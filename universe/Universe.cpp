@@ -709,8 +709,6 @@ namespace Delauney {
 		std::list<Delauney::DTTriangle> *triList;
 		// list of indices in vector of points extracted from removed triangles that need to be retriangulated
 		std::list<Delauney::SortValInt> pointNumList;
-		// reference to triangle extracted fron the list to be examined and perhaps disected...
-		Delauney::DTTriangle &tri = Delauney::DTTriangle();
 		double vx, vy, mag;  // vector components, magnitude
 	
 		// ensure a useful list of systems was passed...
@@ -726,9 +724,9 @@ namespace Delauney {
 	
 		// add points for covering triangle.  the point positions should be big enough to form a triangle
 		// that encloses all the systems of the galaxy (or at least one whose circumcircle covers all points)
-		points.push_back(Delauney::DTPoint(-100000.0, -100000.0));
-		points.push_back(Delauney::DTPoint(200000.0, -100000.0));
-		points.push_back(Delauney::DTPoint(50000.0, 200000.0));
+		points.push_back(Delauney::DTPoint(-1.0, -1.0));
+        points.push_back(Delauney::DTPoint(2.0 * (Universe::UniverseWidth() + 1.0), -1.0));
+		points.push_back(Delauney::DTPoint(-1.0, 2.0 * (Universe::UniverseWidth() + 1.0)));
 
 		// initialize triList.  algorithm adds and removes triangles from this list, and the resulting 
 		// list is returned (so should be deleted externally)
@@ -750,7 +748,7 @@ namespace Delauney {
 			itEnd = triList->end();		
 			while (itCur != itEnd) {
 				// get current triangle
-				tri = *itCur;
+				Delauney::DTTriangle& tri = *itCur;
 
 				// check if point to be added to triangulation is within the circumcircle for the current triangle
 				if (tri.PointInCircumCircle(points[n])) {
