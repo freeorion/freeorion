@@ -28,9 +28,9 @@
 
 
 //static members
-std::string ClientUI::FONT          = "arial.ttf";
+std::string ClientUI::FONT          = "Vera.ttf";
 int         ClientUI::PTS           = 12;
-std::string ClientUI::TITLE_FONT    = "arial.ttf";
+std::string ClientUI::TITLE_FONT    = "Vera.ttf";
 int         ClientUI::TITLE_PTS     = 12;
 
 std::string ClientUI::DIR           = "default/";
@@ -100,7 +100,7 @@ const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
 
     db.Add<std::string>("UI.dir", "Sets UI resource directory root.", "default");
     db.Add<std::string>("UI.art-dir", "Sets UI art resource directory under \'[UI.dir]/art\'.", "small");
-    db.Add<std::string>("UI.font", "Sets UI font resource file.", "arial.ttf");
+    db.Add<std::string>("UI.font", "Sets UI font resource file.", "Vera.ttf");
     db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
     db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "arial.ttf");
     db.Add("UI.title-font-size", "Sets UI title font size.", 12, RangedValidator<int>(4, 40));

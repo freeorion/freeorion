@@ -6,9 +6,9 @@
   <UI>
     <dir value="default/"/>
     <art-dir value="small"/>
-    <font value="arial.ttf"/>
+    <font value="Vera.ttf"/>
     <font-size value="12"/>
-    <title-font value="arial.ttf"/>
+    <title-font value="Vera.ttf"/>
     <title-font-size value="12"/>
     <wnd-color>
       <red value="0"/>
