@@ -61,29 +61,29 @@ bool ClientNetworkCore::SendSynchronousMessage( const Message& msg, Message& res
         // this requires a timeout since if there is a chance that we'll never get a response
         unsigned int start_time = SDL_GetTicks();
 
-        while (FE_PollEvent(&ev)) {
-            // ignore all but network  messages
-            if ( ev.type == SDL_USEREVENT ) {
-                int net2_type = NET2_GetEventType(const_cast<SDL_Event*>(&ev));
-                if (net2_type == NET2_ERROREVENT || 
-                    net2_type == NET2_TCPACCEPTEVENT || 
-                    net2_type == NET2_TCPRECEIVEEVENT || 
-                    net2_type == NET2_TCPCLOSEEVENT || 
-                    net2_type == NET2_UDPRECEIVEEVENT)
-                    HandleNetEvent(const_cast<SDL_Event&>(ev));
-            }
+        while(( SDL_GetTicks() - start_time ) < SYCHRONOUS_TIMEOUT)
+            if (FE_PollEvent(&ev)) {
+                // ignore all but network  messages
+                if ( ev.type == SDL_USEREVENT ) {
+                    int net2_type = NET2_GetEventType(const_cast<SDL_Event*>(&ev));
+                    if (net2_type == NET2_ERROREVENT || 
+                        net2_type == NET2_TCPACCEPTEVENT || 
+                        net2_type == NET2_TCPRECEIVEEVENT || 
+                        net2_type == NET2_TCPCLOSEEVENT || 
+                        net2_type == NET2_UDPRECEIVEEVENT)
+                        HandleNetEvent(const_cast<SDL_Event&>(ev));
+                }
 
-            if ( m_waiting_for_msg == Message::UNDEFINED ) {
-                // message has been received, get data and break loop
-                success = true;
-                response_msg = m_response_msg;
-                break;
-            }
+                if ( m_waiting_for_msg == Message::UNDEFINED ) {
+                    // message has been received, get data and break loop
+                    success = true;
+                    response_msg = m_response_msg;
+                    break;
+                }
 
-            // check for timeout
-            if ( ( SDL_GetTicks() - start_time ) > SYCHRONOUS_TIMEOUT )
-                break;
-        }
+            }
+            else
+              Sleep(100); // reduce cpu load while waiting
     }
 
     return success;
@@ -299,3 +299,4 @@ void ClientNetworkCore::HandleSynchronousResponse( const Message& msg )
         m_waiting_for_msg  = Message::UNDEFINED;
     }
 }
+
