@@ -714,9 +714,9 @@ void Universe::GenerateStarlanes(StarlaneFreqency short_freq, StarlaneFreqency m
     SmallIntDistType short_dist = SmallIntDist(0, max_starlanes[short_freq]);
     SmallIntDistType medium_dist = SmallIntDist(0, max_starlanes[medium_freq]);
     SmallIntDistType long_dist = SmallIntDist(0, max_starlanes[long_freq]);
-    SmallIntDistType short_range_dist = SmallIntDist(-starlane_ranges[0], starlane_ranges[0]);
-    SmallIntDistType medium_range_dist = SmallIntDist(-starlane_ranges[1], starlane_ranges[1]);
-    SmallIntDistType long_range_dist = SmallIntDist(-starlane_ranges[2], starlane_ranges[2]);
+    SmallIntDistType short_range_dist = SmallIntDist(-starlane_ranges[0], starlane_ranges[0] + 1);
+    SmallIntDistType medium_range_dist = SmallIntDist(-starlane_ranges[1], starlane_ranges[1] + 1);
+    SmallIntDistType long_range_dist = SmallIntDist(-starlane_ranges[2], starlane_ranges[2] + 1);
 
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
