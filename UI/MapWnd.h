@@ -23,10 +23,11 @@ class SystemIcon;
 class StatisticIcon;
 class StatisticIconDualValue;
 class CUIToolBar;
+class UniverseObject;
 
 namespace GG {
-class Texture;
-class MultiEdit;
+    class Texture;
+    class MultiEdit;
 }
 
 class MapWndPopup;
@@ -121,6 +122,7 @@ private:
     void MoveBackgrounds(const GG::Pt& move);    //!< scrolls the backgrounds at their respective rates
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
     void SystemRightClicked(int system_id);
+    void UniverseObjectDeleted(const UniverseObject *obj);
     bool OpenChatWindow();
     bool EndTurn();
     bool ToggleSitRep();

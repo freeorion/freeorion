@@ -157,6 +157,8 @@ MapWnd::MapWnd() :
 {
     SetText("MapWnd");
 
+    Connect(GetUniverse().UniverseObjectDeleteSignal(), &MapWnd::UniverseObjectDeleted, this);
+
     // toolbar
     m_toolbar = new CUIToolBar(0,0,GG::App::GetApp()->AppWidth(),30);
     AttachChild(m_toolbar);
@@ -1139,6 +1141,11 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 void MapWnd::SystemRightClicked(int system_id)
 {
     m_right_clicked_system_signal(system_id);
+}
+
+void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
+{
+    m_fleet_lines.erase(const_cast<Fleet*>(dynamic_cast<const Fleet*>(obj)));
 }
 
 void MapWnd::RegisterPopup( MapWndPopup* popup )
