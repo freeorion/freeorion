@@ -7,7 +7,6 @@
 #include "../universe/Predicates.h"
 #include "../universe/Planet.h"
 #include "../universe/Universe.h"
-
 #include "../util/AppInterface.h"
 #include <algorithm>
 
