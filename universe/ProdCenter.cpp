@@ -71,7 +71,7 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem) :
             m_primary = FocusType(lexical_cast<int>(elem.Child("m_primary").Text()));
             m_secondary = FocusType(lexical_cast<int>(elem.Child("m_secondary").Text()));
             m_workforce = lexical_cast<double>(elem.Child("m_workforce").Text());
-            m_planet_type = PlanetType(lexical_cast<int>(elem.Child("m_planet_type").Text()));
+            m_planet_type = lexical_cast<PlanetType>(elem.Child("m_planet_type").Text());
             m_currently_building = BuildType(lexical_cast<int>(elem.Child("m_currently_building").Text()));
             m_rollover = lexical_cast<double>(elem.Child("m_rollover").Text());
         }

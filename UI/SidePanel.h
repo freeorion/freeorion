@@ -34,20 +34,16 @@
 
 class CUI_CloseButton;
 class CUIDropDownList;
-class CUIScroll;
-class System;
-
 class CUIIconButton;
+class CUIScroll;
 class CUITextureButton;
-
+class System;
 namespace GG {class TextControl;}
-
-class PlanetCtrl;
-class Timer;
+class RotatingPlanetControl;
 
 class SidePanel : public GG::Wnd
 {
-    class PlanetView;
+  class PlanetView;
   public:
     /** a single planet's info and controls; several of these may appear at any one time in a SidePanel */
     class PlanetPanel : public GG::Wnd
@@ -128,19 +124,19 @@ class SidePanel : public GG::Wnd
               Planet* GetPlanet(); ///< returns the planet with ID m_planet_id
         const Planet* GetPlanet() const;
 
-        int                 m_planet_id;              ///< id for the planet with is representet by this planet panel
-        GG::TextControl     *m_planet_name;           ///< planet name
-        GG::TextControl     *m_planet_info;           ///< planet size and type info
-        CUIButton           *m_button_colonize;       ///< btn which can be pressed to colonize this planet
-        GG::DynamicGraphic  *m_planet_graphic;        ///< image of the planet (can be a frameset)
-        GG::DynamicGraphic  *m_planet_graphic_lights; ///< light of the planet to be drawn about planet graphic (can be a frameset)
-        CUIIconButton       *m_button_food,           ///< food focus btn (lclick - set primary focus,rclick - ser secondary focus)
-                            *m_button_mining,         ///< mining focus btn (lclick - set primary focus,rclick - ser secondary focus)
-                            *m_button_industry,       ///< industry focus btn (lclick - set primary focus,rclick - ser secondary focus)
-                            *m_button_research,       ///< research focus btn (lclick - set primary focus,rclick - ser secondary focus)
-                            *m_button_balanced;       ///< balanced focus btn (lclick - set primary focus,rclick - ser secondary focus)
+        int                   m_planet_id;                ///< id for the planet with is representet by this planet panel
+        GG::TextControl       *m_planet_name;             ///< planet name
+        GG::TextControl       *m_planet_info;             ///< planet size and type info
+        CUIButton             *m_button_colonize;         ///< btn which can be pressed to colonize this planet
+        GG::DynamicGraphic    *m_planet_graphic;          ///< image of the planet (can be a frameset); this is now used only for asteroids
+        RotatingPlanetControl *m_rotating_planet_graphic; ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
+        CUIIconButton         *m_button_food,             ///< food focus btn (lclick - set primary focus,rclick - ser secondary focus)
+                              *m_button_mining,           ///< mining focus btn (lclick - set primary focus,rclick - ser secondary focus)
+                              *m_button_industry,         ///< industry focus btn (lclick - set primary focus,rclick - ser secondary focus)
+                              *m_button_research,         ///< research focus btn (lclick - set primary focus,rclick - ser secondary focus)
+                              *m_button_balanced;         ///< balanced focus btn (lclick - set primary focus,rclick - ser secondary focus)
 
-        CUIDropDownList     *m_construction;          ///< drop down list which hold planet build projects
+        CUIDropDownList       *m_construction;            ///< drop down list which hold planet build projects
 
         boost::signals::connection m_connection_planet_changed;           ///< stores connection used to handle a planet change
         boost::signals::connection m_connection_planet_production_changed;///< stores connection used to handle a planet production change

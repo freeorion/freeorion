@@ -27,7 +27,11 @@
 
 #include "MapWnd.h"
 
+
 namespace {
+    const int MAX_PLANET_SIZE = 128; // size of a huge planet, in on-screen pixels
+    const int MIN_PLANET_SIZE = MAX_PLANET_SIZE / 3; // size of a tiny planet, in on-screen pixels
+
     int CircleXFromY(double y, double r) {return static_cast<int>(std::sqrt(r * r - y * y) + 0.5);}
 
     // v0.2 only
@@ -44,14 +48,213 @@ namespace {
         }
         return 0;
     }
+
+    struct RotatingPlanetData
+    {
+        RotatingPlanetData(const GG::XMLElement& elem)
+        {
+            if (elem.Tag() != "RotatingPlanetData")
+                throw std::invalid_argument("Attempted to construct a RotatingPlanetData from an XMLElement that had a tag other than \"RotatingPlanetData\"");
+
+            planet_type = boost::lexical_cast<PlanetType>(elem.Child("planet_type").Text());
+            filename = elem.Child("filename").Text();
+            RPM = boost::lexical_cast<double>(elem.Child("RPM").Text());
+            axis_angle = boost::lexical_cast<double>(elem.Child("axis_angle").Text());
+            shininess = boost::lexical_cast<double>(elem.Child("shininess").Text());
+
+            shininess = std::max(0.0, std::min(shininess, 128.0)); // ensure proper bounds
+        }
+
+        GG::XMLElement XMLEncode() const
+        {
+            GG::XMLElement retval("RotatingPlanetData");
+            retval.AppendChild(GG::XMLElement("planet_type", boost::lexical_cast<std::string>(planet_type)));
+            retval.AppendChild(GG::XMLElement("filename", filename));
+            retval.AppendChild(GG::XMLElement("RPM", boost::lexical_cast<std::string>(RPM)));
+            retval.AppendChild(GG::XMLElement("axis_angle", boost::lexical_cast<std::string>(axis_angle)));
+            retval.AppendChild(GG::XMLElement("shininess", boost::lexical_cast<std::string>(shininess)));
+            return retval;
+        }
+
+        PlanetType planet_type; ///< the type of planet for which this data may be used
+        std::string filename;   ///< the filename of the image used to texture a rotating image
+        double RPM;             ///< the rotation of this planet, in revolutions per minute (may be negative, which will cause CW rotation)
+        double axis_angle;      ///< the angle, in degrees, of the axis on which the planet rotates, measured CCW from straight up (may be negative)
+        double shininess;       ///< the exponent of specular (shiny) reflection off of the planet; must be in [0.0, 128.0]
+    };
+
+    const std::map<PlanetType, std::vector<RotatingPlanetData> >& GetRotatingPlanetData()
+    {
+        static std::map<PlanetType, std::vector<RotatingPlanetData> > data;
+        if (data.empty()) {
+            GG::XMLDoc doc;
+            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            doc.ReadDoc(ifs);
+            ifs.close();
+
+            if (doc.root_node.ContainsChild("GLPlanets")) {
+                const GG::XMLElement& elem = doc.root_node.Child("GLPlanets");
+                for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+                    if (it->Tag() == "RotatingPlanetData") {
+                        RotatingPlanetData current_data(*it);
+                        data[current_data.planet_type].push_back(current_data);
+                    }
+                }
+            }
+        }
+        return data;
+    }
+
+    double GetRotatingPlanetAmbientAndDiffuseIntensity()
+    {
+        double retval = 0.5;
+
+        GG::XMLDoc doc;
+        std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+        doc.ReadDoc(ifs);
+        ifs.close();
+
+        if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("ambient_and_diffuse_intensity"))
+            retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_and_diffuse_intensity").Text());
+
+        retval = std::max(0.0, std::min(retval, 1.0));
+
+        return retval;
+    }
+
+    void RenderSphere(double r, const GG::Clr& amb_and_diff, const GG::Clr& spec, double shine, 
+                      boost::shared_ptr<GG::Texture> texture)
+    {
+        static GLUquadric* quad = gluNewQuadric();
+
+        if (quad) {
+            if (texture) {
+                glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
+            }
+
+            if (shine) {
+                glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, static_cast<float>(shine));
+                GLfloat spec_v[] = {spec.r / 255.0, spec.g / 255.0, spec.b / 255.0, spec.a / 255.0};
+                glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec_v);
+            }
+            GLfloat amb_and_diff_v[] = {amb_and_diff.r / 255.0, amb_and_diff.g / 255.0, amb_and_diff.b / 255.0, amb_and_diff.a / 255.0};
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, amb_and_diff_v);
+            gluQuadricTexture(quad, texture ? GL_TRUE : GL_FALSE);
+            gluQuadricNormals(quad, GLU_SMOOTH);
+            gluQuadricOrientation(quad, GLU_OUTSIDE);
+
+            glColor4ubv(GG::CLR_WHITE.v);
+            gluSphere(quad, r, 100, 100);
+        }
+    }
+
+    void RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture, double RPM, double axis_tilt, double shininess)
+    {
+        HumanClientApp::GetApp()->Exit2DMode();
+
+        // slide the texture coords to simulate a rotating axis
+        glMatrixMode(GL_TEXTURE);
+        glLoadIdentity();
+        glTranslated(GG::App::GetApp()->Ticks() / 1000.0 * RPM * 1.0 / 60.0, 0, 0.0);
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0.0, HumanClientApp::GetApp()->AppWidth(), HumanClientApp::GetApp()->AppHeight(), 0.0, 0.0, HumanClientApp::GetApp()->AppWidth());
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glTranslated(center.x, center.y, -(diameter / 2 + 1));
+        glRotated(100.0, -1.0, 0.0, 0.0); // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
+        glRotated(axis_tilt, 0.0, 1.0, 0.0);  // axis tilt
+
+        glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
+        GLfloat light_position[] = {1.0, -1.0, -1.0, 0.0};
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        glEnable(GL_TEXTURE_2D);
+
+        double intensity = GetRotatingPlanetAmbientAndDiffuseIntensity();
+        GG::Clr amb_and_diff(intensity, intensity, intensity, 1.0);
+        RenderSphere(diameter / 2, amb_and_diff, GG::CLR_WHITE, shininess, texture);
+
+        glPopAttrib();
+
+        glMatrixMode(GL_TEXTURE);
+        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+
+        HumanClientApp::GetApp()->Enter2DMode();
+    }
+
+    int PlanetDiameter(Planet::PlanetSize size)
+    {
+        double scale = 0.0;
+        switch (size)
+        {
+        case Planet::SZ_TINY      : scale = 0.0/5.0; break;
+        case Planet::SZ_SMALL     : scale = 1.0/5.0; break;
+        case Planet::SZ_MEDIUM    : scale = 2.0/5.0; break;
+        case Planet::SZ_LARGE     : scale = 3.0/5.0; break;
+        case Planet::SZ_HUGE      : scale = 4.0/5.0; break;
+        case Planet::SZ_GASGIANT  : scale = 5.0/5.0; break;
+        case Planet::SZ_ASTEROIDS : scale = 5.0/5.0; break;
+        default                   : scale = 2.0/5.0; break;
+        }
+
+        return MIN_PLANET_SIZE + (MAX_PLANET_SIZE - MIN_PLANET_SIZE) * scale;
+    }
 }
+
+class RotatingPlanetControl : public GG::Control
+{
+public:
+    RotatingPlanetControl(int x, int y, Planet::PlanetSize size, const RotatingPlanetData& planet_data) :
+        GG::Control(x, y, PlanetDiameter(size), PlanetDiameter(size), 0),
+        m_planet_data(planet_data),
+        m_size(size),
+        m_texture(GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + m_planet_data.filename))
+    {
+    }
+
+    virtual bool Render()
+    {
+        RenderPlanet(UpperLeft() + GG::Pt(Width() / 2, Height() / 2), Width(), m_texture, 
+                     SizeRotationFactor(m_size) * m_planet_data.RPM, m_planet_data.axis_angle, m_planet_data.shininess);
+        return true;
+    }
+
+    void SetRotatingPlanetData(const RotatingPlanetData& planet_data)
+    {
+        m_planet_data = planet_data;
+        m_texture = GG::App::GetApp()->GetTexture(m_planet_data.filename);
+    }
+
+private:
+    double SizeRotationFactor(Planet::PlanetSize size) const
+    {
+        switch (size)
+        {
+        case Planet::SZ_TINY      : return 2.0;
+        case Planet::SZ_SMALL     : return 1.5;
+        case Planet::SZ_MEDIUM    : return 1.0;
+        case Planet::SZ_LARGE     : return 0.75;
+        case Planet::SZ_HUGE      : return 0.5;
+        case Planet::SZ_GASGIANT  : return 0.25;
+        default                   : return 1.0;
+        }
+        return 1.0;
+    }
+
+    RotatingPlanetData              m_planet_data;
+    Planet::PlanetSize              m_size;
+    boost::shared_ptr<GG::Texture>  m_texture;
+};
 
 ////////////////////////////////////////////////
 // SidePanel::PlanetPanel
 ////////////////////////////////////////////////
 namespace {
-  const int MAX_PLANET_SIZE = 128; // size of a huge planet, in on-screen pixels
-  const int MIN_PLANET_SIZE = MAX_PLANET_SIZE / 3; // size of a tiny planet, in on-screen pixels
   const int IMAGES_PER_PLANET_TYPE = 3; // number of planet images available per planet type (named "type1.png", "type2.png", ...)
   const int SYSTEM_NAME_FONT_SIZE = static_cast<int>(ClientUI::PTS*1.4);
   
@@ -751,7 +954,8 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
   m_planet_name(0),m_planet_info(0),
   m_button_colonize(0),
   m_construction(0),
-  m_planet_graphic(0),m_planet_graphic_lights(0),
+  m_planet_graphic(0),
+  m_rotating_planet_graphic(0),
   m_button_food(0),m_button_mining(0),m_button_industry(0),m_button_research(0),m_button_balanced(0)
 {
   SetText(ClientUI::String("PLANET_PANEL"));
@@ -767,35 +971,34 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
   int planet_image_sz = PlanetDiameter();
   GG::Pt planet_image_pos(MAX_PLANET_SIZE / 2 - planet_image_sz / 2, Height() / 2 - planet_image_sz / 2);
 
-  std::vector<boost::shared_ptr<GG::Texture> > textures; int start_frame; double fps;
-
-  //#texures holds at least one element or GetPlanetTextures throws an exception
-  GetPlanetTextures(planet,textures,start_frame=-1,fps=0.0);
-  m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-  if(start_frame==-1 && 1<textures.size())
-    start_frame = RandSmallInt(0,textures.size()-1);
-
-  if(start_frame!=-1 && fps!=0.0)
-    m_planet_graphic->SetTimeIndex(start_frame * 1000.0 / m_planet_graphic->FPS());
-   AttachChild(m_planet_graphic);m_planet_graphic->Play();
- 
-  textures.clear();
-  //lights
-  //#texures holds at least one element or GetPlanetTextures throws an exception
-  try
+  if (planet.Type() == PT_ASTEROIDS) 
   {
-    GetPlanetTexturesDynamic("Lights",planet.Size(),1,textures,start_frame=-1,fps=0.0);
-    m_planet_graphic_lights = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    if(start_frame==-1 && 1<textures.size())
-      start_frame = RandSmallInt(0,textures.size()-1);
+      std::vector<boost::shared_ptr<GG::Texture> > textures; int start_frame; double fps;
 
-    if(start_frame!=-1 && fps!=0.0)
-      m_planet_graphic_lights->SetTimeIndex(start_frame * 1000.0 / m_planet_graphic_lights->FPS());
+      //#texures holds at least one element or GetPlanetTextures throws an exception
+      GetPlanetTextures(planet,textures,start_frame=-1,fps=0.0);
+      m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+      if(start_frame==-1 && 1<textures.size())
+          start_frame = RandSmallInt(0,textures.size()-1);
 
-    AttachChild(m_planet_graphic_lights);m_planet_graphic_lights->Play();
+      if(start_frame!=-1 && fps!=0.0)
+          m_planet_graphic->SetTimeIndex(start_frame * 1000.0 / m_planet_graphic->FPS());
+      AttachChild(m_planet_graphic);m_planet_graphic->Play();
+
+      textures.clear();
   }
-  catch(...)
-  {}
+  else if (planet.Type() < MAX_PLANET_TYPE)
+  {
+      const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
+      std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet.Type());
+      int num_planets_of_type;
+      if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet.Type())->second.size()))
+      {
+          m_rotating_planet_graphic = new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, planet.Size(),
+                                                                it->second[planet.ID() % num_planets_of_type]);
+          AttachChild(m_rotating_planet_graphic);
+      }
+  }
 
   m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::TEXT_COLOR,GG::TF_LEFT|GG::TF_TOP);
   AttachChild(m_planet_info);
@@ -922,7 +1125,10 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
   Connect(m_construction->SelChangedSignal(), &SidePanel::PlanetPanel::BuildSelected, this);
   ////////////////////// v0.2 only!!
 
-  MoveChildDown(m_planet_graphic);
+  if (planet.Type() == PT_ASTEROIDS) 
+  {
+    MoveChildDown(m_planet_graphic);
+  }
 
   const Planet *plt = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
 
@@ -999,8 +1205,8 @@ void SidePanel::PlanetPanel::PlanetChanged()
     text+= GetPlanetTypeName(*planet);
   
     text+="\n";
-    if(planet->MaxPop()==0) text+= ClientUI::String("PL_UNHABITABLE");
-    else                    text+= "("+ClientUI::String("PL_UNINHABITED")+" 0/"+boost::lexical_cast<std::string>(planet->MaxPop())+")";
+    if(planet->MaxPop()==0) text+= ClientUI::String("PL_UNINHABITABLE");
+    else                    text+= ClientUI::String("PL_SIZE") + " " + boost::lexical_cast<std::string>(planet->MaxPop());
 
     m_planet_info->SetText(text);
   }
@@ -1125,11 +1331,16 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys)
 
 bool SidePanel::PlanetPanel::RenderUnhabited(const Planet &planet)
 {
-  return true;
+    //if (planet.Type() != PT_ASTEROIDS)
+        //RenderPlanet(UpperLeft() + GG::Pt(MAX_PLANET_SIZE / 2, Height() / 2), PlanetDiameter(), GG::App::GetApp()->GetTexture("moon.png"));
+    return true;
 }
 
 bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 {
+  //if (planet.Type() != PT_ASTEROIDS)
+    //RenderPlanet(UpperLeft() + GG::Pt(MAX_PLANET_SIZE / 2, Height() / 2), PlanetDiameter(), GG::App::GetApp()->GetTexture("moon.png"));
+
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS);
   Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
@@ -1169,6 +1380,9 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 
 bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 {
+  //if (planet.Type() != PT_ASTEROIDS)
+    //RenderPlanet(UpperLeft() + GG::Pt(MAX_PLANET_SIZE / 2, Height() / 2), PlanetDiameter(), GG::App::GetApp()->GetTexture("moon.png"));
+
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS);
   Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
@@ -1248,7 +1462,6 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     // TODO : get the costs of the item from the list of available technologies
     int cost = Cost(planet.CurrentlyBuilding());
     double percent_complete = planet.PercentComplete();
-std::cout << "ProdCenter::SCOUT <= planet->CurrentlyBuilding() (1) : percent_complete=" << percent_complete << "\n";
 
     int x1 = m_construction->UpperLeft ().x;
     int x2 = m_construction->LowerRight().x;
@@ -1294,22 +1507,7 @@ bool SidePanel::PlanetPanel::Render()
 
 int SidePanel::PlanetPanel::PlanetDiameter() const
 {
-  const Planet *planet = GetPlanet();
-
-  double scale=0.0;
-  switch(planet->Size())
-  {
-    case Planet::SZ_TINY      : scale = 0.0/5.0; break;
-    case Planet::SZ_SMALL     : scale = 1.0/5.0; break;
-    case Planet::SZ_MEDIUM    : scale = 2.0/5.0; break;
-    case Planet::SZ_LARGE     : scale = 3.0/5.0; break;
-    case Planet::SZ_HUGE      : scale = 4.0/5.0; break;
-    case Planet::SZ_GASGIANT  : scale = 5.0/5.0; break;
-    case Planet::SZ_ASTEROIDS : scale = 5.0/5.0; break;
-    default                   : scale = 2.0/5.0; break;
-  }
-
-  return MIN_PLANET_SIZE + (MAX_PLANET_SIZE - MIN_PLANET_SIZE)*scale;
+    return ::PlanetDiameter(GetPlanet()->Size());
 }
 
 bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
@@ -1521,17 +1719,21 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   Planet *planet = dynamic_cast<Planet*>(GetUniverse().Object(m_planet_id));
 
   EnableChildClipping(true);
-  std::vector<boost::shared_ptr<GG::Texture> > textures; int start_frame; double fps;
 
-  GetPlanetTextures(*planet,textures,start_frame=-1,fps=0.0);
-  m_planet_graphic = new GG::DynamicGraphic(-35,-20,80,80,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-  if(start_frame==-1 && 1<textures.size())
-    start_frame = RandSmallInt(0,textures.size()-1);
+  if (plt.Type() == PT_ASTEROIDS) 
+  {
+      std::vector<boost::shared_ptr<GG::Texture> > textures; int start_frame; double fps;
 
-  if(start_frame!=-1 && fps!=0.0)
-    m_planet_graphic->SetTimeIndex(start_frame * 1000.0 / m_planet_graphic->FPS());
+      GetPlanetTextures(*planet,textures,start_frame=-1,fps=0.0);
+      m_planet_graphic = new GG::DynamicGraphic(-35,-20,80,80,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+      if(start_frame==-1 && 1<textures.size())
+          start_frame = RandSmallInt(0,textures.size()-1);
 
-  AttachChild(m_planet_graphic);m_planet_graphic->Play();
+      if(start_frame!=-1 && fps!=0.0)
+          m_planet_graphic->SetTimeIndex(start_frame * 1000.0 / m_planet_graphic->FPS());
+
+      AttachChild(m_planet_graphic);m_planet_graphic->Play();
+  }
 
   boost::shared_ptr<GG::Texture> texture;
   switch(planet->Type())
@@ -1898,7 +2100,7 @@ bool SidePanel::PlanetView::Render()
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
   font->RenderText(ul.x+20,y,ul.x+500,y+font->Height(), text, format, 0, false);
 
-  if(planet->MaxPop()==0) text= ClientUI::String("PL_UNHABITABLE");
+  if(planet->MaxPop()==0) text= ClientUI::String("PL_UNINHABITABLE");
   else                    text= " "+boost::lexical_cast<std::string>(static_cast<int>(planet->PopPoints()))+"/"+boost::lexical_cast<std::string>(planet->MaxPop()) + " Million";
 
   text+="  ";
@@ -2003,7 +2205,6 @@ bool SidePanel::PlanetView::Render()
     // construction progress bar
     int cost = Cost(planet->CurrentlyBuilding());
     double percent_complete = planet->PercentComplete();
-std::cout << "ProdCenter::SCOUT <= planet->CurrentlyBuilding() (2) : percent_complete=" << percent_complete << "\n";
 
     int x1 = m_construction->UpperLeft ().x;
     int x2 = m_construction->LowerRight().x;

@@ -43,6 +43,8 @@ class UniverseObject;
 #endif
 namespace GG {class XMLElement;}
 
+#include "GGEnum.h"
+
 // this is here to break a circular dependendy between Planet and ProdCenter, both of which need this enum
 /** the types of planets in FreeOrion*/
 enum PlanetType {PT_SWAMP,
@@ -59,6 +61,27 @@ enum PlanetType {PT_SWAMP,
                 PT_GASGIANT,                     
                 MAX_PLANET_TYPE   //keep this last
                 };
+
+// define EnumMap and stream operators for PlanetType
+// this is done because these labels are used in some artist-created XML files
+ENUM_MAP_BEGIN(PlanetType)
+    ENUM_MAP_INSERT(PT_SWAMP)
+    ENUM_MAP_INSERT(PT_TOXIC)
+    ENUM_MAP_INSERT(PT_INFERNO)
+    ENUM_MAP_INSERT(PT_RADIATED)
+    ENUM_MAP_INSERT(PT_BARREN)
+    ENUM_MAP_INSERT(PT_TUNDRA)
+    ENUM_MAP_INSERT(PT_DESERT)
+    ENUM_MAP_INSERT(PT_TERRAN)
+    ENUM_MAP_INSERT(PT_OCEAN)
+    ENUM_MAP_INSERT(PT_GAIA)
+    ENUM_MAP_INSERT(PT_ASTEROIDS)
+    ENUM_MAP_INSERT(PT_GASGIANT)
+ENUM_MAP_END
+
+ENUM_STREAM_IN(PlanetType)
+ENUM_STREAM_OUT(PlanetType)
+
 
 class Universe
 {

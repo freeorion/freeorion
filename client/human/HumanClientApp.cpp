@@ -266,7 +266,7 @@ void HumanClientApp::Enter2DMode()
 
     // set up coordinates with origin in upper-left and +x and +y directions right and down, respectively
     // the depth of the viewing volume is only 1 (from 0.0 to 1.0)
-    glOrtho(0.0, (GLdouble)AppWidth(), (GLdouble)AppHeight(), 0.0, 0.0, 1.0);
+    glOrtho(0.0, AppWidth(), AppHeight(), 0.0, 0.0, AppWidth());
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -412,10 +412,13 @@ void HumanClientApp::GLInit()
 
     glEnable(GL_BLEND);
     glClearColor(0, 0, 0, 0);
-    glViewport(0, 0, AppWidth() - 1, AppHeight() - 1);
+    glViewport(0, 0, AppWidth(), AppHeight());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(50.0, ratio, 1.0, 10.0);
+    gluPerspective(50.0, ratio, 0.0, 10.0);
+    gluLookAt(0.0, 0.0, 5.0, 
+              0.0, 0.0, 0.0, 
+              0.0, 1.0, 0.0);
 
     Logger().debugStream() << "GLInit() complete.";
 }

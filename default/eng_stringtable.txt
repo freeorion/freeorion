@@ -325,7 +325,7 @@ Inferno
 PL_GASGIANT
 Gas Giant
 PL_ASTEROIDS
-Asteroid Field
+Asteroids
 PL_RADIATED
 Radiated
 PL_SWAMP
@@ -343,11 +343,14 @@ Terran
 PL_GAIA
 Gaia
 
-PL_UNHABITABLE
-unhabitable
+PL_UNINHABITABLE
+uninhabitable
 
 PL_UNINHABITED
-unhabited
+uninhabited
+
+PL_SIZE
+Size
 
 PL_PRIMARY_FOCUS
 primary 

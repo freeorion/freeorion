@@ -62,7 +62,7 @@ Planet::Planet(const GG::XMLElement& elem) :
         throw std::invalid_argument("Attempted to construct a Planet from an XMLElement that had a tag other than \"Planet\"");
 
     try {
-        m_type = PlanetType(lexical_cast<int>(elem.Child("m_type").Text()));
+        m_type = lexical_cast<PlanetType>(elem.Child("m_type").Text());
         m_size = PlanetSize(lexical_cast<int>(elem.Child("m_size").Text()));
         m_just_conquered = lexical_cast<int>(elem.Child("m_just_conquered").Text());
 
