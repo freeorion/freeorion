@@ -2,10 +2,26 @@
 #ifndef _ClientUI_h_
 #define _ClientUI_h_
 
+//include relevant controls
+
+#include "ToolContainer.h"
+#include "CUIControls.h"
+
+//FreeOrion defines
+class ClientNetwork;
+class ClientUniverse;
+class ClientEmpire;
+class SystemObjects;
+class Planet;
+class Star;
+class SitRepEvent;
+class Combat;
+
 //! \brief ClientUI Main Module
 //!This is the main class of the ClientUI module.
 //!it contains objects of many other classes and controls the
 //!display of all information onscreen.
+
 class ClientUI
 {
 public:
@@ -15,14 +31,14 @@ public:
 
     enum        
     {
-        STATE_INTRO        = 1,
+        STATE_INTRO       = 1,
         STATE_SETTINGS    = 2,
-        STATE_EMPIRESEL    = 3,
-        STATE_TURNSTART = 4,
-        STATE_MAP        = 5,
-        STATE_SITREP    = 6,
-        STATE_PROCESS    = 7,
-        STATE_BATTLE    = 8,
+        STATE_EMPIRESEL   = 3,
+        STATE_TURNSTART   = 4,
+        STATE_MAP         = 5,
+        STATE_SITREP      = 6,
+        STATE_PROCESS     = 7,
+        STATE_BATTLE      = 8,
         STATE_SAVE        = 9,
         STATE_LOAD        = 10,
         STATE_SHUTDOWN    = 11
