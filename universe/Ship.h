@@ -17,14 +17,27 @@ struct ShipDesign
    int         empire;  ///< the empire that designed this ship
    std::string name;    ///< the name of the design
    
+   int WarpSpeed() const; ///< returns the maximum speed for ships of this design.  Returns 1 for 0.1
+   
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
+   enum V01DesignID
+   {
+        SCOUT,
+        MARK1,
+        MARK2,
+        MARK3,
+        MARK4,
+        COLONY
+    };
+
    int         attack;  ///< the attack value of the design
    int         defense; ///< the defense value of the design
    int         cost;    ///< the cost of the design, in PP
    bool        colonize; ///< whether or not the ship is capable of creating a new colony
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
+
 
    /** \name Accessors */ //@{
   	GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a ShipDesign object

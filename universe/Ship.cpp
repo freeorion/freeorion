@@ -21,7 +21,8 @@ ShipDesign::ShipDesign() :
    name(""),
    attack(0),
    defense(0),
-   cost(10000000)
+   cost(10000000),
+   id(ShipDesign::SCOUT)
 {
    //TODO
 }
@@ -76,6 +77,11 @@ GG::XMLElement ShipDesign::XMLEncode() const
 
 }
 
+
+int ShipDesign::WarpSpeed() const
+{
+    return 1; // for 0.1, and the early revs.  This will change later
+}
 
 ////////////////////////////////////////////////
 // Ship
