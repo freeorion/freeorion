@@ -265,7 +265,7 @@ void HumanClientApp::Enter2DMode()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glViewport(0, 0, AppWidth() - 1, AppHeight() - 1);
+	glViewport(0, 0, AppWidth(), AppHeight()); //removed -1 from AppWidth & Height
 
 	glMatrixMode(GL_PROJECTION);
    glPushMatrix();
