@@ -66,6 +66,8 @@ network/XParser.cpp				\
 network/XParser.hpp  				\
 network/XTree.cpp				\
 network/XTree.hpp  				\
+universe/Building.cpp				\
+universe/Building.h	 			\
 universe/Condition.cpp				\
 universe/Condition.h	 			\
 universe/Effect.cpp				\
