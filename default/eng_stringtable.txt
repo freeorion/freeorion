@@ -576,3 +576,21 @@ A combat has taken place in system %system%. The encounter was a draw.
 
 PLANET_LOST_STARVED_TO_DEATH
 Your population at planet %planet% in system %system% starved to death. The planet is lost!
+
+
+####################
+# Specials         #
+####################
+
+HOMEWORLD_SPECIAL
+Homeworld
+
+HOMEWORLD_SPECIAL_DESCRIPTION
+This planet is the birthplace of your race; you know how to get the most out of it, gaining bonuses to virtually all planetary stats.
+
+STARVATION_SPECIAL
+Starvation
+
+STARVATION_SPECIAL_DESCRIPTION
+This planet is starving!  The people will not do anything as well as they normally do, except produce nutrients.
+
