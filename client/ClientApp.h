@@ -6,7 +6,7 @@
 #endif 
 
 #ifndef _ClientEmpire_h_
-#include "../empire/ClientEmpireManager.h"
+#include "../Empire/ClientEmpireManager.h"
 #endif 
 
 #ifndef _OrderSet_h_
