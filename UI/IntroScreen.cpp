@@ -36,7 +36,7 @@
 #include "../network/Message.h"
 
 IntroScreen::IntroScreen():
-    CUI_Wnd("FreeOrion Main Menu", 600, 100, 300, 600, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE)
+    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024+300)/2, 300, 300, 400, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE)
 {
 
     //get a texture to fill the background with
@@ -49,9 +49,9 @@ IntroScreen::IntroScreen():
     GG::App::GetApp()->Register(bg_graphic);
     
     //create buttons
-    m_start_game = new GG::Button(20, 30, 260, 30, "Start New Game", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_quick_start = new GG::Button(20, 80, 260, 30, "Quick Start", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_exit_game = new GG::Button(20, 130, 260, 30, "Exit", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_start_game = new GG::Button(20, 30, 260, 30, ClientUI::String("INTRO_BTN_START_GAME"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_quick_start = new GG::Button(20, 80, 260, 30, ClientUI::String("INTRO_BTN_QUICK_START"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_exit_game = new GG::Button(20, 130, 260, 30, ClientUI::String("INTRO_BTN_EXIT"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
     
     //attach buttons
     AttachChild(m_start_game);
@@ -160,7 +160,7 @@ void IntroScreen::OnStartGame()
                {
                    if((timeout_count + GG::App::GetApp()->Ticks()) >= (timeout_count + SERVER_CONNECT_TIMEOUT))
                    {
-                       ClientUI::MessageBox("Unable to connect to server." );
+                       ClientUI::MessageBox(ClientUI::String("ERR_UNABLE_TO_CONNECT") );
                        break;
                    }               
                }

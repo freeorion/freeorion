@@ -39,7 +39,8 @@ const GG::Clr ServerConnectWnd::BACKCOLOR(1.0, 1.0, 1.0, 0.75);
 const string ServerConnectWnd::DEF_FONT("arial.ttf");
 */
 
-ServerConnectWnd::ServerConnectWnd(int x, int y, int w, int h) : CUI_ModalWnd("Connect to Server", x, y, w, h, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE)
+ServerConnectWnd::ServerConnectWnd(int x, int y, int w, int h) : 
+    CUI_ModalWnd(ClientUI::String("SCONNECT_WINDOW_TITLE"), x, y, w, h, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE)
 {
      
 #define POS_LABEL_SERVER_CONNECT    10,5
@@ -51,14 +52,14 @@ ServerConnectWnd::ServerConnectWnd(int x, int y, int w, int h) : CUI_ModalWnd("C
     
     // Some default values
     m_ended_with_ok = false;
-    m_btn_search_more = new GG::Button(POS_BTN_SEARCH_MORE,"Search more...",ClientUI::FONT,ClientUI::PTS,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_btn_search_more = new GG::Button(POS_BTN_SEARCH_MORE,ClientUI::String("SCONNECT_BTN_SEARCH_MORE"),ClientUI::FONT,ClientUI::PTS,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
     m_cbo_available_servers = new GG::DropDownList(POS_CBO_AVAILABLE_SERVERS,120,ClientUI::CTRL_COLOR,GG::CLR_WHITE);
-    m_btn_ok = new GG::Button(POS_BTN_OK,"OK",ClientUI::FONT,ClientUI::PTS,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_btn_cancel = new GG::Button(POS_BTN_CANCEL,"Cancel",ClientUI::FONT,ClientUI::PTS,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_btn_ok = new GG::Button(POS_BTN_OK,ClientUI::String("OK"),ClientUI::FONT,ClientUI::PTS,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_btn_cancel = new GG::Button(POS_BTN_CANCEL,ClientUI::String("CANCEL"),ClientUI::FONT,ClientUI::PTS,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
     
     // Attach static labels
 //    AttachChild(new GG::StaticText(POS_LABEL_SERVER_CONNECT,"Connect to server",ClientUI::FONT,ClientUI::PTS + 4,ClientUI::TEXT_COLOR));
-    AttachChild(new GG::StaticText(POS_LABEL_SERVER_SERVER,"Server:",ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR));
+    AttachChild(new GG::StaticText(POS_LABEL_SERVER_SERVER,ClientUI::String("SCONNECT_LBL_SERVER"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR));
     
     // Attach signal connections
     InitControls();
@@ -152,10 +153,10 @@ void ServerConnectWnd::PopulateServerList()
 void ServerConnectWnd::SearchMore()
 {
 
-    ShowDialog("Retrieving more servers...");
+    ShowDialog(ClientUI::String("SCONNECT_RETRIEVING"));
     
     int n = UpdateServerList(4);  
-    string feedback("Found xx new servers");
+    string feedback(ClientUI::String("SCONNECT_FOUND"));
     if (n>0)
     {
         int x = feedback.find("xx");
@@ -166,7 +167,7 @@ void ServerConnectWnd::SearchMore()
     }
     else
     {
-        feedback = "No more servers found";
+        feedback = ClientUI::String("SCONNECT_NOMORE");
     }
     
     ShowDialog(feedback);

@@ -37,7 +37,7 @@
 
 EmpireSelect::EmpireSelect():
 //    GG::ModalWnd(200,200,645,360),
-    CUI_ModalWnd("Empire Selection",200,200,400,200, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
+    CUI_ModalWnd(ClientUI::String("ESELECT_WINDOW_TITLE"),200,200,400,200, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
     m_end_with_ok(false)
 {
    
@@ -45,7 +45,7 @@ EmpireSelect::EmpireSelect():
     // this will get overwritten during construction
     m_empire_name = new GG::Edit(100, 25, 168, 25, "Tyrethians", ClientUI::FONT, ClientUI::PTS, ClientUI::INNER_BORDER_COLOR/*, GG::CLR_BLACK*/);
     m_empire_name->SetTextColor(ClientUI::TEXT_COLOR);
-
+//uncomment this line once arrows.png is properly committed
     m_arrows.Load(ClientUI::ART_DIR + "arrows.png");
 
     m_left_select = new GG::Button(40,130,15,15,"", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR);
@@ -69,8 +69,8 @@ EmpireSelect::EmpireSelect():
     m_right_select->SetPressedGraphic(*m_ra_pressed_sub);
     m_right_select->SetRolloverGraphic(*m_ra_hover_sub);
 
-    m_ok     = new GG::Button(300,90,75,25,"Ok", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
-    m_cancel = new GG::Button(210,90,75,25,"Cancel", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
+    m_ok     = new GG::Button(300,90,75,25,ClientUI::String("OK"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
+    m_cancel = new GG::Button(210,90,75,25,ClientUI::String("CANCEL"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
 
     m_cur_color = 0;
 
@@ -88,7 +88,7 @@ void EmpireSelect::Init()
     AttachChild(m_right_select);
 
     // Attach static labels
-    AttachChild(new GG::StaticText(10,30,"Empire name:",ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR));
+    AttachChild(new GG::StaticText(10,30,ClientUI::String("ESELECT_EMPIRE_NAME"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR));
     
     //attach signals
     GG::Connect(m_ok->ClickedSignal(), &EmpireSelect::OnOK, this);
