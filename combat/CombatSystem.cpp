@@ -7,7 +7,9 @@
 #include "../universe/Ship.h"
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
+
 #include "../util/Random.h"
+#include "../util/AppInterface.h"
 
 #include <time.h>
 #include <map>
@@ -37,13 +39,6 @@ namespace
     std::vector<Planet*> defenseless_planets;
   };
 }
-#ifdef FREEORION_BUILD_SERVER
-  #include "../server/ServerApp.h"
-  static Empire *LookupEmpire(int ID) {return ServerApp::Empires().Lookup(ID);}
-#else
-  #include "../client/ClientApp.h"
-  static Empire *LookupEmpire(int ID) {return ClientApp::Empires().Lookup(ID);}
-#endif
 
 static void RemoveShip(int nID)
 {
@@ -56,7 +51,7 @@ static void RemoveShip(int nID)
     {
       for(std::set<int>::const_iterator own_it=flt->Owners().begin();own_it != flt->Owners().end();++own_it)
       {
-        Empire *empire = LookupEmpire(*own_it);
+        Empire *empire = Empires().Lookup(*own_it);
         empire->RemoveFleet(flt->ID());
       }
       GetUniverse().Remove(flt->ID());
