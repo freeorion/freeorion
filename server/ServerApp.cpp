@@ -63,7 +63,9 @@ namespace {
                 for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
                     if (fs::exists(*it) && !fs::is_directory(*it) && it->leaf()[0] != '.') {
                         std::string filename = it->leaf();
-                        if (filename.find(SAVE_FILE_EXTENSION) == filename.size() - SAVE_FILE_EXTENSION.size()) {
+                        // disallow filenames that begin with a dot, and filenames with spaces in them
+                        if (filename.find('.') != 0 && filename.find(' ') == std::string::npos && 
+                            filename.find(SAVE_FILE_EXTENSION) == filename.size() - SAVE_FILE_EXTENSION.size()) {
                             save_games.push_back(filename);
                         }
                     }
@@ -717,19 +719,9 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
         if (m_state == SERVER_MP_LOBBY) { // enter an MP lobby
             if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
                 m_network_core.SendMessage(JoinAckMessage(player_id));
+                m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, LobbyStartDoc()));
                 for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                    if (it->first != player_id) {
-                        std::stringstream stream;
-                        LobbyStartDoc().WriteDoc(stream);
-                        Logger().debugStream() << "Outgoing lobby update to player #" << it->first << ": \n" << stream.str();
-                        m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, LobbyStartDoc()));
-                    }
-                }
-                if (player_id != NetworkCore::HOST_PLAYER_ID) {
-                    std::stringstream stream;
-                    LobbyUpdateDoc().WriteDoc(stream);
-                    Logger().debugStream() << "Outgoing lobby update to player #" << player_id << ": \n" << stream.str();
-                    m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, LobbyUpdateDoc()));
+                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, LobbyUpdateDoc()));
                 }
             }
         } else { // immediately join a game that is about to start
@@ -1254,9 +1246,7 @@ bool ServerApp::AllOrdersReceived( )
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         if ( !it->second )
-        {m_log_category.debugStream() << "ServerApp::AllOrdersReceived : still waiting on at least empire " << it->first;
             return false; 
-        }
     } 
     return true;
 }
@@ -1404,9 +1394,38 @@ void ServerApp::ProcessTurns( )
 
     // if a combat happend give the human user a chance to look at the results
     if(combat_happend)
-      SDL_Delay(5000);
+      SDL_Delay(1000);
 
     ++m_current_turn;
+
+    // check if all empires are still alive
+    std::map<int, int> eliminations; // map from player ids to empire ids
+    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        if (GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(it->first)).empty()) { // when you're out of planets, your game over
+            std::string player_name = it->second->PlayerName();
+            for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); 
+                 player_it != m_network_core.Players().end(); ++player_it) {
+                if (player_it->second.name == player_name) {
+                    // record this player/empire so we can send out messages about it
+                    eliminations[player_it->first] = it->first;
+                    break;
+                }
+            }
+        } 
+    }
+
+    // clean up defeated empires
+    for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
+        // remove the empire from play
+        Universe::ObjectVec object_vec = GetUniverse().FindObjects(IsOwnedByFunctor(it->second));
+        for (unsigned int j = 0; j < object_vec.size(); ++j) {
+            if (object_vec[j]->WhollyOwnedBy(it->second)) {
+                GetUniverse().Remove(object_vec[j]->ID());
+            } else { // the object is owned by this empire, but also by at least one other empire as well
+                object_vec[j]->RemoveOwner(it->second);
+            }
+        }
+    }
 
     // send new-turn updates to all players
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it)
@@ -1416,38 +1435,22 @@ void ServerApp::ProcessTurns( )
         m_network_core.SendMessage( TurnUpdateMessage( player_it->first, doc ) );
     }
 
-    // check if all empires are still alive
-    std::vector<std::pair<int, int> > eliminations; // .first is the player id, .second is the empire id
-    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        if (GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(it->first)).empty()) { // when you're out of planets, your game over
-            std::string player_name = it->second->PlayerName();
-            for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); 
-                 player_it != m_network_core.Players().end(); ++player_it) {
-                if (player_it->second.name == player_name) {
-                    // record this player/empire so we can send out messages about it
-                    eliminations.push_back(std::make_pair(player_it->first, it->first));
-                    break;
-                }
-            }
-        } 
-    }
-
     // notify all players of the eliminated players
-    for (unsigned int i = 0; i < eliminations.size(); ++i) {
-        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-            m_network_core.SendMessage(PlayerEliminatedMessage(it->first, Empires().Lookup(eliminations[i].second)->Name()));
+    for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
+        for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) {
+            m_network_core.SendMessage(PlayerEliminatedMessage(player_it->first, Empires().Lookup(it->second)->Name()));
         }
     }
-    // dump connections to eliminated players, and clean up defeated empires
-    for (unsigned int i = 0; i < eliminations.size(); ++i) {
-        m_log_category.debugStream() << "ServerApp::ProcessTurns : Player " << eliminations[i].first << " is marked as a loser and dumped";
-        m_losers.insert(eliminations[i].first);
-        m_network_core.DumpPlayer(eliminations[i].first);
-        // remove the empire from play
-        RemoveEmpireTurn(eliminations[i].second);
-        Empires().EliminateEmpire(eliminations[i].second);
-        // TODO: test manual elimination of all the defeated empire's units
+
+    // dump connections to eliminated players, and remove server-side empire data
+    for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
+        m_log_category.debugStream() << "ServerApp::ProcessTurns : Player " << it->first << " is marked as a loser and dumped";
+        m_losers.insert(it->first);
+        m_network_core.DumpPlayer(it->first);
+        Empires().EliminateEmpire(it->second);
+        RemoveEmpireTurn(it->second);
     }
+
     // determine if victory conditions exist
     if (m_network_core.Players().size() == 1) { // if there is only one player left, that player is the winner
         m_log_category.debugStream() << "ServerApp::ProcessTurns : One player left -- sending victory notification and terminating.";
