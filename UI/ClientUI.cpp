@@ -16,6 +16,7 @@
 #include "../universe/Ship.h"
 #include "ToolContainer.h"
 #include "TurnProgressWnd.h"
+#include "../util/OptionsDB.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -90,26 +91,61 @@ const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
     "SITREP_TECH_RESEARCHED",
     "SITREP_BASE_BUILT"
   };
+  // command-line options
+  void AddOptions(OptionsDB& db)
+  {
+    db.Add(    "app-width", "Sets horizontal app resolution.", 1024, RangedValidator<int>(640, 1600));
+    db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(480, 1200));
+    db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
+
+    db.Add<std::string>("UI.dir", "Sets UI resource directory root.", "default");
+    db.Add<std::string>("UI.art-dir", "Sets UI art resource directory under \'[UI.dir]/art\'.", "small");
+    db.Add<std::string>("UI.font", "Sets UI font resource file.", "arial.ttf");
+    db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
+    db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "arial.ttf");
+    db.Add("UI.title-font-size", "Sets UI title font size.", 12, RangedValidator<int>(4, 40));
+        
+    db.Add("UI.wnd-color.red", "Sets UI window color (red).", 0, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-color.green", "Sets UI window color (green).", 0, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-color.blue", "Sets UI window color (blue).", 0, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-color.alpha", "Sets UI window color (alpha).", 210, RangedValidator<int>(0, 255));
+        
+    db.Add("UI.text-color.red", "Sets UI text color (red).", 255, RangedValidator<int>(0, 255));
+    db.Add("UI.text-color.green", "Sets UI text color (green).", 255, RangedValidator<int>(0, 255));
+    db.Add("UI.text-color.blue", "Sets UI text color (blue).", 255, RangedValidator<int>(0, 255));
+    db.Add("UI.text-color.alpha", "Sets UI text color (alpha).", 255, RangedValidator<int>(0, 255));
+
+    db.Add("UI.ctrl-color.red", "Sets UI control color (red).", 30, RangedValidator<int>(0, 255));
+    db.Add("UI.ctrl-color.green", "Sets UI control color (green).", 30, RangedValidator<int>(0, 255));
+    db.Add("UI.ctrl-color.blue", "Sets UI control color (blue).", 30, RangedValidator<int>(0, 255));
+    db.Add("UI.ctrl-color.alpha", "Sets UI control color (alpha).", 255, RangedValidator<int>(0, 255));
+
+    db.Add("UI.wnd-outer-border-color.red", "Sets UI outer border color (red).", 64, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-outer-border-color.green", "Sets UI outer border color (green).", 64, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-outer-border-color.blue", "Sets UI outer border color (blue).", 64, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-outer-border-color.alpha", "Sets UI outer border color (alpha).", 255, RangedValidator<int>(0, 255));
+
+    db.Add("UI.wnd-border-color.red", "Sets UI border color (red).", 0, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-border-color.green", "Sets UI border color (green).", 0, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-border-color.blue", "Sets UI border color (blue).", 0, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-border-color.alpha", "Sets UI border color (alpha).", 255, RangedValidator<int>(0, 255));
+
+    db.Add("UI.wnd-inner-border-color.red", "Sets UI inner border color (red).", 255, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-inner-border-color.green", "Sets UI inner border color (green).", 255, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-inner-border-color.blue", "Sets UI inner border color (blue).", 255, RangedValidator<int>(0, 255));
+    db.Add("UI.wnd-inner-border-color.alpha", "Sets UI inner border color (alpha).", 255, RangedValidator<int>(0, 255));
+
+    db.Add("UI.tooltip-delay", "Sets UI tooltip popup delay, in ms.", 1000, RangedValidator<int>(0, 3000));
+    db.Add<std::string>("UI.stringtable-filename", "Sets UI string table filename.", "eng_stringtable.txt");
+  }
+  bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 
 
 //Init and Cleanup//////////////////////////////////////
-ClientUI::ClientUI(const std::string& string_table_file /* = StringTable::S_DEFAULT_FILENAME */) :
-    TOOLTIP_DELAY(1000), // 1 second delay for tooltips to appear
-    m_tooltips(0),
-    m_state(STATE_STARTUP),
-    m_string_table(0),
-    m_intro_screen(0),
-    m_map_wnd(0),
-    m_turn_progress_wnd(0)
-{
-    s_the_UI = this;    
-    Initialize(string_table_file);
-}//ClientUI()
-
-ClientUI::ClientUI(const GG::XMLElement& elem) :
-    TOOLTIP_DELAY(1000),
+ClientUI::ClientUI() :
+    TOOLTIP_DELAY(GetOptionsDB().Get<int>("UI.tooltip-delay")), // 1 second delay for tooltips to appear
     m_tooltips(0),
     m_state(STATE_STARTUP),
     m_string_table(0),
@@ -118,54 +154,50 @@ ClientUI::ClientUI(const GG::XMLElement& elem) :
     m_turn_progress_wnd(0)
 {
     using namespace GG;
-    
+
     s_the_UI = this;
-    
-    if(elem.Tag() != "ClientUI")
-        throw std::invalid_argument("Tried to construct a 'ClientUI' object from an XML tag that was not 'ClientUI'.");
-    
-    const XMLElement* current = &elem.Child("WND_BORDER_COLOR");
-    WND_BORDER_COLOR = Clr(current->Child("GG::Clr"));
-    
-    current = &elem.Child("CTRL_COLOR");
-    CTRL_COLOR = Clr(current->Child("GG::Clr"));
-    
-    current = &elem.Child("WND_INNER_BORDER_COLOR");
-    WND_INNER_BORDER_COLOR = Clr(current->Child("GG::Clr"));
-    
-    current = &elem.Child("WND_OUTER_BORDER_COLOR");
-    WND_OUTER_BORDER_COLOR = Clr(current->Child("GG::Clr"));
-    
-    current = &elem.Child("TEXT_COLOR");
-    TEXT_COLOR = Clr(current->Child("GG::Clr"));
-    
-    current = &elem.Child("WND_COLOR");
-    WND_COLOR = Clr(current->Child("GG::Clr"));
-    
-    current = &elem.Child("PTS");
-    PTS = lexical_cast<int>(current->Attribute("value"));
-    
-    current = &elem.Child("TITLE_PTS");
-    TITLE_PTS = lexical_cast<int>(current->Attribute("value"));
-    
-    current = &elem.Child("DIR");
-    DIR = current->Attribute("value");
-    
-    current = &elem.Child("FONT");
-    FONT = current->Attribute("value");
-    
-    current = &elem.Child("TITLE_FONT");
-    TITLE_FONT = current->Attribute("value");
-    
-    current = &elem.Child("ART_DIR");
-    ART_DIR = DIR + "art/" + current->Attribute("value") + "/";
+
+    WND_BORDER_COLOR = Clr(GetOptionsDB().Get<int>("UI.wnd-border-color.red"),
+                           GetOptionsDB().Get<int>("UI.wnd-border-color.green"),
+                           GetOptionsDB().Get<int>("UI.wnd-border-color.blue"),
+                           GetOptionsDB().Get<int>("UI.wnd-border-color.alpha"));
+
+    CTRL_COLOR = Clr(GetOptionsDB().Get<int>("UI.ctrl-color.red"),
+		     GetOptionsDB().Get<int>("UI.ctrl-color.green"),
+		     GetOptionsDB().Get<int>("UI.ctrl-color.blue"),
+		     GetOptionsDB().Get<int>("UI.ctrl-color.alpha"));
+
+    WND_INNER_BORDER_COLOR = Clr(GetOptionsDB().Get<int>("UI.wnd-inner-border-color.red"),
+				 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.green"),
+				 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.blue"),
+				 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.alpha"));
+
+    WND_OUTER_BORDER_COLOR = Clr(GetOptionsDB().Get<int>("UI.wnd-outer-border-color.red"),
+				 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.green"),
+				 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.blue"),
+				 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.alpha"));
+
+    TEXT_COLOR = Clr(GetOptionsDB().Get<int>("UI.text-color.red"),
+		     GetOptionsDB().Get<int>("UI.text-color.green"),
+		     GetOptionsDB().Get<int>("UI.text-color.blue"),
+		     GetOptionsDB().Get<int>("UI.text-color.alpha"));
+
+    WND_COLOR = Clr(GetOptionsDB().Get<int>("UI.wnd-color.red"),
+		    GetOptionsDB().Get<int>("UI.wnd-color.green"),
+		    GetOptionsDB().Get<int>("UI.wnd-color.blue"),
+		    GetOptionsDB().Get<int>("UI.wnd-color.alpha"));
+
+    PTS       = GetOptionsDB().Get<int>("UI.font-size");
+    TITLE_PTS = GetOptionsDB().Get<int>("UI.title-font-size");
+    DIR       = GetOptionsDB().Get<std::string>("UI.dir") + "/";
+    FONT      = GetOptionsDB().Get<std::string>("UI.font");
+    TITLE_FONT= GetOptionsDB().Get<std::string>("UI.title-font");
+    ART_DIR   = DIR + "art/" + GetOptionsDB().Get<std::string>("UI.art-dir") + "/";
 
     //call initialize with stringtable filename
-    current = &elem.Child("STRINGTABLE_FILENAME");
-    Initialize(DIR + current->Attribute("value"));
-    
-}//ClientUI(XMLElement)
- 
+    Initialize(DIR + GetOptionsDB().Get<std::string>("UI.stringtable-filename"));
+}
+
 bool ClientUI::Initialize(const std::string& string_table_file)
 {
     //initialize Tooltip engine
@@ -231,77 +263,6 @@ const std::string& ClientUI::Language() const
 {
     return m_string_table->Language();
 }
-
-GG::XMLElement ClientUI::XMLEncode() const
-{
-    using namespace GG;
-    XMLElement retval("ClientUI"), temp;
-    
-    //static constants
-    
-    //config the directory
-    temp = XMLElement("DIR");
-    temp.SetAttribute("value", DIR);
-    retval.AppendChild(temp);
-    //only large or small is saved, so art dir is created from the DIR
-    temp = XMLElement("ART_DIR");
-    temp.SetAttribute("value", (ART_DIR.find("small") != std::string::npos ? "small" : "large") );
-    retval.AppendChild(temp);
-          
-    temp = XMLElement("FONT");
-    temp.SetAttribute("value", FONT);
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("PTS");
-    temp.SetAttribute("value", lexical_cast<std::string>(PTS));
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("TITLE_FONT");
-    temp.SetAttribute("value", TITLE_FONT);
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("TITLE_PTS");
-    temp.SetAttribute("value", lexical_cast<std::string>(TITLE_PTS));
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("WND_COLOR");
-    temp.AppendChild(WND_COLOR.XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("TEXT_COLOR");
-    temp.AppendChild(TEXT_COLOR.XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("CTRL_COLOR");
-    temp.AppendChild(CTRL_COLOR.XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("WND_OUTER_BORDER_COLOR");
-    temp.AppendChild(WND_OUTER_BORDER_COLOR.XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("WND_BORDER_COLOR");
-    temp.AppendChild(WND_BORDER_COLOR.XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("WND_INNER_BORDER_COLOR");
-    temp.AppendChild(WND_INNER_BORDER_COLOR.XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("TOOLTIP_DELAY");
-    temp.SetAttribute("value", lexical_cast<std::string>(TOOLTIP_DELAY));
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("STRINGTABLE_FILENAME");
-    temp.SetAttribute("value", m_string_table->Filename());
-    retval.AppendChild(temp);
-    
-    //other values are initialized automatically
-    
-    //return the element
-    return retval;
-    
-}//XMLEncode()
 
 bool ClientUI::AttachToolWnd(GG::Wnd* parent, ToolWnd* tool) 
 {

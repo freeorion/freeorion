@@ -64,8 +64,7 @@ public:
     };//enum
     
     //! \name Structors //!@{
-    ClientUI(const std::string& string_table_file = StringTable::S_DEFAULT_FILENAME);        //!< construction (calls Initialize())
-    ClientUI(const GG::XMLElement& elem); //!< construct via XML
+    ClientUI();        //!< construction (calls Initialize())
     ~ClientUI();    //!< destruction (calls Cleanup())
 
     bool Initialize(const std::string& string_table_file);    //!< provided to setup initial variables. 
