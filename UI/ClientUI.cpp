@@ -11,6 +11,8 @@
 #include "dialogs/GGThreeButtonDlg.h"
 #include "MapWnd.h"
 #include "ToolContainer.h"
+#include "../util/AppInterface.h"
+
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -69,6 +71,21 @@ int         ClientUI::SIDE_PANEL_PTS = 11;
 //private static members
 log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
 ClientUI* ClientUI::s_the_UI = 0;
+
+namespace {
+// an internal LUT of string IDs for each SitRep type
+// It's in this module becaue SitReps know nothing about how they
+// should be rendered - this is up to the client UI
+const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
+  {
+    "SITREP_MAX_INDUSTRY",
+    "SITREP_SHIP_BUILT",
+    "SITREP_TECH_RESEARCHED",
+    "SITREP_BASE_BUILT"
+  };
+}
+
+
 
 //Init and Cleanup//////////////////////////////////////
 ClientUI::ClientUI(const std::string& string_table_file /* = StringTable::S_DEFAULT_FILENAME */) :
@@ -491,4 +508,15 @@ void ClientUI::HideAllWindows()
 void ClientUI::UpdateTurnProgress( const std::string& phase_str, const int empire_id )
 {
   m_turn_progress_wnd->UpdateTurnProgress( phase_str, empire_id );
+}
+
+
+void ClientUI::GenerateSitRepText( SitRepEntry *p_sit_rep )
+{
+  // get template string
+  std::string template_str( String( g_string_id_lut[ p_sit_rep->m_type ] ) );
+
+  // parse string
+  p_sit_rep->GenerateVarText( template_str );
+
 }
