@@ -73,7 +73,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\util;..\..\..\universe;..\..\..\UI;..\..\..\network;..\..\..\Empire;..\..\..\combat;..\..\..\client\human;..\..\..\client;&quot;C:\log4cpp-0.3.4b\include&quot;;&quot;C:\freetype-2.1.7\include&quot;;C:\DevIL\include;&quot;C:\Boost\include\boost-1_32&quot;;&quot;C:\SDL_mixer-1.2.5\include&quot;;&quot;C:\SDL-1.2.7\include&quot;;C:\zlib\include;..\..\..\GG\include\SDL;..\..\..\GG\include\net;..\..\..\GG\include\dialogs;..\..\..\GG\include"
+				AdditionalIncludeDirectories="..\..\..\util;..\..\..\universe;..\..\..\UI;..\..\..\network;..\..\..\Empire;..\..\..\combat;..\..\..\client\human;..\..\..\client;&quot;C:\log4cpp-0.3.4b\include&quot;;&quot;C:\freetype-2.1.7\include&quot;;C:\DevIL\include;&quot;C:\Boost\include\boost-1_32&quot;;&quot;C:\SDL_mixer-1.2.5\include&quot;;&quot;C:\SDL-1.2.7\include&quot;;C:\zlib\include;..\..\..\GG\include\SDL;..\..\..\GG\include\net;..\..\..\GG\include\dialogs;..\..\..\GG\include;C:\fmodapi374win\api\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				RuntimeLibrary="2"
 				ForceConformanceInForLoopScope="TRUE"
@@ -88,10 +88,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib SDL_mixer.lib log4cpp.lib freetype214MT.lib"
+				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib fmodvc.lib log4cpp.lib freetype214MT.lib"
 				OutputFile="$(OutDir)/freeorion.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\Boost\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;;&quot;C:\freetype-2.1.7\objs&quot;;C:\DevIL\lib;C:\zlib\lib;&quot;C:\SDL-1.2.7\lib&quot;;&quot;C:\SDL_mixer-1.2.5\lib&quot;;..\..\..\GG\msvc\GG\GiGi\Release;..\..\..\GG\msvc\GG\GiGiNet\Release;..\..\..\GG\msvc\GG\GiGiSDL\Release"
+				AdditionalLibraryDirectories="C:\Boost\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;;&quot;C:\freetype-2.1.7\objs&quot;;C:\DevIL\lib;C:\zlib\lib;&quot;C:\SDL-1.2.7\lib&quot;;&quot;C:\SDL_mixer-1.2.5\lib&quot;;..\..\..\GG\msvc\GG\GiGi\Release;..\..\..\GG\msvc\GG\GiGiNet\Release;..\..\..\GG\msvc\GG\GiGiSDL\Release;C:\fmodapi374win\api\lib"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
