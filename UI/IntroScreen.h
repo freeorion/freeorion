@@ -48,9 +48,11 @@ public:
 //!@{
 
 //    virtual int Render();    //!< rendering code
-    
-    void OnStartGame();    //!< called when m_start_game is clicked
-    void OnQuickStart();    //!< called when m_quick_start is clicked
+
+    void OnSinglePlayer();  //!< called when m_single_player is clicked
+    void OnMultiPlayer();   //!< called when m_multi_player is clicked
+    void OnOptions();    //!< called when m_options is clicked
+    void OnAbout();    //!< called when m_about is clicked
     void OnExitGame();    //!< called when m_exit_game is clicked
     
     inline virtual void Close() {OnExitGame();}    //!< override to exit the game 
@@ -75,8 +77,10 @@ private:
 //! \name GG Controls
 //!@{
 
-    GG::Button* m_start_game;    //!< button that starts a new game
-    GG::Button* m_quick_start;    //!< button that starts a quick game (no universe setup, etc.)
+    GG::Button* m_single_player;    //!< opens up the single player game dialog
+    GG::Button* m_multi_player;    //!< opens up the multi player game dialog
+    GG::Button* m_options;	//!< opens the options dialog
+    GG::Button* m_about;	//!< opens a dialog to choose to see credits or license
     GG::Button* m_exit_game;    //!< button that exits the program
 
 //!@}

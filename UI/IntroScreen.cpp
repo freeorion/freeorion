@@ -40,37 +40,44 @@ IntroScreen::IntroScreen():
             GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE | 
             CUI_Wnd::MINIMIZABLE | CUI_Wnd::CLOSABLE)
 {
+
     //get a texture to fill the background with
-    
+
     m_background = new GG::Texture();
     m_background->Load(ClientUI::ART_DIR + "splash01.png");
-    
+
     //create staticgraphic from the image
     GG::StaticGraphic* bg_graphic = new GG::StaticGraphic(0,0,GG::App::GetApp()->AppWidth(),GG::App::GetApp()->AppHeight(),m_background);
     GG::App::GetApp()->Register(bg_graphic);
-    
+
     //create buttons
-    m_start_game = new GG::Button(20, 30, 260, 30, ClientUI::String("INTRO_BTN_START_GAME"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_quick_start = new GG::Button(20, 80, 260, 30, ClientUI::String("INTRO_BTN_QUICK_START"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_exit_game = new GG::Button(20, 130, 260, 30, ClientUI::String("INTRO_BTN_EXIT"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    
+    m_single_player = new GG::Button(20, 30, 260, 30, ClientUI::String("INTRO_BTN_SINGLE_PLAYER"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_multi_player = new GG::Button(20, 80, 260, 30, ClientUI::String("INTRO_BTN_MULTI_PLAYER"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_options = new GG::Button(20, 130, 260, 30, ClientUI::String("INTRO_BTN_OPTIONS"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_about = new GG::Button(20, 180, 260, 30, ClientUI::String("INTRO_BTN_ABOUT"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_exit_game = new GG::Button(20, 230, 260, 30, ClientUI::String("INTRO_BTN_EXIT"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+
     //attach buttons
-    AttachChild(m_start_game);
-    AttachChild(m_quick_start);
+    AttachChild(m_single_player);
+    AttachChild(m_multi_player);
+    AttachChild(m_options);
+    AttachChild(m_about);
     AttachChild(m_exit_game);
-    
+
     //connect signals and slots
-    GG::Connect(m_start_game->ClickedSignal(), &IntroScreen::OnStartGame, this);
-    GG::Connect(m_quick_start->ClickedSignal(), &IntroScreen::OnQuickStart, this);
+    GG::Connect(m_single_player->ClickedSignal(), &IntroScreen::OnSinglePlayer, this);
+    GG::Connect(m_multi_player->ClickedSignal(), &IntroScreen::OnMultiPlayer, this);
+    GG::Connect(m_options->ClickedSignal(), &IntroScreen::OnOptions, this);
+    GG::Connect(m_about->ClickedSignal(), &IntroScreen::OnAbout, this);
     GG::Connect(m_exit_game->ClickedSignal(), &IntroScreen::OnExitGame, this);
-   
+
 }//IntroScreen()
 
 IntroScreen::IntroScreen(const GG::XMLElement &elem):
     CUI_Wnd(elem.Child("CUI_Wnd"))
 {
     //TODO: load from XML
-    
+
 }//IntroScreen(XMLElement)
 
 IntroScreen::~IntroScreen()
@@ -101,7 +108,12 @@ int IntroScreen::Render()
 //    Message Maps   //
 /////////////////////////////////////////////////////////////
 
-void IntroScreen::OnStartGame()
+void IntroScreen::OnSinglePlayer()
+{
+
+}//OnSinglePlayer()
+
+void IntroScreen::OnMultiPlayer()
 {
     //Open up the server connect screen
     //        XML Read begin
@@ -112,7 +124,7 @@ void IntroScreen::OnStartGame()
 //        dlg_file.close();
 //        ServerConnectWnd* sc = new ServerConnectWnd(doc.root_node.Child("ServerConnectWnd"));
 //        XML Read end
-   
+
     /*
             Here ClientCore should perform a preliminary scan to
             determine the available servers, at least "localhost".
@@ -135,7 +147,7 @@ void IntroScreen::OnStartGame()
     }
     else
     {
-            HumanClientApp::GetApp()->Logger().debugStream() << "No server was selected.";       
+            HumanClientApp::GetApp()->Logger().debugStream() << "No server was selected.";
     }
     
     //TODO: add server init code here
@@ -246,19 +258,20 @@ void IntroScreen::OnStartGame()
 
     }
 
-}//OnStartGame()
+}//OnMultiPlayer()
+
+void IntroScreen::OnOptions()
+{
+
+}//OnOptions
+
+void IntroScreen::OnAbout()
+{
+
+}//OnAbout()
 
 void IntroScreen::OnExitGame()
 {
     //exit the application
     GG::App::GetApp()->Exit(0); //exit with 0, good error code
 }//OnExitGame()
-
-void IntroScreen:: OnQuickStart()
-{
-    //TODO: Start a quick game.
-    // choose localhost, universe, and empire all for player
-
-
-}//OnQuickStart()
-

@@ -40,11 +40,17 @@ FreeOrion Menú Principal
 
 #Button names####
 
-INTRO_BTN_START_GAME
+INTRO_BTN_SINGLE_PLAYER
 Comienza el Juego Nuevo
 
-INTRO_BTN_QUICK_START
+INTRO_BTN_MULTI_PLAYER
 Comienzo Rápido
+
+INTRO_BTN_OPTIONS
+Options
+
+INTRO_BTN_ABOUT
+About
 
 INTRO_BTN_EXIT
 Salida
