@@ -165,6 +165,10 @@ GG::XMLElement Planet::XMLEncode(int empire_id) const
 
 void Planet::AddOwner   (int id)
 {
+  Empire *empire = Empires().Lookup(id);
+  if(empire)
+    empire->AddPlanet(ID());
+
   GetSystem()->UniverseObject::AddOwner(id);
   UniverseObject::AddOwner(id);
 }
@@ -183,6 +187,10 @@ void Planet::RemoveOwner(int id)
 
   if(count_planets==1)
     system->UniverseObject::RemoveOwner(id);
+  
+  Empire *empire = Empires().Lookup(id);
+  if(empire)
+    empire->RemoveOwnedPlanet(ID());
 
   UniverseObject::RemoveOwner(id);
 }
