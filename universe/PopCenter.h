@@ -17,67 +17,63 @@
 class PopCenter
 {
 public:
-   /** the types of population density*/
-   enum DensityType {OUTPOST,
-                     SPARSE,
-                     AVERAGE,
-                     DENSE,
-                     SUPERDENSE
-                    }; // others TBD (these are from the Public Review: Population & Econ Model thread on the forums)
+    /** the types of population density*/
+    enum DensityType {OUTPOST,
+		      SPARSE,
+		      AVERAGE,
+		      DENSE,
+		      SUPERDENSE
+    }; // others TBD (these are from the Public Review: Population & Econ Model thread on the forums)
 
-   /** \name Structors */ //@{
-   PopCenter(); ///< default ctor
-   PopCenter(double max_pop); ///< basic ctor that only specifies a max pop (DEFAULT_POP_SCALE_FACTOR is used for the scale factor)
-   PopCenter(double max_pop, int race); ///< basic ctor that specifies a max pop and race
-   PopCenter(const GG::XMLElement& elem); ///< ctor that constructs a PopCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a PopCenter object
-   virtual ~PopCenter(); ///< dtor
-   //@}
+    /** \name Structors */ //@{
+    PopCenter(); ///< default ctor
+    PopCenter(double max_pop); ///< basic ctor that only specifies a max pop (DEFAULT_POP_SCALE_FACTOR is used for the scale factor)
+    PopCenter(double max_pop, int race); ///< basic ctor that specifies a max pop and race
+    PopCenter(const GG::XMLElement& elem); ///< ctor that constructs a PopCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a PopCenter object
+    virtual ~PopCenter(); ///< dtor
+    //@}
 
-   /** \name Accessors */ //@{
-   const Meter& PopulationMeter() const      {return m_pop_meter;}  ///< returns the population Meter for this center
-   const Meter& HealthMeter() const          {return m_health;}     ///< returns the population Meter for this center
-   double       PopPoints() const            {return m_pop;}        ///< returns the number of pop points in this center
-   double       MaxPop() const               {return m_max_pop;}    ///< returns the max number of pop points possible in this center
-   double       PopGrowth() const            {return m_growth;}     ///< returns the change in pop points since the last turn (may be negative)
-   double       EnvPopGrowthModifier() const {return m_env_growth_mod;} ///< returns the population growth modifier due to environment
-   int          Race() const                 {return m_race;}       ///< returns the race that the population is composed of
-   double       Inhabitants() const; ///< returns the number of inhabitants in the center (not the pop points); depends on race
-   DensityType  PopDensity() const;  ///< returns the density of this center, based on its population
-   double       AvailableFood() const {return m_available_food;}   ///< returns the amount of food which is currently available
+    /** \name Accessors */ //@{
+    const Meter& PopulationMeter() const      {return m_pop;}        ///< returns the population Meter for this center
+    const Meter& HealthMeter() const          {return m_health;}     ///< returns the population Meter for this center
+    double       PopPoints() const            {return m_pop.Current();}///< returns the number of pop points in this center
+    double       MaxPop() const               {return m_pop.Max();}  ///< returns the max number of pop points possible in this center
+    double       PopGrowth() const            {return m_growth;}     ///< returns the change in pop points since the last turn (may be negative)
+    int          Race() const                 {return m_race;}       ///< returns the race that the population is composed of
+    double       Inhabitants() const; ///< returns the number of inhabitants in the center (not the pop points); depends on race
+    DensityType  PopDensity() const;  ///< returns the density of this center, based on its population
+    double       AvailableFood() const {return m_available_food;}   ///< returns the amount of food which is currently available
 
-   double       FuturePopGrowth() const;    ///< predicts by which amount the population will grow next turn, AvailableFood might limit growth rate
-   double       FuturePopGrowthMax() const; ///< predicts by which amount the population will grow at maximum next turn (assuming there is enough food)
+    double       FuturePopGrowth() const;    ///< predicts by which amount the population will grow next turn, AvailableFood might limit growth rate
+    double       FuturePopGrowthMax() const; ///< predicts by which amount the population will grow at maximum next turn (assuming there is enough food)
 
-   virtual GG::XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a PopCenter object with the given visibility
-   //@}
+    virtual GG::XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a PopCenter object with the given visibility
+    //@}
 
-   /** \name Mutators */ //@{
-   Meter& PopulationMeter()      {return m_pop_meter;}  ///< returns the population Meter for this center
-   Meter& HealthMeter()          {return m_health;}     ///< returns the population Meter for this center
+    /** \name Mutators */ //@{
+    Meter& PopulationMeter()      {return m_pop;}    ///< returns the population Meter for this center
+    Meter& HealthMeter()          {return m_health;} ///< returns the population Meter for this center
 
-   /** adjusts the population by \a pop, down to a minimum of 0.0, or up to a maximum of MaxPop().  This function 
-      returns the (positive) pop surplus, or the (negative) pop deficit that would result from 
-      adjusting the population by \a pop points, or 0 if the adjustment falls within [0.0, MaxPop()]*/
-   double AdjustPop(double pop);
+    /** adjusts the population by \a pop, down to a minimum of 0.0, or up to a maximum of MaxPop().  This function 
+	returns the (positive) pop surplus, or the (negative) pop deficit that would result from 
+	adjusting the population by \a pop points, or 0 if the adjustment falls within [0.0, MaxPop()]*/
+    double AdjustPop(double pop);
 
-   void SetMaxPop(double max_pop)               {m_max_pop = max_pop;} ///< sets the maximum population to \a pop
-   void SetEnvGrowthMod(double env_growth_mod)  {m_env_growth_mod = env_growth_mod;} ///< sets the modifier to the growth rate due to environment
-   void SetRace(int race)                       {m_race = race;}   ///< sets the race of the population to \a race
-   void SetAvailableFood(double available_food) {m_available_food = available_food;}   ///< sets the amount of food which is currently available
+    void SetMaxPop(double max_pop)               {m_pop.SetMax(max_pop);} ///< sets the maximum population to \a pop
+    void SetEnvHealthMod(double env_growth_mod);                          ///< sets the modifier to the growth rate due to environment
+    void SetRace(int race)                       {m_race = race;}   ///< sets the race of the population to \a race
+    void SetAvailableFood(double available_food) {m_available_food = available_food;}   ///< sets the amount of food which is currently available
 
-   virtual void MovementPhase( );
-   virtual void PopGrowthProductionResearchPhase( );
-   //@}
+    virtual void MovementPhase( );
+    virtual void PopGrowthProductionResearchPhase( );
+    //@}
    
 private:
-   double   m_pop;          // these are all in points, not inhabitants
-   double   m_max_pop;
-   Meter    m_pop_meter;
-   Meter    m_health;
-   double   m_growth;
-   double   m_env_growth_mod;
-   int      m_race; ///< the id of the race that occupies this planet
-   double   m_available_food;
+    Meter    m_pop;
+    Meter    m_health;
+    double   m_growth;
+    int      m_race; ///< the id of the race that occupies this planet
+    double   m_available_food;
 };
 
 #endif // _PopCenter_h_

@@ -20,5 +20,5 @@ Asteroid                                0               0               0       
 GasGiant                                0               0               0               0       0
 
 <1x5>
-PlanetEnvEffectOnPopGrowthRate          Inhospitable    Terrible        Adequate        Optimal Superb
-GrowthRate                              0               50              80              100     100        # percentages
+PlanetEnvEffectOnHealth          Inhospitable    Terrible        Adequate        Optimal Superb
+Health                           0               25              30              40      50     # max/current meter modifiers

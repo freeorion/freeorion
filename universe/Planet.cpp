@@ -49,7 +49,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_def_bases = 0;
 
     SetMaxPop(PlanetDataTables()["PlanetMaxPop"][size][Environment()]);
-    SetEnvGrowthMod(PlanetDataTables()["PlanetEnvEffectOnPopGrowthRate"][0][Environment()] / 100.0);
+    SetEnvHealthMod(PlanetDataTables()["PlanetEnvEffectOnHealth"][0][Environment()]);
     SetPlanetType(type);
 }
 
