@@ -19,8 +19,8 @@ AM_CXXFLAGS = -Wall -g
 
 bin_PROGRAMS = freeoriond freeorion freeorionca
 
-freeorion_CPPFLAGS = @SDL_CFLAGS@ @FT2_CFLAGS@ @GIGI_CFLAGS@ @GIGISDL_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_HUMAN
-freeorion_LDADD = @GIGI_LIBS@ @GIGINET_LIBS@ @GIGISDL_LIBS@ -lfmod-3.74
+freeorion_CPPFLAGS = @SDL_CFLAGS@ @FT2_CFLAGS@ @GIGI_CFLAGS@ @GIGISDL_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_HUMAN -I/usr/local/include/graphviz
+freeorion_LDADD = @GIGI_LIBS@ @GIGINET_LIBS@ @GIGISDL_LIBS@ -lfmod-3.74 -L/usr/local/lib/graphviz -ldotneato
 
 freeoriond_CPPFLAGS = @FT2_CFLAGS@ @SDL_CFLAGS@ @GIGI_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_SERVER # -DWITH_PYTHON -I/usr/include/python2.3 -I.. -IPython
 freeoriond_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGINET_LIBS@ #-lboost_python  -lpython2.3
@@ -154,8 +154,6 @@ client/human/HumanClientApp.h			\
 client/human/chmain.cpp				\
 UI/About.cpp					\
 UI/About.h					\
-UI/BSpline.cpp					\
-UI/BSpline.h					\
 UI/ClientUI.cpp					\
 UI/ClientUI.h					\
 UI/CUIControls.cpp				\
@@ -201,41 +199,6 @@ UI/ToolWnd.cpp					\
 UI/ToolWnd.h					\
 UI/TurnProgressWnd.cpp				\
 UI/TurnProgressWnd.h				\
-UI/vcg/alloc.c				\
-UI/vcg/alloc.h				\
-UI/vcg/draw.c				\
-UI/vcg/drawchr.h				\
-UI/vcg/draw.h				\
-UI/vcg/drawlib.c				\
-UI/vcg/drawlib.h				\
-UI/vcg/drawstr.c				\
-UI/vcg/drawstr.h				\
-UI/vcg/fisheye.c				\
-UI/vcg/fisheye.h				\
-UI/vcg/folding.c				\
-UI/vcg/folding.h				\
-UI/vcg/globals.h				\
-UI/vcg/grammar.h				\
-UI/vcg/grprint.cpp				\
-UI/vcg/grprint.h				\
-UI/vcg/lex.yy.c				\
-UI/vcg/main.cpp				\
-UI/vcg/main.h				\
-UI/vcg/options.c				\
-UI/vcg/options.h				\
-UI/vcg/prepare.c				\
-UI/vcg/step0.c				\
-UI/vcg/step1.c				\
-UI/vcg/step2.c				\
-UI/vcg/step3.c				\
-UI/vcg/step4.c				\
-UI/vcg/steps.h				\
-UI/vcg/timelim.c				\
-UI/vcg/timelim.h				\
-UI/vcg/timing.h				\
-UI/vcg/tree.c				\
-UI/vcg/y.tab.c				\
-UI/vcg/y.tab.h				\
 network/ClientNetworkCore.cpp			\
 network/ClientNetworkCore.h			\
 $(COMMON_FILES)
