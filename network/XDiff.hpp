@@ -74,10 +74,11 @@ namespace GG {class XMLDoc;}
    there are some attributes that must be deleted, and some that must be updated or added.  Since it is not 
    possible to annotate individual attributes, the entire set of original attributes must be replaced with the 
    new sequence of attributes.
-   
+   <br>
    TXT codes may appear with exactly one of the *ATTR codes, but no more than one *ATTR code may appear in an 
    update, and all INS and DEL codes will always appear alone.
-   */
+   <br>
+   Note that the names of all sibling elements must be unique for this algorithm to work.*/
 class XDiff
 {
 public:
