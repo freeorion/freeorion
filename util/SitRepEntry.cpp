@@ -58,6 +58,12 @@ void SitRepEntry::InitObjectFactory( GG::XMLObjectFactory<SitRepEntry>& factory)
 
 }
 
+void SitRepEntry::EncodeBaseMembers(XMLElement& element) const
+{
+    XMLElement summary("m_summary_text", m_summary_text);
+    element.AppendChild(summary);
+}
+
 
 ////////////////////////////////////////////////
 // BuildSitRepEntry
@@ -73,15 +79,16 @@ BuildSitRepEntry::BuildSitRepEntry(BuildSitRepEntryType buildType, int planetID,
 
 BuildSitRepEntry::BuildSitRepEntry(const GG::XMLElement& elem) : SitRepEntry(elem)
 {
-    // write me
+    m_planet_id = lexical_cast<int>(elem.Child("m_planet_id").Attribute("value"));
+    m_fleet_id = lexical_cast<int> (elem.Child("m_fleet_id").Attribute("value"));
+    m_build_type = (BuildSitRepEntryType)lexical_cast<int> (elem.Child("m_build_type").Attribute("value"));
 }
 
 XMLElement BuildSitRepEntry::XMLEncode() const
 {
     XMLElement element("BuildSitRepEntry");
     
-    XMLElement summary("m_summary_text", m_summary_text);
-    element.AppendChild(summary);
+    SitRepEntry::EncodeBaseMembers(element);
     
     XMLElement planetid("m_planet_id");
     planetid.SetAttribute("value", lexical_cast<std::string>(m_planet_id));
@@ -91,6 +98,8 @@ XMLElement BuildSitRepEntry::XMLEncode() const
     fleetid.SetAttribute("value", lexical_cast<std::string>(m_fleet_id));
     element.AppendChild(fleetid);
     
+    // cast is used in case lexical_cast
+    // decides it doesn't want to cast an enum
     XMLElement buildtype("m_build_type");
     buildtype.SetAttribute("value", lexical_cast<std::string>((int)m_build_type));
     element.AppendChild(buildtype);

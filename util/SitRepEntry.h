@@ -61,7 +61,10 @@ public:
 protected:
    virtual const std::string&  SummaryText() = 0;  ///< returns the string to display inthe SitRep
    virtual bool                ExecuteLink() = 0;  ///< causes the entry to trigger the appropriate UI display for this event, returns true on success
-	
+   
+   /// Encodes base class members into the given XMLElement
+   void EncodeBaseMembers(GG::XMLElement& elem) const;
+    
    std::string    m_summary_text;
 };
 

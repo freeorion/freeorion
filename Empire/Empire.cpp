@@ -30,12 +30,12 @@ Empire::Empire(const std::string& name, int ID, const GG::Clr& color, ControlSta
 Empire::Empire(const GG::XMLElement& elem)
 {
     using GG::XMLElement;
-    
+ 
     m_id = lexical_cast<int> ( elem.Child("m_id").Attribute("value") );
     m_name = elem.Child("m_name").Text();
     m_total_rp = lexical_cast<int> ( elem.Child("m_total_rp").Attribute("value") );
     m_control_state = (ControlStatus) lexical_cast <int> ( elem.Child("m_control_state").Attribute("value") );
-    m_color = GG::Clr( elem.Child("m_color") );
+    m_color = GG::Clr( elem.Child("m_color").Child(0) );
     
     // make a sitrep entry factory
     GG::XMLObjectFactory<SitRepEntry> sitrep_factory;
@@ -76,6 +76,7 @@ Empire::Empire(const GG::XMLElement& elem)
     {
         m_techs.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
     }
+    
 }
   
 
@@ -363,6 +364,20 @@ void Empire::ClearSitRep()
     Methods to support XML Serialization
 **************************************************/
 
+void EncodeIntList(GG::XMLElement& container, const std::list<int>& lst)
+{
+    
+    int i=0;
+    for(std::list<int>::const_iterator itr = lst.begin(); itr != lst.end(); itr++)
+    {
+        GG::XMLElement item("index" + lexical_cast<std::string>(i) );
+        i++;
+        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
+        container.AppendChild(item);
+    }
+}
+
+
 GG::XMLElement Empire::XMLEncode() const
 {
     using GG::XMLElement;
@@ -399,48 +414,23 @@ GG::XMLElement Empire::XMLEncode() const
     element.AppendChild(sitrep);
     
     XMLElement fleets("m_fleets");
-    for(ConstFleetIDItr itr = FleetBegin(); itr != FleetEnd(); itr++)
-    {
-        XMLElement item("item");
-        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
-        fleets.AppendChild(item);
-    }
+    EncodeIntList(fleets, m_fleets);
     element.AppendChild(fleets);
     
     XMLElement planets("m_planets");
-    for(ConstPlanetIDItr itr = PlanetBegin(); itr != PlanetEnd(); itr++)
-    {
-        XMLElement item("item");
-        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
-        planets.AppendChild(item);
-    }
+    EncodeIntList(planets, m_planets);
     element.AppendChild(planets);
     
     XMLElement explored("m_explored_systems");
-    for(ConstSystemIDItr itr = ExploredBegin(); itr != ExploredEnd(); itr++)
-    {
-        XMLElement item("item");
-        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
-        explored.AppendChild(item);
-    }
+    EncodeIntList(explored, m_explored_systems);
     element.AppendChild(explored);
     
     XMLElement techs("m_techs");
-    for(ConstTechIDItr itr = TechBegin(); itr != TechEnd(); itr++)
-    {
-        XMLElement item("item");
-        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
-        techs.AppendChild(item);
-    }
+    EncodeIntList(techs, m_techs);
     element.AppendChild(techs);
     
     XMLElement visible_fleets("m_visible_fleets");
-    for(ConstFleetIDItr itr = VisibleFleetBegin(); itr != VisibleFleetEnd(); itr++)
-    {
-        XMLElement item("item");
-        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
-        visible_fleets.AppendChild(item);
-    }
+    EncodeIntList(visible_fleets, m_visible_fleets);
     element.AppendChild(visible_fleets);
     
     return element;
