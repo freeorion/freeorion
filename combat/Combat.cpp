@@ -7,11 +7,10 @@
 ////////////////////////////////////////////////
 // class CombatUpdateMessage::EmpireCombatInfo
 CombatUpdateMessage::EmpireCombatInfo::EmpireCombatInfo()
-: empire                   (""),combat_ships         (0),
-  combat_ships_hitpoints    (0),non_combat_ships      (0),
-  non_combat_ships_hitpoints(0),planets               (0),
-  planets_defence_bases     (0),destroyed_ships_destroyed(0),
-  retreated_ships           (0),defenseless_planets   (0)
+: empire                   (""),
+  combat_ships    (0),combat_ships_hitpoints    (0),combat_ships_retreated    (0),combat_ships_destroyed    (0),
+  non_combat_ships(0),non_combat_ships_hitpoints(0),non_combat_ships_retreated(0),non_combat_ships_destroyed(0),
+  planets         (0),planets_defence_bases     (0),planets_lost              (0),planets_defenseless       (0)
 {}
 
 CombatUpdateMessage::EmpireCombatInfo::~EmpireCombatInfo()
@@ -21,13 +20,16 @@ CombatUpdateMessage::EmpireCombatInfo::EmpireCombatInfo(const GG::XMLElement &e)
 : empire                    (                         e.Child("empire"                    ).Text()),
   combat_ships              (boost::lexical_cast<int>(e.Child("combat_ships"              ).Text())),
   combat_ships_hitpoints    (boost::lexical_cast<int>(e.Child("combat_ships_hitpoints"    ).Text())),
+  combat_ships_retreated    (boost::lexical_cast<int>(e.Child("combat_ships_retreated"    ).Text())),
+  combat_ships_destroyed    (boost::lexical_cast<int>(e.Child("combat_ships_destroyed"    ).Text())),
   non_combat_ships          (boost::lexical_cast<int>(e.Child("non_combat_ships"          ).Text())),
   non_combat_ships_hitpoints(boost::lexical_cast<int>(e.Child("non_combat_ships_hitpoints").Text())),
+  non_combat_ships_retreated(boost::lexical_cast<int>(e.Child("non_combat_ships_retreated").Text())),
+  non_combat_ships_destroyed(boost::lexical_cast<int>(e.Child("non_combat_ships_destroyed").Text())),
   planets                   (boost::lexical_cast<int>(e.Child("planets"                   ).Text())),
   planets_defence_bases     (boost::lexical_cast<int>(e.Child("planets_defence_bases"     ).Text())),
-  destroyed_ships_destroyed (boost::lexical_cast<int>(e.Child("destroyed_ships_destroyed" ).Text())),
-  retreated_ships           (boost::lexical_cast<int>(e.Child("retreated_ships"           ).Text())),
-  defenseless_planets       (boost::lexical_cast<int>(e.Child("defenseless_planets"       ).Text()))
+  planets_lost              (boost::lexical_cast<int>(e.Child("planets_lost"              ).Text())),
+  planets_defenseless       (boost::lexical_cast<int>(e.Child("planets_defenseless"       ).Text()))
 {}
 
 GG::XMLElement CombatUpdateMessage::EmpireCombatInfo::XMLEncode() const
@@ -37,13 +39,16 @@ GG::XMLElement CombatUpdateMessage::EmpireCombatInfo::XMLEncode() const
   e.AppendChild(GG::XMLElement("empire", empire));
   e.AppendChild(GG::XMLElement("combat_ships"              , boost::lexical_cast<std::string>(combat_ships              )));
   e.AppendChild(GG::XMLElement("combat_ships_hitpoints"    , boost::lexical_cast<std::string>(combat_ships_hitpoints    )));
+  e.AppendChild(GG::XMLElement("combat_ships_retreated"    , boost::lexical_cast<std::string>(combat_ships_retreated    )));
+  e.AppendChild(GG::XMLElement("combat_ships_destroyed"    , boost::lexical_cast<std::string>(combat_ships_destroyed    )));
   e.AppendChild(GG::XMLElement("non_combat_ships"          , boost::lexical_cast<std::string>(non_combat_ships          )));
   e.AppendChild(GG::XMLElement("non_combat_ships_hitpoints", boost::lexical_cast<std::string>(non_combat_ships_hitpoints)));
+  e.AppendChild(GG::XMLElement("non_combat_ships_retreated", boost::lexical_cast<std::string>(non_combat_ships_retreated)));
+  e.AppendChild(GG::XMLElement("non_combat_ships_destroyed", boost::lexical_cast<std::string>(non_combat_ships_destroyed)));
   e.AppendChild(GG::XMLElement("planets"                   , boost::lexical_cast<std::string>(planets                   )));
   e.AppendChild(GG::XMLElement("planets_defence_bases"     , boost::lexical_cast<std::string>(planets_defence_bases     )));
-  e.AppendChild(GG::XMLElement("destroyed_ships_destroyed" , boost::lexical_cast<std::string>(destroyed_ships_destroyed )));
-  e.AppendChild(GG::XMLElement("retreated_ships"           , boost::lexical_cast<std::string>(retreated_ships           )));
-  e.AppendChild(GG::XMLElement("defenseless_planets"       , boost::lexical_cast<std::string>(defenseless_planets       )));
+  e.AppendChild(GG::XMLElement("planets_lost"              , boost::lexical_cast<std::string>(planets_lost              )));
+  e.AppendChild(GG::XMLElement("planets_defenseless"       , boost::lexical_cast<std::string>(planets_defenseless       )));
 
   return e;
 }

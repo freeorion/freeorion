@@ -134,9 +134,23 @@ CombatUpdateMessage GenerateCombatUpdateMessage(int system_id,const std::vector<
     for(unsigned int i = 0;i<empire_combat_forces[e].planets.size();i++)
       eci.planets_defence_bases+=empire_combat_forces[e].planets[i].second;
 
-    eci.destroyed_ships_destroyed = empire_combat_forces[e].destroyed_ships.size();
-    eci.retreated_ships           = empire_combat_forces[e].retreated_ships.size();
-    eci.defenseless_planets       = empire_combat_forces[e].defenseless_planets.size();
+    eci.combat_ships_destroyed = 0;
+    eci.non_combat_ships_destroyed = 0;
+
+    for(unsigned int i = 0;i<empire_combat_forces[e].destroyed_ships.size();i++)
+      if(empire_combat_forces[e].destroyed_ships[i]->Design().attack>0)
+        eci.combat_ships_destroyed++;
+      else
+        eci.non_combat_ships_destroyed++;
+
+    for(unsigned int i = 0;i<empire_combat_forces[e].retreated_ships.size();i++)
+      if(empire_combat_forces[e].retreated_ships[i]->Design().attack>0)
+        eci.combat_ships_retreated++;
+      else
+        eci.non_combat_ships_retreated++;
+
+    eci.planets_lost       = empire_combat_forces[e].defenseless_planets.size();
+    eci.planets_defenseless= 0;
 
     cmb_upd_msg.m_opponents.push_back(eci);
   }
@@ -329,6 +343,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
       msg = GG::XMLDoc();
       msg.root_node.AppendChild(GenerateCombatUpdateMessage(system_id,empire_combat_forces).XMLEncode());
       SendMessageToAllPlayer(Message::COMBAT_ROUND_UPDATE,Message::CORE,msg);
+      //SDL_Delay(1000); maybe we add an delay to illustrate players a ongoing combat
     }
 
 #ifdef DEBUG_COMBAT
