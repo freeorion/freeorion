@@ -22,8 +22,7 @@ UniverseObject* NewSystem(const GG::XMLElement& elem) {return new System(elem);}
 }
 
 // static(s)
-const double ClientUniverse::UNIVERSE_WIDTH =    1000.0;
-const int    ClientUniverse::MIN_STAR_DISTANCE = 15;
+const double ClientUniverse::UNIVERSE_WIDTH = 1000.0;
 
 ClientUniverse::ClientUniverse()
 {
@@ -62,8 +61,14 @@ void ClientUniverse::SetUniverse(const GG::XMLElement& elem)
     m_objects.clear();
 
     for (int i = 0; i < elem.Child("m_objects").NumChildren(); ++i) {
-        if (UniverseObject* obj = m_factory.GenerateObject(elem.Child("m_objects").Child(i)))
-            Insert(obj, obj->ID());
+        if (UniverseObject* obj = m_factory.GenerateObject(elem.Child("m_objects").Child(i))) {
+            m_objects[obj->ID()] = obj;
+        } else {
+#ifdef FREEORION_BUILD_HUMAN
+            HumanClientApp::GetApp()->Logger().errorStream() << "ClientUniverse::SetUniverse : Failed while trying to factory-generate "
+                "m_objects element #" << i << " of the incoming turn update universe.";
+#endif
+        }
     }
 }
 
@@ -114,104 +119,4 @@ GG::XMLElement ClientUniverse::XMLEncode(int empire_id) const
    element.AppendChild(object_map);
 
    return element;
-}
-
-int ClientUniverse::NearestSystem(System& target_sys)
-{
-   // get list of system ID's
-   ConstObjectVec sys_obj_vec = FindObjects(IsSystem);
-   int nearest_sys_id = 0;
-   float nearest_dist = 2000;
-
-   for (int sys_cnt = 0; sys_cnt < (int) sys_obj_vec.size(); sys_cnt++)
-   {
-      const System* temp_sys = dynamic_cast<const System*>(sys_obj_vec[sys_cnt]);
-
-      if (temp_sys->ID() != target_sys.ID())
-      {
-         float temp_dist = pow((temp_sys->X()-target_sys.X()),2) + pow(temp_sys->Y()-target_sys.Y(),2);
-
-         if (temp_dist < nearest_dist)
-         {
-            nearest_dist = temp_dist;
-            nearest_sys_id = temp_sys->ID();
-         }
-         else if ((temp_dist == nearest_dist) && (temp_sys->ID() < nearest_sys_id))
-         {
-            nearest_dist = temp_dist;
-            nearest_sys_id = temp_sys->ID();
-         }
-      } 
-   }
-   
-   return nearest_sys_id;
-}   
-
-int ClientUniverse::NearestSystem(System& target_sys, System& prev_sys)
-{
-   // get list of system ID's
-   ConstObjectVec sys_obj_vec = FindObjects(IsSystem);
-   int nearest_sys_id = 0;
-   float nearest_dist = 2000;
-   float prev_dist = pow((prev_sys.X()-target_sys.X()),2) + pow(prev_sys.Y()-target_sys.Y(),2);
-
-   for (int sys_cnt = 0; sys_cnt < (int) sys_obj_vec.size(); sys_cnt++)
-   {
-      const System* temp_sys = dynamic_cast<const System*>(sys_obj_vec[sys_cnt]);
-      if ((temp_sys->ID() != target_sys.ID()) && (temp_sys->ID() != prev_sys.ID()))
-      {
- 
-         float temp_dist = pow((temp_sys->X()-target_sys.X()),2) + pow(temp_sys->Y()-target_sys.Y(),2);
-         if ((temp_dist > prev_dist) && (temp_dist < nearest_dist))
-         {
-            nearest_dist = temp_dist;
-            nearest_sys_id = temp_sys->ID();
-         }
-         else if (temp_dist == prev_dist)
-         {
-            // special case: next system is same distance as prev_sys, but has higher ID
-            if (temp_sys->ID() > prev_sys.ID())
-            {
-               // it's possible we've already found another system at the same distance also
-               if ((nearest_dist != temp_dist) || (temp_sys->ID() < nearest_sys_id))
-               {
-                  nearest_dist = temp_dist;
-                  nearest_sys_id = temp_sys->ID();
-               }
-            }
-         }
-        else if ((temp_dist == nearest_dist) && (temp_sys->ID() < nearest_sys_id))
-         {
-            nearest_dist = temp_dist;
-            nearest_sys_id = temp_sys->ID();
-         }
-      } 
-   }
-   return nearest_sys_id;
-}
-
-int ClientUniverse::Insert(UniverseObject* obj, int obj_id)
-{
-   if (!obj)
-   {
-#ifdef FREEORION_BUILD_HUMAN
-      HumanClientApp* client_app = HumanClientApp::GetApp();
-      client_app->Logger().errorStream() << "ClientUniverse::Insert : Attempt to add object to object map failed because the object pointer is null.";
-#endif
-      return UniverseObject::INVALID_OBJECT_ID;
-   }
-
-   if (m_objects.find(obj_id) == m_objects.end())
-   {
-      // ID is unused, store object here
-      m_objects[obj_id] = obj;
-      return obj_id;
-   }
-      
-   // ID is in use
-#ifdef FREEORION_BUILD_HUMAN
-   HumanClientApp* client_app = HumanClientApp::GetApp();
-   client_app->Logger().errorStream() << "ClientUniverse::Insert : Attempt to add object to object map failed because ID " << obj_id << " is already in use.";
-#endif
-   return UniverseObject::INVALID_OBJECT_ID;         
 }

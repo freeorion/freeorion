@@ -90,9 +90,6 @@ public:
    virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a ClientUniverse object with visibility restrictions for the given empire
    //@}
 
-   int NearestSystem(System& target_sys); ///< returns the nearest system to the target. In the case that more than 1 systems are of equal distance, uses system ID as the tie-breaker
-   int NearestSystem(System& target_sys, System& prev_sys); ///< returns the nearest system to target beyond the prev.  Can be used iteratively to generate a list of nearest systems.  Will use system ID as tie-breaker for equally distant systems.  This can result in a system being returned that is of an equal distance as prev_sys.
-   
    /** \name Mutators */ //@{
    void SetUniverse(const GG::XMLElement& elem); ///< wipes out the current object map and sets the map to the XMLElement passed in.
    //@}
@@ -101,17 +98,10 @@ public:
        depending on universe size */
    static const double UNIVERSE_WIDTH;
 
-   /** the minimum distance in map coordinates between stars during universe generation */
-   static const int    MIN_STAR_DISTANCE;
-
 protected:
    ObjectMap m_objects;
 
    GG::XMLObjectFactory<UniverseObject> m_factory;
-
-private:
-   /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.  Used when decoding objects sent from server, so ID is already allocated.*/
-   int Insert(UniverseObject* obj, int obj_id);   
 };
 
 #endif // _ClientUniverse_h_
