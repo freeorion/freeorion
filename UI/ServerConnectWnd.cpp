@@ -1,244 +1,205 @@
 #include "ServerConnectWnd.h"
 
 #include "ClientUI.h"
-#include "CUI_Wnd.h"
 #include "CUIControls.h"
-#include "GGClr.h"
-#include "GGControl.h"
-#include "GGDrawUtil.h"
+#include "GGButton.h"
+#include "GGTextControl.h"
+#include "../client/human/HumanClientApp.h"
+#include "SDLGGApp.h"
 
 #include <sstream>
 #include <iomanip>
 
-ServerConnectWnd::ServerConnectWnd(int x, int y, int w, int h) : 
-    CUI_Wnd(ClientUI::String("SCONNECT_WINDOW_TITLE"), x, y, w, h, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
-	m_ended_with_ok(false)
+namespace {
+const int SERVERS_LIST_BOX_WIDTH = 400;
+const int OK_CANCEL_BUTTON_WIDTH = 80;
+const int CONTROL_MARGIN = 5; // gap to leave between controls in the window
+const int LAN_SERVER_SEARCH_TIMEOUT = 5; // in seconds
+const int SERVER_CONNECT_WND_WIDTH = SERVERS_LIST_BOX_WIDTH + 6 * CONTROL_MARGIN;
+const int SERVER_CONNECT_WND_HEIGHT = 500 + ClientUI::PTS + 10 + 3 * CONTROL_MARGIN;
+std::set<std::string> g_LAN_servers; // semi-persistent (persists only during runtime) list of known LAN servers
+}
+
+ServerConnectWnd::ServerConnectWnd() : 
+    CUI_Wnd(ClientUI::String("SCONNECT_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() - SERVER_CONNECT_WND_WIDTH) / 2, 
+            (GG::App::GetApp()->AppHeight() - SERVER_CONNECT_WND_HEIGHT) / 2, SERVER_CONNECT_WND_WIDTH, SERVER_CONNECT_WND_HEIGHT, 
+            GG::Wnd::CLICKABLE | GG::Wnd::MODAL),
+    m_host_or_join_radio_group(0),
+    m_LAN_game_label(0),
+    m_servers_lb(0),
+    m_find_LAN_servers_bn(0),
+    m_internet_game_label(0),
+    m_IP_address_edit(0),
+    m_player_name_edit(0),
+    m_ok_bn(0),
+    m_cancel_bn(0)
 {
-    m_btn_search_more = new CUIButton(10, 150, 220, ClientUI::String("SCONNECT_BTN_SEARCH_MORE"));
-    m_cbo_available_servers = new CUIDropDownList(120, 80, 300, ClientUI::PTS + 4, 120);
-    m_btn_ok = new CUIButton(350, 300, 80, ClientUI::String("OK"));
-    m_btn_cancel = new CUIButton(230, 300, 80, ClientUI::String("CANCEL"));
-    
-    // static labels
-    AttachChild(new GG::TextControl(10, 80, ClientUI::String("SCONNECT_LBL_SERVER"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR));
-    
-    // signal connections
-    InitControls();
+    GG::TextControl* temp = new GG::TextControl(LeftBorder() + CONTROL_MARGIN, TopBorder() + CONTROL_MARGIN, ClientUI::String("PLAYER_NAME_LABEL"), 
+                                                ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+    AttachChild(temp);
+    const int PLAYER_NAME_EDIT_X = LeftBorder() + CONTROL_MARGIN + temp->Width() + CONTROL_MARGIN;
+    m_player_name_edit = new CUIEdit(PLAYER_NAME_EDIT_X, TopBorder() + CONTROL_MARGIN, SERVER_CONNECT_WND_WIDTH - 2 * CONTROL_MARGIN - PLAYER_NAME_EDIT_X, 
+                                     ClientUI::PTS + 10, "");
+
+    m_host_or_join_radio_group = new GG::RadioButtonGroup(LeftBorder() + CONTROL_MARGIN, m_player_name_edit->LowerRight().y + CONTROL_MARGIN);
+    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4, ClientUI::String("HOST_GAME_BN"), GG::TF_LEFT, 
+                                                             CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, ClientUI::PTS + 4 + CONTROL_MARGIN, SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4, 
+                                                             ClientUI::String("JOIN_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+
+    const int JOIN_CONTROLS_X = LeftBorder() + CONTROL_MARGIN + 10;
+    m_LAN_game_label = new GG::TextControl(JOIN_CONTROLS_X, m_host_or_join_radio_group->LowerRight().y + CONTROL_MARGIN, 
+                                           ClientUI::String("LAN_GAME_LABEL"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+    m_servers_lb = new CUIListBox(JOIN_CONTROLS_X, m_LAN_game_label->LowerRight().y + CONTROL_MARGIN, SERVERS_LIST_BOX_WIDTH, 300);
+    m_find_LAN_servers_bn = new CUIButton(JOIN_CONTROLS_X, m_servers_lb->LowerRight().y + CONTROL_MARGIN, 100, ClientUI::String("REFRESH_LIST_BN"));
+    m_internet_game_label = new GG::TextControl(JOIN_CONTROLS_X, m_find_LAN_servers_bn->LowerRight().y + 2 * CONTROL_MARGIN, 
+                                                ClientUI::String("INTERNET_GAME_LABEL"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+    m_IP_address_edit = new CUIEdit(JOIN_CONTROLS_X, m_internet_game_label->LowerRight().y + CONTROL_MARGIN, SERVERS_LIST_BOX_WIDTH, ClientUI::PTS + 10, "");
+    m_ok_bn = new CUIButton(Width() - RightBorder() - 2 * (OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN), m_IP_address_edit->LowerRight().y + 2 * CONTROL_MARGIN, 
+                            OK_CANCEL_BUTTON_WIDTH, ClientUI::String("OK"));
+    m_cancel_bn = new CUIButton(Width() - RightBorder() - (OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN), m_IP_address_edit->LowerRight().y + 2 * CONTROL_MARGIN, 
+                                OK_CANCEL_BUTTON_WIDTH, ClientUI::String("CANCEL"));
+
+    m_servers_lb->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
+
+    Init();
 }
 
-ServerConnectWnd::ServerConnectWnd(const GG::XMLElement& elem) : CUI_Wnd(elem.Child("CUI_Wnd"))
+ServerConnectWnd::ServerConnectWnd(const GG::XMLElement& elem) : 
+    CUI_Wnd(elem.Child("CUI_Wnd"))
 {
- 
-    m_ended_with_ok = false;
-    
-    const GG::XMLElement*  curr_elem  = &elem.Child("m_cbo_available_servers");
-    m_cbo_available_servers = new CUIDropDownList(curr_elem->Child("CUIDropDownList"));
-    
-    curr_elem  = &elem.Child("m_btn_search_more");
-    m_btn_search_more = new CUIButton(curr_elem->Child("CUIButton"));
-    
-    curr_elem  = &elem.Child("m_btn_ok");
-    m_btn_ok = new CUIButton(curr_elem->Child("CUIButton"));
-    
-    curr_elem  = &elem.Child("m_btn_cancel");
-    m_btn_cancel = new CUIButton(curr_elem->Child("CUIButton"));
-    
-    // Attach children and signal connections
-    InitControls();
+    // TODO : implement if needed
 }
 
-const std::string& ServerConnectWnd::GetSelectedServer() const
+const std::pair<std::string, std::string>& ServerConnectWnd::Result() const
 {
-    const GG::DropDownList::Row* r = m_cbo_available_servers->CurrentItem();
-    // how to get the content of the Row out of the Row? Only way I found is data type...
-    return r->data_type;
+    return m_result;
 }
 
-void ServerConnectWnd::AddServer(const std::string& ipaddress, const std::string& ipname)
+void ServerConnectWnd::Init()
 {
-    m_server_list.push_back(IPValue(ipaddress,ipname));   
+    AttachSignalChildren();
+
+    Connect(m_host_or_join_radio_group->ButtonChangedSignal(), &ServerConnectWnd::HostOrJoinClicked, this);
+    Connect(m_servers_lb->SelChangedSignal(), &ServerConnectWnd::ServerSelected, this);
+    Connect(m_find_LAN_servers_bn->ClickedSignal(), &ServerConnectWnd::RefreshServerList, this);
+    Connect(m_IP_address_edit->EditedSignal(), &ServerConnectWnd::IPAddressEdited, this);
+    Connect(m_player_name_edit->EditedSignal(), &ServerConnectWnd::NameEdited, this);
+    Connect(m_ok_bn->ClickedSignal(), &ServerConnectWnd::OkClicked, this);
+    Connect(m_cancel_bn->ClickedSignal(), &ServerConnectWnd::CancelClicked, this);
+
+    m_host_or_join_radio_group->SetCheck(0);
+    PopulateServerList();
 }
 
-int ServerConnectWnd::Run()
-{
-    // Fill the drop down list values in
-    PopulateServerList();  
-    return Wnd::Run(); 
-}
-
-void ServerConnectWnd::InitControls()
-{    
-    m_cbo_available_servers->SetStyle(GG::LB_NOSORT);
-    
-    // Attach & connect signal controls
-    AttachControls();
-    GG::Connect(m_btn_search_more->ClickedSignal(), &ServerConnectWnd::SearchMore, this);
-    GG::Connect(m_btn_ok->ClickedSignal(), &ServerConnectWnd::OnOk, this);
-    GG::Connect(m_btn_cancel->ClickedSignal(), &ServerConnectWnd::OnCancel, this);
-}
-
-/** Take server list (m_server_list) and populate dropdownlist with the values */
 void ServerConnectWnd::PopulateServerList()
 {
-    int lastindex=-1;
-    if (m_server_list.size()>0)
-    {  
-	    for(RowsIterator i=m_server_list.begin(); i!=m_server_list.end(); i++)
-	    {
-	         lastindex = AddRow((*i), lastindex);
-	    }
-	    m_cbo_available_servers->Select(0);  
-    }
-    else
-    {
-        AddRow(IPValue("127.0.0.1","localhost"));
+    m_servers_lb->Clear();
+    for (std::set<std::string>::iterator it = g_LAN_servers.begin(); it != g_LAN_servers.end(); ++it) {
+        GG::ListBox::Row row;
+        row.push_back(*it, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+        m_servers_lb->Insert(row);
     }
 }
 
-/** Search for more FreeOrion servers. TO DO */
-void ServerConnectWnd::SearchMore()
+void ServerConnectWnd::AttachSignalChildren()
 {
+    AttachChild(m_host_or_join_radio_group);
+    AttachChild(m_LAN_game_label);
+    AttachChild(m_servers_lb);
+    AttachChild(m_find_LAN_servers_bn);
+    AttachChild(m_internet_game_label);
+    AttachChild(m_IP_address_edit);
+    AttachChild(m_player_name_edit);
+    AttachChild(m_ok_bn);
+    AttachChild(m_cancel_bn);
+}
 
-    ShowDialog(ClientUI::String("SCONNECT_RETRIEVING"));
-    
-    int n = UpdateServerList(4);  
-    std::string feedback(ClientUI::String("SCONNECT_FOUND"));
-    if (n>0)
-    {
-        int x = feedback.find("xx");
-        std::ostringstream cntr;
-        cntr << std::setfill(' ') << std::setw(2) << n;
-        feedback.replace(x, 2 ,cntr.str());
-        PopulateServerList();
+void ServerConnectWnd::DetachSignalChildren()
+{
+    DetachChild(m_host_or_join_radio_group);
+    DetachChild(m_LAN_game_label);
+    DetachChild(m_servers_lb);
+    DetachChild(m_find_LAN_servers_bn);
+    DetachChild(m_internet_game_label);
+    DetachChild(m_IP_address_edit);
+    DetachChild(m_player_name_edit);
+    DetachChild(m_ok_bn);
+    DetachChild(m_cancel_bn);
+}
+
+void ServerConnectWnd::RefreshServerList()
+{
+    g_LAN_servers = HumanClientApp::GetApp()->NetworkCore().DiscoverLANServers(LAN_SERVER_SEARCH_TIMEOUT);
+    PopulateServerList();
+}
+
+void ServerConnectWnd::HostOrJoinClicked(int idx)
+{
+    if (!idx) { // host
+        m_LAN_game_label->Disable();
+        m_servers_lb->Disable();
+        m_find_LAN_servers_bn->Disable();
+        m_internet_game_label->Disable();
+        m_IP_address_edit->Disable();
+        if (m_player_name_edit->WindowText() == "")
+            m_ok_bn->Disable();
+        else
+            m_ok_bn->Disable(false);
+    } else { // join
+        m_LAN_game_label->Disable(false);
+        m_servers_lb->Disable(false);
+        m_find_LAN_servers_bn->Disable(false);
+        m_internet_game_label->Disable(false);
+        m_IP_address_edit->Disable(false);
+        if ((m_servers_lb->Selections().empty() && m_IP_address_edit->WindowText() == "") || m_player_name_edit->WindowText() == "")
+            m_ok_bn->Disable();
     }
-    else
-    {
-        feedback = ClientUI::String("SCONNECT_NOMORE");
+}
+
+void ServerConnectWnd::ServerSelected(const std::set<int>& selections)
+{
+    if (!selections.empty()) {
+        *m_IP_address_edit << "";
+        if (m_player_name_edit->WindowText() != "")
+            m_ok_bn->Disable(false);
+    } else if (m_IP_address_edit->WindowText() == "") {
+        m_ok_bn->Disable();
     }
-    
-    ShowDialog(feedback);
-
 }
 
-void ServerConnectWnd::OnOk()
+void ServerConnectWnd::IPAddressEdited(const std::string& str)
 {
-    m_ended_with_ok=true;
-    m_done=true;
-}
-
-void ServerConnectWnd::OnCancel()
-{
-    m_ended_with_ok=false;
-    m_done=true;
-}
-
-GG::XMLElement ServerConnectWnd::XMLEncode()
-{
-      DetachControls();
-   
-      GG::XMLElement retval("ServerConnectWnd");
-      retval.AppendChild(CUI_Wnd::XMLEncode());
-      
-      GG::XMLElement temp("m_ended_with_OK");
-      temp.SetAttribute("value", boost::lexical_cast<std::string>(m_ended_with_ok));
-      retval.AppendChild(temp);
-      
-      temp = GG::XMLElement("m_cbo_available_servers");
-      temp.AppendChild(m_cbo_available_servers->XMLEncode());
-      retval.AppendChild(temp);
-      
-      temp = GG::XMLElement("m_btn_search_more");
-      temp.AppendChild(m_btn_search_more->XMLEncode());
-      retval.AppendChild(temp);
-      
-      temp = GG::XMLElement("m_btn_ok");
-      temp.AppendChild(m_btn_ok->XMLEncode());
-      retval.AppendChild(temp);
-      
-      temp = GG::XMLElement("m_btn_cancel");
-      temp.AppendChild(m_btn_cancel->XMLEncode());
-      retval.AppendChild(temp);
-      
-      AttachControls();
-      
-      return retval;  
-}
-
-int ServerConnectWnd::UpdateServerList(int maxitems)
-{
-
-    int foundServers = 0;
-    
-    IPValue r1("64.239.105.78","www.freeorion.org");
-    IPValue r2("195.34.43.9","games.freeorion.org");
-    IPValue r3("10.55.8.4");
-    IPValue r4("10.29.34.3");
-    IPValue r5("10.23.211.12");
-      
-    // Reset list
-    m_server_list.clear();
-    
-    switch (maxitems)
-    {
-	    case 2:
-	         m_server_list.push_back(r1);
-	         m_server_list.push_back(r2);
-	         foundServers = 2;
-	    break;
-        
-        case 4:
-             m_server_list.push_back(r3);
-             m_server_list.push_back(r4);  
-             m_server_list.push_back(r5);  
-             foundServers = 3;     
-	    break;
-        
-        default:
-	    break;
+    if (str != "") {
+        m_servers_lb->ClearSelection();
+        if (m_player_name_edit->WindowText() != "")
+            m_ok_bn->Disable(false);
+    } else if (m_servers_lb->Selections().empty()) {
+        m_ok_bn->Disable();
     }
-    
-    return foundServers;
 }
 
-void ServerConnectWnd::AttachControls()
+void ServerConnectWnd::NameEdited(const std::string& str)
 {
-    AttachChild(m_btn_search_more);
-    AttachChild(m_cbo_available_servers);
-    AttachChild(m_btn_ok);
-    AttachChild(m_btn_cancel);
+    if (str != "") {
+        if (m_host_or_join_radio_group->CheckedButton() == 0)
+            m_ok_bn->Disable(false);
+        else if (!m_servers_lb->Selections().empty() || m_IP_address_edit->WindowText() != "")
+            m_ok_bn->Disable(false);
+    } else {
+        m_ok_bn->Disable();
+    }
 }
 
-void ServerConnectWnd::DetachControls()
+void ServerConnectWnd::OkClicked()
 {
-    DetachChild(m_cbo_available_servers);
-    DetachChild(m_btn_search_more);
-    DetachChild(m_btn_ok);
-    DetachChild(m_btn_cancel);
-}
-
-/** Add a row to the drop down list. Return insertion index value */
-int ServerConnectWnd::AddRow(const IPValue& value)
-{
-    GG::DropDownList::Row r;
-    FormatRow(value,&r);
-	return (m_cbo_available_servers->Insert(r));
-}
-
-/** Add a row to the drop down list. Return insertion index value. index specify insertion point */
-int ServerConnectWnd::AddRow(const IPValue& value, int index)
-{
-    GG::DropDownList::Row r;
-    FormatRow(value,&r);
-	return (m_cbo_available_servers->Insert(r,index));
-}
-
-void ServerConnectWnd::ShowDialog(const std::string& msg)
-{
-    ClientUI::MessageBox(msg);
-}
-
-void ServerConnectWnd::FormatRow(const IPValue& rstr, GG::DropDownList::Row* row)
-{
-	row->push_back(rstr.Name(), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);  // display the name/URL of server
-	row->data_type = rstr.Address();             // store the real ip address
+    m_result.first = *m_player_name_edit;
+    if (m_host_or_join_radio_group->CheckedButton() == 0) {
+        m_result.second = "HOST GAME SELECTED";
+    } else {
+        m_result.second = *m_IP_address_edit;
+        if (m_result.second == "")
+            m_result.second = m_servers_lb->GetRow(*m_servers_lb->Selections().begin())[0]->WindowText();
+    }
+    CUI_Wnd::Close();
 }
