@@ -59,7 +59,7 @@ public:
     virtual void   LClick(const GG::Pt& pt, Uint32 keys);
     virtual void   MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
 
-    void           InitTurn( int turn_number );        //!< called at the start of each turn by
+    void           InitTurn( int turn_number );        //!< called at the start of each turn
     void           ShowSystemNames(); //!< enables the system name text
     void           HideSystemNames(); //!< disables the system name text
 

@@ -75,10 +75,10 @@ private:
 struct MapWnd::MovementLineData
 {
     MovementLineData() {}
-    MovementLineData(double x_, double y_, System* dest) : x(x_), y(y_), destination(dest) {}
+    MovementLineData(double x_, double y_, const std::list<System*>& dest) : x(x_), y(y_), destinations(dest) {}
     double x;
     double y;
-    System* destination;
+    std::list<System*> destinations;
     // TODO : color, other properties(?), based on moving empire and destination, etc.
 };
 
@@ -378,7 +378,6 @@ void MapWnd::InitTurn(int turn_number)
     Universe::ObjectVec fleets = universe.FindObjects(IsMovingFleetFunctor());
     Universe::ObjectVec ordered_moving_fleets = universe.FindObjects(IsOrderedMovingFleetFunctor());
     fleets.insert(fleets.end(), ordered_moving_fleets.begin(), ordered_moving_fleets.end());
-
     typedef std::multimap<std::pair<double, double>, UniverseObject*> SortedFleetMap;
     SortedFleetMap position_sorted_fleets;
     for (unsigned int i = 0; i < fleets.size(); ++i) {
@@ -517,15 +516,15 @@ void MapWnd::SetFleetMovement(FleetButton* fleet_button)
     for (unsigned int i = 0; i < fleet_button->Fleets().size(); ++i) {
         Fleet* fleet = fleet_button->Fleets()[i];
         GG::Pt ul = ClientUpperLeft();
-        if (fleet->DestinationID() != UniverseObject::INVALID_OBJECT_ID &&
-            fleet->DestinationID() != fleet->SystemID() &&
-            destinations.find(fleet->DestinationID()) == destinations.end()) {
-            destinations.insert(fleet->DestinationID());
+        if (fleet->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
+            fleet->FinalDestinationID() != fleet->SystemID() &&
+            destinations.find(fleet->FinalDestinationID()) == destinations.end()) {
+            destinations.insert(fleet->FinalDestinationID());
             GG::Pt fleet_ul = fleet_button->UpperLeft();
             GG::Pt sz = fleet_button->Size();
             m_fleet_lines[fleet] = MovementLineData((fleet_ul.x + sz.x / 2 - ul.x) / m_zoom_factor, 
                                                     (fleet_ul.y + sz.y / 2 - ul.y) / m_zoom_factor, 
-                                                    fleet->Destination());
+                                                    fleet->TravelRoute());
         } else {
             m_fleet_lines.erase(fleet);
         }
@@ -619,13 +618,18 @@ void MapWnd::RenderFleetMovementLines()
     glEnable(GL_LINE_STIPPLE);
     glLineStipple(static_cast<int>(LINE_SCALE / 2.5), STIPPLE);
     glLineWidth(LINE_SCALE / 2.5);
-    glBegin(GL_LINES);
+    glColor4d(1.0, 1.0, 1.0, 1.0);
+    glBegin(GL_LINE_STRIP);
 
     GG::Pt ul = ClientUpperLeft();
     for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
-        glColor3d(1.0, 1.0, 1.0);
+        const std::list<System*>& destinations = it->second.destinations;
         glVertex2d(ul.x + it->second.x * m_zoom_factor, ul.y + it->second.y * m_zoom_factor);
-        glVertex2d(ul.x + it->second.destination->X() * m_zoom_factor, ul.y + it->second.destination->Y() * m_zoom_factor);
+        for (std::list<System*>::const_iterator dest_it = destinations.begin(); dest_it != destinations.end(); ++dest_it) {
+            if (it->first->SystemID() == (*dest_it)->ID())
+                continue;
+            glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
+        }
     }
 
     glEnd();
