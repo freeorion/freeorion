@@ -20,7 +20,12 @@
 
 
 namespace detail {
+#ifdef _MSC_VER
     void PlayValueChangedSound(...);
+#else
+    template <class T>
+    void PlayValueChangedSound(T);
+#endif
 }
 
 
@@ -36,7 +41,11 @@ public:
                     ClientUI::TEXT_COLOR, GG::CLR_ZERO, new CUIArrowButton(0, 0, 1, 1, SHAPE_UP, ClientUI::DROP_DOWN_LIST_ARROW_COLOR), 
                     new CUIArrowButton(0, 0, 1, 1, SHAPE_DOWN, ClientUI::DROP_DOWN_LIST_ARROW_COLOR))
     {
+#ifdef _MSC_VER
         GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound, -1);
+#else
+        GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound<T>, -1);
+#endif
     }
 
     /** ctor that constructs an CUISpin object from an XMLElement. \throw std::invalid_argument May throw 
@@ -47,7 +56,11 @@ public:
         if (elem.Tag() != XMLTypeName())
             throw std::invalid_argument("Attempted to construct a " + XMLTypeName() + " from an XMLElement that had a tag other than \"" + XMLTypeName() + "\"");
 
+#ifdef _MSC_VER
         GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound, -1);
+#else
+        GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound<T>, -1);
+#endif
     }
     //@}
 
@@ -111,6 +124,7 @@ public:
 };
 
 namespace detail {
+#ifdef _MSC_VER
     inline void PlayValueChangedSound(...)
     {
         std::string sound_dir = GetOptionsDB().Get<std::string>("settings-dir");
@@ -120,6 +134,18 @@ namespace detail {
         if (GetOptionsDB().Get<bool>("UI.sound.enabled"))
             HumanClientApp::GetApp()->PlaySound(sound_dir + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
     }
+#else
+    template <class T>
+    inline void PlayValueChangedSound(T)
+    {
+        std::string sound_dir = GetOptionsDB().template Get<std::string>("settings-dir");
+        if (!sound_dir.empty() && sound_dir[sound_dir.size() - 1] != '/')
+            sound_dir += '/';
+        sound_dir += "data/sound/";
+        if (GetOptionsDB().template Get<bool>("UI.sound.enabled"))
+            HumanClientApp::GetApp()->PlaySound(sound_dir + GetOptionsDB().template Get<std::string>("UI.sound.button-click"));
+    }
+#endif
 }
 
 inline std::pair<std::string, std::string> CUISpinRevision()

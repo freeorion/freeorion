@@ -1,6 +1,6 @@
 #include "AIClientApp.h"
 
-#include "../util/MultiplayerCommon.h"
+#include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "fastevents.h"
 #include "net2.h"
