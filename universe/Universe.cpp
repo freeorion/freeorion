@@ -27,6 +27,7 @@
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/breadth_first_search.hpp>
 
 #include <stdexcept>
 #include <cmath>
@@ -121,14 +122,14 @@ namespace {
         distances.insert(std::make_pair(x_dist * x_dist + y_dist * y_dist, DistanceInfo(s1, s2, group1_it, group2_it)));
     }
 
-    // used to short-circuit the use of Dijkstra's algorithm for pathfinding when it finds the desired destination system
-    struct PathFindingDijkstraVisitor : public boost::base_visitor<PathFindingDijkstraVisitor>
+    // used to short-circuit the use of BFS (breadth-first search) or Dijkstra's algorithm for pathfinding when it finds the desired destination system
+    struct PathFindingShortCircuitingVisitor : public boost::base_visitor<PathFindingShortCircuitingVisitor>
     {
         typedef boost::on_finish_vertex event_filter;
 
         struct FoundDestination {}; // exception type thrown when destination is found
 
-        PathFindingDijkstraVisitor(int dest_system) : destination_system(dest_system) {}
+        PathFindingShortCircuitingVisitor(int dest_system) : destination_system(dest_system) {}
         template <class Vertex, class Graph>
         void operator()(Vertex u, Graph& g)
         {
@@ -954,13 +955,13 @@ std::pair<std::list<System*>, double> Universe::ShortestPath(int system1, int sy
 
     std::vector<int> predecessors(boost::num_vertices(m_system_graph));
     std::vector<double> distances(boost::num_vertices(m_system_graph));
-    IndexPropertyMap index_map = boost::get(boost::vertex_index, m_system_graph);
+    ConstIndexPropertyMap index_map = boost::get(boost::vertex_index, m_system_graph);
     ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_system_graph);
     try {
         boost::dijkstra_shortest_paths(m_system_graph, system1, &predecessors[0], &distances[0], edge_weight_map, index_map, 
                                        std::less<double>(), std::plus<double>(), std::numeric_limits<int>::max(), 0, 
-                                       boost::make_dijkstra_visitor(PathFindingDijkstraVisitor(system2)));
-    } catch (const PathFindingDijkstraVisitor::FoundDestination& fd) {
+                                       boost::make_dijkstra_visitor(PathFindingShortCircuitingVisitor(system2)));
+    } catch (const PathFindingShortCircuitingVisitor::FoundDestination& fd) {
         // catching this just means that the destination was found, and so the algorithm was exited early, via exception
     }
 
@@ -983,6 +984,44 @@ std::pair<std::list<System*>, double> Universe::ShortestPath(int system1, int sy
         retval.first.push_back(pointer_property_map[system1]);
         retval.first.push_back(pointer_property_map[system2]);
         retval.second = linear_distance;
+    }
+
+    return retval;
+}
+
+std::pair<std::list<System*>, int> Universe::LeastJumpsPath(System* system1, System* system2) const
+{
+    return LeastJumpsPath(system1->ID(), system2->ID());
+}
+
+std::pair<std::list<System*>, int> Universe::LeastJumpsPath(int system1, int system2) const
+{
+    std::pair<std::list<System*>, int> retval;
+    std::vector<int> path;
+    std::vector<int> predecessors(boost::num_vertices(m_system_graph));
+    try {
+        boost::queue<int> buf;
+        std::vector<int> colors(boost::num_vertices(m_system_graph));
+        boost::breadth_first_search(m_system_graph, system1, buf,
+                                    boost::make_bfs_visitor(std::make_pair(PathFindingShortCircuitingVisitor(system2),
+                                                                           boost::record_predecessors(&predecessors[0],
+                                                                                                      boost::on_tree_edge()))),
+                                    &colors[0]);
+    } catch (const PathFindingShortCircuitingVisitor::FoundDestination& fd) {
+        // catching this just means that the destination was found, and so the algorithm was exited early, via exception
+    }
+
+    ConstSystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), m_system_graph);
+    int current_system = system2;
+    while (predecessors[current_system] != current_system) {
+        retval.first.push_front(pointer_property_map[current_system]);
+        current_system = predecessors[current_system];
+    }
+    retval.second = retval.first.size() - 1;
+
+    // note that at this point retval.first will be empty if there was no starlane path from system1 to system2
+    if (!retval.first.empty()) {
+        retval.first.push_front(pointer_property_map[current_system]);
     }
 
     return retval;

@@ -172,6 +172,16 @@ public:
         if either system ID is out of range. */
     std::pair<std::list<System*>, double> ShortestPath(int system1, int system2) const;
 
+    /** returns the sequence of systems, including \a system1 and \a system2, that defines the path with the fewest
+        jumps from \a system1 to \a system2, and the number of jumps to get there.  If no such path exists, the list
+        will be empty. */
+    std::pair<std::list<System*>, int> LeastJumpsPath(System* system1, System* system2) const;
+
+    /** returns the sequence of systems, including \a system1 and \a system2, that defines the path with the fewest
+        jumps from \a system1 to \a system2, and the number of jumps to get there.  If no such path exists, the list
+        will be empty.  \throw std::out_of_range This function will throw if either system ID is out of range. */
+    std::pair<std::list<System*>, int> LeastJumpsPath(int system1, int system2) const;
+
     /** returns the systems that are one starlane hop away from system \a system.  The returned systems are indexed by 
         distance from \a system. */
     std::map<double, System*> ImmediateNeighbors(System* system) const;
