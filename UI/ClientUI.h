@@ -115,8 +115,8 @@ public:
     
     static inline ClientUI* GetClientUI() {if(the_UI) return the_UI; return NULL;} //!< returns a pointer to the singleton ClientUI class
     inline const std::string& Language() {return m_string_table->Language();} //!< Returns the language of the StringTable object associated with ClientUI
-    inline const std::string& String(int index) {return m_string_table->String(index); } //!< Returns a lookup from the string table
-    inline void LogMessage(const std::string& msg) {s_logger.debug(msg);} //!<sends a message to the logger
+    inline const std::string& String(std::string index) {return m_string_table->String(index); } //!< Returns a lookup from the string table
+    static inline void LogMessage(const std::string& msg) {s_logger.debug(msg);} //!<sends a message to the logger
     
     //!@}
     
