@@ -38,6 +38,10 @@ namespace {
     const int SITREP_PANEL_WIDTH = 400;
     const int SITREP_PANEL_HEIGHT = 300;
     const int MIN_SYSTEM_NAME_SIZE = 10;
+    const int LAYOUT_MARGIN = 5;
+    const int CHAT_WIDTH = 400;
+    const int CHAT_HEIGHT = 400;
+    const int CHAT_EDIT_HEIGHT = 30;
     int g_chat_display_show_time = 0;
     std::deque<std::string> g_chat_edit_history;
     int g_history_position = 0; // the current edit contents are in history position 0
@@ -182,8 +186,6 @@ MapWnd::MapWnd() :
     GG::App::GetApp()->Register(m_research_wnd);
     m_research_wnd->Hide();
 
-    const int LAYOUT_MARGIN = 5;
-
     // turn button
     m_turn_update = new CUITurnButton(LAYOUT_MARGIN, LAYOUT_MARGIN, END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
@@ -226,8 +228,6 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_food);
 
     // chat display and chat input box
-    const int CHAT_WIDTH = 400;
-    const int CHAT_HEIGHT = 400;
     m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", ClientUI::FONT, ClientUI::PTS, GG::CLR_ZERO, 
                                        GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE | GG::MultiEdit::INTEGRAL_HEIGHT | GG::MultiEdit::NO_VSCROLL, 
                                        ClientUI::TEXT_COLOR, GG::CLR_ZERO, 0);
@@ -235,7 +235,6 @@ MapWnd::MapWnd() :
     m_chat_display->SetMaxLinesOfHistory(100);
     m_chat_display->Hide();
 
-    const int CHAT_EDIT_HEIGHT = 30;
     m_chat_edit = new CUIEdit(LAYOUT_MARGIN, GG::App::GetApp()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, CHAT_EDIT_HEIGHT, "", 
                               ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
     AttachChild(m_chat_edit);
@@ -1137,6 +1136,10 @@ void MapWnd::Cleanup()
 void MapWnd::Sanitize()
 {
     Cleanup();
+    m_side_panel->MoveTo(GG::App::GetApp()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y);
+    m_chat_display->MoveTo(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN);
+    m_chat_edit->MoveTo(LAYOUT_MARGIN, GG::App::GetApp()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN);
+    m_sitrep_panel->MoveTo((GG::App::GetApp()->AppWidth() - SITREP_PANEL_WIDTH) / 2, (GG::App::GetApp()->AppHeight() - SITREP_PANEL_HEIGHT) / 2);
     MoveTo(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight());
     m_zoom_factor = 1.0;
 }
