@@ -55,22 +55,6 @@ namespace {
 }
 
 ///////////////////////////////////////////////////////////
-// Constant                                              //
-///////////////////////////////////////////////////////////
-template <>
-std::string ValueRef::Constant<int>::Description() const
-{
-    return boost::lexical_cast<std::string>(m_value);
-}
-
-template <>
-std::string ValueRef::Constant<double>::Description() const
-{
-    return boost::lexical_cast<std::string>(m_value);
-}
-
-
-///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 template <>

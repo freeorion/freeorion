@@ -29,7 +29,7 @@ namespace {
     boost::tuple<bool, ValueRef::OpType, double>
     SimpleMeterModification(MeterType meter, bool max, const ValueRef::ValueRefBase<double>* ref)
     {
-        boost::tuple<bool, ValueRef::OpType, double> retval(false);
+        boost::tuple<bool, ValueRef::OpType, double> retval(false, ValueRef::PLUS, 0.0);
         if (const ValueRef::Operation<double>* op = dynamic_cast<const ValueRef::Operation<double>*>(ref)) {
             if (!op->LHS() || !op->RHS())
                 return retval;

@@ -6,7 +6,9 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/format.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/type_traits/is_enum.hpp>
 
 #include <string>
 #include <vector>
@@ -129,13 +131,25 @@ std::string ValueRef::Constant<T>::Description() const
     return UserString(boost::lexical_cast<std::string>(m_value));
 }
 
+template <>
+inline std::string ValueRef::Constant<int>::Description() const
+{
+    return boost::lexical_cast<std::string>(m_value);
+}
+
+template <>
+inline std::string ValueRef::Constant<double>::Description() const
+{
+    return boost::lexical_cast<std::string>(m_value);
+}
+
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 template <class T>
 ValueRef::Variable<T>::Variable(bool source_ref, const std::string& property_name) :
     m_source_ref(source_ref),
-    m_property_name(detail::TokenizeDottedReference(property_name))
+    m_property_name(::detail::TokenizeDottedReference(property_name))
 {
 }
 
