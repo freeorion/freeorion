@@ -20,6 +20,8 @@ namespace GG {
   class StaticGraphic;
 }
 
+class CombatWnd;
+
 class TurnProgressWnd : public GG::Wnd
 {
 public:
@@ -27,8 +29,11 @@ public:
     TurnProgressWnd( );
     //@}
     ~TurnProgressWnd();
-
+  
     void UpdateTurnProgress( const std::string& phase_str, const int empire_id );
+    void UpdateCombatTurnProgress(const std::string& message);
+    
+    bool   InWindow(const GG::Pt& pt) const;
 
 private:
 
@@ -36,6 +41,7 @@ private:
     GG::TextControl*  m_empire_text;
     GG::StaticGraphic* m_bg_graphic; //!< the background image 
     
+    CombatWnd* m_combat_wnd;
 };
 
 #endif // _TurnProgressWnd_h_
