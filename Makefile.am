@@ -189,6 +189,8 @@ UI/MultiplayerLobbyWnd.cpp			\
 UI/MultiplayerLobbyWnd.h			\
 UI/OptionsWnd.cpp				\
 UI/OptionsWnd.h					\
+UI/ResearchWnd.cpp				\
+UI/ResearchWnd.h				\
 UI/ServerConnectWnd.cpp				\
 UI/ServerConnectWnd.h				\
 UI/SidePanel.cpp				\
