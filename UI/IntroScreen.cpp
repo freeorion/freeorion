@@ -37,7 +37,9 @@ bool foo_bool = RegisterOptions(&Options);
 
 
 IntroScreen::IntroScreen() :
-    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), GetOptionsDB().Get<int>("UI.main-menu.left")/*(1024 + 300) / 2*/,GetOptionsDB().Get<int>("UI.main-menu.top")/* 300*/, 200, 340, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE)
+    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), 
+            GetOptionsDB().Get<int>("UI.main-menu.left"), GetOptionsDB().Get<int>("UI.main-menu.top"), 
+            200, 300, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE)
 {
     //create staticgraphic from the image
     m_bg_graphic = new GG::StaticGraphic(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), 
@@ -51,7 +53,7 @@ IntroScreen::IntroScreen() :
     m_load_game = new CUIButton(20, 110, 160, ClientUI::String("INTRO_BTN_LOAD_GAME"));
     m_options = new CUIButton(20, 150, 160, ClientUI::String("INTRO_BTN_OPTIONS"));
     m_about = new CUIButton(20, 190, 160, ClientUI::String("INTRO_BTN_ABOUT"));
-    m_exit_game = new CUIButton(20, 230, 160, ClientUI::String("INTRO_BTN_EXIT"));
+    m_exit_game = new CUIButton(20, 260, 160, ClientUI::String("INTRO_BTN_EXIT"));
     
     //attach buttons
     AttachChild(m_single_player);

@@ -11,6 +11,10 @@
     <fleet-autoselect>1</fleet-autoselect>
     <font>Vera.ttf</font>
     <font-size>12</font-size>
+    <main-menu>
+      <top>320</top>
+      <left>742</left>
+    </main-menu>
     <multiple-fleet-windows>0</multiple-fleet-windows>
     <stringtable-filename>eng_stringtable.txt</stringtable-filename>
     <text-color>
