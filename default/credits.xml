@@ -2,7 +2,7 @@
 <GG::XMLDoc>
   <CREDITS>
     <GROUP name ="LEAD">
-      <PERSON name="Mark Saward"     nick="Tyreth"          task="Project Lead, Programmning, Game Design, Graphics"/>
+      <PERSON name="Mark Saward"     nick="Tyreth"          task="Project Lead, Programming, Game Design, Graphics"/>
       <PERSON name="Zach Laine"      nick="Tzlaine"         task="Programming Lead, Game Design"/>
       <PERSON name="Samuel Knowlton" nick="Aquitaine"       task="Game Design Lead"/>
       <PERSON name="Anton Ruonala"   nick="Miu"             task="Graphics Lead"/>
