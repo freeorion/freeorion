@@ -13,18 +13,50 @@
 #define COMBAT_SIT_REP_IMAGE  4  // to be replaced by global define..
 #define FLEET_SIT_REP_IMAGE  5  // to be replaced by global define..
 
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
 
+using GG::XMLElement;
+
+
+///////////////////////////////////////////////////////////////////////
+// Generator functions to construct subclass objects from XMLElements
+///////////////////////////////////////////////////////////////////////
+
+SitRepEntry* NewBuild(const XMLElement& elem) { return new BuildSitRepEntry(elem); };
+SitRepEntry* NewCombat(const XMLElement& elem) { return new CombatSitRepEntry(elem); };
+SitRepEntry* NewFleetArrival(const XMLElement& elem) { return new FleetArrivalSitRepEntry(elem); };
+SitRepEntry* NewColonize(const XMLElement& elem) { return new ColonizeSitRepEntry(elem); };
+SitRepEntry* NewTech(const XMLElement& elem) { return new TechSitRepEntry(elem); };
+
+////////////////////////////////////////////////
+// SitRepEntry
+////////////////////////////////////////////////
 
 
 SitRepEntry::SitRepEntry()
 {
+    
 }
 
 SitRepEntry::~SitRepEntry()
 {
 }
 
+SitRepEntry::SitRepEntry(const GG::XMLElement& element)
+{
+    m_summary_text = element.Child("m_summary_text").Text();
+}
 
+void SitRepEntry::InitObjectFactory( GG::XMLObjectFactory<SitRepEntry>& factory)
+{
+    factory.AddGenerator("BuildSitRepEntry", &NewBuild);
+    factory.AddGenerator("CombatSitRepEntry", &NewCombat);
+    factory.AddGenerator("FleetArrivalSitRepEntry", &NewFleetArrival);
+    factory.AddGenerator("ColonizeSitRepEntry", &NewColonize);
+    factory.AddGenerator("TechSitRepEntry", &NewTech);
+
+}
 
 
 ////////////////////////////////////////////////
@@ -37,6 +69,33 @@ BuildSitRepEntry::BuildSitRepEntry(BuildSitRepEntryType buildType, int planetID,
    m_fleet_id = fleetID;
    m_build_type = buildType;
    
+}
+
+BuildSitRepEntry::BuildSitRepEntry(const GG::XMLElement& elem) : SitRepEntry(elem)
+{
+    // write me
+}
+
+XMLElement BuildSitRepEntry::XMLEncode() const
+{
+    XMLElement element("BuildSitRepEntry");
+    
+    XMLElement summary("m_summary_text", m_summary_text);
+    element.AppendChild(summary);
+    
+    XMLElement planetid("m_planet_id");
+    planetid.SetAttribute("value", lexical_cast<std::string>(m_planet_id));
+    element.AppendChild(planetid);
+    
+    XMLElement fleetid("m_fleet_id");
+    fleetid.SetAttribute("value", lexical_cast<std::string>(m_fleet_id));
+    element.AppendChild(fleetid);
+    
+    XMLElement buildtype("m_build_type");
+    buildtype.SetAttribute("value", lexical_cast<std::string>((int)m_build_type));
+    element.AppendChild(buildtype);
+    
+    return element;
 }
 
 
@@ -206,6 +265,19 @@ ColonizeSitRepEntry::ColonizeSitRepEntry(int planetID, int fleetID, bool colo_su
    
 }
 
+ColonizeSitRepEntry::ColonizeSitRepEntry(const XMLElement& elem) : SitRepEntry(elem)
+{
+    // write me!
+}
+
+XMLElement ColonizeSitRepEntry::XMLEncode() const
+{   
+    XMLElement elem("ColonizeSitRepEntry");
+    // write me!
+    return elem;
+}
+
+
 
 int ColonizeSitRepEntry::ImageID()
 {
@@ -278,6 +350,17 @@ CombatSitRepEntry::CombatSitRepEntry(int systemID, int initialOwner, CombatFleet
    memcpy((void*)&m_combat_fleet_map, (void*)fleetDataMap, sizeof(CombatFleetMap));   
 }
 
+CombatSitRepEntry::CombatSitRepEntry(const XMLElement& elem) : SitRepEntry(elem)
+{
+    // write me!
+}
+
+XMLElement CombatSitRepEntry::XMLEncode() const
+{   
+    XMLElement elem("CombatSitRepEntry");
+    // write me!
+    return elem;
+}
 
 int CombatSitRepEntry::ImageID()
 {
@@ -340,7 +423,17 @@ FleetArrivalSitRepEntry::FleetArrivalSitRepEntry(int systemID, int fleetID, bool
    m_new_explore = newExplore;
    
 }
+FleetArrivalSitRepEntry::FleetArrivalSitRepEntry(const XMLElement& elem) : SitRepEntry(elem)
+{
+    // write me!
+}
 
+XMLElement FleetArrivalSitRepEntry::XMLEncode() const
+{   
+    XMLElement elem("FleetArrivalSitRepEntry");
+    // write me!
+    return elem;
+}
 
 int FleetArrivalSitRepEntry::ImageID()
 {
@@ -394,6 +487,17 @@ TechSitRepEntry::TechSitRepEntry()
    // TODO: constructor to take tech ID
 }
 
+TechSitRepEntry::TechSitRepEntry(const XMLElement& elem) : SitRepEntry(elem)
+{
+    // write me!
+}
+
+XMLElement TechSitRepEntry::XMLEncode() const
+{   
+    XMLElement elem("TechSitRepEntry");
+    // write me!
+    return elem;
+}
 
 int TechSitRepEntry::ImageID()
 {

@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 PROJECT_NAME           = Empire
 PROJECT_NUMBER         = 
-OUTPUT_DIRECTORY       = D:\FreeOrion\docs\Empire
+OUTPUT_DIRECTORY       = C:\FreeOrion\Empire\doc
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = YES
 EXTRACT_ALL            = YES
@@ -58,14 +58,19 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = D:/FreeOrion/src/FreeOrion/Empire/SitRepEntry.h \
-                         D:/FreeOrion/src/FreeOrion/Empire/TechLevel.h \
-                         D:/FreeOrion/src/FreeOrion/Empire/TechManager.h \
-                         D:/FreeOrion/src/FreeOrion/Empire/ClientEmpire.h \
-                         D:/FreeOrion/src/FreeOrion/Empire/Empire.h \
-                         D:/FreeOrion/src/FreeOrion/Empire/EmpireManager.h \
-                         D:/FreeOrion/src/FreeOrion/Empire/ServerEmpire.h \
-                         D:/FreeOrion/src/FreeOrion/Empire/doc/EmpireDoc.txt
+INPUT                  = C:/FreeOrion/Empire/doc/EmpireDoc.txt \
+                         C:/FreeOrion/Empire/TechManager.h \
+                         C:/FreeOrion/Empire/ClientEmpire.cpp \
+                         C:/FreeOrion/Empire/ClientEmpire.h \
+                         C:/FreeOrion/Empire/Empire.cpp \
+                         C:/FreeOrion/Empire/Empire.h \
+                         C:/FreeOrion/Empire/EmpireManager.cpp \
+                         C:/FreeOrion/Empire/EmpireManager.h \
+                         C:/FreeOrion/Empire/ServerEmpire.cpp \
+                         C:/FreeOrion/Empire/ServerEmpire.h \
+                         C:/FreeOrion/Empire/TechLevel.cpp \
+                         C:/FreeOrion/Empire/TechLevel.h \
+                         C:/FreeOrion/Empire/TechManager.cpp
 FILE_PATTERNS          = 
 RECURSIVE              = NO
 EXCLUDE                = 

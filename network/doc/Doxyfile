@@ -1,4 +1,4 @@
-# Doxyfile 1.3-rc2
+# Doxyfile 1.3
 
 #---------------------------------------------------------------------------
 # General configuration options
@@ -7,6 +7,7 @@ PROJECT_NAME           = "FreeOrion Network Module"
 PROJECT_NUMBER         = "v 0.0.1.0"
 OUTPUT_DIRECTORY       = 
 OUTPUT_LANGUAGE        = English
+USE_WINDOWS_ENCODING   = YES
 EXTRACT_ALL            = YES
 EXTRACT_PRIVATE        = NO
 EXTRACT_STATIC         = YES
@@ -118,6 +119,7 @@ LATEX_HEADER           =
 PDF_HYPERLINKS         = NO
 USE_PDFLATEX           = NO
 LATEX_BATCHMODE        = NO
+LATEX_HIDE_INDICES     = NO
 #---------------------------------------------------------------------------
 # configuration options related to the RTF output
 #---------------------------------------------------------------------------
@@ -188,6 +190,7 @@ DOT_PATH               =
 DOTFILE_DIRS           = 
 MAX_DOT_GRAPH_WIDTH    = 1024
 MAX_DOT_GRAPH_HEIGHT   = 1024
+MAX_DOT_GRAPH_DEPTH    = 0
 GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES
 #---------------------------------------------------------------------------

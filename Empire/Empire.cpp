@@ -2,6 +2,11 @@
 #include "Empire.h"
 #endif
 
+#ifndef _FREEORION_TechManager_h_
+#include "TechManager.h"
+#endif
+
+
 #include <algorithm>
 using std::find;
 
@@ -15,7 +20,8 @@ Empire::Empire(const std::string& name, int ID, const GG::Clr& color, ControlSta
  m_name(name), 
  m_id(ID), 
  m_color(color), 
- m_control_state(control)
+ m_control_state(control),
+ m_total_rp(0)
 {
     // nothing else to do
 }
@@ -31,8 +37,15 @@ Empire::Empire(const GG::XMLElement& elem)
     m_control_state = (ControlStatus) lexical_cast <int> ( elem.Child("m_control_state").Attribute("value") );
     m_color = GG::Clr( elem.Child("m_color") );
     
-    // TODO:  decode the sitrep
+    // make a sitrep entry factory
+    GG::XMLObjectFactory<SitRepEntry> sitrep_factory;
+    SitRepEntry::InitObjectFactory(sitrep_factory);
     
+    XMLElement sitrep = elem.Child("m_sitrep_entries");
+    for(unsigned int i=0; i<sitrep.NumChildren(); i++)
+    {
+        AddSitRepEntry( sitrep_factory.GenerateObject(sitrep.Child(i)) );
+    }
     
     XMLElement container_elem = elem.Child("m_fleets");
     for(unsigned int i=0; i<container_elem.NumChildren(); i++)
@@ -332,6 +345,15 @@ void Empire::RemoveVisibleFleet(int ID)
 
 void Empire::ClearSitRep()
 {
+    SitRepItr itr = SitRepBegin();
+    
+    // deallocate all sitrep entries in the collection
+    while(itr != SitRepEnd())
+    {
+        delete *itr;
+        itr++;
+    }
+    
     m_sitrep_entries.clear();
 }
 
@@ -372,7 +394,7 @@ GG::XMLElement Empire::XMLEncode() const
     XMLElement sitrep("m_sitrep_entries");
     for(ConstSitRepItr itr = SitRepBegin(); itr != SitRepEnd(); itr++)
     {
-       // sitrep.AppendChild( (*itr)->XMLEncode() );
+       sitrep.AppendChild( (*itr)->XMLEncode() );
     }
     element.AppendChild(sitrep);
     
@@ -429,7 +451,7 @@ GG::XMLElement Empire::XMLEncode() const
 void Empire::XMLMerge(const GG::XMLElement& elem)
 {
 
-    
+    // CODE ME!
     
     
 }
@@ -450,8 +472,20 @@ int Empire::AddRP(int moreRPs)
 {
     m_total_rp += moreRPs;
 
-    // FINISH ME!!
     // check the TechManager for new techs
+    
+    TechManager::iterator itr = TechManager::instance().begin();
+    while(itr != TechManager::instance().end())
+    {
+        if ( (*itr).second->GetMinPts() >= m_total_rp )
+        {
+            if( !HasTech( (*itr).first ) )
+            {
+                AddTech( (*itr).first );
+            }
+        }
+    }
+    
     
     return m_total_rp;
 }

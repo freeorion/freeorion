@@ -5,10 +5,11 @@
   The purpose of the Empire module is to manage information related to the overall
   state of each Empire in a FreeOrion game.  Information handled by the Empire module
   will include: 
-	- All planets, fleets, etc that are owned by the Empire.
-	- Events currently in the empire's sitrep
-	- An empire's accumulated research and technological advancement.
-	- A list of star systems explored by the empire.
+	- All planets, and fleets that are owned by the Empire.
+	- Entries currently in the empire's sitrep 
+	- An empire's accumulated research, and a set of
+    	 all technological advancements they currently possess.
+	- A list of star systems the empire has explored.
 
   And, In later revisions:
 	- racial advantages
@@ -16,7 +17,8 @@
 	- whatever else they decide to make us add... :)
 
   The Empire module is also responsible for managing "global" data such as
-  technology research fields, ship designs, etc. etc.
+    - the technology database (a set of all possible technological advancements),
+    - ship designs (in future revisions)
 
 
  \section classes Major Classes
@@ -27,17 +29,29 @@
  first obtain a pointer to the object from an EmpireManager.
 
  Other FreeOrion modules will interact with the Empire module through the EmpireManager class
- (actually, through a subclass of EmpireManager).  The EmpireManagers have methods for looking
- up specific empires based on their unique numeric identifiers.  In addition, the ServerEmpire
- manager has the ability to create XML updates for transmission to clients between turns 
- (to keep the client empire state in sync with the rest of the game).  The ClientEmpire manager 
- is able to process these updates and bring itself in sync with the server.
+ (actually, through one of the subclasses of EmpireManager, ServerEmpire and ClientEmpire).
+ 
+ EmpireManager is the base class for the manager, and supports methods for 
+   iterating across the set of empires, and obtaining pointers to empires based
+   on their unique numeric ID (which is supplied by ServerEmpire at the time
+   the empire is created).
+ 
+ ServerEmpire is the server version of the empire manager, and supports methods
+   for creating new empires, and generating XML updates for transmission to
+   clients between turns.  (These updates contain a set of changes which the
+   client must make to itself to keep it in sync with the server).
+   
+ ClientEmpire is the client version of the empire manager, and supports methods
+   for handling the updates which ServerEmpire generates.
+ 
 
- A similar object manager pattern is used for technology items.  The TechLevel class is used to
- represent a particular field of technological progress, and it is created and managed by a TechManager
- object.  These objects may be used by both client and server to provide controlled access to the technologies
- that will eventually be incorporated into FreeOrion.  For Version 0.1, the TechManager creates hardcoded
- TechLevels and provides access to these.  
+ A similar object manager pattern is used for technology items.  
+ The TechLevel class is used to represent a particular technological advancement (such as a new ship type), and it is created and managed by a TechManager
+ object.  
+ 
+ The TechManager represents a technology database, and supports methods to create
+ TechLevels from an external file, and lookup TechLevels based on their numeric
+ identifier.  For Version 0.1, the TechManager creates hardcoded TechLevels, but in later versions it will load an external file to obtain the set of technologies which exist in the game.
 
 */
 

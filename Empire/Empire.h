@@ -238,6 +238,11 @@ public:
     void AddVisibleFleet(int ID);
 
     /// Inserts the a pointer to given sitrep entry into the empire's sitrep list
+    /**
+    *  The object pointed to by 'entry' will be deallocated when
+    *  the empire's sitrep is cleared.  Be careful you do not have any
+    *  references to SitRepEntries lieing around when this happens.
+    */
     void AddSitRepEntry( SitRepEntry* entry);
     
      /* ************************************************
@@ -260,6 +265,10 @@ public:
     void RemoveVisibleFleet(int ID);
     
     /// Removes all entries from the Empire's SitRep
+    /** 
+    * Any SitRep entry objects currently referenced by the Empire's SitRep collection
+    * will be deallocated, and the pointers discarded.
+    */
     void ClearSitRep();
     
 
@@ -295,7 +304,7 @@ public:
    	/// Mutator for empire name
     void Name(const std::string& name);
     //@}
-    
+    Empire(const GG::XMLElement& elemenet);
 protected:
 
     /* *****************************************************
@@ -318,7 +327,7 @@ protected:
     * by the given XLMElement.  This XMLElement should have been created
     * by Empire::XMLEncode()
     */
-    Empire(const GG::XMLElement& elemenet);
+    //Empire(const GG::XMLElement& elemenet);
     
     //@}
     
