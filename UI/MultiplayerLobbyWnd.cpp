@@ -146,7 +146,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
         } else if (doc.root_node.ContainsChild("abort_game")) {
             ClientUI::MessageBox(ClientUI::String("MPLOBBY_HOST_ABORTED_GAME"));
             m_result = false;
-            CUI_Wnd::Close();
+            CUI_Wnd::CloseClicked();
         } else if (doc.root_node.ContainsChild("exit_lobby")) {
             int player_id = boost::lexical_cast<int>(doc.root_node.Child("exit_lobby").Attribute("id"));
             std::string player_name = m_player_names[player_id];
@@ -177,8 +177,8 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
                 for (int i = 0; i < doc.root_node.Child("players").NumChildren(); ++i) {
                     m_player_IDs[doc.root_node.Child("players").Child(i).Tag()] = i;
                     m_player_names[i] = doc.root_node.Child("players").Child(i).Tag();
-                    GG::ListBox::Row row;
-                    row.push_back(m_player_names[i], ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+                    GG::ListBox::Row* row = new GG::ListBox::Row;
+                    row->push_back(m_player_names[i], ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
                     m_players_lb->Insert(row);
                 }
             }
@@ -188,7 +188,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
 
     case Message::GAME_START: {
         m_result = true;
-        CUI_Wnd::Close();
+        CUI_Wnd::CloseClicked();
         break;
     }
 
@@ -379,7 +379,7 @@ void MultiplayerLobbyWnd::StartGameClicked()
     if (!failed) {
         HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(HumanClientApp::GetApp()->PlayerID(), HumanClientApp::GetApp()->PlayerName()));
         m_result = true;
-        CUI_Wnd::Close();
+        CUI_Wnd::CloseClicked();
     }
 }
 
@@ -395,7 +395,7 @@ void MultiplayerLobbyWnd::CancelClicked()
         HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, doc));
     }
     m_result = false;
-    CUI_Wnd::Close();
+    CUI_Wnd::CloseClicked();
 }
 
 void MultiplayerLobbyWnd::DisableControls()
