@@ -2448,6 +2448,8 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
   GG::Connect(m_button_prev->ClickedSignal(), &SidePanel::PrevButtonClicked, this);
   GG::Connect(m_button_next->ClickedSignal(), &SidePanel::NextButtonClicked, this);
 
+  GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &SidePanel::UniverseObjectDelete, this);
+
   Hide();
 }
 
@@ -2597,6 +2599,13 @@ void SidePanel::SetSystem(int system_id)
         m_button_next->Show();
       }
     }
+}
+
+void SidePanel::UniverseObjectDelete(const UniverseObject *obj)
+{
+    const Fleet *fleet = dynamic_cast<const Fleet *>(obj);
+    if(fleet)
+      FleetsChanged();
 }
 
 void SidePanel::FleetsChanged()
