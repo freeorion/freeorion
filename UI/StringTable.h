@@ -3,30 +3,45 @@
 #define _StringTable_h_
 
 #include <string>
-#include <vector>
+#include <map>
 #include <fstream>
 #include <boost/lexical_cast.hpp>
 
 //! This is an implementation of a String Table for internationalization purposes.
 //! The table is built from a file of the following format:<br>
 //! name_of_language<br>
-//! 0000 string0<br>
-//! 0001 string1<br>
-//! etc.<br>
-//! An example file would look like:<br>
+//! ID1<br>
+//! STRING1<br><br>
+//! comments are also allowed, preceded by a pound '#' sign
+//! These will not be added to the table.
+//! Any number of blank lines may separate strings, but an
+//! identifier <b>MUST</b> be followed by its string on the next line.
+//!
+//! An example:<br>
 //! English<br>
-//! 0000 Hello world!<br>
-//! 0001 Goodbye world!<br>
-//! 0002 I like FreeOrion very much.<br>
 //! <br>
-//! Another version of this file, would be:<br>
-//! Español<br>
-//! 0000 ¡Hola mundo!<br>
-//! 0001 ¡Adios mundo!<br>
-//! 0002 Me gusta FreeOrion mucho.<br>
-
-
-
+//! WELCOME<br>
+//! Welcome to FreeOrion<br>
+//! <br>
+//! EXIT<br>
+//! Exit the program<br>
+//! <br>
+//! #These are comments<br>
+//! #these are more comments<br>
+//! TEST_ONE<br>
+//! test one<br>
+//! TEST TWO<br>
+//! test two<br>
+//! <br>
+//! TEST THREE<br>
+//! test three<br>
+//! #<br>
+//! <br>
+//! <br>
+//! <br>
+//! TESTFOUR<br>
+//! test four<br>
+//! 
 
 class StringTable
 {
@@ -49,11 +64,11 @@ public:
     
     //! @param index The index of the string to lookup
     //! @return The string found at index in the table, or S_ERROR_STRING if it fails
-    const std::string& operator[] (int index);    //!< Looks up a string at index and returns it.
+    const std::string& operator[] (std::string index);    //!< Looks up a string at index and returns it.
     
     //! @param index The index of the string to lookup
     //! @return The string found at index in the table
-    inline const std::string& String(int index) { return operator[] (index); }    //!< Interface to operator() \see StringTable::operator() 
+    inline const std::string& String(std::string index) { return operator[] (index); }    //!< Interface to operator() \see StringTable::operator() 
     inline const std::string& Language() {return m_language;}    //!< Returns the language of this StringTable
     
 //!@}
@@ -79,7 +94,7 @@ private:
 
     std::string m_filename;    //!< the name of the file this StringTable was constructed with
     std::string m_language;    //!< A string containing the name of the language used
-    std::vector<std::string> m_strings;  //!< The strings in the table
+    std::map<std::string, std::string> m_strings;  //!< The strings in the table
 
 //!@}
     
