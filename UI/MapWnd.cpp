@@ -126,7 +126,7 @@ int MapWnd::Keypress (GG::Key key, Uint32 key_mods)
 	if (m_options.m_quit)
 	{
 	  // TODO: Shut down the game.  The following is temporary
-	  HumanClientApp::GetApp()->ShutDown();
+	  GG::App::GetApp()->Exit(0);
 	}
     }
 

@@ -63,13 +63,6 @@ void HumanClientApp::KillServer()
     m_player_name = "";
 }
 
-// TODO: Remove the following ShutDown() function, was put in temporarily
-// until a proper one was implemented
-void HumanClientApp::ShutDown()
-{
-    SDLQuit();
-}
-
 void HumanClientApp::SetLobby(MultiplayerLobbyWnd* lobby)
 {
     m_multiplayer_lobby_wnd = lobby;
