@@ -695,6 +695,8 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
     case IRREGULAR:
         GenerateIrregularGalaxy(size, adjacency_grid);
         break;
+	case RING:
+		GenerateIrregularGalaxy(size, adjacency_grid);
     default:
         Logger().errorStream() << "Universe::Universe : Unknown galaxy shape: "<< shape << ".  Using IRREGULAR as default.";
         GenerateIrregularGalaxy(size, adjacency_grid);

@@ -49,6 +49,7 @@ public:
                 CLUSTER,          ///< a cluster galaxy
                 ELLIPTICAL,    ///< an elliptical galaxy
                 IRREGULAR,     ///< an irregular galaxy
+				RING,			///< a ring galaxy
                 FROM_FILE,     ///< a galaxy loaded from a file
                 GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
                };
