@@ -21,6 +21,7 @@ class ClientEmpire;
 class Combat;
 class MapWnd;
 class IntroScreen;
+class TurnProgressWnd;
 class Tech;
 class ToolContainer;
 class ToolWnd;
@@ -36,7 +37,7 @@ class Category;
 //! \brief ClientUI Main Module
 //!This is the main class of the ClientUI module.
 //!it contains objects of many other classes and controls the
-//!display of all information onscreen.
+//!display of all information oTURN_PROGRESS_WND_COLORnscreen.
 
 class ClientUI
 {
@@ -91,22 +92,23 @@ public:
     // calling these changes internal state to display the proper screen
     // and initializes and displays the screen
     // see Interface Doc for details
+    // takes as a paramter the new turn number
     //!@{
-    void InitTurn();      //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
+    void InitTurn( int turn_number );      //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
     
     void ScreenIntro();                        //!< Intro Screen
     void ScreenSettings(const ClientNetworkCore& net);    //!< Game/Network Options Screen
     void ScreenEmpireSelect();                    //!< Empire Selection Screen
-    void ScreenTurnStart();                    //!< Turn Start Splash Screen
+    void ScreenProcessTurn();                     //!< Turn Star Progress Splash Screen
 
     void ScreenMap();     //!< Universe Map Screen
 
+    //!< Updates turn progress window
+    void UpdateTurnProgress( const std::string& phase_str, const int empire_id );
+
     //! @param events vector containing all the events to be listed
     void ScreenSitrep(const std::vector<SitRepEntry>& events);    //!< Sitrep Screen
-    
-    //! @param state integer code pertaining to the message to display on the turn-processing screen
-    void ScreenProcessTurn(int state);                //!< Turn-processing screen
-    
+   
     //! @param combat pointer to a Combat module
     void ScreenBattle(Combat* combat);                //!< Battle Screen
     
@@ -178,8 +180,8 @@ public:
     static GG::Clr     STATE_BUTTON_COLOR;
 
     static GG::Clr     SCROLL_TAB_COLOR;
-    static int         SCROLL_WIDTH;
-
+    static  int        SCROLL_WIDTH;
+    
     static GG::Clr     DROP_DOWN_LIST_INT_COLOR;
     static GG::Clr     DROP_DOWN_LIST_ARROW_COLOR;
 
@@ -196,6 +198,7 @@ public:
     static int         SIDE_PANEL_PLANET_NAME_PTS;
     static int         SIDE_PANEL_PTS;
 
+        
     //!@}
 
 private:
@@ -207,8 +210,9 @@ private:
 
     StringTable* m_string_table;        //!< a string table to lookup international strings
 
-    IntroScreen* m_intro_screen;        //!< the intro (and main menu) screen first showed when the game starts up
-    MapWnd*      m_map_wnd;             //!< the galaxy map
+    IntroScreen*     m_intro_screen;      //!< the intro (and main menu) screen first showed when the game starts up
+    MapWnd*          m_map_wnd;           //!< the galaxy map
+    TurnProgressWnd* m_turn_progress_wnd; //!< the turn progress window
 
     static log4cpp::Category& s_logger; //!< log4cpp logging category
     static ClientUI* s_the_UI;          //!<pointer to the one and only ClientUI object

@@ -7,6 +7,7 @@
 #include "GGClr.h"
 #include "GGDrawUtil.h"
 #include "IntroScreen.h"
+#include "TurnProgressWnd.h"
 #include "dialogs/GGThreeButtonDlg.h"
 #include "MapWnd.h"
 #include "ToolContainer.h"
@@ -64,6 +65,7 @@ GG::Clr     ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR(25, 40, 140, 150);
 int         ClientUI::SIDE_PANEL_PLANET_NAME_PTS = 15;
 int         ClientUI::SIDE_PANEL_PTS = 11;
 
+
 //private static members
 log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
 ClientUI* ClientUI::s_the_UI = 0;
@@ -75,7 +77,8 @@ ClientUI::ClientUI(const std::string& string_table_file /* = StringTable::S_DEFA
     m_state(STATE_STARTUP),
     m_string_table(0),
     m_intro_screen(0),
-    m_map_wnd(0)
+    m_map_wnd(0),
+    m_turn_progress_wnd(0)
 {
     s_the_UI = this;    
     Initialize(string_table_file);
@@ -87,7 +90,8 @@ ClientUI::ClientUI(const GG::XMLElement& elem) :
     m_state(STATE_STARTUP),
     m_string_table(0),
     m_intro_screen(0),
-    m_map_wnd(0)
+    m_map_wnd(0),
+    m_turn_progress_wnd(0)
 {
     using namespace GG;
     
@@ -190,6 +194,9 @@ bool ClientUI::Cleanup()
 
     delete m_map_wnd;
     m_map_wnd = 0;
+
+    delete m_turn_progress_wnd;
+    m_turn_progress_wnd = 0;
 
     s_the_UI = 0;
 
@@ -339,9 +346,9 @@ bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
 /////////////////////////////////////////////////////
 
 //Screen Functions///////////////////////////////////
-void ClientUI::InitTurn()
+void ClientUI::InitTurn( int turn_number )
 {
-    m_map_wnd->InitTurn();
+    m_map_wnd->InitTurn( turn_number );
 }
     
 void ClientUI::ScreenIntro()
@@ -354,7 +361,20 @@ void ClientUI::ScreenIntro()
     GG::App::GetApp()->Register(m_intro_screen);
 
 }//ScreenIntro()
-                      
+      
+
+void ClientUI::ScreenProcessTurn()
+{
+    HideAllWindows();
+    
+    m_state = STATE_TURNSTART; // set to turn start
+    
+    m_turn_progress_wnd = new TurnProgressWnd();
+    GG::App::GetApp()->Register(m_turn_progress_wnd);
+
+}//ScreenTurnStart()
+
+                
 void ClientUI::ScreenSettings(const ClientNetworkCore &net)
 {
     // TODO: modally run options dialog here on top of whatever screen(s) is(are) already active
@@ -367,14 +387,6 @@ void ClientUI::ScreenEmpireSelect()
 
 }//ScreenEmpireSelect()
 
-void ClientUI::ScreenTurnStart()
-{
-    ScreenMap();
-
-    // TODO: pop up a turn start screen that displays for a set period of time
-
-}//ScreenTurnStart()
-
 void ClientUI::ScreenMap()
 {
     HideAllWindows();
@@ -386,12 +398,16 @@ void ClientUI::ScreenMap()
     case STATE_INTRO:
         GG::App::GetApp()->Remove(m_intro_screen);
         delete m_intro_screen;
+	m_intro_screen = 0;
         break;
     case STATE_SETTINGS:
         break;
     case STATE_EMPIRESEL:
         break;
     case STATE_TURNSTART:
+        GG::App::GetApp()->Remove(m_turn_progress_wnd );
+        delete m_turn_progress_wnd;
+	m_turn_progress_wnd = 0;
         break;
     case STATE_MAP:
         break;
@@ -424,14 +440,6 @@ void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
     // TODO: run sitrep as an on-top window, layered over the main map
 
 }//ScreenSitrep()
-
-void ClientUI::ScreenProcessTurn(int state)
-{
-    ScreenMap();
-
-    // TODO: pop up a turn processing turn screen that displays until server returns new turn update
-
-}//ScreenProcessTurn()
 
 void ClientUI::ScreenBattle(Combat* combat)
 {
@@ -475,5 +483,12 @@ void ClientUI::HideAllWindows()
         m_intro_screen->Hide();
     if (m_map_wnd)
         m_map_wnd->Hide();
+    if (m_turn_progress_wnd)
+        m_turn_progress_wnd->Hide();
 }
 
+
+void ClientUI::UpdateTurnProgress( const std::string& phase_str, const int empire_id )
+{
+  m_turn_progress_wnd->UpdateTurnProgress( phase_str, empire_id );
+}
