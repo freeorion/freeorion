@@ -1573,7 +1573,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     y1 = m_construction->LowerRight().y;
     y2 = y1 + 5;
     GG::FlatRectangle(x1, y1, x2, y2, GG::CLR_ZERO, ClientUI::CTRL_BORDER_COLOR, 1);
-    GG::FlatRectangle(x1, y1, x1 + static_cast<int>((x2 - x1 - 2) * percent_complete), y2,
+    GG::FlatRectangle(x1, y1, x1 + static_cast<int>((x2 - x1 - 2) * std::min(percent_complete,1.0)), y2,
                       ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR, LightColor(ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR), 1);
 
     // construction progress text
@@ -1583,7 +1583,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     if(cost>0.0 && planet.ProductionPoints()<0.0) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
     else
       if(cost>0.0)
-          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet.Rollover()) / planet.ProductionPoints())));
+        text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % std::max(1,static_cast<int>(std::ceil((cost - planet.Rollover()) / planet.ProductionPoints()))));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
@@ -2317,7 +2317,7 @@ bool SidePanel::PlanetView::Render()
     y1 = m_construction->LowerRight().y-2;
     y2 = y1 + 5;
     GG::FlatRectangle(x1, y1, x2, y2, GG::CLR_ZERO, ClientUI::CTRL_BORDER_COLOR, 1);
-    GG::FlatRectangle(x1, y1, x1 + static_cast<int>((x2 - x1 - 2) * percent_complete), y2,
+    GG::FlatRectangle(x1, y1, x1 + static_cast<int>((x2 - x1 - 2) * std::min(percent_complete,1.0)), y2,
                       ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR, LightColor(ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR), 1);
 
     // construction progress text
@@ -2327,7 +2327,7 @@ bool SidePanel::PlanetView::Render()
     if(cost>0.0 && planet->ProductionPoints()<0.0) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
     else
       if(cost>0.0)
-          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet->Rollover()) / planet->ProductionPoints())));
+          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % std::max(1,static_cast<int>(std::ceil((cost - planet->Rollover()) / planet->ProductionPoints()))));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
