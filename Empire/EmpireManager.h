@@ -98,7 +98,7 @@ public:
 
     /// Changes the properties of an empire, if it exists.
     /**
-    * UpdateEmpireStatus changes the name, color, or control status
+    * UpdateEmpireStatus changes the id, name, or color
     * of the empire whose ID equals empireID.  Returns true if successful
     * false if not.  If the empire manager does not have an empire object 
     * for the specified empire this method will return false.
@@ -106,8 +106,7 @@ public:
     */
     virtual bool UpdateEmpireStatus(int empireID, 
                             std::string &name, 
-                            GG::Clr color, 
-                            Empire::ControlStatus control);
+                            GG::Clr color);
 
     /** \name Constants */ //@{
     /// Tag for empire update XMLElements

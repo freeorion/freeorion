@@ -17,10 +17,6 @@
 #include "../util/SitRepEntry.h"
 #endif
 
-#ifndef _TechManager_h_
-#include "TechManager.h"
-#endif
-
 // include ship.h so we can see the shipdesign object
 #ifndef _Ship_h_
 #include "../universe/Ship.h"
@@ -70,19 +66,12 @@ public:
 
 
     /** \name Iterator Types */ //@{
-    typedef std::set<int>::const_iterator               TechIDItr;
-    typedef std::set<int>::const_iterator               SystemIDItr;
-    typedef std::map<int, ShipDesign>::const_iterator   ShipDesignItr;
-    typedef std::list<SitRepEntry*>::const_iterator     SitRepItr;
+    typedef std::set<std::string>::const_iterator             TechItr;
+    typedef std::set<std::string>::const_iterator             BuildingTypeItr;
+    typedef std::set<int>::const_iterator                     SystemIDItr;
+    typedef std::map<std::string, ShipDesign>::const_iterator ShipDesignItr;
+    typedef std::list<SitRepEntry*>::const_iterator           SitRepItr;
     //@}
-
-    /**
-     * ControlStatus is used to determine whether an Empire is AI
-     * or Human controlled.
-     */
-    enum ControlStatus {CONTROL_AI =    0,  ///< under AI control
-                        CONTROL_HUMAN = 1   ///< under human control
-    };
 
     /* *****************************************************
     ** CONSTRUCTORS
@@ -95,8 +84,7 @@ public:
      * (planets, fleets, owned planets, visible fleets, technologies, explored
      * systems, sitrep entries) will be empty after creation
      */
-    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id,
-           ControlStatus& control); 
+    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id); 
 
     /// Creates an empire from an XMLElement
     /**
@@ -116,9 +104,6 @@ public:
    *****************************************************/
 
     /** \name Accessors */ //@{
-    /// Returns an Empire's control state
-    ControlStatus ControlState() const;
-
     /// Returns the Empire's name
     const std::string& Name() const;
 
@@ -142,8 +127,8 @@ public:
      */
     int TotalRP() const;
 
-    /// Searches for a ship design and copies over the input design and returns success/failure
-    bool CopyShipDesign(int design_id, ShipDesign& design_target);
+    /// Returns the ship design with the requested name, or 0 if none exists.
+    const ShipDesign* GetShipDesign(const std::string& name) const;
 
     /* ******************************************************
      *  The Empire object maintains containers of the following 
@@ -157,7 +142,10 @@ public:
     **************************************************/
 
     /// Returns true if the given item is in the appropriate list, false if it is not.  
-    bool HasTech(int ID) const;
+    bool TechAvailable(const std::string& name) const;
+
+    /// Returns true if the given item is in the appropriate list, false if it is not.  
+    bool BuildingTypeAvailable(const std::string& name) const;
 
     /// Returns true if the given item is in the appropriate list, false if it is not.
     bool HasExploredSystem(int ID) const;
@@ -170,8 +158,11 @@ public:
        (const) Iterators over our various lists
     ***************************************/
 
-    TechIDItr TechBegin() const;
-    TechIDItr TechEnd() const;
+    TechItr TechBegin() const;
+    TechItr TechEnd() const;
+
+    BuildingTypeItr BuildingTypeBegin() const;
+    BuildingTypeItr BuildingTypeEnd() const;
 
     SystemIDItr ExploredBegin() const;
     SystemIDItr ExploredEnd() const;
@@ -202,11 +193,6 @@ public:
      * This method encodes the empire into an XMLElement, but includes only
      * the information that the specified empire will have access to.
      * 
-     *  For v0.2, this will only be the Empire's name, color, and control state
-     *
-     *  For future versions, technology, diplomatic status, race, and other
-     *  such data will be included as appropriate.
-     *
      *   If the viewer has the same empire ID as the host object
      *   then the return value is the same as the no-arg version of XMLEncode()
      */
@@ -219,14 +205,17 @@ public:
        Methods to add items to our various lists
     **************************************************/
 
-    /// Inserts the given ID into the Empire's list of Technologies.
-    void AddTech(int ID);
+    /// Inserts the given Tech into the Empire's list of available technologies.
+    void AddTech(const std::string& name);
+
+    /// Inserts the given BuildingType into the Empire's list of available BuldingTypes.
+    void AddBuildingType(const std::string& name);
 
     /// Inserts the given ID into the Empire's list of explored systems.
     void AddExploredSystem(int ID);
 
     /// inserts a copy of the given design into the empire's design list
-    int AddShipDesign(const ShipDesign& design);
+    void AddShipDesign(const ShipDesign& design);
 
     /** Inserts the a pointer to given SitRep entry into the empire's sitrep list.
      *  \warning When you call this method, you are transferring ownership
@@ -242,11 +231,11 @@ public:
        Methods to remove items from our various lists
     **************************************************/
 
-    /// Removes the given ID from the empire's list
-    void RemoveTech(int ID);
+    /// Removes the given Tech from the empire's list
+    void RemoveTech(const std::string& name);
 
-    /// Removes the design with the specified ID from the empire's design list
-    void RemoveShipDesign(int id);
+    /// Removes the given BuildingType from the empire's list
+    void RemoveBuildingType(const std::string& name);
 
     /// Clears all sitrep entries;
     void ClearSitRep();
@@ -269,9 +258,6 @@ public:
    	
     /// Mutator for empire color
     void SetColor(const GG::Clr& color);
-
-    /// Mutator for control state
-    void SetControlState(ControlStatus state);
 
     /// Mutator for empire name
     void SetName(const std::string& name);
@@ -308,21 +294,17 @@ private:
     /// the ID of the empire's homeworld
     int m_homeworld_id;
 
-    /// Empire's control status
-    Empire::ControlStatus m_control_state;
+    /// list of acquired technologies.  These are string names referencing Tech objects
+    std::set<std::string> m_techs;
 
-    /// the next available ship design ID
-    int m_next_design_id;
-
-    /// list of acquired technologies.  These are IDs
-    /// referencing Tech objects in the techmanager
-    std::set<int> m_techs;   
+    /// list of acquired BuildingType.  These are string names referencing BuildingType objects
+    std::set<std::string> m_building_types;
 
     /// systems you've explored
     std::set<int> m_explored_systems;
 
     /// The Empire's ship designs
-    std::map<int, ShipDesign> m_ship_designs; 
+    std::map<std::string, ShipDesign> m_ship_designs;
 
     /// The Empire's sitrep entries
     std::list<SitRepEntry*> m_sitrep_entries;

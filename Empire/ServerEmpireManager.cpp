@@ -13,7 +13,6 @@
 ServerEmpireManager::ServerEmpireManager() :
     EmpireManager()
 {
-    // nothing to do yet
 }
 
 
@@ -21,10 +20,9 @@ Empire* ServerEmpireManager::CreateEmpire(int id,
                                           const std::string& name, 
                                           const std::string& player_name, 
                                           const GG::Clr& color, 
-                                          int planetID, 
-                                          Empire::ControlStatus state)
+                                          int planetID)
 {
-    Empire* emp = new Empire(name, player_name, id, color, planetID, state);
+    Empire* emp = new Empire(name, player_name, id, color, planetID);
     if(emp == NULL)
     {
         throw std::runtime_error("Memory allocation failed.  ServerEmpireManager::CreateEmpire()");
@@ -51,7 +49,6 @@ bool ServerEmpireManager::EliminateEmpire(int id)
     Empire* emp = Lookup(id);
     RemoveEmpire(emp);
     
-    // prevent memory leak
     delete emp;
     
     return (emp != NULL);
@@ -88,35 +85,3 @@ GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int empire_id)
 
     return this_turn;
 }
-
-/*
-GG::XMLElement ServerEmpireManager::CreateClientSitrepUpdate(int empire_id)
-{
-    GG::XMLElement update(SITREP_UPDATE_TAG);
-    
-    // find whatever empire they're talking about
-    Empire* emp = Lookup(empire_id);
-    
-    // perform sanity check
-    if(emp == NULL)
-    {
-        throw std::runtime_error("Invalid empire_id passed to ServerEmpireManager::CreateClientSitrepUpdate()");
-    }
-    
-    // convert Empire ID to string
-    char sIDString[12];  // integer cannot possibly exceed 11 characters
-    sprintf(sIDString, "%d", empire_id);
-        
-    // set ID attribute of the sitrep update to indicate whose empire this is
-    update.SetAttribute("empire_id", sIDString);
-        
-    // add the empire's entire sitrep to the update element
-    for( Empire::SitRepItr itr = emp->SitRepBegin(); itr != emp->SitRepEnd(); itr++)
-    {
-        update.AppendChild((*itr)->XMLEncode());
-    }
-    
-    
-    return update;
-
-}*/

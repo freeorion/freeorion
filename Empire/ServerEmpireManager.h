@@ -24,7 +24,7 @@ public:
    
     /** \name Mutators */ //@{
    
-    /// Creates a new Empire with the specified name, color, homeworld, and control state.
+    /// Creates a new Empire with the specified name, color, and homeworld.
     /** 
         Creates an empire with the specified properties and
         returns a pointer to it, after setting it up.
@@ -35,7 +35,7 @@ public:
         I do this because GameCore may want to call this under a variety of
         circumstances, and I do not want it to be too specific.
     */
-    Empire* CreateEmpire(int id, const std::string& name, const std::string& player_name, const GG::Clr& color, int planetID, Empire::ControlStatus state);
+    Empire* CreateEmpire(int id, const std::string& name, const std::string& player_name, const GG::Clr& color, int planetID);
 
     /// Removes all traces of the Empire with the specified ID.
     /**

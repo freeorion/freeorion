@@ -88,17 +88,9 @@ EmpireManager::iterator EmpireManager::end()
 }
 
 
-/**
-* UpdateEmpireStatus changes the name, color, or control status
-* of the empire whose ID equals empireID.  Returns true if successful
-* false if not.  If the empire manager does not have an empire object 
-* for the specified empire it will create one, otherwise it will update 
-* it's data.  
-*/
 bool EmpireManager::UpdateEmpireStatus(int empireID, 
                         std::string &name, 
-                        GG::Clr color, 
-                        Empire::ControlStatus control)
+                        GG::Clr color)
 {
     Empire* emp = Lookup(empireID);
     
@@ -106,7 +98,6 @@ bool EmpireManager::UpdateEmpireStatus(int empireID,
     {
         emp->SetName(name);
         emp->SetColor(color);
-        emp->SetControlState(control);
         
         return true;
     }

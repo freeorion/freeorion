@@ -1,11 +1,10 @@
 #include "Empire.h"
 
-#include "TechManager.h"
-
 #include "ResourcePool.h"
 
 #include "../universe/Predicates.h"
 #include "../universe/Planet.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 #include <algorithm>
@@ -17,16 +16,13 @@ using boost::lexical_cast;
 
 
 /** Constructors */ 
-Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id, 
-               ControlStatus& control) :
+Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id) :
     m_id(ID),
     m_total_rp(0),
     m_name(name),
     m_player_name(player_name),
     m_color(color), 
     m_homeworld_id(homeworld_id), 
-    m_control_state(control),
-    m_next_design_id(1),
     m_mineral_resource_pool(),m_food_resource_pool(),m_research_resource_pool(),m_population_resource_pool(),m_trade_resource_pool()
 {}
 
@@ -47,25 +43,29 @@ Empire::Empire(const GG::XMLElement& elem) :
     m_name = elem.Child("m_name").Text();
     m_player_name = elem.Child("m_player_name").Text();
     m_total_rp = lexical_cast<int>(elem.Child("m_total_rp").Text());
-    m_control_state = ControlStatus(lexical_cast<int>(elem.Child("m_control_state").Text()));
     m_color = GG::Clr(elem.Child("m_color").Child("GG::Clr"));
     m_homeworld_id = elem.Child("m_homeworld_id").Text().empty() ? 
         UniverseObject::INVALID_OBJECT_ID : lexical_cast<int>(elem.Child("m_homeworld_id").Text());
-    m_next_design_id = lexical_cast<int>(elem.Child("m_next_design_id").Text());
 
     const XMLElement& sitreps_elem = elem.Child("m_sitrep_entries");
     for (int i = 0; i < sitreps_elem.NumChildren(); ++i) {
         AddSitRepEntry(new SitRepEntry(sitreps_elem.Child(i)));
     }
 
-    m_explored_systems = GG::ContainerFromString<std::set<int> >(elem.Child("m_explored_systems").Text());
-    m_techs = GG::ContainerFromString<std::set<int> >(elem.Child("m_techs").Text());
-
     const XMLElement& designs_elem = elem.Child("m_ship_designs");
-    for (int i = 0; i < designs_elem.NumChildren(); ++i)
-    {
-       ShipDesign ship_design(designs_elem.Child(i));
-       m_ship_designs.insert(std::make_pair(ship_design.id, ship_design));
+    for (int i = 0; i < designs_elem.NumChildren(); ++i) {
+        ShipDesign ship_design(designs_elem.Child(i).Child(0));
+        m_ship_designs[ship_design.name] = ship_design;
+    }
+
+    m_explored_systems = GG::ContainerFromString<std::set<int> >(elem.Child("m_explored_systems").Text());
+    const XMLElement& techs_elem = elem.Child("m_techs");
+    for (int i = 0; i < techs_elem.NumChildren(); ++i) {
+        m_techs.insert(techs_elem.Child(i).Text());
+    }
+    const XMLElement& building_types_elem = elem.Child("m_building_types");
+    for (int i = 0; i < building_types_elem.NumChildren(); ++i) {
+        m_building_types.insert(building_types_elem.Child(i).Text());
     }
 }
 
@@ -73,11 +73,6 @@ Empire::~Empire()
 {}
 
 /** Misc Accessors */
-Empire::ControlStatus Empire::ControlState() const
-{
-    return m_control_state;
-}
-
 const std::string& Empire::Name() const
 {
     return m_name;
@@ -108,31 +103,28 @@ int Empire::TotalRP() const
     return m_total_rp;
 }
 
-bool Empire::CopyShipDesign(int design_id, ShipDesign& design_target)
+const ShipDesign* Empire::GetShipDesign(const std::string& name) const
 {
-   Empire::ShipDesignItr itr = m_ship_designs.find(design_id);
-   
-   if (itr != ShipDesignEnd())
-   {
-      design_target = (*itr).second;
-      return true;
-   }
-
-   return false;
+    Empire::ShipDesignItr it = m_ship_designs.find(name);
+    return (it == m_ship_designs.end()) ? 0 : &it->second;
 }
 
-bool Empire::HasTech(int ID) const
+bool Empire::TechAvailable(const std::string& name) const
 {
-    Empire::TechIDItr item = m_techs.find(ID);
-    
-    return (item != TechEnd());
+    Empire::TechItr item = m_techs.find(name);
+    return item != m_techs.end();
+}
 
+bool Empire::BuildingTypeAvailable(const std::string& name) const
+{
+    Empire::BuildingTypeItr item = m_building_types.find(name);
+    return item != m_building_types.end();
 }
 
 bool Empire::HasExploredSystem(int ID) const
 {
-   Empire::SystemIDItr item = find(ExploredBegin(), ExploredEnd(), ID);
-   return (item != ExploredEnd());
+    Empire::SystemIDItr item = find(ExploredBegin(), ExploredEnd(), ID);
+    return (item != ExploredEnd());
 }
 
 int Empire::NumSitRepEntries() const
@@ -144,13 +136,22 @@ int Empire::NumSitRepEntries() const
 /* *************************************
     (const) Iterators over our various lists
 ***************************************/
-Empire::TechIDItr Empire::TechBegin() const
+Empire::TechItr Empire::TechBegin() const
 {
     return m_techs.begin();
 }
-Empire::TechIDItr Empire::TechEnd() const
+Empire::TechItr Empire::TechEnd() const
 {
     return m_techs.end();
+}
+
+Empire::TechItr Empire::BuildingTypeBegin() const
+{
+    return m_building_types.begin();
+}
+Empire::TechItr Empire::BuildingTypeEnd() const
+{
+    return m_building_types.end();
 }
 
 Empire::SystemIDItr Empire::ExploredBegin()  const
@@ -184,9 +185,14 @@ Empire::SitRepItr Empire::SitRepEnd() const
 /*************************************************
     Methods to add items to our various lists
 **************************************************/
-void Empire::AddTech(int ID)
+void Empire::AddTech(const std::string& name)
 {
-    m_techs.insert(ID);
+    m_techs.insert(name);
+}
+
+void Empire::AddBuildingType(const std::string& name)
+{
+    m_building_types.insert(name);
 }
 
 void Empire::AddExploredSystem(int ID)
@@ -194,13 +200,9 @@ void Empire::AddExploredSystem(int ID)
     m_explored_systems.insert(ID);
 }
 
-int Empire::AddShipDesign(const ShipDesign& design)
+void Empire::AddShipDesign(const ShipDesign& design)
 {
-   ShipDesign new_design = design;
-   new_design.id = m_next_design_id;
-   m_ship_designs.insert(std::pair<int, ShipDesign>(m_next_design_id, new_design));
-    
-   return m_next_design_id++;
+   m_ship_designs[design.name] = design;
 }
 
 void Empire::AddSitRepEntry(SitRepEntry* entry)
@@ -212,17 +214,14 @@ void Empire::AddSitRepEntry(SitRepEntry* entry)
 /*************************************************
     Methods to remove items from our various lists
 **************************************************/
-void Empire::RemoveTech(int ID)
+void Empire::RemoveTech(const std::string& name)
 {
-    m_techs.erase(ID);
+    m_techs.erase(name);
 }
 
-void Empire::RemoveShipDesign(int id)
+void Empire::RemoveBuildingType(const std::string& name)
 {
-    Empire::ShipDesignItr it = m_ship_designs.find(id);
-    if (it != m_ship_designs.end()) {
-        m_ship_designs.erase(id);
-    }
+    m_building_types.erase(name);
 }
 
 void Empire::ClearSitRep()
@@ -246,10 +245,8 @@ GG::XMLElement Empire::XMLEncode() const
     retval.AppendChild(XMLElement("m_name", m_name));
     retval.AppendChild(XMLElement("m_player_name", m_player_name));
     retval.AppendChild(XMLElement("m_total_rp", lexical_cast<std::string>(m_total_rp)));
-    retval.AppendChild(XMLElement("m_control_state", lexical_cast<std::string>(m_control_state)));
     retval.AppendChild(XMLElement("m_color", m_color.XMLEncode()));
     retval.AppendChild(XMLElement("m_homeworld_id", lexical_cast<std::string>(m_homeworld_id)));
-    retval.AppendChild(XMLElement("m_next_design_id", lexical_cast<std::string>(m_next_design_id)));
 
     retval.AppendChild(XMLElement("m_sitrep_entries"));
     for (SitRepItr it = SitRepBegin(); it != SitRepEnd(); ++it) {
@@ -257,12 +254,23 @@ GG::XMLElement Empire::XMLEncode() const
     }
 
     retval.AppendChild(XMLElement("m_ship_designs"));
+    int i = 0;
     for (ShipDesignItr it = ShipDesignBegin(); it != ShipDesignEnd(); ++it) {
-        retval.LastChild().AppendChild(it->second.XMLEncode());
+        retval.LastChild().AppendChild(XMLElement("design" + lexical_cast<std::string>(i++), it->second.XMLEncode()));
     }
 
     retval.AppendChild(XMLElement("m_explored_systems", GG::StringFromContainer<std::set<int> >(m_explored_systems)));
-    retval.AppendChild(XMLElement("m_techs", GG::StringFromContainer<std::set<int> >(m_techs)));
+    retval.AppendChild(XMLElement("m_techs"));
+    i = 0;
+    for (TechItr it = TechBegin(); it != TechEnd(); ++it) {
+        retval.LastChild().AppendChild(XMLElement("tech" + lexical_cast<std::string>(i++), *it));
+    }
+
+    retval.AppendChild(XMLElement("m_building_types"));
+    i = 0;
+    for (BuildingTypeItr it = BuildingTypeBegin(); it != BuildingTypeEnd(); ++it) {
+        retval.LastChild().AppendChild(XMLElement("building_type" + lexical_cast<std::string>(i++), *it));
+    }
 
     retval.AppendChild(XMLElement("m_mineral_resource_pool", m_mineral_resource_pool.XMLEncode()));
     retval.AppendChild(XMLElement("m_food_resource_pool", m_food_resource_pool.XMLEncode()));
@@ -289,9 +297,7 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
     retval.AppendChild(XMLElement("m_name", m_name));
     retval.AppendChild(XMLElement("m_player_name", m_player_name));
     retval.AppendChild(XMLElement("m_total_rp", lexical_cast<std::string>(m_total_rp)));
-    retval.AppendChild(XMLElement("m_control_state", lexical_cast<std::string>(m_control_state)));
     retval.AppendChild(XMLElement("m_color", m_color.XMLEncode()));
-    retval.AppendChild(XMLElement("m_next_design_id", lexical_cast<std::string>(m_next_design_id)));
 
     // leave these in, but unpopulated
     retval.AppendChild(XMLElement("m_homeworld_id"));
@@ -299,6 +305,7 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
     retval.AppendChild(XMLElement("m_ship_designs"));
     retval.AppendChild(XMLElement("m_explored_systems"));
     retval.AppendChild(XMLElement("m_techs"));
+    retval.AppendChild(XMLElement("m_building_types"));
     retval.AppendChild(XMLElement("m_mineral_resource_pool", MineralResourcePool().XMLEncode()));
     retval.AppendChild(XMLElement("m_food_resource_pool", FoodResourcePool().XMLEncode()));
     retval.AppendChild(XMLElement("m_research_resource_pool", ResearchResourcePool().XMLEncode()));
@@ -320,37 +327,13 @@ int Empire::AddRP(int moreRPs)
 }
 
 
-void Empire::CheckResearchProgress( )
+void Empire::CheckResearchProgress()
 {
-    // check the TechManager for new techs
-    
-    TechManager::iterator itr = TechManager::instance().begin();
-    while(itr != TechManager::instance().end())
-    {
-        if ( (*itr).second->GetMinPts() <= m_total_rp )
-        {
-            if( !HasTech( (*itr).second->GetID() ) )
-            {
-                AddTech( (*itr).first );
-
-        		// add sit rep
-                SitRepEntry *p_entry = CreateTechResearchedSitRep( (*itr).first );
-                AddSitRepEntry( p_entry );
-            }
-        }
-        
-        itr++;
-    }
 }
 
 void Empire::SetColor(const GG::Clr& color)
 {
     m_color = color;
-}
-
-void Empire::SetControlState(ControlStatus state)
-{
-    m_control_state = state;
 }
 
 void Empire::SetName(const std::string& name)
