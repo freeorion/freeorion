@@ -41,15 +41,6 @@
 
    NAME : the name of the joining player\endverbatim
 
-   \section empire_setup EMPIRE_SETUP
-   \subsection use_3 Usage
-   sent to server when a client wishes to send it's empire setup once decided.
-   \subsection format_3 Format
-   \verbatim
-   <empire_name>"NAME"</empire_name>
-   <empire_color value="color">
-   \endverbatim
-
    \section save_game SAVE_GAME
    \subsection use_4 Usage
    sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
