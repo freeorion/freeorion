@@ -1,23 +1,50 @@
 #include "FleetButton.h"
 
 #include "../util/AppInterface.h"
+#include "../universe/Fleet.h"
 #include "FleetWindow.h"
 #include "GGDrawUtil.h"
 #include "../client/human/HumanClientApp.h"
 #include "MapWnd.h"
+#include "../universe/System.h"
 
 ////////////////////////////////////////////////
 // SystemIcon::FleetButton
 ////////////////////////////////////////////////
 
 // static(s)
-std::set<int> FleetButton::s_open_fleet_ids;
+std::set<Fleet*> FleetButton::s_open_fleets;
 
-FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_ids, ShapeOrientation orientation) : 
+FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, double zoom) : 
+    Button(0, 0, 1, 1, "", "", 0, color),
+    m_orientation()
+{
+    Universe& universe = GetUniverse();
+    for (unsigned int i = 0; i < fleet_IDs.size(); ++i) {
+        m_fleets.push_back(dynamic_cast<Fleet*>(universe.Object(fleet_IDs[i])));
+    }
+    Fleet* fleet = m_fleets.back();
+    double x = fleet->X();
+    double y = fleet->Y();
+    GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * zoom), 
+                     static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * zoom));
+    SizeMove(button_ul.x, button_ul.y, 
+             static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * zoom + 0.5), 
+             static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * zoom + 0.5));
+
+    m_orientation = fleet->Destination()->X() - fleet->X() < 0 ? SHAPE_LEFT : SHAPE_RIGHT;
+
+    GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
+}
+
+FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs, ShapeOrientation orientation) : 
     Button(x, y, w, h, "", "", 0, color),
-    m_fleet_ids(fleet_ids),
     m_orientation(orientation)
 {
+    Universe& universe = GetUniverse();
+    for (unsigned int i = 0; i < fleet_IDs.size(); ++i) {
+        m_fleets.push_back(dynamic_cast<Fleet*>(universe.Object(fleet_IDs[i])));
+    }
     GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
 }
 
@@ -30,9 +57,10 @@ FleetButton::FleetButton(const GG::XMLElement& elem) :
     const GG::XMLElement* curr_elem = &elem.Child("m_orientation");
     m_orientation = ShapeOrientation(boost::lexical_cast<int>(curr_elem->Attribute("value")));
 
-    curr_elem = &elem.Child("m_fleet_ids");
+    curr_elem = &elem.Child("m_fleets");
+    Universe& universe = GetUniverse();
     for (int i = 0; i < curr_elem->NumChildren(); ++i) {
-        m_fleet_ids.push_back(boost::lexical_cast<int>(curr_elem->Child(i).Attribute("value")));
+        m_fleets.push_back(dynamic_cast<Fleet*>(universe.Object(boost::lexical_cast<int>(curr_elem->Child(i).Attribute("value")))));
     }
 
     GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
@@ -55,10 +83,10 @@ GG::XMLElement FleetButton::XMLEncode() const
     temp.SetAttribute("value", boost::lexical_cast<std::string>(m_orientation));
     retval.AppendChild(temp);
 
-    temp = GG::XMLElement("m_fleet_ids");
-    for (unsigned int i = 0; i < m_fleet_ids.size(); ++i) {
+    temp = GG::XMLElement("m_fleets");
+    for (unsigned int i = 0; i < m_fleets.size(); ++i) {
         GG::XMLElement temp2("ID");
-        temp2.SetAttribute("value", boost::lexical_cast<std::string>(m_fleet_ids[i]));
+        temp2.SetAttribute("value", boost::lexical_cast<std::string>(m_fleets[i]->ID()));
         temp.AppendChild(temp2);
     }
     retval.AppendChild(temp);
@@ -96,27 +124,28 @@ void FleetButton::RenderRollover()
 void FleetButton::Clicked()
 {
     // only open a fleet window if there is not one open already for these fleets
-    for (int i = 0; i < m_fleet_ids.size(); ++i) {
-        if (s_open_fleet_ids.find(m_fleet_ids[i]) != s_open_fleet_ids.end())
+    for (unsigned int i = 0; i < m_fleets.size(); ++i) {
+        if (s_open_fleets.find(m_fleets[i]) != s_open_fleets.end())
             return;
     }
-    
+
     GG::Pt ul = UpperLeft();
-    bool read_only = *GetUniverse().Object(m_fleet_ids[0])->Owners().begin() != HumanClientApp::GetApp()->PlayerID();
-    FleetWnd* fleet_wnd = new FleetWnd(ul.x + 50, ul.y + 50, m_fleet_ids, read_only);
-    Wnd* root_parent = RootParent();
-    
-    if (MapWnd* map_wnd = dynamic_cast<MapWnd*>(root_parent))
+    bool read_only = *m_fleets[0]->Owners().begin() != HumanClientApp::GetApp()->PlayerID() || 
+        (m_fleets[0]->DestinationID() != UniverseObject::INVALID_OBJECT_ID && 
+         m_fleets[0]->SystemID() == UniverseObject::INVALID_OBJECT_ID);
+    FleetWnd* fleet_wnd = new FleetWnd(ul.x + 50, ul.y + 50, m_fleets, read_only);
+
+    if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
         GG::Connect(map_wnd->SelectedSystemSignal(), &FleetWnd::SystemClicked, fleet_wnd);
-    
+
     if (GG::App::GetApp()->AppWidth() < fleet_wnd->LowerRight().x)
         fleet_wnd->OffsetMove(fleet_wnd->LowerRight().x - GG::App::GetApp()->AppWidth() - 5, 0);
-    
+
     if (GG::App::GetApp()->AppHeight() < fleet_wnd->LowerRight().y)
         fleet_wnd->OffsetMove(0, fleet_wnd->LowerRight().y - GG::App::GetApp()->AppHeight() - 5);
 
-    for (int i = 0; i < m_fleet_ids.size(); ++i) {
-        s_open_fleet_ids.insert(m_fleet_ids[i]);
+    for (unsigned int i = 0; i < m_fleets.size(); ++i) {
+        s_open_fleets.insert(m_fleets[i]);
     }
 
     GG::Connect(fleet_wnd->ShowingFleetSignal(), &FleetButton::FleetIsBeingExamined);
@@ -124,12 +153,12 @@ void FleetButton::Clicked()
     GG::App::GetApp()->Register(fleet_wnd);
 }
 
-void FleetButton::FleetIsBeingExamined(int id)
+void FleetButton::FleetIsBeingExamined(Fleet* fleet)
 {
-    s_open_fleet_ids.insert(id);
+    s_open_fleets.insert(fleet);
 }
 
-void FleetButton::FleetIsNotBeingExamined(int id)
+void FleetButton::FleetIsNotBeingExamined(Fleet* fleet)
 {
-    s_open_fleet_ids.erase(id);
+    s_open_fleets.erase(fleet);
 }
