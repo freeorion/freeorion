@@ -116,7 +116,11 @@ namespace {
 
     } g_lobby_data(false);
 
+#ifdef FREEORION_WIN32
     const std::string AI_CLIENT_EXE = "freeorionca.exe";
+#else
+    const std::string AI_CLIENT_EXE = "freeorionca";
+#endif    
     const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
     GG::XMLDoc g_load_doc;
     const bool ALL_OBJECTS_VISIBLE = false; // set this to true to turn off visibility for debugging purposes

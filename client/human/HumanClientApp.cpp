@@ -68,7 +68,11 @@ Message HumanClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
 
 void HumanClientApp::StartServer()
 {
+#ifdef FREEORION_WIN32
     const std::string SERVER_CLIENT_EXE = "freeoriond.exe";
+#else
+    const std::string SERVER_CLIENT_EXE = "freeoriond";
+#endif
     std::vector<std::string> args(1, SERVER_CLIENT_EXE);
     m_server_process = Process(SERVER_CLIENT_EXE, args);
 }
