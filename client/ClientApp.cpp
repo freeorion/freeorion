@@ -1,11 +1,7 @@
 #include "ClientApp.h"
 
-#include "../network/Message.h"
-
 #include "../Empire/TechManager.h"
-
 #include "../network/XDiff.hpp"
-
 
 #include <stdexcept>
 
@@ -32,6 +28,17 @@ ClientApp::~ClientApp()
 {
     // shutdown tech tree
     TechManager::instance().ClearAll();
+}
+
+Message ClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
+{
+    GG::XMLDoc orders_doc;
+    if (save_game_data)
+        orders_doc.root_node.AppendChild("save_game_data");
+    for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
+        orders_doc.root_node.AppendChild(order_it->second->XMLEncode());
+    }
+    return ::TurnOrdersMessage(m_player_id, -1, orders_doc);
 }
 
 void ClientApp::HandleMessage(const Message& msg)
@@ -71,26 +78,13 @@ ClientNetworkCore& ClientApp::NetworkCore()
 }
 
 
-void ClientApp::StartTurn(  )
+void ClientApp::StartTurn( )
 {
-    GG::XMLDoc orders_doc;
-    OrderSet::const_iterator  order_it;
-    GG::XMLElement order_elt;
+    // send message
+    m_network_core.SendMessage(TurnOrdersMessage());
 
-    /// execute order set
-    for ( order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it)
-    {
-      order_elt = order_it->second->XMLEncode( );               
-      
-      orders_doc.root_node.AppendChild( order_elt );
-
-    }
-
-    /// clear order set
+    // clear order set
     m_orders.Reset( );
-
-    /// send message
-    m_network_core.SendMessage(TurnOrdersMessage( m_player_id, -1, orders_doc ) );
 }
 
 
@@ -99,11 +93,13 @@ int ClientApp::GetNewObjectID( )
     int new_id = UniverseObject::INVALID_OBJECT_ID; 
 
     // ask the server for a new universe object ID. This is a blocking method and can timeout without a valid ID
-    s_app->m_network_core.SendSynchronousMessage( RequestNewObjectIDMessage( s_app->m_player_id, -1 ), new_id );
+    Message msg;
+    s_app->m_network_core.SendSynchronousMessage( RequestNewObjectIDMessage( s_app->m_player_id ), msg );
+    return boost::lexical_cast<int>(msg.GetText());
 
     return new_id;
 }
- 
+
 
 void ClientApp::UpdateTurnData( GG::XMLDoc &doc )
 {
@@ -146,4 +142,3 @@ void ClientApp::UpdateTurnData( GG::XMLDoc &doc )
         m_empires.HandleEmpireElementUpdate( new_doc.root_node.Child( EmpireManager::EMPIRE_UPDATE_TAG ) );
     }
 }
-

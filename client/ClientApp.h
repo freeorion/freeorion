@@ -2,28 +2,31 @@
 #ifndef _ClientApp_h_
 #define _ClientApp_h_
 
-#ifndef _Universe_h_
-#include "../universe/Universe.h"
-#endif 
-
 #ifndef _ClientEmpire_h_
 #include "../Empire/ClientEmpireManager.h"
 #endif 
-
-#ifndef _OrderSet_h_
-#include "../util/OrderSet.h"
-#endif
 
 #ifndef _ClientNetworkCore_h_
 #include "../network/ClientNetworkCore.h"
 #endif
 
+#ifndef _Message_h_
+#include "../network/Message.h"
+#endif
+
+#ifndef _OrderSet_h_
+#include "../util/OrderSet.h"
+#endif
+
+#ifndef _Universe_h_
+#include "../universe/Universe.h"
+#endif 
+
 #include <string>
 
-namespace log4cpp { class Category;};
+namespace log4cpp {class Category;};
 
 class CombatModule;
-class Message;
 class MultiplayerLobbyWnd;
 
 /** the abstract base class for the application framework classes AIClientApp and HumanClientApp.  The static functions
@@ -41,16 +44,19 @@ public:
     /** \name Accessors */ //@{   
     const std::string&   PlayerName() const {return m_player_name;}   ///< returns the player name of this client
     int                  PlayerID() const {return m_player_id;}       ///< returns the player ID of this client
+    Message              TurnOrdersMessage(bool save_game_data = false) const; ///< returns the orders message containing all orders issued so far in the turn
     //@}
 
+    /** \name Mutators */ //@{   
     virtual void         StartTurn( );   ///< encodes order sets and sends turn orders message
+    //@}
 
     /** handles an incoming message from the server with the appropriate action or response */
-    static void                   HandleMessage(const Message& msg);
+    static void          HandleMessage(const Message& msg);
 
     /** returns a universe object ID which can be used for new objects created by the client */
     /** can return UniverseObject::INVALID_OBJECT_ID if ID cannot be found.  */
-    static int                    GetNewObjectID( );
+    static int           GetNewObjectID( );
 
     static MultiplayerLobbyWnd*   MultiplayerLobby(); ///< returns the multiplayer lobby window, or 0 if none exists
     static Universe&              GetUniverse();      ///< returns client's local copy of Universe
@@ -60,7 +66,6 @@ public:
     static ClientNetworkCore&     NetworkCore();      ///< returns the network core object for this client's player
 
 protected:
-
     /** handles universe and empire data update */
     void UpdateTurnData( GG::XMLDoc &doc );
 
@@ -83,9 +88,6 @@ private:
     virtual void HandleMessageImpl(const Message& msg) = 0;
 
     static ClientApp* s_app; ///< a ClientApp pointer to the singleton instance of the app
-
-
-
 };
 
 #endif // _ClientApp_h_
