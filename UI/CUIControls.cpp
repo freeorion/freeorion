@@ -4,6 +4,7 @@
 #include "CUIDrawUtil.h"
 #include "GGApp.h"
 #include "GGDrawUtil.h"
+#include "GGStaticGraphic.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -658,4 +659,41 @@ GG::Scroll* CUIMultiEdit::NewHScroll(bool vert_scroll)
     const int GAP = PIXEL_MARGIN - 2; // the space between the client area and the border
     GG::Pt cl_sz = Edit::ClientLowerRight() - Edit::ClientUpperLeft();
     return new CUIScroll(-GAP, cl_sz.y + GAP - SCROLL_WIDTH, cl_sz.x + 2 * GAP - (vert_scroll ? SCROLL_WIDTH : 0), SCROLL_WIDTH, GG::Scroll::HORIZONTAL);
+}
+
+///////////////////////////////////////
+// class StatisticIcon
+///////////////////////////////////////
+StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color, double value,
+                             int decimals_to_show/* = 0*/, bool show_sign/* = false*/) :
+    GG::Control(x, y, w, h, 0),
+    m_value(value),
+    m_decimals_to_show(decimals_to_show),
+    m_show_sign(show_sign),
+    m_positive_color(text_color),
+    m_negative_color(text_color),
+    m_icon(new GG::StaticGraphic(0, 0, h, h, GG::App::GetApp()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
+    m_text(new GG::TextControl(h, 0, w - h, h, "", ClientUI::FONT, ClientUI::PTS, GG::TF_LEFT | GG::TF_VCENTER, text_color))
+{
+    AttachChild(m_icon);
+    AttachChild(m_text);
+    Refresh();
+}
+
+void StatisticIcon::SetValue(double value) 
+{
+    m_value = value;
+    if (m_decimals_to_show) {
+        char buf[128];
+        sprintf(buf, (m_show_sign ? "%+#.*g" : "%#.*g"), m_decimals_to_show, value);
+        m_text->SetText(buf);
+    } else {
+        m_text->SetText(boost::lexical_cast<std::string>(static_cast<int>(value)));
+    }
+}
+
+void StatisticIcon::Refresh()
+{
+    SetValue(m_value);
+    m_text->SetColor(m_value < 0.0 ? m_negative_color : m_positive_color);
 }

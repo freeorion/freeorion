@@ -35,6 +35,10 @@
 #include "GGScroll.h"
 #endif
 
+namespace GG {
+    class StaticGraphic;
+}
+
 
 //! \file All CUI* classes are FreeOrion-style controls incorporating 
 //! the visual theme the project requires.  Implementation may
@@ -281,5 +285,45 @@ protected:
     virtual GG::Scroll* NewHScroll(bool vert_scroll);
     //@}
 };
+
+
+/** Encapsulates an icon and text that goes with it in a single control.  For example, "[food icon] +1" or "[population icon] 66", 
+    where [... icon] is an icon image, not text.  Note that no rounding is done when DecimalsShown() = 0; in this state, the number 
+    displayed will be the truncated integer version of the current value.  Also not that PositiveColor() and NegativeColor() are
+    the same color by default, specifically the one \a text_color parameter specified in the ctor. */
+class StatisticIcon : public GG::Control
+{
+public:
+    /** default ctor */
+    StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color, double value, 
+                  int decimals_to_show = 0, bool show_sign = false);
+
+    double  Value() const         {return m_value;}            ///< returns the value displayed
+    int     DecimalsShown() const {return m_decimals_to_show;} ///< returns the number of places after the decimal point to be shown
+    bool    ShowsSign() const     {return m_show_sign;}        ///< returns true iff a sign should always be shown, even for positive values
+    GG::Clr PositiveColor() const {return m_positive_color;}   ///< returns the color that will be used to display positive values
+    GG::Clr NegativeColor() const {return m_negative_color;}   ///< returns the color that will be used to display negative values
+
+    bool Render() {return true;}
+
+    void SetValue(double value); ///< sets the value to be displayed
+
+    void SetDecimalsShown(int d)     {m_decimals_to_show = d; Refresh();} ///< sets the number of places after the decimal point to be shown
+    void ShowSign(bool b)            {m_show_sign = b; Refresh();}        ///< sets whether a sign should always be shown, even for positive values
+    void SetPositiveColor(GG::Clr c) {m_positive_color = c; Refresh();}   ///< sets the color that will be used to display positive values
+    void SetNegativeColor(GG::Clr c) {m_negative_color = c; Refresh();}   ///< sets the color that will be used to display negative values
+
+private:
+    void Refresh();
+
+    double m_value;
+    int m_decimals_to_show;
+    bool m_show_sign;
+    GG::Clr m_positive_color;
+    GG::Clr m_negative_color;
+    GG::StaticGraphic* m_icon;
+    GG::TextControl* m_text;
+};
+
 
 #endif
