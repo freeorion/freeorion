@@ -261,7 +261,7 @@ MapWnd::MapWnd() :
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_MINUS, 0), &MapWnd::KeyboardZoomOut, this);
 
     // Keys for showing systems
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_s, 0), &MapWnd::ZoomToHomeSystem, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_d, 0), &MapWnd::ZoomToHomeSystem, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_x, 0), &MapWnd::ZoomToPrevOwnedSystem, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_c, 0), &MapWnd::ZoomToNextOwnedSystem, this);
 
@@ -293,7 +293,7 @@ MapWnd::~MapWnd()
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_MINUS, 0);
 
     // Keys for showing systems
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_s, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_d, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_x, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_c, 0);
 
@@ -535,7 +535,7 @@ void MapWnd::InitTurn(int turn_number)
     GG::App::GetApp()->SetAccelerator(GG::GGK_KP_MINUS, 0);
 
     // Keys for showing systems
-    GG::App::GetApp()->SetAccelerator(GG::GGK_s, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_d, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_x, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_c, 0);
 
