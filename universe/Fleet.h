@@ -15,14 +15,6 @@ private:
     typedef std::set<int> ShipIDSet;
    
 public:
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void ()> DestinationChangedSignalType; ///< emitted when the destination of this fleet changes
-    //@}
-   
-    /** \name Slot Types */ //@{
-    typedef DestinationChangedSignalType::slot_type DestinationChangedSlotType; ///< type of functor(s) invoked on a DestinationChangedSignalType
-    //@}
-
     typedef ShipIDSet::iterator         iterator;         ///< an iterator to the ships in the fleet
     typedef ShipIDSet::const_iterator   const_iterator;   ///< a const iterator to the ships in the fleet
    
@@ -56,7 +48,8 @@ public:
     /// Returns number of ships in fleet
     int NumShips() const {return m_ships.size();}
 
-    DestinationChangedSignalType& DestinationChangedSignal() const {return m_destination_changed_sig;} ///< returns the destination changed signal object for this Fleet
+    /// Returns true iff this Fleet contains a ship with ID \a id
+    bool ContainsShip(int id) const {return m_ships.find(id) != m_ships.end();}
     //@}
    
     /** \name Mutators */ //@{
@@ -79,8 +72,6 @@ public:
 private:
     ShipIDSet   m_ships;
     int         m_moving_to;
-
-    mutable DestinationChangedSignalType m_destination_changed_sig;
 };
 
 #endif // _Fleet_h_

@@ -162,7 +162,6 @@ void Fleet::SetDestination(int id)
 {
     m_moving_to = id;
     StateChangedSignal()();
-    m_destination_changed_sig();
 }
 
 void Fleet::AddShips(const std::vector<int>& ships)
