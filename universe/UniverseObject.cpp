@@ -1,4 +1,6 @@
 #include "UniverseObject.h"
+
+#include "ClientUniverse.h"
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
@@ -6,6 +8,13 @@ using boost::lexical_cast;
 #include <stdexcept>
 
 #include <stdexcept>
+
+
+// static(s)
+const double        UniverseObject::INVALID_POSITION =  -100000.0;
+const int           UniverseObject::INVALID_OBJECT_ID = -1;
+const unsigned int  UniverseObject::MIN_SHIP_ID       = 1900000000;
+const unsigned int  UniverseObject::MAX_SHIP_ID       = 2000000000;
 
 UniverseObject::UniverseObject() : 
    m_id(INVALID_OBJECT_ID),
@@ -22,7 +31,7 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
    m_y(y),
    m_owners(owners)
 {
-   if (m_x < 0.0 || 1000.0 < m_x || m_y < 0.0 || 1000.0 < m_y)
+   if (m_x < 0.0 || ClientUniverse::UNIVERSE_WIDTH < m_x || m_y < 0.0 || ClientUniverse::UNIVERSE_WIDTH < m_y)
       throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
 }
 
@@ -131,7 +140,7 @@ GG::XMLElement UniverseObject::XMLEncode(int empire_id) const
 
 void UniverseObject::Move(double x, double y)
 {
-   if (m_x + x < 0.0 || 1000.0 < m_x + x || m_y + y < 0.0 || 1000.0 < m_y + y)
+   if (m_x + x < 0.0 || ClientUniverse::UNIVERSE_WIDTH < m_x + x || m_y + y < 0.0 || ClientUniverse::UNIVERSE_WIDTH < m_y + y)
       throw std::runtime_error("UniverseObject::Move : Attempted to move object \"" + m_name + "\" off the map area.");
    m_x += x;
    m_y += y;
@@ -139,7 +148,7 @@ void UniverseObject::Move(double x, double y)
 
 void UniverseObject::MoveTo(double x, double y)
 {
-   if (x < 0.0 || 1000.0 < x || y < 0.0 || 1000.0 < y)
+   if (x < 0.0 || ClientUniverse::UNIVERSE_WIDTH < x || y < 0.0 || ClientUniverse::UNIVERSE_WIDTH < y)
       throw std::invalid_argument("UniverseObject::MoveTo : Attempted to place object \"" + m_name + "\" off the map area.");
    m_x = x;
    m_y = y;

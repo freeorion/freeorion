@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _UniverseObject_h_
 #define _UniverseObject_h_
 
@@ -78,8 +79,10 @@ public:
 
    //@}
    
-   static const double  INVALID_POSITION = -100000;   ///< the position in x and y at which default-constructed objects are placed
-   static const int     INVALID_OBJECT_ID = 0;              ///< the ID number assigned to a UniverseObject upon construction; it is assigned an ID later when it is placed in the universe
+   static const double  INVALID_POSITION;  ///< the position in x and y at which default-constructed objects are placed
+   static const int     INVALID_OBJECT_ID; ///< the ID number assigned to a UniverseObject upon construction; it is assigned an ID later when it is placed in the universe
+   static const unsigned int  MIN_SHIP_ID; ///< the beginning of the range of object IDs used for ships IDs
+   static const unsigned int  MAX_SHIP_ID; ///< the end of the range of object IDs used for ships IDs
 
 private:
    int            m_id;
