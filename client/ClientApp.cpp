@@ -35,8 +35,9 @@ Message ClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
     GG::XMLDoc orders_doc;
     if (save_game_data)
         orders_doc.root_node.AppendChild("save_game_data");
+    orders_doc.root_node.AppendChild(GG::XMLElement("Orders"));
     for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
-        orders_doc.root_node.AppendChild(order_it->second->XMLEncode());
+        orders_doc.root_node.LastChild().AppendChild(order_it->second->XMLEncode());
     }
     return ::TurnOrdersMessage(m_player_id, -1, orders_doc);
 }

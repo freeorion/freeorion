@@ -13,14 +13,14 @@
 #include <sstream>
 
 namespace {
-GG::Wnd* NewCUIButton(const GG::XMLElement& elem)         {return new CUIButton(elem);}
-GG::Wnd* NewCUIStateButton(const GG::XMLElement& elem)    {return new CUIStateButton(elem);}
-GG::Wnd* NewCUIScroll(const GG::XMLElement& elem)         {return new CUIScroll(elem);}
-GG::Wnd* NewCUIScrollTab(const GG::XMLElement& elem)      {return new CUIScroll::ScrollTab(elem);}
-GG::Wnd* NewCUIListBox(const GG::XMLElement& elem)        {return new CUIListBox(elem);}
-GG::Wnd* NewCUIDropDownList(const GG::XMLElement& elem)   {return new CUIDropDownList(elem);}
-GG::Wnd* NewCUIEdit(const GG::XMLElement& elem)           {return new CUIEdit(elem);}
-GG::Wnd* NewCUIMultiEdit(const GG::XMLElement& elem)      {return new CUIMultiEdit(elem);}
+    GG::Wnd* NewCUIButton(const GG::XMLElement& elem)         {return new CUIButton(elem);}
+    GG::Wnd* NewCUIStateButton(const GG::XMLElement& elem)    {return new CUIStateButton(elem);}
+    GG::Wnd* NewCUIScroll(const GG::XMLElement& elem)         {return new CUIScroll(elem);}
+    GG::Wnd* NewCUIScrollTab(const GG::XMLElement& elem)      {return new CUIScroll::ScrollTab(elem);}
+    GG::Wnd* NewCUIListBox(const GG::XMLElement& elem)        {return new CUIListBox(elem);}
+    GG::Wnd* NewCUIDropDownList(const GG::XMLElement& elem)   {return new CUIDropDownList(elem);}
+    GG::Wnd* NewCUIEdit(const GG::XMLElement& elem)           {return new CUIEdit(elem);}
+    GG::Wnd* NewCUIMultiEdit(const GG::XMLElement& elem)      {return new CUIMultiEdit(elem);}
 }
  
 HumanClientApp::HumanClientApp() : 
@@ -45,6 +45,20 @@ HumanClientApp::HumanClientApp() :
 
 HumanClientApp::~HumanClientApp()
 {
+}
+
+Message HumanClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
+{
+    GG::XMLDoc orders_doc;
+    if (save_game_data) {
+        orders_doc.root_node.AppendChild("save_game_data");
+        orders_doc.root_node.AppendChild(GetUI()->SaveGameData()); // include relevant UI state
+    }
+    orders_doc.root_node.AppendChild(GG::XMLElement("Orders"));
+    for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
+        orders_doc.root_node.LastChild().AppendChild(order_it->second->XMLEncode());
+    }
+    return ::TurnOrdersMessage(m_player_id, -1, orders_doc);
 }
 
 void HumanClientApp::StartServer()
@@ -539,10 +553,17 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         std::stringstream stream(msg.GetText());
         GG::XMLDoc doc;
         doc.ReadDoc(stream);
+
+        // re-issue orders given earlier in the saved turn
         GG::XMLObjectFactory<Order> factory;
         Order::InitOrderFactory(factory);
-        for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
-            Orders().IssueOrder(factory.GenerateObject(doc.root_node.Child(i)));
+        for (int i = 0; i < doc.root_node.Child("Orders").NumChildren(); ++i) {
+            Orders().IssueOrder(factory.GenerateObject(doc.root_node.Child("Orders").Child(i)));
+        }
+
+        // restore UI state
+        if (doc.root_node.ContainsChild("UI")) {
+            GetUI()->RestoreFromSaveData(doc.root_node.Child("UI"));
         }
         break;
     }

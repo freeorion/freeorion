@@ -223,8 +223,8 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
         doc.ReadDoc(stream);
         GG::XMLObjectFactory<Order> factory;
         Order::InitOrderFactory(factory);
-        for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
-            Orders().IssueOrder(factory.GenerateObject(doc.root_node.Child(i)));
+        for (int i = 0; i < doc.root_node.Child("Orders").NumChildren(); ++i) {
+            Orders().IssueOrder(factory.GenerateObject(doc.root_node.Child("Orders").Child(i)));
         }
         break;
     }

@@ -44,7 +44,10 @@ public:
     /** \name Accessors */ //@{   
     const std::string&   PlayerName() const {return m_player_name;}   ///< returns the player name of this client
     int                  PlayerID() const {return m_player_id;}       ///< returns the player ID of this client
-    Message              TurnOrdersMessage(bool save_game_data = false) const; ///< returns the orders message containing all orders issued so far in the turn
+    
+    /** returns the orders message containing all orders issued so far in the turn; if \a save_game_data is true, additional 
+        client-side data may also be included */
+    virtual Message      TurnOrdersMessage(bool save_game_data = false) const;
     //@}
 
     /** \name Mutators */ //@{   

@@ -310,7 +310,9 @@ void ServerApp::HandleMessage(const Message& msg)
                     GG::XMLElement player_element("Player");
                     player_element.AppendChild(GG::XMLElement("name", m_network_core.Players().find(it->first)->second.name));
                     player_element.AppendChild(m_empires.Lookup(it->first)->XMLEncode());
-                    player_element.AppendChild(it->second);
+                    for (GG::XMLElement::const_child_iterator elem_it = it->second.child_begin(); elem_it != it->second.child_end(); ++elem_it) {
+                        player_element.AppendChild(*elem_it);
+                    }
                     doc.root_node.AppendChild(player_element);
                 }
                 doc.root_node.AppendChild(m_universe.XMLEncode(Universe::ALL_EMPIRES));
@@ -381,9 +383,10 @@ void ServerApp::HandleMessage(const Message& msg)
 	    doc.ReadDoc(stream);
 
         if (doc.root_node.ContainsChild("save_game_data")) { // the Orders were in answer to a save game data request
-            doc.root_node.SetTag("Orders");
             doc.root_node.RemoveChild("save_game_data");
-            m_player_save_game_data[msg.Sender()] = doc.root_node;
+            m_player_save_game_data[msg.Sender()].AppendChild(doc.root_node.Child("Orders"));
+            if (doc.root_node.ContainsChild("UI"))
+                m_player_save_game_data[msg.Sender()].AppendChild(doc.root_node.Child("UI"));
             m_players_responded.insert(msg.Sender());
         } else { // the Orders were sent from a Player who has finished her turn
 #if 0
@@ -400,7 +403,7 @@ void ServerApp::HandleMessage(const Message& msg)
             p_order_set = new OrderSet( );
             GG::XMLObjectFactory<Order> order_factory;
             Order::InitOrderFactory(order_factory);
-            GG::XMLElement root = doc.root_node;
+            const GG::XMLElement& root = doc.root_node.Child("Orders");
 
             for (int i = 0; i < root.NumChildren(); ++i) {
                 Order *p_order = order_factory.GenerateObject(root.Child(i));
@@ -742,13 +745,15 @@ void ServerApp::NewGameInit()
 void ServerApp::LoadGameInit()
 {
     m_turn_sequence.clear();
-    std::vector<GG::XMLDoc> order_docs;
+    std::vector<GG::XMLDoc> player_docs;
     for (int i = 0; i < g_load_doc.root_node.NumChildren(); ++i) {
         if (g_load_doc.root_node.Child(i).Tag() == "Player") {
-            GG::XMLDoc orders;
-            orders.root_node = g_load_doc.root_node.Child(i).Child("Orders");
-            orders.root_node.SetTag("GG::XMLDoc");
-            order_docs.push_back(orders);
+            GG::XMLDoc player_doc;
+            player_doc.root_node.SetTag("GG::XMLDoc");
+            player_doc.root_node.AppendChild(g_load_doc.root_node.Child(i).Child("Orders"));
+            if (g_load_doc.root_node.Child(i).ContainsChild("UI"))
+                player_doc.root_node.AppendChild(g_load_doc.root_node.Child(i).Child("UI"));
+            player_docs.push_back(player_doc);
         }
     }
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
@@ -761,13 +766,13 @@ void ServerApp::LoadGameInit()
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
 
 #if 0
-        std::ofstream ofs("LoadGameInit-doc.xml");
+        std::ofstream ofs(("LoadGameInit-doc-empire" + boost::lexical_cast<std::string>(it->first) + ".xml").c_str());
         doc.WriteDoc(ofs);
         ofs.close();
 #endif
 
         // send saved pending orders to player
-        m_network_core.SendMessage(ServerLoadGameMessage(it->first, order_docs[it->first]));
+        m_network_core.SendMessage(ServerLoadGameMessage(it->first, player_docs[it->first]));
 
         m_turn_sequence[it->first] = 0;
     }
