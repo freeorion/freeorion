@@ -734,14 +734,15 @@ void StatisticIcon::Refresh()
 ///////////////////////////////////////
 // class StatisticIconDualValue
 ///////////////////////////////////////
-StatisticIconDualValue::StatisticIconDualValue(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color, double value,double value_second,
-                                     int decimals_to_show/* = 0*/, bool show_sign/* = false*/) :
+StatisticIconDualValue::StatisticIconDualValue(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color, 
+                                               double value,double value_second,
+                                               int decimals_to_show/* = 0*/,int decimals_to_show_second/* = 0*/,
+                                               bool show_sign/* = false*/, bool show_sign_second/* = false*/) :
     GG::Control(x, y, w, h, 0),
-    m_value(value),
-    m_decimals_to_show(decimals_to_show),
-    m_show_sign(show_sign),
-    m_positive_color(text_color),
-    m_negative_color(text_color),
+    m_value(value),m_value_second(value_second),
+    m_decimals_to_show(decimals_to_show),m_decimals_to_show_second(decimals_to_show_second),
+    m_show_sign(show_sign),m_show_sign_second(show_sign_second),
+    m_positive_color(text_color),m_negative_color(text_color),
     m_icon(new GG::StaticGraphic(0, 0, h, h, GG::App::GetApp()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
     m_text(new GG::TextControl(h, 0, w - h, h, "", ClientUI::FONT, ClientUI::PTS, GG::TF_LEFT | GG::TF_VCENTER, text_color))
 {
@@ -752,15 +753,20 @@ StatisticIconDualValue::StatisticIconDualValue(int x, int y, int w, int h, const
 
 void StatisticIconDualValue::UpdateTextControl()
 {
-    std::string value        = (ShowsSign() && 0.0 <= Value      () ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(Value      ()));
-    std::string value_second = (ShowsSign() && 0.0 <= ValueSecond() ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(ValueSecond()));
+    std::string value        = (ShowsSign      () && 0.0 <= Value      () ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(Value      ()));
+    std::string value_second = (ShowsSignSecond() && 0.0 <= ValueSecond() ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(ValueSecond()));
+
+    char buf[128];
 
     if (DecimalsShown()) 
     {
-        char buf[128];
-        sprintf(buf, (ShowsSign() ? "%+#.*g" : "%#.*g"), DecimalsShown(), Value());
+        sprintf(buf, (ShowsSign() ? "%+.*f" : "%.*f"), DecimalsShown(), Value());
         value = buf;
-        sprintf(buf, (ShowsSign() ? "%+#.*g" : "%#.*g"), DecimalsShown(), ValueSecond());
+    } 
+
+    if (DecimalsShownSecond()) 
+    {
+        sprintf(buf, (ShowsSignSecond() ? "%+.*f" : "%.*f"), DecimalsShownSecond(), ValueSecond());
         value_second = buf;
     } 
 
