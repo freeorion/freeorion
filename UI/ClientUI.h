@@ -176,7 +176,7 @@ public:
     static void LogMessage(const std::string& msg); //!<sends a message to the logger
     static const std::string&  String(const std::string& index);    //!< Returns a lookup from the string table
 
-    static void GenerateSitRepText( SitRepEntry *p_sit_rep ); ///< generates a SitRep string from it's XMl data.
+    static void GenerateSitRepText( SitRepEntry *p_sit_rep ); ///< generates a SitRep string from it's XML data.
 
 
 

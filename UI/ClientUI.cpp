@@ -328,31 +328,17 @@ bool ClientUI::Initialize(const std::string& string_table_file)
 {
     //initialize Tooltip engine
     m_tooltips = new ToolContainer(TOOLTIP_DELAY);
-    
+
     //initialize string table
     m_string_table = new StringTable(string_table_file);
-    
+
     //initialize UI state & window
     m_state = STATE_STARTUP;
-    
+
     m_map_wnd = new MapWnd();
     GG::App::GetApp()->Register(m_map_wnd);
     m_map_wnd->Hide();
 
-    //clear logging file
-    std::ofstream ofs_outfile("ClientUI.log");    
-    ofs_outfile.close();
-
-    //setup logger
-    log4cpp::Appender* appender = new log4cpp::FileAppender("Appender", "ClientUI.log");
-    log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
-    layout->setConversionPattern("%d %p : %m%n");
-    appender->setLayout(layout);
-    s_logger.setAdditivity(false);  // make appender the only appender used...
-    s_logger.setAppender(appender);
-    s_logger.setAdditivity(true);   // ...but allow the addition of others later
-    s_logger.setPriority(log4cpp::Priority::DEBUG);
-    
     return true;
 }
 
