@@ -49,7 +49,11 @@ class ClientEmpire;
 #endif
 
 class Tech;
-class SitRepEvent;
+
+#ifndef _SitRepEntry_h_
+#include "../util/SitRepEntry.h"
+#endif
+
 class Combat;
 
 //! \brief ClientUI Main Module
@@ -79,7 +83,19 @@ public:
         STATE_LOAD        = 10,
         STATE_SHUTDOWN    = 11
     };//enum
+    
+//! \name Static Config Data
+//!@{
+    static std::string FONT;    //!< The default font to use
+    static int         PTS;    //!< default point size
+    static std::string DIR;     //!< directory currently being used, contains config files
+    static std::string ART_DIR;    //!< directory holding artwork, ("*/art/small/" or "*/art/large/"
+    static GG::Clr     WND_COLOR; //!< color of a UI window
+    static GG::Clr     BORDER_COLOR; //!< color of window borders
+    static GG::Clr     CTRL_COLOR; //!< color of UI controls
+    static GG::Clr     TEXT_COLOR; //!< color of UI text    
 
+//!@}
 public:
     //! \name Construction & Initialization
     //!@{
@@ -112,6 +128,7 @@ public:
     bool ChangeResolution(int width, int height);    //!< changes the screen resolution and modifies any images or data required to make the change.  
     bool Freeze();                        //!< freezes the interface so that user input is ignored.
     bool Unfreeze();                    //!< unfreezes the UI and input is recognized again
+    bool Frozen();                //!< returns true if interface is frozen, false otherwise
     
     //! @param parent A pointer to the Wnd that should contain the tooltip
     //! @param tool A pointer to a ToolWnd to be associated with that window
@@ -136,7 +153,7 @@ public:
     void ScreenMap(const ClientUniverse &u, const ClientEmpire &e);     //!< Universe Map Screen
 
     //! @param events vector containing all the events to be listed
-    void ScreenSitrep(const std::vector<SitRepEvent> events);    //!< Sitrep Screen
+    void ScreenSitrep(const std::vector<SitRepEntry> &events);    //!< Sitrep Screen
     
     //! @param state integer code pertaining to the message to display on the turn-processing screen
     void ScreenProcessTurn(int state);                //!< Turn-processing screen
@@ -176,28 +193,35 @@ public:
     bool ZoomTo(const Tech& t);    //!< Opens the technology screen and presents a description of the given technology
    
    //!@}
-   
-#ifdef DEBUG
 
-    //! \name Debugging Functions
-    //!@{
-    
     //! @param message The message to display
-    void MessageBox(const std::string& message);        //!< displays a the message in a popup window for debugging
+    static void MessageBox(const std::string& message);        //!< displays a the message in a popup window for debugging
     
-    //!@}
-#endif
+   
 
 private:
+    //! \name Internal Functions
+    //!@{
+    void UnregisterCurrent(bool delete_it = false);    //!< removes the current window from the Zlist and deletes it if delete_it is true
+    
+    //!@}
+
+private:
+    //! \name Static Members
+    //!@{
     static log4cpp::Category& s_logger;        //!< log4cpp logging category
+    static ClientUI* the_UI;                   //!<pointer to the one and only ClientUI object
+    //!@}
 
 private:
     const Uint32 TOOLTIP_DELAY;    //!<number of milliseconds to initialize tooltips to
     ToolContainer* m_tooltips;        //!< the single toolcontainer object
     int m_state;                    //!< represents the screen currently being displayed
+    GG::Wnd* m_current_window;    //!< a pointer to the window (screen) currently being displays
+    bool m_frozen;    //!< true if the interface is frozen and false if it isn't
     
     StringTable* m_string_table;    //!< a string table to lookup international strings
-    static ClientUI* the_UI;    //!<pointer to the one and only ClientUI object
+    
 
 };//ClientUI
 
