@@ -8,21 +8,11 @@
 #include "../client/human/HumanClientApp.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
+#include "../util/Random.h"
 #include "SidePanel.h"
 #include "../universe/System.h"
 #include "SystemIcon.h"
 #include "../universe/UniverseObject.h"
-
-// HACK! this keeps gcc 3.2 from barfing when it sees "typedef long long uint64_t;"
-// in boost/cstdint.h when compiling under windows
-#ifdef WIN32
-#  define BOOST_MSVC -1
-#endif
-#include <boost/random/uniform_smallint.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#ifdef WIN32
-#  undef BOOST_MSVC
-#endif
 
 #include <vector>
 
@@ -31,6 +21,8 @@ const int SIDE_PANEL_WIDTH = 300;
 const int MAP_MARGIN_WIDTH = 50;    // the number of pixels of system-less space around all four sides of the starfield
 const double ZOOM_STEP_SIZE = 1.25;
 const int NUM_NEBULA_TEXTURES = 5;
+const int MIN_NEBULAE = 3;
+const int MAX_NEBULAE = 8;
 }
 
 // static(s)
@@ -77,18 +69,17 @@ MapWnd::MapWnd() :
     m_bg_scroll_rate[2] = 0.5;
 
     // set up nebulae
-    boost::mt19937 gen;
-    int num_nebulae = boost::uniform_smallint<boost::mt19937>(gen, 1, 4)();
+    int num_nebulae = RandSmallInt(MIN_NEBULAE, MAX_NEBULAE);
     m_nebulae.resize(num_nebulae);
     m_nebula_centers.resize(num_nebulae);
-    boost::uniform_smallint<boost::mt19937> universe_placement(gen, 0, ClientUniverse::UNIVERSE_WIDTH);
-    boost::uniform_smallint<boost::mt19937> nebula_type(gen, 1, NUM_NEBULA_TEXTURES);
+    SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(ClientUniverse::UNIVERSE_WIDTH));
+    SmallIntDistType nebula_type = SmallIntDist(1, NUM_NEBULA_TEXTURES);
     for (int i = 0; i < num_nebulae; ++i) {
         std::string nebula_filename = "nebula" + boost::lexical_cast<std::string>(nebula_type()) + ".png";
         m_nebulae[i].reset(new GG::Texture());
         m_nebulae[i]->Load(ClientUI::ART_DIR + nebula_filename);
         m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
-    }
+    }    
 }
 
 MapWnd::~MapWnd()
@@ -120,9 +111,7 @@ int MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
     m_side_panel->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
-
     m_dragged = true;
-
     return 1;
 }
 
