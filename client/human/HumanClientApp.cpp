@@ -297,7 +297,13 @@ void HumanClientApp::SetLobby(MultiplayerLobbyWnd* lobby)
 void HumanClientApp::PlayMusic(const std::string& filename, bool loop)
 {
     m_current_music = FSOUND_Stream_Open(filename.c_str(), FSOUND_2D | FSOUND_NONBLOCKING, 0, 0);
-    FSOUND_Stream_SetEndCallback(m_current_music, &HumanClientApp::StreamEnded, this);
+    FSOUND_Stream_SetEndCallback(m_current_music,
+#if _MSC_VER
+                                 (FSOUND_STREAMCALLBACK)(&HumanClientApp::StreamEnded),
+#else
+                                 &HumanClientApp::StreamEnded,
+#endif
+                                 this);
     m_loop_music = loop;
 }
 
