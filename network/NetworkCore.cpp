@@ -94,10 +94,17 @@ void NetworkCore::ReceiveData(int socket, std::string& stream, const std::string
 std::string ToString(const IPaddress& addr)
 {
    std::string retval;
-   retval += boost::lexical_cast<std::string>(addr.host << 24 >> 24) + '.';
-   retval += boost::lexical_cast<std::string>(addr.host << 16 >> 24) + '.';
-   retval += boost::lexical_cast<std::string>(addr.host << 8  >> 24) + '.';
-   retval += boost::lexical_cast<std::string>(addr.host << 0  >> 24);
+#ifdef __BIG_ENDIAN__
+   retval += boost::lexical_cast<std::string>(addr.host	      & 255) + '.';
+   retval += boost::lexical_cast<std::string>(addr.host >> 8  & 255) + '.';
+   retval += boost::lexical_cast<std::string>(addr.host >> 16 & 255) + '.';
+   retval += boost::lexical_cast<std::string>(addr.host >> 24);
+#else
+   retval += boost::lexical_cast<std::string>(addr.host >> 24      ) + '.';
+   retval += boost::lexical_cast<std::string>(addr.host >> 16 & 255) + '.';
+   retval += boost::lexical_cast<std::string>(addr.host >> 8  & 255) + '.';
+   retval += boost::lexical_cast<std::string>(addr.host       & 255);
+#endif
    return retval;
 }
 
