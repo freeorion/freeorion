@@ -1,9 +1,9 @@
 /**
   * XDiff -- A part of Niagara Project
-  * Author:	Yuan Wang
+  * Author:   Yuan Wang
   *
-  * Copyright (c)	Computer Sciences Department,
-  *			University of Wisconsin -- Madison
+  * Copyright (c)   Computer Sciences Department,
+  *         University of Wisconsin -- Madison
   * All Rights Reserved._
   *
   * Permission to use, copy, modify and distribute this software and
@@ -23,13 +23,13 @@
   * Please report bugs or send your comments to yuanwang@cs.wisc.edu
   */
 
-#ifndef	__XDIFF__
-#define	__XDIFF__
+#ifndef   __XDIFF__
+#define   __XDIFF__
 
 #include <fstream>
 #include <vector>
 
-#ifndef	__XTREE__
+#ifndef   __XTREE__
 #include "XTree.hpp"
 #endif
 
@@ -40,20 +40,20 @@ namespace GG {class XMLDoc;}
 /** computes the difference between two XML documents.  The result of this computation reflects the changes that must be 
    made to argument 1 to recreate argument 2, so the result is analogous to arg2 - arg1. Only the information absolutely 
    necessary to communicate the difference is included in the result.  Usually this means that only the parts that differ 
-   are included, but sometimes elements of the original documents' structure must be included to indicate where the 
+   are included, but sometimes elements of the original document's structure must be included to indicate where the 
    differences are located.  Any element that represents a difference will have an attribute XDchg="..." ("XDiff change").  
    The change types are:
    - \verbatim "INS " \endverbatim
    This element is an insertion.  A single item such as "\<TagName XDchg="INS "/\>" may be inserted, or a complex object such as 
    \verbatim
-   <TagName>
+   <TagName XDchg="INS ">
       <sub_item1 value="foo">
          <sub_sub_item value="0"/>
       </sub_item1>
       ...
       <sub_itemN value="bar">"Text"</sub_itemN>
    </TagName>\endverbatim
-   - \verbatim "INS " \endverbatim
+   - \verbatim "DEL " \endverbatim
    This element is a deletion.  Even if the item to be deleted has attributes and children, only its tag name will be included,
    since this is all that is needed to find and delete it (e.g. "\<TagName XDchg="DEL "/\>").
    - \verbatim "TXT " \endverbatim
@@ -61,7 +61,7 @@ namespace GG {class XMLDoc;}
    "\<TagName XDchg="TXT "\>"New text here."</item>").  Items without a "TXT " update code will not have accompanying text.
    - \verbatim "DELATTR " \endverbatim
    This element has attributes which should be deleted from the attributes for an element appearing in the first argument.  
-   All attributes in this element except "XDchg" are to be deleted.
+   All attributes in this element (except "XDchg") are to be deleted.
    - \verbatim "UPDATTR " \endverbatim
    This element has attributes which should be updated in or added to the attributes for an element appearing in the first 
    argument.  Any attributes which appear in the original element should be updated to the values presented in this element;
@@ -72,7 +72,7 @@ namespace GG {class XMLDoc;}
    attributes, the entire set of original attributes must be replaced with the new sequence of attributes.
    
    TXT codes may appear with exactly one of the *ATTR codes, but no more than one *ATTR code may appear in an update, and
-   all INS and DEL codes will apear alone.
+   all INS and DEL codes will always appear alone.
    */
 class XDiff
 {
@@ -83,6 +83,10 @@ public:
    /** ctor that takes two GG::XMLDoc's as input, and writes the result of the xdiff operation to \a output; 
       if whitespace == true, linebreaks and indentation will be included. */
    XDiff(const GG::XMLDoc& doc1, const GG::XMLDoc& doc2, std::string& output, bool whitespace = false);
+   
+   /** ctor that takes two GG::XMLDoc's as input, and writes the result of the xdiff operation to \a output; 
+      if whitespace == true, linebreaks and indentation will be included. */
+   XDiff(const GG::XMLDoc& doc1, const GG::XMLDoc& doc2, GG::XMLDoc& output, bool whitespace = false);
    
    ~XDiff(); ///< dtor
 
@@ -130,5 +134,6 @@ private:
    XTree*                           _xtree2;
    XLut*                            _xlut;
 };
+
 #endif
 
