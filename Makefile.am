@@ -15,7 +15,7 @@ save:
 flags:
 	echo @FT2_CFLAGS@ @SDL_CFLAGS@ @GIGI_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_SERVER @CFLAGS@ @CPPFLAGS@
 
-AM_CXXFLAGS = -Wall
+AM_CXXFLAGS = -Wall -g
 
 bin_PROGRAMS = freeoriond freeorion freeorionca
 
@@ -154,6 +154,8 @@ client/human/HumanClientApp.h			\
 client/human/chmain.cpp				\
 UI/About.cpp					\
 UI/About.h					\
+UI/BSpline.cpp					\
+UI/BSpline.h					\
 UI/ClientUI.cpp					\
 UI/ClientUI.h					\
 UI/CUIControls.cpp				\
@@ -191,12 +193,49 @@ UI/SitRepPanel.cpp				\
 UI/SitRepPanel.h				\
 UI/SystemIcon.cpp				\
 UI/SystemIcon.h					\
+UI/TechWnd.cpp				\
+UI/TechWnd.h				\
 UI/ToolContainer.cpp				\
 UI/ToolContainer.h				\
 UI/ToolWnd.cpp					\
 UI/ToolWnd.h					\
 UI/TurnProgressWnd.cpp				\
 UI/TurnProgressWnd.h				\
+UI/vcg/alloc.c				\
+UI/vcg/alloc.h				\
+UI/vcg/draw.c				\
+UI/vcg/drawchr.h				\
+UI/vcg/draw.h				\
+UI/vcg/drawlib.c				\
+UI/vcg/drawlib.h				\
+UI/vcg/drawstr.c				\
+UI/vcg/drawstr.h				\
+UI/vcg/fisheye.c				\
+UI/vcg/fisheye.h				\
+UI/vcg/folding.c				\
+UI/vcg/folding.h				\
+UI/vcg/globals.h				\
+UI/vcg/grammar.h				\
+UI/vcg/grprint.cpp				\
+UI/vcg/grprint.h				\
+UI/vcg/lex.yy.c				\
+UI/vcg/main.cpp				\
+UI/vcg/main.h				\
+UI/vcg/options.c				\
+UI/vcg/options.h				\
+UI/vcg/prepare.c				\
+UI/vcg/step0.c				\
+UI/vcg/step1.c				\
+UI/vcg/step2.c				\
+UI/vcg/step3.c				\
+UI/vcg/step4.c				\
+UI/vcg/steps.h				\
+UI/vcg/timelim.c				\
+UI/vcg/timelim.h				\
+UI/vcg/timing.h				\
+UI/vcg/tree.c				\
+UI/vcg/y.tab.c				\
+UI/vcg/y.tab.h				\
 network/ClientNetworkCore.cpp			\
 network/ClientNetworkCore.h			\
 $(COMMON_FILES)
