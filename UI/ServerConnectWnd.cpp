@@ -128,7 +128,7 @@ void ServerConnectWnd::InitControls()
     AttachControls();
     GG::Connect(m_btn_search_more->ClickedSignal(), &ServerConnectWnd::SearchMore, this);
     GG::Connect(m_btn_ok->ClickedSignal(), &ServerConnectWnd::OnOk, this);
-    GG::Connect(m_btn_cancel->ClickedSignal(), &ServerConnectWnd::OnOk, this);
+    GG::Connect(m_btn_cancel->ClickedSignal(), &ServerConnectWnd::OnCancel, this);
 }
 
 /** Take server list (m_server_list) and populate dropdownlist with the values */
