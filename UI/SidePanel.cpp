@@ -89,19 +89,19 @@ namespace {
     std::string planet_image = ClientUI::ART_DIR + "planets/";
     switch (planet.Type())
     {
-      case Planet::PT_SWAMP     : planet_image += "swamp"     ; break;
-      case Planet::PT_TOXIC     : planet_image += "toxic"     ; break;
-      case Planet::PT_INFERNO   : planet_image += "inferno"   ; break;
-      case Planet::PT_RADIATED  : planet_image += "radiated"  ; break;
-      case Planet::PT_BARREN    : planet_image += "barren"    ; break;
-      case Planet::PT_TUNDRA    : planet_image += "tundra"    ; break;
-      case Planet::PT_DESERT    : planet_image += "desert"    ; break;
-      case Planet::PT_TERRAN    : planet_image += "terran"    ; break;
-      case Planet::PT_OCEAN     : planet_image += "ocean"     ; break;
-      case Planet::PT_GAIA      : planet_image += "gaia"      ; break;
-      case Planet::PT_ASTEROIDS : planet_image += "asteroids" ; break;
-      case Planet::PT_GASGIANT  : planet_image += "gasgiant"  ; break;    
-      default                   : planet_image += "barren"    ; break;
+      case PT_SWAMP     : planet_image += "swamp"     ; break;
+      case PT_TOXIC     : planet_image += "toxic"     ; break;
+      case PT_INFERNO   : planet_image += "inferno"   ; break;
+      case PT_RADIATED  : planet_image += "radiated"  ; break;
+      case PT_BARREN    : planet_image += "barren"    ; break;
+      case PT_TUNDRA    : planet_image += "tundra"    ; break;
+      case PT_DESERT    : planet_image += "desert"    ; break;
+      case PT_TERRAN    : planet_image += "terran"    ; break;
+      case PT_OCEAN     : planet_image += "ocean"     ; break;
+      case PT_GAIA      : planet_image += "gaia"      ; break;
+      case PT_ASTEROIDS : planet_image += "asteroids" ; break;
+      case PT_GASGIANT  : planet_image += "gasgiant"  ; break;    
+      default           : planet_image += "barren"    ; break;
     }
     planet_image += boost::lexical_cast<std::string>((planet.ID() % IMAGES_PER_PLANET_TYPE) + 1) + ".png";
 
@@ -131,19 +131,19 @@ namespace {
   {
     switch (planet.Type())
     {
-      case Planet::PT_SWAMP     : return "Swamp"     ;
-      case Planet::PT_TOXIC     : return "Toxic"     ;
-      case Planet::PT_INFERNO   : return "Inferno"   ;
-      case Planet::PT_RADIATED  : return "Radiated"  ;
-      case Planet::PT_BARREN    : return "Barren"    ;
-      case Planet::PT_TUNDRA    : return "Tundra"    ;
-      case Planet::PT_DESERT    : return "Desert"    ;
-      case Planet::PT_TERRAN    : return "Terran"    ;
-      case Planet::PT_OCEAN     : return "Ocean"     ;
-      case Planet::PT_GAIA      : return "Gaia"      ;
-      case Planet::PT_ASTEROIDS : return "Asteroids" ;
-      case Planet::PT_GASGIANT  : return "Gasgiant"  ;
-      default                   : return "Barren"    ;
+      case PT_SWAMP     : return "Swamp"     ;
+      case PT_TOXIC     : return "Toxic"     ;
+      case PT_INFERNO   : return "Inferno"   ;
+      case PT_RADIATED  : return "Radiated"  ;
+      case PT_BARREN    : return "Barren"    ;
+      case PT_TUNDRA    : return "Tundra"    ;
+      case PT_DESERT    : return "Desert"    ;
+      case PT_TERRAN    : return "Terran"    ;
+      case PT_OCEAN     : return "Ocean"     ;
+      case PT_GAIA      : return "Gaia"      ;
+      case PT_ASTEROIDS : return "Asteroids" ;
+      case PT_GASGIANT  : return "Gasgiant"  ;
+      default           : return "Barren"    ;
     }
   }
 
@@ -264,19 +264,19 @@ namespace {
   {
     switch (planet.Type())
     {
-      case Planet::PT_SWAMP     : return ClientUI::String("PL_SWAMP"    );
-      case Planet::PT_TOXIC     : return ClientUI::String("PL_TOXIC"    );
-      case Planet::PT_INFERNO   : return ClientUI::String("PL_INFERNO"  );
-      case Planet::PT_RADIATED  : return ClientUI::String("PL_RADIATED" );
-      case Planet::PT_BARREN    : return ClientUI::String("PL_BARREN"   );
-      case Planet::PT_TUNDRA    : return ClientUI::String("PL_TUNDRA"   );
-      case Planet::PT_DESERT    : return ClientUI::String("PL_DESERT"   );
-      case Planet::PT_TERRAN    : return ClientUI::String("PL_TERRAN"   );
-      case Planet::PT_OCEAN     : return ClientUI::String("PL_OCEAN"    );
-      case Planet::PT_GAIA      : return ClientUI::String("PL_GAIA"     );
-      case Planet::PT_ASTEROIDS : return ClientUI::String("PL_ASTEROIDS");
-      case Planet::PT_GASGIANT  : return ClientUI::String("PL_GASGIANT" );        
-      default                   : return "ERROR ";
+      case PT_SWAMP     : return ClientUI::String("PL_SWAMP"    );
+      case PT_TOXIC     : return ClientUI::String("PL_TOXIC"    );
+      case PT_INFERNO   : return ClientUI::String("PL_INFERNO"  );
+      case PT_RADIATED  : return ClientUI::String("PL_RADIATED" );
+      case PT_BARREN    : return ClientUI::String("PL_BARREN"   );
+      case PT_TUNDRA    : return ClientUI::String("PL_TUNDRA"   );
+      case PT_DESERT    : return ClientUI::String("PL_DESERT"   );
+      case PT_TERRAN    : return ClientUI::String("PL_TERRAN"   );
+      case PT_OCEAN     : return ClientUI::String("PL_OCEAN"    );
+      case PT_GAIA      : return ClientUI::String("PL_GAIA"     );
+      case PT_ASTEROIDS : return ClientUI::String("PL_ASTEROIDS");
+      case PT_GASGIANT  : return ClientUI::String("PL_GASGIANT" );        
+      default           : return "ERROR ";
     }
   }
 
@@ -805,14 +805,6 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
   row->push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
 
-  row = new ConstructionRow(ProdCenter::INDUSTRY_BUILD);
-  row->push_back("Industry", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
-  row = new ConstructionRow(ProdCenter::RESEARCH_BUILD);
-  row->push_back("Research", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
   row = new ConstructionRow(ProdCenter::SCOUT);
   row->push_back("Scout", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
@@ -992,10 +984,10 @@ void SidePanel::PlanetPanel::PlanetProdCenterChanged()
       break;
     }
 
-  m_button_food    ->SetValue(0.0);
-  m_button_mining  ->SetValue(0.0);
-  m_button_industry->SetValue(planet->ProdPoints());
-  m_button_research->SetValue(0.0);
+  m_button_food    ->SetValue(planet->FarmingPoints());
+  m_button_industry->SetValue(planet->IndustryPoints());
+  m_button_mining  ->SetValue(planet->MiningPoints());
+  m_button_research->SetValue(planet->ResearchPoints());
 
   m_button_food    ->SetColor((planet->PrimaryFocus()==Planet::BALANCED || planet->PrimaryFocus()==Planet::FARMING || planet->SecondaryFocus()==Planet::BALANCED || planet->SecondaryFocus()==Planet::FARMING )?GG::Clr(100,100,  0,200):GG::CLR_ZERO);
   m_button_mining  ->SetColor((planet->PrimaryFocus()==Planet::BALANCED || planet->PrimaryFocus()==Planet::MINING  || planet->SecondaryFocus()==Planet::BALANCED || planet->SecondaryFocus()==Planet::MINING  )?GG::Clr(100,  0,  0,200):GG::CLR_ZERO);
@@ -1160,10 +1152,10 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 
   int farming=0,mining=0,research=0,industry=0,defense=0,population=0;
 
-  //farming   +=;
-  //mining    +=;
-  //research  +=;
-  industry  +=static_cast<int>(planet.ProdPoints());;
+  farming   +=static_cast<int>(planet.FarmingPoints());
+  industry  +=static_cast<int>(planet.IndustryPoints());
+  mining    +=static_cast<int>(planet.MiningPoints());
+  research  +=static_cast<int>(planet.ResearchPoints());
   //defense   +=;
   population+=static_cast<int>(planet.PopPoints());
 
@@ -1205,10 +1197,10 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
     format = GG::TF_LEFT | GG::TF_VCENTER;
     text = "";
-    if(cost && !planet.ProdPoints()) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
+    if(cost && !planet.IndustryPoints()) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
     else
       if(cost)
-        text = Format(ClientUI::String("PL_PRODUCTION_TIME_TURNS").c_str(),static_cast<int>(std::ceil((cost - planet.BuildProgress()) / planet.ProdPoints())));
+        text = Format(ClientUI::String("PL_PRODUCTION_TIME_TURNS").c_str(),static_cast<int>(std::ceil((cost - planet.BuildProgress()) / planet.IndustryPoints())));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
@@ -1476,19 +1468,19 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   boost::shared_ptr<GG::Texture> texture;
   switch(planet->Type())
   {
-    case Planet::PT_SWAMP     : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/swamp1.png");break;
-    case Planet::PT_TOXIC     : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/toxic1.png");break;
-    case Planet::PT_INFERNO   : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/inferno1.png");break;
-    case Planet::PT_RADIATED  : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/irradiated1.png");break;
-    case Planet::PT_BARREN    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/barren1.png");break;
-    case Planet::PT_TUNDRA    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/tundra1.png");break;
-    case Planet::PT_DESERT    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/desert1.png");break;
-    case Planet::PT_TERRAN    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
-    case Planet::PT_OCEAN     : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/ocean1.png");break;
-    case Planet::PT_GAIA      : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
-    case Planet::PT_ASTEROIDS : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
-    case Planet::PT_GASGIANT  : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;       
-    default                   : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
+    case PT_SWAMP     : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/swamp1.png");break;
+    case PT_TOXIC     : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/toxic1.png");break;
+    case PT_INFERNO   : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/inferno1.png");break;
+    case PT_RADIATED  : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/irradiated1.png");break;
+    case PT_BARREN    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/barren1.png");break;
+    case PT_TUNDRA    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/tundra1.png");break;
+    case PT_DESERT    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/desert1.png");break;
+    case PT_TERRAN    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
+    case PT_OCEAN     : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/ocean1.png");break;
+    case PT_GAIA      : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
+    case PT_ASTEROIDS : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
+    case PT_GASGIANT  : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;       
+    default           : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
   }
   m_bg_image = GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultHeight());
 
@@ -1524,14 +1516,6 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   ////////////////////// v0.1 only!! (in v0.2 and later build this list from the production capabilities of the planet)
   GG::ListBox::Row* row = new ConstructionRow(ProdCenter::NOT_BUILDING);
   row->push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
-  row = new ConstructionRow(ProdCenter::INDUSTRY_BUILD);
-  row->push_back("Industry", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
-  row = new ConstructionRow(ProdCenter::RESEARCH_BUILD);
-  row->push_back("Research", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
 
   row = new ConstructionRow(ProdCenter::SCOUT);
@@ -1891,10 +1875,10 @@ bool SidePanel::PlanetView::Render()
 
   int farming=0,mining=0,research=0,industry=0,defense=0,population=0;
 
-  //farming   +=;
-  //mining    +=;
-  //research  +=;
-  industry  +=static_cast<int>(planet->ProdPoints());;
+  farming   +=static_cast<int>(planet->FarmingPoints());
+  industry  +=static_cast<int>(planet->IndustryPoints());
+  mining    +=static_cast<int>(planet->MiningPoints());
+  research  +=static_cast<int>(planet->ResearchPoints());
   //defense   +=;
   population+=static_cast<int>(planet->PopPoints());
 
@@ -1964,10 +1948,10 @@ bool SidePanel::PlanetView::Render()
     font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
     Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
     text = "";
-    if(cost && !planet->ProdPoints()) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
+    if(cost && !planet->IndustryPoints()) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
     else
       if(cost)
-        text = Format(ClientUI::String("PL_PRODUCTION_TIME_TURNS").c_str(),static_cast<int>(std::ceil((cost - planet->BuildProgress()) / planet->ProdPoints())));
+        text = Format(ClientUI::String("PL_PRODUCTION_TIME_TURNS").c_str(),static_cast<int>(std::ceil((cost - planet->BuildProgress()) / planet->IndustryPoints())));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
@@ -1981,8 +1965,6 @@ bool SidePanel::PlanetView::Render()
     {
       case ProdCenter::BUILD_UNKNOWN  : break;
       case ProdCenter::NOT_BUILDING   : break;
-      case ProdCenter::INDUSTRY_BUILD : break;
-      case ProdCenter::RESEARCH_BUILD : break;
       case ProdCenter::SCOUT          : design_id = ShipDesign::SCOUT;break;
       case ProdCenter::COLONY_SHIP    : design_id = ShipDesign::COLONY;break;
       case ProdCenter::MARKI          : design_id = ShipDesign::MARK1;break;
@@ -2214,6 +2196,7 @@ void SidePanel::SetSystem(int system_id)
       for(unsigned int i = 0; i < plt_vec.size(); i++) 
       {
         GG::Connect(plt_vec[i]->StateChangedSignal(), &SidePanel::PlanetsChanged, this);
+        GG::Connect(plt_vec[i]->ProdCenterChangedSignal(), &SidePanel::PlanetsChanged, this);
       }
 
       m_planet_panel_container->SetPlanets(plt_vec);
@@ -2253,10 +2236,10 @@ void SidePanel::PlanetsChanged()
 
     for(unsigned int i=0;i<plt_vec.size();i++)
     {
-      //farming   +=;
-      //mining    +=;
-      //research  +=;
-      industry  +=static_cast<int>(plt_vec[i]->ProdPoints());;
+      farming   +=static_cast<int>(plt_vec[i]->FarmingPoints());
+      industry  +=static_cast<int>(plt_vec[i]->IndustryPoints());
+      mining    +=static_cast<int>(plt_vec[i]->MiningPoints());
+      research  +=static_cast<int>(plt_vec[i]->ResearchPoints());
       defense   +=plt_vec[i]->DefBases();
       
       if(plt_vec[i]->Owners().find(HumanClientApp::GetApp()->PlayerID()) != plt_vec[i]->Owners().end())
