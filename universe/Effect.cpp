@@ -54,6 +54,9 @@ EffectsGroup::EffectsGroup(const Condition::ConditionBase* scope, const Conditio
 
 EffectsGroup::EffectsGroup(const GG::XMLElement& elem)
 {
+    if (elem.Tag() != "EffectsGroup")
+        throw std::invalid_argument("Attempted to construct a EffectsGroup from an XMLElement that had a tag other than \"EffectsGroup\"");
+
     m_scope = Condition::ConditionFactory().GenerateObject(elem.Child("scope").Child(1));
     m_activation = Condition::ConditionFactory().GenerateObject(elem.Child("activation").Child(1));
     for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
