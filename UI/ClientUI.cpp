@@ -459,10 +459,14 @@ bool ClientUI::ZoomToShip(int id)
 
 bool ClientUI::ZoomToTech(const std::string& tech_name)
 {
+#ifndef FREEORION_BUILD_UTIL
     if (!GetTech(tech_name))
         return false;
     m_map_wnd->ShowTech(tech_name);
     return true;
+#else
+    return false;
+#endif
 }
 
 bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
