@@ -158,9 +158,9 @@ Message JoinGameMessage(const std::string& player_name)
    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_name);
 }
 
-Message EmpireSetupMessage(const GG::XMLDoc& empire_setup)
+Message JoinGameSetup(const GG::XMLDoc& player_setup)
 {
-   return Message(Message::EMPIRE_SETUP, -1, -1, Message::CORE, empire_setup);
+   return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_setup);
 }
 
 Message HostAckMessage(int player_id)
@@ -171,11 +171,6 @@ Message HostAckMessage(int player_id)
 Message JoinAckMessage(int player_id)
 {
    return Message(Message::JOIN_GAME, -1, player_id, Message::CORE, boost::lexical_cast<std::string>(player_id));
-}
-
-Message EmpireSetupMessage(int sender, const GG::XMLDoc& empire_setup)
-{
-   return Message(Message::EMPIRE_SETUP, sender, -1, Message::CORE, empire_setup);
 }
 
 Message EndGameMessage(int sender, int receiver)
