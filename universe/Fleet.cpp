@@ -282,7 +282,7 @@ void Fleet::MovementPhase()
 
                 // explore new system
                 Empire* empire = Empires().Lookup(*Owners().begin()); // assumes one owner empire per fleet
-                empire->AddExploredSystem(next_system->ID());
+                empire->AddExploredSystem(m_travel_route.empty() ? SystemID() : m_prev_system);
                 Logger().debugStream() << "    Added explored system #" << next_system->ID() << " to empire " << *Owners().begin();
             } else {
                 Logger().debugStream() << "    distance=" << distance << " > movement_left=" << movement_left << "; we're done";
