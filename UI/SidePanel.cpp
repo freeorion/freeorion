@@ -13,8 +13,12 @@
 #include "XMLDoc.h"
 #include "GGBase.h"
 
-#include "Fleet.h"
-#include "Ship.h"
+#ifndef __GGScroll_h_
+#include "GGScroll.h"
+#endif
+
+#include "../universe/Fleet.h"
+#include "../universe/Ship.h"
 
 
 namespace {
@@ -1221,7 +1225,7 @@ void SidePanel::PlanetPanel::ClickColonize()
 ////////////////////////////////////////////////
 SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h)
 : Wnd(x-MAX_PLANET_SIZE/2, y, w+MAX_PLANET_SIZE/2, h, GG::Wnd::CLICKABLE),m_planet_panels(),
-  m_vscroll(new CUIScroll(Width()-10,0,10,Height(),GG::Scroll::Orientation::VERTICAL))
+  m_vscroll(new CUIScroll(Width()-10,0,10,Height(),GG::Scroll::VERTICAL))
 {
   EnableChildClipping(true);
   AttachChild(m_vscroll);
