@@ -7,6 +7,7 @@
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
+#include "../Empire/TechLevel.h"
 
 
 namespace {
@@ -70,6 +71,11 @@ SidePanel::PlanetPanel::PlanetPanel(const Planet& planet, int y, int parent_widt
 
     // construction drop list
     if (!m_planet.Owners().empty() && *m_planet.Owners().begin() == HumanClientApp::GetApp()->PlayerID()) {
+
+        // for v.1 some of these only appear after tech is researched
+        
+        Empire *empire = HumanClientApp::Empires().Lookup( HumanClientApp::GetApp()->PlayerID() );
+
         m_construction = new CUIDropDownList(Width() - CONSTR_DROP_LIST_WIDTH - 3, 
                                              Height() - ClientUI::SIDE_PANEL_PTS - CONSTR_PROGRESS_BAR_HT - 6,
                                              CONSTR_DROP_LIST_WIDTH, ClientUI::SIDE_PANEL_PTS + 4, 
@@ -81,35 +87,73 @@ SidePanel::PlanetPanel::PlanetPanel(const Planet& planet, int y, int parent_widt
         GG::ListBox::Row* row = new GG::ListBox::Row;
         row->push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
         m_construction->Insert(row);
+        m_construction_prod_idx.push_back( ProdCenter::NOT_BUILDING );
+
         row = new GG::ListBox::Row;
         row->push_back("Industry", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
         m_construction->Insert(row);
+        m_construction_prod_idx.push_back( ProdCenter::INDUSTRY_BUILD );
+
         row = new GG::ListBox::Row;
         row->push_back("Research", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
         m_construction->Insert(row);
+        m_construction_prod_idx.push_back( ProdCenter::RESEARCH_BUILD );
+
         row = new GG::ListBox::Row;
         row->push_back("Scout", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
         m_construction->Insert(row);
+        m_construction_prod_idx.push_back( ProdCenter::SCOUT );
+
         row = new GG::ListBox::Row;
         row->push_back("Colony Ship", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
         m_construction->Insert(row);
+        m_construction_prod_idx.push_back( ProdCenter::COLONY_SHIP );
+
         row = new GG::ListBox::Row;
         row->push_back("MarkI", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
         m_construction->Insert(row);
-        row = new GG::ListBox::Row;
-        row->push_back("MarkII", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-        m_construction->Insert(row);
-        row = new GG::ListBox::Row;
-        row->push_back("MarkIII", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-        m_construction->Insert(row);
-        row = new GG::ListBox::Row;
-        row->push_back("MarkIV", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-        m_construction->Insert(row);
-        row = new GG::ListBox::Row;
-        row->push_back("DefBase", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-        m_construction->Insert(row);
-        m_construction->Select(m_planet.CurrentlyBuilding());
+        m_construction_prod_idx.push_back( ProdCenter::MARKI );
 
+        if ( empire->HasTech( Tech::TECH_MARK2 ) )
+        {
+            row = new GG::ListBox::Row;
+            row->push_back("MarkII", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+            m_construction->Insert(row);
+            m_construction_prod_idx.push_back( ProdCenter::MARKII );
+        }
+
+        if ( empire->HasTech( Tech::TECH_MARK3 ) )
+        {
+            row = new GG::ListBox::Row;
+            row->push_back("MarkIII", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+            m_construction->Insert(row);
+            m_construction_prod_idx.push_back( ProdCenter::MARKIII );
+        }
+
+        if ( empire->HasTech( Tech::TECH_MARK4 ) )
+        {
+            row = new GG::ListBox::Row;
+            row->push_back("MarkIV", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+            m_construction->Insert(row);
+            m_construction_prod_idx.push_back( ProdCenter::MARKIV );
+        }
+
+        if ( empire->HasTech( Tech::TECH_BASE ) )
+        {
+            row = new GG::ListBox::Row;
+            row->push_back("DefBase", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+            m_construction->Insert(row);
+            m_construction_prod_idx.push_back( ProdCenter::DEF_BASE );
+        }
+
+        // find the index we need to set in the list 
+        int selection_idx = 0;
+        for ( std::vector< ProdCenter::BuildType >::iterator it = m_construction_prod_idx.begin(); it != m_construction_prod_idx.end(); ++it, selection_idx++ ) {
+            if ( *it ==  m_planet.CurrentlyBuilding() )
+                break;
+        }
+        
+        m_construction->Select( selection_idx );
         Connect(m_construction->SelChangedSignal(), &SidePanel::PlanetPanel::BuildSelected, this);
         ////////////////////// v0.1 only!!
     }
@@ -296,7 +340,7 @@ bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
 
 void SidePanel::PlanetPanel::BuildSelected(int idx) const
 {
-    HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*m_planet.Owners().begin(), m_planet.ID(), ProdCenter::BuildType(idx)));
+    HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*m_planet.Owners().begin(), m_planet.ID(), m_construction_prod_idx[ idx ] ));
 }
 
 

@@ -80,6 +80,7 @@ private:
 
         GG::SubTexture     m_planet_graphic;
         CUIDropDownList*   m_construction;
+        std::vector< ProdCenter::BuildType > m_construction_prod_idx;
 
         DoubleClickedSignalType       m_double_clicked_sig;
 
