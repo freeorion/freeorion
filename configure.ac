@@ -163,7 +163,7 @@ AC_CACHE_SAVE
 FAILED=no
 YG_GET_PATH(boost)
 YG_CHECK_BOOST([1.3.0],,[FAILED=yes])
-AC_CHECK_LIB(boost_regex,main,[],[FAILED=yes])
+#AC_CHECK_LIB(boost_regex,main,[],[FAILED=yes])
 AC_CHECK_LIB(boost_filesystem,main,[],[FAILED=yes])
 AC_CHECK_LIB(boost_signals,main,[],[FAILED=yes])
 
@@ -171,7 +171,6 @@ if test $FAILED = yes; then
   AC_MSG_FAILURE([boost libs not found.
 ** You need the Boost C++ libraries, version 1.3.0 or better,
 ** as well as the following boost-modules:
-** - boost.regex
 ** - boost.filesystem
 ** - boost.signals
 ** download them from http://www.boost.org])
