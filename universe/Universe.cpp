@@ -169,8 +169,9 @@ namespace {
         while (ifs) {
             std::string latest_name;
             std::getline(ifs, latest_name);
-            if (latest_name != "")
-            names.push_back(latest_name);
+            if (latest_name != "") {
+                names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
+            }
         }
     }
 
