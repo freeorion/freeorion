@@ -295,7 +295,7 @@ bool System::RemoveWormhole(int id)
    return retval;
 }
 
-void System::AddOwner   (int id)
+void System::AddOwner(int id)
 {
 }
 

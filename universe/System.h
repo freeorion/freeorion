@@ -14,8 +14,8 @@
    contained within the universe, and (nearly) all systems also contain UniverseObjects.  Systems are searchable using
    arbirary predicates, much in the same way that the Client- and ServerUniverses are.  Each System consists of a star
    and 0 or more orbits.  UniversObjects can be placed in the system "at large" or in a particular orbit.  No checking
-   is done to determine whether an object is orbit-bound (like a Planet) or not (like a Fleet) when placing them with 
-   the Insert() functions.  Iteration is available over all starlanes and wormholes (together), all system objects, 
+   is done to determine whether an object is orbit-bound (like a Planet) or not (like a Fleet) when placing them with
+   the Insert() functions.  Iteration is available over all starlanes and wormholes (together), all system objects,
    all free system objects (those not in an orbit), and all objects in a paricular orbit.*/
 class System : public UniverseObject
 {
@@ -24,15 +24,18 @@ private:
    typedef std::map<int, bool>      StarlaneMap;
 
 public:
-   /** types of stars in FreeOrion*/
-   enum StarType {INVALID_STARTYPE = -1,  ///< the highest illegal StarType value
-                  RED_DWARF, 
-                  RED_GIANT, 
-                  YELLOW,
+   /** types of stars in FreeOrion v0.2 */
+   enum StarType {INVALID_STARTYPE = -1,  ///< the highest illegal negative StarType value
                   BLUE,
-                  NUM_STARTYPES           ///< the lowest illegal StarType value
+                  WHITE,
+                  YELLOW,
+                  ORANGE,
+                  RED,
+                  NEUTRON,
+                  BLACK,
+                  NUM_STARTYPES           ///< the lowest illegal positive StarType value
                  }; // others TBD
-      
+
    typedef std::vector<UniverseObject*>       ObjectVec;          ///< the return type of FindObjects()
    typedef std::vector<const UniverseObject*> ConstObjectVec;     ///< the return type of FindObjects()
    typedef std::vector<int>                   ObjectIDVec;        ///< the return type of FindObjectIDs()
@@ -45,16 +48,16 @@ public:
    /** \name Structors */ //@{
    System();    ///< default ctor
 
-   /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range 
+   /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
       of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
-   System(StarType star, int orbits, const std::string& name, double x, double y, 
+   System(StarType star, int orbits, const std::string& name, double x, double y,
           const std::set<int>& owners = std::set<int>());
 
-   /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range 
+   /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
       of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
-   System(StarType star, int orbits, const StarlaneMap& lanes_and_holes, 
+   System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
           const std::string& name, double x, double y, const std::set<int>& owners = std::set<int>());
-          
+
    System(const GG::XMLElement& elem); ///< ctor that constructs a System object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a System object
    ~System();   ///< dtor
    //@}
@@ -62,84 +65,45 @@ public:
    /** \name Accessors */ //@{
    StarType Star() const   {return m_star;}  ///< returns the type of star for this system
    int      Orbits() const {return m_orbits;}///< returns the number of orbits in this system
-   
+
    bool HasStarlaneTo(int id) const;         ///< returns true if there is a starlane from this system to the system with ID number \a id
    bool HasWormholeTo(int id) const;         ///< returns true if there is a wormhole from this system to the system with ID number \a id
 
-   /** returns the IDs of all the objects that match \a pred.  Predicates used with this function must take a single const 
+   /** returns the IDs of all the objects that match \a pred.  Predicates used with this function must take a single const
       UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred>
-   ObjectIDVec FindObjectIDs(Pred pred) const
-   {
+   template <class Pred> ObjectIDVec FindObjectIDs(Pred pred) const;
 
-      const Universe& universe = GetUniverse();
+   /** returns the IDs of all the objects of type T. */
+   template <class T> ObjectIDVec FindObjectIDs() const;
 
-      ObjectIDVec retval;
-      for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-         const UniverseObject* o = universe.Object(it->second);
-         if (pred(o))
-            retval.push_back(it->second);
-      }
-      return retval;
-   }
-
-   /** returns the IDs of all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take 
+   /** returns the IDs of all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take
       a single const UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred>
-   ObjectIDVec FindObjectIDsInOrbit(int orbit, Pred pred) const
-   {
-      const Universe& universe = GetUniverse();
+   template <class Pred> ObjectIDVec FindObjectIDsInOrbit(int orbit, Pred pred) const;
 
-      ObjectIDVec retval;
-      std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
-      for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-         const UniverseObject* o = universe.Object(it->second);
-         if (pred(o))
-            retval.push_back(it->second);
-      }
-      return retval;
-   }
+   /** returns the IDs of all the objects of type T in orbit \a orbit. */
+   template <class T> ObjectIDVec FindObjectIDsInOrbit(int orbit) const;
 
-   /** returns all the objects that match \a pred.  Predicates used with this function must take a single const UniverseObject* 
+   /** returns all the objects that match \a pred.  Predicates used with this function must take a single const UniverseObject*
       parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred>
-   ConstObjectVec FindObjects(Pred pred) const
-   {
-      const Universe& universe = GetUniverse();
+   template <class Pred> ConstObjectVec FindObjects(Pred pred) const;
 
-      ConstObjectVec retval;
-      for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-         const UniverseObject* o = universe.Object(it->second);
-         if (pred(o))
-            retval.push_back(o);
-      }
-      return retval;
-   }
+   /** returns all the objects of type T. */
+   template <class T> std::vector<const T*> FindObjects() const;
 
-   /** returns all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take a single const 
+   /** returns all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take a single const
       UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred>
-   ConstObjectVec FindObjectsInOrbit(int orbit, Pred pred) const
-   {
-      const Universe& universe = GetUniverse();
+   template <class Pred> ConstObjectVec FindObjectsInOrbit(int orbit, Pred pred) const;
 
-      ConstObjectVec retval;
-      std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
-      for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-         const UniverseObject* o = universe.Object(it->second);
-         if (pred(o))
-            retval.push_back(o);
-      }
-      return retval;
-   }
+   /** returns all the objects of type T in orbit \a orbit. */
+   template <class T> std::vector<const T*> FindObjectsInOrbit(int orbit) const;
 
    const_orbit_iterator begin() const  {return m_objects.begin();}   ///< begin iterator for all system objects
    const_orbit_iterator end() const    {return m_objects.end();}     ///< end iterator for all system objects
 
-   /** returns begin and end iterators for all system objects in orbit \a o*/  
+   /** returns begin and end iterators for all system objects in orbit \a o*/
    std::pair<const_orbit_iterator, const_orbit_iterator> orbit_range(int o) const {return m_objects.equal_range(o);}
 
-   /** returns begin and end iterators for all system objects not in an orbit*/  
+   /** returns begin and end iterators for all system objects not in an orbit*/
    std::pair<const_orbit_iterator, const_orbit_iterator> non_orbit_range() const {return m_objects.equal_range(-1);}
 
    const_lane_iterator  begin_lanes() const  {return m_starlanes_wormholes.begin();}   ///< begin iterator for all starlanes and wormholes terminating in this system
@@ -151,18 +115,18 @@ public:
    //@}
 
    /** \name Mutators */ //@{
-   /** inserts a UniversObject into the system, though not in any particular orbit.  Only objects free of any 
+   /** inserts a UniversObject into the system, though not in any particular orbit.  Only objects free of any
       particular orbit, such as ships, should be inserted using this function.  This function calls obj->SetSystem(this).*/
    int Insert(UniverseObject* obj);
 
-   /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound 
-      objects should be inserted with this function.  This function calls obj->SetSystem(this).  \throw 
+   /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
+      objects should be inserted with this function.  This function calls obj->SetSystem(this).  \throw
       std::invalid_arugment May throw std::invalid_arugment if \a orbit is out of the range [0, Orbits()].*/
    int Insert(UniverseObject* obj, int orbit);
 
-   /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound 
-       objects should be inserted with this function. NOTE: This function is primarily intended for XML decoding purposes 
-       and does not set the object's system to point to this system since it is assumed that this has already been done prior 
+   /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
+       objects should be inserted with this function. NOTE: This function is primarily intended for XML decoding purposes
+       and does not set the object's system to point to this system since it is assumed that this has already been done prior
        to encoding. If used for other purposes you must set the object's System ID manually. */
    int Insert(int obj_id, int orbit);
 
@@ -174,39 +138,19 @@ public:
    bool RemoveStarlane(int id);  ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
    bool RemoveWormhole(int id);  ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
 
-
-   /** returns all the objects that match \a pred.  Predicates used with this function must take a single UniverseObject* 
+   /** returns all the objects that match \a pred.  Predicates used with this function must take a single UniverseObject*
       parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred>
-   ObjectVec FindObjects(Pred pred)
-   {
-      Universe& universe = GetUniverse();
+   template <class Pred> ObjectVec FindObjects(Pred pred);
 
-      ObjectVec retval;
-      for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-         UniverseObject* o = universe.Object(it->second);
-         if (pred(o))
-            retval.push_back(o);
-      }
-      return retval;
-   }
+   /** returns all the objects of type T. */
+   template <class T> std::vector<T*> FindObjects();
 
-   /** returns all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take a single 
+   /** returns all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take a single
       UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred>
-   ObjectVec FindObjectsInOrbit(int orbit, Pred pred)
-   {
-      Universe& universe = GetUniverse();
+   template <class Pred> ObjectVec FindObjectsInOrbit(int orbit, Pred pred);
 
-      ObjectVec retval;
-      std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
-      for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
-         UniverseObject* o = universe.Object(it->second);
-         if (pred(o))
-            retval.push_back(o);
-      }
-      return retval;
-   }
+   /** returns all the objects of type T in orbit \a orbit. */
+   template <class T> std::vector<T*> FindObjectsInOrbit(int orbit);
 
    virtual void AddOwner   (int id);  ///< adding owner to system objects is not allowed
    virtual void RemoveOwner(int id);  ///< removing owner from system objects is not allowed
@@ -220,7 +164,7 @@ public:
    /** returns begin and end iterators for all system objects in orbit \a o*/
    std::pair<orbit_iterator, orbit_iterator> orbit_range(int o) {return m_objects.equal_range(o);}
 
-   /** returns begin and end iterators for all system objects not in an orbit*/  
+   /** returns begin and end iterators for all system objects not in an orbit*/
    std::pair<orbit_iterator, orbit_iterator> non_orbit_range() {return m_objects.equal_range(-1);}
 
    lane_iterator  begin_lanes()  {return m_starlanes_wormholes.begin();}   ///< begin iterator for all starlanes and wormholes terminating in this system
@@ -234,6 +178,166 @@ private:
    ObjectMultimap m_objects;              ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
    StarlaneMap    m_starlanes_wormholes;  ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
 };
+
+
+// template implementations
+
+template <class Pred>
+System::ObjectIDVec System::FindObjectIDs(Pred pred) const
+{
+    const Universe& universe = GetUniverse();
+    ObjectIDVec retval;
+    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        const UniverseObject* o = universe.Object(it->second);
+        if (pred(o))
+            retval.push_back(it->second);
+    }
+    return retval;
+}
+
+template <class T>
+System::ObjectIDVec System::FindObjectIDs() const
+{
+    const Universe& universe = GetUniverse();
+    ObjectIDVec retval;
+    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (dynamic_cast<const T*>(universe.Object(it->second)))
+        retval.push_back(it->second);
+    }
+    return retval;
+}
+
+template <class Pred>
+System::ObjectIDVec System::FindObjectIDsInOrbit(int orbit, Pred pred) const
+{
+    const Universe& universe = GetUniverse();
+    ObjectIDVec retval;
+    std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
+    for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
+        const UniverseObject* o = universe.Object(it->second);
+        if (pred(o))
+            retval.push_back(it->second);
+    }
+    return retval;
+}
+
+template <class T>
+System::ObjectIDVec System::FindObjectIDsInOrbit(int orbit) const
+{
+    const Universe& universe = GetUniverse();
+    ObjectIDVec retval;
+    std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
+    for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
+        if (dynamic_cast<const T*>(universe.Object(it->second)))
+            retval.push_back(it->second);
+    }
+    return retval;
+}
+
+template <class Pred>
+System::ConstObjectVec System::FindObjects(Pred pred) const
+{
+    const Universe& universe = GetUniverse();
+    ConstObjectVec retval;
+    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        const UniverseObject* o = universe.Object(it->second);
+        if (pred(o))
+            retval.push_back(o);
+    }
+    return retval;
+}
+
+template <class T>
+std::vector<const T*> System::FindObjects() const
+{
+    const Universe& universe = GetUniverse();
+    std::vector<const T*> retval;
+    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (const T* t = dynamic_cast<const T*>(universe.Object(it->second)))
+            retval.push_back(t);
+    }
+    return retval;
+}
+
+template <class Pred>
+System::ConstObjectVec System::FindObjectsInOrbit(int orbit, Pred pred) const
+{
+    const Universe& universe = GetUniverse();
+    ConstObjectVec retval;
+    std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
+    for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
+        const UniverseObject* o = universe.Object(it->second);
+        if (pred(o))
+            retval.push_back(o);
+    }
+    return retval;
+}
+
+template <class T>
+std::vector<const T*> System::FindObjectsInOrbit(int orbit) const
+{
+    const Universe& universe = GetUniverse();
+    std::vector<const T*> retval;
+    std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
+    for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
+        if (const T* t = dynamic_cast<const T*>(universe.Object(it->second)))
+            retval.push_back(t);
+    }
+    return retval;
+}
+
+template <class Pred>
+System::ObjectVec System::FindObjects(Pred pred)
+{
+    Universe& universe = GetUniverse();
+    ObjectVec retval;
+    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        UniverseObject* o = universe.Object(it->second);
+        if (pred(o))
+            retval.push_back(o);
+    }
+    return retval;
+}
+
+template <class T>
+std::vector<T*> System::FindObjects()
+{
+    Universe& universe = GetUniverse();
+    std::vector<T*> retval;
+    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (T* t = dynamic_cast<T*>(universe.Object(it->second)))
+            retval.push_back(t);
+    }
+    return retval;
+}
+
+template <class Pred>
+System::ObjectVec System::FindObjectsInOrbit(int orbit, Pred pred)
+{
+    Universe& universe = GetUniverse();
+    ObjectVec retval;
+    std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
+    for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
+        UniverseObject* o = universe.Object(it->second);
+        if (pred(o))
+            retval.push_back(o);
+    }
+    return retval;
+}
+
+template <class T>
+std::vector<T*> System::FindObjectsInOrbit(int orbit)
+{
+    Universe& universe = GetUniverse();
+    std::vector<T*> retval;
+    std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
+    for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
+        if (T* t = dynamic_cast<T*>(universe.Object(it->second)))
+            retval.push_back(t);
+    }
+    return retval;
+}
+
 
 #endif // _System_h_
 
