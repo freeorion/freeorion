@@ -138,6 +138,7 @@ void LinkText::Init()
         GG::Font::RegisterKnownTag("tech");
         GG::Font::RegisterKnownTag("encyclopedia");
         s_link_tags_registered = true;
+        SetText(WindowText());
     }
     FindLinks();
 }
@@ -146,58 +147,53 @@ void LinkText::FindLinks()
 {
     m_links.clear();
 
-    bool ignore_tags = false; // this toggles true/false based on the presence of <pre> and </pre> tags
-
-    const std::string& text = WindowText();
     const std::vector<GG::Font::LineData>& line_data = GetLineData();
     const boost::shared_ptr<GG::Font>& font = GetFont();
 
     int y_posn = 0; // y-coordinate of the top of the current line
     Link link;
 
-    for (std::vector<GG::Font::LineData>::const_iterator cit = line_data.begin(); 
-         cit != line_data.end();
-         ++cit, y_posn += font->Lineskip()) {
-        const GG::Font::LineData& curr_line = *cit;
+    for (std::vector<GG::Font::LineData>::const_iterator it = line_data.begin(); 
+         it != line_data.end();
+         ++it, y_posn += font->Lineskip()) {
+        const GG::Font::LineData& curr_line = *it;
       
         // if the last line ended without the current tag ending
         if (link.type != "") {
             link.rects.push_back(GG::Rect(0, y_posn, 0, y_posn + font->Height()));
         }
 
-        for (int i = curr_line.begin_idx; i < curr_line.end_idx; ++i) {
-            GG::Font::Tag tag;
-            GG::Font::FindFormatTag(text, i, tag, ignore_tags);
-            if (tag.char_length) {
-                if (tag.tokens[0] == "pre") {
-                    ignore_tags = !tag.close_tag;
-                } else if (!ignore_tags && 
-                           (tag.tokens[0] == "planet" || tag.tokens[0] == "system" || tag.tokens[0] == "fleet" || 
-                            tag.tokens[0] == "ship" || tag.tokens[0] == "tech" || tag.tokens[0] == "encyclopedia")) {
-                    link.type = tag.tokens[0];
-                    if (!tag.close_tag) {
-                        link.data = tag.tokens[1];
-                        link.text_posn.first = i + tag.char_length;
-                        link.rects.push_back(GG::Rect((link.text_posn.first - curr_line.begin_idx) ? 
-                                                      curr_line.extents[link.text_posn.first - curr_line.begin_idx - 1] : 0,
-                                                      y_posn,
-                                                      0,
-                                                      y_posn + font->Height()));
-                    } else {
-                        link.text_posn.second = i;
-                        link.rects.back().lr.x = (link.text_posn.second - curr_line.begin_idx) ? 
-                            curr_line.extents[link.text_posn.second - curr_line.begin_idx - 1] : 0;
-                        m_links.push_back(link);
-                        link = Link();
+        for (unsigned int i = 0; i < curr_line.char_data.size(); ++i) {
+            if (!curr_line.char_data[i].tags.empty()) {
+                for (unsigned int j = 0; j < curr_line.char_data[i].tags.size(); ++j) {
+                    const boost::shared_ptr<GG::Font::FormattingTag>& tag = curr_line.char_data[i].tags[j];
+                    if (tag->text == "planet" || tag->text == "system" || tag->text == "fleet" ||
+                        tag->text == "ship" || tag->text == "tech" || tag->text == "encyclopedia") {
+                        link.type = tag->text;
+                        if (tag->close_tag) {
+                            link.text_posn.second = curr_line.char_data[i].original_char_index;
+                            link.rects.back().lr.x = i ? curr_line.char_data[i - 1].extent : 0;
+                            m_links.push_back(link);
+                            link = Link();
+                        } else {
+                            link.data = tag->params[0];
+                            link.text_posn.first = curr_line.char_data[i].original_char_index;
+                            for (unsigned int k = 0; k < curr_line.char_data[i].tags.size(); ++k) {
+                                link.text_posn.first -= curr_line.char_data[i].tags[k]->OriginalStringChars();
+                            }
+                            link.rects.push_back(GG::Rect(i ? curr_line.char_data[i - 1].extent : 0,
+                                                          y_posn,
+                                                          0,
+                                                          y_posn + font->Height()));
+                        }
                     }
                 }
-                i += tag.char_length - 1; // "- 1" because i gets incremented at the end of the loop iteration
             }
         }
 
         // if a line is ending without the current tag ending
         if (link.type != "") {
-            link.rects.back().lr.x = curr_line.extents.empty() ? 0 : curr_line.extents.back();
+            link.rects.back().lr.x = curr_line.char_data.empty() ? 0 : curr_line.char_data.back().extent;
         }
     }
 }
@@ -222,10 +218,11 @@ void LinkText::ClearOldRollover()
         std::string text = WindowText();
         std::string::size_type pos = text.find("<u>", m_links[m_old_rollover_link].text_posn.first);
         text.erase(pos, 3);
-        pos = text.rfind("</u>", m_links[m_old_rollover_link].text_posn.second - 3);
+        pos = text.find("</u>", std::min(0, m_links[m_old_rollover_link].text_posn.first - 3));
         text.erase(pos, 4);
         SetText(text);
     }
     m_old_rollover_link = -1;
 }
+
 

@@ -77,13 +77,13 @@ class CombatInfoControl : public GG::Control
       font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
       glColor4ubv(ClientUI::TEXT_COLOR.v);
       format = GG::TF_LEFT | GG::TF_BOTTOM;
-      font->RenderText(rc.UpperLeft(),rc.LowerRight(),UserString("COMBAT_BATTLE"), format, 0, true);
+      font->RenderText(rc.UpperLeft(),rc.LowerRight(),UserString("COMBAT_BATTLE"), format, 0);
 
       rc = GG::Rect(ul+GG::Pt(20+50,5),ul+GG::Pt(500,28));
       font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.7));
       glColor4ubv(ClientUI::TEXT_COLOR.v);
       format = GG::TF_LEFT | GG::TF_BOTTOM;
-      font->RenderText(rc.UpperLeft(),rc.LowerRight(),boost::io::str(boost::format(UserString("COMBAT_SYSTEM")) % m_combat_info.m_system), format, 0, true);
+      font->RenderText(rc.UpperLeft(),rc.LowerRight(),boost::io::str(boost::format(UserString("COMBAT_SYSTEM")) % m_combat_info.m_system), format, 0);
       
 
       for(unsigned int i=0;i<m_combat_info.m_opponents.size();i++,y+=font->Height()+2)
@@ -124,7 +124,7 @@ class CombatInfoControl : public GG::Control
 
         rc = GG::Rect(area.UpperLeft()+rc_txt_empire.UpperLeft(),area.UpperLeft()+rc_txt_empire.LowerRight());
         glColor4ubv(ClientUI::TEXT_COLOR.v);format = GG::TF_LEFT | GG::TF_VCENTER;
-        font->RenderText(rc.UpperLeft(),rc.LowerRight(),m_combat_info.m_opponents[i].empire, format, 0, true);
+        font->RenderText(rc.UpperLeft(),rc.LowerRight(),m_combat_info.m_opponents[i].empire, format, 0);
 
         for(unsigned int c=0;c<3;c++)
         {
@@ -142,7 +142,7 @@ class CombatInfoControl : public GG::Control
             rc = GG::Rect(col.UpperLeft()+item_txt[j].UpperLeft(),col.UpperLeft()+item_txt[j].LowerRight());
             GG::FlatRectangle(rc.Left(), rc.Top(), rc.Right(), rc.Bottom(),entries[c][j].bg_clr,entries[c][j].border_clr,entries[c][j].border_width);
             glColor4ubv(ClientUI::TEXT_COLOR.v);
-            font->RenderText(rc.UpperLeft(),rc.LowerRight(),entries[c][j].txt, entries[c][j].txt_fmt, 0, true);
+            font->RenderText(rc.UpperLeft(),rc.LowerRight(),entries[c][j].txt, entries[c][j].txt_fmt, 0);
           }
         }
       }

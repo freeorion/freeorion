@@ -65,7 +65,7 @@ void SitRepPanel::Update()
 
     boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
     Uint32 format = GG::TF_LEFT | GG::TF_WORDBREAK;
-    int width = m_sitreps_lb->Width() - 4;
+    int width = m_sitreps_lb->Width() - 8;
 
     // loop through sitreps and display
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
@@ -77,7 +77,7 @@ void SitRepPanel::Update()
         GG::Connect(link_text->ShipLinkSignal(), &ClientUI::ZoomToShip, ClientUI::GetClientUI());
         GG::Connect(link_text->TechLinkSignal(), &ClientUI::ZoomToTech, ClientUI::GetClientUI());
         GG::Connect(link_text->EncyclopediaLinkSignal(), &ClientUI::ZoomToEncyclopediaEntry, ClientUI::GetClientUI());
-        row->height = font->TextExtent(link_text->WindowText(), format, width, true).y;
+        row->height = font->TextExtent(link_text->WindowText(), format, width).y;
         row->push_back(link_text);
         m_sitreps_lb->Insert(row);                
     }

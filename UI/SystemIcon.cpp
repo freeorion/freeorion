@@ -210,7 +210,7 @@ void SystemIcon::Refresh()
         int pixels_per_owner = extent.x / owners.size() + 1; // the +1 is to make sure there is not a stray character left off the end
         int owner_idx = 1;
         for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
-            while (last_char_pos < m_system.Name().size() && lines[0].extents[last_char_pos] < (owner_idx * pixels_per_owner)) {
+            while (last_char_pos < m_system.Name().size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
                 ++last_char_pos;
             }
             m_name.push_back(new GG::TextControl(0, 0, m_system.Name().substr(first_char_pos, last_char_pos - first_char_pos), 

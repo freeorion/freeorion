@@ -118,10 +118,10 @@ bool CreditsWnd::Render()
                         credit+=person.Attribute("task");
                         credit+="</rgba>";
                     }
-                    font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,credit, format, 0, true);
+                    font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,credit, format, 0);
                     offset+=font->TextExtent(credit, format).y+2;
                 }
-            font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,"", format, 0, true);
+            font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,"", format, 0);
             offset+=font->TextExtent("", format).y+2;
         }
     GG::EndScissorClipping();
