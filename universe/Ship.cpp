@@ -28,7 +28,7 @@ ShipDesign::ShipDesign() :
 
 ShipDesign::ShipDesign(const GG::XMLElement& elem)
 {
-   if (elem.Tag() != "ShipDesign")
+   if (elem.Tag() != "ShipDesign" )
       throw std::invalid_argument("Attempted to construct a ShipDesign from an XMLElement that had a tag other than \"ShipDesign\"");
 
    id = lexical_cast<int> ( elem.Child("id").Attribute("value") );
@@ -112,7 +112,7 @@ Ship::Ship(const GG::XMLElement& elem) :
   UniverseObject(elem.Child("UniverseObject")),
   m_design(ShipDesign(elem.Child("ShipDesign")))
 {
-   if (elem.Tag() != "Ship")
+   if (elem.Tag().find( "Ship" ) == std::string::npos )
       throw std::invalid_argument("Attempted to construct a Ship from an XMLElement that had a tag other than \"Ship\"");
 
    m_fleet_id = lexical_cast<int> ( elem.Child("m_fleet_id").Attribute("value") );
@@ -135,8 +135,11 @@ GG::XMLElement Ship::XMLEncode() const
 {
    using GG::XMLElement;
    using boost::lexical_cast;
+   using std::string;
 
-   XMLElement element("Ship");
+   string ship_name( "Ship" );
+   ship_name += boost::lexical_cast<std::string>( ID() );
+   XMLElement element( ship_name );
 
    element.AppendChild( UniverseObject::XMLEncode() );
 
@@ -155,8 +158,11 @@ GG::XMLElement Ship::XMLEncode(int empire_id) const
    // the same as the full
    using GG::XMLElement;
    using boost::lexical_cast;
+   using std::string;
 
-   XMLElement element("Ship");
+   string ship_name( "Ship" );
+   ship_name += boost::lexical_cast<std::string>( ID() );
+   XMLElement element( ship_name );
 
    element.AppendChild( UniverseObject::XMLEncode() );
 

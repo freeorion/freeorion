@@ -43,7 +43,7 @@ UniverseObject::UniverseObject(const GG::XMLElement& elem)
    using GG::XMLElement;
 
    if (elem.Tag() != "UniverseObject")
-      throw std::invalid_argument("Attempted to construct a UniverseObject from an XMLElement that had a tag other than \"UniverseObject\"");
+      throw std::invalid_argument("Attempted to construct a UniverseObject from an XMLElement that had tag: \"" +  elem.Tag() + "\"." );
 
    Visibility vis = (Visibility) lexical_cast<int> ( elem.Child("visibility").Attribute("value") );
 

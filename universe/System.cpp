@@ -45,7 +45,7 @@ System::System(const GG::XMLElement& elem) :
 {
    using GG::XMLElement;
 
-   if (elem.Tag() != "System")
+   if (elem.Tag().find( "System" ) == std::string::npos )
       throw std::invalid_argument("Attempted to construct a System from an XMLElement that had a tag other than \"System\"");
 
    Visibility vis = (Visibility) lexical_cast<int> ( elem.Child("visibility").Attribute("value") );
@@ -114,7 +114,9 @@ GG::XMLElement System::XMLEncode() const
    using boost::lexical_cast;
    using std::string;
 
-   XMLElement element("System");
+   string system_name( "System" );
+   system_name += boost::lexical_cast<std::string>( ID() );
+   XMLElement element( system_name );
 
    XMLElement visibility("visibility");
    visibility.SetAttribute( "value", lexical_cast<string>(FULL_VISIBILITY) );
@@ -133,20 +135,26 @@ GG::XMLElement System::XMLEncode() const
    XMLElement orbit_map("m_objects");
    for(const_orbit_iterator itr = begin(); itr != end(); ++itr)
    {
-      XMLElement map_object("map_object");
-      map_object.SetAttribute("orbit", lexical_cast<string>(itr->first));
-      map_object.SetAttribute("id", lexical_cast<string>(itr->second));
-      orbit_map.AppendChild(map_object);
+       string object_name( "map_object" );
+       object_name += boost::lexical_cast<std::string>( itr->first );
+       XMLElement map_object( object_name );
+
+       map_object.SetAttribute("orbit", lexical_cast<string>(itr->first));
+       map_object.SetAttribute("id", lexical_cast<string>(itr->second));
+       orbit_map.AppendChild(map_object);
    }
    element.AppendChild(orbit_map);
 
    XMLElement lane_map("m_starlanes_wormholes");
    for(const_lane_iterator itr = begin_lanes(); itr != end_lanes(); ++itr)
    {
-      XMLElement map_lane("map_lane");
-      map_lane.SetAttribute("system", lexical_cast<string>(itr->first));
-      map_lane.SetAttribute("wormhole", lexical_cast<string>(itr->second));
-      lane_map.AppendChild(map_lane);
+       string lane_name( "map_lane" );
+       lane_name += boost::lexical_cast<std::string>( itr->first );
+       XMLElement map_lane( lane_name );
+
+       map_lane.SetAttribute("system", lexical_cast<string>(itr->first));
+       map_lane.SetAttribute("wormhole", lexical_cast<string>(itr->second));
+       lane_map.AppendChild(map_lane);
    }
    element.AppendChild(lane_map);
 
@@ -160,8 +168,11 @@ GG::XMLElement System::XMLEncode(int empire_id) const
 
    using GG::XMLElement;
    using boost::lexical_cast;
+   using std::string;
 
-   XMLElement element("System");
+   string system_name( "System" );
+   system_name += boost::lexical_cast<std::string>( ID() );
+   XMLElement element( system_name );
 
    XMLElement visibility("visibility");
    visibility.SetAttribute( "value", lexical_cast<std::string>(PARTIAL_VISIBILITY) );
@@ -181,20 +192,26 @@ GG::XMLElement System::XMLEncode(int empire_id) const
    XMLElement orbit_map("m_objects");
    for(const_orbit_iterator itr = begin(); itr != end(); ++itr)
    {
-      XMLElement map_object("map_object");
-      map_object.SetAttribute("orbit", lexical_cast<std::string>(itr->first));
-      map_object.SetAttribute("id", lexical_cast<std::string>(itr->second));
-      orbit_map.AppendChild(map_object);
+       string object_name( "map_object" );
+       object_name += boost::lexical_cast<std::string>( itr->first );
+       XMLElement map_object( object_name );
+     
+       map_object.SetAttribute("orbit", lexical_cast<std::string>(itr->first));
+       map_object.SetAttribute("id", lexical_cast<std::string>(itr->second));
+       orbit_map.AppendChild(map_object);
    }
    element.AppendChild(orbit_map);
 
    XMLElement lane_map("m_starlanes_wormholes");
    for(const_lane_iterator itr = begin_lanes(); itr != end_lanes(); ++itr)
    {
-      XMLElement map_lane("map_lane");
-      map_lane.SetAttribute("system", lexical_cast<std::string>(itr->first));
-      map_lane.SetAttribute("wormhole", lexical_cast<std::string>(itr->second));
-      lane_map.AppendChild(map_lane);
+       string lane_name( "map_lane" );
+       lane_name += boost::lexical_cast<std::string>( itr->first );
+       XMLElement map_lane( lane_name );
+
+       map_lane.SetAttribute("system", lexical_cast<std::string>(itr->first));
+       map_lane.SetAttribute("wormhole", lexical_cast<std::string>(itr->second));
+       lane_map.AppendChild(map_lane);
    }
    element.AppendChild(lane_map);
 

@@ -33,7 +33,7 @@ Fleet::Fleet(const GG::XMLElement& elem) :
 {
    using GG::XMLElement;
 
-   if (elem.Tag() != "Fleet")
+   if (elem.Tag().find( "Fleet" ) == std::string::npos )
       throw std::invalid_argument("Attempted to construct a Fleet from an XMLElement that had a tag other than \"Fleet\"");
 
    XMLElement ships = elem.Child("m_ships");
@@ -66,17 +66,23 @@ GG::XMLElement Fleet::XMLEncode() const
 {
    using GG::XMLElement;
    using boost::lexical_cast;
+   using std::string;
 
-   XMLElement element("Fleet");
+   string ship_name( "Fleet" );
+   ship_name += boost::lexical_cast<std::string>( ID()  );
+   XMLElement element( ship_name );
 
    element.AppendChild( UniverseObject::XMLEncode() );
 
    XMLElement ships("m_ships");
    for(const_iterator itr=begin(); itr != end(); itr++)
    {
-      XMLElement ship("ship");
-      ship.SetAttribute( "value", lexical_cast<std::string>(*itr) );
-      ships.AppendChild(ship);
+       string name( "ship" );
+       name += boost::lexical_cast<std::string>( *itr  );
+       XMLElement ship( name );
+
+       ship.SetAttribute( "value", lexical_cast<std::string>(*itr) );
+       ships.AppendChild(ship);
    }
    element.AppendChild(ships);
 
@@ -96,17 +102,23 @@ GG::XMLElement Fleet::XMLEncode(int empire_id) const
 
    using GG::XMLElement;
    using boost::lexical_cast;
+   using std::string;
 
-   XMLElement element("Fleet");
+   string ship_name( "Fleet" );
+   ship_name += boost::lexical_cast<std::string>( ID()  );
+   XMLElement element( ship_name );
 
    element.AppendChild( UniverseObject::XMLEncode() );
 
    XMLElement ships("m_ships");
    for(const_iterator itr=begin(); itr != end(); itr++)
    {
-      XMLElement ship("ship");
-      ship.SetAttribute( "value", lexical_cast<std::string>(*itr) );
-      ships.AppendChild(ship);
+       string name( "ship" );
+       name += boost::lexical_cast<std::string>( *itr  );
+       XMLElement ship( name );
+
+       ship.SetAttribute( "value", lexical_cast<std::string>(*itr) );
+       ships.AppendChild(ship);
    }
    element.AppendChild(ships);
 

@@ -53,7 +53,7 @@ Planet::Planet(const GG::XMLElement& elem) :
 {
    using GG::XMLElement;
 
-   if (elem.Tag() != "Planet")
+   if (elem.Tag().find( "Planet" ) == std::string::npos )
       throw std::invalid_argument("Attempted to construct a Planet from an XMLElement that had a tag other than \"Planet\"");
 
    m_type = (PlanetType) lexical_cast<int> ( elem.Child("m_type").Attribute("value") );
@@ -86,8 +86,11 @@ GG::XMLElement Planet::XMLEncode() const
 {
    using GG::XMLElement;
    using boost::lexical_cast;
+   using std::string;
 
-   XMLElement element("Planet");
+   string planet_name( "Planet" );
+   planet_name += boost::lexical_cast<std::string>( ID()  );
+   XMLElement element( planet_name );
 
    element.AppendChild( UniverseObject::XMLEncode() );
 
@@ -116,8 +119,11 @@ GG::XMLElement Planet::XMLEncode(int empire_id) const
 
    using GG::XMLElement;
    using boost::lexical_cast;
+   using std::string;
 
-   XMLElement element("Planet");
+   string planet_name( "Planet" );
+   planet_name += boost::lexical_cast<std::string>( ID() );
+   XMLElement element( planet_name );
 
    // full encode of UniverseObject since owner list should be visible
    element.AppendChild( UniverseObject::XMLEncode() );
@@ -206,54 +212,53 @@ void Planet::PopGrowthProductionResearchPhase( )
 
 void Planet::UpdateShipBuildProgress( ShipDesign::V01DesignID design_id )
 {
-  Empire* empire = (Empires()).Lookup( *Owners().begin() );
-  Universe* universe = &GetUniverse();
+    Empire* empire = (Empires()).Lookup( *Owners().begin() );
+    Universe* universe = &GetUniverse();
 
-  ShipDesign ship_design;
+    ShipDesign ship_design;
 
-  // get ship design we're trying to build
-  if ( empire->CopyShipDesign( (int) design_id, ship_design ) )
-  {
-    int new_ships = UpdateBuildProgress( ship_design.cost );
-
-    if ( new_ships > 0 )
+    // get ship design we're trying to build
+    if ( empire->CopyShipDesign( (int) design_id, ship_design ) )
     {
-      UniverseObject* obj = universe->Object( SystemID() );
-      System* the_system = dynamic_cast<System*> (obj);
+        int new_ships = UpdateBuildProgress( ship_design.cost );
 
-      // create new fleet with new ship
-      Fleet* new_fleet = new Fleet("", the_system->X(), the_system->Y(), empire->EmpireID() );
-      int fleet_id = universe->Insert(new_fleet);
-	  
-      // set name
-      // TODO: What is the mechanism for determining new fleet name?
-      std::string fleet_name( "Fleet" );
-      fleet_name += boost::lexical_cast<std::string>( fleet_id );
-      new_fleet->Rename( fleet_name );
+        if ( new_ships > 0 )
+        {
+            UniverseObject* obj = universe->Object( SystemID() );
+            System* the_system = dynamic_cast<System*> (obj);
 
-      // insert fleet around this system
-      the_system->Insert(new_fleet);
-	  
-      // add fleet to this empire
-      empire->AddFleet(fleet_id);
+            // create new fleet with new ship
+            Fleet* new_fleet = new Fleet("", the_system->X(), the_system->Y(), empire->EmpireID() );
+            int fleet_id = universe->Insert(new_fleet);
+  
+            // set name
+            // TODO: What is the mechanism for determining new fleet name?
+            std::string fleet_name( "New fleet " );
+            fleet_name += boost::lexical_cast<std::string>( fleet_id );
+            new_fleet->Rename( fleet_name );
 
-      // add new ship (s)
-      for ( int i = 0; i < new_ships; i++ )
-      {
-	Ship *new_ship = new Ship(empire->EmpireID(), (int) design_id );
-	int ship_id = universe->Insert( new_ship  );
+            // insert fleet around this system
+            the_system->Insert(new_fleet);
+  
+            // add fleet to this empire
+            empire->AddFleet(fleet_id);
 
-        std::string ship_name( ship_design.name );
-        ship_name += boost::lexical_cast<std::string>( ship_id );
-        new_ship->Rename( ship_name );
+            // add new ship (s)
+            for ( int i = 0; i < new_ships; i++ )
+            {
+                Ship *new_ship = new Ship(empire->EmpireID(), (int) design_id );
+                int ship_id = universe->Insert( new_ship  );
 
+                std::string ship_name( ship_design.name );
+                ship_name += boost::lexical_cast<std::string>( ship_id );
+                new_ship->Rename( ship_name );
 
-	new_fleet->AddShip(ship_id);
+                new_fleet->AddShip(ship_id);
 
-	// add sitrep
-	SitRepEntry *p_entry = CreateShipBuiltSitRep( ship_id, ID() );
-        empire->AddSitRepEntry( p_entry );
-      }
+                // add sitrep
+                SitRepEntry *p_entry = CreateShipBuiltSitRep( ship_id, ID() );
+                empire->AddSitRepEntry( p_entry );
+            }
+        }
     }
-  }
 }
