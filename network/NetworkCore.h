@@ -44,6 +44,7 @@ public:
    static const int           SERVER_FIND_LISTEN_PORT;   ///< the port used by servers to their IP address(es)
    static const int           SERVER_FIND_RESPONSE_PORT; ///< the port used to catch server responses when looking for the IP address(es) of server(s) on the LAN
    static const int           CONNECT_PORT;              ///< the port used to make TCP connections
+   static const int           HOST_PLAYER_ID;            ///< the ID number assigned to the hosting player
    static const std::string   SERVER_FIND_QUERY_MSG;     ///< the UDP message used to ask if this server is hosting a game that the querying host may join
    static const std::string   SERVER_FIND_YES_MSG;       ///< the UDP message used to indicate this server is hosting a game that the querying host may join
    static const std::string   SERVER_FIND_NO_MSG;        ///< the UDP message used to indicate this server is not hosting a game that the querying host may join

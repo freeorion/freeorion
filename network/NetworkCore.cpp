@@ -5,10 +5,12 @@
 #include <boost/lexical_cast.hpp>
 #include <log4cpp/Category.hh>
 
+// static(s)
 const std::string NetworkCore::EOM_STR = "_MSG_END_";
 const int         NetworkCore::SERVER_FIND_LISTEN_PORT = 12345;
 const int         NetworkCore::SERVER_FIND_RESPONSE_PORT = 12346;
 const int         NetworkCore::CONNECT_PORT = 12347;
+const int         NetworkCore::HOST_PLAYER_ID = 0;
 const std::string NetworkCore::SERVER_FIND_QUERY_MSG = "HELLO";
 const std::string NetworkCore::SERVER_FIND_YES_MSG = "NOPE.";
 const std::string NetworkCore::SERVER_FIND_NO_MSG = "YEAH.";
@@ -71,14 +73,12 @@ void NetworkCore::ReceiveData(int socket, std::string& stream, const std::string
    }
 
    // construct Message(s) from data, and dispatch them as appropriate
-   int curr_posn = 0;
    unsigned int next_EOM = std::string::npos;
-   while ((next_EOM = stream.find(NetworkCore::EOM_STR, curr_posn)) != std::string::npos) {
-      DispatchMessage(Message(stream.substr(curr_posn, next_EOM - curr_posn)), socket);
-      curr_posn = next_EOM + NetworkCore::EOM_STR.size();
+   while ((next_EOM = stream.find(NetworkCore::EOM_STR)) != std::string::npos) {
+       Message msg(stream.substr(0, next_EOM));
+       stream = stream.substr(next_EOM + NetworkCore::EOM_STR.size());
+       DispatchMessage(msg, socket);
    }
-   if (curr_posn)
-      stream = stream.substr(curr_posn);
 }
 
 std::string ToString(const IPaddress& addr)
