@@ -32,19 +32,48 @@
 #include <vector>
 #include <string>
 
-//using namespace std;
+/** utility class to collect IP address and name */
+class IPValue
+{
+public:
+    /** \name Structors */ //@{
+    /** construct a new IPValue consisting of the sole IP address */
+    /*!
+      \param ip_address IP address of the server
+    */
+    IPValue(const std::string& ip_address): il_address(ip_address),il_name(ip_address) {}
+    /** construct a new IPValue consisting of the IP address and an associated name that can be an URL, a logical name, or the server name */
+    /*!
+      \param ip_address ip address of the server
+      \param ip_name name of server (ie: "localhost", "http://wwww.freeorion.org", "LAN Server #1")
+    */
+    IPValue(const std::string& ip_address, const std::string& ip_name) : il_address(ip_address),il_name(ip_name) {}
+    //@}
+    /** \name Accessors */ //@{
+    /** get the IP address of this server */
+    /*!
+      \return the IP address of this server (ie "127.0.0.1")
+    */
+    const std::string& Address() const { return il_address; }
+    /** get the name of this server */
+    /*!
+      \return the name of this server (ie: "localhost", "http://wwww.freeorion.org", "LAN Server #1")
+    */
+    const std::string& Name() const { return il_name; }
+    //@}
 
-typedef std::vector<std::string> RowsVector;
-typedef RowsVector::iterator RowsIterator;
+private:
+    std::string il_address; // ip address
+    std::string il_name;    // ip name or URL
+};
+
 
 /** server connections window  */
 class ServerConnectWnd : public GG::ModalWnd
 {
 public:
-    /** \name Structors */ //@{
-    /** display a new dialog for server connection. The dialog is a modal window composed by a dropdown list 
-    of the available servers. User may choose the server or search for more in the net. When done user may press OK, 
-    which means the server is selected, or cancel, which means go back to previous screen. */
+        /** \name Structors */ //@{
+    /** display a new dialog for server connection */
     /*!
       \param x upper left x coordinate of screen
       \param y upper left y coordinate of screen
@@ -62,9 +91,9 @@ public:
     virtual ~ServerConnectWnd() {}
     //@}
     /** \name Accessors */ //@{
-    /** get the IP address or URL of the selected server as a string */
+    /** get the IP address of the selected server  */
     /*!
-      \return the IP address or URL of the selected server as a const string
+      \return the IP address of the selected server 
     */
     virtual const std::string& GetSelectedServer() const;
     /** if user selects one server returns true, else false if user selected cancel */
@@ -74,21 +103,26 @@ public:
     bool IsServerSelected() const { return this->m_ended_with_ok; }
     //@}
     /** \name Mutators */ //@{
-    /** Add a new IP server address, as a string, to the server list shown in the drop downlist */
+    /** Add a new IP server address, as a std::string, to the server list shown in the drop downlist */
     /*!
-      \param ipaddress IP address of the server to add
+      \param ipaddress IP address of the server to add (ie: "127.0.0.1")
+      \param ipvalue IP name/URL of server to add (ie: "localhost")
     */
-    void AddServer(const std::string& ipaddress);
+    void AddServer(const std::string& ipaddress, const std::string& ipname);
     /** fill the dropdownlist box and then executes the modal window */
-	virtual int	Run();  
+	virtual int	Run(); 
+	/** render window */
+    virtual int Render(); 
     //@}
-protected:
-    virtual int Render();
+
 private:
 /*
     static const GG::Clr BACKCOLOR; 
     static const std::string DEF_FONT;
 */ 
+    
+    typedef std::vector<IPValue> RowsVector;
+    typedef RowsVector::iterator RowsIterator;
     
     void InitControls();
     void AttachControls();
@@ -97,18 +131,20 @@ private:
     void SearchMore();
     void OnOk();
     void OnCancel();
-    int UpdateServerList(int maxitems);   
-    int AddRow(const std::string& value);
-    int AddRow(const std::string& value, int index);
+    int UpdateServerList(int maxitems);  
+    /** Add row to dropdownlist. Each row contains name and address of server */ 
+    int AddRow(const IPValue& value);   
+    /** Add row to dropdownlist at index position. Each row contains name and address of server */  
+    int AddRow(const IPValue& value, int index);
     void ShowDialog(const std::string& msg);
     GG::XMLElement XMLEncode();
 
    
     // inline
-    inline void FormatRow(const std::string& rstr,GG::DropDownList::Row* row)
+    void FormatRow(const IPValue& rstr,GG::DropDownList::Row* row)
 	{
-	    row->push_back(rstr,ClientUI::FONT,12);
-	    row->data_type = rstr;
+	    row->push_back(rstr.Name(),ClientUI::GetClientUI()->FONT,ClientUI::GetClientUI()->PTS);  // display the name/URL of server
+	    row->data_type = rstr.Address();             // store the real ip address
 	}
    
     bool m_ended_with_ok;

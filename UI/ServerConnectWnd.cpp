@@ -88,9 +88,9 @@ const string& ServerConnectWnd::GetSelectedServer() const
     return r->data_type;
 }
 
-void ServerConnectWnd::AddServer(const string& ipaddress)
+void ServerConnectWnd::AddServer(const std::string& ipaddress, const std::string& ipname)
 {
-    m_server_list.push_back(ipaddress);   
+    m_server_list.push_back(IPValue(ipaddress,ipname));   
 }
 
 int ServerConnectWnd::Run()
@@ -105,7 +105,7 @@ int ServerConnectWnd::Run()
 int ServerConnectWnd::Render()
 {
     HumanClientApp::GetApp()->Enter2DMode();
-    GG::FlatRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, ClientUI::CTRL_COLOR, ClientUI::BORDER_COLOR, 1);
+    GG::FlatRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, ClientUI::WND_COLOR, ClientUI::BORDER_COLOR, 1);
     HumanClientApp::GetApp()->Exit2DMode();
     return 0;
 }
@@ -115,6 +115,8 @@ int ServerConnectWnd::Render()
 
 void ServerConnectWnd::InitControls()
 {    
+    m_cbo_available_servers->SetStyle(GG::LB_NOSORT);
+    
     // Attach & connect signal controls
     AttachControls();
     GG::Connect(m_btn_search_more->ClickedSignal(), &ServerConnectWnd::SearchMore, this);
@@ -136,7 +138,7 @@ void ServerConnectWnd::PopulateServerList()
     }
     else
     {
-        AddServer("localhost");
+        AddRow(IPValue("127.0.0.1","localhost"));
     }
 }
 
@@ -213,11 +215,11 @@ int ServerConnectWnd::UpdateServerList(int maxitems)
 
     int foundServers = 0;
     
-    string r1("194.32.12.56");
-    string r2("10.22.8.2");
-    string r3("10.55.8.4");
-    string r4("10.29.34.3");
-    string r5("195.34.43.9");
+    IPValue r1("64.239.105.78","www.freeorion.org");
+    IPValue r2("195.34.43.9","games.freeorion.org");
+    IPValue r3("10.55.8.4");
+    IPValue r4("10.29.34.3");
+    IPValue r5("10.23.211.12");
       
     // Reset list
     m_server_list.clear();
@@ -261,7 +263,7 @@ void ServerConnectWnd::DetachControls()
 }
 
 /** Add a row to the drop down list. Return insertion index value */
-int ServerConnectWnd::AddRow(const string& value)
+int ServerConnectWnd::AddRow(const IPValue& value)
 {
     GG::DropDownList::Row r;
     FormatRow(value,&r);
@@ -269,7 +271,7 @@ int ServerConnectWnd::AddRow(const string& value)
 }
 
 /** Add a row to the drop down list. Return insertion index value. index specify insertion point */
-int ServerConnectWnd::AddRow(const string& value, int index)
+int ServerConnectWnd::AddRow(const IPValue& value, int index)
 {
     GG::DropDownList::Row r;
     FormatRow(value,&r);
