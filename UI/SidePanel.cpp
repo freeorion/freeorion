@@ -2270,13 +2270,17 @@ void SidePanel::PlanetLClicked(int planet_id)
   if(   planet_id != UniverseObject::INVALID_OBJECT_ID
      && (!m_planet_view || m_planet_view->PlanetID()!=planet_id))
   {
+    const Planet* planet = dynamic_cast<const Planet*>(GetUniverse().Object(planet_id));
+
     if(m_planet_view)
     {
       GG::App::GetApp()->Remove(m_planet_view);
       delete m_planet_view;m_planet_view=0;
     }
 
-    const Planet* planet = dynamic_cast<const Planet*>(GetUniverse().Object(planet_id));
+    // don't show planetview for gas giants or asteriods fields
+    if(planet->Type() == PT_ASTEROIDS || planet->Type() == PT_GASGIANT)
+      return;
 
     MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
 
