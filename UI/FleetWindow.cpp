@@ -51,51 +51,13 @@ struct ShipRow : public GG::ListBox::Row
 };
 }
 
-namespace {
-const int NEW_FLEET_BUTTON_WIDTH = 75;
-class EditWnd : public CUI_Wnd
-{
-public:
-    EditWnd(int w, const std::string& text, Uint32 flags = Wnd::MODAL) : 
-        CUI_Wnd("Enter new name", 0, 0, 1, 1, flags)
-    {
-        m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, w - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), ClientUI::PTS + 10, text);
-        m_ok_bn = new CUIButton(m_edit->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, ClientUI::String("OK"));
-        m_cancel_bn = new CUIButton(m_ok_bn->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, ClientUI::String("CANCEL"));
-
-        Resize(w, m_cancel_bn->LowerRight().y + BottomBorder() + 3);
-        MoveTo((GG::App::GetApp()->AppWidth() - w) / 2, (GG::App::GetApp()->AppHeight() - Height()) / 2);
-
-        AttachChild(m_edit);
-        AttachChild(m_ok_bn);
-        AttachChild(m_cancel_bn);
-
-        GG::Connect(m_ok_bn->ClickedSignal(), &EditWnd::OkClicked, this);
-        GG::Connect(m_cancel_bn->ClickedSignal(), &CUI_Wnd::CloseClicked, static_cast<CUI_Wnd*>(this));
-    }
-
-    const std::string& Result() const {return m_result;}
-
-private:
-    void OkClicked() {m_result = m_edit->WindowText(); CloseClicked();}
-
-    std::string m_result;
-
-    CUIEdit*    m_edit;
-    CUIButton*  m_ok_bn;
-    CUIButton*  m_cancel_bn;
-
-    static const int BUTTON_WIDTH = 75;
-    static const int CONTROL_MARGIN = 5;
-};
-}
-
 ////////////////////////////////////////////////
 // FleetDetailPanel
 ////////////////////////////////////////////////
 namespace {
-const int FLEET_LISTBOX_WIDTH =  250;
-const int FLEET_LISTBOX_HEIGHT = 150;
+    const int NEW_FLEET_BUTTON_WIDTH = 75;
+    const int FLEET_LISTBOX_WIDTH =  250;
+    const int FLEET_LISTBOX_HEIGHT = 150;
 }
 
 FleetDetailPanel::FleetDetailPanel(int x, int y, Fleet* fleet, bool read_only, Uint32 flags/* = 0*/) : 
@@ -296,10 +258,10 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row
       switch (popup.MenuID()) {
       case 1: { // rename ship
           std::string ship_name = m_ships_lb->GetRow(row_idx)[row_idx]->WindowText();
-          EditWnd edit_wnd(350, ship_name);
+          CUIEditWnd edit_wnd(350, "Enter new name", ship_name);
           edit_wnd.Run();
           if (edit_wnd.Result() != "") {
-              ship->Rename(edit_wnd.Result());
+              HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->PlayerID(), ship->ID(), edit_wnd.Result()));
               m_ships_lb->GetRow(row_idx)[row_idx]->SetText(edit_wnd.Result());
           }
           break;
@@ -559,10 +521,10 @@ void FleetWnd::FleetRightClicked(int row_idx, const GG::ListBox::Row* row, const
       case 1: { // rename fleet
           Fleet* fleet = FleetInRow(row_idx);
           std::string fleet_name = fleet->Name();
-          EditWnd edit_wnd(350, fleet_name);
+          CUIEditWnd edit_wnd(350, "Enter new name", fleet_name);
           edit_wnd.Run();
           if (edit_wnd.Result() != "") {
-              fleet->Rename(edit_wnd.Result());
+              HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->PlayerID(), fleet->ID(), edit_wnd.Result()));
               m_fleets_lb->GetRow(row_idx)[0]->SetText(edit_wnd.Result());
           }
           break;
