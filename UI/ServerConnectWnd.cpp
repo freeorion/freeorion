@@ -79,6 +79,11 @@ ServerConnectWnd::ServerConnectWnd(const GG::XMLElement& elem) :
     // TODO : implement if needed
 }
 
+void ServerConnectWnd::ModalInit()
+{
+    GG::App::GetApp()->SetFocusWnd(m_player_name_edit);
+}
+
 void ServerConnectWnd::Keypress (GG::Key key, Uint32 key_mods)
 {
     if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) { // Same behaviour as if "OK" was pressed
@@ -111,7 +116,6 @@ void ServerConnectWnd::Init()
         m_host_or_join_radio_group->SetCheck(1);
         m_servers_lb->SelectRow(0);
     }
-    GG::App::GetApp()->SetFocusWnd(m_player_name_edit);
 }
 
 void ServerConnectWnd::PopulateServerList()

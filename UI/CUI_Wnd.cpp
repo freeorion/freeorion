@@ -493,7 +493,7 @@ CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string&
     m_ok_bn = new CUIButton(m_edit->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, UserString("OK"));
     m_cancel_bn = new CUIButton(m_ok_bn->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, UserString("CANCEL"));
 
-    Resize(w, m_cancel_bn->LowerRight().y + BottomBorder() + 3);
+    Resize(w, std::max(m_edit->LowerRight().y, m_cancel_bn->LowerRight().y) + BottomBorder() + 3);
     MoveTo((GG::App::GetApp()->AppWidth() - w) / 2, (GG::App::GetApp()->AppHeight() - Height()) / 2);
 
     AttachChild(m_edit);
@@ -504,6 +504,10 @@ CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string&
     GG::Connect(m_cancel_bn->ClickedSignal(), &CUI_Wnd::CloseClicked, static_cast<CUI_Wnd*>(this));
 
     m_edit->SelectAll();
+}
+
+void CUIEditWnd::ModalInit()
+{
     GG::App::GetApp()->SetFocusWnd(m_edit);
 }
 

@@ -159,7 +159,8 @@ class CUIEditWnd : public CUI_Wnd
 public:
     CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, Uint32 flags = Wnd::MODAL);
 
-    void Keypress(GG::Key key, Uint32 key_mods);
+    virtual void ModalInit();
+    virtual void Keypress(GG::Key key, Uint32 key_mods);
 
     const std::string& Result() const;
 
