@@ -48,7 +48,7 @@ Contributors
     Bryan Patterson (PowerCrazy)
     Joseph Bissonnette (Oceanmachine)
     Zach Laine (Tzlaine)
-    Mark Saward (Mark Saward)
+    Mark Saward (Tyreth)
 
   Graphics:
     Anton Ruonala
@@ -56,10 +56,11 @@ Contributors
     "Ka"
     Mark Saward (Tyreth)
     Alex Kaludis
-    "Obiwan"
+    Jonathan Hill (Obiwan)
     Chris Montgomery
     Mathias Koehler (prenid)
-    "Zanzibar"
+    (Zanzibar) - <zanzibar196 AT hotmail DOT com>
+                 http://zanzibar196.org/ - 
 
   Audio:
     Kenneth Welch
