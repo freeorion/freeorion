@@ -378,29 +378,36 @@ void HumanClientApp::Initialize()
 
 void HumanClientApp::HandleSDLEvent(const SDL_Event& event)
 {
-    bool send_to_gg = false;
-    GG::App::EventType gg_event;
     GG::Key key = GGKeyFromSDLKey(event.key.keysym);
     Uint32 key_mods = SDL_GetModState();
     GG::Pt mouse_pos(event.motion.x, event.motion.y);
     GG::Pt mouse_rel(event.motion.xrel, event.motion.yrel);
 
+    // it would be much easier if GG::App::EventType had a non event type
+    //GG::App::EventType gg_event;
+    typedef struct GGEventHelper {
+        GGEventHelper() :assigned(FALSE) {} 
+        BOOL IsGGEvent() const {return assigned;}
+        GGEventHelper& operator =(GG::App::EventType event) {gg_event=event;assigned=TRUE; return *this;}
+        operator GG::App::EventType() {return gg_event;}
+      private:
+        GG::App::EventType gg_event; BOOL assigned;
+    };
+    GGEventHelper gg_event;
+
     switch(event.type) {
     case SDL_KEYDOWN: {
         if (key < GG::GGK_NUMLOCK)
-            send_to_gg = true;
-        gg_event = GG::App::KEYPRESS;
+            gg_event = GG::App::KEYPRESS;
         break;
     }
 
     case SDL_MOUSEMOTION: {
-        send_to_gg = true;
         gg_event = GG::App::MOUSEMOVE;
         break;
     }
 
     case SDL_MOUSEBUTTONDOWN: {
-        send_to_gg = true;
         switch (event.button.button) {
         case SDL_BUTTON_LEFT:      gg_event = GG::App::LPRESS; break;
         case SDL_BUTTON_MIDDLE:    gg_event = GG::App::MPRESS; break;
@@ -413,7 +420,6 @@ void HumanClientApp::HandleSDLEvent(const SDL_Event& event)
     }
 
     case SDL_MOUSEBUTTONUP: {
-        send_to_gg = true;
         switch (event.button.button) {
         case SDL_BUTTON_LEFT:   gg_event = GG::App::LRELEASE; break;
         case SDL_BUTTON_MIDDLE: gg_event = GG::App::MRELEASE; break;
@@ -438,16 +444,17 @@ void HumanClientApp::HandleSDLEvent(const SDL_Event& event)
 
     case SDL_QUIT: {
         Exit(0);
-        break;
+        return;
     }
     }
-    if (send_to_gg)
+
+    if (gg_event.IsGGEvent()) {
         GG::App::HandleEvent(gg_event, key, key_mods, mouse_pos, mouse_rel);
 
-    /* Send event to UI to handle some global events */
-    if ( m_ui )
-        m_ui->HandleEvent( gg_event, key, key_mods, mouse_pos, mouse_rel );
-    
+        /* Send event to UI to handle some global events */
+        if ( m_ui)
+            m_ui->HandleEvent( gg_event, key, key_mods, mouse_pos, mouse_rel );
+    }
 }
 
 void HumanClientApp::Update()
