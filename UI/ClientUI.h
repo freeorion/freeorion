@@ -229,6 +229,16 @@ public:
     static GG::Clr     SIDE_PANEL_BUILD_PROGRESSBAR_COLOR;
     static int         SIDE_PANEL_PLANET_NAME_PTS;
     static int         SIDE_PANEL_PTS;
+
+    // tech screen
+    static GG::Clr     KNOWN_TECH_FILL_COLOR;
+    static GG::Clr     KNOWN_TECH_TEXT_AND_BORDER_COLOR;
+    static GG::Clr     RESEARCHABLE_TECH_FILL_COLOR;
+    static GG::Clr     RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+    static GG::Clr     UNRESEARCHABLE_TECH_FILL_COLOR;
+    static GG::Clr     UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+    static GG::Clr     TECH_WND_PROGRESS_BAR_BACKGROUND;
+    static GG::Clr     TECH_WND_PROGRESS_BAR;
     //!@}
 
 private:
@@ -264,6 +274,18 @@ struct TempUISoundDisabler
 private:
     bool m_was_enabled;
 };
+
+/** This exists as a way of allowing UI colors to be specified on the command line with one option and "(r,g,b,a)", instead of one option per color
+    channel.  GG::Clr is not streamable using the normal means, due to what appears to be a bug in MSVC 7.1. */
+struct StreamableColor
+{
+    StreamableColor();
+    StreamableColor(const GG::Clr& clr);
+    GG::Clr ToClr() const;
+    int r, g, b, a;
+};
+std::ostream& operator<<(std::ostream& os, const StreamableColor& clr);
+std::istream& operator>>(std::istream& is, StreamableColor& clr);
 
 
 inline std::pair<std::string, std::string> ClientUIRevision()

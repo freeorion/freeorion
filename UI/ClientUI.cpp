@@ -29,9 +29,10 @@
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/spirit.hpp>
 
-#include <string>
 #include <fstream>
+#include <string>
 
 
 //static members
@@ -86,8 +87,18 @@ GG::Clr     ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR(25, 40, 140, 150);
 int         ClientUI::SIDE_PANEL_PLANET_NAME_PTS = 15;
 int         ClientUI::SIDE_PANEL_PTS = 11;
 
+// tech screen
+GG::Clr     ClientUI::KNOWN_TECH_FILL_COLOR(43, 81, 102, 255);
+GG::Clr     ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR(119, 190, 210, 255);
+GG::Clr     ClientUI::RESEARCHABLE_TECH_FILL_COLOR(31, 53, 66, 255);
+GG::Clr     ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR = KNOWN_TECH_TEXT_AND_BORDER_COLOR;
+GG::Clr     ClientUI::UNRESEARCHABLE_TECH_FILL_COLOR = ClientUI::CTRL_COLOR;
+GG::Clr     ClientUI::UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR = ClientUI::CTRL_BORDER_COLOR;
+GG::Clr     ClientUI::TECH_WND_PROGRESS_BAR_BACKGROUND(53, 80, 125, 255);
+GG::Clr     ClientUI::TECH_WND_PROGRESS_BAR(6, 27, 92, 255);
 
-//private static members
+
+// private static members
 log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
 ClientUI* ClientUI::s_the_UI = 0;
 
@@ -109,10 +120,11 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add(    "app-width", "Sets horizontal app resolution.", 1024, RangedValidator<int>(640, 2048));
-        db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(480, 1536));
+        db.Add(    "app-width", "Sets horizontal app resolution.", 1280, RangedValidator<int>(640, 2048));
+        db.Add(    "app-height", "Sets vertical app resolution.", 1024, RangedValidator<int>(480, 1536));
         db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
 
+        // sound
         db.Add<std::string>("art-dir", "Sets UI art resource directory.", "default/data/art/");
         db.Add<std::string>("sound-dir", "Sets UI sound and music resource directory.", "default/data/sound/");
         db.Add("UI.sound.enabled", "Toggles UI sound effects on or off.", true, Validator<bool>());
@@ -130,40 +142,29 @@ namespace {
         db.Add<std::string>("UI.sound.planet-button-click", "The sound file played when a planet button is clicked.", "planet_button_click.wav");
         db.Add<std::string>("UI.sound.fleet-button-rollover", "The sound file played when mouse moves over a fleet button.", "fleet_button_rollover.wav");
         db.Add<std::string>("UI.sound.fleet-button-click", "The sound file played when a fleet button is clicked.", "fleet_button_click.wav");
-        db.Add<std::string>("UI.font", "Sets UI font resource file.", "Vera.ttf");
-        db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
-        db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "Vera.ttf");
-        db.Add("UI.title-font-size", "Sets UI title font size.", 12, RangedValidator<int>(4, 40));
 
-        db.Add("UI.wnd-color.red", "Sets UI window color (red).", 0, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-color.green", "Sets UI window color (green).", 0, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-color.blue", "Sets UI window color (blue).", 0, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-color.alpha", "Sets UI window color (alpha).", 210, RangedValidator<int>(0, 255));
+        // fonts
+        db.Add<std::string>("UI.font", "Sets UI font resource file.", ClientUI::FONT);
+        db.Add("UI.font-size", "Sets UI font size.", ClientUI::PTS, RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", ClientUI::TITLE_FONT);
+        db.Add("UI.title-font-size", "Sets UI title font size.", ClientUI::TITLE_PTS, RangedValidator<int>(4, 40));
 
-        db.Add("UI.text-color.red", "Sets UI text color (red).", 255, RangedValidator<int>(0, 255));
-        db.Add("UI.text-color.green", "Sets UI text color (green).", 255, RangedValidator<int>(0, 255));
-        db.Add("UI.text-color.blue", "Sets UI text color (blue).", 255, RangedValidator<int>(0, 255));
-        db.Add("UI.text-color.alpha", "Sets UI text color (alpha).", 255, RangedValidator<int>(0, 255));
-
-        db.Add("UI.ctrl-color.red", "Sets UI control color (red).", 30, RangedValidator<int>(0, 255));
-        db.Add("UI.ctrl-color.green", "Sets UI control color (green).", 30, RangedValidator<int>(0, 255));
-        db.Add("UI.ctrl-color.blue", "Sets UI control color (blue).", 30, RangedValidator<int>(0, 255));
-        db.Add("UI.ctrl-color.alpha", "Sets UI control color (alpha).", 255, RangedValidator<int>(0, 255));
-
-        db.Add("UI.wnd-outer-border-color.red", "Sets UI outer border color (red).", 64, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-outer-border-color.green", "Sets UI outer border color (green).", 64, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-outer-border-color.blue", "Sets UI outer border color (blue).", 64, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-outer-border-color.alpha", "Sets UI outer border color (alpha).", 255, RangedValidator<int>(0, 255));
-
-        db.Add("UI.wnd-border-color.red", "Sets UI border color (red).", 0, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-border-color.green", "Sets UI border color (green).", 0, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-border-color.blue", "Sets UI border color (blue).", 0, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-border-color.alpha", "Sets UI border color (alpha).", 255, RangedValidator<int>(0, 255));
-
-        db.Add("UI.wnd-inner-border-color.red", "Sets UI inner border color (red).", 255, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-inner-border-color.green", "Sets UI inner border color (green).", 255, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-inner-border-color.blue", "Sets UI inner border color (blue).", 255, RangedValidator<int>(0, 255));
-        db.Add("UI.wnd-inner-border-color.alpha", "Sets UI inner border color (alpha).", 255, RangedValidator<int>(0, 255));
+        // colors
+        db.Add("UI.wnd-color", "Sets UI window color.", StreamableColor(ClientUI::WND_COLOR), Validator<StreamableColor>());
+        db.Add("UI.text-color", "Sets UI text color.", StreamableColor(ClientUI::TEXT_COLOR), Validator<StreamableColor>());
+        db.Add("UI.ctrl-color", "Sets UI control color.", StreamableColor(ClientUI::CTRL_COLOR), Validator<StreamableColor>());
+        db.Add("UI.ctrl-border-color", "Sets UI control border color.", StreamableColor(ClientUI::CTRL_BORDER_COLOR), Validator<StreamableColor>());
+        db.Add("UI.wnd-outer-border-color", "Sets UI outer border color.", StreamableColor(ClientUI::WND_OUTER_BORDER_COLOR), Validator<StreamableColor>());
+        db.Add("UI.wnd-border-color", "Sets UI border color.", StreamableColor(ClientUI::WND_BORDER_COLOR), Validator<StreamableColor>());
+        db.Add("UI.wnd-inner-border-color", "Sets UI inner border color.", StreamableColor(ClientUI::WND_INNER_BORDER_COLOR), Validator<StreamableColor>());
+        db.Add("UI.known-tech", "Sets color of known techs in the tech tree.", StreamableColor(ClientUI::KNOWN_TECH_FILL_COLOR), Validator<StreamableColor>());
+        db.Add("UI.known-tech-border", "Sets text and border color of known techs in the tech tree.", StreamableColor(ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR), Validator<StreamableColor>());
+        db.Add("UI.researchable-tech", "Sets color of researchable techs in the tech tree.", StreamableColor(ClientUI::RESEARCHABLE_TECH_FILL_COLOR), Validator<StreamableColor>());
+        db.Add("UI.researchable-tech-border", "Sets text and border color of researchable techs in the tech tree.", StreamableColor(ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR), Validator<StreamableColor>());
+        db.Add("UI.unresearchable-tech", "Sets color of unresearchable techs in the tech tree.", StreamableColor(ClientUI::UNRESEARCHABLE_TECH_FILL_COLOR), Validator<StreamableColor>());
+        db.Add("UI.unresearchable-tech-border", "Sets text and border color of unresearchable techs in the tech tree.", StreamableColor(ClientUI::UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR), Validator<StreamableColor>());
+        db.Add("UI.tech-progress-background", "Sets background color of progress bars in the tech tree.", StreamableColor(ClientUI::TECH_WND_PROGRESS_BAR_BACKGROUND), Validator<StreamableColor>());
+        db.Add("UI.tech-progress", "Sets color of progress bars in the tech tree.", StreamableColor(ClientUI::TECH_WND_PROGRESS_BAR), Validator<StreamableColor>());
 
         db.Add("UI.tooltip-delay", "Sets UI tooltip popup delay, in ms.", 1000, RangedValidator<int>(0, 3000));
 
@@ -324,35 +325,21 @@ ClientUI::ClientUI() :
 
     s_the_UI = this;
 
-    WND_BORDER_COLOR = Clr(GetOptionsDB().Get<int>("UI.wnd-border-color.red"),
-                           GetOptionsDB().Get<int>("UI.wnd-border-color.green"),
-                           GetOptionsDB().Get<int>("UI.wnd-border-color.blue"),
-                           GetOptionsDB().Get<int>("UI.wnd-border-color.alpha"));
-
-    CTRL_COLOR = Clr(GetOptionsDB().Get<int>("UI.ctrl-color.red"),
-                     GetOptionsDB().Get<int>("UI.ctrl-color.green"),
-                     GetOptionsDB().Get<int>("UI.ctrl-color.blue"),
-                     GetOptionsDB().Get<int>("UI.ctrl-color.alpha"));
-
-    WND_INNER_BORDER_COLOR = Clr(GetOptionsDB().Get<int>("UI.wnd-inner-border-color.red"),
-                                 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.green"),
-                                 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.blue"),
-                                 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.alpha"));
-
-    WND_OUTER_BORDER_COLOR = Clr(GetOptionsDB().Get<int>("UI.wnd-outer-border-color.red"),
-                                 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.green"),
-                                 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.blue"),
-                                 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.alpha"));
-
-    TEXT_COLOR = Clr(GetOptionsDB().Get<int>("UI.text-color.red"),
-                     GetOptionsDB().Get<int>("UI.text-color.green"),
-                     GetOptionsDB().Get<int>("UI.text-color.blue"),
-                     GetOptionsDB().Get<int>("UI.text-color.alpha"));
-
-    WND_COLOR = Clr(GetOptionsDB().Get<int>("UI.wnd-color.red"),
-                    GetOptionsDB().Get<int>("UI.wnd-color.green"),
-                    GetOptionsDB().Get<int>("UI.wnd-color.blue"),
-                    GetOptionsDB().Get<int>("UI.wnd-color.alpha"));
+    WND_COLOR = GetOptionsDB().Get<StreamableColor>("UI.wnd-color").ToClr();
+    TEXT_COLOR = GetOptionsDB().Get<StreamableColor>("UI.text-color").ToClr();
+    CTRL_COLOR = GetOptionsDB().Get<StreamableColor>("UI.ctrl-color").ToClr();
+    CTRL_BORDER_COLOR = GetOptionsDB().Get<StreamableColor>("UI.ctrl-border-color").ToClr();
+    WND_OUTER_BORDER_COLOR = GetOptionsDB().Get<StreamableColor>("UI.wnd-outer-border-color").ToClr();
+    WND_BORDER_COLOR = GetOptionsDB().Get<StreamableColor>("UI.wnd-border-color").ToClr();
+    WND_INNER_BORDER_COLOR = GetOptionsDB().Get<StreamableColor>("UI.wnd-inner-border-color").ToClr();
+    KNOWN_TECH_FILL_COLOR = GetOptionsDB().Get<StreamableColor>("UI.known-tech").ToClr();
+    KNOWN_TECH_TEXT_AND_BORDER_COLOR = GetOptionsDB().Get<StreamableColor>("UI.known-tech-border").ToClr();
+    RESEARCHABLE_TECH_FILL_COLOR = GetOptionsDB().Get<StreamableColor>("UI.researchable-tech").ToClr();
+    RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR = GetOptionsDB().Get<StreamableColor>("UI.researchable-tech-border").ToClr();
+    UNRESEARCHABLE_TECH_FILL_COLOR = GetOptionsDB().Get<StreamableColor>("UI.unresearchable-tech").ToClr();
+    UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR = GetOptionsDB().Get<StreamableColor>("UI.unresearchable-tech-border").ToClr();
+    TECH_WND_PROGRESS_BAR_BACKGROUND = GetOptionsDB().Get<StreamableColor>("UI.tech-progress-background").ToClr();
+    TECH_WND_PROGRESS_BAR = GetOptionsDB().Get<StreamableColor>("UI.tech-progress").ToClr();
 
     PTS       = GetOptionsDB().Get<int>("UI.font-size");
     TITLE_PTS = GetOptionsDB().Get<int>("UI.title-font-size");
@@ -821,3 +808,55 @@ TempUISoundDisabler::~TempUISoundDisabler()
     if (m_was_enabled)
         GetOptionsDB().Set("UI.sound.enabled", true);
 }
+
+StreamableColor::StreamableColor() :
+    r(0),
+    g(0),
+    b(0),
+    a(0)    
+{
+}
+
+StreamableColor::StreamableColor(const GG::Clr& clr) :
+    r(clr.r),
+    g(clr.g),
+    b(clr.b),
+    a(clr.a)    
+{
+}
+
+GG::Clr StreamableColor::ToClr() const
+{
+    return GG::Clr(r, g, b, a);
+}
+
+std::ostream& operator<<(std::ostream& os, const StreamableColor& clr)
+{
+    os << "(" << clr.r << "," << clr.g << "," << clr.b << "," << clr.a << ")";
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, StreamableColor& clr)
+{
+    using namespace boost::spirit;
+    rule<> color_p =
+        ch_p('(') >> *space_p >>
+        int_p[assign(clr.r)] >> *space_p >> ',' >> *space_p >>
+        int_p[assign(clr.g)] >> *space_p >> ',' >> *space_p >>
+        int_p[assign(clr.b)] >> *space_p >> ',' >> *space_p >>
+        int_p[assign(clr.a)] >> *space_p >> ')';
+    std::string str;
+    char c;
+    do {
+        is >> c;
+        str += c;
+    } while (is && c != ')');
+    if (!parse(str.c_str(), color_p).full ||
+        clr.r < 0 || 255 < clr.r ||
+        clr.g < 0 || 255 < clr.g ||
+        clr.b < 0 || 255 < clr.b ||
+        clr.a < 0 || 255 < clr.a)
+        is.setstate(std::ios_base::failbit);
+    return is;
+}
+
