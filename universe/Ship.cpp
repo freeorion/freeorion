@@ -1,6 +1,8 @@
 #include "Ship.h"
 #include "../GG/XML/XMLDoc.h"
 
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
 #include <stdexcept>
 
 ////////////////////////////////////////////////
@@ -11,7 +13,7 @@ ShipDesign::ShipDesign() :
    name(""),
    attack(0),
    defense(0),
-   cost(10000000000000)
+   cost(10000000)
 {
    //TODO
 }
@@ -25,9 +27,8 @@ ShipDesign::ShipDesign(const GG::XMLElement& elem)
 
 GG::XMLElement ShipDesign::XMLEncode() const
 {
-	GG::XMLElement retval;
-   // TODO
-   return retval;
+
+
 }
 
 
@@ -40,7 +41,7 @@ Ship::Ship() :
    //TODO
 }
 
-Ship::Ship(int race, std::string& ship_type)
+Ship::Ship(int race, int design_id)
 {
    //TODO
 }
@@ -55,9 +56,16 @@ Ship::Ship(const GG::XMLElement& elem) :
 
 GG::XMLElement Ship::XMLEncode() const
 {
-	GG::XMLElement retval;
-   // TODO
-   return retval;
+   using GG::XMLElement;
+   using boost::lexical_cast;
+
+   XMLElement element("Ship");
+
+   element.AppendChild( UniverseObject::XMLEncode() );
+
+   element.AppendChild( m_design.XMLEncode() );
+
+   return element;
 }
   	
 void Ship::MovementPhase(std::vector<SitRepEntry>& sit_reps)
