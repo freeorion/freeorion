@@ -62,7 +62,7 @@ protected:
     
 public:
     virtual int Render();    //!< renders the window as a FreeOrion window
-
+    virtual int LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys); //!< Respond to drag events
 //!@}
 
 private:
@@ -71,6 +71,7 @@ private:
     void OnCloseClick();    //!< mapped to the pressing of the square
     void OnMinimizeClick(); //!< mapped to pressing of the dash button
     void OnResizeClick(int x, int y); //!< mapped to resizing the window
+
     
 //!@}
 
@@ -140,7 +141,7 @@ protected:
     
 public:
     virtual int Render();    //!< renders the window as a FreeOrion window
-
+    virtual int LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys); //!< Respond to drag events
 //!@}
 
 private:
@@ -149,6 +150,7 @@ private:
     void OnCloseClick();    //!< mapped to the pressing of the square
     void OnMinimizeClick(); //!< mapped to pressing of the dash button
     void OnResizeClick(int x, int y); //!< mapped to resizing the window
+    
     
 //!@}
 protected:

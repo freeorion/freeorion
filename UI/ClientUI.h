@@ -107,6 +107,7 @@ public:
     //!@{
     
     ClientUI(const std::string& string_table_file = StringTable::S_DEFAULT_FILENAME);        //!< construction (calls Initialize())
+    ClientUI(const GG::XMLElement& elem); //!< construct via XML
     ~ClientUI();    //!< destruction (calls Cleanup())
 
     bool Initialize(const std::string& string_table_file);    //!< provided to setup initial variables. 
@@ -121,7 +122,7 @@ public:
     
     static inline ClientUI* GetClientUI() {if(the_UI) return the_UI; return NULL;} //!< returns a pointer to the singleton ClientUI class
     inline const std::string& Language() const {return m_string_table->Language();} //!< Returns the language of the StringTable object associated with ClientUI
-    inline const std::string& String(std::string index) const {return m_string_table->String(index); } //!< Returns a lookup from the string table
+    static inline const std::string& String(std::string index){return the_UI->m_string_table->String(index); } //!< Returns a lookup from the string table
     static inline void LogMessage(const std::string& msg) {s_logger.debug(msg);} //!<sends a message to the logger
     
     //!@}
@@ -135,6 +136,8 @@ public:
     bool Freeze();                        //!< freezes the interface so that user input is ignored.
     bool Unfreeze();                    //!< unfreezes the UI and input is recognized again
     bool Frozen();                //!< returns true if interface is frozen, false otherwise
+    
+    GG::XMLElement XMLEncode() const; //!< encodes ClientUI to XML
     
     //! @param parent A pointer to the Wnd that should contain the tooltip
     //! @param tool A pointer to a ToolWnd to be associated with that window

@@ -59,6 +59,58 @@ ClientUI::ClientUI(const std::string& string_table_file /* = StringTable::S_DEFA
     the_UI = this;    
     Initialize(string_table_file);
 }//ClientUI()
+
+ClientUI::ClientUI(const GG::XMLElement& elem)
+{
+    using namespace GG;
+    
+    the_UI = this;
+    
+    if(elem.Tag() != "ClientUI")
+        throw std::invalid_argument("Tried to construct a 'ClientUI' object from an XML tag that was not 'ClientUI'.");
+    
+    const XMLElement* current = &elem.Child("BORDER_COLOR");
+    BORDER_COLOR = Clr(current->Child("GG::Clr"));
+    
+    current = &elem.Child("CTRL_COLOR");
+    CTRL_COLOR = Clr(current->Child("GG::Clr"));
+    
+    current = &elem.Child("INNER_BORDER_COLOR");
+    INNER_BORDER_COLOR = Clr(current->Child("GG::Clr"));
+    
+    current = &elem.Child("OUTER_BORDER_COLOR");
+    OUTER_BORDER_COLOR = Clr(current->Child("GG::Clr"));
+    
+    current = &elem.Child("TEXT_COLOR");
+    TEXT_COLOR = Clr(current->Child("GG::Clr"));
+    
+    current = &elem.Child("WND_COLOR");
+    WND_COLOR = Clr(current->Child("GG::Clr"));
+    
+    current = &elem.Child("PTS");
+    PTS = lexical_cast<int>(current->Attribute("value"));
+    
+    current = &elem.Child("TITLE_PTS");
+    TITLE_PTS = lexical_cast<int>(current->Attribute("value"));
+    
+    current = &elem.Child("DIR");
+    DIR = current->Attribute("value");
+    
+    current = &elem.Child("FONT");
+    FONT = current->Attribute("value");
+    
+    current = &elem.Child("TITLE_FONT");
+    TITLE_FONT = current->Attribute("value");
+    
+    current = &elem.Child("ART_DIR");
+    ART_DIR = DIR + "art/" + current->Attribute("value") + "/";
+    
+    current = &elem.Child("STRINGTABLE_FILENAME");
+    
+    //call initialize with stringtable filename
+    Initialize(DIR + current->Attribute("value"));
+    
+}//ClientUI(XMLElement)
  
 bool ClientUI::Initialize(const std::string& string_table_file)
 {
@@ -118,6 +170,78 @@ bool ClientUI::Cleanup()
 
     return true; 
 }//Cleanup()
+
+GG::XMLElement ClientUI::XMLEncode() const
+{
+    using namespace GG;
+    XMLElement retval("ClientUI"), temp;
+    
+    //static constants
+    
+    //config the directory
+    temp = XMLElement("DIR");
+    temp.SetAttribute("value", DIR);
+    retval.AppendChild(temp);
+    //only large or small is saved, so art dir is created from the DIR
+    temp = XMLElement("ART_DIR");
+    temp.SetAttribute("value", (ART_DIR.find("small") != std::string::npos ? "small" : "large") );
+    retval.AppendChild(temp);
+          
+    temp = XMLElement("FONT");
+    temp.SetAttribute("value", FONT);
+    retval.AppendChild(temp);
+    
+    temp = XMLElement("PTS");
+    temp.SetAttribute("value", lexical_cast<std::string>(PTS));
+    retval.AppendChild(temp);
+    
+    temp = XMLElement("TITLE_FONT");
+    temp.SetAttribute("value", TITLE_FONT);
+    retval.AppendChild(temp);
+    
+    temp = XMLElement("TITLE_PTS");
+    temp.SetAttribute("value", lexical_cast<std::string>(TITLE_PTS));
+    retval.AppendChild(temp);
+    
+    
+    temp = XMLElement("WND_COLOR");
+    temp.AppendChild(WND_COLOR.XMLEncode());
+    retval.AppendChild(temp);
+    
+    temp = XMLElement("TEXT_COLOR");
+    temp.AppendChild(TEXT_COLOR.XMLEncode());
+    retval.AppendChild(temp);
+    
+    temp = XMLElement("CTRL_COLOR");
+    temp.AppendChild(CTRL_COLOR.XMLEncode());
+    retval.AppendChild(temp);
+    
+    temp = XMLElement("OUTER_BORDER_COLOR");
+    temp.AppendChild(OUTER_BORDER_COLOR.XMLEncode());
+    retval.AppendChild(temp);
+    
+    temp = XMLElement("BORDER_COLOR");
+    temp.AppendChild(BORDER_COLOR.XMLEncode());
+    retval.AppendChild(temp);
+    
+    temp = XMLElement("INNER_BORDER_COLOR");
+    temp.AppendChild(INNER_BORDER_COLOR.XMLEncode());
+    retval.AppendChild(temp);
+    
+    temp = XMLElement("TOOLTIP_DELAY");
+    temp.SetAttribute("value", lexical_cast<std::string>(TOOLTIP_DELAY));
+    retval.AppendChild(temp);
+    
+    temp = XMLElement("STRINGTABLE_FILENAME");
+    temp.SetAttribute("value", m_string_table->Filename());
+    retval.AppendChild(temp);
+    
+    //other values are initialized automatically
+    
+    //return the element
+    return retval;
+    
+}//XMLEncode()
 
 //////////////////////////////////////////////////////////
 
@@ -304,7 +428,6 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
     
     if(resize)
     {
-        //LogMessage("Resizable window!");
         //if it is resizable, draw a line strip that has a diagonal at lower right corner
         
         glBegin(GL_LINE_STRIP);
@@ -323,7 +446,6 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
     }//end if resize
     else
     {
-        //LogMessage("NOT A Resizable window!");
         //...otherwise, make a clear rectangle with a thin border
 //        GG::FlatRectangle(x1, y1, x2, y2, GG::CLR_ZERO, INNER_BORDER_COLOR, 1);
         glBegin(GL_LINE_STRIP);
@@ -341,7 +463,6 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
         
     if(resize)
     {
-        LogMessage("Resizable window! Part II.");
         
         glBegin(GL_LINES);
             //draw the extra lines if its a resizable window
@@ -355,7 +476,6 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
     }
     if(min)
     {    
-        LogMessage("Minimizable window!");
         //draw dash if minimizable
         //draw the lines for the dash and the x
         //dash
@@ -368,7 +488,6 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
     }
     if(close)
     {
-        //LogMessage("Closable Window!");
         //if closable, draw the "X"
         //draw cross
         
