@@ -84,6 +84,8 @@ universe/ProdCenter.cpp				\
 universe/ProdCenter.h  				\
 universe/Ship.cpp				\
 universe/Ship.h  				\
+universe/Special.cpp				\
+universe/Special.h  				\
 universe/System.cpp				\
 universe/System.h  				\
 universe/Universe.cpp				\
