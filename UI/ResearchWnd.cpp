@@ -466,7 +466,7 @@ void ResearchWnd::ResearchInfoPanel::Reset()
 // ResearchWnd                                  //
 //////////////////////////////////////////////////
 ResearchWnd::ResearchWnd(int w, int h) :
-    CUI_Wnd(UserString("RESEARCH_WND_TITLE"), 0, 0, w, h),
+    CUI_Wnd(UserString("RESEARCH_WND_TITLE"), 0, 0, w, h, GG::Wnd::CLICKABLE | GG::Wnd::ONTOP),
     m_research_info_panel(0),
     m_queue_lb(0),
     m_tech_tree_wnd(0)
