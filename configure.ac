@@ -65,7 +65,8 @@ AC_FUNC_MMAP
 AC_FUNC_SELECT_ARGTYPES
 AC_FUNC_SETVBUF_REVERSED
 AC_TYPE_SIGNAL
-AC_CHECK_FUNCS([floor gethostbyaddr gethostbyname memmove memset munmap pow select socket sqrt strcasecmp])
+AC_SEARCH_LIBS(sqrt,[m],[],[AC_MSG_FAILURE([The sqrt-function was not found. This is bad!])])
+AC_CHECK_FUNCS([floor gethostbyaddr gethostbyname memmove memset munmap pow select socket strcasecmp])
 
 
 # Checks for libraries.
