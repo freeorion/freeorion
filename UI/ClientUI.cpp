@@ -42,8 +42,8 @@ std::string ClientUI::TITLE_FONT    = "Vera.ttf";
 int         ClientUI::TITLE_PTS     = 12;
 
 std::string ClientUI::DIR           = "default/";
-std::string ClientUI::ART_DIR       = ClientUI::DIR + "art/small/";
-std::string ClientUI::MUSIC_DIR	    = ClientUI::DIR + "music/";
+std::string ClientUI::ART_DIR       = "default/data/art/";
+std::string ClientUI::SOUND_DIR	    = "default/data/sound/";
 
 GG::Clr     ClientUI::TEXT_COLOR(255,255,255,255);
 
@@ -111,7 +111,8 @@ namespace {
         db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(480, 1536));
         db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
 
-        db.Add<std::string>("UI.art-dir", "Sets UI art resource directory under \'[data-dir]/art\'.", "small");
+        db.Add<std::string>("UI.art-dir", "Sets UI art resource directory.", "default/data/art/");
+        db.Add<std::string>("UI.sound-dir", "Sets UI sound and music resource directory.", "default/data/sound/");
         db.Add<std::string>("UI.font", "Sets UI font resource file.", "Vera.ttf");
         db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
         db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "Vera.ttf");
@@ -338,7 +339,12 @@ ClientUI::ClientUI() :
     DIR       = GetOptionsDB().Get<std::string>("data-dir");
     FONT      = GetOptionsDB().Get<std::string>("UI.font");
     TITLE_FONT= GetOptionsDB().Get<std::string>("UI.title-font");
-    ART_DIR   = DIR + "art/" + GetOptionsDB().Get<std::string>("UI.art-dir") + "/";
+    ART_DIR   = GetOptionsDB().Get<std::string>("UI.art-dir");
+    if (!ART_DIR.empty() && ART_DIR[ART_DIR.size() - 1] != '/')
+	ART_DIR += '/';
+    SOUND_DIR   = GetOptionsDB().Get<std::string>("UI.sound-dir");
+    if (!SOUND_DIR.empty() && SOUND_DIR[SOUND_DIR.size() - 1] != '/')
+	SOUND_DIR += '/';
 
     //call initialize with stringtable filename
     Initialize(DIR + GetOptionsDB().Get<std::string>("UI.stringtable-filename"));

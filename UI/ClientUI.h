@@ -199,8 +199,8 @@ public:
     static int         TITLE_PTS;        //!< default point size to use for window title
     
     static std::string DIR;              //!< directory currently being used, contains config files
-    static std::string ART_DIR;          //!< directory holding artwork, ("*/art/small/" or "*/art/large/"
-    static std::string MUSIC_DIR;        //!< directory holding music
+    static std::string ART_DIR;          //!< directory holding artwork
+    static std::string SOUND_DIR;        //!< directory holding sound and music
 
     static GG::Clr     TEXT_COLOR;       //!< color of UI text
     

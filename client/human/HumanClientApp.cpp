@@ -193,7 +193,7 @@ void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/
 void HumanClientApp::StartMusic(void)
 {
     StopMusic();
-    PlayMusic(ClientUI::MUSIC_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1, 0, 0.0);
+    PlayMusic(ClientUI::SOUND_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1, 0, 0.0);
 }
 
 void HumanClientApp::StopMusic(void)
