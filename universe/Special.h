@@ -13,21 +13,20 @@ public:
     /** \name Structors */ //@{
     Special(const std::string& name, const std::string& description); ///< basic ctor
     Special(const GG::XMLElement& elem); ///< XML ctor
-    ~Special(); /// dtor
     //@}
 
     /** \name Accessors */ //@{
     const std::string&          Name() const;               ///< returns the unique name for this type of special
     const std::string&          Description() const;        ///< returns a text description of this type of special
-    const std::vector<Effect::EffectsGroup*>&
+    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                 Effects() const;            ///< returns the EffectsGroups that encapsulate the effects that specials of this type have
-    void                        Execute(int host_id) const; ///< executes the effects of the special
     //@}
 
 private:
-    std::string                        m_name;
-    std::string                        m_description;
-    std::vector<Effect::EffectsGroup*> m_effects;
+    std::string          m_name;
+    std::string          m_description;
+    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
+                         m_effects;
 };
 
 /** Returns the Special object used to represent specials of type \a name.  If no such Special exists, 0 is returned instead. */

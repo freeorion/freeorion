@@ -121,31 +121,39 @@ EffectsGroup::~EffectsGroup()
     }
 }
 
-void EffectsGroup::Execute(int source_id) const
+void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
 {
     Universe& universe = GetUniverse();
     UniverseObject* source = universe.Object(source_id);
+    assert(source);
+
+    targets.clear();
 
     // evaluate the activation condition only on the source object
-    Condition::ConditionBase::ObjectSet condition_targets;
-    Condition::ConditionBase::ObjectSet condition_non_targets;
-    condition_non_targets.insert(source);
-    m_activation->Eval(source, condition_targets, condition_non_targets);
+    Condition::ConditionBase::ObjectSet non_targets;
+    non_targets.insert(source);
+    m_activation->Eval(source, targets, non_targets);
 
     // if the activation condition did not evaluate to true for the source object, do nothing
-    if (condition_targets.empty())
+    if (targets.empty())
         return;
 
     // evaluate the scope condition
-    condition_targets.clear();
-    condition_non_targets.clear();
+    targets.clear();
+    non_targets.clear();
     for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        condition_non_targets.insert(it->second);
+        non_targets.insert(it->second);
     }
-    m_scope->Eval(source, condition_targets, condition_non_targets);
+    m_scope->Eval(source, targets, non_targets);
+}
 
-    // execute effects on targets in scope
-    for (Condition::ConditionBase::ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
+{
+    UniverseObject* source = GetUniverse().Object(source_id);
+    assert(source);
+
+    // execute effects on targets
+    for (Condition::ConditionBase::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         for (unsigned int i = 0; i < m_effects.size(); ++i) {
             m_effects[i]->Execute(source, *it);
         }
@@ -614,6 +622,66 @@ std::string SetTechAvailability::Description() const
     return str(format(UserString(m_available ? "DESC_SET_TECH_AVAIL" : "DESC_SET_TECH_UNAVAIL"))
                % affected
                % empire_str);
+}
+
+
+///////////////////////////////////////////////////////////
+// RefineBuildingType                                    //
+///////////////////////////////////////////////////////////
+RefineBuildingType::RefineBuildingType(const std::string& building_type_name,
+                                       const ValueRef::ValueRefBase<int>* empire_id,
+                                       const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects) :
+    m_building_type_name(building_type_name),
+    m_empire_id(empire_id),
+    m_effects(effects)
+{
+}
+
+RefineBuildingType::RefineBuildingType(const GG::XMLElement& elem)
+{
+    if (elem.Tag() != "Effect::RefineBuildingType")
+        throw std::invalid_argument("Attempted to construct a Effect::RefineBuildingType from an XMLElement that had a tag other than \"Effect::RefineBuildingType\"");
+
+    m_building_type_name = elem.Child("building_type").Text();
+    m_empire_id = ParseArithmeticExpression<int>(elem.Child("empire_id").Text());
+    for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
+        m_effects.push_back(boost::shared_ptr<const Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
+    }
+}
+
+RefineBuildingType::~RefineBuildingType()
+{
+    delete m_empire_id;
+}
+
+void RefineBuildingType::Execute(const UniverseObject* source, UniverseObject* target) const
+{
+    int empire_id = m_empire_id->Eval(source, target);
+    Empire* empire = Empires().Lookup(empire_id);
+    empire->RefineBuildingType(m_building_type_name, m_effects);
+}
+
+std::string RefineBuildingType::Description() const
+{
+    std::string retval;
+    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
+#if 0
+    retval = str(format(UserString("DESC_REFINE_BUILDING_TYPE"))
+                 % m_building_type_name
+                 % empire_str);
+    for (unsigned int i = 0; i < m_effects.size(); ++i) {
+        EffectsGroup::Description description = m_effects.GetDescription();
+        retval += str(format(UserString("DESC_EFFECTS_GROUP"))
+                      % description.scope_description
+                      % description.activation_description);
+        for (unsigned int j = 0; j < description.effect_descriptions.size(); ++j) {
+            retval += str(format(UserString("DESC_EFFECT"))
+                          % lexical_cast<std::string>(j)
+                          % description.effect_descriptions[i]);
+        }
+    }
+#endif
+    return retval;
 }
 
 

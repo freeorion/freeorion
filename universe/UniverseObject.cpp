@@ -191,10 +191,3 @@ void UniverseObject::ResetMaxMeters()
 void UniverseObject::AdjustMaxMeters()
 {
 }
-
-void UniverseObject::ExecuteSpecials()
-{
-    for (std::set<std::string>::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it) {
-        GetSpecial(*it)->Execute(ID());
-    }
-}

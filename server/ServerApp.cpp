@@ -8,10 +8,12 @@
 #include "../universe/Building.h"
 #include "../util/OrderSet.h"
 #include "../util/GZStream.h"
+#include "../universe/Effect.h"
 #include "../universe/Fleet.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Planet.h"
+#include "../universe/Special.h"
 #include "../universe/System.h"
 #include "../universe/Predicates.h"
 
@@ -724,8 +726,7 @@ void ServerApp::HandleMessage(const Message& msg)
                         condition = new Condition::Building("building_name");
                         break;
                     case 6:
-                        // TODO : put a valid special name in here.
-                        condition = new Condition::HasSpecial("STARVATION_SPECIAL");
+                        condition = new Condition::HasSpecial("HOMEWORLD_SPECIAL");
                         break;
                     case 7:
                         // TODO : put a valid condition name in here.
@@ -1695,37 +1696,36 @@ Empire* ServerApp::GetPlayerEmpire(int player_id) const
 }
 
 
-void ServerApp::AddEmpireTurn( int empire_id )
+void ServerApp::AddEmpireTurn(int empire_id)
 {
     // add empire
-    m_turn_sequence[ empire_id ] = NULL;
+    m_turn_sequence[empire_id] = NULL;
 }
 
 
-void ServerApp::RemoveEmpireTurn( int empire_id )
+void ServerApp::RemoveEmpireTurn(int empire_id)
 {
-    m_turn_sequence.erase( empire_id );
+    m_turn_sequence.erase(empire_id);
 }
 
-void ServerApp::SetEmpireTurnOrders( int empire_id , OrderSet *order_set )
+void ServerApp::SetEmpireTurnOrders(int empire_id, OrderSet *order_set)
 {
-    m_turn_sequence[ empire_id ] = order_set;
+    m_turn_sequence[empire_id] = order_set;
 }
 
 
-bool ServerApp::AllOrdersReceived( )
+bool ServerApp::AllOrdersReceived()
 {
     // Loop through to find empire ID and check for valid orders pointer
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-    {
-        if ( !it->second )
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
+        if (!it->second)
             return false; 
     } 
     return true;
 }
 
 
-void ServerApp::ProcessTurns( )
+void ServerApp::ProcessTurns()
 {
     Empire                    *pEmpire;
     OrderSet                  *pOrderSet;
@@ -1873,14 +1873,7 @@ void ServerApp::ProcessTurns( )
         it->second->AdjustMaxMeters();
     }
 
-    std::vector<Building*> buildings = GetUniverse().FindObjects<Building>();
-    for (unsigned int i = 0; i < buildings.size(); ++i) {
-        buildings[i]->ExecuteEffects();
-    }
-
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ExecuteSpecials();
-    }
+    GetUniverse().ApplyEffects();
 
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
@@ -1902,8 +1895,6 @@ void ServerApp::ProcessTurns( )
             empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(),(*it)->ID()));
             (*it)->RemoveOwner(*(*it)->Owners().begin());
         }
-
-
 
     // loop and free all orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)

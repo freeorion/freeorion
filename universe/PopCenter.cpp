@@ -153,25 +153,25 @@ void PopCenter::AdjustMaxMeters()
     // determine meter maxes; they should have been previously reset to 0, then adjusted by Specials, Building effects, etc.
     m_pop.AdjustMax(MaxPopModFromObject(m_object));
     m_health.AdjustMax(MaxHealthModFromObject(m_object));
-    if (m_available_food < m_pop.Current()) { // starvation
-        m_object->AddSpecial("STARVATION_SPECIAL");
-        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][0]);
-    } else if (m_available_food < 2 * m_pop.Current()) {
-        m_object->RemoveSpecial("STARVATION_SPECIAL");
-        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][1]);
-    } else if (m_available_food < 4 * m_pop.Current()) {
-        m_object->RemoveSpecial("STARVATION_SPECIAL");
-        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][2]);
-    } else {
-        m_object->RemoveSpecial("STARVATION_SPECIAL");
-        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
-    }
 }
 
 void PopCenter::PopGrowthProductionResearchPhase()
 {
-    m_health.AdjustCurrent(m_health.Current() * (((m_health.Max() + 1.0) - m_health.Current()) / (m_health.Max() + 1.0)));
     m_pop.AdjustCurrent(FuturePopGrowth());
+    if (AvailableFood() < m_pop.Current()) { // starvation
+        m_object->AddSpecial("STARVATION_SPECIAL");
+        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][0]);
+    } else if (m_available_food < 2 * m_pop.Current()) { // "minimal" nutrient levels
+        m_object->RemoveSpecial("STARVATION_SPECIAL");
+        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][1]);
+    } else if (m_available_food < 4 * m_pop.Current()) { // "normal" nutrient levels
+        m_object->RemoveSpecial("STARVATION_SPECIAL");
+        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][2]);
+    } else { // food orgy!
+        m_object->RemoveSpecial("STARVATION_SPECIAL");
+        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
+    }
+    m_health.AdjustCurrent(m_health.Current() * (((m_health.Max() + 1.0) - m_health.Current()) / (m_health.Max() + 1.0)));
 }
 
 

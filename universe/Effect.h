@@ -19,6 +19,7 @@ namespace Effect {
     class RemoveSpecial;
     class SetStarType;
     class SetTechAvailability;
+    class RefineBuildingType;
     class SetEffectTarget;
     GG::XMLObjectFactory<EffectBase> EffectFactory(); ///< an XML factory that creates the right subclass of EffectBase from a given XML element
 }
@@ -32,6 +33,8 @@ namespace Effect {
 class Effect::EffectsGroup
 {
 public:
+    typedef Condition::ConditionBase::ObjectSet TargetSet;
+
     struct Description
     {
         std::string scope_description;
@@ -44,7 +47,8 @@ public:
     EffectsGroup(const GG::XMLElement& elem);
     virtual ~EffectsGroup();
 
-    void Execute(int source_id) const;
+    void GetTargetSet(int source_id, TargetSet& targets) const;
+    void Execute(int source_id, const TargetSet& targets) const;
     const std::string& StackingGroup() const;
     const std::vector<EffectBase*>& EffectsList() const;
     Description GetDescription() const;
@@ -245,6 +249,25 @@ private:
     const ValueRef::ValueRefBase<int>* m_empire_id;
     bool                               m_available;
     bool                               m_include_tech;
+};
+
+/** Adds additional EffectsGroups \a effects to the \a building_type_name BuildingType definition for Empire \a empire_id.  This is intended to be used
+    for Refinement Techs and special events. */
+class Effect::RefineBuildingType : public Effect::EffectBase
+{
+public:
+    RefineBuildingType(const std::string& building_type_name, const ValueRef::ValueRefBase<int>* empire_id,
+                       const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects);
+    RefineBuildingType(const GG::XMLElement& elem);
+    virtual ~RefineBuildingType();
+
+    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
+
+private:
+    std::string                                                 m_building_type_name;
+    const ValueRef::ValueRefBase<int>*                          m_empire_id;
+    std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
 };
 
 class Effect::SetEffectTarget : public Effect::EffectBase

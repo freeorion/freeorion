@@ -7,6 +7,7 @@
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/key_extractors.hpp>
 #include <boost/multi_index/ordered_index.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <set>
 #include <string>
@@ -28,7 +29,6 @@ public:
 
     /** \name Structors */ //@{
     Tech(const GG::XMLElement& elem); ///< XML ctor
-    ~Tech(); ///< dtor
     //@}
 
     /** \name Accessors */ //@{
@@ -52,7 +52,7 @@ public:
 
     /** returns the effects that are applied to the discovering empire's capitol when this tech is researched;
         not all techs have effects, in which case this returns 0 */
-    const std::vector<const Effect::EffectsGroup*>& Effects() const;
+    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const;
 
     /** returns the set of names of all techs required before this one can be researched */
     const std::set<std::string>& Prerequisites() const;
@@ -65,15 +65,16 @@ private:
     Tech(const Tech&);                  // disabled
     const Tech& operator=(const Tech&); // disabled
 
-    std::string                              m_name;
-    std::string                              m_description;
-    std::string                              m_category;
-    TechType                                 m_type;
-    double                                   m_research_cost;
-    int                                      m_research_turns;
-    std::vector<const Effect::EffectsGroup*> m_effects;
-    std::set<std::string>                    m_prerequisites;
-    std::vector<ItemSpec>                    m_unlocked_items;
+    std::string                m_name;
+    std::string                m_description;
+    std::string                m_category;
+    TechType                   m_type;
+    double                     m_research_cost;
+    int                        m_research_turns;
+    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
+                               m_effects;
+    std::set<std::string>      m_prerequisites;
+    std::vector<ItemSpec>      m_unlocked_items;
 };
 
 

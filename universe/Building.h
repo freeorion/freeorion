@@ -6,6 +6,7 @@
 #include "UniverseObject.h"
 #endif
 
+class BuildingType;
 namespace Effect {
     class EffectsGroup;
 }
@@ -22,10 +23,14 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string& BuildingTypeName() const; ///< returns the name of the type of building this is
-    bool               Operating() const;        ///< true iff this building is currently operating
-    int                PlanetID() const;         ///< returns the ID number of the planet this building is on
-    Planet*            GetPlanet() const;        ///< returns a pointer to the planet this building is on
+    /** returns the BuildingType object for this building, specific to the owning empire (or the default version if there
+        is other than exactly one owner) */
+    const BuildingType* GetBuildingType() const;
+
+    const std::string&  BuildingTypeName() const; ///< returns the name of the BuildingType object for this building
+    bool                Operating() const;        ///< returns true iff this building is currently operating
+    int                 PlanetID() const;         ///< returns the ID number of the planet this building is on
+    Planet*             GetPlanet() const;        ///< returns a pointer to the planet this building is on
 
     virtual GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a Building object with visibility limited relative to the input empire
 
@@ -35,8 +40,6 @@ public:
     /** \name Mutators */ //@{
     void Activate(bool activate);    ///< activates or deactivates the building
     void SetPlanetID(int planet_id); ///< sets the planet on which the building is located
-
-    void ExecuteEffects();           ///< executes the effects of the building
 
     virtual void MovementPhase();
     virtual void PopGrowthProductionResearchPhase();
@@ -57,7 +60,6 @@ public:
     BuildingType(); ///< default ctor
     BuildingType(const std::string& name, const std::string& description); ///< basic ctor
     BuildingType(const GG::XMLElement& elem); ///< ctor that constructs a BuildingType object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a BuildingType object
-    ~BuildingType(); ///< dtor
     //@}
 
     /** \name Accessors */ //@{
@@ -66,22 +68,26 @@ public:
     double                      BuildCost() const;        ///< returns the number of production points required to build this building
     int                         BuildTime() const;        ///< returns the number of turns required to build this building
     double                      MaintenanceCost() const;  ///< returns the number of monetary points required per turn to operate this building
-    const std::vector<const Effect::EffectsGroup*>&
+    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                 Effects() const;            ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
     //@}
 
+    /** \name Mutators */ //@{
+    void AddEffects(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects);
+    //@}
+
 private:
-    std::string                              m_name;
-    std::string                              m_description;
-    double                                   m_build_cost;
-    int                                      m_build_time;
-    double                                   m_maintenance_cost;
-    std::vector<const Effect::EffectsGroup*> m_effects;
+    std::string                                                 m_name;
+    std::string                                                 m_description;
+    double                                                      m_build_cost;
+    int                                                         m_build_time;
+    double                                                      m_maintenance_cost;
+    std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
 };
 
 /** Returns the BuildingType specification object for a building of type \a name.  If no such BuildingType
     exists, 0 is returned instead. */
-BuildingType* GetBuildingType(const std::string& name);
+const BuildingType* GetBuildingType(const std::string& name);
 
 
 inline std::pair<std::string, std::string> BuildingRevision()

@@ -120,7 +120,7 @@ double Planet::BuildingCosts() const
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
         Building* building = universe.Object<Building>(*it);
         if (building->Operating()) {
-            BuildingType* bulding_type = GetBuildingType(building->BuildingTypeName());
+            const BuildingType* bulding_type = GetBuildingType(building->BuildingTypeName());
             retval += bulding_type->MaintenanceCost();
         }
     }

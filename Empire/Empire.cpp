@@ -1,10 +1,10 @@
 #include "Empire.h"
 
-#include "ResourcePool.h"
-
+#include "../universe/Building.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/Planet.h"
+#include "ResourcePool.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
@@ -77,7 +77,12 @@ Empire::Empire(const GG::XMLElement& elem) :
 }
 
 Empire::~Empire()
-{}
+{
+    for (std::map<std::string, BuildingType*>::const_iterator it = m_modified_building_types.begin(); it != m_modified_building_types.end(); ++it) {
+        delete it->second;
+    }
+    ClearSitRep();
+}
 
 /** Misc Accessors */
 const std::string& Empire::Name() const
@@ -102,6 +107,12 @@ const GG::Clr& Empire::Color() const
 
 int Empire::HomeworldID() const
 {
+    return m_homeworld_id;
+}
+
+int Empire::CapitolID() const
+{
+    // TODO: come up with a system for changing (moving) the capitol from the homeworld to somewhere else
     return m_homeworld_id;
 }
 
@@ -131,6 +142,16 @@ bool Empire::BuildingTypeAvailable(const std::string& name) const
 {
     Empire::BuildingTypeItr item = m_building_types.find(name);
     return item != m_building_types.end();
+}
+
+const BuildingType* Empire::GetBuildingType(const std::string& name) const
+{
+    std::map<std::string, BuildingType*>::const_iterator it = m_modified_building_types.find(name);
+    if (it != m_modified_building_types.end()) {
+        return it->second;
+    } else {
+        return ::GetBuildingType(name);
+    }
 }
 
 bool Empire::HasExploredSystem(int ID) const
@@ -213,6 +234,22 @@ void Empire::UnlockItem(const Tech::ItemSpec& item)
 void Empire::AddBuildingType(const std::string& name)
 {
     m_building_types.insert(name);
+}
+
+void Empire::RefineBuildingType(const std::string& name, const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects)
+{
+    BuildingType*& building = m_modified_building_types[name];
+    if (!building)
+        building = new BuildingType(*::GetBuildingType(name));
+    building->AddEffects(effects);
+}
+
+void Empire::ClearRefinements()
+{
+    for (std::map<std::string, BuildingType*>::iterator it = m_modified_building_types.begin(); it != m_modified_building_types.end(); ++it) {
+        delete it->second;
+    }
+    m_modified_building_types.clear();
 }
 
 void Empire::AddExploredSystem(int ID)

@@ -86,7 +86,7 @@ Tech::Tech(const GG::XMLElement& elem) :
 
     if (elem.ContainsChild("effects")) {
         for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
-            m_effects.push_back(new Effect::EffectsGroup(*it));
+            m_effects.push_back(boost::shared_ptr<Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
         }
     }
 
@@ -100,13 +100,6 @@ Tech::Tech(const GG::XMLElement& elem) :
          it != elem.Child("unlocked_items").child_end();
          ++it) {
         m_unlocked_items.push_back(ItemSpec(*it));
-    }
-}
-
-Tech::~Tech()
-{
-    for (unsigned int i = 0; i < m_effects.size(); ++i) {
-        delete m_effects[i];
     }
 }
 
@@ -140,7 +133,7 @@ int Tech::ResearchTurns() const
     return m_research_turns;
 }
 
-const std::vector<const Effect::EffectsGroup*>& Tech::Effects() const
+const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Tech::Effects() const
 {
     return m_effects;
 }

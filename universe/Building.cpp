@@ -37,7 +37,7 @@ namespace {
             ifs.close();
         }
 
-        BuildingType* GetBuildingType(const std::string& name) const
+        const BuildingType* GetBuildingType(const std::string& name) const
         {
             std::map<std::string, BuildingType*>::const_iterator it = m_building_types.find(name);
             return it != m_building_types.end() ? it->second : 0;
@@ -77,6 +77,15 @@ Building::Building(const GG::XMLElement& elem) :
     m_building_type = elem.Child("m_building_type").Text();
     m_operating = lexical_cast<bool>(elem.Child("m_operating").Text());
     m_planet_id = lexical_cast<int>(elem.Child("m_planet_id").Text());
+}
+
+const BuildingType* Building::GetBuildingType() const
+{
+    if (Owners().size() != 1)
+        return ::GetBuildingType(m_building_type);
+
+    Empire* empire = Empires().Lookup(*Owners().begin());
+    return empire->GetBuildingType(m_building_type);
 }
 
 const std::string& Building::BuildingTypeName() const
@@ -130,14 +139,6 @@ void Building::SetPlanetID(int planet_id)
     m_planet_id = planet_id;
 }
 
-void Building::ExecuteEffects()
-{
-    const std::vector<const Effect::EffectsGroup*>& effects = GetBuildingType(m_building_type)->Effects();
-    for (unsigned int i = 0; i < effects.size(); ++i) {
-        effects[i]->Execute(ID());
-    }
-}
-
 void Building::MovementPhase()
 {
 }
@@ -180,14 +181,7 @@ BuildingType::BuildingType(const GG::XMLElement& elem)
     m_build_time = lexical_cast<int>(elem.Child("build_time").Text());
     m_maintenance_cost = lexical_cast<double>(elem.Child("maintenance_cost").Text());
     for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
-        m_effects.push_back(new Effect::EffectsGroup(*it));
-    }
-}
-
-BuildingType::~BuildingType()
-{
-    for (unsigned int i = 0; i < m_effects.size(); ++i) {
-        delete m_effects[i];
+        m_effects.push_back(boost::shared_ptr<const Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
     }
 }
 
@@ -216,12 +210,17 @@ double BuildingType::MaintenanceCost() const
     return m_maintenance_cost;
 }
 
-const std::vector<const Effect::EffectsGroup*>& BuildingType::Effects() const
+const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& BuildingType::Effects() const
 {
     return m_effects;
 }
 
-BuildingType* GetBuildingType(const std::string& name)
+void BuildingType::AddEffects(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects)
+{
+    std::copy(effects.begin(), effects.end(), m_effects.end());
+}
+
+const BuildingType* GetBuildingType(const std::string& name)
 {
     static BuildingTypeManager manager;
     return manager.GetBuildingType(name);

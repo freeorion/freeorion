@@ -118,9 +118,6 @@ public:
         Effects acting on the object, which should already have been executed before this fucntion is called. */
     virtual void AdjustMaxMeters();
 
-    /** executes all specials attached to this UniverseObject. */
-    void ExecuteSpecials();
-
     /** performs the movement that this object is responsible for this object's actions during the pop growth/production/research
         phase of a turn. */
     virtual void PopGrowthProductionResearchPhase( ) = 0;

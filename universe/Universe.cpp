@@ -2,12 +2,14 @@
 
 #include "../util/AppInterface.h"
 #include "Building.h"
+#include "Effect.h"
 #include "Fleet.h"
 #include "../util/DataTable.h"
 #include "../util/MultiplayerCommon.h"
 #include "Planet.h"
 #include "Predicates.h"
 #include "../util/Random.h"
+#include "Special.h"
 #include "../Empire/ServerEmpireManager.h"
 #include "Ship.h"
 #include "ShipDesign.h"
@@ -1083,20 +1085,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     GenerateHomeworlds(players + ai_players, homeworlds);
     GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
 
-    // adjust the meters at start, so that they will have the right values during the first turn
-    for (const_iterator it = begin(); it != end(); ++it) {
-        it->second->ResetMaxMeters();
-        it->second->AdjustMaxMeters();
-    }
-
-    std::vector<Building*> buildings = FindObjects<Building>();
-    for (unsigned int i = 0; i < buildings.size(); ++i) {
-        buildings[i]->ExecuteEffects();
-    }
-
-    for (const_iterator it = begin(); it != end(); ++it) {
-        it->second->ExecuteSpecials();
-    }
+    ApplyEffects();
 }
 
 int Universe::Insert(UniverseObject* obj)
@@ -1136,6 +1125,64 @@ bool Universe::InsertID(UniverseObject* obj, int id )
         }
     }
     return retval;
+}
+
+void Universe::ApplyEffects()
+{
+    // reset max meter state that is affected by the application of effects
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ResetMaxMeters();
+        it->second->AdjustMaxMeters();
+    }
+
+    // cache all activation and scoping condition results before applying Effects, since the application of
+    // these Effects may affect the activation and scoping evaluations
+    typedef std::multimap<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMap;
+    typedef std::pair<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMapElem;
+    EffectsAndTargetsMap effects_targets_map;
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        it->second->ClearRefinements();
+        for (Empire::TechItr tech_it = it->second->TechBegin(); tech_it != it->second->TechEnd(); ++it) {
+            const Tech* tech = GetTech(*tech_it);
+            assert(tech);
+            for (unsigned int i = 0; i < tech->Effects().size(); ++i) {
+                boost::shared_ptr<const Effect::EffectsGroup> effect = tech->Effects()[i];
+                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->second->CapitolID(), Effect::EffectsGroup::TargetSet()));
+                tech->Effects()[i]->GetTargetSet(it->second->CapitolID(), map_elem.second.second);
+                effects_targets_map.insert(map_elem);
+            }
+        }
+    }
+    std::vector<Building*> buildings = FindObjects<Building>();
+    for (unsigned int i = 0; i < buildings.size(); ++i) {
+        const BuildingType* building_type = buildings[i]->GetBuildingType();
+        assert(building_type);
+        for (unsigned int j = 0; j < building_type->Effects().size(); ++j) {
+            boost::shared_ptr<const Effect::EffectsGroup> effect = building_type->Effects()[j];
+            EffectsAndTargetsMapElem map_elem(effect, std::make_pair(buildings[i]->ID(), Effect::EffectsGroup::TargetSet()));
+            building_type->Effects()[j]->GetTargetSet(buildings[i]->ID(), map_elem.second.second);
+            effects_targets_map.insert(map_elem);
+        }
+    }
+    for (Universe::const_iterator it = begin(); it != end(); ++it) {
+        for (std::set<std::string>::const_iterator special_it = it->second->Specials().begin();
+             special_it != it->second->Specials().end();
+             ++special_it) {
+            const Special* special = GetSpecial(*special_it);
+            assert(special);
+            for (unsigned int i = 0; i < special->Effects().size(); ++i) {
+                boost::shared_ptr<const Effect::EffectsGroup> effect = special->Effects()[i];
+                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->first, Effect::EffectsGroup::TargetSet()));
+                special->Effects()[i]->GetTargetSet(it->first, map_elem.second.second);
+                effects_targets_map.insert(map_elem);
+            }
+        }
+    }
+
+    // execute effects on cached results
+    for (EffectsAndTargetsMap::const_iterator it = effects_targets_map.begin(); it != effects_targets_map.end(); ++it) {
+        it->first->Execute(it->second.first, it->second.second);
+    }
 }
 
 UniverseObject* Universe::Remove(int id)
@@ -2007,7 +2054,13 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         home_planet->AddSpecial("HOMEWORLD_SPECIAL");
         home_planet->ResetMaxMeters();
         home_planet->AdjustMaxMeters();
-        home_planet->ExecuteSpecials();
+        Effect::EffectsGroup::TargetSet target_set;
+        target_set.insert(home_planet);
+        Special* special = GetSpecial("HOMEWORLD_SPECIAL");
+        assert(special);
+        for (unsigned int j = 0; j < special->Effects().size(); ++j) {
+            special->Effects()[j]->Execute(home_planet->ID(), target_set);
+        }
         home_planet->AdjustPop(15);
         home_planet->GetMeter(METER_HEALTH)->SetCurrent(home_planet->GetMeter(METER_HEALTH)->Max());
         home_planet->GetMeter(METER_CONSTRUCTION)->SetCurrent(home_planet->GetMeter(METER_CONSTRUCTION)->Max() * 0.75);

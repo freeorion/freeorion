@@ -538,7 +538,6 @@ void FleetColonizeOrder::ServerExecute() const
     Planet* planet = universe.Object<Planet>(m_planet);
     planet->ResetMaxMeters();
     planet->AdjustMaxMeters();
-    planet->ExecuteSpecials();
     planet->AdjustPop(INITIAL_COLONY_POP);
     planet->GetMeter(METER_FARMING)->SetCurrent(INITIAL_COLONY_POP);
     planet->GetMeter(METER_HEALTH)->SetCurrent(planet->GetMeter(METER_HEALTH)->Max());

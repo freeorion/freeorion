@@ -52,6 +52,7 @@ class UniverseObject;
   struct PlayerSetupData;
 #endif
 
+class Empire;
 struct UniverseObjectVisitor;
 namespace GG {class XMLElement;}
 
@@ -202,6 +203,9 @@ public:
     void              CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
                                      SpecialsFrequency specials_freq, int players, int ai_players, 
                                      const std::vector<PlayerSetupData>& player_setup_data = std::vector<PlayerSetupData>());
+
+    /** Applies all Effects from Buildings, Specials, Techs, etc. */
+    void ApplyEffects();
 
     /** removes the object with ID number \a id from the universe and any containing UniverseObjects (e.g. the containing System),
         and returns it; returns 0 if there is no such object*/

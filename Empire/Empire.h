@@ -25,6 +25,7 @@
 #include <list>
 #include <string>
 
+class BuildingType;
 class ShipDesign;
 
 /**
@@ -120,6 +121,9 @@ public:
     /// Returns the numeric ID of the empire's homeworld
     int HomeworldID() const;
 
+    /// Returns the numeric ID of the empire's capitol
+    int CapitolID() const;
+
     /// Returns the Empire's accumulated RPs
     /** 
      * Gets the empire's accumulated research points. 
@@ -150,6 +154,11 @@ public:
 
     /// Returns true if the given item is in the appropriate list, false if it is not.
     bool BuildingTypeAvailable(const std::string& name) const;
+
+    /** Returns the BuildingType called \a name.  This will be equivalent to the BuildingType
+        returned by the global GetBuildingType() function if this empire has not discovered
+        any Techs that modify it, or the modified version otherwise. */
+    const BuildingType* GetBuildingType(const std::string& name) const;
 
     /// Returns true if the given item is in the appropriate list, false if it is not.
     bool HasExploredSystem(int ID) const;
@@ -224,6 +233,12 @@ public:
 
     /// Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     void AddBuildingType(const std::string& name);
+
+    /** Adds EffectsGroups \a effects to the empire-specific version of BuildingType \a name. */
+    void RefineBuildingType(const std::string& name, const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects);
+
+    /** Removes all refinements to Buildings, ShipComponents, etc., that are caused by Tech effects. */
+    void ClearRefinements();
 
     /// Inserts the given ID into the Empire's list of explored systems.
     void AddExploredSystem(int ID);
@@ -316,6 +331,8 @@ private:
 
     /// list of acquired BuildingType.  These are string names referencing BuildingType objects
     std::set<std::string> m_building_types;
+
+    std::map<std::string, BuildingType*> m_modified_building_types;
 
     /// systems you've explored
     std::set<int> m_explored_systems;

@@ -63,14 +63,7 @@ Special::Special(const GG::XMLElement& elem)
     m_name = elem.Child("name").Text();
     m_description = elem.Child("description").Text();
     for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
-        m_effects.push_back(new Effect::EffectsGroup(*it));
-    }
-}
-
-Special::~Special()
-{
-    for (unsigned int i = 0; i < m_effects.size(); ++i) {
-        delete m_effects[i];
+        m_effects.push_back(boost::shared_ptr<Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
     }
 }
 
@@ -84,17 +77,9 @@ const std::string& Special::Description() const
     return m_description;
 }
 
-const std::vector<Effect::EffectsGroup*>& Special::Effects() const
+const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Special::Effects() const
 {
     return m_effects;
-}
-
-void Special::Execute(int host_id) const
-{
-    const std::vector<Effect::EffectsGroup*>& effects = Effects();
-    for (unsigned int i = 0; i < effects.size(); ++i) {
-        effects[i]->Execute(host_id);
-    }
 }
 
 Special* GetSpecial(const std::string& name)
