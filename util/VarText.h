@@ -43,10 +43,13 @@ class VarText
   ///< combines the gien template with the varaibles ontained in object to create a string with live variables replaced with text
   ///< will produce exceptions if invalid variables are found ( no not exist in XML data or in universe )
   void GenerateVarText( std::string template_str );
+
+  GG::XMLElement &GetVariables( ) { return( m_variables ); }
+  std::string& GetText( ) { return( m_text ); }
+  void SetText( std::string &text ) { m_text = text; }
+
+ protected:
      
-  // members are public to simplify construction 
-  // since most uses of VarText will be to contruct the message via global functions, it would
-  // bloat the code of the clients to alwys be using accesors
   GG::XMLElement             m_variables; ///< the data describing the sitrep. See class comments for description
   std::string                m_text; ///<the text, including hyperlinks, that describes this entry. Built from XML data
 

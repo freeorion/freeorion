@@ -53,7 +53,7 @@ public:
     /** This LUT is in Client because the server has no need for it - it's a UI issue. This design ina way breaks */
     /** the data-hiding feature of a class, but is needed because both clients and server share this code. It's better */
     /** to have the discrepancy here than to bloat the server with data it will not use */
-    enum EntryType {INVALID_ENTRY_TYPE = -1,  ///< this is the EntryType for default-constructed SitRepEntrys; no others should have this type
+    typedef enum EntryType {INVALID_ENTRY_TYPE = -1,  ///< this is the EntryType for default-constructed SitRepEntrys; no others should have this type
                     MAX_INDUSTRY_HIT,
                     SHIP_BUILT,
 		    TECH_RESEARCHED,
@@ -72,6 +72,11 @@ public:
     /** encodes the SitRepEntry into an XML element */
     GG::XMLElement XMLEncode() const;
     //@}
+
+    void SetType( EntryType type ) { m_type = type; }
+    EntryType GetType( ) { return m_type; }
+
+private:
 
     EntryType                  m_type; ///< the type of SitRep this is
 
