@@ -88,6 +88,9 @@ private:
 
     GG::MultiEdit *	  m_info;	//!< Displays the license or credits information
 
+    std::string		  m_credits_str;    //!< String containing the credits
+    std::string		  m_license_str;
+
     int                   m_cur_color;       //!< Currently selected color
     
 //!@}

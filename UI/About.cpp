@@ -34,6 +34,30 @@ About::About():
     m_credits_doc.ReadDoc(xml_file);
     xml_file.close();
 
+    // Read in the credits from a file
+    std::fstream fin, fin2;
+    fin.open("default/credits.txt", std::ios::in);
+    if (!fin.is_open()) return;
+
+    std::string temp_str;
+    while (!fin.eof())
+    {
+      std::getline(fin, temp_str, '\n');
+      m_credits_str.append(temp_str);
+      m_credits_str.append("\n");	// To ensure new lines are read
+    }
+    fin.close();
+
+    fin2.open("default/COPYING", std::ios::in);
+    if (!fin2.is_open()) return;
+    while (!fin2.eof())
+    {
+      std::getline(fin2, temp_str, '\n');
+      m_license_str.append(temp_str);
+      m_license_str.append("\n");	// To ensure new lines are read
+    }
+    fin2.close();
+
     Init();    //attaches children and connects signals to slots
 }//About()
 
@@ -64,8 +88,6 @@ About::~About()
 int About::Render()
 {
     CUI_Wnd::Render();
-   // GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::WND_BORDER_COLOR,true);
-    //ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, "Galaxy Setup");
 
     return true;
 }//Render()
@@ -85,12 +107,11 @@ void About::OnDone()
 
 void About::OnLicense()
 {
-   m_info->SetText("License");
+   m_info->SetText(m_license_str);
 }//OnLicense()
 
 void About::OnCredits()
 {
-   m_info->SetText(m_credits_doc.root_node.Child("CREDITS").Text());
-   //m_info->SetText("Credits");
+   m_info->SetText(m_credits_str);
 }//OnLicense()
 
