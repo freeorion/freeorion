@@ -1,14 +1,14 @@
 #include "NetworkCore.h"
 
 #include "Message.h"
-#include "../SDL_net2/net2.h"
 
+#include <boost/lexical_cast.hpp>
 #include <log4cpp/Category.hh>
 
 const std::string NetworkCore::EOM_STR = "_MSG_END_";
 const int         NetworkCore::FIND_PORT = 12345;
 const int         NetworkCore::CONNECT_PORT = 12346;
-const int         NetworkCore::FIND_SERVER_PACKET_SIZE = 256;
+const std::string NetworkCore::FIND_SERVER_PACKET_MSG = "HELLO?";
 
 namespace {
 log4cpp::Category& logger = log4cpp::Category::getRoot();
@@ -76,5 +76,15 @@ void NetworkCore::ReceiveData(int socket, std::string& stream, const std::string
    }
    if (curr_posn)
       stream = stream.substr(curr_posn);
+}
+
+std::string ToString(const IPaddress& addr)
+{
+   std::string retval;
+   retval += boost::lexical_cast<std::string>(addr.host << 24 >> 24) + '.';
+   retval += boost::lexical_cast<std::string>(addr.host << 16 >> 24) + '.';
+   retval += boost::lexical_cast<std::string>(addr.host << 8  >> 24) + '.';
+   retval += boost::lexical_cast<std::string>(addr.host << 0  >> 24);
+   return retval;
 }
 

@@ -5,8 +5,11 @@
 
 #ifndef _SDL_H
 #include <SDL.h>
-#endif 
+#endif
 
+#ifndef _SDLnet_h
+#include "../SDL_net2/net2.h"
+#endif
 
 /** the states the server may be in at various points during its execution*/
 enum ServerState {SERVER_IDLE,         ///< there is no game yet and no one has send a HOST_GAME Message yet; this is the initial state
@@ -34,10 +37,10 @@ public:
    virtual void HandleNetEvent(SDL_Event& event) = 0; ///< directly handles SDL network events
    //@}
    
-   static const std::string EOM_STR;         ///< the string that marks the end of a Message in a TCP byte stream
-   static const int FIND_PORT;               ///< the port used to find the IP address(es) of server(s) on the LAN
-   static const int CONNECT_PORT;            ///< the port used to make TCP connections
-   static const int FIND_SERVER_PACKET_SIZE; ///< the size of the UDP message used to find IP address(es) of server(s) on the LAN
+   static const std::string   EOM_STR;                ///< the string that marks the end of a Message in a TCP byte stream
+   static const int           FIND_PORT;              ///< the port used to find the IP address(es) of server(s) on the LAN
+   static const int           CONNECT_PORT;           ///< the port used to make TCP connections
+   static const std::string   FIND_SERVER_PACKET_MSG; ///< the UDP message used to find IP address(es) of server(s) on the LAN
    
 protected:
    /** sends \a msg to the designated socket.  Creates a log entry on error.  \throw std::invalid_argument 
@@ -54,6 +57,10 @@ private:
       \throw std::invalid_argument May throw std::invalid_argument if the destination does not exist on this host.*/
    virtual void DispatchMessage(const Message& msg, int socket) = 0;
 };
+
+/** returns the dotted address notation for \a addr.  Provided since the only stringification provided by SDL 
+   net/net2 involves hostname resolution.*/
+std::string ToString(const IPaddress& addr);
 
 #endif // _NetworkCore_h_
 

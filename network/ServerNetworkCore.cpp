@@ -61,7 +61,7 @@ void ServerNetworkCore::ListenToPorts()
       ServerApp::GetApp()->Logger().fatalStream() << "ServerNetworkCore::ServerNetworkCore : failed to open port " << 
          NetworkCore::CONNECT_PORT << " for TCP connections.  SDL_net2 error: " << (err_msg ? err_msg : "[unknown error]");
       ServerApp::GetApp()->Exit(1);
-   } else if ((m_UDP_socket = NET2_UDPAcceptOn(NetworkCore::FIND_PORT, NetworkCore::FIND_SERVER_PACKET_SIZE)) == -1) {
+   } else if ((m_UDP_socket = NET2_UDPAcceptOn(NetworkCore::FIND_PORT, NetworkCore::FIND_SERVER_PACKET_MSG.size())) == -1) {
       char* err_msg = NET2_GetError();
       ServerApp::GetApp()->Logger().fatalStream() << "ServerNetworkCore::ServerNetworkCore : failed to open port " << 
          NetworkCore::FIND_PORT << " for UDP packets.  SDL_net2 error: " << (err_msg ? err_msg : "[unknown error]");
@@ -213,14 +213,18 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
       }
          
       case NET2_UDPRECEIVEEVENT: {
-         int port = NET2_GetEventData(&event);
-         if (port == NetworkCore::FIND_PORT) { // hosts looking for our IP address
-// TODO: send back IP address via UDP
-            
-            ServerApp::GetApp()->Logger().debug("ServerNetworkCore::HandleNetEvent : Sent IP address to requsting host.");
-         } else { // oops. unknown port
-            ServerApp::GetApp()->Logger().error("ServerNetworkCore::HandleNetEvent : Somehow we accepted a UDP packet on "
-               "an unknown port!  Ignoring packet.");
+         int socket = NET2_GetSocket(&event);
+         UDPpacket* packet = 0;
+         while (packet = NET2_UDPRead(socket)) {
+            if (NET2_UDPSend(&packet->address, const_cast<char*>(NetworkCore::FIND_SERVER_PACKET_MSG.c_str()), 
+                             NetworkCore::FIND_SERVER_PACKET_MSG.size()) == -1) {
+               const char* err_msg = NET2_GetError();
+               ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::HandleNetEvent : Call to "
+                  "NET2_UDPSend() failed; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
+            } else {
+               ServerApp::GetApp()->Logger().debug("ServerNetworkCore::HandleNetEvent : Sent IP address to requsting host.");
+            }
+            NET2_UDPFreePacket(packet);
          }
          break;
       }

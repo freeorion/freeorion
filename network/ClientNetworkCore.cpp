@@ -3,6 +3,7 @@
 #include "Message.h"
 #include "../client/ClientApp.h"
 #include "../SDL_net2/net2.h"
+#include "../SDL_net2/fastevents.h"
 
 #include <log4cpp/Category.hh>
 
@@ -34,30 +35,82 @@ void ClientNetworkCore::SendMessage(const Message& msg) const
    }
 }   
    
-bool ClientNetworkCore::ConnectToLocalhostServer()
+std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
 {
-   return ConnectToInternetServer("localhost");
-}
-
-bool ClientNetworkCore::ConnectToLANServer()
-{
-   bool retval;
-// TODO find a server on this LAN's subnet
+   std::set<std::string> retval;
    
-   // connect to server
-/*
-   if (Connected()) {
-      logger.debugStream() << "ClientNetworkCore::ConnectToInternetServer : Connected "
-         "to server \"" << server << "\"";
+   timeout *= 1000; // use milliseconds for convenience
+
+   // set listen flag and initialize UDP socket
+   m_listening_on_LAN = true;
+   int socket = NET2_UDPAcceptOn(NetworkCore::FIND_PORT, NetworkCore::FIND_SERVER_PACKET_MSG.size());
+   if (socket == -1) {
+      const char* err_msg = NET2_GetError();
+      logger.errorStream() << "ClientNetworkCore::DiscoverLANServers : Call to NET2_UDPAcceptOn() "
+         "failed; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
    } else {
-      logger.debugStream() << "ClientNetworkCore::ConnectToInternetServer : Call to NET2_TCPConnectTo() "
-         "failed with server= \"" << server << "\"";
+      // broadcast and poll for timeout milliseconds
+      std::vector<SDL_Event> ignored_events; // keep ignored events here and repush them after timeout
+      IPaddress broadcast_address;
+      if (NET2_ResolveHost(&broadcast_address, "255.255.255.255", NetworkCore::FIND_PORT) == -1 ||
+          NET2_UDPSend(&broadcast_address, "255.255.255.255", 15) == -1) {
+         const char* err_msg = NET2_GetError();
+         logger.errorStream() << "ClientNetworkCore::DiscoverLANServers : Call to NET2_ResolveHost() "
+            "or call to NET2_UDPSend() failed; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
+      }
+
+      int last_time = SDL_GetTicks();
+      int last_second = timeout / 1000; // the last second in which a broadcast was made
+      SDL_Event event;
+
+      while (0 < timeout) {
+         int time = SDL_GetTicks();
+
+         // if it has been about a second since the last broadcast, do it again
+         if (last_second / 1000 != last_second) {
+            if (NET2_UDPSend(&broadcast_address, const_cast<char*>(NetworkCore::FIND_SERVER_PACKET_MSG.c_str()), 
+                             NetworkCore::FIND_SERVER_PACKET_MSG.size()) == -1) {
+               const char* err_msg = NET2_GetError();
+               logger.errorStream() << "ClientNetworkCore::DiscoverLANServers : Call to NET2_UDPSend() "
+                  "failed; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
+            }
+            last_second = time / 1000;
+         }
+
+         // handle events, picking the ones out that are incoming UDP packets
+         if (FE_PollEvent(&event)) {
+            if (event.type == SDL_USEREVENT && NET2_GetEventType(&event) == NET2_UDPRECEIVEEVENT &&
+                NET2_GetSocket(&event) == socket) {
+                UDPpacket* packet = 0;
+                while (packet = NET2_UDPRead(NET2_GetSocket(&event))) {
+                   retval.insert(ToString(packet->address));
+                   NET2_UDPFreePacket(packet);
+                }
+            } else {
+               ignored_events.push_back(event);
+            }
+         }
+         timeout -= time - last_time;
+         last_time = time;
+      }
+      
+      // reset listen flag and take down UDP socket
+      m_listening_on_LAN = false;
+      NET2_UDPClose(socket);
+      
+      // repush ignored events
+      for (unsigned int i = 0; i < ignored_events.size(); ++i)
+         FE_PushEvent(&ignored_events[i]);
    }
-*/
    return retval;
 }
 
-bool ClientNetworkCore::ConnectToInternetServer(const std::string& server)
+bool ClientNetworkCore::ConnectToLocalhostServer()
+{
+   return ConnectToServer("localhost");
+}
+
+bool ClientNetworkCore::ConnectToServer(const std::string& server)
 {
    m_server_socket = NET2_TCPConnectTo(const_cast<char*>(server.c_str()), NetworkCore::CONNECT_PORT);
    if (Connected()) {
