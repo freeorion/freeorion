@@ -70,8 +70,7 @@ public:
 
 protected:
     /** handles universe and empire data update */
-    void UpdateTurnData( GG::XMLDoc &doc );
-
+    void UpdateTurnData( const GG::XMLDoc &diff );
 
     MultiplayerLobbyWnd* m_multiplayer_lobby_wnd;
 

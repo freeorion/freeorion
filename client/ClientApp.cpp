@@ -100,50 +100,48 @@ int ClientApp::GetNewObjectID( )
     Message msg;
     s_app->m_network_core.SendSynchronousMessage( RequestNewObjectIDMessage( s_app->m_player_id ), msg );
 
-    if(msg.GetText().length()>0)
+    if (msg.GetText().length()>0)
       new_id = boost::lexical_cast<int>(msg.GetText());
 
     return new_id;
 }
 
 
-void ClientApp::UpdateTurnData( GG::XMLDoc &doc )
+void ClientApp::UpdateTurnData( const GG::XMLDoc &diff )
 {
     GG::XMLDoc new_doc;
-    GG::XMLElement universe_data;
-    GG::XMLElement empire_data;
 
     // we may not have a universe object if nothing has changed 
-    if(doc.root_node.ContainsChild("Universe")) 
+    if (diff.root_node.ContainsChild("Universe")) 
     {
         // get old universe data
-        universe_data = m_universe.XMLEncode( );
-        new_doc.root_node.AppendChild( universe_data );
+        new_doc.root_node.AppendChild(m_universe.XMLEncode(PlayerID()));
     }
  
-    if(doc.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG) )
+    if (diff.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG))
     {
         // get old empire data
-        empire_data = m_empires.EncodeEmpires( );
-        new_doc.root_node.AppendChild( empire_data );
+        new_doc.root_node.AppendChild(m_empires.EncodeEmpires());
     }
 
     // XPatch
-    XPatch( new_doc, doc );
+    XPatch( new_doc, diff );
 
+#if 0
     // write patch data for debug
     std::ofstream output("patch_merge_result.txt");
     new_doc.WriteDoc(output);
-    output.close();		
+    output.close();
+#endif
 
     // apply universe
-    if(new_doc.root_node.ContainsChild( "Universe" ) )
+    if (new_doc.root_node.ContainsChild( "Universe" ) )
     {
         m_universe.SetUniverse( new_doc.root_node.Child( "Universe" ) );
     }
 
     // apply empire
-    if(new_doc.root_node.ContainsChild( EmpireManager::EMPIRE_UPDATE_TAG ) ) 
+    if (new_doc.root_node.ContainsChild( EmpireManager::EMPIRE_UPDATE_TAG ) ) 
     {
         m_empires.HandleEmpireElementUpdate( new_doc.root_node.Child( EmpireManager::EMPIRE_UPDATE_TAG ) );
     }
