@@ -23,22 +23,6 @@
 class Planet : public UniverseObject, public PopCenter, public ProdCenter
 {
 public:
-   /** the types of planets in FreeOrion*/
-   enum PlanetType {PT_SWAMP,
-                    PT_TOXIC,
-                    PT_INFERNO,
-                    PT_RADIATED,
-                    PT_BARREN,
-                    PT_TUNDRA,
-                    PT_DESERT,
-                    PT_TERRAN,                    //changed the order to be clockwise around the 
-                    PT_OCEAN,                    // wheel of EP, added Inferno and Swamp types
-                    PT_GAIA,
-                    PT_ASTEROIDS,                     //these need to be types also so they can have an environment
-                    PT_GASGIANT,                     
-                    MAX_PLANET_TYPE   //keep this last
-                   };
-
    /** the sizes of planets in FreeOrion*/
    enum PlanetSize {SZ_NOWORLD,   // used to designate an empty planet slot
                     SZ_TINY,
