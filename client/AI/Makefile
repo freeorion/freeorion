@@ -1,21 +1,13 @@
 # FreeOrion AI Client
-# This Makefile assumes you've installed boost in /usr/boost_1_30_0, and that
-# you've built it using bjam (see boost build docs for explanation of bjam).
-# If you've put boost somewhere else, change BOOST_DIR accordingly.
+# This Makefile assumes you've installed boost in /usr/include/boost or /usr/local/include/boost, that
+# you've built it using bjam (see boost build docs for explanation of bjam), and that you've put the 
+# libraries in /usr/lib or /usr/local/lib
 
 ###############################
 ## Variables ##################
 ###############################
-# Directories
-BOOST_DIR = /usr/boost_1_30_0
-
 # Includes
 SDL_INC = /usr/include/SDL
-BOOST_INC = $(BOOST_DIR)
-
-# Libs
-BOOST_SIG_LIB = $(BOOST_DIR)/libs/signals/build/bin/libboost_signals.a/gcc/debug/runtime-link-dynamic
-#BOOST_PYTHON_LIB = $(BOOST_DIR)/libs/python/build/bin/libboost_python.a/gcc/debug/runtime-link-dynamic
 
 # Executable name
 BIN  = freeorionca.exe
@@ -31,14 +23,14 @@ CPP  = g++ -D__DEBUG__
 CPP_SRCS =	$(wildcard *.cpp) \
 				$(wildcard ../*.cpp) \
 				$(filter-out ../../Empire/Server%,$(wildcard ../../Empire/*.cpp)) \
-				$(filter-out ../../network/Server%,$(wildcard ../../network/*.cpp)) \
-				$(filter-out ../../universe/Server%,$(wildcard ../../universe/*.cpp)) \
-				$(wildcard ../../util/*.cpp)
+				$(filter-out ../../network/ClientNetworkCore.cpp,$(filter-out ../../network/Server%,$(wildcard ../../network/*.cpp))) \
+				$(filter-out ../../universe/Universe.cpp,$(wildcard ../../universe/*.cpp)) \
+				$(filter-out ../../util/AppInterface.cpp,$(wildcard ../../util/*.cpp))
 
-OBJS = $(addprefix ../../objs/AI/,$(notdir $(patsubst %.cpp,%.o,$(CPP_SRCS))))
+OBJS = $(addprefix ../../objs/,$(notdir $(patsubst %.cpp,%.o,$(CPP_SRCS)))) ../../objs/AI/Universe.o ../../objs/AI/AppInterface.o ../../objs/AI/ClientNetworkCore.o
 
-INCS =  -I/usr/include  -I/usr/include/GG  -I/usr/include/GG/net  -I$(SDL_INC)  -I$(BOOST_INC)
-LIBS =  -L/usr/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz -lpthread -lGiGi -lGiGiNet
+INCS =  -I/usr/include  -I/usr/include/GG  -I/usr/include/GG/net  -I$(SDL_INC)
+LIBS =  -L/usr/lib -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz -lpthread -lGiGi -lGiGiNet
 
 # Build Flags
 CFLAGS = $(INCS) -g3 -Wall
@@ -62,20 +54,29 @@ $(BIN): $(OBJS)
 	$(CPP) $(OBJS) -o $(BIN) $(LIBS)
 	/bin/mv $(BIN) ../../
 
-../../objs/AI/%.o : %.cpp
+../../objs/%.o : %.cpp
 	$(CPP) $< -c $(CXXFLAGS) -o $@
 
-../../objs/AI/%.o : ../%.cpp
+../../objs/%.o : ../%.cpp
 	$(CPP) $< -c $(CXXFLAGS) -o $@
 
-../../objs/AI/%.o : ../../Empire/%.cpp
+../../objs/%.o : ../../Empire/%.cpp
 	$(CPP) $< -c $(CXXFLAGS) -o $@
 
-../../objs/AI/%.o : ../../network/%.cpp
+../../objs/%.o : ../../network/%.cpp
 	$(CPP) $< -c $(CXXFLAGS) -o $@
 
-../../objs/AI/%.o : ../../universe/%.cpp
+../../objs/%.o : ../../universe/%.cpp
 	$(CPP) $< -c $(CXXFLAGS) -o $@
 
-../../objs/AI/%.o : ../../util/%.cpp
+../../objs/%.o : ../../util/%.cpp
+	$(CPP) $< -c $(CXXFLAGS) -o $@
+
+../../objs/AI/Universe.o : ../../universe/Universe.cpp
+	$(CPP) $< -c $(CXXFLAGS) -o $@
+
+../../objs/AI/AppInterface.o : ../../util/AppInterface.cpp
+	$(CPP) $< -c $(CXXFLAGS) -o $@
+
+../../objs/AI/ClientNetworkCore.o : ../../network/ClientNetworkCore.cpp
 	$(CPP) $< -c $(CXXFLAGS) -o $@
