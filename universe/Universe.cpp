@@ -1142,7 +1142,7 @@ void Universe::ApplyEffects()
     EffectsAndTargetsMap effects_targets_map;
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
         it->second->ClearRefinements();
-        for (Empire::TechItr tech_it = it->second->TechBegin(); tech_it != it->second->TechEnd(); ++it) {
+        for (Empire::TechItr tech_it = it->second->TechBegin(); tech_it != it->second->TechEnd(); ++tech_it) {
             const Tech* tech = GetTech(*tech_it);
             assert(tech);
             for (unsigned int i = 0; i < tech->Effects().size(); ++i) {
