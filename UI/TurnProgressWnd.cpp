@@ -28,7 +28,8 @@ TurnProgressWnd::TurnProgressWnd( ) :
   UserString("TURN_PROGRESS_WND");
 
   m_bg_graphic = new GG::StaticGraphic(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), 
-                                             GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash01.png"));
+                                       GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash01.png"), 
+                                       GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
   GG::App::GetApp()->Register(m_bg_graphic);
 
   m_phase_text = new GG::TextControl(0, 20, PROGRESS_WND_WIDTH, static_cast<int>(ClientUI::PTS * 2.0 + 4), "", ClientUI::FONT,  static_cast<int>(ClientUI::PTS * 2.0), ClientUI::TEXT_COLOR, GG::TF_CENTER | GG::TF_VCENTER);
