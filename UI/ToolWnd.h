@@ -10,47 +10,33 @@
 #ifndef _GGTextControl_h_
 #include "GGTextControl.h"
 #endif
-//!Implements a Tooltip window containing a string.
-//!This window appears when the mouse hovers over its
-//!parent window for a specified amount of time.
 
+/** Implements a Tooltip window containing a string. This window appears when the mouse hovers over its parent
+    window for a specified amount of time. */
 class ToolWnd : public GG::Wnd
 {
 public:
-//! \name Structors
-//!@{
-    
-    //! Main Construction
-    
+    //! \name Structors
+    //!@{
     //! Constructs a Tooltip window at (x,y) containing text with the specified background color.
-    
     //! @param x the x coordinate of the tooltip.
     //! @param y the y coordinate of the tooltip.
     //! @param text the string that the tooltip will display
     //! @param clr the background color of the window.  Text is always black.
-    
-    ToolWnd(int x, int y, const std::string& text, const GG::Clr& clr, const std::string& font_name = "arial.ttf", int pts = 10);
-    
-//!@} 
-
-public:
-    //! \name Overrides
-    //!@{
-    
-    //! Called to render the window.
-    bool Render();
-    
+    ToolWnd(int x, int y, const std::string& text, const GG::Clr& wnd_color, const GG::Clr& border_color,
+            const GG::Clr& text_color, const std::string& font_name = "arial.ttf", int pts = 10);
     //!@}
-    
-protected:
-    //! \name Member Vars
-    //!@{
-    
-    GG::TextControl *textwnd;    //!< where the text is contained
-    GG::Clr color;              //!< the color of the tool window
 
+    //! \name Mutators
+    //!@{
+    virtual bool Render();
     //!@}
-};//ToolWnd
+
+private:
+    GG::TextControl* m_text;         //!< where the text is contained
+    GG::Clr          m_color;        //!< the color of the tool window
+    GG::Clr          m_border_color; //!< the color of the border of the tool window
+};
 
 inline std::pair<std::string, std::string> ToolWndRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}

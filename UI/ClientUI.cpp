@@ -15,6 +15,7 @@
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
+#include "ToolWnd.h"
 #include "ToolContainer.h"
 #include "TurnProgressWnd.h"
 #include "../client/human/HumanClientApp.h"
@@ -405,7 +406,7 @@ const std::string& ClientUI::Language() const
     return m_string_table->Language();
 }
 
-bool ClientUI::AttachToolWnd(GG::Wnd* parent, ToolWnd* tool) 
+bool ClientUI::AttachToolWnd(GG::Wnd* parent, ToolWnd* tool)
 {
     return (m_tooltips ? m_tooltips->AttachToolWnd(parent, tool) : false);
 }

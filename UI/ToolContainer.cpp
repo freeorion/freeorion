@@ -1,8 +1,7 @@
-//ToolContainer.cpp
-
 #include "ToolContainer.h"
 
 #include "GGApp.h"
+#include "GGWnd.h"
 #include "../util/MultiplayerCommon.h"
 
 
@@ -12,75 +11,54 @@ namespace {
 }
 
 
-ToolContainer::ToolContainer(int delay)
+ToolContainer::ToolContainer(int delay/* = 1000*/) :
+    m_timer_id(SDL_AddTimer(delay, &Callback, static_cast<void*>(this)))
 {
- 
-    startTime=1;
-    currentTime=0;
-    delayTime=delay;
-    
-    timerID=SDL_AddTimer(delayTime, &ShowCallback, this);
-   
 }
 
 ToolContainer::~ToolContainer()
 {
 }
 
-bool ToolContainer::AttachToolWnd(GG::Wnd* parent, ToolWnd* tool)
+bool ToolContainer::AttachToolWnd(GG::Wnd* parent, GG::Wnd* tool_tip)
 {
-    //!this function attaches the toolwnd as a child to the parent
-    //!it also adds it to the map
-    
-    if(!parent)
-    {
-        //we got a bad pointer, get out
+    // this function attaches the tool tip wnd as a child to the parent it also adds it to the map
+
+    if (!parent)
         return false;
-    }
-    
-    //add as a child
-    parent->AttachChild(tool);
-    
-    //add to the map...will overwrite if it exists
-    toolList[parent]=tool;    //if its NULL its the same as erasing
-    //all clear, return true
+
+    parent->AttachChild(tool_tip);
+
+    if (!tool_tip) // if its NULL its the same as erasing
+        m_tool_tip_wnds.erase(parent);
+    else // add to the map...will overwrite if it exists
+        m_tool_tip_wnds[parent] = tool_tip;
+
     return true;
 }
 
-Uint32 ToolContainer::ShowCallback(Uint32 interval, void* param)
+Uint32 ToolContainer::Callback(Uint32 interval, void* param)
 {
-    static GG::Wnd* tooltarget=NULL;
-    ToolContainer* container=(ToolContainer*)param;
+    static GG::Wnd* prev_tool_tip_wnd = 0;
+    ToolContainer* this_ptr = reinterpret_cast<ToolContainer*>(param);
     
-    //find the window that is under the mouse
-    //if it is in our list, make the toolwindow visible
     GG::Wnd* wnd = GG::App::GetApp()->GetWindowUnder(GG::App::GetApp()->MousePosition());
-    std::map<GG::Wnd*, ToolWnd*>::iterator pos;
     
-    if(wnd==tooltarget)
-    {
+    if (wnd == prev_tool_tip_wnd)
         return interval;
-    }
     
-    if( (pos=container->toolList.find(tooltarget)) != container->toolList.end())
-    {
-        //we found the window
-        pos->second->Hide();
-    }
-    
-    if(wnd!=NULL)
-    {     
-        //find the old window and disable that toolwindow
-
-        //keep going if window is valid
-        if( (pos=container->toolList.find(wnd)) != container->toolList.end())
-        {
-            //we found the window
-            pos->second->Show();
-        }
- 
+    // if there is an old tooltip window active, hide it
+    std::map<GG::Wnd*, GG::Wnd*>::iterator it = this_ptr->m_tool_tip_wnds.find(prev_tool_tip_wnd);
+    if (it != this_ptr->m_tool_tip_wnds.end()) {
+        it->second->Hide();
     }
 
-    tooltarget=wnd; 
+    // if wnd is in our list of tool tip windows, show it
+    if ((it = this_ptr->m_tool_tip_wnds.find(wnd)) != this_ptr->m_tool_tip_wnds.end()) {
+        it->second->Show();
+    }
+
+    prev_tool_tip_wnd = wnd;
+
     return interval;
 }

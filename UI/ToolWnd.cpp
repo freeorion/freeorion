@@ -1,8 +1,7 @@
-//ToolWnd.cpp
+#include "ToolWnd.h"
 
 #include "GGDrawUtil.h"
 #include "../util/MultiplayerCommon.h"
-#include "ToolWnd.h"
 
 
 namespace {
@@ -11,23 +10,23 @@ namespace {
 }
 
 
-//ToolWnd::ToolWnd(int x, int y, char* text, GG::Clr clr):
-ToolWnd::ToolWnd(int x, int y, const std::string& text, const GG::Clr& clr, const std::string& font_name /* = "arial.ttf"*/, int pts /*= 10*/):
-    GG::Wnd(x,y,10,10,0)
+ToolWnd::ToolWnd(int x, int y, const std::string& text, const GG::Clr& wnd_color, const GG::Clr& border_color,
+                 const GG::Clr& text_color, const std::string& font_name /* = "arial.ttf"*/, int pts /*= 10*/) :
+    GG::Wnd(x, y, 10, 10, 0),
+    m_color(wnd_color),
+    m_border_color(border_color)
 {
-    textwnd=new GG::TextControl(4,4,text.c_str(),font_name,pts);
-    color=clr;
-    //resize this window to match the size of the text field
-    Resize(textwnd->GG::Wnd::Width()+8,textwnd->GG::Wnd::Height()+8);
-    AttachChild(textwnd);
+    m_text = new GG::TextControl(4, 4, text.c_str(), font_name, pts, text_color);
+    Resize(m_text->GG::Wnd::Width() + 8, m_text->GG::Wnd::Height() + 8);
+    AttachChild(m_text);
     Hide(); 
 }
 
 bool ToolWnd::Render()
 {
-    GG::FlatRectangle(UpperLeft().x,UpperLeft().y,LowerRight().x,LowerRight().y,color,GG::CLR_BLACK,1);
-    //draw a wire rectangle around the text 1 pixel away
-    GG::FlatRectangle(UpperLeft().x+2,UpperLeft().y+2,LowerRight().x-2,LowerRight().y-2,GG::CLR_ZERO,GG::CLR_BLACK);
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, m_color, m_border_color, 1);
+    GG::FlatRectangle(ul.x + 2, ul.y + 2, lr.x - 2, lr.y - 2, GG::CLR_ZERO, m_border_color);
     return true;
 }
 
