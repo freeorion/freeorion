@@ -23,6 +23,7 @@
 
 class CombatModule;
 class Message;
+class MultiplayerLobbyWnd;
 
 /** the abstract base class for the application framework classes AIClientApp and HumanClientApp.  The static functions
     are designed to give both types of client (which are very different) a unified interface.  This allows code in either
@@ -43,13 +44,15 @@ public:
 
     /** handles an incoming message from the server with the appropriate action or response */
     static void                   HandleMessage(const Message& msg);
-    static ClientUniverse&        Universe();       ///< returns client's local copy of Universe
-    static ClientEmpireManager&   Empire();         ///< returns this client's player's Empire
-    static CombatModule*          CurrentCombat();  ///< returns this client's currently executing Combat; may be 0
-    static OrderSet&              Orders();         ///< returns Order set for this client's player
-    static ClientNetworkCore&     NetworkCore();    ///< returns the network core object for this client's player
+    static MultiplayerLobbyWnd*   MultiplayerLobby(); ///< returns the multiplayer lobby window, or 0 if none exists
+    static ClientUniverse&        Universe();         ///< returns client's local copy of Universe
+    static ClientEmpireManager&   Empire();           ///< returns this client's player's Empire
+    static CombatModule*          CurrentCombat();    ///< returns this client's currently executing Combat; may be 0
+    static OrderSet&              Orders();           ///< returns Order set for this client's player
+    static ClientNetworkCore&     NetworkCore();      ///< returns the network core object for this client's player
    
 protected:
+    MultiplayerLobbyWnd* m_multiplayer_lobby_wnd;
     ClientUniverse       m_universe;
     ClientEmpireManager  m_empire;
     CombatModule*        m_current_combat;

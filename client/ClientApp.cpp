@@ -8,6 +8,7 @@
 ClientApp* ClientApp::s_app = 0;
 
 ClientApp::ClientApp() : 
+   m_multiplayer_lobby_wnd(0),
    m_current_combat(0), 
    m_player_id(-1)
 {
@@ -24,6 +25,11 @@ ClientApp::~ClientApp()
 void ClientApp::HandleMessage(const Message& msg)
 {
    s_app->HandleMessageImpl(msg);
+}
+
+MultiplayerLobbyWnd* ClientApp::MultiplayerLobby()
+{
+    return s_app->m_multiplayer_lobby_wnd;
 }
 
 ClientUniverse& ClientApp::Universe()
