@@ -7,23 +7,45 @@
 #include "../universe/Ship.h"
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
+#include "../util/Random.h"
 
 #include <time.h>
 #include <map>
 
-#define DEBUG_COMBAT
+//#define DEBUG_COMBAT
 
+bool CombatAssetsOwner::operator==(const CombatAssetsOwner &ca) const  
+{
+  return owner && ca.owner && (owner->EmpireID() == ca.owner->EmpireID());
+}
+
+namespace
+{
+  struct CombatAssetsHitPoints
+  {
+    Empire* owner;
+
+    int CountArmedAssets() {return combat_ships.size();}
+    int CountAssets() {return combat_ships.size()+non_combat_ships.size()+planets.size();}
+
+    std::vector<std::pair<Ship  *,unsigned int> > combat_ships;
+    std::vector<std::pair<Ship  *,unsigned int> > non_combat_ships;
+    std::vector<std::pair<Planet*,unsigned int> > planets;
+
+    std::vector<Ship  *> destroyed_ships;
+    std::vector<Ship  *> retreated_ships;
+    std::vector<Planet*> defenseless_planets;
+  };
+}
 #ifdef FREEORION_BUILD_SERVER
   #include "../server/ServerApp.h"
-  Empire *LookupEmpire(int ID) {return ServerApp::Empires().Lookup(ID);}
+  static Empire *LookupEmpire(int ID) {return ServerApp::Empires().Lookup(ID);}
 #else
   #include "../client/ClientApp.h"
-  Empire *LookupEmpire(int ID) {return ClientApp::Empires().Lookup(ID);}
+  static Empire *LookupEmpire(int ID) {return ClientApp::Empires().Lookup(ID);}
 #endif
 
-
-
-void RemoveShip(int nID)
+static void RemoveShip(int nID)
 {
   Ship *shp = dynamic_cast<Ship*>(GetUniverse().Object(nID));
   if(shp!=NULL)
@@ -43,81 +65,59 @@ void RemoveShip(int nID)
   }
 }
 
-
-
-bool CombatAssetsOwner::operator==(const CombatAssetsOwner &ca) const  
-{
-  return owner && ca.owner && (owner->EmpireID() == ca.owner->EmpireID());
-}
-
-struct CombatAssetsHitPoints
-{
-  Empire* owner;
-
-  int CountArmedAssets() {return combat_ships.size();}
-  int CountAssets() {return combat_ships.size()+non_combat_ships.size()+planets.size();}
-
-  std::vector<std::pair<Ship  *,unsigned int> > combat_ships;
-  std::vector<std::pair<Ship  *,unsigned int> > non_combat_ships;
-  std::vector<std::pair<Planet*,unsigned int> > planets;
-
-  std::vector<Ship  *> destroyed_ships;
-  std::vector<Ship  *> retreated_ships;
-  std::vector<Planet*> defenseless_planets;
-};
-
 #ifdef DEBUG_COMBAT
-void Debugout(std::vector<CombatAssetsHitPoints> &empire_combat_forces)
+static void Debugout(std::vector<CombatAssetsHitPoints> &empire_combat_forces)
 {
   unsigned int hit_points;
-  std::string debug; char buffer[20];
+  std::string debug;
 
   debug = "\ncurrent forces\n";
 
   for(unsigned int i=0;i<empire_combat_forces.size();i++)
   {
     debug+= "  " + empire_combat_forces[i].owner->Name() + " "
-           +" ships (cmb,non cmb,destr,retr): (";
+          +" ships (cmb,non cmb,destr,retr): (";
 
     hit_points=0;
     for(unsigned int j=0;j<empire_combat_forces[i].combat_ships.size();j++)
       hit_points+=empire_combat_forces[i].combat_ships[j].second;
 
-    //debug+= "#" + (std::string)itoa(empire_combat_forces[i].combat_ships.size(),buffer,10) 
-      //     +":" + (std::string)itoa(hit_points,buffer,10);
+    debug+= "#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].combat_ships.size()) 
+          +":" + boost::lexical_cast<std::string,int>(hit_points);
 
     hit_points=0;
     for(unsigned int j=0;j<empire_combat_forces[i].non_combat_ships.size();j++)
       hit_points+=empire_combat_forces[i].non_combat_ships[j].second;
 
-    //debug+= ",#" + (std::string)itoa(empire_combat_forces[i].non_combat_ships.size(),buffer,10)
-     //      +":" + (std::string)itoa(hit_points,buffer,10);
+    debug+= ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].non_combat_ships.size())
+          +":" + boost::lexical_cast<std::string,int>(hit_points);
     
-    //debug+= ",#" + (std::string)itoa(empire_combat_forces[i].destroyed_ships.size(),buffer,10);
-    //debug+= ",#" + (std::string)itoa(empire_combat_forces[i].retreated_ships.size(),buffer,10) + ")";
+    debug+= ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].destroyed_ships.size());
+    debug+= ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].retreated_ships.size()) + ")";
 
     hit_points=0;
     for(unsigned int j=0;j<empire_combat_forces[i].planets.size();j++)
       hit_points+=empire_combat_forces[i].planets[j].second;
 
-    //debug+= "; planets : #" + (std::string)itoa(empire_combat_forces[i].planets.size(),buffer,10) 
-      //     +":" + (std::string)itoa(hit_points,buffer,10);
+    debug+= "; planets : #" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].planets.size()) 
+          +":" + boost::lexical_cast<std::string,int>(hit_points);
 
     debug+="\n";
   }
-  //ServerApp::GetApp()->Logger().debugStream() << debug;
+  log4cpp::Category::getRoot().debugStream() << debug;
 }
 #endif
 
-void CombatSystem::ResolveCombat(const std::vector<CombatAssets> &assets)
+void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAssets> &assets)
 {
 #ifdef DEBUG_COMBAT
-  //ServerApp::GetApp()->Logger().debugStream() << "COMBAT resolution!";
+  log4cpp::Category::getRoot().debugStream() << "COMBAT resolution!";
 #endif
   const double base_chance_to_retreat = 0.25;
   const int    defence_base_hit_points= 3;
 
-  srand((unsigned int)time(NULL));
+  ClockSeed();
+  SmallIntDistType small_int_dist = SmallIntDist(0,10000);
 
   std::vector<CombatAssetsHitPoints> empire_combat_forces;
 
@@ -158,12 +158,20 @@ void CombatSystem::ResolveCombat(const std::vector<CombatAssets> &assets)
       combat_assets.push_back(empire_combat_forces.size()-1);
   }
 
+  // if only non combat forces meet, no battle take place
+  unsigned int e;
+  for(e=0;e<combat_assets.size();e++)
+    if(empire_combat_forces[combat_assets[e]].combat_ships.size()>0)
+      break;
+  if(e>=combat_assets.size())
+    return;
+
   while(combat_assets.size()>1)
   {
     // give all non combat shpis a base chance to retreat
     for(unsigned int e=0;e<combat_assets.size();e++)
       for(unsigned int i=0; i<empire_combat_forces[combat_assets[e]].non_combat_ships.size(); i++)
-        if((rand()%100)<=(int)(base_chance_to_retreat*100.0))
+        if((small_int_dist()%100)<=(int)(base_chance_to_retreat*100.0))
         {
           empire_combat_forces[combat_assets[e]].retreated_ships .push_back(empire_combat_forces[combat_assets[e]].non_combat_ships[i].first);
           empire_combat_forces[combat_assets[e]].non_combat_ships.erase    (empire_combat_forces[combat_assets[e]].non_combat_ships.begin()+i);
@@ -192,12 +200,12 @@ void CombatSystem::ResolveCombat(const std::vector<CombatAssets> &assets)
       {
         Ship *shp = empire_combat_forces[e].combat_ships[i].first;
 
-        damage_done[e] += rand()%(shp->Design().attack+1);
+        damage_done[e] += small_int_dist()%(shp->Design().attack+1);
       }
 
 #ifdef DEBUG_COMBAT
-      //ServerApp::GetApp()->Logger().debugStream() 
-        //<< "Damage done by " << empire_combat_forces[e].owner->Name() << " " << damage_done[e];
+      log4cpp::Category::getRoot().debugStream() 
+        << "Damage done by " << empire_combat_forces[e].owner->Name() << " " << damage_done[e];
 #endif
     }
 
@@ -211,7 +219,7 @@ void CombatSystem::ResolveCombat(const std::vector<CombatAssets> &assets)
           break;
 
         // calc damage target assets at random, but don't shoot at yourself (+1)
-        int target_combat_assets = combat_assets.size()==1?0:rand()%(combat_assets.size()-1);
+        int target_combat_assets = combat_assets.size()==1?0:small_int_dist()%(combat_assets.size()-1);
         if(combat_assets[target_combat_assets] == e)
           target_combat_assets++;
 
@@ -292,7 +300,7 @@ void CombatSystem::ResolveCombat(const std::vector<CombatAssets> &assets)
   {   
     //remove defense bases of defenseless planets
     for(unsigned int i=0; i<empire_combat_forces[e].defenseless_planets.size(); i++)
-      empire_combat_forces[e].defenseless_planets[i]->AdjustDefBases(0);
+      empire_combat_forces[e].defenseless_planets[i]->AdjustDefBases(-empire_combat_forces[e].defenseless_planets[i]->DefBases());
     
     //adjust defense bases of planets
     for(unsigned int i=0; i<empire_combat_forces[e].planets.size(); i++)
@@ -303,7 +311,7 @@ void CombatSystem::ResolveCombat(const std::vector<CombatAssets> &assets)
                                           -empire_combat_forces[e].planets[i].second
                                           +defence_base_hit_points-1)
                                         / defence_base_hit_points;
-      empire_combat_forces[e].planets[i].first->AdjustDefBases(defense_bases_left);
+      empire_combat_forces[e].planets[i].first->AdjustDefBases(defense_bases_left-empire_combat_forces[e].planets[i].first->DefBases());
     }
 
     // conquer planets if there is a victor
@@ -358,7 +366,8 @@ void CombatSystem::ResolveCombat(const std::vector<CombatAssets> &assets)
     for(unsigned int i=0; i<empire_combat_forces[e].destroyed_ships.size(); i++)
       RemoveShip(empire_combat_forces[e].destroyed_ships[i]->ID());
 
-    // TODO: add some information to sitreport
+    // add some information to sitreport
+    empire_combat_forces[e].owner->AddSitRepEntry(CreateCombatSitRep(empire_combat_forces[e].owner->EmpireID(),victor==-1?-1:empire_combat_forces[victor].owner->EmpireID(),system_id));
   }
 }
 
