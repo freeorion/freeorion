@@ -36,7 +36,7 @@ public:
         be destroyed, or will retreat, as per the 0.1 requirements doc.
         Systems may change hands as well.
     */
-    void ResolveCombat(const std::vector<CombatAssets> &assets);
+    void ResolveCombat(const int system_id,const std::vector<CombatAssets> &assets);
     
 
 
