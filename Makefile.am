@@ -11,7 +11,7 @@ install:
 save :
 	mkdir -p save
 
-AM_CXXFLAGS = -Wall
+#AM_CXXFLAGS = -Wall
 
 bin_PROGRAMS = freeoriond.exe freeorion.exe freeorionca.exe 
 
@@ -94,6 +94,7 @@ util/OrderSet.cpp				\
 util/OrderSet.h  				\
 util/Process.cpp				\
 util/Process.h  				\
+util/Random.cpp					\
 util/Random.h					\
 util/SitRepEntry.cpp				\
 util/SitRepEntry.h  				\
