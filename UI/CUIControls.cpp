@@ -1059,7 +1059,7 @@ void StatisticIconDualValue::SetValueSecond(double value)
 // class CUIToolBar
 ///////////////////////////////////////
 CUIToolBar::CUIToolBar(int x, int y, int w, int h) :
-    GG::Control(x, y, w, h, GG::Wnd::ONTOP)
+    GG::Control(x, y, w, h, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE)
 {}
 
 bool CUIToolBar::Render()
