@@ -149,11 +149,11 @@ GSETUP_ENORMOUS
 riesig (300 Sterne)
 
 GSETUP_2ARM
-Spiral, 2-armig
+Spirale, 2-armig
 GSETUP_3ARM
-Spiral, 3-armig
+Spirale, 3-armig
 GSETUP_4ARM
-Spiral, 4-armig
+Spirale, 4-armig
 GSETUP_CLUSTER
 Cluster
 GSETUP_FROMFILE
@@ -244,7 +244,7 @@ Planetenansicht
 #Planet Sizes and Types####
 
 PL_SZ_NOWORLD
-Es gibt hier nicht's zu sehen! Weitergehen!
+Es gibt hier nichts zu sehen! Weitergehen!
 PL_SZ_TINY
 winzig
 PL_SZ_SMALL
