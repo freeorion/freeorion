@@ -6,19 +6,14 @@
 
 #include "ToolWnd.h"
 
-ToolWnd::ToolWnd()
-{
-
-}
-
 //ToolWnd::ToolWnd(int x, int y, char* text, GG::Clr clr):
-ToolWnd::ToolWnd(int x, int y, const std::string& text, const GG::Clr& clr):
+ToolWnd::ToolWnd(int x, int y, const std::string& text, const GG::Clr& clr, const std::string& font_name /* = "arial.ttf"*/, int pts /*= 10*/):
     GG::Wnd(x,y,10,10,0)
 {
-    textwnd=new GG::StaticText(4,4,text.c_str(),"arial.ttf",10);
+    textwnd=new GG::StaticText(4,4,text.c_str(),font_name,pts);
     color=clr;
     //resize this window to match the size of the text field
-    Resize(textwnd->GG::Wnd::Width()+6,textwnd->GG::Wnd::Height()+6);
+    Resize(textwnd->GG::Wnd::Width()+8,textwnd->GG::Wnd::Height()+8);
     AttachChild(textwnd);
     Hide(); 
 }

@@ -15,16 +15,6 @@
 
 class ToolWnd : public GG::Wnd
 {
-
-private:
-//! \name Structors
-//!@{
-    
-    //! Default construction.  Do not use.
-    ToolWnd();
-    
-//!@}
-
 public:
 //! \name Structors
 //!@{
@@ -37,9 +27,8 @@ public:
     //! @param y the y coordinate of the tooltip.
     //! @param text the string that the tooltip will display
     //! @param clr the background color of the window.  Text is always black.
-   // ToolWnd(int x, int y, char* text, const GG::Clr& clr); 
     
-    ToolWnd(int x, int y, const std::string& text, const GG::Clr& clr);
+    ToolWnd(int x, int y, const std::string& text, const GG::Clr& clr, const std::string& font_name = "arial.ttf", int pts = 10);
     
 //!@} 
 
