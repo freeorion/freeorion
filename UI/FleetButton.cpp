@@ -37,16 +37,9 @@ FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, doubl
     m_compliment(0)
 {
     Universe& universe = GetUniverse();
-    std::set<Fleet*> fleets_currently_shown;
-    std::set<Fleet*> fleets_currently_not_shown;
-
     for (unsigned int i = 0; i < fleet_IDs.size(); ++i) {
         Fleet* fleet = universe.Object<Fleet>(fleet_IDs[i]);
         m_fleets.push_back(fleet);
-        if (s_open_fleets.find(fleet) != s_open_fleets.end())
-            fleets_currently_shown.insert(fleet);
-        else
-            fleets_currently_not_shown.insert(fleet);
     }
     Fleet* fleet = m_fleets.back();
     double x = fleet->X();
@@ -60,13 +53,6 @@ FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, doubl
     m_orientation = GetUniverse().Object<System>(fleet->NextSystemID())->X() - fleet->X() < 0 ? SHAPE_LEFT : SHAPE_RIGHT;
 
     GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
-
-    if (!fleets_currently_shown.empty()) {
-        FleetWnd* fleet_wnd = s_open_fleets[*fleets_currently_shown.begin()];
-        for (std::set<Fleet*>::iterator it = fleets_currently_not_shown.begin(); it != fleets_currently_not_shown.end(); ++it) {
-            fleet_wnd->AddFleet(*it);
-        }
-    }
 }
 
 FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs, ShapeOrientation orientation) : 
@@ -75,25 +61,11 @@ FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::v
     m_compliment(0)
 {
     Universe& universe = GetUniverse();
-    std::set<Fleet*> fleets_currently_shown;
-    std::set<Fleet*> fleets_currently_not_shown;
-
     for (unsigned int i = 0; i < fleet_IDs.size(); ++i) {
         Fleet* fleet = universe.Object<Fleet>(fleet_IDs[i]);
         m_fleets.push_back(fleet);
-        if (s_open_fleets.find(fleet) != s_open_fleets.end())
-            fleets_currently_shown.insert(fleet);
-        else
-            fleets_currently_not_shown.insert(fleet);
     }
     GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
-
-    if (!fleets_currently_shown.empty()) {
-        FleetWnd* fleet_wnd = s_open_fleets[*fleets_currently_shown.begin()];
-        for (std::set<Fleet*>::iterator it = fleets_currently_not_shown.begin(); it != fleets_currently_not_shown.end(); ++it) {
-            fleet_wnd->AddFleet(*it);
-        }
-    }
 }
 
 FleetButton::FleetButton(const GG::XMLElement& elem) : 

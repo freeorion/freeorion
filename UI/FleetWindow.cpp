@@ -1080,7 +1080,7 @@ Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
         }
     }
 
-    m_showing_fleet_sig(new_fleet, this);
+    AddFleet(new_fleet);
 
     return new_fleet;
 }
