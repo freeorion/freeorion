@@ -4326,18 +4326,18 @@ BuildCmd=
 [Project]
 FileName=HumanClient.dev
 Name=HumanClient
-UnitCount=93
+UnitCount=108
 Type=0
 Ver=1
 ObjFiles=
-Includes=C:\Dev-Cpp\include\SDL;C:\Dev-Cpp\include\c++\mingw32;C:\boost-1.30.2;C:\Dev-Cpp\include\freetype2;C:\Expat-1.95.5\Source\lib;C:\log4cpp-0.2.7\include;../../GG/include;../../GG/include/net;../../GG/include/dialogs;../../GG/include/SDL
-Libs=C:\Expat-1.95.5\StaticLibs
+Includes=C:\Dev-Cpp\include\SDL;C:\Dev-Cpp\include\c++\mingw32;C:\boost-1.30.2;C:\Dev-Cpp\include\freetype2;C:\log4cpp-0.2.7\include;../../GG/include;../../GG/include/net;../../GG/include/dialogs;../../GG/include/SDL
+Libs=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=-DFREEORION_WIN32_@@_-DFREEORION_BUILD_HUMAN_@@__@@_
-Linker=-lmingw32_@@_-lSDLmain_@@_-lSDL_@@_-lSDL_mixer_@@_-lopengl32_@@_-lglu32_@@_-lfreetype_@@_-lwsock32_@@_-lboost_signals_@@_-lboost_filesystem_@@_-lboost_regex_@@_-lexpat_@@_-llog4cpp_@@_-lz_@@_../../GiGi.dll_@@_../../GiGiNet.dll_@@_../../GiGiSDL.dll_@@_
+Linker=-lmingw32_@@_-lSDLmain_@@_-lSDL_@@_-lSDL_mixer_@@_-lopengl32_@@_-lglu32_@@_-lfreetype_@@_-lwsock32_@@_-lboost_signals_@@_-lboost_filesystem_@@_-lboost_regex_@@_-llog4cpp_@@_-lz_@@_../../GiGi.dll_@@_../../GiGiNet.dll_@@_../../GiGiSDL.dll_@@_
 IsCpp=1
 Icon=
 ExeOutput=..\..
@@ -5231,7 +5231,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit94]
-FileName=..\..\universe\ProdCenter.cpp
+FileName=..\..\universe\Predicates.cpp
 CompileCpp=1
 Folder=universe
 Compile=1
@@ -5241,9 +5241,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit95]
-FileName=..\..\universe\ProdCenter.h
+FileName=..\..\UI\TurnProgressWnd.h
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -5251,9 +5251,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit97]
-FileName=..\..\universe\Ship.h
+FileName=..\..\UI\FleetButton.h
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -5261,9 +5261,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit98]
-FileName=..\..\universe\System.cpp
+FileName=..\..\UI\InGameOptions.cpp
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -5271,9 +5271,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit99]
-FileName=..\..\universe\System.h
+FileName=..\..\UI\InGameOptions.h
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -5281,7 +5281,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit100]
-FileName=..\..\UI\ClientUI.cpp
+FileName=..\..\UI\TurnProgressWnd.cpp
 CompileCpp=1
 Folder=ClientUI
 Compile=1
@@ -5291,9 +5291,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit101]
-FileName=..\..\UI\ClientUI.h
+FileName=..\..\util\SitRepEntry.cpp
 CompileCpp=1
-Folder=ClientUI
+Folder=util
 Compile=1
 Link=1
 Priority=1000
@@ -5301,9 +5301,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit102]
-FileName=..\..\UI\GalaxySetupWnd.cpp
+FileName=..\..\util\VarText.h
 CompileCpp=1
-Folder=ClientUI
+Folder=util
 Compile=1
 Link=1
 Priority=1000
@@ -5311,9 +5311,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit103]
-FileName=..\..\UI\GalaxySetupWnd.h
+FileName=..\..\util\VarText.cpp
 CompileCpp=1
-Folder=ClientUI
+Folder=util
 Compile=1
 Link=1
 Priority=1000
@@ -5321,9 +5321,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit104]
-FileName=..\..\UI\IntroScreen.cpp
+FileName=..\..\util\OptionValidators.h
 CompileCpp=1
-Folder=ClientUI
+Folder=util
 Compile=1
 Link=1
 Priority=1000
@@ -5331,9 +5331,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit105]
-FileName=..\..\UI\IntroScreen.h
+FileName=..\..\util\OptionsDB.cpp
 CompileCpp=1
-Folder=ClientUI
+Folder=util
 Compile=1
 Link=1
 Priority=1000
@@ -5341,9 +5341,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit106]
-FileName=..\..\UI\ServerConnectWnd.cpp
+FileName=..\..\util\OptionsDB.h
 CompileCpp=1
-Folder=ClientUI
+Folder=util
 Compile=1
 Link=1
 Priority=1000
@@ -5351,7 +5351,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit107]
-FileName=..\..\UI\ServerConnectWnd.h
+FileName=..\..\UI\SitRepPanel.cpp
 CompileCpp=1
 Folder=ClientUI
 Compile=1
@@ -5361,7 +5361,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit108]
-FileName=..\..\UI\StringTable.cpp
+FileName=..\..\UI\SitRepPanel.h
 CompileCpp=1
 Folder=ClientUI
 Compile=1
@@ -5681,9 +5681,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit96]
-FileName=..\..\universe\Ship.cpp
+FileName=..\..\UI\FleetButton.cpp
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000

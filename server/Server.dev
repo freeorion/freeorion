@@ -1,18 +1,18 @@
 [Project]
 FileName=Server.dev
 Name=Server
-UnitCount=54
+UnitCount=58
 Type=1
 Ver=1
 ObjFiles=
-Includes=C:\Dev-Cpp\include\SDL;C:\Dev-Cpp\include\c++\mingw32;C:\boost-1.30.2;C:\Expat-1.95.5\Source\lib;C:\log4cpp-0.2.7\include;../GG/include;../GG/include/net;../GG/include/dialogs
-Libs=C:\Expat-1.95.5\StaticLibs
+Includes=C:\Dev-Cpp\include\SDL;C:\Dev-Cpp\include\c++\mingw32;C:\boost-1.30.2;C:\log4cpp-0.2.7\include;../GG/include;../GG/include/net;../GG/include/dialogs
+Libs=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=-DLOG4CPP_FIX_ERROR_COLLISION=1_@@_-DFREEORION_WIN32_@@_-DFREEORION_BUILD_SERVER_@@_
-Linker=-lmingw32_@@_-lSDLmain_@@_-lSDL_@@_-lwsock32_@@_-lboost_signals_@@_-lexpat_@@_-llog4cpp_@@_-lz_@@_../GiGi.dll_@@_../GiGiNet.dll_@@_../GiGiSDL.dll_@@_
+Linker=-lmingw32_@@_-lSDLmain_@@_-lSDL_@@_-lwsock32_@@_-lboost_signals_@@_-llog4cpp_@@_-lz_@@_../GiGi.dll_@@_../GiGiNet.dll_@@_../GiGiSDL.dll_@@_
 IsCpp=1
 Icon=
 ExeOutput=..
@@ -546,9 +546,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit55]
-FileName=..\util\AppInterface.h
+FileName=..\universe\Predicates.cpp
 CompileCpp=1
-Folder=
+Folder=universe
 Compile=1
 Link=1
 Priority=1000
@@ -556,7 +556,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit56]
-FileName=..\util\SitRepEntry.h
+FileName=..\util\VarText.h
 CompileCpp=1
 Folder=util
 Compile=1
@@ -566,9 +566,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit58]
-FileName=..\universe\Fleet.cpp
+FileName=..\util\VarText.cpp
 CompileCpp=1
-Folder=universe
+Folder=util
 Compile=1
 Link=1
 Priority=1000
@@ -779,6 +779,16 @@ BuildCmd=
 FileName=..\universe\System.h
 CompileCpp=1
 Folder=universe
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit57]
+FileName=..\util\SitRepEntry.cpp
+CompileCpp=1
+Folder=util
 Compile=1
 Link=1
 Priority=1000
