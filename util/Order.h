@@ -3,12 +3,19 @@
 
 #include <vector>
 
+#ifndef _XMLDoc_h_
+#include "XMLDoc.h"
+#endif
 
-class ServerApp;
+#ifndef _XMLObjectFactory_h_
+#include "XMLObjectFactory.h"
+#endif
+
 
 /////////////////////////////////////////////////////
 // ORDER
 /////////////////////////////////////////////////////
+
 
 /** the abstract base class for serializable player actions (Orders)*/
 class Order
@@ -16,6 +23,7 @@ class Order
 public:
    /** \name Structors */ //@{
    Order() : m_empire(-1) {}  ///< default ctor
+   Order(const GG::XMLElement& elem);  ///< serialization constructor
    Order(int empire) : m_empire(empire) {} ///< ctor taking the ID of the Empire issuing the order
 	virtual ~Order() {}
    //@}
@@ -29,10 +37,16 @@ public:
    *  must be that of an existing empire.  
    * 
    *  Subclasses add additional preconditions.  An std::runtime_error
-   *   will be thrown if any precondition fails.
+   *   should be thrown if any precondition fails.
    */
    virtual void Execute() const = 0; ///< executes the order on the server's Universe and Empires; does nothing in the client apps
+   
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+   
    //@}
+
+    /// initializes an XML object factory for constructing orders
+    static void InitOrderFactory(GG::XMLObjectFactory<Order>& fact);
 
 protected:
     /** \name Mutators */ //@{
@@ -50,7 +64,9 @@ private:
 // PLANET BUILD ORDER
 /////////////////////////////////////////////////////
 
-/** the Order subclass that represents planetary production*/
+/** the Order subclass that represents planetary production.
+    PlanetBuildOrder's when issued, cause planets to change their
+    production project. */
 class PlanetBuildOrder : public Order
 {
 public:
@@ -65,6 +81,7 @@ public:
    
    /** \name Structors */ //@{
    PlanetBuildOrder();
+   PlanetBuildOrder(const GG::XMLElement& elem);
    PlanetBuildOrder(int empire, int planet, BuildType build, int ship_type = -1);
    //@}
    
@@ -83,6 +100,8 @@ public:
    *       to the specified build type and ship type (if building ships)
    */
    virtual void Execute() const;
+   
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
    //@}
    
 private:
@@ -96,12 +115,14 @@ private:
 // FLEET MOVE ORDER
 /////////////////////////////////////////////////////
 
-/** the Order subclass that represents fleet movement*/
+/** the Order subclass that represents fleet movement
+    These orders change the current destination of a fleet */
 class FleetMoveOrder : public Order
 {
 public:
    /** \name Structors */ //@{
    FleetMoveOrder();
+   FleetMoveOrder(const GG::XMLElement& elem);
    FleetMoveOrder(int empire, int fleet, int dest_system);
    //@}
    
@@ -119,6 +140,8 @@ public:
    *     - the specified fleet will have its move orders set to the specified destination
    */
    virtual void Execute() const;
+   
+    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
    //@}
    
 private:
@@ -130,12 +153,15 @@ private:
 // FLEET MERGE ORDER
 /////////////////////////////////////////////////////
 
-/** the Order subclass that represents transfer of ships between existing fleets */
+/** the Order subclass that represents transfer of ships between existing fleets
+    A FleetMergeOrder is used to transfer ships from one existing fleet to another
+ */
 class FleetMergeOrder : public Order
 {
 public:
    /** \name Structors */ //@{
    FleetMergeOrder();
+   FleetMergeOrder(const GG::XMLElement& elem);
    FleetMergeOrder(int empire, int fleet_from, int fleet_to, const std::vector<int>& ships);
    //@}
    
@@ -153,8 +179,11 @@ public:
    *
    *  Postconditions:
    *     - all ships in m_add_ships will be moved from the Source fleet to the destination fleet
+   *         if the source fleet becomes empty it will be deallocated
    */
    virtual void Execute() const;
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+      
    //@}
    
 private:
@@ -169,12 +198,14 @@ private:
 
 /** the Order subclass that represents forming a new fleet from a group
     of existing ships
+    FleetSplitOrders are used to form new fleets from ships in existing fleets.
 */
 class FleetSplitOrder : public Order
 {
 public:
    /** \name Structors */ //@{
    FleetSplitOrder();
+   FleetSplitOrder(const GG::XMLElement& elem);
    FleetSplitOrder(int empire, const std::vector<int>& ships);
    //@}
    
@@ -189,11 +220,13 @@ public:
    *
    *  Postconditions:
    *     - all ships in m_remove_ships will be removed from their respective fleets
-   *     - a new fleet will be created using the issuing empire's next fleet ID, which
-   *         will contain all of the ships in m_remove_ships
+   *         if any fleets become empty they will be destroyed
+   *     - a new fleet will be created which will contain all of the ships in 
+   *          m_remove_ships.  THe universe and empire states will be updated accordingly
    *
    */
    virtual void Execute() const;
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
    //@}
    
 private:
@@ -211,6 +244,7 @@ class FleetColonizeOrder : public Order
 public:
    /** \name Structors */ //@{
    FleetColonizeOrder();
+   FleetColonizeOrder(const GG::XMLElement& elem);
    FleetColonizeOrder(int empire, int fleet, int planet);
    //@}
    
@@ -228,12 +262,15 @@ public:
    *
    *  Postconditions:
    *      - a colony ship will be removed from the fleet and deallocated
+   *        if the fleet becomes empty it will be deallocated.
    *      - the empire issuing the order will be added to the list of owners
    *            for the planet
    *      - the planet's population will be increased
    *      - the planet will be added to the empire's list of owned planets
+   *     
    */
    virtual void Execute() const;
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
    //@}
    
 private:

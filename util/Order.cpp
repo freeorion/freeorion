@@ -21,21 +21,49 @@
 
 #include "../universe/Predicates.h"
 
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
+
+
 #include <vector>
 using std::vector;
 
+using GG::XMLElement;
 
 // TEMPORARY!  This should go into some sort of external
 // XML file that the server uses for game rules like this
 // I will be coding such a class in the near future -- jbarcz1
 const int INITIAL_COLONY_POP = 1;
 
-
-
+namespace
+{
+    Order* GenPlanetBuildOrder(const XMLElement& elem) { return new PlanetBuildOrder(elem);};
+    Order* GenFleetMoveOrder(const XMLElement& elem) { return new FleetMoveOrder(elem);};
+    Order* GenFleetMergeOrder(const XMLElement& elem) { return new FleetMergeOrder(elem);};
+    Order* GenFleetSplitOrder(const XMLElement& elem) { return new FleetSplitOrder(elem);};
+    Order* GenFleetColonizeOrder(const XMLElement& elem) { return new FleetColonizeOrder(elem);};
+}
 
 /////////////////////////////////////////////////////
 // ORDER
 /////////////////////////////////////////////////////
+
+Order::Order(const GG::XMLElement& elem)
+{
+    m_empire = lexical_cast<int>(elem.Child("m_empire").Attribute("value"));
+}
+
+GG::XMLElement Order::XMLEncode() const
+{
+    XMLElement elem("Order");
+    
+    XMLElement empire("m_empire");
+    empire.SetAttribute("value", lexical_cast<std::string>(m_empire));
+    elem.AppendChild(empire);
+    
+    return elem;
+}
+
 
 void Order::ValidateEmpireID() const
 {
@@ -47,6 +75,15 @@ void Order::ValidateEmpireID() const
 
 }
 
+void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
+{
+    fact.AddGenerator("PlanetBuildOrder", &GenPlanetBuildOrder);
+    fact.AddGenerator("FleetMoveOrder", &GenFleetMoveOrder);
+    fact.AddGenerator("FleetMergeOrder", &GenFleetMergeOrder);
+    fact.AddGenerator("FleetSplitOrder", &GenFleetSplitOrder);
+    fact.AddGenerator("FleetColonizeOrder", &GenFleetColonizeOrder);
+}
+
 ////////////////////////////////////////////////
 // PlanetBuildOrder
 ////////////////////////////////////////////////
@@ -56,6 +93,18 @@ PlanetBuildOrder::PlanetBuildOrder() :
    m_build_type(INVALID),
    m_ship_type(-1)
 {
+}
+
+PlanetBuildOrder::PlanetBuildOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
+{   
+    if(elem.Tag() != ("PlanetBuildOrder"))
+    {
+        throw std::invalid_argument("Tried to construct PlanetBuildOrder from malformed XMLElement");
+    }
+
+    m_planet = lexical_cast<int> (elem.Child("m_planet").Attribute("value"));
+    m_build_type = (BuildType)lexical_cast<int> (elem.Child("m_build_type").Attribute("value"));
+    m_ship_type = lexical_cast<int> (elem.Child("m_ship_type").Attribute("value"));
 }
 
 PlanetBuildOrder::PlanetBuildOrder(int empire, int planet, BuildType build, int ship_type/* = -1*/) : 
@@ -114,6 +163,27 @@ void PlanetBuildOrder::Execute() const
     }
 }
 
+GG::XMLElement PlanetBuildOrder::XMLEncode() const
+{
+    XMLElement elem("PlanetBuildOrder");
+    elem.AppendChild(Order::XMLEncode());
+    
+    XMLElement planet("m_planet");
+    XMLElement build_type("m_build_type");
+    XMLElement ship_type("m_ship_type");
+    
+    planet.SetAttribute("value", lexical_cast<std::string>(m_planet));
+    build_type.SetAttribute("value", lexical_cast<std::string>(m_build_type));
+    ship_type.SetAttribute("value", lexical_cast<std::string>(m_ship_type));
+    
+    elem.AppendChild(planet);
+    elem.AppendChild(build_type);
+    elem.AppendChild(ship_type);
+    
+   
+    return elem;
+}
+
 
 ////////////////////////////////////////////////
 // FleetMoveOrder
@@ -123,6 +193,15 @@ FleetMoveOrder::FleetMoveOrder() :
    m_fleet(UniverseObject::INVALID_OBJECT_ID),
    m_dest_system(UniverseObject::INVALID_OBJECT_ID)
 {
+}
+
+FleetMoveOrder::FleetMoveOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
+{
+    if(elem.Tag()!=("FleetMoveOrder"))
+        throw std::invalid_argument("Attempted to construct FleetMoveOrder from malformed XMLElement");
+    
+    m_fleet = lexical_cast<int>(elem.Child("m_fleet").Attribute("value"));
+    m_dest_system = lexical_cast<int>(elem.Child("m_dest_system").Attribute("value"));
 }
 
 FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int dest_system) : 
@@ -168,9 +247,25 @@ void FleetMoveOrder::Execute() const
     // set the destination
     the_fleet->SetMoveOrders(this->DestinationSystemID());
     
-    // TODO:  check destination validity (future versions)
+    // TODO:  check destination validity (once ship range is decided on)
 }
 
+XMLElement FleetMoveOrder::XMLEncode() const
+{
+    XMLElement elem("FleetMoveOrder");
+    elem.AppendChild(Order::XMLEncode());
+    
+    XMLElement fleet("m_fleet");
+    XMLElement dest_system("m_dest_system");
+    
+    fleet.SetAttribute("value", lexical_cast<std::string>(m_fleet));
+    dest_system.SetAttribute("value", lexical_cast<std::string>(m_dest_system));
+    
+    elem.AppendChild(fleet);
+    elem.AppendChild(dest_system);
+
+    return elem;
+}
 
 ////////////////////////////////////////////////
 // FleetMergeOrder
@@ -180,6 +275,21 @@ FleetMergeOrder::FleetMergeOrder() :
    m_fleet_from(UniverseObject::INVALID_OBJECT_ID),
    m_fleet_to(UniverseObject::INVALID_OBJECT_ID)
 {
+}
+
+FleetMergeOrder::FleetMergeOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
+{
+    if(elem.Tag() !=("FleetMergeOrder"))
+        throw std::invalid_argument("Attempted to construct FleetMergeOrder from malformed XMLElement");
+    
+    m_fleet_from = lexical_cast<int> (elem.Child("m_fleet_from").Attribute("value"));
+    m_fleet_to = lexical_cast<int> (elem.Child("m_fleet_to").Attribute("value"));
+    
+    XMLElement container_elem = elem.Child("m_add_ships");
+    for(int i=0; i<container_elem.NumChildren(); i++)
+    {
+        m_add_ships.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+    }
 }
 
 FleetMergeOrder::FleetMergeOrder(int empire, int fleet_from, int fleet_to, const std::vector<int>& ships) : 
@@ -251,6 +361,41 @@ void FleetMergeOrder::Execute() const
         
         itr++;
     }
+    
+    if(source_fleet->ShipCount() == 0)
+    {
+        // if fleet is out of ships, then get rid of it
+        universe.Delete(source_fleet->ID());
+        empire.Lookup(EmpireID())->RemoveFleet(source_fleet->ID());
+    }
+}
+
+XMLElement FleetMergeOrder::XMLEncode() const
+{
+    XMLElement elem("FleetMergeOrder");
+    elem.AppendChild(Order::XMLEncode());
+    
+    XMLElement fleet_from("m_fleet_from");
+    XMLElement fleet_to("m_fleet_to");
+    XMLElement ships("m_add_ships");
+    
+    fleet_from.SetAttribute("value", lexical_cast<std::string>(m_fleet_from));
+    fleet_to.SetAttribute("value", lexical_cast<std::string>(m_fleet_to));
+    
+    int i=0;
+    for( vector<int>::const_iterator itr = m_add_ships.begin(); itr != m_add_ships.end(); itr++)
+    {
+        GG::XMLElement item("index" + lexical_cast<std::string>(i) );
+        i++;
+        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
+        ships.AppendChild(item);
+    }
+    
+    elem.AppendChild(fleet_from);
+    elem.AppendChild(fleet_to);
+    elem.AppendChild(ships);
+   
+    return elem;
 }
 
 
@@ -260,6 +405,18 @@ void FleetMergeOrder::Execute() const
 FleetSplitOrder::FleetSplitOrder() : 
    Order()
 {
+}
+
+FleetSplitOrder::FleetSplitOrder(const XMLElement& elem) : Order(elem.Child("Order"))
+{
+    if(elem.Tag() != ("FleetSplitOrder"))
+        throw std::invalid_argument("Attempted to construct FleetSplitOrder from malformed XMLElement");
+    
+    XMLElement container_elem = elem.Child("m_remove_ships");
+    for(int i=0; i<container_elem.NumChildren(); i++)
+    {
+        m_remove_ships.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+    }
 }
 
 FleetSplitOrder::FleetSplitOrder(int empire, const std::vector<int>& ships) : 
@@ -343,10 +500,33 @@ void FleetSplitOrder::Execute() const
         itr++;
     }
     
-    // TODO:  Create new fleet with the specified ships in it
+    //  Create new fleet with the specified ships in it
+    Fleet* fleet = new Fleet("New Fleet", fleet_x, fleet_y, EmpireID());
+    fleet->AddShips(m_remove_ships);
+    universe.Insert(fleet);
+    empire.Lookup(EmpireID())->AddFleet(fleet->ID());
     
 }
 
+XMLElement FleetSplitOrder::XMLEncode() const
+{
+    XMLElement elem("FleetSplitOrder");
+    elem.AppendChild(Order::XMLEncode());
+    
+    XMLElement remove_ships("m_remove_ships");
+    int i=0;
+    for( vector<int>::const_iterator itr = m_remove_ships.begin(); itr != m_remove_ships.end(); itr++)
+    {
+        GG::XMLElement item("index" + lexical_cast<std::string>(i) );
+        i++;
+        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
+        remove_ships.AppendChild(item);
+    }
+    
+    elem.AppendChild(remove_ships);
+    
+    return elem;
+}
 
 ////////////////////////////////////////////////
 // FleetColonizeOrder
@@ -356,6 +536,15 @@ FleetColonizeOrder::FleetColonizeOrder() :
    m_fleet(-1),
    m_planet(-1)
 {
+}
+
+FleetColonizeOrder::FleetColonizeOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
+{
+    if(elem.Tag() != ("FleetColonizeOrder"))
+        throw std::invalid_argument("Attempted to construct FleetColonizeOrder from malformed XMLElement");
+    
+    m_fleet = lexical_cast<int> (elem.Child("m_fleet").Attribute("value"));
+    m_planet = lexical_cast<int> (elem.Child("m_planet").Attribute("value"));
 }
 
 FleetColonizeOrder::FleetColonizeOrder(int empire, int fleet, int planet) : 
@@ -454,5 +643,22 @@ void FleetColonizeOrder::Execute() const
     
     throw std::runtime_error("Colonization order issued to fleet without colony ship.");
     
+}
+
+
+XMLElement FleetColonizeOrder::XMLEncode() const
+{
+    XMLElement elem("FleetColonizeOrder");
+    elem.AppendChild(Order::XMLEncode());
+    
+    XMLElement fleet("m_fleet");
+    XMLElement planet("m_planet");
+    
+    fleet.SetAttribute("value", lexical_cast<std::string>(m_fleet));
+    planet.SetAttribute("value", lexical_cast<std::string>(m_planet));
+    
+    elem.AppendChild(fleet);
+    elem.AppendChild(planet);
+    return elem;
 }
 
