@@ -930,7 +930,7 @@ Condition::WithinDistance::WithinDistance(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::WithinDistance : Attempted to create a WithinDistance condition from an XML element with a tag other than \"Condition::WithinDistance\".");
 
     m_distance = ParseArithmeticExpression<double>(elem.Child("distance").Text());
-    m_condition = ConditionFactory().GenerateObject(elem.Child("condition").Text());
+    m_condition = ConditionFactory().GenerateObject(elem.Child("condition").Child(0));
 }
 
 Condition::WithinDistance::~WithinDistance()
@@ -1000,11 +1000,11 @@ Condition::WithinStarlaneJumps::WithinStarlaneJumps(const ValueRef::ValueRefBase
 
 Condition::WithinStarlaneJumps::WithinStarlaneJumps(const GG::XMLElement& elem)
 {
-    if (elem.Tag() != "Condition::ConditionWithinStarlaneJumps")
+    if (elem.Tag() != "Condition::WithinStarlaneJumps")
         throw std::runtime_error("Condition::WithinStarlaneJumps : Attempted to create a WithinStarlaneJumps condition from an XML element with a tag other than \"Condition::WithinStarlaneJumps\".");
 
     m_jumps = ParseArithmeticExpression<int>(elem.Child("jumps").Text());
-    m_condition = ConditionFactory().GenerateObject(elem.Child("condition").Text());
+    m_condition = ConditionFactory().GenerateObject(elem.Child("condition").Child(0));
 }
 
 Condition::WithinStarlaneJumps::~WithinStarlaneJumps()
