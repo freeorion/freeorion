@@ -303,7 +303,7 @@ UniverseObject* Universe::Remove(int id)
    iterator it = m_objects.find(id);
    if (it != m_objects.end()) {
       retval = it->second;
-      if (System* sys = dynamic_cast<System*>(Object(retval->SystemID())))
+      if (System* sys = retval->GetSystem())
           sys->Remove(id);
       m_objects.erase(id);
    }
@@ -476,7 +476,7 @@ void Universe::GenerateHomeworlds(int players, int stars, std::vector<int>& home
             too_close = false;
             system = dynamic_cast<System*>(sys_vec[system_index]);
             for (unsigned int j = 0; j < homeworlds.size(); ++j) {
-                UniverseObject* existing_system = Object(Object(homeworlds[j])->SystemID());
+                System* existing_system = Object(homeworlds[j])->GetSystem();
                 double x_dist = existing_system->X() - system->X();
                 double y_dist = existing_system->Y() - system->Y();
                 if (x_dist * x_dist + y_dist * y_dist < MIN_HOME_SYSTEM_SEPARATION * MIN_HOME_SYSTEM_SEPARATION) {
@@ -569,12 +569,12 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       // set ownership of home planet
       int empire_id = empire->EmpireID();
       Planet* home_planet = dynamic_cast<Planet*>(Object(homeworlds[i]));
-      Logger().debugStream() << "Setting " << Object(home_planet->SystemID())->Name() << " (Planet #" <<  home_planet->ID() << 
+      Logger().debugStream() << "Setting " << home_planet->GetSystem()->Name() << " (Planet #" <<  home_planet->ID() << 
           ") to be home system for Empire " << empire_id;
       home_planet->AddOwner(empire_id);
       // TODO: adding an owner to a planet should probably add that owner to the 
       //       system automatically...
-      System* home_system = dynamic_cast<System*>(Object(home_planet->SystemID()));
+      System* home_system = home_planet->GetSystem();
       home_system->AddOwner(empire_id);
 
       // create population and industry on home planet
