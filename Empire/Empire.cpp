@@ -564,6 +564,11 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
     color.AppendChild(colorelem);
     element.AppendChild(color);
     
+    XMLElement design_id("m_next_design_id");
+    design_id.SetAttribute( "value", lexical_cast<std::string>(m_next_design_id) );
+    element.AppendChild(design_id);
+    
+    
     // for the lists, put the child elements in but do not populate them
     
     XMLElement sitrep("m_sitrep_entries");
@@ -573,23 +578,18 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
     element.AppendChild(ship_designs);
     
     XMLElement fleets("m_fleets");
-    //EncodeIntList(fleets, m_fleets);
     element.AppendChild(fleets);
     
     XMLElement planets("m_planets");
-    //EncodeIntList(planets, m_planets);
     element.AppendChild(planets);
     
     XMLElement explored("m_explored_systems");
-    //EncodeIntList(explored, m_explored_systems);
     element.AppendChild(explored);
     
     XMLElement techs("m_techs");
-    //EncodeIntList(techs, m_techs);
     element.AppendChild(techs);
     
     XMLElement visible_fleets("m_visible_fleets");
-    //EncodeIntList(visible_fleets, m_visible_fleets);
     element.AppendChild(visible_fleets);
     
     return element;
