@@ -26,6 +26,10 @@
 #include "../universe/Ship.h"
 #endif
 
+#ifndef _ResourcePool_h_
+#include "ResourcePool.h"
+#endif
+
 /**
 * Class to maintain the state of a single empire.  
 * This class keeps track of the following information:
@@ -102,6 +106,9 @@ public:
      */
     Empire(const GG::XMLElement& elem);
 
+    //@}
+    /** \name Destructors */ //@{
+    ~Empire();
     //@}
 
     /* **************************************************
@@ -276,6 +283,8 @@ public:
     void SetPlayerName(const std::string& player_name);
     //@}
    
+    void UpdateResourcePool();
+
 private:
     /// Empire's unique numeric id
     int m_id;
@@ -310,6 +319,10 @@ private:
 
     /// The Empire's sitrep entries
     std::list<SitRepEntry*> m_sitrep_entries;
+
+    /// The Empire mineral resource pool
+    MineralResourcePool m_mineral_resource_pool;
+    FoodResourcePool    m_food_resource_pool;
 };
 
 #endif

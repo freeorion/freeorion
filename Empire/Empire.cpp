@@ -2,6 +2,13 @@
 
 #include "TechManager.h"
 
+#include "ResourcePool.h"
+
+#include "../universe/Predicates.h"
+#include "../universe/Planet.h"
+#include "../universe/Universe.h"
+
+#include "../util/AppInterface.h"
 #include <algorithm>
 
 #include <boost/lexical_cast.hpp>
@@ -18,11 +25,12 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_player_name(player_name),
     m_color(color), 
     m_control_state(control),
-    m_next_design_id(1)
-{
-}
+    m_next_design_id(1),
+    m_mineral_resource_pool(),m_food_resource_pool()
+{}
 
-Empire::Empire(const GG::XMLElement& elem)
+Empire::Empire(const GG::XMLElement& elem) : 
+    m_mineral_resource_pool(),m_food_resource_pool()
 {
     using GG::XMLElement;
 
@@ -49,6 +57,9 @@ Empire::Empire(const GG::XMLElement& elem)
        m_ship_designs.insert(std::make_pair(ship_design.id, ship_design));
     }
 }
+
+Empire::~Empire()
+{}
 
 /** Misc Accessors */
 Empire::ControlStatus Empire::ControlState() const
@@ -321,4 +332,10 @@ void Empire::SetName(const std::string& name)
 void Empire::SetPlayerName(const std::string& player_name)
 {
     m_player_name = player_name;
+}
+
+void Empire::UpdateResourcePool()
+{
+  m_mineral_resource_pool.SetPlanets(GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(m_id)));
+  m_food_resource_pool.SetPlanets(GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(m_id)));
 }
