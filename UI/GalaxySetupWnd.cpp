@@ -352,11 +352,12 @@ void GalaxySetupWnd::OnChangeType(int index)
 void GalaxySetupWnd::OnBrowse()
 {
     //open a file dialog and allow the user to browse for a graphics file
+    std::vector<std::pair<std::string, std::string> > allowed_file_types;
+    allowed_file_types.push_back(std::pair<std::string, std::string>("Graphics Files (PNG, Targa)", "*.png, *.PNG, *.tga, *.TGA"));
     GG::FileDlg dlg(*m_galaxy_file,
                     false,
                     false,
-                    "*.png, *.PNG, *.tga, *.TGA",
-                    true,
+                    allowed_file_types,
                     ClientUI::FONT,
                     ClientUI::PTS,
                     GG::Clr(100,100,100,255),GG::CLR_WHITE,GG::CLR_BLACK
@@ -364,10 +365,10 @@ void GalaxySetupWnd::OnBrowse()
                     //ClientUI::BORDER_COLOR,
                     //ClientUI::TEXT_COLOR
                     );
-    
+
     dlg.Run();
     
-    if(dlg.Result().empty())
+    if (dlg.Result().empty())
         return;
     
     //get and store result
