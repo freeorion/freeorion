@@ -176,7 +176,7 @@ AC_CACHE_SAVE
 # Check for Boost
 FAILED=no
 YG_GET_PATH(boost)
-YG_CHECK_BOOST([1.30.0],,[FAILED=yes])
+YG_CHECK_BOOST([1.32.0],,[FAILED=yes])
 #YG_CHECK_BOOST([1.31.0],[AC_MSG_FAILURE([Boost 1.31 is NOT supported at the moment.
 #Getting FO compatible with 1.31 is work-in-progress.])
 #FAILED=yes])
@@ -190,7 +190,7 @@ AC_CHECK_LIB(boost_signals,main,[],[
 
 if test $FAILED = yes; then 
   AC_MSG_FAILURE([boost libs not found.
-** You need the Boost C++ libraries, version 1.30 (1.31 does NOT work ATM),
+** You need the Boost C++ libraries, version 1.32 or later,
 ** as well as the following boost-modules:
 ** - boost.filesystem
 ** - boost.signals
