@@ -44,6 +44,9 @@ public:
     //@}
 
     //! \name Mutators //@{
+    void Update();
+    void Clear();
+    void Reset();
     void ShowCategory(const std::string& category);
     void SetTechTypesShown(TechTypesShown tech_types);
     void UncollapseAll();

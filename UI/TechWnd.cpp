@@ -72,61 +72,6 @@ namespace {
         return retval;
     }
 
-    void CircleArc(int x1, int y1, int x2, int y2, double theta1, double theta2, bool filled_shape)
-    {
-        int wd = x2 - x1, ht = y2 - y1;
-        double center_x = x1 + wd / 2.0;
-        double center_y = y1 + ht / 2.0;
-        double r = std::min(wd / 2.0, ht / 2.0);
-
-        // correct theta* values to range [0, 2pi)
-        if (theta1 < 0)
-            theta1 += (int(-theta1 / (2 * PI)) + 1) * 2 * PI;
-        else if (theta1 >= 2 * PI)
-            theta1 -= int(theta1 / (2 * PI)) * 2 * PI;
-        if (theta2 < 0)
-            theta2 += (int(-theta2 / (2 * PI)) + 1) * 2 * PI;
-        else if (theta2 >= 2 * PI)
-            theta2 -= int(theta2 / (2 * PI)) * 2 * PI;
-
-        const int      SLICES = std::min(3 + std::max(wd, ht), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
-        const double   HORZ_THETA = (2 * PI) / SLICES;
-
-        static std::map<int, std::valarray<double> > unit_circle_coords;
-        std::valarray<double>& unit_vertices = unit_circle_coords[SLICES];
-        bool calc_vertices = unit_vertices.size() == 0;
-        if (calc_vertices) {
-            unit_vertices.resize(2 * (SLICES + 1), 0.0);
-            double theta = 0.0f;
-            for (int j = 0; j <= SLICES; theta += HORZ_THETA, ++j) { // calculate x,y values for each point on a unit circle divided into SLICES arcs
-                unit_vertices[j*2] = std::cos(-theta);
-                unit_vertices[j*2+1] = std::sin(-theta);
-            }
-        }
-        int first_slice_idx = int(theta1 / HORZ_THETA + 1);
-        int last_slice_idx = int(theta2 / HORZ_THETA - 1);
-        if (theta1 >= theta2)
-            last_slice_idx += SLICES;
-
-        if (filled_shape) {
-            glBegin(GL_TRIANGLE_FAN);
-            glVertex2f(center_x, center_y);
-        }
-        // point on circle at angle theta1
-        double theta1_x = std::cos(-theta1), theta1_y = std::sin(-theta1);
-        glVertex2f(center_x + theta1_x * r, center_y + theta1_y * r);
-        // angles in between theta1 and theta2, if any
-        for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
-            int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
-            glVertex2f(center_x + unit_vertices[X] * r, center_y + unit_vertices[Y] * r);
-        }
-        // theta2
-        double theta2_x = std::cos(-theta2), theta2_y = std::sin(-theta2);
-        glVertex2f(center_x + theta2_x * r, center_y + theta2_y * r);
-        if (filled_shape)
-            glEnd();
-    }
-
     void FillTheoryPanel(const GG::Rect& panel, int corner_radius)
     {
         CircleArc(panel.lr.x - 2 * corner_radius, panel.ul.y,
@@ -456,14 +401,14 @@ class TechTreeWnd::TechDetailPanel : public GG::Wnd
 public:
     TechDetailPanel(int w, int h);
     const Tech* CurrentTech() const {return m_tech;}
-    void SetTech(const Tech* tech)  {m_tech = tech; Update();}
+    void SetTech(const Tech* tech)  {m_tech = tech; Reset();}
     mutable boost::signal<void (const Tech*)> CenterOnTechSignal;
     mutable boost::signal<void (const Tech*)> QueueTechSignal;
 
 private:
     void CenterClickedSlot() {CenterOnTechSignal(m_tech);}
     void AddToQueueClickedSlot() {QueueTechSignal(m_tech);}
-    void Update();
+    void Reset();
 
     const Tech*      m_tech;
     GG::TextControl* m_tech_name_text;
@@ -483,7 +428,6 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     const int COST_PTS = ClientUI::PTS + 6;
     const int BUTTON_WIDTH = 150;
     const int BUTTON_MARGIN = 5;
-    const int DESCRIPTION_X = BUTTON_WIDTH + 10;
     m_tech_name_text = new GG::TextControl(1, 0, w, NAME_PTS + 4, "", ClientUI::FONT, NAME_PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_category_and_type_text = new GG::TextControl(1, m_tech_name_text->LowerRight().y, w, CATEGORY_AND_TYPE_PTS + 4, "", ClientUI::FONT, CATEGORY_AND_TYPE_PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_cost_text = new GG::TextControl(1, m_category_and_type_text->LowerRight().y, w, COST_PTS + 4, "", ClientUI::FONT, COST_PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
@@ -505,7 +449,7 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     AttachChild(m_description_box);
 }
 
-void TechTreeWnd::TechDetailPanel::Update()
+void TechTreeWnd::TechDetailPanel::Reset()
 {
     m_tech_name_text->SetText("");
     m_category_and_type_text->SetText("");
@@ -525,7 +469,7 @@ void TechTreeWnd::TechDetailPanel::Update()
     m_category_and_type_text->SetText(str(format(UserString("TECH_DETAIL_TYPE_STR"))
         % UserString(m_tech->Category())
         % UserString(boost::lexical_cast<std::string>(m_tech->Type()))));
-    m_cost_text->SetText(str(format(UserString("TECH_COST_STR"))
+    m_cost_text->SetText(str(format(UserString("TECH_TOTAL_COST_STR"))
         % static_cast<int>(m_tech->ResearchCost() + 0.5)
         % m_tech->ResearchTurns()));
     if (m_tech->Effects().empty()) {
@@ -551,12 +495,10 @@ public:
     TechNavigator(int w, int h);
 
     const Tech* CurrentTech() const {return m_current_tech;}
-    void SetTech(const Tech* tech) {m_current_tech = tech; Update();}
+    void SetTech(const Tech* tech) {m_current_tech = tech; Reset();}
     void TechClickedSlot(const Tech* tech) {TechClickedSignal(tech);}
-    void TechDoubleClickedSlot(const Tech* tech) {TechDoubleClickedSignal(tech);}
 
     mutable boost::signal<void (const Tech*)> TechClickedSignal;
-    mutable boost::signal<void (const Tech*)> TechDoubleClickedSignal;
 
 private:
     /** A control with a label \a str on it, and that is rendered partially onto the next row.
@@ -578,17 +520,15 @@ private:
         virtual GG::Pt ClientLowerRight() const {return LowerRight() - GG::Pt(2, 2);}
         virtual bool Render();
         virtual void LClick(const GG::Pt& pt, Uint32 keys) {ClickedSignal(m_tech);}
-        virtual void LDoubleClick(const GG::Pt& pt, Uint32 keys) {DoubleClickedSignal(m_tech);}
         const Tech * const m_tech;
         GG::Clr m_border_color;
         GG::TextControl* m_name_text;
         mutable boost::signal<void (const Tech*)> ClickedSignal;
-        mutable boost::signal<void (const Tech*)> DoubleClickedSignal;
     };
 
     GG::ListBox::Row* NewSectionHeaderRow(const std::string& str);
     GG::ListBox::Row* NewTechRow(const Tech* tech);
-    void Update();
+    void Reset();
 
     const Tech* m_current_tech;
     GG::ListBox* m_lb;
@@ -618,11 +558,10 @@ GG::ListBox::Row* TechTreeWnd::TechNavigator::NewTechRow(const Tech* tech)
     TechControl* control = new TechControl(Width() - retval->indentation - 8 - 14, ROW_HEIGHT, tech);
     retval->push_back(control);
     GG::Connect(control->ClickedSignal, &TechTreeWnd::TechNavigator::TechClickedSlot, this);
-    GG::Connect(control->DoubleClickedSignal, &TechTreeWnd::TechNavigator::TechDoubleClickedSlot, this);
     return retval;
 }
 
-void TechTreeWnd::TechNavigator::Update()
+void TechTreeWnd::TechNavigator::Reset()
 {
     m_lb->Clear();
     if (!m_current_tech)
@@ -788,6 +727,9 @@ public:
     //! \name Mutators //@{
     virtual bool Render();
 
+    void Update();
+    void Clear();
+    void Reset();
     void ShowCategory(const std::string& category);
     void ShowTech(const Tech* tech);
     void CenterOnTech(const Tech* tech);
@@ -931,7 +873,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
         known_tech = true;
     } else {
         Empire::ResearchQueue queue = empire->GetResearchQueue();
-        if (std::find(queue.begin(), queue.end(), m_tech) != queue.end())
+        if (queue.InQueue(m_tech))
             queued_tech = true;
         double rps_spent = empire->ResearchStatus(m_tech->Name());
         if (0.0 <= rps_spent) {
@@ -968,7 +910,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
 
     std::string cost_str;
     if (!known_tech)
-        cost_str = str(format(UserString("TECH_COST_STR")) % static_cast<int>(m_tech->ResearchCost() + 0.5) % m_tech->ResearchTurns());
+        cost_str = str(format(UserString("TECH_TOTAL_COST_STR")) % static_cast<int>(m_tech->ResearchCost() + 0.5) % m_tech->ResearchTurns());
     m_tech_cost_text = new GG::TextControl(TECH_TEXT_OFFSET.x, 0,
                                            Width() - TECH_TEXT_OFFSET.x, Height() - TECH_TEXT_OFFSET.y - PROGRESS_PANEL_BOTTOM_EXTRUSION,
                                            cost_str, ClientUI::FONT, ClientUI::PTS, m_text_and_border_color, GG::TF_BOTTOM | GG::TF_LEFT);
@@ -1104,8 +1046,6 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
 
     GG::Connect(m_vscroll->ScrolledSignal(), &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
     GG::Connect(m_hscroll->ScrolledSignal(), &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
-
-    Layout(false);
 }
 
 GG::Pt TechTreeWnd::LayoutPanel::ClientLowerRight() const
@@ -1225,6 +1165,30 @@ bool TechTreeWnd::LayoutPanel::Render()
     return true;
 }
 
+void TechTreeWnd::LayoutPanel::Update()
+{
+    Layout(true);
+}
+
+void TechTreeWnd::LayoutPanel::Clear()
+{
+    m_vscroll->ScrollTo(0);
+    m_hscroll->ScrollTo(0);
+    m_vscroll->SizeScroll(0, 1, 1, 1);
+    m_hscroll->SizeScroll(0, 1, 1, 1);
+    for (std::map<const Tech*, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it) {
+        DeleteChild(it->second);
+    }
+    m_techs.clear();
+    m_dependency_arcs.clear();
+    m_selected_tech = 0;
+}
+
+void TechTreeWnd::LayoutPanel::Reset()
+{
+    Layout(false);
+}
+
 void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category)
 {
     m_category_shown = category;
@@ -1233,6 +1197,8 @@ void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category)
 
 void TechTreeWnd::LayoutPanel::ShowTech(const Tech* tech)
 {
+    if (m_category_shown != "ALL" && m_category_shown != tech->Category())
+        ShowCategory(tech->Category());
     TechClickedSlot(tech);
 }
 
@@ -1265,15 +1231,9 @@ void TechTreeWnd::LayoutPanel::UncollapseAll()
 void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
 {
     GG::Pt final_position = keep_position ? m_scroll_position : GG::Pt();
-
-    m_vscroll->ScrollTo(0);
-    m_hscroll->ScrollTo(0);
-
-    // clear out old tech panels
-    for (std::map<const Tech*, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it) {
-        DeleteChild(it->second);
-    }
-    m_techs.clear();
+    const Tech* selected_tech = keep_position ? m_selected_tech : 0;
+    Clear();
+    m_selected_tech = selected_tech;
 
     aginit();
 
@@ -1512,7 +1472,6 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     m_tech_navigator = new TechNavigator(NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
     m_tech_navigator->MoveTo(m_tech_detail_panel->Width(), 0);
     GG::Connect(m_tech_navigator->TechClickedSignal, &TechTreeWnd::CenterOnTech, this);
-    GG::Connect(m_tech_navigator->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
     AttachChild(m_tech_navigator);
 
     const int LAYOUT_MARGIN_TOP = NAVIGATOR_AND_DETAIL_HEIGHT + 2 + ClientUI::PTS + 10; // leave room for category buttons at top
@@ -1569,6 +1528,23 @@ const std::string& TechTreeWnd::CategoryShown() const
 TechTreeWnd::TechTypesShown TechTreeWnd::GetTechTypesShown() const
 {
     return m_layout_panel->GetTechTypesShown();
+}
+
+void TechTreeWnd::Update()
+{
+    m_layout_panel->Update();
+}
+
+void TechTreeWnd::Clear()
+{
+    m_tech_navigator->SetTech(0);
+    m_tech_detail_panel->SetTech(0);
+    m_layout_panel->Clear();
+}
+
+void TechTreeWnd::Reset()
+{
+    m_layout_panel->Reset();
 }
 
 void TechTreeWnd::ShowCategory(const std::string& category)
