@@ -41,82 +41,91 @@
 
    NAME : the name of the joining player\endverbatim
 
-   \section save_game SAVE_GAME
+   \section empire_setup EMPIRE_SETUP
    \subsection use_3 Usage
-   sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
+   sent to server when a client wishes to send it's empire setup once decided.
    \subsection format_3 Format
    \verbatim
+   <empire_name>"NAME"</empire_name>
+   <empire_color value="color">
    \endverbatim
 
-   \section load_game LOAD_GAME
+   \section save_game SAVE_GAME
    \subsection use_4 Usage
-   sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
+   sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
    \subsection format_4 Format
    \verbatim
    \endverbatim
 
-   \section game_start GAME_START
+   \section load_game LOAD_GAME
    \subsection use_5 Usage
-   sent to each client before the first TURN_UPDATE of a new or newly loaded game
+   sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
    \subsection format_5 Format
    \verbatim
    \endverbatim
 
-   \section turn_update TURN_UPDATE
+   \section game_start GAME_START
    \subsection use_6 Usage
-   sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
+   sent to each client before the first TURN_UPDATE of a new or newly loaded game
    \subsection format_6 Format
    \verbatim
    \endverbatim
 
-   \section turn_orders TURN_ORDERS
+   \section turn_update TURN_UPDATE
    \subsection use_7 Usage
-   sent to the server by a client that has orders to be processed at the end of a turn or when a game is saved
+   sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
    \subsection format_7 Format
    \verbatim
    \endverbatim
 
-   \section combat_start COMBAT_START
+   \section turn_orders TURN_ORDERS
    \subsection use_8 Usage
-   sent to clients when a combat is about to start
+   sent to the server by a client that has orders to be processed at the end of a turn or when a game is saved
    \subsection format_8 Format
    \verbatim
    \endverbatim
 
-   \section combat_round_update COMBAT_ROUND_UPDATE
+   \section combat_start COMBAT_START
    \subsection use_9 Usage
-   sent to clients when a combat round has been resolved
+   sent to clients when a combat is about to start
    \subsection format_9 Format
    \verbatim
    \endverbatim
 
-   \section combat_end COMBAT_END
+   \section combat_round_update COMBAT_ROUND_UPDATE
    \subsection use_10 Usage
-   sent to clients when a combat is concluded
+   sent to clients when a combat round has been resolved
    \subsection format_10 Format
    \verbatim
    \endverbatim
 
-   \section human_player_msg HUMAN_PLAYER_MSG
+   \section combat_end COMBAT_END
    \subsection use_11 Usage
-   sent when one player sends a text message to another in multiplayer
+   sent to clients when a combat is concluded
    \subsection format_11 Format
+   \verbatim
+   \endverbatim
+
+   \section human_player_msg HUMAN_PLAYER_MSG
+   \subsection use_12 Usage
+   sent when one player sends a text message to another in multiplayer
+   \subsection format_12 Format
    \verbatim
    MESSAGE
 
    MESASAGE : the text of the message to be sent to the other player\endverbatim
 
    \section player_eliminated PLAYER_ELIMINATED
-   \subsection use_12 Usage
+   \subsection use_13 Usage
    sent to all clients when a player is eliminated from play
-   \subsection format_12 Format
+   \subsection format_13 Format
    \verbatim
    \endverbatim
 
    \section player_exit PLAYER_EXIT
-   \subsection use_13 Usage
+   \subsection use_14 Usage
    sent to the "host" client when another player leaves the game
-   \subsection format_13 Format
+   \subsection format_14 Format
    \verbatim
    \endverbatim
 
