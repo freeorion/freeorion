@@ -174,19 +174,32 @@ void AIClientApp::SDLQuit()
 void AIClientApp::HandleMessageImpl(const Message& msg)
 {
    switch (msg.Type()) {
-   case Message::SERVER_STATUS:
+   case Message::SERVER_STATUS: {
       Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received SERVER_STATUS";
       break;
-   case Message::JOIN_GAME:
-      if (msg.Sender() == -1 && msg.Receiver() == -1) {
+   }
+      
+   case Message::JOIN_GAME: {
+      if (msg.Sender() == -1) {
          if (m_player_id == -1) {
             m_player_id = boost::lexical_cast<int>(msg.GetText());
             Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received JOIN_GAME acknowledgement";
          } else {
-            Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received erroneous JOIN_GAME acknowledgement when already in a game";
+            Logger().errorStream() << "AIClientApp::HandleMessageImpl : Received erroneous JOIN_GAME acknowledgement when already in a game";
          }
       }
       break;
+   }
+      
+   case Message::END_GAME: {
+      Exit(0);
+      break;
+   }
+   
+   default: {
+      Logger().errorStream() << "AIClientApp::HandleMessageImpl : Received unknown Message type code " << msg.Type();
+      break;
+   }
    }
 }
 
