@@ -317,7 +317,7 @@ int SidePanel::PlanetPanel::Render()
         // TODO : get the costs of the item from the list of available technologies
         const int PROD_COSTS[] = {0, 0, 0, 50, 250, 100, 200, 375, 700, 200};
         int cost = PROD_COSTS[planet->CurrentlyBuilding()];
-        double percent_complete = cost ? planet->BuildProgress() / cost : 0.0;
+        double percent_complete = cost ? (planet->BuildProgress()+planet->Rollover()) / cost : 0.0;
         int x1 = ul.x + Width() - CONSTR_DROP_LIST_WIDTH - 3;
         int x2 = x1 + CONSTR_DROP_LIST_WIDTH;
         y1 = ul.y + Height() - ClientUI::SIDE_PANEL_PTS - CONSTR_PROGRESS_BAR_HT - 3;
