@@ -185,20 +185,26 @@ NewFleetOrder::NewFleetOrder(const XMLElement& elem) :
 
     curr_elem = &elem.Child("m_position");
     m_position = std::make_pair(lexical_cast<double>(curr_elem->Attribute("x")), lexical_cast<double>(curr_elem->Attribute("y")));
+
+    curr_elem = &elem.Child("m_new_id");
+    m_new_id = lexical_cast<int>(curr_elem->Attribute("value"));
+
 }
 
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, int system_id) :
+NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id) :
     Order(empire),
     m_fleet_name(fleet_name),
     m_system_id(system_id),
+    m_new_id( new_id ),
     m_position(std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION))
 {
 }
 
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, double x, double y) :
+NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,  const int new_id, double x, double y) :
     Order(empire),
     m_fleet_name(fleet_name),
     m_system_id(-1),
+    m_new_id( new_id ),
     m_position(std::make_pair(x, y))
 {
 }
@@ -212,11 +218,14 @@ void NewFleetOrder::Execute() const
     if (m_system_id != UniverseObject::INVALID_OBJECT_ID) {
         System* system = dynamic_cast<System*>(universe.Object(m_system_id));
         fleet = new Fleet(m_fleet_name, system->X(), system->Y(), EmpireID());
-        int id = universe.Insert(fleet);
+        
+        // an ID is provided to ensure consistancy between server and client uiverses
+        universe.InsertID(fleet, m_new_id );
         system->Insert(fleet);
     } else {
         fleet = new Fleet(m_fleet_name, m_position.first, m_position.second, EmpireID());
-        universe.Insert(fleet);
+        // an ID is provided to ensure consistancy between server and client uiverses
+        universe.InsertID(fleet, m_new_id );
     }
     Empires().Lookup(EmpireID())->AddFleet(fleet->ID());
 }
@@ -231,6 +240,10 @@ XMLElement NewFleetOrder::XMLEncode() const
 
     temp = XMLElement("m_system_id");
     temp.SetAttribute("value", lexical_cast<std::string>(m_system_id));
+    elem.AppendChild(temp);
+
+    temp = XMLElement("m_new_id");
+    temp.SetAttribute("value", lexical_cast<std::string>(m_new_id));
     elem.AppendChild(temp);
 
     temp = XMLElement("m_position");

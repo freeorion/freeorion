@@ -115,14 +115,15 @@ public:
    /** \name Structors */ //@{
    NewFleetOrder();
    NewFleetOrder(const GG::XMLElement& elem);
-   NewFleetOrder(int empire, const std::string& fleet_name, int system_id);
-   NewFleetOrder(int empire, const std::string& fleet_name, double x, double y);
+   NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id);
+   NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, double x, double y);
    //@}
    
    /** \name Accessors */ //@{
    const std::string&        FleetName() const    {return m_fleet_name;} ///< returns the name of the new fleet
    int                       SystemID() const     {return m_system_id;}  ///< returns the system the new fleet will be placed into (may be INVALID_OBJECT_ID if a position is specified)
    std::pair<double, double> Position() const     {return m_position;}   ///< returns the position of the new fleet (may be (INVALID_POSITION, INVALID_POSITION) if in a system)
+   int                       NewID() const     {return m_new_id;}  ///< returns the ID for this fleet 
    
    /**
    * Preconditions of execute: 
@@ -140,6 +141,7 @@ public:
 private:
    std::string               m_fleet_name;
    int                       m_system_id;
+   int                       m_new_id;
    std::pair<double, double> m_position;
 };
 
