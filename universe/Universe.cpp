@@ -961,6 +961,11 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
             }
             Planet::PlanetType planet_type = Planet::PlanetType(idx);
 
+            if (planet_type == Planet::PT_ASTEROIDS)
+                planet_size = Planet::SZ_ASTEROIDS;
+            if (planet_type == Planet::PT_GASGIANT)
+                planet_size = Planet::SZ_GASGIANT;
+
             Planet* planet = new Planet(planet_type, planet_size);
 
             Insert(planet); // add planet to universe map
