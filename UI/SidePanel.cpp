@@ -1,5 +1,6 @@
 #include "SidePanel.h"
 
+#include "CUI_Wnd.h"
 #include "CUIControls.h"
 #include "GGDrawUtil.h"
 #include "GGStaticGraphic.h"
@@ -20,7 +21,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 
-
+ 
 namespace {
 int CircleXFromY(double y, double r) {return static_cast<int>(std::sqrt(r * r - y * y) + 0.5);}
 }
@@ -853,11 +854,10 @@ void SidePanel::PlanetPanel::ConstructOwned    (const Planet &planet)
   m_button_mining   = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH+RESOURCE_DISPLAY_MARGIN,ul.y                                                ,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconMining  (),ClientUI::FONT,static_cast<int>(ClientUI::PTS*0.9),GG::CLR_ZERO);
   m_button_research = new CUIIconButton(ul.x                                               ,ul.y+RESOURCE_DISPLAY_HEIGHT+RESOURCE_DISPLAY_MARGIN,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconResearch(),ClientUI::FONT,static_cast<int>(ClientUI::PTS*0.9),GG::CLR_ZERO);
   m_button_industry = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH+RESOURCE_DISPLAY_MARGIN,ul.y+RESOURCE_DISPLAY_HEIGHT+RESOURCE_DISPLAY_MARGIN,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconIndustry(),ClientUI::FONT,static_cast<int>(ClientUI::PTS*0.9),GG::CLR_ZERO);
-  m_button_balanced = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH-5                      ,ul.y+RESOURCE_DISPLAY_HEIGHT-6                      ,19                    ,19                     ,IconBalance (),ClientUI::FONT,ClientUI::PTS,GG::CLR_ZERO);
+  m_button_balanced = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH-6                      ,ul.y+RESOURCE_DISPLAY_HEIGHT-6                      ,19                    ,19                     ,IconBalance (),ClientUI::FONT,ClientUI::PTS                      ,GG::CLR_ZERO,GG::CLR_ZERO);
 
   boost::shared_ptr<GG::Texture>  icon = IconBalance ();
-  m_button_balanced->SetIconRect(GG::Rect((m_button_balanced->Width()-icon->Width())/2,(m_button_balanced->Height()-icon->Height())/2,
-                                          (m_button_balanced->Width()-icon->Width())/2+icon->Width(),(m_button_balanced->Height()-icon->Height())/2+icon->Height()));
+  m_button_balanced->SetIconRect(GG::Rect((-2),(-2),m_button_balanced->Width()-(-2),m_button_balanced->Height()-(-2)));
 
   m_button_food     ->SetAngledCornerLowerRight(7);
   m_button_mining   ->SetAngledCornerLowerLeft (7);
@@ -1218,6 +1218,33 @@ void SidePanel::PlanetPanel::ClickColonize()
   Reset(*planet);
 }
 
+void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
+{
+  const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
+
+  GG::MenuItem menu_contents;
+  menu_contents.next_level.push_back(GG::MenuItem("Rename Planet", 1, false, false));
+  GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
+
+  if(popup.Run()) 
+    switch (popup.MenuID())
+    {
+      case 1: 
+      { // rename planet
+        std::string plt_name = planet->Name();
+        CUIEditWnd edit_wnd(350, "Enter new planet name", plt_name);
+        edit_wnd.Run();
+        if(edit_wnd.Result() != "")
+        {
+          HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->PlayerID(), planet->ID(), edit_wnd.Result()));
+          m_planet_name->SetText(planet->Name());
+        }
+        break;
+      }
+      default:
+        break;
+    }
+}
 
  ////////////////////////////////////////////////
 // SidePanel::PlanetPanelContainer

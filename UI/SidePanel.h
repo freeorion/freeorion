@@ -30,6 +30,7 @@
 #include "../universe/Planet.h"
 #endif
 
+class CUI_CloseButton;
 class CUIDropDownList;
 class CUIScroll;
 class System;
@@ -68,6 +69,7 @@ public:
         /** \name Mutators */ //@{
         virtual bool Render();
         virtual void LClick(const GG::Pt& pt, Uint32 keys);
+        virtual void RClick(const GG::Pt& pt, Uint32 keys);
         //@}
 
     protected:
