@@ -605,14 +605,15 @@ Fleet* FleetWnd::NewFleetWndReceivedShip(FleetDetailWnd* fleet_wnd, int ship_id)
 void FleetWnd::FleetDetailWndClosing(FleetDetailWnd* wnd)
 {
     Fleet* fleet = wnd->GetFleetDetailPanel().GetFleet();
-    if (fleet && !fleet->NumShips()) {
-	DeleteFleet(fleet);
-    }
 
     if (m_new_fleet_windows.find(wnd) != m_new_fleet_windows.end()) {
         m_new_fleet_windows.erase(wnd);
     } else {
-	m_open_fleet_windows.erase(fleet);
+        m_open_fleet_windows.erase(fleet);
+    }
+
+    if (fleet && !fleet->NumShips()) {
+        DeleteFleet(fleet);
     }
 
     RemoveEmptyFleets();
