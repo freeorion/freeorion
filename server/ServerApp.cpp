@@ -952,15 +952,6 @@ void ServerApp::ProcessTurns( )
 
         GG::XMLDoc doc = CreateTurnUpdate( player_it->first );
 
-        // append all sitreps to document that belong to this empire
-        GG::XMLElement sit_reps( SitRepEntry::SITREP_UPDATE_TAG );
-
-        for ( Empire::ConstSitRepItr sitrep_it = pEmpire->SitRepBegin(); sitrep_it != pEmpire->SitRepEnd(); ++sitrep_it )
-        {
-            sit_reps.AppendChild( (*sitrep_it)->XMLEncode() );
-        }
-        doc.root_node.AppendChild( sit_reps );
-
         // free empire sitreps
         pEmpire->ClearSitRep( );
 
