@@ -46,10 +46,10 @@ public:
     enum Shape {SPIRAL_2,      ///< a two-armed spiral galaxy
                 SPIRAL_3,      ///< a three-armed spiral galaxy
                 SPIRAL_4,      ///< a four-armed spiral galaxy
-                CLUSTER,          ///< a cluster galaxy
+                CLUSTER,       ///< a cluster galaxy
                 ELLIPTICAL,    ///< an elliptical galaxy
                 IRREGULAR,     ///< an irregular galaxy
-				RING,			///< a ring galaxy
+				RING,          ///< a ring galaxy
                 FROM_FILE,     ///< a galaxy loaded from a file
                 GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
                };
@@ -268,7 +268,8 @@ protected:
 
     void GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid);  ///< creates a spiral galaxy and stores the empire homeworlds in the homeworlds vector
     void GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates an eliptical galaxy and stores the empire homeworlds in the homeworlds vector
-    void GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates an cluster galaxy and stores the empire homeworlds in the homeworlds vector
+    void GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates a cluster galaxy and stores the empire homeworlds in the homeworlds vector
+    void GenerateRingGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates a ring galaxy and stores the empire homeworlds in the homeworlds vector
     void GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
     void PopulateSystems(Universe::PlanetDensity density);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)

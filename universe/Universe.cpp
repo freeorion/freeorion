@@ -370,6 +370,46 @@ namespace {
         }
     }
 
+    void RingGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int stars, double width, double height)
+    {
+        double RING_WIDTH = width / 4.0;
+        double RING_RADIUS = (width - RING_WIDTH) / 2.0;
+
+        unsigned int attempts;
+
+        DoubleDistType   theta_dist = DoubleDist(0.0, 2.0 * PI);
+        GaussianDistType radius_dist = GaussianDist(RING_RADIUS, RING_WIDTH / 3.0);
+
+        for (unsigned int i = 0, attempts = 0; i < stars && attempts < 100; ++i, ++attempts)
+        {
+            double theta = theta_dist();
+            double radius = radius_dist();
+
+            double x = width / 2.0 + radius * std::cos(theta);
+            double y = height / 2.0 + radius * std::sin(theta);
+
+            if (x < 0 || width <= x || y < 0 || height <= y)
+                continue;
+
+            // ensure all system have a min separation to each other (search isn't opimized, not worth the effort)
+            bool too_close = false;
+            for (unsigned int j = 0; j < positions.size(); ++j) {
+                if ((positions[j].first - x) * (positions[j].first - x) + (positions[j].second - y) * (positions[j].second - y)
+                    < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
+                    too_close = true;
+                    break;
+                }
+            }
+            if (too_close) {
+                --i;
+                continue;
+            }
+
+            attempts = 0;
+            positions.push_back(std::pair<double,double>(x, y));
+        }
+    }
+
     System* GenerateSystem(Universe &universe, Universe::Age age, double x, double y)
     {
         const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
@@ -385,7 +425,7 @@ namespace {
         std::advance(it, star_name_idx);
         std::string star_name(*it);
         star_names.erase(it);
-        int num_orbits = 10; // this is fixed in the v0.2 DD
+        int num_orbits = 10; // this is fixed at 10 in the v0.2 DD
 
         // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
         int idx = 0;
@@ -696,7 +736,8 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
         GenerateIrregularGalaxy(size, adjacency_grid);
         break;
 	case RING:
-		GenerateIrregularGalaxy(size, adjacency_grid);
+		GenerateRingGalaxy(size, adjacency_grid);
+        break;
     default:
         Logger().errorStream() << "Universe::Universe : Unknown galaxy shape: "<< shape << ".  Using IRREGULAR as default.";
         GenerateIrregularGalaxy(size, adjacency_grid);
@@ -812,6 +853,14 @@ void Universe::GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid)
     GenerateStarField(*this,positions,adjacency_grid,s_universe_width/ADJACENCY_BOXES);
 }
 
+void Universe::GenerateRingGalaxy(int stars, AdjacencyGrid& adjacency_grid)
+{
+    std::vector<std::pair<double,double> > positions;
+
+    RingGalaxyCalcPositions(positions,stars,s_universe_width,s_universe_width);
+    GenerateStarField(*this,positions,adjacency_grid,s_universe_width/ADJACENCY_BOXES);
+}
+
 void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 {
     std::list<std::string> star_names;
@@ -872,8 +921,6 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
     const std::vector<std::vector<int> >& slot_mod_to_planet_type_dist = UniverseDataTables()["SlotModToPlanetTypeDist"];
     const std::vector<std::vector<int> >& star_color_mod_to_planet_type_dist = UniverseDataTables()["StarColorModToPlanetTypeDist"];
 
-    SmallIntDistType hundred_dist = SmallIntDist(1, 100);
-
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
 
@@ -883,7 +930,7 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
             int idx = 0;
             int max_roll = 0;
             for (unsigned int i = 0; i < Planet::MAX_PLANET_SIZE; ++i) {
-                int roll = hundred_dist() + star_color_mod_to_planet_size_dist[system->Star()][i] + slot_mod_to_planet_size_dist[orbit][i]
+                int roll = g_hundred_dist() + star_color_mod_to_planet_size_dist[system->Star()][i] + slot_mod_to_planet_size_dist[orbit][i]
                     + density_mod_to_planet_size_dist[density][i];
                 if (max_roll < roll) {
                     max_roll = roll;
@@ -904,7 +951,7 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
             } else {
                 // make another series of modified rolls for planet type
                 for (unsigned int i = 0; i < Planet::MAX_PLANET_TYPE; ++i) {
-                    int roll = hundred_dist() + planet_size_mod_to_planet_type_dist[planet_size][i] + slot_mod_to_planet_type_dist[orbit][i] + 
+                    int roll = g_hundred_dist() + planet_size_mod_to_planet_type_dist[planet_size][i] + slot_mod_to_planet_type_dist[orbit][i] + 
                         star_color_mod_to_planet_type_dist[system->Star()][i];
                     if (max_roll < roll) {
                         max_roll = roll;
