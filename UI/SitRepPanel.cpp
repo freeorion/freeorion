@@ -72,16 +72,21 @@ void SitRepPanel::Update()
 
     m_sitreps_lb->Clear();
 
+    boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
+    Uint32 format = GG::TF_LEFT | GG::TF_WORDBREAK;
+    int width = m_sitreps_lb->Width() - 4;
+
     // loop through sitreps and display
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
         GG::ListBox::Row *row = new GG::ListBox::Row;
-        LinkText* link_text = new LinkText(0, 0, (*sitrep_it)->GetText(), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+        LinkText* link_text = new LinkText(0, 0, width, ClientUI::PTS + 4, (*sitrep_it)->GetText(), font, format, ClientUI::TEXT_COLOR);
         GG::Connect(link_text->PlanetLinkSignal(), &ClientUI::ZoomToPlanet, ClientUI::GetClientUI());
         GG::Connect(link_text->SystemLinkSignal(), &ClientUI::ZoomToSystem, ClientUI::GetClientUI());
         GG::Connect(link_text->FleetLinkSignal(), &ClientUI::ZoomToFleet, ClientUI::GetClientUI());
         GG::Connect(link_text->ShipLinkSignal(), &ClientUI::ZoomToShip, ClientUI::GetClientUI());
         GG::Connect(link_text->TechLinkSignal(), &ClientUI::ZoomToTech, ClientUI::GetClientUI());
         GG::Connect(link_text->EncyclopediaLinkSignal(), &ClientUI::ZoomToEncyclopediaEntry, ClientUI::GetClientUI());
+        row->height = font->TextExtent(link_text->WindowText(), format, width).y;
         row->push_back(link_text);
         m_sitreps_lb->Insert(row);                
     }
