@@ -408,6 +408,12 @@
 					RelativePath="..\..\..\Ui\MultiplayerLobbyWnd.h">
 				</File>
 				<File
+					RelativePath="..\..\..\Ui\OptionsWnd.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\OptionsWnd.h">
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\Parser.cpp">
 				</File>
 				<File
