@@ -21,8 +21,6 @@ using boost::lexical_cast;
 
 Empire::Empire(const std::string& name, int ID, const GG::Clr& color, ControlStatus& control) :
  // initialize members
- m_min_fleet_id(0),
- m_max_fleet_id(0x7FFFFFFF),
  m_id(ID),
  m_total_rp(0),
  m_name(name),  
@@ -130,17 +128,6 @@ const GG::Clr& Empire::Color() const
 int Empire::TotalRP() const
 {
     return m_total_rp;
-}
-
-int Empire::FleetIDMin() const
-{
-    return m_min_fleet_id;
-}
-
-
-int Empire::FleetIDMax() const
-{
-    return m_max_fleet_id;
 }
 
 
@@ -670,13 +657,6 @@ void Empire::Name(const std::string& name)
 {
     m_name = name;
 }
-
-void Empire::SetFleetIDs(int min, int max)
-{
-    m_min_fleet_id = min;
-    m_max_fleet_id = max;
-}
-
 
 
 // private helper method for encoding a list of integers

@@ -122,20 +122,6 @@ public:
      */
     int TotalRP() const;
     
-    /// Returns the minimum fleet ID for this empire
-    /** 
-     * Returns the minimum value of the empire's assigned fleet ID range.
-     * This if for informational purposes only and is not enforced in any way.
-     */
-    int FleetIDMin() const;
-    
-    /// Returns the maximum fleet ID for this empire
-    /** 
-     * Returns the maximum value of the empire's assigned fleet ID range.
-     * This if for informational purposes only and is not enforced in any way.
-     */
-    int FleetIDMax() const;
-
     /// Searches for a ship design and copies over the input design and returns success/failure
     bool CopyShipDesign(int design_id, ShipDesign& design_target);
 
@@ -369,13 +355,6 @@ public:
    	/// Mutator for empire name
     void Name(const std::string& name);
     
-    /// Sets the empire's assigned fleet ID range
-    /**
-     * Sets the empire's range of assigned fleet IDs.  This range
-     * is for informational purposes only and is not enforced in any way
-     */
-    void SetFleetIDs(int min, int max);
-    
     //@}
    
 protected:
@@ -414,12 +393,6 @@ private:
      *  equal to the value of the container element.
      */
     static void EncodeIntList(GG::XMLElement& container, const std::set<int>& lst);
-
-    /// the minimum fleet id that should be assigned to this empire
-    int m_min_fleet_id;
-    
-    /// the maximum fleet id that should be assigned to this empire
-    int m_max_fleet_id;
 
     /// Empire's unique numeric id
     int m_id;
