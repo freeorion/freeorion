@@ -6,13 +6,13 @@
 #include <boost/signal.hpp>
 #endif
 
-#ifndef _Ship_h_
+#ifndef _UniverseObject_h_
 #include "../universe/UniverseObject.h"
 #endif
 
 class Planet;
  template <class T> 
- class PlanetChangedFunctor
+ class PlanetChangedFunctor : public boost::signals::trackable
  {
    public:
        PlanetChangedFunctor(T &parent, int planet_id) : m_parent(parent), m_planet_id(planet_id) {}
@@ -31,6 +31,7 @@ class ResourcePool
     typedef bool (*SortFuncType)(const Planet*,const Planet*);///< type of function used to sort the planet vector
 
     ResourcePool();
+    virtual ~ResourcePool();
     
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()> ChangedSignalType;

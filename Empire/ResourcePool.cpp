@@ -26,6 +26,9 @@ bool lower(const Planet* elem1,const Planet* elem2 )
 ResourcePool::ResourcePool()
 {}
 
+ResourcePool::~ResourcePool()
+{}
+
 void ResourcePool::SetPlanets(const Universe::ObjectVec &planet_vec)
 {
   for(unsigned int i=0;i<m_connections.size();i++)
