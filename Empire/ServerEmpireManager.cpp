@@ -2,6 +2,8 @@
 #include "ServerEmpireManager.h"
 #endif
 
+#include <stdexcept>
+
 ServerEmpireManager::ServerEmpireManager() :
     m_next_id(1)
 {
@@ -71,8 +73,10 @@ bool ServerEmpireManager::EliminateEmpire(int ID)
 */
 GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int EmpireID)
 {
-    GG::XMLElement update;
-    // FINISH ME!!!
+    GG::XMLElement update("EmpireUpdate");
+    
+    
+    
     return update;
 }
 
@@ -84,8 +88,32 @@ GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int EmpireID)
 */
 GG::XMLElement ServerEmpireManager::CreateClientSitrepUpdate(int EmpireID)
 {
-    GG::XMLElement update;
-    // FINISH ME!!!
+    GG::XMLElement update("SitrepUpdate");
+    
+    // find whatever empire they're talking about
+    Empire* emp = Lookup(EmpireID);
+    
+    // perform sanity check
+    if(emp == NULL)
+    {
+        throw std::runtime_error("Invalid EmpireID passed to ServerEmpireManager::CreateClientSitrepUpdate()");
+    }
+    else
+    {
+        // convert Empire ID to string
+        char sIDString[12];  // integer cannot possibly exceed 10 digits
+        sprintf(sIDString, "%d", EmpireID);
+        
+        // set ID attribute of the sitrep update to indicate whose empire this is
+        update.SetAttribute("EmpireID", sIDString);
+        
+        // add the empire's entire sitrep to the update element
+       /* for( Empire::SitRepItr itr = emp->SitRepBegin(); itr != emp->SitRepEnd(); itr++)
+        {
+            update.AppendChild((*itr).XMLEncode());
+        }*/
+    }
+    
     return update;
 
 }

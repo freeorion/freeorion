@@ -3,6 +3,9 @@
 #include "ClientEmpireManager.h"
 #endif
 
+#include <string>
+
+
 ClientEmpireManager::ClientEmpireManager()
 {
     // no worries yet
@@ -31,6 +34,27 @@ bool ClientEmpireManager::HandleEmpireElementUpdate( GG::XMLElement empireElemen
 */
 bool ClientEmpireManager::HandleSitRepElementUpdate( GG::XMLElement sitRepElement)
 {
-    // FINISH ME!!
+    std::string sID = (sitRepElement.Attribute("EmpireID"));
+    
+    if( sID == "" )
+    {
+        return false;
+    }
+    
+    int iID = atoi(sID.c_str());
+    
+    Empire* emp = Lookup(iID);
+    if(emp == NULL)
+    {
+        return false;
+    }
+    
+    emp->ClearSitRep();
+ /*   for(unsigned int i = 0; i<sitRepElement.NumChildren(); i++)
+    {
+       SitRepEntry* entry = new SitRepEntry(sitRepElement.Child(i));        
+       emp->AddSitRepEntry(entry);
+    }
+   */     
     return true;
 }

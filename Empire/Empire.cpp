@@ -5,6 +5,9 @@
 #include <algorithm>
 using std::find;
 
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
+
 /** Constructors */ 
 
 Empire::Empire(const std::string& name, int ID, const GG::Clr& color, ControlStatus& control) :
@@ -18,9 +21,48 @@ Empire::Empire(const std::string& name, int ID, const GG::Clr& color, ControlSta
 }
 
 
-Empire::Empire(const GG::XMLElement& elemenet)
+Empire::Empire(const GG::XMLElement& elem)
 {
-    // write me!
+    using GG::XMLElement;
+    
+    m_id = lexical_cast<int> ( elem.Child("m_id").Attribute("value") );
+    m_name = elem.Child("m_name").Text();
+    m_total_rp = lexical_cast<int> ( elem.Child("m_total_rp").Attribute("value") );
+    m_control_state = (ControlStatus) lexical_cast <int> ( elem.Child("m_control_state").Attribute("value") );
+    m_color = GG::Clr( elem.Child("m_color") );
+    
+    // TODO:  decode the sitrep
+    
+    
+    XMLElement container_elem = elem.Child("m_fleets");
+    for(unsigned int i=0; i<container_elem.NumChildren(); i++)
+    {
+        m_fleets.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+    }
+    
+    container_elem = elem.Child("m_planets");
+    for(unsigned int i=0; i<container_elem.NumChildren(); i++)
+    {
+        m_planets.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+    }
+    
+    container_elem = elem.Child("m_explored_systems");
+    for(unsigned int i=0; i<container_elem.NumChildren(); i++)
+    {
+        m_explored_systems.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+    }
+    
+    container_elem = elem.Child("m_visible_fleets");
+    for(unsigned int i=0; i<container_elem.NumChildren(); i++)
+    {
+        m_visible_fleets.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+    }
+    
+    container_elem = elem.Child("m_techs");
+    for(unsigned int i=0; i<container_elem.NumChildren(); i++)
+    {
+        m_techs.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+    }
 }
   
 
@@ -301,16 +343,95 @@ void Empire::ClearSitRep()
 
 GG::XMLElement Empire::XMLEncode() const
 {
-    GG::XMLElement element;
+    using GG::XMLElement;
+    using boost::lexical_cast;
     
-    // WRITE ME!
+    XMLElement element("Empire");
+    
+    XMLElement ID("m_id");
+    ID.SetAttribute( "value", lexical_cast<std::string>(m_id) );
+    element.AppendChild(ID);
+    
+    XMLElement name("m_name");
+    name.SetText(m_name);
+    element.AppendChild(name);
+    
+    XMLElement total_rp("m_total_rp");
+    total_rp.SetAttribute( "value", lexical_cast<std::string>(m_total_rp) );
+    element.AppendChild(total_rp);
+    
+    XMLElement control("m_control_state");
+    control.SetAttribute( "value",  lexical_cast<std::string>( (int) m_control_state) );
+    element.AppendChild(control);
+    
+    XMLElement color("m_color");
+    GG::XMLElement colorelem = m_color.XMLEncode();
+    color.AppendChild(colorelem);
+    element.AppendChild(color);
+    
+    XMLElement sitrep("m_sitrep_entries");
+    for(ConstSitRepItr itr = SitRepBegin(); itr != SitRepEnd(); itr++)
+    {
+       // sitrep.AppendChild( (*itr)->XMLEncode() );
+    }
+    element.AppendChild(sitrep);
+    
+    XMLElement fleets("m_fleets");
+    for(ConstFleetIDItr itr = FleetBegin(); itr != FleetEnd(); itr++)
+    {
+        XMLElement item("item");
+        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
+        fleets.AppendChild(item);
+    }
+    element.AppendChild(fleets);
+    
+    XMLElement planets("m_planets");
+    for(ConstPlanetIDItr itr = PlanetBegin(); itr != PlanetEnd(); itr++)
+    {
+        XMLElement item("item");
+        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
+        planets.AppendChild(item);
+    }
+    element.AppendChild(planets);
+    
+    XMLElement explored("m_explored_systems");
+    for(ConstSystemIDItr itr = ExploredBegin(); itr != ExploredEnd(); itr++)
+    {
+        XMLElement item("item");
+        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
+        explored.AppendChild(item);
+    }
+    element.AppendChild(explored);
+    
+    XMLElement techs("m_techs");
+    for(ConstTechIDItr itr = TechBegin(); itr != TechEnd(); itr++)
+    {
+        XMLElement item("item");
+        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
+        techs.AppendChild(item);
+    }
+    element.AppendChild(techs);
+    
+    XMLElement visible_fleets("m_visible_fleets");
+    for(ConstFleetIDItr itr = VisibleFleetBegin(); itr != VisibleFleetEnd(); itr++)
+    {
+        XMLElement item("item");
+        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
+        visible_fleets.AppendChild(item);
+    }
+    element.AppendChild(visible_fleets);
     
     return element;
 }
 
+
+
 void Empire::XMLMerge(const GG::XMLElement& elem)
 {
-    // WRITE ME!
+
+    
+    
+    
 }
 
 
