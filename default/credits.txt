@@ -41,7 +41,7 @@ Contributors
     Chris Martin (utilae)
     "skdiw"
     Peter DeVries (Krikkitone)
-    "Impaler"
+    Kenneth Ferland (Impaler)
     "emrys"
     Andreas Bernard
     Teal Ablaze
