@@ -1,9 +1,9 @@
 /**
   * XDiff -- A part of Niagara Project
-  * Author:	Yuan Wang
+  * Author:   Yuan Wang
   *
-  * Copyright (c)	Computer Sciences Department,
-  *			University of Wisconsin -- Madison
+  * Copyright (c)   Computer Sciences Department,
+  *         University of Wisconsin -- Madison
   * All Rights Reserved._
   *
   * Permission to use, copy, modify and distribute this software and
@@ -33,8 +33,8 @@ XLut::XLut(bool con) :
 
 void XLut::add(int eid1, int eid2, int dist)
 {
-   unsigned int	key = ((unsigned int)eid1 << 16) | (eid2 & 0xffff);
-   unsigned long long	value = ((unsigned long long)eid1 << 40) | ((unsigned long long)(eid2 & 0xffffff) << 16) | dist;
+   unsigned int   key = ((unsigned int)eid1 << 16) | (eid2 & 0xffff);
+   unsigned long long   value = ((unsigned long long)eid1 << 40) | ((unsigned long long)(eid2 & 0xffffff) << 16) | dist;
    if (_possibleConflict) {
       TableMapType::const_iterator hit = _xTable.find(key); //hash_map<unsigned int, unsigned long long>::const_iterator hit = _xTable.find(key);
       if (hit == _xTable.end()) {
@@ -48,13 +48,13 @@ void XLut::add(int eid1, int eid2, int dist)
          _conflict = true;
       }
    } else {
-   	_xTable[key] = value;
+      _xTable[key] = value;
    }
 }
 
 int XLut::get(int eid1, int eid2)
 {
-   unsigned int	key = ((unsigned int)eid1 << 16) | (eid2 & 0xffff);
+   unsigned int   key = ((unsigned int)eid1 << 16) | (eid2 & 0xffff);
    TableMapType::const_iterator hit = _xTable.find(key); //hash_map<unsigned int, unsigned long long>::const_iterator hit = _xTable.find(key);
    if (hit == _xTable.end())
       return XTree::NO_CONNECTION;
@@ -62,8 +62,8 @@ int XLut::get(int eid1, int eid2)
    if (!_conflict) {
       return (int)(hit->second & 0xffff);
    } else {
-      unsigned long long	partialValue = ((unsigned long long)eid1 << 40) | ((unsigned long long)(eid2 & 0xffffff) << 16); 
-      unsigned long long	bucket = hit->second;
+      unsigned long long   partialValue = ((unsigned long long)eid1 << 40) | ((unsigned long long)(eid2 & 0xffffff) << 16); 
+      unsigned long long   bucket = hit->second;
       if (((partialValue ^ bucket) >> 16) == 0) {
          return (int)(bucket & 0xffff);
       } else {
@@ -78,3 +78,4 @@ int XLut::get(int eid1, int eid2)
       }
    }
 }
+

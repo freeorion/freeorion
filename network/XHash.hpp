@@ -1,9 +1,9 @@
 /**
   * XDiff -- A part of Niagara Project
-  * Author:	Yuan Wang
+  * Author:   Yuan Wang
   *
-  * Copyright (c)	Computer Sciences Department,
-  *			University of Wisconsin -- Madison
+  * Copyright (c)   Computer Sciences Department,
+  *         University of Wisconsin -- Madison
   * All Rights Reserved._
   *
   * Permission to use, copy, modify and distribute this software and
@@ -23,8 +23,8 @@
   * Please report bugs or send your comments to yuanwang@cs.wisc.edu
   */
 
-#ifndef	__XHASH__
-#define	__XHASH__
+#ifndef   __XHASH__
+#define   __XHASH__
 
 #include <string>
 
@@ -64,4 +64,6 @@ private:
    static unsigned long long des(unsigned long long data);
    static int desCore(unsigned int x, unsigned long long k);
 };
+
 #endif
+

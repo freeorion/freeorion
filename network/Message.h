@@ -1,7 +1,7 @@
 #ifndef _Message_h_
 #define _Message_h_
 
-#ifndef	_XMLDoc_h_
+#ifndef   _XMLDoc_h_
 #include "../GG/XML/XMLDoc.h"
 #endif
 

@@ -41,7 +41,7 @@ bool ClientNetworkCore::ConnectToLocalhostServer()
 
 bool ClientNetworkCore::ConnectToLANServer()
 {
-	bool retval;
+   bool retval;
 // TODO find a server on this LAN's subnet
    
    // connect to server
@@ -54,7 +54,7 @@ bool ClientNetworkCore::ConnectToLANServer()
          "failed with server= \"" << server << "\"";
    }
 */
-	return retval;
+   return retval;
 }
 
 bool ClientNetworkCore::ConnectToInternetServer(const std::string& server)
@@ -64,7 +64,7 @@ bool ClientNetworkCore::ConnectToInternetServer(const std::string& server)
       logger.debugStream() << "ClientNetworkCore::ConnectToInternetServer : Connected "
          "to server \"" << server << "\"";
    } else {
-	   const char* err_msg = NET2_GetError();
+      const char* err_msg = NET2_GetError();
       logger.errorStream() << "ClientNetworkCore::ConnectToInternetServer : Call to NET2_TCPConnectTo() "
          "failed with server= \"" << server << "\"; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
    }
@@ -94,7 +94,7 @@ void ClientNetworkCore::HandleNetEvent(SDL_Event& event)
       case NET2_TCPACCEPTEVENT: {
          logger.error("ClientNetworkCore::HandleNetEvent : Somehow, the client just accepted a connection!");
          break;
-		}
+      }
 
       case NET2_TCPRECEIVEEVENT: {
          ReceiveData(NET2_GetSocket(&event), m_receive_stream, "ClientNetworkCore");
@@ -122,7 +122,7 @@ void ClientNetworkCore::HandleNetEvent(SDL_Event& event)
       default: {
          logger.error("ClientNetworkCore::HandleNetEvent : Recieved an SDL_USEREVENT that was not an SDL_net2 network event.");
          break;
-		}
+      }
       }
    } else {
       logger.error("ClientNetworkCore::HandleNetEvent : Recieved an SDL event that was not an SDL_USEREVENT.");

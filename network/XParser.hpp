@@ -1,9 +1,9 @@
 /**
   * XDiff -- A part of Niagara Project
-  * Author:	Yuan Wang
+  * Author:   Yuan Wang
   *
-  * Copyright (c)	Computer Sciences Department,
-  *			University of Wisconsin -- Madison
+  * Copyright (c)   Computer Sciences Department,
+  *         University of Wisconsin -- Madison
   * All Rights Reserved._
   *
   * Permission to use, copy, modify and distribute this software and
@@ -23,7 +23,7 @@
   * Please report bugs or send your comments to yuanwang@cs.wisc.edu
   */
 
-#ifndef	__XPARSER__
+#ifndef   __XPARSER__
 #define __XPARSER__
 
 #include <vector>
@@ -37,8 +37,8 @@ class XTree;
 class XParser
 {
 public:
-	XTree* parse(const std::string& filename);
-	XTree* parse(const GG::XMLDoc& doc);
+   XTree* parse(const std::string& filename);
+   XTree* parse(const GG::XMLDoc& doc);
 
    // these are required as callbacks for Expat's use
    static void BeginElement(void* user_data, const char* name, const char** attrs);
@@ -62,5 +62,7 @@ private:
    
    static XParser* s_curr_parser;
 };
+
 #endif
+
 

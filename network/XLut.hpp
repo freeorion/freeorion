@@ -1,9 +1,9 @@
 /**
   * XDiff -- A part of Niagara Project
-  * Author:	Yuan Wang
+  * Author:   Yuan Wang
   *
-  * Copyright (c)	Computer Sciences Department,
-  *			University of Wisconsin -- Madison
+  * Copyright (c)   Computer Sciences Department,
+  *         University of Wisconsin -- Madison
   * All Rights Reserved._
   *
   * Permission to use, copy, modify and distribute this software and
@@ -23,12 +23,12 @@
   * Please report bugs or send your comments to yuanwang@cs.wisc.edu
   */
 
-#ifndef	__XLUT__
-#define	__XLUT__
+#ifndef   __XLUT__
+#define   __XLUT__
 
 #include <stdio.h>
 
-#ifndef	__XTREE__
+#ifndef   __XTREE__
 #include "XTree.hpp"
 #endif
 
@@ -45,17 +45,17 @@ public:
    
    /**
      * Add a node pair and their distance to this table.
-     * @param	eid1	element id #1
-     * @param	eid2	element id #2
-     * @param	dist	distance
+     * @param   eid1   element id #1
+     * @param   eid2   element id #2
+     * @param   dist   distance
      */
    void add(int eid1, int eid2, int dist);
    
    /**
      * Get the distance of a node pair.
-     * @param	eid1	element id #1
-     * @param	eid2	element id #2
-     * @return	distance or -1 if not found
+     * @param   eid1   element id #1
+     * @param   eid2   element id #2
+     * @return   distance or -1 if not found
      */
    int get(int eid1, int eid2);
    
@@ -66,4 +66,6 @@ private:
    bool _conflict;
    TableMapType _xTable;
 };
+
 #endif
+

@@ -1,9 +1,9 @@
 /**
   * XDiff -- A part of Niagara Project
-  * Author:	Yuan Wang
+  * Author:   Yuan Wang
   *
-  * Copyright (c)	Computer Sciences Department,
-  *			University of Wisconsin -- Madison
+  * Copyright (c)   Computer Sciences Department,
+  *         University of Wisconsin -- Madison
   * All Rights Reserved._
   *
   * Permission to use, copy, modify and distribute this software and
@@ -48,9 +48,9 @@ const int ROOT = 0;
 XTree::XTree() : 
    _topCap(TOP_LEVEL_CAPACITY),
    _botCap(BOT_LEVEL_CAPACITY),
-	_elementIndex(-1),
-	_tagIndex(-1),
-	_valueCount(BOT_LEVEL_CAPACITY - 1)
+   _elementIndex(-1),
+   _tagIndex(-1),
+   _valueCount(BOT_LEVEL_CAPACITY - 1)
 {
    _initialize();
 }
@@ -58,9 +58,9 @@ XTree::XTree() :
 XTree::XTree(int topcap, int botcap) : 
    _topCap(topcap),
    _botCap(botcap),
-	_elementIndex(-1),
-	_tagIndex(-1),
-	_valueCount(botcap - 1)
+   _elementIndex(-1),
+   _tagIndex(-1),
+   _valueCount(botcap - 1)
 {
    _initialize();
 }
@@ -102,7 +102,7 @@ int XTree::addElement(int pid, int lsid, string tagName)
    // Check if we've got the element name
    TagMapType::const_iterator hit = _tagNames.find(tagName);
    if (hit != _tagNames.end()) {
-      int	id = hit->second;
+      int   id = hit->second;
       _valueIndex[topid][botid] = id;
    } else {
       _tagIndex++;

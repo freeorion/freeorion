@@ -143,27 +143,27 @@ bool ServerNetworkCore::EstablishPlayer(int player_id, int socket)
 void ServerNetworkCore::DumpAllConnections()
 {
    for (std::map<int, ConnectionInfo>::iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
-		int player_id = -1;
-	   int socket = it->second.socket;
-		player_id = it->first;
-		IPaddress* addr = NET2_TCPGetPeerAddress(socket);
-		const char* socket_hostname = SDLNet_ResolveIP(addr);
-		NET2_TCPClose(socket);
-		ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::DumpAllConnections : Connection to " << 
-			(player_id == -1 ? "" : "player " + boost::lexical_cast<std::string>(player_id)) << " " << 
-			(socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << socket << " terminated.";
-		m_player_connections.erase(it);
-		break;
+      int player_id = -1;
+      int socket = it->second.socket;
+      player_id = it->first;
+      IPaddress* addr = NET2_TCPGetPeerAddress(socket);
+      const char* socket_hostname = SDLNet_ResolveIP(addr);
+      NET2_TCPClose(socket);
+      ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::DumpAllConnections : Connection to " << 
+         (player_id == -1 ? "" : "player " + boost::lexical_cast<std::string>(player_id)) << " " << 
+         (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << socket << " terminated.";
+      m_player_connections.erase(it);
+      break;
    }
    for (unsigned int i = 0; i < m_new_connections.size(); ++i) {
-		int socket = m_new_connections[i].socket;
-		IPaddress* addr = NET2_TCPGetPeerAddress(socket);
-		const char* socket_hostname = SDLNet_ResolveIP(addr);
-		NET2_TCPClose(socket);
-		ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::DumpAllConnections : Connection to non-player " <<
-			 (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << socket << " terminated.";
-		m_new_connections.erase(m_new_connections.begin() + i);
-		break;
+      int socket = m_new_connections[i].socket;
+      IPaddress* addr = NET2_TCPGetPeerAddress(socket);
+      const char* socket_hostname = SDLNet_ResolveIP(addr);
+      NET2_TCPClose(socket);
+      ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::DumpAllConnections : Connection to non-player " <<
+          (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << socket << " terminated.";
+      m_new_connections.erase(m_new_connections.begin() + i);
+      break;
    }
 }
 
@@ -178,11 +178,11 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
          if (port == NetworkCore::CONNECT_PORT) { // regular incoming connections
             IPaddress* addr = NET2_TCPGetPeerAddress(socket);
             const char* socket_hostname = SDLNet_ResolveIP(addr);
-				m_new_connections.push_back(ConnectionInfo(socket, *addr));
-				ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::HandleNetEvent : Now connected to client at " <<
-				   (socket_hostname ? socket_hostname : "[unknown host]") << ", on socket " << socket << ".";
-				SendMessage(Message(Message::SERVER_STATUS, -1, -1, Message::CORE, ServerApp::GetApp()->ServerStatus()),
-								socket, "ServerNetworkCore");
+            m_new_connections.push_back(ConnectionInfo(socket, *addr));
+            ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::HandleNetEvent : Now connected to client at " <<
+               (socket_hostname ? socket_hostname : "[unknown host]") << ", on socket " << socket << ".";
+            SendMessage(Message(Message::SERVER_STATUS, -1, -1, Message::CORE, ServerApp::GetApp()->ServerStatus()),
+                        socket, "ServerNetworkCore");
          } else { // oops. unknown port
             ServerApp::GetApp()->Logger().error("ServerNetworkCore::HandleNetEvent : Somehow we accepted a TCP connection "
                "on an unknown port!  Closing the new connection now.");
@@ -301,3 +301,4 @@ void ServerNetworkCore::ClosePorts()
       m_UDP_socket = -1;
    }
 }
+

@@ -1,9 +1,9 @@
 /**
   * XDiff -- A part of Niagara Project
-  * Author:	Yuan Wang
+  * Author:   Yuan Wang
   *
-  * Copyright (c)	Computer Sciences Department,
-  *			University of Wisconsin -- Madison
+  * Copyright (c)   Computer Sciences Department,
+  *         University of Wisconsin -- Madison
   * All Rights Reserved._
   *
   * Permission to use, copy, modify and distribute this software and
@@ -23,8 +23,8 @@
   * Please report bugs or send your comments to yuanwang@cs.wisc.edu
   */
 
-#ifndef	__XTREE__
-#define	__XTREE__
+#ifndef   __XTREE__
+#define   __XTREE__
 
 #include <iostream>
 #include <string>
@@ -36,10 +36,10 @@
 /*class HashString
 {
 public:
-	bool operator()(std::string const &str) const
-	{
-		return std::hash<char const *>()(str.c_str());
-	}
+   bool operator()(std::string const &str) const
+   {
+      return std::hash<char const *>()(str.c_str());
+   }
 };*/
 
 #ifdef DELETE
@@ -60,10 +60,10 @@ public:
 
    /**
      * Add a new element to the tree.
-     * @param	pid		parent id
-     * @param	lsid		left-side sibling id
-     * @param	tagName		element name
-     * @return	the element id in the tree.
+     * @param   pid      parent id
+     * @param   lsid      left-side sibling id
+     * @param   tagName      element name
+     * @return   the element id in the tree.
      */
    int addElement(int pid, int lsid, std::string tagName);
 
@@ -72,13 +72,13 @@ public:
 
    /**
      * Add an attribute.
-     * @param	eid	element id
-     * @param	lsid	the sibling id on the left
-     * @param	name	attribute name
-     * @param	value	attribute value
-     * @param	valuehash	hash value of the value
-     * @param	attrhash	hash value of the entire attribute
-     * @return	the element id of the attribute
+     * @param   eid   element id
+     * @param   lsid   the sibling id on the left
+     * @param   name   attribute name
+     * @param   value   attribute value
+     * @param   valuehash   hash value of the value
+     * @param   attrhash   hash value of the entire attribute
+     * @return   the element id of the attribute
      */
    int addAttribute(int eid, int lsid, std::string name, std::string value,
                     unsigned long long valuehash, unsigned long long attrhash);
@@ -90,16 +90,16 @@ public:
      * Add a CDATA section (either a start or an end) to the CDATA
      * hashtable, in which each entry should have an even number of
      * position slots. This value is interpreted as a string.
-     * @param	eid		The text node id
-     * @param	position	the section tag position
+     * @param   eid      The text node id
+     * @param   position   the section tag position
      */
    void addCDATA(int eid, size_t position);
 
    /**
      * Add matching information.
-     * @param	eid		element id
-     * @param	matchType	match type
-     * @param	matchNode	matched element id
+     * @param   eid      element id
+     * @param   matchType   match type
+     * @param   matchNode   matched element id
      */
    void addMatching(int eid, int matchType, int matchNode = -1);
    // End  -- methods for constructing a tree.
@@ -124,8 +124,8 @@ public:
 
    /**
      * Get the CDATA position list for a text node.
-     * @param	eid		The text node id
-     * @return	the position vector.
+     * @param   eid      The text node id
+     * @return   the position vector.
      */
    std::vector<unsigned int>& getCDATA(int eid);
 
@@ -191,5 +191,6 @@ private:
    TagMapType                                      _tagNames;
    CDataMapType                                    _cdataTable;
 };
+
 #endif
 
