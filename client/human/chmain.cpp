@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
     // read and process command-line arguments, if any
     try {
         GetOptionsDB().AddFlag('h', "help", "Print this help message.");
-        GetOptionsDB().AddFlag('g', "generate-config-xml", "Uses all the settings given on the command line to generate a config.xml file in \"default/\".  This will overwrite the current \"default/config.xml\" file, if it exists.");
+        GetOptionsDB().AddFlag('g', "generate-config-xml", "Uses all the settings from any existing config.xml file and those given on the command line to generate a config.xml file in \"default/\".  This will overwrite the current \"default/config.xml\" file, if it exists.");
 		GetOptionsDB().AddFlag('m', "music-off", "Disables music in the game");
 		GetOptionsDB().Add("bg-music", "Sets the background track to play", std::string("artificial_intelligence_v3.ogg"));
         GetOptionsDB().AddFlag('f', "fullscreen", "Start the game in fullscreen");
@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
             early_exit = true;
         }
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
+            GetOptionsDB().Remove("generate-config-xml");
             std::ofstream ofs("default/config.xml");
             GetOptionsDB().GetXML().WriteDoc(ofs);
             ofs.close();
