@@ -24,24 +24,12 @@ namespace GG {
 class Texture;
 }
 
-/**
-    This class is a huge window that stores EVERYTHING in the whole universe graphically
-*/
+/** This class is a window that graphically displays everything in the universe */
 class MapWnd : public GG::Wnd
 {
 public:
     static const double MIN_SCALE_FACTOR;
     static const double MAX_SCALE_FACTOR;
-
-    enum     //!< enumeration for indices to the icon vector
-    {
-        FLEET_ICON          = 0,
-        NUTRIENTS_ICON      = 1,
-        SCIENCE_ICON        = 2,
-        MINERALS_ICON       = 3,
-        INDUSTRY_ICON       = 4,
-        POPULATION_ICON     = 5
-    };
 
     //! \name Signal Types //!@{
     typedef boost::signal<void (int)> SelectedSystemSignalType; //!< emitted when the user selects a star system
@@ -77,7 +65,15 @@ public:
 
     SelectedSystemSignalType& SelectedSystemSignal() {return m_selected_system_signal;}
 
-    void SelectSystem(int systemID); //!< catches emitted signals from the system icons
+    void CenterOnMapCoord(double x, double y); //!< centers the map on map position (x, y)
+    void CenterOnSystem(int systemID);         //!< centers the map on system \a systemID
+    void CenterOnFleet(int fleetID);           //!< centers the map on fleet \a fleetID
+    void CenterOnSystem(System* system);       //!< centers the map on system \a system
+    void CenterOnFleet(Fleet* fleet);          //!< centers the map on fleet \a fleet
+    void SelectSystem(int systemID);           //!< catches emitted signals from the system icons, and allows programmatic selection of planets
+    void SelectFleet(int fleetID);             //!< allows programmatic selection of fleets
+    void SelectSystem(System* system);         //!< allows programmatic selection of planets
+    void SelectFleet(Fleet* fleet);            //!< allows programmatic selection of fleets
 
     void SetFleetMovement(FleetButton* fleet_button); //!< allows code that creates FleetButtons to indicate where (and whether) they are moving
 
@@ -85,13 +81,7 @@ public:
     //!@}
         
 private:
-    struct MovementLineData
-    {
-        MovementLineData() {}
-        MovementLineData(System* dest) : destination(dest) {}
-        System* destination;
-        // TODO : color, other properties(?), based on moving empire and destination, etc.
-    };
+    struct MovementLineData; ///< contains all the information necessary to render a single fleet movement line on the main map
 
     void RenderBackgrounds();    //!< renders the backgrounds onto the screen
     void RenderFleetMovementLines(); //!< renders the dashed lines indicating where each fleet is going
@@ -110,7 +100,7 @@ private:
     std::vector<SystemIcon*>        m_system_icons;  //! the system icons in the main map
     SitRepPanel*      	            m_sitrep_panel;  //! the sitrep panel
     std::vector<FleetButton*>       m_fleet_buttons; //! the moving fleets in the main map
-    std::map<FleetButton*, 
+    std::map<Fleet*, 
              MovementLineData>      m_fleet_lines;   //! the lines used for moving fleets in the main map
 
     GG::Pt     m_drag_offset;  //! the distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)

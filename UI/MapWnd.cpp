@@ -22,6 +22,7 @@
 
 #include <vector>
 
+
 namespace {
 const int SIDE_PANEL_WIDTH = 300;
 const int MAP_MARGIN_WIDTH = 50;    // the number of pixels of system-less space around all four sides of the starfield
@@ -34,6 +35,24 @@ const int SITREP_PANEL_WIDTH = 400;
 const int SITREP_PANEL_HEIGHT = 300;
 }
 
+
+////////////////////////////////////////////////
+// MapWnd::MovementLineData
+////////////////////////////////////////////////
+struct MapWnd::MovementLineData
+{
+    MovementLineData() {}
+    MovementLineData(double x_, double y_, System* dest) : x(x_), y(y_), destination(dest) {}
+    double x;
+    double y;
+    System* destination;
+    // TODO : color, other properties(?), based on moving empire and destination, etc.
+};
+
+
+////////////////////////////////////////////////
+// MapWnd
+////////////////////////////////////////////////
 // static(s)
 const double MapWnd::MIN_SCALE_FACTOR = 0.5;
 const double MapWnd::MAX_SCALE_FACTOR = 8.0;
@@ -101,7 +120,6 @@ MapWnd::MapWnd() :
 
     //connect signals and slots
     GG::Connect(m_turn_update->ClickedSignal(), &MapWnd::OnTurnUpdate, this);
-    
 }
 
 MapWnd::~MapWnd()
@@ -122,12 +140,28 @@ int MapWnd::Render()
 
 int MapWnd::Keypress (GG::Key key, Uint32 key_mods)
 {
-    if (key == GG::GGK_RETURN) { // start turn
-      HumanClientApp::GetApp()->StartTurn( );
+    switch (key) {
+    case GG::GGK_RETURN: { // start turn
+        HumanClientApp::GetApp()->StartTurn();
+        break;
     }
-    if (key == GG::GGK_F10) { // If F10 is pressed, loads up the options screen
+
+    case GG::GGK_F2: { // show the sitrep window
+        if (m_sitrep_panel->Visible())
+            m_sitrep_panel->Hide();
+        else
+            m_sitrep_panel->Show();
+        break;
+    }
+
+    case GG::GGK_F10: { // load up the options screen
         InGameOptions options;
         options.Run();
+        break;
+    }
+
+    default:
+        break;
     }
 
     return 1;
@@ -175,7 +209,7 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
     GG::Pt center = GG::Pt( GG::App::GetApp()->AppWidth() / 2,  GG::App::GetApp()->AppHeight() / 2);
     GG::Pt ul_offset = ul - center;
     if (0 < move) {
-        if (m_zoom_factor < MAX_SCALE_FACTOR) {
+        if (m_zoom_factor * ZOOM_STEP_SIZE < MAX_SCALE_FACTOR) {
             ul_offset.x = static_cast<int>(ul_offset.x * ZOOM_STEP_SIZE);
             ul_offset.y = static_cast<int>(ul_offset.y * ZOOM_STEP_SIZE);
             m_zoom_factor *= ZOOM_STEP_SIZE;
@@ -185,7 +219,7 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
             m_zoom_factor = MAX_SCALE_FACTOR;
         }
     } else if ( 0 > move ) {
-        if (MIN_SCALE_FACTOR < m_zoom_factor) {
+        if (MIN_SCALE_FACTOR < m_zoom_factor / ZOOM_STEP_SIZE) {
             ul_offset.x = static_cast<int>(ul_offset.x / ZOOM_STEP_SIZE);
             ul_offset.y = static_cast<int>(ul_offset.y / ZOOM_STEP_SIZE);
             m_zoom_factor /= ZOOM_STEP_SIZE;
@@ -195,8 +229,7 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
             m_zoom_factor = MIN_SCALE_FACTOR;
         }
     } else {
-      // Windows platform always sends an additional event with a move of 0. This should be ignored
-      return 0;
+      return 1; // Windows platform always sends an additional event with a move of 0. This should be ignored
     }
 
     for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
@@ -221,6 +254,7 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 
     GG::Pt map_move = ul_offset + center - ul;
     OffsetMove(map_move);
+    MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_turn_update->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
@@ -266,34 +300,22 @@ void MapWnd::InitTurn(int turn_number)
     Universe::ObjectVec fleets = universe.FindObjects(IsMovingFleetFunctor());
     Universe::ObjectVec ordered_moving_fleets = universe.FindObjects(IsOrderedMovingFleetFunctor());
     fleets.insert(fleets.end(), ordered_moving_fleets.begin(), ordered_moving_fleets.end());
-#if 1
-    std::cout << "** All moving fleets found: ";
-    for (unsigned int i = 0; i < fleets.size(); ++i)
-        std::cout << fleets[i]->ID() << " ";
-    std::cout << "\n";
-#endif
+
     typedef std::multimap<std::pair<double, double>, UniverseObject*> SortedFleetMap;
     SortedFleetMap position_sorted_fleets;
     for (unsigned int i = 0; i < fleets.size(); ++i) {
         position_sorted_fleets.insert(std::make_pair(std::make_pair(fleets[i]->X(), fleets[i]->Y()), fleets[i]));
     }
+
     SortedFleetMap::iterator it = position_sorted_fleets.begin();
     SortedFleetMap::iterator end_it = position_sorted_fleets.end();
     while (it != end_it) {
-std::cout << "** Examining first sorted group\n";
         SortedFleetMap::iterator local_end_it = position_sorted_fleets.upper_bound(it->first);
         std::map<int, std::vector<int> > IDs_by_empire_color;
         for (; it != local_end_it; ++it) {
-std::cout << "** Examining Empire " << *it->second->Owners().begin() << "'s fleet #" << it->second->ID() << "\n";
             IDs_by_empire_color[*it->second->Owners().begin()].push_back(it->second->ID());
         }
         for (std::map<int, std::vector<int> >::iterator ID_it = IDs_by_empire_color.begin(); ID_it != IDs_by_empire_color.end(); ++ID_it) {
-#if 1
-            std::cout << "** Creating a fleet button for fleets: ";
-            for (unsigned int i = 0; i < ID_it->second.size(); ++i)
-                std::cout << ID_it->second[i] << " ";
-            std::cout << "\n";
-#endif
             FleetButton* fb = new FleetButton(Empires().Lookup(ID_it->first)->Color(), ID_it->second, m_zoom_factor);
             m_fleet_buttons.push_back(fb);
             AttachChild(fb);
@@ -311,10 +333,11 @@ std::cout << "** Examining Empire " << *it->second->Owners().begin() << "'s flee
     MoveChildUp(m_sitrep_panel);
     // are there any sitreps to show?
     Empire *pEmpire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->PlayerID() );
-    if ( pEmpire->NumSitReps( ) > 0 )
-      m_sitrep_panel->Update();
+    m_sitrep_panel->Update();
+    if ( pEmpire->NumSitReps( ) )
+        m_sitrep_panel->Show();
     else
-      m_sitrep_panel->Hide();      
+        m_sitrep_panel->Hide();
 }
 
 void MapWnd::ShowSystemNames()
@@ -329,19 +352,105 @@ void MapWnd::HideSystemNames()
         m_system_icons[i]->HideName();
 }
 
+void MapWnd::CenterOnMapCoord(double x, double y)
+{
+    GG::Pt ul = ClientUpperLeft();
+    double current_x = (GG::App::GetApp()->AppWidth() / 2 - ul.x) / m_zoom_factor;
+    double current_y = (GG::App::GetApp()->AppHeight() / 2 - ul.y) / m_zoom_factor;
+    GG::Pt map_move = GG::Pt(static_cast<int>((current_x - x) * m_zoom_factor), 
+                             static_cast<int>((current_y - y) * m_zoom_factor));
+    OffsetMove(map_move);
+    MoveBackgrounds(map_move);
+    m_side_panel->OffsetMove(-map_move);
+    m_turn_update->OffsetMove(-map_move);
+    m_sitrep_panel->OffsetMove(-map_move);
+
+    // this correction ensures that the centering doesn't leave too large a margin to the side
+    GG::Pt move_to_pt = ul = ClientUpperLeft();
+    CorrectMapPosition(move_to_pt);
+    GG::Pt final_move = move_to_pt - ul;
+    m_side_panel->OffsetMove(-final_move);
+    m_turn_update->OffsetMove(-final_move);
+    m_sitrep_panel->OffsetMove(-final_move);
+    MoveBackgrounds(final_move);
+    MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
+}
+
+void MapWnd::CenterOnSystem(int systemID)
+{
+    if (System* system = dynamic_cast<System*>(GetUniverse().Object(systemID)))
+        CenterOnSystem(system);
+}
+
+void MapWnd::CenterOnFleet(int fleetID)
+{
+    if (Fleet* fleet = dynamic_cast<Fleet*>(GetUniverse().Object(fleetID)))
+        CenterOnFleet(fleet);
+}
+
+void MapWnd::CenterOnSystem(System* system)
+{
+    CenterOnMapCoord(system->X(), system->Y());
+}
+
+void MapWnd::CenterOnFleet(Fleet* fleet)
+{
+    CenterOnMapCoord(fleet->X(), fleet->Y());
+}
+
 void MapWnd::SelectSystem(int systemID)
 {
     m_selected_system_signal(systemID);
 }
 
+void MapWnd::SelectFleet(int fleetID)
+{
+    if (Fleet* fleet = dynamic_cast<Fleet*>(GetUniverse().Object(fleetID)))
+        SelectFleet(fleet);
+}
+
+void MapWnd::SelectSystem(System* system)
+{
+    SelectSystem(system->ID());
+}
+
+void MapWnd::SelectFleet(Fleet* fleet)
+{
+    if (System* system = fleet->GetSystem()) {
+        for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
+            if (&m_system_icons[i]->GetSystem() == system) {
+                m_system_icons[i]->ClickFleetButton(fleet);
+                break;
+            }
+        }
+    } else {
+        for (unsigned int i = 0; i < m_fleet_buttons.size(); ++i) {
+            if (std::find(m_fleet_buttons[i]->Fleets().begin(), m_fleet_buttons[i]->Fleets().end(), fleet) != m_fleet_buttons[i]->Fleets().end()) {
+                m_fleet_buttons[i]->LClick(GG::Pt(), 0);
+                break;
+            }
+        }
+    }
+}
+
 void MapWnd::SetFleetMovement(FleetButton* fleet_button)
 {
-    Fleet* fleet = fleet_button->Fleets().back();
-    if (fleet->DestinationID() != UniverseObject::INVALID_OBJECT_ID &&
-        fleet->DestinationID() != fleet->SystemID()) {
-        m_fleet_lines[fleet_button] = MovementLineData(fleet->Destination());
-    } else {
-        m_fleet_lines.erase(fleet_button);
+    std::set<int> destinations;
+    for (unsigned int i = 0; i < fleet_button->Fleets().size(); ++i) {
+        Fleet* fleet = fleet_button->Fleets()[i];
+        GG::Pt ul = ClientUpperLeft();
+        if (fleet->DestinationID() != UniverseObject::INVALID_OBJECT_ID &&
+            fleet->DestinationID() != fleet->SystemID() &&
+            destinations.find(fleet->DestinationID()) == destinations.end()) {
+            destinations.insert(fleet->DestinationID());
+            GG::Pt fleet_ul = fleet_button->UpperLeft();
+            GG::Pt sz = fleet_button->WindowDimensions();
+            m_fleet_lines[fleet] = MovementLineData((fleet_ul.x + sz.x / 2 - ul.x) / m_zoom_factor, 
+                                                    (fleet_ul.y + sz.y / 2 - ul.y) / m_zoom_factor, 
+                                                    fleet->Destination());
+        } else {
+            m_fleet_lines.erase(fleet);
+        }
     }
 }
 
@@ -398,13 +507,9 @@ void MapWnd::RenderFleetMovementLines()
     glBegin(GL_LINES);
 
     GG::Pt ul = ClientUpperLeft();
-    for (std::map<FleetButton*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
-        GG::Pt size = it->first->WindowDimensions();
-        size.x /= 2;
-        size.y /= 2;
-        GG::Pt from = it->first->UpperLeft() + size;
+    for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
         glColor3d(1.0, 1.0, 1.0);
-        glVertex2d(from.x, from.y);
+        glVertex2d(ul.x + it->second.x * m_zoom_factor, ul.y + it->second.y * m_zoom_factor);
         glVertex2d(ul.x + it->second.destination->X() * m_zoom_factor, ul.y + it->second.destination->Y() * m_zoom_factor);
     }
 
@@ -431,7 +536,7 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 {
     int contents_width = static_cast<int>(m_zoom_factor * Universe::UNIVERSE_WIDTH);
     int app_width =  GG::App::GetApp()->AppWidth();
-    int app_height =  GG::App::GetApp()->AppHeight();
+    int app_height = GG::App::GetApp()->AppHeight();
     if (app_width < contents_width) {
         if (MAP_MARGIN_WIDTH < move_to_pt.x)
             move_to_pt.x = MAP_MARGIN_WIDTH;
