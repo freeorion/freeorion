@@ -317,28 +317,33 @@ void HumanClientApp::StopMusic()
 
 void HumanClientApp::PlaySound(const std::string& filename)
 {
-    FSOUND_SAMPLE* sample = 0;
     std::map<std::string, int>::iterator it = m_sounds.find(filename);
     if (it != m_sounds.end()) {
-        sample = FSOUND_Sample_Get(it->second);
+        if (FSOUND_SAMPLE* sample = FSOUND_Sample_Get(it->second))
+            FSOUND_PlaySound(FSOUND_FREE, sample);
     } else {
-        int previous_sample_slot = -1;
-        std::map<std::string, int>::iterator it = m_sounds.begin();
-        while (it != m_sounds.end() && it->second == previous_sample_slot + 1) {
-            previous_sample_slot = it->second;
-            ++it;
+        int first_available_sample_slot = 0;
+        std::set<int>::iterator used_index_it = m_used_sample_indices.begin();
+        while (used_index_it != m_used_sample_indices.end() && *used_index_it == first_available_sample_slot) {
+            ++first_available_sample_slot;
+            ++used_index_it;
         }
-        if ((sample = FSOUND_Sample_Load(previous_sample_slot + 1, filename.c_str(), 0, 0, 0)))
-            m_sounds[filename] = previous_sample_slot + 1;
+        if (FSOUND_SAMPLE* sample = FSOUND_Sample_Load(first_available_sample_slot, filename.c_str(), 0, 0, 0)) {
+            m_sounds[filename] = first_available_sample_slot;
+            m_used_sample_indices.insert(first_available_sample_slot);
+            FSOUND_PlaySound(FSOUND_FREE, sample);
+        }
     }
-    FSOUND_PlaySound(FSOUND_FREE, sample);
 }
 
 void HumanClientApp::FreeSound(const std::string& filename)
 {
     std::map<std::string, int>::iterator it = m_sounds.find(filename);
-    if (it != m_sounds.end())
+    if (it != m_sounds.end()) {
         FSOUND_Sample_Free(FSOUND_Sample_Get(it->second));
+        m_used_sample_indices.erase(it->second);
+        m_sounds.erase(it);
+    }
 }
    
 void HumanClientApp::FreeAllSounds()
@@ -346,6 +351,8 @@ void HumanClientApp::FreeAllSounds()
     for (std::map<std::string, int>::iterator it = m_sounds.begin(); it != m_sounds.end(); ++it) {
         FSOUND_Sample_Free(FSOUND_Sample_Get(it->second));
     }
+    m_used_sample_indices.clear();
+    m_sounds.clear();
 }
 
 void HumanClientApp::SetMusicVolume(int vol)
