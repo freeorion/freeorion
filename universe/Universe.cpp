@@ -175,6 +175,24 @@ namespace {
         }
     }
 
+    double CalcNewPosNearestNeighbour(const std::pair<double, double> &position,const std::vector<std::pair<double, double> > &positions)
+    {
+        if(positions.size()==0)
+          return 0.0;
+
+        unsigned int j; 
+        double lowest_dist=  (positions[0].first  - position.first ) * (positions[0].first  - position.first ) 
+                           + (positions[0].second - position.second) * (positions[0].second - position.second),distance=0.0;
+
+        for (j=1; j < positions.size(); ++j){
+            distance =  (positions[j].first  - position.first ) * (positions[j].first  - position.first ) 
+                      + (positions[j].second - position.second) * (positions[j].second - position.second);
+            if(lowest_dist>distance)
+                lowest_dist = distance;
+        }
+        return lowest_dist;
+    }
+
     const int MAX_ATTEMPTS_PLACE_SYSTEM = 100;
 
     void SpiralGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int arms, unsigned int stars, double width, double height)
@@ -192,6 +210,9 @@ namespace {
         SmallIntDistType  random_arm      = SmallIntDist(0  ,arms);
         DoubleDistType    random_degree   = DoubleDist  (0.0,2.0*PI);
         DoubleDistType    random_radius   = DoubleDist  (0.0,  1.0);
+
+        // stores best suboptimal system position so far
+        std::pair<double,double> sys_max_distance_pos;double sys_max_distance = 0.0;
 
         for (i = 0, attempts = 0; i < stars && attempts <MAX_ATTEMPTS_PLACE_SYSTEM; i++, ++attempts)
         {
@@ -215,19 +236,28 @@ namespace {
             if (x < 0 || width <= x || y < 0 || height <= y)
                 continue;
 
-            // ensure all system have a min separation to each other (search isn't opimized, not worth the effort)
-            for (j = 0; j < positions.size(); ++j) {
-                if ((positions[j].first - x) * (positions[j].first - x) + (positions[j].second - y) * (positions[j].second - y)
-                    < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION)
-                break;
-            }
-            if (j < positions.size() && attempts < MAX_ATTEMPTS_PLACE_SYSTEM-1) {
-                --i;
-                continue;
-            }
+            // See if new star is too close to any existing star.
+            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
 
-            attempts = 0;
-            positions.push_back(std::pair<double,double>(x, y));
+            // If so, we try again.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION) {
+                if(lowest_dist > sys_max_distance) {
+                    sys_max_distance = lowest_dist;
+                    sys_max_distance_pos = std::pair<double,double>(x,y);
+                }
+                if(attempts<MAX_ATTEMPTS_PLACE_SYSTEM-1){
+                    --i;
+                    continue;
+                }
+            }
+            else
+                sys_max_distance_pos = std::pair<double,double>(x,y);
+
+            // Add the new star location.
+            positions.push_back(sys_max_distance_pos);
+
+            // Note that attempts is reset for every star.
+            attempts = 0; sys_max_distance = 0.0;
         }
     }
 
@@ -246,6 +276,9 @@ namespace {
 
         // Used to give up when failing to place a star too often.
         unsigned int attempts = 0;
+
+        // stores best suboptimal system position so far
+        std::pair<double,double> sys_max_distance_pos;double sys_max_distance = 0.0;
 
         // For each attempt to place a star...
         for (unsigned int i = 0; i < stars && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts){
@@ -271,24 +304,27 @@ namespace {
                 continue;
 
             // See if new star is too close to any existing star.
-            unsigned int j = 0;
-            for (; j < positions.size(); ++j){
-                if ((positions[j].first - x) * (positions[j].first - x) +
-                    (positions[j].second - y) * (positions[j].second - y)
-                    < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION)
-                    break;
-            }
-            // If so, we try again.
-            if (j < positions.size() && attempts<MAX_ATTEMPTS_PLACE_SYSTEM-1){
-                --i;
-                continue;
-            }
+            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
 
-            // Note that attempts is reset for every star.
-            attempts = 0;
+            // If so, we try again.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION) {
+                if(lowest_dist > sys_max_distance) {
+                    sys_max_distance = lowest_dist;
+                    sys_max_distance_pos = std::pair<double,double>(x,y);
+                }
+                if(attempts<MAX_ATTEMPTS_PLACE_SYSTEM-1){
+                    --i;
+                    continue;
+                }
+            }
+            else
+                sys_max_distance_pos = std::pair<double,double>(x,y);
 
             // Add the new star location.
-            positions.push_back(std::pair<double,double>(x, y));
+            positions.push_back(sys_max_distance_pos);
+
+            // Note that attempts is reset for every star.
+            attempts = 0; sys_max_distance = 0.0;
         }
     }
 
@@ -327,7 +363,10 @@ namespace {
             clusters_position.push_back(std::pair<std::pair<double,double>,std::pair<double,double> >(std::pair<double,double>(x,y),std::pair<double,double>(sin(rotation),cos(rotation))));
         }
 
-        for (i=0,attempts=0; i < stars && attempts<100; i++,attempts++ )
+       // stores best suboptimal system position so far
+      std::pair<double,double> sys_max_distance_pos;double sys_max_distance = 0.0;
+
+       for (i=0,attempts=0; i < stars && attempts<100; i++,attempts++ )
         {
             double x,y;
             if (random_zero_to_one()<system_noise)
@@ -357,19 +396,28 @@ namespace {
             if (x<0 || width<=x || y<0 || height<=y)
                 continue;
 
-            // ensure all system have a min separation to each other (search isn't opimized, not worth the effort)
-            for (j=0;j<positions.size();j++)
-                if ((positions[j].first - x)*(positions[j].first - x)+ (positions[j].second - y)*(positions[j].second - y)
-                    < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION)
-                    break;
-            if (j<positions.size() && attempts<MAX_ATTEMPTS_PLACE_SYSTEM-1)
-            {
-                i--;
-                continue;
-            }
+            // See if new star is too close to any existing star.
+            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
 
-            attempts=0;
-            positions.push_back(std::pair<double,double>(x,y));
+            // If so, we try again.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION) {
+                if(lowest_dist > sys_max_distance) {
+                    sys_max_distance = lowest_dist;
+                    sys_max_distance_pos = std::pair<double,double>(x,y);
+                }
+                if(attempts<MAX_ATTEMPTS_PLACE_SYSTEM-1){
+                    --i;
+                    continue;
+                }
+            }
+            else
+                sys_max_distance_pos = std::pair<double,double>(x,y);
+
+            // Add the new star location.
+            positions.push_back(sys_max_distance_pos);
+
+            // Note that attempts is reset for every star.
+            attempts = 0; sys_max_distance = 0.0;
         }
     }
 
@@ -383,6 +431,9 @@ namespace {
         DoubleDistType   theta_dist = DoubleDist(0.0, 2.0 * PI);
         GaussianDistType radius_dist = GaussianDist(RING_RADIUS, RING_WIDTH / 3.0);
 
+        // stores best suboptimal system position so far
+        std::pair<double,double> sys_max_distance_pos;double sys_max_distance = 0.0;
+
         for (unsigned int i = 0, attempts = 0; i < stars && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts)
         {
             double theta = theta_dist();
@@ -394,22 +445,28 @@ namespace {
             if (x < 0 || width <= x || y < 0 || height <= y)
                 continue;
 
-            // ensure all system have a min separation to each other (search isn't opimized, not worth the effort)
-            bool too_close = false;
-            for (unsigned int j = 0; j < positions.size(); ++j) {
-                if ((positions[j].first - x) * (positions[j].first - x) + (positions[j].second - y) * (positions[j].second - y)
-                    < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
-                    too_close = true;
-                    break;
+            // See if new star is too close to any existing star.
+            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
+
+            // If so, we try again.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION) {
+                if(lowest_dist > sys_max_distance) {
+                    sys_max_distance = lowest_dist;
+                    sys_max_distance_pos = std::pair<double,double>(x,y);
+                }
+                if(attempts<MAX_ATTEMPTS_PLACE_SYSTEM-1){
+                    --i;
+                    continue;
                 }
             }
-            if (too_close && attempts<MAX_ATTEMPTS_PLACE_SYSTEM-1) {
-                --i;
-                continue;
-            }
+            else
+                sys_max_distance_pos = std::pair<double,double>(x,y);
 
-            attempts = 0;
-            positions.push_back(std::pair<double,double>(x, y));
+            // Add the new star location.
+            positions.push_back(sys_max_distance_pos);
+
+            // Note that attempts is reset for every star.
+            attempts = 0; sys_max_distance = 0.0;
         }
     }
 
