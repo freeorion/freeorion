@@ -43,6 +43,11 @@ public:
    virtual ~ClientApp();
    //@}
    
+   /** \name Accessors */ //@{   
+   const std::string&   PlayerName() const {return m_player_name;}   ///< returns the player name of this client
+   int                  PlayerID() const {return m_player_id;}       ///< returns the player ID of this client
+   //@}
+
    /** handles an incoming message from the server with the appropriate action or response */
    static void                HandleMessage(const Message& msg);
    static ClientUniverse&     Universe();       ///< returns client's local copy of Universe
@@ -52,10 +57,6 @@ public:
    static ClientNetworkCore&  NetworkCore();    ///< returns the network core object for this client's player
    
 protected:
-   /** \name Accessors */ //@{   
-   const std::string& PlayerName() const {return m_player_name;} ///< returns the player name of this client
-   //@}
-
    ClientUniverse    m_universe;
    ClientEmpire      m_empire;
    CombatModule*     m_current_combat;
