@@ -35,7 +35,7 @@ const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, Universe:
 const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, Universe::UNIVERSE_WIDTH]
 const int     ADJACENCY_BOXES = 25;
 const double  ADJACENCY_BOX_SIZE = Universe::UNIVERSE_WIDTH / ADJACENCY_BOXES;
-
+  
 // "only" defined for 1 <= n <= 3999, as we can't
 // display the symbol for 5000
 std::string RomanNumber(unsigned int n)
@@ -110,7 +110,7 @@ Universe::~Universe()
     for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
         delete it->second;
 }
-
+ 
 void Universe::SetUniverse(const GG::XMLElement& elem)
 {
     using GG::XMLElement;
@@ -121,20 +121,14 @@ void Universe::SetUniverse(const GG::XMLElement& elem)
     // wipe out anything present in the object map
     for (ObjectMap::iterator itr= m_objects.begin(); itr != m_objects.end(); ++itr)
         delete itr->second;
-    m_objects.clear();
-
+    m_objects.clear(); 
+ 
     for (int i = 0; i < elem.Child("m_objects").NumChildren(); ++i) {
-        if (UniverseObject* obj = m_factory.GenerateObject(elem.Child("m_objects").Child(i))) {
+      if (UniverseObject* obj = m_factory.GenerateObject(elem.Child("m_objects").Child(i))) {
             m_objects[obj->ID()] = obj;
-        } else {
-
-           Logger().errorStream() << "Universe::SetUniverse : Failed while trying to factory-generate "
-                "m_objects element #" << i << " of the incoming turn update universe.";
-
-        }
+      }
     }
 }
-
 
 const UniverseObject* Universe::Object(int id) const
 {
