@@ -22,14 +22,16 @@
 
 namespace {
     const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
+    int MAIN_MENU_WIDTH = 200;
+    int MAIN_MENU_HEIGHT = 340;
 
     void Options(OptionsDB& db)
     {
         db.AddFlag("force-external-server", 
                    "Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.");
    
-        db.Add("UI.main-menu.left", "Position of the intro screen main menu (left)",(1024 + 300) / 2);
-        db.Add("UI.main-menu.top", "Position of the intro screen main menu (top)",300);
+        db.Add("UI.main-menu.x", "Position of the center of the intro screen main menu, as a portion of the application's total width.", 0.83, RangedValidator<double>(0.0, 1.0));
+        db.Add("UI.main-menu.y", "Position of the center of the intro screen main menu, as a portion of the application's total height.", 0.48, RangedValidator<double>(0.0, 1.0));
     }
 
     bool foo_bool = RegisterOptions(&Options);
@@ -138,8 +140,9 @@ bool CreditsWnd::Render()
 
 IntroScreen::IntroScreen() :
     CUI_Wnd(UserString("INTRO_WINDOW_TITLE"), 
-            GetOptionsDB().Get<int>("UI.main-menu.left"), GetOptionsDB().Get<int>("UI.main-menu.top"), 
-            200, 340, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE),
+            static_cast<int>(GG::App::GetApp()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.x") - MAIN_MENU_WIDTH / 2),
+            static_cast<int>(GG::App::GetApp()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.y") - MAIN_MENU_HEIGHT / 2),
+            MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE),
     m_credits_wnd(NULL)
 {
     //create staticgraphic from the image
