@@ -155,9 +155,9 @@ private:
    int                          m_galaxy_size;     ///< the size of the galaxy (the number of star systems)
    Universe::Shape              m_galaxy_shape;    ///< the shape of the galaxy
    Universe::Age                m_galaxy_age;      ///< the age of the galaxy
-   Universe::StarlaneFreqency   m_starlane_freq;   ///< the frequency of starlanes
+   Universe::StarlaneFrequency  m_starlane_freq;   ///< the frequency of starlanes
    Universe::PlanetDensity      m_planet_density;  ///< the density of planets within systems
-   Universe::SpecialsFreqency   m_specials_freq;   ///< the frequency of planetary and system specials
+   Universe::SpecialsFrequency  m_specials_freq;   ///< the frequency of planetary and system specials
    std::string                  m_galaxy_file;     ///< file to use for generating the galaxy
    // end SERVER_GAME_SETUP variables
 

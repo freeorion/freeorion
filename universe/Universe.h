@@ -117,7 +117,7 @@ public:
                        };
 
     /** types of starlane frequencies */
-    enum StarlaneFreqency {LANES_NONE, 
+    enum StarlaneFrequency{LANES_NONE, 
                            LANES_FEW, 
                            LANES_SOME, 
                            LANES_SEVERAL, 
@@ -127,7 +127,7 @@ public:
                           };
 
     /** types of starlane frequencies */
-    enum SpecialsFreqency {SPECIALS_NONE, 
+    enum SpecialsFrequency{SPECIALS_NONE, 
                            SPECIALS_RARE, 
                            SPECIALS_UNCOMMON, 
                            SPECIALS_COMMON, 
@@ -231,8 +231,8 @@ public:
     bool               InsertID(UniverseObject* obj, int id );
 
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
-    void              CreateUniverse(int size, Shape shape, Age age, StarlaneFreqency starlane_freq, PlanetDensity planet_density, 
-                                     SpecialsFreqency specials_freq, int players, int ai_players, 
+    void              CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
+                                     SpecialsFrequency specials_freq, int players, int ai_players, 
                                      const std::vector<PlayerSetupData>& player_setup_data = std::vector<PlayerSetupData>());
 
     /** removes the object with ID number \a id from the universe, and returns it; returns 0 if there is no such object*/
@@ -330,7 +330,7 @@ protected:
     void GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
     void PopulateSystems(Universe::PlanetDensity density);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
-    void GenerateStarlanes(StarlaneFreqency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated
+    void GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated
     void InitializeSystemGraph(); ///< resizes the system graph to the appropriate size and populates m_system_distances 
     void GenerateHomeworlds(int players, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
 

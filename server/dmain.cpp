@@ -7,7 +7,7 @@
 #  include <Python.h>
 #  include <cstdio>
 
-  extern "C" void initUniverse(void);
+  extern "C" void inituniverse(void);
 #endif
 
 #ifdef __cplusplus
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 #ifdef WITH_PYTHON
 
    Py_Initialize();
-   initUniverse();
+   inituniverse();
 //   PyRun_SimpleString("import Universe\nprint dir(Universe)\nprint
 //   \"Hallo\"");
    PyRun_InteractiveLoop(stdin, "Console");

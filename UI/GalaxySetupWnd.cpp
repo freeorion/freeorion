@@ -90,9 +90,9 @@ Universe::Age GalaxySetupPanel::GalaxyAge() const
     return Universe::Age(m_galaxy_ages_list->CurrentItemIndex());
 }
 
-Universe::StarlaneFreqency GalaxySetupPanel::StarlaneFrequency() const
+Universe::StarlaneFrequency GalaxySetupPanel::StarlaneFrequency() const
 {
-    return Universe::StarlaneFreqency(m_starlane_freq_list->CurrentItemIndex() + (ALLOW_NO_STARLANES ? 0 : 1));
+    return Universe::StarlaneFrequency(m_starlane_freq_list->CurrentItemIndex() + (ALLOW_NO_STARLANES ? 0 : 1));
 }
 
 Universe::PlanetDensity GalaxySetupPanel::PlanetDensity() const
@@ -100,9 +100,9 @@ Universe::PlanetDensity GalaxySetupPanel::PlanetDensity() const
     return Universe::PlanetDensity(m_planet_density_list->CurrentItemIndex());
 }
 
-Universe::SpecialsFreqency GalaxySetupPanel::SpecialsFrequency() const
+Universe::SpecialsFrequency GalaxySetupPanel::SpecialsFrequency() const
 {
-    return Universe::SpecialsFreqency(m_specials_freq_list->CurrentItemIndex());
+    return Universe::SpecialsFrequency(m_specials_freq_list->CurrentItemIndex());
 }
 
 boost::shared_ptr<GG::Texture> GalaxySetupPanel::PreviewImage() const

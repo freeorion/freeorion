@@ -665,8 +665,8 @@ GG::XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
     return retval;
 }
 
-void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFreqency starlane_freq, PlanetDensity planet_density, 
-                              SpecialsFreqency specials_freq, int players, int ai_players, 
+void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
+                              SpecialsFrequency specials_freq, int players, int ai_players, 
                               const std::vector<PlayerSetupData>& player_setup_data/* = std::vector<PlayerSetupData>()*/)
 {
     // wipe out anything present in the object map
@@ -912,7 +912,7 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
     }
 }
 
-void Universe::GenerateStarlanes(StarlaneFreqency freq, const AdjacencyGrid& adjacency_grid)
+void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid)
 {
     const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
 

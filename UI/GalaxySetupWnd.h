@@ -50,9 +50,9 @@ public:
     int                         Systems() const;      //!< Returns the number of star systems to use in generating the galaxy
     Universe::Shape             GalaxyShape() const;  //!< Returns the shape of the galaxy
     Universe::Age               GalaxyAge() const;    //!< Returns the age of the galaxy
-    Universe::StarlaneFreqency  StarlaneFrequency() const;  //!< Returns the frequency of starlanes in the galaxy
+    Universe::StarlaneFrequency  StarlaneFrequency() const;  //!< Returns the frequency of starlanes in the galaxy
     Universe::PlanetDensity     PlanetDensity() const;      //!< Returns the density of planets within systems
-    Universe::SpecialsFreqency  SpecialsFrequency() const;  //!< Returns the rarity of planetary and system specials
+    Universe::SpecialsFrequency  SpecialsFrequency() const;  //!< Returns the rarity of planetary and system specials
 
     boost::shared_ptr<GG::Texture> PreviewImage() const;  //!< Returns the current preview image texture
 
