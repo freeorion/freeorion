@@ -9,7 +9,6 @@ namespace Effect {
     class EffectBase;
     class SetMeter;
     class SetEmpireStockpile;
-    class SetEmpireStockpile;
     class SetPlanetType;
     class SetPlanetSize;
     class AddOwner;
@@ -19,7 +18,7 @@ namespace Effect {
     class AddSpecial;
     class RemoveSpecial;
     class SetStarType;
-    class SetAvailability;
+    class SetTechAvailability;
     class SetEffectTarget;
     GG::XMLObjectFactory<EffectBase> EffectFactory(); ///< an XML factory that creates the right subclass of EffectBase from a given XML element
 }
@@ -33,16 +32,27 @@ namespace Effect {
 class Effect::EffectsGroup
 {
 public:
-    EffectsGroup(const Condition::ConditionBase* scope, const Condition::ConditionBase* activation, const std::vector<EffectBase*>& effects);
+    struct Description
+    {
+        std::string scope_description;
+        std::string activation_description;
+        std::vector<std::string> effect_descriptions;
+    };
+
+    EffectsGroup(const Condition::ConditionBase* scope, const Condition::ConditionBase* activation,
+                 const std::vector<EffectBase*>& effects, const std::string& stacking_group = "");
     EffectsGroup(const GG::XMLElement& elem);
     virtual ~EffectsGroup();
 
     void Execute(int source_id) const;
+    const std::string& StackingGroup() const;
     const std::vector<EffectBase*>& EffectsList() const;
+    Description GetDescription() const;
 
 protected:
     const Condition::ConditionBase* m_scope;
     const Condition::ConditionBase* m_activation;
+    std::string                     m_stacking_group;
     std::vector<EffectBase*>        m_effects;
 };
 
@@ -55,6 +65,7 @@ public:
     virtual ~EffectBase();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const = 0;
+    virtual std::string Description() const = 0;
 };
 
 /** Sets the meter of the given kind to \a value.  The max value of the meter is set if \a max == true; otherwise the current value of the
@@ -67,6 +78,7 @@ public:
     virtual ~SetMeter();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     MeterType                             m_meter;
@@ -74,20 +86,21 @@ private:
     bool                                  m_max;
 };
 
-/*class Effect::SetEmpireStockpile : public Effect::EffectBase
+/** Sets the empire stockpile of the target's owning empire to \a value.  If the target does not have exactly one owner, nothing is done. */
+class Effect::SetEmpireStockpile : public Effect::EffectBase
 {
 public:
-    SetEmpireStockpile(StockpileType stockpile, const ValueRef::ValueRefBase<int>* empire_id, const ValueRef::ValueRefBase<double>* amount);
+    SetEmpireStockpile(StockpileType stockpile, const ValueRef::ValueRefBase<double>* value);
     SetEmpireStockpile(const GG::XMLElement& elem);
     virtual ~SetEmpireStockpile();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
-StockpileType                         m_stockpile;
-    const ValueRef::ValueRefBase<int>*    m_empire_id;
-    const ValueRef::ValueRefBase<double>* m_amount;
-};*/
+    StockpileType                         m_stockpile;
+    const ValueRef::ValueRefBase<double>* m_value;
+};
 
 /** Sets the planet type of the target to \a type.  This has no effect on non-Planet targets. */
 class Effect::SetPlanetType : public Effect::EffectBase
@@ -98,6 +111,7 @@ public:
     virtual ~SetPlanetType();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     const ValueRef::ValueRefBase<PlanetType>* m_type;
@@ -112,6 +126,7 @@ public:
     virtual ~SetPlanetSize();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     const ValueRef::ValueRefBase<PlanetSize>* m_size;
@@ -126,6 +141,7 @@ public:
     virtual ~AddOwner();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     const ValueRef::ValueRefBase<int>* m_empire_id;
@@ -140,6 +156,7 @@ public:
     virtual ~RemoveOwner();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     const ValueRef::ValueRefBase<int>* m_empire_id;
@@ -153,6 +170,7 @@ public:
     Create(const GG::XMLElement& elem);
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 };*/
 
 /** Destroys the target object. */
@@ -163,6 +181,7 @@ public:
     Destroy(const GG::XMLElement& elem);
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 };
 
 /** Adds the Special with the name \a name to the target object. */
@@ -173,6 +192,7 @@ public:
     AddSpecial(const GG::XMLElement& elem);
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     std::string m_name;
@@ -186,6 +206,7 @@ public:
     RemoveSpecial(const GG::XMLElement& elem);
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     std::string m_name;
@@ -200,28 +221,30 @@ public:
     virtual ~SetStarType();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     const ValueRef::ValueRefBase<StarType>* m_type;
 };
 
-/** Sets the availability of tech \a tech_name to empire \a empire_id.  If \a grant_tech is true, the tech is fully available, just as if it were
-    researched normally; otherwise, only the items that the tech grants are made available.  Note that this means this Effect is intended also to
+/** Sets the availability of tech \a tech_name to empire \a empire_id.  If \a include_tech is true, the tech is fully available, just as if it were
+    researched normally; otherwise, only the items that the tech includes are made available.  Note that this means this Effect is intended also to
     be used to unlock buildings, ships, etc.  The tech and/or its items are made available if \a available is true, or unavailable otherwise. */
-class Effect::SetAvailability : public Effect::EffectBase
+class Effect::SetTechAvailability : public Effect::EffectBase
 {
 public:
-    SetAvailability(const std::string& tech_name, const ValueRef::ValueRefBase<int>* empire_id, bool available, bool grant_tech);
-    SetAvailability(const GG::XMLElement& elem);
-    virtual ~SetAvailability();
+    SetTechAvailability(const std::string& tech_name, const ValueRef::ValueRefBase<int>* empire_id, bool available, bool include_tech);
+    SetTechAvailability(const GG::XMLElement& elem);
+    virtual ~SetTechAvailability();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     std::string                        m_tech_name;
     const ValueRef::ValueRefBase<int>* m_empire_id;
     bool                               m_available;
-    bool                               m_grant_tech;
+    bool                               m_include_tech;
 };
 
 class Effect::SetEffectTarget : public Effect::EffectBase
@@ -232,6 +255,7 @@ public:
     virtual ~SetEffectTarget();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     const ValueRef::ValueRefBase<int>* m_effect_target_id;

@@ -1,35 +1,70 @@
 #include "Effect.h"
 
+#include "../util/AppInterface.h"
 #include "../util/Parse.h"
 
+#include <boost/format.hpp>
+#include <boost/tuple/tuple.hpp>
+
 using namespace Effect;
+using namespace boost::io;
+using boost::lexical_cast;
+using boost::format;
 
 namespace {
-    Effect::EffectBase* NewSetMeter(const GG::XMLElement& elem)             {return new Effect::SetMeter(elem);}
-    //Effect::EffectBase* NewSetEmpireStockpile(const GG::XMLElement& elem) {return new Effect::SetEmpireStockpile(elem);}
-    Effect::EffectBase* NewSetPlanetType(const GG::XMLElement& elem)        {return new Effect::SetPlanetType(elem);}
-    Effect::EffectBase* NewSetPlanetSize(const GG::XMLElement& elem)        {return new Effect::SetPlanetSize(elem);}
-    Effect::EffectBase* NewAddOwner(const GG::XMLElement& elem)             {return new Effect::AddOwner(elem);}
-    Effect::EffectBase* NewRemoveOwner(const GG::XMLElement& elem)          {return new Effect::RemoveOwner(elem);}
-    //Effect::EffectBase* NewCreate(const GG::XMLElement& elem)             {return new Effect::Create(elem);}
-    Effect::EffectBase* NewDestroy(const GG::XMLElement& elem)              {return new Effect::Destroy(elem);}
-    Effect::EffectBase* NewAddSpecial(const GG::XMLElement& elem)           {return new Effect::AddSpecial(elem);}
-    Effect::EffectBase* NewRemoveSpecial(const GG::XMLElement& elem)        {return new Effect::RemoveSpecial(elem);}
-    Effect::EffectBase* NewSetStarType(const GG::XMLElement& elem)          {return new Effect::SetStarType(elem);}
-    Effect::EffectBase* NewSetAvailability(const GG::XMLElement& elem)      {return new Effect::SetAvailability(elem);}
-    Effect::EffectBase* NewSetEffectTarget(const GG::XMLElement& elem)      {return new Effect::SetEffectTarget(elem);}
+    EffectBase* NewSetMeter(const GG::XMLElement& elem)             {return new SetMeter(elem);}
+    EffectBase* NewSetEmpireStockpile(const GG::XMLElement& elem)   {return new SetEmpireStockpile(elem);}
+    EffectBase* NewSetPlanetType(const GG::XMLElement& elem)        {return new SetPlanetType(elem);}
+    EffectBase* NewSetPlanetSize(const GG::XMLElement& elem)        {return new SetPlanetSize(elem);}
+    EffectBase* NewAddOwner(const GG::XMLElement& elem)             {return new AddOwner(elem);}
+    EffectBase* NewRemoveOwner(const GG::XMLElement& elem)          {return new RemoveOwner(elem);}
+    //EffectBase* NewCreate(const GG::XMLElement& elem)             {return new Create(elem);}
+    EffectBase* NewDestroy(const GG::XMLElement& elem)              {return new Destroy(elem);}
+    EffectBase* NewAddSpecial(const GG::XMLElement& elem)           {return new AddSpecial(elem);}
+    EffectBase* NewRemoveSpecial(const GG::XMLElement& elem)        {return new RemoveSpecial(elem);}
+    EffectBase* NewSetStarType(const GG::XMLElement& elem)          {return new SetStarType(elem);}
+    EffectBase* NewSetTechAvailability(const GG::XMLElement& elem)  {return new SetTechAvailability(elem);}
+    EffectBase* NewSetEffectTarget(const GG::XMLElement& elem)      {return new SetEffectTarget(elem);}
+
+    boost::tuple<bool, ValueRef::OpType, double>
+    SimpleMeterModification(MeterType meter, bool max, const ValueRef::ValueRefBase<double>* ref)
+    {
+        boost::tuple<bool, ValueRef::OpType, double> retval(false);
+        if (const ValueRef::Operation<double>* op = dynamic_cast<const ValueRef::Operation<double>*>(ref)) {
+            if (!op->LHS() || !op->RHS())
+                return retval;
+            if (const ValueRef::Variable<double>* var = dynamic_cast<const ValueRef::Variable<double>*>(op->LHS())) {
+                if (const ValueRef::Constant<double>* constant = dynamic_cast<const ValueRef::Constant<double>*>(op->RHS())) {
+                    retval.get<0>() = var->PropertyName().size() == 1 &&
+                        (max ? "Max" : "Current") + UserString(lexical_cast<std::string>(meter)) == var->PropertyName()[0];
+                    retval.get<1>() = op->GetOpType();
+                    retval.get<2>() = constant->Value();
+                    return retval;
+                }
+            } else if (const ValueRef::Variable<double>* var = dynamic_cast<const ValueRef::Variable<double>*>(op->LHS())) {
+                if (const ValueRef::Constant<double>* constant = dynamic_cast<const ValueRef::Constant<double>*>(op->LHS())) {
+                    retval.get<0>() = var->PropertyName().size() == 1 &&
+                        (max ? "Max" : "Current") + UserString(lexical_cast<std::string>(meter)) == var->PropertyName()[0];
+                    retval.get<1>() = op->GetOpType();
+                    retval.get<2>() = constant->Value();
+                    return retval;
+                }
+            }
+        }
+        return retval;
+    }
 
     bool temp_header_bool = RecordHeaderFile(EffectRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
-GG::XMLObjectFactory<Effect::EffectBase> Effect::EffectFactory()
+GG::XMLObjectFactory<EffectBase> Effect::EffectFactory()
 {
-    static GG::XMLObjectFactory<Effect::EffectBase> factory;
+    static GG::XMLObjectFactory<EffectBase> factory;
     static bool init = false;
     if (!init) {
         factory.AddGenerator("Effect::SetMeter", &NewSetMeter);
-        //factory.AddGenerator("Effect::SetEmpireStockpile", &NewSetEmpireStockpile);
+        factory.AddGenerator("Effect::SetEmpireStockpile", &NewSetEmpireStockpile);
         factory.AddGenerator("Effect::SetPlanetType", &NewSetPlanetType);
         factory.AddGenerator("Effect::SetPlanetSize", &NewSetPlanetSize);
         factory.AddGenerator("Effect::AddOwner", &NewAddOwner);
@@ -38,7 +73,7 @@ GG::XMLObjectFactory<Effect::EffectBase> Effect::EffectFactory()
         factory.AddGenerator("Effect::Destroy", &NewDestroy);
         factory.AddGenerator("Effect::AddSpecial", &NewAddSpecial);
         factory.AddGenerator("Effect::RemoveSpecial", &NewRemoveSpecial);
-        factory.AddGenerator("Effect::SetAvailability", &NewSetAvailability);
+        factory.AddGenerator("Effect::SetTechAvailability", &NewSetTechAvailability);
         factory.AddGenerator("Effect::SetEffectTarget", &NewSetEffectTarget);
         init = true;
     }
@@ -48,9 +83,11 @@ GG::XMLObjectFactory<Effect::EffectBase> Effect::EffectFactory()
 ///////////////////////////////////////////////////////////
 // EffectsGroup                                          //
 ///////////////////////////////////////////////////////////
-EffectsGroup::EffectsGroup(const Condition::ConditionBase* scope, const Condition::ConditionBase* activation, const std::vector<EffectBase*>& effects) :
+EffectsGroup::EffectsGroup(const Condition::ConditionBase* scope, const Condition::ConditionBase* activation,
+                           const std::vector<EffectBase*>& effects, const std::string& stacking_group/* = ""*/) :
     m_scope(scope),
     m_activation(activation),
+    m_stacking_group(stacking_group),
     m_effects(effects)
 {
 }
@@ -62,6 +99,7 @@ EffectsGroup::EffectsGroup(const GG::XMLElement& elem)
 
     m_scope = Condition::ConditionFactory().GenerateObject(elem.Child("scope").Child(0));
     m_activation = Condition::ConditionFactory().GenerateObject(elem.Child("activation").Child(0));
+    m_stacking_group = elem.Child("stacking_group").Text();
     for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
         m_effects.push_back(EffectFactory().GenerateObject(*it));
     }
@@ -107,9 +145,25 @@ void EffectsGroup::Execute(int source_id) const
     }
 }
 
+const std::string& EffectsGroup::StackingGroup() const
+{
+    return m_stacking_group;
+}
+
 const std::vector<EffectBase*>& EffectsGroup::EffectsList() const
 {
     return m_effects;
+}
+
+EffectsGroup::Description EffectsGroup::GetDescription() const
+{
+    Description retval;
+    retval.scope_description = str(format(UserString("DESC_EFFECTS_GROUP_SCOPE")) % m_scope->Description());
+    retval.activation_description = str(format(UserString("DESC_EFFECTS_GROUP_ACTIVATION")) % m_activation->Description());
+    for (unsigned int i = 0; i < m_effects.size(); ++i) {
+        retval.effect_descriptions.push_back(m_effects[i]->Description());
+    }
+    return retval;
 }
 
 
@@ -136,9 +190,9 @@ SetMeter::SetMeter(const GG::XMLElement& elem)
     if (elem.Tag() != "Effect::SetMeter")
         throw std::invalid_argument("Attempted to construct a Effect::SetMeter from an XMLElement that had a tag other than \"Effect::SetMeter\"");
 
-    m_meter = boost::lexical_cast<MeterType>(elem.Child("meter").Text());
+    m_meter = lexical_cast<MeterType>(elem.Child("meter").Text());
     m_value = ParseArithmeticExpression<double>(elem.Child("value").Text());
-    m_max = boost::lexical_cast<bool>(elem.Child("max").Text());
+    m_max = lexical_cast<bool>(elem.Child("max").Text());
 }
 
 SetMeter::~SetMeter()
@@ -152,6 +206,80 @@ void SetMeter::Execute(const UniverseObject* source, UniverseObject* target) con
         double val = m_value->Eval(source, target);
         m_max ? m->SetMax(val) : m->SetCurrent(val);
     }
+}
+
+std::string SetMeter::Description() const
+{
+    std::string retval;
+    bool simple;
+    ValueRef::OpType op;
+    double const_operand;
+    boost::tie(simple, op, const_operand) = SimpleMeterModification(m_meter, m_max, m_value);
+    if (simple) {
+        char op_char = '+';
+        switch (op) {
+        case ValueRef::PLUS: op_char = '+';
+        case ValueRef::MINUS: op_char = '-';
+        case ValueRef::TIMES: op_char = '*';
+        case ValueRef::DIVIDES: op_char = '/';
+        default: op_char = '?';
+        }
+        str(format(UserString(m_max ? "DESC_SIMPLE_SET_METER_MAX" : "DESC_SIMPLE_SET_METER_CURRENT"))
+            % UserString(lexical_cast<std::string>(m_meter))
+            % op_char
+            % lexical_cast<std::string>(const_operand));
+    } else {
+        str(format(UserString(m_max ? "DESC_COMPLEX_SET_METER_MAX" : "DESC_COMPLEX_SET_METER_CURRENT"))
+            % UserString(lexical_cast<std::string>(m_meter))
+            % lexical_cast<std::string>(const_operand));
+    }
+    return retval;
+}
+
+
+///////////////////////////////////////////////////////////
+// SetEmpireStockpile                                    //
+///////////////////////////////////////////////////////////
+SetEmpireStockpile::SetEmpireStockpile(StockpileType stockpile, const ValueRef::ValueRefBase<double>* value) :
+    m_stockpile(stockpile),
+    m_value(value)
+{
+}
+
+SetEmpireStockpile::SetEmpireStockpile(const GG::XMLElement& elem)
+{
+    if (elem.Tag() != "Effect::SetEmpireStockpile")
+        throw std::invalid_argument("Attempted to construct a Effect::SetEmpireStockpile from an XMLElement that had a tag other than \"Effect::SetEmpireStockpile\"");
+
+    m_stockpile = lexical_cast<StockpileType>(elem.Child("stockpile").Text());
+    m_value = ParseArithmeticExpression<double>(elem.Child("value").Text());
+}
+
+SetEmpireStockpile::~SetEmpireStockpile()
+{
+    delete m_value;
+}
+
+void SetEmpireStockpile::Execute(const UniverseObject* source, UniverseObject* target) const
+{
+    if (source->Owners().size() != 1)
+        return;
+
+    double value = m_value->Eval(source, target);
+    Empire* empire = Empires().Lookup(*source->Owners().begin());
+    if (m_stockpile == ST_FOOD) {
+        empire->FoodResPool().SetStockpile(value);
+    } else if (m_stockpile == ST_MINERAL) {
+        empire->MineralResPool().SetStockpile(value);
+    } else if (m_stockpile == ST_TRADE) {
+        empire->TradeResPool().SetStockpile(value);
+    }
+}
+
+std::string SetEmpireStockpile::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_value) ? UserString(lexical_cast<std::string>(m_value->Eval(0, 0))) : m_value->Description();
+    return str(format(UserString("DESC_SET_EMPIRE_STOCKPILE")) % UserString(lexical_cast<std::string>(m_stockpile)) % value_str);
 }
 
 
@@ -183,6 +311,12 @@ void SetPlanetType::Execute(const UniverseObject* source, UniverseObject* target
     }
 }
 
+std::string SetPlanetType::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
+    return str(format(UserString("DESC_SET_PLANET_TYPE")) % value_str);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetPlanetSize                                         //
@@ -212,6 +346,12 @@ void SetPlanetSize::Execute(const UniverseObject* source, UniverseObject* target
     }
 }
 
+std::string SetPlanetSize::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_size) ? UserString(lexical_cast<std::string>(m_size->Eval(0, 0))) : m_size->Description();
+    return str(format(UserString("DESC_SET_PLANET_SIZE")) % value_str);
+}
+
 
 ///////////////////////////////////////////////////////////
 // AddOwner                                              //
@@ -236,8 +376,15 @@ AddOwner::~AddOwner()
 
 void AddOwner::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    // TODO : verify that such an empire exists
-    target->AddOwner(m_empire_id->Eval(source, target));
+    int empire_id = m_empire_id->Eval(source, target);
+    assert(Empires().Lookup(empire_id));
+    target->AddOwner(empire_id);
+}
+
+std::string AddOwner::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
+    return str(format(UserString("DESC_ADD_OWNER")) % value_str);
 }
 
 
@@ -264,8 +411,15 @@ RemoveOwner::~RemoveOwner()
 
 void RemoveOwner::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    // TODO : verify that such an empire exists
-    target->RemoveOwner(m_empire_id->Eval(source, target));
+    int empire_id = m_empire_id->Eval(source, target);
+    assert(Empires().Lookup(empire_id));
+    target->RemoveOwner(empire_id);
+}
+
+std::string RemoveOwner::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
+    return str(format(UserString("DESC_REMOVE_OWNER")) % value_str);
 }
 
 
@@ -301,6 +455,11 @@ void Destroy::Execute(const UniverseObject* source, UniverseObject* target) cons
     GetUniverse().Delete(target->ID());
 }
 
+std::string Destroy::Description() const
+{
+    return UserString("DESC_DESTROY");
+}
+
 
 ///////////////////////////////////////////////////////////
 // AddSpecial                                            //
@@ -323,6 +482,11 @@ void AddSpecial::Execute(const UniverseObject* source, UniverseObject* target) c
     target->AddSpecial(m_name);
 }
 
+std::string AddSpecial::Description() const
+{
+    return str(format(UserString("DESC_ADD_SPECIAL")) % m_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // RemoveSpecial                                         //
@@ -343,6 +507,11 @@ RemoveSpecial::RemoveSpecial(const GG::XMLElement& elem)
 void RemoveSpecial::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     target->RemoveSpecial(m_name);
+}
+
+std::string RemoveSpecial::Description() const
+{
+    return str(format(UserString("DESC_REMOVE_SPECIAL")) % m_name);
 }
 
 
@@ -374,37 +543,69 @@ void SetStarType::Execute(const UniverseObject* source, UniverseObject* target) 
     }
 }
 
+std::string SetStarType::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
+    return str(format(UserString("DESC_SET_STAR_TYPE")) % value_str);
+}
+
 
 ///////////////////////////////////////////////////////////
-// SetAvailability                                           //
+// SetTechAvailability                                           //
 ///////////////////////////////////////////////////////////
-SetAvailability::SetAvailability(const std::string& tech_name, const ValueRef::ValueRefBase<int>* empire_id, bool available, bool grant_tech) :
+SetTechAvailability::SetTechAvailability(const std::string& tech_name, const ValueRef::ValueRefBase<int>* empire_id, bool available, bool include_tech) :
     m_tech_name(tech_name),
     m_empire_id(empire_id),
     m_available(available),
-    m_grant_tech(grant_tech)
+    m_include_tech(include_tech)
 {
 }
 
-SetAvailability::SetAvailability(const GG::XMLElement& elem)
+SetTechAvailability::SetTechAvailability(const GG::XMLElement& elem)
 {
-    if (elem.Tag() != "Effect::SetAvailability")
-        throw std::invalid_argument("Attempted to construct a Effect::SetAvailability from an XMLElement that had a tag other than \"Effect::SetAvailability\"");
+    if (elem.Tag() != "Effect::SetTechAvailability")
+        throw std::invalid_argument("Attempted to construct a Effect::SetTechAvailability from an XMLElement that had a tag other than \"Effect::SetTechAvailability\"");
 
     m_tech_name = elem.Child("tech_name").Text();
     m_empire_id = ParseArithmeticExpression<int>(elem.Child("empire_id").Text());
-    m_available = boost::lexical_cast<bool>(elem.Child("available").Text());
-    m_grant_tech = boost::lexical_cast<bool>(elem.Child("grant_tech").Text());
+    m_available = lexical_cast<bool>(elem.Child("available").Text());
+    m_include_tech = lexical_cast<bool>(elem.Child("include_tech").Text());
 }
 
-SetAvailability::~SetAvailability()
+SetTechAvailability::~SetTechAvailability()
 {
     delete m_empire_id;
 }
 
-void SetAvailability::Execute(const UniverseObject* source, UniverseObject* target) const
+void SetTechAvailability::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    // TODO: implement after availability is implemented
+    Empire* empire = Empires().Lookup(m_empire_id->Eval(source, target));
+    const Tech* tech = GetTech(m_tech_name);
+    assert(empire && tech);
+
+    const std::vector<Tech::ItemSpec>& items = tech->UnlockedItems();
+    for (unsigned int i = 0; i < items.size(); ++i) {
+        if (m_available)
+            empire->UnlockItem(items[i]);
+        else
+            empire->LockItem(items[i]);
+    }
+
+    if (m_include_tech) {
+        if (m_available)
+            empire->AddTech(m_tech_name);
+        else
+            empire->RemoveTech(m_tech_name);
+    }
+}
+
+std::string SetTechAvailability::Description() const
+{
+    std::string affected = str(format(UserString(m_include_tech ? "DESC_TECH_AND_ITEMS_AFFECTED" : "DESC_ITEMS_ONLY_AFFECTED")) % m_tech_name);
+    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
+    return str(format(UserString(m_available ? "DESC_SET_TECH_AVAIL" : "DESC_SET_TECH_UNAVAIL"))
+               % affected
+               % empire_str);
 }
 
 
@@ -432,4 +633,10 @@ SetEffectTarget::~SetEffectTarget()
 void SetEffectTarget::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     // TODO: implement after Effect targets are implemented
+}
+
+std::string SetEffectTarget::Description() const
+{
+    // TODO: implement after Effect targets are implemented
+    return "ERROR: SetEffectTarget is currently unimplemented.";
 }
