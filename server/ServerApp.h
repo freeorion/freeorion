@@ -90,6 +90,8 @@ private:
    
    void GameInit();        ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
 
+   GG::XMLDoc CreateTurnUpdate(int empire_id);   ///< creates encoded universe and empire data for the specified empire, diffs it with the previous turn data, stores the new data over the previous turn data and returns the diff XMLElement
+
    ServerUniverse          m_universe;
    ServerEmpireManager     m_empires;
    CombatModule*           m_current_combat;
@@ -111,6 +113,9 @@ private:
    int                     m_universe_size;        ///< the size of the universe
    int                     m_universe_shape;        ///< the shape of the universe
    std::string             m_universe_file;        ///< file to use for generating universe
+
+   std::map<int, GG::XMLDoc> m_last_turn_update_msg; ///< stores the xml encoded empire and universe data from the previous turn in order to generate diffs for turn update message.  Map is indexed by empire ID, with separate message data for each since each player sees different parts of the universe.
+
 
    static ServerApp*       s_app;
 };

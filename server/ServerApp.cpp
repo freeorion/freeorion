@@ -4,6 +4,12 @@
 #include "../network/Message.h"
 #include "XMLDoc.h"
 
+#ifndef __XDIFF__
+#include "../network/XDiff.hpp"
+#endif
+
+
+
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
 #include <log4cpp/PatternLayout.hh>
@@ -152,43 +158,44 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
          std::string host_player_name = doc.root_node.Child("host_player_name").Text();
          m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Attribute("value"));
          m_universe_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("size"));
-	 m_universe_shape = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("shape"));
-	 if (m_universe_shape == 4)
+         m_universe_shape = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("shape"));
+         if (m_universe_shape == 4)
            m_universe_file = doc.root_node.Child("universe_params").Attribute("file");
          CreateAIClients(doc.root_node);
          m_state = SERVER_GAME_SETUP;
          m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
          m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe size set to " << m_universe_size << " (SERVER_GAME_SETUP).";
          m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe shape set to " << m_universe_shape << " (SERVER_GAME_SETUP).";
-	 if (m_universe_shape == 6)
-	 {
-           m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe file set to " << m_universe_file << " (SERVER_GAME_SETUP).";
-	   ServerApp::Universe().CreateUniverse(m_universe_file, m_universe_size, 5, 2);
-           m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Created universe (SERVER_GAME_SETUP).";
-	 }
-	 else 
-	 { 
-	   ServerApp::Universe().CreateUniverse((ClientUniverse::Shape)m_universe_shape, m_universe_size, 5, 3); 
-           m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Created universe without file (SERVER_GAME_SETUP).";
-	 }
-	 
+         if (m_universe_shape == 6)
+         {
+            m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe file set to " << m_universe_file << " (SERVER_GAME_SETUP).";
+            ServerApp::Universe().CreateUniverse(m_universe_file, m_universe_size, 5, 2);
+            m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Created universe (SERVER_GAME_SETUP).";
+         }
+         else 
+         { 
+            ServerApp::Universe().CreateUniverse((ClientUniverse::Shape)m_universe_shape, m_universe_size, 5, 3); 
+            m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Created universe without file (SERVER_GAME_SETUP).";
+         }
+         
          if (m_network_core.EstablishPlayer(m_players_info.size(), connection.socket)) {
             m_network_core.SendMessage(HostAckMessage(m_players_info.size()));
             m_network_core.SendMessage(JoinAckMessage(m_players_info.size()));
             m_players_info.push_back(PlayerInfo(connection, host_player_name, true));
          }
-
-	 // set up the universe with the details obtained from the client - currently fixed to one AI
+         
+         // set up the universe with the details obtained from the client - currently fixed to one AI
       } else {
          const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
          m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to host "
-            "a new game but there was already one in progress or one being setup.  Terminating connection to " << 
-            (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
+         "a new game but there was already one in progress or one being setup.  Terminating connection to " << 
+         (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
          m_network_core.DumpConnection(connection.socket);
       }
+
       break;
    }
-
+      
    case Message::JOIN_GAME: {
       std::string msg_text = msg.GetText(); // the player name should be the entire text
       std::set<std::string>::iterator it = m_expected_ai_players.find(msg_text);
@@ -208,8 +215,8 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
          } else {
             const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
             m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to join "
-               "the game but there was not enough room.  Terminating connection to " << 
-               (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
+            "the game but there was not enough room.  Terminating connection to " << 
+            (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
             m_network_core.DumpConnection(connection.socket);
          }
       }
@@ -220,12 +227,12 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
       }
       break;
    }
-
+      
    default: {
       const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
       m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \"" <<
-         msg.Type() << "\" for a non-player Message.  Terminating connection to " << 
-         (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
+      msg.Type() << "\" for a non-player Message.  Terminating connection to " << 
+      (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
       m_network_core.DumpConnection(connection.socket);
       break;
    }
@@ -366,3 +373,43 @@ void ServerApp::GameInit()
 {
 }
 
+GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
+{
+   using GG::XMLElement;
+
+   GG::XMLDoc this_turn;
+
+   // generate new data for this turn
+   XMLElement universe_data = m_universe.XMLEncode(empire_id);
+   XMLElement empire_data = m_empires.CreateClientEmpireUpdate(empire_id);
+
+   // build the new turn doc
+   this_turn.root_node.AppendChild(universe_data);
+   this_turn.root_node.AppendChild(empire_data);
+
+   std::map<int, GG::XMLDoc>::iterator itr =  m_last_turn_update_msg.find(empire_id);
+   if (itr == m_last_turn_update_msg.end())
+   {
+      // This empire has not been added to the map yet. Full data will be sent
+      // to the client and this turn will be the first entry for this empire.
+      
+      m_last_turn_update_msg[empire_id] = this_turn;
+
+      return this_turn;
+   }
+
+   // valid entry in the map for this empire
+   GG::XMLDoc last_turn = itr->second;
+   
+   GG::XMLDoc update_patch;
+
+   // diff this turn with previous turn
+   XDiff(last_turn, this_turn, update_patch);
+
+   // clear the previous entry and store this turn into the map
+   m_last_turn_update_msg.erase(itr);
+   m_last_turn_update_msg[empire_id] = this_turn;
+
+   // return the results of the diff
+   return update_patch;
+}
