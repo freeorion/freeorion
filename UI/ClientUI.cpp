@@ -190,16 +190,14 @@ bool ClientUI::Initialize(const std::string& string_table_file)
     s_logger.setAppender(appender);
     s_logger.setAdditivity(true);   // ...but allow the addition of others later
     s_logger.setPriority(log4cpp::Priority::DEBUG);
-    s_logger.debug("ClientUI logger initialized.");
     
     return true;
-}//Initialize()
+}
 
 ClientUI::~ClientUI() 
 {
-    s_logger.debug("Shutting down ClientUI.");
     Cleanup();
-}//~ClientUI()
+}
 
 bool ClientUI::Cleanup()
 {
