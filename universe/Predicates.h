@@ -33,4 +33,16 @@ struct IsMovingFleetFunctor
     const int empire_id;
 };
 
+/** returns true iff \a obj is owned by the empire with id \a empire, and \a obj is of type T. */
+template <class T> 
+struct IsOwnedObjectFunctor
+{
+    IsOwnedObjectFunctor(int empire) : empire_id(empire) {}
+    bool operator()(const UniverseObject* obj) const 
+    {
+        return obj->Owners().find(empire_id) != obj->Owners().end() && dynamic_cast<const T*>(obj);
+    }
+    const int empire_id;
+};
+
 #endif // _Predicates_h_
