@@ -478,6 +478,13 @@ void FleetWnd::SystemClicked(int system_id)
                 std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_windows.find(fleet);
                 if (it != m_open_fleet_windows.end())
                     it->second->GetFleetDetailPanel().SetFleet(it->second->GetFleetDetailPanel().GetFleet());
+                
+                for(std::set<FleetDetailWnd*>::iterator it_new_fleets = m_new_fleet_windows.begin();it_new_fleets!=m_new_fleet_windows.end();++it_new_fleets)
+                  if((*it_new_fleets)->GetFleetDetailPanel().GetFleet()==fleet){
+                    (*it_new_fleets)->GetFleetDetailPanel().SetFleet((*it_new_fleets)->GetFleetDetailPanel().GetFleet());                  
+                    break;
+                  }
+                m_fleet_detail_panel->SetFleet(m_fleet_detail_panel->GetFleet());
             }
         }
     }
