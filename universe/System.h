@@ -181,6 +181,20 @@ private:
    StarlaneMap    m_starlanes_wormholes;  ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
 };
 
+namespace GG {
+    ENUM_MAP_BEGIN(System::StarType)
+	ENUM_MAP_INSERT(System::BLUE)
+	ENUM_MAP_INSERT(System::WHITE)
+	ENUM_MAP_INSERT(System::YELLOW)
+	ENUM_MAP_INSERT(System::ORANGE)
+	ENUM_MAP_INSERT(System::RED)
+	ENUM_MAP_INSERT(System::NEUTRON)
+	ENUM_MAP_INSERT(System::BLACK)
+    ENUM_MAP_END
+}
+ENUM_STREAM_IN(System::StarType)
+ENUM_STREAM_OUT(System::StarType)
+
 
 // template implementations
 

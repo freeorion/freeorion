@@ -50,7 +50,7 @@ System::System(const GG::XMLElement& elem) :
         throw std::invalid_argument("Attempted to construct a System from an XMLElement that had a tag other than \"System\"");
 
     try {
-        m_star = StarType(lexical_cast<int>(elem.Child("m_star").Text()));
+        m_star = lexical_cast<StarType>(elem.Child("m_star").Text());
 
         Visibility vis = Visibility(lexical_cast<int>(elem.Child("UniverseObject").Child("vis").Text()));
         if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
