@@ -143,12 +143,12 @@ void ClientNetworkCore::DispatchMessage(const Message& msg, int socket)
       if (ClientApp::CurrentCombat()) {
 //ClientApp::CombatModule().HandleMessage(msg);
       } else {
-         logger.errorStream()<< "ServerNetworkCore::DispatchMessage : Attempted to pass message to Combat module when "
+         logger.errorStream()<< "ClientNetworkCore::DispatchMessage : Attempted to pass message to Combat module when "
             "there is no current combat.";
       }
       break;
    default:
-      logger.errorStream()<< "ServerNetworkCore::DispatchMessage : Unknown module value \"" << 
+      logger.errorStream()<< "ClientNetworkCore::DispatchMessage : Unknown module value \"" << 
          msg.Module() << "\" encountered.";
       break;
    }

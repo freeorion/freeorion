@@ -17,7 +17,7 @@ log4cpp::Category& logger = log4cpp::Category::getRoot();
 void NetworkCore::SendMessage(const Message& msg, int socket, const std::string& app_name) const
 {
    if (socket < 0) {
-      logger.fatalStream() << "NetworkCore::SendMessage : Attempted to send a Message object to invalid socket " << socket << ".";
+      logger.fatalStream() << app_name << "::SendMessage : Attempted to send a Message object to invalid socket " << socket << ".";
       throw std::invalid_argument("Attempted to send a Message object to an invalid socket.");
    }
 
@@ -56,7 +56,7 @@ void NetworkCore::ReceiveData(int socket, std::string& stream, const std::string
    static char buf[2048];
    
    if (socket < 0) {
-      logger.fatalStream() << "NetworkCore::ReceiveData : Attempted to read data from invalid socket " << socket << ".";
+      logger.fatalStream() << app_name << "::ReceiveData : Attempted to read data from invalid socket " << socket << ".";
       throw std::invalid_argument("Attempted to read data from an invalid socket.");
    }
 
@@ -66,7 +66,7 @@ void NetworkCore::ReceiveData(int socket, std::string& stream, const std::string
       for (int i = 0; i < recv_len; ++i)
          stream += buf[i];
    }
-   
+
    // construct Message(s) from data, and dispatch them as appropriate
    int curr_posn = 0;
    int next_EOM = std::string::npos;
