@@ -688,7 +688,7 @@ void StatisticIcon::SetValue(double value)
         sprintf(buf, (m_show_sign ? "%+#.*g" : "%#.*g"), m_decimals_to_show, value);
         m_text->SetText(buf);
     } else {
-        m_text->SetText(boost::lexical_cast<std::string>(static_cast<int>(value)));
+        m_text->SetText((m_show_sign && 0.0 <= value ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(value)));
     }
 }
 
