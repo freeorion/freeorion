@@ -12,12 +12,7 @@ freeoriond_exe_SOURCES =			\
 AM_CPPFLAGS = @GIGI_CFLAGS@ @GIGINET_CFLAGS@ @FT2_CFLAGS@ @SDL_CFLAGS@ -DFREEORION_BUILD_SERVER #-DWITH_PYTHON -I/usr/include/python2.2
 AM_CXXFLAGS = -g3 -Wall
 
-# Remake convenience libs if needed
-
-%-common.a: force
-	make -C $(@D)
-
-force : ;
+include @top_srcdir@/remake_libs.mak
 
 freeoriond_exe_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGINET_LIBS@ @FT2_LIBS@	\
 @top_srcdir@/network/libFOnetwork-server.a				\
