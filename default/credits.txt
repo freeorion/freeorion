@@ -35,7 +35,7 @@ Contributors
   Game Design:
     Samuel Knowlton (Aquitaine)
     Krum Stanoev
-    "Drek"
+    Ben Lake (Drek)
     "Nightfish"
     Joshua Barczak (jbarcz1)
     Chris Martin (utilae)
@@ -52,7 +52,7 @@ Contributors
 
   Graphics:
     Anton Ruonala
-    "Drek"
+    Ben Lake (Drek)
     "Ka"
     Mark Saward (Tyreth)
     Alex Kaludis
