@@ -534,6 +534,57 @@ namespace {
     return true;
   }
 }
+class CUITextureButton : public GG::Button
+{
+  public:
+    /** \name Structors */ //@{
+    CUITextureButton(int x, int y, int w, int h,const boost::shared_ptr<GG::Texture> &texture,GG::Clr color = ClientUI::BUTTON_COLOR, GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int thick = 1, Uint32 flags = GG::Wnd::CLICKABLE)
+      :  Button(x, y, w, h, "", "", 0, color, GG::CLR_ZERO, flags),
+         m_border_color(border), m_border_thick(thick),m_texture(GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultWidth()))
+    {}
+
+    //@}
+
+    /** \name Accessors */ //@{
+    const GG::SubTexture& Texture() const {return m_texture;}
+    //@}
+
+    /** \name Mutators control */ //@{
+    virtual void   SetBorderColor(GG::Clr c) {m_border_color=c;}   ///< sets the control's border color;   
+    //@}
+
+  protected:
+    /** \name Mutators control */ //@{
+    virtual void RenderPressed () {OffsetMove(1, 1);RenderUnpressed();OffsetMove(-1, -1);}
+    virtual void RenderRollover() {RenderUnpressed();}
+    virtual void RenderUnpressed()
+    { 
+      GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+      GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
+
+      GG::Pt ul = UpperLeft(), lr = LowerRight();
+      AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y,color_to_use,border_color_to_use,m_border_thick,0,0,0,0);    
+      
+      glColor4ubv(GG::CLR_WHITE.v);
+      m_texture.OrthoBlit(ul,lr,false);
+    }
+    //@}
+
+    virtual void   RButtonDown(const GG::Pt& pt, Uint32 keys)          {if (!Disabled()) SetState(BN_PRESSED);}
+    virtual void   RDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys){if (!Disabled()) SetState(BN_PRESSED);}
+    virtual void   RButtonUp(const GG::Pt& pt, Uint32 keys)            {if (!Disabled()) SetState(BN_UNPRESSED);}
+    virtual void   RClick(const GG::Pt& pt, Uint32 keys)               {if (!Disabled()) {SetState(BN_UNPRESSED); m_rclicked_sig(); SetState(BN_UNPRESSED);}}
+
+  private:
+    void Refresh();
+
+    mutable ClickedSignalType m_rclicked_sig;
+
+    GG::SubTexture m_texture;
+
+    GG::Clr m_border_color;
+    int     m_border_thick;
+};
 
 class CUIIconButton : public GG::Button
 {
@@ -1479,7 +1530,10 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
 
   GG::Pt ul = UpperLeft();
 
-  m_radio_btn_primary_focus = new GG::RadioButtonGroup(15,145);
+  m_btn_fullscreen = new CUITextureButton(20,70-15,15,15,GetTexture(ClientUI::ART_DIR + "icons/fullscreenbutton.png"),GG::CLR_ZERO,GG::CLR_ZERO);
+  AttachChild(m_btn_fullscreen);
+
+  m_radio_btn_primary_focus = new GG::RadioButtonGroup(20,145);
   m_radio_btn_primary_focus->AddButton(new CUIStateButton(0,  0,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
   m_radio_btn_primary_focus->AddButton(new CUIStateButton(0, 35,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
   m_radio_btn_primary_focus->AddButton(new CUIStateButton(0, 70,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
@@ -1488,7 +1542,7 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   AttachChild(m_radio_btn_primary_focus);
   m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::PrimaryFocusClicked, this);
 
-  m_radio_btn_secondary_focus = new GG::RadioButtonGroup(35,145);
+  m_radio_btn_secondary_focus = new GG::RadioButtonGroup(40,145);
   m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0,  0,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
   m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0, 35,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
   m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0, 70,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
@@ -1794,7 +1848,7 @@ bool SidePanel::PlanetView::Render()
   AngledCornerRectangle(ul.x+10, ul.y+70,ul.x+244, ul.y+290, GG::Clr(0.0,0.0,0.0,0.6), GG::CLR_ZERO,0,0,0,0,0);
   glColor4ubv(alpha_color.v);
 
-  m_foci_image.OrthoBlit(ul+GG::Pt(60,130),ul+GG::Pt(80+m_foci_image.Width(),140+130),false);
+  m_foci_image.OrthoBlit(ul+GG::Pt(65,130),ul+GG::Pt(85+m_foci_image.Width(),140+130),false);
 
   boost::shared_ptr<GG::Font> font;std::string text; int y;
   Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
@@ -1803,19 +1857,19 @@ bool SidePanel::PlanetView::Render()
 
   y = ul.y+40;
   text = planet->Name();
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));
-  font->RenderText(ul.x+30,y,ul.x+500,y+font->Height(), text, format, 0, false);
+  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT_BOLD, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));
+  font->RenderText(ul.x+40,y,ul.x+500,y+font->Height(), text, format, 0, false);
   y+=font->Height();
 
   text = GetPlanetSizeName(*planet);if(text.length()>0) text+=" "; text+= GetPlanetTypeName(*planet);
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+30,y-2,ul.x+500,y-2+font->Height(), text, format, 0, false);
+  font->RenderText(ul.x+40,y-2,ul.x+500,y-2+font->Height(), text, format, 0, false);
   y+=font->Height();
 
   y = ul.y+80;
   text = "Population";
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+15,y,ul.x+500,y+font->Height(), text, format, 0, false);
+  font->RenderText(ul.x+20,y,ul.x+500,y+font->Height(), text, format, 0, false);
 
   if(planet->MaxPop()==0) text= ClientUI::String("PL_UNHABITABLE");
   else                    text= " "+boost::lexical_cast<std::string>(static_cast<int>(planet->PopPoints()))+"/"+boost::lexical_cast<std::string>(planet->MaxPop()) + " Million";
@@ -1826,38 +1880,38 @@ bool SidePanel::PlanetView::Render()
   text+=")</rgba>";
 
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+15+80,y,ul.x+500,y+font->Height(), text, format, 0, true);
+  font->RenderText(ul.x+20+80,y,ul.x+500,y+font->Height(), text, format, 0, true);
   y+=font->Height();
 
 
   text = "Immigration";
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*0.9));
-  font->RenderText(ul.x+15,y,ul.x+500,y+font->Height(), text, format, 0, false);
+  font->RenderText(ul.x+20,y,ul.x+500,y+font->Height(), text, format, 0, false);
   y+=font->Height();
 
   y+= 5;
 
   text = "Focus";
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+15,y,ul.x+500,y+font->Height(), text, format, 0, false);
+  font->RenderText(ul.x+20,y,ul.x+500,y+font->Height(), text, format, 0, false);
   
   text = "Production";
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+170,y,ul.x+500,y+font->Height(), text, format, 0, false);
+  font->RenderText(ul.x+175,y,ul.x+500,y+font->Height(), text, format, 0, false);
   y+=font->Height();
 
   text = "pri";
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*0.9));
-  font->RenderText(ul.x+15,y,ul.x+500,y+font->Height(), text, format, 0, false);
+  font->RenderText(ul.x+20,y,ul.x+500,y+font->Height(), text, format, 0, false);
 
   text = "sec";
-  font->RenderText(ul.x+35,y,ul.x+500,y+font->Height(), text, format, 0, false);
+  font->RenderText(ul.x+40,y,ul.x+500,y+font->Height(), text, format, 0, false);
   
   y+=font->Height();
 
   text = "Balanced Focus";
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+60,ul.y+145+128,ul.x+500,ul.y+145+128+font->Height(), text, format, 0, false);
+  font->RenderText(ul.x+65,ul.y+145+128,ul.x+500,ul.y+145+128+font->Height(), text, format, 0, false);
   y+=font->Height();
 
 
@@ -1875,7 +1929,7 @@ bool SidePanel::PlanetView::Render()
   int x,icon_dim = static_cast<int>(font->Height()*1.5);  boost::shared_ptr<GG::Texture> icon;
 
   format = GG::TF_RIGHT | GG::TF_VCENTER;
-  x = UpperLeft().x+170;
+  x = UpperLeft().x+175;
   //farming
   y = UpperLeft().y+140;
   icon=IconFarming(); icon->OrthoBlit(x,y,x+icon_dim,y+icon_dim, 0, false);
@@ -1976,7 +2030,7 @@ bool SidePanel::PlanetView::Render()
 
       format = GG::TF_LEFT | GG::TF_VCENTER;
       text = design.name;
-      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));
+      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT_BOLD, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));
       font->RenderText(ul.x+260,ul.y+180,ul.x+500,ul.y+180+font->Height(), text, format, 0, false);
 
       y = ul.y+180;

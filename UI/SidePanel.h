@@ -38,6 +38,8 @@ class CUIScroll;
 class System;
 
 class CUIIconButton;
+class CUITextureButton;
+
 namespace GG {class TextControl;}
 
 class PlanetCtrl;
@@ -288,6 +290,8 @@ private:
         CUIDropDownList *m_construction;
 
         GG::RadioButtonGroup *m_radio_btn_primary_focus,*m_radio_btn_secondary_focus;
+        CUITextureButton *m_btn_fullscreen;
+
 
         boost::signals::connection m_connection_btn_primary_focus_changed;
         boost::signals::connection m_connection_btn_secondary_focus_changed;
