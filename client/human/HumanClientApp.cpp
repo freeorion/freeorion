@@ -203,7 +203,11 @@ void HumanClientApp::SDLInit()
 {
     const SDL_VideoInfo* vid_info = 0;
 
+#ifdef FREEORION_WIN32
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) < 0) {
+#else
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE | SDL_INIT_EVENTTHREAD) < 0) {
+#endif
         Logger().errorStream() << "SDL initialization failed: " << SDL_GetError();
         Exit(1);
     }
@@ -481,9 +485,9 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             
             // if we have empire data, then process it.  As it stands now,
             // we may not, so dont assume we do.
-            if(doc.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG)) {
-                    Logger().debugStream() <<"About to call HandleEmpireElementUpdate.";
-                    m_empire.HandleEmpireElementUpdate(doc.root_node.Child(EmpireManager::EMPIRE_UPDATE_TAG));
+            if (doc.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG)) {
+                Logger().debugStream() <<"About to call HandleEmpireElementUpdate.";
+                m_empires.HandleEmpireElementUpdate(doc.root_node.Child(EmpireManager::EMPIRE_UPDATE_TAG));
             } else {
                 Logger().debugStream() <<"No Empire data received from server.  Update Server Code.";
             }
