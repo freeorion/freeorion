@@ -98,7 +98,7 @@ ERR_CONNECT_TIMED_OUT
 Timed out while attempting to connect to server
 
 ERR_VERSION_MISMATCH
-Cannot connect to server, because this client is using different versions of the follwing settings and/or source files: 
+Cannot connect to server, because this client is using different versions of the following settings and/or source files: 
 
 
 ########################
