@@ -1,3 +1,6 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include "HumanClientApp.h"
 
 #include "../../UI/CUIControls.h"
@@ -17,6 +20,42 @@
 #include <boost/format.hpp>
 
 #include <sstream>
+
+#ifdef ENABLE_CRASH_BACKTRACE
+# include <signal.h>
+# include <execinfo.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
+# include <unistd.h>
+
+  void SigHandler(int sig)
+  {
+      void* backtrace_buffer[100];
+      int num;
+      int fd;
+
+      signal(sig, SIG_DFL);
+      fd = open("crash.txt",O_WRONLY|O_CREAT|O_APPEND|O_SYNC,0666);
+      if (fd != -1) {
+	  write(fd, "--- New crash backtrace begins here ---\n", 24);
+	  num = backtrace(backtrace_buffer, 100);
+	  backtrace_symbols_fd(backtrace_buffer, num, fd);
+	  backtrace_symbols_fd(backtrace_buffer, num, 2);
+	  close(fd);
+      }
+      
+      // Now we try to display a MessageBox; this might fail and also
+      // corrupt the heap, but since we're dying anyway that's no big
+      // deal
+      
+      ClientUI::MessageBox("The client has just crashed!\nFile a bug report and\nattach the file called 'crash.txt'\nif necessary");
+      
+      // Try SDL-shutdown
+      SDL_Quit();
+      raise(sig);
+  }
+#endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
     GG::Wnd* NewCUIButton(const GG::XMLElement& elem)         {return new CUIButton(elem);}
@@ -49,6 +88,9 @@ HumanClientApp::HumanClientApp() :
     m_game_started(false),
     m_turns_since_autosave(0)
 {
+#ifdef ENABLE_CRASH_BACKTRACE
+    signal(SIGSEGV, SigHandler);
+#endif
     AddWndGenerator("CUIButton", &NewCUIButton);
     AddWndGenerator("CUIStateButton", &NewCUIStateButton);
     AddWndGenerator("CUIScroll", &NewCUIScroll);
