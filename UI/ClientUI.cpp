@@ -102,7 +102,7 @@ const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
     db.Add<std::string>("UI.art-dir", "Sets UI art resource directory under \'[UI.dir]/art\'.", "small");
     db.Add<std::string>("UI.font", "Sets UI font resource file.", "Vera.ttf");
     db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
-    db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "arial.ttf");
+    db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "Vera.ttf");
     db.Add("UI.title-font-size", "Sets UI title font size.", 12, RangedValidator<int>(4, 40));
         
     db.Add("UI.wnd-color.red", "Sets UI window color (red).", 0, RangedValidator<int>(0, 255));
