@@ -34,21 +34,6 @@ namespace {
 
     int CircleXFromY(double y, double r) {return static_cast<int>(std::sqrt(r * r - y * y) + 0.5);}
 
-    // v0.2 only
-    int Cost(ProdCenter::BuildType item)
-    {
-        switch (item) {
-        case ProdCenter::DEF_BASE:      return 200;
-        case ProdCenter::SCOUT:         return 50;
-        case ProdCenter::COLONY_SHIP:   return 250;
-        case ProdCenter::MARKI:         return 100;
-        case ProdCenter::MARKII:        return 200;
-        case ProdCenter::MARKIII:       return 375;
-        case ProdCenter::MARKIV:        return 700;
-        }
-        return 0;
-    }
-
     struct RotatingPlanetData
     {
         RotatingPlanetData(const GG::XMLElement& elem)
@@ -105,49 +90,24 @@ namespace {
         return data;
     }
 
-    double GetRotatingPlanetAmbientIntensity()
+    double GetRotatingPlanetAmbientAndDiffuseIntensity()
     {
-        static double retval = -1.0;
+        double retval = 0.5;
 
-        if (retval == -1.0) {
-            GG::XMLDoc doc;
-            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
-            doc.ReadDoc(ifs);
-            ifs.close();
+        GG::XMLDoc doc;
+        std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+        doc.ReadDoc(ifs);
+        ifs.close();
 
-            if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("ambient_intensity"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_intensity").Text());
-            else
-                retval = 0.5;
+        if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("ambient_and_diffuse_intensity"))
+            retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_and_diffuse_intensity").Text());
 
-            retval = std::max(0.0, std::min(retval, 1.0));
-        }
+        retval = std::max(0.0, std::min(retval, 1.0));
 
         return retval;
     }
 
-    double GetRotatingPlanetDiffuseIntensity()
-    {
-        static double retval = -1.0;
-
-        if (retval == -1.0) {
-            GG::XMLDoc doc;
-            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
-            doc.ReadDoc(ifs);
-            ifs.close();
-
-            if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("diffuse_intensity"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("diffuse_intensity").Text());
-            else
-                retval = 0.5;
-
-            retval = std::max(0.0, std::min(retval, 1.0));
-        }
-
-        return retval;
-    }
-
-    void RenderSphere(double r, const GG::Clr& ambient, const GG::Clr& diffuse, const GG::Clr& spec, double shine, 
+    void RenderSphere(double r, const GG::Clr& amb_and_diff, const GG::Clr& spec, double shine, 
                       boost::shared_ptr<GG::Texture> texture)
     {
         static GLUquadric* quad = gluNewQuadric();
@@ -162,10 +122,8 @@ namespace {
                 GLfloat spec_v[] = {spec.r / 255.0, spec.g / 255.0, spec.b / 255.0, spec.a / 255.0};
                 glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec_v);
             }
-            GLfloat ambient_v[] = {ambient.r / 255.0, ambient.g / 255.0, ambient.b / 255.0, ambient.a / 255.0};
-            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_v);
-            GLfloat diffuse_v[] = {diffuse.r / 255.0, diffuse.g / 255.0, diffuse.b / 255.0, diffuse.a / 255.0};
-            glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_v);
+            GLfloat amb_and_diff_v[] = {amb_and_diff.r / 255.0, amb_and_diff.g / 255.0, amb_and_diff.b / 255.0, amb_and_diff.a / 255.0};
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, amb_and_diff_v);
             gluQuadricTexture(quad, texture ? GL_TRUE : GL_FALSE);
             gluQuadricNormals(quad, GLU_SMOOTH);
             gluQuadricOrientation(quad, GLU_OUTSIDE);
@@ -201,11 +159,9 @@ namespace {
         glEnable(GL_LIGHT0);
         glEnable(GL_TEXTURE_2D);
 
-        double intensity = GetRotatingPlanetAmbientIntensity();
-        GG::Clr ambient(intensity, intensity, intensity, 1.0);
-        intensity = GetRotatingPlanetDiffuseIntensity();
-        GG::Clr diffuse(intensity, intensity, intensity, 1.0);
-        RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
+        double intensity = GetRotatingPlanetAmbientAndDiffuseIntensity();
+        GG::Clr amb_and_diff(intensity, intensity, intensity, 1.0);
+        RenderSphere(diameter / 2, amb_and_diff, GG::CLR_WHITE, shininess, texture);
 
         glPopAttrib();
 
@@ -1325,13 +1281,13 @@ void SidePanel::PlanetPanel::PlanetProdCenterChanged()
 void SidePanel::PlanetPanel::SetPrimaryFocus(Planet::FocusType focus)
 {
   Planet *planet = GetPlanet();
-  planet->SetPrimaryFocus(focus);
+  HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,0));
 }
 
 void SidePanel::PlanetPanel::SetSecondaryFocus(Planet::FocusType focus)
 {
   Planet *planet = GetPlanet();
-  planet->SetSecondaryFocus(focus);
+  HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,1));
 } 
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
@@ -1468,14 +1424,13 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
                    m_button_research->UpperLeft ().x+ 500,
                    m_button_research->LowerRight().y+font->Height(), text, format, 0, false);
 
-  int farming=0,mining=0,research=0,industry=0,defense=0,population=0;
+  int farming=0,mining=0,research=0,industry=0,defense=0;
 
   farming   +=static_cast<int>(planet.FarmingPoints());
   industry  +=static_cast<int>(planet.IndustryPoints());
   mining    +=static_cast<int>(planet.MiningPoints());
   research  +=static_cast<int>(planet.ResearchPoints());
   //defense   +=;
-  population+=static_cast<int>(planet.PopPoints());
 
 
   const int RESOURCE_DISPLAY_HEIGHT = font->Height()+4;
@@ -1489,7 +1444,15 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   x+=font->Height();
-  text = boost::lexical_cast<std::string>(population)+"/"+boost::lexical_cast<std::string>(planet.MaxPop());
+  if(planet.PopPoints()>planet.AvailableFood())
+    text=GG::RgbaTag(GG::CLR_RED);
+  else
+    if(planet.PopPoints()>planet.AvailableFood())
+      text=GG::RgbaTag(GG::CLR_RED);
+    else
+      text=GG::RgbaTag(ClientUI::TEXT_COLOR);
+
+  text+= boost::lexical_cast<std::string>(static_cast<int>(planet.PopPoints())) + "</rgba>/"+boost::lexical_cast<std::string>(planet.MaxPop());
   font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0, true);
   x+=font->TextExtent(text, format).x+ICON_MARGIN;
 
@@ -1498,7 +1461,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   {
     // construction progress bar
     // TODO : get the costs of the item from the list of available technologies
-    int cost = Cost(planet.CurrentlyBuilding());
+    double cost = planet.ItemBuildCost();
     double percent_complete = planet.PercentComplete();
 
     int x1 = m_construction->UpperLeft ().x;
@@ -1514,10 +1477,10 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
     format = GG::TF_LEFT | GG::TF_VCENTER;
     text = "";
-    if(cost && !planet.IndustryPoints()) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
+    if(cost>0.0 && planet.ProductionPoints()<0.0) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
     else
-      if(cost)
-          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet.Rollover()) / planet.IndustryPoints())));
+      if(cost>0.0)
+          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet.Rollover()) / planet.ProductionPoints())));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
@@ -2042,8 +2005,8 @@ void SidePanel::PlanetView::PrimaryFocusClicked(int idx)
   }
   Planet *planet = dynamic_cast<Planet*>(GetUniverse().Object(m_planet_id));
   if(planet->PrimaryFocus()!=ft)
-    planet->SetPrimaryFocus(ft);
-  
+    HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,0));
+ 
   m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::PrimaryFocusClicked, this);
   m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this);
 }
@@ -2065,7 +2028,7 @@ void SidePanel::PlanetView::SecondaryFocusClicked(int idx)
   }
   Planet *planet = dynamic_cast<Planet*>(GetUniverse().Object(m_planet_id));
   if(planet->SecondaryFocus()!=ft)
-    planet->SetSecondaryFocus(ft);
+    HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,1));
 
   m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::SecondaryFocusClicked, this);
   m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this);
@@ -2241,7 +2204,7 @@ bool SidePanel::PlanetView::Render()
   if(ProdCenter::SCOUT <= planet->CurrentlyBuilding())
   {
     // construction progress bar
-    int cost = Cost(planet->CurrentlyBuilding());
+    int cost = planet->ItemBuildCost();
     double percent_complete = planet->PercentComplete();
 
     int x1 = m_construction->UpperLeft ().x;
@@ -2257,10 +2220,10 @@ bool SidePanel::PlanetView::Render()
     font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
     Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
     text = "";
-    if(cost && !planet->IndustryPoints()) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
+    if(cost>0.0 && planet->ProductionPoints()<0.0) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
     else
-      if(cost)
-          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet->Rollover()) / planet->IndustryPoints())));
+      if(cost>0.0)
+          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet->Rollover()) / planet->ProductionPoints())));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
