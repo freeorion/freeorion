@@ -1,43 +1,43 @@
-FreeOrion Credits - Release 0.1
+FreeOrion Credits - Release 0.2
 
 Admin
 -----
 
   FreeOrion Lead:
-    Mark Saward - <tyreth AT freeorion DOT org>
+    Mark Saward (Tyreth) - <tyreth AT freeorion DOT org>
 
   Programming Lead:
-    Zach Laine
+    Zach Laine (Tzlaine)
 
   Game Design Lead:
-    Samuel Knowlton
+    Samuel Knowlton (Aquitaine)
 
   Graphics Lead:
-    Anton Ruonala
+    Anton Ruonala (Miu)
 
   Audio Lead:
-    Kenneth Welch
+    Kenneth Welch (LithiumMongoose)
 
 Contributors
 -----
 
   Programming:
-    Zach Laine
-    Joseph Bissonnette
-    Dennis Brakhane
-    Joshua Barczak
+    Zach Laine (Tzlaine)
+    Joseph Bissonnette (Oceanmachine)
+    Dennis Brakhane (Yoghurt)
+    Joshua Barczak (jbarcz1)
     Andrew Emmons
-    Mark Saward
-    Ronald Nölte
-    Tony Casale
+    Mark Saward (Tyreth) 
+    Ronald Nölte (Noelte)
+    Tony Casale (Tsev)
     Michael J. Agostini
 
   Game Design:
-    Samuel Knowlton
+    Samuel Knowlton (Aquitaine)
     Krum Stanoev
     "Drek"
     "Nightfish"
-    "jbarc1"
+    Joshua Barczak (jbarcz1)
     "utilae"
     "skdiw"
     "Krikkitone"
@@ -46,18 +46,19 @@ Contributors
     Andreas Bernard
     Teal Ablaze
     "Powercrazy"
-    Joseph Bissonnette
-    Zach Laine
-    Mark Saward
+    Joseph Bissonnette (Oceanmachine)
+    Zach Laine (Tzlaine)
+    Mark Saward (Mark Saward)
 
   Graphics:
     Anton Ruonala
     "Drek"
     "Ka"
-    Mark Saward
+    Mark Saward (Tyreth)
     Alex Kaludis
     "Obiwan"
     Chris Montgomery
+    Mathias Koehler (prenid)
     "Zanzibar"
 
   Audio:

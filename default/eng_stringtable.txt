@@ -260,6 +260,9 @@ About FreeOrion
 CREDITS
 Credits
 
+FREEORION_VISION
+FreeOrion, an open-source game based on Master of Orion, is a turn-based game of epic space strategy that builds on the classic '4X' model by incorporating the nation-building elements of games such as Europa Universalis 2 and a versatile tactical combat engine. While its modular, open-source design allows for a significant degree of customization of the game engine and the story elements by the community, the FreeOrion team is dedicated to the construction of a living, breathing universe in a 'grand campaign' model. 
+
 ###########################
 # In Game Options	  #
 ###########################
