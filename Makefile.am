@@ -22,10 +22,10 @@ bin_PROGRAMS = freeoriond freeorion freeorionca
 freeorion_CPPFLAGS = @SDL_CFLAGS@ @FT2_CFLAGS@ @GIGI_CFLAGS@ @GIGISDL_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_HUMAN -I/usr/local/include/graphviz
 freeorion_LDADD = @GIGI_LIBS@ @GIGINET_LIBS@ @GIGISDL_LIBS@ -lfmod-3.74 -L/usr/local/lib/graphviz -ldotneato
 
-freeoriond_CPPFLAGS = @FT2_CFLAGS@ @SDL_CFLAGS@ @GIGI_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_SERVER # -DWITH_PYTHON -I/usr/include/python2.3 -I.. -IPython
-freeoriond_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGINET_LIBS@ #-lboost_python  -lpython2.3
+freeoriond_CPPFLAGS = -Iuniverse -Iutil @FT2_CFLAGS@ @SDL_CFLAGS@ @GIGI_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_SERVER -DWITH_PYTHON -I/usr/include/python2.3 -I.. -IPython
+freeoriond_LDADD = @GIGI_LIBS@ @GIGINET_LIBS@ -lboost_python  -lpython2.3
 
-freeorionca_CPPFLAGS = @SDL_CFLAGS@ @GIGINET_CFLAGS@ @GIGISDL_CFLAGS@ -DFREEORION_BUILD_AI
+freeorionca_CPPFLAGS = -Iuniverse -Iutil @SDL_CFLAGS@ @GIGINET_CFLAGS@ @GIGISDL_CFLAGS@ -DFREEORION_BUILD_AI
 freeorionca_LDADD = @GIGISDL_LIBS@ @GIGINET_LIBS@ @GIGI_LIBS@
 
 # The list of prefixes that will be prepended to the names of the object files
@@ -72,7 +72,7 @@ universe/Enums.h	 			\
 universe/Fleet.cpp				\
 universe/Fleet.h	 			\
 universe/Meter.cpp				\
-universe/Meter.h  				\
+universe/Meter.h				\
 universe/Planet.cpp				\
 universe/Planet.h  				\
 universe/PopCenter.cpp				\
@@ -96,7 +96,7 @@ universe/Universe.h  				\
 universe/UniverseObject.cpp			\
 universe/UniverseObject.h  			\
 universe/ValueRef.cpp				\
-universe/ValueRef.h  				\
+universe/ValueRef.h				\
 util/AppInterface.cpp				\
 util/AppInterface.h  				\
 util/DataTable.cpp				\
@@ -126,11 +126,17 @@ UI/StringTable.h				\
 util/VarText.cpp				\
 util/VarText.h  
 
-#Python/test/universe.cpp                        \
-#Python/test/combat.cpp				\
-#Python/test/empire.cpp				\
-#Python/test/empire2.cpp				\
-#Python/test/main.cpp				
+# Python/PEmpire.cpp				\
+# Python/PFleet.cpp				\
+# Python/PPlanet.cpp				\
+# Python/PPopCenter.cpp				\
+# Python/PProdCenter.cpp				\
+# Python/PShip.cpp				\
+# Python/PSystem.cpp				\
+# Python/PUniverse.cpp				\
+# Python/PUniverseObject.cpp			\
+# Python/PConverters.cpp				\
+# Python/main.cpp					
 
 # Files specific to SERVER
 freeoriond_SOURCES =				\
@@ -138,7 +144,7 @@ server/ServerApp.cpp				\
 server/ServerApp.h				\
 server/dmain.cpp				\
 combat/CombatSystem.cpp				\
-combat/CombatSystem.h  				\
+combat/CombatSystem.h				\
 Empire/ServerEmpireManager.cpp			\
 Empire/ServerEmpireManager.h			\
 network/ServerNetworkCore.cpp			\
