@@ -28,8 +28,8 @@ About::About():
     m_done_btn = new CUIButton(400,440,75,ClientUI::String("DONE"));
     m_license = new CUIButton(310,440,75,ClientUI::String("LICENSE"));
     m_credits = new CUIButton(220,440,75,ClientUI::String("CREDITS"));
-    std::string bob="FreeOrion, an open-source game based o­n Master of Orion, is a turn-based game of epic space strategy that builds o­n the classic '4X' model by incorporating the nation-building elements of games such as Europa Universalis 2 and a versatile tactical combat engine. While its modular, open-source design allows for a significant degree of customization of the game engine and the story elements by the community, the FreeOrion team is dedicated to the construction of a living, breathing universe in a 'grand campaign' model.";
-    m_info = new CUIMultiEdit(20, 20, 450, 400, bob, GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY, ClientUI::FONT,
+    m_info = new CUIMultiEdit(20, 20, 450, 400, ClientUI::String("FREEORION_VISION"), 
+                 GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY, ClientUI::FONT,
                  ClientUI::PTS, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR,
                  ClientUI::MULTIEDIT_INT_COLOR, CLICKABLE | DRAG_KEEPER);
 
