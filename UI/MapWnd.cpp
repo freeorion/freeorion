@@ -214,6 +214,7 @@ MapWnd::MapWnd() :
 
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F2, 0), &MapWnd::ToggleSitRep, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowOptions, this);
+	GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_s, 0), &MapWnd::CloseSystemView, this);
 
     // Keys for zooming
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_e, GG::GGKMOD_CTRL), &MapWnd::KeyboardZoomIn, this);
@@ -234,6 +235,7 @@ MapWnd::~MapWnd()
 
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F2, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F10, 0);
+	GG::App::GetApp()->RemoveAccelerator(GG::GGK_s, 0);
 
     // Zoom keys
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_e, GG::GGKMOD_CTRL);
@@ -461,6 +463,7 @@ void MapWnd::InitTurn(int turn_number)
 
     GG::App::GetApp()->SetAccelerator(GG::GGK_F2, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_F10, 0);
+	GG::App::GetApp()->SetAccelerator(GG::GGK_s, 0);
 
     // Keys for zooming
     GG::App::GetApp()->SetAccelerator(GG::GGK_e, GG::GGKMOD_CTRL);
@@ -1114,6 +1117,12 @@ bool MapWnd::ShowOptions()
         m_options_showing = false;
     }
     return true;
+}
+
+bool MapWnd::CloseSystemView()
+{
+    m_selected_system_signal(UniverseObject::INVALID_OBJECT_ID);
+	return true;
 }
 
 bool MapWnd::KeyboardZoomIn()

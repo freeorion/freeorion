@@ -108,6 +108,7 @@ private:
     bool EndTurn();
     bool ToggleSitRep();
     bool ShowOptions();
+	bool CloseSystemView();                      //!< closes off the current system view
     bool KeyboardZoomIn();
     bool KeyboardZoomOut();
     
