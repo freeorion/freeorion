@@ -23,7 +23,7 @@ GG::Wnd* NewCUIDropDownList(const GG::XMLElement& elem)   {return new CUIDropDow
 GG::Wnd* NewCUIEdit(const GG::XMLElement& elem)           {return new CUIEdit(elem);}
 GG::Wnd* NewCUIMultiEdit(const GG::XMLElement& elem)      {return new CUIMultiEdit(elem);}
 }
-
+  
 HumanClientApp::HumanClientApp(const GG::XMLElement& elem) : 
     ClientApp(), 
     SDLGGApp::SDLGGApp(boost::lexical_cast<int>(elem.Child("width").Attribute("value")), 
@@ -246,6 +246,11 @@ void HumanClientApp::Exit2DMode()
 HumanClientApp* HumanClientApp::GetApp()
 {
     return dynamic_cast<HumanClientApp*>(GG::App::GetApp());
+}
+
+boost::shared_ptr<ClientUI> HumanClientApp::GetUI()
+{
+    return (dynamic_cast<HumanClientApp*>(GG::App::GetApp()))->m_ui;
 }
    
 void HumanClientApp::SDLInit()
@@ -582,7 +587,6 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::TURN_UPDATE: {
-        GG::XMLElement root_sitrep;
         int turn_number;
 
         std::stringstream stream(msg.GetText());
@@ -599,36 +603,20 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         // free current sitreps
         Empires().Lookup( m_player_id )->ClearSitRep( );
 
-        // get sitrep entries, remove from doc but do not parse yet
-        if(doc.root_node.ContainsChild( SitRepEntry::SITREP_UPDATE_TAG )) 
-        {
-            root_sitrep = doc.root_node.Child( SitRepEntry::SITREP_UPDATE_TAG );
-            // Remove SitRep update data
-            doc.root_node.RemoveChild( SitRepEntry::SITREP_UPDATE_TAG );
-        }
-
         // Update data used XPatch and needs only elements common to universe and empire
         UpdateTurnData( doc );
 
-	    // Important! After Updating turn data, empire could be changed, re-get pointer to empire data
-
         // Now decode sitreps
-        if( root_sitrep.Tag() == SitRepEntry::SITREP_UPDATE_TAG )
-        {
-            // decode all the sitreps from the update
-            for(int i=0; i<root_sitrep.NumChildren(); i++)
-            {   
-                SitRepEntry *decoded_sitrep = new SitRepEntry( root_sitrep.Child(i) );
+        // Empire sitreps need UI in order to generate text, since it needs string resources
+        // generate textr for all sitreps
+        for (Empire::ConstSitRepItr sitrep_it = Empires().Lookup( m_player_id )->SitRepBegin(); sitrep_it != Empires().Lookup( m_player_id )->SitRepEnd(); ++sitrep_it) {
 
-                // create string
-                m_ui->GenerateSitRepText( decoded_sitrep );
-
-                // add to player's empire
-                Empires().Lookup( m_player_id )->AddSitRepEntry( decoded_sitrep );
-            }
+            SitRepEntry *pEntry = (*sitrep_it);
+                
+            // create string
+             m_ui->GenerateSitRepText( pEntry );
         }
-
-        Logger().debugStream() <<"HumanClientApp::HandleMessageImpl : Sitrep update complete";
+        Logger().debugStream() <<"HumanClientApp::HandleMessageImpl : Sitrep creation complete";
 
         m_ui->ScreenMap(); 
         m_ui->InitTurn( turn_number ); // init the new turn
@@ -705,3 +693,4 @@ void HumanClientApp::StartTurn( )
   ClientApp::StartTurn();
   
 }
+
