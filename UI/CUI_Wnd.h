@@ -115,7 +115,7 @@ public:
 
 protected:
     //! \name Accessors //@{
-    int MinimizedLength() const;        //!< the width of a minimized CUI_Wnd
+    virtual int MinimizedLength() const;//!< the width of a minimized CUI_Wnd
     int LeftBorder() const;             //!< the distance on the left side between the outer edge of the window and the inner border
     int TopBorder() const;              //!< the distance at the top between the outer edge of the window and the inner border
     int RightBorder() const;            //!< the distance on the right side between the outer edge of the window and the inner border
@@ -124,7 +124,13 @@ protected:
     //@}
 
     //! \name Mutators //@{
+#ifdef FREEORION_WIN32
+public:
+#endif
     virtual void CloseClicked();    //!< called when window is closed via the close button
+#ifdef FREEORION_WIN32
+protected:
+#endif
     virtual void MinimizeClicked(); //!< called when window is minimized or restored via the minimize/restore button
     //@}
 

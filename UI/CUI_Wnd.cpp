@@ -160,7 +160,8 @@ CUI_Wnd::CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags)
 {
     // set window text
     SetText(t);
-    SetMinDimensions(GG::Pt(MINIMIZED_WND_LENGTH, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
+    // call to CUI_Wnd::MinimizedLength() because MinimizedLength is virtual
+    SetMinDimensions(GG::Pt(CUI_Wnd::MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
     InitButtons();
 }
 
@@ -400,7 +401,7 @@ void CUI_Wnd::MinimizeClicked()
 {
     if (!m_minimized) {
         m_original_size = WindowDimensions();
-        SetMinDimensions(GG::Pt(MINIMIZED_WND_LENGTH, BORDER_TOP));
+        SetMinDimensions(GG::Pt(MinimizedLength(), BORDER_TOP));
         Resize(MINIMIZED_WND_LENGTH, BORDER_TOP);
         if (m_close_button)
             m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
@@ -414,7 +415,7 @@ void CUI_Wnd::MinimizeClicked()
             m_minimize_button->Show();
         m_minimized = true;
     } else {
-        SetMinDimensions(GG::Pt(MINIMIZED_WND_LENGTH, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
+        SetMinDimensions(GG::Pt(MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
         Resize(m_original_size);
         if (m_close_button)
             m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
