@@ -86,6 +86,8 @@ universe/ProdCenter.cpp				\
 universe/ProdCenter.h  				\
 universe/Ship.cpp				\
 universe/Ship.h  				\
+universe/ShipDesign.cpp				\
+universe/ShipDesign.h  				\
 universe/Special.cpp				\
 universe/Special.h  				\
 universe/System.cpp				\
