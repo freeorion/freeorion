@@ -4,6 +4,7 @@
 #include "dialogs/GGFileDlg.h"
 #include "../../UI/MapWnd.h"
 #include "../../network/Message.h"
+#include "../../UI/MultiplayerLobbyWnd.h"
 #include "../../util/OptionsDB.h"
 #include "../../universe/Planet.h"
 #include "../../util/Process.h"
@@ -30,7 +31,8 @@ HumanClientApp::HumanClientApp() :
              GetOptionsDB().Get<int>("app-height"),
              false, "freeorion"),
     m_current_music(0),
-    m_single_player_game(true)
+    m_single_player_game(true),
+    m_game_started(false)
 {
     AddWndGenerator("CUIButton", &NewCUIButton);
     AddWndGenerator("CUIStateButton", &NewCUIStateButton);
@@ -498,6 +500,8 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         if (msg.Sender() == -1) {
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
                 "starting player turn...";
+            m_game_started = true;
+
             std::stringstream stream(msg.GetText());
             GG::XMLDoc doc;
             doc.ReadDoc(stream);
@@ -645,6 +649,17 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         Logger().errorStream() << "HumanClientApp::HandleMessageImpl : Received unknown Message type code " << msg.Type();
         break;
     }
+    }
+}
+
+void HumanClientApp::HandleServerDisconnectImpl()
+{
+    if (m_multiplayer_lobby_wnd) { // in MP lobby
+        ClientUI::MessageBox(ClientUI::String("MPLOBBY_HOST_ABORTED_GAME"));
+        m_multiplayer_lobby_wnd->Cancel();
+    } else if (m_game_started) { // playing game
+        ClientUI::MessageBox(ClientUI::String("SERVER_LOST"));
+        Exit(1);
     }
 }
 

@@ -101,6 +101,7 @@ private:
     virtual void SDLQuit();
 
     virtual void HandleMessageImpl(const Message& msg);
+    virtual void HandleServerDisconnectImpl();
 
     Process                           m_server_process;     ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
     Mix_Music*                        m_current_music;      ///< the currently-playing music, if any
@@ -110,6 +111,7 @@ private:
     boost::shared_ptr<ClientUI>       m_ui;                 ///< the one and only ClientUI object!
     std::string                       m_save_filename;      ///< the name under which the current game has been saved
     bool                              m_single_player_game; ///< true when this game is a single-player game
+    bool                              m_game_started;       ///< true when a game is currently in progress
 
     static void EndOfMusicCallback();
     static void EndOfSoundCallback(int channel);
