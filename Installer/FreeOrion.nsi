@@ -180,7 +180,7 @@ Section -AdditionalIcons
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
     CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
-    CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion Forums.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
+    CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion Forums.lnk" "$INSTDIR\FreeOrion Forums.url"
     CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk" "$INSTDIR\uninst.exe"
     CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion dedicated server.lnk" "$INSTDIR\freeoriond.exe"
     CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion (windowed).lnk" "$INSTDIR\freeorion.exe"
