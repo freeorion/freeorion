@@ -14,6 +14,8 @@
 template <class T> class CUISpin : public GG::Spin<T>
 {
 public:
+    typedef typename GG::Spin<T>::ValueType ValueType;
+
     /** \name Structors */ //@{
     CUISpin(int x, int y, int w, T value, T step, T min, T max, bool edits) :
         GG::Spin<T>(x, y, w, value, step, min, max, edits, ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_BORDER_COLOR, 
@@ -25,7 +27,7 @@ public:
     /** ctor that constructs an CUISpin object from an XMLElement. \throw std::invalid_argument May throw 
         std::invalid_argument if \a elem does not encode a CUISpin object*/
     CUISpin(const GG::XMLElement& elem) : 
-        GG::Spin<T>(elem.Child(Spin<T>::XMLTypeName()))
+        GG::Spin<T>(elem.Child(GG::Spin<T>::XMLTypeName()))
     {
         if (elem.Tag() != XMLTypeName())
             throw std::invalid_argument("Attempted to construct a " + XMLTypeName() + " from an XMLElement that had a tag other than \"" + XMLTypeName() + "\"");
