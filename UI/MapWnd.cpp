@@ -31,7 +31,7 @@ const double MapWnd::MAX_SCALE_FACTOR = 8.0;
 const int    MapWnd::NUM_BACKGROUNDS = 3;
 
 MapWnd::MapWnd() :
-    GG::Wnd(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight(), 
+    GG::Wnd(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight(),
             static_cast<int>(Universe::UNIVERSE_WIDTH * MAX_SCALE_FACTOR) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH, 
             static_cast<int>(Universe::UNIVERSE_WIDTH * MAX_SCALE_FACTOR) + GG::App::GetApp()->AppHeight() + MAP_MARGIN_WIDTH, 
             GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
@@ -94,6 +94,24 @@ GG::Pt MapWnd::ClientUpperLeft() const
 int MapWnd::Render()
 {
     RenderBackgrounds();
+    return 1;
+}
+
+int MapWnd::Keypress (GG::Key key, Uint32 key_mods)
+{
+    if (key == GG::GGK_F10)		// If F10 is pressed, loads up the options screen
+    					// TODO: Find out why F10 is not recognised until the left
+					// mouse button has been clicked
+    {
+        InGameOptions   m_options;
+        m_options.Run();
+
+	if (m_options.m_quit)
+	{
+	  // TODO: Shut down the game.  The following is temporary
+	  HumanClientApp::GetApp()->ShutDown();
+	}
+    }
     return 1;
 }
 

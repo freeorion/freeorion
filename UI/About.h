@@ -31,8 +31,7 @@
 #include "CUI_Wnd.h"
 #endif
 
-//! This class is the Empire Selection window.  It is a modal window
-//! that allows the user to choose a name, color, etc.
+//! This is a screen showing license and credits
 class About : public CUI_Wnd
 {
 private:
@@ -72,15 +71,10 @@ public:
        bool m_end_with_done;    //!< determines whether or not we ended the dialog with OK or not
 //!@}
 private:
-//! \name Private Constants
-//!@{
-    static const int GALAXY_TYPES;
-
-//!@}
 //! \name Controls
 //!@{
 
-    GG::Button*           m_done_btn;              //!< Done button
+    GG::Button*           m_done_btn;    //!< Done button
     GG::Button*           m_license;     //!< License button
     GG::Button*           m_credits;     //!< Credits button
 
@@ -91,8 +85,6 @@ private:
     std::string		  m_credits_str;    //!< String containing the credits
     std::string		  m_license_str;
 
-    int                   m_cur_color;       //!< Currently selected color
-    
 //!@}
 
 private:

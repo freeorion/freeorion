@@ -43,6 +43,8 @@ public:
     void StartServer(); ///< starts a server process on localhost
     void KillServer();  ///< kills any running process already started by this client; performs no cleanup of other processes, such as AIs
 
+    void ShutDown();	///< TODO: implement a proper shutdown
+
     void SetLobby(MultiplayerLobbyWnd* lobby); ///< registers a lobby dialog so that Messages can reach it; passing 0 unsets the lobby dialog
 
     /** plays a music file.  The music will be played \a repeats + 1 times, so passing a 0 plays the song once (1 repeat).

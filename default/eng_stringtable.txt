@@ -197,6 +197,22 @@ About FreeOrion v0.1a
 CREDITS
 Credits
 
+###########################
+# In Game Options	  #
+###########################
+
+INGAMEOPTIONS_WINDOW_TITLE
+Options
+
+INGAMEOPTIONS_SAVE
+Save Game
+
+INGAMEOPTIONS_LOAD
+Load Game
+
+INGAMEOPTIONS_QUIT
+Quit Game
+
 #################
 # Main Map      #
 #################
