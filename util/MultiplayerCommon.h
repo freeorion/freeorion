@@ -10,6 +10,12 @@
 /** The colors that are available for use for empires in the game. */
 const std::vector<GG::Clr>& EmpireColors();
 
+/** Returns an MD5 "sum" of the given string as a 32-digithexidecimal string. */
+std::string MD5StringSum(const std::string& str);
+
+/** Returns an MD5 "sum" of the given text file as a 32-digit hexidecimal string. */
+std::string MD5FileSum(const std::string& filename);
+
 /** The data for one empire necessary for game-setup during multiplayer loading. */
 struct SaveGameEmpireData
 {

@@ -135,6 +135,11 @@ Message JoinGameMessage(const std::string& player_name);
 /** creates a JOIN_GAME message.  Sends an xml document of the player's details.*/
 Message JoinGameSetup(const GG::XMLDoc& player_setup);
 
+/** creates a SERVER_STATUS message that indicates that the JOIN_GAME message just received from the client will
+    not be honored because the client and server are using different versions of code or essential configuration
+    files.  This message should only be sent by the server.*/
+Message VersionConflictMessage(int player_id, const GG::XMLDoc& conflict_details);
+
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
 Message GameStartMessage(int player_id, const GG::XMLDoc& start_data);
 

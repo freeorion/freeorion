@@ -1,10 +1,25 @@
 #include "Message.h"
 
+#include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
+
 #include <boost/lexical_cast.hpp>
 #include <zlib.h>
 
 #include <stdexcept>
 #include <sstream>
+
+namespace {
+    void AddVersionInfo(GG::XMLDoc& doc)
+    {
+        std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+        if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+            settings_dir += '/';
+        doc.root_node.AppendChild(GG::XMLElement("techs.xml", MD5FileSum(settings_dir + "techs.xml")));
+        doc.root_node.AppendChild(GG::XMLElement("buildings.xml", MD5FileSum(settings_dir + "buildings.xml")));
+        doc.root_node.AppendChild(GG::XMLElement("specials.xml", MD5FileSum(settings_dir + "specials.xml")));
+    }
+}
 
 ////////////////////////////////////////////////
 // Free Functions
@@ -162,24 +177,37 @@ void Message::DecompressMessage(std::string& uncompressed_msg) const
 ////////////////////////////////////////////////
 Message HostGameMessage(int player_id, const GG::XMLDoc& game_parameters)
 {
-    return Message(Message::HOST_GAME, player_id, -1, Message::CORE, game_parameters);
+    GG::XMLDoc doc(game_parameters);
+    AddVersionInfo(doc);
+    return Message(Message::HOST_GAME, player_id, -1, Message::CORE, doc);
 }
 
 Message HostGameMessage(int player_id, const std::string& host_player_name)
 {
     GG::XMLDoc doc;
     doc.root_node.AppendChild(GG::XMLElement("host_player_name", host_player_name));
+    AddVersionInfo(doc);
     return Message(Message::HOST_GAME, player_id, -1, Message::CORE, doc);
 }
 
 Message JoinGameMessage(const std::string& player_name)
 {
-    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_name);
+    GG::XMLDoc doc;
+    doc.root_node.AppendChild(GG::XMLElement("player_name", player_name));
+    AddVersionInfo(doc);
+    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, doc);
 }
 
 Message JoinGameSetup(const GG::XMLDoc& player_setup)
 {
-    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_setup);
+    GG::XMLDoc doc(player_setup);
+    AddVersionInfo(doc);
+    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, doc);
+}
+
+Message VersionConflictMessage(int player_id, const GG::XMLDoc& conflict_details)
+{
+    return Message(Message::SERVER_STATUS, -1, player_id, Message::CORE, conflict_details);
 }
 
 Message GameStartMessage(int player_id, const GG::XMLDoc& start_data)

@@ -40,12 +40,12 @@
 #include <Condition.h>
 namespace {
     // command-line options
-    void AddOptions(OptionsDB& db)
+    void AddConditionTestOptions(OptionsDB& db)
     {
         db.Add("condition-test-set", "Selects the test of the Condition class to perform.", 0, Validator<int>());
         db.Add("condition-test-source", "Selects source object (id) for the Condition class tests.", 528, Validator<int>());
     }
-    bool temp_bool = RegisterOptions(&AddOptions);
+    bool condition_test_temp_bool = RegisterOptions(&AddConditionTestOptions);
 }
 #endif
 
@@ -146,6 +146,15 @@ namespace {
     const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
     GG::XMLDoc g_load_doc;
     const bool ALL_OBJECTS_VISIBLE = false; // set this to true to turn off visibility for debugging purposes
+
+    // command-line options
+    void AddOptions(OptionsDB& db)
+    {
+        db.Add("debug.log-turn-orders", "Enables the logging of orders coming in from each player.", false, Validator<bool>());
+        db.Add("debug.log-new-game-universe", "Enables the logging of new-game universes that are sent to each player.", false, Validator<bool>());
+        db.Add("debug.log-load-game-universe", "Enables the logging of loaded-game universes that are sent to each player.", false, Validator<bool>());
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 ////////////////////////////////////////////////
@@ -889,15 +898,14 @@ void ServerApp::HandleMessage(const Message& msg)
                 m_player_save_game_data[msg.Sender()].AppendChild(doc.root_node.Child("UI"));
             m_players_responded.insert(msg.Sender());
         } else { // the Orders were sent from a Player who has finished her turn
-#if 0
-            /* debug information */
-            std::string dbg_file( "turn_orders_server_" );
-            dbg_file += boost::lexical_cast<std::string>(msg.Sender());
-            dbg_file += ".txt";
-            std::ofstream output( dbg_file.c_str() );
-            doc.WriteDoc(output);
-            output.close();
-#endif
+            if (GetOptionsDB().Get<bool>("debug.log-turn-orders")) {
+                std::string dbg_file("TurnOrdersReceived_");
+                dbg_file += boost::lexical_cast<std::string>(msg.Sender());
+                dbg_file += ".txt";
+                std::ofstream output(dbg_file.c_str());
+                doc.WriteDoc(output);
+                output.close();
+            }
 
             OrderSet *p_order_set;
             p_order_set = new OrderSet( );
@@ -1015,7 +1023,12 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
 
             PlayerInfo host_player_info(connection.socket, connection.address, host_player_name, true);
             int player_id = NetworkCore::HOST_PLAYER_ID;
-            if (doc.root_node.NumChildren() == 1) { // start an MP lobby situation so that game settings can be established
+
+            // verify that the connecting client is using the same settings and/or source files
+            if (VersionMismatch(player_id, host_player_info, connection, doc))
+                return;
+
+            if (!doc.root_node.ContainsChild("universe_params")) { // start an MP lobby situation so that game settings can be established
                 m_single_player_game = false;
                 m_state = SERVER_MP_LOBBY;
                 g_lobby_data = MultiplayerLobbyData();
@@ -1061,12 +1074,21 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
     }
       
     case Message::JOIN_GAME: {
-        std::string player_name = msg.GetText(); // the player name should be the entire text
+        std::stringstream stream(msg.GetText());
+        GG::XMLDoc doc;
+        doc.ReadDoc(stream);
+        std::string player_name = doc.root_node.Child("player_name").Text();
+
         PlayerInfo player_info(connection.socket, connection.address, player_name, false);
         int player_id = std::max(NetworkCore::HOST_PLAYER_ID + 1, static_cast<int>(m_network_core.Players().size()));
         if (player_id) {
             player_id = m_network_core.Players().rbegin()->first + 1;
         }
+
+        // verify that the connecting client is using the same settings and/or source files
+        if (VersionMismatch(player_id, player_info, connection, doc))
+            return;
+
         if (m_state == SERVER_MP_LOBBY) { // enter an MP lobby
             if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
                 m_network_core.SendMessage(JoinAckMessage(player_id));
@@ -1332,11 +1354,11 @@ void ServerApp::NewGameInit()
         // turn number is an attribute of the document
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
 
-#if 1
-        std::ofstream ofs(("NewGameInit-empire" + boost::lexical_cast<std::string>(it->first) + "-doc.xml").c_str());
-        doc.WriteDoc(ofs);
-        ofs.close();
-#endif
+        if (GetOptionsDB().Get<bool>("debug.log-new-game-universe")) {
+            std::ofstream ofs(("NewGameInit-empire" + boost::lexical_cast<std::string>(it->first) + "-doc.xml").c_str());
+            doc.WriteDoc(ofs);
+            ofs.close();
+        }
 
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
     }
@@ -1396,11 +1418,11 @@ void ServerApp::LoadGameInit()
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
 
-#if 1
-        std::ofstream ofs(("LoadGameInit-empire" + boost::lexical_cast<std::string>(empire_id) + "-doc.xml").c_str());
-        doc.WriteDoc(ofs);
-        ofs.close();
-#endif
+        if (GetOptionsDB().Get<bool>("debug.log-load-game-universe")) {
+            std::ofstream ofs(("LoadGameInit-empire" + boost::lexical_cast<std::string>(empire_id) + "-doc.xml").c_str());
+            doc.WriteDoc(ofs);
+            ofs.close();
+        }
 
         // send saved pending orders to player
         m_network_core.SendMessage(ServerLoadGameMessage(it->first, player_docs[empire_id]));
@@ -1409,6 +1431,38 @@ void ServerApp::LoadGameInit()
     }
 
     m_losers.clear();
+}
+
+bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, const PlayerInfo& connection, const GG::XMLDoc& doc)
+{
+    std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+    if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+        settings_dir += '/';
+
+    bool techs_differ = MD5FileSum(settings_dir + "techs.xml") != doc.root_node.Child("techs.xml").Text();
+    bool buildings_differ = MD5FileSum(settings_dir + "buildings.xml") != doc.root_node.Child("buildings.xml").Text();
+    bool specials_differ = MD5FileSum(settings_dir + "specials.xml") != doc.root_node.Child("specials.xml").Text();
+    if (techs_differ || buildings_differ || specials_differ) {
+        const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
+        std::string files = std::string(techs_differ ? " techs.xml" : "") +
+            std::string(buildings_differ ? " buildings.xml" : "") +
+            std::string(specials_differ ? " specials.xml" : "");
+        m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A player at " << 
+            (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket <<
+            " attempted to connect, but is using a different version of the follwing files:" << files << 
+            ".  This player will be notified of the conflicts, then dumped.";
+        if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
+            GG::XMLDoc conflict_details;
+            conflict_details.root_node.AppendChild(GG::XMLElement("settings_files", files.substr(1)));
+            conflict_details.root_node.AppendChild(GG::XMLElement("source_files"));
+            m_network_core.SendMessage(VersionConflictMessage(player_id, conflict_details));
+            SDL_Delay(5000);
+            m_network_core.DumpPlayer(player_id);
+        }
+        return true;
+    }
+
+    return false;
 }
 
 GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)

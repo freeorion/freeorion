@@ -1,5 +1,6 @@
 #include "MultiplayerCommon.h"
 
+#include "md5.h"
 
 #include <fstream>
 
@@ -33,6 +34,39 @@ const std::vector<GG::Clr>& EmpireColors()
         }
     }
     return colors;
+}
+
+std::string MD5StringSum(const std::string& str)
+{
+    std::string retval;
+    if (!str.empty()) {
+        md5_state_t md5_state;
+        md5_byte_t digest[16];
+        md5_init(&md5_state);
+        md5_append(&md5_state,
+                   reinterpret_cast<const md5_byte_t*>(str.c_str()),
+                   str.size());
+        md5_finish(&md5_state, digest);
+        if (0) {
+            retval = reinterpret_cast<const char*>(digest);
+        } else {
+            retval.resize(32, ' ');
+            for (int i = 0; i < 16; ++i) {
+                sprintf(&retval[i * 2], "%02x", digest[i]);
+            }
+        }
+    }
+    return retval;
+}
+
+std::string MD5FileSum(const std::string& filename)
+{
+    std::string file_contents;
+    std::ifstream ifs(filename.c_str());
+    while (ifs) {
+        file_contents += ifs.get();
+    }
+    return MD5StringSum(file_contents);
 }
 
 

@@ -29,32 +29,32 @@
 # include <fcntl.h>
 # include <unistd.h>
 
-  void SigHandler(int sig)
-  {
-      void* backtrace_buffer[100];
-      int num;
-      int fd;
+void SigHandler(int sig)
+{
+    void* backtrace_buffer[100];
+    int num;
+    int fd;
 
-      signal(sig, SIG_DFL);
-      fd = open("crash.txt",O_WRONLY|O_CREAT|O_APPEND|O_SYNC,0666);
-      if (fd != -1) {
-	  write(fd, "--- New crash backtrace begins here ---\n", 24);
-	  num = backtrace(backtrace_buffer, 100);
-	  backtrace_symbols_fd(backtrace_buffer, num, fd);
-	  backtrace_symbols_fd(backtrace_buffer, num, 2);
-	  close(fd);
-      }
-      
-      // Now we try to display a MessageBox; this might fail and also
-      // corrupt the heap, but since we're dying anyway that's no big
-      // deal
-      
-      ClientUI::MessageBox("The client has just crashed!\nFile a bug report and\nattach the file called 'crash.txt'\nif necessary");
-      
-      // Try SDL-shutdown
-      SDL_Quit();
-      raise(sig);
-  }
+    signal(sig, SIG_DFL);
+    fd = open("crash.txt",O_WRONLY|O_CREAT|O_APPEND|O_SYNC,0666);
+    if (fd != -1) {
+        write(fd, "--- New crash backtrace begins here ---\n", 24);
+        num = backtrace(backtrace_buffer, 100);
+        backtrace_symbols_fd(backtrace_buffer, num, fd);
+        backtrace_symbols_fd(backtrace_buffer, num, 2);
+        close(fd);
+    }
+
+    // Now we try to display a MessageBox; this might fail and also
+    // corrupt the heap, but since we're dying anyway that's no big
+    // deal
+
+    ClientUI::MessageBox("The client has just crashed!\nFile a bug report and\nattach the file called 'crash.txt'\nif necessary");
+
+    // Try SDL-shutdown
+    SDL_Quit();
+    raise(sig);
+}
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
@@ -584,7 +584,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         doc.ReadDoc(stream);
         if (doc.root_node.ContainsChild("new_name")) {
             m_player_name = doc.root_node.Child("new_name").Text();
-            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS -- server has renamed this player \"" << 
+            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS -- Server has renamed this player \"" << 
                 m_player_name  << "\"";
         } else if (doc.root_node.ContainsChild("server_state")) {
             ServerState server_state = ServerState(boost::lexical_cast<int>(doc.root_node.Child("server_state").Attribute("value")));
@@ -592,6 +592,14 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
                 doc.root_node.Child("server_state").Attribute("value") << ")";
             if (server_state == SERVER_DYING)
                 KillServer();
+        } else if (doc.root_node.ContainsChild("settings_files")) {
+            std::string settings_files = doc.root_node.Child("settings_files").Text();
+            std::string source_files = doc.root_node.Child("source_files").Text();
+            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS -- Connection rejected by server, "
+                "because different versions of the following settings and/or source files are in use by the client and the server: " << 
+                settings_files << " " << source_files;
+            ClientUI::MessageBox(ClientUI::String("ERR_VERSION_MISMATCH") + settings_files + " " + source_files);
+            EndGame();
         }
         break;
     } 
