@@ -24,7 +24,7 @@
 std::string ClientUI::FONT          = "arial.ttf";
 int         ClientUI::PTS           = 12;
 std::string ClientUI::TITLE_FONT    = "arial.ttf";
-int         ClientUI::TITLE_PTS     = 9;
+int         ClientUI::TITLE_PTS     = 12;
 
 std::string ClientUI::DIR           = "default/";
 std::string ClientUI::ART_DIR       = ClientUI::DIR + "art/small/";
