@@ -48,7 +48,7 @@ public:
    double         IndustryPoints() const;
    double         MiningPoints() const;
    double         ResearchPoints() const;
-   double         BuildProgress() const    {return m_build_progress;}
+   double         PercentComplete() const;
    double         Rollover() const         {return m_rollover;}
    double         Workforce() const        {return m_workforce;}
    PlanetType     GetPlanetType() const    {return m_planet_type;}
@@ -89,7 +89,7 @@ private:
 
    ///< until shipyards, planets build ships as psrt of it's implementation of ProdCenters
    ///< takes a design ID and if any are build, adds the ships to a fleet.
-   void UpdateShipBuildProgress( Empire *empire, const int system_id, const int planet_id, ShipDesign::V01DesignID design_id );
+   void UpdateShipBuildProgress( Empire *empire, const int system_id, const int planet_id, ShipDesign::V02DesignID design_id );
 
    FocusType  m_primary;
    FocusType  m_secondary;
@@ -101,7 +101,6 @@ private:
    /////////////////////////////////////////////////////////////////////////////
    // V0.2 ONLY!!!!
    BuildType      m_currently_building;
-   double         m_build_progress; ///< build progress towards the current build target (may be 0.0 if not applicable, such as when no target exists)
    double         m_rollover;  ///< for build types that can span multiple turns this specifies how many production points are rolled over towards the next turn.
    // V0.2 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////

@@ -109,7 +109,7 @@ namespace {
                     icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/" + 
                                                          boost::lexical_cast<std::string>(m_fleet->NumShips()) + "shipfleet.png");
                 } else {
-                    ShipDesign::V01DesignID max_id = ShipDesign::SCOUT;
+                    ShipDesign::V02DesignID max_id = ShipDesign::SCOUT;
                     for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {
                         Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(*it));
                         if (max_id <= ship->Design().id) {
@@ -119,7 +119,7 @@ namespace {
                                 design_name[space] = '_';
                             }
                             icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png");
-                            max_id = ShipDesign::V01DesignID(ship->Design().id);
+                            max_id = ShipDesign::V02DesignID(ship->Design().id);
                         }
                     }
                 }

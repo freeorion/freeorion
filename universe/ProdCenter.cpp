@@ -21,6 +21,21 @@ namespace {
         }
         return map;
     }
+
+    // v0.2 only
+    int Cost(ProdCenter::BuildType item)
+    {
+        switch (item) {
+        case ProdCenter::DEF_BASE:      return 200;
+        case ProdCenter::SCOUT:         return 50;
+        case ProdCenter::COLONY_SHIP:   return 250;
+        case ProdCenter::MARKI:         return 100;
+        case ProdCenter::MARKII:        return 200;
+        case ProdCenter::MARKIII:       return 375;
+        case ProdCenter::MARKIV:        return 700;
+        }
+        return 0;
+    }
 }
 
 using boost::lexical_cast;
@@ -32,19 +47,17 @@ ProdCenter::ProdCenter() :
    m_max_workforce(0.0),
    m_planet_type(PT_TERRAN),
    m_currently_building(NOT_BUILDING),
-   m_build_progress(0),
    m_rollover(0)
 {
 }
 
 ProdCenter::ProdCenter(const GG::XMLElement& elem) : 
-   m_primary(FOCUS_UNKNOWN),
-   m_secondary(FOCUS_UNKNOWN),
+   m_primary(BALANCED),
+   m_secondary(BALANCED),
    m_workforce(0.0),
    m_max_workforce(0.0),
    m_planet_type(PT_TERRAN),
-   m_currently_building(BUILD_UNKNOWN),
-   m_build_progress(0),
+   m_currently_building(NOT_BUILDING),
    m_rollover(0)
 {
     if (elem.Tag() != "ProdCenter")
@@ -61,7 +74,6 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem) :
             m_planet_type = PlanetType(lexical_cast<int>(elem.Child("m_planet_type").Text()));
             m_currently_building = BuildType(lexical_cast<int>(elem.Child("m_currently_building").Text()));
             m_rollover = lexical_cast<double>(elem.Child("m_rollover").Text());
-            m_build_progress = lexical_cast<double>(elem.Child("m_build_progress").Text());
         }
     } catch (const boost::bad_lexical_cast& e) {
         Logger().debugStream() << "Caught boost::bad_lexical_cast in ProdCenter::ProdCenter(); bad XMLElement was:";
@@ -106,6 +118,12 @@ double ProdCenter::ResearchPoints() const
             + ((m_secondary==FOCUS_UNKNOWN)?0:ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][3]));
 }
 
+double ProdCenter::PercentComplete() const
+{
+    int cost = Cost(m_currently_building);
+    return (cost ? (m_rollover / cost) : 0);
+}
+
 GG::XMLElement ProdCenter::XMLEncode(UniverseObject::Visibility vis) const
 {
    // partial encode version -- no current production info
@@ -123,7 +141,6 @@ GG::XMLElement ProdCenter::XMLEncode(UniverseObject::Visibility vis) const
       retval.AppendChild(XMLElement("m_planet_type", lexical_cast<string>(m_planet_type)));
       retval.AppendChild(XMLElement("m_currently_building", lexical_cast<string>(m_currently_building)));
       retval.AppendChild(XMLElement("m_rollover", lexical_cast<string>(m_rollover)));
-      retval.AppendChild(XMLElement("m_build_progress", lexical_cast<string>(m_build_progress)));
    }
    return retval;
 }
@@ -167,16 +184,15 @@ void ProdCenter::SetProduction(ProdCenter::BuildType type)
 
 void ProdCenter::MovementPhase( )
 {
-   // TODO
 }
 
 void ProdCenter::PopGrowthProductionResearchPhase( Empire *empire, const int system_id, const int planet_id )
 {
   Universe* universe = &GetUniverse();
 
-  if (CurrentlyBuilding() == DEF_BASE )
+  if (m_currently_building == DEF_BASE )
   {
-    // for v0.1 we hard-code values for cost of bases
+    // for v0.2 we hard-code values for cost of bases
     int new_bases = UpdateBuildProgress( 200 );
     
     if ( new_bases > 0 )
@@ -191,33 +207,31 @@ void ProdCenter::PopGrowthProductionResearchPhase( Empire *empire, const int sys
         // add sitrep
         SitRepEntry *p_entry = CreateBaseBuiltSitRep( system_id, planet_id );
         empire->AddSitRepEntry( p_entry );
-
-    }
+     }
   }
-
   // V0.2 only - we would have a better way to know we're building different ships
   // for now enumerate through the ones we can build
-  else if ( CurrentlyBuilding() == ProdCenter::SCOUT )
+  else if ( m_currently_building == ProdCenter::SCOUT )
   {
     UpdateShipBuildProgress( empire, system_id, planet_id, ShipDesign::SCOUT );
   }
-  else if ( CurrentlyBuilding() == ProdCenter::COLONY_SHIP )
+  else if ( m_currently_building == ProdCenter::COLONY_SHIP )
   {
     UpdateShipBuildProgress( empire, system_id, planet_id, ShipDesign::COLONY );
   }
-  else if ( CurrentlyBuilding() == ProdCenter::MARKI )
+  else if ( m_currently_building == ProdCenter::MARKI )
   {
     UpdateShipBuildProgress( empire, system_id, planet_id, ShipDesign::MARK1 );
   }
-  else if ( CurrentlyBuilding() == ProdCenter::MARKII )
+  else if ( m_currently_building == ProdCenter::MARKII )
   {
     UpdateShipBuildProgress( empire, system_id, planet_id, ShipDesign::MARK2 );
   }
-  else if ( CurrentlyBuilding() == ProdCenter::MARKIII )
+  else if ( m_currently_building == ProdCenter::MARKIII )
   {
     UpdateShipBuildProgress( empire, system_id, planet_id, ShipDesign::MARK3 );
   }
-  else if ( CurrentlyBuilding() == ProdCenter::MARKIV )
+  else if ( m_currently_building == ProdCenter::MARKIV )
   {
     UpdateShipBuildProgress( empire, system_id, planet_id, ShipDesign::MARK4 );
   }
@@ -227,29 +241,17 @@ void ProdCenter::PopGrowthProductionResearchPhase( Empire *empire, const int sys
 
 int ProdCenter::UpdateBuildProgress( int item_cost )
 {
-  double new_build_progress =  BuildProgress() + Rollover() + IndustryPoints();
+  double total_build_points =  m_rollover + IndustryPoints();
 
-  int new_items = (int)new_build_progress / item_cost;
+  int new_items = total_build_points / item_cost;
     
-  if ( new_items > 0 )
-  {
-    // calculate rollover
-    m_rollover = new_build_progress - ( new_items * item_cost );
-    m_build_progress =  0.0;
-  }
-  else
-  {
-    // reset rollover
-    m_rollover = 0.0;
-    // adjust progress
-    m_build_progress = new_build_progress;
-  }
+  m_rollover = total_build_points - ( new_items * item_cost );
 
   return new_items;
 }
 
 
-void ProdCenter::UpdateShipBuildProgress(  Empire *empire, const int system_id, const int planet_id, ShipDesign::V01DesignID design_id )
+void ProdCenter::UpdateShipBuildProgress(  Empire *empire, const int system_id, const int planet_id, ShipDesign::V02DesignID design_id )
 {
     Universe* universe = &GetUniverse();
     ShipDesign ship_design;

@@ -29,6 +29,21 @@
 
 namespace {
     int CircleXFromY(double y, double r) {return static_cast<int>(std::sqrt(r * r - y * y) + 0.5);}
+
+    // v0.2 only
+    int Cost(ProdCenter::BuildType item)
+    {
+        switch (item) {
+        case ProdCenter::DEF_BASE:      return 200;
+        case ProdCenter::SCOUT:         return 50;
+        case ProdCenter::COLONY_SHIP:   return 250;
+        case ProdCenter::MARKI:         return 100;
+        case ProdCenter::MARKII:        return 200;
+        case ProdCenter::MARKIII:       return 375;
+        case ProdCenter::MARKIV:        return 700;
+        }
+        return 0;
+    }
 }
 
 ////////////////////////////////////////////////
@@ -1223,9 +1238,9 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   {
     // construction progress bar
     // TODO : get the costs of the item from the list of available technologies
-    const int PROD_COSTS[] = {0, 0, 0, 50, 250, 100, 200, 375, 700, 200};
-    int cost = PROD_COSTS[planet.CurrentlyBuilding()];
-    double percent_complete = cost ? (planet.BuildProgress()+planet.Rollover()) / cost : 0.0;
+    int cost = Cost(planet.CurrentlyBuilding());
+    double percent_complete = planet.PercentComplete();
+std::cout << "ProdCenter::SCOUT <= planet->CurrentlyBuilding() (1) : percent_complete=" << percent_complete << "\n";
 
     int x1 = m_construction->UpperLeft ().x;
     int x2 = m_construction->LowerRight().x;
@@ -1243,7 +1258,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     if(cost && !planet.IndustryPoints()) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
     else
       if(cost)
-          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet.BuildProgress()) / planet.IndustryPoints())));
+          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet.Rollover()) / planet.IndustryPoints())));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
@@ -1976,10 +1991,9 @@ bool SidePanel::PlanetView::Render()
   if(ProdCenter::SCOUT <= planet->CurrentlyBuilding())
   {
     // construction progress bar
-    // TODO : get the costs of the item from the list of available technologies
-    const int PROD_COSTS[] = {0, 0, 0, 50, 250, 100, 200, 375, 700, 200};
-    int cost = PROD_COSTS[planet->CurrentlyBuilding()];
-    double percent_complete = cost ? (planet->BuildProgress()+planet->Rollover()) / cost : 0.0;
+    int cost = Cost(planet->CurrentlyBuilding());
+    double percent_complete = planet->PercentComplete();
+std::cout << "ProdCenter::SCOUT <= planet->CurrentlyBuilding() (2) : percent_complete=" << percent_complete << "\n";
 
     int x1 = m_construction->UpperLeft ().x;
     int x2 = m_construction->LowerRight().x;
@@ -1997,7 +2011,7 @@ bool SidePanel::PlanetView::Render()
     if(cost && !planet->IndustryPoints()) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
     else
       if(cost)
-          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet->BuildProgress()) / planet->IndustryPoints())));
+          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet->Rollover()) / planet->IndustryPoints())));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
@@ -2005,7 +2019,7 @@ bool SidePanel::PlanetView::Render()
     glColor4ubv(ClientUI::TEXT_COLOR.v);
     font->RenderText(x1, y1, x1+500, y2, text, format, 0, false);
 
-    ShipDesign::V01DesignID design_id=static_cast<ShipDesign::V01DesignID>(0);
+    ShipDesign::V02DesignID design_id=static_cast<ShipDesign::V02DesignID>(0);
 
     switch(planet->CurrentlyBuilding())
     {
