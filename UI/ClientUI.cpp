@@ -5,7 +5,7 @@
 
 #ifndef _ClientUI_h_
 #include "ClientUI.h"
-#endif
+#endif 
 
 #ifndef _GGApp_h_
 #include "GGApp.h"
@@ -31,6 +31,9 @@ bool ClientUI::Initialize()
     //initialize Tooltip engine
     m_tooltips=new ToolContainer(TOOLTIP_DELAY);
     
+    //initialize string table
+    m_string_table = new StringTable();
+    
     //initialize UI state
     m_state=STATE_STARTUP;
     
@@ -54,7 +57,7 @@ bool ClientUI::Initialize()
     return true;
 }//Initialize()
 
-ClientUI::~ClientUI()
+ClientUI::~ClientUI() 
 {
     s_logger.debug("Shutting down ClientUI.");
     Cleanup();
@@ -65,6 +68,10 @@ bool ClientUI::Cleanup()
     if(m_tooltips!=NULL)
         delete(m_tooltips);
     m_tooltips=NULL;
+    
+    if(m_string_table!=NULL)
+        delete(m_string_table);
+    m_string_table=NULL;
 
     //TODO: Destroy variables, etc.   
 
@@ -155,7 +162,7 @@ void ClientUI::ScreenEmpireSelect()
 
 void ClientUI::ScreenTurnStart()
 {
-
+ 
 }//ScreenTurnStart()
 
 void ClientUI::ScreenMap(const ClientUniverse &u, const ClientEmpire &e)

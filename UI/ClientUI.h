@@ -4,7 +4,14 @@
 
 //include relevant controls
 
+#ifndef _ToolContainer_h_
 #include "ToolContainer.h"
+#endif
+
+#ifndef _StringTable_h_
+#include "StringTable.h"
+#endif
+
 //#include "CUIControls.h"
 
 //include log4cpp stuff
@@ -17,7 +24,7 @@
 class ClientNetwork;
 class ClientUniverse;
 class ClientEmpire;
-class SystemObjects;
+class UniverseObject;
 class Planet;
 class System;
 class Fleet;
@@ -69,7 +76,11 @@ public:
     //! \name Accessors
     //!@{
     
-    inline const log4cpp::Category& Logger() {return s_logger;}//!< Returns the logger associated with ClientUI
+    //inline const log4cpp::Category& Logger() {return s_logger;}//!< Returns the logger associated with ClientUI
+    
+    inline const std::string& Language() {return m_string_table->Language();} //!< Returns the language of the StringTable object associated with ClientUI
+    inline const std::string& String(int index) {return m_string_table->String(index); } //!< Returns a lookup from the string table
+    inline void LogMessage(const std::string& msg) {s_logger.debug(msg);} //!<sends a message to the logger
     
     //!@}
     
@@ -164,6 +175,8 @@ private:
     const Uint32 TOOLTIP_DELAY;    //!<number of milliseconds to initialize tooltips to
     ToolContainer* m_tooltips;        //!< the single toolcontainer object
     int m_state;                    //!< represents the screen currently being displayed
+    
+    StringTable* m_string_table;    //!< a string table to lookup international strings
 
 };//ClientUI
 
