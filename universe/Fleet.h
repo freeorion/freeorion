@@ -6,6 +6,8 @@
 #include "UniverseObject.h"
 #endif
 
+#include <list>
+
 class System;
 
 /** */
@@ -32,28 +34,41 @@ public:
    
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Fleet object
     virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a Fleet object with visibility limited relative to the input empire
-   
-    /// Returns the number of turns which must elapse before the fleet arrives at its destination.  
-    int ETA() const;
-   
-    /// Returns ID of system that this fleet is moving to
-    int DestinationID() const {return m_moving_to;}
 
-    /// Returns system that this fleet is moving to (may be null)
-    System* Destination() const;
+    /** Returns the list of systems that this fleet will move through en route to its destination (may be empty). 
+        If this fleet is currently at a system, that system will be the first one in the list. */
+    const std::list<System*>& TravelRoute() const;
+
+    /// Returns the number of turns which must elapse before the fleet arrives at its final destination and the turns to the next system, respectively.
+    std::pair<int, int> ETA() const;
    
-    /// Returns true if there is at least one armed ship in the fleet
+    /// Returns ID of system that this fleet is moving to.
+    int FinalDestinationID() const {return m_moving_to;}
+
+    /// Returns system that this fleet is moving to (may be null).
+    System* FinalDestination() const;
+
+    /// Returns ID of system that this fleet is moving away from as it moves to its destination.
+    int PreviousSystemID() const {return m_prev_system;}
+
+    /// Returns ID of system that this fleet is moving to next as it moves to its destination.
+    int NextSystemID() const {return m_next_system;}
+
+    /// Returns true iff this fleet can change its direction while in interstellar space.
+    bool CanChangeDirectionInRoute() const;
+
+    /// Returns true if there is at least one armed ship in the fleet.
     bool HasArmedShips() const;
 
-    /// Returns number of ships in fleet
+    /// Returns number of ships in fleet.
     int NumShips() const {return m_ships.size();}
 
-    /// Returns true iff this Fleet contains a ship with ID \a id
+    /// Returns true iff this Fleet contains a ship with ID \a id.
     bool ContainsShip(int id) const {return m_ships.find(id) != m_ships.end();}
     //@}
    
     /** \name Mutators */ //@{
-    void              SetDestination(int id);  ///< orders the fleet to move to the system with ID \a id
+    void              SetRoute(const std::list<System*>& route, double distance);  ///< orders the fleet to move through the systems in the list, in order
    
     void              AddShips(const std::vector<int>& ships);     ///< adds the ships with the IDs stored in \a ships to the fleet
     void              AddShip(int ship_id);                        ///< adds the ship to the fleet
@@ -65,13 +80,23 @@ public:
 
     bool RemoveShip(int ship); ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.
 
-    virtual void MovementPhase( );
-    virtual void PopGrowthProductionResearchPhase( );
+    virtual void MovementPhase();
+    virtual void PopGrowthProductionResearchPhase();
     //@}
 
 private:
-    ShipIDSet   m_ships;
-    int         m_moving_to;
+    void CalculateRoute() const; // sets m_travel_route and m_travel_distance to their proper values based on the other member data
+
+    ShipIDSet           m_ships;
+    int                 m_moving_to;
+
+    // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
+    int                 m_prev_system;  // the next system in the route, if any
+    int                 m_next_system;  // the previous system in the route, if any 
+
+    // these are filled temporarily and only as needed, and they can be deduced from the other info above; don't put them in the XML encoding
+    mutable std::list<System*>  m_travel_route;
+    mutable double              m_travel_distance;
 };
 
 #endif // _Fleet_h_
