@@ -12,58 +12,82 @@
 
 #include <string>
 #include <stdexcept>
+#include <vector>
 
-/** a simple SitRepEntry to be displayed in the SitRep screen. */
-struct SitRepEntry
+
+/** a simple SitRepEntry to be displayed in the SitRep screen. 
+ *  This class describes a sitrep entry, for both the client and server. 
+ *  Data for the SitRep is contained in a XML tree. The first element is
+ *  always EntryType and represents the type of sitrep.
+ *  Followed are elements representing the variables for the given SitRep.
+ *  Their tag names correspond to placehold entries in the string used to
+ *  display the SitRep.
+ *  The server only maintains this XML data while the client decodes it and produces
+ *  a string which is used to display the SitRep. This will contain tags for hyperlinks, etc
+ *  For example:
+ *  For SitRep type: MAX_INDUSTRY_HIT
+ *  <SitRepEntry EntryType='0'>
+ *     <m_planet value='123'/>
+ *     <m_system value='56'/>
+ *  </SitRepEntry>
+ *
+ *  The string for this entry would be:
+ *  "The planet %m_planet% in the system %m_system% has reached it's maximum industry."
+ *
+ *
+ */
+
+#ifndef _VarText_h_
+#include "VarText.h"
+#endif
+
+class SitRepEntry : public VarText
 {
+public:
+    
+    /** tag name of sitrep update */
+    static const std::string SITREP_UPDATE_TAG;
+
     /** an enumeration of the types of entries */
+    /** WARNING: make sure to update the LUT in UICLient.cpp which contain stringIDs for each type of SitRep */
+    /** This LUT is in Client because the server has no need for it - it's a UI issue. This design ina way breaks */
+    /** the data-hiding feature of a class, but is needed because both clients and server share this code. It's better */
+    /** to have the discrepancy here than to bloat the server with data it will not use */
     enum EntryType {INVALID_ENTRY_TYPE = -1,  ///< this is the EntryType for default-constructed SitRepEntrys; no others should have this type
                     MAX_INDUSTRY_HIT,
-                    MAX_TECH_HIT,
-                    SHIP_BUILT
+                    SHIP_BUILT,
+		    TECH_RESEARCHED,
+		    BASE_BUILT,
+		    NUM_SITREP_TYPES
                    };
 
     /** \name Structors */ //@{
-    SitRepEntry() : type(INVALID_ENTRY_TYPE) {} ///< default ctor
-
-    SitRepEntry(EntryType type_, const std::string& text_) : type(type_), text(text_) {} ///< basic ctor
+    SitRepEntry() : m_type(INVALID_ENTRY_TYPE) {} ///< default ctor
 
     /** ctor that constructs a SitRepEntry object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a SitRepEntry object */
-    SitRepEntry(const GG::XMLElement& elem)
-    {
-        if (elem.Tag() != "SitRepEntry")
-            throw std::invalid_argument("Attempted to construct a SitRepEntry from an XMLElement that had a tag other than \"SitRepEntry\"");
-
-        type = EntryType(boost::lexical_cast<int>(elem.Child("type").Attribute("value")));
-        turn = boost::lexical_cast<int>(elem.Child("turn").Attribute("value"));
-        text = elem.Child("text").Text();
-    }
+    SitRepEntry(const GG::XMLElement& elem);
     //@}
    
     /** \name Accessors */ //@{
     /** encodes the SitRepEntry into an XML element */
-    GG::XMLElement XMLEncode() const
-    {
-        GG::XMLElement retval("SitRepEntry");
-
-        GG::XMLElement temp("type");
-        temp.SetAttribute("value", boost::lexical_cast<std::string>(type));
-        retval.AppendChild(temp);
-
-        temp = GG::XMLElement("turn");
-        temp.SetAttribute("value", boost::lexical_cast<std::string>(turn));
-        retval.AppendChild(temp);
-
-        temp = GG::XMLElement("text", text);
-        retval.AppendChild(temp);
-
-        return retval;
-    }
+    GG::XMLElement XMLEncode() const;
     //@}
 
-    EntryType   type; ///< the type of SitRep this is
-    int         turn; ///< the turn for which this SitRep was generated
-    std::string text; ///< the text, including hyperlinks, that describes this entry
+    EntryType                  m_type; ///< the type of SitRep this is
+
 };
+
+
+/** Sitrep constructors - for each SitRep type, there is a global constructor function
+ *  See implementation file for examples
+ */
+
+SitRepEntry *CreateMaxIndustrySitRep( const int system_id, const int planet_id );
+
+SitRepEntry *CreateTechResearchedSitRep( const int techID );
+
+SitRepEntry *CreateBaseBuiltSitRep( const int system_id, const int planet_id );
+
+SitRepEntry *CreateShipBuiltSitRep( const int ship_id, const int planet_id );
 
 #endif // _SitRepEntry_h_
