@@ -66,7 +66,7 @@ Planet::Planet(const GG::XMLElement& elem) :
 
     try {
         m_type = lexical_cast<PlanetType>(elem.Child("m_type").Text());
-        m_size = PlanetSize(lexical_cast<int>(elem.Child("m_size").Text()));
+        m_size = lexical_cast<PlanetSize>(elem.Child("m_size").Text());
         m_just_conquered = lexical_cast<int>(elem.Child("m_just_conquered").Text());
 
         Visibility vis = Visibility(lexical_cast<int>(elem.Child("UniverseObject").Child("vis").Text()));
@@ -80,6 +80,59 @@ Planet::Planet(const GG::XMLElement& elem) :
         Logger().debugStream() << "\n" << osstream.str();
         throw;
     }
+}
+
+PlanetEnvironment Planet::Environment() const
+{
+    switch (m_type)
+    {
+        case PT_ASTEROIDS:
+        case PT_GASGIANT:   return PE_UNINHABITABLE;
+        case PT_SWAMP:
+        case PT_TOXIC:
+        case PT_INFERNO:
+        case PT_RADIATED:
+        case PT_BARREN:
+        case PT_TUNDRA:     return PE_TERRIBLE;
+        case PT_DESERT:
+        case PT_OCEAN:      return PE_ADEQUATE;
+        case PT_TERRAN:     return PE_OPTIMAL;
+        case PT_GAIA:       return PE_SUPERB;
+        default:            throw std::invalid_argument("Planet::Environment::Invalid Planet type");
+    }
+}
+
+const Meter* Planet::GetMeter(MeterType type) const
+{
+    switch (type) {
+        case METER_POPULATION:
+            return &PopulationMeter();
+            break;
+        case METER_FARMING:
+            return &FarmingMeter();
+            break;
+        case METER_INDUSTRY:
+            return &IndustryMeter();
+            break;
+        case METER_RESEARCH:
+            return &ResearchMeter();
+            break;
+        case METER_TRADE:
+            return &TradeMeter();
+            break;
+        case METER_MINING:
+            return &MiningMeter();
+            break;
+        case METER_CONSTRUCTION:
+            return &ConstructionMeter();
+            break;
+        case METER_HEALTH:
+            return &HealthMeter();
+            break;
+        default:
+            break;
+    }
+    return 0;
 }
 
 UniverseObject::Visibility Planet::GetVisibility(int empire_id) const
@@ -155,6 +208,39 @@ void Planet::IsAboutToBeColonized(bool bB)
     StateChangedSignal()();
 }
 
+Meter* Planet::GetMeter(MeterType type)
+{
+    switch (type) {
+        case METER_POPULATION:
+            return &PopulationMeter();
+            break;
+        case METER_FARMING:
+            return &FarmingMeter();
+            break;
+        case METER_INDUSTRY:
+            return &IndustryMeter();
+            break;
+        case METER_RESEARCH:
+            return &ResearchMeter();
+            break;
+        case METER_TRADE:
+            return &TradeMeter();
+            break;
+        case METER_MINING:
+            return &MiningMeter();
+            break;
+        case METER_CONSTRUCTION:
+            return &ConstructionMeter();
+            break;
+        case METER_HEALTH:
+            return &HealthMeter();
+            break;
+        default:
+            break;
+    }
+    return 0;
+}
+
 void Planet::MovementPhase()
 {
 }
@@ -177,26 +263,3 @@ void Planet::PopGrowthProductionResearchPhase( )
 
     StateChangedSignal()();
 }
-
-Planet::PlanetEnvironment Planet::Environment()
-{
-    switch (m_type)
-    {
-        case PT_ASTEROIDS:
-        case PT_GASGIANT:   return PE_UNINHABITABLE;
-        case PT_SWAMP:
-        case PT_TOXIC:
-        case PT_INFERNO:
-        case PT_RADIATED:
-        case PT_BARREN:
-        case PT_TUNDRA:     return PE_TERRIBLE;
-        case PT_DESERT:
-        case PT_OCEAN:      return PE_ADEQUATE;
-        case PT_TERRAN:     return PE_OPTIMAL;
-        case PT_GAIA:       return PE_SUPERB;
-        default:            throw std::invalid_argument("Planet::Environment::Invalid Planet type");
-    }
-}
-
-
-

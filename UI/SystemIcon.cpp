@@ -20,13 +20,13 @@ namespace {
     const std::map<int, std::string>& StarTypesNames()
     {
         static std::map<int, std::string> star_type_names;
-        star_type_names[System::BLUE] = "blue";
-        star_type_names[System::WHITE] = "white";
-        star_type_names[System::YELLOW] = "yellow";
-        star_type_names[System::ORANGE] = "orange";
-        star_type_names[System::RED] = "red";
-        star_type_names[System::NEUTRON] = "neutron";
-        star_type_names[System::BLACK] = "black";
+        star_type_names[STAR_BLUE] = "blue";
+        star_type_names[STAR_WHITE] = "white";
+        star_type_names[STAR_YELLOW] = "yellow";
+        star_type_names[STAR_ORANGE] = "orange";
+        star_type_names[STAR_RED] = "red";
+        star_type_names[STAR_NEUTRON] = "neutron";
+        star_type_names[STAR_BLACK] = "black";
         return star_type_names;
     }
 }

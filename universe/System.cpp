@@ -10,7 +10,7 @@ using boost::lexical_cast;
 
 System::System() : 
    UniverseObject(),
-   m_star(INVALID_STARTYPE),
+   m_star(INVALID_STAR_TYPE),
    m_orbits(0)
 {
 }
@@ -21,7 +21,7 @@ System::System(StarType star, int orbits, const std::string& name, double x, dou
    m_star(star),
    m_orbits(orbits)
 {
-   if (m_star < INVALID_STARTYPE || NUM_STARTYPES < m_star)
+   if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
       throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with an invalid star type.");
    if (m_orbits < 0)
       throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
@@ -34,7 +34,7 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
    m_orbits(orbits),
    m_starlanes_wormholes(lanes_and_holes)
 {
-   if (m_star < INVALID_STARTYPE || NUM_STARTYPES < m_star)
+   if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
       throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with an invalid star type.");
    if (m_orbits < 0)
       throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
@@ -152,6 +152,7 @@ int System::Insert(UniverseObject* obj, int orbit)
     if (orbit < -1)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
     obj->SetSystem(ID());
+    obj->MoveTo(X(), Y());
     StateChangedSignal()();
 	return Insert(obj->ID(), orbit);
 }

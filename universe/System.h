@@ -24,18 +24,6 @@ private:
    typedef std::map<int, bool>      StarlaneMap;
 
 public:
-   /** types of stars in FreeOrion v0.2 */
-   enum StarType {INVALID_STARTYPE = -1,  ///< the highest illegal negative StarType value
-                  BLUE,
-                  WHITE,
-                  YELLOW,
-                  ORANGE,
-                  RED,
-                  NEUTRON,
-                  BLACK,
-                  NUM_STARTYPES           ///< the lowest illegal positive StarType value
-                 }; // others TBD
-
    typedef std::vector<UniverseObject*>       ObjectVec;          ///< the return type of FindObjects()
    typedef std::vector<const UniverseObject*> ConstObjectVec;     ///< the return type of FindObjects()
    typedef std::vector<int>                   ObjectIDVec;        ///< the return type of FindObjectIDs()
@@ -180,20 +168,6 @@ private:
    ObjectMultimap m_objects;              ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
    StarlaneMap    m_starlanes_wormholes;  ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
 };
-
-namespace GG {
-    ENUM_MAP_BEGIN(System::StarType)
-	ENUM_MAP_INSERT(System::BLUE)
-	ENUM_MAP_INSERT(System::WHITE)
-	ENUM_MAP_INSERT(System::YELLOW)
-	ENUM_MAP_INSERT(System::ORANGE)
-	ENUM_MAP_INSERT(System::RED)
-	ENUM_MAP_INSERT(System::NEUTRON)
-	ENUM_MAP_INSERT(System::BLACK)
-    ENUM_MAP_END
-}
-ENUM_STREAM_IN(System::StarType)
-ENUM_STREAM_OUT(System::StarType)
 
 
 // template implementations

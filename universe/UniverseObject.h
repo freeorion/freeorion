@@ -3,7 +3,7 @@
 #define _UniverseObject_h_
 
 #ifndef _Universe_h_
-#include "Universe.h"
+#include <Universe.h>
 #endif
 
 #ifndef BOOST_SIGNAL_HPP
@@ -14,9 +14,37 @@
 #include <string>
 #include <vector>
 
+class Meter;
 class System;
 class SitRepEntry;
 namespace GG {class XMLElement;};
+
+/* the various major subclasses of UniverseObject */
+enum UniverseObjectType {
+    OBJ_BUILDING,
+    OBJ_SHIP,
+    OBJ_FLEET, 
+    OBJ_PLANET,
+    OBJ_POP_CENTER,
+    OBJ_PROD_CENTER,
+    OBJ_SYSTEM,
+    NUM_OBJ_TYPES
+};
+
+namespace GG {
+    ENUM_MAP_BEGIN(UniverseObjectType)
+	ENUM_MAP_INSERT(OBJ_BUILDING)
+	ENUM_MAP_INSERT(OBJ_SHIP)
+	ENUM_MAP_INSERT(OBJ_FLEET)
+	ENUM_MAP_INSERT(OBJ_PLANET)
+	ENUM_MAP_INSERT(OBJ_POP_CENTER)
+	ENUM_MAP_INSERT(OBJ_PROD_CENTER)
+	ENUM_MAP_INSERT(OBJ_SYSTEM)
+    ENUM_MAP_END
+}
+ENUM_STREAM_IN(UniverseObjectType)
+ENUM_STREAM_OUT(UniverseObjectType)
+
 
 /** the abstract base class for all objects in the universe.  The UniverseObject class itself has only an ID, a name, 
     a position, possibly a System in which it is, and zero or more owners.  The position can range from 0 (left) to 1000 
@@ -66,6 +94,8 @@ public:
     int                  SystemID() const{return m_system_id;}///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
     System*              GetSystem() const;                  ///< returns system in which this object can be found, or null if the object is not within any system
 
+    virtual const Meter* GetMeter(MeterType type) const;  ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+
     bool                 Unowned() const;                 ///< returns true iff there are no owners of this object
     bool                 OwnedBy(int empire) const;       ///< returns true iff the empire with id \a empire is an owner of this object
     bool                 WhollyOwnedBy(int empire) const; ///< returns true iff the empire with id \a empire is the only owner of this object
@@ -89,6 +119,8 @@ public:
         either coordinate of the move is outside the map area.*/
     void MoveTo(double x, double y);
    
+    virtual Meter* GetMeter(MeterType type);  ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+
     virtual void AddOwner(int id);  ///< adds the Empire with ID \a id to the list of owners of this object
     virtual void RemoveOwner(int id);   ///< removes the Empire with ID \a id to the list of owners of this object
     void SetSystem(int sys)  {m_system_id = sys; m_changed_sig();}    ///< assigns this object to a System

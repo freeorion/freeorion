@@ -364,7 +364,7 @@ public:
    /** \name Structors */ //@{
    ChangeFocusOrder();
    ChangeFocusOrder(const GG::XMLElement& elem);
-   ChangeFocusOrder(int empire, int planet,ProdCenter::FocusType focus,int which);
+   ChangeFocusOrder(int empire, int planet,FocusType focus,int which);
    //@}
    
    /** \name Accessors */ //@{
@@ -383,9 +383,9 @@ public:
    //@}
    
 private:
-   int                    m_planet;
-   ProdCenter::FocusType  m_focus;
-   int                    m_which;
+   int       m_planet;
+   FocusType m_focus;
+   int       m_which;
 };
 #endif // _Order_h_
 

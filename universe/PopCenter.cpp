@@ -13,6 +13,8 @@ using boost::lexical_cast;
 PopCenter::PopCenter() : 
    m_pop(0.0),
    m_max_pop(0.0),
+   m_pop_meter(),
+   m_health(),
    m_growth(0.0),
    m_env_growth_mod(1.0),
    m_race(-1),
@@ -23,6 +25,8 @@ PopCenter::PopCenter() :
 PopCenter::PopCenter(double max_pop) : 
    m_pop(0.0),
    m_max_pop(max_pop),
+   m_pop_meter(1.0, max_pop),
+   m_health(20.0, 20.0),
    m_growth(0.0),
    m_env_growth_mod(1.0),
    m_race(-1),
@@ -33,6 +37,8 @@ PopCenter::PopCenter(double max_pop) :
 PopCenter::PopCenter(double max_pop, int race) : 
    m_pop(0.0),
    m_max_pop(max_pop),
+   m_pop_meter(1.0, max_pop),
+   m_health(20.0, 20.0), // TODO: initialize this by environment
    m_growth(0.0),
    m_env_growth_mod(1.0),
    m_race(race),

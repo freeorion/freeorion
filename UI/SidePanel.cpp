@@ -30,8 +30,8 @@
 #define ROTATING_PLANET_IMAGES 0 // set this to 1 to use the OpenGL-rendered rotating planets code
 
 namespace {
-    const int MAX_PLANET_SIZE = 128; // size of a huge planet, in on-screen pixels
-    const int MIN_PLANET_SIZE = MAX_PLANET_SIZE / 3; // size of a tiny planet, in on-screen pixels
+    const int MAX_PLANET_DIAMETER = 128; // size of a huge planet, in on-screen pixels
+    const int MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER / 3; // size of a tiny planet, in on-screen pixels
 
     int CircleXFromY(double y, double r) {return static_cast<int>(std::sqrt(r * r - y * y) + 0.5);}
 
@@ -179,9 +179,9 @@ namespace {
         return retval;
     }
 
-    const std::map<System::StarType, std::vector<float> >& GetStarLightColors()
+    const std::map<StarType, std::vector<float> >& GetStarLightColors()
     {
-        static std::map<System::StarType, std::vector<float> > light_colors;
+        static std::map<StarType, std::vector<float> > light_colors;
 
         if (light_colors.empty()) {
             GG::XMLDoc doc;
@@ -191,7 +191,7 @@ namespace {
 
             if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").NumChildren()) {
                 for (GG::XMLElement::child_iterator it = doc.root_node.Child("GLStars").child_begin(); it != doc.root_node.Child("GLStars").child_end(); ++it) {
-                    std::vector<float>& color_vec = light_colors[boost::lexical_cast<System::StarType>(it->Child("star_type").Text())];
+                    std::vector<float>& color_vec = light_colors[boost::lexical_cast<StarType>(it->Child("star_type").Text())];
                     GG::Clr color(it->Child("GG::Clr"));
                     color_vec.push_back(color.r / 255.0);
                     color_vec.push_back(color.g / 255.0);
@@ -199,8 +199,8 @@ namespace {
                     color_vec.push_back(color.a / 255.0);
                 }
             } else {
-                for (int i = System::BLUE; i < System::NUM_STARTYPES; ++i) {
-                    light_colors[System::StarType(i)].resize(4, 1.0);
+                for (int i = STAR_BLUE; i < NUM_STAR_TYPES; ++i) {
+                    light_colors[StarType(i)].resize(4, 1.0);
                 }
             }
         }
@@ -208,7 +208,7 @@ namespace {
         return light_colors;
     }
 
-    void RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture, double RPM, double axis_tilt, double shininess, System::StarType star_type)
+    void RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture, double RPM, double axis_tilt, double shininess, StarType star_type)
     {
         HumanClientApp::GetApp()->Exit2DMode();
 
@@ -233,7 +233,7 @@ namespace {
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
-        const std::map<System::StarType, std::vector<float> >& star_light_colors = GetStarLightColors();
+        const std::map<StarType, std::vector<float> >& star_light_colors = GetStarLightColors();
         glLightfv(GL_LIGHT0, GL_DIFFUSE, &star_light_colors.find(star_type)->second[0]);
         glLightfv(GL_LIGHT0, GL_SPECULAR, &star_light_colors.find(star_type)->second[0]);
         glEnable(GL_TEXTURE_2D);
@@ -253,29 +253,29 @@ namespace {
         HumanClientApp::GetApp()->Enter2DMode();
     }
 
-    int PlanetDiameter(Planet::PlanetSize size)
+    int PlanetDiameter(PlanetSize size)
     {
         double scale = 0.0;
         switch (size)
         {
-        case Planet::SZ_TINY      : scale = 0.0/5.0; break;
-        case Planet::SZ_SMALL     : scale = 1.0/5.0; break;
-        case Planet::SZ_MEDIUM    : scale = 2.0/5.0; break;
-        case Planet::SZ_LARGE     : scale = 3.0/5.0; break;
-        case Planet::SZ_HUGE      : scale = 4.0/5.0; break;
-        case Planet::SZ_GASGIANT  : scale = 5.0/5.0; break;
-        case Planet::SZ_ASTEROIDS : scale = 5.0/5.0; break;
+        case SZ_TINY      : scale = 0.0/5.0; break;
+        case SZ_SMALL     : scale = 1.0/5.0; break;
+        case SZ_MEDIUM    : scale = 2.0/5.0; break;
+        case SZ_LARGE     : scale = 3.0/5.0; break;
+        case SZ_HUGE      : scale = 4.0/5.0; break;
+        case SZ_GASGIANT  : scale = 5.0/5.0; break;
+        case SZ_ASTEROIDS : scale = 5.0/5.0; break;
         default                   : scale = 2.0/5.0; break;
         }
 
-        return MIN_PLANET_SIZE + (MAX_PLANET_SIZE - MIN_PLANET_SIZE) * scale;
+        return MIN_PLANET_DIAMETER + (MAX_PLANET_DIAMETER - MIN_PLANET_DIAMETER) * scale;
     }
 }
 
 class RotatingPlanetControl : public GG::Control
 {
 public:
-    RotatingPlanetControl(int x, int y, Planet::PlanetSize size, System::StarType star_type, const RotatingPlanetData& planet_data) :
+    RotatingPlanetControl(int x, int y, PlanetSize size, StarType star_type, const RotatingPlanetData& planet_data) :
         GG::Control(x, y, PlanetDiameter(size), PlanetDiameter(size), 0),
         m_planet_data(planet_data),
         m_size(size),
@@ -298,25 +298,25 @@ public:
     }
 
 private:
-    double SizeRotationFactor(Planet::PlanetSize size) const
+    double SizeRotationFactor(PlanetSize size) const
     {
         switch (size)
         {
-        case Planet::SZ_TINY      : return 2.0;
-        case Planet::SZ_SMALL     : return 1.5;
-        case Planet::SZ_MEDIUM    : return 1.0;
-        case Planet::SZ_LARGE     : return 0.75;
-        case Planet::SZ_HUGE      : return 0.5;
-        case Planet::SZ_GASGIANT  : return 0.25;
+        case SZ_TINY      : return 2.0;
+        case SZ_SMALL     : return 1.5;
+        case SZ_MEDIUM    : return 1.0;
+        case SZ_LARGE     : return 0.75;
+        case SZ_HUGE      : return 0.5;
+        case SZ_GASGIANT  : return 0.25;
         default                   : return 1.0;
         }
         return 1.0;
     }
 
     RotatingPlanetData              m_planet_data;
-    Planet::PlanetSize              m_size;
+    PlanetSize              m_size;
     boost::shared_ptr<GG::Texture>  m_texture;
-    System::StarType                m_star_type;
+    StarType                m_star_type;
 };
 
 ////////////////////////////////////////////////
@@ -425,7 +425,7 @@ namespace {
     }
   }
 
-  int GetPlanetTexturesDynamic(const std::string &node_name,const Planet::PlanetSize &planet_size,int art_variation,std::vector<boost::shared_ptr<GG::Texture> > &textures, int &start_frame, double &fps)
+  int GetPlanetTexturesDynamic(const std::string &node_name,const PlanetSize &planet_size,int art_variation,std::vector<boost::shared_ptr<GG::Texture> > &textures, int &start_frame, double &fps)
   {
     GG::XMLDoc planetart_doc;
     std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
@@ -481,13 +481,13 @@ namespace {
             std::string plt_size_name;
             switch(planet_size)
             {
-              case Planet::SZ_TINY      : plt_size_name = "Tiny"     ; break;
-              case Planet::SZ_SMALL     : plt_size_name = "Small"    ; break;
-              case Planet::SZ_MEDIUM    : plt_size_name = "Medium"   ; break;
-              case Planet::SZ_LARGE     : plt_size_name = "Large"    ; break;
-              case Planet::SZ_HUGE      : plt_size_name = "Huge"     ; break;
-              case Planet::SZ_ASTEROIDS : plt_size_name = "Asteroids"; break;
-              case Planet::SZ_GASGIANT  : plt_size_name = "Gasgigant"; break;
+              case SZ_TINY      : plt_size_name = "Tiny"     ; break;
+              case SZ_SMALL     : plt_size_name = "Small"    ; break;
+              case SZ_MEDIUM    : plt_size_name = "Medium"   ; break;
+              case SZ_LARGE     : plt_size_name = "Large"    ; break;
+              case SZ_HUGE      : plt_size_name = "Huge"     ; break;
+              case SZ_ASTEROIDS : plt_size_name = "Asteroids"; break;
+              case SZ_GASGIANT  : plt_size_name = "Gasgigant"; break;
               default                   : plt_size_name = "Default"  ; break;
             }
 
@@ -527,13 +527,13 @@ namespace {
   {
     switch (planet.Size())
     {
-      case Planet::SZ_TINY      : return ClientUI::String("PL_SZ_TINY"  );
-      case Planet::SZ_SMALL     : return ClientUI::String("PL_SZ_SMALL" ); 
-      case Planet::SZ_MEDIUM    : return ClientUI::String("PL_SZ_MEDIUM"); 
-      case Planet::SZ_LARGE     : return ClientUI::String("PL_SZ_LARGE" ); 
-      case Planet::SZ_HUGE      : return ClientUI::String("PL_SZ_HUGE"  ); 
-      case Planet::SZ_ASTEROIDS : return ""; //ClientUI::String("PL_SZ_ASTEROIDS"); break;
-      case Planet::SZ_GASGIANT  : return ""; //ClientUI::String("PL_SZ_GASGIANT"); break;
+      case SZ_TINY      : return ClientUI::String("PL_SZ_TINY"  );
+      case SZ_SMALL     : return ClientUI::String("PL_SZ_SMALL" ); 
+      case SZ_MEDIUM    : return ClientUI::String("PL_SZ_MEDIUM"); 
+      case SZ_LARGE     : return ClientUI::String("PL_SZ_LARGE" ); 
+      case SZ_HUGE      : return ClientUI::String("PL_SZ_HUGE"  ); 
+      case SZ_ASTEROIDS : return ""; //ClientUI::String("PL_SZ_ASTEROIDS"); break;
+      case SZ_GASGIANT  : return ""; //ClientUI::String("PL_SZ_GASGIANT"); break;
       default                   : return "ERROR ";
     }
   }
@@ -1025,7 +1025,7 @@ void CUIIconButton::RenderUnpressed()
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &planet, System::StarType star_type)
+SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &planet, StarType star_type)
 : Wnd(0, y, w, h, GG::Wnd::CLICKABLE),
   m_planet_id(planet.ID()),
   m_planet_name(0),m_planet_info(0),
@@ -1041,12 +1041,12 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   if(planet.Owners().size()>0)
     owner_color = HumanClientApp::Empires().Lookup(*planet.Owners().begin())->Color();
 
-  m_planet_name = new GG::TextControl(MAX_PLANET_SIZE-15,10,planet.Name(),ClientUI::FONT,ClientUI::SIDE_PANEL_PLANET_NAME_PTS,ClientUI::TEXT_COLOR);
+  m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),ClientUI::FONT,ClientUI::SIDE_PANEL_PLANET_NAME_PTS,ClientUI::TEXT_COLOR);
   AttachChild(m_planet_name);
 
   GG::Pt ul = UpperLeft(), lr = LowerRight();
   int planet_image_sz = PlanetDiameter();
-  GG::Pt planet_image_pos(MAX_PLANET_SIZE / 2 - planet_image_sz / 2, Height() / 2 - planet_image_sz / 2);
+  GG::Pt planet_image_pos(MAX_PLANET_DIAMETER / 2 - planet_image_sz / 2, Height() / 2 - planet_image_sz / 2);
 
 #if ROTATING_PLANET_IMAGES
   if (planet.Type() == PT_ASTEROIDS)
@@ -1354,42 +1354,42 @@ void SidePanel::PlanetPanel::PlanetProdCenterChanged()
   m_button_mining  ->SetValue(planet->MiningPoints  ());
   m_button_research->SetValue(planet->ResearchPoints());
 
-  m_button_food    ->SetColor((planet->PrimaryFocus()==Planet::BALANCED || planet->PrimaryFocus()==Planet::FARMING || planet->SecondaryFocus()==Planet::BALANCED || planet->SecondaryFocus()==Planet::FARMING )?GG::Clr(100,100,  0,200):GG::CLR_ZERO);
-  m_button_mining  ->SetColor((planet->PrimaryFocus()==Planet::BALANCED || planet->PrimaryFocus()==Planet::MINING  || planet->SecondaryFocus()==Planet::BALANCED || planet->SecondaryFocus()==Planet::MINING  )?GG::Clr(100,  0,  0,200):GG::CLR_ZERO);
-  m_button_industry->SetColor((planet->PrimaryFocus()==Planet::BALANCED || planet->PrimaryFocus()==Planet::INDUSTRY|| planet->SecondaryFocus()==Planet::BALANCED || planet->SecondaryFocus()==Planet::INDUSTRY)?GG::Clr(  0,  0,100,200):GG::CLR_ZERO);
-  m_button_research->SetColor((planet->PrimaryFocus()==Planet::BALANCED || planet->PrimaryFocus()==Planet::SCIENCE || planet->SecondaryFocus()==Planet::BALANCED || planet->SecondaryFocus()==Planet::SCIENCE )?GG::Clr(  0,100,  0,200):GG::CLR_ZERO);
+  m_button_food    ->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_FARMING || planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_FARMING )?GG::Clr(100,100,  0,200):GG::CLR_ZERO);
+  m_button_mining  ->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_MINING  || planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_MINING  )?GG::Clr(100,  0,  0,200):GG::CLR_ZERO);
+  m_button_industry->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_INDUSTRY|| planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_INDUSTRY)?GG::Clr(  0,  0,100,200):GG::CLR_ZERO);
+  m_button_research->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_SCIENCE || planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_SCIENCE )?GG::Clr(  0,100,  0,200):GG::CLR_ZERO);
   
   GG::Clr color;
 
   color = ClientUI::CTRL_BORDER_COLOR;
-  if(planet->PrimaryFocus()==Planet::BALANCED || planet->PrimaryFocus()==Planet::FARMING)
-    color = (planet->SecondaryFocus()==Planet::BALANCED || planet->SecondaryFocus()==Planet::FARMING)?GG::CLR_WHITE:GG::Clr(255,255,0,255);
+  if(planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_FARMING)
+    color = (planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_FARMING)?GG::CLR_WHITE:GG::Clr(255,255,0,255);
   m_button_food->SetBorderColor(color);
 
   color = ClientUI::CTRL_BORDER_COLOR;
-  if(planet->PrimaryFocus()==Planet::BALANCED || planet->PrimaryFocus()==Planet::MINING)
-    color = (planet->SecondaryFocus()==Planet::BALANCED || planet->SecondaryFocus()==Planet::MINING) ?GG::CLR_WHITE:GG::Clr(255,0,0,255);
+  if(planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_MINING)
+    color = (planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_MINING) ?GG::CLR_WHITE:GG::Clr(255,0,0,255);
   m_button_mining->SetBorderColor(color);
 
   color = ClientUI::CTRL_BORDER_COLOR;
-  if(planet->PrimaryFocus()==Planet::BALANCED || planet->PrimaryFocus()==Planet::INDUSTRY)
-    color = (planet->SecondaryFocus()==Planet::BALANCED || planet->SecondaryFocus()==Planet::INDUSTRY)?GG::CLR_WHITE:GG::Clr(0,0,255,255);
+  if(planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_INDUSTRY)
+    color = (planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_INDUSTRY)?GG::CLR_WHITE:GG::Clr(0,0,255,255);
   m_button_industry->SetBorderColor(color);
 
   color = ClientUI::CTRL_BORDER_COLOR;
-  if(planet->PrimaryFocus()==Planet::BALANCED || planet->PrimaryFocus()==Planet::SCIENCE)
-    color = (planet->SecondaryFocus()==Planet::BALANCED || planet->SecondaryFocus()==Planet::SCIENCE) ?GG::CLR_WHITE:GG::Clr(0,255,0,255);
+  if(planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_SCIENCE)
+    color = (planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_SCIENCE) ?GG::CLR_WHITE:GG::Clr(0,255,0,255);
   m_button_research->SetBorderColor(color);
 
 }
 
-void SidePanel::PlanetPanel::SetPrimaryFocus(Planet::FocusType focus)
+void SidePanel::PlanetPanel::SetPrimaryFocus(FocusType focus)
 {
   Planet *planet = GetPlanet();
   HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,0));
 }
 
-void SidePanel::PlanetPanel::SetSecondaryFocus(Planet::FocusType focus)
+void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 {
   Planet *planet = GetPlanet();
   HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,1));
@@ -1412,7 +1412,7 @@ void SidePanel::PlanetPanel::MouseLeave(const GG::Pt& pt, Uint32 keys)
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    ul.x += MAX_PLANET_SIZE / 2;
+    ul.x += MAX_PLANET_DIAMETER / 2;
     return ((ul <= pt && pt < lr) || InPlanet(pt));
 }
 
@@ -1438,7 +1438,7 @@ bool SidePanel::PlanetPanel::RenderUnhabited(const Planet &planet)
 bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 {
   //if (planet.Type() != PT_ASTEROIDS)
-    //RenderPlanet(UpperLeft() + GG::Pt(MAX_PLANET_SIZE / 2, Height() / 2), PlanetDiameter(), GG::App::GetApp()->GetTexture("moon.png"));
+    //RenderPlanet(UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER / 2, Height() / 2), PlanetDiameter(), GG::App::GetApp()->GetTexture("moon.png"));
 
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS);
@@ -1460,7 +1460,7 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
   int population=static_cast<int>(planet.PopPoints());
 
   const int RESOURCE_DISPLAY_HEIGHT = font->Height()+4;
-  const int RESOURCE_DISPLAY_WIDTH  = (Width()-MAX_PLANET_SIZE/2)/5;
+  const int RESOURCE_DISPLAY_WIDTH  = (Width()-MAX_PLANET_DIAMETER/2)/5;
   boost::shared_ptr<GG::Texture> icon;
   const int ICON_MARGIN    =  5;
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.2));
@@ -1480,7 +1480,7 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 {
   //if (planet.Type() != PT_ASTEROIDS)
-    //RenderPlanet(UpperLeft() + GG::Pt(MAX_PLANET_SIZE / 2, Height() / 2), PlanetDiameter(), GG::App::GetApp()->GetTexture("moon.png"));
+    //RenderPlanet(UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER / 2, Height() / 2), PlanetDiameter(), GG::App::GetApp()->GetTexture("moon.png"));
 
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS);
@@ -1504,11 +1504,11 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   text = ClientUI::String("PL_PRIMARY_FOCUS");
   switch(planet.PrimaryFocus())
   {
-    case Planet::BALANCED : text+=" "+ClientUI::String("PL_BALANCED");break;
-    case Planet::FARMING  : text+=" "+ClientUI::String("PL_FARMING" );break;
-    case Planet::INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
-    case Planet::MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
-    case Planet::SCIENCE  : text+=" "+ClientUI::String("PL_SCIENCE" );break;
+    case FOCUS_BALANCED : text+=" "+ClientUI::String("PL_BALANCED");break;
+    case FOCUS_FARMING  : text+=" "+ClientUI::String("PL_FARMING" );break;
+    case FOCUS_INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
+    case FOCUS_MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
+    case FOCUS_SCIENCE  : text+=" "+ClientUI::String("PL_SCIENCE" );break;
   }
   font->RenderText(m_button_food->UpperLeft().x,
                    m_button_food->UpperLeft().y-font->Height(),
@@ -1518,11 +1518,11 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   text = ClientUI::String("PL_SECONDARY_FOCUS");
   switch(planet.SecondaryFocus())
   {
-    case Planet::BALANCED : text+=" "+ClientUI::String("PL_BALANCED");break;
-    case Planet::FARMING  : text+=" "+ClientUI::String("PL_FARMING" );break;
-    case Planet::INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
-    case Planet::MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
-    case Planet::SCIENCE  : text+=" "+ClientUI::String("PL_SCIENCE" );break;
+    case FOCUS_BALANCED : text+=" "+ClientUI::String("PL_BALANCED");break;
+    case FOCUS_FARMING  : text+=" "+ClientUI::String("PL_FARMING" );break;
+    case FOCUS_INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
+    case FOCUS_MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
+    case FOCUS_SCIENCE  : text+=" "+ClientUI::String("PL_SCIENCE" );break;
   }
   font->RenderText(m_button_research->UpperLeft ().x,
                    m_button_research->LowerRight().y,
@@ -1539,7 +1539,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 
 
   const int RESOURCE_DISPLAY_HEIGHT = font->Height()+4;
-  const int RESOURCE_DISPLAY_WIDTH  = (Width()-MAX_PLANET_SIZE/2)/5;
+  const int RESOURCE_DISPLAY_WIDTH  = (Width()-MAX_PLANET_DIAMETER/2)/5;
   boost::shared_ptr<GG::Texture> icon;
   const int ICON_MARGIN    =  5;
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.2));
@@ -1616,7 +1616,7 @@ int SidePanel::PlanetPanel::PlanetDiameter() const
 
 bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
 {
-    GG::Pt center = UpperLeft() + GG::Pt(MAX_PLANET_SIZE / 2, Height() / 2);
+    GG::Pt center = UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER / 2, Height() / 2);
     GG::Pt diff = pt - center;
     int r_squared = PlanetDiameter() * PlanetDiameter() / 4;
     return diff.x * diff.x + diff.y * diff.y <= r_squared;
@@ -1687,7 +1687,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
 // SidePanel::PlanetPanelContainer
 ////////////////////////////////////////////////
 SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h)
-: Wnd(x-MAX_PLANET_SIZE/2, y, w+MAX_PLANET_SIZE/2, h, GG::Wnd::CLICKABLE),m_planet_panels(),
+: Wnd(x-MAX_PLANET_DIAMETER/2, y, w+MAX_PLANET_DIAMETER/2, h, GG::Wnd::CLICKABLE),m_planet_panels(),
   m_vscroll(new CUIScroll(Width()-10,0,10,Height(),GG::Scroll::VERTICAL))
 {
   EnableChildClipping(true);
@@ -1700,7 +1700,7 @@ bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
   if(pt.y<UpperLeft().y)
     return false;
 
-  bool retval = UpperLeft()+GG::Pt(MAX_PLANET_SIZE/2,0) <= pt && pt < LowerRight();
+  bool retval = UpperLeft()+GG::Pt(MAX_PLANET_DIAMETER/2,0) <= pt && pt < LowerRight();
   for(unsigned int i = 0; i < m_planet_panels.size() && !retval; ++i)
     if(m_planet_panels[i]->InWindow(pt))
       retval = true;
@@ -1723,12 +1723,12 @@ void SidePanel::PlanetPanelContainer::Clear()
 
 }
 
-void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*> &plt_vec, System::StarType star_type)
+void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*> &plt_vec, StarType star_type)
 {
   Clear();
 
   int y = 0;
-  const int PLANET_PANEL_HT = MAX_PLANET_SIZE;
+  const int PLANET_PANEL_HT = MAX_PLANET_DIAMETER;
   for (unsigned int i = 0; i < plt_vec.size(); ++i, y += PLANET_PANEL_HT) 
   {
     const Planet* planet = plt_vec[i];
@@ -1742,7 +1742,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*
 void SidePanel::PlanetPanelContainer::VScroll(int from,int to,int range_min,int range_max)
 {
   int y = -from;
-  const int PLANET_PANEL_HT = MAX_PLANET_SIZE;
+  const int PLANET_PANEL_HT = MAX_PLANET_DIAMETER;
   for (unsigned int i = 0; i < m_planet_panels.size(); ++i, y += PLANET_PANEL_HT)
     m_planet_panels[i]->MoveTo(UpperLeft().x-m_planet_panels[i]->UpperLeft().x,y);
 }
@@ -1997,19 +1997,19 @@ void SidePanel::PlanetView::PlanetProdCenterChanged()
 
   switch(planet->PrimaryFocus())
   {
-    case ProdCenter::FARMING  : m_radio_btn_primary_focus->SetCheck(0);break;
-    case ProdCenter::MINING   : m_radio_btn_primary_focus->SetCheck(1);break;
-    case ProdCenter::SCIENCE  : m_radio_btn_primary_focus->SetCheck(2);break;
-    case ProdCenter::INDUSTRY : m_radio_btn_primary_focus->SetCheck(3);break;
-    case ProdCenter::BALANCED : m_radio_btn_primary_focus->SetCheck(4);break;
+    case FOCUS_FARMING  : m_radio_btn_primary_focus->SetCheck(0);break;
+    case FOCUS_MINING   : m_radio_btn_primary_focus->SetCheck(1);break;
+    case FOCUS_SCIENCE  : m_radio_btn_primary_focus->SetCheck(2);break;
+    case FOCUS_INDUSTRY : m_radio_btn_primary_focus->SetCheck(3);break;
+    case FOCUS_BALANCED : m_radio_btn_primary_focus->SetCheck(4);break;
   }
   switch(planet->SecondaryFocus())
   {
-    case ProdCenter::FARMING  : m_radio_btn_secondary_focus->SetCheck(0);break;
-    case ProdCenter::MINING   : m_radio_btn_secondary_focus->SetCheck(1);break;
-    case ProdCenter::SCIENCE  : m_radio_btn_secondary_focus->SetCheck(2);break;
-    case ProdCenter::INDUSTRY : m_radio_btn_secondary_focus->SetCheck(3);break;
-    case ProdCenter::BALANCED : m_radio_btn_secondary_focus->SetCheck(4);break;
+    case FOCUS_FARMING  : m_radio_btn_secondary_focus->SetCheck(0);break;
+    case FOCUS_MINING   : m_radio_btn_secondary_focus->SetCheck(1);break;
+    case FOCUS_SCIENCE  : m_radio_btn_secondary_focus->SetCheck(2);break;
+    case FOCUS_INDUSTRY : m_radio_btn_secondary_focus->SetCheck(3);break;
+    case FOCUS_BALANCED : m_radio_btn_secondary_focus->SetCheck(4);break;
   }
 }
 
@@ -2092,15 +2092,15 @@ void SidePanel::PlanetView::PrimaryFocusClicked(int idx)
   m_connection_planet_production_changed.disconnect();
   m_connection_btn_primary_focus_changed.disconnect();
 
-  Planet::FocusType ft=Planet::FOCUS_UNKNOWN;
+  FocusType ft=FOCUS_UNKNOWN;
   switch(idx)
   {
-    case  0:ft=Planet::FARMING      ;break;
-    case  1:ft=Planet::MINING       ;break;
-    case  2:ft=Planet::SCIENCE      ;break;
-    case  3:ft=Planet::INDUSTRY     ;break;
-    case  4:ft=Planet::BALANCED     ;break;
-    default:ft=Planet::FOCUS_UNKNOWN;break;
+    case  0:ft=FOCUS_FARMING      ;break;
+    case  1:ft=FOCUS_MINING       ;break;
+    case  2:ft=FOCUS_SCIENCE      ;break;
+    case  3:ft=FOCUS_INDUSTRY     ;break;
+    case  4:ft=FOCUS_BALANCED     ;break;
+    default:ft=FOCUS_UNKNOWN;break;
   }
   Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
   if(planet->PrimaryFocus()!=ft)
@@ -2115,15 +2115,15 @@ void SidePanel::PlanetView::SecondaryFocusClicked(int idx)
   m_connection_planet_production_changed.disconnect();
   m_connection_btn_secondary_focus_changed.disconnect();
 
-  Planet::FocusType ft=Planet::FOCUS_UNKNOWN;
+  FocusType ft=FOCUS_UNKNOWN;
   switch(idx)
   {
-    case  0:ft=Planet::FARMING      ;break;
-    case  1:ft=Planet::MINING       ;break;
-    case  2:ft=Planet::SCIENCE      ;break;
-    case  3:ft=Planet::INDUSTRY     ;break;
-    case  4:ft=Planet::BALANCED     ;break;
-    default:ft=Planet::FOCUS_UNKNOWN;break;
+    case  0:ft=FOCUS_FARMING      ;break;
+    case  1:ft=FOCUS_MINING       ;break;
+    case  2:ft=FOCUS_SCIENCE      ;break;
+    case  3:ft=FOCUS_INDUSTRY     ;break;
+    case  4:ft=FOCUS_BALANCED     ;break;
+    default:ft=FOCUS_UNKNOWN;break;
   }
   Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
   if(planet->SecondaryFocus()!=ft)
@@ -2243,7 +2243,7 @@ bool SidePanel::PlanetView::Render()
   
   y+=font->Height();
 
-  text = "Balanced Focus";
+  text = "FOCUS_BALANCED Focus";
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
   font->RenderText(ul.x+65,ul.y+145+128,ul.x+500,ul.y+145+128+font->Height(), text, format, 0, false);
   y+=font->Height();
@@ -2542,14 +2542,14 @@ void SidePanel::SetSystem(int system_id)
       std::string star_image = ClientUI::ART_DIR + "stars_sidepanel/";
       switch (m_system->Star())
       {
-        case System::BLUE     : star_image += "blue0"     ; break;
-        case System::WHITE    : star_image += "white0"    ; break;
-        case System::YELLOW   : star_image += "yellow0"   ; break;
-        case System::ORANGE   : star_image += "orange0"   ; break;
-        case System::RED      : star_image += "red0"      ; break;
-        case System::NEUTRON  : star_image += "neutron0"  ; break;
-        case System::BLACK    : star_image += "blackhole0"; break;
-        default               : star_image += "white0"    ; break;
+        case STAR_BLUE     : star_image += "blue0"     ; break;
+        case STAR_WHITE    : star_image += "white0"    ; break;
+        case STAR_YELLOW   : star_image += "yellow0"   ; break;
+        case STAR_ORANGE   : star_image += "orange0"   ; break;
+        case STAR_RED      : star_image += "red0"      ; break;
+        case STAR_NEUTRON  : star_image += "neutron0"  ; break;
+        case STAR_BLACK    : star_image += "blackhole0"; break;
+        default            : star_image += "white0"    ; break;
       }
       star_image += boost::lexical_cast<std::string>(m_system->ID()%2)+".png";
 

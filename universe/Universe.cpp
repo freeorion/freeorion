@@ -433,14 +433,14 @@ namespace {
         // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
         int idx = 0;
         int max_roll = 0;
-        for (unsigned int i = 0; i < System::NUM_STARTYPES; ++i) {
+        for (unsigned int i = 0; i < NUM_STAR_TYPES; ++i) {
             int roll = g_hundred_dist() + universe_age_mod_to_star_type_dist[age][i] + base_star_type_dist[i];
             if (max_roll < roll) {
                 max_roll = roll;
                 idx = i;
             }
         }
-        System* system = new System(System::StarType(idx), MAX_SYSTEM_ORBITS, star_name, x, y);
+        System* system = new System(StarType(idx), MAX_SYSTEM_ORBITS, star_name, x, y);
 
         int new_system_id = universe.Insert(system);
         if (new_system_id == UniverseObject::INVALID_OBJECT_ID) {
@@ -1067,7 +1067,7 @@ void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjace
     std::list<std::string> star_names;
     LoadSystemNames(star_names);
 
-    SmallIntDistType star_type_gen = SmallIntDist(0, System::NUM_STARTYPES - 1);
+    SmallIntDistType star_type_gen = SmallIntDist(0, NUM_STAR_TYPES - 1);
 
     // generate star field
     for (int star_cnt = 0; star_cnt < stars; ++star_cnt) {
@@ -1130,7 +1130,7 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
             // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
             int idx = 0;
             int max_roll = 0;
-            for (unsigned int i = 0; i < Planet::MAX_PLANET_SIZE; ++i) {
+            for (unsigned int i = 0; i < NUM_PLANET_SIZES; ++i) {
                 int roll = g_hundred_dist() + star_color_mod_to_planet_size_dist[system->Star()][i] + slot_mod_to_planet_size_dist[orbit][i]
                     + density_mod_to_planet_size_dist[density][i];
                 if (max_roll < roll) {
@@ -1138,20 +1138,20 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
                     idx = i;
                 }
             }
-            Planet::PlanetSize planet_size = Planet::PlanetSize(idx);
+            PlanetSize planet_size = PlanetSize(idx);
 
-            if (planet_size == Planet::SZ_NOWORLD)
+            if (planet_size == SZ_NOWORLD)
                 continue;
-            else if (planet_size != Planet::SZ_ASTEROIDS)
+            else if (planet_size != SZ_ASTEROIDS)
                 ++num_planets_in_system;
 
-            if (planet_size == Planet::SZ_ASTEROIDS) {
+            if (planet_size == SZ_ASTEROIDS) {
                 idx = PT_ASTEROIDS;
-            } else if (planet_size == Planet::SZ_GASGIANT) {
+            } else if (planet_size == SZ_GASGIANT) {
                 idx = PT_GASGIANT;
             } else {
                 // make another series of modified rolls for planet type
-                for (unsigned int i = 0; i < MAX_PLANET_TYPE; ++i) {
+                for (unsigned int i = 0; i < NUM_PLANET_TYPES; ++i) {
                     int roll = g_hundred_dist() + planet_size_mod_to_planet_type_dist[planet_size][i] + slot_mod_to_planet_type_dist[orbit][i] + 
                         star_color_mod_to_planet_type_dist[system->Star()][i];
                     if (max_roll < roll) {
@@ -1163,9 +1163,9 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
             PlanetType planet_type = PlanetType(idx);
 
             if (planet_type == PT_ASTEROIDS)
-                planet_size = Planet::SZ_ASTEROIDS;
+                planet_size = SZ_ASTEROIDS;
             if (planet_type == PT_GASGIANT)
-                planet_size = Planet::SZ_GASGIANT;
+                planet_size = SZ_GASGIANT;
 
             Planet* planet = new Planet(planet_type, planet_size);
 
@@ -2049,7 +2049,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
             planet_name = system->Name() + " " + RomanNumber(home_orbit + 1);
         }
 
-        Planet* planet = new Planet(PT_TERRAN, Planet::SZ_LARGE);
+        Planet* planet = new Planet(PT_TERRAN, SZ_LARGE);
         planet_id = Insert(planet);
         planet->Rename(planet_name);
         system->Insert(planet, home_orbit);

@@ -1,6 +1,7 @@
 #include "UniverseObject.h"
 
 #include "../util/AppInterface.h"
+#include "Meter.h"
 #include "System.h"
 #include "Universe.h"
 #include "XMLDoc.h"
@@ -72,7 +73,12 @@ UniverseObject::~UniverseObject()
 
 System* UniverseObject::GetSystem() const
 {
-    return GetUniverse().Object<System>(m_system_id);
+    return m_system_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<System>(m_system_id);
+}
+
+const Meter* UniverseObject::GetMeter(MeterType type) const
+{
+    return 0;
 }
 
 bool UniverseObject::Unowned() const 
@@ -133,6 +139,11 @@ void UniverseObject::MoveTo(double x, double y)
    m_x = x;
    m_y = y;
    m_changed_sig();
+}
+
+Meter* UniverseObject::GetMeter(MeterType type)
+{
+    return 0;
 }
 
 void UniverseObject::AddOwner(int id)    

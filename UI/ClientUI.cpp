@@ -698,19 +698,19 @@ boost::shared_ptr<GG::Texture> ClientUI::GetNumberedTexture(const std::string& d
         for (fs::directory_iterator it(star_dir); it != end_it; ++it) {
             if (!fs::is_directory(*it)) {
                 if (it->leaf().find("blue") == 0) {
-                    ++image_names[System::BLUE].second; 
+                    ++image_names[STAR_BLUE].second; 
                 } else if (it->leaf().find("white") == 0) {
-                    ++image_names[System::WHITE].second; 
+                    ++image_names[STAR_WHITE].second; 
                 } else if (it->leaf().find("yellow") == 0) {
-                    ++image_names[System::YELLOW].second; 
+                    ++image_names[STAR_YELLOW].second; 
                 } else if (it->leaf().find("orange") == 0) {
-                    ++image_names[System::ORANGE].second; 
+                    ++image_names[STAR_ORANGE].second; 
                 } else if (it->leaf().find("red") == 0) {
-                    ++image_names[System::RED].second; 
+                    ++image_names[STAR_RED].second; 
                 } else if (it->leaf().find("neutron") == 0) {
-                    ++image_names[System::NEUTRON].second; 
+                    ++image_names[STAR_NEUTRON].second; 
                 } else if (it->leaf().find("black") == 0) {
-                    ++image_names[System::BLACK].second; 
+                    ++image_names[STAR_BLACK].second; 
                 }
             }
         }

@@ -23,27 +23,6 @@
 class Planet : public UniverseObject, public PopCenter, public ProdCenter
 {
 public:
-   /** the sizes of planets in FreeOrion*/
-   enum PlanetSize {SZ_NOWORLD,   // used to designate an empty planet slot
-                    SZ_TINY,
-                    SZ_SMALL,
-                    SZ_MEDIUM,
-                    SZ_LARGE,
-                    SZ_HUGE,
-                    SZ_ASTEROIDS,
-                    SZ_GASGIANT,
-                    MAX_PLANET_SIZE   //keep this last
-                   };
-
-   /** the environmental conditions of planets in FreeOrion*/
-   enum PlanetEnvironment {PE_UNINHABITABLE,   //for gas giants and asteroids
-                    PE_TERRIBLE,
-                    PE_ADEQUATE,
-                    PE_OPTIMAL,
-                    PE_SUPERB,
-                    MAX_PLANET_ENVIRONMENT   //keep this last
-                   };
-
    /** \name Structors */ //@{
    Planet(); ///< default ctor
    Planet(PlanetType type, PlanetSize size); ///< general ctor taking just the planet's type and size
@@ -51,10 +30,13 @@ public:
    //@}
 
    /** \name Accessors */ //@{
-   PlanetType     Type() const {return m_type;}
-   PlanetSize     Size() const {return m_size;}
-   
+   PlanetType          Type() const {return m_type;}
+   PlanetSize          Size() const {return m_size;}
+   PlanetEnvironment   Environment() const;
+
    bool IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
+
+   virtual const Meter* GetMeter(MeterType type) const;
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.2 ONLY!!!!
@@ -67,6 +49,8 @@ public:
    //@}
   	
    /** \name Mutators */ //@{
+   virtual Meter* GetMeter(MeterType type);
+
    virtual void MovementPhase( );
    virtual void PopGrowthProductionResearchPhase( );
 
@@ -90,7 +74,6 @@ public:
     void IsAboutToBeColonized(bool bB);
 
     //@}
-   PlanetEnvironment   Environment();
 
 private:
    PlanetType     m_type;
@@ -100,6 +83,9 @@ private:
 
    ///< flag to indicate that the planet is colonized the very next turn
    ///< isn't stored by XMLEncode
+   // TODO: determine whether it is acceptible not to store this in XML as indicated above;
+   // what happens when an order is given, and the game is saved and restored before 
+   // the next turn comes?
    bool m_is_about_to_be_colonized; 
    
    /////////////////////////////////////////////////////////////////////////////

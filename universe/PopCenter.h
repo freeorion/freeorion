@@ -6,6 +6,10 @@
 #include "UniverseObject.h"
 #endif
 
+#ifndef _Meter_h_
+#include <Meter.h>
+#endif
+
 /** a population center decoration for a UniverseObject.  This is a decorator class.  That is, it is designed to 
     augment another class with extra functionality.  Planet is the most obvious class to inherit PopCenter, but 
     other classes could be made from it as well (e.g., a ship that is large enough to support population and still 
@@ -30,6 +34,8 @@ public:
    //@}
 
    /** \name Accessors */ //@{
+   const Meter& PopulationMeter() const      {return m_pop_meter;}  ///< returns the population Meter for this center
+   const Meter& HealthMeter() const          {return m_health;}     ///< returns the population Meter for this center
    double       PopPoints() const            {return m_pop;}        ///< returns the number of pop points in this center
    double       MaxPop() const               {return m_max_pop;}    ///< returns the max number of pop points possible in this center
    double       PopGrowth() const            {return m_growth;}     ///< returns the change in pop points since the last turn (may be negative)
@@ -46,6 +52,9 @@ public:
    //@}
 
    /** \name Mutators */ //@{
+   Meter& PopulationMeter()      {return m_pop_meter;}  ///< returns the population Meter for this center
+   Meter& HealthMeter()          {return m_health;}     ///< returns the population Meter for this center
+
    /** adjusts the population by \a pop, down to a minimum of 0.0, or up to a maximum of MaxPop().  This function 
       returns the (positive) pop surplus, or the (negative) pop deficit that would result from 
       adjusting the population by \a pop points, or 0 if the adjustment falls within [0.0, MaxPop()]*/
@@ -63,6 +72,8 @@ public:
 private:
    double   m_pop;          // these are all in points, not inhabitants
    double   m_max_pop;
+   Meter    m_pop_meter;
+   Meter    m_health;
    double   m_growth;
    double   m_env_growth_mod;
    int      m_race; ///< the id of the race that occupies this planet

@@ -711,7 +711,7 @@ GG::XMLElement DeleteFleetOrder::XMLEncode() const
 ChangeFocusOrder::ChangeFocusOrder() : 
     Order(),
     m_planet(UniverseObject::INVALID_OBJECT_ID),
-    m_focus(ProdCenter::FOCUS_UNKNOWN),
+    m_focus(FOCUS_UNKNOWN),
     m_which(-1)
 {
 }
@@ -723,11 +723,11 @@ ChangeFocusOrder::ChangeFocusOrder(const GG::XMLElement& elem):
         throw std::invalid_argument("Attempted to construct ChangeFocusOrder from malformed XMLElement");
 
     m_planet = lexical_cast<int>(elem.Child("m_planet").Text());
-    m_focus = static_cast<ProdCenter::FocusType>(lexical_cast<int>(elem.Child("m_focus").Text()));
+    m_focus = static_cast<FocusType>(lexical_cast<int>(elem.Child("m_focus").Text()));
     m_which = lexical_cast<int>(elem.Child("m_which").Text());
 }
 
-ChangeFocusOrder::ChangeFocusOrder(int empire, int planet,ProdCenter::FocusType focus,int which) : 
+ChangeFocusOrder::ChangeFocusOrder(int empire, int planet,FocusType focus,int which) : 
     Order(empire),
     m_planet(planet),
     m_focus(focus),

@@ -41,8 +41,8 @@ namespace {
 using boost::lexical_cast;
 
 ProdCenter::ProdCenter() : 
-   m_primary(BALANCED),
-   m_secondary(BALANCED),
+   m_primary(FOCUS_BALANCED),
+   m_secondary(FOCUS_BALANCED),
    m_workforce(0.0),
    m_max_workforce(0.0),
    m_planet_type(PT_TERRAN),
@@ -50,11 +50,21 @@ ProdCenter::ProdCenter() :
    m_rollover(0),
    m_available_minerals(0.0)
 {
+    double meter_max = 0.0;
+    if (m_primary == FOCUS_BALANCED)
+        meter_max += 3.0;
+    else if (m_primary == FOCUS_INDUSTRY)
+        meter_max += 15.0;
+    if (m_secondary == FOCUS_BALANCED)
+        meter_max += 1.0;
+    else if (m_secondary == FOCUS_INDUSTRY)
+        meter_max += 5.0;
+    m_industry.SetMax(meter_max);
 }
 
 ProdCenter::ProdCenter(const GG::XMLElement& elem) : 
-   m_primary(BALANCED),
-   m_secondary(BALANCED),
+   m_primary(FOCUS_BALANCED),
+   m_secondary(FOCUS_BALANCED),
    m_workforce(0.0),
    m_max_workforce(0.0),
    m_planet_type(PT_TERRAN),
@@ -70,8 +80,8 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem) :
 
         UniverseObject::Visibility vis = UniverseObject::Visibility(lexical_cast<int>(elem.Child("vis").Text()));
         if (vis == UniverseObject::FULL_VISIBILITY) {
-            m_primary = FocusType(lexical_cast<int>(elem.Child("m_primary").Text()));
-            m_secondary = FocusType(lexical_cast<int>(elem.Child("m_secondary").Text()));
+            m_primary = lexical_cast<FocusType>(elem.Child("m_primary").Text());
+            m_secondary = lexical_cast<FocusType>(elem.Child("m_secondary").Text());
             m_workforce = lexical_cast<double>(elem.Child("m_workforce").Text());
             m_planet_type = lexical_cast<PlanetType>(elem.Child("m_planet_type").Text());
             m_currently_building = BuildType(lexical_cast<int>(elem.Child("m_currently_building").Text()));

@@ -61,7 +61,7 @@ class SidePanel : public GG::Wnd
         //@}
 
         /** \name Structors */ //@{
-        PlanetPanel(int x, int y, int w, int h, const Planet &planet, System::StarType star_type); ///< basic ctor
+        PlanetPanel(int x, int y, int w, int h, const Planet &planet, StarType star_type); ///< basic ctor
         ~PlanetPanel();
         //@}
 
@@ -107,20 +107,20 @@ class SidePanel : public GG::Wnd
         void PlanetProdCenterChanged();       ///< called when a planet production was changed
         void BuildSelected(int idx) const;    ///< called when a planet production was changed
 
-        void SetPrimaryFocus  (Planet::FocusType focus); ///< set the primary focus of the planet to focus
-        void SetSecondaryFocus(Planet::FocusType focus); ///< set the secondary focus of the planet to focus
+        void SetPrimaryFocus  (FocusType focus); ///< set the primary focus of the planet to focus
+        void SetSecondaryFocus(FocusType focus); ///< set the secondary focus of the planet to focus
 
-        void LClickFarming () {SetPrimaryFocus(Planet::FARMING );}///< set the primary focus of the planet to farming
-        void LClickMining  () {SetPrimaryFocus(Planet::MINING  );}///< set the primary focus of the planet to mining
-        void LClickIndustry() {SetPrimaryFocus(Planet::INDUSTRY);}///< set the primary focus of the planet to industry
-        void LClickResearch() {SetPrimaryFocus(Planet::SCIENCE );}///< set the primary focus of the planet to science
-        void LClickBalanced() {SetPrimaryFocus(Planet::BALANCED);}///< set the primary focus of the planet to balanced
+        void LClickFarming () {SetPrimaryFocus(FOCUS_FARMING );}///< set the primary focus of the planet to farming
+        void LClickMining  () {SetPrimaryFocus(FOCUS_MINING  );}///< set the primary focus of the planet to mining
+        void LClickIndustry() {SetPrimaryFocus(FOCUS_INDUSTRY);}///< set the primary focus of the planet to industry
+        void LClickResearch() {SetPrimaryFocus(FOCUS_SCIENCE );}///< set the primary focus of the planet to science
+        void LClickBalanced() {SetPrimaryFocus(FOCUS_BALANCED);}///< set the primary focus of the planet to balanced
 
-        void RClickFarming () {SetSecondaryFocus(Planet::FARMING );}///< set the secondary focus of the planet to farming
-        void RClickMining  () {SetSecondaryFocus(Planet::MINING  );}///< set the secondary focus of the planet to mining
-        void RClickIndustry() {SetSecondaryFocus(Planet::INDUSTRY);}///< set the secondary focus of the planet to industry
-        void RClickResearch() {SetSecondaryFocus(Planet::SCIENCE );}///< set the secondary focus of the planet to science
-        void RClickBalanced() {SetSecondaryFocus(Planet::BALANCED);}///< set the secondary focus of the planet to balanced
+        void RClickFarming () {SetSecondaryFocus(FOCUS_FARMING );}///< set the secondary focus of the planet to farming
+        void RClickMining  () {SetSecondaryFocus(FOCUS_MINING  );}///< set the secondary focus of the planet to mining
+        void RClickIndustry() {SetSecondaryFocus(FOCUS_INDUSTRY);}///< set the secondary focus of the planet to industry
+        void RClickResearch() {SetSecondaryFocus(FOCUS_SCIENCE );}///< set the secondary focus of the planet to science
+        void RClickBalanced() {SetSecondaryFocus(FOCUS_BALANCED);}///< set the secondary focus of the planet to balanced
 
         void ClickColonize();///< called if btn colonize is pressed
 
@@ -210,7 +210,7 @@ private:
         //@}
 
         void Clear();
-        void SetPlanets(const std::vector<const Planet*> &plt_vec, System::StarType star_type);
+        void SetPlanets(const std::vector<const Planet*> &plt_vec, StarType star_type);
 
         /** \name Accessors */ //@{
         virtual bool InWindow(const GG::Pt& pt) const;

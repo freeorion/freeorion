@@ -45,25 +45,50 @@ namespace GG {class XMLElement;}
 
 #include "GGEnum.h"
 
-// this is here to break a circular dependendy between Planet and ProdCenter, both of which need this enum
-/** the types of planets in FreeOrion*/
-enum PlanetType {PT_SWAMP,
-                PT_TOXIC,
-                PT_INFERNO,
-                PT_RADIATED,
-                PT_BARREN,
-                PT_TUNDRA,
-                PT_DESERT,
-                PT_TERRAN,                   //changed the order to be clockwise around the 
-                PT_OCEAN,                    // wheel of EP, added Inferno and Swamp types
-                PT_GAIA,
-                PT_ASTEROIDS,                //these need to be types also so they can have an environment
-                PT_GASGIANT,                     
-                MAX_PLANET_TYPE   //keep this last
-                };
+/** types of stars in FreeOrion v0.2 */
+enum StarType {
+    INVALID_STAR_TYPE = -1,  ///< the highest illegal negative StarType value
+    STAR_BLUE,
+    STAR_WHITE,
+    STAR_YELLOW,
+    STAR_ORANGE,
+    STAR_RED,
+    STAR_NEUTRON,
+    STAR_BLACK,
+    NUM_STAR_TYPES           ///< the lowest illegal positive StarType value
+}; // others TBD
 
-// define EnumMap and stream operators for PlanetType
-// this is done because these labels are used in some artist-created XML files
+namespace GG {
+    ENUM_MAP_BEGIN(StarType)
+	ENUM_MAP_INSERT(STAR_BLUE)
+	ENUM_MAP_INSERT(STAR_WHITE)
+	ENUM_MAP_INSERT(STAR_YELLOW)
+	ENUM_MAP_INSERT(STAR_ORANGE)
+	ENUM_MAP_INSERT(STAR_RED)
+	ENUM_MAP_INSERT(STAR_NEUTRON)
+	ENUM_MAP_INSERT(STAR_BLACK)
+    ENUM_MAP_END
+}
+ENUM_STREAM_IN(StarType)
+ENUM_STREAM_OUT(StarType)
+
+/** the types of planets in FreeOrion*/
+enum PlanetType {
+    PT_SWAMP,
+    PT_TOXIC,
+    PT_INFERNO,
+    PT_RADIATED,
+    PT_BARREN,
+    PT_TUNDRA,
+    PT_DESERT,
+    PT_TERRAN,                   //changed the order to be clockwise around the 
+    PT_OCEAN,                    // wheel of EP, added Inferno and Swamp types
+    PT_GAIA,
+    PT_ASTEROIDS,                //these need to be types also so they can have an environment
+    PT_GASGIANT,                     
+    NUM_PLANET_TYPES   //keep this last
+};
+
 namespace GG {
     ENUM_MAP_BEGIN(PlanetType)
 	ENUM_MAP_INSERT(PT_SWAMP)
@@ -80,9 +105,136 @@ namespace GG {
 	ENUM_MAP_INSERT(PT_GASGIANT)
     ENUM_MAP_END
 }
-
 ENUM_STREAM_IN(PlanetType)
 ENUM_STREAM_OUT(PlanetType)
+
+
+/** the sizes of planets in FreeOrion*/
+enum PlanetSize {
+    SZ_NOWORLD,   // used to designate an empty planet slot
+    SZ_TINY,
+    SZ_SMALL,
+    SZ_MEDIUM,
+    SZ_LARGE,
+    SZ_HUGE,
+    SZ_ASTEROIDS,
+    SZ_GASGIANT,
+    NUM_PLANET_SIZES   //keep this last
+};
+
+namespace GG {
+    ENUM_MAP_BEGIN(PlanetSize)
+	ENUM_MAP_INSERT(SZ_NOWORLD)
+	ENUM_MAP_INSERT(SZ_TINY)
+	ENUM_MAP_INSERT(SZ_SMALL)
+	ENUM_MAP_INSERT(SZ_MEDIUM)
+	ENUM_MAP_INSERT(SZ_LARGE)
+	ENUM_MAP_INSERT(SZ_HUGE)
+	ENUM_MAP_INSERT(SZ_ASTEROIDS)
+	ENUM_MAP_INSERT(SZ_GASGIANT)
+    ENUM_MAP_END
+}
+ENUM_STREAM_IN(PlanetSize)
+ENUM_STREAM_OUT(PlanetSize)
+
+
+/** the environmental conditions of planets in FreeOrion*/
+enum PlanetEnvironment {
+    PE_UNINHABITABLE,   //for gas giants and asteroids
+    PE_TERRIBLE,
+    PE_ADEQUATE,
+    PE_OPTIMAL,
+    PE_SUPERB,
+    NUM_PLANET_ENVIRONMENTS   //keep this last
+};
+
+namespace GG {
+    ENUM_MAP_BEGIN(PlanetEnvironment)
+	ENUM_MAP_INSERT(PE_UNINHABITABLE)
+	ENUM_MAP_INSERT(PE_TERRIBLE)
+	ENUM_MAP_INSERT(PE_ADEQUATE)
+	ENUM_MAP_INSERT(PE_OPTIMAL)
+	ENUM_MAP_INSERT(PE_SUPERB)
+    ENUM_MAP_END
+}
+ENUM_STREAM_IN(PlanetEnvironment)
+ENUM_STREAM_OUT(PlanetEnvironment)
+
+
+/** the types of production focus*/
+enum FocusType {
+    FOCUS_UNKNOWN,
+    FOCUS_BALANCED,
+    FOCUS_FARMING,
+    FOCUS_INDUSTRY,
+    FOCUS_MINING,
+    FOCUS_SCIENCE,
+    NUM_FOCI
+}; // others TBD
+                      
+namespace GG {
+    ENUM_MAP_BEGIN(FocusType)
+	ENUM_MAP_INSERT(FOCUS_UNKNOWN)
+	ENUM_MAP_INSERT(FOCUS_BALANCED)
+	ENUM_MAP_INSERT(FOCUS_FARMING)
+	ENUM_MAP_INSERT(FOCUS_INDUSTRY)
+	ENUM_MAP_INSERT(FOCUS_MINING)
+	ENUM_MAP_INSERT(FOCUS_SCIENCE)
+    ENUM_MAP_END
+}
+ENUM_STREAM_IN(FocusType)
+ENUM_STREAM_OUT(FocusType)
+
+
+/** the possible types for Meters in FreeOrion. */
+enum MeterType {
+    METER_INVALID = -1,
+    METER_POPULATION,
+    METER_FARMING,
+    METER_INDUSTRY,
+    METER_RESEARCH,
+    METER_TRADE,
+    METER_MINING,
+    METER_CONSTRUCTION,
+    METER_HEALTH
+    /* Future meter types (more TBD)
+    METER_HAPPINESS,
+    METER_SECURITY
+    */
+};
+
+namespace GG {
+    ENUM_MAP_BEGIN(MeterType)
+	ENUM_MAP_INSERT(METER_INVALID)
+	ENUM_MAP_INSERT(METER_FARMING)
+	ENUM_MAP_INSERT(METER_POPULATION)
+	ENUM_MAP_INSERT(METER_INDUSTRY)
+	ENUM_MAP_INSERT(METER_RESEARCH)
+	ENUM_MAP_INSERT(METER_TRADE)
+	ENUM_MAP_INSERT(METER_MINING)
+	ENUM_MAP_INSERT(METER_CONSTRUCTION)
+	ENUM_MAP_INSERT(METER_HEALTH)
+    ENUM_MAP_END
+}
+ENUM_STREAM_IN(MeterType)
+ENUM_STREAM_OUT(MeterType)
+
+/** the types of diplomatic empire affiliations to a given empire*/
+enum EmpireAffiliationType {
+    AFFIL_SELF,  ///< not an affiliation as such; this indicates that the given empire, rather than its affiliates
+    AFFIL_ENEMY, ///< allies of the given empire
+    AFFIL_ALLY   ///< enamies of the given empire
+};
+
+namespace GG {
+    ENUM_MAP_BEGIN(EmpireAffiliationType)
+	ENUM_MAP_INSERT(AFFIL_SELF)
+	ENUM_MAP_INSERT(AFFIL_ENEMY)
+	ENUM_MAP_INSERT(AFFIL_ALLY)
+    ENUM_MAP_END
+}
+ENUM_STREAM_IN(EmpireAffiliationType)
+ENUM_STREAM_OUT(EmpireAffiliationType)
 
 
 class Universe
