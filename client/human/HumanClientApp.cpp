@@ -128,6 +128,19 @@ void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/
     }
 }
 
+void HumanClientApp::StartMusic(void)
+{
+ HumanClientApp::GetApp()->StopMusic();
+ HumanClientApp::GetApp()->PlayMusic(ClientUI::MUSIC_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1, 0, 0.0);
+}
+
+void HumanClientApp::StopMusic(void)
+{
+ Mix_HaltMusic();
+ Mix_FreeMusic(m_current_music);
+ m_current_music = 0;
+}
+
 void HumanClientApp::PlaySound(const std::string& filename, int repeats, int timeout/* = -1*/)
 {
     // load and cache the sound data
