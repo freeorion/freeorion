@@ -1,63 +1,28 @@
-#ifndef _ServerConnectWnd_h_
 #include "ServerConnectWnd.h"
-#endif
 
-#ifndef _GGDrawUtil_h_
-#include "GGDrawUtil.h"
-#endif
-
-#ifndef _GGControl_h_
-#include "GGControl.h"
-#endif
-
-#ifndef _GGClr_h_
-#include "GGClr.h"
-#endif
-
-//tsev{
-#ifndef _ClientUI_h_
 #include "ClientUI.h"
-#endif
-
-#ifndef _CUI_Wnd_h_
 #include "CUI_Wnd.h"
-#endif
-// }tsev
+#include "CUIControls.h"
+#include "GGClr.h"
+#include "GGControl.h"
+#include "GGDrawUtil.h"
 
 #include <sstream>
 #include <iomanip>
 
-using namespace std;
- 
-// Compile time constants
-/*
-const GG::Clr ServerConnectWnd::BACKCOLOR(1.0, 1.0, 1.0, 0.75);    
-const string ServerConnectWnd::DEF_FONT("arial.ttf");
-*/
-
 ServerConnectWnd::ServerConnectWnd(int x, int y, int w, int h) : 
-    CUI_Wnd(ClientUI::String("SCONNECT_WINDOW_TITLE"), x, y, w, h, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL)
+    CUI_Wnd(ClientUI::String("SCONNECT_WINDOW_TITLE"), x, y, w, h, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
+	m_ended_with_ok(false)
 {
-     
-#define POS_LABEL_SERVER_CONNECT    10,5
-#define POS_LABEL_SERVER_SERVER     10,80
-#define POS_BTN_SEARCH_MORE         10,150,220,30
-#define POS_CBO_AVAILABLE_SERVERS   120,80,300,20
-#define POS_BTN_OK                  350,300,80,30
-#define POS_BTN_CANCEL              230,300,80,30
+    m_btn_search_more = new CUIButton(10, 150, 220, ClientUI::String("SCONNECT_BTN_SEARCH_MORE"));
+    m_cbo_available_servers = new CUIDropDownList(120, 80, 300, ClientUI::PTS + 4, 120);
+    m_btn_ok = new CUIButton(350, 300, 80, ClientUI::String("OK"));
+    m_btn_cancel = new CUIButton(230, 300, 80, ClientUI::String("CANCEL"));
     
-    // Some default values
-    m_ended_with_ok = false;
-    m_btn_search_more = new GG::Button(POS_BTN_SEARCH_MORE,ClientUI::String("SCONNECT_BTN_SEARCH_MORE"),ClientUI::FONT,ClientUI::PTS,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_cbo_available_servers = new GG::DropDownList(POS_CBO_AVAILABLE_SERVERS,120,ClientUI::CTRL_COLOR,GG::CLR_WHITE);
-    m_btn_ok = new GG::Button(POS_BTN_OK,ClientUI::String("OK"),ClientUI::FONT,ClientUI::PTS,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_btn_cancel = new GG::Button(POS_BTN_CANCEL,ClientUI::String("CANCEL"),ClientUI::FONT,ClientUI::PTS,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    // static labels
+    AttachChild(new GG::TextControl(10, 80, ClientUI::String("SCONNECT_LBL_SERVER"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR));
     
-    // Attach static labels
-//    AttachChild(new GG::StaticText(POS_LABEL_SERVER_CONNECT,"Connect to server",ClientUI::FONT,ClientUI::PTS + 4,ClientUI::TEXT_COLOR));
-    AttachChild(new GG::TextControl(POS_LABEL_SERVER_SERVER,ClientUI::String("SCONNECT_LBL_SERVER"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR));
-    
-    // Attach signal connections
+    // signal connections
     InitControls();
 }
 
@@ -67,22 +32,22 @@ ServerConnectWnd::ServerConnectWnd(const GG::XMLElement& elem) : CUI_Wnd(elem.Ch
     m_ended_with_ok = false;
     
     const GG::XMLElement*  curr_elem  = &elem.Child("m_cbo_available_servers");
-    m_cbo_available_servers = new GG::DropDownList(curr_elem->Child("GG::DropDownList"));
+    m_cbo_available_servers = new CUIDropDownList(curr_elem->Child("CUIDropDownList"));
     
     curr_elem  = &elem.Child("m_btn_search_more");
-    m_btn_search_more = new GG::Button(curr_elem->Child("GG::Button"));
+    m_btn_search_more = new CUIButton(curr_elem->Child("CUIButton"));
     
     curr_elem  = &elem.Child("m_btn_ok");
-    m_btn_ok = new GG::Button(curr_elem->Child("GG::Button"));
+    m_btn_ok = new CUIButton(curr_elem->Child("CUIButton"));
     
     curr_elem  = &elem.Child("m_btn_cancel");
-    m_btn_cancel = new GG::Button(curr_elem->Child("GG::Button"));
+    m_btn_cancel = new CUIButton(curr_elem->Child("CUIButton"));
     
     // Attach children and signal connections
     InitControls();
 }
 
-const string& ServerConnectWnd::GetSelectedServer() const
+const std::string& ServerConnectWnd::GetSelectedServer() const
 {
     const GG::DropDownList::Row* r = m_cbo_available_servers->CurrentItem();
     // how to get the content of the Row out of the Row? Only way I found is data type...
@@ -100,21 +65,6 @@ int ServerConnectWnd::Run()
     PopulateServerList();  
     return Wnd::Run(); 
 }
-
-/// PROTECTED MEMBERS ////
-
-//int ServerConnectWnd::Render()
-//{
-/*    HumanClientApp::GetApp()->Enter2DMode();
-    GG::FlatRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, ClientUI::WND_COLOR, ClientUI::BORDER_COLOR, 1);
-    HumanClientApp::GetApp()->Exit2DMode();
-*/
-//    ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, "Connect to Server");
-//    return 0;
-//}
-
-
-/// PRIVATE MEMBERS ////
 
 void ServerConnectWnd::InitControls()
 {    
@@ -135,7 +85,7 @@ void ServerConnectWnd::PopulateServerList()
     {  
 	    for(RowsIterator i=m_server_list.begin(); i!=m_server_list.end(); i++)
 	    {
-	         lastindex = AddRow((*i),lastindex);
+	         lastindex = AddRow((*i), lastindex);
 	    }
 	    m_cbo_available_servers->Select(0);  
     }
@@ -152,13 +102,13 @@ void ServerConnectWnd::SearchMore()
     ShowDialog(ClientUI::String("SCONNECT_RETRIEVING"));
     
     int n = UpdateServerList(4);  
-    string feedback(ClientUI::String("SCONNECT_FOUND"));
+    std::string feedback(ClientUI::String("SCONNECT_FOUND"));
     if (n>0)
     {
         int x = feedback.find("xx");
-        ostringstream cntr;
-        cntr << setfill(' ') << setw(2) << n;
-        feedback.replace(x,2,cntr.str());
+        std::ostringstream cntr;
+        cntr << std::setfill(' ') << std::setw(2) << n;
+        feedback.replace(x, 2 ,cntr.str());
         PopulateServerList();
     }
     else
@@ -282,15 +232,13 @@ int ServerConnectWnd::AddRow(const IPValue& value, int index)
 	return (m_cbo_available_servers->Insert(r,index));
 }
 
-void ServerConnectWnd::ShowDialog(const string& msg)
+void ServerConnectWnd::ShowDialog(const std::string& msg)
 {
-/*
-    GG::MessageDlg* dialog = new GG::MessageDlg(300,300,400,200,msg,ClientUI::FONT,ClientUI::PTS,ClientUI::WND_COLOR,ClientUI::BORDER_COLOR);
-    dialog->Run();
-    delete dialog;
-*/
-//now uses the messagebox method in ClientUI
     ClientUI::MessageBox(msg);
 }
 
-
+void ServerConnectWnd::FormatRow(const IPValue& rstr, GG::DropDownList::Row* row)
+{
+	row->push_back(rstr.Name(), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);  // display the name/URL of server
+	row->data_type = rstr.Address();             // store the real ip address
+}
