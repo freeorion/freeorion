@@ -334,7 +334,6 @@ bool HumanClientApp::LoadSinglePlayerGame()
             m_empire_id = -1;
             m_player_name = "Happy_Player";
             m_ui->GetMapWnd()->CloseAllPopups();
-            m_ui->ScreenLoad();
 
             // HACK!  send the multiplayer form of the HostGameMessage, since it establishes us as the host, and the single-player 
             // LOAD_GAME message will establish us as a single-player game
