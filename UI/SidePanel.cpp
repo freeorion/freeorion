@@ -1196,7 +1196,7 @@ void SidePanel::PlanetPanel::PlanetChanged()
   enum OWNERSHIP {OS_NONE,OS_FOREIGN,OS_SELF} owner = OS_NONE;
 
   std::string text;
-  if(planet->Owners().size()==0) 
+  if(planet->Owners().size()==0 || planet->IsAboutToBeColonized()) 
   { //uninhabited
     owner = OS_NONE;
     text = GetPlanetSizeName(*planet);
@@ -1235,7 +1235,10 @@ void SidePanel::PlanetPanel::PlanetChanged()
   m_planet_name->SetTextColor(planet->Owners().size()>0?HumanClientApp::Empires().Lookup(*(planet->Owners().begin()))->Color():ClientUI::TEXT_COLOR);
 
   // visibility
-  EnableControl(m_button_colonize,(owner==OS_NONE && planet->MaxPop()>0 && FindColonyShip(planet->SystemID())));
+  EnableControl(m_button_colonize,(   owner==OS_NONE 
+                                   && planet->MaxPop()>0 
+                                   && !planet->IsAboutToBeColonized()
+                                   && FindColonyShip(planet->SystemID())));
   EnableControl(m_button_food    ,(owner==OS_SELF));
   EnableControl(m_button_mining  ,(owner==OS_SELF));
   EnableControl(m_button_industry,(owner==OS_SELF));
@@ -1331,9 +1334,15 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys)
 
 bool SidePanel::PlanetPanel::RenderUnhabited(const Planet &planet)
 {
-    //if (planet.Type() != PT_ASTEROIDS)
-        //RenderPlanet(UpperLeft() + GG::Pt(MAX_PLANET_SIZE / 2, Height() / 2), PlanetDiameter(), GG::App::GetApp()->GetTexture("moon.png"));
-    return true;
+  if(planet.IsAboutToBeColonized())
+  {
+    glColor4ubv(ClientUI::TEXT_COLOR.v);
+    boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS);
+    Uint32 format = GG::TF_CENTER | GG::TF_VCENTER;
+
+    font->RenderText(UpperLeft()+m_button_colonize->UpperLeft(),UpperLeft()+m_button_colonize->LowerRight(), "colonizing ...", format, 0, false);
+  }
+  return true;
 }
 
 bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
@@ -1495,7 +1504,7 @@ bool SidePanel::PlanetPanel::Render()
 {
   const Planet *planet = GetPlanet();
 
-  if(planet->Owners().size()==0)  
+  if(planet->Owners().size()==0 || planet->IsAboutToBeColonized())  
     RenderUnhabited(*planet);
   else 
     if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))     
@@ -1532,7 +1541,7 @@ void SidePanel::PlanetPanel::ClickColonize()
   if(ship==0)
     throw std::runtime_error("SidePanel::PlanetPanel::ClickColonize ship not found!");
 
-  HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->EmpireID(), ship->GetFleet()->ID(), planet->ID() ));
+  HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->EmpireID(), ship, planet->ID() ));
 }
 
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
