@@ -11,6 +11,7 @@
 #include "../universe/Ship.h"
 #include "../universe/System.h"
 #include "../network/Message.h"
+#include "SidePanel.h"
 
 
 namespace {
@@ -40,7 +41,7 @@ struct ShipRow : public GG::ListBox::Row
         if (!ship)
             throw std::invalid_argument("Attempted to contruct a ShipRow using a null ship pointer.");
 
-        push_back(ship->Design().name, ClientUI::FONT,  ClientUI::PTS,  ClientUI::TEXT_COLOR);
+        push_back(ship->Name().length()>0?ship->Name():ship->Design().name, ClientUI::FONT,  ClientUI::PTS,  ClientUI::TEXT_COLOR);
         data_type = "Ship";
     }
 
@@ -50,6 +51,44 @@ struct ShipRow : public GG::ListBox::Row
 };
 }
 
+namespace {
+const int NEW_FLEET_BUTTON_WIDTH = 75;
+class EditWnd : public CUI_Wnd
+{
+public:
+    EditWnd(int w, const std::string& text, Uint32 flags = Wnd::MODAL) : 
+        CUI_Wnd("Enter new name", 0, 0, 1, 1, flags)
+    {
+        m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, w - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), ClientUI::PTS + 10, text);
+        m_ok_bn = new CUIButton(m_edit->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, ClientUI::String("OK"));
+        m_cancel_bn = new CUIButton(m_ok_bn->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, ClientUI::String("CANCEL"));
+
+        Resize(w, m_cancel_bn->LowerRight().y + BottomBorder() + 3);
+        MoveTo((GG::App::GetApp()->AppWidth() - w) / 2, (GG::App::GetApp()->AppHeight() - Height()) / 2);
+
+        AttachChild(m_edit);
+        AttachChild(m_ok_bn);
+        AttachChild(m_cancel_bn);
+
+        GG::Connect(m_ok_bn->ClickedSignal(), &EditWnd::OkClicked, this);
+        GG::Connect(m_cancel_bn->ClickedSignal(), &CUI_Wnd::CloseClicked, static_cast<CUI_Wnd*>(this));
+    }
+
+    const std::string& Result() const {return m_result;}
+
+private:
+    void OkClicked() {m_result = m_edit->WindowText(); CloseClicked();}
+
+    std::string m_result;
+
+    CUIEdit*    m_edit;
+    CUIButton*  m_ok_bn;
+    CUIButton*  m_cancel_bn;
+
+    static const int BUTTON_WIDTH = 75;
+    static const int CONTROL_MARGIN = 5;
+};
+}
 
 ////////////////////////////////////////////////
 // FleetDetailPanel
@@ -224,41 +263,68 @@ void FleetDetailPanel::ShipDroppedIntoList(int row_idx, const GG::ListBox::Row* 
         // creating a new fleet can fail but will be handled by listbox exception
         m_fleet = m_need_new_fleet_sig(ship_id);
 
-	m_fleet_connection.disconnect();
-	m_fleet_connection = GG::Connect(m_fleet->StateChangedSignal(), &FleetDetailPanel::Refresh, this);
+        m_fleet_connection.disconnect();
+        m_fleet_connection = GG::Connect(m_fleet->StateChangedSignal(), &FleetDetailPanel::Refresh, this);
         
         *m_destination_text << DestinationText();
         if (Parent())
             Parent()->SetText(m_fleet->Name());
     }
     Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
-    if (ship->FleetID() != m_fleet->ID())
+    if(   ship->FleetID() != m_fleet->ID()
+       && ship->GetFleet()->SystemID() == m_fleet->SystemID()
+       && m_fleet->SystemID()!=UniverseObject::INVALID_OBJECT_ID)
     {
-	HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->PlayerID(), ship->FleetID(), m_fleet->ID(), std::vector<int>(1, ship_id)));
+      HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->PlayerID(), ship->FleetID(), m_fleet->ID(), std::vector<int>(1, ship_id)));
     } else {
-	throw  GG::ListBox::DontAcceptDropException();
+      throw  GG::ListBox::DontAcceptDropException();
     }
 }
 
 void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt)
 {
-    int ship_id = dynamic_cast<const ShipRow*>(row)->ShipID();
-    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
+    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(dynamic_cast<const ShipRow*>(row)->ShipID()));
 
-    // is this a colony ship?
-    if ( ship->Design().colonize )
-    {
-	int planet_id = HumanClientApp::GetUI()->SelectPlanet(m_fleet->SystemID());
-	if ( planet_id != -1 )
-	{
-	    // check some conditions. If this is ever the final UI for colonization, once should display a cursor to reflect
-	    // the fact colonization cannot happen. For now, clicking on an invalid system will NOT end the UI
-	    if ( dynamic_cast<const Planet*>(GetUniverse().Object( planet_id ))->Owners().size() != 0 )
-		return;
+    GG::MenuItem menu_contents;
+    menu_contents.next_level.push_back(GG::MenuItem("Rename", 1, false, false));
 
-	    HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->PlayerID(), ship->GetFleet( )->ID(), planet_id ));
-	}
-    }
+    if(ship->Design().colonize)
+      menu_contents.next_level.push_back(GG::MenuItem("Colonize Planet", 2, false, false));
+
+    GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
+
+    if(popup.Run())
+      switch (popup.MenuID()) {
+      case 1: { // rename ship
+          std::string ship_name = m_ships_lb->GetRow(row_idx)[row_idx]->WindowText();
+          EditWnd edit_wnd(350, ship_name);
+          edit_wnd.Run();
+          if (edit_wnd.Result() != "") {
+              ship->Rename(edit_wnd.Result());
+              m_ships_lb->GetRow(row_idx)[row_idx]->SetText(edit_wnd.Result());
+          }
+          break;
+      }
+      case 2:{ // colonize planet
+            int planet_id = HumanClientApp::GetUI()->SelectPlanet(m_fleet->SystemID());
+            if ( planet_id != UniverseObject::INVALID_OBJECT_ID )
+            {
+                // check some conditions. If this is ever the final UI for colonization, once should display a cursor to reflect
+                // the fact colonization cannot happen. For now, clicking on an invalid system will NOT end the UI
+                const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object( planet_id ));
+                if ( planet->Owners().size() != 0 )
+	              return;
+
+                HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->PlayerID(), ship->GetFleet()->ID(), planet_id ));
+
+                HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->SetSystem(planet->SystemID());
+            }
+          }
+          break;
+      default:
+          break;
+      }
+
 }
 
 std::string FleetDetailPanel::DestinationText() const
@@ -352,45 +418,6 @@ std::string FleetDetailWnd::TitleText() const
 ////////////////////////////////////////////////
 // FleetWnd
 ////////////////////////////////////////////////
-namespace {
-const int NEW_FLEET_BUTTON_WIDTH = 75;
-class EditWnd : public CUI_Wnd
-{
-public:
-    EditWnd(int w, const std::string& text, Uint32 flags = Wnd::MODAL) : 
-        CUI_Wnd("Enter new name", 0, 0, 1, 1, flags)
-    {
-        m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, w - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), ClientUI::PTS + 10, text);
-        m_ok_bn = new CUIButton(m_edit->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, ClientUI::String("OK"));
-        m_cancel_bn = new CUIButton(m_ok_bn->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, ClientUI::String("CANCEL"));
-
-        Resize(w, m_cancel_bn->LowerRight().y + BottomBorder() + 3);
-        MoveTo((GG::App::GetApp()->AppWidth() - w) / 2, (GG::App::GetApp()->AppHeight() - Height()) / 2);
-
-        AttachChild(m_edit);
-        AttachChild(m_ok_bn);
-        AttachChild(m_cancel_bn);
-
-        GG::Connect(m_ok_bn->ClickedSignal(), &EditWnd::OkClicked, this);
-        GG::Connect(m_cancel_bn->ClickedSignal(), &CUI_Wnd::CloseClicked, static_cast<CUI_Wnd*>(this));
-    }
-
-    const std::string& Result() const {return m_result;}
-
-private:
-    void OkClicked() {m_result = m_edit->WindowText(); CloseClicked();}
-
-    std::string m_result;
-
-    CUIEdit*    m_edit;
-    CUIButton*  m_ok_bn;
-    CUIButton*  m_cancel_bn;
-
-    static const int BUTTON_WIDTH = 75;
-    static const int CONTROL_MARGIN = 5;
-};
-}
-
 FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
     MapWndPopup("", x, y, 1, 1, flags),
     m_empire_id(-1),
@@ -526,21 +553,23 @@ void FleetWnd::FleetRightClicked(int row_idx, const GG::ListBox::Row* row, const
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem("Rename", 1, false, false));
     GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
-    switch (popup.Run()) {
-    case 1: { // rename fleet
-        Fleet* fleet = FleetInRow(row_idx);
-        std::string fleet_name = fleet->Name();
-        EditWnd edit_wnd(350, fleet_name);
-        edit_wnd.Run();
-        if (edit_wnd.Result() != "") {
-            fleet->Rename(edit_wnd.Result());
-            m_fleets_lb->GetRow(row_idx)[0]->SetText(edit_wnd.Result());
-        }
-        break;
-    }
-    default:
-        break;
-    }
+
+    if(popup.Run())
+      switch (popup.MenuID()) {
+      case 1: { // rename fleet
+          Fleet* fleet = FleetInRow(row_idx);
+          std::string fleet_name = fleet->Name();
+          EditWnd edit_wnd(350, fleet_name);
+          edit_wnd.Run();
+          if (edit_wnd.Result() != "") {
+              fleet->Rename(edit_wnd.Result());
+              m_fleets_lb->GetRow(row_idx)[0]->SetText(edit_wnd.Result());
+          }
+          break;
+      }
+      default:
+          break;
+      }
 }
 
 void FleetWnd::FleetDoubleClicked(int row_idx, const GG::ListBox::Row* row)
@@ -585,8 +614,15 @@ void FleetWnd::NewFleetButtonClicked()
 Fleet* FleetWnd::NewFleetWndReceivedShip(FleetDetailWnd* fleet_wnd, int ship_id)
 {
     Fleet* existing_fleet = FleetInRow(0);
-    int empire_id = HumanClientApp::GetApp()->PlayerID();
+    Ship *ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
 
+    if (!existing_fleet || !ship || existing_fleet->SystemID()!=ship->GetFleet()->SystemID())
+    {
+	  // throw exception to UI so drop does not occur
+	  throw GG::ListBox::DontAcceptDropException();
+    }
+
+    int empire_id = HumanClientApp::GetApp()->PlayerID();
     int new_fleet_id = ClientApp::GetNewObjectID();
 
     if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID)
