@@ -127,115 +127,34 @@ namespace {
               :GG::XMLElement();
   }
 
-  int GetPlanetTexturesDynamicLights(const Planet &planet,std::vector<boost::shared_ptr<GG::Texture> > &textures, int &start_frame, double &fps)
+  std::string GetPlanetArtNodeName(const Planet &planet)
   {
-    GG::XMLDoc planetart_doc;
-    std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
-    planetart_doc.ReadDoc(ifs);
-    ifs.close();
-
-    std::string plt_art_node_name = "ArtPlanets.Lights";
-
-    GG::XMLElement plt_art_node = GetXMLChild(planetart_doc.root_node,plt_art_node_name);
-
-    if(plt_art_node.Tag().length()>0)
-    {
-      std::vector<GG::XMLElement> plt_art_vec;
-
-      for(int i=0; i< plt_art_node.NumChildren();i++)
-      {
-        GG::XMLElement single_plt_art =plt_art_node.Child(i);
-        if(0==single_plt_art.Tag().compare("Art"))
-          plt_art_vec.push_back(single_plt_art);
-      }
-
-      if(plt_art_vec.size()>0)
-      {
-        GG::XMLElement chosen_plt_art = plt_art_vec[planet.ID() % plt_art_vec.size()];
-       
-        if(chosen_plt_art.ContainsChild("File"))
-        {
-          GG::XMLElement file(chosen_plt_art.Child("File"));
-
-          std::string filename = file.ContainsAttribute("Filename")?file.Attribute("Filename"):"";
-          int from = file.ContainsAttribute("From")?boost::lexical_cast<int>(file.Attribute("From")):0,
-              to   = file.ContainsAttribute("To"  )?boost::lexical_cast<int>(file.Attribute("To"  )):0;
-
-          if(std::string::npos==filename.find('%'))
-            textures.push_back(HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "planets/"+filename));
-          else
-          {
-            if(from<=to)
-              for(int i=from; i<=to; i++)
-              {
-                std::string filename_image = filename,
-                            index          = boost::lexical_cast<std::string>(i);
-
-                filename_image.replace(filename_image.find_last_of('%')-index.length()+1,index.length(),index);
-                while(filename_image.find('%')!=std::string::npos)
-                  filename_image.replace(filename_image.find('%'),1,"0");
-
-                textures.push_back(HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "planets/"+filename_image));
-              }
-          }
-          if(chosen_plt_art.ContainsChild("FPS"))
-          {
-            std::string plt_size_name;
-            switch (planet.Size())
-            {
-              case Planet::SZ_TINY      : plt_size_name = "Tiny"     ; break;
-              case Planet::SZ_SMALL     : plt_size_name = "Small"    ; break;
-              case Planet::SZ_MEDIUM    : plt_size_name = "Medium"   ; break;
-              case Planet::SZ_LARGE     : plt_size_name = "Large"    ; break;
-              case Planet::SZ_HUGE      : plt_size_name = "Huge"     ; break;
-              case Planet::SZ_ASTEROIDS : plt_size_name = "Asteroids"; break;
-              case Planet::SZ_GASGIANT  : plt_size_name = "Gasgigant"; break;
-              default                   : plt_size_name = "Default"  ; break;
-            }
-
-            if(chosen_plt_art.Child("FPS").ContainsAttribute(plt_size_name))
-              fps = boost::lexical_cast<double>(chosen_plt_art.Child("FPS").Attribute(plt_size_name));
-          }
-
-          if(chosen_plt_art.ContainsChild("StartFrame"))
-          {
-            if(chosen_plt_art.Child("StartFrame").ContainsAttribute("value"))
-              start_frame=boost::lexical_cast<int>(chosen_plt_art.Child("StartFrame").Attribute("value"));
-          }
-        }
-      }
-    }
-
-    if(textures.size()==0)
-      textures.push_back(GetPlanetTextureStatic(planet));
-
-    return textures.size();
-  }
-
-  int GetPlanetTexturesDynamic(const Planet &planet,std::vector<boost::shared_ptr<GG::Texture> > &textures, int &start_frame, double &fps)
-  {
-    GG::XMLDoc planetart_doc;
-    std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
-    planetart_doc.ReadDoc(ifs);
-    ifs.close();
-
-    std::string plt_art_node_name = "ArtPlanets.";
     switch (planet.Type())
     {
-      case Planet::PT_SWAMP     : plt_art_node_name += "Swamp"     ; break;
-      case Planet::PT_TOXIC     : plt_art_node_name += "Toxic"     ; break;
-      case Planet::PT_INFERNO   : plt_art_node_name += "Inferno"   ; break;
-      case Planet::PT_RADIATED  : plt_art_node_name += "Radiated"  ; break;
-      case Planet::PT_BARREN    : plt_art_node_name += "Barren"    ; break;
-      case Planet::PT_TUNDRA    : plt_art_node_name += "Tundra"    ; break;
-      case Planet::PT_DESERT    : plt_art_node_name += "Desert"    ; break;
-      case Planet::PT_TERRAN    : plt_art_node_name += "Terran"    ; break;
-      case Planet::PT_OCEAN     : plt_art_node_name += "Ocean"     ; break;
-      case Planet::PT_GAIA      : plt_art_node_name += "Gaia"      ; break;
-      case Planet::PT_ASTEROIDS : plt_art_node_name += "Asteroids" ; break;
-      case Planet::PT_GASGIANT  : plt_art_node_name += "Gasgiant"  ; break;    
-      default                   : plt_art_node_name += "Barren"    ; break;
+      case Planet::PT_SWAMP     : return "Swamp"     ;
+      case Planet::PT_TOXIC     : return "Toxic"     ;
+      case Planet::PT_INFERNO   : return "Inferno"   ;
+      case Planet::PT_RADIATED  : return "Radiated"  ;
+      case Planet::PT_BARREN    : return "Barren"    ;
+      case Planet::PT_TUNDRA    : return "Tundra"    ;
+      case Planet::PT_DESERT    : return "Desert"    ;
+      case Planet::PT_TERRAN    : return "Terran"    ;
+      case Planet::PT_OCEAN     : return "Ocean"     ;
+      case Planet::PT_GAIA      : return "Gaia"      ;
+      case Planet::PT_ASTEROIDS : return "Asteroids" ;
+      case Planet::PT_GASGIANT  : return "Gasgiant"  ;
+      default                   : return "Barren"    ;
     }
+  }
+
+  int GetPlanetTexturesDynamic(const std::string &node_name,const Planet::PlanetSize &planet_size,int art_variation,std::vector<boost::shared_ptr<GG::Texture> > &textures, int &start_frame, double &fps)
+  {
+    GG::XMLDoc planetart_doc;
+    std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+    planetart_doc.ReadDoc(ifs);
+    ifs.close();
+
+    std::string plt_art_node_name = "ArtPlanets."+node_name;
 
     GG::XMLElement plt_art_node = GetXMLChild(planetart_doc.root_node,plt_art_node_name);
 
@@ -252,7 +171,7 @@ namespace {
 
       if(plt_art_vec.size()>0)
       {
-        GG::XMLElement chosen_plt_art = plt_art_vec[planet.ID() % plt_art_vec.size()];
+        GG::XMLElement chosen_plt_art = plt_art_vec[art_variation % plt_art_vec.size()];
        
         if(chosen_plt_art.ContainsChild("File"))
         {
@@ -282,7 +201,7 @@ namespace {
           if(chosen_plt_art.ContainsChild("FPS"))
           {
             std::string plt_size_name;
-            switch (planet.Size())
+            switch(planet_size)
             {
               case Planet::SZ_TINY      : plt_size_name = "Tiny"     ; break;
               case Planet::SZ_SMALL     : plt_size_name = "Small"    ; break;
@@ -308,7 +227,7 @@ namespace {
     }
 
     if(textures.size()==0)
-      textures.push_back(GetPlanetTextureStatic(planet));
+      throw std::runtime_error("::GetPlanetTexturesDynamic: no dynamic textures found!");
 
     return textures.size();
   }
@@ -317,7 +236,7 @@ namespace {
   {
     try
     {
-      return GetPlanetTexturesDynamic(planet,textures,start_frame,fps);
+      return GetPlanetTexturesDynamic(GetPlanetArtNodeName(planet),planet.Size(),planet.ID(),textures,start_frame,fps);
     }
     catch(...)
     {
@@ -703,7 +622,7 @@ CUIIconButton::CUIIconButton( int x, int y, int w, int h,const boost::shared_ptr
                               int pts, GG::Clr color, GG::Clr border, int thick, GG::Clr text_color, Uint32 flags)
 :  Button(x, y, w, h, "", font_filename, pts, color, text_color, flags),
    m_border_color(border), m_border_thick(thick),m_angled_corner_upperleft(0),m_angled_corner_upperright(0),m_angled_corner_lowerright(0),m_angled_corner_lowerleft(0),
-   m_icon(GG::SubTexture(icon,0,0,icon->Width()-1,icon->Height()-1)),
+   m_icon(GG::SubTexture(icon,0,0,icon->DefaultWidth(),icon->DefaultWidth())),
    m_value(0.0),m_decimals_to_show(0),m_show_sign(true),m_positive_color(text_color),m_negative_color(text_color),
    m_icon_rect(1+m_border_thick,1+m_border_thick,h-(1+m_border_thick),h-(1+m_border_thick)),m_text_rect(m_icon_rect.LowerRight().x,2,w-2,h-2)
 {
@@ -797,20 +716,25 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
 
   if(start_frame!=-1 && fps!=0.0)
     m_planet_graphic->SetTimeIndex(start_frame * 1000.0 / m_planet_graphic->FPS());
-  
+   AttachChild(m_planet_graphic);m_planet_graphic->Play();
+ 
   textures.clear();
   //lights
   //#texures holds at least one element or GetPlanetTextures throws an exception
-  GetPlanetTexturesDynamicLights(planet,textures,start_frame=-1,fps=0.0);
-  m_planet_graphic_lights = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-  if(start_frame==-1 && 1<textures.size())
-    start_frame = RandSmallInt(0,textures.size()-1);
+  try
+  {
+    GetPlanetTexturesDynamic("Lights",planet.Size(),1,textures,start_frame=-1,fps=0.0);
+    m_planet_graphic_lights = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+    if(start_frame==-1 && 1<textures.size())
+      start_frame = RandSmallInt(0,textures.size()-1);
 
-  if(start_frame!=-1 && fps!=0.0)
-    m_planet_graphic_lights->SetTimeIndex(start_frame * 1000.0 / m_planet_graphic_lights->FPS());
+    if(start_frame!=-1 && fps!=0.0)
+      m_planet_graphic_lights->SetTimeIndex(start_frame * 1000.0 / m_planet_graphic_lights->FPS());
 
-  AttachChild(m_planet_graphic);m_planet_graphic->Play();
-  AttachChild(m_planet_graphic_lights);m_planet_graphic_lights->Play();
+    AttachChild(m_planet_graphic_lights);m_planet_graphic_lights->Play();
+  }
+  catch(...)
+  {}
 
   m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::TEXT_COLOR,GG::TF_LEFT|GG::TF_TOP);
   AttachChild(m_planet_info);
@@ -828,7 +752,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
   m_button_mining   = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH+RESOURCE_DISPLAY_MARGIN,ul.y                                                ,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconMining  (),ClientUI::FONT,static_cast<int>(ClientUI::PTS*0.9),GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
   m_button_research = new CUIIconButton(ul.x                                               ,ul.y+RESOURCE_DISPLAY_HEIGHT+RESOURCE_DISPLAY_MARGIN,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconResearch(),ClientUI::FONT,static_cast<int>(ClientUI::PTS*0.9),GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
   m_button_industry = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH+RESOURCE_DISPLAY_MARGIN,ul.y+RESOURCE_DISPLAY_HEIGHT+RESOURCE_DISPLAY_MARGIN,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconIndustry(),ClientUI::FONT,static_cast<int>(ClientUI::PTS*0.9),GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
-  m_button_balanced = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH-6                      ,ul.y+RESOURCE_DISPLAY_HEIGHT-6                      ,19                    ,19                     ,IconBalance (),ClientUI::FONT,ClientUI::PTS                      ,GG::CLR_ZERO,GG::CLR_ZERO               ,2);
+  m_button_balanced = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH-1                      ,ul.y+RESOURCE_DISPLAY_HEIGHT-1                      ,9                     ,9                     ,IconBalance (),ClientUI::FONT,ClientUI::PTS                      ,GG::CLR_ZERO,GG::CLR_ZERO               ,2);
 
   boost::shared_ptr<GG::Texture>  icon = IconBalance ();
   m_button_balanced->SetIconRect(GG::Rect((-2),(-2),m_button_balanced->Width()-(-2),m_button_balanced->Height()-(-2)));
@@ -837,12 +761,12 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
   m_button_mining   ->SetAngledCornerLowerLeft (7);
   m_button_research ->SetAngledCornerUpperRight(7);
   m_button_industry ->SetAngledCornerUpperLeft (7);
-
+/*
   m_button_balanced ->SetAngledCornerLowerRight(7);
   m_button_balanced ->SetAngledCornerLowerLeft (7);
   m_button_balanced ->SetAngledCornerUpperRight(7);
   m_button_balanced ->SetAngledCornerUpperLeft (7);
-
+*/
   m_button_food    ->SetPositiveColor(GG::CLR_GREEN);m_button_food    ->SetNegativeColor(GG::CLR_RED );
   //m_button_mining  ->SetPositiveColor(GG::CLR_ZERO );m_button_mining  ->SetNegativeColor(GG::CLR_ZERO);
   //m_button_research->SetPositiveColor(GG::CLR_ZERO );m_button_research->SetNegativeColor(GG::CLR_ZERO);
@@ -2242,25 +2166,27 @@ void SidePanel::SetSystem(int system_id)
       std::vector<boost::shared_ptr<GG::Texture> > textures;
       boost::shared_ptr<GG::Texture> graphic;
      
-      std::string star_image = ClientUI::ART_DIR + "stars/";
+      std::string star_image = ClientUI::ART_DIR + "stars_sidepanel/";
       switch (m_system->Star())
       {
-        case System::BLUE     : star_image += "blue2"; break;
-        case System::WHITE    : star_image += "yellow1"; break;
-        case System::YELLOW   : star_image += "yellow2"; break;
-        case System::ORANGE   : star_image += "red4"; break;
-        case System::RED      : star_image += "red3"; break;
-        case System::NEUTRON  : star_image += "blue2"; break;
-        case System::BLACK    : star_image += "blue2"; break;
-        default               : star_image += "blue2"; break;
+        case System::BLUE     : star_image += "blue0"     ; break;
+        case System::WHITE    : star_image += "white0"    ; break;
+        case System::YELLOW   : star_image += "yellow0"   ; break;
+        case System::ORANGE   : star_image += "orange0"   ; break;
+        case System::RED      : star_image += "red0"      ; break;
+        case System::NEUTRON  : star_image += "neutron0"  ; break;
+        case System::BLACK    : star_image += "blackhole0"; break;
+        default               : star_image += "white0"    ; break;
       }
-      star_image += ".png";
+      star_image += boost::lexical_cast<std::string>(m_system->ID()%2)+".png";
 
       graphic = GetTexture(star_image);
       
       textures.push_back(graphic);
 
-      m_star_graphic = new GG::DynamicGraphic((Width()*1)/3,-(Width()*1)/3,Width(),Width(),true,textures.back()->Width(),textures.back()->Height(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+      //m_star_graphic = new GG::DynamicGraphic((Width()*2)/3,-(Width()*2)/3,Width(),Width(),true,textures.back()->Width(),textures.back()->Height(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+      int star_dim = (Width()*4)/5;
+      m_star_graphic = new GG::DynamicGraphic(Width()-(star_dim*2)/3,-(star_dim*1)/3,star_dim,star_dim,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
 
       AttachChild(m_star_graphic);MoveChildDown(m_star_graphic);
 
