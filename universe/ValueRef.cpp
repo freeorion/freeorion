@@ -1,5 +1,6 @@
 #include "ValueRef.h"
 
+#include "Building.h"
 #include "Fleet.h"
 #include "Planet.h"
 #include "System.h"
@@ -25,13 +26,11 @@ namespace {
     {
         while (first != last) {
             if (*first == "Planet") {
-#if 0 // TODO (enable this when Building is implemented)
                 if (const Building* b = dynamic_cast<const Building*>(obj)) {
-                    obj = b->Planet();
+                    obj = b->GetPlanet();
                 } else {
                     obj = 0;
                 }
-#endif
             } else if (*first == "System") {
                 obj = obj->GetSystem();
             }
@@ -106,8 +105,8 @@ UniverseObjectType ValueRef::Variable<UniverseObjectType>::Eval(const UniverseOb
             return OBJ_PLANET;
         } else if (dynamic_cast<const System*>(object)) {
             return OBJ_SYSTEM;
-        //} else if (dynamic_cast<const Building*>(object)) {
-            //return OBJ_BUILDING; // TODO (enable this once Building is implemented)
+        } else if (dynamic_cast<const Building*>(object)) {
+            return OBJ_BUILDING;
         } else if (dynamic_cast<const Ship*>(object)) {
             return OBJ_SHIP;
         } else if (dynamic_cast<const Fleet*>(object)) {
@@ -178,9 +177,9 @@ double ValueRef::Variable<double>::Eval(const UniverseObject* source, const Univ
         const Meter* m = object->GetMeter(METER_RESEARCH);
         retval = m ? m->Current() : 0;
     } else if (m_property_name.back() == "MaxResearch") {
-         const Meter* m = object->GetMeter(METER_RESEARCH);
+        const Meter* m = object->GetMeter(METER_RESEARCH);
         retval = m ? m->Max() : 0;
-   } else if (m_property_name.back() == "CurrentTrade") {
+    } else if (m_property_name.back() == "CurrentTrade") {
         const Meter* m = object->GetMeter(METER_TRADE);
         retval = m ? m->Current() : 0;
     } else if (m_property_name.back() == "MaxTrade") {
