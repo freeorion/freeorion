@@ -24,7 +24,7 @@
 
 namespace {
 log4cpp::Category& logger = log4cpp::Category::getRoot();
-const unsigned int SYCHRONOUS_TIMEOUT = 5000;    // 5 seconds
+const unsigned int SYCHRONOUS_TIMEOUT = 30000;    // 30 seconds
 }
 
 ClientNetworkCore::ClientNetworkCore() : 
