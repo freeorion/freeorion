@@ -18,8 +18,19 @@
   class System;
 #endif
 
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits/add_const.hpp>
+#include <boost/type_traits/add_pointer.hpp>
+#include <boost/type_traits/is_const.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_pointer.hpp>
+
 #include <string>
 
+
+/** a more efficient replacement for dynamic_cast that only works for UniverseObject and its subclasses */
+template <class T1, class T2>
+T1 universe_object_cast(T2 ptr);
 
 /** the base class for UniverseObject visitor classes.  These visitors have Visit() overloads for each type in the UniversObject-based
     class herarchy.  Calling Visit() returns the \a obj parameter, if some predicate is true of that object.  Each UniverseObject
@@ -101,6 +112,27 @@ inline std::pair<std::string, std::string> PredicatesRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
 // template implementations
+
+template <class T1, class T2>
+T1 universe_object_cast(T2 ptr)
+{
+    using namespace boost;
+
+    typedef typename remove_const<T1>::type T1ConstFreeType;
+    typedef typename add_pointer<
+        typename remove_const<
+            typename remove_pointer<
+                T2
+            >::type
+        >::type
+    >::type T2ConstFreeType;
+    typedef UniverseObjectSubclassVisitor<typename remove_pointer<T2ConstFreeType>::type> VisitorType;
+
+    return static_cast<typename mpl::if_<is_const<T2>,
+                                         typename add_const<T1ConstFreeType>::type,
+                                         T1
+                                        >::type>(ptr->Accept(VisitorType()));
+}
 
 template <class T>
 UniverseObject* UniverseObjectSubclassVisitor<T>::Visit(T* obj) const
