@@ -9,7 +9,7 @@
 # ...
 
 <8x5>
-PlanetMaxPop                            Inhospitable    Terrible        Adequate        Optimal Superb
+PlanetMaxPop                            Inhospitable    Terrible        Adequate        Superb  Optimal
 NoWorld                                 0               0               0               0       0
 Tiny                                    0               2               4               8       10
 Small                                   0               4               8               16      20
@@ -20,5 +20,17 @@ Asteroid                                0               0               0       
 GasGiant                                0               0               0               0       0
 
 <1x5>
-PlanetEnvEffectOnHealth          Inhospitable    Terrible        Adequate        Optimal Superb
-Health                           0               25              30              40      50     # max/current meter modifiers
+PlanetEnvHealthMod                      Inhospitable    Terrible        Adequate        Superb  Optimal
+Health                                  0               25              30              40      50     # max/current meter modifiers
+
+<1x5>
+PlanetEnvFarmingMod                     Inhospitable    Terrible        Adequate        Superb  Optimal
+Farming                                 -100            -30             -10             0       10
+
+<1x6>
+PlanetSizeIndustryMod                   NoWorld         Tiny            Small           Medium  Large   Huge
+Industry                                0               10              5               0       -5      -10
+
+<1x6>
+NutrientHealthMod                       LessThan1       LessThan2       LessThan4       4OrMore
+NutrientsDividedByPop                   -50             -10             0               10
