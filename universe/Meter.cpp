@@ -42,6 +42,11 @@ GG::XMLElement Meter::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
     return retval;
 }
 
+void Meter::ResetMax()
+{
+    m_max = METER_MIN;
+}
+
 void Meter::SetCurrent(double current)
 {
     m_current = std::max(METER_MIN, std::min(current, m_max));
@@ -50,5 +55,14 @@ void Meter::SetCurrent(double current)
 void Meter::SetMax(double max)
 {
     m_max = std::max(METER_MIN, std::min(max, METER_MAX));
-    m_current = std::max(METER_MIN, std::min(m_current, m_max));
+}
+
+void Meter::AdjustCurrent(double current)
+{
+    SetCurrent(m_current + current);
+}
+
+void Meter::AdjustMax(double max)
+{
+    SetMax(m_max + max);
 }

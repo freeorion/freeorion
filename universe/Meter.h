@@ -21,8 +21,11 @@ public:
 
     GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a System object with visibility limited relative to the input empire
 
-    void SetCurrent(double current); ///< sets the current value of the Meter, clamping it to the range [METER_MIN, Max()]
-    void SetMax(double max);         ///< sets the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
+    void ResetMax();                    ///< resets the max value of the Meter to METER_MIN, during max value recalculation
+    void SetCurrent(double current);    ///< sets the current value of the Meter, clamping it to the range [METER_MIN, Max()]
+    void SetMax(double max);            ///< sets the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
+    void AdjustCurrent(double current); ///< adds \a current to the current value of the Meter, clamping it to the range [METER_MIN, Max()]
+    void AdjustMax(double max);         ///< adds \a max to the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
 
     static const double METER_MIN;
     static const double METER_MAX;
