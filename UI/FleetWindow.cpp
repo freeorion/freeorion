@@ -1012,7 +1012,7 @@ void FleetWnd::DeleteFleet(Fleet* fleet)
 
 void FleetWnd::FleetPanelEmpty(Fleet* fleet)
 {
-    RemoveEmptyFleets();
+    DeleteFleet(fleet);
 }
 
 Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
