@@ -12,6 +12,8 @@
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
+
 #include <sstream>
 
 namespace {
@@ -680,13 +682,13 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             EndGame();
         } else {
             // TODO: replace this with something better
-            ClientUI::MessageBox(Format(ClientUI::String("EMPIRE_DEFEATED").c_str(), msg.GetText().c_str()));
+            ClientUI::MessageBox(boost::io::str(boost::format(ClientUI::String("EMPIRE_DEFEATED")) % msg.GetText()));
         }
         break;
     }
 
     case Message::PLAYER_EXIT: {
-        std::string message = Format(ClientUI::String("PLAYER_DISCONNECTED").c_str(), msg.GetText().c_str());
+        std::string message = boost::io::str(boost::format(ClientUI::String("PLAYER_DISCONNECTED")) % msg.GetText());
         ClientUI::MessageBox(message);
         break;
     }

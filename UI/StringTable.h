@@ -8,9 +8,6 @@
 #include <map>
 #include <fstream>
 
-/** formats a StringTable string a la vsprintf */
-std::string Format(const char* fmt, ...);
-
 //! This is an implementation of a String Table for internationalization purposes.
 //! The table is built from a file of the following format:<br>
 //! name_of_language<br>

@@ -43,7 +43,10 @@ SERVER_GAME_END
 The server has sent an end-game message.  Buh-bye.
 
 PLAYER_DISCONNECTED
-Player %s no longer has a connection to the server.
+Player %1% no longer has a connection to the server.
+
+EMPIRE_DEFEATED
+The %1% empire is no more.
 
 
 #################
@@ -367,7 +370,7 @@ PL_PRODUCTION_TIME_NEVER
 (never)
 
 PL_PRODUCTION_TIME_TURNS
-(%d turns)
+(%1% turns)
 
 PL_COLONIZE
 Colonize
@@ -376,7 +379,7 @@ SP_UNKNOWN_SYSTEM
 unknown system
 
 SP_SYSTEM_NAME
-The %s System
+The %1% System
 
 SP_SYSTEM_PRODUCTION
 System Production

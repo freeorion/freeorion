@@ -8,18 +8,6 @@ using namespace std;
 const string StringTable::S_DEFAULT_FILENAME = "eng_stringtable.txt";
 const string StringTable::S_ERROR_STRING = "ERROR: ";
 
-// free functions
-string Format(const char* fmt, ...)
-{
-    char buffer[1024]; 
-    va_list args;
-
-    va_start(args, fmt);
-    vsprintf(buffer, fmt, args);
-
-    return buffer;
-}
-
 // StringTable
 StringTable::StringTable():
     m_filename(S_DEFAULT_FILENAME)

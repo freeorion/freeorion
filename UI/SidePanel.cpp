@@ -23,6 +23,8 @@
 #include "../universe/Ship.h"
 #include "../util/OptionsDB.h"
 
+#include <boost/format.hpp>
+
 #include "MapWnd.h"
 
 namespace {
@@ -1241,7 +1243,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     if(cost && !planet.IndustryPoints()) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
     else
       if(cost)
-        text = Format(ClientUI::String("PL_PRODUCTION_TIME_TURNS").c_str(),static_cast<int>(std::ceil((cost - planet.BuildProgress()) / planet.IndustryPoints())));
+          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet.BuildProgress()) / planet.IndustryPoints())));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
@@ -1995,7 +1997,7 @@ bool SidePanel::PlanetView::Render()
     if(cost && !planet->IndustryPoints()) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
     else
       if(cost)
-        text = Format(ClientUI::String("PL_PRODUCTION_TIME_TURNS").c_str(),static_cast<int>(std::ceil((cost - planet->BuildProgress()) / planet->IndustryPoints())));
+          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % static_cast<int>(std::ceil((cost - planet->BuildProgress()) / planet->IndustryPoints())));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
@@ -2187,7 +2189,7 @@ void SidePanel::SetSystem(int system_id)
         if(sys_vec[i]->Name().length()==0)
           continue;
  
-        row->push_back(Format(ClientUI::String("SP_SYSTEM_NAME").c_str(),sys_vec[i]->Name().c_str()), ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4), ClientUI::TEXT_COLOR);
+        row->push_back(boost::io::str(boost::format(ClientUI::String("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4), ClientUI::TEXT_COLOR);
         m_system_name->Insert(row);
 
         if(sys_vec[i]->ID() == system_id)
