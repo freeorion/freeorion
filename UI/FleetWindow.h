@@ -164,7 +164,7 @@ public:
 
     //! \name Mutators //@{
     void SystemClicked(int system_id); ///< invoked when a system is clicked on the main map, possibly indicating that the currently-selected fleet should move there
-    void        AddFleet(Fleet* fleet); ///< adds a new fleet to a currently-open FletWnd
+    void AddFleet(Fleet* fleet); ///< adds a new fleet to a currently-open FletWnd
     //@}
 
     static bool FleetWndsOpen();     ///< returns true iff one or more fleet windows are open
@@ -184,7 +184,7 @@ private:
     void        FleetSelectionChanged(const std::set<int>& rows);
     void        FleetRightClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt);
     void        FleetDoubleClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
-    void        FleetDeleted(int row_idx);
+    void        FleetDeleted(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void        ObjectDroppedIntoList(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void        NewFleetButtonClicked();
     Fleet*      NewFleetWndReceivedShip(FleetDetailWnd* fleet_wnd, int ship_id);

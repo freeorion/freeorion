@@ -901,7 +901,7 @@ void FleetWnd::FleetDoubleClicked(int row_idx, const boost::shared_ptr<GG::ListB
     }
 }
 
-void FleetWnd::FleetDeleted(int row_idx)
+void FleetWnd::FleetDeleted(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
 {
     if (m_current_fleet == row_idx)
         m_current_fleet = -1;
