@@ -360,12 +360,6 @@
 					RelativePath="..\..\..\Ui\CUISpin.h">
 				</File>
 				<File
-					RelativePath="..\..\..\Ui\EmpireSelect.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\EmpireSelect.h">
-				</File>
-				<File
 					RelativePath="..\..\..\Ui\FleetButton.cpp">
 				</File>
 				<File
@@ -420,22 +414,10 @@
 					RelativePath="..\..\..\Ui\OptionsWnd.h">
 				</File>
 				<File
-					RelativePath="..\..\..\Ui\Parser.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\Parser.h">
-				</File>
-				<File
 					RelativePath="..\..\..\Ui\ServerConnectWnd.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\ServerConnectWnd.h">
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\ServerUI.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\ServerUI.h">
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\SidePanel.cpp">
