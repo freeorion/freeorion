@@ -33,7 +33,14 @@
 
 class System;
 class UniverseObject;
-struct PlayerSetupData;
+#ifdef __GNUC__
+  // GCC doesn't allow us to forward-declare PlayerSetupData
+#  ifndef _MultiplayerCommon_h_
+#    include "util/MultiplayerCommon.h"
+#  endif
+#else
+  struct PlayerSetupData;
+#endif
 namespace GG {class XMLElement;}
 
 
