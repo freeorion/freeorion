@@ -1303,7 +1303,82 @@ void ServerApp::ProcessTurns( )
         }
         m_last_turn_update_msg[ it->first ] = game_state;
     }
+ 
+    // filter FleetColonizeOrder for later processing
+    std::map<int,std::vector<FleetColonizeOrder*> > map_planet_colonize_order_list;
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
+    {
+        pOrderSet = it->second;
 
+        /// filter FleetColonizeOrder and sort them per planet
+        FleetColonizeOrder *order;
+        for ( order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it)
+            if(order=dynamic_cast<FleetColonizeOrder*>(order_it->second))
+            {
+                std::map<int,std::vector<FleetColonizeOrder*> >::iterator it = map_planet_colonize_order_list.find(order->PlanetID());
+                if(it == map_planet_colonize_order_list.end())
+                {
+                  map_planet_colonize_order_list.insert(std::pair<int,std::vector<FleetColonizeOrder*> >(order->PlanetID(),std::vector<FleetColonizeOrder*>()));
+                  it = map_planet_colonize_order_list.find(order->PlanetID());
+                }
+                it->second.push_back(order);
+            }
+    }
+
+    // colonization apply be the following rules
+    // 1 - if there is only own empire which tries to colonize a planet, is allowed to do so
+    // 2 - if there are more than one empire then
+    // 2.a - if only one empire which tries to colonize (empire who doesn't are ignored) is armed, this empire wins the race
+    // 2.b - if more than one empire is armed or all forces are unarmed, noone can colonize the planet
+    for (std::map<int,std::vector<FleetColonizeOrder*> >::iterator it = map_planet_colonize_order_list.begin(); it != map_planet_colonize_order_list.end(); ++it)
+    {
+      // only one empire?
+      if(it->second.size()==1)
+        it->second[0]->ExecuteServerApply();
+      else
+      {
+        const Planet *planet = dynamic_cast<Planet*>(GetUniverse().Object(it->first));
+        const System *system = dynamic_cast<System*>(GetUniverse().Object(planet->SystemID()));
+
+        std::vector<const Fleet*> vec_fleet = system->FindObjects<Fleet>();
+        std::set<int> set_empire_with_military;
+        for(unsigned int i=0;i<vec_fleet.size();i++)
+          for(Fleet::const_iterator ship_it=vec_fleet[i]->begin();ship_it!=vec_fleet[i]->end();++ship_it)
+            if(dynamic_cast<Ship*>(GetUniverse().Object(*ship_it))->IsArmed())
+            {
+              set_empire_with_military.insert(*vec_fleet[i]->Owners().begin());
+              break;
+            }
+
+        // set the first empire as winner for now
+        int winner = 0;
+        // is the current winner armed?
+        bool winner_is_armed = set_empire_with_military.find(it->second[0]->EmpireID()) != set_empire_with_military.end();
+        for(unsigned int i=1;i<it->second.size();i++)
+          // is this empire armed?
+          if(set_empire_with_military.find(it->second[i]->EmpireID()) != set_empire_with_military.end())
+          {
+            // if this empire is armed and the former winner too, noone can win
+            if(winner_is_armed)
+            {
+              winner = -1; // no winner!!
+              break;       // won't find a winner!
+            }
+            winner = i; // this empire is the winner for now
+            winner_is_armed = true; // and has armed forces
+          }
+          else
+            // this empire isn't armed
+            if(!winner_is_armed)
+              winner = -1; // if the current winner isn't armed, a winner must be armed!!!!
+
+        for(unsigned int i=0;i<it->second.size();i++)
+          if(winner==i) 
+            it->second[i]->ExecuteServerApply();
+          else
+            it->second[i]->ExecuteServerRevoke();
+      }
+    }
 
     /// process movement phase
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
