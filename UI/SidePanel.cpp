@@ -1026,10 +1026,6 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
 {
   SetText(UserString("PLANET_PANEL"));
 
-  GG::Clr owner_color(ClientUI::TEXT_COLOR);
-  if(planet.Owners().size()>0)
-    owner_color = HumanClientApp::Empires().Lookup(*planet.Owners().begin())->Color();
-
   m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),ClientUI::FONT,ClientUI::SIDE_PANEL_PLANET_NAME_PTS,ClientUI::TEXT_COLOR);
   AttachChild(m_planet_name);
 
@@ -1313,8 +1309,10 @@ void SidePanel::PlanetPanel::PlanetChanged()
       m_planet_info->SetText(text);
     }
 
-  Empire* planet_empire = HumanClientApp::Empires().Lookup(*(planet->Owners().begin()));
-  m_planet_name->SetTextColor(planet_empire?planet_empire->Color():ClientUI::TEXT_COLOR);
+  if (!planet->Owners().empty()) {
+      Empire* planet_empire = HumanClientApp::Empires().Lookup(*(planet->Owners().begin()));
+      m_planet_name->SetTextColor(planet_empire?planet_empire->Color():ClientUI::TEXT_COLOR);
+  }
 
   // visibility
   if (owner==OS_NONE 
@@ -1363,6 +1361,8 @@ void SidePanel::PlanetPanel::PlanetChanged()
 
 void SidePanel::PlanetPanel::PlanetProdCenterChanged()
 {
+  TempUISoundDisabler sound_disabler;
+
   const Planet *planet = GetPlanet();
 
   int i;
@@ -1983,6 +1983,7 @@ void SidePanel::PlanetView::PlanetChanged()
 
 void SidePanel::PlanetView::PlanetProdCenterChanged()
 {
+  TempUISoundDisabler soud_disabler;
   Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
   if(planet==0)
     throw std::runtime_error("SidePanel::PlanetView::PlanetChanged: planet not found");
@@ -2511,6 +2512,8 @@ int SidePanel::SystemID() const {return m_system!=0?m_system->ID():UniverseObjec
 
 void SidePanel::SetSystem(int system_id)
 {
+    TempUISoundDisabler sound_disabler;
+
     delete m_planet_view;m_planet_view=0;
     m_fleet_icons.clear();
     m_planet_panel_container->Clear();
