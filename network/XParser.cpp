@@ -29,8 +29,6 @@
 
 #include "XMLDoc.h"
 
-#include <expat.h>
-
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -49,158 +47,102 @@ bool found_last_quote = false;
 
 XTree* XParser::parse(const string& filename)
 {
-   GG::XMLDoc doc;
-   ifstream ifs(filename.c_str());
-   doc.ReadDoc(ifs);
-   ifs.close();
-   
-   return parse(doc);
+    GG::XMLDoc doc;
+    ifstream ifs(filename.c_str());
+    doc.ReadDoc(ifs);
+    ifs.close();
+
+    return parse(doc);
 }
 
 XTree* XParser::parse(const GG::XMLDoc& doc)
 {
-   _idStack = vector<int>(STACK_SZ, 0);
-   _lsidStack = vector<int>(STACK_SZ, 0);
-   _valueStack = vector<unsigned long long>(STACK_SZ, 0);
-   _stackTop = 0;
-   _currentNodeID = XTree::NULL_NODE;
-   _idStack[_stackTop] = XTree::NULL_NODE;
-   _readElement = false;
-   _xtree = new XTree();
-   
-   std::stringstream is;
-   doc.WriteDoc(is, false);
-   
-   XML_Parser p = XML_ParserCreate(0);
-   XML_SetElementHandler(p, &XParser::BeginElement, &XParser::EndElement);
-   XML_SetCharacterDataHandler(p, &XParser::CharacterData);
-   s_curr_parser = this;
-   string parse_str;
-   while (is) {
-      string str;
-      getline(is, str);
-      parse_str += str + '\n';
-   }
-   XML_Parse(p, parse_str.c_str(), parse_str.size(), true);
-   XML_ParserFree(p);
-   s_curr_parser = 0;
-   
-   return _xtree;
+    _idStack = vector<int>(STACK_SZ, 0);
+    _lsidStack = vector<int>(STACK_SZ, 0);
+    _valueStack = vector<unsigned long long>(STACK_SZ, 0);
+    _stackTop = 0;
+    _currentNodeID = XTree::NULL_NODE;
+    _idStack[_stackTop] = XTree::NULL_NODE;
+    _readElement = false;
+    _xtree = new XTree();
+
+    recursive_parse(doc.root_node);
+
+    return _xtree;
 }
 
-void XParser::BeginElement(void* user_data, const char* name, const char** attrs) 
+void XParser::recursive_parse(const GG::XMLElement& elem)
 {
-   if (s_curr_parser) 
-      s_curr_parser->BE(name, attrs);
-}
+    // if text is mixed with elements.
+    if (!_elementBuffer.empty()) {
+        unsigned long long value = XHash::hash(_elementBuffer);
+        int tid = _xtree->addText(_idStack[_stackTop],
+                                  _lsidStack[_stackTop],
+                                  _elementBuffer, value);
+        _lsidStack[_stackTop] = tid;
+        _currentNodeID = tid;
+        _valueStack[_stackTop] += value;
+    }
 
-void XParser::BE(const char* name, const char** attrs) 
-{
-   // if text is mixed with elements.
-   if (!_elementBuffer.empty()) {
-      unsigned long long value = XHash::hash(_elementBuffer);
-      int tid = _xtree->addText(_idStack[_stackTop],
-                                _lsidStack[_stackTop],
-                                _elementBuffer, value);
-      _lsidStack[_stackTop] = tid;
-      _currentNodeID = tid;
-      _valueStack[_stackTop] += value;
-   }
-   
-   int eid = _xtree->addElement(_idStack[_stackTop], _lsidStack[_stackTop], name);
-   // Update last sibling info.
-   _lsidStack[_stackTop] = eid;
-   
-   // Push
-   _idStack[++_stackTop] = eid;
-   _currentNodeID = eid;
-   _lsidStack[_stackTop] = XTree::NULL_NODE;
-   _valueStack[_stackTop] = XHash::hash(name);
-   
-   // Take care of attributes
-   while (attrs && *attrs) {
-      string attr_name(*attrs);
-      unsigned long long namehash = XHash::hash(attr_name);
-      unsigned long long attrhash = namehash;
-      string attr_value(*(attrs + 1));
-      attrhash += XHash::hash(attr_value);
-      int aid = _xtree->addAttribute(eid, _lsidStack[_stackTop], attr_name, attr_value, namehash, attrhash);
-      _lsidStack[_stackTop] = aid;
-      _currentNodeID = aid + 1;
-      _valueStack[_stackTop] += attrhash;
-      attrs += 2;
-   }
-   
-   _readElement = true;
-   _elementBuffer = "";
-   found_first_quote = found_last_quote = false;
-}
+    int eid = _xtree->addElement(_idStack[_stackTop], _lsidStack[_stackTop], elem.Tag());
+    // Update last sibling info.
+    _lsidStack[_stackTop] = eid;
 
-void XParser::CharacterData(void *user_data, const char *s, int len)
-{
-   if (s_curr_parser) 
-      s_curr_parser->CD(s, len);
-}
+    // Push
+    _idStack[++_stackTop] = eid;
+    _currentNodeID = eid;
+    _lsidStack[_stackTop] = XTree::NULL_NODE;
+    _valueStack[_stackTop] = XHash::hash(elem.Tag());
 
-void XParser::CD(const char *s, int len)
-{
-   if (!found_last_quote) {
-      string str;
-      for (int i = 0; i < len; ++i, ++s) {
-         char c = *s;
-         if (c == '"') {
-            if (!found_first_quote) {
-               found_first_quote = true;
-               continue;
-            } else if (found_first_quote && !found_last_quote && i == len - 1) {
-               found_last_quote = true;
-               break;
-            }
-         }
-         if (found_first_quote)
-            str += c;
-      }
-      _elementBuffer += str;//s_element_stack.back()->m_text += str;
-   }
-}
+    // Take care of attributes
+    for (GG::XMLElement::const_attr_iterator it = elem.attr_begin(); it != elem.attr_end(); ++it) {
+        unsigned long long namehash = XHash::hash(it->first);
+        unsigned long long attrhash = namehash;
+        attrhash += XHash::hash(it->second);
+        int aid = _xtree->addAttribute(eid, _lsidStack[_stackTop], it->first, it->second, namehash, attrhash);
+        _lsidStack[_stackTop] = aid;
+        _currentNodeID = aid + 1;
+        _valueStack[_stackTop] += attrhash;
+    }
 
-void XParser::EndElement(void* user_data, const char* name)
-{
-   if (s_curr_parser) 
-      s_curr_parser->EE(name);
-}
+    _readElement = true;
+    _elementBuffer = elem.Text();
 
-void XParser::EE(const char* name)
-{
-   if (_readElement) {
-      if (!_elementBuffer.empty()) {
-         unsigned long long value = XHash::hash(_elementBuffer);
-         _currentNodeID = _xtree->addText(_idStack[_stackTop],
-                                          _lsidStack[_stackTop],
-                                          _elementBuffer, value);
-         _valueStack[_stackTop] += value;
-      } else {
-         _currentNodeID = _xtree->addText(_idStack[_stackTop],
-                                          _lsidStack[_stackTop],
-                                          "", 0);
-      }
-      _readElement = false;
-   } else { // mixed contents
-      if (!_elementBuffer.empty()) {
-         unsigned long long value = XHash::hash(_elementBuffer);
-         _currentNodeID = _xtree->addText(_idStack[_stackTop],
-                                          _lsidStack[_stackTop],
-                                          _elementBuffer, value);
-         _valueStack[_stackTop] += value;
-      }
-   }
-   
-   _elementBuffer = "";
-   _xtree->addHashValue(_idStack[_stackTop], _valueStack[_stackTop]);
-   _valueStack[_stackTop - 1] += _valueStack[_stackTop];
-   _lsidStack[_stackTop - 1] = _idStack[_stackTop];
-   
-   // Pop
-   _stackTop--;
+
+    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+        recursive_parse(*it);
+    }
+
+
+    if (_readElement) {
+        if (!_elementBuffer.empty()) {
+            unsigned long long value = XHash::hash(_elementBuffer);
+            _currentNodeID = _xtree->addText(_idStack[_stackTop],
+                                             _lsidStack[_stackTop],
+                                             _elementBuffer, value);
+            _valueStack[_stackTop] += value;
+        } else {
+            _currentNodeID = _xtree->addText(_idStack[_stackTop],
+                                             _lsidStack[_stackTop],
+                                             "", 0);
+        }
+        _readElement = false;
+    } else { // mixed contents
+        if (!_elementBuffer.empty()) {
+            unsigned long long value = XHash::hash(_elementBuffer);
+            _currentNodeID = _xtree->addText(_idStack[_stackTop],
+                                             _lsidStack[_stackTop],
+                                             _elementBuffer, value);
+            _valueStack[_stackTop] += value;
+        }
+    }
+
+    _elementBuffer = "";
+    _xtree->addHashValue(_idStack[_stackTop], _valueStack[_stackTop]);
+    _valueStack[_stackTop - 1] += _valueStack[_stackTop];
+    _lsidStack[_stackTop - 1] = _idStack[_stackTop];
+
+    // Pop
+    _stackTop--;
 }
 

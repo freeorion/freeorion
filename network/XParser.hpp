@@ -30,37 +30,32 @@
 #include <string>
 
 
-namespace GG {class XMLDoc;}
+namespace GG {
+class XMLDoc;
+class XMLElement;
+}
 class XTree;
 
 /** takes an XML file or GG::XMLDoc and constructs an XTree from it. */
 class XParser
 {
 public:
-   XTree* parse(const std::string& filename);
-   XTree* parse(const GG::XMLDoc& doc);
+    XTree* parse(const std::string& filename);
+    XTree* parse(const GG::XMLDoc& doc);
 
-   // these are required as callbacks for Expat's use
-   static void BeginElement(void* user_data, const char* name, const char** attrs);
-   static void CharacterData(void *user_data, const char *s, int len);
-   static void EndElement(void* user_data, const char* name);
-   
 private:
-   // these are the non-static versions of the callbacks above
-   void BE(const char* name, const char** attrs);
-   void CD(const char *s, int len);
-   void EE(const char* name);
+    void recursive_parse(const GG::XMLElement& elem);
    
-   XTree*                           _xtree;
-   std::vector<int>                 _idStack;
-   std::vector<int>                 _lsidStack; // id and left sibling
-   std::vector<unsigned long long>  _valueStack;
-   int                              _stackTop;
-   int                              _currentNodeID;
-   bool                             _readElement;
-   std::string                      _elementBuffer;
+    XTree*                           _xtree;
+    std::vector<int>                 _idStack;
+    std::vector<int>                 _lsidStack; // id and left sibling
+    std::vector<unsigned long long>  _valueStack;
+    int                              _stackTop;
+    int                              _currentNodeID;
+    bool                             _readElement;
+    std::string                      _elementBuffer;
    
-   static XParser* s_curr_parser;
+    static XParser* s_curr_parser;
 };
 
 #endif
