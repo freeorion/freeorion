@@ -116,7 +116,7 @@ std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
         // broadcast and poll for timeout milliseconds
         IPaddress broadcast_address;
         if (NET2_ResolveHost(&broadcast_address, "255.255.255.255", NetworkCore::SERVER_FIND_LISTEN_PORT) == -1 ||
-            NET2_UDPSend(&broadcast_address, "255.255.255.255", 15) == -1) {
+            NET2_UDPSend(&broadcast_address, const_cast<char*>(NetworkCore::SERVER_FIND_QUERY_MSG.c_str()), NetworkCore::SERVER_FIND_QUERY_MSG.size()) == -1) {
             const char* err_msg = NET2_GetError();
             logger.errorStream() << "ClientNetworkCore::DiscoverLANServers : Call to NET2_ResolveHost() "
                 "or call to NET2_UDPSend() failed; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
