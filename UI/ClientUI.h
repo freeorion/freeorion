@@ -66,6 +66,13 @@ public:
 
     //!@}
     
+    //! \name Accessors
+    //!@{
+    
+    inline const log4cpp::Category& Logger() {return s_logger;}//!< Returns the logger associated with ClientUI
+    
+    //!@}
+    
     //! \name Utility Functions
     //!@{
     
@@ -74,6 +81,10 @@ public:
     bool ChangeResolution(int width, int height);    //!< changes the screen resolution and modifies any images or data required to make the change.  
     bool Freeze();                        //!< freezes the interface so that user input is ignored.
     bool Unfreeze();                    //!< unfreezes the UI and input is recognized again
+    
+    //! @param parent A pointer to the Wnd that should contain the tooltip
+    //! @param tool A pointer to a ToolWnd to be associated with that window
+    inline bool AttachToolWnd(GG::Wnd* parent, ToolWnd* tool) {if(m_tooltips) return m_tooltips->AttachToolWnd(parent, tool);};    //!< Adds a ToolWnd to the given window
     
     //!@}
 
@@ -141,12 +152,12 @@ public:
     //!@{
     
     //! @param message The message to display
-    void MessageBox(const std::string message);        //!< displays a the message in a popup window for debugging
+    void MessageBox(const std::string& message);        //!< displays a the message in a popup window for debugging
     
     //!@}
 #endif
 
-public:
+private:
     static log4cpp::Category& s_logger;        //!< log4cpp logging category
 
 private:

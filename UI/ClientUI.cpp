@@ -1,6 +1,7 @@
 //ClientUI.cpp
 
 #include <string>
+#include <fstream>
 
 #ifndef _ClientUI_h_
 #include "ClientUI.h"
@@ -8,6 +9,10 @@
 
 #ifndef _GGApp_h_
 #include "GGApp.h"
+#endif
+
+#ifndef _GGMessageDlg_h_
+#include "dialogs/GGMessageDlg.h"
 #endif
 
 //static members
@@ -30,21 +35,28 @@ bool ClientUI::Initialize()
     m_state=STATE_STARTUP;
     
     //TODO: Initialize variables.
-   log4cpp::Appender* appender = new log4cpp::FileAppender("Appender", "ClientUI.log");
-   log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
-   layout->setConversionPattern("%d %p : %m%n");
-   appender->setLayout(layout);
-   s_logger.setAdditivity(false);  // make appender the only appender used...
-   s_logger.setAppender(appender);
-   s_logger.setAdditivity(true);   // ...but allow the addition of others later
-   s_logger.setPriority(log4cpp::Priority::DEBUG);
-   s_logger.debug("UI logger initialized.");
+    
+    //clear logging file
+    std::ofstream ofs_outfile("ClientUI.log");    
+    ofs_outfile.close();
+
+    //setup logger
+    log4cpp::Appender* appender = new log4cpp::FileAppender("Appender", "ClientUI.log");
+    log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
+    layout->setConversionPattern("%d %p : %m%n");
+    appender->setLayout(layout);
+    s_logger.setAdditivity(false);  // make appender the only appender used...
+    s_logger.setAppender(appender);
+    s_logger.setAdditivity(true);   // ...but allow the addition of others later
+    s_logger.setPriority(log4cpp::Priority::DEBUG);
+    s_logger.debug("ClientUI logger initialized.");
     
     return true;
 }//Initialize()
 
 ClientUI::~ClientUI()
 {
+    s_logger.debug("Shutting down ClientUI.");
     Cleanup();
 }//~ClientUI()
 
@@ -54,7 +66,8 @@ bool ClientUI::Cleanup()
         delete(m_tooltips);
     m_tooltips=NULL;
 
-    //TODO: Destroy variables, etc.
+    //TODO: Destroy variables, etc.   
+
     return true; 
 }//Cleanup()
 
@@ -71,6 +84,7 @@ bool ClientUI::ChangeResolution(int width, int height)
 bool ClientUI::Freeze()
 {
     //TODO: Freeze the interface
+    // should probably disable all windows, or possibly disconnect all signals from all sockets
     
     return true;
 }//Freeze()
@@ -78,6 +92,7 @@ bool ClientUI::Freeze()
 bool ClientUI::Unfreeze()
 {
     //TODO: Unfreeze the interface
+    // should either enable all windows, or reconnect all signals to sockets
     
     return true;
 }//Unfreeze()
@@ -175,10 +190,13 @@ void ClientUI::ScreenLoad(bool show)
 /////////////////////////////////////////////////////
 
 #ifdef DEBUG
-void ClientUI::MessageBox(const std::string message)
+void ClientUI::MessageBox(const std::string& message)
 {
-    //TODO: Popup a messagebox containing message
+    string dbg_msg = "MessageBox( \"" + message + "\" )";
+    s_logger.debug(dbg_msg);    //write message to log
     
+    GG::MessageDlg dlg(320,200,message,"arial.ttf",10,GG::CLR_GRAY,GG::CLR_WHITE);
+    dlg.Run();    
 }//MessageBox()
 #endif
 
