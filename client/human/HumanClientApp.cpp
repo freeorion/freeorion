@@ -515,6 +515,10 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Universe setup complete.";
 
+            for (Empire::SitRepItr it = Empires().Lookup(m_player_id)->SitRepBegin(); it != Empires().Lookup(m_player_id)->SitRepEnd(); ++it) {
+                m_ui->GenerateSitRepText(*it);
+            }
+
             int turn_number;
             turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
 
