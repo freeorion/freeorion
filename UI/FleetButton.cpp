@@ -25,7 +25,7 @@ FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, doubl
 {
     Universe& universe = GetUniverse();
     for (unsigned int i = 0; i < fleet_IDs.size(); ++i) {
-        m_fleets.push_back(dynamic_cast<Fleet*>(universe.Object(fleet_IDs[i])));
+        m_fleets.push_back(universe.Object<Fleet>(fleet_IDs[i]));
     }
     Fleet* fleet = m_fleets.back();
     double x = fleet->X();
@@ -36,7 +36,7 @@ FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, doubl
              static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * zoom + 0.5), 
              static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * zoom + 0.5));
 
-    m_orientation = fleet->FinalDestination()->X() - fleet->X() < 0 ? SHAPE_LEFT : SHAPE_RIGHT;
+    m_orientation = GetUniverse().Object<System>(fleet->NextSystemID())->X() - fleet->X() < 0 ? SHAPE_LEFT : SHAPE_RIGHT;
 
     GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
 }
@@ -48,7 +48,7 @@ FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::v
 {
     Universe& universe = GetUniverse();
     for (unsigned int i = 0; i < fleet_IDs.size(); ++i) {
-        m_fleets.push_back(dynamic_cast<Fleet*>(universe.Object(fleet_IDs[i])));
+        m_fleets.push_back(universe.Object<Fleet>(fleet_IDs[i]));
     }
     GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
 }
@@ -66,7 +66,7 @@ FleetButton::FleetButton(const GG::XMLElement& elem) :
     curr_elem = &elem.Child("m_fleets");
     Universe& universe = GetUniverse();
     for (int i = 0; i < curr_elem->NumChildren(); ++i) {
-        m_fleets.push_back(dynamic_cast<Fleet*>(universe.Object(boost::lexical_cast<int>(curr_elem->Child(i).Attribute("value")))));
+        m_fleets.push_back(universe.Object<Fleet>(boost::lexical_cast<int>(curr_elem->Child(i).Attribute("value"))));
     }
 
     GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);

@@ -111,7 +111,7 @@ namespace {
                 } else {
                     ShipDesign::V02DesignID max_id = ShipDesign::SCOUT;
                     for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {
-                        Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(*it));
+                        Ship* ship = GetUniverse().Object<Ship>(*it);
                         if (max_id <= ship->Design().id) {
                             std::string design_name = ship->Design().name;
                             unsigned int space;
@@ -382,7 +382,7 @@ FleetDetailPanel::FleetDetailPanel(const GG::XMLElement& elem) :
         throw std::invalid_argument("Attempted to construct a FleetDetailPanel from an XMLElement that had a tag other than \"FleetDetailPanel\"");
 
     const GG::XMLElement* curr_elem = &elem.Child("m_fleet");
-    SetFleet(dynamic_cast<Fleet*>(GetUniverse().Object(boost::lexical_cast<int>(curr_elem->Attribute("value")))));
+    SetFleet(GetUniverse().Object<Fleet>(boost::lexical_cast<int>(curr_elem->Attribute("value"))));
 
     curr_elem = &elem.Child("m_destination_text");
     m_destination_text = new GG::TextControl(*curr_elem);
@@ -446,7 +446,7 @@ void FleetDetailPanel::SetFleet(Fleet* fleet)
         Universe& universe = GetUniverse();
         if (m_fleet->NumShips()) {
             for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {
-                m_ships_lb->Insert(new ShipRow(dynamic_cast<Ship*>(universe.Object(*it))));
+                m_ships_lb->Insert(new ShipRow(universe.Object<Ship>(*it)));
             }
         } else {
             m_panel_empty_sig(m_fleet);
@@ -535,7 +535,7 @@ void FleetDetailPanel::ShipDroppedIntoList(int row_idx, const GG::ListBox::Row* 
         if (Parent())
             Parent()->SetText(m_fleet->Name());
     }
-    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
+    Ship* ship = GetUniverse().Object<Ship>(ship_id);
     if (CanJoin(ship, m_fleet)) {
         HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ship->FleetID(), m_fleet->ID(), std::vector<int>(1, ship_id)));
     } else {
@@ -550,7 +550,7 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row
     if (ship_row->m_ship->Owners().size() != 1 || HumanClientApp::GetApp()->EmpireID() != *ship_row->m_ship->Owners().begin())
         return;
 
-    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_row->ShipID()));
+    Ship* ship = GetUniverse().Object<Ship>(ship_row->ShipID());
 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem("Rename", 1, false, false));
@@ -595,7 +595,7 @@ std::string FleetDetailPanel::DestinationText() const
 
 std::string FleetDetailPanel::ShipStatusText(int ship_id) const
 {
-    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
+    Ship* ship = GetUniverse().Object<Ship>(ship_id);
     std::string retval;
 
     // if we do not own the fleet or it's not a colony ship
@@ -798,18 +798,19 @@ void FleetWnd::DetachSignalChildren()
 
 void FleetWnd::SystemClicked(int system_id)
 {
-    if (!m_read_only && system_id != -1) {
+    if (system_id != -1) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         for (std::set<int>::const_iterator it = m_fleets_lb->Selections().begin(); it != m_fleets_lb->Selections().end(); ++it) {
             Fleet* fleet = FleetInRow(*it);
-            if (fleet->NumShips()) {
+            if (fleet->OwnedBy(empire_id) && fleet->NumShips()) {
                 // TODO: allow technologies or other factors to allow a fleet to turn around in mid-flight, without completing its current leg
                 int start_system = fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID ? fleet->NextSystemID() : fleet->SystemID();
 
                 std::list<System*> route = GetUniverse().ShortestPath(start_system, system_id).first;
                 // disallow "offroad" (direct non-starlane non-wormhole) travel
                 if (route.size() == 2 && *route.begin() != *route.rbegin() &&
-                    !(*route.begin())->HasStarlaneTo((*route.rbegin())->ID()) && !(*route.begin())->HasWormholeTo((*route.rbegin())->ID())) {
+                    !(*route.begin())->HasStarlaneTo((*route.rbegin())->ID()) && !(*route.begin())->HasWormholeTo((*route.rbegin())->ID()) &&
+                    !(*route.rbegin())->HasStarlaneTo((*route.begin())->ID()) && !(*route.rbegin())->HasWormholeTo((*route.begin())->ID())) {
                     return;
                 }
 
@@ -818,7 +819,7 @@ void FleetWnd::SystemClicked(int system_id)
                     ClientUI::GetClientUI()->GetMapWnd()->SetFleetMovement(fleet);
             }
         }
-    }
+    } 
 }
 
 void FleetWnd::FleetBrowsed(int row_idx)
@@ -1044,7 +1045,7 @@ void FleetWnd::DeleteFleet(Fleet* fleet)
 Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
 {
     Fleet* existing_fleet = FleetInRow(0);
-    Ship *ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
+    Ship *ship = GetUniverse().Object<Ship>(ship_id);
 
     if (!existing_fleet || !ship || existing_fleet->SystemID() != ship->GetFleet()->SystemID())
         throw GG::ListBox::DontAcceptDropException();

@@ -112,7 +112,7 @@ std::pair<int, int> Fleet::ETA() const
 
 System* Fleet::FinalDestination() const
 {
-    return dynamic_cast<System*>(GetUniverse().Object(m_moving_to));
+    return GetUniverse().Object<System>(m_moving_to);
 }
 
 bool Fleet::CanChangeDirectionInRoute() const
@@ -124,7 +124,7 @@ bool Fleet::CanChangeDirectionInRoute() const
 bool Fleet::HasArmedShips() const
 {
     for (Fleet::const_iterator it = begin(); it != end(); it++) {   
-        if (dynamic_cast<Ship*>(GetUniverse().Object(*it))->IsArmed())
+        if (GetUniverse().Object<Ship>(*it)->IsArmed())
             return true;
     }
     return false;
@@ -162,7 +162,7 @@ void Fleet::SetRoute(const std::list<System*>& route, double distance)
 void Fleet::AddShips(const std::vector<int>& ships)
 {
     for (unsigned int i = 0; i < ships.size(); ++i) {
-        if (Ship* s = dynamic_cast<Ship*>(GetUniverse().Object(ships[i]))) {
+        if (Ship* s = GetUniverse().Object<Ship>(ships[i])) {
             s->SetFleetID(ID());
             m_ships.insert(ships[i]);
         } else {
@@ -174,7 +174,7 @@ void Fleet::AddShips(const std::vector<int>& ships)
 
 void Fleet::AddShip(const int ship_id)
 {
-    if (Ship* s = dynamic_cast<Ship*>(GetUniverse().Object(ship_id))) {
+    if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
         s->SetFleetID(ID());
         m_ships.insert(ship_id);
     } else {
@@ -309,20 +309,29 @@ void Fleet::CalculateRoute() const
             m_travel_route = path.first;
             m_travel_distance = path.second;
         } else { // if we're between systems, the shortest route may be through either one
-            std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(m_next_system, m_moving_to);
-            std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(m_prev_system, m_moving_to);
-            double dist_x = path1.first.front()->X() - X();
-            double dist_y = path1.first.front()->Y() - Y();
-            double dist1 = std::sqrt(dist_x * dist_x + dist_y * dist_y);
-            dist_x = path2.first.front()->X() - X();
-            dist_y = path2.first.front()->Y() - Y();
-            double dist2 = std::sqrt(dist_x * dist_x + dist_y * dist_y);
-            if (dist1 + path1.second < dist2 + path2.second) {
-                m_travel_route = path1.first;
-                m_travel_distance = dist1 + path1.second;
+            if (0) { // TODO: enable this code when technologies or other factors to allow a fleet to turn around in mid-flight, without completing its current leg
+                std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(m_next_system, m_moving_to);
+                std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(m_prev_system, m_moving_to);
+                double dist_x = path1.first.front()->X() - X();
+                double dist_y = path1.first.front()->Y() - Y();
+                double dist1 = std::sqrt(dist_x * dist_x + dist_y * dist_y);
+                dist_x = path2.first.front()->X() - X();
+                dist_y = path2.first.front()->Y() - Y();
+                double dist2 = std::sqrt(dist_x * dist_x + dist_y * dist_y);
+                if (dist1 + path1.second < dist2 + path2.second) {
+                    m_travel_route = path1.first;
+                    m_travel_distance = dist1 + path1.second;
+                } else {
+                    m_travel_route = path2.first;
+                    m_travel_distance = dist2 + path2.second;
+                }
             } else {
-                m_travel_route = path2.first;
-                m_travel_distance = dist2 + path2.second;
+                std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(m_next_system, m_moving_to);
+                double dist_x = route.first.front()->X() - X();
+                double dist_y = route.first.front()->Y() - Y();
+                double dist = std::sqrt(dist_x * dist_x + dist_y * dist_y);
+                m_travel_route = route.first;
+                m_travel_distance = dist + route.second;
             }
         }
     }
