@@ -28,7 +28,7 @@
 // Modified by Dennis Brakhane at 2004-03-11: added set_gzparams-wrapper
 
 
-#include "gzstream.h"
+#include "GZStream.h"
 #include <iostream>
 #include <string.h>  // for memcpy
 

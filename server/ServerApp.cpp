@@ -6,7 +6,7 @@
 
 #include "../network/XDiff.hpp"
 #include "../util/OrderSet.h"
-#include "../util/gzstream.h"
+#include "../util/GZStream.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
