@@ -30,6 +30,10 @@
 #include "../universe/Planet.h"
 #endif
 
+#ifndef _System_h_
+#include "../universe/System.h"
+#endif
+
 #include <vector>
 
 class CUI_CloseButton;
@@ -37,7 +41,6 @@ class CUIDropDownList;
 class CUIIconButton;
 class CUIScroll;
 class CUITextureButton;
-class System;
 namespace GG {class TextControl;}
 class RotatingPlanetControl;
 
@@ -58,7 +61,7 @@ class SidePanel : public GG::Wnd
         //@}
 
         /** \name Structors */ //@{
-        PlanetPanel(int x, int y, int w, int h,const Planet &planet); ///< basic ctor
+        PlanetPanel(int x, int y, int w, int h, const Planet &planet, System::StarType star_type); ///< basic ctor
         ~PlanetPanel();
         //@}
 
@@ -205,7 +208,7 @@ private:
         //@}
 
         void Clear();
-        void SetPlanets(const std::vector<const Planet*> &plt_vec);
+        void SetPlanets(const std::vector<const Planet*> &plt_vec, System::StarType star_type);
 
         /** \name Accessors */ //@{
         virtual bool InWindow(const GG::Pt& pt) const;
@@ -279,11 +282,10 @@ private:
 
         int m_transparency;
 
-        GG::DynamicGraphic  *m_planet_graphic;
         GG::SubTexture      m_bg_image;
         GG::SubTexture      m_build_image;
         GG::SubTexture      m_foci_image;
-        CUIDropDownList *m_construction;
+        CUIDropDownList     *m_construction;
 
         GG::RadioButtonGroup *m_radio_btn_primary_focus,*m_radio_btn_secondary_focus;
         CUITextureButton *m_btn_fullscreen;

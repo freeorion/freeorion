@@ -8,8 +8,6 @@
 #include "GGThreeButtonDlg.h"
 
 #include "../client/human/HumanClientApp.h"
-#include "../universe/System.h"
-#include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../Empire/TechLevel.h"
 #include "../util/Random.h"
@@ -29,6 +27,7 @@
 
 #include "MapWnd.h"
 
+#define ROTATING_PLANET_IMAGES 0 // set this to 1 to use the OpenGL-rendered rotating planets code
 
 namespace {
     const int MAX_PLANET_SIZE = 128; // size of a huge planet, in on-screen pixels
@@ -162,7 +161,54 @@ namespace {
         }
     }
 
-    void RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture, double RPM, double axis_tilt, double shininess)
+    GLfloat* GetLightPosition()
+    {
+        static GLfloat retval[] = {0.0, 0.0, 0.0, 0.0};
+
+        if (retval[0] == 0.0 && retval[1] == 0.0 && retval[2] == 0.0) {
+            GG::XMLDoc doc;
+            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            doc.ReadDoc(ifs);
+            ifs.close();
+
+            retval[0] = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("x").Text());
+            retval[1] = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("y").Text());
+            retval[2] = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("z").Text());
+        }
+
+        return retval;
+    }
+
+    const std::map<System::StarType, std::vector<float> >& GetStarLightColors()
+    {
+        static std::map<System::StarType, std::vector<float> > light_colors;
+
+        if (light_colors.empty()) {
+            GG::XMLDoc doc;
+            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            doc.ReadDoc(ifs);
+            ifs.close();
+
+            if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").NumChildren()) {
+                for (GG::XMLElement::child_iterator it = doc.root_node.Child("GLStars").child_begin(); it != doc.root_node.Child("GLStars").child_end(); ++it) {
+                    std::vector<float>& color_vec = light_colors[boost::lexical_cast<System::StarType>(it->Child("star_type").Text())];
+                    GG::Clr color(it->Child("GG::Clr"));
+                    color_vec.push_back(color.r / 255.0);
+                    color_vec.push_back(color.g / 255.0);
+                    color_vec.push_back(color.b / 255.0);
+                    color_vec.push_back(color.a / 255.0);
+                }
+            } else {
+                for (int i = System::BLUE; i < System::NUM_STARTYPES; ++i) {
+                    light_colors[System::StarType(i)].resize(4, 1.0);
+                }
+            }
+        }
+
+        return light_colors;
+    }
+
+    void RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture, double RPM, double axis_tilt, double shininess, System::StarType star_type)
     {
         HumanClientApp::GetApp()->Exit2DMode();
 
@@ -182,10 +228,14 @@ namespace {
         glRotated(axis_tilt, 0.0, 1.0, 0.0);  // axis tilt
 
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
-        GLfloat light_position[] = {1.0, -1.0, -1.0, 0.0};
+        GLfloat* light_position = GetLightPosition();
+        //GLfloat light_position[] = {1.5, -0.8, -1.0, 0.0};
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
+        const std::map<System::StarType, std::vector<float> >& star_light_colors = GetStarLightColors();
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, &star_light_colors.find(star_type)->second[0]);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, &star_light_colors.find(star_type)->second[0]);
         glEnable(GL_TEXTURE_2D);
 
         double intensity = GetRotatingPlanetAmbientIntensity();
@@ -225,18 +275,19 @@ namespace {
 class RotatingPlanetControl : public GG::Control
 {
 public:
-    RotatingPlanetControl(int x, int y, Planet::PlanetSize size, const RotatingPlanetData& planet_data) :
+    RotatingPlanetControl(int x, int y, Planet::PlanetSize size, System::StarType star_type, const RotatingPlanetData& planet_data) :
         GG::Control(x, y, PlanetDiameter(size), PlanetDiameter(size), 0),
         m_planet_data(planet_data),
         m_size(size),
-        m_texture(GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + m_planet_data.filename))
+        m_texture(GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + m_planet_data.filename)),
+        m_star_type(star_type)
     {
     }
 
     virtual bool Render()
     {
         RenderPlanet(UpperLeft() + GG::Pt(Width() / 2, Height() / 2), Width(), m_texture, 
-                     SizeRotationFactor(m_size) * m_planet_data.RPM, m_planet_data.axis_angle, m_planet_data.shininess);
+                     SizeRotationFactor(m_size) * m_planet_data.RPM, m_planet_data.axis_angle, m_planet_data.shininess, m_star_type);
         return true;
     }
 
@@ -265,6 +316,7 @@ private:
     RotatingPlanetData              m_planet_data;
     Planet::PlanetSize              m_size;
     boost::shared_ptr<GG::Texture>  m_texture;
+    System::StarType                m_star_type;
 };
 
 ////////////////////////////////////////////////
@@ -973,7 +1025,7 @@ void CUIIconButton::RenderUnpressed()
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &planet)
+SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &planet, System::StarType star_type)
 : Wnd(0, y, w, h, GG::Wnd::CLICKABLE),
   m_planet_id(planet.ID()),
   m_planet_name(0),m_planet_info(0),
@@ -996,8 +1048,10 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
   int planet_image_sz = PlanetDiameter();
   GG::Pt planet_image_pos(MAX_PLANET_SIZE / 2 - planet_image_sz / 2, Height() / 2 - planet_image_sz / 2);
 
-  if (planet.Type() == PT_ASTEROIDS) 
+#if ROTATING_PLANET_IMAGES
+  if (planet.Type() == PT_ASTEROIDS)
   {
+#endif
       std::vector<boost::shared_ptr<GG::Texture> > textures; int start_frame; double fps;
 
       //#texures holds at least one element or GetPlanetTextures throws an exception
@@ -1011,6 +1065,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
       AttachChild(m_planet_graphic);m_planet_graphic->Play();
 
       textures.clear();
+#if ROTATING_PLANET_IMAGES
   }
   else if (planet.Type() < MAX_PLANET_TYPE)
   {
@@ -1019,11 +1074,12 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
       int num_planets_of_type;
       if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet.Type())->second.size()))
       {
-          m_rotating_planet_graphic = new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, planet.Size(),
+          m_rotating_planet_graphic = new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, planet.Size(), star_type,
                                                                 it->second[planet.ID() % num_planets_of_type]);
           AttachChild(m_rotating_planet_graphic);
       }
   }
+#endif
 
   m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::TEXT_COLOR,GG::TF_LEFT|GG::TF_TOP);
   AttachChild(m_planet_info);
@@ -1667,7 +1723,7 @@ void SidePanel::PlanetPanelContainer::Clear()
 
 }
 
-void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*> &plt_vec)
+void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*> &plt_vec, System::StarType star_type)
 {
   Clear();
 
@@ -1676,7 +1732,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*
   for (unsigned int i = 0; i < plt_vec.size(); ++i, y += PLANET_PANEL_HT) 
   {
     const Planet* planet = plt_vec[i];
-    PlanetPanel* planet_panel = new PlanetPanel(0, y, Width()-m_vscroll->Width(), PLANET_PANEL_HT,*planet);
+    PlanetPanel* planet_panel = new PlanetPanel(0, y, Width()-m_vscroll->Width(), PLANET_PANEL_HT, *planet, star_type);
     AttachChild(planet_panel);
     m_planet_panels.push_back(planet_panel);
   }
@@ -1769,7 +1825,6 @@ bool SidePanel::SystemResourceSummary::Render()
 ////////////////////////////////////////////////
 SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
 : Wnd(x, y, w, h, GG::Wnd::CLICKABLE | GG::Wnd::ONTOP),
-  m_planet_graphic(0),
   m_bg_image(),
   m_build_image(),m_planet_id(plt.ID()),
   m_radio_btn_primary_focus  (0),
@@ -1779,21 +1834,6 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
 
   EnableChildClipping(true);
-
-  if (plt.Type() == PT_ASTEROIDS) 
-  {
-      std::vector<boost::shared_ptr<GG::Texture> > textures; int start_frame; double fps;
-
-      GetPlanetTextures(*planet,textures,start_frame=-1,fps=0.0);
-      m_planet_graphic = new GG::DynamicGraphic(-35,-20,80,80,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-      if(start_frame==-1 && 1<textures.size())
-          start_frame = RandSmallInt(0,textures.size()-1);
-
-      if(start_frame!=-1 && fps!=0.0)
-          m_planet_graphic->SetTimeIndex(start_frame * 1000.0 / m_planet_graphic->FPS());
-
-      AttachChild(m_planet_graphic);m_planet_graphic->Play();
-  }
 
   boost::shared_ptr<GG::Texture> texture;
   switch(planet->Type())
@@ -2530,14 +2570,14 @@ void SidePanel::SetSystem(int system_id)
       // add planets
       std::vector<const Planet*> plt_vec = m_system->FindObjects<Planet>();
 
-      m_planet_panel_container->SetPlanets(plt_vec);
+      m_planet_panel_container->SetPlanets(plt_vec, m_system->Star());
       for(unsigned int i = 0; i < plt_vec.size(); i++) 
       {
         GG::Connect(plt_vec[i]->StateChangedSignal(), &SidePanel::PlanetsChanged, this);
         GG::Connect(plt_vec[i]->ProdCenterChangedSignal(), &SidePanel::PlanetsChanged, this);
       }
 
-      m_planet_panel_container->SetPlanets(plt_vec);
+      m_planet_panel_container->SetPlanets(plt_vec, m_system->Star());
       for(int i = 0; i < m_planet_panel_container->PlanetPanels(); i++) 
         GG::Connect(m_planet_panel_container->GetPlanetPanel(i)->PlanetImageLClickedSignal(),&SidePanel::PlanetLClicked,this);
 
