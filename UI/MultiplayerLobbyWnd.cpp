@@ -73,6 +73,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     x = CHAT_WIDTH + CONTROL_MARGIN;
     int y = m_galaxy_image_file_edit->LowerRight().y + CONTROL_MARGIN;
     m_players_lb = new CUIListBox(x, y, Width() - RightBorder() - CONTROL_MARGIN - x, m_chat_input_edit->UpperLeft().y - CONTROL_MARGIN - y);
+    m_players_lb->SetStyle(GG::LB_NOSORT);
 
     if (m_host)
         m_start_game_bn = new CUIButton(0, 0, 125, ClientUI::String("START_GAME_BN"));
@@ -203,18 +204,18 @@ void MultiplayerLobbyWnd::Init()
 
     // create and load textures
     m_textures.clear();
-    for (int i = 0; i < ClientUniverse::GALAXY_SHAPES; ++i)
+    for (int i = 0; i < Universe::GALAXY_SHAPES; ++i)
         m_textures.push_back(boost::shared_ptr<GG::Texture>(new GG::Texture()));
-    m_textures[ClientUniverse::SPIRAL_2]->Load(ClientUI::ART_DIR + "gp_spiral2.png");
-    m_textures[ClientUniverse::SPIRAL_3]->Load(ClientUI::ART_DIR + "gp_spiral3.png");
-    m_textures[ClientUniverse::SPIRAL_4]->Load(ClientUI::ART_DIR + "gp_spiral4.png");
-    m_textures[ClientUniverse::CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
-    m_textures[ClientUniverse::ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
-    m_textures[ClientUniverse::IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
+    m_textures[Universe::SPIRAL_2]->Load(ClientUI::ART_DIR + "gp_spiral2.png");
+    m_textures[Universe::SPIRAL_3]->Load(ClientUI::ART_DIR + "gp_spiral3.png");
+    m_textures[Universe::SPIRAL_4]->Load(ClientUI::ART_DIR + "gp_spiral4.png");
+    m_textures[Universe::CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
+    m_textures[Universe::ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
+    m_textures[Universe::IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
     
     // default settings (medium and 2-arm spiral)
     m_galaxy_size_buttons->SetCheck(2);
-    m_galaxy_type_buttons->SetCheck(ClientUniverse::SPIRAL_2);
+    m_galaxy_type_buttons->SetCheck(Universe::SPIRAL_2);
 }
 
 void MultiplayerLobbyWnd::AttachSignalChildren()
@@ -250,32 +251,32 @@ void MultiplayerLobbyWnd::GalaxySizeClicked(int idx)
     // disable invalid galaxy shapes for the chosen galaxy size
     switch (idx) {
     case 0:
-        if (-1 < m_galaxy_type_buttons->CheckedButton() && m_galaxy_type_buttons->CheckedButton() <= ClientUniverse::SPIRAL_4)
-            m_galaxy_type_buttons->SetCheck(ClientUniverse::CLUSTER);
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_2);
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_3);
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_4);
+        if (-1 < m_galaxy_type_buttons->CheckedButton() && m_galaxy_type_buttons->CheckedButton() <= Universe::SPIRAL_4)
+            m_galaxy_type_buttons->SetCheck(Universe::CLUSTER);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_2);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_3);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_4);
         break;
     case 1:
         if (-1 < m_galaxy_type_buttons->CheckedButton() && 
-            (m_galaxy_type_buttons->CheckedButton() == ClientUniverse::SPIRAL_3 ||
-             m_galaxy_type_buttons->CheckedButton() == ClientUniverse::SPIRAL_4))
-            m_galaxy_type_buttons->SetCheck(ClientUniverse::SPIRAL_2);
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_2, false);
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_3);
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_4);
+            (m_galaxy_type_buttons->CheckedButton() == Universe::SPIRAL_3 ||
+             m_galaxy_type_buttons->CheckedButton() == Universe::SPIRAL_4))
+            m_galaxy_type_buttons->SetCheck(Universe::SPIRAL_2);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_2, false);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_3);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_4);
         break;
     case 2:
-        if (-1 < m_galaxy_type_buttons->CheckedButton() && m_galaxy_type_buttons->CheckedButton() == ClientUniverse::SPIRAL_4)
-            m_galaxy_type_buttons->SetCheck(ClientUniverse::SPIRAL_3);
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_2, false);
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_3, false);
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_4);
+        if (-1 < m_galaxy_type_buttons->CheckedButton() && m_galaxy_type_buttons->CheckedButton() == Universe::SPIRAL_4)
+            m_galaxy_type_buttons->SetCheck(Universe::SPIRAL_3);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_2, false);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_3, false);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_4);
         break;
     default:
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_2, false);
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_3, false);
-        m_galaxy_type_buttons->DisableButton(ClientUniverse::SPIRAL_4, false);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_2, false);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_3, false);
+        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_4, false);
         break;
     }
 
@@ -295,7 +296,7 @@ void MultiplayerLobbyWnd::GalaxyTypeClicked(int idx)
         m_galaxy_preview_image = 0;
     }
 
-    if (m_galaxy_type_buttons->CheckedButton() == ClientUniverse::FROM_FILE) {
+    if (m_galaxy_type_buttons->CheckedButton() == Universe::FROM_FILE) {
         try {
             boost::shared_ptr<GG::Texture> tex(new GG::Texture());
             tex->Load(m_galaxy_image_file_edit->WindowText());
@@ -337,7 +338,7 @@ void MultiplayerLobbyWnd::BrowseClicked()
     if (!dlg.Result().empty()) {
         m_galaxy_image_file_edit->SetText(*dlg.Result().begin());
         m_galaxy_type_buttons->SetCheck(-1);
-        m_galaxy_type_buttons->SetCheck(ClientUniverse::FROM_FILE);
+        m_galaxy_type_buttons->SetCheck(Universe::FROM_FILE);
 
         if (m_host) {
             int player_id = HumanClientApp::GetApp()->PlayerID();
@@ -357,7 +358,7 @@ void MultiplayerLobbyWnd::StartGameClicked()
 {
     //check to see if we have a valid image if file is checked
     bool failed = false;
-    if (m_galaxy_type_buttons->CheckedButton() == ClientUniverse::FROM_FILE) {
+    if (m_galaxy_type_buttons->CheckedButton() == Universe::FROM_FILE) {
         try {
             boost::shared_ptr<GG::Texture> tex(new GG::Texture);
             tex->Load(m_galaxy_image_file_edit->WindowText());
