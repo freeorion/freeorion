@@ -911,9 +911,9 @@ void FleetWnd::ObjectDroppedIntoList(int row_idx, const GG::ListBox::Row* row)
     if (row_idx == m_fleets_lb->NumRows() - 2) { // drop was into the new fleet row; "- 2" is used, because the list is now 1 larger, since the ShipRow was just dropped into it
         if (ship_row) {
             Fleet* target_fleet = CreateNewFleetFromDrop(ship_row->ShipID());
+            m_fleets_lb->Delete(row_idx); // remove the ship from the list, since it was just placed into a fleet
             HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ship_row->m_ship->FleetID(), 
                                                                        target_fleet->ID(), std::vector<int>(1, ship_row->ShipID())));
-            m_fleets_lb->Delete(row_idx); // remove the ship from the list, since it was just placed into a fleet
         } else if (fleet_row) { // disallow drops of fleets onto the new fleet row
             throw GG::ListBox::DontAcceptDropException();
         }
@@ -993,7 +993,6 @@ void FleetWnd::DeleteFleet(Fleet* fleet)
     if (m_fleet_detail_panel->GetFleet() == fleet)
         m_fleet_detail_panel->SetFleet(0);
 
-    HumanClientApp::Orders().IssueOrder(new DeleteFleetOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID()));
     std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_windows.find(fleet);
     if (it != m_open_fleet_windows.end()) {
         delete it->second;
@@ -1006,6 +1005,7 @@ void FleetWnd::DeleteFleet(Fleet* fleet)
             break;
         }
     }
+    HumanClientApp::Orders().IssueOrder(new DeleteFleetOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID()));
 }
 
 void FleetWnd::FleetPanelEmpty(Fleet* fleet)
