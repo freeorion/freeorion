@@ -22,7 +22,8 @@ ShipDesign::ShipDesign() :
    attack(0),
    defense(0),
    cost(10000000),
-   colonize( false )
+   colonize( false ),
+   description("")
 {
    //TODO
 }
@@ -39,7 +40,7 @@ ShipDesign::ShipDesign(const GG::XMLElement& elem)
    defense = lexical_cast<int>(elem.Child("defense").Text());
    cost = lexical_cast<int>(elem.Child("cost").Text());
    colonize = lexical_cast<bool>(elem.Child("colonize").Text());
-
+   description = elem.Child("description").Text();
 }
 
 GG::XMLElement ShipDesign::XMLEncode() const
@@ -55,6 +56,7 @@ GG::XMLElement ShipDesign::XMLEncode() const
    retval.AppendChild(XMLElement("defense", lexical_cast<std::string>(defense)));
    retval.AppendChild(XMLElement("cost", lexical_cast<std::string>(cost)));
    retval.AppendChild(XMLElement("colonize", lexical_cast<std::string>(colonize)));
+   retval.AppendChild(XMLElement("description", description));
    return retval;
 
 }
@@ -138,6 +140,3 @@ void Ship::PopGrowthProductionResearchPhase( )
 {
    //TODO
 }
-
-
-

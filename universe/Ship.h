@@ -39,6 +39,9 @@ struct ShipDesign
    int         defense; ///< the defense value of the design
    int         cost;    ///< the cost of the design, in PP
    bool        colonize; ///< whether or not the ship is capable of creating a new colony
+   
+   std::string description;    ///< short description of the design, will maybe last after v.2
+
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
 
@@ -82,4 +85,5 @@ private:
 };
 
 #endif // _Ship_h_
+
 
