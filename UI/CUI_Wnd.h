@@ -11,6 +11,11 @@
 #include "GGButton.h"
 #endif
 
+class CUIEdit;
+class CUIButton;
+class CUIButton;
+
+
 /** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore*/
 class CUI_MinRestoreButton : public GG::Button
 {
@@ -146,5 +151,31 @@ private:
     CUI_CloseButton*       m_close_button;     //!< the close button
     CUI_MinRestoreButton*  m_minimize_button;  //!< the minimize/restore button
 };
+
+
+// This didn't seem big enough to warrant its own file, so this seemed like a good enough place for it....
+/** provides a convenient modal wnd for getting text user input. */
+class CUIEditWnd : public CUI_Wnd
+{
+public:
+    CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, Uint32 flags = Wnd::MODAL);
+
+    void Keypress(GG::Key key, Uint32 key_mods);
+
+    const std::string& Result() const;
+
+private:
+    void OkClicked();
+
+    std::string m_result;
+
+    CUIEdit*    m_edit;
+    CUIButton*  m_ok_bn;
+    CUIButton*  m_cancel_bn;
+
+    static const int BUTTON_WIDTH = 75;
+    static const int CONTROL_MARGIN = 5;
+};
+
 
 #endif

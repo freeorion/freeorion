@@ -3,6 +3,7 @@
 #include "CUI_Wnd.h"
 
 #include "ClientUI.h"
+#include "CUIControls.h"
 #include "GGApp.h"
 #include "GGDrawUtil.h"
 
@@ -423,3 +424,42 @@ void CUI_Wnd::MinimizeClicked()
     }
 }
 
+///////////////////////////////////////
+// class CUIEditWnd
+///////////////////////////////////////
+
+CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, Uint32 flags/* = Wnd::MODAL*/) : 
+    CUI_Wnd(prompt_text, 0, 0, 1, 1, flags)
+{
+    m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, w - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), ClientUI::PTS + 10, edit_text);
+    m_ok_bn = new CUIButton(m_edit->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, ClientUI::String("OK"));
+    m_cancel_bn = new CUIButton(m_ok_bn->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, ClientUI::String("CANCEL"));
+
+    Resize(w, m_cancel_bn->LowerRight().y + BottomBorder() + 3);
+    MoveTo((GG::App::GetApp()->AppWidth() - w) / 2, (GG::App::GetApp()->AppHeight() - Height()) / 2);
+
+    AttachChild(m_edit);
+    AttachChild(m_ok_bn);
+    AttachChild(m_cancel_bn);
+
+    GG::Connect(m_ok_bn->ClickedSignal(), &CUIEditWnd::OkClicked, this);
+    GG::Connect(m_cancel_bn->ClickedSignal(), &CUI_Wnd::CloseClicked, static_cast<CUI_Wnd*>(this));
+}
+
+void CUIEditWnd::Keypress(GG::Key key, Uint32 key_mods)
+{
+    switch (key) {
+    case GG::GGK_RETURN: OkClicked(); break;
+    case GG::GGK_ESCAPE: CloseClicked(); break;
+    }
+}
+
+const std::string& CUIEditWnd::Result() const 
+{
+    return m_result;
+}
+
+void CUIEditWnd::OkClicked() 
+{
+    m_result = m_edit->WindowText(); CloseClicked();
+}
