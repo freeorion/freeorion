@@ -343,12 +343,9 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
 
         for(std::set<Fleet*>::iterator it = flt_set.begin(); it != flt_set.end(); ++it)
         {
-          Fleet *flt = *it;
-          System *current_system = dynamic_cast<System *>(GetUniverse().Object(flt->SystemID()));
-
-          current_system->Remove(flt->ID());// set flt-SystemId() to INVALID_OBJECT_ID
           std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(system_id, sys->ID());
-          flt->SetRoute(route.first, route.second);
+          (*it)->SetRoute(route.first, route.second);
+          (*it)->GetSystem()->Remove((*it)->ID());
         }
       }
     }
