@@ -2,6 +2,18 @@
 #include "ServerEmpireManager.h"
 #endif
 
+#ifndef _ServerApp_h_
+#include "../server/ServerApp.h"
+#endif
+
+#ifndef _ServerUniverse_h_
+#include "../universe/ServerUniverse.h"
+#endif
+
+#ifndef _Planet_h_
+#include "../universe/Planet.h"
+#endif
+
 #include <stdexcept>
 
 #ifndef __XDIFF__
@@ -24,6 +36,13 @@ Empire* ServerEmpireManager::CreateEmpire(const std::string& name,
     Empire* emp = new Empire(name, m_next_id, color, state);
     m_next_id++;
     emp->AddPlanet(planetID);
+
+    // Add system homeplanet is in to the ExploredSystem list
+    ServerApp* server_app = ServerApp::GetApp();
+    ServerUniverse* universe = &(server_app->Universe());
+    UniverseObject*   uni_obj = universe->Object(planetID);
+    Planet*   planet = dynamic_cast<Planet*>(uni_obj);
+    emp->AddExploredSystem(planet->SystemID());
     
     // add a dummy empire update to the map, so that when 
     // the first empire update is produced, we have something to diff with
