@@ -93,10 +93,7 @@ private:
     virtual void GLInit();
     virtual void Initialize();
 
-    virtual void HandleSDLEvent(const SDL_Event& event);
-
-    virtual void Update();
-    virtual void Render();
+    virtual void HandleNonGGEvent(const SDL_Event& event);
 
     virtual void FinalCleanup();
     virtual void SDLQuit();

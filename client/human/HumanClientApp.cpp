@@ -381,88 +381,25 @@ void HumanClientApp::Initialize()
     m_ui->ScreenIntro();    //start the first screen; the UI takes over from there.
 }
 
-void HumanClientApp::HandleSDLEvent(const SDL_Event& event)
+void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
 {
-    GG::Key key = GGKeyFromSDLKey(event.key.keysym);
-    Uint32 key_mods = SDL_GetModState();
-    GG::Pt mouse_pos(event.motion.x, event.motion.y);
-    GG::Pt mouse_rel(event.motion.xrel, event.motion.yrel);
-
-    // it would be much easier if GG::App::EventType had a non event type
-    //GG::App::EventType gg_event;
-    struct GGEventHelper {
-        GGEventHelper() :assigned(false) {} 
-        bool IsGGEvent() const {return assigned;}
-        GGEventHelper& operator =(GG::App::EventType event) {gg_event=event;assigned=true; return *this;}
-        operator GG::App::EventType() {return gg_event;}
-      private:
-        GG::App::EventType gg_event; bool assigned;
-    } gg_event;
-
     switch(event.type) {
-    case SDL_KEYDOWN: {
-        if (key < GG::GGK_NUMLOCK)
-            gg_event = GG::App::KEYPRESS;
-        break;
-    }
-
-    case SDL_MOUSEMOTION: {
-        gg_event = GG::App::MOUSEMOVE;
-        break;
-    }
-
-    case SDL_MOUSEBUTTONDOWN: {
-        switch (event.button.button) {
-        case SDL_BUTTON_LEFT:      gg_event = GG::App::LPRESS; break;
-        case SDL_BUTTON_MIDDLE:    gg_event = GG::App::MPRESS; break;
-        case SDL_BUTTON_RIGHT:     gg_event = GG::App::RPRESS; break;
-        case SDL_BUTTON_WHEELUP:   gg_event = GG::App::MOUSEWHEEL; mouse_rel = GG::Pt(0, 1); break;
-        case SDL_BUTTON_WHEELDOWN: gg_event = GG::App::MOUSEWHEEL; mouse_rel = GG::Pt(0, -1); break;
+        case SDL_USEREVENT: {
+            int net2_type = NET2_GetEventType(const_cast<SDL_Event*>(&event));
+            if (net2_type == NET2_ERROREVENT || 
+                net2_type == NET2_TCPACCEPTEVENT || 
+                net2_type == NET2_TCPRECEIVEEVENT || 
+                net2_type == NET2_TCPCLOSEEVENT || 
+                net2_type == NET2_UDPRECEIVEEVENT)
+                m_network_core.HandleNetEvent(const_cast<SDL_Event&>(event));
+            break;
         }
-        key_mods = SDL_GetModState();
-        break;
-    }
 
-    case SDL_MOUSEBUTTONUP: {
-        switch (event.button.button) {
-        case SDL_BUTTON_LEFT:   gg_event = GG::App::LRELEASE; break;
-        case SDL_BUTTON_MIDDLE: gg_event = GG::App::MRELEASE; break;
-        case SDL_BUTTON_RIGHT:  gg_event = GG::App::RRELEASE; break;
-        case SDL_BUTTON_WHEELUP:   gg_event = GG::App::MOUSEWHEEL; break;
-        case SDL_BUTTON_WHEELDOWN: gg_event = GG::App::MOUSEWHEEL; break;
+        case SDL_QUIT: {
+            Exit(0);
+            return;
         }
-        key_mods = SDL_GetModState();
-        break;
     }
-
-    case SDL_USEREVENT: {
-        int net2_type = NET2_GetEventType(const_cast<SDL_Event*>(&event));
-        if (net2_type == NET2_ERROREVENT || 
-            net2_type == NET2_TCPACCEPTEVENT || 
-            net2_type == NET2_TCPRECEIVEEVENT || 
-            net2_type == NET2_TCPCLOSEEVENT || 
-            net2_type == NET2_UDPRECEIVEEVENT)
-            m_network_core.HandleNetEvent(const_cast<SDL_Event&>(event));
-        break;
-    }
-
-    case SDL_QUIT: {
-        Exit(0);
-        return;
-    }
-    }
-
-    if (gg_event.IsGGEvent())
-        GG::App::HandleEvent(gg_event, key, key_mods, mouse_pos, mouse_rel);
-}
-
-void HumanClientApp::Update()
-{
-}
-
-void HumanClientApp::Render()
-{
-    SDLGGApp::Render(); // paints GUI windows
 }
 
 void HumanClientApp::FinalCleanup()
