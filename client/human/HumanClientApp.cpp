@@ -12,6 +12,8 @@
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 
 #include <sstream>
@@ -25,6 +27,16 @@ namespace {
     GG::Wnd* NewCUIDropDownList(const GG::XMLElement& elem)   {return new CUIDropDownList(elem);}
     GG::Wnd* NewCUIEdit(const GG::XMLElement& elem)           {return new CUIEdit(elem);}
     GG::Wnd* NewCUIMultiEdit(const GG::XMLElement& elem)      {return new CUIMultiEdit(elem);}
+
+    // command-line options
+    void AddOptions(OptionsDB& db)
+    {
+        db.Add("autosave.single-player", "If true, autosaves will occur during single-player games.", false, Validator<bool>());
+        db.Add("autosave.multiplayer", "If true, autosaves will occur during multiplayer games.", false, Validator<bool>());
+        db.Add("autosave.turns", "Sets the number of turns that should elapse between autosaves.", 5, RangedValidator<int>(1, 50));
+        db.Add("autosave.saves", "Sets the number of autosaved games that should be kept.", 10, RangedValidator<int>(1, 50));
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
 }
  
 HumanClientApp::HumanClientApp() : 
@@ -34,7 +46,8 @@ HumanClientApp::HumanClientApp() :
              false, "freeorion"),
     m_current_music(0),
     m_single_player_game(true),
-    m_game_started(false)
+    m_game_started(false),
+    m_turns_since_autosave(0)
 {
     AddWndGenerator("CUIButton", &NewCUIButton);
     AddWndGenerator("CUIStateButton", &NewCUIStateButton);
@@ -591,6 +604,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             int turn_number;
             turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
 
+            Autosave(turn_number, true);
             m_ui->ScreenMap();
             m_ui->InitTurn( turn_number ); // init the new turn
         }
@@ -658,6 +672,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         }
         Logger().debugStream() <<"HumanClientApp::HandleMessageImpl : Sitrep creation complete";
 
+        Autosave(turn_number, false);
         m_ui->ScreenMap(); 
         m_ui->InitTurn( turn_number ); // init the new turn
         break;
@@ -748,6 +763,75 @@ void HumanClientApp::HandleServerDisconnectImpl()
     } else if (m_game_started) { // playing game
         ClientUI::MessageBox(ClientUI::String("SERVER_LOST"));
         EndGame();
+    }
+}
+
+void HumanClientApp::Autosave(int turn_number, bool new_game)
+{
+    if (((m_single_player_game && GetOptionsDB().Get<bool>("autosave.single-player")) || 
+         (!m_single_player_game && GetOptionsDB().Get<bool>("autosave.multiplayer"))) &&
+        (m_turns_since_autosave++ % GetOptionsDB().Get<int>("autosave.turns")) == 0) {
+        const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+        std::string empire_name = Empires().Lookup(EmpireID())->Name();
+        unsigned int first_good_empire_char = empire_name.find_first_of(legal_chars);
+        if (first_good_empire_char == std::string::npos) {
+            empire_name = "";
+        } else {
+            unsigned int first_bad_empire_char = empire_name.find_first_not_of(legal_chars, first_good_empire_char);
+            empire_name = empire_name.substr(first_good_empire_char, first_bad_empire_char - first_good_empire_char);
+        }
+
+        std::string save_filename;
+        if (m_single_player_game) {
+            save_filename = boost::io::str(boost::format("AS_%s_%03d.sav") % empire_name % turn_number);
+        } else {
+            unsigned int first_good_player_char = m_player_name.find_first_of(legal_chars);
+            if (first_good_player_char == std::string::npos) {
+                save_filename = boost::io::str(boost::format("AS_%s_%03d.mps") % empire_name % turn_number);
+            } else {
+                unsigned int first_bad_player_char = m_player_name.find_first_not_of(legal_chars, first_good_player_char);
+                std::string player_name = m_player_name.substr(first_good_player_char, first_bad_player_char - first_good_player_char);
+                save_filename = boost::io::str(boost::format("AS_%s_%s_%03d.mps") % player_name % empire_name % turn_number);
+            }
+        }
+
+        std::set<std::string> similar_save_files;
+        std::set<std::string> old_save_files;
+        std::string extension = m_single_player_game ? ".sav" : ".mps";
+        namespace fs = boost::filesystem;
+        fs::path save_dir = "save";
+        fs::directory_iterator end_it;
+        for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
+            if (!fs::is_directory(*it)) {
+                std::string filename = it->leaf();
+                if (!new_game &&
+                    filename.find(extension) == filename.size() - extension.size() && 
+                    filename.find(save_filename.substr(0, save_filename.size() - 7)) == 0) {
+                    similar_save_files.insert(filename);
+                } else if (filename.find("AS_") == 0) {
+                    // this simple condition means that at the beginning of an autosave run, we'll clear out all old autosave files,
+                    // even if they don't match the current empire name, or if they are MP vs. SP games, or whatever
+                    old_save_files.insert(filename);
+                }
+            }
+        }
+
+        for (std::set<std::string>::iterator it = old_save_files.begin(); it != old_save_files.end(); ++it) {
+            fs::remove(save_dir / *it);
+        }
+
+        unsigned int max_autosaves = GetOptionsDB().Get<int>("autosave.saves");
+        std::set<std::string>::reverse_iterator rit = similar_save_files.rbegin();
+        std::advance(rit, std::min(similar_save_files.size(), max_autosaves - 1));
+        for (; rit != similar_save_files.rend(); ++rit) {
+            fs::remove(save_dir / *rit);
+        }
+
+        Message response;
+        bool save_succeeded = 
+            HumanClientApp::GetApp()->NetworkCore().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), "save/" + save_filename), response);
+        if (!save_succeeded)
+            Logger().errorStream() << "HumanClientApp::Autosave : An error occured while attempting to save the autosave file \"" << save_filename << "\"";
     }
 }
 

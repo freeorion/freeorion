@@ -116,6 +116,8 @@ private:
     virtual void HandleMessageImpl(const Message& msg);
     virtual void HandleServerDisconnectImpl();
 
+    void Autosave(int turn_number, bool new_game); ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
+
     Process                           m_server_process;     ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
     Mix_Music*                        m_current_music;      ///< the currently-playing music, if any
     std::map<std::string, Mix_Chunk*> m_sounds;             ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
@@ -125,6 +127,7 @@ private:
     std::string                       m_save_filename;      ///< the name under which the current game has been saved
     bool                              m_single_player_game; ///< true when this game is a single-player game
     bool                              m_game_started;       ///< true when a game is currently in progress
+    int                               m_turns_since_autosave; ///< the number of turns that have elapsed since the last autosave
 
     static void EndOfMusicCallback();
     static void EndOfSoundCallback(int channel);
