@@ -163,26 +163,28 @@ GG::XMLElement Planet::XMLEncode(int empire_id) const
     return element;
 }
 
-void Planet::AddOwnerExt   (int id)
+void Planet::AddOwner   (int id)
 {
+  GetSystem()->UniverseObject::AddOwner(id);
   UniverseObject::AddOwner(id);
-  GetSystem()->AddOwner(id);
 }
 
-void Planet::RemoveOwnerExt(int id)
+void Planet::RemoveOwner(int id)
 {
-  UniverseObject::RemoveOwner(id);
   System *system=GetSystem();
   System::ObjectVec planets = system->FindObjects(IsPlanet);
  
   // check if Empire(id) is owner of at least one other planet
   System::ObjectVec::const_iterator plt_it;
+  int count_planets = 0;
   for(plt_it=planets.begin();plt_it != planets.end();++plt_it)
     if((*plt_it)->Owners().find(id) != (*plt_it)->Owners().end())
-      break;
+      count_planets++;
 
-  if(plt_it == planets.end())
-    system->RemoveOwner(id);
+  if(count_planets==1)
+    system->UniverseObject::RemoveOwner(id);
+
+  UniverseObject::RemoveOwner(id);
 }
 
 
@@ -196,9 +198,9 @@ void Planet::Conquer(int conquerer)
   // RemoveOwner will change owners - without temp_owner => side effect
   std::set<int> temp_owner(Owners());
   for(std::set<int>::const_iterator own_it = temp_owner.begin();own_it != temp_owner.end();++own_it)
-    RemoveOwnerExt(*own_it);
+    RemoveOwner(*own_it);
 
-  AddOwnerExt(conquerer);
+  AddOwner(conquerer);
 #endif
 }
 
