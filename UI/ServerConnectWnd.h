@@ -104,7 +104,7 @@ public:
     /*!
       \return true if user exit with OK selecting one server, or false if user selected cancel
     */
-    bool IsServerSelected() const { return this->m_ended_with_ok; }
+    bool IsServerSelected() const { return m_ended_with_ok; }
     //@}
     /** \name Mutators */ //@{
     /** Add a new IP server address, as a std::string, to the server list shown in the drop downlist */
