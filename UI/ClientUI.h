@@ -137,7 +137,7 @@ public:
     
     //! @param id address of technology that we wish to zoom to
     //! @return true if successful, false if object doesn't exist
-    bool ZoomToTech(int id);    //!< Opens the technology screen and presents a description of the given technology
+    bool ZoomToTech(const std::string& tech_name);    //!< Opens the technology screen and presents a description of the given technology
    
     //! @param str address of encyclopedia entry that we wish to zoom to
     //! @return true if successful, false if object doesn't exist

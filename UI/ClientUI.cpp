@@ -457,11 +457,12 @@ bool ClientUI::ZoomToShip(int id)
     return false;
 }
 
-bool ClientUI::ZoomToTech(int id)
-{ 
-    // TODO: Zooming code
-    
-    return false;
+bool ClientUI::ZoomToTech(const std::string& tech_name)
+{
+    if (!GetTech(tech_name))
+        return false;
+    m_map_wnd->ShowTech(tech_name);
+    return true;
 }
 
 bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
