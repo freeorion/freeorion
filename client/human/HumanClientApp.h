@@ -55,8 +55,8 @@ public:
 
     void SetLobby(MultiplayerLobbyWnd* lobby); ///< registers a lobby dialog so that Messages can reach it; passing 0 unsets the lobby dialog
 
-    /** plays a music file.  The file will be played in a loop if \a loop is true, and will be freed when it is finished playing otherwise. */
-    void PlayMusic(const std::string& filename, bool loop = false);
+    /** plays a music file.  The file will be played in an infinitve loop if \a loop is < 0, and it will be played \a loops + 1 times otherwise. */
+    void PlayMusic(const std::string& filename, int loops = 0);
 
 	/** stops playing music */
 	void StopMusic();
@@ -109,12 +109,12 @@ private:
 
     void Autosave(int turn_number, bool new_game); ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
 
-    static signed char StreamEnded(FSOUND_STREAM* stream, void*, int, void* ptr);
-
     Process                           m_server_process;     ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
     FSOUND_STREAM*                    m_current_music;      ///< the currently-playing music, if any
     int                               m_music_channel;      ///< the channel on which the currently-playing music is playing (or -1 if no music is playing)
-    bool                              m_loop_music;         ///< whether the currently-playing music should be repeated indefinitely
+    int                               m_music_loops;        ///< the number of loops of the current music to play (< 0 for loop forever)
+    int                               m_next_music_time;    ///< the time in ms that the next loop of the current music should play (0 if no repeats are scheduled)
+    std::string                       m_music_name;         ///< the name of the currently-playing music file
     std::map<std::string, int>        m_sounds;             ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
     boost::shared_ptr<ClientUI>       m_ui;                 ///< the one and only ClientUI object!
     std::string                       m_save_filename;      ///< the name under which the current game has been saved

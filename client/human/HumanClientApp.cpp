@@ -198,7 +198,8 @@ HumanClientApp::HumanClientApp() :
              false, "freeorion"),
     m_current_music(0),
     m_music_channel(-1),
-    m_loop_music(false),
+    m_music_loops(0),
+    m_next_music_time(0),
     m_single_player_game(true),
     m_game_started(false),
     m_turns_since_autosave(0)
@@ -294,23 +295,24 @@ void HumanClientApp::SetLobby(MultiplayerLobbyWnd* lobby)
     m_multiplayer_lobby_wnd = lobby;
 }
 
-void HumanClientApp::PlayMusic(const std::string& filename, bool loop)
+void HumanClientApp::PlayMusic(const std::string& filename, int loops)
 {
-    m_current_music = FSOUND_Stream_Open(filename.c_str(), FSOUND_2D | FSOUND_NONBLOCKING, 0, 0);
-    FSOUND_Stream_SetEndCallback(m_current_music,
-#if _MSC_VER
-                                 (FSOUND_STREAMCALLBACK)(&HumanClientApp::StreamEnded),
-#else
-                                 &HumanClientApp::StreamEnded,
-#endif
-                                 this);
-    m_loop_music = loop;
+    StopMusic();
+    m_current_music = FSOUND_Stream_Open(filename.c_str(), FSOUND_2D, 0, 0);
+    m_music_channel = FSOUND_Stream_Play(FSOUND_FREE, m_current_music);
+    FSOUND_SetVolumeAbsolute(m_music_channel, GetOptionsDB().Get<int>("music-volume"));
+    m_music_loops = loops;
+    m_next_music_time = m_music_loops ? GG::App::GetApp()->Ticks() + FSOUND_Stream_GetLengthMs(m_current_music) : 0;
+    m_music_name = filename;
 }
 
 void HumanClientApp::StopMusic()
 {
-    if (m_music_channel != -1)
-        FSOUND_Stream_Stop(m_current_music);
+    if (m_current_music) {
+        FSOUND_Stream_Close(m_current_music);
+        m_current_music = 0;
+        m_music_channel = -1;
+    }
 }
 
 void HumanClientApp::PlaySound(const std::string& filename)
@@ -574,7 +576,7 @@ void HumanClientApp::Initialize()
     m_ui->ScreenIntro(); // start the first screen; the UI takes over from there.
 
     if (!(GetOptionsDB().Get<bool>("music-off")))
-        PlayMusic(ClientUI::SOUND_DIR + GetOptionsDB().Get<std::string>("bg-music"), true);
+        PlayMusic(ClientUI::SOUND_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1);
 }
 
 void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
@@ -600,11 +602,8 @@ void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
 
 void HumanClientApp::RenderBegin()
 {
-    if (m_current_music && m_music_channel == -1) { // if this music stream has been loaded but is not ready yet
-        m_music_channel = FSOUND_Stream_Play(FSOUND_FREE, m_current_music);
-        if (m_music_channel != -1)
-            FSOUND_SetVolumeAbsolute(m_music_channel, GetOptionsDB().Get<int>("music-volume"));
-    }
+    if (m_next_music_time && m_next_music_time <= GG::App::GetApp()->Ticks() && (m_music_loops == -1 || (--m_music_loops + 1)))
+        PlayMusic(m_music_name, m_music_loops);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // this is the only line in SDLGGApp::RenderBegin()
 }
 
@@ -939,18 +938,4 @@ void HumanClientApp::Autosave(int turn_number, bool new_game)
         if (!save_succeeded)
             Logger().errorStream() << "HumanClientApp::Autosave : An error occured while attempting to save the autosave file \"" << save_filename << "\"";
     }
-}
-
-signed char HumanClientApp::StreamEnded(FSOUND_STREAM* stream, void*, int, void* ptr)
-{
-    HumanClientApp* this_ptr = static_cast<HumanClientApp*>(ptr);
-    // TODO: bring up next track from a playlist
-    if (!this_ptr->m_loop_music) {
-        FSOUND_Stream_Close(this_ptr->m_current_music);
-        this_ptr->m_current_music = 0;
-        // return the sound on this channel to the level of the other channels
-        FSOUND_SetVolumeAbsolute(this_ptr->m_music_channel, FSOUND_GetSFXMasterVolume());
-    }
-    this_ptr->m_music_channel = -1;
-    return 0; // this value is ignored
 }
