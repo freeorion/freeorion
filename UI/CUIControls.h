@@ -25,30 +25,31 @@
 class CUI_PopupMenu : public GG::PopupMenu
 {
     //TODO: implementation
-public:
-    int Render();
+
 
 }; //CUI_PopupMenu
 
 class CUI_StateButton : public GG::StateButton
 {
     //TODO: implementation
-public:
-    int Render();
+
 }; //CUI_StateButton
 
+//! Render() not needed for CUI_Button
 class CUI_Button : public GG::Button
 {
     //TODO: implementation
-public:
-    int Render();
+protected:
+    void RenderDefault();
+    void RenderPressed();
+    void RenderRollover();
+    void RenderUnpressed();
 }; //CUI_Button
 
 class CUI_ListBox : public GG::ListBox
 {
     //TODO: implementation
-public:
-    int Render();
+
 }; //CUI_ListBox
 
 #endif
