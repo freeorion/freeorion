@@ -244,6 +244,8 @@ Planet Panel
 
 #Planet Sizes and Types####
 
+PL_SZ_NOWORLD
+*Nothing to see here, Move Along*
 PL_SZ_TINY
 Tiny
 PL_SZ_SMALL
@@ -257,8 +259,16 @@ Huge
 
 PL_TOXIC
 Toxic
+PL_INFERNO
+Inferno
+PL_GASGIANT
+Gas Giant
+PL_ASTEROIDS
+Asteroid Field
 PL_RADIATED
 Radiated
+PL_SWAMP
+Swamp
 PL_BARREN
 Barren
 PL_DESERT
@@ -311,7 +321,7 @@ Situation Report
 ####################
 
 SITREP_MAX_INDUSTRY
-The planet %planet% in system %system% has reached it's maximum production.
+The planet %planet% in system %system% has reached its maximum production.
 
 SITREP_SHIP_BUILT
 A new ship %ship% is now orbiting planet %planet%.
@@ -323,11 +333,11 @@ SITREP_BASE_BUILT
 The planet %planet% in system %system% has completed a defence base.
 
 SITREP_COMBAT_SYSTEM_WON
-A combat had taken place in system %system%. You won!
+A combat has taken place in system %system%. You won!
 
 SITREP_COMBAT_SYSTEM_LOST
-A combat had taken place in system %system%. You lost!
+A combat has taken place in system %system%. You lost!
 
 SITREP_COMBAT_SYSTEM_NO_VICTOR
-A combat had taken place in system %system%. You no side won!
+A combat has taken place in system %system%. The encounter was a draw.
 
