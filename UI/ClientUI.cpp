@@ -143,14 +143,14 @@ namespace {
         db.Add("UI.tooltip-delay", "Sets UI tooltip popup delay, in ms.", 1000, RangedValidator<int>(0, 3000));
         db.Add<std::string>("UI.stringtable-filename", "Sets UI string table filename.", "eng_stringtable.txt");
 
-        db.Add("UI.multiple-fleet-windows", "This flag allows clicks on multiple fleet buttons to open multiple fleet "
-               "windows at the same time.  Normally, opening a fleet window will close any currently-open fleet window.", 
+        db.Add("UI.multiple-fleet-windows", "If true, clicks on multiple fleet buttons will open multiple fleet "
+               "windows at the same time.  Otherwise, opening a fleet window will close any currently-open fleet window.", 
                false);
 
-        db.Add("UI.fleet-autoselect", "This flag supresses the auto-selection of the top fleet when a fleet window "
+        db.Add("UI.fleet-autoselect", "Auto-select the top fleet when a fleet window "
                "is opened.  Consider using this flag if you use UI.multiple-fleet-windows.", true);
 
-        db.Add("UI.fleet-window-quickclose", "This flag supresses the closing of open the fleet window(s) when you "
+        db.Add("UI.window-quickclose", "Close open windows such as fleet windows and the system-view side panel when you "
                "right-click on the main map.", true);
     }
     bool temp_bool = RegisterOptions(&AddOptions);

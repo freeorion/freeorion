@@ -10,7 +10,6 @@
     </ctrl-color>
     <dir>default/</dir>
     <fleet-autoselect>1</fleet-autoselect>
-    <fleet-window-quickclose>1</fleet-window-quickclose>
     <font>Vera.ttf</font>
     <font-size>12</font-size>
     <multiple-fleet-windows>0</multiple-fleet-windows>
@@ -24,6 +23,7 @@
     <title-font>Vera.ttf</title-font>
     <title-font-size>12</title-font-size>
     <tooltip-delay>1000</tooltip-delay>
+    <window-quickclose>1</fleet-window-quickclose>
     <wnd-border-color>
       <alpha>255</alpha>
       <blue>0</blue>
