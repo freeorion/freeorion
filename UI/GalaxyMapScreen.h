@@ -1,6 +1,7 @@
+// -*- C++ -*-
+//GalaxyMapScreen.h
 #ifndef _GalaxyMapScreen_h_
 #define _GalaxyMapScreen_h_
-//GalaxyMapScreen.h
 
 #include <vector>
 
@@ -36,7 +37,6 @@
 #include "MapWnd.h"
 #endif
 
-class PlanetBarWnd; //to be defined externally
 class SystemIcon;  //extends staticgraphic
 class Icon;         //a staticgraphic that responds to events, extends staticgraphic
 class MapWnd;
@@ -79,7 +79,6 @@ private:
     
     //! Misc screens //!@{
     MapWnd* m_map_wnd;               //!< the actual window that holds the systems
-    
     //!@}
     
     //! \name Private Members //!@{
