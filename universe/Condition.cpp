@@ -808,7 +808,7 @@ Condition::EmpireStockpileValue::EmpireStockpileValue(StockpileType stockpile, c
 
 Condition::EmpireStockpileValue::EmpireStockpileValue(const GG::XMLElement& elem)
 {
-    if (elem.Tag() != "Condition::StockpileValue")
+    if (elem.Tag() != "Condition::EmpireStockpileValue")
         throw std::runtime_error("Condition::StockpileValue : Attempted to create a StockpileValue condition from an XML element with a tag other than \"Condition::StockpileValue\".");
 
     m_stockpile = lexical_cast<StockpileType>(elem.Child("stockpile").Text());
