@@ -11,10 +11,10 @@ using boost::lexical_cast;
 
 
 // static(s)
-const double        UniverseObject::INVALID_POSITION =  -100000.0;
-const int           UniverseObject::INVALID_OBJECT_ID = -1;
-const unsigned int  UniverseObject::MIN_SHIP_ID       = 1900000000;
-const unsigned int  UniverseObject::MAX_SHIP_ID       = 2000000000;
+const double UniverseObject::INVALID_POSITION =  -100000.0;
+const int    UniverseObject::INVALID_OBJECT_ID = -1;
+const int    UniverseObject::MIN_SHIP_ID       = 1900000000;
+const int    UniverseObject::MAX_SHIP_ID       = 2000000000;
 
 UniverseObject::UniverseObject() : 
    m_id(INVALID_OBJECT_ID),
@@ -48,8 +48,8 @@ UniverseObject::UniverseObject(const GG::XMLElement& elem)
 
    m_id = lexical_cast<int> ( elem.Child("m_id").Attribute("value") );
    m_name = elem.Child("m_name").Text();
-   m_x = lexical_cast<int> ( elem.Child("m_x").Attribute("value") );
-   m_y = lexical_cast<int> ( elem.Child("m_y").Attribute("value") );
+   m_x = lexical_cast<double> ( elem.Child("m_x").Attribute("value") );
+   m_y = lexical_cast<double> ( elem.Child("m_y").Attribute("value") );
    m_system_id = lexical_cast<int> ( elem.Child("m_system_id").Attribute("value") );
 
    if (vis == FULL_VISIBILITY)
