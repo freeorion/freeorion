@@ -47,7 +47,8 @@ ProdCenter::ProdCenter() :
    m_max_workforce(0.0),
    m_planet_type(PT_TERRAN),
    m_currently_building(NOT_BUILDING),
-   m_rollover(0)
+   m_rollover(0),
+   m_available_minerals(0.0)
 {
 }
 
@@ -58,7 +59,8 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem) :
    m_max_workforce(0.0),
    m_planet_type(PT_TERRAN),
    m_currently_building(NOT_BUILDING),
-   m_rollover(0)
+   m_rollover(0),
+   m_available_minerals(0.0)
 {
     if (elem.Tag() != "ProdCenter")
         throw std::invalid_argument("Attempted to construct a ProdCenter from an XMLElement that had a tag other than \"ProdCenter\"");
@@ -74,6 +76,7 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem) :
             m_planet_type = lexical_cast<PlanetType>(elem.Child("m_planet_type").Text());
             m_currently_building = BuildType(lexical_cast<int>(elem.Child("m_currently_building").Text()));
             m_rollover = lexical_cast<double>(elem.Child("m_rollover").Text());
+            m_available_minerals = lexical_cast<double>(elem.Child("m_available_minerals").Text());
         }
     } catch (const boost::bad_lexical_cast& e) {
         Logger().debugStream() << "Caught boost::bad_lexical_cast in ProdCenter::ProdCenter(); bad XMLElement was:";
@@ -120,10 +123,24 @@ double ProdCenter::ResearchPoints() const
 
 double ProdCenter::PercentComplete() const
 {
-    int cost = Cost(m_currently_building);
+    int cost = ItemBuildCost();
     return (cost ? (m_rollover / cost) : 0);
 }
 
+double ProdCenter::ItemBuildCost() const
+{
+  return Cost(m_currently_building);
+}
+
+double ProdCenter::ProductionPoints() const
+{
+  return std::min(IndustryPoints(),AvailableMinerals());
+}
+
+double ProdCenter::ProductionPointsMax() const
+{
+  return IndustryPoints();
+}
 GG::XMLElement ProdCenter::XMLEncode(UniverseObject::Visibility vis) const
 {
    // partial encode version -- no current production info
@@ -141,6 +158,7 @@ GG::XMLElement ProdCenter::XMLEncode(UniverseObject::Visibility vis) const
       retval.AppendChild(XMLElement("m_planet_type", lexical_cast<string>(m_planet_type)));
       retval.AppendChild(XMLElement("m_currently_building", lexical_cast<string>(m_currently_building)));
       retval.AppendChild(XMLElement("m_rollover", lexical_cast<string>(m_rollover)));
+      retval.AppendChild(XMLElement("m_available_minerals", lexical_cast<string>(m_available_minerals)));
    }
    return retval;
 }
@@ -241,7 +259,7 @@ void ProdCenter::PopGrowthProductionResearchPhase( Empire *empire, const int sys
 
 int ProdCenter::UpdateBuildProgress( int item_cost )
 {
-  double total_build_points =  m_rollover + IndustryPoints();
+  double total_build_points =  m_rollover + ProductionPoints();// IndustryPoints();
 
   int new_items = total_build_points / item_cost;
     

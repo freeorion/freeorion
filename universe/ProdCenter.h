@@ -52,6 +52,13 @@ public:
    double         Rollover() const         {return m_rollover;}
    double         Workforce() const        {return m_workforce;}
    PlanetType     GetPlanetType() const    {return m_planet_type;}
+   
+   ///< returns costs to build one item of the currently produced type
+   double ItemBuildCost() const;
+
+   double AvailableMinerals() const {return m_available_minerals;}
+   double ProductionPoints() const;
+   double ProductionPointsMax() const;
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.2 ONLY!!!!
@@ -70,6 +77,7 @@ public:
    void SetWorkforce(double workforce);
    void SetMaxWorkforce(double max_workforce);
    void SetPlanetType(PlanetType planet_type);
+   void SetAvailableMinerals(double available_minerals) {m_available_minerals = available_minerals;}
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.2 ONLY!!!!
@@ -97,6 +105,8 @@ private:
    double     m_workforce;     ///< pop points present in this center
    double     m_max_workforce; ///< max pop points available at this center
    PlanetType m_planet_type;   ///< the environment at this center
+
+   double     m_available_minerals;
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.2 ONLY!!!!
