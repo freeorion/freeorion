@@ -12,6 +12,7 @@ AM_CXXFLAGS = -g3 -Wall
 
 freeorionca_exe_LDADD = @SDL_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@ \
 @top_srcdir@/Empire/libFOempire-common.a	\
+@top_srcdir@/network/libFOnetwork-ai.a		\
 @top_srcdir@/network/libFOnetwork-common.a	\
 @top_srcdir@/universe/libFOuniverse-ai.a	\
 @top_srcdir@/universe/libFOuniverse-common.a	\

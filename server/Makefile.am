@@ -13,8 +13,9 @@ AM_CPPFLAGS = @GIGI_CFLAGS@ @GIGINET_CFLAGS@ @FT2_CFLAGS@ @SDL_CFLAGS@ -DFREEORI
 AM_CXXFLAGS = -g3 -Wall
 
 freeoriond_exe_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGINET_LIBS@ @FT2_LIBS@ \
-@top_srcdir@/Empire/libFOempire-common.a	\
+@top_srcdir@/network/libFOnetwork-server.a	\
 @top_srcdir@/network/libFOnetwork-common.a	\
+@top_srcdir@/Empire/libFOempire-common.a	\
 @top_srcdir@/universe/libFOuniverse-server.a	\
 @top_srcdir@/universe/libFOuniverse-common.a	\
 @top_srcdir@/util/libFOutil-server.a		\
