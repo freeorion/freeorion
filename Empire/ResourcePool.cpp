@@ -144,7 +144,7 @@ void FoodResourcePool::Calc()
   for(std::vector<Planet*>::iterator it = m_planets.begin();it !=m_planets.end();++it)
   {
     Planet *planet=*it;
-    planet->SetAvailableFood(std::min(m_available_pool,std::min(planet->FarmingPoints(),planet->PopPoints())));
+    planet->SetAvailableFood(std::min(m_available_pool,std::min(planet->FarmingPoints(),planet->PopPoints()+planet->FuturePopGrowthMax())));
     m_available_pool-=planet->AvailableFood();
   }
 
@@ -154,7 +154,7 @@ void FoodResourcePool::Calc()
     Planet *planet=*it;
     if(planet->PopPoints()>planet->AvailableFood())
     {
-      double receives = std::min(m_available_pool,planet->PopPoints()-planet->AvailableFood());
+      double receives = std::min(m_available_pool,planet->PopPoints()+planet->FuturePopGrowthMax()-planet->AvailableFood());
       planet->SetAvailableFood(planet->AvailableFood()+receives);
       m_available_pool-=receives;
     }
