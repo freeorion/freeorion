@@ -102,7 +102,7 @@ GG::XMLElement UniverseObject::XMLEncode() const
    XMLElement owners("m_owners");
    for(std::set<int>::const_iterator itr=m_owners.begin(); itr != m_owners.end(); itr++)
    {
-      XMLElement owner("owner");
+      XMLElement owner("owner"+lexical_cast<std::string>(*itr));
       owner.SetAttribute( "value", lexical_cast<std::string>(*itr) );
       owners.AppendChild(owner);
    }
