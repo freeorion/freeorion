@@ -218,6 +218,7 @@ void ClientNetworkCore::HandleNetEvent(SDL_Event& event)
             if (closing_socket == m_server_socket) { // connection to server
                 logger.debug("ClientNetworkCore::HandleNetEvent : Connection to server terminated.");
                 m_server_socket = -1;
+                ClientApp::HandleServerDisconnect();
             } else { // unknown connection
                 IPaddress* addr = NET2_TCPGetPeerAddress(closing_socket);
                 const char* socket_hostname = SDLNet_ResolveIP(addr);
