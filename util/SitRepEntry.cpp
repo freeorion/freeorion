@@ -91,4 +91,18 @@ SitRepEntry *CreateShipBuiltSitRep( const int ship_id, const int planet_id )
   return( pSitRep );
 }
 
+SitRepEntry *CreateCombatSitRep(const int empire_id, const int victor_id, const int system_id)
+{
+  SitRepEntry  *pSitRep = new SitRepEntry( );
+
+  pSitRep->SetType(victor_id==-1? SitRepEntry::COMBAT_SYSTEM_NO_VICTOR
+                                : (empire_id==victor_id?SitRepEntry::COMBAT_SYSTEM_WON : SitRepEntry::COMBAT_SYSTEM_LOST));
+
+  GG::XMLElement system_elem( VarText::SYSTEM_ID_TAG );
+  system_elem.SetAttribute("value",  boost::lexical_cast<std::string>( system_id ));
+  pSitRep->GetVariables( ).AppendChild( system_elem );
+
+  return( pSitRep );
+}
+
 
