@@ -25,8 +25,7 @@ const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
 
 
 IntroScreen::IntroScreen() :
-    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024 + 300) / 2, 300, 200, 400, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::RESIZABLE | 
-            CUI_Wnd::MINIMIZABLE | CUI_Wnd::CLOSABLE)
+    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024 + 300) / 2, 300, 200, 400, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | CUI_Wnd::CLOSABLE)
 {
     //create staticgraphic from the image
     m_bg_graphic = new GG::StaticGraphic(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), 
