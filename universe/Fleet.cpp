@@ -164,7 +164,11 @@ void Fleet::AddShips(const std::vector<int>& ships)
         if (Ship* s = GetUniverse().Object<Ship>(ships[i])) {
             s->SetFleetID(ID());
             s->MoveTo(X(), Y());
-            s->SetSystem(SystemID());
+	    if (System* system = GetSystem()) {
+		system->Insert(s);
+	    } else {
+		s->SetSystem(SystemID());
+	    }
             m_ships.insert(ships[i]);
         } else {
             throw std::invalid_argument("Fleet::AddShips() : Attempted to add an id of a non-ship object to a fleet.");
@@ -178,7 +182,11 @@ void Fleet::AddShip(const int ship_id)
     if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
         s->SetFleetID(ID());
         s->MoveTo(X(), Y());
-        s->SetSystem(SystemID());
+	if (System* system = GetSystem()) {
+	    system->Insert(s);
+	} else {
+	    s->SetSystem(SystemID());
+	}
         m_ships.insert(ship_id);
     } else {
         throw std::invalid_argument("Fleet::AddShip() : Attempted to add an id of a non-ship object to a fleet.");
@@ -191,10 +199,6 @@ std::vector<int> Fleet::RemoveShips(const std::vector<int>& ships)
     std::vector<int> retval;
     for (unsigned int i = 0; i < ships.size(); ++i) {
         bool found = m_ships.find(ships[i]) != m_ships.end();
-        if (UniverseObject* ship = GetUniverse().Object(ships[i])) {
-            ship->MoveTo(X(), Y());
-            ship->SetSystem(SystemID());
-        }
         m_ships.erase(ships[i]);
         if (!found)
             retval.push_back(ships[i]);
@@ -225,10 +229,6 @@ bool Fleet::RemoveShip(int ship)
     bool retval = false;
     iterator it = m_ships.find(ship);
     if (it != m_ships.end()) {
-        if (UniverseObject* ship = GetUniverse().Object(*it)) {
-            ship->MoveTo(X(), Y());
-            ship->SetSystem(SystemID());
-        }
         m_ships.erase(it);
         StateChangedSignal()();
         retval = true;
@@ -242,41 +242,36 @@ void Fleet::MovementPhase()
         if (m_travel_route.empty())
             CalculateRoute();
 
-        Logger().debugStream() << "Fleet::MovementPhase() : travel route is:";
-        for (std::list<System*>::iterator it = m_travel_route.begin(); it != m_travel_route.end(); ++it) {
-            Logger().debugStream() << (*it)->Name();
-        }
         if (System* current_system = GetSystem()) {
-            Logger().debugStream() << "current_system is " << current_system->Name();
-            if (current_system == m_travel_route.front()) {
+            if (current_system == m_travel_route.front())
                 m_travel_route.pop_front();
-                Logger().debugStream() << "popping " << current_system->Name() << " from front of list";
-            }
             current_system->Remove(ID());
+	    for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+		current_system->Remove(*it);
+	    }
         }
 
         System* next_system = m_travel_route.front();
         double movement_left = SHIP_SPEED;
-        Logger().debugStream() << "Fleet \"" << Name() << "\" is moving to system \"" << GetUniverse().Object(m_moving_to)->Name() << "\" with " << movement_left << " movement";
         while (movement_left) {
-            Logger().debugStream() << "  top of while(): moving to #" << next_system->ID() << "\"" << next_system->Name() 
-                << "\"; movement_left=" << movement_left << " m_prev_system=" << m_prev_system << " m_next_system=" << m_next_system;
             double direction_x = next_system->X() - X();
             double direction_y = next_system->Y() - Y();
             double distance = std::sqrt(direction_x * direction_x + direction_y * direction_y);
             if (distance <= movement_left) {
-                Logger().debugStream() << "    distance=" << distance << " <= movement_left=" << movement_left << "; popping " << m_travel_route.front()->Name() << " from the front of the list";
                 m_travel_route.pop_front();
                 if (m_travel_route.empty()) {
-                    Logger().debugStream() << "    m_travel_route is empty";
                     MoveTo(next_system->X(), next_system->Y());
                     next_system->Insert(this);
+		    for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+			UniverseObject* ship = GetUniverse().Object(*it);
+			ship->MoveTo(next_system->X(), next_system->Y());
+			next_system->Insert(ship);
+		    }
                     movement_left = 0.0;
                     m_moving_to = m_prev_system = m_next_system = INVALID_OBJECT_ID;
                     m_travel_route.clear();
                     m_travel_distance = 0.0;
                 } else {
-                    Logger().debugStream() << "    m_travel_route is not empty; continuing...";
                     MoveTo(next_system->X(), next_system->Y());
                     next_system = m_travel_route.front();
                     movement_left -= distance;
@@ -285,30 +280,33 @@ void Fleet::MovementPhase()
                     m_travel_distance -= distance;
                     // if we're "at" this system (within some epsilon), insert this fleet into the system
                     if (std::abs(movement_left) < 1.0e-5) {
-                        Logger().debugStream() << "    fleet is close enough to non-destination system" << next_system->Name() << "; inserting it...";
                         next_system->Insert(this);
+			for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+			    UniverseObject* ship = GetUniverse().Object(*it);
+			    ship->MoveTo(next_system->X(), next_system->Y());
+			    next_system->Insert(ship);
+			}
                         movement_left = 0.0;
-                    }
+                    } else {
+			for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+			    UniverseObject* ship = GetUniverse().Object(*it);
+			    ship->MoveTo(next_system->X(), next_system->Y());
+			}
+		    }
                 }
 
                 // explore new system
                 Empire* empire = Empires().Lookup(*Owners().begin()); // assumes one owner empire per fleet
                 empire->AddExploredSystem(m_travel_route.empty() ? SystemID() : m_prev_system);
-                Logger().debugStream() << "    Added explored system #" << next_system->ID() << " to empire " << *Owners().begin();
             } else {
-                Logger().debugStream() << "    distance=" << distance << " > movement_left=" << movement_left << "; we're done";
                 Move(direction_x / distance * movement_left, direction_y / distance * movement_left);
+		for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+		    UniverseObject* ship = GetUniverse().Object(*it);
+		    ship->Move(direction_x / distance * movement_left, direction_y / distance * movement_left);
+		}
                 m_travel_distance -= distance;
                 movement_left = 0.0;
             }
-        }
-        Logger().debugStream() << "[End of Fleet::MovementPhase()] SystemID()=" << SystemID() 
-            << " ; movement_left=" << movement_left << " m_prev_system=" << m_prev_system << " m_next_system=" << m_next_system << "\n";
-
-        for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-            UniverseObject* ship = GetUniverse().Object(*it);
-            ship->MoveTo(X(), Y());
-            ship->SetSystem(SystemID());
         }
     }
 }
