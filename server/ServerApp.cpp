@@ -6,6 +6,7 @@
 
 #include "../network/XDiff.hpp"
 #include "../util/OrderSet.h"
+#include "../util/gzstream.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
@@ -24,6 +25,7 @@
 #include "SDL_getenv.h"
 
 #include <ctime>
+
 
 
 struct AISetupData
@@ -309,7 +311,11 @@ void ServerApp::HandleMessage(const Message& msg)
                     doc.root_node.AppendChild(player_element);
                 }
                 doc.root_node.AppendChild(m_universe.XMLEncode());
-                std::ofstream ofs(save_filename.c_str());
+		GZStream::ogzstream ofs(save_filename.c_str());
+		/* For now, we use the standard compression settings,
+		   but later we could let the compression settings be
+		   customizable in the save-dialog */
+		// The default is: ofs.set_gzparams(6, Z_DEFAULT_STRATEGY);
                 doc.WriteDoc(ofs);
                 ofs.close();
                 m_network_core.SendMessage(ServerSaveGameMessage(msg.Sender(), true));
@@ -329,7 +335,7 @@ void ServerApp::HandleMessage(const Message& msg)
 
             std::string load_filename = msg.GetText();
             GG::XMLDoc doc;
-            std::ifstream ifs(load_filename.c_str());
+	    GZStream::igzstream ifs(load_filename.c_str());
             doc.ReadDoc(ifs);
             ifs.close();
 

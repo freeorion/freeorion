@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT(FreeOrion, 0.2, www.sourceforge.net/projects/freeorion)
+AC_INIT(FreeOrion, 0.2, http://www.sourceforge.net/projects/freeorion)
 
 dnl for cross-compilation
 dnl BUILD is the system that is compiling
