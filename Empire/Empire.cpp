@@ -25,7 +25,9 @@ Empire::Empire(const std::string& name, int ID, const GG::Clr& color, ControlSta
  m_id(ID), 
  m_color(color), 
  m_control_state(control),
- m_total_rp(0)
+ m_total_rp(0),
+ m_min_fleet_id(0),    // I forget what the fleet ID ranges were, and I'm sure everybody else does too
+ m_max_fleet_id(0x7FFFFFFF)
 {
     // nothing else to do
 }
@@ -115,6 +117,19 @@ int Empire::TotalRP() const
 {
     return m_total_rp;
 }
+
+int Empire::FleetIDMin() const
+{
+    return m_min_fleet_id;
+}
+
+
+int Empire::FleetIDMax() const
+{
+    return m_max_fleet_id;
+}
+
+
 
 // Each of the following
 // Returns true if the given item is in the appropriate list,
@@ -617,6 +632,14 @@ void Empire::Name(const std::string& name)
 {
     m_name = name;
 }
+
+void Empire::SetFleetIDs(int min, int max)
+{
+    m_min_fleet_id = min;
+    m_max_fleet_id = max;
+}
+
+
 
 // private helper method for encoding a list of integers
 void Empire::EncodeIntList(GG::XMLElement& container, const std::set<int>& lst)

@@ -15,58 +15,52 @@
 #include "../network/XDiff.hpp"
 #endif
 
-#include <string>
 
+#include <map>
+#include <list>
 
-ClientEmpireManager::ClientEmpireManager() : EmpireManager(), m_last_turn_empire_state(EmpireManager::EMPIRE_UPDATE_TAG)
+ClientEmpireManager::ClientEmpireManager() : EmpireManager()
 {
     // no worries yet
 }
    
 /**
 *  Handles an update for this client.  
-*  The XMLElement should be an XMLDiff for the empires in this client
-*  manager (that is, produced by ServerEmpireManager::CreateClientEmpireUpdate()
+*  The XMLElement should be an XML encoding from the server for the empires
+*  that are in this manager.  It should have been produced by
+*  ServerEmpireManager::CreateClientEmpireUpdate()
 *
 */
 bool ClientEmpireManager::HandleEmpireElementUpdate( GG::XMLElement empireElement)
-{    
-    // make an XMLDoc for the new empire state, initialize it to old state
-    GG::XMLDoc new_state;
-    new_state.root_node = m_last_turn_empire_state;
-    
-    // make an XMLDoc for the update 
-    GG::XMLDoc update_patch;
-    update_patch.root_node = empireElement;
-    
-    // apply the patch
-    XPatch(new_state, update_patch);
-    
+{   
     // if its not an empire update element, we have an error
-    if(new_state.root_node.Tag() != EmpireManager::EMPIRE_UPDATE_TAG)
+    if(empireElement.Tag() != EmpireManager::EMPIRE_UPDATE_TAG)
     {   
         return false;
     }
     
+    // clears the map and deallocates all empires
+    RemoveAllEmpires();
+    
     // **********************
     // now we must decode
     // **********************
-   
-    for(int i=0; i<new_state.root_node.NumChildren(); i++)
+    
+    // decode all the empires from the update
+    for(int i=0; i<empireElement.NumChildren(); i++)
     {
-        Empire decoded_empire( new_state.root_node.Child(i).Child(0) );
-        Empire* old_empire = Lookup(decoded_empire.EmpireID());
+        Empire *decoded_empire = new Empire( empireElement.Child(i).Child(0) );
         
-        if(old_empire)
+        // check for out of memory
+        if( decoded_empire == NULL )
         {
-            *old_empire = decoded_empire;
+            throw std::runtime_error("Memory allocation failure: ClientEmpireManager::HandleEmpireElementUpdate()");
         }
-        else
-        {
-            old_empire = new Empire( decoded_empire );
-            InsertEmpire(old_empire);
-        }
+        
+        InsertEmpire(decoded_empire);
+  
     }
+    
      
     return true;
 }

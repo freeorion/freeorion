@@ -134,7 +134,7 @@ protected:
     
     /// Used by derived classes to remove all empires from the map
     /**
-    * Removes all empiress from the manager's map and deallocates those empires.
+    * Removes all empires from the manager's map and deallocates those empires.
     *
     */
     void RemoveAllEmpires();

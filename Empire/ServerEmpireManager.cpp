@@ -34,21 +34,22 @@ Empire* ServerEmpireManager::CreateEmpire(const std::string& name,
                                    Empire::ControlStatus state)
 {
     Empire* emp = new Empire(name, m_next_id, color, state);
+    if(emp == NULL)
+    {
+        throw std::runtime_error("Memory allocation failed.  ServerEmpireManager::CreateEmpire()");
+    }
+
     m_next_id++;
     emp->AddPlanet(planetID);
 
     // Add system homeplanet is in to the ExploredSystem list
-    ServerApp* server_app = ServerApp::GetApp();
+  /*  ServerApp* server_app = ServerApp::GetApp();
     ServerUniverse* universe = &(server_app->Universe());
     UniverseObject*   uni_obj = universe->Object(planetID);
     Planet*   planet = dynamic_cast<Planet*>(uni_obj);
     emp->AddExploredSystem(planet->SystemID());
-    
-    // add a dummy empire update to the map, so that when 
-    // the first empire update is produced, we have something to diff with
-    GG::XMLElement state_init (EmpireManager::EMPIRE_UPDATE_TAG, std::string(""));
-    m_last_turn_empire_states.insert(std::pair<int, GG::XMLElement>(emp->EmpireID(), state_init));
-    
+    */
+  
     InsertEmpire(emp);
     
     return emp;
@@ -60,9 +61,6 @@ bool ServerEmpireManager::EliminateEmpire(int ID)
 {
     Empire* emp = Lookup(ID);
     RemoveEmpire(emp);
-    
-    // dont need his last empire update anymore
-    m_last_turn_empire_states.erase(ID);
     
     // prevent memory leak
     delete emp;
@@ -107,17 +105,7 @@ GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int EmpireID)
         this_turn.AppendChild(current_empire);
     }
     
-    // make XMLDocs for last turn's state, and for this turn's state
-    GG::XMLDoc last_turn;
-    GG::XMLDoc this_turn_doc;
-    last_turn.root_node = (*m_last_turn_empire_states.find(EmpireID)).second;
-    this_turn_doc.root_node = this_turn;
-    
-    // diff them to produce the update patch, and return its root element
-    GG::XMLDoc update_patch;
-    XDiff(last_turn, this_turn_doc, update_patch);
-    
-    return update_patch.root_node;
+    return this_turn;
 }
 
 /*

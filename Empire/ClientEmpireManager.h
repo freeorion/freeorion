@@ -27,13 +27,16 @@ public:
    /// Handles Empire state updates from server.
     /**
     *  Handles an update for this client.  
-    *  The XMLElement should be an XMLDiff for the empires in this client
-    *  manager (that is, produced by ServerEmpire::CreateClientEmpireUpdate()
+    *  The XMLElement should be one produced by ServerEmpire::CreateClientEmpireUpdate()
     *
-    *  The client manager will be updated to reflect the changes specified
+    *  The client manager will be updated to reflect the empire state specified
     *  by ServerEmpire.  Empires will be created, removed, or modified until
     *  the empires in this manager match those in the server manager.
     *
+    *   DANGER: This method will cause all empires in the manager to be
+    *      deallocated and recreated.  Pointers to Empires will not be valid
+    *      after an update is handled.  Do not use pointers to empires!  store
+    *      the things by their IDs instead.
     */
     bool HandleEmpireElementUpdate( GG::XMLElement empireElement);
 
@@ -54,7 +57,6 @@ public:
     //@}
 
 private:
-    GG::XMLElement m_last_turn_empire_state;
     
 };
 

@@ -56,8 +56,8 @@ public:
     
     /// Creates an XML update of the Empire states to send to a client.
     /**
-    * Creates an XMLElement representing changes to the Empires in the game
-    * between the last turn and the current turn.  The information that is 
+    * Creates an XMLElement containing the present Empire state, as visible
+    * to the empire with the given ID.   The information that is 
     * included in the element is the information which the Empire with the given
     * ID would have available to it.  For version 0.1, all information in the
     * server manager is included in the update element, but this may change in subsequent
@@ -68,8 +68,6 @@ public:
     * ClientEmpire::HandleEmpireUpdate() method to bring the ClientManager
     * in sync with the server manager.  
     *
-    * When this method is called, the stored XMLElements for each client are 
-    * replaced with a new XMLElement representing the current state of the Empires.
     *
     * An std::runtime_error is thrown if no empire exists with the given ID
     */
