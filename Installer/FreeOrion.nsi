@@ -13,8 +13,8 @@ SetCompressor lzma
 !packhdr foinsttemp.exe '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 foinsttemp.exe'
 ; Strip debugging symbols from binaries
 !system "C:\Dev-Cpp\bin\strip -sp ..\freeorion.exe -o freeorion.exe.stripped"
-!system "C:\Dev-Cpp\bin\strip -sp ..\freeorion.exe -o freeoriond.exe.stripped"
-!system "C:\Dev-Cpp\bin\strip -sp ..\freeorion.exe -o freeorionca.exe.stripped"
+!system "C:\Dev-Cpp\bin\strip -sp ..\freeoriond.exe -o freeoriond.exe.stripped"
+!system "C:\Dev-Cpp\bin\strip -sp ..\freeorionca.exe -o freeorionca.exe.stripped"
 
 
 ; Other installer settings
@@ -69,7 +69,6 @@ BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} Installer $$Revision$$ (NSIS v2
 !macroend
 
 Function .onInit
-  MessageBox MB_OK "TEST"
   !insertmacro CHECKUSER ""
 FunctionEnd
 Function un.onInit
