@@ -437,9 +437,45 @@ FW_EMPIRE_FLEETS
 %1% Fleets
 
 
+###############
+# TechWnd     #
+###############
+
+TECH_COST_STR
+%1% RP / %2% Turns
+
+TECH_WND_TECH_COMPLETED
+COMPLETED
+
+TECH_WND_TECH_QUEUED
+Queued
+
+TECH_WND_TECH_INCOMPLETE
+Incomplete
+
+TECH_WND_ALL_TECH_CATEGORIES
+All Categories
+
+TECH_WND_TECH_TYPES_ALL
+All Types
+
+TECH_WND_TECH_TYPES_THEORIES_AND_APPS
+Theories and Apps
+
+TECH_WND_TECH_TYPES_THEORIES_ONLY
+Theories only
+
+TECH_WND_UNCOLLAPSE_TECHS
+Uncollapse all
+
+TECH_WND_TECH_TYPES_TO_SHOW
+Tech types to show:
+
+
 ####################
 # Combat Messages  #
 ####################
+
 COMBAT_WINDOW_TITLE
 Combat Window
 
@@ -1113,3 +1149,331 @@ DESC_AND_BETWEEN_OPERANDS
 
 DESC_OR_BETWEEN_OPERANDS
  or
+
+
+###################
+# Tech Categories #
+###################
+
+LEARNING_CATEGORY
+Learning Category
+PRODUCTION_CATEGORY
+Production Category
+CONSTRUCTION_CATEGORY
+Construction Category
+GROWTH_CATEGORY
+Growth Category
+ECONOMICS_CATEGORY
+Economics Category
+
+#############################
+# Tech Names & Descriptions #
+#############################
+
+LRN_PHYS_BRAIN
+The Physical Brain
+LRN_PHYS_BRAIN_DESC
+The stuctures and their functions in the brain are determined.  The electrochemical and quantum nature of thought and memory are exposed.  With understanding, alteration and augmentation of brain functions becomes possible, and new ideas are spawned at the frontiers of thought, its expression, and its replacement.
+LRN_ALGO_ELEGANCE
+Algorithmic Elegance
+LRN_ALGO_ELEGANCE_DESC
+With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity.  At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.
+LRN_GAL_EXPLO
+Galactic Exploration
+LRN_GAL_EXPLO_DESC
+The discovery of interstellar travel via starlanes ushers in a new age of development in societies.  Old paradigms and petty squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth, or destruction.
+LRN_TRANSLING_THT
+Translinguistic Thought
+LRN_TRANSLING_THT_DESC
+Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truely great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
+LRN_PSIONICS
+Psionics
+LRN_PSIONICS_DESC
+Telepathy, Empathy, Clairvoyance, Prescience, Mind Control, Possesion, Psychokinesis & Psychoenergitics.
+LRN_ARTIF_MINDS
+Artificial Minds
+LRN_ARTIF_MINDS_DESC
+HAL never makes mistakes
+LRN_XENOARCH
+Xenoarchaeology
+LRN_XENOARCH_DESC
+Oooh! Pretty oblilesk.
+LRN_GRAVITONICS
+Gravitonics
+LRN_GRAVITONICS_DESC
+Up is down, down is sideways, sideways is backwards, nowhere is straight...?
+LRN_EVERYTHING
+Theory of Everything
+LRN_EVERYTHING_DESC
+Unification of Quantum Gravity with Grand Unified Theory.  All classic forces are described, and equivalent under certain ultrasymetric conditions.
+LRN_FORCE_FIELD
+Force-Field Harmonics
+LRN_FORCE_FIELD_DESC
+Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles.  By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.
+LRN_MIND_VOID
+Mind of the Void
+LRN_MIND_VOID_DESC
+We are not alone in the cosmos... but why should the search be so limited?  Perhaps the universe itself is alive, aware, watching.
+LRN_TIME_MECH
+Temporal Mechanics
+LRN_TIME_MECH_DESC
+1234321010101654321210303502340231501235123401234
+LRN_NDIM_SUBSPACE
+N-Dimensional Subspace
+LRN_NDIM_SUBSPACE_DESC
+Early superstring theorists spoke of 10, 11 or 26 dimensional universes, with all but the 4 macrodimensions "curled up" so tightly as to be unseen.  These other dimensions may now be uncurled and opened, by shifting into levels of existance previously hidden below the surface of our limited perception.
+LRN_MATTER_ENERGY
+Matter-Energy Conversion
+LRN_MATTER_ENERGY_DESC
+Transporters & Replicators!  WOO!
+LRN_UNIF_CONC
+Unified Consciousness
+LRN_UNIF_CONC_DESC
+Know about the mind of the void + manipulate fields = combine brains, optionally with the universe itself
+LRN_TRANSCEND
+Singularity of Transcendence
+LRN_TRANSCEND_DESC
+Woah!  My hands are so big, man!
+GRO_PLANET_ECOL
+Planetary Ecology
+GRO_PLANET_ECOL_DESC
+
+GRO_GENETIC_ENG
+Genetic Engineering
+GRO_GENETIC_ENG_DESC
+
+GRO_MEDICAL_PATH
+Medical Pathology
+GRO_MEDICAL_PATH_DESC
+
+GRO_INDUSTY_FARM
+Industrial Farming
+GRO_INDUSTY_FARM_DESC
+
+GRO_POP_SOCIOLOGY
+Population Sociology
+GRO_POP_SOCIOLOGY_DESC
+
+GRO_ENV_ENCAPSUL
+Environmenal Encapsulation
+GRO_ENV_ENCAPSUL_DESC
+
+GRO_SYMBIOTIC_BIO
+Symbotic Biology
+GRO_SYMBIOTIC_BIO_DESC
+
+GRO_GENETIC_MED
+Genetic Medicine
+GRO_GENETIC_MED_DESC
+
+GRO_LIFECYCLE_MAN
+Lifecycle Manipulation
+GRO_LIFECYCLE_MAN_DESC
+
+GRO_XENO_GENETICS
+Xenological Genetics
+GRO_XENO_GENETICS_DESC
+
+GRO_NANOTECH_MED
+Nanotech Medicine
+GRO_NANOTECH_MED_DESC
+
+GRO_ORBIT_FARMING
+Orbital Farming
+GRO_ORBIT_FARMING_DESC
+
+GRO_INDUSRY_CLONE
+Industrial Cloning
+GRO_INDUSRY_CLONE_DESC
+
+GRO_XENO_HYBRIDS
+Xenlological Hybridization
+GRO_XENO_HYBRIDS_DESC
+
+GRO_NANO_CYBERNET
+Nanotech Cybernetics
+GRO_NANO_CYBERNET_DESC
+
+GRO_ENERGY_META
+Pure-Energy Metabolism
+GRO_ENERGY_META_DESC
+
+PRO_MICROGRAV_MAN
+Microgravity Manufacturing
+PRO_MICROGRAV_MAN_DESC
+
+PRO_PLANET_GEOL
+Planetary Geology
+PRO_PLANET_GEOL_DESC
+
+PRO_ROBOTIC_PROD
+Robotic Production
+PRO_ROBOTIC_PROD_DESC
+
+PRO_FUSION_GEN
+Fusion Generation
+PRO_FUSION_GEN_DESC
+
+PRO_ASTEROID_MINE
+Asteroid Mining
+PRO_ASTEROID_MINE_DESC
+
+PRO_CORE_MINE
+Deep Core Mining
+PRO_CORE_MINE_DESC
+
+PRO_NANOTECH_PROD
+Nanotech Production
+PRO_NANOTECH_PROD_DESC
+
+PRO_ORBITAL_GEN
+Orbital Generation
+PRO_ORBITAL_GEN_DESC
+
+PRO_ORBITAL_MINE
+Orbital Mining
+PRO_ORBITAL_MINE_DESC
+
+PRO_SENTIENT_FACT
+Sentient Autofactories
+PRO_SENTIENT_FACT_DESC
+
+PRO_FRC_FLD_ASSMB
+Force-Field Assembly
+PRO_FRC_FLD_ASSMB_DESC
+
+PRO_INTSTEL_COPRO
+Interstellar Co-Production
+PRO_INTSTEL_COPRO_DESC
+
+PRO_TRANSMUTATION
+Transmutation
+PRO_TRANSMUTATION_DESC
+
+PRO_NDIM_ASSMB
+N-Dimensional Assembly
+PRO_NDIM_ASSMB_DESC
+
+PRO_SINGULAR_GEN
+Singularity Generation
+PRO_SINGULAR_GEN_DESC
+
+PRO_MATENG_REPLIC
+Matter-Energy Replication
+PRO_MATENG_REPLIC_DESC
+
+PRO_ZERO_GEN
+Zero-Point Generation
+PRO_ZERO_GEN_DESC
+
+CON_ORBITAL_CON
+Orbital Construction
+CON_ORBITAL_CON_DESC
+
+CON_ARCH_PSYCH
+Architectural Psychology
+CON_ARCH_PSYCH_DESC
+
+CON_INFRA_ECOL
+Infrastructure Ecology
+CON_INFRA_ECOL_DESC
+
+CON_ORGANIC_STRC
+Organic Structures
+CON_ORGANIC_STRC_DESC
+
+CON_METRO_INFRA
+Metroplex Architecture
+CON_METRO_INFRA_DESC
+
+CON_TRANS_STRC
+Transforming Structures
+CON_TRANS_STRC_DESC
+
+CON_ARCH_MONOFILS
+Architectural Monofilaments
+CON_ARCH_MONOFILS_DESC
+
+CON_SELFGRAV_STRC
+Self-Gravitating Construction
+CON_SELFGRAV_STRC_DESC
+
+CON_ASYMP_MATS
+Asymptotic Materials
+CON_ASYMP_MATS_DESC
+
+CON_STRC_INT_FLDS
+Structural Integrity Fields
+CON_STRC_INT_FLDS_DESC
+
+CON_CONTGRAV_ARCH
+Controlled Gravity Architecture
+CON_CONTGRAV_ARCH_DESC
+
+CON_GAL_INFRA
+Galactic Infrastructure
+CON_GAL_INFRA_DESC
+
+CON_FRC_ENRG_STRC
+Force-Energy Structures
+CON_FRC_ENRG_STRC_DESC
+
+CON_ART_HEAVENLY
+Artificial Heavenly Bodies
+CON_ART_HEAVENLY_DESC
+
+CON_TRANS_ARCH
+Transcendent Architecture
+CON_TRANS_ARCH_DESC
+
+CON_NDIM_STRC
+N-Dimensional Structures
+CON_NDIM_STRC_DESC
+
+ECO_MARKET_ECON
+Market Economics
+ECO_MARKET_ECON_DESC
+
+ECO_PLANNED_ECON
+Planned Economics
+ECO_PLANNED_ECON_DESC
+
+ECO_EXTERN_INTEG
+Externality Integration
+ECO_EXTERN_INTEG_DESC
+
+ECO_ECON_SPECTRO
+Economic Spectroscopy
+ECO_ECON_SPECTRO_DESC
+
+ECO_INTSTEL_TRADE
+Interstellar Trade
+ECO_INTSTEL_TRADE_DESC
+
+ECO_ENV_ADAPTION
+Environmental Adaption
+ECO_ENV_ADAPTION_DESC
+
+ECO_GAL_MONEY_POL
+Galactic Monetary Policy
+ECO_GAL_MONEY_POL_DESC
+
+ECO_ECON_FLUIDITY
+Economic Fluidity
+ECO_ECON_FLUIDITY_DESC
+
+ECO_PLANET_COLONY
+Planetary Collonialism
+ECO_PLANET_COLONY_DESC
+
+ECO_ECON_PRESCIEN
+Economic Prescience
+ECO_ECON_PRESCIEN_DESC
+
+ECO_STAB_HYPGROW
+Stablized Hypergrowth
+ECO_STAB_HYPGROW_DESC
+
+ECO_ECON_HEGEMONY
+Economic Hegemony
+ECO_ECON_HEGEMONY_DESC
