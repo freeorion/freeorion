@@ -163,6 +163,11 @@ Message JoinGameSetup(const GG::XMLDoc& player_setup)
    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_setup);
 }
 
+Message GameStartMessage(int player_id, const GG::XMLDoc& start_data)
+{
+   return Message(Message::GAME_START, -1, player_id, Message::CORE, start_data);
+}
+
 Message HostAckMessage(int player_id)
 {
    return Message(Message::HOST_GAME, -1, player_id, Message::CORE, "ACK");
