@@ -99,8 +99,8 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add(    "app-width", "Sets horizontal app resolution.", 1024, RangedValidator<int>(640, 1600));
-        db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(480, 1200));
+        db.Add(    "app-width", "Sets horizontal app resolution.", 1024, RangedValidator<int>(640, 2048));
+        db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(480, 1536));
         db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
 
         db.Add<std::string>("UI.dir", "Sets UI resource directory root.", "default/");
@@ -251,7 +251,7 @@ namespace {
 	    m_side_panel->SetSystem(system_id);
 	    AttachChild(m_side_panel);
 	    for (int i = 0; i < m_side_panel->PlanetPanels(); ++i) {
-		GG::Connect(m_side_panel->GetPlanetPanel(i)->LeftClickedSignal(), &PlanetPicker::PlanetClicked, this);
+		GG::Connect(m_side_panel->GetPlanetPanel(i)->PlanetImageLClickedSignal(), &PlanetPicker::PlanetClicked, this);
 	    }
 	    HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_COLONIZE);
 	}
