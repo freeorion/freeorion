@@ -145,10 +145,10 @@
 				Name="combat"
 				Filter="">
 				<File
-					RelativePath="..\..\..\combat\CombatSystem.cpp">
+					RelativePath="..\..\..\combat\Combat.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\combat\CombatSystem.h">
+					RelativePath="..\..\..\combat\Combat.h">
 				</File>
 			</Filter>
 			<Filter
@@ -317,6 +317,12 @@
 					RelativePath="..\..\..\util\GZStream.h">
 				</File>
 				<File
+					RelativePath="..\..\..\util\MultiplayerCommon.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\util\MultiplayerCommon.h">
+				</File>
+				<File
 					RelativePath="..\..\..\util\OptionsDB.cpp">
 				</File>
 				<File
@@ -342,6 +348,9 @@
 				</File>
 				<File
 					RelativePath="..\..\..\util\Process.h">
+				</File>
+				<File
+					RelativePath="..\..\..\util\Random.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\util\Random.h">
