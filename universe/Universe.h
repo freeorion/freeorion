@@ -33,6 +33,7 @@
 
 class System;
 class UniverseObject;
+struct PlayerSetupData;
 namespace GG {class XMLElement;}
 
 
@@ -183,7 +184,8 @@ public:
 
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
     void              CreateUniverse(int size, Shape shape, Age age, StarlaneFreqency starlane_freq, PlanetDensity planet_density, 
-                                     SpecialsFreqency specials_freq, int players, int ai_players);
+                                     SpecialsFreqency specials_freq, int players, int ai_players, 
+                                     const std::vector<PlayerSetupData>& player_setup_data = std::vector<PlayerSetupData>());
 
     /** removes the object with ID number \a id from the universe, and returns it; returns 0 if there is no such object*/
     UniverseObject*   Remove(int id);
@@ -287,7 +289,7 @@ protected:
     /// Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets
     /// NOTE: does nothing if executed client-side. This is a hack to deal with the
     /// dependency on ServerEmpireManager -- jdb
-    void GenerateEmpires(int players, std::vector<int>& homeworlds);
+    void GenerateEmpires(int players, std::vector<int>& homeworlds, const std::vector<PlayerSetupData>& player_setup_data);
 
     ObjectMap m_objects;                                ///< note that for the system graph algorithms to work more easily, the first N elements should be the N systems
     DistanceMatrix m_system_distances;                  ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order

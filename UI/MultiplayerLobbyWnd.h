@@ -54,8 +54,10 @@ private:
     void SaveGameChanged(int idx);
     void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
     void PlayerSelected(const std::set<int>& selections);
+    void PlayerDataChanged();
     void StartGameClicked();
     void CancelClicked();
+    bool PlayerDataUnique();
     void SendUpdate();
     GG::XMLDoc LobbyUpdateDoc() const;
 

@@ -3,6 +3,7 @@
 #include "../util/AppInterface.h"
 #include "Fleet.h"
 #include "../util/DataTable.h"
+#include "../util/MultiplayerCommon.h"
 #include "Planet.h"
 #include "Predicates.h"
 #include "../util/Random.h"
@@ -663,7 +664,8 @@ GG::XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 }
 
 void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFreqency starlane_freq, PlanetDensity planet_density, 
-                              SpecialsFreqency specials_freq, int players, int ai_players)
+                              SpecialsFreqency specials_freq, int players, int ai_players, 
+                              const std::vector<PlayerSetupData>& player_setup_data/* = std::vector<PlayerSetupData>()*/)
 {
     // wipe out anything present in the object map
     for (ObjectMap::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr)
@@ -717,7 +719,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFreqency s
     GenerateStarlanes(starlane_freq, adjacency_grid);
     InitializeSystemGraph();
     GenerateHomeworlds(players + ai_players, homeworlds);
-    GenerateEmpires(players + ai_players, homeworlds);
+    GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
 }
 
 int Universe::Insert(UniverseObject* obj)
@@ -1209,26 +1211,28 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
     }
 }
 
-void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
+void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const std::vector<PlayerSetupData>& player_setup_data)
 {
 #ifdef FREEORION_BUILD_SERVER
    // create empires and assign homeworlds, names, colors, and fleet ranges to
    // for each one
 
    const std::map<int, PlayerInfo>& player_info = ServerApp::GetApp()->NetworkCore().Players();
-   int i = 0;
+   unsigned int i = 0;
    for (std::map<int, PlayerInfo>::const_iterator it = player_info.begin(); it != player_info.end(); ++it, ++i) {
-      // TODO: select name at random from default list
-      std::string name = "Empire" + boost::lexical_cast<std::string>(i);
-
-      // TODO: select color at random from default list
-      GG::Clr color(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
+      std::string empire_name = "Empire" + boost::lexical_cast<std::string>(i);
+      const std::vector<GG::Clr>& colors = EmpireColors();
+      GG::Clr color = (i < colors.size() ? colors[i] : GG::Clr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0));
+      if (i < player_setup_data.size()) {
+          empire_name = player_setup_data[i].empire_name;
+          color = player_setup_data[i].empire_color;
+      }
 
       int home_planet_id = homeworlds[i];
 
       // create new Empire object through empire manager
       Empire* empire =
-          dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, name, it->second.name, color, home_planet_id, Empire::CONTROL_HUMAN);
+          dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, empire_name, it->second.name, color, home_planet_id, Empire::CONTROL_HUMAN);
 
       // set ownership of home planet
       int empire_id = empire->EmpireID();

@@ -29,7 +29,7 @@ namespace GG {
 class XMLDoc;
 class XMLElement;
 }
-struct AISetupData;
+struct PlayerSetupData;
 class CombatModule;
 class Message;
 class OrderSet;
@@ -69,7 +69,7 @@ public:
    log4cpp::Category&   Logger();         ///< returns the debug logging object for the app
 
    /** creates an AI client child process for each element of \a AIs*/
-   void CreateAIClients(const std::vector<AISetupData>& AIs);
+   void CreateAIClients(const std::vector<PlayerSetupData>& AIs);
 
    /** creates a single AI client child process for each AI_client subelement of \a elem.  This function is provided as a convenience 
        interface to void CreateAIClients(const LobbyModeData& AIs).*/
