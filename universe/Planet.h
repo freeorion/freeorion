@@ -71,9 +71,6 @@ public:
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
    void AdjustDefBases(int bases) {m_def_bases += bases; if (m_def_bases < 0) m_def_bases = 0; StateChangedSignal()();}
-   ///< until shipyards, planets build ships as psrt of it's implementation of ProdCenters
-   ///< takes a design ID and if any are build, adds the ships to a fleet.
-   void UpdateShipBuildProgress( ShipDesign::V01DesignID design_id );
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
 
