@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _ServerUniverse_h_
 #define _ServerUniverse_h_
 
