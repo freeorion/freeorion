@@ -282,23 +282,34 @@ FREEORION_VISION
 FreeOrion, an open-source game based on Master of Orion, is a turn-based game of epic space strategy that builds on the classic '4X' model by incorporating the nation-building elements of games such as Europa Universalis 2 and a versatile tactical combat engine. While its modular, open-source design allows for a significant degree of customization of the game engine and the story elements by the community, the FreeOrion team is dedicated to the construction of a living, breathing universe in a 'grand campaign' model. 
 
 ###########################
-# In Game Options	  #
+# Game Menu	              #
 ###########################
 
-INGAMEOPTIONS_WINDOW_TITLE
+GAME_MENU_WINDOW_TITLE
 Options
 
-INGAMEOPTIONS_SAVE
+GAME_MENU_SAVE
 Save Game
 
-INGAMEOPTIONS_LOAD
+GAME_MENU_LOAD
 Load Game
 
-INGAMEOPTIONS_RESIGN
+GAME_MENU_RESIGN
 Resign
 
-INGAMEOPTIONS_SAVE_FILES
+GAME_MENU_SAVE_FILES
 Save Game Files
+
+###########################
+# Game Options            #
+###########################
+
+OPTIONS_AUDIO
+Audio
+
+OPTIONS_MUSIC
+Music
+
 
 #################
 # Main Map      #
@@ -306,6 +317,12 @@ Save Game Files
 
 MAP_BTN_TURN_UPDATE
 Turn 
+
+MAP_BTN_MENU
+Menu
+
+MAP_BTN_SITREP
+SitRep
 
 #################
 # SidePanel     #
@@ -438,6 +455,43 @@ FW_EMPIRE_FLEETS
 
 
 ####################
+# Combat Messages  #
+####################
+COMBAT_WINDOW_TITLE
+Combat Window
+
+COMBAT_BATTLE
+BATTLE : 
+
+COMBAT_SYSTEM
+The %1% System
+
+COMBAT_MILITARY_SHIPS
+Military Ships
+
+COMBAT_CIVILIAN_SHIPS
+Civilian Ships
+
+COMBAT_PLANETS
+Planets
+
+COMBAT_REMAINING
+ Remaining
+
+COMBAT_RETREATED
+ Retreated
+
+COMBAT_DESTROYED
+ Destroyed
+
+COMBAT_DEFENSELESS
+ Defenseless
+
+COMBAT_LOST
+ Lost!
+
+
+####################
 # TurnProgress     #
 ####################
 
@@ -484,7 +538,7 @@ SITREP_TECH_RESEARCHED
 The technology %tech% has been discovered.
 
 SITREP_BASE_BUILT
-The planet %planet% in system %system% has completed a defence base.
+The planet %planet% in system %system% has completed a defense base.
 
 SITREP_COMBAT_SYSTEM_WON
 A combat has taken place in system %system%. You won!
