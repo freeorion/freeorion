@@ -115,10 +115,10 @@ int MultiplayerLobbyWnd::Keypress(GG::Key key, Uint32 key_mods)
 {
     if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) && GG::App::GetApp()->FocusWnd() == m_chat_input_edit) {
         int receiver = -1; // all players by default
-        std::string text = m_chat_input_edit->WindowText() + "\n";
+        std::string text = m_chat_input_edit->WindowText();
         HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
         m_chat_input_edit->SetText("");
-        *m_chat_box += text;
+        *m_chat_box += "[" + m_player_names[HumanClientApp::GetApp()->PlayerID()] + "]" + text + "\n";
     }
     else if (key == GG::GGK_RETURN)
     {
@@ -142,7 +142,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
             int sender = boost::lexical_cast<int>(doc.root_node.Child("sender").Attribute("value"));
             std::map<int, std::string>::iterator it = m_player_names.find(sender);
             *m_chat_box += (it != m_player_names.end() ? ("[" + it->second + "] ") : "[unknown] ");
-            *m_chat_box += doc.root_node.Child("text").Text();
+            *m_chat_box += doc.root_node.Child("text").Text() + "\n";
         } else if (doc.root_node.ContainsChild("abort_game")) {
             ClientUI::MessageBox(ClientUI::String("MPLOBBY_HOST_ABORTED_GAME"));
             m_result = false;
@@ -340,8 +340,9 @@ void MultiplayerLobbyWnd::BrowseClicked()
     file_types.push_back(std::make_pair(ClientUI::String("GSETUP_GRAPHICS_FILES") + " (PNG, Targa, JPG, BMP)", 
                                         "*.png, *.PNG, *.tga, *.TGA, *.jpg, *.JPG, *.bmp, *.BMP"));
 
-    GG::FileDlg dlg(m_galaxy_image_file_edit->WindowText(), false, false, file_types, ClientUI::FONT, ClientUI::PTS, GG::Clr(100, 100, 100, 255), 
-                    GG::CLR_WHITE, GG::CLR_BLACK); 
+    GG::FileDlg dlg("", m_galaxy_image_file_edit->WindowText(), false, false, file_types, ClientUI::FONT, ClientUI::PTS,
+                    ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
+
     dlg.Run();    
     if (!dlg.Result().empty()) {
         m_galaxy_image_file_edit->SetText(*dlg.Result().begin());
