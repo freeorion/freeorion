@@ -14,6 +14,9 @@
 #include "../../util/SitRepEntry.h"
 #include "XMLDoc.h"
 
+#include <fmod.h>
+#include <fmod_errors.h>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -79,8 +82,110 @@ namespace {
                "messages. This may make FreeOrion more or less responsive, depending on your system.",
                false, Validator<bool>());
 #endif
+        db.Add("music-volume", "The volume (0 to 255) at which music should be played.", 255, RangedValidator<int>(1, 255));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    enum SoundDriver {
+        SOUND_DRIVER_NOSOUND = FSOUND_OUTPUT_NOSOUND,
+        SOUND_DRIVER_DIRECT_SOUND = FSOUND_OUTPUT_DSOUND,
+        SOUND_DRIVER_WINDOWS_MULTIMEDIA_WAVEOUT = FSOUND_OUTPUT_WINMM,
+        SOUND_DRIVER_ASIO = FSOUND_OUTPUT_ASIO,
+        SOUND_DRIVER_OSS = FSOUND_OUTPUT_OSS,
+        SOUND_DRIVER_ESD = FSOUND_OUTPUT_ESD,
+        SOUND_DRIVER_ALSA = FSOUND_OUTPUT_ALSA
+    };
+
+    /** Assumes that sound has not been initialized! */
+    std::vector<SoundDriver> GetSoundDrivers()
+    {
+        std::vector<SoundDriver> retval;
+        
+#if defined(FREEORION_WINDOWS)
+        if (FSOUND_SetOutput(FSOUND_OUTPUT_DSOUND) && FSOUND_GetNumDrivers())
+            retval.push_back(SOUND_DRIVER_DIRECT_SOUND);
+        if (FSOUND_SetOutput(FSOUND_OUTPUT_WINMM) && FSOUND_GetNumDrivers())
+            retval.push_back(SOUND_DRIVER_WINDOWS_MULTIMEDIA_WAVEOUT);
+        if (FSOUND_SetOutput(FSOUND_OUTPUT_ASIO) && FSOUND_GetNumDrivers())
+            retval.push_back(SOUND_DRIVER_ASIO);
+#elif defined(FREEORION_LINUX)
+        if (FSOUND_SetOutput(FSOUND_OUTPUT_OSS) && FSOUND_GetNumDrivers())
+            retval.push_back(SOUND_DRIVER_OSS);
+        if (FSOUND_SetOutput(FSOUND_OUTPUT_ESD) && FSOUND_GetNumDrivers())
+            retval.push_back(SOUND_DRIVER_ESD);
+        if (FSOUND_SetOutput(FSOUND_OUTPUT_ALSA) && FSOUND_GetNumDrivers())
+            retval.push_back(SOUND_DRIVER_ALSA);
+#endif
+
+        FSOUND_SetOutput(FSOUND_OUTPUT_NOSOUND);
+
+        return retval;
+    }
+
+    void InitFMOD(unsigned int channels = 64, unsigned int memory_size = 4*1024*1024)
+    {
+        const int SAMPLE_FREQ = 44100;
+
+        assert(0 < channels);
+        assert((memory_size % 512) == 0);
+
+        log4cpp::Category& logger = HumanClientApp::GetApp()->Logger();
+
+        if (FSOUND_GetVersion() < FMOD_VERSION) {
+            logger.errorStream() << "InitFMOD() : You are using the wrong version of the FMOD DLL!  This program was built with FMOD " << FMOD_VERSION;
+        }
+
+        if (!FSOUND_SetMemorySystem(malloc(memory_size), memory_size, 0, 0, 0)) {
+            logger.errorStream() << "InitFMOD() : Error initializing FMOD memory; FMOD error was \"" << FMOD_ErrorString(FSOUND_GetError()) << "\"";
+        }
+
+        FSOUND_SetOutput(-1);
+        FSOUND_SetDriver(0);
+        SoundDriver default_sound_driver = static_cast<SoundDriver>(FSOUND_GetOutput());
+        bool success = true;
+        if (!FSOUND_Init(SAMPLE_FREQ, channels, FSOUND_INIT_USEDEFAULTMIDISYNTH)) {
+            success = false;
+            // first chance: try all other devices for this output driver
+            int num_devices = FSOUND_GetNumDrivers();
+            for (int i = 1; i < num_devices; ++i) { // start at 1, since 0 obviously didn't work
+                FSOUND_SetDriver(i);
+                if (FSOUND_Init(SAMPLE_FREQ, channels, FSOUND_INIT_USEDEFAULTMIDISYNTH)) {
+                    success = true;
+                    break;
+                }
+            }
+            // second chance: try other output drivers's devices
+            if (!success) {
+                std::vector<SoundDriver> sound_drivers = GetSoundDrivers();
+                std::vector<SoundDriver>::iterator it = std::find(sound_drivers.begin(), sound_drivers.end(), default_sound_driver);
+                if (it != sound_drivers.end()) {
+                    sound_drivers.erase(it);
+                }
+                for (unsigned int i = 0; i < sound_drivers.size(); ++i) {
+                    FSOUND_SetOutput(sound_drivers[i]);
+                    num_devices = FSOUND_GetNumDrivers();
+                    for (int j = 0; j < num_devices; ++j) { 
+                        FSOUND_SetDriver(j);
+                        if (FSOUND_Init(SAMPLE_FREQ, channels, FSOUND_INIT_USEDEFAULTMIDISYNTH)) {
+                            success = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!success) {
+            FSOUND_SetOutput(FSOUND_OUTPUT_NOSOUND);
+            FSOUND_SetDriver(0);
+            if (FSOUND_Init(SAMPLE_FREQ, channels, FSOUND_INIT_USEDEFAULTMIDISYNTH)) {
+                logger.errorStream() << "InitFMOD() : No suitable sound configuration could be found ... sound disabled";
+            } else {
+                logger.errorStream() << "InitFMOD() : No suitable sound configuration could be found, and FSOUND_Init() failed even with "
+                    "FSOUND_OUTPUT_NOSOUND as the output (sound disabled); FMOD error was \"" << FMOD_ErrorString(FSOUND_GetError()) << "\"";
+            }
+        }
+    }
 
     bool temp_header_bool = RecordHeaderFile(HumanClientAppRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
@@ -92,6 +197,8 @@ HumanClientApp::HumanClientApp() :
              GetOptionsDB().Get<int>("app-height"),
              false, "freeorion"),
     m_current_music(0),
+    m_music_channel(-1),
+    m_loop_music(false),
     m_single_player_game(true),
     m_game_started(false),
     m_turns_since_autosave(0)
@@ -187,113 +294,65 @@ void HumanClientApp::SetLobby(MultiplayerLobbyWnd* lobby)
     m_multiplayer_lobby_wnd = lobby;
 }
 
-void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/* = 0*/, double position/* = 0.0*/)
+void HumanClientApp::PlayMusic(const std::string& filename, bool loop)
 {
-    if (repeats == -1) 
-        repeats = -2;
-    if (m_current_music) {
-        Mix_HaltMusic();
-        Mix_FreeMusic(m_current_music);
-        m_current_music = 0;
-    }
-    m_current_music = Mix_LoadMUS(filename.c_str());
-    if (m_current_music) {
-        if (Mix_PlayMusic(m_current_music, repeats + 1) == -1) {
-            Mix_HaltMusic();
-            Mix_FreeMusic(m_current_music);
-            m_current_music = 0;
-            Logger().errorStream() << "HumanClientApp::PlayMusic : An error occured while attempting to play \"" << 
-                filename << "\"; SDL_mixer error: " << Mix_GetError();
-        }
+    m_current_music = FSOUND_Stream_Open(filename.c_str(), FSOUND_2D | FSOUND_NONBLOCKING, 0, 0);
+    FSOUND_Stream_SetEndCallback(m_current_music, &HumanClientApp::StreamEnded, this);
+    m_loop_music = loop;
+}
+
+void HumanClientApp::StopMusic()
+{
+    if (m_music_channel != -1)
+        FSOUND_Stream_Stop(m_current_music);
+}
+
+void HumanClientApp::PlaySound(const std::string& filename)
+{
+    FSOUND_SAMPLE* sample = 0;
+    std::map<std::string, int>::iterator it = m_sounds.find(filename);
+    if (it != m_sounds.end()) {
+        sample = FSOUND_Sample_Get(it->second);
     } else {
-        Logger().errorStream() << "HumanClientApp::PlayMusic : An error occured while attempting to load \"" << 
-            filename << "\"; SDL_mixer error: " << Mix_GetError();
-    }
-}
-
-void HumanClientApp::StartMusic(void)
-{
-    StopMusic();
-    PlayMusic(ClientUI::SOUND_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1, 0, 0.0);
-}
-
-void HumanClientApp::StopMusic(void)
-{
-    Mix_HaltMusic();
-    Mix_FreeMusic(m_current_music);
-    m_current_music = 0;
-}
-
-void HumanClientApp::PlaySound(const std::string& filename, int repeats/* = 0*/, int timeout/* = -1*/)
-{
-    // load and cache the sound data
-    static std::set<std::string> s_sounds_not_found;
-    std::map<std::string, Mix_Chunk*>::iterator it = m_sounds.find(filename);
-    if (it == m_sounds.end()) {
-        Mix_Chunk* data = Mix_LoadWAV(filename.c_str());
-        if (!data) {
-            // only report a missing sound once
-            if (s_sounds_not_found.find(filename) == s_sounds_not_found.end()) {
-                Logger().errorStream() << "HumanClientApp::PlaySound : An error occured while attempting to load \"" << 
-                    filename << "\"; SDL_mixer error: " << Mix_GetError();
-            }
-            s_sounds_not_found.insert(filename);
-            return;
-        } else {
-            m_sounds[filename] = data;
+        int previous_sample_slot = -1;
+        std::map<std::string, int>::iterator it = m_sounds.begin();
+        while (it != m_sounds.end() && it->second == previous_sample_slot + 1) {
+            previous_sample_slot = it->second;
+            ++it;
         }
+        if ((sample = FSOUND_Sample_Load(previous_sample_slot + 1, filename.c_str(), 0, 0, 0)))
+            m_sounds[filename] = previous_sample_slot + 1;
     }
-
-    // find a free channel, creating an additional channel if needed
-    Mix_Chunk* data = m_sounds[filename];
-    int channel = 0;
-    int num_channels = Mix_AllocateChannels(-1);
-    m_channels.resize(num_channels);
-    for (; channel < num_channels; ++channel) {
-        if (m_channels[channel] == "")
-            break;
-    }
-    // there are not enough channels, so create one
-    if (channel == num_channels) {
-        Mix_AllocateChannels(channel);
-        m_channels.push_back("");
-    }
-
-    // play
-    if (Mix_PlayChannel(channel, data, repeats) != channel) {
-        Logger().errorStream() << "HumanClientApp::PlaySound : An error occured while attempting to play \"" << 
-            filename << "\"; SDL_mixer error: " << Mix_GetError();
-    } else {
-        m_channels[channel] = filename;
-    }
+    FSOUND_PlaySound(FSOUND_FREE, sample);
 }
 
 void HumanClientApp::FreeSound(const std::string& filename)
 {
-    if (m_sounds.find(filename) != m_sounds.end()) {
-        bool still_playing = false;
-        for (unsigned int i = 0; i < m_channels.size(); ++i) {
-            if (m_channels[i] == filename) {
-                still_playing = true;
-                break;
-            }
-        }
-        if (!still_playing) {
-            Mix_FreeChunk(m_sounds[filename]);
-            m_sounds.erase(filename);
-            m_sounds_to_free.erase(filename);
-        } else {
-            m_sounds_to_free.insert(filename);
-        }
-    }
+    std::map<std::string, int>::iterator it = m_sounds.find(filename);
+    if (it != m_sounds.end())
+        FSOUND_Sample_Free(FSOUND_Sample_Get(it->second));
 }
    
 void HumanClientApp::FreeAllSounds()
 {
-    for (std::map<std::string, Mix_Chunk*>::iterator it = m_sounds.begin(); it != m_sounds.end();) {
-        std::map<std::string, Mix_Chunk*>::iterator temp = it++;
-        FreeSound(temp->first);
+    for (std::map<std::string, int>::iterator it = m_sounds.begin(); it != m_sounds.end(); ++it) {
+        FSOUND_Sample_Free(FSOUND_Sample_Get(it->second));
     }
+}
+
+void HumanClientApp::SetMusicVolume(int vol)
+{
+    vol = std::max(0, std::min(vol, 255));
+    if (m_music_channel != -1)
+        FSOUND_SetVolumeAbsolute(m_music_channel, vol);
+    GetOptionsDB().Set<int>("music-volume", vol);
+}
+
+void HumanClientApp::SetUISoundsVolume(int vol)
+{
+    vol = std::max(0, std::min(vol, 255));
+    FSOUND_SetSFXMasterVolume(vol);
+    GetOptionsDB().Set<int>("UI.sound.volume", vol);
 }
 
 bool HumanClientApp::LoadSinglePlayerGame()
@@ -399,6 +458,24 @@ boost::shared_ptr<ClientUI> HumanClientApp::GetUI()
     return (dynamic_cast<HumanClientApp*>(GG::App::GetApp()))->m_ui;
 }
    
+void HumanClientApp::StartTurn()
+{
+    // setup GUI
+    m_ui->ScreenProcessTurn();
+
+    // call base method
+    ClientApp::StartTurn();
+}
+
+boost::shared_ptr<GG::Texture> HumanClientApp::GetTextureOrDefault(const std::string& name, bool mipmap)
+{
+    try {
+        return SDLGGApp::GetTexture(name,mipmap);
+    } catch(...) {
+        return SDLGGApp::GetTexture(ClientUI::ART_DIR + "misc/missing.png", mipmap);
+    }
+}
+
 void HumanClientApp::SDLInit()
 {
     const SDL_VideoInfo* vid_info = 0;
@@ -411,9 +488,9 @@ void HumanClientApp::SDLInit()
     // application's main thread. It seems that only the applications
     // main-thread is able to receive events...
 #if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
 #else
-    Uint32 init_flags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE;
+    Uint32 init_flags = SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE;
     if (GetOptionsDB().Get<bool>("enable-sdl-event-thread"))
         init_flags |= SDL_INIT_EVENTTHREAD;
     if (SDL_Init(init_flags) < 0) {
@@ -424,50 +501,7 @@ void HumanClientApp::SDLInit()
 
     SDL_WM_SetCaption("FreeOrion v0.2", "FreeOrion v0.2");
 
-    int freq = MIX_DEFAULT_FREQUENCY; // sampling frequency
-    Uint16 format = MIX_DEFAULT_FORMAT;
-    int channels = 2; // stereo
-    int chunk_sz = 2048;
-    if (Mix_OpenAudio(freq, format, channels, chunk_sz)) {
-        Logger().fatalStream() << "SDL Mixer initialization failed with parameters (frequency= " << freq << 
-            ", format= " << format << ", channels= " << channels << ", chunksize= " << chunk_sz << "): " << Mix_GetError();
-        Exit(1);
-    } else {
-        // ensure the correct runtime is being used      
-        const SDL_version* link_version = Mix_Linked_Version();
-        SDL_version compile_version;
-        MIX_VERSION(&compile_version);
-        if (compile_version.major != link_version->major || compile_version.minor != link_version->minor || 
-            compile_version.patch != link_version->patch) {
-            Logger().fatalStream() << "Version of SDL Mixer headers compiled with this program (v" << 
-                compile_version.major << "." << compile_version.minor << "." << compile_version.patch << 
-                ") does not match version in runtime library (v" <<
-                link_version->major << "." << link_version->minor << "." << link_version->patch << ")";
-            Exit(1);
-        }      
-
-        // check to see what values are actually being used, in case we didn't get what we wanted from initialization
-        int actual_freq;
-        Uint16 actual_format;
-        int actual_channels;
-        Mix_QuerySpec(&actual_freq, &actual_format, &actual_channels);
-        if (freq != actual_freq) {
-            Logger().debugStream() << "WARNING: SDL Mixer initialization was attempted with frequency= " << freq << ", but"
-                "the actual frequency being used is " << actual_freq;
-        }
-        if (format != actual_format) {
-            Logger().debugStream() << "WARNING: SDL Mixer initialization was attempted with format= " << format << ", but"
-                "the actual format being used is " << actual_format;
-        }
-        if (channels != actual_channels) {
-            Logger().debugStream() << "WARNING: SDL Mixer initialization was attempted in " << 
-                (channels == 1 ? "mono" : "stereo") << ", but " << 
-                (actual_channels == 1 ? "mono" : "stereo") << " is being used";
-        }
-        Mix_HookMusicFinished(&HumanClientApp::EndOfMusicCallback);
-        Mix_ChannelFinished(&HumanClientApp::EndOfSoundCallback);
-        m_channels.resize(actual_channels, "");
-    }
+    InitFMOD();
 
     if (SDLNet_Init() < 0) {
         Logger().errorStream() << "SDL Net initialization failed: " << SDLNet_GetError();
@@ -536,45 +570,45 @@ void HumanClientApp::GLInit()
 void HumanClientApp::Initialize()
 {
     m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
-    m_ui->ScreenIntro();    //start the first screen; the UI takes over from there.
+    m_ui->ScreenIntro(); // start the first screen; the UI takes over from there.
 
     if (!(GetOptionsDB().Get<bool>("music-off")))
-        StartMusic();
+        PlayMusic(ClientUI::SOUND_DIR + GetOptionsDB().Get<std::string>("bg-music"), true);
 }
 
 void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
 {
     switch(event.type) {
-        case SDL_USEREVENT: {
-            int net2_type = NET2_GetEventType(const_cast<SDL_Event*>(&event));
-            if (net2_type == NET2_ERROREVENT || 
-                net2_type == NET2_TCPACCEPTEVENT || 
-                net2_type == NET2_TCPRECEIVEEVENT || 
-                net2_type == NET2_TCPCLOSEEVENT || 
-                net2_type == NET2_UDPRECEIVEEVENT)
-                m_network_core.HandleNetEvent(const_cast<SDL_Event&>(event));
-            break;
-        }
-
-        case SDL_QUIT: {
-            Exit(0);
-            return;
-        }
+    case SDL_USEREVENT: {
+        int net2_type = NET2_GetEventType(const_cast<SDL_Event*>(&event));
+        if (net2_type == NET2_ERROREVENT || 
+            net2_type == NET2_TCPACCEPTEVENT || 
+            net2_type == NET2_TCPRECEIVEEVENT || 
+            net2_type == NET2_TCPCLOSEEVENT || 
+            net2_type == NET2_UDPRECEIVEEVENT)
+            m_network_core.HandleNetEvent(const_cast<SDL_Event&>(event));
+        break;
     }
+
+    case SDL_QUIT: {
+        Exit(0);
+        return;
+    }
+    }
+}
+
+void HumanClientApp::RenderBegin()
+{
+    if (m_current_music && m_music_channel == -1) { // if this music stream has been loaded but is not ready yet
+        m_music_channel = FSOUND_Stream_Play(FSOUND_FREE, m_current_music);
+        if (m_music_channel != -1)
+            FSOUND_SetVolumeAbsolute(m_music_channel, GetOptionsDB().Get<int>("music-volume"));
+    }
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // this is the only line in SDLGGApp::RenderBegin()
 }
 
 void HumanClientApp::FinalCleanup()
 {
-    if (m_current_music) {
-        Mix_HaltMusic();
-        Mix_FreeMusic(m_current_music);
-        m_current_music = 0;
-    }
-    Mix_HaltChannel(-1); // stop all sound playback
-    for (std::map<std::string, Mix_Chunk*>::iterator it = m_sounds.begin(); it != m_sounds.end(); ++it) {
-        Mix_FreeChunk(it->second);
-    }
-
     if (NetworkCore().Connected()) {
         NetworkCore().DisconnectFromServer();
     }
@@ -587,7 +621,7 @@ void HumanClientApp::SDLQuit()
     NET2_Quit();
     FE_Quit();
     SDLNet_Quit();
-    Mix_CloseAudio();   
+    FSOUND_Close();
     SDL_Quit();
     Logger().debugStream() << "SDLQuit() complete.";
 }
@@ -790,7 +824,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::PLAYER_ELIMINATED: {
-        std::cout << "HumanClientApp::HandleMessageImpl : Message::PLAYER_ELIMINATED : m_empire_id=" << m_empire_id << " Empires().Lookup(m_empire_id)=" << Empires().Lookup(m_empire_id);
+        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Message::PLAYER_ELIMINATED : m_empire_id=" << m_empire_id << " Empires().Lookup(m_empire_id)=" << Empires().Lookup(m_empire_id);
         if (Empires().Lookup(m_empire_id)->Name() == msg.GetText()) {
             // TODO: replace this with something better
             ClientUI::MessageBox(ClientUI::String("PLAYER_DEFEATED"));
@@ -906,47 +940,16 @@ void HumanClientApp::Autosave(int turn_number, bool new_game)
     }
 }
 
-void HumanClientApp::EndOfMusicCallback()
+signed char HumanClientApp::StreamEnded(FSOUND_STREAM* stream, void*, int, void* ptr)
 {
-    HumanClientApp* this_ptr = GetApp();
-    if (!this_ptr->m_current_music)
-        throw std::runtime_error("HumanClientApp::EndOfMusicCallback : End of a song was reached, but HumanClientApp::m_current_music == 0!");
-
-    Mix_HaltMusic();
-    Mix_FreeMusic(this_ptr->m_current_music);
-    this_ptr->m_current_music = 0;
-}
-
-void HumanClientApp::EndOfSoundCallback(int channel)
-{
-    HumanClientApp* this_ptr = GetApp();
-    std::map<std::string, Mix_Chunk*>::iterator it = this_ptr->m_sounds.find(this_ptr->m_channels[channel]);
-    if (it == this_ptr->m_sounds.end()) {
-        throw std::runtime_error("HumanClientApp::EndOfSoundCallback : End of a sound was reached, but there's no "
-                                 "record of the filename associated with the channel that just stopped playing.");
+    HumanClientApp* this_ptr = static_cast<HumanClientApp*>(ptr);
+    // TODO: bring up next track from a playlist
+    if (!this_ptr->m_loop_music) {
+        FSOUND_Stream_Close(this_ptr->m_current_music);
+        this_ptr->m_current_music = 0;
+        // return the sound on this channel to the level of the other channels
+        FSOUND_SetVolumeAbsolute(this_ptr->m_music_channel, FSOUND_GetSFXMasterVolume());
     }
-    std::string filename = it->first;
-    this_ptr->m_channels[channel] = ""; 
-    if (this_ptr->m_sounds_to_free.find(filename) != this_ptr->m_sounds_to_free.end())
-        this_ptr->FreeSound(filename);
+    this_ptr->m_music_channel = -1;
+    return 0; // this value is ignored
 }
-
-
-void HumanClientApp::StartTurn( )
-{
-  // setup GUI
-  m_ui->ScreenProcessTurn( );
-
-  // call base method
-  ClientApp::StartTurn();
-}
-
-boost::shared_ptr<GG::Texture> HumanClientApp::GetTextureOrDefault(const std::string& name, bool mipmap)
-{
-    try {
-        return SDLGGApp::GetTexture(name,mipmap);
-    } catch(...) {
-        return SDLGGApp::GetTexture(ClientUI::ART_DIR + "misc/missing.png", mipmap);
-    }
-}
-

@@ -8,6 +8,7 @@
 
 class CUIButton;
 class CUIStateButton;
+class CUISlider;
 namespace GG {
     class TextControl;
 }
@@ -34,10 +35,16 @@ private:
     void DoneClicked();
 	void MusicCicked(bool checked);
 	void UIEffectsCicked(bool checked);
+    void MusicVolumeSlid(int pos, int low, int high);
+    void UISoundsVolumeSlid(int pos, int low, int high);
 
     CUIButton*       m_done_btn;    //!< Done button
     CUIStateButton*  m_music;       //!< Music enabled/disabled
     CUIStateButton*  m_ui_effects;  //!< UI sound effects enabled/disabled
+    CUISlider*       m_music_volume;
+    GG::TextControl* m_music_volume_label;
+    CUISlider*       m_ui_sounds_volume;
+    GG::TextControl* m_ui_sounds_volume_label;
 
     GG::TextControl* m_audio_str;   //!< Audio title string
 };

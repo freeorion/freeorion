@@ -116,6 +116,7 @@ namespace {
         db.Add<std::string>("art-dir", "Sets UI art resource directory.", "default/data/art/");
         db.Add<std::string>("sound-dir", "Sets UI sound and music resource directory.", "default/data/sound/");
         db.Add("UI.sound.enabled", "Toggles UI sound effects on or off.", true, Validator<bool>());
+        db.Add("UI.sound.volume", "The volume (0 to 255) at which UI sound effects should be played.", 255, RangedValidator<int>(0, 255));
         db.Add<std::string>("UI.sound.button-rollover", "The sound file played when the mouse moves over a button.", "button_rollover.wav");
         db.Add<std::string>("UI.sound.button-click", "The sound file played when a button is clicked.", "button_click.wav");
         db.Add<std::string>("UI.sound.turn-button-click", "The sound file played when the turn button is clicked.", "turn_button_click.wav");
