@@ -22,8 +22,8 @@ bin_PROGRAMS = freeoriond freeorion freeorionca
 freeorion_CPPFLAGS = @SDL_CFLAGS@ @FT2_CFLAGS@ @GIGI_CFLAGS@ @GIGISDL_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_HUMAN -I/usr/local/include/graphviz
 freeorion_LDADD = @GIGI_LIBS@ @GIGINET_LIBS@ @GIGISDL_LIBS@ -lfmod-3.74 -L/usr/local/lib/graphviz -ldotneato
 
-freeoriond_CPPFLAGS = -Iuniverse -Iutil @FT2_CFLAGS@ @SDL_CFLAGS@ @GIGI_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_SERVER -DWITH_PYTHON -I/usr/include/python2.3 -I.. -IPython
-freeoriond_LDADD = @GIGI_LIBS@ @GIGINET_LIBS@ -lboost_python  -lpython2.3
+freeoriond_CPPFLAGS = -Iuniverse -Iutil @FT2_CFLAGS@ @SDL_CFLAGS@ @GIGI_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_SERVER -DWITH_PYTHON -I/usr/include/python2.3 -I.. #-IPython
+freeoriond_LDADD = @GIGI_LIBS@ @GIGINET_LIBS@ #-lboost_python  -lpython2.3
 
 freeorionca_CPPFLAGS = -Iuniverse -Iutil @SDL_CFLAGS@ @GIGINET_CFLAGS@ @GIGISDL_CFLAGS@ -DFREEORION_BUILD_AI
 freeorionca_LDADD = @GIGISDL_LIBS@ @GIGINET_LIBS@ @GIGI_LIBS@
