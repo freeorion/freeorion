@@ -44,6 +44,9 @@ public:
     bool                SinglePlayerGame() const {return m_single_player_game;} ///< returns true iff this game is a single-player game
 
     virtual Message     TurnOrdersMessage(bool save_game_data = false) const;
+
+    /** Returns a map from Planet IDs to pending (issued earlier this turn and undo-able) colonization order IDs. */
+    std::map<int, int> PendingColonizationOrders() const;
     //@}
 
     /** \name Mutators */ //@{

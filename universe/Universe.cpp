@@ -1974,6 +1974,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         home_planet->AdjustMaxMeters();
         home_planet->ExecuteSpecials();
         home_planet->AdjustPop(15);
+        home_planet->GetMeter(METER_HEALTH)->SetCurrent(home_planet->GetMeter(METER_HEALTH)->Max());
         home_planet->GetMeter(METER_CONSTRUCTION)->SetCurrent(home_planet->GetMeter(METER_CONSTRUCTION)->Max() * 0.75);
         home_planet->GetMeter(METER_FARMING)->SetCurrent(home_planet->GetMeter(METER_FARMING)->Max() * 0.75);
         home_planet->GetMeter(METER_INDUSTRY)->SetCurrent(home_planet->GetMeter(METER_INDUSTRY)->Max() * 0.75);

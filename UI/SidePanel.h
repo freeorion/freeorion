@@ -141,6 +141,7 @@ class SidePanel : public GG::Wnd
 
         CUIDropDownList       *m_construction;            ///< drop down list which hold planet build projects
 
+        boost::signals::connection m_connection_system_changed;           ///< stores connection used to handle a system change
         boost::signals::connection m_connection_planet_changed;           ///< stores connection used to handle a planet change
         boost::signals::connection m_connection_planet_production_changed;///< stores connection used to handle a planet production change
 

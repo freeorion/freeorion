@@ -167,13 +167,12 @@ void PopCenter::AdjustMaxMeters()
         // TODO: remove starvation special
         m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
     }
-    m_health.SetCurrent(m_health.Max());
 }
 
 void PopCenter::PopGrowthProductionResearchPhase()
 {
-    // grow current pop
-    m_pop.SetCurrent(m_pop.Current() + FuturePopGrowth());
+    m_health.AdjustCurrent(m_health.Current() * (((m_health.Max() + 1.0) - m_health.Current()) / (m_health.Max() + 1.0)));
+    m_pop.AdjustCurrent(FuturePopGrowth());
 }
 
 

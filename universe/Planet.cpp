@@ -35,7 +35,7 @@ Planet::Planet() :
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(false)
+    m_is_about_to_be_colonized(0)
 {
 }
 
@@ -46,7 +46,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(false)
+    m_is_about_to_be_colonized(0)
 {
     SetType(type);
     SetSize(size);
@@ -57,7 +57,7 @@ Planet::Planet(const GG::XMLElement& elem) :
     UniverseObject(elem.Child("UniverseObject")),
     PopCenter(elem.Child("PopCenter"), this),
     ProdCenter(elem.Child("ProdCenter"), PopCenter::PopulationMeter(), this),
-    m_is_about_to_be_colonized(false),
+    m_is_about_to_be_colonized(0),
     m_def_bases(0)
 {
     using GG::XMLElement;
@@ -73,7 +73,7 @@ Planet::Planet(const GG::XMLElement& elem) :
         Visibility vis = Visibility(lexical_cast<int>(elem.Child("UniverseObject").Child("vis").Text()));
         if (vis == FULL_VISIBILITY) {
             m_def_bases = lexical_cast<int>(elem.Child("m_def_bases").Text());
-            m_is_about_to_be_colonized = lexical_cast<bool>(elem.Child("m_is_about_to_be_colonized").Text());
+            m_is_about_to_be_colonized = lexical_cast<int>(elem.Child("m_is_about_to_be_colonized").Text());
             m_buildings = GG::ContainerFromString<std::set<int> >(elem.Child("m_buildings").Text());
         }
     } catch (const boost::bad_lexical_cast& e) {
@@ -257,10 +257,19 @@ void Planet::Conquer(int conquerer)
     AddOwner(conquerer);
 }
 
-void Planet::IsAboutToBeColonized(bool bB)
+void Planet::SetIsAboutToBeColonized(bool b)
 {
-    m_is_about_to_be_colonized = bB;
-    StateChangedSignal()();
+    bool overall_status = m_is_about_to_be_colonized;
+    b ? ++m_is_about_to_be_colonized : --m_is_about_to_be_colonized;
+    if (m_is_about_to_be_colonized < 0)
+        m_is_about_to_be_colonized = 0;
+    if (overall_status != static_cast<bool>(m_is_about_to_be_colonized))
+        StateChangedSignal()();
+}
+
+void Planet::ResetIsAboutToBeColonized()
+{
+    m_is_about_to_be_colonized = 0;
 }
 
 Meter* Planet::GetMeter(MeterType type)

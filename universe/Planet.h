@@ -78,7 +78,10 @@ public:
     void Conquer( int conquerer ) ;
     
     /// Called during colonization when a planet is about to be colonized
-    void IsAboutToBeColonized(bool bB);
+    void SetIsAboutToBeColonized(bool b);
+
+    /// Called after colonization, to reset the number of prospective colonizers to 0
+    void ResetIsAboutToBeColonized();
     //@}
 
     static PlanetEnvironment Environment(PlanetType type); ///< returns the environment that corresponds to each planet type
@@ -95,7 +98,7 @@ private:
     // TODO: determine whether it is acceptible not to store this in XML as indicated above;
     // what happens when an order is given, and the game is saved and restored before 
     // the next turn comes?
-    bool m_is_about_to_be_colonized; 
+    int m_is_about_to_be_colonized; ///< keeps a count of the number of ships that want to colonize
    
     /////////////////////////////////////////////////////////////////////////////
     // V0.2 ONLY!!!!

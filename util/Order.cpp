@@ -37,7 +37,7 @@ const int INITIAL_COLONY_POP = 1;
 
 namespace
 {
-    Order* GenPlanetBuildOrder(const XMLElement& elem)   {return new PlanetBuildOrder(elem);}
+    Order* GenBuildOrder(const XMLElement& elem)         {return new BuildOrder(elem);}
     Order* GenRenameOrder(const XMLElement& elem)        {return new RenameOrder(elem);}
     Order* GenNewFleetOrder(const XMLElement& elem)      {return new NewFleetOrder(elem);}
     Order* GenFleetMoveOrder(const XMLElement& elem)     {return new FleetMoveOrder(elem);}
@@ -49,18 +49,25 @@ namespace
 
 
 /////////////////////////////////////////////////////
-// ORDER
+// Order
 /////////////////////////////////////////////////////
+Order::Order() :
+    m_empire(-1),
+    m_executed(false)
+{
+}
 
 Order::Order(const GG::XMLElement& elem)
 {
     m_empire = lexical_cast<int>(elem.Child("m_empire").Text());
+    m_executed = lexical_cast<bool>(elem.Child("m_executed").Text());
 }
 
 GG::XMLElement Order::XMLEncode() const
 {
     XMLElement retval("Order");
     retval.AppendChild(XMLElement("m_empire", lexical_cast<std::string>(m_empire)));
+    retval.AppendChild(XMLElement("m_executed", lexical_cast<std::string>(m_executed)));
     return retval;
 }
 
@@ -75,13 +82,30 @@ void Order::ValidateEmpireID() const
 
 }
 
-void Order::Undo() const
+void Order::Execute() const
 {
+    ExecuteImpl();
+    m_executed = true;
+}
+
+bool Order::Undo() const
+{
+    return UndoImpl();
+}
+
+bool Order::Executed() const
+{
+    return m_executed;
+}
+
+bool Order::UndoImpl() const
+{
+    return false;
 }
 
 void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
 {
-    fact.AddGenerator("PlanetBuildOrder",   &GenPlanetBuildOrder);
+    fact.AddGenerator("BuildOrder",         &GenBuildOrder);
     fact.AddGenerator("RenameOrder",        &GenRenameOrder);
     fact.AddGenerator("FleetSplitOrder",    &GenNewFleetOrder);
     fact.AddGenerator("FleetMoveOrder",     &GenFleetMoveOrder);
@@ -119,7 +143,16 @@ RenameOrder::RenameOrder(int empire, int fleet, const std::string& name) :
         throw std::invalid_argument("RenameOrder::RenameOrder() : Attempted to name an object \"\".");
 }
 
-void RenameOrder::Execute() const
+GG::XMLElement RenameOrder::XMLEncode() const
+{
+    XMLElement retval("RenameOrder");
+    retval.AppendChild(Order::XMLEncode());
+    retval.AppendChild(XMLElement("m_object", lexical_cast<std::string>(m_object)));
+    retval.AppendChild(XMLElement("m_name", m_name));
+    return retval;
+}
+
+void RenameOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
@@ -136,78 +169,68 @@ void RenameOrder::Execute() const
     obj->Rename(m_name);
 }
 
-GG::XMLElement RenameOrder::XMLEncode() const
+
+
+////////////////////////////////////////////////
+// BuildOrder
+////////////////////////////////////////////////
+BuildOrder::BuildOrder() : 
+    Order(),
+    m_prodcenter(UniverseObject::INVALID_OBJECT_ID),
+    m_build_type(ProdCenter::NOT_BUILDING),
+    m_name("")
 {
-    XMLElement retval("RenameOrder");
+}
+
+BuildOrder::BuildOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
+{   
+    if (elem.Tag() != ("BuildOrder"))
+        throw std::invalid_argument("Tried to construct BuildOrder from malformed XMLElement");
+
+    m_prodcenter = lexical_cast<int>(elem.Child("m_prodcenter").Text());
+    m_build_type = ProdCenter::BuildType(lexical_cast<int>(elem.Child("m_build_type").Text()));
+    m_name = elem.Child("m_name").Text();
+}
+
+BuildOrder::BuildOrder(int empire, int planet, ProdCenter::BuildType build, const std::string& name) : 
+    Order(empire),
+    m_prodcenter(planet),
+    m_build_type(build),
+    m_name(name)
+{
+}
+
+GG::XMLElement BuildOrder::XMLEncode() const
+{
+    XMLElement retval("BuildOrder");
     retval.AppendChild(Order::XMLEncode());
-    retval.AppendChild(XMLElement("m_object", lexical_cast<std::string>(m_object)));
+    retval.AppendChild(XMLElement("m_prodcenter", lexical_cast<std::string>(m_prodcenter)));
+    retval.AppendChild(XMLElement("m_build_type", lexical_cast<std::string>(m_build_type)));
     retval.AppendChild(XMLElement("m_name", m_name));
     return retval;
 }
 
-
-
-////////////////////////////////////////////////
-// PlanetBuildOrder
-////////////////////////////////////////////////
-PlanetBuildOrder::PlanetBuildOrder() : 
-    Order(),
-    m_planet(UniverseObject::INVALID_OBJECT_ID),
-    m_build_type(ProdCenter::NOT_BUILDING)
-{
-}
-
-PlanetBuildOrder::PlanetBuildOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
-{   
-    if (elem.Tag() != ("PlanetBuildOrder"))
-        throw std::invalid_argument("Tried to construct PlanetBuildOrder from malformed XMLElement");
-
-    m_planet = lexical_cast<int>(elem.Child("m_planet").Text());
-    m_build_type = ProdCenter::BuildType(lexical_cast<int>(elem.Child("m_build_type").Text()));
-}
-
-PlanetBuildOrder::PlanetBuildOrder(int empire, int planet, ProdCenter::BuildType build) : 
-    Order(empire),
-    m_planet(planet),
-    m_build_type(build)
-{
-}
-
-void PlanetBuildOrder::Execute() const
+void BuildOrder::ExecuteImpl() const
 {
     // TODO:  unit test this code once universe building methods
     // are in place.  the semantics of the building methods may change
     
     ValidateEmpireID();
  
-    Universe* universe = &GetUniverse();
+    Universe& universe = GetUniverse();
     
     // look up object
-    UniverseObject* the_object = universe->Object(PlanetID());
-    Planet* the_planet = dynamic_cast<Planet*> ( the_object );
+    ProdCenter* prodcenter = universe.Object<ProdCenter>(m_prodcenter);
     
     // sanity check
-    if(the_planet == NULL)
-    {
-        throw std::runtime_error("Non-planet object ID specified in planet build order.");
-    }
+    if(!prodcenter)
+        throw std::runtime_error("Non-ProdCenter object ID specified in build order.");
     
     //  verify that empire specified in order owns specified planet
-    if( !the_planet->OwnedBy(EmpireID()) )
-    {
-        throw std::runtime_error("Empire specified in planet build order does not own specified planet.");
-    }
+    if(!dynamic_cast<UniverseObject*>(prodcenter)->OwnedBy(m_prodcenter))
+        throw std::runtime_error("Empire specified in build order does not own specified ProdCenter.");
     
-    the_planet->SetProduction(m_build_type, "");
-}
-
-GG::XMLElement PlanetBuildOrder::XMLEncode() const
-{
-    XMLElement retval("PlanetBuildOrder");
-    retval.AppendChild(Order::XMLEncode());
-    retval.AppendChild(XMLElement("m_planet", lexical_cast<std::string>(m_planet)));
-    retval.AppendChild(XMLElement("m_build_type", lexical_cast<std::string>(m_build_type)));
-    return retval;
+    prodcenter->SetProduction(m_build_type, m_name);
 }
 
 
@@ -250,7 +273,20 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,  const i
 {
 }
 
-void NewFleetOrder::Execute() const
+XMLElement NewFleetOrder::XMLEncode() const
+{
+    XMLElement retval("FleetSplitOrder");
+    retval.AppendChild(Order::XMLEncode());
+    retval.AppendChild(XMLElement("m_fleet_name", m_fleet_name));
+    retval.AppendChild(XMLElement("m_system_id", lexical_cast<std::string>(m_system_id)));
+    retval.AppendChild(XMLElement("m_new_id", lexical_cast<std::string>(m_new_id)));
+    retval.AppendChild(XMLElement("m_position"));
+    retval.LastChild().AppendChild(XMLElement("x", lexical_cast<std::string>(m_position.first)));
+    retval.LastChild().AppendChild(XMLElement("y", lexical_cast<std::string>(m_position.second)));
+    return retval;
+}
+
+void NewFleetOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
@@ -268,19 +304,6 @@ void NewFleetOrder::Execute() const
         // an ID is provided to ensure consistancy between server and client uiverses
         universe.InsertID(fleet, m_new_id );
     }
-}
-
-XMLElement NewFleetOrder::XMLEncode() const
-{
-    XMLElement retval("FleetSplitOrder");
-    retval.AppendChild(Order::XMLEncode());
-    retval.AppendChild(XMLElement("m_fleet_name", m_fleet_name));
-    retval.AppendChild(XMLElement("m_system_id", lexical_cast<std::string>(m_system_id)));
-    retval.AppendChild(XMLElement("m_new_id", lexical_cast<std::string>(m_new_id)));
-    retval.AppendChild(XMLElement("m_position"));
-    retval.LastChild().AppendChild(XMLElement("x", lexical_cast<std::string>(m_position.first)));
-    retval.LastChild().AppendChild(XMLElement("y", lexical_cast<std::string>(m_position.second)));
-    return retval;
 }
 
 
@@ -320,7 +343,19 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest
     m_route_length = route.second;
 }
 
-void FleetMoveOrder::Execute() const
+XMLElement FleetMoveOrder::XMLEncode() const
+{
+    XMLElement retval("FleetMoveOrder");
+    retval.AppendChild(Order::XMLEncode());
+    retval.AppendChild(XMLElement("m_fleet", lexical_cast<std::string>(m_fleet)));
+    retval.AppendChild(XMLElement("m_start_system", lexical_cast<std::string>(m_start_system)));
+    retval.AppendChild(XMLElement("m_dest_system", lexical_cast<std::string>(m_dest_system)));
+    retval.AppendChild(XMLElement("m_route", GG::StringFromContainer<std::vector<int> >(m_route)));
+    retval.AppendChild(XMLElement("m_route_length", lexical_cast<std::string>(m_route_length)));
+    return retval;
+}
+
+void FleetMoveOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
@@ -363,17 +398,6 @@ void FleetMoveOrder::Execute() const
     the_fleet->SetRoute(route, m_route_length);
 }
 
-XMLElement FleetMoveOrder::XMLEncode() const
-{
-    XMLElement retval("FleetMoveOrder");
-    retval.AppendChild(Order::XMLEncode());
-    retval.AppendChild(XMLElement("m_fleet", lexical_cast<std::string>(m_fleet)));
-    retval.AppendChild(XMLElement("m_start_system", lexical_cast<std::string>(m_start_system)));
-    retval.AppendChild(XMLElement("m_dest_system", lexical_cast<std::string>(m_dest_system)));
-    retval.AppendChild(XMLElement("m_route", GG::StringFromContainer<std::vector<int> >(m_route)));
-    retval.AppendChild(XMLElement("m_route_length", lexical_cast<std::string>(m_route_length)));
-    return retval;
-}
 
 ////////////////////////////////////////////////
 // FleetMergeOrder
@@ -403,7 +427,17 @@ FleetTransferOrder::FleetTransferOrder(int empire, int fleet_from, int fleet_to,
 {
 }
 
-void FleetTransferOrder::Execute() const
+XMLElement FleetTransferOrder::XMLEncode() const
+{
+    XMLElement retval("FleetTransferOrder");
+    retval.AppendChild(Order::XMLEncode());
+    retval.AppendChild(XMLElement("m_fleet_from", lexical_cast<std::string>(m_fleet_from)));
+    retval.AppendChild(XMLElement("m_fleet_to", lexical_cast<std::string>(m_fleet_to)));
+    retval.AppendChild(XMLElement("m_add_ships", GG::StringFromContainer<std::vector<int> >(m_add_ships)));
+    return retval;
+}
+
+void FleetTransferOrder::ExecuteImpl() const
 {
 
     ValidateEmpireID();
@@ -464,16 +498,6 @@ void FleetTransferOrder::Execute() const
     }
 }
 
-XMLElement FleetTransferOrder::XMLEncode() const
-{
-    XMLElement retval("FleetTransferOrder");
-    retval.AppendChild(Order::XMLEncode());
-    retval.AppendChild(XMLElement("m_fleet_from", lexical_cast<std::string>(m_fleet_from)));
-    retval.AppendChild(XMLElement("m_fleet_to", lexical_cast<std::string>(m_fleet_to)));
-    retval.AppendChild(XMLElement("m_add_ships", GG::StringFromContainer<std::vector<int> >(m_add_ships)));
-    return retval;
-}
-
 
 ////////////////////////////////////////////////
 // FleetColonizeOrder
@@ -481,7 +505,7 @@ XMLElement FleetTransferOrder::XMLEncode() const
 FleetColonizeOrder::FleetColonizeOrder() : 
     Order(),
     m_empire(UniverseObject::INVALID_OBJECT_ID),
-    m_ship(0),
+    m_ship(UniverseObject::INVALID_OBJECT_ID),
     m_planet(UniverseObject::INVALID_OBJECT_ID)
 {
 }
@@ -491,161 +515,35 @@ FleetColonizeOrder::FleetColonizeOrder(const GG::XMLElement& elem) : Order(elem.
     if(elem.Tag() != ("FleetColonizeOrder"))
         throw std::invalid_argument("Attempted to construct FleetColonizeOrder from malformed XMLElement");
     
-    m_empire = lexical_cast<int> (elem.Child("m_empire").Text());
-    m_ship   = new Ship(elem.Child("m_ship").Child(0));
-    m_planet = lexical_cast<int> (elem.Child("m_planet").Text());
+    m_empire = lexical_cast<int>(elem.Child("m_empire").Text());
+    m_ship   = lexical_cast<int>(elem.Child("m_ship").Text());
+    m_planet = lexical_cast<int>(elem.Child("m_planet").Text());
+    m_colony_fleet_id = lexical_cast<int>(elem.Child("m_colony_fleet_id").Text());
+    m_colony_fleet_name = elem.Child("m_colony_fleet_name").Text();
 }
 
-FleetColonizeOrder::FleetColonizeOrder(int empire,Ship *ship, int planet) : 
+FleetColonizeOrder::FleetColonizeOrder(int empire, int ship, int planet) : 
     Order(empire),
     m_empire(empire),
-    m_ship(new Ship(ship->XMLEncode(empire))),
+    m_ship(ship),
     m_planet(planet)
 {
 }
 
-FleetColonizeOrder::~FleetColonizeOrder()
+void FleetColonizeOrder::ServerExecute() const
 {
-    delete m_ship;
-}
-
-// first step to colonize a planet, the planet to colonize is marked
-void FleetColonizeOrder::Execute() const
-{
-    ValidateEmpireID();
-
-    Universe* universe = &GetUniverse();
-    
-    // look up the fleet in question
-    UniverseObject* the_object = universe->Object(m_ship->FleetID());
-    Fleet* colony_fleet = dynamic_cast<Fleet*> ( the_object );
-   
-    // sanity check -- ensure fleet exists
-    if(!colony_fleet)
-    {
-        throw std::runtime_error("Illegal fleet id specified in fleet colonize order.");
-    }
-     
-    // verify that empire issuing order owns specified fleet
-    if( !colony_fleet->OwnedBy(EmpireID()) )
-    {
-        throw std::runtime_error("Empire attempted to issue colonize order to another's fleet.");
-    }
-    
-    // verify that planet exists and is un-occupied.
-    the_object = universe->Object(PlanetID());
-    Planet* target_planet = dynamic_cast<Planet*> ( the_object );
-    if(target_planet == NULL)
-    {
-        throw std::runtime_error("Colonization order issued with invalid planet id.");
-    }
-    if(!target_planet->Unowned())
-    {
-        throw std::runtime_error("Colonization order issued for owned planet.");    
-    }
-    
-    // verify that planet is in same system as the fleet
-    if (target_planet->SystemID() != colony_fleet->SystemID() && target_planet->SystemID() != UniverseObject::INVALID_OBJECT_ID)
-    {
-        throw std::runtime_error("Fleet specified in colonization order is not in specified system.");
-    }
-    
-    // verify that fleet contains a colony ship.  We iterate until we find
-    // the first colony ship, then get rid of it, and use it to populate the planet
-
-    target_planet->IsAboutToBeColonized(true);
-    
-
-    //!!! Possible sideeffect
-    //!!! if a fleet wnd is open with the colony ship in a single fleet
-    //!!! the fleet wnd with catch a change fleet state signal and issue 
-    //!!! a delete fleet order if the fleet is empty, that's why we have 
-    //!!! to delete the colony fleet without removing the colony ship first
-
-    // If colony ship is only ship in fleet, remove fleet
-    if(colony_fleet->NumShips() == 1)
-    {
-        universe->Delete(colony_fleet->ID());
-    }
-    else // remove colony ship from fleet
-    {
-        colony_fleet->RemoveShip(m_ship->ID());
-    }
-
-    //delete the colony ship
-    universe->Delete(m_ship->ID());
-    
-    
-    // order processing is now done
-    return;
-}
-
-void FleetColonizeOrder::Undo() const
-{
-    // TODO
-}
-
-void FleetColonizeOrder::ExecuteServerApply() const
-{
-    ValidateEmpireID();
-
-    Universe* universe = &GetUniverse();
-       
-    // verify that planet exists and is un-occupied.
-    Planet* target_planet = universe->Object<Planet>(PlanetID());
-    if(target_planet == NULL)
-    {
-        throw std::runtime_error("Colonization order issued with invalid planet id.");
-    }
-
-    if(!target_planet->Unowned())
-    {
-        throw std::runtime_error("Colonization order issued for owned planet.");    
-    }
-       
-    // verify that fleet contains a colony ship.  We iterate until we find
-    // the first colony ship, then get rid of it, and use it to populate the planet
-
-    // adjust planet population
-    target_planet->AdjustPop(INITIAL_COLONY_POP);
-    
-    // make this order's empire the owner of the planet
-    target_planet->AddOwner( EmpireID() );
-    
-    // add empire to system owner list, if planet is in a system
-    // add planet to the empire's list of owned planets
-    if(target_planet->SystemID() != UniverseObject::INVALID_OBJECT_ID )
-    {
-        target_planet->GetSystem()->AddOwner(EmpireID());
-    }
-   
-    // order processing is now done
-    return;
-}
-
-void FleetColonizeOrder::ExecuteServerRevoke() const
-{
-    ValidateEmpireID();
-  
-    Planet* target_planet = GetUniverse().Object<Planet>(PlanetID());
-    if(target_planet == NULL)
-    {
-        throw std::runtime_error("Colonization order issued with invalid planet id.");
-    }
-
-    int new_fleet_id = GetUniverse().GenerateObjectID();
-
-    System* system = GetUniverse().Object<System>(target_planet->SystemID());
-    Fleet *fleet = new Fleet("Colony Ship Fleet" + boost::lexical_cast<std::string>(new_fleet_id), system->X(), system->Y(),m_empire);
-          
-    // an ID is provided to ensure consistancy between server and client uiverses
-    GetUniverse().InsertID(fleet,new_fleet_id);
-    system->Insert(fleet);
-
-    Ship *ship = new Ship(m_ship->XMLEncode(m_empire));
-    GetUniverse().InsertID(ship, GetUniverse().GenerateObjectID());
-
-    fleet->AddShip(ship->ID());
+    Universe& universe = GetUniverse();
+    universe.Delete(m_ship);
+    Planet* planet = universe.Object<Planet>(m_planet);
+    planet->ResetMaxMeters();
+    planet->AdjustMaxMeters();
+    planet->ExecuteSpecials();
+    planet->AdjustPop(INITIAL_COLONY_POP);
+    planet->GetMeter(METER_FARMING)->SetCurrent(INITIAL_COLONY_POP);
+    planet->GetMeter(METER_HEALTH)->SetCurrent(planet->GetMeter(METER_HEALTH)->Max());
+    planet->AddOwner(m_empire);
+    if (System* system = planet->GetSystem())
+        system->AddOwner(m_empire);
 }
 
 XMLElement FleetColonizeOrder::XMLEncode() const
@@ -653,14 +551,93 @@ XMLElement FleetColonizeOrder::XMLEncode() const
     XMLElement retval("FleetColonizeOrder");
     retval.AppendChild(Order::XMLEncode());
     retval.AppendChild(XMLElement("m_empire", lexical_cast<std::string>(m_empire)));
-    
-    XMLElement ship("m_ship");
-    ship.AppendChild(m_ship->XMLEncode(m_empire));
-    retval.AppendChild(ship);
+    retval.AppendChild(XMLElement("m_ship", lexical_cast<std::string>(m_ship)));
     retval.AppendChild(XMLElement("m_planet", lexical_cast<std::string>(m_planet)));
+    retval.AppendChild(XMLElement("m_colony_fleet_id", lexical_cast<std::string>(m_colony_fleet_id)));
+    retval.AppendChild(XMLElement("m_colony_fleet_name", m_colony_fleet_name));
     return retval;
 }
 
+void FleetColonizeOrder::ExecuteImpl() const
+{
+    ValidateEmpireID();
+
+    Universe& universe = GetUniverse();
+    
+    // look up the ship and fleet in question
+    Ship* ship = universe.Object<Ship>(m_ship);
+    Fleet* fleet = universe.Object<Fleet>(ship->FleetID());
+   
+    // ensure fleet exists
+    if (!fleet)
+        throw std::runtime_error("Illegal fleet id specified in fleet colonize order.");
+
+    // verify that empire issuing order owns specified fleet
+    if (!fleet->OwnedBy(m_empire))
+        throw std::runtime_error("Empire attempted to issue colonize order to another's fleet.");
+
+    // verify that planet exists and is un-occupied.
+    Planet* planet = universe.Object<Planet>(m_planet);
+    if (planet == NULL)
+        throw std::runtime_error("Colonization order issued with invalid planet id.");
+
+    if (!planet->Unowned())
+        throw std::runtime_error("Colonization order issued for owned planet.");    
+
+    // verify that planet is in same system as the fleet
+    if (planet->SystemID() != fleet->SystemID() ||
+        planet->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
+        throw std::runtime_error("Fleet specified in colonization order is not in "
+                                 "specified system.");
+    }
+
+    planet->SetIsAboutToBeColonized(true);
+
+    m_colony_fleet_id = fleet->ID(); // record the fleet in which the colony ship started
+    m_colony_fleet_name = fleet->Name();
+
+    // Remove colony ship from fleet; if colony ship is only ship in fleet, delete the fleet.
+    // This leaves the ship in existence, and in its starting system, but not in any fleet;
+    // this situation will be resolved by either ServerExecute() or UndoImpl().
+    fleet->RemoveShip(m_ship);
+    if (!fleet->NumShips()) {
+        universe.Delete(fleet->ID());
+    }
+}
+
+bool FleetColonizeOrder::UndoImpl() const
+{
+    // Note that this function does double duty: it serves as a normal client-side undo, but must also
+    // serve as a server-side undo, when more than one empire tries to colonize the same planet at the
+    // same time.
+
+    Universe& universe = GetUniverse();
+    
+    Fleet* fleet = universe.Object<Fleet>(m_colony_fleet_id);
+    Planet* planet = universe.Object<Planet>(m_planet);
+
+    planet->SetIsAboutToBeColonized(false);
+    
+    Ship* ship = universe.Object<Ship>(m_ship);
+
+    // if the fleet from which the colony ship came no longer exists or has moved, recreate it
+    if (!fleet || fleet->SystemID() != ship->SystemID()) {
+        System* system = planet->GetSystem();
+        fleet = new Fleet(!fleet ? m_colony_fleet_name : "Colony Fleet", system->X(), system->Y(), m_empire);
+        universe.Insert(fleet);
+        fleet->AddShip(ship->ID());
+        system->Insert(fleet);
+    } else {
+        fleet->AddShip(ship->ID());
+    }
+
+    return true;
+}
+
+
+////////////////////////////////////////////////
+// DeleteFleetOrder
+////////////////////////////////////////////////
 DeleteFleetOrder::DeleteFleetOrder() : 
     Order(),
     m_fleet(-1)
@@ -682,7 +659,15 @@ DeleteFleetOrder::DeleteFleetOrder(int empire, int fleet) :
 {
 }
 
-void DeleteFleetOrder::Execute() const
+GG::XMLElement DeleteFleetOrder::XMLEncode() const
+{
+    XMLElement retval("DeleteFleetOrder");
+    retval.AppendChild(Order::XMLEncode());
+    retval.AppendChild(XMLElement("m_fleet", lexical_cast<std::string>(m_fleet)));
+    return retval;
+}
+
+void DeleteFleetOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
@@ -700,20 +685,14 @@ void DeleteFleetOrder::Execute() const
     GetUniverse().Delete(FleetID());
 }
 
-GG::XMLElement DeleteFleetOrder::XMLEncode() const
-{
-    XMLElement retval("DeleteFleetOrder");
-    retval.AppendChild(Order::XMLEncode());
-    retval.AppendChild(XMLElement("m_fleet", lexical_cast<std::string>(m_fleet)));
-    return retval;
-}
 
-// CHANGE PLANET FOCUS ORDER
+////////////////////////////////////////////////
+// ChangeFocusOrder
+////////////////////////////////////////////////
 ChangeFocusOrder::ChangeFocusOrder() : 
     Order(),
     m_planet(UniverseObject::INVALID_OBJECT_ID),
-    m_focus(FOCUS_UNKNOWN),
-    m_which(-1)
+    m_focus(FOCUS_UNKNOWN)
 {
 }
 
@@ -724,18 +703,28 @@ ChangeFocusOrder::ChangeFocusOrder(const GG::XMLElement& elem):
         throw std::invalid_argument("Attempted to construct ChangeFocusOrder from malformed XMLElement");
 
     m_planet = lexical_cast<int>(elem.Child("m_planet").Text());
-    m_focus = static_cast<FocusType>(lexical_cast<int>(elem.Child("m_focus").Text()));
-    m_which = lexical_cast<int>(elem.Child("m_which").Text());
+    m_focus = lexical_cast<FocusType>(elem.Child("m_focus").Text());
+    m_primary = lexical_cast<bool>(elem.Child("m_primary").Text());
 }
 
-ChangeFocusOrder::ChangeFocusOrder(int empire, int planet,FocusType focus,int which) : 
+ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, FocusType focus, bool primary) : 
     Order(empire),
     m_planet(planet),
     m_focus(focus),
-    m_which(which)
+    m_primary(primary)
 {}
 
-void ChangeFocusOrder::Execute() const
+GG::XMLElement ChangeFocusOrder::XMLEncode() const
+{
+    XMLElement retval("ChangeFocusOrder");
+    retval.AppendChild(Order::XMLEncode());
+    retval.AppendChild(XMLElement("m_planet", lexical_cast<std::string>(m_planet)));
+    retval.AppendChild(XMLElement("m_focus", lexical_cast<std::string>(m_focus)));
+    retval.AppendChild(XMLElement("m_primary", lexical_cast<std::string>(m_primary)));
+    return retval;
+}
+
+void ChangeFocusOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
@@ -747,26 +736,5 @@ void ChangeFocusOrder::Execute() const
     if (!planet->OwnedBy(EmpireID()))
         throw std::runtime_error("Empire attempted to issue change planet focus to another's planet.");
 
-    switch(m_which)
-    {
-    case 0: planet->SetPrimaryFocus  (m_focus);break;
-    case 1: planet->SetSecondaryFocus(m_focus);break;
-    }
+    m_primary ? planet->SetPrimaryFocus(m_focus) : planet->SetSecondaryFocus(m_focus);
 }
-
-void ChangeFocusOrder::Undo() const
-{
-    // TODO
-}
-
-GG::XMLElement ChangeFocusOrder::XMLEncode() const
-{
-    XMLElement retval("ChangeFocusOrder");
-    retval.AppendChild(Order::XMLEncode());
-    retval.AppendChild(XMLElement("m_planet", lexical_cast<std::string>(m_planet)));
-    retval.AppendChild(XMLElement("m_focus" , lexical_cast<std::string>(m_focus )));
-    retval.AppendChild(XMLElement("m_which" , lexical_cast<std::string>(m_which )));
-    return retval;
-}
-
-

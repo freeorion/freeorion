@@ -18,24 +18,28 @@
 
 
 /////////////////////////////////////////////////////
-// ORDER
+// Order
 /////////////////////////////////////////////////////
-
-
-/** the abstract base class for serializable player actions (Orders)*/
+/** the abstract base class for serializable player actions.  Orders are generally executed on the
+    client side as soon as they are issued.  Those that define UndoImpl() may also be undone on the client
+    side.  Subclass-defined UndoImpl() \a must return true, indicating that the call had some effect; the
+    default implementation does nothing and returns false. Note that only some Order subclasses define
+    UndoImpl(), specifically those that need to be undone before another order of a similar type can be
+    issued. For example, FleetColonizeOrder needs to be undoable; otherwise, once the user clicks the
+    colonize button, she is locked in to this decision. */
 class Order
 {
 public:
     /** \name Structors */ //@{
-    Order() : m_empire(-1) {}  ///< default ctor
-    Order(const GG::XMLElement& elem);  ///< serialization constructor
+    Order(); ///< default ctor
+    Order(const GG::XMLElement& elem);  ///< XML constructor
     Order(int empire) : m_empire(empire) {} ///< ctor taking the ID of the Empire issuing the order
 	virtual ~Order() {}
     //@}
    
     /** \name Accessors */ //@{
     int          EmpireID() const {return m_empire;} ///< returns the ID of the Empire issuing the order
-   
+
     /**
      *  Preconditions of Execute():
      *  For all order subclasses, the empire ID for the order
@@ -44,10 +48,9 @@ public:
      *  Subclasses add additional preconditions.  An std::runtime_error
      *   should be thrown if any precondition fails.
      */
-    virtual void           Execute() const = 0; ///< executes the order on the Universe and Empires
-    virtual void           Undo() const;        ///< reverts the game state to what it was before this order was executed
-    virtual GG::XMLElement XMLEncode() const;   ///< constructs an XMLElement for the order
-   
+    void                   Execute() const;   ///< executes the order on the Universe and Empires
+    bool                   Undo() const;      ///< if this function returns true, it reverts the game state to what it was before this order was executed, otherwise it returns false and has no effect
+    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
 
     /// initializes an XML object factory for constructing orders
@@ -59,16 +62,22 @@ protected:
      * This is here so that I do not have to type the same 'if' 5 times.  -- jbarcz1
      */
     void ValidateEmpireID() const; ///< verifies that the empire ID in this order is that of an existing empire.  Throws an std::runtime_error if not
+    bool Executed() const;         ///< returns true iff this order has been executed (a second execution indicates server-side execution)
     //@}
+
 private:
+    virtual void ExecuteImpl() const = 0;
+    virtual bool UndoImpl() const;
+
     int m_empire;
+
+    mutable bool m_executed; // indicates that Execute() has occured, and so an undo is legal
 };
 
 
 /////////////////////////////////////////////////////
-// RENAME ORDER
+// RenameOrder
 /////////////////////////////////////////////////////
-
 /** the Order subclass that represents the renaming of a UniverseObject. */
 class RenameOrder : public Order
 {
@@ -83,67 +92,68 @@ public:
     int                  ObjectID() const {return m_object;} ///< returns ID of fleet selected in this order
     const std::string&   Name() const     {return m_name;}  ///< returns the new name of the fleet
    
-    /**
-     *  Preconditions for fleet rename order are:
-     *    - m_object must be the id of an object in the universe, wholly owned by the empire issuing the order
-     *
-     *  Postconditions:
-     *    - the object's name attribute will be changed to the one desired.
-     *
-     */
-    virtual void           Execute() const;
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
    
 private:
+    /**
+     * Preconditions of execute: 
+     *    - the designated planet must exist, be owned by the issuing empire
+     *
+     *  Postconditions:
+     *    - the planet focus is changed which=0(primary),1(secondary)
+     *
+     */
+    virtual void ExecuteImpl() const;
+
     int           m_object;
     std::string   m_name;
 };
 
 
 /////////////////////////////////////////////////////
-// PLANET BUILD ORDER
+// BuildOrder
 /////////////////////////////////////////////////////
-
-/** the Order subclass that represents planetary production.
-    PlanetBuildOrder's when issued, cause planets to change their
-    production project. */
-class PlanetBuildOrder : public Order
+/** the Order subclass that represents planetary production.  BuildOrder's when issued, cause ProdCenters
+    to change their production project. */
+class BuildOrder : public Order
 {
 public:
     /** \name Structors */ //@{
-    PlanetBuildOrder();
-    PlanetBuildOrder(const GG::XMLElement& elem);
-    PlanetBuildOrder(int empire, int planet, ProdCenter::BuildType build);
+    BuildOrder();
+    BuildOrder(const GG::XMLElement& elem);
+    BuildOrder(int empire, int prodcenter_id, ProdCenter::BuildType build, const std::string& name);
     //@}
 
     /** \name Accessors */ //@{
-    int                   PlanetID() const {return m_planet;}       ///< returns ID of planet selected in this order
-    ProdCenter::BuildType Type() const     {return m_build_type;}   ///< returns the build selection set in this order
+    int                   ProdCenterID() const {return m_prodcenter;} ///< returns ID of planet selected in this order
+    ProdCenter::BuildType Type() const         {return m_build_type;} ///< returns the build type set in this order (eg BUILDING)
+    const std::string&    Name() const         {return m_name;}       ///< returns the name of the exact type of item within the build type that should be produced (eg "SuperFarm")
 
+    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+    //@}
+
+private:
     /**
      * Preconditions for executing planet build order:
-     *  - m_planet must be the ID of a planet, owned by the empire
+     *  - m_prodcenter must be the ID of a planet, owned by the empire
      *     issuing the order
      *
      *  Postconditions:
      *    - the specified planet will have its build orders set 
      *       to the specified build type and ship type (if building ships)
      */
-    virtual void           Execute() const;
-    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
-    //@}
+    virtual void ExecuteImpl() const;
 
-private:
-    int                     m_planet;
+    int                     m_prodcenter;
     ProdCenter::BuildType   m_build_type;
+    std::string             m_name;
 };
 
 
 /////////////////////////////////////////////////////
-// NEW FLEET ORDER
+// NewFleetOrder
 /////////////////////////////////////////////////////
-
 /** the Order subclass that represents forming a new fleet. 
     Only one of system or position will be used to place the new fleet.*/
 class NewFleetOrder : public Order
@@ -162,6 +172,10 @@ public:
     std::pair<double, double> Position() const     {return m_position;}   ///< returns the position of the new fleet (may be (INVALID_POSITION, INVALID_POSITION) if in a system)
     int                       NewID() const     {return m_new_id;}  ///< returns the ID for this fleet 
 
+    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+    //@}
+
+private:
     /**
      * Preconditions of execute: 
      *    None.
@@ -171,11 +185,8 @@ public:
      *          and will belong to the creating empire.
      *
      */
-    virtual void           Execute() const;
-    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
-    //@}
+    virtual void ExecuteImpl() const;
 
-private:
     std::string               m_fleet_name;
     int                       m_system_id;
     int                       m_new_id;
@@ -184,9 +195,8 @@ private:
 
 
 /////////////////////////////////////////////////////
-// FLEET MOVE ORDER
+// FleetMoveOrder
 /////////////////////////////////////////////////////
-
 /** the Order subclass that represents fleet movement
     These orders change the current destination of a fleet */
 class FleetMoveOrder : public Order
@@ -205,20 +215,21 @@ public:
     const std::vector<int>&  Route() const               {return m_route;}        ///< returns the IDs of the systems in the route specified by this Order
     double                   RouteLength() const         {return m_route_length;} ///< returns the length of the route specified by this Order
 
-    /**
-     * Preconditions for fleet move order are:
-     *  - m_fleet must be the id of a fleet, owned by the empire issuing the order
-     *  - m_dest_system must be the ID of a star system
-     *  - the destination star system must be within fleet's range (this precondition is not checked yet)
-     *
-     *  postconditions:
-     *     - the specified fleet will have its move orders set to the specified destination
-     */
-    virtual void           Execute() const;
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
 
 private:
+    /**
+     * Preconditions of execute: 
+     *    None.
+     *
+     *  Postconditions:
+     *    - a new fleet will exist either in system m_system_id or at position m_position,
+     *          and will belong to the creating empire.
+     *
+     */
+    virtual void ExecuteImpl() const;
+
     int              m_fleet;
     int              m_start_system;
     int              m_dest_system;
@@ -226,10 +237,10 @@ private:
     double           m_route_length;
 };
 
-/////////////////////////////////////////////////////
-// FLEET TRANSFER ORDER
-/////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////
+// FleetTransferOrder
+/////////////////////////////////////////////////////
 /** the Order subclass that represents transfer of ships between existing fleets
     A FleetTransferOrder is used to transfer ships from one existing fleet to another
  */
@@ -247,6 +258,11 @@ public:
     int                     DestinationFleet() const {return m_fleet_to;}    ///< returns ID of the fleet that the ships will go into             
     const std::vector<int>& Ships() const            {return m_add_ships;}   ///< returns IDs of the ships selected for addition to the fleet
 
+    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+
+    //@}
+
+private:
     /**
      *  FleetTransferOrder's preconditions are:
      *    - m_fleet_from must be the ID of a fleet owned by the issuing empire
@@ -257,12 +273,8 @@ public:
      *  Postconditions:
      *     - all ships in m_add_ships will be moved from the Source fleet to the destination fleet
      */
-    virtual void           Execute() const;
-    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+    virtual void ExecuteImpl() const;
 
-    //@}
-
-private:
     int               m_fleet_from;
     int               m_fleet_to;
     std::vector<int>  m_add_ships;
@@ -270,9 +282,8 @@ private:
 
 
 /////////////////////////////////////////////////////
-// FLEET COLONIZE ORDER
+// FleetColonizeOrder
 /////////////////////////////////////////////////////
-
 /** the Order subclass that represents a planet colonization action*/
 class FleetColonizeOrder : public Order
 {
@@ -280,15 +291,19 @@ public:
     /** \name Structors */ //@{
     FleetColonizeOrder();
     FleetColonizeOrder(const GG::XMLElement& elem);
-    FleetColonizeOrder(int empire, Ship *ship, int planet);
-
-    virtual ~FleetColonizeOrder();
+    FleetColonizeOrder(int empire, int ship, int planet);
     //@}
 
     /** \name Accessors */ //@{
     int   EmpireID() const  {return m_empire;} ///< returns ID of the empire id of the empire which tries to colonize the planet
     int   PlanetID() const  {return m_planet;} ///< returns ID of the planet to be colonized
 
+    virtual void           ServerExecute() const; //< called if the server allows the colonization effort 
+
+    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+    //@}
+
+private:
     /**
      *  Preconditions:
      *     - m_fleet must be the ID of a fleet owned by issuing empire
@@ -305,25 +320,23 @@ public:
      *      - the planet will be added to the empire's list of owned planets
      *     
      */
-    virtual void           Execute() const;
-    virtual void           Undo() const;
     //< either ExecuteServerApply or ExecuteServerRevoke is called!!!
-    virtual void           ExecuteServerApply() const; //< called if the server seconds the colonization effort 
-    virtual void           ExecuteServerRevoke() const;//< called if the server doesn't second the colonization effort
-    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
-    //@}
+    virtual void ExecuteImpl() const;
+    virtual bool UndoImpl() const;
 
-private:
     int   m_empire;
-    Ship  *m_ship;
+    int   m_ship;
     int   m_planet;
+
+    // these are for undoing this order only
+    mutable int         m_colony_fleet_id;   // the fleet from which the colony ship was taken
+    mutable std::string m_colony_fleet_name; // the name of fleet from which the colony ship was taken
 };
 
 
 /////////////////////////////////////////////////////
-// DELETE FLEET ORDER
+// DeleteFleetOrder
 /////////////////////////////////////////////////////
-
 /** the Order subclass that represents forming a new fleet. 
     Only one of system or position will be used to place the new fleet.*/
 class DeleteFleetOrder : public Order
@@ -338,26 +351,36 @@ public:
     /** \name Accessors */ //@{
     int   FleetID() const   {return m_fleet;}  ///< returns ID of the fleet to be deleted
 
-    /**
-     * Preconditions of execute: 
-     *    - the designated fleet must exist, be owned by the issuing empire, and be empty
-     *
-     *  Postconditions:
-     *    - the fleet will no longer exist
-     *
-     */
-    virtual void           Execute() const;
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
 
 private:
+    /**
+     *  Preconditions:
+     *     - m_fleet must be the ID of a fleet owned by issuing empire
+     *     - m_planet must be the ID of an un-owned planet.
+     *     - the fleet and the planet must have the same x,y coordinates
+     *     - the fleet must contain a colony ship
+     *
+     *  Postconditions:
+     *      - a colony ship will be removed from the fleet and deallocated
+     *        if the fleet becomes empty it will be deallocated.
+     *      - the empire issuing the order will be added to the list of owners
+     *            for the planet
+     *      - the planet's population will be increased
+     *      - the planet will be added to the empire's list of owned planets
+     *     
+     */
+    //< either ExecuteServerApply or ExecuteServerRevoke is called!!!
+    virtual void ExecuteImpl() const;
+
     int                       m_fleet;
 };
 
-/////////////////////////////////////////////////////
-// CHANGE PLANET FOCUS ORDER
-/////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////
+// ChangeFocusOrder
+/////////////////////////////////////////////////////
 /** the Order subclass that represents changing a planet focus*/
 class ChangeFocusOrder : public Order
 {
@@ -365,12 +388,16 @@ public:
     /** \name Structors */ //@{
     ChangeFocusOrder();
     ChangeFocusOrder(const GG::XMLElement& elem);
-    ChangeFocusOrder(int empire, int planet,FocusType focus,int which);
+    ChangeFocusOrder(int empire, int planet, FocusType focus, bool primary);
     //@}
 
     /** \name Accessors */ //@{
     int   PlanetID() const   {return m_planet;}  ///< returns ID of the fleet to be deleted
 
+    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+    //@}
+
+private:
     /**
      * Preconditions of execute: 
      *    - the designated planet must exist, be owned by the issuing empire
@@ -379,15 +406,11 @@ public:
      *    - the planet focus is changed which=0(primary),1(secondary)
      *
      */
-    virtual void           Execute() const;
-    virtual void           Undo() const;
-    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
-    //@}
+    virtual void ExecuteImpl() const;
 
-private:
     int       m_planet;
     FocusType m_focus;
-    int       m_which;
+    bool      m_primary;
 };
 
 #endif // _Order_h_

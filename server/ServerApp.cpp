@@ -1632,7 +1632,7 @@ void ServerApp::ProcessTurns( )
         for ( order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it)
         {
             // Add exeption handling here 
-            order_it->second->Execute( );               
+            order_it->second->Execute( );
         }
     }    
 
@@ -1686,12 +1686,13 @@ void ServerApp::ProcessTurns( )
     // 2.b - if more than one empire is armed or all forces are unarmed, noone can colonize the planet
     for (std::map<int,std::vector<FleetColonizeOrder*> >::iterator it = map_planet_colonize_order_list.begin(); it != map_planet_colonize_order_list.end(); ++it)
     {
+        Planet *planet = GetUniverse().Object<Planet>(it->first);
+
         // only one empire?
         if(it->second.size()==1)
-            it->second[0]->ExecuteServerApply();
+            it->second[0]->ServerExecute();
         else
         {
-            const Planet *planet = GetUniverse().Object<Planet>(it->first);
             const System *system = GetUniverse().Object<System>(planet->SystemID());
 
             std::vector<const Fleet*> vec_fleet = system->FindObjects<Fleet>();
@@ -1728,10 +1729,12 @@ void ServerApp::ProcessTurns( )
 
             for(int i=0;i<static_cast<int>(it->second.size());i++)
                 if(winner==i) 
-                    it->second[i]->ExecuteServerApply();
+                    it->second[i]->ServerExecute();
                 else
-                    it->second[i]->ExecuteServerRevoke();
+                    it->second[i]->Undo();
         }
+
+        planet->ResetIsAboutToBeColonized();
     }
 
     // process movement phase

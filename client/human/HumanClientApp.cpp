@@ -121,6 +121,17 @@ Message HumanClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
     return ::TurnOrdersMessage(m_player_id, -1, orders_doc);
 }
 
+std::map<int, int> HumanClientApp::PendingColonizationOrders() const
+{
+    std::map<int, int> retval;
+    for (OrderSet::const_iterator it = m_orders.begin(); it != m_orders.end(); ++it) {
+        if (const FleetColonizeOrder* order = dynamic_cast<const FleetColonizeOrder*>(it->second)) {
+            retval[order->PlanetID()] = it->first;
+        }
+    }
+    return retval;
+}
+
 void HumanClientApp::StartServer()
 {
 #ifdef FREEORION_WIN32

@@ -746,8 +746,7 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets)
     }
 
     for (unsigned int i = 0; i < fleets.size(); ++i) {
-        m_fleets_lb->Insert(new FleetRow(fleets[i]));
-        m_showing_fleet_sig(fleets[i], this);
+        AddFleet(fleets[i]);
     }
     if (!m_read_only) {
         m_fleets_lb->Insert(new FleetRow(0));
@@ -810,6 +809,12 @@ void FleetWnd::SystemClicked(int system_id)
             }
         }
     } 
+}
+
+void FleetWnd::AddFleet(Fleet* fleet)
+{
+    m_fleets_lb->Insert(new FleetRow(fleet), m_fleets_lb->NumRows() - (m_read_only ? 0 : 1));
+    m_showing_fleet_sig(fleet, this);
 }
 
 void FleetWnd::FleetBrowsed(int row_idx)
@@ -1058,7 +1063,6 @@ Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
         }
     }
 
-    m_fleets_lb->Insert(new FleetRow(new_fleet), m_read_only ? m_fleets_lb->NumRows() : m_fleets_lb->NumRows() - 1);
     m_showing_fleet_sig(new_fleet, this);
 
     return new_fleet;

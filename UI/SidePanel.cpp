@@ -562,7 +562,7 @@ namespace {
   {
     const System *system = GetUniverse().Object<const System>(system_id);
     if(system==0)
-      return 0;//UniverseObject::INVALID_OBJECT_ID;
+      return 0;
 
     std::vector<const Fleet*> flt_vec = system->FindObjects<Fleet>();
 
@@ -1224,6 +1224,8 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
 
   const Planet *plt = GetUniverse().Object<const Planet>(m_planet_id);
 
+  if (System* system = plt->GetSystem())
+    m_connection_system_changed = GG::Connect(system->StateChangedSignal(), &SidePanel::PlanetPanel::PlanetChanged, this);
   m_connection_planet_changed = GG::Connect(plt->StateChangedSignal(), &SidePanel::PlanetPanel::PlanetChanged, this);
   m_connection_planet_production_changed= GG::Connect(plt->ProdCenterChangedSignal(), &SidePanel::PlanetPanel::PlanetProdCenterChanged, this);
 
@@ -1324,13 +1326,46 @@ void SidePanel::PlanetPanel::PlanetChanged()
       m_planet_info->SetText(text);
     }
 
-  m_planet_name->SetTextColor(planet->Owners().size()>0?HumanClientApp::Empires().Lookup(*(planet->Owners().begin()))->Color():ClientUI::TEXT_COLOR);
+  Empire* planet_empire = HumanClientApp::Empires().Lookup(*(planet->Owners().begin()));
+  m_planet_name->SetTextColor(planet_empire?planet_empire->Color():ClientUI::TEXT_COLOR);
 
   // visibility
-  EnableControl(m_button_colonize,(   owner==OS_NONE 
-                                   && planet->MaxPop()>0 
-                                   && !planet->IsAboutToBeColonized()
-                                   && FindColonyShip(planet->SystemID())));
+  if (owner==OS_NONE 
+      && planet->MaxPop()>0 
+      && !planet->IsAboutToBeColonized()
+      && FindColonyShip(planet->SystemID()))
+  {
+    std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
+    if(it != m_vec_unused_controls.end())
+    {
+      m_vec_unused_controls.erase(it);
+      AttachChild(m_button_colonize);
+      m_button_colonize->Show();
+    }
+    m_button_colonize->SetText(ClientUI::String("PL_COLONIZE"));
+  }
+  else if (planet->IsAboutToBeColonized())
+  {
+    std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
+    if(it != m_vec_unused_controls.end())
+    {
+      m_vec_unused_controls.erase(it);
+      AttachChild(m_button_colonize);
+      m_button_colonize->Show();
+    }
+    m_button_colonize->SetText(ClientUI::String("CANCEL"));
+  }
+  else
+  {
+     std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
+     if(it == m_vec_unused_controls.end())
+     {
+        m_vec_unused_controls.push_back(m_button_colonize);
+        DetachChild(m_button_colonize);
+        m_button_colonize->Hide();
+     }
+  }
+
   EnableControl(m_button_food    ,(owner==OS_SELF));
   EnableControl(m_button_mining  ,(owner==OS_SELF));
   EnableControl(m_button_industry,(owner==OS_SELF));
@@ -1426,14 +1461,6 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys)
 
 bool SidePanel::PlanetPanel::RenderUnhabited(const Planet &planet)
 {
-  if(planet.IsAboutToBeColonized())
-  {
-    glColor4ubv(ClientUI::TEXT_COLOR.v);
-    boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS);
-    Uint32 format = GG::TF_CENTER | GG::TF_VCENTER;
-
-    font->RenderText(UpperLeft()+m_button_colonize->UpperLeft(),UpperLeft()+m_button_colonize->LowerRight(), "colonizing ...", format, 0, false);
-  }
   return true;
 }
 
@@ -1626,29 +1653,38 @@ void SidePanel::PlanetPanel::BuildSelected(int idx) const
 {
   const Planet *planet = GetPlanet();
 
-  HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*planet->Owners().begin(), planet->ID(),static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build_type));
+  HumanClientApp::Orders().IssueOrder(new BuildOrder(*planet->Owners().begin(), planet->ID(),static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build_type, ""));
 }
 
 void SidePanel::PlanetPanel::ClickColonize()
 {
   const Planet *planet = GetPlanet();
-  Ship *ship=FindColonyShip(planet->SystemID());
-  if(ship==0)
-    throw std::runtime_error("SidePanel::PlanetPanel::ClickColonize ship not found!");
-
-
-  if(!IsStationaryFleetFunctor(*ship->GetFleet()->Owners().begin())(ship->GetFleet()))
+  int empire_id = HumanClientApp::GetApp()->EmpireID();
+  std::map<int, int> pending_colonization_orders = HumanClientApp::GetApp()->PendingColonizationOrders();
+  std::map<int, int>::const_iterator it = pending_colonization_orders.find(planet->ID());
+  if(it == pending_colonization_orders.end()) // colonize
   {
-    GG::ThreeButtonDlg dlg(320,200,"All colony ships in this system have been\ngiven orders to leave the system.\n\nUse one of the departing colony ships?",
-                           ClientUI::FONT,ClientUI::PTS,ClientUI::WND_COLOR,ClientUI::CTRL_BORDER_COLOR,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR,2,
-                           "Yes","No");
-    dlg.Run();
+    Ship *ship=FindColonyShip(planet->SystemID());
+    if(ship==0)
+      throw std::runtime_error("SidePanel::PlanetPanel::ClickColonize ship not found!");
 
-    if(dlg.Result()!=0)
-      return;
+    if(!IsStationaryFleetFunctor(*ship->GetFleet()->Owners().begin())(ship->GetFleet()))
+    {
+      GG::ThreeButtonDlg dlg(320,200,ClientUI::String("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
+                             ClientUI::FONT,ClientUI::PTS,ClientUI::WND_COLOR,ClientUI::CTRL_BORDER_COLOR,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR,2,
+                             "Yes","No");
+      dlg.Run();
+
+      if(dlg.Result()!=0)
+        return;
+    }
+
+    HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID() ));
   }
-
-  HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->EmpireID(), ship, planet->ID() ));
+  else // cancel colonization
+  {
+    HumanClientApp::Orders().RecindOrder(it->second);
+  }
 }
 
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
@@ -1660,7 +1696,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
 
 
   GG::MenuItem menu_contents;
-  menu_contents.next_level.push_back(GG::MenuItem("Rename Planet", 1, false, false));
+  menu_contents.next_level.push_back(GG::MenuItem(ClientUI::String("SP_RENAME_PLANET"), 1, false, false));
   GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
 
   if(popup.Run()) 
@@ -1669,7 +1705,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
       case 1: 
       { // rename planet
         std::string plt_name = planet->Name();
-        CUIEditWnd edit_wnd(350, "Enter new planet name", plt_name);
+        CUIEditWnd edit_wnd(350, ClientUI::String("SP_ENTER_NEW_PLANET_NAME"), plt_name);
         edit_wnd.Run();
         if(edit_wnd.Result() != "")
         {
@@ -2087,7 +2123,7 @@ void SidePanel::PlanetView::BuildSelected(int idx) const
   if(!planet)
     throw std::runtime_error("SidePanel::PlanetPanel::BuildSelected planet not found!");
 
-  HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*planet->Owners().begin(), planet->ID(),static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build_type));
+  HumanClientApp::Orders().IssueOrder(new BuildOrder(*planet->Owners().begin(), planet->ID(),static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build_type, ""));
 }
 
 void SidePanel::PlanetView::PrimaryFocusClicked(int idx)
