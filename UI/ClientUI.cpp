@@ -259,10 +259,12 @@ void ClientUI::UnregisterCurrent(bool delete_it /*= false */)
 
 void ClientUI::MessageBox(const std::string& message)
 {
-    std::string dbg_msg = "MessageBox( \"" + message + "\" )";
-    s_logger.debug(dbg_msg);    //write message to log
+ //   std::string dbg_msg = "MessageBox( \"" + message + "\" )";
+ //   s_logger.debug(dbg_msg);    //write message to log
     
-    GG::MessageDlg dlg(320,200,message,"arial.ttf",10,GG::CLR_GRAY,GG::CLR_WHITE);
+    GG::MessageDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR,BORDER_COLOR,TEXT_COLOR,
+        new GG::Button( (320-75)/2, 170, 75, 25, "OK", FONT, PTS, CTRL_COLOR, TEXT_COLOR));
+    
     dlg.Run();    
 }//MessageBox()
 
