@@ -134,7 +134,7 @@ double PopCenter::AdjustPop(double pop)
 
 double PopCenter::FuturePopGrowth() const
 {
-    return std::min(FuturePopGrowthMax(), AvailableFood() - PopPoints());
+    return std::min(FuturePopGrowthMax(), std::min(AvailableFood(), m_pop.Max()) - m_pop.Current());
 }
 
 double PopCenter::FuturePopGrowthMax() const
