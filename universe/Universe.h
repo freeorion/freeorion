@@ -46,7 +46,7 @@ class UniverseObject;
 #ifdef __GNUC__
   // GCC doesn't allow us to forward-declare PlayerSetupData
 #  ifndef _MultiplayerCommon_h_
-#    include "util/MultiplayerCommon.h"
+#    include "../util/MultiplayerCommon.h"
 #  endif
 #else
   struct PlayerSetupData;
