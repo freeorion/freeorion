@@ -191,7 +191,6 @@ void ServerNetworkCore::DumpAllConnections()
 
 void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
 {
-// TODO: put this function in its own thread and create a message queue into which this function can dump messages
     if (event.type == SDL_USEREVENT) {
       switch(NET2_GetEventType(&event)) {
       case NET2_TCPACCEPTEVENT: {
@@ -301,7 +300,6 @@ void ServerNetworkCore::DispatchMessage(const Message& msg, int socket)
          }
       }
    }
-// TODO: add more Message screening
    if (spoofed_sender) {
       ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::DispatchMessage : Player #" << sender_conn_it->first << 
          " sent this message pretending to be player #" << msg.Sender() << " (spoofing player will be dumped): " << 

@@ -101,13 +101,8 @@ private:
    
     bool m_just_conquered;
 
-    ///< flag to indicate that the planet is colonized the very next turn
-    ///< isn't stored by XMLEncode
-    // TODO: determine whether it is acceptible not to store this in XML as indicated above;
-    // what happens when an order is given, and the game is saved and restored before 
-    // the next turn comes?
-    int m_is_about_to_be_colonized; ///< keeps a count of the number of ships that want to colonize
-   
+    int m_is_about_to_be_colonized;
+
     /////////////////////////////////////////////////////////////////////////////
     // V0.2 ONLY!!!!
     int            m_def_bases;

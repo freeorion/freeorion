@@ -1300,7 +1300,6 @@ void ServerApp::Poll()
                 Exit(0);
                 break;
 			}
-            // TODO: handle other relevant SDL events here
         }
     }
 }

@@ -620,24 +620,10 @@ void ClientUI::ScreenIntro()
 {
     SwitchState(STATE_INTRO); // set to intro screen state
 }
-      
 
 void ClientUI::ScreenProcessTurn()
 {
     SwitchState(STATE_TURNSTART); // set to turn start
-}
-
-                
-void ClientUI::ScreenSettings(const ClientNetworkCore &net)
-{
-    // TODO: modally run options dialog here on top of whatever screen(s) is(are) already active
-
-}
-
-void ClientUI::ScreenEmpireSelect()
-{
-    // TODO: run modally
-
 }
 
 void ClientUI::ScreenMap()
@@ -658,26 +644,6 @@ void ClientUI::UpdateCombatTurnProgress( const std::string& msg)
 void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
 {
     ScreenMap();
-
-    // TODO: run sitrep as an on-top window, layered over the main map
-
-}
-
-void ClientUI::ScreenBattle(Combat* combat)
-{
-    // TODO: run battle screen by iteself
-
-}
-
-void ClientUI::ScreenSave(bool show)
-{
-    // TODO: modally run save dialog here on top of whatever screen(s) is(are) already active
-
-}
-
-void ClientUI::ScreenLoad()
-{
-  SwitchState(STATE_LOAD); // set to turn start
 }
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)

@@ -109,8 +109,6 @@ public:
     void RestoreFromSaveData(const GG::XMLElement& elem); ///< restores the UI state that was saved in an earlier call to SaveGameData().
     
     void ScreenIntro();                        //!< Intro Screen
-    void ScreenSettings(const ClientNetworkCore& net);    //!< Game/Network Options Screen
-    void ScreenEmpireSelect();                    //!< Empire Selection Screen
     void ScreenProcessTurn();                     //!< Turn Star Progress Splash Screen
 
     void ScreenMap();     //!< Universe Map Screen
@@ -124,14 +122,6 @@ public:
     //! @param events vector containing all the events to be listed
     void ScreenSitrep(const std::vector<SitRepEntry>& events);    //!< Sitrep Screen
    
-    //! @param combat pointer to a Combat module
-    void ScreenBattle(Combat* combat);                //!< Battle Screen
-    
-    //! @param show true if the screen is to be displayed, false if it is to be turned off
-    void ScreenSave(bool show);                    //!< Savegame Screen
-    
-    void ScreenLoad(); //!< Load Game Screen
-
     // Zooming Functions
     //! @param id address of a planet that we wish to zoom to
     //! @return true if successful, false if object doesn't exist

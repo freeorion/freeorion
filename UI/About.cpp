@@ -50,27 +50,25 @@ About::About():
     }
     fin.close();
 
-    Init();    //attaches children and connects signals to slots
-}//About()
+    Init();
+}
 
 void About::Init()
 {
-    //add children
     AttachChild(m_done_btn);
     AttachChild(m_license);
     AttachChild(m_vision);
     AttachChild(m_info);
 
-    //attach signals
     GG::Connect(m_done_btn->ClickedSignal(), &About::OnDone, this);
     GG::Connect(m_license->ClickedSignal(), &About::OnLicense, this);
     GG::Connect(m_vision->ClickedSignal(), &About::OnVision, this);
-}//Init()
+}
 
 About::~About()
 {
 
-}//~About
+}
 
 ///////////////////////////////////////////////
 //   MUTATORS
@@ -81,7 +79,7 @@ bool About::Render()
     CUI_Wnd::Render();
 
     return true;
-}//Render()
+}
 
 void About::Keypress (GG::Key key, Uint32 key_mods)
 {
@@ -89,7 +87,7 @@ void About::Keypress (GG::Key key, Uint32 key_mods)
     {
       OnDone();
     }
-}//Keypress()
+}
 
 ///////////////////////////////////////////////
 //   ACCESSORS
@@ -101,17 +99,16 @@ void About::Keypress (GG::Key key, Uint32 key_mods)
 
 void About::OnDone()
 {
-    m_info->SetText(ClientUI::String("FREEORION_VISION"));	//TODO this is a hack to stop a segfault
     m_done = true;
-}//OnDone()
+}
 
 void About::OnLicense()
 {
    m_info->SetText(m_license_str);
-}//OnLicense()
+}
 
 void About::OnVision()
 {
    m_info->SetText(ClientUI::String("FREEORION_VISION"));
-}//OnVision()
+}
 

@@ -1602,7 +1602,6 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   if(BT_NOT_BUILDING <= planet.CurrentlyBuilding().first)
   {
     // construction progress bar
-    // TODO : get the costs of the item from the list of available technologies
     double cost = planet.ItemBuildCost();
     double percent_complete = planet.PercentComplete();
 

@@ -510,8 +510,6 @@ void MapWnd::RClick(const GG::Pt& pt, Uint32 keys)
             return;
         }
     }
-
-    // TODO : provide a context-sensitive menu for the main map, if needed
 }
 
 void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
