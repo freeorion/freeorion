@@ -531,7 +531,8 @@ void FleetColonizeOrder::Execute() const
         {
             // adjust planet population
             target_planet->AdjustPop(INITIAL_COLONY_POP);
-            target_planet->AdjustWorkforce(INITIAL_COLONY_POP);
+            target_planet->SetWorkforce(INITIAL_COLONY_POP);
+            target_planet->SetMaxWorkforce( target_planet->MaxPop() );
             
             // make this order's empire the owner of the planet
             target_planet->AddOwner( EmpireID() );
