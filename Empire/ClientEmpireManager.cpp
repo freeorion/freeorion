@@ -30,6 +30,7 @@ bool ClientEmpireManager::HandleEmpireElementUpdate(const GG::XMLElement& elem)
         Empire *decoded_empire = new Empire(elem.Child(i).Child(0));
         InsertEmpire(decoded_empire);
         decoded_empire->UpdateResourcePool();
+        decoded_empire->UpdateResearchQueue();
     }
 
     return true;

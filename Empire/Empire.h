@@ -22,6 +22,8 @@
 #include "XMLDoc.h"
 #endif
 
+#include <boost/tuple/tuple.hpp>
+
 #include <list>
 #include <string>
 
@@ -75,7 +77,67 @@ public:
     typedef std::list<SitRepEntry*>::const_iterator           SitRepItr;
     //@}
 
-    typedef std::deque<const Tech*> ResearchQueue;
+    struct ResearchQueue
+    {
+        /** The type of a single element in the research queue.  Such an element includes the tech itself, the
+            spending being done on this tech, and the number of turns until this tech is completed. */
+        typedef boost::tuple<const Tech*, double, int> QueueElement;
+
+        typedef std::deque<QueueElement> QueueType;
+
+        /** The ResearchQueue iterator type.  Dereference yields a QueueElement. */
+        typedef QueueType::iterator iterator;
+        /** The const ResearchQueue iterator type.  Dereference yields a QueueElement. */
+        typedef QueueType::const_iterator const_iterator;
+
+        /** \name Structors */ //@{
+        ResearchQueue(); ///< Basic ctor.
+        ResearchQueue(const GG::XMLElement& elem); ///< Constructs a ResearchQueue from an XMLElement.
+        //@}
+
+        /** \name Accessors */ //@{
+        bool InQueue(const Tech* tech) const; ///< Returns true iff \a tech is in this queue.
+        int ProjectsInProgress() const;       ///< Returns the number of research projects currently (perhaps partially) funded.
+        double TotalRPsSpent() const;         ///< Returns the number of RPs spent on the projects in this queue.
+
+        // STL container-like interface
+        bool empty() const;
+        unsigned int size() const;
+        const_iterator begin() const;
+        const_iterator end() const;
+        const_iterator find(const Tech* tech) const;
+
+        /** Returns an iterator to the underfunded research project, or end() if none exists. */
+        const_iterator UnderfundedProject() const;
+
+        GG::XMLElement XMLEncode() const; ///< Encodes this queue as an XMLElement.
+        //@}
+
+        /** \name Mutators */ //@{
+        /** Recalculates the RPs spent on and number of turns left for each project in the queue.  Also
+            determines the number of projects in prgress, and the total number of RPs spent on the projects
+            in the queue.  \note A precondition of this function that \a RPs must be greater than some
+            epsilon > 0; see the implementation for the actual value used for epsilon. */
+        void Update(double RPs, const std::map<std::string, double>& research_status);
+
+        // STL container-like interface
+        void push_back(const Tech* tech);
+        void insert(iterator it, const Tech* tech);
+        void erase(iterator it);
+
+        iterator begin();
+        iterator end();
+        iterator find(const Tech* tech);
+
+        /** Returns an iterator to the underfunded research project, or end() if none exists. */
+        iterator UnderfundedProject();
+        //@}
+
+    private:
+        QueueType m_queue;
+        int       m_projects_in_progress;
+        double    m_total_RPs_spent;
+    };
 
     /* *****************************************************
     ** CONSTRUCTORS
@@ -312,6 +374,7 @@ public:
     //@}
 
     void UpdateResourcePool();
+    void UpdateResearchQueue();
 
     MineralResourcePool&    MineralResPool    () {return m_mineral_resource_pool;}
     FoodResourcePool&       FoodResPool       () {return m_food_resource_pool;}
@@ -323,9 +386,6 @@ public:
 private:
     /// Empire's unique numeric id
     int m_id;
-
-    /// Empire's total accumulated research points
-    int m_total_rp;
 
     /// Empire's name
     std::string m_name;
