@@ -24,6 +24,9 @@ Cancel
 DONE
 Done
 
+CLOSE
+Close
+
 LOAD
 Load
 
@@ -50,6 +53,9 @@ Single Player
 
 INTRO_BTN_MULTI_PLAYER
 Multi Player
+
+INTRO_BTN_LOAD_GAME
+Load Game
 
 INTRO_BTN_OPTIONS
 Options
@@ -215,6 +221,9 @@ Load Game
 INGAMEOPTIONS_QUIT
 Quit Game
 
+INGAMEOPTIONS_SAVE_FILES
+Save Game Files
+
 #################
 # Main Map      #
 #################
@@ -296,25 +305,22 @@ Executing Orders
 SITREP_PANEL_TITLE
 Situation Report
 
-SITREP_PANEL_CLOSE
-Close
-
 
 ####################
 # Sit Rep Entries  #
 ####################
 
 SITREP_MAX_INDUSTRY
-The planet %m_planet% in system %m_system% has reached it's maximum production.
+The planet %planet% in system %system% has reached it's maximum production.
 
 SITREP_SHIP_BUILT
-A new ship %m_ship% is now orbiting planet %m_planet%.
+A new ship %ship% is now orbiting planet %planet%.
 
 SITREP_TECH_RESEARCHED
-The technology %m_tech% has been discovered.
+The technology %tech% has been discovered.
 
 SITREP_BASE_BUILT
-The planet %m_planet% in system %m_system% has completed a defence base.
+The planet %planet% in system %system% has completed a defence base.
 
 
 
