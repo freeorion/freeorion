@@ -1,0 +1,33 @@
+//ToolWnd.cpp
+
+#ifndef _GGDrawUtil_h_
+#include "GGDrawUtil.h"
+#endif
+
+#include "ToolWnd.h"
+
+ToolWnd::ToolWnd()
+{
+
+}
+
+ToolWnd::ToolWnd(int x, int y, char* text, GG::Clr clr):
+    GG::Wnd(x,y,10,10,0)
+{
+    textwnd=new GG::StaticText(4,4,text,"arial.ttf",10);
+    color=clr;
+    //resize this window to match the size of the text field
+    Resize(textwnd->GG::Wnd::Width()+6,textwnd->GG::Wnd::Height()+6);
+    AttachChild(textwnd);
+    Hide(); 
+}
+
+int ToolWnd::Render()
+{
+    GG::FlatRectangle(UpperLeft().x,UpperLeft().y,LowerRight().x,LowerRight().y,color,GG::CLR_BLACK,1);
+    //draw a wire rectangle around the text 1 pixel away
+    GG::FlatRectangle(UpperLeft().x+2,UpperLeft().y+2,LowerRight().x-2,LowerRight().y-2,GG::CLR_ZERO,GG::CLR_BLACK);
+    return 0;
+}
+
+
