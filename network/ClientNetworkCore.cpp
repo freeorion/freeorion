@@ -53,7 +53,6 @@ std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
          "failed; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
    } else {
       // broadcast and poll for timeout milliseconds
-      std::vector<SDL_Event> ignored_events; // keep ignored events here and repush them after timeout
       IPaddress broadcast_address;
       if (NET2_ResolveHost(&broadcast_address, "255.255.255.255", NetworkCore::SERVER_FIND_LISTEN_PORT) == -1 ||
           NET2_UDPSend(&broadcast_address, "255.255.255.255", 15) == -1) {
@@ -70,7 +69,7 @@ std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
          int time = SDL_GetTicks();
 
          // if it has been about a second since the last broadcast, do it again
-         if (last_second / 1000 != last_second) {
+         if (last_second < time / 1000) {
             if (NET2_UDPSend(&broadcast_address, const_cast<char*>(NetworkCore::SERVER_FIND_QUERY_MSG.c_str()), 
                              NetworkCore::SERVER_FIND_QUERY_MSG.size()) == -1) {
                const char* err_msg = NET2_GetError();
@@ -89,8 +88,6 @@ std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
                    retval.insert(ToString(packet->address));
                    NET2_UDPFreePacket(packet);
                 }
-            } else {
-               ignored_events.push_back(event);
             }
          }
          timeout -= time - last_time;
@@ -100,10 +97,6 @@ std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
       // reset listen flag and take down UDP socket
       m_listening_on_LAN = false;
       NET2_UDPClose(socket);
-      
-      // repush ignored events
-      for (unsigned int i = 0; i < ignored_events.size(); ++i)
-         FE_PushEvent(&ignored_events[i]);
    }
    return retval;
 }
