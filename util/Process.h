@@ -19,7 +19,10 @@
 /** encapsulates a spawned child process in a platform-independent manner. A Process object holds a shared_ptr to the 
    data on the process it creates; therefore Process objects can be freely copied, with the same copy semantics as 
    a shared_ptr.  In addition, the created process is automatically killed when its owning Process object is 
-   destroyed.  Currently, creating processes is supported on these operating systems:
+   destroyed, unless it is explicitly Free()d.  Note that whether or not the process is explicitly Free()d, it may be 
+   explicitly Kill()ed at any time.
+   <br>
+   Currently, creating processes is supported on these operating systems:
    - Linux (this is the default): requires definition of FREEORION_LINUX
    - Win32 (use for MinGW apps as well): requires definition of FREEORION_WIN32
    one of them *must* be used.  Note that the Win32 version of Process calls TerminateProcess(), and so the killed
@@ -46,9 +49,14 @@ public:
    //@}
 
    /** \name Mutators */ //@{
-   /** equivalent to "*this = Process();".  This essentially reduces the reference count of Process objects associated 
-      with the underlying child process.  If this is the last reference to the child process, it is killed.*/   
+   /** kills the controlled process immediately. */   
    void Kill();
+
+   /** kills the controlled process iff it has not been freed. */
+   void RequestTermination();
+
+   /** frees the controlled process from auto-deletion when this Process object is destroyed. */   
+   void Free();
    //@}
    
 private:
@@ -57,8 +65,12 @@ private:
    public:
       ProcessImpl(const std::string& cmd, const std::vector<std::string>& argv);
       ~ProcessImpl();
+
+      void Kill();
+      void Free();
       
    private:
+       bool                m_free;
    #if defined(FREEORION_WIN32)
       STARTUPINFO          m_startup_info;
       PROCESS_INFORMATION  m_process_info;
