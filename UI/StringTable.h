@@ -17,6 +17,7 @@
 //! These will not be added to the table.
 //! Any number of blank lines may separate strings, but an
 //! identifier <b>MUST</b> be followed by its string on the next line.
+//! Newlines sequences ("\n") within strings are converted to newlines when the string is loaded.
 //!
 //! An example:<br>
 //! English<br>

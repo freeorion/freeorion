@@ -4,6 +4,16 @@
 
 using namespace std;
 
+namespace {
+    void HandleNewlines(std::string& str)
+    {
+        std::string::size_type pos = 0;
+        while ((pos = str.find("\\n", pos)) != std::string::npos) {
+            str.replace(pos, 2, "\n");
+        }
+    }
+}
+
 // static(s)
 const string StringTable::S_DEFAULT_FILENAME = "eng_stringtable.txt";
 const string StringTable::S_ERROR_STRING = "ERROR: ";
@@ -72,6 +82,8 @@ void StringTable::Load()
             getline(ifs, temp);
         }
         getline(ifs, temp2);
+
+        HandleNewlines(temp2);
 
         if (!m_strings.insert(make_pair(temp, temp2)).second) {
             //found a duplicate or invalid key
