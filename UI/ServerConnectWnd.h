@@ -6,7 +6,7 @@
 #endif
 
 #ifndef _HumanClientApp_h_
-#include "HumanClientApp.h"
+#include "../client/human/HumanClientApp.h"
 #endif
 
 #ifndef _GGWnd_h_
