@@ -35,13 +35,14 @@
 
 #define TEST_CONDITIONS_CLASS 0
 #if TEST_CONDITIONS_CLASS
+#define TEST_CONDITIONS_CLASS_CONCISE_OUTPUT 1
 #include <Condition.h>
 namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
         db.Add("condition-test-set", "Selects the test of the Condition class to perform.", 0, Validator<int>());
-        db.Add("condition-test-source", "Selects source object (id) for the Condition class tests.", 559, Validator<int>());
+        db.Add("condition-test-source", "Selects source object (id) for the Condition class tests.", 528, Validator<int>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -650,10 +651,11 @@ void ServerApp::HandleMessage(const Message& msg)
             ofs.close();
 #endif
 #if TEST_CONDITIONS_CLASS
-            std::ofstream ofs2("ConditionTest.txt");
+            for (int i = 0; i < 32; ++i) {
+            std::ofstream ofs2(("ConditionTest" + boost::lexical_cast<std::string>(i) + ".txt").c_str());
             try {
                 Condition::ConditionBase* condition = 0;
-                switch (GetOptionsDB().Get<int>("condition-test-set")) {
+                switch (i) {
                     case 0:
                     default:
                         condition = new Condition::All();
@@ -706,6 +708,7 @@ void ServerApp::HandleMessage(const Message& msg)
                                                               new ValueRef::Constant<double>(10.0),
                                                               new ValueRef::Constant<double>(90.0),
                                                               true);
+                        break;
                     case 15:
                         // TODO : test this
                         condition = new Condition::MeterValue(METER_POPULATION,
@@ -737,62 +740,128 @@ void ServerApp::HandleMessage(const Message& msg)
                         // TODO (EffectTarget is currently unimplemented)
                         //condition = new Condition::EffectTarget();
                         break;
-                    case 21:
-                        // TODO : put some valid conditions in here
-                        //condition = new Condition::And(/*conditions*/);
+                    /* the rest of these test And Or and Not, and their interactions; A = case 8, B = case 12, C = case 10 */
+                    case 21: { // A and B
+                        std::vector<const Condition::ConditionBase*> operands;
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
+                        condition = new Condition::And(operands);
                         break;
-                    case 22:
-                        // TODO : put some valid conditions in here
-                        //condition = new Condition::Or(/*conditions*/);
+                    }
+                    case 22: { // A or B
+                        std::vector<const Condition::ConditionBase*> operands;
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
+                        condition = new Condition::Or(operands);
                         break;
-                    case 23:
-                        // TODO : put a valid condition in here
-                        //condition = new Condition::Not(/*condition*/);
+                    }
+                    case 23: { // not A
+                        condition = new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
                         break;
-                    case 24:
-                        // TODO : test A and (B or C)
+                    }
+                    case 24: { // A and (B or C)
+                        std::vector<const Condition::ConditionBase*> operands;
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        std::vector<const Condition::ConditionBase*> or_operands;
+                        or_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
+                        or_operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
+                        operands.push_back(new Condition::Or(or_operands));
+                        condition = new Condition::And(operands);
                         break;
-                    case 25:
-                        // TODO : test (A and B) or C
+                    }
+                    case 25: { // (A and B) or C
+                        std::vector<const Condition::ConditionBase*> operands;
+                        std::vector<const Condition::ConditionBase*> and_operands;
+                        and_operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        and_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
+                        operands.push_back(new Condition::And(and_operands));
+                        operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
+                        condition = new Condition::Or(operands);
                         break;
-                    case 26:
-                        // TODO : test A or (B and C)
+                    }
+                    case 26: { // A or (B and C)
+                        std::vector<const Condition::ConditionBase*> operands;
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        std::vector<const Condition::ConditionBase*> and_operands;
+                        and_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
+                        and_operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
+                        operands.push_back(new Condition::And(and_operands));
+                        condition = new Condition::Or(operands);
                         break;
-                    case 27:
-                        // TODO : test (A or B) and C
+                    }
+                    case 27: { // (A or B) and C
+                        std::vector<const Condition::ConditionBase*> operands;
+                        std::vector<const Condition::ConditionBase*> or_operands;
+                        or_operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        or_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
+                        operands.push_back(new Condition::Or(or_operands));
+                        operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
+                        condition = new Condition::And(operands);
                         break;
-                    case 28:
-                        // TODO : test A or not(B)
+                    }
+                    case 28: { // A or not(B)
+                        std::vector<const Condition::ConditionBase*> operands;
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
+                        condition = new Condition::Or(operands);
                         break;
-                    case 29:
-                        // TODO : test A and not(B)
+                    }
+                    case 29: { // A and not(B)
+                        std::vector<const Condition::ConditionBase*> operands;
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
+                        condition = new Condition::And(operands);
                         break;
+                    }
+                    case 30: { // not(B) or A
+                        std::vector<const Condition::ConditionBase*> operands;
+                        operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        condition = new Condition::Or(operands);
+                        break;
+                    }
+                    case 31: { // not(B) and A
+                        std::vector<const Condition::ConditionBase*> operands;
+                        operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        condition = new Condition::And(operands);
+                        break;
+                    }
                 }
                 // get the list of all UniverseObjects that satisfy m_condition
                 Condition::ConditionBase::ObjectSet condition_targets;
                 Condition::ConditionBase::ObjectSet condition_non_targets;
                 for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
-                    condition_non_targets.push_back(it->second);
+                    condition_non_targets.insert(it->second);
                 }
+#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
                 ofs2 << "SOURCE:\n" << std::endl;
+#endif
                 UniverseObject* source = m_universe.Object(GetOptionsDB().Get<int>("condition-test-source"));
+#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
                 GG::XMLDoc debug_doc;
                 debug_doc.root_node.AppendChild(source->XMLEncode());
                 debug_doc.WriteDoc(ofs2);
+#endif
                 if (condition) {
                     condition->Eval(source, condition_targets, condition_non_targets);
+#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
                     ofs2 << "\n\nTARGETS:\n" << std::endl;
+#endif
                     for (Condition::ConditionBase::ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
                         ofs2 << "  " << (*it)->ID() << " \"" << (*it)->Name() << "\"" << std::endl;
                     }
                 } else {
-                    ofs2 << "Test #" << GetOptionsDB().Get<int>("condition-test-set") << " not implemented yet.";
+                    ofs2 << "Test #" << i << " not implemented yet.";
                 }
+#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
                 ofs2 << "\n" << std::endl;
+#endif
             } catch (...) {
                 ofs2.close();
             }
             ofs2.close();
+            }
 #endif
 
             CreateAIClients(std::vector<PlayerSetupData>(m_expected_players - 1));

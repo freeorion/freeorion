@@ -80,7 +80,7 @@ void Condition::ConditionBase::Eval(const UniverseObject* source, ObjectSet& tar
     ObjectSet::iterator end_it = from_set.end();
     for ( ; it != end_it; ) {
         if (search_domain == TARGETS ? !Match(source, *it) : Match(source, *it)) {
-            to_set.push_back(*it);
+            to_set.insert(*it);
             ObjectSet::iterator temp = it++;
             from_set.erase(temp);
         } else {
@@ -109,8 +109,10 @@ Condition::All::All(const GG::XMLElement& elem)
 
 void Condition::All::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
-    if (search_domain == NON_TARGETS)
-        targets.splice(targets.end(), non_targets, non_targets.begin(), non_targets.end());
+    if (search_domain == NON_TARGETS) {
+        targets.insert(non_targets.begin(), non_targets.end());
+        non_targets.clear();
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -607,7 +609,7 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
     ObjectSet condition_non_targets;
     const Universe& universe = GetUniverse();
     for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        condition_non_targets.push_back(it->second);
+        condition_non_targets.insert(it->second);
     }
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
@@ -619,7 +621,7 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
         ObjectSet::iterator end_it2 = from_set.end();
         for ( ; it2 != end_it2; ) {
             if (search_domain == TARGETS ? !Match(*it, *it2) : Match(*it, *it2)) {
-                to_set.push_back(*it2);
+                to_set.insert(*it2);
                 ObjectSet::iterator temp = it2++;
                 from_set.erase(temp);
             } else {
@@ -670,7 +672,7 @@ void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSe
     ObjectSet condition_non_targets;
     const Universe& universe = GetUniverse();
     for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        condition_non_targets.push_back(it->second);
+        condition_non_targets.insert(it->second);
     }
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
@@ -682,7 +684,7 @@ void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSe
         ObjectSet::iterator end_it2 = from_set.end();
         for ( ; it2 != end_it2; ) {
             if (search_domain == TARGETS ? !Match(*it, *it2) : Match(*it, *it2)) {
-                to_set.push_back(*it2);
+                to_set.insert(*it2);
                 ObjectSet::iterator temp = it2++;
                 from_set.erase(temp);
             } else {
@@ -773,6 +775,7 @@ bool Condition::EffectTarget::Match(const UniverseObject* source, const Universe
 Condition::And::And(const std::vector<const ConditionBase*>& operands) :
     m_operands(operands)
 {
+    assert(!m_operands.empty());
 }
 
 Condition::And::And(const GG::XMLElement& elem)
@@ -783,6 +786,8 @@ Condition::And::And(const GG::XMLElement& elem)
     for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_operands.push_back(ConditionFactory().GenerateObject(*it));
     }
+
+    assert(!m_operands.empty());
 }
 
 Condition::And::~And()
@@ -794,10 +799,31 @@ Condition::And::~And()
 
 void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
-    for (unsigned int i = 0; i < m_operands.size(); ++i) {
-        m_operands[i]->Eval(source, non_targets, targets, TARGETS);
+    // get the list of all UniverseObjects that satisfy the m_operands AND'ed together
+    ObjectSet operand_targets;
+    ObjectSet operand_non_targets;
+    const Universe& universe = GetUniverse();
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+        operand_non_targets.insert(it->second);
+    }
+    m_operands[0]->Eval(source, operand_targets, operand_non_targets);
+
+    for (unsigned int i = 1; i < m_operands.size(); ++i) {
+        m_operands[i]->Eval(source, operand_targets, operand_non_targets, TARGETS);
         if (targets.empty())
             break;
+    }
+
+    ObjectSet::iterator operand_it = search_domain == TARGETS ? operand_non_targets.begin() : operand_targets.begin();
+    ObjectSet::iterator operand_end_it = search_domain == TARGETS ? operand_non_targets.end() : operand_targets.end();
+    ObjectSet& from = search_domain == TARGETS ? targets : non_targets;
+    ObjectSet& to = search_domain == TARGETS ? non_targets : targets;
+    for (; operand_it != operand_end_it; ++operand_it) {
+        if (search_domain == TARGETS) {
+            from.erase(*operand_it);
+        } else {
+            to.insert(*operand_it);
+        }
     }
 }
 
@@ -807,6 +833,7 @@ void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, Obje
 Condition::Or::Or(const std::vector<const ConditionBase*>& operands) :
     m_operands(operands)
 {
+    assert(!m_operands.empty());
 }
 
 Condition::Or::Or(const GG::XMLElement& elem)
@@ -817,6 +844,8 @@ Condition::Or::Or(const GG::XMLElement& elem)
     for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_operands.push_back(ConditionFactory().GenerateObject(*it));
     }
+
+    assert(!m_operands.empty());
 }
 
 Condition::Or::~Or()
@@ -828,10 +857,31 @@ Condition::Or::~Or()
 
 void Condition::Or::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
-    for (unsigned int i = 0; i < m_operands.size(); ++i) {
-        m_operands[i]->Eval(source, non_targets, targets, NON_TARGETS);
-        if (non_targets.empty())
+    // get the list of all UniverseObjects that satisfy the m_operands OR'ed together
+    ObjectSet operand_targets;
+    ObjectSet operand_non_targets;
+    const Universe& universe = GetUniverse();
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+        operand_non_targets.insert(it->second);
+    }
+    m_operands[0]->Eval(source, operand_targets, operand_non_targets);
+
+    for (unsigned int i = 1; i < m_operands.size(); ++i) {
+        m_operands[i]->Eval(source, operand_targets, operand_non_targets, NON_TARGETS);
+        if (operand_non_targets.empty())
             break;
+    }
+
+    ObjectSet::iterator operand_it = search_domain == TARGETS ? operand_non_targets.begin() : operand_targets.begin();
+    ObjectSet::iterator operand_end_it = search_domain == TARGETS ? operand_non_targets.end() : operand_targets.end();
+    ObjectSet& from = search_domain == TARGETS ? targets : non_targets;
+    ObjectSet& to = search_domain == TARGETS ? non_targets : targets;
+    for (; operand_it != operand_end_it; ++operand_it) {
+        if (search_domain == TARGETS) {
+            from.erase(*operand_it);
+        } else {
+            to.insert(*operand_it);
+        }
     }
 }
 
@@ -841,6 +891,7 @@ void Condition::Or::Eval(const UniverseObject* source, ObjectSet& targets, Objec
 Condition::Not::Not(const ConditionBase* operand) :
     m_operand(operand)
 {
+    assert(m_operand);
 }
 
 Condition::Not::Not(const GG::XMLElement& elem)
@@ -852,6 +903,8 @@ Condition::Not::Not(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::Not : Attempted to create a Not condition with more than one or no operand conditions.");
 
     m_operand = ConditionFactory().GenerateObject(elem.Child(1));
+
+    assert(m_operand);
 }
 
 Condition::Not::~Not()

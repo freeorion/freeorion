@@ -39,7 +39,7 @@ namespace Condition {
 
 struct Condition::ConditionBase
 {
-    typedef std::list<UniverseObject*> ObjectSet;
+    typedef std::set<UniverseObject*> ObjectSet;
 
     enum SearchDomain {
         NON_TARGETS, ///< The Condition will only examine items in the nontarget set; those that match the Condition will be inserted into the target set.
