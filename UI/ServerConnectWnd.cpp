@@ -64,6 +64,9 @@ ServerConnectWnd::ServerConnectWnd() :
     m_servers_lb->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
 
     Init();
+
+    g_LAN_servers = HumanClientApp::GetApp()->NetworkCore().DiscoverLANServers(LAN_SERVER_SEARCH_TIMEOUT);
+    PopulateServerList();
 }
 
 ServerConnectWnd::ServerConnectWnd(const GG::XMLElement& elem) : 
