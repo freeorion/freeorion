@@ -170,18 +170,19 @@ GG::XMLElement Universe::XMLEncode(int empire_id) const
    {
       // determine visibility
       UniverseObject::Visibility vis = (*itr).second->Visible(empire_id);
+      XMLElement univ_object("UniverseObject");
+      XMLElement univ_element;
+
       if (vis == UniverseObject::FULL_VISIBILITY)
       {
-         XMLElement univ_object("univ_object");
-         univ_object.AppendChild( (*itr).second->XMLEncode() );
-         object_map.AppendChild(univ_object);
+	 univ_element = (*itr).second->XMLEncode( );
       }
       else if (vis == UniverseObject::PARTIAL_VISIBILITY)
       {
-         XMLElement univ_object("univ_object");
-         univ_object.AppendChild( (*itr).second->XMLEncode(empire_id) );
-         object_map.AppendChild(univ_object);
+	 univ_element = (*itr).second->XMLEncode( empire_id );
       }
+      //univ_element.AppendChild( univ_object );
+      object_map.AppendChild( univ_element );
 
       // for NO_VISIBILITY no element is added
    }
