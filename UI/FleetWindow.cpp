@@ -820,10 +820,7 @@ void FleetWnd::FleetSelectionChanged(const std::set<int>& rows)
         m_fleets_lb->ClearRow(m_fleets_lb->NumRows() - 1);
     }
 
-    if (!m_read_only && m_fleets_lb->Caret() != m_fleets_lb->NumRows() - 1)
-        m_current_fleet = m_fleets_lb->Caret();
-    else
-        m_current_fleet = -1;
+    m_current_fleet = m_fleets_lb->Caret();
 
     Fleet* fleet = 0 <= m_current_fleet ? FleetInRow(m_current_fleet) : 0;
     m_fleet_detail_panel->SetFleet(fleet);
@@ -1108,12 +1105,14 @@ bool FleetWnd::FleetWndsOpen()
 
 bool FleetWnd::CloseAllFleetWnds()
 {
-    bool retval = false;
-    for (std::set<FleetWnd*>::iterator it = s_open_fleet_wnds.begin(); it != s_open_fleet_wnds.end(); ++it) {
-        (*it)->Close();
-        retval = true;
+    bool retval = s_open_fleet_wnds.size()>0;
+
+    while(s_open_fleet_wnds.size()>0)
+    {
+        (*s_open_fleet_wnds.begin())->Close();
+        s_open_fleet_wnds.erase((*s_open_fleet_wnds.begin()));
     }
-    s_open_fleet_wnds.clear();
+
     return retval;
 }
 
