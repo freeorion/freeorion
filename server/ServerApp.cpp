@@ -128,17 +128,17 @@ void ServerApp::CreateAIClients(const GG::XMLElement& elem)
 void ServerApp::HandleMessage(const Message& msg)
 {
    switch (msg.Type()) {
-   case Message::EMPIRE_SETUP: {
+   case Message::JOIN_GAME: {
       std::stringstream stream(msg.GetText());
       GG::XMLDoc doc;
       doc.ReadDoc(stream);
-      m_log_category.debugStream() << "ServerApp::HandleMessage : Received EMPIRE_SETUP request (EMPIRE_SETUP).";
+      m_log_category.debugStream() << "ServerApp::HandleMessage : Received empire setup request (JOIN_GAME).";
 
       std::string m_tmp_empire_name = doc.root_node.Child("empire_name").Text();
       int m_tmp_color = boost::lexical_cast<int>(doc.root_node.Child("empire_color").Attribute("value"));
 
-      m_log_category.debugStream() << "ServerApp::HandleMessage : Empire name " << m_tmp_empire_name << " (EMPIRE_SETUP).";
-      m_log_category.debugStream() << "ServerApp::HandleMessage : Empire color " << m_tmp_color << " (EMPIRE_SETUP).";
+      m_log_category.debugStream() << "ServerApp::HandleMessage : Empire name " << m_tmp_empire_name << " (JOIN_GAME).";
+      m_log_category.debugStream() << "ServerApp::HandleMessage : Empire color " << m_tmp_color << " (JOIN_GAME).";
       break;
    }
    case Message::END_GAME: {
@@ -197,7 +197,6 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
             m_players_info.push_back(PlayerInfo(connection, host_player_name, true));
          }
          
-         // set up the universe with the details obtained from the client - currently fixed to one AI
       } else {
          const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
          m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to host "
