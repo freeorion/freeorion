@@ -178,7 +178,7 @@ SetPlanetType::~SetPlanetType()
 
 void SetPlanetType::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    if (Planet* p = dynamic_cast<Planet*>(target)) {
+    if (Planet* p = universe_object_cast<Planet*>(target)) {
         p->SetType(m_type->Eval(source, target));
     }
 }
@@ -207,7 +207,7 @@ SetPlanetSize::~SetPlanetSize()
 
 void SetPlanetSize::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    if (Planet* p = dynamic_cast<Planet*>(target)) {
+    if (Planet* p = universe_object_cast<Planet*>(target)) {
         p->SetSize(m_size->Eval(source, target));
     }
 }
@@ -369,7 +369,7 @@ SetStarType::~SetStarType()
 
 void SetStarType::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    if (System* s = dynamic_cast<System*>(target)) {
+    if (System* s = universe_object_cast<System*>(target)) {
         s->SetStarType(m_type->Eval(source, target));
     }
 }

@@ -26,7 +26,7 @@ namespace {
     {
         while (first != last) {
             if (*first == "Planet") {
-                if (const Building* b = dynamic_cast<const Building*>(obj)) {
+                if (const Building* b = universe_object_cast<const Building*>(obj)) {
                     obj = b->GetPlanet();
                 } else {
                     obj = 0;
@@ -62,7 +62,7 @@ PlanetSize ValueRef::Variable<PlanetSize>::Eval(const UniverseObject* source, co
     PlanetSize retval = INVALID_PLANET_SIZE;
     if (m_property_name.back() == "PlanetSize") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
-        if (const Planet* p = dynamic_cast<const Planet*>(object))
+        if (const Planet* p = universe_object_cast<const Planet*>(object))
             retval = p->Size();
     } else {
         throw std::runtime_error("Attempted to read a non-PlanetSize value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetSize.");
@@ -76,7 +76,7 @@ PlanetType ValueRef::Variable<PlanetType>::Eval(const UniverseObject* source, co
     PlanetType retval = INVALID_PLANET_TYPE;
     if (m_property_name.back() == "PlanetType") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
-        if (const Planet* p = dynamic_cast<const Planet*>(object))
+        if (const Planet* p = universe_object_cast<const Planet*>(object))
             retval = p->Type();
     } else {
         throw std::runtime_error("Attempted to read a non-PlanetType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetType.");
@@ -90,7 +90,7 @@ PlanetEnvironment ValueRef::Variable<PlanetEnvironment>::Eval(const UniverseObje
     PlanetEnvironment retval = INVALID_PLANET_ENVIRONMENT;
     if (m_property_name.back() == "PlanetEnvironment") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
-        if (const Planet* p = dynamic_cast<const Planet*>(object))
+        if (const Planet* p = universe_object_cast<const Planet*>(object))
             retval = p->Environment();
     } else {
         throw std::runtime_error("Attempted to read a non-PlanetEnvironment value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetEnvironment.");
@@ -104,15 +104,15 @@ UniverseObjectType ValueRef::Variable<UniverseObjectType>::Eval(const UniverseOb
     UniverseObjectType retval = INVALID_UNIVERSE_OBJECT_TYPE;
     if (m_property_name.back() == "ObjectType") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
-        if (dynamic_cast<const Planet*>(object)) {
+        if (universe_object_cast<const Planet*>(object)) {
             return OBJ_PLANET;
-        } else if (dynamic_cast<const System*>(object)) {
+        } else if (universe_object_cast<const System*>(object)) {
             return OBJ_SYSTEM;
-        } else if (dynamic_cast<const Building*>(object)) {
+        } else if (universe_object_cast<const Building*>(object)) {
             return OBJ_BUILDING;
-        } else if (dynamic_cast<const Ship*>(object)) {
+        } else if (universe_object_cast<const Ship*>(object)) {
             return OBJ_SHIP;
-        } else if (dynamic_cast<const Fleet*>(object)) {
+        } else if (universe_object_cast<const Fleet*>(object)) {
             return OBJ_FLEET;
         } else if (dynamic_cast<const PopCenter*>(object)) {
             return OBJ_POP_CENTER;
@@ -131,7 +131,7 @@ StarType ValueRef::Variable<StarType>::Eval(const UniverseObject* source, const 
     StarType retval = INVALID_STAR_TYPE;
     if (m_property_name.back() == "StarType") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
-        if (const System* s = dynamic_cast<const System*>(object))
+        if (const System* s = universe_object_cast<const System*>(object))
             retval = s->Star();
     } else {
         throw std::runtime_error("Attempted to read a non-StarType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type StarType.");

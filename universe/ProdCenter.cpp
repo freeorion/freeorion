@@ -72,7 +72,7 @@ namespace {
     double MaxFarmingModFromObject(const UniverseObject* object)
     {
         double retval = 0.0;
-        if (const Planet* planet = dynamic_cast<const Planet*>(object)) {
+        if (const Planet* planet = universe_object_cast<const Planet*>(object)) {
             retval = PlanetDataTables()["PlanetEnvFarmingMod"][0][planet->Environment()];
         }
         return retval;
@@ -81,7 +81,7 @@ namespace {
     double MaxIndustryModFromObject(const UniverseObject* object)
     {
         double retval = 0.0;
-        if (const Planet* planet = dynamic_cast<const Planet*>(object)) {
+        if (const Planet* planet = universe_object_cast<const Planet*>(object)) {
             retval = PlanetDataTables()["PlanetSizeIndustryMod"][0][planet->Environment()];
         }
         return retval;
@@ -317,7 +317,7 @@ void ProdCenter::PopGrowthProductionResearchPhase()
   
     // v0.3 ONLY
     Empire* empire = Empires().Lookup(*m_object->Owners().begin());
-    Planet* planet = dynamic_cast<Planet*>(m_object);
+    Planet* planet = universe_object_cast<Planet*>(m_object);
     if (m_currently_building.first == BT_ORBITAL && planet) {
         // for v0.3 we hard-code values for cost of defense bases
         int new_bases = UpdateBuildProgress( 200 );

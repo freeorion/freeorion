@@ -202,16 +202,16 @@ bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* 
 {
     switch (m_type->Eval(source, target)) {
     case OBJ_BUILDING:
-        return dynamic_cast<const Building*>(target);
+        return universe_object_cast<const ::Building*>(target);
         break;
     case OBJ_SHIP:
-        return dynamic_cast<const Ship*>(target);
+        return universe_object_cast<const Ship*>(target);
         break;
     case OBJ_FLEET:
-        return dynamic_cast<const Fleet*>(target);
+        return universe_object_cast<const Fleet*>(target);
         break;
     case OBJ_PLANET:
-        return dynamic_cast<const Planet*>(target);
+        return universe_object_cast<const Planet*>(target);
         break;
     case OBJ_POP_CENTER:
         return dynamic_cast<const PopCenter*>(target);
@@ -220,7 +220,7 @@ bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* 
         return dynamic_cast<const ProdCenter*>(target);
         break;
     case OBJ_SYSTEM:
-        return dynamic_cast<const System*>(target);
+        return universe_object_cast<const System*>(target);
         break;
     default:
 	    break;
@@ -246,7 +246,7 @@ Condition::Building::Building(const GG::XMLElement& elem)
 
 bool Condition::Building::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    const ::Building* building = dynamic_cast<const ::Building*>(target);
+    const ::Building* building = universe_object_cast<const ::Building*>(target);
     return building && building->BuildingTypeName() == m_name;
 }
 
@@ -301,7 +301,7 @@ bool Condition::Contains::Match(const UniverseObject* source, const UniverseObje
     if (condition_targets.empty())
         return false;
 
-    if (const System* system = dynamic_cast<const System*>(target)) {
+    if (const System* system = universe_object_cast<const System*>(target)) {
         bool found = false;
         for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
             if ((*it)->SystemID() == system->ID()) {
@@ -310,7 +310,7 @@ bool Condition::Contains::Match(const UniverseObject* source, const UniverseObje
             }
         }
         return found;
-    } else if (const Planet* planet = dynamic_cast<const Planet*>(target)) {
+    } else if (const Planet* planet = universe_object_cast<const Planet*>(target)) {
         bool found = false;
         for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
             if (planet->ContainsBuilding((*it)->ID())) {
@@ -319,7 +319,7 @@ bool Condition::Contains::Match(const UniverseObject* source, const UniverseObje
             }
         }
         return found;
-    } else if (const Fleet* fleet = dynamic_cast<const Fleet*>(target)) {
+    } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(target)) {
         bool found = false;
         for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
             if (fleet->ContainsShip((*it)->ID())) {
@@ -360,9 +360,9 @@ Condition::PlanetType::~PlanetType()
 
 bool Condition::PlanetType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    const Planet* planet = dynamic_cast<const Planet*>(target);
+    const Planet* planet = universe_object_cast<const Planet*>(target);
     const ::Building* building = 0;
-    if (!planet && (building = dynamic_cast<const ::Building*>(target))) {
+    if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
         planet = building->GetPlanet();
     }
     if (planet) {
@@ -400,9 +400,9 @@ Condition::PlanetSize::~PlanetSize()
 
 bool Condition::PlanetSize::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    const Planet* planet = dynamic_cast<const Planet*>(target);
+    const Planet* planet = universe_object_cast<const Planet*>(target);
     const ::Building* building = 0;
-    if (!planet && (building = dynamic_cast<const ::Building*>(target))) {
+    if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
         planet = building->GetPlanet();
     }
     if (planet) {
@@ -441,9 +441,9 @@ Condition::PlanetEnvironment::~PlanetEnvironment()
 
 bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    const Planet* planet = dynamic_cast<const Planet*>(target);
+    const Planet* planet = universe_object_cast<const Planet*>(target);
     const ::Building* building = 0;
-    if (!planet && (building = dynamic_cast<const ::Building*>(target))) {
+    if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
         planet = building->GetPlanet();
     }
     if (planet) {
@@ -521,7 +521,7 @@ Condition::StarType::~StarType()
 bool Condition::StarType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const System* system = target->GetSystem();
-    if (system || (system = dynamic_cast<const System*>(target))) {
+    if (system || (system = universe_object_cast<const System*>(target))) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
             if (m_types[i]->Eval(source, target) == system->Star())
                 return true;
@@ -790,32 +790,32 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
     } else {
         const System* source_system = source->GetSystem();
         if (!source_system)
-            source_system = dynamic_cast<const System*>(source);
+            source_system = universe_object_cast<const System*>(source);
         const System* target_system = target->GetSystem();
         if (!target_system)
-            target_system = dynamic_cast<const System*>(target);
+            target_system = universe_object_cast<const System*>(target);
         if (source_system && target_system) {
             std::pair<std::list<System*>, double> path = GetUniverse().ShortestPath(source_system->ID(), target_system->ID());
             if (!path.first.empty()) { // if path.first is empty, no path exists between the systems
                 return (static_cast<int>(path.first.size()) - 1) <= jump_limit;
             }
         } else if (source_system) {
-            if (const Fleet* target_fleet = dynamic_cast<const Fleet*>(target)) {
+            if (const Fleet* target_fleet = universe_object_cast<const Fleet*>(target)) {
                 std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(source_system->ID(), target_fleet->PreviousSystemID());
                 std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(source_system->ID(), target_fleet->NextSystemID());
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())) - 1)
                     return jumps <= jump_limit;
             }
         } else if (target_system) {
-            if (const Fleet* source_fleet = dynamic_cast<const Fleet*>(source)) {
+            if (const Fleet* source_fleet = universe_object_cast<const Fleet*>(source)) {
                 std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(source_fleet->PreviousSystemID(), target_system->ID());
                 std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(source_fleet->NextSystemID(), target_system->ID());
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())))
                     return jumps - 1 <= jump_limit;
             }
         } else {
-            const Fleet* target_fleet = dynamic_cast<const Fleet*>(target);
-            const Fleet* source_fleet = dynamic_cast<const Fleet*>(source);
+            const Fleet* target_fleet = universe_object_cast<const Fleet*>(target);
+            const Fleet* source_fleet = universe_object_cast<const Fleet*>(source);
             if (source_fleet && target_fleet) {
                 int source_fleet_prev_system_id = source_fleet->PreviousSystemID();
                 int source_fleet_next_system_id = source_fleet->NextSystemID();

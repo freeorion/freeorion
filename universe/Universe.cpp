@@ -1015,7 +1015,7 @@ GG::XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 
     for (const_iterator it = begin(); it != end(); ++it) {
         // skip all non-System objects that are completely invisible to this empire
-        if (it->second->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || dynamic_cast<System*>(it->second))
+        if (it->second->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(it->second))
             retval.LastChild().AppendChild(it->second->XMLEncode(empire_id));
     }
 
@@ -1144,10 +1144,10 @@ UniverseObject* Universe::Remove(int id)
         retval = it->second;
         if (System* sys = retval->GetSystem())
             sys->Remove(id);
-        if (Ship* ship = dynamic_cast<Ship*>(retval)) {
+        if (Ship* ship = universe_object_cast<Ship*>(retval)) {
             if (Fleet* fleet = ship->GetFleet())
                 fleet->RemoveShip(ship->ID());
-        } else if (Building* building = dynamic_cast<Building*>(retval)) {
+        } else if (Building* building = universe_object_cast<Building*>(retval)) {
             if (Planet* planet = building->GetPlanet())
                 planet->RemoveBuilding(building->ID());
         }

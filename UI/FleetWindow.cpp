@@ -1052,7 +1052,7 @@ Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
         System::ObjectVec fleets = existing_fleet->GetSystem()->FindObjectsInOrbit(-1, StationaryFleetVisitor(empire_id));
         for (unsigned int i = 0; i < fleets.size(); ++i) {
             if (fleets[i]->Name() == fleet_name) {
-                new_fleet = dynamic_cast<Fleet*>(fleets[i]);
+                new_fleet = universe_object_cast<Fleet*>(fleets[i]);
                 break;
             }
         }
@@ -1088,7 +1088,7 @@ void FleetWnd::UniverseObjectDelete(const UniverseObject *obj)
     const Fleet *fleet;
     // only look for obj if FleetWnd contains fleets and obj is a fleet
     if ((m_open_fleet_windows.empty() && m_fleets_lb->NumRows() == (m_read_only ? 0 : 1))
-        || !(fleet = dynamic_cast<const Fleet *>(obj)))
+        || !(fleet = universe_object_cast<const Fleet *>(obj)))
         return;
 
     if (m_fleet_detail_panel->GetFleet() == fleet)

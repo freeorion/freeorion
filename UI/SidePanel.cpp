@@ -2643,7 +2643,7 @@ void SidePanel::SetSystem(int system_id)
 
 void SidePanel::UniverseObjectDelete(const UniverseObject *obj)
 {
-    const Fleet *fleet = dynamic_cast<const Fleet *>(obj);
+    const Fleet *fleet = universe_object_cast<const Fleet *>(obj);
     if(fleet)
       FleetsChanged();
 }

@@ -56,7 +56,7 @@ void ResourcePool::SetPlanets(const Universe::ObjectVec &planet_vec)
 
     for(unsigned int i=0;i<planet_vec.size();i++)
     {
-        Planet *planet = dynamic_cast<Planet*>(planet_vec[i]);
+        Planet *planet = universe_object_cast<Planet*>(planet_vec[i]);
         m_planets.push_back(planet);
         m_connections.push_back(GG::Connect(planet->ProdCenterChangedSignal(), PlanetChangedFunctor<ResourcePool>(*this,planet->ID())));
     }

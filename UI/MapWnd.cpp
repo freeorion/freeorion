@@ -1146,7 +1146,7 @@ void MapWnd::SystemRightClicked(int system_id)
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
 {
-    m_fleet_lines.erase(const_cast<Fleet*>(dynamic_cast<const Fleet*>(obj)));
+    m_fleet_lines.erase(const_cast<Fleet*>(universe_object_cast<const Fleet*>(obj)));
 }
 
 void MapWnd::RegisterPopup( MapWndPopup* popup )

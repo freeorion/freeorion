@@ -366,7 +366,7 @@ void FleetMoveOrder::ExecuteImpl() const
     
     // look up the fleet in question
     UniverseObject* the_object = universe.Object(FleetID());
-    Fleet* the_fleet = dynamic_cast<Fleet*> ( the_object );
+    Fleet* the_fleet = universe_object_cast<Fleet*> ( the_object );
     
     // perform sanity check
     if(the_fleet == NULL)
@@ -383,7 +383,7 @@ void FleetMoveOrder::ExecuteImpl() const
     
     // look up destination
     UniverseObject* another_object = universe.Object(DestinationSystemID());
-    System* the_system = dynamic_cast<System*> (another_object);
+    System* the_system = universe_object_cast<System*> (another_object);
     
     // perform another sanity check
     if(the_system == NULL)
