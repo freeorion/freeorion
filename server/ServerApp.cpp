@@ -293,7 +293,17 @@ void ServerApp::HandleMessage(const Message& msg)
 
 	    for(int i=0; i< root.NumChildren(); i++)
 	    {
-	      p_order_set->AddOrder( order_factory.GenerateObject( root.Child(i)) );
+              Order *p_order = order_factory.GenerateObject( root.Child(i));
+
+	      if ( p_order )
+	      {
+		p_order_set->AddOrder( p_order );
+	      }
+	      else
+	      {
+                // log error
+                m_log_category.errorStream() << "An Order has been received that has no factory - ignoring.";        
+	      }
 	    }
 
             /* if all orders are received already, do nothing as we are processing a trun */
