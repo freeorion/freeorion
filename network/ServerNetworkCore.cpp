@@ -222,9 +222,9 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
                break;
             }
          }
-         DumpConnection(closing_socket);
          if (player_id != -1)
             ServerApp::GetApp()->PlayerDisconnected(player_id);
+         DumpConnection(closing_socket);
          break;
       }
          

@@ -793,12 +793,19 @@ void ServerApp::PlayerDisconnected(int id)
             }
             m_network_core.DumpPlayer(id);
         } else { // player disconnected during a regular game
-            // possibly try to recover?
             m_state = SERVER_DISCONNECT;
-            m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Server now in mode " << SERVER_DISCONNECT << " (SERVER_DISCONNECT).";
+            const PlayerInfo& disconnected_player_info = m_network_core.Players().find(id)->second;
+            m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Lost connection ot player #" << boost::lexical_cast<std::string>(id) 
+                << ", named \"" << disconnected_player_info.name << "\"; server now in mode " << SERVER_DISCONNECT << " (SERVER_DISCONNECT).";
+            std::string message = disconnected_player_info.name;
+            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+                if (it->first != id) {
+                    m_network_core.SendMessage(PlayerDisconnectedMessage(it->first, message));
+                    // in the future we may find a way to recover from this, but for now we will immediately send a game ending message as well
+                    m_network_core.SendMessage(EndGameMessage(-1, it->first));
+                }
+            }
         }
-// TODO: try to reconnect
-// TODO: send request to host player to ask what to do
     }
 }
 
