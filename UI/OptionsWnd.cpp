@@ -91,7 +91,7 @@ void OptionsWnd::MusicCicked(bool checked)
     else
 	{
 		GetOptionsDB().Set("music-off", false);
-        HumanClientApp::GetApp()->PlayMusic(ClientUI::SOUND_DIR + GetOptionsDB().Get<std::string>("bg-music"), true);
+        HumanClientApp::GetApp()->PlayMusic(ClientUI::SOUND_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1);
 	}
    
 }
