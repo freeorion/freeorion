@@ -70,4 +70,3 @@ private:
 };
 
 #endif // _ServerNetworkCore_h_
-
