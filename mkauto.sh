@@ -7,7 +7,6 @@ tar cvhf FO-autotools.tar			\
     config.h.in					\
     config.sub					\
     configure					\
-    configure.ac				\
     depcomp					\
     install-sh					\
     m4						\
