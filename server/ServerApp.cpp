@@ -11,7 +11,7 @@
 #include <boost/lexical_cast.hpp>
 
 // for Videodriver setenv-hack
-#include <SDL/SDL_getenv.h>
+#include "SDL_getenv.h"
 
 #include <ctime>
 
