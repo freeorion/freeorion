@@ -1,68 +1,52 @@
 <?xml version="1.0"?>
 <GG::XMLDoc>
-  <HumanClientApp>
-    <width value="1024"/>
-    <height value="768"/>
-    <bpp value="32"/>
-    <calc_FPS value="0"/>
-    <app_name>"freeorion"</app_name>
-  </HumanClientApp>
-  <ClientUI>
-    <DIR value="default/"/>
-    <ART_DIR value="small"/>
-    <FONT value="arial.ttf"/>
-    <PTS value="12"/>
-    <TITLE_FONT value="arial.ttf"/>
-    <TITLE_PTS value="12"/>
-    <WND_COLOR>
-      <GG::Clr>
-        <red value="0"/>
-        <green value="0"/>
-        <blue value="0"/>
-        <alpha value="210"/>
-      </GG::Clr>
-    </WND_COLOR>
-    <TEXT_COLOR>
-      <GG::Clr>
-        <red value="255"/>
-        <green value="255"/>
-        <blue value="255"/>
-        <alpha value="255"/>
-      </GG::Clr>
-    </TEXT_COLOR>
-    <CTRL_COLOR>
-      <GG::Clr>
-        <red value="30"/>
-        <green value="30"/>
-        <blue value="30"/>
-        <alpha value="255"/>
-      </GG::Clr>
-    </CTRL_COLOR>
-    <WND_OUTER_BORDER_COLOR>
-      <GG::Clr>
-        <red value="64"/>
-        <green value="64"/>
-        <blue value="64"/>
-        <alpha value="255"/>
-      </GG::Clr>
-    </WND_OUTER_BORDER_COLOR>
-    <WND_BORDER_COLOR>
-      <GG::Clr>
-        <red value="0"/>
-        <green value="0"/>
-        <blue value="0"/>
-        <alpha value="255"/>
-      </GG::Clr>
-    </WND_BORDER_COLOR>
-    <WND_INNER_BORDER_COLOR>
-      <GG::Clr>
-        <red value="255"/>
-        <green value="255"/>
-        <blue value="255"/>
-        <alpha value="255"/>
-      </GG::Clr>
-    </WND_INNER_BORDER_COLOR>
-    <TOOLTIP_DELAY value="1000"/>
-    <STRINGTABLE_FILENAME value="eng_stringtable.txt"/>
-  </ClientUI>
+  <app-width value="1024"/>
+  <app-height value="768"/>
+  <color-depth value="32"/>  
+  <UI>
+    <dir value="default/"/>
+    <art-dir value="small"/>
+    <font value="arial.ttf"/>
+    <font-size value="12"/>
+    <title-font value="arial.ttf"/>
+    <title-font-size value="12"/>
+    <wnd-color>
+      <red value="0"/>
+      <green value="0"/>
+      <blue value="0"/>
+      <alpha value="210"/>
+    </wnd-color>
+    <text-color>
+      <red value="255"/>
+      <green value="255"/>
+      <blue value="255"/>
+      <alpha value="255"/>
+    </text-color>
+    <ctrl-color>
+      <red value="30"/>
+      <green value="30"/>
+      <blue value="30"/>
+      <alpha value="255"/>
+    </ctrl-color>
+    <wnd-outer-border-color>
+      <red value="64"/>
+      <green value="64"/>
+      <blue value="64"/>
+      <alpha value="255"/>
+    </wnd-outer-border-color>
+    <wnd-border-color>
+      <red value="0"/>
+      <green value="0"/>
+      <blue value="0"/>
+      <alpha value="255"/>
+    </wnd-border-color>
+    <wnd-inner-border-color>
+      <red value="255"/>
+      <green value="255"/>
+      <blue value="255"/>
+      <alpha value="255"/>
+    </wnd-inner-border-color>
+    <tooltip-delay value="1000"/>
+    <stringtable-filename value="eng_stringtable.txt"/>
+  </UI>
 </GG::XMLDoc>
