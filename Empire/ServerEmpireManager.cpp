@@ -80,7 +80,7 @@ GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int EmpireID)
     // perform sanity check
     if(emp == NULL)
     {
-        throw std::runtime_error("Invalid EmpireID passed to ServerEmpireManager::CreateClientSitrepUpdate()");
+        throw std::runtime_error("Invalid EmpireID passed to ServerEmpireManager::CreateClientEmpireUpdate()");
     }
     
     // convert Empire ID to string
