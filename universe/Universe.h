@@ -100,6 +100,9 @@ public:
     const UniverseObject* Object(int id) const; ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
     UniverseObject* Object(int id);  ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
 
+    template <class T> const T* Object(int id) const; ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
+    template <class T> T* Object(int id);  ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
+
     /** returns all the objects that match \a pred.  Predicates used with this function must take a single const
         UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
     template <class Pred> ConstObjectVec FindObjects(Pred pred) const;
@@ -295,6 +298,20 @@ protected:
 
 
 // template implementations
+template <class T> 
+const T* Universe::Object(int id) const
+{
+    const_iterator it = m_objects.find(id);
+    return (it != m_objects.end() ? dynamic_cast<const T*>(it->second) : 0);
+}
+
+template <class T> 
+T* Universe::Object(int id)
+{
+    const_iterator it = m_objects.find(id);
+    return (it != m_objects.end() ? dynamic_cast<T*>(it->second) : 0);
+}
+
 template <class Pred>
 Universe::ConstObjectVec Universe::FindObjects(Pred pred) const
 {
