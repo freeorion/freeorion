@@ -89,8 +89,39 @@ int IntroScreen::Render()
 void IntroScreen::OnStartGame()
 {
     //Open up the server connect screen
-    ServerConnectWnd wnd(10,10,800,600);
+    //        XML Read begin
+//        ifstream dlg_file("servercnct.xml");
+//        assert(dlg_file);
+//        GG::XMLDoc doc;
+//        doc.ReadDoc(dlg_file);
+//        dlg_file.close();
+//        ServerConnectWnd* sc = new ServerConnectWnd(doc.root_node.Child("ServerConnectWnd"));
+//        XML Read end
+   
+    /*
+            Here ClientCore should perform a preliminary scan to
+            determine the available servers, at least "localhost".
+            Servers can be added via the AddServer call.
+    */
+
+    // Auto Constructor begin
+    ServerConnectWnd wnd(400,100,450,400);
+    // Auto Constructor end
+    
+    // Add some servers
+    wnd.AddServer("127.0.0.1","localhost");
+    wnd.AddServer("194.23.24.21","LAN Server");
+        
     wnd.Run();
+    
+    if (wnd.IsServerSelected())
+    {
+            HumanClientApp::GetApp()->Logger().debugStream() << "Selected server: " << wnd.GetSelectedServer();
+    }
+    else
+    {
+            HumanClientApp::GetApp()->Logger().debugStream() << "No server was selected.";       
+    }
     
     //TODO: add server init code here
     
