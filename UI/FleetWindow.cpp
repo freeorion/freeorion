@@ -115,20 +115,19 @@ namespace {
                                                          boost::lexical_cast<std::string>(m_fleet->NumShips()) + "shipfleet.png");
                 } else if (5 < m_fleet->NumShips()) {
                     icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/5shipfleet.png");
-                } else {
-                    double max_cost = 0.0;
-                    for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {
-                        Ship* ship = GetUniverse().Object<Ship>(*it);
-                        if (max_cost <= ship->Design()->cost) {
-                            std::string design_name = ship->Design()->name;
-                            unsigned int space;
-                            if ((space = design_name.find(' ')) != std::string::npos) {
-                                design_name[space] = '_';
-                            }
-                            icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png");
-                            max_cost = ship->Design()->cost;
+                } else if (m_fleet->NumShips() == 1) {
+                    Ship* ship = GetUniverse().Object<Ship>(*m_fleet->begin());
+                    std::string design_name;
+                    if (ship->Design()) {
+                        design_name = ship->Design()->name;
+                        unsigned int space;
+                        if ((space = design_name.find(' ')) != std::string::npos) {
+                            design_name[space] = '_';
                         }
+                    } else {
+                        design_name = "Scout";
                     }
+                    icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png");
                 }
             } else { // the "new fleet" data panel
                 icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/newfleet.png");
@@ -148,14 +147,19 @@ namespace {
                 int attack_strength = 0;
                 bool damaged_ships = false;
                 bool contains_colony_ship = false;
+                bool attack_factor_unknown = true;
                 for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {
                     Ship* ship = GetUniverse().Object<Ship>(*it);
-                    if (ship->Design()->colonize)
-                        contains_colony_ship = true;
-                    attack_strength += ship->Design()->attack;
-                    // TODO: acount for damaged ships once damage system is in place
+                    const ShipDesign* design = ship->Design();
+                    if (design) {
+                        if (design->colonize)
+                            contains_colony_ship = true;
+                        attack_strength += design->attack;
+                        attack_factor_unknown = false;
+                    }
+                    // TODO: account for damaged ships once damage system is in place
                 }
-                m_fleet_strength_stat->SetValue(attack_strength);
+                m_fleet_strength_stat->SetValue(attack_factor_unknown ? StatisticIcon::UNKNOWN_VALUE : attack_strength);
 
                 const int ICON_SPACING = 5;
                 const int ICON_SZ = Height() - FLEET_NAME_HT - 1;
@@ -266,10 +270,15 @@ namespace {
         void SetShipIcon()
         {
             const int ICON_OFFSET = (Size().y - SHIP_ICON_SZ) / 2;
-            std::string design_name = m_ship->Design()->name;
-            unsigned int space;
-            if ((space = design_name.find(' ')) != std::string::npos) {
-                design_name[space] = '_';
+            std::string design_name;
+            if (m_ship->Design()) {
+                design_name = m_ship->Design()->name;
+                unsigned int space;
+                if ((space = design_name.find(' ')) != std::string::npos) {
+                    design_name[space] = '_';
+                }
+            } else {
+                design_name = "Scout";
             }
             m_ship_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, SHIP_ICON_SZ, SHIP_ICON_SZ, 
                                                 GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png"), GG::GR_FITGRAPHIC);
@@ -279,7 +288,7 @@ namespace {
         {
             SetShipIcon();
             m_ship_name_text->SetText(m_ship->Name());
-            m_ship_strength_stat->SetValue(m_ship->Design()->attack);
+            m_ship_strength_stat->SetValue(m_ship->Design() ? m_ship->Design()->attack : StatisticIcon::UNKNOWN_VALUE);
 
             const int ICON_SPACING = 5;
             const int ICON_SZ = Height() - SHIP_NAME_HT - 1;
@@ -295,7 +304,7 @@ namespace {
             } else if (m_damage_stat) {
                 DeleteChild(m_damage_stat);
             }
-            if (m_ship->Design()->colonize) {
+            if (m_ship->Design() && m_ship->Design()->colonize) {
                 if (!m_colonizer_icon) {
                     m_colonizer_icon = new GG::StaticGraphic(x_position, SHIP_NAME_HT, ICON_SZ, ICON_SZ, 
                                                              GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/colonymarker.png"), GG::GR_FITGRAPHIC);
@@ -608,7 +617,7 @@ std::string FleetDetailPanel::DestinationText() const
 std::string FleetDetailPanel::ShipStatusText(int ship_id) const
 {
     Ship* ship = GetUniverse().Object<Ship>(ship_id);
-    return UserString("FW_SHIP_CLASS") + " \"" + ship->Design()->name + "\"";
+    return UserString("FW_SHIP_CLASS") + " \"" + (ship->Design() ? ship->Design()->name : UserString("FW_UNKNOWN_DESIGN_NAME")) + "\"";
 }
 
 
