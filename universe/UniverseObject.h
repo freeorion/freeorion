@@ -48,8 +48,9 @@ public:
     /** \name Structors */ //@{
     UniverseObject();    ///< default ctor
    
-    /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if the either x or y coordinate 
-        is outside the map area.*/
+    /** general ctor.  \throw std::invalid_argument May throw
+        std::invalid_argument if the either x or y coordinate is
+        outside the map area.*/
     UniverseObject(const std::string name, double x, double y, const std::set<int>& owners = std::set<int>());
    
     UniverseObject(const GG::XMLElement& elem); ///< ctor that constructs a UniverseObject object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a UniverseObject object
