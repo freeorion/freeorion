@@ -14,7 +14,36 @@
 #include "Ship.h"
 #endif
 
+#ifndef _GGEnum_h_
+#include "GGEnum.h"
+#endif
+
 class Empire;
+
+
+/** The general type of construction being done at a ProdCenter.  Within each valid type, a specific kind 
+    of item is being built, e.g. under BUILDING a kind of building called "SuperFarm" might be built. */
+enum BuildType {
+    INVALID_BUILD_TYPE = -1,
+    BT_NOT_BUILDING,         ///< no building is taking place
+    BT_BUILDING,             ///< a Building object is being built
+    BT_SHIP,                 ///< a Ship object is being built
+    BT_ORBITAL,              ///< an Orbital object is being built
+    NUM_BUILD_TYPES
+};
+
+namespace GG {
+    ENUM_MAP_BEGIN(BuildType)
+	ENUM_MAP_INSERT(INVALID_BUILD_TYPE)
+	ENUM_MAP_INSERT(BT_NOT_BUILDING)
+	ENUM_MAP_INSERT(BT_BUILDING)
+	ENUM_MAP_INSERT(BT_SHIP)
+	ENUM_MAP_INSERT(BT_ORBITAL)
+    ENUM_MAP_END
+}
+ENUM_STREAM_IN(BuildType)
+ENUM_STREAM_OUT(BuildType)
+
 
 /** a production center decoration for a UniverseObject. */
 class ProdCenter
@@ -23,14 +52,6 @@ public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()> ProdCenterChangedSignalType; ///< emitted when the ProdCenter is altered in any way
     //@}
-
-    /////////////////////////////////////////////////////////////////////////////
-    // V0.3 ONLY!!!!
-    // (in later versions, this enum will specify BUILDING, SHIP, etc., and will be specified along with the name of
-    // the specific kind of that thiing that should be built
-    enum BuildType {BUILD_UNKNOWN, NOT_BUILDING, SCOUT, COLONY_SHIP, MARKI, MARKII, MARKIII, MARKIV, DEF_BASE, BUILDING};
-    // V0.3 ONLY!!!!
-    /////////////////////////////////////////////////////////////////////////////
 
     /** \name Structors */ //@{
     ProdCenter(const Meter& pop, UniverseObject* object); ///< default ctor
@@ -80,7 +101,7 @@ public:
     Meter&   ConstructionMeter()             {return m_construction;} ///< returns the construction Meter for this center
     void SetAvailableMinerals(double available_minerals) {m_available_minerals = available_minerals;}
 
-    void SetProduction(ProdCenter::BuildType type, const std::string& name);
+    void SetProduction(BuildType type, const std::string& name);
 
     virtual void AdjustMaxMeters();
     virtual void PopGrowthProductionResearchPhase();
@@ -89,11 +110,13 @@ public:
 private:
     ///< Updates build progress and determines if an item of given cost has been built. Handles
     ///< logic for rollovers and multiple items. Returns the number of items built, 0 if none
-    int UpdateBuildProgress(int item_cost);
+    int UpdateBuildProgress(double item_cost);
 
-    ///< until shipyards, planets build ships as psrt of it's implementation of ProdCenters
-    ///< takes a design ID and if any are build, adds the ships to a fleet.
-    void UpdateShipBuildProgress(Empire *empire, ShipDesign::V02DesignID design_id);
+    ///< until shipyards, planets build ships as part of it's implementation of ProdCenters
+    ///< takes a design name and if any are build, adds the ships to a new fleet.
+    void UpdateShipBuildProgress(Empire *empire, const std::string& design_name);
+
+    void UpdateBuildingBuildProgress(Empire *empire, const std::string& building_type_name);
 
     FocusType  m_primary;
     FocusType  m_secondary;

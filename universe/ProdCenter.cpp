@@ -1,10 +1,12 @@
 #include "ProdCenter.h"
 
 #include "../util/AppInterface.h"
+#include "../universe/Building.h"
 #include "../util/DataTable.h"
 #include "../Empire/Empire.h"
 #include "Fleet.h"
 #include "Planet.h"
+#include "../universe/ShipDesign.h"
 #include "System.h"
 #include "XMLDoc.h"
 
@@ -34,16 +36,14 @@ namespace {
     }
 
     // v0.2 only
-    int Cost(ProdCenter::BuildType item)
+    double Cost(BuildType type, const std::string& item, int empire_id)
     {
-        switch (item) {
-        case ProdCenter::DEF_BASE:      return 200;
-        case ProdCenter::SCOUT:         return 50;
-        case ProdCenter::COLONY_SHIP:   return 250;
-        case ProdCenter::MARKI:         return 100;
-        case ProdCenter::MARKII:        return 200;
-        case ProdCenter::MARKIII:       return 375;
-        case ProdCenter::MARKIV:        return 700;
+        switch (type) {
+        case INVALID_BUILD_TYPE:
+        case BT_NOT_BUILDING:           return 0;
+        case BT_BUILDING:               return GetBuildingType(item)->BuildCost();
+        case BT_SHIP:                   return GetShipDesign(empire_id, item)->cost;
+        case BT_ORBITAL:                return 200;
         default:                        return 0;
         }
         return 0;
@@ -94,7 +94,7 @@ ProdCenter::ProdCenter(const Meter& pop, UniverseObject* object) :
     m_pop(pop),
     m_object(object),
     m_available_minerals(0.0),
-    m_currently_building(NOT_BUILDING, ""),
+    m_currently_building(BT_NOT_BUILDING, ""),
     m_rollover(0)
 {
     assert(m_object);
@@ -113,7 +113,7 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem, const Meter& pop, UniverseObj
     m_pop(pop),
     m_object(object),
     m_available_minerals(0.0),
-    m_currently_building(NOT_BUILDING, ""),
+    m_currently_building(BT_NOT_BUILDING, ""),
     m_rollover(0)
 {
     assert(m_object);
@@ -132,7 +132,7 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem, const Meter& pop, UniverseObj
             m_research = Meter(elem.Child("m_research").Child("Meter"));
             m_trade = Meter(elem.Child("m_trade").Child("Meter"));
             m_construction = Meter(elem.Child("m_construction").Child("Meter"));
-            m_currently_building.first = BuildType(lexical_cast<int>(elem.Child("m_currently_building").Child("first").Text()));
+            m_currently_building.first = lexical_cast<BuildType>(elem.Child("m_currently_building").Child("first").Text());
             m_currently_building.second = elem.Child("m_currently_building").Child("second").Text();
             m_rollover = lexical_cast<double>(elem.Child("m_rollover").Text());
             m_available_minerals = lexical_cast<double>(elem.Child("m_available_minerals").Text());
@@ -183,7 +183,7 @@ double ProdCenter::PercentComplete() const
 
 double ProdCenter::ItemBuildCost() const
 {
-    return Cost(m_currently_building.first);
+    return Cost(m_currently_building.first, m_currently_building.second, *m_object->Owners().begin());
 }
 
 double ProdCenter::ProductionPoints() const
@@ -246,7 +246,7 @@ void ProdCenter::SetSecondaryFocus(FocusType focus)
     m_prod_changed_sig();
 }
 
-void ProdCenter::SetProduction(ProdCenter::BuildType type, const std::string& name)
+void ProdCenter::SetProduction(BuildType type, const std::string& name)
 {
     m_currently_building = std::make_pair(type, name);
     m_prod_changed_sig();
@@ -315,8 +315,8 @@ void ProdCenter::PopGrowthProductionResearchPhase()
     // v0.3 ONLY
     Empire* empire = Empires().Lookup(*m_object->Owners().begin());
     Planet* planet = dynamic_cast<Planet*>(m_object);
-    if (m_currently_building.first == DEF_BASE && planet) {
-        // for v0.3 we hard-code values for cost of bases
+    if (m_currently_building.first == BT_ORBITAL && planet) {
+        // for v0.3 we hard-code values for cost of defense bases
         int new_bases = UpdateBuildProgress( 200 );
     
         if ( new_bases > 0 )
@@ -328,28 +328,16 @@ void ProdCenter::PopGrowthProductionResearchPhase()
             SitRepEntry *p_entry = CreateBaseBuiltSitRep( m_object->SystemID(), m_object->ID() );
             empire->AddSitRepEntry( p_entry );
         }
-        // V0.3 only - we would have a better way to know we're building different ships
-        // for now enumerate through the ones we can build
-    } else if ( m_currently_building.first == ProdCenter::SCOUT ) {
-        UpdateShipBuildProgress( empire, ShipDesign::SCOUT );
-    } else if ( m_currently_building.first == ProdCenter::COLONY_SHIP ) {
-        UpdateShipBuildProgress( empire, ShipDesign::COLONY );
-    } else if ( m_currently_building.first == ProdCenter::MARKI ) {
-        UpdateShipBuildProgress( empire, ShipDesign::MARK1 );
-    } else if ( m_currently_building.first == ProdCenter::MARKII ) {
-        UpdateShipBuildProgress( empire, ShipDesign::MARK2 );
-    } else if ( m_currently_building.first == ProdCenter::MARKIII ) {
-        UpdateShipBuildProgress( empire, ShipDesign::MARK3 );
-    } else if ( m_currently_building.first == ProdCenter::MARKIV ) {
-        UpdateShipBuildProgress( empire, ShipDesign::MARK4 );
-    } else if ( m_currently_building.first == ProdCenter::BUILDING ) {
-        // TODO
+    } else if ( m_currently_building.first == BT_SHIP ) {
+        UpdateShipBuildProgress( empire, m_currently_building.second );
+    } else if ( m_currently_building.first == BT_BUILDING ) {
+        UpdateBuildingBuildProgress( empire, m_currently_building.second );
     }
     // v0.3 ONLY
 }
 
 
-int ProdCenter::UpdateBuildProgress(int item_cost)
+int ProdCenter::UpdateBuildProgress(double item_cost)
 {
     double total_build_points =  m_rollover + ProductionPoints();
     int new_items = static_cast<int>(total_build_points / item_cost);
@@ -358,15 +346,15 @@ int ProdCenter::UpdateBuildProgress(int item_cost)
 }
 
 
-void ProdCenter::UpdateShipBuildProgress(Empire *empire, ShipDesign::V02DesignID design_id)
+void ProdCenter::UpdateShipBuildProgress(Empire *empire, const std::string& design_name)
 {
     Universe* universe = &GetUniverse();
-    ShipDesign ship_design;
+    const ShipDesign* ship_design = empire->GetShipDesign(design_name);
 
     // get ship design we're trying to build
-    if (empire->CopyShipDesign((int)design_id, ship_design))
+    if (ship_design)
     {
-        int new_ships = UpdateBuildProgress(ship_design.cost);
+        int new_ships = UpdateBuildProgress(ship_design->cost);
 
         if (new_ships > 0)
         {
@@ -388,10 +376,10 @@ void ProdCenter::UpdateShipBuildProgress(Empire *empire, ShipDesign::V02DesignID
             // add new ship (s)
             for (int i = 0; i < new_ships; ++i)
             {
-                Ship *new_ship = new Ship(empire->EmpireID(), (int)design_id);
+                Ship *new_ship = new Ship(empire->EmpireID(), design_name);
                 int ship_id = universe->Insert(new_ship);
 
-                std::string ship_name(ship_design.name);
+                std::string ship_name(ship_design->name);
                 ship_name += boost::lexical_cast<std::string>(ship_id);
                 new_ship->Rename(ship_name);
 
@@ -405,4 +393,7 @@ void ProdCenter::UpdateShipBuildProgress(Empire *empire, ShipDesign::V02DesignID
     }
 }
 
-
+void ProdCenter::UpdateBuildingBuildProgress(Empire *empire, const std::string& building_type_name)
+{
+    // TODO
+}

@@ -2,6 +2,7 @@
 
 #include "../util/AppInterface.h"
 #include "Fleet.h"
+#include "ShipDesign.h"
 #include "XMLDoc.h"
 
 #include <log4cpp/Appender.hh>
@@ -13,87 +14,30 @@ using boost::lexical_cast;
 #include <stdexcept>
 
 ////////////////////////////////////////////////
-// ShipDesign
-////////////////////////////////////////////////
-ShipDesign::ShipDesign() : 
-   id(ShipDesign::SCOUT),
-   empire(-1),
-   name(""),
-   attack(0),
-   defense(0),
-   cost(10000000),
-   colonize( false ),
-   description("")
-{
-   //TODO
-}
-
-ShipDesign::ShipDesign(const GG::XMLElement& elem)
-{
-   if (elem.Tag() != "ShipDesign" )
-      throw std::invalid_argument("Attempted to construct a ShipDesign from an XMLElement that had a tag other than \"ShipDesign\"");
-
-   id = lexical_cast<int>(elem.Child("id").Text());
-   empire = lexical_cast<int>(elem.Child("empire").Text());
-   name = elem.Child("name").Text();
-   attack = lexical_cast<int>(elem.Child("attack").Text());
-   defense = lexical_cast<int>(elem.Child("defense").Text());
-   cost = lexical_cast<int>(elem.Child("cost").Text());
-   colonize = lexical_cast<bool>(elem.Child("colonize").Text());
-   description = elem.Child("description").Text();
-}
-
-GG::XMLElement ShipDesign::XMLEncode() const
-{
-   using GG::XMLElement;
-   using boost::lexical_cast;
-
-   XMLElement retval("ShipDesign");
-   retval.AppendChild(XMLElement("id", lexical_cast<std::string>(id)));
-   retval.AppendChild(XMLElement("empire", lexical_cast<std::string>(empire)));
-   retval.AppendChild(XMLElement("name", name));
-   retval.AppendChild(XMLElement("attack", lexical_cast<std::string>(attack)));
-   retval.AppendChild(XMLElement("defense", lexical_cast<std::string>(defense)));
-   retval.AppendChild(XMLElement("cost", lexical_cast<std::string>(cost)));
-   retval.AppendChild(XMLElement("colonize", lexical_cast<std::string>(colonize)));
-   retval.AppendChild(XMLElement("description", description));
-   return retval;
-
-}
-
-
-int ShipDesign::WarpSpeed() const
-{
-    return 1; // for 0.2, and the early revs.  This will change later
-}
-
-////////////////////////////////////////////////
 // Ship
 ////////////////////////////////////////////////
-Ship::Ship() : 
-   m_design(ShipDesign())
+Ship::Ship()
 {
 }
 
-Ship::Ship(int empire_id, int design_id)
+Ship::Ship(int empire_id, const std::string& design_name) :
+    m_design_name(design_name)
 {
-   // Lookup empire where design is located
-   Empire* empire = Empires().Lookup(empire_id);
-   if (!empire->CopyShipDesign(design_id, m_design))
-      throw std::invalid_argument("Attempted to construct a Ship with an invalid design ID");
+   if (!GetShipDesign(empire_id, m_design_name))
+      throw std::invalid_argument("Attempted to construct a Ship with an invalid design name");
 
    AddOwner(empire_id);
 }
 
 Ship::Ship(const GG::XMLElement& elem) : 
-  UniverseObject(elem.Child("UniverseObject")),
-  m_design(ShipDesign(elem.Child("ShipDesign")))
+  UniverseObject(elem.Child("UniverseObject"))
 {
-    if (elem.Tag().find( "Ship" ) == std::string::npos )
+    if (elem.Tag().find("Ship") == std::string::npos)
         throw std::invalid_argument("Attempted to construct a Ship from an XMLElement that had a tag other than \"Ship\"");
 
     try {
-        m_fleet_id = lexical_cast<int> ( elem.Child("m_fleet_id").Text() );
+        m_fleet_id = lexical_cast<int>(elem.Child("m_fleet_id").Text());
+        m_design_name = elem.Child("m_design_name").Text();
     } catch (const boost::bad_lexical_cast& e) {
         Logger().debugStream() << "Caught boost::bad_lexical_cast in Ship::Ship(); bad XMLElement was:";
         std::stringstream osstream;
@@ -103,6 +47,16 @@ Ship::Ship(const GG::XMLElement& elem) :
     }
 }
 
+const ShipDesign* Ship::Design() const
+{
+    return GetShipDesign(*Owners().begin(), m_design_name);
+}
+
+int Ship::FleetID() const
+{
+    return m_fleet_id;
+}
+
 Fleet* Ship::GetFleet() const
 {
     return m_fleet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Fleet>(m_fleet_id);
@@ -110,40 +64,38 @@ Fleet* Ship::GetFleet() const
 
 UniverseObject::Visibility Ship::GetVisibility(int empire_id) const
 {
-  UniverseObject::Visibility vis = NO_VISIBILITY;
+    UniverseObject::Visibility vis = NO_VISIBILITY;
 
-  if (empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
-      vis = FULL_VISIBILITY;
-  else
-      vis = PARTIAL_VISIBILITY; // TODO: do something smarter here, such as a range check vs. owned systems and fleets
+    if (empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
+        vis = FULL_VISIBILITY;
+    else
+        vis = PARTIAL_VISIBILITY; // TODO: do something smarter here, such as a range check vs. owned systems and fleets
 
-  // Ship is visible if its fleet is visible
-  return FleetID() == INVALID_OBJECT_ID ? NO_VISIBILITY : (GetFleet()?GetFleet()->GetVisibility(empire_id):vis);
+    // Ship is visible if its fleet is visible
+    return FleetID() == INVALID_OBJECT_ID ? NO_VISIBILITY : (GetFleet()?GetFleet()->GetVisibility(empire_id):vis);
 }
 
 bool Ship::IsArmed() const
 {
-    return (m_design.attack > 0);
+    return Design()->attack > 0;
 }
 
 GG::XMLElement Ship::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
-   using GG::XMLElement;
-   using boost::lexical_cast;
-   using std::string;
-   XMLElement retval("Ship" + boost::lexical_cast<std::string>(ID()));
-   retval.AppendChild(UniverseObject::XMLEncode(empire_id));
-   retval.AppendChild(m_design.XMLEncode());
-   retval.AppendChild(XMLElement("m_fleet_id", lexical_cast<std::string>(m_fleet_id)));
-   return retval;
+    using GG::XMLElement;
+    using boost::lexical_cast;
+    using std::string;
+    XMLElement retval("Ship" + boost::lexical_cast<std::string>(ID()));
+    retval.AppendChild(UniverseObject::XMLEncode(empire_id));
+    retval.AppendChild(XMLElement("m_fleet_id", lexical_cast<std::string>(m_fleet_id)));
+    retval.AppendChild(XMLElement("m_design_name", m_design_name));
+    return retval;
 }
   	
-void Ship::MovementPhase( )
+void Ship::MovementPhase()
 {
-   //TODO
 }
 
-void Ship::PopGrowthProductionResearchPhase( )
+void Ship::PopGrowthProductionResearchPhase()
 {
-   //TODO
 }

@@ -122,13 +122,13 @@ public:
     /** \name Structors */ //@{
     BuildOrder();
     BuildOrder(const GG::XMLElement& elem);
-    BuildOrder(int empire, int prodcenter_id, ProdCenter::BuildType build, const std::string& name);
+    BuildOrder(int empire, int prodcenter_id, BuildType build, const std::string& name);
     //@}
 
     /** \name Accessors */ //@{
-    int                   ProdCenterID() const {return m_prodcenter;} ///< returns ID of planet selected in this order
-    ProdCenter::BuildType Type() const         {return m_build_type;} ///< returns the build type set in this order (eg BUILDING)
-    const std::string&    Name() const         {return m_name;}       ///< returns the name of the exact type of item within the build type that should be produced (eg "SuperFarm")
+    int                ProdCenterID() const {return m_prodcenter;} ///< returns ID of planet selected in this order
+    BuildType          Type() const         {return m_build_type;} ///< returns the build type set in this order (eg BUILDING)
+    const std::string& Name() const         {return m_name;}       ///< returns the name of the exact type of item within the build type that should be produced (eg "SuperFarm")
 
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
@@ -145,9 +145,9 @@ private:
      */
     virtual void ExecuteImpl() const;
 
-    int                     m_prodcenter;
-    ProdCenter::BuildType   m_build_type;
-    std::string             m_name;
+    int         m_prodcenter;
+    BuildType   m_build_type;
+    std::string m_name;
 };
 
 
@@ -295,7 +295,6 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    int   EmpireID() const  {return m_empire;} ///< returns ID of the empire id of the empire which tries to colonize the planet
     int   PlanetID() const  {return m_planet;} ///< returns ID of the planet to be colonized
 
     virtual void           ServerExecute() const; //< called if the server allows the colonization effort 
@@ -324,7 +323,6 @@ private:
     virtual void ExecuteImpl() const;
     virtual bool UndoImpl() const;
 
-    int   m_empire;
     int   m_ship;
     int   m_planet;
 

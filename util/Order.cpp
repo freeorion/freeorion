@@ -177,7 +177,7 @@ void RenameOrder::ExecuteImpl() const
 BuildOrder::BuildOrder() : 
     Order(),
     m_prodcenter(UniverseObject::INVALID_OBJECT_ID),
-    m_build_type(ProdCenter::NOT_BUILDING),
+    m_build_type(BT_NOT_BUILDING),
     m_name("")
 {
 }
@@ -188,11 +188,11 @@ BuildOrder::BuildOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
         throw std::invalid_argument("Tried to construct BuildOrder from malformed XMLElement");
 
     m_prodcenter = lexical_cast<int>(elem.Child("m_prodcenter").Text());
-    m_build_type = ProdCenter::BuildType(lexical_cast<int>(elem.Child("m_build_type").Text()));
+    m_build_type = lexical_cast<BuildType>(elem.Child("m_build_type").Text());
     m_name = elem.Child("m_name").Text();
 }
 
-BuildOrder::BuildOrder(int empire, int planet, ProdCenter::BuildType build, const std::string& name) : 
+BuildOrder::BuildOrder(int empire, int planet, BuildType build, const std::string& name) : 
     Order(empire),
     m_prodcenter(planet),
     m_build_type(build),
@@ -227,7 +227,7 @@ void BuildOrder::ExecuteImpl() const
         throw std::runtime_error("Non-ProdCenter object ID specified in build order.");
     
     //  verify that empire specified in order owns specified planet
-    if(!dynamic_cast<UniverseObject*>(prodcenter)->OwnedBy(m_prodcenter))
+    if(!dynamic_cast<UniverseObject*>(prodcenter)->OwnedBy(EmpireID()))
         throw std::runtime_error("Empire specified in build order does not own specified ProdCenter.");
     
     prodcenter->SetProduction(m_build_type, m_name);
@@ -504,7 +504,6 @@ void FleetTransferOrder::ExecuteImpl() const
 ////////////////////////////////////////////////
 FleetColonizeOrder::FleetColonizeOrder() : 
     Order(),
-    m_empire(UniverseObject::INVALID_OBJECT_ID),
     m_ship(UniverseObject::INVALID_OBJECT_ID),
     m_planet(UniverseObject::INVALID_OBJECT_ID)
 {
@@ -515,7 +514,6 @@ FleetColonizeOrder::FleetColonizeOrder(const GG::XMLElement& elem) : Order(elem.
     if(elem.Tag() != ("FleetColonizeOrder"))
         throw std::invalid_argument("Attempted to construct FleetColonizeOrder from malformed XMLElement");
     
-    m_empire = lexical_cast<int>(elem.Child("m_empire").Text());
     m_ship   = lexical_cast<int>(elem.Child("m_ship").Text());
     m_planet = lexical_cast<int>(elem.Child("m_planet").Text());
     m_colony_fleet_id = lexical_cast<int>(elem.Child("m_colony_fleet_id").Text());
@@ -524,7 +522,6 @@ FleetColonizeOrder::FleetColonizeOrder(const GG::XMLElement& elem) : Order(elem.
 
 FleetColonizeOrder::FleetColonizeOrder(int empire, int ship, int planet) : 
     Order(empire),
-    m_empire(empire),
     m_ship(ship),
     m_planet(planet)
 {
@@ -541,16 +538,15 @@ void FleetColonizeOrder::ServerExecute() const
     planet->AdjustPop(INITIAL_COLONY_POP);
     planet->GetMeter(METER_FARMING)->SetCurrent(INITIAL_COLONY_POP);
     planet->GetMeter(METER_HEALTH)->SetCurrent(planet->GetMeter(METER_HEALTH)->Max());
-    planet->AddOwner(m_empire);
+    planet->AddOwner(EmpireID());
     if (System* system = planet->GetSystem())
-        system->AddOwner(m_empire);
+        system->AddOwner(EmpireID());
 }
 
 XMLElement FleetColonizeOrder::XMLEncode() const
 {
     XMLElement retval("FleetColonizeOrder");
     retval.AppendChild(Order::XMLEncode());
-    retval.AppendChild(XMLElement("m_empire", lexical_cast<std::string>(m_empire)));
     retval.AppendChild(XMLElement("m_ship", lexical_cast<std::string>(m_ship)));
     retval.AppendChild(XMLElement("m_planet", lexical_cast<std::string>(m_planet)));
     retval.AppendChild(XMLElement("m_colony_fleet_id", lexical_cast<std::string>(m_colony_fleet_id)));
@@ -573,7 +569,7 @@ void FleetColonizeOrder::ExecuteImpl() const
         throw std::runtime_error("Illegal fleet id specified in fleet colonize order.");
 
     // verify that empire issuing order owns specified fleet
-    if (!fleet->OwnedBy(m_empire))
+    if (!fleet->OwnedBy(EmpireID()))
         throw std::runtime_error("Empire attempted to issue colonize order to another's fleet.");
 
     // verify that planet exists and is un-occupied.
@@ -623,7 +619,7 @@ bool FleetColonizeOrder::UndoImpl() const
     // if the fleet from which the colony ship came no longer exists or has moved, recreate it
     if (!fleet || fleet->SystemID() != ship->SystemID()) {
         System* system = planet->GetSystem();
-        fleet = new Fleet(!fleet ? m_colony_fleet_name : "Colony Fleet", system->X(), system->Y(), m_empire);
+        fleet = new Fleet(!fleet ? m_colony_fleet_name : "Colony Fleet", system->X(), system->Y(), EmpireID());
         universe.Insert(fleet);
         fleet->AddShip(ship->ID());
         system->Insert(fleet);

@@ -10,6 +10,7 @@
 #include "../util/Random.h"
 #include "../Empire/ServerEmpireManager.h"
 #include "Ship.h"
+#include "ShipDesign.h"
 #include "System.h"
 #include "UniverseObject.h"
 #include "XMLDoc.h"
@@ -1954,7 +1955,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
         // create new Empire object through empire manager
         Empire* empire =
-            dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, empire_name, it->second.name, color, home_planet_id, Empire::CONTROL_HUMAN);
+            dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, empire_name, it->second.name, color, home_planet_id);
 
         // set ownership of home planet
         int empire_id = empire->EmpireID();
@@ -1986,42 +1987,42 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         // create the empire's initial ship designs
         // for now, the order that these are created need to match
         // the enums for ship designs in ships.h
-        ShipDesign scout_design;
-        scout_design.name = "Scout";
-        scout_design.attack = 0;
-        scout_design.defense = 1;
-        scout_design.cost = 50;
-        scout_design.colonize = false;
-        scout_design.empire = empire_id;
-        scout_design.description = "Small and cheap unarmed vessel designed for recon and exploration.";
-
-        int scout_id = empire->AddShipDesign(scout_design);
-
-        ShipDesign colony_ship_design;
-        colony_ship_design.name = "Colony Ship";
-        colony_ship_design.attack = 0;
-        colony_ship_design.defense = 1;
-        colony_ship_design.cost = 250;
-        colony_ship_design.colonize = true;
-        colony_ship_design.empire = empire_id;
-        colony_ship_design.description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
-        int colony_id = empire->AddShipDesign(colony_ship_design);
-
         ShipDesign design;
+        design.name = "Scout";
+        design.attack = 0;
+        design.defense = 1;
+        design.cost = 50;
+        design.speed = 1;
+        design.colonize = false;
+        design.empire = empire_id;
+        design.description = "Small and cheap unarmed vessel designed for recon and exploration.";
+        empire->AddShipDesign(design);
+
+        design.name = "Colony Ship";
+        design.attack = 0;
+        design.defense = 1;
+        design.cost = 250;
+        design.speed = 1;
+        design.colonize = true;
+        design.empire = empire_id;
+        design.description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
+        empire->AddShipDesign(design);
+
         design.name = "Mark I";
         design.attack = 2;
         design.defense = 1;
         design.cost = 100;
+        design.speed = 1;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Affordable armed patrol frigate.";
-
         empire->AddShipDesign(design);
 
         design.name = "Mark II";
         design.attack = 5;
         design.defense = 2;
         design.cost = 200;
+        design.speed = 1;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Cruiser with storng defensive and offensive capabilities.";
@@ -2031,6 +2032,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         design.attack = 10;
         design.defense = 3;
         design.cost = 375;
+        design.speed = 1;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
@@ -2040,6 +2042,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         design.attack = 15;
         design.defense = 5;
         design.cost = 700;
+        design.speed = 1;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";
@@ -2052,17 +2055,17 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
         Ship* ship = 0;
 
-        ship = new Ship(empire_id, scout_id);
+        ship = new Ship(empire_id, "Scout");
         ship->Rename("Scout");
         int ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
 
-        ship = new Ship(empire_id, scout_id);
+        ship = new Ship(empire_id, "Scout");
         ship->Rename("Scout");
         ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
 
-        ship = new Ship(empire_id, colony_id);
+        ship = new Ship(empire_id, "Colony Ship");
         ship->Rename("Colony Ship");
         ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
@@ -2070,7 +2073,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 #endif
 }
 
-int Universe::GenerateObjectID( )
+int Universe::GenerateObjectID()
 {
     return ++m_last_allocated_id;
 }
