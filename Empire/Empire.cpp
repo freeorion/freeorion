@@ -269,7 +269,7 @@ Empire::Empire(const GG::XMLElement& elem) :
         m_building_types.insert(building_types_elem.Child(i).Text());
     }
 
-    m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
+    m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
 }
 
 Empire::~Empire()
@@ -444,7 +444,7 @@ void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
         m_research_queue.push_back(tech);
     else
         m_research_queue.insert(m_research_queue.begin() + pos, tech);
-    m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
+    m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
 }
 
 void Empire::RemoveTechFromQueue(const Tech* tech)
@@ -452,7 +452,7 @@ void Empire::RemoveTechFromQueue(const Tech* tech)
     ResearchQueue::iterator it = m_research_queue.find(tech);
     if (it != m_research_queue.end()) {
         m_research_queue.erase(it);
-        m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
+        m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
     }
 }
 
@@ -630,7 +630,7 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
 **************************************************/
 void Empire::CheckResearchProgress()
 {
-    m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
+    m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
     for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ) {
         const Tech* tech = it->get<0>();
         double& status = m_research_status[tech->Name()];
@@ -672,15 +672,15 @@ void Empire::SetPlayerName(const std::string& player_name)
 
 void Empire::UpdateResourcePool()
 {
-  m_mineral_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
-  m_food_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
-  m_research_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
-  m_population_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
-  m_industry_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
-  m_trade_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
+    m_mineral_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
+    m_food_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
+    m_research_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
+    m_population_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
+    m_industry_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
+    m_trade_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
 }
 
 void Empire::UpdateResearchQueue()
 {
-    m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
+    m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
 }

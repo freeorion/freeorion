@@ -112,7 +112,7 @@ ResourcePool::SortFuncType MineralResourcePool::SortFunc() const
 
 void MineralResourcePool::PlanetChanged(int m_planet_id)
 {
-    m_available_pool=m_stockpile;
+    m_pool_production=0.0;
     m_needed_pool=0.0;
 
     // sum all minerals
@@ -120,17 +120,17 @@ void MineralResourcePool::PlanetChanged(int m_planet_id)
     {
         Planet *planet=*it;
         planet->SetAvailableMinerals(0.0);
-        m_available_pool+=planet->MiningPoints();
+        m_pool_production+=planet->MiningPoints();
         m_needed_pool+=planet->IndustryPoints();
     }
-    m_overall_pool = m_available_pool;
+    double available = m_pool_production + m_stockpile;
 
     // first run: give all planets required mineral limited by local mineral production
     for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
     {
         Planet *planet=*it;
-        planet->SetAvailableMinerals(std::min(m_available_pool,std::min(planet->MiningPoints(),planet->IndustryPoints())));
-        m_available_pool-=planet->AvailableMinerals();
+        planet->SetAvailableMinerals(std::min(available,std::min(planet->MiningPoints(),planet->IndustryPoints())));
+        available-=planet->AvailableMinerals();
     }
 
     // second run: give all planets required mineral to build one unit or support max required minerals
@@ -140,9 +140,9 @@ void MineralResourcePool::PlanetChanged(int m_planet_id)
         double complete_one_item_cost = (planet->ItemBuildCost()-planet->Rollover())-planet->ProductionPoints();
         if(complete_one_item_cost>0.0 && planet->IndustryPoints()>planet->AvailableMinerals())
         {
-            double receives = std::min(m_available_pool,std::min(complete_one_item_cost,planet->IndustryPoints()-planet->AvailableMinerals()));
+            double receives = std::min(available,std::min(complete_one_item_cost,planet->IndustryPoints()-planet->AvailableMinerals()));
             planet->SetAvailableMinerals(planet->AvailableMinerals()+receives);
-            m_available_pool-=receives;
+            available-=receives;
         }
     }
 
@@ -152,13 +152,13 @@ void MineralResourcePool::PlanetChanged(int m_planet_id)
         Planet *planet=*it;
         if(planet->IndustryPoints()>planet->AvailableMinerals())
         {
-            double receives = std::min(m_available_pool,planet->IndustryPoints()-planet->AvailableMinerals());
+            double receives = std::min(available,planet->IndustryPoints()-planet->AvailableMinerals());
             planet->SetAvailableMinerals(planet->AvailableMinerals()+receives);
-            m_available_pool-=receives;
+            available-=receives;
         }
     }
 
-    m_stockpile=std::max(0.0, m_available_pool);
+    m_stockpile=std::max(0.0, available);
 
     ChangedSignal()();
 }
@@ -204,7 +204,7 @@ ResourcePool::SortFuncType FoodResourcePool::SortFunc() const
 
 void FoodResourcePool::PlanetChanged(int m_planet_id)
 {
-    m_available_pool=m_stockpile;
+    m_pool_production=0.0;
     m_needed_pool=0.0;
 
     // sum all food
@@ -212,29 +212,29 @@ void FoodResourcePool::PlanetChanged(int m_planet_id)
     {
         Planet *planet=*it;
         planet->SetAvailableFood(0.0);
-        m_available_pool+=planet->FarmingPoints();
+        m_pool_production+=planet->FarmingPoints();
         m_needed_pool+=PopEstimate(planet);
     }
-    m_overall_pool = m_available_pool;
+    double available = m_pool_production + m_stockpile;
 
     // first pass: give all planets required food limited by local food production
     for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
     {
         Planet *planet=*it;
-        planet->SetAvailableFood(std::min(m_available_pool,std::min(planet->FarmingPoints(),PopEstimate(planet))));
-        m_available_pool-=planet->AvailableFood();
+        planet->SetAvailableFood(std::min(available,std::min(planet->FarmingPoints(),PopEstimate(planet))));
+        available-=planet->AvailableFood();
     }
 
     // second pass: give all planets up to 1 times the required minimum
-    DistributeFood(Planets().begin(), Planets().end(), 1.0, m_available_pool);
+    DistributeFood(Planets().begin(), Planets().end(), 1.0, available);
 
     // third pass: give all planets up to 2 times the required minimum
-    DistributeFood(Planets().begin(), Planets().end(), 2.0, m_available_pool);
+    DistributeFood(Planets().begin(), Planets().end(), 2.0, available);
 
     // fourth pass: give all planets up to 4 times the required minimum
-    DistributeFood(Planets().begin(), Planets().end(), 4.0, m_available_pool);
+    DistributeFood(Planets().begin(), Planets().end(), 4.0, available);
 
-    m_stockpile=std::max(0.0, m_available_pool);
+    m_stockpile=std::max(0.0, available);
 
     ChangedSignal()();
 }
@@ -273,13 +273,13 @@ ResearchResourcePool::ResearchResourcePool(const GG::XMLElement& elem)
 
 void ResearchResourcePool::PlanetChanged(int m_planet_id)
 {
-    m_overall_pool=0.0;
+    m_pool_production=0.0;
 
     // sum all research
     for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
     {
         Planet *planet=*it;
-        m_overall_pool+=planet->ResearchPoints();
+        m_pool_production+=planet->ResearchPoints();
     }
 
     ChangedSignal()();
@@ -341,12 +341,12 @@ IndustryResourcePool::IndustryResourcePool(const GG::XMLElement& elem)
 
 void IndustryResourcePool::PlanetChanged(int m_planet_id)
 {
-    m_overall_pool=0.0;
+    m_pool_production=0.0;
 
     for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
     {
         Planet *planet=*it;
-        m_overall_pool+=planet->IndustryPoints();
+        m_pool_production+=planet->IndustryPoints();
     }
 
     ChangedSignal()();
@@ -382,7 +382,7 @@ ResourcePool::SortFuncType TradeResourcePool::SortFunc() const
 
 void TradeResourcePool::PlanetChanged(int m_planet_id)
 {
-    m_available_pool=m_stockpile;
+    m_pool_production=0.0;
     m_needed_pool=0.0;
 
     // sum all trade
@@ -390,29 +390,29 @@ void TradeResourcePool::PlanetChanged(int m_planet_id)
     {
         Planet *planet=*it;
         planet->SetAvailableTrade(0.0);
-        m_available_pool+=planet->TradePoints();
+        m_pool_production+=planet->TradePoints();
         m_needed_pool+=planet->BuildingCosts();
     }
-    m_overall_pool = m_available_pool;
+    double available = m_pool_production + m_stockpile;
 
     // first pass: give all planets required trade limited by local trade production
     for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
     {
         Planet *planet=*it;
-        planet->SetAvailableTrade(std::min(m_available_pool,std::min(planet->TradePoints(),planet->BuildingCosts())));
-        m_available_pool-=planet->AvailableTrade();
+        planet->SetAvailableTrade(std::min(available,std::min(planet->TradePoints(),planet->BuildingCosts())));
+        available-=planet->AvailableTrade();
     }
 
     // second pass: give all planets up to the required minimum to keep their buildings operating
     for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
     {
         Planet *planet=*it;
-        double receives = std::min(m_available_pool,planet->BuildingCosts()-planet->AvailableTrade());
+        double receives = std::min(available,planet->BuildingCosts()-planet->AvailableTrade());
         planet->SetAvailableTrade(planet->AvailableTrade()+receives);
-        m_available_pool-=receives;
+        available-=receives;
     }
 
-    m_stockpile=m_available_pool;
+    m_stockpile=available;
 
     ChangedSignal()();
 }

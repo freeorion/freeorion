@@ -72,9 +72,9 @@ public:
     MineralResourcePool();
     MineralResourcePool(const GG::XMLElement& elem);
     
-    double Available() const {return m_overall_pool;} ///< amount of mineral which is produced by the planets
-    double Needed   () const {return m_needed_pool;}///< amount of mineral which is needed to support planet production
-
+    double Production() const {return m_pool_production;}
+    double ExcessShortfall() const {return m_pool_production - m_needed_pool;}
+    double Needed   () const {return m_needed_pool;}
     virtual double Stockpile() const;
     virtual GG::XMLElement XMLEncode() const;
 
@@ -85,7 +85,7 @@ protected:
     virtual void PlanetChanged(int m_planet_id);
 
 private:
-    double m_overall_pool,m_available_pool,m_needed_pool,m_stockpile;
+    double m_pool_production,m_needed_pool,m_stockpile;
 };
 
 /**
@@ -97,9 +97,9 @@ public:
     FoodResourcePool();
     FoodResourcePool(const GG::XMLElement& elem);
 
-    double Available() const {return m_overall_pool;}
-    double Needed   () const {return m_needed_pool;}
-
+    double Production() const {return m_pool_production;}
+    double ExcessShortfall() const {return m_pool_production - m_needed_pool;}
+    double Needed() const {return m_needed_pool;}
     virtual double Stockpile() const;
     virtual GG::XMLElement XMLEncode() const;
 
@@ -110,7 +110,7 @@ protected:
     virtual void PlanetChanged(int m_planet_id);
 
 private:
-    double m_overall_pool,m_available_pool,m_needed_pool,m_stockpile;
+    double m_pool_production,m_needed_pool,m_stockpile;
 };
 
 /**
@@ -122,7 +122,7 @@ public:
     ResearchResourcePool();
     ResearchResourcePool(const GG::XMLElement& elem);
 
-    double Available() const {return m_overall_pool;}
+    double Production() const {return m_pool_production;}
 
     virtual GG::XMLElement XMLEncode() const;
 
@@ -130,7 +130,7 @@ protected:
     virtual void PlanetChanged(int m_planet_id);
 
 private:
-    double m_overall_pool;
+    double m_pool_production;
 };
 
 /**
@@ -163,7 +163,7 @@ public:
     IndustryResourcePool();
     IndustryResourcePool(const GG::XMLElement& elem);
 
-    double Available() const {return m_overall_pool;}
+    double Production() const {return m_pool_production;}
 
     virtual GG::XMLElement XMLEncode() const;
 
@@ -171,7 +171,7 @@ protected:
     virtual void PlanetChanged(int m_planet_id);
 
 private:
-    double m_overall_pool;
+    double m_pool_production;
 };
 
 /**
@@ -183,9 +183,9 @@ public:
     TradeResourcePool();
     TradeResourcePool(const GG::XMLElement& elem);
 
-    double Available() const {return m_overall_pool;}
+    double Production() const {return m_pool_production;}
+    double ExcessShortfall() const {return m_pool_production - m_needed_pool;}
     double Needed   () const {return m_needed_pool;}
-
     virtual double Stockpile() const;
     virtual GG::XMLElement XMLEncode() const;
 
@@ -196,7 +196,7 @@ protected:
     virtual void PlanetChanged(int m_planet_id);
 
 private:
-    double m_overall_pool,m_available_pool,m_needed_pool,m_stockpile;
+    double m_pool_production,m_needed_pool,m_stockpile;
 };
 
 

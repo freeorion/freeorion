@@ -219,7 +219,11 @@ MapWnd::MapWnd() :
     m_research= new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-50,LAYOUT_MARGIN,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0);
     m_toolbar->AttachChild(m_research);
 
-    m_mineral = new StatisticIconDualValue(m_research->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0,0,0,false,false);
+    m_trade = new StatisticIconDualValue(m_research->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/trade.png",GG::CLR_WHITE,0,0,0,0,false,false);
+    m_trade->SetPositiveColor(GG::CLR_GREEN); m_trade->SetNegativeColor(GG::CLR_RED);
+    m_toolbar->AttachChild(m_trade);
+
+    m_mineral = new StatisticIconDualValue(m_trade->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0,0,0,false,false);
     m_mineral->SetPositiveColor(GG::CLR_GREEN); m_mineral->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_mineral);
 
@@ -632,6 +636,7 @@ void MapWnd::InitTurn(int turn_number)
 
     GG::Connect(empire->FoodResPool       ().ChangedSignal(),&MapWnd::FoodResourcePoolChanged      ,this,0);FoodResourcePoolChanged();
     GG::Connect(empire->MineralResPool    ().ChangedSignal(),&MapWnd::MineralResourcePoolChanged   ,this,0);MineralResourcePoolChanged();
+    GG::Connect(empire->TradeResPool      ().ChangedSignal(),&MapWnd::TradeResourcePoolChanged     ,this,0);TradeResourcePoolChanged();
     GG::Connect(empire->ResearchResPool   ().ChangedSignal(),&MapWnd::ResearchResourcePoolChanged  ,this,0);ResearchResourcePoolChanged();
     GG::Connect(empire->PopulationResPool ().ChangedSignal(),&MapWnd::PopulationResourcePoolChanged,this,1);PopulationResourcePoolChanged();
     GG::Connect(empire->IndustryResPool   ().ChangedSignal(),&MapWnd::IndustryResourcePoolChanged  ,this,0);IndustryResourcePoolChanged();
@@ -1227,30 +1232,38 @@ void MapWnd::FoodResourcePoolChanged()
 {
   Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
 
-  m_food->SetValue      (empire->FoodResPool   ().Available());
-  m_food->SetValueSecond(empire->FoodResPool().Available()-empire->FoodResPool().Needed());
+  m_food->SetValue      (empire->FoodResPool().Production());
+  m_food->SetValueSecond(empire->FoodResPool().ExcessShortfall());
 }
 
 void MapWnd::MineralResourcePoolChanged()
 {
   Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
 
-  m_mineral->SetValue      (empire->MineralResPool   ().Available());
-  m_mineral->SetValueSecond(empire->MineralResPool   ().Available()-empire->MineralResPool().Needed());
+  m_mineral->SetValue      (empire->MineralResPool().Production());
+  m_mineral->SetValueSecond(empire->MineralResPool().ExcessShortfall());
+}
+
+void MapWnd::TradeResourcePoolChanged()
+{
+  Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+
+  m_trade->SetValue      (empire->TradeResPool().Production());
+  m_trade->SetValueSecond(empire->TradeResPool().ExcessShortfall());
 }
 
 void MapWnd::ResearchResourcePoolChanged()
 {
   Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
 
-  m_research->SetValue(empire->ResearchResPool().Available());
+  m_research->SetValue(empire->ResearchResPool().Production());
 }
 
 void MapWnd::IndustryResourcePoolChanged()
 {
   Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
 
-  m_industry->SetValue(empire->IndustryResPool().Available());
+  m_industry->SetValue(empire->IndustryResPool().Production());
 }
 
 

@@ -104,6 +104,7 @@ protected:
 private:
     void FoodResourcePoolChanged();
     void MineralResourcePoolChanged();
+    void TradeResourcePoolChanged();
     void ResearchResourcePoolChanged();
     void PopulationResourcePoolChanged();
     void IndustryResourcePoolChanged();
@@ -175,7 +176,7 @@ private:
     int                             m_current_fleet;
 
     CUIToolBar                      *m_toolbar;
-    StatisticIconDualValue          *m_food,*m_mineral,*m_population;
+    StatisticIconDualValue          *m_food,*m_mineral,*m_trade,*m_population;
     StatisticIcon                   *m_research,*m_industry;
 
     CUIButton                       *m_btn_siterep,*m_btn_research,*m_btn_menu;
