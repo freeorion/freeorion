@@ -7,7 +7,7 @@
 #include <map>
 #include <string>
 
-
+// TODO: all of these #defines should be moved to a config file..
 
 // Object ID's are segregated into separate ranges by object type, primarily
 // to facilitate the creation of new objects by the client without ID-space
@@ -15,6 +15,27 @@
 #define INVALID_OBJECT_ID              0
 #define MIN_SHIP_ID           1900000000
 #define MAX_SHIP_ID           2100000000
+
+// These define the size of the galaxy map.  They do not measure absolute distances,
+// and the ratio between map coordinates and actual distance varies depending on 
+// universe size
+#define UNIVERSE_X_SIZE     1000
+#define UNIVERSE_Y_SIZE     1000
+
+// Specifies the minimum map distance between stars during universe generation
+// This should also probably be made relative to galaxy size...
+#define MIN_STAR_DISTANCE   15
+
+// These specify the minimum distance of the homeworlds from each other in terms
+// of systems separating them. IE for a very small galaxy no homeworld should be 
+// within the 3 nearest systems to any other homeworld
+
+#define HOMEWORLD_PROXIMITY_LIMIT_V_SMALL_UNI    3
+#define HOMEWORLD_PROXIMITY_LIMIT_SMALL_UNI      4
+#define HOMEWORLD_PROXIMITY_LIMIT_MEDIUM_UNI     5
+#define HOMEWORLD_PROXIMITY_LIMIT_LARGE_UNI      5
+#define HOMEWORLD_PROXIMITY_LIMIT_V_LARGE_UNI    5
+#define HOMEWORLD_PROXIMITY_LIMIT_ENORMOUS_UNI   6
 
 
 

@@ -82,6 +82,12 @@ void ProdCenter::DoResearch()
    // TODO
 }
 
+void ProdCenter::AdjustIndustry(double industry)
+{
+   m_industry_factor += industry;
+}
+
+
 void ProdCenter::MovementPhase(std::vector<SitRepEntry>& sit_reps)
 {
    // TODO

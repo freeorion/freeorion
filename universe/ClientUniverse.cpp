@@ -62,7 +62,7 @@ int ClientUniverse::NearestSystem(System& target_sys)
    int nearest_sys_id = 0;
    float nearest_dist = 2000;
 
-   for (int sys_cnt = 0; sys_cnt < sys_obj_vec.size(); sys_cnt++)
+   for (int sys_cnt = 0; sys_cnt < (int) sys_obj_vec.size(); sys_cnt++)
    {
       const System* temp_sys = dynamic_cast<const System*>(sys_obj_vec[sys_cnt]);
 
@@ -96,7 +96,7 @@ int ClientUniverse::NearestSystem(System& target_sys, System& prev_sys)
    float nearest_dist = 2000;
    float prev_dist = sqrt(pow((prev_sys.X()-target_sys.X()),2) + pow(prev_sys.Y()-target_sys.Y(),2));
 
-   for (int sys_cnt = 0; sys_cnt < sys_obj_vec.size(); sys_cnt++)
+   for (int sys_cnt = 0; sys_cnt < (int) sys_obj_vec.size(); sys_cnt++)
    {
       const System* temp_sys = dynamic_cast<const System*>(sys_obj_vec[sys_cnt]);
       if ((temp_sys->ID() != target_sys.ID()) && (temp_sys->ID() != prev_sys.ID()))

@@ -73,9 +73,15 @@ public:
    
 private:
 
-   void generate_spiral_galaxy(int arms, int stars, int players, std::vector<int>& homeworlds);  ///< creates a spiral galaxy and stores the empire homeworlds in the homeworlds vector
-   void generate_eliptical_galaxy(int stars, int players, std::vector<int>& homeworlds);  ///< creates an eliptical galaxy and stores the empire homeworlds in the homeworlds vector
-   void generate_irregular_galaxy(int stars, int players, std::vector<int>& homeworlds);  ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
+   void GenerateSpiralGalaxy(int arms, int stars);  ///< creates a spiral galaxy and stores the empire homeworlds in the homeworlds vector
+   void GenerateElipticalGalaxy(int stars);  ///< creates an eliptical galaxy and stores the empire homeworlds in the homeworlds vector
+   void GenerateIrregularGalaxy(int stars);  ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
+
+   void GenerateHomeworlds(int players, int stars, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
+
+   void PopulateSystems();  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
+
+   void GenerateEmpires(int players, int ai_players, std::vector<int>& homeworlds);  ///< Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets
 
    int m_last_allocated_id;
    

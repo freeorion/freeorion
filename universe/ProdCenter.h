@@ -55,6 +55,7 @@ public:
    void BuildShip(int id);
    void BuildIndustry();
    void DoResearch();
+   void AdjustIndustry(double industry);
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
