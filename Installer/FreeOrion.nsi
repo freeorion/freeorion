@@ -12,7 +12,10 @@ SetCompressor lzma
 ; Pack exe-header of installer (not required)
 !packhdr foinsttemp.exe '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 foinsttemp.exe'
 ; Strip debugging symbols from binaries
-!system "C:\Dev-Cpp\bin\strip -sp ..\*.exe"
+!system "C:\Dev-Cpp\bin\strip -sp ..\freeorion.exe -o freeorion.exe.stripped"
+!system "C:\Dev-Cpp\bin\strip -sp ..\freeorion.exe -o freeoriond.exe.stripped"
+!system "C:\Dev-Cpp\bin\strip -sp ..\freeorion.exe -o freeorionca.exe.stripped"
+
 
 ; Other installer settings
 
@@ -66,10 +69,9 @@ BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} Installer $$Revision$$ (NSIS v2
 !macroend
 
 Function .onInit
+  MessageBox MB_OK "TEST"
   !insertmacro CHECKUSER ""
 FunctionEnd
-
-; the same applies to the uninstaller
 Function un.onInit
   !insertmacro CHECKUSER "un"
 FunctionEnd
@@ -109,7 +111,11 @@ var ICONS_GROUP
 
 ; Finish page
 !define MUI_FINISHPAGE_NOAUTOCLOSE
-!define MUI_FINISHPAGE_RUN "$INSTDIR\freeorion.exe"
+;!define MUI_FINISHPAGE_RUN "$INSTDIR\freeorion.exe"
+!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\RELEASE-NOTES-V01.txt"
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "View Release Notes"
+!define MUI_FINISHPAGE_LINK "Visit the FreeOrion Forums"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://www.artclusta.com/bb"
 !insertmacro MUI_PAGE_FINISH
 
 ; -------------------------------------------------
@@ -126,11 +132,6 @@ var ICONS_GROUP
 ;!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
 ; Languages
-
-;Function .onInit
-;  !insertmacro MUI_LANGDLL_DISPLAY
-;FunctionEnd
-
 
 
 ; MUI end ------
@@ -158,12 +159,14 @@ Section "Required files" SecRequired
   File "..\GiGiNet.dll"
   File "..\GiGi.dll"
   File "..\freetype-6.dll"
-  File "..\freeoriond.exe"
-  File "..\freeorionca.exe"
-  File "..\freeorion.exe"
+  File /oname=freeoriond.exe "freeoriond.exe.stripped"
+  File /oname=freeorionca.exe "freeorionca.exe.stripped"
+  File /oname=freeorion.exe "freeorion.exe.stripped"
   File "..\devil.dll"
   File "..\Vera.ttf"
-  File /oname="License.Vera.txt" "..\License.Vera"
+  File "..\RELEASE-NOTES-V01.txt"
+  CreateDirectory "$INSTDIR\save"
+  File /oname=License.Vera.txt "..\License.Vera"
 SectionEnd
 
 Section /o "Source Code" SecInstallSource
@@ -181,9 +184,10 @@ Section -AdditionalIcons
     CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion Forums.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
     CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk" "$INSTDIR\uninst.exe"
     CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion dedicated server.lnk" "$INSTDIR\freeoriond.exe"
-    CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion.lnk" "$INSTDIR\freeorion.exe"
+    CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion (windowed).lnk" "$INSTDIR\freeorion.exe"
+    CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion (fullscreen).lnk" "$INSTDIR\freeorion.exe" "--fullscreen"
   !insertmacro MUI_STARTMENU_WRITE_END
-  CreateShortCut "$DESKTOP\FreeOrion.lnk" "$INSTDIR\freeorion.exe"
+;  CreateShortCut "$DESKTOP\FreeOrion.lnk" "$INSTDIR\freeorion.exe"
 SectionEnd
 
 Section -Post
@@ -227,11 +231,8 @@ Section Uninstall
   Delete "$INSTDIR\zlib.dll"
   Delete "$INSTDIR\*.log"
   RMDir /r "$INSTDIR\default"
-  Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
-  Delete "$SMPROGRAMS\$ICONS_GROUP\Website.lnk"
+  Delete "$SMPROGRAMS\$ICONS_GROUP\*.lnk"
   Delete "$DESKTOP\FreeOrion.lnk"
-  Delete "$SMPROGRAMS\$ICONS_GROUP\FreeOrion.lnk"
-  Delete "$SMPROGRAMS\$ICONS_GROUP\FreeOrion dedicated server.lnk"
 
   RMDir "$SMPROGRAMS\$ICONS_GROUP"
   RMDir /r "$INSTDIR"
