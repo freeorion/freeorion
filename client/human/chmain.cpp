@@ -23,9 +23,18 @@ int main(int argc, char* argv[])
             GetOptionsDB().GetUsage(std::cerr);
             return 0;
         }
-    } catch (const std::exception& e) {
+    } catch (const std::invalid_argument& e) {
+        std::cout << "main() caught exception(std::invalid_arg): " << e.what();
         GetOptionsDB().GetUsage(std::cerr);
-        return 0;
+        return 1;
+    } catch (const std::runtime_error& e) {
+        std::cout << "main() caught exception(std::runtime_error): " << e.what();
+        GetOptionsDB().GetUsage(std::cerr);
+        return 1;
+    } catch (const std::exception& e) {
+        std::cout << "main() caught exception(std::exception): " << e.what();
+        GetOptionsDB().GetUsage(std::cerr);
+        return 1;
     }
 
     HumanClientApp app;
