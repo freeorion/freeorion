@@ -72,6 +72,7 @@ private:
     void        Refresh();
     void        UniverseObjectDelete(const UniverseObject *);
 
+    void        ShipSelectionChanged(const std::set<int>& rows);
     void        ShipBrowsed(int row_idx);
     void        ShipDroppedIntoList(int row_idx, const GG::ListBox::Row* row);
     void        ShipRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt);
