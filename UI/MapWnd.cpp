@@ -996,9 +996,9 @@ void MapWnd::RenderFleetMovementLines()
             if (it->first->SystemID() == (*dest_it)->ID())
                 continue;
             glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
-	    std::list<System*>::const_iterator temp_it = dest_it;
-	    if (++temp_it != destinations.end())
-		glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
+            std::list<System*>::const_iterator temp_it = dest_it;
+            if (++temp_it != destinations.end())
+                glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
         }
         glEnd();
     }
