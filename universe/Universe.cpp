@@ -174,6 +174,8 @@ namespace {
         }
     }
 
+    const MAX_ATTEMPTS_PLACE_SYSTEM = 100;
+
     void SpiralGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int arms, unsigned int stars, double width, double height)
     {
         double arm_offset     = RandDouble(0.0,2.0*PI);
@@ -190,7 +192,7 @@ namespace {
         DoubleDistType    random_degree   = DoubleDist  (0.0,2.0*PI);
         DoubleDistType    random_radius   = DoubleDist  (0.0,  1.0);
 
-        for (i = 0, attempts = 0; i < stars && attempts < 100; i++, ++attempts)
+        for (i = 0, attempts = 0; i < stars && attempts <MAX_ATTEMPTS_PLACE_SYSTEM; i++, ++attempts)
         {
             double radius = random_radius();
 
@@ -218,7 +220,7 @@ namespace {
                     < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION)
                 break;
             }
-            if (j < positions.size()) {
+            if (j < positions.size() && attempts < MAX_ATTEMPTS_PLACE_SYSTEM-1) {
                 --i;
                 continue;
             }
@@ -234,7 +236,6 @@ namespace {
         const double rotation = RandDouble(0.0, PI),
             rotation_sin = std::sin(rotation),
             rotation_cos = std::cos(rotation);
-        const unsigned int fail_attempts = 100;
         const double gap_constant = .95;
         const double gap_size = 1.0 - gap_constant * gap_constant * gap_constant;
 
@@ -246,7 +247,7 @@ namespace {
         unsigned int attempts = 0;
 
         // For each attempt to place a star...
-        for (unsigned int i = 0; i < stars && attempts < fail_attempts; ++i, ++attempts){
+        for (unsigned int i = 0; i < stars && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts){
             double radius = radius_dist();
             // Adjust for bigger density near center and create gap.
             radius = radius * radius * radius + gap_size;
@@ -277,7 +278,7 @@ namespace {
                     break;
             }
             // If so, we try again.
-            if (j < positions.size()){
+            if (j < positions.size() && attempts<MAX_ATTEMPTS_PLACE_SYSTEM-1){
                 --i;
                 continue;
             }
@@ -302,7 +303,7 @@ namespace {
         DoubleDistType    random_zero_to_one = DoubleDist  (0.0,  1.0);
         DoubleDistType    random_angle  = DoubleDist  (0.0,2.0*PI);
 
-        for (i=0,attempts=0;i<clusters && attempts<100;i++,attempts++)
+        for (i=0,attempts=0;i<clusters && attempts<MAX_ATTEMPTS_PLACE_SYSTEM;i++,attempts++)
         {
             // prevent cluster position near borders (and on border)
             double x=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters,
@@ -360,7 +361,7 @@ namespace {
                 if ((positions[j].first - x)*(positions[j].first - x)+ (positions[j].second - y)*(positions[j].second - y)
                     < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION)
                     break;
-            if (j<positions.size())
+            if (j<positions.size() && attempts<MAX_ATTEMPTS_PLACE_SYSTEM-1)
             {
                 i--;
                 continue;
@@ -381,7 +382,7 @@ namespace {
         DoubleDistType   theta_dist = DoubleDist(0.0, 2.0 * PI);
         GaussianDistType radius_dist = GaussianDist(RING_RADIUS, RING_WIDTH / 3.0);
 
-        for (unsigned int i = 0, attempts = 0; i < stars && attempts < 100; ++i, ++attempts)
+        for (unsigned int i = 0, attempts = 0; i < stars && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts)
         {
             double theta = theta_dist();
             double radius = radius_dist();
@@ -401,7 +402,7 @@ namespace {
                     break;
                 }
             }
-            if (too_close) {
+            if (too_close && attempts<MAX_ATTEMPTS_PLACE_SYSTEM-1) {
                 --i;
                 continue;
             }
@@ -682,7 +683,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFreqency s
     // in order to ensure that they get spaced out properly
     AdjacencyGrid adjacency_grid(ADJACENCY_BOXES, std::vector<std::set<System*> >(ADJACENCY_BOXES));
 
-    s_universe_width = size * 1000.0 / 150.0; // chosen so that the width of a medium galaxy is 1000.0
+    s_universe_width = std::sqrt(static_cast<double>(size)) * 1000.0 / std::sqrt(150.0); // chosen so that the width of a medium galaxy is 1000.0
 
     std::vector<std::pair<double,double> > positions;
 
@@ -834,8 +835,8 @@ void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjace
             }
         }
 
-        if (!attempts_left)
-            Delete(system->ID());
+        //if (!attempts_left)
+        //    Delete(system->ID());
     }
 }
 
