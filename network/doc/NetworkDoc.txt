@@ -9,17 +9,24 @@
 
    \section serv_stat SERVER_STATUS
    \subsection use_0 Usage
-   sent to the client when requested, and when the server first recieves a connection from a client
-   \subsection format_0 Format
+   sent to the client when requested, when the server first recieves a connection from a client, and certain other similar times
+   \subsection server_status_format_1 Format 1
    \verbatim
    <server_state value="STATE"/>
 
    STATE : numerical value of a ServerState enum\endverbatim
 
+   \subsection server_status_format_2 Format 2
+   \verbatim
+   <new_name>NAME</new_name>
+
+   NAME : name of the receiving player\endverbatim
+   This is received when a client joins a game with a player name that is already in use; the server alters the name slightly and returns it via this message.
+
    \section host_game HOST_GAME
    \subsection use_1 Usage
    sent when a client wishes to establish a game at the server
-   \subsection format_1 Format
+   \subsection host_game_format_1 Format 1
    \verbatim
    <host_player_name>"NAME"</host_player_name>
    <num_players value="NUM_PLAYERS">
@@ -38,33 +45,112 @@
    NUM_SYSTEMS : the number of desired star systems in the generated map
    Each AI_client element indicates that an AI should be created, and indicates the parameters for its creation\endverbatim
 
+   \subsection host_game_format_2 Format 2
+   \verbatim
+   <host_player_name>"NAME"</host_player_name>
+
+   NAME : name of the hosting player\endverbatim
+
+   This format is used to start multiplayer games.  When first seen, it puts the server into its SERVER_MP_LOBBY server state.  A second (Format 2) HOST_GAME 
+   message is required to start the multiplayer game.
+
    \section join_game JOIN_GAME
    \subsection use_2 Usage
    sent when a client wishes to join a game being established at the server
-   \subsection format_2 Format
+   \subsection join_game_format_1 Format
    \verbatim
    NAME
 
    NAME : the name of the joining player\endverbatim
 
+   \section lobby_update LOBBY_UPDATE
+   \subsection use_94 Usage
+   sent from the server to the clients when game parameters change and players join or leave the MP lobby; sent to the server by the "host" client when game parameters 
+   are changed in the MP lobby; and from any client when chat messages are to be sent in the MP lobby
+   \subsection lobby_update_format_1 Format 1
+   \verbatim
+   <galaxy_size "value"="SIZE"/>
+   <galaxy_type "value"="TYPE"/>
+   <galaxy_image_filename>"FILENAME"</galaxy_image_filename>
+   <players>
+       <NAME1 "id"="N1"/>
+       <NAME2 "id"="N2"/>
+       ...
+   </players>
+
+   SIZE : the size in number of stars of the galaxy in which the game will be played
+   TYPE : the type of the galaxy in which the game will be played (2-arm spiral, cluster, etc.)
+   FILENAME : name of the file to be used to generate a custom galaxy shape
+   NAME1, NAME2 ... : the names of all the players currently (hosting or joined) in the MP lobby
+   N1, N2, ... : the player IDs of the corresponding players NAME1, NAME2, ...\endverbatim
+
+   This format is sent from the server to a newly joined client, in order for that client's lobby window to be synchronized with those of the other players.
+
+   \subsection lobby_update_format_2 Format 2
+   \verbatim
+   <players>
+       <NAME1 "id"="N1"/>
+       <NAME2 "id"="N2"/>
+       ...
+   </players>
+
+   NAME1, NAME2 ... : the names of all the players currently (hosting or joined) in the MP lobby
+   N1, N2, ... : the player IDs of the corresponding players NAME1, NAME2, ...\endverbatim
+
+   This format is sent from the server to a all already-joined clients (and the host client) when a new client joins, in order to notify all the clients of 
+   the newly-joined player.
+
+   \subsection lobby_update_format_3 Format 3
+   \verbatim
+   <galaxy_size "value"="SIZE"/>
+   <galaxy_type "value"="TYPE"/>
+   <galaxy_image_filename>"FILENAME"</galaxy_image_filename>
+
+   SIZE : the size in number of stars of the galaxy in which the game will be played
+   TYPE : the type of the galaxy in which the game will be played (2-arm spiral, cluster, etc.)
+   FILENAME : name of the file to be used to generate a custom galaxy shape\endverbatim
+
+   This format is sent from the host client to the server whenever the host player changes a game setup parameter.  The message is echoed by the server to the 
+   other clients to maintain synchronicity.
+
+   \subsection lobby_update_format_4 Format 4
+   \verbatim
+   <receiver "value"="RECEIVER">
+   <text>"TEXT"</text>
+
+   RECEIVER : the player ID of the receiver (-1 for all other clients)
+   TEXT : the text of the message\endverbatim
+
+   This format is sent to the server by any lobby client that wishes to send a text message to one or more other clients.
+
+   \subsection lobby_update_format_5 Format 5
+   \verbatim
+   <sender "value"="SENDER">
+   <text>"TEXT"</text>
+
+   SENDER : the player ID of the sender
+   TEXT : the text of the message\endverbatim
+
+   This format is sent to the target(s) of the text message by the server.
+
    \section save_game SAVE_GAME
    \subsection use_4 Usage
    sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
-   \subsection format_4 Format
+   \subsection save_game_format_1 Format
    \verbatim
    \endverbatim
 
    \section load_game LOAD_GAME
    \subsection use_5 Usage
    sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
-   \subsection format_5 Format
+   \subsection load_game_format_1 Format
    \verbatim
    \endverbatim
 
    \section game_start GAME_START
    \subsection use_6 Usage
    sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
-   \subsection format_6 Format
+   \subsection game_start_format_1 Format
    \verbatim
    <ClientUniverse>"UNIVERSE"</ClientUniverse>
 
@@ -73,60 +159,67 @@
    \section turn_update TURN_UPDATE
    \subsection use_7 Usage
    sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
-   \subsection format_7 Format
+   \subsection turn_update_format_1 Format
    \verbatim
    \endverbatim
 
    \section turn_orders TURN_ORDERS
    \subsection use_8 Usage
    sent to the server by a client that has orders to be processed at the end of a turn or when a game is saved
-   \subsection format_8 Format
+   \subsection turn_orders_format_1 Format
    \verbatim
    \endverbatim
 
    \section combat_start COMBAT_START
    \subsection use_9 Usage
    sent to clients when a combat is about to start
-   \subsection format_9 Format
+   \subsection combat_start_format_1 Format
    \verbatim
    \endverbatim
 
    \section combat_round_update COMBAT_ROUND_UPDATE
    \subsection use_10 Usage
    sent to clients when a combat round has been resolved
-   \subsection format_10 Format
+   \subsection combat_round_update_format_1 Format
    \verbatim
    \endverbatim
 
    \section combat_end COMBAT_END
    \subsection use_11 Usage
    sent to clients when a combat is concluded
-   \subsection format_11 Format
+   \subsection combat_end_format_1 Format
    \verbatim
    \endverbatim
 
    \section human_player_msg HUMAN_PLAYER_MSG
    \subsection use_12 Usage
    sent when one player sends a text message to another in multiplayer
-   \subsection format_12 Format
+   \subsection human_player_msg_format_1 Format
    \verbatim
    MESSAGE
 
-   MESASAGE : the text of the message to be sent to the other player\endverbatim
+   MESSAGE : the text of the message to be sent to the other player\endverbatim
 
    \section player_eliminated PLAYER_ELIMINATED
    \subsection use_13 Usage
    sent to all clients when a player is eliminated from play
-   \subsection format_13 Format
+   \subsection player_eliminated_format_1 Format
    \verbatim
    \endverbatim
 
    \section player_exit PLAYER_EXIT
    \subsection use_14 Usage
    sent to the "host" client when another player leaves the game
-   \subsection format_14 Format
+   \subsection player_exit_format_1 Format
    \verbatim
    \endverbatim
+
+   \section game_end GAME_END
+   \subsection use_14 Usage
+   sent to the server by the hosting client or to the other clients by the server to indicate that the game has been terminated
+   \subsection game_end_format_1 Format
+   \verbatim
+   "" (empty message text)\endverbatim
 
 */
 
