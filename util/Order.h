@@ -349,5 +349,39 @@ private:
    int                       m_fleet;
 };
 
+/////////////////////////////////////////////////////
+// CHANGE PLANET FOCUS ORDER
+/////////////////////////////////////////////////////
+
+/** the Order subclass that represents changing a planet focus*/
+class ChangeFocusOrder : public Order
+{
+public:
+   /** \name Structors */ //@{
+   ChangeFocusOrder();
+   ChangeFocusOrder(const GG::XMLElement& elem);
+   ChangeFocusOrder(int empire, int planet,ProdCenter::FocusType focus,int which);
+   //@}
+   
+   /** \name Accessors */ //@{
+   int   PlanetID() const   {return m_planet;}  ///< returns ID of the fleet to be deleted
+   
+   /**
+   * Preconditions of execute: 
+   *    - the designated planet must exist, be owned by the issuing empire
+   *
+   *  Postconditions:
+   *    - the planet focus is changed which=0(primary),1(secondary)
+   *
+   */
+   virtual void           Execute() const;
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+   //@}
+   
+private:
+   int                    m_planet;
+   ProdCenter::FocusType  m_focus;
+   int                    m_which;
+};
 #endif // _Order_h_
 

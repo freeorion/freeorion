@@ -44,6 +44,7 @@ namespace
     Order* GenFleetTransferOrder(const XMLElement& elem) {return new FleetTransferOrder(elem);}
     Order* GenFleetColonizeOrder(const XMLElement& elem) {return new FleetColonizeOrder(elem);}
     Order* GenDeleteFleetOrder(const XMLElement& elem)   {return new DeleteFleetOrder(elem);}
+    Order* GenChangeFocusOrder(const XMLElement& elem)   {return new ChangeFocusOrder(elem);}
 }
 
 
@@ -83,6 +84,7 @@ void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
     fact.AddGenerator("FleetTransferOrder", &GenFleetTransferOrder);
     fact.AddGenerator("FleetColonizeOrder", &GenFleetColonizeOrder);
     fact.AddGenerator("DeleteFleetOrder",   &GenDeleteFleetOrder);
+    fact.AddGenerator("ChangeFocusOrder",   &GenChangeFocusOrder);
 }
 
 
@@ -678,6 +680,63 @@ GG::XMLElement DeleteFleetOrder::XMLEncode() const
     XMLElement retval("DeleteFleetOrder");
     retval.AppendChild(Order::XMLEncode());
     retval.AppendChild(XMLElement("m_fleet", lexical_cast<std::string>(m_fleet)));
+    return retval;
+}
+
+// CHANGE PLANET FOCUS ORDER
+ChangeFocusOrder::ChangeFocusOrder() : 
+    Order(),
+    m_planet(UniverseObject::INVALID_OBJECT_ID),
+    m_focus(ProdCenter::FOCUS_UNKNOWN),
+    m_which(-1)
+{
+}
+
+ChangeFocusOrder::ChangeFocusOrder(const GG::XMLElement& elem):
+    Order(elem.Child("Order"))
+{
+    if(elem.Tag() != ("ChangeFocusOrder"))
+        throw std::invalid_argument("Attempted to construct ChangeFocusOrder from malformed XMLElement");
+
+    m_planet = lexical_cast<int>(elem.Child("m_planet").Text());
+    m_focus = static_cast<ProdCenter::FocusType>(lexical_cast<int>(elem.Child("m_focus").Text()));
+    m_which = lexical_cast<int>(elem.Child("m_which").Text());
+}
+
+ChangeFocusOrder::ChangeFocusOrder(int empire, int planet,ProdCenter::FocusType focus,int which) : 
+    Order(empire),
+    m_planet(planet),
+    m_focus(focus),
+    m_which(which)
+{}
+
+void ChangeFocusOrder::Execute() const
+{
+    ValidateEmpireID();
+
+    Planet* planet = dynamic_cast<Planet*>(GetUniverse().Object(PlanetID()));
+    Empire* empire = Empires().Lookup(EmpireID());
+
+    if(!planet)
+        throw std::runtime_error("Illegal planet id specified in change planet focus order.");
+
+    if (!planet->OwnedBy(EmpireID()))
+        throw std::runtime_error("Empire attempted to issue change planet focus to another's planet.");
+
+    switch(m_which)
+    {
+      case 0: planet->SetPrimaryFocus  (m_focus);break;
+      case 1: planet->SetSecondaryFocus(m_focus);break;
+    }
+}
+
+GG::XMLElement ChangeFocusOrder::XMLEncode() const
+{
+    XMLElement retval("ChangeFocusOrder");
+    retval.AppendChild(Order::XMLEncode());
+    retval.AppendChild(XMLElement("m_planet", lexical_cast<std::string>(m_planet)));
+    retval.AppendChild(XMLElement("m_focus" , lexical_cast<std::string>(m_focus )));
+    retval.AppendChild(XMLElement("m_which" , lexical_cast<std::string>(m_which )));
     return retval;
 }
 
