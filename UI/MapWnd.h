@@ -93,10 +93,10 @@ private:
     std::vector<double>   m_bg_position_X;  //!< array, the X position of the first full background image
     std::vector<double>   m_bg_position_Y;  //!< array, the Y positions of the backgrounds
 
-    double          	m_zoom_factor;  //! the current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
-    SidePanel*      	m_side_panel;   //! the planet view panel on the side of the main map
-    SysIconVec     	m_stars;        //! a vector of StarControls
-    
+    double          m_zoom_factor;  //! the current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
+    SidePanel*      m_side_panel;   //! the planet view panel on the side of the main map
+    SysIconVec      m_system_icons; //! a vector of SystemIcons
+
     GG::Pt          m_drag_offset;  //! the distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool            m_dragged;      //! tracks whether or not a drag occurs during a left button down sequence of events
 

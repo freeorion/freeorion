@@ -192,12 +192,11 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
       // Windows platform always sends an additional event with a move of 0. This should be ignored
       return 0;
 
-    for (unsigned int i = 0; i < m_stars.size(); ++i) {
-        const System* system = 
-            dynamic_cast<const System*>(HumanClientApp::GetUniverse().Object(m_stars[i]->SystemID()));
-        GG::Pt icon_ul(static_cast<int>((system->X() - SystemIcon::ICON_WIDTH / 2) * m_zoom_factor), 
-                       static_cast<int>((system->Y() - SystemIcon::ICON_HEIGHT / 2) * m_zoom_factor));
-        m_stars[i]->SizeMove(icon_ul.x, icon_ul.y, 
+    for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
+        const System& system = m_system_icons[i]->GetSystem();
+        GG::Pt icon_ul(static_cast<int>((system.X() - SystemIcon::ICON_WIDTH / 2) * m_zoom_factor), 
+                       static_cast<int>((system.Y() - SystemIcon::ICON_HEIGHT / 2) * m_zoom_factor));
+        m_system_icons[i]->SizeMove(icon_ul.x, icon_ul.y, 
                              static_cast<int>(icon_ul.x + SystemIcon::ICON_WIDTH * m_zoom_factor + 0.5), 
                              static_cast<int>(icon_ul.y + SystemIcon::ICON_HEIGHT * m_zoom_factor + 0.5));
     }
@@ -221,16 +220,15 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 void MapWnd::InitTurn( int turn_number )
 {
     // remove icons from UI
-    for (unsigned int i = 0; i < m_stars.size(); ++i) {
-      DeleteChild( m_stars[i] );
+    for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
+      DeleteChild( m_system_icons[i] );
     }
-    // clear stars
-    m_stars.clear();
+    m_system_icons.clear();
 
     Universe::ObjectIDVec system_IDs = ClientApp::GetUniverse().FindObjectIDs(IsSystem);
     for (unsigned int i = 0; i < system_IDs.size(); ++i) {
         SystemIcon* icon = new SystemIcon(system_IDs[i], m_zoom_factor);
-        m_stars.push_back(icon);
+        m_system_icons.push_back(icon);
         AttachChild(icon);
         GG::Connect(icon->LeftClickedSignal(), &MapWnd::SelectSystem, this);
     }        
@@ -244,14 +242,14 @@ void MapWnd::InitTurn( int turn_number )
 
 void MapWnd::ShowSystemNames()
 {
-    for (unsigned int i = 0; i < m_stars.size(); ++i)
-        m_stars[i]->ShowName();
+    for (unsigned int i = 0; i < m_system_icons.size(); ++i)
+        m_system_icons[i]->ShowName();
 }
 
 void MapWnd::HideSystemNames()
 {
-    for (unsigned int i = 0; i < m_stars.size(); ++i)
-        m_stars[i]->HideName();
+    for (unsigned int i = 0; i < m_system_icons.size(); ++i)
+        m_system_icons[i]->HideName();
 }
 
 void MapWnd::RenderBackgrounds()
