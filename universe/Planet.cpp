@@ -1,7 +1,7 @@
 #include "Planet.h"
 
 #include "../util/AppInterface.h"
-#include "DataTable.h"
+#include "../util/DataTable.h"
 #include "Fleet.h"
 #include "Predicates.h"
 #include "../server/ServerApp.h"
