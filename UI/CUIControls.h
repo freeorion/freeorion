@@ -210,7 +210,8 @@ class CUIDropDownList : public GG::DropDownList
 public:
     /** \name Structors */ //@{
     CUIDropDownList(int x, int y, int w, int row_ht, int drop_ht, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, 
-                    GG::Clr interior = ClientUI::DROP_DOWN_LIST_INT_COLOR, Uint32 flags = CLICKABLE); ///< basic ctor
+                    GG::Clr interior = ClientUI::DROP_DOWN_LIST_INT_COLOR, GG::Clr drop_list_interior = ClientUI::DROP_DOWN_LIST_INT_COLOR, 
+                    Uint32 flags = CLICKABLE); ///< basic ctor
 
     CUIDropDownList(const GG::XMLElement& elem); ///< ctor that constructs a CUIDropDownList object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIDropDownList object
     //@}
@@ -221,7 +222,13 @@ public:
 
     /** \name Mutators */ //@{
     virtual bool   Render();
+
+    void DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
+    void EnableDropArrow();   ///< enables rendering of the small downward-facing arrow on the right of the control
     //@}
+
+private:
+    bool m_render_drop_arrow;
 };
 
 

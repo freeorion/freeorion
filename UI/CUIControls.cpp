@@ -486,8 +486,10 @@ const int CUIDROPDOWNLIST_ANGLE_OFFSET = 5;
 }
 
 CUIDropDownList::CUIDropDownList(int x, int y, int w, int row_ht, int drop_ht, GG::Clr color/* = ClientUI::CTRL_BORDER_COLOR*/,
-                                 GG::Clr interior/* = ClientUI::DROP_DOWN_LIST_INT_COLOR*/, Uint32 flags/* = CLICKABLE*/) : 
-    DropDownList(x, y, w, row_ht, drop_ht, color, interior, new CUIListBox(x, y, w, drop_ht, color, interior, flags))
+                                 GG::Clr interior/* = ClientUI::DROP_DOWN_LIST_INT_COLOR*/, 
+                                 GG::Clr drop_list_interior/* = ClientUI::DROP_DOWN_LIST_INT_COLOR*/, Uint32 flags/* = CLICKABLE*/) : 
+    DropDownList(x, y, w, row_ht, drop_ht, color, interior, new CUIListBox(x, y, w, drop_ht, color, drop_list_interior, flags)),
+    m_render_drop_arrow(true)
 {
 }
 
@@ -523,14 +525,28 @@ bool CUIDropDownList::Render()
     int margin = 3;
     int triangle_width = lr.y - ul.y - 4 * margin;
     int outline_width = triangle_width + 3 * margin;
-    IsoscelesTriangle(lr.x - triangle_width - margin * 5 / 2, ul.y + 2 * margin, lr.x - margin * 5 / 2, lr.y - 2 * margin, 
-                      SHAPE_DOWN, ClientUI::DROP_DOWN_LIST_ARROW_COLOR);
+
+    if (m_render_drop_arrow) {
+        IsoscelesTriangle(lr.x - triangle_width - margin * 5 / 2, ul.y + 2 * margin, lr.x - margin * 5 / 2, lr.y - 2 * margin, 
+                          SHAPE_DOWN, ClientUI::DROP_DOWN_LIST_ARROW_COLOR);
+    }
 
     AngledCornerRectangle(lr.x - outline_width - margin, ul.y + margin, lr.x - margin, lr.y - margin, GG::CLR_ZERO, 
                           color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
 
     return true;
 }
+
+void CUIDropDownList::DisableDropArrow()
+{
+    m_render_drop_arrow = false;
+}
+
+void CUIDropDownList::EnableDropArrow()
+{
+    m_render_drop_arrow = true;
+}
+
 
 
 ///////////////////////////////////////
