@@ -6,7 +6,7 @@
 # $Id$
 
 FILENAME=FO-autotools.tar.bz2
-URL=http://dennis.uni-hd.de/FO/$FILENAME
+URL=http://freeorion.sourceforge.net/$FILENAME
 TAR_OPTIONS=-xjf
 
 while test $# != 0; do
