@@ -178,3 +178,6 @@ License
 
 ABOUT_WINDOW_TITLE
 About FreeOrion v0.1a
+
+CREDITS
+Credits
