@@ -427,7 +427,7 @@ void SidePanel::SetSystem(int system_id)
 
     m_system = dynamic_cast<const System*>(HumanClientApp::GetUniverse().Object(system_id));
     if (m_system) {
-        *m_name_text << m_system->Name() + " System";
+        *m_name_text << (m_system->Name() == "" ? "Unexplored" : m_system->Name()) + " System";
 
         //TODO: add star icon and star type text
 
