@@ -492,7 +492,7 @@ void MapWnd::SetFleetMovement(FleetButton* fleet_button)
             destinations.find(fleet->DestinationID()) == destinations.end()) {
             destinations.insert(fleet->DestinationID());
             GG::Pt fleet_ul = fleet_button->UpperLeft();
-            GG::Pt sz = fleet_button->WindowDimensions();
+            GG::Pt sz = fleet_button->Size();
             m_fleet_lines[fleet] = MovementLineData((fleet_ul.x + sz.x / 2 - ul.x) / m_zoom_factor, 
                                                     (fleet_ul.y + sz.y / 2 - ul.y) / m_zoom_factor, 
                                                     fleet->Destination());

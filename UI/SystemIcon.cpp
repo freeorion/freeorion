@@ -83,7 +83,7 @@ void SystemIcon::SizeMove(int x1, int y1, int x2, int y2)
     PositionSystemName();
 
     const int BUTTON_SIZE = static_cast<int>(Height() * ClientUI::FLEET_BUTTON_SIZE);
-    GG::Pt size = WindowDimensions();
+    GG::Pt size = Size();
     int stationary_y = 0;
     for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
         it->second->SizeMove(size.x - BUTTON_SIZE, stationary_y, size.x, stationary_y + BUTTON_SIZE);
@@ -156,7 +156,7 @@ void SystemIcon::CreateFleetButtons()
     m_moving_fleet_markers.clear();
 
     const int BUTTON_SIZE = static_cast<int>(Height() * ClientUI::FLEET_BUTTON_SIZE);
-    GG::Pt size = WindowDimensions();
+    GG::Pt size = Size();
     MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     int stationary_y = 0;
     int moving_y = size.y - BUTTON_SIZE;

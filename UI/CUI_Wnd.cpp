@@ -161,7 +161,7 @@ CUI_Wnd::CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags)
     // set window text
     SetText(t);
     // call to CUI_Wnd::MinimizedLength() because MinimizedLength is virtual
-    SetMinDimensions(GG::Pt(CUI_Wnd::MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
+    SetMinSize(GG::Pt(CUI_Wnd::MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
     InitButtons();
 }
 
@@ -212,15 +212,15 @@ GG::XMLElement CUI_Wnd::XMLEncode() const
 void CUI_Wnd::SizeMove(int x1, int y1, int x2, int y2)
 {
     Wnd::SizeMove(x1, y1, x2, y2);
-    if (Width() < MinDimensions().x)
-        Resize(MinDimensions().x, Height());
-    if (MaxDimensions().x < Width())
-        Resize(MaxDimensions().x, Height());
+    if (Width() < MinSize().x)
+        Resize(MinSize().x, Height());
+    if (MaxSize().x < Width())
+        Resize(MaxSize().x, Height());
 
-    if (Height() < MinDimensions().y)
-        Resize(Width(), MinDimensions().y);
-    if (MaxDimensions().y < Height())
-        Resize(Width(), MaxDimensions().y);
+    if (Height() < MinSize().y)
+        Resize(Width(), MinSize().y);
+    if (MaxSize().y < Height())
+        Resize(Width(), MaxSize().y);
 
     if (m_close_button)
         m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
@@ -400,8 +400,8 @@ void CUI_Wnd::CloseClicked()
 void CUI_Wnd::MinimizeClicked()
 {
     if (!m_minimized) {
-        m_original_size = WindowDimensions();
-        SetMinDimensions(GG::Pt(MinimizedLength(), BORDER_TOP));
+        m_original_size = Size();
+        SetMinSize(GG::Pt(MinimizedLength(), BORDER_TOP));
         Resize(MINIMIZED_WND_LENGTH, BORDER_TOP);
         if (m_close_button)
             m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
@@ -415,7 +415,7 @@ void CUI_Wnd::MinimizeClicked()
             m_minimize_button->Show();
         m_minimized = true;
     } else {
-        SetMinDimensions(GG::Pt(MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
+        SetMinSize(GG::Pt(MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
         Resize(m_original_size);
         if (m_close_button)
             m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);

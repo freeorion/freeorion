@@ -297,7 +297,7 @@ CUIScroll::ScrollTab::ScrollTab(GG::Scroll::Orientation orientation, int scroll_
     Button(0, 2, scroll_width, scroll_width, "", "", 0, color),
     m_border_color(border_color)
 {
-    SetMinDimensions(GG::Pt(orientation == GG::Scroll::VERTICAL ? MinDimensions().x : 10, orientation == GG::Scroll::VERTICAL ? 10 : MinDimensions().y));
+    SetMinSize(GG::Pt(orientation == GG::Scroll::VERTICAL ? MinSize().x : 10, orientation == GG::Scroll::VERTICAL ? 10 : MinSize().y));
 }
 
 CUIScroll::ScrollTab::ScrollTab(const GG::XMLElement& elem) : 
@@ -404,7 +404,7 @@ int CUIScroll::Render()
 void CUIScroll::SizeMove(int x1, int y1, int x2, int y2)
 {
     Wnd::SizeMove(x1, y1, x2, y2);
-    int bn_width = (ScrollOrientation() == VERTICAL) ? WindowDimensions().x : WindowDimensions().y;
+    int bn_width = (ScrollOrientation() == VERTICAL) ? Size().x : Size().y;
     TabButton()->SizeMove(TabButton()->UpperLeft(), 
                           (ScrollOrientation() == VERTICAL) ? GG::Pt(bn_width, TabButton()->LowerRight().y) :
                           GG::Pt(TabButton()->LowerRight().x, bn_width));

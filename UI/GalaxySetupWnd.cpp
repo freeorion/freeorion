@@ -50,10 +50,10 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     m_galaxy_file = new CUIEdit(PREVIEW_UL.x, preview_lr.y + 7, 168, ClientUI::PTS + 10, "");
     
-    m_browse_button = new CUIButton(PREVIEW_UL.x + m_galaxy_file->WindowDimensions().x + 5, preview_lr.y + 7, 75, ClientUI::String("BROWSE_BTN"));
+    m_browse_button = new CUIButton(PREVIEW_UL.x + m_galaxy_file->Size().x + 5, preview_lr.y + 7, 75, ClientUI::String("BROWSE_BTN"));
     
     m_ok     = new CUIButton(10, preview_lr.y + 10, 75, ClientUI::String("OK"));
-    m_cancel = new CUIButton(10 + m_ok->WindowDimensions().x + 15, preview_lr.y + 10, 75, ClientUI::String("CANCEL"));
+    m_cancel = new CUIButton(10 + m_ok->Size().x + 15, preview_lr.y + 10, 75, ClientUI::String("CANCEL"));
 
     Init();
 }

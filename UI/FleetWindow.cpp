@@ -371,7 +371,7 @@ FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint3
 {
     m_fleet_panel = new FleetDetailPanel(LeftBorder() + 3, TopBorder() + 3, fleet, read_only);
     std::cout << "FleetDetailWnd::FleetDetailWnd() : Created FleetDetailPanel @ " << m_fleet_panel << "\n";
-    Resize(m_fleet_panel->WindowDimensions() + GG::Pt(LeftBorder() + RightBorder() + 6, TopBorder() + BottomBorder() + 6));
+    Resize(m_fleet_panel->Size() + GG::Pt(LeftBorder() + RightBorder() + 6, TopBorder() + BottomBorder() + 6));
     AttachSignalChildren();
     SetText(TitleText());
     GG::Connect(m_fleet_panel->NeedNewFleetSignal(), &FleetDetailWnd::PanelNeedsNewFleet, this);
