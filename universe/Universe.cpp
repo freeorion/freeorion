@@ -1259,6 +1259,8 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       scout_design.cost = 50;
       scout_design.colonize = false;
       scout_design.empire = empire_id;
+      scout_design.description = "Small and cheap unarmed vessel designed for recognition and exploration.";
+
       int scout_id = empire->AddShipDesign(scout_design);
 
       ShipDesign colony_ship_design;
@@ -1268,6 +1270,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       colony_ship_design.cost = 250;
       colony_ship_design.colonize = true;
       colony_ship_design.empire = empire_id;
+      colony_ship_design.description = "Huge unarmed vessel capable of delivering million citizens safely to borderworlds.";
       int colony_id = empire->AddShipDesign(colony_ship_design);
 
       ShipDesign design;
@@ -1277,6 +1280,8 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       design.cost = 100;
       design.colonize = false;
       design.empire = empire_id;
+      design.description = "Affordable armed patrol frigate.";
+
       empire->AddShipDesign(design);
 
       design.name = "Mark II";
@@ -1285,6 +1290,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       design.cost = 200;
       design.colonize = false;
       design.empire = empire_id;
+      design.description = "Cruiser with storng defence and offence capabilities.";
       empire->AddShipDesign(design);
 
       design.name = "Mark III";
@@ -1293,6 +1299,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       design.cost = 375;
       design.colonize = false;
       design.empire = empire_id;
+      design.description = "Advanced cruiser with heavy weaponery and armoring to do the dirty work.";
       empire->AddShipDesign(design);
 
       design.name = "Mark IV";
@@ -1301,6 +1308,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       design.cost = 700;
       design.colonize = false;
       design.empire = empire_id;
+      design.description = "Massive state-of-art warship armed and protected with latest technolgy. Priced accordigly.";
       empire->AddShipDesign(design);
 
       // create the empire's starting fleet
