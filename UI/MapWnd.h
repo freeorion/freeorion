@@ -20,6 +20,10 @@ class SidePanel;
 class SitRepPanel;
 class System;
 class SystemIcon;
+class StatisticIcon;
+class StatisticIconDualValue;
+class CUIToolBar;
+
 namespace GG {
 class Texture;
 class MultiEdit;
@@ -98,6 +102,15 @@ protected:
     virtual bool   EventFilter(GG::Wnd* w, const GG::Wnd::Event& event);
 
 private:
+    void FoodResourcePoolChanged();
+    void MineralResourcePoolChanged();
+    void ResearchResourcePoolChanged();
+    void PopulationResourcePoolChanged();
+    void IndustryResourcePoolChanged();
+
+    void MenuBtnClicked() {ShowOptions();}
+    void SiteRepBtnClicked() {ToggleSitRep();}
+
     struct StarlaneData;     ///< contains all the information necessary to render a single fleet movement line on the main map
     struct MovementLineData; ///< contains all the information necessary to render a single fleet movement line on the main map
 
@@ -145,6 +158,12 @@ private:
     CUIButton*                      m_turn_update;   //!< button that updates player's turn
     std::list<MapWndPopup*>         m_popups;        //!< list of currently active popup windows
     bool                            m_options_showing; //!< set during ShowOptions() to prevent reentrency
+
+    CUIToolBar                      *m_toolbar;
+    StatisticIconDualValue          *m_food,*m_mineral,*m_population;
+    StatisticIcon                   *m_research,*m_industry;
+
+    CUIButton                       *m_btn_siterep,*m_btn_menu;
 
     SystemLeftClickedSignalType  m_left_clicked_system_signal;
     SystemRightClickedSignalType m_right_clicked_system_signal;

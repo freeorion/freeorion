@@ -205,9 +205,40 @@ MapWnd::MapWnd() :
     m_sitrep_panel = new SitRepPanel( (GG::App::GetApp()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::App::GetApp()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);
 
+    // toolbar
+    m_toolbar = new CUIToolBar(0,0,GG::App::GetApp()->AppWidth(),30);
+    AttachChild(m_toolbar);
+
     // turn button
     m_turn_update = new CUIButton(5, 5, END_TURN_BTN_WIDTH, "" );
-    AttachChild(m_turn_update);
+    m_toolbar->AttachChild(m_turn_update);
+
+    m_food = new StatisticIconDualValue(m_turn_update->LowerRight().x+5,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0);
+    m_food->SetPositiveColor(GG::CLR_GREEN); m_food->SetNegativeColor(GG::CLR_RED);
+    m_toolbar->AttachChild(m_food);
+
+    m_mineral = new StatisticIconDualValue(m_food->LowerRight().x+5,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0);
+    m_mineral->SetPositiveColor(GG::CLR_GREEN); m_mineral->SetNegativeColor(GG::CLR_RED);
+    m_toolbar->AttachChild(m_mineral);
+
+    m_research= new StatisticIcon(m_mineral->LowerRight().x+5,5,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0);
+    m_toolbar->AttachChild(m_research);
+    
+    m_industry= new StatisticIcon(m_research->LowerRight().x+5,5,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/industry.png",GG::CLR_WHITE,0);
+    m_toolbar->AttachChild(m_industry);
+    
+    m_population= new StatisticIconDualValue(m_industry->LowerRight().x+5,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0);
+    m_population->SetPositiveColor(GG::CLR_GREEN); m_population->SetNegativeColor(GG::CLR_RED);
+    m_population->SetDecimalsShown(2);
+    m_toolbar->AttachChild(m_population);
+
+    m_btn_siterep = new CUIButton(m_population->LowerRight().x+5, 5, 50, "Siterep" );
+    m_toolbar->AttachChild(m_btn_siterep);
+    GG::Connect(m_btn_siterep->ClickedSignal(), &MapWnd::SiteRepBtnClicked, this);
+    
+    m_btn_menu = new CUIButton(m_btn_siterep->LowerRight().x+5, 5, 40, "Menu" );
+    m_toolbar->AttachChild(m_btn_menu);
+    GG::Connect(m_btn_menu->ClickedSignal(), &MapWnd::MenuBtnClicked, this);
 
     // chat display and chat input box
     const int CHAT_WIDTH = 400;
@@ -454,8 +485,9 @@ void MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
     m_side_panel->OffsetMove(-final_move);
     m_chat_display->OffsetMove(-final_move);
     m_chat_edit->OffsetMove(-final_move);
-    m_turn_update->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
+    m_toolbar->OffsetMove(-final_move);
+
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
     m_dragged = true;
@@ -604,6 +636,8 @@ void MapWnd::InitTurn(int turn_number)
         }
     }
 
+    MoveChildUp(m_toolbar);
+
     MoveChildUp(m_side_panel);
     if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
         m_side_panel->Hide();
@@ -633,6 +667,12 @@ void MapWnd::InitTurn(int turn_number)
     // center the map at the start of the game (if we're at the default start position, the ods are very good that this is a fresh game)
     if (ClientUpperLeft() == GG::Pt())
         CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
+
+    GG::Connect(empire->FoodResPool       ().ChangedSignal(),&MapWnd::FoodResourcePoolChanged      ,this,0);FoodResourcePoolChanged();
+    GG::Connect(empire->MineralResPool    ().ChangedSignal(),&MapWnd::MineralResourcePoolChanged   ,this,0);MineralResourcePoolChanged();
+    GG::Connect(empire->ResearchResPool   ().ChangedSignal(),&MapWnd::ResearchResourcePoolChanged  ,this,0);ResearchResourcePoolChanged();
+    GG::Connect(empire->PopulationResPool ().ChangedSignal(),&MapWnd::PopulationResourcePoolChanged,this,1);PopulationResourcePoolChanged();
+    GG::Connect(empire->IndustryResPool   ().ChangedSignal(),&MapWnd::IndustryResourcePoolChanged  ,this,0);IndustryResourcePoolChanged();
 }
 
 void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
@@ -666,8 +706,8 @@ void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
-    m_turn_update->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
+    m_toolbar->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
@@ -676,8 +716,9 @@ void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
     m_side_panel->OffsetMove(-final_move);
     m_chat_display->OffsetMove(-final_move);
     m_chat_edit->OffsetMove(-final_move);
-    m_turn_update->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
+    m_toolbar->OffsetMove(-final_move);
+
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
 
@@ -722,8 +763,8 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
-    m_turn_update->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
+    m_toolbar->OffsetMove(-map_move);
 
     // this correction ensures that the centering doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
@@ -732,8 +773,9 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     m_side_panel->OffsetMove(-final_move);
     m_chat_display->OffsetMove(-final_move);
     m_chat_edit->OffsetMove(-final_move);
-    m_turn_update->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
+    m_toolbar->OffsetMove(-final_move);
+
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
 }
@@ -909,8 +951,8 @@ void MapWnd::Zoom(int delta)
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
-    m_turn_update->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
+    m_toolbar->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
@@ -919,8 +961,8 @@ void MapWnd::Zoom(int delta)
     m_side_panel->OffsetMove(-final_move);
     m_chat_display->OffsetMove(-final_move);
     m_chat_edit->OffsetMove(-final_move);
-    m_turn_update->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
+    m_toolbar->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
 }
@@ -1188,4 +1230,41 @@ bool MapWnd::KeyboardZoomOut()
     return true;
 }
 
+void MapWnd::FoodResourcePoolChanged()
+{
+  Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
 
+  m_food->SetValue      (empire->FoodResPool   ().Available());
+  m_food->SetValueSecond(empire->FoodResPool().Available()-empire->FoodResPool().Needed());
+}
+
+void MapWnd::MineralResourcePoolChanged()
+{
+  Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+
+  m_mineral->SetValue      (empire->MineralResPool   ().Available());
+  m_mineral->SetValueSecond(empire->MineralResPool   ().Available()-empire->MineralResPool().Needed());
+}
+
+void MapWnd::ResearchResourcePoolChanged()
+{
+  Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+
+  m_research->SetValue(empire->ResearchResPool().Available());
+}
+
+void MapWnd::IndustryResourcePoolChanged()
+{
+  Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+
+  m_industry->SetValue(empire->IndustryResPool().Available());
+}
+
+
+void MapWnd::PopulationResourcePoolChanged()
+{
+  Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+
+  m_population->SetValue      (empire->PopulationResPool().Available());
+  m_population->SetValueSecond(empire->PopulationResPool().Growth   ());
+}
