@@ -10,9 +10,7 @@
   extern "C" void inituniverse(void);
 #endif
 
-#ifdef __cplusplus
 extern "C" // use C-linkage, as required by SDL
-#endif
 int main(int argc, char* argv[])
 {
     try {
@@ -33,6 +31,9 @@ int main(int argc, char* argv[])
     } catch (const std::exception& e) {
         std::cerr << "main() caught exception(std::exception): " << e.what();
         GetOptionsDB().GetUsage(std::cerr);
+        return 1;
+    } catch (...) {
+        std::cerr << "main() caught unknown exception.";
         return 1;
     }
 

@@ -4,9 +4,7 @@
 
 #include <fstream>
 
-#ifdef __cplusplus
 extern "C" // use C-linkage, as required by SDL
-#endif
 int main(int argc, char* argv[])
 {
     try {
