@@ -16,6 +16,7 @@
 
 #include <boost/lexical_cast.hpp>
 
+const int IMAGES_PER_STAR_TYPE = 2; // number of star images available per star type (named "type1.png", "type2.png", ...)
 
 ////////////////////////////////////////////////
 // SystemIcon
@@ -31,32 +32,27 @@ SystemIcon::SystemIcon(int id, double zoom) :
     SetText(m_system.Name());
 
     //resize to the proper size
-    GG::Pt ul(static_cast<int>((m_system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * zoom), 
+    GG::Pt ul(static_cast<int>((m_system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * zoom),
               static_cast<int>((m_system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2) * zoom));
-    SizeMove(ul.x, ul.y, 
-             static_cast<int>(ul.x + ClientUI::SYSTEM_ICON_SIZE * zoom + 0.5), 
+    SizeMove(ul.x, ul.y,
+             static_cast<int>(ul.x + ClientUI::SYSTEM_ICON_SIZE * zoom + 0.5),
              static_cast<int>(ul.y + ClientUI::SYSTEM_ICON_SIZE * zoom + 0.5));
 
-    //load the proper graphic for the color of the star
+    // star graphic
     boost::shared_ptr<GG::Texture> graphic;
+    std::string system_image = ClientUI::ART_DIR + "stars/";
     switch (m_system.Star()) {
-    case System::YELLOW:
-        graphic = HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "/stars/yellow1.png");
-        break;
-    case System::RED_GIANT:
-        graphic = HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "/stars/red3.png");
-        break;
-    case System::RED_DWARF:
-        graphic = HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "/stars/red4.png");
-        break;
-    case System::BLUE:
-        graphic = HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "/stars/blue2.png");
-        break;
-    default:
-        //just load a blue star for now
-        graphic = HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "/stars/blue2.png");
-        break;
+        case System::BLUE: system_image += "blue2"; break;
+        case System::WHITE:    system_image += "yellow1"; break;
+        case System::YELLOW: system_image += "yellow2"; break;
+        case System::ORANGE: system_image += "red4"; break;
+        case System::RED: system_image += "red3"; break;
+        case System::NEUTRON:   system_image += "blue2"; break;
+        case System::BLACK:   system_image += "blue2"; break;
+    default:               system_image += "blue2"; break;
     }
+    system_image += /*boost::lexical_cast<std::string>((m_system.ID() % IMAGES_PER_STAR_TYPE) + 1) +*/ ".png";
+    graphic = HumanClientApp::GetApp()->GetTexture(system_image);
 
     //setup static graphic
     m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::GR_FITGRAPHIC);
@@ -96,35 +92,35 @@ void SystemIcon::SizeMove(int x1, int y1, int x2, int y2)
     }
 }
 
-void SystemIcon::LClick(const GG::Pt& pt, Uint32 keys) 
+void SystemIcon::LClick(const GG::Pt& pt, Uint32 keys)
 {
-    if (!Disabled()) 
-        m_left_click_signal(m_system.ID()); 
+    if (!Disabled())
+        m_left_click_signal(m_system.ID());
 }
 
-void SystemIcon::RClick(const GG::Pt& pt, Uint32 keys) 
+void SystemIcon::RClick(const GG::Pt& pt, Uint32 keys)
 {
-    if (!Disabled()) 
-        m_right_click_signal(m_system.ID()); 
+    if (!Disabled())
+        m_right_click_signal(m_system.ID());
 }
 
-void SystemIcon::LDoubleClick(const GG::Pt& pt, Uint32 keys) 
+void SystemIcon::LDoubleClick(const GG::Pt& pt, Uint32 keys)
 {
-    if (!Disabled()) 
-        m_left_double_click_signal(m_system.ID()); 
+    if (!Disabled())
+        m_left_double_click_signal(m_system.ID());
 }
 
 void SystemIcon::ClickFleetButton(Fleet* fleet)
 {
     for (unsigned int i = 0; i < m_stationary_fleet_markers.size(); ++i) {
-        if (std::find(m_stationary_fleet_markers[i]->Fleets().begin(), m_stationary_fleet_markers[i]->Fleets().end(), fleet) != 
+        if (std::find(m_stationary_fleet_markers[i]->Fleets().begin(), m_stationary_fleet_markers[i]->Fleets().end(), fleet) !=
             m_stationary_fleet_markers[i]->Fleets().end()) {
             m_stationary_fleet_markers[i]->LClick(GG::Pt(), 0);
             return;
         }
     }
     for (unsigned int i = 0; i < m_moving_fleet_markers.size(); ++i) {
-        if (std::find(m_moving_fleet_markers[i]->Fleets().begin(), m_moving_fleet_markers[i]->Fleets().end(), fleet) != 
+        if (std::find(m_moving_fleet_markers[i]->Fleets().begin(), m_moving_fleet_markers[i]->Fleets().end(), fleet) !=
             m_moving_fleet_markers[i]->Fleets().end()) {
             m_moving_fleet_markers[i]->LClick(GG::Pt(), 0);
             return;
@@ -189,7 +185,7 @@ void SystemIcon::Refresh()
     }
     m_name->SetColor(text_color);
 
-    System::ConstObjectVec fleets = m_system.FindObjects(&IsFleet);
+    std::vector<const Fleet*> fleets = m_system.FindObjects<Fleet>();
     for (unsigned int i = 0; i < fleets.size(); ++i)
         Connect(fleets[i]->StateChangedSignal(), &SystemIcon::CreateFleetButtons, this);
 

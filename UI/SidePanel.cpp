@@ -35,7 +35,7 @@ GG::SubTexture SidePanel::PlanetPanel::m_research_icon;
 GG::SubTexture SidePanel::PlanetPanel::m_mining_icon;
 GG::SubTexture SidePanel::PlanetPanel::m_farming_icon;
 
-SidePanel::PlanetPanel::PlanetPanel(const Planet& planet, int y, int parent_width, int h) : 
+SidePanel::PlanetPanel::PlanetPanel(const Planet& planet, int y, int parent_width, int h) :
     Wnd(-HUGE_PLANET_SIZE / 2, y, parent_width + HUGE_PLANET_SIZE / 2, h, GG::Wnd::CLICKABLE),
     m_planet_id(planet.ID()),
     m_construction(0)
@@ -54,31 +54,35 @@ SidePanel::PlanetPanel::PlanetPanel(const Planet& planet, int y, int parent_widt
 
     // planet graphic
     std::string planet_image = ClientUI::ART_DIR + "planets/";
+
     switch (planet.Type()) {
-    case Planet::TOXIC:    planet_image += "toxic"; break;
-    case Planet::RADIATED: planet_image += "radiated"; break;
-    case Planet::BARREN:   planet_image += "barren"; break;
-    case Planet::DESERT:   planet_image += "desert"; break;
-    case Planet::TUNDRA:   planet_image += "tundra"; break;
-    case Planet::OCEAN:    planet_image += "ocean"; break;
-    case Planet::TERRAN:
-    case Planet::GAIA:     planet_image += "terran"; break;
+    case Planet::PT_GASGIANT:
+    case Planet::PT_TOXIC:    planet_image += "toxic"; break;
+    case Planet::PT_INFERNO:
+    case Planet::PT_RADIATED: planet_image += "radiated"; break;
+    case Planet::PT_ASTEROIDS:
+    case Planet::PT_BARREN:   planet_image += "barren"; break;
+    case Planet::PT_DESERT:   planet_image += "desert"; break;
+    case Planet::PT_SWAMP:
+    case Planet::PT_TUNDRA:   planet_image += "tundra"; break;
+    case Planet::PT_OCEAN:    planet_image += "ocean"; break;
+    case Planet::PT_GAIA:
+    case Planet::PT_TERRAN:    planet_image += "terran"; break;
     default:               planet_image += "barren"; break;
     }
     planet_image += boost::lexical_cast<std::string>((planet.ID() % IMAGES_PER_PLANET_TYPE) + 1) + ".png";
-    m_planet_graphic = GG::SubTexture(HumanClientApp::GetApp()->GetTexture(planet_image), 
-                                      0, 0, PLANET_IMAGE_SIZE - 1, PLANET_IMAGE_SIZE - 1);
-
+    m_planet_graphic = GG::SubTexture(HumanClientApp::GetApp()->GetTexture(planet_image),
+                                  0, 0, PLANET_IMAGE_SIZE - 1, PLANET_IMAGE_SIZE - 1);
     // construction drop list
     if (!planet.Owners().empty() && *planet.Owners().begin() == HumanClientApp::GetApp()->PlayerID()) {
 
         // for v.1 some of these only appear after tech is researched
-        
+
         Empire *empire = HumanClientApp::Empires().Lookup( HumanClientApp::GetApp()->PlayerID() );
 
-        m_construction = new CUIDropDownList(Width() - CONSTR_DROP_LIST_WIDTH - 3, 
+        m_construction = new CUIDropDownList(Width() - CONSTR_DROP_LIST_WIDTH - 3,
                                              Height() - ClientUI::SIDE_PANEL_PTS - CONSTR_PROGRESS_BAR_HT - 6,
-                                             CONSTR_DROP_LIST_WIDTH, ClientUI::SIDE_PANEL_PTS + 4, 
+                                             CONSTR_DROP_LIST_WIDTH, ClientUI::SIDE_PANEL_PTS + 4,
                                              (ClientUI::SIDE_PANEL_PTS + 4) * 5, GG::CLR_ZERO);
         m_construction->SetStyle(GG::LB_NOSORT);
         m_construction->OffsetMove(0, -m_construction->Height());
@@ -146,13 +150,13 @@ SidePanel::PlanetPanel::PlanetPanel(const Planet& planet, int y, int parent_widt
             m_construction_prod_idx.push_back( ProdCenter::DEF_BASE );
         }
 
-        // find the index we need to set in the list 
+        // find the index we need to set in the list
         int selection_idx = 0;
         for ( std::vector< ProdCenter::BuildType >::iterator it = m_construction_prod_idx.begin(); it != m_construction_prod_idx.end(); ++it, selection_idx++ ) {
             if ( *it ==  planet.CurrentlyBuilding() )
                 break;
         }
-        
+
         m_construction->Select( selection_idx );
         Connect(m_construction->SelChangedSignal(), &SidePanel::PlanetPanel::BuildSelected, this);
         ////////////////////// v0.1 only!!
@@ -167,11 +171,11 @@ bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 }
 
 
-void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys) 
+void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys)
 {
     if ( InPlanet( pt ) )
     {
-	m_left_clicked_sig( m_planet_id );
+    m_left_clicked_sig( m_planet_id );
     }
 }
 
@@ -186,6 +190,9 @@ bool SidePanel::PlanetPanel::Render()
     const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
     if(!planet)
         throw std::runtime_error("SidePanel::PlanetPanel::Render planet not found!");
+        
+    if(planet->Size() == Planet::SZ_NOWORLD)        //nothing to render
+        return true;
 
     // planet graphic
     int planet_image_sz = PlanetDiameter();
@@ -216,23 +223,29 @@ bool SidePanel::PlanetPanel::Render()
     posn = GG::Pt(ul.x + HUGE_PLANET_SIZE / 2 + CircleXFromY(y - Height() / 2.0, TEXT_POSITION_RADIUS), ul.y + static_cast<int>(y));
     std::string text;
     switch (planet->Size()) {
+        case Planet::SZ_NOWORLD: text += ClientUI::String("PL_SZ_NOWORLD"); break;
         case Planet::SZ_TINY: text += ClientUI::String("PL_SZ_TINY"); break;
         case Planet::SZ_SMALL: text += ClientUI::String("PL_SZ_SMALL"); break;
         case Planet::SZ_MEDIUM: text += ClientUI::String("PL_SZ_MEDIUM"); break;
         case Planet::SZ_LARGE: text += ClientUI::String("PL_SZ_LARGE"); break;
         case Planet::SZ_HUGE: text += ClientUI::String("PL_SZ_HUGE"); break;
+        case Planet::SZ_ASTEROIDS: case Planet::SZ_GASGIANT: break;
         default: text += "ERROR "; break;
     }
     text += " ";
     switch (planet->Type()) {
-        case Planet::TOXIC: text += ClientUI::String("PL_TOXIC"); break;
-        case Planet::RADIATED: text += ClientUI::String("PL_RADIATED"); break;
-        case Planet::BARREN: text += ClientUI::String("PL_BARREN"); break;
-        case Planet::DESERT: text += ClientUI::String("PL_DESERT"); break;
-        case Planet::TUNDRA: text += ClientUI::String("PL_TUNDRA"); break;
-        case Planet::OCEAN: text += ClientUI::String("PL_OCEAN"); break;
-        case Planet::TERRAN: text += ClientUI::String("PL_TERRAN"); break;
-        case Planet::GAIA: text += ClientUI::String("PL_GAIA"); break;
+        case Planet::PT_TOXIC:      text += ClientUI::String("PL_TOXIC"); break;
+        case Planet::PT_INFERNO:    text += ClientUI::String("PL_INFERNO"); break;
+        case Planet::PT_ASTEROIDS:  text += ClientUI::String("PL_ASTEROIDS"); break;
+        case Planet::PT_GASGIANT:   text += ClientUI::String("PL_GASGIANT"); break;
+        case Planet::PT_RADIATED:   text += ClientUI::String("PL_RADIATED"); break;
+        case Planet::PT_BARREN:     text += ClientUI::String("PL_BARREN"); break;
+        case Planet::PT_DESERT:     text += ClientUI::String("PL_DESERT"); break;
+        case Planet::PT_SWAMP:      text += ClientUI::String("PL_SWAMP"); break;
+        case Planet::PT_TUNDRA:     text += ClientUI::String("PL_TUNDRA"); break;
+        case Planet::PT_OCEAN:      text += ClientUI::String("PL_OCEAN"); break;
+        case Planet::PT_TERRAN:     text += ClientUI::String("PL_TERRAN"); break;
+        case Planet::PT_GAIA:       text += ClientUI::String("PL_GAIA"); break;
         default: text += "ERROR "; break;
     }
     y1 = static_cast<int>(posn.y - FONT_HALF_HT);
@@ -317,7 +330,7 @@ bool SidePanel::PlanetPanel::Render()
         y1 = ul.y + Height() - ClientUI::SIDE_PANEL_PTS - CONSTR_PROGRESS_BAR_HT - 3;
         y2 = y1 + CONSTR_PROGRESS_BAR_HT;
         GG::FlatRectangle(x1, y1, x2, y2, GG::CLR_ZERO, ClientUI::CTRL_BORDER_COLOR, 1);
-        GG::FlatRectangle(x1, y1, x1 + static_cast<int>((x2 - x1 - 2) * percent_complete), y2, 
+        GG::FlatRectangle(x1, y1, x1 + static_cast<int>((x2 - x1 - 2) * percent_complete), y2,
                           ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR, LightColor(ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR), 1);
 
         // construction progress text
@@ -369,10 +382,10 @@ void SidePanel::PlanetPanel::BuildSelected(int idx) const
 ////////////////////////////////////////////////
 // SidePanel
 ////////////////////////////////////////////////
-SidePanel::SidePanel(int x, int y, int w, int h) : 
+SidePanel::SidePanel(int x, int y, int w, int h) :
     Wnd(x, y, w, h, GG::Wnd::CLICKABLE),
     m_system(0),
-    m_name_text(new GG::TextControl(0, 0, w, static_cast<int>(ClientUI::PTS * 1.5 + 4), "", ClientUI::FONT, 
+    m_name_text(new GG::TextControl(0, 0, w, static_cast<int>(ClientUI::PTS * 1.5 + 4), "", ClientUI::FONT,
                                     static_cast<int>(ClientUI::PTS * 1.5), GG::TF_CENTER | GG::TF_VCENTER, ClientUI::TEXT_COLOR)),
     m_first_row_shown(0),
     m_first_col_shown(0),
@@ -416,10 +429,12 @@ void SidePanel::SetSystem(int system_id)
     if (m_system) {
         *m_name_text << m_system->Name() + " System";
 
+        //TODO: add star icon and star type text
+
         // TODO: add fleet icons
 
         // add planets
-        System::ConstObjectVec planets = m_system->FindObjects(IsPlanet);
+        std::vector<const Planet*> planets = m_system->FindObjects<Planet>();
         int y = m_name_text->Height();
         const int PLANET_PANEL_HT = HUGE_PLANET_SIZE;
         for (unsigned int i = 0; i < planets.size(); ++i, y += PLANET_PANEL_HT) {
