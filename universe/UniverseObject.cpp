@@ -34,7 +34,7 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
    m_owners(owners),
    m_system_id(INVALID_OBJECT_ID)
 {
-   if (m_x < 0.0 || Universe::UNIVERSE_WIDTH < m_x || m_y < 0.0 || Universe::UNIVERSE_WIDTH < m_y)
+   if (m_x < 0.0 || Universe::UniverseWidth() < m_x || m_y < 0.0 || Universe::UniverseWidth() < m_y)
       throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
 }
 
@@ -155,7 +155,7 @@ GG::XMLElement UniverseObject::XMLEncode(int empire_id) const
 
 void UniverseObject::Move(double x, double y)
 {
-   if (m_x + x < 0.0 || Universe::UNIVERSE_WIDTH < m_x + x || m_y + y < 0.0 || Universe::UNIVERSE_WIDTH < m_y + y)
+   if (m_x + x < 0.0 || Universe::UniverseWidth() < m_x + x || m_y + y < 0.0 || Universe::UniverseWidth() < m_y + y)
       throw std::runtime_error("UniverseObject::Move : Attempted to move object \"" + m_name + "\" off the map area.");
    m_x += x;
    m_y += y;
@@ -164,7 +164,7 @@ void UniverseObject::Move(double x, double y)
 
 void UniverseObject::MoveTo(double x, double y)
 {
-   if (x < 0.0 || Universe::UNIVERSE_WIDTH < x || y < 0.0 || Universe::UNIVERSE_WIDTH < y)
+   if (x < 0.0 || Universe::UniverseWidth() < x || y < 0.0 || Universe::UniverseWidth() < y)
       throw std::invalid_argument("UniverseObject::MoveTo : Attempted to place object \"" + m_name + "\" off the map area.");
    m_x = x;
    m_y = y;
