@@ -47,17 +47,18 @@ typedef boost::mt19937                            GeneratorType;
   typedef boost::uniform_real<GeneratorType>        DoubleDistType;
   typedef boost::normal_distribution<GeneratorType> GaussianDistType;
 #else
-   typedef boost::variate_generator<GeneratorType,boost::uniform_smallint<> >   SmallIntDistType;
+  typedef boost::variate_generator<GeneratorType,boost::uniform_smallint<> >   SmallIntDistType;
   typedef boost::variate_generator<GeneratorType,boost::uniform_int<> >         IntDistType;
   typedef boost::variate_generator<GeneratorType,boost::uniform_real<> >        DoubleDistType;
   typedef boost::variate_generator<GeneratorType,boost::normal_distribution<> > GaussianDistType;
 #endif
 
-namespace {
-    GeneratorType gen; // the one random number generator driving the distributions below
+namespace Util_Random{
+    extern GeneratorType gen; // the one random number generator driving the distributions below
     // The interface of uniform_01 didn't change.
-    boost::uniform_01<GeneratorType> zero_to_one_gen(gen);
+    extern boost::uniform_01<GeneratorType> zero_to_one_gen;//(gen);
 }
+using namespace Util_Random;
 
 /** seeds the underlying random number generator used to drive all random number distributions */
 inline void Seed(unsigned int seed) {gen.seed(static_cast<boost::mt19937::result_type>(seed));}
