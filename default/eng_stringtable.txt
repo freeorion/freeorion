@@ -438,11 +438,20 @@ FW_EMPIRE_FLEETS
 
 
 ###############
-# TechWnd     #
+# TechTreeWnd #
 ###############
 
-TECH_COST_STR
+TECH_TOTAL_COST_STR
 %1% RP / %2% Turns
+
+TECH_TURN_COST_STR
+%1% RP
+
+TECH_TURNS_LEFT_STR
+%1% Turns
+
+TECH_TURNS_LEFT_NEVER
+Never
 
 TECH_DETAIL_TYPE_STR
 %1% %2%
@@ -485,6 +494,32 @@ Requires
 
 TECH_WND_UNLOCKS
 Unlocks
+
+
+###############
+# ResearchWnd #
+###############
+
+RESEARCH_WND_TITLE
+Research
+
+RESEARCH_INFO_PANEL_TITLE
+Research
+
+RESEARCH_INFO_TOTAL_RPS_LABEL
+Total Available RP
+
+RESEARCH_INFO_WASTED_RPS_LABEL
+Wasted RP
+
+RESEARCH_INFO_PROJECTS_IN_PROGRESS_LABEL
+Projects in Progress
+
+RESEARCH_INFO_RPS_TO_UNDERFUNDED_PROJECTS_LABEL
+RP Going to Underfunded Project
+
+RESEARCH_INFO_PROJECTS_IN_QUEUE_LABEL
+Projects in Queue
 
 
 ####################
