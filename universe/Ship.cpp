@@ -110,8 +110,15 @@ Fleet* Ship::GetFleet() const
 
 UniverseObject::Visibility Ship::GetVisibility(int empire_id) const
 {
-   // Ship is visible if its fleet is visible
-   return FleetID() == INVALID_OBJECT_ID ? NO_VISIBILITY : GetFleet()->GetVisibility(empire_id);
+  UniverseObject::Visibility vis = NO_VISIBILITY;
+
+  if (empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
+      vis = FULL_VISIBILITY;
+  else
+      vis = PARTIAL_VISIBILITY; // TODO: do something smarter here, such as a range check vs. owned systems and fleets
+
+  // Ship is visible if its fleet is visible
+  return FleetID() == INVALID_OBJECT_ID ? NO_VISIBILITY : (GetFleet()?GetFleet()->GetVisibility(empire_id):vis);
 }
 
 bool Ship::IsArmed() const
