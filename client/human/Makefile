@@ -10,12 +10,14 @@ FREETYPE_INC = /usr/include/freetype2
 BOOST_INC = /usr/boost_1_30_0
 
 BOOST_SIG_LIB = /usr/boost_1_30_0/libs/signals/build/bin/libboost_signals.a/gcc/debug/runtime-link-dynamic
+BOOST_FS_LIB = /usr/boost_1_30_0/libs/filesystem/build/bin/libboost_filesystem.a/gcc/debug/runtime-link-dynamic
+BOOST_REGEX_LIB = /usr/boost_1_30_0/libs/regex/build/bin/libboost_regex.a/gcc/debug/runtime-link-dynamic
 #BOOST_PYTHON_LIB = /usr/boost_1_30_0/libs/python/build/bin/libboost_python.a/gcc/debug/runtime-link-dynamic
 
 OBJ  = ../../objs/chmain.o ../../objs/HumanClientApp.o ../../objs/ClientApp.o ../../objs/GGApp.o ../../objs/GGButton.o ../../objs/GGClr.o ../../objs/GGControl.o ../../objs/GGDrawUtil.o ../../objs/GGDropDownList.o ../../objs/GGEdit.o ../../objs/GGListBox.o ../../objs/GGMenu.o ../../objs/GGPtRect.o ../../objs/GGScroll.o ../../objs/GGStaticGraphic.o ../../objs/GGText.o ../../objs/GGTextControl.o ../../objs/GGTexture.o ../../objs/GGWnd.o ../../objs/GGZList.o ../../objs/SDL_ttf.o ../../objs/SDLGGApp.o ../../objs/XMLDoc.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/SDLnetUDP.o ../../objs/SDLnet.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/Process.o ../../objs/OrderSet.o
 LINKOBJ  = ../../objs/chmain.o ../../objs/HumanClientApp.o ../../objs/ClientApp.o ../../objs/GGApp.o ../../objs/GGButton.o ../../objs/GGClr.o ../../objs/GGControl.o ../../objs/GGDrawUtil.o ../../objs/GGDropDownList.o ../../objs/GGEdit.o ../../objs/GGListBox.o ../../objs/GGMenu.o ../../objs/GGPtRect.o ../../objs/GGScroll.o ../../objs/GGStaticGraphic.o ../../objs/GGText.o ../../objs/GGTextControl.o ../../objs/GGTexture.o ../../objs/GGWnd.o ../../objs/GGZList.o ../../objs/SDL_ttf.o ../../objs/SDLGGApp.o ../../objs/XMLDoc.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/SDLnetUDP.o ../../objs/SDLnet.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/Process.o ../../objs/OrderSet.o
 
-LIBS =  -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lSDL_image -lGL -lGLU -lfreetype -lboost_signals -lexpat -llog4cpp -lz -lpthread
+LIBS =  -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -L$(BOOST_FS_LIB) -L$(BOOST_REGEX_LIB) -lSDLmain -lSDL -lSDL_image -lSDL_mixer -lGL -lGLU -lfreetype -lboost_signals -lboost_filesystem -lboost_regex -lexpat -llog4cpp -lz -lpthread
 
 INCS =  -I/usr/include  -I/usr/include/GL  -I$(SDL_INC)  -I$(FREETYPE_INC)  -I$(BOOST_INC)  -I../../SDL_net  -I../../SDL_net2  -I../../GG  -I../../GG/XML
 
