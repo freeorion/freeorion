@@ -263,10 +263,15 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
             if (option.value.empty())
                 throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
 
-            if (option.validator) // non-flag
-                option.FromString(argv[++i]);
-            else // flag
+            if (option.validator) { // non-flag
+                try {
+                    option.FromString(argv[++i]);
+                } catch (const std::exception& e) {
+                    throw std::runtime_error("OptionsDB::SetFromCommandLine() : the following exception was caught when attemptimg to set option \"" + option.name + "\": " + e.what());
+                }
+            } else { // flag
                 option.value = true;
+            }
 
             option_changed = true;
         } else if (current_token.find('-') == 0) {
@@ -323,7 +328,7 @@ void OptionsDB::SetFromXMLRecursive(const GG::XMLElement& elem, const std::strin
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
 
     // flags have no text or children; their presence at all indicates a value of true
-    std::string option_value = elem.NumChildren() || elem.Text() != "" ? elem.Text() : "true";
+    std::string option_value = elem.NumChildren() || elem.Text() != "" ? elem.Text() : "1";
 
     if (option_value != "") {
         std::map<std::string, Option>::iterator it = m_options.find(option_name);
@@ -335,7 +340,11 @@ void OptionsDB::SetFromXMLRecursive(const GG::XMLElement& elem, const std::strin
         if (option.value.empty())
             throw std::runtime_error("The value member of option \"" + option.name + "\" is undefined.");
 
-        option.FromString(option_value);
+        try {
+            option.FromString(option_value);
+        } catch (const std::exception& e) {
+            throw std::runtime_error("OptionsDB::SetFromXMLRecursive() : the following exception was caught when attemptimg to set option \"" + option_name + "\": " + e.what());
+        }
     }
 
     for (int i = 0; i < elem.NumChildren(); ++i) {
