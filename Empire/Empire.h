@@ -285,6 +285,12 @@ public:
    
     void UpdateResourcePool();
 
+    const MineralResourcePool&    MineralResPool    () const {return m_mineral_resource_pool;}
+    const FoodResourcePool&       FoodResPool       () const {return m_food_resource_pool;}
+    const ResearchResourcePool&   ResearchResPool   () const {return m_research_resource_pool;}
+    const PopulationResourcePool& PopulationResPool () const {return m_population_resource_pool;}
+    const IndustryResourcePool&   IndustryResPool   () const {return m_industry_resource_pool;}
+
 private:
     /// Empire's unique numeric id
     int m_id;
@@ -320,9 +326,12 @@ private:
     /// The Empire's sitrep entries
     std::list<SitRepEntry*> m_sitrep_entries;
 
-    /// The Empire mineral resource pool
-    MineralResourcePool m_mineral_resource_pool;
-    FoodResourcePool    m_food_resource_pool;
+    /// The Empire resource pools
+    MineralResourcePool     m_mineral_resource_pool;
+    FoodResourcePool        m_food_resource_pool;
+    ResearchResourcePool    m_research_resource_pool;
+    PopulationResourcePool  m_population_resource_pool;
+    IndustryResourcePool    m_industry_resource_pool;
 };
 
 #endif

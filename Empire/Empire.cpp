@@ -25,7 +25,7 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_color(color), 
     m_control_state(control),
     m_next_design_id(1),
-    m_mineral_resource_pool(),m_food_resource_pool()
+    m_mineral_resource_pool(),m_food_resource_pool(),m_research_resource_pool(),m_population_resource_pool()
 {}
 
 Empire::Empire(const GG::XMLElement& elem) : 
@@ -337,4 +337,7 @@ void Empire::UpdateResourcePool()
 {
   m_mineral_resource_pool.SetPlanets(GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(m_id)));
   m_food_resource_pool.SetPlanets(GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(m_id)));
+  m_research_resource_pool.SetPlanets(GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(m_id)));
+  m_population_resource_pool.SetPlanets(GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(m_id)));
+  m_industry_resource_pool.SetPlanets(GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(m_id)));
 }
