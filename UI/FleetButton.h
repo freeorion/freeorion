@@ -13,6 +13,8 @@
 
 class FleetWnd;
 
+/** represents a group of same-empire fleets at the same location.  Clicking a FleetButton brings up a fleet window 
+    from which the user can view and/or give orders to the fleets shown. */
 class FleetButton : public GG::Button
 {
 public:
