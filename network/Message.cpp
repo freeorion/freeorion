@@ -148,9 +148,16 @@ void Message::DecompressMessage(std::string& uncompressed_msg) const
 ////////////////////////////////////////////////
 // Message-Creation Free Functions
 ////////////////////////////////////////////////
-Message HostGameMessage(const GG::XMLDoc& game_parameters)
+Message HostGameMessage(int player_id, const GG::XMLDoc& game_parameters)
 {
-   return Message(Message::HOST_GAME, -1, -1, Message::CORE, game_parameters);
+   return Message(Message::HOST_GAME, player_id, -1, Message::CORE, game_parameters);
+}
+
+Message HostGameMessage(int player_id, const std::string& host_player_name)
+{
+   GG::XMLDoc doc;
+   doc.root_node.AppendChild(GG::XMLElement("host_player_name", host_player_name));
+   return Message(Message::HOST_GAME, player_id, -1, Message::CORE, doc);
 }
 
 Message JoinGameMessage(const std::string& player_name)
@@ -178,8 +185,49 @@ Message JoinAckMessage(int player_id)
    return Message(Message::JOIN_GAME, -1, player_id, Message::CORE, boost::lexical_cast<std::string>(player_id));
 }
 
+Message RenameMessage(int player_id, const std::string& new_name)
+{
+    GG::XMLDoc doc;
+    doc.root_node.AppendChild(GG::XMLElement("new_name", new_name));
+    return Message(Message::SERVER_STATUS, -1, player_id, Message::CORE, doc);
+}
+
 Message EndGameMessage(int sender, int receiver)
 {
    return Message(Message::END_GAME, sender, receiver, Message::CORE, "");
 }
 
+
+////////////////////////////////////////////////
+// Multiplayer Lobby Messages
+////////////////////////////////////////////////
+
+Message LobbyUpdateMessage(int sender, const GG::XMLDoc& doc)
+{
+    return Message(Message::LOBBY_UPDATE, sender, -1, Message::CORE, doc);
+}
+
+Message ServerLobbyUpdateMessage(int receiver, const GG::XMLDoc& doc)
+{
+    return Message(Message::LOBBY_UPDATE, -1, receiver, Message::CLIENT_LOBBY_MODULE, doc);
+}
+
+Message LobbyChatMessage(int sender, int receiver, const std::string& text)
+{
+    GG::XMLDoc doc;
+    GG::XMLElement temp("receiver");
+    temp.SetAttribute("value", boost::lexical_cast<std::string>(receiver));
+    doc.root_node.AppendChild(temp);
+    doc.root_node.AppendChild(GG::XMLElement("text", text));
+    return Message(Message::LOBBY_UPDATE, sender, -1, Message::CORE, doc);
+}
+
+Message ServerLobbyChatMessage(int sender, int receiver, const std::string& text)
+{
+    GG::XMLDoc doc;
+    GG::XMLElement temp("sender");
+    temp.SetAttribute("value", boost::lexical_cast<std::string>(sender));
+    doc.root_node.AppendChild(temp);
+    doc.root_node.AppendChild(GG::XMLElement("text", text));
+    return Message(Message::LOBBY_UPDATE, -1, receiver, Message::CLIENT_LOBBY_MODULE, doc);
+}

@@ -36,6 +36,7 @@ public:
     enum MessageType {SERVER_STATUS,       ///< sent to the client when requested, and when the server first recieves a connection from a client
                       HOST_GAME,           ///< sent when a client wishes to establish a game at the server
                       JOIN_GAME,           ///< sent when a client wishes to join a game being established at the server
+                      LOBBY_UPDATE,        ///< used to synchronize multiplayer lobby dialogs among different players, when one user changes a setting
                       SAVE_GAME,           ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
                       LOAD_GAME,           ///< sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
                       GAME_START,          ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
@@ -52,6 +53,7 @@ public:
                
     /** Represents the module which is the destination for the message */
     enum ModuleType {CORE,                    ///< this module is the ServerCore or ClientCore, as appropriate; all server-bound messages go here
+                     CLIENT_LOBBY_MODULE,     ///< the human-only multiplayer lobby dialog
                      CLIENT_UNIVERSE_MODULE,  ///< the ClientUniverse module
                      CLIENT_EMPIRE_MODULE,    ///< the ClientEmpire module
                      CLIENT_COMBAT_MODULE     ///< the client Combat module
@@ -103,7 +105,10 @@ private:
 };
 
 /** creates a HOST_GAME message*/
-Message HostGameMessage(const GG::XMLDoc& game_parameters);
+Message HostGameMessage(int player_id, const GG::XMLDoc& game_parameters);
+
+/** creates a minimal HOST_GAME message used to enter and finalize the multiplayer "lobby" setup*/
+Message HostGameMessage(int player_id, const std::string& host_player_name);
 
 /** creates a JOIN_GAME message.  The sender's player name is sent in the message.*/
 Message JoinGameMessage(const std::string& player_name);
@@ -122,8 +127,35 @@ Message HostAckMessage(int player_id);
    should only be sent by the server.*/
 Message JoinAckMessage(int player_id);
 
-/** creates an END_GAME message.  Only END_GAME messages sent from the host client and the server are considered valid*/
+/** creates a SERVER_STATUS message that renames a player that has just joined a game with a name already in use.  
+    The \a player_id is the ID of the receiving player.  This message should only be sent by the server.*/
+Message RenameMessage(int player_id, const std::string& new_name);
+
+/** creates an END_GAME message.  Only END_GAME messages sent from the host client and the server are considered valid.*/
 Message EndGameMessage(int sender, int receiver);
+
+
+////////////////////////////////////////////////
+// Multiplayer Lobby Messages
+////////////////////////////////////////////////
+
+/** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the 
+    server, then to other users.  Clients must send all such updates to the server directly; the server
+    will send updates to the other clients as needed.*/
+Message LobbyUpdateMessage(int sender, const GG::XMLDoc& doc);
+
+/** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the users.  
+    This message should only be sent by the server.*/
+Message ServerLobbyUpdateMessage(int receiver, const GG::XMLDoc& doc);
+
+/** creates an LOBBY_UPDATE message containing a chat string to be broadcast to player \a receiver, or all players if 
+    \a receiver is -1. Note that the receiver of this message is always the server.*/
+Message LobbyChatMessage(int sender, int receiver, const std::string& text);
+
+/** creates an LOBBY_UPDATE message containing a chat string from \sender to be displayed in \a receiver's lobby dialog.  
+    This message should only be sent by the server.*/
+Message ServerLobbyChatMessage(int sender, int receiver, const std::string& text);
+
 
 #endif // _Message_h_
 
