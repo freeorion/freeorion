@@ -12,7 +12,6 @@
 // Object ID's are segregated into separate ranges by object type, primarily
 // to facilitate the creation of new objects by the client without ID-space
 // collisions
-#define INVALID_OBJECT_ID              0
 #define MIN_SHIP_ID           1900000000
 #define MAX_SHIP_ID           2100000000
 

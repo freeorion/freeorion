@@ -18,6 +18,13 @@ Fleet::Fleet() :
    // TODO
 }
 
+Fleet::Fleet(const std::string& name, double x, double y, int owner) :
+  UniverseObject(name, x, y),
+  m_moving_to(-1)
+{
+   AddOwner(owner);
+}
+
 Fleet::Fleet(const GG::XMLElement& elem) : 
    UniverseObject(elem.Child("UniverseObject"))
 {
@@ -120,6 +127,26 @@ void Fleet::AddShips(const std::vector<int>& ships)
 
       // TODO: store fleet id into the ship objects
    }
+}
+
+void Fleet::AddShip(const int ship_id)
+{
+   m_ships.insert(ship_id);
+
+#ifdef FREEORION_BUILD_SERVER
+   ServerApp* server_app = ServerApp::GetApp();
+   ServerUniverse& server_uni = server_app->Universe();
+   
+   Ship* ship = dynamic_cast<Ship*>(server_uni.Object(ship_id));
+   if (ship == NULL)
+   {
+      throw std::invalid_argument("Attempted to add a ship to a fleet, but object was missing.");
+      return;
+   }
+   m_ships.insert(ship_id);
+   ship->SetFleetID(ID());
+      
+#endif
 }
 
 std::vector<int> Fleet::RemoveShips(const std::vector<int>& ships)

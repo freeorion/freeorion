@@ -5,6 +5,10 @@
 #include "../server/ServerApp.h"
 #endif
 
+#include <log4cpp/Appender.hh>
+#include <log4cpp/Category.hh>
+#include <log4cpp/PatternLayout.hh>
+#include <log4cpp/FileAppender.hh>
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 #include <stdexcept>
@@ -13,7 +17,7 @@ using boost::lexical_cast;
 // ShipDesign
 ////////////////////////////////////////////////
 ShipDesign::ShipDesign() : 
-   race(-1),
+   empire(-1),
    name(""),
    attack(0),
    defense(0),
@@ -28,7 +32,7 @@ ShipDesign::ShipDesign(const GG::XMLElement& elem)
       throw std::invalid_argument("Attempted to construct a ShipDesign from an XMLElement that had a tag other than \"ShipDesign\"");
 
    id = lexical_cast<int> ( elem.Child("id").Attribute("value") );
-   race = lexical_cast<int> ( elem.Child("race").Attribute("value") );
+   empire = lexical_cast<int> ( elem.Child("empire").Attribute("value") );
    name = elem.Child("name").Text();
    attack = lexical_cast<int> ( elem.Child("attack").Attribute("value") );
    defense = lexical_cast<int> ( elem.Child("defense").Attribute("value") );
@@ -47,9 +51,9 @@ GG::XMLElement ShipDesign::XMLEncode() const
    sd_ID.SetAttribute( "value", lexical_cast<std::string>(id) );
    element.AppendChild(sd_ID);
 
-   XMLElement sd_race("race");
-   sd_race.SetAttribute( "value", lexical_cast<std::string>(race) );
-   element.AppendChild(sd_race);
+   XMLElement sd_empire("empire");
+   sd_empire.SetAttribute( "value", lexical_cast<std::string>(empire) );
+   element.AppendChild(sd_empire);
    
    XMLElement sd_name("name");
    sd_name.SetText(name);
@@ -82,9 +86,23 @@ Ship::Ship() :
    //TODO
 }
 
-Ship::Ship(int race, int design_id)
+Ship::Ship(int empire_id, int design_id)
 {
-   //TODO
+   // This constructor should only be used by the server, will not work if called from client.
+   
+#ifdef FREEORION_BUILD_SERVER
+
+   // Lookup empire where design is located
+   ServerApp* server_app = ServerApp::GetApp();
+   Empire* empire = (server_app->Empires()).Lookup(empire_id);
+
+   if (empire->CopyShipDesign(design_id, m_design) != true)
+   {
+      throw std::invalid_argument("Attempted to construct a Ship with an invalid design ID");
+   }
+
+#endif
+   
 }
 
 Ship::Ship(const GG::XMLElement& elem) : 

@@ -214,6 +214,8 @@ GG::XMLElement System::XMLEncode(int empire_id) const
 int System::Insert(UniverseObject* obj)
 {
 	int retval = -1;
+
+    // look for an empty orbit to place into
     for (int orb = 0; orb < m_orbits; orb++)
     {
        if (m_objects.find(orb) == end())
@@ -223,8 +225,11 @@ int System::Insert(UniverseObject* obj)
           return orb;
        }
     }
-    // TODO: should not fail on this (multiple objects are allowed per orbit.  First check for empty orbits, if none place the object in orbit at random
-    printf("No available orbits\n");
+
+    // if no empty orbits, add a new one
+    m_objects.insert(std::pair<int, int>(m_orbits, obj->ID()));
+    m_orbits++;
+    
 	return retval;
 }
 

@@ -8,7 +8,7 @@ using boost::lexical_cast;
 #include <stdexcept>
 
 UniverseObject::UniverseObject() : 
-   m_id(INVALID_ID),
+   m_id(INVALID_OBJECT_ID),
    m_x(INVALID_POSITION),
    m_y(INVALID_POSITION)
 {
@@ -16,7 +16,7 @@ UniverseObject::UniverseObject() :
 
 UniverseObject::UniverseObject(const std::string name, double x, double y, 
                                const std::set<int>& owners/* = std::set<int>()*/) : 
-   m_id(INVALID_ID),
+   m_id(INVALID_OBJECT_ID),
    m_name(name),
    m_x(x),
    m_y(y),

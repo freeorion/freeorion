@@ -14,7 +14,7 @@ struct ShipDesign
    //@}
    
    int         id;      ///< unique ID to identify this design
-   int         race;    ///< the race that designed this ship
+   int         empire;  ///< the empire that designed this ship
    std::string name;    ///< the name of the design
    
    /////////////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@ struct ShipDesign
    int         attack;  ///< the attack value of the design
    int         defense; ///< the defense value of the design
    int         cost;    ///< the cost of the design, in PP
+   bool        colonize; ///< whether or not the ship is capable of creating a new colony
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +37,7 @@ class Ship : virtual public UniverseObject
 public:
    /** \name Structors */ //@{
    Ship(); ///< default ctor
-   Ship(int race, int design_id); ///< general ctor taking just the ship's race and design id; from this the design can be looked up and used to create the ship
+   Ship(int empire_id, int design_id); ///< general ctor taking just the ship's empire and design id; from this the design can be looked up and used to create the ship
    Ship(const GG::XMLElement& elem); ///< ctor that constructs a Ship object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Ship object
    //@}
 

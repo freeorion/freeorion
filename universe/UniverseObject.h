@@ -79,7 +79,7 @@ public:
    //@}
    
    static const double  INVALID_POSITION = -100000;   ///< the position in x and y at which default-constructed objects are placed
-   static const int     INVALID_ID = -1;              ///< the ID number assigned to a UniverseObject upon construction; it is assigned an ID later when it is placed in the universe
+   static const int     INVALID_OBJECT_ID = 0;              ///< the ID number assigned to a UniverseObject upon construction; it is assigned an ID later when it is placed in the universe
 
 private:
    int            m_id;

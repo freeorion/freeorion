@@ -103,7 +103,7 @@ int ServerUniverse::Insert(UniverseObject* obj)
       ServerApp* server_app = ServerApp::GetApp();
       server_app->Logger().errorStream() << "ServerUniverse::Insert : Attempt to add object to object map failed because the object pointer is NULL.";
             
-      return INVALID_OBJECT_ID;
+      return UniverseObject::INVALID_OBJECT_ID;
    }
 
    int object_id;
@@ -114,7 +114,7 @@ int ServerUniverse::Insert(UniverseObject* obj)
       // Fleet ID may have already been allocated by
       // the client in the case of a fleet split order.
       // In this case the previously allocated ID is used.
-      if (obj->ID() != INVALID_OBJECT_ID)
+      if (obj->ID() != UniverseObject::INVALID_OBJECT_ID)
       {
          if (m_objects.find(obj->ID()) != m_objects.end())
          {
@@ -122,7 +122,7 @@ int ServerUniverse::Insert(UniverseObject* obj)
             ServerApp* server_app = ServerApp::GetApp();
             server_app->Logger().errorStream() << "ServerUniverse::Insert : Attempt to add fleet to object map failed because ID (" << obj->ID() << ") previously assigned to the fleet is already in use.";
             
-            return INVALID_OBJECT_ID;           
+            return UniverseObject::INVALID_OBJECT_ID;           
          }   
          m_objects[obj->ID()] = obj;
          return obj->ID();                  
@@ -149,7 +149,7 @@ int ServerUniverse::Insert(UniverseObject* obj)
          // No available ID's!
          server_app->Logger().errorStream() << "ServerUniverse::Insert : Attempt to add fleet to object map failed because ID pool is exhausted.";
          
-         return INVALID_OBJECT_ID;         
+         return UniverseObject::INVALID_OBJECT_ID;         
       }
    }
    
@@ -179,7 +179,7 @@ int ServerUniverse::Insert(UniverseObject* obj)
    ServerApp* server_app = ServerApp::GetApp();
    server_app->Logger().errorStream() << "ServerUniverse::Insert : Attempt to add object to object map failed because ID pool is exhausted.";
    
-   return INVALID_OBJECT_ID;         
+   return UniverseObject::INVALID_OBJECT_ID;         
 }
 
 
@@ -285,7 +285,7 @@ void ServerUniverse::GenerateIrregularGalaxy(int stars)
          sys_temp = new System(star_type, num_orbits, star_name, x_coord, y_coord);       
 
          int nearest_id = NearestSystem(*sys_temp);
-         if (nearest_id == INVALID_OBJECT_ID)
+         if (nearest_id == UniverseObject::INVALID_OBJECT_ID)
          {
             // occurs when no other systems have been created yet
 
@@ -322,7 +322,7 @@ void ServerUniverse::GenerateIrregularGalaxy(int stars)
       // star is ready to go in the object map
       int new_sys_id = Insert(sys_temp);
       
-      if (new_sys_id == INVALID_OBJECT_ID)
+      if (new_sys_id == UniverseObject::INVALID_OBJECT_ID)
       {
          ServerApp* server_app = ServerApp::GetApp();
          server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Attemp to insert system " << star_name << " into the object map failed.";
@@ -371,6 +371,8 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
 
    
    // select homeworld systems, add planets appropriately
+
+
    homeworlds.clear();
 
    // get a vector of all the systems
@@ -398,6 +400,9 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
          continue;
       }         
 
+
+      // next, need to verify that no systems within the proximity limit
+      // have been selected already as homewords
 
       // check nearest system
       int nearest_id = NearestSystem(*system_temp);
@@ -427,6 +432,7 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
          continue;
       }
 
+      // all checks have passed, this system will host a homeworld.
         
       // select an orbit at random.  Note: ultimately this orbit number may not be
       // the one that the system object places this planet at. It is still good to
@@ -488,7 +494,7 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
 
          // Add planet to universe map
          int planet_id = Insert(planet);
-         if (planet_id == INVALID_OBJECT_ID)
+         if (planet_id == UniverseObject::INVALID_OBJECT_ID)
          {
             ServerApp* server_app = ServerApp::GetApp();
             server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Attemp to insert planet into the object map failed.";
@@ -502,6 +508,14 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
 
          }
       }  // end adding planets
+
+
+
+      // It is possible, given the configuration (number of stars, number of players)
+      // and particular geography generated, that it will be impossible to find suitable
+      // home systems for all players. This would result in an infinite loop since the
+      // system list is being searched and tested at random. The following is a half-assed
+      // effort to bail out when this occurs.
 
       safety++;
       
@@ -587,7 +601,7 @@ void ServerUniverse::PopulateSystems()
 
          // Add planet to universe map
          int planet_id = Insert(planet);
-         if (planet_id == INVALID_OBJECT_ID)
+         if (planet_id == UniverseObject::INVALID_OBJECT_ID)
          {
             ServerApp* server_app = ServerApp::GetApp();
             server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Attemp to insert planet into the object map failed.";
@@ -667,7 +681,67 @@ void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<in
       home_planet->AdjustIndustry(0.10);
       home_planet->AdjustDefBases(3);
 
-      // TODO: create starting fleet. Will need to add the default ship types to the empire
-      //       then create 2 scouts and 1 colony ship...
+      
+      // create the empire's initial ship designs
+      ShipDesign* scout_design = new ShipDesign();
+      scout_design->name = "Scout";
+      scout_design->attack = 0;
+      scout_design->defense = 0;
+      scout_design->cost = 50;
+      scout_design->colonize = false;
+      scout_design->empire = empire_id;
+
+      int scout_id = new_empire->AddShipDesign(*scout_design);
+
+      delete scout_design;
+      
+      ShipDesign* colony_ship_design = new ShipDesign();
+      colony_ship_design->name = "Colony Ship";
+      colony_ship_design->attack = 0;
+      colony_ship_design->defense = 0;
+      colony_ship_design->cost = 250;
+      colony_ship_design->colonize = true;
+      colony_ship_design->empire = empire_id;
+
+      int colony_id = new_empire->AddShipDesign(*colony_ship_design);
+
+      delete colony_ship_design;
+
+      ShipDesign* mark_1_design = new ShipDesign();
+      mark_1_design->name = "Mark I";
+      mark_1_design->attack = 2;
+      mark_1_design->defense = 1;
+      mark_1_design->cost = 100;
+      mark_1_design->colonize = false;
+      mark_1_design->empire = empire_id;
+
+      new_empire->AddShipDesign(*mark_1_design);
+
+      delete mark_1_design;
+
+      
+      // create the empire's starting fleet
+      
+      Fleet* home_fleet = new Fleet("Home Fleet", home_system->X(), home_system->Y(), empire_id);
+      
+      int fleet_id = Insert(home_fleet);
+      home_system->Insert(home_fleet);
+      new_empire->AddFleet(fleet_id);
+    
+      Ship* scout = new Ship(empire_id, scout_id);
+
+      int ship_id = Insert(scout);
+      home_fleet->AddShip(ship_id);
+
+      scout = new Ship(empire_id, scout_id);
+
+      ship_id = Insert(scout);
+      home_fleet->AddShip(ship_id);
+
+      Ship* colony_ship = new Ship(empire_id, colony_id);
+
+      ship_id = Insert(colony_ship);
+      home_fleet->AddShip(ship_id);
+      
    }
 }

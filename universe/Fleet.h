@@ -17,6 +17,7 @@ public:
    
    /** \name Structors */ //@{
    Fleet(); ///< default ctor
+   Fleet(const std::string& name, double x, double y, int owner);
    Fleet(const GG::XMLElement& elem); ///< ctor that constructs a Fleet object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Fleet object
    //@}
 
@@ -34,6 +35,7 @@ public:
    void              SetMoveOrders(int id);  ///< orders the fleet to move to the system with ID \a id
    
    void              AddShips(const std::vector<int>& ships);     ///< adds the ships with the IDs stored in \a ships to the fleet
+   void              AddShip(const int ship_id);                  ///< adds the ship to the fleet
    std::vector<int>  RemoveShips(const std::vector<int>& ships);  ///< removes the ships with the IDs stored in \a ships from the fleet, and returns any IDs not found in the fleet
    std::vector<int>  DeleteShips(const std::vector<int>& ships);  ///< removes and deletes the ships with the IDs stored in \a ships from the fleet, and returns any IDs not found in the fleet
    
