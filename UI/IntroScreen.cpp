@@ -20,6 +20,10 @@
 #include "GalaxySetupWnd.h"
 #endif
 
+#ifndef _EmpireSelect_h_
+#include "EmpireSelect.h"
+#endif
+
 #ifndef _ServerConnectWnd_h_
 #include "ServerConnectWnd.h"
 #endif
@@ -197,7 +201,12 @@ void IntroScreen::OnStartGame()
                          galaxy_wnd.GalaxySize(), galaxy_wnd.GalaxyShape(), galaxy_wnd.GalaxyFile().c_str());
                 ClientUI::MessageBox(tmp);
             // \TEMP
+
+                EmpireSelect empire_wnd;    
+                empire_wnd.Run();
+
         }
+
     }
 
 }//OnStartGame()
