@@ -31,6 +31,7 @@ while test $# != 0; do
       ;;
   *)
       echo "$0: Unknown option $1"
+      $0 --help
       exit 1
   esac
   shift
