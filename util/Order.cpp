@@ -1,13 +1,7 @@
 #include "Order.h"
+#include "../universe/UniverseObject.h"
 
-#ifdef FREEORION_BUILD_SERVER
-
-#include <vector>
-using std::vector;
-
-#ifndef _ServerApp_h_
-#include "../server/ServerApp.h"
-#endif
+#include "./AppInterface.h"
 
 #ifndef _Planet_h_
 #include "../universe/Planet.h"
@@ -25,30 +19,32 @@ using std::vector;
 #include "../universe/System.h"
 #endif
 
-#ifndef _UniverseObject_h_
-#include "../universe/UniverseObject.h"
-#endif
+#include "../universe/Predicates.h"
 
-// VERY VERY TEMPORARY!  This should go into some sort of external
+#include <vector>
+using std::vector;
+
+
+// TEMPORARY!  This should go into some sort of external
 // XML file that the server uses for game rules like this
 // I will be coding such a class in the near future -- jbarcz1
 const int INITIAL_COLONY_POP = 1;
 
-#endif
 
+
+
+/////////////////////////////////////////////////////
+// ORDER
+/////////////////////////////////////////////////////
 
 void Order::ValidateEmpireID() const
 {
-#ifdef FREEORION_BUILD_SERVER
-    // check to make sure specified empire exists.  
-    ServerApp* app = ServerApp::GetApp();
-    ServerEmpireManager* empire = &app->Empires();
-    
+    EmpireManager* empire = &Empires(); 
     if(empire->Lookup(EmpireID()) == NULL)
     {
         throw std::runtime_error("Invalid empire ID specified for order.");
     }
-#endif
+
 }
 
 ////////////////////////////////////////////////
@@ -56,7 +52,7 @@ void Order::ValidateEmpireID() const
 ////////////////////////////////////////////////
 PlanetBuildOrder::PlanetBuildOrder() : 
    Order(),
-   m_planet(-1),
+   m_planet(UniverseObject::INVALID_OBJECT_ID),
    m_build_type(INVALID),
    m_ship_type(-1)
 {
@@ -72,15 +68,13 @@ PlanetBuildOrder::PlanetBuildOrder(int empire, int planet, BuildType build, int 
 
 void PlanetBuildOrder::Execute() const
 {
-#ifdef FREEORION_BUILD_SERVER
-
     // TODO:  unit test this code once universe building methods
     // are in place.  the semantics of the building methods may change
-    ValidateEmpireID();
     
-    ServerApp* app = ServerApp::GetApp();
-    ServerUniverse* universe = &app->Universe();
-    ServerEmpireManager* empire = &app->Empires();
+    ValidateEmpireID();
+ 
+    EmpireManager* empire = &Empires();
+    Universe* universe = &GetUniverse();
     
     // look up object
     UniverseObject* the_object = universe->Object(this->PlanetID());
@@ -118,9 +112,6 @@ void PlanetBuildOrder::Execute() const
             break;
         
     }
-           
-      
-#endif
 }
 
 
@@ -129,8 +120,8 @@ void PlanetBuildOrder::Execute() const
 ////////////////////////////////////////////////
 FleetMoveOrder::FleetMoveOrder() : 
    Order(),
-   m_fleet(-1),
-   m_dest_system(-1)
+   m_fleet(UniverseObject::INVALID_OBJECT_ID),
+   m_dest_system(UniverseObject::INVALID_OBJECT_ID)
 {
 }
 
@@ -143,15 +134,13 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int dest_system) :
 
 void FleetMoveOrder::Execute() const
 {
-#ifdef FREEORION_BUILD_SERVER
     ValidateEmpireID();
 
-    ServerApp* app = ServerApp::GetApp();
-    ServerUniverse* universe = &app->Universe();
-    ServerEmpireManager* empire = &app->Empires();
+    Universe& universe = GetUniverse();
+    EmpireManager& empire = Empires();
     
     // look up the fleet in question
-    UniverseObject* the_object = universe->Object(this->FleetID());
+    UniverseObject* the_object = universe.Object(this->FleetID());
     Fleet* the_fleet = dynamic_cast<Fleet*> ( the_object );
     
     // perform sanity check
@@ -161,13 +150,13 @@ void FleetMoveOrder::Execute() const
     }
     
     // verify that empire specified in order owns specified fleet
-    if( ! empire->Lookup(EmpireID())->HasFleet(this->FleetID()) )
+    if( ! empire.Lookup(EmpireID())->HasFleet(this->FleetID()) )
     {
         throw std::runtime_error("Empire specified in fleet order does not own specified fleet.");
     }
     
     // look up destination
-    UniverseObject* another_object = universe->Object(this->DestinationSystemID());
+    UniverseObject* another_object = universe.Object(this->DestinationSystemID());
     System* the_system = dynamic_cast<System*> (another_object);
     
     // perform another sanity check
@@ -180,8 +169,6 @@ void FleetMoveOrder::Execute() const
     the_fleet->SetMoveOrders(this->DestinationSystemID());
     
     // TODO:  check destination validity (future versions)
-    
-#endif
 }
 
 
@@ -190,40 +177,48 @@ void FleetMoveOrder::Execute() const
 ////////////////////////////////////////////////
 FleetMergeOrder::FleetMergeOrder() : 
    Order(),
-   m_fleet(-1)
+   m_fleet_from(UniverseObject::INVALID_OBJECT_ID),
+   m_fleet_to(UniverseObject::INVALID_OBJECT_ID)
 {
 }
 
-FleetMergeOrder::FleetMergeOrder(int empire, int fleet, const std::vector<int>& ships) : 
+FleetMergeOrder::FleetMergeOrder(int empire, int fleet_from, int fleet_to, const std::vector<int>& ships) : 
    Order(empire),
-   m_fleet(fleet),
+   m_fleet_from(fleet_from),
+   m_fleet_to(fleet_to),
    m_add_ships(ships)
 {
 }
 
 void FleetMergeOrder::Execute() const
 {
-#ifdef FREEORION_BUILD_SERVER
+
     ValidateEmpireID();
-    ServerApp* app = ServerApp::GetApp();
-    ServerUniverse* universe = &app->Universe();
-    ServerEmpireManager* empire = &app->Empires();
-    
-    // look up the fleet in question
-    UniverseObject* the_object = universe->Object(this->FleetID());
-    Fleet* target_fleet = dynamic_cast<Fleet*> ( the_object );
+
+    Universe& universe = GetUniverse();
+    EmpireManager& empire = Empires();
+
+    // look up the source fleet and destination fleet
+    Fleet* source_fleet = dynamic_cast<Fleet*> ( universe.Object(this->SourceFleet()) );
+    Fleet* target_fleet = dynamic_cast<Fleet*> ( universe.Object(this->DestinationFleet()) );
     
     // sanity check
-    if(!target_fleet)
+    if(!source_fleet || !target_fleet)
     {
         throw std::runtime_error("Illegal fleet id specified in fleet merge order.");
+    }
+    
+    // verify that empire is not trying to take ships from somebody else's fleet
+    if( !empire.Lookup( EmpireID() )->HasFleet( this->SourceFleet() ) )
+    {
+        throw std::runtime_error("Empire attempted to merge ships from another's fleet.");
     }
     
     // verify that empire cannot merge ships into somebody else's fleet.
     // this is just an additional security measure.  IT could be removed to
     // allow 'donations' of ships to other players, provided that GameCore
     // verifies IDs of the Empires issuing the orders.
-    if( !empire->Lookup( EmpireID() )->HasFleet( this->FleetID() ) )
+    if( !empire.Lookup( EmpireID() )->HasFleet( this->DestinationFleet() ) )
     {
         throw std::runtime_error("Empire attempted to merge ships into another's fleet.");
     }
@@ -235,44 +230,27 @@ void FleetMergeOrder::Execute() const
     {
         // find the ship, verify that ID is valid
         int curr = (*itr);
-        UniverseObject* curr_ship = universe->Object(curr);
-        Ship* a_ship = dynamic_cast<Ship*> ( curr_ship);
+        Ship* a_ship = dynamic_cast<Ship*> ( universe.Object(curr));
         if(!a_ship)
         {
             throw std::runtime_error("Illegal ship id specified in fleet merge order.");
         }
         
-        // figure out what fleet this ship is coming from
+        // figure out what fleet this ship is coming from -- verify its the one we
+        // said it comes from
         int original_fleet_id = a_ship->FleetID();
-        Fleet* original_fleet = dynamic_cast<Fleet*> ( universe->Object(original_fleet_id ));
-        if( original_fleet )
+        if(a_ship->FleetID() != SourceFleet() )
         {
-            // if ship is coming from a fleet, verify that empire giving the order
-            // is the owner of that fleet.  
-            if( ! empire->Lookup(EmpireID())->HasFleet(original_fleet_id) )
-            {
-                throw std::runtime_error("Empire attempted to issue merge order to ships in another's fleet.");
-            }
-            
-            // remove ship from the fleet it came from
-            original_fleet->RemoveShip(curr);
-        }
-        else
-        {
-            // specified ship has no fleet.
-            // we cannot verify its ownership, so assume this is legal
+            throw std::runtime_error("Ship in merge order is not in specified source fleet.");
         }
         
         // send the ship to its new fleet
-        a_ship->SetFleetID(this->FleetID());
+        a_ship->SetFleetID(this->DestinationFleet());
+        source_fleet->RemoveShip(curr);
         target_fleet->AddShip(curr);
         
         itr++;
     }
-    
-    
-   
-#endif
 }
 
 
@@ -280,79 +258,93 @@ void FleetMergeOrder::Execute() const
 // FleetSplitOrder
 ////////////////////////////////////////////////
 FleetSplitOrder::FleetSplitOrder() : 
-   Order(),
-   m_fleet(-1)
+   Order()
 {
 }
 
-FleetSplitOrder::FleetSplitOrder(int empire, int fleet, const std::vector<int>& ships) : 
+FleetSplitOrder::FleetSplitOrder(int empire, const std::vector<int>& ships) : 
    Order(empire),
-   m_fleet(fleet),
    m_remove_ships(ships)
 {
 }
 
 void FleetSplitOrder::Execute() const
 {
-#ifdef FREEORION_BUILD_SERVER
     ValidateEmpireID();
-    ServerApp* app = ServerApp::GetApp();
-    ServerUniverse* universe = &app->Universe();
-    ServerEmpireManager* empire = &app->Empires();
-        
-    
-    // look up the fleet in question
-    UniverseObject* the_object = universe->Object(this->FleetID());
-    Fleet* target_fleet = dynamic_cast<Fleet*> ( the_object );
-    
-    // sanity check
-    if(!target_fleet)
-    {
-        throw std::runtime_error("Illegal fleet id specified in fleet split order.");
-    }
-    
-    // verify that empire giving the order is the owner of the fleet
-    if( !empire->Lookup( EmpireID() )->HasFleet( this->FleetID() ) )
-    {
-        throw std::runtime_error("Empire attempted to split ships from another's fleet.");
-    }
-    
-    // iterate down the ship vector and remove each ship from the fleet
-    // after first verifying that it is a valid ship id
+
+    Universe& universe = GetUniverse();
+    EmpireManager& empire = Empires();
+
+    // iterate down the ship vector and remove each ship from its fleet
+    // we check as we go to make sure that:
+    //     - ship and fleet IDs are valid
+    //     - empire issuing order owns all fleets
+    //     - all fleets are located within same system
+    //
+    double fleet_x = -1;
+    double fleet_y = -1;
     vector<int>::const_iterator itr = m_remove_ships.begin();
     while(itr != m_remove_ships.end())
     {
         // find the ship, verify that ID is valid
         int curr = (*itr);
-        UniverseObject* curr_ship = universe->Object(curr);
-        Ship* a_ship = dynamic_cast<Ship*> ( curr_ship);
+        Ship* a_ship = dynamic_cast<Ship*> ( universe.Object(curr) );
         if(!a_ship)
         {
             throw std::runtime_error("Illegal ship id specified in fleet split order.");
         }
         
-        // make sure the ship is in the specified fleet
-        int original_fleet_id = a_ship->FleetID();
-        if(original_fleet_id != FleetID())
-        {
-            throw std::runtime_error("Fleet ID in split order does not match fleet ID in affected ship.");
-        }
-        
-        // remove ship from its original fleet
-        Fleet* original_fleet = dynamic_cast<Fleet*> ( universe->Object(original_fleet_id ));
-        if(original_fleet)
-        {
-            original_fleet->RemoveShip(curr);
-        }
-        else
+        // find the fleet that the ship is in
+        Fleet* original_fleet = dynamic_cast<Fleet*> ( universe.Object(a_ship->FleetID() ));
+        if(!original_fleet)
         {
             // specified ship has no fleet.  ERROR!
             throw std::runtime_error("Ship in split order has no assigned fleet, or assigned fleet ID is not valid.");
         }
+        
+        // verify that issuing empire owns the ship's fleet
+        if( !empire.Lookup( EmpireID() )->HasFleet( a_ship->FleetID() ) )
+        {
+            throw std::runtime_error("Empire attempted to split ships from another's fleet.");
+        }
+        
+        // *****************************************************************
+        // verify that fleet is in same location as the others, and that
+        // all fleets are in a system (not moving)
+        // ******************************************************************
+        
+        // make sure that fleet has no move orders
+        if( original_fleet->MoveOrders() != UniverseObject::INVALID_OBJECT_ID)
+        {
+            throw std::runtime_error("Split order involves moving fleet.");
+        }
+        
+        if(fleet_x == -1 && fleet_y == -1)
+        {
+            // means this is first iteration of the loop and we dont know yet
+            // where all this is happening
+            fleet_x = original_fleet->X();
+            fleet_y = original_fleet->Y();
+        }
+        else
+        {
+            if(original_fleet->X() != fleet_x || original_fleet->Y() != fleet_y)
+            {
+                throw std::runtime_error("Split order involves fleets in different systems.");
+            }
+        }
+        
+        original_fleet->RemoveShip(curr);
+        if(original_fleet->ShipCount() == 0)
+        {
+            universe.Delete(original_fleet->ID());
+            empire.Lookup(EmpireID())->RemoveFleet(original_fleet->ID());
+        }
         itr++;
     }
     
-#endif
+    // TODO:  Create new fleet with the specified ships in it
+    
 }
 
 
@@ -379,11 +371,10 @@ FleetColonizeOrder::FleetColonizeOrder(int empire, int fleet, int planet) :
 
 void FleetColonizeOrder::Execute() const
 {
-#ifdef FREEORION_BUILD_SERVER
     ValidateEmpireID();
-    ServerApp* app = ServerApp::GetApp();
-    ServerUniverse* universe = &app->Universe();
-    ServerEmpireManager* empire = &app->Empires();
+
+    Universe* universe = &GetUniverse();
+    EmpireManager* empire = &Empires();
     
     // look up the fleet in question
     UniverseObject* the_object = universe->Object(this->FleetID());
@@ -415,7 +406,7 @@ void FleetColonizeOrder::Execute() const
         throw std::runtime_error("Colonization order issued for owned planet.");    
     }
     
-    // verify that planet is in same system as the fleet
+    // verify that planet is in same position as the fleet
     if(  (target_planet->X() != colony_fleet->X())  || target_planet->Y() != colony_fleet->Y())
     {
         throw std::runtime_error("Fleet specified in colonization order is not in specified system.");
@@ -436,14 +427,23 @@ void FleetColonizeOrder::Execute() const
             target_planet->AddOwner( EmpireID() );
             
             // add empire to system owner list, if planet is in a system
+            // add planet to the empire's list of owned planets
             if(target_planet->SystemID() != UniverseObject::INVALID_OBJECT_ID )
             {
                 universe->Object(target_planet->SystemID())->AddOwner( EmpireID() );
+                empire->Lookup(EmpireID())->AddPlanet(PlanetID());
             }
             
             // remove colony ship from fleet and deallocate it
             colony_fleet->RemoveShip(curr_ship_id);
             universe->Delete(curr_ship_id);
+            
+            // If colony ship was only ship in fleet, remove fleet
+            if(colony_fleet->ShipCount() == 0)
+            {
+                universe->Delete(colony_fleet->ID());
+                empire->Lookup(EmpireID())->RemoveFleet(colony_fleet->ID());
+            }
             
             // order processing is now done
             return;
@@ -454,6 +454,5 @@ void FleetColonizeOrder::Execute() const
     
     throw std::runtime_error("Colonization order issued to fleet without colony ship.");
     
-#endif
 }
 

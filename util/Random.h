@@ -39,7 +39,7 @@ boost::uniform_01<GeneratorType> zero_to_one_gen(gen);
 }
 
 /** seeds the underlying random number generator used to drive all random number distributions */
-inline void Seed(unsigned int seed) {gen.seed(seed);}
+//inline void Seed(unsigned int seed) {gen.seed(seed);}
 
 /** seeds the underlying random number generator used to drive all random number distributions with 
     the current clock time */
