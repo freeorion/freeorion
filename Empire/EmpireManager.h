@@ -32,28 +32,25 @@
 class EmpireManager
 {
 public:
-
     /** \name Iterator types */ //@{
     /// Iterator over Empires
     typedef std::map<int, Empire*>::iterator iterator; 
-    
+
     /// Const Iterator over Empires
     typedef std::map<int, Empire*>::const_iterator const_iterator;
     //@}
-    
-    
+
     /** \name Constructors */ //@{
     /// Default Constructor
     EmpireManager();
     //@}
-   
+
     /** \name Destructors */ //@{
     /// Virtual Destructor - Deallocates all Empires
     /** Deallocates all empires that exist in the manager. */
     virtual ~EmpireManager();
     //@}
-    
-    
+
     /** \name Const Iterators */ //@{
     /**
     * Returns a const iterator pointing at the first empire
@@ -84,10 +81,8 @@ public:
     * or NULL if it does not
     */
     Empire* Lookup(int ID);
-    
     //@}
-   
-  
+
     /** \name Non-Const Iterators */ //@{
     /**
     * Returns an iterator pointing at the first empire
@@ -117,39 +112,30 @@ public:
     /** \name Constants */ //@{
     /// Tag for empire update XMLElements
     static const std::string EMPIRE_UPDATE_TAG;
-    
-protected:
-  
-    /// Used by derived classes to add an empire to the set of empires.
+
     /**
     * Adds the given empire to the manager's map.  Does not modify the
     * given empire object, or any others.
     * 
     */
     void InsertEmpire(Empire* empire);
-    
-    /// Used by derived classes to remove an empire from the set of empires.
+
     /**
     * Removes the given empire from the manager's map.  Does 
     * not modify the given empire object, or any others.
     */
     void RemoveEmpire(Empire* empire);
-    
-    
-    /// Used by derived classes to remove all empires from the map
+
     /**
     * Removes all empires from the manager's map and deallocates those empires.
     *
     */
     void RemoveAllEmpires();
-    
-    
+
 private:
-    
     // map of IDs to empires for fast lookup
     std::map<int, Empire*> m_empire_map;    
-    
-                
+
 };
 
 
