@@ -215,6 +215,12 @@ MapWnd::MapWnd() :
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F2, 0), &MapWnd::ToggleSitRep, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowOptions, this);
 
+    // Keys for zooming
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_e, GG::GGKMOD_CTRL), &MapWnd::KeyboardZoomIn, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_PLUS, 0), &MapWnd::KeyboardZoomIn, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_r, GG::GGKMOD_CTRL), &MapWnd::KeyboardZoomOut, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_MINUS, 0), &MapWnd::KeyboardZoomOut, this);
+    
     g_chat_edit_history.push_front("");
 }
 
@@ -228,6 +234,12 @@ MapWnd::~MapWnd()
 
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F2, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F10, 0);
+
+    // Zoom keys
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_e, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_r, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_PLUS, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_MINUS, 0);
 }
 
 GG::Pt MapWnd::ClientUpperLeft() const
@@ -333,7 +345,6 @@ void MapWnd::Keypress (GG::Key key, Uint32 key_mods)
         }
         break;
     }
-
     case GG::GGK_RETURN:
     case GG::GGK_KP_ENTER: { // send chat message
         if (m_chat_edit->Visible()) {
@@ -435,78 +446,9 @@ void MapWnd::RClick(const GG::Pt& pt, Uint32 keys)
 
 void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 {
-    GG::Pt ul = ClientUpperLeft();
-    GG::Pt center = GG::Pt( GG::App::GetApp()->AppWidth() / 2,  GG::App::GetApp()->AppHeight() / 2);
-    GG::Pt ul_offset = ul - center;
-    if (0 < move) {
-        if (m_zoom_factor * ZOOM_STEP_SIZE < s_max_scale_factor) {
-            ul_offset.x = static_cast<int>(ul_offset.x * ZOOM_STEP_SIZE);
-            ul_offset.y = static_cast<int>(ul_offset.y * ZOOM_STEP_SIZE);
-            m_zoom_factor *= ZOOM_STEP_SIZE;
-        } else {
-            ul_offset.x = static_cast<int>(ul_offset.x * s_max_scale_factor / m_zoom_factor);
-            ul_offset.y = static_cast<int>(ul_offset.y * s_max_scale_factor / m_zoom_factor);
-            m_zoom_factor = s_max_scale_factor;
-        }
-    } else if ( 0 > move ) {
-        if (s_min_scale_factor < m_zoom_factor / ZOOM_STEP_SIZE) {
-            ul_offset.x = static_cast<int>(ul_offset.x / ZOOM_STEP_SIZE);
-            ul_offset.y = static_cast<int>(ul_offset.y / ZOOM_STEP_SIZE);
-            m_zoom_factor /= ZOOM_STEP_SIZE;
-        } else {
-            ul_offset.x = static_cast<int>(ul_offset.x * s_min_scale_factor / m_zoom_factor);
-            ul_offset.y = static_cast<int>(ul_offset.y * s_min_scale_factor / m_zoom_factor);
-            m_zoom_factor = s_min_scale_factor;
-        }
-    } else {
-        return; // Windows platform always sends an additional event with a move of 0. This should be ignored
+    if (move != 0) {
+	Zoom(move);
     }
-
-    if (m_zoom_factor * ClientUI::PTS < MIN_SYSTEM_NAME_SIZE)
-        HideSystemNames();
-    else
-        ShowSystemNames();
-
-    for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
-        const System& system = m_system_icons[i]->GetSystem();
-        GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor), 
-                       static_cast<int>((system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor));
-        m_system_icons[i]->SizeMove(icon_ul.x, icon_ul.y, 
-                             static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5), 
-                             static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5));
-    }
-
-    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
-        Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
-        double x = fleet->X();
-        double y = fleet->Y();
-        GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor), 
-                         static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor));
-        m_moving_fleet_buttons[i]->SizeMove(button_ul.x, button_ul.y, 
-                                     static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5), 
-                                     static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5));
-    }
-
-    GG::Pt map_move = ul_offset + center - ul;
-    OffsetMove(map_move);
-    MoveBackgrounds(map_move);
-    m_side_panel->OffsetMove(-map_move);
-    m_chat_display->OffsetMove(-map_move);
-    m_chat_edit->OffsetMove(-map_move);
-    m_turn_update->OffsetMove(-map_move);
-    m_sitrep_panel->OffsetMove(-map_move);
-
-    // this correction ensures that zooming in doesn't leave too large a margin to the side
-    GG::Pt move_to_pt = ul = ClientUpperLeft();
-    CorrectMapPosition(move_to_pt);
-    GG::Pt final_move = move_to_pt - ul;
-    m_side_panel->OffsetMove(-final_move);
-    m_chat_display->OffsetMove(-final_move);
-    m_chat_edit->OffsetMove(-final_move);
-    m_turn_update->OffsetMove(-final_move);
-    m_sitrep_panel->OffsetMove(-final_move);
-    MoveBackgrounds(final_move);
-    MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
 }
 
 void MapWnd::InitTurn(int turn_number)
@@ -519,6 +461,12 @@ void MapWnd::InitTurn(int turn_number)
 
     GG::App::GetApp()->SetAccelerator(GG::GGK_F2, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_F10, 0);
+
+    // Keys for zooming
+    GG::App::GetApp()->SetAccelerator(GG::GGK_e, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_r, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_PLUS, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_MINUS, 0);
 
     Universe& universe = ClientApp::GetUniverse();
 
@@ -852,6 +800,82 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::Wnd::Event& event)
     return false;
 }
 
+void MapWnd::Zoom(int delta)
+{
+    GG::Pt ul = ClientUpperLeft();
+    GG::Pt center = GG::Pt( GG::App::GetApp()->AppWidth() / 2,  GG::App::GetApp()->AppHeight() / 2);
+    GG::Pt ul_offset = ul - center;
+    if (delta > 0) {
+        if (m_zoom_factor * ZOOM_STEP_SIZE < s_max_scale_factor) {
+            ul_offset.x = static_cast<int>(ul_offset.x * ZOOM_STEP_SIZE);
+            ul_offset.y = static_cast<int>(ul_offset.y * ZOOM_STEP_SIZE);
+            m_zoom_factor *= ZOOM_STEP_SIZE;
+        } else {
+            ul_offset.x = static_cast<int>(ul_offset.x * s_max_scale_factor / m_zoom_factor);
+            ul_offset.y = static_cast<int>(ul_offset.y * s_max_scale_factor / m_zoom_factor);
+            m_zoom_factor = s_max_scale_factor;
+        }
+    } else if ( delta < 0) {
+        if (s_min_scale_factor < m_zoom_factor / ZOOM_STEP_SIZE) {
+            ul_offset.x = static_cast<int>(ul_offset.x / ZOOM_STEP_SIZE);
+            ul_offset.y = static_cast<int>(ul_offset.y / ZOOM_STEP_SIZE);
+            m_zoom_factor /= ZOOM_STEP_SIZE;
+        } else {
+            ul_offset.x = static_cast<int>(ul_offset.x * s_min_scale_factor / m_zoom_factor);
+            ul_offset.y = static_cast<int>(ul_offset.y * s_min_scale_factor / m_zoom_factor);
+            m_zoom_factor = s_min_scale_factor;
+        }
+    } else {
+        return; // If delta == 0, no change
+    }
+
+    if (m_zoom_factor * ClientUI::PTS < MIN_SYSTEM_NAME_SIZE)
+        HideSystemNames();
+    else
+        ShowSystemNames();
+
+    for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
+        const System& system = m_system_icons[i]->GetSystem();
+        GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor), 
+                       static_cast<int>((system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor));
+        m_system_icons[i]->SizeMove(icon_ul.x, icon_ul.y, 
+                             static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5), 
+                             static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5));
+    }
+
+    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
+        Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
+        double x = fleet->X();
+        double y = fleet->Y();
+        GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor), 
+                         static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor));
+        m_moving_fleet_buttons[i]->SizeMove(button_ul.x, button_ul.y, 
+                                     static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5), 
+                                     static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5));
+    }
+
+    GG::Pt map_move = ul_offset + center - ul;
+    OffsetMove(map_move);
+    MoveBackgrounds(map_move);
+    m_side_panel->OffsetMove(-map_move);
+    m_chat_display->OffsetMove(-map_move);
+    m_chat_edit->OffsetMove(-map_move);
+    m_turn_update->OffsetMove(-map_move);
+    m_sitrep_panel->OffsetMove(-map_move);
+
+    // this correction ensures that zooming in doesn't leave too large a margin to the side
+    GG::Pt move_to_pt = ul = ClientUpperLeft();
+    CorrectMapPosition(move_to_pt);
+    GG::Pt final_move = move_to_pt - ul;
+    m_side_panel->OffsetMove(-final_move);
+    m_chat_display->OffsetMove(-final_move);
+    m_chat_edit->OffsetMove(-final_move);
+    m_turn_update->OffsetMove(-final_move);
+    m_sitrep_panel->OffsetMove(-final_move);
+    MoveBackgrounds(final_move);
+    MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
+}
+
 void MapWnd::RenderBackgrounds()
 {
     double x, y;
@@ -1089,4 +1113,16 @@ bool MapWnd::ShowOptions()
     }
     return true;
 }
+
+bool MapWnd::KeyboardZoomIn()
+{
+    Zoom(1);
+    return true;
+}
+bool MapWnd::KeyboardZoomOut()
+{
+    Zoom(-1);
+    return true;
+}
+
 

@@ -98,6 +98,7 @@ private:
     struct StarlaneData;     ///< contains all the information necessary to render a single fleet movement line on the main map
     struct MovementLineData; ///< contains all the information necessary to render a single fleet movement line on the main map
 
+    void Zoom(int delta);                        //!< changes the zoomlevel of the main map
     void RenderBackgrounds();                    //!< renders the backgrounds onto the screen
     void RenderStarlanes();                      //!< renders the starlanes between the systems
     void RenderFleetMovementLines();             //!< renders the dashed lines indicating where each fleet is going
@@ -107,6 +108,9 @@ private:
     bool EndTurn();
     bool ToggleSitRep();
     bool ShowOptions();
+    bool KeyboardZoomIn();
+    bool KeyboardZoomOut();
+    
 
     std::vector<boost::shared_ptr<GG::Texture> > m_backgrounds; //!< starfield backgrounds
     std::vector<boost::shared_ptr<GG::Texture> > m_nebulae;     //!< decorative nebula textures
