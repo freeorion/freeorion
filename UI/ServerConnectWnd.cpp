@@ -40,7 +40,7 @@ const string ServerConnectWnd::DEF_FONT("arial.ttf");
 */
 
 ServerConnectWnd::ServerConnectWnd(int x, int y, int w, int h) : 
-    CUI_ModalWnd(ClientUI::String("SCONNECT_WINDOW_TITLE"), x, y, w, h, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE)
+    CUI_Wnd(ClientUI::String("SCONNECT_WINDOW_TITLE"), x, y, w, h, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL)
 {
      
 #define POS_LABEL_SERVER_CONNECT    10,5
@@ -65,7 +65,7 @@ ServerConnectWnd::ServerConnectWnd(int x, int y, int w, int h) :
     InitControls();
 }
 
-ServerConnectWnd::ServerConnectWnd(const GG::XMLElement& elem) : CUI_ModalWnd(elem.Child("CUI_ModalWnd"))
+ServerConnectWnd::ServerConnectWnd(const GG::XMLElement& elem) : CUI_Wnd(elem.Child("CUI_Wnd"))
 {
  
     m_ended_with_ok = false;
@@ -102,7 +102,7 @@ int ServerConnectWnd::Run()
 {
     // Fill the drop down list values in
     PopulateServerList();  
-    return ModalWnd::Run(); 
+    return Wnd::Run(); 
 }
 
 /// PROTECTED MEMBERS ////
@@ -191,7 +191,7 @@ GG::XMLElement ServerConnectWnd::XMLEncode()
       DetachControls();
    
       GG::XMLElement retval("ServerConnectWnd");
-      retval.AppendChild(GG::ModalWnd::XMLEncode());
+      retval.AppendChild(CUI_Wnd::XMLEncode());
       
       GG::XMLElement temp("m_ended_with_OK");
       temp.SetAttribute("value", boost::lexical_cast<std::string>(m_ended_with_ok));

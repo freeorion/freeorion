@@ -73,7 +73,7 @@ private:
 
 
 /** server connections window  */
-class ServerConnectWnd : public CUI_ModalWnd
+class ServerConnectWnd : public CUI_Wnd
 {
 public:
         /** \name Structors */ //@{

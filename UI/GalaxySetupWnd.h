@@ -25,7 +25,7 @@
 
 //! This class is the Galaxy Setup window.  It is a modal window
 //! that allows the user to choose a galaxy style, size, etc.
-class GalaxySetupWnd : public CUI_ModalWnd
+class GalaxySetupWnd : public CUI_Wnd
 {
 private:
     //! enum for galaxy sizes

@@ -29,7 +29,7 @@
 
 //! This class is the Empire Selection window.  It is a modal window
 //! that allows the user to choose a name, color, etc.
-class EmpireSelect : public CUI_ModalWnd
+class EmpireSelect : public CUI_Wnd
 {
 private:
     

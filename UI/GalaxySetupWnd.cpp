@@ -37,8 +37,7 @@ const int GalaxySetupWnd::TYPE_ROW_HEIGHT = 35; //row height
 ////////////////////////////////////////////
 
 GalaxySetupWnd::GalaxySetupWnd():
-//    GG::ModalWnd(200,200,645,360),
-    CUI_ModalWnd(ClientUI::String("GSETUP_WINDOW_TITLE"),200,200,645,360, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
+    CUI_Wnd(ClientUI::String("GSETUP_WINDOW_TITLE"),200,200,645,360, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
     m_end_with_ok(false)
 {
     //initialize size radio group
@@ -89,8 +88,7 @@ GalaxySetupWnd::GalaxySetupWnd():
 }//GalaxySetupWnd()
 
 GalaxySetupWnd::GalaxySetupWnd(const GG::XMLElement &elem):
-//    GG::ModalWnd(elem.Child("GG::ModalWnd")),
-    CUI_ModalWnd(elem.Child("CUI_ModalWnd")),
+    CUI_Wnd(elem.Child("CUI_Wnd")),
     m_end_with_ok(false)
 {
     using namespace GG;
@@ -174,7 +172,7 @@ GalaxySetupWnd::~GalaxySetupWnd()
 
 int GalaxySetupWnd::Render()
 {
-    CUI_ModalWnd::Render();
+    CUI_Wnd::Render();
    // GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::BORDER_COLOR,true);
     //ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, "Galaxy Setup");
     
@@ -192,7 +190,7 @@ GG::XMLElement GalaxySetupWnd::XMLEncode() const
     
     XMLElement retval("GalaxySetupWnd"), temp;
     
-    retval.AppendChild(ModalWnd::XMLEncode());
+    retval.AppendChild(CUI_Wnd::XMLEncode());
     
     temp = XMLElement("m_browse_button");
     temp.AppendChild(m_browse_button->XMLEncode());

@@ -36,8 +36,7 @@
 ////////////////////////////////////////////
 
 EmpireSelect::EmpireSelect():
-//    GG::ModalWnd(200,200,645,360),
-    CUI_ModalWnd(ClientUI::String("ESELECT_WINDOW_TITLE"),200,200,400,200, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
+    CUI_Wnd(ClientUI::String("ESELECT_WINDOW_TITLE"),200,200,400,200, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
     m_end_with_ok(false)
 {
    
@@ -109,7 +108,7 @@ EmpireSelect::~EmpireSelect()
 
 int EmpireSelect::Render()
 {
-    CUI_ModalWnd::Render();
+    CUI_Wnd::Render();
    // GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::BORDER_COLOR,true);
     //ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, "Galaxy Setup");
 
