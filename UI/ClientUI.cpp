@@ -707,8 +707,9 @@ boost::shared_ptr<GG::Texture> ClientUI::GetNumberedTexture(const std::string& d
         }
     }
 
+    int star_variant = image_names[type].second!=0?(hash_key % image_names[type].second):0;
     std::string filename = ClientUI::ART_DIR + "stars/" + 
-        image_names[type].first + lexical_cast<string>((hash_key % image_names[type].second) + 1) + ".png";
+        image_names[type].first + lexical_cast<string>(star_variant + 1) + ".png";
     return HumanClientApp::GetApp()->GetTexture(filename);
 }
 
