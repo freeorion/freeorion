@@ -11,9 +11,11 @@
 #endif
 
 #include <map>
+#include <string>
 #include <vector>
 
 class Message;
+class PlayerInfo;
 
 /** the network core needed by the FreeOrion server.  This class extends NetworkCore by allowing mutliple connections, 
    allowing connections to be associated with players by the server app, and allowing connections to be terminated by 
@@ -30,31 +32,22 @@ class Message;
 class ServerNetworkCore : public NetworkCore
 {
 public:
-	/** holds the connection state for a single player*/
-   struct ConnectionInfo
-   {
-      ConnectionInfo(); ///< default ctor
-      ConnectionInfo(int sock, const IPaddress& addr); ///< ctor
-      
-      bool        Connected() const {return socket != -1;}  ///< returns true if this player is still connected
-   
-      int         socket;     ///< socket on which the player is connected (-1 if there is no valid connection)
-      IPaddress   address;    ///< the IP address of the connected player
-   };
-
    /** \name Structors */ //@{
    ServerNetworkCore();
    virtual ~ServerNetworkCore();
    //@}
 
    /** \name Accessors */ //@{
+   const std::map<int, PlayerInfo>& Players() const {return m_player_connections;}
+
    virtual void SendMessage(const Message& msg) const;
    //@}
    
    /** \name Mutators */ //@{
    void ListenToPorts(); ///< closes any currently-open listen-ports, then sets up ports for incoming connections
+   bool EstablishPlayer(int socket, int player_id, const PlayerInfo& data); ///< establishes player with ID number \a id as being the connection on \a socket; returns true on success
+   bool DumpPlayer(int player_id); ///< disconnects player \a player_id; returns true if a connection to \a player_id existed and was terminated
    bool DumpConnection(int socket); ///< disconnects the connection on socket number \a socket; returns true if a connection on \a socket existed and was terminated
-   bool EstablishPlayer(int player_id, int socket); ///< establishes player with ID number \a id as being the connection on \a socket; returns true in success
    void DumpAllConnections(); ///< closes all connections
 
    virtual void HandleNetEvent(SDL_Event& event);
@@ -69,11 +62,11 @@ private:
    virtual void DispatchMessage(const Message& msg, int socket);
    void ClosePorts();
    
-   std::map<int, std::string>    m_receive_streams;      ///< a map of streams of incoming data, keyed on socket number
-   std::vector<ConnectionInfo>   m_new_connections;      ///< connection info objects for new connections
-   std::map<int, ConnectionInfo> m_player_connections;   ///< connection info objects associated with established players; indexed by player id number
-   int                           m_TCP_socket;           ///< the "socket" number returned by SDL_net2; close this socket to stop listening on the port
-   int                           m_UDP_socket;           ///< the "socket" number returned by SDL_net2; close this socket to stop listening on the port
+   std::map<int, std::string> m_receive_streams;      ///< a map of streams of incoming data, keyed on socket number
+   std::vector<PlayerInfo>    m_new_connections;      ///< connection info objects for new connections
+   std::map<int, PlayerInfo>  m_player_connections;   ///< connection info objects associated with established players; indexed by player id number
+   int                        m_TCP_socket;           ///< the "socket" number returned by SDL_net2; close this socket to stop listening on the port
+   int                        m_UDP_socket;           ///< the "socket" number returned by SDL_net2; close this socket to stop listening on the port
 };
 
 #endif // _ServerNetworkCore_h_

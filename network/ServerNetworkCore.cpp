@@ -9,21 +9,6 @@
 #include <sstream>
 
 ////////////////////////////////////////////////
-// ServerNetworkCore::ConnectionInfo
-////////////////////////////////////////////////
-ServerNetworkCore::ConnectionInfo::ConnectionInfo() : 
-   socket(-1)
-{
-}
-
-ServerNetworkCore::ConnectionInfo::ConnectionInfo(int sock, const IPaddress& addr) : 
-   socket(sock),
-   address(addr)
-{
-}
-
-
-////////////////////////////////////////////////
 // ServerNetworkCore
 ////////////////////////////////////////////////
 ServerNetworkCore::ServerNetworkCore() :
@@ -41,7 +26,7 @@ void ServerNetworkCore::SendMessage(const Message& msg) const
 {
    int receiver_id = msg.Receiver();
    int receiver_socket = -1;
-   std::map<int, ConnectionInfo>::const_iterator it = m_player_connections.find(receiver_id);
+   std::map<int, PlayerInfo>::const_iterator it = m_player_connections.find(receiver_id);
    if (it != m_player_connections.end())
       receiver_socket = it->second.socket;
 
@@ -61,25 +46,75 @@ void ServerNetworkCore::ListenToPorts()
       ServerApp::GetApp()->Logger().fatalStream() << "ServerNetworkCore::ServerNetworkCore : failed to open port " << 
          NetworkCore::CONNECT_PORT << " for TCP connections.  SDL_net2 error: " << (err_msg ? err_msg : "[unknown error]");
       ServerApp::GetApp()->Exit(1);
-   } else if ((m_UDP_socket = NET2_UDPAcceptOn(NetworkCore::FIND_PORT, NetworkCore::FIND_SERVER_PACKET_MSG.size())) == -1) {
+   } else if ((m_UDP_socket = NET2_UDPAcceptOn(NetworkCore::SERVER_FIND_LISTEN_PORT, NetworkCore::SERVER_FIND_QUERY_MSG.size())) == -1) {
       char* err_msg = NET2_GetError();
       ServerApp::GetApp()->Logger().fatalStream() << "ServerNetworkCore::ServerNetworkCore : failed to open port " << 
-         NetworkCore::FIND_PORT << " for UDP packets.  SDL_net2 error: " << (err_msg ? err_msg : "[unknown error]");
+         NetworkCore::SERVER_FIND_LISTEN_PORT << " for UDP packets.  SDL_net2 error: " << (err_msg ? err_msg : "[unknown error]");
       NET2_TCPClose(m_TCP_socket);
       ServerApp::GetApp()->Exit(1);
    } else {
       ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore : Listening for TCP connections on port " << 
          NetworkCore::CONNECT_PORT;
       ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore : Listening for UDP packets on port " << 
-         NetworkCore::FIND_PORT;
+         NetworkCore::SERVER_FIND_LISTEN_PORT;
    }
+}
+
+bool ServerNetworkCore::EstablishPlayer(int socket, int player_id, const PlayerInfo& data)//int player_id, const std::string& name, int socket)
+{
+   bool retval = false;
+   bool found = false;
+   for (std::map<int, PlayerInfo>::iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
+      if (it->second.socket == socket) {
+         ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::EstablishPlayer : Attempted to establish \"" << data.name << 
+            "\" (player #" << player_id << ") on socket " << socket << ". But this player is already established on socket "
+            << it->second.socket << ".";
+         found = true;
+         break;
+      }
+   }
+   for (unsigned int i = 0; i < m_new_connections.size() && !found; ++i) {
+      if (m_new_connections[i].socket == socket) {
+         m_player_connections[player_id] = data;
+         m_player_connections[player_id].socket = m_new_connections[i].socket;
+         m_player_connections[player_id].address = m_new_connections[i].address;
+         m_new_connections.erase(m_new_connections.begin() + i);
+         retval = true;
+         for (unsigned int i = 0; i < m_player_connections.size(); ++i) {
+             if (static_cast<int>(i) == player_id) 
+                 continue;
+             if (data.name == m_player_connections[i].name) {
+                 m_player_connections[player_id].name += "0";
+                 SendMessage(RenameMessage(player_id, m_player_connections[player_id].name));
+                 break;
+             }
+         }
+         ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::EstablishPlayer : Established \"" << m_player_connections[player_id].name << 
+            "\" (player #" << player_id << ") on socket " << socket << ".";
+         break;
+      }
+   }
+   if (!retval) {
+      ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::EstablishPlayer : Unable to establish \"" << data.name << 
+         "\" (player #" << player_id << ") on unknown socket " << socket << ".";
+   }
+   return retval;
+}
+
+bool ServerNetworkCore::DumpPlayer(int player_id)
+{
+    bool retval = false;
+    std::map<int, PlayerInfo>::iterator it = m_player_connections.find(player_id);
+    if (it != m_player_connections.end())
+        retval = DumpConnection(it->second.socket);
+    return retval;
 }
 
 bool ServerNetworkCore::DumpConnection(int socket)
 {
    bool retval = false;
    int player_id = -1;
-   for (std::map<int, ConnectionInfo>::iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
+   for (std::map<int, PlayerInfo>::iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
       if (it->second.socket == socket) {
          player_id = it->first;
          m_player_connections.erase(it);
@@ -110,39 +145,9 @@ bool ServerNetworkCore::DumpConnection(int socket)
    return retval;
 }
 
-bool ServerNetworkCore::EstablishPlayer(int player_id, int socket)
-{
-   bool retval = false;
-   bool found = false;
-   for (std::map<int, ConnectionInfo>::iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
-      if (it->second.socket == socket) {
-         ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::EstablishPlayer : Attempted to establish "
-            "player " << player_id << " on socket " << socket << ". But this player is already established on socket "
-            << it->second.socket << ".";
-         found = true;
-         break;
-      }
-   }
-   for (unsigned int i = 0; i < m_new_connections.size() && !found; ++i) {
-      if (m_new_connections[i].socket == socket) {
-         m_player_connections[player_id] = m_new_connections[i];
-         m_new_connections.erase(m_new_connections.begin() + i);
-         retval = true;
-         ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::EstablishPlayer : Established "
-            "player " << player_id << " on socket " << socket << ".";
-         break;
-      }
-   }
-   if (!retval) {
-      ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::EstablishPlayer : Unable to establish "
-         "player " << player_id << " on unknown socket " << socket << ".";
-   }
-   return retval;
-}
-
 void ServerNetworkCore::DumpAllConnections()
 {
-   for (std::map<int, ConnectionInfo>::iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
+   for (std::map<int, PlayerInfo>::iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
       int player_id = -1;
       int socket = it->second.socket;
       player_id = it->first;
@@ -178,7 +183,7 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
          if (port == NetworkCore::CONNECT_PORT) { // regular incoming connections
             IPaddress* addr = NET2_TCPGetPeerAddress(socket);
             const char* socket_hostname = SDLNet_ResolveIP(addr);
-            m_new_connections.push_back(ConnectionInfo(socket, *addr));
+            m_new_connections.push_back(PlayerInfo(socket, *addr));
             ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::HandleNetEvent : Now connected to client at " <<
                (socket_hostname ? socket_hostname : "[unknown host]") << ", on socket " << socket << ".";
             SendMessage(Message(Message::SERVER_STATUS, -1, -1, Message::CORE, ServerApp::GetApp()->ServerStatus()),
@@ -200,7 +205,7 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
       case NET2_TCPCLOSEEVENT: {
          int closing_socket = NET2_GetSocket(&event);
          int player_id = -1;
-         for (std::map<int, ConnectionInfo>::iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
+         for (std::map<int, PlayerInfo>::iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
             if (it->second.socket == closing_socket) {
                player_id = it->first;
                break;
@@ -216,13 +221,23 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
          int socket = NET2_GetSocket(&event);
          UDPpacket* packet = 0;
          while (packet = NET2_UDPRead(socket)) {
-            if (NET2_UDPSend(&packet->address, const_cast<char*>(NetworkCore::FIND_SERVER_PACKET_MSG.c_str()), 
-                             NetworkCore::FIND_SERVER_PACKET_MSG.size()) == -1) {
-               const char* err_msg = NET2_GetError();
-               ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::HandleNetEvent : Call to "
-                  "NET2_UDPSend() failed; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
+            IPaddress return_address;
+            std::string incoming_msg;
+            for (int i = 0; i < packet->len; ++i)
+               incoming_msg += packet->data[i];
+            if (incoming_msg == SERVER_FIND_QUERY_MSG) {
+               NET2_ResolveHost(&return_address, const_cast<char*>(ToString(packet->address).c_str()), NetworkCore::SERVER_FIND_RESPONSE_PORT);
+               if (NET2_UDPSend(&return_address, const_cast<char*>(NetworkCore::SERVER_FIND_YES_MSG.c_str()), 
+                                NetworkCore::SERVER_FIND_YES_MSG.size()) == -1) {
+                  const char* err_msg = NET2_GetError();
+                  ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::HandleNetEvent : Call to "
+                      "NET2_UDPSend() failed; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
+               } else {
+                  ServerApp::GetApp()->Logger().debug("ServerNetworkCore::HandleNetEvent : Sent IP address to requsting host.");
+               }
             } else {
-               ServerApp::GetApp()->Logger().debug("ServerNetworkCore::HandleNetEvent : Sent IP address to requsting host.");
+                ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::HandleNetEvent : Received unknown UDP packet type "
+                      "containing: \"" << incoming_msg << "\"";
             }
             NET2_UDPFreePacket(packet);
          }
@@ -246,13 +261,13 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
       ServerApp::GetApp()->Logger().error("ServerNetworkCore::HandleNetEvent : Recieved an SDL event that was not an SDL_USEREVENT.");
    }
 }
-   
+
 void ServerNetworkCore::DispatchMessage(const Message& msg, int socket)
 {
    bool sender_unknown = true;
    bool spoofed_sender = false;
-   ConnectionInfo conn_info;
-   std::map<int, ConnectionInfo>::iterator sender_conn_it = m_player_connections.find(msg.Sender());
+   PlayerInfo conn_info;
+   std::map<int, PlayerInfo>::iterator sender_conn_it = m_player_connections.find(msg.Sender());
    if (sender_conn_it != m_player_connections.end()) {
       sender_unknown = false;
       conn_info = sender_conn_it->second;
@@ -260,7 +275,7 @@ void ServerNetworkCore::DispatchMessage(const Message& msg, int socket)
          spoofed_sender = true;
    }
    if (sender_unknown) {
-      for (std::vector<ConnectionInfo>::iterator it = m_new_connections.begin(); it != m_new_connections.end(); ++it) {
+      for (std::vector<PlayerInfo>::iterator it = m_new_connections.begin(); it != m_new_connections.end(); ++it) {
          if (it->socket == socket) {
             conn_info = *it;
             break;
@@ -273,7 +288,7 @@ void ServerNetworkCore::DispatchMessage(const Message& msg, int socket)
          " sent this message pretending to be player #" << msg.Sender() << " (spoofing player will be dumped): " << 
          msg.Type() << " " << msg.Sender() << " " << msg.Receiver() << " " << msg.Module() << " " << msg.GetText();
          DumpConnection(conn_info.socket);
-   } else if (msg.Receiver() == -1) { // a message destined for server
+   } else if (msg.Receiver() == -1) { // a message addressed to the server
       switch (msg.Module()) {
       case Message::CORE:
          if (sender_unknown) {
@@ -307,7 +322,7 @@ void ServerNetworkCore::ClosePorts()
    if (m_UDP_socket != -1) {
       NET2_UDPClose(m_UDP_socket);
       ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore : No longer listening for UDP packets on port " << 
-         NetworkCore::FIND_PORT;
+         NetworkCore::SERVER_FIND_LISTEN_PORT;
       m_UDP_socket = -1;
    }
 }
