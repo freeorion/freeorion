@@ -201,8 +201,15 @@ void IntroScreen::OnStartGame()
                 ClientUI::MessageBox(tmp);
             // \TEMP
 
-                EmpireSelect empire_wnd;    
-                empire_wnd.Run();
+		if (HumanClientApp::GetApp()->PlayerID() == -1)
+		{
+		  ClientUI::MessageBox(ClientUI::String("Game already hosted or unknown error") );
+		}
+		else
+		{
+                  EmpireSelect empire_wnd;    
+                  empire_wnd.Run();
+		}
 
         }
 
