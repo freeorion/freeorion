@@ -78,6 +78,9 @@ public:
 
     static HumanClientApp* GetApp(); ///< returns HumanClientApp pointer to the single instance of the app
 
+    /// override default so that UI can be updated
+    virtual void         StartTurn( );   ///< encodes order sets and sends turn orders message
+
 private:
     virtual void SDLInit();
     virtual void GLInit();
@@ -100,7 +103,7 @@ private:
     std::set<std::string>               m_sounds_to_free; ///< the filenames of sounds that should be freed, once they have finished playing
     boost::shared_ptr<ClientUI>         m_ui;             ///< the one and only ClientUI object!
     GG::XMLDoc                          m_config_doc;     ///< the XML document this was configured with
-
+    
     static void EndOfMusicCallback();
     static void EndOfSoundCallback(int channel);
 };

@@ -6,6 +6,7 @@
 #include "../../util/Process.h"
 #include "../../util/SitRepEntry.h"
 
+
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
@@ -408,6 +409,7 @@ void HumanClientApp::Render()
 
 void HumanClientApp::FinalCleanup()
 {
+  
     if (m_current_music) {
         Mix_HaltMusic();
         Mix_FreeMusic(m_current_music);
@@ -501,16 +503,85 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Universe setup complete.";
 
+            int turn_number;
+            turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
+
             m_ui->ScreenMap();
-            m_ui->InitTurn(); // init the new turn
+            m_ui->InitTurn( turn_number ); // init the new turn
+          }
         }
         break;
-    }
+	
+    case Message::TURN_PROGRESS: {
+
+            GG::XMLDoc doc;
+	    int phase_id;
+	    int empire_id;
+	    std::string phase_str;
+	    std::stringstream stream(msg.GetText());
+
+	    doc.ReadDoc(stream);          
+
+	    phase_id = boost::lexical_cast<int>(doc.root_node.Child("phase_id").Attribute("value"));
+	    empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Attribute("value"));
+
+	    // given IDs, build message
+	    if ( phase_id == Message::FLEET_MOVEMENT )
+              phase_str = ClientUI::String("TURN_PROGRESS_PHASE_FLEET_MOVEMENT" );
+	    else if ( phase_id == Message::COMBAT )
+              phase_str = ClientUI::String("TURN_PROGRESS_PHASE_COMBAT" );
+	    else if ( phase_id == Message::EMPIRE_PRODUCTION )
+              phase_str = ClientUI::String("TURN_PROGRESS_PHASE_EMPIRE_GROWTH" );
+	    else if ( phase_id == Message::WAITING_FOR_PLAYERS )
+              phase_str = ClientUI::String("TURN_PROGRESS_PHASE_WAITING");
+	    else if ( phase_id == Message::PROCESSING_ORDERS )
+              phase_str = ClientUI::String("TURN_PROGRESS_PHASE_ORDERS");
+
+	    m_ui->UpdateTurnProgress( phase_str, empire_id );
+
+        }
+        break;	
+
+    case Message::TURN_UPDATE: {
+
+            std::stringstream stream(msg.GetText());
+            GG::XMLDoc doc;
+            doc.ReadDoc(stream);
+
+            // dump the game start doc
+            std::ofstream output("update_doc.txt");
+            doc.WriteDoc(output);
+            output.close();
+           
+            int turn_number;
+            turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
+
+            // set with new universe data
+	    // we may not have a universe object if nothing has changed 
+	    if(doc.root_node.ContainsChild("Universe")) {
+	      m_universe.SetUniverse(doc.root_node.Child("Universe"));
+	    }
+            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Universe update complete.";
+
+            // if we have empire data, then process it.  As it stands now,
+            // we may not, so dont assume we do.
+            if(doc.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG)) {
+                    Logger().debugStream() <<"About to call HandleEmpireElementUpdate.";
+                    m_empires.HandleEmpireElementUpdate(doc.root_node.Child(EmpireManager::EMPIRE_UPDATE_TAG));
+            }
+            Logger().debugStream() <<"HumanClientApp::HandleMessageImpl : Empire update complete";
+
+            m_ui->ScreenMap(); 
+            m_ui->InitTurn( turn_number ); // init the new turn
+        }
+        break;
+        
     default: {
         Logger().errorStream() << "HumanClientApp::HandleMessageImpl : Received unknown Message type code " << msg.Type();
         break;
     }
-    }
+   }
+   
 }
 
 void HumanClientApp::EndOfMusicCallback()
@@ -537,4 +608,16 @@ void HumanClientApp::EndOfSoundCallback(int channel)
     if (this_ptr->m_sounds_to_free.find(filename) != this_ptr->m_sounds_to_free.end())
         this_ptr->FreeSound(filename);
 }
+
+
+void HumanClientApp::StartTurn( )
+{
+  // setup GUI
+  m_ui->ScreenProcessTurn( );
+
+  // call base method
+  ClientApp::StartTurn();
+  
+}
+
 
