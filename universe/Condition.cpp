@@ -7,6 +7,12 @@
 #include "../util/Random.h"
 #include "System.h"
 
+#include <boost/format.hpp>
+
+using namespace boost::io;
+using boost::lexical_cast;
+using boost::format;
+
 namespace {
     Condition::ConditionBase* NewAll(const GG::XMLElement& elem)                    {return new Condition::All(elem);}
     Condition::ConditionBase* NewEmpireAffiliation(const GG::XMLElement& elem)      {return new Condition::EmpireAffiliation(elem);}
@@ -22,7 +28,7 @@ namespace {
     Condition::ConditionBase* NewStarType(const GG::XMLElement& elem)               {return new Condition::StarType(elem);}
     Condition::ConditionBase* NewChance(const GG::XMLElement& elem)                 {return new Condition::Chance(elem);}
     Condition::ConditionBase* NewMeterValue(const GG::XMLElement& elem)             {return new Condition::MeterValue(elem);}
-    //Condition::ConditionBase* NewStockpileValue(const GG::XMLElement& elem)         {return new Condition::StockpileValue(elem);}
+    Condition::ConditionBase* NewEmpireStockpileValue(const GG::XMLElement& elem)   {return new Condition::EmpireStockpileValue(elem);}
     Condition::ConditionBase* NewVisibleToEmpire(const GG::XMLElement& elem)        {return new Condition::VisibleToEmpire(elem);}
     Condition::ConditionBase* NewWithinDistance(const GG::XMLElement& elem)         {return new Condition::WithinDistance(elem);}
     Condition::ConditionBase* NewWithinStarlaneJumps(const GG::XMLElement& elem)    {return new Condition::WithinStarlaneJumps(elem);}
@@ -54,7 +60,7 @@ GG::XMLObjectFactory<Condition::ConditionBase> Condition::ConditionFactory()
         factory.AddGenerator("Condition::StarType", &NewStarType);
         factory.AddGenerator("Condition::Chance", &NewChance);
         factory.AddGenerator("Condition::MeterValue", &NewMeterValue);
-        //factory.AddGenerator("Condition::StockpileValue", &NewStockpileValue);
+        factory.AddGenerator("Condition::EmpireStockpileValue", &NewEmpireStockpileValue);
         factory.AddGenerator("Condition::VisibleToEmpire", &NewVisibleToEmpire);
         factory.AddGenerator("Condition::WithinDistance", &NewWithinDistance);
         factory.AddGenerator("Condition::WithinStarlaneJumps", &NewWithinStarlaneJumps);
@@ -68,7 +74,7 @@ GG::XMLObjectFactory<Condition::ConditionBase> Condition::ConditionFactory()
 }
 
 ///////////////////////////////////////////////////////////
-// ConditionBase                                         //
+// Condition::ConditionBase                              //
 ///////////////////////////////////////////////////////////
 Condition::ConditionBase::ConditionBase()
 {
@@ -93,6 +99,11 @@ void Condition::ConditionBase::Eval(const UniverseObject* source, ObjectSet& tar
             ++it;
         }
     }
+}
+
+std::string Condition::ConditionBase::Description() const
+{
+    return "";
 }
 
 bool Condition::ConditionBase::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -121,6 +132,11 @@ void Condition::All::Eval(const UniverseObject* source, ObjectSet& targets, Obje
     }
 }
 
+std::string Condition::All::Description() const
+{
+    return UserString("DESC_ALL");
+}
+
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
@@ -137,13 +153,24 @@ Condition::EmpireAffiliation::EmpireAffiliation(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::EmpireAffiliation : Attempted to create a EmpireAffiliation condition from an XML element with a tag other than \"Condition::EmpireAffiliation\".");
 
     m_empire_id = ParseArithmeticExpression<int>(elem.Child("empire_id").Text());
-    m_affiliation = boost::lexical_cast<EmpireAffiliationType>(elem.Child("affiliation").Text());
-    m_exclusive = boost::lexical_cast<bool>(elem.Child("exclusive").Text());
+    m_affiliation = lexical_cast<EmpireAffiliationType>(elem.Child("affiliation").Text());
+    m_exclusive = lexical_cast<bool>(elem.Child("exclusive").Text());
 }
 
 Condition::EmpireAffiliation::~EmpireAffiliation()
 {
     delete m_empire_id;
+}
+
+std::string Condition::EmpireAffiliation::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
+    if (m_affiliation == AFFIL_SELF)
+        return str(format(UserString(m_exclusive ? "DESC_EMPIRE_AFFILIATION_SELF" : "DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE")) % value_str);
+    else
+        return str(format(UserString(m_exclusive ? "DESC_EMPIRE_AFFILIATION" : "DESC_EMPIRE_AFFILIATION_EXCLUSIVE"))
+                   % UserString(lexical_cast<std::string>(m_affiliation))
+                   % value_str);
 }
 
 bool Condition::EmpireAffiliation::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -177,6 +204,11 @@ Condition::Self::Self(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::Self : Attempted to create a Self condition from an XML element with a tag other than \"Condition::Self\".");
 }
 
+std::string Condition::Self::Description() const
+{
+    return UserString("DESC_SELF");
+}
+
 bool Condition::Self::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     return source == target;
@@ -196,6 +228,12 @@ Condition::Type::Type(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::Type : Attempted to create aType condition from an XML element with a tag other than \"Condition::Type\".");
 
     m_type = ParseArithmeticExpression<UniverseObjectType>(elem.Text());
+}
+
+std::string Condition::Type::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
+    return str(format(UserString("DESC_TYPE")) % value_str);
 }
 
 bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -244,6 +282,11 @@ Condition::Building::Building(const GG::XMLElement& elem)
     m_name = elem.Text();
 }
 
+std::string Condition::Building::Description() const
+{
+    return str(format(UserString("DESC_BUILDING")) % UserString(m_name));
+}
+
 bool Condition::Building::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const ::Building* building = universe_object_cast<const ::Building*>(target);
@@ -266,6 +309,11 @@ Condition::HasSpecial::HasSpecial(const GG::XMLElement& elem)
     m_name = elem.Text();
 }
 
+std::string Condition::HasSpecial::Description() const
+{
+    return str(format(UserString("DESC_SPECIAL")) % UserString(m_name));
+}
+
 bool Condition::HasSpecial::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     return (m_name == "All" && !target->Specials().empty()) || target->Specials().find(m_name) != target->Specials().end();
@@ -285,6 +333,11 @@ Condition::Contains::Contains(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::Contains : Attempted to create a Contains condition from an XML element with a tag other than \"Condition::Contains\".");
 
     m_condition = ConditionFactory().GenerateObject(elem.Child(0));
+}
+
+std::string Condition::Contains::Description() const
+{
+    return str(format(UserString("DESC_CONTAINS")) % m_condition->Description());
 }
 
 bool Condition::Contains::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -358,6 +411,22 @@ Condition::PlanetType::~PlanetType()
     }
 }
 
+std::string Condition::PlanetType::Description() const
+{
+    std::string values_str;
+    for (unsigned int i = 0; i < m_types.size(); ++i) {
+        values_str += ValueRef::ConstantExpr(m_types[i]) ? UserString(lexical_cast<std::string>(m_types[i]->Eval(0, 0))) : m_types[i]->Description();
+        if (2 <= m_types.size() && i < m_types.size() - 2) {
+            values_str += ", ";
+        } else if (i == m_types.size() - 2) {
+            values_str += m_types.size() < 3 ? " " : ", ";
+            values_str += UserString("OR");
+            values_str += " ";
+        }
+    }
+    return str(format(UserString("DESC_PLANET_TYPE")) % values_str);
+}
+
 bool Condition::PlanetType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const Planet* planet = universe_object_cast<const Planet*>(target);
@@ -373,6 +442,7 @@ bool Condition::PlanetType::Match(const UniverseObject* source, const UniverseOb
     }
     return false;
 }
+
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
@@ -396,6 +466,22 @@ Condition::PlanetSize::~PlanetSize()
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
         delete m_sizes[i];
     }
+}
+
+std::string Condition::PlanetSize::Description() const
+{
+    std::string values_str;
+    for (unsigned int i = 0; i < m_sizes.size(); ++i) {
+        values_str += ValueRef::ConstantExpr(m_sizes[i]) ? UserString(lexical_cast<std::string>(m_sizes[i]->Eval(0, 0))) : m_sizes[i]->Description();
+        if (2 <= m_sizes.size() && i < m_sizes.size() - 2) {
+            values_str += ", ";
+        } else if (i == m_sizes.size() - 2) {
+            values_str += m_sizes.size() < 3 ? " " : ", ";
+            values_str += UserString("OR");
+            values_str += " ";
+        }
+    }
+    return str(format(UserString("DESC_PLANET_SIZE")) % values_str);
 }
 
 bool Condition::PlanetSize::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -439,6 +525,22 @@ Condition::PlanetEnvironment::~PlanetEnvironment()
     }
 }
 
+std::string Condition::PlanetEnvironment::Description() const
+{
+    std::string values_str;
+    for (unsigned int i = 0; i < m_environments.size(); ++i) {
+        values_str += ValueRef::ConstantExpr(m_environments[i]) ? UserString(lexical_cast<std::string>(m_environments[i]->Eval(0, 0))) : m_environments[i]->Description();
+        if (2 <= m_environments.size() && i < m_environments.size() - 2) {
+            values_str += ", ";
+        } else if (i == m_environments.size() - 2) {
+            values_str += m_environments.size() < 3 ? " " : ", ";
+            values_str += UserString("OR");
+            values_str += " ";
+        }
+    }
+    return str(format(UserString("DESC_PLANET_ENVIRONMENT")) % values_str);
+}
+
 bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const Planet* planet = universe_object_cast<const Planet*>(target);
@@ -472,7 +574,7 @@ Condition::FocusType::FocusType(const GG::XMLElement& elem)
     for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_foci.push_back(ParseArithmeticExpression< ::FocusType>(it->Text()));
     }
-    m_primary = boost::lexical_cast< ::FocusType>(elem.Child("primary").Text());
+    m_primary = lexical_cast< ::FocusType>(elem.Child("primary").Text());
 }
 
 Condition::FocusType::~FocusType()
@@ -480,6 +582,22 @@ Condition::FocusType::~FocusType()
     for (unsigned int i = 0; i < m_foci.size(); ++i) {
         delete m_foci[i];
     }
+}
+
+std::string Condition::FocusType::Description() const
+{
+    std::string values_str;
+    for (unsigned int i = 0; i < m_foci.size(); ++i) {
+        values_str += ValueRef::ConstantExpr(m_foci[i]) ? UserString(lexical_cast<std::string>(m_foci[i]->Eval(0, 0))) : m_foci[i]->Description();
+        if (2 <= m_foci.size() && i < m_foci.size() - 2) {
+            values_str += ", ";
+        } else if (i == m_foci.size() - 2) {
+            values_str += m_foci.size() < 3 ? " " : ", ";
+            values_str += UserString("OR");
+            values_str += " ";
+        }
+    }
+    return str(format(UserString(m_primary ? "DESC_FOCUS_TYPE_PRIMARY" : "DESC_FOCUS_TYPE_SECONDARY")) % values_str);
 }
 
 bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -518,6 +636,22 @@ Condition::StarType::~StarType()
     }
 }
 
+std::string Condition::StarType::Description() const
+{
+    std::string values_str;
+    for (unsigned int i = 0; i < m_types.size(); ++i) {
+        values_str += ValueRef::ConstantExpr(m_types[i]) ? UserString(lexical_cast<std::string>(m_types[i]->Eval(0, 0))) : m_types[i]->Description();
+        if (2 <= m_types.size() && i < m_types.size() - 2) {
+            values_str += ", ";
+        } else if (i == m_types.size() - 2) {
+            values_str += m_types.size() < 3 ? " " : ", ";
+            values_str += UserString("OR");
+            values_str += " ";
+        }
+    }
+    return str(format(UserString("DESC_STAR_TYPE")) % values_str);
+}
+
 bool Condition::StarType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const System* system = target->GetSystem();
@@ -551,6 +685,12 @@ Condition::Chance::~Chance()
     delete m_chance;
 }
 
+std::string Condition::Chance::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_chance) ? lexical_cast<std::string>(m_chance->Eval(0, 0)) : m_chance->Description();
+    return str(format(UserString("DESC_CHANCE")) % value_str);
+}
+
 bool Condition::Chance::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     double chance = std::max(0.0, std::min(m_chance->Eval(source, target), 1.0));
@@ -573,16 +713,26 @@ Condition::MeterValue::MeterValue(const GG::XMLElement& elem)
     if (elem.Tag() != "Condition::MeterValue")
         throw std::runtime_error("Condition::MeterValue : Attempted to create a MeterValue condition from an XML element with a tag other than \"Condition::MeterValue\".");
 
-    m_meter = boost::lexical_cast<MeterType>(elem.Child("meter").Text());
+    m_meter = lexical_cast<MeterType>(elem.Child("meter").Text());
     m_low = ParseArithmeticExpression<double>(elem.Child("low").Text());
     m_high = ParseArithmeticExpression<double>(elem.Child("high").Text());
-    m_max_meter = boost::lexical_cast<bool>(elem.Child("max_meter").Text());
+    m_max_meter = lexical_cast<bool>(elem.Child("max_meter").Text());
 }
 
 Condition::MeterValue::~MeterValue()
 {
     delete m_low;
     delete m_high;
+}
+
+std::string Condition::MeterValue::Description() const
+{
+    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
+    return str(format(UserString(m_max_meter ? "DESC_METER_VALUE_MAX" : "DESC_METER_VALUE_CURRENT"))
+               % UserString(lexical_cast<std::string>(m_meter))
+               % low_str
+               % high_str);
 }
 
 bool Condition::MeterValue::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -597,36 +747,58 @@ bool Condition::MeterValue::Match(const UniverseObject* source, const UniverseOb
 }
 
 ///////////////////////////////////////////////////////////
-// StockpileValue                                        //
+// EmpireStockpileValue                                        //
 ///////////////////////////////////////////////////////////
-/*Condition::StockpileValue::StockpileValue(StockpileType stockpile, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
+Condition::EmpireStockpileValue::EmpireStockpileValue(StockpileType stockpile, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
     m_stockpile(stockpile),
     m_low(low),
     m_high(high)
 {
 }
 
-Condition::StockpileValue::StockpileValue(const GG::XMLElement& elem)
+Condition::EmpireStockpileValue::EmpireStockpileValue(const GG::XMLElement& elem)
 {
     if (elem.Tag() != "Condition::StockpileValue")
         throw std::runtime_error("Condition::StockpileValue : Attempted to create a StockpileValue condition from an XML element with a tag other than \"Condition::StockpileValue\".");
 
-    m_stockpile = boost::lexical_cast<StockpileType>(elem.Child("stockpile").Text());
+    m_stockpile = lexical_cast<StockpileType>(elem.Child("stockpile").Text());
     m_low = ParseArithmeticExpression<double>(elem.Child("low").Text());
     m_high = ParseArithmeticExpression<double>(elem.Child("high").Text());
 }
 
-Condition::StockpileValue::~StockpileValue()
+Condition::EmpireStockpileValue::~EmpireStockpileValue()
 {
     delete m_low;
     delete m_high;
 }
 
-bool Condition::StockpileValue::Match(const UniverseObject* source, const UniverseObject* target) const
+std::string Condition::EmpireStockpileValue::Description() const
 {
-    //TODO
+    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
+    return str(format(UserString("DESC_EMPIRE_STOCKPILE_VALUE"))
+               % UserString(lexical_cast<std::string>(m_stockpile))
+               % low_str
+               % high_str);
+}
+
+bool Condition::EmpireStockpileValue::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    if (source->Owners().size() != 1)
+        return false;
+    Empire* empire = Empires().Lookup(*source->Owners().begin());
+    if (m_stockpile == ST_FOOD) {
+        double stockpile = empire->FoodResPool().Stockpile();
+        return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
+    } else if (m_stockpile == ST_MINERAL) {
+        double stockpile = empire->MineralResPool().Stockpile();
+        return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
+    } else if (m_stockpile == ST_TRADE) {
+        double stockpile = empire->TradeResPool().Stockpile();
+        return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
+    }
     return false;
-}*/
+}
 
 ///////////////////////////////////////////////////////////
 // VisibleToEmpire                                       //
@@ -650,6 +822,27 @@ Condition::VisibleToEmpire::~VisibleToEmpire()
 {
     for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
         delete m_empire_ids[i];
+    }
+}
+
+std::string Condition::VisibleToEmpire::Description() const
+{
+    if (m_empire_ids.size() == 1) {
+        std::string value_str = ValueRef::ConstantExpr(m_empire_ids[0]) ? Empires().Lookup(m_empire_ids[0]->Eval(0, 0))->Name() : m_empire_ids[0]->Description();
+        return str(format(UserString("DESC_VISIBLE_TO_SINGLE_EMPIRE")) % value_str);
+    } else {
+        std::string values_str;
+        for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
+            values_str += ValueRef::ConstantExpr(m_empire_ids[i]) ? Empires().Lookup(m_empire_ids[i]->Eval(0, 0))->Name() : m_empire_ids[i]->Description();
+            if (2 <= m_empire_ids.size() && i < m_empire_ids.size() - 2) {
+                values_str += ", ";
+            } else if (i == m_empire_ids.size() - 2) {
+                values_str += m_empire_ids.size() < 3 ? " " : ", ";
+                values_str += UserString("OR");
+                values_str += " ";
+            }
+        }
+        return str(format(UserString("DESC_VISIBLE_TO_EMPIRES")) % values_str);
     }
 }
 
@@ -717,6 +910,14 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
     }
 }
 
+std::string Condition::WithinDistance::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_distance) ? lexical_cast<std::string>(m_distance->Eval(0, 0)) : m_distance->Description();
+    return str(format(UserString("DESC_WITHIN_DISTANCE"))
+               % value_str
+               % m_condition->Description());
+}
+
 bool Condition::WithinDistance::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     double dist = m_distance->Eval(source, target);
@@ -737,7 +938,7 @@ Condition::WithinStarlaneJumps::WithinStarlaneJumps(const ValueRef::ValueRefBase
 
 Condition::WithinStarlaneJumps::WithinStarlaneJumps(const GG::XMLElement& elem)
 {
-    if (elem.Tag() != "ConditionWithinStarlaneJumps")
+    if (elem.Tag() != "Condition::ConditionWithinStarlaneJumps")
         throw std::runtime_error("Condition::WithinStarlaneJumps : Attempted to create a WithinStarlaneJumps condition from an XML element with a tag other than \"Condition::WithinStarlaneJumps\".");
 
     m_jumps = ParseArithmeticExpression<int>(elem.Child("jumps").Text());
@@ -778,6 +979,14 @@ void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSe
             }
         }
     }
+}
+
+std::string Condition::WithinStarlaneJumps::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_jumps) ? lexical_cast<std::string>(m_jumps->Eval(0, 0)) : m_jumps->Description();
+    return str(format(UserString("DESC_WITHIN_DISTANCE"))
+               % value_str
+               % m_condition->Description());
 }
 
 bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -850,6 +1059,13 @@ Condition::EffectTarget::EffectTarget(const GG::XMLElement& elem)
     // TODO
 }
 
+std::string Condition::EffectTarget::Description() const
+{
+    std::string retval;
+    // TODO
+    return retval;
+}
+
 bool Condition::EffectTarget::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     return false/*TODO*/;
@@ -913,6 +1129,23 @@ void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, Obje
     }
 }
 
+std::string Condition::And::Description() const
+{
+    if (m_operands.size() == 1) {
+        return m_operands[0]->Description();
+    } else {
+        // TODO: use per-operand-type connecting language
+        std::string values_str;
+        for (unsigned int i = 0; i < m_operands.size(); ++i) {
+            values_str += m_operands[i]->Description();
+            if (i != m_operands.size() - 1) {
+                values_str += UserString("DESC_AND_BETWEEN_OPERANDS");
+            }
+        }
+        return values_str;
+    }
+}
+
 ///////////////////////////////////////////////////////////
 // Or                                                    //
 ///////////////////////////////////////////////////////////
@@ -971,6 +1204,23 @@ void Condition::Or::Eval(const UniverseObject* source, ObjectSet& targets, Objec
     }
 }
 
+std::string Condition::Or::Description() const
+{
+    if (m_operands.size() == 1) {
+        return m_operands[0]->Description();
+    } else {
+        // TODO: use per-operand-type connecting language
+        std::string values_str;
+        for (unsigned int i = 0; i < m_operands.size(); ++i) {
+            values_str += m_operands[i]->Description();
+            if (i != m_operands.size() - 1) {
+                values_str += UserString("DESC_OR_BETWEEN_OPERANDS");
+            }
+        }
+        return values_str;
+    }
+}
+
 ///////////////////////////////////////////////////////////
 // Not                                                   //
 ///////////////////////////////////////////////////////////
@@ -1001,4 +1251,9 @@ Condition::Not::~Not()
 void Condition::Not::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
     m_operand->Eval(source, non_targets, targets, search_domain == TARGETS ? NON_TARGETS : TARGETS);
+}
+
+std::string Condition::Not::Description() const
+{
+    return UserString("DESC_NOT") + m_operand->Description();
 }
