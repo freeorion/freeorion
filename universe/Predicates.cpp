@@ -39,3 +39,13 @@ bool IsMovingFleetFunctor::operator()(const UniverseObject* obj) const
     }
     return false;
 }
+
+bool IsOwnedByFunctor::operator()(const UniverseObject* obj) const
+{
+    return obj->OwnedBy(empire_id);
+}
+
+bool IsWhollyOwnedByFunctor::operator()(const UniverseObject* obj) const
+{
+    return obj->WhollyOwnedBy(empire_id);
+}

@@ -33,6 +33,22 @@ struct IsMovingFleetFunctor
     const int empire_id;
 };
 
+/** returns true iff the given empire is an owner of \a obj. */
+struct IsOwnedByFunctor
+{
+    IsOwnedByFunctor(int empire = -1) : empire_id(empire) {}
+    bool operator()(const UniverseObject* obj) const;
+    const int empire_id;
+};
+
+/** returns true iff the given empire is the only owner of \a obj. */
+struct IsWhollyOwnedByFunctor
+{
+    IsWhollyOwnedByFunctor(int empire = -1) : empire_id(empire) {}
+    bool operator()(const UniverseObject* obj) const;
+    const int empire_id;
+};
+
 /** returns true iff \a obj is owned by the empire with id \a empire, and \a obj is of type T. */
 template <class T> 
 struct IsOwnedObjectFunctor
