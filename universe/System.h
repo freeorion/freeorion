@@ -29,6 +29,7 @@ public:
                   RED_DWARF, 
                   RED_GIANT, 
                   YELLOW,
+                  BLUE,
                   NUM_STARTYPES           ///< the lowest illegal StarType value
                  }; // others TBD
       
