@@ -39,11 +39,13 @@ namespace
 {
     Order* GenPlanetBuildOrder(const XMLElement& elem)   {return new PlanetBuildOrder(elem);}
     Order* GenNewFleetOrder(const XMLElement& elem)      {return new NewFleetOrder(elem);}
+    Order* GenRenameOrder(const XMLElement& elem)   {return new RenameOrder(elem);}
     Order* GenFleetMoveOrder(const XMLElement& elem)     {return new FleetMoveOrder(elem);}
     Order* GenFleetTransferOrder(const XMLElement& elem) {return new FleetTransferOrder(elem);}
     Order* GenFleetColonizeOrder(const XMLElement& elem) {return new FleetColonizeOrder(elem);}
     Order* GenDeleteFleetOrder(const XMLElement& elem)   {return new DeleteFleetOrder(elem);}
 }
+
 
 /////////////////////////////////////////////////////
 // ORDER
@@ -85,6 +87,56 @@ void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
     fact.AddGenerator("FleetColonizeOrder", &GenFleetColonizeOrder);
     fact.AddGenerator("DeleteFleetOrder",   &GenDeleteFleetOrder);
 }
+
+
+////////////////////////////////////////////////
+// RenameOrder
+////////////////////////////////////////////////
+RenameOrder::RenameOrder() : 
+   Order(),
+   m_object(UniverseObject::INVALID_OBJECT_ID)
+{
+}
+   
+RenameOrder::RenameOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
+{
+    if (elem.Tag()!=("RenameOrder"))
+        throw std::invalid_argument("Attempted to construct RenameOrder from malformed XMLElement");
+    
+    m_object = lexical_cast<int>(elem.Child("m_object").Text());
+    m_name = elem.Child("m_name").Text();
+}
+
+RenameOrder::RenameOrder(int empire, int fleet, const std::string& name) : 
+   Order(empire),
+   m_object(fleet),
+   m_name(name)
+{
+}
+
+void RenameOrder::Execute() const
+{
+    ValidateEmpireID();
+
+    UniverseObject* obj = GetUniverse().Object(m_object);\
+
+    // verify that empire specified in order owns specified object
+    if (!obj->WhollyOwnedBy(EmpireID()))
+        throw std::runtime_error("Empire specified in rename order does not own specified object.");
+
+    obj->Rename(m_name);
+}
+
+GG::XMLElement RenameOrder::XMLEncode() const
+{
+    XMLElement retval("RenameOrder");
+    retval.AppendChild(Order::XMLEncode());
+    retval.AppendChild(XMLElement("m_object", lexical_cast<std::string>(m_object)));
+    retval.AppendChild(XMLElement("m_name", m_name));
+    return retval;
+}
+
+
 
 ////////////////////////////////////////////////
 // PlanetBuildOrder
@@ -135,7 +187,7 @@ void PlanetBuildOrder::Execute() const
     }
     
     //  verify that empire specified in order owns specified planet
-    if( ! empire->Lookup(EmpireID())->HasPlanet(PlanetID()) )
+    if( !the_planet->OwnedBy(EmpireID()) )
     {
         throw std::runtime_error("Empire specified in planet build order does not own specified planet.");
     }
@@ -227,7 +279,6 @@ void NewFleetOrder::Execute() const
         // an ID is provided to ensure consistancy between server and client uiverses
         universe.InsertID(fleet, m_new_id );
     }
-    Empires().Lookup(EmpireID())->AddFleet(fleet->ID());
 }
 
 XMLElement NewFleetOrder::XMLEncode() const
@@ -301,9 +352,10 @@ void FleetMoveOrder::Execute() const
     }
     
     // verify that empire specified in order owns specified fleet
-    if( ! empire.Lookup(EmpireID())->HasFleet(FleetID()) )
+    if( !the_fleet->OwnedBy(EmpireID()) )
     {
-        throw std::runtime_error("Empire specified in fleet order does not own specified fleet.");
+        throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) + 
+            " specified in fleet order does not own specified fleet " + boost::lexical_cast<std::string>(FleetID()) + ".");
     }
     
     // look up destination
@@ -395,16 +447,16 @@ void FleetTransferOrder::Execute() const
     }
     
     // verify that empire is not trying to take ships from somebody else's fleet
-    if( !empire.Lookup( EmpireID() )->HasFleet( SourceFleet() ) )
+    if( !source_fleet->OwnedBy(EmpireID()) )
     {
         throw std::runtime_error("Empire attempted to merge ships from another's fleet.");
     }
     
     // verify that empire cannot merge ships into somebody else's fleet.
     // this is just an additional security measure.  IT could be removed to
-    // allow 'donations' of ships to other players, provided that GameCore
+    // allow 'donations' of ships to other players, provided the server
     // verifies IDs of the Empires issuing the orders.
-    if( !empire.Lookup( EmpireID() )->HasFleet( DestinationFleet() ) )
+    if( !target_fleet->OwnedBy(EmpireID()) )
     {
         throw std::runtime_error("Empire attempted to merge ships into another's fleet.");
     }
@@ -511,7 +563,7 @@ void FleetColonizeOrder::Execute() const
     }
      
     // verify that empire issuing order owns specified fleet
-    if( !empire->Lookup( EmpireID() )->HasFleet( FleetID() ) )
+    if( !colony_fleet->OwnedBy(EmpireID()) )
     {
         throw std::runtime_error("Empire attempted to issue colonize order to another's fleet.");
     }
@@ -523,16 +575,13 @@ void FleetColonizeOrder::Execute() const
     {
         throw std::runtime_error("Colonization order issued with invalid planet id.");
     }
-    if(target_planet->Owners().size() != 0)
+    if(!target_planet->Unowned())
     {
         throw std::runtime_error("Colonization order issued for owned planet.");    
     }
     
-    // verify that planet is in same position as the fleet
-    // Using doubles here to compare WILL NOT always produce equality - the precision is dependant on hardware
-    // and can be off enough to cause inequality */
-    // since we're dealing with systems here, use int
-    if( ( (int)target_planet->GetSystem()->X() != (int)colony_fleet->X())  || (int)target_planet->GetSystem()->Y() != (int)colony_fleet->Y())
+    // verify that planet is in same system as the fleet
+    if (target_planet->SystemID() != colony_fleet->SystemID() && target_planet->SystemID() != UniverseObject::INVALID_OBJECT_ID)
     {
         throw std::runtime_error("Fleet specified in colonization order is not in specified system.");
     }
@@ -558,7 +607,6 @@ void FleetColonizeOrder::Execute() const
             if(target_planet->SystemID() != UniverseObject::INVALID_OBJECT_ID )
             {
                 target_planet->GetSystem()->AddOwner(EmpireID());
-                empire->Lookup(EmpireID())->AddPlanet(PlanetID());
             }
             
             // remove colony ship from fleet and deallocate it
@@ -568,7 +616,6 @@ void FleetColonizeOrder::Execute() const
             // If colony ship was only ship in fleet, remove fleet
             if(colony_fleet->NumShips() == 0)
             {
-                empire->Lookup(EmpireID())->RemoveFleet(colony_fleet->ID());
                 universe->Delete(colony_fleet->ID());
             }
             
@@ -627,14 +674,13 @@ void DeleteFleetOrder::Execute() const
     if(!fleet)
         throw std::runtime_error("Illegal fleet id specified in fleet colonize order.");
 
-    if (!empire->HasFleet(FleetID()))
+    if (!fleet->OwnedBy(EmpireID()))
         throw std::runtime_error("Empire attempted to issue deletion order to another's fleet.");
 
     if (fleet->NumShips())
         throw std::runtime_error("Attempted to delete an unempty fleet.");
 
     GetUniverse().Delete(FleetID());
-    empire->RemoveFleet(FleetID());
 }
 
 GG::XMLElement DeleteFleetOrder::XMLEncode() const

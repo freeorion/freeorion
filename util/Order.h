@@ -65,6 +65,42 @@ private:
 
 
 /////////////////////////////////////////////////////
+// RENAME ORDER
+/////////////////////////////////////////////////////
+
+/** the Order subclass that represents the renaming of a UniverseObject. */
+class RenameOrder : public Order
+{
+public:
+   /** \name Structors */ //@{
+   RenameOrder();
+   RenameOrder(const GG::XMLElement& elem);
+   RenameOrder(int empire, int object, const std::string& name);
+   //@}
+   
+   /** \name Accessors */ //@{
+   int                  ObjectID() const {return m_object;} ///< returns ID of fleet selected in this order
+   const std::string&   Name() const     {return m_name;}  ///< returns the new name of the fleet
+   
+   /**
+   *  Preconditions for fleet rename order are:
+   *    - m_object must be the id of an object in the universe, wholly owned by the empire issuing the order
+   *
+   *  Postconditions:
+   *    - the object's name attribute will be changed to the one desired.
+   *
+   */
+   virtual void           Execute() const;
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+   //@}
+   
+private:
+   int           m_object;
+   std::string   m_name;
+};
+
+
+/////////////////////////////////////////////////////
 // PLANET BUILD ORDER
 /////////////////////////////////////////////////////
 
