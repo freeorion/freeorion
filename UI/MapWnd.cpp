@@ -657,10 +657,10 @@ void MapWnd::RenderFleetMovementLines()
     glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
     glLineWidth(LINE_SCALE);
     glColor4d(1.0, 1.0, 1.0, 1.0);
-    glBegin(GL_LINE_STRIP);
 
     GG::Pt ul = ClientUpperLeft();
     for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
+        glBegin(GL_LINE_STRIP);
         const std::list<System*>& destinations = it->second.destinations;
         glVertex2d(ul.x + it->second.x * m_zoom_factor, ul.y + it->second.y * m_zoom_factor);
         for (std::list<System*>::const_iterator dest_it = destinations.begin(); dest_it != destinations.end(); ++dest_it) {
@@ -668,9 +668,9 @@ void MapWnd::RenderFleetMovementLines()
                 continue;
             glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
         }
-    }
+        glEnd();
+   }
 
-    glEnd();
     glLineWidth(1.0);
     glDisable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
@@ -739,7 +739,7 @@ void MapWnd::DeleteAllPopups( )
 {
     for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ) {
         // get popup and increment iterator first since closing the popup will change this list by removing the poup
-        MapWndPopup *popup = *it++;
+        MapWndPopup* popup = *it++;
         popup->Close( );
     }   
     // clear list
