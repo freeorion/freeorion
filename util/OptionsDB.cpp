@@ -153,7 +153,6 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
 
         os << std::string(description_column - 1, ' ');// - (it->second.name.size() + 7), ' ');
 
-        bool first_line = true;
         std::vector<std::string> tokenized_strings;
         using boost::spirit::anychar_p;
         using boost::spirit::rule;

@@ -411,7 +411,6 @@ std::string TechManager::FindRedundantDependency()
 
     for (iterator it = begin(); it != end(); ++it) {
         const Tech* tech = *it;
-        TechType tech_type = tech->Type();
         std::set<std::string> prereqs = tech->Prerequisites();
         std::map<std::string, std::string> techs_unlocked_by_prereqs;
         for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
