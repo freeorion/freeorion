@@ -74,7 +74,7 @@ private:
         bool InPlanet(const GG::Pt& pt) const;
         void BuildSelected(int idx) const;
 
-        const Planet&      m_planet;
+        int m_planet_id;
 
         int m_parent_visible_width; ///< the width of the SidePanel, not counting the amount that the planets hang over
 

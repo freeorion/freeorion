@@ -37,7 +37,7 @@ GG::SubTexture SidePanel::PlanetPanel::m_farming_icon;
 
 SidePanel::PlanetPanel::PlanetPanel(const Planet& planet, int y, int parent_width, int h) : 
     Wnd(-HUGE_PLANET_SIZE / 2, y, parent_width + HUGE_PLANET_SIZE / 2, h, GG::Wnd::CLICKABLE),
-    m_planet(planet),
+    m_planet_id(planet.ID()),
     m_construction(0)
 {
     // initialize statics if we're the first instance of a PlanetPanel
@@ -54,7 +54,7 @@ SidePanel::PlanetPanel::PlanetPanel(const Planet& planet, int y, int parent_widt
 
     // planet graphic
     std::string planet_image = ClientUI::ART_DIR + "planets/";
-    switch (m_planet.Type()) {
+    switch (planet.Type()) {
     case Planet::TOXIC:    planet_image += "toxic"; break;
     case Planet::RADIATED: planet_image += "radiated"; break;
     case Planet::BARREN:   planet_image += "barren"; break;
@@ -65,12 +65,12 @@ SidePanel::PlanetPanel::PlanetPanel(const Planet& planet, int y, int parent_widt
     case Planet::GAIA:     planet_image += "terran"; break;
     default:               planet_image += "barren"; break;
     }
-    planet_image += boost::lexical_cast<std::string>((m_planet.ID() % IMAGES_PER_PLANET_TYPE) + 1) + ".png";
+    planet_image += boost::lexical_cast<std::string>((planet.ID() % IMAGES_PER_PLANET_TYPE) + 1) + ".png";
     m_planet_graphic = GG::SubTexture(HumanClientApp::GetApp()->GetTexture(planet_image), 
                                       0, 0, PLANET_IMAGE_SIZE - 1, PLANET_IMAGE_SIZE - 1);
 
     // construction drop list
-    if (!m_planet.Owners().empty() && *m_planet.Owners().begin() == HumanClientApp::GetApp()->PlayerID()) {
+    if (!planet.Owners().empty() && *planet.Owners().begin() == HumanClientApp::GetApp()->PlayerID()) {
 
         // for v.1 some of these only appear after tech is researched
         
@@ -149,7 +149,7 @@ SidePanel::PlanetPanel::PlanetPanel(const Planet& planet, int y, int parent_widt
         // find the index we need to set in the list 
         int selection_idx = 0;
         for ( std::vector< ProdCenter::BuildType >::iterator it = m_construction_prod_idx.begin(); it != m_construction_prod_idx.end(); ++it, selection_idx++ ) {
-            if ( *it ==  m_planet.CurrentlyBuilding() )
+            if ( *it ==  planet.CurrentlyBuilding() )
                 break;
         }
         
@@ -173,6 +173,10 @@ int SidePanel::PlanetPanel::Render()
     using boost::lexical_cast;
     using std::string;
 
+    const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
+    if(!planet)
+        throw std::invalid_argument("SidePanel::PlanetPanel::Render planet not found!");
+
     // planet graphic
     int planet_image_sz = PlanetDiameter();
     GG::Pt planet_image_pos(ul.x + HUGE_PLANET_SIZE / 2 - planet_image_sz / 2, ul.y + Height() / 2 - planet_image_sz / 2);
@@ -187,13 +191,13 @@ int SidePanel::PlanetPanel::Render()
     double y = Height() / 2.0 - TEXT_POSITION_RADIUS + PLANET_NAME_FONT_HALF_HT;
     GG::Pt posn(ul.x + HUGE_PLANET_SIZE / 2 + CircleXFromY(y - Height() / 2.0, TEXT_POSITION_RADIUS), ul.y + static_cast<int>(y));
     GG::Clr planet_name_color = ClientUI::TEXT_COLOR;
-    const std::set<int>& owners = m_planet.Owners();
+    const std::set<int>& owners = planet->Owners();
     if (!owners.empty()) {
         planet_name_color = HumanClientApp::Empires().Lookup(*owners.begin())->Color();
     }
     glColor4ubv(planet_name_color.v);
     int y1 = static_cast<int>(posn.y - PLANET_NAME_FONT_HALF_HT), y2 = static_cast<int>(posn.y + PLANET_NAME_FONT_HALF_HT);
-    planet_name_font->RenderText(GG::Pt(posn.x, y1), GG::Pt(posn.x + 500, y2), m_planet.Name(), format, 0, false);
+    planet_name_font->RenderText(GG::Pt(posn.x, y1), GG::Pt(posn.x + 500, y2), planet->Name(), format, 0, false);
 
     glColor4ubv(ClientUI::TEXT_COLOR.v);
     boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PTS);
@@ -201,7 +205,7 @@ int SidePanel::PlanetPanel::Render()
     y += PLANET_NAME_FONT_HALF_HT + FONT_HALF_HT;
     posn = GG::Pt(ul.x + HUGE_PLANET_SIZE / 2 + CircleXFromY(y - Height() / 2.0, TEXT_POSITION_RADIUS), ul.y + static_cast<int>(y));
     std::string text;
-    switch (m_planet.Size()) {
+    switch (planet->Size()) {
     case Planet::SZ_TINY: text += ClientUI::String("PL_SZ_TINY"); break;
     case Planet::SZ_SMALL: text += ClientUI::String("PL_SZ_SMALL"); break;
     case Planet::SZ_MEDIUM: text += ClientUI::String("PL_SZ_MEDIUM"); break;
@@ -210,7 +214,7 @@ int SidePanel::PlanetPanel::Render()
     default: text += "ERROR "; break;
     }
     text += " ";
-    switch (m_planet.Type()) {
+    switch (planet->Type()) {
     case Planet::TOXIC: text += ClientUI::String("PL_TOXIC"); break;
     case Planet::RADIATED: text += ClientUI::String("PL_RADIATED"); break;
     case Planet::BARREN: text += ClientUI::String("PL_BARREN"); break;
@@ -227,15 +231,15 @@ int SidePanel::PlanetPanel::Render()
 
     // pop
     const int ICON_MARGIN = 5;
-    if (!m_planet.Owners().empty()) {
+    if (!planet->Owners().empty()) {
         y += font->Height();
         posn = GG::Pt(ul.x + HUGE_PLANET_SIZE / 2 + CircleXFromY(y - Height() / 2.0, TEXT_POSITION_RADIUS), ul.y + static_cast<int>(y));
-        text = lexical_cast<string>(static_cast<int>(m_planet.PopPoints()));
+        text = lexical_cast<string>(static_cast<int>(planet->PopPoints()));
         text += "/";
-        text += lexical_cast<string>(static_cast<int>(m_planet.MaxPop()));
-        if (m_planet.PopGrowth()) {
-            text += GG::RgbaTag(0 < m_planet.PopGrowth() ? ClientUI::STAT_INCR_COLOR : ClientUI::STAT_DECR_COLOR);
-            text += (0 < m_planet.PopGrowth() ? " (+" : " (") + lexical_cast<string>(m_planet.PopGrowth()) + ")</rgba>";
+        text += lexical_cast<string>(static_cast<int>(planet->MaxPop()));
+        if (planet->PopGrowth()) {
+            text += GG::RgbaTag(0 < planet->PopGrowth() ? ClientUI::STAT_INCR_COLOR : ClientUI::STAT_DECR_COLOR);
+            text += (0 < planet->PopGrowth() ? " (+" : " (") + lexical_cast<string>(planet->PopGrowth()) + ")</rgba>";
         }
         y1 = static_cast<int>(posn.y - FONT_HALF_HT);
         y2 = static_cast<int>(posn.y + FONT_HALF_HT);
@@ -246,7 +250,7 @@ int SidePanel::PlanetPanel::Render()
         // industry
         y += font->Height();
         posn = GG::Pt(ul.x + HUGE_PLANET_SIZE / 2 + CircleXFromY(y - Height() / 2.0, TEXT_POSITION_RADIUS), ul.y + static_cast<int>(y));
-        text = lexical_cast<string>(static_cast<int>(m_planet.ProdPoints()));
+        text = lexical_cast<string>(static_cast<int>(planet->ProdPoints()));
         y1 = static_cast<int>(posn.y - FONT_HALF_HT);
         y2 = static_cast<int>(posn.y + FONT_HALF_HT);
         m_industry_icon.OrthoBlit(posn.x, y1, posn.x + font->Height(), y1 + font->Height(), false);
@@ -292,12 +296,12 @@ int SidePanel::PlanetPanel::Render()
     font->RenderText(GG::Pt(posn.x, y1), GG::Pt(posn.x + 500, y2), text, format, 0, true);
 #endif
 
-    if (ProdCenter::SCOUT <= m_planet.CurrentlyBuilding()) {
+    if (ProdCenter::SCOUT <= planet->CurrentlyBuilding()) {
         // construction progress bar
         // TODO : get the costs of the item from the list of available technologies
         const int PROD_COSTS[] = {0, 0, 0, 50, 250, 100, 200, 375, 700, 200};
-        int cost = PROD_COSTS[m_planet.CurrentlyBuilding()];
-        double percent_complete = cost ? m_planet.BuildProgress() / cost : 0.0;
+        int cost = PROD_COSTS[planet->CurrentlyBuilding()];
+        double percent_complete = cost ? planet->BuildProgress() / cost : 0.0;
         int x1 = ul.x + Width() - CONSTR_DROP_LIST_WIDTH - 3;
         int x2 = x1 + CONSTR_DROP_LIST_WIDTH;
         y1 = ul.y + Height() - ClientUI::SIDE_PANEL_PTS - CONSTR_PROGRESS_BAR_HT - 3;
@@ -308,10 +312,10 @@ int SidePanel::PlanetPanel::Render()
 
         // construction progress text
         format = GG::TF_RIGHT | GG::TF_VCENTER;
-        if (cost && !m_planet.ProdPoints()) {
+        if (cost && !planet->ProdPoints()) {
             text = "(never)";
         } else if (cost) {
-            int turns_remaining = static_cast<int>(std::ceil((cost - m_planet.BuildProgress()) / m_planet.ProdPoints()));
+            int turns_remaining = static_cast<int>(std::ceil((cost - planet->BuildProgress()) / planet->ProdPoints()));
             text = "(" + lexical_cast<string>(turns_remaining) + " turns)";
         } else {
             text = "";
@@ -327,7 +331,11 @@ int SidePanel::PlanetPanel::Render()
 
 int SidePanel::PlanetPanel::PlanetDiameter() const
 {
-    return TINY_PLANET_SIZE + (HUGE_PLANET_SIZE - TINY_PLANET_SIZE) / (Planet::SZ_HUGE - Planet::SZ_TINY) * m_planet.Size();
+    const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
+    if(!planet)
+        throw std::invalid_argument("SidePanel::PlanetPanel::PlanetDiameter planet not found!");
+
+    return TINY_PLANET_SIZE + (HUGE_PLANET_SIZE - TINY_PLANET_SIZE) / (Planet::SZ_HUGE - Planet::SZ_TINY) * planet->Size();
 }
 
 bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
@@ -340,7 +348,11 @@ bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
 
 void SidePanel::PlanetPanel::BuildSelected(int idx) const
 {
-    HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*m_planet.Owners().begin(), m_planet.ID(), m_construction_prod_idx[ idx ] ));
+    const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
+    if(!planet)
+        throw std::invalid_argument("SidePanel::PlanetPanel::BuildSelected planet not found!");
+
+    HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*planet->Owners().begin(), planet->ID(), m_construction_prod_idx[ idx ] ));
 }
 
 
