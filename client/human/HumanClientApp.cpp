@@ -201,6 +201,8 @@ bool HumanClientApp::LoadSinglePlayerGame()
 
             HumanClientApp::GetApp()->NetworkCore().SendMessage(HostLoadGameMessage(HumanClientApp::GetApp()->PlayerID(), filename));
             return true;
+        } else {
+            HumanClientApp::GetApp()->KillServer();
         }
     } catch (const GG::FileDlg::InitialDirectoryDoesNotExistException& e) {
         ClientUI::MessageBox(e.Message());
