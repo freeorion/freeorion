@@ -6,7 +6,6 @@
 #include "About.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
-#include "EmpireSelect.h"
 #include "GalaxySetupWnd.h"
 #include "GGDrawUtil.h"
 #include "GGStaticGraphic.h"

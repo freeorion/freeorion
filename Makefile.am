@@ -132,6 +132,8 @@ client/human/HumanClientApp.h			\
 client/human/chmain.cpp				\
 UI/About.cpp					\
 UI/About.h					\
+UI/ClientUI.cpp					\
+UI/ClientUI.h					\
 UI/CUIControls.cpp				\
 UI/CUIControls.h				\
 UI/CUIDrawUtil.cpp				\
@@ -139,12 +141,8 @@ UI/CUIDrawUtil.h 				\
 UI/CUISpin.h					\
 UI/CUI_Wnd.cpp					\
 UI/CUI_Wnd.h					\
-UI/ClientUI.cpp					\
-UI/ClientUI.h					\
 UI/CombatWnd.cpp				\
 UI/CombatWnd.h					\
-UI/EmpireSelect.cpp				\
-UI/EmpireSelect.h				\
 UI/FleetButton.cpp				\
 UI/FleetButton.h 				\
 UI/FleetWindow.cpp				\
@@ -163,12 +161,8 @@ UI/MultiplayerLobbyWnd.cpp			\
 UI/MultiplayerLobbyWnd.h			\
 UI/OptionsWnd.cpp				\
 UI/OptionsWnd.h					\
-UI/Parser.cpp  					\
-UI/Parser.h  					\
 UI/ServerConnectWnd.cpp				\
 UI/ServerConnectWnd.h				\
-UI/ServerUI.cpp					\
-UI/ServerUI.h					\
 UI/SidePanel.cpp				\
 UI/SidePanel.h					\
 UI/SitRepPanel.cpp				\
