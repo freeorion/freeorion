@@ -6,6 +6,10 @@
 #include "CUI_Wnd.h"
 #endif
 
+#ifndef _GalaxySetupWnd_h_
+#include "GalaxySetupWnd.h"
+#endif
+
 #include <vector>
 
 class CUIButton;
@@ -15,7 +19,6 @@ class CUIListBox;
 class CUIMultiEdit;
 class Message;
 namespace GG {
-class RadioButtonGroup;
 class StaticGraphic;
 class TextControl;
 }
@@ -37,20 +40,23 @@ public:
     /** \name Mutators */ //@{
     virtual bool Render();
     virtual void Keypress(GG::Key key, Uint32 key_mods);
+
     void         HandleMessage(const Message& msg);
+    void         Cancel() {CancelClicked();}
     //@}
 
 private:
     void Init();
     void AttachSignalChildren();
     void DetachSignalChildren();
-    void GalaxySizeClicked(int idx);
-    void GalaxyTypeClicked(int idx);
-    void BrowseClicked();
+    void NewLoadClicked(int idx);
+    void GalaxySetupPanelChanged();
+    void SaveGameChanged(int idx);
+    void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
     void PlayerSelected(const std::set<int>& selections);
     void StartGameClicked();
     void CancelClicked();
-    void DisableControls();
+    void SendUpdate();
     GG::XMLDoc LobbyUpdateDoc() const;
 
     bool m_result;
@@ -61,16 +67,13 @@ private:
 
     CUIMultiEdit*         m_chat_box;
     CUIEdit*              m_chat_input_edit;
-    GG::RadioButtonGroup* m_galaxy_size_buttons;
-    GG::RadioButtonGroup* m_galaxy_type_buttons;
-    GG::StaticGraphic*    m_galaxy_preview_image;
-    CUIEdit*              m_galaxy_image_file_edit;
-    CUIButton*            m_image_file_browse_bn;
+    GG::RadioButtonGroup* m_new_load_game_buttons;
+    GalaxySetupPanel*     m_galaxy_setup_panel;
+    CUIDropDownList*      m_saved_games_list;
+    GG::StaticGraphic*    m_preview_image;
     CUIListBox*           m_players_lb;
     CUIButton*            m_start_game_bn;
     CUIButton*            m_cancel_bn;
-
-    std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
 };
 
 #endif // _MultiplayerLobbyWnd_h_

@@ -10,15 +10,18 @@
 #include "../network/Message.h"
 
 namespace {
-const int    LOBBY_WND_WIDTH = 800;
-const int    LOBBY_WND_HEIGHT = 600;
-const int    CONTROL_MARGIN = 5; // gap to leave between controls in the window
-const int    CHAT_WIDTH = 250;
-const int    RADIO_BN_HT = ClientUI::PTS + 4;
-const int    RADIO_BN_SPACING = RADIO_BN_HT + 10;
-const GG::Pt PREVIEW_SZ(248, 186);
-GG::Pt       g_preview_ul;
-const int    PREVIEW_MARGIN = 3;
+    const int    LOBBY_WND_WIDTH = 800;
+    const int    LOBBY_WND_HEIGHT = 600;
+    const int    CONTROL_MARGIN = 5; // gap to leave between controls in the window
+    const int    GALAXY_SETUP_PANEL_WIDTH = 250;
+    const int    SAVED_GAMES_LIST_ROW_HEIGHT = 22;
+    const int    SAVED_GAMES_LIST_DROP_HEIGHT = 10 * SAVED_GAMES_LIST_ROW_HEIGHT;
+    const int    CHAT_WIDTH = 250;
+    const int    RADIO_BN_HT = ClientUI::PTS + 4;
+    const int    RADIO_BN_SPACING = RADIO_BN_HT + 10;
+    GG::Pt       g_preview_ul;
+    const GG::Pt PREVIEW_SZ(248, 186);
+    const int    PREVIEW_MARGIN = 3;
 }
 
 MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) : 
@@ -29,11 +32,10 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     m_host(host),
     m_chat_box(0),
     m_chat_input_edit(0),
-    m_galaxy_size_buttons(0),
-    m_galaxy_type_buttons(0),
-    m_galaxy_preview_image(0),
-    m_galaxy_image_file_edit(0),
-    m_image_file_browse_bn(0),
+    m_new_load_game_buttons(0),
+    m_galaxy_setup_panel(0),
+    m_saved_games_list(0),
+    m_preview_image(0),
     m_players_lb(0),
     m_start_game_bn(0),
     m_cancel_bn(0)
@@ -44,35 +46,23 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
                                   GG::TF_LINEWRAP | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
 
-    m_galaxy_size_buttons = new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, TopBorder() + CONTROL_MARGIN);
-    m_galaxy_size_buttons->AddButton(new CUIStateButton(0, 0 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_VERYSMALL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_size_buttons->AddButton(new CUIStateButton(0, 1 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_SMALL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_size_buttons->AddButton(new CUIStateButton(0, 2 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_MEDIUM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_size_buttons->AddButton(new CUIStateButton(0, 3 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_LARGE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_size_buttons->AddButton(new CUIStateButton(0, 4 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_VERYLARGE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_size_buttons->AddButton(new CUIStateButton(0, 5 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_ENORMOUS"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    
-    m_galaxy_type_buttons = new GG::RadioButtonGroup(CHAT_WIDTH + 150 + CONTROL_MARGIN, TopBorder() + CONTROL_MARGIN);
-    m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 0 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_2ARM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 1 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_3ARM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 2 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_4ARM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 3 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_CLUSTER"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 4 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_ELLIPTICAL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 5 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_IRREGULAR"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 6 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_RING"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-	m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 7 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_FROMFILE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_new_load_game_buttons = new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, TopBorder() + CONTROL_MARGIN);
+    m_new_load_game_buttons->AddButton(new CUIStateButton(0, 0, 100, RADIO_BN_HT, ClientUI::String("NEW_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+
+    m_galaxy_setup_panel = new GalaxySetupPanel(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y, GALAXY_SETUP_PANEL_WIDTH);
+
+    m_new_load_game_buttons->AddButton(new CUIStateButton(0, m_galaxy_setup_panel->LowerRight().y, 100, RADIO_BN_HT, ClientUI::String("LOAD_GAME_BN"), 
+                                                          GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+
+    m_saved_games_list = new CUIDropDownList(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y + CONTROL_MARGIN, 
+                                              GALAXY_SETUP_PANEL_WIDTH, SAVED_GAMES_LIST_ROW_HEIGHT, SAVED_GAMES_LIST_DROP_HEIGHT);
 
     g_preview_ul = GG::Pt(Width() - RightBorder() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, TopBorder() + CONTROL_MARGIN + PREVIEW_MARGIN);
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
-    m_galaxy_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GR_FITGRAPHIC);
-    m_galaxy_image_file_edit = new CUIEdit(g_preview_ul.x - PREVIEW_MARGIN, m_galaxy_preview_image->LowerRight().y + CONTROL_MARGIN + PREVIEW_MARGIN, 175, 
-                                           ClientUI::PTS + 10, "");
-    m_image_file_browse_bn = new CUIButton(m_galaxy_image_file_edit->LowerRight().x + CONTROL_MARGIN, 
-                                           m_galaxy_preview_image->LowerRight().y + CONTROL_MARGIN + PREVIEW_MARGIN, 
-                                           Width() - RightBorder() - m_galaxy_image_file_edit->LowerRight().x  - 2 * CONTROL_MARGIN, ClientUI::String("BROWSE_BTN"));
+    m_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GR_FITGRAPHIC);
 
     x = CHAT_WIDTH + CONTROL_MARGIN;
-    int y = m_galaxy_image_file_edit->LowerRight().y + CONTROL_MARGIN;
+    int y = std::max(m_saved_games_list->LowerRight().y, m_preview_image->LowerRight().y) + CONTROL_MARGIN;
     m_players_lb = new CUIListBox(x, y, Width() - RightBorder() - CONTROL_MARGIN - x, m_chat_input_edit->UpperLeft().y - CONTROL_MARGIN - y);
     m_players_lb->SetStyle(GG::LB_NOSORT);
 
@@ -86,7 +76,11 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     Init();
 
     if (!m_host) {
-        DisableControls();
+        for (int i = 0; i < m_new_load_game_buttons->NumButtons(); ++i) {
+            m_new_load_game_buttons->DisableButton(i);
+        }
+        m_galaxy_setup_panel->Disable();
+        m_saved_games_list->Disable();
     }
 
     HumanClientApp::GetApp()->SetLobby(this);
@@ -119,14 +113,10 @@ void MultiplayerLobbyWnd::Keypress(GG::Key key, Uint32 key_mods)
         std::string text = m_chat_input_edit->WindowText();
         HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
         m_chat_input_edit->SetText("");
-        *m_chat_box += "[" + m_player_names[HumanClientApp::GetApp()->PlayerID()] + "]" + text + "\n";
-    }
-    else if (key == GG::GGK_RETURN)
-    {
+        *m_chat_box += m_player_names[HumanClientApp::GetApp()->PlayerID()] + ": " + text + "\n";
+    } else if (!m_start_game_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
         StartGameClicked();
-    }
-    else if (key == GG::GGK_ESCAPE)
-    {
+    } else if (key == GG::GGK_ESCAPE) {
         CancelClicked();
     }
 }
@@ -139,16 +129,16 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
         GG::XMLDoc doc;
         doc.ReadDoc(stream);
         if (doc.root_node.ContainsChild("sender")) {
-            int sender = boost::lexical_cast<int>(doc.root_node.Child("sender").Attribute("value"));
+            int sender = boost::lexical_cast<int>(doc.root_node.Child("sender").Text());
             std::map<int, std::string>::iterator it = m_player_names.find(sender);
-            *m_chat_box += (it != m_player_names.end() ? ("[" + it->second + "] ") : "[unknown] ");
+            *m_chat_box += (it != m_player_names.end() ? (it->second + ": ") : "[unknown]: ");
             *m_chat_box += doc.root_node.Child("text").Text() + "\n";
         } else if (doc.root_node.ContainsChild("abort_game")) {
             ClientUI::MessageBox(ClientUI::String("MPLOBBY_HOST_ABORTED_GAME"));
             m_result = false;
             CUI_Wnd::CloseClicked();
         } else if (doc.root_node.ContainsChild("exit_lobby")) {
-            int player_id = boost::lexical_cast<int>(doc.root_node.Child("exit_lobby").Attribute("id"));
+            int player_id = boost::lexical_cast<int>(doc.root_node.Child("exit_lobby").Child("id").Text());
             std::string player_name = m_player_names[player_id];
             for (int i = 0; i < m_players_lb->NumRows(); ++i) {
                 if (player_name == m_players_lb->GetRow(i)[0]->WindowText()) {
@@ -158,18 +148,30 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
             }
             m_player_IDs.erase(player_name);
             m_player_names.erase(player_id);
-        } else {
-            if (doc.root_node.ContainsChild("galaxy_size")) {
-                int galaxy_size = boost::lexical_cast<int>(doc.root_node.Child("galaxy_size").Attribute("value"));
-                m_galaxy_size_buttons->SetCheck((galaxy_size - 50) / 50);
+            if (m_host)
+                m_start_game_bn->Disable(m_players_lb->NumRows() <= 1);
+        } else { // regular update
+            if (doc.root_node.ContainsChild("new_game"))
+                m_new_load_game_buttons->SetCheck(0);
+            else if (doc.root_node.ContainsChild("load_game"))
+                m_new_load_game_buttons->SetCheck(1);
+
+            if (doc.root_node.ContainsChild("universe_params")) {
+                m_galaxy_setup_panel->SetFromXML(doc.root_node.Child("universe_params"));
             }
-            if (doc.root_node.ContainsChild("galaxy_image_filename")) {
-                m_galaxy_image_file_edit->SetText(doc.root_node.Child("galaxy_image_filename").Text());
+
+            if (doc.root_node.ContainsChild("save_games")) {
+                m_saved_games_list->Clear();
+                std::vector<std::string> files = GG::Tokenize(doc.root_node.Child("save_games").Text());
+                for (unsigned int i = 0; i < files.size(); ++i) {
+                    m_saved_games_list->Insert(new CUISimpleDropDownListRow(files[i]));
+                }
             }
-            if (doc.root_node.ContainsChild("galaxy_type")) {
-                m_galaxy_type_buttons->SetCheck(-1);
-                m_galaxy_type_buttons->SetCheck(boost::lexical_cast<int>(doc.root_node.Child("galaxy_type").Attribute("value")));
+
+            if (doc.root_node.ContainsChild("save_file")) {
+                m_saved_games_list->Select(boost::lexical_cast<int>(doc.root_node.Child("save_file").Text()));
             }
+
             if (doc.root_node.ContainsChild("players")) {
                 m_player_IDs.clear();
                 m_player_names.clear();
@@ -181,6 +183,8 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
                     row->push_back(m_player_names[i], ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
                     m_players_lb->Insert(row);
                 }
+                if (m_host)
+                    m_start_game_bn->Disable(m_players_lb->NumRows() <= 1);
             }
         }
         break;
@@ -202,40 +206,30 @@ void MultiplayerLobbyWnd::Init()
 {
     AttachSignalChildren();
 
-    Connect(m_galaxy_size_buttons->ButtonChangedSignal(), &MultiplayerLobbyWnd::GalaxySizeClicked, this);
-    Connect(m_galaxy_type_buttons->ButtonChangedSignal(), &MultiplayerLobbyWnd::GalaxyTypeClicked, this);
-    Connect(m_image_file_browse_bn->ClickedSignal(), &MultiplayerLobbyWnd::BrowseClicked, this);
+    if (m_host) {
+        Connect(m_new_load_game_buttons->ButtonChangedSignal(), &MultiplayerLobbyWnd::NewLoadClicked, this);
+        Connect(m_galaxy_setup_panel->SettingsChangedSignal(), &MultiplayerLobbyWnd::GalaxySetupPanelChanged, this);
+        Connect(m_saved_games_list->SelChangedSignal(), &MultiplayerLobbyWnd::SaveGameChanged, this);
+    }
+    Connect(m_galaxy_setup_panel->ImageChangedSignal(), &MultiplayerLobbyWnd::PreviewImageChanged, this);
     Connect(m_players_lb->SelChangedSignal(), &MultiplayerLobbyWnd::PlayerSelected, this);
     if (m_host)
         Connect(m_start_game_bn->ClickedSignal(), &MultiplayerLobbyWnd::StartGameClicked, this);
     Connect(m_cancel_bn->ClickedSignal(), &MultiplayerLobbyWnd::CancelClicked, this);
 
-    // create and load textures
-    m_textures.clear();
-    for (int i = 0; i < Universe::GALAXY_SHAPES; ++i)
-        m_textures.push_back(boost::shared_ptr<GG::Texture>(new GG::Texture()));
-    m_textures[Universe::SPIRAL_2]->Load(ClientUI::ART_DIR + "gp_spiral2.png");
-    m_textures[Universe::SPIRAL_3]->Load(ClientUI::ART_DIR + "gp_spiral3.png");
-    m_textures[Universe::SPIRAL_4]->Load(ClientUI::ART_DIR + "gp_spiral4.png");
-    m_textures[Universe::CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
-    m_textures[Universe::ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
-    m_textures[Universe::IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
-	m_textures[Universe::RING]->Load(ClientUI::ART_DIR + "gp_ring.png");
-    
-    // default settings (medium and 2-arm spiral)
-    m_galaxy_size_buttons->SetCheck(2);
-    m_galaxy_type_buttons->SetCheck(Universe::SPIRAL_2);
+    // default settings (new game)
+    m_new_load_game_buttons->SetCheck(0);
+    PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
 }
 
 void MultiplayerLobbyWnd::AttachSignalChildren()
 {
     AttachChild(m_chat_box);
     AttachChild(m_chat_input_edit);
-    AttachChild(m_galaxy_size_buttons);
-    AttachChild(m_galaxy_type_buttons);
-    AttachChild(m_galaxy_preview_image);
-    AttachChild(m_galaxy_image_file_edit);
-    AttachChild(m_image_file_browse_bn);
+    AttachChild(m_new_load_game_buttons);
+    AttachChild(m_galaxy_setup_panel);
+    AttachChild(m_saved_games_list);
+    AttachChild(m_preview_image);
     AttachChild(m_players_lb);
     AttachChild(m_start_game_bn);
     AttachChild(m_cancel_bn);
@@ -245,119 +239,51 @@ void MultiplayerLobbyWnd::DetachSignalChildren()
 {
     DetachChild(m_chat_box);
     DetachChild(m_chat_input_edit);
-    DetachChild(m_galaxy_size_buttons);
-    DetachChild(m_galaxy_type_buttons);
-    DetachChild(m_galaxy_preview_image);
-    DetachChild(m_galaxy_image_file_edit);
-    DetachChild(m_image_file_browse_bn);
+    DetachChild(m_new_load_game_buttons);
+    DetachChild(m_galaxy_setup_panel);
+    DetachChild(m_saved_games_list);
+    DetachChild(m_preview_image);
     DetachChild(m_players_lb);
     DetachChild(m_start_game_bn);
     DetachChild(m_cancel_bn);
 }
 
-void MultiplayerLobbyWnd::GalaxySizeClicked(int idx)
+void MultiplayerLobbyWnd::NewLoadClicked(int idx)
 {
-    // disable invalid galaxy shapes for the chosen galaxy size
     switch (idx) {
     case 0:
-        if (-1 < m_galaxy_type_buttons->CheckedButton() && m_galaxy_type_buttons->CheckedButton() <= Universe::SPIRAL_4)
-            m_galaxy_type_buttons->SetCheck(Universe::CLUSTER);
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_2);
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_3);
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_4);
+        m_galaxy_setup_panel->Disable(false);
+        m_saved_games_list->Disable();
         break;
     case 1:
-        if (-1 < m_galaxy_type_buttons->CheckedButton() && 
-            (m_galaxy_type_buttons->CheckedButton() == Universe::SPIRAL_3 ||
-             m_galaxy_type_buttons->CheckedButton() == Universe::SPIRAL_4))
-            m_galaxy_type_buttons->SetCheck(Universe::SPIRAL_2);
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_2, false);
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_3);
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_4);
-        break;
-    case 2:
-        if (-1 < m_galaxy_type_buttons->CheckedButton() && m_galaxy_type_buttons->CheckedButton() == Universe::SPIRAL_4)
-            m_galaxy_type_buttons->SetCheck(Universe::SPIRAL_3);
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_2, false);
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_3, false);
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_4);
+        m_galaxy_setup_panel->Disable();
+        m_saved_games_list->Disable(false);
         break;
     default:
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_2, false);
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_3, false);
-        m_galaxy_type_buttons->DisableButton(Universe::SPIRAL_4, false);
         break;
     }
 
-    if (m_host) {
-        int player_id = HumanClientApp::GetApp()->PlayerID();
-        if (player_id != -1)
-            HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, LobbyUpdateDoc()));
-    } else {
-        DisableControls();
-    }
+    SendUpdate();
 }
 
-void MultiplayerLobbyWnd::GalaxyTypeClicked(int idx)
+void MultiplayerLobbyWnd::GalaxySetupPanelChanged()
 {
-    if (m_galaxy_preview_image) {
-        DeleteChild(m_galaxy_preview_image);
-        m_galaxy_preview_image = 0;
-    }
-
-    if (m_galaxy_type_buttons->CheckedButton() == Universe::FROM_FILE) {
-        try {
-            boost::shared_ptr<GG::Texture> tex(new GG::Texture());
-            tex->Load(m_galaxy_image_file_edit->WindowText());
-            m_galaxy_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, tex, GG::GR_FITGRAPHIC);
-            AttachChild(m_galaxy_preview_image);
-        } catch (const std::exception& e) {
-            GG::App::GetApp()->Logger().alert("MultiplayerLobbyWnd::GalaxyTypeClicked : Invalid texture file specified.");
-        }
-        m_galaxy_image_file_edit->Disable(false);
-        m_image_file_browse_bn->Disable(false);
-    } else {
-        if (idx != -1) {
-            m_galaxy_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, m_textures[idx], GG::GR_FITGRAPHIC);
-            AttachChild(m_galaxy_preview_image);
-        }
-        m_galaxy_image_file_edit->Disable();
-        m_image_file_browse_bn->Disable();
-    }
-
-    if (m_host) {
-        int player_id = HumanClientApp::GetApp()->PlayerID();
-        if (player_id != -1)
-            HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, LobbyUpdateDoc()));
-    } else {
-        DisableControls();
-    }
+    SendUpdate();
 }
 
-void MultiplayerLobbyWnd::BrowseClicked()
+void MultiplayerLobbyWnd::SaveGameChanged(int idx)
 {
-    // filter for graphics files
-    std::vector<std::pair<std::string, std::string> > file_types;
-    file_types.push_back(std::make_pair(ClientUI::String("GSETUP_GRAPHICS_FILES") + " (PNG, Targa, JPG, BMP)", 
-                                        "*.png, *.PNG, *.tga, *.TGA, *.jpg, *.JPG, *.bmp, *.BMP"));
+    SendUpdate();
+}
 
-    GG::FileDlg dlg("", m_galaxy_image_file_edit->WindowText(), false, false, file_types, ClientUI::FONT, ClientUI::PTS,
-                    ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
-
-    dlg.Run();    
-    if (!dlg.Result().empty()) {
-        m_galaxy_image_file_edit->SetText(*dlg.Result().begin());
-        m_galaxy_type_buttons->SetCheck(-1);
-        m_galaxy_type_buttons->SetCheck(Universe::FROM_FILE);
-
-        if (m_host) {
-            int player_id = HumanClientApp::GetApp()->PlayerID();
-            if (player_id != -1)
-                HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, LobbyUpdateDoc()));
-        } else {
-            DisableControls();
-        }
+void MultiplayerLobbyWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image)
+{
+    if (m_preview_image) {
+        DeleteChild(m_preview_image);
+        m_preview_image = 0;
     }
+    m_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, new_image, GG::GR_FITGRAPHIC);
+    AttachChild(m_preview_image);
 }
 
 void MultiplayerLobbyWnd::PlayerSelected(const std::set<int>& selections)
@@ -366,23 +292,9 @@ void MultiplayerLobbyWnd::PlayerSelected(const std::set<int>& selections)
 
 void MultiplayerLobbyWnd::StartGameClicked()
 {
-    //check to see if we have a valid image if file is checked
-    bool failed = false;
-    if (m_galaxy_type_buttons->CheckedButton() == Universe::FROM_FILE) {
-        try {
-            boost::shared_ptr<GG::Texture> tex(new GG::Texture);
-            tex->Load(m_galaxy_image_file_edit->WindowText());
-        } catch (const std::exception& e) {
-            ClientUI::MessageBox("\"" + m_galaxy_image_file_edit->WindowText() + "\" " + ClientUI::String("GSETUP_ERR_INVALID_GRAPHICS"));
-            failed = true;
-        }
-    }
-
-    if (!failed) {
-        HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(HumanClientApp::GetApp()->PlayerID(), HumanClientApp::GetApp()->PlayerName()));
-        m_result = true;
-        CUI_Wnd::CloseClicked();
-    }
+    HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(HumanClientApp::GetApp()->PlayerID(), HumanClientApp::GetApp()->PlayerName()));
+    m_result = true;
+    CUI_Wnd::CloseClicked();
 }
 
 void MultiplayerLobbyWnd::CancelClicked()
@@ -400,29 +312,18 @@ void MultiplayerLobbyWnd::CancelClicked()
     CUI_Wnd::CloseClicked();
 }
 
-void MultiplayerLobbyWnd::DisableControls()
+void MultiplayerLobbyWnd::SendUpdate()
 {
-    for (int i = 0; i < m_galaxy_size_buttons->NumButtons(); ++i)
-        m_galaxy_size_buttons->DisableButton(i);
-    for (int i = 0; i < m_galaxy_type_buttons->NumButtons(); ++i)
-        m_galaxy_type_buttons->DisableButton(i);
-    m_galaxy_image_file_edit->Disable();
-    m_image_file_browse_bn->Disable();
-
+    int player_id = HumanClientApp::GetApp()->PlayerID();
+    if (player_id != -1)
+        HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, LobbyUpdateDoc()));
 }
 
 GG::XMLDoc MultiplayerLobbyWnd::LobbyUpdateDoc() const
 {
     GG::XMLDoc retval;
-    GG::XMLElement temp("galaxy_size");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(50 * m_galaxy_size_buttons->CheckedButton() + 50));
-    retval.root_node.AppendChild(temp);
-
-    temp = GG::XMLElement("galaxy_type");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_galaxy_type_buttons->CheckedButton()));
-    retval.root_node.AppendChild(temp);
-
-    retval.root_node.AppendChild(GG::XMLElement("galaxy_image_filename", m_galaxy_image_file_edit->WindowText()));
-
+    retval.root_node.AppendChild(GG::XMLElement(m_new_load_game_buttons->CheckedButton() ? "load_game" : "new_game"));
+    retval.root_node.AppendChild(m_galaxy_setup_panel->XMLEncode());
+    retval.root_node.AppendChild(GG::XMLElement("save_file", boost::lexical_cast<std::string>(m_saved_games_list->CurrentItemIndex())));
     return retval;
 }
