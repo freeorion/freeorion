@@ -254,14 +254,10 @@ void ClientNetworkCore::DispatchMessage(const Message& msg, int socket)
         break;
 
     case Message::CLIENT_LOBBY_MODULE:
-        if (!ClientApp::MultiplayerLobby()) {
-            logger.errorStream()<< "ClientNetworkCore::DispatchMessage : Attempted to pass message to client multiplayer lobby module when "
-                "there is no current lobby.";
-        } else {
 #ifdef FREEORION_BUILD_HUMAN
+        if (ClientApp::MultiplayerLobby())
             ClientApp::MultiplayerLobby()->HandleMessage(msg);
 #endif
-        }
         break;
 
     case Message::CLIENT_UNIVERSE_MODULE:

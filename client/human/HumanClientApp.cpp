@@ -674,7 +674,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
                 m_player_id = boost::lexical_cast<int>(msg.GetText());
                 Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received JOIN_GAME acknowledgement "
                     "(joined as player " << m_player_id << ")";
-            } else {
+            } else if (m_player_id != NetworkCore::HOST_PLAYER_ID) {
                 Logger().errorStream() << "HumanClientApp::HandleMessageImpl : Received erroneous JOIN_GAME acknowledgement when "
                     "already in a game";
             }
