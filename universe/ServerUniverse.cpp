@@ -376,10 +376,13 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
    // get a vector of all the systems
    ObjectVec sys_obj_vec = FindObjects(ServerIsSystem);
 
+   assert(!sys_obj_vec.empty());
+      
    while ((int) homeworlds.size() < players)
    {
       // select a system at random
       int system_index = (int) (sys_obj_vec.size() * ((double)rand()/(double)RAND_MAX));
+
       System* system_temp = dynamic_cast<System*>(sys_obj_vec[system_index]);
 
       // make sure it has planets
@@ -522,6 +525,8 @@ void ServerUniverse::PopulateSystems()
 
    // get a vector of all the systems
    ObjectVec sys_obj_vec = FindObjects(ServerIsSystem);
+
+   assert(!sys_obj_vec.empty());
 
    for (ObjectVec::iterator sys_itr = sys_obj_vec.begin(); sys_itr != sys_obj_vec.end(); sys_itr++)
    {
