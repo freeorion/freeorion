@@ -79,6 +79,7 @@ Tech::Tech(const GG::XMLElement& elem) :
 
     m_name = elem.Child("name").Text();
     m_description = elem.Child("description").Text();
+    m_type = lexical_cast<TechType>(elem.Child("type").Text());
     m_category = elem.Child("category").Text();
     m_research_cost = lexical_cast<double>(elem.Child("research_cost").Text());
     m_research_turns = lexical_cast<int>(elem.Child("research_turns").Text());
@@ -107,6 +108,11 @@ const std::string& Tech::Name() const
 const std::string& Tech::Description() const
 {
     return m_description;
+}
+
+TechType Tech::Type() const
+{
+    return m_type;
 }
 
 const std::string& Tech::Category() const
@@ -286,10 +292,36 @@ TechManager::TechManager()
                                   "techs were defined that fell within them:" + stream.str()).c_str());
     }
 
+    std::string illegal_dependency_str = FindIllegalDependencies();
+    if (!illegal_dependency_str.empty()) {
+        throw std::runtime_error(illegal_dependency_str.c_str());
+    }
+
     std::string cycle_str = FindFirstDependencyCycle();
     if (!cycle_str.empty()) {
         throw std::runtime_error(cycle_str.c_str());
     }
+}
+
+std::string TechManager::FindIllegalDependencies()
+{
+    assert(!m_techs.empty());
+
+    std::string retval;
+    for (iterator it = begin(); it != end(); ++it) {
+        const Tech* tech = *it;
+        TechType tech_type = tech->Type();
+        const std::set<std::string>& prereqs = tech->Prerequisites();
+        for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
+            const Tech* prereq_tech = GetTech(*it);
+            TechType prereq_type = prereq_tech->Type();
+            if (tech_type == TT_THEORY && prereq_type != TT_THEORY)
+                retval += "ERROR: Theory tech \"" + tech->Name() + "\" requires non-Theory tech \"" + prereq_tech->Name() + "\"; Theory techs can only require other Theory techs.\n";
+            if (prereq_type == TT_REFINEMENT && tech_type != TT_REFINEMENT)
+                retval += "ERROR: Non-Refinement Tech \"" + tech->Name() + "\" requires Refinement tech \"" + prereq_tech->Name() + "\"; Refinement techs cannot be requirements for anything but other Refinement techs.\n";
+        }
+    }
+    return retval;
 }
 
 std::string TechManager::FindFirstDependencyCycle()

@@ -37,6 +37,9 @@ public:
     /** Returns the text description of this tech */
     const std::string& Description() const;
 
+    /** Returns the type (theory/application/refinement) of this tech */
+    TechType Type() const;
+
     /** retursn the name of the category to which this tech belongs */
     const std::string& Category() const;
 
@@ -64,6 +67,7 @@ private:
     std::string m_name;
     std::string m_description;
     std::string m_category;
+    TechType m_type;
     double m_research_cost;
     int m_research_turns;
     const Effect::EffectsGroup* m_effects;
@@ -160,6 +164,10 @@ public:
 
 private:
     TechManager();
+
+    /** returns an error string indicating the first instance of an illegal prerequisite relationship between
+        two techs in m_techs, or an empty string if there are no illegal dependencies  */
+    std::string FindIllegalDependencies();
 
     /** returns an error string indicating the first prerequisite dependency cycle found in m_techs, or an
         empty string if there are no dependency cycles */
