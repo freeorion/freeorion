@@ -149,8 +149,8 @@ enum PlanetEnvironment {
     PE_UNINHABITABLE,   //for gas giants and asteroids
     PE_TERRIBLE,
     PE_ADEQUATE,
-    PE_OPTIMAL,
     PE_SUPERB,
+    PE_OPTIMAL,
     NUM_PLANET_ENVIRONMENTS   //keep this last
 };
 
@@ -160,8 +160,8 @@ namespace GG {
 	ENUM_MAP_INSERT(PE_UNINHABITABLE)
 	ENUM_MAP_INSERT(PE_TERRIBLE)
 	ENUM_MAP_INSERT(PE_ADEQUATE)
-	ENUM_MAP_INSERT(PE_OPTIMAL)
 	ENUM_MAP_INSERT(PE_SUPERB)
+	ENUM_MAP_INSERT(PE_OPTIMAL)
     ENUM_MAP_END
 }
 ENUM_STREAM_IN(PlanetEnvironment)
@@ -176,7 +176,8 @@ enum FocusType {
     FOCUS_FARMING,
     FOCUS_INDUSTRY,
     FOCUS_MINING,
-    FOCUS_SCIENCE,
+    FOCUS_RESEARCH,
+    FOCUS_TRADE,
     NUM_FOCI
 }; // others TBD
                       
@@ -188,7 +189,7 @@ namespace GG {
 	ENUM_MAP_INSERT(FOCUS_FARMING)
 	ENUM_MAP_INSERT(FOCUS_INDUSTRY)
 	ENUM_MAP_INSERT(FOCUS_MINING)
-	ENUM_MAP_INSERT(FOCUS_SCIENCE)
+	ENUM_MAP_INSERT(FOCUS_RESEARCH)
     ENUM_MAP_END
 }
 ENUM_STREAM_IN(FocusType)
@@ -205,11 +206,12 @@ enum MeterType {
     METER_TRADE,
     METER_MINING,
     METER_CONSTRUCTION,
-    METER_HEALTH
+    METER_HEALTH,
     /* Future meter types (more TBD)
     METER_HAPPINESS,
     METER_SECURITY
     */
+    NUM_METER_TYPES
 };
 
 namespace GG {
@@ -231,9 +233,10 @@ ENUM_STREAM_OUT(MeterType)
 /** the types of diplomatic empire affiliations to a given empire*/
 enum EmpireAffiliationType {
     INVALID_EMPIRE_AFFIL_TYPE = -1,
-    AFFIL_SELF,  ///< not an affiliation as such; this indicates that the given empire, rather than its affiliates
-    AFFIL_ENEMY, ///< allies of the given empire
-    AFFIL_ALLY   ///< enamies of the given empire
+    AFFIL_SELF,     ///< not an affiliation as such; this indicates that the given empire, rather than its affiliates
+    AFFIL_ENEMY,    ///< allies of the given empire
+    AFFIL_ALLY,     ///< enamies of the given empire
+    NUM_AFFIL_TYPES
 };
 
 namespace GG {
@@ -254,7 +257,7 @@ protected:
     typedef std::map<int, UniverseObject*> ObjectMap; ///< the container type that is used internally to hold the objects in the universe; keyed by ID number
 
 public:
-    /** the types of universe shapes available in FreeOrion*/
+/** the types of universe shapes available in FreeOrion*/
     enum Shape {SPIRAL_2,      ///< a two-armed spiral galaxy
                 SPIRAL_3,      ///< a three-armed spiral galaxy
                 SPIRAL_4,      ///< a four-armed spiral galaxy
@@ -263,21 +266,21 @@ public:
                 IRREGULAR,     ///< an irregular galaxy
                 RING,          ///< a ring galaxy
                 GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
-               };
+    };
 
     /** types of Univervse ages*/
     enum Age {AGE_YOUNG,
               AGE_MATURE,
               AGE_ANCIENT,
               NUM_UNIVERSE_AGES    // keep this last, the number of universe age options
-             };
+    };
 
     /** types of Planet Density */
     enum PlanetDensity {PD_LOW,
                         PD_AVERAGE,
                         PD_HIGH,
                         NUM_UNIVERSE_PLANET_DENSITIES        //keep this last, the number of planet density options
-                       };
+    };
 
     /** types of starlane frequencies */
     enum StarlaneFrequency{LANES_NONE, 
@@ -287,7 +290,7 @@ public:
                            LANES_MANY, 
                            LANES_VERY_MANY,
                            NUM_STARLANE_FREQENCIES    // keep this last, the number of starlane frequency options
-                          };
+    };
 
     /** types of starlane frequencies */
     enum SpecialsFrequency{SPECIALS_NONE, 
@@ -295,7 +298,7 @@ public:
                            SPECIALS_UNCOMMON, 
                            SPECIALS_COMMON, 
                            NUM_SPECIALS_FREQENCIES    // keep this last, the number of specials frequency options
-                          };
+    };
 
     /** the value passed to XMLEncode() when the entire object is desired, not just the portion visible to one empire */
     enum {ALL_EMPIRES = -1};
@@ -340,7 +343,7 @@ public:
     template <class T> std::vector<T*> FindObjects();
 
     /** returns the IDs of all the objects that match \a pred.  Predicates used with this function must take a single const
-    UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+        UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
     template <class Pred> ObjectIDVec FindObjectIDs(Pred pred) const;
 
     /** returns the IDs of all the objects of type T. */
@@ -383,14 +386,14 @@ public:
     void SetUniverse(const GG::XMLElement& elem ); ///< wipes out the current object map and sets the map to the XMLElement passed in.
 
     /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.
-    \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
-    passing it to Insert().*/
+        \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
+        passing it to Insert().*/
     int               Insert(UniverseObject* obj);
 
     /** inserts object \a obj of given ID into the universe; returns true on proper insert , or false on failure.
-    \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
-    passing it to InsertID().
-    Useful mostly for times when ID needs to be consistant on client and server*/
+        \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
+        passing it to InsertID().
+        Useful mostly for times when ID needs to be consistant on client and server*/
     bool               InsertID(UniverseObject* obj, int id );
 
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
@@ -399,24 +402,15 @@ public:
                                      const std::vector<PlayerSetupData>& player_setup_data = std::vector<PlayerSetupData>());
 
     /** removes the object with ID number \a id from the universe and any containing UniverseObjects (e.g. the containing System),
-	and returns it; returns 0 if there is no such object*/
+        and returns it; returns 0 if there is no such object*/
     UniverseObject*   Remove(int id);
 
     /** removes and deletes the object with ID number \a id; returns true if such an object was found, false otherwise*/
     bool              Delete(int id);
-
-    /** moves UniverseObjects that are in movement or are starting movement as a result of orders this turn.  This must be
-    called after all movement Orders have been processed but before combats are resolved.  Any SitRepEntrys that
-    are generated are pushed onto the end of \a sit_reps.*/
-    void MovementPhase(std::vector<SitRepEntry>& sit_reps);
-
-    /** grows pop, and executes production and research.  This must be called after all Orders have been processed on the
-    Universe and all combats are resolved.  Any SitRepEntrys that are generated are pushed onto the end of \a sit_reps.*/
-    void PopGrowthProductionResearch(std::vector<SitRepEntry>& sit_reps);
     //@}
 
     /** returns the size of the galaxy map.  Does not measure absolute distances; the ratio between map coordinates and actual distance varies
-    depending on universe size */
+        depending on universe size */
     static double UniverseWidth() {return s_universe_width;}
 
     int GenerateObjectID( );  ///< generates an object ID for a future object. Usually used by the server to service new ID requests
@@ -430,14 +424,14 @@ protected:
     struct vertex_system_pointer_t {typedef boost::vertex_property_tag kind;};
     typedef boost::property<vertex_system_pointer_t, System*,
                             boost::property<boost::vertex_index_t, int> > 
-                            vertex_property_t;
+    vertex_property_t;
     typedef boost::property<boost::edge_weight_t, double> 
-                            edge_property_t;
+    edge_property_t;
 
     // declare main graph types, including properties declared above
     typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS, 
                                    vertex_property_t, edge_property_t>
-                                   SystemGraph;
+    SystemGraph;
 
     // declare types for iteration over graph
     typedef SystemGraph::vertex_iterator   VertexIterator;
@@ -466,14 +460,12 @@ protected:
         {
             T* retval = 0;
 
-            for ( typename std::map<std::string, Generator>::const_iterator it = m_generators.begin(); it != m_generators.end(); ++it )
-            {
+            for ( typename std::map<std::string, Generator>::const_iterator it = m_generators.begin(); it != m_generators.end(); ++it ) {
                 // is the string anywhere in the tag?
                 std::string tag_name = elem.Tag();
-                std::string tag_alpha = tag_name.substr(0, tag_name.find_first_of("0123456789") );
+                std::string tag_alpha = tag_name.substr(0, tag_name.find_first_of("0123456789"));
 
-                if ( tag_alpha == it->first )
-                {
+                if (tag_alpha == it->first) {
                     retval = it->second(elem);
                     break;
                 }
