@@ -174,6 +174,30 @@ GG::XMLElement System::XMLEncode(int empire_id) const
    star.SetAttribute( "value", lexical_cast<std::string>(m_star) );
    element.AppendChild(star);
 
+   XMLElement orbits("m_orbits");
+   orbits.SetAttribute( "value", lexical_cast<std::string>(m_orbits) );
+   element.AppendChild(orbits);
+
+   XMLElement orbit_map("m_objects");
+   for(const_orbit_iterator itr = begin(); itr != end(); ++itr)
+   {
+      XMLElement map_object("map_object");
+      map_object.SetAttribute("orbit", lexical_cast<std::string>(itr->first));
+      map_object.SetAttribute("id", lexical_cast<std::string>(itr->second));
+      orbit_map.AppendChild(map_object);
+   }
+   element.AppendChild(orbit_map);
+
+   XMLElement lane_map("m_starlanes_wormholes");
+   for(const_lane_iterator itr = begin_lanes(); itr != end_lanes(); ++itr)
+   {
+      XMLElement map_lane("map_lane");
+      map_lane.SetAttribute("system", lexical_cast<std::string>(itr->first));
+      map_lane.SetAttribute("wormhole", lexical_cast<std::string>(itr->second));
+      lane_map.AppendChild(map_lane);
+   }
+   element.AppendChild(lane_map);
+
    return element;
 }
 
