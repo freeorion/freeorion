@@ -786,3 +786,15 @@ void HumanClientApp::StartTurn( )
   ClientApp::StartTurn();
 }
 
+boost::shared_ptr<GG::Texture> HumanClientApp::GetTexture(const std::string& name, bool mipmap)
+{
+  try
+  {
+    return SDLGGApp::GetTexture(name,mipmap);
+  }
+  catch(...)
+  {
+    return SDLGGApp::GetTexture(ClientUI::ART_DIR+"misc/missing.png",mipmap);
+  }
+}
+

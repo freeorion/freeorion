@@ -99,6 +99,10 @@ public:
     /// override default so that UI can be updated
     virtual void         StartTurn( );   ///< encodes order sets and sends turn orders message
 
+    ///< loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true
+    ///< load default missing.png if name isn't found
+    boost::shared_ptr<GG::Texture> GetTexture(const std::string& name, bool mipmap = false); 
+
 private:
     virtual void SDLInit();
     virtual void GLInit();
