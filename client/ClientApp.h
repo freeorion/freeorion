@@ -60,6 +60,11 @@ public:
     static ClientNetworkCore&     NetworkCore();      ///< returns the network core object for this client's player
 
 protected:
+
+    /** handles universe and empire data update */
+    void UpdateTurnData( GG::XMLDoc &doc );
+
+
     MultiplayerLobbyWnd* m_multiplayer_lobby_wnd;
 
     Universe                m_universe;
@@ -78,6 +83,8 @@ private:
     virtual void HandleMessageImpl(const Message& msg) = 0;
 
     static ClientApp* s_app; ///< a ClientApp pointer to the singleton instance of the app
+
+
 
 };
 
