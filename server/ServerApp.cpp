@@ -465,7 +465,8 @@ void ServerApp::HandleMessage(const Message& msg)
                 for (std::map<int, GG::XMLElement>::iterator it = m_player_save_game_data.begin(); it != m_player_save_game_data.end(); ++it) {
                     GG::XMLElement player_element("Player");
                     player_element.AppendChild(GG::XMLElement("name", m_network_core.Players().find(it->first)->second.name));
-                    player_element.AppendChild(m_empires.Lookup(it->first)->XMLEncode());
+                    Empire* player_empire = GetPlayerEmpire(it->first);
+                    player_element.AppendChild(m_empires.Lookup(player_empire->EmpireID())->XMLEncode());
                     for (GG::XMLElement::const_child_iterator elem_it = it->second.child_begin(); elem_it != it->second.child_end(); ++elem_it) {
                         player_element.AppendChild(*elem_it);
                     }
@@ -614,7 +615,8 @@ void ServerApp::HandleMessage(const Message& msg)
             if (text == "")
                 return;
         }
-        std::string final_text = GG::RgbaTag(Empires().Lookup(msg.Sender())->Color()) + m_network_core.Players().find(msg.Sender())->second.name + 
+        Empire* sender_empire = GetPlayerEmpire(msg.Sender());
+        std::string final_text = GG::RgbaTag(Empires().Lookup(sender_empire->EmpireID())->Color()) + m_network_core.Players().find(msg.Sender())->second.name + 
             (target_player_names.empty() ? ": " : " (whisper):") + text + "</rgba>\n";
         for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
             if (target_player_names.empty() || target_player_names.find(it->second.name) != target_player_names.end())
