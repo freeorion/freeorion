@@ -36,6 +36,7 @@ BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} Installer $$Revision$$ (NSIS v2
 !define MUI_ABORTWARNING
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\win-install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\win-uninstall.ico"
+!define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\Win.bmp"
 !macro CHECKUSER UN
   UserInfo::GetName
