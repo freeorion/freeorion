@@ -146,9 +146,7 @@ void EmpireManager::RemoveEmpire(Empire* empire)
 void EmpireManager::RemoveAllEmpires()
 {
     for(EmpireManager::iterator itr = begin(); itr != end(); itr++)
-    {
-        RemoveEmpire(itr->second);
         delete itr->second;
-    }
+    m_empire_map.clear();
 }
 
