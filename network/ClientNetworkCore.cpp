@@ -62,8 +62,9 @@ bool ClientNetworkCore::ConnectToInternetServer(const std::string& server)
       logger.debugStream() << "ClientNetworkCore::ConnectToInternetServer : Connected "
          "to server \"" << server << "\"";
    } else {
+	   const char* err_msg = NET2_GetError();
       logger.errorStream() << "ClientNetworkCore::ConnectToInternetServer : Call to NET2_TCPConnectTo() "
-         "failed with server= \"" << server << "\"";
+         "failed with server= \"" << server << "\"; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
    }
    return Connected();
 }
@@ -80,9 +81,18 @@ void ClientNetworkCore::HandleNetEvent(SDL_Event& event)
 {
    if (event.type == SDL_USEREVENT) {
       switch(NET2_GetEventType(&event)) {
-      case NET2_TCPACCEPTEVENT:
+      case NET2_ERROREVENT: {
+         if (const char* err_msg = NET2_GetEventError(&event))
+            logger.errorStream() << "ClientNetworkCore::HandleNetEvent : Network error \"" << err_msg << "\"";
+         else 
+            logger.error("ClientNetworkCore::HandleNetEvent : Unknown network error.");
+         break;
+      }
+
+      case NET2_TCPACCEPTEVENT: {
          logger.error("ClientNetworkCore::HandleNetEvent : Somehow, the client just accepted a connection!");
          break;
+		}
 
       case NET2_TCPRECEIVEEVENT: {
          ReceiveData(NET2_GetSocket(&event), m_receive_stream, "ClientNetworkCore");
@@ -107,17 +117,10 @@ void ClientNetworkCore::HandleNetEvent(SDL_Event& event)
          break;
       }
          
-      case NET2_ERROREVENT: {
-         if (const char* err_msg = NET2_GetEventError(&event))
-            logger.errorStream() << "ClientNetworkCore::HandleNetEvent : Network error \"" << err_msg << "\"";
-         else 
-            logger.error("ClientNetworkCore::HandleNetEvent : Unknown network error.");
-         break;
-      }
-
-      default:
+      default: {
          logger.error("ClientNetworkCore::HandleNetEvent : Recieved an SDL_USEREVENT that was not an SDL_net2 network event.");
          break;
+		}
       }
    } else {
       logger.error("ClientNetworkCore::HandleNetEvent : Recieved an SDL event that was not an SDL_USEREVENT.");
