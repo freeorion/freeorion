@@ -191,15 +191,19 @@ bool HumanClientApp::LoadSinglePlayerGame()
     std::vector<std::pair<std::string, std::string> > save_file_types;
     save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("INGAMEOPTIONS_SAVE_FILES"), "*.sav"));
 
-    GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-directory"), "", false, false, save_file_types, 
-                    ClientUI::FONT, ClientUI::PTS, ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
-    dlg.Run();
-    std::string filename;
-    if (!dlg.Result().empty()) {
-        filename = *dlg.Result().begin();
+    try {
+        GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-directory"), "", false, false, save_file_types, 
+                        ClientUI::FONT, ClientUI::PTS, ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
+        dlg.Run();
+        std::string filename;
+        if (!dlg.Result().empty()) {
+            filename = *dlg.Result().begin();
 
-        HumanClientApp::GetApp()->NetworkCore().SendMessage(HostLoadGameMessage(HumanClientApp::GetApp()->PlayerID(), filename));
-        return true;
+            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostLoadGameMessage(HumanClientApp::GetApp()->PlayerID(), filename));
+            return true;
+        }
+    } catch (const GG::FileDlg::InitialDirectoryDoesNotExistException& e) {
+        ClientUI::MessageBox(e.Message());
     }
     return false;
 }

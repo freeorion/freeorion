@@ -88,22 +88,26 @@ void InGameOptions::Save()
     std::vector<std::pair<std::string, std::string> > save_file_types;
     save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("INGAMEOPTIONS_SAVE_FILES"), "*.sav"));
 
-    GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-directory"), "", true, false, save_file_types, 
-                    ClientUI::FONT, ClientUI::PTS, ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
-    dlg.Run();
-    std::string filename;
-    if (!dlg.Result().empty()) {
-        filename = *dlg.Result().begin();
-        if (filename.find(".sav") != filename.size() - 4)
-            filename += ".sav";
+    try {
+        GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-directory"), "", true, false, save_file_types, 
+                        ClientUI::FONT, ClientUI::PTS, ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
+        dlg.Run();
+        std::string filename;
+        if (!dlg.Result().empty()) {
+            filename = *dlg.Result().begin();
+            if (filename.find(".sav") != filename.size() - 4)
+                filename += ".sav";
 
-        Message response;
-        bool save_succeeded = HumanClientApp::GetApp()->NetworkCore().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), filename), response);
-        if (save_succeeded) {
-            CloseClicked();
-        } else {
-            ClientUI::MessageBox("Could not save game as \"" + filename + "\".");
+            Message response;
+            bool save_succeeded = HumanClientApp::GetApp()->NetworkCore().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), filename), response);
+            if (save_succeeded) {
+                CloseClicked();
+            } else {
+                ClientUI::MessageBox("Could not save game as \"" + filename + "\".");
+            }
         }
+    } catch (const GG::FileDlg::InitialDirectoryDoesNotExistException& e) {
+        ClientUI::MessageBox(e.Message());
     }
 }
 
