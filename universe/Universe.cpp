@@ -21,6 +21,7 @@
 #endif
 
 #include <boost/tuple/tuple.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include <stdexcept>
 #include <cmath>
@@ -38,6 +39,7 @@ namespace {
     const double  PI = 3.141592;
     const int     MAX_SYSTEM_ORBITS = 10;   // maximum slots where planets can be, in v0.2
     SmallIntDistType g_hundred_dist = SmallIntDist(1, 100); // a linear distribution [1, 100] used in most universe generation
+    const double  OFFROAD_SLOWDOWN_FACTOR = 1000.0; // the factor by which non-starlane travel is slower than starlane travel
 
     DataTableMap& UniverseDataTables()
     {
@@ -112,6 +114,23 @@ namespace {
         y_dist = s2->Y() - s1->Y();
         distances.insert(std::make_pair(x_dist * x_dist + y_dist * y_dist, DistanceInfo(s1, s2, group1_it, group2_it)));
     }
+
+    // used to short-circuit the use of Dijkstra's algorithm for pathfinding when it finds the desired destination system
+    struct PathFindingDijkstraVisitor : public boost::base_visitor<PathFindingDijkstraVisitor>
+    {
+        typedef boost::on_finish_vertex event_filter;
+
+        struct FoundDestination {}; // exception type thrown when destination is found
+
+        PathFindingDijkstraVisitor(int dest_system) : destination_system(dest_system) {}
+        template <class Vertex, class Graph>
+        void operator()(Vertex u, Graph& g)
+        {
+            if (u == destination_system)
+                throw FoundDestination();
+        }
+        const int destination_system;
+    };
 
     // "only" defined for 1 <= n <= 3999, as we can't
     // display the symbol for 5000
@@ -494,6 +513,8 @@ void Universe::SetUniverse(const GG::XMLElement& elem)
     }
 
     m_last_allocated_id = boost::lexical_cast<int>(elem.Child("m_last_allocated_id").Text());
+
+    InitializeSystemGraph();
 }
 
 const UniverseObject* Universe::Object(int id) const
@@ -506,6 +527,63 @@ UniverseObject* Universe::Object(int id)
 {
     iterator it = m_objects.find(id);
     return (it != m_objects.end() ? it->second : 0);
+}
+
+double Universe::LinearDistance(System* system1, System* system2) const
+{
+    return LinearDistance(system1->ID(), system2->ID());
+}
+
+double Universe::LinearDistance(int system1, int system2) const
+{
+    return m_system_distances.at(std::max(system1, system2)).at(std::min(system1, system2));
+}
+
+std::pair<std::list<System*>, double> Universe::ShortestPath(System* system1, System* system2) const
+{
+    return ShortestPath(system1->ID(), system2->ID());
+}
+
+std::pair<std::list<System*>, double> Universe::ShortestPath(int system1, int system2) const
+{
+    std::pair<std::list<System*>, double> retval;
+
+    double linear_distance = LinearDistance(system1, system2);
+
+    std::vector<int> predecessors(boost::num_vertices(m_system_graph));
+    std::vector<double> distances(boost::num_vertices(m_system_graph));
+    IndexPropertyMap index_map = boost::get(boost::vertex_index, m_system_graph);
+    ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_system_graph);
+    try {
+        boost::dijkstra_shortest_paths(m_system_graph, system1, &predecessors[0], &distances[0], edge_weight_map, index_map, 
+                                    std::less<int>(), std::plus<int>(), std::numeric_limits<int>::max(), 0, 
+                                    boost::make_dijkstra_visitor(PathFindingDijkstraVisitor(system2)));
+    } catch (const PathFindingDijkstraVisitor::FoundDestination& fd) {
+        // catching this just means that the destination was found, and so the algorithm was exited early, via exception
+    }
+
+    ConstSystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), m_system_graph);
+    int current_system = system2;
+    while (predecessors[current_system] != current_system) {
+        retval.first.push_front(pointer_property_map[current_system]);
+        retval.second += distances[current_system];
+        current_system = predecessors[current_system];
+    }
+
+    // note that at this point retval.first will be empty if there was no starlane path from system1 to system2
+    if (!retval.first.empty()) {
+        retval.first.push_front(pointer_property_map[current_system]);
+    }
+
+    // if system2 is unreachable or it would be faster to travel "offroad", use the linear distance
+    if (linear_distance * OFFROAD_SLOWDOWN_FACTOR < retval.second || retval.first.empty()) {
+        retval.first.clear();
+        retval.first.push_back(pointer_property_map[system1]);
+        retval.first.push_back(pointer_property_map[system2]);
+        retval.second = linear_distance;
+    }
+
+    return retval;
 }
 
 GG::XMLElement Universe::XMLEncode() const
@@ -604,6 +682,7 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
 
     PopulateSystems(PD_AVERAGE);
     GenerateStarlanes(LANES_AVERAGE, adjacency_grid);
+    InitializeSystemGraph();
     GenerateHomeworlds(players + ai_players, homeworlds);
     GenerateEmpires(players + ai_players, homeworlds);
 }
@@ -754,6 +833,71 @@ void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 
         if (!attempts_left)
             Delete(system->ID());
+    }
+}
+
+void Universe::PopulateSystems(Universe::PlanetDensity density)
+{
+    std::vector<System*> sys_vec = FindObjects<System>();
+
+    if (sys_vec.empty())
+        throw std::runtime_error("Attempted to populate an empty galaxy.");
+
+    const std::vector<std::vector<int> >& density_mod_to_planet_size_dist = UniverseDataTables()["DensityModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >& star_color_mod_to_planet_size_dist = UniverseDataTables()["StarColorModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >& slot_mod_to_planet_size_dist = UniverseDataTables()["SlotModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >& planet_size_mod_to_planet_type_dist = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
+    const std::vector<std::vector<int> >& slot_mod_to_planet_type_dist = UniverseDataTables()["SlotModToPlanetTypeDist"];
+    const std::vector<std::vector<int> >& star_color_mod_to_planet_type_dist = UniverseDataTables()["StarColorModToPlanetTypeDist"];
+
+    SmallIntDistType hundred_dist = SmallIntDist(1, 100);
+
+    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+        System* system = *it;
+
+        int num_planets_in_system = 0;     // the number of slots in this system that were determined to contain planets
+        for (int orbit = 0; orbit < system->Orbits(); orbit++) {
+            // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
+            int idx = 0;
+            int max_roll = 0;
+            for (unsigned int i = 0; i < Planet::MAX_PLANET_SIZE; ++i) {
+                int roll = hundred_dist() + star_color_mod_to_planet_size_dist[system->Star()][i] + slot_mod_to_planet_size_dist[orbit][i]
+                    + density_mod_to_planet_size_dist[density][i];
+                if (max_roll < roll) {
+                    max_roll = roll;
+                    idx = i;
+                }
+            }
+            Planet::PlanetSize planet_size = Planet::PlanetSize(idx);
+
+            if (planet_size == Planet::SZ_NOWORLD)
+                continue;
+            else
+                ++num_planets_in_system;
+
+            if (planet_size == Planet::SZ_ASTEROIDS) {
+                idx = Planet::PT_ASTEROIDS;
+            } else if (planet_size == Planet::SZ_GASGIANT) {
+                idx = Planet::PT_GASGIANT;
+            } else {
+                // make another series of modified rolls for planet type
+                for (unsigned int i = 0; i < Planet::MAX_PLANET_TYPE; ++i) {
+                    int roll = hundred_dist() + planet_size_mod_to_planet_type_dist[planet_size][i] + slot_mod_to_planet_type_dist[orbit][i] + 
+                        star_color_mod_to_planet_type_dist[system->Star()][i];
+                    if (max_roll < roll) {
+                        max_roll = roll;
+                        idx = i;
+                    }
+                }
+            }
+            Planet::PlanetType planet_type = Planet::PlanetType(idx);
+
+            Planet* planet = new Planet(planet_type, planet_size);
+
+            Insert(planet); // add planet to universe map
+            system->Insert(planet, orbit);  // add planet to system map
+            planet->Rename(system->Name() + " " + RomanNumber(num_planets_in_system));
+        }
     }
 }
 
@@ -956,6 +1100,51 @@ void Universe::GenerateStarlanes(StarlaneFreqency freq, const AdjacencyGrid& adj
     }
 }
 
+void Universe::InitializeSystemGraph()
+{
+    for (int i = static_cast<int>(boost::num_vertices(m_system_graph)) - 1; i >= 0; --i) {
+        boost::clear_vertex(i, m_system_graph);
+        boost::remove_vertex(i, m_system_graph);
+    }
+
+    std::vector<System*> systems = FindObjects<System>();
+    m_system_distances.resize(systems.size());
+    SystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), m_system_graph);
+
+    EdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_system_graph);
+    typedef boost::graph_traits<SystemGraph>::edge_descriptor EdgeDescriptor;
+
+    for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
+        // add a vertex to the graph for this system, and assign it a pointer for its System object
+        boost::add_vertex(m_system_graph);
+        System* system1 = systems[i];
+        pointer_property_map[i] = system1;
+
+        // add edges and edge weights
+        for (System::lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
+            std::pair<EdgeDescriptor, bool> add_edge_result = boost::add_edge(system1->ID(), it->first, m_system_graph);
+            if (it->second) { // if this is a wormhole
+                edge_weight_map[add_edge_result.first] = 0.0;
+            } else if (add_edge_result.second) { // if this is a non-duplicate starlane
+                UniverseObject* system2 = Object(it->first);
+                double x_dist = system2->X() - system1->X();
+                double y_dist = system2->Y() - system1->Y();
+                edge_weight_map[add_edge_result.first] = std::sqrt(x_dist * x_dist + y_dist * y_dist);
+            }
+        }
+
+        // define the straight-line system distances for this system
+        m_system_distances[i].clear();
+        for (int j = 0; j < i; ++j) {
+            UniverseObject* system2 = Object(j);
+            double x_dist = system2->X() - system1->X();
+            double y_dist = system2->Y() - system1->Y();
+            m_system_distances[i].push_back(std::sqrt(x_dist * x_dist + y_dist * y_dist));
+        }
+        m_system_distances[i].push_back(0.0);
+    }
+}
+
 void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
 {
     homeworlds.clear();
@@ -1012,71 +1201,6 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
         system->Insert(planet, home_orbit);
 
         homeworlds.push_back(planet_id);
-    }
-}
-
-void Universe::PopulateSystems(Universe::PlanetDensity density)
-{
-    std::vector<System*> sys_vec = FindObjects<System>();
-
-    if (sys_vec.empty())
-        throw std::runtime_error("Attempted to populate an empty galaxy.");
-
-    const std::vector<std::vector<int> >& density_mod_to_planet_size_dist = UniverseDataTables()["DensityModToPlanetSizeDist"];
-    const std::vector<std::vector<int> >& star_color_mod_to_planet_size_dist = UniverseDataTables()["StarColorModToPlanetSizeDist"];
-    const std::vector<std::vector<int> >& slot_mod_to_planet_size_dist = UniverseDataTables()["SlotModToPlanetSizeDist"];
-    const std::vector<std::vector<int> >& planet_size_mod_to_planet_type_dist = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
-    const std::vector<std::vector<int> >& slot_mod_to_planet_type_dist = UniverseDataTables()["SlotModToPlanetTypeDist"];
-    const std::vector<std::vector<int> >& star_color_mod_to_planet_type_dist = UniverseDataTables()["StarColorModToPlanetTypeDist"];
-
-    SmallIntDistType hundred_dist = SmallIntDist(1, 100);
-
-    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
-        System* system = *it;
-
-        int num_planets_in_system = 0;     // the number of slots in this system that were determined to contain planets
-        for (int orbit = 0; orbit < system->Orbits(); orbit++) {
-            // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
-            int idx = 0;
-            int max_roll = 0;
-            for (unsigned int i = 0; i < Planet::MAX_PLANET_SIZE; ++i) {
-                int roll = hundred_dist() + star_color_mod_to_planet_size_dist[system->Star()][i] + slot_mod_to_planet_size_dist[orbit][i]
-                    + density_mod_to_planet_size_dist[density][i];
-                if (max_roll < roll) {
-                    max_roll = roll;
-                    idx = i;
-                }
-            }
-            Planet::PlanetSize planet_size = Planet::PlanetSize(idx);
-
-            if (planet_size == Planet::SZ_NOWORLD)
-                continue;
-            else
-                ++num_planets_in_system;
-
-            if (planet_size == Planet::SZ_ASTEROIDS) {
-                idx = Planet::PT_ASTEROIDS;
-            } else if (planet_size == Planet::SZ_GASGIANT) {
-                idx = Planet::PT_GASGIANT;
-            } else {
-                // make another series of modified rolls for planet type
-                for (unsigned int i = 0; i < Planet::MAX_PLANET_TYPE; ++i) {
-                    int roll = hundred_dist() + planet_size_mod_to_planet_type_dist[planet_size][i] + slot_mod_to_planet_type_dist[orbit][i] + 
-                        star_color_mod_to_planet_type_dist[system->Star()][i];
-                    if (max_roll < roll) {
-                        max_roll = roll;
-                        idx = i;
-                    }
-                }
-            }
-            Planet::PlanetType planet_type = Planet::PlanetType(idx);
-
-            Planet* planet = new Planet(planet_type, planet_size);
-
-            Insert(planet); // add planet to universe map
-            system->Insert(planet, orbit);  // add planet to system map
-            planet->Rename(system->Name() + " " + RomanNumber(num_planets_in_system));
-        }
     }
 }
 

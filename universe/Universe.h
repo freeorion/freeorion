@@ -10,7 +10,23 @@
 #include <boost/signal.hpp>
 #endif
 
+#if defined(_MSC_VER)
+  // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
+  // in boost/cstdint.h when compiling under windows
+#  if defined(int64_t)
+#    undef int64_t
+#  endif
+#elif defined(WIN32)
+  // HACK! this keeps gcc 3.x from barfing when it sees "typedef long long uint64_t;"
+  // in boost/cstdint.h when compiling under windows
+#  define BOOST_MSVC -1
+#endif
+#ifndef BOOST_GRAPH_ADJACENCY_LIST_HPP
+#include <boost/graph/adjacency_list.hpp>
+#endif
+
 #include <vector>
+#include <list>
 #include <map>
 #include <string>
 #include <set>
@@ -110,11 +126,24 @@ public:
     const_iterator begin() const  {return m_objects.begin();}   ///< returns the begin const_iterator for the objects in the universe
     const_iterator end() const    {return m_objects.end();}     ///< returns the end const_iterator for the objects in the universe
 
+    double LinearDistance(System* system1, System* system2) const; ///< returns the straight-line distance between the given systems
+    double LinearDistance(int system1, int system2) const; ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
+
+    /** returns the sequence of systems, including \a system1 and \a system2, that defines the shortest path from \a system1 to 
+        \a system2, and the distance travelled to get there.  If no such path exists, the list will be empty.  Note that the 
+        path returned may be via one or more starlane, or may be "offroad". */
+    std::pair<std::list<System*>, double> ShortestPath(System* system1, System* system2) const;
+
+    /** returns the sequence of systems, including \a system1 and \a system2, that defines the shortest path from \a system1 to 
+        \a system2, and the distance travelled to get there.  If no such path exists, the list will be empty.  Note that the 
+        path returned may be via one or more starlane, or may be "offroad".  \throw std::out_of_range This function will throw 
+        if either system ID is out of range. */
+    std::pair<std::list<System*>, double> ShortestPath(int system1, int system2) const;
+
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Universe object
     virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
 
     UniverseObjectDeleteSignalType& UniverseObjectDeleteSignal() const {return m_universe_object_delete_sig;} ///< returns the state changed signal object for this UniverseObject
-
     //@}
 
     /** \name Mutators */ //@{
@@ -161,6 +190,29 @@ public:
     typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
 
 protected:
+    typedef std::vector< std::vector<double> > DistanceMatrix;
+
+    // declare property map types
+    struct vertex_system_pointer_t {typedef boost::vertex_property_tag kind;};
+    typedef boost::property<vertex_system_pointer_t, System*,
+                            boost::property<boost::vertex_index_t, int> > 
+                            vertex_property_t;
+    typedef boost::property<boost::edge_weight_t, double> 
+                            edge_property_t;
+
+    // declare main graph types, including properties declared above
+    typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS, 
+                                   vertex_property_t, edge_property_t>
+                                   SystemGraph;
+
+    // declare property map types for properties declared above
+    typedef boost::property_map<SystemGraph, vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
+    typedef boost::property_map<SystemGraph, vertex_system_pointer_t>::type       SystemPointerPropertyMap;
+    typedef boost::property_map<SystemGraph, boost::vertex_index_t>::const_type   ConstIndexPropertyMap;
+    typedef boost::property_map<SystemGraph, boost::vertex_index_t>::type         IndexPropertyMap;
+    typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type    ConstEdgeWeightPropertyMap;
+    typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type          EdgeWeightPropertyMap;
+
     // factory class
     template <class T> class NumberedElementFactory
     {
@@ -206,20 +258,20 @@ protected:
     void GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates an cluster galaxy and stores the empire homeworlds in the homeworlds vector
     void GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
-    /** creates starlanes and adds them systems already generated */
-    void GenerateStarlanes(StarlaneFreqency freq, const AdjacencyGrid& adjacency_grid);
-
-    void GenerateHomeworlds(int players, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
-
     void PopulateSystems(Universe::PlanetDensity density);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
+    void GenerateStarlanes(StarlaneFreqency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated
+    void InitializeSystemGraph(); ///< resizes the system graph to the appropriate size and populates m_system_distances 
+    void GenerateHomeworlds(int players, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
 
     /// Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets
     /// NOTE: does nothing if executed client-side. This is a hack to deal with the
     /// dependency on ServerEmpireManager -- jdb
     void GenerateEmpires(int players, std::vector<int>& homeworlds);
 
-    ObjectMap m_objects;
-    NumberedElementFactory<UniverseObject> m_factory;
+    ObjectMap m_objects;                                ///< note that for the system graph algorithms to work more easily, the first N elements should be the N systems
+    DistanceMatrix m_system_distances;                  ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
+    SystemGraph m_system_graph;                         ///< a graph in which the systems are vertices and the starlanes are edges
+    NumberedElementFactory<UniverseObject> m_factory;   ///< generates new object IDs for all new objects
     int m_last_allocated_id;
 
     static double s_universe_width;
