@@ -2,17 +2,20 @@
 
 #include "ClientUI.h"
 
+#include "../util/AppInterface.h"
 #include "CUIControls.h"
+#include "../universe/Fleet.h"
 #include "GGApp.h"
 #include "GGClr.h"
 #include "GGDrawUtil.h"
-#include "IntroScreen.h"
-#include "TurnProgressWnd.h"
 #include "dialogs/GGThreeButtonDlg.h"
+#include "IntroScreen.h"
 #include "MapWnd.h"
+#include "../universe/Planet.h"
+#include "../universe/System.h"
+#include "../universe/Ship.h"
 #include "ToolContainer.h"
-#include "../util/AppInterface.h"
-
+#include "TurnProgressWnd.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -21,6 +24,7 @@
 
 #include <string>
 #include <fstream>
+
 
 //static members
 std::string ClientUI::FONT          = "arial.ttf";
@@ -310,7 +314,7 @@ bool ClientUI::AttachToolWnd(GG::Wnd* parent, ToolWnd* tool)
 //Utilities////////////////////////////////////////////////
 bool ClientUI::ChangeResolution(int width, int height)
 {
-    //TODO: Determine ability to reinitialize SDL with OpenGL.
+    // TODO: Determine ability to reinitialize SDL with OpenGL.
 
     return false;
 }//ChangeResolution()
@@ -321,44 +325,72 @@ bool ClientUI::ChangeResolution(int width, int height)
 //Zoom Functions///////////////////////////////////
 bool ClientUI::ZoomToPlanet(int id)
 {
-    //TODO: Zooming code
-    
+    // this just zooms to the appropriate system, until we create a planet window of some kind
+    if (Planet* planet = dynamic_cast<Planet*>(GetUniverse().Object(id))) {
+        ZoomToSystem(planet->GetSystem());
+        return true;
+    }
     return false;
 }
 
 bool ClientUI::ZoomToSystem(int id)
-{ 
-    //TODO: Zooming code
-    
+{
+    if (System* system = dynamic_cast<System*>(GetUniverse().Object(id))) {
+        ZoomToSystem(system);
+        return true;
+    }
     return false;
 }
 
 bool ClientUI::ZoomToFleet(int id)
 {
-    //TODO: Zooming code
-    
+    if (Fleet* fleet = dynamic_cast<Fleet*>(GetUniverse().Object(id))) {
+        ZoomToFleet(fleet);
+        return true;
+    }
     return false;
 }
 
 bool ClientUI::ZoomToShip(int id)
 {
-    //TODO: Zooming code
-    
+    // this just zooms to the appropriate fleet window, until we create a ship window of some kind
+    if (Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(id))) {
+        ZoomToFleet(ship->GetFleet());
+        return true;
+    }
     return false;
 }
 
 bool ClientUI::ZoomToTech(int id)
 { 
-    //TODO: Zooming code
+    // TODO: Zooming code
     
     return false;
 }
 
 bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
 { 
-    //TODO: Zooming code
+    // TODO: Zooming code
     
     return false;
+}
+
+void ClientUI::ZoomToSystem(System* system)
+{
+    if (!system)
+        return;
+
+    m_map_wnd->CenterOnSystem(system->ID());
+    m_map_wnd->SelectSystem(system->ID());
+}
+
+void ClientUI::ZoomToFleet(Fleet* fleet)
+{
+    if (!fleet)
+        return;
+
+    m_map_wnd->CenterOnFleet(fleet->ID());
+    m_map_wnd->SelectFleet(fleet->ID());
 }
 
 /////////////////////////////////////////////////////
@@ -409,14 +441,14 @@ void ClientUI::ScreenMap()
 {
     HideAllWindows();
 
-    // clean up prvious windows, based on previous state
+    // clean up previous windows, based on previous state
     switch (m_state) {
     case STATE_STARTUP:
         break;
     case STATE_INTRO:
         GG::App::GetApp()->Remove(m_intro_screen);
         delete m_intro_screen;
-	m_intro_screen = 0;
+        m_intro_screen = 0;
         break;
     case STATE_SETTINGS:
         break;
@@ -425,7 +457,7 @@ void ClientUI::ScreenMap()
     case STATE_TURNSTART:
         GG::App::GetApp()->Remove(m_turn_progress_wnd );
         delete m_turn_progress_wnd;
-	m_turn_progress_wnd = 0;
+        m_turn_progress_wnd = 0;
         break;
     case STATE_MAP:
         break;
@@ -494,18 +526,6 @@ const std::string& ClientUI::String(const std::string& index)
     return s_the_UI->m_string_table->String(index);
 }
 
-////////////////////////////////////////////////////
-void ClientUI::HideAllWindows()
-{
-    if (m_intro_screen)
-        m_intro_screen->Hide();
-    if (m_map_wnd)
-        m_map_wnd->Hide();
-    if (m_turn_progress_wnd)
-        m_turn_progress_wnd->Hide();
-}
-
-
 void ClientUI::UpdateTurnProgress( const std::string& phase_str, const int empire_id )
 {
   m_turn_progress_wnd->UpdateTurnProgress( phase_str, empire_id );
@@ -520,4 +540,15 @@ void ClientUI::GenerateSitRepText( SitRepEntry *p_sit_rep )
   // parse string
   p_sit_rep->GenerateVarText( template_str );
 
+}
+
+////////////////////////////////////////////////////
+void ClientUI::HideAllWindows()
+{
+    if (m_intro_screen)
+        m_intro_screen->Hide();
+    if (m_map_wnd)
+        m_map_wnd->Hide();
+    if (m_turn_progress_wnd)
+        m_turn_progress_wnd->Hide();
 }

@@ -19,6 +19,7 @@ class ClientNetworkCore;
 class ClientUniverse;
 class ClientEmpire;
 class Combat;
+class Fleet;
 class MapWnd;
 class IntroScreen;
 class TurnProgressWnd;
@@ -26,6 +27,7 @@ class Tech;
 class ToolContainer;
 class ToolWnd;
 class SitRepEntry;
+class System;
 namespace GG {
 class Clr;
 class SubTexture;
@@ -122,29 +124,32 @@ public:
     void ScreenLoad(bool show);                    //!< Load Game Screen
 
     // Zooming Functions
-    //! @param p address of a planet that we wish to zoom to
+    //! @param id address of a planet that we wish to zoom to
     //! @return true if successful, false if object doesn't exist
     bool ZoomToPlanet(int id);    //!< Zooms to a particular planet on the galaxy map and opens the planet screen for that planet
 
-    //! @param s address of system that we wish to zoom to
+    //! @param id address of system that we wish to zoom to
     //! @return true if successful, false if object doesn't exist
     bool ZoomToSystem(int id);    //!< Zooms to a particular system on the galaxy map
     
-    //! @param s address of fleet that we wish to zoom to
+    //! @param id address of fleet that we wish to zoom to
     //! @return true if successful, false if object doesn't exist
     bool ZoomToFleet(int id);    //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
     
-    //! @param s address of ship that we wish to zoom to
+    //! @param id address of ship that we wish to zoom to
     //! @return true if successful, false if object doesn't exist
     bool ZoomToShip(int id);    //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
     
-    //! @param t address of technology that we wish to zoom to
+    //! @param id address of technology that we wish to zoom to
     //! @return true if successful, false if object doesn't exist
     bool ZoomToTech(int id);    //!< Opens the technology screen and presents a description of the given technology
    
-    //! @param t address of technology that we wish to zoom to
+    //! @param str address of encyclopedia entry that we wish to zoom to
     //! @return true if successful, false if object doesn't exist
     bool ZoomToEncyclopediaEntry(const std::string& str);    //!< Opens the encyclodedia screen and presents the entry for the given item
+
+    void ZoomToSystem(System* system); //!< Zooms to a particular system on the galaxy map
+    void ZoomToFleet(Fleet* fleet);    //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
     //!@}
     
     static ClientUI*    GetClientUI() {return s_the_UI;}   //!< returns a pointer to the singleton ClientUI class
