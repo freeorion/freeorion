@@ -72,18 +72,20 @@ public:
     
     //! \name Accessors //!@{
     const log4cpp::Category& Logger() {return s_logger;}    //!< Returns the logger associated with ClientUI
-    
+
     const std::string&  Language() const;                   //!< Returns the language of the StringTable object associated with ClientUI
-    
+
+    MapWnd* GetMapWnd() {return m_map_wnd;}                 //!< Returns the main map window (may be null).
+
     const GG::SubTexture& SitRepIcon(SitRepEntry::EntryType type) const; ///< returns the icon for this sitrep entry type; returns the default icon if \a type has no associated icon
+
+    GG::XMLElement XMLEncode() const; //!< encodes ClientUI to XML
     //!@}
     
     //! \name Mutators //!@{
     //! @param width screen width
     //! @param height screen height
     bool ChangeResolution(int width, int height);    //!< changes the screen resolution and modifies any images or data required to make the change.  
-    
-    GG::XMLElement XMLEncode() const; //!< encodes ClientUI to XML
     
     //! @param parent A pointer to the Wnd that should contain the tooltip
     //! @param tool A pointer to a ToolWnd to be associated with that window
@@ -196,6 +198,9 @@ public:
 
     static GG::Clr     STAT_INCR_COLOR; //!< used to color increasing stats text (eg "+2")
     static GG::Clr     STAT_DECR_COLOR; //!< used to color decreasing stats text (eg "-3")
+
+    static int         SYSTEM_ICON_SIZE; //!< the width/height of a System/Icon at zoom = 1.0
+    static double      FLEET_BUTTON_SIZE; //!< the width/height of a FleetButton at zoom = 1.0, relative to the size of a SystemIcon
 
     // game UI windows
     static GG::Clr     SIDE_PANEL_COLOR;
