@@ -6,26 +6,6 @@
 #include "System.h"
 #include "UniverseObject.h"
 
-bool IsSystem(const UniverseObject* obj) 
-{
-    return dynamic_cast<const System*>(obj);
-}
-
-bool IsPlanet(const UniverseObject* obj) 
-{
-    return dynamic_cast<const Planet*>(obj);
-}
-
-bool IsFleet(const UniverseObject* obj) 
-{
-    return dynamic_cast<const Fleet*>(obj);
-}
-
-bool IsShip(const UniverseObject* obj) 
-{
-    return dynamic_cast<const Ship*>(obj);
-}
-
 bool IsStationaryFleetFunctor::operator()(const UniverseObject* obj) const
 {
     if (const Fleet* fleet = dynamic_cast<const Fleet*>(obj)) {
