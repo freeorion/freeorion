@@ -320,7 +320,7 @@ void MapWnd::InitTurn(int turn_number)
 
     // assumes the app is wider than it is tall, and so if it fits in the height it will fit in the width
     if (GG::App::GetApp()->AppHeight() - 2.0 * MAP_MARGIN_WIDTH < Universe::UniverseWidth() * s_min_scale_factor)
-	s_min_scale_factor = (GG::App::GetApp()->AppHeight() - 2.0 * MAP_MARGIN_WIDTH) / Universe::UniverseWidth();
+        s_min_scale_factor = std::max(0.05, (GG::App::GetApp()->AppHeight() - 2.0 * MAP_MARGIN_WIDTH) / Universe::UniverseWidth());
 
     Resize(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH,
 	   static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppHeight() + MAP_MARGIN_WIDTH);
@@ -585,7 +585,7 @@ void MapWnd::RenderBackgrounds()
 
 void MapWnd::RenderStarlanes()
 {
-    double LINE_SCALE = std::max(1.0, m_zoom_factor / s_min_scale_factor / 5.0);
+    double LINE_SCALE = std::max(1.0, 0.666 * m_zoom_factor);
     double INNER_LINE_PORTION = 0.3;
     double INNER_LINE_WIDTH = (LINE_SCALE / 2.0) * INNER_LINE_PORTION; // these are actually half-widths in either direction
     double OUTER_LINE_WIDTH = (LINE_SCALE / 2.0);
@@ -649,7 +649,7 @@ void MapWnd::RenderFleetMovementLines()
     const double RATE = 0.5;
     const int SHIFT = static_cast<int>(GG::App::GetApp()->Ticks() * RATE / 32.0) % 32;
     const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (32 - SHIFT));
-    const double LINE_SCALE = std::max(1.0, m_zoom_factor / s_min_scale_factor / 2.5);
+    double LINE_SCALE = std::max(1.0, 1.333 * m_zoom_factor);
 
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LINE_SMOOTH);
