@@ -49,7 +49,7 @@
 * and can be accessed from other modules by using the EmpireManager::Lookup() 
 * method to obtain a pointer.
 */ 
-class Empire     
+class Empire 
 {
 public:
     /** 
@@ -67,7 +67,7 @@ public:
      * access to the constructor and keep it hidden from others
      */
     friend class ClientEmpireManager;
-    
+
 
     /** \name Iterator Types */ //@{
     typedef std::set<int>::const_iterator               TechIDItr;
@@ -75,14 +75,14 @@ public:
     typedef std::map<int, ShipDesign>::const_iterator   ShipDesignItr;
     typedef std::list<SitRepEntry*>::const_iterator     SitRepItr;
     //@}
-    
+
     /**
      * ControlStatus is used to determine whether an Empire is AI
      * or Human controlled.
      */
     enum ControlStatus {CONTROL_AI =    0,  ///< under AI control
                         CONTROL_HUMAN = 1   ///< under human control
-                       };
+    };
 
     /* *****************************************************
     ** CONSTRUCTORS
@@ -112,8 +112,8 @@ public:
     //@}
 
     /* **************************************************
-    *** ACCESSORS
-    *****************************************************/
+   *** ACCESSORS
+   *****************************************************/
 
     /** \name Accessors */ //@{
     /// Returns an Empire's control state
@@ -211,16 +211,10 @@ public:
      *   then the return value is the same as the no-arg version of XMLEncode()
      */
     GG::XMLElement XMLEncode(const Empire& viewer) const;
-
-
     //@}
 
-    /* ****************************************************
-   *** MUTATORS
-   *******************************************************/
 
     /** \name Mutators */ //@{
-
     /* ************************************************
        Methods to add items to our various lists
     **************************************************/
@@ -233,7 +227,7 @@ public:
 
     /// inserts a copy of the given design into the empire's design list
     int AddShipDesign(const ShipDesign& design);
-    
+
     /** Inserts the a pointer to given SitRep entry into the empire's sitrep list.
      *  \warning When you call this method, you are transferring ownership
      *  of the entry object to the Empire.
@@ -250,14 +244,14 @@ public:
 
     /// Removes the given ID from the empire's list
     void RemoveTech(int ID);
-    
+
     /// Removes the design with the specified ID from the empire's design list
     void RemoveShipDesign(int id);
 
     /// Clears all sitrep entries;
     void ClearSitRep();
 
-    
+
     /// Adds reseach points to the accumulated total. 
     /** 
      * Increments the empire's accumulated research points 
@@ -272,20 +266,20 @@ public:
      * advances that have been achieved, and add them to the technology list.
      */
     void CheckResearchProgress();
-       	
+   	
     /// Mutator for empire color
     void SetColor(const GG::Clr& color);
-    
-   	/// Mutator for control state
+
+    /// Mutator for control state
     void SetControlState(ControlStatus state);
 
-   	/// Mutator for empire name
+    /// Mutator for empire name
     void SetName(const std::string& name);
 
-   	/// Mutator for empire's player name
+    /// Mutator for empire's player name
     void SetPlayerName(const std::string& player_name);
     //@}
-   
+
     void UpdateResourcePool();
 
     const MineralResourcePool&    MineralResPool    () const {return m_mineral_resource_pool;}
@@ -293,14 +287,15 @@ public:
     const ResearchResourcePool&   ResearchResPool   () const {return m_research_resource_pool;}
     const PopulationResourcePool& PopulationResPool () const {return m_population_resource_pool;}
     const IndustryResourcePool&   IndustryResPool   () const {return m_industry_resource_pool;}
+    const TradeResourcePool&      TradeResPool      () const {return m_trade_resource_pool;}
 
 private:
     /// Empire's unique numeric id
     int m_id;
-    
+
     /// Empire's total accumulated research points
     int m_total_rp;
-    
+
     /// Empire's name
     std::string m_name;
 
@@ -312,9 +307,9 @@ private:
 
     /// the ID of the empire's homeworld
     int m_homeworld_id;
-    
+
     /// Empire's control status
-	Empire::ControlStatus m_control_state;
+    Empire::ControlStatus m_control_state;
 
     /// the next available ship design ID
     int m_next_design_id;
@@ -322,10 +317,10 @@ private:
     /// list of acquired technologies.  These are IDs
     /// referencing Tech objects in the techmanager
     std::set<int> m_techs;   
-    
-    /// systems you've explored        
-    std::set<int> m_explored_systems; 
-    
+
+    /// systems you've explored
+    std::set<int> m_explored_systems;
+
     /// The Empire's ship designs
     std::map<int, ShipDesign> m_ship_designs; 
 
@@ -338,6 +333,7 @@ private:
     ResearchResourcePool    m_research_resource_pool;
     PopulationResourcePool  m_population_resource_pool;
     IndustryResourcePool    m_industry_resource_pool;
+    TradeResourcePool       m_trade_resource_pool;
 };
 
 #endif

@@ -11,23 +11,26 @@
 #endif
 
 class Planet;
- template <class T> 
- class PlanetChangedFunctor //: public boost::signals::trackable
- {
-   public:
-       PlanetChangedFunctor(T &parent, int planet_id) : m_parent(parent), m_planet_id(planet_id) {}
-       void operator()() {m_parent.OnPlanetChanged(m_planet_id);}
-   private:
-       T &m_parent;
-       int m_planet_id;
- };
+namespace GG {class XMLElement;}
+
+template <class PoolT> 
+class PlanetChangedFunctor
+{
+public:
+    PlanetChangedFunctor(PoolT &pool, int planet_id);
+    void operator()();
+
+private:
+    PoolT& m_pool;
+    int    m_planet_id;
+};
 
 /**
 * Base class for all resource pool.
 */
 class ResourcePool
 {
-  public:
+public:
     typedef bool (*SortFuncType)(const Planet*,const Planet*);///< type of function used to sort the planet vector
 
     ResourcePool();
@@ -39,15 +42,20 @@ class ResourcePool
 
     ChangedSignalType& ChangedSignal() const {return m_changed_sig;} ///< returns the changed signal object for this ResourcePool
 
-          std::vector<Planet*>& Planets()       {return m_planets;} ///< returns the planet vector 
+    virtual GG::XMLElement XMLEncode() const = 0;
+
+    virtual double Stockpile() const;
+
+    std::vector<Planet*>& Planets()       {return m_planets;} ///< returns the planet vector 
     const std::vector<Planet*>& Planets() const {return m_planets;} ///< returns the planet vector 
 
     void SetPlanets(const Universe::ObjectVec &planet_vec);///< sets the planet vector 
 
-  protected:
+protected:
     virtual SortFuncType SortFunc() const; ///< used to order planet list
     virtual void PlanetChanged(int m_planet_id) = 0; ///< called when a planet of the planet vector has changed
-  private:
+
+private:
     void OnPlanetChanged(int m_planet_id);///< called through the PlanetChangedFunctor when a planet has changed
 
     std::vector<Planet*> m_planets; ///< list of planet which feed/consume the resource
@@ -62,18 +70,23 @@ class ResourcePool
 */
 class MineralResourcePool : public ResourcePool
 {
-  public:
+public:
     MineralResourcePool();
+    MineralResourcePool(const GG::XMLElement& elem);
     
     double Available() const {return m_overall_pool;} ///< amount of mineral which is produced by the planets
-    double Spend    () const {return m_overall_pool-m_available_pool;}///< amount of mineral which is spend to planets to support production
     double Needed   () const {return m_needed_pool;}///< amount of mineral which is needed to support planet production
 
-  protected:
+    virtual double Stockpile() const;
+
+    virtual GG::XMLElement XMLEncode() const;
+
+protected:
     virtual SortFuncType SortFunc() const; 
     virtual void PlanetChanged(int m_planet_id);
-  private:
-    double m_overall_pool,m_available_pool,m_needed_pool;
+
+private:
+    double m_overall_pool,m_available_pool,m_needed_pool,m_stockpile;
 };
 
 /**
@@ -81,18 +94,23 @@ class MineralResourcePool : public ResourcePool
 */
 class FoodResourcePool : public ResourcePool
 {
-  public:
+public:
     FoodResourcePool();
+    FoodResourcePool(const GG::XMLElement& elem);
 
     double Available() const {return m_overall_pool;}
-    double Spend    () const {return m_overall_pool-m_available_pool;}
     double Needed   () const {return m_needed_pool;}
 
-  protected:
+    virtual double Stockpile() const;
+
+    virtual GG::XMLElement XMLEncode() const;
+
+protected:
     virtual SortFuncType SortFunc() const; 
     virtual void PlanetChanged(int m_planet_id);
-  private:
-    double m_overall_pool,m_available_pool,m_needed_pool;
+
+private:
+    double m_overall_pool,m_available_pool,m_needed_pool,m_stockpile;
 };
 
 /**
@@ -100,14 +118,18 @@ class FoodResourcePool : public ResourcePool
 */
 class ResearchResourcePool : public ResourcePool
 {
-  public:
+public:
     ResearchResourcePool();
+    ResearchResourcePool(const GG::XMLElement& elem);
 
     double Available() const {return m_overall_pool;}
 
-  protected:
+    virtual GG::XMLElement XMLEncode() const;
+
+protected:
     virtual void PlanetChanged(int m_planet_id);
-  private:
+
+private:
     double m_overall_pool;
 };
 
@@ -116,15 +138,19 @@ class ResearchResourcePool : public ResourcePool
 */
 class PopulationResourcePool : public ResourcePool
 {
-  public:
+public:
     PopulationResourcePool();
+    PopulationResourcePool(const GG::XMLElement& elem);
 
     double Available() const {return m_overall_pool;}
     double Growth   () const {return m_growth;}
 
-  protected:
+    virtual GG::XMLElement XMLEncode() const;
+
+protected:
     virtual void PlanetChanged(int m_planet_id);
-  private:
+
+private:
     double m_overall_pool,m_growth;
 };
 
@@ -133,14 +159,57 @@ class PopulationResourcePool : public ResourcePool
 */
 class IndustryResourcePool : public ResourcePool
 {
-  public:
+public:
     IndustryResourcePool();
+    IndustryResourcePool(const GG::XMLElement& elem);
 
     double Available() const {return m_overall_pool;}
 
-  protected:
+    virtual GG::XMLElement XMLEncode() const;
+
+protected:
     virtual void PlanetChanged(int m_planet_id);
-  private:
+
+private:
     double m_overall_pool;
 };
+
+/**
+* Resource pool for trade.
+*/
+class TradeResourcePool : public ResourcePool
+{
+public:
+    TradeResourcePool();
+    TradeResourcePool(const GG::XMLElement& elem);
+
+    double Available() const {return m_overall_pool;}
+    double Needed   () const {return m_needed_pool;}
+
+    virtual double Stockpile() const;
+
+    virtual GG::XMLElement XMLEncode() const;
+
+protected:
+    virtual SortFuncType SortFunc() const; 
+    virtual void PlanetChanged(int m_planet_id);
+
+private:
+    double m_overall_pool,m_available_pool,m_needed_pool,m_stockpile;
+};
+
+
+// template implementations
+template <class PoolT> 
+PlanetChangedFunctor<PoolT>::PlanetChangedFunctor(PoolT& pool, int planet_id) :
+    m_pool(pool),
+    m_planet_id(planet_id)
+{}
+
+template <class PoolT> 
+void PlanetChangedFunctor<PoolT>::operator()()
+{
+    m_pool.OnPlanetChanged(m_planet_id);
+}
+
 #endif

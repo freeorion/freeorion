@@ -34,6 +34,7 @@ Planet::Planet() :
     ProdCenter(PopCenter::PopulationMeter(), this),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
+    m_available_trade(0.0),
     m_just_conquered(false),
     m_is_about_to_be_colonized(0)
 {
@@ -45,6 +46,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     ProdCenter(PopCenter::PopulationMeter(), this),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
+    m_available_trade(0.0),
     m_just_conquered(false),
     m_is_about_to_be_colonized(0)
 {
@@ -75,6 +77,7 @@ Planet::Planet(const GG::XMLElement& elem) :
             m_def_bases = lexical_cast<int>(elem.Child("m_def_bases").Text());
             m_is_about_to_be_colonized = lexical_cast<int>(elem.Child("m_is_about_to_be_colonized").Text());
             m_buildings = GG::ContainerFromString<std::set<int> >(elem.Child("m_buildings").Text());
+            m_available_trade  = lexical_cast<double>(elem.Child("m_available_trade").Text());
         }
     } catch (const boost::bad_lexical_cast& e) {
         Logger().debugStream() << "Caught boost::bad_lexical_cast in Planet::Planet(); bad XMLElement was:";
@@ -88,6 +91,25 @@ Planet::Planet(const GG::XMLElement& elem) :
 PlanetEnvironment Planet::Environment() const
 {
     return Environment(m_type);
+}
+
+double Planet::AvailableTrade() const
+{
+    return m_available_trade;
+}
+
+double Planet::BuildingCosts() const
+{
+    double retval = 0.0;
+    Universe& universe = GetUniverse();
+    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
+        Building* building = universe.Object<Building>(*it);
+        if (building->Operating()) {
+            BuildingType* bulding_type = GetBuildingType(building->BuildingTypeName());
+            retval += bulding_type->MaintenanceCost();
+        }
+    }
+    return retval;
 }
 
 const Meter* Planet::GetMeter(MeterType type) const
@@ -151,6 +173,7 @@ GG::XMLElement Planet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) cons
         retval.AppendChild(XMLElement("m_def_bases", lexical_cast<std::string>(m_def_bases)));
         retval.AppendChild(XMLElement("m_is_about_to_be_colonized", lexical_cast<std::string>(m_is_about_to_be_colonized)));
         retval.AppendChild(XMLElement("m_buildings", GG::StringFromContainer<std::set<int> >(m_buildings)));
+        retval.AppendChild(XMLElement("m_available_trade", lexical_cast<std::string>(m_available_trade)));
     }
     return retval;
 }
@@ -219,6 +242,11 @@ bool Planet::DeleteBuilding(int building_id)
         return true;
     }
     return false;
+}
+
+void Planet::SetAvailableTrade(double trade)
+{
+    m_available_trade = trade;
 }
 
 void Planet::AddOwner (int id)

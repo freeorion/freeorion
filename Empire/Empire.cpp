@@ -27,12 +27,20 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_homeworld_id(homeworld_id), 
     m_control_state(control),
     m_next_design_id(1),
-    m_mineral_resource_pool(),m_food_resource_pool(),m_research_resource_pool(),m_population_resource_pool()
+    m_mineral_resource_pool(),m_food_resource_pool(),m_research_resource_pool(),m_population_resource_pool(),m_trade_resource_pool()
 {}
 
 Empire::Empire(const GG::XMLElement& elem) : 
-    m_mineral_resource_pool(),m_food_resource_pool()
+    m_mineral_resource_pool(elem.Child("m_mineral_resource_pool").Child("MineralResourcePool")),
+    m_food_resource_pool(elem.Child("m_food_resource_pool").Child("FoodResourcePool")),
+    m_research_resource_pool(elem.Child("m_research_resource_pool").Child("ResearchResourcePool")),
+    m_population_resource_pool(elem.Child("m_population_resource_pool").Child("PopulationResourcePool")),
+    m_trade_resource_pool(elem.Child("m_trade_resource_pool").Child("TradeResourcePool"))
+
 {
+    if (elem.Tag() != "Empire")
+        throw std::invalid_argument("Attempted to construct a Empire from an XMLElement that had a tag other than \"Empire\"");
+
     using GG::XMLElement;
 
     m_id = lexical_cast<int>(elem.Child("m_id").Text());
@@ -244,19 +252,24 @@ GG::XMLElement Empire::XMLEncode() const
     retval.AppendChild(XMLElement("m_next_design_id", lexical_cast<std::string>(m_next_design_id)));
 
     retval.AppendChild(XMLElement("m_sitrep_entries"));
-    for (SitRepItr it = SitRepBegin(); it != SitRepEnd(); ++it)
-    {
+    for (SitRepItr it = SitRepBegin(); it != SitRepEnd(); ++it) {
        retval.LastChild().AppendChild((*it)->XMLEncode());
     }
 
     retval.AppendChild(XMLElement("m_ship_designs"));
-    for (ShipDesignItr it = ShipDesignBegin(); it != ShipDesignEnd(); ++it)
-    {
+    for (ShipDesignItr it = ShipDesignBegin(); it != ShipDesignEnd(); ++it) {
         retval.LastChild().AppendChild(it->second.XMLEncode());
     }
 
     retval.AppendChild(XMLElement("m_explored_systems", GG::StringFromContainer<std::set<int> >(m_explored_systems)));
     retval.AppendChild(XMLElement("m_techs", GG::StringFromContainer<std::set<int> >(m_techs)));
+
+    retval.AppendChild(XMLElement("m_mineral_resource_pool", m_mineral_resource_pool.XMLEncode()));
+    retval.AppendChild(XMLElement("m_food_resource_pool", m_food_resource_pool.XMLEncode()));
+    retval.AppendChild(XMLElement("m_research_resource_pool", m_research_resource_pool.XMLEncode()));
+    retval.AppendChild(XMLElement("m_population_resource_pool", m_population_resource_pool.XMLEncode()));
+    retval.AppendChild(XMLElement("m_trade_resource_pool", m_trade_resource_pool.XMLEncode()));
+
     return retval;
 }
 
@@ -286,6 +299,12 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
     retval.AppendChild(XMLElement("m_ship_designs"));
     retval.AppendChild(XMLElement("m_explored_systems"));
     retval.AppendChild(XMLElement("m_techs"));
+    retval.AppendChild(XMLElement("m_mineral_resource_pool", MineralResourcePool().XMLEncode()));
+    retval.AppendChild(XMLElement("m_food_resource_pool", FoodResourcePool().XMLEncode()));
+    retval.AppendChild(XMLElement("m_research_resource_pool", ResearchResourcePool().XMLEncode()));
+    retval.AppendChild(XMLElement("m_population_resource_pool", PopulationResourcePool().XMLEncode()));
+    retval.AppendChild(XMLElement("m_trade_resource_pool", TradeResourcePool().XMLEncode()));
+
     return retval;
 }
 
@@ -351,4 +370,5 @@ void Empire::UpdateResourcePool()
   m_research_resource_pool.SetPlanets(GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(m_id)));
   m_population_resource_pool.SetPlanets(GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(m_id)));
   m_industry_resource_pool.SetPlanets(GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(m_id)));
+  m_trade_resource_pool.SetPlanets(GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(m_id)));
 }

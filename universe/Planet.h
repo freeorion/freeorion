@@ -35,6 +35,9 @@ public:
     PlanetEnvironment    Environment() const;
     const std::set<int>& Buildings() const {return m_buildings;}
 
+    double AvailableTrade() const; ///< returns the trade available at this planet for use in building maintenance
+    double BuildingCosts() const;  ///< returns the cost in trade for the upkeep of all currently-enabled buildings
+
     /** Returns true iff this Planet contains a building with ID \a id. */
     bool ContainsBuilding(int id) const {return m_buildings.find(id) != m_buildings.end();}
 
@@ -71,6 +74,8 @@ public:
     bool RemoveBuilding(int building_id); ///< removes the building from the planet; returns false if no such building was found
     bool DeleteBuilding(int building_id); ///< removes the building from the planet and deletes it; returns false if no such building was found
 
+    void SetAvailableTrade(double trade); ///< sets the trade available at this planet for use in building maintenance
+
     virtual void AddOwner   (int id); ///< adds the Empire with ID \a id to the list of owners of this planet, update system owners and empire planets
     virtual void RemoveOwner(int id); ///< removes the Empire with ID \a id to the list of owners of this planet, update system owners and empire planets
 
@@ -90,6 +95,7 @@ private:
     PlanetType    m_type;
     PlanetSize    m_size;
     std::set<int> m_buildings;
+    double        m_available_trade;
    
     bool m_just_conquered;
 
