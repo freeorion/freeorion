@@ -1,6 +1,8 @@
 #include "PopCenter.h"
 
 #include "../util/AppInterface.h"
+#include "../util/DataTable.h"
+#include "Planet.h"
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
@@ -9,36 +11,62 @@
 
 using boost::lexical_cast;
 
+namespace {
+    DataTableMap& PlanetDataTables()
+    {
+        static DataTableMap map;
+        if (map.empty()) {
+            LoadDataTables("default/planet_tables.txt", map);
+        }
+        return map;
+    }
 
-PopCenter::PopCenter() : 
-    m_pop(),
-    m_health(),
+    double MaxPopModFromObject(const UniverseObject* object)
+    {
+        double retval = 0.0;
+        if (const Planet* planet = dynamic_cast<const Planet*>(object)) {
+            retval = PlanetDataTables()["PlanetMaxPop"][planet->Size()][planet->Environment()];
+        }
+        return retval;
+    }
+
+    double MaxHealthModFromObject(const UniverseObject* object)
+    {
+        double retval = 0.0;
+        if (const Planet* planet = dynamic_cast<const Planet*>(object)) {
+            retval = PlanetDataTables()["PlanetEnvHealthMod"][0][planet->Environment()];
+        }
+        return retval;
+    }
+}
+
+PopCenter::PopCenter(UniverseObject* object) : 
+    m_pop(0.0, MaxPopModFromObject(object)),
+    m_health(MaxHealthModFromObject(object), MaxHealthModFromObject(object)),
     m_growth(0.0),
     m_race(-1),
-    m_available_food(0.0)
+    m_available_food(0.0),
+    m_object(object)
 {
+    assert(m_object);
 }
    
-PopCenter::PopCenter(double max_pop) : 
-    m_pop(1.0, max_pop),
-    m_health(0.0, 0.0),
-    m_growth(0.0),
-    m_race(-1),
-    m_available_food(0.0)
-{
-}
-   
-PopCenter::PopCenter(double max_pop, int race) : 
-    m_pop(1.0, max_pop),
-    m_health(0.0, 0.0),
+PopCenter::PopCenter(int race, UniverseObject* object) : 
+    m_pop(0.0, MaxPopModFromObject(object)),
+    m_health(MaxHealthModFromObject(object), MaxHealthModFromObject(object)),
     m_growth(0.0),
     m_race(race),
-    m_available_food(0.0)
+    m_available_food(0.0),
+    m_object(object)
 {
+    assert(m_object);
 }
    
-PopCenter::PopCenter(const GG::XMLElement& elem)
+PopCenter::PopCenter(const GG::XMLElement& elem, UniverseObject* object) :
+    m_object(object)
 {
+    assert(m_object);
+
     if (elem.Tag() != "PopCenter")
         throw std::invalid_argument("Attempted to construct a PopCenter from an XMLElement that had a tag other than \"PopCenter\"");
 
@@ -97,22 +125,11 @@ double PopCenter::AdjustPop(double pop)
     double new_val = m_pop.Current() + pop;
     m_pop.SetCurrent(new_val);
     if (new_val < Meter::METER_MIN) {
-	retval = new_val;
+        retval = new_val;
     } else if (m_pop.Max() < new_val) {
-	retval = new_val - m_pop.Max();
+        retval = new_val - m_pop.Max();
     }
     return retval;
-}
-
-void PopCenter::SetEnvHealthMod(double env_health_mod)
-{
-    env_health_mod = std::max(Meter::METER_MIN, std::min(env_health_mod, Meter::METER_MAX));
-    m_health.SetMax(env_health_mod);
-    m_health.SetCurrent(env_health_mod);
-}
-
-void PopCenter::MovementPhase()
-{
 }
 
 double PopCenter::FuturePopGrowth() const
@@ -123,16 +140,39 @@ double PopCenter::FuturePopGrowth() const
 double PopCenter::FuturePopGrowthMax() const
 {
     if (20.0 < m_health.Current()) {
-	return m_pop.Current() * (((m_pop.Max() + 1.0) - m_pop.Current()) / (m_pop.Max() + 1.0)) * (m_health.Current() - 20.0) * 0.01;
+        return m_pop.Current() * (((m_pop.Max() + 1.0) - m_pop.Current()) / (m_pop.Max() + 1.0)) * (m_health.Current() - 20.0) * 0.01;
     } else if (m_health.Current() == 20.0) {
-	return 0.0;
+        return 0.0;
     } else { // m_health.Current() < 20.0
-	return m_pop.Current() * (m_health.Current() - 20.0) * 0.01;
+        return m_pop.Current() * (m_health.Current() - 20.0) * 0.01;
     }
 }
 
-void PopCenter::PopGrowthProductionResearchPhase( )
+void PopCenter::AdjustMaxMeters()
 {
+    // determine meter maxes; they should have been previously reset to 0, then adjusted by Specials, Building effects, etc.
+    m_pop.AdjustMax(MaxPopModFromObject(m_object));
+    m_health.AdjustMax(MaxHealthModFromObject(m_object));
+    if (m_available_food < m_pop.Current()) { // starvation
+        // TODO: add starvation special
+        // TODO: reduce happiness when it is implemented
+        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][0]);
+    } else if (m_available_food < 2 * m_pop.Current()) {
+        // TODO: remove starvation special
+        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][1]);
+    } else if (m_available_food < 4 * m_pop.Current()) {
+        // TODO: remove starvation special
+        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][2]);
+    } else {
+        // TODO: remove starvation special
+        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
+    }
+    m_health.SetCurrent(m_health.Max());
+}
+
+void PopCenter::PopGrowthProductionResearchPhase()
+{
+    // grow current pop
     m_pop.SetCurrent(m_pop.Current() + FuturePopGrowth());
 }
 

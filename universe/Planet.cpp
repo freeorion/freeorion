@@ -29,36 +29,36 @@ namespace {
 }
 
 Planet::Planet() :
-   UniverseObject(),
-   PopCenter(),
-   ProdCenter(),
-   m_just_conquered(0),
-   m_is_about_to_be_colonized(false)
+    UniverseObject(),
+    PopCenter(this),
+    ProdCenter(PopCenter::PopulationMeter(), this),
+    m_type(PT_TERRAN),
+    m_size(SZ_MEDIUM),
+    m_just_conquered(false),
+    m_is_about_to_be_colonized(false)
 {
 }
 
 Planet::Planet(PlanetType type, PlanetSize size) :
-   UniverseObject(),
-   PopCenter(),
-   ProdCenter(),
-   m_just_conquered(0),
-   m_is_about_to_be_colonized(false)
+    UniverseObject(),
+    PopCenter(this),
+    ProdCenter(PopCenter::PopulationMeter(), this),
+    m_type(PT_TERRAN),
+    m_size(SZ_MEDIUM),
+    m_just_conquered(false),
+    m_is_about_to_be_colonized(false)
 {
-    m_type = type;
-    m_size = size;
+    SetType(type);
+    SetSize(size);
     m_def_bases = 0;
-
-    SetMaxPop(PlanetDataTables()["PlanetMaxPop"][size][Environment()]);
-    SetEnvHealthMod(PlanetDataTables()["PlanetEnvEffectOnHealth"][0][Environment()]);
-    SetPlanetType(type);
 }
 
 Planet::Planet(const GG::XMLElement& elem) :
-   UniverseObject(elem.Child("UniverseObject")),
-   PopCenter(elem.Child("PopCenter")),
-   ProdCenter(elem.Child("ProdCenter")),
-   m_is_about_to_be_colonized(false),
-   m_def_bases(0)
+    UniverseObject(elem.Child("UniverseObject")),
+    PopCenter(elem.Child("PopCenter"), this),
+    ProdCenter(elem.Child("ProdCenter"), PopCenter::PopulationMeter(), this),
+    m_is_about_to_be_colonized(false),
+    m_def_bases(0)
 {
     using GG::XMLElement;
 
@@ -68,12 +68,13 @@ Planet::Planet(const GG::XMLElement& elem) :
     try {
         m_type = lexical_cast<PlanetType>(elem.Child("m_type").Text());
         m_size = lexical_cast<PlanetSize>(elem.Child("m_size").Text());
-        m_just_conquered = lexical_cast<int>(elem.Child("m_just_conquered").Text());
+        m_just_conquered = lexical_cast<bool>(elem.Child("m_just_conquered").Text());
 
         Visibility vis = Visibility(lexical_cast<int>(elem.Child("UniverseObject").Child("vis").Text()));
         if (vis == FULL_VISIBILITY) {
             m_def_bases = lexical_cast<int>(elem.Child("m_def_bases").Text());
-	    m_buildings = GG::ContainerFromString<std::set<int> >(elem.Child("m_buildings").Text());
+            m_is_about_to_be_colonized = lexical_cast<bool>(elem.Child("m_is_about_to_be_colonized").Text());
+            m_buildings = GG::ContainerFromString<std::set<int> >(elem.Child("m_buildings").Text());
         }
     } catch (const boost::bad_lexical_cast& e) {
         Logger().debugStream() << "Caught boost::bad_lexical_cast in Planet::Planet(); bad XMLElement was:";
@@ -86,53 +87,38 @@ Planet::Planet(const GG::XMLElement& elem) :
 
 PlanetEnvironment Planet::Environment() const
 {
-    switch (m_type)
-    {
-        case PT_ASTEROIDS:
-        case PT_GASGIANT:   return PE_UNINHABITABLE;
-        case PT_SWAMP:
-        case PT_TOXIC:
-        case PT_INFERNO:
-        case PT_RADIATED:
-        case PT_BARREN:
-        case PT_TUNDRA:     return PE_TERRIBLE;
-        case PT_DESERT:
-        case PT_OCEAN:      return PE_ADEQUATE;
-        case PT_TERRAN:     return PE_OPTIMAL;
-        case PT_GAIA:       return PE_SUPERB;
-        default:            throw std::invalid_argument("Planet::Environment::Invalid Planet type");
-    }
+    return Environment(m_type);
 }
 
 const Meter* Planet::GetMeter(MeterType type) const
 {
     switch (type) {
-        case METER_POPULATION:
-            return &PopulationMeter();
-            break;
-        case METER_FARMING:
-            return &FarmingMeter();
-            break;
-        case METER_INDUSTRY:
-            return &IndustryMeter();
-            break;
-        case METER_RESEARCH:
-            return &ResearchMeter();
-            break;
-        case METER_TRADE:
-            return &TradeMeter();
-            break;
-        case METER_MINING:
-            return &MiningMeter();
-            break;
-        case METER_CONSTRUCTION:
-            return &ConstructionMeter();
-            break;
-        case METER_HEALTH:
-            return &HealthMeter();
-            break;
-        default:
-            break;
+    case METER_POPULATION:
+        return &PopulationMeter();
+        break;
+    case METER_FARMING:
+        return &FarmingMeter();
+        break;
+    case METER_INDUSTRY:
+        return &IndustryMeter();
+        break;
+    case METER_RESEARCH:
+        return &ResearchMeter();
+        break;
+    case METER_TRADE:
+        return &TradeMeter();
+        break;
+    case METER_MINING:
+        return &MiningMeter();
+        break;
+    case METER_CONSTRUCTION:
+        return &ConstructionMeter();
+        break;
+    case METER_HEALTH:
+        return &HealthMeter();
+        break;
+    default:
+        break;
     }
     return 0;
 }
@@ -162,43 +148,50 @@ GG::XMLElement Planet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) cons
     retval.AppendChild(XMLElement("m_size", lexical_cast<std::string>(m_size)));
     retval.AppendChild(XMLElement("m_just_conquered", lexical_cast<std::string>(m_just_conquered)));
     if (vis == FULL_VISIBILITY) {
-	retval.AppendChild(XMLElement("m_buildings", GG::StringFromContainer<std::set<int> >(m_buildings)));
         retval.AppendChild(XMLElement("m_def_bases", lexical_cast<std::string>(m_def_bases)));
+        retval.AppendChild(XMLElement("m_is_about_to_be_colonized", lexical_cast<std::string>(m_is_about_to_be_colonized)));
+        retval.AppendChild(XMLElement("m_buildings", GG::StringFromContainer<std::set<int> >(m_buildings)));
     }
     return retval;
 }
 
 void Planet::SetType(PlanetType type)
 {
+    if (type <= INVALID_PLANET_TYPE)
+        type = PT_SWAMP;
+    if (NUM_PLANET_TYPES <= type)
+        type = PT_GASGIANT;
+    double old_modifier = PlanetDataTables()["PlanetEnvFarmingMod"][0][Environment(m_type)];
+    double new_modifier = PlanetDataTables()["PlanetEnvFarmingMod"][0][Environment(type)];
+    GetMeter(METER_FARMING)->AdjustMax(new_modifier - old_modifier);
     m_type = type;
-    if (m_type <= INVALID_PLANET_TYPE)
-	m_type = PT_SWAMP;
-    if (NUM_PLANET_TYPES <= m_type)
-	m_type = PT_GASGIANT;
     StateChangedSignal()();
 }
 
 void Planet::SetSize(PlanetSize size)
 {
+    if (size <= SZ_NOWORLD)
+        size = SZ_TINY;
+    if (NUM_PLANET_SIZES <= size)
+        size = SZ_GASGIANT;
+    double old_modifier = PlanetDataTables()["PlanetSizeIndustryMod"][0][m_size];
+    double new_modifier = PlanetDataTables()["PlanetSizeIndustryMod"][0][size];
+    GetMeter(METER_INDUSTRY)->AdjustMax(new_modifier - old_modifier);
     m_size = size;
-    if (m_size <= SZ_NOWORLD)
-	m_size = SZ_TINY;
-    if (NUM_PLANET_SIZES <= m_size)
-	m_size = SZ_GASGIANT;
     StateChangedSignal()();
 }
 
 void Planet::AddBuilding(int building_id)
 {
     if (Building* building = GetUniverse().Object<Building>(building_id)) {
-	building->SetPlanetID(ID());
-	if (System* system = GetSystem()) {
-	    system->Insert(building);
-	} else {
-	    building->SetSystem(SystemID());
-	}
-	building->MoveTo(X(), Y());
-	m_buildings.insert(building_id);
+        building->SetPlanetID(ID());
+        if (System* system = GetSystem()) {
+            system->Insert(building);
+        } else {
+            building->SetSystem(SystemID());
+        }
+        building->MoveTo(X(), Y());
+        m_buildings.insert(building_id);
     }
     StateChangedSignal()();
 }
@@ -206,13 +199,13 @@ void Planet::AddBuilding(int building_id)
 bool Planet::RemoveBuilding(int building_id)
 {
     if (m_buildings.find(building_id) != m_buildings.end()) {
-	if (Building* building = GetUniverse().Object<Building>(building_id)) {
-	    building->SetPlanetID(INVALID_OBJECT_ID);
-	    building->SetSystem(INVALID_OBJECT_ID);
-	}
-	m_buildings.erase(building_id);
-	StateChangedSignal()();
-	return true;
+        if (Building* building = GetUniverse().Object<Building>(building_id)) {
+            building->SetPlanetID(INVALID_OBJECT_ID);
+            building->SetSystem(INVALID_OBJECT_ID);
+        }
+        m_buildings.erase(building_id);
+        StateChangedSignal()();
+        return true;
     }
     return false;
 }
@@ -220,10 +213,10 @@ bool Planet::RemoveBuilding(int building_id)
 bool Planet::DeleteBuilding(int building_id)
 {
     if (m_buildings.find(building_id) != m_buildings.end()) {
-	GetUniverse().Delete(building_id);
-	m_buildings.erase(building_id);
-	StateChangedSignal()();
-	return true;
+        GetUniverse().Delete(building_id);
+        m_buildings.erase(building_id);
+        StateChangedSignal()();
+        return true;
     }
     return false;
 }
@@ -254,7 +247,7 @@ void Planet::RemoveOwner(int id)
 
 void Planet::Conquer(int conquerer)
 {
-    m_just_conquered = 1;
+    m_just_conquered = true;
 
     // RemoveOwner will change owners - without temp_owner => side effect
     std::set<int> temp_owner(Owners());
@@ -273,32 +266,32 @@ void Planet::IsAboutToBeColonized(bool bB)
 Meter* Planet::GetMeter(MeterType type)
 {
     switch (type) {
-        case METER_POPULATION:
-            return &PopulationMeter();
-            break;
-        case METER_FARMING:
-            return &FarmingMeter();
-            break;
-        case METER_INDUSTRY:
-            return &IndustryMeter();
-            break;
-        case METER_RESEARCH:
-            return &ResearchMeter();
-            break;
-        case METER_TRADE:
-            return &TradeMeter();
-            break;
-        case METER_MINING:
-            return &MiningMeter();
-            break;
-        case METER_CONSTRUCTION:
-            return &ConstructionMeter();
-            break;
-        case METER_HEALTH:
-            return &HealthMeter();
-            break;
-        default:
-            break;
+    case METER_POPULATION:
+        return &PopulationMeter();
+        break;
+    case METER_FARMING:
+        return &FarmingMeter();
+        break;
+    case METER_INDUSTRY:
+        return &IndustryMeter();
+        break;
+    case METER_RESEARCH:
+        return &ResearchMeter();
+        break;
+    case METER_TRADE:
+        return &TradeMeter();
+        break;
+    case METER_MINING:
+        return &MiningMeter();
+        break;
+    case METER_CONSTRUCTION:
+        return &ConstructionMeter();
+        break;
+    case METER_HEALTH:
+        return &HealthMeter();
+        break;
+    default:
+        break;
     }
     return 0;
 }
@@ -307,21 +300,41 @@ void Planet::MovementPhase()
 {
 }
 
+void Planet::AdjustMaxMeters()
+{
+    ProdCenter::AdjustMaxMeters();
+    PopCenter::AdjustMaxMeters();
+}
+
 void Planet::PopGrowthProductionResearchPhase( )
 {
-    Empire* empire = (Empires()).Lookup( *Owners().begin() );
-
-    // do not do production of planet was just conquered
-    // as per v0.2 requirements doc.
-    if (m_just_conquered == 1)
-        m_just_conquered = 0;
+    // do not do production if planet was just conquered
+    if (m_just_conquered)
+        m_just_conquered = false;
     else
-        ProdCenter::PopGrowthProductionResearchPhase( empire, SystemID(), ID() );
+        ProdCenter::PopGrowthProductionResearchPhase();
 
-    PopCenter::PopGrowthProductionResearchPhase( );
-
-    // adjust workforce for prod center
-    SetWorkforce(PopPoints());
+    PopCenter::PopGrowthProductionResearchPhase();
 
     StateChangedSignal()();
+}
+
+PlanetEnvironment Planet::Environment(PlanetType type)
+{
+    switch (type)
+    {
+    case PT_ASTEROIDS:
+    case PT_GASGIANT:   return PE_UNINHABITABLE;
+    case PT_SWAMP:
+    case PT_TOXIC:
+    case PT_INFERNO:
+    case PT_RADIATED:
+    case PT_BARREN:
+    case PT_TUNDRA:     return PE_TERRIBLE;
+    case PT_DESERT:
+    case PT_OCEAN:      return PE_ADEQUATE;
+    case PT_TERRAN:     return PE_SUPERB;
+    case PT_GAIA:       return PE_OPTIMAL;
+    default:            return PE_UNINHABITABLE;
+    }
 }

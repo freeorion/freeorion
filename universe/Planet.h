@@ -56,6 +56,7 @@ public:
     virtual Meter* GetMeter(MeterType type);
 
     virtual void MovementPhase( );
+    virtual void AdjustMaxMeters( );
     virtual void PopGrowthProductionResearchPhase( );
 
     /////////////////////////////////////////////////////////////////////////////
@@ -78,15 +79,16 @@ public:
     
     /// Called during colonization when a planet is about to be colonized
     void IsAboutToBeColonized(bool bB);
-
     //@}
+
+    static PlanetEnvironment Environment(PlanetType type); ///< returns the environment that corresponds to each planet type
 
 private:
     PlanetType    m_type;
     PlanetSize    m_size;
     std::set<int> m_buildings;
    
-    int m_just_conquered;
+    bool m_just_conquered;
 
     ///< flag to indicate that the planet is colonized the very next turn
     ///< isn't stored by XMLEncode

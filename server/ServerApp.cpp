@@ -5,6 +5,7 @@
 #include "XMLDoc.h"
 
 #include "../network/XDiff.hpp"
+#include "../universe/Building.h"
 #include "../util/OrderSet.h"
 #include "../util/GZStream.h"
 #include "../universe/Fleet.h"
@@ -432,8 +433,8 @@ void ServerApp::HandleMessage(const Message& msg)
             if (doc.root_node.ContainsChild("players")) {
                 g_lobby_data.players.clear();
                 for (GG::XMLElement::child_iterator it = doc.root_node.Child("players").child_begin(); 
-                    it != doc.root_node.Child("players").child_end(); 
-                    ++it) {
+                     it != doc.root_node.Child("players").child_end(); 
+                     ++it) {
                     g_lobby_data.players.push_back(PlayerSetupData(*it));
                 }
             }
@@ -503,8 +504,8 @@ void ServerApp::HandleMessage(const Message& msg)
 #if GZIP_SAVE_FILES_COMPRESSION_LEVEL
                 GZStream::ogzstream ofs(save_filename.c_str());
                 /* For now, we use the standard compression settings,
-	                but later we could let the compression settings be
-	                customizable in the save-dialog */
+                   but later we could let the compression settings be
+                   customizable in the save-dialog */
                 // The default is: ofs.set_gzparams(6, Z_DEFAULT_STRATEGY);
                 ofs.set_gzparams(GZIP_SAVE_FILES_COMPRESSION_LEVEL, Z_DEFAULT_STRATEGY);
 #else
@@ -653,10 +654,10 @@ void ServerApp::HandleMessage(const Message& msg)
 #endif
 #if TEST_CONDITIONS_CLASS
             for (int i = 0; i < 32; ++i) {
-            std::ofstream ofs2(("ConditionTest" + boost::lexical_cast<std::string>(i) + ".txt").c_str());
-            try {
-                Condition::ConditionBase* condition = 0;
-                switch (i) {
+                std::ofstream ofs2(("ConditionTest" + boost::lexical_cast<std::string>(i) + ".txt").c_str());
+                try {
+                    Condition::ConditionBase* condition = 0;
+                    switch (i) {
                     case 0:
                     default:
                         condition = new Condition::All();
@@ -686,7 +687,7 @@ void ServerApp::HandleMessage(const Message& msg)
                         // condition = new Condition::Contains(/*condition*/);
                         break;
                     case 8:
-                        condition = new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL)));
+                        condition = new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB)));
                         break;
                     case 9:
                         condition = new Condition::PlanetSize(std::vector<const ValueRef::ValueRefBase<PlanetSize>*>(1, new ValueRef::Constant<PlanetSize>(SZ_ASTEROIDS)));
@@ -720,8 +721,8 @@ void ServerApp::HandleMessage(const Message& msg)
                     case 16:
                         // TODO : put a valid stockpile type in here.
                         /*condition = new Condition::StockpileValue(new ValueRef::Constant<StockpileType>(stockpile type value),
-                                                              new ValueRef::Constant<double>(10.0),
-                                                              new ValueRef::Constant<double>(90.0));*/
+                          new ValueRef::Constant<double>(10.0),
+                          new ValueRef::Constant<double>(90.0));*/
                         break;
                     case 17:
                         condition = new Condition::VisibleToEmpire(std::vector<const ValueRef::ValueRefBase<int>*>(1, new ValueRef::Constant<int>(0)));
@@ -741,17 +742,17 @@ void ServerApp::HandleMessage(const Message& msg)
                         // TODO (EffectTarget is currently unimplemented)
                         //condition = new Condition::EffectTarget();
                         break;
-                    /* the rest of these test And Or and Not, and their interactions; A = case 8, B = case 12, C = case 10 */
+                        /* the rest of these test And Or and Not, and their interactions; A = case 8, B = case 12, C = case 10 */
                     case 21: { // A and B
                         std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
                         operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
                         condition = new Condition::And(operands);
                         break;
                     }
                     case 22: { // A or B
                         std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
                         operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
                         condition = new Condition::Or(operands);
                         break;
@@ -762,7 +763,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     }
                     case 24: { // A and (B or C)
                         std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
                         std::vector<const Condition::ConditionBase*> or_operands;
                         or_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
                         or_operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
@@ -773,7 +774,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     case 25: { // (A and B) or C
                         std::vector<const Condition::ConditionBase*> operands;
                         std::vector<const Condition::ConditionBase*> and_operands;
-                        and_operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        and_operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
                         and_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
                         operands.push_back(new Condition::And(and_operands));
                         operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
@@ -782,7 +783,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     }
                     case 26: { // A or (B and C)
                         std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
                         std::vector<const Condition::ConditionBase*> and_operands;
                         and_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
                         and_operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
@@ -793,7 +794,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     case 27: { // (A or B) and C
                         std::vector<const Condition::ConditionBase*> operands;
                         std::vector<const Condition::ConditionBase*> or_operands;
-                        or_operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        or_operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
                         or_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
                         operands.push_back(new Condition::Or(or_operands));
                         operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
@@ -802,14 +803,14 @@ void ServerApp::HandleMessage(const Message& msg)
                     }
                     case 28: { // A or not(B)
                         std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
                         operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
                         condition = new Condition::Or(operands);
                         break;
                     }
                     case 29: { // A and not(B)
                         std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
                         operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
                         condition = new Condition::And(operands);
                         break;
@@ -817,51 +818,51 @@ void ServerApp::HandleMessage(const Message& msg)
                     case 30: { // not(B) or A
                         std::vector<const Condition::ConditionBase*> operands;
                         operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
                         condition = new Condition::Or(operands);
                         break;
                     }
                     case 31: { // not(B) and A
                         std::vector<const Condition::ConditionBase*> operands;
                         operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL))));
+                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
                         condition = new Condition::And(operands);
                         break;
                     }
-                }
-                // get the list of all UniverseObjects that satisfy m_condition
-                Condition::ConditionBase::ObjectSet condition_targets;
-                Condition::ConditionBase::ObjectSet condition_non_targets;
-                for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
-                    condition_non_targets.insert(it->second);
-                }
-#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
-                ofs2 << "SOURCE:\n" << std::endl;
-#endif
-                UniverseObject* source = m_universe.Object(GetOptionsDB().Get<int>("condition-test-source"));
-#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
-                GG::XMLDoc debug_doc;
-                debug_doc.root_node.AppendChild(source->XMLEncode());
-                debug_doc.WriteDoc(ofs2);
-#endif
-                if (condition) {
-                    condition->Eval(source, condition_targets, condition_non_targets);
-#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
-                    ofs2 << "\n\nTARGETS:\n" << std::endl;
-#endif
-                    for (Condition::ConditionBase::ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-                        ofs2 << "  " << (*it)->ID() << " \"" << (*it)->Name() << "\"" << std::endl;
                     }
-                } else {
-                    ofs2 << "Test #" << i << " not implemented yet.";
-                }
+                    // get the list of all UniverseObjects that satisfy m_condition
+                    Condition::ConditionBase::ObjectSet condition_targets;
+                    Condition::ConditionBase::ObjectSet condition_non_targets;
+                    for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
+                        condition_non_targets.insert(it->second);
+                    }
 #if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
-                ofs2 << "\n" << std::endl;
+                    ofs2 << "SOURCE:\n" << std::endl;
 #endif
-            } catch (...) {
+                    UniverseObject* source = m_universe.Object(GetOptionsDB().Get<int>("condition-test-source"));
+#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
+                    GG::XMLDoc debug_doc;
+                    debug_doc.root_node.AppendChild(source->XMLEncode());
+                    debug_doc.WriteDoc(ofs2);
+#endif
+                    if (condition) {
+                        condition->Eval(source, condition_targets, condition_non_targets);
+#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
+                        ofs2 << "\n\nTARGETS:\n" << std::endl;
+#endif
+                        for (Condition::ConditionBase::ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+                            ofs2 << "  " << (*it)->ID() << " \"" << (*it)->Name() << "\"" << std::endl;
+                        }
+                    } else {
+                        ofs2 << "Test #" << i << " not implemented yet.";
+                    }
+#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
+                    ofs2 << "\n" << std::endl;
+#endif
+                } catch (...) {
+                    ofs2.close();
+                }
                 ofs2.close();
-            }
-            ofs2.close();
             }
 #endif
 
@@ -1163,7 +1164,7 @@ void ServerApp::PlayerDisconnected(int id)
             m_state = SERVER_DISCONNECT;
             const PlayerInfo& disconnected_player_info = m_network_core.Players().find(id)->second;
             m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Lost connection to player #" << boost::lexical_cast<std::string>(id) 
-                << ", named \"" << disconnected_player_info.name << "\"; server now in mode " << SERVER_DISCONNECT << " (SERVER_DISCONNECT).";
+                                         << ", named \"" << disconnected_player_info.name << "\"; server now in mode " << SERVER_DISCONNECT << " (SERVER_DISCONNECT).";
             std::string message = disconnected_player_info.name;
             for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
                 if (it->first != id) {
@@ -1213,7 +1214,7 @@ void ServerApp::Run()
 {
     try {
         SDLInit();
-	Initialize();
+        Initialize();
         while (1)
             Poll();
     } catch (const std::invalid_argument& exception) {
@@ -1331,6 +1332,12 @@ void ServerApp::NewGameInit()
         // turn number is an attribute of the document
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
 
+#if 1
+        std::ofstream ofs(("NewGameInit-empire" + boost::lexical_cast<std::string>(it->first) + "-doc.xml").c_str());
+        doc.WriteDoc(ofs);
+        ofs.close();
+#endif
+
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
     }
 
@@ -1389,8 +1396,8 @@ void ServerApp::LoadGameInit()
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
 
-#if 0
-        std::ofstream ofs(("LoadGameInit-doc-empire" + boost::lexical_cast<std::string>(empire_id) + ".xml").c_str());
+#if 1
+        std::ofstream ofs(("LoadGameInit-empire" + boost::lexical_cast<std::string>(empire_id) + "-doc.xml").c_str());
         doc.WriteDoc(ofs);
         ofs.close();
 #endif
@@ -1608,10 +1615,10 @@ void ServerApp::ProcessTurns( )
     OrderSet                  *pOrderSet;
     OrderSet::const_iterator  order_it;
 
-    /// First process all orders, then process turns
+    // First process all orders, then process turns
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
-        /// broadcast UI message to all players
+        // broadcast UI message to all players
         for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
         {
             m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::PROCESSING_ORDERS, it->first ) );
@@ -1621,7 +1628,7 @@ void ServerApp::ProcessTurns( )
         pEmpire->ClearSitRep( );
         pOrderSet = it->second;
      
-        /// execute order set
+        // execute order set
         for ( order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it)
         {
             // Add exeption handling here 
@@ -1657,7 +1664,7 @@ void ServerApp::ProcessTurns( )
     {
         pOrderSet = it->second;
 
-        /// filter FleetColonizeOrder and sort them per planet
+        // filter FleetColonizeOrder and sort them per planet
         FleetColonizeOrder *order;
         for ( order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it)
             if((order=dynamic_cast<FleetColonizeOrder*>(order_it->second)))
@@ -1665,8 +1672,8 @@ void ServerApp::ProcessTurns( )
                 std::map<int,std::vector<FleetColonizeOrder*> >::iterator it = map_planet_colonize_order_list.find(order->PlanetID());
                 if(it == map_planet_colonize_order_list.end())
                 {
-                  map_planet_colonize_order_list.insert(std::pair<int,std::vector<FleetColonizeOrder*> >(order->PlanetID(),std::vector<FleetColonizeOrder*>()));
-                  it = map_planet_colonize_order_list.find(order->PlanetID());
+                    map_planet_colonize_order_list.insert(std::pair<int,std::vector<FleetColonizeOrder*> >(order->PlanetID(),std::vector<FleetColonizeOrder*>()));
+                    it = map_planet_colonize_order_list.find(order->PlanetID());
                 }
                 it->second.push_back(order);
             }
@@ -1679,55 +1686,55 @@ void ServerApp::ProcessTurns( )
     // 2.b - if more than one empire is armed or all forces are unarmed, noone can colonize the planet
     for (std::map<int,std::vector<FleetColonizeOrder*> >::iterator it = map_planet_colonize_order_list.begin(); it != map_planet_colonize_order_list.end(); ++it)
     {
-      // only one empire?
-      if(it->second.size()==1)
-        it->second[0]->ExecuteServerApply();
-      else
-      {
-        const Planet *planet = GetUniverse().Object<Planet>(it->first);
-        const System *system = GetUniverse().Object<System>(planet->SystemID());
+        // only one empire?
+        if(it->second.size()==1)
+            it->second[0]->ExecuteServerApply();
+        else
+        {
+            const Planet *planet = GetUniverse().Object<Planet>(it->first);
+            const System *system = GetUniverse().Object<System>(planet->SystemID());
 
-        std::vector<const Fleet*> vec_fleet = system->FindObjects<Fleet>();
-        std::set<int> set_empire_with_military;
-        for(unsigned int i=0;i<vec_fleet.size();i++)
-          for(Fleet::const_iterator ship_it=vec_fleet[i]->begin();ship_it!=vec_fleet[i]->end();++ship_it)
-            if(GetUniverse().Object<Ship>(*ship_it)->IsArmed())
-            {
-              set_empire_with_military.insert(*vec_fleet[i]->Owners().begin());
-              break;
-            }
+            std::vector<const Fleet*> vec_fleet = system->FindObjects<Fleet>();
+            std::set<int> set_empire_with_military;
+            for(unsigned int i=0;i<vec_fleet.size();i++)
+                for(Fleet::const_iterator ship_it=vec_fleet[i]->begin();ship_it!=vec_fleet[i]->end();++ship_it)
+                    if(GetUniverse().Object<Ship>(*ship_it)->IsArmed())
+                    {
+                        set_empire_with_military.insert(*vec_fleet[i]->Owners().begin());
+                        break;
+                    }
 
-        // set the first empire as winner for now
-        int winner = 0;
-        // is the current winner armed?
-        bool winner_is_armed = set_empire_with_military.find(it->second[0]->EmpireID()) != set_empire_with_military.end();
-        for(unsigned int i=1;i<it->second.size();i++)
-          // is this empire armed?
-          if(set_empire_with_military.find(it->second[i]->EmpireID()) != set_empire_with_military.end())
-          {
-            // if this empire is armed and the former winner too, noone can win
-            if(winner_is_armed)
-            {
-              winner = -1; // no winner!!
-              break;       // won't find a winner!
-            }
-            winner = i; // this empire is the winner for now
-            winner_is_armed = true; // and has armed forces
-          }
-          else
-            // this empire isn't armed
-            if(!winner_is_armed)
-              winner = -1; // if the current winner isn't armed, a winner must be armed!!!!
+            // set the first empire as winner for now
+            int winner = 0;
+            // is the current winner armed?
+            bool winner_is_armed = set_empire_with_military.find(it->second[0]->EmpireID()) != set_empire_with_military.end();
+            for(unsigned int i=1;i<it->second.size();i++)
+                // is this empire armed?
+                if(set_empire_with_military.find(it->second[i]->EmpireID()) != set_empire_with_military.end())
+                {
+                    // if this empire is armed and the former winner too, noone can win
+                    if(winner_is_armed)
+                    {
+                        winner = -1; // no winner!!
+                        break;       // won't find a winner!
+                    }
+                    winner = i; // this empire is the winner for now
+                    winner_is_armed = true; // and has armed forces
+                }
+                else
+                    // this empire isn't armed
+                    if(!winner_is_armed)
+                        winner = -1; // if the current winner isn't armed, a winner must be armed!!!!
 
-        for(int i=0;i<static_cast<int>(it->second.size());i++)
-          if(winner==i) 
-            it->second[i]->ExecuteServerApply();
-          else
-            it->second[i]->ExecuteServerRevoke();
-      }
+            for(int i=0;i<static_cast<int>(it->second.size());i++)
+                if(winner==i) 
+                    it->second[i]->ExecuteServerApply();
+                else
+                    it->second[i]->ExecuteServerRevoke();
+        }
     }
 
-    /// process movement phase
+    // process movement phase
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
         m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::FLEET_MOVEMENT, -1));
 
@@ -1735,15 +1742,30 @@ void ServerApp::ProcessTurns( )
         it->second->MovementPhase();
 
 
-    /// process production and growth phase
+    // process production and growth phase
     for (ServerEmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->UpdateResourcePool();
 
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
         m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::EMPIRE_PRODUCTION, -1));
 
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it)
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+        it->second->ResetMaxMeters();
+        it->second->AdjustMaxMeters();
+    }
+
+    std::vector<Building*> buildings = GetUniverse().FindObjects<Building>();
+    for (unsigned int i = 0; i < buildings.size(); ++i) {
+        buildings[i]->ExecuteEffects();
+    }
+
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+        it->second->ExecuteSpecials();
+    }
+
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
+    }
 
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         ///< check now for completed research
@@ -1754,17 +1776,17 @@ void ServerApp::ProcessTurns( )
     // find planets which have starved to death
     std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();
     for(std::vector<Planet*>::iterator it = plt_vec.begin();it!=plt_vec.end();++it)
-      if((*it)->Owners().size()>0 && (*it)->PopPoints()==0.0)
-      {
-        // add some information to sitreport
-        Empire *empire = Empires().Lookup(*(*it)->Owners().begin());
-        empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(),(*it)->ID()));
-        (*it)->RemoveOwner(*(*it)->Owners().begin());
-      }
+        if((*it)->Owners().size()>0 && (*it)->PopPoints()==0.0)
+        {
+            // add some information to sitreport
+            Empire *empire = Empires().Lookup(*(*it)->Owners().begin());
+            empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(),(*it)->ID()));
+            (*it)->RemoveOwner(*(*it)->Owners().begin());
+        }
 
 
 
-    /// loop and free all orders
+    // loop and free all orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         delete it->second;
@@ -1773,65 +1795,65 @@ void ServerApp::ProcessTurns( )
     
     // check for combats, and resolve them.
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-       m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::COMBAT, -1) );
+        m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::COMBAT, -1) );
 
     std::vector<System*> sys_vec = GetUniverse().FindObjects<System>();
     bool combat_happend = false;
     for(std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it)
     {
-      std::vector<CombatAssets> empire_combat_forces;
-      System* system = *it;
+        std::vector<CombatAssets> empire_combat_forces;
+        System* system = *it;
       
-      std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
-      for(std::vector<Fleet*>::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it)
-      {
-	        Fleet* flt = *flt_it;
-	        // a fleet should belong only to one empire!?
- 	        if(1==flt->Owners().size())
-          {
-            std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*flt->Owners().begin())));
-
-            if(ecf_it==empire_combat_forces.end())
+        std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
+        for(std::vector<Fleet*>::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it)
+        {
+            Fleet* flt = *flt_it;
+            // a fleet should belong only to one empire!?
+            if(1==flt->Owners().size())
             {
-              CombatAssets ca(Empires().Lookup(*flt->Owners().begin()));
-              ca.fleets.push_back(flt);
-              empire_combat_forces.push_back(ca);
-            }
-            else
-              (*ecf_it).fleets.push_back(flt);
-          }
-      }
-      std::vector<Planet*> plt_vec = system->FindObjects<Planet>();
-      for(std::vector<Planet*>::iterator plt_it = plt_vec.begin();plt_it != plt_vec.end(); ++plt_it)
-      {
-	        Planet* plt = *plt_it;
-	        // a planet should belong only to one empire!?
-          if(1==plt->Owners().size())
-          {           
-            std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*plt->Owners().begin())));
+                std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*flt->Owners().begin())));
 
-            if(ecf_it==empire_combat_forces.end())
-            {
-              CombatAssets ca(Empires().Lookup(*plt->Owners().begin()));
-              ca.planets.push_back(plt);
-              empire_combat_forces.push_back(ca);
+                if(ecf_it==empire_combat_forces.end())
+                {
+                    CombatAssets ca(Empires().Lookup(*flt->Owners().begin()));
+                    ca.fleets.push_back(flt);
+                    empire_combat_forces.push_back(ca);
+                }
+                else
+                    (*ecf_it).fleets.push_back(flt);
             }
-            else
-              (*ecf_it).planets.push_back(plt);
-          }
-     }
+        }
+        std::vector<Planet*> plt_vec = system->FindObjects<Planet>();
+        for(std::vector<Planet*>::iterator plt_it = plt_vec.begin();plt_it != plt_vec.end(); ++plt_it)
+        {
+            Planet* plt = *plt_it;
+            // a planet should belong only to one empire!?
+            if(1==plt->Owners().size())
+            {           
+                std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*plt->Owners().begin())));
 
-      if(empire_combat_forces.size()>1)
-      {
-        combat_happend=true;
-        CombatSystem combat_system;
-        combat_system.ResolveCombat(system->ID(),empire_combat_forces);
-      }
+                if(ecf_it==empire_combat_forces.end())
+                {
+                    CombatAssets ca(Empires().Lookup(*plt->Owners().begin()));
+                    ca.planets.push_back(plt);
+                    empire_combat_forces.push_back(ca);
+                }
+                else
+                    (*ecf_it).planets.push_back(plt);
+            }
+        }
+
+        if(empire_combat_forces.size()>1)
+        {
+            combat_happend=true;
+            CombatSystem combat_system;
+            combat_system.ResolveCombat(system->ID(),empire_combat_forces);
+        }
     }
 
     // if a combat happend give the human user a chance to look at the results
     if(combat_happend)
-      SDL_Delay(1000);
+        SDL_Delay(1000);
 
     ++m_current_turn;
 

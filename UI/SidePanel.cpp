@@ -1209,7 +1209,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   // find the index we need to set in the list 
   int selection_idx = -1;
   for(int i = 0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet.CurrentlyBuilding() )
+    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet.CurrentlyBuilding().first )
        selection_idx =i;
   
   if(selection_idx!=-1)
@@ -1345,7 +1345,7 @@ void SidePanel::PlanetPanel::PlanetProdCenterChanged()
 
   int i;
   for(i=0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet->CurrentlyBuilding() )
+    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet->CurrentlyBuilding().first )
     {
       m_construction->Select(i);
       break;
@@ -1359,7 +1359,7 @@ void SidePanel::PlanetPanel::PlanetProdCenterChanged()
   m_button_food    ->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_FARMING || planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_FARMING )?GG::Clr(100,100,  0,200):GG::CLR_ZERO);
   m_button_mining  ->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_MINING  || planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_MINING  )?GG::Clr(100,  0,  0,200):GG::CLR_ZERO);
   m_button_industry->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_INDUSTRY|| planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_INDUSTRY)?GG::Clr(  0,  0,100,200):GG::CLR_ZERO);
-  m_button_research->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_SCIENCE || planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_SCIENCE )?GG::Clr(  0,100,  0,200):GG::CLR_ZERO);
+  m_button_research->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_RESEARCH|| planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_RESEARCH)?GG::Clr(  0,100,  0,200):GG::CLR_ZERO);
   
   GG::Clr color;
 
@@ -1379,8 +1379,8 @@ void SidePanel::PlanetPanel::PlanetProdCenterChanged()
   m_button_industry->SetBorderColor(color);
 
   color = ClientUI::CTRL_BORDER_COLOR;
-  if(planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_SCIENCE)
-    color = (planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_SCIENCE) ?GG::CLR_WHITE:GG::Clr(0,255,0,255);
+  if(planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_RESEARCH)
+    color = (planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_RESEARCH) ?GG::CLR_WHITE:GG::Clr(0,255,0,255);
   m_button_research->SetBorderColor(color);
 
 }
@@ -1508,7 +1508,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     case FOCUS_FARMING  : text+=" "+ClientUI::String("PL_FARMING" );break;
     case FOCUS_INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
     case FOCUS_MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
-    case FOCUS_SCIENCE  : text+=" "+ClientUI::String("PL_SCIENCE" );break;
+    case FOCUS_RESEARCH : text+=" "+ClientUI::String("PL_RESEARCH");break;
     default: break;
   }
   font->RenderText(m_button_food->UpperLeft().x,
@@ -1523,7 +1523,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     case FOCUS_FARMING  : text+=" "+ClientUI::String("PL_FARMING" );break;
     case FOCUS_INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
     case FOCUS_MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
-    case FOCUS_SCIENCE  : text+=" "+ClientUI::String("PL_SCIENCE" );break;
+    case FOCUS_RESEARCH : text+=" "+ClientUI::String("PL_RESEARCH");break;
     default: break;
   }
   font->RenderText(m_button_research->UpperLeft ().x,
@@ -1560,7 +1560,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   x+=font->TextExtent(text, format).x+ICON_MARGIN;
 
 
-  if(ProdCenter::SCOUT <= planet.CurrentlyBuilding())
+  if(ProdCenter::SCOUT <= planet.CurrentlyBuilding().first)
   {
     // construction progress bar
     // TODO : get the costs of the item from the list of available technologies
@@ -1937,7 +1937,7 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   // find the index we need to set in the list 
   int selection_idx = -1;
   for(int i = 0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet->CurrentlyBuilding() )
+    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet->CurrentlyBuilding().first )
       selection_idx =i;
   
   if(selection_idx!=-1)
@@ -1974,7 +1974,7 @@ void SidePanel::PlanetView::PlanetProdCenterChanged()
     throw std::runtime_error("SidePanel::PlanetView::PlanetChanged: planet not found");
 
   boost::shared_ptr<GG::Texture> texture;
-  switch(planet->CurrentlyBuilding())
+  switch(planet->CurrentlyBuilding().first)
   {
     case ProdCenter::COLONY_SHIP: texture=GetTexture(ClientUI::ART_DIR + "misc/colony1.png");break;
     case ProdCenter::SCOUT      : texture=GetTexture(ClientUI::ART_DIR + "misc/scout1.png");break;
@@ -1990,7 +1990,7 @@ void SidePanel::PlanetView::PlanetProdCenterChanged()
 
   int i;
   for(i=0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet->CurrentlyBuilding() )
+    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet->CurrentlyBuilding().first )
     {
       m_construction->Select(i);
       break;
@@ -2000,7 +2000,7 @@ void SidePanel::PlanetView::PlanetProdCenterChanged()
   {
     case FOCUS_FARMING  : m_radio_btn_primary_focus->SetCheck(0);break;
     case FOCUS_MINING   : m_radio_btn_primary_focus->SetCheck(1);break;
-    case FOCUS_SCIENCE  : m_radio_btn_primary_focus->SetCheck(2);break;
+    case FOCUS_RESEARCH : m_radio_btn_primary_focus->SetCheck(2);break;
     case FOCUS_INDUSTRY : m_radio_btn_primary_focus->SetCheck(3);break;
     case FOCUS_BALANCED : m_radio_btn_primary_focus->SetCheck(4);break;
     default: break;
@@ -2009,7 +2009,7 @@ void SidePanel::PlanetView::PlanetProdCenterChanged()
   {
     case FOCUS_FARMING  : m_radio_btn_secondary_focus->SetCheck(0);break;
     case FOCUS_MINING   : m_radio_btn_secondary_focus->SetCheck(1);break;
-    case FOCUS_SCIENCE  : m_radio_btn_secondary_focus->SetCheck(2);break;
+    case FOCUS_RESEARCH : m_radio_btn_secondary_focus->SetCheck(2);break;
     case FOCUS_INDUSTRY : m_radio_btn_secondary_focus->SetCheck(3);break;
     case FOCUS_BALANCED : m_radio_btn_secondary_focus->SetCheck(4);break;
     default: break;
@@ -2100,7 +2100,7 @@ void SidePanel::PlanetView::PrimaryFocusClicked(int idx)
   {
     case  0:ft=FOCUS_FARMING      ;break;
     case  1:ft=FOCUS_MINING       ;break;
-    case  2:ft=FOCUS_SCIENCE      ;break;
+    case  2:ft=FOCUS_RESEARCH     ;break;
     case  3:ft=FOCUS_INDUSTRY     ;break;
     case  4:ft=FOCUS_BALANCED     ;break;
     default:ft=FOCUS_UNKNOWN;break;
@@ -2123,7 +2123,7 @@ void SidePanel::PlanetView::SecondaryFocusClicked(int idx)
   {
     case  0:ft=FOCUS_FARMING      ;break;
     case  1:ft=FOCUS_MINING       ;break;
-    case  2:ft=FOCUS_SCIENCE      ;break;
+    case  2:ft=FOCUS_RESEARCH     ;break;
     case  3:ft=FOCUS_INDUSTRY     ;break;
     case  4:ft=FOCUS_BALANCED     ;break;
     default:ft=FOCUS_UNKNOWN;break;
@@ -2308,7 +2308,7 @@ bool SidePanel::PlanetView::Render()
                         rc_build_image_border.Right(),rc_build_image_border.Bottom(), GG::CLR_ZERO,GG::Clr(200,200,200,255), 1,0,0,0,0);
   glColor4ubv(alpha_color.v);
   
-  if(ProdCenter::SCOUT <= planet->CurrentlyBuilding())
+  if(ProdCenter::SCOUT <= planet->CurrentlyBuilding().first)
   {
     // construction progress bar
     double cost = planet->ItemBuildCost();
@@ -2340,7 +2340,7 @@ bool SidePanel::PlanetView::Render()
 
     ShipDesign::V02DesignID design_id=static_cast<ShipDesign::V02DesignID>(0);
 
-    switch(planet->CurrentlyBuilding())
+    switch(planet->CurrentlyBuilding().first)
     {
       case ProdCenter::BUILD_UNKNOWN  : break;
       case ProdCenter::NOT_BUILDING   : break;
@@ -2350,6 +2350,7 @@ bool SidePanel::PlanetView::Render()
       case ProdCenter::MARKII         : design_id = ShipDesign::MARK2;break;
       case ProdCenter::MARKIII        : design_id = ShipDesign::MARK3;break;
       case ProdCenter::MARKIV         : design_id = ShipDesign::MARK4;break;
+      case ProdCenter::BUILDING       : break;
       case ProdCenter::DEF_BASE       : break;
     }
 

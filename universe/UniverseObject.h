@@ -47,7 +47,6 @@ namespace GG {
 ENUM_STREAM_IN(UniverseObjectType)
 ENUM_STREAM_OUT(UniverseObjectType)
 
-
 /** the abstract base class for all objects in the universe.  The UniverseObject class itself has only an ID, a name, 
     a position, possibly a System in which it is, and zero or more owners.  The position can range from 0 (left) to 1000 
     (right) in X, and 0 (top) to 1000 (bottom) in Y.  This coordinate system was chosen to help with conversion to 
@@ -96,7 +95,7 @@ public:
     int                  SystemID() const{return m_system_id;}///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
     System*              GetSystem() const;                  ///< returns system in which this object can be found, or null if the object is not within any system
     const std::set<std::string>&
-                         Specials() const {return m_specials;}///< returns the set of names of the Specials attached to this object
+    Specials() const {return m_specials;}///< returns the set of names of the Specials attached to this object
 
     virtual const Meter* GetMeter(MeterType type) const;  ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
@@ -132,11 +131,22 @@ public:
     virtual void RemoveSpecial(const std::string& name) {m_specials.erase(name);}   ///< removes the Special \a name from this object, if it is already present
    
     /** performs the movement that this object is responsible for this object's actions during the movement phase of 
-        a turn.  Called by ServerUniverse::MovementPhase().*/
+        a turn. */
     virtual void MovementPhase( ) = 0;
-   
-    /** performs the movement that this object is responsible for this object's actions during the pop growth/production/
-        research phase of a turn.  Called by ServerUniverse::PopGrowthProductionResearchPhase().*/
+
+    /** sets all the max meter values for all meters in this UniverseObject to Meter::METER_MIN.  This should be done before any
+        Effects act on the object. */
+    void ResetMaxMeters();
+
+    /** adjusts the max meter values for all meters in this UniverseObject, based on its own properties.  This does not include
+        Effects acting on the object, which should already have been executed before this fucntion is called. */
+    virtual void AdjustMaxMeters();
+
+    /** executes all specials attached to this UniverseObject. */
+    void ExecuteSpecials();
+
+    /** performs the movement that this object is responsible for this object's actions during the pop growth/production/research
+        phase of a turn. */
     virtual void PopGrowthProductionResearchPhase( ) = 0;
     //@}
    

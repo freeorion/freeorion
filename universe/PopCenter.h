@@ -18,18 +18,18 @@ class PopCenter
 {
 public:
     /** the types of population density*/
-    enum DensityType {OUTPOST,
-		      SPARSE,
-		      AVERAGE,
-		      DENSE,
-		      SUPERDENSE
+    enum DensityType {
+        OUTPOST,
+        SPARSE,
+        AVERAGE,
+        DENSE,
+        SUPERDENSE
     }; // others TBD (these are from the Public Review: Population & Econ Model thread on the forums)
 
     /** \name Structors */ //@{
-    PopCenter(); ///< default ctor
-    PopCenter(double max_pop); ///< basic ctor that only specifies a max pop (DEFAULT_POP_SCALE_FACTOR is used for the scale factor)
-    PopCenter(double max_pop, int race); ///< basic ctor that specifies a max pop and race
-    PopCenter(const GG::XMLElement& elem); ///< ctor that constructs a PopCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a PopCenter object
+    PopCenter(UniverseObject* object); ///< basic ctor that only specifies a max pop (DEFAULT_POP_SCALE_FACTOR is used for the scale factor)
+    PopCenter(int race, UniverseObject* object); ///< basic ctor that specifies a max pop and race
+    PopCenter(const GG::XMLElement& elem, UniverseObject* object); ///< ctor that constructs a PopCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a PopCenter object
     virtual ~PopCenter(); ///< dtor
     //@}
 
@@ -55,17 +55,15 @@ public:
     Meter& HealthMeter()          {return m_health;} ///< returns the population Meter for this center
 
     /** adjusts the population by \a pop, down to a minimum of 0.0, or up to a maximum of MaxPop().  This function 
-	returns the (positive) pop surplus, or the (negative) pop deficit that would result from 
-	adjusting the population by \a pop points, or 0 if the adjustment falls within [0.0, MaxPop()]*/
+        returns the (positive) pop surplus, or the (negative) pop deficit that would result from 
+        adjusting the population by \a pop points, or 0 if the adjustment falls within [0.0, MaxPop()]*/
     double AdjustPop(double pop);
 
-    void SetMaxPop(double max_pop)               {m_pop.SetMax(max_pop);} ///< sets the maximum population to \a pop
-    void SetEnvHealthMod(double env_growth_mod);                          ///< sets the modifier to the growth rate due to environment
     void SetRace(int race)                       {m_race = race;}   ///< sets the race of the population to \a race
     void SetAvailableFood(double available_food) {m_available_food = available_food;}   ///< sets the amount of food which is currently available
 
-    virtual void MovementPhase( );
-    virtual void PopGrowthProductionResearchPhase( );
+    virtual void AdjustMaxMeters();
+    virtual void PopGrowthProductionResearchPhase();
     //@}
    
 private:
@@ -74,6 +72,8 @@ private:
     double   m_growth;
     int      m_race; ///< the id of the race that occupies this planet
     double   m_available_food;
+
+    UniverseObject* const m_object; ///< the UniverseObject of which this center is a part
 };
 
 #endif // _PopCenter_h_

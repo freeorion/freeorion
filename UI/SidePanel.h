@@ -113,13 +113,13 @@ class SidePanel : public GG::Wnd
         void LClickFarming () {SetPrimaryFocus(FOCUS_FARMING );}///< set the primary focus of the planet to farming
         void LClickMining  () {SetPrimaryFocus(FOCUS_MINING  );}///< set the primary focus of the planet to mining
         void LClickIndustry() {SetPrimaryFocus(FOCUS_INDUSTRY);}///< set the primary focus of the planet to industry
-        void LClickResearch() {SetPrimaryFocus(FOCUS_SCIENCE );}///< set the primary focus of the planet to science
+        void LClickResearch() {SetPrimaryFocus(FOCUS_RESEARCH );}///< set the primary focus of the planet to science
         void LClickBalanced() {SetPrimaryFocus(FOCUS_BALANCED);}///< set the primary focus of the planet to balanced
 
         void RClickFarming () {SetSecondaryFocus(FOCUS_FARMING );}///< set the secondary focus of the planet to farming
         void RClickMining  () {SetSecondaryFocus(FOCUS_MINING  );}///< set the secondary focus of the planet to mining
         void RClickIndustry() {SetSecondaryFocus(FOCUS_INDUSTRY);}///< set the secondary focus of the planet to industry
-        void RClickResearch() {SetSecondaryFocus(FOCUS_SCIENCE );}///< set the secondary focus of the planet to science
+        void RClickResearch() {SetSecondaryFocus(FOCUS_RESEARCH );}///< set the secondary focus of the planet to science
         void RClickBalanced() {SetSecondaryFocus(FOCUS_BALANCED);}///< set the secondary focus of the planet to balanced
 
         void ClickColonize();///< called if btn colonize is pressed
