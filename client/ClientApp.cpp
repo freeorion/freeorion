@@ -12,7 +12,8 @@ ClientApp* ClientApp::s_app = 0;
 ClientApp::ClientApp() : 
     m_multiplayer_lobby_wnd(0),
     m_current_combat(0), 
-    m_player_id(-1)
+    m_player_id(-1),
+    m_empire_id(-1)
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of ClientApp");
@@ -116,7 +117,7 @@ void ClientApp::UpdateTurnData( const GG::XMLDoc &diff )
     if (diff.root_node.ContainsChild("Universe")) 
     {
         // get old universe data
-        new_doc.root_node.AppendChild(m_universe.XMLEncode(PlayerID()));
+        new_doc.root_node.AppendChild(m_universe.XMLEncode(m_empire_id));
     }
  
     if (diff.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG))

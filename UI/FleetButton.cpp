@@ -148,7 +148,7 @@ void FleetButton::Clicked()
     }
 
     GG::Pt ul = UpperLeft();
-    bool read_only = *fleets[0]->Owners().begin() != HumanClientApp::GetApp()->PlayerID() || 
+    bool read_only = *fleets[0]->Owners().begin() != HumanClientApp::GetApp()->EmpireID() || 
         (fleets[0]->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID && 
          fleets[0]->SystemID() == UniverseObject::INVALID_OBJECT_ID);
     FleetWnd* fleet_wnd = new FleetWnd(ul.x + 50, ul.y + 50, fleets, read_only);

@@ -62,7 +62,7 @@ void SitRepPanel::OnClose()
 
 void SitRepPanel::Update()
 {
-    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->PlayerID());
+    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
     m_sitreps_lb->Clear();
 

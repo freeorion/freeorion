@@ -279,7 +279,7 @@ namespace {
     std::vector<const Fleet*> flt_vec = system->FindObjects<Fleet>();
 
     for(unsigned int i=0;i<flt_vec.size();i++)
-      if(flt_vec[i]->Owners().find(HumanClientApp::GetApp()->PlayerID()) != flt_vec[i]->Owners().end())
+      if(flt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != flt_vec[i]->Owners().end())
       {
         Ship* ship;
         for(Fleet::const_iterator it = flt_vec[i]->begin(); it != flt_vec[i]->end(); ++it)
@@ -830,7 +830,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
   
 
   // for v.1 some of these only appear after tech is researched
-  Empire *empire = HumanClientApp::Empires().Lookup( HumanClientApp::GetApp()->PlayerID() );
+  Empire *empire = HumanClientApp::Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
 
   m_construction = new CUIDropDownList(m_planet_name->UpperLeft ().x+10, 
                                        m_button_research->LowerRight().y-UpperLeft().y+10,
@@ -980,7 +980,7 @@ void SidePanel::PlanetPanel::PlanetChanged()
     m_planet_info->SetText(text);
   }
   else 
-    if(!planet->OwnedBy(HumanClientApp::GetApp()->PlayerID()))
+    if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
     {//inhabited
       owner = OS_FOREIGN;
       text = GetPlanetSizeName(*planet);
@@ -1260,7 +1260,7 @@ bool SidePanel::PlanetPanel::Render()
   if(planet->Owners().size()==0)  
     RenderUnhabited(*planet);
   else 
-    if(!planet->OwnedBy(HumanClientApp::GetApp()->PlayerID()))     
+    if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))     
       RenderInhabited(*planet);
     else
       RenderOwned    (*planet);
@@ -1309,14 +1309,14 @@ void SidePanel::PlanetPanel::ClickColonize()
   if(ship==0)
     throw std::runtime_error("SidePanel::PlanetPanel::ClickColonize ship not found!");
 
-  HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->PlayerID(), ship->GetFleet()->ID(), planet->ID() ));
+  HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->EmpireID(), ship->GetFleet()->ID(), planet->ID() ));
 }
 
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
 {
   const Planet *planet = GetPlanet();
   
-  if(!planet->OwnedBy(HumanClientApp::GetApp()->PlayerID()))
+  if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
     return;
 
 
@@ -1334,7 +1334,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
         edit_wnd.Run();
         if(edit_wnd.Result() != "")
         {
-          HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->PlayerID(), planet->ID(), edit_wnd.Result()));
+          HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result()));
           m_planet_name->SetText(planet->Name());
         }
         break;
@@ -1575,7 +1575,7 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   m_construction->Insert(row);
 
 
-  Empire *empire = HumanClientApp::Empires().Lookup( HumanClientApp::GetApp()->PlayerID() );
+  Empire *empire = HumanClientApp::Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
   if( empire->HasTech( Tech::TECH_MARK2 ) )
   {
     row = new ConstructionRow(ProdCenter::MARKII);
@@ -1626,7 +1626,7 @@ void SidePanel::PlanetView::PlanetChanged()
   if(planet==0)
     throw std::runtime_error("SidePanel::PlanetView::PlanetChanged: planet not found");
 
-  bool is_owner = planet->OwnedBy(HumanClientApp::GetApp()->PlayerID());
+  bool is_owner = planet->OwnedBy(HumanClientApp::GetApp()->EmpireID());
 
   is_owner?m_construction->Show():m_construction->Hide();
   is_owner?m_radio_btn_primary_focus->Show():m_radio_btn_primary_focus->Hide();
@@ -1697,7 +1697,7 @@ void SidePanel::PlanetView::Show(bool children)
   if(planet->Owners().size()==0) 
     owner = OS_NONE;
   else 
-    if(!planet->OwnedBy(HumanClientApp::GetApp()->PlayerID()))
+    if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
       owner = OS_FOREIGN;
     else
       owner = OS_SELF;
@@ -1835,7 +1835,7 @@ bool SidePanel::PlanetView::Render()
   if(!m_bShowUI)
     return true;
 
-  if(!planet->OwnedBy(HumanClientApp::GetApp()->PlayerID()))    
+  if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))    
     return true;
 
   GG::Clr alpha_color(GG::CLR_WHITE);
@@ -2286,7 +2286,7 @@ void SidePanel::PlanetsChanged()
       research  +=static_cast<int>(plt_vec[i]->ResearchPoints());
       defense   +=plt_vec[i]->DefBases();
       
-      if(plt_vec[i]->Owners().find(HumanClientApp::GetApp()->PlayerID()) != plt_vec[i]->Owners().end())
+      if(plt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != plt_vec[i]->Owners().end())
         num_empire_planets++;
     }
 

@@ -43,8 +43,9 @@ public:
    
     /** \name Accessors */ //@{   
     const std::string&   PlayerName() const {return m_player_name;}   ///< returns the player name of this client
-    int                  PlayerID() const {return m_player_id;}       ///< returns the player ID of this client
-    
+    int                  PlayerID() const   {return m_player_id;}     ///< returns the player ID of this client
+    int                  EmpireID() const   {return m_empire_id;}     ///< returns the empire ID of this client
+
     /** returns the orders message containing all orders issued so far in the turn; if \a save_game_data is true, additional 
         client-side data may also be included */
     virtual Message      TurnOrdersMessage(bool save_game_data = false) const;
@@ -84,6 +85,7 @@ protected:
     ClientNetworkCore       m_network_core;
     std::string             m_player_name;
     int                     m_player_id;
+    int                     m_empire_id;
    
 private:
     const ClientApp& operator=(const ClientApp&); // disabled
