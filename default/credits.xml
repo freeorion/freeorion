@@ -29,7 +29,7 @@
       <PERSON name="Andreas Bernard" nick=""           task="Game Design"/>
       <PERSON name="Teal Ablaze"     nick=""           task="Game Design"/>
       <PERSON name="Bryan Patterson" nick="PowerCrazy" task="Game Design"/>
-      <PERSON name=""                nick="Geoff the Medio" task="Game Design"/>
+      <PERSON name="Geoff the Medio" nick=""           task="Game Design"/>
     </GROUP>
     <GROUP name ="GRAPHICS">
       <PERSON name="Ka"               nick=""          task="Graphics"/>
