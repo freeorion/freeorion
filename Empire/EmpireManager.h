@@ -117,7 +117,6 @@ public:
     /** \name Constants */ //@{
     /// Tag for empire update XMLElements
     static const std::string EMPIRE_UPDATE_TAG;
-    static const std::string SITREP_UPDATE_TAG;
     
 protected:
   

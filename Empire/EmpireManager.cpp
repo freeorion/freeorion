@@ -4,7 +4,6 @@
 #endif
 
 const std::string EmpireManager::EMPIRE_UPDATE_TAG = "EmpireUpdate";
-const std::string EmpireManager::SITREP_UPDATE_TAG = "SitrepUpdate";
 
 /**  Constructors */ 
 EmpireManager::EmpireManager()
