@@ -17,9 +17,13 @@ http://www.freeorion.org/wiki/index.php?title=V.2_Requirements
 You can download FreeOrion 0.2 with either the source or precompiled from here:
 http://sourceforge.net/project/showfiles.php?group_id=75752
 
-Construction on 0.3 will begin immediately, from this design document:
+Construction on 0.3 will begin immediately, with the design document for 0.3
+being announced soon after this release, both on http://www.freeorion.org/ and also on the announcements mailing list:
+
 http://www.freeorion.org/wiki/index.php?title=V.3_Requirements
+
 As the roadmap notes, 0.3 will include buildings, secret projects/wonders, and the foundations of the tech tree.  v0.3 will be a significant milestone, also including the announcement of our project to the wider world.  As such, this release will need to be very polished and playable.  The introduction of buildings and research will also add a greater dimension to the game.  This means that we would appreciate again if you did not spread news of this release far, and don't submit it to news websites, as we requested with 0.1.  We appreciate your discretion, and invite you to enjoy this newest release.
+Roadmap: http://www.freeorion.org/wiki/index.php?title=Roadmap
 
 The FreeOrion community has continued to grow since the 0.1 release, with valuable input from a variety of people in all areas of the game's production.  Since the last release we have moved to a new website and put up a wiki:
 http://www.freeorion.org/wiki/
