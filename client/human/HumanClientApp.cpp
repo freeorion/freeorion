@@ -82,6 +82,13 @@ void HumanClientApp::KillServer()
     m_player_name = "";
 }
 
+void HumanClientApp::EndGame()
+{
+    m_game_started = false;
+    KillServer();
+    GetUI()->ScreenIntro();
+}
+
 void HumanClientApp::SetLobby(MultiplayerLobbyWnd* lobby)
 {
     m_multiplayer_lobby_wnd = lobby;
@@ -193,7 +200,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
         }
 
         if (failed) {
-            HumanClientApp::GetApp()->KillServer();
+            KillServer();
             return false;
         }
 
@@ -220,7 +227,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
             HumanClientApp::GetApp()->NetworkCore().SendMessage(HostLoadGameMessage(HumanClientApp::GetApp()->PlayerID(), filename));
             return true;
         } else {
-            HumanClientApp::GetApp()->KillServer();
+            KillServer();
         }
     } catch (const GG::FileDlg::InitialDirectoryDoesNotExistException& e) {
         ClientUI::MessageBox(e.Message());
@@ -642,14 +649,28 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         m_ui->UpdateTurnProgress( phase_str, empire_id );
         break;
     }
+
     case Message::COMBAT_START:
     case Message::COMBAT_ROUND_UPDATE:
     case Message::COMBAT_END:{
         m_ui->UpdateCombatTurnProgress(msg.GetText());
         break;
     }
+
     case Message::HUMAN_PLAYER_MSG: {
         GetUI()->GetMapWnd()->HandlePlayerChatMessage(msg.GetText());
+        break;
+    }
+
+    case Message::PLAYER_EXIT: {
+        std::string message = ClientUI::String("PLAYER_DISCONNECTED_PART_1") + " " + msg.GetText() + " " + ClientUI::String("PLAYER_DISCONNECTED_PART_2");
+        ClientUI::MessageBox(message);
+        break;
+    }
+
+    case Message::END_GAME: {
+        ClientUI::MessageBox(ClientUI::String("SERVER_GAME_END"));
+        EndGame();
         break;
     }
 
@@ -667,7 +688,7 @@ void HumanClientApp::HandleServerDisconnectImpl()
         m_multiplayer_lobby_wnd->Cancel();
     } else if (m_game_started) { // playing game
         ClientUI::MessageBox(ClientUI::String("SERVER_LOST"));
-        Exit(1);
+        EndGame();
     }
 }
 
@@ -704,6 +725,5 @@ void HumanClientApp::StartTurn( )
 
   // call base method
   ClientApp::StartTurn();
-  
 }
 
