@@ -47,6 +47,7 @@ struct LobbyModeData
 
 } g_lobby_data;
 const std::string AI_CLIENT_EXE = "freeorionca.exe";
+const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
 GG::XMLDoc g_load_doc;
 }
 
@@ -144,7 +145,6 @@ log4cpp::Category& ServerApp::Logger()
 void ServerApp::CreateAIClients(const std::vector<AISetupData>& AIs)
 {
     m_expected_ai_players.clear();
-    int player_id;
     for (std::set<int>::iterator it = m_ai_IDs.begin(); it != m_ai_IDs.end(); ++it) {
         m_network_core.DumpPlayer(*it);
     }
@@ -300,11 +300,11 @@ void ServerApp::HandleMessage(const Message& msg)
                     break;
             }
             if (m_players_responded == needed_reponses) {
-                doc.root_node.AppendChild(GG::XMLElement("turn_number", boost::lexical_cast<std::string>(m_current_turn)));
+		SaveGameVars(doc);
                 for (std::map<int, GG::XMLElement>::iterator it = m_player_save_game_data.begin(); it != m_player_save_game_data.end(); ++it) {
                     GG::XMLElement player_element("Player");
                     player_element.AppendChild(GG::XMLElement("name", m_network_core.Players().find(it->first)->second.name));
-                    player_element.AppendChild(m_empires.Lookup(it->first)->XMLEncode());//CreateClientEmpireUpdate(it->first));
+                    player_element.AppendChild(m_empires.Lookup(it->first)->XMLEncode());
                     player_element.AppendChild(it->second);
                     doc.root_node.AppendChild(player_element);
                 }
@@ -341,7 +341,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     ++m_expected_players;
                 }
             }
-            m_current_turn = boost::lexical_cast<int>(doc.root_node.Child("turn_number").Text());
+	    LoadGameVars(doc);
 
             CreateAIClients(std::vector<AISetupData>(m_expected_players - 1));
             g_load_doc = doc;
@@ -674,7 +674,6 @@ void ServerApp::SDLQuit()
 
 void ServerApp::NewGameInit()
 {
-
     std::map<int, PlayerInfo>::const_iterator it;
 
     m_universe.CreateUniverse(m_galaxy_shape, m_galaxy_size, m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size());
@@ -800,6 +799,27 @@ GG::XMLDoc ServerApp::LobbyPlayerUpdateDoc() const
     return retval;
 }
 
+void ServerApp::SaveGameVars(GG::XMLDoc& doc) const
+{
+    doc.root_node.AppendChild(GG::XMLElement("turn_number", boost::lexical_cast<std::string>(m_current_turn)));
+
+    GG::XMLElement temp("m_last_turn_update_msg");
+    for (std::map<int, GG::XMLDoc>::const_iterator it = m_last_turn_update_msg.begin(); it != m_last_turn_update_msg.end(); ++it) {
+	temp.AppendChild(GG::XMLElement(LAST_TURN_UPDATE_SAVE_ELEM_PREFIX + boost::lexical_cast<std::string>(it->first), it->second.root_node));
+    }
+    doc.root_node.AppendChild(temp);
+}
+
+void ServerApp::LoadGameVars(const GG::XMLDoc& doc)
+{
+    m_current_turn = boost::lexical_cast<int>(doc.root_node.Child("turn_number").Text());
+
+    const GG::XMLElement& last_turn_update_elem = doc.root_node.Child("m_last_turn_update_msg");
+    for (GG::XMLElement::const_child_iterator it = last_turn_update_elem.child_begin(); it != last_turn_update_elem.child_end(); ++it) {
+	m_last_turn_update_msg[boost::lexical_cast<int>(it->Tag().substr(LAST_TURN_UPDATE_SAVE_ELEM_PREFIX.size()))].root_node = it->Child(0);
+    }
+}
+
 
 void ServerApp::AddEmpireTurn( int empire_id )
 {
@@ -815,15 +835,15 @@ void ServerApp::RemoveEmpireTurn( int empire_id )
     {
         if ( it->first == empire_id )
         {
-            m_turn_sequence.erase( it, it );
-            return; 
+            m_turn_sequence.erase( it );
+            break;
         }
     }
 }
 
-void ServerApp::SetEmpireTurnOrders( int empire_id , OrderSet *pOrderSet )
+void ServerApp::SetEmpireTurnOrders( int empire_id , OrderSet *order_set )
 {
-    m_turn_sequence[ empire_id ] = pOrderSet;
+    m_turn_sequence[ empire_id ] = order_set;
 }
 
 
@@ -874,7 +894,7 @@ void ServerApp::ProcessTurns( )
     // clients execute orders locally
     // here we encode the states so that we can diff later
     // note tha for v0.1 all clients see the same universe, but this will not always be the case
-    // hence we store the universe data for each empire
+    // therefore we store the universe data for each empire
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         GG::XMLDoc game_state;

@@ -83,12 +83,11 @@ public:
 
    /** called by ServerNetworkCore when a player's TCP connection is closed*/
    void PlayerDisconnected(int id);
-   //@}
 
    /**  Adds an existing empire to turn processing. The position the empire is in the vector is it's position in the turn processing.*/
    void AddEmpireTurn( int empire_id );
 
-   /** AddsRemoves an emire from turn processing. This is most likely called when an empire is eliminated from the game */
+   /** Removes an empire from turn processing. This is most likely called when an empire is eliminated from the game */
    void RemoveEmpireTurn( int empire_id );
 
    /** Adds turn orders for the given empire for the current turn. pOrderSet will be freed when all processing is done for the turn */
@@ -100,7 +99,7 @@ public:
 
    /** Processes all empires in the manager in the order that they are added. Will delete all pOrderSets assigned.*/
    void ProcessTurns( );
-
+   //@}
 
    static ServerApp*             GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
    static Universe&              GetUniverse();    ///< returns server's copy of Universe
@@ -129,6 +128,9 @@ private:
    GG::XMLDoc LobbyUpdateDoc() const;          ///< returns an MP lobby-mode update XMLDoc containing all relevant parts of the lobby state
    GG::XMLDoc LobbyPlayerUpdateDoc() const;    ///< returns an MP lobby-mode update XMLDoc containing just the current players
 
+   void SaveGameVars(GG::XMLDoc& doc) const;   ///< adds all game-state variables to \a doc
+   void LoadGameVars(const GG::XMLDoc& doc);   ///< assigns all game-state variables from \a doc
+   
    Universe                m_universe;
    ServerEmpireManager     m_empires;
    CombatModule*           m_current_combat;
