@@ -138,7 +138,10 @@ GG::XMLElement UniverseObject::XMLEncode(int empire_id) const
    y.SetAttribute( "value", lexical_cast<std::string>(m_y) );
    element.AppendChild(y);
 
-   // owners are not encoded for partial visibility
+   XMLElement system_id("m_system_id");
+   system_id.SetAttribute( "value", lexical_cast<std::string>(m_system_id) );
+   element.AppendChild(system_id);
+
 
    return element;
 }
