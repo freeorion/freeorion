@@ -85,8 +85,6 @@ public:
 
     static HumanClientApp* GetApp(); ///< returns HumanClientApp pointer to the single instance of the app
 
-    static boost::shared_ptr<ClientUI>  GetUI(); ///< returns ClientUI pointer to the one and only client UI
-
     /// override default so that UI can be updated
     virtual void         StartTurn();   ///< encodes order sets and sends turn orders message
 

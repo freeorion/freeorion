@@ -229,7 +229,7 @@ Message HumanClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
     GG::XMLDoc orders_doc;
     if (save_game_data) {
         orders_doc.root_node.AppendChild("save_game_data");
-        orders_doc.root_node.AppendChild(GetUI()->SaveGameData()); // include relevant UI state
+        orders_doc.root_node.AppendChild(ClientUI::GetClientUI()->SaveGameData()); // include relevant UI state
     }
     orders_doc.root_node.AppendChild(GG::XMLElement("Orders"));
     for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
@@ -285,8 +285,8 @@ void HumanClientApp::EndGame()
     m_player_id = -1;
     m_empire_id = -1;
     m_player_name = "";
-    GetUI()->GetMapWnd()->CloseAllPopups();
-    GetUI()->ScreenIntro();
+    ClientUI::GetClientUI()->GetMapWnd()->CloseAllPopups();
+    ClientUI::GetClientUI()->ScreenIntro();
 }
 
 void HumanClientApp::SetLobby(MultiplayerLobbyWnd* lobby)
@@ -459,11 +459,6 @@ HumanClientApp* HumanClientApp::GetApp()
     return dynamic_cast<HumanClientApp*>(GG::App::GetApp());
 }
 
-boost::shared_ptr<ClientUI> HumanClientApp::GetUI()
-{
-    return (dynamic_cast<HumanClientApp*>(GG::App::GetApp()))->m_ui;
-}
-   
 void HumanClientApp::StartTurn()
 {
     // setup GUI
@@ -748,7 +743,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
         // restore UI state
         if (doc.root_node.ContainsChild("UI")) {
-            GetUI()->RestoreFromSaveData(doc.root_node.Child("UI"));
+            ClientUI::GetClientUI()->RestoreFromSaveData(doc.root_node.Child("UI"));
         }
         break;
     }
@@ -825,7 +820,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::HUMAN_PLAYER_MSG: {
-        GetUI()->GetMapWnd()->HandlePlayerChatMessage(msg.GetText());
+        ClientUI::GetClientUI()->GetMapWnd()->HandlePlayerChatMessage(msg.GetText());
         break;
     }
 

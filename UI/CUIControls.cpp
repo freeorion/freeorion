@@ -21,12 +21,16 @@ namespace {
 
     void PlayButtonClickSound()
     {
+#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
+#endif
     }
 
     void PlayTurnButtonClickSound()
     {
+#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"));
+#endif
     }
 
     struct PlayButtonCheckSound
@@ -34,24 +38,32 @@ namespace {
         PlayButtonCheckSound(bool play_only_when_checked) : m_play_only_when_checked(play_only_when_checked) {}
         void operator()(bool checked) const
         {
+#ifndef FREEORION_BUILD_UTIL
             if ((!m_play_only_when_checked || checked) && PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
+#endif
         }
         const bool m_play_only_when_checked;
     };
 
     void PlayListSelectSound(const std::set<int>&)
     {
+#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.list-select"));
+#endif
     }
 
     void PlayItemDropSound(int, const boost::shared_ptr<GG::ListBox::Row>&)
     {
+#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.item-drop"));
+#endif
     }
 
     void PlayTextTypingSound(const std::string&)
     {
+#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.text-typing"));
+#endif
     }
 
     bool temp_header_bool = RecordHeaderFile(CUIControlsRevision());
@@ -167,8 +179,10 @@ GG::XMLElement CUIButton::XMLEncode() const
 void CUIButton::MouseHere(const GG::Pt& pt, Uint32 keys)
 {
     if (!Disabled()) {
+#ifndef FREEORION_BUILD_UTIL
         if (State() != BN_ROLLOVER && PlaySounds())
             HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+#endif
         SetState(BN_ROLLOVER);
     }
 }
@@ -281,8 +295,10 @@ GG::XMLElement CUIArrowButton::XMLEncode() const
 void CUIArrowButton::MouseHere(const GG::Pt& pt, Uint32 keys)
 {
     if (!Disabled()) {
+#ifndef FREEORION_BUILD_UTIL
         if (State() != BN_ROLLOVER && PlaySounds())
             HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+#endif
         SetState(BN_ROLLOVER);
     }
 }
@@ -337,7 +353,10 @@ CUIStateButton::CUIStateButton(const GG::XMLElement& elem) :
     // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
     // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
     // checking the redering style
-    GG::Connect(CheckedSignal(), PlayButtonCheckSound(StateButton::Style() == CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON), -1);
+    GG::Connect(CheckedSignal(),
+                PlayButtonCheckSound(static_cast<int>(StateButton::Style()) ==
+                                     static_cast<int>(CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON)),
+                -1);
 }
 
 GG::XMLElement CUIStateButton::XMLEncode() const
@@ -455,10 +474,14 @@ const int CUISCROLL_ANGLE_OFFSET = 3;
 // class CUIScroll::ScrollTab
 CUIScroll::ScrollTab::ScrollTab(GG::Scroll::Orientation orientation, int scroll_width, GG::Clr color, 
                                 GG::Clr border_color) : 
-    Button(0, 2, scroll_width, scroll_width, "", "", 0, color),
-    m_border_color(border_color)
+    Button(orientation == GG::Scroll::VERTICAL ? 0 : 2,
+           orientation == GG::Scroll::VERTICAL ? 2 : 0,
+           scroll_width, scroll_width, "", "", 0, color),
+    m_border_color(border_color),
+    m_orientation(orientation)
 {
-    SetMinSize(GG::Pt(orientation == GG::Scroll::VERTICAL ? MinSize().x : 10, orientation == GG::Scroll::VERTICAL ? 10 : MinSize().y));
+    SetMinSize(GG::Pt(m_orientation == GG::Scroll::VERTICAL ? MinSize().x : 10,
+                      m_orientation == GG::Scroll::VERTICAL ? 10 : MinSize().y));
 }
 
 CUIScroll::ScrollTab::ScrollTab(const GG::XMLElement& elem) : 
@@ -485,27 +508,46 @@ bool CUIScroll::ScrollTab::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    ul.x += 3;
-    lr.x -= 3;
+    if (m_orientation == GG::Scroll::VERTICAL) {
+        ul.x += 3;
+        lr.x -= 3;
+    } else {
+        ul.y += 3;
+        lr.y -= 3;
+    }
     // basic shape, no border
     AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, Color(), GG::CLR_ZERO, CUISCROLL_ANGLE_OFFSET, 0);
-   // upper left diagonal stripe
+    // upper left diagonal stripe
     GG::Clr light_color = Color();
     AdjustBrightness(light_color, 35);
     glColor4ubv(light_color.v);
     glDisable(GL_TEXTURE_2D);
     glBegin(GL_POLYGON);
-    glVertex2i(lr.x, ul.y);
-    glVertex2i(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
-    glVertex2i(ul.x, ul.y + CUISCROLL_ANGLE_OFFSET);
-    glVertex2i(ul.x, ul.y + (lr.x - ul.x));
+    if (m_orientation == GG::Scroll::VERTICAL) {
+        glVertex2i(lr.x, ul.y);
+        glVertex2i(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
+        glVertex2i(ul.x, ul.y + CUISCROLL_ANGLE_OFFSET);
+        glVertex2i(ul.x, ul.y + (lr.x - ul.x));
+    } else {
+        glVertex2i(ul.x + (lr.y - ul.y), ul.y);
+        glVertex2i(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
+        glVertex2i(ul.x, lr.y - CUISCROLL_ANGLE_OFFSET);
+        glVertex2i(ul.x, lr.y);
+    }
     glEnd();
     // lower right diagonal stripe
     glBegin(GL_POLYGON);
-    glVertex2i(lr.x, lr.y - (lr.x - ul.x));
-    glVertex2i(ul.x, lr.y);
-    glVertex2i(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
-    glVertex2i(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
+    if (m_orientation == GG::Scroll::VERTICAL) {
+        glVertex2i(lr.x, lr.y - (lr.x - ul.x));
+        glVertex2i(ul.x, lr.y);
+        glVertex2i(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
+        glVertex2i(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
+    } else {
+        glVertex2i(lr.x, ul.y);
+        glVertex2i(lr.x - (lr.y - ul.y), lr.y);
+        glVertex2i(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
+        glVertex2i(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
+    }
     glEnd();
     glEnable(GL_TEXTURE_2D);
     // border

@@ -260,6 +260,7 @@ namespace {
         return( SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y) );
     }
 
+#ifndef FREEORION_BUILD_UTIL
     class PlanetPicker : public GG::Wnd
     {
     public:
@@ -267,23 +268,23 @@ namespace {
             Wnd(0, 0, GG::App::GetApp()->AppWidth() - 1, GG::App::GetApp()->AppHeight() - 1, CLICKABLE | MODAL),
             m_side_panel(new SidePanel(GG::App::GetApp()->AppWidth() - MapWnd::SIDE_PANEL_WIDTH, 0, MapWnd::SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight())),
             m_planet_selected(-1),
-            m_mapwnd_sidepanel_visible(HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Visible())
+            m_mapwnd_sidepanel_visible(ClientUI::GetClientUI()->GetMapWnd()->GetSidePanel()->Visible())
         {
             if(m_mapwnd_sidepanel_visible)
-                HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Hide();
+                ClientUI::GetClientUI()->GetMapWnd()->GetSidePanel()->Hide();
 
             m_side_panel->SetSystem(system_id);
             AttachChild(m_side_panel);
             for (int i = 0; i < m_side_panel->PlanetPanels(); ++i) {
                 GG::Connect(m_side_panel->GetPlanetPanel(i)->PlanetImageLClickedSignal(), &PlanetPicker::PlanetClicked, this);
             }
-            HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_COLONIZE);
+            ClientUI::GetClientUI()->SetCursor(ClientUI::CURSOR_COLONIZE);
         }
         ~PlanetPicker()
         {
-            HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_DEFAULT);
+            ClientUI::GetClientUI()->SetCursor(ClientUI::CURSOR_DEFAULT);
             if(m_mapwnd_sidepanel_visible)
-                HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Show();
+                ClientUI::GetClientUI()->GetMapWnd()->GetSidePanel()->Show();
         }
         int PlanetPicked() const {return m_planet_selected;}
         void LButtonUp(const GG::Pt& pt, Uint32 keys) {m_done = true;}
@@ -298,6 +299,7 @@ namespace {
         int              m_planet_selected;
         bool             m_mapwnd_sidepanel_visible;
     };
+#endif
 
     bool temp_header_bool = RecordHeaderFile(ClientUIRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
@@ -377,9 +379,11 @@ bool ClientUI::Initialize()
     //initialize UI state & window
     m_state = STATE_STARTUP;
 
+#ifndef FREEORION_BUILD_UTIL
     m_map_wnd = new MapWnd();
     GG::App::GetApp()->Register(m_map_wnd);
     m_map_wnd->Hide();
+#endif
 
     return true;
 }
@@ -394,6 +398,7 @@ bool ClientUI::Cleanup()
     delete m_tooltips;
     m_tooltips = 0;
     
+#ifndef FREEORION_BUILD_UTIL
     delete m_intro_screen;
     m_intro_screen = 0;
 
@@ -402,6 +407,7 @@ bool ClientUI::Cleanup()
 
     delete m_turn_progress_wnd;
     m_turn_progress_wnd = 0;
+#endif
 
     s_the_UI = 0;
 
@@ -416,7 +422,9 @@ bool ClientUI::AttachToolWnd(GG::Wnd* parent, ToolWnd* tool)
 GG::XMLElement ClientUI::SaveGameData() const
 {
     GG::XMLElement retval("UI");
+#ifndef FREEORION_BUILD_UTIL
     retval.AppendChild(m_map_wnd->SaveGameData());
+#endif
     return retval;
 }
 
@@ -481,8 +489,10 @@ void ClientUI::ZoomToSystem(System* system)
     if (!system)
         return;
 
+#ifndef FREEORION_BUILD_UTIL
     m_map_wnd->CenterOnSystem(system->ID());
     m_map_wnd->SelectSystem(system->ID());
+#endif
 }
 
 void ClientUI::ZoomToFleet(Fleet* fleet)
@@ -490,8 +500,10 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
     if (!fleet)
         return;
 
+#ifndef FREEORION_BUILD_UTIL
     m_map_wnd->CenterOnFleet(fleet->ID());
     m_map_wnd->SelectFleet(fleet->ID());
+#endif
 }
 
 /////////////////////////////////////////////////////
@@ -499,16 +511,21 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
 //Screen Functions///////////////////////////////////
 void ClientUI::InitTurn( int turn_number )
 {
+#ifndef FREEORION_BUILD_UTIL
     m_map_wnd->InitTurn( turn_number );
+#endif
 }
 
 void ClientUI::RestoreFromSaveData(const GG::XMLElement& elem)
 {
+#ifndef FREEORION_BUILD_UTIL
     m_map_wnd->RestoreFromSaveData(elem.Child("MapWnd"));
+#endif
 }
 
 void ClientUI::SwitchState(State state)
 {
+#ifndef FREEORION_BUILD_UTIL
     HideAllWindows();
     // clean up previous windows, based on previous state
     switch (m_state) {
@@ -601,6 +618,7 @@ void ClientUI::SwitchState(State state)
     default:
         break;
     }
+#endif
 }
 
 void ClientUI::ScreenIntro()
@@ -620,12 +638,16 @@ void ClientUI::ScreenMap()
 
 void ClientUI::UpdateTurnProgress( const std::string& phase_str, const int empire_id )
 {
+#ifndef FREEORION_BUILD_UTIL
     m_turn_progress_wnd->UpdateTurnProgress( phase_str, empire_id );
+#endif
 }
 
 void ClientUI::UpdateCombatTurnProgress( const std::string& msg)
 {
+#ifndef FREEORION_BUILD_UTIL
     m_turn_progress_wnd->UpdateCombatTurnProgress(msg);
+#endif
 }
 
 void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
@@ -637,8 +659,10 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
 {
     GG::ThreeButtonDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR, WND_BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
                            new CUIButton((320-75)/2, 170, 75, UserString("OK")));
+#ifndef FREEORION_BUILD_UTIL
     if (play_alert_sound && GetOptionsDB().Get<bool>("UI.sound.enabled"))
         HumanClientApp::GetApp()->PlaySound(SoundDir() + "alert.wav");
+#endif
     dlg.Run();
 }
 
@@ -649,15 +673,16 @@ void ClientUI::LogMessage(const std::string& msg)
 
 void ClientUI::GenerateSitRepText( SitRepEntry *p_sit_rep )
 {
-  // get template string
-  std::string template_str( UserString( g_string_id_lut[ p_sit_rep->GetType() ] ) );
+    // get template string
+    std::string template_str( UserString( g_string_id_lut[ p_sit_rep->GetType() ] ) );
 
-  // parse string
-  p_sit_rep->GenerateVarText( template_str );
+    // parse string
+    p_sit_rep->GenerateVarText( template_str );
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::GetNumberedTexture(const std::string& dir_name, const std::map<int, std::string>& types_to_names, 
-                                                            int type, int hash_key)
+boost::shared_ptr<GG::Texture>
+ClientUI::GetNumberedTexture(const std::string& dir_name, const std::map<int, std::string>& types_to_names, 
+                             int type, int hash_key)
 {
     using boost::lexical_cast;
     using std::string;
@@ -696,7 +721,7 @@ boost::shared_ptr<GG::Texture> ClientUI::GetNumberedTexture(const std::string& d
     int star_variant = image_names[type].second!=0?(hash_key % image_names[type].second):0;
     std::string filename = ClientUI::ART_DIR + "stars/" + 
         image_names[type].first + lexical_cast<string>(star_variant + 1) + ".png";
-    return HumanClientApp::GetApp()->GetTexture(filename);
+    return GG::App::GetApp()->GetTexture(filename);
 }
 
 const std::string& ClientUI::SoundDir()
@@ -714,19 +739,23 @@ const std::string& ClientUI::SoundDir()
 ////////////////////////////////////////////////////
 void ClientUI::HideAllWindows()
 {
+#ifndef FREEORION_BUILD_UTIL
     if (m_intro_screen)
         m_intro_screen->Hide();
     if (m_map_wnd)
         m_map_wnd->Hide();
     if (m_turn_progress_wnd)
         m_turn_progress_wnd->Hide();
+#endif
 }
 
 int ClientUI::SelectPlanet(int system_id)
 {
+#ifndef FREEORION_BUILD_UTIL
     PlanetPicker planet_picker(system_id);
     planet_picker.Run();
     return planet_picker.PlanetPicked();
+#endif
 }
 
 void ClientUI::SetCursor( Cursor new_cursor_type )

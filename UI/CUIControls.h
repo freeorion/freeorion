@@ -184,6 +184,7 @@ public:
         virtual bool Render();
     private:
         GG::Clr m_border_color;
+        GG::Scroll::Orientation m_orientation;
     };
 
     /** \name Structors */ //@{

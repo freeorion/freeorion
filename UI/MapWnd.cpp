@@ -110,7 +110,7 @@ MapWndPopup::MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint
     CUI_Wnd( t, x, y, h, w, flags )
 {
     // register with map wnd
-    HumanClientApp::GetUI()->GetMapWnd()->RegisterPopup( this );
+    ClientUI::GetClientUI()->GetMapWnd()->RegisterPopup( this );
 }
 
 MapWndPopup::MapWndPopup(const GG::XMLElement& elem):
@@ -121,7 +121,7 @@ MapWndPopup::MapWndPopup(const GG::XMLElement& elem):
 MapWndPopup::~MapWndPopup( )
 {
     // remove from map wnd
-    HumanClientApp::GetUI()->GetMapWnd()->RemovePopup( this );
+    ClientUI::GetClientUI()->GetMapWnd()->RemovePopup( this );
 }
 
 void MapWndPopup::Close( )

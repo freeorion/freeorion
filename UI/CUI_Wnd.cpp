@@ -54,15 +54,21 @@ namespace {
     }
     void PlayMinimizeSound()
     {
+#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-maximize"));
+#endif
     }
     void PlayMaximizeSound()
     {
+#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-minimize"));
+#endif
     }
     void PlayCloseSound()
     {
+#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-close"));
+#endif
     }
 
     bool temp_header_bool = RecordHeaderFile(CUI_WndRevision());
