@@ -1,6 +1,6 @@
 #include "ServerApp.h"
 
-#include "../../util/OptionsDB.h"
+#include "../util/OptionsDB.h"
 
 #ifdef WITH_PYTHON
 #  include <boost/python.hpp>
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
    Py_Finalize();
    
 #endif
-   
+
    g_app(); // run app (intialization and main process loop)
    return 0;
 }
