@@ -70,7 +70,7 @@ ClientUI* ClientUI::s_the_UI = 0;
 
 //Init and Cleanup//////////////////////////////////////
 ClientUI::ClientUI(const std::string& string_table_file /* = StringTable::S_DEFAULT_FILENAME */) :
-    TOOLTIP_DELAY(1000), //1 second delay for tooltips to appear
+    TOOLTIP_DELAY(1000), // 1 second delay for tooltips to appear
     m_tooltips(0),
     m_state(STATE_STARTUP),
     m_string_table(0),
@@ -82,6 +82,11 @@ ClientUI::ClientUI(const std::string& string_table_file /* = StringTable::S_DEFA
 }//ClientUI()
 
 ClientUI::ClientUI(const GG::XMLElement& elem) :
+    TOOLTIP_DELAY(1000),
+    m_tooltips(0),
+    m_state(STATE_STARTUP),
+    m_string_table(0),
+    m_intro_screen(0),
     m_map_wnd(0)
 {
     using namespace GG;

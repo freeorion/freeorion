@@ -13,8 +13,16 @@
 #include "SystemIcon.h"
 #include "../universe/UniverseObject.h"
 
+// HACK! this keeps gcc 3.2 from barfing when it sees "typedef long long uint64_t;"
+// in boost/cstdint.h when compiling under windows
+#ifdef WIN32
+#  define BOOST_MSVC -1
+#endif
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/mersenne_twister.hpp>
+#ifdef WIN32
+#  undef BOOST_MSVC
+#endif
 
 #include <vector>
 
@@ -70,16 +78,16 @@ MapWnd::MapWnd() :
 
     // set up nebulae
     boost::mt19937 gen;
-    int num_nebulae = boost::uniform_smallint<int>(1, 4)(gen);
+    int num_nebulae = boost::uniform_smallint<boost::mt19937>(gen, 1, 4)();
     m_nebulae.resize(num_nebulae);
     m_nebula_centers.resize(num_nebulae);
-    boost::uniform_smallint<int> universe_placement(0, ClientUniverse::UNIVERSE_WIDTH);
-    boost::uniform_smallint<int> nebula_type(1, NUM_NEBULA_TEXTURES);
+    boost::uniform_smallint<boost::mt19937> universe_placement(gen, 0, ClientUniverse::UNIVERSE_WIDTH);
+    boost::uniform_smallint<boost::mt19937> nebula_type(gen, 1, NUM_NEBULA_TEXTURES);
     for (int i = 0; i < num_nebulae; ++i) {
-        std::string nebula_filename = "nebula" + boost::lexical_cast<std::string>(nebula_type(gen)) + ".png";
+        std::string nebula_filename = "nebula" + boost::lexical_cast<std::string>(nebula_type()) + ".png";
         m_nebulae[i].reset(new GG::Texture());
         m_nebulae[i]->Load(ClientUI::ART_DIR + nebula_filename);
-        m_nebula_centers[i] = GG::Pt(universe_placement(gen), universe_placement(gen));
+        m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
     }
 }
 
