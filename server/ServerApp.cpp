@@ -22,7 +22,7 @@ ServerApp::PlayerInfo::PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn)
 }
 
 ServerApp::PlayerInfo::PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn, const std::string& _name) : 
-   ServerNetworkCore::ConnectionInfo(conn),
+	ServerNetworkCore::ConnectionInfo(conn),
    name(_name)
 {
 }
@@ -135,7 +135,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
       } else {
          const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
          m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to host "
-            "a new game but there was already one in progress or being setup.  Terminating connection to " << 
+            "a new game but there was already one in progress or one being setup.  Terminating connection to " << 
             (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
          m_network_core.DumpConnection(connection.socket);
       }
@@ -266,7 +266,7 @@ void ServerApp::Poll()
 {
    // handle events
    SDL_Event event;
-   while (FE_PollEvent(&event)) {
+   while (FE_WaitEvent(&event)) {
       int net2_type = NET2_GetEventType(&event);
       if (event.type == SDL_USEREVENT && 
           (net2_type == NET2_ERROREVENT || 
@@ -276,6 +276,11 @@ void ServerApp::Poll()
            net2_type == NET2_UDPRECEIVEEVENT)) { // an SDL_net2 event
          m_network_core.HandleNetEvent(event);
       } else { // some other SDL event
+		   switch (event.type) {
+			case SDL_QUIT:
+			   Exit(0);
+			   break;
+			}
 // TODO: handle other relevant SDL events here
       }
    }
@@ -283,6 +288,9 @@ void ServerApp::Poll()
 
 void ServerApp::FinalCleanup()
 {
+	NetworkCore().DumpAllConnections();
+	for (unsigned int i = 0; i < m_ai_clients.size(); ++i)
+	   m_ai_clients[i].Kill();
 }
 
 void ServerApp::SDLQuit()
