@@ -14,6 +14,10 @@
 #include "ProdCenter.h"
 #endif
 
+#ifndef _Ship_h_
+#include "Ship.h"
+#endif
+
 
 /** a class representing a FreeOrion planet.*/
 class Planet : public UniverseObject, public PopCenter, public ProdCenter
@@ -61,16 +65,21 @@ public:
    //@}
   	
    /** \name Mutators */ //@{
-   virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
-   virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
+   virtual void MovementPhase( );
+   virtual void PopGrowthProductionResearchPhase( );
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
    void AdjustDefBases(int bases) {m_def_bases += bases; if (m_def_bases < 0) m_def_bases = 0; StateChangedSignal()();}
+   ///< until shipyards, planets build ships as psrt of it's implementation of ProdCenters
+   ///< takes a design ID and if any are build, adds the ships to a fleet.
+   void UpdateShipBuildProgress( ShipDesign::V01DesignID design_id );
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
 
    //@}
+
+
 
 private:
    PlanetType     m_type;
