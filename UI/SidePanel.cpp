@@ -962,9 +962,10 @@ class CUIIconButton : public GG::Button
 CUIIconButton::CUIIconButton( int x, int y, int w, int h,const boost::shared_ptr<GG::Texture> &icon,const std::string& font_filename, 
                               int pts, GG::Clr color, GG::Clr border, int thick, GG::Clr text_color, Uint32 flags)
 :  Button(x, y, w, h, "", font_filename, pts, color, text_color, flags),
-   m_border_color(border), m_border_thick(thick),m_angled_corner_upperleft(0),m_angled_corner_upperright(0),m_angled_corner_lowerright(0),m_angled_corner_lowerleft(0),
-   m_icon(GG::SubTexture(icon,0,0,icon->DefaultWidth(),icon->DefaultWidth())),
    m_value(0.0),m_decimals_to_show(0),m_show_sign(true),m_positive_color(text_color),m_negative_color(text_color),
+   m_icon(GG::SubTexture(icon,0,0,icon->DefaultWidth(),icon->DefaultWidth())),
+   m_border_color(border), m_border_thick(thick),
+   m_angled_corner_upperleft(0),m_angled_corner_upperright(0),m_angled_corner_lowerright(0),m_angled_corner_lowerleft(0),
    m_icon_rect(1+m_border_thick,1+m_border_thick,h-(1+m_border_thick),h-(1+m_border_thick)),m_text_rect(m_icon_rect.LowerRight().x,2,w-2,h-2)
 {
   SetTextFormat(GG::TF_RIGHT | GG::TF_VCENTER);
@@ -1031,10 +1032,10 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   m_planet_id(planet.ID()),
   m_planet_name(0),m_planet_info(0),
   m_button_colonize(0),
-  m_construction(0),
   m_planet_graphic(0),
   m_rotating_planet_graphic(0),
-  m_button_food(0),m_button_mining(0),m_button_industry(0),m_button_research(0),m_button_balanced(0)
+  m_button_food(0),m_button_mining(0),m_button_industry(0),m_button_research(0),m_button_balanced(0),
+  m_construction(0)
 {
   SetText(ClientUI::String("PLANET_PANEL"));
 
@@ -1062,7 +1063,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
           start_frame = RandSmallInt(0,textures.size()-1);
 
       if(start_frame!=-1 && fps!=0.0)
-          m_planet_graphic->SetTimeIndex(start_frame * 1000.0 / m_planet_graphic->FPS());
+          m_planet_graphic->SetTimeIndex(static_cast<int>(start_frame * 1000.0 / m_planet_graphic->FPS()));
       AttachChild(m_planet_graphic);m_planet_graphic->Play();
 
       textures.clear();
@@ -1399,7 +1400,7 @@ void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 {
   GG::Wnd *parent;
-  if(parent=Parent())
+  if((parent=Parent()))
     parent->MouseWheel(pt,move,keys);
 }
 void SidePanel::PlanetPanel::MouseEnter(const GG::Pt& pt, Uint32 keys)
@@ -1823,11 +1824,13 @@ bool SidePanel::SystemResourceSummary::Render()
 ////////////////////////////////////////////////
 SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
 : Wnd(x, y, w, h, GG::Wnd::CLICKABLE | GG::Wnd::ONTOP),
+  m_planet_id(plt.ID()),
+  m_bShowUI(false),
+  m_fadein_start(0),m_fadein_span(0),
   m_bg_image(),
-  m_build_image(),m_planet_id(plt.ID()),
+  m_build_image(),
   m_radio_btn_primary_focus  (0),
-  m_radio_btn_secondary_focus(0),
-  m_bShowUI(false),m_fadein_start(0),m_fadein_span(0)
+  m_radio_btn_secondary_focus(0)
 {
   Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
 
@@ -2412,16 +2415,16 @@ bool SidePanel::PlanetView::Render()
 SidePanel::SidePanel(int x, int y, int w, int h) : 
     Wnd(x, y, w, h, GG::Wnd::CLICKABLE),
     m_system(0),
-    m_star_graphic(0),
-    m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,ClientUI::String("SP_UNKNOWN_SYSTEM"),ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4),0,ClientUI::TEXT_COLOR)),
     m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5),ClientUI::SIDE_PANEL_COLOR)),
+    m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,ClientUI::String("SP_UNKNOWN_SYSTEM"),ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4),0,ClientUI::TEXT_COLOR)),
     m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
     m_button_next(new GG::Button(40+w-80                 ,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
+    m_star_graphic(0),
     m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::PTS-5,ClientUI::String("SP_SYSTEM_PRODUCTION"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR)),
-    m_system_resource_summary(new SystemResourceSummary(0,100-20,w,20)),
-    m_planet_panel_container(new PlanetPanelContainer(0,100,w,h-100-30)),
     m_next_pltview_fade_in(0),m_next_pltview_planet_id(UniverseObject::INVALID_OBJECT_ID),m_next_pltview_fade_out(-1),
-    m_planet_view(0)
+    m_planet_view(0),
+    m_planet_panel_container(new PlanetPanelContainer(0,100,w,h-100-30)),
+    m_system_resource_summary(new SystemResourceSummary(0,100-20,w,20))
 {
   SetText(ClientUI::String("SIDE_PANEL"));
 
