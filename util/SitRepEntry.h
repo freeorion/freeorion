@@ -57,6 +57,9 @@ public:
         SHIP_BUILT,
         TECH_RESEARCHED,
         BASE_BUILT,
+        COMBAT_SYSTEM_WON,
+        COMBAT_SYSTEM_LOST,
+        COMBAT_SYSTEM_NO_VICTOR,
         NUM_SITREP_TYPES
     };
 
@@ -92,5 +95,7 @@ SitRepEntry *CreateTechResearchedSitRep( const int techID );
 SitRepEntry *CreateBaseBuiltSitRep( const int system_id, const int planet_id );
 
 SitRepEntry *CreateShipBuiltSitRep( const int ship_id, const int planet_id );
+
+SitRepEntry *CreateCombatSitRep(const int empire_id, const int victor_id, const int system_id);
 
 #endif // _SitRepEntry_h_
