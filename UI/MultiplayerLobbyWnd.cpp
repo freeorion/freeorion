@@ -127,7 +127,7 @@ namespace {
 }
 
 MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) : 
-    CUI_Wnd(ClientUI::String("MPLOBBY_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() - LOBBY_WND_WIDTH) / 2, 
+    CUI_Wnd(UserString("MPLOBBY_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() - LOBBY_WND_WIDTH) / 2, 
             (GG::App::GetApp()->AppHeight() - LOBBY_WND_HEIGHT) / 2, LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT, 
             GG::Wnd::CLICKABLE | GG::Wnd::MODAL),
     m_result(false),
@@ -151,11 +151,11 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     m_chat_box->SetMaxLinesOfHistory(250);
 
     m_new_load_game_buttons = new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, TopBorder() + CONTROL_MARGIN);
-    m_new_load_game_buttons->AddButton(new CUIStateButton(0, 0, 100, RADIO_BN_HT, ClientUI::String("NEW_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_new_load_game_buttons->AddButton(new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
 
     m_galaxy_setup_panel = new GalaxySetupPanel(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y, GALAXY_SETUP_PANEL_WIDTH);
 
-    m_new_load_game_buttons->AddButton(new CUIStateButton(0, m_galaxy_setup_panel->LowerRight().y, 100, RADIO_BN_HT, ClientUI::String("LOAD_GAME_BN"), 
+    m_new_load_game_buttons->AddButton(new CUIStateButton(0, m_galaxy_setup_panel->LowerRight().y, 100, RADIO_BN_HT, UserString("LOAD_GAME_BN"), 
                                                           GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
 
     m_saved_games_list = new CUIDropDownList(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y + CONTROL_MARGIN, 
@@ -172,8 +172,8 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     m_players_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL);
 
     if (m_host)
-        m_start_game_bn = new CUIButton(0, 0, 125, ClientUI::String("START_GAME_BN"));
-    m_cancel_bn = new CUIButton(0, 0, 125, ClientUI::String("CANCEL"));
+        m_start_game_bn = new CUIButton(0, 0, 125, UserString("START_GAME_BN"));
+    m_cancel_bn = new CUIButton(0, 0, 125, UserString("CANCEL"));
     m_cancel_bn->MoveTo(Width() - RightBorder() - m_cancel_bn->Width() - CONTROL_MARGIN, Height() - BottomBorder() - m_cancel_bn->Height() - CONTROL_MARGIN);
     if (m_host)
         m_start_game_bn->MoveTo(m_cancel_bn->UpperLeft().x - CONTROL_MARGIN - m_start_game_bn->Width(), Height() - BottomBorder() - m_cancel_bn->Height() - CONTROL_MARGIN);
@@ -239,7 +239,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
             *m_chat_box += (it != m_player_names.end() ? (it->second + ": ") : "[unknown]: ");
             *m_chat_box += doc.root_node.Child("text").Text() + "\n";
         } else if (doc.root_node.ContainsChild("abort_game")) {
-            ClientUI::MessageBox(ClientUI::String("MPLOBBY_HOST_ABORTED_GAME"), true);
+            ClientUI::MessageBox(UserString("MPLOBBY_HOST_ABORTED_GAME"), true);
             m_result = false;
             CUI_Wnd::CloseClicked();
         } else if (doc.root_node.ContainsChild("exit_lobby")) {

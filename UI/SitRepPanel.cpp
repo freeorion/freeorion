@@ -20,8 +20,8 @@ namespace {
 
 
 SitRepPanel::SitRepPanel(int x, int y, int w, int h) : 
-    CUI_Wnd(ClientUI::String("SITREP_PANEL_TITLE"), x, y, w, h, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE/* | CUI_Wnd::MINIMIZABLE*/),
-    m_title(new GG::TextControl(0, SITREP_TITLE_MARGIN_Y, w, static_cast<int>(ClientUI::PTS * 1.75 + 4), ClientUI::String("SITREP_PANEL_TITLE"), 
+    CUI_Wnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE/* | CUI_Wnd::MINIMIZABLE*/),
+    m_title(new GG::TextControl(0, SITREP_TITLE_MARGIN_Y, w, static_cast<int>(ClientUI::PTS * 1.75 + 4), UserString("SITREP_PANEL_TITLE"), 
                                 ClientUI::FONT, static_cast<int>(ClientUI::PTS * 1.75), ClientUI::TEXT_COLOR, GG::TF_CENTER | GG::TF_VCENTER))
 {
     TempUISoundDisabler sound_disabler;
@@ -35,7 +35,7 @@ SitRepPanel::SitRepPanel(int x, int y, int w, int h) :
 
     // create buttons
     m_close = new CUIButton(w - SITREP_LB_MARGIN_X - SITREP_CLOSE_WIDTH, SITREP_LB_MARGIN_Y + SITREP_LB_HEIGHT + SITREP_CLOSE_MARGIN_Y, SITREP_CLOSE_WIDTH, 
-                            ClientUI::String("CLOSE"));
+                            UserString("CLOSE"));
 
     //attach buttons
     AttachChild(m_close);

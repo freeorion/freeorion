@@ -49,31 +49,31 @@ GalaxySetupPanel::GalaxySetupPanel(int x, int y, int w/* = DEFAULT_WIDTH*/) :
     const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
     int row = -1;
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_STARS"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARS"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_stars_spin = new CUISpin<int>(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, 75, 100, 1, 10, 500, true);
     m_stars_spin->OffsetMove(0, (PANEL_CONTROL_SPACING - m_stars_spin->Height()) / 2);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_SHAPE"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SHAPE"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_galaxy_shapes_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     m_galaxy_shapes_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_galaxy_shapes_list->Height()) / 2);
     m_galaxy_shapes_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_AGE"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_AGE"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_galaxy_ages_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     m_galaxy_ages_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_galaxy_ages_list->Height()) / 2);
     m_galaxy_ages_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_STARLANE_FREQ"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARLANE_FREQ"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_starlane_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     m_starlane_freq_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_starlane_freq_list->Height()) / 2);
     m_starlane_freq_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_PLANET_DENSITY"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_PLANET_DENSITY"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_planet_density_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     m_planet_density_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_planet_density_list->Height()) / 2);
     m_planet_density_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row* PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_SPECIALS_FREQ"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row* PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SPECIALS_FREQ"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_specials_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     m_specials_freq_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_specials_freq_list->Height()) / 2);
     m_specials_freq_list->SetStyle(GG::LB_NOSORT);
@@ -174,34 +174,34 @@ void GalaxySetupPanel::Init()
 	m_textures[Universe::RING]->Load(ClientUI::ART_DIR + "gp_ring.png");
 
     // fill droplists
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_2ARM")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_3ARM")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_4ARM")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_CLUSTER")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_ELLIPTICAL")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_IRREGULAR")));
-    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_RING")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_2ARM")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_3ARM")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_4ARM")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_CLUSTER")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_ELLIPTICAL")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_IRREGULAR")));
+    m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RING")));
 
-    m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_YOUNG")));
-    m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_MATURE")));
-    m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_ANCIENT")));
+    m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_YOUNG")));
+    m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MATURE")));
+    m_galaxy_ages_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_ANCIENT")));
 
     if (ALLOW_NO_STARLANES)
-        m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_NONE")));
-    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_FEW")));
-    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_SOME")));
-    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_SEVERAL")));
-    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_MANY")));
-    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_VERY_MANY")));
+        m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
+    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_FEW")));
+    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_SOME")));
+    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_SEVERAL")));
+    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MANY")));
+    m_starlane_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_VERY_MANY")));
 
-    m_planet_density_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_LOW")));
-    m_planet_density_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_MEDIUM")));
-    m_planet_density_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_HIGH")));
+    m_planet_density_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
+    m_planet_density_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
+    m_planet_density_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
 
-    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_NONE")));
-    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_RARE")));
-    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_UNCOMMON")));
-    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(ClientUI::String("GSETUP_COMMON")));
+    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
+    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_RARE")));
+    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_UNCOMMON")));
+    m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_COMMON")));
 
     // default settings
     m_galaxy_shapes_list->Select(0);
@@ -246,7 +246,7 @@ void GalaxySetupPanel::ShapeChanged(int index)
 // GalaxySetupWnd
 ////////////////////////////////////////////////
 GalaxySetupWnd::GalaxySetupWnd() : 
-    CUI_Wnd(ClientUI::String("GSETUP_WINDOW_TITLE"), (HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2, 
+    CUI_Wnd(UserString("GSETUP_WINDOW_TITLE"), (HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2, 
             (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2, GAL_SETUP_WND_WD, GAL_SETUP_WND_HT, 
             GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
     m_ended_with_ok(false),
@@ -264,11 +264,11 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_galaxy_setup_panel = new GalaxySetupPanel(0, 22);
 
     const int LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
-    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_EMPIRE_COLOR"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT);
+    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_COLOR"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT);
     m_empire_color_selector = new EmpireColorSelector(ClientUI::PTS + 4);
     m_empire_color_selector->MoveTo(LABELS_WIDTH + 2 * CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING + (PANEL_CONTROL_SPACING - m_empire_color_selector->Height()) / 2);
     m_empire_color_selector->Select(0);
-    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y, LABELS_WIDTH, m_empire_color_selector->Height(), ClientUI::String("GSETUP_EMPIRE_NAME"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT);
+    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y, LABELS_WIDTH, m_empire_color_selector->Height(), UserString("GSETUP_EMPIRE_NAME"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT);
     m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y,
                                      LABELS_WIDTH, CONTROL_HEIGHT, "Human");
     m_empire_name_label->OffsetMove(0, (PANEL_CONTROL_SPACING - m_empire_name_label->Height()) / 2);
@@ -278,8 +278,8 @@ GalaxySetupWnd::GalaxySetupWnd() :
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image =  new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GR_FITGRAPHIC); // create a blank graphic
 
-    m_ok = new CUIButton(10, m_empire_color_selector->LowerRight().y + 10, 75, ClientUI::String("OK"));
-    m_cancel = new CUIButton(10 + m_ok->Size().x + 15, m_empire_color_selector->LowerRight().y + 10, 75, ClientUI::String("CANCEL"));
+    m_ok = new CUIButton(10, m_empire_color_selector->LowerRight().y + 10, 75, UserString("OK"));
+    m_cancel = new CUIButton(10 + m_ok->Size().x + 15, m_empire_color_selector->LowerRight().y + 10, 75, UserString("CANCEL"));
 
     Init();
 }

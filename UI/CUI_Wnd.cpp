@@ -484,8 +484,8 @@ CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string&
     CUI_Wnd(prompt_text, 0, 0, 1, 1, flags)
 {
     m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, w - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), ClientUI::PTS + 10, edit_text);
-    m_ok_bn = new CUIButton(m_edit->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, ClientUI::String("OK"));
-    m_cancel_bn = new CUIButton(m_ok_bn->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, ClientUI::String("CANCEL"));
+    m_ok_bn = new CUIButton(m_edit->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, UserString("OK"));
+    m_cancel_bn = new CUIButton(m_ok_bn->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, UserString("CANCEL"));
 
     Resize(w, m_cancel_bn->LowerRight().y + BottomBorder() + 3);
     MoveTo((GG::App::GetApp()->AppWidth() - w) / 2, (GG::App::GetApp()->AppHeight() - Height()) / 2);

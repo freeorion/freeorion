@@ -137,7 +137,7 @@ bool CreditsWnd::Render()
 
 
 IntroScreen::IntroScreen() :
-    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), 
+    CUI_Wnd(UserString("INTRO_WINDOW_TITLE"), 
             GetOptionsDB().Get<int>("UI.main-menu.left"), GetOptionsDB().Get<int>("UI.main-menu.top"), 
             200, 340, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE),
     m_credits_wnd(NULL)
@@ -149,13 +149,13 @@ IntroScreen::IntroScreen() :
     GG::App::GetApp()->Register(m_bg_graphic);
     
     //create buttons
-    m_single_player = new CUIButton(20, 30, 160, ClientUI::String("INTRO_BTN_SINGLE_PLAYER"));
-    m_multi_player = new CUIButton(20, 70, 160, ClientUI::String("INTRO_BTN_MULTI_PLAYER"));
-    m_load_game = new CUIButton(20, 110, 160, ClientUI::String("INTRO_BTN_LOAD_GAME"));
-    m_options = new CUIButton(20, 150, 160, ClientUI::String("INTRO_BTN_OPTIONS"));
-    m_about = new CUIButton(20, 190, 160, ClientUI::String("INTRO_BTN_ABOUT"));
-    m_credits = new CUIButton(20, 230, 160, ClientUI::String("INTRO_BTN_CREDITS"));
-    m_exit_game = new CUIButton(20, 300, 160, ClientUI::String("INTRO_BTN_EXIT"));
+    m_single_player = new CUIButton(20, 30, 160, UserString("INTRO_BTN_SINGLE_PLAYER"));
+    m_multi_player = new CUIButton(20, 70, 160, UserString("INTRO_BTN_MULTI_PLAYER"));
+    m_load_game = new CUIButton(20, 110, 160, UserString("INTRO_BTN_LOAD_GAME"));
+    m_options = new CUIButton(20, 150, 160, UserString("INTRO_BTN_OPTIONS"));
+    m_about = new CUIButton(20, 190, 160, UserString("INTRO_BTN_ABOUT"));
+    m_credits = new CUIButton(20, 230, 160, UserString("INTRO_BTN_CREDITS"));
+    m_exit_game = new CUIButton(20, 300, 160, UserString("INTRO_BTN_EXIT"));
     
     //attach buttons
     AttachChild(m_single_player);
@@ -235,7 +235,7 @@ void IntroScreen::OnSinglePlayer()
         int start_time = GG::App::GetApp()->Ticks();
         while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) {
             if (SERVER_CONNECT_TIMEOUT < GG::App::GetApp()->Ticks() - start_time) {
-                ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"), true);
+                ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 failed = true;
                 break;
             }
@@ -280,7 +280,7 @@ void IntroScreen::OnMultiPlayer()
             int start_time = GG::App::GetApp()->Ticks();
             while (!HumanClientApp::GetApp()->NetworkCore().ConnectToServer(server_name)) {
                 if (SERVER_CONNECT_TIMEOUT < GG::App::GetApp()->Ticks() - start_time) {
-                    ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"), true);
+                    ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                     if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
                         HumanClientApp::GetApp()->KillServer();
                     break;

@@ -51,6 +51,12 @@ std::string MD5StringSum(const std::string& str);
 /** Returns an MD5 "sum" of the given text file as a 32-digit hexidecimal string. */
 std::string MD5FileSum(const std::string& filename);
 
+/** Returns a language-specific string for the key-string \a str */
+const std::string& UserString(const std::string& str);
+
+/** Returns the language of the StringTable currently in use */
+const std::string& Language();
+
 /** The data for one empire necessary for game-setup during multiplayer loading. */
 struct SaveGameEmpireData
 {

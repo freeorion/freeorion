@@ -23,14 +23,14 @@ namespace {
 ////////////////////////////////////////////
 
 About::About():
-    CUI_Wnd(ClientUI::String("ABOUT_WINDOW_TITLE"),80,130,600,500, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
+    CUI_Wnd(UserString("ABOUT_WINDOW_TITLE"),80,130,600,500, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
     m_end_with_done(false)
 {
 
-    m_done_btn = new CUIButton(400,440,75,ClientUI::String("DONE"));
-    m_license = new CUIButton(310,440,75,ClientUI::String("LICENSE"));
-    m_vision = new CUIButton(220,440,75,ClientUI::String("VISION"));
-    m_info = new CUIMultiEdit(20, 20, 550, 400, ClientUI::String("FREEORION_VISION"), 
+    m_done_btn = new CUIButton(400,440,75,UserString("DONE"));
+    m_license = new CUIButton(310,440,75,UserString("LICENSE"));
+    m_vision = new CUIButton(220,440,75,UserString("VISION"));
+    m_info = new CUIMultiEdit(20, 20, 550, 400, UserString("FREEORION_VISION"), 
                  GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY, ClientUI::FONT,
                  ClientUI::PTS, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR,
                  ClientUI::MULTIEDIT_INT_COLOR, CLICKABLE | DRAG_KEEPER);
@@ -109,6 +109,6 @@ void About::OnLicense()
 
 void About::OnVision()
 {
-   m_info->SetText(ClientUI::String("FREEORION_VISION"));
+   m_info->SetText(UserString("FREEORION_VISION"));
 }
 

@@ -1,6 +1,6 @@
 #include "StringTable.h"
 
-#include "ClientUI.h"
+#include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 
 using namespace std;
@@ -66,7 +66,7 @@ void StringTable::Load()
     try {
         ifs.open(m_filename.c_str());    //open the file
     } catch (const exception& e) {
-        ClientUI::MessageBox("Error opening StringTable file: \"" + m_filename + "\"", true);
+        Logger().errorStream() << "Error opening StringTable file: \"" << m_filename << "\"";
         return;        // handle exception by showing error msg and then get out!
     }
 
@@ -91,9 +91,9 @@ void StringTable::Load()
 
         if (!m_strings.insert(make_pair(temp, temp2)).second) {
             //found a duplicate or invalid key
-            ClientUI::LogMessage("Duplicate string ID found: '" + (string)temp + "' in file: '" + m_filename + "'.  Ignoring duplicate.");
+            Logger().errorStream() << "Duplicate string ID found: '" << (string)temp << "' in file: '" << m_filename << "'.  Ignoring duplicate.";
         } else {
-            ClientUI::LogMessage("Inserted(" + (string)temp + ", " + string(temp2) + ")");
+            Logger().debugStream() << "Inserted(" << (string)temp << ", " << string(temp2) << ")";
         }
     }
 }

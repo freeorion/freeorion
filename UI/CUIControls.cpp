@@ -1037,10 +1037,10 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
                  const std::vector<std::pair<std::string, std::string> >& types) :
     GG::FileDlg(directory, filename, save, multi, types, ClientUI::FONT, ClientUI::PTS,
                 ClientUI::CTRL_COLOR, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR,
-                new CUIButton(3 * WIDTH / 4, HEIGHT - (ClientUI::PTS + 14) * 2, WIDTH / 4 - 10, ClientUI::String(save ? "SAVE" : "OPEN")),
-                new CUIButton(3 * WIDTH / 4, HEIGHT - (ClientUI::PTS + 14), WIDTH / 4 - 10, ClientUI::String("CANCEL")))
+                new CUIButton(3 * WIDTH / 4, HEIGHT - (ClientUI::PTS + 14) * 2, WIDTH / 4 - 10, UserString(save ? "SAVE" : "OPEN")),
+                new CUIButton(3 * WIDTH / 4, HEIGHT - (ClientUI::PTS + 14), WIDTH / 4 - 10, UserString("CANCEL")))
 {
-    SetFilesString(ClientUI::String("FILE_DLG_FILES"));
-    SetFileTypesString(ClientUI::String("FILE_DLG_FILE_TYPES"));
+    SetFilesString(UserString("FILE_DLG_FILES"));
+    SetFileTypesString(UserString("FILE_DLG_FILE_TYPES"));
 }
 

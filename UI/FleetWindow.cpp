@@ -37,7 +37,7 @@ namespace {
             Control(0, 0, w, h, 0),
             m_fleet(fleet),
             m_fleet_icon(0),
-            m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + ClientUI::String("FW_NEW_FLEET_LABEL") + "</i>", 
+            m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + UserString("FW_NEW_FLEET_LABEL") + "</i>", 
                                                   ClientUI::FONT, ClientUI::PTS, m_fleet ? ClientUI::TEXT_COLOR : GG::CLR_BLACK, GG::TF_RIGHT | GG::TF_VCENTER)),
             m_num_ships_stat(0),
             m_fleet_strength_stat(0),
@@ -568,7 +568,7 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const boost::shared_ptr<GG:
     Ship* ship = GetUniverse().Object<Ship>(ship_row->ShipID());
 
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(ClientUI::String("RENAME"), 1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
 
@@ -576,7 +576,7 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const boost::shared_ptr<GG:
         switch (popup.MenuID()) {
         case 1: { // rename ship
             std::string ship_name = m_ships_lb->GetRow(row_idx)[0]->WindowText();
-            CUIEditWnd edit_wnd(350, ClientUI::String("ENTER_NEW_NAME"), ship_name);
+            CUIEditWnd edit_wnd(350, UserString("ENTER_NEW_NAME"), ship_name);
             edit_wnd.Run();
             if (edit_wnd.Result() != "") {
                 HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), ship->ID(), edit_wnd.Result()));
@@ -596,11 +596,11 @@ std::string FleetDetailPanel::DestinationText() const
     System* current = m_fleet->GetSystem();
     if (dest && dest != current) {
         std::pair<int, int> eta = m_fleet->ETA();
-        retval = boost::io::str(boost::format(ClientUI::String("FW_FLEET_MOVING_TO")) % (dest->Name().empty() ? ClientUI::String("UNKNOWN_SYSTEM") : dest->Name()) % eta.first);
+        retval = boost::io::str(boost::format(UserString("FW_FLEET_MOVING_TO")) % (dest->Name().empty() ? UserString("UNKNOWN_SYSTEM") : dest->Name()) % eta.first);
         if (eta.first != eta.second)
             retval += "(" + boost::lexical_cast<std::string>(m_fleet->ETA().second) + ")";
     } else if (current) {
-        retval = boost::io::str(boost::format(ClientUI::String("FW_FLEET_AT")) % current->Name());
+        retval = boost::io::str(boost::format(UserString("FW_FLEET_AT")) % current->Name());
     }
     return retval;
 }
@@ -608,7 +608,7 @@ std::string FleetDetailPanel::DestinationText() const
 std::string FleetDetailPanel::ShipStatusText(int ship_id) const
 {
     Ship* ship = GetUniverse().Object<Ship>(ship_id);
-    return ClientUI::String("FW_SHIP_CLASS") + " \"" + ship->Design()->name + "\"";
+    return UserString("FW_SHIP_CLASS") + " \"" + ship->Design()->name + "\"";
 }
 
 
@@ -658,7 +658,7 @@ void FleetDetailWnd::DetachSignalChildren()
 
 std::string FleetDetailWnd::TitleText() const
 {
-    std::string retval = ClientUI::String("FW_NEW_FLEET_NAME");
+    std::string retval = UserString("FW_NEW_FLEET_NAME");
     if (const Fleet* fleet = m_fleet_panel->GetFleet()) {
         retval = fleet->Name();
     }
@@ -860,14 +860,14 @@ void FleetWnd::FleetRightClicked(int row_idx, const boost::shared_ptr<GG::ListBo
         return;
 
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(ClientUI::String("RENAME"), 1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
     GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
 
     if (popup.Run()) {
       switch (popup.MenuID()) {
       case 1: { // rename fleet
           std::string fleet_name = fleet->Name();
-          CUIEditWnd edit_wnd(350, ClientUI::String("ENTER_NEW_NAME"), fleet_name);
+          CUIEditWnd edit_wnd(350, UserString("ENTER_NEW_NAME"), fleet_name);
           edit_wnd.Run();
           if (edit_wnd.Result() != "") {
               HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID(), edit_wnd.Result()));
@@ -998,7 +998,7 @@ Fleet* FleetWnd::FleetInRow(int idx) const
 std::string FleetWnd::TitleText() const
 {
     Fleet* existing_fleet = FleetInRow(0);
-    return boost::io::str(boost::format(ClientUI::String("FW_EMPIRE_FLEETS")) % Empires().Lookup(*existing_fleet->Owners().begin())->Name());
+    return boost::io::str(boost::format(UserString("FW_EMPIRE_FLEETS")) % Empires().Lookup(*existing_fleet->Owners().begin())->Name());
 }
 
 void FleetWnd::DeleteFleet(Fleet* fleet)
@@ -1044,11 +1044,11 @@ Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
 
     if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID)
     {
-        ClientUI::MessageBox(ClientUI::String("SERVER_TIMEOUT"), true);
+        ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
         throw GG::ListBox::DontAcceptDropException();
     }
 
-    std::string fleet_name = ClientUI::String("FW_NEW_FLEET_NAME") + boost::lexical_cast<std::string>(new_fleet_id);
+    std::string fleet_name = UserString("FW_NEW_FLEET_NAME") + boost::lexical_cast<std::string>(new_fleet_id);
 
     Fleet* new_fleet = 0;
     if (existing_fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID) {

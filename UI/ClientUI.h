@@ -7,10 +7,6 @@
 #include "../util/SitRepEntry.h"
 #endif
 
-#ifndef _StringTable_h_
-#include "StringTable.h"
-#endif
-
 #ifndef _GGWnd_h_
 #include "GGWnd.h"
 #endif
@@ -77,14 +73,14 @@ public:
     ClientUI();        //!< construction (calls Initialize())
     ~ClientUI();    //!< destruction (calls Cleanup())
 
-    bool Initialize(const std::string& string_table_file);    //!< provided to setup initial variables. 
-    bool Cleanup();        //!< provided to clean up ClientUI's memory space. 
+    bool Initialize();    //!< provided to setup initial variables. 
+    bool Cleanup();       //!< provided to clean up ClientUI's memory space. 
     //!@}
     
     //! \name Accessors //!@{
     const log4cpp::Category& Logger() {return s_logger;}    //!< Returns the logger associated with ClientUI
 
-    const std::string&  Language() const;                   //!< Returns the language of the StringTable object associated with ClientUI
+    const std::string&  Language() const;                   //!< 
 
     MapWnd* GetMapWnd() {return m_map_wnd;}                 //!< Returns the main map window (may be null).
 
@@ -164,7 +160,6 @@ public:
     static void MessageBox(const std::string& message, bool play_alert_sound = false);
 
     static void LogMessage(const std::string& msg); //!<sends a message to the logger
-    static const std::string&  String(const std::string& index);    //!< Returns a lookup from the string table
 
     static void GenerateSitRepText( SitRepEntry *p_sit_rep ); ///< generates a SitRep string from it's XML data.
 
@@ -244,8 +239,6 @@ private:
     const Uint32 TOOLTIP_DELAY;         //!< number of milliseconds to initialize tooltips to
     ToolContainer* m_tooltips;          //!< the single toolcontainer object
     State m_state;                      //!< represents the screen currently being displayed
-
-    StringTable* m_string_table;        //!< a string table to lookup international strings
 
     IntroScreen*     m_intro_screen;      //!< the intro (and main menu) screen first showed when the game starts up
     MapWnd*          m_map_wnd;           //!< the galaxy map

@@ -2,6 +2,7 @@
 
 #include "md5.h"
 #include "OptionsDB.h"
+#include "../UI/StringTable.h"
 
 #include <log4cpp/Priority.hh>
 
@@ -15,8 +16,24 @@ namespace {
         db.Add<std::string>("log-level", "Sets the level at or above which log messages will be output "
                             "(levels in order of increasing verbosity: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, "
                             "ALERT, FATAL, EMERG", "WARN");
+        db.Add<std::string>("stringtable-filename", "Sets the language-specific string table filename.", "eng_stringtable.txt");
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    std::string SettingsDir()
+    {
+        std::string retval = GetOptionsDB().Get<std::string>("settings-dir");
+        if (retval.empty() || retval[retval.size()] != '/')
+            retval += '/';
+        return retval;
+    }
+
+    StringTable* GetStringTable()
+    {
+        static StringTable* string_table =
+            new StringTable(SettingsDir() + GetOptionsDB().Get<std::string>("stringtable-filename"));
+        return string_table;
+    }
 
     bool temp_header_bool = RecordHeaderFile(MultiplayerCommonRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
@@ -143,6 +160,18 @@ std::string MD5FileSum(const std::string& filename)
         file_contents += ifs.get();
     }
     return MD5StringSum(file_contents);
+}
+
+const std::string& UserString(const std::string& str)
+{
+    static std::string retval("ERROR");
+    return GetStringTable()->String(str);
+}
+
+const std::string& Language() 
+{
+    static std::string retval("ERROR");
+    return GetStringTable()->Language();
 }
 
 

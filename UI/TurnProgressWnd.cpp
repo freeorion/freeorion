@@ -25,7 +25,7 @@ TurnProgressWnd::TurnProgressWnd( ) :
       m_combat_wnd(0)
 
 {
-  ClientUI::String("TURN_PROGRESS_WND");
+  UserString("TURN_PROGRESS_WND");
 
   m_bg_graphic = new GG::StaticGraphic(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), 
                                              GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash01.png"));

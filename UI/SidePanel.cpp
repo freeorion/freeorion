@@ -28,6 +28,8 @@
 
 #include "MapWnd.h"
 
+using boost::lexical_cast;
+
 #define ROTATING_PLANET_IMAGES 0 // set this to 1 to use the OpenGL-rendered rotating planets code
 
 namespace {
@@ -43,11 +45,11 @@ namespace {
             if (elem.Tag() != "RotatingPlanetData")
                 throw std::invalid_argument("Attempted to construct a RotatingPlanetData from an XMLElement that had a tag other than \"RotatingPlanetData\"");
 
-            planet_type = boost::lexical_cast<PlanetType>(elem.Child("planet_type").Text());
+            planet_type = lexical_cast<PlanetType>(elem.Child("planet_type").Text());
             filename = elem.Child("filename").Text();
-            RPM = boost::lexical_cast<double>(elem.Child("RPM").Text());
-            axis_angle = boost::lexical_cast<double>(elem.Child("axis_angle").Text());
-            shininess = boost::lexical_cast<double>(elem.Child("shininess").Text());
+            RPM = lexical_cast<double>(elem.Child("RPM").Text());
+            axis_angle = lexical_cast<double>(elem.Child("axis_angle").Text());
+            shininess = lexical_cast<double>(elem.Child("shininess").Text());
 
             shininess = std::max(0.0, std::min(shininess, 128.0)); // ensure proper bounds
         }
@@ -55,11 +57,11 @@ namespace {
         GG::XMLElement XMLEncode() const
         {
             GG::XMLElement retval("RotatingPlanetData");
-            retval.AppendChild(GG::XMLElement("planet_type", boost::lexical_cast<std::string>(planet_type)));
+            retval.AppendChild(GG::XMLElement("planet_type", lexical_cast<std::string>(planet_type)));
             retval.AppendChild(GG::XMLElement("filename", filename));
-            retval.AppendChild(GG::XMLElement("RPM", boost::lexical_cast<std::string>(RPM)));
-            retval.AppendChild(GG::XMLElement("axis_angle", boost::lexical_cast<std::string>(axis_angle)));
-            retval.AppendChild(GG::XMLElement("shininess", boost::lexical_cast<std::string>(shininess)));
+            retval.AppendChild(GG::XMLElement("RPM", lexical_cast<std::string>(RPM)));
+            retval.AppendChild(GG::XMLElement("axis_angle", lexical_cast<std::string>(axis_angle)));
+            retval.AppendChild(GG::XMLElement("shininess", lexical_cast<std::string>(shininess)));
             return retval;
         }
 
@@ -103,7 +105,7 @@ namespace {
             ifs.close();
 
             if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("ambient_intensity"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_intensity").Text());
+                retval = lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_intensity").Text());
             else
                 retval = 0.5;
 
@@ -124,7 +126,7 @@ namespace {
             ifs.close();
 
             if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("diffuse_intensity"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("diffuse_intensity").Text());
+                retval = lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("diffuse_intensity").Text());
             else
                 retval = 0.5;
 
@@ -172,9 +174,9 @@ namespace {
             doc.ReadDoc(ifs);
             ifs.close();
 
-            retval[0] = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("x").Text());
-            retval[1] = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("y").Text());
-            retval[2] = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("z").Text());
+            retval[0] = lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("x").Text());
+            retval[1] = lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("y").Text());
+            retval[2] = lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("z").Text());
         }
 
         return retval;
@@ -192,7 +194,7 @@ namespace {
 
             if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").NumChildren()) {
                 for (GG::XMLElement::child_iterator it = doc.root_node.Child("GLStars").child_begin(); it != doc.root_node.Child("GLStars").child_end(); ++it) {
-                    std::vector<float>& color_vec = light_colors[boost::lexical_cast<StarType>(it->Child("star_type").Text())];
+                    std::vector<float>& color_vec = light_colors[lexical_cast<StarType>(it->Child("star_type").Text())];
                     GG::Clr color(it->Child("GG::Clr"));
                     color_vec.push_back(color.r / 255.0);
                     color_vec.push_back(color.g / 255.0);
@@ -389,7 +391,7 @@ namespace {
       case PT_GASGIANT  : planet_image += "gasgiant"  ; break;    
       default           : planet_image += "barren"    ; break;
     }
-    planet_image += boost::lexical_cast<std::string>((planet.ID() % IMAGES_PER_PLANET_TYPE) + 1) + ".png";
+    planet_image += lexical_cast<std::string>((planet.ID() % IMAGES_PER_PLANET_TYPE) + 1) + ".png";
 
     try
     {
@@ -464,8 +466,8 @@ namespace {
           GG::XMLElement file(chosen_plt_art.Child("File"));
 
           std::string filename = file.ContainsAttribute("Filename")?file.Attribute("Filename"):"";
-          int from = file.ContainsAttribute("From")?boost::lexical_cast<int>(file.Attribute("From")):0,
-              to   = file.ContainsAttribute("To"  )?boost::lexical_cast<int>(file.Attribute("To"  )):0;
+          int from = file.ContainsAttribute("From")?lexical_cast<int>(file.Attribute("From")):0,
+              to   = file.ContainsAttribute("To"  )?lexical_cast<int>(file.Attribute("To"  )):0;
 
           if(std::string::npos==filename.find('%'))
             textures.push_back(HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "planets/"+filename));
@@ -475,7 +477,7 @@ namespace {
               for(int i=from; i<=to; i++)
               {
                 std::string filename_image = filename,
-                            index          = boost::lexical_cast<std::string>(i);
+                            index          = lexical_cast<std::string>(i);
 
                 filename_image.replace(filename_image.find_last_of('%')-index.length()+1,index.length(),index);
                 while(filename_image.find('%')!=std::string::npos)
@@ -500,13 +502,13 @@ namespace {
             }
 
             if(chosen_plt_art.Child("FPS").ContainsAttribute(plt_size_name))
-              fps = boost::lexical_cast<double>(chosen_plt_art.Child("FPS").Attribute(plt_size_name));
+              fps = lexical_cast<double>(chosen_plt_art.Child("FPS").Attribute(plt_size_name));
           }
 
           if(chosen_plt_art.ContainsChild("StartFrame"))
           {
             if(chosen_plt_art.Child("StartFrame").ContainsAttribute("value"))
-              start_frame=boost::lexical_cast<int>(chosen_plt_art.Child("StartFrame").Attribute("value"));
+              start_frame=lexical_cast<int>(chosen_plt_art.Child("StartFrame").Attribute("value"));
           }
         }
       }
@@ -533,37 +535,14 @@ namespace {
 
   std::string GetPlanetSizeName(const Planet &planet)
   {
-    switch (planet.Size())
-    {
-      case SZ_TINY      : return ClientUI::String("PL_SZ_TINY"  );
-      case SZ_SMALL     : return ClientUI::String("PL_SZ_SMALL" ); 
-      case SZ_MEDIUM    : return ClientUI::String("PL_SZ_MEDIUM"); 
-      case SZ_LARGE     : return ClientUI::String("PL_SZ_LARGE" ); 
-      case SZ_HUGE      : return ClientUI::String("PL_SZ_HUGE"  ); 
-      case SZ_ASTEROIDS : return ""; //ClientUI::String("PL_SZ_ASTEROIDS"); break;
-      case SZ_GASGIANT  : return ""; //ClientUI::String("PL_SZ_GASGIANT"); break;
-      default                   : return "ERROR ";
-    }
+    if (planet.Size() == SZ_ASTEROIDS || planet.Size() == SZ_GASGIANT)
+      return "";
+    return UserString(lexical_cast<std::string>(planet.Size()));
   }
 
   std::string GetPlanetTypeName(const Planet &planet)
   {
-    switch (planet.Type())
-    {
-      case PT_SWAMP     : return ClientUI::String("PL_SWAMP"    );
-      case PT_TOXIC     : return ClientUI::String("PL_TOXIC"    );
-      case PT_INFERNO   : return ClientUI::String("PL_INFERNO"  );
-      case PT_RADIATED  : return ClientUI::String("PL_RADIATED" );
-      case PT_BARREN    : return ClientUI::String("PL_BARREN"   );
-      case PT_TUNDRA    : return ClientUI::String("PL_TUNDRA"   );
-      case PT_DESERT    : return ClientUI::String("PL_DESERT"   );
-      case PT_TERRAN    : return ClientUI::String("PL_TERRAN"   );
-      case PT_OCEAN     : return ClientUI::String("PL_OCEAN"    );
-      case PT_GAIA      : return ClientUI::String("PL_GAIA"     );
-      case PT_ASTEROIDS : return ClientUI::String("PL_ASTEROIDS");
-      case PT_GASGIANT  : return ClientUI::String("PL_GASGIANT" );        
-      default           : return "ERROR ";
-    }
+    return UserString(lexical_cast<std::string>(planet.Type()));
   }
 
   Ship* FindColonyShip(int system_id)
@@ -996,7 +975,7 @@ void CUIIconButton::SetValue(double value)
     SetText(buf);
   } 
   else
-    SetText((m_show_sign?(m_value < 0.0?"-":"+"):"") + boost::lexical_cast<std::string>(static_cast<int>(value)));
+    SetText((m_show_sign?(m_value < 0.0?"-":"+"):"") + lexical_cast<std::string>(static_cast<int>(value)));
   
   SetTextColor(m_value < 0.0 ? m_negative_color : m_positive_color);
 }
@@ -1045,7 +1024,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   m_button_food(0),m_button_mining(0),m_button_industry(0),m_button_research(0),m_button_balanced(0),
   m_construction(0)
 {
-  SetText(ClientUI::String("PLANET_PANEL"));
+  SetText(UserString("PLANET_PANEL"));
 
   GG::Clr owner_color(ClientUI::TEXT_COLOR);
   if(planet.Owners().size()>0)
@@ -1094,7 +1073,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::TEXT_COLOR,GG::TF_LEFT|GG::TF_TOP);
   AttachChild(m_planet_info);
 
-  m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::SIDE_PANEL_PTS)/2,60,ClientUI::String("PL_COLONIZE"),ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::Wnd::CLICKABLE);
+  m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::SIDE_PANEL_PTS)/2,60,UserString("PL_COLONIZE"),ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::Wnd::CLICKABLE);
   Connect(m_button_colonize->ClickedSignal(), &SidePanel::PlanetPanel::ClickColonize, this);
   AttachChild(m_button_colonize);
 
@@ -1307,8 +1286,8 @@ void SidePanel::PlanetPanel::PlanetChanged()
     text+= GetPlanetTypeName(*planet);
   
     text+="\n";
-    if(planet->MaxPop()==0) text+= ClientUI::String("PL_UNINHABITABLE");
-    else                    text+= ClientUI::String("PL_SIZE") + " " + boost::lexical_cast<std::string>(planet->MaxPop());
+    if(planet->MaxPop()==0) text+= UserString("PE_UNINHABITABLE");
+    else                    text+= UserString("PL_SIZE") + " " + lexical_cast<std::string>(planet->MaxPop());
 
     m_planet_info->SetText(text);
   }
@@ -1350,7 +1329,7 @@ void SidePanel::PlanetPanel::PlanetChanged()
       AttachChild(m_button_colonize);
       m_button_colonize->Show();
     }
-    m_button_colonize->SetText(ClientUI::String("PL_COLONIZE"));
+    m_button_colonize->SetText(UserString("PL_COLONIZE"));
   }
   else if (planet->IsAboutToBeColonized())
   {
@@ -1361,7 +1340,7 @@ void SidePanel::PlanetPanel::PlanetChanged()
       AttachChild(m_button_colonize);
       m_button_colonize->Show();
     }
-    m_button_colonize->SetText(ClientUI::String("CANCEL"));
+    m_button_colonize->SetText(UserString("CANCEL"));
   }
   else
   {
@@ -1509,7 +1488,7 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   x+=font->Height();
-  text = boost::lexical_cast<std::string>(population)+"/"+boost::lexical_cast<std::string>(planet.MaxPop());
+  text = lexical_cast<std::string>(population)+"/"+lexical_cast<std::string>(planet.MaxPop());
   font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0, true);
   x+=font->TextExtent(text, format).x+ICON_MARGIN;
 
@@ -1540,31 +1519,15 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 
 
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*0.9));
-  text = ClientUI::String("PL_PRIMARY_FOCUS");
-  switch(planet.PrimaryFocus())
-  {
-    case FOCUS_BALANCED : text+=" "+ClientUI::String("PL_BALANCED");break;
-    case FOCUS_FARMING  : text+=" "+ClientUI::String("PL_FARMING" );break;
-    case FOCUS_INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
-    case FOCUS_MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
-    case FOCUS_RESEARCH : text+=" "+ClientUI::String("PL_RESEARCH");break;
-    default: break;
-  }
+  text = UserString("PL_PRIMARY_FOCUS") + " ";
+  text += UserString(lexical_cast<std::string>(planet.PrimaryFocus()));
   font->RenderText(m_button_food->UpperLeft().x,
                    m_button_food->UpperLeft().y-font->Height(),
                    m_button_food->UpperLeft().x+ 500,
                    m_button_food->UpperLeft().y, text, format, 0, false);
 
-  text = ClientUI::String("PL_SECONDARY_FOCUS");
-  switch(planet.SecondaryFocus())
-  {
-    case FOCUS_BALANCED : text+=" "+ClientUI::String("PL_BALANCED");break;
-    case FOCUS_FARMING  : text+=" "+ClientUI::String("PL_FARMING" );break;
-    case FOCUS_INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
-    case FOCUS_MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
-    case FOCUS_RESEARCH : text+=" "+ClientUI::String("PL_RESEARCH");break;
-    default: break;
-  }
+  text = UserString("PL_SECONDARY_FOCUS") + " ";
+  text += UserString(lexical_cast<std::string>(planet.SecondaryFocus()));
   font->RenderText(m_button_research->UpperLeft ().x,
                    m_button_research->LowerRight().y,
                    m_button_research->UpperLeft ().x+ 500,
@@ -1594,7 +1557,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   else if(future_pop_growth>0.0)  text=GG::RgbaTag(GG::CLR_GREEN);
        else                       text=GG::RgbaTag(ClientUI::TEXT_COLOR);
 
-  text+= boost::lexical_cast<std::string>(static_cast<int>(planet.PopPoints())) + "</rgba>/"+boost::lexical_cast<std::string>(planet.MaxPop());
+  text+= lexical_cast<std::string>(static_cast<int>(planet.PopPoints())) + "</rgba>/"+lexical_cast<std::string>(planet.MaxPop());
   font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0, true);
   x+=font->TextExtent(text, format).x+ICON_MARGIN;
 
@@ -1618,10 +1581,10 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
     format = GG::TF_LEFT | GG::TF_VCENTER;
     text = "";
-    if(cost>0.0 && planet.ProductionPoints()<0.0) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
+    if(cost>0.0 && planet.ProductionPoints()<0.0) text = UserString("PL_PRODUCTION_TIME_NEVER");
     else
       if(cost>0.0)
-        text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % std::max(1,static_cast<int>(std::ceil((cost - planet.Rollover()) / planet.ProductionPoints()))));
+        text = boost::io::str(boost::format(UserString("PL_PRODUCTION_TIME_TURNS")) % std::max(1,static_cast<int>(std::ceil((cost - planet.Rollover()) / planet.ProductionPoints()))));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
@@ -1682,7 +1645,7 @@ void SidePanel::PlanetPanel::ClickColonize()
 
     if(!ship->GetFleet()->Accept(StationaryFleetVisitor(*ship->GetFleet()->Owners().begin())))
     {
-      GG::ThreeButtonDlg dlg(320,200,ClientUI::String("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
+      GG::ThreeButtonDlg dlg(320,200,UserString("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
                              ClientUI::FONT,ClientUI::PTS,ClientUI::WND_COLOR,ClientUI::CTRL_BORDER_COLOR,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR,2,
                              "Yes","No");
       dlg.Run();
@@ -1708,7 +1671,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
 
 
   GG::MenuItem menu_contents;
-  menu_contents.next_level.push_back(GG::MenuItem(ClientUI::String("SP_RENAME_PLANET"), 1, false, false));
+  menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false));
   GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
 
   if(popup.Run()) 
@@ -1717,7 +1680,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
       case 1: 
       { // rename planet
         std::string plt_name = planet->Name();
-        CUIEditWnd edit_wnd(350, ClientUI::String("SP_ENTER_NEW_PLANET_NAME"), plt_name);
+        CUIEditWnd edit_wnd(350, UserString("SP_ENTER_NEW_PLANET_NAME"), plt_name);
         edit_wnd.Run();
         if(edit_wnd.Result() != "")
         {
@@ -1823,7 +1786,7 @@ bool SidePanel::SystemResourceSummary::Render()
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   icon=IconFarming(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
-  text = (farming<0?"-":"+") + boost::lexical_cast<std::string>(farming);
+  text = (farming<0?"-":"+") + lexical_cast<std::string>(farming);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0, true);
   //x+=font->TextExtent(text, format).x+ICON_MARGIN;
   x+=info_elem_width+ICON_MARGIN;
@@ -1832,7 +1795,7 @@ bool SidePanel::SystemResourceSummary::Render()
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   icon=IconMining(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
-  text = (mining<0?"-":"+") + boost::lexical_cast<std::string>(mining);
+  text = (mining<0?"-":"+") + lexical_cast<std::string>(mining);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0, true);
   //x+=font->TextExtent(text, format).x+ICON_MARGIN;
   x+=info_elem_width+ICON_MARGIN;
@@ -1841,7 +1804,7 @@ bool SidePanel::SystemResourceSummary::Render()
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   icon=IconResearch(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
-  text = (research<0?"-":"+") + boost::lexical_cast<std::string>(research);
+  text = (research<0?"-":"+") + lexical_cast<std::string>(research);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0, true);
   //x+=font->TextExtent(text, format).x+ICON_MARGIN;
   x+=info_elem_width+ICON_MARGIN;
@@ -1850,7 +1813,7 @@ bool SidePanel::SystemResourceSummary::Render()
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   icon=IconIndustry(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
-  text = (industry<0?"-":"+") + boost::lexical_cast<std::string>(industry);
+  text = (industry<0?"-":"+") + lexical_cast<std::string>(industry);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0, true);
   //x+=font->TextExtent(text, format).x+ICON_MARGIN;
   x+=info_elem_width+ICON_MARGIN;
@@ -1859,7 +1822,7 @@ bool SidePanel::SystemResourceSummary::Render()
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   icon=IconDefense(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
-  text = boost::lexical_cast<std::string>(defense)+"/"+boost::lexical_cast<std::string>(defense*3);
+  text = lexical_cast<std::string>(defense)+"/"+lexical_cast<std::string>(defense*3);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0, true);
   //x+=font->TextExtent(text, format).x+ICON_MARGIN;
   x+=info_elem_width+ICON_MARGIN;
@@ -2267,8 +2230,8 @@ bool SidePanel::PlanetView::Render()
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
   font->RenderText(ul.x+20,y,ul.x+500,y+font->Height(), text, format, 0, false);
 
-  if(planet->MaxPop()==0) text= ClientUI::String("PL_UNINHABITABLE");
-  else                    text= " "+boost::lexical_cast<std::string>(static_cast<int>(planet->PopPoints()))+"/"+boost::lexical_cast<std::string>(planet->MaxPop()) + " Million";
+  if(planet->MaxPop()==0) text= UserString("PE_UNINHABITABLE");
+  else                    text= " "+lexical_cast<std::string>(static_cast<int>(planet->PopPoints()))+"/"+lexical_cast<std::string>(planet->MaxPop()) + " Million";
 
   text+="  ";
 
@@ -2277,7 +2240,7 @@ bool SidePanel::PlanetView::Render()
   else if(future_pop_growth>0.0)  text+=GG::RgbaTag(GG::CLR_GREEN) + "(+";
        else                       text+=GG::RgbaTag(ClientUI::TEXT_COLOR) + "(";
 
-  text+=boost::lexical_cast<std::string>(future_pop_growth);
+  text+=lexical_cast<std::string>(future_pop_growth);
   text+=")</rgba>";
 
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
@@ -2334,25 +2297,25 @@ bool SidePanel::PlanetView::Render()
   //farming
   y = UpperLeft().y+140;
   icon=IconFarming(); icon->OrthoBlit(x,y,x+icon_dim,y+icon_dim, 0, false);
-  text = (farming<0?"-":"+") + boost::lexical_cast<std::string>(farming);
+  text = (farming<0?"-":"+") + lexical_cast<std::string>(farming);
   font->RenderText(x+icon_dim,y,x+icon_dim+35, y+icon_dim, text, format, 0, true);
 
   //mining
   y = UpperLeft().y+140+35;
   icon=IconMining(); icon->OrthoBlit(x,y,x+icon_dim,y+icon_dim, 0, false);
-  text = (mining<0?"-":"+") + boost::lexical_cast<std::string>(mining);
+  text = (mining<0?"-":"+") + lexical_cast<std::string>(mining);
   font->RenderText(x+icon_dim,y,x+icon_dim+35, y+icon_dim, text, format, 0, true);
 
   //research
   y = UpperLeft().y+140+70;
   icon=IconResearch(); icon->OrthoBlit(x,y,x+icon_dim,y+icon_dim, 0, false);
-  text = (research<0?"-":"+") + boost::lexical_cast<std::string>(research);
+  text = (research<0?"-":"+") + lexical_cast<std::string>(research);
   font->RenderText(x+icon_dim,y,x+icon_dim+35, y+icon_dim, text, format, 0, true);
 
   //industy
   y = UpperLeft().y+140+105;
   icon=IconIndustry(); icon->OrthoBlit(x,y,x+icon_dim,y+icon_dim, 0, false);
-  text = (industry<0?"-":"+") + boost::lexical_cast<std::string>(industry);
+  text = (industry<0?"-":"+") + lexical_cast<std::string>(industry);
   font->RenderText(x+icon_dim,y,x+icon_dim+35, y+icon_dim, text, format, 0, true);
 
   AngledCornerRectangle(ul.x+255, ul.y+10,ul.x+489, ul.y+289, GG::Clr(0.0,0.0,0.0,0.6), GG::CLR_ZERO,0,0,0,0,0);
@@ -2391,10 +2354,10 @@ bool SidePanel::PlanetView::Render()
     font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
     Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
     text = "";
-    if(cost>0.0 && planet->ProductionPoints()<0.0) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
+    if(cost>0.0 && planet->ProductionPoints()<0.0) text = UserString("PL_PRODUCTION_TIME_NEVER");
     else
       if(cost>0.0)
-          text = boost::io::str(boost::format(ClientUI::String("PL_PRODUCTION_TIME_TURNS")) % std::max(1,static_cast<int>(std::ceil((cost - planet->Rollover()) / planet->ProductionPoints()))));
+          text = boost::io::str(boost::format(UserString("PL_PRODUCTION_TIME_TURNS")) % std::max(1,static_cast<int>(std::ceil((cost - planet->Rollover()) / planet->ProductionPoints()))));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
@@ -2420,7 +2383,7 @@ bool SidePanel::PlanetView::Render()
       font->RenderText(ul.x+385,y,ul.x+50,y+font->Height(), text, format, 0, false);
 
       format = GG::TF_RIGHT | GG::TF_VCENTER;
-      text = boost::lexical_cast<std::string>(design->attack);
+      text = lexical_cast<std::string>(design->attack);
       font->RenderText(ul.x+385+50,y,ul.x+484,y+font->Height(), text, format, 0, false);
 
       y+=font->Height();
@@ -2430,7 +2393,7 @@ bool SidePanel::PlanetView::Render()
       font->RenderText(ul.x+385,y,ul.x+200,y+font->Height(), text, format, 0, false);
 
       format = GG::TF_RIGHT | GG::TF_VCENTER;
-      text = boost::lexical_cast<std::string>(design->defense);
+      text = lexical_cast<std::string>(design->defense);
       font->RenderText(ul.x+385+50,y,ul.x+484,y+font->Height(), text, format, 0, false);
       
       y+=font->Height();
@@ -2440,7 +2403,7 @@ bool SidePanel::PlanetView::Render()
       font->RenderText(ul.x+385,y,ul.x+200,y+font->Height(), text, format, 0, false);
 
       format = GG::TF_RIGHT | GG::TF_VCENTER;
-      text = boost::lexical_cast<std::string>(design->cost);
+      text = lexical_cast<std::string>(design->cost);
       font->RenderText(ul.x+385+50,y,ul.x+484,y+font->Height(), text, format, 0, false);
 
       y+=font->Height();
@@ -2460,11 +2423,11 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     Wnd(x, y, w, h, GG::Wnd::CLICKABLE),
     m_system(0),
     m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5),ClientUI::SIDE_PANEL_COLOR)),
-    m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,ClientUI::String("SP_UNKNOWN_SYSTEM"),ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4),ClientUI::TEXT_COLOR)),
+    m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,UserString("SP_UNKNOWN_SYSTEM"),ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4),ClientUI::TEXT_COLOR)),
     m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
     m_button_next(new GG::Button(40+w-80                 ,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
     m_star_graphic(0),
-    m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::PTS-5,ClientUI::String("SP_SYSTEM_PRODUCTION"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR)),
+    m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::PTS-5,UserString("SP_SYSTEM_PRODUCTION"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR)),
     m_next_pltview_fade_in(0),m_next_pltview_planet_id(UniverseObject::INVALID_OBJECT_ID),m_next_pltview_fade_out(-1),
     m_planet_view(0),
     m_planet_panel_container(new PlanetPanelContainer(0,100,w,h-100-30)),
@@ -2472,7 +2435,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
 {
   TempUISoundDisabler sound_disabler;
 
-  SetText(ClientUI::String("SIDE_PANEL"));
+  SetText(UserString("SIDE_PANEL"));
 
   m_system_name->DisableDropArrow();
   m_system_name->SetStyle(GG::LB_CENTER);
@@ -2571,7 +2534,7 @@ void SidePanel::SetSystem(int system_id)
         if(sys_vec[i]->Name().length()==0)
           continue;
  
-        row->push_back(boost::io::str(boost::format(ClientUI::String("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4), ClientUI::TEXT_COLOR);
+        row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4), ClientUI::TEXT_COLOR);
         m_system_name->Insert(row);
 
         if(sys_vec[i]->ID() == system_id)
@@ -2600,7 +2563,7 @@ void SidePanel::SetSystem(int system_id)
         case STAR_BLACK    : star_image += "blackhole0"; break;
         default            : star_image += "white0"    ; break;
       }
-      star_image += boost::lexical_cast<std::string>(m_system->ID()%2)+".png";
+      star_image += lexical_cast<std::string>(m_system->ID()%2)+".png";
 
       graphic = GetTexture(star_image);
       

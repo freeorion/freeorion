@@ -181,11 +181,11 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_turn_update);
 
 
-    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-5-40, 5, 40, ClientUI::String("MAP_BTN_MENU") );
+    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-5-40, 5, 40, UserString("MAP_BTN_MENU") );
     m_toolbar->AttachChild(m_btn_menu);
     GG::Connect(m_btn_menu->ClickedSignal(), &MapWnd::MenuBtnClicked, this);
     
-    m_btn_siterep = new CUIButton(m_btn_menu->UpperLeft().x-5-50, 5, 50, ClientUI::String("MAP_BTN_SITREP") );
+    m_btn_siterep = new CUIButton(m_btn_menu->UpperLeft().x-5-50, 5, 50, UserString("MAP_BTN_SITREP") );
     m_toolbar->AttachChild(m_btn_siterep);
     GG::Connect(m_btn_siterep->ClickedSignal(), &MapWnd::SiteRepBtnClicked, this);
     
@@ -638,7 +638,7 @@ void MapWnd::InitTurn(int turn_number)
         m_side_panel->Hide();
 
     // set turn button to current turn
-    m_turn_update->SetText( ClientUI::String("MAP_BTN_TURN_UPDATE") + boost::lexical_cast<std::string>(turn_number ) );    
+    m_turn_update->SetText( UserString("MAP_BTN_TURN_UPDATE") + boost::lexical_cast<std::string>(turn_number ) );    
     MoveChildUp( m_turn_update );
 
     MoveChildUp(m_sitrep_panel);

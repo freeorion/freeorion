@@ -77,13 +77,13 @@ class CombatInfoControl : public GG::Control
       font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
       glColor4ubv(ClientUI::TEXT_COLOR.v);
       format = GG::TF_LEFT | GG::TF_BOTTOM;
-      font->RenderText(rc.UpperLeft(),rc.LowerRight(),ClientUI::String("COMBAT_BATTLE"), format, 0, true);
+      font->RenderText(rc.UpperLeft(),rc.LowerRight(),UserString("COMBAT_BATTLE"), format, 0, true);
 
       rc = GG::Rect(ul+GG::Pt(20+50,5),ul+GG::Pt(500,28));
       font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.7));
       glColor4ubv(ClientUI::TEXT_COLOR.v);
       format = GG::TF_LEFT | GG::TF_BOTTOM;
-      font->RenderText(rc.UpperLeft(),rc.LowerRight(),boost::io::str(boost::format(ClientUI::String("COMBAT_SYSTEM")) % m_combat_info.m_system), format, 0, true);
+      font->RenderText(rc.UpperLeft(),rc.LowerRight(),boost::io::str(boost::format(UserString("COMBAT_SYSTEM")) % m_combat_info.m_system), format, 0, true);
       
 
       for(unsigned int i=0;i<m_combat_info.m_opponents.size();i++,y+=font->Height()+2)
@@ -99,22 +99,22 @@ class CombatInfoControl : public GG::Control
         } entries[3][4] =
         {
           {
-            {ClientUI::String("COMBAT_MILITARY_SHIPS") ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
-            {boost::lexical_cast<std::string>(eci->combat_ships          ) + ClientUI::String("COMBAT_REMAINING"),GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->combat_ships_retreated) + ClientUI::String("COMBAT_RETREATED"),GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->combat_ships_retreated)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->combat_ships_destroyed) + ClientUI::String("COMBAT_DESTROYED"),GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->combat_ships_destroyed)?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
+            {UserString("COMBAT_MILITARY_SHIPS") ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
+            {boost::lexical_cast<std::string>(eci->combat_ships          ) + UserString("COMBAT_REMAINING"),GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->combat_ships_retreated) + UserString("COMBAT_RETREATED"),GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->combat_ships_retreated)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->combat_ships_destroyed) + UserString("COMBAT_DESTROYED"),GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->combat_ships_destroyed)?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
           },
           {
-            {ClientUI::String("COMBAT_CIVILIAN_SHIPS") ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
-            {boost::lexical_cast<std::string>(eci->non_combat_ships          )+ClientUI::String("COMBAT_REMAINING")    ,GG::TF_CENTER | GG::TF_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->non_combat_ships_retreated)+ClientUI::String("COMBAT_RETREATED")    ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->non_combat_ships_retreated)?GG::CLR_ZERO : GG::Clr(128,64,64,255)  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->non_combat_ships_destroyed)+ClientUI::String("COMBAT_DESTROYED")    ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->non_combat_ships_destroyed)?GG::CLR_ZERO : GG::CLR_RED   ,GG::CLR_ZERO ,0}
+            {UserString("COMBAT_CIVILIAN_SHIPS") ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
+            {boost::lexical_cast<std::string>(eci->non_combat_ships          )+UserString("COMBAT_REMAINING")    ,GG::TF_CENTER | GG::TF_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->non_combat_ships_retreated)+UserString("COMBAT_RETREATED")    ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->non_combat_ships_retreated)?GG::CLR_ZERO : GG::Clr(128,64,64,255)  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->non_combat_ships_destroyed)+UserString("COMBAT_DESTROYED")    ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->non_combat_ships_destroyed)?GG::CLR_ZERO : GG::CLR_RED   ,GG::CLR_ZERO ,0}
           },
           {
-            {ClientUI::String("COMBAT_PLANETS") ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
-            {boost::lexical_cast<std::string>(eci->planets            )+ClientUI::String("COMBAT_REMAINING")    ,GG::TF_CENTER | GG::TF_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->planets_defenseless)+ClientUI::String("COMBAT_DEFENSELESS")  ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->planets_defenseless)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->planets_lost       )+ClientUI::String("COMBAT_LOST")         ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->planets_lost       )?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
+            {UserString("COMBAT_PLANETS") ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
+            {boost::lexical_cast<std::string>(eci->planets            )+UserString("COMBAT_REMAINING")    ,GG::TF_CENTER | GG::TF_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->planets_defenseless)+UserString("COMBAT_DEFENSELESS")  ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->planets_defenseless)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->planets_lost       )+UserString("COMBAT_LOST")         ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->planets_lost       )?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
           }
         };
         
@@ -173,7 +173,7 @@ struct CombatInfoRow : public GG::ListBox::Row
 // CombatWnd
 ////////////////////////////////////////////////
 CombatWnd::CombatWnd(int x,int y)
-    : CUI_Wnd(ClientUI::String("COMBAT_WINDOW_TITLE"),x,y, WIDTH, HEIGHT,  GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE | CUI_Wnd::MINIMIZABLE)
+    : CUI_Wnd(UserString("COMBAT_WINDOW_TITLE"),x,y, WIDTH, HEIGHT,  GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE | CUI_Wnd::MINIMIZABLE)
 
 {
   m_combats_lb = new CUIListBox(LeftBorder(),TopBorder(),Width()-(LeftBorder()+RightBorder()),Height()-(TopBorder()+BottomBorder()),GG::CLR_ZERO,GG::CLR_ZERO);

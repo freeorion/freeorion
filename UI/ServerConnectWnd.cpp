@@ -26,7 +26,7 @@ namespace {
 }
 
 ServerConnectWnd::ServerConnectWnd() : 
-    CUI_Wnd(ClientUI::String("SCONNECT_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() - SERVER_CONNECT_WND_WIDTH) / 2, 
+    CUI_Wnd(UserString("SCONNECT_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() - SERVER_CONNECT_WND_WIDTH) / 2, 
             (GG::App::GetApp()->AppHeight() - 500 + ClientUI::PTS + 10 + 3 * CONTROL_MARGIN) / 2, SERVER_CONNECT_WND_WIDTH, 
             500 + ClientUI::PTS + 10 + 3 * CONTROL_MARGIN, GG::Wnd::CLICKABLE | GG::Wnd::MODAL),
     m_host_or_join_radio_group(0),
@@ -41,7 +41,7 @@ ServerConnectWnd::ServerConnectWnd() :
 {
     TempUISoundDisabler sound_disabler;
 
-    GG::TextControl* temp = new GG::TextControl(LeftBorder() + CONTROL_MARGIN, TopBorder() + CONTROL_MARGIN, ClientUI::String("PLAYER_NAME_LABEL"), 
+    GG::TextControl* temp = new GG::TextControl(LeftBorder() + CONTROL_MARGIN, TopBorder() + CONTROL_MARGIN, UserString("PLAYER_NAME_LABEL"), 
                                                 ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
     AttachChild(temp);
     const int PLAYER_NAME_EDIT_X = LeftBorder() + CONTROL_MARGIN + temp->Width() + CONTROL_MARGIN;
@@ -49,23 +49,23 @@ ServerConnectWnd::ServerConnectWnd() :
                                      ClientUI::PTS + 10, "");
 
     m_host_or_join_radio_group = new GG::RadioButtonGroup(LeftBorder() + CONTROL_MARGIN, m_player_name_edit->LowerRight().y + CONTROL_MARGIN);
-    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4, ClientUI::String("HOST_GAME_BN"), GG::TF_LEFT, 
+    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4, UserString("HOST_GAME_BN"), GG::TF_LEFT, 
                                                              CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
     m_host_or_join_radio_group->AddButton(new CUIStateButton(0, ClientUI::PTS + 4 + CONTROL_MARGIN, SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4, 
-                                                             ClientUI::String("JOIN_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+                                                             UserString("JOIN_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
 
     const int JOIN_CONTROLS_X = LeftBorder() + CONTROL_MARGIN + 10;
     m_LAN_game_label = new GG::TextControl(JOIN_CONTROLS_X, m_host_or_join_radio_group->LowerRight().y + CONTROL_MARGIN, 
-                                           ClientUI::String("LAN_GAME_LABEL"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+                                           UserString("LAN_GAME_LABEL"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
     m_servers_lb = new CUIListBox(JOIN_CONTROLS_X, m_LAN_game_label->LowerRight().y + CONTROL_MARGIN, SERVERS_LIST_BOX_WIDTH, 300);
-    m_find_LAN_servers_bn = new CUIButton(JOIN_CONTROLS_X, m_servers_lb->LowerRight().y + CONTROL_MARGIN, 100, ClientUI::String("REFRESH_LIST_BN"));
+    m_find_LAN_servers_bn = new CUIButton(JOIN_CONTROLS_X, m_servers_lb->LowerRight().y + CONTROL_MARGIN, 100, UserString("REFRESH_LIST_BN"));
     m_internet_game_label = new GG::TextControl(JOIN_CONTROLS_X, m_find_LAN_servers_bn->LowerRight().y + 2 * CONTROL_MARGIN, 
-                                                ClientUI::String("INTERNET_GAME_LABEL"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+                                                UserString("INTERNET_GAME_LABEL"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
     m_IP_address_edit = new CUIEdit(JOIN_CONTROLS_X, m_internet_game_label->LowerRight().y + CONTROL_MARGIN, SERVERS_LIST_BOX_WIDTH, ClientUI::PTS + 10, "");
     m_ok_bn = new CUIButton(Width() - RightBorder() - 2 * (OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN), m_IP_address_edit->LowerRight().y + 2 * CONTROL_MARGIN, 
-                            OK_CANCEL_BUTTON_WIDTH, ClientUI::String("OK"));
+                            OK_CANCEL_BUTTON_WIDTH, UserString("OK"));
     m_cancel_bn = new CUIButton(Width() - RightBorder() - (OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN), m_IP_address_edit->LowerRight().y + 2 * CONTROL_MARGIN, 
-                                OK_CANCEL_BUTTON_WIDTH, ClientUI::String("CANCEL"));
+                                OK_CANCEL_BUTTON_WIDTH, UserString("CANCEL"));
 
     m_servers_lb->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
 

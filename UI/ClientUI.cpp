@@ -166,7 +166,6 @@ namespace {
         db.Add("UI.wnd-inner-border-color.alpha", "Sets UI inner border color (alpha).", 255, RangedValidator<int>(0, 255));
 
         db.Add("UI.tooltip-delay", "Sets UI tooltip popup delay, in ms.", 1000, RangedValidator<int>(0, 3000));
-        db.Add<std::string>("UI.stringtable-filename", "Sets UI string table filename.", "eng_stringtable.txt");
 
         db.Add("UI.multiple-fleet-windows", "If true, clicks on multiple fleet buttons will open multiple fleet "
                "windows at the same time.  Otherwise, opening a fleet window will close any currently-open fleet window.", 
@@ -313,7 +312,6 @@ ClientUI::ClientUI() :
     TOOLTIP_DELAY(GetOptionsDB().Get<int>("UI.tooltip-delay")), // 1 second delay for tooltips to appear
     m_tooltips(0),
     m_state(STATE_STARTUP),
-    m_string_table(0),
     m_intro_screen(0),
     m_map_wnd(0),
     m_turn_progress_wnd(0),
@@ -368,17 +366,13 @@ ClientUI::ClientUI() :
     if (!SOUND_DIR.empty() && SOUND_DIR[SOUND_DIR.size() - 1] != '/')
         SOUND_DIR += '/';
 
-    //call initialize with stringtable filename
-    Initialize(DIR + GetOptionsDB().Get<std::string>("UI.stringtable-filename"));
+    Initialize();
 }
 
-bool ClientUI::Initialize(const std::string& string_table_file)
+bool ClientUI::Initialize()
 {
     //initialize Tooltip engine
     m_tooltips = new ToolContainer(TOOLTIP_DELAY);
-
-    //initialize string table
-    m_string_table = new StringTable(string_table_file);
 
     //initialize UI state & window
     m_state = STATE_STARTUP;
@@ -400,9 +394,6 @@ bool ClientUI::Cleanup()
     delete m_tooltips;
     m_tooltips = 0;
     
-    delete m_string_table;
-    m_string_table = 0;
-
     delete m_intro_screen;
     m_intro_screen = 0;
 
@@ -415,11 +406,6 @@ bool ClientUI::Cleanup()
     s_the_UI = 0;
 
     return true; 
-}
-
-const std::string& ClientUI::Language() const 
-{
-    return m_string_table->Language();
 }
 
 bool ClientUI::AttachToolWnd(GG::Wnd* parent, ToolWnd* tool)
@@ -650,7 +636,7 @@ void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)
 {
     GG::ThreeButtonDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR, WND_BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
-                           new CUIButton((320-75)/2, 170, 75, String("OK")));
+                           new CUIButton((320-75)/2, 170, 75, UserString("OK")));
     if (play_alert_sound && GetOptionsDB().Get<bool>("UI.sound.enabled"))
         HumanClientApp::GetApp()->PlaySound(SoundDir() + "alert.wav");
     dlg.Run();
@@ -661,15 +647,10 @@ void ClientUI::LogMessage(const std::string& msg)
     s_logger.debug(msg);
 }
 
-const std::string& ClientUI::String(const std::string& index)
-{
-    return s_the_UI->m_string_table->String(index);
-}
-
 void ClientUI::GenerateSitRepText( SitRepEntry *p_sit_rep )
 {
   // get template string
-  std::string template_str( String( g_string_id_lut[ p_sit_rep->GetType() ] ) );
+  std::string template_str( UserString( g_string_id_lut[ p_sit_rep->GetType() ] ) );
 
   // parse string
   p_sit_rep->GenerateVarText( template_str );

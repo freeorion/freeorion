@@ -364,7 +364,7 @@ void HumanClientApp::SetUISoundsVolume(int vol)
 bool HumanClientApp::LoadSinglePlayerGame()
 {
     std::vector<std::pair<std::string, std::string> > save_file_types;
-    save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("GAME_MENU_SAVE_FILES"), "*.sav"));
+    save_file_types.push_back(std::pair<std::string, std::string>(UserString("GAME_MENU_SAVE_FILES"), "*.sav"));
 
     try {
         FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", false, false, save_file_types);
@@ -382,7 +382,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
                 const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
                 while (!NetworkCore().ConnectToLocalhostServer()) {
                     if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
-                        ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"), true);
+                        ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                         failed = true;
                         break;
                     }
@@ -655,7 +655,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS -- Connection rejected by server, "
                 "because different versions of the following settings and/or source files are in use by the client and the server: " << 
                 settings_files << " " << source_files;
-            ClientUI::MessageBox(ClientUI::String("ERR_VERSION_MISMATCH") + settings_files + " " + source_files, true);
+            ClientUI::MessageBox(UserString("ERR_VERSION_MISMATCH") + settings_files + " " + source_files, true);
             EndGame();
         }
         break;
@@ -803,15 +803,15 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
         // given IDs, build message
         if ( phase_id == Message::FLEET_MOVEMENT )
-            phase_str = ClientUI::String("TURN_PROGRESS_PHASE_FLEET_MOVEMENT" );
+            phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT" );
         else if ( phase_id == Message::COMBAT )
-            phase_str = ClientUI::String("TURN_PROGRESS_PHASE_COMBAT" );
+            phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT" );
         else if ( phase_id == Message::EMPIRE_PRODUCTION )
-            phase_str = ClientUI::String("TURN_PROGRESS_PHASE_EMPIRE_GROWTH" );
+            phase_str = UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH" );
         else if ( phase_id == Message::WAITING_FOR_PLAYERS )
-            phase_str = ClientUI::String("TURN_PROGRESS_PHASE_WAITING");
+            phase_str = UserString("TURN_PROGRESS_PHASE_WAITING");
         else if ( phase_id == Message::PROCESSING_ORDERS )
-            phase_str = ClientUI::String("TURN_PROGRESS_PHASE_ORDERS");
+            phase_str = UserString("TURN_PROGRESS_PHASE_ORDERS");
 
         m_ui->UpdateTurnProgress( phase_str, empire_id );
         break;
@@ -833,17 +833,17 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Message::PLAYER_ELIMINATED : m_empire_id=" << m_empire_id << " Empires().Lookup(m_empire_id)=" << Empires().Lookup(m_empire_id);
         if (Empires().Lookup(m_empire_id)->Name() == msg.GetText()) {
             // TODO: replace this with something better
-            ClientUI::MessageBox(ClientUI::String("PLAYER_DEFEATED"));
+            ClientUI::MessageBox(UserString("PLAYER_DEFEATED"));
             EndGame();
         } else {
             // TODO: replace this with something better
-            ClientUI::MessageBox(boost::io::str(boost::format(ClientUI::String("EMPIRE_DEFEATED")) % msg.GetText()));
+            ClientUI::MessageBox(boost::io::str(boost::format(UserString("EMPIRE_DEFEATED")) % msg.GetText()));
         }
         break;
     }
 
     case Message::PLAYER_EXIT: {
-        std::string message = boost::io::str(boost::format(ClientUI::String("PLAYER_DISCONNECTED")) % msg.GetText());
+        std::string message = boost::io::str(boost::format(UserString("PLAYER_DISCONNECTED")) % msg.GetText());
         ClientUI::MessageBox(message, true);
         break;
     }
@@ -851,9 +851,9 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     case Message::END_GAME: {
         if (msg.GetText() == "VICTORY") {
             // TODO: replace this with something better
-            ClientUI::MessageBox(ClientUI::String("PLAYER_VICTORIOUS"));
+            ClientUI::MessageBox(UserString("PLAYER_VICTORIOUS"));
         } else {
-            ClientUI::MessageBox(ClientUI::String("SERVER_GAME_END"));
+            ClientUI::MessageBox(UserString("SERVER_GAME_END"));
         }
         EndGame();
         break;
@@ -869,10 +869,10 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 void HumanClientApp::HandleServerDisconnectImpl()
 {
     if (m_multiplayer_lobby_wnd) { // in MP lobby
-        ClientUI::MessageBox(ClientUI::String("MPLOBBY_HOST_ABORTED_GAME"), true);
+        ClientUI::MessageBox(UserString("MPLOBBY_HOST_ABORTED_GAME"), true);
         m_multiplayer_lobby_wnd->Cancel();
     } else if (m_game_started) { // playing game
-        ClientUI::MessageBox(ClientUI::String("SERVER_LOST"), true);
+        ClientUI::MessageBox(UserString("SERVER_LOST"), true);
         EndGame();
     }
 }
