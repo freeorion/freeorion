@@ -68,6 +68,7 @@ universe/Condition.cpp				\
 universe/Condition.h	 			\
 universe/Effect.cpp				\
 universe/Effect.h	 			\
+universe/Enums.h	 			\
 universe/Fleet.cpp				\
 universe/Fleet.h	 			\
 universe/Meter.cpp				\
@@ -88,6 +89,8 @@ universe/Special.cpp				\
 universe/Special.h  				\
 universe/System.cpp				\
 universe/System.h  				\
+universe/Tech.h					\
+universe/Tech.cpp				\
 universe/Universe.cpp				\
 universe/Universe.h  				\
 universe/UniverseObject.cpp			\
