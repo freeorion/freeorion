@@ -24,6 +24,8 @@
 #include "ServerConnectWnd.h"
 #endif
 
+#include "../network/Message.h"
+
 #include <stdlib.h>
 #include <string>
 
@@ -142,6 +144,32 @@ void IntroScreen::OnStartGame()
         {
             //TODO: Open Empire selection window if user clicked OK
             
+                while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) ;
+
+		      //sleep(1);
+
+                // start a game on the server
+                GG::XMLDoc game_parameters;
+                // use (host) human player named "Zach"
+                GG::XMLElement elem("host_player_name");
+                elem.SetText("Zach");
+                game_parameters.root_node.AppendChild(elem);
+                // 5 players total
+                elem = GG::XMLElement("num_players");
+                elem.SetAttribute("value", "5");
+                    game_parameters.root_node.AppendChild(elem);
+                // 1 AI client
+                elem = GG::XMLElement("AI_client");
+                game_parameters.root_node.AppendChild(elem);
+		// Universe setup
+                char tmp_universe[255];
+                sprintf(tmp_universe, "%d", galaxy_wnd.GalaxySize());
+		elem = GG::XMLElement("universe_params");
+                elem.SetAttribute("size", tmp_universe);
+                game_parameters.root_node.AppendChild(elem);
+
+                HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(game_parameters));
+
             //TEMP
                 //display the chosen settings
 
