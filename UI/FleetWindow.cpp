@@ -599,7 +599,10 @@ std::string FleetDetailPanel::DestinationText() const
     System* current = m_fleet->GetSystem();
     if (dest && dest != current) {
         std::pair<int, int> eta = m_fleet->ETA();
-        retval = "Moving to " + dest->Name() + ", ETA " + boost::lexical_cast<std::string>(eta.first);
+        if (dest->Name().empty())
+            retval = "Moving to unknown system, ETA " + boost::lexical_cast<std::string>(eta.first);
+        else
+            retval = "Moving to " + dest->Name() + ", ETA " + boost::lexical_cast<std::string>(eta.first);
         if (eta.first != eta.second)
             retval += "(" + boost::lexical_cast<std::string>(m_fleet->ETA().second) + ")";
     } else if (current) {
@@ -1032,7 +1035,7 @@ Fleet* FleetWnd::FleetInRow(int idx) const
 std::string FleetWnd::TitleText() const
 {
     Fleet* existing_fleet = FleetInRow(0);
-    return "Empire " + boost::lexical_cast<std::string>(*existing_fleet->Owners().begin()) + " Fleets";
+    return Empires().Lookup(*existing_fleet->Owners().begin())->Name() + " Fleets";
 }
 
 void FleetWnd::DeleteFleet(Fleet* fleet)
