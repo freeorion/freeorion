@@ -451,7 +451,7 @@ void FleetDetailPanel::SetFleet(Fleet* fleet)
     *m_destination_text << "";
     *m_ship_status_text << "";
     m_ships_lb->Clear();
-    if (m_fleet = fleet) {
+    if ((m_fleet = fleet)) {
         Universe& universe = GetUniverse();
         if (m_fleet->NumShips()) {
             for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {

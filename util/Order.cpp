@@ -176,7 +176,6 @@ void PlanetBuildOrder::Execute() const
     
     ValidateEmpireID();
  
-    EmpireManager* empire = &Empires();
     Universe* universe = &GetUniverse();
     
     // look up object
@@ -322,7 +321,6 @@ void FleetMoveOrder::Execute() const
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
-    EmpireManager& empire = Empires();
     
     // look up the fleet in question
     UniverseObject* the_object = universe.Object(FleetID());
@@ -407,7 +405,6 @@ void FleetTransferOrder::Execute() const
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
-    EmpireManager& empire = Empires();
 
     // look up the source fleet and destination fleet
     Fleet* source_fleet = universe.Object<Fleet>(SourceFleet());
@@ -514,7 +511,6 @@ void FleetColonizeOrder::Execute() const
     ValidateEmpireID();
 
     Universe* universe = &GetUniverse();
-    EmpireManager* empire = &Empires();
     
     // look up the fleet in question
     UniverseObject* the_object = universe->Object(m_ship->FleetID());
@@ -585,7 +581,6 @@ void FleetColonizeOrder::ExecuteServerApply() const
     ValidateEmpireID();
 
     Universe* universe = &GetUniverse();
-    EmpireManager* empire = &Empires();
        
     // verify that planet exists and is un-occupied.
     Planet* target_planet = universe->Object<Planet>(PlanetID());
@@ -685,7 +680,6 @@ void DeleteFleetOrder::Execute() const
     ValidateEmpireID();
 
     Fleet* fleet = GetUniverse().Object<Fleet>(FleetID());
-    Empire* empire = Empires().Lookup(EmpireID());
 
     if(!fleet)
         throw std::runtime_error("Illegal fleet id specified in fleet colonize order.");
@@ -739,7 +733,6 @@ void ChangeFocusOrder::Execute() const
     ValidateEmpireID();
 
     Planet* planet = GetUniverse().Object<Planet>(PlanetID());
-    Empire* empire = Empires().Lookup(EmpireID());
 
     if(!planet)
         throw std::runtime_error("Illegal planet id specified in change planet focus order.");

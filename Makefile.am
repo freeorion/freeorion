@@ -66,8 +66,12 @@ network/XParser.cpp				\
 network/XParser.hpp  				\
 network/XTree.cpp				\
 network/XTree.hpp  				\
+universe/Condition.cpp				\
+universe/Condition.h	 			\
 universe/Fleet.cpp				\
 universe/Fleet.h	 			\
+universe/Meter.cpp				\
+universe/Meter.h  				\
 universe/Planet.cpp				\
 universe/Planet.h  				\
 universe/PopCenter.cpp				\
@@ -84,6 +88,8 @@ universe/Universe.cpp				\
 universe/Universe.h  				\
 universe/UniverseObject.cpp			\
 universe/UniverseObject.h  			\
+universe/ValueRef.cpp				\
+universe/ValueRef.h  				\
 util/AppInterface.cpp				\
 util/AppInterface.h  				\
 util/DataTable.cpp				\

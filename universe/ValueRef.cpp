@@ -1,9 +1,9 @@
-#include <ValueRef.h>
+#include "ValueRef.h"
 
-#include <Fleet.h>
-#include <Planet.h>
-#include <System.h>
-#include <UniverseObject.h>
+#include "Fleet.h"
+#include "Planet.h"
+#include "System.h"
+#include "UniverseObject.h"
 
 #include <boost/spirit.hpp>
 

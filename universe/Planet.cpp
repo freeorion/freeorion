@@ -56,8 +56,8 @@ Planet::Planet(const GG::XMLElement& elem) :
    UniverseObject(elem.Child("UniverseObject")),
    PopCenter(elem.Child("PopCenter")),
    ProdCenter(elem.Child("ProdCenter")),
-   m_def_bases(0),
-   m_is_about_to_be_colonized(false)
+   m_is_about_to_be_colonized(false),
+   m_def_bases(0)
 {
     using GG::XMLElement;
 

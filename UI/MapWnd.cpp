@@ -143,6 +143,7 @@ MapWnd::MapWnd() :
             static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH, 
             static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppHeight() + MAP_MARGIN_WIDTH, 
             GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
+    m_disabled_accels_list(),
     m_backgrounds(NUM_BACKGROUNDS),
     m_bg_scroll_rate(NUM_BACKGROUNDS),
     m_bg_position_X(NUM_BACKGROUNDS),
@@ -150,10 +151,8 @@ MapWnd::MapWnd() :
     m_zoom_factor(1.0),
     m_drag_offset(-1, -1),
     m_dragged(false),
-    m_disabled_accels_list(),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
     m_current_fleet(UniverseObject::INVALID_OBJECT_ID)
-
 {
     SetText("MapWnd");
 
@@ -594,7 +593,6 @@ void MapWnd::InitTurn(int turn_number)
         GG::Connect(icon->RightClickedSignal(), &MapWnd::SystemRightClicked, this);
 
         // system's starlanes
-        int n = 0;
         for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
             if (!it->second) {
                 System* dest_system = universe.Object<System>(it->first);

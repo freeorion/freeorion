@@ -264,7 +264,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
     }
 
     // apply damage each empire combat force has done
-    for(unsigned int e=0; e < damage_done.size(); e++)
+    for(int e=0; e < static_cast<int>(damage_done.size()); e++)
       while(damage_done[e]>0) // any damage?
       {
         // all or all other forces destroyed!!
@@ -354,7 +354,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
   int victor = combat_assets.size()==1 && empire_combat_forces[combat_assets[0]].CountArmedAssets()>0
               ?combat_assets[0]:-1;
 
-  for(unsigned int e=0;e<empire_combat_forces.size();e++)
+  for(int e=0;e<static_cast<int>(empire_combat_forces.size());e++)
   {   
     //remove defense bases of defenseless planets
     for(unsigned int i=0; i<empire_combat_forces[e].defenseless_planets.size(); i++)
@@ -386,8 +386,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
     // if there is not target system all retreating ships are destroyed
     if(victor!=-1 && victor!=e && empire_combat_forces[e].retreated_ships.size()>0)
     {
-      const Fleet  *flt=empire_combat_forces[e].retreated_ships[0]->GetFleet();
-      const System *sys=NULL; double range = 0.0;
+      const System *sys=NULL;
 
       // retreat to nearest non-hostile system
       std::map<double, System*> neighbors = GetUniverse().ImmediateNeighbors(system_id);

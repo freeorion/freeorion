@@ -2,10 +2,10 @@
 #ifndef _Condition_h_
 #define _Condition_h_
 
-#include <Meter.h>
-#include <Planet.h>
-#include <System.h>
-#include <ValueRef.h>
+#include "Meter.h"
+#include "Planet.h"
+#include "System.h"
+#include "ValueRef.h"
 
 class UniverseObject;
 

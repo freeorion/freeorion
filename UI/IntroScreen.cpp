@@ -52,8 +52,9 @@ class CreditsWnd : public GG::Wnd
 
 CreditsWnd::CreditsWnd(int x, int y, int w, int h,const GG::XMLElement &credits,int cx, int cy, int cw, int ch,int co)
 : GG::Wnd(x, y, w, h,GG::Wnd::CLICKABLE),m_credits(credits),m_cx(cx),m_cy(cy),m_cw(cw),m_ch(ch),m_co(co),
-  m_bRender(true),m_bFadeIn(true),
-  m_start_time(GG::App::GetApp()->Ticks())
+  m_start_time(GG::App::GetApp()->Ticks()),
+  m_bRender(true),
+  m_bFadeIn(true)
 {}
 
 bool CreditsWnd::Render()
@@ -80,7 +81,7 @@ bool CreditsWnd::Render()
     if(fade_in>1.0)
       m_bFadeIn=false;
     else
-      transparency = 255*fade_in;
+      transparency = static_cast<int>(255*fade_in);
   }
 
   glColor4ubv(GG::Clr(transparency,transparency,transparency,255).v);

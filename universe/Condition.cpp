@@ -1,10 +1,10 @@
-#include <Condition.h>
+#include "Condition.h"
 
-#include <AppInterface.h>
-#include <Fleet.h>
-#include <Parse.h>
-#include <Random.h>
-#include <System.h>
+#include "../util/AppInterface.h"
+#include "Fleet.h"
+#include "../util/Parse.h"
+#include "../util/Random.h"
+#include "System.h"
 
 namespace {
     Condition::ConditionBase* NewAll(const GG::XMLElement& elem)                    {return new Condition::All(elem);}
@@ -216,6 +216,8 @@ bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* 
         case OBJ_SYSTEM:
             return dynamic_cast<const System*>(target);
             break;
+        default:
+	    break;
     }
     return false;
 }

@@ -33,6 +33,7 @@ namespace {
         case ProdCenter::MARKII:        return 200;
         case ProdCenter::MARKIII:       return 375;
         case ProdCenter::MARKIV:        return 700;
+	default:                        return 0;
         }
         return 0;
     }
@@ -46,9 +47,9 @@ ProdCenter::ProdCenter() :
    m_workforce(0.0),
    m_max_workforce(0.0),
    m_planet_type(PT_TERRAN),
+   m_available_minerals(0.0),
    m_currently_building(NOT_BUILDING),
-   m_rollover(0),
-   m_available_minerals(0.0)
+   m_rollover(0)
 {
     double meter_max = 0.0;
     if (m_primary == FOCUS_BALANCED)
@@ -68,9 +69,9 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem) :
    m_workforce(0.0),
    m_max_workforce(0.0),
    m_planet_type(PT_TERRAN),
+   m_available_minerals(0.0),
    m_currently_building(NOT_BUILDING),
-   m_rollover(0),
-   m_available_minerals(0.0)
+   m_rollover(0)
 {
     if (elem.Tag() != "ProdCenter")
         throw std::invalid_argument("Attempted to construct a ProdCenter from an XMLElement that had a tag other than \"ProdCenter\"");
@@ -133,8 +134,8 @@ double ProdCenter::ResearchPoints() const
 
 double ProdCenter::PercentComplete() const
 {
-    int cost = ItemBuildCost();
-    return (cost ? (m_rollover / cost) : 0);
+    double cost = ItemBuildCost();
+    return (cost ? (m_rollover / cost) : 0.0);
 }
 
 double ProdCenter::ItemBuildCost() const
@@ -225,7 +226,7 @@ void ProdCenter::PopGrowthProductionResearchPhase( Empire *empire, const int sys
   Planet* the_planet = dynamic_cast<Planet*> ( the_object );  
   
   if (the_planet->ResearchPoints() > 0)
-  	empire->AddRP(the_planet->ResearchPoints());
+    empire->AddRP(static_cast<int>(the_planet->ResearchPoints()));
 
   if (m_currently_building == DEF_BASE )
   {
@@ -276,7 +277,7 @@ int ProdCenter::UpdateBuildProgress( int item_cost )
 {
   double total_build_points =  m_rollover + ProductionPoints();// IndustryPoints();
 
-  int new_items = total_build_points / item_cost;
+  int new_items = static_cast<int>(total_build_points / item_cost);
     
   m_rollover = total_build_points - ( new_items * item_cost );
 

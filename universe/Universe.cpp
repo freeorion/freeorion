@@ -127,7 +127,7 @@ namespace {
         template <class Vertex, class Graph>
         void operator()(Vertex u, Graph& g)
         {
-            if (u == destination_system)
+            if (static_cast<int>(u) == destination_system)
                 throw FoundDestination();
         }
         const int destination_system;
@@ -204,7 +204,7 @@ namespace {
         double center         = 0.25;
         double x,y;
 
-        unsigned int i, j, attempts;
+        int i, attempts;
 
         GaussianDistType  random_gaussian = GaussianDist(0.0,arm_spread);
         SmallIntDistType  random_arm      = SmallIntDist(0  ,arms);
@@ -214,7 +214,7 @@ namespace {
         // stores best suboptimal system position so far
         std::pair<double,double> sys_max_distance_pos;double sys_max_distance = 0.0;
 
-        for (i = 0, attempts = 0; i < stars && attempts <MAX_ATTEMPTS_PLACE_SYSTEM; i++, ++attempts)
+        for (i = 0, attempts = 0; i < static_cast<int>(stars) && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; i++, ++attempts)
         {
             double radius = random_radius();
 
@@ -275,7 +275,7 @@ namespace {
         DoubleDistType random_angle  = DoubleDist(0.0, 2.0 * PI);
 
         // Used to give up when failing to place a star too often.
-        unsigned int attempts = 0;
+        int attempts = 0;
 
         // stores best suboptimal system position so far
         std::pair<double,double> sys_max_distance_pos;double sys_max_distance = 0.0;
@@ -340,7 +340,7 @@ namespace {
         DoubleDistType    random_zero_to_one = DoubleDist  (0.0,  1.0);
         DoubleDistType    random_angle  = DoubleDist  (0.0,2.0*PI);
 
-        for (i=0,attempts=0;i<clusters && attempts<MAX_ATTEMPTS_PLACE_SYSTEM;i++,attempts++)
+        for (i=0,attempts=0;i<clusters && static_cast<int>(attempts)<MAX_ATTEMPTS_PLACE_SYSTEM;i++,attempts++)
         {
             // prevent cluster position near borders (and on border)
             double x=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters,
@@ -426,15 +426,13 @@ namespace {
         double RING_WIDTH = width / 4.0;
         double RING_RADIUS = (width - RING_WIDTH) / 2.0;
 
-        unsigned int attempts;
-
         DoubleDistType   theta_dist = DoubleDist(0.0, 2.0 * PI);
         GaussianDistType radius_dist = GaussianDist(RING_RADIUS, RING_WIDTH / 3.0);
 
         // stores best suboptimal system position so far
         std::pair<double,double> sys_max_distance_pos;double sys_max_distance = 0.0;
 
-        for (unsigned int i = 0, attempts = 0; i < stars && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts)
+        for (unsigned int i = 0, attempts = 0; i < stars && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts)
         {
             double theta = theta_dist();
             double radius = radius_dist();
@@ -485,7 +483,6 @@ namespace {
         std::advance(it, star_name_idx);
         std::string star_name(*it);
         star_names.erase(it);
-        int num_orbits = 10; // this is fixed at 10 in the v0.2 DD
 
         // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
         int idx = 0;
@@ -677,7 +674,7 @@ namespace Delauney {
 				(x3 * x3 + y3 * y3) * (x1 * y2 - x2 * y1));
 			
 		// make sure nothing funky's going on...
-		if (abs(a) < 0.01)
+		if (std::abs(a) < 0.01)
 			throw std::runtime_error("Attempted to find circumcircle for a triangle with vertices in a line.");
 					
 		// finish!
@@ -920,7 +917,7 @@ std::pair<std::list<System*>, double> Universe::ShortestPath(int system1, int sy
     ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_system_graph);
     try {
         boost::dijkstra_shortest_paths(m_system_graph, system1, &predecessors[0], &distances[0], edge_weight_map, index_map, 
-                                       std::less<int>(), std::plus<int>(), std::numeric_limits<int>::max(), 0, 
+                                       std::less<double>(), std::plus<double>(), std::numeric_limits<int>::max(), 0, 
                                        boost::make_dijkstra_visitor(PathFindingDijkstraVisitor(system2)));
     } catch (const PathFindingDijkstraVisitor::FoundDestination& fd) {
         // catching this just means that the destination was found, and so the algorithm was exited early, via exception
@@ -1127,8 +1124,6 @@ void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjace
     // generate star field
     for (int star_cnt = 0; star_cnt < stars; ++star_cnt) {
         // generate new star
-        System* system = GenerateSystem(*this, age, (s_universe_width - 0.1) * RandZeroToOne(), (s_universe_width - 0.1) * RandZeroToOne());
-
         const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
 
         bool placed = false;
@@ -1691,11 +1686,9 @@ void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vecto
 
 	int curNumLanes;
 
-	bool useThisLane;
-	
 	int numSys = systems.size();
 	// make sure data is consistent
-	if (laneSetArray.size() != numSys) {
+	if (static_cast<int>(laneSetArray.size()) != numSys) {
 		//Logger().debugStream() << "CullAngularlyTooCloseLanes got different size vectors of lane sets and systems.  Doing nothing.";
 		return;
 	}
@@ -1850,7 +1843,7 @@ void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<in
 	// could be made a parameter, possibly a function of the starlane frequency
 
 	// make sure data is consistent
-	if (laneSetArray.size() != numSys) {
+	if (static_cast<int>(laneSetArray.size()) != numSys) {
 		//Logger().debugStream() << "GrowSpanningTrees got different size vectors of potential lane set(s) and systems.  Doing nothing.";
 		return;
 	}
@@ -2229,7 +2222,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
       // create the empire's starting fleet
       Fleet* home_fleet = new Fleet("Home Fleet", home_system->X(), home_system->Y(), empire_id);
-      int fleet_id = Insert(home_fleet);
+      Insert(home_fleet);
       home_system->Insert(home_fleet);
 
       Ship* ship = 0;

@@ -65,7 +65,7 @@ struct enum_parser : public boost::spirit::parser<enum_parser<E> >
     variables of the form Source.VarName or Target.VarName are recognized, where VarName is a symbol name recognized by 
     ValueRef::Variable. */
 template <class T>
-struct ArithmeticExpression : public boost::spirit::grammar<ArithmeticExpression>
+struct ArithmeticExpression : public boost::spirit::grammar<ArithmeticExpression<T> >
 {
     static const int ignore_ID =             1;
     static const int int_constant_ID =       2;
@@ -141,41 +141,41 @@ struct ArithmeticExpression : public boost::spirit::grammar<ArithmeticExpression
         }
 
         boost::spirit::rule<ScannerT,
-                            boost::spirit::parser_context,
+                            boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<ignore_ID> >        ignore;
         boost::spirit::rule<ScannerT,
-                            boost::spirit::parser_context,
+                            boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<constant_ID> >      constant;
         boost::spirit::rule<ScannerT,
-                            boost::spirit::parser_context,
+                            boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<int_constant_ID> >  int_constant;
         boost::spirit::rule<ScannerT,
-                            boost::spirit::parser_context,
+                            boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<variable_ID> >      variable;
         boost::spirit::rule<ScannerT,
-                            boost::spirit::parser_context,
+                            boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<primary_expr_ID> >  primary_expr;
         boost::spirit::rule<ScannerT,
-                            boost::spirit::parser_context,
+                            boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<negative_expr_ID> > negative_expr;
         boost::spirit::rule<ScannerT,
-                            boost::spirit::parser_context,
+                            boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<times_expr_ID> >    times_expr;
         boost::spirit::rule<ScannerT,
-                            boost::spirit::parser_context,
+                            boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<divides_expr_ID> >  divides_expr;
         boost::spirit::rule<ScannerT,
-                            boost::spirit::parser_context,
+                            boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<plus_expr_ID> >     plus_expr;
         boost::spirit::rule<ScannerT,
-                            boost::spirit::parser_context,
+                            boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<minus_expr_ID> >    minus_expr;
         boost::spirit::rule<ScannerT,
-                            boost::spirit::parser_context,
+                            boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<expr_ID> >          expr;
 
         const boost::spirit::rule<ScannerT,
-                                boost::spirit::parser_context,
+                                boost::spirit::parser_context<>,
                                 boost::spirit::parser_tag<expr_ID> > &
         start() const
         {

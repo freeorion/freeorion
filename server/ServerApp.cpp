@@ -1606,9 +1606,6 @@ void ServerApp::ProcessTurns( )
     Empire                    *pEmpire;
     OrderSet                  *pOrderSet;
     OrderSet::const_iterator  order_it;
-    Fleet                     *the_fleet;
-    Planet                    *the_planet;
-    UniverseObject            *the_object;
 
     /// First process all orders, then process turns
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
@@ -1662,7 +1659,7 @@ void ServerApp::ProcessTurns( )
         /// filter FleetColonizeOrder and sort them per planet
         FleetColonizeOrder *order;
         for ( order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it)
-            if(order=dynamic_cast<FleetColonizeOrder*>(order_it->second))
+            if((order=dynamic_cast<FleetColonizeOrder*>(order_it->second)))
             {
                 std::map<int,std::vector<FleetColonizeOrder*> >::iterator it = map_planet_colonize_order_list.find(order->PlanetID());
                 if(it == map_planet_colonize_order_list.end())
@@ -1721,7 +1718,7 @@ void ServerApp::ProcessTurns( )
             if(!winner_is_armed)
               winner = -1; // if the current winner isn't armed, a winner must be armed!!!!
 
-        for(unsigned int i=0;i<it->second.size();i++)
+        for(int i=0;i<static_cast<int>(it->second.size());i++)
           if(winner==i) 
             it->second[i]->ExecuteServerApply();
           else

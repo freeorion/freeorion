@@ -145,7 +145,7 @@ std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
                 if (event.type == SDL_USEREVENT && NET2_GetEventType(&event) == NET2_UDPRECEIVEEVENT &&
                     NET2_GetSocket(&event) == socket) {
                     UDPpacket* packet = 0;
-                    while (packet = NET2_UDPRead(NET2_GetSocket(&event))) {
+                    while ((packet = NET2_UDPRead(NET2_GetSocket(&event)))) {
                         retval.insert(ToString(packet->address));
                         NET2_UDPFreePacket(packet);
                     }

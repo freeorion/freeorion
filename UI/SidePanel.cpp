@@ -268,7 +268,7 @@ namespace {
         default                   : scale = 2.0/5.0; break;
         }
 
-        return MIN_PLANET_DIAMETER + (MAX_PLANET_DIAMETER - MIN_PLANET_DIAMETER) * scale;
+        return static_cast<int>(MIN_PLANET_DIAMETER + (MAX_PLANET_DIAMETER - MIN_PLANET_DIAMETER) * scale);
     }
 }
 
@@ -837,7 +837,8 @@ class CUITextureButton : public GG::Button
     /** \name Structors */ //@{
     CUITextureButton(int x, int y, int w, int h,const boost::shared_ptr<GG::Texture> &texture,GG::Clr color = ClientUI::BUTTON_COLOR, GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int thick = 1, Uint32 flags = GG::Wnd::CLICKABLE)
       :  Button(x, y, w, h, "", "", 0, color, GG::CLR_ZERO, flags),
-         m_border_color(border), m_border_thick(thick),m_texture(GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultWidth()))
+         m_texture(GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultWidth())),
+	 m_border_color(border), m_border_thick(thick)
     {}
 
     //@}
@@ -1016,7 +1017,7 @@ void CUIIconButton::RenderUnpressed()
   glColor4ubv(GG::CLR_WHITE.v);
   m_icon.OrthoBlit(UpperLeft()+m_icon_rect.UpperLeft(),UpperLeft()+m_icon_rect.LowerRight(),false);
 
-  std::string text; int x,y;GG::SubTexture icon;
+  std::string text; GG::SubTexture icon;
 
   Uint32 format = TextFormat();
   
@@ -1459,8 +1460,6 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 
   int population=static_cast<int>(planet.PopPoints());
 
-  const int RESOURCE_DISPLAY_HEIGHT = font->Height()+4;
-  const int RESOURCE_DISPLAY_WIDTH  = (Width()-MAX_PLANET_DIAMETER/2)/5;
   boost::shared_ptr<GG::Texture> icon;
   const int ICON_MARGIN    =  5;
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.2));
@@ -1509,6 +1508,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     case FOCUS_INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
     case FOCUS_MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
     case FOCUS_SCIENCE  : text+=" "+ClientUI::String("PL_SCIENCE" );break;
+    default: break;
   }
   font->RenderText(m_button_food->UpperLeft().x,
                    m_button_food->UpperLeft().y-font->Height(),
@@ -1523,13 +1523,14 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     case FOCUS_INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
     case FOCUS_MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
     case FOCUS_SCIENCE  : text+=" "+ClientUI::String("PL_SCIENCE" );break;
+    default: break;
   }
   font->RenderText(m_button_research->UpperLeft ().x,
                    m_button_research->LowerRight().y,
                    m_button_research->UpperLeft ().x+ 500,
                    m_button_research->LowerRight().y+font->Height(), text, format, 0, false);
 
-  int farming=0,mining=0,research=0,industry=0,defense=0;
+  int farming=0,mining=0,research=0,industry=0;
 
   farming   +=static_cast<int>(planet.FarmingPoints());
   industry  +=static_cast<int>(planet.IndustryPoints());
@@ -1538,8 +1539,6 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   //defense   +=;
 
 
-  const int RESOURCE_DISPLAY_HEIGHT = font->Height()+4;
-  const int RESOURCE_DISPLAY_WIDTH  = (Width()-MAX_PLANET_DIAMETER/2)/5;
   boost::shared_ptr<GG::Texture> icon;
   const int ICON_MARGIN    =  5;
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.2));
@@ -1765,7 +1764,6 @@ bool SidePanel::SystemResourceSummary::Render()
   std::string text; int x,y; boost::shared_ptr<GG::Texture> icon;
   boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.2));
   Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
-  const int HALF_FONT_HT   = font->Height()/2;
   const int ICON_MARGIN    =  5;
   
   x=UpperLeft().x;y=UpperLeft().y;
@@ -2002,6 +2000,7 @@ void SidePanel::PlanetView::PlanetProdCenterChanged()
     case FOCUS_SCIENCE  : m_radio_btn_primary_focus->SetCheck(2);break;
     case FOCUS_INDUSTRY : m_radio_btn_primary_focus->SetCheck(3);break;
     case FOCUS_BALANCED : m_radio_btn_primary_focus->SetCheck(4);break;
+    default: break;
   }
   switch(planet->SecondaryFocus())
   {
@@ -2010,6 +2009,7 @@ void SidePanel::PlanetView::PlanetProdCenterChanged()
     case FOCUS_SCIENCE  : m_radio_btn_secondary_focus->SetCheck(2);break;
     case FOCUS_INDUSTRY : m_radio_btn_secondary_focus->SetCheck(3);break;
     case FOCUS_BALANCED : m_radio_btn_secondary_focus->SetCheck(4);break;
+    default: break;
   }
 }
 
@@ -2251,7 +2251,7 @@ bool SidePanel::PlanetView::Render()
 
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
 
-  int farming=0,mining=0,research=0,industry=0,defense=0,population=0;
+  int farming=0,mining=0,research=0,industry=0,population=0;
 
   farming   +=static_cast<int>(planet->FarmingPoints());
   industry  +=static_cast<int>(planet->IndustryPoints());
@@ -2308,7 +2308,7 @@ bool SidePanel::PlanetView::Render()
   if(ProdCenter::SCOUT <= planet->CurrentlyBuilding())
   {
     // construction progress bar
-    int cost = planet->ItemBuildCost();
+    double cost = planet->ItemBuildCost();
     double percent_complete = planet->PercentComplete();
 
     int x1 = m_construction->UpperLeft ().x;
@@ -2669,8 +2669,6 @@ void SidePanel::PlanetLClicked(int planet_id)
     if(planet->Type() == PT_ASTEROIDS || planet->Type() == PT_GASGIANT)
       return;
 
-    MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-
     int app_width = GetOptionsDB().Get<int>("app-width") - MapWnd::SIDE_PANEL_WIDTH, 
         app_height= GetOptionsDB().Get<int>("app-height");
 
@@ -2746,8 +2744,6 @@ return;
     }
 
     const Planet* planet = GetUniverse().Object<const Planet>(m_next_pltview_planet_id);
-
-    MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
 
     int app_width = GetOptionsDB().Get<int>("app-width") - MapWnd::SIDE_PANEL_WIDTH, 
         app_height= GetOptionsDB().Get<int>("app-height");

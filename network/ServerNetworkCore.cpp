@@ -231,14 +231,14 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
       case NET2_UDPRECEIVEEVENT: {
          int socket = NET2_GetSocket(&event);
          UDPpacket* packet = 0;
-         while (packet = NET2_UDPRead(socket)) {
+         while ((packet = NET2_UDPRead(socket))) {
             IPaddress return_address;
             std::string incoming_msg;
             for (int i = 0; i < packet->len; ++i)
                incoming_msg += packet->data[i];
             if (incoming_msg == SERVER_FIND_QUERY_MSG) {
                NET2_ResolveHost(&return_address, const_cast<char*>(ToString(packet->address).c_str()), NetworkCore::SERVER_FIND_RESPONSE_PORT);
-               if (bool available = ServerApp::GetApp()->State() == SERVER_MP_LOBBY || ServerApp::GetApp()->State() == SERVER_GAME_SETUP) {
+               if (ServerApp::GetApp()->State() == SERVER_MP_LOBBY || ServerApp::GetApp()->State() == SERVER_GAME_SETUP) {
                    if (NET2_UDPSend(&return_address, const_cast<char*>(NetworkCore::SERVER_FIND_YES_MSG.c_str()), 
                                     NetworkCore::SERVER_FIND_YES_MSG.size()) == -1) {
                        const char* err_msg = NET2_GetError();
