@@ -138,7 +138,7 @@ void AIClientApp::Poll()
 {
    // handle events
    SDL_Event event;
-   while (FE_PollEvent(&event)) {
+   while (FE_WaitEvent(&event)) {
       int net2_type = NET2_GetEventType(&event);
       if (event.type == SDL_USEREVENT && 
           (net2_type == NET2_ERROREVENT || 
@@ -147,7 +147,13 @@ void AIClientApp::Poll()
            net2_type == NET2_TCPCLOSEEVENT || 
            net2_type == NET2_UDPRECEIVEEVENT)) { // an SDL_net2 event
          m_network_core.HandleNetEvent(event);
-      }
+      } else {
+		   switch (event.type) {
+			case SDL_QUIT:
+			   Exit(0);
+				break;
+			}
+		}
    }
 }
 
