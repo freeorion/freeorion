@@ -1,0 +1,590 @@
+Note that throughout this entire document, cas (capitalization) matters.  CurrentFarming works, but
+CURRENTFARMING does not.
+
+
+
+**************************************************
+* Types and Expressions                          *
+**************************************************
+
+In the Conditions and Effects below, there are references to variables and expressions of various
+types. Variables refer to attributes of a source or target object.  The source object is the object
+to which the Effect is attached, and the target object(s) is(are) the objects that are within an
+Effect's scope.  Here is a comprehensive list of the attributes available, and their types (more on
+types later):
+
+    CurrentFarming        double
+    MaxFarming            double
+    CurrentIndustry       double
+    MaxIndustry           double
+    CurrentResearch       double
+    MaxResearch           double
+    CurrentTrade          double
+    MaxTrade              double
+    CurrentMining         double
+    MaxMining             double
+    CurrentConstruction   double
+    MaxConstruction       double
+    CurrentHealth         double
+    MaxHealth             double
+    CurrentPopulation     double
+    MaxPopulation         double
+    MoneyStockpile        double
+    MineralStockpile      double
+    FoodStockpile         double
+    MoneyProduction       double
+    FoodProduction        double
+    MineralProduction     double
+    IndustryProduction    double
+    ScienceProduction     double
+    PlanetSize            PlanetSize *
+    PlanetType            PlanetType *
+    PlanetEnvironment     PlanetEnvironment *
+    ObjectType            UniverseObjectType *!
+    StarType              StarType *
+    PrimaryFocus          FocusType *
+    SecondaryFocus        FocusType *
+    Owner                 int **
+    ID                    int ***
+
+*   See the FreeOrion sources for the valid values for these enumerated types.  They are omitted
+    here, since they may change periodically.
+**  Owner will return -1 (instead of 0 like all other failures for numeric types) if there are no
+    owners, or there are more than one, since this is guaranteed not to match any actual object.
+*** This is tbe integer numeric ID used to identify an object internally within FreeOrion.
+!   The types returned by ObjectType have some overlap.  For instance, a Planet is also a PopCenter
+    and a ProdCenter.  In this case, Planet is returned before PopCenter or ProdCenter, since if you
+    see a Planet, you know it is a ProdCenter, but seeing a ProdCenter, you have no idea if it is
+    a Planet or something else that produces goods or resources, for instance a mining outpost.
+    This principle guides the order in which type is determined when ObjectType is used.
+
+As mentioned above, these attributes can be referenced on the source or target object, but not
+alone.  So "Source.ID" and "Target.PlanetSize" are legal variables, but not "PlanetEnvironment".
+In addition, an object's containing object, if one exists, may be used in a variable.  For instance,
+if the source is a planet, "Source.System.StarType" represents the ster type of the source's system.
+Planet may also be used in a similar fashion, as in "Target.Planet.PlanetEnvironment".
+
+Nonsensical combinations of Target, Source, Planet, System, and the above attributes are allowed,
+but will always return 0 for numeric values, and INVALID_... for enumerated type values.  For
+instance, if the source is a System, Source.System.StarType will always return INVALID_STAR_TYPE,
+which is guaranteed not to match any actual System.  Similarly, Target.System.CurrentFarming makes
+no sense (since meters exist for Planets but not Systems), and so will return 0.0.
+
+Now about types.  The "double" type listed above, is a double-precision floating point number, which
+is more or less any real number in the range [-10^300, 10^300].  The "int" type is an integer
+number, which is basically any whole number in the range [-2*10^9, 2*10^9].  The other types are
+enumerted types, with specific values.  Each such value has a string associated with it, for
+instance the first valid StarType is STAR_BLUE.
+
+In the Conditions and Effects below, certain parameters have types.  It is illegal to provide a
+parameter of the wrong type, and it will result in a thrown exception (a purposeful crash of
+FreeOrion).  There is one major exceptions to this.  It is legal to provide a int value for any
+parameter of any type.  This is mainly to support easy expression syntax, which is the next thing
+that needs to be addressed.
+
+Instead of providing a singe variable or constant value (such as 3.14, 5, or STAR_BLUE), you can
+instead provide an arithmetic expression.  Legal expressions may contain parentheses, +, -, *, and
+/.  The - operator can be binary as in "3 + 4", or unary as in "-Source.MaxHealth".  Whitespace
+(spaces, tabs, and newlines) is ignored.  Expressions may be arbtrarily complex.  The type of the
+entire expression must match the type of the parameter for which it is intended.  For instance,
+it is illegal to supply "1 + 3.14" as a value for an int-type parameter, since 3.14 is not an int.
+As mentioned before, though, it is legal to supply "STAR_BLUE + 1" as a value for a StarType
+parameter, since integers are always ok.
+
+Note that since arbitrarily complex expressions are allowed in Effects, and multiple Effects may
+affect a single target in a single turn, the order in which the Effects are applied to the target
+may matter.  For instance, if Effect A is sets the current industry meter to
+"Target.CurrentIndustry + 20", and Effect B sets the current industry meter to
+"Target.CurrentIndustry * 3", the answer could be X * 3 + 20 or (X + 20) * 3, depending on the order
+of execution.  To minimize this, and in keeping with the guidelines for Effects in general, such
+Effects should have small magnitude, which will make the problem largely disappear.  For instance, 
+if "Target.CurrentIndustry + 3" and "Target.CurrentIndustry * 1.05" are used instead, the difference
+between X * 1.05 + 3 and (X + 3) * 1.05 is a negligible 0.15.
+
+Note that some of the parameters in the Conditions and Effects below ask for a certain type,
+sometimes a type-expression.  Those paramters that do not explicitly allow type-expressions cannot
+handle them.
+
+Finally, note that in places below where a bool value is requested, you must enter a "1" for true
+or a "0" for false.  "False", "True", "T", "F", etc., are not recognized.
+
+
+
+**************************************************
+* Conditions                                     *
+**************************************************
+
+
+**************************************************
+Name:       All
+Descr.:     Matches all objects.
+XML format:
+<Condition::All/>
+
+
+**************************************************
+Name:       EmpireAffiliation
+Descr.:     Matches all objects that are owned (if EXCLUSIVE == false) or only owned
+            (if EXCLUSIVE == true) by an empire that  has affilitation type affilitation
+            with Empire EMPIRE_ID.
+XML format:
+<Condition::EmpireAffiliation>
+    <empire_id>EMPIRE_ID</empire_id>
+    <affiliation>AFFILIATION</affiliation>
+    <exclusive>EXCLUSIVE</exclusive>
+</Condition::EmpireAffiliation>
+
+Param Types:
+EMPIRE_ID   int-expression
+AFFILIATION EmpireAffiliationType
+EXCLUSIVE   bool
+
+
+**************************************************
+Name:       Self
+Descr.:     Matches the source object only.
+XML format:
+<Condition::Self/>
+
+
+**************************************************
+Name:       Type
+Descr.:     Matches all objects that are of UniverseObjectType TYPE.
+XML format:
+<Condition::Type>TYPE</Condition::Type>
+
+Param Types:
+TYPE UniverseObjectType-expression
+
+
+**************************************************
+Name:       Building
+Descr.:     Matches all Building objects of the sort specified by NAME.
+XML format:
+<Condition::Building>NAME</Condition::Building>
+
+Param Types:
+NAME string
+ 
+
+**************************************************
+Name:       HasSpecial
+Descr.:     Matches all objects that have an attached Special of the sort specified by NAME.
+            Passing "All" for NAME will match all objects with attached Specials.
+XML format:
+<Condition::HasSpecial>NAME</Condition::HasSpecial>
+
+Param Types:
+NAME string
+
+
+**************************************************
+Name:       Contains
+Descr.:     Matches all objects that contain an object that matches Condition CONDITION.
+            Container objects are Systems, Planets (which contain Buildings), and Fleets
+            (which contain Ships).
+XML format:
+<Condition::Contains>
+    CONDITION
+</Condition::Contains>
+
+Param Types:
+CONDITION Condition
+
+
+**************************************************
+Name:       PlanetType
+Descr.:     Matches all Planet objects that have one of the given PlanetTypes.  Note
+            that all Building objects which are on matching planets are also matched.
+XML format:
+<Condition::PlanetType>
+    <PlanetType>TYPE0</PlanetType>
+    <PlanetType>TYPE1</PlanetType>
+    ...
+    <PlanetType>TYPEN</PlanetType>
+</Condition::PlanetType>
+
+Param Types:
+TYPEX PlanetType-expression
+
+
+**************************************************
+Name:       PlanetSize
+Descr.:     Matches all Planet objects that have one of the given PlanetSizes.  Note that
+            all Building objects which are on matching planets are also matched.
+XML format:
+<Condition::PlanetSize>
+    <PlanetSize>SIZE0</PlanetSize>
+    <PlanetSize>SIZE1</PlanetSize>
+    ...
+    <PlanetSize>SIZEN</PlanetSize>
+</Condition::PlanetSize>
+
+Param Types:
+SIZEX PlanetSize-expression
+
+
+**************************************************
+Name:       PlanetEnvironment
+Descr.:     Matches all Planet objects that have one of the given PlanetEnvironments.
+            Note that all Building objects which are on matching planets are also matched.
+XML format:
+<Condition::PlanetEnvironment>
+    <PlanetEnvironment>ENVIRONMENT0</PlanetEnvironment>
+    <PlanetEnvironment>ENVIRONMENT1</PlanetEnvironment>
+    ...
+    <PlanetEnvironment>ENVIRONMENTN</PlanetEnvironment>
+</Condition::PlanetEnvironment>
+
+Param Types:
+ENVIRONMENTX PlanetEnvironment-expression
+
+
+**************************************************
+Name:       FocusType
+Descr.:     Matches all ProdCenter objects that have one of the given FocusTypes.
+XML format:
+<Condition::Focus>
+    <FocusType>FOCUS0</FocusType>
+    <FocusType>FOCUS1</FocusType>
+    ...
+    <FocusType>FOCUSN</FocusType>
+</Condition::FocusType>
+
+Param Types:
+FOCUSX FocusType-expression
+
+
+**************************************************
+Name:       StarType
+Descr.:     Matches all System objects that have one of the given StarTypes.  Note that all
+            objects in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.).
+XML format:
+<Condition::StarType>
+    <StarType>TYPE0</StarType>
+    <StarType>TYPE1</StarType>
+    ...
+    <StarType>TYPEN</StarType>
+</Condition::StarType>
+
+Param Types:
+TYPEX StarType-expression
+
+
+**************************************************
+Name:       Chance
+Descr.:     Matches a given object with a linearly distributed probability of CHANCE.
+XML format:
+<Condition::Chance>
+    <chance>CHANCE</chance>
+</Condition::Chance>
+
+Param Types:
+CHANCE double-expression
+
+
+**************************************************
+Name:       MeterValue
+Descr.:     Matches all objects that have a meter of type METER, and whose current value (if
+            MAX_METER == false) or maximum value (if MAX_METER == true) of that meter is >= LOW
+            and < HIGH.
+XML format:
+<Condition::MeterValue>
+    <meter>METER</meter>
+    <low>LOW</low>
+    <high>HIGH</high>
+    <max_meter>MAX_METER</max_meter>
+</Condition::MeterValue>
+
+Param Types:
+METER     MeterType
+LOW       double-expression
+HIGH      double-expression
+MAX_METER bool
+
+
+**************************************************
+Name:       VisibleToEmpire
+Descr.:     Matches all objects that are visible to at least one given empire id.
+XML format:
+<Condition::VisibleToEmpire>
+    <empire_id>ID0</empire_id>
+    <empire_id>ID1</empire_id>
+    ...
+    <empire_id>IDN</empire_id>
+</Condition::VisibleToEmpire>
+
+Param Types:
+IDX int-expression
+
+
+**************************************************
+Name:       WithinDistance
+Descr.:     Matches all objects that are within DISTANCE units of at least one object that
+            meets CONDITION. Warning: this Condition can slow things down considerably if overused.
+            It is best to use Conditions that yield relatively few matches.
+XML format:
+<Condition::WithinDistance>
+    <distance>DISTANCE</distance>
+    <condition>CONDITION</condition>
+</Condition::WithinDistance>
+
+Param Types:
+DISTANCE double-expression
+CONDITION Condition
+
+
+**************************************************
+Name:       WithinStarlaneJumps
+Descr.:     Matches all objects that are within JUMPS starlane jumps of at least one object that
+            meets CONDITION. Warning: this Condition can slow things down considerably if overused.
+            It is best to use Conditions that yield relatively few matches.
+XML format:
+<Condition::WithinStarlaneJumps>
+    <jumps>JUMPS</jumps>
+    <condition>CONDITION</condition>
+</Condition::WithinStarlaneJumps>
+
+Param Types:
+JUMPS int-expression
+CONDITION Condition
+
+
+**************************************************
+Name:       And
+Descr.:     Matches all objects that match every Condition in <operands>.
+XML format:
+<Condition::And>
+    OPERAND0
+    OPERAND1
+    ...
+    OPERANDN
+</Condition::And>
+
+Param Types:
+OPERANDX Condition
+
+
+**************************************************
+Name:       Or
+Descr.:     Matches all objects that match at least one Condition in <operands>.
+XML format:
+<Condition::Or>
+    OPERAND0
+    OPERAND1
+    ...
+    OPERANDN
+</Condition::Or>
+
+Param Types:
+OPERANDX Condition
+
+
+**************************************************
+Name:       Not
+Descr.:     Matches all objects that do not match the Condition OPERAND.
+XML format:
+<Condition::Not>
+    OPERAND
+</Condition::Not>
+
+Param Types:
+OPERAND Condition
+
+
+Note 1: Some Conditions that match an object's containing object will be returned, even though
+they at first seem to be nonsensical.  For instance, if the target object is a Planet,
+StarType will match the type of the System in which the target is located.  This means that StarType
+will match all objects in all Systems with the given star type, and the Systems themselves.
+Similarly, all objects on all Planets (and the Planets themselves) that match a PlanetType,
+PlanetSize, or PlanetEnvironment will be matched.  This has an important implication; if you want
+all Systems with blue stars, you should use StarType=STAR_BLUE AND Type=OBJ_SYSTEM:
+
+<Condition::And>
+    <Condition::StarType>
+        <StarType>STAR_BLUE</StarType>
+    </Condition::StarType>
+    <Condition::Type>
+        <type>OBJ_SYSTEM</type>
+    </Condition::Type>
+</Condition::And>
+
+If you want all Ships in Systems with blue stars, you should use StarType=STAR_BLUE AND Type=OBJ_SHIP:
+
+<Condition::And>
+    <Condition::StarType>
+        <StarType>STAR_BLUE</StarType>
+    </Condition::StarType>
+    <Condition::Type>
+        <type>OBJ_SHIP</type>
+    </Condition::Type>
+</Condition::And>
+
+
+Note 2: The And and Or Conditions are designed to work as efficiently as possible, by only searching
+the objects that have not already been matched.  So it is always best to put the most restrictive
+Condition first in an And Condition's operands.  For instance, if StarType=STAR_BLUE matches about
+1000 objects, And(Self, StarType=STAR_BLUE) will be about 1000 times faster than
+And(StarType=STAR_BLUE, Self), since the former only has to look at the match from Self to see if it
+also is (or is inside of) a blue-starred System, whereas that latter has to look through the 1000
+matches from StarType=STAR_BLUE to see if any of them also matches Self.
+
+
+
+
+**************************************************
+* Effects                                        *
+**************************************************
+
+**************************************************
+Name:       SetMeter
+Descr.:     Sets the meter of the given kind to VALUE.  The max value of the meter is set if
+            MAX == true; otherwise the current value of the meter is set.  If the target of the
+            Effect has no meters, nothing is done.
+XML format:
+<Effect::SetMeter>
+    <meter>METER</meter>
+    <value>VALUE</value>
+    <max>MAX</max>
+</Effect::SetMeter>
+
+Param Types:
+METER MeterType
+VALUE double-expression
+MAX   bool
+
+
+**************************************************
+Name:       SetPlanetType
+Descr.:     Sets the planet type of the target to TYPE.  This has no effect on non-Planet targets.
+XML format:
+<Effect::SetPlanetType>TYPE</Effect::SetPlanetType>
+
+Param Types:
+TYPE PlanetSize-expression
+
+
+**************************************************
+Name:       SetPlanetSize
+Descr.:     Sets the planet size of the target to SIZE.  This has no effect on non-Planet targets.
+XML format:
+<Effect::SetPlanetSize>SIZE</Effect::SetPlanetSize>
+
+Param Types:
+SIZE PlanetSize-expression
+
+
+**************************************************
+Name:       AddOwner
+Descr.:     Adds empire EMPIRE_ID as an owner of the target.  This has no effect if EMPIRE_ID
+            was already an owner of the target object.
+XML format:
+<Effect::AddOwner>EMPIRE_ID</Effect::AddOwner>
+
+Param Types:
+EMPIRE_ID int-expression
+
+
+**************************************************
+Name:       RemoveOwner
+Descr.:     Removes empire EMPIRE_ID as an owner of the target.  This has no effect if
+            EMPIRE_ID was not already an owner of the target object.
+XML format:
+<Effect::RemoveOwner>EMPIRE_ID</Effect::RemoveOwner>
+
+Param Types:
+EMPIRE_ID int-expression
+
+
+**************************************************
+Name:       Destroy
+Descr.:     Destroys the target object.
+XML format:
+<Effect::Destroy/>
+
+
+**************************************************
+Name:       AddSpecial
+Descr.:     Adds the Special with the name NAME to the target object.
+XML format:
+<Effect::AddSpecial>NAME</Effect::AddSpecial>
+
+Param Types:
+NAME string
+
+
+**************************************************
+Name:       RemoveSpecial
+Descr.:     Removes the Special with the name NAME to the target object.  This has no effect if
+            no such Special was already attached to the target object.
+XML format:
+<Effect::RemoveSpecial>NAME</Effect::RemoveSpecial>
+
+Param Types:
+NAME string
+
+
+**************************************************
+Name:       SetStarType
+Descr.:     Sets the star type of the target to TYPE.  This has no effect on non-System targets.
+XML format:
+<Effect::SetStarType>TYPE</Effect::SetStarType>
+
+Param Types:
+TYPE StarType-expression
+
+
+**************************************************
+Name:       SetAvailability
+Descr.:     Sets the availability of tech TECH_NAME to empire EMPIRE_ID.  If GRANT_TECH is
+            true, the tech is fully available, just as if it were researched normally; otherwise,
+            only the items that the tech grants are made available.  Note that this means this
+            Effect is intended also to be used to unlock buildings, ships, etc.  The tech and/or its
+            items are made available if AVAILABLE is true, or unavailable otherwise.
+XML format:
+<Effect::SetAvailability>
+    <tech_name>TECH_NAME</tech_name>
+    <empire_id>EMPIRE_ID</empire_id>
+    <available>AVAILABLE</available>
+    <grant_tech>GRANT_TECH</grant_tech>
+</Effect::SetAvailability>
+
+Param Types:
+TECH_NAME  string
+EMPIRE_ID  int-expression
+AVAILABLE bool
+GRANT_TECH bool
+
+
+
+
+**************************************************
+* EffectGroup                                    *
+**************************************************
+Descr.:     Contains one or more Effects, a Condition which indicates the objects in the scope of
+            the Effect(s), and a Condition which indicates whether or not the Effect(s) will be
+            executed on the objects in scope during the current turn.  Since Conditions operate on
+            sets of objects (usually all objects in the universe), the activation condition bears
+            some explanation.  It exists to allow an EffectsGroup to be activated or suppressed based
+            on the source object only (the object to which the EffectsGroup is attached).  It does
+            this by considering the "universe" containing only the source object. If the source
+            object meets the activation condition, the EffectsGroup will be active in the current
+            turn.
+XML format:
+<EffectGroup>
+    <scope>SCOPE</scope>
+    <activation>ACTIVATION</activation>
+    <effects>
+        EFFECT0
+        EFFECT1
+        ...
+        EFFENTN
+    </effects>
+</EffectGroup>
+
+Param Types:
+SCOPE      Condition
+ACTIVATION Condition
+EFFECTX    Effect
+
+
