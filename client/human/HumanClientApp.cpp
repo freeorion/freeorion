@@ -449,13 +449,34 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
     case Message::GAME_START: {
         if (msg.Sender() == -1) {
+            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
+                "starting player turn...";
             std::stringstream stream(msg.GetText());
             GG::XMLDoc doc;
             doc.ReadDoc(stream);
+            
+            // dump the game start doc
+            std::ofstream output("start_doc.txt");
+            doc.WriteDoc(output);
+            output.close();
+            
+            Logger().debugStream() <<"About to call SetUniverse.";
             m_universe.SetUniverse(doc.root_node.Child("ClientUniverse"));
-// TODO: set empire data as well
-            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
-                "starting player turn...";
+            
+            // if we have empire data, then process it.  As it stands now,
+            // we may not, so dont assume we do.
+            if(doc.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG))
+            {
+                Logger().debugStream() <<"About to call HandleEmpireElementUpdate.";
+                m_empire.HandleEmpireElementUpdate(doc.root_node.Child(EmpireManager::EMPIRE_UPDATE_TAG));
+            }
+            else
+            {
+                Logger().debugStream() <<"No Empire data received from server.  Update Server Code.";
+            }
+            
+            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Universe setup complete.";
+
             m_ui->ScreenMap();
             m_ui->InitTurn(); // init the new turn
         }
