@@ -84,10 +84,10 @@ TechManager::iterator TechManager::end()
 bool TechManager::LoadTechTree(const std::string& TechFileName)
 {
     // make hardcoded techlevels as per v0.2 requirements document
-    Tech* mark2 = new Tech(((int)Tech::TECH_MARK2), std::string("Mark II"), 250);
-    Tech* dbase = new Tech(((int)Tech::TECH_BASE),  std::string("Defense Base"), 350);
-    Tech* mark3 = new Tech(((int)Tech::TECH_MARK3), std::string("Mark III"), 750);
-    Tech* mark4 = new Tech(((int)Tech::TECH_MARK4), std::string("Mark IV"), 1650);
+    Tech* mark2 = new Tech(((int)Tech::TECH_MARK2), std::string("Mark II"), 1750);
+    Tech* dbase = new Tech(((int)Tech::TECH_BASE),  std::string("Defense Base"), 1000);
+    Tech* mark3 = new Tech(((int)Tech::TECH_MARK3), std::string("Mark III"), 3500);
+    Tech* mark4 = new Tech(((int)Tech::TECH_MARK4), std::string("Mark IV"), 7000);
     
     std::pair<int, Tech*> the_pair;
     

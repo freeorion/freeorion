@@ -207,6 +207,15 @@ void ProdCenter::MovementPhase( )
 void ProdCenter::PopGrowthProductionResearchPhase( Empire *empire, const int system_id, const int planet_id )
 {
   Universe* universe = &GetUniverse();
+  
+  // Update research:
+  
+  // look up planet
+  UniverseObject* the_object = universe->Object( planet_id );  
+  Planet* the_planet = dynamic_cast<Planet*> ( the_object );  
+  
+  if (the_planet->ResearchPoints() > 0)
+  	empire->AddRP(the_planet->ResearchPoints());
 
   if (m_currently_building == DEF_BASE )
   {
@@ -215,10 +224,6 @@ void ProdCenter::PopGrowthProductionResearchPhase( Empire *empire, const int sys
     
     if ( new_bases > 0 )
     {
-        // look up planet
-        UniverseObject* the_object = universe->Object( planet_id );
-        Planet* the_planet = dynamic_cast<Planet*> ( the_object );
-
         // add base
         the_planet->AdjustDefBases( new_bases );
 
