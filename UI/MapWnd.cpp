@@ -144,6 +144,8 @@ MapWnd::MapWnd() :
 
     m_sitrep_panel = new SitRepPanel( (GG::App::GetApp()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::App::GetApp()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);
+	
+	m_options_showing = false;
 
     //set up background images
     m_backgrounds[0].reset(new GG::Texture());
