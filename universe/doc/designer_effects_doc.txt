@@ -326,7 +326,7 @@ Finally, note that in places below where a bool value is requested, you must ent
 
 ==Notes on Conditions==
 ===Note 1===
-Some Conditions that match an object's containing object will be returned, even though they at first seem to be nonsensical.  For instance, if the target object is a Planet, StarType will match the type of the System in which the target is located.  This means that StarType will match all objects in all Systems with the given star type, and the Systems themselves. Similarly, all objects on all Planets (and the Planets themselves) that match a PlanetType, PlanetSize, or PlanetEnvironment will be matched.  This has an important implication; if you want all Systems with blue stars, you should use StarType=STAR_BLUE AND ObjectType=OBJ_SYSTEM:
+Some Conditions that match an object's containing object will be returned, even though they at first seem to be nonsensical.  For instance, if the target object is a Planet, StarType will match the type of the System in which the target is located.  This means that StarType will match all objects in all Systems with the given star type, and the Systems themselves. Similarly, all objects on all Planets (and the Planets themselves) that match a PlanetType, PlanetSize, or PlanetEnvironment will be matched.  This has an important implication; if you want all Systems with blue stars, you should use StarType=STAR_BLUE AND Type=OBJ_SYSTEM:
 
  <Condition::And>
      <Condition::StarType>
@@ -477,7 +477,7 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
  <EffectsGroup>
      <scope>SCOPE</scope>
      <activation>ACTIVATION</activation>
-     <stacking_group>STACKING_GROUP</stacking_group>
+     <stacking_group>STACKING_GROUP</stacking_group> [optional -- may be left out]
      <effects>
          EFFECT0
          EFFECT1
@@ -495,18 +495,23 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
 <br>
 <br>
 ==Special==
-<br>Descr.:     A Special is a definition of a predefined group of Effects with a unique name, which may be attached to an object.
+<br>Descr.:     A Special is a definition of a predefined set of EffectsGroups with a unique name, which may be attached to an object.
 <br>XML format:
  <Special>
      <name>NAME</name>
      <description>DESCRIPTION</description>
-     EFFECTS_GROUP
+     <effects>
+          EFFECTS_GROUP0
+          EFFECTS_GROUP1
+          ...
+          EFFECTS_GROUPN
+     </effects>
  </Special>
 
 <br>Param Types:
- NAME          string
- DESCRIPTION   string
- EFFECTS_GROUP EffectsGroup
+ NAME           string
+ DESCRIPTION    string
+ EFFECTS_GROUPX EffectsGroup
 
 Note: The NAME and DESCRIPTION strings should not be user-presentable text, such as NAME="Homeworld".  They should instead be keys into a string table file.  For instance, NAME="HOMEWORLD_SPECIAL".  This key string will be used to look up the actual text from the string table file for the language used at runtime, such as eng_stringtable.txt or esp_stringtable.txt.  The string that goes with DESCRIPTION="HOMEWORLD_SPECIAL_DESCRIPTION" in eng_stringtable.txt, for instance, may be "This is your race's homeworld; you receive numerous bonuses on this world, a world to which your people are uniquely suited."  The description text should not include the actual effects of the Special; those will be supplied directly from the EffectsGroup object contained within the Special.
 
@@ -524,7 +529,12 @@ See [[XML_Description_Examples#Buildings|example Building XML descriptions]]
      <build_cost>BUILD_COST</build_cost>
      <build_time>BUILD_TIME</build_time>
      <maintenance_cost>MAINTENANCE_COST</maintenance_cost>
-     EFFECTS_GROUP
+     <effects>
+          EFFECTS_GROUP0
+          EFFECTS_GROUP1
+          ...
+          EFFECTS_GROUPN
+     </effects>
  </BuildingType>
 
 <br>Param Types:
@@ -533,7 +543,7 @@ See [[XML_Description_Examples#Buildings|example Building XML descriptions]]
  BUILD_COST       double
  BUILD_TIME       int
  MAINTENANCE_COST double
- EFFECTS_GROUP    EffectsGroup
+ EFFECTS_GROUPX   EffectsGroup
 
 Note: The note about Special name and description text also applies to BuildingTypes.
 
@@ -569,10 +579,10 @@ See [[XML_Description_Examples#Techs|example Technology XML descriptions]]
      <research_cost>RESEARCH_COST</research_cost>
      <research_turns>RESEARCH_TURNS</research_turns>
      <prerequisites>
-         NAME0
-         NAME1
+         <prereq>NAME0</prereq>
+         <prereq>NAME1</prereq>
          ...
-         NAMEN
+         <prereq>NAMEN</prereq>
      </prerequisites>
      <unlocked_items>
          ITEM0
@@ -580,7 +590,13 @@ See [[XML_Description_Examples#Techs|example Technology XML descriptions]]
          ...
          ITEMN
      </unlocked_items>
-     EFFECTS_GROUP [optional]
+     <effects>            [optional -- may be left out]
+          EFFECTS_GROUP0
+          EFFECTS_GROUP1
+          ...
+          EFFECTS_GROUPN
+     </effects>
+     EFFECTS_GROUP
  </Tech>
 
 <br>Param Types:
@@ -592,6 +608,6 @@ See [[XML_Description_Examples#Techs|example Technology XML descriptions]]
  RESEARCH_TURNS   double
  NAMEX            string
  ITEMX            Item
- EFFECTS_GROUP    EffectsGroup
+ EFFECTS_GROUPX   EffectsGroup
 
 Note: The note about Special and BuildingType name and description text also applies to Tech names, descriptions, and category names.
