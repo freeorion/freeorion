@@ -2564,16 +2564,16 @@ void SidePanel::PlanetsChanged()
     int farming=0,mining=0,research=0,industry=0,defense=0,num_empire_planets=0;
 
     for(unsigned int i=0;i<plt_vec.size();i++)
-    {
-      farming   +=static_cast<int>(plt_vec[i]->FarmingPoints());
-      industry  +=static_cast<int>(plt_vec[i]->IndustryPoints());
-      mining    +=static_cast<int>(plt_vec[i]->MiningPoints());
-      research  +=static_cast<int>(plt_vec[i]->ResearchPoints());
-      defense   +=plt_vec[i]->DefBases();
-      
       if(plt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != plt_vec[i]->Owners().end())
+      {
+        farming   +=static_cast<int>(plt_vec[i]->FarmingPoints());
+        industry  +=static_cast<int>(plt_vec[i]->IndustryPoints());
+        mining    +=static_cast<int>(plt_vec[i]->MiningPoints());
+        research  +=static_cast<int>(plt_vec[i]->ResearchPoints());
+        defense   +=plt_vec[i]->DefBases();
+        
         num_empire_planets++;
-    }
+      }
 
     m_system_resource_summary->SetFarming (farming );
     m_system_resource_summary->SetMining  (mining  );
