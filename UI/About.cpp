@@ -1,28 +1,13 @@
 //About.cpp
 
-#ifndef _About_h_
 #include "About.h"
-#endif
 
-#ifndef _GGApp_h_
-#include "GGApp.h"
-#endif
-
-#ifndef _GGDrawUtil_h_
-#include "GGDrawUtil.h"
-#endif
-
-#ifndef _GGClr_h_
-#include "GGClr.h"
-#endif
-
-#ifndef _ClientUI_h_
 #include "ClientUI.h"
-#endif
-
-#ifndef _GGFileDlg_h_
+#include "CUIControls.h"
+#include "GGApp.h"
+#include "GGClr.h"
+#include "GGDrawUtil.h"
 #include "dialogs/GGFileDlg.h"
-#endif
 
 #include <fstream>
 
@@ -40,8 +25,8 @@ About::About():
     m_end_with_done(false)
 {
 
-    m_done_btn = new GG::Button(200,240,75,25,ClientUI::String("DONE"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
-    m_license = new GG::Button(110,240,75,25,ClientUI::String("LICENSE"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
+    m_done_btn = new CUIButton(200,240,75,ClientUI::String("DONE"));
+    m_license = new CUIButton(110,240,75,ClientUI::String("LICENSE"));
 
     Init();    //attaches children and connects signals to slots
 }//About()
@@ -74,7 +59,7 @@ About::~About()
 int About::Render()
 {
     CUI_Wnd::Render();
-   // GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::BORDER_COLOR,true);
+   // GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::WND_BORDER_COLOR,true);
     //ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, "Galaxy Setup");
 
     return true;

@@ -1,28 +1,13 @@
 //EmpireSelect.cpp
 
-#ifndef _EmpireSelect_h_
 #include "EmpireSelect.h"
-#endif
 
-#ifndef _GGApp_h_
-#include "GGApp.h"
-#endif
-
-#ifndef _GGDrawUtil_h_
-#include "GGDrawUtil.h"
-#endif
-
-#ifndef _GGClr_h_
-#include "GGClr.h"
-#endif
-
-#ifndef _ClientUI_h_
 #include "ClientUI.h"
-#endif
-
-#ifndef _GGFileDlg_h_
+#include "CUIControls.h"
+#include "GGApp.h"
+#include "GGClr.h"
+#include "GGDrawUtil.h"
 #include "dialogs/GGFileDlg.h"
-#endif
 
 #include <fstream>
 
@@ -42,13 +27,12 @@ EmpireSelect::EmpireSelect():
    
     //create a temporary texture and static graphic  
     // this will get overwritten during construction
-    m_empire_name = new GG::Edit(100, 25, 168, 25, "Tyrethians", ClientUI::FONT, ClientUI::PTS, ClientUI::INNER_BORDER_COLOR/*, GG::CLR_BLACK*/);
+    m_empire_name = new CUIEdit(100, 25, 168, 25, "Tyrethians");
     m_empire_name->SetTextColor(ClientUI::TEXT_COLOR);
-//uncomment this line once arrows.png is properly committed
     m_arrows.Load(ClientUI::ART_DIR + "arrows.png");
 
-    m_left_select = new GG::Button(40,130,15,15,"", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR);
-    m_right_select = new GG::Button(50,130,15,15,"", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR);
+    m_left_select = new CUIButton(40,130,15,"");
+    m_right_select = new CUIButton(50,130,15,"");
 
     // Create subtextures of the arrows.png file
     m_la_sub = new GG::SubTexture(&m_arrows, 0, 0, 15, 15);
@@ -68,8 +52,8 @@ EmpireSelect::EmpireSelect():
     m_right_select->SetPressedGraphic(*m_ra_pressed_sub);
     m_right_select->SetRolloverGraphic(*m_ra_hover_sub);
 
-    m_ok     = new GG::Button(300,90,75,25,ClientUI::String("OK"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
-    m_cancel = new GG::Button(210,90,75,25,ClientUI::String("CANCEL"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
+    m_ok     = new CUIButton(300,90,75,ClientUI::String("OK"));
+    m_cancel = new CUIButton(210,90,75,ClientUI::String("CANCEL"));
 
     m_cur_color = 0;
 
@@ -179,12 +163,12 @@ EmpireSelect::~EmpireSelect()
 int EmpireSelect::Render()
 {
     CUI_Wnd::Render();
-   // GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::BORDER_COLOR,true);
+   // GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::WND_BORDER_COLOR,true);
     //ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, "Galaxy Setup");
 
     //draw square of the selected color
     GG::Clr newcolor(SelectColor(m_cur_color));
-    GG::FlatRectangle(UpperLeft().x+30, UpperLeft().y+70, UpperLeft().x+80, UpperLeft().y+120, newcolor, ClientUI::INNER_BORDER_COLOR, 1);
+    GG::FlatRectangle(UpperLeft().x+30, UpperLeft().y+70, UpperLeft().x+80, UpperLeft().y+120, newcolor, ClientUI::WND_INNER_BORDER_COLOR, 1);
     
     return true;
 }//Render()
