@@ -24,7 +24,7 @@
 
 // include ship.h so we can see the shipdesign object
 #ifndef _Ship_h_
-#include "../Universe/Ship.h"
+#include "../universe/Ship.h"
 #endif
 
 /**
