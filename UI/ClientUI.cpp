@@ -315,7 +315,7 @@ ClientUI::ClientUI() :
 
     PTS       = GetOptionsDB().Get<int>("UI.font-size");
     TITLE_PTS = GetOptionsDB().Get<int>("UI.title-font-size");
-    DIR       = GetOptionsDB().Get<std::string>("UI.dir") + "/";
+    DIR       = GetOptionsDB().Get<std::string>("UI.dir");
     FONT      = GetOptionsDB().Get<std::string>("UI.font");
     TITLE_FONT= GetOptionsDB().Get<std::string>("UI.title-font");
     ART_DIR   = DIR + "art/" + GetOptionsDB().Get<std::string>("UI.art-dir") + "/";
