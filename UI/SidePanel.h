@@ -2,6 +2,14 @@
 #ifndef _SidePanel_h_
 #define _SidePanel_h_
 
+#ifndef _CUIControls_h_
+#include "CUIControls.h"
+#endif
+
+#ifndef _GGDynamicGraphic_h_
+#include "GGDynamicGraphic.h"
+#endif
+
 #ifndef _GGWnd_h_
 #include "GGWnd.h"
 #endif
@@ -18,10 +26,15 @@
 #include "../universe/ProdCenter.h"
 #endif
 
+#ifndef _Planet_h_
+#include "../universe/Planet.h"
+#endif
+
 class CUIDropDownList;
 class CUIScroll;
-class Planet;
 class System;
+
+class CUIIconButton;
 namespace GG {class TextControl;}
 
 
@@ -41,11 +54,13 @@ public:
         //@}
 
         /** \name Structors */ //@{
-        PlanetPanel(const Planet& planet, int y, int parent_width, int h); ///< basic ctor
+        PlanetPanel(int x, int y, int w, int h,const Planet &planet); ///< basic ctor
+        ~PlanetPanel();
         //@}
 
         /** \name Accessors */ //@{
         virtual bool InWindow(const GG::Pt& pt) const;
+        virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
 
         LeftClickedSignalType& LeftClickedSignal() const {return m_left_clicked_sig;} ///< returns the left clicked signal object for this Planet panel
         //@}
@@ -55,26 +70,54 @@ public:
         virtual void LClick(const GG::Pt& pt, Uint32 keys);
         //@}
 
+    protected:
+        friend class SidePanel;
+        void Reset();
+        void Reset(const Planet &planet);
     private:
+
+        void ConstructUnhabited(const Planet &planet);
+        void ConstructInhabited(const Planet &planet);
+        void ConstructOwned    (const Planet &planet);
+
+        bool RenderUnhabited(const Planet &planet);
+        bool RenderInhabited(const Planet &planet);
+        bool RenderOwned    (const Planet &planet);
+
+        void UpdateControls(const Planet &planet);
+
         int  PlanetDiameter() const;
         bool InPlanet(const GG::Pt& pt) const;
         void BuildSelected(int idx) const;
 
+        void SetPrimaryFocus  (Planet::FocusType focus); 
+        void SetSecondaryFocus(Planet::FocusType focus); 
+
+        void LClickFarming () {SetPrimaryFocus(Planet::FARMING );}
+        void LClickMining  () {SetPrimaryFocus(Planet::MINING  );}
+        void LClickIndustry() {SetPrimaryFocus(Planet::INDUSTRY);}
+        void LClickResearch() {SetPrimaryFocus(Planet::SCIENCE );}
+        void LClickBalanced() {SetPrimaryFocus(Planet::BALANCED);}
+
+        void RClickFarming () {SetSecondaryFocus(Planet::FARMING );}
+        void RClickMining  () {SetSecondaryFocus(Planet::MINING  );}
+        void RClickIndustry() {SetSecondaryFocus(Planet::INDUSTRY);}
+        void RClickResearch() {SetSecondaryFocus(Planet::SCIENCE );}
+        void RClickBalanced() {SetSecondaryFocus(Planet::BALANCED);}
+
+        void ClickColonize();
+
         int m_planet_id;
+        GG::TextControl     *m_planet_name;
+        GG::TextControl     *m_planet_info;
+        CUIButton           *m_button_colonize;
+        GG::DynamicGraphic  *m_planet_graphic;
+        CUIIconButton       *m_button_food,*m_button_mining,*m_button_industry,*m_button_research;
+        CUIIconButton       *m_button_balanced;
 
-        int m_parent_visible_width; ///< the width of the SidePanel, not counting the amount that the planets hang over
-
-        GG::SubTexture     m_planet_graphic;
-        CUIDropDownList*   m_construction;
-        std::vector< ProdCenter::BuildType > m_construction_prod_idx;
+        CUIDropDownList     *m_construction;
 
         mutable LeftClickedSignalType m_left_clicked_sig;
-
-        static GG::SubTexture m_pop_icon;
-        static GG::SubTexture m_industry_icon;
-        static GG::SubTexture m_research_icon;
-        static GG::SubTexture m_mining_icon;
-        static GG::SubTexture m_farming_icon;
     };
 
     /** \name Structors */ //@{
@@ -84,29 +127,85 @@ public:
     /** \name Accessors */ //@{
     virtual bool InWindow(const GG::Pt& pt) const;
 
-    int                PlanetPanels() const        {return m_planet_panels.size();}
-    const PlanetPanel* GetPlanetPanel(int n) const {return m_planet_panels[n];}
+    int                PlanetPanels() const        {return m_planet_panel_container->PlanetPanels();}
+    const PlanetPanel* GetPlanetPanel(int n) const {return m_planet_panel_container->GetPlanetPanel(n);}
+    int                SystemID() const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool Render();
+    virtual bool  Render();
 
     void         SetSystem(int system_id); ///< sets the system currently being viewed in the side panel
     //@}
 
 private:
-    const System*     m_system;
+    void AdjustScrolls();
 
-    GG::TextControl*  m_name_text;
+    void SystemSelectionChanged(int selection);
+    void FleetsChanged();
+    void PlanetsChanged();
+    void PrevButtonClicked();
+    void NextButtonClicked();
+
+    const System        *m_system;
+    CUIDropDownList     *m_system_name;
+    GG::TextControl     *m_system_name_unknown;
+    GG::Button          *m_button_prev,*m_button_next;
+    GG::DynamicGraphic  *m_star_graphic;
+    GG::TextControl     *m_static_text_systemproduction;
+
 
     std::vector<GG::SubTexture> m_fleet_icons;
-    std::vector<PlanetPanel*>   m_planet_panels;
 
-    int               m_first_row_shown;
-    int               m_first_col_shown;
+    class PlanetPanelContainer : public GG::Wnd
+    {
+      public:
+        /** \name Structors */ //@{
+        PlanetPanelContainer(int x, int y, int w, int h);
+        //@}
 
-    CUIScroll*        m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
-    CUIScroll*        m_hscroll; ///< the horizontal scroll (for viewing all the fleet icons)
+        void Clear();
+        void SetPlanets(const std::vector<const Planet*> &plt_vec);
+
+        /** \name Accessors */ //@{
+        virtual bool InWindow(const GG::Pt& pt) const;
+        virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+
+        int                PlanetPanels() const        {return m_planet_panels.size();}
+        const PlanetPanel* GetPlanetPanel(int n) const {return m_planet_panels[n];}
+        //@}
+
+        PlanetPanel* GetPlanetPanel(int n) {return m_planet_panels[n];}
+
+      private:
+        std::vector<PlanetPanel*>   m_planet_panels;
+    
+        void VScroll(int,int,int,int);
+        CUIScroll*        m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
+    };
+
+    class SystemResourceSummary : public GG::Wnd
+    {
+      public:
+        /** \name Structors */ //@{
+        SystemResourceSummary(int x, int y, int w, int h);
+        //@}
+
+        /** \name Mutators */ //@{
+        virtual bool  Render();
+
+        void SetFarming (int farming ) {m_farming = farming;}
+        void SetMining  (int mining  ) {m_mining  = mining;}
+        void SetResearch(int research) {m_research= research;}
+        void SetIndustry(int industry) {m_industry= industry;}
+        void SetDefense (int defense ) {m_defense = defense;}
+        //@}
+
+      private:
+        int m_farming,m_mining,m_research,m_industry,m_defense;
+    };
+    PlanetPanelContainer  *m_planet_panel_container;
+    SystemResourceSummary *m_system_resource_summary;
 };
 
 #endif // _SidePanel_h_
