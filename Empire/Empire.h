@@ -34,13 +34,10 @@
 *   - numeric ID
 *   - control state (human or AI)
 *   - accumulated research
-*   - list of sitrep entries
-*   - list of owned planets
-*   - list of owned fleets
 *   - list of technologies
-*   - list of visible fleets
 *   - list of explored systems
 *   - list of ship designs
+*   - list of sitrep entries
 *
 * Only ServerEmpire should create these objects.  
 * In both the client and server, Empires are managed by a subclass of EmpireManager, 
@@ -68,23 +65,10 @@ public:
     
 
     /** \name Iterator Types */ //@{
-    // these typedefs allow me to change the container I use
-    // without breaking anybody else's code
-    typedef std::set<int>::iterator PlanetIDItr;
-    typedef std::set<int>::iterator FleetIDItr;
-    typedef std::set<int>::iterator SystemIDItr;
-    typedef std::set<int>::iterator TechIDItr;
-  
-    typedef std::set<int>::const_iterator    ConstPlanetIDItr;
-    typedef std::set<int>::const_iterator    ConstFleetIDItr;
-    typedef std::set<int>::const_iterator    ConstSystemIDItr;
-    typedef std::set<int>::const_iterator    ConstTechIDItr;
-    
-    typedef std::list<SitRepEntry*>::iterator SitRepItr;
-    typedef std::list<SitRepEntry*>::const_iterator    ConstSitRepItr;
-    
-    typedef std::map<int, ShipDesign>::iterator ShipDesignItr;
-    typedef std::map<int, ShipDesign>::const_iterator ConstShipDesignItr;
+    typedef std::set<int>::const_iterator               TechIDItr;
+    typedef std::set<int>::const_iterator               SystemIDItr;
+    typedef std::map<int, ShipDesign>::const_iterator   ShipDesignItr;
+    typedef std::list<SitRepEntry*>::const_iterator     SitRepItr;
     //@}
     
     /**
@@ -93,7 +77,7 @@ public:
      */
     enum ControlStatus {CONTROL_AI =    0,  ///< under AI control
                         CONTROL_HUMAN = 1   ///< under human control
-    };
+                       };
 
     /* *****************************************************
     ** CONSTRUCTORS
@@ -135,7 +119,7 @@ public:
     
     /// Returns the Empire's color
     const GG::Clr& Color() const;
-    
+
     /// Returns the Empire's accumulated RPs
     /** 
      * Gets the empire's accumulated research points. 
@@ -143,7 +127,7 @@ public:
      * have been achieved.
      */
     int TotalRP() const;
-    
+
     /// Searches for a ship design and copies over the input design and returns success/failure
     bool CopyShipDesign(int design_id, ShipDesign& design_target);
 
@@ -152,85 +136,37 @@ public:
      *  objects (all referenced by their object IDs)
      *    - Tech advances
      *    - Explored Systems
-     *    - Owned Planets
-     *    - Owned Fleets
-     *    - Visible Fleets
-     *    - SitRepEntries
      *********************************************************/
-    
+
     /* ************************************************
        Methods to see if items are in our lists
     **************************************************/
 
-    
     /// Returns true if the given item is in the appropriate list, false if it is not.  
     bool HasTech(int ID) const;
-    
-    /// Returns true if the given item is in the appropriate list, false if it is not.
-    bool HasPlanet(int ID) const;
-    
+
     /// Returns true if the given item is in the appropriate list, false if it is not.
     bool HasExploredSystem(int ID) const;
-    
-    /// Returns true if the given item is in the appropriate list, false if it is not.
-    bool HasFleet(int ID) const;
-    
-    /// Returns true if the given item is in the appropriate list, false if it is not.
-    bool HasVisibleFleet(int ID) const;
-    
-    
+
+    /// Returns the number of entries in the SitRep.
+    int NumSitRepEntries() const;
+
+
     /* *************************************
        (const) Iterators over our various lists
     ***************************************/
 
-    ConstTechIDItr TechBegin() const;
-    ConstTechIDItr TechEnd() const;
-    
-    ConstPlanetIDItr PlanetBegin() const;
-    ConstPlanetIDItr PlanetEnd() const;
-    
-    ConstFleetIDItr FleetBegin() const;
-    ConstFleetIDItr FleetEnd() const;
-                                     
-    ConstSystemIDItr ExploredBegin() const;
-    ConstSystemIDItr ExploredEnd() const;
-    
-    ConstFleetIDItr VisibleFleetBegin() const;
-    ConstFleetIDItr VisibleFleetEnd() const;
-    
-    ConstSitRepItr SitRepBegin() const;
-    ConstSitRepItr SitRepEnd() const;
-    
-    std::list<SitRepEntry*> *GetSitRepEntries( ) { return &m_sitrep_entries; };
-    
+    TechIDItr TechBegin() const;
+    TechIDItr TechEnd() const;
 
-    ConstShipDesignItr ShipDesignBegin() const;
-    ConstShipDesignItr ShipDesignEnd() const;
-      
-    /* *************************************
-       (non-const) Iterators over our various lists
-    ***************************************/
- 
-    TechIDItr TechBegin();
-    TechIDItr TechEnd();
-    
-    PlanetIDItr PlanetBegin();
-    PlanetIDItr PlanetEnd();
-    
-    FleetIDItr FleetBegin();
-    FleetIDItr FleetEnd();
-    
-    SystemIDItr ExploredBegin();
-    SystemIDItr ExploredEnd();
-    
-    FleetIDItr VisibleFleetBegin();
-    FleetIDItr VisibleFleetEnd();
-    
-    SitRepItr SitRepBegin();
-    SitRepItr SitRepEnd();
-    
-    ShipDesignItr ShipDesignBegin() ;
-    ShipDesignItr ShipDesignEnd() ;
+    SystemIDItr ExploredBegin() const;
+    SystemIDItr ExploredEnd() const;
+
+    ShipDesignItr ShipDesignBegin() const;
+    ShipDesignItr ShipDesignEnd() const;
+
+    SitRepItr SitRepBegin() const;
+    SitRepItr SitRepEnd() const;
 
     /// Encodes an empire into an XMLElement
     /**
@@ -278,33 +214,22 @@ public:
     /// Inserts the given ID into the Empire's list of Technologies.
     void AddTech(int ID);
 
-    /// Inserts the given ID into the Empire's list of owned planets.
-    void AddPlanet(int ID);
-
     /// Inserts the given ID into the Empire's list of explored systems.
     void AddExploredSystem(int ID);
-
-    /// Inserts the given ID into the Empire's list of owned fleets.
-    void AddFleet(int ID);
-
-    /// Inserts the given ID into the Empire's list of visible fleets.
-    void AddVisibleFleet(int ID);
-
-    /// Inserts the a pointer to given sitrep entry into the empire's sitrep list
-    /**
-     *  WARNING: When you call this method, you are transferring ownership
-     *  of the entry object to the Empire.
-     *  The object pointed to by 'entry' will be deallocated when
-     *  the empire's sitrep is cleared.  Be careful you do not have any
-     *  references to SitRepEntries lieing around when this happens.
-     *  You MUST pass in a dynamically allocated sitrep entry
-     */
-    void AddSitRepEntry( SitRepEntry* entry);
-
 
     /// inserts a copy of the given design into the empire's design list
     int AddShipDesign(const ShipDesign& design);
     
+    /** Inserts the a pointer to given SitRep entry into the empire's sitrep list.
+     *  \warning When you call this method, you are transferring ownership
+     *  of the entry object to the Empire.
+     *  The object pointed to by 'entry' will be deallocated when
+     *  the empire's sitrep is cleared.  Be careful you do not have any
+     *  references to SitRepEntries lying around when this happens.
+     *  You \a must pass in a dynamically allocated sitrep entry
+     */
+    void AddSitRepEntry( SitRepEntry* entry);
+
     /* ************************************************
        Methods to remove items from our various lists
     **************************************************/
@@ -312,46 +237,12 @@ public:
     /// Removes the given ID from the empire's list
     void RemoveTech(int ID);
     
-    /// Removes the given ID from the empire's list
-    void RemoveOwnedPlanet(int ID);
-    
-    /// Removes the given ID from the empire's list
-    void RemoveExploredSystem(int ID);
-    
-    /// Removes the given ID from the empire's list
-    void RemoveFleet(int ID);
-    
-    /// Removes the given ID from the empire's list
-    void RemoveVisibleFleet(int ID);
-    
-    /// Removes all entries from the Empire's SitRep
-    /** 
-     * Any SitRep entry objects currently referenced by the Empire's SitRep collection
-     * will be deallocated, and the pointers discarded.
-     */
-    void ClearSitRep();
-
-    /** 
-     * returns the size of sitreps container
-     */
-    int NumSitReps() { return m_sitrep_entries.size( ); }
-    
     /// Removes the design with the specified ID from the empire's design list
     void RemoveShipDesign(int id);
-    
-    
-    /// Applies changes to the Empire object
-    /**
-     * The given element (elem) is the result of an XMLDiff between the calling
-     * object and another empire object.  The appropriate changes are made
-     * to ensure that this Empire object is identical to the one used to produce
-     * the diff.
-     *
-     * This method should be used for processing turn updates in the client
-     * to ensure that an empire's state on the client side is the same as its 
-     * state server side.
-     */
-    void XMLMerge(const GG::XMLElement& elem);
+
+    /// Clears all sitrep entries;
+    void ClearSitRep();
+
     
     /// Adds reseach points to the accumulated total. 
     /** 
@@ -366,7 +257,7 @@ public:
      * This method checks for new technological
      * advances that have been achieved, and add them to the technology list.
      */
-    void CheckResearchProgress( );
+    void CheckResearchProgress();
        	
     /// Mutator for empire color
     void Color(const GG::Clr& color);
@@ -376,18 +267,10 @@ public:
     
    	/// Mutator for empire name
     void Name(const std::string& name);
-    
     //@}
    
 private:
     /// Helper method to encode a list of integers into an XMLElement
-    /** 
-     *  The contents of the list are encoded using the encoding method described
-     *  in the GG documentation.
-     *  Each container element is an XML subelement called itemN where N is the 
-     *  index of the container element.  Each subelement has a "value" attribute
-     *  equal to the value of the container element.
-     */
     static void EncodeIntList(GG::XMLElement& container, const std::set<int>& lst);
 
     /// Empire's unique numeric id
@@ -407,32 +290,19 @@ private:
 
     /// the next available ship design ID
     int m_next_design_id;
-    
-    /// The Empire's sitrep entries
-    std::list<SitRepEntry*> m_sitrep_entries;
-
-
-    // all of the following are lists of ObjectIDs which 
-    // reference objects in the Universe module
 
     /// list of acquired technologies.  These are IDs
     /// referencing Tech objects in the techmanager
     std::set<int> m_techs;   
     
-    /// planets you own
-    std::set<int> m_planets;       
-    
-    /// fleets you own
-    std::set<int> m_fleets;
-    
     /// systems you've explored        
     std::set<int> m_explored_systems; 
     
-    /// fleets you can see but dont own    
-    std::set<int> m_visible_fleets;   
-    
+    /// The Empire's ship designs
     std::map<int, ShipDesign> m_ship_designs; 
-    
+
+    /// The Empire's sitrep entries
+    std::list<SitRepEntry*> m_sitrep_entries;
 };
 
 #endif
