@@ -6,6 +6,11 @@
 #include "UniverseObject.h"
 #endif
 
+#ifndef _Ship_h_
+#include "Ship.h"
+#endif
+
+
 /** a production center decoration for a UniverseObject.*/
 class Empire;
 class ProdCenter
@@ -56,12 +61,6 @@ public:
    void SetSecondaryFocus(FocusType focus);
    void SetWorkforce(double workforce);
    void SetMaxWorkforce(double max_workforce);
-   void SetRollover( double rollover );
-   void SetBuildProgress( double build_progress );   
-
-   ///< Updates build progress and determines if an item of given cost has been built. Handles
-   ///< logic for rollovers and multiple items. Returns the number of items built, 0 if none
-   int UpdateBuildProgress( int item_cost );
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
@@ -71,11 +70,19 @@ public:
    /////////////////////////////////////////////////////////////////////////////
    
    virtual void MovementPhase( );
-   // this will usually be an empty method since types of production is specific to the implementor of this class
-   void PopGrowthProductionResearchPhase( );
+   void PopGrowthProductionResearchPhase( Empire *pEmpire, const int system_id, const int planet_id );
    //@}
    
 private:
+
+   ///< Updates build progress and determines if an item of given cost has been built. Handles
+   ///< logic for rollovers and multiple items. Returns the number of items built, 0 if none
+   int UpdateBuildProgress( int item_cost );
+
+   ///< until shipyards, planets build ships as psrt of it's implementation of ProdCenters
+   ///< takes a design ID and if any are build, adds the ships to a fleet.
+   void UpdateShipBuildProgress( Empire *empire, const int system_id, const int planet_id, ShipDesign::V01DesignID design_id );
+
    FocusType      m_primary;
    FocusType      m_secondary;
    
