@@ -125,7 +125,7 @@ int ServerUniverse::Insert(UniverseObject* obj)
             {
                // ID is unused, store object here
                m_objects[object_id] = obj;
-               
+               obj->SetID(object_id);
                return object_id;
             }
          }
@@ -147,6 +147,8 @@ int ServerUniverse::Insert(UniverseObject* obj)
          // ID is unused, store object here
          m_objects[object_id] = obj;
          m_last_allocated_id = object_id;
+         // ID must be stored into the object as well
+         obj->SetID(object_id);
          return object_id;
       }
       
