@@ -109,17 +109,23 @@ RenameOrder::RenameOrder(int empire, int fleet, const std::string& name) :
    m_object(fleet),
    m_name(name)
 {
+    if (name == "")
+        throw std::invalid_argument("RenameOrder::RenameOrder() : Attempted to name an object \"\".");
 }
 
 void RenameOrder::Execute() const
 {
     ValidateEmpireID();
 
-    UniverseObject* obj = GetUniverse().Object(m_object);\
+    UniverseObject* obj = GetUniverse().Object(m_object);
 
     // verify that empire specified in order owns specified object
     if (!obj->WhollyOwnedBy(EmpireID()))
         throw std::runtime_error("Empire specified in rename order does not own specified object.");
+
+    // disallow the name "", since that denotes an unknown object
+    if (m_name == "")
+        throw std::runtime_error("Name \"\" specified in rename order is invalid.");
 
     obj->Rename(m_name);
 }
