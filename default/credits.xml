@@ -31,12 +31,12 @@
       <PERSON name="Bryan Patterson" nick="PowerCrazy" task="Game Design"/>
     </GROUP>
     <GROUP name ="GRAPHICS">
-      <PERSON name="Ka"               nick=""       task="Graphics"/>
-      <PERSON name="Alex Kaludis"     nick=""       task="Graphics"/>
-      <PERSON name="Jonathan Hill"    nick="Obiwan" task="Graphics"/>
-      <PERSON name="Chris Montgomery" nick=""       task="Graphics"/>
-      <PERSON name="Mathias Köhler"   nick="pd"     task="Graphics"/>
-      <PERSON name="Zanzibar"         nick=""       task="Graphics"/>
+      <PERSON name="Ka"               nick=""          task="Graphics"/>
+      <PERSON name="Alex Kaludis"     nick="That Guy"  task="Graphics"/>
+      <PERSON name="Jonathan Hill"    nick="Obiwan"    task="Graphics"/>
+      <PERSON name="Chris Montgomery" nick=""          task="Graphics"/>
+      <PERSON name="Mathias Köhler"   nick="pd"        task="Graphics"/>
+      <PERSON name="Zanzibar"         nick=""          task="Graphics"/>
     </GROUP>
     <GROUP name ="AUDIO">
       <PERSON name="Shannon Roberts" nick="Guiguibaah" task="Audio"/>
