@@ -92,11 +92,11 @@ void InGameOptions::Save()
             filename += ".sav";
 
         Message response;
-        bool save_failed = HumanClientApp::GetApp()->NetworkCore().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), filename), response);
-        if (save_failed) {
-            ClientUI::MessageBox("Could not save game as \"" + filename + "\".");
-        } else {
+        bool save_succeeded = HumanClientApp::GetApp()->NetworkCore().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), filename), response);
+        if (save_succeeded) {
             CloseClicked();
+        } else {
+            ClientUI::MessageBox("Could not save game as \"" + filename + "\".");
         }
     }
 }
