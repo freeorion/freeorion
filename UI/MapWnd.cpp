@@ -540,6 +540,7 @@ void MapWnd::RenderBackgrounds()
         m_nebulae[i]->OrthoBlit(ul, 
                                 ul + GG::Pt(static_cast<int>(m_nebulae[i]->Width() * m_zoom_factor), 
                                             static_cast<int>(m_nebulae[i]->Width() * m_zoom_factor)), 
+                                0,
                                 false);
     }
 }
