@@ -37,7 +37,7 @@ namespace {
             m_fleet(fleet),
             m_fleet_icon(0),
             m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + ClientUI::String("FW_NEW_FLEET_LABEL") + "</i>", 
-                                                  ClientUI::FONT, ClientUI::PTS, GG::TF_RIGHT | GG::TF_VCENTER, m_fleet ? ClientUI::TEXT_COLOR : GG::CLR_BLACK)),
+                                                  ClientUI::FONT, ClientUI::PTS, m_fleet ? ClientUI::TEXT_COLOR : GG::CLR_BLACK, GG::TF_RIGHT | GG::TF_VCENTER)),
             m_num_ships_stat(0),
             m_fleet_strength_stat(0),
             m_damage_icon(0),
@@ -203,8 +203,8 @@ namespace {
             Control(0, 0, w, h, 0),
             m_ship(ship),
             m_ship_icon(0),
-            m_ship_name_text(new GG::TextControl(h, 0, w - h - 5, SHIP_NAME_HT, m_ship->Name(), ClientUI::FONT, ClientUI::PTS, 
-                                                 GG::TF_RIGHT | GG::TF_VCENTER, ClientUI::TEXT_COLOR)),
+            m_ship_name_text(new GG::TextControl(h, 0, w - h - 5, SHIP_NAME_HT, m_ship->Name(), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, 
+                                                 GG::TF_RIGHT | GG::TF_VCENTER)),
             m_ship_strength_stat(0),
             m_damage_stat(0),
             m_colonizer_icon(0),
@@ -373,10 +373,10 @@ FleetDetailPanel::FleetDetailPanel(int x, int y, Fleet* fleet, bool read_only, U
     m_ships_lb(0),
     m_ship_status_text(0)
 {
-    m_destination_text = new GG::TextControl(0, 0, FLEET_LISTBOX_WIDTH, ClientUI::PTS + 4, "", ClientUI::FONT, ClientUI::PTS, GG::TF_LEFT, ClientUI::TEXT_COLOR);
+    m_destination_text = new GG::TextControl(0, 0, FLEET_LISTBOX_WIDTH, ClientUI::PTS + 4, "", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_ships_lb = new CUIListBox(0, m_destination_text->LowerRight().y + CONTROL_MARGIN, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT);
     m_ship_status_text = new GG::TextControl(0, m_ships_lb->LowerRight().y + CONTROL_MARGIN, m_ships_lb->Width(), ClientUI::PTS + 4, 
-                                             "", ClientUI::FONT, ClientUI::PTS, GG::TF_LEFT, ClientUI::TEXT_COLOR);
+                                             "", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
     Resize(m_ship_status_text->LowerRight());
 

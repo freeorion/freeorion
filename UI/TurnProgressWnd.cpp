@@ -30,9 +30,9 @@ TurnProgressWnd::TurnProgressWnd( ) :
                                              GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash01.png"));
   GG::App::GetApp()->Register(m_bg_graphic);
 
-  m_phase_text = new GG::TextControl(0, 20, PROGRESS_WND_WIDTH, static_cast<int>(ClientUI::PTS * 2.0 + 4), "", ClientUI::FONT,  static_cast<int>(ClientUI::PTS * 2.0), GG::TF_CENTER | GG::TF_VCENTER, ClientUI::TEXT_COLOR);
+  m_phase_text = new GG::TextControl(0, 20, PROGRESS_WND_WIDTH, static_cast<int>(ClientUI::PTS * 2.0 + 4), "", ClientUI::FONT,  static_cast<int>(ClientUI::PTS * 2.0), ClientUI::TEXT_COLOR, GG::TF_CENTER | GG::TF_VCENTER);
 
-  m_empire_text = new GG::TextControl(0, 50, PROGRESS_WND_WIDTH, static_cast<int>(ClientUI::PTS * 2.0 + 4), "", ClientUI::FONT, static_cast<int>(ClientUI::PTS * 2.0), GG::TF_CENTER | GG::TF_VCENTER, ClientUI::TEXT_COLOR);
+  m_empire_text = new GG::TextControl(0, 50, PROGRESS_WND_WIDTH, static_cast<int>(ClientUI::PTS * 2.0 + 4), "", ClientUI::FONT, static_cast<int>(ClientUI::PTS * 2.0), ClientUI::TEXT_COLOR, GG::TF_CENTER | GG::TF_VCENTER);
 
   AttachChild(m_phase_text);
   AttachChild(m_empire_text);

@@ -711,7 +711,7 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon
     m_positive_color(text_color),
     m_negative_color(text_color),
     m_icon(new GG::StaticGraphic(0, 0, h, h, GG::App::GetApp()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
-    m_text(new GG::TextControl(h, 0, w - h, h, "", ClientUI::FONT, ClientUI::PTS, GG::TF_LEFT | GG::TF_VCENTER, text_color))
+    m_text(new GG::TextControl(h, 0, w - h, h, "", ClientUI::FONT, ClientUI::PTS, text_color, GG::TF_LEFT | GG::TF_VCENTER))
 {
     AttachChild(m_icon);
     AttachChild(m_text);
@@ -749,7 +749,7 @@ StatisticIconDualValue::StatisticIconDualValue(int x, int y, int w, int h, const
     m_show_sign(show_sign),m_show_sign_second(show_sign_second),
     m_positive_color(text_color),m_negative_color(text_color),
     m_icon(new GG::StaticGraphic(0, 0, h, h, GG::App::GetApp()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
-    m_text(new GG::TextControl(h, 0, w - h, h, "", ClientUI::FONT, ClientUI::PTS, GG::TF_LEFT | GG::TF_VCENTER, text_color))
+    m_text(new GG::TextControl(h, 0, w - h, h, "", ClientUI::FONT, ClientUI::PTS, text_color, GG::TF_LEFT | GG::TF_VCENTER))
 {
     AttachChild(m_icon);
     AttachChild(m_text);

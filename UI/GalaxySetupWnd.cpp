@@ -46,31 +46,31 @@ GalaxySetupPanel::GalaxySetupPanel(int x, int y, int w/* = DEFAULT_WIDTH*/) :
     const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
     int row = -1;
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_STARS"), ClientUI::FONT, ClientUI::PTS, GG::TF_RIGHT, ClientUI::TEXT_COLOR));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_STARS"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_stars_spin = new CUISpin<int>(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, 75, 100, 1, 10, 500, true);
     m_stars_spin->OffsetMove(0, (PANEL_CONTROL_SPACING - m_stars_spin->Height()) / 2);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_SHAPE"), ClientUI::FONT, ClientUI::PTS, GG::TF_RIGHT, ClientUI::TEXT_COLOR));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_SHAPE"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_galaxy_shapes_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     m_galaxy_shapes_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_galaxy_shapes_list->Height()) / 2);
     m_galaxy_shapes_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_AGE"), ClientUI::FONT, ClientUI::PTS, GG::TF_RIGHT, ClientUI::TEXT_COLOR));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_AGE"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_galaxy_ages_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     m_galaxy_ages_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_galaxy_ages_list->Height()) / 2);
     m_galaxy_ages_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_STARLANE_FREQ"), ClientUI::FONT, ClientUI::PTS, GG::TF_RIGHT, ClientUI::TEXT_COLOR));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_STARLANE_FREQ"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_starlane_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     m_starlane_freq_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_starlane_freq_list->Height()) / 2);
     m_starlane_freq_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_PLANET_DENSITY"), ClientUI::FONT, ClientUI::PTS, GG::TF_RIGHT, ClientUI::TEXT_COLOR));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_PLANET_DENSITY"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_planet_density_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     m_planet_density_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_planet_density_list->Height()) / 2);
     m_planet_density_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row* PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_SPECIALS_FREQ"), ClientUI::FONT, ClientUI::PTS, GG::TF_RIGHT, ClientUI::TEXT_COLOR));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row* PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_SPECIALS_FREQ"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_specials_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     m_specials_freq_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_specials_freq_list->Height()) / 2);
     m_specials_freq_list->SetStyle(GG::LB_NOSORT);
@@ -259,11 +259,11 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_galaxy_setup_panel = new GalaxySetupPanel(0, 22);
 
     const int LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
-    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_EMPIRE_COLOR"), ClientUI::FONT, ClientUI::PTS, GG::TF_RIGHT, ClientUI::TEXT_COLOR);
+    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, ClientUI::String("GSETUP_EMPIRE_COLOR"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT);
     m_empire_color_selector = new EmpireColorSelector(ClientUI::PTS + 4);
     m_empire_color_selector->MoveTo(LABELS_WIDTH + 2 * CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING + (PANEL_CONTROL_SPACING - m_empire_color_selector->Height()) / 2);
     m_empire_color_selector->Select(0);
-    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y, LABELS_WIDTH, m_empire_color_selector->Height(), ClientUI::String("GSETUP_EMPIRE_NAME"), ClientUI::FONT, ClientUI::PTS, GG::TF_RIGHT, ClientUI::TEXT_COLOR);
+    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y, LABELS_WIDTH, m_empire_color_selector->Height(), ClientUI::String("GSETUP_EMPIRE_NAME"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT);
     m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y,
                                      LABELS_WIDTH, CONTROL_HEIGHT, "Human");
     m_empire_name_label->OffsetMove(0, (PANEL_CONTROL_SPACING - m_empire_name_label->Height()) / 2);
