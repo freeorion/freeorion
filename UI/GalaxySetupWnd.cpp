@@ -308,13 +308,9 @@ void GalaxySetupWnd::OnBrowse()
     allowed_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("GSETUP_GRAPHICS_FILES") + " (PNG, Targa, JPG, BMP)", 
                                                                      "*.png, *.PNG, *.tga, *.TGA, *.jpg, *.JPG, *.bmp, *.BMP"));
 
-    GG::FileDlg dlg(GalaxyFile(),
-                    false, false, allowed_file_types,
-                    ClientUI::FONT,
-                    ClientUI::PTS,
-                    GG::Clr(100,100,100,255),
-                    GG::CLR_WHITE,
-                    GG::CLR_BLACK); 
+    GG::FileDlg dlg("", GalaxyFile(), false, false, allowed_file_types, ClientUI::FONT, ClientUI::PTS,
+                    ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
+
     dlg.Run();    
     if (!dlg.Result().empty()) {
         m_galaxy_file->SetText(*dlg.Result().begin());
