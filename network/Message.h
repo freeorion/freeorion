@@ -106,11 +106,11 @@ Message HostGameMessage(const GG::XMLDoc& game_parameters);
 /** creates a JOIN_GAME message*/
 Message JoinGameMessage(const std::string& player_name);
 
-/** creates a JOIN_GAME acknowledgement message*/
-Message JoinAckMessage(int player_id);
-
 /** creates a HOST_GAME acknowledgement message*/
 Message HostAckMessage(int player_id);
+
+/** creates a JOIN_GAME acknowledgement message*/
+Message JoinAckMessage(int player_id);
 
 #endif // _Message_h_
 

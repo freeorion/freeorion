@@ -12,7 +12,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=-DLOG4CPP_FIX_ERROR_COLLISION=1_@@_-DWIN32_CHILD_PROCESSES_@@_
-Linker=-lmingw32_@@_-lSDLmain_@@_-lSDL_@@_-lSDL_image_@@_-lopengl32_@@_-lglu32_@@_-lfreetype_@@_-lwsock32_@@_-lboost_signals_@@_-lexpat_@@_-llog4cpp_@@_-lz_@@_
+Linker=-lmingw32_@@_-lSDLmain_@@_-lSDL_@@_-lSDL_image_@@_-lopengl32_@@_-lglu32_@@_-lfreetype_@@_-lwsock32_@@_-lboost_signals_@@_-lboost_filesystem_@@_-lboost_regex_@@_-lexpat_@@_-llog4cpp_@@_-lz_@@_
 IsCpp=1
 Icon=
 ExeOutput=..\..\..\FreeOrion
@@ -686,16 +686,6 @@ OverrideBuildCmd=0
 BuildCmd=$(CC) -c SDLnetUDP.c -o ../../objs/SDLnetUDP.o $(CFLAGS)
 
 [Unit66]
-FileName=..\..\SDL_net\SDL_net.c
-CompileCpp=0
-Folder=SDL_net
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=$(CC) -c SDL_net.c -o ../../objs/SDL_net.o $(CFLAGS)
-
-[Unit67]
 FileName=..\..\SDL_net\SDL_net.h
 CompileCpp=1
 Folder=SDL_net
@@ -705,7 +695,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit68]
+[Unit67]
 FileName=..\..\SDL_net\SDLnetselect.c
 CompileCpp=0
 Folder=SDL_net
@@ -715,7 +705,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c SDLnetselect.c -o ../../objs/SDLnetselect.o $(CFLAGS)
 
-[Unit69]
+[Unit68]
 FileName=..\..\SDL_net\SDLnetsys.h
 CompileCpp=1
 Folder=SDL_net
@@ -725,7 +715,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit70]
+[Unit69]
 FileName=..\..\SDL_net\SDLnetTCP.c
 CompileCpp=0
 Folder=SDL_net
@@ -735,7 +725,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c SDLnetTCP.c -o ../../objs/SDLnetTCP.o $(CFLAGS)
 
-[Unit71]
+[Unit70]
 FileName=..\..\SDL_net2\trace.h
 CompileCpp=1
 Folder=fastevents
@@ -745,7 +735,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit72]
+[Unit71]
 FileName=..\..\SDL_net2\fastevents.c
 CompileCpp=0
 Folder=fastevents
@@ -755,7 +745,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c fastevents.c -o ../../objs/fastevents.o $(CFLAGS)
 
-[Unit73]
+[Unit72]
 FileName=..\..\SDL_net2\fastevents.h
 CompileCpp=1
 Folder=fastevents
@@ -765,7 +755,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit74]
+[Unit73]
 FileName=..\..\SDL_net2\net2.c
 CompileCpp=0
 Folder=fastevents
@@ -775,7 +765,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c net2.c -o ../../objs/net2.o $(CFLAGS)
 
-[Unit75]
+[Unit74]
 FileName=..\..\SDL_net2\net2.h
 CompileCpp=1
 Folder=fastevents
@@ -785,7 +775,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit76]
+[Unit75]
 FileName=..\..\SDL_net2\queue.h
 CompileCpp=1
 Folder=fastevents
@@ -795,7 +785,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit77]
+[Unit76]
 FileName=..\..\SDL_net2\trace.c
 CompileCpp=0
 Folder=fastevents
@@ -805,7 +795,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c trace.c -o ../../objs/trace.o $(CFLAGS)
 
-[Unit78]
+[Unit77]
 FileName=..\..\util\Process.h
 CompileCpp=1
 Folder=util
@@ -815,7 +805,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit79]
+[Unit78]
 FileName=..\..\util\Process.cpp
 CompileCpp=1
 Folder=util
@@ -825,7 +815,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit80]
+[Unit79]
 FileName=..\..\util\OrderSet.h
 CompileCpp=1
 Folder=util
@@ -835,10 +825,20 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit81]
+[Unit80]
 FileName=..\..\util\OrderSet.cpp
 CompileCpp=1
 Folder=util
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit81]
+FileName=..\..\SDL_net\SDLnet.c
+CompileCpp=1
+Folder=SDL_net
 Compile=1
 Link=1
 Priority=1000

@@ -133,7 +133,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
             m_network_core.SendMessage(JoinAckMessage(m_players_info.size() - 1));
          }
       } else {
-         char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
+         const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
          m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to host "
             "a new game but there was already one in progress or being setup.  Terminating connection to " << 
             (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
@@ -159,7 +159,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
                m_network_core.SendMessage(JoinAckMessage(m_players_info.size() - 1));
             }
          } else {
-            char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
+            const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
             m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to join "
                "the game but there was not enough room.  Terminating connection to " << 
                (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
@@ -174,7 +174,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
    }
 
    default: {
-      char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
+      const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
       m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \"" <<
          msg.Type() << "\" for a non-player Message.  Terminating connection to " << 
          (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;

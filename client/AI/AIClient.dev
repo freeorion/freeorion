@@ -176,16 +176,6 @@ OverrideBuildCmd=0
 BuildCmd=$(CC) -c SDLnetUDP.c -o SDLnetUDP.o $(CFLAGS)
 
 [Unit14]
-FileName=..\..\SDL_net\SDL_net.c
-CompileCpp=0
-Folder=SDL_net
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=$(CC) -c SDL_net.c -o SDL_net.o $(CFLAGS)
-
-[Unit15]
 FileName=..\..\SDL_net\SDL_net.h
 CompileCpp=1
 Folder=SDL_net
@@ -195,7 +185,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit16]
+[Unit15]
 FileName=..\..\SDL_net\SDLnetselect.c
 CompileCpp=0
 Folder=SDL_net
@@ -205,7 +195,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c SDLnetselect.c -o SDLnetselect.o $(CFLAGS)
 
-[Unit17]
+[Unit16]
 FileName=..\..\SDL_net\SDLnetsys.h
 CompileCpp=1
 Folder=SDL_net
@@ -215,7 +205,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit18]
+[Unit17]
 FileName=..\..\SDL_net\SDLnetTCP.c
 CompileCpp=0
 Folder=SDL_net
@@ -225,7 +215,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=$(CC) -c SDLnetTCP.c -o SDLnetTCP.o $(CFLAGS)
 
-[Unit19]
+[Unit18]
 FileName=..\..\network\ClientNetworkCore.cpp
 CompileCpp=1
 Folder=network
@@ -235,7 +225,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit20]
+[Unit19]
 FileName=..\..\network\ClientNetworkCore.h
 CompileCpp=1
 Folder=network
@@ -245,7 +235,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit20]
 FileName=..\..\network\Message.cpp
 CompileCpp=1
 Folder=network
@@ -255,7 +245,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit22]
+[Unit21]
 FileName=..\..\network\Message.h
 CompileCpp=1
 Folder=network
@@ -265,7 +255,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit23]
+[Unit22]
 FileName=..\..\network\NetworkCore.cpp
 CompileCpp=1
 Folder=network
@@ -275,7 +265,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit23]
 FileName=..\..\network\NetworkCore.h
 CompileCpp=1
 Folder=network
@@ -285,7 +275,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit25]
+[Unit24]
 FileName=..\..\network\XDiff.cpp
 CompileCpp=1
 Folder=network
@@ -295,7 +285,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit26]
+[Unit25]
 FileName=..\..\network\XDiff.hpp
 CompileCpp=1
 Folder=network
@@ -305,7 +295,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit27]
+[Unit26]
 FileName=..\..\network\XHash.cpp
 CompileCpp=1
 Folder=network
@@ -315,7 +305,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit28]
+[Unit27]
 FileName=..\..\network\XHash.hpp
 CompileCpp=1
 Folder=network
@@ -325,7 +315,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
+[Unit28]
 FileName=..\..\network\XLut.cpp
 CompileCpp=1
 Folder=network
@@ -335,7 +325,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit30]
+[Unit29]
 FileName=..\..\network\XLut.hpp
 CompileCpp=1
 Folder=network
@@ -345,7 +335,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit31]
+[Unit30]
 FileName=..\..\network\XParser.cpp
 CompileCpp=1
 Folder=network
@@ -355,7 +345,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit32]
+[Unit31]
 FileName=..\..\network\XParser.hpp
 CompileCpp=1
 Folder=network
@@ -365,7 +355,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit33]
+[Unit32]
 FileName=..\..\network\XTree.cpp
 CompileCpp=1
 Folder=network
@@ -375,7 +365,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit34]
+[Unit33]
 FileName=..\..\network\XTree.hpp
 CompileCpp=1
 Folder=network
@@ -385,7 +375,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit35]
+[Unit34]
 FileName=..\..\GG\XML\XMLDoc.h
 CompileCpp=1
 Folder=GG/XML
@@ -395,7 +385,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit36]
+[Unit35]
 FileName=..\..\GG\XML\XMLDoc.cpp
 CompileCpp=1
 Folder=GG/XML
@@ -405,7 +395,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit37]
+[Unit36]
 FileName=..\..\util\OrderSet.h
 CompileCpp=1
 Folder=util
@@ -415,10 +405,20 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit38]
+[Unit37]
 FileName=..\..\util\OrderSet.cpp
 CompileCpp=1
 Folder=util
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit38]
+FileName=..\..\SDL_net\SDLnet.c
+CompileCpp=1
+Folder=SDL_net
 Compile=1
 Link=1
 Priority=1000

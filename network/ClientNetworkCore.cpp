@@ -98,7 +98,7 @@ void ClientNetworkCore::HandleNetEvent(SDL_Event& event)
             m_server_socket = -1;
          } else { // unknown connection
             IPaddress* addr = NET2_TCPGetPeerAddress(closing_socket);
-            char* socket_hostname = SDLNet_ResolveIP(addr);
+            const char* socket_hostname = SDLNet_ResolveIP(addr);
             logger.errorStream() << "ClientNetworkCore::HandleNetEvent : Connection to " <<
                (socket_hostname ? "host " + std::string(socket_hostname) : "[unknown host]") << " on socket " << 
                closing_socket << " terminated";

@@ -158,14 +158,13 @@ Message JoinGameMessage(const std::string& player_name)
    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_name);
 }
 
-Message JoinAckMessage(int player_id)
-{
-   return Message(Message::JOIN_GAME, -1, player_id, Message::CORE, boost::lexical_cast<std::string>(player_id));
-}
-
 Message HostAckMessage(int player_id)
 {
    return Message(Message::HOST_GAME, -1, player_id, Message::CORE, "ACK");
 }
 
+Message JoinAckMessage(int player_id)
+{
+   return Message(Message::JOIN_GAME, -1, player_id, Message::CORE, boost::lexical_cast<std::string>(player_id));
+}
 

@@ -1,4 +1,4 @@
-# FreeOrion AI client
+# FreeOrion AI Client
 # This Makefile assumes you've installed boost in /usr/boost_1_30_0, and that
 # you've built it using bjam (see boost build docs for explanation of bjam).
 
@@ -12,8 +12,8 @@ BOOST_INC = /usr/boost_1_30_0
 BOOST_SIG_LIB = /usr/boost_1_30_0/libs/signals/build/bin/libboost_signals.a/gcc/debug/runtime-link-dynamic
 #BOOST_PYTHON_LIB = /usr/boost_1_30_0/libs/python/build/bin/libboost_python.a/gcc/debug/runtime-link-dynamic
 
-OBJ  = ../../objs/camain.o ../../objs/AIClientApp.o ../../objs/ClientApp.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/SDLnetUDP.o ../../objs/SDL_net.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/XMLDoc.o ../../objs/OrderSet.o
-LINKOBJ  = ../../objs/camain.o ../../objs/AIClientApp.o ../../objs/ClientApp.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/SDLnetUDP.o ../../objs/SDL_net.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/XMLDoc.o ../../objs/OrderSet.o
+OBJ  = ../../objs/camain.o ../../objs/AIClientApp.o ../../objs/ClientApp.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/SDLnetUDP.o ../../objs/SDLnet.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/XMLDoc.o ../../objs/OrderSet.o
+LINKOBJ  = ../../objs/camain.o ../../objs/AIClientApp.o ../../objs/ClientApp.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/SDLnetUDP.o ../../objs/SDLnet.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/XMLDoc.o ../../objs/OrderSet.o
 
 LIBS =  -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz
 
@@ -58,8 +58,8 @@ $(BIN): $(LINKOBJ)
 ../../objs/SDLnetUDP.o: ../../SDL_net/SDLnetUDP.c
 	$(CC) -c ../../SDL_net/SDLnetUDP.c -o ../../objs/SDLnetUDP.o $(CFLAGS)
 
-../../objs/SDL_net.o: ../../SDL_net/SDL_net.c
-	$(CC) -c ../../SDL_net/SDL_net.c -o ../../objs/SDL_net.o $(CFLAGS)
+../../objs/SDLnet.o: ../../SDL_net/SDLnet.c
+	$(CC) -c ../../SDL_net/SDLnet.c -o ../../objs/SDLnet.o $(CFLAGS)
 
 ../../objs/SDLnetselect.o: ../../SDL_net/SDLnetselect.c
 	$(CC) -c ../../SDL_net/SDLnetselect.c -o ../../objs/SDLnetselect.o $(CFLAGS)

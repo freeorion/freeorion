@@ -97,7 +97,7 @@ bool ServerNetworkCore::DumpConnection(int socket)
 
    if (retval) {
       IPaddress* addr = NET2_TCPGetPeerAddress(socket);
-      char* socket_hostname = SDLNet_ResolveIP(addr);
+      const char* socket_hostname = SDLNet_ResolveIP(addr);
       NET2_TCPClose(socket);
       ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::DumpConnection : Connection to " << 
          (player_id == -1 ? "" : "player " + boost::lexical_cast<std::string>(player_id)) << " " << 
@@ -150,7 +150,7 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
          int socket = NET2_GetSocket(&event);
          if (port == NetworkCore::CONNECT_PORT) { // regular incoming connections
             IPaddress* addr = NET2_TCPGetPeerAddress(socket);
-            char* socket_hostname = SDLNet_ResolveIP(addr);
+            const char* socket_hostname = SDLNet_ResolveIP(addr);
             m_new_connections.push_back(ConnectionInfo(socket, *addr));
             ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::HandleNetEvent : Now connected to client at " << 
                (socket_hostname ? socket_hostname : "[unknown host]") << ", on socket " << socket << ".";
