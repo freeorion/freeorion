@@ -111,7 +111,7 @@ private:
    const ServerApp& operator=(const ServerApp&); // disabled
    ServerApp(const ServerApp&); // disabled
 
-   void Run();             ///< initializes app state, then executes main event handler/render loop (PollAndRender())'
+   void Run();             ///< initializes app state, then executes main event handler/render loop (Poll())
 
    void SDLInit();         ///< initializes SDL and SDL-related libs
    void Initialize();      ///< app initialization

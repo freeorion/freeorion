@@ -280,7 +280,7 @@ void ServerApp::HandleMessage(const Message& msg)
             }
 
             // wait for them all to come in
-            SDL_Event ev;            
+            SDL_Event ev;
             const unsigned int SYCHRONOUS_TIMEOUT = 15000; // give up after this many ms without any valid responses
             unsigned int start_time = SDL_GetTicks();
             while (1) {
@@ -302,7 +302,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     break;
             }
             if (m_players_responded == needed_reponses) {
-		SaveGameVars(doc);
+                SaveGameVars(doc);
                 for (std::map<int, GG::XMLElement>::iterator it = m_player_save_game_data.begin(); it != m_player_save_game_data.end(); ++it) {
                     GG::XMLElement player_element("Player");
                     player_element.AppendChild(GG::XMLElement("name", m_network_core.Players().find(it->first)->second.name));
