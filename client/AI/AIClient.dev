@@ -1,7 +1,7 @@
 [Project]
 FileName=AIClient.dev
 Name=AIClient
-UnitCount=58
+UnitCount=59
 Type=1
 Ver=1
 ObjFiles=
@@ -25,7 +25,7 @@ CommandLine=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000000100001000
+CompilerSettings=0000000000000001000000
 UseCustomMakefile=0
 CustomMakefile=
 
@@ -588,9 +588,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit59]
-FileName=..\..\Empire\ClientEmpireManager.cpp
+FileName=..\..\util\DataTable.cpp
 CompileCpp=1
-Folder=empire
+Folder=util
 Compile=1
 Link=1
 Priority=1000
