@@ -341,7 +341,7 @@ void ClientUI::ScreenIntro()
     //TODO: Create options screen
     //TEMP
     m_current_window = new IntroScreen();
-    GG::App::GetApp()->RegisterOnTop(m_current_window);
+    GG::App::GetApp()->Register(m_current_window);
 
 }//ScreenIntro()
                       
