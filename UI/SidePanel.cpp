@@ -789,19 +789,20 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
 
   std::vector<boost::shared_ptr<GG::Texture> > textures; int start_frame; double fps;
 
+  //#texures holds at least one element or GetPlanetTextures throws an exception
   GetPlanetTextures(planet,textures,start_frame=-1,fps=0.0);
-  m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,64,64,0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+  m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
   if(start_frame==-1 && 1<textures.size())
     start_frame = RandSmallInt(0,textures.size()-1);
 
   if(start_frame!=-1 && fps!=0.0)
     m_planet_graphic->SetTimeIndex(start_frame * 1000.0 / m_planet_graphic->FPS());
   
-  //lights
-  
   textures.clear();
+  //lights
+  //#texures holds at least one element or GetPlanetTextures throws an exception
   GetPlanetTexturesDynamicLights(planet,textures,start_frame=-1,fps=0.0);
-  m_planet_graphic_lights = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures.back()->Width(),textures.back()->Height(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+  m_planet_graphic_lights = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
   if(start_frame==-1 && 1<textures.size())
     start_frame = RandSmallInt(0,textures.size()-1);
 
