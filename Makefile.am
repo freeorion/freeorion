@@ -85,6 +85,8 @@ util/DataTable.h   				\
 util/GLStateComparator.h			\
 util/GZStream.cpp				\
 util/GZStream.h  				\
+util/MultiplayerCommon.cpp			\
+util/MultiplayerCommon.h			\
 util/OptionValidators.h				\
 util/OptionsDB.cpp				\
 util/OptionsDB.h  				\
