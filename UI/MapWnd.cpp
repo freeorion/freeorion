@@ -947,10 +947,11 @@ void MapWnd::RenderStarlanes()
 
 void MapWnd::RenderFleetMovementLines()
 {
-    const unsigned int PATTERN = 0xF0F0F0F0;
-    const double RATE = 0.5;
-    const int SHIFT = static_cast<int>(GG::App::GetApp()->Ticks() * RATE / 32.0) % 32;
-    const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (32 - SHIFT));
+    const GLushort PATTERN = 0xF0F0;
+    const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
+    const double RATE = 0.25;
+    const int SHIFT = static_cast<int>(GG::App::GetApp()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
+    const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
     double LINE_SCALE = std::max(1.0, 1.333 * m_zoom_factor);
 
     glDisable(GL_TEXTURE_2D);
@@ -962,12 +963,15 @@ void MapWnd::RenderFleetMovementLines()
 
     GG::Pt ul = ClientUpperLeft();
     for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
-        glBegin(GL_LINE_STRIP);
+        // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
+        // when the begining of a line segment starts offscreen
+        glBegin(GL_LINES);
         const std::list<System*>& destinations = it->second.destinations;
         glVertex2d(ul.x + it->second.x * m_zoom_factor, ul.y + it->second.y * m_zoom_factor);
         for (std::list<System*>::const_iterator dest_it = destinations.begin(); dest_it != destinations.end(); ++dest_it) {
             if (it->first->SystemID() == (*dest_it)->ID())
                 continue;
+            glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
             glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
         }
         glEnd();
