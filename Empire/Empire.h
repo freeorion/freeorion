@@ -47,7 +47,7 @@
 * and can be accessed from other modules by using the EmpireManager::Lookup() 
 * method to obtain a pointer.
 */ 
-class Empire
+class Empire     
 {
 public:
     /** 
@@ -139,7 +139,6 @@ public:
     /// Searches for a ship design and copies over the input design and returns success/failure
     bool CopyShipDesign(int design_id, ShipDesign& design_target);
 
-    
     /* ******************************************************
      *  The Empire object maintains containers of the following 
      *  objects (all referenced by their object IDs)
@@ -184,7 +183,7 @@ public:
     
     ConstFleetIDItr FleetBegin() const;
     ConstFleetIDItr FleetEnd() const;
-    
+                                     
     ConstSystemIDItr ExploredBegin() const;
     ConstSystemIDItr ExploredEnd() const;
     
@@ -194,6 +193,9 @@ public:
     ConstSitRepItr SitRepBegin() const;
     ConstSitRepItr SitRepEnd() const;
     
+    std::list<SitRepEntry*> *GetSitRepEntries( ) { return &m_sitrep_entries; };
+    
+
     ConstShipDesignItr ShipDesignBegin() const;
     ConstShipDesignItr ShipDesignEnd() const;
       
@@ -221,7 +223,6 @@ public:
     
     ShipDesignItr ShipDesignBegin() ;
     ShipDesignItr ShipDesignEnd() ;
-
 
     /// Encodes an empire into an XMLElement
     /**
@@ -252,8 +253,6 @@ public:
      *   then the return value is the same as the no-arg version of XMLEncode()
      */
     GG::XMLElement XMLEncode(const Empire& viewer) const;
-
-
 
 
     //@}
@@ -293,7 +292,8 @@ public:
      *  You MUST pass in a dynamically allocated sitrep entry
      */
     void AddSitRepEntry( SitRepEntry* entry);
-    
+
+
     /// inserts a copy of the given design into the empire's design list
     int AddShipDesign(const ShipDesign& design);
     
@@ -322,6 +322,11 @@ public:
      * will be deallocated, and the pointers discarded.
      */
     void ClearSitRep();
+
+    /** 
+     * returns the size of sitreps container
+     */
+    int NumSitReps() { return m_sitrep_entries.size( ); }
     
     /// Removes the design with the specified ID from the empire's design list
     void RemoveShipDesign(int id);
@@ -340,14 +345,20 @@ public:
      */
     void XMLMerge(const GG::XMLElement& elem);
     
-    /// Adds reseach points to the accumulated total.  Checks for new tech advances.
+    /// Adds reseach points to the accumulated total. 
     /** 
      * Increments the empire's accumulated research points 
      * by the specified amount.  Returns total accumulated research points
-     * after the addition.  This method should also check for new technological
-     * advances that have been achieved, and add them to the technology list.
+     * after the addition. 
      */
     int AddRP(int moreRPs);
+
+    /// Checks for new tech advances.
+    /** 
+     * This method checks for new technological
+     * advances that have been achieved, and add them to the technology list.
+     */
+    void CheckResearchProgress( );
        	
     /// Mutator for empire color
     void Color(const GG::Clr& color);

@@ -158,7 +158,6 @@ bool Empire::CopyShipDesign(int design_id, ShipDesign& design_target)
    return false;
 }
 
-
 // Each of the following
 // Returns true if the given item is in the appropriate list,
 // false if it is not.
@@ -619,14 +618,19 @@ void Empire::XMLMerge(const GG::XMLElement& elem)
 
 /** 
 * increases the empire's accumulated research points
-* by the specified amount, and adds any new technologies achieved to the
-* Empire's list of technologies.  Returns total accumulated research points
+* by the specified amount, Returns total accumulated research points
 * after the addition. 
 */
 int Empire::AddRP(int moreRPs)
 {
     m_total_rp += moreRPs;
 
+    return m_total_rp;
+}
+
+
+void Empire::CheckResearchProgress( )
+{
     // check the TechManager for new techs
     
     TechManager::iterator itr = TechManager::instance().begin();
@@ -637,14 +641,15 @@ int Empire::AddRP(int moreRPs)
             if( !HasTech( (*itr).second->GetID() ) )
             {
                 AddTech( (*itr).first );
+
+		// add sit rep
+		SitRepEntry *p_entry = CreateTechResearchedSitRep( (*itr).first );
+		AddSitRepEntry( p_entry );
             }
         }
         
         itr++;
     }
-    
-    
-    return m_total_rp;
 }
 
    	
