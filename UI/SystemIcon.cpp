@@ -114,6 +114,24 @@ int SystemIcon::LDoubleClick(const GG::Pt& pt, Uint32 keys)
     return 1;
 }
 
+void SystemIcon::ClickFleetButton(Fleet* fleet)
+{
+    for (unsigned int i = 0; i < m_stationary_fleet_markers.size(); ++i) {
+        if (std::find(m_stationary_fleet_markers[i]->Fleets().begin(), m_stationary_fleet_markers[i]->Fleets().end(), fleet) != 
+            m_stationary_fleet_markers[i]->Fleets().end()) {
+            m_stationary_fleet_markers[i]->LClick(GG::Pt(), 0);
+            return;
+        }
+    }
+    for (unsigned int i = 0; i < m_moving_fleet_markers.size(); ++i) {
+        if (std::find(m_moving_fleet_markers[i]->Fleets().begin(), m_moving_fleet_markers[i]->Fleets().end(), fleet) != 
+            m_moving_fleet_markers[i]->Fleets().end()) {
+            m_moving_fleet_markers[i]->LClick(GG::Pt(), 0);
+            return;
+        }
+    }
+}
+
 void SystemIcon::ShowName()
 {
     m_name->Show();

@@ -11,6 +11,7 @@
 #include "CUIDrawUtil.h"
 #endif
 
+class Fleet;
 class FleetButton;
 class System;
 namespace GG {
@@ -58,6 +59,7 @@ public:
     virtual int    RClick(const GG::Pt& pt, Uint32 keys);
     virtual int    LDoubleClick(const GG::Pt& pt, Uint32 keys);
 
+    void           ClickFleetButton(Fleet* fleet); //!< clicks the FleetButton containing \a fleet
     void           ShowName(); //!< enables the system name text
     void           HideName(); //!< disables the system name text
 
