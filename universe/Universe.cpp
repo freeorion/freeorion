@@ -213,14 +213,12 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
     case SPIRAL_4:
         GenerateSpiralGalaxy(4, size, adjacency_grid);
         break;
-#if 0
     case CLUSTER:
-        //GenerateClusterGalaxy(size, adjacency_grid);
+        GenerateClusterGalaxy(size, adjacency_grid);
         break;
     case ELLIPTICAL:
         GenerateEllipticalGalaxy(size, adjacency_grid);
         break;
-#endif
     case IRREGULAR:
         GenerateIrregularGalaxy(size, adjacency_grid);
         break;
@@ -313,15 +311,15 @@ void Universe::PopGrowthProductionResearch(std::vector<SitRepEntry>& sit_reps)
 
 namespace
 {
-  double Deg2Rad(double deg) {return 3.141592/180.0*deg;}
+  const double PI = 3.141592;
 
   void SpiralGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions,unsigned int arms,unsigned int stars,double width,double height)
   {
-    double arm_offset     = RandDouble(0.0,360.0);
-    double arm_angle      = 360.0 / arms;
-    double arm_spread     = 0.3 *  180.0 / arms ;
+    double arm_offset     = RandDouble(0.0,2.0*PI);
+    double arm_angle      = 2.0*PI / arms;
+    double arm_spread     = 0.3 * PI / arms ;
     double arm_separation = 1.0;
-    double arm_length     = 1.5*360/2;
+    double arm_length     = 1.5 * PI;
     double center         = 0.25;
     double x,y;
 
@@ -329,7 +327,7 @@ namespace
 
     GaussianDistType  random_gaussian = GaussianDist(0.0,arm_spread);
     SmallIntDistType  random_arm      = SmallIntDist(0  ,arms);
-    DoubleDistType    random_degree   = DoubleDist  (0.0,360.0);
+    DoubleDistType    random_degree   = DoubleDist  (0.0,2.0*PI);
     DoubleDistType    random_radius   = DoubleDist  (0.0,  1.0);
     
     for (i=0,attemps=0; i < stars && attemps<100; i++,attemps++ )
@@ -339,16 +337,16 @@ namespace
       if(radius<center)
       {
         double angle = random_degree();
-        x = radius * cos( Deg2Rad(arm_offset + angle) );
-        y = radius * sin( Deg2Rad(arm_offset + angle) );
+        x = radius * cos( arm_offset + angle );
+        y = radius * sin( arm_offset + angle );
       }
       else
       {
         double arm    = (double)random_arm() * arm_angle;
         double angle  = random_gaussian();
 
-        x = radius * cos( Deg2Rad(arm_offset + arm + angle + radius * arm_length) );
-        y = radius * sin( Deg2Rad(arm_offset + arm + angle + radius * arm_length) );
+        x = radius * cos( arm_offset + arm + angle + radius * arm_length );
+        y = radius * sin( arm_offset + arm + angle + radius * arm_length );
       }
 
       x = (x+1)*width/2.0;
@@ -372,13 +370,145 @@ namespace
       positions.push_back(std::pair<double,double>(x,y));
     }
   }
-}
 
-void Universe::GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid)
-{
-    std::vector<std::pair<double,double> > positions;
-    SpiralGalaxyCalcPositions(positions,arms,stars,UNIVERSE_WIDTH,UNIVERSE_WIDTH);
+  void EllipticalGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions,unsigned int stars,double width,double height)
+  {
+    //propability of systems which don't belong to a cluster
+    const double system_noise      = 0.10;
+    double ellipse_width_vs_height = RandDouble(0.3,0.5);
+    double rotation                = RandDouble(0.0,PI),rotation_sin = sin(rotation),rotation_cos = cos(rotation);
 
+    unsigned int i,j,attemps;
+
+    DoubleDistType    random_zero_to_one = DoubleDist  (0.0,  1.0);
+    DoubleDistType    random_angle  = DoubleDist  (0.0,2.0*PI);
+
+    for (i=0,attemps=0; i < stars && attemps<100; i++,attemps++ )
+    {
+      double x,y;
+
+      if(random_zero_to_one()<system_noise)
+      {
+        x = random_zero_to_one() * 2.0 - 1.0;
+        y = random_zero_to_one() * 2.0 - 1.0;
+      }
+      else
+      {
+        double radius = random_zero_to_one();
+        double angle  = random_angle();
+        double x1,y1;
+
+        x1 = radius * cos(angle);
+        y1 = radius * sin(angle)*ellipse_width_vs_height;
+
+        x = x1*rotation_cos + y1*rotation_sin;
+        y =-x1*rotation_sin + y1*rotation_cos;
+      }
+      x = (x+1)*width/2.0;
+      y = (y+1)*height/2.0;
+
+      if(x<0 || width<=x || y<0 || height<=y)
+        continue;
+
+      // ensure all system have a min separation to each other (search isn't opimized, not worth the effort)
+      for(j=0;j<positions.size();j++)
+        if((positions[j].first - x)*(positions[j].first - x)+ (positions[j].second - y)*(positions[j].second - y)
+            < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION)
+          break;
+      if(j<positions.size())
+      {
+        i--;
+        continue;
+      }
+
+      attemps=0;
+      positions.push_back(std::pair<double,double>(x,y));
+    }
+  }
+
+  void ClusterGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions,unsigned int clusters,unsigned int stars,double width,double height)
+  {
+    //propability of systems which don't belong to a cluster
+    const double system_noise = 0.15;
+    double ellipse_width_vs_height = RandDouble(0.2,0.5);
+    // first innermost pair hold cluster position, second innermost pair stores help values for cluster rotation (sin,cos)
+    std::vector<std::pair<std::pair<double,double>,std::pair<double,double> > > clusters_position;
+    unsigned int i,j,attemps;
+
+    DoubleDistType    random_zero_to_one = DoubleDist  (0.0,  1.0);
+    DoubleDistType    random_angle  = DoubleDist  (0.0,2.0*PI);
+
+    for(i=0,attemps=0;i<clusters && attemps<100;i++,attemps++)
+    {
+      // prevent cluster position near borders (and on border)
+      double x=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters,
+             y=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters;
+
+      
+      // ensure all clusters have a min separation to each other (search isn't opimized, not worth the effort)
+      for(j=0;j<clusters_position.size();j++)
+        if((clusters_position[j].first.first - x)*(clusters_position[j].first.first - x)+ (clusters_position[j].first.second - y)*(clusters_position[j].first.second - y)
+            < (2.0/clusters))
+          break;
+      if(j<clusters_position.size())
+      {
+        i--;
+        continue;
+      }
+
+      attemps=0;
+      double rotation = RandDouble(0.0,PI);
+      clusters_position.push_back(std::pair<std::pair<double,double>,std::pair<double,double> >(std::pair<double,double>(x,y),std::pair<double,double>(sin(rotation),cos(rotation))));
+    }
+
+    for (i=0,attemps=0; i < stars && attemps<100; i++,attemps++ )
+    {
+      double x,y;
+      if(random_zero_to_one()<system_noise)
+      {
+        x = random_zero_to_one() * 2.0 - 1.0;
+        y = random_zero_to_one() * 2.0 - 1.0;
+      }
+      else
+      {
+        short  cluster = i%clusters_position.size();
+        double radius  = random_zero_to_one();
+        double angle   = random_angle();
+        double x1,y1;
+
+        x1 = radius * cos(angle);
+        y1 = radius * sin(angle)*ellipse_width_vs_height;
+
+        x = x1*clusters_position[cluster].second.second + y1*clusters_position[cluster].second.first;
+        y =-x1*clusters_position[cluster].second.first  + y1*clusters_position[cluster].second.second;
+        
+        x = x/sqrt((double)clusters) + clusters_position[cluster].first.first;
+        y = y/sqrt((double)clusters) + clusters_position[cluster].first.second;
+      }
+      x = (x+1)*width /2.0;
+      y = (y+1)*height/2.0;
+
+      if(x<0 || width<=x || y<0 || height<=y)
+        continue;
+
+      // ensure all system have a min separation to each other (search isn't opimized, not worth the effort)
+      for(j=0;j<positions.size();j++)
+        if((positions[j].first - x)*(positions[j].first - x)+ (positions[j].second - y)*(positions[j].second - y)
+            < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION)
+          break;
+      if(j<positions.size())
+      {
+        i--;
+        continue;
+      }
+
+      attemps=0;
+      positions.push_back(std::pair<double,double>(x,y));
+    }
+  }
+
+  void GenerateStarField(Universe &universe,const std::vector<std::pair<double,double> > &positions, Universe::AdjacencyGrid& adjacency_grid)
+  {
     std::list<std::string> star_names;
     LoadPlanetNames(star_names);
 
@@ -407,7 +537,7 @@ void Universe::GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacenc
 
         System* system = new System(star_type, num_orbits, star_name, positions[star_cnt].first,positions[star_cnt].second);
 
-        int new_sys_id = Insert(system);
+        int new_sys_id = universe.Insert(system);
         if (new_sys_id == UniverseObject::INVALID_OBJECT_ID) {
             throw std::runtime_error("Universe::GenerateIrregularGalaxy : Attemp to insert system " + 
                                      star_name + " into the object map failed.");
@@ -416,11 +546,32 @@ void Universe::GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacenc
         adjacency_grid[static_cast<int>(system->X() / ADJACENCY_BOX_SIZE)]
                       [static_cast<int>(system->Y() / ADJACENCY_BOX_SIZE)].insert(std::make_pair(system->X(), system->Y()));
     }
+  }
+}
+
+void Universe::GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid)
+{
+    std::vector<std::pair<double,double> > positions;
+
+    ClockSeed();
+    SpiralGalaxyCalcPositions(positions,arms,stars,UNIVERSE_WIDTH,UNIVERSE_WIDTH);
+    GenerateStarField(*this,positions,adjacency_grid);
 }
 
 void Universe::GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 {
-   // TODO
+    std::vector<std::pair<double,double> > positions;
+    
+    EllipticalGalaxyCalcPositions(positions,stars,UNIVERSE_WIDTH,UNIVERSE_WIDTH);
+    GenerateStarField(*this,positions,adjacency_grid);
+}
+
+void Universe::GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid)
+{
+    std::vector<std::pair<double,double> > positions;
+    
+    ClusterGalaxyCalcPositions(positions,5,stars,UNIVERSE_WIDTH,UNIVERSE_WIDTH);
+    GenerateStarField(*this,positions,adjacency_grid);
 }
 
 void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)

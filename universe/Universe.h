@@ -148,6 +148,7 @@ public:
 
   int GenerateObjectID( );  ///< generates an object ID for a future object. Usually used by the server to service new ID requests
 
+  typedef std::vector<std::vector<std::set<std::pair<double, double> > > > AdjacencyGrid;
 
 protected:
 
@@ -191,10 +192,9 @@ protected:
         std::map<std::string, Generator> m_generators;
    };
 
-   typedef std::vector<std::vector<std::set<std::pair<double, double> > > > AdjacencyGrid;
-
    void GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid);  ///< creates a spiral galaxy and stores the empire homeworlds in the homeworlds vector
    void GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates an eliptical galaxy and stores the empire homeworlds in the homeworlds vector
+   void GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates an cluster galaxy and stores the empire homeworlds in the homeworlds vector
    void GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
    void GenerateHomeworlds(int players, std::vector<int>& homeworlds, AdjacencyGrid& adjacency_grid);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
