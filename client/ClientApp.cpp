@@ -31,7 +31,7 @@ ClientUniverse& ClientApp::Universe()
    return s_app->m_universe;
 }
 
-ClientEmpire& ClientApp::Empire()
+ClientEmpireManager& ClientApp::Empire()
 {
    return s_app->m_empire;
 }
