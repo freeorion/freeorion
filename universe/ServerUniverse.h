@@ -24,8 +24,6 @@ public:
    
    /** \name Structors */ //@{
    ServerUniverse(); ///< default ctor
-   ServerUniverse(Shape shape, int stars, int players, int ai_players); ///< ctor to create a universe from a shape, number of stars, and number of players; other params TBD
-   ServerUniverse(const std::string& map_file, int stars, int players, int ai_players); ///< ctor to create a universe from a shape image file, number of stars, and number of players; other params TBD
    ServerUniverse(const GG::XMLElement& elem); ///< ctor that constructs a ServerUniverse object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ServerUniverse object
    ~ServerUniverse(); ///< dtor
    //@}
@@ -36,6 +34,11 @@ public:
       passing it to Insert().*/
    int               Insert(UniverseObject* obj);
    
+   /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
+   void              CreateUniverse(Shape shape, int stars, int players, int ai_players);
+   /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses an arbitrary bitmap image to determine galaxy shape. */
+   void              CreateUniverse(const std::string& map_file, int stars, int players, int ai_players);
+
    /** removes the object with ID number \a id from the universe, and returns it; returns 0 if theree is no such object*/
    UniverseObject*   Remove(int id);
    

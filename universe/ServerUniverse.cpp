@@ -23,9 +23,11 @@ ServerUniverse::ServerUniverse()
 
 }
 
-ServerUniverse::ServerUniverse(Shape shape, int stars, int players, int ai_players)
+void ServerUniverse::CreateUniverse(Shape shape, int stars, int players, int ai_players)
 {
    std::vector<int> homeworlds;
+
+   // TODO:  wipe out any currently loaded universe
 
    // intialize the ID counter
    m_last_allocated_id = 0;   
@@ -65,7 +67,7 @@ ServerUniverse::ServerUniverse(Shape shape, int stars, int players, int ai_playe
      
 }
 
-ServerUniverse::ServerUniverse(const std::string& map_file, int stars, int players, int ai_players)
+void ServerUniverse::CreateUniverse(const std::string& map_file, int stars, int players, int ai_players)
 {
    // intialize the ID counter
    m_last_allocated_id = 0;   
