@@ -150,7 +150,7 @@ void PopCenter::MovementPhase( )
 void PopCenter::PopGrowthProductionResearchPhase( )
 {
     double max_pop = (m_max_pop == 0.0 ? 1.0 : m_max_pop);   // to prevent division by zero
-    m_pop = std::min(m_pop * ((max_pop - m_pop) / max_pop) * m_env_growth_mod * 0.072, m_max_pop); // 7.2% growth means pop doubles every 10 turns
+    m_pop = std::min(m_pop + (m_pop * ((max_pop - m_pop) / max_pop) * m_env_growth_mod * 0.072), m_max_pop); // 7.2% growth means pop doubles every 10 turns
 }
 
 

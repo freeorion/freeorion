@@ -46,7 +46,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_def_bases = 0;
 
     SetMaxPop(PlanetDataTables()["PlanetMaxPop"][size][Environment()]);
-    SetEnvGrowthMod(PlanetDataTables()["PlanetMaxPop"][0][Environment()] / 100.0);
+    SetEnvGrowthMod(PlanetDataTables()["PlanetEnvEffectOnPopGrowthRate"][0][Environment()] / 100.0);
 }
 
 Planet::Planet(const GG::XMLElement& elem) :
