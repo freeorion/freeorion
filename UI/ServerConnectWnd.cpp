@@ -63,10 +63,8 @@ ServerConnectWnd::ServerConnectWnd() :
 
     m_servers_lb->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
 
-    Init();
-
     g_LAN_servers = HumanClientApp::GetApp()->NetworkCore().DiscoverLANServers(LAN_SERVER_SEARCH_TIMEOUT);
-    PopulateServerList();
+    Init();
 }
 
 ServerConnectWnd::ServerConnectWnd(const GG::XMLElement& elem) : 
@@ -103,6 +101,10 @@ void ServerConnectWnd::Init()
 
     m_host_or_join_radio_group->SetCheck(0);
     PopulateServerList();
+    if (m_servers_lb->NumRows()) {
+        m_host_or_join_radio_group->SetCheck(1);
+        m_servers_lb->SelectRow(0);
+    }
     GG::App::GetApp()->SetFocusWnd(m_player_name_edit);
 }
 
