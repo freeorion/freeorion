@@ -37,30 +37,30 @@
         <alpha value="255"/>
       </GG::Clr>
     </CTRL_COLOR>
-    <OUTER_BORDER_COLOR>
+    <WND_OUTER_BORDER_COLOR>
       <GG::Clr>
         <red value="64"/>
         <green value="64"/>
         <blue value="64"/>
         <alpha value="255"/>
       </GG::Clr>
-    </OUTER_BORDER_COLOR>
-    <BORDER_COLOR>
+    </WND_OUTER_BORDER_COLOR>
+    <WND_BORDER_COLOR>
       <GG::Clr>
         <red value="0"/>
         <green value="0"/>
         <blue value="0"/>
         <alpha value="255"/>
       </GG::Clr>
-    </BORDER_COLOR>
-    <INNER_BORDER_COLOR>
+    </WND_BORDER_COLOR>
+    <WND_INNER_BORDER_COLOR>
       <GG::Clr>
         <red value="255"/>
         <green value="255"/>
         <blue value="255"/>
         <alpha value="255"/>
       </GG::Clr>
-    </INNER_BORDER_COLOR>
+    </WND_INNER_BORDER_COLOR>
     <TOOLTIP_DELAY value="1000"/>
     <STRINGTABLE_FILENAME value="eng_stringtable.txt"/>
   </ClientUI>
