@@ -1439,22 +1439,36 @@ bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, co
     if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
         settings_dir += '/';
 
-    bool techs_differ = MD5FileSum(settings_dir + "techs.xml") != doc.root_node.Child("techs.xml").Text();
-    bool buildings_differ = MD5FileSum(settings_dir + "buildings.xml") != doc.root_node.Child("buildings.xml").Text();
-    bool specials_differ = MD5FileSum(settings_dir + "specials.xml") != doc.root_node.Child("specials.xml").Text();
-    if (techs_differ || buildings_differ || specials_differ) {
+    const std::vector<std::string>& settings_files = VersionSensitiveSettingsFiles();
+    std::string settings_files_mismatches;
+    for (unsigned int i = 0; i < settings_files.size(); ++i) {
+        if (MD5FileSum(settings_dir + settings_files[i]) != doc.root_node.Child(settings_files[i]).Text()) {
+            if (!settings_files_mismatches.empty())
+                settings_files_mismatches += " ";
+            settings_files_mismatches += settings_files[i];
+        }
+    }
+    const std::map<std::string, std::string>& source_files = SourceFiles();
+    std::string source_files_mismatches;
+    for (std::map<std::string, std::string>::const_iterator it = source_files.begin(); it != source_files.end(); ++it) {
+        if (doc.root_node.ContainsChild(it->first) &&
+            doc.root_node.Child(it->first).Text() != it->second) {
+            if (!source_files_mismatches.empty())
+                source_files_mismatches += " ";
+            source_files_mismatches += it->first;
+        }
+    }
+    if (!settings_files_mismatches.empty() || !source_files_mismatches.empty()) {
         const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
-        std::string files = std::string(techs_differ ? " techs.xml" : "") +
-            std::string(buildings_differ ? " buildings.xml" : "") +
-            std::string(specials_differ ? " specials.xml" : "");
         m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A player at " << 
             (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket <<
-            " attempted to connect, but is using a different version of the follwing files:" << files << 
+            " attempted to connect, but is using a different version of the following files: " << 
+            settings_files_mismatches << " " << source_files_mismatches <<
             ".  This player will be notified of the conflicts, then dumped.";
         if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
             GG::XMLDoc conflict_details;
-            conflict_details.root_node.AppendChild(GG::XMLElement("settings_files", files.substr(1)));
-            conflict_details.root_node.AppendChild(GG::XMLElement("source_files"));
+            conflict_details.root_node.AppendChild(GG::XMLElement("settings_files", settings_files_mismatches));
+            conflict_details.root_node.AppendChild(GG::XMLElement("source_files", source_files_mismatches));
             m_network_core.SendMessage(VersionConflictMessage(player_id, conflict_details));
             SDL_Delay(5000);
             m_network_core.DumpPlayer(player_id);

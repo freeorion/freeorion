@@ -15,9 +15,14 @@ namespace {
         std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
         if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
             settings_dir += '/';
-        doc.root_node.AppendChild(GG::XMLElement("techs.xml", MD5FileSum(settings_dir + "techs.xml")));
-        doc.root_node.AppendChild(GG::XMLElement("buildings.xml", MD5FileSum(settings_dir + "buildings.xml")));
-        doc.root_node.AppendChild(GG::XMLElement("specials.xml", MD5FileSum(settings_dir + "specials.xml")));
+        const std::vector<std::string>& settings_files = VersionSensitiveSettingsFiles();
+        for (unsigned int i = 0; i < settings_files.size(); ++i) {
+            doc.root_node.AppendChild(GG::XMLElement(settings_files[i], MD5FileSum(settings_dir + settings_files[i])));
+        }
+        const std::map<std::string, std::string>& source_files = SourceFiles();
+        for (std::map<std::string, std::string>::const_iterator it = source_files.begin(); it != source_files.end(); ++it) {
+            doc.root_node.AppendChild(GG::XMLElement(it->first, it->second));
+        }
     }
 }
 

@@ -13,6 +13,11 @@ namespace {
         db.Add<std::string>("settings-dir", "Sets the root directory for the settings and data files.", "default/");
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    std::map<std::string, std::string> g_source_files;
+
+    bool temp_header_bool = RecordHeaderFile(MultiplayerCommonRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 /////////////////////////////////////////////////////
@@ -23,9 +28,9 @@ const std::vector<GG::Clr>& EmpireColors()
     static std::vector<GG::Clr> colors;
     if (colors.empty()) {
         GG::XMLDoc doc;
-	std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-	if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-	    settings_dir += '/';
+        std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+        if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+            settings_dir += '/';
         std::ifstream ifs((settings_dir + "empire_colors.xml").c_str());
         doc.ReadDoc(ifs);
         ifs.close();
@@ -34,6 +39,51 @@ const std::vector<GG::Clr>& EmpireColors()
         }
     }
     return colors;
+}
+
+const std::vector<std::string>& VersionSensitiveSettingsFiles()
+{
+    static std::vector<std::string> retval;
+    static bool init = false;
+    if (!init) {
+        retval.push_back("techs.xml");
+        retval.push_back("buildings.xml");
+        retval.push_back("specials.xml");
+        init = true;
+    }
+    return retval;
+}
+
+const std::map<std::string, std::string>& SourceFiles()
+{
+    return g_source_files;
+}
+
+bool RecordSourceFile(const std::string& filename, const std::string& revision)
+{
+    std::string::size_type filename_start = filename.find_first_of(" \t");
+    filename_start = filename.find_first_not_of(" \t", filename_start);
+    std::string::size_type filename_length = filename.find_last_of(',') - filename_start;
+    std::string transformed_filename = filename.substr(filename_start, filename_length);
+
+    std::string::size_type revision_start = revision.find_first_of(" \t");
+    revision_start = revision.find_first_not_of(" \t", revision_start);
+    std::string::size_type revision_length = revision.find_first_of(" \t", revision_start) - revision_start;
+    std::string transformed_revision = revision.substr(revision_start, revision_length);
+
+    std::map<std::string, std::string>::iterator it = g_source_files.find(transformed_filename);
+    if (it == g_source_files.end()) {
+        g_source_files[transformed_filename] = transformed_revision;
+    } else {
+        throw std::runtime_error("RecordSourceFile() : Attempted to record source file \"" +
+                                 transformed_filename + "\" twice.");
+    }
+    return true;
+}
+
+bool RecordHeaderFile(const std::pair<std::string, std::string>& filename_revision_pair)
+{
+    return RecordSourceFile(filename_revision_pair.first, filename_revision_pair.second);
 }
 
 std::string MD5StringSum(const std::string& str)
