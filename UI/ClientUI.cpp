@@ -751,7 +751,9 @@ void ClientUI::HideAllWindows()
 
 int ClientUI::SelectPlanet(int system_id)
 {
-#ifndef FREEORION_BUILD_UTIL
+#ifdef FREEORION_BUILD_UTIL
+    return -1;
+#else
     PlanetPicker planet_picker(system_id);
     planet_picker.Run();
     return planet_picker.PlanetPicked();
