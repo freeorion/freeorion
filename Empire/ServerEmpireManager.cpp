@@ -6,8 +6,8 @@
 #include "../server/ServerApp.h"
 #endif
 
-#ifndef _ServerUniverse_h_
-#include "../universe/ServerUniverse.h"
+#ifndef _Universe_h_
+#include "../universe/Universe.h"
 #endif
 
 #ifndef _Planet_h_
@@ -44,7 +44,7 @@ Empire* ServerEmpireManager::CreateEmpire(const std::string& name,
 
     // Add system homeplanet is in to the ExploredSystem list
     ServerApp* server_app = ServerApp::GetApp();
-    ServerUniverse* universe = &(server_app->Universe());
+    Universe* universe = &(server_app->GetUniverse());
     UniverseObject*   uni_obj = universe->Object(planetID);
     Planet*   planet = dynamic_cast<Planet*>(uni_obj);
     emp->AddExploredSystem(planet->SystemID());
