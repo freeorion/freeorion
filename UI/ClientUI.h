@@ -13,7 +13,10 @@ class ClientUniverse;
 class ClientEmpire;
 class SystemObjects;
 class Planet;
-class Star;
+class System;
+class Fleet;
+class Ship;
+class Tech;
 class SitRepEvent;
 class Combat;
 
@@ -83,20 +86,6 @@ public:
     //! @param e address of ClientEmpire module
     void ScreenMap(const ClientUniverse &u, const ClientEmpire &e);     //!< Universe Map Screen
 
-    //! @param obj address of a system object that we wish to zoom to
-    //! @return true if successful, false if object doesn't exist
-    bool ZoomTo(const SystemObjects& obj);    //!< Zooms to a particular object on the galaxy map and opens any appropriate sub-screens
-    //! This version of the function is called if a more specific one (planet, star, etc.) doesn't exist
- 
-    //! @param p address of a planet that we wish to zoom to
-    //! @return true if successful, false if object doesn't exist
-    bool ZoomTo(const Planet& p);    //!< Zooms to a particular planet on the galaxy map and opens the planet screen for that planet
-
-    //! @param s address of star that we wish to zoom to
-    //! @return true if successful, false if object doesn't exist
-    bool ZoomTo(const Star& s);    //!< Zooms to a particular star on the galaxy map
- 
-   
     //! @param events vector containing all the events to be listed
     void ScreenSitrep(const std::vector<SitRepEvent> events);    //!< Sitrep Screen
     
@@ -113,19 +102,45 @@ public:
     void ScreenLoad(bool show);                    //!< Load Game Screen
 
     //!@}
+    
+    //! \name Zooming Functions
+    //!@{
+    
+    //! @param p address of a planet that we wish to zoom to
+    //! @return true if successful, false if object doesn't exist
+    bool ZoomTo(const Planet& p);    //!< Zooms to a particular planet on the galaxy map and opens the planet screen for that planet
+
+    //! @param s address of system that we wish to zoom to
+    //! @return true if successful, false if object doesn't exist
+    bool ZoomTo(const System& s);    //!< Zooms to a particular system on the galaxy map
+    
+    //! @param s address of fleet that we wish to zoom to
+    //! @return true if successful, false if object doesn't exist
+    bool ZoomTo(const Fleet& f);    //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+    
+    //! @param s address of ship that we wish to zoom to
+    //! @return true if successful, false if object doesn't exist
+    bool ZoomTo(const Ship& s);    //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
+    
+    //! @param t address of technology that we wish to zoom to
+    //! @return true if successful, false if object doesn't exist
+    bool ZoomTo(const Tech& t);    //!< Opens the technology screen and presents a description of the given technology
+   
+   //!@}
+   
 #ifdef DEBUG
 
     // \name Debugging Functions
     //!@{
     
     //! @param message The message to display
-    void MessageBox(std::string message);        //!< displays a the message in a popup window for debugging
+    void MessageBox(const std::string message);        //!< displays a the message in a popup window for debugging
     
     //!@}
 #endif
 
 private:
-    ToolContainer* tooltips;        //!< the single toolcontainer object
+    static ToolContainer* tooltips;        //!< the single toolcontainer object
 
 };//ClientUI
 
