@@ -145,7 +145,7 @@ void MineralResourcePool::PlanetChanged(int m_planet_id)
         }
     }
 
-    m_stockpile=m_available_pool;
+    m_stockpile=std::max(0.0, m_available_pool);
 
     ChangedSignal()();
 }
@@ -225,7 +225,7 @@ void FoodResourcePool::PlanetChanged(int m_planet_id)
         m_available_pool-=receives;
     }
 
-    m_stockpile=m_available_pool;
+    m_stockpile=std::max(0.0, m_available_pool);
 
     ChangedSignal()();
 }
