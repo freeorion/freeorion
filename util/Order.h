@@ -158,11 +158,12 @@ public:
    /** \name Structors */ //@{
    FleetMoveOrder();
    FleetMoveOrder(const GG::XMLElement& elem);
-   FleetMoveOrder(int empire, int fleet, int dest_system);
+   FleetMoveOrder(int empire, int fleet, int start_system, int dest_system);
    //@}
    
    /** \name Accessors */ //@{
    int  FleetID() const             {return m_fleet;}        ///< returns ID of fleet selected in this order
+   int  StartSystemID() const       {return m_start_system;} ///< returns ID of system set as the start system for this order (the system the route starts from)
    int  DestinationSystemID() const {return m_dest_system;}  ///< returns ID of system set as destination for this order
    
    /**
@@ -180,6 +181,7 @@ public:
    
 private:
    int   m_fleet;
+   int   m_start_system;
    int   m_dest_system;
 };
 

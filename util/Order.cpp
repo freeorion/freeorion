@@ -125,7 +125,7 @@ void PlanetBuildOrder::Execute() const
     Universe* universe = &GetUniverse();
     
     // look up object
-    UniverseObject* the_object = universe->Object(this->PlanetID());
+    UniverseObject* the_object = universe->Object(PlanetID());
     Planet* the_planet = dynamic_cast<Planet*> ( the_object );
     
     // sanity check
@@ -135,7 +135,7 @@ void PlanetBuildOrder::Execute() const
     }
     
     //  verify that empire specified in order owns specified planet
-    if( ! empire->Lookup(EmpireID())->HasPlanet(this->PlanetID()) )
+    if( ! empire->Lookup(EmpireID())->HasPlanet(PlanetID()) )
     {
         throw std::runtime_error("Empire specified in planet build order does not own specified planet.");
     }
@@ -271,12 +271,14 @@ FleetMoveOrder::FleetMoveOrder(const GG::XMLElement& elem) : Order(elem.Child("O
         throw std::invalid_argument("Attempted to construct FleetMoveOrder from malformed XMLElement");
     
     m_fleet = lexical_cast<int>(elem.Child("m_fleet").Attribute("value"));
+    m_start_system = lexical_cast<int>(elem.Child("m_start_system").Attribute("value"));
     m_dest_system = lexical_cast<int>(elem.Child("m_dest_system").Attribute("value"));
 }
 
-FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int dest_system) : 
+FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : 
    Order(empire),
    m_fleet(fleet),
+   m_start_system(start_system),
    m_dest_system(dest_system)
 {
 }
@@ -289,7 +291,7 @@ void FleetMoveOrder::Execute() const
     EmpireManager& empire = Empires();
     
     // look up the fleet in question
-    UniverseObject* the_object = universe.Object(this->FleetID());
+    UniverseObject* the_object = universe.Object(FleetID());
     Fleet* the_fleet = dynamic_cast<Fleet*> ( the_object );
     
     // perform sanity check
@@ -299,13 +301,13 @@ void FleetMoveOrder::Execute() const
     }
     
     // verify that empire specified in order owns specified fleet
-    if( ! empire.Lookup(EmpireID())->HasFleet(this->FleetID()) )
+    if( ! empire.Lookup(EmpireID())->HasFleet(FleetID()) )
     {
         throw std::runtime_error("Empire specified in fleet order does not own specified fleet.");
     }
     
     // look up destination
-    UniverseObject* another_object = universe.Object(this->DestinationSystemID());
+    UniverseObject* another_object = universe.Object(DestinationSystemID());
     System* the_system = dynamic_cast<System*> (another_object);
     
     // perform another sanity check
@@ -314,8 +316,9 @@ void FleetMoveOrder::Execute() const
         throw std::runtime_error("Non-system destination ID specified in fleet move order.");
     }
     
-    // set the destination
-    the_fleet->SetDestination(this->DestinationSystemID());
+    // set the movement route
+    std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(m_start_system, m_dest_system);
+    the_fleet->SetRoute(route.first, route.second);
     
     // TODO:  check destination validity (once ship range is decided on)
 }
@@ -326,12 +329,15 @@ XMLElement FleetMoveOrder::XMLEncode() const
     elem.AppendChild(Order::XMLEncode());
     
     XMLElement fleet("m_fleet");
+    XMLElement start_system("m_start_system");
     XMLElement dest_system("m_dest_system");
     
     fleet.SetAttribute("value", lexical_cast<std::string>(m_fleet));
+    start_system.SetAttribute("value", lexical_cast<std::string>(m_start_system));
     dest_system.SetAttribute("value", lexical_cast<std::string>(m_dest_system));
     
     elem.AppendChild(fleet);
+    elem.AppendChild(start_system);
     elem.AppendChild(dest_system);
 
     return elem;
@@ -379,8 +385,8 @@ void FleetTransferOrder::Execute() const
     EmpireManager& empire = Empires();
 
     // look up the source fleet and destination fleet
-    Fleet* source_fleet = dynamic_cast<Fleet*> ( universe.Object(this->SourceFleet()) );
-    Fleet* target_fleet = dynamic_cast<Fleet*> ( universe.Object(this->DestinationFleet()) );
+    Fleet* source_fleet = dynamic_cast<Fleet*> ( universe.Object(SourceFleet()) );
+    Fleet* target_fleet = dynamic_cast<Fleet*> ( universe.Object(DestinationFleet()) );
     
     // sanity check
     if(!source_fleet || !target_fleet)
@@ -389,7 +395,7 @@ void FleetTransferOrder::Execute() const
     }
     
     // verify that empire is not trying to take ships from somebody else's fleet
-    if( !empire.Lookup( EmpireID() )->HasFleet( this->SourceFleet() ) )
+    if( !empire.Lookup( EmpireID() )->HasFleet( SourceFleet() ) )
     {
         throw std::runtime_error("Empire attempted to merge ships from another's fleet.");
     }
@@ -398,7 +404,7 @@ void FleetTransferOrder::Execute() const
     // this is just an additional security measure.  IT could be removed to
     // allow 'donations' of ships to other players, provided that GameCore
     // verifies IDs of the Empires issuing the orders.
-    if( !empire.Lookup( EmpireID() )->HasFleet( this->DestinationFleet() ) )
+    if( !empire.Lookup( EmpireID() )->HasFleet( DestinationFleet() ) )
     {
         throw std::runtime_error("Empire attempted to merge ships into another's fleet.");
     }
@@ -424,7 +430,7 @@ void FleetTransferOrder::Execute() const
         }
         
         // send the ship to its new fleet
-        a_ship->SetFleetID(this->DestinationFleet());
+        a_ship->SetFleetID(DestinationFleet());
         source_fleet->RemoveShip(curr);
         target_fleet->AddShip(curr);
         
@@ -495,7 +501,7 @@ void FleetColonizeOrder::Execute() const
     EmpireManager* empire = &Empires();
     
     // look up the fleet in question
-    UniverseObject* the_object = universe->Object(this->FleetID());
+    UniverseObject* the_object = universe->Object(FleetID());
     Fleet* colony_fleet = dynamic_cast<Fleet*> ( the_object );
    
     // sanity check -- ensure fleet exists
@@ -505,13 +511,13 @@ void FleetColonizeOrder::Execute() const
     }
      
     // verify that empire issuing order owns specified fleet
-    if( !empire->Lookup( EmpireID() )->HasFleet( this->FleetID() ) )
+    if( !empire->Lookup( EmpireID() )->HasFleet( FleetID() ) )
     {
         throw std::runtime_error("Empire attempted to issue colonize order to another's fleet.");
     }
     
     // verify that planet exists and is un-occupied.
-    the_object = universe->Object(this->PlanetID());
+    the_object = universe->Object(PlanetID());
     Planet* target_planet = dynamic_cast<Planet*> ( the_object );
     if(target_planet == NULL)
     {
