@@ -35,13 +35,8 @@
 
 namespace {
 
-using std::cout;
-using std::cerr;
-using std::ios;
 using std::ostream;
 using std::istream;
-using std::ofstream;
-using std::ifstream;
 using std::string;
 using std::vector;
 
@@ -66,53 +61,7 @@ bool           oFlag = false;
 bool           gFlag = false;
 }
 
-XDiff::XDiff(const string& input_file_1, const string& input_file_2, const string& output_file) : 
-   _attrList1(ATTRIBUTE_SIZE),
-   _attrList2(ATTRIBUTE_SIZE),
-   _textList1(TEXT_SIZE),
-   _textList2(TEXT_SIZE),
-   _circuit(CIRCUIT_SIZE),
-   _seed(time(0)),
-   _leastCostMatrix(MATRIX_SIZE, vector<int>(MATRIX_SIZE)),
-   _pathMatrix(MATRIX_SIZE, vector<int>(MATRIX_SIZE)),
-   _attrMatch(ATTRIBUTE_SIZE),
-   _textMatch1(TEXT_SIZE),
-   _textMatch2(TEXT_SIZE),
-   _needNewLine(false),
-   _attrHash(ATTRIBUTE_SIZE),
-   _textHash(TEXT_SIZE),
-   _attrTag(ATTRIBUTE_SIZE),
-   _xtree1(0),
-   _xtree2(0),
-   _xlut(0)
-{
-   // parse the first file.
-   XParser parser1;
-   _xtree1 = parser1.parse(input_file_1);
-
-   // parse the second file.
-   XParser parser2;
-   _xtree2 = parser2.parse(input_file_2);
-
-   // check both root nodes.
-   int root1 = _xtree1->getRoot();
-   int root2 = _xtree2->getRoot();
-   if (_xtree1->getHashValue(root1) != _xtree2->getHashValue(root2)) {
-      if (_xtree1->getTag(root1).compare(_xtree2->getValue(root2)) != 0) {
-         _xtree1->addMatching(root1, XTree::DELETE, root2);
-         _xtree2->addMatching(root2, XTree::INSERT, root1);
-      } else {
-         _xtree1->addMatching(root1, XTree::CHANGE, root2);
-         _xtree2->addMatching(root2, XTree::CHANGE, root1);
-         _xlut = new XLut((_xtree1->getNodeCount() > 0xffff) ||
-                (_xtree2->getNodeCount() > 0xffff));
-         xdiff(root1, root2, false);
-      }
-      writeDiff(input_file_1, output_file);
-   }
-}
-
-XDiff::XDiff(const GG::XMLDoc& doc1, const GG::XMLDoc& doc2, string& output, bool whitespace/* = false*/) : 
+XDiff::XDiff(const GG::XMLDoc& doc1, const GG::XMLDoc& doc2, GG::XMLDoc& output) : 
    _attrList1(ATTRIBUTE_SIZE),
    _attrList2(ATTRIBUTE_SIZE),
    _textList1(TEXT_SIZE),
@@ -154,57 +103,11 @@ XDiff::XDiff(const GG::XMLDoc& doc1, const GG::XMLDoc& doc2, string& output, boo
                 (_xtree2->getNodeCount() > 0xffff));
          xdiff(root1, root2, false);
       }
-      std::stringstream diff_result;
-      writeDocDiff(diff_result, whitespace);
-      output = diff_result.str();
-   }
-}
-
-XDiff::XDiff(const GG::XMLDoc& doc1, const GG::XMLDoc& doc2, GG::XMLDoc& output, bool whitespace/* = false*/) : 
-   _attrList1(ATTRIBUTE_SIZE),
-   _attrList2(ATTRIBUTE_SIZE),
-   _textList1(TEXT_SIZE),
-   _textList2(TEXT_SIZE),
-   _circuit(CIRCUIT_SIZE),
-   _seed(time(0)), 
-   _leastCostMatrix(MATRIX_SIZE, vector<int>(MATRIX_SIZE)),
-   _pathMatrix(MATRIX_SIZE, vector<int>(MATRIX_SIZE)),
-   _attrMatch(ATTRIBUTE_SIZE),
-   _textMatch1(TEXT_SIZE),
-   _textMatch2(TEXT_SIZE),
-   _needNewLine(false),
-   _attrHash(ATTRIBUTE_SIZE),
-   _textHash(TEXT_SIZE),
-   _attrTag(ATTRIBUTE_SIZE),
-   _xtree1(0),
-   _xtree2(0),
-   _xlut(0)
-{
-   // parse the first file.
-   XParser parser1;
-   _xtree1 = parser1.parse(doc1);
-
-   // parse the second file.
-   XParser parser2;
-   _xtree2 = parser2.parse(doc2);
-
-   // check both root nodes.
-   int root1 = _xtree1->getRoot();
-   int root2 = _xtree2->getRoot();
-   if (_xtree1->getHashValue(root1) != _xtree2->getHashValue(root2)) {
-      if (_xtree1->getTag(root1).compare(_xtree2->getValue(root2)) != 0) {
-         _xtree1->addMatching(root1, XTree::DELETE, root2);
-         _xtree2->addMatching(root2, XTree::INSERT, root1);
-      } else {
-         _xtree1->addMatching(root1, XTree::CHANGE, root2);
-         _xtree2->addMatching(root2, XTree::CHANGE, root1);
-         _xlut = new XLut((_xtree1->getNodeCount() > 0xffff) ||
-                (_xtree2->getNodeCount() > 0xffff));
-         xdiff(root1, root2, false);
-      }
-      std::stringstream diff_result;
-      writeDocDiff(diff_result, whitespace);
-      output.ReadDoc(diff_result);
+      std::stringstream doc1_stream;
+      std::stringstream result_stream;
+      doc1.WriteDoc(doc1_stream);
+      writeDiff(doc1_stream, result_stream);
+      output.ReadDoc(result_stream);
    }
 }
 
@@ -1978,11 +1881,8 @@ int XDiff::searchNCC(int nodeCount)
    return 0;
 }
 
-void XDiff::writeDiff(const string& input_file, const string& output_file)
+void XDiff::writeDiff(istream& in, ostream& out)
 {
-   ifstream   in(input_file.c_str());
-   ofstream   out(output_file.c_str(), ios::out|ios::trunc);
-
    int root1 = _xtree1->getRoot();
    int root2 = _xtree2->getRoot();
    // the header
@@ -1995,69 +1895,37 @@ void XDiff::writeDiff(const string& input_file, const string& output_file)
          break;
       out << line << "\n";
    }
-   in.close();
 
    int matchType, matchNode;
    _xtree1->getMatching(root1, matchType, matchNode);
    if (matchType == XTree::DELETE) {
-      writeDeleteNode(out, root1, 0, true);
-      writeInsertNode(out, root2, 0, true);
+      writeDeleteNode(out, root1);
+      writeInsertNode(out, root2);
    } else {
-      writeDiffNode(out, root1, root2, 0, true);
-   }
-
-   out.close();
-}
-
-void XDiff::writeDocDiff(std::stringstream& out, bool whitespace/* = false*/)
-{
-   out << "<?xml version=\"1.0\"?>";
-   if (whitespace) out << "\n";
-   
-   int root1 = _xtree1->getRoot();
-   int root2 = _xtree2->getRoot();
-
-   int matchType, matchNode;
-   _xtree1->getMatching(root1, matchType, matchNode);
-   if (matchType == XTree::DELETE) {
-      writeDeleteNode(out, root1, 0, whitespace);
-      writeInsertNode(out, root2, 0, whitespace);
-   } else {
-      writeDiffNode(out, root1, root2, 0, whitespace);
+      writeDiffNode(out, root1, root2);
    }
 }
 
-void XDiff::writeDeleteNode(ostream &out, int node, int indent, bool whitespace/* = false*/)
+void XDiff::writeDeleteNode(ostream &out, int node)
 {
    if (_xtree1->isElement(node)) {
       string tag = _xtree1->getTag(node);
-      if (whitespace) {
-         if (_needNewLine)
-            out << "\n";
-         for (int i = 0; i < indent; ++i)
-            out << INDENT_STR;
-      }
       
-      out << "<" << tag << " " << CHANGE_ATTR_STR << "=\"" << DELETE_PREFIX << "\"" << ">";
+      out << "<" << tag << " " << CHANGE_ATTR_STR << "=\"" << DELETE_PREFIX << "\"" << "/>";
       _needNewLine = true;
    } else {
-      out << "<" << _xtree1->getText(node) << " " << CHANGE_ATTR_STR << "=\"" << DELETE_PREFIX << "\"" << ">";
-      if (whitespace)
-         out << "\n";
+      string text = _xtree1->getText(node);
+      if (text != "")
+         text = '"' + text + '"';
+      out << text;
       _needNewLine = false;
    }
 }
 
-void XDiff::writeInsertNode(ostream &out, int node, int indent, bool whitespace/* = false*/)
+void XDiff::writeInsertNode(ostream &out, int node)
 {
    if (_xtree2->isElement(node)) {
       string tag = _xtree2->getTag(node);
-      if (whitespace) {
-         if (_needNewLine)
-            out << "\n";
-         for (int i = 0; i < indent; ++i)
-            out << INDENT_STR;
-      }
             
       out << "<" << tag;
       _needNewLine = true;
@@ -2074,65 +1942,50 @@ void XDiff::writeInsertNode(ostream &out, int node, int indent, bool whitespace/
       int child = _xtree2->getFirstChild(node);
       if (child < 0) {
          out << "/>";
-         if (whitespace)
-            out << "\n";
          _needNewLine = false;
          return;
       }
 
       out << ">";
-      if (whitespace)
-         out << "\n";
       _needNewLine = false;
 
       bool child_elements = false;
+      bool printed_text = false;
       while (child > 0) {
          if (_xtree2->isElement(child))
             child_elements = true;
-         writeMatchNode(out, _xtree2, child, indent + 1, whitespace);
+         writeMatchNode(out, _xtree2, child);
+         if (_xtree2->isLeaf(child) && !_xtree2->isAttribute(child))
+            printed_text = true;
          child = _xtree2->getNextSibling(child);
       }
 
-      if (whitespace && _needNewLine) {
-         out << "\n";
-         _needNewLine = false;
-      }
-
-      if (whitespace && child_elements) {
-         for (int i = 0; i < indent; ++i)
-            out << INDENT_STR;
-      }
       out << "</" << tag << ">";
-      if (whitespace)
-         out << "\n";
    } else {
-      out << _xtree2->getText(node);
-      if (whitespace)
-         out << "\n";
+      string text = _xtree2->getText(node);
+      if (text != "")
+         text = '"' + text + '"';
+      out << text;
       _needNewLine = false;
    }
 }
 
-void XDiff::writeMatchNode(ostream &out, XTree *xtree, int node, int indent, bool whitespace/* = false*/)
+void XDiff::writeMatchNode(ostream &out, XTree *xtree, int node)
 {
    if (xtree->isElement(node)) {
       string tag = xtree->getTag(node);
-      if (whitespace) {
-         if (_needNewLine)
-            out << "\n";
-         for (int i = 0; i < indent; ++i)
-            out << INDENT_STR;
-      }
 
       out << "<" << tag;
 
       // Attributes.
+      string text;
       int attr = xtree->getFirstAttribute(node);
       while (attr > 0) {
          out << " " << xtree->getTag(attr) << "=\"" << xtree->getAttributeValue(attr) << "\"";
          attr = xtree->getNextAttribute(attr);
       }
 
+      // Child nodes.
       bool child_elements = false;
       int child = xtree->getFirstChild(node);
       while (!child_elements && child > 0) {
@@ -2141,12 +1994,17 @@ void XDiff::writeMatchNode(ostream &out, XTree *xtree, int node, int indent, boo
          child = xtree->getNextSibling(child);
       }
 
-      // Child nodes.
+      // find text
+      int child1 = _xtree2->getFirstChild(node);
+      while (text == "" && child1 > 0) {
+         if (_xtree2->isLeaf(child1) && !_xtree2->isAttribute(child1))
+            text = _xtree2->getText(child1);
+         child1 = _xtree2->getNextSibling(child1);
+      }
+
       child = xtree->getFirstChild(node);
-      if (!child_elements) {
+      if (text == "" && !child_elements) {
          out << "/>";
-         if (whitespace)
-            out << "\n";
          _needNewLine = false;
          return;
       }
@@ -2156,38 +2014,24 @@ void XDiff::writeMatchNode(ostream &out, XTree *xtree, int node, int indent, boo
 
       child = xtree->getFirstChild(node);
       while (child > 0) {
-         writeMatchNode(out, xtree, child, indent + 1, whitespace);
+         writeMatchNode(out, xtree, child);
          child = xtree->getNextSibling(child);
       }
 
-      if (whitespace && _needNewLine) {
-         out << "\n";
-         _needNewLine = false;
-      }
-      
-      if (whitespace && child_elements) {
-         for (int i = 0; i < indent; ++i)
-            out << INDENT_STR;
-      }
       out << "</" << tag << ">";
-      if (whitespace)
-         out << "\n";
    } else {
-      out << xtree->getText(node);
+      string text = xtree->getText(node);
+      if (text != "")
+         text = '"' + text + '"';
+      out << text;
       _needNewLine = false;
    }
 }
 
-void XDiff::writeDiffNode(ostream &out, int node1, int node2, int indent, bool whitespace/* = false*/)
+void XDiff::writeDiffNode(ostream &out, int node1, int node2)
 {
    if (_xtree1->isElement(node1)) {
       string tag = _xtree1->getTag(node1);
-      if (whitespace) {
-         if (_needNewLine)
-            out << "\n";
-         for (int i = 0; i < indent; ++i)
-            out << INDENT_STR;
-      }
 
       // Attributes.
       // first, determine diff types for all attributes
@@ -2218,20 +2062,18 @@ void XDiff::writeDiffNode(ostream &out, int node1, int node2, int indent, bool w
       bool child_elements = false;
       bool has_different_text = false;
       int child1 = _xtree1->getFirstChild(node1);
-      while (!has_different_text && !child_elements && child1 > 0) {
+      while ((!has_different_text || !child_elements) && child1 > 0) {
          int matchType, matchNode;
          _xtree1->getMatching(child1, matchType, matchNode);
          if (_xtree1->isElement(child1))
             child_elements = true;
-         if (matchType == XTree::MATCH)
-            ;
-         else if (_xtree1->isLeaf(child1) && !_xtree1->isAttribute(child1))
+         if (matchType != XTree::MATCH && _xtree1->isLeaf(child1) && !_xtree1->isAttribute(child1))
             has_different_text = true;
          child1 = _xtree1->getNextSibling(child1);
       }
       
       int child2 = _xtree2->getFirstChild(node2);
-      while (!has_different_text && !child_elements && child2 > 0) {
+      while ((!has_different_text || !child_elements) && child2 > 0) {
          int matchType, matchNode;
          _xtree2->getMatching(child2, matchType, matchNode);
          if (_xtree1->isElement(child1))
@@ -2278,12 +2120,10 @@ void XDiff::writeDiffNode(ostream &out, int node1, int node2, int indent, bool w
          string value = _xtree1->getAttributeValue(attr1);
          int matchType, matchNode;
          _xtree1->getMatching(attr1, matchType, matchNode);
-         if (matchType == XTree::MATCH) {
-            if (mode == ATTR_REDO)
+         if (matchType == XTree::DELETE) {
+            if (mode != ATTR_REDO)
                out << " " << atag << "=\"" << value << "\"";
-         } else if (matchType == XTree::DELETE) {
-            out << " " << atag << "=\"" << value << "\"";
-         } else {
+         } else if (matchType != XTree::MATCH) {
             out << " " << atag << "=\"" << _xtree2->getAttributeValue(matchNode) << "\"";
          }
 
@@ -2294,18 +2134,21 @@ void XDiff::writeDiffNode(ostream &out, int node1, int node2, int indent, bool w
       while (attr2 > 0) {
          int matchType, matchNode;
          _xtree2->getMatching(attr2, matchType, matchNode);
-         if (matchType == XTree::INSERT) {
-            out << " " << _xtree2->getTag(attr2) << "=\"" << _xtree2->getAttributeValue(attr2) << "\"";
+         string atag = _xtree2->getTag(attr2);
+         string value = _xtree2->getAttributeValue(attr2);
+         if (matchType == XTree::MATCH) {
+            if (mode == ATTR_REDO)
+               out << " " << atag << "=\"" << value << "\"";
+         } else if (matchType == XTree::INSERT) {
+            out << " " << atag << "=\"" << value << "\"";
          }
 
          attr2 = _xtree2->getNextAttribute(attr2);
       }
 
       // Child nodes.
-      if (!has_different_text && !child_elements) {
+      if ((!has_different_text && !child_elements)) {
          out << "/>";
-         if (whitespace)
-            out << "\n";
          _needNewLine = false;
          return;
       }
@@ -2320,9 +2163,9 @@ void XDiff::writeDiffNode(ostream &out, int node1, int node2, int indent, bool w
          if (matchType == XTree::MATCH)
             ;
          else if (matchType == XTree::DELETE)
-            writeDeleteNode(out, child1, indent + 1, whitespace);
+            writeDeleteNode(out, child1);
          else
-            writeDiffNode(out, child1, matchNode, indent + 1, whitespace);
+            writeDiffNode(out, child1, matchNode);
 
          child1 = _xtree1->getNextSibling(child1);
       }
@@ -2332,25 +2175,98 @@ void XDiff::writeDiffNode(ostream &out, int node1, int node2, int indent, bool w
          int matchType, matchNode;
          _xtree2->getMatching(child2, matchType, matchNode);
          if (matchType == XTree::INSERT)
-            writeInsertNode(out, child2, indent + 1, whitespace);
+            writeInsertNode(out, child2);
 
          child2 = _xtree2->getNextSibling(child2);
       }
 
-      if (whitespace && _needNewLine) {
-         out << "\n";
-         _needNewLine = false;
-      }
-      if (whitespace && child_elements) {
-         for (int i = 0; i < indent; ++i)
-            out << INDENT_STR;
-      }
       out << "</" << tag << ">";
-      if (whitespace)
-         out << "\n";
    } else {
-      out << "\"" << _xtree2->getText(node2) << "\"";
+      string text = _xtree2->getText(node2);
+      if (text != "")
+         text = '"' + text + '"';
+      out << text;
       _needNewLine = false;
+   }
+}
+
+void XPatch(GG::XMLDoc& old, const GG::XMLDoc& diff)
+{
+   vector<const GG::XMLElement*> diff_stack;
+   vector<GG::XMLElement*> old_stack;
+   diff_stack.push_back(&diff.root_node);
+   old_stack.push_back(&old.root_node);
+   
+   enum {INS, DEL, MATCH} curr_elem_type = MATCH;
+   while (!diff_stack.empty()) {
+      const GG::XMLElement* curr_diff_elem = diff_stack.back();
+      GG::XMLElement* curr_old_elem = old_stack.back();
+      diff_stack.pop_back();
+      old_stack.pop_back();
+      
+      // examine this element
+      curr_elem_type = MATCH;
+      string change_str = curr_diff_elem->Attribute(CHANGE_ATTR_STR);
+      if (change_str == INSERT_PREFIX) {
+         curr_elem_type = INS;
+         GG::XMLElement ins_elem(*curr_diff_elem);
+         ins_elem.RemoveAttribute(CHANGE_ATTR_STR);
+         curr_old_elem->AppendChild(ins_elem);
+      } else if (change_str == DELETE_PREFIX) {
+         curr_elem_type = DEL;
+         curr_old_elem->RemoveChild(curr_diff_elem->Tag());
+      } else { // some combination of text and attribute prefixes (and maybe none)
+         // adjust attributes and text as needed
+         if (change_str != "") {
+            // adjust attributes
+            if (change_str.find(DELETEATTR_PREFIX) != string::npos) {
+               for (GG::XMLElement::const_attr_iterator it = curr_diff_elem->attr_begin(); 
+                    it != curr_diff_elem->attr_end(); 
+                    ++it)
+                  curr_old_elem->RemoveAttribute(it->first);
+            } else if (change_str.find(REDOATTR_PREFIX) != string::npos) {
+               curr_old_elem->RemoveAttributes();
+               for (GG::XMLElement::const_attr_iterator it = curr_diff_elem->attr_begin(); 
+                    it != curr_diff_elem->attr_end(); 
+                    ++it) {
+                  if (it->first != CHANGE_ATTR_STR)
+                     curr_old_elem->SetAttribute(it->first, it->second);
+               }
+            } else if (change_str.find(UPDATEATTR_PREFIX) != string::npos) {
+               for (GG::XMLElement::const_attr_iterator it = curr_diff_elem->attr_begin(); 
+                    it != curr_diff_elem->attr_end(); 
+                    ++it) {
+                  if (it->first != CHANGE_ATTR_STR)
+                     curr_old_elem->SetAttribute(it->first, it->second);
+               }
+            }
+
+            // adjust text
+            if (change_str.find(UPDATE_TEXT_PREFIX) != string::npos)
+               curr_old_elem->SetText(curr_diff_elem->Text());
+         }
+         // insert and delete children as needed; this makes sure that the children match up in both docs 
+         // before they get pushed on their respective stacks
+         for (int i = 0; i < curr_diff_elem->NumChildren(); ++i) {
+            if (curr_diff_elem->Child(i).Attribute(CHANGE_ATTR_STR) == INSERT_PREFIX) {
+               GG::XMLElement ins_elem(curr_diff_elem->Child(i));
+               ins_elem.RemoveAttribute(CHANGE_ATTR_STR);
+               curr_old_elem->AppendChild(ins_elem);
+            } else if (curr_diff_elem->Child(i).Attribute(CHANGE_ATTR_STR) == DELETE_PREFIX) {
+               curr_old_elem->RemoveChild(curr_diff_elem->Child(i).Tag());
+            }
+         }
+      }
+
+      if (curr_elem_type == MATCH) {
+         for (int i = curr_diff_elem->NumChildren() - 1; 0 <= i; --i) {
+            string change_str = curr_diff_elem->Child(i).Attribute(CHANGE_ATTR_STR);
+            if (change_str != INSERT_PREFIX && change_str != DELETE_PREFIX) {
+               diff_stack.push_back(&curr_diff_elem->Child(i));
+               old_stack.push_back(&curr_old_elem->Child(curr_diff_elem->Child(i).Tag()));
+            }
+         }
+      }
    }
 }
 
