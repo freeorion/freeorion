@@ -47,20 +47,18 @@ public:
     static void                   HandleMessage(const Message& msg);
 
     static MultiplayerLobbyWnd*   MultiplayerLobby(); ///< returns the multiplayer lobby window, or 0 if none exists
-    static Universe&              GetUniverse();       ///< returns client's local copy of Universe
-    static ClientEmpireManager&   Empire();         ///< returns this client's player's Empire
-    static CombatModule*          CurrentCombat();  ///< returns this client's currently executing Combat; may be 0
-    static OrderSet&              Orders();         ///< returns Order set for this client's player
-    static ClientNetworkCore&     NetworkCore();    ///< returns the network core object for this client's player
+    static Universe&              GetUniverse();      ///< returns client's local copy of Universe
+    static ClientEmpireManager&   Empires();          ///< returns the set of known Empires
+    static CombatModule*          CurrentCombat();    ///< returns this client's currently executing Combat; may be 0
+    static OrderSet&              Orders();           ///< returns Order set for this client's player
+    static ClientNetworkCore&     NetworkCore();      ///< returns the network core object for this client's player
     
 
 protected:
-
-    Universe       m_universe;
-
     MultiplayerLobbyWnd* m_multiplayer_lobby_wnd;
 
-    ClientEmpireManager  m_empire;
+    Universe             m_universe;
+    ClientEmpireManager  m_empires;
     CombatModule*        m_current_combat;
     OrderSet             m_orders;
     ClientNetworkCore    m_network_core;
