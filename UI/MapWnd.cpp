@@ -1,123 +1,30 @@
 //MapWnd.cpp
-#include <vector>
 
-#ifndef _MapWnd_h_
 #include "MapWnd.h"
-#endif
 
-#ifndef _HumanClientApp_h_
 #include "../client/human/HumanClientApp.h"
-#endif
-
-#ifndef _UniverseObject_h_
-#include "../util/UniverseObject.h"
-#endif
-
-#ifndef _System_h_
-#include "../universe/System.h"
-#endif
-
-#ifndef _Planet_h_
-#include "../universe/Planet.h"
-#endif
-
-#ifndef _ClientUniverse_h_
 #include "../universe/ClientUniverse.h"
-#endif
-
-#ifndef _SystemIcon_h_
+#include "../universe/UniverseObject.h"
+#include "../universe/System.h"
+#include "../universe/Planet.h"
 #include "SystemIcon.h"
-#endif
-
 #include "GGDrawUtil.h"
+#include "../universe/Predicates.h"
+
+#include <vector>
 
 const int MapWnd::MAX_SCALE_FACTOR = 32;
 
-namespace
-{
-
-    //predicate for finding systems
-    bool IsSystem(UniverseObject* obj)
-    {
-        if(obj->GetSystem() == obj)
-            return true;
-        return false;
-    }
-    
-}
-
+#if 0
 std::vector<UniverseObject*> g_temp_objects;
+#endif
 
 MapWnd::MapWnd() :
     GG::Wnd(0,0,5,5,GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE)
 {
-    const ClientUniverse u = HumanClientApp::GetApp()->Universe();
-    
     //resize to the exact size of the universe....this will eventually change
-    SizeMove(0,0,UNIVERSE_X_SIZE*MAX_SCALE_FACTOR, UNIVERSE_Y_SIZE*MAX_SCALE_FACTOR);
-    
-    
-    //TEMP: set up the temporary universe objects
-    //REMOVE THIS WHEN THE SERVER STARTS GIVING US UNIVERSE DATA!!
-    UniverseObject* temp_object = new System(System::YELLOW, 0, "Utilae", 10.0, 10.0);   
-    g_temp_objects.push_back(temp_object);
- 
-    
-    temp_object = new System(System::RED_DWARF, 0, "Tsev", 1.0, 1.0);   
-    g_temp_objects.push_back(temp_object);
-    
-    
-    temp_object = new System(System::YELLOW, 0, "Aquitaine", 3.0, 5.0);   
-    g_temp_objects.push_back(temp_object);
-
-    
-    temp_object = new System(System::RED_GIANT, 0, "Nightfish", 3.0, 2.0);   
-    g_temp_objects.push_back(temp_object);
-    
-    
-    temp_object = new System(System::YELLOW, 0, "Tzlaine", 69.0, 70.0);   
-    g_temp_objects.push_back(temp_object);
-    
-    
-    temp_object = new System(System::RED_GIANT, 0, "Drektopia", 8.0, 12.0);   
-    g_temp_objects.push_back(temp_object);
-    
-    
-    temp_object = new System(System::RED_DWARF, 0, "Burndaddy", 10.0, 13.0);   
-    g_temp_objects.push_back(temp_object);
-    
-    
-    temp_object = new System(System::RED_GIANT, 0, "Ocean Machine", 150.0, 190.0);   
-    g_temp_objects.push_back(temp_object);
-    
-    
-    temp_object = new System(System::YELLOW, 0, "Tyreth", 900.0, 900.0);
-    g_temp_objects.push_back(temp_object);
-    
-    
-    temp_object = new System(System::RED_DWARF, 0, "PK", 900.0, 10.0);
-    g_temp_objects.push_back(temp_object);
-    
-    
-    temp_object = new System(System::RED_DWARF, 0, "Jbarcz1", 3.0, 900.0);
-    g_temp_objects.push_back(temp_object);
-    
-    
-    temp_object = new System(System::YELLOW, 0, "Orion", 500.0, 500.0);
-    g_temp_objects.push_back(temp_object);
-    
-    
-    temp_object = new System(System::YELLOW, 0, "Neuromancer", 350.0, 10.0);
-    g_temp_objects.push_back(temp_object);
-   
-    
-    temp_object = new System(System::YELLOW, 0, "Mr. Ed", 735.0, 6.0);
-    g_temp_objects.push_back(temp_object);
-   
-    
-    temp_object = new System(System::YELLOW, 0, "Yoghurt", 600.0, 13.0);
-    g_temp_objects.push_back(temp_object);
-    
+    SizeMove(0, 0, static_cast<int>(ClientUniverse::UNIVERSE_WIDTH * MAX_SCALE_FACTOR), 
+             static_cast<int>(ClientUniverse::UNIVERSE_WIDTH * MAX_SCALE_FACTOR));
     
     //set up background images
     m_background[0] = boost::shared_ptr<GG::Texture>(new GG::Texture());
@@ -141,90 +48,38 @@ MapWnd::MapWnd() :
 
 MapWnd::~MapWnd()
 {
-//TEMP: de-allocate temporary objects
-    std::vector<UniverseObject*>::iterator pos;
-    for(pos=g_temp_objects.begin(); pos != g_temp_objects.end(); pos = g_temp_objects.erase(pos))
-    {
-        if(*pos)
-            delete(*pos);
-    }
 }
 
 void MapWnd::InitTurn()
 {
-    //should create all of the system children
-    std::vector<UniverseObject*>::iterator pos;
-    int count=0;
-    for(pos=g_temp_objects.begin(); pos != g_temp_objects.end(); ++pos)
-    {
-        SystemIcon* temp;
-        AttachChild(temp = new SystemIcon(count));
-        //connect signals
-        GG::Connect(temp->LeftClickedSignal(), &MapWnd::SelectSystem, this);
-        ++count;
+    ClientUniverse::ObjectIDVec system_IDs = ClientApp::Universe().FindObjectIDs(IsSystem);
+    for (unsigned int i = 0; i < system_IDs.size(); ++i) {
+        SystemIcon* icon = new SystemIcon(system_IDs[i]);
+        AttachChild(icon);
+        GG::Connect(icon->LeftClickedSignal(), &MapWnd::SelectSystem, this);
     }
-    
 }
 
 
 int MapWnd::Render()
 {
-    HumanClientApp::GetApp()->Enter2DMode();
-    const ClientUniverse u = HumanClientApp::GetApp()->Universe();
-    
     glScissor(GalaxyMapScreen::s_scissor_rect.Left(),
-                GalaxyMapScreen::s_scissor_rect.Top(),
-                GalaxyMapScreen::s_scissor_rect.Right(),
-                GalaxyMapScreen::s_scissor_rect.Bottom());
+              GalaxyMapScreen::s_scissor_rect.Top(),
+              GalaxyMapScreen::s_scissor_rect.Right(),
+              GalaxyMapScreen::s_scissor_rect.Bottom());
     glEnable(GL_SCISSOR_TEST);
-    
+
     //render the background images
     RenderBackgrounds();
-    
-    
+
     glDisable(GL_TEXTURE_2D);
     
-    //ClientUniverse::ConstObjectVec objects = u.FindObjects(IsSystem);
-    //ClientUniverse::ConstObjectVec::iterator pos;
-    //ClientUniverse::const_iterator pos;
-    //plot each system as a point 
-/*
-    glColor3f(1.0,1.0,1.0);
-    glBegin(GL_POINTS);
-        for(pos = u.begin(); pos!=u.end(); ++pos)
-        {
-            const UniverseObject* sys = pos->second;
-            HumanClientApp::GetApp()->Logger().debug("Plotting pixel");
-            glVertex2d(sys->X(), sys->Y());
-            glVertex2d(sys->X()+1, sys->Y());
-            glVertex2d(sys->X()+1, sys->Y()+1);
-            glVertex2d(sys->X(), sys->Y()+1);
-            
-        }
-        
-    glEnd();
-*/
-/*
-        std::vector<UniverseObject*>::iterator pos;
-        glDisable(GL_TEXTURE_2D);
-        glColor3f(1.0,1.0,1.0);
-        glBegin(GL_POINTS);
-            for(pos=g_temp_objects.begin(); pos != g_temp_objects.end(); ++pos)
-            {
-                HumanClientApp::GetApp()->Logger().debug("Drawing an object");
-                UniverseObject* obj = *pos;
-                glVertex2d(obj->X(), obj->Y());
-                glVertex2d(obj->X()+1, obj->Y()+1);
-                glVertex2d(obj->X()+2, obj->Y()+2);
-            }
-        glEnd();
-*/
     GG::FlatRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, GG::CLR_ZERO, GG::CLR_WHITE, 2);
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_SCISSOR_TEST);    
-            
-    HumanClientApp::GetApp()->Exit2DMode();
+     
+    return 1;
 }
 
 int MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
@@ -300,12 +155,5 @@ void MapWnd::MoveBackgrounds(const GG::Pt& move)
 
 void MapWnd::SelectSystem(int systemID)
 {
-    //this function gets called when any system emits a signal
-    //log this for debugging purposes
-    HumanClientApp::GetApp()->Logger().debug("Clicked a system!");
-    //all this should do is emit its own signal
-    if(!ClientUI::GetClientUI()->Frozen())
-    {
-        m_selected_system_signal(systemID);    //emit the signal
-    }
+    m_selected_system_signal(systemID);
 }
