@@ -24,24 +24,41 @@ class Planet : public UniverseObject, public PopCenter, public ProdCenter
 {
 public:
    /** the types of planets in FreeOrion*/
-   enum PlanetType {TOXIC,
-                    RADIATED,
-                    BARREN,
-                    DESERT,
-                    TUNDRA,
-                    OCEAN,
-                    TERRAN,
-                    GAIA,
-                    MAX_PLANET_TYPE
-                   }; // others TBD (these are from the drek spreadsheet)
+   enum PlanetType {PT_SWAMP,
+                    PT_TOXIC,
+                    PT_INFERNO,
+                    PT_RADIATED,
+                    PT_BARREN,
+                    PT_TUNDRA,
+                    PT_DESERT,
+                    PT_TERRAN,                    //changed the order to be clockwise around the 
+                    PT_OCEAN,                    // wheel of EP, added Inferno and Swamp types
+                    PT_GAIA,
+                    PT_ASTEROIDS,                     //these need to be types also so they can have an environment
+                    PT_GASGIANT,                     
+                    MAX_PLANET_TYPE   //keep this last
+                   };
 
    /** the sizes of planets in FreeOrion*/
-   enum PlanetSize {SZ_TINY,
+   enum PlanetSize {SZ_NOWORLD,   // used to designate an empty planet slot
+                    SZ_TINY,
                     SZ_SMALL,
                     SZ_MEDIUM,
                     SZ_LARGE,
-                    SZ_HUGE
-                   }; // others TBD (these are from the drek spreadsheet)
+                    SZ_HUGE,
+                    SZ_ASTEROIDS,
+                    SZ_GASGIANT,
+                    MAX_PLANET_SIZE   //keep this last
+                   };
+
+   /** the environmental conditions of planets in FreeOrion*/
+   enum PlanetEnvironment {PE_UNINHABITABLE,   //for gas giants and asteroids
+                    PE_TERRIBLE,
+                    PE_ADEQUATE,
+                    PE_OPTIMAL,
+                    PE_SUPERB,
+                    MAX_PLANET_ENVIRONMENT   //keep this last
+                   };
 
    /** \name Structors */ //@{
    Planet(); ///< default ctor
@@ -85,6 +102,7 @@ public:
     void Conquer( int conquerer ) ;
     
     //@}
+   PlanetEnvironment   Environment();
 
 private:
    PlanetType     m_type;
