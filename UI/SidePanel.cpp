@@ -25,8 +25,6 @@
 
 #include "MapWnd.h"
 
-#include <io.h>
-
 namespace {
 int CircleXFromY(double y, double r) {return static_cast<int>(std::sqrt(r * r - y * y) + 0.5);}
 }
