@@ -78,6 +78,9 @@ public:
                            NUM_STARLANE_FREQENCIES    // keep this last, the number of starlane frequency options
                           };
 
+    /** the value passed to XMLEncode() when the entire object is desired, not just the portion visible to one empire */
+    enum {ALL_EMPIRES = -1};
+
     typedef ObjectMap::const_iterator            const_iterator;   ///< a const_iterator for iteration over the objects in the universe
     typedef ObjectMap::iterator                  iterator;
 
@@ -152,8 +155,7 @@ public:
         distance from \a system.  \throw std::out_of_range This function will throw if the system ID is out of range. */
     std::map<double, System*> ImmediateNeighbors(int system) const;
 
-    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Universe object
-    virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
+    virtual GG::XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
 
     UniverseObjectDeleteSignalType& UniverseObjectDeleteSignal() const {return m_universe_object_delete_sig;} ///< returns the state changed signal object for this UniverseObject
     //@}

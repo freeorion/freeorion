@@ -646,54 +646,21 @@ std::map<double, System*> Universe::ImmediateNeighbors(int system) const
     return retval;
 }
 
-GG::XMLElement Universe::XMLEncode() const
+GG::XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 {
-    GG::XMLElement retval("Universe");
-    GG::XMLElement temp("m_objects");
+    using GG::XMLElement;
+    XMLElement retval("Universe");
+    retval.AppendChild(XMLElement("s_universe_width", boost::lexical_cast<std::string>(s_universe_width)));
+    retval.AppendChild(XMLElement("m_objects"));
 
-    retval.AppendChild(GG::XMLElement("s_universe_width", boost::lexical_cast<std::string>(s_universe_width)));
+    for (const_iterator it = begin(); it != end(); ++it) {
+        // skip all non-System objects that are completely invisible to this empire
+        if (it->second->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || dynamic_cast<System*>(it->second))
+            retval.LastChild().AppendChild(it->second->XMLEncode(empire_id));
+    }
 
-    for (const_iterator it = begin(); it != end(); ++it)
-        temp.AppendChild(it->second->XMLEncode());
-    retval.AppendChild(temp);
-
-    retval.AppendChild(GG::XMLElement("m_last_allocated_id", boost::lexical_cast<std::string>(m_last_allocated_id)));
-
+    retval.AppendChild(XMLElement("m_last_allocated_id", boost::lexical_cast<std::string>(m_last_allocated_id)));
     return retval;
-}
-
-GG::XMLElement Universe::XMLEncode(int empire_id) const
-{
-   using GG::XMLElement;
-
-   XMLElement element("Universe");
-   XMLElement object_map("m_objects");
-
-   element.AppendChild(XMLElement("s_universe_width", boost::lexical_cast<std::string>(s_universe_width)));
-
-   for (const_iterator itr = begin(); itr != end(); ++itr)
-   {
-       // determine visibility
-       UniverseObject::Visibility vis = (*itr).second->Visible(empire_id);
-       XMLElement univ_object("UniverseObject");
-       XMLElement univ_element;
-
-       if (vis == UniverseObject::FULL_VISIBILITY) {
-           univ_element = (*itr).second->XMLEncode( );
-       } else if (vis == UniverseObject::PARTIAL_VISIBILITY) {
-           univ_element = (*itr).second->XMLEncode( empire_id );
-       }
-
-       //univ_element.AppendChild( univ_object );
-       object_map.AppendChild( univ_element );
-
-       // for NO_VISIBILITY no element is added
-   }
-   element.AppendChild(object_map);
-
-   element.AppendChild(GG::XMLElement("m_last_allocated_id", boost::lexical_cast<std::string>(m_last_allocated_id)));
-
-   return element;
 }
 
 void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players)
