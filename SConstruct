@@ -60,17 +60,16 @@ if platform_str == 'win32':
                gg_dir + 'msvc/GG/GiGi/Release',
                gg_dir + 'msvc/GG/GiGiNet/Release',
                gg_dir + 'msvc/GG/GiGiSDL/Release']
+    common_ccflags = '/O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "FREEORION_WIN32" /D "BOOST_SIGNALS_STATIC_LINK" /D "_MBCS" /FD /EHsc /MD /GS /Zc:forScope /GR /W3 /nologo /c /Wp64 /Zi /wd4099 /wd4251 /wd4800 /wd4267 /wd4275 /wd4244 /wd4101 /wd4258'
+    freeoriond_ccflags = common_ccflags + ' /D "FREEORION_BUILD_SERVER"'
+    freeorionca_ccflags = common_ccflags + ' /D "FREEORION_BUILD_AI"'
+    freeorion_ccflags = common_ccflags + ' /D "FREEORION_BUILD_HUMAN"'
     env = Environment(CCFLAGS = '',
                       CPPPATH = cpppath,
                       LIBS = libs,
-                      LIBPATH = libpath)
-#,
-#                      LINKFLAGS = '/INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\Boost\lib" /NODEFAULTLIB:"LIBCMT" /DEBUG /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /MACHINE:X86')
-                      #LINKFLAGS = '/INCREMENTAL:NO /NOLOGO /NODEFAULTLIB:"LIBCMT" /DEBUG /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /MACHINE:X86')
-                      # /PDB:"Release/freeorion.pdb" 
-common_linkflags = '/INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\Boost\lib" /NODEFAULTLIB:"LIBCMT" /DEBUG /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /MACHINE:X86'
-common_ccflags = '/O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "FREEORION_WIN32" /D "BOOST_SIGNALS_STATIC_LINK" /D "_MBCS" /FD /EHsc /MD /GS /Zc:forScope /GR /Fd"vc70.pdb" /W3 /nologo /c /Wp64 /Zi /wd4099 /wd4251 /wd4800 /wd4267 /wd4275 /wd4244 /wd4101 /wd4258'
-#common_ccflags = '/O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "FREEORION_WIN32" /D "BOOST_SIGNALS_STATIC_LINK" /D "_MBCS" /FD /EHsc /MD /GS /Zc:forScope /GR /W3 /nologo /c /Wp64 /Zi /wd4099 /wd4251 /wd4800 /wd4267 /wd4275 /wd4244 /wd4101 /wd4258'
+                      LIBPATH = libpath,
+                      LINKFLAGS = '/INCREMENTAL:NO /NOLOGO /NODEFAULTLIB:"LIBCMT" /DEBUG /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /MACHINE:X86')
+
 common_source = ['combat/Combat.cpp',
                  'Empire/ClientEmpireManager.cpp',
                  'Empire/Empire.cpp',
@@ -113,7 +112,6 @@ common_source = ['combat/Combat.cpp',
                  'UI/StringTable.cpp']
 common_objects = Flatten([Object(x, CCFLAGS=common_ccflags, CPPPATH=cpppath) for x in common_source])
 
-freeoriond_ccflags = common_ccflags + ' /D "FREEORION_BUILD_SERVER"'
 freeoriond_source = ['server/ServerApp.cpp',
                      'server/dmain.cpp',
                      'combat/CombatSystem.cpp',
@@ -123,7 +121,6 @@ freeoriond_objects = Flatten([Object(x, CCFLAGS=freeoriond_ccflags, CPPPATH=cppp
 freeoriond_objects.append(Object('universe/Universe-d', 'universe/Universe.cpp', CCFLAGS=freeoriond_ccflags, CPPPATH=cpppath))
 freeoriond_objects.append(Object('util/AppInterface-d', 'util/AppInterface.cpp', CCFLAGS=freeoriond_ccflags, CPPPATH=cpppath))
 
-freeorionca_ccflags = common_ccflags + ' /D "FREEORION_BUILD_AI"'
 freeorionca_source = ['client/AI/AIClientApp.cpp',
                       'client/AI/camain.cpp']
 freeorionca_objects = Flatten([Object(x, CCFLAGS=freeorionca_ccflags, CPPPATH=cpppath) for x in freeorionca_source])
@@ -131,7 +128,6 @@ freeorionca_objects.append(Object('universe/Universe-ca', 'universe/Universe.cpp
 freeorionca_objects.append(Object('util/AppInterface-ca', 'util/AppInterface.cpp', CCFLAGS=freeorionca_ccflags, CPPPATH=cpppath))
 freeorionca_objects.append(Object('network/ClientNetworkCore-ca', 'network/ClientNetworkCore.cpp', CCFLAGS=freeorionca_ccflags, CPPPATH=cpppath))
 
-freeorion_ccflags = common_ccflags + ' /D "FREEORION_BUILD_HUMAN"'
 freeorion_source = ['client/human/HumanClientApp.cpp',
                     'client/human/chmain.cpp',
                     'UI/About.cpp',
@@ -165,13 +161,10 @@ freeorion_objects.append(Object('network/ClientNetworkCore-h', 'network/ClientNe
 
 client_app_object = Object('client/ClientApp.cpp', CCFLAGS=common_ccflags, CPPPATH=cpppath)
 
-env['LINKFLAGS'] = common_linkflags + ' /PDB:"freeoriond.pdb"'
 env.Program('freeoriond', freeoriond_objects + common_objects)
-env['LINKFLAGS'] = common_linkflags + ' /PDB:"freeorionca.pdb"'
 env.Program('freeorionca', freeorionca_objects + client_app_object + common_objects)
-env['LINKFLAGS'] = common_linkflags + ' /PDB:"freeorion.pdb"'
 env.Program('freeorion', freeorion_objects + client_app_object + common_objects)
 
-#CacheDir('scons_cache')
+CacheDir('scons_cache')
 TargetSignatures('content')
 SetOption('implicit_cache', 1)
