@@ -33,32 +33,36 @@ class Message
 {
 public:
     /** Represents the type of the message */
-    enum MessageType {SERVER_STATUS,       ///< sent to the client when requested, and when the server first recieves a connection from a client
-                      HOST_GAME,           ///< sent when a client wishes to establish a game at the server
-                      JOIN_GAME,           ///< sent when a client wishes to join a game being established at the server
-                      LOBBY_UPDATE,        ///< used to synchronize multiplayer lobby dialogs among different players, when one user changes a setting
-                      SAVE_GAME,           ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
-                      LOAD_GAME,           ///< sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
-                      GAME_START,          ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
-                      TURN_UPDATE,         ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
-                      TURN_ORDERS,         ///< sent to the server by a client that has orders to be processed at the end of a turn or when a game is saved
-                      TURN_PROGRESS,       ///< sent to clients to display a turn progress message. To make messages short, IDs are used
-                      COMBAT_START,        ///< sent to clients when a combat is about to start
-                      COMBAT_ROUND_UPDATE, ///< sent to clients when a combat round has been resolved
-                      COMBAT_END,          ///< sent to clients when a combat is concluded
-                      HUMAN_PLAYER_MSG,    ///< sent when one player sends a text message to another in multiplayer
-                      PLAYER_ELIMINATED,   ///< sent to all clients when a player is eliminated from play
-                      PLAYER_EXIT,         ///< sent to the "host" client when another player leaves the game
-                      END_GAME,            ///< sent to the server by the host client when the current game is to end
+    enum MessageType {UNDEFINED,
+                      SERVER_STATUS,           ///< sent to the client when requested, and when the server first recieves a connection from a client
+                      HOST_GAME,               ///< sent when a client wishes to establish a game at the server
+                      JOIN_GAME,               ///< sent when a client wishes to join a game being established at the server
+                      LOBBY_UPDATE,            ///< used to synchronize multiplayer lobby dialogs among different players, when one user changes a setting
+                      SAVE_GAME,               ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
+                      LOAD_GAME,               ///< sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
+                      GAME_START,              ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
+                      TURN_UPDATE,             ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
+                      TURN_ORDERS,             ///< sent to the server by a client that has orders to be processed at the end of a turn or when a game is saved
+                      TURN_PROGRESS,           ///< sent to clients to display a turn progress message. To make messages short, IDs are used
+                      COMBAT_START,            ///< sent to clients when a combat is about to start
+                      COMBAT_ROUND_UPDATE,     ///< sent to clients when a combat round has been resolved
+                      COMBAT_END,              ///< sent to clients when a combat is concluded
+                      HUMAN_PLAYER_MSG,        ///< sent when one player sends a text message to another in multiplayer
+                      PLAYER_ELIMINATED,       ///< sent to all clients when a player is eliminated from play
+                      PLAYER_EXIT,             ///< sent to the "host" client when another player leaves the game
+                      REQUEST_NEW_OBJECT_ID,   ///< sent by client to server requesting a new object ID.
+                      DISPATCH_NEW_OBJECT_ID,  ///< sent by server to client with the new object ID.
+                      END_GAME,                ///< sent to the server by the host client when the current game is to end
     };
 
                
     /** Represents the module which is the destination for the message */
     enum ModuleType {CORE,                    ///< this module is the ServerCore or ClientCore, as appropriate; all server-bound messages go here
-                     CLIENT_LOBBY_MODULE,     ///< the human-only multiplayer lobby dialog
-                     CLIENT_UNIVERSE_MODULE,  ///< the ClientUniverse module
-                     CLIENT_EMPIRE_MODULE,    ///< the ClientEmpire module
-                     CLIENT_COMBAT_MODULE     ///< the client Combat module
+                     CLIENT_LOBBY_MODULE,            ///< the human-only multiplayer lobby dialog
+                     CLIENT_UNIVERSE_MODULE,         ///< the ClientUniverse module
+                     CLIENT_EMPIRE_MODULE,           ///< the ClientEmpire module
+                     CLIENT_COMBAT_MODULE,           ///< the client Combat module
+                     CLIENT_SYNCHRONOUS_RESPONSE     ///< client-only - the response to a synchronous message
                      // are other server modules necessary?
     };
 
@@ -75,16 +79,17 @@ public:
     /** standard ctor.  Senders that are not part of a game and so have no player number should send -1 as the \a 
         sender parameter.   \throw std::invalid_argument May throw std::invalid_argument if the parameters would form
         an invalid message */
-    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const std::string& text);
+    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const std::string& text, MessageType response_msg= UNDEFINED );
  
     /** convienience ctor that converts \a doc into a std::string automatically.  Senders that are not part of a game 
         and so have no player number should send -1 as the \a sender parameter.   \throw std::invalid_argument May
         throw std::invalid_argument if the parameters would form an invalid message */
-    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const GG::XMLDoc& doc);
+    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const GG::XMLDoc& doc, MessageType response_msg= UNDEFINED );
     //@}
 
     /** \name Accessors */ //@{
     MessageType Type() const;      ///< returns type of message
+    MessageType Response() const;  ///< returns response this message expects, implies a sychronous message
     int         Sender() const;    ///< returns the ID of the player sending the message (-1 represents server or a client not yet in a game)
     int         Receiver() const;  ///< returns the ID of the player receiving the message (-1 represents server)
     ModuleType  Module() const;    ///< returns the module that is to get the message at the receiving end
@@ -109,6 +114,7 @@ private:
     boost::shared_ptr<std::string> m_message_text;
     bool                           m_compressed;
     int                            m_uncompressed_size;
+    MessageType                    m_response_msg;  ///< implies a synchronous message is set, this is the message it's expecting to be returned from the server ( only client messages can be synchronous )
 
     friend class NetworkCore;         ///< grant access for calls to HeaderString()
     friend class ClientNetworkCore;   ///< grant access for calls to private ctor and HeaderString()
@@ -153,6 +159,15 @@ Message TurnProgressMessage( int player_id, const Message::TurnProgressPhase pha
 
 /** creates a TURN_UPDATE message.  Contains a diff of universe and empire data */
 Message TurnUpdateMessage(int player_id, const GG::XMLDoc& start_data);
+
+/** creates an REQUEST_NEW_OBJECT_ID  message. */
+/** this message is a synchronous message, when sent it will wait for a reply form the server */
+Message RequestNewObjectIDMessage(int sender, int receiver );
+
+/** creates an DISPATCH_NEW_OBJECT_ID  message. */
+/** this message is sent to a client who is waiting for a new object ID */
+Message DispatchObjectIDMessage( int player_id, const int new_id );
+
 
 
 ////////////////////////////////////////////////

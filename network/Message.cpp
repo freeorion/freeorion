@@ -43,24 +43,26 @@ void UnzipString(std::string str, std::string& unzipped_str, int size)
 ////////////////////////////////////////////////
 // Message
 ////////////////////////////////////////////////
-Message::Message(MessageType msg_type, int sender, int receiver, ModuleType module, const std::string& text) : 
+Message::Message(MessageType msg_type, int sender, int receiver, ModuleType module, const std::string& text, MessageType response_msg ) : 
    m_message_type(msg_type),
    m_sending_player(sender),
    m_receiving_player(receiver),
    m_receiving_module(module),
-   m_message_text(new std::string)
+   m_message_text(new std::string),
+   m_response_msg( response_msg )
 {
    ZipString(text, *m_message_text);
    m_compressed = true;
    m_uncompressed_size = text.size();
 }
 
-Message::Message(MessageType msg_type, int sender, int receiver, ModuleType module, const GG::XMLDoc& doc) : 
+Message::Message(MessageType msg_type, int sender, int receiver, ModuleType module, const GG::XMLDoc& doc,  MessageType response_msg ) : 
    m_message_type(msg_type),
    m_sending_player(sender),
    m_receiving_player(receiver),
    m_receiving_module(module),
-   m_message_text(new std::string)
+   m_message_text(new std::string),
+   m_response_msg( response_msg )
 {
    std::stringstream stream;
    doc.WriteDoc(stream);
@@ -71,7 +73,8 @@ Message::Message(MessageType msg_type, int sender, int receiver, ModuleType modu
 
 // private ctor
 Message::Message(const std::string& raw_msg) : 
-   m_message_text(new std::string)
+   m_message_text(new std::string),
+   m_response_msg( UNDEFINED )
 {
    std::stringstream stream(raw_msg);
    
@@ -88,6 +91,11 @@ Message::Message(const std::string& raw_msg) :
 Message::MessageType Message::Type() const
 {
    return m_message_type;
+}
+
+Message::MessageType Message::Response() const
+{
+   return m_response_msg;
 }
 
 int Message::Sender() const
@@ -222,6 +230,20 @@ Message TurnUpdateMessage(int player_id, const GG::XMLDoc& start_data)
 {
    return Message(Message::TURN_UPDATE, -1, player_id, Message::CORE, start_data);
 }
+
+
+Message RequestNewObjectIDMessage(int sender, int receiver )
+{
+   return Message(Message::REQUEST_NEW_OBJECT_ID, sender, receiver, Message::CORE, "", Message::DISPATCH_NEW_OBJECT_ID );
+}
+
+Message DispatchObjectIDMessage( int player_id, const int new_id )
+{
+   return Message(Message::DISPATCH_NEW_OBJECT_ID, -1, player_id, Message::CLIENT_SYNCHRONOUS_RESPONSE, boost::lexical_cast<std::string>(new_id ) );
+
+}
+
+
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Messages
