@@ -6,6 +6,10 @@
 #include "../util/SitRepEntry.h"
 #endif
 
+#ifndef BOOST_SIGNAL_HPP
+#include <boost/signal.hpp>
+#endif
+
 #include <vector>
 #include <map>
 #include <string>
@@ -40,8 +44,11 @@ public:
     typedef std::vector<UniverseObject*>         ObjectVec;        ///< the return type of the non-const FindObjects()
     typedef std::vector<int>                     ObjectIDVec;      ///< the return type of FindObjectIDs()
 
+    /** \name Signal Types */ //@{
+    typedef boost::signal<void (const UniverseObject *)> UniverseObjectDeleteSignalType; ///< emitted just before the UniverseObject is deleted
+    //@}
     
-    
+
     /** \name Structors */ //@{
     Universe(); ///< default ctor
     Universe(const GG::XMLElement& elem); ///< ctor that constructs a Universe object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Universe object
@@ -100,6 +107,9 @@ public:
    
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Universe object
     virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
+ 
+    UniverseObjectDeleteSignalType& UniverseObjectDeleteSignal() const {return m_universe_object_delete_sig;} ///< returns the state changed signal object for this UniverseObject
+
     //@}
 
 
@@ -210,6 +220,8 @@ protected:
     int m_last_allocated_id;
 
     static double s_universe_width;
+
+    mutable UniverseObjectDeleteSignalType m_universe_object_delete_sig;
 };
 
 

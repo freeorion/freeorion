@@ -546,9 +546,11 @@ UniverseObject* Universe::Remove(int id)
 
 bool Universe::Delete(int id)
 {
-   UniverseObject* obj = Remove(id);
-   delete obj;
-   return obj;
+  UniverseObject* obj = Remove(id);
+  if(obj)
+    UniverseObjectDeleteSignal()(obj);
+  delete obj;
+  return obj;
 }
 
 void Universe::MovementPhase(std::vector<SitRepEntry>& sit_reps)
