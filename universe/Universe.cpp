@@ -1090,6 +1090,10 @@ UniverseObject* Universe::Remove(int id)
       retval = it->second;
       if (System* sys = retval->GetSystem())
           sys->Remove(id);
+      if (Ship* ship = dynamic_cast<Ship*>(retval)) {
+	  if (Fleet* fleet = ship->GetFleet())
+	      fleet->RemoveShip(ship->ID());
+      }
       m_objects.erase(id);
    }
    return retval;
