@@ -133,7 +133,9 @@ void FleetButton::Clicked()
     if (m_compliment)
         fleets.insert(fleets.end(), m_compliment->m_fleets.begin(), m_compliment->m_fleets.end());
 
-    if (GetOptionsDB().Get<bool>("UI.multiple-fleet-windows")) {
+    bool multiple_fleet_windows = GetOptionsDB().Get<bool>("UI.multiple-fleet-windows");
+
+    if (multiple_fleet_windows) {
         // only open a fleet window if there is not one open already for these fleets
         for (unsigned int i = 0; i < fleets.size(); ++i) {
             if (s_open_fleets.find(fleets[i]) != s_open_fleets.end())
@@ -153,14 +155,20 @@ void FleetButton::Clicked()
          fleets[0]->SystemID() == UniverseObject::INVALID_OBJECT_ID);
     FleetWnd* fleet_wnd = new FleetWnd(ul.x + 50, ul.y + 50, fleets, read_only);
 
+    if (multiple_fleet_windows) {
+        // for multiple windows, place them at the screen location of the fleet button
+        if (GG::App::GetApp()->AppWidth() < fleet_wnd->LowerRight().x)
+            fleet_wnd->OffsetMove(fleet_wnd->LowerRight().x - GG::App::GetApp()->AppWidth() - 5, 0);
+
+        if (GG::App::GetApp()->AppHeight() < fleet_wnd->LowerRight().y)
+            fleet_wnd->OffsetMove(0, fleet_wnd->LowerRight().y - GG::App::GetApp()->AppHeight() - 5);
+    } else {
+        // for one-fleet-at-a-time, place them in the lower-left corner of the screen
+        fleet_wnd->MoveTo(5, GG::App::GetApp()->AppHeight() - fleet_wnd->Height() - 5);
+    }
+
     if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
         GG::Connect(map_wnd->SystemRightClickedSignal(), &FleetWnd::SystemClicked, fleet_wnd);
-
-    if (GG::App::GetApp()->AppWidth() < fleet_wnd->LowerRight().x)
-        fleet_wnd->OffsetMove(fleet_wnd->LowerRight().x - GG::App::GetApp()->AppWidth() - 5, 0);
-
-    if (GG::App::GetApp()->AppHeight() < fleet_wnd->LowerRight().y)
-        fleet_wnd->OffsetMove(0, fleet_wnd->LowerRight().y - GG::App::GetApp()->AppHeight() - 5);
 
     for (unsigned int i = 0; i < fleets.size(); ++i) {
         s_open_fleets[fleets[i]] = fleet_wnd;
