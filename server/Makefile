@@ -39,7 +39,7 @@ CPP_SRCS =	$(wildcard *.cpp) \
 OBJS = $(addprefix ../objs/server/,$(notdir $(patsubst %.cpp,%.o,$(CPP_SRCS))))
 
 INCS =  -I/usr/include  -I/usr/include/GG  -I/usr/include/GG/net  -I$(SDL_INC)  -I$(FREETYPE_INC) -I$(BOOST_INC)
-LIBS =  -L/usr/lib -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lfreetype -lboost_signals -lexpat -llog4cpp -lz -lpthread -lGiGi
+LIBS =  -L/usr/lib -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lfreetype -lboost_signals -lexpat -llog4cpp -lz -lpthread -lGiGi -lGiGiNet
 
 # Build Flags
 CFLAGS = $(INCS) -g3 -Wall

@@ -38,7 +38,7 @@ CPP_SRCS =	$(wildcard *.cpp) \
 OBJS = $(addprefix ../../objs/AI/,$(notdir $(patsubst %.cpp,%.o,$(CPP_SRCS))))
 
 INCS =  -I/usr/include  -I/usr/include/GG  -I/usr/include/GG/net  -I$(SDL_INC)  -I$(BOOST_INC)
-LIBS =  -L/usr/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz -lpthread -lGiGi
+LIBS =  -L/usr/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz -lpthread -lGiGi -lGiGiNet
 
 # Build Flags
 CFLAGS = $(INCS) -g3 -Wall
