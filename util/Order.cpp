@@ -486,10 +486,6 @@ FleetColonizeOrder::FleetColonizeOrder(int empire, int fleet, int planet) :
    m_planet(planet)
 {
 }
-    
-
-
-
 
 void FleetColonizeOrder::Execute() const
 {
@@ -513,8 +509,6 @@ void FleetColonizeOrder::Execute() const
     {
         throw std::runtime_error("Empire attempted to issue colonize order to another's fleet.");
     }
-    
-    
     
     // verify that planet exists and is un-occupied.
     the_object = universe->Object(this->PlanetID());
@@ -568,19 +562,15 @@ void FleetColonizeOrder::Execute() const
             // If colony ship was only ship in fleet, remove fleet
             if(colony_fleet->NumShips() == 0)
             {
-                universe->Delete(colony_fleet->ID());
                 empire->Lookup(EmpireID())->RemoveFleet(colony_fleet->ID());
+                universe->Delete(colony_fleet->ID());
             }
             
             // order processing is now done
             return;
         }
-    
     }
-    
-    
     throw std::runtime_error("Colonization order issued to fleet without colony ship.");
-    
 }
 
 
@@ -599,7 +589,6 @@ XMLElement FleetColonizeOrder::XMLEncode() const
     elem.AppendChild(planet);
     return elem;
 }
-
 
 DeleteFleetOrder::DeleteFleetOrder() : 
     Order(),
@@ -651,3 +640,4 @@ GG::XMLElement DeleteFleetOrder::XMLEncode() const
     elem.AppendChild(temp);
     return elem;
 }
+
