@@ -140,7 +140,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
                 if (!first_line)
                     os << std::string(description_column, ' ');
                 next_pos = it->second.description.size();
-                if (static_cast<unsigned int>(description_column) < next_pos - last_pos) {
+                if (static_cast<unsigned int>(description_width) < next_pos - last_pos) {
                     os << it->second.description.substr(last_pos, pos - last_pos) << "\n";
                     os << std::string(description_column, ' ') << it->second.description.substr(pos, next_pos) << "\n";
                 } else {
@@ -279,7 +279,9 @@ void OptionsDB::SetFromXML(const GG::XMLDoc& doc)
 void OptionsDB::SetFromXMLRecursive(const GG::XMLElement& elem, const std::string& section_name)
 {
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
-    if (elem.Text() != "") {
+    std::string option_value= elem.Text()!=""?elem.Text():elem.Attribute("value");
+
+    if(option_value != "") {
         std::map<std::string, Option>::iterator it = m_options.find(option_name);
 
         if (it == m_options.end())
@@ -289,7 +291,7 @@ void OptionsDB::SetFromXMLRecursive(const GG::XMLElement& elem, const std::strin
         if (option.value.empty())
             throw std::runtime_error("The value member of option \"" + option.name + "\" is undefined.");
 
-        option.FromString(elem.Text());
+        option.FromString(option_value);
     }
     for (int i = 0; i < elem.NumChildren(); ++i) {
         SetFromXMLRecursive(elem.Child(i), option_name);
