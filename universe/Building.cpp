@@ -20,7 +20,10 @@ namespace {
             for (GG::XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
                 if (it->Tag() != "BuildingType")
                     throw std::runtime_error("ERROR: Encountered non-BuildingType in buildings.xml!");
-                m_building_types[it->Child("name").Text()] = new BuildingType(*it);
+                BuildingType* building_type = new BuildingType(*it);
+                if (m_building_types.find(building_type->Name()) == m_building_types.end())
+                    throw std::runtime_error(("ERROR: More than on building type in buildings.xml has the name " + building_type->Name()).c_str());
+                m_building_types[building_type->Name()] = building_type;
             }
             ifs.close();
         }
