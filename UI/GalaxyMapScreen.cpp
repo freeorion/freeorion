@@ -16,12 +16,18 @@
 #include "GGApp.h"
 #endif
 
+#ifndef _FleetWindow_h_
+#include "FleetWindow.h"
+#endif
+
+#include <vector>
+
 GG::Rect GalaxyMapScreen::s_scissor_rect;
 double GalaxyMapScreen::s_scale_factor;
 
 
 GalaxyMapScreen::GalaxyMapScreen() :
-    GG::Wnd(),
+    GG::Wnd(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), GG::Wnd::DRAG_KEEPER),
     m_selected_index(-1),
     m_orders(0),
     m_map_wnd(0)
@@ -40,6 +46,17 @@ GalaxyMapScreen::GalaxyMapScreen() :
     
     AttachChild(m_map_wnd);
     
+    // ***********************************************************************
+    // TEMP TEMP TEMP TEMP -- create fleetwindow for testing/demo purposes
+    // ***********************************************************************
+ 
+    std::vector<int> fleets;
+    
+    // causes memory leak, but thats ok, this is only a test....
+    FleetWindow* wnd = new FleetWindow(40, 40, 0, fleets);
+    
+    AttachChild(wnd);
+    GG::App::GetApp()->Register(wnd);
 }
 
 GalaxyMapScreen::~GalaxyMapScreen()
