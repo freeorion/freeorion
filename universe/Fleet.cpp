@@ -201,7 +201,7 @@ void Fleet::SetRoute(const std::list<System*>& route, double distance)
     m_travel_distance = distance;
     // if we're already moving, add in the distance from where we are to the first system in the route
     if (SystemID() != route.front()->ID()) {
-        System* starting_system = GetSystem();
+        System* starting_system = route.front();
         double dist_x = starting_system->X() - X();
         double dist_y = starting_system->Y() - Y();
         m_travel_distance += std::sqrt(dist_x * dist_x + dist_y * dist_y);
@@ -209,7 +209,7 @@ void Fleet::SetRoute(const std::list<System*>& route, double distance)
     m_moving_to = m_travel_route.back()->ID();
     if (m_prev_system != SystemID() && m_prev_system == m_travel_route.front()->ID()) {
         m_prev_system = m_next_system; // if already in transit and turning around, swap prev and next
-    } else {
+    } else if (SystemID() == route.front()->ID()) {
         m_prev_system = SystemID();
     }
     std::list<System*>::const_iterator it = m_travel_route.begin();
