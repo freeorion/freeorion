@@ -164,6 +164,7 @@ CUI_Wnd::CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags)
     // call to CUI_Wnd::MinimizedLength() because MinimizedLength is virtual
     SetMinSize(GG::Pt(CUI_Wnd::MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
     InitButtons();
+    EnableChildClipping(true);
 }
 
 CUI_Wnd::CUI_Wnd(const GG::XMLElement& elem) : 
