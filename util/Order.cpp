@@ -38,8 +38,8 @@ const int INITIAL_COLONY_POP = 1;
 namespace
 {
     Order* GenPlanetBuildOrder(const XMLElement& elem)   {return new PlanetBuildOrder(elem);}
+    Order* GenRenameOrder(const XMLElement& elem)        {return new RenameOrder(elem);}
     Order* GenNewFleetOrder(const XMLElement& elem)      {return new NewFleetOrder(elem);}
-    Order* GenRenameOrder(const XMLElement& elem)   {return new RenameOrder(elem);}
     Order* GenFleetMoveOrder(const XMLElement& elem)     {return new FleetMoveOrder(elem);}
     Order* GenFleetTransferOrder(const XMLElement& elem) {return new FleetTransferOrder(elem);}
     Order* GenFleetColonizeOrder(const XMLElement& elem) {return new FleetColonizeOrder(elem);}
@@ -81,6 +81,7 @@ void Order::ValidateEmpireID() const
 void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
 {
     fact.AddGenerator("PlanetBuildOrder",   &GenPlanetBuildOrder);
+    fact.AddGenerator("RenameOrder",        &GenRenameOrder);
     fact.AddGenerator("FleetSplitOrder",    &GenNewFleetOrder);
     fact.AddGenerator("FleetMoveOrder",     &GenFleetMoveOrder);
     fact.AddGenerator("FleetTransferOrder", &GenFleetTransferOrder);
