@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _Ship_h_
 #define _Ship_h_
 
@@ -45,7 +46,7 @@ struct ShipDesign
 };
 
 /** a class representing a single FreeOrion ship*/
-class Ship : virtual public UniverseObject
+class Ship : public UniverseObject
 {
 public:
    /** \name Structors */ //@{

@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _Process_h_
 #define _Process_h_
 
@@ -18,7 +19,7 @@
    - Win32 (use for MinGW apps as well): requires definition of FREEORION_WIN32
    one of them *must* be used.  Note that the Win32 version of Process calls TerminateProcess(), and so the killed
    process does minimal cleanup; in particular, it will not terminate any of its child processes and may not release
-   DLLs it may be useing.*/
+   DLLs it may be using.*/
 class Process
 {
 public:

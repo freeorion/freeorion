@@ -1,3 +1,4 @@
+// -*- C++ -*-
 
 #ifndef _ServerEmpireManager_h_
 #define _ServerEmpireManager_h_

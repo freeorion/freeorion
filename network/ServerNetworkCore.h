@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _ServerNetworkCore_h_
 #define _ServerNetworkCore_h_
 

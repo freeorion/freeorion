@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _System_h_
 #define _System_h_
 
@@ -18,7 +19,7 @@ class System : public UniverseObject
 {
 private:
    typedef std::multimap<int, int>  ObjectMultimap;
-   typedef std::map<int, bool>                  StarlaneMap;
+   typedef std::map<int, bool>      StarlaneMap;
 
 public:
    /** types of stars in FreeOrion*/
@@ -89,14 +90,16 @@ public:
    int Insert(UniverseObject* obj, int orbit);
 
    /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound 
-       objects should be inserted with this function. NOTE: This function is primarily intended for XML decode purposes and does not set the object's System to point to this system as it is assumed that this has already been done prior to encoding. If used for other purposes you must set the objects System ID manually. */
+       objects should be inserted with this function. NOTE: This function is primarily intended for XML decoding purposes 
+       and does not set the object's system to point to this system since it is assumed that this has already been done prior 
+       to encoding. If used for other purposes you must set the objects System ID manually. */
    int Insert(int obj_id, int orbit);
 
-   /** removes the object with ID number \a id from the system, and returns it; returns 0 if theree is no such object*/
+   /** removes the object with ID number \a id from the system, and returns it; returns 0 if there is no such object*/
    bool   Remove(int id);
 
-   void AddStarlane(int id);     ///< adds a starlane between this system and the system with ID number \a id.  \note Adding a starlane to a system to which there is already a wormhole reases the wormhole; you may want to check for a wormhole before calling this function.
-   void AddWormhole(int id);     ///< adds a wormhole between this system and the system with ID number \a id  \note Adding a wormhole to a system to which there is already a starlane reases the starlane; you may want to check for a starlane before calling this function.
+   void AddStarlane(int id);     ///< adds a starlane between this system and the system with ID number \a id.  \note Adding a starlane to a system to which there is already a wormhole erases the wormhole; you may want to check for a wormhole before calling this function.
+   void AddWormhole(int id);     ///< adds a wormhole between this system and the system with ID number \a id  \note Adding a wormhole to a system to which there is already a starlane erases the starlane; you may want to check for a starlane before calling this function.
    bool RemoveStarlane(int id);  ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
    bool RemoveWormhole(int id);  ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
 
