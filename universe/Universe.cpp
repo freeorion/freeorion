@@ -180,15 +180,15 @@ namespace {
     double CalcNewPosNearestNeighbour(const std::pair<double, double> &position,const std::vector<std::pair<double, double> > &positions)
     {
         if(positions.size()==0)
-          return 0.0;
+            return 0.0;
 
         unsigned int j; 
         double lowest_dist=  (positions[0].first  - position.first ) * (positions[0].first  - position.first ) 
-                           + (positions[0].second - position.second) * (positions[0].second - position.second),distance=0.0;
+            + (positions[0].second - position.second) * (positions[0].second - position.second),distance=0.0;
 
         for (j=1; j < positions.size(); ++j){
             distance =  (positions[j].first  - position.first ) * (positions[j].first  - position.first ) 
-                      + (positions[j].second - position.second) * (positions[j].second - position.second);
+                + (positions[j].second - position.second) * (positions[j].second - position.second);
             if(lowest_dist>distance)
                 lowest_dist = distance;
         }
@@ -365,10 +365,10 @@ namespace {
             clusters_position.push_back(std::pair<std::pair<double,double>,std::pair<double,double> >(std::pair<double,double>(x,y),std::pair<double,double>(sin(rotation),cos(rotation))));
         }
 
-       // stores best suboptimal system position so far
-      std::pair<double,double> sys_max_distance_pos;double sys_max_distance = 0.0;
+        // stores best suboptimal system position so far
+        std::pair<double,double> sys_max_distance_pos;double sys_max_distance = 0.0;
 
-       for (i=0,attempts=0; i < stars && attempts<100; i++,attempts++ )
+        for (i=0,attempts=0; i < stars && attempts<100; i++,attempts++ )
         {
             double x,y;
             if (random_zero_to_one()<system_noise)
@@ -501,7 +501,7 @@ namespace {
         int new_system_id = universe.Insert(system);
         if (new_system_id == UniverseObject::INVALID_OBJECT_ID) {
             throw std::runtime_error("Universe::GenerateIrregularGalaxy() : Attempt to insert system " +
-                                    star_name + " into the object map failed.");
+                                     star_name + " into the object map failed.");
         }
         return system;
     }
@@ -1036,7 +1036,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
         GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
         break;
     default:
-        Logger().errorStream() << "Universe::Universe : Unknown galaxy shape: "<< shape << ".  Using IRREGULAR as default.";
+        Logger().errorStream() << "Universe::Universe : Unknown galaxy shape: " << shape << ".  Using IRREGULAR as default.";
         GenerateIrregularGalaxy(size, age, adjacency_grid);
     }
 
@@ -1045,84 +1045,89 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     InitializeSystemGraph();
     GenerateHomeworlds(players + ai_players, homeworlds);
     GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
+
+    // adjust the meters at start, so that they will have the right values during the first turn
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ResetMaxMeters();
+        it->second->AdjustMaxMeters();
+    }
+
+    std::vector<Building*> buildings = FindObjects<Building>();
+    for (unsigned int i = 0; i < buildings.size(); ++i) {
+        buildings[i]->ExecuteEffects();
+    }
+
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ExecuteSpecials();
+    }
 }
 
 int Universe::Insert(UniverseObject* obj)
 {
-   int retval = UniverseObject::INVALID_OBJECT_ID;
-   if (obj) {
-       if (m_last_allocated_id + 1 < UniverseObject::MAX_ID) {
-           m_objects[++m_last_allocated_id] = obj;
-           obj->SetID(m_last_allocated_id);
-           retval = m_last_allocated_id;
-       } else { // we'll probably never execute this branch, considering how many IDs are available
-           // find a hole in the assigned IDs in which to place the object
-           int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
-           for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-               if (1 < it->first - last_id_seen) {
-                   m_objects[last_id_seen + 1] = obj;
-                   obj->SetID(last_id_seen + 1);
-                   retval = last_id_seen + 1;
-                   break;
-               }
-           }
-       }
-   }
+    int retval = UniverseObject::INVALID_OBJECT_ID;
+    if (obj) {
+        if (m_last_allocated_id + 1 < UniverseObject::MAX_ID) {
+            m_objects[++m_last_allocated_id] = obj;
+            obj->SetID(m_last_allocated_id);
+            retval = m_last_allocated_id;
+        } else { // we'll probably never execute this branch, considering how many IDs are available
+            // find a hole in the assigned IDs in which to place the object
+            int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
+            for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+                if (1 < it->first - last_id_seen) {
+                    m_objects[last_id_seen + 1] = obj;
+                    obj->SetID(last_id_seen + 1);
+                    retval = last_id_seen + 1;
+                    break;
+                }
+            }
+        }
+    }
 
-   return retval;
+    return retval;
 }
 
 bool Universe::InsertID(UniverseObject* obj, int id )
 {
-   bool retval = false;
+    bool retval = false;
 
-   if (obj) {
-       if ( id < UniverseObject::MAX_ID) {
-           m_objects[id] = obj;
-           obj->SetID(id);
-           retval = true;
-       }
-   }
-   return retval;
+    if (obj) {
+        if ( id < UniverseObject::MAX_ID) {
+            m_objects[id] = obj;
+            obj->SetID(id);
+            retval = true;
+        }
+    }
+    return retval;
 }
 
 UniverseObject* Universe::Remove(int id)
 {
-   UniverseObject* retval = 0;
-   iterator it = m_objects.find(id);
-   if (it != m_objects.end()) {
-      retval = it->second;
-      if (System* sys = retval->GetSystem())
-          sys->Remove(id);
-      if (Ship* ship = dynamic_cast<Ship*>(retval)) {
-	  if (Fleet* fleet = ship->GetFleet())
-	      fleet->RemoveShip(ship->ID());
-      } else if (Building* building = dynamic_cast<Building*>(retval)) {
-	  if (Planet* planet = building->GetPlanet())
-	      planet->RemoveBuilding(building->ID());
-      }
-      m_objects.erase(id);
-   }
-   return retval;
+    UniverseObject* retval = 0;
+    iterator it = m_objects.find(id);
+    if (it != m_objects.end()) {
+        retval = it->second;
+        if (System* sys = retval->GetSystem())
+            sys->Remove(id);
+        if (Ship* ship = dynamic_cast<Ship*>(retval)) {
+            if (Fleet* fleet = ship->GetFleet())
+                fleet->RemoveShip(ship->ID());
+        } else if (Building* building = dynamic_cast<Building*>(retval)) {
+            if (Planet* planet = building->GetPlanet())
+                planet->RemoveBuilding(building->ID());
+        }
+        m_objects.erase(id);
+    }
+    return retval;
 }
 
 bool Universe::Delete(int id)
 {
-  UniverseObject* obj = Remove(id);
-  if (obj)
-    UniverseObjectDeleteSignal()(obj);
-  delete obj;
-  return obj;
-}
-
-void Universe::MovementPhase(std::vector<SitRepEntry>& sit_reps)
-{
-   // TODO
-}
-
-void Universe::PopGrowthProductionResearch(std::vector<SitRepEntry>& sit_reps)
-{
-   // TODO
+    UniverseObject* obj = Remove(id);
+    if (obj)
+        UniverseObjectDeleteSignal()(obj);
+    delete obj;
+    return obj;
 }
 
 void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid)
@@ -1240,206 +1245,6 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
     }
 }
 
-/*!!! old version
-void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid)
-{
-    const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
-
-    std::vector<System*> sys_vec = FindObjects<System>();
-
-    if (sys_vec.empty())
-        throw std::runtime_error("Attempted to generate starlanes in an empty galaxy.");
-
-    int MAX_LANES = UniverseDataTables()["MaxStarlanes"][0][freq];
-    double MAX_LANE_LENGTH = static_cast<double>(UniverseDataTables()["MaxStarlaneLength"][0][0]);
-
-    if (!MAX_LANES)
-        return;
-
-    SmallIntDistType lanes_dist = SmallIntDist(1, MAX_LANES);
-    GaussianDistType lane_length_dist = GaussianDist(0.0, MAX_LANE_LENGTH / 3.0); // obviously, only the positive values generated by this dist should be used
-
-    bool full_connectivity = true; // this may be optional later; for now, we should always do it
-    std::list<ConnectedGroup> connected_groups;
-
-    // generate the number of starlanes that each system should have
-    std::map<System*, int> starlanes;
-    for (unsigned int i = 0; i < sys_vec.size(); ++i) {
-        starlanes[sys_vec[i]] = lanes_dist();
-    }
-
-    for (unsigned int i = 0; i < sys_vec.size(); ++i) {
-        System* system = sys_vec[i];
-        // subtract any starlanes that might have already been placed when processing other systems
-        int lanes = starlanes[sys_vec[i]] - system->Starlanes();
-
-        double system_x = system->X();
-        double system_y = system->Y();
-        while (0 < lanes) {
-            double lane_length = -1.0;
-            while (lane_length < 0.0) {
-                lane_length = std::min(lane_length_dist(), MAX_LANE_LENGTH);
-            }
-
-            // look in the circle of adjacency grid boxes for a candidate.  If none is found, 
-            // keep looking in circles of one grid-box-size smaller in radius each.  If still
-            // nothing is found, look outside of lane_length until another system is found.
-            bool placed = false;
-            double current_lane_length = lane_length;
-            bool first_chance = true;
-            int attempts = 0;
-            const int MAX_PLACEMENT_ATTEMPTS = 35;
-            while (!placed && ++attempts < MAX_PLACEMENT_ATTEMPTS) {
-                std::set<std::pair<unsigned int, unsigned int> > searched_grid_squares;
-                // a simple heuristic for getting the approximate number of slices that will catch all the grid boxes 
-                // in a cirle of the given grid-box radius
-                const int SLICES = std::max(1, static_cast<int>(current_lane_length / ADJACENCY_BOX_SIZE * PI));
-                const double SLICE_ANGLE = 2.0 * PI / SLICES;
-                const int FIRST_SLICE = RandSmallInt(0, SLICES - 1); // this randomizes the direction in which we start looking
-                for (int j = FIRST_SLICE; j < FIRST_SLICE + SLICES; ++j) {
-                    double theta = SLICE_ANGLE * j;
-                    unsigned int grid_x = static_cast<unsigned int>((system_x + current_lane_length * std::cos(theta)) / ADJACENCY_BOX_SIZE);
-                    unsigned int grid_y = static_cast<unsigned int>((system_y + current_lane_length * std::sin(theta)) / ADJACENCY_BOX_SIZE);
-
-                    if (grid_x < 0 || adjacency_grid.size() <= grid_x || grid_y < 0 || adjacency_grid.size() <= grid_y ||
-                        searched_grid_squares.find(std::make_pair(grid_x, grid_y)) != searched_grid_squares.end())
-                        continue;
-
-                    searched_grid_squares.insert(std::make_pair(grid_x, grid_y));
-                    const std::set<System*> grid_box = adjacency_grid[grid_x][grid_y];
-                    if (!grid_box.empty()) {
-                        std::set<System*>::const_iterator grid_box_it = grid_box.begin();
-                        std::advance(grid_box_it, RandSmallInt(0, grid_box.size() - 1));
-                        System* dest_system = *grid_box_it;
-                        // don't place a starlane to yourself, or a system with enough starlanes already; but if we're 
-                        // in second-chance mode, take any connection you can find
-                        if (system != dest_system && (!first_chance || dest_system->Starlanes() < starlanes[dest_system])) {
-                            system->AddStarlane(dest_system->ID());
-                            dest_system->AddStarlane(system->ID());
-                            placed = true;
-                            --lanes;
-
-                            if (full_connectivity) {
-                                // record connectivity info; first, find out which group each system is already in, if any
-                                std::list<ConnectedGroup>::iterator system_group_it, dest_system_group_it;
-                                for (system_group_it = connected_groups.begin(); system_group_it != connected_groups.end(); ++system_group_it) {
-                                    if (system_group_it->systems.find(system) != system_group_it->systems.end())
-                                        break;
-                                }
-                                for (dest_system_group_it = connected_groups.begin(); dest_system_group_it != connected_groups.end(); ++dest_system_group_it) {
-                                    if (dest_system_group_it->systems.find(dest_system) != dest_system_group_it->systems.end())
-                                        break;
-                                }
-
-                                if (system_group_it == connected_groups.end() && dest_system_group_it == connected_groups.end()) {
-                                    // niether belongs to a group, so create a new group
-                                    connected_groups.push_back(ConnectedGroup());
-                                    connected_groups.back().systems.insert(system);
-                                    connected_groups.back().systems.insert(dest_system);
-                                    connected_groups.back().upper_left = UpperLeft(system, dest_system);
-                                    connected_groups.back().upper_right = UpperRight(system, dest_system);
-                                    connected_groups.back().lower_right = LowerRight(system, dest_system);
-                                    connected_groups.back().lower_left = LowerLeft(system, dest_system);
-                                } else if (system_group_it != connected_groups.end() && dest_system_group_it != connected_groups.end() && system_group_it != dest_system_group_it) {
-                                    std::string group1, group2, final_group;
-                                    for (std::set<System*>::iterator sys_it = system_group_it->systems.begin(); sys_it != system_group_it->systems.end(); ++sys_it) {
-                                        group1 += (*sys_it)->Name() + " ";
-                                    }
-                                    for (std::set<System*>::iterator sys_it = dest_system_group_it->systems.begin(); sys_it != dest_system_group_it->systems.end(); ++sys_it) {
-                                        group2 += (*sys_it)->Name() + " ";
-                                    }
-                                    // each belongs to a group, so merge them
-                                    system_group_it->systems.insert(dest_system_group_it->systems.begin(), dest_system_group_it->systems.end());
-                                    for (std::set<System*>::iterator sys_it = system_group_it->systems.begin(); sys_it != system_group_it->systems.end(); ++sys_it) {
-                                        final_group += (*sys_it)->Name() + " ";
-                                    }
-                                    system_group_it->upper_left = UpperLeft(system_group_it->upper_left, dest_system_group_it->upper_left);
-                                    system_group_it->upper_right = UpperRight(system_group_it->upper_right, dest_system_group_it->upper_right);
-                                    system_group_it->lower_right = LowerRight(system_group_it->lower_right, dest_system_group_it->lower_right);
-                                    system_group_it->lower_left = LowerLeft(system_group_it->lower_left, dest_system_group_it->lower_left);
-                                    connected_groups.erase(dest_system_group_it);
-                                } else if (system_group_it != connected_groups.end()) {
-                                    // add dest_system to system's group
-                                    system_group_it->systems.insert(dest_system);
-                                    system_group_it->upper_left = UpperLeft(system_group_it->upper_left, dest_system);
-                                    system_group_it->upper_right = UpperRight(system_group_it->upper_right, dest_system);
-                                    system_group_it->lower_right = LowerRight(system_group_it->lower_right, dest_system);
-                                    system_group_it->lower_left = LowerLeft(system_group_it->lower_left, dest_system);
-                                } else if (dest_system_group_it != connected_groups.end()) {
-                                    // add system to dest_system's group
-                                    dest_system_group_it->systems.insert(system);
-                                    dest_system_group_it->upper_left = UpperLeft(dest_system_group_it->upper_left, system);
-                                    dest_system_group_it->upper_right = UpperRight(dest_system_group_it->upper_right, system);
-                                    dest_system_group_it->lower_right = LowerRight(dest_system_group_it->lower_right, system);
-                                    dest_system_group_it->lower_left = LowerLeft(dest_system_group_it->lower_left, system);
-                                }
-                            }
-
-                            break;
-                        }
-                    }
-                }
-
-                // bad luck; try again with a different length
-                if (first_chance) {
-                    current_lane_length -= ADJACENCY_BOX_SIZE;
-                    // there's nothing suitable inside radius lane_length, so look outside of it now
-                    if (current_lane_length < 0.0) {
-                        current_lane_length = lane_length + ADJACENCY_BOX_SIZE;
-                        first_chance = false;
-                    }
-                } else {
-                    current_lane_length += ADJACENCY_BOX_SIZE;
-                }
-            }
-
-            // give up on this lane after excessive attempts
-            if (attempts == MAX_PLACEMENT_ATTEMPTS)
-                --lanes;
-        }
-    }
-
-    // warning: this algorithm is O(N^2), where N is the number of groups. 
-    // normally, with a small number of groups, this is fine
-    if (1 < connected_groups.size()) {
-        // find the distances between the "corner" systems in all the groups
-        std::multimap<double, DistanceInfo> distances;
-        for (std::list<ConnectedGroup>::iterator it = connected_groups.begin(); it != connected_groups.end(); ++it) {
-            for (std::list<ConnectedGroup>::iterator inner_it = it; inner_it != connected_groups.end(); ++inner_it) {
-                if (it == inner_it)
-                    continue;
-
-                System* s1;
-                s1 = it->upper_left;
-                InsertDistances(distances, s1, it, inner_it);
-                s1 = it->lower_left;
-                InsertDistances(distances, s1, it, inner_it);
-                s1 = it->lower_right;
-                InsertDistances(distances, s1, it, inner_it);
-                s1 = it->lower_left;
-                InsertDistances(distances, s1, it, inner_it);
-            }
-        }
-
-        std::set<int> groups_eliminated;
-        for (unsigned int i = 0; i < connected_groups.size() - 1; ++i) {
-            std::multimap<double, DistanceInfo>::iterator map_it = distances.begin();
-            while (groups_eliminated.find(std::distance(connected_groups.begin(), map_it->second.get<2>())) != groups_eliminated.end() || 
-                   groups_eliminated.find(std::distance(connected_groups.begin(), map_it->second.get<3>())) != groups_eliminated.end()) {\
-               ++map_it;
-            }
-            DistanceInfo distance_info = map_it->second;
-            std::list<ConnectedGroup>::iterator it1 = distance_info.get<2>();
-            std::list<ConnectedGroup>::iterator it2 = distance_info.get<3>();
-            System* system = distance_info.get<0>();
-            System* dest_system = distance_info.get<1>();
-            system->AddStarlane(dest_system->ID());
-            dest_system->AddStarlane(system->ID());
-            groups_eliminated.insert(std::distance(connected_groups.begin(), it2));
-        }
-    }
-}*/
-
 void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid) {
 	int numSys, s1, s2, s3; // numbers of systems, indices in vec_sys
 	int n; // loop counter
@@ -1472,18 +1277,18 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
 	// these numbers can and should be tweaked or extended
 	int maxJumpsBetweenSystems;
 	switch (freq) {
-		case LANES_SOME:
-			maxJumpsBetweenSystems = 6;
-			break;
-		case LANES_SEVERAL:
-			maxJumpsBetweenSystems = 4;
-			break;
-		case LANES_MANY:
-			maxJumpsBetweenSystems = 3;
-			break;
-		case LANES_VERY_MANY:
-		default:
-			maxJumpsBetweenSystems = 2;			
+    case LANES_SOME:
+        maxJumpsBetweenSystems = 6;
+        break;
+    case LANES_SEVERAL:
+        maxJumpsBetweenSystems = 4;
+        break;
+    case LANES_MANY:
+        maxJumpsBetweenSystems = 3;
+        break;
+    case LANES_VERY_MANY:
+    default:
+        maxJumpsBetweenSystems = 2;			
 	}
 	
 	numSys = sys_vec.size();  // (actually = number of systems + 1)
@@ -2096,8 +1901,8 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
         if (system->Orbits()>0 && !system->FindObjects<Planet>().empty()) {
             std::vector<int> vec_orbits;
             for(int i=0;i<system->Orbits();i++)
-              if(system->FindObjectIDsInOrbit<Planet>(i).size()>0)
-                vec_orbits.push_back(i);
+                if(system->FindObjectIDsInOrbit<Planet>(i).size()>0)
+                    vec_orbits.push_back(i);
 
             int planet_index = vec_orbits.size()>1?RandSmallInt(0, vec_orbits.size() - 1):0;
             planet_name = system->Name() + " " + RomanNumber(planet_index + 1);
@@ -2108,7 +1913,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
             planet_name = system->Name() + " " + RomanNumber(home_orbit + 1);
         }
 
-        Planet* planet = new Planet(PT_TERRAN, SZ_LARGE);
+        Planet* planet = new Planet(PT_TERRAN, SZ_MEDIUM);
         planet_id = Insert(planet);
         planet->Rename(planet_name);
         system->Insert(planet, home_orbit);
@@ -2120,145 +1925,153 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
 void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const std::vector<PlayerSetupData>& player_setup_data)
 {
 #ifdef FREEORION_BUILD_SERVER
-   // create empires and assign homeworlds, names, colors, and fleet ranges to
-   // for each one
+    // create empires and assign homeworlds, names, colors, and fleet ranges to
+    // for each one
 
-   const std::map<int, PlayerInfo>& player_info = ServerApp::GetApp()->NetworkCore().Players();
-   unsigned int i = 0;
-   std::vector<GG::Clr> colors = EmpireColors();
-   for (std::map<int, PlayerInfo>::const_iterator it = player_info.begin(); it != player_info.end(); ++it, ++i) {
-      std::string empire_name = "Empire" + boost::lexical_cast<std::string>(i);
+    const std::map<int, PlayerInfo>& player_info = ServerApp::GetApp()->NetworkCore().Players();
+    unsigned int i = 0;
+    std::vector<GG::Clr> colors = EmpireColors();
+    for (std::map<int, PlayerInfo>::const_iterator it = player_info.begin(); it != player_info.end(); ++it, ++i) {
+        std::string empire_name = "Empire" + boost::lexical_cast<std::string>(i);
 
-      GG::Clr color;
-      if (i < player_setup_data.size()) { // first try to use user-assigned colors
-          empire_name = player_setup_data[i].empire_name;
-          color = player_setup_data[i].empire_color;
-          std::vector<GG::Clr>::iterator color_it = std::find(colors.begin(), colors.end(), color);
-          if (color_it != colors.end()) {
-              colors.erase(color_it);
-          }
-      } else if (!colors.empty()) { // failing that, use other built-in colors
-          int color_idx = RandInt(0, colors.size() - 1);
-          color = colors[color_idx];
-          colors.erase(colors.begin() + color_idx);
-      } else { // as a last resort, make up a color
-          color = GG::Clr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
-      }
+        GG::Clr color;
+        if (i < player_setup_data.size()) { // first try to use user-assigned colors
+            empire_name = player_setup_data[i].empire_name;
+            color = player_setup_data[i].empire_color;
+            std::vector<GG::Clr>::iterator color_it = std::find(colors.begin(), colors.end(), color);
+            if (color_it != colors.end()) {
+                colors.erase(color_it);
+            }
+        } else if (!colors.empty()) { // failing that, use other built-in colors
+            int color_idx = RandInt(0, colors.size() - 1);
+            color = colors[color_idx];
+            colors.erase(colors.begin() + color_idx);
+        } else { // as a last resort, make up a color
+            color = GG::Clr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
+        }
 
-      int home_planet_id = homeworlds[i];
+        int home_planet_id = homeworlds[i];
 
-      // create new Empire object through empire manager
-      Empire* empire =
-          dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, empire_name, it->second.name, color, home_planet_id, Empire::CONTROL_HUMAN);
+        // create new Empire object through empire manager
+        Empire* empire =
+            dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, empire_name, it->second.name, color, home_planet_id, Empire::CONTROL_HUMAN);
 
-      // set ownership of home planet
-      int empire_id = empire->EmpireID();
-      Planet* home_planet = Object<Planet>(homeworlds[i]);
-      Logger().debugStream() << "Setting " << home_planet->GetSystem()->Name() << " (Planet #" <<  home_planet->ID() <<
-          ") to be home system for Empire " << empire_id;
-      home_planet->AddOwner(empire_id);
+        // set ownership of home planet
+        int empire_id = empire->EmpireID();
+        Planet* home_planet = Object<Planet>(homeworlds[i]);
+        Logger().debugStream() << "Setting " << home_planet->GetSystem()->Name() << " (Planet #" <<  home_planet->ID() <<
+            ") to be home system for Empire " << empire_id;
+        home_planet->AddOwner(empire_id);
 
-      // TODO: adding an owner to a planet should probably add that owner to the
-      //       system automatically...
-      System* home_system = home_planet->GetSystem();
-      home_system->AddOwner(empire_id);
+        // TODO: adding an owner to a planet should probably add that owner to the
+        //       system automatically...
+        System* home_system = home_planet->GetSystem();
+        home_system->AddOwner(empire_id);
 
-      // create population and industry on home planet
-      home_planet->AdjustPop(20);
-      home_planet->SetWorkforce(20);
-      home_planet->SetMaxWorkforce( home_planet->MaxPop() );
-      home_planet->AdjustDefBases(3);
+        // create population and industry on home planet
+        home_planet->AddSpecial("HOMEWORLD_SPECIAL");
+        home_planet->ResetMaxMeters();
+        home_planet->AdjustMaxMeters();
+        home_planet->ExecuteSpecials();
+        home_planet->AdjustPop(15);
+        home_planet->GetMeter(METER_CONSTRUCTION)->SetCurrent(home_planet->GetMeter(METER_CONSTRUCTION)->Max() * 0.75);
+        home_planet->GetMeter(METER_FARMING)->SetCurrent(home_planet->GetMeter(METER_FARMING)->Max() * 0.75);
+        home_planet->GetMeter(METER_INDUSTRY)->SetCurrent(home_planet->GetMeter(METER_INDUSTRY)->Max() * 0.75);
+        home_planet->GetMeter(METER_MINING)->SetCurrent(home_planet->GetMeter(METER_MINING)->Max() * 0.75);
+        home_planet->GetMeter(METER_RESEARCH)->SetCurrent(home_planet->GetMeter(METER_RESEARCH)->Max() * 0.75);
+        home_planet->GetMeter(METER_TRADE)->SetCurrent(home_planet->GetMeter(METER_TRADE)->Max() * 0.75);
+        home_planet->AdjustDefBases(3);
 
-      // create the empire's initial ship designs
-      // for now, the order that these are created need to match
-      // the enums for ship designs in ships.h
-      ShipDesign scout_design;
-      scout_design.name = "Scout";
-      scout_design.attack = 0;
-      scout_design.defense = 1;
-      scout_design.cost = 50;
-      scout_design.colonize = false;
-      scout_design.empire = empire_id;
-      scout_design.description = "Small and cheap unarmed vessel designed for recon and exploration.";
+        // create the empire's initial ship designs
+        // for now, the order that these are created need to match
+        // the enums for ship designs in ships.h
+        ShipDesign scout_design;
+        scout_design.name = "Scout";
+        scout_design.attack = 0;
+        scout_design.defense = 1;
+        scout_design.cost = 50;
+        scout_design.colonize = false;
+        scout_design.empire = empire_id;
+        scout_design.description = "Small and cheap unarmed vessel designed for recon and exploration.";
 
-      int scout_id = empire->AddShipDesign(scout_design);
+        int scout_id = empire->AddShipDesign(scout_design);
 
-      ShipDesign colony_ship_design;
-      colony_ship_design.name = "Colony Ship";
-      colony_ship_design.attack = 0;
-      colony_ship_design.defense = 1;
-      colony_ship_design.cost = 250;
-      colony_ship_design.colonize = true;
-      colony_ship_design.empire = empire_id;
-      colony_ship_design.description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
-      int colony_id = empire->AddShipDesign(colony_ship_design);
+        ShipDesign colony_ship_design;
+        colony_ship_design.name = "Colony Ship";
+        colony_ship_design.attack = 0;
+        colony_ship_design.defense = 1;
+        colony_ship_design.cost = 250;
+        colony_ship_design.colonize = true;
+        colony_ship_design.empire = empire_id;
+        colony_ship_design.description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
+        int colony_id = empire->AddShipDesign(colony_ship_design);
 
-      ShipDesign design;
-      design.name = "Mark I";
-      design.attack = 2;
-      design.defense = 1;
-      design.cost = 100;
-      design.colonize = false;
-      design.empire = empire_id;
-      design.description = "Affordable armed patrol frigate.";
+        ShipDesign design;
+        design.name = "Mark I";
+        design.attack = 2;
+        design.defense = 1;
+        design.cost = 100;
+        design.colonize = false;
+        design.empire = empire_id;
+        design.description = "Affordable armed patrol frigate.";
 
-      empire->AddShipDesign(design);
+        empire->AddShipDesign(design);
 
-      design.name = "Mark II";
-      design.attack = 5;
-      design.defense = 2;
-      design.cost = 200;
-      design.colonize = false;
-      design.empire = empire_id;
-      design.description = "Cruiser with storng defensive and offensive capabilities.";
-      empire->AddShipDesign(design);
+        design.name = "Mark II";
+        design.attack = 5;
+        design.defense = 2;
+        design.cost = 200;
+        design.colonize = false;
+        design.empire = empire_id;
+        design.description = "Cruiser with storng defensive and offensive capabilities.";
+        empire->AddShipDesign(design);
 
-      design.name = "Mark III";
-      design.attack = 10;
-      design.defense = 3;
-      design.cost = 375;
-      design.colonize = false;
-      design.empire = empire_id;
-      design.description = "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
-      empire->AddShipDesign(design);
+        design.name = "Mark III";
+        design.attack = 10;
+        design.defense = 3;
+        design.cost = 375;
+        design.colonize = false;
+        design.empire = empire_id;
+        design.description = "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
+        empire->AddShipDesign(design);
 
-      design.name = "Mark IV";
-      design.attack = 15;
-      design.defense = 5;
-      design.cost = 700;
-      design.colonize = false;
-      design.empire = empire_id;
-      design.description = "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";
-      empire->AddShipDesign(design);
+        design.name = "Mark IV";
+        design.attack = 15;
+        design.defense = 5;
+        design.cost = 700;
+        design.colonize = false;
+        design.empire = empire_id;
+        design.description = "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";
+        empire->AddShipDesign(design);
 
-      // create the empire's starting fleet
-      Fleet* home_fleet = new Fleet("Home Fleet", home_system->X(), home_system->Y(), empire_id);
-      Insert(home_fleet);
-      home_system->Insert(home_fleet);
+        // create the empire's starting fleet
+        Fleet* home_fleet = new Fleet("Home Fleet", home_system->X(), home_system->Y(), empire_id);
+        Insert(home_fleet);
+        home_system->Insert(home_fleet);
 
-      Ship* ship = 0;
+        Ship* ship = 0;
 
-      ship = new Ship(empire_id, scout_id);
-      ship->Rename("Scout");
-      int ship_id = Insert(ship);
-      home_fleet->AddShip(ship_id);
+        ship = new Ship(empire_id, scout_id);
+        ship->Rename("Scout");
+        int ship_id = Insert(ship);
+        home_fleet->AddShip(ship_id);
 
-      ship = new Ship(empire_id, scout_id);
-      ship->Rename("Scout");
-      ship_id = Insert(ship);
-      home_fleet->AddShip(ship_id);
+        ship = new Ship(empire_id, scout_id);
+        ship->Rename("Scout");
+        ship_id = Insert(ship);
+        home_fleet->AddShip(ship_id);
 
-      ship = new Ship(empire_id, colony_id);
-      ship->Rename("Colony Ship");
-      ship_id = Insert(ship);
-      home_fleet->AddShip(ship_id);
-   }
+        ship = new Ship(empire_id, colony_id);
+        ship->Rename("Colony Ship");
+        ship_id = Insert(ship);
+        home_fleet->AddShip(ship_id);
+    }
 #endif
 }
 
 int Universe::GenerateObjectID( )
 {
-  return( ++m_last_allocated_id );
+    return ++m_last_allocated_id;
 }
 
 
