@@ -4,6 +4,10 @@
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
+#ifdef FREEORION_BUILD_SERVER
+#include "../server/ServerApp.h"
+#endif
+
 #include <stdexcept>
 
 System::System() : 
@@ -65,12 +69,33 @@ bool System::HasWormholeTo(int id) const
    return (it == m_starlanes_wormholes.end() ? false : it->second == true);
 }
 
+UniverseObject::Visibility System::Visible(int empire_id) const
+{
+   // if system is has been explored it is fully visible, if not it
+   // will be partially visible
+#ifdef FREEORION_BUILD_SERVER 
+   ServerApp* server_app = ServerApp::GetApp();
+   Empire* empire = (server_app->Empires()).Lookup(empire_id);
+       
+   if (empire->HasExploredSystem(ID()))
+   {
+      return FULL_VISIBILITY;
+   }
+#endif
+   return PARTIAL_VISIBILITY;
+}
+
+
 GG::XMLElement System::XMLEncode() const
 {
    using GG::XMLElement;
    using boost::lexical_cast;
 
    XMLElement element("System");
+
+   XMLElement visibility("visibility");
+   visibility.SetAttribute( "value", lexical_cast<std::string>(FULL_VISIBILITY) );
+   element.AppendChild(visibility);
 
    element.AppendChild( UniverseObject::XMLEncode() );
 
@@ -118,6 +143,31 @@ GG::XMLElement System::XMLEncode() const
 
    return element;
 }
+
+
+GG::XMLElement System::XMLEncode(int empire_id) const
+{
+   // Partial visibility version.  Displays only the star type.
+
+   using GG::XMLElement;
+   using boost::lexical_cast;
+
+   XMLElement element("System");
+
+   XMLElement visibility("visibility");
+   visibility.SetAttribute( "value", lexical_cast<std::string>(PARTIAL_VISIBILITY) );
+   element.AppendChild(visibility);
+
+   // use partial encode so owners are not visible
+   element.AppendChild( UniverseObject::XMLEncode(empire_id) );
+
+   XMLElement star("m_star");
+   star.SetAttribute( "value", lexical_cast<std::string>(m_star) );
+   element.AppendChild(star);
+
+   return element;
+}
+
 
 int System::Insert(UniverseObject* obj)
 {

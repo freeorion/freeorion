@@ -39,19 +39,23 @@ UniverseObject::~UniverseObject()
 
 GG::XMLElement UniverseObject::XMLEncode() const
 {
-    using GG::XMLElement;
-    using boost::lexical_cast;
-    
-    XMLElement element("UniverseObject");
-    
-    XMLElement ID("m_id");
-    ID.SetAttribute( "value", lexical_cast<std::string>(m_id) );
-    element.AppendChild(ID);
+   using GG::XMLElement;
+   using boost::lexical_cast;
+   
+   XMLElement element("UniverseObject");
+   
+   XMLElement visibility("visibility");
+   visibility.SetAttribute( "value", lexical_cast<std::string>(FULL_VISIBILITY) );
+   element.AppendChild(visibility);
 
+   XMLElement ID("m_id");
+   ID.SetAttribute( "value", lexical_cast<std::string>(m_id) );
+   element.AppendChild(ID);
+   
    XMLElement name("m_name");
    name.SetText(Name());
    element.AppendChild(name);
-
+   
    XMLElement x("m_x");
    x.SetAttribute( "value", lexical_cast<std::string>(m_x) );
    element.AppendChild(x);
@@ -71,6 +75,41 @@ GG::XMLElement UniverseObject::XMLEncode() const
 
    return element;
 }
+
+
+
+GG::XMLElement UniverseObject::XMLEncode(int empire_id) const
+{
+   using GG::XMLElement;
+   using boost::lexical_cast;
+   
+   XMLElement element("UniverseObject");
+   
+   XMLElement visibility("visibility");
+   visibility.SetAttribute( "value", lexical_cast<std::string>(PARTIAL_VISIBILITY) );
+   element.AppendChild(visibility);
+   
+   XMLElement ID("m_id");
+   ID.SetAttribute( "value", lexical_cast<std::string>(m_id) );
+   element.AppendChild(ID);
+   
+   XMLElement name("m_name");
+   name.SetText(Name());
+   element.AppendChild(name);
+
+   XMLElement x("m_x");
+   x.SetAttribute( "value", lexical_cast<std::string>(m_x) );
+   element.AppendChild(x);
+
+   XMLElement y("m_y");
+   y.SetAttribute( "value", lexical_cast<std::string>(m_y) );
+   element.AppendChild(y);
+
+   // owners are not encoded for partial visibility
+
+   return element;
+}
+
 
 void UniverseObject::Move(double x, double y)
 {

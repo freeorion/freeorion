@@ -26,8 +26,55 @@ Fleet::Fleet(const GG::XMLElement& elem) :
    // TODO
 }
 
+UniverseObject::Visibility Fleet::Visible(int empire_id) const
+{
+   // if the fleet is visible it will be listed in the empire's
+   // visible fleet list
+#ifdef FREEORION_BUILD_SERVER
+   ServerApp* server_app = ServerApp::GetApp();
+   Empire* empire = (server_app->Empires()).Lookup(empire_id);
+   
+   if ((empire->HasFleet(ID())) || (empire->HasVisibleFleet(ID())))
+   {
+      return FULL_VISIBILITY;
+   }
+#endif   
+   return NO_VISIBILITY;
+}
+
+
 GG::XMLElement Fleet::XMLEncode() const
 {
+   using GG::XMLElement;
+   using boost::lexical_cast;
+
+   XMLElement element("Fleet");
+
+   element.AppendChild( UniverseObject::XMLEncode() );
+
+   XMLElement ships("m_ships");
+   for(const_iterator itr=begin(); itr != end(); itr++)
+   {
+      XMLElement ship("ship");
+      ship.SetAttribute( "value", lexical_cast<std::string>(*itr) );
+      ships.AppendChild(ship);
+   }
+   element.AppendChild(ships);
+
+   XMLElement moving_to("m_moving_to");
+   moving_to.SetAttribute( "value", lexical_cast<std::string>(m_moving_to) );
+   element.AppendChild(moving_to);
+
+   return element;
+}
+
+
+GG::XMLElement Fleet::XMLEncode(int empire_id) const
+{
+   // Fleets are either visible or not, so there is no 
+   // difference between the full and partial visibilty
+   // XMLEncodes for this class
+
    using GG::XMLElement;
    using boost::lexical_cast;
 
@@ -60,6 +107,8 @@ void Fleet::AddShips(const std::vector<int>& ships)
 {
    for (unsigned int i = 0; i < ships.size(); ++i) {
       m_ships.insert(ships[i]);
+
+      // TODO: store fleet id into the ship objects
    }
 }
 

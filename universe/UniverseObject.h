@@ -19,6 +19,14 @@ namespace GG {class XMLElement;};
 class UniverseObject
 {
 public:
+   /** the three different visibility levels */
+   enum Visibility 
+   { 
+      FULL_VISIBILITY,
+      PARTIAL_VISIBILITY,
+      NO_VISIBILITY
+   };
+
    /** \name Structors */ //@{
    UniverseObject();    ///< default ctor
    
@@ -37,8 +45,11 @@ public:
    double               Y() const      {return m_y;}        ///< the Y-coordinate of this object
    const std::set<int>& Owners() const {return m_owners;}   ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
    const System*        GetSystem() const {return m_system;}///< returns a pointer to the system in which this object can be found, or 0 if the object is not within any system
+
+   virtual Visibility Visible(int empire_id) const = 0; ///< returns the visibility status of this universe object relative to the input empire.
    
-  	virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a UniverseObject object
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a UniverseObject object
+   virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a UniverseObject object with visibility limited relative to the input empire
    //@}
    
    /** \name Mutators */ //@{

@@ -23,10 +23,13 @@ public:
    /** \name Accessors */ //@{
    const_iterator begin() const  {return m_ships.begin();}  ///< returns the begin const_iterator for the ships in the fleet
    const_iterator end() const    {return m_ships.end();}    ///< returns the end const_iterator for the ships in the fleet
+
+   virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
    
-  	virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Fleet object
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Fleet object
+   virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a Fleet object with visibility limited relative to the input empire
    //@}
-  	
+   
    /** \name Mutators */ //@{
    void              SetMoveOrders(int id);  ///< orders the fleet to move to the system with ID \a id
    

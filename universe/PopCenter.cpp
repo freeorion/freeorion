@@ -59,8 +59,46 @@ PopCenter::DensityType PopCenter::PopDensity() const
    return retval;
 }
 
+UniverseObject::Visibility PopCenter::Visible(int empire_id) const
+{
+   // For a PopCenter visibility will always be checked against
+   // the implementing object, so this function will never be used.
+
+   return FULL_VISIBILITY;
+}
+
 GG::XMLElement PopCenter::XMLEncode() const
 {
+   using GG::XMLElement;
+   using boost::lexical_cast;
+
+   XMLElement element("PopCenter");
+
+   XMLElement pop("m_pop");
+   pop.SetAttribute( "value", lexical_cast<std::string>(m_pop) );
+   element.AppendChild(pop);
+
+   XMLElement max_pop("m_max_pop");
+   max_pop.SetAttribute( "value", lexical_cast<std::string>(m_max_pop) );
+   element.AppendChild(max_pop);
+
+   XMLElement growth("m_growth");
+   growth.SetAttribute( "value", lexical_cast<std::string>(m_growth) );
+   element.AppendChild(growth);
+
+   XMLElement race("m_race");
+   race.SetAttribute( "value", lexical_cast<std::string>(m_race) );
+   element.AppendChild(race);
+
+   return element;
+
+}
+
+GG::XMLElement PopCenter::XMLEncode(int empire_id) const
+{
+   // partial encode version.  PopCenter is always fully encoded
+   // so this function is identical to the full encode version
+
    using GG::XMLElement;
    using boost::lexical_cast;
 

@@ -34,6 +34,7 @@ public:
    FocusType   PrimaryFocus() const    {return m_primary;}
    FocusType   SecondaryFocus() const  {return m_secondary;}
    double      ProdPoints() const;
+   double      Rollover() const        {return m_rollover;}
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
@@ -41,7 +42,9 @@ public:
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
-  	virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a ProdCenter object
+   virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a ProdCenter object
+   virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a ProdCenter object with visibility limited relative to the input empire
    //@}
 
    /** \name Mutators */ //@{
@@ -75,6 +78,7 @@ private:
    // V0.1 ONLY!!!!
    double         m_industry_factor; ///< a number in [0.0 1.0] representing the percentage of industrialization
    BuildType      m_currently_building;
+   double         m_rollover;  ///< for build types that can span multiple turns this specifies how many production points are rolled over towards the next turn.
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
 };

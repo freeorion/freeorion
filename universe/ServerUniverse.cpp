@@ -578,7 +578,7 @@ void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<in
    int fleet_id_rng_size =(int) ((MAX_SHIP_ID - MIN_SHIP_ID)/players);
    
    ServerApp* server_app = ServerApp::GetApp();
-   ServerEmpireManager empire_mgr = server_app->Empires();
+   ServerEmpireManager* empire_mgr = &(server_app->Empires());
 
    for (int empire_cnt = 0; empire_cnt < players; empire_cnt++)
    {
@@ -612,8 +612,8 @@ void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<in
       }
 
       // create new Empire object through empire manager
-      Empire* new_empire = empire_mgr.CreateEmpire(empire_name, *empire_color, home_planet_id, control);
-      
+      Empire* new_empire = empire_mgr->CreateEmpire(empire_name, *empire_color, home_planet_id, control);
+
       // TODO: need to input the empire's ship ID range somehow
 
       // set ownership of home planet

@@ -104,11 +104,11 @@ public:
       }
       return retval;
    }
-
    const_iterator begin() const  {return m_objects.begin();}   ///< returns the begin const_iterator for the objects in the universe
    const_iterator end() const    {return m_objects.end();}     ///< returns the end const_iterator for the objects in the universe
    
    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a ClientUniverse object
+   virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a ClientUniverse object with visibility restrictions for the given empire
    //@}
 
    int NearestSystem(System& target_sys); ///< returns the nearest system to the target. In the case that more than 1 systems are of equal distance, uses system ID as the tie-breaker

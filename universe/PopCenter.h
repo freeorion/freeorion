@@ -43,7 +43,9 @@ public:
    double               Inhabitants() const; ///< returns the number of inhabitants in the center (not the pop points); depends on race
    DensityType          PopDensity() const;  ///< returns the density of this center, based on its population
 
-  	virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a PopCenter object
+   virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a PopCenter object
+   virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a PopCenter object with visibility limited relative to the input empire
    //@}
 
    /** \name Mutators */ //@{

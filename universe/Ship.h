@@ -42,19 +42,25 @@ public:
 
    /** \name Accessors */ //@{
    const ShipDesign& Design() const {return m_design;} ///< returns the design of the ship, containing engine type, weapons, etc.
+   int   FleetID() const            {return m_fleet_id;} ///< returns the ID of the fleet the ship is residing in
    
-  	virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Ship object
+   virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Ship object
+   virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a Ship object with visibility limited relative to the input empire
    //@}
   	
    /** \name Mutators */ //@{   
+   void         SetFleetID(int fleet_id) {m_fleet_id = fleet_id;} ///< sets the ID of the fleet the ship resides in
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
 
-  	virtual void XMLMerge(const GG::XMLElement& elem); ///< updates the Ship object from an XMLElement object that represents the updates
+
+   virtual void XMLMerge(const GG::XMLElement& elem); ///< updates the Ship object from an XMLElement object that represents the updates
    //@}
 
 private:
    ShipDesign  m_design;
+   int         m_fleet_id;
 };
 
 #endif // _Ship_h_

@@ -54,7 +54,37 @@ GG::XMLElement ClientUniverse::XMLEncode() const
       object_map.AppendChild(univ_object);
    }
    element.AppendChild(object_map);
-   
+
+   return element;
+}
+
+GG::XMLElement ClientUniverse::XMLEncode(int empire_id) const
+{
+   using GG::XMLElement;
+
+   XMLElement element("Universe");
+  
+   XMLElement object_map("m_objects");
+   for(const_iterator itr= begin(); itr != end(); itr++)
+   {
+      // determine visibility
+      UniverseObject::Visibility vis = (*itr).second->Visible(empire_id);
+      if (vis == UniverseObject::FULL_VISIBILITY)
+      {
+         XMLElement univ_object("univ_object");
+         univ_object.AppendChild( (*itr).second->XMLEncode() );
+         object_map.AppendChild(univ_object);
+      }
+      else if (vis == UniverseObject::PARTIAL_VISIBILITY)
+      {
+         XMLElement univ_object("univ_object");
+         univ_object.AppendChild( (*itr).second->XMLEncode(empire_id) );
+         object_map.AppendChild(univ_object);
+      }
+
+      // for NO_VISIBILITY no element is added
+   }
+   element.AppendChild(object_map);
 
    return element;
 }

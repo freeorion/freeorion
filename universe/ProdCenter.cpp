@@ -43,12 +43,25 @@ double ProdCenter::ProdPoints() const
    return retval;
 }
 
+UniverseObject::Visibility ProdCenter::Visible(int empire_id) const
+{
+   // For a ProdCenter visibility will always be checked against
+   // the implementing object, so this function will never be used.
+
+   return FULL_VISIBILITY;
+}
+
+
 GG::XMLElement ProdCenter::XMLEncode() const
 {
    using GG::XMLElement;
    using boost::lexical_cast;
 
    XMLElement element("ProdCenter.h");
+
+   XMLElement visibility("visibility");
+   visibility.SetAttribute( "value", lexical_cast<std::string>(FULL_VISIBILITY) );
+   element.AppendChild(visibility);
 
    XMLElement primary("m_primary");
    primary.SetAttribute( "value", lexical_cast<std::string>(m_primary) );
@@ -70,9 +83,47 @@ GG::XMLElement ProdCenter::XMLEncode() const
    currently_building.SetAttribute( "value", lexical_cast<std::string>(m_currently_building) );
    element.AppendChild(currently_building);
 
+   XMLElement rollover("m_rollover");
+   currently_building.SetAttribute( "value", lexical_cast<std::string>(m_rollover) );
+   element.AppendChild(rollover);
+
    return element;
 
 }
+
+GG::XMLElement ProdCenter::XMLEncode(int empire_id) const
+{
+   // partial encode version.  Skips currently_building and rollover
+
+   using GG::XMLElement;
+   using boost::lexical_cast;
+
+   XMLElement element("ProdCenter.h");
+
+   XMLElement visibility("visibility");
+   visibility.SetAttribute( "value", lexical_cast<std::string>(PARTIAL_VISIBILITY) );
+   element.AppendChild(visibility);
+
+   XMLElement primary("m_primary");
+   primary.SetAttribute( "value", lexical_cast<std::string>(m_primary) );
+   element.AppendChild(primary);
+
+   XMLElement secondary("m_secondary");
+   secondary.SetAttribute( "value", lexical_cast<std::string>(m_secondary) );
+   element.AppendChild(secondary);
+
+   XMLElement workforce("m_workforce");
+   workforce.SetAttribute( "value", lexical_cast<std::string>(m_workforce) );
+   element.AppendChild(workforce);
+
+   XMLElement industry("m_industry_factor");
+   industry.SetAttribute( "value", lexical_cast<std::string>(m_industry_factor) );
+   element.AppendChild(industry);
+
+   return element;
+
+}
+
 
 void ProdCenter::SetPrimaryFocus(FocusType focus)
 {

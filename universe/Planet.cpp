@@ -4,6 +4,10 @@
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
+#ifdef FREEORION_BUILD_SERVER
+#include "../server/ServerApp.h"
+#endif
+
 #include <stdexcept>
 
 Planet::Planet() : 
@@ -52,6 +56,29 @@ Planet::Planet(const GG::XMLElement& elem) :
    // TODO
 }
 
+
+UniverseObject::Visibility Planet::Visible(int empire_id) const
+{
+   // if system is visible, then planet is too. Full visibility
+   // if owned by player, partial if not.
+#ifdef FREEORION_BUILD_SERVER 
+   ServerApp* server_app = ServerApp::GetApp();
+   Empire* empire = (server_app->Empires()).Lookup(empire_id);
+
+   if (empire->HasPlanet(ID()))
+   {
+      return FULL_VISIBILITY;
+   }
+       
+   if (empire->HasExploredSystem(SystemID()))
+   {
+      return PARTIAL_VISIBILITY;
+   }
+#endif
+   return NO_VISIBILITY;
+}
+
+
 GG::XMLElement Planet::XMLEncode() const
 {
    using GG::XMLElement;
@@ -64,6 +91,43 @@ GG::XMLElement Planet::XMLEncode() const
    element.AppendChild( PopCenter::XMLEncode() );
 
    element.AppendChild( ProdCenter::XMLEncode() );
+
+   XMLElement type("m_type");
+   type.SetAttribute( "value", lexical_cast<std::string>(m_type) );
+   element.AppendChild(type);
+
+   XMLElement size("m_size");
+   size.SetAttribute( "value", lexical_cast<std::string>(m_size) );
+   element.AppendChild(size);
+
+   XMLElement system_id("m_system_id");
+   system_id.SetAttribute( "value", lexical_cast<std::string>(m_system_id) );
+   element.AppendChild(system_id);
+
+   XMLElement def_bases("m_def_bases");
+   def_bases.SetAttribute( "value", lexical_cast<std::string>(m_def_bases) );
+   element.AppendChild(def_bases);
+
+   return element;
+}
+
+GG::XMLElement Planet::XMLEncode(int empire_id) const
+{
+   // Partial encoding of Planet for limited visibility
+
+   using GG::XMLElement;
+   using boost::lexical_cast;
+
+   XMLElement element("Planet");
+
+   // full encode of UniverseObject since owner list should be visible
+   element.AppendChild( UniverseObject::XMLEncode() );
+
+   // full encode for PopCenter, nothing is hidden there
+   element.AppendChild( PopCenter::XMLEncode() );
+
+   // partial encode of ProdCenter to hide the current build option info
+   element.AppendChild( ProdCenter::XMLEncode(empire_id) );
 
    XMLElement type("m_type");
    type.SetAttribute( "value", lexical_cast<std::string>(m_type) );

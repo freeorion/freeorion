@@ -1,6 +1,10 @@
 #include "Ship.h"
 #include "XMLDoc.h"
 
+#ifdef FREEORION_BUILD_SERVER
+#include "../server/ServerApp.h"
+#endif
+
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 #include <stdexcept>
@@ -84,8 +88,40 @@ Ship::Ship(const GG::XMLElement& elem) :
    //TODO
 }
 
+UniverseObject::Visibility Ship::Visible(int empire_id) const
+{
+   // Ship is visible if the fleet it is in is visible
+#ifdef FREEORION_BUILD_SERVER
+   ServerApp* server_app = ServerApp::GetApp();
+   Empire* empire = (server_app->Empires()).Lookup(empire_id);
+   
+   if ((empire->HasFleet(FleetID())) || (empire->HasVisibleFleet(FleetID())))
+   {
+      return FULL_VISIBILITY;
+   }
+#endif
+   return NO_VISIBILITY;
+}
+
+
 GG::XMLElement Ship::XMLEncode() const
 {
+   using GG::XMLElement;
+   using boost::lexical_cast;
+
+   XMLElement element("Ship");
+
+   element.AppendChild( UniverseObject::XMLEncode() );
+
+   element.AppendChild( m_design.XMLEncode() );
+
+   return element;
+}
+
+GG::XMLElement Ship::XMLEncode(int empire_id) const
+{
+   // ships are always fully encoded so partial version is
+   // the same as the full
    using GG::XMLElement;
    using boost::lexical_cast;
 

@@ -87,7 +87,9 @@ public:
    const_lane_iterator  begin_lanes() const  {return m_starlanes_wormholes.begin();}   ///< begin iterator for all starlanes and wormholes terminating in this system
    const_lane_iterator  end_lanes() const    {return m_starlanes_wormholes.end();}     ///< end iterator for all starlanes and wormholes terminating in this system
    
-  	virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a System object
+   virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a System object
+   virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a System object with visibility limited relative to the input empire
    //@}
 
    /** \name Mutators */ //@{
