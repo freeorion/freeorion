@@ -103,7 +103,7 @@ struct ArithmeticExpression : public boost::spirit::grammar<ArithmeticExpression
             }
 
             variable =
-                leaf_node_d[(str_p("Source") | str_p("Target")) >> '.' >> alpha_p >> *(alnum_p | '_')];
+                leaf_node_d[(str_p("Source") | str_p("Target")) >> *('.' >> alpha_p >> *(alnum_p | '_'))];
 
             primary_expr =
                 discard_node_d[ignore]

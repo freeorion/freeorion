@@ -3,6 +3,13 @@
 #define _ValueRef_h_
 
 #include <string>
+#include <vector>
+
+class UniverseObject;
+
+namespace detail {
+    std::vector<std::string> TokenizeDottedReference(const std::string& str);
+}
 
 /** this namespace contains ValueRefBase and its subclasses.  The ValueRefBase subclasses represent expression trees that may be 
     evaluated at various times, and which refer to both constant and variable values. */
@@ -49,8 +56,8 @@ struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
     virtual T Eval(const UniverseObject* source, const UniverseObject* target) const;
 
 private:
-    bool        m_source_ref;
-    std::string m_property_name;
+    bool                     m_source_ref;
+    std::vector<std::string> m_property_name;
 };
 
 /** an arithmetic operation node ValueRef class.  One of addition, subtraction, mutiplication, division, or unary negation is 
@@ -93,16 +100,8 @@ T ValueRef::Constant<T>::Eval(const UniverseObject* source, const UniverseObject
 template <class T>
 ValueRef::Variable<T>::Variable(bool source_ref, const std::string& property_name) :
     m_source_ref(source_ref),
-    m_property_name(property_name)
+    m_property_name(detail::TokenizeDottedReference(property_name))
 {
-}
-
-template <class T>
-T ValueRef::Variable<T>::Eval(const UniverseObject* source, const UniverseObject* target) const
-{
-    T retval;
-    // TODO : read the appropriate value from source (if m_source_ref is true) or target (if m_source_ref is false)
-    return retval;
 }
 
 ///////////////////////////////////////////////////////////
