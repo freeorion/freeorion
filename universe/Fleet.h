@@ -6,6 +6,8 @@
 #include "UniverseObject.h"
 #endif
 
+class System;
+
 /** */
 class Fleet : public UniverseObject
 {
@@ -34,15 +36,18 @@ public:
    /// Returns the number of turns which must elapse before the fleet arrives at its destination.  
    int ETA() const;
    
-   /// Returns ID of system that this fleet is moving to 
-   int MoveOrders() const { return m_moving_to; };
-   
+   /// Returns ID of system that this fleet is moving to
+   int DestinationID() const {return m_moving_to;}
+
+   /// Returns system that this fleet is moving to (may be null)
+   System* Destination() const;
+
    /// Returns number of ships in fleet
-   int ShipCount() const { return m_ships.size();};
+   int NumShips() const {return m_ships.size();}
    //@}
    
    /** \name Mutators */ //@{
-   void              SetMoveOrders(int id);  ///< orders the fleet to move to the system with ID \a id
+   void              SetDestination(int id);  ///< orders the fleet to move to the system with ID \a id
    
    void              AddShips(const std::vector<int>& ships);     ///< adds the ships with the IDs stored in \a ships to the fleet
    void              AddShip(int ship_id);                        ///< adds the ship to the fleet

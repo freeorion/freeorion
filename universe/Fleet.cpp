@@ -5,11 +5,12 @@
 using boost::lexical_cast;
 
 #include "../util/AppInterface.h"
+#include "System.h"
 
 #include <stdexcept>
 
 namespace {
-const int SHIP_SPEED = 50; // "reasonable" speed --can cross galaxy in 20 turns (v0.1 only !!!!)
+const double SHIP_SPEED = 50.0; // "reasonable" speed --can cross galaxy in 20 turns (v0.1 only !!!!)
 }
 
 
@@ -118,15 +119,21 @@ GG::XMLElement Fleet::XMLEncode(int empire_id) const
 
 int Fleet::ETA() const
 {
-    /// TODO: compute the distance from fleet's position to its destination
-    // then figure out how long it takes to get there
-    return 0;
+    int retval = 0;
+    if (System* dest = Destination()) {
+        double x = dest->X() - X();
+        double y = dest->Y() - Y();
+        retval = static_cast<int>(std::ceil(std::sqrt(x * x + y * y) / SHIP_SPEED));
+    }
+    return retval;
 }
 
+System* Fleet::Destination() const
+{
+    return dynamic_cast<System*>(GetUniverse().Object(m_moving_to));
+}
 
-
-
-void Fleet::SetMoveOrders(int id)
+void Fleet::SetDestination(int id)
 {
     m_moving_to = id;
     StateChangedSignal()();
@@ -204,12 +211,26 @@ bool Fleet::RemoveShip(int ship)
 
 void Fleet::MovementPhase( )
 {
-   // TODO
+    if (System* destination_system = Destination()) {
+        if (System* current_system = GetSystem()) {
+            current_system->Remove(ID());
+        }
+
+        double direction_x = destination_system->X() - X();
+        double direction_y = destination_system->Y() - Y();
+        double distance = std::sqrt(direction_x * direction_x + direction_y * direction_y);
+        if (distance < SHIP_SPEED) {
+            destination_system->Insert(this);
+            SetDestination(INVALID_OBJECT_ID);
+            // TODO : explore new system
+        } else {
+            Move(direction_x / distance * SHIP_SPEED, direction_y / distance * SHIP_SPEED);
+        }
+    }
 }
 
 void Fleet::PopGrowthProductionResearchPhase()
 {
-   // TODO
 }
 
 
