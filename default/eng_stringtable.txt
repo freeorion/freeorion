@@ -322,5 +322,12 @@ The technology %tech% has been discovered.
 SITREP_BASE_BUILT
 The planet %planet% in system %system% has completed a defence base.
 
+SITREP_COMBAT_SYSTEM_WON
+A combat had taken place in system %system%. You won!
 
+SITREP_COMBAT_SYSTEM_LOST
+A combat had taken place in system %system%. You lost!
+
+SITREP_COMBAT_SYSTEM_NO_VICTOR
+A combat had taken place in system %system%. You no side won!
 
