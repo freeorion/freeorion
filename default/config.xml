@@ -54,4 +54,5 @@
   <color-depth>32</color-depth>
   <fullscreen>0</fullscreen>
   <save-directory>save</save-directory>
+  <musicoff>0</musicoff>
 </GG::XMLDoc>
