@@ -442,19 +442,19 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds, Adj
 
     ObjectVec sys_vec = FindObjects(IsSystem);
 
-    if (sys_vec.empty())
-        throw std::runtime_error("Attempted to generate homeworlds in an empty galaxy.");
-
     for (int i = 0; i < players; ++i) {
-        int system_index = RandSmallInt(0, static_cast<int>(sys_vec.size()) - 1);
-
-        System* system = dynamic_cast<System*>(sys_vec[system_index]);
+        if (sys_vec.empty())
+            throw std::runtime_error("Attempted to generate homeworlds in an empty galaxy.");
+        
+        int system_index;
+        System* system;
 
         // make sure it has planets and it's not too close to the other homeworlds
         bool too_close = true;
         int attempts = 0;
-        while ((!system->Orbits() || too_close) && ++attempts < 50) {
+        do {
             too_close = false;
+            system_index = RandSmallInt(0, static_cast<int>(sys_vec.size()) - 1);
             system = dynamic_cast<System*>(sys_vec[system_index]);
             for (unsigned int j = 0; j < homeworlds.size(); ++j) {
                 System* existing_system = Object(homeworlds[j])->GetSystem();
@@ -465,18 +465,30 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds, Adj
                     break;
                 }
             }
-        }
+        }while((!system->Orbits() || too_close) && ++attempts < 50);
 
         sys_vec.erase(sys_vec.begin() + system_index);
 
         // find a place to put the homeworld, and replace whatever planet is there already
-        int home_orbit = RandSmallInt(0, system->Orbits() - 1);
-        System::ObjectIDVec planet_IDs = system->FindObjectIDsInOrbit(home_orbit, IsPlanet);
+        int planet_id,home_orbit;
+        std::string planet_name;
+
+        if(system->Orbits()>0) {
+            home_orbit = RandSmallInt(0, system->Orbits() - 1);
+            System::ObjectIDVec planet_IDs = system->FindObjectIDsInOrbit(home_orbit, IsPlanet);
+            planet_name = Object(planet_IDs.back())->Name();
+            Delete(planet_IDs.back());
+        }
+        else {
+            home_orbit = 0;
+            planet_name = system->Name() + " " + RomanNumber(home_orbit+1);
+        }
+
         Planet* planet = new Planet(Planet::TERRAN, Planet::SZ_MEDIUM);
-        planet->Rename(Object(planet_IDs.back())->Name());
-        Delete(planet_IDs.back());
-        int planet_id = Insert(planet);
+        planet_id = Insert(planet);
+        planet->Rename(planet_name);
         system->Insert(planet, home_orbit);
+        
         homeworlds.push_back(planet_id);
     }
 }
