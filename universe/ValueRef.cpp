@@ -29,7 +29,7 @@ namespace {
                 if (const Building* b = dynamic_cast<const Building*>(obj)) {
                     obj = b->Planet();
                 } else {
-                    throw std::runtime_error("Attempted to refer to the planet of a non-Building object.");
+                    obj = 0;
                 }
 #endif
             } else if (*first == "System") {
@@ -57,7 +57,7 @@ namespace {
 template <>
 PlanetSize ValueRef::Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
-    PlanetSize retval = PlanetSize(0);
+    PlanetSize retval = INVALID_PLANET_SIZE;
     if (m_property_name.back() == "PlanetSize") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
         if (const Planet* p = dynamic_cast<const Planet*>(object))
@@ -71,7 +71,7 @@ PlanetSize ValueRef::Variable<PlanetSize>::Eval(const UniverseObject* source, co
 template <>
 PlanetType ValueRef::Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
-    PlanetType retval = PlanetType(0);
+    PlanetType retval = INVALID_PLANET_TYPE;
     if (m_property_name.back() == "PlanetType") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
         if (const Planet* p = dynamic_cast<const Planet*>(object))
@@ -85,7 +85,7 @@ PlanetType ValueRef::Variable<PlanetType>::Eval(const UniverseObject* source, co
 template <>
 PlanetEnvironment ValueRef::Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
-    PlanetEnvironment retval = PlanetEnvironment(0);
+    PlanetEnvironment retval = INVALID_PLANET_ENVIRONMENT;
     if (m_property_name.back() == "PlanetEnvironment") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
         if (const Planet* p = dynamic_cast<const Planet*>(object))
@@ -99,7 +99,7 @@ PlanetEnvironment ValueRef::Variable<PlanetEnvironment>::Eval(const UniverseObje
 template <>
 UniverseObjectType ValueRef::Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
-    UniverseObjectType retval = UniverseObjectType(0);
+    UniverseObjectType retval = INVALID_UNIVERSE_OBJECT_TYPE;
     if (m_property_name.back() == "ObjectType") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
         if (dynamic_cast<const Planet*>(object)) {
@@ -126,7 +126,7 @@ UniverseObjectType ValueRef::Variable<UniverseObjectType>::Eval(const UniverseOb
 template <>
 StarType ValueRef::Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
-    StarType retval = StarType(0);
+    StarType retval = INVALID_STAR_TYPE;
     if (m_property_name.back() == "StarType") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
         if (const System* s = dynamic_cast<const System*>(object))
@@ -140,7 +140,7 @@ StarType ValueRef::Variable<StarType>::Eval(const UniverseObject* source, const 
 template <>
 FocusType ValueRef::Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
-    FocusType retval = FocusType(0);
+    FocusType retval = INVALID_FOCUS_TYPE;
     if (m_property_name.back() == "PrimaryFocus") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
         if (const ProdCenter* pc = dynamic_cast<const ProdCenter*>(object))
