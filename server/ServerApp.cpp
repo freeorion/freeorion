@@ -30,13 +30,13 @@
 
 #define TEST_VALUE_REF_VARIABLE 0
 #if TEST_VALUE_REF_VARIABLE
-#include <ValueRef.h>
+#include "../universe/ValueRef.h"
 #endif
 
 #define TEST_CONDITIONS_CLASS 0
 #if TEST_CONDITIONS_CLASS
 #define TEST_CONDITIONS_CLASS_CONCISE_OUTPUT 1
-#include <Condition.h>
+#include "../universe/Condition.h"
 namespace {
     // command-line options
     void AddConditionTestOptions(OptionsDB& db)
@@ -209,7 +209,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_log_category.setAdditivity(true);   // ...but allow the addition of others later
     m_log_category.setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
     m_log_category.debug("freeoriond logger initialized.");
-    m_log_category.errorStream() << "ServerApp::ServerApp : Server now in mode " << SERVER_IDLE << " (SERVER_IDLE).";
+    m_log_category.debugStream() << "ServerApp::ServerApp : Server now in mode " << SERVER_IDLE << " (SERVER_IDLE).";
 }
 
 ServerApp::~ServerApp()
@@ -552,7 +552,7 @@ void ServerApp::HandleMessage(const Message& msg)
             std::ofstream ofs("ValueRefTest.txt");
 
             // first, create the XML representation of an arbitrary UniverseObject
-            UniverseObject* object = m_universe.Object(559);
+            UniverseObject* object = m_universe.Object(530);
             GG::XMLDoc debug_doc;
             debug_doc.root_node.AppendChild(object->XMLEncode());
             debug_doc.WriteDoc(ofs);
@@ -575,14 +575,14 @@ void ServerApp::HandleMessage(const Message& msg)
                 "MaxHealth",
                 "CurrentPopulation",
                 "MaxPopulation",
-                "MoneyStockpile",
+                "TradeStockpile",
                 "MineralStockpile",
                 "FoodStockpile",
-                "MoneyProduction",
+                "TradeProduction",
                 "FoodProduction",
                 "MineralProduction",
                 "IndustryProduction",
-                "ScienceProduction",
+                "ResearchProduction",
                 0
             };
 
@@ -592,20 +592,40 @@ void ServerApp::HandleMessage(const Message& msg)
                 const char** curr_name = field_names;
                 while (*curr_name) {
                     ofs << *curr_name << "(source)= " << ValueRef::Variable<double>(true, *curr_name).Eval(object, 0) << std::endl;
+                    ofs << "    VAR:   " << ValueRef::Variable<double>(true, *curr_name).Description() << std::endl;
+                    ofs << "    CONST: " << ValueRef::Constant<double>(ValueRef::Variable<double>(true, *curr_name).Eval(object, 0)).Description() << std::endl;
                     curr_name++;
                 }
                 ofs << std::endl;
 
                 ofs << "PlanetSize(source)= " << ValueRef::Variable<PlanetSize>(true, "PlanetSize").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<PlanetSize>(true, "PlanetSize").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<PlanetSize>(ValueRef::Variable<PlanetSize>(true, "PlanetSize").Eval(object, 0)).Description() << std::endl;
                 ofs << "PlanetType(source)= " << ValueRef::Variable<PlanetType>(true, "PlanetType").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<PlanetType>(true, "PlanetType").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<PlanetType>(ValueRef::Variable<PlanetType>(true, "PlanetType").Eval(object, 0)).Description() << std::endl;
                 ofs << "PlanetEnvironment(source)= " << ValueRef::Variable<PlanetEnvironment>(true, "PlanetEnvironment").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<PlanetEnvironment>(true, "PlanetEnvironment").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<PlanetEnvironment>(ValueRef::Variable<PlanetEnvironment>(true, "PlanetEnvironment").Eval(object, 0)).Description() << std::endl;
                 ofs << "ObjectType(source)= " << ValueRef::Variable<UniverseObjectType>(true, "ObjectType").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<UniverseObjectType>(true, "ObjectType").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<UniverseObjectType>(ValueRef::Variable<UniverseObjectType>(true, "ObjectType").Eval(object, 0)).Description() << std::endl;
                 ofs << "StarType(source)= " << ValueRef::Variable<StarType>(true, "StarType").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<StarType>(true, "StarType").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<StarType>(ValueRef::Variable<StarType>(true, "StarType").Eval(object, 0)).Description() << std::endl;
                 ofs << "PrimaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "PrimaryFocus").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<FocusType>(true, "PrimaryFocus").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<FocusType>(ValueRef::Variable<FocusType>(true, "PrimaryFocus").Eval(object, 0)).Description() << std::endl;
                 ofs << "SecondaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "SecondaryFocus").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<FocusType>(true, "SecondaryFocus").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<FocusType>(ValueRef::Variable<FocusType>(true, "SecondaryFocus").Eval(object, 0)).Description() << std::endl;
 
                 ofs << "Owner(source)= " << ValueRef::Variable<int>(true, "Owner").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<int>(true, "Owner").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<int>(ValueRef::Variable<int>(true, "Owner").Eval(object, 0)).Description() << std::endl;
                 ofs << "ID(source)= " << ValueRef::Variable<int>(true, "ID").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<int>(true, "ID").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<int>(ValueRef::Variable<int>(true, "ID").Eval(object, 0)).Description() << std::endl;
                 ofs << "\n\n";
 
                 // now the target object version
@@ -633,20 +653,40 @@ void ServerApp::HandleMessage(const Message& msg)
                 curr_name = field_names;
                 while (*curr_name) {
                     ofs << "System." << *curr_name << "(source)= " << ValueRef::Variable<double>(true, std::string("System.") + *curr_name).Eval(object, 0) << std::endl;
+                    ofs << "    VAR:   " << ValueRef::Variable<double>(true, std::string("System.") + *curr_name).Description() << std::endl;
+                    ofs << "    CONST: " << ValueRef::Constant<double>(ValueRef::Variable<double>(true, std::string("System.") + *curr_name).Eval(object, 0)).Description() << std::endl;
                     curr_name++;
                 }
                 ofs << std::endl;
 
                 ofs << "System.PlanetSize(source)= " << ValueRef::Variable<PlanetSize>(true, "System.PlanetSize").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<PlanetSize>(true, "System.PlanetSize").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<PlanetSize>(ValueRef::Variable<PlanetSize>(true, "System.PlanetSize").Eval(object, 0)).Description() << std::endl;
                 ofs << "System.PlanetType(source)= " << ValueRef::Variable<PlanetType>(true, "System.PlanetType").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<PlanetType>(true, "System.PlanetType").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<PlanetType>(ValueRef::Variable<PlanetType>(true, "System.PlanetType").Eval(object, 0)).Description() << std::endl;
                 ofs << "System.PlanetEnvironment(source)= " << ValueRef::Variable<PlanetEnvironment>(true, "System.PlanetEnvironment").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<PlanetEnvironment>(true, "System.PlanetEnvironment").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<PlanetEnvironment>(ValueRef::Variable<PlanetEnvironment>(true, "System.PlanetEnvironment").Eval(object, 0)).Description() << std::endl;
                 ofs << "System.ObjectType(source)= " << ValueRef::Variable<UniverseObjectType>(true, "System.ObjectType").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<UniverseObjectType>(true, "System.ObjectType").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<UniverseObjectType>(ValueRef::Variable<UniverseObjectType>(true, "System.ObjectType").Eval(object, 0)).Description() << std::endl;
                 ofs << "System.StarType(source)= " << ValueRef::Variable<StarType>(true, "System.StarType").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<StarType>(true, "System.StarType").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<StarType>(ValueRef::Variable<StarType>(true, "System.StarType").Eval(object, 0)).Description() << std::endl;
                 ofs << "System.PrimaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "System.PrimaryFocus").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<FocusType>(true, "System.PrimaryFocus").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<FocusType>(ValueRef::Variable<FocusType>(true, "System.PrimaryFocus").Eval(object, 0)).Description() << std::endl;
                 ofs << "System.SecondaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "System.SecondaryFocus").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<FocusType>(true, "System.SecondaryFocus").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<FocusType>(ValueRef::Variable<FocusType>(true, "System.SecondaryFocus").Eval(object, 0)).Description() << std::endl;
 
                 ofs << "System.Owner(source)= " << ValueRef::Variable<int>(true, "System.Owner").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<int>(true, "System.Owner").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<int>(ValueRef::Variable<int>(true, "System.Owner").Eval(object, 0)).Description() << std::endl;
                 ofs << "System.ID(source)= " << ValueRef::Variable<int>(true, "System.ID").Eval(object, 0) << std::endl;
+                ofs << "    VAR:   " << ValueRef::Variable<int>(true, "System.ID").Description() << std::endl;
+                ofs << "    CONST: " << ValueRef::Constant<int>(ValueRef::Variable<int>(true, "System.ID").Eval(object, 0)).Description() << std::endl;
                 ofs << "\n\n";
 
                 // (skip the target object version; the first round of tests determined that that works alright)
@@ -681,11 +721,11 @@ void ServerApp::HandleMessage(const Message& msg)
                         break;
                     case 5:
                         // TODO : put a valid building name in here.
-                        // condition = new Condition::Building("building_name");
+                        condition = new Condition::Building("building_name");
                         break;
                     case 6:
                         // TODO : put a valid special name in here.
-                        // condition = new Condition::HasSpecial("special_name");
+                        condition = new Condition::HasSpecial("STARVATION_SPECIAL");
                         break;
                     case 7:
                         // TODO : put a valid condition name in here.
@@ -694,12 +734,23 @@ void ServerApp::HandleMessage(const Message& msg)
                     case 8:
                         condition = new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB)));
                         break;
-                    case 9:
-                        condition = new Condition::PlanetSize(std::vector<const ValueRef::ValueRefBase<PlanetSize>*>(1, new ValueRef::Constant<PlanetSize>(SZ_ASTEROIDS)));
+                    case 9: {
+                        std::vector<const ValueRef::ValueRefBase<PlanetSize>*> vec;
+                        vec.push_back(new ValueRef::Constant<PlanetSize>(SZ_ASTEROIDS));
+                        vec.push_back(new ValueRef::Constant<PlanetSize>(SZ_GASGIANT));
+                        vec.push_back(new ValueRef::Constant<PlanetSize>(SZ_LARGE));
+                        //condition = new Condition::PlanetSize(std::vector<const ValueRef::ValueRefBase<PlanetSize>*>(1, new ValueRef::Constant<PlanetSize>(SZ_ASTEROIDS)));
+                        condition = new Condition::PlanetSize(vec);
                         break;
-                    case 10:
-                        condition = new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true);
+                    }
+                    case 10: {
+                        std::vector<const ValueRef::ValueRefBase<FocusType>*> vec;
+                        vec.push_back(new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY));
+                        vec.push_back(new ValueRef::Constant<FocusType>(FOCUS_RESEARCH));
+                        //condition = new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true);
+                        condition = new Condition::FocusType(vec, true);
                         break;
+                    }
                     case 11:
                         condition = new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), false);
                         break;
@@ -855,6 +906,7 @@ void ServerApp::HandleMessage(const Message& msg)
 #if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
                         ofs2 << "\n\nTARGETS:\n" << std::endl;
 #endif
+                        ofs2 << "Condition Test " << i << ": All objects" << condition->Description() << "\n";
                         for (Condition::ConditionBase::ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
                             ofs2 << "  " << (*it)->ID() << " \"" << (*it)->Name() << "\"" << std::endl;
                         }
@@ -864,7 +916,8 @@ void ServerApp::HandleMessage(const Message& msg)
 #if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
                     ofs2 << "\n" << std::endl;
 #endif
-                } catch (...) {
+                } catch (const std::exception &e) {
+                    ofs2 << e.what() << "\n";
                     ofs2.close();
                 }
                 ofs2.close();
