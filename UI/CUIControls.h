@@ -229,6 +229,7 @@ public:
 
 private:
     bool m_render_drop_arrow;
+    GG::Clr m_interior_color;
 };
 
 

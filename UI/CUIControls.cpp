@@ -489,7 +489,8 @@ CUIDropDownList::CUIDropDownList(int x, int y, int w, int row_ht, int drop_ht, G
                                  GG::Clr interior/* = ClientUI::DROP_DOWN_LIST_INT_COLOR*/, 
                                  GG::Clr drop_list_interior/* = ClientUI::DROP_DOWN_LIST_INT_COLOR*/, Uint32 flags/* = CLICKABLE*/) : 
     DropDownList(x, y, w, row_ht, drop_ht, color, interior, new CUIListBox(x, y, w, drop_ht, color, drop_list_interior, flags)),
-    m_render_drop_arrow(true)
+    m_render_drop_arrow(true),
+    m_interior_color(interior)
 {
 }
 
@@ -498,27 +499,35 @@ CUIDropDownList::CUIDropDownList(const GG::XMLElement& elem) :
 {
     if (elem.Tag() != "CUIDropDownList")
         throw std::invalid_argument("Attempted to construct a CUIDropDownList from an XMLElement that had a tag other than \"CUIDropDownList\"");
+
+    m_render_drop_arrow = boost::lexical_cast<bool>(elem.Child("m_render_drop_arrow").Text());
+    m_interior_color = GG::Clr(elem.Child("m_interior_color"));
 }
 
 GG::XMLElement CUIDropDownList::XMLEncode() const
 {
     GG::XMLElement retval("CUIDropDownList");
     retval.AppendChild(DropDownList::XMLEncode());
+    retval.AppendChild(GG::XMLElement("m_render_drop_arrow", boost::lexical_cast<std::string>(m_render_drop_arrow)));
+    retval.AppendChild(m_interior_color.XMLEncode());
     return retval;
 }
 
 bool CUIDropDownList::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::Clr color = LB()->Color();
-    GG::Clr color_to_use = Disabled() ? DisabledColor(color) : color;
-    GG::Clr int_color_to_use = Disabled() ? DisabledColor(LB()->InteriorColor()) : LB()->InteriorColor();
+    GG::Clr lb_color = LB()->Color();
+    GG::Clr lb_interior_color = LB()->InteriorColor();
+    GG::Clr color_to_use = Disabled() ? DisabledColor(lb_color) : lb_color;
+    GG::Clr int_color_to_use = Disabled() ? DisabledColor(m_interior_color) : m_interior_color;
 
-    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, int_color_to_use, GG::CLR_ZERO, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
+    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, int_color_to_use, GG::CLR_ZERO, CUIDROPDOWNLIST_ANGLE_OFFSET, 3, false);
 
     LB()->SetColor(GG::CLR_ZERO);
+    LB()->SetInteriorColor(GG::CLR_ZERO);
     DropDownList::Render();
-    LB()->SetColor(color);
+    LB()->SetInteriorColor(lb_interior_color);
+    LB()->SetColor(lb_color);
 
     AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
 
