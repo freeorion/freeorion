@@ -266,7 +266,8 @@ ClientUI::ClientUI() :
     m_string_table(0),
     m_intro_screen(0),
     m_map_wnd(0),
-    m_turn_progress_wnd(0)
+    m_turn_progress_wnd(0),
+    m_default_cursor(NULL)
 {
     using namespace GG;
 
