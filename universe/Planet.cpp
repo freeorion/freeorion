@@ -5,7 +5,7 @@
 #include "System.h"
 #include "Predicates.h"
 
-#include "..\server\serverapp.h"
+#include "../server/ServerApp.h"
 
 
 #include <boost/lexical_cast.hpp>

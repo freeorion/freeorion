@@ -6,7 +6,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/System.h"
-#include "../empire/empire.h"
+#include "../Empire/Empire.h"
 
 #include <time.h>
 #include <map>
@@ -14,10 +14,10 @@
 #define DEBUG_COMBAT
 
 #ifdef FREEORION_BUILD_SERVER
-  #include "../server/serverapp.h"
+  #include "../server/ServerApp.h"
   Empire *LookupEmpire(int ID) {return ServerApp::Empires().Lookup(ID);}
 #else
-  #include "../client/clientapp.h"
+  #include "../client/ClientApp.h"
   Empire *LookupEmpire(int ID) {return ClientApp::Empires().Lookup(ID);}
 #endif
 
@@ -83,36 +83,36 @@ void Debugout(std::vector<CombatAssetsHitPoints> &empire_combat_forces)
     for(unsigned int j=0;j<empire_combat_forces[i].combat_ships.size();j++)
       hit_points+=empire_combat_forces[i].combat_ships[j].second;
 
-    debug+= "#" + (std::string)itoa(empire_combat_forces[i].combat_ships.size(),buffer,10) 
-           +":" + (std::string)itoa(hit_points,buffer,10);
+    //debug+= "#" + (std::string)itoa(empire_combat_forces[i].combat_ships.size(),buffer,10) 
+      //     +":" + (std::string)itoa(hit_points,buffer,10);
 
     hit_points=0;
     for(unsigned int j=0;j<empire_combat_forces[i].non_combat_ships.size();j++)
       hit_points+=empire_combat_forces[i].non_combat_ships[j].second;
 
-    debug+= ",#" + (std::string)itoa(empire_combat_forces[i].non_combat_ships.size(),buffer,10)
-           +":" + (std::string)itoa(hit_points,buffer,10);
+    //debug+= ",#" + (std::string)itoa(empire_combat_forces[i].non_combat_ships.size(),buffer,10)
+     //      +":" + (std::string)itoa(hit_points,buffer,10);
     
-    debug+= ",#" + (std::string)itoa(empire_combat_forces[i].destroyed_ships.size(),buffer,10);
-    debug+= ",#" + (std::string)itoa(empire_combat_forces[i].retreated_ships.size(),buffer,10) + ")";
+    //debug+= ",#" + (std::string)itoa(empire_combat_forces[i].destroyed_ships.size(),buffer,10);
+    //debug+= ",#" + (std::string)itoa(empire_combat_forces[i].retreated_ships.size(),buffer,10) + ")";
 
     hit_points=0;
     for(unsigned int j=0;j<empire_combat_forces[i].planets.size();j++)
       hit_points+=empire_combat_forces[i].planets[j].second;
 
-    debug+= "; planets : #" + (std::string)itoa(empire_combat_forces[i].planets.size(),buffer,10) 
-           +":" + (std::string)itoa(hit_points,buffer,10);
+    //debug+= "; planets : #" + (std::string)itoa(empire_combat_forces[i].planets.size(),buffer,10) 
+      //     +":" + (std::string)itoa(hit_points,buffer,10);
 
     debug+="\n";
   }
-  ServerApp::GetApp()->Logger().debugStream() << debug;
+  //ServerApp::GetApp()->Logger().debugStream() << debug;
 }
 #endif
 
 void CombatSystem::ResolveCombat(const std::vector<CombatAssets> &assets)
 {
 #ifdef DEBUG_COMBAT
-  ServerApp::GetApp()->Logger().debugStream() << "COMBAT resolution!";
+  //ServerApp::GetApp()->Logger().debugStream() << "COMBAT resolution!";
 #endif
   const double base_chance_to_retreat = 0.25;
   const int    defence_base_hit_points= 3;
@@ -196,8 +196,8 @@ void CombatSystem::ResolveCombat(const std::vector<CombatAssets> &assets)
       }
 
 #ifdef DEBUG_COMBAT
-      ServerApp::GetApp()->Logger().debugStream() 
-        << "Damage done by " << empire_combat_forces[e].owner->Name() << " " << damage_done[e];
+      //ServerApp::GetApp()->Logger().debugStream() 
+        //<< "Damage done by " << empire_combat_forces[e].owner->Name() << " " << damage_done[e];
 #endif
     }
 

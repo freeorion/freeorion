@@ -12,7 +12,7 @@
 #include "../universe/Predicates.h"
 #include "../Empire/TechManager.h"
 
-#include "../Combat/CombatSystem.h"
+#include "../combat/CombatSystem.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
