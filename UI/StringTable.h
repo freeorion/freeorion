@@ -2,10 +2,14 @@
 #ifndef _StringTable_h_
 #define _StringTable_h_
 
+#include <boost/lexical_cast.hpp>
+
 #include <string>
 #include <map>
 #include <fstream>
-#include <boost/lexical_cast.hpp>
+
+/** formats a StringTable string a la vsprintf */
+std::string Format(const char* fmt, ...);
 
 //! This is an implementation of a String Table for internationalization purposes.
 //! The table is built from a file of the following format:<br>
@@ -41,27 +45,22 @@
 //! <br>
 //! TESTFOUR<br>
 //! test four<br>
-//! 
-
 class StringTable
 {
 public:
 
-//! \names Structors
-//!@{
-    
+    //! \names Structors
+    //!@{
     StringTable();  //!< default construction, uses S_DEFAULT_FILENAME
     
     //! @param filename A file containing the data for this StringTable
     StringTable(const std::string& filename);   //!< construct a StringTable from the given filename
-    ~StringTable();                            //!< default destructor
-    
-//!@}
+    ~StringTable();                             //!< default destructor
+    //!@}
 
 public:
-//! \name Accessors
-//!@{
-    
+    //! \name Accessors
+    //!@{
     //! @param index The index of the string to lookup
     //! @return The string found at index in the table, or S_ERROR_STRING if it fails
     const std::string& operator[] (std::string index);    //!< Looks up a string at index and returns it.
@@ -69,36 +68,30 @@ public:
     //! @param index The index of the string to lookup
     //! @return The string found at index in the table
     inline const std::string& String(std::string index) { return operator[] (index); }    //!< Interface to operator() \see StringTable::operator() 
-    inline const std::string& Language() const {return m_language;}    //!< Returns the language of this StringTable
+    inline const std::string& Language() const {return m_language;} //!< Returns the language of this StringTable
     inline const std::string& Filename() const {return m_filename;} //!< accessor to the filename
-    
-//!@}
+    //!@}
 
 public:
-//! \names Constants
-//!@{
-    static const std::string S_DEFAULT_FILENAME;    //!< the default file used if none specified
-    static const std::string S_ERROR_STRING;    //!< A string that gets returned when invalid indices are used
-    
-//!@}
+    //! \names Constants
+    //!@{
+    static const std::string S_DEFAULT_FILENAME; //!< the default file used if none specified
+    static const std::string S_ERROR_STRING;     //!< A string that gets returned when invalid indices are used
+    //!@}
 
 private:
-//! \name Internal Functions
-//!@{
-
+    //! \name Internal Functions
+    //!@{
     void Load();    //!< Loads the String table file from m_filename
+    //!@}
 
-//!@}
-
-//! \name Data Members
-//!@{
-
+    //! \name Data Members
+    //!@{
     std::string m_filename;    //!< the name of the file this StringTable was constructed with
     std::string m_language;    //!< A string containing the name of the language used
     std::map<std::string, std::string> m_strings;  //!< The strings in the table
-
-//!@}
+    //!@}
     
-};//StringTable
+};
 
 #endif
