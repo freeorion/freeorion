@@ -25,18 +25,24 @@ CC   = gcc -D__DEBUG__
 CPP  = g++ -D__DEBUG__
 
 # Lists of objects, includes, and libs
-# Add object files to OBJ when they are added to the project
-OBJ  = ../../objs/camain.o ../../objs/AIClientApp.o ../../objs/ClientApp.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/SDLnetUDP.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/XMLDoc.o ../../objs/OrderSet.o ../../objs/SDLnet.o ../../objs/Order.o ../../objs/ClientUniverse.o ../../objs/UniverseObject.o ../../objs/Fleet.o ../../objs/Planet.o ../../objs/PopCenter.o ../../objs/ProdCenter.o ../../objs/ServerUniverse.o ../../objs/Ship.o ../../objs/System.o
-INCS =  -I/usr/include  -I$(SDL_INC)  -I$(BOOST_INC)  -I../../SDL_net  -I../../SDL_net2  -I../../GG/XML
-LIBS =  -L/usr/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz -lpthread
+# Add new source code directories here as they are added to the project;
+# also add a rule to the rules at the end that recognizes the new directory's
+# sources.  Try to keep the directory names in alphabetical order.
+CPP_SRCS =	$(wildcard *.cpp) \
+				$(wildcard ../*.cpp) \
+				$(filter-out ../../Empire/Server%,$(wildcard ../../Empire/*.cpp)) \
+				$(filter-out ../../network/Server%,$(wildcard ../../network/*.cpp)) \
+				$(filter-out ../../universe/Server%,$(wildcard ../../universe/*.cpp)) \
+				$(wildcard ../../util/*.cpp)
+
+OBJS = $(addprefix ../../objs/AI/,$(notdir $(patsubst %.cpp,%.o,$(CPP_SRCS))))
+
+INCS =  -I/usr/include  -I/usr/include/GG  -I/usr/include/GG/net  -I$(SDL_INC)  -I$(BOOST_INC)
+LIBS =  -L/usr/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz -lpthread -lGiGi
 
 # Build Flags
 CFLAGS = $(INCS) -g3 -Wall
 CXXFLAGS = $(INCS) -g3 -Wall -DFREEORION_BUILD_AI
-
-# Directories to search for source files
-# Add directories here when they are added to the project
-VPATH = ..:../..:../../Empire:../../GG/XML:../../network:../../SDL_net:../../SDL_net2:../../UI:../../universe:../../util
 
 
 ###############################
@@ -46,16 +52,30 @@ VPATH = ..:../..:../../Empire:../../GG/XML:../../network:../../SDL_net:../../SDL
 
 all: all-before freeorionca.exe all-after
 
+all-before :
+	mkdir -p ../../objs/AI
 
 clean: clean-custom
-	rm -f $(OBJ)
+	rm -f $(OBJS)
 
-$(BIN): $(OBJ)
-	$(CPP) $(OBJ) -o $(BIN) $(LIBS)
+$(BIN): $(OBJS)
+	$(CPP) $(OBJS) -o $(BIN) $(LIBS)
 	/bin/mv $(BIN) ../../
 
-../../objs/%.o : %.c
-	$(CC) $< -c $(CFLAGS) -o $@
+../../objs/AI/%.o : %.cpp
+	$(CPP) $< -c $(CXXFLAGS) -o $@
 
-../../objs/%.o : %.cpp
+../../objs/AI/%.o : ../%.cpp
+	$(CPP) $< -c $(CXXFLAGS) -o $@
+
+../../objs/AI/%.o : ../../Empire/%.cpp
+	$(CPP) $< -c $(CXXFLAGS) -o $@
+
+../../objs/AI/%.o : ../../network/%.cpp
+	$(CPP) $< -c $(CXXFLAGS) -o $@
+
+../../objs/AI/%.o : ../../universe/%.cpp
+	$(CPP) $< -c $(CXXFLAGS) -o $@
+
+../../objs/AI/%.o : ../../util/%.cpp
 	$(CPP) $< -c $(CXXFLAGS) -o $@
