@@ -79,14 +79,13 @@ public:
     Message();
 
     /** standard ctor.  Senders that are not part of a game and so have no player number should send -1 as the \a 
-        sender parameter. Set the \a receiver parameter to -1 to send the message to all players. 
-        \throw std::invalid_argument May throw std::invalid_argument if the parameters would form
+        sender parameter. \throw std::invalid_argument May throw std::invalid_argument if the parameters would form
         an invalid message */
     Message(MessageType msg_type, int sender, int receiver, ModuleType module, const std::string& text, MessageType response_msg = UNDEFINED);
  
     /** convienience ctor that converts \a doc into a std::string automatically.  Senders that are not part of a game 
-        and so have no player number should send -1 as the \a sender parameter. Set the \a receiver parameter to -1 to send the message to all players.
-        \throw std::invalid_argument May throw std::invalid_argument if the parameters would form an invalid message */
+        and so have no player number should send -1 as the \a sender parameter. \throw std::invalid_argument May throw 
+        std::invalid_argument if the parameters would form an invalid message */
     Message(MessageType msg_type, int sender, int receiver, ModuleType module, const GG::XMLDoc& doc, MessageType response_msg = UNDEFINED);
     //@}
 
