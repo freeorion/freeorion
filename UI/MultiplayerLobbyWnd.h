@@ -58,7 +58,7 @@ private:
     void CancelClicked();
     void PopulatePlayerList(bool loading_game);
     void SendUpdate();
-    bool PlayerDataUnique() const;
+    bool PlayerDataAcceptable() const;
     bool CanStart() const;
     GG::XMLDoc LobbyUpdateDoc() const;
 

@@ -83,6 +83,8 @@ namespace {
                 player_data.empire_color = g_save_game_empire_data[player_data.save_game_empire_id].color;
             m_color_selector->SelectColor(player_data.empire_color);
             push_back(m_color_selector);
+            push_back(0 <= player_data.save_game_empire_id ? g_save_game_empire_data[player_data.save_game_empire_id].player_name : "", 
+                      ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
             height = PLAYER_ROW_HEIGHT + 6;
 
             m_color_selector->Disable();
@@ -101,6 +103,7 @@ namespace {
             player_data.empire_color = g_save_game_empire_data[i].color;
             player_data.save_game_empire_id = g_save_game_empire_data[i].id;
             m_color_selector->SelectColor(player_data.empire_color);
+            operator[](3)->SetText(g_save_game_empire_data[i].player_name);
             data_changed_sig();
         }
 
@@ -434,6 +437,7 @@ void MultiplayerLobbyWnd::CancelClicked()
 void MultiplayerLobbyWnd::PopulatePlayerList(bool loading_game)
 {
     m_players_lb->Clear();
+
     for (unsigned int i = 0; i < m_player_setup_data.size(); ++i) {
         int id = m_player_setup_data[i].second;
         if (loading_game) {
@@ -453,6 +457,15 @@ void MultiplayerLobbyWnd::PopulatePlayerList(bool loading_game)
             Connect(row->data_changed_sig, &MultiplayerLobbyWnd::PlayerDataChanged, this);
         }
     }
+
+    if (loading_game) {
+        m_players_lb->SetNumCols(4);
+        m_players_lb->SetColAlignment(2, GG::LB_RIGHT);
+        m_players_lb->SetColAlignment(3, GG::LB_RIGHT);
+    } else {
+        m_players_lb->SetNumCols(3);
+        m_players_lb->SetColAlignment(2, GG::LB_RIGHT);
+    }
 }
 
 void MultiplayerLobbyWnd::SendUpdate()
@@ -463,12 +476,14 @@ void MultiplayerLobbyWnd::SendUpdate()
     }
 }
 
-bool MultiplayerLobbyWnd::PlayerDataUnique() const
+bool MultiplayerLobbyWnd::PlayerDataAcceptable() const
 {
     std::set<std::string> empire_names;
     std::set<int> empire_colors;
     for (int i = 0; i < m_players_lb->NumRows(); ++i) {
         const PlayerRow& row = dynamic_cast<const PlayerRow&>(m_players_lb->GetRow(i));
+        if (row.player_data.empire_name.empty())
+            return false;
         empire_names.insert(row.player_data.empire_name);
         empire_colors.insert(row.player_data.empire_color.i);
     }
@@ -477,7 +492,7 @@ bool MultiplayerLobbyWnd::PlayerDataUnique() const
 
 bool MultiplayerLobbyWnd::CanStart() const
 {
-    return PlayerDataUnique() && 1 < m_players_lb->NumRows();
+    return PlayerDataAcceptable() && 1 < m_players_lb->NumRows();
 }
 
 GG::XMLDoc MultiplayerLobbyWnd::LobbyUpdateDoc() const
