@@ -467,9 +467,6 @@ GG::XMLElement Empire::XMLEncode() const
     design_id.SetAttribute( "value", lexical_cast<std::string>(m_next_design_id) );
     element.AppendChild(design_id);
     
-    // There is no need to serialize the sitrep entries since they are
-    // handled by the empire manager sitrep update functionality
-    
     XMLElement sitrep("m_sitrep_entries");
     for(ConstSitRepItr itr = SitRepBegin(); itr != SitRepEnd(); itr++)
     {
@@ -529,8 +526,7 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
     name.SetText(m_name);
     element.AppendChild(name);
     
-    // total_rp member needs to have a value so it can get initialized when we de-serialize.
-    // set it to 0 because the other empire isnt' supposed to know this
+    // total_rp member needs to have a value so just use 0
     XMLElement total_rp("m_total_rp");
     total_rp.SetAttribute( "value", lexical_cast<std::string>(0) );
     element.AppendChild(total_rp);
@@ -623,9 +619,9 @@ void Empire::CheckResearchProgress( )
             {
                 AddTech( (*itr).first );
 
-		// add sit rep
-		SitRepEntry *p_entry = CreateTechResearchedSitRep( (*itr).first );
-		AddSitRepEntry( p_entry );
+        		// add sit rep
+                SitRepEntry *p_entry = CreateTechResearchedSitRep( (*itr).first );
+                AddSitRepEntry( p_entry );
             }
         }
         

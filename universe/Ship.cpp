@@ -136,6 +136,10 @@ UniverseObject::Visibility Ship::Visible(int empire_id) const
    return NO_VISIBILITY;
 }
 
+bool Ship::IsArmed() const
+{
+    return (m_design.attack > 0);
+}
 
 GG::XMLElement Ship::XMLEncode() const
 {

@@ -1,7 +1,7 @@
 [Project]
 FileName=Server.dev
 Name=Server
-UnitCount=58
+UnitCount=61
 Type=1
 Ver=1
 ObjFiles=
@@ -20,7 +20,7 @@ ObjectOutput=..\objs\server
 OverrideOutput=1
 OverrideOutputName=freeoriond.exe
 HostApplication=
-Folders=empire,network,server,universe,util
+Folders=combat,empire,network,server,universe,util
 CommandLine=
 IncludeVersionInfo=0
 SupportXPThemes=0
@@ -575,16 +575,6 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit59]
-FileName=..\Empire\TechManager.h
-CompileCpp=1
-Folder=empire
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit50]
 FileName=..\util\SitRepEntry.h
 CompileCpp=1
@@ -595,20 +585,10 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit60]
-FileName=..\Empire\ClientEmpireManager.cpp
-CompileCpp=1
-Folder=empire
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit61]
-FileName=..\Empire\ClientEmpireManager.h
+FileName=..\universe\Predicates.h
 CompileCpp=1
-Folder=empire
+Folder=universe
 Compile=1
 Link=1
 Priority=1000

@@ -14,14 +14,16 @@ using boost::lexical_cast;
 Planet::Planet() : 
    UniverseObject(),
    PopCenter(),
-   ProdCenter()
+   ProdCenter(),
+   m_just_conquered(0)
 {
 }
 
 Planet::Planet(PlanetType type, PlanetSize size) : 
    UniverseObject(),
    PopCenter(),
-   ProdCenter()
+   ProdCenter(),
+   m_just_conquered(0)
 {
     m_type = type;
     m_size = size;
@@ -59,6 +61,7 @@ Planet::Planet(const GG::XMLElement& elem) :
     m_type = (PlanetType) lexical_cast<int> ( elem.Child("m_type").Attribute("value") );
     m_size = (PlanetSize) lexical_cast<int> ( elem.Child("m_size").Attribute("value") );
     m_def_bases = lexical_cast<int> ( elem.Child("m_def_bases").Attribute("value") );
+    m_just_conquered = lexical_cast<int> (elem.Child("m_just_conquered").Attribute("value") );
 }
 
 UniverseObject::Visibility Planet::Visible(int empire_id) const
@@ -110,6 +113,10 @@ GG::XMLElement Planet::XMLEncode() const
     def_bases.SetAttribute( "value", lexical_cast<std::string>(m_def_bases) );
     element.AppendChild(def_bases);
 
+    XMLElement just_conquered("m_just_conquered");
+    just_conquered.SetAttribute( "value", lexical_cast<std::string>(m_just_conquered));
+    element.AppendChild(just_conquered);
+    
     return element;
 }
 
@@ -146,8 +153,20 @@ GG::XMLElement Planet::XMLEncode(int empire_id) const
     def_bases.SetAttribute( "value", lexical_cast<std::string>(m_def_bases) );
     element.AppendChild(def_bases);
 
+    XMLElement just_conquered("m_just_conquered");
+    just_conquered.SetAttribute( "value", lexical_cast<std::string>(m_just_conquered));
+    element.AppendChild(just_conquered);
+
     return element;
 }
+
+
+void Planet::Conquer(int conquerer)
+{
+    m_just_conquered = 1;
+    // TODO : change ownership
+}
+
 
 void Planet::MovementPhase()
 {
@@ -159,7 +178,12 @@ void Planet::PopGrowthProductionResearchPhase( )
 {
     Empire* empire = (Empires()).Lookup( *Owners().begin() );
 
-    ProdCenter::PopGrowthProductionResearchPhase( empire, SystemID(), ID() );
+    // do not do production of planet was just conquered
+    // as per 0.1 requirements doc.
+    if(m_just_conquered == 1)
+        m_just_conquered = 0;
+    else
+        ProdCenter::PopGrowthProductionResearchPhase( empire, SystemID(), ID() );
 
     PopCenter::PopGrowthProductionResearchPhase( );
 

@@ -670,7 +670,7 @@ void ServerApp::SDLQuit()
 
 void ServerApp::NewGameInit()
 {
-    int i = 0;
+
     std::map<int, PlayerInfo>::const_iterator it;
 
     m_universe.CreateUniverse(m_galaxy_shape, m_galaxy_size, m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size());
@@ -686,12 +686,12 @@ void ServerApp::NewGameInit()
 
     // the universe creation caused the creation of empires.  But now we
     // need to assign the empires to players.
-    for (it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
+    for (it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
         GG::XMLDoc doc;
         if (m_single_player_game)
             doc.root_node.AppendChild("single_player_game");
         doc.root_node.AppendChild(m_universe.XMLEncode());
-        doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(i));
+        doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
 
         // turn number is an attribute of the document
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
@@ -911,6 +911,7 @@ void ServerApp::ProcessTurns( )
         }
     }
 
+
     /// process turn for production and growth
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
@@ -941,6 +942,9 @@ void ServerApp::ProcessTurns( )
         delete it->second;
         it->second = NULL;
     }   
+    
+    // TODO:  check for combats, and resolve them.
+    
     
     /// Increment turn
     ++m_current_turn;

@@ -41,6 +41,9 @@ public:
 
    /// Returns system that this fleet is moving to (may be null)
    System* Destination() const;
+   
+   /// Returns true if there is at least one armed ship in the fleet
+   bool HasArmedShips() const;
 
    /// Returns number of ships in fleet
    int NumShips() const {return m_ships.size();}

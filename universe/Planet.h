@@ -76,11 +76,18 @@ public:
 
    //@}
 
+    /** \name Mutators */ //@{
 
-
+    /// Called during combat when a planet changes hands
+    void Conquer( int conquerer ) ;
+    
+    //@}
+    
 private:
    PlanetType     m_type;
    PlanetSize     m_size;
+   
+   int m_just_conquered;
    
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!

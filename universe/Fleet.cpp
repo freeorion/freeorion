@@ -145,6 +145,20 @@ System* Fleet::Destination() const
     return dynamic_cast<System*>(GetUniverse().Object(m_moving_to));
 }
 
+bool Fleet::HasArmedShips() const
+{
+    
+    for(Fleet::iterator itr = begin(); itr != end(); itr++)
+    {   
+        if( dynamic_cast<Ship*>(GetUniverse().Object(*itr) )->IsArmed() )
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 void Fleet::SetDestination(int id)
 {
     m_moving_to = id;

@@ -22,6 +22,7 @@ struct ShipDesign
    
    int WarpSpeed() const; ///< returns the maximum speed for ships of this design.  Returns 1 for 0.1
    
+   
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
    enum V01DesignID
@@ -65,6 +66,9 @@ public:
    virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Ship object
    virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a Ship object with visibility limited relative to the input empire
+   
+   bool IsArmed() const; 
+   
    //@}
   	
    /** \name Mutators */ //@{   
