@@ -138,12 +138,12 @@ double PopCenter::AdjustPop(double pop)
    return retval;
 }
 
-void PopCenter::MovementPhase(std::vector<SitRepEntry>& sit_reps)
+void PopCenter::MovementPhase( )
 {
    // TODO
 }
 
-void PopCenter::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
+void PopCenter::PopGrowthProductionResearchPhase( )
 {
     m_pop = std::min(m_pop * 1.072, m_max_pop); // 7.2% should double pop every 10 turns
 }

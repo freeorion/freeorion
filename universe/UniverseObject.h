@@ -86,11 +86,11 @@ public:
    
     /** performs the movement that this object is responsible for this object's actions during the movement phase of 
         a turn.  Called by ServerUniverse::MovementPhase().*/
-    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps) = 0;
+    virtual void MovementPhase( ) = 0;
    
     /** performs the movement that this object is responsible for this object's actions during the pop growth/production/
         research phase of a turn.  Called by ServerUniverse::PopGrowthProductionResearchPhase().*/
-    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps) = 0;
+    virtual void PopGrowthProductionResearchPhase( ) = 0;
 
     //@}
    

@@ -15,12 +15,13 @@ using boost::lexical_cast;
 // ShipDesign
 ////////////////////////////////////////////////
 ShipDesign::ShipDesign() : 
+   id(ShipDesign::SCOUT),
    empire(-1),
    name(""),
    attack(0),
    defense(0),
    cost(10000000),
-   id(ShipDesign::SCOUT)
+   colonize( false )
 {
    //TODO
 }
@@ -164,12 +165,12 @@ GG::XMLElement Ship::XMLEncode(int empire_id) const
    return element;
 }
   	
-void Ship::MovementPhase(std::vector<SitRepEntry>& sit_reps)
+void Ship::MovementPhase( )
 {
    //TODO
 }
 
-void Ship::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
+void Ship::PopGrowthProductionResearchPhase( )
 {
    //TODO
 }

@@ -54,8 +54,8 @@ public:
 
    bool RemoveShip(int ship); ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.
 
-   virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
-   virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
+   virtual void MovementPhase( );
+   virtual void PopGrowthProductionResearchPhase( );
    //@}
 
 private:

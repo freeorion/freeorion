@@ -208,8 +208,8 @@ public:
    }
 
 
-   virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
-   virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
+   virtual void MovementPhase( );
+   virtual void PopGrowthProductionResearchPhase( );
 
    orbit_iterator begin()  {return m_objects.begin();}   ///< begin iterator for all system objects
    orbit_iterator end()    {return m_objects.end();}     ///< end iterator for all system objects

@@ -202,12 +202,12 @@ bool Fleet::RemoveShip(int ship)
     return retval;
 }
 
-void Fleet::MovementPhase(std::vector<SitRepEntry>& sit_reps)
+void Fleet::MovementPhase( )
 {
    // TODO
 }
 
-void Fleet::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
+void Fleet::PopGrowthProductionResearchPhase()
 {
    // TODO
 }

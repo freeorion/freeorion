@@ -24,12 +24,12 @@ struct ShipDesign
    // V0.1 ONLY!!!!
    enum V01DesignID
    {
-        SCOUT,
-        MARK1,
-        MARK2,
-        MARK3,
-        MARK4,
-        COLONY
+     SCOUT = 1,  // Ship desing IDs star at 1
+     COLONY,
+     MARK1,
+     MARK2,
+     MARK3,
+     MARK4
     };
 
    int         attack;  ///< the attack value of the design
@@ -66,8 +66,8 @@ public:
   	
    /** \name Mutators */ //@{   
    void         SetFleetID(int fleet_id) {m_fleet_id = fleet_id; StateChangedSignal()();} ///< sets the ID of the fleet the ship resides in
-   virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
-   virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
+   virtual void MovementPhase( );
+   virtual void PopGrowthProductionResearchPhase( );
    //@}
 
 private:

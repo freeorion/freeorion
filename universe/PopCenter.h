@@ -51,8 +51,8 @@ public:
    
    void SetRace(int race)  {m_race = race;}   ///< sets the race of the population to \a race
    
-   virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
-   virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
+   virtual void MovementPhase( );
+   virtual void PopGrowthProductionResearchPhase( );
    //@}
    
 private:

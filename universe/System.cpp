@@ -284,11 +284,11 @@ bool System::RemoveWormhole(int id)
    return retval;
 }
 
-void System::MovementPhase(std::vector<SitRepEntry>& sit_reps)
+void System::MovementPhase( )
 {
 }
 
-void System::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
+void System::PopGrowthProductionResearchPhase( )
 {
 }
 
