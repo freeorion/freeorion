@@ -1,4 +1,5 @@
 #!/bin/sh
+echo "HINT: If this script fails, try './update-configure.sh'"
 echo "** Creating configure and friends"
 set -x
 aclocal -I m4
