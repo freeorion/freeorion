@@ -553,10 +553,23 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
 
 void ServerApp::PlayerDisconnected(int id)
 {
-    m_state = SERVER_DISCONNECT;
-    m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Server now in mode " << SERVER_DISCONNECT << " (SERVER_DISCONNECT).";
+    if (id == NetworkCore::HOST_PLAYER_ID) {
+        // if the host dies, there's really nothing else we can do
+        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+            if (it->first != id)
+                m_network_core.SendMessage(EndGameMessage(-1, it->first));
+        }
+        m_state = SERVER_DYING;
+        m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_DYING << " (SERVER_DYING).";
+        m_network_core.DumpAllConnections();
+        Exit(1);
+    } else {
+        // possibly try to recover
+        m_state = SERVER_DISCONNECT;
+        m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Server now in mode " << SERVER_DISCONNECT << " (SERVER_DISCONNECT).";
 // TODO: try to reconnect
 // TODO: send request to host player to ask what to do
+    }
 }
 
 ServerApp* ServerApp::GetApp()
