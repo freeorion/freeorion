@@ -6,25 +6,26 @@
 ; enable lzma compression when releasing the final installer
 ; for now, use normal zlib, as lzma takes a _long_ time
 SetCompressor lzma
+SetCompressorDictSize 32
 ;SetCompress off
 
 ; You probably need to change the paths
 ; Pack exe-header of installer (not required)
-!packhdr foinsttemp.exe '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 foinsttemp.exe'
+!packhdr foinsttemp.exe '"C:\Dokumente und Einstellungen\Administrator\Desktop\UPX" -9 foinsttemp.exe'
 ; Strip debugging symbols from binaries
-!system "C:\Dev-Cpp\bin\strip -sp ..\freeorion.exe -o freeorion.exe.stripped"
-!system '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 freeorion.exe.stripped'
-!system "C:\Dev-Cpp\bin\strip -sp ..\freeoriond.exe -o freeoriond.exe.stripped"
-!system '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 freeoriond.exe.stripped'
-!system "C:\Dev-Cpp\bin\strip -sp ..\freeorionca.exe -o freeorionca.exe.stripped"
-!system '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 freeorionca.exe.stripped'
+;!system "C:\Dev-Cpp\bin\strip -sp ..\freeorion.exe -o freeorion.exe.stripped"
+;!system '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 freeorion.exe.stripped'
+;!system "C:\Dev-Cpp\bin\strip -sp ..\freeoriond.exe -o freeoriond.exe.stripped"
+;!system '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 freeoriond.exe.stripped'
+;!system "C:\Dev-Cpp\bin\strip -sp ..\freeorionca.exe -o freeorionca.exe.stripped"
+;!system '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 freeorionca.exe.stripped'
 
 
 ; Other installer settings
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "FreeOrion"
-!define PRODUCT_VERSION "0.1"
+!define PRODUCT_VERSION "0.2"
 !define PRODUCT_PUBLISHER "The FreeOrion Community"
 !define PRODUCT_WEB_SITE "http://www.freeorion.org"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\freeorion.exe"
@@ -34,7 +35,7 @@ SetCompressor lzma
 
 !define MUI_COMPONENTSPAGE_NODESC ; no descriptions (yet)
 
-BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} Installer $$Revision$$ (NSIS v2.0rc4)"
+BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} Installer $$Revision$$ (NSIS v2.0)"
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
 
@@ -66,7 +67,7 @@ BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} Installer $$Revision$$ (NSIS v2
  all_fine:
   StrCmp $SMPROGRAMS "" 0 no_bug
   ; a strange bug...
-  MessageBox MB_OK|MB_ICONSTOP "I'm unable to determine the startmenu-folder, sorry. THIS IS A KNOWN BUG. If you can reproduce it, please post information to the FreeOrion Forum (www.artclusta.com/bb). Quitting. (Try to rename the installer, sometimes it works, don't ask me why)"
+  MessageBox MB_OK|MB_ICONSTOP "I'm unable to determine the startmenu-folder, sorry. THIS IS A KNOWN BUG. If you can reproduce it, please post information to the FreeOrion Forum (www.freeorion.org/forum). Quitting. (Try to rename the installer, sometimes it works, don't ask me why)"
   Quit
  no_bug:
 !macroend
@@ -114,10 +115,10 @@ var ICONS_GROUP
 ; Finish page
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 ;!define MUI_FINISHPAGE_RUN "$INSTDIR\freeorion.exe"
-!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\RELEASE-NOTES-V01.txt"
+!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\RELEASE-NOTES-V02.txt"
 !define MUI_FINISHPAGE_SHOWREADME_TEXT "View Release Notes"
 !define MUI_FINISHPAGE_LINK "Visit the FreeOrion Forums"
-!define MUI_FINISHPAGE_LINK_LOCATION "http://www.artclusta.com/bb"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://www.freeorion.org/forum"
 !insertmacro MUI_PAGE_FINISH
 
 ; -------------------------------------------------
@@ -151,8 +152,8 @@ Section "Required files" SecRequired
   SectionIn RO ; this can't be deselected
   SetOutPath "$INSTDIR"
   SetOverwrite on
-  File /r "C:\CVS-export\FreeOrion\default" ; we don't want the CVS directory included, so use an 'export'ed Repository
-  File "..\zlib.dll"
+  File /r "C:\CVS-Export\FreeOrion\default" ; we don't want the CVS directory included, so use an 'export'ed Repository
+  File "..\zlib1.dll"
   File "..\SDL_mixer.dll"
   File "..\SDL.dll"
   File "..\ilut.dll"
@@ -160,13 +161,20 @@ Section "Required files" SecRequired
   File "..\GiGiSDL.dll"
   File "..\GiGiNet.dll"
   File "..\GiGi.dll"
-  File "..\freetype-6.dll"
-  File /oname=freeoriond.exe "freeoriond.exe.stripped"
-  File /oname=freeorionca.exe "freeorionca.exe.stripped"
-  File /oname=freeorion.exe "freeorion.exe.stripped"
+  File "..\log4cpp.dll"
+;  File "..\freetype-6.dll"
+  File "..\freeorion.exe"
+  File "..\freeoriond.exe"
+  File "..\freeorionca.exe"
+  file "..\zlib1.dll"
   File "..\devil.dll"
   File "..\Vera.ttf"
-  File "..\RELEASE-NOTES-V01.txt"
+  File "..\VeraBd.ttf"
+  File "..\VeraIt.ttf"
+  File "..\VeraBI.ttf"
+  File "..\msvcp71.dll" ; do not install them into system folder yet!
+  File "..\msvcr71.dll" ; we would have to do some additional checks
+  File "..\RELEASE-NOTES-V02.txt"
   CreateDirectory "$INSTDIR\save"
   File /oname=License.Vera.txt "..\License.Vera"
 SectionEnd
@@ -178,7 +186,7 @@ SectionEnd
 
 Section -AdditionalIcons
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
-  WriteIniStr "$INSTDIR\FreeOrion Forums.url" "InternetShortcut" "URL" "http://www.artclusta.com/bb"
+  WriteIniStr "$INSTDIR\FreeOrion Forums.url" "InternetShortcut" "URL" "http://www.freeorion.org/forum"
   SetOutPath "$INSTDIR" ; otherwise Shortcuts might have SOURCEDIR as working directory
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
@@ -217,6 +225,9 @@ Section Uninstall
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
   Delete "$INSTDIR\Vera.ttf"
+  Delete "$INSTDIR\VeraBd.ttf"
+  Delete "$INSTDIR\VeraIt.ttf"
+  Delete "$INSTDIR\VeraBI.ttf"
   Delete "$INSTDIR\License.Vera.txt"
   Delete "$INSTDIR\devil.dll"
   Delete "$INSTDIR\freeorion.exe"
@@ -230,7 +241,8 @@ Section Uninstall
   Delete "$INSTDIR\ilut.dll"
   Delete "$INSTDIR\SDL.dll"
   Delete "$INSTDIR\SDL_mixer.dll"
-  Delete "$INSTDIR\zlib.dll"
+  Delete "$INSTDIR\zlib1.dll"
+  Delete "$INSTDIR\log4cpp.dll"
   Delete "$INSTDIR\*.log"
   RMDir /r "$INSTDIR\default"
   Delete "$SMPROGRAMS\$ICONS_GROUP\*.lnk"
