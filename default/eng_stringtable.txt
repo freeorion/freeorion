@@ -85,6 +85,9 @@ Options
 INTRO_BTN_ABOUT
 About
 
+INTRO_BTN_CREDITS
+Credits
+
 INTRO_BTN_EXIT
 Exit
 
