@@ -55,6 +55,22 @@ namespace {
 }
 
 ///////////////////////////////////////////////////////////
+// Constant                                              //
+///////////////////////////////////////////////////////////
+template <>
+std::string ValueRef::Constant<int>::Description() const
+{
+    return boost::lexical_cast<std::string>(m_value);
+}
+
+template <>
+std::string ValueRef::Constant<double>::Description() const
+{
+    return boost::lexical_cast<std::string>(m_value);
+}
+
+
+///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 template <>
@@ -213,22 +229,41 @@ double ValueRef::Variable<double>::Eval(const UniverseObject* source, const Univ
     } else if (m_property_name.back() == "MaxPopulation") {
         const Meter* m = object->GetMeter(METER_POPULATION);
         retval = m ? m->Max() : 0;
-    } else if (m_property_name.back() == "MoneyStockpile") {
-        // TODO
+    } else if (m_property_name.back() == "TradeStockpile") {
+        if (object->Owners().size() == 1) {
+            Empire* empire = Empires().Lookup(*object->Owners().begin());
+            retval = empire->TradeResPool().Stockpile();
+        }
     } else if (m_property_name.back() == "MineralStockpile") {
-        // TODO
+        if (object->Owners().size() == 1) {
+            Empire* empire = Empires().Lookup(*object->Owners().begin());
+            retval = empire->MineralResPool().Stockpile();
+        }
     } else if (m_property_name.back() == "FoodStockpile") {
-        // TODO
-    } else if (m_property_name.back() == "MoneyProduction") {
-        // TODO
+        if (object->Owners().size() == 1) {
+            Empire* empire = Empires().Lookup(*object->Owners().begin());
+            retval = empire->FoodResPool().Stockpile();
+        }
+    } else if (m_property_name.back() == "TradeProduction") {
+        if (const ProdCenter* prod_center = dynamic_cast<const ProdCenter*>(object)) {
+            retval = prod_center->TradePoints();
+        }
     } else if (m_property_name.back() == "FoodProduction") {
-        // TODO
+        if (const ProdCenter* prod_center = dynamic_cast<const ProdCenter*>(object)) {
+            retval = prod_center->FarmingPoints();
+        }
     } else if (m_property_name.back() == "MineralProduction") {
-        // TODO
+        if (const ProdCenter* prod_center = dynamic_cast<const ProdCenter*>(object)) {
+            retval = prod_center->MiningPoints();
+        }
     } else if (m_property_name.back() == "IndustryProduction") {
-        // TODO
-    } else if (m_property_name.back() == "ScienceProduction") {
-        // TODO
+        if (const ProdCenter* prod_center = dynamic_cast<const ProdCenter*>(object)) {
+            retval = prod_center->IndustryPoints();
+        }
+    } else if (m_property_name.back() == "ResearchProduction") {
+        if (const ProdCenter* prod_center = dynamic_cast<const ProdCenter*>(object)) {
+            retval = prod_center->ResearchPoints();
+        }
     } else {
         throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type double.");
     }

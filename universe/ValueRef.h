@@ -2,6 +2,12 @@
 #ifndef _ValueRef_h_
 #define _ValueRef_h_
 
+#include "../util/MultiplayerCommon.h"
+
+#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
+
 #include <string>
 #include <vector>
 
@@ -25,6 +31,7 @@ namespace ValueRef {
         DIVIDES,
         NEGATE
     };
+    template <class T> bool ConstantExpr(const ValueRefBase<T>* expr);
 }
 
 /** the base class for all ValueRef classes.  This class provides the public interface for a ValueRef expression tree. */
@@ -33,6 +40,7 @@ struct ValueRef::ValueRefBase
 {
     virtual ~ValueRefBase() {} ///< virtual dtor
     virtual T Eval(const UniverseObject* source, const UniverseObject* target) const = 0; ///< evaluates the expression tree and return the results
+    virtual std::string Description() const = 0;
 };
 
 /** the constant value leaf ValueRef class. */
@@ -40,7 +48,11 @@ template <class T>
 struct ValueRef::Constant : public ValueRef::ValueRefBase<T>
 {
     Constant(T value); ///< basic ctor
+
+    T Value() const;
+
     virtual T Eval(const UniverseObject* source, const UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     T m_value;
@@ -53,7 +65,12 @@ struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
     /** basic ctor.  If \a source_ref is true, the field corresponding to \a property_name is read from the 
         \a source parameter of Eval; otherwise, the same field is read from Eval's \a target parameter. */
     Variable(bool source_ref, const std::string& property_name);
+
+    bool SourceRef() const;
+    const std::vector<std::string>& PropertyName() const;
+
     virtual T Eval(const UniverseObject* source, const UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     bool                     m_source_ref;
@@ -68,7 +85,13 @@ struct ValueRef::Operation : public ValueRef::ValueRefBase<T>
     Operation(OpType op_type, const ValueRefBase<T>* operand1, const ValueRefBase<T>* operand2); ///< binary operation ctor
     Operation(OpType op_type, const ValueRefBase<T>* operand); ///< unary operation ctor
     ~Operation(); ///< dtor
+
+    OpType GetOpType() const;
+    const ValueRefBase<T>* LHS() const;
+    const ValueRefBase<T>* RHS() const;
+
     virtual T Eval(const UniverseObject* source, const UniverseObject* target) const;
+    virtual std::string Description() const;
 
 private:
     OpType                 m_op_type;
@@ -89,9 +112,21 @@ ValueRef::Constant<T>::Constant(T value) :
 }
 
 template <class T>
+T ValueRef::Constant<T>::Value() const
+{
+    return m_value;
+}
+
+template <class T>
 T ValueRef::Constant<T>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
     return m_value;
+}
+
+template <class T>
+std::string ValueRef::Constant<T>::Description() const
+{
+    return UserString(boost::lexical_cast<std::string>(m_value));
 }
 
 ///////////////////////////////////////////////////////////
@@ -102,6 +137,29 @@ ValueRef::Variable<T>::Variable(bool source_ref, const std::string& property_nam
     m_source_ref(source_ref),
     m_property_name(detail::TokenizeDottedReference(property_name))
 {
+}
+
+template <class T>
+bool ValueRef::Variable<T>::SourceRef() const
+{
+    return m_source_ref;
+}
+
+template <class T>
+const std::vector<std::string>& ValueRef::Variable<T>::PropertyName() const
+{
+    return m_property_name;
+}
+
+template <class T>
+std::string ValueRef::Variable<T>::Description() const
+{
+    boost::format formatter(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size())));
+    formatter % UserString(m_source_ref ? "DESC_VAR_SOURCE" : "DESC_VAR_TARGET");
+    for (unsigned int i = 0; i < m_property_name.size(); ++i) {
+        formatter % UserString("DESC_VAR_" + boost::to_upper_copy(m_property_name[i]));
+    }
+    return boost::io::str(formatter);
 }
 
 ///////////////////////////////////////////////////////////
@@ -131,6 +189,24 @@ ValueRef::Operation<T>::~Operation()
 }
 
 template <class T>
+ValueRef::OpType ValueRef::Operation<T>::GetOpType() const
+{
+    return m_op_type;
+}
+
+template <class T>
+const ValueRef::ValueRefBase<T>* ValueRef::Operation<T>::LHS() const
+{
+    return m_operand1;
+}
+
+template <class T>
+const ValueRef::ValueRefBase<T>* ValueRef::Operation<T>::RHS() const
+{
+    return m_operand2;
+}
+
+template <class T>
 T ValueRef::Operation<T>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
     switch (m_op_type) {
@@ -154,6 +230,37 @@ T ValueRef::Operation<T>::Eval(const UniverseObject* source, const UniverseObjec
             break;
     }
 }
+
+template <class T>
+std::string ValueRef::Operation<T>::Description() const
+{
+    std::string retval = m_operand1->Description();
+    switch (m_op_type) {
+    case PLUS:    retval += " + "; break;
+    case MINUS:   retval += " - "; break;
+    case TIMES:   retval += " * "; break;
+    case DIVIDES: retval += " / "; break;
+    case NEGATE:
+        return ("-(" + m_operand1->Description() + ")");
+    }
+    retval += m_operand2->Description();
+    return retval;
+}
+
+// template implementations
+template <class T>
+bool ValueRef::ConstantExpr(const ValueRefBase<T>* expr)
+{
+    assert(expr);
+    if (dynamic_cast<const Constant<T>*>(expr))
+        return true;
+    else if (dynamic_cast<const Variable<T>*>(expr))
+        return false;
+    else if (const Operation<T>* op = dynamic_cast<const Operation<T>*>(expr))
+        return ConstantExpr(op->LHS()) && ConstantExpr(op->RHS());
+    return false;
+}
+
 
 inline std::pair<std::string, std::string> ValueRefRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
