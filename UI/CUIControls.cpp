@@ -1,10 +1,12 @@
 //CUIControls.cpp
 
 #include "CUIControls.h"
+
 #include "CUIDrawUtil.h"
 #include "GGApp.h"
 #include "GGDrawUtil.h"
 #include "GGStaticGraphic.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -13,7 +15,35 @@
 // class CUIButton
 ///////////////////////////////////////
 namespace {
-const int CUIBUTTON_ANGLE_OFFSET = 5;
+    const int CUIBUTTON_ANGLE_OFFSET = 5;
+    const int COLOR_SELECTOR_WIDTH = 75;
+    const int COLOR_SQUARE_HEIGHT = 10;
+
+    // row type used in the EmpireColorSelector
+    struct ColorRow : public GG::ListBox::Row
+    {
+        struct ColorSquare : GG::Control
+        {
+            ColorSquare(const GG::Clr& color, int h) : 
+                GG::Control(0, 0, COLOR_SELECTOR_WIDTH - 40, h, 0)
+            {
+                SetColor(color);
+            }
+
+            virtual bool Render()
+            {
+                GG::Pt ul = UpperLeft(), lr = LowerRight();
+                GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, Color(), GG::CLR_ZERO, 0);
+                return true;
+            }
+        };
+
+        ColorRow(const GG::Clr& color, int h = COLOR_SQUARE_HEIGHT)
+        {
+            push_back(new ColorSquare(color, h));
+        }
+    };
+
 }
 
 CUIButton::CUIButton(int x, int y, int w, const std::string& str, const std::string& font_filename/* = ClientUI::FONT*/, 
@@ -697,3 +727,40 @@ void StatisticIcon::Refresh()
     SetValue(m_value);
     m_text->SetColor(m_value < 0.0 ? m_negative_color : m_positive_color);
 }
+
+///////////////////////////////////////
+// class EmpireColorSelector
+///////////////////////////////////////
+EmpireColorSelector::EmpireColorSelector(int h) : 
+    CUIDropDownList(0, 0, COLOR_SELECTOR_WIDTH, h, 5 * h)
+{
+    const std::vector<GG::Clr>& colors = EmpireColors();
+    for (unsigned int i = 0; i < colors.size(); ++i) {
+        Insert(new ColorRow(colors[i], h - 2));
+    }
+    Connect(SelChangedSignal(), &EmpireColorSelector::SelectionChanged, this);
+}
+
+GG::Clr EmpireColorSelector::CurrentColor() const
+{
+    return (*CurrentItem())[0]->Color();
+}
+
+void EmpireColorSelector::SelectColor(const GG::Clr& clr)
+{
+    Select(0);
+    const std::vector<GG::Clr>& colors = EmpireColors();
+    for (unsigned int i = 0; i < colors.size(); ++i) {
+        if (colors[i] == clr) {
+            Select(i);
+            break;
+        }
+    }
+}
+
+void EmpireColorSelector::SelectionChanged(int i)
+{
+    const std::vector<GG::Clr>& colors = EmpireColors();
+    color_changed_sig(colors[i]);
+}
+

@@ -307,16 +307,20 @@ struct CUISimpleDropDownListRow : public GG::ListBox::Row
 class StatisticIcon : public GG::Control
 {
 public:
-    /** default ctor */
+    /** \name Structors */ //@{
     StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color, double value, 
                   int decimals_to_show = 0, bool show_sign = false);
+    //@}
 
+    /** \name Accessors */ //@{
     double  Value() const         {return m_value;}            ///< returns the value displayed
     int     DecimalsShown() const {return m_decimals_to_show;} ///< returns the number of places after the decimal point to be shown
     bool    ShowsSign() const     {return m_show_sign;}        ///< returns true iff a sign should always be shown, even for positive values
     GG::Clr PositiveColor() const {return m_positive_color;}   ///< returns the color that will be used to display positive values
     GG::Clr NegativeColor() const {return m_negative_color;}   ///< returns the color that will be used to display negative values
+    //@}
 
+    /** \name Mutators */ //@{
     bool Render() {return true;}
 
     void SetValue(double value); ///< sets the value to be displayed
@@ -325,6 +329,7 @@ public:
     void ShowSign(bool b)            {m_show_sign = b; Refresh();}        ///< sets whether a sign should always be shown, even for positive values
     void SetPositiveColor(GG::Clr c) {m_positive_color = c; Refresh();}   ///< sets the color that will be used to display positive values
     void SetNegativeColor(GG::Clr c) {m_negative_color = c; Refresh();}   ///< sets the color that will be used to display negative values
+    //@}
 
 private:
     void Refresh();
@@ -338,5 +343,33 @@ private:
     GG::TextControl* m_text;
 };
 
+
+/** A control used to pick from the empire colors returned by EmpireColors(). */
+class EmpireColorSelector : public CUIDropDownList
+{
+public:
+    /** \name Signal Types */ //@{
+    typedef boost::signal<void (const GG::Clr&)> ColorChangedSignalType;
+    //@}
+
+    /** \name Structors */ //@{
+    EmpireColorSelector(int h);
+    //@}
+
+    /** \name Accessors */ //@{
+    GG::Clr CurrentColor() const; ///< returns the color that is currently selected, or GG::CLR_ZERO if none is selected
+    //@}
+
+    /** \name Mutators */ //@{
+    void SelectColor(const GG::Clr& clr);
+
+    ColorChangedSignalType& ColorChangedSignal() const {return color_changed_sig;}
+    //@}
+
+private:
+    void SelectionChanged(int i);
+
+    mutable ColorChangedSignalType color_changed_sig;
+};
 
 #endif
