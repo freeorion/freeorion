@@ -128,13 +128,6 @@ void ClientApp::UpdateTurnData( const GG::XMLDoc &diff )
     // XPatch
     XPatch( new_doc, diff );
 
-#if 0
-    // write patch data for debug
-    std::ofstream output("patch_merge_result.txt");
-    new_doc.WriteDoc(output);
-    output.close();
-#endif
-
     // apply universe
     if (new_doc.root_node.ContainsChild( "Universe" ) )
     {

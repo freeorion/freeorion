@@ -74,6 +74,11 @@ namespace {
         db.Add("autosave.multiplayer", "If true, autosaves will occur during multiplayer games.", false, Validator<bool>());
         db.Add("autosave.turns", "Sets the number of turns that should elapse between autosaves.", 5, RangedValidator<int>(1, 50));
         db.Add("autosave.saves", "Sets the number of autosaved games that should be kept.", 10, RangedValidator<int>(1, 50));
+#if defined(FREEORION_LINUX)
+        db.Add("enable-sdl-event-thread", "Enables creation of a thread dedicated to handling incoming SDL "
+               "messages. This may make FreeOrion more or less responsive, depending on your system.",
+               false, Validator<bool>());
+#endif
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -402,7 +407,10 @@ void HumanClientApp::SDLInit()
 #if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) < 0) {
 #else
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE | SDL_INIT_EVENTTHREAD) < 0) {
+    Uint32 init_flags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE;
+    if (GetOptionsDB().Get<bool>("enable-sdl-event-thread"))
+        init_flags |= SDL_INIT_EVENTTHREAD;
+    if (SDL_Init(init_flags) < 0) {
 #endif
         Logger().errorStream() << "SDL initialization failed: " << SDL_GetError();
         Exit(1);
@@ -637,13 +645,6 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             GG::XMLDoc doc;
             doc.ReadDoc(stream);
 
-#if 0
-            // dump the game start doc
-            std::ofstream output("start_doc.txt");
-            doc.WriteDoc(output);
-            output.close();
-#endif
-
             if (m_single_player_game = doc.root_node.ContainsChild("single_player_game")) {
                 Logger().debugStream() << "Single-Player game";
                 doc.root_node.RemoveChild("single_player_game");
@@ -712,13 +713,6 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         std::stringstream stream(msg.GetText());
         GG::XMLDoc doc;
         doc.ReadDoc(stream);
-
-#if 0
-        // dump the update doc
-        std::ofstream output("update_doc.txt");
-        doc.WriteDoc(output);
-        output.close();
-#endif
 
         turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
 
