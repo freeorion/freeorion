@@ -513,12 +513,13 @@ void ResearchWnd::CenterOnTech(const std::string& tech_name)
 
 void ResearchWnd::UpdateQueue()
 {
+    using boost::tuples::get;
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const Empire::ResearchQueue& queue = empire->GetResearchQueue();
     m_queue_lb->Clear();
     const int QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
     for (Empire::ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
-        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, it->get<0>(), it->get<1>(), it->get<2>()));
+        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, get<0>(*it), get<1>(*it), get<2>(*it)));
     }
 }
 
