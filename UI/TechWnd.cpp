@@ -406,8 +406,8 @@ public:
     mutable boost::signal<void (const Tech*)> QueueTechSignal;
 
 private:
-    void CenterClickedSlot() {CenterOnTechSignal(m_tech);}
-    void AddToQueueClickedSlot() {QueueTechSignal(m_tech);}
+    void CenterClickedSlot() {if (m_tech) CenterOnTechSignal(m_tech);}
+    void AddToQueueClickedSlot() {if (m_tech) QueueTechSignal(m_tech);}
     void Reset();
 
     const Tech*      m_tech;
@@ -420,7 +420,7 @@ private:
 };
 
 TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
-    GG::Wnd(0, 0, w, h),
+    GG::Wnd(0, 0, w, h, 0),
     m_tech(0)
 {
     const int NAME_PTS = ClientUI::PTS + 10;
@@ -431,10 +431,12 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     m_tech_name_text = new GG::TextControl(1, 0, w, NAME_PTS + 4, "", ClientUI::FONT, NAME_PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_category_and_type_text = new GG::TextControl(1, m_tech_name_text->LowerRight().y, w, CATEGORY_AND_TYPE_PTS + 4, "", ClientUI::FONT, CATEGORY_AND_TYPE_PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_cost_text = new GG::TextControl(1, m_category_and_type_text->LowerRight().y, w, COST_PTS + 4, "", ClientUI::FONT, COST_PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
-    m_recenter_button = new CUIButton(w - 1 - 2 * BUTTON_WIDTH - BUTTON_MARGIN, 1, BUTTON_WIDTH, "Center on Tech");
-    m_add_to_queue_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, "Add to Queue");
+    m_add_to_queue_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, UserString("TECH_DETAIL_ADD_TO_QUEUE"));
+    m_recenter_button = new CUIButton(w - 1 - BUTTON_WIDTH, m_add_to_queue_button->LowerRight().y + BUTTON_MARGIN, BUTTON_WIDTH, UserString("TECH_DETAIL_CENTER_ON_TECH"));
     m_recenter_button->Hide();
     m_add_to_queue_button->Hide();
+    m_recenter_button->Disable();
+    m_add_to_queue_button->Disable();
     m_description_box = new CUIMultiEdit(1, m_cost_text->LowerRight().y, w - 2, h - m_cost_text->LowerRight().y - 2, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
 
@@ -458,10 +460,14 @@ void TechTreeWnd::TechDetailPanel::Reset()
     if (!m_tech) {
         m_recenter_button->Hide();
         m_add_to_queue_button->Hide();
+        m_recenter_button->Disable();
+        m_add_to_queue_button->Disable();
         return;
     } else {
         m_recenter_button->Show();
         m_add_to_queue_button->Show();
+        m_recenter_button->Disable(false);
+        m_add_to_queue_button->Disable(false);
     }
     m_tech_name_text->SetText(UserString(m_tech->Name()));
     using boost::io::str;
@@ -568,18 +574,14 @@ void TechTreeWnd::TechNavigator::Reset()
         return;
 
     const std::set<std::string>& prereqs = m_current_tech->Prerequisites();
-    if (!prereqs.empty()) {
-        m_lb->Insert(NewSectionHeaderRow(UserString("TECH_WND_REQUIRES")));
-        for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
-            m_lb->Insert(NewTechRow(GetTech(*it)));
-        }
+    m_lb->Insert(NewSectionHeaderRow(UserString("TECH_WND_REQUIRES")));
+    for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
+        m_lb->Insert(NewTechRow(GetTech(*it)));
     }
     const std::set<std::string>& unlocks = m_current_tech->UnlockedTechs();
-    if (!unlocks.empty()) {
-        m_lb->Insert(NewSectionHeaderRow(UserString("TECH_WND_UNLOCKS")));
-        for (std::set<std::string>::const_iterator it = unlocks.begin(); it != unlocks.end(); ++it) {
-            m_lb->Insert(NewTechRow(GetTech(*it)));
-        }
+    m_lb->Insert(NewSectionHeaderRow(UserString("TECH_WND_UNLOCKS")));
+    for (std::set<std::string>::const_iterator it = unlocks.begin(); it != unlocks.end(); ++it) {
+        m_lb->Insert(NewTechRow(GetTech(*it)));
     }
 }
 
@@ -715,6 +717,7 @@ public:
 
     /** \name Accessors */ //@{
     virtual GG::Pt ClientLowerRight() const;
+    virtual void   LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
 
     const std::string&           CategoryShown() const;
     TechTreeWnd::TechTypesShown  GetTechTypesShown() const;
@@ -1051,6 +1054,12 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
 GG::Pt TechTreeWnd::LayoutPanel::ClientLowerRight() const
 {
     return LowerRight() - GG::Pt(ClientUI::SCROLL_WIDTH, ClientUI::SCROLL_WIDTH);
+}
+
+void TechTreeWnd::LayoutPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
+{
+    m_vscroll->ScrollTo(m_vscroll->PosnRange().first - move.y);
+    m_hscroll->ScrollTo(m_hscroll->PosnRange().first - move.x);
 }
 
 const std::string& TechTreeWnd::LayoutPanel::CategoryShown() const
