@@ -22,6 +22,9 @@ public:
     virtual int Keypress (GG::Key key, Uint32 key_mods);
     //@}
 
+protected:
+    virtual int MinimizedLength() const;//!< the width of a minimized InGameOptions wnd
+
 private:
     void Init();          //!< Attaches children and connects signals
     void Save();        //!< when m_save_btn button is pressed

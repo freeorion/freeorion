@@ -35,12 +35,17 @@ InGameOptions::InGameOptions():
     m_quit_btn = new CUIButton(30,120,75,ClientUI::String("INGAMEOPTIONS_QUIT"));
     m_done_btn = new CUIButton(30,180,75,ClientUI::String("DONE"));
 
+    // call to InGameOptions::MinimizedLength() because MinimizedLength is virtual
+    SetMinDimensions(GG::Pt(InGameOptions::MinimizedLength(),MinDimensions().y));
     Init(); //attaches children and connects signals to slots
 }
 
 InGameOptions::~InGameOptions()
 {
 }
+
+int InGameOptions::MinimizedLength() const
+{ return 135;}
 
 int InGameOptions::Render()
 {
