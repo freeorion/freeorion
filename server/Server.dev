@@ -1,7 +1,7 @@
 [Project]
 FileName=Server.dev
 Name=Server
-UnitCount=61
+UnitCount=63
 Type=1
 Ver=1
 ObjFiles=
@@ -25,7 +25,7 @@ CommandLine=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001001001000
+CompilerSettings=0000000000100001000
 UseCustomMakefile=0
 CustomMakefile=
 
@@ -598,9 +598,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit62]
-FileName=..\Empire\Empire.cpp
+FileName=..\util\GZStream.cpp
 CompileCpp=1
-Folder=empire
+Folder=util
 Compile=1
 Link=1
 Priority=1000
@@ -608,9 +608,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit63]
-FileName=..\Empire\Empire.h
+FileName=..\util\GZStream.h
 CompileCpp=1
-Folder=empire
+Folder=util
 Compile=1
 Link=1
 Priority=1000

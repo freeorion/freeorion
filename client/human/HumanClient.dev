@@ -4350,7 +4350,7 @@ CommandLine=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001001001000
+CompilerSettings=0000000000100001000
 UseCustomMakefile=0
 CustomMakefile=
 
