@@ -167,6 +167,8 @@ AC_CACHE_SAVE
 FAILED=no
 YG_GET_PATH(boost)
 YG_CHECK_BOOST([1.3.0],,[FAILED=yes])
+AC_LANG(C++)
+AC_CHECK_HEADER([boost/graph/adjacency_list.hpp],[],[FAILED=yes])
 #AC_CHECK_LIB(boost_regex,main,[],[FAILED=yes])
 AC_CHECK_LIB(boost_filesystem,main,[],[FAILED=yes])
 AC_CHECK_LIB(boost_signals,main,[],[FAILED=yes])
@@ -177,6 +179,7 @@ if test $FAILED = yes; then
 ** as well as the following boost-modules:
 ** - boost.filesystem
 ** - boost.signals
+** - boost.graph
 ** download them from http://www.boost.org])
 fi
 
