@@ -186,7 +186,7 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
             m_new_connections.push_back(PlayerInfo(socket, *addr));
             ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::HandleNetEvent : Now connected to client at " <<
                (socket_hostname ? socket_hostname : "[unknown host]") << ", on socket " << socket << ".";
-            SendMessage(Message(Message::SERVER_STATUS, -1, -1, Message::CORE, ServerApp::GetApp()->ServerStatus()),
+            SendMessage(Message(Message::SERVER_STATUS, -1, -1, Message::CORE, ServerApp::GetApp()->ServerStatusDoc()),
                         socket, "ServerNetworkCore");
          } else { // oops. unknown port
             ServerApp::GetApp()->Logger().error("ServerNetworkCore::HandleNetEvent : Somehow we accepted a TCP connection "
@@ -227,13 +227,15 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
                incoming_msg += packet->data[i];
             if (incoming_msg == SERVER_FIND_QUERY_MSG) {
                NET2_ResolveHost(&return_address, const_cast<char*>(ToString(packet->address).c_str()), NetworkCore::SERVER_FIND_RESPONSE_PORT);
-               if (NET2_UDPSend(&return_address, const_cast<char*>(NetworkCore::SERVER_FIND_YES_MSG.c_str()), 
-                                NetworkCore::SERVER_FIND_YES_MSG.size()) == -1) {
-                  const char* err_msg = NET2_GetError();
-                  ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::HandleNetEvent : Call to "
-                      "NET2_UDPSend() failed; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
-               } else {
-                  ServerApp::GetApp()->Logger().debug("ServerNetworkCore::HandleNetEvent : Sent IP address to requsting host.");
+               if (bool available = ServerApp::GetApp()->State() == SERVER_MP_LOBBY || ServerApp::GetApp()->State() == SERVER_GAME_SETUP) {
+                   if (NET2_UDPSend(&return_address, const_cast<char*>(NetworkCore::SERVER_FIND_YES_MSG.c_str()), 
+                                    NetworkCore::SERVER_FIND_YES_MSG.size()) == -1) {
+                       const char* err_msg = NET2_GetError();
+                       ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::HandleNetEvent : Call to "
+                           "NET2_UDPSend() failed; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
+                   } else {
+                       ServerApp::GetApp()->Logger().debug("ServerNetworkCore::HandleNetEvent : Sent IP address to requsting host.");
+                   }
                }
             } else {
                 ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::HandleNetEvent : Received unknown UDP packet type "

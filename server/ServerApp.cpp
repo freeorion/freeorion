@@ -31,7 +31,7 @@ struct LobbyModeData
     {}
 
     int                      galaxy_size; // number of stars
-    Universe::Shape    galaxy_type;
+    Universe::Shape          galaxy_type;
     std::string              galaxy_image_filename;
 
     std::vector<AISetupData> AIs;
@@ -99,7 +99,7 @@ ServerApp::~ServerApp()
 	log4cpp::Category::shutdown();
 }
 
-GG::XMLDoc ServerApp::ServerStatus() const
+GG::XMLDoc ServerApp::ServerStatusDoc() const
 {
     GG::XMLDoc retval;
     GG::XMLElement elem("server_state");
@@ -247,7 +247,7 @@ void ServerApp::HandleMessage(const Message& msg)
             }
             m_state = SERVER_DYING;
             m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_DYING << " (SERVER_DYING).";
-            m_network_core.SendMessage(Message(Message::SERVER_STATUS, -1, msg.Sender(), Message::CORE, ServerStatus()));
+            m_network_core.SendMessage(Message(Message::SERVER_STATUS, -1, msg.Sender(), Message::CORE, ServerStatusDoc()));
             m_network_core.DumpAllConnections();
             Exit(0);
         }
