@@ -31,8 +31,11 @@
 
 #include <ctime>
 
-// define this as nonzero to save games in gzip-compressed form; define this as zero when this is inconvenient, such as when testing and debugging
-#define GZIP_SAVE_FILES 0
+// The compression level of savegames. Range 0-9.
+// define this as nonzero to save games in gzip-compressed form;
+// define this as zero when this is inconvenient, such as when testing
+// and debugging
+#define GZIP_SAVE_FILES_COMPRESSION_LEVEL 0
 
 
 struct PlayerSetupData
@@ -121,11 +124,7 @@ namespace {
             save_game_empire_data.clear();
             if (0 <= save_file && save_file < static_cast<int>(save_games.size())) {
                 GG::XMLDoc doc;
-#if GZIP_SAVE_FILES
                 GZStream::igzstream ifs((SAVE_DIR_NAME + save_games[save_file]).c_str());
-#else
-                std::ifstream ifs((SAVE_DIR_NAME + save_games[save_file]).c_str());
-#endif
                 doc.ReadDoc(ifs);
                 ifs.close();
 
@@ -330,11 +329,7 @@ void ServerApp::HandleMessage(const Message& msg)
 
                     std::string load_filename = g_lobby_data;
                     GG::XMLDoc doc;
-#if GZIP_SAVE_FILES
                     GZStream::igzstream ifs(load_filename.c_str());
-#else
-                    std::ifstream ifs(load_filename.c_str());
-#endif
                     doc.ReadDoc(ifs);
                     ifs.close();
 
@@ -480,17 +475,14 @@ void ServerApp::HandleMessage(const Message& msg)
                     doc.root_node.AppendChild(player_element);
                 }
                 doc.root_node.AppendChild(m_universe.XMLEncode(Universe::ALL_EMPIRES));
-#if GZIP_SAVE_FILES
+
                 GZStream::ogzstream ofs(save_filename.c_str());
                 /* For now, we use the standard compression settings,
 	                but later we could let the compression settings be
 	                customizable in the save-dialog */
                 // The default is: ofs.set_gzparams(6, Z_DEFAULT_STRATEGY);
+		ofs.set_gzparams(GZIP_SAVE_FILES_COMPRESSION_LEVEL, Z_DEFAULT_STRATEGY);
                 doc.WriteDoc(ofs, false);
-#else
-                std::ofstream ofs(save_filename.c_str());
-                doc.WriteDoc(ofs);
-#endif
                 ofs.close();
                 m_network_core.SendMessage(ServerSaveGameMessage(msg.Sender(), true));
             }
@@ -509,11 +501,7 @@ void ServerApp::HandleMessage(const Message& msg)
 
             std::string load_filename = msg.GetText();
             GG::XMLDoc doc;
-#if GZIP_SAVE_FILES
             GZStream::igzstream ifs(load_filename.c_str());
-#else
-            std::ifstream ifs(load_filename.c_str());
-#endif
             doc.ReadDoc(ifs);
             ifs.close();
 
