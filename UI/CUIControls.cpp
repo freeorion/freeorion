@@ -54,6 +54,13 @@ namespace {
 #endif
     }
 
+    void PlayDropDownListOpenSound()
+    {
+#ifndef FREEORION_BUILD_UTIL
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"));
+#endif
+    }
+
     void PlayItemDropSound(int, const boost::shared_ptr<GG::ListBox::Row>&)
     {
 #ifndef FREEORION_BUILD_UTIL
@@ -755,6 +762,13 @@ bool CUIDropDownList::Render()
                           color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
 
     return true;
+}
+
+void CUIDropDownList::LClick(const GG::Pt& pt, Uint32 keys)
+{
+    if (!Disabled())
+        PlayDropDownListOpenSound();
+    DropDownList::LClick(pt, keys);
 }
 
 void CUIDropDownList::DisableDropArrow()

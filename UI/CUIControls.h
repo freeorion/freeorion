@@ -260,6 +260,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual bool   Render();
+    virtual void   LClick(const GG::Pt& pt, Uint32 keys);
 
     void DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
     void EnableDropArrow();   ///< enables rendering of the small downward-facing arrow on the right of the control
