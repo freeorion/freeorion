@@ -61,63 +61,78 @@ MapWnd::MapWnd() :
     //REMOVE THIS WHEN THE SERVER STARTS GIVING US UNIVERSE DATA!!
     UniverseObject* temp_object = new System(System::YELLOW, 0, "Utilae", 10.0, 10.0);   
     g_temp_objects.push_back(temp_object);
+ 
     
     temp_object = new System(System::RED_DWARF, 0, "Tsev", 1.0, 1.0);   
     g_temp_objects.push_back(temp_object);
     
+    
     temp_object = new System(System::YELLOW, 0, "Aquitaine", 3.0, 5.0);   
     g_temp_objects.push_back(temp_object);
+
     
     temp_object = new System(System::RED_GIANT, 0, "Nightfish", 3.0, 2.0);   
     g_temp_objects.push_back(temp_object);
     
+    
     temp_object = new System(System::YELLOW, 0, "Tzlaine", 69.0, 70.0);   
     g_temp_objects.push_back(temp_object);
+    
     
     temp_object = new System(System::RED_GIANT, 0, "Drektopia", 8.0, 12.0);   
     g_temp_objects.push_back(temp_object);
     
+    
     temp_object = new System(System::RED_DWARF, 0, "Burndaddy", 10.0, 13.0);   
     g_temp_objects.push_back(temp_object);
+    
     
     temp_object = new System(System::RED_GIANT, 0, "Ocean Machine", 150.0, 190.0);   
     g_temp_objects.push_back(temp_object);
     
+    
     temp_object = new System(System::YELLOW, 0, "Tyreth", 900.0, 900.0);
     g_temp_objects.push_back(temp_object);
+    
     
     temp_object = new System(System::RED_DWARF, 0, "PK", 900.0, 10.0);
     g_temp_objects.push_back(temp_object);
     
+    
     temp_object = new System(System::RED_DWARF, 0, "Jbarcz1", 3.0, 900.0);
     g_temp_objects.push_back(temp_object);
+    
     
     temp_object = new System(System::YELLOW, 0, "Orion", 500.0, 500.0);
     g_temp_objects.push_back(temp_object);
     
+    
     temp_object = new System(System::YELLOW, 0, "Neuromancer", 350.0, 10.0);
     g_temp_objects.push_back(temp_object);
+   
     
     temp_object = new System(System::YELLOW, 0, "Mr. Ed", 735.0, 6.0);
     g_temp_objects.push_back(temp_object);
+   
     
     temp_object = new System(System::YELLOW, 0, "Yoghurt", 600.0, 13.0);
     g_temp_objects.push_back(temp_object);
     
+    
     //set up background images
-    m_background[0] = new GG::Texture();
+    m_background[0] = boost::shared_ptr<GG::Texture>(new GG::Texture());
     m_background[0]->Load(ClientUI::ART_DIR+"starfield1.png");
     m_bg_position_X[0] = 10.0;
     m_bg_position_Y[0] = 10.0;
     m_bg_scroll_rate[0] = 0.5;
     
-    m_background[1] = new GG::Texture();
+    m_background[1] = boost::shared_ptr<GG::Texture>(new GG::Texture());
     m_background[1]->Load(ClientUI::ART_DIR+"starfield2.png");
     m_bg_position_X[1] = 10.0;
     m_bg_position_Y[1] = 10.0;
     m_bg_scroll_rate[1] = 0.25;
     
-    m_background[2] = new GG::Texture();
+    m_background[2] = boost::shared_ptr<GG::Texture>(new GG::Texture());
     m_background[2]->Load(ClientUI::ART_DIR+"starfield3.png");
     m_bg_position_X[2] = 10.0;
     m_bg_position_Y[2] = 10.0;
@@ -142,7 +157,10 @@ void MapWnd::InitTurn()
     int count=0;
     for(pos=g_temp_objects.begin(); pos != g_temp_objects.end(); ++pos)
     {
-        AttachChild(new SystemIcon(count));
+        SystemIcon* temp;
+        AttachChild(temp = new SystemIcon(count));
+        //connect signals
+        GG::Connect(temp->LeftClickedSignal(), &MapWnd::SelectSystem, this);
         ++count;
     }
     
@@ -277,5 +295,17 @@ void MapWnd::MoveBackgrounds(const GG::Pt& move)
     
         m_bg_position_X[i] += move_x;
         m_bg_position_Y[i] += move_y;    
+    }
+}
+
+void MapWnd::SelectSystem(int systemID)
+{
+    //this function gets called when any system emits a signal
+    //log this for debugging purposes
+    HumanClientApp::GetApp()->Logger().debug("Clicked a system!");
+    //all this should do is emit its own signal
+    if(!ClientUI::GetClientUI()->Frozen())
+    {
+        m_selected_system_signal(systemID);    //emit the signal
     }
 }

@@ -12,6 +12,10 @@
 #include "GGTexture.h"
 #endif
 
+#ifndef _ClientUI_h_
+#include "ClientUI.h"
+#endif
+
 #define GMAP_NUM_BACKGROUNDS 3
 
 class SystemIcon;
@@ -37,6 +41,13 @@ public:
         POPULATION_ICON     = 5
     };
     
+    //! \name Signal Types //!@{
+    typedef boost::signal<void (int)> SelectedSystemSignalType; //!< emitted when the user selects a star system
+    //!@}
+    //! \name Slot Types //!@{
+    typedef SelectedSystemSignalType::slot_type SelectedSystemSlotType; //!< type of functor invoked when the user selects a star system
+    //!@}
+    
 public:
 
     //! \name Structors //!@{
@@ -53,6 +64,10 @@ public:
     virtual int Render();    //!< custom rendering code
     void InitTurn();        //!< called at the start of each turn by
     virtual int LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys); //!< override this code so we don't drag too far
+    
+    SelectedSystemSignalType& SelectedSystemSignal() {return m_selected_system_signal; }
+    
+    void SelectSystem(int systemID); //!< catches emitted signals from the system icons
     //!@}
 
 private:
@@ -65,7 +80,7 @@ private:
 private:
     //! \name Background Data Storage //!@{
     // TODO: Convert this to a "Background" class
-    GG::Texture*    m_background[GMAP_NUM_BACKGROUNDS];  //!< array, 3 layers of backgrounds
+    boost::shared_ptr<GG::Texture>    m_background[GMAP_NUM_BACKGROUNDS];  //!< array, 3 layers of backgrounds
     float           m_bg_scroll_rate[GMAP_NUM_BACKGROUNDS]; //!< array, the rates at which each background scrolls
     float           m_bg_position_X[GMAP_NUM_BACKGROUNDS]; //!< array, the X position of the first full background image
     float           m_bg_position_Y[GMAP_NUM_BACKGROUNDS]; //!< array, the Y positions of the backgrounds
@@ -74,6 +89,11 @@ private:
     StarControlVec  m_stars;          //! a vector of StarControls
     
     IconVec         m_icons;          //! a list of icons
+    
+    //! \name Signals //!@{
+    SelectedSystemSignalType m_selected_system_signal;
+    
+    //!@}
 
 friend class GalaxyMapScreen;    //this is basically a part of that screen anyway
 };
