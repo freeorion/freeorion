@@ -870,7 +870,7 @@ void ServerApp::Run()
 {
     try {
         SDLInit();
-        Initialize();
+	Initialize();
         while (1)
             Poll();
     } catch (const std::invalid_argument& exception) {
@@ -884,7 +884,7 @@ void ServerApp::Run()
 
 void ServerApp::SDLInit()
 {
-#ifndef FREEORION_WIN32
+#ifdef FREEORION_LINUX
     // Dirty hack to active the dummy video handler of SDL; if the user has already set SDL_VIDEODRIVER, we'll trust him
     if (getenv("SDL_VIDEODRIVER") == NULL) {
         putenv("SDL_VIDEODRIVER=dummy");
