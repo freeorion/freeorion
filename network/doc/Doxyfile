@@ -57,7 +57,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ..
+INPUT                  = .. \
+                         ./NetworkDoc.txt
 FILE_PATTERNS          = 
 RECURSIVE              = YES
 EXCLUDE                = 
