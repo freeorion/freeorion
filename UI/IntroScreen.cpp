@@ -13,8 +13,8 @@
 #include "GGTexture.h"
 #include "../network/Message.h"
 #include "MultiplayerLobbyWnd.h"
-#include "ServerConnectWnd.h"
 #include "../util/OptionsDB.h"
+#include "ServerConnectWnd.h"
 
 #include <cstdlib>
 #include <string>
@@ -35,7 +35,7 @@ bool foo_bool = RegisterOptions(&Options);
 
 
 IntroScreen::IntroScreen() :
-    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024 + 300) / 2, 300, 200, 400, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | CUI_Wnd::CLOSABLE)
+    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024 + 300) / 2, 300, 200, 340, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | CUI_Wnd::CLOSABLE)
 {
     //create staticgraphic from the image
     m_bg_graphic = new GG::StaticGraphic(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), 
@@ -45,13 +45,15 @@ IntroScreen::IntroScreen() :
     //create buttons
     m_single_player = new CUIButton(20, 30, 160, ClientUI::String("INTRO_BTN_SINGLE_PLAYER"));
     m_multi_player = new CUIButton(20, 70, 160, ClientUI::String("INTRO_BTN_MULTI_PLAYER"));
-    m_options = new CUIButton(20, 110, 160, ClientUI::String("INTRO_BTN_OPTIONS"));
-    m_about = new CUIButton(20, 150, 160, ClientUI::String("INTRO_BTN_ABOUT"));
-    m_exit_game = new CUIButton(20, 190, 160, ClientUI::String("INTRO_BTN_EXIT"));
+    m_load_game = new CUIButton(20, 110, 160, ClientUI::String("INTRO_BTN_LOAD_GAME"));
+    m_options = new CUIButton(20, 150, 160, ClientUI::String("INTRO_BTN_OPTIONS"));
+    m_about = new CUIButton(20, 190, 160, ClientUI::String("INTRO_BTN_ABOUT"));
+    m_exit_game = new CUIButton(20, 230, 160, ClientUI::String("INTRO_BTN_EXIT"));
     
     //attach buttons
     AttachChild(m_single_player);
     AttachChild(m_multi_player);
+    AttachChild(m_load_game);
     AttachChild(m_options);
     AttachChild(m_about);
     AttachChild(m_exit_game);
@@ -59,6 +61,7 @@ IntroScreen::IntroScreen() :
     //connect signals and slots
     GG::Connect(m_single_player->ClickedSignal(), &IntroScreen::OnSinglePlayer, this);
     GG::Connect(m_multi_player->ClickedSignal(), &IntroScreen::OnMultiPlayer, this);
+    GG::Connect(m_load_game->ClickedSignal(), &IntroScreen::OnLoadGame, this);
     GG::Connect(m_options->ClickedSignal(), &IntroScreen::OnOptions, this);
     GG::Connect(m_about->ClickedSignal(), &IntroScreen::OnAbout, this);
     GG::Connect(m_exit_game->ClickedSignal(), &IntroScreen::OnExitGame, this);
@@ -91,7 +94,7 @@ void IntroScreen::OnSinglePlayer()
     bool failed = false;
     Hide();
 
-    if (!GetOptionsDB().Get<bool>("force-external-server"))//HumanClientApp::s_external_server)
+    if (!GetOptionsDB().Get<bool>("force-external-server"))
         HumanClientApp::GetApp()->StartServer();
     GalaxySetupWnd galaxy_wnd;    
     galaxy_wnd.Run();
@@ -153,7 +156,7 @@ void IntroScreen::OnMultiPlayer()
         } else {
             std::string server_name = server_connect_wnd.Result().second;
             if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
-                if (!GetOptionsDB().Get<bool>("force-external-server"))//HumanClientApp::s_external_server)
+                if (!GetOptionsDB().Get<bool>("force-external-server"))
                     HumanClientApp::GetApp()->StartServer();
                 server_name = "localhost";
             }
@@ -184,6 +187,13 @@ void IntroScreen::OnMultiPlayer()
     }
 }
 
+void IntroScreen::OnLoadGame()
+{  
+    Hide();
+    if (!HumanClientApp::GetApp()->LoadSinglePlayerGame())
+        Show();
+}
+
 void IntroScreen::OnOptions()
 {
 }
@@ -207,4 +217,4 @@ int IntroScreen::Keypress (GG::Key key, Uint32 key_mods)
       OnExitGame();
     }
     return 1;
-}//Keypress()
+}

@@ -28,31 +28,31 @@ public:
     //!@}
 
     /** \name Accessors*/ //!@{
+    virtual GG::XMLElement XMLEncode() const;   //!< load from XML element
     //!@}
 
     /** \name Mutators*/ //!@{
-    void OnSinglePlayer();  //!< called when m_single_player is clicked
-    void OnMultiPlayer();   //!< called when m_multi_player is clicked
-    void OnOptions();    //!< called when m_options is clicked
-    void OnAbout();    //!< called when m_about is clicked
-    void OnExitGame();    //!< called when m_exit_game is clicked
+    void OnSinglePlayer();  //!< called when single player is clicked
+    void OnMultiPlayer();   //!< called when multi player is clicked
+    void OnLoadGame();      //!< called when load game is clicked
+    void OnOptions();       //!< called when options is clicked
+    void OnAbout();         //!< called when about is clicked
+    void OnExitGame();      //!< called when exit_game is clicked
     virtual int Keypress (GG::Key key, Uint32 key_mods);
     
-    virtual void Close() {OnExitGame();}    //!< override to exit the game 
+    virtual void Close() {OnExitGame();} //!< override to exit the game 
     //!@}
-
-    virtual GG::XMLElement XMLEncode() const;    //!< load from XML element
 
 private:
     /** \name GG Controls*/ //!@{
     GG::StaticGraphic* m_bg_graphic; //!< the background image shown in the intro screen
-    CUIButton* m_single_player;    //!< opens up the single player game dialog
-    CUIButton* m_multi_player;    //!< opens up the multi player game dialog
-    CUIButton* m_options;	//!< opens the options dialog
-    CUIButton* m_about;	//!< opens a dialog to choose to see credits or license
-    CUIButton* m_exit_game;    //!< button that exits the program
+    CUIButton* m_single_player;      //!< opens up the single player game dialog
+    CUIButton* m_multi_player;       //!< opens up the multi player game dialog
+    CUIButton* m_load_game;          //!< loads a saved single player game
+    CUIButton* m_options;	         //!< opens the options dialog
+    CUIButton* m_about;	             //!< opens a dialog to choose to see credits or license
+    CUIButton* m_exit_game;          //!< button that exits the program
     //!@}
-
 };
 
 #endif
