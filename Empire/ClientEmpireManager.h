@@ -51,8 +51,8 @@ public:
 
     //@}
 
-protected:
-    // nothing yet
+private:
+    GG::XMLElement m_last_turn_empire_state;
     
 };
 

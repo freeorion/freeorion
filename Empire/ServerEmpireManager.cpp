@@ -4,23 +4,18 @@
 
 #include <stdexcept>
 
+#ifndef __XDIFF__
+#include "../network/XDiff.hpp"
+#endif
+
 ServerEmpireManager::ServerEmpireManager() :
+    EmpireManager(),
     m_next_id(1)
 {
     // nothing to do yet
 }
 
-/** 
-   Creates an empire with the specified properties and
-   returns a pointer to it, after setting it up.
-   homeID is the ID of the planet which is the empire's homeworld
-   the empire will be created, and the given planetID added to its
-   list of owned planets.
-   this will only set up the data in Empire.  It is the caller's 
-   responsibility to make sure that universe updates planet ownership.
-   I do this because GameCore may want to call this under a variety of
-   circumstances, and I do not want it to be too specific.
-*/
+
 Empire* ServerEmpireManager::CreateEmpire(const std::string& name, 
                                    const GG::Clr& color, 
                                    int planetID, 
@@ -30,65 +25,86 @@ Empire* ServerEmpireManager::CreateEmpire(const std::string& name,
     m_next_id++;
     emp->AddPlanet(planetID);
     
+    // add a dummy empire update to the map, so that when 
+    // the first empire update is produced, we have something to diff with
+    GG::XMLElement state_init (EmpireManager::EMPIRE_UPDATE_TAG, std::string(""));
+    m_last_turn_empire_states.insert(std::pair<int, GG::XMLElement>(emp->EmpireID(), state_init));
+    
     InsertEmpire(emp);
     
     return emp;
 }
 
 
-/**
-  removes all traces of the empire with the given ID.
-  and deallocates that empire.  Pointers, references, and iterators
-  to that empire will be invalidated.
-  
-  Nothing happens if an empire with the specified ID does not exist.
-  
-  Again, this method does not do anything to the universe,
-  that is GameCore's responsibility.
-  
-  This method returns true if the empire was removed, false if it
-  doesn't exist.
-*/
+
 bool ServerEmpireManager::EliminateEmpire(int ID)
 {
     Empire* emp = Lookup(ID);
     RemoveEmpire(emp);
+    
+    // dont need his last empire update anymore
+    m_last_turn_empire_states.erase(ID);
+    
+    // prevent memory leak
+    delete emp;
+    
     return (emp != NULL);
 }
     
 
 
-/**
-* Creates an XMLElement representing an XML diff between the
-* present state of the empires and the state at the beginning of 
-* the current turn.
-*
-* The returned element can be passed to the 
-* ClientEmpireManager::HandleEmpireUpdate() method to bring the ClientEmpireManager
-* in sync with the server manager.  
-*
-* When this method is called, the stored XMLElements for the empires at
-* the beginning of the turn are replaced by fresh elements representing
-* their current states.
-*/
 GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int EmpireID)
 {
-    GG::XMLElement update("EmpireUpdate");
+    GG::XMLElement this_turn(EmpireManager::EMPIRE_UPDATE_TAG);
+      
+    // find whatever empire they're talking about
+    Empire* emp = Lookup(EmpireID);
     
+    // perform sanity check
+    if(emp == NULL)
+    {
+        throw std::runtime_error("Invalid EmpireID passed to ServerEmpireManager::CreateClientSitrepUpdate()");
+    }
     
+    // convert Empire ID to string
+    char sIDString[12];  // integer cannot possibly exceed 11 digits
+    sprintf(sIDString, "%d", EmpireID);
+        
+    // set ID attribute of the update to indicate whose empire this is
+    this_turn.SetAttribute("EmpireID", sIDString);
     
-    return update;
+    // ****************************************************************
+    // For version 0.1, we simply encode the states of all empires
+    // since all information about all empires is always known to all others
+    // ****************************************************************
+    for(EmpireManager::iterator itr = begin(); itr != end(); itr++)
+    {
+        
+        char empire_tag[20];
+        sprintf(empire_tag, "Empire%d", (*itr).second->EmpireID());
+        
+        GG::XMLElement current_empire(empire_tag);
+        current_empire.AppendChild( (*itr).second->XMLEncode() );
+        this_turn.AppendChild(current_empire);
+    }
+    
+    // make XMLDocs for last turn's state, and for this turn's state
+    GG::XMLDoc last_turn;
+    GG::XMLDoc this_turn_doc;
+    last_turn.root_node = (*m_last_turn_empire_states.find(EmpireID)).second;
+    this_turn_doc.root_node = this_turn;
+    
+    // diff them to produce the update patch, and return its root element
+    GG::XMLDoc update_patch;
+    XDiff(last_turn, this_turn_doc, update_patch);
+    
+    return update_patch.root_node;
 }
 
-/**
-* Creates an XMLElement representing the list of sitrep events
-* for the empire with the given ID.  The returned element can be 
-* sent to the client and decoded to put the proper sitrep events in
-* the client's queue
-*/
+
 GG::XMLElement ServerEmpireManager::CreateClientSitrepUpdate(int EmpireID)
 {
-    GG::XMLElement update("SitrepUpdate");
+    GG::XMLElement update(SITREP_UPDATE_TAG);
     
     // find whatever empire they're talking about
     Empire* emp = Lookup(EmpireID);
@@ -98,21 +114,20 @@ GG::XMLElement ServerEmpireManager::CreateClientSitrepUpdate(int EmpireID)
     {
         throw std::runtime_error("Invalid EmpireID passed to ServerEmpireManager::CreateClientSitrepUpdate()");
     }
-    else
+    
+    // convert Empire ID to string
+    char sIDString[12];  // integer cannot possibly exceed 11 characters
+    sprintf(sIDString, "%d", EmpireID);
+        
+    // set ID attribute of the sitrep update to indicate whose empire this is
+    update.SetAttribute("EmpireID", sIDString);
+        
+    // add the empire's entire sitrep to the update element
+    for( Empire::SitRepItr itr = emp->SitRepBegin(); itr != emp->SitRepEnd(); itr++)
     {
-        // convert Empire ID to string
-        char sIDString[12];  // integer cannot possibly exceed 10 digits
-        sprintf(sIDString, "%d", EmpireID);
-        
-        // set ID attribute of the sitrep update to indicate whose empire this is
-        update.SetAttribute("EmpireID", sIDString);
-        
-        // add the empire's entire sitrep to the update element
-        for( Empire::SitRepItr itr = emp->SitRepBegin(); itr != emp->SitRepEnd(); itr++)
-        {
-            update.AppendChild((*itr)->XMLEncode());
-        }
+        update.AppendChild((*itr)->XMLEncode());
     }
+    
     
     return update;
 

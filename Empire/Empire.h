@@ -307,7 +307,7 @@ public:
    	/// Mutator for empire name
     void Name(const std::string& name);
     //@}
-    Empire(const GG::XMLElement& elemenet);
+   
 protected:
 
     /* *****************************************************
@@ -330,7 +330,7 @@ protected:
     * by the given XLMElement.  This XMLElement should have been created
     * by Empire::XMLEncode()
     */
-    //Empire(const GG::XMLElement& elem);
+    Empire(const GG::XMLElement& elem);
     
     //@}
     

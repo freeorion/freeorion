@@ -52,6 +52,8 @@ public:
     */
     bool EliminateEmpire(int ID);
     
+    
+    
     /// Creates an XML update of the Empire states to send to a client.
     /**
     * Creates an XMLElement representing changes to the Empires in the game
@@ -68,6 +70,8 @@ public:
     *
     * When this method is called, the stored XMLElements for each client are 
     * replaced with a new XMLElement representing the current state of the Empires.
+    *
+    * An std::runtime_error is thrown if no empire exists with the given ID
     */
 	GG::XMLElement CreateClientEmpireUpdate(int EmpireID);
     
@@ -76,6 +80,8 @@ public:
     * Creates an XMLElement representing the list of sitrep events
     * for the empire with the given ID.  The returned element can be 
     * sent to the client and decoded with ClientEmpire::HandleSitrepUpdate()
+    * 
+    * An std::runtime_error is thrown if no empire exists with the given ID
     */
 	GG::XMLElement CreateClientSitrepUpdate(int EmpireID);
     
@@ -84,17 +90,18 @@ private:
 
     /// List of empire updates from previous turn
     /**
-    * A set of XMLElements for the empires, which contain their states
-    * at the beginning of this turn.  These are used by 
+    * A set of XMLElements for the empires, which contain all information 
+    * that the empire had at the beginning of the last turn. These are used by 
     * CreateClientEmpireUpdate() to produce an update XMLElement to
-    * send off to the client.
+    * send off to the client. (a new one is made and diffed against the current one)
     *
-    * This map is a map of EmpireID->Empire XML encoding, and 
-    * is repopulated with the current empire states whenever CreateClientEmpireUpdate() is called
+    * This map is a map of EmpireID to the empire's update from lst turn and 
+    * the corresponding entry for each empire is repopulated whenever CreateClientEmpireUpdate()
+    * is called for that empire.
     */
-    std::map<int, GG::XMLElement> m_last_turn_elements;
+    std::map<int, GG::XMLElement> m_last_turn_empire_states;
     
-    /// The next ID value that will be used for creating empires
+    /// The ID value that will be assigned to the next empire that is created.
     int m_next_id;
  
 };

@@ -3,6 +3,9 @@
 #include "EmpireManager.h"
 #endif
 
+const std::string EmpireManager::EMPIRE_UPDATE_TAG = "EmpireUpdate";
+const std::string EmpireManager::SITREP_UPDATE_TAG = "SitrepUpdate";
+
 /**  Constructors */ 
 EmpireManager::EmpireManager()
 {
@@ -105,14 +108,14 @@ bool EmpireManager::UpdateEmpireStatus(int empireID,
         emp->Name(name);
         emp->Color(color);
         emp->ControlState(control);
+        
+        return true;
     }
     else
     {
-        emp = new Empire(name, empireID, color, control);
-        InsertEmpire(emp);
-    } 
-    
-    return true;
+        return false;
+    }
+   
 }
   
 
@@ -139,5 +142,10 @@ void EmpireManager::RemoveEmpire(Empire* empire)
     {
         m_empire_map.erase(empire->EmpireID());
     }
+}
+
+void EmpireManager::RemoveAllEmpires()
+{
+    
 }
 

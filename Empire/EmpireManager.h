@@ -31,6 +31,7 @@
 class EmpireManager
 {
 public:
+
     /** \name Iterator types */ //@{
     /// Iterator over Empires
     typedef std::map<int, Empire*>::iterator iterator; 
@@ -104,8 +105,8 @@ public:
     * UpdateEmpireStatus changes the name, color, or control status
     * of the empire whose ID equals empireID.  Returns true if successful
     * false if not.  If the empire manager does not have an empire object 
-    * for the specified empire it will create one, otherwise it will update 
-    * it's data.  
+    * for the specified empire this method will return false.
+    *
     */
     virtual bool UpdateEmpireStatus(int empireID, 
                             std::string &name, 
@@ -130,6 +131,23 @@ protected:
     */
     void RemoveEmpire(Empire* empire);
     
+    
+    /// Used by derived classes to remove all empires from the map
+    /**
+    * Removes all empiress from the manager's map and deallocates those empires.
+    *
+    */
+    void RemoveAllEmpires();
+    
+
+    
+    /** \name Constants */ //@{
+    /// Tag for empire update XMLElements
+    static const std::string EMPIRE_UPDATE_TAG;
+    
+    /// Tag for Sitrep XMLElements
+    static const std::string SITREP_UPDATE_TAG;
+    //@}
     
 private:
     

@@ -6,6 +6,10 @@
 #include "TechManager.h"
 #endif
 
+#ifndef __XDIFF__
+#include "../network/XDiff.hpp"
+#endif
+
 
 #include <algorithm>
 using std::find;
@@ -37,8 +41,9 @@ Empire::Empire(const GG::XMLElement& elem)
     m_control_state = (ControlStatus) lexical_cast <int> ( elem.Child("m_control_state").Attribute("value") );
     m_color = GG::Clr( elem.Child("m_color").Child(0) );
     
-    // make a sitrep entry factory
-    GG::XMLObjectFactory<SitRepEntry> sitrep_factory;
+    // There is no need to serialize the sitrep entries since they are
+    // handled by the empire manager sitrep update functionality
+    /*GG::XMLObjectFactory<SitRepEntry> sitrep_factory;
     SitRepEntry::InitObjectFactory(sitrep_factory);
     
     XMLElement sitrep = elem.Child("m_sitrep_entries");
@@ -46,6 +51,7 @@ Empire::Empire(const GG::XMLElement& elem)
     {
         AddSitRepEntry( sitrep_factory.GenerateObject(sitrep.Child(i)) );
     }
+    */
     
     XMLElement container_elem = elem.Child("m_fleets");
     for(unsigned int i=0; i<container_elem.NumChildren(); i++)
@@ -395,12 +401,16 @@ GG::XMLElement Empire::XMLEncode() const
     color.AppendChild(colorelem);
     element.AppendChild(color);
     
+    // There is no need to serialize the sitrep entries since they are
+    // handled by the empire manager sitrep update functionality
+    /*
     XMLElement sitrep("m_sitrep_entries");
     for(ConstSitRepItr itr = SitRepBegin(); itr != SitRepEnd(); itr++)
     {
        sitrep.AppendChild( (*itr)->XMLEncode() );
     }
     element.AppendChild(sitrep);
+    */
     
     XMLElement fleets("m_fleets");
     EncodeIntList(fleets, m_fleets);
@@ -429,10 +439,16 @@ GG::XMLElement Empire::XMLEncode() const
 
 void Empire::XMLMerge(const GG::XMLElement& elem)
 {
-
-    // CODE ME!
+    GG::XMLDoc diff_doc;
+    diff_doc.root_node = elem;
     
+    GG::XMLElement obj_elem( XMLEncode() );
+    GG::XMLDoc obj_doc;
+    obj_doc.root_node = obj_elem;
     
+    XPatch(obj_doc, diff_doc);
+    
+    *this = Empire( obj_doc.root_node );
 }
 
 
