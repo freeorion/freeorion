@@ -11,12 +11,14 @@
 #include <iomanip>
 
 namespace {
-const int SERVERS_LIST_BOX_WIDTH = 400;
-const int OK_CANCEL_BUTTON_WIDTH = 80;
-const int CONTROL_MARGIN = 5; // gap to leave between controls in the window
-const int LAN_SERVER_SEARCH_TIMEOUT = 1; // in seconds
-const int SERVER_CONNECT_WND_WIDTH = SERVERS_LIST_BOX_WIDTH + 6 * CONTROL_MARGIN;
-std::set<std::string> g_LAN_servers; // semi-persistent (persists only during runtime) list of known LAN servers
+    const int SERVERS_LIST_BOX_WIDTH = 400;
+    const int OK_CANCEL_BUTTON_WIDTH = 80;
+    const int CONTROL_MARGIN = 5; // gap to leave between controls in the window
+    const int LAN_SERVER_SEARCH_TIMEOUT = 1; // in seconds
+    const int SERVER_CONNECT_WND_WIDTH = SERVERS_LIST_BOX_WIDTH + 6 * CONTROL_MARGIN;
+    std::set<std::string> g_LAN_servers; // semi-persistent list of known LAN servers (persists only during runtime, but longer than the server connect window)
+
+    bool NameOK(const std::string& name) {return !name.empty() && name.find_first_of(" \t:") == std::string::npos;}
 }
 
 ServerConnectWnd::ServerConnectWnd() : 
@@ -153,17 +155,17 @@ void ServerConnectWnd::HostOrJoinClicked(int idx)
         m_find_LAN_servers_bn->Disable();
         m_internet_game_label->Disable();
         m_IP_address_edit->Disable();
-        if (m_player_name_edit->WindowText() == "")
-            m_ok_bn->Disable();
-        else
+        if (NameOK(m_player_name_edit->WindowText()))
             m_ok_bn->Disable(false);
+        else
+            m_ok_bn->Disable();
     } else { // join
         m_LAN_game_label->Disable(false);
         m_servers_lb->Disable(false);
         m_find_LAN_servers_bn->Disable(false);
         m_internet_game_label->Disable(false);
         m_IP_address_edit->Disable(false);
-        if ((m_servers_lb->Selections().empty() && m_IP_address_edit->WindowText() == "") || m_player_name_edit->WindowText() == "")
+        if ((m_servers_lb->Selections().empty() && m_IP_address_edit->WindowText() == "") || !NameOK(m_player_name_edit->WindowText()))
             m_ok_bn->Disable();
     }
 }
@@ -172,7 +174,7 @@ void ServerConnectWnd::ServerSelected(const std::set<int>& selections)
 {
     if (!selections.empty()) {
         *m_IP_address_edit << "";
-        if (m_player_name_edit->WindowText() != "")
+        if (NameOK(m_player_name_edit->WindowText()))
             m_ok_bn->Disable(false);
     } else if (m_IP_address_edit->WindowText() == "") {
         m_ok_bn->Disable();
@@ -183,7 +185,7 @@ void ServerConnectWnd::IPAddressEdited(const std::string& str)
 {
     if (str != "") {
         m_servers_lb->ClearSelection();
-        if (m_player_name_edit->WindowText() != "")
+        if (NameOK(m_player_name_edit->WindowText()))
             m_ok_bn->Disable(false);
     } else if (m_servers_lb->Selections().empty()) {
         m_ok_bn->Disable();

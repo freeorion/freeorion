@@ -15,6 +15,8 @@
 
 #include "../combat/CombatSystem.h"
 
+#include <GGFont.h>
+
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
 #include <log4cpp/PatternLayout.hh>
@@ -426,6 +428,45 @@ void ServerApp::HandleMessage(const Message& msg)
             /* look to see if all empires are done */
             if ( AllOrdersReceived( ) )
                 ProcessTurns( );
+        }
+        break;
+    }
+
+    case Message::HUMAN_PLAYER_MSG: {
+        std::string text = msg.GetText();
+
+        // if there's a colon in the message, treat all tokens before the colon as player names.
+        // if there are tokens before the colon, but at least one of them *is not* a valid player names, assume there has been a typo,
+        // and don't send the message at all, since we can't decipher which parts are message and which parts are names
+        unsigned int colon_position = text.find(':');
+        // target_player_names.empty() implies that all players should be sent the message; otherwise, only the indicated players will receive the message
+        std::set<std::string> target_player_names;
+        if (colon_position != std::string::npos) {
+            std::vector<std::string> tokens = GG::Tokenize(text.substr(0, colon_position));
+            for (unsigned int i = 0; i < tokens.size(); ++i) {
+                bool token_is_name = false;
+                for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+                    if (tokens[i] == it->second.name) {
+                        token_is_name = true;
+                        break;
+                    }
+                }
+                if (token_is_name)
+                    target_player_names.insert(tokens[i]);
+                else
+                    return;
+            }
+        }
+        if (!target_player_names.empty()) {
+            text = text.substr(colon_position + 1);
+            if (text == "")
+                return;
+        }
+        std::string final_text = GG::RgbaTag(Empires().Lookup(msg.Sender())->Color()) + m_network_core.Players().find(msg.Sender())->second.name + 
+            (target_player_names.empty() ? ": " : " (whisper):") + text + "</rgba>\n";
+        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+            if (target_player_names.empty() || target_player_names.find(it->second.name) != target_player_names.end())
+                m_network_core.SendMessage(ChatMessage(msg.Sender(), it->first, final_text));
         }
         break;
     }

@@ -22,6 +22,7 @@ class System;
 class SystemIcon;
 namespace GG {
 class Texture;
+class MultiEdit;
 }
 
 class MapWndPopup;
@@ -64,6 +65,7 @@ public:
     void           RestoreFromSaveData(const GG::XMLElement& elem); //!< restores the UI state that was saved in an earlier call to SaveGameData().
     void           ShowSystemNames();                               //!< enables the system name text
     void           HideSystemNames();                               //!< disables the system name text
+    void           HandlePlayerChatMessage(const std::string& msg); //!< displays incoming player chat text
 
     SelectedSystemSignalType& SelectedSystemSignal() {return m_selected_system_signal;}
 
@@ -101,6 +103,8 @@ private:
     void MoveBackgrounds(const GG::Pt& move);    //!< scrolls the backgrounds at their respective rates
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
     void DeleteAllPopups( );                     //!< deletes all active popups.
+    bool OpenChatWindow();
+    bool EndTurn();
     bool ToggleSitRep();
     bool ShowOptions();
 
@@ -115,6 +119,8 @@ private:
     SidePanel*                      m_side_panel;    //! the planet view panel on the side of the main map
     std::vector<SystemIcon*>        m_system_icons;  //! the system icons in the main map
     SitRepPanel*      	            m_sitrep_panel;  //! the sitrep panel
+    GG::MultiEdit*                  m_chat_display;  //! the (read-only) MP-chat output multi-line edit box
+    CUIEdit*                        m_chat_edit;     //! the MP-chat input edit box
     std::vector<FleetButton*>       m_moving_fleet_buttons; //! the moving fleets in the main map
     std::set<StarlaneData>          m_starlanes;     //! the starlanes between systems
     std::map<Fleet*, 

@@ -2,6 +2,7 @@
 
 #include "../../UI/CUIControls.h"
 #include "dialogs/GGFileDlg.h"
+#include "../../UI/MapWnd.h"
 #include "../../network/Message.h"
 #include "../../util/OptionsDB.h"
 #include "../../universe/Planet.h"
@@ -197,7 +198,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
         // HACK!  send the multiplayer form of the HostGameMessage, since it establishes us as the host, and the single-player 
         // LOAD_GAME message will establish us as a single-player game
         GG::XMLDoc parameters;
-        parameters.root_node.AppendChild(GG::XMLElement("host_player_name", std::string("Happy Player")));
+        parameters.root_node.AppendChild(GG::XMLElement("host_player_name", std::string("Happy_Player")));
         if (!failed)
             HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(HumanClientApp::GetApp()->PlayerID(), parameters));
     }
@@ -632,6 +633,11 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             phase_str = ClientUI::String("TURN_PROGRESS_PHASE_ORDERS");
 
         m_ui->UpdateTurnProgress( phase_str, empire_id );
+        break;
+    }
+
+    case Message::HUMAN_PLAYER_MSG: {
+        GetUI()->GetMapWnd()->HandlePlayerChatMessage(msg.GetText());
         break;
     }
 

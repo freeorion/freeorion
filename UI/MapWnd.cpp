@@ -8,6 +8,7 @@
 #include "FleetButton.h"
 #include "FleetWindow.h"
 #include "GGDrawUtil.h"
+#include "GGMultiEdit.h"
 #include "../client/human/HumanClientApp.h"
 #include "../network/Message.h"
 #include "../util/OptionsDB.h"
@@ -23,7 +24,7 @@
 #include "TurnProgressWnd.h"
 
 #include <vector>
-
+#include <deque>
 
 namespace {
     const double ZOOM_STEP_SIZE = 1.25;
@@ -33,6 +34,16 @@ namespace {
     const int END_TURN_BTN_WIDTH = 60;
     const int SITREP_PANEL_WIDTH = 400;
     const int SITREP_PANEL_HEIGHT = 300;
+    int g_chat_display_show_time = 0;
+    std::deque<std::string> g_chat_edit_history;
+    int g_history_position = 0; // the current edit contents are in history position 0
+    void AddOptions(OptionsDB& db)
+    {
+        db.Add("UI.chat-hide-interval", "Time interval, in seconds, after which the multiplayer chat window will disappear if "
+               "nothing is added to it.  A value of 0 indicates that the window should never diappear.", 10, RangedValidator<int>(0, 3600));
+        db.Add("UI.chat-edit-history", "The number of outgoing messages to keep in the chat edit box history.", 50, RangedValidator<int>(0, 1000));
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 
@@ -141,13 +152,34 @@ MapWnd::MapWnd() :
 {
     SetText("MapWnd");
 
+    // system-view side panel
     m_side_panel = new SidePanel(GG::App::GetApp()->AppWidth() - SIDE_PANEL_WIDTH, 0, SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight());
     AttachChild(m_side_panel);
     Connect(SelectedSystemSignal(), &SidePanel::SetSystem, m_side_panel);
 
     m_sitrep_panel = new SitRepPanel( (GG::App::GetApp()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::App::GetApp()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);
-	
+
+    // turn button
+    m_turn_update = new CUIButton(5, 5, END_TURN_BTN_WIDTH, "" );
+    AttachChild(m_turn_update);
+
+    // chat display and chat input box
+    const int CHAT_WIDTH = 400;
+    const int CHAT_HEIGHT = 400;
+    m_chat_display = new GG::MultiEdit(5, m_turn_update->LowerRight().y + 5, CHAT_WIDTH, CHAT_HEIGHT, "", ClientUI::FONT, ClientUI::PTS, GG::CLR_ZERO, 
+                                       GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE | GG::MultiEdit::INTEGRAL_HEIGHT | GG::MultiEdit::NO_VSCROLL, 
+                                       ClientUI::TEXT_COLOR, GG::CLR_ZERO, 0);
+    AttachChild(m_chat_display);
+    m_chat_display->SetMaxLinesOfHistory(100);
+    m_chat_display->Hide();
+
+    const int CHAT_EDIT_HEIGHT = 30;
+    m_chat_edit = new CUIEdit(5, GG::App::GetApp()->AppHeight() - CHAT_EDIT_HEIGHT - 5, CHAT_WIDTH, CHAT_EDIT_HEIGHT, "", 
+                              ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
+    AttachChild(m_chat_edit);
+    m_chat_edit->Hide();
+
 	m_options_showing = false;
 
     //set up background images
@@ -169,22 +201,30 @@ MapWnd::MapWnd() :
     m_bg_position_Y[2] = 10.0;
     m_bg_scroll_rate[2] = 0.5;
 
-    // create buttons
-    m_turn_update = new CUIButton(5, 5, END_TURN_BTN_WIDTH, "" );
-
-    //attach buttons
-    AttachChild(m_turn_update);
-
-    //connect signals and slots
+    // connect signals and slots
     GG::Connect(m_turn_update->ClickedSignal(), &MapWnd::OnTurnUpdate, this);
 
-    // register keyboard accelerators for function keys, and listen for them
+    // connect keyboard accelerators
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_RETURN, 0), &MapWnd::OpenChatWindow, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_ENTER, 0), &MapWnd::OpenChatWindow, this);
+
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_RETURN, GG::GGKMOD_CTRL), &MapWnd::EndTurn, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL), &MapWnd::EndTurn, this);
+
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F2, 0), &MapWnd::ToggleSitRep, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowOptions, this);
+
+    g_chat_edit_history.push_front("");
 }
 
 MapWnd::~MapWnd()
 {
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, 0);
+
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
+
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F2, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F10, 0);
 }
@@ -213,16 +253,128 @@ bool MapWnd::Render()
     RenderBackgrounds();
     RenderStarlanes();
     RenderFleetMovementLines();
+
+    int interval = GetOptionsDB().Get<int>("UI.chat-hide-interval");
+    if (!m_chat_edit->Visible() && g_chat_display_show_time && interval && 
+        (interval < (GG::App::GetApp()->Ticks() - g_chat_display_show_time) / 1000)) {
+        m_chat_display->Hide();
+        g_chat_display_show_time = 0;
+    }
+
     return true;
 }
 
 void MapWnd::Keypress (GG::Key key, Uint32 key_mods)
 {
     switch (key) {
-    case GG::GGK_RETURN: { // start turn
-        HumanClientApp::GetApp()->StartTurn();
+    case GG::GGK_TAB: { // auto-complete current chat edit word
+        if (m_chat_edit->Visible()) {
+            std::string text = m_chat_edit->WindowText();
+            std::pair<int, int> cursor_pos = m_chat_edit->CursorPosn();
+            if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= static_cast<int>(text.size())) {
+                unsigned int word_start = text.substr(0, cursor_pos.first).find_last_of(" :");
+                if (word_start == std::string::npos)
+                    word_start = 0;
+                else
+                    ++word_start;
+                std::string partial_word = text.substr(word_start, cursor_pos.first - word_start);
+                if (partial_word == "")
+                    return;
+                std::set<std::string> names;
+                // add player and empire names
+                for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+                    names.insert(it->second->Name());
+                    names.insert(it->second->PlayerName());
+                }
+                // add system names
+                std::vector<System*> systems = GetUniverse().FindObjects<System>();
+                for (unsigned int i = 0; i < systems.size(); ++i) {
+                    if (systems[i]->Name() != "")
+                        names.insert(systems[i]->Name());
+                }
+
+                if (names.find(partial_word) != names.end()) { // if there's an exact match, just add a space
+                    text.insert(cursor_pos.first, " ");
+                    m_chat_edit->SetText(text);
+                    m_chat_edit->SelectRange(cursor_pos.first + 1, cursor_pos.first + 1);
+                } else { // no exact match; look for possible completions
+                    // find the range of strings in names that is at least partially matched by partial_word
+                    std::set<std::string>::iterator lower_bound = names.lower_bound(partial_word);
+                    std::set<std::string>::iterator upper_bound = lower_bound;
+                    while (upper_bound != names.end() && upper_bound->find(partial_word) == 0)
+                        ++upper_bound;
+                    if (lower_bound == upper_bound)
+                        return;
+
+                    // find the common portion of the strings in (upper_bound, lower_bound)
+                    unsigned int common_end = partial_word.size();
+                    for ( ; common_end < lower_bound->size(); ++common_end) {
+                        std::set<std::string>::iterator it = lower_bound;
+                        char ch = (*it++)[common_end];
+                        bool match = true;
+                        for ( ; it != upper_bound; ++it) {
+                            if ((*it)[common_end] != ch) {
+                                match = false;
+                                break;
+                            }
+                        }
+                        if (!match)
+                            break;
+                    }
+                    unsigned int chars_to_add = common_end - partial_word.size();
+                    bool full_completion = common_end == lower_bound->size();
+                    text.insert(cursor_pos.first, lower_bound->substr(partial_word.size(), chars_to_add) + (full_completion ? " " : ""));
+                    m_chat_edit->SetText(text);
+                    int move_cursor_to = cursor_pos.first + chars_to_add + (full_completion ? 1 : 0);
+                    m_chat_edit->SelectRange(move_cursor_to, move_cursor_to);
+                }
+            }
+        }
         break;
     }
+
+    case GG::GGK_RETURN:
+    case GG::GGK_KP_ENTER: { // send chat message
+        if (m_chat_edit->Visible()) {
+            std::string edit_text = m_chat_edit->WindowText();
+            if (edit_text != "") {
+                if (g_chat_edit_history.size() == 1 || g_chat_edit_history[1] != edit_text) {
+                    g_chat_edit_history[0] = edit_text;
+                    g_chat_edit_history.push_front("");
+                } else {
+                    g_chat_edit_history[0] = "";
+                }
+                while (GetOptionsDB().Get<int>("UI.chat-edit-history") < static_cast<int>(g_chat_edit_history.size()) + 1)
+                    g_chat_edit_history.pop_back();
+                g_history_position = 0;
+                HumanClientApp::GetApp()->NetworkCore().SendMessage(ChatMessage(HumanClientApp::GetApp()->PlayerID(), edit_text));
+            }
+            m_chat_edit->Clear();
+            m_chat_edit->Hide();
+            GG::App::GetApp()->SetFocusWnd(this);
+            g_chat_display_show_time = GG::App::GetApp()->Ticks();
+        }
+        break;
+    }
+
+    case GG::GGK_UP: {
+        if (m_chat_edit->Visible() && g_history_position < static_cast<int>(g_chat_edit_history.size()) - 1) {
+            g_chat_edit_history[g_history_position] = m_chat_edit->WindowText();
+            ++g_history_position;
+            m_chat_edit->SetText(g_chat_edit_history[g_history_position]);
+        }
+        break;
+    }
+
+    case GG::GGK_DOWN: {
+        if (m_chat_edit->Visible() && 0 < g_history_position) {
+            g_chat_edit_history[g_history_position] = m_chat_edit->WindowText();
+            --g_history_position;
+            m_chat_edit->SetText(g_chat_edit_history[g_history_position]);
+        }
+        break;
+    }
+
     default:
         break;
     }
@@ -239,6 +391,8 @@ void MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ClientUpperLeft();
     m_side_panel->OffsetMove(-final_move);
+    m_chat_display->OffsetMove(-final_move);
+    m_chat_edit->OffsetMove(-final_move);
     m_turn_update->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
@@ -262,11 +416,20 @@ void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
 
 void MapWnd::RClick(const GG::Pt& pt, Uint32 keys)
 {
-    // if fleet window quickclose is enabled, the right-click will close fleet windows; if there are no open fleet 
-    // windows or the quickclose option is disabled, just pop up a context-sensitive menu
-    if (!GetOptionsDB().Get<bool>("UI.fleet-window-quickclose") || !FleetWnd::CloseAllFleetWnds()) {
-        // TODO : provide a context-sensitive menu for the main map, if needed
+    // Attempt to close open fleet windows (if any are open and this is allowed), then attempt to close the SidePanel (if open);
+    // if these fail, go ahead with the context-sensitive popup menu . Note that this enforces a one-close-per-click policy.
+
+    if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
+        if (FleetWnd::CloseAllFleetWnds())
+            return;
+
+        if (m_side_panel->Visible()) {
+            m_side_panel->Hide();
+            return;
+        }
     }
+
+    // TODO : provide a context-sensitive menu for the main map, if needed
 }
 
 void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
@@ -322,6 +485,8 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
     OffsetMove(map_move);
     MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
+    m_chat_display->OffsetMove(-map_move);
+    m_chat_edit->OffsetMove(-map_move);
     m_turn_update->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
 
@@ -330,6 +495,8 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
+    m_chat_display->OffsetMove(-final_move);
+    m_chat_edit->OffsetMove(-final_move);
     m_turn_update->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
@@ -338,6 +505,12 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 
 void MapWnd::InitTurn(int turn_number)
 { 
+    GG::App::GetApp()->SetAccelerator(GG::GGK_RETURN, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_ENTER, 0);
+
+    GG::App::GetApp()->SetAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
+
     GG::App::GetApp()->SetAccelerator(GG::GGK_F2, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_F10, 0);
 
@@ -441,6 +614,8 @@ void MapWnd::InitTurn(int turn_number)
         m_sitrep_panel->Show();
     else
         m_sitrep_panel->Hide();
+
+    m_chat_edit->Hide();
 }
 
 void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
@@ -472,6 +647,8 @@ void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
     OffsetMove(map_move);
     MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
+    m_chat_display->OffsetMove(-map_move);
+    m_chat_edit->OffsetMove(-map_move);
     m_turn_update->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
 
@@ -480,6 +657,8 @@ void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
+    m_chat_display->OffsetMove(-final_move);
+    m_chat_edit->OffsetMove(-final_move);
     m_turn_update->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
@@ -507,6 +686,12 @@ void MapWnd::HideSystemNames()
         m_system_icons[i]->HideName();
 }
 
+void MapWnd::HandlePlayerChatMessage(const std::string& msg)
+{
+    *m_chat_display += msg;
+    g_chat_display_show_time = GG::App::GetApp()->Ticks();
+}
+
 void MapWnd::CenterOnMapCoord(double x, double y)
 {
     GG::Pt ul = ClientUpperLeft();
@@ -517,6 +702,8 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     OffsetMove(map_move);
     MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
+    m_chat_display->OffsetMove(-map_move);
+    m_chat_edit->OffsetMove(-map_move);
     m_turn_update->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
 
@@ -525,6 +712,8 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
+    m_chat_display->OffsetMove(-final_move);
+    m_chat_edit->OffsetMove(-final_move);
     m_turn_update->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
@@ -631,12 +820,18 @@ void MapWnd::OnTurnUpdate()
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::Wnd::Event& event)
 {
     if (event.Type() == GG::Wnd::Event::RClick) {
-        // if fleet window quickclose is enabled, the right-click will close fleet windows; if there are no open fleet 
-        // windows or the quickclose option is disabled, just let Wnd w handle it.
-        if (!GetOptionsDB().Get<bool>("UI.fleet-window-quickclose") || !FleetWnd::CloseAllFleetWnds())
-            return false;
-        else
-            return true;
+        // Attempt to close open fleet windows (if any are open and this is allowed), then attempt to close the SidePanel (if open);
+        // if these fail, just let Wnd w handle it.  Note that this enforces a one-close-per-click policy.
+
+        if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
+            if (FleetWnd::CloseAllFleetWnds())
+                return true;
+
+            if (m_side_panel->Visible()) {
+                m_side_panel->Hide();
+                return true;
+            }
+        }
     }
     return false;
 }
@@ -835,6 +1030,24 @@ void MapWnd::DeleteAllPopups( )
     }   
     // clear list
     m_popups.clear( );
+}
+
+bool MapWnd::OpenChatWindow()
+{
+    if (!m_chat_display->Visible() || !m_chat_edit->Visible()) {
+        m_chat_display->Show();
+        m_chat_edit->Show();
+        GG::App::GetApp()->SetFocusWnd(m_chat_edit);
+        g_chat_display_show_time = GG::App::GetApp()->Ticks();
+        return true;
+    }
+    return false;
+}
+
+bool MapWnd::EndTurn()
+{
+    HumanClientApp::GetApp()->StartTurn();
+    return true;
 }
 
 bool MapWnd::ToggleSitRep()
