@@ -105,7 +105,7 @@ Ship::Ship(const GG::XMLElement& elem) :
 
 Fleet* Ship::GetFleet() const
 {
-    return GetUniverse().Object<Fleet>(m_fleet_id);
+    return m_fleet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Fleet>(m_fleet_id);
 }
 
 UniverseObject::Visibility Ship::GetVisibility(int empire_id) const
