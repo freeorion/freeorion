@@ -28,7 +28,7 @@ Empire* ServerEmpire::CreateEmpire(std::string& name,
     m_next_id++;
     emp->AddPlanet(planetID);
     
-    AddEmpireToManager(emp);
+    InsertEmpire(emp);
     
     return emp;
 }
@@ -47,10 +47,10 @@ Empire* ServerEmpire::CreateEmpire(std::string& name,
   This method returns true if the empire was removed, false if it
   doesn't exist.
 */
-bool ServerEmpire::RemoveEmpire(int ID)
+bool ServerEmpire::EliminateEmpire(int ID)
 {
     Empire* emp = Lookup(ID);
-    RemoveEmpireFromManager(emp);
+    RemoveEmpire(emp);
     return (emp != NULL);
 }
     

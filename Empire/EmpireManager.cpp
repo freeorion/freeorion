@@ -14,8 +14,8 @@ EmpireManager::EmpireManager()
 EmpireManager::~EmpireManager()
 {
     // kill 'em all!
-    EmpireItr itr = EmpireBegin();
-    while(itr != EmpireEnd())
+    EmpireManager::iterator itr = begin();
+    while(itr != end())
     {
         delete (*itr).second;
         itr++;
@@ -24,19 +24,12 @@ EmpireManager::~EmpireManager()
    
 /**  Const Iterators */ 
 
-/**
-* EmpireBegin returns an const iterator pointing at the first empire
-* in the manager.  
-*/
-EmpireManager::ConstEmpireItr EmpireManager::EmpireBegin() const
+EmpireManager::const_iterator EmpireManager::begin() const
 {
     return m_empire_map.begin();
 }
-/**
-* EmpireEnd returns an iterator which is past the end of
-* the list of empires.  
-*/
-EmpireManager::ConstEmpireItr EmpireManager::EmpireEnd() const
+
+EmpireManager::const_iterator EmpireManager::end() const
 {
     return m_empire_map.end();
 }
@@ -51,9 +44,9 @@ EmpireManager::ConstEmpireItr EmpireManager::EmpireEnd() const
 */
 const Empire* EmpireManager::Lookup(int ID) const
 {
-    ConstEmpireItr itr = m_empire_map.find(ID);
+    const_iterator itr = m_empire_map.find(ID);
 
-    if(itr == EmpireEnd())
+    if(itr == end())
     {
         return NULL;
     }
@@ -68,9 +61,9 @@ const Empire* EmpireManager::Lookup(int ID) const
 */
 Empire* EmpireManager::Lookup(int ID)
 {
-    EmpireItr itr = m_empire_map.find(ID);
+    iterator itr = m_empire_map.find(ID);
 
-    if(itr == EmpireEnd())
+    if(itr == end())
     {
         return NULL;
     }
@@ -82,19 +75,12 @@ Empire* EmpireManager::Lookup(int ID)
   
 /**  Non-Const Iterators */ 
 
-/**
-* EmpireBegin returns an iterator pointing at the first empire
-* in the manager.  
-*/
-EmpireManager::EmpireItr EmpireManager::EmpireBegin()
+EmpireManager::iterator EmpireManager::begin()
 {
     return m_empire_map.begin();
 }
- /**
-* EmpireEnd returns an iterator which is past the end of
-* the list of empires.  
-*/
-EmpireManager::EmpireItr EmpireManager::EmpireEnd()
+
+EmpireManager::iterator EmpireManager::end()
 {
     return m_empire_map.end();
 }
@@ -123,7 +109,7 @@ bool EmpireManager::UpdateEmpireStatus(int empireID,
     else
     {
         emp = new Empire(name, empireID, color, control);
-        AddEmpireToManager(emp);
+        InsertEmpire(emp);
     } 
     
     return true;
@@ -132,10 +118,10 @@ bool EmpireManager::UpdateEmpireStatus(int empireID,
 
   
 /**
-* AddEmpire adds the given empire to the manager's map
+* InsertEmpire adds the given empire to the manager's map
 * 
 */
-void EmpireManager::AddEmpireToManager(Empire* empire)
+void EmpireManager::InsertEmpire(Empire* empire)
 {
     if(empire != NULL)
     {
@@ -147,7 +133,7 @@ void EmpireManager::AddEmpireToManager(Empire* empire)
 /**
 * RemoveEmpire removes the given empire from the manager's map
 */
-void EmpireManager::RemoveEmpireFromManager(Empire* empire)
+void EmpireManager::RemoveEmpire(Empire* empire)
 {
     if(empire != NULL)
     {

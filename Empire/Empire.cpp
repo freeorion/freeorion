@@ -10,7 +10,7 @@ Empire::Empire(const std::string& name, int ID, const GG::Clr& color, ControlSta
  m_color(color), 
  m_control_state(control)
 {
-    // nothing else to od
+    // nothing else to do
 }
 
 
@@ -309,15 +309,17 @@ void Empire::XMLMerge(const GG::XMLElement& elem)
 **************************************************/
 
 /** 
-* increments the empire's accumulated research points
-* by the specified amount.  Returns total accumulated research points
+* increases the empire's accumulated research points
+* by the specified amount, and adds any new technologies achieved to the
+* Empire's list of technologies.  Returns total accumulated research points
 * after the addition. 
 */
 int Empire::AddRP(int moreRPs)
 {
     m_total_rp += moreRPs;
 
-    // check for new techs?  or will GameCore do it?
+    // FINISH ME!!
+    // check the TechManager for new techs
     
     return m_total_rp;
 }

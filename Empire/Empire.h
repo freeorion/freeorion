@@ -88,6 +88,10 @@ public:
         CONTROL_HUMAN=1   /// under human control
 	 }  ;
 
+	 /* **************************************************
+	 *** ACCESSORS
+	 *****************************************************/
+
 	 /** \name Accessors */ //@{
     /// Returns an Empire's control state
     ControlStatus ControlState() const;
@@ -109,7 +113,6 @@ public:
     */
     int TotalRP() const;
     
-    //@}
   
     
     /* ******************************************************
@@ -127,7 +130,6 @@ public:
         Methods to see if items are in our lists
     **************************************************/
 
-    /** \name List Search */ //@{
     
     /// Returns true if the given item is in the appropriate list, false if it is not.  
     bool HasTech(int ID) const;
@@ -144,12 +146,11 @@ public:
     /// Returns true if the given item is in the appropriate list, false if it is not.
     bool HasVisibleFleet(int ID) const;
     
-    //@}
-      
+    
     /* *************************************
         (const) Iterators over our various lists
     ***************************************/
-    /** \name Const Iterators */ //@{
+
     ConstTechIDItr TechBegin() const;
     ConstTechIDItr TechEnd() const;
     
@@ -167,13 +168,12 @@ public:
     
     ConstSitRepItr SitRepBegin() const;
     ConstSitRepItr SitRepEnd() const;
-    //@}
-    
+  
+      
     /* *************************************
         (non-const) Iterators over our various lists
     ***************************************/
  
-    /** \name Non-Const Iterators */ //@{
     TechIDItr TechBegin();
     TechIDItr TechEnd();
     
@@ -191,18 +191,37 @@ public:
     
     SitRepItr SitRepBegin();
     SitRepItr SitRepEnd();
+   
+
+
+
+    /// Encodes an empire into an XMLElement
+    /**
+    * This method encodes an empire into an XMLElement, which can then
+    * be transmitted over the network and used by a client to replicate
+    * the empire object.  
+    *
+    * This method is used by the Server to generate turn updates.
+    *
+    * The exact format of the XMLElement will be determined when this method
+    * is implemented.
+    *
+    *
+    */
+    GG::XMLElement XMLEncode() const;
+
     //@}
 
+    /* ****************************************************
+    *** MUTATORS
+    *******************************************************/
 
-
-
-
+    /** \name Mutators */ //@{
 
     /* ************************************************
         Methods to add items to our various lists
     **************************************************/
 
-    /** \name List Manipulation */ //@{
     /// Inserts the given ID into the Empire's list of Technologies.
     void AddTech(int ID);
 
@@ -243,27 +262,7 @@ public:
     /// Removes all entries from the Empire's SitRep
     void ClearSitRep();
     
-    //@}
 
-     /* ************************************************
-        Methods to support XML Serialization
-    **************************************************/
-    
-    /** \name Serialization */ //@{
-    /// Encodes an empire into an XMLElement
-    /**
-    * This method encodes an empire into an XMLElement, which can then
-    * be transmitted over the network and used by a client to replicate
-    * the empire object.  
-    *
-    * This method is used by the Server to generate turn updates.
-    *
-    * The exact format of the XMLElement will be determined when this method
-    * is implemented.
-    *
-    *
-    */
-    GG::XMLElement XMLEncode() const;
     
     /// Applies changes to the Empire object
     /**
@@ -278,14 +277,12 @@ public:
     */
     void XMLMerge(const GG::XMLElement& elem);
     
-    //@}
-    
-    /** \name  Mutators */ //@{
-    /// Adds reseach points to the accumulated total.
+    /// Adds reseach points to the accumulated total.  Checks for new tech advances.
     /** 
     * Increments the empire's accumulated research points 
     * by the specified amount.  Returns total accumulated research points
-    * after the addition. 
+    * after the addition.  This method should also check for new technological
+    * advances that have been achieved, and add them to the technology list.
     */
     int AddRP(int moreRPs);
        	
@@ -300,6 +297,10 @@ public:
     //@}
     
 protected:
+
+    /* *****************************************************
+    ** CONSTRUCTORS
+    ********************************************************/
 
     /** \name Constructors */ //@{
     /// Creates an empire with the given properties.

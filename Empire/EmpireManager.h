@@ -33,11 +33,12 @@ class EmpireManager
 public:
     /** \name Iterator types */ //@{
     /// Iterator over Empires
-    typedef std::map<int, Empire*>::iterator EmpireItr; 
+    typedef std::map<int, Empire*>::iterator iterator; 
     
     /// Const Iterator over Empires
-    typedef std::map<int, Empire*>::const_iterator ConstEmpireItr;
+    typedef std::map<int, Empire*>::const_iterator const_iterator;
     //@}
+    
     
     /** \name Constructors */ //@{
     /// Default Constructor
@@ -53,15 +54,15 @@ public:
     
     /** \name Const Iterators */ //@{
     /**
-    * ConstEmpireBegin returns an const iterator pointing at the first empire
+    * Returns a const iterator pointing at the first empire
     * in the manager.  
     */
-    ConstEmpireItr EmpireBegin() const;
+    const_iterator begin() const;
     /**
-    * ConstEmpireEnd returns an iterator which is past the end of
+    * Returns a const iterator which is past the end of
     * the list of empires.  
     */
-    ConstEmpireItr EmpireEnd() const;
+    const_iterator end() const;
     //@}
 
     /** \name Empire Lookup By ID */ //@{
@@ -87,15 +88,15 @@ public:
   
     /** \name Non-Const Iterators */ //@{
     /**
-    * EmpireBegin returns an iterator pointing at the first empire
+    * Returns an iterator pointing at the first empire
     * in the manager.  
     */
-    EmpireItr EmpireBegin();
+    iterator begin();
      /**
-    * EmpireEnd returns an iterator which is past the end of
+    * Returns an iterator which is past the end of
     * the list of empires.  
     */
-    EmpireItr EmpireEnd();
+    iterator end();
     //@}
 
     /// Changes the properties of an empire, if it exists.
@@ -120,14 +121,14 @@ protected:
     * given empire object, or any others.
     * 
     */
-    void AddEmpireToManager(Empire* empire);
+    void InsertEmpire(Empire* empire);
     
     /// Used by derived classes to remove an empire from the set of empires.
     /**
     * Removes the given empire from the manager's map.  Does 
     * not modify the given empire object, or any others.
     */
-    void RemoveEmpireFromManager(Empire* empire);
+    void RemoveEmpire(Empire* empire);
     
     
 private:

@@ -1,6 +1,12 @@
 
 #include "TechManager.h"
 
+TechManager& TechManager::instance()
+{
+    static TechManager it;
+    return it;
+}
+
 
 TechManager::TechManager() : 
     m_next_id(1)
@@ -8,19 +14,13 @@ TechManager::TechManager() :
 
 }
 
-/**
-   TechBegin and TechEnd allow 
-   iteration over the techlevels in this manager
-*/
-TechManager::ConstTechItr TechManager::TechBegin() const
+
+TechManager::const_iterator TechManager::begin() const
 {
     return m_tech_map.begin();
 }
-/**
-   TechBegin and TechEnd allow 
-   iteration over the techlevels in this manager
-*/
-TechManager::ConstTechItr TechManager::TechEnd() const
+
+TechManager::const_iterator TechManager::end() const
 {
     return m_tech_map.end();
 }
@@ -33,9 +33,9 @@ TechManager::ConstTechItr TechManager::TechEnd() const
 */
 const TechLevel* TechManager::Lookup(int ID) const
 {
-    ConstTechItr itr = m_tech_map.find(ID);
+    const_iterator itr = m_tech_map.find(ID);
     
-    if(itr == TechEnd())
+    if(itr == end())
     {
         return NULL;
     }
@@ -51,9 +51,9 @@ const TechLevel* TechManager::Lookup(int ID) const
 */
 TechLevel* TechManager::Lookup(int ID)
 {
-    TechItr itr = m_tech_map.find(ID);
+    iterator itr = m_tech_map.find(ID);
     
-    if(itr == TechEnd())
+    if(itr == end())
     {
         return NULL;
     }
@@ -65,19 +65,12 @@ TechLevel* TechManager::Lookup(int ID)
 
 
 
-/**
-   TechBegin and TechEnd allow 
-   iteration over the techlevels in this manager
-*/
-TechManager::TechItr TechManager::TechBegin() 
+TechManager::iterator TechManager::begin() 
 {
     return m_tech_map.begin();
 }
-/**
-   TechBegin and TechEnd allow 
-   iteration over the techlevels in this manager
-*/
-TechManager::TechItr TechManager::TechEnd() 
+
+TechManager::iterator TechManager::end() 
 {
     return m_tech_map.end();
 }
@@ -116,8 +109,6 @@ bool TechManager::LoadTechTree(const std::string& TechFileName)
     m_tech_map.insert(the_pair);
     
     return true;
-    
-    
 }
 
 /**
