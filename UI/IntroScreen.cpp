@@ -1,69 +1,41 @@
 //IntroScreen.cpp
-#ifndef _HumanClientApp_h_
-#include "../client/human/HumanClientApp.h"
-#endif
-
-#ifndef _IntroScreen_h_
 #include "IntroScreen.h"
-#endif
 
-#ifndef _GGDrawUtil_h_
+#include "../client/human/HumanClientApp.h"
+
 #include "GGDrawUtil.h"
-#endif
-
-#ifndef _GGStaticGraphic_h_
 #include "GGStaticGraphic.h"
-#endif
-
-#ifndef _ClientUI_h_
 #include "ClientUI.h"
-#endif
-
-#ifndef _GalaxySetupWnd_h_
 #include "GalaxySetupWnd.h"
-#endif
-
-#ifndef _EmpireSelect_h_
 #include "EmpireSelect.h"
-#endif
-
-#ifndef _About_h_
 #include "About.h"
-#endif
-
-#ifndef _ServerConnectWnd_h_
 #include "ServerConnectWnd.h"
-#endif
-
 #include "../network/Message.h"
+#include "CUIControls.h"
 
 #include <stdlib.h>
 #include <string>
 
-//#include "SitRepWnd.h"
-
 IntroScreen::IntroScreen():
-    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024+300)/2, 300, 300, 400, 
+    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024+300)/2, 300, 200, 400, 
             GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE | 
             CUI_Wnd::MINIMIZABLE | CUI_Wnd::CLOSABLE)
 {
-
-    //get a texture to fill the background with
-
+    //get the background texture
     m_background = new GG::Texture();
     m_background->Load(ClientUI::ART_DIR + "splash01.png");
-
+    
     //create staticgraphic from the image
     GG::StaticGraphic* bg_graphic = new GG::StaticGraphic(0,0,GG::App::GetApp()->AppWidth(),GG::App::GetApp()->AppHeight(),m_background);
     GG::App::GetApp()->Register(bg_graphic);
-
+    
     //create buttons
-    m_single_player = new GG::Button(20, 30, 260, 30, ClientUI::String("INTRO_BTN_SINGLE_PLAYER"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_multi_player = new GG::Button(20, 80, 260, 30, ClientUI::String("INTRO_BTN_MULTI_PLAYER"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_options = new GG::Button(20, 130, 260, 30, ClientUI::String("INTRO_BTN_OPTIONS"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_about = new GG::Button(20, 180, 260, 30, ClientUI::String("INTRO_BTN_ABOUT"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_exit_game = new GG::Button(20, 230, 260, 30, ClientUI::String("INTRO_BTN_EXIT"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-
+    m_single_player = new CUIButton(20, 30, 160, ClientUI::String("INTRO_BTN_SINGLE_PLAYER"));
+    m_multi_player = new CUIButton(20, 70, 160, ClientUI::String("INTRO_BTN_MULTI_PLAYER"));
+    m_options = new CUIButton(20, 110, 160, ClientUI::String("INTRO_BTN_OPTIONS"));
+    m_about = new CUIButton(20, 150, 160, ClientUI::String("INTRO_BTN_ABOUT"));
+    m_exit_game = new CUIButton(20, 190, 160, ClientUI::String("INTRO_BTN_EXIT"));
+    
     //attach buttons
     AttachChild(m_single_player);
     AttachChild(m_multi_player);
@@ -77,7 +49,7 @@ IntroScreen::IntroScreen():
     GG::Connect(m_options->ClickedSignal(), &IntroScreen::OnOptions, this);
     GG::Connect(m_about->ClickedSignal(), &IntroScreen::OnAbout, this);
     GG::Connect(m_exit_game->ClickedSignal(), &IntroScreen::OnExitGame, this);
-
+    
 }//IntroScreen()
 
 IntroScreen::IntroScreen(const GG::XMLElement &elem):
@@ -97,22 +69,12 @@ IntroScreen::~IntroScreen()
 
 GG::XMLElement IntroScreen::XMLEncode() const
 {
-	 GG::XMLElement retval;
-	 return retval;
+     GG::XMLElement retval;
+     return retval;
     //TODO: encode to XML
 }
-/*
-int IntroScreen::Render()
-{
-    //draw it
-     
-//    GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::BORDER_COLOR,true);
-//    ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, "FreeOrion Main Menu");
 
-//    return GG::Wnd::Render();
-    return 1;
-}//Render()
-*/
+
 ///////////////////////
 //    Message Maps   //
 /////////////////////////////////////////////////////////////
@@ -189,7 +151,7 @@ void IntroScreen::OnMultiPlayer()
                    }               
                }
 
-		      //sleep(1);
+              //sleep(1);
 
                 // start a game on the server
                 GG::XMLDoc game_parameters;
@@ -204,11 +166,11 @@ void IntroScreen::OnMultiPlayer()
                 // 1 AI client
                 elem = GG::XMLElement("AI_client");
                 game_parameters.root_node.AppendChild(elem);
-		// Universe setup
+        // Universe setup
                 char tmp_universe_size[255];
                 char tmp_universe_shape[255];
 
-		// Add universe size and shape to the XML doc
+        // Add universe size and shape to the XML doc
                 sprintf(tmp_universe_size, "%d", galaxy_wnd.GalaxySize());
                 sprintf(tmp_universe_shape, "%d", galaxy_wnd.GalaxyShape());
                 elem = GG::XMLElement("universe_params");
@@ -227,21 +189,21 @@ void IntroScreen::OnMultiPlayer()
             // \TEMP
 
             if (HumanClientApp::GetApp()->PlayerID() == -1)
-       		{
-    		  ClientUI::MessageBox(ClientUI::String("Game already hosted or unknown error") );
-    		}
-    		else
-    		{
+            {
+              ClientUI::MessageBox(ClientUI::String("Game already hosted or unknown error") );
+            }
+            else
+            {
                 EmpireSelect empire_wnd;
                 empire_wnd.Run();
     
-    		    if(empire_wnd.m_end_with_ok)
-    		    {
+                if(empire_wnd.m_end_with_ok)
+                {
                      // send the empire selection info
                      GG::XMLDoc empire_setup;
 
-		             //char tmp_empire_name[255];
-		             //sprintf(tmp_empire_name, "%d", empire_wnd.GalaxySize());
+                     //char tmp_empire_name[255];
+                     //sprintf(tmp_empire_name, "%d", empire_wnd.GalaxySize());
 
                      // add the empire name
                      GG::XMLElement elem("empire_name");
@@ -258,9 +220,9 @@ void IntroScreen::OnMultiPlayer()
 
 		             // send the empire setup choices to the server
                      HumanClientApp::GetApp()->NetworkCore().SendMessage(JoinGameSetup(empire_setup));
-		    }
-               else
-                   ClientUI::MessageBox(ClientUI::String("Failed empire setup!") );
+                }
+                else
+                    ClientUI::MessageBox(ClientUI::String("Failed empire setup!") );
                    
             }//else
                         
