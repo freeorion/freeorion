@@ -222,10 +222,7 @@ int System::Insert(int obj_id, int orbit)
 {
     if (orbit < -1)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
-
-    const Universe& universe = GetUniverse();
-
-    if (!universe.Object(obj_id))
+    if (!GetUniverse().Object(obj_id))
         throw std::invalid_argument("System::Insert() : Attempted to place an object in a System, when the object is not already in the Universe");
     if (m_orbits <= orbit)
         m_orbits = orbit + 1;
@@ -239,10 +236,7 @@ bool System::Remove(int id)
    bool retval = false;
    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
       if (it->second == id) {
-
-         const Universe& universe = GetUniverse();
-
-         const_cast<UniverseObject*>(universe.Object(it->second))->SetSystem(0);
+         GetUniverse().Object(it->second)->SetSystem(INVALID_OBJECT_ID);
          m_objects.erase(it);
          retval = true;
          StateChangedSignal()();
