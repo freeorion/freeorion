@@ -49,32 +49,12 @@ bool found_last_quote = false;
 
 XTree* XParser::parse(const string& filename)
 {
-   _idStack = vector<int>(STACK_SZ, 0);
-   _lsidStack = vector<int>(STACK_SZ, 0);
-   _valueStack = vector<unsigned long long>(STACK_SZ, 0);
-   _stackTop = 0;
-   _currentNodeID = XTree::NULL_NODE;
-   _idStack[_stackTop] = XTree::NULL_NODE;
-   _readElement = false;
-   _xtree = new XTree();
+   GG::XMLDoc doc;
+   ifstream ifs(filename.c_str());
+   doc.ReadDoc(ifs);
+   ifs.close();
    
-   XML_Parser p = XML_ParserCreate(0);
-   XML_SetElementHandler(p, &XParser::BeginElement, &XParser::EndElement);
-   XML_SetCharacterDataHandler(p, &XParser::CharacterData);
-   s_curr_parser = this;
-   string parse_str;
-   ifstream is(filename.c_str());
-   while (is) {
-      string str;
-      getline(is, str);
-      parse_str += str + '\n';
-   }
-   is.close();
-   XML_Parse(p, parse_str.c_str(), parse_str.size(), true);
-   XML_ParserFree(p);
-   s_curr_parser = 0;
-   
-   return _xtree;
+   return parse(doc);
 }
 
 XTree* XParser::parse(const GG::XMLDoc& doc)
@@ -89,7 +69,7 @@ XTree* XParser::parse(const GG::XMLDoc& doc)
    _xtree = new XTree();
    
    std::stringstream is;
-   doc.WriteDoc(is);
+   doc.WriteDoc(is, false);
    
    XML_Parser p = XML_ParserCreate(0);
    XML_SetElementHandler(p, &XParser::BeginElement, &XParser::EndElement);
