@@ -20,6 +20,5 @@ freeorionca_exe_LDADD = @SDL_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@	\
 @top_srcdir@/universe/libFOuniverse-common.a				\
 @top_srcdir@/util/libFOutil-ai.a					\
 @top_srcdir@/util/libFOutil-common.a					\
-@top_srcdir@/combat/libFOcombat-ai.a					\
 @top_srcdir@/combat/libFOcombat-common.a
 

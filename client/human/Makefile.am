@@ -25,6 +25,5 @@ freeorion_exe_LDADD =						\
 @top_srcdir@/util/libFOutil-human.a				\
 @top_srcdir@/util/libFOutil-common.a				\
 @top_srcdir@/UI/libFOui-common.a				\
-@top_srcdir@/combat/libFOcombat-human.a				\
 @top_srcdir@/combat/libFOcombat-common.a
 
