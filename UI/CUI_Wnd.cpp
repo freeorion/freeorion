@@ -108,10 +108,7 @@ void CUI_ModalWnd::OnCloseClick()
     OnClose();
     //close the window if it gets clicked
     //first remove from parent
-    Hide(true);
-    if(Parent() != NULL)
-        Parent()->DeleteChild(this);
-
+    m_done = true;
 }//OnCloseClick()
 
 void CUI_ModalWnd::OnMinimizeClick()
