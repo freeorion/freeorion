@@ -1,0 +1,4 @@
+FreeOrion Credits - Version 0.1
+Mark Saward tyreth@freeorion.org
+Joseph Bissonnette private@not.yet Programming Lead
+Zach Laine private@not.yet
