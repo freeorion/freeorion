@@ -14,8 +14,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    std::map<std::string, std::string> g_source_files;
-
     bool temp_header_bool = RecordHeaderFile(MultiplayerCommonRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
@@ -56,7 +54,8 @@ const std::vector<std::string>& VersionSensitiveSettingsFiles()
 
 const std::map<std::string, std::string>& SourceFiles()
 {
-    return g_source_files;
+    static std::map<std::string, std::string> source_files;
+    return source_files;
 }
 
 bool RecordSourceFile(const std::string& filename, const std::string& revision)
@@ -71,12 +70,15 @@ bool RecordSourceFile(const std::string& filename, const std::string& revision)
     std::string::size_type revision_length = revision.find_first_of(" \t", revision_start) - revision_start;
     std::string transformed_revision = revision.substr(revision_start, revision_length);
 
-    std::map<std::string, std::string>::iterator it = g_source_files.find(transformed_filename);
-    if (it == g_source_files.end()) {
-        g_source_files[transformed_filename] = transformed_revision;
+    std::map<std::string, std::string>& source_files = const_cast<std::map<std::string, std::string>&>(SourceFiles());
+    std::map<std::string, std::string>::iterator it = source_files.find(transformed_filename);
+    if (it == source_files.end()) {
+        source_files[transformed_filename] = transformed_revision;
     } else {
-        throw std::runtime_error("RecordSourceFile() : Attempted to record source file \"" +
-                                 transformed_filename + "\" twice.");
+        std::string message = "RecordSourceFile() : Attempted to record source file \"" +
+            transformed_filename + "\" twice.";
+        std::cerr << message << "\n";
+        throw std::runtime_error(message.c_str());
     }
     return true;
 }
