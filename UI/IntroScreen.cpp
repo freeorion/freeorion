@@ -166,12 +166,19 @@ void IntroScreen::OnStartGame()
                 elem = GG::XMLElement("AI_client");
                 game_parameters.root_node.AppendChild(elem);
 		// Universe setup
-                char tmp_universe[255];
-                sprintf(tmp_universe, "%d", galaxy_wnd.GalaxySize());
-		elem = GG::XMLElement("universe_params");
-                elem.SetAttribute("size", tmp_universe);
-                game_parameters.root_node.AppendChild(elem);
+                char tmp_universe_size[255];
+                char tmp_universe_shape[255];
 
+		// Add universe size and shape to the XML doc
+                sprintf(tmp_universe_size, "%d", galaxy_wnd.GalaxySize());
+                sprintf(tmp_universe_shape, "%d", galaxy_wnd.GalaxyShape());
+		elem = GG::XMLElement("universe_params");
+                elem.SetAttribute("size", tmp_universe_size);
+                elem.SetAttribute("shape", tmp_universe_shape);
+		if (boost::lexical_cast<int>(tmp_universe_shape) == 4)
+                  elem.SetAttribute("file", galaxy_wnd.GalaxyFile().c_str());
+                game_parameters.root_node.AppendChild(elem);
+		
                 HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(game_parameters));
 
                 char tmp[255];
