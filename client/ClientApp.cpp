@@ -4,6 +4,13 @@
 
 #include <stdexcept>
 
+#ifdef FREEORION_BUILD_HUMAN
+#include "./human/HumanClientApp.h"
+#else
+#include "./AI/AIClientApp.h"
+#endif
+
+
 // static member(s)
 ClientApp* ClientApp::s_app = 0;
 
@@ -27,15 +34,17 @@ void ClientApp::HandleMessage(const Message& msg)
    s_app->HandleMessageImpl(msg);
 }
 
+
+Universe& ClientApp::GetUniverse()
+{
+   return s_app->m_universe;
+}
+
 MultiplayerLobbyWnd* ClientApp::MultiplayerLobby()
 {
     return s_app->m_multiplayer_lobby_wnd;
 }
 
-ClientUniverse& ClientApp::Universe()
-{
-   return s_app->m_universe;
-}
 
 ClientEmpireManager& ClientApp::Empire()
 {
@@ -56,4 +65,5 @@ ClientNetworkCore& ClientApp::NetworkCore()
 {
    return s_app->m_network_core;
 }
+
 

@@ -477,7 +477,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             output.close();
             
             Logger().debugStream() <<"About to call SetUniverse.";
-            m_universe.SetUniverse(doc.root_node.Child("ClientUniverse"));
+            m_universe.SetUniverse(doc.root_node.Child("Universe"));
             
             // if we have empire data, then process it.  As it stands now,
             // we may not, so dont assume we do.

@@ -2,8 +2,8 @@
 #ifndef _ServerApp_h_
 #define _ServerApp_h_
 
-#ifndef _ServerUniverse_h_
-#include "../universe/ServerUniverse.h"
+#ifndef _Universe_h_
+#include "../universe/Universe.h"
 #endif 
 
 #ifndef _ServerEmpire_h_
@@ -80,7 +80,7 @@ public:
    //@}
 
    static ServerApp*             GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
-   static ServerUniverse&        Universe();       ///< returns server's copy of Universe
+   static Universe&        GetUniverse();       ///< returns server's copy of Universe
    static ServerEmpireManager&   Empires();        ///< returns the server's copy of the Empires
    static CombatModule*          CurrentCombat();  ///< returns the server's currently executing Combat; may be 0
    static ServerNetworkCore&     NetworkCore();    ///< returns the network core object for the server
@@ -105,7 +105,7 @@ private:
    GG::XMLDoc LobbyUpdateDoc() const;          ///< creates an MP lobby-mode update XMLDoc containing all relevant parts of the lobby state
    GG::XMLDoc LobbyPlayerUpdateDoc() const;    ///< creates an MP lobby-mode update XMLDoc containing just the current players
 
-   ServerUniverse          m_universe;
+   Universe          m_universe;
    ServerEmpireManager     m_empires;
    CombatModule*           m_current_combat;
    ServerNetworkCore       m_network_core;
@@ -120,9 +120,11 @@ private:
    std::set<std::string>   m_expected_ai_players;  ///< the player names expected from valid AI clients; this prevents malicious users from "spoofing" as AI clients.  Should be empty after all players have joined a game.
    int                     m_expected_players;     ///< the total desired number of players in the game
 
+
    int                     m_galaxy_size;          ///< the size of the galaxy (the number of star systems)
-   ClientUniverse::Shape   m_galaxy_shape;         ///< the shape of the galaxy
+   Universe::Shape   m_galaxy_shape;         ///< the shape of the galaxy
    std::string             m_galaxy_file;          ///< file to use for generating the galaxy
+
    // end SERVER_GAME_SETUP variables
 
    std::map<int, GG::XMLDoc> m_last_turn_update_msg; ///< stores the xml encoded empire and universe data from the previous turn in order to generate diffs for turn update message.  Map is indexed by empire ID, with separate message data for each since each player sees different parts of the universe.

@@ -265,57 +265,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit26]
-FileName=..\universe\ClientUniverse.h
-CompileCpp=1
-Folder=universe
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit27]
-FileName=..\universe\ServerUniverse.h
-CompileCpp=1
-Folder=universe
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit28]
-FileName=..\universe\ServerUniverse.cpp
-CompileCpp=1
-Folder=universe
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit29]
-FileName=..\universe\ClientUniverse.cpp
-CompileCpp=1
-Folder=universe
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit30]
-FileName=..\universe\UniverseObject.cpp
-CompileCpp=1
-Folder=universe
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit31]
 FileName=..\universe\UniverseObject.h
 CompileCpp=1
 Folder=universe
@@ -325,7 +275,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit32]
+[Unit28]
 FileName=..\universe\System.cpp
 CompileCpp=1
 Folder=universe
@@ -335,17 +285,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit33]
-FileName=..\universe\System.h
-CompileCpp=1
-Folder=universe
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit34]
+[Unit30]
 FileName=..\universe\Planet.cpp
 CompileCpp=1
 Folder=universe
@@ -355,7 +295,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit35]
+[Unit31]
 FileName=..\universe\PopCenter.h
 CompileCpp=1
 Folder=universe
@@ -365,7 +305,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit36]
+[Unit32]
 FileName=..\universe\ProdCenter.h
 CompileCpp=1
 Folder=universe
@@ -375,7 +315,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit37]
+[Unit33]
 FileName=..\universe\Planet.h
 CompileCpp=1
 Folder=universe
@@ -385,7 +325,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit38]
+[Unit34]
 FileName=..\universe\PopCenter.cpp
 CompileCpp=1
 Folder=universe
@@ -395,7 +335,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit39]
+[Unit35]
 FileName=..\universe\ProdCenter.cpp
 CompileCpp=1
 Folder=universe
@@ -405,7 +345,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit40]
+[Unit36]
 FileName=..\universe\Ship.cpp
 CompileCpp=1
 Folder=universe
@@ -415,7 +355,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit42]
+[Unit37]
+FileName=..\universe\Ship.h
+CompileCpp=1
+Folder=universe
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit38]
 FileName=..\universe\Fleet.h
 CompileCpp=1
 Folder=universe
@@ -425,7 +375,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit43]
+[Unit39]
 FileName=..\universe\Fleet.cpp
 CompileCpp=1
 Folder=universe
@@ -435,8 +385,38 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit44]
+[Unit40]
 FileName=..\Empire\TechManager.h
+CompileCpp=1
+Folder=empire
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit42]
+FileName=..\Empire\Empire.h
+CompileCpp=1
+Folder=empire
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit43]
+FileName=..\Empire\EmpireManager.cpp
+CompileCpp=1
+Folder=empire
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit44]
+FileName=..\Empire\EmpireManager.h
 CompileCpp=1
 Folder=empire
 Compile=1
@@ -476,9 +456,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit41]
-FileName=..\universe\Ship.h
+FileName=..\Empire\Empire.cpp
 CompileCpp=1
-Folder=universe
+Folder=empire
 Compile=1
 Link=1
 Priority=1000
@@ -486,7 +466,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit46]
-FileName=..\Empire\Empire.h
+FileName=..\Empire\ServerEmpireManager.h
 CompileCpp=1
 Folder=empire
 Compile=1
@@ -496,36 +476,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit47]
-FileName=..\Empire\EmpireManager.cpp
-CompileCpp=1
-Folder=empire
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit48]
-FileName=..\Empire\EmpireManager.h
-CompileCpp=1
-Folder=empire
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit49]
-FileName=..\Empire\ServerEmpireManager.cpp
-CompileCpp=1
-Folder=empire
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit51]
 FileName=..\Empire\TechLevel.cpp
 CompileCpp=1
 Folder=empire
@@ -535,7 +485,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit52]
+[Unit48]
 FileName=..\Empire\TechLevel.h
 CompileCpp=1
 Folder=empire
@@ -545,7 +495,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit53]
+[Unit49]
 FileName=..\Empire\TechManager.cpp
 CompileCpp=1
 Folder=empire
@@ -555,8 +505,38 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit51]
+FileName=..\universe\Universe.cpp
+CompileCpp=1
+Folder=universe
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit52]
+FileName=..\universe\Universe.h
+CompileCpp=1
+Folder=universe
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit53]
+FileName=..\util\AppInterface.h
+CompileCpp=1
+Folder=util
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit54]
-FileName=..\util\SitRepEntry.h
+FileName=..\util\AppInterface.cpp
 CompileCpp=1
 Folder=util
 Compile=1
@@ -566,9 +546,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit55]
-FileName=..\Empire\TechManager.cpp
+FileName=..\util\AppInterface.h
 CompileCpp=1
-Folder=empire
+Folder=
 Compile=1
 Link=1
 Priority=1000
@@ -606,9 +586,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit50]
-FileName=..\Empire\ServerEmpireManager.h
+FileName=..\util\SitRepEntry.h
 CompileCpp=1
-Folder=empire
+Folder=util
 Compile=1
 Link=1
 Priority=1000
@@ -776,9 +756,29 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit45]
-FileName=..\Empire\Empire.cpp
+FileName=..\Empire\ServerEmpireManager.cpp
 CompileCpp=1
 Folder=empire
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit26]
+FileName=..\universe\UniverseObject.cpp
+CompileCpp=1
+Folder=universe
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit29]
+FileName=..\universe\System.h
+CompileCpp=1
+Folder=universe
 Compile=1
 Link=1
 Priority=1000

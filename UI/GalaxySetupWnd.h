@@ -4,8 +4,8 @@
 #ifndef _GalaxySetupWnd_h_
 #define _GalaxySetupWnd_h_
 
-#ifndef _ClientUniverse_h_
-#include "../universe/ClientUniverse.h"
+#ifndef _Universe_h_
+#include "../universe/Universe.h"
 #endif
 
 #ifndef _CUI_Wnd_h_
@@ -35,7 +35,7 @@ public:
     /** \name Accessors*/ //!@{
     bool                  EndedWithOk() const {return m_done && m_ended_with_ok;} ///< retursn true iff the dialog is finished running and it was closed with the "OK" button
     int                   Systems() const;     ///< number of star systems to use in generating the galaxy
-    ClientUniverse::Shape GalaxyShape() const; //!< Returns the shape of the galaxy: TWO_ARM, THREE_ARM, etc.
+    Universe::Shape         GalaxyShape() const; //!< Returns the shape of the galaxy: TWO_ARM, THREE_ARM, etc.
     std::string           GalaxyFile() const;  //!< Returns the filename of the image-based galaxy file if it exists
 
     virtual GG::XMLElement XMLEncode() const;  //!< encode to XML

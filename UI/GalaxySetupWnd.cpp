@@ -145,14 +145,14 @@ int GalaxySetupWnd::Systems() const
     return retval;
 }
 
-ClientUniverse::Shape GalaxySetupWnd::GalaxyShape() const
+Universe::Shape GalaxySetupWnd::GalaxyShape() const
 {
-    return ClientUniverse::Shape(m_type_buttons->CheckedButton());
+    return Universe::Shape(m_type_buttons->CheckedButton());
 }
 
 std::string GalaxySetupWnd::GalaxyFile() const
 {
-    return ((m_type_buttons->CheckedButton() == ClientUniverse::FROM_FILE) ? m_galaxy_file->WindowText() : "");
+    return ((m_type_buttons->CheckedButton() == Universe::FROM_FILE) ? m_galaxy_file->WindowText() : "");
 }
 
 void GalaxySetupWnd::Init()
@@ -167,18 +167,18 @@ void GalaxySetupWnd::Init()
 
     // create and load textures
     m_textures.clear();
-    for (int i = 0; i < ClientUniverse::GALAXY_SHAPES; ++i)
+    for (int i = 0; i < Universe::GALAXY_SHAPES; ++i)
         m_textures.push_back(boost::shared_ptr<GG::Texture>(new GG::Texture()));
-    m_textures[ClientUniverse::SPIRAL_2]->Load(ClientUI::ART_DIR + "gp_spiral2.png");
-    m_textures[ClientUniverse::SPIRAL_3]->Load(ClientUI::ART_DIR + "gp_spiral3.png");
-    m_textures[ClientUniverse::SPIRAL_4]->Load(ClientUI::ART_DIR + "gp_spiral4.png");
-    m_textures[ClientUniverse::CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
-    m_textures[ClientUniverse::ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
-    m_textures[ClientUniverse::IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
+    m_textures[Universe::SPIRAL_2]->Load(ClientUI::ART_DIR + "gp_spiral2.png");
+    m_textures[Universe::SPIRAL_3]->Load(ClientUI::ART_DIR + "gp_spiral3.png");
+    m_textures[Universe::SPIRAL_4]->Load(ClientUI::ART_DIR + "gp_spiral4.png");
+    m_textures[Universe::CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
+    m_textures[Universe::ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
+    m_textures[Universe::IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
     
     // default settings (medium and 2-arm spiral)
     m_size_buttons->SetCheck(2);
-    m_type_buttons->SetCheck(ClientUniverse::SPIRAL_2);
+    m_type_buttons->SetCheck(Universe::SPIRAL_2);
 }
 
 void GalaxySetupWnd::AttachSignalChildren()
@@ -206,7 +206,7 @@ void GalaxySetupWnd::DetachSignalChildren()
 void GalaxySetupWnd::OnOK()
 {
     //check to see if we have a valid image if file is checked
-    if (m_type_buttons->CheckedButton() == ClientUniverse::FROM_FILE) {
+    if (m_type_buttons->CheckedButton() == Universe::FROM_FILE) {
         try {
             boost::shared_ptr<GG::Texture> tex(new GG::Texture);
             tex->Load(GalaxyFile());
@@ -231,32 +231,32 @@ void GalaxySetupWnd::OnChangeSize(int index)
     // disable invalid galaxy shapes for the chosen galaxy size
     switch (index) {
     case 0:
-        if (-1 < m_type_buttons->CheckedButton() && m_type_buttons->CheckedButton() <= ClientUniverse::SPIRAL_4)
-            m_type_buttons->SetCheck(ClientUniverse::CLUSTER);
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_2);
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_3);
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_4);
+        if (-1 < m_type_buttons->CheckedButton() && m_type_buttons->CheckedButton() <= Universe::SPIRAL_4)
+            m_type_buttons->SetCheck(Universe::CLUSTER);
+        m_type_buttons->DisableButton(Universe::SPIRAL_2);
+        m_type_buttons->DisableButton(Universe::SPIRAL_3);
+        m_type_buttons->DisableButton(Universe::SPIRAL_4);
         break;
     case 1:
         if (-1 < m_type_buttons->CheckedButton() && 
-            (m_type_buttons->CheckedButton() == ClientUniverse::SPIRAL_3 ||
-             m_type_buttons->CheckedButton() == ClientUniverse::SPIRAL_4))
-            m_type_buttons->SetCheck(ClientUniverse::SPIRAL_2);
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_2, false);
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_3);
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_4);
+            (m_type_buttons->CheckedButton() == Universe::SPIRAL_3 ||
+             m_type_buttons->CheckedButton() == Universe::SPIRAL_4))
+            m_type_buttons->SetCheck(Universe::SPIRAL_2);
+        m_type_buttons->DisableButton(Universe::SPIRAL_2, false);
+        m_type_buttons->DisableButton(Universe::SPIRAL_3);
+        m_type_buttons->DisableButton(Universe::SPIRAL_4);
         break;
     case 2:
-        if (-1 < m_type_buttons->CheckedButton() && m_type_buttons->CheckedButton() == ClientUniverse::SPIRAL_4)
-            m_type_buttons->SetCheck(ClientUniverse::SPIRAL_3);
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_2, false);
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_3, false);
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_4);
+        if (-1 < m_type_buttons->CheckedButton() && m_type_buttons->CheckedButton() == Universe::SPIRAL_4)
+            m_type_buttons->SetCheck(Universe::SPIRAL_3);
+        m_type_buttons->DisableButton(Universe::SPIRAL_2, false);
+        m_type_buttons->DisableButton(Universe::SPIRAL_3, false);
+        m_type_buttons->DisableButton(Universe::SPIRAL_4);
         break;
     default:
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_2, false);
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_3, false);
-        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_4, false);
+        m_type_buttons->DisableButton(Universe::SPIRAL_2, false);
+        m_type_buttons->DisableButton(Universe::SPIRAL_3, false);
+        m_type_buttons->DisableButton(Universe::SPIRAL_4, false);
         break;
     }
 }
@@ -267,7 +267,7 @@ void GalaxySetupWnd::OnChangeType(int index)
         DeleteChild(m_preview_image);
         m_preview_image = 0;
     }
-    if (m_type_buttons->CheckedButton() == ClientUniverse::FROM_FILE) {
+    if (m_type_buttons->CheckedButton() == Universe::FROM_FILE) {
         try {
             boost::shared_ptr<GG::Texture> tex(new GG::Texture());
             tex->Load(GalaxyFile());
@@ -306,6 +306,6 @@ void GalaxySetupWnd::OnBrowse()
     if (!dlg.Result().empty()) {
         m_galaxy_file->SetText(*dlg.Result().begin());
         m_type_buttons->SetCheck(-1);
-        m_type_buttons->SetCheck(ClientUniverse::FROM_FILE);
+        m_type_buttons->SetCheck(Universe::FROM_FILE);
     }
 }

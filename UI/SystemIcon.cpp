@@ -96,7 +96,7 @@ SystemIcon::SystemIcon(int id, double zoom) :
     m_static_graphic(0),
     m_name(0)
 {
-    const System* sys = dynamic_cast<const System*>(ClientApp::Universe().Object(id));
+    const System* sys = dynamic_cast<const System*>(ClientApp::GetUniverse().Object(id));
 
     Connect(sys->StateChangedSignal(), &SystemIcon::Refresh, this);
 
@@ -210,7 +210,7 @@ void SystemIcon::CreateFleetButtons(const System* sys)
 
 void SystemIcon::Refresh()
 {
-    const System* sys = dynamic_cast<const System*>(ClientApp::Universe().Object(m_system_ID));
+    const System* sys = dynamic_cast<const System*>(ClientApp::GetUniverse().Object(m_system_ID));
 
     SetText(sys->Name());
     m_name->SetText(sys->Name());

@@ -27,11 +27,11 @@ struct LobbyModeData
 {
     LobbyModeData () :
         galaxy_size(150),
-        galaxy_type(ClientUniverse::SPIRAL_2)
+        galaxy_type(Universe::SPIRAL_2)
     {}
 
     int                      galaxy_size; // number of stars
-    ClientUniverse::Shape    galaxy_type;
+    Universe::Shape    galaxy_type;
     std::string              galaxy_image_filename;
 
     std::vector<AISetupData> AIs;
@@ -223,7 +223,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 g_lobby_data.galaxy_size = boost::lexical_cast<int>(doc.root_node.Child("galaxy_size").Attribute("value"));
             }
             if (doc.root_node.ContainsChild("galaxy_type")) {
-                g_lobby_data.galaxy_type = ClientUniverse::Shape(boost::lexical_cast<int>(doc.root_node.Child("galaxy_type").Attribute("value")));
+                g_lobby_data.galaxy_type = Universe::Shape(boost::lexical_cast<int>(doc.root_node.Child("galaxy_type").Attribute("value")));
             }
             if (doc.root_node.ContainsChild("galaxy_image_filename")) {
                 g_lobby_data.galaxy_image_filename = doc.root_node.Child("galaxy_image_filename").Text();
@@ -270,6 +270,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
             GG::XMLDoc doc;
             doc.ReadDoc(stream);
             std::string host_player_name = doc.root_node.Child("host_player_name").Text();
+
             PlayerInfo host_player_info(connection.socket, connection.address, host_player_name, true);
             int player_id = HOST_PLAYER_ID;
             if (doc.root_node.NumChildren() == 1) { // start an MP lobby situation so that game settings can be established
@@ -283,8 +284,8 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
             } else { // immediately start a new game with the given parameters
                 m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Attribute("value"));
                 m_galaxy_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("size"));
-                m_galaxy_shape = ClientUniverse::Shape(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("shape")));
-                if (m_galaxy_shape == ClientUniverse::FROM_FILE)
+                m_galaxy_shape = Universe::Shape(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("shape")));
+                if (m_galaxy_shape == Universe::FROM_FILE)
                     m_galaxy_file = doc.root_node.Child("universe_params").Child("file").Text();
                 CreateAIClients(doc.root_node);
                 m_state = SERVER_GAME_SETUP;
@@ -377,7 +378,7 @@ ServerApp* ServerApp::GetApp()
     return s_app;
 }
 
-ServerUniverse& ServerApp::Universe()
+Universe& ServerApp::GetUniverse()
 {
     return ServerApp::GetApp()->m_universe;
 }
@@ -493,9 +494,11 @@ void ServerApp::SDLQuit()
 
 void ServerApp::GameInit()
 {
+
     m_universe.CreateUniverse(m_galaxy_shape, m_galaxy_size, m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size());
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << 
-        (m_galaxy_shape == ClientUniverse::FROM_FILE ? ("from file " + m_galaxy_file) : "") << " (SERVER_GAME_SETUP).";
+        (m_galaxy_shape == Universe::FROM_FILE ? ("from file " + m_galaxy_file) : "") << " (SERVER_GAME_SETUP).";
+
 
     // the universe creation caused the creation of empires.  But now we
     // need to assign the empires to players.

@@ -3,7 +3,7 @@
 #include "MapWnd.h"
 
 #include "ClientUI.h"
-#include "../universe/ClientUniverse.h"
+#include "../universe/Universe.h"
 #include "GGDrawUtil.h"
 #include "../client/human/HumanClientApp.h"
 #include "../universe/Planet.h"
@@ -32,8 +32,8 @@ const int    MapWnd::NUM_BACKGROUNDS = 3;
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight(), 
-            static_cast<int>(ClientUniverse::UNIVERSE_WIDTH * MAX_SCALE_FACTOR) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH, 
-            static_cast<int>(ClientUniverse::UNIVERSE_WIDTH * MAX_SCALE_FACTOR) + GG::App::GetApp()->AppHeight() + MAP_MARGIN_WIDTH, 
+            static_cast<int>(Universe::UNIVERSE_WIDTH * MAX_SCALE_FACTOR) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH, 
+            static_cast<int>(Universe::UNIVERSE_WIDTH * MAX_SCALE_FACTOR) + GG::App::GetApp()->AppHeight() + MAP_MARGIN_WIDTH, 
             GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
     m_backgrounds(NUM_BACKGROUNDS),
     m_bg_scroll_rate(NUM_BACKGROUNDS),
@@ -72,7 +72,7 @@ MapWnd::MapWnd() :
     int num_nebulae = RandSmallInt(MIN_NEBULAE, MAX_NEBULAE);
     m_nebulae.resize(num_nebulae);
     m_nebula_centers.resize(num_nebulae);
-    SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(ClientUniverse::UNIVERSE_WIDTH));
+    SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UNIVERSE_WIDTH));
     SmallIntDistType nebula_type = SmallIntDist(1, NUM_NEBULA_TEXTURES);
     for (int i = 0; i < num_nebulae; ++i) {
         std::string nebula_filename = "nebula" + boost::lexical_cast<std::string>(nebula_type()) + ".png";
@@ -160,7 +160,7 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 
     for (unsigned int i = 0; i < m_stars.size(); ++i) {
         const System* system = 
-            dynamic_cast<const System*>(HumanClientApp::Universe().Object(m_stars[i]->SystemID()));
+            dynamic_cast<const System*>(HumanClientApp::GetUniverse().Object(m_stars[i]->SystemID()));
         GG::Pt icon_ul(static_cast<int>((system->X() - SystemIcon::ICON_WIDTH / 2) * m_zoom_factor), 
                        static_cast<int>((system->Y() - SystemIcon::ICON_HEIGHT / 2) * m_zoom_factor));
         m_stars[i]->SizeMove(icon_ul.x, icon_ul.y, 
@@ -185,7 +185,7 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 void MapWnd::InitTurn()
 {
     m_stars.clear();
-    ClientUniverse::ObjectIDVec system_IDs = ClientApp::Universe().FindObjectIDs(IsSystem);
+    Universe::ObjectIDVec system_IDs = ClientApp::GetUniverse().FindObjectIDs(IsSystem);
     for (unsigned int i = 0; i < system_IDs.size(); ++i) {
         SystemIcon* icon = new SystemIcon(system_IDs[i], m_zoom_factor);
         m_stars.push_back(icon);
@@ -258,7 +258,7 @@ void MapWnd::SelectSystem(int systemID)
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 {
-    int contents_width = static_cast<int>(m_zoom_factor * ClientUniverse::UNIVERSE_WIDTH);
+    int contents_width = static_cast<int>(m_zoom_factor * Universe::UNIVERSE_WIDTH);
     int app_width =  GG::App::GetApp()->AppWidth();
     int app_height =  GG::App::GetApp()->AppHeight();
     if (app_width < contents_width) {
