@@ -45,8 +45,11 @@ private:
         TWO_ARM    = 0,
         THREE_ARM  = 1,
         FOUR_ARM   = 2,
-        CLUSTER    = 3,
-        FROM_FILE  = 4
+        CLUSTER    = 3,        
+        //more added 6/24/2003
+        ELLIPTICAL = 4,
+        IRREGULAR  = 5,
+        FROM_FILE  = 6
     };//enum
     
 public:
@@ -97,6 +100,7 @@ private:
 //! \name Private Constants
 //!@{
     static const int GALAXY_TYPES;
+    static const int TYPE_ROW_HEIGHT;
 
 //!@}
 //! \name Controls

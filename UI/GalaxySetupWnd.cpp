@@ -29,7 +29,8 @@
 ////////////////////////////////////////////
 //   CONSTANTS
 ////////////////////////////////////////////
-const int GalaxySetupWnd::GALAXY_TYPES  =  4;   //not including "From file:"
+const int GalaxySetupWnd::GALAXY_TYPES  =  6;   //not including "From file:"
+const int GalaxySetupWnd::TYPE_ROW_HEIGHT = 35; //row height
 
 ////////////////////////////////////////////
 //   CONSTRUCTION/DESTRUCTION
@@ -53,29 +54,36 @@ GalaxySetupWnd::GalaxySetupWnd():
     
     m_type_buttons = new GG::RadioButtonGroup(125,7);
     
-    m_type_buttons->AddButton(temp=new GG::StateButton(125,10,100,50,ClientUI::String("GSETUP_2ARM"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
+    int y = 10;
+    m_type_buttons->AddButton(temp=new GG::StateButton(125,y,100,50,ClientUI::String("GSETUP_2ARM"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
     m_type_vector.push_back(temp);
-    m_type_buttons->AddButton(temp=new GG::StateButton(125,65,100,50,ClientUI::String("GSETUP_3ARM"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
+    m_type_buttons->AddButton(temp=new GG::StateButton(125,y+=TYPE_ROW_HEIGHT,100,50,ClientUI::String("GSETUP_3ARM"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
     m_type_vector.push_back(temp);
-    m_type_buttons->AddButton(temp=new GG::StateButton(125,120,100,50,ClientUI::String("GSETUP_4ARM"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
+    m_type_buttons->AddButton(temp=new GG::StateButton(125,y+=TYPE_ROW_HEIGHT,100,50,ClientUI::String("GSETUP_4ARM"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
     m_type_vector.push_back(temp);
-    m_type_buttons->AddButton(temp=new GG::StateButton(125,175,100,50,ClientUI::String("GSETUP_CLUSTER"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
+    m_type_buttons->AddButton(temp=new GG::StateButton(125,y+=TYPE_ROW_HEIGHT,100,50,ClientUI::String("GSETUP_CLUSTER"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
     m_type_vector.push_back(temp);
-    m_type_buttons->AddButton(temp=new GG::StateButton(125,230,100,50,ClientUI::String("GSETUP_FROMFILE"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
+    m_type_buttons->AddButton(temp=new GG::StateButton(125,y+=TYPE_ROW_HEIGHT,100,50,ClientUI::String("GSETUP_ELLIPTICAL"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
+    m_type_vector.push_back(temp);
+    m_type_buttons->AddButton(temp=new GG::StateButton(125,y+=TYPE_ROW_HEIGHT,100,50,ClientUI::String("GSETUP_IRREGULAR"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
+    m_type_vector.push_back(temp);
+    m_type_buttons->AddButton(temp=new GG::StateButton(125,y+=TYPE_ROW_HEIGHT,100,50,ClientUI::String("GSETUP_FROMFILE"), ClientUI::FONT,ClientUI::PTS,0,ClientUI::TEXT_COLOR, ClientUI::TEXT_COLOR, ClientUI::CTRL_COLOR,GG::StateButton::SBSTYLE_3D_RADIO,-1,-1,ClientUI::PTS+4, ClientUI::PTS+4));
     m_type_vector.push_back(temp);
     
-    m_galaxy_file =    new GG::Edit(385, 247, 168, 25, "", ClientUI::FONT, ClientUI::PTS, ClientUI::INNER_BORDER_COLOR/*, GG::CLR_BLACK*/);
+    y+=20;
+    m_galaxy_file =    new GG::Edit(385, y,/*247 old*/ 168, 25, "", ClientUI::FONT, ClientUI::PTS, ClientUI::INNER_BORDER_COLOR/*, GG::CLR_BLACK*/);
     m_galaxy_file->SetTextColor(ClientUI::TEXT_COLOR);
     
-    m_browse_button = new GG::Button(555, 247, 75, 25, ClientUI::String("BROWSE_BTN"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
+    m_browse_button = new GG::Button(555, y, 75, 25, ClientUI::String("BROWSE_BTN"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
     
     //create a temporary texture and static graphic  
     // this will get overwritten during construction
     boost::shared_ptr<GG::Texture> temptex(new GG::Texture());
     m_preview_image =  new GG::StaticGraphic(385, 30, 248, 186, temptex, GG::SG_FITGRAPHIC);    //create a blank graphic
  
-    m_ok     = new GG::Button(555,305,75,25,ClientUI::String("OK"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
-    m_cancel = new GG::Button(465,305,75,25,ClientUI::String("CANCEL"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
+    y+= TYPE_ROW_HEIGHT;
+    m_ok     = new GG::Button(555,y/*305*/,75,25,ClientUI::String("OK"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
+    m_cancel = new GG::Button(465,y/*305*/,75,25,ClientUI::String("CANCEL"), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
 
     Init();    //attaches children and connects signals to slots
 }//GalaxySetupWnd()
@@ -146,6 +154,9 @@ void GalaxySetupWnd::Init()
     m_textures[THREE_ARM]->Load(ClientUI::ART_DIR + "gp_spiral3.png");
     m_textures[FOUR_ARM]->Load(ClientUI::ART_DIR + "gp_spiral4.png");
     m_textures[CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
+    //get new textures for elliptical
+    m_textures[ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
+    m_textures[IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
     
     //now change everything to default setting (large and spiral-2arm)
     m_size_buttons->SetCheck(LARGE);
