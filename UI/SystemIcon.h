@@ -74,9 +74,9 @@ private:
     void Refresh();
     void PositionSystemName();
 
-    const System&       m_system;         //!< the System object associated with this SystemIcon
-    GG::StaticGraphic*  m_static_graphic; //!< the control used to render the displayed texture
-    GG::TextControl*    m_name;           //!< the control that holds the name of the system
+    const System&                 m_system;         //!< the System object associated with this SystemIcon
+    GG::StaticGraphic*            m_static_graphic; //!< the control used to render the displayed texture
+    std::vector<GG::TextControl*> m_name;           //!< the control that holds the name of the system (multiple controls may be needed, since there may be multiple owners and thus colors)
 
     std::map<int, FleetButton*> m_stationary_fleet_markers; //!< the fleet buttons for the fleets that are stationary in the system, indexed by Empire ID of the owner
     std::map<int, FleetButton*> m_moving_fleet_markers;     //!< the fleet buttons for the fleets that are under orders to move out of the system, indexed by Empire ID of the owner

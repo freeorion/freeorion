@@ -24,8 +24,7 @@ const int IMAGES_PER_STAR_TYPE = 2; // number of star images available per star 
 SystemIcon::SystemIcon(int id, double zoom) :
     GG::Control(0, 0, 1, 1, GG::Wnd::CLICKABLE),
     m_system(*dynamic_cast<const System*>(ClientApp::GetUniverse().Object(id))),
-    m_static_graphic(0),
-    m_name(0)
+    m_static_graphic(0)
 {
     Connect(m_system.StateChangedSignal(), &SystemIcon::Refresh, this);
 
@@ -42,14 +41,14 @@ SystemIcon::SystemIcon(int id, double zoom) :
     boost::shared_ptr<GG::Texture> graphic;
     std::string system_image = ClientUI::ART_DIR + "stars/";
     switch (m_system.Star()) {
-        case System::BLUE: system_image += "blue2"; break;
-        case System::WHITE:    system_image += "yellow1"; break;
-        case System::YELLOW: system_image += "yellow2"; break;
-        case System::ORANGE: system_image += "red4"; break;
-        case System::RED: system_image += "red3"; break;
-        case System::NEUTRON:   system_image += "blue2"; break;
-        case System::BLACK:   system_image += "blue2"; break;
-    default:               system_image += "blue2"; break;
+    case System::BLUE:    system_image += "blue2"; break;
+    case System::WHITE:   system_image += "yellow1"; break;
+    case System::YELLOW:  system_image += "yellow2"; break;
+    case System::ORANGE:  system_image += "red4"; break;
+    case System::RED:     system_image += "red3"; break;
+    case System::NEUTRON: system_image += "blue2"; break;
+    case System::BLACK:   system_image += "blue2"; break;
+    default:              system_image += "blue2"; break;
     }
     system_image += /*boost::lexical_cast<std::string>((m_system.ID() % IMAGES_PER_STAR_TYPE) + 1) +*/ ".png";
     graphic = HumanClientApp::GetApp()->GetTexture(system_image);
@@ -57,11 +56,6 @@ SystemIcon::SystemIcon(int id, double zoom) :
     //setup static graphic
     m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::GR_FITGRAPHIC);
     AttachChild(m_static_graphic);
-
-    //set up the name text control
-    m_name = new GG::TextControl(0, 0, m_system.Name(), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
-    PositionSystemName();
-    AttachChild(m_name);
 
     Refresh();
 }
@@ -130,12 +124,16 @@ void SystemIcon::ClickFleetButton(Fleet* fleet)
 
 void SystemIcon::ShowName()
 {
-    m_name->Show();
+    for (unsigned int i = 0; i < m_name.size(); ++i) {
+        m_name[i]->Show();
+    }
 }
 
 void SystemIcon::HideName()
 {
-    m_name->Hide();
+    for (unsigned int i = 0; i < m_name.size(); ++i) {
+        m_name[i]->Hide();
+    }
 }
 
 void SystemIcon::CreateFleetButtons()
@@ -182,14 +180,41 @@ void SystemIcon::CreateFleetButtons()
 void SystemIcon::Refresh()
 {
     SetText(m_system.Name());
-    m_name->SetText(m_system.Name());
+
+    // set up the name text controls
+    for (unsigned int i = 0; i < m_name.size(); ++i) {
+        DeleteChild(m_name[i]);
+    }
+    m_name.clear();
 
     const std::set<int>& owners = m_system.Owners();
-    GG::Clr text_color = ClientUI::TEXT_COLOR;
-    if (!owners.empty()) {
-        text_color = HumanClientApp::Empires().Lookup(*owners.begin())->Color();
+    if (owners.size() < 2) {
+        GG::Clr text_color = ClientUI::TEXT_COLOR;
+        if (!owners.empty()) {
+            text_color = HumanClientApp::Empires().Lookup(*owners.begin())->Color();
+        }
+        m_name.push_back(new GG::TextControl(0, 0, m_system.Name(), ClientUI::FONT, ClientUI::PTS, text_color));
+        AttachChild(m_name[0]);
+    } else {
+        boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
+        Uint32 format = 0;
+        std::vector<GG::Font::LineData> lines;
+        GG::Pt extent = font->DetermineLines(m_system.Name(), format, 1000, lines);
+        unsigned int first_char_pos = 0;
+        unsigned int last_char_pos = 0;
+        int pixels_per_owner = extent.x / owners.size() + 1; // the +1 is to make sure there is not a stray character left off the end
+        int owner_idx = 1;
+        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
+            while (last_char_pos < m_system.Name().size() && lines[0].extents[last_char_pos] < (owner_idx * pixels_per_owner)) {
+                ++last_char_pos;
+            }
+            m_name.push_back(new GG::TextControl(0, 0, m_system.Name().substr(first_char_pos, last_char_pos - first_char_pos), 
+                                                 ClientUI::FONT, ClientUI::PTS, HumanClientApp::Empires().Lookup(*it)->Color()));
+            AttachChild(m_name.back());
+            first_char_pos = last_char_pos;
+        }
     }
-    m_name->SetColor(text_color);
+    PositionSystemName();
 
     std::vector<const Fleet*> fleets = m_system.FindObjects<Fleet>();
     for (unsigned int i = 0; i < fleets.size(); ++i)
@@ -200,6 +225,15 @@ void SystemIcon::Refresh()
 
 void SystemIcon::PositionSystemName()
 {
-    if (m_name)
-        m_name->MoveTo(Width() / 2 - m_name->Width() / 2, Height());
+    if (!m_name.empty()) {
+        int total_width = 0;
+        std::vector<int> extents;
+        for (unsigned int i = 0; i < m_name.size(); ++i) {
+            extents.push_back(total_width);
+            total_width += m_name[i]->Width();
+        }
+        for (unsigned int i = 0; i < m_name.size(); ++i) {
+            m_name[i]->MoveTo((Width() - total_width) / 2 + extents[i], Height());
+        }
+    }
 }
