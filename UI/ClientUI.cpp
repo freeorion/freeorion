@@ -106,10 +106,9 @@ ClientUI::ClientUI(const GG::XMLElement& elem)
     
     current = &elem.Child("ART_DIR");
     ART_DIR = DIR + "art/" + current->Attribute("value") + "/";
-    
-    current = &elem.Child("STRINGTABLE_FILENAME");
-    
+
     //call initialize with stringtable filename
+    current = &elem.Child("STRINGTABLE_FILENAME");
     Initialize(DIR + current->Attribute("value"));
     
 }//ClientUI(XMLElement)
@@ -173,6 +172,11 @@ bool ClientUI::Cleanup()
     return true; 
 }//Cleanup()
 
+const std::string& ClientUI::Language() const 
+{
+    return m_string_table->Language();
+}
+
 GG::XMLElement ClientUI::XMLEncode() const
 {
     using namespace GG;
@@ -204,7 +208,6 @@ GG::XMLElement ClientUI::XMLEncode() const
     temp = XMLElement("TITLE_PTS");
     temp.SetAttribute("value", lexical_cast<std::string>(TITLE_PTS));
     retval.AppendChild(temp);
-    
     
     temp = XMLElement("WND_COLOR");
     temp.AppendChild(WND_COLOR.XMLEncode());
@@ -278,43 +281,50 @@ bool ClientUI::Frozen()
     return m_frozen;
 }
 
-/////////////////////////////////////////////////////////
+///////////////////////////////////////////////////
 
 //Zoom Functions///////////////////////////////////
-bool ClientUI::ZoomTo(const Planet& p)
+bool ClientUI::ZoomToPlanet(int id)
 {
     //TODO: Zooming code
     
     return false;
-}//ZoomTo(Planet)
+}
 
-bool ClientUI::ZoomTo(const System& s)
+bool ClientUI::ZoomToSystem(int id)
 { 
     //TODO: Zooming code
     
     return false;
-}//ZoomTo(Planet)
+}
 
-bool ClientUI::ZoomTo(const Fleet& f)
+bool ClientUI::ZoomToFleet(int id)
 {
     //TODO: Zooming code
     
     return false;
-}//ZoomTo(Fleet)
+}
 
-bool ClientUI::ZoomTo(const Ship& s)
+bool ClientUI::ZoomToShip(int id)
 {
     //TODO: Zooming code
     
     return false;
-}//ZoomTo(Ship)
+}
 
-bool ClientUI::ZoomTo(const Tech& t)
+bool ClientUI::ZoomToTech(int id)
 { 
     //TODO: Zooming code
     
     return false;
-}//ZoomTo(Tech)
+}
+
+bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
+{ 
+    //TODO: Zooming code
+    
+    return false;
+}
 
 /////////////////////////////////////////////////////
 
@@ -380,7 +390,28 @@ void ClientUI::ScreenLoad(bool show)
 
 }//ScreenLoad()
 
-/////////////////////////////////////////////////////
+void ClientUI::MessageBox(const std::string& message)
+{
+ //   std::string dbg_msg = "MessageBox( \"" + message + "\" )";
+ //   s_logger.debug(dbg_msg);    //write message to log
+    
+    GG::ThreeButtonDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR, BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
+        new GG::Button((320-75)/2, 170, 75, 25, "OK", FONT, PTS, CTRL_COLOR, TEXT_COLOR));
+    
+    dlg.Run();    
+}//MessageBox()
+
+void ClientUI::LogMessage(const std::string& msg)
+{
+    s_logger.debug(msg);
+}
+
+const std::string& ClientUI::String(const std::string& index)
+{
+    return the_UI->m_string_table->String(index);
+}
+
+////////////////////////////////////////////////////
 void ClientUI::UnregisterCurrent(bool delete_it /*= false */)
 {
     if(m_current_window)
@@ -393,72 +424,4 @@ void ClientUI::UnregisterCurrent(bool delete_it /*= false */)
         }
     }
 }//UnregisterCurrent
-
-/////////////////////////////////////////////////////
-//Utilities
-/////////////////////////////////////////////////////
-
-void ClientUI::MessageBox(const std::string& message)
-{
- //   std::string dbg_msg = "MessageBox( \"" + message + "\" )";
- //   s_logger.debug(dbg_msg);    //write message to log
-    
-    GG::ThreeButtonDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR, BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
-        new GG::Button((320-75)/2, 170, 75, 25, "OK", FONT, PTS, CTRL_COLOR, TEXT_COLOR));
-    
-    dlg.Run();    
-}//MessageBox()
-
-void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& title, bool resize, const std::string& font, int pts)
-{
-    const int o_x1 = x1, o_y1 = y1, o_x2 = x2, o_y2 = y2; //stores original values of these
-    //draws a rectangle like the burndaddy prototype
-    //first draw a flat rectangle of the current window color
-    GG::FlatRectangle(x1, y1, x2, y2, WND_COLOR, OUTER_BORDER_COLOR, 1);
-    
-    //draw a wire rectangle
-    // 15 gap on top, 5 gap around
-    //start at upper left
-    x1 += 5;
-    y1 += 15;
-    x2 -= 5;
-    y2 -= 5; 
-    
-    //use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-
-    if (resize) {
-        //if it is resizable, draw a line strip that has a diagonal at lower right corner
-        glBegin(GL_LINE_STRIP);
-            glColor4ubv(INNER_BORDER_COLOR.v);
-            glVertex2i(x1, y1);
-            glVertex2i(x2, y1);
-            
-            //line down to 15 px from total bottom
-            glVertex2i(x2, y2-10);
-            //line diagonal to bottom
-            glVertex2i(x2-10, y2);
-            //line back to lower left
-            glVertex2i(x1, y2);
-            glVertex2i(x1, y1-1);
-        glEnd();
-
-        glBegin(GL_LINES);
-            //draw the extra lines if its a resizable window
-            glColor4ubv(INNER_BORDER_COLOR.v);
-            glVertex2i(x2, y2-6);
-            glVertex2i(x2-6, y2);
-            
-            glVertex2i(x2, y2-2);
-            glVertex2i(x2-2, y2);
-        glEnd();
-    }
-
-    glEnable(GL_TEXTURE_2D);
-
-    //now draw the text title
-    glColor4ubv(GG::CLR_WHITE.v);
-    GG::TextImage title_img(title, font, pts);
-    title_img.OrthoBlit(o_x1 + 3, o_y1 + 2);
-}
 
