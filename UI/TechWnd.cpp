@@ -1200,8 +1200,10 @@ void TechTreeWnd::LayoutPanel::Reset()
 
 void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category)
 {
-    m_category_shown = category;
-    Layout(false);
+    if (m_category_shown != category) {
+        m_category_shown = category;
+        Layout(false);
+    }
 }
 
 void TechTreeWnd::LayoutPanel::ShowTech(const Tech* tech)
@@ -1371,7 +1373,7 @@ bool TechTreeWnd::LayoutPanel::TechVisible(const Tech* tech)
     }
     if (category_prereqs.size() == 1) {
         const std::set<const Tech*>& collapsed_subtree_techs = m_collapsed_subtree_techs_per_view[m_category_shown];
-        const Tech* prereq = GetTech(*prereqs.begin());
+        const Tech* prereq = GetTech(*category_prereqs.begin());
         if (collapsed_subtree_techs.find(prereq) != collapsed_subtree_techs.end())
             return false;
         else
