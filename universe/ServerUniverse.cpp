@@ -133,8 +133,8 @@ int ServerUniverse::Insert(UniverseObject* obj)
          const std::set<int> obj_owners = obj->Owners();  // for a fleet there will only be 1 owner
       
          Empire* empire = (server_app->Empires()).Lookup(*(obj_owners.begin()));
-         int empire_fleet_id_min = MIN_SHIP_ID;  // NEED TO FIX!!!!!!!
-         int empire_fleet_id_max = MAX_SHIP_ID;  // NEED TO FIX!!!!!!!
+         int empire_fleet_id_min = empire->FleetIDMin();
+         int empire_fleet_id_max = empire->FleetIDMax();
          for (object_id = empire_fleet_id_min; object_id <= empire_fleet_id_max; object_id++)
          {
             if (m_objects.find(object_id) == m_objects.end())
@@ -644,7 +644,8 @@ void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<in
       // create new Empire object through empire manager
       Empire* new_empire = empire_mgr->CreateEmpire(empire_name, *empire_color, home_planet_id, control);
 
-      // TODO: need to input the empire's ship ID range somehow
+      // store the the empire's valid fleet ID range
+      new_empire->SetFleetIDs(empire_min_flt_id, empire_max_flt_id);
 
       // set ownership of home planet
       int empire_id = new_empire->EmpireID();
