@@ -8,13 +8,6 @@
 #include "XMLDoc.h"
 
 namespace {
-    struct FindByPlanetID
-    {
-        FindByPlanetID(int planet = -1) : planet_id(planet) {}
-        bool operator()(const Planet* planet) const {return planet->ID()==planet_id;}
-        const int planet_id;
-    };
-
     bool Greater(const Planet* elem1, const Planet* elem2)
     {
         return elem1->PopPoints() > elem2->PopPoints();
@@ -23,6 +16,21 @@ namespace {
     bool Lower(const Planet* elem1, const Planet* elem2)
     {
         return elem1->PopPoints() < elem2->PopPoints();
+    }
+
+    double PopEstimate(Planet* p)
+    {
+        return p->PopPoints() + std::min(p->FuturePopGrowthMax(), p->MaxPop() - p->PopPoints());
+    }
+
+    void DistributeFood(std::vector<Planet*>::iterator first, std::vector<Planet*>::iterator last, double multiple, double& available_pool)
+    {
+        for (std::vector<Planet*>::iterator it = first; it != last; ++it) {
+            Planet* planet = *it;
+            double receives = std::min(available_pool, PopEstimate(planet) - planet->AvailableFood());
+            planet->SetAvailableFood(planet->AvailableFood() + receives);
+            available_pool -= receives;
+        }
     }
 
     bool temp_header_bool = RecordHeaderFile(ResourcePoolRevision());
@@ -201,7 +209,7 @@ void FoodResourcePool::PlanetChanged(int m_planet_id)
         Planet *planet=*it;
         planet->SetAvailableFood(0.0);
         m_available_pool+=planet->FarmingPoints();
-        m_needed_pool+=planet->PopPoints()+planet->FuturePopGrowthMax();
+        m_needed_pool+=PopEstimate(planet);
     }
     m_overall_pool = m_available_pool;
 
@@ -209,27 +217,18 @@ void FoodResourcePool::PlanetChanged(int m_planet_id)
     for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
     {
         Planet *planet=*it;
-        planet->SetAvailableFood(std::min(m_available_pool,std::min(planet->FarmingPoints(),planet->PopPoints()+planet->FuturePopGrowthMax())));
+        planet->SetAvailableFood(std::min(m_available_pool,std::min(planet->FarmingPoints(),PopEstimate(planet))));
         m_available_pool-=planet->AvailableFood();
     }
 
-    // second pass: give all planets up to 2 times the required minimum
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
-    {
-        Planet *planet=*it;
-        double receives = std::min(m_available_pool,2*(planet->PopPoints()+planet->FuturePopGrowthMax())-planet->AvailableFood());
-        planet->SetAvailableFood(planet->AvailableFood()+receives);
-        m_available_pool-=receives;
-    }
+    // second pass: give all planets up to 1 times the required minimum
+    DistributeFood(Planets().begin(), Planets().end(), 1.0, m_available_pool);
 
-    // third pass: give all planets up to 4 times the required minimum
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
-    {
-        Planet *planet=*it;
-        double receives = std::min(m_available_pool,4*(planet->PopPoints()+planet->FuturePopGrowthMax())-planet->AvailableFood());
-        planet->SetAvailableFood(planet->AvailableFood()+receives);
-        m_available_pool-=receives;
-    }
+    // third pass: give all planets up to 2 times the required minimum
+    DistributeFood(Planets().begin(), Planets().end(), 2.0, m_available_pool);
+
+    // fourth pass: give all planets up to 4 times the required minimum
+    DistributeFood(Planets().begin(), Planets().end(), 4.0, m_available_pool);
 
     m_stockpile=std::max(0.0, m_available_pool);
 
