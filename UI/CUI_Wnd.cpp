@@ -444,12 +444,15 @@ CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string&
 
     GG::Connect(m_ok_bn->ClickedSignal(), &CUIEditWnd::OkClicked, this);
     GG::Connect(m_cancel_bn->ClickedSignal(), &CUI_Wnd::CloseClicked, static_cast<CUI_Wnd*>(this));
+
+    m_edit->SelectAll();
+    GG::App::GetApp()->SetFocusWnd(m_edit);
 }
 
 void CUIEditWnd::Keypress(GG::Key key, Uint32 key_mods)
 {
     switch (key) {
-    case GG::GGK_RETURN: OkClicked(); break;
+    case GG::GGK_RETURN: if (!m_ok_bn->Disabled()) OkClicked(); break;
     case GG::GGK_ESCAPE: CloseClicked(); break;
     }
 }
