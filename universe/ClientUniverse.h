@@ -58,8 +58,10 @@ public:
    enum Shape {SPIRAL_2,      ///< a two-armed spiral galaxy
                SPIRAL_3,      ///< a three-armed spiral galaxy
                SPIRAL_4,      ///< a four-armed spiral galaxy
+	       CLUSTER,	      ///< a cluster galaxy
                ELLIPTICAL,    ///< an elliptical galaxy
-               IRREGULAR      ///< an irregular galaxy
+               IRREGULAR,     ///< an irregular galaxy
+	       FROM_FILE      ///< a galaxy loaded from a file
               }; // other types TBD
    
    typedef ObjectMap::const_iterator            const_iterator;   ///< a const_iterator for iteration over the objects in the universe
