@@ -1,52 +1,57 @@
 <?xml version="1.0"?>
 <GG::XMLDoc>
-  <app-width value="1024"/>
-  <app-height value="768"/>
-  <color-depth value="32"/>  
   <UI>
-    <dir value="default/"/>
-    <art-dir value="small"/>
-    <font value="Vera.ttf"/>
-    <font-size value="12"/>
-    <title-font value="Vera.ttf"/>
-    <title-font-size value="12"/>
-    <wnd-color>
-      <red value="0"/>
-      <green value="0"/>
-      <blue value="0"/>
-      <alpha value="210"/>
-    </wnd-color>
-    <text-color>
-      <red value="255"/>
-      <green value="255"/>
-      <blue value="255"/>
-      <alpha value="255"/>
-    </text-color>
+    <art-dir>small</art-dir>
     <ctrl-color>
-      <red value="30"/>
-      <green value="30"/>
-      <blue value="30"/>
-      <alpha value="255"/>
+      <alpha>255</alpha>
+      <blue>30</blue>
+      <green>30</green>
+      <red>30</red>
     </ctrl-color>
-    <wnd-outer-border-color>
-      <red value="64"/>
-      <green value="64"/>
-      <blue value="64"/>
-      <alpha value="255"/>
-    </wnd-outer-border-color>
+    <dir>default/</dir>
+    <fleet-autoselect>1</fleet-autoselect>
+    <fleet-window-quickclose>1</fleet-window-quickclose>
+    <font>Vera.ttf</font>
+    <font-size>12</font-size>
+    <multiple-fleet-windows>0</multiple-fleet-windows>
+    <stringtable-filename>eng_stringtable.txt</stringtable-filename>
+    <text-color>
+      <alpha>255</alpha>
+      <blue>255</blue>
+      <green>255</green>
+      <red>255</red>
+    </text-color>
+    <title-font>Vera.ttf</title-font>
+    <title-font-size>12</title-font-size>
+    <tooltip-delay>1000</tooltip-delay>
     <wnd-border-color>
-      <red value="0"/>
-      <green value="0"/>
-      <blue value="0"/>
-      <alpha value="255"/>
+      <alpha>255</alpha>
+      <blue>0</blue>
+      <green>0</green>
+      <red>0</red>
     </wnd-border-color>
+    <wnd-color>
+      <alpha>210</alpha>
+      <blue>0</blue>
+      <green>0</green>
+      <red>0</red>
+    </wnd-color>
     <wnd-inner-border-color>
-      <red value="255"/>
-      <green value="255"/>
-      <blue value="255"/>
-      <alpha value="255"/>
+      <alpha>255</alpha>
+      <blue>255</blue>
+      <green>255</green>
+      <red>255</red>
     </wnd-inner-border-color>
-    <tooltip-delay value="1000"/>
-    <stringtable-filename value="eng_stringtable.txt"/>
+    <wnd-outer-border-color>
+      <alpha>255</alpha>
+      <blue>64</blue>
+      <green>64</green>
+      <red>64</red>
+    </wnd-outer-border-color>
   </UI>
+  <app-height>768</app-height>
+  <app-width>1024</app-width>
+  <color-depth>32</color-depth>
+  <fullscreen>0</fullscreen>
+  <save-directory>save</save-directory>
 </GG::XMLDoc>
