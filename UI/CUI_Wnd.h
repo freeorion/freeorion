@@ -96,7 +96,7 @@ public:
          };
 
     //! \name Structors //@{
-    CUI_Wnd(const std::string& t, int x, int y, int h, int w, Uint32 flags = GG::Wnd::CLICKABLE); //!< Constructs the window to be a CUI window
+    CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags = GG::Wnd::CLICKABLE); //!< Constructs the window to be a CUI window
     CUI_Wnd(const GG::XMLElement& elem); //!< Construction through XML
     ~CUI_Wnd();    //!< Destructor
     //@}
