@@ -682,7 +682,7 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
         window_posn.y = GG::App::GetApp()->AppHeight() - Height();
     MoveTo(window_posn);
 
-    EnableChildClipping(true);
+    EnableChildClipping(false);
 
     Init(fleets);
     m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetWnd::UniverseObjectDelete, this);
