@@ -3,8 +3,8 @@ common_files.inc : Makefile.am
 include common_files.inc
 
 EXTRA_DIST = m4 default Vera.ttf VeraBd.ttf common_files.inc \
-	     VeraBI.ttf  VeraIt.ttf create_commonfilesinc.pl
-ACLOCAL_AMFLAGS = -I m4
+	     VeraBI.ttf  VeraIt.ttf create_commonfilesinc.pl RELEASE-NOTES-V02.txt
+ACLOCAL_AMFLAGS = -I m4 -I /usr/local/share/aclocal
 noinst_DATA = freeoriond freeorion freeorionca save
 CLEANFILES = freeoriond freeorion freeorionca
 install:
