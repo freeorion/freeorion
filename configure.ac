@@ -37,7 +37,7 @@ AM_INIT_AUTOMAKE(foreign subdir-objects)
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
-AM_PROG_CC_C_O
+#AM_PROG_CC_C_O
 AC_PROG_LN_S
 AC_PROG_CPP
 #AC_PROG_LIBTOOL
@@ -47,23 +47,23 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h inttypes.h memory.h netdb.h netinet/in.h stddef.h stdlib.h string.h sys/socket.h sys/time.h syslog.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STAT
-AC_HEADER_STDBOOL
-AC_C_CONST
-AC_C_INLINE
-AC_TYPE_OFF_T
-AC_TYPE_PID_T
-AC_TYPE_SIZE_T
-AC_HEADER_TIME
+#AC_HEADER_STAT
+#AC_HEADER_STDBOOL
+#AC_C_CONST
+#AC_C_INLINE
+#AC_TYPE_OFF_T
+#AC_TYPE_PID_T
+#AC_TYPE_SIZE_T
+#AC_HEADER_TIME
 
 # Checks for library functions.
-AC_FUNC_ERROR_AT_LINE
-AC_FUNC_FORK
-AC_FUNC_MALLOC
-AC_FUNC_MEMCMP
-AC_FUNC_MMAP
-AC_FUNC_SELECT_ARGTYPES
-AC_FUNC_SETVBUF_REVERSED
+#AC_FUNC_ERROR_AT_LINE
+#AC_FUNC_FORK
+#AC_FUNC_MALLOC
+#AC_FUNC_MEMCMP
+#AC_FUNC_MMAP
+#AC_FUNC_SELECT_ARGTYPES
+#AC_FUNC_SETVBUF_REVERSED
 AC_TYPE_SIGNAL
 AC_SEARCH_LIBS(sqrt,[m],[],[AC_MSG_FAILURE([The sqrt-function was not found. This is bad!])])
 AC_CHECK_FUNCS([floor gethostbyaddr gethostbyname memmove memset munmap pow select socket strcasecmp])
