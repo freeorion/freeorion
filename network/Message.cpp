@@ -275,6 +275,11 @@ Message ChatMessage(int sender, int receiver, const std::string& msg)
     return Message(Message::HUMAN_PLAYER_MSG, sender, receiver, Message::CORE, msg);
 }
 
+Message PlayerDisconnectedMessage(int receiver, const std::string& msg)
+{
+    return Message(Message::PLAYER_EXIT, -1, receiver, Message::CORE, msg);
+}
+
 
 
 ////////////////////////////////////////////////

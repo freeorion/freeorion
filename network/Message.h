@@ -187,6 +187,10 @@ Message ChatMessage(int sender, const std::string& msg);
 /** creates a HUMAN_PLAYER_MSG, which is sent to the specific indicated receiver.  This is used for MP chat.*/
 Message ChatMessage(int sender, int receiver, const std::string& msg);
 
+/** creates a PLAYER_EXIT message, which is sent to all remaining clients when a client looses its connection to the server.  
+    This message should only be sent by the server.*/
+Message PlayerDisconnectedMessage(int receiver, const std::string& msg);
+
 
 
 ////////////////////////////////////////////////
