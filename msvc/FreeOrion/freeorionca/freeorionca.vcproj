@@ -173,6 +173,12 @@
 					RelativePath="..\..\..\Empire\EmpireManager.h">
 				</File>
 				<File
+					RelativePath="..\..\..\Empire\ResourcePool.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\Empire\ResourcePool.h">
+				</File>
+				<File
 					RelativePath="..\..\..\Empire\TechLevel.cpp">
 				</File>
 				<File
