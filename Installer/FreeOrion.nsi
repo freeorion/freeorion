@@ -13,8 +13,11 @@ SetCompressor lzma
 !packhdr foinsttemp.exe '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 foinsttemp.exe'
 ; Strip debugging symbols from binaries
 !system "C:\Dev-Cpp\bin\strip -sp ..\freeorion.exe -o freeorion.exe.stripped"
+!system '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 freeorion.exe.stripped'
 !system "C:\Dev-Cpp\bin\strip -sp ..\freeoriond.exe -o freeoriond.exe.stripped"
+!system '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 freeoriond.exe.stripped'
 !system "C:\Dev-Cpp\bin\strip -sp ..\freeorionca.exe -o freeorionca.exe.stripped"
+!system '"C:\Dokumente und Einstellungen\Dennis\Desktop\UPX" -9 freeorionca.exe.stripped'
 
 
 ; Other installer settings
