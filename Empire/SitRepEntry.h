@@ -1,33 +1,31 @@
-
-#ifndef _FREEORION_SITREPENTRY_H_
-#define _FREEORION_SITREPENTRY_H_
-
-// this is a temporary file until  I get the real one from Joseph
+#ifndef _SitRepEntry_h_
+#define _SitRepEntry_h_
 
 
-#ifndef _XMLDoc_h_
-#include "GG\XML\XMLDoc.h"
-#endif
+#include <string>
 
-/**
-* This is a preliminary version that is being used until Joseph
-* sends Josh the real SitRepEntry headers
-*
-*/
+
+/** Base class for SitRepEntries. Serves as base for ColonizeSitRepEntry, FleetArrivalSitRepEntry, CombatSitRepEntry, NewTechSitRepEntry, BuildSitRepEntry.
+Provides unified interface for the UI to display the entries and for hyperlinking into the galaxy map.*/
 class SitRepEntry
 {
-public:
-    SitRepEntry(int EmpireID) { m_empire_id = EmpireID;};
-    SitRepEntry(const GG::XMLElement& element) {};    
-    
-    int GetEmpireID() const { return m_empire_id; } ;
+ public:
+    friend  class ClientApp;
 
-private:
-    int m_empire_id;
-    
+    /** \name Structors */ //@{
+    SitRepEntry();
+    virtual ~SitRepEntry();
+    //@}
+
+
+    virtual int     ImageID() = 0;      ///< returns the ID of the image to display with this entry
+
+	  
+ protected:
+    virtual const std::string&  SummaryText() = 0;  ///< returns the string to display inthe SitRep
+    virtual bool    ExecuteLink() = 0;  ///< causes the entry to trigger the appropriate UI display for this event, returns true on success
+
+	std::string    m_summary_text;
 };
 
-// many derived classes. 
-// See the IDS for some details.
-
-#endif
+#endif // _SitRepEntry_h_
