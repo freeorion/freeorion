@@ -120,7 +120,8 @@ void InGameOptions::Load()
 
 void InGameOptions::Quit()
 {
-    GG::App::GetApp()->Exit(0);
+    HumanClientApp::GetApp()->EndGame();
+    CloseClicked();
 }
 
 void InGameOptions::Done()
