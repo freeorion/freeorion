@@ -986,6 +986,9 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 DESC_EFFECTS_GROUP_SCOPE
 Objects affected: Any object%1%
 
+DESC_EFFECTS_GROUP_SELF_SCOPE
+Objects affected: Source object only
+
 DESC_EFFECTS_GROUP_ACTIVATION
 Effect is active if the source is an object%1%
 
