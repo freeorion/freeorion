@@ -13,11 +13,13 @@
 #include "InGameOptions.h"
 #endif
 
-class SitRepPanel;
-class SidePanel;
-class SystemIcon;
-class Icon;
 class CUIButton;
+class Fleet;
+class FleetButton;
+class SidePanel;
+class SitRepPanel;
+class System;
+class SystemIcon;
 namespace GG {
 class Texture;
 }
@@ -30,8 +32,6 @@ class MapWnd : public GG::Wnd
 public:
     static const double MIN_SCALE_FACTOR;
     static const double MAX_SCALE_FACTOR;
-
-    typedef std::vector<SystemIcon*> SysIconVec;
 
     enum     //!< enumeration for indices to the icon vector
     {
@@ -79,11 +79,22 @@ public:
 
     void SelectSystem(int systemID); //!< catches emitted signals from the system icons
 
-     void OnTurnUpdate();   //!< called when m_turn_update is clicked
+    void SetFleetMovement(FleetButton* fleet_button); //!< allows code that creates FleetButtons to indicate where (and whether) they are moving
+
+    void OnTurnUpdate();   //!< called when m_turn_update is clicked
     //!@}
         
 private:
+    struct MovementLineData
+    {
+        MovementLineData() {}
+        MovementLineData(System* dest) : destination(dest) {}
+        System* destination;
+        // TODO : color, other properties(?), based on moving empire and destination, etc.
+    };
+
     void RenderBackgrounds();    //!< renders the backgrounds onto the screen
+    void RenderFleetMovementLines(); //!< renders the dashed lines indicating where each fleet is going
     void MoveBackgrounds(const GG::Pt& move); //!< scrolls the backgrounds at their respective rates
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
 
@@ -94,13 +105,16 @@ private:
     std::vector<double>   m_bg_position_X;  //!< array, the X position of the first full background image
     std::vector<double>   m_bg_position_Y;  //!< array, the Y positions of the backgrounds
 
-    double          	m_zoom_factor;  //! the current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
-    SidePanel*      	m_side_panel;   //! the planet view panel on the side of the main map
-    SitRepPanel*      	m_sitrep_panel; //! the sitrep panel
-    SysIconVec      m_system_icons; //! a vector of SystemIcons
+    double                          m_zoom_factor;   //! the current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
+    SidePanel*                      m_side_panel;    //! the planet view panel on the side of the main map
+    std::vector<SystemIcon*>        m_system_icons;  //! the system icons in the main map
+    SitRepPanel*      	            m_sitrep_panel;  //! the sitrep panel
+    std::vector<FleetButton*>       m_fleet_buttons; //! the moving fleets in the main map
+    std::map<FleetButton*, 
+             MovementLineData>      m_fleet_lines;   //! the lines used for moving fleets in the main map
 
-    GG::Pt          m_drag_offset;  //! the distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
-    bool            m_dragged;      //! tracks whether or not a drag occurs during a left button down sequence of events
+    GG::Pt     m_drag_offset;  //! the distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
+    bool       m_dragged;      //! tracks whether or not a drag occurs during a left button down sequence of events
 
     CUIButton* m_turn_update;    //!< button that updates player's turn
 
