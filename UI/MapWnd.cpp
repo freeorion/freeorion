@@ -10,6 +10,7 @@
 #include "../universe/Predicates.h"
 #include "../util/Random.h"
 #include "SidePanel.h"
+#include "SitRepPanel.h"
 #include "../universe/System.h"
 #include "SystemIcon.h"
 #include "../universe/UniverseObject.h"
@@ -26,6 +27,8 @@ const int NUM_NEBULA_TEXTURES = 5;
 const int MIN_NEBULAE = 3;
 const int MAX_NEBULAE = 8;
 const int END_TURN_BTN_WIDTH = 60;
+const int SITREP_PANEL_WIDTH = 400;
+const int SITREP_PANEL_HEIGHT = 300;
 }
 
 // static(s)
@@ -51,6 +54,9 @@ MapWnd::MapWnd() :
     m_side_panel = new SidePanel(GG::App::GetApp()->AppWidth() - SIDE_PANEL_WIDTH, 0, SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight());
     AttachChild(m_side_panel);
     Connect(SelectedSystemSignal(), &SidePanel::SetSystem, m_side_panel);
+
+    m_sitrep_panel = new SitRepPanel( (GG::App::GetApp()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::App::GetApp()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
+    AttachChild(m_sitrep_panel);
 
     //set up background images
     m_backgrounds[0].reset(new GG::Texture());
@@ -140,6 +146,7 @@ int MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
     GG::Pt final_move = move_to_pt - ClientUpperLeft();
     m_side_panel->OffsetMove(-final_move);
     m_turn_update->OffsetMove(-final_move);
+    m_sitrep_panel->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
     m_dragged = true;
@@ -204,6 +211,7 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_turn_update->OffsetMove(-map_move);
+    m_sitrep_panel->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
@@ -211,6 +219,7 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
     m_turn_update->OffsetMove(-final_move);
+    m_sitrep_panel->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
 
@@ -238,6 +247,14 @@ void MapWnd::InitTurn( int turn_number )
     // set turn button to current turn
     m_turn_update->SetText( ClientUI::String("MAP_BTN_TURN_UPDATE") + boost::lexical_cast<std::string>(turn_number ) );    
     MoveChildUp( m_turn_update );
+
+    MoveChildUp(m_sitrep_panel);
+    // are there any sitreps to show?
+    Empire *pEmpire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->PlayerID() );
+    if ( pEmpire->NumSitReps( ) > 0 )
+      m_sitrep_panel->Update();
+    else
+      m_sitrep_panel->Hide();      
 }
 
 void MapWnd::ShowSystemNames()
