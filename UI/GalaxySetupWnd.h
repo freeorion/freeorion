@@ -19,9 +19,13 @@
 #include "GGStaticGraphic.h"
 #endif
 
+#ifndef _CUI_Wnd_h_
+#include "CUI_Wnd.h"
+#endif
+
 //! This class is the Galaxy Setup window.  It is a modal window
 //! that allows the user to choose a galaxy style, size, etc.
-class GalaxySetupWnd : public GG::ModalWnd
+class GalaxySetupWnd : public CUI_ModalWnd
 {
 private:
     //! enum for galaxy sizes
