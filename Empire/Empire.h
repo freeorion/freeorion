@@ -31,6 +31,7 @@
 * This class keeps track of the following information:
 *   - color
 *   - name
+*   - player name
 *   - numeric ID
 *   - control state (human or AI)
 *   - accumulated research
@@ -90,7 +91,7 @@ public:
      * (planets, fleets, owned planets, visible fleets, technologies, explored
      * systems, sitrep entries) will be empty after creation
      */
-    Empire(const std::string& name, int ID, const GG::Clr& color, 
+    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, 
            ControlStatus& control); 
 
     /// Creates an empire from an XMLElement
@@ -100,9 +101,9 @@ public:
      * by Empire::XMLEncode()
      */
     Empire(const GG::XMLElement& elem);
-    
+
     //@}
-    
+
     /* **************************************************
     *** ACCESSORS
     *****************************************************/
@@ -110,10 +111,13 @@ public:
     /** \name Accessors */ //@{
     /// Returns an Empire's control state
     ControlStatus ControlState() const;
-	
+
     /// Returns the Empire's name
     const std::string& Name() const;
-    
+
+    /// Returns the Empire's player's name
+    const std::string& PlayerName() const;
+
     /// Returns the Empire's unique numeric ID
     int EmpireID() const;
     
@@ -260,13 +264,16 @@ public:
     void CheckResearchProgress();
        	
     /// Mutator for empire color
-    void Color(const GG::Clr& color);
+    void SetColor(const GG::Clr& color);
     
    	/// Mutator for control state
-    void ControlState(ControlStatus state);
-    
+    void SetControlState(ControlStatus state);
+
    	/// Mutator for empire name
-    void Name(const std::string& name);
+    void SetName(const std::string& name);
+
+   	/// Mutator for empire's player name
+    void SetPlayerName(const std::string& player_name);
     //@}
    
 private:
@@ -278,7 +285,10 @@ private:
     
     /// Empire's name
     std::string m_name;
-    
+
+    /// Empire's Player's name
+    std::string m_player_name;
+
     /// Empire's color
     GG::Clr m_color;
     

@@ -11,10 +11,11 @@ using boost::lexical_cast;
 
 
 /** Constructors */ 
-Empire::Empire(const std::string& name, int ID, const GG::Clr& color, ControlStatus& control) :
+Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, ControlStatus& control) :
     m_id(ID),
     m_total_rp(0),
-    m_name(name),  
+    m_name(name),
+    m_player_name(player_name),
     m_color(color), 
     m_control_state(control),
     m_next_design_id(1)
@@ -27,6 +28,7 @@ Empire::Empire(const GG::XMLElement& elem)
 
     m_id = lexical_cast<int>(elem.Child("m_id").Text());
     m_name = elem.Child("m_name").Text();
+    m_player_name = elem.Child("m_player_name").Text();
     m_total_rp = lexical_cast<int>(elem.Child("m_total_rp").Text());
     m_control_state = ControlStatus(lexical_cast<int>(elem.Child("m_control_state").Text()));
     m_color = GG::Clr(elem.Child("m_color").Child("GG::Clr"));
@@ -57,6 +59,11 @@ Empire::ControlStatus Empire::ControlState() const
 const std::string& Empire::Name() const
 {
     return m_name;
+}
+
+const std::string& Empire::PlayerName() const
+{
+    return m_player_name;
 }
 
 int Empire::EmpireID() const
@@ -210,6 +217,7 @@ GG::XMLElement Empire::XMLEncode() const
     XMLElement retval("Empire");
     retval.AppendChild(XMLElement("m_id", lexical_cast<std::string>(m_id)));
     retval.AppendChild(XMLElement("m_name", m_name));
+    retval.AppendChild(XMLElement("m_player_name", m_player_name));
     retval.AppendChild(XMLElement("m_total_rp", lexical_cast<std::string>(m_total_rp)));
     retval.AppendChild(XMLElement("m_control_state", lexical_cast<std::string>(m_control_state)));
     retval.AppendChild(XMLElement("m_color", m_color.XMLEncode()));
@@ -246,6 +254,7 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
     XMLElement retval("Empire");
     retval.AppendChild(XMLElement("m_id", lexical_cast<std::string>(m_id)));
     retval.AppendChild(XMLElement("m_name", m_name));
+    retval.AppendChild(XMLElement("m_player_name", m_player_name));
     retval.AppendChild(XMLElement("m_total_rp", lexical_cast<std::string>(m_total_rp)));
     retval.AppendChild(XMLElement("m_control_state", lexical_cast<std::string>(m_control_state)));
     retval.AppendChild(XMLElement("m_color", m_color.XMLEncode()));
@@ -294,17 +303,22 @@ void Empire::CheckResearchProgress( )
     }
 }
 
-void Empire::Color(const GG::Clr& color)
+void Empire::SetColor(const GG::Clr& color)
 {
     m_color = color;
 }
 
-void Empire::ControlState(ControlStatus state)
+void Empire::SetControlState(ControlStatus state)
 {
     m_control_state = state;
 }
 
-void Empire::Name(const std::string& name)
+void Empire::SetName(const std::string& name)
 {
     m_name = name;
+}
+
+void Empire::SetPlayerName(const std::string& player_name)
+{
+    m_player_name = player_name;
 }
