@@ -1,6 +1,5 @@
-#SUBDIRS = Empire network UI universe util combat server client
-SUBDIRS = server client
-EXTRA_DIST = m4
+SUBDIRS = Empire network UI universe util combat server client
+EXTRA_DIST = m4 remake_libs.mak default arial.ttf
 ACLOCAL_AMFLAGS = -I m4
 AM_CPPFLAGS = -DFREEORION_LINUX
 noinst_DATA = freeoriond.exe freeorion.exe freeorionca.exe
