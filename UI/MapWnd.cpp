@@ -343,6 +343,9 @@ void MapWnd::InitTurn(int turn_number)
 	    }
     }
 
+    // this gets cleared here instead of with the movement line stuff because that would clear some movement lines that come from the SystemIcons below
+    m_fleet_lines.clear();
+
     // systems and starlanes
     for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
         DeleteChild(m_system_icons[i]);
@@ -373,11 +376,8 @@ void MapWnd::InitTurn(int turn_number)
         DeleteChild(m_moving_fleet_buttons[i]);
     }
     m_moving_fleet_buttons.clear();
-    m_fleet_lines.clear();
 
     Universe::ObjectVec fleets = universe.FindObjects(IsMovingFleetFunctor());
-    Universe::ObjectVec ordered_moving_fleets = universe.FindObjects(IsOrderedMovingFleetFunctor());
-    fleets.insert(fleets.end(), ordered_moving_fleets.begin(), ordered_moving_fleets.end());
     typedef std::multimap<std::pair<double, double>, UniverseObject*> SortedFleetMap;
     SortedFleetMap position_sorted_fleets;
     for (unsigned int i = 0; i < fleets.size(); ++i) {
@@ -669,7 +669,7 @@ void MapWnd::RenderFleetMovementLines()
             glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
         }
         glEnd();
-   }
+    }
 
     glLineWidth(1.0);
     glDisable(GL_LINE_SMOOTH);
