@@ -109,12 +109,12 @@ namespace {
         if (FSOUND_SetOutput(FSOUND_OUTPUT_ASIO) && FSOUND_GetNumDrivers())
             retval.push_back(SOUND_DRIVER_ASIO);
 #elif defined(FREEORION_LINUX)
+        if (FSOUND_SetOutput(FSOUND_OUTPUT_ALSA) && FSOUND_GetNumDrivers())
+            retval.push_back(SOUND_DRIVER_ALSA);
         if (FSOUND_SetOutput(FSOUND_OUTPUT_OSS) && FSOUND_GetNumDrivers())
             retval.push_back(SOUND_DRIVER_OSS);
         if (FSOUND_SetOutput(FSOUND_OUTPUT_ESD) && FSOUND_GetNumDrivers())
             retval.push_back(SOUND_DRIVER_ESD);
-        if (FSOUND_SetOutput(FSOUND_OUTPUT_ALSA) && FSOUND_GetNumDrivers())
-            retval.push_back(SOUND_DRIVER_ALSA);
 #endif
 
         FSOUND_SetOutput(FSOUND_OUTPUT_NOSOUND);
