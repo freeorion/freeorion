@@ -38,9 +38,9 @@ Contributors
     "Drek"
     "Nightfish"
     Joshua Barczak (jbarcz1)
-    "utilae"
+    Chris Martin (utilae)
     "skdiw"
-    "Krikkitone"
+    Peter DeVries (Krikkitone)
     "Impaler"
     "emrys"
     Andreas Bernard
