@@ -101,7 +101,7 @@ private:
     std::set<std::string>               m_sounds_to_free; ///< the filenames of sounds that should be freed, once they have finished playing
     boost::shared_ptr<ClientUI>         m_ui;             ///< the one and only ClientUI object!
     GG::XMLDoc                          m_config_doc;     ///< the XML document this was configured with
-    
+
     static void EndOfMusicCallback();
     static void EndOfSoundCallback(int channel);
 };

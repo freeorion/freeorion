@@ -1,3 +1,4 @@
+
 #include "HumanClientApp.h"
 
 #include "../../UI/CUIControls.h"
@@ -564,6 +565,30 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             }
             Logger().debugStream() <<"HumanClientApp::HandleMessageImpl : Empire update complete";
 
+	    // free current sitreps
+	    Empire *pEmpire = Empires().Lookup( m_player_id );
+
+	    pEmpire->ClearSitRep( );
+
+	    // decode sitreps
+            if(doc.root_node.ContainsChild( SitRepEntry::SITREP_UPDATE_TAG )) 
+	    {
+               GG::XMLElement root_sitrep = doc.root_node.Child( SitRepEntry::SITREP_UPDATE_TAG );
+
+	       // decode all the sitreps from the update
+	       for(int i=0; i<root_sitrep.NumChildren(); i++)
+               {   
+		 SitRepEntry *decoded_sitrep = new SitRepEntry( root_sitrep.Child(i) );
+
+		 // create string
+		 m_ui->GenerateSitRepText( decoded_sitrep );
+
+		 // add to player's empire
+	         pEmpire->AddSitRepEntry( decoded_sitrep );
+	       }
+            }
+            Logger().debugStream() <<"HumanClientApp::HandleMessageImpl : Sitrep update complete";
+
             m_ui->ScreenMap(); 
             m_ui->InitTurn( turn_number ); // init the new turn
         }
@@ -612,5 +637,4 @@ void HumanClientApp::StartTurn( )
   ClientApp::StartTurn();
   
 }
-
 
