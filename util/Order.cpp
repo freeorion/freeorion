@@ -75,6 +75,10 @@ void Order::ValidateEmpireID() const
 
 }
 
+void Order::Undo() const
+{
+}
+
 void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
 {
     fact.AddGenerator("PlanetBuildOrder",   &GenPlanetBuildOrder);
@@ -92,8 +96,8 @@ void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
 // RenameOrder
 ////////////////////////////////////////////////
 RenameOrder::RenameOrder() : 
-   Order(),
-   m_object(UniverseObject::INVALID_OBJECT_ID)
+    Order(),
+    m_object(UniverseObject::INVALID_OBJECT_ID)
 {
 }
    
@@ -107,9 +111,9 @@ RenameOrder::RenameOrder(const GG::XMLElement& elem) : Order(elem.Child("Order")
 }
 
 RenameOrder::RenameOrder(int empire, int fleet, const std::string& name) : 
-   Order(empire),
-   m_object(fleet),
-   m_name(name)
+    Order(empire),
+    m_object(fleet),
+    m_name(name)
 {
     if (name == "")
         throw std::invalid_argument("RenameOrder::RenameOrder() : Attempted to name an object \"\".");
@@ -147,9 +151,9 @@ GG::XMLElement RenameOrder::XMLEncode() const
 // PlanetBuildOrder
 ////////////////////////////////////////////////
 PlanetBuildOrder::PlanetBuildOrder() : 
-   Order(),
-   m_planet(UniverseObject::INVALID_OBJECT_ID),
-   m_build_type(ProdCenter::NOT_BUILDING)
+    Order(),
+    m_planet(UniverseObject::INVALID_OBJECT_ID),
+    m_build_type(ProdCenter::NOT_BUILDING)
 {
 }
 
@@ -163,9 +167,9 @@ PlanetBuildOrder::PlanetBuildOrder(const GG::XMLElement& elem) : Order(elem.Chil
 }
 
 PlanetBuildOrder::PlanetBuildOrder(int empire, int planet, ProdCenter::BuildType build) : 
-   Order(empire),
-   m_planet(planet),
-   m_build_type(build)
+    Order(empire),
+    m_planet(planet),
+    m_build_type(build)
 {
 }
 
@@ -194,7 +198,7 @@ void PlanetBuildOrder::Execute() const
         throw std::runtime_error("Empire specified in planet build order does not own specified planet.");
     }
     
-    the_planet->SetProduction(m_build_type);
+    the_planet->SetProduction(m_build_type, "");
 }
 
 GG::XMLElement PlanetBuildOrder::XMLEncode() const
@@ -211,7 +215,7 @@ GG::XMLElement PlanetBuildOrder::XMLEncode() const
 // CreateFleetOrder
 ////////////////////////////////////////////////
 NewFleetOrder::NewFleetOrder() :
-   Order()
+    Order()
 {
 }
 
@@ -284,10 +288,10 @@ XMLElement NewFleetOrder::XMLEncode() const
 // FleetMoveOrder
 ////////////////////////////////////////////////
 FleetMoveOrder::FleetMoveOrder() : 
-   Order(),
-   m_fleet(UniverseObject::INVALID_OBJECT_ID),
-   m_dest_system(UniverseObject::INVALID_OBJECT_ID),
-   m_route_length(0.0)
+    Order(),
+    m_fleet(UniverseObject::INVALID_OBJECT_ID),
+    m_dest_system(UniverseObject::INVALID_OBJECT_ID),
+    m_route_length(0.0)
 {
 }
 
@@ -304,10 +308,10 @@ FleetMoveOrder::FleetMoveOrder(const GG::XMLElement& elem) : Order(elem.Child("O
 }
 
 FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : 
-   Order(empire),
-   m_fleet(fleet),
-   m_start_system(start_system),
-   m_dest_system(dest_system)
+    Order(empire),
+    m_fleet(fleet),
+    m_start_system(start_system),
+    m_dest_system(dest_system)
 {
     std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(start_system, dest_system);
     for (std::list<System*>::iterator it = route.first.begin(); it != route.first.end(); ++it) {
@@ -336,7 +340,7 @@ void FleetMoveOrder::Execute() const
     if( !the_fleet->OwnedBy(EmpireID()) )
     {
         throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) + 
-            " specified in fleet order does not own specified fleet " + boost::lexical_cast<std::string>(FleetID()) + ".");
+                                 " specified in fleet order does not own specified fleet " + boost::lexical_cast<std::string>(FleetID()) + ".");
     }
     
     // look up destination
@@ -375,9 +379,9 @@ XMLElement FleetMoveOrder::XMLEncode() const
 // FleetMergeOrder
 ////////////////////////////////////////////////
 FleetTransferOrder::FleetTransferOrder() : 
-   Order(),
-   m_fleet_from(UniverseObject::INVALID_OBJECT_ID),
-   m_fleet_to(UniverseObject::INVALID_OBJECT_ID)
+    Order(),
+    m_fleet_from(UniverseObject::INVALID_OBJECT_ID),
+    m_fleet_to(UniverseObject::INVALID_OBJECT_ID)
 {
 }
 
@@ -392,10 +396,10 @@ FleetTransferOrder::FleetTransferOrder(const GG::XMLElement& elem) : Order(elem.
 }
 
 FleetTransferOrder::FleetTransferOrder(int empire, int fleet_from, int fleet_to, const std::vector<int>& ships) : 
-   Order(empire),
-   m_fleet_from(fleet_from),
-   m_fleet_to(fleet_to),
-   m_add_ships(ships)
+    Order(empire),
+    m_fleet_from(fleet_from),
+    m_fleet_to(fleet_to),
+    m_add_ships(ships)
 {
 }
 
@@ -475,10 +479,10 @@ XMLElement FleetTransferOrder::XMLEncode() const
 // FleetColonizeOrder
 ////////////////////////////////////////////////
 FleetColonizeOrder::FleetColonizeOrder() : 
-   Order(),
-   m_empire(UniverseObject::INVALID_OBJECT_ID),
-   m_ship(0),
-   m_planet(UniverseObject::INVALID_OBJECT_ID)
+    Order(),
+    m_empire(UniverseObject::INVALID_OBJECT_ID),
+    m_ship(0),
+    m_planet(UniverseObject::INVALID_OBJECT_ID)
 {
 }
 
@@ -493,16 +497,16 @@ FleetColonizeOrder::FleetColonizeOrder(const GG::XMLElement& elem) : Order(elem.
 }
 
 FleetColonizeOrder::FleetColonizeOrder(int empire,Ship *ship, int planet) : 
-   Order(empire),
-   m_empire(empire),
-   m_ship(new Ship(ship->XMLEncode(empire))),
-   m_planet(planet)
+    Order(empire),
+    m_empire(empire),
+    m_ship(new Ship(ship->XMLEncode(empire))),
+    m_planet(planet)
 {
 }
 
 FleetColonizeOrder::~FleetColonizeOrder()
 {
-  delete m_ship;
+    delete m_ship;
 }
 
 // first step to colonize a planet, the planet to colonize is marked
@@ -561,11 +565,11 @@ void FleetColonizeOrder::Execute() const
     // If colony ship is only ship in fleet, remove fleet
     if(colony_fleet->NumShips() == 1)
     {
-       universe->Delete(colony_fleet->ID());
+        universe->Delete(colony_fleet->ID());
     }
     else // remove colony ship from fleet
     {
-      colony_fleet->RemoveShip(m_ship->ID());
+        colony_fleet->RemoveShip(m_ship->ID());
     }
 
     //delete the colony ship
@@ -574,6 +578,11 @@ void FleetColonizeOrder::Execute() const
     
     // order processing is now done
     return;
+}
+
+void FleetColonizeOrder::Undo() const
+{
+    // TODO
 }
 
 void FleetColonizeOrder::ExecuteServerApply() const
@@ -599,8 +608,6 @@ void FleetColonizeOrder::ExecuteServerApply() const
 
     // adjust planet population
     target_planet->AdjustPop(INITIAL_COLONY_POP);
-    target_planet->SetWorkforce(INITIAL_COLONY_POP);
-    target_planet->SetMaxWorkforce( target_planet->MaxPop() );
     
     // make this order's empire the owner of the planet
     target_planet->AddOwner( EmpireID() );
@@ -742,9 +749,14 @@ void ChangeFocusOrder::Execute() const
 
     switch(m_which)
     {
-      case 0: planet->SetPrimaryFocus  (m_focus);break;
-      case 1: planet->SetSecondaryFocus(m_focus);break;
+    case 0: planet->SetPrimaryFocus  (m_focus);break;
+    case 1: planet->SetSecondaryFocus(m_focus);break;
     }
+}
+
+void ChangeFocusOrder::Undo() const
+{
+    // TODO
 }
 
 GG::XMLElement ChangeFocusOrder::XMLEncode() const
