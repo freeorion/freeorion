@@ -998,7 +998,7 @@ StatisticIconDualValue::StatisticIconDualValue(int x, int y, int w, int h, const
     m_decimals_to_show(decimals_to_show),m_decimals_to_show_second(decimals_to_show_second),
     m_show_sign(show_sign),m_show_sign_second(show_sign_second),
     m_positive_color(text_color),m_negative_color(text_color),
-    m_icon(new GG::StaticGraphic(0, 0, h, h, GG::App::GetApp()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
+    m_icon(new GG::StaticGraphic(0, 0, h, h, HumanClientApp::GetApp()->GetTextureOrDefault(icon_filename), GG::GR_FITGRAPHIC)),
     m_text(new GG::TextControl(h, 0, w - h, h, "", ClientUI::FONT, ClientUI::PTS, text_color, GG::TF_LEFT | GG::TF_VCENTER))
 {
     AttachChild(m_icon);
