@@ -26,6 +26,8 @@
 
 #include <ctime>
 
+// define this as nonzero to save games in gzip-compressed form; define this as zero when this is inconvenient, such as when testing and debugging
+#define GZIP_SAVE_FILES 1
 
 
 struct AISetupData
@@ -311,13 +313,19 @@ void ServerApp::HandleMessage(const Message& msg)
                     doc.root_node.AppendChild(player_element);
                 }
                 doc.root_node.AppendChild(m_universe.XMLEncode());
-		GZStream::ogzstream ofs(save_filename.c_str());
-		/* For now, we use the standard compression settings,
-		   but later we could let the compression settings be
-		   customizable in the save-dialog */
-		// The default is: ofs.set_gzparams(6, Z_DEFAULT_STRATEGY);
+#if GZIP_SAVE_FILES
+                GZStream::ogzstream ofs(save_filename.c_str());
+                /* For now, we use the standard compression settings,
+	                but later we could let the compression settings be
+	                customizable in the save-dialog */
+                // The default is: ofs.set_gzparams(6, Z_DEFAULT_STRATEGY);
+                doc.WriteDoc(ofs, false);
+                ofs.close();
+#else
+                std::ofstream ofs(save_filename.c_str());
                 doc.WriteDoc(ofs);
                 ofs.close();
+#endif
                 m_network_core.SendMessage(ServerSaveGameMessage(msg.Sender(), true));
             }
         } else {
@@ -335,9 +343,15 @@ void ServerApp::HandleMessage(const Message& msg)
 
             std::string load_filename = msg.GetText();
             GG::XMLDoc doc;
-	    GZStream::igzstream ifs(load_filename.c_str());
+#if GZIP_SAVE_FILES
+            GZStream::igzstream ifs(load_filename.c_str());
             doc.ReadDoc(ifs);
             ifs.close();
+#else
+            std::ifstream ifs(load_filename.c_str());
+            doc.ReadDoc(ifs);
+            ifs.close();
+#endif
 
             m_universe.SetUniverse(doc.root_node.Child("Universe"));
             m_expected_players = 0;
@@ -347,7 +361,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     ++m_expected_players;
                 }
             }
-	    LoadGameVars(doc);
+            LoadGameVars(doc);
 
             CreateAIClients(std::vector<AISetupData>(m_expected_players - 1));
             g_load_doc = doc;
@@ -743,6 +757,10 @@ void ServerApp::LoadGameInit()
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
 
+        std::ofstream ofs("LoadGameInit-doc.xml");
+        doc.WriteDoc(ofs);
+        ofs.close();
+
         // send saved pending orders to player
         m_network_core.SendMessage(ServerLoadGameMessage(it->first, order_docs[it->first]));
 
@@ -897,6 +915,7 @@ void ServerApp::ProcessTurns( )
         }
 
         pEmpire = Empires().Lookup( it->first );
+        pEmpire->ClearSitRep( );
         pOrderSet = it->second;
      
         /// execute order set
@@ -1028,9 +1047,6 @@ void ServerApp::ProcessTurns( )
 
         GG::XMLDoc doc = CreateTurnUpdate( player_it->first );
         
-        // free empire sitreps
-        pEmpire->ClearSitRep( );
-
         m_network_core.SendMessage( TurnUpdateMessage( player_it->first, doc ) );
     }
 }
