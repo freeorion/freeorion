@@ -284,7 +284,7 @@ bool Condition::Contains::Match(const UniverseObject* source, const UniverseObje
 ///////////////////////////////////////////////////////////
 // PlanetEnvironment                                     //
 ///////////////////////////////////////////////////////////
-Condition::PlanetEnvironment::PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase<::PlanetEnvironment>*>& environments) :
+Condition::PlanetEnvironment::PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments) :
     m_environments(environments)
 {
 }
@@ -295,7 +295,7 @@ Condition::PlanetEnvironment::PlanetEnvironment(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::PlanetEnvironment : Attempted to create a PlanetEnvironment condition from an XML element with a tag other than \"Condition::PlanetEnvironment\".");
 
     for (GG::XMLElement::const_child_iterator it = elem.Child("environments").child_begin(); it != elem.Child("environments").child_end(); ++it) {
-        m_environments.push_back(ParseArithmeticExpression<::PlanetEnvironment>(it->Text()));
+        m_environments.push_back(ParseArithmeticExpression< ::PlanetEnvironment>(it->Text()));
     }
 }
 
@@ -327,7 +327,7 @@ bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const Uni
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
-Condition::PlanetSize::PlanetSize(const std::vector<const ValueRef::ValueRefBase<::PlanetSize>*>& sizes) :
+Condition::PlanetSize::PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
     m_sizes(sizes)
 {
 }
@@ -338,7 +338,7 @@ Condition::PlanetSize::PlanetSize(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::PlanetSize : Attempted to create a PlanetSize condition from an XML element with a tag other than \"Condition::PlanetSize\".");
 
     for (GG::XMLElement::const_child_iterator it = elem.Child("sizes").child_begin(); it != elem.Child("sizes").child_end(); ++it) {
-        m_sizes.push_back(ParseArithmeticExpression<::PlanetSize>(it->Text()));
+        m_sizes.push_back(ParseArithmeticExpression< ::PlanetSize>(it->Text()));
     }
 }
 
@@ -370,7 +370,7 @@ bool Condition::PlanetSize::Match(const UniverseObject* source, const UniverseOb
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
-Condition::FocusType::FocusType(const std::vector<const ValueRef::ValueRefBase<::FocusType>*>& foci, bool primary) :
+Condition::FocusType::FocusType(const std::vector<const ValueRef::ValueRefBase< ::FocusType>*>& foci, bool primary) :
     m_foci(foci),
     m_primary(primary)
 {
@@ -382,9 +382,9 @@ Condition::FocusType::FocusType(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::FocusType : Attempted to create a FocusType condition from an XML element with a tag other than \"Condition::FocusType\".");
 
     for (GG::XMLElement::const_child_iterator it = elem.Child("foci").child_begin(); it != elem.Child("foci").child_end(); ++it) {
-        m_foci.push_back(ParseArithmeticExpression<::FocusType>(it->Text()));
+        m_foci.push_back(ParseArithmeticExpression< ::FocusType>(it->Text()));
     }
-    m_primary = boost::lexical_cast<::FocusType>(elem.Child("primary").Text());
+    m_primary = boost::lexical_cast< ::FocusType>(elem.Child("primary").Text());
 }
 
 Condition::FocusType::~FocusType()
@@ -408,7 +408,7 @@ bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObj
 ///////////////////////////////////////////////////////////
 // StarType                                              //
 ///////////////////////////////////////////////////////////
-Condition::StarType::StarType(const std::vector<const ValueRef::ValueRefBase<::StarType>*>& types) :
+Condition::StarType::StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types) :
     m_types(types)
 {
 }
@@ -419,7 +419,7 @@ Condition::StarType::StarType(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::StarType : Attempted to create a StarType condition from an XML element with a tag other than \"Condition::StarType\".");
 
     for (GG::XMLElement::const_child_iterator it = elem.Child("types").child_begin(); it != elem.Child("types").child_end(); ++it) {
-        m_types.push_back(ParseArithmeticExpression<::StarType>(it->Text()));
+        m_types.push_back(ParseArithmeticExpression< ::StarType>(it->Text()));
     }
 }
 
@@ -536,7 +536,8 @@ Condition::StockpileValue::~StockpileValue()
 
 bool Condition::StockpileValue::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    return false/*TODO* /;
+    //TODO
+    return false;
 }*/
 
 ///////////////////////////////////////////////////////////

@@ -126,47 +126,47 @@ private:
 
 struct Condition::PlanetEnvironment : Condition::ConditionBase
 {
-    PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase<::PlanetEnvironment>*>& environments);
+    PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments);
     PlanetEnvironment(const GG::XMLElement& elem);
     virtual ~PlanetEnvironment();
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
-    std::vector<const ValueRef::ValueRefBase<::PlanetEnvironment>*> m_environments;
+    std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*> m_environments;
 };
 
 struct Condition::PlanetSize : Condition::ConditionBase
 {
-    PlanetSize(const std::vector<const ValueRef::ValueRefBase<::PlanetSize>*>& sizes);
+    PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes);
     PlanetSize(const GG::XMLElement& elem);
     virtual ~PlanetSize();
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
-    std::vector<const ValueRef::ValueRefBase<::PlanetSize>*> m_sizes;
+    std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*> m_sizes;
 };
 
 struct Condition::FocusType : Condition::ConditionBase
 {
-    FocusType(const std::vector<const ValueRef::ValueRefBase<::FocusType>*>& foci, bool primary);
+    FocusType(const std::vector<const ValueRef::ValueRefBase< ::FocusType>*>& foci, bool primary);
     FocusType(const GG::XMLElement& elem);
     virtual ~FocusType();
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
-    std::vector<const ValueRef::ValueRefBase<::FocusType>*> m_foci;
+    std::vector<const ValueRef::ValueRefBase< ::FocusType>*> m_foci;
     bool m_primary;
 };
 
 struct Condition::StarType : Condition::ConditionBase
 {
-    StarType(const std::vector<const ValueRef::ValueRefBase<::StarType>*>& types);
+    StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types);
     StarType(const GG::XMLElement& elem);
     virtual ~StarType();
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
-    std::vector<const ValueRef::ValueRefBase<::StarType>*> m_types;
+    std::vector<const ValueRef::ValueRefBase< ::StarType>*> m_types;
 };
 
 struct Condition::Chance : Condition::ConditionBase
