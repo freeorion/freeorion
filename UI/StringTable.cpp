@@ -4,6 +4,10 @@
 #include "StringTable.h"
 #endif
 
+#ifndef _ClientUI_h_
+#include "ClientUI.h"
+#endif
+
 using namespace std;
 
 //init constants
@@ -43,8 +47,17 @@ const string& StringTable::operator[] (int index)
 void StringTable::Load()
 {
     char temp[256] = {0};
+    ifstream file;
     
-    ifstream file(m_filename.c_str());    //open the file
+    try
+    {
+        file.open(m_filename.c_str());    //open the file
+    }
+    catch(const exception& e)
+    {
+        ClientUI::MessageBox("Error opening StringTable file: \"" + m_filename + "\"");
+        return;        //handle exception by showing error msg and then get out!
+    }
     
     file.getline(temp,256);    //read the first line
     m_language = temp;
