@@ -30,12 +30,13 @@ public:
    //@}
 
    /** \name Accessors */ //@{
-   double               PopPoints() const    {return m_pop;}                  ///< returns the number of pop points in this center
-   double               MaxPop() const       {return m_max_pop;}              ///< returns the max number of pop points possible in this center
-   double               PopGrowth() const    {return m_growth;}               ///< returns the change in pop points since the last turn (may be negative)
-   int                  Race() const         {return m_race;}                 ///< returns the race that the population is composed of
-   double               Inhabitants() const; ///< returns the number of inhabitants in the center (not the pop points); depends on race
-   DensityType          PopDensity() const;  ///< returns the density of this center, based on its population
+   double       PopPoints() const            {return m_pop;}        ///< returns the number of pop points in this center
+   double       MaxPop() const               {return m_max_pop;}    ///< returns the max number of pop points possible in this center
+   double       PopGrowth() const            {return m_growth;}     ///< returns the change in pop points since the last turn (may be negative)
+   double       EnvPopGrowthModifier() const {return m_growth;}     ///< returns the change in pop points since the last turn (may be negative)
+   int          Race() const                 {return m_race;}       ///< returns the race that the population is composed of
+   double       Inhabitants() const; ///< returns the number of inhabitants in the center (not the pop points); depends on race
+   DensityType  PopDensity() const;  ///< returns the density of this center, based on its population
 
    virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a PopCenter object
@@ -47,10 +48,11 @@ public:
       returns the (positive) pop surplus, or the (negative) pop deficit that would result from 
       adjusting the population by \a pop points, or 0 if the adjustment falls within [0.0, MaxPop()]*/
    double AdjustPop(double pop);
-   void SetMaxPop(double max_pop) {m_max_pop = max_pop;}
-   
-   void SetRace(int race)  {m_race = race;}   ///< sets the race of the population to \a race
-   
+
+   void SetMaxPop(double max_pop)               {m_max_pop = max_pop;} ///< sets the maximum population to \a pop
+   void SetEnvGrowthMod(double env_growth_mod)  {m_env_growth_mod = env_growth_mod;} ///< sets the modifier to the growth rate due to environment
+   void SetRace(int race)                       {m_race = race;}   ///< sets the race of the population to \a race
+
    virtual void MovementPhase( );
    virtual void PopGrowthProductionResearchPhase( );
    //@}
@@ -59,6 +61,7 @@ private:
    double   m_pop;          // these are all in points, not inhabitants
    double   m_max_pop;
    double   m_growth;
+   double   m_env_growth_mod;
    int      m_race; ///< the id of the race that occupies this planet
 };
 
