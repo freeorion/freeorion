@@ -1,5 +1,6 @@
 #include "MultiplayerCommon.h"
 
+#include <fstream>
 
 /////////////////////////////////////////////////////
 // Free Function(s)
@@ -8,14 +9,15 @@ const std::vector<GG::Clr>& EmpireColors()
 {
     static std::vector<GG::Clr> colors;
     if (colors.empty()) {
-        colors.push_back(GG::Clr(192, 192, 192, 255)); // light gray
-        colors.push_back(GG::Clr(255, 0, 0, 255)); // red
-        colors.push_back(GG::Clr(255, 255, 0, 255)); // yellow
-        colors.push_back(GG::Clr(0, 255, 0, 255)); // green
-        colors.push_back(GG::Clr(0, 255, 255, 255)); // cyan
-        colors.push_back(GG::Clr(0, 128, 255, 255)); // light blue
-        colors.push_back(GG::Clr(255, 128, 192, 255)); // ???
-        colors.push_back(GG::Clr(255, 128, 0, 255)); // burnt orange
+        GG::XMLDoc doc;
+        // HACK: this is a hard-coded path, even though the ClientUI::DIR (usually "default") is command-line changable, 
+        // because the server needs to know the colors as well, an the ClientUI code should not be included in the server
+        std::ifstream ifs("default/empire_colors.xml");
+        doc.ReadDoc(ifs);
+        ifs.close();
+        for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
+            colors.push_back(GG::Clr(doc.root_node.Child(i)));
+        }
     }
     return colors;
 }
