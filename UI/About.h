@@ -19,6 +19,10 @@
 #include "GGSpin.h"
 #endif
 
+#ifndef __GGMultiEdit_h_
+#include "GGMultiEdit.h"
+#endif
+
 #ifndef _GGStaticGraphic_h_
 #include "GGStaticGraphic.h"
 #endif
@@ -58,6 +62,7 @@ public:
 //!@{
     void OnDone();        //!< when OK button is pressed
     void OnLicense();   //!< when license button is pressed
+    void OnCredits();   //!< when credits button is pressed
 
 //!@}
 
@@ -77,6 +82,11 @@ private:
 
     GG::Button*           m_done_btn;              //!< Done button
     GG::Button*           m_license;     //!< License button
+    GG::Button*           m_credits;     //!< Credits button
+
+    GG::XMLDoc 		  m_credits_doc; //!< XML document containing the project credits
+
+    GG::MultiEdit *	  m_info;	//!< Displays the license or credits information
 
     int                   m_cur_color;       //!< Currently selected color
     
