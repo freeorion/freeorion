@@ -981,7 +981,7 @@ void ServerApp::ProcessTurns( )
       {
 	        Planet* plt = dynamic_cast<Planet*>(*plt_it);
 	        // a planet should belong only to one empire!?
-          if( (1==plt->Owners().size()) && plt->DefBases()>0)
+          if(1==plt->Owners().size())
           {           
             std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*plt->Owners().begin())));
 
@@ -999,7 +999,7 @@ void ServerApp::ProcessTurns( )
       if(empire_combat_forces.size()>1)
       {
         CombatSystem combat_system;
-        combat_system.ResolveCombat(empire_combat_forces);
+        combat_system.ResolveCombat(system->ID(),empire_combat_forces);
       }
     }
     // TODO : check if all empires are still alive
