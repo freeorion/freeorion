@@ -191,7 +191,7 @@ int SidePanel::PlanetPanel::Render()
 
     const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
     if(!planet)
-        throw std::invalid_argument("SidePanel::PlanetPanel::Render planet not found!");
+        throw std::runtime_error("SidePanel::PlanetPanel::Render planet not found!");
 
     // planet graphic
     int planet_image_sz = PlanetDiameter();
@@ -349,7 +349,7 @@ int SidePanel::PlanetPanel::PlanetDiameter() const
 {
     const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
     if(!planet)
-        throw std::invalid_argument("SidePanel::PlanetPanel::PlanetDiameter planet not found!");
+        throw std::runtime_error("SidePanel::PlanetPanel::PlanetDiameter planet not found!");
 
     return TINY_PLANET_SIZE + (HUGE_PLANET_SIZE - TINY_PLANET_SIZE) / (Planet::SZ_HUGE - Planet::SZ_TINY) * planet->Size();
 }
@@ -366,7 +366,7 @@ void SidePanel::PlanetPanel::BuildSelected(int idx) const
 {
     const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
     if(!planet)
-        throw std::invalid_argument("SidePanel::PlanetPanel::BuildSelected planet not found!");
+        throw std::runtime_error("SidePanel::PlanetPanel::BuildSelected planet not found!");
 
     HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*planet->Owners().begin(), planet->ID(), m_construction_prod_idx[ idx ] ));
 }
