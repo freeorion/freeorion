@@ -4,12 +4,6 @@
 
 #include <stdexcept>
 
-#ifdef FREEORION_BUILD_HUMAN
-#include "./human/HumanClientApp.h"
-#else
-#include "./AI/AIClientApp.h"
-#endif
-
 
 // static member(s)
 ClientApp* ClientApp::s_app = 0;
