@@ -771,6 +771,7 @@ Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
     }
 
     m_fleets_lb->Insert(new FleetRow(new_fleet), m_read_only ? m_fleets_lb->NumRows() : m_fleets_lb->NumRows() - 1);
+    m_showing_fleet_sig(new_fleet);
 
     return new_fleet;
 }
