@@ -287,7 +287,8 @@ XMLElement NewFleetOrder::XMLEncode() const
 FleetMoveOrder::FleetMoveOrder() : 
    Order(),
    m_fleet(UniverseObject::INVALID_OBJECT_ID),
-   m_dest_system(UniverseObject::INVALID_OBJECT_ID)
+   m_dest_system(UniverseObject::INVALID_OBJECT_ID),
+   m_route_length(0.0)
 {
 }
 
@@ -299,6 +300,8 @@ FleetMoveOrder::FleetMoveOrder(const GG::XMLElement& elem) : Order(elem.Child("O
     m_fleet = lexical_cast<int>(elem.Child("m_fleet").Text());
     m_start_system = lexical_cast<int>(elem.Child("m_start_system").Text());
     m_dest_system = lexical_cast<int>(elem.Child("m_dest_system").Text());
+    m_route = GG::ContainerFromString<std::vector<int> >(elem.Child("m_route").Text());
+    m_route_length = lexical_cast<double>(elem.Child("m_route_length").Text());
 }
 
 FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : 
@@ -307,6 +310,11 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest
    m_start_system(start_system),
    m_dest_system(dest_system)
 {
+    std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(start_system, dest_system);
+    for (std::list<System*>::iterator it = route.first.begin(); it != route.first.end(); ++it) {
+        m_route.push_back((*it)->ID());
+    }
+    m_route_length = route.second;
 }
 
 void FleetMoveOrder::Execute() const
@@ -342,12 +350,15 @@ void FleetMoveOrder::Execute() const
     {
         throw std::runtime_error("Non-system destination ID specified in fleet move order.");
     }
-    
-    // set the movement route
-    std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(m_start_system, m_dest_system);
-    the_fleet->SetRoute(route.first, route.second);
-    
+
     // TODO:  check destination validity (once ship range is decided on)
+
+    // set the movement route
+    std::list<System*> route;
+    for (unsigned int i = 0; i < m_route.size(); ++i) {
+        route.push_back(GetUniverse().Object<System>(m_route[i]));
+    }
+    the_fleet->SetRoute(route, m_route_length);
 }
 
 XMLElement FleetMoveOrder::XMLEncode() const
@@ -357,6 +368,8 @@ XMLElement FleetMoveOrder::XMLEncode() const
     retval.AppendChild(XMLElement("m_fleet", lexical_cast<std::string>(m_fleet)));
     retval.AppendChild(XMLElement("m_start_system", lexical_cast<std::string>(m_start_system)));
     retval.AppendChild(XMLElement("m_dest_system", lexical_cast<std::string>(m_dest_system)));
+    retval.AppendChild(XMLElement("m_route", GG::StringFromContainer<std::vector<int> >(m_route)));
+    retval.AppendChild(XMLElement("m_route_length", lexical_cast<std::string>(m_route_length)));
     return retval;
 }
 

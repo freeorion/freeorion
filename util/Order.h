@@ -198,15 +198,17 @@ public:
    //@}
    
    /** \name Accessors */ //@{
-   int  FleetID() const             {return m_fleet;}        ///< returns ID of fleet selected in this order
-   int  StartSystemID() const       {return m_start_system;} ///< returns ID of system set as the start system for this order (the system the route starts from)
-   int  DestinationSystemID() const {return m_dest_system;}  ///< returns ID of system set as destination for this order
+   int                      FleetID() const             {return m_fleet;}        ///< returns ID of fleet selected in this order
+   int                      StartSystemID() const       {return m_start_system;} ///< returns ID of system set as the start system for this order (the system the route starts from)
+   int                      DestinationSystemID() const {return m_dest_system;}  ///< returns ID of system set as destination for this order
+   const std::vector<int>&  Route() const               {return m_route;}        ///< returns the IDs of the systems in the route specified by this Order
+   double                   RouteLength() const         {return m_route_length;} ///< returns the length of the route specified by this Order
    
    /**
    * Preconditions for fleet move order are:
    *  - m_fleet must be the id of a fleet, owned by the empire issuing the order
    *  - m_dest_system must be the ID of a star system
-   *  - star system must be within fleet's range (this precondition is not checked yet)
+   *  - the destination star system must be within fleet's range (this precondition is not checked yet)
    *
    *  postconditions:
    *     - the specified fleet will have its move orders set to the specified destination
@@ -216,9 +218,11 @@ public:
    //@}
    
 private:
-   int   m_fleet;
-   int   m_start_system;
-   int   m_dest_system;
+   int              m_fleet;
+   int              m_start_system;
+   int              m_dest_system;
+   std::vector<int> m_route;
+   double           m_route_length;
 };
 
 /////////////////////////////////////////////////////
