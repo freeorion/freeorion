@@ -68,13 +68,8 @@ Message HumanClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
 
 void HumanClientApp::StartServer()
 {
-#ifdef FREEORION_WIN32
     const std::string SERVER_CLIENT_EXE = "freeoriond.exe";
-#else
-    const std::string SERVER_CLIENT_EXE = "freeoriond";
-#endif
     std::vector<std::string> args(1, SERVER_CLIENT_EXE);
-    args.push_back("--data-dir"); args.push_back(GetOptionsDB().Get<std::string>("data-dir"));
     m_server_process = Process(SERVER_CLIENT_EXE, args);
 }
 
@@ -113,8 +108,6 @@ void HumanClientApp::SetLobby(MultiplayerLobbyWnd* lobby)
 
 void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/* = 0*/, double position/* = 0.0*/)
 {
-	if (repeats == -1) 
-		repeats = -2;
     if (m_current_music) {
         Mix_HaltMusic();
         Mix_FreeMusic(m_current_music);
@@ -133,19 +126,6 @@ void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/
         Logger().errorStream() << "HumanClientApp::PlayMusic : An error occured while attempting to load \"" << 
             filename << "\"; SDL_mixer error: " << Mix_GetError();
     }
-}
-
-void HumanClientApp::StartMusic(void)
-{
-	HumanClientApp::GetApp()->StopMusic();
-	HumanClientApp::GetApp()->PlayMusic(ClientUI::MUSIC_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1, 0, 0.0);
-}
-
-void HumanClientApp::StopMusic(void)
-{
-	Mix_HaltMusic();
-	Mix_FreeMusic(m_current_music);
-	m_current_music = 0;
 }
 
 void HumanClientApp::PlaySound(const std::string& filename, int repeats, int timeout/* = -1*/)
@@ -248,7 +228,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
     save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("INGAMEOPTIONS_SAVE_FILES"), "*.sav"));
 
     try {
-        GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", false, false, save_file_types, 
+        GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-directory"), "", false, false, save_file_types, 
                         ClientUI::FONT, ClientUI::PTS, ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
         dlg.Run();
         std::string filename;
@@ -447,9 +427,6 @@ void HumanClientApp::Initialize()
 {
     m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
     m_ui->ScreenIntro();    //start the first screen; the UI takes over from there.
-	
-	if (!(GetOptionsDB().Get<bool>("music-off")))
-		HumanClientApp::GetApp()->StartMusic();
 }
 
 void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
@@ -572,7 +549,6 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             // free current sitreps, if any
             if (Empires().Lookup(m_empire_id))
                 Empires().Lookup(m_empire_id)->ClearSitRep();
-
             Orders().Reset();
 
             // if we have empire data, then process it.  As it stands now,
@@ -640,9 +616,12 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
         // free current sitreps
         Empires().Lookup( m_empire_id )->ClearSitRep( );
+        
 
         // Update data used XPatch and needs only elements common to universe and empire
         UpdateTurnData( doc );
+
+        Empires().Lookup(m_empire_id)->UpdateResourcePool();
 
         // Now decode sitreps
         // Empire sitreps need UI in order to generate text, since it needs string resources
