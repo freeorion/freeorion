@@ -11,6 +11,10 @@
 #include "StringTable.h"
 #endif
 
+#ifndef _GalaxyMapScreen_h_
+#include "GalaxyMapScreen.h"
+#endif
+
 // include log4cpp stuff
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -117,7 +121,7 @@ public:
     
     //! @param u address of ClientUniverse module
     //! @param e address of ClientEmpire module
-    void ScreenMap(const ClientUniverse &u, const ClientEmpire &e);     //!< Universe Map Screen
+    void ScreenMap();     //!< Universe Map Screen
 
     //! @param events vector containing all the events to be listed
     void ScreenSitrep(const std::vector<SitRepEntry> &events);    //!< Sitrep Screen
@@ -178,6 +182,8 @@ private:
     bool m_frozen;    //!< true if the interface is frozen and false if it isn't
     
     StringTable* m_string_table;    //!< a string table to lookup international strings
+    
+    GalaxyMapScreen* m_galaxy_map;    //!< the galaxy map screen
 
     static log4cpp::Category& s_logger;        //!< log4cpp logging category
     static ClientUI* the_UI;                   //!<pointer to the one and only ClientUI object

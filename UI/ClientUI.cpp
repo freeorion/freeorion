@@ -56,13 +56,15 @@ ClientUI* ClientUI::the_UI = NULL;
 //Init and Cleanup//////////////////////////////////////
 
 ClientUI::ClientUI(const std::string& string_table_file /* = StringTable::S_DEFAULT_FILENAME */):
-    TOOLTIP_DELAY(1000) //1 second delay for tooltips to appear
+    TOOLTIP_DELAY(1000), //1 second delay for tooltips to appear
+    m_galaxy_map(0)
 {
     the_UI = this;    
     Initialize(string_table_file);
 }//ClientUI()
 
-ClientUI::ClientUI(const GG::XMLElement& elem)
+ClientUI::ClientUI(const GG::XMLElement& elem) :
+    m_galaxy_map(0)
 {
     using namespace GG;
     
@@ -360,9 +362,28 @@ void ClientUI::ScreenTurnStart()
  
 }//ScreenTurnStart()
 
-void ClientUI::ScreenMap(const ClientUniverse &u, const ClientEmpire &e)
+void ClientUI::ScreenMap()
 {
+    //remove current window, and load the map screen
 
+    UnregisterCurrent(true);
+    
+    // TODO: background image is still there, but covered.
+    //   this needs to be removed at some point
+    
+    
+    GG::App::GetApp()->Logger().debug("Unregistered current window");
+    m_state = STATE_MAP;
+    
+    //load and register the map screen
+    m_galaxy_map = new GalaxyMapScreen();
+    GG::App::GetApp()->Logger().debug("Created map screen");
+    //init the new turn
+    m_galaxy_map->InitTurn();
+    GG::App::GetApp()->Logger().debug("Initialized first turn");
+    m_current_window = m_galaxy_map;
+    GG::App::GetApp()->Register(m_current_window);
+    GG::App::GetApp()->Logger().debug("Registered map screen");
 }//ScreenMap()
 
 void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
