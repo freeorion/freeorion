@@ -181,3 +181,48 @@ About FreeOrion v0.1a
 
 CREDITS
 Credits
+
+#################
+# Main Map      #
+#################
+
+#################
+# SidePanel     #
+#################
+
+SIDE_PANEL
+Side Panel
+
+##Planet Panel#############
+PLANET_PANEL
+Planet Panel
+
+#Planet Sizes and Types####
+
+PL_SZ_TINY
+Tiny
+PL_SZ_SMALL
+Small
+PL_SZ_MEDIUM
+Medium
+PL_SZ_LARGE
+Large
+PL_SZ_HUGE
+Huge
+
+PL_TOXIC
+Toxic
+PL_RADIATED
+Radiated
+PL_BARREN
+Barren
+PL_DESERT
+Desert
+PL_TUNDRA
+Tundra
+PL_OCEAN
+Ocean
+PL_TERRAN
+Terran
+PL_GAIA
+Gaia
