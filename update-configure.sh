@@ -62,7 +62,7 @@ if test x$FORCE_REBUILD = xyes -o $FILENAME -nt update-configure.stamp; then
     echo >&2 "*** tar exited with non-zero status. Aborting!"
     exit $?
   fi
-  if test -a config.status; then
+  if test -e config.status; then
      echo "*** re-runnning configure"
      ./config.status --recheck
      ./config.status
