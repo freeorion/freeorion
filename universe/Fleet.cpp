@@ -115,9 +115,19 @@ GG::XMLElement Fleet::XMLEncode(int empire_id) const
    return element;
 }
 
+int Fleet::ETA() const
+{
+    /// TODO: compute the distance from fleet's position to its destination
+    // then figure out how long it takes to get there
+    return 0;
+}
+
+
+
+
 void Fleet::SetMoveOrders(int id)
 {
-   // TODO
+    m_moving_to = id;
 }
 
 void Fleet::AddShips(const std::vector<int>& ships)
@@ -176,6 +186,16 @@ std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
       }
    }
    return retval;
+}
+
+void Fleet::AddShip(int ship)
+{
+    m_ships.insert(ship);
+}
+
+void Fleet::RemoveShip(int ship)
+{
+    m_ships.erase(ship);
 }
 
 void Fleet::MovementPhase(std::vector<SitRepEntry>& sit_reps)

@@ -29,6 +29,13 @@ public:
    
    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Fleet object
    virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a Fleet object with visibility limited relative to the input empire
+   
+   /// Returns the number of turns which must elapse before the fleet arrives at its destination.  
+   int ETA() const;
+   
+   /// Returns ID of system that this fleet is moving to 
+   int MoveOrders() const { return m_moving_to; };
+   
    //@}
    
    /** \name Mutators */ //@{
@@ -41,6 +48,9 @@ public:
    
    iterator begin()  {return m_ships.begin();}  ///< returns the begin iterator for the ships in the fleet
    iterator end()    {return m_ships.end();}    ///< returns the end iterator for the ships in the fleet
+
+   void AddShip(int ship); ///< adds the ship to the fleet
+   void RemoveShip(int ship); ///< removes the ship from the fleet
 
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
