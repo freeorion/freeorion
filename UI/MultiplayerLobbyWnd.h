@@ -53,19 +53,22 @@ private:
     void GalaxySetupPanelChanged();
     void SaveGameChanged(int idx);
     void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
-    void PlayerSelected(const std::set<int>& selections);
     void PlayerDataChanged();
     void StartGameClicked();
     void CancelClicked();
-    bool PlayerDataUnique();
+    void PopulatePlayerList(bool loading_game);
     void SendUpdate();
+    bool PlayerDataUnique() const;
+    bool CanStart() const;
     GG::XMLDoc LobbyUpdateDoc() const;
 
     bool m_result;
 
-    bool m_host;
+    bool                       m_host;
     std::map<std::string, int> m_player_IDs;
     std::map<int, std::string> m_player_names;
+    std::vector<std::pair<PlayerSetupData, int> > 
+                               m_player_setup_data;
 
     CUIMultiEdit*         m_chat_box;
     CUIEdit*              m_chat_input_edit;

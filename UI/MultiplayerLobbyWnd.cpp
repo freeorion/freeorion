@@ -14,15 +14,15 @@ namespace {
     std::vector<SaveGameEmpireData> g_save_game_empire_data; // the save-game data for all empires in a saved game that is being started, indexed by save-game empire ID
 
     const int PLAYER_ROW_HEIGHT = 22;
-    const int EDIT_WIDTH = 75;
-    const int COLOR_SELECTOR_WIDTH = 60;
+    const int EMPIRE_NAME_WIDTH = 170;
+    const int COLOR_SELECTOR_WIDTH = 75;
 
     struct ColorRow : public GG::ListBox::Row
     {
         struct ColorSquare : GG::Control
         {
             ColorSquare(const GG::Clr& color) : 
-                GG::Control(0, 0, COLOR_SELECTOR_WIDTH - 28, 10, 0)
+                GG::Control(0, 0, COLOR_SELECTOR_WIDTH - 40, 10, 0)
             {
                 SetColor(color);
             }
@@ -92,16 +92,16 @@ namespace {
 
     struct NewGamePlayerRow : PlayerRow
     {
-        NewGamePlayerRow(const std::string& player_name, const PlayerSetupData& player_data, bool disabled) : 
-            PlayerRow(player_data)
+        NewGamePlayerRow(const std::string& player_name, const PlayerSetupData& player_data_, bool disabled) : 
+            PlayerRow(player_data_)
         {
             push_back(player_name, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
-            CUIEdit* edit = new CUIEdit(0, 0, EDIT_WIDTH, PLAYER_ROW_HEIGHT, player_data.empire_name, ClientUI::FONT, ClientUI::PTS, GG::CLR_ZERO, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
+            CUIEdit* edit = new CUIEdit(0, 0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, player_data.empire_name, ClientUI::FONT, ClientUI::PTS, GG::CLR_ZERO, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
             push_back(edit);
-            EmpireColorSelector* color_selector = new EmpireColorSelector(COLOR_SELECTOR_WIDTH, PLAYER_ROW_HEIGHT - 8);
+            EmpireColorSelector* color_selector = new EmpireColorSelector(COLOR_SELECTOR_WIDTH, PLAYER_ROW_HEIGHT);
             color_selector->SelectColor(player_data.empire_color);
             push_back(color_selector);
-            height = PLAYER_ROW_HEIGHT;
+            height = PLAYER_ROW_HEIGHT + 6;
 
             if (disabled) {
                 edit->Disable();
@@ -127,11 +127,47 @@ namespace {
 
     struct LoadGamePlayerRow : PlayerRow
     {
-        LoadGamePlayerRow(const std::string& player_name/*, const PlayerSetupData& player_data, bool disabled*/)
+        LoadGamePlayerRow(const std::string& player_name, const PlayerSetupData& player_data_, bool disabled) : 
+            PlayerRow(player_data_)
         {
             push_back(player_name, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
-            height = PLAYER_ROW_HEIGHT;
+            CUIDropDownList* empire_list = new CUIDropDownList(0, 0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, 5 * PLAYER_ROW_HEIGHT);
+            empire_list->SetStyle(GG::LB_NOSORT);
+            for (unsigned int i = 0; i < g_save_game_empire_data.size(); ++i) {
+                empire_list->Insert(new CUISimpleDropDownListRow(g_save_game_empire_data[i].name));
+                if (g_save_game_empire_data[i].name == player_data_.empire_name) {
+                    empire_list->Select(i);
+                    player_data.save_game_empire_id = g_save_game_empire_data[i].id;
+                }
+            }
+            push_back(empire_list);
+            m_color_selector = new EmpireColorSelector(COLOR_SELECTOR_WIDTH, PLAYER_ROW_HEIGHT);
+            if (0 <= player_data.save_game_empire_id)
+                player_data.empire_color = g_save_game_empire_data[player_data.save_game_empire_id].color;
+            m_color_selector->SelectColor(player_data.empire_color);
+            push_back(m_color_selector);
+            height = PLAYER_ROW_HEIGHT + 6;
+
+            m_color_selector->Disable();
+
+            if (disabled) {
+                empire_list->Disable();
+            } else {
+                Connect(empire_list->SelChangedSignal(), &LoadGamePlayerRow::EmpireChanged, this);
+            }
         }
+
+    private:
+        void EmpireChanged(int i)
+        {
+            player_data.empire_name = g_save_game_empire_data[i].name;
+            player_data.empire_color = g_save_game_empire_data[i].color;
+            player_data.save_game_empire_id = g_save_game_empire_data[i].id;
+            m_color_selector->SelectColor(player_data.empire_color);
+            data_changed_sig();
+        }
+
+        EmpireColorSelector* m_color_selector;
     };
 
     const int    LOBBY_WND_WIDTH = 800;
@@ -188,7 +224,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     x = CHAT_WIDTH + CONTROL_MARGIN;
     int y = std::max(m_saved_games_list->LowerRight().y, m_preview_image->LowerRight().y) + CONTROL_MARGIN;
     m_players_lb = new CUIListBox(x, y, Width() - RightBorder() - CONTROL_MARGIN - x, m_chat_input_edit->UpperLeft().y - CONTROL_MARGIN - y);
-    m_players_lb->SetStyle(GG::LB_NOSORT);
+    m_players_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL);
 
     if (m_host)
         m_start_game_bn = new CUIButton(0, 0, 125, ClientUI::String("START_GAME_BN"));
@@ -273,7 +309,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
             m_player_IDs.erase(player_name);
             m_player_names.erase(player_id);
             if (m_host)
-                m_start_game_bn->Disable(!PlayerDataUnique() || m_players_lb->NumRows() <= 1);
+                m_start_game_bn->Disable(!CanStart());
         } else { // regular update
             bool loading_game = false;
 
@@ -296,34 +332,37 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
                 }
             }
 
-            if (doc.root_node.ContainsChild("save_file")) {
-                m_saved_games_list->Select(boost::lexical_cast<int>(doc.root_node.Child("save_file").Text()));
+            if (doc.root_node.ContainsChild("save_game_empire_data")) {
+                g_save_game_empire_data.clear();
+                for (int i = 0; i < doc.root_node.Child("save_game_empire_data").NumChildren(); ++i) {
+                    g_save_game_empire_data.push_back(SaveGameEmpireData(doc.root_node.Child("save_game_empire_data").Child(i)));
+                }
             }
 
             if (doc.root_node.ContainsChild("players")) {
                 m_player_IDs.clear();
                 m_player_names.clear();
-                m_players_lb->Clear();
+                m_player_setup_data.clear();
                 for (int i = 0; i < doc.root_node.Child("players").NumChildren(); ++i) {
                     int id = boost::lexical_cast<int>(doc.root_node.Child("players").Child(i).Child("id").Text());
                     m_player_IDs[doc.root_node.Child("players").Child(i).Tag()] = id;
                     m_player_names[id] = doc.root_node.Child("players").Child(i).Tag();
-                    if (loading_game) {
-                        LoadGamePlayerRow* row = new LoadGamePlayerRow(m_player_names[i]);
-                        m_players_lb->Insert(row);
-                        Connect(row->data_changed_sig, &MultiplayerLobbyWnd::SendUpdate, this);
-                    } else {
-                        NewGamePlayerRow* row = 
-                            new NewGamePlayerRow(m_player_names[id], 
-                                                 PlayerSetupData(doc.root_node.Child("players").Child(i).Child("PlayerSetupData")),
-                                                 !m_host && id != HumanClientApp::GetApp()->PlayerID());
-                        m_players_lb->Insert(row);
-                        Connect(row->data_changed_sig, &MultiplayerLobbyWnd::PlayerDataChanged, this);
-                    }
+                    m_player_setup_data.push_back(std::make_pair(PlayerSetupData(doc.root_node.Child("players").Child(i).Child("PlayerSetupData")), id));
                 }
-                if (m_host)
-                    m_start_game_bn->Disable(!PlayerDataUnique() || m_players_lb->NumRows() <= 1);
+                PopulatePlayerList(loading_game);
             }
+
+            if (doc.root_node.ContainsChild("save_file")) {
+                int save_file_idx = boost::lexical_cast<int>(doc.root_node.Child("save_file").Text());
+                if (save_file_idx != m_saved_games_list->CurrentItemIndex()) {
+                    m_saved_games_list->Select(save_file_idx);
+                }
+            }
+
+            PopulatePlayerList(loading_game);
+
+            if (m_host)
+                m_start_game_bn->Disable(!CanStart());
         }
         break;
     }
@@ -350,7 +389,6 @@ void MultiplayerLobbyWnd::Init()
         Connect(m_saved_games_list->SelChangedSignal(), &MultiplayerLobbyWnd::SaveGameChanged, this);
     }
     Connect(m_galaxy_setup_panel->ImageChangedSignal(), &MultiplayerLobbyWnd::PreviewImageChanged, this);
-    Connect(m_players_lb->SelChangedSignal(), &MultiplayerLobbyWnd::PlayerSelected, this);
     if (m_host)
         Connect(m_start_game_bn->ClickedSignal(), &MultiplayerLobbyWnd::StartGameClicked, this);
     Connect(m_cancel_bn->ClickedSignal(), &MultiplayerLobbyWnd::CancelClicked, this);
@@ -392,10 +430,12 @@ void MultiplayerLobbyWnd::NewLoadClicked(int idx)
     case 0:
         m_galaxy_setup_panel->Disable(false);
         m_saved_games_list->Disable();
+        PopulatePlayerList(false);
         break;
     case 1:
         m_galaxy_setup_panel->Disable();
         m_saved_games_list->Disable(false);
+        PopulatePlayerList(true);
         break;
     default:
         break;
@@ -424,14 +464,10 @@ void MultiplayerLobbyWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new
     AttachChild(m_preview_image);
 }
 
-void MultiplayerLobbyWnd::PlayerSelected(const std::set<int>& selections)
-{
-}
-
 void MultiplayerLobbyWnd::PlayerDataChanged()
 {
     if (m_host)
-        m_start_game_bn->Disable(!PlayerDataUnique() || m_players_lb->NumRows() <= 1);
+        m_start_game_bn->Disable(!CanStart());
     SendUpdate();
 }
 
@@ -457,7 +493,39 @@ void MultiplayerLobbyWnd::CancelClicked()
     CUI_Wnd::CloseClicked();
 }
 
-bool MultiplayerLobbyWnd::PlayerDataUnique()
+void MultiplayerLobbyWnd::PopulatePlayerList(bool loading_game)
+{
+    m_players_lb->Clear();
+    for (unsigned int i = 0; i < m_player_setup_data.size(); ++i) {
+        int id = m_player_setup_data[i].second;
+        if (loading_game) {
+            m_player_setup_data[i].first.save_game_empire_id = -1; // reset this, in case it has some old value that makes no sense
+            LoadGamePlayerRow* row = 
+                new LoadGamePlayerRow(m_player_names[i],
+                                      m_player_setup_data[i].first,
+                                      !m_host && id != HumanClientApp::GetApp()->PlayerID());
+            m_players_lb->Insert(row);
+            Connect(row->data_changed_sig, &MultiplayerLobbyWnd::PlayerDataChanged, this);
+        } else {
+            NewGamePlayerRow* row = 
+                new NewGamePlayerRow(m_player_names[id], 
+                                     m_player_setup_data[i].first,
+                                     !m_host && id != HumanClientApp::GetApp()->PlayerID());
+            m_players_lb->Insert(row);
+            Connect(row->data_changed_sig, &MultiplayerLobbyWnd::PlayerDataChanged, this);
+        }
+    }
+}
+
+void MultiplayerLobbyWnd::SendUpdate()
+{
+    int player_id = HumanClientApp::GetApp()->PlayerID();
+    if (player_id != -1) {
+        HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, LobbyUpdateDoc()));
+    }
+}
+
+bool MultiplayerLobbyWnd::PlayerDataUnique() const
 {
     std::set<std::string> empire_names;
     std::set<int> empire_colors;
@@ -469,11 +537,9 @@ bool MultiplayerLobbyWnd::PlayerDataUnique()
     return empire_names.size() == m_players_lb->NumRows() && empire_colors.size() == m_players_lb->NumRows();
 }
 
-void MultiplayerLobbyWnd::SendUpdate()
+bool MultiplayerLobbyWnd::CanStart() const
 {
-    int player_id = HumanClientApp::GetApp()->PlayerID();
-    if (player_id != -1)
-        HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, LobbyUpdateDoc()));
+    return PlayerDataUnique() && 1 < m_players_lb->NumRows();
 }
 
 GG::XMLDoc MultiplayerLobbyWnd::LobbyUpdateDoc() const
