@@ -1256,6 +1256,7 @@ void ServerApp::ProcessTurns( )
        m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::COMBAT, -1) );
 
     std::vector<System*> sys_vec = GetUniverse().FindObjects<System>();
+    bool combat_happend = false;
     for(std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it)
     {
       std::vector<CombatAssets> empire_combat_forces;
@@ -1302,10 +1303,16 @@ void ServerApp::ProcessTurns( )
 
       if(empire_combat_forces.size()>1)
       {
+        combat_happend=true;
         CombatSystem combat_system;
         combat_system.ResolveCombat(system->ID(),empire_combat_forces);
       }
     }
+
+    // if a combat happend give the human user a chance to look at the results
+    if(combat_happend)
+      Sleep(5000);
+
     // TODO : check if all empires are still alive
 
     /// Increment turn
