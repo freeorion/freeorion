@@ -52,6 +52,7 @@ public:
     const std::string& StackingGroup() const;
     const std::vector<EffectBase*>& EffectsList() const;
     Description GetDescription() const;
+    std::string DescriptionString() const;
 
 protected:
     const Condition::ConditionBase* m_scope;
@@ -59,6 +60,9 @@ protected:
     std::string                     m_stacking_group;
     std::vector<EffectBase*>        m_effects;
 };
+
+/** Returns a single string which describes a vector of EffectsGroups. */
+std::string EffectsDescription(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups);
 
 /** The base class for all Effects.  When an Effect is executed, the source object (the object to which the Effect or its containing
     EffectGroup is attached) and the target object are both required.  Note that this means that ValueRefs contained within Effects

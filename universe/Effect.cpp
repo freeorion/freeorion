@@ -184,6 +184,36 @@ EffectsGroup::Description EffectsGroup::GetDescription() const
     return retval;
 }
 
+std::string EffectsGroup::DescriptionString() const
+{
+    std::stringstream retval;
+    Description description = GetDescription();
+    retval << str(format(UserString("DESC_EFFECTS_GROUP_SCOPE_DESC")) % description.scope_description);
+    if (!dynamic_cast<const Condition::Self*>(m_activation) && !dynamic_cast<const Condition::All*>(m_activation))
+        retval << str(format(UserString("DESC_EFFECTS_GROUP_ACTIVATION_DESC")) % description.activation_description);
+    for (unsigned int i = 0; i < description.effect_descriptions.size(); ++i) {
+        retval << str(format(UserString("DESC_EFFECTS_GROUP_EFFECT_DESC")) % description.effect_descriptions[i]);
+    }
+    return retval.str();
+}
+
+
+///////////////////////////////////////////////////////////
+// EffectsDescription function                           //
+///////////////////////////////////////////////////////////
+std::string EffectsDescription(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups)
+{
+    std::stringstream retval;
+    if (effects_groups.size() == 1) {
+        retval << str(format(UserString("DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC")) % effects_groups[0]->DescriptionString());
+    } else {
+        for (unsigned int i = 0; i < effects_groups.size(); ++i) {
+            retval << str(format(UserString("DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC")) % (i + 1) % effects_groups[i]->DescriptionString());
+        }
+    }
+    return retval.str();
+}
+
 
 ///////////////////////////////////////////////////////////
 // EffectBase                                            //
