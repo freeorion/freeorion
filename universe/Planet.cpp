@@ -165,7 +165,27 @@ GG::XMLElement Planet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) cons
     return retval;
 }
 
-void Planet::AddOwner   (int id)
+void Planet::SetType(PlanetType type)
+{
+    m_type = type;
+    if (m_type <= INVALID_PLANET_TYPE)
+	m_type = PT_SWAMP;
+    if (NUM_PLANET_TYPES <= m_type)
+	m_type = PT_GASGIANT;
+    StateChangedSignal()();
+}
+
+void Planet::SetSize(PlanetSize size)
+{
+    m_size = size;
+    if (m_size <= SZ_NOWORLD)
+	m_size = SZ_TINY;
+    if (NUM_PLANET_SIZES <= m_size)
+	m_size = SZ_GASGIANT;
+    StateChangedSignal()();
+}
+
+void Planet::AddOwner (int id)
 {
     GetSystem()->UniverseObject::AddOwner(id);
     UniverseObject::AddOwner(id);
