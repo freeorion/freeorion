@@ -1,0 +1,382 @@
+Deutsch
+
+#################
+# Common        #
+#################
+
+#Anyone can use these for basic buttons
+
+APPNAME
+FreeOrion
+
+BROWSE_BTN
+Durchsuchen...
+
+OK
+Bestätigen
+
+CANCEL
+Abbrechen
+
+DONE
+Fertig
+
+CLOSE
+Schließen
+
+LOAD
+Öffnen
+
+SAVE
+Speichern
+
+SERVER_TIMEOUT
+Der Server antwortet nicht.
+
+#################
+# Intro Screen  #
+#################
+
+#Window title####
+
+INTRO_WINDOW_TITLE
+FreeOrion Hauptmenu
+
+
+#Button names####
+
+INTRO_BTN_SINGLE_PLAYER
+Einzelspieler
+
+INTRO_BTN_MULTI_PLAYER
+Mehrspieler
+
+INTRO_BTN_LOAD_GAME
+Spiel laden
+
+INTRO_BTN_OPTIONS
+Einstellungen
+
+INTRO_BTN_ABOUT
+Information
+
+INTRO_BTN_EXIT
+Beenden
+
+
+#Error Messages####
+
+ERR_CONNECT_TIMED_OUT
+Timed out while attempting to connect to server
+
+
+########################
+# Server Setup Screen  #
+########################
+
+#Window title####
+
+SCONNECT_WINDOW_TITLE
+Verbindungsaufbau zum Server
+
+
+#Static labels####
+
+LAN_GAME_LABEL
+Lan Spiel Adresse:
+INTERNET_GAME_LABEL
+Internet Spiel Adresse::
+PLAYER_NAME_LABEL
+Name des Spielers:
+
+
+#Button names####
+
+HOST_GAME_BN
+Neues Spiel erzeugen
+JOIN_GAME_BN
+Bestehendem Spiel beitreten
+REFRESH_LIST_BN
+Liste aktualisieren
+
+
+########################
+# Multiplayer Lobby    #
+########################
+
+#Window title####
+
+MPLOBBY_WINDOW_TITLE
+Mehrspieler Einstellungen
+
+#Strings
+MPLOBBY_HOST_ABORTED_GAME
+The host player has terminated this game setup.
+
+#Button names####
+
+START_GAME_BN
+Spiel starten
+
+
+########################
+# Galaxy Setup Screen  #
+########################
+
+#Window title####
+
+GSETUP_WINDOW_TITLE
+Galaxie Einstellungen
+
+#Strings
+GSETUP_GRAPHICS_FILES
+Graphik Dateien
+
+
+#Button names####
+
+GSETUP_VERYSMALL
+sehr klein (50 Sterne)
+GSETUP_SMALL
+klein (100 Sterne)
+GSETUP_MEDIUM
+normal (150 Sterne)
+GSETUP_LARGE
+groß (200 Sterne)
+GSETUP_VERYLARGE
+sehr gross (250 Sterne)
+GSETUP_ENORMOUS
+riesig (300 Sterne)
+
+GSETUP_2ARM
+Spiral, 2-arm
+GSETUP_3ARM
+Spiral, 3-arm
+GSETUP_4ARM
+Spiral, 4-arm
+GSETUP_CLUSTER
+Cluster
+GSETUP_FROMFILE
+aus Datei...
+GSETUP_ELLIPTICAL
+elliptisch
+GSETUP_IRREGULAR
+unregelmäßig
+GSETUP_RING
+Ring
+
+#Error messages####
+
+GSETUP_ERR_NOEXIST
+existiert nicht.
+
+GSETUP_ERR_INVALID_GRAPHICS
+keine gültiges graphik format.
+
+
+###########################
+# Empire Selection Screen #
+###########################
+
+#Window Title####
+
+ESELECT_WINDOW_TITLE
+Imperium Auswahl
+
+
+#Static text####
+
+ESELECT_EMPIRE_NAME
+Name des Imperium:
+
+###########################
+# About Dialog		  #
+###########################
+
+#License button text####
+
+LICENSE
+Lizenz
+
+ABOUT_WINDOW_TITLE
+Informationen zu FreeOrion v0.1a
+
+CREDITS
+Credits
+
+###########################
+# In Game Options	  #
+###########################
+
+INGAMEOPTIONS_WINDOW_TITLE
+Einstellungen
+
+INGAMEOPTIONS_SAVE
+Spiel speichern
+
+INGAMEOPTIONS_LOAD
+Spiel laden
+
+INGAMEOPTIONS_QUIT
+Spiel beenden
+
+INGAMEOPTIONS_SAVE_FILES
+gespeicherte Spiele
+
+#################
+# Main Map      #
+#################
+
+MAP_BTN_TURN_UPDATE
+Turn 
+
+#################
+# SidePanel     #
+#################
+
+SIDE_PANEL
+Systemansicht
+
+##Planet Panel#############
+PLANET_PANEL
+Planetenansicht
+
+#Planet Sizes and Types####
+
+PL_SZ_NOWORLD
+*hier gib's nichts zu sehen, hau ab*
+PL_SZ_TINY
+winzig
+PL_SZ_SMALL
+klein
+PL_SZ_MEDIUM
+normal
+PL_SZ_LARGE
+groß
+PL_SZ_HUGE
+sehr groß
+
+PL_TOXIC
+Toxic
+PL_INFERNO
+Inferno
+PL_GASGIANT
+Gas Giant
+PL_ASTEROIDS
+Asteroid Field
+PL_RADIATED
+Radiated
+PL_SWAMP
+Swamp
+PL_BARREN
+Barren
+PL_DESERT
+Desert
+PL_TUNDRA
+Tundra
+PL_OCEAN
+Ocean
+PL_TERRAN
+Terran
+PL_GAIA
+Gaia
+
+PL_UNHABITABLE
+unbewohnbar
+
+PL_UNINHABITED
+unbewohnt
+
+PL_PRIMARY_FOCUS
+primär 
+
+PL_SECONDARY_FOCUS
+sekundär
+
+PL_BALANCED
+ausgeglichen
+PL_FARMING
+Landwirtschaft
+PL_INDUSTRY
+Industrie
+PL_MINING
+Bergbau
+PL_SCIENCE
+Forschung
+
+PL_PRODUCTION_TIME_NEVER
+(niemals)
+
+PL_PRODUCTION_TIME_TURNS
+(%d Züge)
+
+PL_COLONIZE
+Besiedeln
+
+SP_UNKNOWN_SYSTEM
+unerforschtes System
+
+SP_SYSTEM_NAME
+Das %s System
+
+SP_SYSTEM_PRODUCTION
+System Produktion
+
+####################
+# TurnProgress     #
+####################
+
+TURN_PROGRESS_WND
+Turn Progress
+
+TURN_PROGRESS_PHASE_FLEET_MOVEMENT
+Flottenbewegungen
+
+TURN_PROGRESS_PHASE_COMBAT
+Raumschlachten
+
+TURN_PROGRESS_PHASE_EMPIRE_GROWTH
+Produktion und Wachstum
+
+TURN_PROGRESS_PHASE_WAITING
+Es müssen noch Spieler ihren Zug beenden, bitte warten.
+
+TURN_PROGRESS_PHASE_ORDERS
+Befehle ausführen
+
+
+########################
+# SitRep Panel         #
+########################
+
+#Window title####
+
+SITREP_PANEL_TITLE
+Status Bericht
+
+
+####################
+# Sit Rep Entries  #
+####################
+
+SITREP_MAX_INDUSTRY
+Der Planet %planet% im System %system% hat den maximalen Industieausbau erreicht.
+
+SITREP_SHIP_BUILT
+Das neue Raumschiff %ship% befindet sich nun im Orbit von %planet%.
+
+SITREP_TECH_RESEARCHED
+%tech% wurde entdeckt.
+
+SITREP_BASE_BUILT
+Eine Verteidigungsbasis auf dem Planeten %planet% im System %system% wurde fertiggestellt.
+
+SITREP_COMBAT_SYSTEM_WON
+Eine Raumschlacht hat im System %system% stattgefunden. Du hast gewonnen!
+
+SITREP_COMBAT_SYSTEM_LOST
+Eine Raumschlacht hat im System %system% stattgefunden. Du hast verloren!
+
+SITREP_COMBAT_SYSTEM_NO_VICTOR
+Eine Raumschlacht hat im System %system% stattgefunden. Es gab keinen Sieger.
+
