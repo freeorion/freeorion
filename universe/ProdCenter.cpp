@@ -255,7 +255,22 @@ void ProdCenter::PopGrowthProductionResearchPhase( Empire *empire, const int sys
   {
     UpdateShipBuildProgress( empire, system_id, planet_id, ShipDesign::COLONY );
   }
-
+  else if ( CurrentlyBuilding() == ProdCenter::MARKI )
+  {
+    UpdateShipBuildProgress( empire, system_id, planet_id, ShipDesign::MARK1 );
+  }
+  else if ( CurrentlyBuilding() == ProdCenter::MARKII )
+  {
+    UpdateShipBuildProgress( empire, system_id, planet_id, ShipDesign::MARK2 );
+  }
+  else if ( CurrentlyBuilding() == ProdCenter::MARKIII )
+  {
+    UpdateShipBuildProgress( empire, system_id, planet_id, ShipDesign::MARK3 );
+  }
+  else if ( CurrentlyBuilding() == ProdCenter::MARKIV )
+  {
+    UpdateShipBuildProgress( empire, system_id, planet_id, ShipDesign::MARK4 );
+  }
   
 }
 
