@@ -55,7 +55,7 @@ ServerConnectWnd::ServerConnectWnd(int x, int y, int w, int h) :
     
     // Attach static labels
 //    AttachChild(new GG::StaticText(POS_LABEL_SERVER_CONNECT,"Connect to server",ClientUI::FONT,ClientUI::PTS + 4,ClientUI::TEXT_COLOR));
-    AttachChild(new GG::StaticText(POS_LABEL_SERVER_SERVER,ClientUI::String("SCONNECT_LBL_SERVER"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR));
+    AttachChild(new GG::TextControl(POS_LABEL_SERVER_SERVER,ClientUI::String("SCONNECT_LBL_SERVER"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR));
     
     // Attach signal connections
     InitControls();

@@ -87,7 +87,7 @@ void EmpireSelect::Init()
     AttachChild(m_right_select);
 
     // Attach static labels
-    AttachChild(new GG::StaticText(10,30,ClientUI::String("ESELECT_EMPIRE_NAME"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR));
+    AttachChild(new GG::TextControl(10,30,ClientUI::String("ESELECT_EMPIRE_NAME"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR));
     
     //attach signals
     GG::Connect(m_ok->ClickedSignal(), &EmpireSelect::OnOK, this);

@@ -22,7 +22,7 @@
     Note that to save and load this class using GG's automatic serialization, LinkText must be added to the 
     app's XMLObjectFactory. Note also that for link tags to be correctly handled, they must not overlap each other at all, 
     though overlap with regular GG::Font tags if fine. */
-class LinkText : public GG::DynamicText
+class LinkText : public GG::TextControl
 {
 public:
     /** \name Signal Types */ //@{

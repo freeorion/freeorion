@@ -8,7 +8,7 @@ bool LinkText::s_link_tags_registered = false;
 
 LinkText::LinkText(int x, int y, int w, int h, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
                    Uint32 text_fmt/* = 0*/, GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = 0*/) : 
-   GG::DynamicText(x, y, w, h, str, font, text_fmt, color, flags),
+   GG::TextControl(x, y, w, h, str, font, text_fmt, color, flags),
    m_old_sel_link(-1),
    m_old_rollover_link(-1)
 {
@@ -17,7 +17,7 @@ LinkText::LinkText(int x, int y, int w, int h, const std::string& str, const boo
 
 LinkText::LinkText(int x, int y, int w, int h, const std::string& str, const std::string& font_filename, int pts, 
                    Uint32 text_fmt/* = 0*/, GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = 0*/) : 
-   GG::DynamicText(x, y, w, h, str, font_filename, pts, text_fmt, color, flags),
+   GG::TextControl(x, y, w, h, str, font_filename, pts, text_fmt, color, flags),
    m_old_sel_link(-1),
    m_old_rollover_link(-1)
 {
@@ -26,7 +26,7 @@ LinkText::LinkText(int x, int y, int w, int h, const std::string& str, const std
 
 LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
                    GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = 0*/) : 
-   GG::DynamicText(x, y, str, font, color, flags),
+   GG::TextControl(x, y, str, font, color, flags),
    m_old_sel_link(-1),
    m_old_rollover_link(-1)
 {
@@ -35,7 +35,7 @@ LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr
 
 LinkText::LinkText(int x, int y, const std::string& str, const std::string& font_filename, int pts, 
                    GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = 0*/) : 
-   GG::DynamicText(x, y, str, font_filename, pts, color, flags),
+   GG::TextControl(x, y, str, font_filename, pts, color, flags),
    m_old_sel_link(-1),
    m_old_rollover_link(-1)
 {
@@ -43,7 +43,7 @@ LinkText::LinkText(int x, int y, const std::string& str, const std::string& font
 }
 
 LinkText::LinkText(const GG::XMLElement& elem) : 
-   GG::DynamicText(elem.Child("GG::DynamicText")),
+   GG::TextControl(elem.Child("GG::TextControl")),
    m_old_sel_link(-1),
    m_old_rollover_link(-1)
 {
@@ -111,14 +111,14 @@ int LinkText::MouseLeave(const GG::Pt& pt, Uint32 keys)
    
 void LinkText::SetText(const std::string& str)
 {
-   GG::DynamicText::SetText(str);
+   GG::TextControl::SetText(str);
    FindLinks();
 }
 
 GG::XMLElement LinkText::XMLEncode() const
 {
    GG::XMLElement retval("LinkText");
-   retval.AppendChild(GG::DynamicText::XMLEncode());
+   retval.AppendChild(GG::TextControl::XMLEncode());
    return retval;
 }
 

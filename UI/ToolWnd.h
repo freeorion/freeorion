@@ -45,7 +45,7 @@ protected:
     //! \name Member Vars
     //!@{
     
-    GG::StaticText *textwnd;    //!< where the text is contained
+    GG::TextControl *textwnd;    //!< where the text is contained
     GG::Clr color;              //!< the color of the tool window
 
     //!@}

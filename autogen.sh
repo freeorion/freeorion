@@ -7,12 +7,15 @@ libtoolize
 autoheader
 automake -a --foreign
 set +x
-if test ! -e configure -o ! -e ltmain.sh -o ! -e config.h.in -o ! -e Makefile.in; then
-   echo "** Unable to generate all files!"
-   echo "** you'll need autoconf 2.5, automake 1.7, libtool 1.5 and aclocal installed"
-   echo "** You can also use the update-configure.sh script which will"
-   echo "** download the required files, just remember to call it"
-   echo "** from time to time, it will only download if anything has changed"
+if test ! -f configure || test ! -f ltmain.sh || test ! -f config.h.in || test ! -f Makefile.in; then
+   cat<<EOT
+** Unable to generate all required files!
+** you'll need autoconf 2.5, automake 1.7, libtool 1.5, autoheader and aclocal installed
+** If you don't have access to these tools, you can use the
+** update-configure.sh script which will download the generated files, 
+** just remember to call it from time to time, it will only download 
+** if some files have been changed
+EOT
    exit 1
 fi
 echo "Now run ./configure, see ./configure --help for more information"

@@ -223,10 +223,10 @@ void HumanClientApp::SDLInit()
       Exit(1);
    }
   
-   if (TTF_Init() < 0) {
-      Logger().errorStream() << "TTF initialization failed: " << TTF_GetError();
-      Exit(1);
-   }
+//    if (TTF_Init() < 0) {
+//       Logger().errorStream() << "TTF initialization failed: " << TTF_GetError();
+//       Exit(1);
+//    }
 
    if (FE_Init() < 0) {
       Logger().errorStream() << "FastEvents initialization failed: " << FE_GetError();
@@ -380,7 +380,7 @@ void HumanClientApp::SDLQuit()
    FinalCleanup();
    NET2_Quit();
    FE_Quit();
-   TTF_Quit();
+//   TTF_Quit();
    SDLNet_Quit();
    Mix_CloseAudio();   
    SDL_Quit();

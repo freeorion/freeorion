@@ -4,6 +4,10 @@
 #include "GGWnd.h"
 #include "ToolWnd.h"
 
+#ifndef _SDL_timer_h
+#include "SDL_timer.h"
+#endif
+
 //!ToolContainer acts as a container for all of the Tooltip windows in an
 //!entire application.  Once initialized, the container operates without any 
 //!intervention until it is destroyed.  Only one object should be active at a 

@@ -63,7 +63,7 @@ freeorionca_exe_SOURCES =				\
 @top_srcdir@/util/SitRepEntry.h			\
 @top_srcdir@/server/ServerApp.cpp
 
-AM_CPPFLAGS = @FT2_CFLAGS@ @GIGI_CFLAGS@ @SDL_CFLAGS@ -DFREEORION_BUILD_AI
+AM_CPPFLAGS = @GIGINET_CFLAGS@ @GIGISDL_CFLAGS@ @SDL_CFLAGS@ -DFREEORION_BUILD_AI
 AM_CXXFLAGS = -g3 -Wall
 
-freeorionca_exe_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @FT2_LIBS@
+freeorionca_exe_LDADD = @SDL_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@ 
