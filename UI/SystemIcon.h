@@ -28,11 +28,6 @@ class SystemIcon : public GG::Control
 public:
     using Wnd::SizeMove;
 
-    //! \name Static Constants //!@{
-    static const int ICON_WIDTH;
-    static const int ICON_HEIGHT;
-    //!@}
-
     //! \name Signal Types //!@{
     typedef boost::signal<void (int)> BrowsedSignalType; //!< emitted when the user moves the cursor over the icon; returns the object id
     typedef boost::signal<void (int)> LeftClickedSignalType; //!< emitted when the user left clicks the icon; returns the objectID
