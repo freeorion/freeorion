@@ -80,6 +80,8 @@ IntroScreen::~IntroScreen()
 
 GG::XMLElement IntroScreen::XMLEncode() const
 {
+	 GG::XMLElement retval;
+	 return retval;
     //TODO: encode to XML
 }
 /*

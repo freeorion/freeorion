@@ -106,6 +106,7 @@ int LinkText::MouseHere(const GG::Pt& pt, Uint32 keys)
 int LinkText::MouseLeave(const GG::Pt& pt, Uint32 keys)
 {
    ClearOldRollover();
+	return 1;
 }
    
 void LinkText::SetText(const std::string& str)
