@@ -84,7 +84,7 @@ GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int EmpireID)
         sprintf(empire_tag, "Empire%d", (*itr).second->EmpireID());
         
         GG::XMLElement current_empire(empire_tag);
-        current_empire.AppendChild( (*itr).second->XMLEncode() );
+        current_empire.AppendChild( (*itr).second->XMLEncode(*emp) );
         this_turn.AppendChild(current_empire);
     }
     
@@ -101,7 +101,7 @@ GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int EmpireID)
     return update_patch.root_node;
 }
 
-
+/*
 GG::XMLElement ServerEmpireManager::CreateClientSitrepUpdate(int EmpireID)
 {
     GG::XMLElement update(SITREP_UPDATE_TAG);
@@ -131,4 +131,4 @@ GG::XMLElement ServerEmpireManager::CreateClientSitrepUpdate(int EmpireID)
     
     return update;
 
-}
+}*/

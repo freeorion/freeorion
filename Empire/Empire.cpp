@@ -56,31 +56,31 @@ Empire::Empire(const GG::XMLElement& elem)
     XMLElement container_elem = elem.Child("m_fleets");
     for(unsigned int i=0; i<container_elem.NumChildren(); i++)
     {
-        m_fleets.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+        m_fleets.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
     }
     
     container_elem = elem.Child("m_planets");
     for(unsigned int i=0; i<container_elem.NumChildren(); i++)
     {
-        m_planets.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+        m_planets.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
     }
     
     container_elem = elem.Child("m_explored_systems");
     for(unsigned int i=0; i<container_elem.NumChildren(); i++)
     {
-        m_explored_systems.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+        m_explored_systems.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
     }
     
     container_elem = elem.Child("m_visible_fleets");
     for(unsigned int i=0; i<container_elem.NumChildren(); i++)
     {
-        m_visible_fleets.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+        m_visible_fleets.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
     }
     
     container_elem = elem.Child("m_techs");
     for(unsigned int i=0; i<container_elem.NumChildren(); i++)
     {
-        m_techs.push_back(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
+        m_techs.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
     }
     
 }
@@ -123,7 +123,7 @@ int Empire::TotalRP() const
 // false if it is not.
 bool Empire::HasTech(int ID) const
 {
-    Empire::ConstTechIDItr item = find(TechBegin(), TechEnd(), ID);
+    Empire::ConstTechIDItr item = m_techs.find(ID);
     
     return (item != TechEnd());
 
@@ -131,7 +131,7 @@ bool Empire::HasTech(int ID) const
 
 bool Empire::HasPlanet(int ID) const
 {
-    Empire::ConstPlanetIDItr item = find(PlanetBegin(), PlanetEnd(), ID);
+    Empire::ConstPlanetIDItr item = m_planets.find(ID);
     return (item != PlanetEnd());
 }
 
@@ -217,6 +217,15 @@ Empire::ConstSitRepItr Empire::SitRepEnd() const
     return m_sitrep_entries.end();
 }
 
+Empire::ConstShipDesignItr Empire::ShipDesignBegin() const
+{
+    return m_ship_designs.begin();
+}
+Empire::ConstShipDesignItr Empire::ShipDesignEnd() const
+{
+    return m_ship_designs.end();
+}
+
 /* *************************************
     (non-const) Iterators over our various lists
 ***************************************/
@@ -279,6 +288,15 @@ Empire::SitRepItr Empire::SitRepEnd()
     return m_sitrep_entries.end();
 }
 
+Empire::ShipDesignItr Empire::ShipDesignBegin() 
+{
+    return m_ship_designs.begin();
+}
+Empire::ShipDesignItr Empire::ShipDesignEnd() 
+{
+    return m_ship_designs.end();
+}
+
  /* ************************************************
     Methods to add items to our various lists
 **************************************************/
@@ -286,37 +304,42 @@ Empire::SitRepItr Empire::SitRepEnd()
 /// Inserts the given ID into the Empire's list of Technologies.
 void Empire::AddTech(int ID)
 {
-    m_techs.push_back(ID);
+    m_techs.insert(ID);
 }
 
 /// Inserts the given ID into the Empire's list of owned planets.
 void Empire::AddPlanet(int ID)
 {
-    m_planets.push_back(ID);
+    m_planets.insert(ID);
 }
 
 /// Inserts the given ID into the Empire's list of explored systems.
 void Empire::AddExploredSystem(int ID)
 {
-    m_explored_systems.push_back(ID);
+    m_explored_systems.insert(ID);
 }
 
 /// Inserts the given ID into the Empire's list of owned fleets.
 void Empire::AddFleet(int ID)
 {
-    m_fleets.push_back(ID);
+    m_fleets.insert(ID);
 }
 
 /// Inserts the given ID into the Empire's list of visible fleets.
 void Empire::AddVisibleFleet(int ID)
 {
-    m_visible_fleets.push_back(ID);
+    m_visible_fleets.insert(ID);
 }
 
 /// Inserts the given sitrep entry into the empire's sitrep list
 void Empire::AddSitRepEntry( SitRepEntry* entry)
 {
     m_sitrep_entries.push_back(entry);
+}
+
+void Empire::AddShipDesign(const ShipDesign& design)
+{
+    m_ship_designs.push_back(design);
 }
 
  /* ************************************************
@@ -326,28 +349,28 @@ void Empire::AddSitRepEntry( SitRepEntry* entry)
 /// Removes the given ID from the empire's list
 void Empire::RemoveTech(int ID)
 {
-    m_techs.remove(ID);
+    m_techs.erase(ID);
 }
 
 /// Removes the given ID from the empire's list
 void Empire::RemoveOwnedPlanet(int ID)
 {
-    m_planets.remove(ID);
+    m_planets.erase(ID);
 }
 /// Removes the given ID from the empire's list
 void Empire::RemoveExploredSystem(int ID)
 {
-    m_explored_systems.remove(ID);
+    m_explored_systems.erase(ID);
 }
 /// Removes the given ID from the empire's list
 void Empire::RemoveFleet(int ID)
 {
-    m_fleets.remove(ID);
+    m_fleets.erase(ID);
 }
 
 void Empire::RemoveVisibleFleet(int ID)
 {
-    m_visible_fleets.remove(ID);
+    m_visible_fleets.erase(ID);
 }
 
 void Empire::ClearSitRep()
@@ -362,6 +385,23 @@ void Empire::ClearSitRep()
     }
     
     m_sitrep_entries.clear();
+}
+
+
+void Empire::RemoveShipDesign(int id)
+{
+    Empire::ShipDesignItr itr = ShipDesignBegin();
+    while(itr != ShipDesignEnd())
+    {
+        if( (*itr).id == id )
+        {
+            m_ship_designs.erase( itr );
+            return;
+        }
+    }
+    
+    // it ain't here
+    return;
 }
 
 
@@ -403,14 +443,20 @@ GG::XMLElement Empire::XMLEncode() const
     
     // There is no need to serialize the sitrep entries since they are
     // handled by the empire manager sitrep update functionality
-    /*
+    
     XMLElement sitrep("m_sitrep_entries");
     for(ConstSitRepItr itr = SitRepBegin(); itr != SitRepEnd(); itr++)
     {
        sitrep.AppendChild( (*itr)->XMLEncode() );
     }
     element.AppendChild(sitrep);
-    */
+    
+    XMLElement ship_designs("m_ship_designs");
+    for(ConstShipDesignItr itr = ShipDesignBegin(); itr != ShipDesignEnd(); itr++)
+    {
+       ship_designs.AppendChild( (*itr).XMLEncode() );
+    }
+    element.AppendChild(ship_designs);
     
     XMLElement fleets("m_fleets");
     EncodeIntList(fleets, m_fleets);
@@ -435,6 +481,74 @@ GG::XMLElement Empire::XMLEncode() const
     return element;
 }
 
+
+GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
+{
+    // same empire --->  call other version
+    if(viewer.EmpireID() == this->EmpireID())
+    {
+        return this->XMLEncode();
+    }
+    
+    using GG::XMLElement;
+    using boost::lexical_cast;
+    
+    XMLElement element("Empire");
+    
+    XMLElement ID("m_id");
+    ID.SetAttribute( "value", lexical_cast<std::string>(m_id) );
+    element.AppendChild(ID);
+    
+    XMLElement name("m_name");
+    name.SetText(m_name);
+    element.AppendChild(name);
+    
+    // total_rp member needs to have a value so it can get initialized when we de-serialize.
+    // set it to 0 because the other empire isnt' supposed to know this
+    XMLElement total_rp("m_total_rp");
+    total_rp.SetAttribute( "value", lexical_cast<std::string>(0) );
+    element.AppendChild(total_rp);
+    
+    XMLElement control("m_control_state");
+    control.SetAttribute( "value",  lexical_cast<std::string>( (int) m_control_state) );
+    element.AppendChild(control);
+    
+    XMLElement color("m_color");
+    GG::XMLElement colorelem = m_color.XMLEncode();
+    color.AppendChild(colorelem);
+    element.AppendChild(color);
+    
+    // for the lists, put the child elements in but do not populate them
+    
+    XMLElement sitrep("m_sitrep_entries");
+    element.AppendChild(sitrep);
+    
+    XMLElement ship_designs("m_ship_designs");
+    element.AppendChild(ship_designs);
+    
+    XMLElement fleets("m_fleets");
+    //EncodeIntList(fleets, m_fleets);
+    element.AppendChild(fleets);
+    
+    XMLElement planets("m_planets");
+    //EncodeIntList(planets, m_planets);
+    element.AppendChild(planets);
+    
+    XMLElement explored("m_explored_systems");
+    //EncodeIntList(explored, m_explored_systems);
+    element.AppendChild(explored);
+    
+    XMLElement techs("m_techs");
+    //EncodeIntList(techs, m_techs);
+    element.AppendChild(techs);
+    
+    XMLElement visible_fleets("m_visible_fleets");
+    //EncodeIntList(visible_fleets, m_visible_fleets);
+    element.AppendChild(visible_fleets);
+    
+    return element;
+
+}
 
 
 void Empire::XMLMerge(const GG::XMLElement& elem)
@@ -507,11 +621,11 @@ void Empire::Name(const std::string& name)
 }
 
 // private helper method for encoding a list of integers
-void Empire::EncodeIntList(GG::XMLElement& container, const std::list<int>& lst)
+void Empire::EncodeIntList(GG::XMLElement& container, const std::set<int>& lst)
 {
     
     int i=0;
-    for(std::list<int>::const_iterator itr = lst.begin(); itr != lst.end(); itr++)
+    for(std::set<int>::const_iterator itr = lst.begin(); itr != lst.end(); itr++)
     {
         GG::XMLElement item("index" + lexical_cast<std::string>(i) );
         i++;

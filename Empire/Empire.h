@@ -22,6 +22,11 @@
 #include "TechManager.h"
 #endif
 
+// include ship.h so we can see the shipdesign object
+#ifndef _Ship_h_
+#include "../Universe/Ship.h"
+#endif
+
 /**
 * Class to maintain the state of a single empire.  
 * This class keeps track of the following information:
@@ -36,6 +41,7 @@
 *   - list of technologies
 *   - list of visible fleets
 *   - list of explored systems
+*   - list of ship designs
 *
 * Only ServerEmpire should create these objects.  
 * In both the client and server, Empires are managed by a subclass of EmpireManager, 
@@ -65,18 +71,21 @@ public:
     /** \name Iterator Types */ //@{
     // these typedefs allow me to change the container I use
     // without breaking anybody else's code
-    typedef std::list<int>::iterator PlanetIDItr;
-    typedef std::list<int>::iterator FleetIDItr;
-    typedef std::list<int>::iterator SystemIDItr;
-    typedef std::list<int>::iterator TechIDItr;
+    typedef std::set<int>::iterator PlanetIDItr;
+    typedef std::set<int>::iterator FleetIDItr;
+    typedef std::set<int>::iterator SystemIDItr;
+    typedef std::set<int>::iterator TechIDItr;
   
-    typedef std::list<int>::const_iterator    ConstPlanetIDItr;
-    typedef std::list<int>::const_iterator    ConstFleetIDItr;
-    typedef std::list<int>::const_iterator    ConstSystemIDItr;
-    typedef std::list<int>::const_iterator    ConstTechIDItr;
+    typedef std::set<int>::const_iterator    ConstPlanetIDItr;
+    typedef std::set<int>::const_iterator    ConstFleetIDItr;
+    typedef std::set<int>::const_iterator    ConstSystemIDItr;
+    typedef std::set<int>::const_iterator    ConstTechIDItr;
     
     typedef std::list<SitRepEntry*>::iterator SitRepItr;
     typedef std::list<SitRepEntry*>::const_iterator    ConstSitRepItr;
+    
+    typedef std::list<ShipDesign>::iterator ShipDesignItr;
+    typedef std::list<ShipDesign>::const_iterator ConstShipDesignItr;
     //@}
     
     /**
@@ -169,7 +178,9 @@ public:
     
     ConstSitRepItr SitRepBegin() const;
     ConstSitRepItr SitRepEnd() const;
-  
+    
+    ConstShipDesignItr ShipDesignBegin() const;
+    ConstShipDesignItr ShipDesignEnd() const;
       
     /* *************************************
         (non-const) Iterators over our various lists
@@ -192,8 +203,9 @@ public:
     
     SitRepItr SitRepBegin();
     SitRepItr SitRepEnd();
-   
-
+    
+    ShipDesignItr ShipDesignBegin() ;
+    ShipDesignItr ShipDesignEnd() ;
 
 
     /// Encodes an empire into an XMLElement
@@ -204,12 +216,27 @@ public:
     *
     * This method is used by the Server to generate turn updates.
     *
-    * The exact format of the XMLElement will be determined when this method
-    * is implemented.
+    * All data on the empire is encoded.
     *
     *
     */
     GG::XMLElement XMLEncode() const;
+
+
+    /// Encodes an empire into an XMLElement, from the perspective of another
+    /**
+    * This method encodes the empire into an XMLElement, but includes only
+    * the information that the specified empire will have access to.
+    * 
+    *  For version 0.1, this will only be the Empire's name, color, and control state
+    *
+    *  For future versions, technology, diplomatic status, race, and other
+    *  such data will be included as appropriate.
+    *
+    *   If the viewer has the same empire ID as the host object
+    *   then the return value is the same as the no-arg version of XMLEncode()
+    */
+    GG::XMLElement XMLEncode(const Empire& viewer) const;
 
     //@}
 
@@ -248,6 +275,9 @@ public:
     */
     void AddSitRepEntry( SitRepEntry* entry);
     
+    /// inserts a copy of the given design into the empire's design list
+    void AddShipDesign(const ShipDesign& design);
+    
      /* ************************************************
         Methods to remove items from our various lists
     **************************************************/
@@ -274,7 +304,9 @@ public:
     */
     void ClearSitRep();
     
-
+    /// Removes the design with the specified ID from the empire's design list
+    void RemoveShipDesign(int id);
+    
     
     /// Applies changes to the Empire object
     /**
@@ -343,7 +375,7 @@ private:
     *  index of the container element.  Each subelement has a "value" attribute
     *  equal to the value of the container element.
     */
-    static void EncodeIntList(GG::XMLElement& container, const std::list<int>& lst);
+    static void EncodeIntList(GG::XMLElement& container, const std::set<int>& lst);
 
     /// Empire's unique numeric id
     int m_id;
@@ -369,19 +401,21 @@ private:
 
     /// list of acquired technologies.  These are IDs
     /// referencing TechLevel objects in the techmanager
-    std::list<int> m_techs;   
+    std::set<int> m_techs;   
     
     /// planets you own
-    std::list<int> m_planets;       
+    std::set<int> m_planets;       
     
     /// fleets you own
-    std::list<int> m_fleets;
+    std::set<int> m_fleets;
     
     /// systems you've explored        
-    std::list<int> m_explored_systems; 
+    std::set<int> m_explored_systems; 
     
     /// fleets you can see but dont own    
-    std::list<int> m_visible_fleets;    
+    std::set<int> m_visible_fleets;   
+    
+    std::list<ShipDesign> m_ship_designs; 
     
 };
 

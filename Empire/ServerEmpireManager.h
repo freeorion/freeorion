@@ -82,8 +82,10 @@ public:
     * sent to the client and decoded with ClientEmpire::HandleSitrepUpdate()
     * 
     * An std::runtime_error is thrown if no empire exists with the given ID
+    *
+    *  This method is depracated.  It does nothing.
     */
-	GG::XMLElement CreateClientSitrepUpdate(int EmpireID);
+	//GG::XMLElement CreateClientSitrepUpdate(int EmpireID);
     
     //@}
 private:
