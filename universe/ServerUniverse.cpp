@@ -25,7 +25,7 @@ const double  ADJACENCY_BOX_SIZE = ClientUniverse::UNIVERSE_WIDTH / ADJACENCY_BO
 std::string RomanNumber(unsigned int n)
 {
     static const char N[] = "IVXLCDM??";
-    string retval;
+    std::string retval;
     int e = 3;
     int mod = 1000;
     for( ; e>=0 ; e--,mod/=10) {
