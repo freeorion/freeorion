@@ -57,6 +57,9 @@ UniverseObject::UniverseObject(const GG::XMLElement& elem)
         if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
             m_name = elem.Child("m_name").Text();
             m_owners = GG::ContainerFromString<std::set<int> >(elem.Child("m_owners").Text());
+	    for (GG::XMLElement::const_child_iterator it = elem.Child("m_specials").child_begin(); it != elem.Child("m_specials").child_end(); ++it) {
+		m_specials.insert(it->Text());
+	    }
         }
     } catch (const boost::bad_lexical_cast& e) {
         Logger().debugStream() << "Caught boost::bad_lexical_cast in UniverseObject::UniverseObject(); bad XMLElement was:";
@@ -118,6 +121,11 @@ GG::XMLElement UniverseObject::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES
    if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
       retval.AppendChild(XMLElement("m_name", m_name));
       retval.AppendChild(XMLElement("m_owners", GG::StringFromContainer<std::set<int> >(m_owners)));
+      retval.AppendChild(XMLElement("m_specials"));
+      int i = 0;
+      for (std::set<std::string>::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it) {
+	  retval.LastChild().AppendChild(XMLElement("Special" + lexical_cast<std::string>(i++), *it));
+      }
    }
    return retval;
 }

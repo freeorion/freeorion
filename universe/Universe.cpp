@@ -1,6 +1,7 @@
 #include "Universe.h"
 
 #include "../util/AppInterface.h"
+#include "Building.h"
 #include "Fleet.h"
 #include "../util/DataTable.h"
 #include "../util/MultiplayerCommon.h"
@@ -29,10 +30,11 @@
 
 namespace {
     // for UniverseObject factory
-    UniverseObject* NewFleet(const GG::XMLElement& elem)  {return new Fleet(elem);}
-    UniverseObject* NewPlanet(const GG::XMLElement& elem) {return new Planet(elem);}
-    UniverseObject* NewShip(const GG::XMLElement& elem)   {return new Ship(elem);}
-    UniverseObject* NewSystem(const GG::XMLElement& elem) {return new System(elem);}
+    UniverseObject* NewBuilding(const GG::XMLElement& elem) {return new Building(elem);}
+    UniverseObject* NewFleet(const GG::XMLElement& elem)    {return new Fleet(elem);}
+    UniverseObject* NewPlanet(const GG::XMLElement& elem)   {return new Planet(elem);}
+    UniverseObject* NewShip(const GG::XMLElement& elem)     {return new Ship(elem);}
+    UniverseObject* NewSystem(const GG::XMLElement& elem)   {return new System(elem);}
 
     const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, s_universe_width]
     const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, s_universe_width]
@@ -830,6 +832,7 @@ double Universe::s_universe_width = 1000.0;
 
 Universe::Universe()
 {
+    m_factory.AddGenerator("Building", &NewBuilding);
     m_factory.AddGenerator("Fleet", &NewFleet);
     m_factory.AddGenerator("Planet", &NewPlanet);
     m_factory.AddGenerator("Ship", &NewShip);
@@ -839,6 +842,7 @@ Universe::Universe()
 
 Universe::Universe(const GG::XMLElement& elem)
 {
+    m_factory.AddGenerator("Building", &NewBuilding);
     m_factory.AddGenerator("Fleet", &NewFleet);
     m_factory.AddGenerator("Planet", &NewPlanet);
     m_factory.AddGenerator("Ship", &NewShip);
@@ -1093,6 +1097,9 @@ UniverseObject* Universe::Remove(int id)
       if (Ship* ship = dynamic_cast<Ship*>(retval)) {
 	  if (Fleet* fleet = ship->GetFleet())
 	      fleet->RemoveShip(ship->ID());
+      } else if (Building* building = dynamic_cast<Building*>(retval)) {
+	  if (Planet* planet = building->GetPlanet())
+	      planet->RemoveBuilding(building->ID());
       }
       m_objects.erase(id);
    }

@@ -95,6 +95,8 @@ public:
     const std::set<int>& Owners() const {return m_owners;}   ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
     int                  SystemID() const{return m_system_id;}///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
     System*              GetSystem() const;                  ///< returns system in which this object can be found, or null if the object is not within any system
+    const std::set<std::string>&
+                         Specials() const {return m_specials;}///< returns the set of names of the Specials attached to this object
 
     virtual const Meter* GetMeter(MeterType type) const;  ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
@@ -126,6 +128,8 @@ public:
     virtual void AddOwner(int id);  ///< adds the Empire with ID \a id to the list of owners of this object
     virtual void RemoveOwner(int id);   ///< removes the Empire with ID \a id to the list of owners of this object
     void SetSystem(int sys)  {m_system_id = sys; m_changed_sig();}    ///< assigns this object to a System
+    virtual void AddSpecial(const std::string& name) {m_specials.insert(name);}  ///< adds the Special \a name to this object, if it is not already present
+    virtual void RemoveSpecial(const std::string& name) {m_specials.erase(name);}   ///< removes the Special \a name from this object, if it is already present
    
     /** performs the movement that this object is responsible for this object's actions during the movement phase of 
         a turn.  Called by ServerUniverse::MovementPhase().*/
@@ -134,7 +138,6 @@ public:
     /** performs the movement that this object is responsible for this object's actions during the pop growth/production/
         research phase of a turn.  Called by ServerUniverse::PopGrowthProductionResearchPhase().*/
     virtual void PopGrowthProductionResearchPhase( ) = 0;
-
     //@}
    
     static const double INVALID_POSITION;  ///< the position in x and y at which default-constructed objects are placed
@@ -142,12 +145,13 @@ public:
     static const int    MAX_ID; ///< the max ID number 
 
 private:
-    int            m_id;
-    std::string    m_name;
-    double         m_x;
-    double         m_y;
-    std::set<int>  m_owners;
-    int            m_system_id;
+    int                   m_id;
+    std::string           m_name;
+    double                m_x;
+    double                m_y;
+    std::set<int>         m_owners;
+    int                   m_system_id;
+    std::set<std::string> m_specials;
 
     mutable StateChangedSignalType m_changed_sig;
 };

@@ -1,6 +1,7 @@
 #include "Planet.h"
 
 #include "../util/AppInterface.h"
+#include "Building.h"
 #include "../util/DataTable.h"
 #include "Fleet.h"
 #include "Predicates.h"
@@ -72,6 +73,7 @@ Planet::Planet(const GG::XMLElement& elem) :
         Visibility vis = Visibility(lexical_cast<int>(elem.Child("UniverseObject").Child("vis").Text()));
         if (vis == FULL_VISIBILITY) {
             m_def_bases = lexical_cast<int>(elem.Child("m_def_bases").Text());
+	    m_buildings = GG::ContainerFromString<std::set<int> >(elem.Child("m_buildings").Text());
         }
     } catch (const boost::bad_lexical_cast& e) {
         Logger().debugStream() << "Caught boost::bad_lexical_cast in Planet::Planet(); bad XMLElement was:";
@@ -160,6 +162,7 @@ GG::XMLElement Planet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) cons
     retval.AppendChild(XMLElement("m_size", lexical_cast<std::string>(m_size)));
     retval.AppendChild(XMLElement("m_just_conquered", lexical_cast<std::string>(m_just_conquered)));
     if (vis == FULL_VISIBILITY) {
+	retval.AppendChild(XMLElement("m_buildings", GG::StringFromContainer<std::set<int> >(m_buildings)));
         retval.AppendChild(XMLElement("m_def_bases", lexical_cast<std::string>(m_def_bases)));
     }
     return retval;
@@ -185,6 +188,46 @@ void Planet::SetSize(PlanetSize size)
     StateChangedSignal()();
 }
 
+void Planet::AddBuilding(int building_id)
+{
+    if (Building* building = GetUniverse().Object<Building>(building_id)) {
+	building->SetPlanetID(ID());
+	if (System* system = GetSystem()) {
+	    system->Insert(building);
+	} else {
+	    building->SetSystem(SystemID());
+	}
+	building->MoveTo(X(), Y());
+	m_buildings.insert(building_id);
+    }
+    StateChangedSignal()();
+}
+
+bool Planet::RemoveBuilding(int building_id)
+{
+    if (m_buildings.find(building_id) != m_buildings.end()) {
+	if (Building* building = GetUniverse().Object<Building>(building_id)) {
+	    building->SetPlanetID(INVALID_OBJECT_ID);
+	    building->SetSystem(INVALID_OBJECT_ID);
+	}
+	m_buildings.erase(building_id);
+	StateChangedSignal()();
+	return true;
+    }
+    return false;
+}
+
+bool Planet::DeleteBuilding(int building_id)
+{
+    if (m_buildings.find(building_id) != m_buildings.end()) {
+	GetUniverse().Delete(building_id);
+	m_buildings.erase(building_id);
+	StateChangedSignal()();
+	return true;
+    }
+    return false;
+}
+
 void Planet::AddOwner (int id)
 {
     GetSystem()->UniverseObject::AddOwner(id);
@@ -208,7 +251,6 @@ void Planet::RemoveOwner(int id)
 
     UniverseObject::RemoveOwner(id);
 }
-
 
 void Planet::Conquer(int conquerer)
 {

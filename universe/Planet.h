@@ -30,9 +30,13 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    PlanetType          Type() const {return m_type;}
-    PlanetSize          Size() const {return m_size;}
-    PlanetEnvironment   Environment() const;
+    PlanetType           Type() const {return m_type;}
+    PlanetSize           Size() const {return m_size;}
+    PlanetEnvironment    Environment() const;
+    const std::set<int>& Buildings() const {return m_buildings;}
+
+    /** Returns true iff this Planet contains a building with ID \a id. */
+    bool ContainsBuilding(int id) const {return m_buildings.find(id) != m_buildings.end();}
 
     bool IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
 
@@ -60,12 +64,11 @@ public:
     // V0.2 ONLY!!!!
     /////////////////////////////////////////////////////////////////////////////
 
-    //@}
-
-    /** \name Mutators */ //@{
-
-    void SetType(PlanetType type);    ///< sets the type of this Planet to \a type
-    void SetSize(PlanetSize size);    ///< sets the size of this Planet to \a size
+    void SetType(PlanetType type);        ///< sets the type of this Planet to \a type
+    void SetSize(PlanetSize size);        ///< sets the size of this Planet to \a size
+    void AddBuilding(int building_id);    ///< adds the building to the planet
+    bool RemoveBuilding(int building_id); ///< removes the building from the planet; returns false if no such building was found
+    bool DeleteBuilding(int building_id); ///< removes the building from the planet and deletes it; returns false if no such building was found
 
     virtual void AddOwner   (int id); ///< adds the Empire with ID \a id to the list of owners of this planet, update system owners and empire planets
     virtual void RemoveOwner(int id); ///< removes the Empire with ID \a id to the list of owners of this planet, update system owners and empire planets
@@ -79,8 +82,9 @@ public:
     //@}
 
 private:
-    PlanetType     m_type;
-    PlanetSize     m_size;
+    PlanetType    m_type;
+    PlanetSize    m_size;
+    std::set<int> m_buildings;
    
     int m_just_conquered;
 
