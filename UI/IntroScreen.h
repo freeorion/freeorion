@@ -12,6 +12,8 @@
 #include "CUI_Wnd.h"
 #endif
 
+class CreditsWnd;
+
 class CUIButton;
 namespace GG {class StaticGraphic;}
 
@@ -37,6 +39,7 @@ public:
     void OnLoadGame();      //!< called when load game is clicked
     void OnOptions();       //!< called when options is clicked
     void OnAbout();         //!< called when about is clicked
+    void OnCredits();       //!< called when credits is clicked
     void OnExitGame();      //!< called when exit_game is clicked
     virtual void Keypress (GG::Key key, Uint32 key_mods);
     
@@ -51,7 +54,10 @@ private:
     CUIButton* m_load_game;          //!< loads a saved single player game
     CUIButton* m_options;	         //!< opens the options dialog
     CUIButton* m_about;	             //!< opens a dialog to choose to see credits or license
+    CUIButton* m_credits;	         //!< displays credits
     CUIButton* m_exit_game;          //!< button that exits the program
+
+    CreditsWnd *m_credits_wnd;
     //!@}
 };
 
