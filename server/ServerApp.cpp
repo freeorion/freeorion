@@ -24,15 +24,15 @@
 ////////////////////////////////////////////////
 // ServerApp::PlayerInfo
 ////////////////////////////////////////////////
-ServerApp::PlayerInfo::PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn) : 
+ServerApp::PlayerInfo::PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn) :
    ServerNetworkCore::ConnectionInfo(conn),
    name(""),
    host(false)
 {
 }
 
-ServerApp::PlayerInfo::PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn, const std::string& _name, 
-                                  bool _host/* = false*/) : 
+ServerApp::PlayerInfo::PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn, const std::string& _name,
+                                  bool _host/* = false*/) :
 	ServerNetworkCore::ConnectionInfo(conn),
    name(_name),
    host(_host)
@@ -125,9 +125,22 @@ void ServerApp::CreateAIClients(const GG::XMLElement& elem)
    }
 }
 
-void ServerApp::HandleMessage(const Message& msg)
+void ServerApp::HandleMessage(const Message& msg, const ServerNetworkCore::ConnectionInfo& connection)
 {
    switch (msg.Type()) {
+   case Message::EMPIRE_SETUP: {
+      std::stringstream stream(msg.GetText());
+      GG::XMLDoc doc;
+      doc.ReadDoc(stream);
+      m_log_category.debugStream() << "ServerApp::HandleMessage : Received EMPIRE_SETUP request (EMPIRE_SETUP).";
+
+      std::string m_tmp_empire_name = doc.root_node.Child("empire_name").Text();
+      int m_tmp_color = boost::lexical_cast<int>(doc.root_node.Child("empire_color").Attribute("value"));
+
+      m_log_category.debugStream() << "ServerApp::HandleMessage : Empire name " << m_tmp_empire_name << " (EMPIRE_SETUP).";
+      m_log_category.debugStream() << "ServerApp::HandleMessage : Empire color " << m_tmp_color << " (EMPIRE_SETUP).";
+      break;
+   }
    case Message::END_GAME: {
       if (0 <= msg.Sender() && msg.Sender() < static_cast<int>(m_players_info.size()) && m_players_info[msg.Sender()].host) {
          for (unsigned int i = 0; i < m_players_info.size(); ++i) {
@@ -223,11 +236,11 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
       if (static_cast<int>(m_expected_ai_players.size() + m_players_info.size()) == m_expected_players) { // if we've gotten all the players joined up
          GameInit();
          m_state = SERVER_WAITING;
-         m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
+         m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
       }
       break;
    }
-      
+
    default: {
       const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
       m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \"" <<

@@ -108,6 +108,9 @@ Message HostGameMessage(const GG::XMLDoc& game_parameters);
 /** creates a JOIN_GAME message.  The sender's player name is sent in the message.*/
 Message JoinGameMessage(const std::string& player_name);
 
+/** creates an EMPIRE_SETUP message*/
+Message EmpireSetupMessage(const GG::XMLDoc& empire_setup);
+
 /** creates a HOST_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message 
    should only be sent by the server.*/
 Message HostAckMessage(int player_id);

@@ -192,7 +192,7 @@ void IntroScreen::OnStartGame()
 		if (boost::lexical_cast<int>(tmp_universe_shape) == 4)
                   elem.SetAttribute("file", galaxy_wnd.GalaxyFile().c_str());
                 game_parameters.root_node.AppendChild(elem);
-		
+
                 HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(game_parameters));
 
                 char tmp[255];
@@ -207,8 +207,32 @@ void IntroScreen::OnStartGame()
 		}
 		else
 		{
-                  EmpireSelect empire_wnd;    
+                  EmpireSelect empire_wnd;
                   empire_wnd.Run();
+
+		  if(empire_wnd.m_end_with_ok)
+		  {
+                     // send the empire selection info
+                     GG::XMLDoc empire_setup;
+
+		     //char tmp_empire_name[255];
+		     //sprintf(tmp_empire_name, "%d", galaxy_wnd.GalaxySize());
+
+                     // add the empire name
+                     GG::XMLElement elem("empire_name");
+                     elem.SetText("Tyrethzor");
+                     empire_setup.root_node.AppendChild(elem);
+
+                     // add the empire color
+                     elem = GG::XMLElement("empire_color");
+                     elem.SetAttribute("value", "2");
+                     empire_setup.root_node.AppendChild(elem);
+
+		     // send the empire setup choices to the server
+                     HumanClientApp::GetApp()->NetworkCore().SendMessage(EmpireSetupMessage(empire_setup));
+		  }
+		  else
+		     ClientUI::MessageBox(ClientUI::String("Failed empire setup!") );
 		}
 
         }

@@ -158,6 +158,11 @@ Message JoinGameMessage(const std::string& player_name)
    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_name);
 }
 
+Message EmpireSetupMessage(const GG::XMLDoc& empire_setup)
+{
+   return Message(Message::EMPIRE_SETUP, -1, -1, Message::CORE, empire_setup);
+}
+
 Message HostAckMessage(int player_id)
 {
    return Message(Message::HOST_GAME, -1, player_id, Message::CORE, "ACK");
