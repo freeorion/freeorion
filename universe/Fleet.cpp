@@ -43,7 +43,6 @@ Fleet::Fleet(const GG::XMLElement& elem) :
    }
 
    m_moving_to = lexical_cast<int> ( elem.Child("m_moving_to").Attribute("value") );
-   
 }
 
 UniverseObject::Visibility Fleet::Visible(int empire_id) const
@@ -163,6 +162,7 @@ void Fleet::SetDestination(int id)
 {
     m_moving_to = id;
     StateChangedSignal()();
+    m_destination_changed_sig();
 }
 
 void Fleet::AddShips(const std::vector<int>& ships)
