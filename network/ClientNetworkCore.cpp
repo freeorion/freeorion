@@ -61,7 +61,7 @@ bool ClientNetworkCore::SendSynchronousMessage( const Message& msg, Message& res
         // this requires a timeout since if there is a chance that we'll never get a response
         unsigned int start_time = SDL_GetTicks();
 
-        while(( SDL_GetTicks() - start_time ) < SYCHRONOUS_TIMEOUT)
+        while (( SDL_GetTicks() - start_time ) < SYCHRONOUS_TIMEOUT) {
             if (FE_PollEvent(&ev)) {
                 // ignore all but network  messages
                 if ( ev.type == SDL_USEREVENT ) {
@@ -81,9 +81,10 @@ bool ClientNetworkCore::SendSynchronousMessage( const Message& msg, Message& res
                     break;
                 }
 
-            }
-            else
-              Sleep(100); // reduce cpu load while waiting
+            } else {
+              SDL_Delay(100); // reduce cpu load while waiting
+	    }
+	}
     }
 
     return success;
