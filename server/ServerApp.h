@@ -27,7 +27,7 @@ namespace GG {class XMLDoc; class XMLElement;}
 struct AISetupData;
 class CombatModule;
 class Message;
-
+class OrderSet;
 
 /** contains the info needed to manage one player, including connection info */
 struct PlayerInfo
@@ -80,6 +80,23 @@ public:
    void PlayerDisconnected(int id);
    //@}
 
+   /**  Adds an existing empire to turn processing. The position the empire is in the vector is it's position in the turn processing.*/
+   void AddEmpireTurn( int empire_id );
+
+   /** AddsRemoves an emire from turn processing. This is most likely called when an empire is eliminated from the game */
+   void RemoveEmpireTurn( int empire_id );
+
+   /** Adds turn orders for the given empire for the current turn. pOrderSet will be freed when all processing is done for the turn */
+   void SetEmpireTurnOrders( int empire_id , OrderSet *pOrderSet );
+
+   /** Determines if all empired have submitted their orders for this turn It will loop the turn squence vector and check for a set pOrderSet. A pOrderSet 
+    * of NULL indicates that the empire has not yet submitted their orders for the given turn */
+   bool AllOrdersReceived( );
+
+   /** Processes all empires in the manager in the order that they are added. Will delete all pOrderSets assigned.*/
+   void ProcessTurns( );
+
+
    static ServerApp*             GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
    static Universe&              GetUniverse();    ///< returns server's copy of Universe
    static ServerEmpireManager&   Empires();        ///< returns the server's copy of the Empires
@@ -114,6 +131,8 @@ private:
    log4cpp::Category&      m_log_category;         ///< reference to the log4cpp object used to log events to file
 
    ServerState             m_state;                ///< the server's current state of execution
+   
+   int                     m_current_turn;         ///< current turn number */
 
    std::vector<Process>    m_ai_clients;           ///< AI client child processes
 
@@ -129,6 +148,9 @@ private:
    std::map<int, GG::XMLDoc> m_last_turn_update_msg; ///< stores the xml encoded empire and universe data from the previous turn in order to generate diffs for turn update message.  Map is indexed by empire ID, with separate message data for each since each player sees different parts of the universe.
 
    static ServerApp*       s_app;
+
+   /// turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
+   std::map<int, OrderSet*> m_turn_sequence;
 };
 
 #endif // _ServerApp_h_

@@ -6,6 +6,11 @@
 
 #include "../network/XDiff.hpp"
 
+#include "../util/OrderSet.h"
+#include "../universe/Fleet.h"
+#include "../universe/ProdCenter.h"
+#include "../universe/PopCenter.h"
+
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
 #include <log4cpp/PatternLayout.hh>
@@ -16,6 +21,11 @@
 #include "SDL_getenv.h"
 
 #include <ctime>
+
+namespace {
+const unsigned int MIN_TURN_PHASE_TIME = 1000;
+}
+
 
 struct AISetupData
 {
@@ -68,7 +78,9 @@ ServerApp*  ServerApp::s_app = 0;
 ServerApp::ServerApp(int argc, char* argv[]) : 
     m_current_combat(0), 
     m_log_category(log4cpp::Category::getRoot()),
-    m_state(SERVER_IDLE)
+    m_state(SERVER_IDLE),
+    m_current_turn(1)
+
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class ServerApp");
@@ -253,6 +265,48 @@ void ServerApp::HandleMessage(const Message& msg)
         }
         break;
     }
+    
+    case Message::TURN_ORDERS:
+        {
+            /* decode order set */
+	    std::stringstream stream(msg.GetText());
+	    GG::XMLDoc doc;
+	    doc.ReadDoc(stream);
+
+	    /* debug information */
+	    std::string dbg_file( "turn_orders_server_" );
+	    dbg_file += boost::lexical_cast<std::string>(msg.Sender() );
+	    dbg_file += ".txt";
+            std::ofstream output( dbg_file.c_str() );
+            doc.WriteDoc(output);
+            output.close();
+
+
+            OrderSet *p_order_set;
+            p_order_set = new OrderSet( );
+	    GG::XMLObjectFactory<Order> order_factory;
+	    Order::InitOrderFactory(order_factory);
+	    GG::XMLElement root = doc.root_node;
+
+	    for(int i=0; i< root.NumChildren(); i++)
+	    {
+	      p_order_set->AddOrder( order_factory.GenerateObject( root.Child(i)) );
+	    }
+
+            /* if all orders are received already, do nothing as we are processing a trun */
+	    if ( AllOrdersReceived( ) )
+	      break;
+
+            /* add orders to turn sequence */    
+            SetEmpireTurnOrders( msg.Sender(), p_order_set );        
+            
+            /* look to see if all empires are done */
+            if ( AllOrdersReceived( ) )
+            {
+                ProcessTurns( );
+            }
+        }
+        break;
 
     default: {
         m_log_category.errorStream() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
@@ -345,6 +399,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                     m_network_core.DumpConnection(connection.socket);
                 }
             }
+
             if (static_cast<int>(m_network_core.Players().size()) == m_expected_players) { // if we've gotten all the players joined up
                 GameInit();
                 m_state = SERVER_WAITING;
@@ -494,21 +549,35 @@ void ServerApp::SDLQuit()
 
 void ServerApp::GameInit()
 {
+    int i = 0;
+    std::map<int, PlayerInfo>::const_iterator it;
 
     m_universe.CreateUniverse(m_galaxy_shape, m_galaxy_size, m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size());
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << 
         (m_galaxy_shape == Universe::FROM_FILE ? ("from file " + m_galaxy_file) : "") << " (SERVER_GAME_SETUP).";
 
 
+    // add empires to turn sequence map
+    // according to spec this should be done randomly
+    // for now it's not
+    for ( it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+        AddEmpireTurn( it->first );
+    }
+
+
     // the universe creation caused the creation of empires.  But now we
     // need to assign the empires to players.
-    int i = 0;
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
+    for (it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
         GG::XMLDoc doc;
         doc.root_node.AppendChild(m_universe.XMLEncode());
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(i));
+
+	// turn number is an attribute of the document
+	doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
+
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
     }
+
 }
 
 GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
@@ -516,6 +585,20 @@ GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
     using GG::XMLElement;
 
     GG::XMLDoc this_turn;
+
+    // for the final game, we'd have visibility
+    // but for now we are able to see the whole universe
+    // so send it all down with the update
+    this_turn.root_node.AppendChild(m_universe.XMLEncode());
+    this_turn.root_node.AppendChild(m_empires.CreateClientEmpireUpdate( empire_id ));
+    
+    // turn number is an attribute of the document
+    this_turn.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
+
+    return( this_turn );
+
+#if 0
+    GG::XMLDoc update_patch;
 
     // generate new data for this turn
     XMLElement universe_data = m_universe.XMLEncode(empire_id);
@@ -530,23 +613,29 @@ GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
         // This empire has not been added to the map yet. Full data will be sent
         // to the client and this turn will be the first entry for this empire.
         m_last_turn_update_msg[empire_id] = this_turn;
-        return this_turn;
+        update_patch = this_turn;
+    }
+    else
+    {
+      // valid entry in the map for this empire
+      GG::XMLDoc last_turn = itr->second;
+   
+      // diff this turn with previous turn
+      XDiff(last_turn, this_turn, update_patch);
+
+      // clear the previous entry and store this turn into the map
+      m_last_turn_update_msg.erase(itr);
+      m_last_turn_update_msg[empire_id] = this_turn;
     }
 
-    // valid entry in the map for this empire
-    GG::XMLDoc last_turn = itr->second;
-   
-    GG::XMLDoc update_patch;
+    // append additional data common to all updates
 
-    // diff this turn with previous turn
-    XDiff(last_turn, this_turn, update_patch);
-
-    // clear the previous entry and store this turn into the map
-    m_last_turn_update_msg.erase(itr);
-    m_last_turn_update_msg[empire_id] = this_turn;
+    // turn number is an attribute of the document
+    update_patch.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
 
     // return the results of the diff
     return update_patch;
+#endif
 }
 
 GG::XMLDoc ServerApp::LobbyUpdateDoc() const
@@ -574,7 +663,9 @@ GG::XMLDoc ServerApp::LobbyUpdateDoc() const
 }
 
 GG::XMLDoc ServerApp::LobbyPlayerUpdateDoc() const
+
 {
+
     GG::XMLDoc retval;
     GG::XMLElement temp("players");
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
@@ -585,3 +676,164 @@ GG::XMLDoc ServerApp::LobbyPlayerUpdateDoc() const
     retval.root_node.AppendChild(temp);
     return retval;
 }
+
+
+void ServerApp::AddEmpireTurn( int empire_id )
+{
+  /// add empire
+  m_turn_sequence[ empire_id ] = NULL;
+}
+
+
+void ServerApp::RemoveEmpireTurn( int empire_id )
+{
+  /// Loop through to find empire ID and remove
+  for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
+  {
+    if ( it->first == empire_id )
+    {
+      m_turn_sequence.erase( it, it );
+      return; 
+    }
+  }
+}
+
+void ServerApp::SetEmpireTurnOrders( int empire_id , OrderSet *pOrderSet )
+{
+   m_turn_sequence[ empire_id ] = pOrderSet;
+}
+
+
+bool ServerApp::AllOrdersReceived( )
+{
+  /// Loop through to find empire ID and check for valid orders pointer
+  for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
+  {
+    if ( !it->second )
+          return false; 
+  } 
+  return true;
+}
+
+
+void ServerApp::ProcessTurns( )
+{
+  Empire                    *pEmpire;
+  OrderSet                  *pOrderSet;
+  OrderSet::const_iterator  order_it;
+  Empire::ConstFleetIDItr   fleet_it;
+  Empire::ConstPlanetIDItr  planet_it;
+  std::vector<SitRepEntry>  sit_reps;
+  Fleet                     *the_fleet;
+  ProdCenter                *the_prod_center;
+  PopCenter                 *the_pop_center;
+  UniverseObject            *the_object;
+  int                       u_ticks_start;
+  
+  /// First process all orders, then process turns
+  for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
+  {
+    /// broadcast UI message to all players
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+
+    {
+      m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::PROCESSING_ORDERS, it->first ) );
+    }
+
+
+    pEmpire = Empires().Lookup( it->first );
+    pOrderSet = it->second;
+     
+    /// execute order set
+    for ( order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it)
+    {
+      // Add exeption handling here 
+      order_it->second->Execute( );               
+    }
+  }    
+
+  
+  /// process turn for fleets
+  for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
+  {
+    u_ticks_start = SDL_GetTicks();
+    
+    /// broadcast UI message to all players
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+
+    {
+      m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::FLEET_MOVEMENT, it->first ) );
+
+    }
+
+    pEmpire = Empires().Lookup( it->first );
+     
+    for ( fleet_it = pEmpire->FleetBegin(); fleet_it != pEmpire->FleetEnd(); ++fleet_it)
+    {
+      the_object = GetUniverse().Object( *fleet_it );
+
+      the_fleet = dynamic_cast<Fleet*> ( the_object );
+
+      the_fleet->MovementPhase( sit_reps );               
+    }
+
+    ///< we want to wait a min time as per the design spec
+    while( ( SDL_GetTicks() - u_ticks_start ) < MIN_TURN_PHASE_TIME )
+    {
+    }   
+  }
+
+
+  /// process turn for production and growth
+  for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
+  {
+    u_ticks_start = SDL_GetTicks();
+    
+    /// broadcast UI message to all players
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+
+    {
+      m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::EMPIRE_PRODUCTION, it->first ) );
+
+    }
+
+    pEmpire = Empires().Lookup( it->first );
+     
+    for ( planet_it = pEmpire->PlanetBegin(); planet_it != pEmpire->PlanetEnd(); ++planet_it)
+    {
+      the_object = GetUniverse().Object( *planet_it );
+
+      the_prod_center = dynamic_cast<ProdCenter*> ( the_object );
+      the_prod_center->PopGrowthProductionResearchPhase( sit_reps );               
+
+      the_pop_center = dynamic_cast<PopCenter*> ( the_object );
+      the_pop_center->PopGrowthProductionResearchPhase( sit_reps );               
+
+    }
+
+    ///< we want to wait a min time as per the design spec
+    while( ( SDL_GetTicks() - u_ticks_start ) < MIN_TURN_PHASE_TIME )
+    {
+    }   
+  }
+
+   /// loop and free all orders
+   for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
+   {
+     delete it->second;
+     it->second = NULL;
+   }   
+
+   /// Increment turn
+   m_current_turn++;
+   
+   /// broadcast UI message to all players
+   for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it)
+   {
+     GG::XMLDoc doc = CreateTurnUpdate( player_it->first );
+     m_network_core.SendMessage( TurnUpdateMessage( player_it->first, doc ) );
+   }
+   
+}
+
+
