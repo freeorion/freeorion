@@ -156,7 +156,7 @@ void Planet::PopGrowthProductionResearchPhase( )
     Empire* empire = (Empires()).Lookup( *Owners().begin() );
 
     // do not do production of planet was just conquered
-    // as per 0.1 requirements doc.
+    // as per v0.2 requirements doc.
     if (m_just_conquered == 1)
         m_just_conquered = 0;
     else

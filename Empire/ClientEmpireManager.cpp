@@ -71,7 +71,7 @@ GG::XMLElement ClientEmpireManager::EncodeEmpires( )
     GG::XMLElement this_turn(EmpireManager::EMPIRE_UPDATE_TAG);
 
     // ****************************************************************
-    // For version 0.1, we simply encode the states of all empires
+    // For v0.2, we simply encode the states of all empires
     // since all information about all empires is always known to all others
     // ****************************************************************
     for (EmpireManager::iterator it = begin(); it != end(); it++)

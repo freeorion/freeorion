@@ -20,12 +20,12 @@ struct ShipDesign
    int         empire;  ///< the empire that designed this ship
    std::string name;    ///< the name of the design
    
-   int WarpSpeed() const; ///< returns the maximum speed for ships of this design.  Returns 1 for 0.1
+   int WarpSpeed() const; ///< returns the maximum speed for ships of this design.
    
    
    /////////////////////////////////////////////////////////////////////////////
-   // V0.1 ONLY!!!!
-   enum V01DesignID
+   // V0.2 ONLY!!!!
+   enum V02DesignID
    {
      SCOUT = 1,  // Ship designs IDs start at 1
      COLONY,
@@ -42,7 +42,7 @@ struct ShipDesign
    
    std::string description;    ///< short description of the design, will maybe last after v.2
 
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
 
 

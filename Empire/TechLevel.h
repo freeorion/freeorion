@@ -11,7 +11,7 @@
 *
 *  Only the TechManager should create Tech objects
 *
-*  For Version 0.1, the TechManager will create four hardcoded tech
+*  For V0.2, the TechManager will create four hardcoded tech
 * levels.
 */
 class Tech
@@ -24,7 +24,7 @@ public:
     
     /**
      * this enum is only to define contants for the different
-     * technology types that will appear in V0.1 (these will be 
+     * technology types that will appear in V0.2 (these will be 
      * hardcoded until some kind of tech tree data structure is built)
      * The TechManager will create techlevels for each element of this
      * enum when the LoadTechTree method is called.  
@@ -40,7 +40,7 @@ public:
     
     /** 
      * GetID returns a unique numeric ID associated with this
-     * technology level.  For version 0.1, return value is guaranteed
+     * technology level.  For version 0.2, return value is guaranteed
      * to be an element of the above enum
      */
     int GetID() const;

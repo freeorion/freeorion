@@ -60,7 +60,7 @@ public:
      * Creates an XMLElement containing the present Empire state, as visible
      * to the empire with the given ID.   The information that is 
      * included in the element is the information which the Empire with the given
-     * ID would have available to it.  For version 0.1, all information in the
+     * ID would have available to it.  For v0.2, all information in the
      * server manager is included in the update element, but this may change in subsequent
      * versions in which the player's knowledge of other empires is limited.
      *  (For example, in future versions, the update generated for an empire will completely exclude empires with which the client does not have contact.)

@@ -78,12 +78,12 @@ TechManager::iterator TechManager::end()
 
 /**
    reads a file containing technology items and populates itself
-   with the technologies in the file.  For V0.1, this will simply
+   with the technologies in the file.  For V0.2, this will simply
    create the hardcoded technology levels described in Tech.h
 */
 bool TechManager::LoadTechTree(const std::string& TechFileName)
 {
-    // make hardcoded techlevels as per v0.1 requirements document
+    // make hardcoded techlevels as per v0.2 requirements document
     Tech* mark2 = new Tech(((int)Tech::TECH_MARK2), std::string("Mark II"), 250);
     Tech* dbase = new Tech(((int)Tech::TECH_BASE),  std::string("Defense Base"), 350);
     Tech* mark3 = new Tech(((int)Tech::TECH_MARK3), std::string("Mark III"), 750);

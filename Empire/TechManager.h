@@ -58,9 +58,9 @@ public:
 
 
     /** \name Mutators */ //@{
-    // For version 0.1, creates hardcoded techlevels.
+    // For v0.2, creates hardcoded techlevels.
     /** reads a file containing technology items and populates itself
-        with the technologies in the file.  For V0.1, this will simply
+        with the technologies in the file.  For V0.2, this will simply
         create the hardcoded technology levels described in Tech.h */
     bool LoadTechTree(const std::string& TechFileName);
 

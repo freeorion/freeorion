@@ -843,7 +843,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
   //m_construction->OffsetMove(0, -m_construction->Height());
   AttachChild(m_construction);
 
-  ////////////////////// v0.1 only!! (in v0.2 and later build this list from the production capabilities of the planet)
+  ////////////////////// v0.2 only!! (in v0.3 and later build this list from the production capabilities of the planet)
   GG::ListBox::Row* row = new ConstructionRow(ProdCenter::NOT_BUILDING);
   row->push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
@@ -897,7 +897,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
   if(selection_idx!=-1)
     m_construction->Select( selection_idx );
   Connect(m_construction->SelChangedSignal(), &SidePanel::PlanetPanel::BuildSelected, this);
-  ////////////////////// v0.1 only!!
+  ////////////////////// v0.2 only!!
 
   MoveChildDown(m_planet_graphic);
 
@@ -1559,7 +1559,7 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   //m_construction->OffsetMove(0, -m_construction->Height());
   AttachChild(m_construction);
 
-  ////////////////////// v0.1 only!! (in v0.2 and later build this list from the production capabilities of the planet)
+  ////////////////////// v0.2 only!! (in v0.3 and later build this list from the production capabilities of the planet)
   GG::ListBox::Row* row = new ConstructionRow(ProdCenter::NOT_BUILDING);
   row->push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
@@ -1615,7 +1615,7 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   if(selection_idx!=-1)
     m_construction->Select( selection_idx );
   Connect(m_construction->SelChangedSignal(), &SidePanel::PlanetView::BuildSelected, this);
-  ////////////////////// v0.1 only!!
+  ////////////////////// v0.2 only!!
 
   GG::Connect(planet->StateChangedSignal(), &SidePanel::PlanetView::PlanetChanged, this);
   m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this);

@@ -33,7 +33,7 @@ public:
     /**
         Resolves a battle in the given system, taking into account
         fleets and defensive bases.  Ships and fleets will either
-        be destroyed, or will retreat, as per the 0.1 requirements doc.
+        be destroyed, or will retreat, as per the v0.2 requirements doc.
         Systems may change hands as well.
     */
     void ResolveCombat(const int system_id,const std::vector<CombatAssets> &assets);

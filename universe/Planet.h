@@ -55,9 +55,9 @@ public:
    PlanetSize     Size() const {return m_size;}
 
    /////////////////////////////////////////////////////////////////////////////
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    int DefBases() const {return m_def_bases;}
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
    virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
@@ -69,9 +69,9 @@ public:
    virtual void PopGrowthProductionResearchPhase( );
 
    /////////////////////////////////////////////////////////////////////////////
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    void AdjustDefBases(int bases) {m_def_bases += bases; if (m_def_bases < 0) m_def_bases = 0; StateChangedSignal()();}
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
 
    //@}
@@ -94,9 +94,9 @@ private:
    int m_just_conquered;
    
    /////////////////////////////////////////////////////////////////////////////
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    int            m_def_bases;
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
 };
 

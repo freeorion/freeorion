@@ -192,7 +192,7 @@ public:
      * This method encodes the empire into an XMLElement, but includes only
      * the information that the specified empire will have access to.
      * 
-     *  For version 0.1, this will only be the Empire's name, color, and control state
+     *  For v0.2, this will only be the Empire's name, color, and control state
      *
      *  For future versions, technology, diplomatic status, race, and other
      *  such data will be included as appropriate.

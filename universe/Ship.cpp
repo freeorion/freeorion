@@ -64,7 +64,7 @@ GG::XMLElement ShipDesign::XMLEncode() const
 
 int ShipDesign::WarpSpeed() const
 {
-    return 1; // for 0.1, and the early revs.  This will change later
+    return 1; // for 0.2, and the early revs.  This will change later
 }
 
 ////////////////////////////////////////////////

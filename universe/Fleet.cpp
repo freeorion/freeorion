@@ -10,7 +10,7 @@ using boost::lexical_cast;
 #include <stdexcept>
 
 namespace {
-const double SHIP_SPEED = 50.0; // "reasonable" speed --can cross galaxy in 20 turns (v0.1 only !!!!)
+    const double SHIP_SPEED = 50.0; // "reasonable" speed --can cross galaxy in 20 turns (v0.2 only !!!!)
 }
 
 
