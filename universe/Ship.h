@@ -65,7 +65,7 @@ public:
    //@}
   	
    /** \name Mutators */ //@{   
-   void         SetFleetID(int fleet_id) {m_fleet_id = fleet_id;} ///< sets the ID of the fleet the ship resides in
+   void         SetFleetID(int fleet_id) {m_fleet_id = fleet_id; StateChangedSignal()();} ///< sets the ID of the fleet the ship resides in
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
    //@}

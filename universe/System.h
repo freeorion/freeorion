@@ -87,7 +87,27 @@ public:
       for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
          const UniverseObject* o = universe.Object(it->second);
          if (pred(o))
-            retval.push_back(it->first);
+            retval.push_back(it->second);
+      }
+      return retval;
+   }
+
+   /** returns the IDs of all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take 
+      a single const UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+   template <class Pred>
+   ObjectIDVec FindObjectIDsInOrbit(int orbit, Pred pred) const
+   {
+#ifdef FREEORION_BUILD_SERVER
+      const ClientUniverse& universe = ServerApp::Universe();
+#else
+      const ClientUniverse& universe = ClientApp::Universe();
+#endif
+      ObjectIDVec retval;
+      std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
+      for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
+         const UniverseObject* o = universe.Object(it->second);
+         if (pred(o))
+            retval.push_back(it->second);
       }
       return retval;
    }
@@ -104,6 +124,26 @@ public:
 #endif
       ConstObjectVec retval;
       for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+         const UniverseObject* o = universe.Object(it->second);
+         if (pred(o))
+            retval.push_back(o);
+      }
+      return retval;
+   }
+
+   /** returns all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take a single const 
+      UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+   template <class Pred>
+   ConstObjectVec FindObjectsInOrbit(int orbit, Pred pred) const
+   {
+#ifdef FREEORION_BUILD_SERVER
+      const ClientUniverse& universe = ServerApp::Universe();
+#else
+      const ClientUniverse& universe = ClientApp::Universe();
+#endif
+      ConstObjectVec retval;
+      std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
+      for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
          const UniverseObject* o = universe.Object(it->second);
          if (pred(o))
             retval.push_back(o);
@@ -161,6 +201,22 @@ public:
       const ServerUniverse& universe = ServerApp::Universe();
       ObjectVec retval;
       for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+         UniverseObject* o = universe.Object(it->second);
+         if (pred(o))
+            retval.push_back(o);
+      }
+      return retval;
+   }
+
+   /** returns all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take a single 
+      UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+   template <class Pred>
+   ObjectVec FindObjectsInOrbit(int orbit, Pred pred)
+   {
+      const ServerUniverse& universe = ServerApp::Universe();
+      ObjectVec retval;
+      std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
+      for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
          UniverseObject* o = universe.Object(it->second);
          if (pred(o))
             retval.push_back(o);

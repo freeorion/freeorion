@@ -13,14 +13,14 @@ using boost::lexical_cast;
 
 Fleet::Fleet() : 
    UniverseObject(),
-   m_moving_to(-1)
+   m_moving_to(INVALID_OBJECT_ID)
 {
    // TODO
 }
 
 Fleet::Fleet(const std::string& name, double x, double y, int owner) :
   UniverseObject(name, x, y),
-  m_moving_to(-1)
+  m_moving_to(INVALID_OBJECT_ID)
 {
    AddOwner(owner);
 }
@@ -128,6 +128,7 @@ int Fleet::ETA() const
 void Fleet::SetMoveOrders(int id)
 {
     m_moving_to = id;
+    StateChangedSignal()();
 }
 
 void Fleet::AddShips(const std::vector<int>& ships)
@@ -137,6 +138,7 @@ void Fleet::AddShips(const std::vector<int>& ships)
 
       // TODO: store fleet id into the ship objects
    }
+   StateChangedSignal()();
 }
 
 void Fleet::AddShip(const int ship_id)
@@ -155,8 +157,9 @@ void Fleet::AddShip(const int ship_id)
    }
    m_ships.insert(ship_id);
    ship->SetFleetID(ID());
-      
 #endif
+
+   StateChangedSignal()();
 }
 
 std::vector<int> Fleet::RemoveShips(const std::vector<int>& ships)
@@ -168,6 +171,7 @@ std::vector<int> Fleet::RemoveShips(const std::vector<int>& ships)
       if (!found)
          retval.push_back(ships[i]);
    }
+   StateChangedSignal()();
    return retval;
 }
 
@@ -185,13 +189,15 @@ std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
 #endif
       }
    }
+   StateChangedSignal()();
    return retval;
 }
 
 
 void Fleet::RemoveShip(int ship)
 {
-    m_ships.erase(ship);
+   m_ships.erase(ship);
+   StateChangedSignal()();
 }
 
 void Fleet::MovementPhase(std::vector<SitRepEntry>& sit_reps)

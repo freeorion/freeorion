@@ -150,6 +150,7 @@ void UniverseObject::Move(double x, double y)
       throw std::runtime_error("UniverseObject::Move : Attempted to move object \"" + m_name + "\" off the map area.");
    m_x += x;
    m_y += y;
+   m_changed_sig();
 }
 
 void UniverseObject::MoveTo(double x, double y)
@@ -158,4 +159,5 @@ void UniverseObject::MoveTo(double x, double y)
       throw std::invalid_argument("UniverseObject::MoveTo : Attempted to place object \"" + m_name + "\" off the map area.");
    m_x = x;
    m_y = y;
+   m_changed_sig();
 }

@@ -148,11 +148,13 @@ GG::XMLElement Planet::XMLEncode(int empire_id) const
 void Planet::MovementPhase(std::vector<SitRepEntry>& sit_reps)
 {
    // TODO
+   StateChangedSignal()();
 }
 
 void Planet::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
 {
    // TODO
+   StateChangedSignal()();
 }
 
 

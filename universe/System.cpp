@@ -197,6 +197,7 @@ int System::Insert(UniverseObject* obj, int orbit)
     if (orbit < -1)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
     obj->SetSystem(ID());
+    StateChangedSignal()();
 	return Insert(obj->ID(), orbit);
 }
 
@@ -215,30 +216,40 @@ int System::Insert(int obj_id, int orbit)
     if (m_orbits <= orbit)
         m_orbits = orbit + 1;
     m_objects.insert(std::pair<int, int>(orbit, obj_id));
+    StateChangedSignal()();
 	return orbit;
 }
 
 bool System::Remove(int id)
 {
-   UniverseObject* retval = 0;
+   bool retval = false;
    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
       if (it->second == id) {
-         retval->SetSystem(0);
+#if defined(FREEORION_BUILD_SERVER)
+         const ClientUniverse& universe = ServerApp::Universe();
+#else
+         const ClientUniverse& universe = ClientApp::Universe();
+#endif
+         const_cast<UniverseObject*>(universe.Object(it->second))->SetSystem(0);
          m_objects.erase(it);
-         return true;
+         retval = true;
+         StateChangedSignal()();
+         break;
       }
    }
-   return false;
+   return retval;
 }
 
 void System::AddStarlane(int id)
 {
    m_starlanes_wormholes[id] = false;
+   StateChangedSignal()();
 }
 
 void System::AddWormhole(int id)
 {
    m_starlanes_wormholes[id] = true;
+   StateChangedSignal()();
 }
 
 bool System::RemoveStarlane(int id)
@@ -246,6 +257,7 @@ bool System::RemoveStarlane(int id)
    bool retval = false;
    if (retval = HasStarlaneTo(id)) {
       m_starlanes_wormholes.erase(id);
+      StateChangedSignal()();
    }
    return retval;
 }
@@ -255,6 +267,7 @@ bool System::RemoveWormhole(int id)
    bool retval = false;
    if (retval = HasWormholeTo(id)) {
       m_starlanes_wormholes.erase(id);
+      StateChangedSignal()();
    }
    return retval;
 }

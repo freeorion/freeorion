@@ -66,7 +66,7 @@ public:
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
-   void AdjustDefBases(int bases) {m_def_bases += bases; if (m_def_bases < 0) m_def_bases = 0;}
+   void AdjustDefBases(int bases) {m_def_bases += bases; if (m_def_bases < 0) m_def_bases = 0; StateChangedSignal()();}
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
 
