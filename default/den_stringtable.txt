@@ -1,0 +1,425 @@
+Danish
+
+#This is the Danish String Table file for FreeOrion
+
+#################
+# Common        #
+#################
+
+#Anyone can use these for basic buttons
+
+APPNAME
+FreeOrion
+
+BROWSE_BTN
+Gennemse...
+
+OK
+OK
+
+CANCEL
+Fortryd
+
+DONE
+Luk
+
+CLOSE
+Luk
+
+LOAD
+Indlæs
+
+SAVE
+Gem
+
+SERVER_TIMEOUT
+Serveren svarer ikke
+
+SERVER_LOST
+Forbindelsen til serveren er mistet.
+
+#################
+# Intro Screen  #
+#################
+
+#Window title####
+
+INTRO_WINDOW_TITLE
+FreeOrion Hoved Menu
+
+
+#Button names####
+
+INTRO_BTN_SINGLE_PLAYER
+Single Player
+
+INTRO_BTN_MULTI_PLAYER
+Multi Player
+
+INTRO_BTN_LOAD_GAME
+Indlæs Gammelt Spil
+
+INTRO_BTN_OPTIONS
+Options
+
+INTRO_BTN_ABOUT
+Omkring
+
+INTRO_BTN_EXIT
+Afslut
+
+
+#Error Messages####
+
+ERR_CONNECT_TIMED_OUT
+Fik timeout mens vi prøvede at tilslutte til serveren
+
+
+########################
+# Server Setup Screen  #
+########################
+
+#Window title####
+
+SCONNECT_WINDOW_TITLE
+Tilslut til server
+
+
+#Static labels####
+
+LAN_GAME_LABEL
+Lan spil på:
+INTERNET_GAME_LABEL
+Internet spil på:
+PLAYER_NAME_LABEL
+Spiller navn:
+
+
+#Button names####
+
+HOST_GAME_BN
+Start et nyt spil
+JOIN_GAME_BN
+Deltag i et spil
+REFRESH_LIST_BN
+Opdater listen
+
+
+########################
+# Multiplayer Lobby    #
+########################
+
+#Window title####
+
+MPLOBBY_WINDOW_TITLE
+Multiplayer Opsætning
+
+#Strings
+MPLOBBY_HOST_ABORTED_GAME
+Ham der startede spillet har fortrudt
+
+#Button names####
+
+NEW_GAME_BN
+Nyt spil
+
+LOAD_GAME_BN
+Indlæs gammelt spil
+
+START_GAME_BN
+Start spil
+
+
+########################
+# Galaxy Setup Screen  #
+########################
+
+#Window title####
+
+GSETUP_WINDOW_TITLE
+Galakse Opsætning
+
+#Strings
+GSETUP_GRAPHICS_FILES
+Grafik Filer
+
+
+#Drop-down list labels and choices####
+
+GSETUP_STARS
+Stjerner
+GSETUP_SHAPE
+Galakse Form
+GSETUP_AGE
+Galakse Alder
+GSETUP_STARLANE_FREQ
+Stjernevejs Hyppighed
+GSETUP_PLANET_DENSITY
+Planet Forekomst
+GSETUP_SPECIALS_FREQ
+Karak.træks Hyppighed
+
+GSETUP_2ARM
+Spiral, 2-arme
+GSETUP_3ARM
+Spiral, 3-arme
+GSETUP_4ARM
+Spiral, 4-arme
+GSETUP_CLUSTER
+Kluster
+GSETUP_ELLIPTICAL
+Elliptisk
+GSETUP_IRREGULAR
+Irreguler
+GSETUP_RING
+Ring
+
+GSETUP_NONE
+Ingen
+
+GSETUP_YOUNG
+Ung
+GSETUP_MATURE
+Voksen
+GSETUP_ANCIENT
+Antik
+
+GSETUP_FEW
+Få
+GSETUP_SOME
+Nogle
+GSETUP_SEVERAL
+Flere
+GSETUP_MANY
+Mange
+GSETUP_VERY_MANY
+Rigtigt mange
+
+GSETUP_LOW
+Lav
+GSETUP_MEDIUM
+Medium
+GSETUP_HIGH
+Høj
+
+GSETUP_RARE
+Sjældent
+GSETUP_UNCOMMON
+Usædvanligt
+GSETUP_COMMON
+Normalt
+
+
+#Error messages####
+
+GSETUP_ERR_NOEXIST
+Eksistere ikke.
+
+
+###########################
+# Empire Selection Screen #
+###########################
+
+#Window Title####
+
+ESELECT_WINDOW_TITLE
+Imperium Udvælgelse
+
+
+#Static text####
+
+ESELECT_EMPIRE_NAME
+Imperium Navn:
+
+###########################
+# About Dialog		  #
+###########################
+
+#License button text####
+
+LICENSE
+Licens
+
+ABOUT_WINDOW_TITLE
+Omkring FreeOrion v0.1a
+
+CREDITS
+Lavet af
+
+###########################
+# In Game Options	  #
+###########################
+
+INGAMEOPTIONS_WINDOW_TITLE
+Options
+
+INGAMEOPTIONS_SAVE
+Gem Spil
+
+INGAMEOPTIONS_LOAD
+Indlæs Spil
+
+INGAMEOPTIONS_QUIT
+Afslut Spil
+
+INGAMEOPTIONS_SAVE_FILES
+Gemte Spil filer
+
+#################
+# Main Map      #
+#################
+
+MAP_BTN_TURN_UPDATE
+Tur 
+
+#################
+# SidePanel     #
+#################
+
+SIDE_PANEL
+Side Panel
+
+##Planet Panel#############
+PLANET_PANEL
+Planet Panel
+
+#Planet Sizes and Types####
+
+PL_SZ_NOWORLD
+Intet at se her; fortsæt bare.
+PL_SZ_TINY
+Mini
+PL_SZ_SMALL
+Lille
+PL_SZ_MEDIUM
+Medium
+PL_SZ_LARGE
+Stor
+PL_SZ_HUGE
+Enorm
+
+PL_TOXIC
+Giftig
+PL_INFERNO
+Flammehav
+PL_GASGIANT
+Gas Gigant
+PL_ASTEROIDS
+Asteroide Felt
+PL_RADIATED
+Radioaktiv
+PL_SWAMP
+Sump
+PL_BARREN
+Øde
+PL_DESERT
+Ørken
+PL_TUNDRA
+Tundra
+PL_OCEAN
+Ocean
+PL_TERRAN
+Jordlig
+PL_GAIA
+Gaia
+
+PL_UNHABITABLE
+Ubeboelig
+
+PL_UNINHABITED
+Ubeboet
+
+PL_PRIMARY_FOCUS
+primær 
+
+PL_SECONDARY_FOCUS
+sekundær
+
+PL_BALANCED
+balanceret
+PL_FARMING
+opdyrkning
+PL_INDUSTRY
+industri
+PL_MINING
+minedrift
+PL_SCIENCE
+forskning
+
+PL_PRODUCTION_TIME_NEVER
+(aldrig)
+
+PL_PRODUCTION_TIME_TURNS
+(%d ture)
+
+PL_COLONIZE
+Kolonisér
+
+SP_UNKNOWN_SYSTEM
+ukendt system
+
+SP_SYSTEM_NAME
+%s Systemet
+
+SP_SYSTEM_PRODUCTION
+System Produktion
+
+
+####################
+# TurnProgress     #
+####################
+
+TURN_PROGRESS_WND
+Udregning af Tur
+
+TURN_PROGRESS_PHASE_FLEET_MOVEMENT
+Bevægelse af Flåder
+
+TURN_PROGRESS_PHASE_COMBAT
+Løser Kamp
+
+TURN_PROGRESS_PHASE_EMPIRE_GROWTH
+Produktion og Vækst
+
+TURN_PROGRESS_PHASE_WAITING
+Venter på at spillere færdigører deres tur
+
+TURN_PROGRESS_PHASE_ORDERS
+Udfører ordre
+
+
+########################
+# SitRep Panel         #
+########################
+
+#Window title####
+
+SITREP_PANEL_TITLE
+Situations Report
+
+
+####################
+# Sit Rep Entries  #
+####################
+
+SITREP_MAX_INDUSTRY
+Planet %planet% i systemet %system% har nået sin maksimale produktion.
+
+SITREP_SHIP_BUILT
+Et nyt skib %ship% er nu i kredsløb omkring planeten %planet%.
+
+SITREP_TECH_RESEARCHED
+Teknologien %tech% er blevet opfundet.
+
+SITREP_BASE_BUILT
+Planeten %planet% i systemet %system% har færdig gjort en forsvars station.
+
+SITREP_COMBAT_SYSTEM_WON
+Der har været en kamp i systemet %system%. Du vandt!
+
+SITREP_COMBAT_SYSTEM_LOST
+Der har været en kamp i systemet %system%. Du tabte!
+
+SITREP_COMBAT_SYSTEM_NO_VICTOR
+Der har været en kamp i systemet %system%. Det blev uafgjort.
+
