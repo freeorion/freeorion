@@ -138,7 +138,7 @@ namespace {
       case Planet::PT_OCEAN     : plt_art_node_name += "Ocean"     ; break;
       case Planet::PT_GAIA      : plt_art_node_name += "Gaia"      ; break;
       case Planet::PT_ASTEROIDS : plt_art_node_name += "Asteroids" ; break;
-      case Planet::PT_GASGIANT  : plt_art_node_name += "Gasgiant"  ; break;    
+      case Planet::PT_GASGIANT  : plt_art_node_name += "GasGiant"  ; break;    
       default                   : plt_art_node_name += "Barren"    ; break;
     }
 
@@ -195,7 +195,7 @@ namespace {
               case Planet::SZ_LARGE     : plt_size_name = "Large"    ; break;
               case Planet::SZ_HUGE      : plt_size_name = "Huge"     ; break;
               case Planet::SZ_ASTEROIDS : plt_size_name = "Asteroids"; break;
-              case Planet::SZ_GASGIANT  : plt_size_name = "Gasgigant"; break;
+              case Planet::SZ_GASGIANT  : plt_size_name = "GasGiant";  break;
               default                   : plt_size_name = "Default"  ; break;
             }
 
@@ -240,8 +240,8 @@ namespace {
       case Planet::SZ_MEDIUM    : return ClientUI::String("PL_SZ_MEDIUM"); 
       case Planet::SZ_LARGE     : return ClientUI::String("PL_SZ_LARGE" ); 
       case Planet::SZ_HUGE      : return ClientUI::String("PL_SZ_HUGE"  ); 
-      case Planet::SZ_ASTEROIDS : return ""; //ClientUI::String("PL_SZ_ASTEROIDS"); break;
-      case Planet::SZ_GASGIANT  : return ""; //ClientUI::String("PL_SZ_GASGIANT"); break;
+      case Planet::SZ_ASTEROIDS : return "";
+      case Planet::SZ_GASGIANT  : return "";
       default                   : return "ERROR ";
     }
   }
