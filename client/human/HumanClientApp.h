@@ -63,6 +63,7 @@ public:
       that this means an infinitely-looping sound will never be freed without being explicitly interrupted.*/
    void FreeAllSounds();
 
+   void SetXMLDoc(const GG::XMLDoc& doc) {m_config_doc = doc;}///< sets the m_config_doc variable
    virtual void Enter2DMode();
    virtual void Exit2DMode();
    //@}
@@ -90,6 +91,7 @@ private:
    std::vector<std::string>            m_channels;       ///< the filenames playing on the various sound channels
    std::set<std::string>               m_sounds_to_free; ///< the filenames of sounds that should be freed, once they have finished playing
    boost::shared_ptr<ClientUI>         m_ui;             ///< the one and only ClientUI object!
+   GG::XMLDoc                          m_config_doc;     ///< the XML document this was configured with
 
    static void EndOfMusicCallback();
    static void EndOfSoundCallback(int channel);

@@ -433,7 +433,9 @@ void HumanClientApp::Initialize()
 */
 
 // Allow ClientUI to take care of the UI
-    m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
+//    m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
+    m_ui = boost::shared_ptr<ClientUI>(new ClientUI(m_config_doc.root_node.Child("ClientUI")));
+    //write UI to XML
     
     m_ui->ScreenIntro();    //start the first screen, and the UI takes over from there.
 }
