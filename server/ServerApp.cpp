@@ -1311,7 +1311,7 @@ void ServerApp::ProcessTurns( )
 
     // if a combat happend give the human user a chance to look at the results
     if(combat_happend)
-      Sleep(5000);
+      SDL_Delay(5000);
 
     // TODO : check if all empires are still alive
 
