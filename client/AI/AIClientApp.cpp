@@ -212,6 +212,23 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
       break;
    }
 
+    case Message::SAVE_GAME: {
+        NetworkCore().SendMessage(TurnOrdersMessage(true));
+        break;
+    }
+
+    case Message::LOAD_GAME: {
+        std::stringstream stream(msg.GetText());
+        GG::XMLDoc doc;
+        doc.ReadDoc(stream);
+        GG::XMLObjectFactory<Order> factory;
+        Order::InitOrderFactory(factory);
+        for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
+            Orders().IssueOrder(factory.GenerateObject(doc.root_node.Child(i)));
+        }
+        break;
+    }
+
    case Message::TURN_UPDATE: {
        if (msg.Sender() == -1) {
             Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received TURN_UPDATE message; "

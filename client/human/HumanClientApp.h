@@ -39,6 +39,11 @@ public:
     virtual ~HumanClientApp();
     //@}
 
+    /** \name Accessors */ //@{
+    const std::string& SaveFileName() const {return m_save_filename;} ///< returns the current game's filename (may be "")
+    bool SinglePlayerGame() const {return m_single_player_game;} ///< returns true iff this game is a single-player game
+    //@}
+
     /** \name Mutators */ //@{
     void StartServer(); ///< starts a server process on localhost
     void KillServer();  ///< kills any running process already started by this client; performs no cleanup of other processes, such as AIs
@@ -70,6 +75,10 @@ public:
     void FreeAllSounds();
 
     void SetXMLDoc(const GG::XMLDoc& doc) {m_config_doc = doc;}///< sets the m_config_doc variable
+
+    bool LoadSinglePlayerGame(); ///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
+    void SetSaveFileName(const std::string& filename) {m_save_filename = filename;} ///< records the current game's filename
+
     virtual void Enter2DMode();
     virtual void Exit2DMode();
     //@}
@@ -94,13 +103,15 @@ private:
 
     virtual void HandleMessageImpl(const Message& msg);
 
-    Process                             m_server_process; ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
-    Mix_Music*                          m_current_music;  ///< the currently-playing music, if any
-    std::map<std::string, Mix_Chunk*>   m_sounds;         ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
-    std::vector<std::string>            m_channels;       ///< the filenames playing on the various sound channels
-    std::set<std::string>               m_sounds_to_free; ///< the filenames of sounds that should be freed, once they have finished playing
-    boost::shared_ptr<ClientUI>         m_ui;             ///< the one and only ClientUI object!
-    GG::XMLDoc                          m_config_doc;     ///< the XML document this was configured with
+    Process                           m_server_process;     ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
+    Mix_Music*                        m_current_music;      ///< the currently-playing music, if any
+    std::map<std::string, Mix_Chunk*> m_sounds;             ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
+    std::vector<std::string>          m_channels;           ///< the filenames playing on the various sound channels
+    std::set<std::string>             m_sounds_to_free;     ///< the filenames of sounds that should be freed, once they have finished playing
+    boost::shared_ptr<ClientUI>       m_ui;                 ///< the one and only ClientUI object!
+    std::string                       m_save_filename;      ///< the name under which the current game has been saved
+    bool                              m_single_player_game; ///< true when this game is a single-player game
+    GG::XMLDoc                        m_config_doc;         ///< the XML document this was configured with
 
     static void EndOfMusicCallback();
     static void EndOfSoundCallback(int channel);

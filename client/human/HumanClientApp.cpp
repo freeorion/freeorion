@@ -1,17 +1,17 @@
-
 #include "HumanClientApp.h"
 
 #include "../../UI/CUIControls.h"
+#include "dialogs/GGFileDlg.h"
 #include "../../network/Message.h"
+#include "../../util/OptionsDB.h"
 #include "../../universe/Planet.h"
 #include "../../util/Process.h"
 #include "../../util/SitRepEntry.h"
-
-
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 #include <sstream>
+
 
 namespace {
 GG::Wnd* NewCUIButton(const GG::XMLElement& elem)         {return new CUIButton(elem);}
@@ -30,7 +30,8 @@ HumanClientApp::HumanClientApp(const GG::XMLElement& elem) :
                        boost::lexical_cast<int>(elem.Child("height").Attribute("value")), 
                        boost::lexical_cast<bool>(elem.Child("calc_FPS").Attribute("value")),
                        elem.Child("app_name").Text()),
-    m_current_music(0)
+    m_current_music(0),
+    m_single_player_game(true)
 {
     AddWndGenerator("CUIButton", &NewCUIButton);
     AddWndGenerator("CUIStateButton", &NewCUIStateButton);
@@ -105,7 +106,7 @@ void HumanClientApp::PlaySound(const std::string& filename, int repeats, int tim
             m_sounds[filename] = data;
         }
     }
-   
+
     // find a free channel, creating an additional channel if needed
     Mix_Chunk* data = m_sounds[filename];
     int channel = 0;
@@ -119,7 +120,7 @@ void HumanClientApp::PlaySound(const std::string& filename, int repeats, int tim
         Mix_AllocateChannels(channel);
         m_channels.resize(channel);
     }
-   
+
     // play
     if (Mix_PlayChannel(channel, data, repeats) != channel) {
         Logger().errorStream() << "HumanClientApp::PlaySound : An error occured while attempting to play \"" << 
@@ -155,6 +156,52 @@ void HumanClientApp::FreeAllSounds()
         std::map<std::string, Mix_Chunk*>::iterator temp = it++;
         FreeSound(temp->first);
     }
+}
+
+bool HumanClientApp::LoadSinglePlayerGame()
+{
+    if (!HumanClientApp::GetApp()->NetworkCore().Connected()) {
+        if (!GetOptionsDB().Get<bool>("force-external-server"))
+            HumanClientApp::GetApp()->StartServer();
+
+        bool failed = false;
+        int start_time = GG::App::GetApp()->Ticks();
+        const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
+        while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) {
+            if (SERVER_CONNECT_TIMEOUT < GG::App::GetApp()->Ticks() - start_time) {
+                ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"));
+                failed = true;
+                break;
+            }
+        }
+
+        if (failed) {
+            HumanClientApp::GetApp()->KillServer();
+            return false;
+        }
+
+        // HACK!  send the multiplayer form of the HostGameMessage, since it establishes us as the host, and the single-player 
+        // LOAD_GAME message will establish us as a single-player game
+        GG::XMLDoc parameters;
+        parameters.root_node.AppendChild(GG::XMLElement("host_player_name", std::string("Happy Player")));
+        if (!failed)
+            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(HumanClientApp::GetApp()->PlayerID(), parameters));
+    }
+
+    std::vector<std::pair<std::string, std::string> > save_file_types;
+    save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("INGAMEOPTIONS_SAVE_FILES"), "*.sav"));
+
+    GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-directory"), "", false, false, save_file_types, 
+                    ClientUI::FONT, ClientUI::PTS, ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
+    dlg.Run();
+    std::string filename;
+    if (!dlg.Result().empty()) {
+        filename = *dlg.Result().begin();
+
+        HumanClientApp::GetApp()->NetworkCore().SendMessage(HostLoadGameMessage(HumanClientApp::GetApp()->PlayerID(), filename));
+        return true;
+    }
+    return false;
 }
 
 void HumanClientApp::Enter2DMode()
@@ -213,7 +260,7 @@ void HumanClientApp::SDLInit()
         Logger().errorStream() << "SDL initialization failed: " << SDL_GetError();
         Exit(1);
     }
-   
+
     int freq = MIX_DEFAULT_FREQUENCY; // sampling frequency
     Uint16 format = MIX_DEFAULT_FORMAT;
     int channels = 2; // stereo
@@ -235,7 +282,7 @@ void HumanClientApp::SDLInit()
                 link_version->major << "." << link_version->minor << "." << link_version->patch << ")";
             Exit(1);
         }      
-      
+
         // check to see what values are actually being used, in case we didn't get what we wanted from initialization
         int actual_freq;
         Uint16 actual_format;
@@ -263,7 +310,7 @@ void HumanClientApp::SDLInit()
         Logger().errorStream() << "SDL Net initialization failed: " << SDLNet_GetError();
         Exit(1);
     }
-  
+
     if (FE_Init() < 0) {
         Logger().errorStream() << "FastEvents initialization failed: " << FE_GetError();
         Exit(1);
@@ -292,12 +339,12 @@ void HumanClientApp::SDLInit()
         Logger().errorStream() << "Video mode set failed: " << SDL_GetError();
         Exit(1);
     }
-   
+
     if (NET2_Init() < 0) {
         Logger().errorStream() << "SDL Net2 initialization failed: " << NET2_GetError();
         Exit(1);
     }
-  
+
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     EnableMouseDragRepeat(SDL_DEFAULT_REPEAT_DELAY / 2, SDL_DEFAULT_REPEAT_INTERVAL / 2);
 
@@ -403,7 +450,6 @@ void HumanClientApp::Render()
 
 void HumanClientApp::FinalCleanup()
 {
-  
     if (m_current_music) {
         Mix_HaltMusic();
         Mix_FreeMusic(m_current_music);
@@ -452,11 +498,13 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         }
         break;
     } 
+
     case Message::HOST_GAME: {
         if (msg.Sender() == -1 && msg.GetText() == "ACK")
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received HOST_GAME acknowledgement";
         break;
     } 
+
     case Message::JOIN_GAME: {
         if (msg.Sender() == -1) {
             if (m_player_id == -1) {
@@ -470,6 +518,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         }
         break;
     }
+
     case Message::GAME_START: {
         if (msg.Sender() == -1) {
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
@@ -482,17 +531,26 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             std::ofstream output("start_doc.txt");
             doc.WriteDoc(output);
             output.close();
-            
-            Logger().debugStream() <<"About to call SetUniverse.";
+
+            if (m_single_player_game = doc.root_node.ContainsChild("single_player_game")) {
+                Logger().debugStream() << "Single-Player game";
+                doc.root_node.RemoveChild("single_player_game");
+            }
+
             m_universe.SetUniverse(doc.root_node.Child("Universe"));
             
+            // free current sitreps, if any
+            if (Empires().Lookup(m_player_id))
+                Empires().Lookup(m_player_id)->ClearSitRep();
+
+            Orders().Reset();
+
             // if we have empire data, then process it.  As it stands now,
             // we may not, so dont assume we do.
             if (doc.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG)) {
-                Logger().debugStream() <<"About to call HandleEmpireElementUpdate.";
                 m_empires.HandleEmpireElementUpdate(doc.root_node.Child(EmpireManager::EMPIRE_UPDATE_TAG));
             } else {
-                Logger().debugStream() <<"No Empire data received from server.  Update Server Code.";
+                Logger().debugStream() << "No Empire data received from server.  Update Server Code.";
             }
             
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Universe setup complete.";
@@ -502,100 +560,114 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
             m_ui->ScreenMap();
             m_ui->InitTurn( turn_number ); // init the new turn
-          }
         }
-        break;
-	
-    case Message::TURN_PROGRESS: {
-
-            GG::XMLDoc doc;
-            int phase_id;
-            int empire_id;
-            std::string phase_str;
-            std::stringstream stream(msg.GetText());
-
-            doc.ReadDoc(stream);          
-
-            phase_id = boost::lexical_cast<int>(doc.root_node.Child("phase_id").Attribute("value"));
-            empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Attribute("value"));
-    
-            // given IDs, build message
-            if ( phase_id == Message::FLEET_MOVEMENT )
-                phase_str = ClientUI::String("TURN_PROGRESS_PHASE_FLEET_MOVEMENT" );
-            else if ( phase_id == Message::COMBAT )
-                phase_str = ClientUI::String("TURN_PROGRESS_PHASE_COMBAT" );
-            else if ( phase_id == Message::EMPIRE_PRODUCTION )
-                phase_str = ClientUI::String("TURN_PROGRESS_PHASE_EMPIRE_GROWTH" );
-            else if ( phase_id == Message::WAITING_FOR_PLAYERS )
-                phase_str = ClientUI::String("TURN_PROGRESS_PHASE_WAITING");
-            else if ( phase_id == Message::PROCESSING_ORDERS )
-                phase_str = ClientUI::String("TURN_PROGRESS_PHASE_ORDERS");
-
-            m_ui->UpdateTurnProgress( phase_str, empire_id );
-        }
-        break;	
-
-    case Message::TURN_UPDATE: {
-
-            GG::XMLElement root_sitrep;
-            int turn_number;
-
-            std::stringstream stream(msg.GetText());
-            GG::XMLDoc doc;
-            doc.ReadDoc(stream);
-
-            // dump the update doc
-            std::ofstream output("update_doc.txt");
-            doc.WriteDoc(output);
-            output.close();
-           
-            turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
-               
-            // free current sitreps
-            Empires().Lookup( m_player_id )->ClearSitRep( );
-
-            // get sitrep entries, remove from doc but do not parse yet
-            if(doc.root_node.ContainsChild( SitRepEntry::SITREP_UPDATE_TAG )) 
-            {
-                root_sitrep = doc.root_node.Child( SitRepEntry::SITREP_UPDATE_TAG );
-                // Remove SitRep update data
-                doc.root_node.RemoveChild( SitRepEntry::SITREP_UPDATE_TAG );
-            }
-
-            // Update data used XPath and needs only elements common to universe and empire
-            UpdateTurnData( doc );
-
-	    // Important! After Updating turn data, empire could be changed, re-get pointer to empire data
-	    
-           // Now decode sitreps
-            if( root_sitrep.Tag() == SitRepEntry::SITREP_UPDATE_TAG )
-            {
-                // decode all the sitreps from the update
-                for(int i=0; i<root_sitrep.NumChildren(); i++)
-                {   
-                    SitRepEntry *decoded_sitrep = new SitRepEntry( root_sitrep.Child(i) );
-
-                    // create string
-                    m_ui->GenerateSitRepText( decoded_sitrep );
-
-                    // add to player's empire
-                    Empires().Lookup( m_player_id )->AddSitRepEntry( decoded_sitrep );
-                 }
-            }
-    
-            Logger().debugStream() <<"HumanClientApp::HandleMessageImpl : Sitrep update complete";
-
-            m_ui->ScreenMap(); 
-            m_ui->InitTurn( turn_number ); // init the new turn
-        }
-        break;
-        
-    default: {
-            Logger().errorStream() << "HumanClientApp::HandleMessageImpl : Received unknown Message type code " << msg.Type();
         break;
     }
-   }
-   
+
+    case Message::SAVE_GAME: {
+        NetworkCore().SendMessage(TurnOrdersMessage(true));
+        break;
+    }
+
+    case Message::LOAD_GAME: {
+        std::stringstream stream(msg.GetText());
+        GG::XMLDoc doc;
+        doc.ReadDoc(stream);
+        GG::XMLObjectFactory<Order> factory;
+        Order::InitOrderFactory(factory);
+        for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
+            Orders().IssueOrder(factory.GenerateObject(doc.root_node.Child(i)));
+        }
+        break;
+    }
+
+    case Message::TURN_UPDATE: {
+        GG::XMLElement root_sitrep;
+        int turn_number;
+
+        std::stringstream stream(msg.GetText());
+        GG::XMLDoc doc;
+        doc.ReadDoc(stream);
+
+        // dump the update doc
+        std::ofstream output("update_doc.txt");
+        doc.WriteDoc(output);
+        output.close();
+
+        turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
+
+        // free current sitreps
+        Empires().Lookup( m_player_id )->ClearSitRep( );
+
+        // get sitrep entries, remove from doc but do not parse yet
+        if(doc.root_node.ContainsChild( SitRepEntry::SITREP_UPDATE_TAG )) 
+        {
+            root_sitrep = doc.root_node.Child( SitRepEntry::SITREP_UPDATE_TAG );
+            // Remove SitRep update data
+            doc.root_node.RemoveChild( SitRepEntry::SITREP_UPDATE_TAG );
+        }
+
+        // Update data used XPatch and needs only elements common to universe and empire
+        UpdateTurnData( doc );
+
+	    // Important! After Updating turn data, empire could be changed, re-get pointer to empire data
+
+        // Now decode sitreps
+        if( root_sitrep.Tag() == SitRepEntry::SITREP_UPDATE_TAG )
+        {
+            // decode all the sitreps from the update
+            for(int i=0; i<root_sitrep.NumChildren(); i++)
+            {   
+                SitRepEntry *decoded_sitrep = new SitRepEntry( root_sitrep.Child(i) );
+
+                // create string
+                m_ui->GenerateSitRepText( decoded_sitrep );
+
+                // add to player's empire
+                Empires().Lookup( m_player_id )->AddSitRepEntry( decoded_sitrep );
+            }
+        }
+
+        Logger().debugStream() <<"HumanClientApp::HandleMessageImpl : Sitrep update complete";
+
+        m_ui->ScreenMap(); 
+        m_ui->InitTurn( turn_number ); // init the new turn
+        break;
+    }
+
+    case Message::TURN_PROGRESS: {
+        GG::XMLDoc doc;
+        int phase_id;
+        int empire_id;
+        std::string phase_str;
+        std::stringstream stream(msg.GetText());
+
+        doc.ReadDoc(stream);          
+
+        phase_id = boost::lexical_cast<int>(doc.root_node.Child("phase_id").Attribute("value"));
+        empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Attribute("value"));
+
+        // given IDs, build message
+        if ( phase_id == Message::FLEET_MOVEMENT )
+            phase_str = ClientUI::String("TURN_PROGRESS_PHASE_FLEET_MOVEMENT" );
+        else if ( phase_id == Message::COMBAT )
+            phase_str = ClientUI::String("TURN_PROGRESS_PHASE_COMBAT" );
+        else if ( phase_id == Message::EMPIRE_PRODUCTION )
+            phase_str = ClientUI::String("TURN_PROGRESS_PHASE_EMPIRE_GROWTH" );
+        else if ( phase_id == Message::WAITING_FOR_PLAYERS )
+            phase_str = ClientUI::String("TURN_PROGRESS_PHASE_WAITING");
+        else if ( phase_id == Message::PROCESSING_ORDERS )
+            phase_str = ClientUI::String("TURN_PROGRESS_PHASE_ORDERS");
+
+        m_ui->UpdateTurnProgress( phase_str, empire_id );
+        break;
+    }
+
+    default: {
+        Logger().errorStream() << "HumanClientApp::HandleMessageImpl : Received unknown Message type code " << msg.Type();
+        break;
+    }
+    }
 }
 
 void HumanClientApp::EndOfMusicCallback()
