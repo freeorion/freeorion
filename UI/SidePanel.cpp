@@ -804,12 +804,12 @@ void SidePanel::PlanetPanel::ConstructUnhabited(const Planet &planet)
   if(planet.MaxPop()==0) text+= "unhabitable";
   else                   text+= "(uninhabited 0/"+boost::lexical_cast<std::string>(planet.MaxPop())+")";
 
-  m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,text,ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::TEXT_COLOR/*,GG::TF_LEFT | GG::TF_TOP | GG::TF_LINEWRAP*/);
+  m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,text,ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::TEXT_COLOR,GG::TF_LEFT | GG::TF_TOP);
   AttachChild(m_planet_info);
 
   if(planet.Owners().size()==0 && planet.MaxPop()>0 && FindColonyShip(planet.SystemID()))
   {
-    m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::SIDE_PANEL_PTS)/2,60,"Colonize",ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::Wnd::CLICKABLE | GG::TF_WORDBREAK);
+    m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::SIDE_PANEL_PTS)/2,60,"Colonize",ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::Wnd::CLICKABLE);
     Connect(m_button_colonize->ClickedSignal(), &SidePanel::PlanetPanel::ClickColonize, this);
     AttachChild(m_button_colonize);
   }
@@ -1026,7 +1026,7 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
   //population
   //x = m_planet_name->UpperLeft ().x+10; y = m_planet_name->LowerRight().y + RESOURCE_DISPLAY_HEIGHT+3;
   glColor4ubv(ClientUI::TEXT_COLOR.v);
-  icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), false);
+  icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   x+=font->Height();
   text = boost::lexical_cast<std::string>(population)+"/"+boost::lexical_cast<std::string>(planet.MaxPop());
   font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0, true);
@@ -1103,7 +1103,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   //population
   //x = m_planet_name->UpperLeft ().x+10; y = m_planet_name->LowerRight().y + RESOURCE_DISPLAY_HEIGHT+3;
   glColor4ubv(ClientUI::TEXT_COLOR.v);
-  icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), false);
+  icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   x+=font->Height();
   text = boost::lexical_cast<std::string>(population)+"/"+boost::lexical_cast<std::string>(planet.MaxPop());
   font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0, true);
@@ -1309,7 +1309,7 @@ bool SidePanel::SystemResourceSummary::Render()
 
   //farming
   glColor4ubv(ClientUI::TEXT_COLOR.v);
-  icon=IconFarming(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), false);
+  icon=IconFarming(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (farming<0?"-":"+") + boost::lexical_cast<std::string>(farming);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0, true);
@@ -1318,7 +1318,7 @@ bool SidePanel::SystemResourceSummary::Render()
 
   //mining
   glColor4ubv(ClientUI::TEXT_COLOR.v);
-  icon=IconMining(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), false);
+  icon=IconMining(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (mining<0?"-":"+") + boost::lexical_cast<std::string>(mining);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0, true);
@@ -1327,7 +1327,7 @@ bool SidePanel::SystemResourceSummary::Render()
 
   //research
   glColor4ubv(ClientUI::TEXT_COLOR.v);
-  icon=IconResearch(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), false);
+  icon=IconResearch(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (research<0?"-":"+") + boost::lexical_cast<std::string>(research);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0, true);
@@ -1336,7 +1336,7 @@ bool SidePanel::SystemResourceSummary::Render()
 
   //industy
   glColor4ubv(ClientUI::TEXT_COLOR.v);
-  icon=IconIndustry(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), false);
+  icon=IconIndustry(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (industry<0?"-":"+") + boost::lexical_cast<std::string>(industry);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0, true);
@@ -1345,7 +1345,7 @@ bool SidePanel::SystemResourceSummary::Render()
 
   //defense
   glColor4ubv(ClientUI::TEXT_COLOR.v);
-  icon=IconDefense(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), false);
+  icon=IconDefense(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = boost::lexical_cast<std::string>(defense)+"/"+boost::lexical_cast<std::string>(defense*3);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0, true);
