@@ -579,11 +579,14 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
 
       // create population and industry on home planet
       home_planet->AdjustPop(20);
-      home_planet->AdjustWorkforce(20);
+      home_planet->SetWorkforce(20);
+      home_planet->SetMaxWorkforce( home_planet->MaxPop() );
       home_planet->AdjustIndustry(0.10);
       home_planet->AdjustDefBases(3);
 
       // create the empire's initial ship designs
+      // for now, the order that these are created need to match
+      // the enums for ship designs in ships.h
       ShipDesign scout_design;
       scout_design.name = "Scout";
       scout_design.attack = 0;
