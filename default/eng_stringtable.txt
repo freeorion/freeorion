@@ -399,6 +399,15 @@ The %1% System
 SP_SYSTEM_PRODUCTION
 System Production
 
+SP_RENAME_PLANET
+Rename Planet
+
+SP_ENTER_NEW_PLANET_NAME
+Enter new planet name
+
+SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
+All colony ships in this system have been\ngiven orders to leave the system.\n\nUse one of the departing colony ships?
+
 
 #################
 # Fleet Window  #
