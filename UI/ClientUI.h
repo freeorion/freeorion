@@ -33,19 +33,18 @@ class ToolWnd;
 class SitRepEntry;
 class System;
 namespace GG {
-class Clr;
-class SubTexture;
-class XMLElement;
+    class Clr;
+    class SubTexture;
+    class XMLElement;
 }
 namespace log4cpp {
-class Category;
+    class Category;
 }
 
 //! \brief ClientUI Main Module
 //!This is the main class of the ClientUI module.
 //!it contains objects of many other classes and controls the
 //!display of all information oTURN_PROGRESS_WND_COLORnscreen.
-
 class ClientUI
 {
 public:
@@ -178,36 +177,45 @@ public:
 
     static void GenerateSitRepText( SitRepEntry *p_sit_rep ); ///< generates a SitRep string from it's XML data.
 
-
+    /** Loads and returns one of a set of numbered textures.  This is supposed to be used to retrieve textures that are numbered, e.g. the star textures 
+        blue1.png, blue2,png, ..., yellow1.png, yellow2.png, etc.  It is assumed that all such files are numbered starting with 1, not 0.  \a dir_name 
+        is the name of the directory in which the images are found, relative to ClientUI::ART_DIR.
+        \a types_to_names is a map of object types to their base filenames, e.g. (System::BLUE --> "blue"), (PT_SWAMP --> "swamp"), etc.  \a type is 
+        the type of object for which you want a texture, which is used to look up the name in \a types_to_names.  \a hash_key is used to pick the numer 
+        from [1, N] of the texture to be used.  This number is usually the ID() of the UniverseObject that the texture represents on-screen.  This is 
+        used so that the texture used to represent the object is arbitrary, but is always the same, even after a save-reload cycle.  \see SystemIcon.cpp 
+        ... for an example of how to use this function. */
+    static boost::shared_ptr<GG::Texture> GetNumberedTexture(const std::string& dir_name, const std::map<int, std::string>& types_to_names, 
+                                                             int type, int hash_key);
 
     //! \name Static Config Data
     //!@{
-    static std::string FONT;            //!< The default font to use
-    static std::string FONT_BOLD;       //!< The default bold font to use
-    static std::string FONT_ITALIC;     //!< The default italic font to use
-    static std::string FONT_BOLD_ITALIC;//!< The default bold and italic font to use
-    static int         PTS;    //!< default point size
-    static std::string TITLE_FONT;    //!< The default font to use for the window title
-    static int         TITLE_PTS;    //!< default point size to use for window title
+    static std::string FONT;             //!< The default font to use
+    static std::string FONT_BOLD;        //!< The default bold font to use
+    static std::string FONT_ITALIC;      //!< The default italic font to use
+    static std::string FONT_BOLD_ITALIC; //!< The default bold and italic font to use
+    static int         PTS;              //!< default point size
+    static std::string TITLE_FONT;       //!< The default font to use for the window title
+    static int         TITLE_PTS;        //!< default point size to use for window title
     
-    static std::string DIR;     //!< directory currently being used, contains config files
-    static std::string ART_DIR;    //!< directory holding artwork, ("*/art/small/" or "*/art/large/"
-    static std::string MUSIC_DIR;  //!< directory holding music
+    static std::string DIR;              //!< directory currently being used, contains config files
+    static std::string ART_DIR;          //!< directory holding artwork, ("*/art/small/" or "*/art/large/"
+    static std::string MUSIC_DIR;        //!< directory holding music
 
-    static GG::Clr     TEXT_COLOR; //!< color of UI text
+    static GG::Clr     TEXT_COLOR;       //!< color of UI text
     
     // generic UI windows
-    static GG::Clr     WND_COLOR; //!< color of a UI window
-    static GG::Clr     WND_BORDER_COLOR; //!< color of window borders
+    static GG::Clr     WND_COLOR;              //!< color of a UI window
+    static GG::Clr     WND_BORDER_COLOR;       //!< color of window borders
     static GG::Clr     WND_OUTER_BORDER_COLOR; //!< color of the outermost border
     static GG::Clr     WND_INNER_BORDER_COLOR; //!< color of the innermost border
 
     // controls
-    static GG::Clr     CTRL_COLOR; //!< color of UI controls
+    static GG::Clr     CTRL_COLOR;         //!< color of UI controls
     static GG::Clr     CTRL_BORDER_COLOR;
 
     static GG::Clr     BUTTON_COLOR;
-    static int         BUTTON_WIDTH;    //!< default width to use for window buttons
+    static int         BUTTON_WIDTH;       //!< default width to use for window buttons
 
     static GG::Clr     STATE_BUTTON_COLOR;
 
@@ -221,10 +229,10 @@ public:
 
     static GG::Clr     MULTIEDIT_INT_COLOR;
 
-    static GG::Clr     STAT_INCR_COLOR; //!< used to color increasing stats text (eg "+2")
-    static GG::Clr     STAT_DECR_COLOR; //!< used to color decreasing stats text (eg "-3")
+    static GG::Clr     STAT_INCR_COLOR;   //!< used to color increasing stats text (eg "+2")
+    static GG::Clr     STAT_DECR_COLOR;   //!< used to color decreasing stats text (eg "-3")
 
-    static int         SYSTEM_ICON_SIZE; //!< the width/height of a System/Icon at zoom = 1.0
+    static int         SYSTEM_ICON_SIZE;  //!< the width/height of a System/Icon at zoom = 1.0
     static double      FLEET_BUTTON_SIZE; //!< the width/height of a FleetButton at zoom = 1.0, relative to the size of a SystemIcon
 
     // game UI windows
@@ -232,14 +240,12 @@ public:
     static GG::Clr     SIDE_PANEL_BUILD_PROGRESSBAR_COLOR;
     static int         SIDE_PANEL_PLANET_NAME_PTS;
     static int         SIDE_PANEL_PTS;
-
-        
     //!@}
 
 private:
     void HideAllWindows();              //!< hides all the UI windows from view
     
-    void SwitchState(State state);     //!< switch current state to >state<, free's last state window and create the one for the new state
+    void SwitchState(State state);      //!< switch current state to >state<, free's last state window and create the one for the new state
 
     const Uint32 TOOLTIP_DELAY;         //!< number of milliseconds to initialize tooltips to
     ToolContainer* m_tooltips;          //!< the single toolcontainer object
@@ -251,10 +257,10 @@ private:
     MapWnd*          m_map_wnd;           //!< the galaxy map
     TurnProgressWnd* m_turn_progress_wnd; //!< the turn progress window
 
-    SDL_Cursor*      m_default_cursor;              //!< used to store default cursor
+    SDL_Cursor*      m_default_cursor;    //!< used to store default cursor
  
     static log4cpp::Category& s_logger; //!< log4cpp logging category
-    static ClientUI* s_the_UI;          //!<pointer to the one and only ClientUI object
+    static ClientUI* s_the_UI;          //!< pointer to the one and only ClientUI object
 };
 
 

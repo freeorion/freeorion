@@ -25,6 +25,9 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/fstream.hpp>
+
 #include <string>
 #include <fstream>
 
@@ -280,7 +283,9 @@ namespace {
 }
 
 
-
+////////////////////////////////////////////////
+// ClientUI
+////////////////////////////////////////////////
 //Init and Cleanup//////////////////////////////////////
 ClientUI::ClientUI() :
     TOOLTIP_DELAY(GetOptionsDB().Get<int>("UI.tooltip-delay")), // 1 second delay for tooltips to appear
@@ -378,8 +383,6 @@ bool ClientUI::Cleanup()
     m_turn_progress_wnd = 0;
 
     s_the_UI = 0;
-
-    //TODO: Destroy variables, etc.   
 
     return true; 
 }
@@ -580,31 +583,41 @@ void ClientUI::SwitchState(State state)
 void ClientUI::ScreenIntro()
 {
     SwitchState(STATE_INTRO); // set to intro screen state
-}//ScreenIntro()
+}
       
 
 void ClientUI::ScreenProcessTurn()
 {
     SwitchState(STATE_TURNSTART); // set to turn start
-}//ScreenTurnStart()
+}
 
                 
 void ClientUI::ScreenSettings(const ClientNetworkCore &net)
 {
     // TODO: modally run options dialog here on top of whatever screen(s) is(are) already active
 
-}//ScreenSettings()
+}
 
 void ClientUI::ScreenEmpireSelect()
 {
     // TODO: run modally
 
-}//ScreenEmpireSelect()
+}
 
 void ClientUI::ScreenMap()
 {
     SwitchState(STATE_MAP);
-}//ScreenMap()
+}
+
+void ClientUI::UpdateTurnProgress( const std::string& phase_str, const int empire_id )
+{
+    m_turn_progress_wnd->UpdateTurnProgress( phase_str, empire_id );
+}
+
+void ClientUI::UpdateCombatTurnProgress( const std::string& msg)
+{
+    m_turn_progress_wnd->UpdateCombatTurnProgress(msg);
+}
 
 void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
 {
@@ -612,31 +625,31 @@ void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
 
     // TODO: run sitrep as an on-top window, layered over the main map
 
-}//ScreenSitrep()
+}
 
 void ClientUI::ScreenBattle(Combat* combat)
 {
     // TODO: run battle screen by iteself
 
-}//ScreenBattle()
+}
 
 void ClientUI::ScreenSave(bool show)
 {
     // TODO: modally run save dialog here on top of whatever screen(s) is(are) already active
 
-}//ScreenSave()
+}
 
 void ClientUI::ScreenLoad()
 {
   SwitchState(STATE_LOAD); // set to turn start
-}//ScreenLoad()
+}
 
 void ClientUI::MessageBox(const std::string& message)
 {
     GG::ThreeButtonDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR, WND_BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
                            new CUIButton((320-75)/2, 170, 75, "OK"));
     dlg.Run();    
-}//MessageBox()
+}
 
 void ClientUI::LogMessage(const std::string& msg)
 {
@@ -648,16 +661,6 @@ const std::string& ClientUI::String(const std::string& index)
     return s_the_UI->m_string_table->String(index);
 }
 
-void ClientUI::UpdateTurnProgress( const std::string& phase_str, const int empire_id )
-{
-  m_turn_progress_wnd->UpdateTurnProgress( phase_str, empire_id );
-}
-
-void ClientUI::UpdateCombatTurnProgress( const std::string& msg)
-{
-  m_turn_progress_wnd->UpdateCombatTurnProgress(msg);
-}
-
 void ClientUI::GenerateSitRepText( SitRepEntry *p_sit_rep )
 {
   // get template string
@@ -665,7 +668,48 @@ void ClientUI::GenerateSitRepText( SitRepEntry *p_sit_rep )
 
   // parse string
   p_sit_rep->GenerateVarText( template_str );
+}
 
+boost::shared_ptr<GG::Texture> ClientUI::GetNumberedTexture(const std::string& dir_name, const std::map<int, std::string>& types_to_names, 
+                                                            int type, int hash_key)
+{
+    using boost::lexical_cast;
+    using std::string;
+
+    static std::map<int, std::pair<string, int> > image_names;
+
+    if (image_names.empty()) {
+        for (std::map<int, std::string>::const_iterator it = types_to_names.begin(); it != types_to_names.end(); ++it) {
+            image_names[it->first].first = it->second;
+        }
+
+        namespace fs = boost::filesystem;
+        fs::path star_dir = ClientUI::ART_DIR + dir_name;
+        fs::directory_iterator end_it;
+        for (fs::directory_iterator it(star_dir); it != end_it; ++it) {
+            if (!fs::is_directory(*it)) {
+                if (it->leaf().find("blue") == 0) {
+                    ++image_names[System::BLUE].second; 
+                } else if (it->leaf().find("white") == 0) {
+                    ++image_names[System::WHITE].second; 
+                } else if (it->leaf().find("yellow") == 0) {
+                    ++image_names[System::YELLOW].second; 
+                } else if (it->leaf().find("orange") == 0) {
+                    ++image_names[System::ORANGE].second; 
+                } else if (it->leaf().find("red") == 0) {
+                    ++image_names[System::RED].second; 
+                } else if (it->leaf().find("neutron") == 0) {
+                    ++image_names[System::NEUTRON].second; 
+                } else if (it->leaf().find("black") == 0) {
+                    ++image_names[System::BLACK].second; 
+                }
+            }
+        }
+    }
+
+    std::string filename = ClientUI::ART_DIR + "stars/" + 
+        image_names[type].first + lexical_cast<string>((hash_key % image_names[type].second) + 1) + ".png";
+    return HumanClientApp::GetApp()->GetTexture(filename);
 }
 
 ////////////////////////////////////////////////////
