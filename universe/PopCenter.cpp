@@ -145,7 +145,7 @@ void PopCenter::MovementPhase(std::vector<SitRepEntry>& sit_reps)
 
 void PopCenter::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
 {
-    m_pop += std::min(m_pop * 1.072, m_max_pop); // 7.2% should double pop every 10 turns
+    m_pop = std::min(m_pop * 1.072, m_max_pop); // 7.2% should double pop every 10 turns
 }
 
 
