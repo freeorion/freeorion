@@ -554,6 +554,7 @@ void ServerApp::HandleMessage(const Message& msg)
             // now, read all the ValueRef-accessible items from this object
             const char* field_names[] = {
                 "CurrentFarming",
+                "MaxFarming",
                 "CurrentIndustry",
                 "MaxIndustry",
                 "CurrentResearch",
@@ -592,7 +593,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 ofs << "PlanetSize(source)= " << ValueRef::Variable<PlanetSize>(true, "PlanetSize").Eval(object, 0) << std::endl;
                 ofs << "PlanetType(source)= " << ValueRef::Variable<PlanetType>(true, "PlanetType").Eval(object, 0) << std::endl;
                 ofs << "PlanetEnvironment(source)= " << ValueRef::Variable<PlanetEnvironment>(true, "PlanetEnvironment").Eval(object, 0) << std::endl;
-                ofs << "UniverseObjectType(source)= " << ValueRef::Variable<UniverseObjectType>(true, "ObjectType").Eval(object, 0) << std::endl;
+                ofs << "ObjectType(source)= " << ValueRef::Variable<UniverseObjectType>(true, "ObjectType").Eval(object, 0) << std::endl;
                 ofs << "StarType(source)= " << ValueRef::Variable<StarType>(true, "StarType").Eval(object, 0) << std::endl;
                 ofs << "PrimaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "PrimaryFocus").Eval(object, 0) << std::endl;
                 ofs << "SecondaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "SecondaryFocus").Eval(object, 0) << std::endl;
@@ -612,7 +613,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 ofs << "PlanetSize(target)= " << ValueRef::Variable<PlanetSize>(false, "PlanetSize").Eval(0, object) << std::endl;
                 ofs << "PlanetType(target)= " << ValueRef::Variable<PlanetType>(false, "PlanetType").Eval(0, object) << std::endl;
                 ofs << "PlanetEnvironment(target)= " << ValueRef::Variable<PlanetEnvironment>(false, "PlanetEnvironment").Eval(0, object) << std::endl;
-                ofs << "UniverseObjectType(target)= " << ValueRef::Variable<UniverseObjectType>(false, "ObjectType").Eval(0, object) << std::endl;
+                ofs << "ObjectType(target)= " << ValueRef::Variable<UniverseObjectType>(false, "ObjectType").Eval(0, object) << std::endl;
                 ofs << "StarType(target)= " << ValueRef::Variable<StarType>(false, "StarType").Eval(0, object) << std::endl;
                 ofs << "PrimaryFocus(target)= " << ValueRef::Variable<FocusType>(false, "PrimaryFocus").Eval(0, object) << std::endl;
                 ofs << "SecondaryFocus(target)= " << ValueRef::Variable<FocusType>(false, "SecondaryFocus").Eval(0, object) << std::endl;
@@ -633,7 +634,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 ofs << "System.PlanetSize(source)= " << ValueRef::Variable<PlanetSize>(true, "System.PlanetSize").Eval(object, 0) << std::endl;
                 ofs << "System.PlanetType(source)= " << ValueRef::Variable<PlanetType>(true, "System.PlanetType").Eval(object, 0) << std::endl;
                 ofs << "System.PlanetEnvironment(source)= " << ValueRef::Variable<PlanetEnvironment>(true, "System.PlanetEnvironment").Eval(object, 0) << std::endl;
-                ofs << "System.UniverseObjectType(source)= " << ValueRef::Variable<UniverseObjectType>(true, "System.ObjectType").Eval(object, 0) << std::endl;
+                ofs << "System.ObjectType(source)= " << ValueRef::Variable<UniverseObjectType>(true, "System.ObjectType").Eval(object, 0) << std::endl;
                 ofs << "System.StarType(source)= " << ValueRef::Variable<StarType>(true, "System.StarType").Eval(object, 0) << std::endl;
                 ofs << "System.PrimaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "System.PrimaryFocus").Eval(object, 0) << std::endl;
                 ofs << "System.SecondaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "System.SecondaryFocus").Eval(object, 0) << std::endl;
