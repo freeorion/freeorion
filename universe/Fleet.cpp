@@ -8,6 +8,10 @@ using boost::lexical_cast;
 
 #include <stdexcept>
 
+namespace {
+const int SHIP_SPEED = 50; // "reasonable" speed --can cross galaxy in 20 turns (v0.1 only !!!!)
+}
+
 
 Fleet::Fleet() : 
    UniverseObject(),
@@ -142,9 +146,9 @@ void Fleet::AddShip(const int ship_id)
 {
    m_ships.insert(ship_id);
 
-   Universe& server_uni = GetUniverse();
+   Universe& universe = GetUniverse();
    
-   Ship* ship = dynamic_cast<Ship*>(server_uni.Object(ship_id));
+   Ship* ship = dynamic_cast<Ship*>(universe.Object(ship_id));
    if (ship == NULL)
    {
       throw std::invalid_argument("Attempted to add a ship to a fleet, but object was missing.");
@@ -178,9 +182,7 @@ std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
       if (!found) {
          retval.push_back(ships[i]);
       } else {
-
          GetUniverse().Delete(ships[i]);
-
       }
    }
    StateChangedSignal()();
@@ -188,10 +190,16 @@ std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
 }
 
 
-void Fleet::RemoveShip(int ship)
+bool Fleet::RemoveShip(int ship)
 {
-   m_ships.erase(ship);
-   StateChangedSignal()();
+    bool retval = false;
+    iterator it = m_ships.find(ship);
+    if (it != m_ships.end()) {
+        m_ships.erase(it);
+        StateChangedSignal()();
+        retval = true;
+    }
+    return retval;
 }
 
 void Fleet::MovementPhase(std::vector<SitRepEntry>& sit_reps)

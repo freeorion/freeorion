@@ -45,14 +45,14 @@ public:
    void              SetMoveOrders(int id);  ///< orders the fleet to move to the system with ID \a id
    
    void              AddShips(const std::vector<int>& ships);     ///< adds the ships with the IDs stored in \a ships to the fleet
-   void              AddShip(const int ship_id);                  ///< adds the ship to the fleet
+   void              AddShip(int ship_id);                        ///< adds the ship to the fleet
    std::vector<int>  RemoveShips(const std::vector<int>& ships);  ///< removes the ships with the IDs stored in \a ships from the fleet, and returns any IDs not found in the fleet
    std::vector<int>  DeleteShips(const std::vector<int>& ships);  ///< removes and deletes the ships with the IDs stored in \a ships from the fleet, and returns any IDs not found in the fleet
    
    iterator begin()  {return m_ships.begin();}  ///< returns the begin iterator for the ships in the fleet
    iterator end()    {return m_ships.end();}    ///< returns the end iterator for the ships in the fleet
 
-   void RemoveShip(int ship); ///< removes the ship from the fleet
+   bool RemoveShip(int ship); ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.
 
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
