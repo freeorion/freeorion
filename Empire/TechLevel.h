@@ -1,6 +1,6 @@
-
-#ifndef _TechLevel_h_
-#define _TechLevel_h_
+// -*- C++ -*-
+#ifndef _Tech_h_
+#define _Tech_h_
 
 #include <string>
 
@@ -9,15 +9,15 @@
 *  It's fields are an identifying number, a name, and the minimum RP
 *  investment needed in order to acquire it
 *
-*  Only the TechManager should create TechLevel objects
+*  Only the TechManager should create Tech objects
 *
 *  For Version 0.1, the TechManager will create four hardcoded tech
 * levels.
 */
-class TechLevel
+class Tech
 {
     /// TechManager is a friend so that it, and only it, can
-    /// create TechLevel objects
+    /// create Tech objects
     friend class TechManager;
     
 public:
@@ -29,13 +29,12 @@ public:
      * The TechManager will create techlevels for each element of this
      * enum when the LoadTechTree method is called.  
      */
-     enum TechLevelType
-     {INVALID_TECH = 0, 
-     TECH_BASE = 1,       ///< Defense bases
-     TECH_MARK2 = 2,      ///< Mark 2 ships
-     TECH_MARK3 = 3,      ///< Mark 3 ships
-     TECH_MARK4 = 4       ///< Mark 4 ships
-     };
+    enum TechType {INVALID_TECH = 0, 
+                   TECH_BASE = 1,       ///< Defense bases
+                   TECH_MARK2 = 2,      ///< Mark 2 ships
+                   TECH_MARK3 = 3,      ///< Mark 3 ships
+                   TECH_MARK4 = 4       ///< Mark 4 ships
+    };
  
     /** \name Accessors */ //{@
     
@@ -59,24 +58,18 @@ public:
     
     //@}
     
- protected:
-      // protected is used so that derived classes have 
-      // access to base class constructor
+protected:
+    // protected is used so that derived classes have 
+    // access to base class constructor
       
-      /** \name Constructors */ //{@
-      TechLevel(int ID, std::string name, int MinPts);
-      //@}
-      
-      
- private:
- 
-      int m_id;
-      int m_min_pts;
-      std::string m_name;
-      
+    /** \name Constructors */ //{@
+    Tech(int ID, std::string name, int MinPts);
+    //@}
+
+private:
+    int m_id;
+    int m_min_pts;
+    std::string m_name;
 };
-
-
-
 
 #endif

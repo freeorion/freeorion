@@ -1,27 +1,23 @@
-
 #include "TechLevel.h"
 
-TechLevel::TechLevel(int ID, std::string name, int MinPts) :
+Tech::Tech(int ID, std::string name, int MinPts) :
     m_id(ID),
     m_min_pts(MinPts),
     m_name(name)
-
 {
-    // no other stuff to do
 }
 
-
-int TechLevel::GetID() const
+int Tech::GetID() const
 {
     return m_id;
 }
 
-int TechLevel::GetMinPts() const
+int Tech::GetMinPts() const
 {
     return m_min_pts;
 }
 
-const std::string& TechLevel::GetName() const
+const std::string& Tech::GetName() const
 {
     return m_name;
 }
