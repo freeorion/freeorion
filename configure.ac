@@ -37,7 +37,7 @@ AM_INIT_AUTOMAKE(foreign subdir-objects)
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
-#AM_PROG_CC_C_O
+AM_PROG_CC_C_O
 AC_PROG_LN_S
 AC_PROG_CPP
 #AC_PROG_LIBTOOL
@@ -65,6 +65,16 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h inttypes.h memory.h netdb.h netinet/in.h s
 #AC_FUNC_SELECT_ARGTYPES
 #AC_FUNC_SETVBUF_REVERSED
 AC_TYPE_SIGNAL
+
+# Check if we can include crash backtraces
+ENABLE_CRASH_HANDLER=yes
+AC_ARG_ENABLE([crash-handler],[AC_HELP_STRING([--disable-crash-handler],[Disable stack backtrace in case of a SIGSEGV (enabled by default if execinfo.h is found)])],[if test x$enableval == xno; then
+  ENABLE_CRASH_HANDLER=no
+fi])
+if test x$ENABLE_CRASH_HANDLER == xyes; then
+  AC_CHECK_HEADER(execinfo.h, [AC_DEFINE([ENABLE_CRASH_BACKTRACE], [1], [Define if you have execinfo.h and want a stack backtrace in case of a crash])])
+fi
+
 AC_SEARCH_LIBS(sqrt,[m],[],[AC_MSG_FAILURE([The sqrt-function was not found. This is bad!])])
 AC_CHECK_FUNCS([floor gethostbyaddr gethostbyname memmove memset munmap pow select socket strcasecmp])
 
@@ -231,6 +241,17 @@ if test $FOUND = 0; then
   AC_SUBST(GIGISDL_CFLAGS)
   AC_SUBST(GIGINET_CFLAGS)
 fi
+
+dnl If we have /usr/local/share/aclocal, include it into aclocal's search-path
+AC_MSG_CHECKING([if we have /usr/local/share/aclocal])
+if test -d /usr/local/share/aclocal; then
+  AC_MSG_RESULT([yes, adding it to aclocal's search-path])
+  ACLOCAL_INCLUDE="-I /usr/local/share/aclocal"
+else
+  AC_MSG_RESULT([no])
+  ACLOCAL_INCLUDE=""
+fi
+AC_SUBST([ACLOCAL_INCLUDE])
 
 AC_CONFIG_FILES([Makefile
 		])
