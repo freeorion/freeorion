@@ -1,0 +1,51 @@
+#ifndef _Fleet_h_
+#define _Fleet_h_
+
+#ifndef _UniverseObject_h_
+#include "UniverseObject.h"
+#endif
+
+/** */
+class Fleet : public UniverseObject
+{
+private:
+   typedef std::set<int> ShipIDSet;
+   
+public:
+   typedef ShipIDSet::iterator         iterator;         ///< an iterator to the ships in the fleet
+   typedef ShipIDSet::const_iterator   const_iterator;   ///< a const iterator to the ships in the fleet
+   
+   /** \name Structors */ //@{
+   Fleet(); ///< default ctor
+   Fleet(const GG::XMLElement& elem); ///< ctor that constructs a Fleet object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Fleet object
+   //@}
+
+   /** \name Accessors */ //@{
+   const_iterator begin() const  {return m_ships.begin();}  ///< returns the begin const_iterator for the ships in the fleet
+   const_iterator end() const    {return m_ships.end();}    ///< returns the end const_iterator for the ships in the fleet
+   
+  	virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Fleet object
+   //@}
+  	
+   /** \name Mutators */ //@{
+   void              SetMoveOrders(int id);  ///< orders the fleet to move to the system with ID \a id
+   
+   void              AddShips(const std::vector<int>& ships);     ///< adds the ships with the IDs stored in \a ships to the fleet
+   std::vector<int>  RemoveShips(const std::vector<int>& ships);  ///< removes the ships with the IDs stored in \a ships from the fleet, and returns any IDs not found in the fleet
+   std::vector<int>  DeleteShips(const std::vector<int>& ships);  ///< removes and deletes the ships with the IDs stored in \a ships from the fleet, and returns any IDs not found in the fleet
+   
+   iterator begin()  {return m_ships.begin();}  ///< returns the begin iterator for the ships in the fleet
+   iterator end()    {return m_ships.end();}    ///< returns the end iterator for the ships in the fleet
+
+   virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
+   virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
+
+  	virtual void XMLMerge(const GG::XMLElement& elem); ///< updates the Fleet object from an XMLElement object that represents the updates
+   //@}
+
+private:
+   ShipIDSet   m_ships;
+   int         m_moving_to;
+};
+
+#endif // _Fleet_h_
