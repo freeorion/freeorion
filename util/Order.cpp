@@ -529,7 +529,10 @@ void FleetColonizeOrder::Execute() const
     }
     
     // verify that planet is in same position as the fleet
-    if(  (target_planet->X() != colony_fleet->X())  || target_planet->Y() != colony_fleet->Y())
+    // Using doubles here to compare WILL NOT always produce equality - the precision is dependant on hardware
+    // and can be off enough to cause inequality */
+    // since we're dealing with systems here, use int
+    if( ( (int)target_planet->GetSystem()->X() != (int)colony_fleet->X())  || (int)target_planet->GetSystem()->Y() != (int)colony_fleet->Y())
     {
         throw std::runtime_error("Fleet specified in colonization order is not in specified system.");
     }
@@ -604,8 +607,8 @@ DeleteFleetOrder::DeleteFleetOrder() :
 {
 }
 
-DeleteFleetOrder::DeleteFleetOrder(const GG::XMLElement& elem)
-: Order(elem.Child("Order"))
+DeleteFleetOrder::DeleteFleetOrder(const GG::XMLElement& elem):
+    Order(elem.Child("Order"))
 {
     if(elem.Tag() != ("DeleteFleetOrder"))
         throw std::invalid_argument("Attempted to construct DeleteFleetOrder from malformed XMLElement");
@@ -648,4 +651,3 @@ GG::XMLElement DeleteFleetOrder::XMLEncode() const
     elem.AppendChild(temp);
     return elem;
 }
-
