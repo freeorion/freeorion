@@ -197,7 +197,7 @@ protected:
    void GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates an eliptical galaxy and stores the empire homeworlds in the homeworlds vector
    void GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
-   void GenerateHomeworlds(int players, int stars, std::vector<int>& homeworlds, AdjacencyGrid& adjacency_grid);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
+   void GenerateHomeworlds(int players, std::vector<int>& homeworlds, AdjacencyGrid& adjacency_grid);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
 
    void PopulateSystems();  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
 
