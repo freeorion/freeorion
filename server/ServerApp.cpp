@@ -321,6 +321,14 @@ void ServerApp::HandleMessage(const Message& msg)
         }
         break;
 
+    case Message::REQUEST_NEW_OBJECT_ID:
+        {
+	  /* get get ID and send back to client, it's waiting for this */
+	  m_network_core.SendMessage(DispatchObjectIDMessage(msg.Sender(), GetUniverse().GenerateObjectID( ) ) );
+
+	}
+        break;
+
     default: {
         m_log_category.errorStream() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
         break;
