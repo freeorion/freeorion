@@ -14,14 +14,6 @@
 #endif
 
 
-// HUGE is being defined in some unknown place that is not
-// being used by our code.  Need to undefine it here so that
-// the use of HUGE in the PlanetSize enum doesn't puke.
-#ifdef HUGE
-#undef HUGE
-#endif
-
-
 /** a class representing a FreeOrion planet.  A Planet is a type of UniverseObject, and has some UniverseObject decorators
    attached to it as well.  See PopCenter for notes on decorators.*/
 class Planet : virtual public UniverseObject, public PopCenter, public ProdCenter
@@ -39,11 +31,11 @@ public:
                    }; // others TBD (these are from the drek spreadsheet)
 
    /** the sizes of planets in FreeOrion*/
-   enum PlanetSize {TINY,
-                    SMALL,
-                    MEDIUM,
-                    LARGE,
-                    HUGE
+   enum PlanetSize {SZ_TINY,
+                    SZ_SMALL,
+                    SZ_MEDIUM,
+                    SZ_LARGE,
+                    SZ_HUGE
                    }; // others TBD (these are from the drek spreadsheet)
 
    /** \name Structors */ //@{
