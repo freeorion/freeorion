@@ -24,7 +24,6 @@
 
 
 namespace {
-    const int MAP_MARGIN_WIDTH = 50;    // the number of pixels of system-less space around all four sides of the starfield
     const double ZOOM_STEP_SIZE = 1.25;
     const int NUM_NEBULA_TEXTURES = 5;
     const int MIN_NEBULAE = 3; // this min and max are for a 1000.0-width galaxy
@@ -33,6 +32,40 @@ namespace {
     const int SITREP_PANEL_WIDTH = 400;
     const int SITREP_PANEL_HEIGHT = 300;
 }
+
+
+////////////////////////////////////////////////
+// MapWnd::StarlaneData
+////////////////////////////////////////////////
+/* Note that an order is imposed on the two systems the starlane spans.  The "source" system is the one with the lower pointer.
+    This is so StarlaneDatas can be stored in a std::set and duplicates will not be a problem. */
+struct MapWnd::StarlaneData
+{
+    StarlaneData() {}
+    StarlaneData(const System* src_system, const System* dst_system) : 
+        src(std::min(src_system, dst_system)), 
+        dst(std::max(src_system, dst_system)) 
+        {}
+    bool operator<(const StarlaneData& rhs) const 
+    {
+        if (src != rhs.src) 
+            return src < rhs.src; 
+        if (dst != rhs.dst) 
+            return dst < rhs.dst;
+    }
+    void SetSystems(const System* src_system, const System* dst_system) 
+    {
+        src = std::max(src_system, dst_system); 
+        dst = std::min(src_system, dst_system);
+    }
+
+    const System* Src() const {return src;}
+    const System* Dst() const {return dst;}
+
+private:
+    const System* src;
+    const System* dst;
+};
 
 
 ////////////////////////////////////////////////
@@ -47,15 +80,6 @@ struct MapWnd::MovementLineData
     System* destination;
     // TODO : color, other properties(?), based on moving empire and destination, etc.
 };
-
-
-////////////////////////////////////////////////
-// MapWnd
-////////////////////////////////////////////////
-// static(s)
-const int MapWnd::NUM_BACKGROUNDS = 3;
-double    MapWnd::s_min_scale_factor = 0.5;
-double    MapWnd::s_max_scale_factor = 8.0;
 
 
 ////////////////////////////////////////////////////////////
@@ -86,12 +110,18 @@ void MapWndPopup::Close( )
     CloseClicked( );
 }
 
-////////////////////////////////////////////////////////////
-// MapWndPopup
-////////////////////////////////////////////////////////////
-
+////////////////////////////////////////////////
+// MapWnd
+////////////////////////////////////////////////
 // static(s)
+const int MapWnd::NUM_BACKGROUNDS = 3;
+double    MapWnd::s_min_scale_factor = 0.5;
+double    MapWnd::s_max_scale_factor = 8.0;
 const int MapWnd::SIDE_PANEL_WIDTH = 300;
+
+namespace {
+    const int MAP_MARGIN_WIDTH = MapWnd::SIDE_PANEL_WIDTH; // the number of pixels of system-less space around all four sides of the starfield
+}
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight(),
@@ -162,6 +192,7 @@ GG::Pt MapWnd::ClientUpperLeft() const
 bool MapWnd::Render()
 {
     RenderBackgrounds();
+    RenderStarlanes();
     RenderFleetMovementLines();
     return true;
 }
@@ -248,13 +279,13 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
                              static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5));
     }
 
-    for (unsigned int i = 0; i < m_fleet_buttons.size(); ++i) {
-        Fleet* fleet = *m_fleet_buttons[i]->Fleets().begin();
+    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
+        Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
         double x = fleet->X();
         double y = fleet->Y();
         GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor), 
                          static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor));
-        m_fleet_buttons[i]->SizeMove(button_ul.x, button_ul.y, 
+        m_moving_fleet_buttons[i]->SizeMove(button_ul.x, button_ul.y, 
                                      static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5), 
                                      static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5));
     }
@@ -293,41 +324,52 @@ void MapWnd::InitTurn(int turn_number)
 
     // set up nebulae on the first turn
     if (m_nebulae.empty()) {
-	// chosen so that the density of nebulae will be about MIN_NEBULAE to MAX_NEBULAE for a 1000.0-width galaxy
-	const double DENSITY_SCALE_FACTOR = (Universe::UniverseWidth() * Universe::UniverseWidth()) / (1000.0 * 1000.0);
-	int num_nebulae = RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
-				       static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));
-	m_nebulae.resize(num_nebulae);
-	m_nebula_centers.resize(num_nebulae);
-	SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
-	SmallIntDistType nebula_type = SmallIntDist(1, NUM_NEBULA_TEXTURES);
-	for (int i = 0; i < num_nebulae; ++i) {
-	    std::string nebula_filename = "nebula" + boost::lexical_cast<std::string>(nebula_type()) + ".png";
-	    m_nebulae[i].reset(new GG::Texture());
-	    m_nebulae[i]->Load(ClientUI::ART_DIR + nebula_filename);
-	    m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
-	}
+	    // chosen so that the density of nebulae will be about MIN_NEBULAE to MAX_NEBULAE for a 1000.0-width galaxy
+	    const double DENSITY_SCALE_FACTOR = (Universe::UniverseWidth() * Universe::UniverseWidth()) / (1000.0 * 1000.0);
+	    int num_nebulae = RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
+				                       static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));
+	    m_nebulae.resize(num_nebulae);
+	    m_nebula_centers.resize(num_nebulae);
+	    SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
+	    SmallIntDistType nebula_type = SmallIntDist(1, NUM_NEBULA_TEXTURES);
+	    for (int i = 0; i < num_nebulae; ++i) {
+	        std::string nebula_filename = "nebula" + boost::lexical_cast<std::string>(nebula_type()) + ".png";
+	        m_nebulae[i].reset(new GG::Texture());
+	        m_nebulae[i]->Load(ClientUI::ART_DIR + nebula_filename);
+	        m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
+	    }
     }
 
-    // systems
+    // systems and starlanes
     for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
         DeleteChild(m_system_icons[i]);
     }
     m_system_icons.clear();
+    m_starlanes.clear();
 
-    Universe::ObjectIDVec system_IDs = universe.FindObjectIDs<System>();
-    for (unsigned int i = 0; i < system_IDs.size(); ++i) {
-        SystemIcon* icon = new SystemIcon(system_IDs[i], m_zoom_factor);
+    std::vector<System*> systems = universe.FindObjects<System>();
+    for (unsigned int i = 0; i < systems.size(); ++i) {
+        // system
+        SystemIcon* icon = new SystemIcon(systems[i]->ID(), m_zoom_factor);
         m_system_icons.push_back(icon);
         AttachChild(icon);
         GG::Connect(icon->LeftClickedSignal(), &MapWnd::SelectSystem, this);
+
+        // system's starlanes
+        int n = 0;
+        for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
+            if (!it->second) {
+                System* dest_system = dynamic_cast<System*>(universe.Object(it->first));
+                m_starlanes.insert(StarlaneData(systems[i], dest_system));
+            }
+        }
     }        
 
     // fleets not in systems
-    for (unsigned int i = 0; i < m_fleet_buttons.size(); ++i) {
-        DeleteChild(m_fleet_buttons[i]);
+    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
+        DeleteChild(m_moving_fleet_buttons[i]);
     }
-    m_fleet_buttons.clear();
+    m_moving_fleet_buttons.clear();
     m_fleet_lines.clear();
 
     Universe::ObjectVec fleets = universe.FindObjects(IsMovingFleetFunctor());
@@ -350,7 +392,7 @@ void MapWnd::InitTurn(int turn_number)
         }
         for (std::map<int, std::vector<int> >::iterator ID_it = IDs_by_empire_color.begin(); ID_it != IDs_by_empire_color.end(); ++ID_it) {
             FleetButton* fb = new FleetButton(Empires().Lookup(ID_it->first)->Color(), ID_it->second, m_zoom_factor);
-            m_fleet_buttons.push_back(fb);
+            m_moving_fleet_buttons.push_back(fb);
             AttachChild(fb);
             SetFleetMovement(fb);
         }
@@ -457,9 +499,9 @@ void MapWnd::SelectFleet(Fleet* fleet)
             }
         }
     } else {
-        for (unsigned int i = 0; i < m_fleet_buttons.size(); ++i) {
-            if (std::find(m_fleet_buttons[i]->Fleets().begin(), m_fleet_buttons[i]->Fleets().end(), fleet) != m_fleet_buttons[i]->Fleets().end()) {
-                m_fleet_buttons[i]->LClick(GG::Pt(), 0);
+        for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
+            if (std::find(m_moving_fleet_buttons[i]->Fleets().begin(), m_moving_fleet_buttons[i]->Fleets().end(), fleet) != m_moving_fleet_buttons[i]->Fleets().end()) {
+                m_moving_fleet_buttons[i]->LClick(GG::Pt(), 0);
                 break;
             }
         }
@@ -528,6 +570,37 @@ void MapWnd::RenderBackgrounds()
                                 0,
                                 false);
     }
+}
+
+void MapWnd::RenderStarlanes()
+{
+    const double LINE_SCALE = std::max(1.0, m_zoom_factor / s_min_scale_factor);
+    const unsigned char STARLANE_ALPHA = static_cast<unsigned char>(0.6 * 255);
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LINE_SMOOTH);
+    glLineWidth(LINE_SCALE / 2.5);
+    glBegin(GL_LINES);
+
+    GG::Pt ul = ClientUpperLeft();
+    for (std::set<StarlaneData>::iterator it = m_starlanes.begin(); it != m_starlanes.end(); ++it) {
+        if (it->Src()->Owners().size() != 1 || it->Dst()->Owners().size() != 1 ||
+            *it->Src()->Owners().begin() != *it->Dst()->Owners().begin()) {
+            glColor4ub(255, 255, 255, STARLANE_ALPHA);
+        } else {
+            int empire_id = *it->Src()->Owners().begin();
+            Empire* empire = Empires().Lookup(empire_id);
+            const GG::Clr& clr = empire->Color();
+            glColor4ub(clr.r, clr.g, clr.b, STARLANE_ALPHA);
+        }
+        glVertex2d(ul.x + it->Src()->X() * m_zoom_factor, ul.y + it->Src()->Y() * m_zoom_factor);
+        glVertex2d(ul.x + it->Dst()->X() * m_zoom_factor, ul.y + it->Dst()->Y() * m_zoom_factor);
+    }
+
+    glEnd();
+    glLineWidth(1.0);
+    glDisable(GL_LINE_SMOOTH);
+    glEnable(GL_TEXTURE_2D);
 }
 
 void MapWnd::RenderFleetMovementLines()
@@ -601,14 +674,12 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
     }
 }
 
-
 void MapWnd::RegisterPopup( MapWndPopup* popup )
 {
     if (popup) {
         m_popups.push_back(popup);
     }
 }
-
 
 void MapWnd::RemovePopup( MapWndPopup* popup )
 {
@@ -618,7 +689,6 @@ void MapWnd::RemovePopup( MapWndPopup* popup )
             m_popups.erase(it);
     }
 }
-
 
 void MapWnd::DeleteAllPopups( )
 {

@@ -86,13 +86,15 @@ public:
     static const int    SIDE_PANEL_WIDTH;
 
 private:
+    struct StarlaneData;     ///< contains all the information necessary to render a single fleet movement line on the main map
     struct MovementLineData; ///< contains all the information necessary to render a single fleet movement line on the main map
 
-    void RenderBackgrounds();    //!< renders the backgrounds onto the screen
-    void RenderFleetMovementLines(); //!< renders the dashed lines indicating where each fleet is going
-    void MoveBackgrounds(const GG::Pt& move); //!< scrolls the backgrounds at their respective rates
+    void RenderBackgrounds();                    //!< renders the backgrounds onto the screen
+    void RenderStarlanes();                      //!< renders the starlanes between the systems
+    void RenderFleetMovementLines();             //!< renders the dashed lines indicating where each fleet is going
+    void MoveBackgrounds(const GG::Pt& move);    //!< scrolls the backgrounds at their respective rates
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
-    void DeleteAllPopups( ); //!< deletes all active popups.
+    void DeleteAllPopups( );                     //!< deletes all active popups.
     bool ToggleSitRep();
     bool ShowOptions();
 
@@ -107,7 +109,8 @@ private:
     SidePanel*                      m_side_panel;    //! the planet view panel on the side of the main map
     std::vector<SystemIcon*>        m_system_icons;  //! the system icons in the main map
     SitRepPanel*      	            m_sitrep_panel;  //! the sitrep panel
-    std::vector<FleetButton*>       m_fleet_buttons; //! the moving fleets in the main map
+    std::vector<FleetButton*>       m_moving_fleet_buttons; //! the moving fleets in the main map
+    std::set<StarlaneData>          m_starlanes;     //! the starlanes between systems
     std::map<Fleet*, 
              MovementLineData>      m_fleet_lines;   //! the lines used for moving fleets in the main map
     GG::Pt                          m_drag_offset;   //! the distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
@@ -126,10 +129,8 @@ private:
 };
 
 
-/**
-   Derive any window from this class to have it managed by MapWnd. For example, MapWnd will delete all open popups
-   when the end turn button is hit
-*/
+/** Derive any window from this class to have it managed by MapWnd. For example, MapWnd will delete all open popups
+   when the end turn button is hit. */
 class MapWndPopup : public CUI_Wnd
 {
 public:
