@@ -78,8 +78,8 @@ public:
 
     /** \name Mutators */ //@{
 
-    void AddOwnerExt   (int id);  ///< adds the Empire with ID \a id to the list of owners of this object, update system owners and emipre planets
-    void RemoveOwnerExt(int id);   ///< removes the Empire with ID \a id to the list of owners of this object, update system owners and emipre planets
+    virtual void AddOwner   (int id);  ///< adds the Empire with ID \a id to the list of owners of this planet, update system owners and empire planets
+    virtual void RemoveOwner(int id);   ///< removes the Empire with ID \a id to the list of owners of this planet, update system owners and empire planets
 
    /// Called during combat when a planet changes hands
     void Conquer( int conquerer ) ;
