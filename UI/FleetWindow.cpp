@@ -581,7 +581,7 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row
                 if ( planet->Owners().size() != 0 )
                     return;
 
-                HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->EmpireID(), ship->GetFleet()->ID(), planet_id ));
+                HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->EmpireID(), ship, planet_id ));
 
                 HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->SetSystem(planet->SystemID());
             }
