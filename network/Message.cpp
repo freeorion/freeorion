@@ -168,6 +168,11 @@ Message JoinAckMessage(int player_id)
    return Message(Message::JOIN_GAME, -1, player_id, Message::CORE, boost::lexical_cast<std::string>(player_id));
 }
 
+Message EmpireSetupMessage(int sender, const GG::XMLDoc& empire_setup)
+{
+   return Message(Message::EMPIRE_SETUP, sender, -1, Message::CORE, empire_setup);
+}
+
 Message EndGameMessage(int sender, int receiver)
 {
    return Message(Message::END_GAME, sender, receiver, Message::CORE, "");

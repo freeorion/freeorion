@@ -35,6 +35,7 @@ public:
    enum MessageType {SERVER_STATUS,       ///< sent to the client when requested, and when the server first recieves a connection from a client
                      HOST_GAME,           ///< sent when a client wishes to establish a game at the server
                      JOIN_GAME,           ///< sent when a client wishes to join a game being established at the server
+		     EMPIRE_SETUP,	  ///< sent when a client has decided on his empire set up
                      SAVE_GAME,           ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
                      LOAD_GAME,           ///< sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
                      GAME_START,          ///< sent to each client before the first TURN_UPDATE of a new or newly loaded game
@@ -114,6 +115,9 @@ Message HostAckMessage(int player_id);
 /** creates a JOIN_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message 
    should only be sent by the server.*/
 Message JoinAckMessage(int player_id);
+
+/** creates an EMPIRE_SETUP message.*/
+Message EmpireSetupMessage(int sender, const GG::XMLDoc& empire_setup);
 
 /** creates an END_GAME message.  Only END_GAME messages sent from the host client and the server are considered valid*/
 Message EndGameMessage(int sender, int receiver);
