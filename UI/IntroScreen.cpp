@@ -35,7 +35,7 @@ bool foo_bool = RegisterOptions(&Options);
 
 
 IntroScreen::IntroScreen() :
-    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024 + 300) / 2, 300, 200, 340, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | CUI_Wnd::CLOSABLE)
+    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024 + 300) / 2, 300, 200, 340, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE)
 {
     //create staticgraphic from the image
     m_bg_graphic = new GG::StaticGraphic(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), 
