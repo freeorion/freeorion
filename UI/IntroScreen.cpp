@@ -98,7 +98,7 @@ void IntroScreen::OnSinglePlayer()
     galaxy_wnd.Run();
     if (galaxy_wnd.EndedWithOk()) {
         //TODO: Select AIs, AI difficulty setting(s), player name, and empire
-        string player_name = "Happy Player";
+        string player_name = "Happy_Player";
         int num_AIs = 4;
 
         GG::XMLDoc game_parameters;
