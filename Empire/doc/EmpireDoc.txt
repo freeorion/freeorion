@@ -71,6 +71,12 @@
   - 6-23-2003   Nearly all methods implemented and partially tested.  
                EmpireManager::UpdateEmpireStatus() changed so it does not create empires.
                THIS IS NOT REFLECTED IN THE IDS!!!
+  - 6-29-2003   Removed Sitrep Update methods from Empire managers.  Sitrep is now
+                transmitted each turn with the empire update.
+                Added list of ship designs to Empire class.
+                Added overload to Empire::XMLEncode() method which encodes an
+                empire from the perspective of another.  (Used for turn updates
+                to transmit info which the client has access to).
 */
 
 
