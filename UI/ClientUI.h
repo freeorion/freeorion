@@ -65,13 +65,13 @@ public:
         STATE_SAVE        = 9,
         STATE_LOAD        = 10,
         STATE_SHUTDOWN    = 11
-    };//enum
+    };
 
     enum Cursor
     {
         CURSOR_DEFAULT     = 0,
         CURSOR_COLONIZE    = 1,
-    };//enum
+    };
 
     
     //! \name Structors //!@{
@@ -89,7 +89,7 @@ public:
 
     MapWnd* GetMapWnd() {return m_map_wnd;}                 //!< Returns the main map window (may be null).
 
-    const GG::SubTexture& SitRepIcon(SitRepEntry::EntryType type) const; ///< returns the icon for this sitrep entry type; returns the default icon if \a type has no associated icon
+    const GG::SubTexture& SitRepIcon(SitRepEntry::EntryType type) const; //!< returns the icon for this sitrep entry type; returns the default icon if \a type has no associated icon
 
     GG::XMLElement XMLEncode() const; //!< encodes ClientUI to XML
     //!@}
@@ -161,17 +161,11 @@ public:
     void ZoomToSystem(System* system); //!< Zooms to a particular system on the galaxy map
     void ZoomToFleet(Fleet* fleet);    //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
 
-    //! Colonization UI consists of changing the cursor and displaying side panel of system ship is orbiting
-    //! It ends when a system is clicked on or the player right-clicks to cancel
-    //! @param colony_ship_id id of colony ship which is to colonize
-    //! @return true if successful, false if object doesn't exist
-    void BeginColonizeSelection( int colony_ship_id );
-    void EndColonizeSelection( int planet_id ); //!< ends colonization selection. A planet ID of -1 cancels colonize UI
-    bool InColonizeSelection( );
+    /** brings up the SidePanel as a modal window, and allows the user to select one of the planets in system \a system_id;
+	returns -1 if no planet is selected */
+    int SelectPlanet(int system_id);
 
     void SetCursor( Cursor new_cursor ); //! < Sets the current cursor
-    
-    void HandleEvent(GG::App::EventType event, GG::Key key, Uint32 key_mods, const GG::Pt& pos, const GG::Pt& rel); //!< Handles global UI events
     //!@}
     
     static ClientUI*    GetClientUI() {return s_the_UI;}   //!< returns a pointer to the singleton ClientUI class
@@ -251,13 +245,11 @@ private:
     MapWnd*          m_map_wnd;           //!< the galaxy map
     TurnProgressWnd* m_turn_progress_wnd; //!< the turn progress window
 
+    SDL_Cursor*      m_default_cursor;              //!< used to store default cursor
+ 
     static log4cpp::Category& s_logger; //!< log4cpp logging category
     static ClientUI* s_the_UI;          //!<pointer to the one and only ClientUI object
-
-    int              m_colonize_ship_id;             //!< set when selecting planet to colonize
-    SDL_Cursor       *m_default_cursor;              ///< used to store default cursor  */
-
-};//ClientUI
+};
 
 
 #endif

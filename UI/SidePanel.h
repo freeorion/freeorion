@@ -28,27 +28,12 @@ namespace GG {class TextControl;}
 class SidePanel : public GG::Wnd
 {
 public:
-    /** \name Structors */ //@{
-    SidePanel(int x, int y, int w, int h);
-    //@}
-
-    /** \name Accessors */ //@{
-    virtual bool InWindow(const GG::Pt& pt) const;
-    //@}
-
-    /** \name Mutators */ //@{
-    virtual int  Render();
-
-    void         SetSystem(int system_id); ///< sets the system currently being viewed in the side panel
-    //@}
-
-private:
     /** a single planet's info and controls; several of these may appear at any one time in a SidePanel */
     class PlanetPanel : public GG::Wnd
     {
     public:
         /** \name Signal Types */ //@{
-        typedef boost::signal<void ()> LeftClickedSignalType; ///< emitted when the planet graphic is left clicked by the user
+        typedef boost::signal<void (int)> LeftClickedSignalType; ///< emitted when the planet graphic is left clicked by the user
         //@}
    
         /** \name Slot Types */ //@{
@@ -61,13 +46,13 @@ private:
 
         /** \name Accessors */ //@{
         virtual bool InWindow(const GG::Pt& pt) const;
+
+        LeftClickedSignalType& LeftClickedSignal() const {return m_left_clicked_sig;} ///< returns the left clicked signal object for this Planet panel
         //@}
 
         /** \name Mutators */ //@{
         virtual int Render();
         virtual int LClick(const GG::Pt& pt, Uint32 keys);
-
-        LeftClickedSignalType& LeftClickedSignal() {return m_left_clicked_sig;} ///< returns the left clicked signal object for this Planet panel
         //@}
 
     private:
@@ -83,7 +68,7 @@ private:
         CUIDropDownList*   m_construction;
         std::vector< ProdCenter::BuildType > m_construction_prod_idx;
 
-        LeftClickedSignalType   m_left_clicked_sig;
+        mutable LeftClickedSignalType m_left_clicked_sig;
 
         static GG::SubTexture m_pop_icon;
         static GG::SubTexture m_industry_icon;
@@ -92,6 +77,24 @@ private:
         static GG::SubTexture m_farming_icon;
     };
 
+    /** \name Structors */ //@{
+    SidePanel(int x, int y, int w, int h);
+    //@}
+
+    /** \name Accessors */ //@{
+    virtual bool InWindow(const GG::Pt& pt) const;
+
+    int                PlanetPanels() const        {return m_planet_panels.size();}
+    const PlanetPanel* GetPlanetPanel(int n) const {return m_planet_panels[n];}
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual int  Render();
+
+    void         SetSystem(int system_id); ///< sets the system currently being viewed in the side panel
+    //@}
+
+private:
     const System*     m_system;
 
     GG::TextControl*  m_name_text;

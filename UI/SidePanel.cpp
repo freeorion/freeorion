@@ -169,13 +169,9 @@ bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 
 int SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys) 
 {
-    m_left_clicked_sig( ); 
-
-    /* determine if planet was clicked and we want to colonize */
-    if ( InPlanet( pt ) && HumanClientApp::GetUI()->InColonizeSelection( ) )
+    if ( InPlanet( pt ) )
     {
-        /* send colonize order */
-        HumanClientApp::GetUI()->EndColonizeSelection( m_planet_id );
+	m_left_clicked_sig( m_planet_id );
     }
 
     return 1;

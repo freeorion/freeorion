@@ -24,7 +24,6 @@
 
 
 namespace {
-const int SIDE_PANEL_WIDTH = 300;
 const int MAP_MARGIN_WIDTH = 50;    // the number of pixels of system-less space around all four sides of the starfield
 const double ZOOM_STEP_SIZE = 1.25;
 const int NUM_NEBULA_TEXTURES = 5;
@@ -91,6 +90,9 @@ void MapWndPopup::Close( )
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
+
+// static(s)
+const int MapWnd::SIDE_PANEL_WIDTH = 300;
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight(),

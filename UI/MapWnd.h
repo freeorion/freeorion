@@ -84,6 +84,8 @@ public:
     void RemovePopup( MapWndPopup* popup );
     //!@}
         
+    static const int SIDE_PANEL_WIDTH;
+
 private:
     struct MovementLineData; ///< contains all the information necessary to render a single fleet movement line on the main map
 

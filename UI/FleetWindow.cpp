@@ -6,6 +6,7 @@
 #include "GGMenu.h"
 #include "GGTextControl.h"
 #include "../client/human/HumanClientApp.h"
+#include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../universe/Ship.h"
 #include "../universe/System.h"
@@ -229,11 +230,19 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row
     int ship_id = dynamic_cast<const ShipRow*>(row)->ShipID();
     Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
 
-    // is this is colony ship?
+    // is this a colony ship?
     if ( ship->Design().colonize )
     {
-        // setup colonize GUI
-        HumanClientApp::GetUI()->BeginColonizeSelection( ship_id );
+	int planet_id = HumanClientApp::GetUI()->SelectPlanet(m_fleet->SystemID());
+	if ( planet_id != -1 )
+	{
+	    // check some conditions. If this is ever the final UI for colonization, once should display a cursor to reflect
+	    // the fact colonization cannot happen. For now, clicking on an invalid system will NOT end the UI
+	    if ( dynamic_cast<const Planet*>(GetUniverse().Object( planet_id ))->Owners().size() != 0 )
+		return;
+
+	    HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->PlayerID(), ship->GetFleet( )->ID(), planet_id ));
+	}
     }
 }
 

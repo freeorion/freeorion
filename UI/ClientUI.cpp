@@ -11,6 +11,7 @@
 #include "dialogs/GGThreeButtonDlg.h"
 #include "IntroScreen.h"
 #include "MapWnd.h"
+#include "SidePanel.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
@@ -82,67 +83,177 @@ log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
 ClientUI* ClientUI::s_the_UI = 0;
 
 namespace {
-// an internal LUT of string IDs for each SitRep type
-// It's in this module becaue SitReps know nothing about how they
-// should be rendered - this is up to the client UI
-const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
-  {
-    "SITREP_MAX_INDUSTRY",
-    "SITREP_SHIP_BUILT",
-    "SITREP_TECH_RESEARCHED",
-    "SITREP_BASE_BUILT",
-    "SITREP_COMBAT_SYSTEM_WON",
-    "SITREP_COMBAT_SYSTEM_LOST",
-    "SITREP_COMBAT_SYSTEM_NO_VICTOR"
-  };
-  // command-line options
-  void AddOptions(OptionsDB& db)
-  {
-    db.Add(    "app-width", "Sets horizontal app resolution.", 1024, RangedValidator<int>(640, 1600));
-    db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(480, 1200));
-    db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
+    // an internal LUT of string IDs for each SitRep type
+    // It's in this module becaue SitReps know nothing about how they
+    // should be rendered - this is up to the client UI
+    const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
+	{
+	    "SITREP_MAX_INDUSTRY",
+	    "SITREP_SHIP_BUILT",
+	    "SITREP_TECH_RESEARCHED",
+	    "SITREP_BASE_BUILT",
+	    "SITREP_COMBAT_SYSTEM_WON",
+	    "SITREP_COMBAT_SYSTEM_LOST",
+	    "SITREP_COMBAT_SYSTEM_NO_VICTOR"
+	};
+    // command-line options
+    void AddOptions(OptionsDB& db)
+    {
+	db.Add(    "app-width", "Sets horizontal app resolution.", 1024, RangedValidator<int>(640, 1600));
+	db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(480, 1200));
+	db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
 
-    db.Add<std::string>("UI.dir", "Sets UI resource directory root.", "default");
-    db.Add<std::string>("UI.art-dir", "Sets UI art resource directory under \'[UI.dir]/art\'.", "small");
-    db.Add<std::string>("UI.font", "Sets UI font resource file.", "Vera.ttf");
-    db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
-    db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "Vera.ttf");
-    db.Add("UI.title-font-size", "Sets UI title font size.", 12, RangedValidator<int>(4, 40));
+	db.Add<std::string>("UI.dir", "Sets UI resource directory root.", "default");
+	db.Add<std::string>("UI.art-dir", "Sets UI art resource directory under \'[UI.dir]/art\'.", "small");
+	db.Add<std::string>("UI.font", "Sets UI font resource file.", "Vera.ttf");
+	db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
+	db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "Vera.ttf");
+	db.Add("UI.title-font-size", "Sets UI title font size.", 12, RangedValidator<int>(4, 40));
         
-    db.Add("UI.wnd-color.red", "Sets UI window color (red).", 0, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-color.green", "Sets UI window color (green).", 0, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-color.blue", "Sets UI window color (blue).", 0, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-color.alpha", "Sets UI window color (alpha).", 210, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-color.red", "Sets UI window color (red).", 0, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-color.green", "Sets UI window color (green).", 0, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-color.blue", "Sets UI window color (blue).", 0, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-color.alpha", "Sets UI window color (alpha).", 210, RangedValidator<int>(0, 255));
         
-    db.Add("UI.text-color.red", "Sets UI text color (red).", 255, RangedValidator<int>(0, 255));
-    db.Add("UI.text-color.green", "Sets UI text color (green).", 255, RangedValidator<int>(0, 255));
-    db.Add("UI.text-color.blue", "Sets UI text color (blue).", 255, RangedValidator<int>(0, 255));
-    db.Add("UI.text-color.alpha", "Sets UI text color (alpha).", 255, RangedValidator<int>(0, 255));
+	db.Add("UI.text-color.red", "Sets UI text color (red).", 255, RangedValidator<int>(0, 255));
+	db.Add("UI.text-color.green", "Sets UI text color (green).", 255, RangedValidator<int>(0, 255));
+	db.Add("UI.text-color.blue", "Sets UI text color (blue).", 255, RangedValidator<int>(0, 255));
+	db.Add("UI.text-color.alpha", "Sets UI text color (alpha).", 255, RangedValidator<int>(0, 255));
 
-    db.Add("UI.ctrl-color.red", "Sets UI control color (red).", 30, RangedValidator<int>(0, 255));
-    db.Add("UI.ctrl-color.green", "Sets UI control color (green).", 30, RangedValidator<int>(0, 255));
-    db.Add("UI.ctrl-color.blue", "Sets UI control color (blue).", 30, RangedValidator<int>(0, 255));
-    db.Add("UI.ctrl-color.alpha", "Sets UI control color (alpha).", 255, RangedValidator<int>(0, 255));
+	db.Add("UI.ctrl-color.red", "Sets UI control color (red).", 30, RangedValidator<int>(0, 255));
+	db.Add("UI.ctrl-color.green", "Sets UI control color (green).", 30, RangedValidator<int>(0, 255));
+	db.Add("UI.ctrl-color.blue", "Sets UI control color (blue).", 30, RangedValidator<int>(0, 255));
+	db.Add("UI.ctrl-color.alpha", "Sets UI control color (alpha).", 255, RangedValidator<int>(0, 255));
 
-    db.Add("UI.wnd-outer-border-color.red", "Sets UI outer border color (red).", 64, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-outer-border-color.green", "Sets UI outer border color (green).", 64, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-outer-border-color.blue", "Sets UI outer border color (blue).", 64, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-outer-border-color.alpha", "Sets UI outer border color (alpha).", 255, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-outer-border-color.red", "Sets UI outer border color (red).", 64, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-outer-border-color.green", "Sets UI outer border color (green).", 64, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-outer-border-color.blue", "Sets UI outer border color (blue).", 64, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-outer-border-color.alpha", "Sets UI outer border color (alpha).", 255, RangedValidator<int>(0, 255));
 
-    db.Add("UI.wnd-border-color.red", "Sets UI border color (red).", 0, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-border-color.green", "Sets UI border color (green).", 0, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-border-color.blue", "Sets UI border color (blue).", 0, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-border-color.alpha", "Sets UI border color (alpha).", 255, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-border-color.red", "Sets UI border color (red).", 0, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-border-color.green", "Sets UI border color (green).", 0, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-border-color.blue", "Sets UI border color (blue).", 0, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-border-color.alpha", "Sets UI border color (alpha).", 255, RangedValidator<int>(0, 255));
 
-    db.Add("UI.wnd-inner-border-color.red", "Sets UI inner border color (red).", 255, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-inner-border-color.green", "Sets UI inner border color (green).", 255, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-inner-border-color.blue", "Sets UI inner border color (blue).", 255, RangedValidator<int>(0, 255));
-    db.Add("UI.wnd-inner-border-color.alpha", "Sets UI inner border color (alpha).", 255, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-inner-border-color.red", "Sets UI inner border color (red).", 255, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-inner-border-color.green", "Sets UI inner border color (green).", 255, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-inner-border-color.blue", "Sets UI inner border color (blue).", 255, RangedValidator<int>(0, 255));
+	db.Add("UI.wnd-inner-border-color.alpha", "Sets UI inner border color (alpha).", 255, RangedValidator<int>(0, 255));
 
-    db.Add("UI.tooltip-delay", "Sets UI tooltip popup delay, in ms.", 1000, RangedValidator<int>(0, 3000));
-    db.Add<std::string>("UI.stringtable-filename", "Sets UI string table filename.", "eng_stringtable.txt");
-  }
-  bool temp_bool = RegisterOptions(&AddOptions);
+	db.Add("UI.tooltip-delay", "Sets UI tooltip popup delay, in ms.", 1000, RangedValidator<int>(0, 3000));
+	db.Add<std::string>("UI.stringtable-filename", "Sets UI string table filename.", "eng_stringtable.txt");
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
+
+    static SDL_Cursor *createColonizeCursor( )
+    {
+	/* cursor code taken from SDL examples */
+
+	static const char *image[] = {
+
+	    /* width height num_colors chars_per_pixel */
+	    "    32    32        3            1",
+	    /* colors */
+	    "X c #000000",
+	    ". c #ffffff",
+	    "  c None",
+	    /* pixels */
+	    "X                               ",
+	    "XX                              ",
+	    "X.X                             ",
+	    "X..X                            ",
+	    "X...X                           ",
+	    "X....X         XXXXXXXXX        ",
+	    "X.....X        X.......X        ",
+	    "X......X       XXXXXXX.X        ",
+	    "X.......X            X.X        ",
+	    "X........X           X.X        ",
+	    "X.....XXXXX          X.X        ",
+	    "X..X..X           XXXX.X        ",
+	    "X.X X..X          X....X        ",
+	    "XX  X..X          X.XXXX        ",
+	    "X    X..X         X.X           ",
+	    "     X..X         XXX           ",
+	    "      X..X                      ",
+	    "      X..X        XXXX          ",
+	    "       XX         X..X          ",
+	    "                  XXXX          ",
+	    "                                ",
+	    "                                ",
+	    "                                ",
+	    "                                ",
+	    "                                ",
+	    "                                ",
+	    "                                ",
+	    "                                ",
+	    "                                ",
+	    "                                ",
+	    "                                ",
+	    "                                ",
+	    "0,0"
+	};
+
+	int i, row, col;
+	Uint8 data[4*32];
+	Uint8 mask[4*32];
+	int hot_x, hot_y;
+
+	i = -1;
+	for ( row=0; row<32; ++row ) {
+	    for ( col=0; col<32; ++col ) {
+		if ( col % 8 ) {
+		    data[i] <<= 1;
+		    mask[i] <<= 1;
+		} else {
+		    ++i;
+		    data[i] = mask[i] = 0;
+		}
+		switch (image[4+row][col]) {
+		case 'X':
+		    data[i] |= 0x01;
+		    mask[i] |= 0x01;
+		    break;
+		case '.':
+		    mask[i] |= 0x01;
+		    break;
+		case ' ':
+		    break;
+		}
+	    }
+	}
+	sscanf(image[4+row], "%d,%d", &hot_x, &hot_y);
+
+	return( SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y) );
+    }
+
+    class PlanetPicker : public GG::Wnd
+    {
+    public:
+	PlanetPicker(int system_id) : 
+	    Wnd(0, 0, GG::App::GetApp()->AppWidth() - 1, GG::App::GetApp()->AppHeight() - 1, CLICKABLE | MODAL),
+	    m_side_panel(new SidePanel(GG::App::GetApp()->AppWidth() - MapWnd::SIDE_PANEL_WIDTH, 0, MapWnd::SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight())),
+	    m_planet_selected(-1)
+	{
+	    m_side_panel->SetSystem(system_id);
+	    AttachChild(m_side_panel);
+	    for (int i = 0; i < m_side_panel->PlanetPanels(); ++i) {
+		GG::Connect(m_side_panel->GetPlanetPanel(i)->LeftClickedSignal(), &PlanetPicker::PlanetClicked, this);
+	    }
+	    HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_COLONIZE);
+	}
+	~PlanetPicker() {HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_DEFAULT);}
+	int PlanetPicked() const {return m_planet_selected;}
+	int LButtonUp(const GG::Pt& pt, Uint32 keys) {m_done = true; return 1;}
+	int LClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
+	int RButtonUp(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
+	int RClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
+
+    private:
+	void PlanetClicked(int planet_id) {m_planet_selected = planet_id; m_done = true;}
+
+	SidePanel*       m_side_panel;
+	int              m_planet_selected;
+    };
 }
 
 
@@ -155,9 +266,7 @@ ClientUI::ClientUI() :
     m_string_table(0),
     m_intro_screen(0),
     m_map_wnd(0),
-    m_turn_progress_wnd(0),
-    m_colonize_ship_id(-1),
-    m_default_cursor(0)
+    m_turn_progress_wnd(0)
 {
     using namespace GG;
 
@@ -520,142 +629,12 @@ void ClientUI::HideAllWindows()
         m_turn_progress_wnd->Hide();
 }
 
-
-void ClientUI::BeginColonizeSelection( int colony_ship_id )
+int ClientUI::SelectPlanet(int system_id)
 {
-    m_colonize_ship_id = colony_ship_id;
-
-    /* determine which system ship is orbiting and display side panel */
-    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(m_colonize_ship_id));
-    
-    /* Zoom to system */
-    m_map_wnd->SelectSystem(  ship->GetFleet()->SystemID( ) );
-
-    /* set UI cursor */
-    SetCursor( CURSOR_COLONIZE );
+    PlanetPicker planet_picker(system_id);
+    planet_picker.Run();
+    return planet_picker.PlanetPicked();
 }
-
-
-void ClientUI::EndColonizeSelection( int planet_id  )
-{
-    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(m_colonize_ship_id));
-
-    if ( planet_id != -1 )
-    {
-        // check some conditions. If this is ever the final UI for colonization, once should display a cursor to reflect
-        // the fact colonization cannot happen. For now, clicking on an invalid system will NOT end the UI
-        if( dynamic_cast<const Planet*>(GetUniverse().Object( planet_id ))->Owners().size() != 0 )
-        {
-            return;
-        }
-        HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->PlayerID(), ship->GetFleet( )->ID(), planet_id ));
-    }
-    m_colonize_ship_id = -1;
-
-    /* clear UI cursor */
-    SetCursor( CURSOR_DEFAULT );
-}
-
-
-bool ClientUI::InColonizeSelection( )
-{
-    if ( m_colonize_ship_id != -1 ) 
-        return( true ); 
-    else
-        return( false ); 
-}
-
-
-void ClientUI::HandleEvent(GG::App::EventType event, GG::Key key, Uint32 key_mods, const GG::Pt& pos, const GG::Pt& rel)
-{
-    if ( event == GG::App::RPRESS && InColonizeSelection( ) )
-    {
-        /* cancel selection mode */
-        EndColonizeSelection( -1 );
-    }
-}
-
-static SDL_Cursor *createColonizeCursor( )
-{
-    /* cursor code taken from SDL examples */
-
-    static const char *image[] = {
-
-  /* width height num_colors chars_per_pixel */
-  "    32    32        3            1",
-  /* colors */
-  "X c #000000",
-  ". c #ffffff",
-  "  c None",
-  /* pixels */
-  "X                               ",
-  "XX                              ",
-  "X.X                             ",
-  "X..X                            ",
-  "X...X                           ",
-  "X....X         XXXXXXXXX        ",
-  "X.....X        X.......X        ",
-  "X......X       XXXXXXX.X        ",
-  "X.......X            X.X        ",
-  "X........X           X.X        ",
-  "X.....XXXXX          X.X        ",
-  "X..X..X           XXXX.X        ",
-  "X.X X..X          X....X        ",
-  "XX  X..X          X.XXXX        ",
-  "X    X..X         X.X           ",
-  "     X..X         XXX           ",
-  "      X..X                      ",
-  "      X..X        XXXX          ",
-  "       XX         X..X          ",
-  "                  XXXX          ",
-  "                                ",
-  "                                ",
-  "                                ",
-  "                                ",
-  "                                ",
-  "                                ",
-  "                                ",
-  "                                ",
-  "                                ",
-  "                                ",
-  "                                ",
-  "                                ",
-  "0,0"
-    };
-
-  int i, row, col;
-  Uint8 data[4*32];
-  Uint8 mask[4*32];
-  int hot_x, hot_y;
-
-  i = -1;
-  for ( row=0; row<32; ++row ) {
-    for ( col=0; col<32; ++col ) {
-      if ( col % 8 ) {
-        data[i] <<= 1;
-        mask[i] <<= 1;
-      } else {
-        ++i;
-        data[i] = mask[i] = 0;
-      }
-      switch (image[4+row][col]) {
-        case 'X':
-          data[i] |= 0x01;
-          mask[i] |= 0x01;
-          break;
-        case '.':
-          mask[i] |= 0x01;
-          break;
-        case ' ':
-          break;
-      }
-    }
-  }
-  sscanf(image[4+row], "%d,%d", &hot_x, &hot_y);
-
-  return( SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y) );
-}
-
 
 void ClientUI::SetCursor( Cursor new_cursor_type )
 {
@@ -704,5 +683,4 @@ void ClientUI::SetCursor( Cursor new_cursor_type )
     {
         SDL_FreeCursor( old_cursor );
     }
-
 }
