@@ -150,8 +150,8 @@ void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/
 
 void HumanClientApp::StartMusic(void)
 {
-    HumanClientApp::GetApp()->StopMusic();
-    HumanClientApp::GetApp()->PlayMusic(ClientUI::MUSIC_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1, 0, 0.0);
+    StopMusic();
+    PlayMusic(ClientUI::MUSIC_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1, 0, 0.0);
 }
 
 void HumanClientApp::StopMusic(void)
@@ -229,34 +229,6 @@ void HumanClientApp::FreeAllSounds()
 
 bool HumanClientApp::LoadSinglePlayerGame()
 {
-    if (!HumanClientApp::GetApp()->NetworkCore().Connected()) {
-        if (!GetOptionsDB().Get<bool>("force-external-server"))
-            HumanClientApp::GetApp()->StartServer();
-
-        bool failed = false;
-        int start_time = GG::App::GetApp()->Ticks();
-        const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
-        while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) {
-            if (SERVER_CONNECT_TIMEOUT < GG::App::GetApp()->Ticks() - start_time) {
-                ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"));
-                failed = true;
-                break;
-            }
-        }
-
-        if (failed) {
-            KillServer();
-            return false;
-        }
-
-        // HACK!  send the multiplayer form of the HostGameMessage, since it establishes us as the host, and the single-player 
-        // LOAD_GAME message will establish us as a single-player game
-        GG::XMLDoc parameters;
-        parameters.root_node.AppendChild(GG::XMLElement("host_player_name", std::string("Happy_Player")));
-        if (!failed)
-            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(HumanClientApp::GetApp()->PlayerID(), parameters));
-    }
-
     std::vector<std::pair<std::string, std::string> > save_file_types;
     save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("INGAMEOPTIONS_SAVE_FILES"), "*.sav"));
 
@@ -268,11 +240,42 @@ bool HumanClientApp::LoadSinglePlayerGame()
         if (!dlg.Result().empty()) {
             filename = *dlg.Result().begin();
 
+            if (!NetworkCore().Connected()) {
+                if (!GetOptionsDB().Get<bool>("force-external-server"))
+                    StartServer();
+
+                bool failed = false;
+                int start_time = Ticks();
+                const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
+                while (!NetworkCore().ConnectToLocalhostServer()) {
+                    if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
+                        ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"));
+                        failed = true;
+                        break;
+                    }
+                }
+
+                if (failed) {
+                    KillServer();
+                    return false;
+                }
+            }
+
+            m_game_started = false;
+            m_player_id = NetworkCore::HOST_PLAYER_ID;
+            m_empire_id = -1;
+            m_player_name = "Happy_Player";
+            m_ui->GetMapWnd()->CloseAllPopups();
             m_ui->ScreenLoad();
-            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostLoadGameMessage(HumanClientApp::GetApp()->PlayerID(), filename));
+
+            // HACK!  send the multiplayer form of the HostGameMessage, since it establishes us as the host, and the single-player 
+            // LOAD_GAME message will establish us as a single-player game
+            GG::XMLDoc parameters;
+            parameters.root_node.AppendChild(GG::XMLElement("host_player_name", std::string("Happy_Player")));
+            NetworkCore().SendMessage(HostGameMessage(NetworkCore::HOST_PLAYER_ID, parameters));
+            NetworkCore().SendMessage(HostLoadGameMessage(NetworkCore::HOST_PLAYER_ID, filename));
+
             return true;
-        } else {
-            KillServer();
         }
     } catch (const GG::FileDlg::InitialDirectoryDoesNotExistException& e) {
         ClientUI::MessageBox(e.Message());
@@ -462,7 +465,7 @@ void HumanClientApp::Initialize()
     m_ui->ScreenIntro();    //start the first screen; the UI takes over from there.
 
     if (!(GetOptionsDB().Get<bool>("music-off")))
-        HumanClientApp::GetApp()->StartMusic();
+        StartMusic();
 }
 
 void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
@@ -829,7 +832,7 @@ void HumanClientApp::Autosave(int turn_number, bool new_game)
 
         Message response;
         bool save_succeeded = 
-            HumanClientApp::GetApp()->NetworkCore().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), "save/" + save_filename), response);
+            NetworkCore().SendSynchronousMessage(HostSaveGameMessage(PlayerID(), "save/" + save_filename), response);
         if (!save_succeeded)
             Logger().errorStream() << "HumanClientApp::Autosave : An error occured while attempting to save the autosave file \"" << save_filename << "\"";
     }
