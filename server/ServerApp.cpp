@@ -10,6 +10,9 @@
 #include <log4cpp/FileAppender.hh>
 #include <boost/lexical_cast.hpp>
 
+// for Videodriver setenv-hack
+#include <stdlib.h>
+
 #include <ctime>
 
 ////////////////////////////////////////////////
@@ -273,6 +276,10 @@ void ServerApp::Run()
 
 void ServerApp::SDLInit()
 {
+   /* Dirty hack to active the dummy video handler of SDL
+    * if the user has already set SDL_VIDEODRIVER, we trust him */
+   setenv("SDL_VIDEODRIVER","dummy",0);
+ 
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
       Logger().errorStream() << "SDL initialization failed: " << SDL_GetError();
       Exit(1);
