@@ -877,12 +877,12 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
                 ++num_planets_in_system;
 
             if (planet_size == Planet::SZ_ASTEROIDS) {
-                idx = Planet::PT_ASTEROIDS;
+                idx = PT_ASTEROIDS;
             } else if (planet_size == Planet::SZ_GASGIANT) {
-                idx = Planet::PT_GASGIANT;
+                idx = PT_GASGIANT;
             } else {
                 // make another series of modified rolls for planet type
-                for (unsigned int i = 0; i < Planet::MAX_PLANET_TYPE; ++i) {
+                for (unsigned int i = 0; i < MAX_PLANET_TYPE; ++i) {
                     int roll = g_hundred_dist() + planet_size_mod_to_planet_type_dist[planet_size][i] + slot_mod_to_planet_type_dist[orbit][i] + 
                         star_color_mod_to_planet_type_dist[system->Star()][i];
                     if (max_roll < roll) {
@@ -891,11 +891,11 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
                     }
                 }
             }
-            Planet::PlanetType planet_type = Planet::PlanetType(idx);
+            PlanetType planet_type = PlanetType(idx);
 
-            if (planet_type == Planet::PT_ASTEROIDS)
+            if (planet_type == PT_ASTEROIDS)
                 planet_size = Planet::SZ_ASTEROIDS;
-            if (planet_type == Planet::PT_GASGIANT)
+            if (planet_type == PT_GASGIANT)
                 planet_size = Planet::SZ_GASGIANT;
 
             Planet* planet = new Planet(planet_type, planet_size);
@@ -1202,7 +1202,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
             planet_name = system->Name() + " " + RomanNumber(home_orbit + 1);
         }
 
-        Planet* planet = new Planet(Planet::PT_TERRAN, Planet::SZ_LARGE);
+        Planet* planet = new Planet(PT_TERRAN, Planet::SZ_LARGE);
         planet_id = Insert(planet);
         planet->Rename(planet_name);
         system->Insert(planet, home_orbit);
@@ -1250,7 +1250,6 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
       home_planet->AdjustPop(20);
       home_planet->SetWorkforce(20);
       home_planet->SetMaxWorkforce( home_planet->MaxPop() );
-      home_planet->AdjustIndustry(0.10);
       home_planet->AdjustDefBases(3);
 
       // create the empire's initial ship designs
