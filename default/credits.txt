@@ -1,4 +1,68 @@
-FreeOrion Credits - Version 0.1
-Mark Saward tyreth@freeorion.org
-Joseph Bissonnette private@not.yet Programming Lead
-Zach Laine private@not.yet
+FreeOrion Credits - Release 0.1
+
+Admin
+-----
+
+  FreeOrion Lead:
+    Mark Saward - <tyreth AT freeorion DOT org>
+
+  Programming Lead:
+    Zach Laine
+
+  Game Design Lead:
+    Samuel Knowlton
+
+  Graphics Lead:
+    Anton Ruonala
+
+  Audio Lead:
+    Kenneth Welch
+
+Contributors
+-----
+
+  Programming:
+    Zach Laine
+    Joseph Bissonnette
+    Dennis Brakhane
+    Joshua Barczak
+    Andrew Emmons
+    Mark Saward
+    Ronald Nölte
+    Tony Casale
+    Michael J. Agostini
+
+  Game Design:
+    Samuel Knowlton
+    Krum Stanoev
+    "Drek"
+    "Nightfish"
+    "jbarc1"
+    "utilae"
+    "skdiw"
+    "Krikkitone"
+    "Impaler"
+    "emrys"
+    Andreas Bernard
+    Teal Ablaze
+    "Powercrazy"
+    Joseph Bissonnette
+    Zach Laine
+    Mark Saward
+
+  Graphics:
+    Anton Ruonala
+    "Drek"
+    "Ka"
+    Mark Saward
+    Alex Kaludis
+    "Obiwan"
+    "Extremepumpkin"
+    "Zanzibar"
+
+  Audio:
+    Kenneth Welch
+    "Guiguibaah"
+    "Mejoff"
+    "Run_Lugge"
+    "_Robbob_"
