@@ -17,7 +17,7 @@ Special::Special(const GG::XMLElement& elem)
 
     m_name = elem.Child("name").Text();
     m_description = elem.Child("description").Text();
-    m_effects = new Effect::EffectsGroup(elem.Child("description").Child("EffectsGroup"));
+    m_effects = new Effect::EffectsGroup(elem.Child("EffectsGroup"));
 }
 
 Special::~Special()
