@@ -662,6 +662,10 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                 m_specials_freq = Universe::SpecialsFreqency(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("specials_freq").Text()));
                 CreateAIClients(doc.root_node);
                 g_load_doc.root_node = GG::XMLElement();
+                g_lobby_data.players.clear();
+                g_lobby_data.players.push_back(PlayerSetupData());
+                g_lobby_data.players.back().empire_name = doc.root_node.Child("empire_name").Text();
+                g_lobby_data.players.back().empire_color = GG::Clr(doc.root_node.Child("empire_color").Child("GG::Clr"));
                 m_state = SERVER_GAME_SETUP;
                 if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
                     m_network_core.SendMessage(HostAckMessage(player_id));
