@@ -3,11 +3,13 @@
 #include "../../UI/CUIControls.h"
 #include "../../network/Message.h"
 #include "../../universe/Planet.h"
+#include "../../util/Process.h"
 #include "../../util/SitRepEntry.h"
 
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
+#include <sstream>
 
 namespace {
 GG::Wnd* NewCUIButton(const GG::XMLElement& elem)         {return new CUIButton(elem);}
@@ -49,6 +51,18 @@ HumanClientApp::~HumanClientApp()
     for (std::map<std::string, Mix_Chunk*>::iterator it = m_sounds.begin(); it != m_sounds.end(); ++it) {
         Mix_FreeChunk(it->second);
     }
+}
+
+void HumanClientApp::StartServer()
+{
+    const std::string SERVER_CLIENT_EXE = "freeoriond.exe";
+    std::vector<std::string> args(1, SERVER_CLIENT_EXE);
+    m_server_process = Process(SERVER_CLIENT_EXE, args);
+}
+
+void HumanClientApp::KillServer()
+{
+    m_server_process.Kill();
 }
 
 void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/* = 0*/, double position/* = 0.0*/)
@@ -242,11 +256,6 @@ void HumanClientApp::SDLInit()
         Exit(1);
     }
   
-    //    if (TTF_Init() < 0) {
-    //       Logger().errorStream() << "TTF initialization failed: " << TTF_GetError();
-    //       Exit(1);
-    //    }
-
     if (FE_Init() < 0) {
         Logger().errorStream() << "FastEvents initialization failed: " << FE_GetError();
         Exit(1);
@@ -290,16 +299,6 @@ void HumanClientApp::GLInit()
     gluPerspective(50.0, ratio, 1.0, 10.0);
 
     Logger().debugStream() << "GLInit() complete.";
-    /*
-      Planet* planet_p = new Planet(Planet::RADIATED, Planet::SMALL);
-      printf("created planet\n");
-      delete planet_p;
-      printf("deleted planet\n");
-
-      BuildSitRepEntry* build_sit_rep = new BuildSitRepEntry(SHIP_BUILT, 100, 50);
-      printf("%s\n", build_sit_rep->SummaryText().c_str());
-      delete build_sit_rep;
-    */
 }
 
 void HumanClientApp::Initialize()
@@ -399,7 +398,6 @@ void HumanClientApp::SDLQuit()
     FinalCleanup();
     NET2_Quit();
     FE_Quit();
-    //   TTF_Quit();
     SDLNet_Quit();
     Mix_CloseAudio();   
     SDL_Quit();
@@ -409,26 +407,49 @@ void HumanClientApp::SDLQuit()
 void HumanClientApp::HandleMessageImpl(const Message& msg)
 {
     switch (msg.Type()) {
-    case Message::SERVER_STATUS:
-        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS";
+    case Message::SERVER_STATUS: {
+        std::stringstream stream(msg.GetText());
+        GG::XMLDoc doc;
+        doc.ReadDoc(stream);
+        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS (status code " << 
+            doc.root_node.Child("server_state").Attribute("value") << ")";
         break;
-    case Message::HOST_GAME:
+    } 
+    case Message::HOST_GAME: {
         if (msg.Sender() == -1 && msg.GetText() == "ACK")
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received HOST_GAME acknowledgement";
         break;
-    case Message::JOIN_GAME:
+    } 
+    case Message::JOIN_GAME: {
         if (msg.Sender() == -1) {
             if (m_player_id == -1) {
                 m_player_id = boost::lexical_cast<int>(msg.GetText());
-                Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received JOIN_GAME acknowledgement";
+                Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received JOIN_GAME acknowledgement "
+                    "(joined as player " << m_player_id << ")";
             } else {
-                Logger().errorStream() << "HumanClientApp::HandleMessageImpl : Received erroneous JOIN_GAME acknowledgement when already in a game";
+                Logger().errorStream() << "HumanClientApp::HandleMessageImpl : Received erroneous JOIN_GAME acknowledgement when "
+                    "already in a game";
             }
         }
         break;
-    default:
+    }
+    case Message::GAME_START: {
+        if (msg.Sender() == -1) {
+            std::stringstream stream(msg.GetText());
+            GG::XMLDoc doc;
+            doc.ReadDoc(stream);
+            m_universe.SetUniverse(doc.root_node.Child("ClientUniverse"));
+// TODO: set empire data as well
+            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
+                "starting player turn...";
+            m_ui->ScreenMap();
+        }
+        break;
+    }
+    default: {
         Logger().errorStream() << "HumanClientApp::HandleMessageImpl : Received unknown Message type code " << msg.Type();
         break;
+    }
     }
 }
 
