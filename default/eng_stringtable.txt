@@ -165,6 +165,8 @@ GSETUP_ELLIPTICAL
 Elliptical
 GSETUP_IRREGULAR
 Irregular
+GSETUP_RING
+Ring
 
 #Error messages####
 
