@@ -27,6 +27,15 @@ int OrderSet::IssueOrder(Order* order)
     return retval;
 }
 
+
+int OrderSet::AddOrder(Order* order)
+{
+    int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
+    m_orders[retval] = order;
+    return retval;    
+}
+
+
 bool OrderSet::RecindOrder(int order)
 {
     // this is disabled until it decided whether or not we'll need it

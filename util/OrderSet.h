@@ -50,6 +50,10 @@ public:
         \warning The OrderSet assumes that the Order is allocated on the heap, and takes ownership of it.  Do not delete any 
         Order* passed to OrderSet.*/
     int            IssueOrder(Order* order);
+
+    /** adds order order to set without executing it.  Order* passed to OrderSet.*/
+    int            AddOrder(Order* order);
+
    
     bool           RecindOrder(int order);    ///< removes the order from the OrderSet; returns true on success, false if there was no such order or the order is non-recindable
     void           Reset(); ///< clears all orders; should be called at the beginning of a new turn
