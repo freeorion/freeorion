@@ -15,8 +15,7 @@ using boost::lexical_cast;
 // static(s)
 const double UniverseObject::INVALID_POSITION =  -100000.0;
 const int    UniverseObject::INVALID_OBJECT_ID = -1;
-const int    UniverseObject::MIN_SHIP_ID       = 1900000000;
-const int    UniverseObject::MAX_SHIP_ID       = 2000000000;
+const int    UniverseObject::MAX_ID            = 2000000000;
 
 UniverseObject::UniverseObject() : 
    m_id(INVALID_OBJECT_ID),
