@@ -114,7 +114,10 @@ public:
                             GG::Clr color, 
                             Empire::ControlStatus control);
 
-  
+    /** \name Constants */ //@{
+    /// Tag for empire update XMLElements
+    static const std::string EMPIRE_UPDATE_TAG;
+    
 protected:
   
     /// Used by derived classes to add an empire to the set of empires.
@@ -140,15 +143,6 @@ protected:
     */
     void RemoveAllEmpires();
     
-
-    
-    /** \name Constants */ //@{
-    /// Tag for empire update XMLElements
-    static const std::string EMPIRE_UPDATE_TAG;
-    
-    /// Tag for Sitrep XMLElements
-    static const std::string SITREP_UPDATE_TAG;
-    //@}
     
 private:
     
