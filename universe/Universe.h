@@ -50,7 +50,6 @@ public:
                 ELLIPTICAL,    ///< an elliptical galaxy
                 IRREGULAR,     ///< an irregular galaxy
 				RING,          ///< a ring galaxy
-                FROM_FILE,     ///< a galaxy loaded from a file
                 GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
                };
 
@@ -72,10 +71,18 @@ public:
     enum StarlaneFreqency {LANES_NONE, 
                            LANES_FEW, 
                            LANES_SOME, 
-                           LANES_AVERAGE, 
+                           LANES_SEVERAL, 
                            LANES_MANY, 
                            LANES_VERY_MANY,
                            NUM_STARLANE_FREQENCIES    // keep this last, the number of starlane frequency options
+                          };
+
+    /** types of starlane frequencies */
+    enum SpecialsFreqency {SPECIALS_NONE, 
+                           SPECIALS_RARE, 
+                           SPECIALS_UNCOMMON, 
+                           SPECIALS_COMMON, 
+                           NUM_SPECIALS_FREQENCIES    // keep this last, the number of specials frequency options
                           };
 
     /** the value passed to XMLEncode() when the entire object is desired, not just the portion visible to one empire */
@@ -175,9 +182,8 @@ public:
     bool               InsertID(UniverseObject* obj, int id );
 
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
-    void              CreateUniverse(Shape shape, int size, int players, int ai_players);
-    /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses an arbitrary bitmap image to determine galaxy shape. */
-    void              CreateUniverse(const std::string& map_file, int size, int players, int ai_players);
+    void              CreateUniverse(int size, Shape shape, Age age, StarlaneFreqency starlane_freq, PlanetDensity planet_density, 
+                                     SpecialsFreqency specials_freq, int players, int ai_players);
 
     /** removes the object with ID number \a id from the universe, and returns it; returns 0 if there is no such object*/
     UniverseObject*   Remove(int id);
@@ -271,11 +277,7 @@ protected:
         std::map<std::string, Generator> m_generators;
     };
 
-    void GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid);  ///< creates a spiral galaxy and stores the empire homeworlds in the homeworlds vector
-    void GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates an eliptical galaxy and stores the empire homeworlds in the homeworlds vector
-    void GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates a cluster galaxy and stores the empire homeworlds in the homeworlds vector
-    void GenerateRingGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates a ring galaxy and stores the empire homeworlds in the homeworlds vector
-    void GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
+    void GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
     void PopulateSystems(Universe::PlanetDensity density);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
     void GenerateStarlanes(StarlaneFreqency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated

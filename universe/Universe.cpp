@@ -448,8 +448,8 @@ namespace {
         return system;
     }
 
-    void GenerateStarField(Universe &universe, const std::vector<std::pair<double, double> > &positions, Universe::AdjacencyGrid& adjacency_grid, 
-                           double adjacency_box_size, Universe::Age age = Universe::AGE_MATURE)
+    void GenerateStarField(Universe &universe, Universe::Age age, const std::vector<std::pair<double, double> > &positions, 
+                           Universe::AdjacencyGrid& adjacency_grid, double adjacency_box_size)
     {
         // generate star field
         for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
@@ -663,7 +663,8 @@ GG::XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
     return retval;
 }
 
-void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players)
+void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFreqency starlane_freq, PlanetDensity planet_density, 
+                              SpecialsFreqency specials_freq, int players, int ai_players)
 {
     // wipe out anything present in the object map
     for (ObjectMap::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr)
@@ -682,47 +683,42 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
 
     s_universe_width = size * 1000.0 / 150.0; // chosen so that the width of a medium galaxy is 1000.0
 
+    std::vector<std::pair<double,double> > positions;
+
     // generate the stars
     switch (shape) {
     case SPIRAL_2:
-        GenerateSpiralGalaxy(2, size, adjacency_grid);
-        break;
     case SPIRAL_3:
-        GenerateSpiralGalaxy(3, size, adjacency_grid);
-        break;
     case SPIRAL_4:
-        GenerateSpiralGalaxy(4, size, adjacency_grid);
+        SpiralGalaxyCalcPositions(positions, 2 + (shape - SPIRAL_2), size, s_universe_width, s_universe_width);
+        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
         break;
     case CLUSTER:
-        GenerateClusterGalaxy(size, adjacency_grid);
+        // TODO: randomize clusters, instead of using 5
+        ClusterGalaxyCalcPositions(positions, 5, size, s_universe_width, s_universe_width);
+        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
         break;
     case ELLIPTICAL:
-        GenerateEllipticalGalaxy(size, adjacency_grid);
+        EllipticalGalaxyCalcPositions(positions, size, s_universe_width, s_universe_width);
+        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
         break;
     case IRREGULAR:
-        GenerateIrregularGalaxy(size, adjacency_grid);
+        GenerateIrregularGalaxy(size, age, adjacency_grid);
         break;
 	case RING:
-		GenerateRingGalaxy(size, adjacency_grid);
+        RingGalaxyCalcPositions(positions, size, s_universe_width, s_universe_width);
+        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
         break;
     default:
         Logger().errorStream() << "Universe::Universe : Unknown galaxy shape: "<< shape << ".  Using IRREGULAR as default.";
-        GenerateIrregularGalaxy(size, adjacency_grid);
+        GenerateIrregularGalaxy(size, age, adjacency_grid);
     }
 
-    PopulateSystems(PD_AVERAGE);
-    GenerateStarlanes(LANES_AVERAGE, adjacency_grid);
+    PopulateSystems(planet_density);
+    GenerateStarlanes(starlane_freq, adjacency_grid);
     InitializeSystemGraph();
     GenerateHomeworlds(players + ai_players, homeworlds);
     GenerateEmpires(players + ai_players, homeworlds);
-}
-
-void Universe::CreateUniverse(const std::string& map_file, int size, int players, int ai_players)
-{
-    // intialize the ID counter
-    m_last_allocated_id = -1;
-
-    // TODO
 }
 
 int Universe::Insert(UniverseObject* obj)
@@ -796,39 +792,7 @@ void Universe::PopGrowthProductionResearch(std::vector<SitRepEntry>& sit_reps)
    // TODO
 }
 
-void Universe::GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid)
-{
-    std::vector<std::pair<double,double> > positions;
-
-    SpiralGalaxyCalcPositions(positions,arms,stars,s_universe_width,s_universe_width);
-    GenerateStarField(*this,positions,adjacency_grid,s_universe_width/ADJACENCY_BOXES);
-}
-
-void Universe::GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid)
-{
-    std::vector<std::pair<double,double> > positions;
-
-    EllipticalGalaxyCalcPositions(positions,stars,s_universe_width,s_universe_width);
-    GenerateStarField(*this,positions,adjacency_grid,s_universe_width/ADJACENCY_BOXES);
-}
-
-void Universe::GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid)
-{
-    std::vector<std::pair<double,double> > positions;
-
-    ClusterGalaxyCalcPositions(positions,5,stars,s_universe_width,s_universe_width);
-    GenerateStarField(*this,positions,adjacency_grid,s_universe_width/ADJACENCY_BOXES);
-}
-
-void Universe::GenerateRingGalaxy(int stars, AdjacencyGrid& adjacency_grid)
-{
-    std::vector<std::pair<double,double> > positions;
-
-    RingGalaxyCalcPositions(positions,stars,s_universe_width,s_universe_width);
-    GenerateStarField(*this,positions,adjacency_grid,s_universe_width/ADJACENCY_BOXES);
-}
-
-void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
+void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid)
 {
     std::list<std::string> star_names;
     LoadSystemNames(star_names);
@@ -838,7 +802,7 @@ void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
     // generate star field
     for (int star_cnt = 0; star_cnt < stars; ++star_cnt) {
         // generate new star
-        System* system = GenerateSystem(*this, AGE_MATURE, (s_universe_width - 0.1) * RandZeroToOne(), (s_universe_width - 0.1) * RandZeroToOne());
+        System* system = GenerateSystem(*this, age, (s_universe_width - 0.1) * RandZeroToOne(), (s_universe_width - 0.1) * RandZeroToOne());
 
         const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
 
@@ -862,7 +826,7 @@ void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
             }
 
             if (!too_close) {
-                System* system = GenerateSystem(*this, AGE_MATURE, x, y);
+                System* system = GenerateSystem(*this, age, x, y);
                 adjacency_grid[static_cast<int>(system->X() / ADJACENCY_BOX_SIZE)]
                     [static_cast<int>(system->Y() / ADJACENCY_BOX_SIZE)].insert(system);
                 placed = true;
