@@ -46,6 +46,7 @@ namespace
     Order* GenFleetColonizeOrder(const XMLElement& elem) {return new FleetColonizeOrder(elem);}
     Order* GenDeleteFleetOrder(const XMLElement& elem)   {return new DeleteFleetOrder(elem);}
     Order* GenChangeFocusOrder(const XMLElement& elem)   {return new ChangeFocusOrder(elem);}
+    Order* GenResearchQueueOrder(const XMLElement& elem) {return new ResearchQueueOrder(elem);}
 
     bool temp_header_bool = RecordHeaderFile(OrderRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
@@ -117,6 +118,7 @@ void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
     fact.AddGenerator("FleetColonizeOrder", &GenFleetColonizeOrder);
     fact.AddGenerator("DeleteFleetOrder",   &GenDeleteFleetOrder);
     fact.AddGenerator("ChangeFocusOrder",   &GenChangeFocusOrder);
+    fact.AddGenerator("ResearchQueueOrder", &GenResearchQueueOrder);
 }
 
 
@@ -711,7 +713,8 @@ ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, FocusType focus, bool
     m_planet(planet),
     m_focus(focus),
     m_primary(primary)
-{}
+{
+}
 
 GG::XMLElement ChangeFocusOrder::XMLEncode() const
 {
@@ -736,4 +739,62 @@ void ChangeFocusOrder::ExecuteImpl() const
         throw std::runtime_error("Empire attempted to issue change planet focus to another's planet.");
 
     m_primary ? planet->SetPrimaryFocus(m_focus) : planet->SetSecondaryFocus(m_focus);
+}
+
+////////////////////////////////////////////////
+// ResearchQueueOrder
+////////////////////////////////////////////////
+ResearchQueueOrder::ResearchQueueOrder() : 
+    Order(),
+    m_position(-1),
+    m_remove(false)
+{
+}
+
+ResearchQueueOrder::ResearchQueueOrder(const GG::XMLElement& elem):
+    Order(elem.Child("Order"))
+{
+    if (elem.Tag() != ("ResearchQueueOrder"))
+        throw std::invalid_argument("Attempted to construct ResearchQueueOrder from malformed XMLElement");
+
+    m_tech_name = elem.Child("m_tech_name").Text();
+    m_position = lexical_cast<int>(elem.Child("m_position").Text());
+    m_remove = lexical_cast<bool>(elem.Child("m_remove").Text());
+}
+
+ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name) : 
+    Order(empire),
+    m_tech_name(tech_name),
+    m_position(-1),
+    m_remove(true)
+{
+}
+
+ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name, int position) : 
+    Order(empire),
+    m_tech_name(tech_name),
+    m_position(position),
+    m_remove(false)
+{
+}
+
+GG::XMLElement ResearchQueueOrder::XMLEncode() const
+{
+    XMLElement retval("ResearchQueueOrder");
+    retval.AppendChild(Order::XMLEncode());
+    retval.AppendChild(XMLElement("m_tech_name", m_tech_name));
+    retval.AppendChild(XMLElement("m_position", lexical_cast<std::string>(m_position)));
+    retval.AppendChild(XMLElement("m_remove", lexical_cast<std::string>(m_remove)));
+    return retval;
+}
+
+void ResearchQueueOrder::ExecuteImpl() const
+{
+    ValidateEmpireID();
+
+    Empire* empire = Empires().Lookup(EmpireID());
+    if (m_remove)
+        empire->RemoveTechFromQueue(GetTech(m_tech_name));
+    else
+        empire->PlaceTechInQueue(GetTech(m_tech_name), m_position);
 }

@@ -411,6 +411,35 @@ private:
     bool      m_primary;
 };
 
+
+/////////////////////////////////////////////////////
+// ResearchQueueOrder
+/////////////////////////////////////////////////////
+/** The Order subclass that represents changing an empire's research queue.  The 2-arg ctor removes the names
+    tech from \a empire's queue, whereas the 3-arg ctor places \a tech_name at position \a position in
+    \a empire's research queue. */
+class ResearchQueueOrder : public Order
+{
+public:
+    /** \name Structors */ //@{
+    ResearchQueueOrder();
+    ResearchQueueOrder(const GG::XMLElement& elem);
+    ResearchQueueOrder(int empire, const std::string& tech_name);
+    ResearchQueueOrder(int empire, const std::string& tech_name, int position);
+    //@}
+
+    /** \name Accessors */ //@{
+    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+    //@}
+
+private:
+    virtual void ExecuteImpl() const;
+
+    std::string m_tech_name;
+    int         m_position;
+    bool        m_remove;
+};
+
 inline std::pair<std::string, std::string> OrderRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
