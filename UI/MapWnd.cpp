@@ -13,7 +13,9 @@
 #include "../universe/System.h"
 #include "SystemIcon.h"
 #include "../universe/UniverseObject.h"
-
+#include "CUIControls.h"
+#include "../network/Message.h"
+#include "TurnProgressWnd.h"
 #include <vector>
 
 namespace {
@@ -23,6 +25,7 @@ const double ZOOM_STEP_SIZE = 1.25;
 const int NUM_NEBULA_TEXTURES = 5;
 const int MIN_NEBULAE = 3;
 const int MAX_NEBULAE = 8;
+const int END_TURN_BTN_WIDTH = 60;
 }
 
 // static(s)
@@ -79,7 +82,17 @@ MapWnd::MapWnd() :
         m_nebulae[i].reset(new GG::Texture());
         m_nebulae[i]->Load(ClientUI::ART_DIR + nebula_filename);
         m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
-    }    
+    }                                                           ///Do seomthing
+
+    // create buttons
+    m_turn_update = new CUIButton(GG::App::GetApp()->AppWidth() - END_TURN_BTN_WIDTH - 5, 5, END_TURN_BTN_WIDTH, "" );
+    
+    //attach buttons
+    AttachChild(m_turn_update);
+
+    //connect signals and slots
+    GG::Connect(m_turn_update->ClickedSignal(), &MapWnd::OnTurnUpdate, this);
+    
 }
 
 MapWnd::~MapWnd()
@@ -99,6 +112,10 @@ int MapWnd::Render()
 
 int MapWnd::Keypress (GG::Key key, Uint32 key_mods)
 {
+    if (key == GG::GGK_RETURN)		// start turn
+    {
+      HumanClientApp::GetApp()->StartTurn( );
+    }
     if (key == GG::GGK_F10)		// If F10 is pressed, loads up the options screen
     					// TODO: Find out why F10 is not recognised until the left
 					// mouse button has been clicked
@@ -112,6 +129,7 @@ int MapWnd::Keypress (GG::Key key, Uint32 key_mods)
 	  HumanClientApp::GetApp()->ShutDown();
 	}
     }
+
     return 1;
 }
 
@@ -127,6 +145,7 @@ int MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ClientUpperLeft();
     m_side_panel->OffsetMove(-final_move);
+    m_turn_update->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
     m_dragged = true;
@@ -191,30 +210,42 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
     GG::Pt map_move = ul_offset + center - ul;
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
+    m_turn_update->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
+    m_turn_update->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
 
     return 1;
 }
 
-void MapWnd::InitTurn()
+void MapWnd::InitTurn( int turn_number )
 {
+    // remove icons from UI
+    for (unsigned int i = 0; i < m_stars.size(); ++i) {
+      DeleteChild( m_stars[i] );
+    }
+    // clear stars
     m_stars.clear();
+
     Universe::ObjectIDVec system_IDs = ClientApp::GetUniverse().FindObjectIDs(IsSystem);
     for (unsigned int i = 0; i < system_IDs.size(); ++i) {
         SystemIcon* icon = new SystemIcon(system_IDs[i], m_zoom_factor);
         m_stars.push_back(icon);
         AttachChild(icon);
         GG::Connect(icon->LeftClickedSignal(), &MapWnd::SelectSystem, this);
-    }
+    }        
     MoveChildUp(m_side_panel);
     m_side_panel->Hide();
+
+    // set turn button to current turn
+    m_turn_update->SetText( ClientUI::String("MAP_BTN_TURN_UPDATE") + boost::lexical_cast<std::string>(turn_number ) );    
+    MoveChildUp( m_turn_update );
 }
 
 void MapWnd::ShowSystemNames()
@@ -306,3 +337,12 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
             move_to_pt.y = app_height - contents_width;
     }
 }
+
+  
+void MapWnd::OnTurnUpdate()
+{
+  HumanClientApp::GetApp()->StartTurn( );
+}
+
+
+

@@ -16,6 +16,7 @@
 class SidePanel;
 class SystemIcon;
 class Icon;
+class CUIButton;
 namespace GG {
 class Texture;
 }
@@ -69,15 +70,17 @@ public:
     virtual int    LClick(const GG::Pt& pt, Uint32 keys);
     virtual int    MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
 
-    void           InitTurn();        //!< called at the start of each turn by
+    void           InitTurn( int turn_number );        //!< called at the start of each turn by
     void           ShowSystemNames(); //!< enables the system name text
     void           HideSystemNames(); //!< disables the system name text
 
     SelectedSystemSignalType& SelectedSystemSignal() {return m_selected_system_signal;}
 
     void SelectSystem(int systemID); //!< catches emitted signals from the system icons
-    //!@}
 
+     void OnTurnUpdate();   //!< called when m_turn_update is clicked
+    //!@}
+        
 private:
     void RenderBackgrounds();    //!< renders the backgrounds onto the screen
     void MoveBackgrounds(const GG::Pt& move); //!< scrolls the backgrounds at their respective rates
@@ -90,12 +93,14 @@ private:
     std::vector<double>   m_bg_position_X;  //!< array, the X position of the first full background image
     std::vector<double>   m_bg_position_Y;  //!< array, the Y positions of the backgrounds
 
-    double          m_zoom_factor;  //! the current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
-    SidePanel*      m_side_panel;   //! the planet view panel on the side of the main map
-    SysIconVec      m_stars;        //! a vector of StarControls
-
+    double          	m_zoom_factor;  //! the current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
+    SidePanel*      	m_side_panel;   //! the planet view panel on the side of the main map
+    SysIconVec     	m_stars;        //! a vector of StarControls
+    
     GG::Pt          m_drag_offset;  //! the distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool            m_dragged;      //! tracks whether or not a drag occurs during a left button down sequence of events
+
+    CUIButton* m_turn_update;    //!< button that updates player's turn
 
     SelectedSystemSignalType m_selected_system_signal;
 
