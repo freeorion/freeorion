@@ -4,7 +4,8 @@
 
 /** \page msg_specs Message Specifications
 
-   Each of these is a MessageType value.  See class Message for details.  Each format section shows how the data in the text of the Message are to be laid out.  Formats that include XML tags are to be enclosed in a GG::XMLDoc before being packaged as a Message, though only the elements in the document are shown here.
+   Each of these is a MessageType value.  See class Message for details.  Each format section shows how the data in the text of the Message are to be laid out.  
+   Formats that include XML tags are to be enclosed in a GG::XMLDoc before being packaged as a Message, though only the elements in the document are shown here.
 
    \section serv_stat SERVER_STATUS
    \subsection use_0 Usage
@@ -21,15 +22,20 @@
    \subsection format_1 Format
    \verbatim
    <host_player_name>"NAME"</host_player_name>
-   <num_players value="NUM">
-   <universe_params size="NUM">
+   <num_players value="NUM_PLAYERS">
+   <universe_params shape="SHAPE" size="NUM_SYSTEMS">
+       <file>"FILE_NAME"</file>
+   </universe_params>
    <AI_client/>
    <AI_client/>
    ...
    <AI_client/>
 
    NAME : name of the hosting player
-   NUM : the total number of desired players, including AIs
+   NUM_PLAYERS : the total number of desired players, including AIs
+   SHAPE : the shape of the generated universe (must be one of the values in the ClientUniverse::Shape enum)
+   FILE_NAME : the filename to use to when creating a galaxy from an image file (ignored unless SHAPE == ClientUniverse::FROM_FILE)
+   NUM_SYSTEMS : the number of desired star systems in the generated map
    Each AI_client element indicates that an AI should be created, and indicates the parameters for its creation\endverbatim
 
    \section join_game JOIN_GAME
@@ -57,10 +63,12 @@
 
    \section game_start GAME_START
    \subsection use_6 Usage
-   sent to each client before the first TURN_UPDATE of a new or newly loaded game
+   sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
    \subsection format_6 Format
    \verbatim
-   \endverbatim
+   <ClientUniverse>"UNIVERSE"</ClientUniverse>
+
+   UNIVERSE : the contents of the client's version of the universe\endverbatim
 
    \section turn_update TURN_UPDATE
    \subsection use_7 Usage
