@@ -24,8 +24,7 @@ const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
 
 void Options(OptionsDB& db)
 {
-    db.Add('f',
-           "force-external-server", 
+    db.Add("force-external-server", 
            "Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.",
            false);
 }
