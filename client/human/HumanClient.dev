@@ -3673,7 +3673,7 @@ OverrideBuildCmd=0
 BuildCmd=$(CC) -c trace.c -o ../../objs/trace.o $(CFLAGS)
 
 [Unit77]
-FileName=..\..\UI\GalaxyMapScreen.h
+FileName=..\..\UI\MapWnd.h
 CompileCpp=1
 Folder=ClientUI
 Compile=1
@@ -4340,7 +4340,7 @@ UnitCount=88
 Type=0
 Ver=1
 ObjFiles=
-Includes=C:\Dev-Cpp\include\SDL;C:\Dev-Cpp\include\c++\mingw32;C:\boost_1_30_0;C:\Dev-Cpp\include\freetype2;C:\Expat-1.95.5\Source\lib;C:\log4cpp-0.2.7\include;../../GG/include;../../GG/include/net;../../GG/include/dialogs;../../GG/include/SDL
+Includes=C:\Dev-Cpp\include\SDL;C:\Dev-Cpp\include\c++\mingw32;C:\boost-1.30.2;C:\Dev-Cpp\include\freetype2;C:\Expat-1.95.5\Source\lib;C:\log4cpp-0.2.7\include;../../GG/include;../../GG/include/net;../../GG/include/dialogs;../../GG/include/SDL
 Libs=C:\Expat-1.95.5\StaticLibs
 PrivateResource=
 ResourceIncludes=
@@ -5111,26 +5111,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit79]
-FileName=..\..\UI\MapWnd.h
-CompileCpp=1
-Folder=ClientUI
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit80]
-FileName=..\..\UI\MapWnd.cpp
-CompileCpp=1
-Folder=ClientUI
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit81]
 FileName=..\..\UI\SystemIcon.h
 CompileCpp=1
 Folder=ClientUI
@@ -5140,10 +5120,30 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit82]
+[Unit80]
 FileName=..\..\UI\SystemIcon.cpp
 CompileCpp=1
-Folder=
+Folder=ClientUI
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit81]
+FileName=..\..\UI\CUIControls.cpp
+CompileCpp=1
+Folder=ClientUI
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit82]
+FileName=..\..\UI\CUIControls.h
+CompileCpp=1
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -5161,26 +5161,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit83]
-FileName=..\..\UI\CUIControls.cpp
-CompileCpp=1
-Folder=ClientUI
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit84]
-FileName=..\..\UI\CUIControls.h
-CompileCpp=1
-Folder=ClientUI
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit85]
 FileName=..\..\UI\CUIDrawUtil.cpp
 CompileCpp=1
 Folder=ClientUI
@@ -5190,7 +5170,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit86]
+[Unit84]
 FileName=..\..\UI\CUIDrawUtil.h
 CompileCpp=1
 Folder=ClientUI
@@ -5200,7 +5180,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit87]
+[Unit85]
 FileName=..\..\UI\FleetWindow.cpp
 CompileCpp=1
 Folder=ClientUI
@@ -5210,8 +5190,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit88]
+[Unit86]
 FileName=..\..\UI\FleetWindow.h
+CompileCpp=1
+Folder=ClientUI
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit87]
+FileName=..\..\UI\SidePanel.cpp
+CompileCpp=1
+Folder=ClientUI
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit88]
+FileName=..\..\UI\SidePanel.h
 CompileCpp=1
 Folder=ClientUI
 Compile=1
@@ -5771,7 +5771,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit78]
-FileName=..\..\UI\GalaxyMapScreen.cpp
+FileName=..\..\UI\MapWnd.cpp
 CompileCpp=1
 Folder=ClientUI
 Compile=1
