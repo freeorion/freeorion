@@ -178,8 +178,8 @@ if test $FAILED = yes; then
 fi
 
 # Check for Expat
-YG_GET_PATH(expat)
-AC_CHECK_LIB(expat,XML_ParserCreate,[],[AC_MSG_FAILURE([You'll need expat])])
+#YG_GET_PATH(expat)
+#AC_CHECK_LIB(expat,XML_ParserCreate,[],[AC_MSG_FAILURE([You'll need expat])])
 
 # Check for log4cpp
 YG_GET_PATH(log4cpp)
