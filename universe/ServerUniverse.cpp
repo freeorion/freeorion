@@ -27,6 +27,42 @@ const int HOMEWORLD_PROXIMITY_LIMIT_MEDIUM_UNI   =   5;
 const int HOMEWORLD_PROXIMITY_LIMIT_LARGE_UNI    =   5;
 const int HOMEWORLD_PROXIMITY_LIMIT_V_LARGE_UNI  =   5;
 const int HOMEWORLD_PROXIMITY_LIMIT_ENORMOUS_UNI =   6;
+
+// only defined for 1 <= n <= 15
+std::string RomanNumber(int n)
+{
+    std::string retval;
+    switch (n) {
+    case  1: retval = "I"; break;
+    case  2: retval = "II"; break;
+    case  3: retval = "III"; break;
+    case  4: retval = "IV"; break;
+    case  5: retval = "V"; break;
+    case  6: retval = "VI"; break;
+    case  7: retval = "VII"; break;
+    case  8: retval = "VIII"; break;
+    case  9: retval = "IX"; break;
+    case 10: retval = "X"; break;
+    case 11: retval = "XI"; break;
+    case 12: retval = "XII"; break;
+    case 13: retval = "XIII"; break;
+    case 14: retval = "XIV"; break;
+    case 15: retval = "XV"; break;
+    default: retval = "ERROR"; break;
+    }
+    return retval;
+}
+
+void LoadPlanetNames(std::list<std::string>& names)
+{
+    std::ifstream ifs("default/starnames.txt");
+    while (ifs) {
+        std::string latest_name;
+        std::getline(ifs, latest_name);
+        if (latest_name != "")
+            names.push_back(latest_name);
+    }
+}
 }
 
 ServerUniverse::ServerUniverse() : 
@@ -237,13 +273,17 @@ void ServerUniverse::GenerateElipticalGalaxy(int stars)
 
 void ServerUniverse::GenerateIrregularGalaxy(int stars)
 {
+    std::list<std::string> star_names;
+    LoadPlanetNames(star_names);
+
     // generate star field
     for (int star_cnt = 0; star_cnt < stars; ++star_cnt) {
         // generate new star
-        std::string star_name("System");  // TODO: read name from default list
-        char star_num[3];
-        sprintf(star_num, "%i", star_cnt);
-        star_name.append(star_num);
+        int star_name_idx = rand() % star_names.size();
+        std::list<std::string>::iterator it = star_names.begin();
+        std::advance(it, star_name_idx);
+        std::string star_name(*it);
+        star_names.erase(it);
         System::StarType star_type = (System::StarType) (System::NUM_STARTYPES * ((double)rand()/(double)RAND_MAX));
         int num_orbits = 5;
         float orbits_rand = (float) ((double)rand()/(double)RAND_MAX);
@@ -462,11 +502,7 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
          system_temp->Insert(planet, orbit);
 
          // name the planet
-         std::string planet_name(system_temp->Name());
-         char orbit_num[2];
-         sprintf(orbit_num, " %i", orbit);
-         planet_name.append(orbit_num);
-         planet->Rename(planet_name);
+         planet->Rename(system_temp->Name() + " " + RomanNumber(orbit + 1));
 
          if (orbit == home_orbit)
          {
@@ -567,11 +603,7 @@ void ServerUniverse::PopulateSystems()
          system->Insert(planet, planet_cnt);
 
          // name the planet
-         std::string planet_name(system->Name());
-         char orbit_num[2];
-         sprintf(orbit_num, " %i", planet_cnt);
-         planet_name.append(orbit_num);
-         planet->Rename(planet_name);
+         planet->Rename(system->Name() + " " + RomanNumber(planet_cnt + 1));
 
       }  // end adding planets
    }
