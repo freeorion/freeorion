@@ -68,6 +68,8 @@ network/XTree.cpp				\
 network/XTree.hpp  				\
 universe/Condition.cpp				\
 universe/Condition.h	 			\
+universe/Effect.cpp				\
+universe/Effect.h	 			\
 universe/Fleet.cpp				\
 universe/Fleet.h	 			\
 universe/Meter.cpp				\
