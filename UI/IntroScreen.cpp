@@ -102,19 +102,9 @@ void IntroScreen::OnSinglePlayer()
         int num_AIs = 4;
 
         GG::XMLDoc game_parameters;
-        GG::XMLElement temp("host_player_name", player_name);
-        game_parameters.root_node.AppendChild(temp);
-
-        temp = GG::XMLElement("num_players");
-        temp.SetAttribute("value", lexical_cast<string>(num_AIs + 1));
-        game_parameters.root_node.AppendChild(temp);
-
-        temp = GG::XMLElement("universe_params");
-        temp.SetAttribute("shape", lexical_cast<string>(galaxy_wnd.GalaxyShape()));
-        temp.SetAttribute("size", lexical_cast<string>(galaxy_wnd.Systems()));
-        GG::XMLElement temp2("file", galaxy_wnd.GalaxyFile());
-        temp.AppendChild(temp2);
-        game_parameters.root_node.AppendChild(temp);
+        game_parameters.root_node.AppendChild(GG::XMLElement("host_player_name", player_name));
+        game_parameters.root_node.AppendChild(GG::XMLElement("num_players", lexical_cast<string>(num_AIs + 1)));
+        game_parameters.root_node.AppendChild(galaxy_wnd.Panel().XMLEncode());
 
         for (int i = 0; i < num_AIs; ++i)
             game_parameters.root_node.AppendChild(GG::XMLElement("AI_client"));
@@ -211,7 +201,5 @@ void IntroScreen::OnExitGame()
 void IntroScreen::Keypress (GG::Key key, Uint32 key_mods)
 {
     if (key == GG::GGK_ESCAPE) // Same behaviour as if "done" was pressed
-    {
-      OnExitGame();
-    }
+        OnExitGame();
 }
