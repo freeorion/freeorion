@@ -209,6 +209,11 @@ Message EndGameMessage(int sender, int receiver)
     return Message(Message::END_GAME, sender, receiver, Message::CORE, "");
 }
 
+Message VictoryMessage(int receiver)
+{
+    return Message(Message::END_GAME, -1, receiver, Message::CORE, "VICTORY");
+}
+
 Message TurnOrdersMessage(int sender, int receiver, const GG::XMLDoc& orders_data)
 {
     return Message(Message::TURN_ORDERS, sender, receiver, Message::CORE, orders_data);
@@ -275,11 +280,15 @@ Message ChatMessage(int sender, int receiver, const std::string& msg)
     return Message(Message::HUMAN_PLAYER_MSG, sender, receiver, Message::CORE, msg);
 }
 
-Message PlayerDisconnectedMessage(int receiver, const std::string& msg)
+Message PlayerDisconnectedMessage(int receiver, const std::string& player_name)
 {
-    return Message(Message::PLAYER_EXIT, -1, receiver, Message::CORE, msg);
+    return Message(Message::PLAYER_EXIT, -1, receiver, Message::CORE, player_name);
 }
 
+Message PlayerEliminatedMessage(int receiver, const std::string& empire_name)
+{
+    return Message(Message::PLAYER_ELIMINATED, -1, receiver, Message::CORE, empire_name);
+}
 
 
 ////////////////////////////////////////////////

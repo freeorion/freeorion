@@ -150,8 +150,12 @@ Message JoinAckMessage(int player_id);
     The \a player_id is the ID of the receiving player.  This message should only be sent by the server.*/
 Message RenameMessage(int player_id, const std::string& new_name);
 
-/** creates an END_GAME message.  Only END_GAME messages sent from the host client and the server are considered valid.*/
+/** creates an END_GAME message used to terminate an active game.  Only END_GAME messages sent from the host client 
+    and the server are considered valid.*/
 Message EndGameMessage(int sender, int receiver);
+
+/** creates an END_GAME message indicating that the recipient has won the game.  This message should only be sent by the server.*/
+Message VictoryMessage(int receiver);
 
 /** creates an TURN_ORDERS message. */
 Message TurnOrdersMessage(int sender, int receiver, const GG::XMLDoc& orders_data);
@@ -189,7 +193,11 @@ Message ChatMessage(int sender, int receiver, const std::string& msg);
 
 /** creates a PLAYER_EXIT message, which is sent to all remaining clients when a client looses its connection to the server.  
     This message should only be sent by the server.*/
-Message PlayerDisconnectedMessage(int receiver, const std::string& msg);
+Message PlayerDisconnectedMessage(int receiver, const std::string& player_name);
+
+/** creates a PLAYER_ELIMINATED message, which is sent to all clients when a client is eliminated from play.  
+    This message should only be sent by the server.*/
+Message PlayerEliminatedMessage(int receiver, const std::string& empire_name);
 
 
 
