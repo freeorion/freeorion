@@ -3,6 +3,7 @@
 #include "Effect.h"
 #include "../util/OptionsDB.h"
 #include "Planet.h"
+#include "Predicates.h"
 
 namespace {
     // loads and stores BuildingTypes specified in [settings-dir]/buildings.xml
@@ -21,8 +22,8 @@ namespace {
                 if (it->Tag() != "BuildingType")
                     throw std::runtime_error("ERROR: Encountered non-BuildingType in buildings.xml!");
                 BuildingType* building_type = new BuildingType(*it);
-                if (m_building_types.find(building_type->Name()) == m_building_types.end())
-                    throw std::runtime_error(("ERROR: More than on building type in buildings.xml has the name " + building_type->Name()).c_str());
+                if (m_building_types.find(building_type->Name()) != m_building_types.end())
+                    throw std::runtime_error(("ERROR: More than one building type in buildings.xml has the name " + building_type->Name()).c_str());
                 m_building_types[building_type->Name()] = building_type;
             }
             ifs.close();
@@ -102,6 +103,11 @@ GG::XMLElement Building::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) co
     retval.AppendChild(XMLElement("m_planet_id", lexical_cast<std::string>(m_planet_id)));
 
     return retval;
+}
+
+UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
+{
+    return visitor.Visit(const_cast<Building* const>(this));
 }
 
 void Building::Activate(bool activate)
