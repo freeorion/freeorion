@@ -80,6 +80,26 @@ System::~System()
 {
 }
    
+int System::Starlanes() const
+{
+    int retval = 0;
+    for (const_lane_iterator it = begin_lanes(); it != end_lanes(); ++it) {
+        if (!it->second)
+            ++retval;
+    }
+    return retval;
+}
+
+int System::Wormholes() const
+{
+    int retval = 0;
+    for (const_lane_iterator it = begin_lanes(); it != end_lanes(); ++it) {
+        if (it->second)
+            ++retval;
+    }
+    return retval;
+}
+
 bool System::HasStarlaneTo(int id) const
 {
    const_lane_iterator it = m_starlanes_wormholes.find(id);

@@ -66,6 +66,8 @@ public:
    StarType Star() const   {return m_star;}  ///< returns the type of star for this system
    int      Orbits() const {return m_orbits;}///< returns the number of orbits in this system
 
+   int  Starlanes() const;                   ///< returns the number of starlanes from this system to other systems
+   int  Wormholes() const;                   ///< returns the number of wormholes from this system to other systems
    bool HasStarlaneTo(int id) const;         ///< returns true if there is a starlane from this system to the system with ID number \a id
    bool HasWormholeTo(int id) const;         ///< returns true if there is a wormhole from this system to the system with ID number \a id
 
