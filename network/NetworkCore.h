@@ -33,7 +33,7 @@ public:
    /** \name Accessors */ //@{
    /** sends entire contents of \a msg to the appropriate socket (based on the receiver), followed by a special 
       end-of-message marker */
-   virtual void SendMessage(const Message& msg) const = 0; 
+   virtual void SendMessage(const Message& msg)= 0; 
    //@}
    
    /** \name Mutators */ //@{

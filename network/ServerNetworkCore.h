@@ -40,7 +40,7 @@ public:
    /** \name Accessors */ //@{
    const std::map<int, PlayerInfo>& Players() const {return m_player_connections;}
 
-   virtual void SendMessage(const Message& msg) const;
+   virtual void SendMessage(const Message& msg);
    //@}
    
    /** \name Mutators */ //@{

@@ -22,7 +22,7 @@ ServerNetworkCore::~ServerNetworkCore()
    ClosePorts();
 }
 
-void ServerNetworkCore::SendMessage(const Message& msg) const
+void ServerNetworkCore::SendMessage(const Message& msg)
 {
    int receiver_id = msg.Receiver();
    int receiver_socket = -1;
