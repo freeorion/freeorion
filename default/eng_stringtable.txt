@@ -443,3 +443,4 @@ A combat has taken place in system %system%. You lost!
 SITREP_COMBAT_SYSTEM_NO_VICTOR
 A combat has taken place in system %system%. The encounter was a draw.
 
+
