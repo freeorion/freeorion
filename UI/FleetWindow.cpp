@@ -55,8 +55,6 @@ namespace {
                 GG::Connect(m_fleet->StateChangedSignal(), &FleetDataPanel::Refresh, this);
             }
 
-            EnableChildClipping(true);
-
             Refresh();
         }
 
@@ -108,9 +106,11 @@ namespace {
             boost::shared_ptr<GG::Texture> icon;
 
             if (m_fleet) { // a regular fleet data panel
-                if (2 <= m_fleet->NumShips() && m_fleet->NumShips() <= 5) {//6) {
+                if (2 <= m_fleet->NumShips() && m_fleet->NumShips() <= 5) {
                     icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/" + 
                                                          boost::lexical_cast<std::string>(m_fleet->NumShips()) + "shipfleet.png");
+                } else if (5 < m_fleet->NumShips()) {
+                    icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/5shipfleet.png");
                 } else {
                     ShipDesign::V02DesignID max_id = ShipDesign::SCOUT;
                     for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {
@@ -217,8 +217,6 @@ namespace {
             AttachChild(m_ship_strength_stat);
             GG::Connect(m_ship->StateChangedSignal(), &ShipDataPanel::Refresh, this);
 
-            EnableChildClipping(true);
-
             Refresh();
         }
 
@@ -321,7 +319,6 @@ namespace {
             push_back(new FleetDataPanel(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT, m_fleet));
             data_type = "Fleet";
             height = PANEL_HT + 4;
-            EnableChildClipping(true);
         }
 
         int FleetID() const {return m_fleet ? m_fleet->ID() : UniverseObject::INVALID_OBJECT_ID;}
@@ -342,7 +339,6 @@ namespace {
             push_back(new ShipDataPanel(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT, m_ship));
             data_type = "Ship";
             height = PANEL_HT + 4;
-            EnableChildClipping(true);
        }
 
         int ShipID() const {return m_ship->ID();}

@@ -456,6 +456,7 @@ CUIListBox::CUIListBox(int x, int y, int w, int h, GG::Clr color/* = ClientUI::C
     ListBox(x, y, w, h, color, interior, flags)
 {
     RecreateScrolls();
+    EnableChildClipping(false); // this is already done by GG::ListBox, and setting this would interfere
 }
 
 CUIListBox::CUIListBox(int x, int y, int w, int h, const std::vector<int>& col_widths, 
@@ -464,12 +465,14 @@ CUIListBox::CUIListBox(int x, int y, int w, int h, const std::vector<int>& col_w
     ListBox(x, y, w, h, color, col_widths, interior, flags)
 {
     RecreateScrolls();
+    EnableChildClipping(false); // this is already done by GG::ListBox, and setting this would interfere
 }
 
 CUIListBox::CUIListBox(const GG::XMLElement& elem) : 
     ListBox(elem.Child("GG::ListBox"))
 {
     RecreateScrolls();
+    EnableChildClipping(false); // this is already done by GG::ListBox, and setting this would interfere
 }
 
 GG::XMLElement CUIListBox::XMLEncode() const
