@@ -105,6 +105,8 @@ util/DataTable.h   				\
 util/GLStateComparator.h			\
 util/GZStream.cpp				\
 util/GZStream.h  				\
+util/md5.c						\
+util/md5.h						\
 util/MultiplayerCommon.cpp			\
 util/MultiplayerCommon.h			\
 util/OptionValidators.h				\
