@@ -41,16 +41,16 @@ SystemIcon::SystemIcon(int id, double zoom) :
     boost::shared_ptr<GG::Texture> graphic;
     std::string system_image = ClientUI::ART_DIR + "stars/";
     switch (m_system.Star()) {
-    case System::BLUE:    system_image += "blue2"; break;
-    case System::WHITE:   system_image += "yellow1"; break;
-    case System::YELLOW:  system_image += "yellow2"; break;
-    case System::ORANGE:  system_image += "red4"; break;
-    case System::RED:     system_image += "red3"; break;
-    case System::NEUTRON: system_image += "blue2"; break;
-    case System::BLACK:   system_image += "blue2"; break;
-    default:              system_image += "blue2"; break;
+    case System::BLUE:    system_image += "blue"; break;
+    case System::WHITE:   system_image += "white"; break;
+    case System::YELLOW:  system_image += "yellow"; break;
+    case System::ORANGE:  system_image += "orange"; break;
+    case System::RED:     system_image += "red"; break;
+    case System::NEUTRON: system_image += "blue"; break;
+    case System::BLACK:   system_image += "black"; break;
+    default:              system_image += "blue"; break;
     }
-    system_image += /*boost::lexical_cast<std::string>((m_system.ID() % IMAGES_PER_STAR_TYPE) + 1) +*/ ".png";
+    system_image += boost::lexical_cast<std::string>((m_system.ID() % 2/*IMAGES_PER_STAR_TYPE*/) + 1) + ".png";
     graphic = HumanClientApp::GetApp()->GetTexture(system_image);
 
     //setup static graphic
