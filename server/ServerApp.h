@@ -126,7 +126,7 @@ private:
 
    GG::XMLDoc CreateTurnUpdate(int empire_id); ///< creates encoded universe and empire data for the specified empire, diffs it with the previous turn data, stores the new data over the previous turn data and returns the diff XMLElement
    GG::XMLDoc LobbyUpdateDoc() const;          ///< returns an MP lobby-mode update XMLDoc containing all relevant parts of the lobby state
-   GG::XMLDoc LobbyPlayerUpdateDoc() const;    ///< returns an MP lobby-mode update XMLDoc containing just the current players
+   GG::XMLDoc LobbyStartDoc() const;           ///< returns an MP lobby-mode update XMLDoc containing just the initial server-side data that the clients don't have
 
    void SaveGameVars(GG::XMLDoc& doc) const;   ///< adds all game-state variables to \a doc
    void LoadGameVars(const GG::XMLDoc& doc);   ///< assigns all game-state variables from \a doc
@@ -149,9 +149,13 @@ private:
    std::set<std::string>   m_expected_ai_players;  ///< the player names expected from valid AI clients; this prevents malicious users from "spoofing" as AI clients.  Should be empty after all players have joined a game.
    int                     m_expected_players;     ///< the total desired number of players in the game
 
-   int                     m_galaxy_size;          ///< the size of the galaxy (the number of star systems)
-   Universe::Shape         m_galaxy_shape;         ///< the shape of the galaxy
-   std::string             m_galaxy_file;          ///< file to use for generating the galaxy
+   int                          m_galaxy_size;     ///< the size of the galaxy (the number of star systems)
+   Universe::Shape              m_galaxy_shape;    ///< the shape of the galaxy
+   Universe::Age                m_galaxy_age;      ///< the age of the galaxy
+   Universe::StarlaneFreqency   m_starlane_freq;   ///< the frequency of starlanes
+   Universe::PlanetDensity      m_planet_density;  ///< the density of planets within systems
+   Universe::SpecialsFreqency   m_specials_freq;   ///< the frequency of planetary and system specials
+   std::string                  m_galaxy_file;     ///< file to use for generating the galaxy
    // end SERVER_GAME_SETUP variables
 
    bool                    m_single_player_game;   ///< true when the game being played is single-player

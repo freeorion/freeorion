@@ -17,11 +17,14 @@
 
 #include <GGFont.h>
 
+#include <boost/lexical_cast.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/fstream.hpp>
+
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
-#include <boost/lexical_cast.hpp>
 
 // for dummy video driver setenv-hack
 #include "SDL_getenv.h"
@@ -29,29 +32,133 @@
 #include <ctime>
 
 // define this as nonzero to save games in gzip-compressed form; define this as zero when this is inconvenient, such as when testing and debugging
-#define GZIP_SAVE_FILES 1
+#define GZIP_SAVE_FILES 0
 
 
-struct AISetupData
+struct PlayerSetupData
 {
-    // TODO
+    PlayerSetupData() :
+        empire_color(GG::CLR_GRAY),
+        save_game_empire_id(-1)
+    {}
+
+    GG::Clr empire_color;
+    int save_game_empire_id;  // when an MP save game is being loaded, this is the id of the empire that this player will play
+};
+
+struct AISetupData : PlayerSetupData
+{
 };
 
 namespace {
+    const std::string SAVE_FILE_EXTENSION = ".mps";
+    const std::string SAVE_DIR_NAME = "save/";
+
+    // TODO: use some better colors
+    const GG::Clr EMPIRE_COLORS[] = {GG::CLR_RED, GG::CLR_GREEN, GG::CLR_BLUE, GG::CLR_CYAN, GG::CLR_YELLOW, GG::CLR_MAGENTA, GG::CLR_GRAY, GG::CLR_WHITE};
+
+    struct SaveGameEmpireData
+    {
+        SaveGameEmpireData() {}
+
+        SaveGameEmpireData(const GG::XMLElement& elem)
+        {
+            id = boost::lexical_cast<int>(elem.Child("id").Text());
+            name = elem.Child("name").Text();
+            player_name = elem.Child("player_name").Text();
+            color = GG::Clr(elem.Child("color").Child("GG::Clr"));
+        }
+
+        GG::XMLElement XMLEncode()
+        {
+            GG::XMLElement retval("SaveGameEmpireData");
+            retval.AppendChild(GG::XMLElement("id", boost::lexical_cast<std::string>(id)));
+            retval.AppendChild(GG::XMLElement("name", name));
+            retval.AppendChild(GG::XMLElement("player_name", player_name));
+            retval.AppendChild(GG::XMLElement("color", color.XMLEncode()));
+            return retval;
+        }
+
+        int         id;
+        std::string name;
+        std::string player_name;
+        GG::Clr     color;
+    };
+
     struct LobbyModeData
     {
-        LobbyModeData () :
-            galaxy_size(150),
-            galaxy_type(Universe::SPIRAL_2)
-        {}
+        LobbyModeData (bool build_save_game_list = true) :
+            new_game(true),
+            size(100),
+            shape(Universe::SPIRAL_2),
+            age(Universe::AGE_MATURE),
+            starlane_freq(Universe::LANES_SEVERAL),
+            planet_density(Universe::PD_AVERAGE),
+            specials_freq(Universe::SPECIALS_UNCOMMON),
+            save_file(-1)
+        {
+            if (build_save_game_list) {
+                // build a list of save files
+                namespace fs = boost::filesystem;
+                fs::path save_dir = boost::filesystem::initial_path() / SAVE_DIR_NAME;
+                fs::directory_iterator end_it;
+                for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
+                    if (fs::exists(*it) && !fs::is_directory(*it) && it->leaf()[0] != '.') {
+                        std::string filename = it->leaf();
+                        if (filename.find(SAVE_FILE_EXTENSION) == filename.size() - SAVE_FILE_EXTENSION.size()) {
+                            save_games.push_back(filename);
+                        }
+                    }
+                }
 
-        int                      galaxy_size; // number of stars
-        Universe::Shape          galaxy_type;
-        std::string              galaxy_image_filename;
+                // build list of empire colors
+                empire_colors.insert(empire_colors.end(), EMPIRE_COLORS, EMPIRE_COLORS + sizeof(EMPIRE_COLORS) / sizeof(GG::Clr));
+            }
+        }
 
-        std::vector<AISetupData> AIs;
+        void RebuildSaveGameEmpireData()
+        {
+            save_game_empire_data.clear();
+            if (0 <= save_file && save_file < static_cast<int>(save_games.size())) {
+                GG::XMLDoc doc;
+#if GZIP_SAVE_FILES
+                GZStream::igzstream ifs((SAVE_DIR_NAME + save_games[save_file]).c_str());
+#else
+                std::ifstream ifs((SAVE_DIR_NAME + save_games[save_file]).c_str());
+#endif
+                doc.ReadDoc(ifs);
+                ifs.close();
 
-    } g_lobby_data;
+                for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
+                    if (doc.root_node.Child(i).Tag() == "Player") {
+                        const GG::XMLElement& elem = doc.root_node.Child(i).Child("Empire");
+                        SaveGameEmpireData data;
+                        data.id = boost::lexical_cast<int>(elem.Child("m_id").Text());
+                        data.name = elem.Child("m_name").Text();
+                        data.player_name = elem.Child("m_player_name").Text();
+                        data.color = GG::Clr(elem.Child("m_color").Child("GG::Clr"));
+                        save_game_empire_data.push_back(data);
+                    }
+                }
+            }
+        }
+
+        bool                            new_game;
+        int                             size;
+        Universe::Shape                 shape;
+        Universe::Age                   age;
+        Universe::StarlaneFreqency      starlane_freq;
+        Universe::PlanetDensity         planet_density;
+        Universe::SpecialsFreqency      specials_freq;
+        int                             save_file;
+        std::vector<AISetupData>        AIs;
+
+        std::vector<std::string>        save_games;
+        std::vector<GG::Clr>            empire_colors;
+        std::vector<SaveGameEmpireData> save_game_empire_data;
+
+    } g_lobby_data(false);
+
     const std::string AI_CLIENT_EXE = "freeorionca.exe";
     const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
     GG::XMLDoc g_load_doc;
@@ -190,25 +297,65 @@ void ServerApp::HandleMessage(const Message& msg)
         std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().find(msg.Sender());
         bool spoofed_host = (m_state == SERVER_MP_LOBBY && it != m_network_core.Players().end() && it->second.name == host_player_name);
         if (!spoofed_host) {
-            m_galaxy_size = g_lobby_data.galaxy_size;
-            m_galaxy_shape = g_lobby_data.galaxy_type;
-            m_galaxy_file = g_lobby_data.galaxy_image_filename;
-            m_expected_players = m_network_core.Players().size() + g_lobby_data.AIs.size();
-            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                if (it->first != msg.Sender())
-                    m_network_core.SendMessage(Message(Message::GAME_START, -1, it->first, Message::CLIENT_LOBBY_MODULE, ""));
-            }
-            m_state = SERVER_GAME_SETUP;
-            CreateAIClients(g_lobby_data.AIs);
-            g_load_doc.root_node = GG::XMLElement();
-            m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
-            if (m_expected_players == static_cast<int>(m_network_core.Players().size())) {
-                if (g_load_doc.root_node.NumChildren())
-                    LoadGameInit();
-                else
-                    NewGameInit();
-                m_state = SERVER_WAITING;
-                m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
+            if (g_lobby_data.new_game) { // new game
+                m_galaxy_size = g_lobby_data.size;
+                m_galaxy_shape = g_lobby_data.shape;
+                m_galaxy_age = g_lobby_data.age;
+                m_starlane_freq = g_lobby_data.starlane_freq;
+                m_planet_density = g_lobby_data.planet_density;
+                m_specials_freq = g_lobby_data.specials_freq;
+                m_expected_players = m_network_core.Players().size() + g_lobby_data.AIs.size();
+                for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+                    if (it->first != msg.Sender())
+                        m_network_core.SendMessage(Message(Message::GAME_START, -1, it->first, Message::CLIENT_LOBBY_MODULE, ""));
+                }
+                m_state = SERVER_GAME_SETUP;
+                CreateAIClients(g_lobby_data.AIs);
+                g_load_doc.root_node = GG::XMLElement();
+                m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
+                if (m_expected_players == static_cast<int>(m_network_core.Players().size())) {
+                    if (g_load_doc.root_node.NumChildren())
+                        LoadGameInit();
+                    else
+                        NewGameInit();
+                    m_state = SERVER_WAITING;
+                    m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
+                }
+            } else { // load game
+#if 0
+                std::map<int, PlayerInfo>::const_iterator sender_it = m_network_core.Players().find(msg.Sender());
+                if (sender_it != m_network_core.Players().end() && sender_it->second.host) {
+                    m_empires.RemoveAllEmpires();
+                    m_single_player_game = false;
+
+                    std::string load_filename = g_lobby_data;
+                    GG::XMLDoc doc;
+#if GZIP_SAVE_FILES
+                    GZStream::igzstream ifs(load_filename.c_str());
+#else
+                    std::ifstream ifs(load_filename.c_str());
+#endif
+                    doc.ReadDoc(ifs);
+                    ifs.close();
+
+                    m_universe.SetUniverse(doc.root_node.Child("Universe"));
+                    m_expected_players = 0;
+                    for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
+                        if (doc.root_node.Child(i).Tag() == "Player") {
+                            m_empires.InsertEmpire(new Empire(doc.root_node.Child(i).Child("Empire")));
+                            ++m_expected_players;
+                        }
+                    }
+                    LoadGameVars(doc);
+
+                    CreateAIClients(std::vector<AISetupData>(m_expected_players - 1));
+                    g_load_doc = doc;
+                    m_state = SERVER_GAME_SETUP;
+                } else {
+                    m_log_category.errorStream() << "Player #" << msg.Sender() << " attempted to initiate a game save, but is not the host, or is "
+                        "not found in the player list.";
+                }
+#endif
             }
         } else {
             const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&m_network_core.Players().find(msg.Sender())->second.address));
@@ -225,7 +372,7 @@ void ServerApp::HandleMessage(const Message& msg)
         GG::XMLDoc doc;
         doc.ReadDoc(stream);
         if (doc.root_node.ContainsChild("receiver")) { // chat message
-            int receiver = boost::lexical_cast<int>(doc.root_node.Child("receiver").Attribute("value"));
+            int receiver = boost::lexical_cast<int>(doc.root_node.Child("receiver").Text());
             const std::string& text = doc.root_node.Child("text").Text();
             if (receiver == -1) { // the receiver is everyone (except the sender)
                 for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
@@ -243,28 +390,43 @@ void ServerApp::HandleMessage(const Message& msg)
                 }
             }
         } else if (doc.root_node.ContainsChild("exit_lobby")) { // player is exiting the lobby (must be a non-host to be valid)
-            doc.root_node.Child("exit_lobby").SetAttribute("id", boost::lexical_cast<std::string>(msg.Sender()));
+            doc.root_node.Child("exit_lobby").AppendChild(GG::XMLElement("id", boost::lexical_cast<std::string>(msg.Sender())));
             for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
                 if (it->first != msg.Sender())
                     m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, doc));
             }
             m_network_core.DumpPlayer(msg.Sender());
         } else { // normal lobby data update
-            if (doc.root_node.ContainsChild("galaxy_size")) {
-                g_lobby_data.galaxy_size = boost::lexical_cast<int>(doc.root_node.Child("galaxy_size").Attribute("value"));
+            if (doc.root_node.ContainsChild("new_game"))
+                g_lobby_data.new_game = true;
+            else if (doc.root_node.ContainsChild("load_game"))
+                g_lobby_data.new_game = false;
+
+            if (doc.root_node.ContainsChild("universe_params")) {
+                g_lobby_data.size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("size").Text());
+                g_lobby_data.shape = Universe::Shape(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("shape").Text()));
+                g_lobby_data.age = Universe::Age(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("age").Text()));
+                g_lobby_data.starlane_freq = Universe::StarlaneFreqency(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("starlane_freq").Text()));
+                g_lobby_data.planet_density = Universe::PlanetDensity(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("planet_density").Text()));
+                g_lobby_data.specials_freq = Universe::SpecialsFreqency(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("specials_freq").Text()));
             }
-            if (doc.root_node.ContainsChild("galaxy_type")) {
-                g_lobby_data.galaxy_type = Universe::Shape(boost::lexical_cast<int>(doc.root_node.Child("galaxy_type").Attribute("value")));
+
+            if (doc.root_node.ContainsChild("save_file")) {
+                int old_save_file = g_lobby_data.save_file;
+                g_lobby_data.save_file = boost::lexical_cast<int>(doc.root_node.Child("save_file").Text());
+                if (g_lobby_data.save_file != old_save_file) {
+                    Logger().debugStream() << "RebuildSaveGameEmpireData()";
+                    g_lobby_data.RebuildSaveGameEmpireData();
+                }
             }
-            if (doc.root_node.ContainsChild("galaxy_image_filename")) {
-                g_lobby_data.galaxy_image_filename = doc.root_node.Child("galaxy_image_filename").Text();
-            }
+
             if (doc.root_node.ContainsChild("players")) {
                 // TODO : handle player updates when there are options for players
             }
+
             for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
                 if (it->first != msg.Sender())
-                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, doc));
+                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, LobbyUpdateDoc()));
             }
         }
         break;
@@ -325,12 +487,11 @@ void ServerApp::HandleMessage(const Message& msg)
 	                customizable in the save-dialog */
                 // The default is: ofs.set_gzparams(6, Z_DEFAULT_STRATEGY);
                 doc.WriteDoc(ofs, false);
-                ofs.close();
 #else
                 std::ofstream ofs(save_filename.c_str());
                 doc.WriteDoc(ofs);
-                ofs.close();
 #endif
+                ofs.close();
                 m_network_core.SendMessage(ServerSaveGameMessage(msg.Sender(), true));
             }
         } else {
@@ -350,13 +511,11 @@ void ServerApp::HandleMessage(const Message& msg)
             GG::XMLDoc doc;
 #if GZIP_SAVE_FILES
             GZStream::igzstream ifs(load_filename.c_str());
-            doc.ReadDoc(ifs);
-            ifs.close();
 #else
             std::ifstream ifs(load_filename.c_str());
+#endif
             doc.ReadDoc(ifs);
             ifs.close();
-#endif
 
             m_universe.SetUniverse(doc.root_node.Child("Universe"));
             m_expected_players = 0;
@@ -521,13 +680,16 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                     m_network_core.SendMessage(HostAckMessage(player_id));
                     m_network_core.SendMessage(JoinAckMessage(player_id));
                 }
+                m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, LobbyStartDoc()));
             } else { // immediately start a new game with the given parameters
                 m_single_player_game = true;
-                m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Attribute("value"));
-                m_galaxy_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("size"));
-                m_galaxy_shape = Universe::Shape(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("shape")));
-                if (m_galaxy_shape == Universe::FROM_FILE)
-                    m_galaxy_file = doc.root_node.Child("universe_params").Child("file").Text();
+                m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Text());
+                m_galaxy_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("size").Text());
+                m_galaxy_shape = Universe::Shape(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("shape").Text()));
+                m_galaxy_age = Universe::Age(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("age").Text()));
+                m_starlane_freq = Universe::StarlaneFreqency(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("starlane_freq").Text()));
+                m_planet_density = Universe::PlanetDensity(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("planet_density").Text()));
+                m_specials_freq = Universe::SpecialsFreqency(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("specials_freq").Text()));
                 CreateAIClients(doc.root_node);
                 g_load_doc.root_node = GG::XMLElement();
                 m_state = SERVER_GAME_SETUP;
@@ -561,10 +723,19 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
             if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
                 m_network_core.SendMessage(JoinAckMessage(player_id));
                 for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                    if (it->first != player_id)
-                        m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, LobbyPlayerUpdateDoc()));
+                    if (it->first != player_id) {
+                        std::stringstream stream;
+                        LobbyStartDoc().WriteDoc(stream);
+                        Logger().debugStream() << "Outgoing lobby update to player #" << it->first << ": \n" << stream.str();
+                        m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, LobbyStartDoc()));
+                    }
                 }
-                m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, LobbyUpdateDoc()));
+                if (player_id != NetworkCore::HOST_PLAYER_ID) {
+                    std::stringstream stream;
+                    LobbyUpdateDoc().WriteDoc(stream);
+                    Logger().debugStream() << "Outgoing lobby update to player #" << player_id << ": \n" << stream.str();
+                    m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, LobbyUpdateDoc()));
+                }
             }
         } else { // immediately join a game that is about to start
             std::set<std::string>::iterator it = m_expected_ai_players.find(player_name);
@@ -614,20 +785,44 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
 
 void ServerApp::PlayerDisconnected(int id)
 {
+    // this will not usually happen, since the host process usually owns the server process, and will usually take it down if it fails
     if (id == NetworkCore::HOST_PLAYER_ID) {
-        // if the host dies, there's really nothing else we can do
-        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-            if (it->first != id)
-                m_network_core.SendMessage(EndGameMessage(-1, it->first));
+        if (m_state == SERVER_MP_LOBBY) { // host disconnected in MP lobby
+            GG::XMLDoc doc;
+            doc.root_node.AppendChild("abort_game");
+            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+                if (it->first != id) {
+                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, doc));
+                    m_network_core.DumpPlayer(it->first);
+                }
+            }
+            m_network_core.DumpPlayer(id);
+        } else { // host disconnected during a regular game
+            // if the host dies, there's really nothing else we can do
+            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+                if (it->first != id)
+                    m_network_core.SendMessage(EndGameMessage(-1, it->first));
+            }
         }
         m_state = SERVER_DYING;
         m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_DYING << " (SERVER_DYING).";
         m_network_core.DumpAllConnections();
         Exit(1);
     } else {
-        // possibly try to recover
-        m_state = SERVER_DISCONNECT;
-        m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Server now in mode " << SERVER_DISCONNECT << " (SERVER_DISCONNECT).";
+        if (m_state == SERVER_MP_LOBBY) { // player disconnected in MP lobby
+            GG::XMLDoc doc;
+            doc.root_node.AppendChild("exit_lobby");
+            doc.root_node.LastChild().AppendChild(GG::XMLElement("id", boost::lexical_cast<std::string>(id)));
+            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+                if (it->first != id)
+                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, doc));
+            }
+            m_network_core.DumpPlayer(id);
+        } else { // player disconnected during a regular game
+            // possibly try to recover?
+            m_state = SERVER_DISCONNECT;
+            m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Server now in mode " << SERVER_DISCONNECT << " (SERVER_DISCONNECT).";
+        }
 // TODO: try to reconnect
 // TODO: send request to host player to ask what to do
     }
@@ -756,9 +951,9 @@ void ServerApp::NewGameInit()
 {
     std::map<int, PlayerInfo>::const_iterator it;
 
-    m_universe.CreateUniverse(m_galaxy_shape, m_galaxy_size, m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size());
-    m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << 
-        (m_galaxy_shape == Universe::FROM_FILE ? ("from file " + m_galaxy_file) : "") << " (SERVER_GAME_SETUP).";
+    m_universe.CreateUniverse(m_galaxy_size, m_galaxy_shape, m_galaxy_age, m_starlane_freq, m_planet_density, m_specials_freq, 
+                              m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size());
+    m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << " (SERVER_GAME_SETUP).";
 
     // add empires to turn sequence map
     // according to spec this should be done randomly
@@ -852,38 +1047,76 @@ GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
 GG::XMLDoc ServerApp::LobbyUpdateDoc() const
 {
     GG::XMLDoc retval;
-    GG::XMLElement temp("galaxy_size");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(g_lobby_data.galaxy_size));
-    retval.root_node.AppendChild(temp);
 
-    temp = GG::XMLElement("galaxy_type");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(g_lobby_data.galaxy_type));
-    retval.root_node.AppendChild(temp);
+    retval.root_node.AppendChild(GG::XMLElement(g_lobby_data.new_game ? "new_game" : "load_game"));
 
-    retval.root_node.AppendChild(GG::XMLElement("galaxy_image_filename", g_lobby_data.galaxy_image_filename));
+    retval.root_node.AppendChild(GG::XMLElement("universe_params"));
+    retval.root_node.LastChild().AppendChild(GG::XMLElement("size", boost::lexical_cast<std::string>(g_lobby_data.size)));
+    retval.root_node.LastChild().AppendChild(GG::XMLElement("shape", boost::lexical_cast<std::string>(g_lobby_data.shape)));
+    retval.root_node.LastChild().AppendChild(GG::XMLElement("age", boost::lexical_cast<std::string>(g_lobby_data.age)));
+    retval.root_node.LastChild().AppendChild(GG::XMLElement("starlane_freq", boost::lexical_cast<std::string>(g_lobby_data.starlane_freq)));
+    retval.root_node.LastChild().AppendChild(GG::XMLElement("planet_density", boost::lexical_cast<std::string>(g_lobby_data.planet_density)));
+    retval.root_node.LastChild().AppendChild(GG::XMLElement("specials_freq", boost::lexical_cast<std::string>(g_lobby_data.specials_freq)));
 
-    temp = GG::XMLElement("players");
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-        GG::XMLElement temp2(it->second.name);
-        temp2.SetAttribute("id", boost::lexical_cast<std::string>(it->first));
-        temp.AppendChild(temp2);
+    if (!g_lobby_data.save_games.empty()) {
+        retval.root_node.AppendChild(GG::XMLElement("save_games"));
+        std::string save_games;
+        for (unsigned int i = 0; i < g_lobby_data.save_games.size(); ++i) {
+            save_games += g_lobby_data.save_games[i] + " ";
+        }
+        retval.root_node.LastChild().SetText(save_games);
     }
-    retval.root_node.AppendChild(temp);
+
+    retval.root_node.AppendChild(GG::XMLElement("save_file", boost::lexical_cast<std::string>(g_lobby_data.save_file)));
+
+    if (!g_lobby_data.save_game_empire_data.empty()) {
+        retval.root_node.AppendChild(GG::XMLElement("save_game_empire_data"));
+        for (unsigned int i = 0; i < g_lobby_data.save_game_empire_data.size(); ++i) {
+            retval.root_node.LastChild().AppendChild(g_lobby_data.save_game_empire_data[i].XMLEncode());
+        }
+    }
+
+    retval.root_node.AppendChild(GG::XMLElement("players"));
+    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+        retval.root_node.LastChild().AppendChild(GG::XMLElement(it->second.name));
+        retval.root_node.LastChild().LastChild().AppendChild(GG::XMLElement("id", boost::lexical_cast<std::string>(it->first)));
+    }
 
     return retval;
 }
 
-GG::XMLDoc ServerApp::LobbyPlayerUpdateDoc() const
+GG::XMLDoc ServerApp::LobbyStartDoc() const
 
 {
     GG::XMLDoc retval;
-    GG::XMLElement temp("players");
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-        GG::XMLElement temp2(it->second.name);
-        temp2.SetAttribute("id", boost::lexical_cast<std::string>(it->first));
-        temp.AppendChild(temp2);
+
+    if (!g_lobby_data.save_game_empire_data.empty()) {
+        retval.root_node.AppendChild(GG::XMLElement("save_game_empire_data"));
+        for (unsigned int i = 0; i < g_lobby_data.save_game_empire_data.size(); ++i) {
+            retval.root_node.LastChild().AppendChild(g_lobby_data.save_game_empire_data[i].XMLEncode());
+        }
     }
-    retval.root_node.AppendChild(temp);
+
+    if (!g_lobby_data.save_games.empty()) {
+        retval.root_node.AppendChild(GG::XMLElement("save_games"));
+        std::string save_games;
+        for (unsigned int i = 0; i < g_lobby_data.save_games.size(); ++i) {
+            save_games += g_lobby_data.save_games[i] + " ";
+        }
+        retval.root_node.LastChild().SetText(save_games);
+    }
+
+    retval.root_node.AppendChild(GG::XMLElement("empire_colors"));
+    for (unsigned int i = 0; i < g_lobby_data.empire_colors.size(); ++i) {
+        retval.root_node.LastChild().AppendChild(g_lobby_data.empire_colors[i].XMLEncode());
+    }
+
+    retval.root_node.AppendChild(GG::XMLElement("players"));
+    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+        retval.root_node.LastChild().AppendChild(GG::XMLElement(it->second.name));
+        retval.root_node.LastChild().LastChild().AppendChild(GG::XMLElement("id", boost::lexical_cast<std::string>(it->first)));
+    }
+
     return retval;
 }
 
@@ -893,7 +1126,7 @@ void ServerApp::SaveGameVars(GG::XMLDoc& doc) const
 
     GG::XMLElement temp("m_last_turn_update_msg");
     for (std::map<int, GG::XMLDoc>::const_iterator it = m_last_turn_update_msg.begin(); it != m_last_turn_update_msg.end(); ++it) {
-	temp.AppendChild(GG::XMLElement(LAST_TURN_UPDATE_SAVE_ELEM_PREFIX + boost::lexical_cast<std::string>(it->first), it->second.root_node));
+        temp.AppendChild(GG::XMLElement(LAST_TURN_UPDATE_SAVE_ELEM_PREFIX + boost::lexical_cast<std::string>(it->first), it->second.root_node));
     }
     doc.root_node.AppendChild(temp);
 }
@@ -904,7 +1137,7 @@ void ServerApp::LoadGameVars(const GG::XMLDoc& doc)
 
     const GG::XMLElement& last_turn_update_elem = doc.root_node.Child("m_last_turn_update_msg");
     for (GG::XMLElement::const_child_iterator it = last_turn_update_elem.child_begin(); it != last_turn_update_elem.child_end(); ++it) {
-	m_last_turn_update_msg[boost::lexical_cast<int>(it->Tag().substr(LAST_TURN_UPDATE_SAVE_ELEM_PREFIX.size()))].root_node = it->Child(0);
+        m_last_turn_update_msg[boost::lexical_cast<int>(it->Tag().substr(LAST_TURN_UPDATE_SAVE_ELEM_PREFIX.size()))].root_node = it->Child(0);
     }
 }
 
