@@ -427,7 +427,7 @@ void FleetColonizeOrder::Execute() const
     {
         int curr_ship_id = (*ships);
         Ship* curr_ship = dynamic_cast<Ship*> (universe->Object(curr_ship_id));
-        if(curr_ship->Design().id == ShipDesign::COLONY)
+        if(curr_ship->Design().colonize)
         {
             // adjust planet population
             target_planet->AdjustPop(INITIAL_COLONY_POP);
@@ -436,7 +436,7 @@ void FleetColonizeOrder::Execute() const
             target_planet->AddOwner( EmpireID() );
             
             // add empire to system owner list, if planet is in a system
-            if(target_planet->SystemID() != UniverseObject::INVALID_ID )
+            if(target_planet->SystemID() != UniverseObject::INVALID_OBJECT_ID )
             {
                 universe->Object(target_planet->SystemID())->AddOwner( EmpireID() );
             }
@@ -450,6 +450,7 @@ void FleetColonizeOrder::Execute() const
         }
     
     }
+    
     
     throw std::runtime_error("Colonization order issued to fleet without colony ship.");
     
