@@ -105,24 +105,49 @@ namespace {
         return data;
     }
 
-    double GetRotatingPlanetAmbientAndDiffuseIntensity()
+    double GetRotatingPlanetAmbientIntensity()
     {
-        double retval = 0.5;
+        static double retval = -1.0;
 
-        GG::XMLDoc doc;
-        std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
-        doc.ReadDoc(ifs);
-        ifs.close();
+        if (retval == -1.0) {
+            GG::XMLDoc doc;
+            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            doc.ReadDoc(ifs);
+            ifs.close();
 
-        if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("ambient_and_diffuse_intensity"))
-            retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_and_diffuse_intensity").Text());
+            if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("ambient_intensity"))
+                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_intensity").Text());
+            else
+                retval = 0.5;
 
-        retval = std::max(0.0, std::min(retval, 1.0));
+            retval = std::max(0.0, std::min(retval, 1.0));
+        }
 
         return retval;
     }
 
-    void RenderSphere(double r, const GG::Clr& amb_and_diff, const GG::Clr& spec, double shine, 
+    double GetRotatingPlanetDiffuseIntensity()
+    {
+        static double retval = -1.0;
+
+        if (retval == -1.0) {
+            GG::XMLDoc doc;
+            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            doc.ReadDoc(ifs);
+            ifs.close();
+
+            if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("diffuse_intensity"))
+                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("diffuse_intensity").Text());
+            else
+                retval = 0.5;
+
+            retval = std::max(0.0, std::min(retval, 1.0));
+        }
+
+        return retval;
+    }
+
+    void RenderSphere(double r, const GG::Clr& ambient, const GG::Clr& diffuse, const GG::Clr& spec, double shine, 
                       boost::shared_ptr<GG::Texture> texture)
     {
         static GLUquadric* quad = gluNewQuadric();
@@ -137,8 +162,10 @@ namespace {
                 GLfloat spec_v[] = {spec.r / 255.0, spec.g / 255.0, spec.b / 255.0, spec.a / 255.0};
                 glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec_v);
             }
-            GLfloat amb_and_diff_v[] = {amb_and_diff.r / 255.0, amb_and_diff.g / 255.0, amb_and_diff.b / 255.0, amb_and_diff.a / 255.0};
-            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, amb_and_diff_v);
+            GLfloat ambient_v[] = {ambient.r / 255.0, ambient.g / 255.0, ambient.b / 255.0, ambient.a / 255.0};
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_v);
+            GLfloat diffuse_v[] = {diffuse.r / 255.0, diffuse.g / 255.0, diffuse.b / 255.0, diffuse.a / 255.0};
+            glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_v);
             gluQuadricTexture(quad, texture ? GL_TRUE : GL_FALSE);
             gluQuadricNormals(quad, GLU_SMOOTH);
             gluQuadricOrientation(quad, GLU_OUTSIDE);
@@ -174,9 +201,11 @@ namespace {
         glEnable(GL_LIGHT0);
         glEnable(GL_TEXTURE_2D);
 
-        double intensity = GetRotatingPlanetAmbientAndDiffuseIntensity();
-        GG::Clr amb_and_diff(intensity, intensity, intensity, 1.0);
-        RenderSphere(diameter / 2, amb_and_diff, GG::CLR_WHITE, shininess, texture);
+        double intensity = GetRotatingPlanetAmbientIntensity();
+        GG::Clr ambient(intensity, intensity, intensity, 1.0);
+        intensity = GetRotatingPlanetDiffuseIntensity();
+        GG::Clr diffuse(intensity, intensity, intensity, 1.0);
+        RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
 
         glPopAttrib();
 
