@@ -7,12 +7,8 @@
 #include "../util/MultiplayerCommon.h"
 
 namespace {
-    const int    SITREP_LB_MARGIN_X = 10;
-    const int    SITREP_LB_MARGIN_Y = 45;
-    const int    SITREP_LB_HEIGHT = 200;
-    const int    SITREP_CLOSE_MARGIN_Y = 5;
-    const int    SITREP_CLOSE_WIDTH = 60;
-    const int    SITREP_TITLE_MARGIN_Y = 15;
+    const int    SITREP_LB_MARGIN_X = 5;
+    const int    SITREP_LB_MARGIN_Y = 5;
 
     bool temp_header_bool = RecordHeaderFile(SitRepPanelRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
@@ -20,28 +16,15 @@ namespace {
 
 
 SitRepPanel::SitRepPanel(int x, int y, int w, int h) : 
-    CUI_Wnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE/* | CUI_Wnd::MINIMIZABLE*/),
-    m_title(new GG::TextControl(0, SITREP_TITLE_MARGIN_Y, w, static_cast<int>(ClientUI::PTS * 1.75 + 4), UserString("SITREP_PANEL_TITLE"), 
-                                ClientUI::FONT, static_cast<int>(ClientUI::PTS * 1.75), ClientUI::TEXT_COLOR, GG::TF_CENTER | GG::TF_VCENTER))
+    CUI_Wnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE)
 {
     TempUISoundDisabler sound_disabler;
 
-    AttachChild(m_title);
-
-    m_sitreps_lb = new CUIListBox(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y, w - (SITREP_LB_MARGIN_X * 2), SITREP_LB_HEIGHT);
+    m_sitreps_lb = new CUIListBox(LeftBorder() + SITREP_LB_MARGIN_X, TopBorder() + SITREP_LB_MARGIN_Y,
+                                  w - (LeftBorder() + SITREP_LB_MARGIN_X), h - (TopBorder() + SITREP_LB_MARGIN_Y));
     m_sitreps_lb->SetStyle(GG::LB_NOSORT);
 
     AttachChild(m_sitreps_lb);
-
-    // create buttons
-    m_close = new CUIButton(w - SITREP_LB_MARGIN_X - SITREP_CLOSE_WIDTH, SITREP_LB_MARGIN_Y + SITREP_LB_HEIGHT + SITREP_CLOSE_MARGIN_Y, SITREP_CLOSE_WIDTH, 
-                            UserString("CLOSE"));
-
-    //attach buttons
-    AttachChild(m_close);
-
-    //connect signals and slots
-    GG::Connect(m_close->ClickedSignal(), &SitRepPanel::OnClose, this);
 
     Hide();
 }
@@ -59,6 +42,14 @@ void SitRepPanel::Keypress (GG::Key key, Uint32 key_mods)
     default:
         break;
     }
+}
+
+void SitRepPanel::SizeMove(int x1, int y1, int x2, int y2)
+{
+    CUI_Wnd::SizeMove(x1, y1, x2, y2);
+    m_sitreps_lb->SizeMove(LeftBorder() + SITREP_LB_MARGIN_X, TopBorder() + SITREP_LB_MARGIN_Y,
+                           Width() - (LeftBorder() + SITREP_LB_MARGIN_X), Height() - (TopBorder() + SITREP_LB_MARGIN_Y));
+    Update();
 }
 
 void SitRepPanel::OnClose()
@@ -86,7 +77,7 @@ void SitRepPanel::Update()
         GG::Connect(link_text->ShipLinkSignal(), &ClientUI::ZoomToShip, ClientUI::GetClientUI());
         GG::Connect(link_text->TechLinkSignal(), &ClientUI::ZoomToTech, ClientUI::GetClientUI());
         GG::Connect(link_text->EncyclopediaLinkSignal(), &ClientUI::ZoomToEncyclopediaEntry, ClientUI::GetClientUI());
-        row->height = font->TextExtent(link_text->WindowText(), format, width).y;
+        row->height = font->TextExtent(link_text->WindowText(), format, width, true).y;
         row->push_back(link_text);
         m_sitreps_lb->Insert(row);                
     }

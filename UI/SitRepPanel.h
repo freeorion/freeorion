@@ -21,6 +21,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void Keypress (GG::Key key, Uint32 key_mods);
+    virtual void SizeMove(int x1, int y1, int x2, int y2);
 
     void Update(); ///< loads all the relevant SitReps into the window
 
@@ -29,8 +30,6 @@ public:
 
 private:
     CUIListBox*           m_sitreps_lb;
-    CUIButton*            m_close;      //!< the button that closes the report
-    GG::TextControl*      m_title;
 };
 
 inline std::pair<std::string, std::string> SitRepPanelRevision()
