@@ -28,6 +28,25 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
+#define TEST_VALUE_REF_VARIABLE 0
+#if TEST_VALUE_REF_VARIABLE
+#include <ValueRef.h>
+#endif
+
+#define TEST_CONDITIONS_CLASS 0
+#if TEST_CONDITIONS_CLASS
+#include <Condition.h>
+namespace {
+    // command-line options
+    void AddOptions(OptionsDB& db)
+    {
+        db.Add("condition-test-set", "Selects the test of the Condition class to perform.", 0, Validator<int>());
+        db.Add("condition-test-source", "Selects source object (id) for the Condition class tests.", 559, Validator<int>());
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
+}
+#endif
+
 // for dummy video driver setenv-hack
 #include "SDL_getenv.h"
 
@@ -521,6 +540,260 @@ void ServerApp::HandleMessage(const Message& msg)
                 }
             }
             LoadGameVars(doc);
+
+#if TEST_VALUE_REF_VARIABLE
+            std::ofstream ofs("ValueRefTest.txt");
+
+            // first, create the XML representation of an arbitrary UniverseObject
+            UniverseObject* object = m_universe.Object(559);
+            GG::XMLDoc debug_doc;
+            debug_doc.root_node.AppendChild(object->XMLEncode());
+            debug_doc.WriteDoc(ofs);
+
+            // now, read all the ValueRef-accessible items from this object
+            const char* field_names[] = {
+                "CurrentFarming",
+                "CurrentIndustry",
+                "MaxIndustry",
+                "CurrentResearch",
+                "MaxResearch",
+                "CurrentTrade",
+                "MaxTrade",
+                "CurrentMining",
+                "MaxMining",
+                "CurrentConstruction",
+                "MaxConstruction",
+                "CurrentHealth",
+                "MaxHealth",
+                "CurrentPopulation",
+                "MaxPopulation",
+                "MoneyStockpile",
+                "MineralStockpile",
+                "FoodStockpile",
+                "MoneyProduction",
+                "FoodProduction",
+                "MineralProduction",
+                "IndustryProduction",
+                "ScienceProduction",
+                0
+            };
+
+            try {
+                ofs << "\nOBJECT:\n" << std::endl;
+                // first the source object version...
+                const char** curr_name = field_names;
+                while (*curr_name) {
+                    ofs << *curr_name << "(source)= " << ValueRef::Variable<double>(true, *curr_name).Eval(object, 0) << std::endl;
+                    curr_name++;
+                }
+                ofs << std::endl;
+
+                ofs << "PlanetSize(source)= " << ValueRef::Variable<PlanetSize>(true, "PlanetSize").Eval(object, 0) << std::endl;
+                ofs << "PlanetType(source)= " << ValueRef::Variable<PlanetType>(true, "PlanetType").Eval(object, 0) << std::endl;
+                ofs << "PlanetEnvironment(source)= " << ValueRef::Variable<PlanetEnvironment>(true, "PlanetEnvironment").Eval(object, 0) << std::endl;
+                ofs << "UniverseObjectType(source)= " << ValueRef::Variable<UniverseObjectType>(true, "ObjectType").Eval(object, 0) << std::endl;
+                ofs << "StarType(source)= " << ValueRef::Variable<StarType>(true, "StarType").Eval(object, 0) << std::endl;
+                ofs << "PrimaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "PrimaryFocus").Eval(object, 0) << std::endl;
+                ofs << "SecondaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "SecondaryFocus").Eval(object, 0) << std::endl;
+
+                ofs << "Owner(source)= " << ValueRef::Variable<int>(true, "Owner").Eval(object, 0) << std::endl;
+                ofs << "ID(source)= " << ValueRef::Variable<int>(true, "ID").Eval(object, 0) << std::endl;
+                ofs << "\n\n";
+
+                // now the target object version
+                curr_name = field_names;
+                while (*curr_name) {
+                    ofs << *curr_name << "(target)= " << ValueRef::Variable<double>(false, *curr_name).Eval(0, object) << std::endl;
+                    curr_name++;
+                }
+                ofs << std::endl;
+
+                ofs << "PlanetSize(target)= " << ValueRef::Variable<PlanetSize>(false, "PlanetSize").Eval(0, object) << std::endl;
+                ofs << "PlanetType(target)= " << ValueRef::Variable<PlanetType>(false, "PlanetType").Eval(0, object) << std::endl;
+                ofs << "PlanetEnvironment(target)= " << ValueRef::Variable<PlanetEnvironment>(false, "PlanetEnvironment").Eval(0, object) << std::endl;
+                ofs << "UniverseObjectType(target)= " << ValueRef::Variable<UniverseObjectType>(false, "ObjectType").Eval(0, object) << std::endl;
+                ofs << "StarType(target)= " << ValueRef::Variable<StarType>(false, "StarType").Eval(0, object) << std::endl;
+                ofs << "PrimaryFocus(target)= " << ValueRef::Variable<FocusType>(false, "PrimaryFocus").Eval(0, object) << std::endl;
+                ofs << "SecondaryFocus(target)= " << ValueRef::Variable<FocusType>(false, "SecondaryFocus").Eval(0, object) << std::endl;
+
+                ofs << "Owner(target)= " << ValueRef::Variable<int>(false, "Owner").Eval(0, object) << std::endl;
+                ofs << "ID(target)= " << ValueRef::Variable<int>(false, "ID").Eval(0, object) << std::endl;
+
+                // NOW, re-run the same tests, using a reference to the object's system
+                ofs << "\nOBJECT'S SYSTEM:\n" << std::endl;
+                // first the source object version...
+                curr_name = field_names;
+                while (*curr_name) {
+                    ofs << "System." << *curr_name << "(source)= " << ValueRef::Variable<double>(true, std::string("System.") + *curr_name).Eval(object, 0) << std::endl;
+                    curr_name++;
+                }
+                ofs << std::endl;
+
+                ofs << "System.PlanetSize(source)= " << ValueRef::Variable<PlanetSize>(true, "System.PlanetSize").Eval(object, 0) << std::endl;
+                ofs << "System.PlanetType(source)= " << ValueRef::Variable<PlanetType>(true, "System.PlanetType").Eval(object, 0) << std::endl;
+                ofs << "System.PlanetEnvironment(source)= " << ValueRef::Variable<PlanetEnvironment>(true, "System.PlanetEnvironment").Eval(object, 0) << std::endl;
+                ofs << "System.UniverseObjectType(source)= " << ValueRef::Variable<UniverseObjectType>(true, "System.ObjectType").Eval(object, 0) << std::endl;
+                ofs << "System.StarType(source)= " << ValueRef::Variable<StarType>(true, "System.StarType").Eval(object, 0) << std::endl;
+                ofs << "System.PrimaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "System.PrimaryFocus").Eval(object, 0) << std::endl;
+                ofs << "System.SecondaryFocus(source)= " << ValueRef::Variable<FocusType>(true, "System.SecondaryFocus").Eval(object, 0) << std::endl;
+
+                ofs << "System.Owner(source)= " << ValueRef::Variable<int>(true, "System.Owner").Eval(object, 0) << std::endl;
+                ofs << "System.ID(source)= " << ValueRef::Variable<int>(true, "System.ID").Eval(object, 0) << std::endl;
+                ofs << "\n\n";
+
+                // (skip the target object version; the first round of tests determined that that works alright)
+            } catch (...) {
+                ofs.close();
+                throw;
+            }
+
+            ofs.close();
+#endif
+#if TEST_CONDITIONS_CLASS
+            std::ofstream ofs2("ConditionTest.txt");
+            try {
+                Condition::ConditionBase* condition = 0;
+                switch (GetOptionsDB().Get<int>("condition-test-set")) {
+                    case 0:
+                    default:
+                        condition = new Condition::All();
+                        break;
+                    case 1:
+                        condition = new Condition::EmpireAffiliation(new ValueRef::Constant<int>(0), AFFIL_SELF, true);
+                        break;
+                    case 2:
+                        condition = new Condition::EmpireAffiliation(new ValueRef::Constant<int>(0), AFFIL_SELF, false);
+                        break;
+                    case 3:
+                        condition = new Condition::Self();
+                        break;
+                    case 4:
+                        condition = new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_SHIP));
+                        break;
+                    case 5:
+                        // TODO : put a valid building name in here.
+                        // condition = new Condition::Building("building_name");
+                        break;
+                    case 6:
+                        // TODO : put a valid special name in here.
+                        // condition = new Condition::HasSpecial("special_name");
+                        break;
+                    case 7:
+                        // TODO : put a valid condition name in here.
+                        // condition = new Condition::Contains(/*condition*/);
+                        break;
+                    case 8:
+                        condition = new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_OPTIMAL)));
+                        break;
+                    case 9:
+                        condition = new Condition::PlanetSize(std::vector<const ValueRef::ValueRefBase<PlanetSize>*>(1, new ValueRef::Constant<PlanetSize>(SZ_ASTEROIDS)));
+                        break;
+                    case 10:
+                        condition = new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true);
+                        break;
+                    case 11:
+                        condition = new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), false);
+                        break;
+                    case 12:
+                        condition = new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)));
+                        break;
+                    case 13:
+                        condition = new Condition::Chance(new ValueRef::Constant<double>(0.05));
+                        break;
+                    case 14:
+                        // TODO : test this
+                        condition = new Condition::MeterValue(METER_POPULATION,
+                                                              new ValueRef::Constant<double>(10.0),
+                                                              new ValueRef::Constant<double>(90.0),
+                                                              true);
+                    case 15:
+                        // TODO : test this
+                        condition = new Condition::MeterValue(METER_POPULATION,
+                                                              new ValueRef::Constant<double>(10.0),
+                                                              new ValueRef::Constant<double>(90.0),
+                                                              false);
+                        break;
+                    case 16:
+                        // TODO : put a valid stockpile type in here.
+                        /*condition = new Condition::StockpileValue(new ValueRef::Constant<StockpileType>(stockpile type value),
+                                                              new ValueRef::Constant<double>(10.0),
+                                                              new ValueRef::Constant<double>(90.0));*/
+                        break;
+                    case 17:
+                        condition = new Condition::VisibleToEmpire(std::vector<const ValueRef::ValueRefBase<int>*>(1, new ValueRef::Constant<int>(0)));
+                        break;
+                    case 18:
+                        // using condition from FocusType #2
+                        condition = new Condition::WithinDistance(new ValueRef::Constant<double>(50.0),
+                                                                  new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), false));
+                        break;
+                    case 19:
+                        // using condition from FocusType #2
+                        // TODO : test more extensively with Fleets at various positions (moving between Systems, etc.)
+                        condition = new Condition::WithinStarlaneJumps(new ValueRef::Constant<int>(2),
+                                                                       new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), false));
+                        break;
+                    case 20:
+                        // TODO (EffectTarget is currently unimplemented)
+                        //condition = new Condition::EffectTarget();
+                        break;
+                    case 21:
+                        // TODO : put some valid conditions in here
+                        //condition = new Condition::And(/*conditions*/);
+                        break;
+                    case 22:
+                        // TODO : put some valid conditions in here
+                        //condition = new Condition::Or(/*conditions*/);
+                        break;
+                    case 23:
+                        // TODO : put a valid condition in here
+                        //condition = new Condition::Not(/*condition*/);
+                        break;
+                    case 24:
+                        // TODO : test A and (B or C)
+                        break;
+                    case 25:
+                        // TODO : test (A and B) or C
+                        break;
+                    case 26:
+                        // TODO : test A or (B and C)
+                        break;
+                    case 27:
+                        // TODO : test (A or B) and C
+                        break;
+                    case 28:
+                        // TODO : test A or not(B)
+                        break;
+                    case 29:
+                        // TODO : test A and not(B)
+                        break;
+                }
+                // get the list of all UniverseObjects that satisfy m_condition
+                Condition::ConditionBase::ObjectSet condition_targets;
+                Condition::ConditionBase::ObjectSet condition_non_targets;
+                for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
+                    condition_non_targets.push_back(it->second);
+                }
+                ofs2 << "SOURCE:\n" << std::endl;
+                UniverseObject* source = m_universe.Object(GetOptionsDB().Get<int>("condition-test-source"));
+                GG::XMLDoc debug_doc;
+                debug_doc.root_node.AppendChild(source->XMLEncode());
+                debug_doc.WriteDoc(ofs2);
+                if (condition) {
+                    condition->Eval(source, condition_targets, condition_non_targets);
+                    ofs2 << "\n\nTARGETS:\n" << std::endl;
+                    for (Condition::ConditionBase::ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+                        ofs2 << "  " << (*it)->ID() << " \"" << (*it)->Name() << "\"" << std::endl;
+                    }
+                } else {
+                    ofs2 << "Test #" << GetOptionsDB().Get<int>("condition-test-set") << " not implemented yet.";
+                }
+                ofs2 << "\n" << std::endl;
+            } catch (...) {
+                ofs2.close();
+            }
+            ofs2.close();
+#endif
 
             CreateAIClients(std::vector<PlayerSetupData>(m_expected_players - 1));
             g_load_doc = doc;
