@@ -48,6 +48,15 @@ Player %1% no longer has a connection to the server.
 EMPIRE_DEFEATED
 The %1% empire is no more.
 
+UNKNOWN_SYSTEM
+unknown system
+
+RENAME
+Rename
+
+ENTER_NEW_NAME
+Enter new name
+
 
 #################
 # Intro Screen  #
@@ -386,6 +395,31 @@ The %1% System
 
 SP_SYSTEM_PRODUCTION
 System Production
+
+
+#################
+# Fleet Window  #
+#################
+
+FW_FLEET_AT
+At %1% System
+
+FW_FLEET_MOVING_TO
+Moving to %1%, ETA %2%
+
+FW_SHIP_CLASS
+Ship Class 
+
+# used to name new fleets when they are created
+FW_NEW_FLEET_NAME
+New fleet
+
+# the name of the new fleet icon in the fleet listbox
+FW_NEW_FLEET_LABEL
+New Fleet
+
+FW_EMPIRE_FLEETS
+%1% Fleets
 
 
 ####################
