@@ -1,6 +1,5 @@
 #include "TechWnd.h"
 
-#include "BSpline.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "CUIDrawUtil.h"
