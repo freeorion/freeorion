@@ -97,6 +97,7 @@ void HumanClientApp::EndGame()
     m_player_id = -1;
     m_empire_id = -1;
     m_player_name = "";
+    GetUI()->GetMapWnd()->CloseAllPopups();
     GetUI()->ScreenIntro();
 }
 
