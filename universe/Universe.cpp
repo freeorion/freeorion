@@ -1224,13 +1224,24 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
    const std::map<int, PlayerInfo>& player_info = ServerApp::GetApp()->NetworkCore().Players();
    unsigned int i = 0;
+   std::vector<GG::Clr> colors = EmpireColors();
    for (std::map<int, PlayerInfo>::const_iterator it = player_info.begin(); it != player_info.end(); ++it, ++i) {
       std::string empire_name = "Empire" + boost::lexical_cast<std::string>(i);
-      const std::vector<GG::Clr>& colors = EmpireColors();
-      GG::Clr color = (i < colors.size() ? colors[i] : GG::Clr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0));
-      if (i < player_setup_data.size()) {
+
+      GG::Clr color;
+      if (i < player_setup_data.size()) { // first try to use user-assigned colors
           empire_name = player_setup_data[i].empire_name;
           color = player_setup_data[i].empire_color;
+          std::vector<GG::Clr>::iterator color_it = std::find(colors.begin(), colors.end(), color);
+          if (color_it != colors.end()) {
+              colors.erase(color_it);
+          }
+      } else if (!colors.empty()) { // failing that, use other built-in colors
+          int color_idx = RandInt(0, colors.size() - 1);
+          color = colors[color_idx];
+          colors.erase(colors.begin() + color_idx);
+      } else { // as a last resort, make up a color
+          color = GG::Clr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
       }
 
       int home_planet_id = homeworlds[i];
