@@ -3,6 +3,7 @@
   <HumanClientApp>
     <width value="1024"/>
     <height value="768"/>
+    <bpp value="32"/>
     <calc_FPS value="0"/>
     <app_name>"freeorion"</app_name>
   </HumanClientApp>
