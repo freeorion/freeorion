@@ -158,7 +158,8 @@ protected:
 //!@{
     std::string m_title;        //!< title of the window
     bool        m_minimize;     //!< whether the window minimizes or not
-
+    bool        m_is_resizing;  //!< keeps resizing smooth
+    
 //!@}
 };//CUI_Wnd
 

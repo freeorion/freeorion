@@ -130,7 +130,8 @@ void CUI_ModalWnd::OnMinimize(){}
 
 CUI_Wnd::CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags):
     GG::Wnd(x,y,w,h,flags),
-    m_title(t)
+    m_title(t),
+    m_is_resizing(false)
 {
     if(flags & MINIMIZABLE)
         m_minimize=true;
@@ -174,6 +175,11 @@ CUI_Wnd::~CUI_Wnd()
 
 int CUI_Wnd::Render()
 {
+//this is the onyl way to get this to work.
+//if the lbutton is up, set m_is_resizing unconditionally to false
+    if(!GG::App::GetApp()->MouseButtonDown(0))
+        m_is_resizing = false;
+
     ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, m_title,
         true, m_minimize, Resizable());
     return 0;
@@ -213,17 +219,23 @@ using namespace std;
     //define a rect where the resize area is
     GG::Rect rect(LowerRight().x-10, LowerRight().y-10, LowerRight().x, LowerRight().y);
     //if drag started in lower left and this is a resizable window
-    if(Resizable() && rect.Contains(pt))
+    if(m_is_resizing || (Resizable() && rect.Contains(pt)))
     {
-        char buff[256];
+/*        char buff[256];
         sprintf(buff,"pt = (%d, %d); move = (%d, %d)",pt.x,pt.y,move.x,move.y);
         ClientUI::LogMessage(string(buff));
-        //resize this window!
+  */      //resize this window!
         //get mouse position
-        GG::Pt pos = GG::App::GetApp()->MousePosition();
-        SizeMove(UpperLeft().x, UpperLeft().y, pos.x+5, pos.y+5);//use mouse position so we stay in the window
+//      GG::Pt pos = GG::App::GetApp()->MousePosition();
+//        SizeMove(UpperLeft().x, UpperLeft().y, pos.x+5, pos.y+5);//use mouse position so we stay in the window
+        SizeMove(UpperLeft(), LowerRight() + move);
+        
+        //boolean value to move
+        m_is_resizing = true;
+
         return 1;
     }
+    m_is_resizing = false;
     return GG::Wnd::LDrag(pt,move,keys);
 
 }//LDrag()
