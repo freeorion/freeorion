@@ -23,6 +23,9 @@ EmpireManager& Empires()
 {
 #ifdef FREEORION_BUILD_SERVER
     return ServerApp::GetApp()->Empires();
+#elif defined(FREEORION_BUILD_UTIL)
+    static EmpireManager em;
+    return em;
 #else
     return ClientApp::Empires();
 #endif
@@ -32,6 +35,9 @@ Universe& GetUniverse()
 {
 #ifdef FREEORION_BUILD_SERVER
     return ServerApp::GetApp()->GetUniverse();
+#elif defined(FREEORION_BUILD_UTIL)
+    static Universe u;
+    return u;
 #else
     return ClientApp::GetUniverse();
 #endif
@@ -39,14 +45,6 @@ Universe& GetUniverse()
 
 log4cpp::Category& Logger()
 {
-#ifdef FREEORION_BUILD_SERVER
-    return ServerApp::GetApp()->Logger();
-#else
-# ifdef FREEORION_BUILD_HUMAN
-    return HumanClientApp::GetApp()->Logger();
-# else
-    return AIClientApp::GetApp()->Logger();
-# endif
-#endif
+    return log4cpp::Category::getRoot();
 }
 
