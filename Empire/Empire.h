@@ -75,6 +75,8 @@ public:
     typedef std::list<SitRepEntry*>::const_iterator           SitRepItr;
     //@}
 
+    typedef std::deque<const Tech*> ResearchQueue;
+
     /* *****************************************************
     ** CONSTRUCTORS
     ********************************************************/
@@ -146,13 +148,23 @@ public:
        Methods to see if items are in our lists
     **************************************************/
 
+    /// Returns true iff \a name is an unavailable tech, and it has not unavailable prerequisites.
+    bool ResearchableTech(const std::string& name) const;
+
+    /// Returns the queue of techs being or queued to be researched.
+    const ResearchQueue& GetResearchQueue() const;
+
+    /** Returns the RPs spent towards tech \a name if it has partial research progress, -1.0 if it is
+        unresearched or already available. */
+    double ResearchStatus(const std::string& name) const;
+
     /// Returns the set of all available techs.
     const std::set<std::string>& AvailableTechs() const;
 
-    /// Returns true if the given item is in the appropriate list, false if it is not.
+    /// progress of partially-researched techs; fully researched techs are cannot be found in this container
     bool TechAvailable(const std::string& name) const;
 
-    /// Returns true if the given item is in the appropriate list, false if it is not.
+    /// Returns true if the given building type is known to this empire, false if it is not.
     bool BuildingTypeAvailable(const std::string& name) const;
 
     /** Returns the BuildingType called \a name.  This will be equivalent to the BuildingType
@@ -225,6 +237,14 @@ public:
        Methods to add items to our various lists
     **************************************************/
 
+    /** Adds \a tech to the research queue, placing it before position \a pos.  If \a tech is already in the queue,
+        it is moved to \a pos, then removed from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
+        is placed at the end of the queue. If \a tech is already available, no action is taken. */
+    void PlaceTechInQueue(const Tech* tech, int pos = -1);
+
+    /// Removes \a tech from the research queue, if it is in the research queue already.
+    void RemoveTechFromQueue(const Tech* tech);
+
     /// Inserts the given Tech into the Empire's list of available technologies.
     void AddTech(const std::string& name);
 
@@ -274,13 +294,6 @@ public:
 
 
     /// Adds reseach points to the accumulated total. 
-    /** 
-     * Increments the empire's accumulated research points 
-     * by the specified amount.  Returns total accumulated research points
-     * after the addition. 
-     */
-    int AddRP(int moreRPs);
-
     /// Checks for new tech advances.
     /** 
      * This method checks for new technological
@@ -328,6 +341,12 @@ private:
 
     /// list of acquired technologies.  These are string names referencing Tech objects
     std::set<std::string> m_techs;
+
+    /// the queue of techs being or waiting to be researched
+    ResearchQueue m_research_queue;
+
+    /// progress of partially-researched techs; fully researched techs are removed
+    std::map<std::string, double> m_research_status;
 
     /// list of acquired BuildingType.  These are string names referencing BuildingType objects
     std::set<std::string> m_building_types;

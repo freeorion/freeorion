@@ -127,6 +127,30 @@ const ShipDesign* Empire::GetShipDesign(const std::string& name) const
     return (it == m_ship_designs.end()) ? 0 : &it->second;
 }
 
+bool Empire::ResearchableTech(const std::string& name) const
+{
+    const Tech* tech = GetTech(name);
+    if (!tech)
+        return false;
+    const std::set<std::string>& prereqs = tech->Prerequisites();
+    for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
+        if (m_techs.find(*it) == m_techs.end())
+            return false;
+    }
+    return true;
+}
+
+const Empire::ResearchQueue& Empire::GetResearchQueue() const
+{
+    return m_research_queue;
+}
+
+double Empire::ResearchStatus(const std::string& name) const
+{
+    std::map<std::string, double>::const_iterator it = m_research_status.find(name);
+    return (it == m_research_status.end()) ? -1.0 : it->second;
+}
+
 const std::set<std::string>& Empire::AvailableTechs() const
 {
     return m_techs;
@@ -218,6 +242,29 @@ Empire::SitRepItr Empire::SitRepEnd() const
 /*************************************************
     Methods to add items to our various lists
 **************************************************/
+void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
+{
+    if (!ResearchableTech(tech->Name()) || m_techs.find(tech->Name()) != m_techs.end())
+        return;
+    ResearchQueue::iterator it = std::find(m_research_queue.begin(), m_research_queue.end(), tech);
+    if (it != m_research_queue.end()) {
+        if (std::distance(m_research_queue.begin(), it) < pos)
+            --pos;
+        m_research_queue.erase(it);
+    }
+    if (pos < 0 || static_cast<int>(m_research_queue.size()) <= pos)
+        m_research_queue.push_back(tech);
+    else
+        m_research_queue.insert(m_research_queue.begin() + pos, tech);
+}
+
+void Empire::RemoveTechFromQueue(const Tech* tech)
+{
+    ResearchQueue::iterator it = std::find(m_research_queue.begin(), m_research_queue.end(), tech);
+    if (it != m_research_queue.end())
+        m_research_queue.erase(it);
+}
+
 void Empire::AddTech(const std::string& name)
 {
     m_techs.insert(name);
@@ -384,14 +431,6 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
 /*************************************************
     Miscellaneous mutators
 **************************************************/
-int Empire::AddRP(int moreRPs)
-{
-    m_total_rp += moreRPs;
-
-    return m_total_rp;
-}
-
-
 void Empire::CheckResearchProgress()
 {
     // TODO: implement
