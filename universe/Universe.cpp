@@ -608,9 +608,9 @@ std::pair<std::list<System*>, double> Universe::ShortestPath(int system1, int sy
     int current_system = system2;
     while (predecessors[current_system] != current_system) {
         retval.first.push_front(pointer_property_map[current_system]);
-        retval.second += distances[current_system];
         current_system = predecessors[current_system];
     }
+    retval.second = distances[system2];
 
     // note that at this point retval.first will be empty if there was no starlane path from system1 to system2
     if (!retval.first.empty()) {
