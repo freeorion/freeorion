@@ -29,7 +29,8 @@ CPP  = g++ -D__DEBUG__
 
 # Lists of objects, includes, and libs
 # Add object files to OBJ when they are added to the project
-OBJ  = ../../objs/chmain.o ../../objs/HumanClientApp.o ../../objs/ClientApp.o ../../objs/GGApp.o ../../objs/GGButton.o ../../objs/GGClr.o ../../objs/GGControl.o ../../objs/GGDrawUtil.o ../../objs/GGDropDownList.o ../../objs/GGEdit.o ../../objs/GGListBox.o ../../objs/GGMenu.o ../../objs/GGPtRect.o ../../objs/GGScroll.o ../../objs/GGStaticGraphic.o ../../objs/GGText.o ../../objs/GGTextControl.o ../../objs/GGTexture.o ../../objs/GGWnd.o ../../objs/GGZList.o ../../objs/SDL_ttf.o ../../objs/SDLGGApp.o ../../objs/XMLDoc.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/SDLnetUDP.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/Process.o ../../objs/OrderSet.o ../../objs/SDLnet.o ../../objs/Order.o ../../objs/ClientUniverse.o ../../objs/UniverseObject.o ../../objs/Fleet.o ../../objs/Planet.o ../../objs/PopCenter.o ../../objs/ProdCenter.o ../../objs/ServerUniverse.o ../../objs/Ship.o ../../objs/System.o ../../UI/ClientUI.o ../../UI/StringTable.o ../../UI/ToolContainer.o ../../UI/IntroScreen.o ../../UI/GalaxySetupWnd.o ../../UI/ServerConnectWnd.o ../../GG/dialogs/GGMessageDlg.o ../../GG/dialogs/GGFileDlg.o ../../GG/dialogs/GGOkCancelDlg.o
+OBJ  = ../../objs/chmain.o ../../objs/HumanClientApp.o ../../objs/ClientApp.o ../../objs/GGApp.o ../../objs/GGButton.o ../../objs/GGClr.o ../../objs/GGControl.o ../../objs/GGDrawUtil.o ../../objs/GGDropDownList.o ../../objs/GGEdit.o ../../objs/GGListBox.o ../../objs/GGMenu.o ../../objs/GGPtRect.o ../../objs/GGScroll.o ../../objs/GGStaticGraphic.o ../../objs/GGText.o ../../objs/GGTextControl.o ../../objs/GGTexture.o ../../objs/GGWnd.o ../../objs/GGZList.o ../../objs/SDL_ttf.o ../../objs/SDLGGApp.o ../../objs/XMLDoc.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/SDLnetUDP.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/Process.o ../../objs/OrderSet.o ../../objs/SDLnet.o ../../objs/Order.o ../../objs/ClientUniverse.o ../../objs/UniverseObject.o ../../objs/Fleet.o ../../objs/Planet.o ../../objs/PopCenter.o ../../objs/ProdCenter.o ../../objs/ServerUniverse.o ../../objs/Ship.o ../../objs/System.o ../../objs/ClientUI.o ../../objs/StringTable.o ../../objs/ToolContainer.o ../../objs/IntroScreen.o ../../objs/GalaxySetupWnd.o ../../objs/ServerConnectWnd.o ../../objs/GGMessageDlg.o ../../objs/GGFileDlg.o ../../objs/GGOkCancelDlg.o ../../objs/EmpireManager.o ../../objs/ClientEmpireManager.o  ../../objs/GGDynamicGraphic.o  ../../objs/GGSlider.o ../../objs/Empire.o
+
 INCS =  -I/usr/include  -I/usr/include/GL  -I$(SDL_INC)  -I$(FREETYPE_INC)  -I$(BOOST_INC)  -I../../SDL_net  -I../../SDL_net2  -I../../GG  -I../../GG/XML
 LIBS =  -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -L$(BOOST_FS_LIB) -L$(BOOST_REGEX_LIB) -lSDLmain -lSDL -lSDL_image -lSDL_mixer -lGL -lGLU -lfreetype -lboost_signals -lboost_filesystem -lboost_regex -lexpat -llog4cpp -lz -lpthread
 
@@ -62,9 +63,4 @@ $(BIN): $(OBJ)
 
 ../../objs/%.o : %.cpp
 	$(CPP) $< -c $(CXXFLAGS) -o $@
-
-
-
-
-
 
