@@ -4,14 +4,48 @@
 #include "../util/OptionsDB.h"
 #include "Planet.h"
 
+namespace {
+    // loads and stores BuildingTypes specified in [settings-dir]/buildings.xml
+    class BuildingTypeManager
+    {
+    public:
+        BuildingTypeManager()
+        {
+            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+                settings_dir += '/';
+            std::ifstream ifs((settings_dir + "buildings.xml").c_str());
+            GG::XMLDoc doc;
+            doc.ReadDoc(ifs);
+            for (GG::XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
+                if (it->Tag() != "BuildingType")
+                    throw std::runtime_error("ERROR: Encountered non-BuildingType in buildings.xml!");
+                m_building_types[it->Child("name").Text()] = new BuildingType(*it);
+            }
+            ifs.close();
+        }
+
+        BuildingType* GetBuildingType(const std::string& name) const
+        {
+            std::map<std::string, BuildingType*>::const_iterator it = m_building_types.find(name);
+            return it != m_building_types.end() ? it->second : 0;
+        }
+
+    private:
+        std::map<std::string, BuildingType*> m_building_types;
+    };
+}
+
 Building::Building() :
     m_building_type(""),
+    m_operating(true),
     m_planet_id(INVALID_OBJECT_ID)
 {
 }
 
 Building::Building(int empire_id, const std::string& building_type, int planet_id) :
     m_building_type(building_type),
+    m_operating(true),
     m_planet_id(planet_id)
 {
    AddOwner(empire_id);
@@ -26,12 +60,18 @@ Building::Building(const GG::XMLElement& elem) :
     using boost::lexical_cast;
 
     m_building_type = elem.Child("m_building_type").Text();
+    m_operating = lexical_cast<bool>(elem.Child("m_operating").Text());
     m_planet_id = lexical_cast<int>(elem.Child("m_planet_id").Text());
 }
 
 const std::string& Building::BuildingTypeName() const
 {
     return m_building_type;
+}
+
+bool Building::Operating() const
+{
+    return m_operating;
 }
 
 int Building::PlanetID() const
@@ -52,16 +92,27 @@ GG::XMLElement Building::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) co
     XMLElement retval("Building" + lexical_cast<std::string>(ID()));
     retval.AppendChild(UniverseObject::XMLEncode(empire_id));
     retval.AppendChild(XMLElement("m_building_type", m_building_type));
+    retval.AppendChild(XMLElement("m_operating", lexical_cast<std::string>(m_operating)));
     retval.AppendChild(XMLElement("m_planet_id", lexical_cast<std::string>(m_planet_id)));
 
     return retval;
 }
 
+void Building::Activate(bool activate)
+{
+    m_operating = activate;
+}
+
 void Building::SetPlanetID(int planet_id)
 {
     if (Planet* planet = GetPlanet())
-	planet->RemoveBuilding(ID());
+        planet->RemoveBuilding(ID());
     m_planet_id = planet_id;
+}
+
+void Building::ExecuteEffects()
+{
+    GetBuildingType(m_building_type)->Effects()->Execute(ID());
 }
 
 void Building::MovementPhase()
@@ -92,8 +143,12 @@ BuildingType::BuildingType(const GG::XMLElement& elem)
     if (elem.Tag() != "BuildingType")
         throw std::invalid_argument("Attempted to construct a BuildingType from an XMLElement that had a tag other than \"BuildingType\"");
 
+    using boost::lexical_cast;
+
     m_name = elem.Child("name").Text();
     m_description = elem.Child("description").Text();
+    m_build_cost = lexical_cast<double>(elem.Child("build_cost").Text());
+    m_maintenance_cost = lexical_cast<double>(elem.Child("maintenance_cost").Text());
     m_effects = new Effect::EffectsGroup(elem.Child("EffectsGroup"));
 }
 
@@ -107,32 +162,19 @@ const std::string& BuildingType::Description() const
     return m_description;
 }
 
+double BuildingType::BuildCost() const
+{
+    return m_build_cost;
+}
+
+double BuildingType::MaintenanceCost() const
+{
+    return m_maintenance_cost;
+}
+
 const Effect::EffectsGroup* BuildingType::Effects() const
 {
     return m_effects;
-}
-
-
-BuildingTypeManager::BuildingTypeManager()
-{
-    std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-    if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-	settings_dir += '/';
-    std::ifstream ifs((settings_dir + "buildings.xml").c_str());
-    GG::XMLDoc doc;
-    doc.ReadDoc(ifs);
-    for (GG::XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
-	if (it->Tag() != "BuildingType")
-	    throw std::runtime_error("ERROR: Encountered non-BuildingType in buildings.xml!");
-	m_building_types[it->Child("name").Text()] = new BuildingType(*it);
-    }
-    ifs.close();
-}
-
-BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const
-{
-    std::map<std::string, BuildingType*>::const_iterator it = m_building_types.find(name);
-    return it != m_building_types.end() ? it->second : 0;
 }
 
 BuildingType* GetBuildingType(const std::string& name)
