@@ -94,7 +94,7 @@ foreach $filename (keys %COMMON) {
 	foreach $ext (("o","obj")) { # Do not use $(OBJEXT) to avoid warnings about overridden makerules.
 	    print OUTPUT<<EOF
 $dir/$prefix-$no_ext.$ext: $dir/server-$no_ext.$ext
-\t(cd $dir;\$(LN_S) server-$no_ext.$ext $prefix-$no_ext.$ext)
+\t(cd $dir && \$(LN_S) -f server-$no_ext.$ext $prefix-$no_ext.$ext)
 EOF
 ;
 	}
