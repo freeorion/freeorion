@@ -57,26 +57,23 @@ FleetWindow::FleetWindow(int x, int y, int active_fleet, vector<int> other_fleet
     m_fleets(other_fleets),
     CUI_Wnd("Fleet Window", x, y, 400, 400, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | CUI_Wnd::CLOSABLE | CUI_Wnd::MINIMIZABLE | GG::Wnd::ONTOP)
 {
-
     // create the common controls which are always visible in the window
     m_ship_list_label  = new GG::TextControl(ship_list_x, ship_list_y-20, "Ships in Fleet", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
     m_fleets_list_label = new GG::TextControl(fleet_list_x, fleet_list_y-20, "Fleets Here", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
 
     m_ship_list = new GG::ListBox(ship_list_x, ship_list_y, ship_list_width, ship_list_height, ClientUI::WND_INNER_BORDER_COLOR, ClientUI::CTRL_COLOR);
-    
+
     m_fleets_list = new GG::ListBox(fleet_list_x, fleet_list_y, fleet_list_width, fleet_list_height, ClientUI::WND_INNER_BORDER_COLOR, ClientUI::CTRL_COLOR); 
     m_fleets_list->SetStyle(GG::LB_SINGLESEL);
-    
-    
+
     m_receiving_fleet_list = new GG::ListBox(receiving_list_x, receiving_list_y, receiving_list_width, receiving_list_height, ClientUI::WND_INNER_BORDER_COLOR, ClientUI::CTRL_COLOR); 
     m_receiving_fleet_label = new GG::TextControl(receiving_list_x, receiving_list_y-20, "Ships in Other Fleet", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
-   
+
     m_move_button = new GG::Button(move_button_x, move_button_y, move_button_width, move_button_height, "Move", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
     m_split_button = new GG::Button(split_button_x, split_button_y, split_button_width, split_button_height, "Split", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
     m_merge_button =  new GG::Button(merge_button_x, merge_button_y, merge_button_width, merge_button_height, "Merge", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
     m_done_button = new GG::Button(done_button_x, done_button_y, done_button_width, done_button_height, "Done", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
 
-      
     AttachChild(m_receiving_fleet_list);
     AttachChild(m_receiving_fleet_label);
     AttachChild(m_ship_list_label);
@@ -87,12 +84,12 @@ FleetWindow::FleetWindow(int x, int y, int active_fleet, vector<int> other_fleet
     AttachChild(m_move_button);
     AttachChild(m_split_button);    
     AttachChild(m_merge_button);
-                        
+
     GG::Connect(m_done_button->ClickedSignal(), &FleetWindow::DoneButtonClicked, this);
     GG::Connect(m_move_button->ClickedSignal(), &FleetWindow::MoveButtonClicked, this);   
     GG::Connect(m_split_button->ClickedSignal(), &FleetWindow::SplitButtonClicked, this);
     GG::Connect(m_merge_button->ClickedSignal(), &FleetWindow::MergeButtonClicked, this);
- 
+
     SetDialogMode(FLEET_VIEW);
 }
 
@@ -104,16 +101,6 @@ FleetWindow::FleetWindow(const GG::XMLElement& elem) : CUI_Wnd(elem)
 
 FleetWindow::~FleetWindow()
 {
-    DestroyChild( m_fleets_list );
-    DestroyChild( m_fleets_list_label);
-    DestroyChild( m_ship_list);
-    DestroyChild( m_ship_list_label);
-    DestroyChild( m_move_button);
-    DestroyChild( m_merge_button);
-    DestroyChild( m_split_button);
-    DestroyChild( m_done_button);
-    DestroyChild( m_receiving_fleet_list);
-    DestroyChild( m_receiving_fleet_label);
 }
 
 
