@@ -29,6 +29,10 @@
 #include "ClientUI.h"
 #endif
 
+#ifndef _CUI_Wnd_h_
+#include "CUI_Wnd.h"
+#endif
+
 #include <vector>
 #include <string>
 
@@ -69,7 +73,7 @@ private:
 
 
 /** server connections window  */
-class ServerConnectWnd : public GG::ModalWnd
+class ServerConnectWnd : public CUI_ModalWnd
 {
 public:
         /** \name Structors */ //@{
@@ -112,7 +116,7 @@ public:
     /** fill the dropdownlist box and then executes the modal window */
 	virtual int	Run(); 
 	/** render window */
-    virtual int Render(); 
+//    virtual int Render(); 
     //@}
 
 private:
@@ -131,6 +135,7 @@ private:
     void SearchMore();
     void OnOk();
     void OnCancel();
+    inline virtual void OnClose() {m_ended_with_ok=false;}
     int UpdateServerList(int maxitems);  
     /** Add row to dropdownlist. Each row contains name and address of server */ 
     int AddRow(const IPValue& value);   
