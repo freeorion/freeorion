@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _PopCenter_h_
 #define _PopCenter_h_
 
@@ -6,17 +7,10 @@
 #endif
 
 /** a population center decoration for a UniverseObject.  This is a decorator class.  That is, it is designed to 
-   augment another class with extra functionality.  Any class that wishes to inherit from this one should be 
-   sure to inherit for UniversObject virtually as well, to make sure that there is only one copy of UniverseObject
-   in each inheriting class.  The serialization functions for decorators should not do anything with their base class,
-   in this case UniverseObject.  This is because the decorated class should be inherited from UniverseObject directly
-   as well, and should construct the UniverseObject portion of itself first.  The first constructed instance of a 
-   virtual base class is always the one that matters, so the decorators should not bother with constructing 
-   UniverseObject at all.  This means that PopCenter and the other UniverseObject decorators should always default
-   construct their UniverseObject bases in their constructors, even in the GG::XMLElement constructors.  Planet 
-   is the most obvious class to inherit PopCenter, but other classes could be made from it as well (e.g., a ship 
-   that is large enough to support population and still travel between systems).*/
-class PopCenter : virtual public UniverseObject
+    augment another class with extra functionality.  Planet is the most obvious class to inherit PopCenter, but 
+    other classes could be made from it as well (e.g., a ship that is large enough to support population and still 
+    travel between systems).*/
+class PopCenter
 {
 public:
    /** the types of population density*/
@@ -32,7 +26,7 @@ public:
    PopCenter(double max_pop); ///< basic ctor that only specifies a max pop (DEFAULT_POP_SCALE_FACTOR is used for the scale factor)
    PopCenter(double max_pop, int race); ///< basic ctor that specifies a max pop and race
    PopCenter(const GG::XMLElement& elem); ///< ctor that constructs a PopCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a PopCenter object
-   ~PopCenter(); ///< dtor
+   virtual ~PopCenter(); ///< dtor
    //@}
 
    /** \name Accessors */ //@{

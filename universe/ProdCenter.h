@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _ProdCenter_h_
 #define _ProdCenter_h_
 
@@ -5,8 +6,8 @@
 #include "UniverseObject.h"
 #endif
 
-/** a production center decoration for a UniverseObject.  See PopCenter for notes on decorators and how to use them.*/
-class ProdCenter : virtual public UniverseObject
+/** a production center decoration for a UniverseObject.*/
+class ProdCenter
 {
 public:
    /** the types of production focus*/
@@ -27,7 +28,7 @@ public:
    ProdCenter(); ///< default ctor
    ProdCenter(double workforce); ///< general ctor taking an initial workforce value, in pop points
    ProdCenter(const GG::XMLElement& elem); ///< ctor that constructs a ProdCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ProdCenter object
-   ~ProdCenter(); ///< dtor
+   virtual ~ProdCenter(); ///< dtor
    //@}
 
    /** \name Accessors */ //@{
@@ -72,11 +73,12 @@ private:
    FocusType      m_secondary;
    
    double         m_workforce; ///< pop points present in this center
-   
+
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
    double         m_industry_factor; ///< a number in [0.0 1.0] representing the percentage of industrialization
    BuildType      m_currently_building;
+   double         m_build_progress; ///< build progress in [0.0 1.0] towards the current build target (may be 0.0 if not applicable, such as when no target exists)
    double         m_rollover;  ///< for build types that can span multiple turns this specifies how many production points are rolled over towards the next turn.
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////

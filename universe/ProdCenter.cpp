@@ -24,21 +24,20 @@ ProdCenter::ProdCenter(double workforce) :
 {
 }
 
-ProdCenter::ProdCenter(const GG::XMLElement& elem) : 
-   UniverseObject()
+ProdCenter::ProdCenter(const GG::XMLElement& elem)
 {
 
    if (elem.Tag() != "ProdCenter")
       throw std::invalid_argument("Attempted to construct a ProdCenter from an XMLElement that had a tag other than \"ProdCenter\"");
 
-   Visibility vis = (Visibility) lexical_cast<int> ( elem.Child("visibility").Attribute("value") );
+   UniverseObject::Visibility vis = UniverseObject::Visibility(lexical_cast<int> ( elem.Child("visibility").Attribute("value") ));
 
    m_primary = (FocusType) lexical_cast<int> ( elem.Child("m_primary").Attribute("value") );
    m_secondary = (FocusType) lexical_cast<int> ( elem.Child("m_secondary").Attribute("value") );
    m_workforce = lexical_cast<double> ( elem.Child("m_workforce").Attribute("value") );
    m_industry_factor = lexical_cast<double> ( elem.Child("m_industry_factor").Attribute("value") );
 
-   if (vis == FULL_VISIBILITY)
+   if (vis == UniverseObject::FULL_VISIBILITY)
    {
       m_currently_building = (BuildType) lexical_cast<int> ( elem.Child("m_currently_building").Attribute("value") );
       m_rollover = lexical_cast<double> ( elem.Child("m_rollover").Attribute("value") );
@@ -62,7 +61,7 @@ UniverseObject::Visibility ProdCenter::Visible(int empire_id) const
    // For a ProdCenter visibility will always be checked against
    // the implementing object, so this function will never be used.
 
-   return FULL_VISIBILITY;
+   return UniverseObject::FULL_VISIBILITY;
 }
 
 
@@ -70,36 +69,37 @@ GG::XMLElement ProdCenter::XMLEncode() const
 {
    using GG::XMLElement;
    using boost::lexical_cast;
+   using std::string;
 
-   XMLElement element("ProdCenter.h");
+   XMLElement element("ProdCenter");
 
-   XMLElement visibility("visibility");
-   visibility.SetAttribute( "value", lexical_cast<std::string>(FULL_VISIBILITY) );
-   element.AppendChild(visibility);
+   XMLElement temp("visibility");
+   temp.SetAttribute("value", lexical_cast<string>(UniverseObject::FULL_VISIBILITY));
+   element.AppendChild(temp);
 
-   XMLElement primary("m_primary");
-   primary.SetAttribute( "value", lexical_cast<std::string>(m_primary) );
-   element.AppendChild(primary);
+   temp = XMLElement("m_primary");
+   temp.SetAttribute("value", lexical_cast<string>(m_primary));
+   element.AppendChild(temp);
 
-   XMLElement secondary("m_secondary");
-   secondary.SetAttribute( "value", lexical_cast<std::string>(m_secondary) );
-   element.AppendChild(secondary);
+   temp = XMLElement("m_secondary");
+   temp.SetAttribute("value", lexical_cast<string>(m_secondary));
+   element.AppendChild(temp);
 
-   XMLElement workforce("m_workforce");
-   workforce.SetAttribute( "value", lexical_cast<std::string>(m_workforce) );
-   element.AppendChild(workforce);
+   temp = XMLElement("m_workforce");
+   temp.SetAttribute("value", lexical_cast<string>(m_workforce));
+   element.AppendChild(temp);
 
-   XMLElement industry("m_industry_factor");
-   industry.SetAttribute( "value", lexical_cast<std::string>(m_industry_factor) );
-   element.AppendChild(industry);
+   temp = XMLElement("m_industry_factor");
+   temp.SetAttribute("value", lexical_cast<string>(m_industry_factor));
+   element.AppendChild(temp);
 
-   XMLElement currently_building("m_currently_building");
-   currently_building.SetAttribute( "value", lexical_cast<std::string>(m_currently_building) );
-   element.AppendChild(currently_building);
+   temp = XMLElement("m_currently_building");
+   temp.SetAttribute("value", lexical_cast<string>(m_currently_building));
+   element.AppendChild(temp);
 
-   XMLElement rollover("m_rollover");
-   currently_building.SetAttribute( "value", lexical_cast<std::string>(m_rollover) );
-   element.AppendChild(rollover);
+   temp = XMLElement("m_rollover");
+   temp.SetAttribute("value", lexical_cast<string>(m_rollover));
+   element.AppendChild(temp);
 
    return element;
 
@@ -115,7 +115,7 @@ GG::XMLElement ProdCenter::XMLEncode(int empire_id) const
    XMLElement element("ProdCenter.h");
 
    XMLElement visibility("visibility");
-   visibility.SetAttribute( "value", lexical_cast<std::string>(PARTIAL_VISIBILITY) );
+   visibility.SetAttribute( "value", lexical_cast<std::string>(UniverseObject::PARTIAL_VISIBILITY) );
    element.AppendChild(visibility);
 
    XMLElement primary("m_primary");

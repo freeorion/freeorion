@@ -7,7 +7,6 @@ using boost::lexical_cast;
 #include <stdexcept>
 
 PopCenter::PopCenter() : 
-   UniverseObject(),
    m_pop(0.0),
    m_max_pop(0.0),
    m_growth(0.0),
@@ -16,7 +15,6 @@ PopCenter::PopCenter() :
 }
    
 PopCenter::PopCenter(double max_pop) : 
-   UniverseObject(),
    m_pop(0.0),
    m_max_pop(max_pop),
    m_growth(0.0),
@@ -25,7 +23,6 @@ PopCenter::PopCenter(double max_pop) :
 }
    
 PopCenter::PopCenter(double max_pop, int race) : 
-   UniverseObject(),
    m_pop(0.0),
    m_max_pop(max_pop),
    m_growth(0.0),
@@ -33,8 +30,7 @@ PopCenter::PopCenter(double max_pop, int race) :
 {
 }
    
-PopCenter::PopCenter(const GG::XMLElement& elem) : 
-   UniverseObject()
+PopCenter::PopCenter(const GG::XMLElement& elem)
 {
 
    if (elem.Tag() != "PopCenter")
@@ -69,7 +65,7 @@ UniverseObject::Visibility PopCenter::Visible(int empire_id) const
    // For a PopCenter visibility will always be checked against
    // the implementing object, so this function will never be used.
 
-   return FULL_VISIBILITY;
+   return UniverseObject::FULL_VISIBILITY;
 }
 
 GG::XMLElement PopCenter::XMLEncode() const

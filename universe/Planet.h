@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _Planet_h_
 #define _Planet_h_
 
@@ -14,9 +15,8 @@
 #endif
 
 
-/** a class representing a FreeOrion planet.  A Planet is a type of UniverseObject, and has some UniverseObject decorators
-   attached to it as well.  See PopCenter for notes on decorators.*/
-class Planet : virtual public UniverseObject, public PopCenter, public ProdCenter
+/** a class representing a FreeOrion planet.*/
+class Planet : public UniverseObject, public PopCenter, public ProdCenter
 {
 public:
    /** the types of planets in FreeOrion*/
