@@ -593,14 +593,38 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       colony_ship_design.empire = empire_id;
       int colony_id = empire->AddShipDesign(colony_ship_design);
 
-      ShipDesign mark_1_design;
-      mark_1_design.name = "Mark I";
-      mark_1_design.attack = 2;
-      mark_1_design.defense = 1;
-      mark_1_design.cost = 100;
-      mark_1_design.colonize = false;
-      mark_1_design.empire = empire_id;
-      empire->AddShipDesign(mark_1_design);
+      ShipDesign design;
+      design.name = "Mark I";
+      design.attack = 2;
+      design.defense = 1;
+      design.cost = 100;
+      design.colonize = false;
+      design.empire = empire_id;
+      empire->AddShipDesign(design);
+
+      design.name = "Mark II";
+      design.attack = 5;
+      design.defense = 2;
+      design.cost = 200;
+      design.colonize = false;
+      design.empire = empire_id;
+      empire->AddShipDesign(design);
+
+      design.name = "Mark III";
+      design.attack = 10;
+      design.defense = 3;
+      design.cost = 375;
+      design.colonize = false;
+      design.empire = empire_id;
+      empire->AddShipDesign(design);
+
+      design.name = "Mark IV";
+      design.attack = 15;
+      design.defense = 5;
+      design.cost = 700;
+      design.colonize = false;
+      design.empire = empire_id;
+      empire->AddShipDesign(design);
 
       // create the empire's starting fleet
       Fleet* home_fleet = new Fleet("Home Fleet", home_system->X(), home_system->Y(), empire_id);

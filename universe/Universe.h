@@ -2,10 +2,6 @@
 #ifndef _Universe_h_
 #define _Universe_h_
 
-#ifndef BOOST_NONCOPYABLE_HPP_INCLUDED
-#include <boost/noncopyable.hpp>
-#endif
-
 #ifndef _SitRepEntry_h_
 #include "../util/SitRepEntry.h"
 #endif
@@ -20,7 +16,7 @@ class UniverseObject;
 namespace GG {class XMLElement;}
 
 
-class Universe : public boost::noncopyable
+class Universe
 {
 protected:
    typedef std::map<int, UniverseObject*> ObjectMap; ///< the container type that is used internally to hold the objects in the universe; keyed by ID number
