@@ -20,15 +20,34 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
-//FreeOrion defines
-class ClientNetwork;
-class ClientUniverse;
+//FreeOrion defines & includes
+//    these shall change as more teams complete their classes
+#ifndef _ClientNetworkCore_h_
+#include "../network/ClientNetworkCore.h"
+#endif
+
+#ifndef _ClientUniverse_h_
+#include "../universe/ClientUniverse.h"
+#endif
+
 class ClientEmpire;
-class UniverseObject;
-class Planet;
-class System;
-class Fleet;
-class Ship;
+
+#ifndef _Planet_h_
+#include "../universe/Planet.h"
+#endif
+
+#ifndef _System_h_
+#include "../universe/System.h"
+#endif
+
+#ifndef _Fleet_h_
+#include "../universe/Fleet.h"
+#endif
+
+#ifndef _Ship_h_
+#include "../universe/Ship.h"
+#endif
+
 class Tech;
 class SitRepEvent;
 class Combat;
@@ -65,10 +84,10 @@ public:
     //! \name Construction & Initialization
     //!@{
     
-    ClientUI();        //!< construction (calls Initialize())
+    ClientUI(const std::string& string_table_file = StringTable::S_DEFAULT_FILENAME);        //!< construction (calls Initialize())
     ~ClientUI();    //!< destruction (calls Cleanup())
 
-    bool Initialize();    //!< provided to setup initial variables. 
+    bool Initialize(const std::string& string_table_file);    //!< provided to setup initial variables. 
     bool Cleanup();        //!< provided to clean up ClientUI's memory space. 
 
     //!@}
@@ -78,13 +97,14 @@ public:
     
     //inline const log4cpp::Category& Logger() {return s_logger;}//!< Returns the logger associated with ClientUI
     
+    static inline ClientUI* GetClientUI() {if(the_UI) return the_UI; return NULL;} //!< returns a pointer to the singleton ClientUI class
     inline const std::string& Language() {return m_string_table->Language();} //!< Returns the language of the StringTable object associated with ClientUI
     inline const std::string& String(int index) {return m_string_table->String(index); } //!< Returns a lookup from the string table
     inline void LogMessage(const std::string& msg) {s_logger.debug(msg);} //!<sends a message to the logger
     
     //!@}
     
-    //! \name Utility Functions
+    //! \name Mutators
     //!@{
     
     //! @param width screen width
@@ -107,7 +127,7 @@ public:
     //!@{
     
     void ScreenIntro();                        //!< Intro Screen
-    void ScreenSettings(ClientNetwork &net);    //!< Game/Network Options Screen
+    void ScreenSettings(const ClientNetworkCore &net);    //!< Game/Network Options Screen
     void ScreenEmpireSelect();                    //!< Empire Selection Screen
     void ScreenTurnStart();                    //!< Turn Start Splash Screen
     
@@ -177,6 +197,7 @@ private:
     int m_state;                    //!< represents the screen currently being displayed
     
     StringTable* m_string_table;    //!< a string table to lookup international strings
+    static ClientUI* the_UI;    //!<pointer to the one and only ClientUI object
 
 };//ClientUI
 

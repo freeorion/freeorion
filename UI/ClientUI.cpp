@@ -17,22 +17,24 @@
 
 //static members
 log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
+ClientUI* ClientUI::the_UI = NULL;
 
 //Init and Cleanup//////////////////////////////////////
 
-ClientUI::ClientUI():
+ClientUI::ClientUI(const std::string& string_table_file /* = StringTable::S_DEFAULT_FILENAME */):
     TOOLTIP_DELAY(1000) //1 second delay for tooltips to appear
 {
-    Initialize();
+    the_UI = this;    
+    Initialize(string_table_file);
 }//ClientUI()
-
-bool ClientUI::Initialize()
+ 
+bool ClientUI::Initialize(const std::string& string_table_file)
 {
     //initialize Tooltip engine
     m_tooltips=new ToolContainer(TOOLTIP_DELAY);
     
     //initialize string table
-    m_string_table = new StringTable();
+    m_string_table = new StringTable(string_table_file);
     
     //initialize UI state
     m_state=STATE_STARTUP;
@@ -73,6 +75,7 @@ bool ClientUI::Cleanup()
         delete(m_string_table);
     m_string_table=NULL;
 
+    the_UI=NULL;
     //TODO: Destroy variables, etc.   
 
     return true; 
@@ -150,7 +153,7 @@ void ClientUI::ScreenIntro()
 
 }//ScreenIntro()
                       
-void ClientUI::ScreenSettings(ClientNetwork &net)
+void ClientUI::ScreenSettings(const ClientNetworkCore &net)
 {
 
 }//ScreenSettings()
