@@ -47,36 +47,37 @@ public:
     /** \name Mutators */ //@{
     virtual bool Render()
     {
-        GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-        GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
-        GG::Pt ul = UpperLeft(), lr = LowerRight();
+	/* the "this->" stuff is needed to make GCC 3.4 (and possible other strict ISO C++ conforming compilers) happy */
+        GG::Clr color_to_use = this->Disabled() ? DisabledColor(this->Color()) : this->Color();
+        GG::Clr int_color_to_use = this->Disabled() ? DisabledColor(this->InteriorColor()) : this->InteriorColor();
+        GG::Pt ul = this->UpperLeft(), lr = this->LowerRight();
         FlatRectangle(ul.x, ul.y, lr.x, lr.y, int_color_to_use, color_to_use, 1);
-        if (!EditsAllowed()) {
-            GetEdit()->OffsetMove(UpperLeft());
-            GetEdit()->Render();
-            GetEdit()->OffsetMove(-UpperLeft());
+        if (!this->EditsAllowed()) {
+            this->GetEdit()->OffsetMove(this->UpperLeft());
+            this->GetEdit()->Render();
+            this->GetEdit()->OffsetMove(-this->UpperLeft());
         }
-        UpButton()->OffsetMove(UpperLeft());
-        DownButton()->OffsetMove(UpperLeft());
-        UpButton()->Render();
-        DownButton()->Render();
-        UpButton()->OffsetMove(-UpperLeft());
-        DownButton()->OffsetMove(-UpperLeft());
+        this->UpButton()->OffsetMove(this->UpperLeft());
+        this->DownButton()->OffsetMove(this->UpperLeft());
+        this->UpButton()->Render();
+        this->DownButton()->Render();
+        this->UpButton()->OffsetMove(-this->UpperLeft());
+        this->DownButton()->OffsetMove(-this->UpperLeft());
         return true;
     }
 
     virtual void SizeMove(int x1, int y1, int x2, int y2)
     {
-        Wnd::SizeMove(x1, y1, x2, y2);
+        GG::Wnd::SizeMove(x1, y1, x2, y2);
         const int BORDER_THICK = 1;
         const int BUTTON_MARGIN = 3;
-        const int BN_HEIGHT = (Height() - 3 * BUTTON_MARGIN) / 2;
+        const int BN_HEIGHT = (this->Height() - 3 * BUTTON_MARGIN) / 2;
         const int BN_WIDTH = BN_HEIGHT;
-        const int BN_X_POS = Width() - BN_WIDTH - BORDER_THICK;
-        GetEdit()->SizeMove(0, 0, BN_X_POS, Height());
-        UpButton()->SizeMove(BN_X_POS, BORDER_THICK,
+        const int BN_X_POS = this->Width() - BN_WIDTH - BORDER_THICK;
+        this->GetEdit()->SizeMove(0, 0, BN_X_POS, this->Height());
+        this->UpButton()->SizeMove(BN_X_POS, BORDER_THICK,
                              BN_X_POS + BN_WIDTH, BUTTON_MARGIN + BN_HEIGHT);
-        DownButton()->SizeMove(BN_X_POS, BUTTON_MARGIN + BN_HEIGHT + BUTTON_MARGIN,
+        this->DownButton()->SizeMove(BN_X_POS, BUTTON_MARGIN + BN_HEIGHT + BUTTON_MARGIN,
                                BN_X_POS + BN_WIDTH, BUTTON_MARGIN + BN_HEIGHT + BUTTON_MARGIN + BN_HEIGHT);
     }
     //@}

@@ -131,13 +131,9 @@ protected:
     //@}
 
     //! \name Mutators //@{
-#ifdef FREEORION_WIN32
 public:
-#endif
     virtual void CloseClicked();    //!< called when window is closed via the close button
-#ifdef FREEORION_WIN32
 protected:
-#endif
     virtual void MinimizeClicked(); //!< called when window is minimized or restored via the minimize/restore button
     //@}
 

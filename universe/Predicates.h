@@ -2,7 +2,13 @@
 #ifndef _Predicates_h_
 #define _Predicates_h_
 
-class UniverseObject;
+#if 10*__GNUC__ + __GNUC_MINOR__ > 33
+# ifndef _UniverseObject_h_
+#  include "../universe/UniverseObject.h"
+# endif
+#else
+  class UniverseObject;
+#endif
 
 /** returns true iff \a obj is a Fleet belonging to the given empire object that is under orders to move, but is not yet moving. 
     If the given empire is -1, all stationary fleets will be returned.  Note that it is preferable to use this functor on System
