@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     // read and process command-line arguments, if any
     try {
         GetOptionsDB().Add('h', "help", "Print this help message.", false);
-
+        GetOptionsDB().Add('f', "fullscreen", "Starts the game in fullscreen", false);
         GG::XMLDoc doc;
         std::ifstream ifs("default/config.xml");
         doc.ReadDoc(ifs);
@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
         GetOptionsDB().SetFromXML(doc);
         GetOptionsDB().SetFromCommandLine(argc, argv);
         if (GetOptionsDB().Get<bool>("help")) {
-            GetOptionsDB().GetUsage(std::cout);
+            GetOptionsDB().GetUsage(std::cerr);
             return 0;
         }
     } catch (const std::exception& e) {

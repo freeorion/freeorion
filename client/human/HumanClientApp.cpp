@@ -12,7 +12,6 @@
 #include <boost/lexical_cast.hpp>
 #include <sstream>
 
-
 namespace {
 GG::Wnd* NewCUIButton(const GG::XMLElement& elem)         {return new CUIButton(elem);}
 GG::Wnd* NewCUIStateButton(const GG::XMLElement& elem)    {return new CUIStateButton(elem);}
@@ -255,6 +254,10 @@ boost::shared_ptr<ClientUI> HumanClientApp::GetUI()
 void HumanClientApp::SDLInit()
 {
     const SDL_VideoInfo* vid_info = 0;
+    Uint32 DoFullScreen = 0;
+
+    // Set Fullscreen if specified at command line or in config-file
+    DoFullScreen = GetOptionsDB().Get<bool>("fullscreen") ? SDL_FULLSCREEN : 0;
 
 #ifdef FREEORION_WIN32
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) < 0) {
@@ -339,7 +342,7 @@ void HumanClientApp::SDLInit()
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
     }
 
-    if (SDL_SetVideoMode(AppWidth(), AppHeight(), bpp, SDL_OPENGL) == 0) {
+    if (SDL_SetVideoMode(AppWidth(), AppHeight(), bpp, DoFullScreen|SDL_OPENGL) == 0) {
         Logger().errorStream() << "Video mode set failed: " << SDL_GetError();
         Exit(1);
     }
