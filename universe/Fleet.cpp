@@ -21,9 +21,19 @@ Fleet::Fleet() :
 Fleet::Fleet(const GG::XMLElement& elem) : 
    UniverseObject(elem.Child("UniverseObject"))
 {
+   using GG::XMLElement;
+
    if (elem.Tag() != "Fleet")
       throw std::invalid_argument("Attempted to construct a Fleet from an XMLElement that had a tag other than \"Fleet\"");
-   // TODO
+
+   XMLElement ships = elem.Child("m_ships");
+   for(int i=0; i<ships.NumChildren(); i++)
+   {
+      m_ships.insert(  lexical_cast<int> (ships.Child(i).Attribute("value") ) );
+   }
+
+   m_moving_to = lexical_cast<int> ( elem.Child("m_moving_to").Attribute("value") );
+   
 }
 
 UniverseObject::Visibility Fleet::Visible(int empire_id) const
@@ -151,8 +161,5 @@ void Fleet::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
    // TODO
 }
 
-void Fleet::XMLMerge(const GG::XMLElement& elem)
-{
-   // TODO
-}
+
 

@@ -72,7 +72,6 @@ public:
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
 
-  	virtual void XMLMerge(const GG::XMLElement& elem); ///< updates the Planet object from an XMLElement object that represents the updates
    //@}
 
 private:

@@ -17,7 +17,7 @@
 class System : public UniverseObject
 {
 private:
-   typedef std::multimap<int, UniverseObject*>  ObjectMultimap;
+   typedef std::multimap<int, int>  ObjectMultimap;
    typedef std::map<int, bool>                  StarlaneMap;
 
 public:
@@ -29,7 +29,7 @@ public:
                   NUM_STARTYPES           ///< the lowest illegal StarType value
                  }; // others TBD
       
-   typedef std::vector<UniverseObject*>         ObjectVec;        ///< the return type of FindObjects()
+   typedef std::vector<int>                     ObjectVec;        ///< the return type of FindObjects()
    typedef std::vector<int>                     ObjectIDVec;      ///< the return type of FindObjectIDs()
 
    typedef ObjectMultimap::iterator       orbit_iterator;         ///< iterator for system objects
@@ -61,20 +61,6 @@ public:
    bool HasStarlaneTo(int id) const;         ///< returns true if there is a starlane from this system to the system with ID number \a id
    bool HasWormholeTo(int id) const;         ///< returns true if there is a wormhole from this system to the system with ID number \a id
 
-   /** returns the IDs of all the objects that match \a pred.  Predicates used with this function must take a single const 
-      UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred>
-   ObjectIDVec FindObjectIDs(Pred pred)
-   {
-      ObjectIDVec retval;
-      for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-         const UniverseObject* o = it->second;
-         if (pred(o))
-            retval.push_back(it->first);
-      }
-      return retval;
-   }
-
    const_orbit_iterator begin() const  {return m_objects.begin();}   ///< begin iterator for all system objects
    const_orbit_iterator end() const    {return m_objects.end();}     ///< end iterator for all system objects
 
@@ -102,32 +88,17 @@ public:
       std::invalid_arugment May throw std::invalid_arugment if \a orbit is out of the range [0, Orbits()].*/
    int Insert(UniverseObject* obj, int orbit);
 
+   /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound 
+       objects should be inserted with this function. NOTE: This function is primarily intended for XML decode purposes and does not set the object's System to point to this system as it is assumed that this has already been done prior to encoding. If used for other purposes you must set the objects System ID manually. */
+   int Insert(int obj_id, int orbit);
+
    /** removes the object with ID number \a id from the system, and returns it; returns 0 if theree is no such object*/
-   UniverseObject*   Remove(int id);
-
-   /** removes the object with ID number \a id; returns true if such an object was found, false otherwise*/
-   bool              Delete(int id);
-
-   UniverseObject*   Object(int id); ///< returns a pointer to the system object with ID number \a id, or 0 if none exists
+   bool   Remove(int id);
 
    void AddStarlane(int id);     ///< adds a starlane between this system and the system with ID number \a id.  \note Adding a starlane to a system to which there is already a wormhole reases the wormhole; you may want to check for a wormhole before calling this function.
    void AddWormhole(int id);     ///< adds a wormhole between this system and the system with ID number \a id  \note Adding a wormhole to a system to which there is already a starlane reases the starlane; you may want to check for a starlane before calling this function.
    bool RemoveStarlane(int id);  ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
    bool RemoveWormhole(int id);  ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
-
-   /** returns all the objects that match \a pred.  Predicates used with this function must take a single UniverseObject* 
-      parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred>
-   ObjectVec FindObjects(Pred pred)
-   {
-      ObjectVec retval;
-      for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-         UniverseObject* o = it->second;
-         if (pred(o))
-            retval.push_back(o);
-      }
-      return retval;
-   }
 
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
@@ -144,7 +115,6 @@ public:
    lane_iterator  begin_lanes()  {return m_starlanes_wormholes.begin();}   ///< begin iterator for all starlanes and wormholes terminating in this system
    lane_iterator  end_lanes()    {return m_starlanes_wormholes.end();}     ///< end iterator for all starlanes and wormholes terminating in this system
 
-  	virtual void XMLMerge(const GG::XMLElement& elem); ///< updates the System object from an XMLElement object that represents the updates
    //@}
 
 private:

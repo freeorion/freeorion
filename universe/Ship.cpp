@@ -26,7 +26,14 @@ ShipDesign::ShipDesign(const GG::XMLElement& elem)
 {
    if (elem.Tag() != "ShipDesign")
       throw std::invalid_argument("Attempted to construct a ShipDesign from an XMLElement that had a tag other than \"ShipDesign\"");
-   //TODO
+
+   id = lexical_cast<int> ( elem.Child("id").Attribute("value") );
+   race = lexical_cast<int> ( elem.Child("race").Attribute("value") );
+   name = elem.Child("name").Text();
+   attack = lexical_cast<int> ( elem.Child("attack").Attribute("value") );
+   defense = lexical_cast<int> ( elem.Child("defense").Attribute("value") );
+   cost = lexical_cast<int> ( elem.Child("cost").Attribute("value") );
+
 }
 
 GG::XMLElement ShipDesign::XMLEncode() const
@@ -81,11 +88,13 @@ Ship::Ship(int race, int design_id)
 }
 
 Ship::Ship(const GG::XMLElement& elem) : 
-   UniverseObject(elem.Child("UniverseObject"))
+  UniverseObject(elem.Child("UniverseObject")),
+  m_design(ShipDesign(elem.Child("m_design")))
 {
    if (elem.Tag() != "Ship")
       throw std::invalid_argument("Attempted to construct a Ship from an XMLElement that had a tag other than \"Ship\"");
-   //TODO
+
+   m_fleet_id = lexical_cast<int> ( elem.Child("m_fleet_id").Attribute("value") );
 }
 
 UniverseObject::Visibility Ship::Visible(int empire_id) const
@@ -114,6 +123,10 @@ GG::XMLElement Ship::XMLEncode() const
    element.AppendChild( UniverseObject::XMLEncode() );
 
    element.AppendChild( m_design.XMLEncode() );
+
+   XMLElement fleet_id("m_fleet_id");
+   fleet_id.SetAttribute( "value", lexical_cast<std::string>(m_fleet_id) );
+   element.AppendChild(fleet_id);
 
    return element;
 }
@@ -144,8 +157,5 @@ void Ship::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
    //TODO
 }
 
-void Ship::XMLMerge(const GG::XMLElement& elem)
-{
-   //TODO
-}
+
 

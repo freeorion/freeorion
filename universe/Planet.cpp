@@ -51,9 +51,16 @@ Planet::Planet(const GG::XMLElement& elem) :
    PopCenter(elem.Child("PopCenter")),
    ProdCenter(elem.Child("ProdCenter"))
 {
+   using GG::XMLElement;
+   
    if (elem.Tag() != "Planet")
       throw std::invalid_argument("Attempted to construct a Planet from an XMLElement that had a tag other than \"Planet\"");
-   // TODO
+
+   m_type = (PlanetType) lexical_cast<int> ( elem.Child("m_type").Attribute("value") );
+   m_size = (PlanetSize) lexical_cast<int> ( elem.Child("m_size").Attribute("value") );
+   m_system_id = lexical_cast<int> ( elem.Child("m_system_id").Attribute("value") );
+   m_def_bases = lexical_cast<int> ( elem.Child("m_def_bases").Attribute("value") );
+
 }
 
 
@@ -158,8 +165,5 @@ void Planet::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps
    // TODO
 }
 
-void Planet::XMLMerge(const GG::XMLElement& elem)
-{
-   // TODO
-}
+
 

@@ -6,6 +6,12 @@ using boost::lexical_cast;
 
 #ifdef FREEORION_BUILD_SERVER
 #include "../server/ServerApp.h"
+#else
+#ifdef FREEORION_BUILD_HUMAN
+#include "../client/human/HumanClientApp.h"
+#else
+#include "../client/AI/AIClientApp.h"
+#endif
 #endif
 
 #include <stdexcept>
@@ -45,16 +51,52 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
 System::System(const GG::XMLElement& elem) : 
    UniverseObject(elem.Child("UniverseObject"))
 {
+   using GG::XMLElement;
+
    if (elem.Tag() != "System")
       throw std::invalid_argument("Attempted to construct a System from an XMLElement that had a tag other than \"System\"");
-   // TODO
+
+   Visibility vis = (Visibility) lexical_cast<int> ( elem.Child("visibility").Attribute("value") );
+
+   m_star = (StarType) lexical_cast<int> ( elem.Child("m_star").Attribute("value") );
+
+   if (vis == FULL_VISIBILITY)
+   {
+      m_orbits = lexical_cast<int> ( elem.Child("m_orbits").Attribute("value") );
+      
+      XMLElement orbit_map = elem.Child("m_objects");
+      for(int i=0; i<orbit_map.NumChildren(); i++)
+      {
+         XMLElement map_object = orbit_map.Child(i);
+
+         int map_key = lexical_cast<int> (map_object.Child("orbit").Attribute("value") );
+         int obj_id = lexical_cast<int> (map_object.Child("orbit_obj_id").Attribute("value") );
+         
+         Insert(obj_id, map_key);
+      }
+
+      XMLElement lane_map = elem.Child("m_starlanes_wormholes");
+      for(int i=0; i<lane_map.NumChildren(); i++)
+      {
+         XMLElement map_lane = lane_map.Child(i);
+
+         int system = lexical_cast<int> (map_lane.Child("system").Attribute("value") );
+         bool wormhole = lexical_cast<bool> (map_lane.Child("wormhole").Attribute("value") );
+
+         if (wormhole)
+         {
+            AddWormhole(system);
+         } 
+         else 
+         {
+            AddStarlane(system);
+         }
+      }
+   }      
 }
 
 System::~System()
 {
-   for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-      delete it->second;
-   }
 }
    
 bool System::HasStarlaneTo(int id) const
@@ -117,7 +159,7 @@ GG::XMLElement System::XMLEncode() const
       map_object.AppendChild(orbit);
 
       XMLElement orbit_obj_id("orbit_obj_id");
-      orbit_obj_id.SetAttribute( "value", lexical_cast<std::string>((*itr).second->ID()) );
+      orbit_obj_id.SetAttribute( "value", lexical_cast<std::string>((*itr).second) );
       map_object.AppendChild(orbit_obj_id);
 
       orbit_map.AppendChild(map_object);
@@ -176,11 +218,12 @@ int System::Insert(UniverseObject* obj)
     {
        if (m_objects.find(orb) == end())
        {
-          m_objects.insert(std::pair<int, UniverseObject*>(orb, obj));
+          m_objects.insert(std::pair<int, int>(orb, obj->ID()));
           obj->SetSystem(this);
           return orb;
        }
     }
+    // TODO: should not fail on this (multiple objects are allowed per orbit.  First check for empty orbits, if none place the object in orbit at random
     printf("No available orbits\n");
 	return retval;
 }
@@ -189,40 +232,31 @@ int System::Insert(UniverseObject* obj, int orbit)
 {
     if (orbit < 0 || m_orbits < orbit)
       throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
-    m_objects.insert(std::pair<int, UniverseObject*>(orbit, obj));
+    m_objects.insert(std::pair<int, int>(orbit, obj->ID()));
     obj->SetSystem(this);
 	return orbit;
 }
 
-UniverseObject* System::Remove(int id)
+
+int System::Insert(int obj_id, int orbit)
+{
+    if (orbit < 0 || m_orbits < orbit)
+      throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
+    m_objects.insert(std::pair<int, int>(orbit, obj_id));
+	return orbit;
+}
+
+bool System::Remove(int id)
 {
    UniverseObject* retval = 0;
    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-      if (it->second->ID() == id) {
-         retval = it->second;
+      if (it->second == id) {
          retval->SetSystem(0);
          m_objects.erase(it);
+         return true;
       }
    }
-   return retval;
-}
-
-bool System::Delete(int id)
-{
-   UniverseObject* obj = Remove(id);
-   delete obj;
-   return obj;
-}
-
-UniverseObject* System::Object(int id)
-{
-   UniverseObject* retval = 0;
-   for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-      if (it->second->ID() == id) {
-         retval = it->second;
-      }
-   }
-   return retval;
+   return false;
 }
 
 void System::AddStarlane(int id)
@@ -261,7 +295,4 @@ void System::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps
 {
 }
 
-void System::XMLMerge(const GG::XMLElement& elem)
-{
-}
 

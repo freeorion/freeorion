@@ -118,11 +118,15 @@ public:
 
    
    /** \name Mutators */ //@{
-   void XMLMerge(const GG::XMLElement& elem); ///< updates the ClientUniverse object from an XMLElement object that represents the updates
+   void PopulateUniverse(const GG::XMLElement& elem); ///< wipes out the current object map and populates the map from the XMLElement passed in.
    //@}
 
+private:
+   /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.  Used when decoding objects sent from server, so ID is already allocated.*/
+   int               Insert(UniverseObject* obj, int obj_id);   
    
-protected:
+protected:  
+
    ObjectMap m_objects;
 };
 

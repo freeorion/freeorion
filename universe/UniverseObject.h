@@ -76,7 +76,6 @@ public:
       research phase of a turn.  Called by ServerUniverse::PopGrowthProductionResearchPhase().*/
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps) = 0;
 
-  	virtual void XMLMerge(const GG::XMLElement& elem); ///< updates the UniverseObject object from an XMLElement object that represents the updates
    //@}
    
    static const double  INVALID_POSITION = -100000;   ///< the position in x and y at which default-constructed objects are placed

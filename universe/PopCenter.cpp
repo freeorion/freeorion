@@ -36,9 +36,14 @@ PopCenter::PopCenter(double max_pop, int race) :
 PopCenter::PopCenter(const GG::XMLElement& elem) : 
    UniverseObject()
 {
+
    if (elem.Tag() != "PopCenter")
       throw std::invalid_argument("Attempted to construct a PopCenter from an XMLElement that had a tag other than \"PopCenter\"");
-   // TODO
+
+   m_pop = lexical_cast<double> ( elem.Child("m_pop").Attribute("value") );
+   m_max_pop = lexical_cast<double> ( elem.Child("m_max_pop").Attribute("value") );
+   m_growth = lexical_cast<double> ( elem.Child("m_growth").Attribute("value") );
+   m_race = lexical_cast<int> ( elem.Child("m_race").Attribute("value") );
 }
 
 PopCenter::~PopCenter()
@@ -148,8 +153,4 @@ void PopCenter::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_r
    // TODO
 }
 
-void PopCenter::XMLMerge(const GG::XMLElement& elem)
-{
-   // TODO
-}
 

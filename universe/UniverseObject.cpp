@@ -28,9 +28,27 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
 
 UniverseObject::UniverseObject(const GG::XMLElement& elem)
 {
+   using GG::XMLElement;
+
    if (elem.Tag() != "UniverseObject")
       throw std::invalid_argument("Attempted to construct a UniverseObject from an XMLElement that had a tag other than \"UniverseObject\"");
-   // TODO
+
+   Visibility vis = (Visibility) lexical_cast<int> ( elem.Child("visibility").Attribute("value") );
+
+   m_id = lexical_cast<int> ( elem.Child("m_id").Attribute("value") );
+   m_name = elem.Child("m_name").Text();
+   m_x = lexical_cast<int> ( elem.Child("m_x").Attribute("value") );
+   m_y = lexical_cast<int> ( elem.Child("m_y").Attribute("value") );
+
+   if (vis == FULL_VISIBILITY)
+   {
+      XMLElement owners = elem.Child("m_owners");
+      for(int i=0; i<owners.NumChildren(); i++)
+      {
+        m_owners.insert(  lexical_cast<int> (owners.Child(i).Attribute("value") ) );
+      }
+   }       
+   
 }
 
 UniverseObject::~UniverseObject()
@@ -126,8 +144,3 @@ void UniverseObject::MoveTo(double x, double y)
    m_x = x;
    m_y = y;
 }
-
-void UniverseObject::XMLMerge(const GG::XMLElement& elem)
-{
-}
-

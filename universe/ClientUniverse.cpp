@@ -1,6 +1,13 @@
 #include "ClientUniverse.h"
 #include "UniverseObject.h"
+#include "Fleet.h"
+#include "Planet.h"
+#include "Ship.h"
 #include "XMLDoc.h"
+
+#ifdef FREEORION_BUILD_HUMAN
+#include "../client/human/HumanClientApp.h"
+#endif
 
 #include <stdexcept>
 #include <cmath>
@@ -22,9 +29,43 @@ ClientUniverse::ClientUniverse(const std::string& map_file, int stars, int playe
 
 ClientUniverse::ClientUniverse(const GG::XMLElement& elem)
 {
-   if (elem.Tag() != "ClientUniverse")
-      throw std::invalid_argument("Attempted to construct a ClientUniverse from an XMLElement that had a tag other than \"ClientUniverse\"");
-   // TODO
+   using GG::XMLElement;
+
+   if (elem.Tag() != "Universe")
+      throw std::invalid_argument("Attempted to construct a ClientUniverse from an XMLElement that had a tag other than \"Universe\"");
+
+   for(int i=0; i<elem.NumChildren(); i++)
+   {
+      XMLElement uni_obj = elem.Child(i);
+
+      if (elem.Tag() == "Fleet")
+      {
+         Fleet* fleet = new Fleet(elem);
+         Insert(fleet, fleet->ID());
+      }
+      else if (elem.Tag() == "Planet")
+      {
+         Planet* planet = new Planet(elem);
+         Insert(planet, planet->ID());
+      }
+      else if (elem.Tag() == "Ship")
+      {
+         Ship* ship = new Ship(elem);
+         Insert(ship, ship->ID());
+      }
+      else if (elem.Tag() == "System")
+      {
+         System* system = new System(elem);
+         Insert(system, system->ID());
+      }
+      else
+      {
+#ifdef FREEORION_BUILD_HUMAN
+         HumanClientApp* client_app = HumanClientApp::GetApp();
+         client_app->Logger().errorStream() << "ClientUniverse::ClientUniverse : Attempt to add object to object map failed because element tag -" << elem.Tag() << "- is unknown.";
+#endif
+      }
+   }
 }
 
 ClientUniverse::~ClientUniverse()
@@ -33,6 +74,55 @@ ClientUniverse::~ClientUniverse()
       delete it->second;
    }
 }
+
+void ClientUniverse::PopulateUniverse(const GG::XMLElement& elem)
+{
+   using GG::XMLElement;
+
+   // wipe out anything present in the object map
+   for(ObjectMap::iterator itr= m_objects.begin(); itr != m_objects.end(); itr++)
+   {
+      delete itr->second;
+      m_objects.erase(itr);
+   }
+
+   if (elem.Tag() != "Universe")
+      throw std::invalid_argument("Attempted to construct a ClientUniverse from an XMLElement that had a tag other than \"Universe\"");
+
+   for(int i=0; i<elem.NumChildren(); i++)
+   {
+      XMLElement uni_obj = elem.Child(i);
+
+      if (elem.Tag() == "Fleet")
+      {
+         Fleet* fleet = new Fleet(elem);
+         Insert(fleet, fleet->ID());
+      }
+      else if (elem.Tag() == "Planet")
+      {
+         Planet* planet = new Planet(elem);
+         Insert(planet, planet->ID());
+      }
+      else if (elem.Tag() == "Ship")
+      {
+         Ship* ship = new Ship(elem);
+         Insert(ship, ship->ID());
+      }
+      else if (elem.Tag() == "System")
+      {
+         System* system = new System(elem);
+         Insert(system, system->ID());
+      }
+      else
+      {
+#ifdef FREEORION_BUILD_HUMAN
+         HumanClientApp* client_app = HumanClientApp::GetApp();
+         client_app->Logger().errorStream() << "ClientUniverse::ClientUniverse : Attempt to add object to object map failed because element tag -" << elem.Tag() << "- is unknown.";
+#endif
+      }
+   }
+}
+
 
 const UniverseObject* ClientUniverse::ClientUniverse::Object(int id) const
 {
@@ -87,11 +177,6 @@ GG::XMLElement ClientUniverse::XMLEncode(int empire_id) const
    element.AppendChild(object_map);
 
    return element;
-}
-
-void ClientUniverse::XMLMerge(const GG::XMLElement& elem)
-{
-   // TODO
 }
 
 // predicate for FindOjbects pred itr
@@ -172,4 +257,31 @@ int ClientUniverse::NearestSystem(System& target_sys, System& prev_sys)
    }
    return nearest_sys_id;
 
+}
+
+
+int ClientUniverse::Insert(UniverseObject* obj, int obj_id)
+{
+   if (obj == NULL)
+   {
+#ifdef FREEORION_BUILD_HUMAN
+      HumanClientApp* client_app = HumanClientApp::GetApp();
+      client_app->Logger().errorStream() << "ClientUniverse::Insert : Attempt to add object to object map failed because the object pointer is NULL.";
+#endif
+      return INVALID_OBJECT_ID;
+   }
+
+   if (m_objects.find(obj_id) == m_objects.end())
+   {
+      // ID is unused, store object here
+      m_objects[obj_id] = obj;
+      return obj_id;
+   }
+      
+   // ID is in use
+#ifdef FREEORION_BUILD_HUMAN
+   HumanClientApp* client_app = HumanClientApp::GetApp();
+   client_app->Logger().errorStream() << "ClientUniverse::Insert : Attempt to add object to object map failed because ID " << obj_id << " is already in use.";
+#endif
+   return INVALID_OBJECT_ID;         
 }

@@ -30,11 +30,14 @@ void ServerUniverse::CreateUniverse(Shape shape, int size, int players, int ai_p
    ServerApp* server_app = ServerApp::GetApp();
    server_app->Logger().debugStream() << "Creating universe with " << stars << " stars and " << players << " players.";
 
-
-
    std::vector<int> homeworlds;
 
-   // TODO:  wipe out any currently loaded universe
+   // wipe out anything present in the object map
+   for(ObjectMap::iterator itr= m_objects.begin(); itr != m_objects.end(); itr++)
+   {
+      delete itr->second;
+      m_objects.erase(itr);
+   }
 
    // intialize the ID counter
    m_last_allocated_id = 0;   

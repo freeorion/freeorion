@@ -27,9 +27,23 @@ ProdCenter::ProdCenter(double workforce) :
 ProdCenter::ProdCenter(const GG::XMLElement& elem) : 
    UniverseObject()
 {
+
    if (elem.Tag() != "ProdCenter")
       throw std::invalid_argument("Attempted to construct a ProdCenter from an XMLElement that had a tag other than \"ProdCenter\"");
-   // TODO
+
+   Visibility vis = (Visibility) lexical_cast<int> ( elem.Child("visibility").Attribute("value") );
+
+   m_primary = (FocusType) lexical_cast<int> ( elem.Child("m_primary").Attribute("value") );
+   m_secondary = (FocusType) lexical_cast<int> ( elem.Child("m_secondary").Attribute("value") );
+   m_workforce = lexical_cast<double> ( elem.Child("m_workforce").Attribute("value") );
+   m_industry_factor = lexical_cast<double> ( elem.Child("m_industry_factor").Attribute("value") );
+
+   if (vis == FULL_VISIBILITY)
+   {
+      m_currently_building = (BuildType) lexical_cast<int> ( elem.Child("m_currently_building").Attribute("value") );
+      m_rollover = lexical_cast<double> ( elem.Child("m_rollover").Attribute("value") );
+   
+   }
 }
 
 ProdCenter::~ProdCenter()
@@ -176,8 +190,5 @@ void ProdCenter::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_
    // TODO
 }
 
-void ProdCenter::XMLMerge(const GG::XMLElement& elem)
-{
-   // TODO
-}
+
 

@@ -65,7 +65,6 @@ public:
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
 
-  	virtual void XMLMerge(const GG::XMLElement& elem); ///< updates the ProdCenter object from an XMLElement object that represents the updates
    //@}
    
 private:

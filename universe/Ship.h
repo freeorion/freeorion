@@ -53,9 +53,6 @@ public:
    void         SetFleetID(int fleet_id) {m_fleet_id = fleet_id;} ///< sets the ID of the fleet the ship resides in
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
-
-
-   virtual void XMLMerge(const GG::XMLElement& elem); ///< updates the Ship object from an XMLElement object that represents the updates
    //@}
 
 private:
