@@ -3,24 +3,34 @@
 
 #include "../client/human/HumanClientApp.h"
 
-#include "GGDrawUtil.h"
-#include "GGTexture.h"
-#include "GGStaticGraphic.h"
-#include "ClientUI.h"
-#include "GalaxySetupWnd.h"
-#include "EmpireSelect.h"
 #include "About.h"
-#include "ServerConnectWnd.h"
+#include "ClientUI.h"
+#include "CUIControls.h"
+#include "EmpireSelect.h"
+#include "GalaxySetupWnd.h"
+#include "GGDrawUtil.h"
+#include "GGStaticGraphic.h"
+#include "GGTexture.h"
 #include "../network/Message.h"
 #include "MultiplayerLobbyWnd.h"
-#include "CUIControls.h"
+#include "ServerConnectWnd.h"
+#include "../util/OptionsDB.h"
 
 #include <cstdlib>
 #include <string>
 
-
 namespace {
 const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
+
+void Options(OptionsDB& db)
+{
+    db.Add('f',
+           "force-external-server", 
+           "Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.",
+           false);
+}
+
+bool foo_bool = RegisterOptions(&Options);
 }
 
 
@@ -52,7 +62,6 @@ IntroScreen::IntroScreen() :
     GG::Connect(m_options->ClickedSignal(), &IntroScreen::OnOptions, this);
     GG::Connect(m_about->ClickedSignal(), &IntroScreen::OnAbout, this);
     GG::Connect(m_exit_game->ClickedSignal(), &IntroScreen::OnExitGame, this);
-    
 }
 
 IntroScreen::IntroScreen(const GG::XMLElement &elem):
@@ -82,7 +91,8 @@ void IntroScreen::OnSinglePlayer()
     bool failed = false;
     Hide();
 
-    HumanClientApp::GetApp()->StartServer();
+    if (!GetOptionsDB().Get<bool>("force-external-server"))//HumanClientApp::s_external_server)
+        HumanClientApp::GetApp()->StartServer();
     GalaxySetupWnd galaxy_wnd;    
     galaxy_wnd.Run();
     if (galaxy_wnd.EndedWithOk()) {
@@ -143,7 +153,8 @@ void IntroScreen::OnMultiPlayer()
         } else {
             std::string server_name = server_connect_wnd.Result().second;
             if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
-                HumanClientApp::GetApp()->StartServer();
+                if (!GetOptionsDB().Get<bool>("force-external-server"))//HumanClientApp::s_external_server)
+                    HumanClientApp::GetApp()->StartServer();
                 server_name = "localhost";
             }
             int start_time = GG::App::GetApp()->Ticks();
