@@ -3,6 +3,8 @@
 
 #ifdef FREEORION_BUILD_SERVER
 #include "../server/ServerApp.h"
+#else
+#include "../client/ClientApp.h"
 #endif
 
 #include <log4cpp/Appender.hh>
@@ -97,23 +99,25 @@ Ship::Ship(int empire_id, int design_id)
    // This constructor should only be used by the server, will not work if called from client.
    
 #ifdef FREEORION_BUILD_SERVER
-
    // Lookup empire where design is located
    ServerApp* server_app = ServerApp::GetApp();
    Empire* empire = (server_app->Empires()).Lookup(empire_id);
+#else
+    Empire* empire = ClientApp::Empire().Lookup(empire_id);
+#endif
 
    if (empire->CopyShipDesign(design_id, m_design) != true)
    {
       throw std::invalid_argument("Attempted to construct a Ship with an invalid design ID");
    }
 
-#endif
+
    
 }
 
 Ship::Ship(const GG::XMLElement& elem) : 
   UniverseObject(elem.Child("UniverseObject")),
-  m_design(ShipDesign(elem.Child("m_design")))
+  m_design(ShipDesign(elem.Child("ShipDesign")))
 {
    if (elem.Tag() != "Ship")
       throw std::invalid_argument("Attempted to construct a Ship from an XMLElement that had a tag other than \"Ship\"");
@@ -127,12 +131,14 @@ UniverseObject::Visibility Ship::Visible(int empire_id) const
 #ifdef FREEORION_BUILD_SERVER
    ServerApp* server_app = ServerApp::GetApp();
    Empire* empire = (server_app->Empires()).Lookup(empire_id);
-   
+#else
+   Empire* empire = ClientApp::Empire().Lookup(empire_id);
+#endif
    if ((empire->HasFleet(FleetID())) || (empire->HasVisibleFleet(FleetID())))
    {
       return FULL_VISIBILITY;
    }
-#endif
+
    return NO_VISIBILITY;
 }
 
