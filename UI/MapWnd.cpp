@@ -6,9 +6,11 @@
 #include "CUIControls.h"
 #include "../universe/Fleet.h"
 #include "FleetButton.h"
+#include "FleetWindow.h"
 #include "GGDrawUtil.h"
 #include "../client/human/HumanClientApp.h"
 #include "../network/Message.h"
+#include "../util/OptionsDB.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../util/Random.h"
@@ -258,6 +260,15 @@ void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
     m_dragged = false;
 }
 
+void MapWnd::RClick(const GG::Pt& pt, Uint32 keys)
+{
+    // if fleet window quickclose is enabled, the right-click will close fleet windows; if there are no open fleet 
+    // windows or the quickclose option is disabled, just pop up a context-sensitive menu
+    if (!GetOptionsDB().Get<bool>("UI.fleet-window-quickclose") || !FleetWnd::CloseAllFleetWnds()) {
+        // TODO : provide a context-sensitive menu for the main map, if needed
+    }
+}
+
 void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 {
     GG::Pt ul = ClientUpperLeft();
@@ -372,6 +383,7 @@ void MapWnd::InitTurn(int turn_number)
         // system
         SystemIcon* icon = new SystemIcon(systems[i]->ID(), m_zoom_factor);
         m_system_icons.push_back(icon);
+        icon->InstallEventFilter(this);
         AttachChild(icon);
         GG::Connect(icon->LeftClickedSignal(), &MapWnd::SelectSystem, this);
 
@@ -433,8 +445,46 @@ void MapWnd::InitTurn(int turn_number)
 
 void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
 {
-    MoveTo(GG::Pt(elem.Child("upper_left").Child("GG::Pt")));
     m_zoom_factor = boost::lexical_cast<double>(elem.Child("m_zoom_factor").Text());
+
+    for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
+        const System& system = m_system_icons[i]->GetSystem();
+        GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor), 
+                       static_cast<int>((system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor));
+        m_system_icons[i]->SizeMove(icon_ul.x, icon_ul.y, 
+                             static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5), 
+                             static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5));
+    }
+
+    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
+        Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
+        double x = fleet->X();
+        double y = fleet->Y();
+        GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor), 
+                         static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor));
+        m_moving_fleet_buttons[i]->SizeMove(button_ul.x, button_ul.y, 
+                                     static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5), 
+                                     static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5));
+    }
+
+    GG::Pt ul = UpperLeft();
+    GG::Pt map_move = GG::Pt(elem.Child("upper_left").Child("GG::Pt")) - ul;
+    OffsetMove(map_move);
+    MoveBackgrounds(map_move);
+    m_side_panel->OffsetMove(-map_move);
+    m_turn_update->OffsetMove(-map_move);
+    m_sitrep_panel->OffsetMove(-map_move);
+
+    // this correction ensures that zooming in doesn't leave too large a margin to the side
+    GG::Pt move_to_pt = ul = ClientUpperLeft();
+    CorrectMapPosition(move_to_pt);
+    GG::Pt final_move = move_to_pt - ul;
+    m_side_panel->OffsetMove(-final_move);
+    m_turn_update->OffsetMove(-final_move);
+    m_sitrep_panel->OffsetMove(-final_move);
+    MoveBackgrounds(final_move);
+    MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
+
     m_nebulae.clear();
     m_nebula_centers.clear();
     const GG::XMLElement& nebulae = elem.Child("m_nebulae");
@@ -443,11 +493,6 @@ void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
         m_nebulae.push_back(GG::App::GetApp()->GetTexture(curr_nebula.Child("filename").Text()));
         m_nebula_centers.push_back(GG::Pt(curr_nebula.Child("position").Child("GG::Pt")));
     }
-
-    // this is a hack to force an update so that we leave the MapWnd in a reasonable state; this is needed because the info 
-    // above is not the entire picture, but just the minimal set of data needed to restore the previous state
-    MouseWheel(GG::Pt(), 1, 0);
-    MouseWheel(GG::Pt(), -1, 0);
 }
 
 void MapWnd::ShowSystemNames()
@@ -581,6 +626,19 @@ void MapWnd::OnTurnUpdate()
     DeleteAllPopups( );
 
     HumanClientApp::GetApp()->StartTurn();
+}
+
+bool MapWnd::EventFilter(GG::Wnd* w, const GG::Wnd::Event& event)
+{
+    if (event.Type() == GG::Wnd::Event::RClick) {
+        // if fleet window quickclose is enabled, the right-click will close fleet windows; if there are no open fleet 
+        // windows or the quickclose option is disabled, just let Wnd w handle it.
+        if (!GetOptionsDB().Get<bool>("UI.fleet-window-quickclose") || !FleetWnd::CloseAllFleetWnds())
+            return false;
+        else
+            return true;
+    }
+    return false;
 }
 
 void MapWnd::RenderBackgrounds()

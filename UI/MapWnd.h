@@ -57,6 +57,7 @@ public:
     virtual void   LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
     virtual void   LButtonUp(const GG::Pt& pt, Uint32 keys);
     virtual void   LClick(const GG::Pt& pt, Uint32 keys);
+    virtual void   RClick(const GG::Pt& pt, Uint32 keys);
     virtual void   MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
 
     void           InitTurn( int turn_number );                     //!< called at the start of each turn
@@ -86,6 +87,9 @@ public:
     //!@}
         
     static const int    SIDE_PANEL_WIDTH;
+
+protected:
+    virtual bool   EventFilter(GG::Wnd* w, const GG::Wnd::Event& event);
 
 private:
     struct StarlaneData;     ///< contains all the information necessary to render a single fleet movement line on the main map
