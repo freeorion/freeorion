@@ -48,6 +48,8 @@ GG::Clr     ClientUI::EDIT_INT_COLOR(0, 0, 0, 255);
 
 GG::Clr     ClientUI::MULTIEDIT_INT_COLOR(0, 0, 0, 255);
 
+GG::Clr     ClientUI::SIDE_PANEL_COLOR(0, 0, 0, 150);
+
 //private static members
 log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
 ClientUI* ClientUI::the_UI = NULL;
@@ -125,9 +127,6 @@ bool ClientUI::Initialize(const std::string& string_table_file)
     //initialize UI state & window
     m_state = STATE_STARTUP;
     m_current_window = NULL;
-    
-    //initialize frozen interface
-    m_frozen = false;
     
     //TODO: Initialize variables.
     
@@ -259,28 +258,6 @@ bool ClientUI::ChangeResolution(int width, int height)
     return false;
 }//ChangeResolution()
 
-bool ClientUI::Freeze()
-{
-    //TODO: Freeze the interface
-    // should probably disable all windows, or possibly disconnect all signals from all sockets
-    // OTHER POSSIBILITY: store m_frozen variable
-    m_frozen = true;
-    
-    return true;
-}//Freeze()
-
-bool ClientUI::Unfreeze()
-{
-    //TODO: Unfreeze the interface
-    // should either enable all windows, or reconnect all signals to sockets
-    m_frozen = false;
-    return true;
-}//Unfreeze()
-
-bool ClientUI::Frozen()
-{
-    return m_frozen;
-}
 
 ///////////////////////////////////////////////////
 
