@@ -30,15 +30,10 @@ int CircleXFromY(double y, double r) {return static_cast<int>(std::sqrt(r * r - 
 // SidePanel::PlanetPanel
 ////////////////////////////////////////////////
 namespace {
-const int MAX_PLANET_SIZE = 128; // size of a huge planet, in on-screen pixels
-const int MIN_PLANET_SIZE = MAX_PLANET_SIZE / 3; // size of a tiny planet, in on-screen pixels
-const int IMAGES_PER_PLANET_TYPE = 3; // number of planet images available per planet type (named "type1.png", "type2.png", ...)
-//const int PLANET_IMAGE_SIZE = 256; // size of the images in the source files
-
-const int CONSTR_DROP_LIST_WIDTH = 150;
-const int CONSTR_PROGRESS_BAR_HT = 4;
-
-const int SYSTEM_NAME_FONT_SIZE = static_cast<int>(ClientUI::PTS*1.4);
+  const int MAX_PLANET_SIZE = 128; // size of a huge planet, in on-screen pixels
+  const int MIN_PLANET_SIZE = MAX_PLANET_SIZE / 3; // size of a tiny planet, in on-screen pixels
+  const int IMAGES_PER_PLANET_TYPE = 3; // number of planet images available per planet type (named "type1.png", "type2.png", ...)
+  const int SYSTEM_NAME_FONT_SIZE = static_cast<int>(ClientUI::PTS*1.4);
 }
 
 
@@ -51,6 +46,17 @@ namespace {
   boost::shared_ptr<GG::Texture> IconMining    () {return GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/mining.png"     );}
   boost::shared_ptr<GG::Texture> IconFarming   () {return GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/farming.png"    );}
   boost::shared_ptr<GG::Texture> IconDefense   () {return GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/defensebase.png");}
+
+
+  std::string Format(const char *fmt,...)
+  {
+    char buffer[1024]; va_list args;
+    
+    va_start(args,fmt);
+    vsprintf(buffer,fmt,args);
+
+    return buffer;
+  }
 
   struct SystemRow : public GG::ListBox::Row
   {
@@ -245,7 +251,7 @@ namespace {
     {
       case Planet::PT_SWAMP     : return ClientUI::String("PL_SWAMP"    );
       case Planet::PT_TOXIC     : return ClientUI::String("PL_TOXIC"    );
-      case Planet::PT_INFERNO   : return ClientUI::String("PT_INFERNO"  );
+      case Planet::PT_INFERNO   : return ClientUI::String("PL_INFERNO"  );
       case Planet::PT_RADIATED  : return ClientUI::String("PL_RADIATED" );
       case Planet::PT_BARREN    : return ClientUI::String("PL_BARREN"   );
       case Planet::PT_TUNDRA    : return ClientUI::String("PL_TUNDRA"   );
@@ -801,15 +807,15 @@ void SidePanel::PlanetPanel::ConstructUnhabited(const Planet &planet)
   text+= GetPlanetTypeName(planet);
   
   text+="\n";
-  if(planet.MaxPop()==0) text+= "unhabitable";
-  else                   text+= "(uninhabited 0/"+boost::lexical_cast<std::string>(planet.MaxPop())+")";
+  if(planet.MaxPop()==0) text+= ClientUI::String("PL_UNHABITABLE");
+  else                   text+= "("+ClientUI::String("PL_UNINHABITED")+" 0/"+boost::lexical_cast<std::string>(planet.MaxPop())+")";
 
   m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,text,ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::TEXT_COLOR,GG::TF_LEFT | GG::TF_TOP);
   AttachChild(m_planet_info);
 
   if(planet.Owners().size()==0 && planet.MaxPop()>0 && FindColonyShip(planet.SystemID()))
   {
-    m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::SIDE_PANEL_PTS)/2,60,"Colonize",ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::Wnd::CLICKABLE);
+    m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::SIDE_PANEL_PTS)/2,60,ClientUI::String("PL_COLONIZE"),ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::Wnd::CLICKABLE);
     Connect(m_button_colonize->ClickedSignal(), &SidePanel::PlanetPanel::ClickColonize, this);
     AttachChild(m_button_colonize);
   }
@@ -849,7 +855,9 @@ void SidePanel::PlanetPanel::ConstructOwned    (const Planet &planet)
   m_button_industry = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH+RESOURCE_DISPLAY_MARGIN,ul.y+RESOURCE_DISPLAY_HEIGHT+RESOURCE_DISPLAY_MARGIN,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconIndustry(),ClientUI::FONT,static_cast<int>(ClientUI::PTS*0.9),GG::CLR_ZERO);
   m_button_balanced = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH-5                      ,ul.y+RESOURCE_DISPLAY_HEIGHT-6                      ,19                    ,19                     ,IconBalance (),ClientUI::FONT,ClientUI::PTS,GG::CLR_ZERO);
 
-  m_button_balanced->SetIconRect(GG::Rect(4,4,m_button_balanced->Width()-4,m_button_balanced->Height()-4));
+  boost::shared_ptr<GG::Texture>  icon = IconBalance ();
+  m_button_balanced->SetIconRect(GG::Rect((m_button_balanced->Width()-icon->Width())/2,(m_button_balanced->Height()-icon->Height())/2,
+                                          (m_button_balanced->Width()-icon->Width())/2+icon->Width(),(m_button_balanced->Height()-icon->Height())/2+icon->Height()));
 
   m_button_food     ->SetAngledCornerLowerRight(7);
   m_button_mining   ->SetAngledCornerLowerLeft (7);
@@ -885,15 +893,9 @@ void SidePanel::PlanetPanel::ConstructOwned    (const Planet &planet)
   // for v.1 some of these only appear after tech is researched
   Empire *empire = HumanClientApp::Empires().Lookup( HumanClientApp::GetApp()->PlayerID() );
 
-  /*m_construction = new CUIDropDownList(Width() - CONSTR_DROP_LIST_WIDTH - 3, 
-                                       Height() - ClientUI::SIDE_PANEL_PTS - CONSTR_PROGRESS_BAR_HT - 6,
-                                       CONSTR_DROP_LIST_WIDTH, ClientUI::SIDE_PANEL_PTS + 4, 
-                                       (ClientUI::SIDE_PANEL_PTS + 4) * 5, GG::CLR_ZERO);*/
-
   m_construction = new CUIDropDownList(m_planet_name->UpperLeft ().x+10, 
-                                       //Height() - ClientUI::SIDE_PANEL_PTS - CONSTR_PROGRESS_BAR_HT - 6,
                                        m_button_research->LowerRight().y-UpperLeft().y+10,
-                                       CONSTR_DROP_LIST_WIDTH, ClientUI::SIDE_PANEL_PTS + 4, 
+                                       100, ClientUI::SIDE_PANEL_PTS + 4, 
                                        (ClientUI::SIDE_PANEL_PTS + 4) * 5, GG::CLR_ZERO);
 
 
@@ -1055,29 +1057,29 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   y+=font->Height();
 
 
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*0.8));
-  text = "primary";
+  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*0.9));
+  text = ClientUI::String("PL_PRIMARY_FOCUS");
   switch(planet.PrimaryFocus())
   {
-    case Planet::BALANCED : text+=" balanced" ;break;
-    case Planet::FARMING  : text+=" farming"  ;break;
-    case Planet::INDUSTRY : text+=" industry" ;break;
-    case Planet::MINING   : text+=" mining"   ;break;
-    case Planet::SCIENCE  : text+=" research" ;break;
+    case Planet::BALANCED : text+=" "+ClientUI::String("PL_BALANCED");break;
+    case Planet::FARMING  : text+=" "+ClientUI::String("PL_FARMING" );break;
+    case Planet::INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
+    case Planet::MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
+    case Planet::SCIENCE  : text+=" "+ClientUI::String("PL_SCIENCE" );break;
   }
   font->RenderText(m_button_food->UpperLeft().x,
                    m_button_food->UpperLeft().y-font->Height(),
                    m_button_food->UpperLeft().x+ 500,
                    m_button_food->UpperLeft().y, text, format, 0, false);
 
-  text = "secondary";
+  text = ClientUI::String("PL_SECONDARY_FOCUS");
   switch(planet.SecondaryFocus())
   {
-    case Planet::BALANCED : text+=" balanced" ;break;
-    case Planet::FARMING  : text+=" farming"  ;break;
-    case Planet::INDUSTRY : text+=" industry" ;break;
-    case Planet::MINING   : text+=" mining"   ;break;
-    case Planet::SCIENCE  : text+=" research" ;break;
+    case Planet::BALANCED : text+=" "+ClientUI::String("PL_BALANCED");break;
+    case Planet::FARMING  : text+=" "+ClientUI::String("PL_FARMING" );break;
+    case Planet::INDUSTRY : text+=" "+ClientUI::String("PL_INDUSTRY");break;
+    case Planet::MINING   : text+=" "+ClientUI::String("PL_MINING"  );break;
+    case Planet::SCIENCE  : text+=" "+ClientUI::String("PL_SCIENCE" );break;
   }
   font->RenderText(m_button_research->UpperLeft ().x,
                    m_button_research->LowerRight().y,
@@ -1131,13 +1133,10 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
     font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
     format = GG::TF_LEFT | GG::TF_VCENTER;
     text = "";
-    if(cost && !planet.ProdPoints()) text = "(never)";
+    if(cost && !planet.ProdPoints()) text = ClientUI::String("PL_PRODUCTION_TIME_NEVER");
     else
       if(cost)
-      {
-        int turns_remaining = static_cast<int>(std::ceil((cost - planet.BuildProgress()) / planet.ProdPoints()));
-        text = "(" + boost::lexical_cast<std::string>(turns_remaining) + " turns)";
-      }
+        text = Format(ClientUI::String("PL_PRODUCTION_TIME_TURNS").c_str(),static_cast<int>(std::ceil((cost - planet.BuildProgress()) / planet.ProdPoints())));
 
     x1 = m_construction->LowerRight().x;
     y1 = m_construction->UpperLeft ().y;
@@ -1362,11 +1361,11 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     Wnd(x, y, w, h, GG::Wnd::CLICKABLE),
     m_system(0),
     m_star_graphic(0),
-    m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,"Unknown System",ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4),0,ClientUI::TEXT_COLOR)),
+    m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,ClientUI::String("SP_UNKNOWN_SYSTEM"),ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4),0,ClientUI::TEXT_COLOR)),
     m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0, 0, 0, 0),ClientUI::SIDE_PANEL_COLOR)),
     m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,0,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
     m_button_next(new GG::Button(40+w-80                 ,0,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
-    m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::PTS-5,"System production",ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR)),
+    m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::PTS-5,ClientUI::String("SP_SYSTEM_PRODUCTION"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR)),
     m_system_resource_summary(new SystemResourceSummary(0,100-20,w,20)),
     m_planet_panel_container(new PlanetPanelContainer(0,100,w,h-100-30))
 {
@@ -1462,8 +1461,8 @@ void SidePanel::SetSystem(int system_id)
 
         if(sys_vec[i]->Name().length()==0)
           continue;
-
-        row->push_back("The " + sys_vec[i]->Name() + " System", ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4), ClientUI::TEXT_COLOR);
+ 
+        row->push_back(Format(ClientUI::String("SP_SYSTEM_NAME").c_str(),sys_vec[i]->Name().c_str()), ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4), ClientUI::TEXT_COLOR);
         m_system_name->Insert(row);
 
         if(sys_vec[i]->ID() == system_id)
