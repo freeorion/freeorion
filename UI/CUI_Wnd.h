@@ -1,3 +1,4 @@
+// -*- C++ -*-
 //CUI_Wnd.h
 #ifndef _CUI_Wnd_h_
 #define _CUI_Wnd_h_
@@ -82,6 +83,8 @@ public:
 class CUI_Wnd : public GG::Wnd
 {
 public:
+    using Wnd::SizeMove;
+
     //! additional window creation flags
     enum {MINIMIZABLE = 1 << 10,    //!< allows the window to be minimized
           CLOSABLE =    1 << 11     //!< allows the window to be closed
@@ -100,11 +103,12 @@ public:
     //@}
 
     //! \name Mutators //@{
-    virtual int Render();
-    virtual int LButtonDown(const GG::Pt& pt, Uint32 keys);
-    virtual int LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
-    virtual int LButtonUp(const GG::Pt& pt, Uint32 keys);
-    virtual int LClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
+    virtual void SizeMove(int x1, int y1, int x2, int y2);
+    virtual int  Render();
+    virtual int  LButtonDown(const GG::Pt& pt, Uint32 keys);
+    virtual int  LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
+    virtual int  LButtonUp(const GG::Pt& pt, Uint32 keys);
+    virtual int  LClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
 
     virtual bool InWindow(const GG::Pt& pt) const;
     //@}
@@ -120,8 +124,8 @@ protected:
     //@}
 
     //! \name Mutators //@{
-    virtual void Close();    //!< called when window is closed via the close button
-    virtual void Minimize(); //!< called when window is minimized
+    virtual void CloseClicked();    //!< called when window is closed via the close button
+    virtual void MinimizeClicked(); //!< called when window is minimized or restored via the minimize/restore button
     //@}
 
 private:

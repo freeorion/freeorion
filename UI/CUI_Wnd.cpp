@@ -139,7 +139,7 @@ const int BUTTON_TOP_OFFSET = 3;
 const int BUTTON_RIGHT_OFFSET = 15;
 const int MINIMIZED_WND_LENGTH = 150;
 const int BORDER_LEFT = 5;
-const int BORDER_TOP = 15;
+const int BORDER_TOP = 18;
 const int BORDER_RIGHT = 5;
 const int BORDER_BOTTOM = 5;
 const int OUTER_EDGE_ANGLE_OFFSET = 8;
@@ -206,6 +206,25 @@ GG::XMLElement CUI_Wnd::XMLEncode() const
     retval.AppendChild(temp);
 
     return retval;
+}
+
+void CUI_Wnd::SizeMove(int x1, int y1, int x2, int y2)
+{
+    Wnd::SizeMove(x1, y1, x2, y2);
+    if (Width() < MinDimensions().x)
+        Resize(MinDimensions().x, Height());
+    if (MaxDimensions().x < Width())
+        Resize(MaxDimensions().x, Height());
+
+    if (Height() < MinDimensions().y)
+        Resize(Width(), MinDimensions().y);
+    if (MaxDimensions().y < Height())
+        Resize(Width(), MaxDimensions().y);
+
+    if (m_close_button)
+        m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
+    if (m_minimize_button)
+        m_minimize_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET);
 }
 
 int CUI_Wnd::Render()
@@ -300,21 +319,6 @@ int CUI_Wnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
     // if we're resize-dragging
     if (m_resize_offset != GG::Pt(-1, -1)) {
         SizeMove(UpperLeft(), pt + m_resize_offset);
-
-        if (Width() < MinDimensions().x)
-            Resize(MinDimensions().x, Height());
-        if (MaxDimensions().x < Width())
-            Resize(MaxDimensions().x, Height());
-
-        if (Height() < MinDimensions().y)
-            Resize(Width(), MinDimensions().y);
-        if (MaxDimensions().y < Height())
-            Resize(Width(), MaxDimensions().y);
-
-        if (m_close_button)
-            m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
-        if (m_minimize_button)
-            m_minimize_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET);
         return 1;
     } else { // if we're normal-dragging
         return GG::Wnd::LDrag(pt, move, keys);
@@ -340,14 +344,14 @@ void CUI_Wnd::InitButtons()
     // create the close button
     if (m_closable) {
         m_close_button = new CUI_CloseButton(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
-        GG::Connect(m_close_button->ClickedSignal(), &CUI_Wnd::Close, this);
+        GG::Connect(m_close_button->ClickedSignal(), &CUI_Wnd::CloseClicked, this);
         AttachChild(m_close_button);
     }
 
     // create the minimize button
     if (m_minimizable) {
         m_minimize_button = new CUI_MinRestoreButton(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET);
-        GG::Connect(m_minimize_button->ClickedSignal(), &CUI_Wnd::Minimize, this);
+        GG::Connect(m_minimize_button->ClickedSignal(), &CUI_Wnd::MinimizeClicked, this);
         AttachChild(m_minimize_button);      
     }    
 }
@@ -382,14 +386,17 @@ int CUI_Wnd::InnerBorderAngleOffset() const
     return INNER_BORDER_ANGLE_OFFSET;
 }
 
-void CUI_Wnd::Close()
+void CUI_Wnd::CloseClicked()
 {
     m_done = true;
-    if (Parent())
+    if (Parent()) {
         Parent()->DeleteChild(this);
+    } else {
+        GG::App::GetApp()->Remove(this);
+    }
 }
 
-void CUI_Wnd::Minimize()
+void CUI_Wnd::MinimizeClicked()
 {
     if (!m_minimized) {
         m_original_size = WindowDimensions();
