@@ -2,7 +2,7 @@ common_files.inc : Makefile.am
 	./create_commonfilesinc.pl
 include common_files.inc
 
-EXTRA_DIST = m4 remake_libs.mak default Vera.ttf VeraBd.ttf  \
+EXTRA_DIST = m4 default Vera.ttf VeraBd.ttf common_files.inc \
 	     VeraBI.ttf  VeraIt.ttf create_commonfilesinc.pl
 ACLOCAL_AMFLAGS = -I m4
 noinst_DATA = freeoriond freeorion freeorionca save
@@ -12,12 +12,9 @@ install:
 save:
 	mkdir -p save
 
-#AM_CXXFLAGS = -Wall
+AM_CXXFLAGS = -Wall
 
 bin_PROGRAMS = freeoriond freeorion freeorionca
-
-#freeorion_exe_CPPFLAGS=@FT2_CFLAGS@ @GIGI_CFLAGS@ @GIGISDL_CFLAGS@ @GIGINET_CFLAGS@ @SDL_CFLAGS@ -DFREEORION_BUILD_HUMAN
-#freeorion_exe_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGINET_LIBS@ @GIGISDL_LIBS@ @FT2_LIBS@
 
 freeorion_CPPFLAGS = @SDL_CFLAGS@ @FT2_CFLAGS@ @GIGI_CFLAGS@ @GIGISDL_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_HUMAN
 freeorion_LDADD = @GIGI_LIBS@ @GIGINET_LIBS@ @GIGISDL_LIBS@
