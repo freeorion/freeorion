@@ -146,18 +146,18 @@ Condition::EmpireAffiliation::~EmpireAffiliation()
 bool Condition::EmpireAffiliation::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     switch (m_affiliation) {
-        case AFFIL_SELF:
-            return m_exclusive ? target->WhollyOwnedBy(m_empire_id->Eval(source, target)) : target->OwnedBy(m_empire_id->Eval(source, target));
+    case AFFIL_SELF:
+        return m_exclusive ? target->WhollyOwnedBy(m_empire_id->Eval(source, target)) : target->OwnedBy(m_empire_id->Eval(source, target));
             break;
-        case AFFIL_ENEMY:
-            // TODO
-            break;
-        case AFFIL_ALLY:
-            // TODO
-            break;
-        default:
-            break;
-        }
+    case AFFIL_ENEMY:
+        // TODO
+        break;
+    case AFFIL_ALLY:
+        // TODO
+        break;
+    default:
+        break;
+    }
     return false;
 }
 
@@ -198,28 +198,28 @@ Condition::Type::Type(const GG::XMLElement& elem)
 bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     switch (m_type->Eval(source, target)) {
-        case OBJ_BUILDING:
-            return dynamic_cast<const Building*>(target);
-            break;
-        case OBJ_SHIP:
-            return dynamic_cast<const Ship*>(target);
-            break;
-        case OBJ_FLEET:
-            return dynamic_cast<const Fleet*>(target);
-            break;
-        case OBJ_PLANET:
-            return dynamic_cast<const Planet*>(target);
-            break;
-        case OBJ_POP_CENTER:
-            return dynamic_cast<const PopCenter*>(target);
-            break;
-        case OBJ_PROD_CENTER:
-            return dynamic_cast<const ProdCenter*>(target);
-            break;
-        case OBJ_SYSTEM:
-            return dynamic_cast<const System*>(target);
-            break;
-        default:
+    case OBJ_BUILDING:
+        return dynamic_cast<const Building*>(target);
+        break;
+    case OBJ_SHIP:
+        return dynamic_cast<const Ship*>(target);
+        break;
+    case OBJ_FLEET:
+        return dynamic_cast<const Fleet*>(target);
+        break;
+    case OBJ_PLANET:
+        return dynamic_cast<const Planet*>(target);
+        break;
+    case OBJ_POP_CENTER:
+        return dynamic_cast<const PopCenter*>(target);
+        break;
+    case OBJ_PROD_CENTER:
+        return dynamic_cast<const ProdCenter*>(target);
+        break;
+    case OBJ_SYSTEM:
+        return dynamic_cast<const System*>(target);
+        break;
+    default:
 	    break;
     }
     return false;
@@ -281,7 +281,7 @@ Condition::Contains::Contains(const GG::XMLElement& elem)
     if (elem.Tag() != "Condition::Contains")
         throw std::runtime_error("Condition::Contains : Attempted to create a Contains condition from an XML element with a tag other than \"Condition::Contains\".");
 
-    m_condition = ConditionFactory().GenerateObject(elem.Child(1));
+    m_condition = ConditionFactory().GenerateObject(elem.Child(0));
 }
 
 bool Condition::Contains::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -296,37 +296,37 @@ bool Condition::Contains::Match(const UniverseObject* source, const UniverseObje
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
     if (condition_targets.empty())
-	return false;
+        return false;
 
     if (const System* system = dynamic_cast<const System*>(target)) {
-	bool found = false;
-	for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-	    if ((*it)->SystemID() == system->ID()) {
-		found = true;
-		break;
-	    }
-	}
-	return found;
+        bool found = false;
+        for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+            if ((*it)->SystemID() == system->ID()) {
+                found = true;
+                break;
+            }
+        }
+        return found;
     } else if (const Planet* planet = dynamic_cast<const Planet*>(target)) {
-	bool found = false;
-	for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-	    if (planet->ContainsBuilding((*it)->ID())) {
-		found = true;
-		break;
-	    }
-	}
-	return found;
+        bool found = false;
+        for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+            if (planet->ContainsBuilding((*it)->ID())) {
+                found = true;
+                break;
+            }
+        }
+        return found;
     } else if (const Fleet* fleet = dynamic_cast<const Fleet*>(target)) {
-	bool found = false;
-	for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-	    if (fleet->ContainsShip((*it)->ID())) {
-		found = true;
-		break;
-	    }
-	}
-	return found;
+        bool found = false;
+        for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+            if (fleet->ContainsShip((*it)->ID())) {
+                found = true;
+                break;
+            }
+        }
+        return found;
     } else {
-	return false;
+        return false;
     }
 }
 
@@ -358,12 +358,10 @@ Condition::PlanetType::~PlanetType()
 bool Condition::PlanetType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const Planet* planet = dynamic_cast<const Planet*>(target);
-#if 0 // enable when Buildings are implemented
-    const Building* building = 0;
-    if (!planet && (building = dynamic_cast<const Planet*>(target))) {
-        planet = building->Planet();
+    const ::Building* building = 0;
+    if (!planet && (building = dynamic_cast<const ::Building*>(target))) {
+        planet = building->GetPlanet();
     }
-#endif
     if (planet) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
             if (m_types[i]->Eval(source, target) == planet->Type())
@@ -400,12 +398,10 @@ Condition::PlanetSize::~PlanetSize()
 bool Condition::PlanetSize::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const Planet* planet = dynamic_cast<const Planet*>(target);
-#if 0 // enable when Buildings are implemented
-    const Building* building = 0;
-    if (!planet && (building = dynamic_cast<const Planet*>(target))) {
-        planet = building->Planet();
+    const ::Building* building = 0;
+    if (!planet && (building = dynamic_cast<const ::Building*>(target))) {
+        planet = building->GetPlanet();
     }
-#endif
     if (planet) {
         for (unsigned int i = 0; i < m_sizes.size(); ++i) {
             if (m_sizes[i]->Eval(source, target) == planet->Size())
@@ -443,12 +439,10 @@ Condition::PlanetEnvironment::~PlanetEnvironment()
 bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const Planet* planet = dynamic_cast<const Planet*>(target);
-#if 0 // enable when Buildings are implemented
-    const Building* building = 0;
-    if (!planet && (building = dynamic_cast<const Planet*>(target))) {
-        planet = building->Planet();
+    const ::Building* building = 0;
+    if (!planet && (building = dynamic_cast<const ::Building*>(target))) {
+        planet = building->GetPlanet();
     }
-#endif
     if (planet) {
         for (unsigned int i = 0; i < m_environments.size(); ++i) {
             if (m_environments[i]->Eval(source, target) == planet->Environment())
@@ -754,7 +748,7 @@ Condition::WithinStarlaneJumps::~WithinStarlaneJumps()
 }
 
 void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
-                                     SearchDomain search_domain/* = NON_TARGETS*/) const
+                                          SearchDomain search_domain/* = NON_TARGETS*/) const
 {
     // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
@@ -829,7 +823,7 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
                 std::pair<std::list<System*>, double> path3 = GetUniverse().ShortestPath(source_fleet_next_system_id, target_fleet_prev_system_id);
                 std::pair<std::list<System*>, double> path4 = GetUniverse().ShortestPath(source_fleet_next_system_id, target_fleet_next_system_id);
                 if (int jumps = static_cast<int>(std::max(std::max(path1.first.size(), path2.first.size()),
-                                                        std::max(path1.first.size(), path2.first.size()))))
+                                                          std::max(path1.first.size(), path2.first.size()))))
                     return jumps - 1 <= jump_limit;
             }
         }
@@ -991,7 +985,7 @@ Condition::Not::Not(const GG::XMLElement& elem)
     if (elem.NumChildren() != 1)
         throw std::runtime_error("Condition::Not : Attempted to create a Not condition with more than one or no operand conditions.");
 
-    m_operand = ConditionFactory().GenerateObject(elem.Child(1));
+    m_operand = ConditionFactory().GenerateObject(elem.Child(0));
 
     assert(m_operand);
 }

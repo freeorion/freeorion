@@ -55,11 +55,11 @@ EffectsGroup::EffectsGroup(const Condition::ConditionBase* scope, const Conditio
 EffectsGroup::EffectsGroup(const GG::XMLElement& elem)
 {
     if (elem.Tag() != "EffectsGroup")
-        throw std::invalid_argument("Attempted to construct a EffectsGroup from an XMLElement that had a tag other than \"EffectsGroup\"");
+        throw std::invalid_argument(("Attempted to construct a EffectsGroup from an XMLElement that had a tag other than \"EffectsGroup\"" + (" (\"" + elem.Tag() + ")")).c_str());
 
-    m_scope = Condition::ConditionFactory().GenerateObject(elem.Child("scope").Child(1));
-    m_activation = Condition::ConditionFactory().GenerateObject(elem.Child("activation").Child(1));
-    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+    m_scope = Condition::ConditionFactory().GenerateObject(elem.Child("scope").Child(0));
+    m_activation = Condition::ConditionFactory().GenerateObject(elem.Child("activation").Child(0));
+    for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
         m_effects.push_back(EffectFactory().GenerateObject(*it));
     }
 }
@@ -176,7 +176,7 @@ SetPlanetType::~SetPlanetType()
 void SetPlanetType::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     if (Planet* p = dynamic_cast<Planet*>(target)) {
-	p->SetType(m_type->Eval(source, target));
+        p->SetType(m_type->Eval(source, target));
     }
 }
 
@@ -205,7 +205,7 @@ SetPlanetSize::~SetPlanetSize()
 void SetPlanetSize::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     if (Planet* p = dynamic_cast<Planet*>(target)) {
-	p->SetSize(m_size->Eval(source, target));
+        p->SetSize(m_size->Eval(source, target));
     }
 }
 
@@ -367,7 +367,7 @@ SetStarType::~SetStarType()
 void SetStarType::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     if (System* s = dynamic_cast<System*>(target)) {
-	s->SetStarType(m_type->Eval(source, target));
+        s->SetStarType(m_type->Eval(source, target));
     }
 }
 
