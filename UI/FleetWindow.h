@@ -179,12 +179,14 @@ private:
     void        FleetRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt);
     void        FleetDoubleClicked(int row_idx, const GG::ListBox::Row* row);
     void        FleetDeleted(int row_idx);
+    void        ObjectDroppedIntoList(int row_idx, const GG::ListBox::Row* row);
     void        NewFleetButtonClicked();
     Fleet*      NewFleetWndReceivedShip(FleetDetailWnd* fleet_wnd, int ship_id);
     void        FleetDetailWndClosing(FleetDetailWnd* wnd);
     Fleet*      FleetInRow(int idx) const;
     std::string TitleText() const;
     void        DeleteFleet(Fleet* fleet);
+    Fleet*      CreateNewFleetFromDrop(int ship_id);
     void        RemoveEmptyFleets();
     void        UniverseObjectDelete(const UniverseObject *);
 
