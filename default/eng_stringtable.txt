@@ -129,6 +129,10 @@ GSETUP_CLUSTER
 Cluster
 GSETUP_FROMFILE
 From file...
+GSETUP_ELLIPTICAL
+Elliptical
+GSETUP_IRREGULAR
+Irregular
 
 #Error messages####
 
