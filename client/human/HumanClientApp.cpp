@@ -268,9 +268,19 @@ void HumanClientApp::SDLInit()
         Exit(1);
     }
 
+    int bpp = boost::lexical_cast<int>(m_config_doc.root_node.Child("HumanClientApp").Child("bpp").Attribute("value"));
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    if (24 <= bpp) {
+        SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    } else { // assumes 16 bpp minimum
+        SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 6);
+        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+    }
 
-    if (SDL_SetVideoMode(AppWidth(), AppHeight(), 16, SDL_OPENGL) == 0) {
+    if (SDL_SetVideoMode(AppWidth(), AppHeight(), bpp, SDL_OPENGL) == 0) {
         Logger().errorStream() << "Video mode set failed: " << SDL_GetError();
         Exit(1);
     }
@@ -303,10 +313,8 @@ void HumanClientApp::GLInit()
 
 void HumanClientApp::Initialize()
 {
-    // Allow ClientUI to take care of the UI
-    // m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
     m_ui = boost::shared_ptr<ClientUI>(new ClientUI(m_config_doc.root_node.Child("ClientUI")));
-    m_ui->ScreenIntro();    //start the first screen, and the UI takes over from there.
+    m_ui->ScreenIntro();    //start the first screen; the UI takes over from there.
 }
 
 void HumanClientApp::HandleSDLEvent(const SDL_Event& event)
