@@ -1,5 +1,6 @@
 #include "ProdCenter.h"
 #include "XMLDoc.h"
+#include "../Empire/Empire.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -9,18 +10,8 @@ using boost::lexical_cast;
 ProdCenter::ProdCenter() : 
    m_primary(BALANCED),
    m_secondary(BALANCED),
-   m_workforce(0),
-   m_industry_factor(0.0),
-   m_currently_building(NOT_BUILDING),
-   m_build_progress(0),
-   m_rollover(0)
-{
-}
-
-ProdCenter::ProdCenter(double workforce) : 
-   m_primary(BALANCED),
-   m_secondary(BALANCED),
-   m_workforce(workforce),
+   m_workforce(0.0),
+   m_max_workforce(0.0),
    m_industry_factor(0.0),
    m_currently_building(NOT_BUILDING),
    m_build_progress(0),
@@ -32,6 +23,7 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem) :
    m_primary(BALANCED),
    m_secondary(BALANCED),
    m_workforce(0.0),
+   m_max_workforce(0.0),
    m_industry_factor(0.0),
    m_currently_building(NOT_BUILDING),
    m_build_progress(0),
@@ -46,13 +38,14 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem) :
    m_primary = (FocusType) lexical_cast<int> ( elem.Child("m_primary").Attribute("value") );
    m_secondary = (FocusType) lexical_cast<int> ( elem.Child("m_secondary").Attribute("value") );
    m_workforce = lexical_cast<double> ( elem.Child("m_workforce").Attribute("value") );
+   m_max_workforce = lexical_cast<double> ( elem.Child("m_max_workforce").Attribute("value") );
    m_industry_factor = lexical_cast<double> ( elem.Child("m_industry_factor").Attribute("value") );
 
    if (vis == UniverseObject::FULL_VISIBILITY)
    {
       m_currently_building = (BuildType) lexical_cast<int> ( elem.Child("m_currently_building").Attribute("value") );
       m_rollover = lexical_cast<double> ( elem.Child("m_rollover").Attribute("value") );
-   
+      m_build_progress = lexical_cast<double> ( elem.Child("m_build_progress").Attribute("value") );
    }
 }
 
@@ -98,6 +91,10 @@ GG::XMLElement ProdCenter::XMLEncode() const
    temp.SetAttribute("value", lexical_cast<string>(m_workforce));
    element.AppendChild(temp);
 
+   temp = XMLElement("m_max_workforce");
+   temp.SetAttribute("value", lexical_cast<string>(m_max_workforce));
+   element.AppendChild(temp);
+
    temp = XMLElement("m_industry_factor");
    temp.SetAttribute("value", lexical_cast<string>(m_industry_factor));
    element.AppendChild(temp);
@@ -110,13 +107,17 @@ GG::XMLElement ProdCenter::XMLEncode() const
    temp.SetAttribute("value", lexical_cast<string>(m_rollover));
    element.AppendChild(temp);
 
+   temp = XMLElement("m_build_progress");
+   temp.SetAttribute("value", lexical_cast<string>(m_build_progress));
+   element.AppendChild(temp);
+
    return element;
 
 }
 
 GG::XMLElement ProdCenter::XMLEncode(int empire_id) const
 {
-   // partial encode version.  Skips currently_building and rollover
+   // partial encode version. No rollover or currently building
 
    using GG::XMLElement;
    using boost::lexical_cast;
@@ -139,9 +140,14 @@ GG::XMLElement ProdCenter::XMLEncode(int empire_id) const
    workforce.SetAttribute( "value", lexical_cast<std::string>(m_workforce) );
    element.AppendChild(workforce);
 
+   XMLElement max_workforce("m_max_workforce");
+   max_workforce.SetAttribute( "value", lexical_cast<std::string>(m_max_workforce) );
+   element.AppendChild(max_workforce);
+
    XMLElement industry("m_industry_factor");
    industry.SetAttribute( "value", lexical_cast<std::string>(m_industry_factor) );
    element.AppendChild(industry);
+
 
    return element;
 
@@ -158,9 +164,14 @@ void ProdCenter::SetSecondaryFocus(FocusType focus)
    m_secondary = focus;
 }
 
-void ProdCenter::AdjustWorkforce(double workforce)
+void ProdCenter::SetWorkforce(double workforce)
 {
-   m_workforce += workforce;
+   m_workforce = workforce;
+}
+
+void ProdCenter::SetMaxWorkforce(double max_workforce)
+{
+   m_max_workforce = max_workforce;
 }
 
 void ProdCenter::SetProduction(ProdCenter::BuildType type)
@@ -168,22 +179,64 @@ void ProdCenter::SetProduction(ProdCenter::BuildType type)
     m_currently_building = type;
 }
 
-void ProdCenter::AdjustIndustry(double industry)
+void ProdCenter::SetRollover( double rollover )
 {
-   m_industry_factor += industry;
+  m_rollover = rollover;
+}
+
+void ProdCenter::SetBuildProgress( double build_progress )
+{
+  m_build_progress = build_progress;
 }
 
 
-void ProdCenter::MovementPhase(std::vector<SitRepEntry>& sit_reps)
+bool ProdCenter::AdjustIndustry(double industry)
+{
+   m_industry_factor += industry;
+
+   if ( m_industry_factor >= ( m_workforce / m_max_workforce ) )
+   {
+     /// set hard max, send true for reaching max
+     m_industry_factor = ( m_workforce / m_max_workforce );
+     
+     return true;
+   }
+
+   return false;
+}
+
+
+void ProdCenter::MovementPhase( )
 {
    // TODO
 }
 
-void ProdCenter::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
+void ProdCenter::PopGrowthProductionResearchPhase( )
 {
-    if (CurrentlyBuilding() == ProdCenter::INDUSTRY_BUILD)
-        AdjustIndustry(ProdPoints() / m_workforce * 0.01);
+
 }
 
 
+int ProdCenter::UpdateBuildProgress( int item_cost )
+{
+  double new_build_progress =  BuildProgress() + Rollover() + ProdPoints();
+
+  int new_items = (int)new_build_progress / item_cost;
+    
+  if ( new_items > 0 )
+  {
+    // calculate rollover
+    SetRollover( new_build_progress - ( new_items * item_cost ) );
+    SetBuildProgress( 0.0 );
+  }
+  else
+  {
+    // reset rollover
+    SetRollover( 0.0 );
+    // adjust progress
+    SetBuildProgress( new_build_progress );
+  }
+
+  return new_items;
+}
 

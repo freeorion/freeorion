@@ -7,6 +7,7 @@
 #endif
 
 /** a production center decoration for a UniverseObject.*/
+class Empire;
 class ProdCenter
 {
 public:
@@ -26,7 +27,6 @@ public:
    
    /** \name Structors */ //@{
    ProdCenter(); ///< default ctor
-   ProdCenter(double workforce); ///< general ctor taking an initial workforce value, in pop points
    ProdCenter(const GG::XMLElement& elem); ///< ctor that constructs a ProdCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ProdCenter object
    virtual ~ProdCenter(); ///< dtor
    //@}
@@ -37,6 +37,7 @@ public:
    double         ProdPoints() const;
    double         BuildProgress() const    {return m_build_progress;}
    double         Rollover() const         {return m_rollover;}
+   double         Workforce() const {return m_workforce;}
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
@@ -53,17 +54,25 @@ public:
    /** \name Mutators */ //@{
    void SetPrimaryFocus(FocusType focus);
    void SetSecondaryFocus(FocusType focus);
-   void AdjustWorkforce(double workforce);
-   
+   void SetWorkforce(double workforce);
+   void SetMaxWorkforce(double max_workforce);
+   void SetRollover( double rollover );
+   void SetBuildProgress( double build_progress );   
+
+   ///< Updates build progress and determines if an item of given cost has been built. Handles
+   ///< logic for rollovers and multiple items. Returns the number of items built, 0 if none
+   int UpdateBuildProgress( int item_cost );
+
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
    void SetProduction(ProdCenter::BuildType type);
-   void AdjustIndustry(double industry);
+   bool AdjustIndustry(double industry);  /// returns true if max is hit
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
-   virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
-   virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
+   virtual void MovementPhase( );
+   // this will usually be an empty method since types of production is specific to the implementor of this class
+   void PopGrowthProductionResearchPhase( );
    //@}
    
 private:
@@ -71,6 +80,8 @@ private:
    FocusType      m_secondary;
    
    double         m_workforce; ///< pop points present in this center
+
+   double         m_max_workforce; ///< max pop points avail at this center
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
