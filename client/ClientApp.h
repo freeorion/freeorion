@@ -43,6 +43,8 @@ public:
     int                  PlayerID() const {return m_player_id;}       ///< returns the player ID of this client
     //@}
 
+    virtual void         StartTurn( );   ///< encodes order sets and sends turn orders message
+
     /** handles an incoming message from the server with the appropriate action or response */
     static void                   HandleMessage(const Message& msg);
 
@@ -52,7 +54,6 @@ public:
     static CombatModule*          CurrentCombat();    ///< returns this client's currently executing Combat; may be 0
     static OrderSet&              Orders();           ///< returns Order set for this client's player
     static ClientNetworkCore&     NetworkCore();      ///< returns the network core object for this client's player
-    
 
 protected:
     MultiplayerLobbyWnd* m_multiplayer_lobby_wnd;
@@ -74,6 +75,7 @@ private:
     virtual void HandleMessageImpl(const Message& msg) = 0;
 
     static ClientApp* s_app; ///< a ClientApp pointer to the singleton instance of the app
+
 };
 
 #endif // _ClientApp_h_

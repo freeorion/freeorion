@@ -60,3 +60,22 @@ ClientNetworkCore& ClientApp::NetworkCore()
 }
 
 
+void ClientApp::StartTurn(  )
+{
+    GG::XMLDoc orders_doc;
+    OrderSet::const_iterator  order_it;
+    GG::XMLElement order_elt;
+
+    /// execute order set
+    for ( order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it)
+    {
+      order_elt = order_it->second->XMLEncode( );               
+      
+      orders_doc.root_node.AppendChild( order_elt );
+    }
+
+    /// send message
+    m_network_core.SendMessage(TurnOrdersMessage( m_player_id, -1, orders_doc ) );
+}
+
+ 
