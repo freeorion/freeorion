@@ -60,6 +60,7 @@ public:
         COMBAT_SYSTEM_WON,
         COMBAT_SYSTEM_LOST,
         COMBAT_SYSTEM_NO_VICTOR,
+        PLANET_LOST_STARVED_TO_DEATH,
         NUM_SITREP_TYPES
     };
 
@@ -97,5 +98,7 @@ SitRepEntry *CreateBaseBuiltSitRep( const int system_id, const int planet_id );
 SitRepEntry *CreateShipBuiltSitRep( const int ship_id, const int planet_id );
 
 SitRepEntry *CreateCombatSitRep(const int empire_id, const int victor_id, const int system_id);
+
+SitRepEntry *CreatePlanetStarvedToDeathSitRep(const int system_id, const int planet_id);
 
 #endif // _SitRepEntry_h_

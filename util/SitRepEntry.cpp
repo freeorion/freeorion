@@ -105,4 +105,21 @@ SitRepEntry *CreateCombatSitRep(const int empire_id, const int victor_id, const 
   return( pSitRep );
 }
 
+SitRepEntry *CreatePlanetStarvedToDeathSitRep(const int system_id, const int planet_id)
+{
+  SitRepEntry  *pSitRep = new SitRepEntry( );
+
+  pSitRep->SetType(SitRepEntry::PLANET_LOST_STARVED_TO_DEATH);
+
+  GG::XMLElement planet_elem( VarText::PLANET_ID_TAG );
+  planet_elem.SetAttribute("value",  boost::lexical_cast<std::string>( planet_id ));
+  pSitRep->GetVariables( ).AppendChild( planet_elem );
+
+  GG::XMLElement system_elem( VarText::SYSTEM_ID_TAG );
+  system_elem.SetAttribute("value",  boost::lexical_cast<std::string>( system_id ));
+  pSitRep->GetVariables( ).AppendChild( system_elem );
+
+
+  return( pSitRep );
+}
 
