@@ -36,6 +36,12 @@ Save
 OPEN
 Open
 
+OR
+or
+
+AND
+and
+
 SERVER_TIMEOUT
 The server is not responding
 
@@ -284,7 +290,7 @@ ESELECT_EMPIRE_NAME
 Empire Name:
 
 ###########################
-# About Dialog		  #
+# About Dialog		      #
 ###########################
 
 #License button text####
@@ -366,71 +372,17 @@ Side Panel
 PLANET_PANEL
 Planet Panel
 
-#Planet Sizes and Types####
-
-PL_SZ_NOWORLD
-Nothing to see here; move along.
-PL_SZ_TINY
-Tiny
-PL_SZ_SMALL
-Small
-PL_SZ_MEDIUM
-Medium
-PL_SZ_LARGE
-Large
-PL_SZ_HUGE
-Huge
-
-PL_TOXIC
-Toxic
-PL_INFERNO
-Inferno
-PL_GASGIANT
-Gas Giant
-PL_ASTEROIDS
-Asteroids
-PL_RADIATED
-Radiated
-PL_SWAMP
-Swamp
-PL_BARREN
-Barren
-PL_DESERT
-Desert
-PL_TUNDRA
-Tundra
-PL_OCEAN
-Ocean
-PL_TERRAN
-Terran
-PL_GAIA
-Gaia
-
-PL_UNINHABITABLE
-uninhabitable
-
 PL_UNINHABITED
-uninhabited
+Uninhabited
 
 PL_SIZE
 Size
 
 PL_PRIMARY_FOCUS
-primary 
+Primary 
 
 PL_SECONDARY_FOCUS
-secondary
-
-PL_BALANCED
-balanced
-PL_FARMING
-farming
-PL_INDUSTRY
-industry
-PL_MINING
-mining
-PL_RESEARCH
-research
+Secondary
 
 PL_PRODUCTION_TIME_NEVER
 (never)
@@ -600,3 +552,489 @@ Starvation
 STARVATION_SPECIAL_DESCRIPTION
 This planet is starving!  The people will not do anything as well as they normally do, except produce nutrients.
 
+
+#######################
+# Enumeration  values #
+#######################
+
+# UniverseObjectTypes
+
+OBJ_BUILDING
+building
+OBJ_SHIP
+ship
+OBJ_FLEET
+fleet
+OBJ_PLANET
+planet
+OBJ_POP_CENTER
+population center
+OBJ_PROD_CENTER
+production center
+OBJ_SYSTEM
+system
+
+
+# StarTypes
+
+STAR_BLUE
+blue
+STAR_WHITE
+white
+STAR_YELLOW
+yellow
+STAR_ORANGE
+orange
+STAR_RED
+red
+STAR_NEUTRON
+neutron
+STAR_BLACK
+black hole
+
+
+# PlanetTypes
+
+PT_SWAMP
+swamp
+PT_TOXIC
+toxic
+PT_INFERNO
+inferno
+PT_RADIATED
+radiated
+PT_BARREN
+barren
+PT_TUNDRA
+tundra
+PT_DESERT
+desert
+PT_TERRAN
+terran
+PT_OCEAN
+ocean
+PT_GAIA
+gaia
+PT_ASTEROIDS
+asteroids
+PT_GASGIANT
+gas giant
+
+
+# Planet Sizes
+
+SZ_NOWORLD
+Nothing to see here; move along.
+SZ_TINY
+tiny
+SZ_SMALL
+small
+SZ_MEDIUM
+medium
+SZ_LARGE
+large
+SZ_HUGE
+huge
+SZ_ASTEROIDS
+asteroids
+SZ_GASGIANT
+gas giant
+
+
+# PlanetEnvironments
+
+PE_UNINHABITABLE
+uninhabitable
+PE_TERRIBLE
+terrible
+PE_ADEQUATE
+adequate
+PE_SUPERB
+superb
+PE_OPTIMAL
+optimal
+
+
+# FocusTypes
+
+FOCUS_UNKNOWN
+unknown
+FOCUS_BALANCED
+balanced
+FOCUS_FARMING
+farming
+FOCUS_INDUSTRY
+industry
+FOCUS_MINING
+mining
+FOCUS_RESEARCH
+research
+FOCUS_TRADE
+trade
+  
+
+# MeterTypes
+
+METER_POPULATION
+population
+METER_FARMING
+farming
+METER_INDUSTRY
+industry
+METER_RESEARCH
+research
+METER_TRADE
+trade
+METER_MINING
+mining
+METER_CONSTRUCTION
+construction
+METER_HEALTH
+health
+
+
+# EmpireAffiliationTypes
+
+AFFIL_SELF
+self
+AFFIL_ENEMY
+enemy
+AFFIL_ALLY
+ally
+
+
+# UnlockableItemTypes
+
+UIT_BUILDING
+building
+UIT_SHIP_COMPONENT
+ship component
+
+
+# TechTypes
+
+TT_THEORY
+Theory
+TT_APPLICATION
+Application
+TT_REFINEMENT
+Refinement
+
+
+# BuildTypes
+
+BT_NOT_BUILDING
+no build
+BT_BUILDING
+building
+BT_SHIP
+ship
+BT_ORBITAL
+orbital
+
+
+# StockpileTypes
+
+ST_FOOD
+food
+ST_MINERAL
+mineral
+ST_TRADE
+trade
+
+
+
+################################################
+# ValueRef, Effect, and Condition Descriptions #
+################################################
+
+# ValueRef
+
+DESC_VAR_PLANET
+planet
+
+DESC_VAR_SYSTEM
+system
+
+DESC_VAR_SOURCE
+source
+
+DESC_VAR_TARGET
+target
+
+DESC_VAR_PLANETSIZE
+planet size
+
+DESC_VAR_PLANETTYPE
+planet type
+
+DESC_VAR_PLANETENVIRONMENT
+planet environment
+
+DESC_VAR_OBJECTTYPE
+object type
+
+DESC_VAR_STARTYPE
+star type
+
+DESC_VAR_PRIMARYFOCUS
+primary focus
+
+DESC_VAR_SECONDARYFOCUS
+secondary focus
+
+DESC_VAR_CURRENTFARMING
+current farming
+
+DESC_VAR_MAXFARMING
+max farming
+
+DESC_VAR_CURRENTINDUSTRY
+current industry
+
+DESC_VAR_MAXINDUSTRY
+max industry
+
+DESC_VAR_CURRENTRESEARCH
+current research
+
+DESC_VAR_MAXRESEARCH
+max research
+
+DESC_VAR_CURRENTTRADE
+current trade
+
+DESC_VAR_MAXTRADE
+max trade
+
+DESC_VAR_CURRENTMINING
+current mining
+
+DESC_VAR_MAXMINING
+max mining
+
+DESC_VAR_CURRENTCONSTRUCTION
+current construction
+
+DESC_VAR_MAXCONSTRUCTION
+max construction
+
+DESC_VAR_CURRENTHEALTH
+current health
+
+DESC_VAR_MAXHEALTH
+max health
+
+DESC_VAR_CURRENTPOPULATION
+current population
+
+DESC_VAR_MAXPOPULATION
+max population
+
+DESC_VAR_TRADESTOCKPILE
+trade stockpile
+
+DESC_VAR_MINERALSTOCKPILE
+mineral stockpile
+
+DESC_VAR_FOODSTOCKPILE
+food stockpile
+
+DESC_VAR_TRADEPRODUCTION
+trade production
+
+DESC_VAR_FOODPRODUCTION
+food production
+
+DESC_VAR_MINERALPRODUCTION
+mineral production
+
+DESC_VAR_INDUSTRYPRODUCTION
+industry production
+
+DESC_VAR_RESEARCHPRODUCTION
+research production
+
+DESC_VAR_OWNER
+owner
+
+DESC_VAR_ID
+ID
+
+# this one is intentially left empty
+DESC_VALUE_REF_MULTIPART_VARIABLE0
+%1%
+
+DESC_VALUE_REF_MULTIPART_VARIABLE1
+%1%'s %2%
+
+DESC_VALUE_REF_MULTIPART_VARIABLE2
+%1%'s %2%'s %3%
+
+DESC_VALUE_REF_MULTIPART_VARIABLE3
+%1%'s %2%'s %3%'s %4%
+
+DESC_VALUE_REF_MULTIPART_VARIABLE4
+%1%'s %2%'s %3%'s %4%'s %5%
+
+DESC_VALUE_REF_MULTIPART_VARIABLE5
+%1%'s %2%'s %3%'s %4%'s %5%'s %6%
+
+# six is probably more than will be needed, but just in case ...
+DESC_VALUE_REF_MULTIPART_VARIABLE6
+%1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
+
+
+
+# Effects
+
+DESC_EFFECTS_GROUP_SCOPE
+Objects affected:\nAll objects
+
+DESC_EFFECTS_GROUP_ACTIVATION
+Effect fires if there is at least one object
+
+
+# SetMeter
+
+DESC_SIMPLE_SET_METER_MAX
+max %1% %2%%3%
+
+DESC_SIMPLE_SET_METER_CURRENT
+current %1% %2%%3%
+
+DESC_COMPLEX_SET_METER_MAX
+set max %1% to %2%
+
+DESC_COMPLEX_SET_METER_CURRENT
+set current %1% to %2%
+
+
+# others
+
+DESC_SET_EMPIRE_STOCKPILE
+Sets the stockpile of %1% of the object's owner to %2%
+
+DESC_SET_PLANET_TYPE
+Changes the planet's type to %1%
+
+DESC_SET_PLANET_SIZE
+Changes the planet's size to %1%
+
+DESC_ADD_OWNER
+Adds ownership by empire %1% to object
+
+DESC_REMOVE_OWNER
+Removes ownership by empire %1% from object
+
+DESC_DESTROY
+Destroys object
+
+DESC_ADD_SPECIAL
+Attaches %1% special to object
+
+DESC_REMOVE_SPECIAL
+Removes %1% special from object
+
+DESC_SET_STAR_TYPE
+Changes the star's type to %1%
+
+
+# SetTechAvailability
+
+DESC_TECH_AND_ITEMS_AFFECTED
+%1% and all the items it unlocks
+
+DESC_ITEMS_ONLY_AFFECTED
+the items unlocked by the %1% tech
+
+DESC_SET_TECH_AVAIL
+Makes %1% available to empire %2%
+
+DESC_SET_TECH_UNAVAIL
+Makes %1% unavailable to empire %2%
+
+
+# Conditions
+
+DESC_ALL
+ in the universe
+
+DESC_EMPIRE_AFFILIATION_SELF
+ belonging to empire %1%
+
+DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
+ belonging only to empire %1%
+
+DESC_EMPIRE_AFFILIATION
+ belonging to an %1% of empire %1%
+
+DESC_EMPIRE_AFFILIATION_EXCLUSIVE
+ belonging only to an %1% of empire %1%
+
+# this one is intentionally left empty
+DESC_SELF
+
+
+DESC_TYPE
+ of type %1%
+
+DESC_BUILDING
+ containing a %1% building
+
+DESC_SPECIAL
+ with a %1% special
+
+DESC_CONTAINS
+ containing objects %1%
+
+DESC_PLANET_TYPE
+ that are %1% planets
+
+DESC_PLANET_SIZE
+ that are %1% planets
+
+DESC_PLANET_ENVIRONMENT
+ that are %1% planets
+
+DESC_FOCUS_TYPE_PRIMARY
+ with primary focus %1%
+
+DESC_FOCUS_TYPE_SECONDARY
+ with secondary focus %1%
+
+DESC_STAR_TYPE
+ that are systems with %1% stars
+
+DESC_CHANCE
+ with a %1% probability
+
+DESC_METER_VALUE_MAX
+ with a max %1% between %2% and %3%
+
+DESC_METER_VALUE_CURRENT
+ with a current %1% between %2% and %3%
+
+DESC_EMPIRE_STOCKPILE_VALUE
+ belonging to an empire with a %1% stockpile between %2% and %3%
+
+DESC_VISIBLE_TO_SINGLE_EMPIRE
+ visible to %1% empire
+
+DESC_VISIBLE_TO_EMPIRES
+ visible to %1% empires
+
+DESC_WITHIN_DISTANCE
+ within %1% of any object%2%
+
+DESC_WITHIN_STARLANE_JUMPS
+ within %1% starlane jumps of any object%2%
+
+DESC_AND_BETWEEN_OPERANDS
+, that are also objects
+
+DESC_OR_BETWEEN_OPERANDS
+, or objects
+
+DESC_NOT
+ that are not objects
