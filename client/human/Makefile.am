@@ -19,11 +19,11 @@ freeorion_exe_LDADD =						\
 @SDL_LIBS@ @GIGI_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@ @FT2_LIBS@	\
 @top_srcdir@/network/libFOnetwork-human.a			\
 @top_srcdir@/network/libFOnetwork-common.a			\
+@top_srcdir@/UI/libFOui-common.a				\
 @top_srcdir@/Empire/libFOempire-common.a			\
+@top_srcdir@/combat/libFOcombat-common.a			\
 @top_srcdir@/universe/libFOuniverse-human.a			\
 @top_srcdir@/universe/libFOuniverse-common.a			\
 @top_srcdir@/util/libFOutil-human.a				\
-@top_srcdir@/util/libFOutil-common.a				\
-@top_srcdir@/UI/libFOui-common.a				\
-@top_srcdir@/combat/libFOcombat-common.a
+@top_srcdir@/util/libFOutil-common.a
 
