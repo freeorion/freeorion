@@ -605,6 +605,7 @@ DeleteFleetOrder::DeleteFleetOrder() :
 }
 
 DeleteFleetOrder::DeleteFleetOrder(const GG::XMLElement& elem)
+: Order(elem.Child("Order"))
 {
     if(elem.Tag() != ("DeleteFleetOrder"))
         throw std::invalid_argument("Attempted to construct DeleteFleetOrder from malformed XMLElement");
@@ -647,3 +648,4 @@ GG::XMLElement DeleteFleetOrder::XMLEncode() const
     elem.AppendChild(temp);
     return elem;
 }
+
