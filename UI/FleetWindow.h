@@ -204,7 +204,6 @@ private:
 
     CUIListBox*         m_fleets_lb;
     FleetDetailPanel*   m_fleet_detail_panel;
-    CUIButton*          m_new_fleet_button;
 
     boost::signals::connection  m_universe_object_delete_connection;
     boost::signals::connection  m_lb_delete_connection;

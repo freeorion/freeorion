@@ -16,12 +16,13 @@
 #include "../network/Message.h"
 #include "SidePanel.h"
 
+#include <boost/format.hpp>
+
 namespace {
     const int NEW_FLEET_BUTTON_WIDTH = 75;
     const int FLEET_LISTBOX_WIDTH =  250;
     const int FLEET_LISTBOX_HEIGHT = 150;
     const int CONTROL_MARGIN = 5; // gap to leave between controls in these window
-    const std::string g_new_fleet_row_text = "[New fleet]";
 
     class FleetDataPanel : public GG::Control
     {
@@ -34,8 +35,8 @@ namespace {
             Control(0, 0, w, h, 0),
             m_fleet(fleet),
             m_fleet_icon(0),
-            m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>New Fleet</i>", ClientUI::FONT, ClientUI::PTS, 
-                                                   GG::TF_RIGHT | GG::TF_VCENTER, m_fleet ? ClientUI::TEXT_COLOR : GG::CLR_BLACK)),
+            m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + ClientUI::String("FW_NEW_FLEET_LABEL") + "</i>", 
+                                                  ClientUI::FONT, ClientUI::PTS, GG::TF_RIGHT | GG::TF_VCENTER, m_fleet ? ClientUI::TEXT_COLOR : GG::CLR_BLACK)),
             m_num_ships_stat(0),
             m_fleet_strength_stat(0),
             m_damage_icon(0),
@@ -53,6 +54,8 @@ namespace {
                 AttachChild(m_fleet_strength_stat);
                 GG::Connect(m_fleet->StateChangedSignal(), &FleetDataPanel::Refresh, this);
             }
+
+            EnableChildClipping(true);
 
             Refresh();
         }
@@ -214,6 +217,8 @@ namespace {
             AttachChild(m_ship_strength_stat);
             GG::Connect(m_ship->StateChangedSignal(), &ShipDataPanel::Refresh, this);
 
+            EnableChildClipping(true);
+
             Refresh();
         }
 
@@ -316,6 +321,7 @@ namespace {
             push_back(new FleetDataPanel(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT, m_fleet));
             data_type = "Fleet";
             height = PANEL_HT + 4;
+            EnableChildClipping(true);
         }
 
         int FleetID() const {return m_fleet ? m_fleet->ID() : UniverseObject::INVALID_OBJECT_ID;}
@@ -336,6 +342,7 @@ namespace {
             push_back(new ShipDataPanel(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT, m_ship));
             data_type = "Ship";
             height = PANEL_HT + 4;
+            EnableChildClipping(true);
        }
 
         int ShipID() const {return m_ship->ID();}
@@ -553,7 +560,7 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row
     Ship* ship = GetUniverse().Object<Ship>(ship_row->ShipID());
 
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem("Rename", 1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(ClientUI::String("RENAME"), 1, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
 
@@ -561,7 +568,7 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row
         switch (popup.MenuID()) {
         case 1: { // rename ship
             std::string ship_name = m_ships_lb->GetRow(row_idx)[0]->WindowText();
-            CUIEditWnd edit_wnd(350, "Enter new name", ship_name);
+            CUIEditWnd edit_wnd(350, ClientUI::String("ENTER_NEW_NAME"), ship_name);
             edit_wnd.Run();
             if (edit_wnd.Result() != "") {
                 HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), ship->ID(), edit_wnd.Result()));
@@ -581,14 +588,11 @@ std::string FleetDetailPanel::DestinationText() const
     System* current = m_fleet->GetSystem();
     if (dest && dest != current) {
         std::pair<int, int> eta = m_fleet->ETA();
-        if (dest->Name().empty())
-            retval = "Moving to unknown system, ETA " + boost::lexical_cast<std::string>(eta.first);
-        else
-            retval = "Moving to " + dest->Name() + ", ETA " + boost::lexical_cast<std::string>(eta.first);
+        retval = boost::io::str(boost::format(ClientUI::String("FW_FLEET_MOVING_TO")) % (dest->Name().empty() ? ClientUI::String("UNKNOWN_SYSTEM") : dest->Name()) % eta.first);
         if (eta.first != eta.second)
             retval += "(" + boost::lexical_cast<std::string>(m_fleet->ETA().second) + ")";
     } else if (current) {
-        retval = "At " + current->Name() + " System";
+        retval = boost::io::str(boost::format(ClientUI::String("FW_FLEET_AT")) % current->Name());
     }
     return retval;
 }
@@ -596,21 +600,7 @@ std::string FleetDetailPanel::DestinationText() const
 std::string FleetDetailPanel::ShipStatusText(int ship_id) const
 {
     Ship* ship = GetUniverse().Object<Ship>(ship_id);
-    std::string retval;
-
-    // if we do not own the fleet or it's not a colony ship
-    if ( m_read_only || !ship->Design().colonize )
-    {
-        retval = "Ship Class \"";
-        retval += ship->Design().name;
-        retval += "\"";
-    }
-    else
-    {
-        // the colonization UI is probably temporary, do not put string in translation table until UI is solidified
-        retval = "Right-Click to Colonize";
-    }
-    return retval;
+    return ClientUI::String("FW_SHIP_CLASS") + " \"" + ship->Design().name + "\"";
 }
 
 
@@ -658,7 +648,7 @@ void FleetDetailWnd::DetachSignalChildren()
 
 std::string FleetDetailWnd::TitleText() const
 {
-    std::string retval = "New fleet";
+    std::string retval = ClientUI::String("FW_NEW_FLEET_NAME");
     if (const Fleet* fleet = m_fleet_panel->GetFleet()) {
         retval = fleet->Name();
     }
@@ -680,17 +670,14 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
     m_moving_fleets(true),
     m_current_fleet(-1),
     m_fleets_lb(0),
-    m_fleet_detail_panel(0),
-    m_new_fleet_button(0)
+    m_fleet_detail_panel(0)
 {
     m_fleets_lb = new CUIListBox(LeftBorder() + 3, TopBorder() + 3, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT);
     m_fleet_detail_panel = new FleetDetailPanel(LeftBorder() + 3, m_fleets_lb->LowerRight().y + CONTROL_MARGIN, 0, read_only );
-    m_new_fleet_button = new CUIButton(FLEET_LISTBOX_WIDTH + 6 + LeftBorder() - 5 - NEW_FLEET_BUTTON_WIDTH, 
-                                       m_fleet_detail_panel->LowerRight().y + CONTROL_MARGIN, NEW_FLEET_BUTTON_WIDTH, "New fleet");
 
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
 
-    Resize(m_new_fleet_button->LowerRight() + GG::Pt(RightBorder() + 5, BottomBorder() + 5));
+    Resize(m_fleet_detail_panel->LowerRight() + GG::Pt(RightBorder() + 5, BottomBorder() + 5));
     GG::Pt window_posn = UpperLeft();
     if (GG::App::GetApp()->AppWidth() < LowerRight().x)
         window_posn.x = GG::App::GetApp()->AppWidth() - Width();
@@ -698,8 +685,7 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
         window_posn.y = GG::App::GetApp()->AppHeight() - Height();
     MoveTo(window_posn);
 
-    if (read_only)
-        m_new_fleet_button->Disable();
+    EnableChildClipping(true);
 
     Init(fleets);
     m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetWnd::UniverseObjectDelete, this);
@@ -771,7 +757,6 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets)
     GG::Connect(m_fleets_lb->DoubleClickedSignal(), &FleetWnd::FleetDoubleClicked, this);
     m_lb_delete_connection = GG::Connect(m_fleets_lb->DeletedSignal(), &FleetWnd::FleetDeleted, this);
     GG::Connect(m_fleets_lb->DroppedSignal(), &FleetWnd::ObjectDroppedIntoList, this);
-    GG::Connect(m_new_fleet_button->ClickedSignal(), &FleetWnd::NewFleetButtonClicked, this);
 
     SetText(TitleText());
 
@@ -786,14 +771,12 @@ void FleetWnd::AttachSignalChildren()
 {
     AttachChild(m_fleets_lb);
     AttachChild(m_fleet_detail_panel);
-    AttachChild(m_new_fleet_button);
 }
 
 void FleetWnd::DetachSignalChildren()
 {
     DetachChild(m_fleets_lb);
     DetachChild(m_fleet_detail_panel);
-    DetachChild(m_new_fleet_button);
 }
 
 void FleetWnd::SystemClicked(int system_id)
@@ -860,14 +843,14 @@ void FleetWnd::FleetRightClicked(int row_idx, const GG::ListBox::Row* row, const
         return;
 
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem("Rename", 1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(ClientUI::String("RENAME"), 1, false, false));
     GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
 
     if (popup.Run()) {
       switch (popup.MenuID()) {
       case 1: { // rename fleet
           std::string fleet_name = fleet->Name();
-          CUIEditWnd edit_wnd(350, "Enter new name", fleet_name);
+          CUIEditWnd edit_wnd(350, ClientUI::String("ENTER_NEW_NAME"), fleet_name);
           edit_wnd.Run();
           if (edit_wnd.Result() != "") {
               HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID(), edit_wnd.Result()));
@@ -963,22 +946,6 @@ void FleetWnd::ObjectDroppedIntoList(int row_idx, const GG::ListBox::Row* row)
     RemoveEmptyFleets();
 }
 
-void FleetWnd::NewFleetButtonClicked()
-{
-    int num_open_windows = m_new_fleet_windows.size() + m_open_fleet_windows.size();
-    GG::Pt window_posn(std::max(0, 25 + LowerRight().x + num_open_windows * 25), std::max(0, UpperLeft().y + num_open_windows * 25));
-    FleetDetailWnd* fdw = new FleetDetailWnd(window_posn.x, window_posn.y, 0, m_read_only);
-    if (GG::App::GetApp()->AppWidth() < fdw->LowerRight().x)
-        window_posn.x = GG::App::GetApp()->AppWidth() - fdw->Width();
-    if (GG::App::GetApp()->AppHeight() < fdw->LowerRight().y)
-        window_posn.y = GG::App::GetApp()->AppHeight() - fdw->Height();
-    fdw->MoveTo(window_posn);
-    m_new_fleet_windows.insert(fdw);
-    GG::App::GetApp()->Register(fdw);
-    GG::Connect(fdw->NeedNewFleetSignal(), &FleetWnd::NewFleetWndReceivedShip, this);
-    GG::Connect(fdw->ClosingSignal(), &FleetWnd::FleetDetailWndClosing, this);
-}
- 
 Fleet* FleetWnd::NewFleetWndReceivedShip(FleetDetailWnd* fleet_wnd, int ship_id)
 {
     Fleet* new_fleet = CreateNewFleetFromDrop(ship_id);
@@ -1014,7 +981,7 @@ Fleet* FleetWnd::FleetInRow(int idx) const
 std::string FleetWnd::TitleText() const
 {
     Fleet* existing_fleet = FleetInRow(0);
-    return Empires().Lookup(*existing_fleet->Owners().begin())->Name() + " Fleets";
+    return boost::io::str(boost::format(ClientUI::String("FW_EMPIRE_FLEETS")) % Empires().Lookup(*existing_fleet->Owners().begin())->Name());
 }
 
 void FleetWnd::DeleteFleet(Fleet* fleet)
@@ -1059,7 +1026,7 @@ Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
         throw GG::ListBox::DontAcceptDropException();
     }
 
-    std::string fleet_name = "New fleet " + boost::lexical_cast<std::string>(new_fleet_id);
+    std::string fleet_name = ClientUI::String("FW_NEW_FLEET_NAME") + boost::lexical_cast<std::string>(new_fleet_id);
 
     Fleet* new_fleet = 0;
     if (existing_fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID) {
