@@ -285,4 +285,34 @@ TURN_PROGRESS_PHASE_ORDERS
 Executing Orders
 
 
+########################
+# SitRep Panel         #
+########################
+
+#Window title####
+
+SITREP_PANEL_TITLE
+Situation Report
+
+SITREP_PANEL_CLOSE
+Close
+
+
+####################
+# Sit Rep Entries  #
+####################
+
+SITREP_MAX_INDUSTRY
+The planet %m_planet% in system %m_system% has reached it's maximum production.
+
+SITREP_SHIP_BUILT
+A new ship %m_ship% is now orbiting planet %m_planet%.
+
+SITREP_TECH_RESEARCHED
+The technology %m_tech% has been discovered.
+
+SITREP_BASE_BUILT
+The planet %m_planet% in system %m_system% has completed a defence base.
+
+
 
