@@ -2,6 +2,9 @@
 #include "Empire.h"
 #endif
 
+#include <algorithm>
+using std::find;
+
 /** Constructors */ 
 
 Empire::Empire(const std::string& name, int ID, const GG::Clr& color, ControlStatus& control) :
@@ -58,27 +61,34 @@ int Empire::TotalRP() const
 // false if it is not.
 bool Empire::HasTech(int ID) const
 {
-    return true; // FINISH ME!
+    Empire::ConstTechIDItr item = find(TechBegin(), TechEnd(), ID);
+    
+    return (item != TechEnd());
+
 }
 
 bool Empire::HasPlanet(int ID) const
 {
-    return true; // FINISH ME!
+    Empire::ConstPlanetIDItr item = find(PlanetBegin(), PlanetEnd(), ID);
+    return (item != PlanetEnd());
 }
 
 bool Empire::HasExploredSystem(int ID) const
 {
-    return true; // FINISH ME!
+   Empire::ConstSystemIDItr item = find(ExploredBegin(), ExploredEnd(), ID);
+   return (item != ExploredEnd());
 }
 
 bool Empire::HasFleet(int ID) const
 {
-    return true; // FINISH ME!
+    Empire::ConstFleetIDItr item = find(FleetBegin(), FleetEnd(), ID);
+    return (item != FleetEnd());
 }
 
 bool Empire::HasVisibleFleet(int ID) const
 {
-    return true; // FINISH ME!
+    Empire::ConstFleetIDItr item = find(VisibleFleetBegin(), VisibleFleetEnd(), ID);
+    return (item != VisibleFleetEnd());
 }
 
 
