@@ -68,15 +68,34 @@ public:
     
     static std::string DIR;     //!< directory currently being used, contains config files
     static std::string ART_DIR;    //!< directory holding artwork, ("*/art/small/" or "*/art/large/"
-    
-    static GG::Clr     WND_COLOR; //!< color of a UI window
-    static GG::Clr     BORDER_COLOR; //!< color of window borders
-    static GG::Clr     OUTER_BORDER_COLOR; //!< color of the outermost border
-    static GG::Clr     INNER_BORDER_COLOR; //!< color of the innermost border
-    static GG::Clr     CTRL_COLOR; //!< color of UI controls
-    static GG::Clr     TEXT_COLOR; //!< color of UI text    
 
+    static GG::Clr     TEXT_COLOR; //!< color of UI text
+    
+    // windows
+    static GG::Clr     WND_COLOR; //!< color of a UI window
+    static GG::Clr     WND_BORDER_COLOR; //!< color of window borders
+    static GG::Clr     WND_OUTER_BORDER_COLOR; //!< color of the outermost border
+    static GG::Clr     WND_INNER_BORDER_COLOR; //!< color of the innermost border
+
+    // controls
+    static GG::Clr     CTRL_COLOR; //!< color of UI controls
+    static GG::Clr     CTRL_BORDER_COLOR;
+
+    static GG::Clr     BUTTON_COLOR;
     static int         BUTTON_WIDTH;    //!< default width to use for window buttons
+
+    static GG::Clr     STATE_BUTTON_COLOR;
+
+    static GG::Clr     SCROLL_TAB_COLOR;
+    static int         SCROLL_WIDTH;
+
+    static GG::Clr     DROP_DOWN_LIST_INT_COLOR;
+	static GG::Clr     DROP_DOWN_LIST_ARROW_COLOR;
+
+	static GG::Clr     EDIT_INT_COLOR;
+
+	static GG::Clr     MULTIEDIT_INT_COLOR;
+
     //!@}
 
     //! \name Structors //!@{

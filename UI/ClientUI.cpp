@@ -1,53 +1,52 @@
 //ClientUI.cpp
 
+#include "ClientUI.h"
+
+#include "CUIControls.h"
+#include "GGApp.h"
+#include "GGClr.h"
+#include "GGDrawUtil.h"
+#include "dialogs/GGThreeButtonDlg.h"
+#include "IntroScreen.h"
+
 #include <string>
 #include <fstream>
 
-#ifndef _ClientUI_h_
-#include "ClientUI.h"
-#endif 
-
-#ifndef _GGApp_h_
-#include "GGApp.h"
-#endif
-
-#ifndef _GGClr_h_
-#include "GGClr.h"
-#endif
-
-#ifndef _GGMessageDlg_h_
-#include "dialogs/GGThreeButtonDlg.h"
-#endif
-
-#ifndef _IntroScreen_h_
-#include "IntroScreen.h"
-#endif
-
-#ifndef _GGDrawUtil_h_
-#include "GGDrawUtil.h"
-#endif
-
-//include OpenGL headers
-#include <GL/gl.h>
-#include <GL/glu.h>
-
 //static members
-std::string ClientUI::FONT          = "arial.ttf";    
-int         ClientUI::PTS           = 12;   
+std::string ClientUI::FONT          = "arial.ttf";
+int         ClientUI::PTS           = 12;
 std::string ClientUI::TITLE_FONT    = "arial.ttf";
 int         ClientUI::TITLE_PTS     = 9;
 
-std::string ClientUI::DIR           = "default/";     
-std::string ClientUI::ART_DIR       = ClientUI::DIR + "art/small/";    
+std::string ClientUI::DIR           = "default/";
+std::string ClientUI::ART_DIR       = ClientUI::DIR + "art/small/";
 
-GG::Clr     ClientUI::WND_COLOR(0,0,0,210);
-GG::Clr     ClientUI::BORDER_COLOR(0,0,0,255);
-GG::Clr     ClientUI::OUTER_BORDER_COLOR(64,64,64,255);
-GG::Clr     ClientUI::INNER_BORDER_COLOR(255,255,255,255);
-GG::Clr     ClientUI::CTRL_COLOR(30,30,30,255); 
 GG::Clr     ClientUI::TEXT_COLOR(255,255,255,255);
 
+// windows
+GG::Clr     ClientUI::WND_COLOR(0,0,0,210);
+GG::Clr     ClientUI::WND_BORDER_COLOR(0,0,0,255);
+GG::Clr     ClientUI::WND_OUTER_BORDER_COLOR(64,64,64,255);
+GG::Clr     ClientUI::WND_INNER_BORDER_COLOR(255,255,255,255);
+
+// controls
+GG::Clr     ClientUI::CTRL_COLOR(30,30,30,255); 
+GG::Clr     ClientUI::CTRL_BORDER_COLOR(124, 124, 124, 255);
+
+GG::Clr     ClientUI::BUTTON_COLOR(0, 0, 0, 255);
 int         ClientUI::BUTTON_WIDTH = 7;
+
+GG::Clr     ClientUI::STATE_BUTTON_COLOR(0, 127, 0, 255);
+
+GG::Clr     ClientUI::SCROLL_TAB_COLOR(60, 60, 60, 255);
+int         ClientUI::SCROLL_WIDTH = 13;
+
+GG::Clr     ClientUI::DROP_DOWN_LIST_INT_COLOR(0, 0, 0, 255);
+GG::Clr     ClientUI::DROP_DOWN_LIST_ARROW_COLOR(130, 130, 0, 255);
+
+GG::Clr     ClientUI::EDIT_INT_COLOR(0, 0, 0, 255);
+
+GG::Clr     ClientUI::MULTIEDIT_INT_COLOR(0, 0, 0, 255);
 
 //private static members
 log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
@@ -73,17 +72,17 @@ ClientUI::ClientUI(const GG::XMLElement& elem) :
     if(elem.Tag() != "ClientUI")
         throw std::invalid_argument("Tried to construct a 'ClientUI' object from an XML tag that was not 'ClientUI'.");
     
-    const XMLElement* current = &elem.Child("BORDER_COLOR");
-    BORDER_COLOR = Clr(current->Child("GG::Clr"));
+    const XMLElement* current = &elem.Child("WND_BORDER_COLOR");
+    WND_BORDER_COLOR = Clr(current->Child("GG::Clr"));
     
     current = &elem.Child("CTRL_COLOR");
     CTRL_COLOR = Clr(current->Child("GG::Clr"));
     
-    current = &elem.Child("INNER_BORDER_COLOR");
-    INNER_BORDER_COLOR = Clr(current->Child("GG::Clr"));
+    current = &elem.Child("WND_INNER_BORDER_COLOR");
+    WND_INNER_BORDER_COLOR = Clr(current->Child("GG::Clr"));
     
-    current = &elem.Child("OUTER_BORDER_COLOR");
-    OUTER_BORDER_COLOR = Clr(current->Child("GG::Clr"));
+    current = &elem.Child("WND_OUTER_BORDER_COLOR");
+    WND_OUTER_BORDER_COLOR = Clr(current->Child("GG::Clr"));
     
     current = &elem.Child("TEXT_COLOR");
     TEXT_COLOR = Clr(current->Child("GG::Clr"));
@@ -223,16 +222,16 @@ GG::XMLElement ClientUI::XMLEncode() const
     temp.AppendChild(CTRL_COLOR.XMLEncode());
     retval.AppendChild(temp);
     
-    temp = XMLElement("OUTER_BORDER_COLOR");
-    temp.AppendChild(OUTER_BORDER_COLOR.XMLEncode());
+    temp = XMLElement("WND_OUTER_BORDER_COLOR");
+    temp.AppendChild(WND_OUTER_BORDER_COLOR.XMLEncode());
     retval.AppendChild(temp);
     
-    temp = XMLElement("BORDER_COLOR");
-    temp.AppendChild(BORDER_COLOR.XMLEncode());
+    temp = XMLElement("WND_BORDER_COLOR");
+    temp.AppendChild(WND_BORDER_COLOR.XMLEncode());
     retval.AppendChild(temp);
     
-    temp = XMLElement("INNER_BORDER_COLOR");
-    temp.AppendChild(INNER_BORDER_COLOR.XMLEncode());
+    temp = XMLElement("WND_INNER_BORDER_COLOR");
+    temp.AppendChild(WND_INNER_BORDER_COLOR.XMLEncode());
     retval.AppendChild(temp);
     
     temp = XMLElement("TOOLTIP_DELAY");
@@ -416,8 +415,8 @@ void ClientUI::MessageBox(const std::string& message)
  //   std::string dbg_msg = "MessageBox( \"" + message + "\" )";
  //   s_logger.debug(dbg_msg);    //write message to log
     
-    GG::ThreeButtonDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR, BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
-        new GG::Button((320-75)/2, 170, 75, 25, "OK", FONT, PTS, CTRL_COLOR, TEXT_COLOR));
+    GG::ThreeButtonDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR, WND_BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
+        new CUIButton((320-75)/2, 170, 75, "OK"));
     
     dlg.Run();    
 }//MessageBox()
