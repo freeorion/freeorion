@@ -138,6 +138,48 @@ namespace {
     const int MAP_MARGIN_WIDTH = MapWnd::SIDE_PANEL_WIDTH; // the number of pixels of system-less space around all four sides of the starfield
 }
 
+/** Disables keyboard accelerators that use an alphanumeric key
+    without modifiers. This is useful if a keyboard input is required,
+    so that the keys aren't interpreted as an accelerator.
+    @note Repeated calls of DisableAlphaNumAccels have to be followed by the
+    same number of calls to EnableAlphaNumAccels to re-enable the
+    accelerators.
+*/
+void MapWnd::DisableAlphaNumAccels()
+{
+    if (++m_disabled_accels_count > 1)
+	return;
+    
+    for (GG::App::const_accel_iterator i = GG::App::GetApp()->accel_begin() ;
+	 i != GG::App::GetApp()->accel_end() ; ++i) {
+	if (i->second != 0) // we only want to disable keys without modifiers
+	    continue; 
+	GG::Key key = i->first;
+	if ((key >= GG::GGK_a && key <= GG::GGK_z) || 
+	    (key >= GG::GGK_0 && key <= GG::GGK_9)) {
+	    m_disabled_accels_list.push_back(key);
+	}
+    }
+    for (std::vector<GG::Key>::iterator i = m_disabled_accels_list.begin() ;
+	 i != m_disabled_accels_list.end() ; ++i) {
+	GG::App::GetApp()->RemoveAccelerator(*i, 0);
+    }
+}
+
+/// Re-enable accelerators disabled by DisableAlphaNumAccels
+void MapWnd::EnableAlphaNumAccels()
+{
+    if (--m_disabled_accels_count >= 1)
+	return;
+
+    for (std::vector<GG::Key>::iterator i = m_disabled_accels_list.begin() ;
+	 i != m_disabled_accels_list.end() ; ++i) {
+	GG::App::GetApp()->SetAccelerator(*i, 0);
+    }
+    m_disabled_accels_list.clear();
+	
+}
+
 MapWnd::MapWnd() :
     GG::Wnd(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight(),
             static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH, 
@@ -149,7 +191,9 @@ MapWnd::MapWnd() :
     m_bg_position_Y(NUM_BACKGROUNDS),
     m_zoom_factor(1.0),
     m_drag_offset(-1, -1),
-    m_dragged(false)
+    m_dragged(false),
+    m_disabled_accels_list(),
+    m_disabled_accels_count(0)
 {
     SetText("MapWnd");
 
@@ -180,6 +224,7 @@ MapWnd::MapWnd() :
                               ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
     AttachChild(m_chat_edit);
     m_chat_edit->Hide();
+    EnableAlphaNumAccels();
 
 	m_options_showing = false;
 
@@ -214,12 +259,12 @@ MapWnd::MapWnd() :
 
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F2, 0), &MapWnd::ToggleSitRep, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowOptions, this);
-	GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_s, GG::GGKMOD_CTRL), &MapWnd::CloseSystemView, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_s, 0), &MapWnd::CloseSystemView, this);
 
     // Keys for zooming
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_e, GG::GGKMOD_CTRL), &MapWnd::KeyboardZoomIn, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_e, 0), &MapWnd::KeyboardZoomIn, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_PLUS, 0), &MapWnd::KeyboardZoomIn, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_r, GG::GGKMOD_CTRL), &MapWnd::KeyboardZoomOut, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_r, 0), &MapWnd::KeyboardZoomOut, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_MINUS, 0), &MapWnd::KeyboardZoomOut, this);
     
     g_chat_edit_history.push_front("");
@@ -235,11 +280,11 @@ MapWnd::~MapWnd()
 
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F2, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F10, 0);
-	GG::App::GetApp()->RemoveAccelerator(GG::GGK_s, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_s, 0);
 
     // Zoom keys
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_e, GG::GGKMOD_CTRL);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_r, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_e, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_r, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_PLUS, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_MINUS, 0);
 }
@@ -365,6 +410,8 @@ void MapWnd::Keypress (GG::Key key, Uint32 key_mods)
             }
             m_chat_edit->Clear();
             m_chat_edit->Hide();
+	    EnableAlphaNumAccels();
+
             GG::App::GetApp()->SetFocusWnd(this);
             g_chat_display_show_time = GG::App::GetApp()->Ticks();
         }
@@ -463,11 +510,11 @@ void MapWnd::InitTurn(int turn_number)
 
     GG::App::GetApp()->SetAccelerator(GG::GGK_F2, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_F10, 0);
-	GG::App::GetApp()->SetAccelerator(GG::GGK_s, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_s, 0);
 
     // Keys for zooming
-    GG::App::GetApp()->SetAccelerator(GG::GGK_e, GG::GGKMOD_CTRL);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_r, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_e, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_r, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_KP_PLUS, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_KP_MINUS, 0);
 
@@ -573,6 +620,8 @@ void MapWnd::InitTurn(int turn_number)
         m_sitrep_panel->Hide();
 
     m_chat_edit->Hide();
+    EnableAlphaNumAccels();
+
 
     if (m_zoom_factor * ClientUI::PTS < MIN_SYSTEM_NAME_SIZE)
         HideSystemNames();
@@ -1085,6 +1134,7 @@ bool MapWnd::OpenChatWindow()
 {
     if (!m_chat_display->Visible() || !m_chat_edit->Visible()) {
         m_chat_display->Show();
+	DisableAlphaNumAccels();
         m_chat_edit->Show();
         GG::App::GetApp()->SetFocusWnd(m_chat_edit);
         g_chat_display_show_time = GG::App::GetApp()->Ticks();

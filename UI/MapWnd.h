@@ -111,6 +111,12 @@ private:
 	bool CloseSystemView();                      //!< closes off the current system view
     bool KeyboardZoomIn();
     bool KeyboardZoomOut();
+
+    void DisableAlphaNumAccels();
+    void EnableAlphaNumAccels();
+
+    std::vector<GG::Key> m_disabled_accels_list;     //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
+    signed short m_disabled_accels_count;          //!< counter for \a DisableAlphaNumAccels
     
 
     std::vector<boost::shared_ptr<GG::Texture> > m_backgrounds; //!< starfield backgrounds
