@@ -41,7 +41,8 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_CLUSTER"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
     m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_ELLIPTICAL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
     m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_IRREGULAR"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_FROMFILE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_RING"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+	m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_FROMFILE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
 
     // create a temporary texture and static graphic
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
@@ -187,6 +188,7 @@ void GalaxySetupWnd::Init()
     m_textures[Universe::CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
     m_textures[Universe::ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
     m_textures[Universe::IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
+	m_textures[Universe::RING]->Load(ClientUI::ART_DIR + "gp_ring.png");
     
     // default settings (medium and 2-arm spiral)
     m_size_buttons->SetCheck(2);

@@ -59,7 +59,8 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 3 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_CLUSTER"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
     m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 4 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_ELLIPTICAL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
     m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 5 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_IRREGULAR"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 6 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_FROMFILE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 6 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_RING"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+	m_galaxy_type_buttons->AddButton(new CUIStateButton(0, 7 * RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_FROMFILE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
 
     g_preview_ul = GG::Pt(Width() - RightBorder() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, TopBorder() + CONTROL_MARGIN + PREVIEW_MARGIN);
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
@@ -219,6 +220,7 @@ void MultiplayerLobbyWnd::Init()
     m_textures[Universe::CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
     m_textures[Universe::ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
     m_textures[Universe::IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
+	m_textures[Universe::RING]->Load(ClientUI::ART_DIR + "gp_ring.png");
     
     // default settings (medium and 2-arm spiral)
     m_galaxy_size_buttons->SetCheck(2);
