@@ -38,6 +38,7 @@ ShipDesign::ShipDesign(const GG::XMLElement& elem)
    attack = lexical_cast<int> ( elem.Child("attack").Attribute("value") );
    defense = lexical_cast<int> ( elem.Child("defense").Attribute("value") );
    cost = lexical_cast<int> ( elem.Child("cost").Attribute("value") );
+   colonize = lexical_cast<bool> ( elem.Child("colonize").Attribute("value") );
 
 }
 
@@ -72,6 +73,9 @@ GG::XMLElement ShipDesign::XMLEncode() const
    sd_cost.SetAttribute( "value", lexical_cast<std::string>(cost) );
    element.AppendChild(sd_cost);
 
+   XMLElement sd_colonize("colonize");
+   sd_colonize.SetAttribute( "value", lexical_cast<std::string>(colonize) );
+   element.AppendChild(sd_colonize);
 
    return element;
 
