@@ -2,7 +2,8 @@ common_files.inc : Makefile.am
 	./create_commonfilesinc.pl
 include common_files.inc
 
-EXTRA_DIST = m4 remake_libs.mak default Vera.ttf create_commonfilesinc.pl
+EXTRA_DIST = m4 remake_libs.mak default Vera.ttf VeraBd.ttf  \
+	     VeraBI.ttf  VeraIt.ttf create_commonfilesinc.pl
 ACLOCAL_AMFLAGS = -I m4
 noinst_DATA = freeoriond freeorion freeorionca save
 CLEANFILES = freeoriond freeorion freeorionca
@@ -45,6 +46,8 @@ Empire/Empire.cpp				\
 Empire/Empire.h					\
 Empire/EmpireManager.cpp			\
 Empire/EmpireManager.h  			\
+Empire/ResourcePool.cpp				\
+Empire/ResourcePool.h				\
 Empire/TechLevel.cpp				\
 Empire/TechLevel.h  				\
 Empire/TechManager.cpp				\
