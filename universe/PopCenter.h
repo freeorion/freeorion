@@ -33,7 +33,7 @@ public:
    double       PopPoints() const            {return m_pop;}        ///< returns the number of pop points in this center
    double       MaxPop() const               {return m_max_pop;}    ///< returns the max number of pop points possible in this center
    double       PopGrowth() const            {return m_growth;}     ///< returns the change in pop points since the last turn (may be negative)
-   double       EnvPopGrowthModifier() const {return m_growth;}     ///< returns the change in pop points since the last turn (may be negative)
+   double       EnvPopGrowthModifier() const {return m_env_growth_mod;} ///< returns the population growth modifier due to environment
    int          Race() const                 {return m_race;}       ///< returns the race that the population is composed of
    double       Inhabitants() const; ///< returns the number of inhabitants in the center (not the pop points); depends on race
    DensityType  PopDensity() const;  ///< returns the density of this center, based on its population
