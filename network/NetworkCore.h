@@ -4,7 +4,7 @@
 #include <string>
 
 #ifndef _SDL_H
-#include <SDL.h>
+#include "SDL.h"
 #endif
 
 #ifndef _SDLnet_h
