@@ -46,6 +46,8 @@ public:
     virtual GG::Pt ClientUpperLeft() const;
 
     double ZoomFactor() const {return m_zoom_factor;}
+
+    SidePanel* GetSidePanel() {return m_side_panel;}
     //!@}
 
     //! \name Mutators //!@{
