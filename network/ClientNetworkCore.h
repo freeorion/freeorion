@@ -6,6 +6,10 @@
 #include "NetworkCore.h"
 #endif
 
+#ifndef _Message_h_
+#include "Message.h"
+#endif
+
 #include <set>
 
 /** the network core needed by the FreeOrion clients.  ClientNetworkCore is rather simple, since it only needs to worry
@@ -23,7 +27,9 @@ public:
 
    /** \name Accessors */ //@{
    bool Connected() const {return m_server_socket != -1;} ///< returns true if there is a valid connection to the server
-   virtual void SendMessage(const Message& msg) const;
+   virtual void SendMessage(const Message& msg);
+   
+   bool SendSynchronousMessage( const Message& msg, int &response_data ); ///< Blocking function. Will not exit until response message is sent by the server. Only works with messages that are expecting a response. The data value is an integer send with server response message. Returns false if timeout occured
    //@}
 
    /** \name Mutators */ //@{
@@ -51,10 +57,15 @@ private:
    ClientNetworkCore(const ClientNetworkCore&); // disabled
    
    virtual void DispatchMessage(const Message& msg, int socket);
+
+   void HandleSynchronousResponse( const Message& msg );
    
    int         m_server_socket;     ///< the number of the socket through which the client is connected to the server; -1 if not connected
    std::string m_receive_stream;    ///< all network traffic must go through the server, so we only need this one input streams
    bool        m_listening_on_LAN;  ///< set to true when the client is broadcasting a discovery request on the LAN
+
+   Message::MessageType m_waiting_for_msg;   ///< for a synchronous message, this is set to the msg type it's waiting for to be returned by the server
+  int          m_response_data;     ///< the synchronous response will contain data which the calling sender is expecting
 };
 
 #endif // _ClientNetworkCore_h_

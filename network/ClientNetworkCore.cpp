@@ -13,11 +13,15 @@
 #include <sstream>
 
 namespace {
-log4cpp::Category& logger = log4cpp::Category::getRoot();
+
+  log4cpp::Category& logger = log4cpp::Category::getRoot();
+
+  const unsigned int SYCHRONOUS_TIMEOUT = 5000;    // 5 seconds
 }
 
 ClientNetworkCore::ClientNetworkCore() : 
-   m_server_socket(-1)
+  m_server_socket(-1),
+  m_waiting_for_msg( Message::UNDEFINED )
 {
 }
 
@@ -29,7 +33,7 @@ ClientNetworkCore::~ClientNetworkCore()
    }
 }
 
-void ClientNetworkCore::SendMessage(const Message& msg) const
+void ClientNetworkCore::SendMessage(const Message& msg) 
 {
    if (m_server_socket != -1) {
       SendMessage(msg, m_server_socket, "ClientNetworkCore");
@@ -37,6 +41,60 @@ void ClientNetworkCore::SendMessage(const Message& msg) const
       logger.error("ClientNetworkCore::SendMessage : Attempted to send a message to the server when not yet connected.");
    }
 }   
+
+
+bool ClientNetworkCore::SendSynchronousMessage( const Message& msg, int &response_data )
+{
+   bool success = false;   
+
+   SendMessage( msg );
+
+   // check for a synchronous message
+   // this could be more sophisticated but there will probably not be many messages of this type
+   if ( msg.Response() != Message::UNDEFINED )
+   {
+     // wait here for a response
+     // this works because thankfully the net2 code is threaded
+     SDL_Event ev;            
+
+     // setup information informing network code that we're waiting for a particular mesage type
+     m_waiting_for_msg = msg.Response();
+
+     // this requires a timeout since if there is a chance that we'll never get a response
+     unsigned int start_time = SDL_GetTicks();
+
+     while (FE_WaitEvent(&ev))                  
+     {
+       // ignore all but network  messages
+       if ( ev.type == SDL_USEREVENT )
+       {
+	 int net2_type = NET2_GetEventType(const_cast<SDL_Event*>(&ev));
+         if (net2_type == NET2_ERROREVENT || 
+             net2_type == NET2_TCPACCEPTEVENT || 
+             net2_type == NET2_TCPRECEIVEEVENT || 
+             net2_type == NET2_TCPCLOSEEVENT || 
+             net2_type == NET2_UDPRECEIVEEVENT)
+             HandleNetEvent(const_cast<SDL_Event&>(ev));
+       }
+
+       if ( m_waiting_for_msg == Message::UNDEFINED )
+       {
+	 // message has been received, get data and break loop
+         success = true;
+	 response_data = m_response_data;
+         break;
+       }
+
+       // check for timeout
+       if ( ( SDL_GetTicks() - start_time ) > SYCHRONOUS_TIMEOUT )
+         break;
+     }
+   }
+
+   return success;
+
+}
+
    
 std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
 {
@@ -208,6 +266,11 @@ void ClientNetworkCore::DispatchMessage(const Message& msg, int socket)
             "there is no current combat.";
       }
       break;
+  case Message::CLIENT_SYNCHRONOUS_RESPONSE:
+       
+       HandleSynchronousResponse( msg );
+       break;
+
    default:
       logger.errorStream()<< "ClientNetworkCore::DispatchMessage : Unknown module value \"" << 
          msg.Module() << "\" encountered.";
@@ -215,3 +278,27 @@ void ClientNetworkCore::DispatchMessage(const Message& msg, int socket)
    }
 }
 
+void ClientNetworkCore::HandleSynchronousResponse( const Message& msg )
+{
+  // check if sychronous response has been received
+  if ( m_waiting_for_msg == msg.Type() )
+  {
+    // handle each message
+    switch( msg.Type() )
+    {
+      case Message::DISPATCH_NEW_OBJECT_ID:
+	{
+	  m_response_data = boost::lexical_cast<int>(msg.GetText( ) );
+	}
+      break;
+
+      default:
+	 logger.errorStream()<< "ClientNetworkCore::HandleSynchronousResponse : Unknown response \"" << 
+         msg.Module() << "\" encountered.";
+	break;
+    }
+  }
+
+  // signal we're done waiting for msg
+  m_waiting_for_msg  = Message::UNDEFINED;
+}
