@@ -140,6 +140,45 @@ struct ArithmeticExpression : public boost::spirit::grammar<ArithmeticExpression
             expr = minus_expr >> discard_node_d[ignore];
         }
 
+#if defined(_MSC_VER) // sigh...
+        boost::spirit::rule<ScannerT,
+                            boost::spirit::parser_context,
+                            boost::spirit::parser_tag<ignore_ID> >        ignore;
+        boost::spirit::rule<ScannerT,
+                            boost::spirit::parser_context,
+                            boost::spirit::parser_tag<constant_ID> >      constant;
+        boost::spirit::rule<ScannerT,
+                            boost::spirit::parser_context,
+                            boost::spirit::parser_tag<int_constant_ID> >  int_constant;
+        boost::spirit::rule<ScannerT,
+                            boost::spirit::parser_context,
+                            boost::spirit::parser_tag<variable_ID> >      variable;
+        boost::spirit::rule<ScannerT,
+                            boost::spirit::parser_context,
+                            boost::spirit::parser_tag<primary_expr_ID> >  primary_expr;
+        boost::spirit::rule<ScannerT,
+                            boost::spirit::parser_context,
+                            boost::spirit::parser_tag<negative_expr_ID> > negative_expr;
+        boost::spirit::rule<ScannerT,
+                            boost::spirit::parser_context,
+                            boost::spirit::parser_tag<times_expr_ID> >    times_expr;
+        boost::spirit::rule<ScannerT,
+                            boost::spirit::parser_context,
+                            boost::spirit::parser_tag<divides_expr_ID> >  divides_expr;
+        boost::spirit::rule<ScannerT,
+                            boost::spirit::parser_context,
+                            boost::spirit::parser_tag<plus_expr_ID> >     plus_expr;
+        boost::spirit::rule<ScannerT,
+                            boost::spirit::parser_context,
+                            boost::spirit::parser_tag<minus_expr_ID> >    minus_expr;
+        boost::spirit::rule<ScannerT,
+                            boost::spirit::parser_context,
+                            boost::spirit::parser_tag<expr_ID> >          expr;
+
+        const boost::spirit::rule<ScannerT,
+                                boost::spirit::parser_context,
+                                boost::spirit::parser_tag<expr_ID> > &
+#else
         boost::spirit::rule<ScannerT,
                             boost::spirit::parser_context<>,
                             boost::spirit::parser_tag<ignore_ID> >        ignore;
@@ -177,6 +216,8 @@ struct ArithmeticExpression : public boost::spirit::grammar<ArithmeticExpression
         const boost::spirit::rule<ScannerT,
                                 boost::spirit::parser_context<>,
                                 boost::spirit::parser_tag<expr_ID> > &
+#endif
+
         start() const
         {
 	        return expr;
