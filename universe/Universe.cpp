@@ -1180,8 +1180,27 @@ void Universe::ApplyEffects()
     }
 
     // execute effects on cached results
+    std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
     for (EffectsAndTargetsMap::const_iterator it = effects_targets_map.begin(); it != effects_targets_map.end(); ++it) {
-        it->first->Execute(it->second.first, it->second.second);
+        // if other EffectsGroups with the same stacking group have affected some of the targets in the scope of the current EffectsGroup, skip them
+        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(it->first->StackingGroup());
+        Effect::EffectsGroup::TargetSet targets(it->second.second);
+        if (non_stacking_it != executed_nonstacking_effects.end()) {
+            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
+                targets.erase(*object_it);
+            }
+        }
+
+        // execute the Effects in the EffectsGroup
+        it->first->Execute(it->second.first, targets);
+
+        // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
+        if (it->first->StackingGroup() != "") {
+            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[it->first->StackingGroup()];
+            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
+                affected_targets.insert(*object_it);
+            }
+        }
     }
 }
 
