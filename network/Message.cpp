@@ -41,8 +41,10 @@ Message::Message() :
     m_message_type(UNDEFINED),
     m_sending_player(-2),
     m_receiving_player(-2),
+    m_message_text(new std::string),
     m_response_msg(UNDEFINED)
 {
+    m_compressed = false;
 }
 
 Message::Message(MessageType msg_type, int sender, int receiver, ModuleType module, const std::string& text, MessageType response_msg) : 
