@@ -204,7 +204,6 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
 
     // generate the stars
     switch (shape) {
-#if 0
     case SPIRAL_2:
         GenerateSpiralGalaxy(2, size, adjacency_grid);
         break;
@@ -213,6 +212,10 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
         break;
     case SPIRAL_4:
         GenerateSpiralGalaxy(4, size, adjacency_grid);
+        break;
+#if 0
+    case CLUSTER:
+        //GenerateClusterGalaxy(size, adjacency_grid);
         break;
     case ELLIPTICAL:
         GenerateEllipticalGalaxy(size, adjacency_grid);
@@ -308,9 +311,111 @@ void Universe::PopGrowthProductionResearch(std::vector<SitRepEntry>& sit_reps)
    // TODO
 }
 
+namespace
+{
+  double Deg2Rad(double deg) {return 3.141592/180.0*deg;}
+
+  void SpiralGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions,unsigned int arms,unsigned int stars,double width,double height)
+  {
+    double arm_offset     = RandDouble(0.0,360.0);
+    double arm_angle      = 360.0 / arms;
+    double arm_spread     = 0.3 *  180.0 / arms ;
+    double arm_separation = 1.0;
+    double arm_length     = 1.5*360/2;
+    double center         = 0.25;
+    double x,y;
+
+    unsigned int i,j,attemps;
+
+    GaussianDistType  random_gaussian = GaussianDist(0.0,arm_spread);
+    SmallIntDistType  random_arm      = SmallIntDist(0  ,arms);
+    DoubleDistType    random_degree   = DoubleDist  (0.0,360.0);
+    DoubleDistType    random_radius   = DoubleDist  (0.0,  1.0);
+    
+    for (i=0,attemps=0; i < stars && attemps<100; i++,attemps++ )
+    {
+      double radius = random_radius();
+
+      if(radius<center)
+      {
+        double angle = random_degree();
+        x = radius * cos( Deg2Rad(arm_offset + angle) );
+        y = radius * sin( Deg2Rad(arm_offset + angle) );
+      }
+      else
+      {
+        double arm    = (double)random_arm() * arm_angle;
+        double angle  = random_gaussian();
+
+        x = radius * cos( Deg2Rad(arm_offset + arm + angle + radius * arm_length) );
+        y = radius * sin( Deg2Rad(arm_offset + arm + angle + radius * arm_length) );
+      }
+
+      x = (x+1)*width/2.0;
+      y = (y+1)*height/2.0;
+
+      if(x<0 || width<=x || y<0 || height<=y)
+        continue;
+
+      // ensure all system have a min separation to each other (search isn't opimized, not worth the effort)
+      for(j=0;j<positions.size();j++)
+        if((positions[j].first - x)*(positions[j].first - x)+ (positions[j].second - y)*(positions[j].second - y)
+            < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION)
+          break;
+      if(j<positions.size())
+      {
+        i--;
+        continue;
+      }
+
+      attemps=0;
+      positions.push_back(std::pair<double,double>(x,y));
+    }
+  }
+}
+
 void Universe::GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid)
 {
-   // TODO
+    std::vector<std::pair<double,double> > positions;
+    SpiralGalaxyCalcPositions(positions,arms,stars,UNIVERSE_WIDTH,UNIVERSE_WIDTH);
+
+    std::list<std::string> star_names;
+    LoadPlanetNames(star_names);
+
+    SmallIntDistType star_type_gen = SmallIntDist(0, System::NUM_STARTYPES - 1);
+
+    // generate star field
+    for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
+        // generate new star
+        int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
+        std::list<std::string>::iterator it = star_names.begin();
+        std::advance(it, star_name_idx);
+        std::string star_name(*it);
+        star_names.erase(it);
+        System::StarType star_type = System::StarType(star_type_gen());
+        int num_orbits = 5;
+        double orbits_rand = RandZeroToOne();
+        if      (orbits_rand < 0.05) num_orbits = 0;
+        else if (orbits_rand < 0.25) num_orbits = 1;
+        else if (orbits_rand < 0.55) num_orbits = 2;
+        else if (orbits_rand < 0.85) num_orbits = 3;
+        else if (orbits_rand < 0.95) num_orbits = 4;
+        // above 0.95 stays at the default 5
+
+        bool placed = false;
+        int attempts = 0;
+
+        System* system = new System(star_type, num_orbits, star_name, positions[star_cnt].first,positions[star_cnt].second);
+
+        int new_sys_id = Insert(system);
+        if (new_sys_id == UniverseObject::INVALID_OBJECT_ID) {
+            throw std::runtime_error("Universe::GenerateIrregularGalaxy : Attemp to insert system " + 
+                                     star_name + " into the object map failed.");
+        }
+
+        adjacency_grid[static_cast<int>(system->X() / ADJACENCY_BOX_SIZE)]
+                      [static_cast<int>(system->Y() / ADJACENCY_BOX_SIZE)].insert(std::make_pair(system->X(), system->Y()));
+    }
 }
 
 void Universe::GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid)
