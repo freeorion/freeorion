@@ -170,7 +170,7 @@ MapWnd::MapWnd() :
     m_bg_scroll_rate[2] = 0.5;
 
     // create buttons
-    m_turn_update = new CUIButton(GG::App::GetApp()->AppWidth() - END_TURN_BTN_WIDTH - 5, 5, END_TURN_BTN_WIDTH, "" );
+    m_turn_update = new CUIButton(5, 5, END_TURN_BTN_WIDTH, "" );
 
     //attach buttons
     AttachChild(m_turn_update);
