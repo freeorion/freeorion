@@ -81,8 +81,8 @@ public:
         either coordinate of the move is outside the map area.*/
     void MoveTo(double x, double y);
    
-    void AddOwner(int id)    {m_owners.insert(id); m_changed_sig();}  ///< adds the Empire with ID \a id to the list of owners of this object
-    void RemoveOwner(int id) {m_owners.erase(id); m_changed_sig();}   ///< removes the Empire with ID \a id to the list of owners of this object
+    virtual void AddOwner(int id);  ///< adds the Empire with ID \a id to the list of owners of this object
+    virtual void RemoveOwner(int id);   ///< removes the Empire with ID \a id to the list of owners of this object
     void SetSystem(int sys)  {m_system_id = sys; m_changed_sig();}    ///< assigns this object to a System
    
     /** performs the movement that this object is responsible for this object's actions during the movement phase of 
@@ -111,3 +111,4 @@ private:
 };
 
 #endif // _UniverseObject_h_
+

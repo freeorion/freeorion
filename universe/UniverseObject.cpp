@@ -170,3 +170,15 @@ void UniverseObject::MoveTo(double x, double y)
    m_y = y;
    m_changed_sig();
 }
+
+void UniverseObject::AddOwner(int id)    
+{
+  m_owners.insert(id); 
+  m_changed_sig();
+}
+
+void UniverseObject::RemoveOwner(int id)
+{
+  m_owners.erase(id);
+  m_changed_sig();
+}
