@@ -34,14 +34,14 @@ GG::XMLElement SitRepEntry::XMLEncode() const
 }
 
 
-SitRepEntry *CreateTechResearchedSitRep( const int techID )
+SitRepEntry *CreateTechResearchedSitRep( const std::string& tech_name )
 {
   SitRepEntry  *pSitRep = new SitRepEntry( );
 
   pSitRep->SetType( SitRepEntry::TECH_RESEARCHED );
 
   GG::XMLElement techID_elem( VarText::TECH_ID_TAG );
-  techID_elem.SetAttribute("value",  boost::lexical_cast<std::string>( techID));
+  techID_elem.SetAttribute("value", tech_name);
   pSitRep->GetVariables( ).AppendChild( techID_elem );
 
   return( pSitRep );

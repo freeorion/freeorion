@@ -91,7 +91,7 @@ private:
 
 SitRepEntry *CreateMaxIndustrySitRep( const int system_id, const int planet_id );
 
-SitRepEntry *CreateTechResearchedSitRep( const int techID );
+SitRepEntry *CreateTechResearchedSitRep( const std::string& tech_name );
 
 SitRepEntry *CreateBaseBuiltSitRep( const int system_id, const int planet_id );
 

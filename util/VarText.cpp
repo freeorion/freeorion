@@ -38,19 +38,13 @@ namespace {
                 m_str += open_tag + obj->Name() + close_tag;
             } else if (token == VarText::TECH_ID_TAG) {
                 std::string tech_name = token_elem.Attribute("value");
-#if 0
-                Tech *tech = TechManager::instance().Lookup(tech_id);
 
-                if (!tech) {
+                if (!GetTech(tech_name)) {
                     m_str += "ERROR";
                     return;
                 }
 
-                m_str += open_tag + tech->GetName() + close_tag;
-#else
-                m_str += "ERROR";
-                return;
-#endif
+                m_str += open_tag + UserString(tech_name) + close_tag;
             }
         }
 
