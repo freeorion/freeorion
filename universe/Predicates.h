@@ -21,7 +21,7 @@ bool IsShip(const UniverseObject* obj);
     searches, rather than Universe ones. */
 struct IsStationaryFleetFunctor
 {
-    IsStationaryFleetFunctor(int empire) : empire_id(empire) {}
+    IsStationaryFleetFunctor(int empire = -1) : empire_id(empire) {}
     bool operator()(const UniverseObject* obj) const;
     const int empire_id;
 };
@@ -31,7 +31,7 @@ struct IsStationaryFleetFunctor
     searches, rather than Universe ones. */
 struct IsOrderedMovingFleetFunctor
 {
-    IsOrderedMovingFleetFunctor(int empire) : empire_id(empire) {}
+    IsOrderedMovingFleetFunctor(int empire = -1) : empire_id(empire) {}
     bool operator()(const UniverseObject* obj) const;
     const int empire_id;
 };
@@ -40,7 +40,7 @@ struct IsOrderedMovingFleetFunctor
     If the given empire is -1, all moving fleets will be returned. */
 struct IsMovingFleetFunctor
 {
-    IsMovingFleetFunctor(int empire) : empire_id(empire) {}
+    IsMovingFleetFunctor(int empire = -1) : empire_id(empire) {}
     bool operator()(const UniverseObject* obj) const;
     const int empire_id;
 };
