@@ -155,6 +155,8 @@ UI/MapWnd.cpp					\
 UI/MapWnd.h					\
 UI/MultiplayerLobbyWnd.cpp			\
 UI/MultiplayerLobbyWnd.h			\
+UI/OptionsWnd.cpp				\
+UI/OptionsWnd.h					\
 UI/Parser.cpp  					\
 UI/Parser.h  					\
 UI/ServerConnectWnd.cpp				\
