@@ -92,7 +92,8 @@ public:
 
     void RegisterPopup( MapWndPopup* popup );  //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void RemovePopup( MapWndPopup* popup );    //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
-    void Sanitize();                           //!< cleans up the MapWnd at the end of a turn or after a game (ie, closes all windows and disables all keyboard accelerators)
+    void Cleanup();                            //!< cleans up the MapWnd at the end of a turn (ie, closes all windows and disables all keyboard accelerators)
+    void Sanitize();                           //!< sanitizes the MapWnd after a game
     //!@}
         
     static const int    SIDE_PANEL_WIDTH;

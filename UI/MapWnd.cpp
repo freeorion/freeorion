@@ -1126,12 +1126,19 @@ void MapWnd::RemovePopup( MapWndPopup* popup )
     }
 }
 
-void MapWnd::Sanitize()
+void MapWnd::Cleanup()
 {
     CloseAllPopups();
     RemoveAccelerators();
     m_research_wnd->Hide();
     m_toolbar->Hide();
+}
+
+void MapWnd::Sanitize()
+{
+    Cleanup();
+    MoveTo(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight());
+    m_zoom_factor = 1.0;
 }
 
 bool MapWnd::OpenChatWindow()
@@ -1149,7 +1156,7 @@ bool MapWnd::OpenChatWindow()
 
 bool MapWnd::EndTurn()
 {
-    Sanitize();
+    Cleanup();
     HumanClientApp::GetApp()->StartTurn();
     return true;
 }
