@@ -48,6 +48,10 @@ public:
     /** handles an incoming message from the server with the appropriate action or response */
     static void                   HandleMessage(const Message& msg);
 
+    /** returns a universe object ID which can be used for new objects created by the client */
+    /** can return UniverseObject::INVALID_OBJECT_ID if ID cannot be found.  */
+    static int                    GetNewObjectID( );
+
     static MultiplayerLobbyWnd*   MultiplayerLobby(); ///< returns the multiplayer lobby window, or 0 if none exists
     static Universe&              GetUniverse();      ///< returns client's local copy of Universe
     static ClientEmpireManager&   Empires();          ///< returns the set of known Empires

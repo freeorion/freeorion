@@ -80,10 +80,24 @@ void ClientApp::StartTurn(  )
       order_elt = order_it->second->XMLEncode( );               
       
       orders_doc.root_node.AppendChild( order_elt );
+
     }
+
+    /// clear order set
+    m_orders.Reset( );
 
     /// send message
     m_network_core.SendMessage(TurnOrdersMessage( m_player_id, -1, orders_doc ) );
 }
 
+
+int ClientApp::GetNewObjectID( )
+{
+    int new_id = UniverseObject::INVALID_OBJECT_ID; 
+
+    // ask the server for a new universe object ID. This is a blocking method and can timeout without a valid ID
+    s_app->m_network_core.SendSynchronousMessage( RequestNewObjectIDMessage( s_app->m_player_id, -1 ), new_id );
+
+    return new_id;
+}
  
