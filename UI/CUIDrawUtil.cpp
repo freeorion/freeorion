@@ -5,7 +5,7 @@ void FindIsoscelesTriangleVertices(int x1, int y1, int x2, int y2, ShapeOrientat
                                    int& x1_, int& y1_, int& x2_, int& y2_, int& x3_, int& y3_)
 {
     // make sure triangle width is odd, for symmetry
-    if ((!((orientation & (SHAPE_UP | SHAPE_DOWN)) ? x2 - x1 : y2 - y1) % 2))
+    if (!(((orientation & (SHAPE_UP | SHAPE_DOWN)) ? x2 - x1 : y2 - y1) % 2))
         ++((orientation & (SHAPE_UP | SHAPE_DOWN)) ? x2 : y2);
 
     switch (orientation) {
