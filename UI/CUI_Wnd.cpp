@@ -454,6 +454,7 @@ void CUIEditWnd::Keypress(GG::Key key, Uint32 key_mods)
     switch (key) {
     case GG::GGK_RETURN: if (!m_ok_bn->Disabled()) OkClicked(); break;
     case GG::GGK_ESCAPE: CloseClicked(); break;
+    default: break;
     }
 }
 
