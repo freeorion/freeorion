@@ -24,7 +24,11 @@ public:
                    MINING,
                    SCIENCE
                   }; // others TBD
-                    
+                      
+   /** \name Signal Types */ //@{
+   typedef boost::signal<void ()> ProdCenterChangedSignalType; ///< emitted when the UniverseObject is altered in any way
+   //@}
+
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
    enum BuildType {BUILD_UNKNOWN, NOT_BUILDING, INDUSTRY_BUILD, RESEARCH_BUILD, SCOUT, COLONY_SHIP, MARKI, MARKII, MARKIII, MARKIV, DEF_BASE};
@@ -53,6 +57,8 @@ public:
    /////////////////////////////////////////////////////////////////////////////
    
    virtual GG::XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a ProdCenter object with the given visibility
+     
+   ProdCenterChangedSignalType& ProdCenterChangedSignal() const {return m_prod_changed_sig;} ///< returns the state changed signal object for this UniverseObject
    //@}
 
    /** \name Mutators */ //@{
@@ -97,7 +103,10 @@ private:
    double         m_rollover;  ///< for build types that can span multiple turns this specifies how many production points are rolled over towards the next turn.
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
+
+   mutable ProdCenterChangedSignalType m_prod_changed_sig;
 };
 
 #endif // _ProdCenter_h_
+
 

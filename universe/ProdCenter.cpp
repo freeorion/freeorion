@@ -94,28 +94,32 @@ GG::XMLElement ProdCenter::XMLEncode(UniverseObject::Visibility vis) const
 void ProdCenter::SetPrimaryFocus(FocusType focus)
 {
    m_primary = focus;
+   m_prod_changed_sig();
 }
 
 void ProdCenter::SetSecondaryFocus(FocusType focus)
 {
    m_secondary = focus;
+   m_prod_changed_sig();
 }
 
 void ProdCenter::SetWorkforce(double workforce)
 {
    m_workforce = workforce;
+   m_prod_changed_sig();
 }
 
 void ProdCenter::SetMaxWorkforce(double max_workforce)
 {
    m_max_workforce = max_workforce;
+   m_prod_changed_sig();
 }
 
 void ProdCenter::SetProduction(ProdCenter::BuildType type)
 {
-    m_currently_building = type;
+   m_currently_building = type;
+   m_prod_changed_sig();
 }
-
 
 bool ProdCenter::AdjustIndustry(double industry)
 {
@@ -278,4 +282,5 @@ void ProdCenter::UpdateShipBuildProgress(  Empire *empire, const int system_id, 
         }
     }
 }
+
 
