@@ -1075,7 +1075,7 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
     int contents_width = static_cast<int>(m_zoom_factor * Universe::UniverseWidth());
     int app_width =  GG::App::GetApp()->AppWidth();
     int app_height = GG::App::GetApp()->AppHeight();
-    if (app_width < contents_width) {
+    if (app_width < contents_width * 1.25) {
         if (MAP_MARGIN_WIDTH < move_to_pt.x)
             move_to_pt.x = MAP_MARGIN_WIDTH;
         if (move_to_pt.x < app_width - contents_width - 2 * MAP_MARGIN_WIDTH)
@@ -1087,7 +1087,7 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
             move_to_pt.x = app_width - contents_width;
     }
 
-    if (app_height < contents_width) {
+    if (app_height < contents_width * 1.25) {
         if (MAP_MARGIN_WIDTH < move_to_pt.y)
             move_to_pt.y = MAP_MARGIN_WIDTH;
         if (move_to_pt.y < app_height - contents_width - 2 * MAP_MARGIN_WIDTH)
