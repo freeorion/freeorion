@@ -4,6 +4,11 @@
 
 #include <fstream>
 
+// this undoes the line from SDL_main.h that reads "#define main SDL_main"
+#ifdef main
+#undef main
+#endif
+
 extern "C" // use C-linkage, as required by SDL
 int main(int argc, char* argv[])
 {
