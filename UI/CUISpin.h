@@ -44,10 +44,10 @@ public:
 #ifdef _MSC_VER
         GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound, -1);
 #else
-        GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound<T>, -1);
+        GG::Connect(GG::Spin<T>::ValueChangedSignal(), &detail::PlayValueChangedSound<T>, -1);
 #endif
-        if (GetEdit())
-            GetEdit()->SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
+        if (GG::Spin<T>::GetEdit())
+            GG::Spin<T>::GetEdit()->SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
     }
 
     /** ctor that constructs an CUISpin object from an XMLElement. \throw std::invalid_argument May throw 
@@ -61,7 +61,7 @@ public:
 #ifdef _MSC_VER
         GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound, -1);
 #else
-        GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound<T>, -1);
+        GG::Connect(GG::Spin<T>::ValueChangedSignal(), &detail::PlayValueChangedSound<T>, -1);
 #endif
     }
     //@}
