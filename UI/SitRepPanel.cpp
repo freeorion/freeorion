@@ -1,5 +1,5 @@
 #include "SitRepPanel.h"
-
+ 
 #include "../client/human/HumanClientApp.h"
 #include "CUIControls.h"
 #include "GGDrawUtil.h"
@@ -54,7 +54,7 @@ void SitRepPanel::Update( )
   for ( Empire::ConstSitRepItr sitrep_it = pEmpire->SitRepBegin(); sitrep_it != pEmpire->SitRepEnd(); ++sitrep_it )
   {
     GG::ListBox::Row *row = new GG::ListBox::Row;
-    row->push_back( (*sitrep_it)->m_text, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+    row->push_back( (*sitrep_it)->GetText(), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
     m_sitreps_lb->Insert(row);                
   }
   

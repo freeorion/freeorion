@@ -515,7 +515,7 @@ void ClientUI::UpdateTurnProgress( const std::string& phase_str, const int empir
 void ClientUI::GenerateSitRepText( SitRepEntry *p_sit_rep )
 {
   // get template string
-  std::string template_str( String( g_string_id_lut[ p_sit_rep->m_type ] ) );
+  std::string template_str( String( g_string_id_lut[ p_sit_rep->GetType() ] ) );
 
   // parse string
   p_sit_rep->GenerateVarText( template_str );
