@@ -6,16 +6,16 @@
 #include <boost/shared_ptr.hpp>
 
 // assume Linux environment by default
-#if (!defined(WIN32_CHILD_PROCESSES) && !defined(LINUX_CHILD_PROCESSES))
-#define LINUX_CHILD_PROCESSES
+#if (!defined(FREEORION_WIN32) && !defined(FREEORION_LINUX))
+#define FREEORION_LINUX
 #endif
 
 /** encapsulates a spawned child process in a platform-independent manner. A Process object holds a shared_ptr to the 
    data on the process it creates; therefore Process objects can be freely copied, with the same copy semantics as 
    a shared_ptr.  In addition, the created process is automatically killed when its owning Process object is 
    destroyed.  Currently, creating processes is supported on these operating systems:
-   - Linux (this is the default): requires definition of LINUX_CHILD_PROCESSES
-   - Win32 (use for MinGW apps as well): requires definition of WIN32_CHILD_PROCESSES
+   - Linux (this is the default): requires definition of FREEORION_LINUX
+   - Win32 (use for MinGW apps as well): requires definition of FREEORION_WIN32
    one of them *must* be used.  Note that the Win32 version of Process calls TerminateProcess(), and so the killed
    process does minimal cleanup; in particular, it will not terminate any of its child processes and may not release
    DLLs it may be useing.*/
@@ -53,10 +53,10 @@ private:
       ~ProcessImpl();
       
    private:
-   #if defined(WIN32_CHILD_PROCESSES)
+   #if defined(FREEORION_WIN32)
       STARTUPINFO          m_startup_info;
       PROCESS_INFORMATION  m_process_info;
-   #elif defined(LINUX_CHILD_PROCESSES)
+   #elif defined(FREEORION_LINUX)
       pid_t                m_process_id;
    #endif
    };

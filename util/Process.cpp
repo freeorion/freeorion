@@ -19,7 +19,7 @@ void Process::Kill()
 }
 
 
-#if defined(WIN32_CHILD_PROCESSES)
+#if defined(FREEORION_WIN32)
 
 Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std::string>& argv)
 {
@@ -65,7 +65,7 @@ Process::ProcessImpl::~ProcessImpl()
    CloseHandle(m_process_info.hThread);
 }
 
-#elif defined(LINUX_CHILD_PROCESSES)
+#elif defined(FREEORION_LINUX)
 
 #include <sys/types.h>
 #include <unistd.h>
