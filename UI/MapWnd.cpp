@@ -122,12 +122,6 @@ int MapWnd::Keypress (GG::Key key, Uint32 key_mods)
     {
         InGameOptions   m_options;
         m_options.Run();
-
-	if (m_options.m_quit)
-	{
-	  // TODO: Shut down the game.  The following is temporary
-	  GG::App::GetApp()->Exit(0);
-	}
     }
 
     return 1;

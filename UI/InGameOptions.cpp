@@ -93,10 +93,7 @@ void InGameOptions::OnLoad()
 
 void InGameOptions::OnQuit()
 {
-
-    m_quit = true;
-    m_done = true;
-
+    GG::App::GetApp()->Exit(0);
 }//OnQuit()
 
 void InGameOptions::OnDone()
