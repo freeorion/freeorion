@@ -444,6 +444,15 @@ FW_EMPIRE_FLEETS
 TECH_COST_STR
 %1% RP / %2% Turns
 
+TECH_DETAIL_TYPE_STR
+%1% %2%
+
+TECH_DETAIL_DESCRIPTION_STR
+%1%
+
+TECH_DETAIL_DESCRIPTION_STR_WITH_EFFECTS
+%1%\n\n<u>Effects</u>\n\n%2%
+
 TECH_WND_TECH_COMPLETED
 COMPLETED
 
@@ -470,6 +479,12 @@ Uncollapse all
 
 TECH_WND_TECH_TYPES_TO_SHOW
 Tech types to show:
+
+TECH_WND_REQUIRES
+Requires
+
+TECH_WND_UNLOCKS
+Unlocks
 
 
 ####################
@@ -925,7 +940,7 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 # Effects
 
 DESC_EFFECTS_GROUP_SCOPE
-Objects affected:\nAny object%1%
+Objects affected: Any object%1%
 
 DESC_EFFECTS_GROUP_ACTIVATION
 Effect is active if the source is an object%1%
@@ -933,6 +948,20 @@ Effect is active if the source is an object%1%
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 Effect is always active
 
+DESC_EFFECTS_GROUP_SCOPE_DESC
+%1%\n
+
+DESC_EFFECTS_GROUP_ACTIVATION_DESC
+%1%\n
+
+DESC_EFFECTS_GROUP_EFFECT_DESC
+%1%\n
+
+DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
+%1%\n
+
+DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
+Effects group %1%:\n%2%\n
 
 # SetMeter
 
