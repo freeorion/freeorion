@@ -490,6 +490,10 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
  EFFECTS_GROUPX      EffectsGroup
 
 
+==Notes on Effects==
+Effects are evaluated and then applied while processing a FreeOrion turn.  When this happens, <i>all</i> EffectsGroups' activation and scope conditions are evaluated before <i>any</i> effects are applied.  The order of effects application is as follows: effects from Techs, then effects from Buildings, then effects from Specials.  The order of execution of Effects within these groups is deterministic, though not controllable.
+
+
 <br>
 <br>
 ==EffectsGroup==
