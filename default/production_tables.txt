@@ -24,17 +24,17 @@ Industry                0     0           2           0
 Mining                  0     2           0           0
 Science                 0     0           0           2
 
-<8x4>
-EnviromentProductionMod Food  Minerals    Industry    Research
-Swamp                   -2    0           0           0
-Toxic                   -5    0           0           0
-Inferno                 -5    0           0           0
-Radiated                -5    0           0           0
-Barren                  -4    0           0           0
-Tundra                  -2    0           0           0
-Desert                  -3    0           0           0
-Terran                  0     0           0           0
-Ocean                   -1    0           0           0
-Gaia                    3     0           0           0
-Asteroids               -8    0           0           0
-GasGiant                -10   0           0           0
+<12x4>
+EnvironmentProductionMod Food  Minerals    Industry    Research
+Swamp                    -2    0           0           0
+Toxic                    -5    0           0           0
+Inferno                  -5    0           0           0
+Radiated                 -5    0           0           0
+Barren                   -4    0           0           0
+Tundra                   -2    0           0           0
+Desert                   -3    0           0           0
+Terran                   0     0           0           0
+Ocean                    -1    0           0           0
+Gaia                     3     0           0           0
+Asteroids                -8    0           0           0
+GasGiant                 -10   0           0           0

@@ -78,10 +78,11 @@ ProdCenter::~ProdCenter()
 
 double ProdCenter::FarmingPoints() const
 {
-    return  m_workforce 
-          *(  ((m_primary  ==FOCUS_UNKNOWN)?0:ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][0]) 
-            + ((m_secondary==FOCUS_UNKNOWN)?0:ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][0])) 
-          + ProductionDataTables()["EnviromentProductionMod"][m_planet_type][0];
+    int modifier = std::max(0,
+                            (m_primary == FOCUS_UNKNOWN ? 0 : ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][0]) +
+                            (m_secondary == FOCUS_UNKNOWN ? 0 : ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][0]) +
+                            ProductionDataTables()["EnvironmentProductionMod"][m_planet_type][0]);
+    return m_workforce * modifier;
 }
 
 double ProdCenter::IndustryPoints() const
@@ -154,7 +155,8 @@ void ProdCenter::SetMaxWorkforce(double max_workforce)
 
 void ProdCenter::SetPlanetType(PlanetType planet_type)
 {
-    m_planet_type = planet_type;
+   m_planet_type = planet_type;
+   m_prod_changed_sig();
 }
 
 void ProdCenter::SetProduction(ProdCenter::BuildType type)
