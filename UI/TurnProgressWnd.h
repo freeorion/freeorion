@@ -33,15 +33,18 @@ public:
     void UpdateTurnProgress( const std::string& phase_str, const int empire_id );
     void UpdateCombatTurnProgress(const std::string& message);
     
-    bool   InWindow(const GG::Pt& pt) const;
+    bool InWindow(const GG::Pt& pt) const;
 
 private:
 
-    GG::TextControl*  m_phase_text;
-    GG::TextControl*  m_empire_text;
-    GG::StaticGraphic* m_bg_graphic; //!< the background image 
+    GG::TextControl*   m_phase_text;
+    GG::TextControl*   m_empire_text;
+    GG::StaticGraphic* m_bg_graphic00; //!< one tile of the background image 
+    GG::StaticGraphic* m_bg_graphic01; //!< one tile of the background image 
+    GG::StaticGraphic* m_bg_graphic10; //!< one tile of the background image 
+    GG::StaticGraphic* m_bg_graphic11; //!< one tile of the background image 
     
-    CombatWnd* m_combat_wnd;
+    CombatWnd*         m_combat_wnd;
 };
 
 inline std::pair<std::string, std::string> TurnProgressWndRevision()

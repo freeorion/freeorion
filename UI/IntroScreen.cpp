@@ -43,97 +43,97 @@ namespace {
 //****************************************************************************************************
 class CreditsWnd : public GG::Wnd
 {
-  public:
+public:
     CreditsWnd(int x, int y, int w, int h,const GG::XMLElement &credits,int cx, int cy, int cw, int ch,int co);
         
     virtual bool Render();
     virtual void LClick(const GG::Pt& pt, Uint32 keys) {m_bRender=false;}
 
-  private:
+private:
     GG::XMLElement m_credits;
     int m_cx,m_cy,m_cw,m_ch,m_co;
     int m_start_time;
     int m_bRender,m_bFadeIn;
 };
 
-CreditsWnd::CreditsWnd(int x, int y, int w, int h,const GG::XMLElement &credits,int cx, int cy, int cw, int ch,int co)
-: GG::Wnd(x, y, w, h,GG::Wnd::CLICKABLE),m_credits(credits),m_cx(cx),m_cy(cy),m_cw(cw),m_ch(ch),m_co(co),
-  m_start_time(GG::App::GetApp()->Ticks()),
-  m_bRender(true),
-  m_bFadeIn(true)
+CreditsWnd::CreditsWnd(int x, int y, int w, int h,const GG::XMLElement &credits,int cx, int cy, int cw, int ch,int co) :
+    GG::Wnd(x, y, w, h,GG::Wnd::CLICKABLE),m_credits(credits),m_cx(cx),m_cy(cy),m_cw(cw),m_ch(ch),m_co(co),
+    m_start_time(GG::App::GetApp()->Ticks()),
+    m_bRender(true),
+    m_bFadeIn(true)
 {}
 
 bool CreditsWnd::Render()
 {
-  if(!m_bRender)
-    return true;
+    if(!m_bRender)
+        return true;
 
-  GG::Pt ul = UpperLeft(), lr = LowerRight();
-  boost::shared_ptr<GG::Font> font=HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));;
-  Uint32 format = GG::TF_CENTER | GG::TF_TOP;
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    boost::shared_ptr<GG::Font> font=HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));;
+    Uint32 format = GG::TF_CENTER | GG::TF_TOP;
 
-  GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::Clr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
-  glColor4ubv(GG::CLR_WHITE.v);
+    GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::Clr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
+    glColor4ubv(GG::CLR_WHITE.v);
 
-  int offset=m_co;
+    int offset=m_co;
 
-  offset -= (GG::App::GetApp()->Ticks() - m_start_time)/40;
+    offset -= (GG::App::GetApp()->Ticks() - m_start_time)/40;
 
-  int transparency = 255;
+    int transparency = 255;
 
-  if(m_bFadeIn)
-  {
-    double fade_in = (GG::App::GetApp()->Ticks() - m_start_time)/2000.0;
-    if(fade_in>1.0)
-      m_bFadeIn=false;
-    else
-      transparency = static_cast<int>(255*fade_in);
-  }
-
-  glColor4ubv(GG::Clr(transparency,transparency,transparency,255).v);
-
-  GG::BeginScissorClipping(ul.x+m_cx,ul.y+m_cy,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch);
-
-  std::string credit;
-  for(int i = 0; i<m_credits.NumChildren();i++)
-    if(0==m_credits.Child(i).Tag().compare("GROUP"))
+    if(m_bFadeIn)
     {
-      GG::XMLElement group = m_credits.Child(i);
-      for(int j = 0; j<group.NumChildren();j++)
-        if(0==group.Child(j).Tag().compare("PERSON"))
+        double fade_in = (GG::App::GetApp()->Ticks() - m_start_time)/2000.0;
+        if(fade_in>1.0)
+            m_bFadeIn=false;
+        else
+            transparency = static_cast<int>(255*fade_in);
+    }
+
+    glColor4ubv(GG::Clr(transparency,transparency,transparency,255).v);
+
+    GG::BeginScissorClipping(ul.x+m_cx,ul.y+m_cy,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch);
+
+    std::string credit;
+    for(int i = 0; i<m_credits.NumChildren();i++)
+        if(0==m_credits.Child(i).Tag().compare("GROUP"))
         {
-          GG::XMLElement person = group.Child(j);
-          credit = "";
-          if(person.ContainsAttribute("name"))
-            credit+=person.Attribute("name");
-          if(person.ContainsAttribute("nick") && person.Attribute("nick").length()>0)
-          {
-            credit+=" <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) +">(";
-            credit+=person.Attribute("nick");
-            credit+=")</rgba>";
-          }
-          if(person.ContainsAttribute("task") && person.Attribute("task").length()>0)
-          {
-            credit+=" - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) +">";
-            credit+=person.Attribute("task");
-            credit+="</rgba>";
-          }
-          font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,credit, format, 0, true);
-          offset+=font->TextExtent(credit, format).y+2;
+            GG::XMLElement group = m_credits.Child(i);
+            for(int j = 0; j<group.NumChildren();j++)
+                if(0==group.Child(j).Tag().compare("PERSON"))
+                {
+                    GG::XMLElement person = group.Child(j);
+                    credit = "";
+                    if(person.ContainsAttribute("name"))
+                        credit+=person.Attribute("name");
+                    if(person.ContainsAttribute("nick") && person.Attribute("nick").length()>0)
+                    {
+                        credit+=" <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) +">(";
+                        credit+=person.Attribute("nick");
+                        credit+=")</rgba>";
+                    }
+                    if(person.ContainsAttribute("task") && person.Attribute("task").length()>0)
+                    {
+                        credit+=" - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) +">";
+                        credit+=person.Attribute("task");
+                        credit+="</rgba>";
+                    }
+                    font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,credit, format, 0, true);
+                    offset+=font->TextExtent(credit, format).y+2;
+                }
+            font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,"", format, 0, true);
+            offset+=font->TextExtent("", format).y+2;
         }
-      font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,"", format, 0, true);
-      offset+=font->TextExtent("", format).y+2;
-  }
-  GG::EndScissorClipping();
+    GG::EndScissorClipping();
 
-  if(offset<0)
-  {
-    m_co = 0;
-    m_start_time = GG::App::GetApp()->Ticks()+m_ch*40;
-  }
+    if(offset<0)
+    {
+        m_co = 0;
+        m_start_time = GG::App::GetApp()->Ticks()+m_ch*40;
+    }
 
 
-  return true;
+    return true;
 }
 //****************************************************************************************************
 
@@ -145,11 +145,30 @@ IntroScreen::IntroScreen() :
             MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE),
     m_credits_wnd(NULL)
 {
-    //create staticgraphic from the image
-    m_bg_graphic = new GG::StaticGraphic(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), 
-                                         GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash01.png"), 
-                                         GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    GG::App::GetApp()->Register(m_bg_graphic);
+    boost::shared_ptr<GG::Texture> texture00 = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash00.png");
+    boost::shared_ptr<GG::Texture> texture01 = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash01.png");
+    boost::shared_ptr<GG::Texture> texture10 = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash10.png");
+    boost::shared_ptr<GG::Texture> texture11 = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash11.png");
+    int total_width = texture00->DefaultWidth() + texture01->DefaultWidth();
+    int total_height = texture00->DefaultHeight() + texture10->DefaultHeight();
+    double x_scale_factor = GG::App::GetApp()->AppWidth() / static_cast<double>(total_width);
+    double y_scale_factor = GG::App::GetApp()->AppHeight() / static_cast<double>(total_height);
+    m_bg_graphic00 = new GG::StaticGraphic(0, 0,
+                                           static_cast<int>(texture00->DefaultWidth() * x_scale_factor), static_cast<int>(texture00->DefaultHeight() * y_scale_factor),
+                                           texture00, GG::GR_FITGRAPHIC);
+    m_bg_graphic01 = new GG::StaticGraphic(m_bg_graphic00->LowerRight().x, 0,
+                                           static_cast<int>(texture01->DefaultWidth() * x_scale_factor), static_cast<int>(texture01->DefaultHeight() * y_scale_factor),
+                                           texture01, GG::GR_FITGRAPHIC);
+    m_bg_graphic10 = new GG::StaticGraphic(0, m_bg_graphic00->LowerRight().y,
+                                           static_cast<int>(texture10->DefaultWidth() * x_scale_factor), static_cast<int>(texture10->DefaultHeight() * y_scale_factor),
+                                           texture10, GG::GR_FITGRAPHIC);
+    m_bg_graphic11 = new GG::StaticGraphic(m_bg_graphic00->LowerRight().x, m_bg_graphic00->LowerRight().y,
+                                           static_cast<int>(texture11->DefaultWidth() * x_scale_factor), static_cast<int>(texture11->DefaultHeight() * y_scale_factor),
+                                           texture11, GG::GR_FITGRAPHIC);
+    GG::App::GetApp()->Register(m_bg_graphic00);
+    GG::App::GetApp()->Register(m_bg_graphic01);
+    GG::App::GetApp()->Register(m_bg_graphic10);
+    GG::App::GetApp()->Register(m_bg_graphic11);
     
     //create buttons
     m_single_player = new CUIButton(20, 30, 160, UserString("INTRO_BTN_SINGLE_PLAYER"));
@@ -187,13 +206,19 @@ IntroScreen::IntroScreen(const GG::XMLElement &elem):
 
 IntroScreen::~IntroScreen()
 {
-    GG::App::GetApp()->Remove(m_bg_graphic);
-    delete m_bg_graphic;
+    GG::App::GetApp()->Remove(m_bg_graphic00);
+    GG::App::GetApp()->Remove(m_bg_graphic01);
+    GG::App::GetApp()->Remove(m_bg_graphic10);
+    GG::App::GetApp()->Remove(m_bg_graphic11);
+    delete m_bg_graphic00;
+    delete m_bg_graphic01;
+    delete m_bg_graphic10;
+    delete m_bg_graphic11;
 
-  if(m_credits_wnd){
-    GG::App::GetApp()->Register(m_credits_wnd);
-    delete m_credits_wnd;
-  }
+    if(m_credits_wnd){
+        GG::App::GetApp()->Register(m_credits_wnd);
+        delete m_credits_wnd;
+    }
 }
 
 GG::XMLElement IntroScreen::XMLEncode() const
@@ -206,8 +231,8 @@ GG::XMLElement IntroScreen::XMLEncode() const
 void IntroScreen::OnSinglePlayer()
 {
     if(m_credits_wnd){
-      GG::App::GetApp()->Register(m_credits_wnd);
-      delete m_credits_wnd;m_credits_wnd=0;
+        GG::App::GetApp()->Register(m_credits_wnd);
+        delete m_credits_wnd;m_credits_wnd=0;
     }
     using boost::lexical_cast;
     using std::string;
@@ -259,8 +284,8 @@ void IntroScreen::OnSinglePlayer()
 void IntroScreen::OnMultiPlayer()
 {
     if(m_credits_wnd){
-      GG::App::GetApp()->Register(m_credits_wnd);
-      delete m_credits_wnd;m_credits_wnd=0;
+        GG::App::GetApp()->Register(m_credits_wnd);
+        delete m_credits_wnd;m_credits_wnd=0;
     }
     bool failed = false;
     Hide();
@@ -310,8 +335,8 @@ void IntroScreen::OnMultiPlayer()
 void IntroScreen::OnLoadGame()
 {  
     if(m_credits_wnd){
-      GG::App::GetApp()->Register(m_credits_wnd);
-      delete m_credits_wnd;m_credits_wnd=0;
+        GG::App::GetApp()->Register(m_credits_wnd);
+        delete m_credits_wnd;m_credits_wnd=0;
     }
     Hide();
     if (!HumanClientApp::GetApp()->LoadSinglePlayerGame())
@@ -321,8 +346,8 @@ void IntroScreen::OnLoadGame()
 void IntroScreen::OnOptions()
 {
     if(m_credits_wnd){
-      GG::App::GetApp()->Register(m_credits_wnd);
-      delete m_credits_wnd;m_credits_wnd=0;
+        GG::App::GetApp()->Register(m_credits_wnd);
+        delete m_credits_wnd;m_credits_wnd=0;
     }
     OptionsWnd options_wnd;
 	options_wnd.Run();
@@ -331,8 +356,8 @@ void IntroScreen::OnOptions()
 void IntroScreen::OnAbout()
 {
     if(m_credits_wnd){
-      GG::App::GetApp()->Register(m_credits_wnd);
-      delete m_credits_wnd;m_credits_wnd=0;
+        GG::App::GetApp()->Register(m_credits_wnd);
+        delete m_credits_wnd;m_credits_wnd=0;
     }
     About about_wnd;
     about_wnd.Run();
@@ -340,39 +365,39 @@ void IntroScreen::OnAbout()
 
 void IntroScreen::OnCredits()
 {
-  if(m_credits_wnd){
+    if(m_credits_wnd){
+        GG::App::GetApp()->Register(m_credits_wnd);
+        delete m_credits_wnd;m_credits_wnd=0;
+    }
+
+    GG::XMLDoc doc;
+    std::ifstream ifs((ClientUI::DIR + "credits.xml").c_str());
+    doc.ReadDoc(ifs);
+    ifs.close();
+
+
+    if (!doc.root_node.ContainsChild("CREDITS"))
+        return;
+
+    GG::XMLElement credits = doc.root_node.Child("CREDITS");
+    // only the area between the upper and lower line of the splash screen should be darkend
+    // if we use another splash screen we have the chenge the following values
+    int nUpperLine = ( 79 * GG::App::GetApp()->AppHeight()) / 768,
+        nLowerLine = (692 * GG::App::GetApp()->AppHeight()) / 768;
+
+    m_credits_wnd = new CreditsWnd(0,nUpperLine,
+                                   GG::App::GetApp()->AppWidth(),nLowerLine-nUpperLine,
+                                   credits,
+                                   60,0,600,(nLowerLine-nUpperLine),((nLowerLine-nUpperLine))/2);
+
     GG::App::GetApp()->Register(m_credits_wnd);
-    delete m_credits_wnd;m_credits_wnd=0;
-  }
-
-  GG::XMLDoc doc;
-  std::ifstream ifs((ClientUI::DIR + "credits.xml").c_str());
-  doc.ReadDoc(ifs);
-  ifs.close();
-
-
-  if (!doc.root_node.ContainsChild("CREDITS"))
-    return;
-
-  GG::XMLElement credits = doc.root_node.Child("CREDITS");
-  // only the area between the upper and lower line of the splash screen should be darkend
-  // if we use another splash screen we have the chenge the following values
-  int nUpperLine = ( 79 * GG::App::GetApp()->AppHeight()) / 768,
-      nLowerLine = (692 * GG::App::GetApp()->AppHeight()) / 768;
-
-  m_credits_wnd = new CreditsWnd(0,nUpperLine,
-                                 GG::App::GetApp()->AppWidth(),nLowerLine-nUpperLine,
-                                 credits,
-                                 60,0,600,(nLowerLine-nUpperLine),((nLowerLine-nUpperLine))/2);
-
-  GG::App::GetApp()->Register(m_credits_wnd);
 }
 
 void IntroScreen::OnExitGame()
 {
     if(m_credits_wnd){
-      GG::App::GetApp()->Register(m_credits_wnd);
-      delete m_credits_wnd;m_credits_wnd=0;
+        GG::App::GetApp()->Register(m_credits_wnd);
+        delete m_credits_wnd;m_credits_wnd=0;
     }
     //exit the application
     GG::App::GetApp()->Exit(0); //exit with 0, good error code

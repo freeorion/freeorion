@@ -48,16 +48,19 @@ public:
 
 private:
     /** \name GG Controls*/ //!@{
-    GG::StaticGraphic* m_bg_graphic; //!< the background image shown in the intro screen
-    CUIButton* m_single_player;      //!< opens up the single player game dialog
-    CUIButton* m_multi_player;       //!< opens up the multi player game dialog
-    CUIButton* m_load_game;          //!< loads a saved single player game
-    CUIButton* m_options;	         //!< opens the options dialog
-    CUIButton* m_about;	             //!< opens a dialog to choose to see credits or license
-    CUIButton* m_credits;	         //!< displays credits
-    CUIButton* m_exit_game;          //!< button that exits the program
+    GG::StaticGraphic* m_bg_graphic00;  //!< a tile of the the background image shown in the intro screen
+    GG::StaticGraphic* m_bg_graphic01;  //!< a tile of the the background image shown in the intro screen
+    GG::StaticGraphic* m_bg_graphic10;  //!< a tile of the the background image shown in the intro screen
+    GG::StaticGraphic* m_bg_graphic11;  //!< a tile of the the background image shown in the intro screen
+    CUIButton*         m_single_player; //!< opens up the single player game dialog
+    CUIButton*         m_multi_player;  //!< opens up the multi player game dialog
+    CUIButton*         m_load_game;     //!< loads a saved single player game
+    CUIButton*         m_options;       //!< opens the options dialog
+    CUIButton*         m_about;         //!< opens a dialog to choose to see credits or license
+    CUIButton*         m_credits;       //!< displays credits
+    CUIButton*         m_exit_game;     //!< button that exits the program
 
-    CreditsWnd *m_credits_wnd;
+    CreditsWnd*        m_credits_wnd;
     //!@}
 };
 
