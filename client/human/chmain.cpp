@@ -13,8 +13,8 @@ int main(int argc, char* argv[])
     // read and process command-line arguments, if any
     try {
         GetOptionsDB().AddFlag('h', "help", "Print this help message.");
-		GetOptionsDB().AddFlag('m', "musicoff", "Disables music in the game");
-		GetOptionsDB().Add("bgmusic", "Sets the background track to play", std::string("background.ogg"));
+		GetOptionsDB().AddFlag('m', "music-off", "Disables music in the game");
+		GetOptionsDB().Add("bg-music", "Sets the background track to play", std::string("background.ogg"));
         GetOptionsDB().AddFlag('f', "fullscreen", "Start the game in fullscreen");
         GG::XMLDoc doc;
         std::ifstream ifs("default/config.xml");
@@ -27,15 +27,15 @@ int main(int argc, char* argv[])
             return 0;
         }
     } catch (const std::invalid_argument& e) {
-        std::cout << "main() caught exception(std::invalid_arg): " << e.what();
+        std::cerr << "main() caught exception(std::invalid_arg): " << e.what();
         GetOptionsDB().GetUsage(std::cerr);
         return 1;
     } catch (const std::runtime_error& e) {
-        std::cout << "main() caught exception(std::runtime_error): " << e.what();
+        std::cerr << "main() caught exception(std::runtime_error): " << e.what();
         GetOptionsDB().GetUsage(std::cerr);
         return 1;
     } catch (const std::exception& e) {
-        std::cout << "main() caught exception(std::exception): " << e.what();
+        std::cerr << "main() caught exception(std::exception): " << e.what();
         GetOptionsDB().GetUsage(std::cerr);
         return 1;
     }

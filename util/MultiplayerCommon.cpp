@@ -1,6 +1,18 @@
 #include "MultiplayerCommon.h"
 
+
 #include <fstream>
+
+#include "OptionsDB.h"
+
+namespace {
+    // command-line options
+    void AddOptions(OptionsDB& db)
+    {
+        db.Add<std::string>("data-dir", "Sets the root directory for the settings files and UI files.", "default/");
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
+}
 
 /////////////////////////////////////////////////////
 // Free Function(s)
@@ -10,9 +22,7 @@ const std::vector<GG::Clr>& EmpireColors()
     static std::vector<GG::Clr> colors;
     if (colors.empty()) {
         GG::XMLDoc doc;
-        // HACK: this is a hard-coded path, even though the ClientUI::DIR (usually "default") is command-line changable, 
-        // because the server needs to know the colors as well, an the ClientUI code should not be included in the server
-        std::ifstream ifs("default/empire_colors.xml");
+        std::ifstream ifs((GetOptionsDB().Get<std::string>("data-dir") + "empire_colors.xml").c_str());
         doc.ReadDoc(ifs);
         ifs.close();
         for (int i = 0; i < doc.root_node.NumChildren(); ++i) {

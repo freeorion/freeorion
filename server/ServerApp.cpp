@@ -9,6 +9,7 @@
 #include "../util/GZStream.h"
 #include "../universe/Fleet.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Predicates.h"
@@ -235,6 +236,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs)
         std::vector<std::string> args;
         args.push_back(AI_CLIENT_EXE);
         args.push_back(player_name);
+        args.push_back("--data-dir"); args.push_back(GetOptionsDB().Get<std::string>("data-dir"));
         m_ai_clients.push_back(Process(AI_CLIENT_EXE, args));
     }
 }

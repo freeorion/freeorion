@@ -28,8 +28,8 @@ void Options(OptionsDB& db)
     db.AddFlag("force-external-server", 
                "Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.");
    
-    db.Add("UI.intro-screen.left", "Position of the intro screen main menu (left)",(1024 + 300) / 2);
-    db.Add("UI.intro-screen.top", "Position of the intro screen main menu (top)",300);
+    db.Add("UI.main-menu.left", "Position of the intro screen main menu (left)",(1024 + 300) / 2);
+    db.Add("UI.main-menu.top", "Position of the intro screen main menu (top)",300);
 }
 
 bool foo_bool = RegisterOptions(&Options);
@@ -37,7 +37,7 @@ bool foo_bool = RegisterOptions(&Options);
 
 
 IntroScreen::IntroScreen() :
-    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), GetOptionsDB().Get<int>("UI.intro-screen.left")/*(1024 + 300) / 2*/,GetOptionsDB().Get<int>("UI.intro-screen.top")/* 300*/, 200, 340, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE)
+    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), GetOptionsDB().Get<int>("UI.main-menu.left")/*(1024 + 300) / 2*/,GetOptionsDB().Get<int>("UI.main-menu.top")/* 300*/, 200, 340, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE)
 {
     //create staticgraphic from the image
     m_bg_graphic = new GG::StaticGraphic(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), 

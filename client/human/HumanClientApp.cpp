@@ -74,6 +74,7 @@ void HumanClientApp::StartServer()
     const std::string SERVER_CLIENT_EXE = "freeoriond";
 #endif
     std::vector<std::string> args(1, SERVER_CLIENT_EXE);
+    args.push_back("--data-dir"); args.push_back(GetOptionsDB().Get<std::string>("data-dir"));
     m_server_process = Process(SERVER_CLIENT_EXE, args);
 }
 
@@ -137,7 +138,7 @@ void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/
 void HumanClientApp::StartMusic(void)
 {
 	HumanClientApp::GetApp()->StopMusic();
-	HumanClientApp::GetApp()->PlayMusic(ClientUI::MUSIC_DIR+GetOptionsDB().Get<std::string>("bgmusic"), -1, 0, 0.0);
+	HumanClientApp::GetApp()->PlayMusic(ClientUI::MUSIC_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1, 0, 0.0);
 }
 
 void HumanClientApp::StopMusic(void)
@@ -247,7 +248,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
     save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("INGAMEOPTIONS_SAVE_FILES"), "*.sav"));
 
     try {
-        GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-directory"), "", false, false, save_file_types, 
+        GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", false, false, save_file_types, 
                         ClientUI::FONT, ClientUI::PTS, ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
         dlg.Run();
         std::string filename;
@@ -447,7 +448,7 @@ void HumanClientApp::Initialize()
     m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
     m_ui->ScreenIntro();    //start the first screen; the UI takes over from there.
 	
-	if (!(GetOptionsDB().Get<bool>("musicoff")))
+	if (!(GetOptionsDB().Get<bool>("music-off")))
 		HumanClientApp::GetApp()->StartMusic();
 }
 

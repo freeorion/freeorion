@@ -107,8 +107,7 @@ namespace {
         db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(480, 1536));
         db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
 
-        db.Add<std::string>("UI.dir", "Sets UI resource directory root.", "default/");
-        db.Add<std::string>("UI.art-dir", "Sets UI art resource directory under \'[UI.dir]/art\'.", "small");
+        db.Add<std::string>("UI.art-dir", "Sets UI art resource directory under \'[data-dir]/art\'.", "small");
         db.Add<std::string>("UI.font", "Sets UI font resource file.", "Vera.ttf");
         db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
         db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "Vera.ttf");
@@ -329,7 +328,7 @@ ClientUI::ClientUI() :
 
     PTS       = GetOptionsDB().Get<int>("UI.font-size");
     TITLE_PTS = GetOptionsDB().Get<int>("UI.title-font-size");
-    DIR       = GetOptionsDB().Get<std::string>("UI.dir");
+    DIR       = GetOptionsDB().Get<std::string>("data-dir");
     FONT      = GetOptionsDB().Get<std::string>("UI.font");
     TITLE_FONT= GetOptionsDB().Get<std::string>("UI.title-font");
     ART_DIR   = DIR + "art/" + GetOptionsDB().Get<std::string>("UI.art-dir") + "/";

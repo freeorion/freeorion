@@ -18,7 +18,7 @@ namespace {
 void Options(OptionsDB& db)
 {
     db.Add('S',
-           "save-directory", 
+           "save-dir", 
            "The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.",
            std::string("save"));
 }
@@ -94,7 +94,7 @@ void InGameOptions::Save()
     save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("INGAMEOPTIONS_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));
 
     try {
-        GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-directory"), "", true, false, save_file_types, 
+        GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", true, false, save_file_types, 
                         ClientUI::FONT, ClientUI::PTS, ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
         dlg.Run();
         std::string filename;

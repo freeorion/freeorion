@@ -30,7 +30,7 @@ OptionsWnd::OptionsWnd():
 
     m_done_btn = new CUIButton(20,140,75,ClientUI::String("DONE"));
     m_music = new CUIStateButton(30,40,75,20,"Music",0);
-	m_music->SetCheck(!(GetOptionsDB().Get<bool>("musicoff")));
+	m_music->SetCheck(!(GetOptionsDB().Get<bool>("music-off")));
 	
 	m_audio_str = new GG::TextControl(15,20,"Audio",ClientUI::FONT,ClientUI::SIDE_PANEL_PLANET_NAME_PTS,ClientUI::TEXT_COLOR);
 	//m_audio_str = new GG::TextControl(10,10,"Audio",ClientUI::FONT,GG::CLR_WHITE,0,0);
@@ -92,12 +92,12 @@ void OptionsWnd::OnMusic(bool checked)
 {
 	if (!checked)
 	{
-		GetOptionsDB().Set("musicoff", true);
+		GetOptionsDB().Set("music-off", true);
 		HumanClientApp::GetApp()->StopMusic();
 	}
 	if (checked)
 	{
-		GetOptionsDB().Set("musicoff", false);
+		GetOptionsDB().Set("music-off", false);
 		HumanClientApp::GetApp()->StartMusic();
 	}
    
