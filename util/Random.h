@@ -39,11 +39,11 @@ boost::uniform_01<GeneratorType> zero_to_one_gen(gen);
 }
 
 /** seeds the underlying random number generator used to drive all random number distributions */
-//inline void Seed(unsigned int seed) {gen.seed(seed);}
+inline void Seed(unsigned int seed) {gen.seed(static_cast<boost::mt19937::result_type>(seed));}
 
 /** seeds the underlying random number generator used to drive all random number distributions with 
     the current clock time */
-inline void ClockSeed() {gen.seed(static_cast<unsigned int>(std::time(0)));}
+inline void ClockSeed() {gen.seed(static_cast<boost::mt19937::result_type>(std::time(0)));}
 
 /** returns a functor that provides a uniform distribution of small integers in the range [\a min, \a max]; 
     if the integers desired are larger than 10000, use IntDist() instead */
