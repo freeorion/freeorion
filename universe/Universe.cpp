@@ -2,6 +2,7 @@
 
 #include "../util/AppInterface.h"
 #include "Fleet.h"
+#include "DataTable.h"
 #include "Planet.h"
 #include "Predicates.h"
 #include "../util/Random.h"
@@ -33,284 +34,347 @@ namespace {
     const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, s_universe_width]
     const int     ADJACENCY_BOXES = 25;
     const double  PI = 3.141592;
+    const int     MAX_SYSTEM_ORBITS = 10;   // maximum slots where planets can be, in v0.2
+    SmallIntDistType g_hundred_dist = SmallIntDist(1, 100); // a linear distribution [1, 100] used in most universe generation
+
+    DataTableMap& UniverseDataTables()
+    {
+        static DataTableMap map;
+        if (map.empty()) {
+            LoadDataTables("default/universe_tables.txt", map);
+        }
+        return map;
+    }
 
     // "only" defined for 1 <= n <= 3999, as we can't
     // display the symbol for 5000
     std::string RomanNumber(unsigned int n)
     {
-	static const char N[] = "IVXLCDM??";
-	std::string retval;
-	int e = 3;
-	int mod = 1000;
-	for (; 0 <= e; e--, mod /= 10) {
-	    unsigned int m = (n / mod) % 10;
-	    if (m % 5 == 4) {
-		retval += N[e << 1];
-		++m;
-		if (m == 10) {
-		    retval += N[(e << 1) + 2];
-		    continue;
-		}
-	    }
-	    if (m >= 5) {
-		retval += N[(e << 1) + 1];
-		m -= 5;
-	    }
-	    while (m) {
-		retval += N[e << 1];
-		--m;
-	    }
-	}
-	return retval;
+        static const char N[] = "IVXLCDM??";
+        std::string retval;
+        int e = 3;
+        int mod = 1000;
+        for (; 0 <= e; e--, mod /= 10) {
+            unsigned int m = (n / mod) % 10;
+            if (m % 5 == 4) {
+                retval += N[e << 1];
+                ++m;
+                if (m == 10) {
+                    retval += N[(e << 1) + 2];
+                    continue;
+                }
+            }
+            if (m >= 5) {
+                retval += N[(e << 1) + 1];
+                m -= 5;
+            }
+            while (m) {
+                retval += N[e << 1];
+                --m;
+            }
+        }
+        return retval;
     }
 
-    void LoadPlanetNames(std::list<std::string>& names)
+    void LoadSystemNames(std::list<std::string>& names)
     {
-	std::ifstream ifs("default/starnames.txt");
-	while (ifs) {
-	    std::string latest_name;
-	    std::getline(ifs, latest_name);
-	    if (latest_name != "")
-		names.push_back(latest_name);
-	}
+        std::ifstream ifs("default/starnames.txt");
+        while (ifs) {
+            std::string latest_name;
+            std::getline(ifs, latest_name);
+            if (latest_name != "")
+            names.push_back(latest_name);
+        }
     }
 
-    void SpiralGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions,unsigned int arms,unsigned int stars,double width,double height)
+    void SpiralGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int arms, unsigned int stars, double width, double height)
     {
-	double arm_offset     = RandDouble(0.0,2.0*PI);
-	double arm_angle      = 2.0*PI / arms;
-	double arm_spread     = 0.3 * PI / arms;
-	double arm_length     = 1.5 * PI;
-	double center         = 0.25;
-	double x,y;
+        double arm_offset     = RandDouble(0.0,2.0*PI);
+        double arm_angle      = 2.0*PI / arms;
+        double arm_spread     = 0.3 * PI / arms;
+        double arm_length     = 1.5 * PI;
+        double center         = 0.25;
+        double x,y;
 
-	unsigned int i,j,attemps;
+        unsigned int i, j, attempts;
 
-	GaussianDistType  random_gaussian = GaussianDist(0.0,arm_spread);
-	SmallIntDistType  random_arm      = SmallIntDist(0  ,arms);
-	DoubleDistType    random_degree   = DoubleDist  (0.0,2.0*PI);
-	DoubleDistType    random_radius   = DoubleDist  (0.0,  1.0);
-    
-	for (i=0,attemps=0; i < stars && attemps<100; i++,attemps++ )
-	{
-	    double radius = random_radius();
+        GaussianDistType  random_gaussian = GaussianDist(0.0,arm_spread);
+        SmallIntDistType  random_arm      = SmallIntDist(0  ,arms);
+        DoubleDistType    random_degree   = DoubleDist  (0.0,2.0*PI);
+        DoubleDistType    random_radius   = DoubleDist  (0.0,  1.0);
 
-	    if(radius<center)
-	    {
-		double angle = random_degree();
-		x = radius * cos( arm_offset + angle );
-		y = radius * sin( arm_offset + angle );
-	    }
-	    else
-	    {
-		double arm    = (double)random_arm() * arm_angle;
-		double angle  = random_gaussian();
+        for (i = 0, attempts = 0; i < stars && attempts < 100; i++, ++attempts)
+        {
+            double radius = random_radius();
 
-		x = radius * cos( arm_offset + arm + angle + radius * arm_length );
-		y = radius * sin( arm_offset + arm + angle + radius * arm_length );
-	    }
+            if (radius < center) {
+                double angle = random_degree();
+                x = radius * cos( arm_offset + angle );
+                y = radius * sin( arm_offset + angle );
+            } else {
+                double arm    = (double)random_arm() * arm_angle;
+                double angle  = random_gaussian();
 
-	    x = (x+1)*width/2.0;
-	    y = (y+1)*height/2.0;
+                x = radius * cos( arm_offset + arm + angle + radius * arm_length );
+                y = radius * sin( arm_offset + arm + angle + radius * arm_length );
+            }
 
-	    if(x<0 || width<=x || y<0 || height<=y)
-		continue;
+            x = (x + 1) * width / 2.0;
+            y = (y + 1) * height / 2.0;
 
-	    // ensure all system have a min separation to each other (search isn't opimized, not worth the effort)
-	    for(j=0;j<positions.size();j++)
-		if((positions[j].first - x)*(positions[j].first - x)+ (positions[j].second - y)*(positions[j].second - y)
-		   < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION)
-		    break;
-	    if(j<positions.size())
-	    {
-		i--;
-		continue;
-	    }
+            if (x < 0 || width <= x || y < 0 || height <= y)
+                continue;
 
-	    attemps=0;
-	    positions.push_back(std::pair<double,double>(x,y));
-	}
+            // ensure all system have a min separation to each other (search isn't opimized, not worth the effort)
+            for (j = 0; j < positions.size(); ++j) {
+                if ((positions[j].first - x) * (positions[j].first - x) + (positions[j].second - y) * (positions[j].second - y)
+                    < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION)
+                break;
+            }
+            if (j < positions.size()) {
+                --i;
+                continue;
+            }
+
+            attempts = 0;
+            positions.push_back(std::pair<double,double>(x, y));
+        }
     }
 
-    void EllipticalGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions,unsigned int stars,double width,double height)
+    void EllipticalGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions, unsigned int stars, double width, double height)
     {
-	const double ellipse_width_vs_height = RandDouble(0.4, 0.6);
-	const double rotation = RandDouble(0.0, PI),
-	    rotation_sin = std::sin(rotation),
-	    rotation_cos = std::cos(rotation);
-	const unsigned int fail_attempts = 100;
-	const double gap_constant = .95;
-	const double gap_size = 1.0 - gap_constant * gap_constant * gap_constant;
+        const double ellipse_width_vs_height = RandDouble(0.4, 0.6);
+        const double rotation = RandDouble(0.0, PI),
+            rotation_sin = std::sin(rotation),
+            rotation_cos = std::cos(rotation);
+        const unsigned int fail_attempts = 100;
+        const double gap_constant = .95;
+        const double gap_size = 1.0 - gap_constant * gap_constant * gap_constant;
 
-	// Random number generators.
-	DoubleDistType radius_dist = DoubleDist(0.0, gap_constant);
-	DoubleDistType random_angle  = DoubleDist(0.0, 2.0 * PI);
+        // Random number generators.
+        DoubleDistType radius_dist = DoubleDist(0.0, gap_constant);
+        DoubleDistType random_angle  = DoubleDist(0.0, 2.0 * PI);
 
-	// Used to give up when failing to place a star too often.
-	unsigned int attempts = 0;
+        // Used to give up when failing to place a star too often.
+        unsigned int attempts = 0;
 
-	// For each attempt to place a star...
-	for (unsigned int i = 0; i < stars && attempts < fail_attempts; ++i, ++attempts){
-	    double radius = radius_dist();
-	    // Adjust for bigger density near center and create gap.
-	    radius = radius * radius * radius + gap_size;
-	    double angle  = random_angle();
+        // For each attempt to place a star...
+        for (unsigned int i = 0; i < stars && attempts < fail_attempts; ++i, ++attempts){
+            double radius = radius_dist();
+            // Adjust for bigger density near center and create gap.
+            radius = radius * radius * radius + gap_size;
+            double angle  = random_angle();
 
-	    // Rotate for individual angle and apply elliptical shape.
-	    double x1 = radius * std::cos(angle);
-	    double y1 = radius * std::sin(angle) * ellipse_width_vs_height;
+            // Rotate for individual angle and apply elliptical shape.
+            double x1 = radius * std::cos(angle);
+            double y1 = radius * std::sin(angle) * ellipse_width_vs_height;
 
-	    // Rotate for ellipse angle.
-	    double x = x1 * rotation_cos - y1 * rotation_sin;
-	    double y = x1 * rotation_sin + y1 * rotation_cos;
+            // Rotate for ellipse angle.
+            double x = x1 * rotation_cos - y1 * rotation_sin;
+            double y = x1 * rotation_sin + y1 * rotation_cos;
 
-	    // Move from [-1.0, 1.0] universe coordinates.
-	    x = (x + 1.0) * width / 2.0;
-	    y = (y + 1.0) * height / 2.0;
+            // Move from [-1.0, 1.0] universe coordinates.
+            x = (x + 1.0) * width / 2.0;
+            y = (y + 1.0) * height / 2.0;
 
-	    // Discard stars that are outside boundaries (due to possible rounding errors).
-	    if (x < 0 || x >= width || y < 0 || y >= height)
-	      continue;
+            // Discard stars that are outside boundaries (due to possible rounding errors).
+            if (x < 0 || x >= width || y < 0 || y >= height)
+                continue;
 
-	    // See if new star is too close to any existing star.
-	    unsigned int j = 0;
-	    for(; j < positions.size(); ++j){
-        if((positions[j].first - x) * (positions[j].first - x) + 
-           (positions[j].second - y) * (positions[j].second - y)
-          < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION)
-          break;
-      }
-	    // If so, we try again.
-	    if(j < positions.size()){
-		--i;
-		continue;
-	    }
+            // See if new star is too close to any existing star.
+            unsigned int j = 0;
+            for (; j < positions.size(); ++j){
+                if ((positions[j].first - x) * (positions[j].first - x) +
+                    (positions[j].second - y) * (positions[j].second - y)
+                    < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION)
+                    break;
+            }
+            // If so, we try again.
+            if (j < positions.size()){
+                --i;
+                continue;
+            }
 
-	    // Note that attempts is reset for every star.
-	    attempts = 0;
+            // Note that attempts is reset for every star.
+            attempts = 0;
 
-	    // Add the new star location.
-	    positions.push_back(std::pair<double,double>(x, y));
-	}
+            // Add the new star location.
+            positions.push_back(std::pair<double,double>(x, y));
+        }
     }
 
-    void ClusterGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions,unsigned int clusters,unsigned int stars,double width,double height)
+    void ClusterGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions, unsigned int clusters, unsigned int stars, double width, double height)
     {
-	//propability of systems which don't belong to a cluster
-	const double system_noise = 0.15;
-	double ellipse_width_vs_height = RandDouble(0.2,0.5);
-	// first innermost pair hold cluster position, second innermost pair stores help values for cluster rotation (sin,cos)
-	std::vector<std::pair<std::pair<double,double>,std::pair<double,double> > > clusters_position;
-	unsigned int i,j,attemps;
+        //propability of systems which don't belong to a cluster
+        const double system_noise = 0.15;
+        double ellipse_width_vs_height = RandDouble(0.2,0.5);
+        // first innermost pair hold cluster position, second innermost pair stores help values for cluster rotation (sin,cos)
+        std::vector<std::pair<std::pair<double,double>,std::pair<double,double> > > clusters_position;
+        unsigned int i,j,attempts;
 
-	DoubleDistType    random_zero_to_one = DoubleDist  (0.0,  1.0);
-	DoubleDistType    random_angle  = DoubleDist  (0.0,2.0*PI);
+        DoubleDistType    random_zero_to_one = DoubleDist  (0.0,  1.0);
+        DoubleDistType    random_angle  = DoubleDist  (0.0,2.0*PI);
 
-	for(i=0,attemps=0;i<clusters && attemps<100;i++,attemps++)
-	{
-	    // prevent cluster position near borders (and on border)
-	    double x=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters,
-		y=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters;
+        for (i=0,attempts=0;i<clusters && attempts<100;i++,attempts++)
+        {
+            // prevent cluster position near borders (and on border)
+            double x=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters,
+                y=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters;
 
-      
-	    // ensure all clusters have a min separation to each other (search isn't opimized, not worth the effort)
-	    for(j=0;j<clusters_position.size();j++)
-		if((clusters_position[j].first.first - x)*(clusters_position[j].first.first - x)+ (clusters_position[j].first.second - y)*(clusters_position[j].first.second - y)
-		   < (2.0/clusters))
-		    break;
-	    if(j<clusters_position.size())
-	    {
-		i--;
-		continue;
-	    }
 
-	    attemps=0;
-	    double rotation = RandDouble(0.0,PI);
-	    clusters_position.push_back(std::pair<std::pair<double,double>,std::pair<double,double> >(std::pair<double,double>(x,y),std::pair<double,double>(sin(rotation),cos(rotation))));
-	}
+            // ensure all clusters have a min separation to each other (search isn't opimized, not worth the effort)
+            for (j=0;j<clusters_position.size();j++)
+                if ((clusters_position[j].first.first - x)*(clusters_position[j].first.first - x)+ (clusters_position[j].first.second - y)*(clusters_position[j].first.second - y)
+                    < (2.0/clusters))
+                    break;
+            if (j<clusters_position.size())
+            {
+                i--;
+                continue;
+            }
 
-	for (i=0,attemps=0; i < stars && attemps<100; i++,attemps++ )
-	{
-	    double x,y;
-	    if(random_zero_to_one()<system_noise)
-	    {
-		x = random_zero_to_one() * 2.0 - 1.0;
-		y = random_zero_to_one() * 2.0 - 1.0;
-	    }
-	    else
-	    {
-		short  cluster = i%clusters_position.size();
-		double radius  = random_zero_to_one();
-		double angle   = random_angle();
-		double x1,y1;
+            attempts=0;
+            double rotation = RandDouble(0.0,PI);
+            clusters_position.push_back(std::pair<std::pair<double,double>,std::pair<double,double> >(std::pair<double,double>(x,y),std::pair<double,double>(sin(rotation),cos(rotation))));
+        }
 
-		x1 = radius * cos(angle);
-		y1 = radius * sin(angle)*ellipse_width_vs_height;
+        for (i=0,attempts=0; i < stars && attempts<100; i++,attempts++ )
+        {
+            double x,y;
+            if (random_zero_to_one()<system_noise)
+            {
+                x = random_zero_to_one() * 2.0 - 1.0;
+                y = random_zero_to_one() * 2.0 - 1.0;
+            }
+            else
+            {
+                short  cluster = i%clusters_position.size();
+                double radius  = random_zero_to_one();
+                double angle   = random_angle();
+                double x1,y1;
 
-		x = x1*clusters_position[cluster].second.second + y1*clusters_position[cluster].second.first;
-		y =-x1*clusters_position[cluster].second.first  + y1*clusters_position[cluster].second.second;
-        
-		x = x/sqrt((double)clusters) + clusters_position[cluster].first.first;
-		y = y/sqrt((double)clusters) + clusters_position[cluster].first.second;
-	    }
-	    x = (x+1)*width /2.0;
-	    y = (y+1)*height/2.0;
+                x1 = radius * cos(angle);
+                y1 = radius * sin(angle)*ellipse_width_vs_height;
 
-	    if(x<0 || width<=x || y<0 || height<=y)
-		continue;
+                x = x1*clusters_position[cluster].second.second + y1*clusters_position[cluster].second.first;
+                y =-x1*clusters_position[cluster].second.first  + y1*clusters_position[cluster].second.second;
 
-	    // ensure all system have a min separation to each other (search isn't opimized, not worth the effort)
-	    for(j=0;j<positions.size();j++)
-		if((positions[j].first - x)*(positions[j].first - x)+ (positions[j].second - y)*(positions[j].second - y)
-		   < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION)
-		    break;
-	    if(j<positions.size())
-	    {
-		i--;
-		continue;
-	    }
+                x = x/sqrt((double)clusters) + clusters_position[cluster].first.first;
+                y = y/sqrt((double)clusters) + clusters_position[cluster].first.second;
+            }
+            x = (x+1)*width /2.0;
+            y = (y+1)*height/2.0;
 
-	    attemps=0;
-	    positions.push_back(std::pair<double,double>(x,y));
-	}
+            if (x<0 || width<=x || y<0 || height<=y)
+                continue;
+
+            // ensure all system have a min separation to each other (search isn't opimized, not worth the effort)
+            for (j=0;j<positions.size();j++)
+                if ((positions[j].first - x)*(positions[j].first - x)+ (positions[j].second - y)*(positions[j].second - y)
+                    < MIN_SYSTEM_SEPARATION*MIN_SYSTEM_SEPARATION)
+                    break;
+            if (j<positions.size())
+            {
+                i--;
+                continue;
+            }
+
+            attempts=0;
+            positions.push_back(std::pair<double,double>(x,y));
+        }
     }
 
-    void GenerateStarField(Universe &universe,const std::vector<std::pair<double,double> > &positions, Universe::AdjacencyGrid& adjacency_grid, double adjacency_box_size)
+    System* GenerateSystem(Universe &universe, Universe::Age age, double x, double y)
     {
-	std::list<std::string> star_names;
-	LoadPlanetNames(star_names);
+        const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
+        const std::vector<std::vector<int> >& universe_age_mod_to_star_type_dist = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
 
-	SmallIntDistType star_type_gen = SmallIntDist(0, System::NUM_STARTYPES - 1);
+        static std::list<std::string> star_names;
+        if (star_names.empty())
+            LoadSystemNames(star_names);
 
-	// generate star field
-	for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
-	    // generate new star
-	    int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
-	    std::list<std::string>::iterator it = star_names.begin();
-	    std::advance(it, star_name_idx);
-	    std::string star_name(*it);
-	    star_names.erase(it);
-	    System::StarType star_type = System::StarType(star_type_gen());
-	    int num_orbits = 5;
-	    double orbits_rand = RandZeroToOne();
-	    if      (orbits_rand < 0.05) num_orbits = 0;
-	    else if (orbits_rand < 0.25) num_orbits = 1;
-	    else if (orbits_rand < 0.55) num_orbits = 2;
-	    else if (orbits_rand < 0.85) num_orbits = 3;
-	    else if (orbits_rand < 0.95) num_orbits = 4;
-	    // above 0.95 stays at the default 5
+        // generate new star
+        int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
+        std::list<std::string>::iterator it = star_names.begin();
+        std::advance(it, star_name_idx);
+        std::string star_name(*it);
+        star_names.erase(it);
+        int num_orbits = 10; // this is fixed in the v0.2 DD
 
-	    System* system = new System(star_type, num_orbits, star_name, positions[star_cnt].first,positions[star_cnt].second);
+        // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
+        int idx = 0;
+        int max_roll = 0;
+        for (unsigned int i = 0; i < System::NUM_STARTYPES; ++i) {
+            int roll = g_hundred_dist() + universe_age_mod_to_star_type_dist[age][i] + base_star_type_dist[i];
+            if (max_roll < roll) {
+                max_roll = roll;
+                idx = i;
+            }
+        }
+        System* system = new System(System::StarType(idx), MAX_SYSTEM_ORBITS, star_name, x, y);
 
-	    int new_sys_id = universe.Insert(system);
-	    if (new_sys_id == UniverseObject::INVALID_OBJECT_ID) {
-		throw std::runtime_error("Universe::GenerateIrregularGalaxy : Attemp to insert system " + 
-					 star_name + " into the object map failed.");
-	    }
+        int new_system_id = universe.Insert(system);
+        if (new_system_id == UniverseObject::INVALID_OBJECT_ID) {
+            throw std::runtime_error("Universe::GenerateIrregularGalaxy() : Attempt to insert system " +
+                                    star_name + " into the object map failed.");
+        }
 
-	    adjacency_grid[static_cast<int>(system->X() / adjacency_box_size)]
-		[static_cast<int>(system->Y() / adjacency_box_size)].insert(std::make_pair(system->X(), system->Y()));
-	}
+        return system;
+    }
+
+    void GenerateStarField(Universe &universe, const std::vector<std::pair<double, double> > &positions, Universe::AdjacencyGrid& adjacency_grid, 
+                           double adjacency_box_size, Universe::Age age = Universe::AGE_MATURE)
+    {
+        // generate star field
+        for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
+            System* system = GenerateSystem(universe, age, positions[star_cnt].first, positions[star_cnt].second);
+            adjacency_grid[static_cast<int>(system->X() / adjacency_box_size)]
+                [static_cast<int>(system->Y() / adjacency_box_size)].insert(system);
+        }
+    }
+
+    void GetNeighbors(double x, double y, const Universe::AdjacencyGrid& adjacency_grid, std::set<System*>& neighbors)
+    {
+        const double ADJACENCY_BOX_SIZE = Universe::UniverseWidth() / ADJACENCY_BOXES;
+        std::pair<unsigned int, unsigned int> grid_box(static_cast<unsigned int>(x / ADJACENCY_BOX_SIZE),
+                                                       static_cast<unsigned int>(y / ADJACENCY_BOX_SIZE));
+
+        // look in the box into which this system falls, and those boxes immediately around that box
+        neighbors = adjacency_grid[grid_box.first][grid_box.second];
+
+        if (0 < grid_box.first) {
+            if (0 < grid_box.second) {
+                const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second - 1];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+            }
+            const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second];
+            neighbors.insert(grid_square.begin(), grid_square.end());
+            if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
+                const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second + 1];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+            }
+        }
+        if (0 < grid_box.second) {
+            const std::set<System*>& grid_square = adjacency_grid[grid_box.first][grid_box.second - 1];
+            neighbors.insert(grid_square.begin(), grid_square.end());
+        }
+        if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
+            const std::set<System*>& grid_square = adjacency_grid[grid_box.first][grid_box.second + 1];
+            neighbors.insert(grid_square.begin(), grid_square.end());
+        }
+
+        if (grid_box.first < adjacency_grid.size() - 1) {
+            if (0 < grid_box.second) {
+                const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second - 1];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+            }
+            const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second];
+            neighbors.insert(grid_square.begin(), grid_square.end());
+            if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
+                const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second + 1];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+            }
+        }
     }
 }
 
@@ -352,14 +416,14 @@ void Universe::SetUniverse(const GG::XMLElement& elem)
     // wipe out anything present in the object map
     for (ObjectMap::iterator itr= m_objects.begin(); itr != m_objects.end(); ++itr)
         delete itr->second;
-    m_objects.clear(); 
+    m_objects.clear();
 
     s_universe_width = boost::lexical_cast<double>(elem.Child("s_universe_width").Text());
 
     for (int i = 0; i < elem.Child("m_objects").NumChildren(); ++i) {
-	if (UniverseObject* obj = m_factory.GenerateObject(elem.Child("m_objects").Child(i))) {
+        if (UniverseObject* obj = m_factory.GenerateObject(elem.Child("m_objects").Child(i))) {
             m_objects[obj->ID()] = obj;
-	}
+        }
     }
 
     m_last_allocated_id = boost::lexical_cast<int>(elem.Child("m_last_allocated_id").Text());
@@ -402,26 +466,23 @@ GG::XMLElement Universe::XMLEncode(int empire_id) const
 
    element.AppendChild(XMLElement("s_universe_width", boost::lexical_cast<std::string>(s_universe_width)));
 
-   for(const_iterator itr = begin(); itr != end(); ++itr)
+   for (const_iterator itr = begin(); itr != end(); ++itr)
    {
-      // determine visibility
-      UniverseObject::Visibility vis = (*itr).second->Visible(empire_id);
-      XMLElement univ_object("UniverseObject");
-      XMLElement univ_element;
+       // determine visibility
+       UniverseObject::Visibility vis = (*itr).second->Visible(empire_id);
+       XMLElement univ_object("UniverseObject");
+       XMLElement univ_element;
 
-      if (vis == UniverseObject::FULL_VISIBILITY)
-      {
-	  univ_element = (*itr).second->XMLEncode( );
-      }
-      else if (vis == UniverseObject::PARTIAL_VISIBILITY)
-      {
-          univ_element = (*itr).second->XMLEncode( empire_id );
-      }
+       if (vis == UniverseObject::FULL_VISIBILITY) {
+           univ_element = (*itr).second->XMLEncode( );
+       } else if (vis == UniverseObject::PARTIAL_VISIBILITY) {
+           univ_element = (*itr).second->XMLEncode( empire_id );
+       }
 
-      //univ_element.AppendChild( univ_object );
-      object_map.AppendChild( univ_element );
+       //univ_element.AppendChild( univ_object );
+       object_map.AppendChild( univ_element );
 
-      // for NO_VISIBILITY no element is added
+       // for NO_VISIBILITY no element is added
    }
    element.AppendChild(object_map);
 
@@ -448,9 +509,9 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
 
     std::vector<int> homeworlds;
 
-    // a grid of ADJACENCY_BOXES x ADJACENCY_BOXES boxes to hold the positions of the systems as they are generated, 
+    // a grid of ADJACENCY_BOXES x ADJACENCY_BOXES boxes to hold the positions of the systems as they are generated,
     // in order to ensure that they get spaced out properly
-    AdjacencyGrid adjacency_grid(ADJACENCY_BOXES, std::vector<std::set<std::pair<double, double> > >(ADJACENCY_BOXES));
+    AdjacencyGrid adjacency_grid(ADJACENCY_BOXES, std::vector<std::set<System*> >(ADJACENCY_BOXES));
 
     s_universe_width = size * 1000.0 / 150.0; // chosen so that the width of a medium galaxy is 1000.0
 
@@ -479,15 +540,16 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
         GenerateIrregularGalaxy(size, adjacency_grid);
     }
 
-    PopulateSystems();
-    GenerateHomeworlds(players + ai_players, homeworlds, adjacency_grid);
+    PopulateSystems(PD_AVERAGE);
+    GenerateStarlanes(LANES_AVERAGE, LANES_AVERAGE, LANES_AVERAGE, adjacency_grid);
+    GenerateHomeworlds(players + ai_players, homeworlds);
     GenerateEmpires(players + ai_players, homeworlds);
 }
 
 void Universe::CreateUniverse(const std::string& map_file, int size, int players, int ai_players)
 {
     // intialize the ID counter
-    m_last_allocated_id = -1;   
+    m_last_allocated_id = -1;
 
     // TODO
 }
@@ -526,7 +588,7 @@ bool Universe::InsertID(UniverseObject* obj, int id )
            m_objects[id] = obj;
            obj->SetID(id);
            retval = true;
-       }       
+       }
    }
    return retval;
 }
@@ -547,7 +609,7 @@ UniverseObject* Universe::Remove(int id)
 bool Universe::Delete(int id)
 {
   UniverseObject* obj = Remove(id);
-  if(obj)
+  if (obj)
     UniverseObjectDeleteSignal()(obj);
   delete obj;
   return obj;
@@ -574,7 +636,7 @@ void Universe::GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacenc
 void Universe::GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 {
     std::vector<std::pair<double,double> > positions;
-    
+
     EllipticalGalaxyCalcPositions(positions,stars,s_universe_width,s_universe_width);
     GenerateStarField(*this,positions,adjacency_grid,s_universe_width/ADJACENCY_BOXES);
 }
@@ -582,7 +644,7 @@ void Universe::GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid
 void Universe::GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 {
     std::vector<std::pair<double,double> > positions;
-    
+
     ClusterGalaxyCalcPositions(positions,5,stars,s_universe_width,s_universe_width);
     GenerateStarField(*this,positions,adjacency_grid,s_universe_width/ADJACENCY_BOXES);
 }
@@ -590,133 +652,163 @@ void Universe::GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 {
     std::list<std::string> star_names;
-    LoadPlanetNames(star_names);
+    LoadSystemNames(star_names);
 
     SmallIntDistType star_type_gen = SmallIntDist(0, System::NUM_STARTYPES - 1);
 
     // generate star field
     for (int star_cnt = 0; star_cnt < stars; ++star_cnt) {
         // generate new star
-        int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
-        std::list<std::string>::iterator it = star_names.begin();
-        std::advance(it, star_name_idx);
-        std::string star_name(*it);
-        star_names.erase(it);
-        System::StarType star_type = System::StarType(star_type_gen());
-        int num_orbits = 5;
-        double orbits_rand = RandZeroToOne();
-        if (orbits_rand < 0.05) {
-            num_orbits = 0;
-        } else if (orbits_rand < 0.25) {
-            num_orbits = 1;
-        } else if (orbits_rand < 0.55) {
-            num_orbits = 2;
-        } else if (orbits_rand < 0.85) {
-            num_orbits = 3;
-        } else if (orbits_rand < 0.95) {
-            num_orbits = 4;
-        }
-        // above 0.95 stays at the default 5
+        System* system = GenerateSystem(*this, AGE_MATURE, (s_universe_width - 0.1) * RandZeroToOne(), (s_universe_width - 0.1) * RandZeroToOne());
+
+        const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
 
         bool placed = false;
-        int attempts = 0;
-
-        System* system = new System(star_type, num_orbits, star_name, (s_universe_width-.1) * RandZeroToOne(), (s_universe_width-.1) * RandZeroToOne());
-
-        int new_sys_id = Insert(system);
-        if (new_sys_id == UniverseObject::INVALID_OBJECT_ID) {
-            throw std::runtime_error("Universe::GenerateIrregularGalaxy : Attemp to insert system " + 
-                                     star_name + " into the object map failed.");
-        }
-
-	const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
-
-        while (!placed && attempts++ < 10) {
-            // look in the box into which this system falls, and those boxes immediately around that box; 
+        int attempts_left = 25;
+        while (!placed && attempts_left--) {
             // make sure this system doesn't get slapped down too close to or on top of any systems
-            std::pair<unsigned int, unsigned int> grid_box(static_cast<unsigned int>(system->X() / ADJACENCY_BOX_SIZE), 
-                                                           static_cast<unsigned int>(system->Y() / ADJACENCY_BOX_SIZE));
-            std::set<std::pair<double, double> > neighbors(adjacency_grid[grid_box.first][grid_box.second]);
-            if (0 < grid_box.first) {
-                if (0 < grid_box.second) {
-                    std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second - 1];
-                    neighbors.insert(grid_square.begin(), grid_square.end());
-                }
-                std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-                if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-                    std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second + 1];
-                    neighbors.insert(grid_square.begin(), grid_square.end());
-                }
-            }
-            if (0 < grid_box.second) {
-                std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first][grid_box.second - 1];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-            }
-            if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-                std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first][grid_box.second + 1];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-            }
+            std::set<System*> neighbors;
+            double x = (s_universe_width - 0.1) * RandZeroToOne(),
+                y = (s_universe_width - 0.1) * RandZeroToOne();
+            GetNeighbors(x, y, adjacency_grid, neighbors);
 
-            if (grid_box.first < adjacency_grid.size() - 1) {
-                if (0 < grid_box.second) {
-                    std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second - 1];
-                    neighbors.insert(grid_square.begin(), grid_square.end());
-                }
-                std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-                if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-                    std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second + 1];
-                    neighbors.insert(grid_square.begin(), grid_square.end());
-                }
-            }
-
-            std::pair<double, double> neighbor_centroid;
             bool too_close = false;
-            double system_x = system->X();
-            double system_y = system->Y();
-            for (std::set<std::pair<double, double> >::iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
-                double x_dist = system_x - it->first;
-                double y_dist = system_y - it->second;
-                if (x_dist * x_dist + y_dist * y_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION)
+            for (std::set<System*>::iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
+                double x_dist = x - (*it)->X();
+                double y_dist = y - (*it)->Y();
+                if (x_dist * x_dist + y_dist * y_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
                     too_close = true;
-                neighbor_centroid.first += it->first;
-                neighbor_centroid.second += it->second;
+                    break;
+                }
             }
 
-            if (too_close) {
-                neighbor_centroid.first /= neighbors.size();
-                neighbor_centroid.second /= neighbors.size();
-                double move_x = system_x - neighbor_centroid.first;
-                double move_y = system_y - neighbor_centroid.second;
-                move_x = std::max(0.0, std::min(move_x + system_x, s_universe_width-.1));
-                move_y = std::max(0.0, std::min(move_y + system_y, s_universe_width-.1));
-                system->MoveTo(move_x, move_y);
-            } else {
+            if (!too_close) {
+                System* system = GenerateSystem(*this, AGE_MATURE, x, y);
+                adjacency_grid[static_cast<int>(system->X() / ADJACENCY_BOX_SIZE)]
+                    [static_cast<int>(system->Y() / ADJACENCY_BOX_SIZE)].insert(system);
                 placed = true;
             }
-
         }
 
-        // if placed is false system couldn't be placed anywhere without getting to close to another system
-        if (placed)
-            adjacency_grid[static_cast<int>(system->X() / ADJACENCY_BOX_SIZE)]
-                          [static_cast<int>(system->Y() / ADJACENCY_BOX_SIZE)].insert(std::make_pair(system->X(), system->Y()));
-        else
+        if (!attempts_left)
             Delete(system->ID());
     }
 }
 
-void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds, AdjacencyGrid& adjacency_grid)
+void Universe::GenerateStarlanes(StarlaneFreqency short_freq, StarlaneFreqency medium_freq, StarlaneFreqency long_freq,
+                                 const AdjacencyGrid& adjacency_grid)
+{
+    const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
+
+    std::vector<System*> sys_vec = FindObjects<System>();
+
+    if (sys_vec.empty())
+        throw std::runtime_error("Attempted to generate starlanes in an empty galaxy.");
+
+    const std::vector<int>& max_starlanes = UniverseDataTables()["MaxStarlanes"][0];
+    std::vector<int> starlane_ranges = UniverseDataTables()["StarlaneRanges"][0];
+    for (unsigned int i = 0; i < starlane_ranges.size(); ++i) {
+        starlane_ranges[i] /= ADJACENCY_BOX_SIZE;
+    }
+
+    SmallIntDistType short_dist = SmallIntDist(0, max_starlanes[short_freq]);
+    SmallIntDistType medium_dist = SmallIntDist(0, max_starlanes[medium_freq]);
+    SmallIntDistType long_dist = SmallIntDist(0, max_starlanes[long_freq]);
+    SmallIntDistType short_range_dist = SmallIntDist(-starlane_ranges[0], starlane_ranges[0]);
+    SmallIntDistType medium_range_dist = SmallIntDist(-starlane_ranges[1], starlane_ranges[1]);
+    SmallIntDistType long_range_dist = SmallIntDist(-starlane_ranges[2], starlane_ranges[2]);
+
+    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+        System* system = *it;
+        int grid_x = static_cast<int>(system->X() / ADJACENCY_BOX_SIZE);
+        int grid_y = static_cast<int>(system->Y() / ADJACENCY_BOX_SIZE);
+        int short_lanes = short_dist();
+        int medium_lanes = medium_dist();
+        int long_lanes = long_dist();
+
+        Logger().debugStream() << "System #" << system->ID() << " needs " << short_lanes << " short lanes, " 
+            << medium_lanes << " medium lanes, and " << long_lanes << " long lanes; generating...\n";
+
+        int attempts = 0;
+        while ((long_lanes || medium_lanes || short_lanes) && attempts++ < 10) {
+            Logger().debugStream() << "  top of while(): still need " << short_lanes << " short lanes, " 
+                << medium_lanes << " medium lanes, and " << long_lanes << " long lanes\n";
+            int x_offset;
+            int y_offset;
+            if (long_lanes) {
+                x_offset = long_range_dist();
+                y_offset = long_range_dist();
+                Logger().debugStream() << "  rolled long lane with offset (" << x_offset << ", " << y_offset << ")\n";
+            } else if (medium_lanes) {
+                x_offset = medium_range_dist();
+                y_offset = medium_range_dist();
+                Logger().debugStream() << "  rolled medium lane with offset (" << x_offset << ", " << y_offset << ")\n";
+            } else if (short_lanes) {
+                x_offset = short_range_dist();
+                y_offset = short_range_dist();
+                Logger().debugStream() << "  rolled short lane with offset (" << x_offset << ", " << y_offset << ")\n";
+            }
+
+            if (grid_x + x_offset < 0 || ADJACENCY_BOXES <= grid_x + x_offset ||
+                grid_y + y_offset < 0 || ADJACENCY_BOXES <= grid_y + y_offset)
+            {Logger().debugStream() << "  *** position plus offset (" << (grid_x + x_offset) << ", " << (y_offset + grid_y) << ") is out of bounds! ***\n";
+                continue;
+            }
+
+            const std::set<System*>& dest_grid_square = adjacency_grid[grid_x + x_offset][grid_y + y_offset];
+            if (dest_grid_square.empty())
+                continue;
+
+            if (x_offset <= starlane_ranges[0] && y_offset <= starlane_ranges[0]) { // the destination falls in the short range
+                if (!short_lanes)
+                    continue;
+                std::set<System*>::const_iterator system_it = dest_grid_square.begin();
+                std::advance(system_it, RandSmallInt(0, dest_grid_square.size() - 1));
+                System* dest_system = *system_it;
+                if (system != dest_system) {
+                    dest_system->AddStarlane(system->ID());
+                    system->AddStarlane(dest_system->ID());
+                    --short_lanes;
+                }
+            } else if (x_offset <= starlane_ranges[1] && y_offset <= starlane_ranges[1]) { // the destination falls in the medium range
+                if (!medium_lanes)
+                    continue;
+                std::set<System*>::const_iterator system_it = dest_grid_square.begin();
+                std::advance(system_it, RandSmallInt(0, dest_grid_square.size() - 1));
+                System* dest_system = *system_it;
+                if (system != dest_system) {
+                    dest_system->AddStarlane(system->ID());
+                    system->AddStarlane(dest_system->ID());
+                    --medium_lanes;
+                }
+            } else { // the destination falls in the long range
+                if (!long_lanes)
+                    continue;
+                std::set<System*>::const_iterator system_it = dest_grid_square.begin();
+                std::advance(system_it, RandSmallInt(0, dest_grid_square.size() - 1));
+                System* dest_system = *system_it;
+                if (system != dest_system) {
+                    dest_system->AddStarlane(system->ID());
+                    system->AddStarlane(dest_system->ID());
+                    --long_lanes;
+                }
+            }
+        }
+    }
+
+    // TODO: make another pass to ensure every system has at least one starlane
+}
+
+void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
 {
     homeworlds.clear();
 
-    ObjectVec sys_vec = FindObjects(IsSystem);
+    std::vector<System*> sys_vec = FindObjects<System>();
+
+    if (sys_vec.empty())
+        throw std::runtime_error("Attempted to generate homeworlds in an empty galaxy.");
 
     for (int i = 0; i < players; ++i) {
-        if (sys_vec.empty())
-            throw std::runtime_error("Attempted to generate homeworlds in an empty galaxy.");
-        
         int system_index;
         System* system;
 
@@ -726,7 +818,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds, Adj
         do {
             too_close = false;
             system_index = RandSmallInt(0, static_cast<int>(sys_vec.size()) - 1);
-            system = dynamic_cast<System*>(sys_vec[system_index]);
+            system = sys_vec[system_index];
             for (unsigned int j = 0; j < homeworlds.size(); ++j) {
                 System* existing_system = Object(homeworlds[j])->GetSystem();
                 double x_dist = existing_system->X() - system->X();
@@ -736,68 +828,97 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds, Adj
                     break;
                 }
             }
-        } while ((!system->Orbits() || too_close) && ++attempts < 50);
+        } while ((!system->Orbits() || system->FindObjectIDs<Planet>().empty() || too_close) && ++attempts < 50);
 
         sys_vec.erase(sys_vec.begin() + system_index);
 
         // find a place to put the homeworld, and replace whatever planet is there already
-        int planet_id,home_orbit;
+        int planet_id, home_orbit;
         std::string planet_name;
 
-        if(system->Orbits()>0) {
-            home_orbit = RandSmallInt(0, system->Orbits() - 1);
-            System::ObjectIDVec planet_IDs = system->FindObjectIDsInOrbit(home_orbit, IsPlanet);
+        if (system->Orbits() > 0) {
+            System::ObjectIDVec planet_IDs;
+            while (planet_IDs.empty()) {
+                home_orbit = RandSmallInt(0, system->Orbits() - 1);
+                planet_IDs = system->FindObjectIDsInOrbit<Planet>(home_orbit);
+            }
             planet_name = Object(planet_IDs.back())->Name();
             Delete(planet_IDs.back());
-        }
-        else {
+        } else {
             home_orbit = 0;
-            planet_name = system->Name() + " " + RomanNumber(home_orbit+1);
+            planet_name = system->Name() + " " + RomanNumber(home_orbit + 1);
         }
 
-        Planet* planet = new Planet(Planet::TERRAN, Planet::SZ_MEDIUM);
+        Planet* planet = new Planet(Planet::PT_TERRAN, Planet::SZ_LARGE);
         planet_id = Insert(planet);
         planet->Rename(planet_name);
         system->Insert(planet, home_orbit);
-        
+
         homeworlds.push_back(planet_id);
     }
 }
 
-void Universe::PopulateSystems()
+void Universe::PopulateSystems(Universe::PlanetDensity density)
 {
-    ObjectVec sys_vec = FindObjects(IsSystem);
+    std::vector<System*> sys_vec = FindObjects<System>();
 
     if (sys_vec.empty())
         throw std::runtime_error("Attempted to populate an empty galaxy.");
 
-    SmallIntDistType planet_type_gen = SmallIntDist(0, Planet::MAX_PLANET_TYPE - 1);
+    const std::vector<std::vector<int> >& density_mod_to_planet_size_dist = UniverseDataTables()["DensityModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >& star_color_mod_to_planet_size_dist = UniverseDataTables()["StarColorModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >& slot_mod_to_planet_size_dist = UniverseDataTables()["SlotModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >& planet_size_mod_to_planet_type_dist = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
+    const std::vector<std::vector<int> >& slot_mod_to_planet_type_dist = UniverseDataTables()["SlotModToPlanetTypeDist"];
+    const std::vector<std::vector<int> >& star_color_mod_to_planet_type_dist = UniverseDataTables()["StarColorModToPlanetTypeDist"];
 
-    for (ObjectVec::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
-        System* system = dynamic_cast<System*>(*it);
+    SmallIntDistType hundred_dist = SmallIntDist(1, 100);
 
+    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+        System* system = *it;
+
+        int num_planets_in_system = 0;     // the number of slots in this system that were determined to contain planets
         for (int orbit = 0; orbit < system->Orbits(); orbit++) {
-            Planet::PlanetSize plt_size;       
+            // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
+            int idx = 0;
+            int max_roll = 0;
+            for (unsigned int i = 0; i < Planet::MAX_PLANET_SIZE; ++i) {
+                int roll = hundred_dist() + star_color_mod_to_planet_size_dist[system->Star()][i] + slot_mod_to_planet_size_dist[orbit][i]
+                    + density_mod_to_planet_size_dist[density][i];
+                if (max_roll < roll) {
+                    max_roll = roll;
+                    idx = i;
+                }
+            }
+            Planet::PlanetSize planet_size = Planet::PlanetSize(idx);
 
-            // Type is selected at random. Type only affects the planet's image in v0.1
-            Planet::PlanetType plt_type = Planet::PlanetType(planet_type_gen());
-            double size_rnd = RandZeroToOne();
-            if (size_rnd < 0.10)
-                plt_size = Planet::SZ_TINY;
-            else if (size_rnd < 0.35)
-                plt_size = Planet::SZ_SMALL;
-            else if (size_rnd < 0.65)
-                plt_size = Planet::SZ_MEDIUM;
-            else if (size_rnd < 0.90)
-                plt_size = Planet::SZ_LARGE;
+            if (planet_size == Planet::SZ_NOWORLD)
+                continue;
             else
-                plt_size = Planet::SZ_HUGE;
+                ++num_planets_in_system;
 
-            Planet* planet = new Planet(plt_type, plt_size);
+            if (planet_size == Planet::SZ_ASTEROIDS) {
+                idx = Planet::PT_ASTEROIDS;
+            } else if (planet_size == Planet::SZ_GASGIANT) {
+                idx = Planet::PT_GASGIANT;
+            } else {
+                // make another series of modified rolls for planet type
+                for (unsigned int i = 0; i < Planet::MAX_PLANET_TYPE; ++i) {
+                    int roll = hundred_dist() + planet_size_mod_to_planet_type_dist[planet_size][i] + slot_mod_to_planet_type_dist[orbit][i] + 
+                        star_color_mod_to_planet_type_dist[system->Star()][i];
+                    if (max_roll < roll) {
+                        max_roll = roll;
+                        idx = i;
+                    }
+                }
+            }
+            Planet::PlanetType planet_type = Planet::PlanetType(idx);
+
+            Planet* planet = new Planet(planet_type, planet_size);
 
             Insert(planet); // add planet to universe map
             system->Insert(planet, orbit);  // add planet to system map
-            planet->Rename(system->Name() + " " + RomanNumber(orbit + 1));
+            planet->Rename(system->Name() + " " + RomanNumber(num_planets_in_system));
         }
     }
 }
@@ -816,22 +937,21 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
 
       // TODO: select color at random from default list
       GG::Clr color(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
-  
+
       int home_planet_id = homeworlds[i];
 
       // create new Empire object through empire manager
-      // TODO : ******* find a way to distinguish between humans and AIs *******
-      Empire* empire = 
+      Empire* empire =
           dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, name, color, home_planet_id, Empire::CONTROL_HUMAN);
 
       // set ownership of home planet
       int empire_id = empire->EmpireID();
       Planet* home_planet = dynamic_cast<Planet*>(Object(homeworlds[i]));
-      Logger().debugStream() << "Setting " << home_planet->GetSystem()->Name() << " (Planet #" <<  home_planet->ID() << 
+      Logger().debugStream() << "Setting " << home_planet->GetSystem()->Name() << " (Planet #" <<  home_planet->ID() <<
           ") to be home system for Empire " << empire_id;
       home_planet->AddOwner(empire_id);
 
-      // TODO: adding an owner to a planet should probably add that owner to the 
+      // TODO: adding an owner to a planet should probably add that owner to the
       //       system automatically...
       System* home_system = home_planet->GetSystem();
       home_system->AddOwner(empire_id);
@@ -919,3 +1039,5 @@ int Universe::GenerateObjectID( )
 {
   return( ++m_last_allocated_id );
 }
+
+

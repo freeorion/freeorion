@@ -24,22 +24,46 @@ class Universe
 {
 protected:
     typedef std::map<int, UniverseObject*> ObjectMap; ///< the container type that is used internally to hold the objects in the universe; keyed by ID number
-   
+
 public:
-    /** the types of universe shapes available in FeeOrion*/
+    /** the types of universe shapes available in FreeOrion*/
     enum Shape {SPIRAL_2,      ///< a two-armed spiral galaxy
-		SPIRAL_3,      ///< a three-armed spiral galaxy
-		SPIRAL_4,      ///< a four-armed spiral galaxy
-		CLUSTER,	      ///< a cluster galaxy
-		ELLIPTICAL,    ///< an elliptical galaxy
-		IRREGULAR,     ///< an irregular galaxy
-		FROM_FILE,     ///< a galaxy loaded from a file
-		GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
-    }; // other types TBD
-   
+                SPIRAL_3,      ///< a three-armed spiral galaxy
+                SPIRAL_4,      ///< a four-armed spiral galaxy
+                CLUSTER,          ///< a cluster galaxy
+                ELLIPTICAL,    ///< an elliptical galaxy
+                IRREGULAR,     ///< an irregular galaxy
+                FROM_FILE,     ///< a galaxy loaded from a file
+                GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
+               };
+
+    /** types of Univervse ages*/
+    enum Age {AGE_YOUNG,
+              AGE_MATURE,
+              AGE_ANCIENT,
+              NUM_UNIVERSE_AGES    // keep this last, the number of universe age options
+             };
+
+    /** types of Planet Density */
+    enum PlanetDensity {PD_LOW,
+                        PD_AVERAGE,
+                        PD_HIGH,
+                        NUM_UNIVERSE_PLANET_DENSITIES        //keep this last, the number of planet density options
+                       };
+
+    /** types of starlane frequencies */
+    enum StarlaneFreqency {LANES_NONE, 
+                           LANES_FEW, 
+                           LANES_SOME, 
+                           LANES_AVERAGE, 
+                           LANES_MANY, 
+                           LANES_VERY_MANY,
+                           NUM_STARLANE_FREQENCIES    // keep this last, the number of starlane frequency options
+                          };
+
     typedef ObjectMap::const_iterator            const_iterator;   ///< a const_iterator for iteration over the objects in the universe
     typedef ObjectMap::iterator                  iterator;
-       
+
     typedef std::vector<const UniverseObject*>   ConstObjectVec;   ///< the return type of FindObjects()
     typedef std::vector<UniverseObject*>         ObjectVec;        ///< the return type of the non-const FindObjects()
     typedef std::vector<int>                     ObjectIDVec;      ///< the return type of FindObjectIDs()
@@ -47,88 +71,66 @@ public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void (const UniverseObject *)> UniverseObjectDeleteSignalType; ///< emitted just before the UniverseObject is deleted
     //@}
-    
+
 
     /** \name Structors */ //@{
     Universe(); ///< default ctor
     Universe(const GG::XMLElement& elem); ///< ctor that constructs a Universe object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Universe object
     virtual ~Universe(); ///< dtor
     //@}
-   
+
     /** \name Accessors */ //@{
     const UniverseObject* Object(int id) const; ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
     UniverseObject* Object(int id);  ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
-   
-    /** returns all the objects that match \a pred.  Predicates used with this function must take a single const 
-	UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-    template <class Pred>
-    ConstObjectVec FindObjects(Pred pred) const
-    {
-	ConstObjectVec retval;
-	for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-	    const UniverseObject* o = it->second;
-	    if (pred(o))
-		retval.push_back(o);
-	}
-	return retval;
-    }
-   
-    template <class Pred>
-    ObjectVec FindObjects(Pred pred)
-    {
-        ObjectVec retval;
-        for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-	    UniverseObject* o = it->second;
-	    if (pred(o))
-		retval.push_back(o);
-        }
-        return retval;
-    }
 
-    /** returns the IDs of all the objects that match \a pred.  Predicates used with this function must take a single const 
-	UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-    template <class Pred>
-    ObjectIDVec FindObjectIDs(Pred pred) const
-    {
-	ObjectIDVec retval;
-	for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-	    const UniverseObject* o = it->second;
-	    if (pred(o))
-		retval.push_back(it->first);
-	}
-	return retval;
-    }
+    /** returns all the objects that match \a pred.  Predicates used with this function must take a single const
+        UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+    template <class Pred> ConstObjectVec FindObjects(Pred pred) const;
+
+    /** returns all the objects that match \a pred.  Predicates used with this function must take a single
+        UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+    template <class Pred> ObjectVec FindObjects(Pred pred);
+
+    /** returns all the objects of type T. */
+    template <class T> std::vector<const T*> FindObjects() const;
+
+    /** returns all the objects of type T. */
+    template <class T> std::vector<T*> FindObjects();
+
+    /** returns the IDs of all the objects that match \a pred.  Predicates used with this function must take a single const
+    UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+    template <class Pred> ObjectIDVec FindObjectIDs(Pred pred) const;
+
+    /** returns the IDs of all the objects of type T. */
+    template <class T> ObjectIDVec FindObjectIDs() const;
 
     iterator begin() { return m_objects.begin();}
     iterator end() { return m_objects.end();}
 
     const_iterator begin() const  {return m_objects.begin();}   ///< returns the begin const_iterator for the objects in the universe
     const_iterator end() const    {return m_objects.end();}     ///< returns the end const_iterator for the objects in the universe
-   
+
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Universe object
     virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
- 
+
     UniverseObjectDeleteSignalType& UniverseObjectDeleteSignal() const {return m_universe_object_delete_sig;} ///< returns the state changed signal object for this UniverseObject
 
     //@}
 
-
-
-
     /** \name Mutators */ //@{
     void SetUniverse(const GG::XMLElement& elem ); ///< wipes out the current object map and sets the map to the XMLElement passed in.
-    
-    /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.  
-	\note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after 
-	passing it to Insert().*/
+
+    /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.
+    \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
+    passing it to Insert().*/
     int               Insert(UniverseObject* obj);
 
-    /** inserts object \a obj of given ID into the universe; returns true on proper insert , or false on failure.  
-	\note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after 
-	passing it to InsertID().
-	Useful mostly for times when ID needs to be consistant on client and server*/
+    /** inserts object \a obj of given ID into the universe; returns true on proper insert , or false on failure.
+    \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
+    passing it to InsertID().
+    Useful mostly for times when ID needs to be consistant on client and server*/
     bool               InsertID(UniverseObject* obj, int id );
-   
+
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
     void              CreateUniverse(Shape shape, int size, int players, int ai_players);
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses an arbitrary bitmap image to determine galaxy shape. */
@@ -136,29 +138,27 @@ public:
 
     /** removes the object with ID number \a id from the universe, and returns it; returns 0 if there is no such object*/
     UniverseObject*   Remove(int id);
-   
+
     /** removes the object with ID number \a id; returns true if such an object was found, false otherwise*/
     bool              Delete(int id);
-    
-    /** moves UniverseObjects that are in movement or are starting movement as a result of orders this turn.  This must be 
-	called after all movement Orders have been processed but before combats are resolved.  Any SitRepEntrys that 
-	are generated are pushed onto the end of \a sit_reps.*/
+
+    /** moves UniverseObjects that are in movement or are starting movement as a result of orders this turn.  This must be
+    called after all movement Orders have been processed but before combats are resolved.  Any SitRepEntrys that
+    are generated are pushed onto the end of \a sit_reps.*/
     void MovementPhase(std::vector<SitRepEntry>& sit_reps);
-   
-    /** grows pop, and executes production and research.  This must be called after all Orders have been processed on the 
-	Universe and all combats are resolved.  Any SitRepEntrys that are generated are pushed onto the end of \a sit_reps.*/
+
+    /** grows pop, and executes production and research.  This must be called after all Orders have been processed on the
+    Universe and all combats are resolved.  Any SitRepEntrys that are generated are pushed onto the end of \a sit_reps.*/
     void PopGrowthProductionResearch(std::vector<SitRepEntry>& sit_reps);
-    
-    
     //@}
 
-    /** returns the size of the galaxy map.  Does not measure absolute distances; the ratio between map coordinates and actual distance varies 
-	depending on universe size */
+    /** returns the size of the galaxy map.  Does not measure absolute distances; the ratio between map coordinates and actual distance varies
+    depending on universe size */
     static double UniverseWidth() {return s_universe_width;}
 
     int GenerateObjectID( );  ///< generates an object ID for a future object. Usually used by the server to service new ID requests
 
-    typedef std::vector<std::vector<std::set<std::pair<double, double> > > > AdjacencyGrid;
+    typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
 
 protected:
     // factory class
@@ -190,7 +190,7 @@ protected:
             }
             return retval;
         }
-   
+
         /** \name Mutators */ //@{
         /** adds (or overrides) a new generator that can generate subclass objects described by \a name */
         void AddGenerator(const std::string& name, Generator gen) {m_generators[name] = gen;}
@@ -206,13 +206,17 @@ protected:
     void GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates an cluster galaxy and stores the empire homeworlds in the homeworlds vector
     void GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
-    void GenerateHomeworlds(int players, std::vector<int>& homeworlds, AdjacencyGrid& adjacency_grid);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
+    /** creates starlanes and adds them systems already generated */
+    void GenerateStarlanes(StarlaneFreqency short_freq, StarlaneFreqency medium_freq, StarlaneFreqency long_freq,
+                           const AdjacencyGrid& adjacency_grid);
 
-    void PopulateSystems();  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
+    void GenerateHomeworlds(int players, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
+
+    void PopulateSystems(Universe::PlanetDensity density);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
 
     /// Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets
-    /// NOTE: does nothing if executed client-side. This is a hack to deal with the 
-    /// dependency on ServerEmpireManager -- jdb                     
+    /// NOTE: does nothing if executed client-side. This is a hack to deal with the
+    /// dependency on ServerEmpireManager -- jdb
     void GenerateEmpires(int players, std::vector<int>& homeworlds);
 
     ObjectMap m_objects;
@@ -225,9 +229,74 @@ protected:
 };
 
 
+// template implementations
+template <class Pred>
+Universe::ConstObjectVec Universe::FindObjects(Pred pred) const
+{
+    ConstObjectVec retval;
+    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        const UniverseObject* o = it->second;
+        if (pred(o))
+            retval.push_back(o);
+    }
+    return retval;
+}
 
+template <class Pred>
+Universe::ObjectVec Universe::FindObjects(Pred pred)
+{
+    ObjectVec retval;
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        UniverseObject* o = it->second;
+        if (pred(o))
+            retval.push_back(o);
+    }
+    return retval;
+}
 
+template <class T>
+std::vector<const T*> Universe::FindObjects() const
+{
+    std::vector<const T*> retval;
+    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (const T* t = dynamic_cast<T*>(it->second))
+            retval.push_back(t);
+    }
+    return retval;
+}
 
+template <class T>
+std::vector<T*> Universe::FindObjects()
+{
+    std::vector<T*> retval;
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (T* t = dynamic_cast<T*>(it->second))
+            retval.push_back(t);
+    }
+    return retval;
+}
+
+template <class Pred>
+Universe::ObjectIDVec Universe::FindObjectIDs(Pred pred) const
+{
+    ObjectIDVec retval;
+    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        const UniverseObject* o = it->second;
+        if (pred(o))
+            retval.push_back(it->first);
+    }
+    return retval;
+}
+
+template <class T>
+Universe::ObjectIDVec Universe::FindObjectIDs() const
+{
+    Universe::ObjectIDVec retval;
+    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (dynamic_cast<T*>(it->second))
+            retval.push_back(it->first);
+    }
+    return retval;
+}
 
 #endif // _Universe_h_
-
