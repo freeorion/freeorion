@@ -7,11 +7,11 @@
 
 // Zach was right, this DOES make things much faster
 #ifndef _GGClr_h_
-#include "GG\GGClr.h"
+#include "../GG/GGClr.h"
 #endif
 
 #ifndef _XMLDoc_h_
-#include "GG\XML\XMLDoc.h"
+#include "../GG/XML/XMLDoc.h"
 #endif
 
 #ifndef _FREEORION_SITREPENTRY_H_
