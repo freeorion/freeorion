@@ -33,14 +33,18 @@
 #include <stdlib.h>
 #include <string>
 
+#include "SitRepWnd.h"
+
 IntroScreen::IntroScreen():
-    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024+300)/2, 300, 300, 400, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE | CUI_Wnd::MINIMIZABLE | CUI_Wnd::CLOSABLE)
+    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024+300)/2, 300, 300, 400, 
+            GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE | 
+            CUI_Wnd::MINIMIZABLE | CUI_Wnd::CLOSABLE)
 {
     //get a texture to fill the background with
     
     m_background = new GG::Texture();
     m_background->Load(ClientUI::ART_DIR + "splash01.png");
-  
+    
     //create staticgraphic from the image
     GG::StaticGraphic* bg_graphic = new GG::StaticGraphic(0,0,GG::App::GetApp()->AppWidth(),GG::App::GetApp()->AppHeight(),m_background);
     GG::App::GetApp()->Register(bg_graphic);
