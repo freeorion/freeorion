@@ -135,7 +135,7 @@ SystemIcon::SystemIcon(int id, double zoom) :
     PositionSystemName();
     AttachChild(m_name);
 
-    CreateFleetButtons(sys);
+    Refresh();
 }
 
 
@@ -189,7 +189,7 @@ void SystemIcon::CreateFleetButtons(const System* sys)
     for (unsigned int i = 0; i < fleets.size(); ++i) {
         const Fleet* fleet = dynamic_cast<const Fleet*>(fleets[i]);
         int owning_empire_id = *fleet->Owners().begin();
-        const Empire* empire = HumanClientApp::Empire().Lookup(owning_empire_id);
+        const Empire* empire = HumanClientApp::Empires().Lookup(owning_empire_id);
         if (fleet->MoveOrders() == UniverseObject::INVALID_OBJECT_ID) {
             if (m_stationary_fleet_markers.find(owning_empire_id) == m_stationary_fleet_markers.end()) {
                 m_stationary_fleet_markers[owning_empire_id] = 
@@ -214,6 +214,13 @@ void SystemIcon::Refresh()
 
     SetText(sys->Name());
     m_name->SetText(sys->Name());
+
+    const std::set<int>& owners = sys->Owners();
+    GG::Clr text_color = ClientUI::TEXT_COLOR;
+    if (!owners.empty()) {
+        text_color = HumanClientApp::Empires().Lookup(*owners.begin())->Color();
+    }
+    m_name->SetColor(text_color);
 
     CreateFleetButtons(sys);
 }
