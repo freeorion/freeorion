@@ -443,6 +443,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
                 "starting player turn...";
             m_ui->ScreenMap();
+            m_ui->InitTurn(); // init the new turn
         }
         break;
     }
