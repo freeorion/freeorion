@@ -1,5 +1,6 @@
 #!/bin/sh
 rm -f FO-autotools.tar
+#    ltmain.sh					
 tar cvhf FO-autotools.tar			\
     aclocal.m4					\
     config.guess				\
@@ -9,11 +10,12 @@ tar cvhf FO-autotools.tar			\
     configure.ac				\
     depcomp					\
     install-sh					\
-    ltmain.sh					\
     m4						\
     missing					\
     mkinstalldirs                               \
-    `find . -name "Makefile.am" -o -name "Makefile.in"`
+    Makefile.am                                 \
+    Makefile.in                                 \
+    common_files.inc
 tar f FO-autotools.tar --delete m4/CVS
 rm -f FO-autotools.tar.bz2
 bzip2 -9 FO-autotools.tar

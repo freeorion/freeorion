@@ -37,10 +37,10 @@ AM_INIT_AUTOMAKE(foreign subdir-objects)
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
-#AM_PROG_CC_C_O
+AM_PROG_CC_C_O
 AC_PROG_LN_S
 AC_PROG_CPP
-AC_PROG_LIBTOOL
+#AC_PROG_LIBTOOL
 
 # Checks for header files.
 AC_HEADER_STDC
