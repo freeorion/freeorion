@@ -83,8 +83,7 @@ Base                            30      40      50      40      30      0       
 
 <1x6>
 MaxStarlanes                    None    Few     Some    Average Many    VeryMany
-Max                             0       1       1       2       2       3
+Max                             0       1       2       3       4       5
 
-<1x3>
-StarlaneRanges                  Short   Medium  Long
-Ranges                          30      90      270
+<1x1>
+MaxStarlaneLength               200
