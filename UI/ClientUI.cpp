@@ -88,60 +88,70 @@ namespace {
     // should be rendered - this is up to the client UI
     const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
 	{
-	    "SITREP_MAX_INDUSTRY",
-	    "SITREP_SHIP_BUILT",
-	    "SITREP_TECH_RESEARCHED",
-	    "SITREP_BASE_BUILT",
-	    "SITREP_COMBAT_SYSTEM_WON",
-	    "SITREP_COMBAT_SYSTEM_LOST",
-	    "SITREP_COMBAT_SYSTEM_NO_VICTOR"
+        "SITREP_MAX_INDUSTRY",
+        "SITREP_SHIP_BUILT",
+        "SITREP_TECH_RESEARCHED",
+        "SITREP_BASE_BUILT",
+        "SITREP_COMBAT_SYSTEM_WON",
+        "SITREP_COMBAT_SYSTEM_LOST",
+        "SITREP_COMBAT_SYSTEM_NO_VICTOR"
 	};
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-	db.Add(    "app-width", "Sets horizontal app resolution.", 1024, RangedValidator<int>(640, 1600));
-	db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(480, 1200));
-	db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
+        db.Add(    "app-width", "Sets horizontal app resolution.", 1024, RangedValidator<int>(640, 1600));
+        db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(480, 1200));
+        db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
 
-	db.Add<std::string>("UI.dir", "Sets UI resource directory root.", "default");
-	db.Add<std::string>("UI.art-dir", "Sets UI art resource directory under \'[UI.dir]/art\'.", "small");
-	db.Add<std::string>("UI.font", "Sets UI font resource file.", "Vera.ttf");
-	db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
-	db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "Vera.ttf");
-	db.Add("UI.title-font-size", "Sets UI title font size.", 12, RangedValidator<int>(4, 40));
-        
-	db.Add("UI.wnd-color.red", "Sets UI window color (red).", 0, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-color.green", "Sets UI window color (green).", 0, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-color.blue", "Sets UI window color (blue).", 0, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-color.alpha", "Sets UI window color (alpha).", 210, RangedValidator<int>(0, 255));
-        
-	db.Add("UI.text-color.red", "Sets UI text color (red).", 255, RangedValidator<int>(0, 255));
-	db.Add("UI.text-color.green", "Sets UI text color (green).", 255, RangedValidator<int>(0, 255));
-	db.Add("UI.text-color.blue", "Sets UI text color (blue).", 255, RangedValidator<int>(0, 255));
-	db.Add("UI.text-color.alpha", "Sets UI text color (alpha).", 255, RangedValidator<int>(0, 255));
+        db.Add<std::string>("UI.dir", "Sets UI resource directory root.", "default/");
+        db.Add<std::string>("UI.art-dir", "Sets UI art resource directory under \'[UI.dir]/art\'.", "small");
+        db.Add<std::string>("UI.font", "Sets UI font resource file.", "Vera.ttf");
+        db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "Vera.ttf");
+        db.Add("UI.title-font-size", "Sets UI title font size.", 12, RangedValidator<int>(4, 40));
 
-	db.Add("UI.ctrl-color.red", "Sets UI control color (red).", 30, RangedValidator<int>(0, 255));
-	db.Add("UI.ctrl-color.green", "Sets UI control color (green).", 30, RangedValidator<int>(0, 255));
-	db.Add("UI.ctrl-color.blue", "Sets UI control color (blue).", 30, RangedValidator<int>(0, 255));
-	db.Add("UI.ctrl-color.alpha", "Sets UI control color (alpha).", 255, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-color.red", "Sets UI window color (red).", 0, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-color.green", "Sets UI window color (green).", 0, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-color.blue", "Sets UI window color (blue).", 0, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-color.alpha", "Sets UI window color (alpha).", 210, RangedValidator<int>(0, 255));
 
-	db.Add("UI.wnd-outer-border-color.red", "Sets UI outer border color (red).", 64, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-outer-border-color.green", "Sets UI outer border color (green).", 64, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-outer-border-color.blue", "Sets UI outer border color (blue).", 64, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-outer-border-color.alpha", "Sets UI outer border color (alpha).", 255, RangedValidator<int>(0, 255));
+        db.Add("UI.text-color.red", "Sets UI text color (red).", 255, RangedValidator<int>(0, 255));
+        db.Add("UI.text-color.green", "Sets UI text color (green).", 255, RangedValidator<int>(0, 255));
+        db.Add("UI.text-color.blue", "Sets UI text color (blue).", 255, RangedValidator<int>(0, 255));
+        db.Add("UI.text-color.alpha", "Sets UI text color (alpha).", 255, RangedValidator<int>(0, 255));
 
-	db.Add("UI.wnd-border-color.red", "Sets UI border color (red).", 0, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-border-color.green", "Sets UI border color (green).", 0, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-border-color.blue", "Sets UI border color (blue).", 0, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-border-color.alpha", "Sets UI border color (alpha).", 255, RangedValidator<int>(0, 255));
+        db.Add("UI.ctrl-color.red", "Sets UI control color (red).", 30, RangedValidator<int>(0, 255));
+        db.Add("UI.ctrl-color.green", "Sets UI control color (green).", 30, RangedValidator<int>(0, 255));
+        db.Add("UI.ctrl-color.blue", "Sets UI control color (blue).", 30, RangedValidator<int>(0, 255));
+        db.Add("UI.ctrl-color.alpha", "Sets UI control color (alpha).", 255, RangedValidator<int>(0, 255));
 
-	db.Add("UI.wnd-inner-border-color.red", "Sets UI inner border color (red).", 255, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-inner-border-color.green", "Sets UI inner border color (green).", 255, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-inner-border-color.blue", "Sets UI inner border color (blue).", 255, RangedValidator<int>(0, 255));
-	db.Add("UI.wnd-inner-border-color.alpha", "Sets UI inner border color (alpha).", 255, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-outer-border-color.red", "Sets UI outer border color (red).", 64, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-outer-border-color.green", "Sets UI outer border color (green).", 64, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-outer-border-color.blue", "Sets UI outer border color (blue).", 64, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-outer-border-color.alpha", "Sets UI outer border color (alpha).", 255, RangedValidator<int>(0, 255));
 
-	db.Add("UI.tooltip-delay", "Sets UI tooltip popup delay, in ms.", 1000, RangedValidator<int>(0, 3000));
-	db.Add<std::string>("UI.stringtable-filename", "Sets UI string table filename.", "eng_stringtable.txt");
+        db.Add("UI.wnd-border-color.red", "Sets UI border color (red).", 0, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-border-color.green", "Sets UI border color (green).", 0, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-border-color.blue", "Sets UI border color (blue).", 0, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-border-color.alpha", "Sets UI border color (alpha).", 255, RangedValidator<int>(0, 255));
+
+        db.Add("UI.wnd-inner-border-color.red", "Sets UI inner border color (red).", 255, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-inner-border-color.green", "Sets UI inner border color (green).", 255, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-inner-border-color.blue", "Sets UI inner border color (blue).", 255, RangedValidator<int>(0, 255));
+        db.Add("UI.wnd-inner-border-color.alpha", "Sets UI inner border color (alpha).", 255, RangedValidator<int>(0, 255));
+
+        db.Add("UI.tooltip-delay", "Sets UI tooltip popup delay, in ms.", 1000, RangedValidator<int>(0, 3000));
+        db.Add<std::string>("UI.stringtable-filename", "Sets UI string table filename.", "eng_stringtable.txt");
+
+        db.Add("UI.multiple-fleet-windows", "This flag allows clicks on multiple fleet buttons to open multiple fleet "
+               "windows at the same time.  Normally, opening a fleet window will close any currently-open fleet window.", 
+               false);
+
+        db.Add("UI.fleet-autoselect", "This flag supresses the auto-selection of the top fleet when a fleet window "
+               "is opened.  Consider using this flag if you use UI.multiple-fleet-windows.", true);
+
+        db.Add("UI.fleet-window-quickclose", "This flag supresses the closing of open the fleet window(s) when you "
+               "right-click on the main map.", true);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
