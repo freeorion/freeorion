@@ -327,9 +327,6 @@ void ProdCenter::UpdateShipBuildProgress(  Empire *empire, const int system_id, 
             // insert fleet around this system
             the_system->Insert(new_fleet);
   
-            // add fleet to this empire
-            empire->AddFleet(fleet_id);
-
             // add new ship (s)
             for ( int i = 0; i < new_ships; i++ )
             {

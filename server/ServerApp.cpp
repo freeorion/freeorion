@@ -870,8 +870,6 @@ void ServerApp::ProcessTurns( )
     Empire                    *pEmpire;
     OrderSet                  *pOrderSet;
     OrderSet::const_iterator  order_it;
-    Empire::ConstFleetIDItr   fleet_it;
-    Empire::ConstPlanetIDItr  planet_it;
     Fleet                     *the_fleet;
     Planet                    *the_planet;
     UniverseObject            *the_object;
@@ -919,52 +917,29 @@ void ServerApp::ProcessTurns( )
         }
         m_last_turn_update_msg[ it->first ] = game_state;
     }
-  
-    /// process turn for fleets
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-    {
-        /// broadcast UI message to all players
-        for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        {
-            m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::FLEET_MOVEMENT, it->first ) );
-        }
-
-        pEmpire = Empires().Lookup( it->first );
-     
-        for ( fleet_it = pEmpire->FleetBegin(); fleet_it != pEmpire->FleetEnd(); ++fleet_it)
-        {
-            the_object = GetUniverse().Object( *fleet_it );
-
-            the_fleet = dynamic_cast<Fleet*> ( the_object );
-
-            the_fleet->MovementPhase( );               
-        }
-    }
 
 
-    /// process turn for production and growth
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-    {
-        /// broadcast UI message to all players
-        for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        {
-            m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::EMPIRE_PRODUCTION, it->first ) );
-        }
+    /// process movement phase
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+        m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::FLEET_MOVEMENT, -1));
 
-        pEmpire = Empires().Lookup( it->first );
-     
-        for ( planet_it = pEmpire->PlanetBegin(); planet_it != pEmpire->PlanetEnd(); ++planet_it)
-        {
-            the_object = GetUniverse().Object( *planet_it );
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it)
+        it->second->MovementPhase();
 
-            the_planet = dynamic_cast<Planet*> ( the_object );
-            the_planet->PopGrowthProductionResearchPhase( );               
-        }
 
+    /// process production and growth phase
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+        m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::EMPIRE_PRODUCTION, -1));
+
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it)
+        it->second->PopGrowthProductionResearchPhase();
+
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         ///< check now for completed research
-        pEmpire->CheckResearchProgress( );
-
+        Empire* empire = Empires().Lookup(it->first);
+        empire->CheckResearchProgress();
     }
+
 
     /// loop and free all orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
@@ -975,7 +950,7 @@ void ServerApp::ProcessTurns( )
     
     // check for combats, and resolve them.
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-       m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::COMBAT,-1) );
+       m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::COMBAT, -1) );
 
     std::vector<System*> sys_vec = GetUniverse().FindObjects<System>();
     for(std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it)

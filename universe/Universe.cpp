@@ -1322,7 +1322,6 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       Fleet* home_fleet = new Fleet("Home Fleet", home_system->X(), home_system->Y(), empire_id);
       int fleet_id = Insert(home_fleet);
       home_system->Insert(home_fleet);
-      empire->AddFleet(fleet_id);
 
       int ship_id = Insert(new Ship(empire_id, scout_id));
       home_fleet->AddShip(ship_id);

@@ -93,24 +93,16 @@ int ShipDesign::WarpSpeed() const
 Ship::Ship() : 
    m_design(ShipDesign())
 {
-   //TODO
 }
 
 Ship::Ship(int empire_id, int design_id)
 {
-   // This constructor should only be used by the server, will not work if called from client.
-   
    // Lookup empire where design is located
-    Empire* empire = Empires().Lookup(empire_id);
-
-
-   if (empire->CopyShipDesign(design_id, m_design) != true)
-   {
+   Empire* empire = Empires().Lookup(empire_id);
+   if (!empire->CopyShipDesign(design_id, m_design))
       throw std::invalid_argument("Attempted to construct a Ship with an invalid design ID");
-   }
 
-
-   
+   AddOwner(empire_id);
 }
 
 Ship::Ship(const GG::XMLElement& elem) : 
@@ -131,13 +123,7 @@ Fleet* Ship::GetFleet() const
 UniverseObject::Visibility Ship::Visible(int empire_id) const
 {
    // Ship is visible if the fleet it is in is visible
-    Empire* empire = Empires().Lookup(empire_id);
-   if ((empire->HasFleet(FleetID())) || (empire->HasVisibleFleet(FleetID())))
-   {
-      return FULL_VISIBILITY;
-   }
-
-   return NO_VISIBILITY;
+   return FleetID() == INVALID_OBJECT_ID ? NO_VISIBILITY : GetUniverse().Object(FleetID())->Visible(empire_id);
 }
 
 bool Ship::IsArmed() const

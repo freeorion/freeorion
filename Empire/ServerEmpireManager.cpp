@@ -30,7 +30,6 @@ Empire* ServerEmpireManager::CreateEmpire(int id,
     }
 
     id++;
-    emp->AddPlanet(planetID);
 
     // Add system homeplanet is in to the ExploredSystem list
     ServerApp* server_app = ServerApp::GetApp();

@@ -66,7 +66,7 @@ void SitRepPanel::Update()
     m_sitreps_lb->Clear();
 
     // loop through sitreps and display
-    for (Empire::ConstSitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
+    for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
         GG::ListBox::Row *row = new GG::ListBox::Row;
         LinkText* link_text = new LinkText(0, 0, (*sitrep_it)->GetText(), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
         GG::Connect(link_text->PlanetLinkSignal(), &ClientUI::ZoomToPlanet, ClientUI::GetClientUI());

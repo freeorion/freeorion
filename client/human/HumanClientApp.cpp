@@ -558,7 +558,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         // Now decode sitreps
         // Empire sitreps need UI in order to generate text, since it needs string resources
         // generate textr for all sitreps
-        for (Empire::ConstSitRepItr sitrep_it = Empires().Lookup( m_player_id )->SitRepBegin(); sitrep_it != Empires().Lookup( m_player_id )->SitRepEnd(); ++sitrep_it) {
+        for (Empire::SitRepItr sitrep_it = Empires().Lookup( m_player_id )->SitRepBegin(); sitrep_it != Empires().Lookup( m_player_id )->SitRepEnd(); ++sitrep_it) {
 
             SitRepEntry *pEntry = (*sitrep_it);
                 

@@ -67,22 +67,8 @@ Planet::Planet(const GG::XMLElement& elem) :
 
 UniverseObject::Visibility Planet::Visible(int empire_id) const
 {
-    // if system is visible, then planet is too. Full visibility
-    // if owned by player, partial if not.
-
-    Empire* empire = (Empires()).Lookup(empire_id);
-
-    if (empire->HasPlanet(ID()))
-    {
-        return FULL_VISIBILITY;
-    }
-
-    if (empire->HasExploredSystem(SystemID()))
-    {
-        return PARTIAL_VISIBILITY;
-    }
-
-    return NO_VISIBILITY;
+    // use the containing system's visibility
+    return GetSystem()->Visible(empire_id);
 }
 
 
@@ -163,10 +149,6 @@ GG::XMLElement Planet::XMLEncode(int empire_id) const
 
 void Planet::AddOwner   (int id)
 {
-    Empire *empire = Empires().Lookup(id);
-    if(empire)
-        empire->AddPlanet(ID());
-
     GetSystem()->UniverseObject::AddOwner(id);
     UniverseObject::AddOwner(id);
 }
@@ -185,10 +167,6 @@ void Planet::RemoveOwner(int id)
 
     if(count_planets==1)
         system->UniverseObject::RemoveOwner(id);
-
-    Empire *empire = Empires().Lookup(id);
-    if(empire)
-        empire->RemoveOwnedPlanet(ID());
 
     UniverseObject::RemoveOwner(id);
 }

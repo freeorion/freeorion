@@ -49,11 +49,6 @@ static void RemoveShip(int nID)
     flt->RemoveShip(shp->ID());
     if(flt->NumShips()==0)
     {
-      for(std::set<int>::const_iterator own_it=flt->Owners().begin();own_it != flt->Owners().end();++own_it)
-      {
-        Empire *empire = Empires().Lookup(*own_it);
-        empire->RemoveFleet(flt->ID());
-      }
       GetUniverse().Remove(flt->ID());
     }
     GetUniverse().Remove(shp->ID());
