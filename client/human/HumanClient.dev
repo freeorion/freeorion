@@ -3813,9 +3813,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit92]
-FileName=..\..\universe\PopCenter.cpp
+FileName=..\..\UI\MultiplayerLobbyWnd.cpp
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -4326,7 +4326,7 @@ BuildCmd=
 [Project]
 FileName=HumanClient.dev
 Name=HumanClient
-UnitCount=91
+UnitCount=93
 Type=0
 Ver=1
 ObjFiles=
@@ -5221,9 +5221,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit93]
-FileName=..\..\universe\PopCenter.h
+FileName=..\..\UI\MultiplayerLobbyWnd.h
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
