@@ -1522,6 +1522,7 @@ void ServerApp::ProcessTurns( )
         m_log_category.debugStream() << "ServerApp::ProcessTurns : Player " << it->first << " is marked as a loser and dumped";
         m_losers.insert(it->first);
         m_network_core.DumpPlayer(it->first);
+        m_ai_IDs.erase(it->first);
         Empires().EliminateEmpire(it->second);
         RemoveEmpireTurn(it->second);
     }
@@ -1534,7 +1535,7 @@ void ServerApp::ProcessTurns( )
         SDL_Delay(5000);
         m_network_core.DumpAllConnections();
         Exit(0);
-    } else if (m_ai_clients.size() == m_network_core.Players().size()) { // if there are none but AI players left, we're done
+    } else if (m_ai_IDs.size() == m_network_core.Players().size()) { // if there are none but AI players left, we're done
         m_log_category.debugStream() << "ServerApp::ProcessTurns : No human players left -- server terminating.";
         // TODO: flush pending messages before Exit(0), instead of waiting 5 seconds
         SDL_Delay(5000);
