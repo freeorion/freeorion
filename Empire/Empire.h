@@ -91,12 +91,34 @@ public:
      * ControlStatus is used to determine whether an Empire is AI
      * or Human controlled.
      */
-    enum ControlStatus
-        {
-            CONTROL_AI=0,     /// under AI control
-            CONTROL_HUMAN=1   /// under human control
-        }  ;
+    enum ControlStatus {CONTROL_AI =    0,  ///< under AI control
+                        CONTROL_HUMAN = 1   ///< under human control
+    };
 
+    /* *****************************************************
+    ** CONSTRUCTORS
+    ********************************************************/
+
+    /** \name Constructors */ //@{
+    /// Creates an empire with the given properties.
+    /**
+     * Initializes the empire's fields to the specified values.  All lists
+     * (planets, fleets, owned planets, visible fleets, technologies, explored
+     * systems, sitrep entries) will be empty after creation
+     */
+    Empire(const std::string& name, int ID, const GG::Clr& color, 
+           ControlStatus& control); 
+
+    /// Creates an empire from an XMLElement
+    /**
+     * The empire's fields and lists will be initialized as specified 
+     * by the given XLMElement.  This XMLElement should have been created
+     * by Empire::XMLEncode()
+     */
+    Empire(const GG::XMLElement& elem);
+    
+    //@}
+    
     /* **************************************************
     *** ACCESSORS
     *****************************************************/
@@ -357,32 +379,6 @@ public:
     
     //@}
    
-protected:
-
-    /* *****************************************************
-    ** CONSTRUCTORS
-    ********************************************************/
-
-    /** \name Constructors */ //@{
-    /// Creates an empire with the given properties.
-    /**
-     * Initializes the empire's fields to the specified values.  All lists
-     * (planets, fleets, owned planets, visible fleets, technologies, explored
-     * systems, sitrep entries) will be empty after creation
-     */
-    Empire(const std::string& name, int ID, const GG::Clr& color, 
-           ControlStatus& control); 
-
-    /// Creates an empire from an XMLElement
-    /**
-     * The empire's fields and lists will be initialized as specified 
-     * by the given XLMElement.  This XMLElement should have been created
-     * by Empire::XMLEncode()
-     */
-    Empire(const GG::XMLElement& elem);
-    
-    //@}
-    
 private:
     /// Helper method to encode a list of integers into an XMLElement
     /** 
@@ -420,7 +416,7 @@ private:
     // reference objects in the Universe module
 
     /// list of acquired technologies.  These are IDs
-    /// referencing TechLevel objects in the techmanager
+    /// referencing Tech objects in the techmanager
     std::set<int> m_techs;   
     
     /// planets you own

@@ -20,16 +20,13 @@ using boost::lexical_cast;
 /** Constructors */ 
 
 Empire::Empire(const std::string& name, int ID, const GG::Clr& color, ControlStatus& control) :
- // initialize members
- m_id(ID),
- m_total_rp(0),
- m_name(name),  
- m_color(color), 
- m_control_state(control),
- m_next_design_id(1)
-
+    m_id(ID),
+    m_total_rp(0),
+    m_name(name),  
+    m_color(color), 
+    m_control_state(control),
+    m_next_design_id(1)
 {
-    // nothing else to do
 }
 
 
