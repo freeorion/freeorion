@@ -216,6 +216,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
         if (!dlg.Result().empty()) {
             filename = *dlg.Result().begin();
 
+            m_ui->ScreenLoad();
             HumanClientApp::GetApp()->NetworkCore().SendMessage(HostLoadGameMessage(HumanClientApp::GetApp()->PlayerID(), filename));
             return true;
         } else {
