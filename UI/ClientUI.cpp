@@ -304,7 +304,7 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
     
     if(resize)
     {
-        LogMessage("Resizable window!");
+        //LogMessage("Resizable window!");
         //if it is resizable, draw a line strip that has a diagonal at lower right corner
         
         glBegin(GL_LINE_STRIP);
@@ -323,7 +323,7 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
     }//end if resize
     else
     {
-        LogMessage("NOT A Resizable window!");
+        //LogMessage("NOT A Resizable window!");
         //...otherwise, make a clear rectangle with a thin border
 //        GG::FlatRectangle(x1, y1, x2, y2, GG::CLR_ZERO, INNER_BORDER_COLOR, 1);
         glBegin(GL_LINE_STRIP);
@@ -368,7 +368,7 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
     }
     if(close)
     {
-        LogMessage("Closable Window!");
+        //LogMessage("Closable Window!");
         //if closable, draw the "X"
         //draw cross
         
