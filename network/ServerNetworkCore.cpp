@@ -37,27 +37,14 @@ void ServerNetworkCore::SendMessage(const Message& msg)
    int receiver_id = msg.Receiver();
    int receiver_socket = -1;
 
-   // if receiver_id is -1 => send msg to all players
-   if(receiver_id!=-1) {
-      std::map<int, PlayerInfo>::const_iterator it = m_player_connections.find(receiver_id);
-      if (it != m_player_connections.end())
-          receiver_socket = it->second.socket;
+   std::map<int, PlayerInfo>::const_iterator it = m_player_connections.find(receiver_id);
+   if (it != m_player_connections.end())
+       receiver_socket = it->second.socket;
 
-      if (receiver_socket != -1) {
-          SendMessage(msg, receiver_socket, "ServerNetworkCore");
-      } else {
-          ServerApp::GetApp()->Logger().error("ServerNetworkCore::SendMessage : Attempted to send a message to unknown or unconnected receiver.");
-      }
-   }
-   else {
-     for(std::map<int, PlayerInfo>::const_iterator it = m_player_connections.begin();it != m_player_connections.end();++it) {
-        receiver_socket = it->second.socket;
-        if (receiver_socket != -1) {
-            SendMessage(msg, receiver_socket, "ServerNetworkCore");
-        } else {
-            ServerApp::GetApp()->Logger().error("ServerNetworkCore::SendMessage : Attempted to send a message to unknown or unconnected receiver.");
-        }
-     }
+   if (receiver_socket != -1) {
+       SendMessage(msg, receiver_socket, "ServerNetworkCore");
+   } else {
+       ServerApp::GetApp()->Logger().error("ServerNetworkCore::SendMessage : Attempted to send a message to unknown or unconnected receiver.");
    }
 }
    
