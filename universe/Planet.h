@@ -13,6 +13,15 @@
 #include "ProdCenter.h"
 #endif
 
+
+// HUGE is being defined in some unknown place that is not
+// being used by our code.  Need to undefine it here so that
+// the use of HUGE in the PlanetSize enum doesn't puke.
+#ifdef HUGE
+#undef HUGE
+#endif
+
+
 /** a class representing a FreeOrion planet.  A Planet is a type of UniverseObject, and has some UniverseObject decorators
    attached to it as well.  See PopCenter for notes on decorators.*/
 class Planet : virtual public UniverseObject, public PopCenter, public ProdCenter
