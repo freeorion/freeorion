@@ -10,6 +10,7 @@
 #include "../universe/Predicates.h"
 #include "../universe/Ship.h"
 #include "../universe/System.h"
+#include "../network/Message.h"
 
 
 namespace {
@@ -207,7 +208,9 @@ void FleetDetailPanel::ShipDroppedIntoList(int row_idx, const GG::ListBox::Row* 
 {
     int ship_id = dynamic_cast<const ShipRow*>(row)->ShipID();
     if (!m_fleet) {
+        // creating a new fleet can fail but will be handled by listbox eception
         m_fleet = m_create_new_fleet_sig(ship_id);
+        
         *m_destination_text << DestinationText();
         if (Parent())
             Parent()->SetText(m_fleet->Name());
@@ -331,9 +334,6 @@ private:
     static const int CONTROL_MARGIN = 5;
 };
 }
-
-// static(s)
-int FleetWnd::s_new_fleet_count = 0;
 
 FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
     CUI_Wnd("", x, y, 1, 1, flags),
@@ -524,16 +524,29 @@ void FleetWnd::NewFleetButtonClicked()
     GG::Connect(fdw->ClosingSignal(), &FleetWnd::FleetDetailWndClosing, this);
     GG::Connect(fdw->ClosingEmptyFleetSignal(), &FleetWnd::EmptyFleetBoxClosing, this);
 }
-
+ 
 Fleet* FleetWnd::NewFleetBoxReceivedShip(int ship_id)
 {
-    std::string fleet_name = "New fleet " + boost::lexical_cast<std::string>(++s_new_fleet_count);
     Fleet* existing_fleet = FleetInRow(0);
     int empire_id = HumanClientApp::GetApp()->PlayerID();
+
+    int new_fleet_id = ClientApp::GetNewObjectID();
+
+    if ( new_fleet_id == UniverseObject::INVALID_OBJECT_ID )
+    {
+      // display message
+      ClientUI::MessageBox(ClientUI::String("SERVER_TIMEOUT"));
+
+      // throw exception to UI so drop does not occur
+      throw GG::ListBox::DontAcceptDropException( );
+    }
+
+    std::string fleet_name = "New fleet " + boost::lexical_cast<std::string>( new_fleet_id );
+
     if (existing_fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID) {
-        HumanClientApp::Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, existing_fleet->SystemID()));
+        HumanClientApp::Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, existing_fleet->SystemID()));
     } else {
-        HumanClientApp::Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, existing_fleet->X(), existing_fleet->Y()));
+        HumanClientApp::Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, existing_fleet->X(), existing_fleet->Y()));
     }
     Fleet* fleet = 0;
     if (existing_fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID) {
