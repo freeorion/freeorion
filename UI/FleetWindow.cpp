@@ -336,7 +336,7 @@ private:
 }
 
 FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
-    CUI_Wnd("", x, y, 1, 1, flags),
+    MapWndPopup("", x, y, 1, 1, flags),
     m_empire_id(-1),
     m_read_only(read_only),
     m_moving_fleets(true),
@@ -364,8 +364,8 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
     Init(fleets);
 }
 
-FleetWnd::FleetWnd(const GG::XMLElement& elem) : 
-    CUI_Wnd(elem.Child("CUI_Wnd")),
+FleetWnd::FleetWnd( const GG::XMLElement& elem) : 
+    MapWndPopup(elem.Child("CUI_Wnd")),
     m_empire_id(-1),
     m_read_only(true)
 {

@@ -10,6 +10,10 @@
 #include "GGListBox.h"
 #endif
 
+#ifndef _MapWnd_h_
+#include "MapWnd.h"
+#endif
+
 class CUIButton;
 class CUIListBox;
 class Fleet;
@@ -123,7 +127,7 @@ private:
 };
 
 
-class FleetWnd : public CUI_Wnd
+class FleetWnd : public MapWndPopup
 {
 public:
     /** \name Signal Types */ //@{
