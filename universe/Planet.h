@@ -53,6 +53,8 @@ public:
    /** \name Accessors */ //@{
    PlanetType     Type() const {return m_type;}
    PlanetSize     Size() const {return m_size;}
+   
+   bool IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.2 ONLY!!!!
@@ -84,6 +86,9 @@ public:
    /// Called during combat when a planet changes hands
     void Conquer( int conquerer ) ;
     
+    /// Called during colonization when a planet is about to be colonized
+    void IsAboutToBeColonized(bool bB);
+
     //@}
    PlanetEnvironment   Environment();
 
@@ -92,6 +97,10 @@ private:
    PlanetSize     m_size;
    
    int m_just_conquered;
+
+   ///< flag to indicate that the planet is colonized the very next turn
+   ///< isn't stored by XMLEncode
+   bool m_is_about_to_be_colonized; 
    
    /////////////////////////////////////////////////////////////////////////////
    // V0.2 ONLY!!!!

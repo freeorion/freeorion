@@ -31,7 +31,8 @@ Planet::Planet() :
    UniverseObject(),
    PopCenter(),
    ProdCenter(),
-   m_just_conquered(0)
+   m_just_conquered(0),
+   m_is_about_to_be_colonized(false)
 {
 }
 
@@ -39,7 +40,8 @@ Planet::Planet(PlanetType type, PlanetSize size) :
    UniverseObject(),
    PopCenter(),
    ProdCenter(),
-   m_just_conquered(0)
+   m_just_conquered(0),
+   m_is_about_to_be_colonized(false)
 {
     m_type = type;
     m_size = size;
@@ -54,7 +56,8 @@ Planet::Planet(const GG::XMLElement& elem) :
    UniverseObject(elem.Child("UniverseObject")),
    PopCenter(elem.Child("PopCenter")),
    ProdCenter(elem.Child("ProdCenter")),
-   m_def_bases(0)
+   m_def_bases(0),
+   m_is_about_to_be_colonized(false)
 {
     using GG::XMLElement;
 
@@ -146,6 +149,11 @@ void Planet::Conquer(int conquerer)
     AddOwner(conquerer);
 }
 
+void Planet::IsAboutToBeColonized(bool bB)
+{
+    m_is_about_to_be_colonized = bB;
+    StateChangedSignal()();
+}
 
 void Planet::MovementPhase()
 {
