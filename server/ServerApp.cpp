@@ -378,6 +378,7 @@ void ServerApp::GameInit()
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(i));
 #else
         doc.root_node.AppendChild(m_universe.XMLEncode());
+        doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(i));
 #endif
         m_network_core.SendMessage(GameStartMessage(i, doc));
     }
