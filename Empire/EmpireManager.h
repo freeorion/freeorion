@@ -1,12 +1,12 @@
 
-#ifndef _FREEORION_EmpireManager_h_
-#define _FREEORION_EmpireManager_h_
+#ifndef _EmpireManager_h_
+#define _EmpireManager_h_
 
 #include <list>
 #include <map>
 #include <string>
 
-#ifndef _FREEORION_Empire_h_
+#ifndef _Empire_h_
 #include "Empire.h"
 #endif
 

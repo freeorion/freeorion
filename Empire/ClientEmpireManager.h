@@ -1,8 +1,8 @@
 
-#ifndef _FREEORION_ClientEmpireManager_h_
-#define _FREEORION_ClientEmpireManager_h_
+#ifndef _ClientEmpireManager_h_
+#define _ClientEmpireManager_h_
 
-#ifndef _FREEORION_EmpireManager_h_
+#ifndef _EmpireManager_h_
 #include "EmpireManager.h"
 #endif
 

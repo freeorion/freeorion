@@ -1,6 +1,14 @@
 
-#ifndef _FREEORION_ClientEmpireManager_h_
+#ifndef _ClientEmpireManager_h_
 #include "ClientEmpireManager.h"
+#endif
+
+#ifndef _XMLObjectFactory_h_
+#include "../GG/XML/XMLObjectFactory.h"
+#endif
+
+#ifndef _SitRepEntry_h_
+#include "../util/SitRepEntry.h"
 #endif
 
 #include <string>
@@ -50,11 +58,16 @@ bool ClientEmpireManager::HandleSitRepElementUpdate( GG::XMLElement sitRepElemen
     }
     
     emp->ClearSitRep();
- /*   for(unsigned int i = 0; i<sitRepElement.NumChildren(); i++)
+    
+    // make object factory for sitrep entries
+    GG::XMLObjectFactory<SitRepEntry> sitrep_factory;
+    SitRepEntry::InitObjectFactory(sitrep_factory);
+    
+    GG::XMLElement sitrep = sitRepElement.Child("m_sitrep_entries");
+    for(unsigned int i=0; i<sitrep.NumChildren(); i++)
     {
-       SitRepEntry* entry = new SitRepEntry(sitRepElement.Child(i));        
-       emp->AddSitRepEntry(entry);
+        emp->AddSitRepEntry( sitrep_factory.GenerateObject(sitrep.Child(i)) );
     }
-   */     
+        
     return true;
 }

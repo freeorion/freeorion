@@ -1,4 +1,4 @@
-#ifndef _FREEORION_ServerEmpireManager_h_ 
+#ifndef _ServerEmpireManager_h_ 
 #include "ServerEmpireManager.h"
 #endif
 
@@ -108,10 +108,10 @@ GG::XMLElement ServerEmpireManager::CreateClientSitrepUpdate(int EmpireID)
         update.SetAttribute("EmpireID", sIDString);
         
         // add the empire's entire sitrep to the update element
-       /* for( Empire::SitRepItr itr = emp->SitRepBegin(); itr != emp->SitRepEnd(); itr++)
+        for( Empire::SitRepItr itr = emp->SitRepBegin(); itr != emp->SitRepEnd(); itr++)
         {
-            update.AppendChild((*itr).XMLEncode());
-        }*/
+            update.AppendChild((*itr)->XMLEncode());
+        }
     }
     
     return update;

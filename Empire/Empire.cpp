@@ -1,8 +1,8 @@
-#ifndef _FREEORION_Empire_h_
+#ifndef _Empire_h_
 #include "Empire.h"
 #endif
 
-#ifndef _FREEORION_TechManager_h_
+#ifndef _TechManager_h_
 #include "TechManager.h"
 #endif
 
@@ -364,18 +364,7 @@ void Empire::ClearSitRep()
     Methods to support XML Serialization
 **************************************************/
 
-void EncodeIntList(GG::XMLElement& container, const std::list<int>& lst)
-{
-    
-    int i=0;
-    for(std::list<int>::const_iterator itr = lst.begin(); itr != lst.end(); itr++)
-    {
-        GG::XMLElement item("index" + lexical_cast<std::string>(i) );
-        i++;
-        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
-        container.AppendChild(item);
-    }
-}
+
 
 
 GG::XMLElement Empire::XMLEncode() const
@@ -467,13 +456,15 @@ int Empire::AddRP(int moreRPs)
     TechManager::iterator itr = TechManager::instance().begin();
     while(itr != TechManager::instance().end())
     {
-        if ( (*itr).second->GetMinPts() >= m_total_rp )
+        if ( (*itr).second->GetMinPts() <= m_total_rp )
         {
-            if( !HasTech( (*itr).first ) )
+            if( !HasTech( (*itr).second->GetID() ) )
             {
                 AddTech( (*itr).first );
             }
         }
+        
+        itr++;
     }
     
     
@@ -499,4 +490,16 @@ void Empire::Name(const std::string& name)
     m_name = name;
 }
 
-
+// private helper method for encoding a list of integers
+void Empire::EncodeIntList(GG::XMLElement& container, const std::list<int>& lst)
+{
+    
+    int i=0;
+    for(std::list<int>::const_iterator itr = lst.begin(); itr != lst.end(); itr++)
+    {
+        GG::XMLElement item("index" + lexical_cast<std::string>(i) );
+        i++;
+        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
+        container.AppendChild(item);
+    }
+}

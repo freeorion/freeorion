@@ -1,6 +1,6 @@
 
-#ifndef _FREEORION_Empire_h_
-#define _FREEORION_Empire_h_
+#ifndef _Empire_h_
+#define _Empire_h_
 
 #include <list>
 #include <string>
@@ -14,11 +14,11 @@
 #include "../GG/XML/XMLDoc.h"
 #endif
 
-#ifndef _FREEORION_SITREPENTRY_H_
+#ifndef _SitRepEntry_h_
 #include "../util/SitRepEntry.h"
 #endif
 
-#ifndef _FREEORION_TECHMANAGER_H_
+#ifndef _TechManager_h_
 #include "TechManager.h"
 #endif
 
@@ -69,12 +69,13 @@ public:
     typedef std::list<int>::iterator FleetIDItr;
     typedef std::list<int>::iterator SystemIDItr;
     typedef std::list<int>::iterator TechIDItr;
-    typedef std::list<SitRepEntry*>::iterator SitRepItr;
-    
+  
     typedef std::list<int>::const_iterator    ConstPlanetIDItr;
     typedef std::list<int>::const_iterator    ConstFleetIDItr;
     typedef std::list<int>::const_iterator    ConstSystemIDItr;
     typedef std::list<int>::const_iterator    ConstTechIDItr;
+    
+    typedef std::list<SitRepEntry*>::iterator SitRepItr;
     typedef std::list<SitRepEntry*>::const_iterator    ConstSitRepItr;
     //@}
     
@@ -239,6 +240,8 @@ public:
 
     /// Inserts the a pointer to given sitrep entry into the empire's sitrep list
     /**
+    *  WARNING: When you call this method, you are transferring ownership
+    *  of the entry object to the Empire.
     *  The object pointed to by 'entry' will be deallocated when
     *  the empire's sitrep is cleared.  Be careful you do not have any
     *  references to SitRepEntries lieing around when this happens.
@@ -327,11 +330,20 @@ protected:
     * by the given XLMElement.  This XMLElement should have been created
     * by Empire::XMLEncode()
     */
-    //Empire(const GG::XMLElement& elemenet);
+    //Empire(const GG::XMLElement& elem);
     
     //@}
     
 private:
+    /// Helper method to encode a list of integers into an XMLElement
+    /** 
+    *  The contents of the list are encoded using the encoding method described
+    *  in the GG documentation.
+    *  Each container element is an XML subelement called itemN where N is the 
+    *  index of the container element.  Each subelement has a "value" attribute
+    *  equal to the value of the container element.
+    */
+    static void EncodeIntList(GG::XMLElement& container, const std::list<int>& lst);
 
     /// Empire's unique numeric id
     int m_id;

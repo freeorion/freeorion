@@ -1,6 +1,6 @@
 
-#ifndef _FREEORION_TECHLEVEL_H_
-#define _FREEORION_TECHLEVEL_H_
+#ifndef _TechLevel_h_
+#define _TechLevel_h_
 
 #include <string>
 
