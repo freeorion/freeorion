@@ -13,6 +13,7 @@
 #include "GGTexture.h"
 #include "../network/Message.h"
 #include "MultiplayerLobbyWnd.h"
+#include "OptionsWnd.h"
 #include "../util/OptionsDB.h"
 #include "ServerConnectWnd.h"
 
@@ -193,12 +194,14 @@ void IntroScreen::OnLoadGame()
 
 void IntroScreen::OnOptions()
 {
+    OptionsWnd options_wnd;
+	options_wnd.Run();
 }
 
 void IntroScreen::OnAbout()
 {
-   About about_wnd;
-   about_wnd.Run();
+    About about_wnd;
+    about_wnd.Run();
 }
 
 void IntroScreen::OnExitGame()

@@ -40,6 +40,7 @@ int         ClientUI::TITLE_PTS     = 12;
 
 std::string ClientUI::DIR           = "default/";
 std::string ClientUI::ART_DIR       = ClientUI::DIR + "art/small/";
+std::string ClientUI::MUSIC_DIR	    = ClientUI::DIR + "music/";
 
 GG::Clr     ClientUI::TEXT_COLOR(255,255,255,255);
 

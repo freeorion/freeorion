@@ -192,6 +192,7 @@ public:
     
     static std::string DIR;     //!< directory currently being used, contains config files
     static std::string ART_DIR;    //!< directory holding artwork, ("*/art/small/" or "*/art/large/"
+    static std::string MUSIC_DIR;  //!< directory holding music
 
     static GG::Clr     TEXT_COLOR; //!< color of UI text
     

@@ -2,6 +2,7 @@
 
 #include "ClientUI.h"
 #include "CUIControls.h"
+#include "OptionsWnd.h"
 #include "GGButton.h"
 #include "GGClr.h"
 #include "GGDrawUtil.h"
@@ -28,12 +29,13 @@ bool foo_bool = RegisterOptions(&Options);
 
 InGameOptions::InGameOptions():
     CUI_Wnd(ClientUI::String("INGAMEOPTIONS_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() / 2) - 55,
-            (GG::App::GetApp()->AppHeight() / 2) - 120, 135, 240, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL)
+            (GG::App::GetApp()->AppHeight() / 2) - 140, 135, 280, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL)
 {
     m_save_btn = new CUIButton(30,40,75,ClientUI::String("INGAMEOPTIONS_SAVE"));
     m_load_btn = new CUIButton(30,80,75,ClientUI::String("INGAMEOPTIONS_LOAD"));
-    m_quit_btn = new CUIButton(30,120,75,ClientUI::String("INGAMEOPTIONS_QUIT"));
-    m_done_btn = new CUIButton(30,180,75,ClientUI::String("DONE"));
+	m_options_btn = new CUIButton(30,120,75,ClientUI::String("INTRO_BTN_OPTIONS"));
+    m_exit_btn = new CUIButton(30,160,75,ClientUI::String("INGAMEOPTIONS_EXITGAME"));
+    m_done_btn = new CUIButton(30,210,75,ClientUI::String("DONE"));
 
     // call to InGameOptions::MinimizedLength() because MinimizedLength is virtual
     SetMinSize(GG::Pt(InGameOptions::MinimizedLength(),MinSize().y));
@@ -66,13 +68,15 @@ void InGameOptions::Init()
     //add children
     AttachChild(m_save_btn);
     AttachChild(m_load_btn);
-    AttachChild(m_quit_btn);
+	AttachChild(m_options_btn);
+    AttachChild(m_exit_btn);
     AttachChild(m_done_btn);
 
     //attach signals
     GG::Connect(m_save_btn->ClickedSignal(), &InGameOptions::Save, this);
     GG::Connect(m_load_btn->ClickedSignal(), &InGameOptions::Load, this);
-    GG::Connect(m_quit_btn->ClickedSignal(), &InGameOptions::Quit, this);
+	GG::Connect(m_options_btn->ClickedSignal(), &InGameOptions::Options, this);
+    GG::Connect(m_exit_btn->ClickedSignal(), &InGameOptions::Exit, this);
     GG::Connect(m_done_btn->ClickedSignal(), &InGameOptions::Done, this);
 
     if (!HumanClientApp::GetApp()->SinglePlayerGame()) {
@@ -118,7 +122,13 @@ void InGameOptions::Load()
         CloseClicked();
 }
 
-void InGameOptions::Quit()
+void InGameOptions::Options()
+{
+    OptionsWnd options_wnd;
+	options_wnd.Run();
+}
+
+void InGameOptions::Exit()
 {
     if (HumanClientApp::GetApp()->NetworkCore().Connected())
         HumanClientApp::GetApp()->NetworkCore().DisconnectFromServer();
