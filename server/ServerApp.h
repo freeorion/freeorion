@@ -1,12 +1,12 @@
 #ifndef _ServerApp_h_
 #define _ServerApp_h_
 
-/*#ifndef _ServerUniverse_h_
+#ifndef _ServerUniverse_h_
 #include "../universe/ServerUniverse.h"
 #endif 
 
-#ifndef _ServerEmpire_h_
-#include "../universe/ServerEmpire.h"
+/*#ifndef _ServerEmpire_h_
+#include "../Empire/ServerEmpire.h"
 #endif */
 
 #ifndef _ServerNetworkCore_h_
@@ -22,7 +22,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // ONLY TEMPORARY!!!!!
-class ServerUniverse {};
 class ServerEmpire {};
 // ONLY TEMPORARY!!!!!
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,11 +1,11 @@
 #ifndef _ClientApp_h_
 #define _ClientApp_h_
 
-/*#ifndef _ClientUniverse_h_
+#ifndef _ClientUniverse_h_
 #include "../universe/ClientUniverse.h"
 #endif 
 
-#ifndef _ClientEmpire_h_
+/*#ifndef _ClientEmpire_h_
 #include "../universe/ClientEmpire.h"
 #endif */
 
@@ -22,7 +22,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // ONLY TEMPORARY!!!!!
-class ClientUniverse {};
 class ClientEmpire {};
 // ONLY TEMPORARY!!!!!
 ////////////////////////////////////////////////////////////////////////////////////////////////////
