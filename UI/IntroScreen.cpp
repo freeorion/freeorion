@@ -32,7 +32,7 @@
 #include "../network/Message.h"
 
 IntroScreen::IntroScreen():
-    GG::Wnd(600, 100, 300, 600)
+    CUI_Wnd("FreeOrion Main Menu", 600, 100, 300, 600, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE)
 {
 
     //get a texture to fill the background with
@@ -45,9 +45,9 @@ IntroScreen::IntroScreen():
     GG::App::GetApp()->Register(bg_graphic);
     
     //create buttons
-    m_start_game = new GG::Button(20, 20, 260, 30, "Start New Game", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_quick_start = new GG::Button(20, 70, 260, 30, "Quick Start", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
-    m_exit_game = new GG::Button(20, 120, 260, 30, "Exit", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_start_game = new GG::Button(20, 30, 260, 30, "Start New Game", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_quick_start = new GG::Button(20, 80, 260, 30, "Quick Start", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
+    m_exit_game = new GG::Button(20, 130, 260, 30, "Exit", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR);
     
     //attach buttons
     AttachChild(m_start_game);
@@ -62,7 +62,7 @@ IntroScreen::IntroScreen():
 }//IntroScreen()
 
 IntroScreen::IntroScreen(const GG::XMLElement &elem):
-    GG::Wnd(elem.Child("GG::Wnd"))
+    CUI_Wnd(elem.Child("CUI_Wnd"))
 {
     //TODO: load from XML
     
@@ -78,17 +78,18 @@ GG::XMLElement IntroScreen::XMLEncode() const
 {
     //TODO: encode to XML
 }
-
+/*
 int IntroScreen::Render()
 {
     //draw it
      
-    GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::BORDER_COLOR,true);
+//    GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::BORDER_COLOR,true);
+//    ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, "FreeOrion Main Menu");
 
 //    return GG::Wnd::Render();
     return 1;
 }//Render()
-
+*/
 ///////////////////////
 //    Message Maps   //
 /////////////////////////////////////////////////////////////
@@ -148,7 +149,17 @@ void IntroScreen::OnStartGame()
                 //display the chosen settings
 
             // connect to server
-                while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) ;
+#define SERVER_CONNECT_TIMEOUT 30000         //TODO: Move to config file
+                
+               int timeout_count=GG::App::GetApp()->Ticks();
+               while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer())
+               {
+                   if((timeout_count + GG::App::GetApp()->Ticks()) >= (timeout_count + SERVER_CONNECT_TIMEOUT))
+                   {
+                       ClientUI::MessageBox("Unable to connect to server." );
+                       break;
+                   }               
+               }
 
 		      //sleep(1);
 
@@ -204,3 +215,4 @@ void IntroScreen:: OnQuickStart()
 
 
 }//OnQuickStart()
+

@@ -19,11 +19,15 @@
 #include "GGButton.h"
 #endif
 
+#ifndef _CUI_Wnd_h_
+#include "CUI_Wnd.h"
+#endif
+
 //! This is the first screen the user sees in FreeOrion.  It will always be the
 //! size of the Application main window.  It will display a splash screen with 
 //! a menu window on one side.
 
-class IntroScreen : public GG::Wnd
+class IntroScreen : public CUI_Wnd
 {
 public:
 //! \name Structors
@@ -43,11 +47,13 @@ public:
 //! \name Mutators
 //!@{
 
-    virtual int Render();    //!< rendering code
+//    virtual int Render();    //!< rendering code
     
     void OnStartGame();    //!< called when m_start_game is clicked
     void OnQuickStart();    //!< called when m_quick_start is clicked
-    void OnExitGame();    //!< called when m_exit_game is clicked   
+    void OnExitGame();    //!< called when m_exit_game is clicked
+    
+    inline virtual void OnClose() {OnExitGame();}    //!< override to exit the game 
 
 //!@}
 
