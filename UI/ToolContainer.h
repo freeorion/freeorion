@@ -14,16 +14,6 @@
 //!time.  Windows are added to the ToolContainer using the AttachToolWnd() function.
 class ToolContainer
 {
-
-private:
-//! \name Structors
-//!@{
-
-    //! Default construction
-    ToolContainer();
-    
-//!@}
-
 public:
 //! \name Structors
 //!@{

@@ -6,11 +6,6 @@
 
 #include "ToolContainer.h"
 
-ToolContainer::ToolContainer()
-{
-    //use ToolContainer(int) instead
-}
-
 ToolContainer::ToolContainer(int delay)
 {
  
