@@ -36,6 +36,7 @@ private:
    void SDLQuit();         ///< cleans up FE and SDL
 
    virtual void HandleMessageImpl(const Message& msg);
+   virtual void HandleServerDisconnectImpl();
 
    log4cpp::Category&   m_log_category; ///< reference to the log4cpp object used to log events to file
 

@@ -255,4 +255,9 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
    }
 }
 
+void AIClientApp::HandleServerDisconnectImpl()
+{
+    Exit(1);
+}
+
 
