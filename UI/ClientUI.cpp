@@ -10,6 +10,9 @@
 #include "GGApp.h"
 #endif
 
+//static members
+log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
+
 //Init and Cleanup//////////////////////////////////////
 
 ClientUI::ClientUI():
@@ -27,6 +30,15 @@ bool ClientUI::Initialize()
     m_state=STATE_STARTUP;
     
     //TODO: Initialize variables.
+   log4cpp::Appender* appender = new log4cpp::FileAppender("Appender", "ClientUI.log");
+   log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
+   layout->setConversionPattern("%d %p : %m%n");
+   appender->setLayout(layout);
+   s_logger.setAdditivity(false);  // make appender the only appender used...
+   s_logger.setAppender(appender);
+   s_logger.setAdditivity(true);   // ...but allow the addition of others later
+   s_logger.setPriority(log4cpp::Priority::DEBUG);
+   s_logger.debug("UI logger initialized.");
     
     return true;
 }//Initialize()
@@ -36,14 +48,14 @@ ClientUI::~ClientUI()
     Cleanup();
 }//~ClientUI()
 
-ClientUI::Cleanup()
+bool ClientUI::Cleanup()
 {
     if(m_tooltips!=NULL)
         delete(m_tooltips);
     m_tooltips=NULL;
 
     //TODO: Destroy variables, etc.
-    
+    return true; 
 }//Cleanup()
 
 //////////////////////////////////////////////////////////
