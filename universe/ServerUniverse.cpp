@@ -23,10 +23,14 @@ ServerUniverse::ServerUniverse()
 
 }
 
-void ServerUniverse::CreateUniverse(Shape shape, int stars, int players, int ai_players)
+void ServerUniverse::CreateUniverse(Shape shape, int size, int players, int ai_players)
 {
+   int stars = 50 + (50*size);
+
    ServerApp* server_app = ServerApp::GetApp();
    server_app->Logger().debugStream() << "Creating universe with " << stars << " stars and " << players << " players.";
+
+
 
    std::vector<int> homeworlds;
 
@@ -61,6 +65,8 @@ void ServerUniverse::CreateUniverse(Shape shape, int stars, int players, int ai_
    // set up the homeworld systems
    GenerateHomeworlds(players, stars, homeworlds);
 
+   
+
    // populate the rest of the planets
    PopulateSystems();
 
@@ -69,7 +75,7 @@ void ServerUniverse::CreateUniverse(Shape shape, int stars, int players, int ai_
      
 }
 
-void ServerUniverse::CreateUniverse(const std::string& map_file, int stars, int players, int ai_players)
+void ServerUniverse::CreateUniverse(const std::string& map_file, int size, int players, int ai_players)
 {
    // intialize the ID counter
    m_last_allocated_id = 0;   
@@ -330,6 +336,37 @@ void ServerUniverse::GenerateIrregularGalaxy(int stars)
 
 void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>& homeworlds)
 {
+   int safety = 0;
+
+   // find the min range between homeworlds
+   int prox_limit = 0;
+   
+   switch(stars) {
+   case 50:
+      prox_limit = HOMEWORLD_PROXIMITY_LIMIT_V_SMALL_UNI;
+      break;
+   case 100:
+      prox_limit = HOMEWORLD_PROXIMITY_LIMIT_SMALL_UNI;
+      break;
+   case 150:
+      prox_limit = HOMEWORLD_PROXIMITY_LIMIT_MEDIUM_UNI;
+      break;
+   case 200:
+      prox_limit = HOMEWORLD_PROXIMITY_LIMIT_LARGE_UNI;
+      break;
+   case 250:
+      prox_limit = HOMEWORLD_PROXIMITY_LIMIT_V_LARGE_UNI;
+      break;
+   case 300:
+      prox_limit = HOMEWORLD_PROXIMITY_LIMIT_ENORMOUS_UNI;
+      break;
+   default:
+      ServerApp* server_app = ServerApp::GetApp();
+      server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Unknown galaxy size (" << stars << " stars).  Using 5 as default homeworld proximity limit.";
+      prox_limit = 5;
+   }
+
+   
    // select homeworld systems, add planets appropriately
    homeworlds.clear();
 
@@ -355,33 +392,6 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
          continue;
       }         
 
-      // make sure it is not too close to an existing homeworld
-      int prox_limit = 0;
-
-      switch(stars) {
-      case 50:
-         prox_limit = HOMEWORLD_PROXIMITY_LIMIT_V_SMALL_UNI;
-         break;
-      case 100:
-         prox_limit = HOMEWORLD_PROXIMITY_LIMIT_SMALL_UNI;
-         break;
-      case 150:
-         prox_limit = HOMEWORLD_PROXIMITY_LIMIT_MEDIUM_UNI;
-         break;
-      case 200:
-         prox_limit = HOMEWORLD_PROXIMITY_LIMIT_LARGE_UNI;
-         break;
-      case 250:
-         prox_limit = HOMEWORLD_PROXIMITY_LIMIT_V_LARGE_UNI;
-         break;
-      case 300:
-         prox_limit = HOMEWORLD_PROXIMITY_LIMIT_ENORMOUS_UNI;
-         break;
-      default:
-         ServerApp* server_app = ServerApp::GetApp();
-         server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Unknown galaxy size (" << stars << " stars).  Using 5 as default homeworld proximity limit.";
-         prox_limit = 5;
-      }
 
       // check nearest system
       int nearest_id = NearestSystem(*system_temp);
@@ -486,6 +496,18 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
 
          }
       }  // end adding planets
+
+      safety++;
+      
+      if (safety >= (stars*players*1.5))
+      {
+         // may not be possible to satisfy homeworld conditions
+         // fail the setup..
+             ServerApp* server_app = ServerApp::GetApp();
+             server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Could not find enough eligible homeworld planets.";
+             server_app->Exit(1);  // TODO: should probably handle this error better... but will be difficult...        
+      }       
+        
    }  // end adding homeworld systems
 
 }
