@@ -287,6 +287,19 @@ protected:
 };
 
 
+/** A simple GG::ListBox::Row subclass designed for use in text-only drop-down lists, such as the ones used in the game setup dialogs. */
+struct CUISimpleDropDownListRow : public GG::ListBox::Row
+{
+    enum {DEFAULT_ROW_HEIGHT = 22};
+    CUISimpleDropDownListRow(const std::string& row_text, int row_height = DEFAULT_ROW_HEIGHT) :
+        GG::ListBox::Row("", row_height)
+    {
+        push_back(row_text, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+    }
+};
+
+
+
 /** Encapsulates an icon and text that goes with it in a single control.  For example, "[food icon] +1" or "[population icon] 66", 
     where [... icon] is an icon image, not text.  Note that no rounding is done when DecimalsShown() = 0; in this state, the number 
     displayed will be the truncated integer version of the current value.  Also not that PositiveColor() and NegativeColor() are
