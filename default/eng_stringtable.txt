@@ -1,0 +1,155 @@
+English
+
+#This is the English String Table file for FreeOrion
+#Translate this file to other languages.
+
+#################
+# Common        #
+#################
+
+#Anyone can use these for basic buttons
+
+APPNAME
+FreeOrion
+
+BROWSE_BTN
+Browse...
+
+OK
+OK
+
+CANCEL
+Cancel
+
+LOAD
+Load
+
+SAVE
+Save
+
+
+#################
+# Intro Screen  #
+#################
+
+#Window title####
+
+INTRO_WINDOW_TITLE
+FreeOrion Main Menu
+
+
+#Button names####
+
+INTRO_BTN_START_GAME
+Start New Game
+
+INTRO_BTN_QUICK_START
+Quick Start
+
+INTRO_BTN_EXIT
+Exit
+
+
+#Error Messages####
+
+ERR_UNABLE_TO_CONNECT
+Error connecting to server
+
+
+########################
+# Server Setup Screen  #
+########################
+
+#Window title####
+
+SCONNECT_WINDOW_TITLE
+Connect to Server
+
+
+#Static labels####
+
+SCONNECT_LBL_SERVER
+Server:
+
+
+#Button names####
+
+SCONNECT_BTN_SEARCH_MORE
+Search more...
+
+#Strings####
+
+SCONNECT_RETRIEVING
+Retrieving more servers...
+
+#NOTE: do not translate the "xx" in the following string
+SCONNECT_FOUND
+Found xx new servers.
+
+SCONNECT_NOMORE
+No more servers found.
+
+
+########################
+# Galaxy Setup Screen  #
+########################
+
+#Window title####
+
+GSETUP_WINDOW_TITLE
+Galaxy Setup
+
+#Strings
+GSETUP_GRAPHICS_FILES
+Graphics Files
+
+
+#Button names####
+
+GSETUP_VERYSMALL
+Very Small (50 Stars)
+GSETUP_SMALL
+Small (100 Stars)
+GSETUP_MEDIUM
+Medium (150 Stars)
+GSETUP_LARGE
+Large (200 Stars)
+GSETUP_VERYLARGE
+Very Large (250 Stars)
+GSETUP_ENORMOUS
+Enormous (300 Stars)
+
+GSETUP_2ARM
+Spiral, 2-arm
+GSETUP_3ARM
+Spiral, 3-arm
+GSETUP_4ARM
+Spiral, 4-arm
+GSETUP_CLUSTER
+Cluster
+GSETUP_FROMFILE
+From file...
+
+#Error messages####
+
+GSETUP_ERR_NOEXIST
+does not exist.
+
+GSETUP_ERR_INVALID_GRAPHICS
+is not a valid graphics file.
+
+
+###########################
+# Empire Selection Screen #
+###########################
+
+#Window Title####
+
+ESELECT_WINDOW_TITLE
+Empire Selection
+
+
+#Static text####
+
+ESELECT_EMPIRE_NAME
+Empire Name:
