@@ -57,9 +57,8 @@ bool InGameOptions::Render()
 
 void InGameOptions::Keypress (GG::Key key, Uint32 key_mods)
 {
-    if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE)) {
-        Done(); // Same behaviour as if "done" was pressed
-    }
+    if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE) // Same behaviour as if "done" was pressed
+        Done();
 }
 
 void InGameOptions::Init()
@@ -85,8 +84,10 @@ void InGameOptions::Init()
 
 void InGameOptions::Save()
 {
+    const std::string SAVE_GAME_EXTENSION = HumanClientApp::GetApp()->SinglePlayerGame() ? ".sav" : ".mps";
+
     std::vector<std::pair<std::string, std::string> > save_file_types;
-    save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("INGAMEOPTIONS_SAVE_FILES"), "*.sav"));
+    save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("INGAMEOPTIONS_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));
 
     try {
         GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-directory"), "", true, false, save_file_types, 
@@ -95,8 +96,8 @@ void InGameOptions::Save()
         std::string filename;
         if (!dlg.Result().empty()) {
             filename = *dlg.Result().begin();
-            if (filename.find(".sav") != filename.size() - 4)
-                filename += ".sav";
+            if (filename.find(SAVE_GAME_EXTENSION) != filename.size() - SAVE_GAME_EXTENSION.size())
+                filename += SAVE_GAME_EXTENSION;
 
             Message response;
             bool save_succeeded = HumanClientApp::GetApp()->NetworkCore().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), filename), response);
