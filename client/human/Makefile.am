@@ -1,103 +1,25 @@
 bin_PROGRAMS = freeorion.exe
 
 freeorion_exe_SOURCES =				\
-@top_srcdir@/Empire/ClientEmpireManager.cpp	\
-@top_srcdir@/Empire/ClientEmpireManager.h	\
-@top_srcdir@/Empire/Empire.cpp			\
-@top_srcdir@/Empire/Empire.h			\
-@top_srcdir@/Empire/EmpireManager.cpp		\
-@top_srcdir@/Empire/EmpireManager.h		\
-@top_srcdir@/Empire/ServerEmpireManager.cpp	\
-@top_srcdir@/Empire/ServerEmpireManager.h	\
-@top_srcdir@/Empire/TechLevel.cpp		\
-@top_srcdir@/Empire/TechLevel.h			\
-@top_srcdir@/Empire/TechManager.cpp		\
-@top_srcdir@/Empire/TechManager.h		\
-@top_srcdir@/UI/About.cpp			\
-@top_srcdir@/UI/About.h				\
-@top_srcdir@/UI/CUIControls.h			\
-@top_srcdir@/UI/CUI_Wnd.cpp			\
-@top_srcdir@/UI/CUI_Wnd.h			\
-@top_srcdir@/UI/ClientUI.cpp			\
-@top_srcdir@/UI/ClientUI.h			\
-@top_srcdir@/UI/EmpireSelect.cpp		\
-@top_srcdir@/UI/EmpireSelect.h			\
-@top_srcdir@/UI/GalaxyMapScreen.cpp		\
-@top_srcdir@/UI/GalaxyMapScreen.h		\
-@top_srcdir@/UI/GalaxySetupWnd.cpp		\
-@top_srcdir@/UI/GalaxySetupWnd.h		\
-@top_srcdir@/UI/IntroScreen.cpp			\
-@top_srcdir@/UI/IntroScreen.h			\
-@top_srcdir@/UI/LinkText.cpp			\
-@top_srcdir@/UI/LinkText.h			\
-@top_srcdir@/UI/MapWnd.cpp			\
-@top_srcdir@/UI/MapWnd.h			\
-@top_srcdir@/UI/Parser.cpp			\
-@top_srcdir@/UI/Parser.h			\
-@top_srcdir@/UI/ServerConnectWnd.cpp		\
-@top_srcdir@/UI/ServerConnectWnd.h		\
-@top_srcdir@/UI/ServerUI.cpp			\
-@top_srcdir@/UI/ServerUI.h			\
-@top_srcdir@/UI/StringTable.cpp			\
-@top_srcdir@/UI/StringTable.h			\
-@top_srcdir@/UI/SystemIcon.cpp			\
-@top_srcdir@/UI/SystemIcon.h			\
-@top_srcdir@/UI/ToolContainer.cpp		\
-@top_srcdir@/UI/ToolContainer.h			\
-@top_srcdir@/UI/ToolWnd.cpp			\
-@top_srcdir@/UI/ToolWnd.h			\
 @top_srcdir@/client/ClientApp.cpp		\
 @top_srcdir@/client/ClientApp.h			\
 @top_srcdir@/client/human/HumanClientApp.cpp	\
 @top_srcdir@/client/human/HumanClientApp.h	\
 @top_srcdir@/client/human/SDL_mixer.h		\
 @top_srcdir@/client/human/chmain.cpp		\
-@top_srcdir@/network/ClientNetworkCore.cpp	\
-@top_srcdir@/network/ClientNetworkCore.h	\
-@top_srcdir@/network/Message.cpp		\
-@top_srcdir@/network/Message.h			\
-@top_srcdir@/network/NetworkCore.cpp		\
-@top_srcdir@/network/NetworkCore.h		\
-@top_srcdir@/network/ServerNetworkCore.cpp	\
-@top_srcdir@/network/ServerNetworkCore.h	\
-@top_srcdir@/network/XDiff.cpp			\
-@top_srcdir@/network/XDiff.hpp			\
-@top_srcdir@/network/XHash.cpp			\
-@top_srcdir@/network/XHash.hpp			\
-@top_srcdir@/network/XLut.cpp			\
-@top_srcdir@/network/XLut.hpp			\
-@top_srcdir@/network/XParser.cpp		\
-@top_srcdir@/network/XParser.hpp		\
-@top_srcdir@/network/XTree.cpp			\
-@top_srcdir@/network/XTree.hpp			\
-@top_srcdir@/universe/ClientUniverse.cpp	\
-@top_srcdir@/universe/ClientUniverse.h		\
-@top_srcdir@/universe/Fleet.cpp			\
-@top_srcdir@/universe/Fleet.h			\
-@top_srcdir@/universe/Planet.cpp		\
-@top_srcdir@/universe/Planet.h			\
-@top_srcdir@/universe/PopCenter.cpp		\
-@top_srcdir@/universe/PopCenter.h		\
-@top_srcdir@/universe/ProdCenter.cpp		\
-@top_srcdir@/universe/ProdCenter.h		\
-@top_srcdir@/universe/ServerUniverse.cpp	\
-@top_srcdir@/universe/ServerUniverse.h		\
-@top_srcdir@/universe/Ship.cpp			\
-@top_srcdir@/universe/Ship.h			\
-@top_srcdir@/universe/System.cpp		\
-@top_srcdir@/universe/System.h			\
-@top_srcdir@/universe/UniverseObject.cpp	\
-@top_srcdir@/universe/UniverseObject.h		\
-@top_srcdir@/util/Order.cpp			\
-@top_srcdir@/util/Order.h			\
-@top_srcdir@/util/OrderSet.cpp			\
-@top_srcdir@/util/OrderSet.h			\
-@top_srcdir@/util/Process.cpp			\
-@top_srcdir@/util/Process.h			\
-@top_srcdir@/util/SitRepEntry.h			\
-@top_srcdir@/server/ServerApp.cpp
+@top_srcdir@/universe/PopCenter.cpp
 
 AM_CPPFLAGS = @FT2_CFLAGS@ @GIGI_CFLAGS@ @GIGISDL_CFLAGS@ @GIGINET_CFLAGS@ @SDL_CFLAGS@ -DFREEORION_BUILD_HUMAN 
 AM_CXXFLAGS = -g3 -Wall
 
-freeorion_exe_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@ @FT2_LIBS@
+# In the following, order DOES matter!
+
+freeorion_exe_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@ @FT2_LIBS@ \
+@top_srcdir@/UI/libFOui-common.a		\
+@top_srcdir@/UI/libFOui-human.a			\
+@top_srcdir@/Empire/libFOempire-common.a	\
+@top_srcdir@/network/libFOnetwork-common.a	\
+@top_srcdir@/universe/libFOuniverse-common.a	\
+@top_srcdir@/universe/libFOuniverse-human.a	\
+@top_srcdir@/util/libFOutil-human.a		\
+@top_srcdir@/util/libFOutil-common.a

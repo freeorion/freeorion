@@ -223,7 +223,12 @@ if test $FOUND = 0; then
   AC_SUBST(GIGINET_CFLAGS)
 fi
 
-AC_CONFIG_FILES([Makefile 
+AC_CONFIG_FILES([Makefile
+		 Empire/Makefile
+		 network/Makefile
+		 UI/Makefile
+		 universe/Makefile
+		 util/Makefile 
                  server/Makefile 
   		 client/Makefile
 		   client/human/Makefile

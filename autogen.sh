@@ -5,6 +5,7 @@ aclocal -I m4
 autoconf
 libtoolize
 autoheader
+./createMakefile.pl
 automake -a --foreign
 set +x
 if test ! -f configure || test ! -f ltmain.sh || test ! -f config.h.in || test ! -f Makefile.in; then
