@@ -24,8 +24,25 @@
 
 namespace log4cpp {class Category;}
 namespace GG {class XMLDoc; class XMLElement;}
+struct AISetupData;
 class CombatModule;
 class Message;
+
+
+/** contains the info needed to manage one player, including connection info */
+struct PlayerInfo
+{
+    PlayerInfo(); ///< default ctor
+    PlayerInfo(int sock, const IPaddress& addr, const std::string& player_name = "", bool host_ = false); ///< ctor
+
+    bool        Connected() const {return socket != -1;}  ///< returns true if this player is still connected
+   
+    int         socket;  ///< socket on which the player is connected (-1 if there is no valid connection)
+    IPaddress   address; ///< the IP address of the connected player
+    std::string name;    ///< the unique name of the player
+    bool        host;    ///< true if this is the host player
+};
+
 
 /** the application framework class for the FreeOrion server. */
 class ServerApp
@@ -44,15 +61,19 @@ public:
    void                 operator()();     ///< external interface to Run()
    void                 Exit(int code);   ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
    log4cpp::Category&   Logger();         ///< returns the debug logging object for the app
-   
-   /** creates a single AI client child process for each AI_client subelement of \a elem*/
+
+   /** creates an AI client child process for each element of \a AIs*/
+   void CreateAIClients(const std::vector<AISetupData>& AIs);
+
+   /** creates a single AI client child process for each AI_client subelement of \a elem.  This function is provided as a convenience 
+       interface to void CreateAIClients(const LobbyModeData& AIs).*/
    void CreateAIClients(const GG::XMLElement& elem);
 
    /** handles an incoming message from the server with the appropriate action or response */
    void HandleMessage(const Message& msg);
 
    /** when Messages arrive from connections that are not established players, they arrive via a call to this function*/
-   void HandleNonPlayerMessage(const Message& msg, const ServerNetworkCore::ConnectionInfo& connection); 
+   void HandleNonPlayerMessage(const Message& msg, const PlayerInfo& connection); 
    
    /** called by ServerNetworkCore when a player's TCP connection is closed*/
    void PlayerDisconnected(int id);
@@ -65,17 +86,6 @@ public:
    static ServerNetworkCore&     NetworkCore();    ///< returns the network core object for the server
    
 private:
-   /** contains the info needed to manage one player, including connection info */
-   struct PlayerInfo : public ServerNetworkCore::ConnectionInfo
-   {
-      PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn); ///< default ctor
-      PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn, const std::string& _name, bool _host = false); ///< ctor
-
-      std::string name;    ///< the player's name
-      bool        host;    ///< true if this is the host player
-// TODO: add other relevant player data
-   };
-
    const ServerApp& operator=(const ServerApp&); // disabled
    ServerApp(const ServerApp&); // disabled
 
@@ -91,7 +101,9 @@ private:
    
    void GameInit();        ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
 
-   GG::XMLDoc CreateTurnUpdate(int empire_id);   ///< creates encoded universe and empire data for the specified empire, diffs it with the previous turn data, stores the new data over the previous turn data and returns the diff XMLElement
+   GG::XMLDoc CreateTurnUpdate(int empire_id); ///< creates encoded universe and empire data for the specified empire, diffs it with the previous turn data, stores the new data over the previous turn data and returns the diff XMLElement
+   GG::XMLDoc LobbyUpdateDoc() const;          ///< creates an MP lobby-mode update XMLDoc containing all relevant parts of the lobby state
+   GG::XMLDoc LobbyPlayerUpdateDoc() const;    ///< creates an MP lobby-mode update XMLDoc containing just the current players
 
    ServerUniverse          m_universe;
    ServerEmpireManager     m_empires;
@@ -102,16 +114,15 @@ private:
    
    ServerState             m_state;                ///< the server's current state of execution
 
-   std::vector<PlayerInfo> m_players_info;         ///< the basic info on every player is stored here
    std::vector<Process>    m_ai_clients;           ///< AI client child processes
    
    // SERVER_GAME_SETUP variables -- These should only be useful when a new game is being set up
    std::set<std::string>   m_expected_ai_players;  ///< the player names expected from valid AI clients; this prevents malicious users from "spoofing" as AI clients.  Should be empty after all players have joined a game.
    int                     m_expected_players;     ///< the total desired number of players in the game
 
-   int                     m_universe_size;        ///< the size of the universe (the number of star systems)
-   ClientUniverse::Shape   m_universe_shape;       ///< the shape of the universe
-   std::string             m_universe_file;        ///< file to use for generating universe
+   int                     m_galaxy_size;          ///< the size of the galaxy (the number of star systems)
+   ClientUniverse::Shape   m_galaxy_shape;         ///< the shape of the galaxy
+   std::string             m_galaxy_file;          ///< file to use for generating the galaxy
    // end SERVER_GAME_SETUP variables
 
    std::map<int, GG::XMLDoc> m_last_turn_update_msg; ///< stores the xml encoded empire and universe data from the previous turn in order to generate diffs for turn update message.  Map is indexed by empire ID, with separate message data for each since each player sees different parts of the universe.
