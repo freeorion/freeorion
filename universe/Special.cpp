@@ -19,8 +19,8 @@ namespace {
                 if (it->Tag() != "Special")
                     throw std::runtime_error("ERROR: Encountered non-Special in specials.xml!");
                 Special* special = new Special(*it);
-                if (m_specials.find(special->Name()) == m_specials.end())
-                    throw std::runtime_error(("ERROR: More than on special in specials.xml has the name " + special->Name()).c_str());
+                if (m_specials.find(special->Name()) != m_specials.end())
+                    throw std::runtime_error(("ERROR: More than one special in specials.xml has the name " + special->Name()).c_str());
                 m_specials[special->Name()] = special;
             }
             ifs.close();
