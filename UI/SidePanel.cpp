@@ -1693,7 +1693,7 @@ SidePanel::SystemResourceSummary::SystemResourceSummary(int x, int y, int w, int
 
 bool SidePanel::SystemResourceSummary::Render()
 {
-  GG::FlatRectangle(UpperLeft().x,UpperLeft().y,LowerRight().x,LowerRight().y,GG::Clr(0.0,0.0,0.0,0.3),GG::CLR_ZERO,1);
+  GG::FlatRectangle(UpperLeft().x,UpperLeft().y,LowerRight().x,LowerRight().y,GG::Clr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,1);
 
   int farming=m_farming,mining=m_mining,research=m_research,industry=m_industry,defense=m_defense;
 
@@ -2365,7 +2365,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_system(0),
     m_star_graphic(0),
     m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,ClientUI::String("SP_UNKNOWN_SYSTEM"),ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4),0,ClientUI::TEXT_COLOR)),
-    m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.3),ClientUI::SIDE_PANEL_COLOR)),
+    m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5),ClientUI::SIDE_PANEL_COLOR)),
     m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
     m_button_next(new GG::Button(40+w-80                 ,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
     m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::PTS-5,ClientUI::String("SP_SYSTEM_PRODUCTION"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR)),
