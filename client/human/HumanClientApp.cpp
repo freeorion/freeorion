@@ -285,20 +285,9 @@ void HumanClientApp::GLInit()
 
 void HumanClientApp::Initialize()
 {
-//tsev {uncomment the old lines to get your original HumanClientApp code back!}
-/*
-// ONLY TEMPORARY!!!!!
-   g_net_test_wnd = boost::shared_ptr<NetTestWnd>(new NetTestWnd());
-   Register(g_net_test_wnd.get());
-// ONLY TEMPORARY!!!!!
-
-*/
-
-// Allow ClientUI to take care of the UI
-//    m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
+    // Allow ClientUI to take care of the UI
+    // m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
     m_ui = boost::shared_ptr<ClientUI>(new ClientUI(m_config_doc.root_node.Child("ClientUI")));
-    //write UI to XML
-    
     m_ui->ScreenIntro();    //start the first screen, and the UI takes over from there.
 }
 
@@ -328,9 +317,11 @@ void HumanClientApp::HandleSDLEvent(const SDL_Event& event)
    case SDL_MOUSEBUTTONDOWN: {
       send_to_gg = true;
       switch (event.button.button) {
-      case SDL_BUTTON_LEFT:   gg_event = GG::App::LPRESS; break;
-      case SDL_BUTTON_MIDDLE: gg_event = GG::App::MPRESS; break;
-      case SDL_BUTTON_RIGHT:  gg_event = GG::App::RPRESS; break;
+      case SDL_BUTTON_LEFT:      gg_event = GG::App::LPRESS; break;
+      case SDL_BUTTON_MIDDLE:    gg_event = GG::App::MPRESS; break;
+      case SDL_BUTTON_RIGHT:     gg_event = GG::App::RPRESS; break;
+      case SDL_BUTTON_WHEELUP:   gg_event = GG::App::MOUSEWHEEL; mouse_rel = GG::Pt(0, 1); break;
+      case SDL_BUTTON_WHEELDOWN: gg_event = GG::App::MOUSEWHEEL; mouse_rel = GG::Pt(0, -1); break;
       }
       key_mods = SDL_GetModState();
       break;
