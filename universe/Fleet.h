@@ -49,7 +49,6 @@ public:
    iterator begin()  {return m_ships.begin();}  ///< returns the begin iterator for the ships in the fleet
    iterator end()    {return m_ships.end();}    ///< returns the end iterator for the ships in the fleet
 
-   void AddShip(int ship); ///< adds the ship to the fleet
    void RemoveShip(int ship); ///< removes the ship from the fleet
 
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);

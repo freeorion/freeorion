@@ -188,10 +188,6 @@ std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
    return retval;
 }
 
-void Fleet::AddShip(int ship)
-{
-    m_ships.insert(ship);
-}
 
 void Fleet::RemoveShip(int ship)
 {
