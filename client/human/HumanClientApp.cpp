@@ -486,11 +486,13 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             std::stringstream stream(msg.GetText());
             GG::XMLDoc doc;
             doc.ReadDoc(stream);
-            
+
+#if 0
             // dump the game start doc
             std::ofstream output("start_doc.txt");
             doc.WriteDoc(output);
             output.close();
+#endif
 
             if (m_single_player_game = doc.root_node.ContainsChild("single_player_game")) {
                 Logger().debugStream() << "Single-Player game";
@@ -552,10 +554,12 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         GG::XMLDoc doc;
         doc.ReadDoc(stream);
 
+#if 0
         // dump the update doc
         std::ofstream output("update_doc.txt");
         doc.WriteDoc(output);
         output.close();
+#endif
 
         turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
 

@@ -36,23 +36,24 @@ struct AISetupData
 };
 
 namespace {
-struct LobbyModeData
-{
-    LobbyModeData () :
-        galaxy_size(150),
-        galaxy_type(Universe::SPIRAL_2)
-    {}
+    struct LobbyModeData
+    {
+        LobbyModeData () :
+            galaxy_size(150),
+            galaxy_type(Universe::SPIRAL_2)
+        {}
 
-    int                      galaxy_size; // number of stars
-    Universe::Shape          galaxy_type;
-    std::string              galaxy_image_filename;
+        int                      galaxy_size; // number of stars
+        Universe::Shape          galaxy_type;
+        std::string              galaxy_image_filename;
 
-    std::vector<AISetupData> AIs;
+        std::vector<AISetupData> AIs;
 
-} g_lobby_data;
-const std::string AI_CLIENT_EXE = "freeorionca.exe";
-const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
-GG::XMLDoc g_load_doc;
+    } g_lobby_data;
+    const std::string AI_CLIENT_EXE = "freeorionca.exe";
+    const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
+    GG::XMLDoc g_load_doc;
+    const bool ALL_OBJECTS_VISIBLE = false; // set this to true to turn off visibility for debugging purposes
 }
 
 ////////////////////////////////////////////////
@@ -312,7 +313,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     player_element.AppendChild(it->second);
                     doc.root_node.AppendChild(player_element);
                 }
-                doc.root_node.AppendChild(m_universe.XMLEncode());
+                doc.root_node.AppendChild(m_universe.XMLEncode(Universe::ALL_EMPIRES));
 #if GZIP_SAVE_FILES
                 GZStream::ogzstream ofs(save_filename.c_str());
                 /* For now, we use the standard compression settings,
@@ -385,6 +386,7 @@ void ServerApp::HandleMessage(const Message& msg)
             m_player_save_game_data[msg.Sender()] = doc.root_node;
             m_players_responded.insert(msg.Sender());
         } else { // the Orders were sent from a Player who has finished her turn
+#if 0
             /* debug information */
             std::string dbg_file( "turn_orders_server_" );
             dbg_file += boost::lexical_cast<std::string>(msg.Sender());
@@ -392,6 +394,7 @@ void ServerApp::HandleMessage(const Message& msg)
             std::ofstream output( dbg_file.c_str() );
             doc.WriteDoc(output);
             output.close();
+#endif
 
             OrderSet *p_order_set;
             p_order_set = new OrderSet( );
@@ -726,7 +729,7 @@ void ServerApp::NewGameInit()
         GG::XMLDoc doc;
         if (m_single_player_game)
             doc.root_node.AppendChild("single_player_game");
-        doc.root_node.AppendChild(m_universe.XMLEncode());
+        doc.root_node.AppendChild(m_universe.XMLEncode(ALL_OBJECTS_VISIBLE ? Universe::ALL_EMPIRES : it->first));
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
 
         // turn number is an attribute of the document
@@ -752,14 +755,16 @@ void ServerApp::LoadGameInit()
         GG::XMLDoc doc;
         if (m_single_player_game)
             doc.root_node.AppendChild("single_player_game");
-        doc.root_node.AppendChild(m_universe.XMLEncode());
+        doc.root_node.AppendChild(m_universe.XMLEncode(ALL_OBJECTS_VISIBLE ? Universe::ALL_EMPIRES : it->first));
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
 
+#if 0
         std::ofstream ofs("LoadGameInit-doc.xml");
         doc.WriteDoc(ofs);
         ofs.close();
+#endif
 
         // send saved pending orders to player
         m_network_core.SendMessage(ServerLoadGameMessage(it->first, order_docs[it->first]));
@@ -777,7 +782,7 @@ GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
     // generate new data for this turn
     // for the final game, we'd have visibility
     // but for now we are able to see the whole universe
-    XMLElement universe_data = m_universe.XMLEncode( );
+    XMLElement universe_data = m_universe.XMLEncode(ALL_OBJECTS_VISIBLE ? Universe::ALL_EMPIRES : empire_id);
     XMLElement empire_data = m_empires.CreateClientEmpireUpdate(empire_id);
 
     // build the new turn doc
@@ -929,13 +934,11 @@ void ServerApp::ProcessTurns( )
     // now that orders are executed, universe and empire data are the same as on the client, since 
     // clients execute orders locally
     // here we encode the states so that we can diff later
-    // note tha for v0.1 all clients see the same universe, but this will not always be the case
-    // therefore we store the universe data for each empire
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         GG::XMLDoc game_state;
 
-        GG::XMLElement universe_data = m_universe.XMLEncode( );  // later this will be what each empire sees
+        GG::XMLElement universe_data = m_universe.XMLEncode(ALL_OBJECTS_VISIBLE ? Universe::ALL_EMPIRES : it->first);
         GG::XMLElement empire_data = m_empires.CreateClientEmpireUpdate( it->first );
 
         // build the new turn doc
