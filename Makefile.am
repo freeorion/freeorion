@@ -15,7 +15,7 @@ save:
 flags:
 	echo @FT2_CFLAGS@ @SDL_CFLAGS@ @GIGI_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_SERVER @CFLAGS@ @CPPFLAGS@
 
-AM_CXXFLAGS = -Wall -g
+AM_CXXFLAGS = -Wall #-g
 
 bin_PROGRAMS = freeoriond freeorion freeorionca
 
