@@ -12,7 +12,7 @@ using namespace std;
 
 //init constants
 const string StringTable::S_DEFAULT_FILENAME = "eng_stringtable.txt";
-const string StringTable::S_ERROR_STRING = "STRINGTABLE_INVALID_INDEX";
+const string StringTable::S_ERROR_STRING = "ERROR: ";
 
 StringTable::StringTable():
     m_filename(S_DEFAULT_FILENAME)
@@ -33,6 +33,7 @@ StringTable::~StringTable()
 
 const string& StringTable::operator[] (std::string index)
 {
+    static std::string retval = ""; //keep this because we are returning a reference
     //since we're using a map now,
     // just do a find and return
     map<string, string>::iterator pos;
@@ -40,7 +41,7 @@ const string& StringTable::operator[] (std::string index)
     pos=m_strings.find(index);
     
     if(pos == m_strings.end())
-        return S_ERROR_STRING;
+        return(retval = S_ERROR_STRING + index);  //output the error string along with the index so we can debug
         
     //we got a value, now return the right one
     return pos->second;
