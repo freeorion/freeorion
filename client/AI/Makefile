@@ -1,99 +1,61 @@
 # FreeOrion AI Client
 # This Makefile assumes you've installed boost in /usr/boost_1_30_0, and that
 # you've built it using bjam (see boost build docs for explanation of bjam).
+# If you've put boost somewhere else, change BOOST_DIR accordingly.
 
-CPP  = g++ -D__DEBUG__
-CC   = gcc -D__DEBUG__
+###############################
+## Variables ##################
+###############################
+# Directories
+BOOST_DIR = /usr/boost_1_30_0
 
+# Includes
 SDL_INC = /usr/include/SDL
-FREETYPE_INC = /usr/include/freetype2
-BOOST_INC = /usr/boost_1_30_0
+BOOST_INC = $(BOOST_DIR)
 
-BOOST_SIG_LIB = /usr/boost_1_30_0/libs/signals/build/bin/libboost_signals.a/gcc/debug/runtime-link-dynamic
-#BOOST_PYTHON_LIB = /usr/boost_1_30_0/libs/python/build/bin/libboost_python.a/gcc/debug/runtime-link-dynamic
+# Libs
+BOOST_SIG_LIB = $(BOOST_DIR)/libs/signals/build/bin/libboost_signals.a/gcc/debug/runtime-link-dynamic
+#BOOST_PYTHON_LIB = $(BOOST_DIR)/libs/python/build/bin/libboost_python.a/gcc/debug/runtime-link-dynamic
 
-OBJ  = ../../objs/camain.o ../../objs/AIClientApp.o ../../objs/ClientApp.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/SDLnetUDP.o ../../objs/SDLnet.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/XMLDoc.o ../../objs/OrderSet.o
-LINKOBJ  = ../../objs/camain.o ../../objs/AIClientApp.o ../../objs/ClientApp.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/SDLnetUDP.o ../../objs/SDLnet.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/XMLDoc.o ../../objs/OrderSet.o
-
-LIBS =  -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz -lpthread
-
-INCS =  -I/usr/include  -I/usr/include/GL  -I$(SDL_INC)  -I$(BOOST_INC)  -I../../SDL_net  -I../../SDL_net2  -I../../GG  -I../../GG/XML
-
-CXXINCS =  $(INCS)
-
+# Executable name
 BIN  = freeorionca.exe
 
-CXXFLAGS = $(CXXINCS) -g3
-CFLAGS = $(INCS) -g3
+# Build commands
+CC   = gcc -D__DEBUG__
+CPP  = g++ -D__DEBUG__
 
+# Lists of objects, includes, and libs
+# Add object files to OBJ when they are added to the project
+OBJ  = ../../objs/camain.o ../../objs/AIClientApp.o ../../objs/ClientApp.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/SDLnetUDP.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/XMLDoc.o ../../objs/OrderSet.o ../../objs/SDLnet.o ../../objs/Order.o ../../objs/ClientUniverse.o ../../objs/UniverseObject.o ../../objs/Fleet.o ../../objs/Planet.o ../../objs/PopCenter.o ../../objs/ProdCenter.o ../../objs/ServerUniverse.o ../../objs/Ship.o ../../objs/System.o
+INCS =  -I/usr/include  -I$(SDL_INC)  -I$(BOOST_INC)  -I../../SDL_net  -I../../SDL_net2  -I../../GG/XML
+LIBS =  -L/usr/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz -lpthread
+
+# Build Flags
+CFLAGS = $(INCS) -g3 -Wall
+CXXFLAGS = $(INCS) -g3 -Wall -DFREEORION_BUILD_AI
+
+# Directories to search for source files
+# Add directories here when they are added to the project
+VPATH = ..:../..:../../Empire:../../GG/XML:../../network:../../SDL_net:../../SDL_net2:../../UI:../../universe:../../util
+
+
+###############################
+## Targets and Rules ##########
+###############################
 .PHONY: all all-before all-after clean clean-custom
 
 all: all-before freeorionca.exe all-after
 
 
 clean: clean-custom
-	rm -f $(OBJ) $(BIN)
+	rm -f $(OBJ)
 
-$(BIN): $(LINKOBJ)
-	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
-	/bin/mv $(BIN) ../../
+$(BIN): $(OBJ)
+	$(CPP) $(OBJ) -o $(BIN) $(LIBS)
+	/bin/mv $(BIN) ..
 
-../../objs/camain.o: camain.cpp
-	$(CPP) -c camain.cpp -o ../../objs/camain.o $(CXXFLAGS)
+../../objs/%.o : %.c
+	$(CC) $< -c $(CFLAGS) -o $@
 
-../../objs/AIClientApp.o: AIClientApp.cpp
-	$(CPP) -c AIClientApp.cpp -o ../../objs/AIClientApp.o $(CXXFLAGS)
-
-../../objs/ClientApp.o: ../ClientApp.cpp
-	$(CPP) -c ../ClientApp.cpp -o ../../objs/ClientApp.o $(CXXFLAGS)
-
-../../objs/fastevents.o: ../../SDL_net2/fastevents.c
-	$(CC) -c ../../SDL_net2/fastevents.c -o ../../objs/fastevents.o $(CFLAGS)
-
-../../objs/net2.o: ../../SDL_net2/net2.c
-	$(CC) -c ../../SDL_net2/net2.c -o ../../objs/net2.o $(CFLAGS)
-
-../../objs/trace.o: ../../SDL_net2/trace.c
-	$(CC) -c ../../SDL_net2/trace.c -o ../../objs/trace.o $(CFLAGS)
-
-../../objs/SDLnetUDP.o: ../../SDL_net/SDLnetUDP.c
-	$(CC) -c ../../SDL_net/SDLnetUDP.c -o ../../objs/SDLnetUDP.o $(CFLAGS)
-
-../../objs/SDLnet.o: ../../SDL_net/SDLnet.c
-	$(CC) -c ../../SDL_net/SDLnet.c -o ../../objs/SDLnet.o $(CFLAGS)
-
-../../objs/SDLnetselect.o: ../../SDL_net/SDLnetselect.c
-	$(CC) -c ../../SDL_net/SDLnetselect.c -o ../../objs/SDLnetselect.o $(CFLAGS)
-
-../../objs/SDLnetTCP.o: ../../SDL_net/SDLnetTCP.c
-	$(CC) -c ../../SDL_net/SDLnetTCP.c -o ../../objs/SDLnetTCP.o $(CFLAGS)
-
-../../objs/ClientNetworkCore.o: ../../network/ClientNetworkCore.cpp
-	$(CPP) -c ../../network/ClientNetworkCore.cpp -o ../../objs/ClientNetworkCore.o $(CXXFLAGS)
-
-../../objs/Message.o: ../../network/Message.cpp
-	$(CPP) -c ../../network/Message.cpp -o ../../objs/Message.o $(CXXFLAGS)
-
-../../objs/NetworkCore.o: ../../network/NetworkCore.cpp
-	$(CPP) -c ../../network/NetworkCore.cpp -o ../../objs/NetworkCore.o $(CXXFLAGS)
-
-../../objs/XDiff.o: ../../network/XDiff.cpp
-	$(CPP) -c ../../network/XDiff.cpp -o ../../objs/XDiff.o $(CXXFLAGS)
-
-../../objs/XHash.o: ../../network/XHash.cpp
-	$(CPP) -c ../../network/XHash.cpp -o ../../objs/XHash.o $(CXXFLAGS)
-
-../../objs/XLut.o: ../../network/XLut.cpp
-	$(CPP) -c ../../network/XLut.cpp -o ../../objs/XLut.o $(CXXFLAGS)
-
-../../objs/XParser.o: ../../network/XParser.cpp
-	$(CPP) -c ../../network/XParser.cpp -o ../../objs/XParser.o $(CXXFLAGS)
-
-../../objs/XTree.o: ../../network/XTree.cpp
-	$(CPP) -c ../../network/XTree.cpp -o ../../objs/XTree.o $(CXXFLAGS)
-
-../../objs/XMLDoc.o: ../../GG/XML/XMLDoc.cpp
-	$(CPP) -c ../../GG/XML/XMLDoc.cpp -o ../../objs/XMLDoc.o $(CXXFLAGS)
-
-../../objs/OrderSet.o: ../../util/OrderSet.cpp
-	$(CPP) -c ../../util/OrderSet.cpp -o ../../objs/OrderSet.o $(CXXFLAGS)
+../../objs/%.o : %.cpp
+	$(CPP) $< -c $(CXXFLAGS) -o $@
