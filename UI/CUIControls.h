@@ -1,6 +1,5 @@
 // -*- C++ -*-
 //CUIControls.h
-
 #ifndef _CUIControls_h_
 #define _CUIControls_h_
 
@@ -10,6 +9,10 @@
 
 #ifndef _GGButton_
 #include "GGButton.h"
+#endif
+
+#ifndef _CUIDrawUtil_h_
+#include "CUIDrawUtil.h"
 #endif
 
 #ifndef _GGListbox_h_
@@ -32,7 +35,8 @@
 #include "GGScroll.h"
 #endif
 
-//! \file All CUI_* classes are FreeOrion-style controls incorporating 
+
+//! \file All CUI* classes are FreeOrion-style controls incorporating 
 //! the visual theme the project requires.  Implementation may
 //! depend on graphics and design team specifications.  They extend
 //! GG controls.
@@ -67,6 +71,32 @@ protected:
 private:
     GG::Clr m_border_color;
     int     m_border_thick;
+};
+
+
+/** a FreeOrion triangular arrow button */
+class CUIArrowButton : public GG::Button
+{
+public:
+    /** \name Structors */ //@{
+    CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orientation, GG::Clr color, Uint32 flags = GG::Wnd::CLICKABLE); ///< basic ctor
+    CUIArrowButton(const GG::XMLElement& elem); ///< ctor that constructs a CUIScroll::ScrollTab object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIScroll::ScrollTab object
+    //@}
+
+    /** \name Accessors */ //@{
+    virtual bool            InWindow(const GG::Pt& pt) const;
+    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIScroll::ScrollTab object
+    //@}
+
+protected:
+    /** \name Mutators control */ //@{
+    virtual void RenderPressed();
+    virtual void RenderRollover();
+    virtual void RenderUnpressed();
+    //@}
+
+private:
+    ShapeOrientation m_orientation;
 };
 
 

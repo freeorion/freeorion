@@ -99,6 +99,63 @@ void CUIButton::RenderUnpressed()
 
 
 ///////////////////////////////////////
+// class CUIArrowButton
+///////////////////////////////////////
+CUIArrowButton::CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orientation, GG::Clr color, Uint32 flags/* = GG::Wnd::CLICKABLE*/) :
+    Button(x, y, w, h, "", "", 0, color, GG::CLR_ZERO, flags),
+    m_orientation(orientation)
+{
+}
+
+CUIArrowButton::CUIArrowButton(const GG::XMLElement& elem) : 
+    Button(elem.Child("GG::Button"))
+{
+    if (elem.Tag() != "CUIArrowButton")
+        throw std::invalid_argument("Attempted to construct a CUIArrowButton from an XMLElement that had a tag other than \"CUIArrowButton\"");
+
+    const GG::XMLElement* curr_elem = &elem.Child("m_orientation");
+    m_orientation = ShapeOrientation(boost::lexical_cast<int>(curr_elem->Attribute("value")));
+}
+
+bool CUIArrowButton::InWindow(const GG::Pt& pt) const
+{
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    return InIsoscelesTriangle(pt, ul.x, ul.y, lr.x, lr.y, m_orientation);
+}
+
+GG::XMLElement CUIArrowButton::XMLEncode() const
+{
+    GG::XMLElement retval("CUIArrowButton");
+    retval.AppendChild(GG::Button::XMLEncode());
+
+    GG::XMLElement temp("m_orientation");
+    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_orientation));
+    retval.AppendChild(temp);
+
+    return retval;
+}
+
+void CUIArrowButton::RenderPressed()
+{
+    OffsetMove(1, 1);
+    RenderUnpressed();
+    OffsetMove(-1, -1);
+}
+
+void CUIArrowButton::RenderRollover()
+{
+    RenderUnpressed();
+}
+
+void CUIArrowButton::RenderUnpressed()
+{
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+    IsoscelesTriangle(ul.x, ul.y, lr.x, lr.y, m_orientation, color_to_use);
+}
+
+
+///////////////////////////////////////
 // class CUIStateButton
 ///////////////////////////////////////
 CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& str, Uint32 text_fmt, Uint32 style/* = SBSTYLE_CUI_CHECKBOX*/,
