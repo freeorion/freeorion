@@ -61,60 +61,63 @@ const std::string& BuildSitRepEntry::SummaryText()
       switch(m_build_type) {
      
       case MAX_INDUSTRY_HIT:
-        uni_obj = universe.Object(m_planet_id);
-        if (uni_obj == NULL)
-        {
-           client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Planet with ID " << m_planet_id << " is NULL in universe object list!";
-           m_summary_text = "An error has occurred.  Invalid event.";
-           return m_summary_text;
-        }
-        planet = dynamic_cast<const Planet*>(uni_obj);
-        m_summary_text = "The maximum industry level for the current population has been hit on " + planet->Name();
-        break;
+         uni_obj = universe.Object(m_planet_id);
+         if (uni_obj == NULL)
+         {
+            client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Planet with ID " << m_planet_id << " is NULL in universe object list!";
+            m_summary_text = "An error has occurred.  Invalid event.";
+            return m_summary_text;
+         }
+         planet = dynamic_cast<const Planet*>(uni_obj);
+         m_summary_text = "The maximum industry level for the current population has been hit on " + planet->Name();
+         break;
+
       case MAX_TECH_HIT:
-        m_summary_text = "Your empire has now reached the maximum technology level.  Nothing can be gained by further research.";
-        break;
+         m_summary_text = "Your empire has now reached the maximum technology level.  Nothing can be gained by further research.";
+         break;
+
       case SHIP_BUILT:  
-        uni_obj = universe.Object(m_planet_id);
-        if (uni_obj == NULL)
-        {
-           client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Planet with ID " << m_planet_id << " is NULL in universe object list!";
-           m_summary_text = "An error has occurred.  Invalid event.";
-           return m_summary_text;
-        }
-        planet = dynamic_cast<const Planet*>(uni_obj);
+         uni_obj = universe.Object(m_planet_id);
+         if (uni_obj == NULL)
+         {
+            client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Planet with ID " << m_planet_id << " is NULL in universe object list!";
+            m_summary_text = "An error has occurred.  Invalid event.";
+            return m_summary_text;
+         }
+         planet = dynamic_cast<const Planet*>(uni_obj);
 
-        uni_obj = universe.Object(m_fleet_id);
-        if (uni_obj == NULL)
-        {
-           client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Fleet with ID " << m_fleet_id << " is NULL in universe object list!";
-           m_summary_text = "An error has occurred.  Invalid event.";
-           return m_summary_text;
-        }
-        fleet = dynamic_cast<const Fleet*>(uni_obj);
-        fleet_citr = fleet->begin();
+         uni_obj = universe.Object(m_fleet_id);
+         if (uni_obj == NULL)
+         {
+            client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Fleet with ID " << m_fleet_id << " is NULL in universe object list!";
+            m_summary_text = "An error has occurred.  Invalid event.";
+            return m_summary_text;
+         }
+         fleet = dynamic_cast<const Fleet*>(uni_obj);
+         fleet_citr = fleet->begin();
 
-        uni_obj = universe.Object(*fleet_citr);
-        if (uni_obj == NULL)
-        {
-           client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Ship with ID " << *fleet_citr << " is NULL in universe object list!";
-           m_summary_text = "An error has occurred.  Invalid event.";
-           return m_summary_text;
-        }
-        ship = dynamic_cast<const Ship*>(uni_obj);
+         uni_obj = universe.Object(*fleet_citr);
+         if (uni_obj == NULL)
+         {
+            client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Ship with ID " << *fleet_citr << " is NULL in universe object list!";
+            m_summary_text = "An error has occurred.  Invalid event.";
+            return m_summary_text;
+         }
+         ship = dynamic_cast<const Ship*>(uni_obj);
 
-        if (1 == 1) // TODO: add fleet size accessor in Fleet.h
-        {
-           m_summary_text = "A new " + ship->Name() + " has been built on " + planet->Name() + " and is awaiting orders.";
-        }
-        else
-        {
-           m_summary_text = "2 new " + ship->Name() + " have been build on " + planet->Name() + " and are awaiting orders.";
-        }
-        break;
+         if (1 == 1) // TODO: add fleet size accessor in Fleet.h
+         {
+            m_summary_text = "A new " + ship->Name() + " has been built on " + planet->Name() + " and is awaiting orders.";
+         }
+         else
+         {
+            m_summary_text = "2 new " + ship->Name() + " have been build on " + planet->Name() + " and are awaiting orders.";
+         }
+         break;
+
       default:
-        client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Invalid build event type: " << m_build_type;
-        m_summary_text = "Unknown build event type!";       
+         client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Invalid build event type: " << m_build_type;
+         m_summary_text = "Unknown build event type!";       
       }
    }
 #endif
@@ -134,50 +137,53 @@ bool BuildSitRepEntry::ExecuteLink()
    //   ClientUI* client_ui; // = xxxx
    
    switch(m_build_type) {
-      case MAX_INDUSTRY_HIT:
-        uni_obj = universe.Object(m_planet_id);
-        if (uni_obj == NULL)
-        {
-           client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Planet with ID " << m_planet_id << " is NULL in universe object list!";
-           m_summary_text = "An error has occurred.  Invalid event.";
-           return false;
-        }
-        planet = dynamic_cast<const Planet*>(uni_obj);
+   case MAX_INDUSTRY_HIT:
+      uni_obj = universe.Object(m_planet_id);
+      if (uni_obj == NULL)
+      {
+         client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Planet with ID " << m_planet_id << " is NULL in universe object list!";
+         m_summary_text = "An error has occurred.  Invalid event.";
+         return false;
+      }
+      planet = dynamic_cast<const Planet*>(uni_obj);
 
-        /*
+      /*
         if (client_ui.ZoomTo(*Planet) == false)
         {
-           client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Could not zoom to planet with ID " << m_planet_id;
-           return false;
-        } 
-        */         
-        break;
-      case MAX_TECH_HIT:
-        // there is no link for the event. TODO: add LinkExists() to all SitRepEntries
-        client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Attempting to link for MAX TECH entry for which no link exists.";
+        client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Could not zoom to planet with ID " << m_planet_id;
         return false;
-        break;
-      case SHIP_BUILT:
-        // zoom to fleet
-        uni_obj = universe.Object(m_fleet_id);
-        if (uni_obj == NULL)
-        {
-           client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteText : Fleet with ID " << m_fleet_id << " is NULL in universe object list!";
-           m_summary_text = "An error has occurred.  Invalid event.";
-           return false;
-        }
-        fleet = dynamic_cast<const Fleet*>(uni_obj);
-        /*
+        } 
+      */         
+      break;
+
+   case MAX_TECH_HIT:
+      // there is no link for the event. TODO: add LinkExists() to all SitRepEntries
+      client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Attempting to link for MAX TECH entry for which no link exists.";
+      return false;
+      break;
+
+   case SHIP_BUILT:
+      // zoom to fleet
+      uni_obj = universe.Object(m_fleet_id);
+      if (uni_obj == NULL)
+      {
+         client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteText : Fleet with ID " << m_fleet_id << " is NULL in universe object list!";
+         m_summary_text = "An error has occurred.  Invalid event.";
+         return false;
+      }
+      fleet = dynamic_cast<const Fleet*>(uni_obj);
+      /*
         if (client_ui.ZoomTo(*Fleet) == false)
         {
-           client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Could not zoom to fleet with ID " << m_fleet_id;
-           return false;
-        } 
-        */
-        break;
-      default:
-        client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Invalid build event type: " << m_build_type;
+        client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Could not zoom to fleet with ID " << m_fleet_id;
         return false;
+        } 
+      */
+      break;
+
+   default:
+      client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Invalid build event type: " << m_build_type;
+      return false;
    }   
 #endif
    return true;
