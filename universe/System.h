@@ -207,6 +207,8 @@ public:
       return retval;
    }
 
+   virtual void AddOwner   (int id);  ///< adding owner to system objects is not allowed
+   virtual void RemoveOwner(int id);  ///< removing owner from system objects is not allowed
 
    virtual void MovementPhase( );
    virtual void PopGrowthProductionResearchPhase( );
@@ -233,3 +235,4 @@ private:
 };
 
 #endif // _System_h_
+

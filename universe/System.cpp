@@ -295,6 +295,14 @@ bool System::RemoveWormhole(int id)
    return retval;
 }
 
+void System::AddOwner   (int id)
+{
+}
+
+void System::RemoveOwner(int id)
+{
+}
+
 void System::MovementPhase( )
 {
 }
@@ -302,5 +310,3 @@ void System::MovementPhase( )
 void System::PopGrowthProductionResearchPhase( )
 {
 }
-
-
