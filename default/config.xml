@@ -52,6 +52,6 @@
   <app-width>1024</app-width>
   <color-depth>32</color-depth>
   <fullscreen>0</fullscreen>
-  <settings-dir>default/</settings-dir>
+  <data-dir>default/</data-dir>
   <save-dir>save</save-dir>
 </GG::XMLDoc>
