@@ -43,7 +43,7 @@ void NetworkCore::SendMessage(const Message& msg, int socket, const std::string&
    if (NET2_TCPSend(socket, const_cast<char*>(msg.m_message_text->c_str()), msg.m_message_text->size()) == -1) {
       const char* err_msg = NET2_GetError();
       logger.errorStream() << app_name << "::SendMessage : NET2_TCPSend call failed with "
-         "socket= " << socket << " buf= \"" << msg.m_message_text->c_str() << "\" len= " << 
+         "socket= " << socket << " buf= \"" << msg.GetText() << "\" len= " << 
          msg.m_message_text->size() << " " << (err_msg ? err_msg : "");
    }
 
