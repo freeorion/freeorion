@@ -60,6 +60,7 @@ enum StarType {
 
 namespace GG {
     ENUM_MAP_BEGIN(StarType)
+	ENUM_MAP_INSERT(INVALID_STAR_TYPE)
 	ENUM_MAP_INSERT(STAR_BLUE)
 	ENUM_MAP_INSERT(STAR_WHITE)
 	ENUM_MAP_INSERT(STAR_YELLOW)
@@ -74,6 +75,7 @@ ENUM_STREAM_OUT(StarType)
 
 /** the types of planets in FreeOrion*/
 enum PlanetType {
+    INVALID_PLANET_TYPE = -1,
     PT_SWAMP,
     PT_TOXIC,
     PT_INFERNO,
@@ -91,6 +93,7 @@ enum PlanetType {
 
 namespace GG {
     ENUM_MAP_BEGIN(PlanetType)
+	ENUM_MAP_INSERT(INVALID_PLANET_TYPE)
 	ENUM_MAP_INSERT(PT_SWAMP)
 	ENUM_MAP_INSERT(PT_TOXIC)
 	ENUM_MAP_INSERT(PT_INFERNO)
@@ -111,6 +114,7 @@ ENUM_STREAM_OUT(PlanetType)
 
 /** the sizes of planets in FreeOrion*/
 enum PlanetSize {
+    INVALID_PLANET_SIZE = -1,
     SZ_NOWORLD,   // used to designate an empty planet slot
     SZ_TINY,
     SZ_SMALL,
@@ -124,6 +128,7 @@ enum PlanetSize {
 
 namespace GG {
     ENUM_MAP_BEGIN(PlanetSize)
+	ENUM_MAP_INSERT(INVALID_PLANET_SIZE)
 	ENUM_MAP_INSERT(SZ_NOWORLD)
 	ENUM_MAP_INSERT(SZ_TINY)
 	ENUM_MAP_INSERT(SZ_SMALL)
@@ -140,6 +145,7 @@ ENUM_STREAM_OUT(PlanetSize)
 
 /** the environmental conditions of planets in FreeOrion*/
 enum PlanetEnvironment {
+    INVALID_PLANET_ENVIRONMENT = -1,
     PE_UNINHABITABLE,   //for gas giants and asteroids
     PE_TERRIBLE,
     PE_ADEQUATE,
@@ -150,6 +156,7 @@ enum PlanetEnvironment {
 
 namespace GG {
     ENUM_MAP_BEGIN(PlanetEnvironment)
+	ENUM_MAP_INSERT(INVALID_PLANET_ENVIRONMENT)
 	ENUM_MAP_INSERT(PE_UNINHABITABLE)
 	ENUM_MAP_INSERT(PE_TERRIBLE)
 	ENUM_MAP_INSERT(PE_ADEQUATE)
@@ -163,6 +170,7 @@ ENUM_STREAM_OUT(PlanetEnvironment)
 
 /** the types of production focus*/
 enum FocusType {
+    INVALID_FOCUS_TYPE = -1,
     FOCUS_UNKNOWN,
     FOCUS_BALANCED,
     FOCUS_FARMING,
@@ -174,6 +182,7 @@ enum FocusType {
                       
 namespace GG {
     ENUM_MAP_BEGIN(FocusType)
+	ENUM_MAP_INSERT(INVALID_FOCUS_TYPE)
 	ENUM_MAP_INSERT(FOCUS_UNKNOWN)
 	ENUM_MAP_INSERT(FOCUS_BALANCED)
 	ENUM_MAP_INSERT(FOCUS_FARMING)
@@ -188,7 +197,7 @@ ENUM_STREAM_OUT(FocusType)
 
 /** the possible types for Meters in FreeOrion. */
 enum MeterType {
-    METER_INVALID = -1,
+    INVALID_METER_TYPE = -1,
     METER_POPULATION,
     METER_FARMING,
     METER_INDUSTRY,
@@ -205,7 +214,7 @@ enum MeterType {
 
 namespace GG {
     ENUM_MAP_BEGIN(MeterType)
-	ENUM_MAP_INSERT(METER_INVALID)
+	ENUM_MAP_INSERT(INVALID_METER_TYPE)
 	ENUM_MAP_INSERT(METER_FARMING)
 	ENUM_MAP_INSERT(METER_POPULATION)
 	ENUM_MAP_INSERT(METER_INDUSTRY)
@@ -221,6 +230,7 @@ ENUM_STREAM_OUT(MeterType)
 
 /** the types of diplomatic empire affiliations to a given empire*/
 enum EmpireAffiliationType {
+    INVALID_EMPIRE_AFFIL_TYPE = -1,
     AFFIL_SELF,  ///< not an affiliation as such; this indicates that the given empire, rather than its affiliates
     AFFIL_ENEMY, ///< allies of the given empire
     AFFIL_ALLY   ///< enamies of the given empire
@@ -228,8 +238,9 @@ enum EmpireAffiliationType {
 
 namespace GG {
     ENUM_MAP_BEGIN(EmpireAffiliationType)
-	ENUM_MAP_INSERT(AFFIL_SELF)
+	ENUM_MAP_INSERT(INVALID_EMPIRE_AFFIL_TYPE)
 	ENUM_MAP_INSERT(AFFIL_ENEMY)
+	ENUM_MAP_INSERT(AFFIL_SELF)
 	ENUM_MAP_INSERT(AFFIL_ALLY)
     ENUM_MAP_END
 }
@@ -250,7 +261,7 @@ public:
                 CLUSTER,       ///< a cluster galaxy
                 ELLIPTICAL,    ///< an elliptical galaxy
                 IRREGULAR,     ///< an irregular galaxy
-				RING,          ///< a ring galaxy
+                RING,          ///< a ring galaxy
                 GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
                };
 
@@ -387,10 +398,11 @@ public:
                                      SpecialsFrequency specials_freq, int players, int ai_players, 
                                      const std::vector<PlayerSetupData>& player_setup_data = std::vector<PlayerSetupData>());
 
-    /** removes the object with ID number \a id from the universe, and returns it; returns 0 if there is no such object*/
+    /** removes the object with ID number \a id from the universe and any containing UniverseObjects (e.g. the containing System),
+	and returns it; returns 0 if there is no such object*/
     UniverseObject*   Remove(int id);
 
-    /** removes the object with ID number \a id; returns true if such an object was found, false otherwise*/
+    /** removes and deletes the object with ID number \a id; returns true if such an object was found, false otherwise*/
     bool              Delete(int id);
 
     /** moves UniverseObjects that are in movement or are starting movement as a result of orders this turn.  This must be
