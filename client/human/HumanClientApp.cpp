@@ -285,8 +285,8 @@ void HumanClientApp::EndGame()
     m_player_id = -1;
     m_empire_id = -1;
     m_player_name = "";
-    ClientUI::GetClientUI()->GetMapWnd()->CloseAllPopups();
-    ClientUI::GetClientUI()->ScreenIntro();
+    m_ui->GetMapWnd()->Sanitize();
+    m_ui->ScreenIntro();
 }
 
 void HumanClientApp::SetLobby(MultiplayerLobbyWnd* lobby)
@@ -398,7 +398,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
             m_player_id = NetworkCore::HOST_PLAYER_ID;
             m_empire_id = -1;
             m_player_name = "Happy_Player";
-            m_ui->GetMapWnd()->CloseAllPopups();
+            m_ui->GetMapWnd()->Sanitize();
 
             // HACK!  send the multiplayer form of the HostGameMessage, since it establishes us as the host, and the single-player 
             // LOAD_GAME message will establish us as a single-player game

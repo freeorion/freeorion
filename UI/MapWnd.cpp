@@ -297,34 +297,7 @@ MapWnd::MapWnd() :
 MapWnd::~MapWnd()
 {
     delete m_research_wnd;
-
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, 0);
-
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
-
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F2, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F3, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F10, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_s, 0);
-
-    // Zoom keys
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_e, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_r, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_PLUS, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_MINUS, 0);
-
-    // Keys for showing systems
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_d, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_x, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_c, 0);
-
-    // Keys for showing fleets
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_f, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_g, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_v, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_b, 0);
+    RemoveAccelerators();
 }
 
 GG::Pt MapWnd::ClientUpperLeft() const
@@ -537,34 +510,8 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 }
 
 void MapWnd::InitTurn(int turn_number)
-{ 
-    GG::App::GetApp()->SetAccelerator(GG::GGK_RETURN, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_ENTER, 0);
-
-    GG::App::GetApp()->SetAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
-
-    GG::App::GetApp()->SetAccelerator(GG::GGK_F2, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_F3, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_F10, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_s, 0);
-
-    // Keys for zooming
-    GG::App::GetApp()->SetAccelerator(GG::GGK_e, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_r, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_PLUS, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_MINUS, 0);
-
-    // Keys for showing systems
-    GG::App::GetApp()->SetAccelerator(GG::GGK_d, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_x, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_c, 0);
-
-    // Keys for showing fleets
-    GG::App::GetApp()->SetAccelerator(GG::GGK_f, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_g, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_v, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_b, 0);
+{
+    SetAccelerators();
 
     Universe& universe = ClientApp::GetUniverse();
 
@@ -1184,15 +1131,10 @@ void MapWnd::RemovePopup( MapWndPopup* popup )
     }
 }
 
-void MapWnd::CloseAllPopups( )
+void MapWnd::Sanitize()
 {
-    for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ) {
-        // get popup and increment iterator first since closing the popup will change this list by removing the popup
-        MapWndPopup* popup = *it++;
-        popup->Close( );
-    }   
-    // clear list
-    m_popups.clear( );
+    CloseAllPopups();
+    RemoveAccelerators();
 }
 
 bool MapWnd::OpenChatWindow()
@@ -1210,6 +1152,7 @@ bool MapWnd::OpenChatWindow()
 
 bool MapWnd::EndTurn()
 {
+    RemoveAccelerators();
     CloseAllPopups( );
     m_research_wnd->Hide();
     HumanClientApp::GetApp()->MoveDown(m_research_wnd);
@@ -1443,6 +1386,68 @@ bool MapWnd::ZoomToNextFleet()
     return true;
 }
 
+void MapWnd::SetAccelerators()
+{
+    GG::App::GetApp()->SetAccelerator(GG::GGK_RETURN, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_ENTER, 0);
+
+    GG::App::GetApp()->SetAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
+
+    GG::App::GetApp()->SetAccelerator(GG::GGK_F2, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_F3, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_F10, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_s, 0);
+
+    // Keys for zooming
+    GG::App::GetApp()->SetAccelerator(GG::GGK_e, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_r, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_PLUS, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_MINUS, 0);
+
+    // Keys for showing systems
+    GG::App::GetApp()->SetAccelerator(GG::GGK_d, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_x, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_c, 0);
+
+    // Keys for showing fleets
+    GG::App::GetApp()->SetAccelerator(GG::GGK_f, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_g, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_v, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_b, 0);
+}
+
+void MapWnd::RemoveAccelerators()
+{
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, 0);
+
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
+
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F2, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F3, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F10, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_s, 0);
+
+    // Zoom keys
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_e, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_r, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_PLUS, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_MINUS, 0);
+
+    // Keys for showing systems
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_d, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_x, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_c, 0);
+
+    // Keys for showing fleets
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_f, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_g, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_v, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_b, 0);
+}
+
 /* Disables keyboard accelerators that use an alphanumeric key
    without modifiers. This is useful if a keyboard input is required,
    so that the keys aren't interpreted as an accelerator.
@@ -1476,4 +1481,15 @@ void MapWnd::EnableAlphaNumAccels()
         GG::App::GetApp()->SetAccelerator(*i, 0);
     }
     m_disabled_accels_list.clear();
+}
+
+void MapWnd::CloseAllPopups()
+{
+    for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ) {
+        // get popup and increment iterator first since closing the popup will change this list by removing the popup
+        MapWndPopup* popup = *it++;
+        popup->Close();
+    }   
+    // clear list
+    m_popups.clear();
 }

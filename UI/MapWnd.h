@@ -92,7 +92,7 @@ public:
 
     void RegisterPopup( MapWndPopup* popup );  //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void RemovePopup( MapWndPopup* popup );    //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
-    void CloseAllPopups( );                    //!< closes all active MapWndPopup popups
+    void Sanitize();                           //!< cleans up the MapWnd at the end of a turn or after a game (ie, closes all windows and disables all keyboard accelerators)
     //!@}
         
     static const int    SIDE_PANEL_WIDTH;
@@ -139,8 +139,11 @@ private:
     bool ZoomToPrevFleet();
     bool ZoomToNextFleet();
 
+    void SetAccelerators();
+    void RemoveAccelerators();
     void DisableAlphaNumAccels();
     void EnableAlphaNumAccels();
+    void CloseAllPopups();
 
     std::set<GG::Key> m_disabled_accels_list;     //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
 
