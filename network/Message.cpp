@@ -197,6 +197,31 @@ Message EndGameMessage(int sender, int receiver)
    return Message(Message::END_GAME, sender, receiver, Message::CORE, "");
 }
 
+Message TurnOrdersMessage(int sender, int receiver, const GG::XMLDoc& orders_data )
+{
+   return Message(Message::TURN_ORDERS, sender, receiver, Message::CORE, orders_data );
+}
+
+Message TurnProgressMessage( int player_id, const Message::TurnProgressPhase phase_id, const int empire_id )
+{
+  /// Turn progres message sends down message ID instead of text for faster transfer
+  /// The data is a number indicating the phase being started and the empire ID
+  GG::XMLDoc doc;
+
+  GG::XMLElement phase_id_elt("phase_id");
+  phase_id_elt.SetAttribute("value", boost::lexical_cast<std::string>(phase_id));
+  doc.root_node.AppendChild( phase_id_elt );
+ 
+  GG::XMLElement empire_id_elt("empire_id");
+  empire_id_elt.SetAttribute("value", boost::lexical_cast<std::string>(empire_id));
+  doc.root_node.AppendChild( empire_id_elt );
+  return Message(Message::TURN_PROGRESS, -1, player_id, Message::CORE, doc );
+}
+
+Message TurnUpdateMessage(int player_id, const GG::XMLDoc& start_data)
+{
+   return Message(Message::TURN_UPDATE, -1, player_id, Message::CORE, start_data);
+}
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Messages

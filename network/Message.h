@@ -42,6 +42,7 @@ public:
                       GAME_START,          ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
                       TURN_UPDATE,         ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
                       TURN_ORDERS,         ///< sent to the server by a client that has orders to be processed at the end of a turn or when a game is saved
+                      TURN_PROGRESS,       ///< sent to clients to display a turn progress message. To make messages short, IDs are used
                       COMBAT_START,        ///< sent to clients when a combat is about to start
                       COMBAT_ROUND_UPDATE, ///< sent to clients when a combat round has been resolved
                       COMBAT_END,          ///< sent to clients when a combat is concluded
@@ -50,6 +51,7 @@ public:
                       PLAYER_EXIT,         ///< sent to the "host" client when another player leaves the game
                       END_GAME,            ///< sent to the server by the host client when the current game is to end
     };
+
                
     /** Represents the module which is the destination for the message */
     enum ModuleType {CORE,                    ///< this module is the ServerCore or ClientCore, as appropriate; all server-bound messages go here
@@ -59,6 +61,15 @@ public:
                      CLIENT_COMBAT_MODULE     ///< the client Combat module
                      // are other server modules necessary?
     };
+
+    enum TurnProgressPhase { FLEET_MOVEMENT,           ///< fleet movement turn progress message
+                             COMBAT,                   ///< combat turn progress message
+                             EMPIRE_PRODUCTION,        ///< empire production turn progress message
+                             WAITING_FOR_PLAYERS,      ///< waiting for other to end their turn
+			     PROCESSING_ORDERS         ///< processing orders
+
+    };
+
 
     /** \name Structors */ //@{
     /** standard ctor.  Senders that are not part of a game and so have no player number should send -1 as the \a 
@@ -133,6 +144,15 @@ Message RenameMessage(int player_id, const std::string& new_name);
 
 /** creates an END_GAME message.  Only END_GAME messages sent from the host client and the server are considered valid.*/
 Message EndGameMessage(int sender, int receiver);
+
+/** creates an TURN_ORDERS message. */
+Message TurnOrdersMessage(int sender, int receiver, const GG::XMLDoc& orders_data );
+
+/** creates an TURN_PROGRESS message. */
+Message TurnProgressMessage( int player_id, const Message::TurnProgressPhase phase_id, const int empire_id );
+
+/** creates a TURN_UPDATE message.  Contains a diff of universe and empire data */
+Message TurnUpdateMessage(int player_id, const GG::XMLDoc& start_data);
 
 
 ////////////////////////////////////////////////
