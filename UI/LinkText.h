@@ -65,12 +65,12 @@ public:
         space the newly rendered text occupies. */
     virtual void   SetText(const std::string& str);
 
-    IDSignalType&     PlanetLinkSignal()       {return m_planet_sig;}       ///< returns the planet link signal object for this LinkText
-    IDSignalType&     SystemLinkSignal()       {return m_system_sig;}       ///< returns the system link signal object for this LinkText
-    IDSignalType&     FleetLinkSignal()        {return m_fleet_sig;}        ///< returns the fleet link signal object for this LinkText
-    IDSignalType&     ShipLinkSignal()         {return m_ship_sig;}         ///< returns the ship link signal object for this LinkText
-    IDSignalType&     TechLinkSignal()         {return m_tech_sig;}         ///< returns the tech link signal object for this LinkText
-    StringSignalType& EncyclopediaLinkSignal() {return m_encyclopedia_sig;} ///< returns the encyclopedia link signal object for this LinkText
+    IDSignalType&     PlanetLinkSignal()       const {return m_planet_sig;}       ///< returns the planet link signal object for this LinkText
+    IDSignalType&     SystemLinkSignal()       const {return m_system_sig;}       ///< returns the system link signal object for this LinkText
+    IDSignalType&     FleetLinkSignal()        const {return m_fleet_sig;}        ///< returns the fleet link signal object for this LinkText
+    IDSignalType&     ShipLinkSignal()         const {return m_ship_sig;}         ///< returns the ship link signal object for this LinkText
+    IDSignalType&     TechLinkSignal()         const {return m_tech_sig;}         ///< returns the tech link signal object for this LinkText
+    StringSignalType& EncyclopediaLinkSignal() const {return m_encyclopedia_sig;} ///< returns the encyclopedia link signal object for this LinkText
 
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a LinkText object
     //@}
@@ -93,12 +93,12 @@ private:
     int               m_old_sel_link;
     int               m_old_rollover_link;
 
-    IDSignalType m_planet_sig;
-    IDSignalType m_system_sig;
-    IDSignalType m_fleet_sig;
-    IDSignalType m_ship_sig;
-    IDSignalType m_tech_sig;
-    StringSignalType m_encyclopedia_sig;
+    mutable IDSignalType m_planet_sig;
+    mutable IDSignalType m_system_sig;
+    mutable IDSignalType m_fleet_sig;
+    mutable IDSignalType m_ship_sig;
+    mutable IDSignalType m_tech_sig;
+    mutable StringSignalType m_encyclopedia_sig;
 
     static bool s_link_tags_registered;
 };

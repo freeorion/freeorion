@@ -26,7 +26,7 @@ LinkText::LinkText(int x, int y, int w, int h, const std::string& str, const std
 
 LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
                    GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = CLICKABLE*/) : 
-    GG::TextControl(x, y, str, font, color, flags),
+    GG::TextControl(x, y, str, font, color, 0, flags),
     m_old_sel_link(-1),
     m_old_rollover_link(-1)
 {
@@ -35,7 +35,7 @@ LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr
 
 LinkText::LinkText(int x, int y, const std::string& str, const std::string& font_filename, int pts, 
                    GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = CLICKABLE*/) : 
-    GG::TextControl(x, y, str, font_filename, pts, color, flags),
+    GG::TextControl(x, y, str, font_filename, pts, color, 0, flags),
     m_old_sel_link(-1),
     m_old_rollover_link(-1)
 {
@@ -50,7 +50,7 @@ LinkText::LinkText(const GG::XMLElement& elem) :
     if (elem.Tag() != "LinkText")
         throw std::invalid_argument("Attempted to construct a LinkText from an XMLElement that had a tag other than \"LinkText\"");
    
-    FindLinks();
+    Init();
 }
 
 void LinkText::LButtonDown(const GG::Pt& pt, Uint32 keys)
@@ -129,10 +129,8 @@ void LinkText::Init()
         GG::Font::RegisterKnownTag("tech");
         GG::Font::RegisterKnownTag("encyclopedia");
         s_link_tags_registered = true;
-        SetText(WindowText());
-    } else {
-        FindLinks();
     }
+    FindLinks();
 }
 
 void LinkText::FindLinks()
