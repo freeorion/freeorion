@@ -5,9 +5,9 @@
 #include "../universe/ServerUniverse.h"
 #endif 
 
-/*#ifndef _ServerEmpire_h_
-#include "../Empire/ServerEmpire.h"
-#endif */
+#ifndef _ServerEmpire_h_
+#include "../empire/ServerEmpireManager.h"
+#endif
 
 #ifndef _ServerNetworkCore_h_
 #include "../network/ServerNetworkCore.h"
@@ -19,12 +19,6 @@
 
 #include <set>
 #include <vector>
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// ONLY TEMPORARY!!!!!
-class ServerEmpire {};
-// ONLY TEMPORARY!!!!!
-////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 namespace log4cpp {class Category;}
@@ -63,10 +57,11 @@ public:
    void PlayerDisconnected(int id); 
    //@}
 
-   static ServerApp*          GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
-   static ServerUniverse&     Universe();       ///< returns client's local copy of Universe
-   static CombatModule*       CurrentCombat();  ///< returns the server's currently executing Combat; may be 0
-   static ServerNetworkCore&  NetworkCore();    ///< returns the network core object for the server
+   static ServerApp*             GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
+   static ServerUniverse&        Universe();       ///< returns server's copy of Universe
+   static ServerEmpireManager&   Empires();        ///< returns the server's copy of the Empires
+   static CombatModule*          CurrentCombat();  ///< returns the server's currently executing Combat; may be 0
+   static ServerNetworkCore&     NetworkCore();    ///< returns the network core object for the server
    
 private:
    /** contains the info needed to manage one player, including connection info */
@@ -96,6 +91,7 @@ private:
    void GameInit();        ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
 
    ServerUniverse          m_universe;
+   ServerEmpireManager     m_empires;
    CombatModule*           m_current_combat;
    ServerNetworkCore       m_network_core;
 

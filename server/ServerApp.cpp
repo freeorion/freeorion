@@ -230,6 +230,11 @@ ServerUniverse& ServerApp::Universe()
    return ServerApp::GetApp()->m_universe;
 }
 
+ServerEmpireManager& ServerApp::Empires()
+{
+   return ServerApp::GetApp()->m_empires;
+}
+
 CombatModule* ServerApp::CurrentCombat()
 {
    return ServerApp::GetApp()->m_current_combat;
