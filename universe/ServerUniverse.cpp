@@ -677,7 +677,7 @@ void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<in
       home_planet->AdjustIndustry(0.10);
       home_planet->AdjustDefBases(3);
 
-#if 0
+#if 1
       // create the empire's initial ship designs
       ShipDesign* scout_design = new ShipDesign();
       scout_design->name = "Scout";
