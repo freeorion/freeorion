@@ -59,7 +59,7 @@ GG::Clr     ClientUI::STAT_INCR_COLOR(127, 255, 127, 255);
 GG::Clr     ClientUI::STAT_DECR_COLOR(255, 127, 127, 255);
 
 // game UI windows
-GG::Clr     ClientUI::SIDE_PANEL_COLOR(0, 0, 0, 150);
+GG::Clr     ClientUI::SIDE_PANEL_COLOR(0, 0, 0, 220);
 GG::Clr     ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR(25, 40, 140, 150);
 int         ClientUI::SIDE_PANEL_PLANET_NAME_PTS = 15;
 int         ClientUI::SIDE_PANEL_PTS = 11;
