@@ -27,8 +27,8 @@ public:
     }; // others TBD (these are from the Public Review: Population & Econ Model thread on the forums)
 
     /** \name Structors */ //@{
-    PopCenter(UniverseObject* object); ///< basic ctor that only specifies a max pop (DEFAULT_POP_SCALE_FACTOR is used for the scale factor)
-    PopCenter(int race, UniverseObject* object); ///< basic ctor that specifies a max pop and race
+    PopCenter(UniverseObject* object, double max_pop_mod, double max_health_mod); ///< basic ctor
+    PopCenter(int race, UniverseObject* object, double max_pop_mod, double max_health_mod); ///< basic ctor
     PopCenter(const GG::XMLElement& elem, UniverseObject* object); ///< ctor that constructs a PopCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a PopCenter object
     virtual ~PopCenter(); ///< dtor
     //@}

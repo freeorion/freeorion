@@ -27,13 +27,24 @@ namespace {
         return map;
     }
 
+    double MaxPopMod(PlanetSize size, PlanetEnvironment environment)
+    {
+        return PlanetDataTables()["PlanetMaxPop"][size][environment];
+    }
+
+    double MaxHealthMod(PlanetEnvironment environment)
+    {
+        return PlanetDataTables()["PlanetEnvHealthMod"][0][environment];
+    }
+
+
     bool temp_header_bool = RecordHeaderFile(PlanetRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 Planet::Planet() :
     UniverseObject(),
-    PopCenter(this),
+    PopCenter(this, MaxPopMod(SZ_MEDIUM, Environment(PT_TERRAN)), MaxHealthMod(Environment(PT_TERRAN))),
     ProdCenter(PopCenter::PopulationMeter(), this),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
@@ -45,7 +56,7 @@ Planet::Planet() :
 
 Planet::Planet(PlanetType type, PlanetSize size) :
     UniverseObject(),
-    PopCenter(this),
+    PopCenter(this, MaxPopMod(size, Environment(type)), MaxHealthMod(Environment(type))),
     ProdCenter(PopCenter::PopulationMeter(), this),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),

@@ -23,29 +23,25 @@ namespace {
 
     double MaxPopModFromObject(const UniverseObject* object)
     {
-        double retval = 0.0;
-        if (const Planet* planet = dynamic_cast<const Planet*>(object)) {
-            retval = PlanetDataTables()["PlanetMaxPop"][planet->Size()][planet->Environment()];
-        }
-        return retval;
+        if (const Planet* planet = universe_object_cast<const Planet*>(object))
+            return PlanetDataTables()["PlanetMaxPop"][planet->Size()][planet->Environment()];
+        return 0.0;
     }
 
     double MaxHealthModFromObject(const UniverseObject* object)
     {
-        double retval = 0.0;
-        if (const Planet* planet = dynamic_cast<const Planet*>(object)) {
-            retval = PlanetDataTables()["PlanetEnvHealthMod"][0][planet->Environment()];
-        }
-        return retval;
+        if (const Planet* planet = universe_object_cast<const Planet*>(object))
+            return PlanetDataTables()["PlanetEnvHealthMod"][0][planet->Environment()];
+        return 0.0;
     }
 
     bool temp_header_bool = RecordHeaderFile(PopCenterRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
-PopCenter::PopCenter(UniverseObject* object) : 
-    m_pop(0.0, MaxPopModFromObject(object)),
-    m_health(MaxHealthModFromObject(object), MaxHealthModFromObject(object)),
+PopCenter::PopCenter(UniverseObject* object, double max_pop_mod, double max_health_mod) : 
+    m_pop(0.0, max_pop_mod),
+    m_health(max_health_mod, max_health_mod),
     m_growth(0.0),
     m_race(-1),
     m_available_food(0.0),
@@ -54,9 +50,9 @@ PopCenter::PopCenter(UniverseObject* object) :
     assert(m_object);
 }
    
-PopCenter::PopCenter(int race, UniverseObject* object) : 
-    m_pop(0.0, MaxPopModFromObject(object)),
-    m_health(MaxHealthModFromObject(object), MaxHealthModFromObject(object)),
+PopCenter::PopCenter(int race, UniverseObject* object, double max_pop_mod, double max_health_mod) : 
+    m_pop(0.0, max_pop_mod),
+    m_health(max_health_mod, max_health_mod),
     m_growth(0.0),
     m_race(race),
     m_available_food(0.0),
