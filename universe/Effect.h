@@ -37,7 +37,8 @@ public:
     EffectsGroup(const GG::XMLElement& elem);
     virtual ~EffectsGroup();
 
-    virtual void Execute(int source_id) const;
+    void Execute(int source_id) const;
+    const std::vector<EffectBase*>& EffectsList() const;
 
 protected:
     const Condition::ConditionBase* m_scope;

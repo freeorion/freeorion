@@ -1,6 +1,7 @@
 #include "Condition.h"
 
 #include "../util/AppInterface.h"
+#include "Building.h"
 #include "Fleet.h"
 #include "../util/Parse.h"
 #include "../util/Random.h"
@@ -198,7 +199,7 @@ bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* 
 {
     switch (m_type->Eval(source, target)) {
         case OBJ_BUILDING:
-            // TODO
+            return dynamic_cast<const Building*>(target);
             break;
         case OBJ_SHIP:
             return dynamic_cast<const Ship*>(target);
@@ -242,7 +243,8 @@ Condition::Building::Building(const GG::XMLElement& elem)
 
 bool Condition::Building::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    return false/*TODO*/;
+    const ::Building* building = dynamic_cast<const ::Building*>(target);
+    return building && building->BuildingTypeName() == m_name;
 }
 
 ///////////////////////////////////////////////////////////
@@ -263,7 +265,7 @@ Condition::HasSpecial::HasSpecial(const GG::XMLElement& elem)
 
 bool Condition::HasSpecial::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    return false/*TODO (don't forget to consider the name "All", which matches all specials)*/;
+    return (m_name == "All" && !target->Specials().empty()) || target->Specials().find(m_name) != target->Specials().end();
 }
 
 ///////////////////////////////////////////////////////////
@@ -284,7 +286,48 @@ Condition::Contains::Contains(const GG::XMLElement& elem)
 
 bool Condition::Contains::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    return false/*TODO (remember to consider Systems *and* Planets *and* Fleets containing objects)*/;
+    // get the list of all UniverseObjects that satisfy m_condition
+    ObjectSet condition_targets;
+    ObjectSet condition_non_targets;
+    const Universe& universe = GetUniverse();
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+        condition_non_targets.insert(it->second);
+    }
+    m_condition->Eval(source, condition_targets, condition_non_targets);
+
+    if (condition_targets.empty())
+	return false;
+
+    if (const System* system = dynamic_cast<const System*>(target)) {
+	bool found = false;
+	for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+	    if ((*it)->SystemID() == system->ID()) {
+		found = true;
+		break;
+	    }
+	}
+	return found;
+    } else if (const Planet* planet = dynamic_cast<const Planet*>(target)) {
+	bool found = false;
+	for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+	    if (planet->ContainsBuilding((*it)->ID())) {
+		found = true;
+		break;
+	    }
+	}
+	return found;
+    } else if (const Fleet* fleet = dynamic_cast<const Fleet*>(target)) {
+	bool found = false;
+	for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+	    if (fleet->ContainsShip((*it)->ID())) {
+		found = true;
+		break;
+	    }
+	}
+	return found;
+    } else {
+	return false;
+    }
 }
 
 ///////////////////////////////////////////////////////////

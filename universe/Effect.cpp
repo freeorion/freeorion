@@ -104,6 +104,11 @@ void EffectsGroup::Execute(int source_id) const
     }
 }
 
+const std::vector<EffectBase*>& EffectsGroup::EffectsList() const
+{
+    return m_effects;
+}
+
 
 ///////////////////////////////////////////////////////////
 // EffectBase                                            //
@@ -312,7 +317,7 @@ AddSpecial::AddSpecial(const GG::XMLElement& elem)
 
 void AddSpecial::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    // TODO : implement after Specials are implemented
+    target->AddSpecial(m_name);
 }
 
 
@@ -334,7 +339,7 @@ RemoveSpecial::RemoveSpecial(const GG::XMLElement& elem)
 
 void RemoveSpecial::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    // TODO : implement after Specials are implemented
+    target->RemoveSpecial(m_name);
 }
 
 
