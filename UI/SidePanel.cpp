@@ -33,6 +33,15 @@ using boost::lexical_cast;
 #define ROTATING_PLANET_IMAGES 0 // set this to 1 to use the OpenGL-rendered rotating planets code
 
 namespace {
+    bool PlaySounds() {return GetOptionsDB().Get<bool>("UI.sound.enabled");}
+    void PlaySidePanelOpenSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"));}
+    void PlayFarmingFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.farming-focus"));}
+    void PlayIndustryFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.industry-focus"));}
+    void PlayResearchFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.research-focus"));}
+    void PlayMiningFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.mining-focus"));}
+    void PlayTradeFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.trade-focus"));}
+    void PlayBalancedFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.balanced-focus"));}
+
     const int MAX_PLANET_DIAMETER = 128; // size of a huge planet, in on-screen pixels
     const int MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER / 3; // size of a tiny planet, in on-screen pixels
 
@@ -1127,6 +1136,19 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   Connect(m_button_industry->RClickedSignal(), &SidePanel::PlanetPanel::RClickIndustry, this);
   Connect(m_button_balanced->ClickedSignal (), &SidePanel::PlanetPanel::LClickBalanced, this);
   Connect(m_button_balanced->RClickedSignal(), &SidePanel::PlanetPanel::RClickBalanced, this);
+
+  // UI sounds
+  GG::Connect(m_button_food    ->ClickedSignal (), &PlayFarmingFocusClickSound);
+  GG::Connect(m_button_food    ->RClickedSignal(), &PlayFarmingFocusClickSound);
+  GG::Connect(m_button_mining  ->ClickedSignal (), &PlayMiningFocusClickSound);
+  GG::Connect(m_button_mining  ->RClickedSignal(), &PlayMiningFocusClickSound);
+  GG::Connect(m_button_research->ClickedSignal (), &PlayResearchFocusClickSound);
+  GG::Connect(m_button_research->RClickedSignal(), &PlayResearchFocusClickSound);
+  GG::Connect(m_button_industry->ClickedSignal (), &PlayIndustryFocusClickSound);
+  GG::Connect(m_button_industry->RClickedSignal(), &PlayIndustryFocusClickSound);
+  GG::Connect(m_button_balanced->ClickedSignal (), &PlayBalancedFocusClickSound);
+  GG::Connect(m_button_balanced->RClickedSignal(), &PlayBalancedFocusClickSound);
+  // TODO: connect trade when it gets added
 
   AttachChild(m_button_food);AttachChild(m_button_mining);AttachChild(m_button_industry);
   AttachChild(m_button_research);AttachChild(m_button_balanced);
@@ -2512,6 +2534,9 @@ int SidePanel::SystemID() const {return m_system!=0?m_system->ID():UniverseObjec
 
 void SidePanel::SetSystem(int system_id)
 {
+    const System* new_system = HumanClientApp::GetUniverse().Object<const System>(system_id);
+    if (new_system && new_system != m_system)
+        PlaySidePanelOpenSound();
     TempUISoundDisabler sound_disabler;
 
     delete m_planet_view;m_planet_view=0;
@@ -2523,7 +2548,7 @@ void SidePanel::SetSystem(int system_id)
 
     Hide();
 
-    m_system = HumanClientApp::GetUniverse().Object<const System>(system_id);
+    m_system = new_system;
 
     if (m_system)
     {
