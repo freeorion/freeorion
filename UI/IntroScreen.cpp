@@ -27,8 +27,8 @@ void Options(OptionsDB& db)
     db.AddFlag("force-external-server", 
                "Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.");
    
-    db.Add("UI.intro-screen.left", "Position of the intro screem main menu (left)",(1024 + 300) / 2);
-    db.Add("UI.intro-screen.top", "Position of the intro screem main menu (top)",300);
+    db.Add("UI.intro-screen.left", "Position of the intro screen main menu (left)",(1024 + 300) / 2);
+    db.Add("UI.intro-screen.top", "Position of the intro screen main menu (top)",300);
 }
 
 bool foo_bool = RegisterOptions(&Options);
