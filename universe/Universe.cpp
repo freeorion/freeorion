@@ -1263,7 +1263,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
       scout_design.cost = 50;
       scout_design.colonize = false;
       scout_design.empire = empire_id;
-      scout_design.description = "Small and cheap unarmed vessel designed for recognition and exploration.";
+      scout_design.description = "Small and cheap unarmed vessel designed for recon and exploration.";
 
       int scout_id = empire->AddShipDesign(scout_design);
 
@@ -1274,7 +1274,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
       colony_ship_design.cost = 250;
       colony_ship_design.colonize = true;
       colony_ship_design.empire = empire_id;
-      colony_ship_design.description = "Huge unarmed vessel capable of delivering million citizens safely to borderworlds.";
+      colony_ship_design.description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
       int colony_id = empire->AddShipDesign(colony_ship_design);
 
       ShipDesign design;
@@ -1294,7 +1294,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
       design.cost = 200;
       design.colonize = false;
       design.empire = empire_id;
-      design.description = "Cruiser with storng defence and offence capabilities.";
+      design.description = "Cruiser with storng defensive and offensive capabilities.";
       empire->AddShipDesign(design);
 
       design.name = "Mark III";
@@ -1303,7 +1303,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
       design.cost = 375;
       design.colonize = false;
       design.empire = empire_id;
-      design.description = "Advanced cruiser with heavy weaponery and armoring to do the dirty work.";
+      design.description = "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
       empire->AddShipDesign(design);
 
       design.name = "Mark IV";
@@ -1312,7 +1312,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
       design.cost = 700;
       design.colonize = false;
       design.empire = empire_id;
-      design.description = "Massive state-of-art warship armed and protected with latest technolgy. Priced accordigly.";
+      design.description = "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";
       empire->AddShipDesign(design);
 
       // create the empire's starting fleet
