@@ -1,20 +1,23 @@
 #include "Universe.h"
-#include "UniverseObject.h"
+
+#include "../util/AppInterface.h"
 #include "Fleet.h"
 #include "Planet.h"
-#include "Ship.h"
-#include "System.h"
-#include "XMLDoc.h"
 #include "Predicates.h"
 #include "../util/Random.h"
-
 #include "../Empire/ServerEmpireManager.h"
+#include "Ship.h"
+#include "System.h"
+#include "UniverseObject.h"
+#include "XMLDoc.h"
 
 #ifdef FREEORION_BUILD_HUMAN
 #include "../client/human/HumanClientApp.h"
 #endif
 
-#include "../util/AppInterface.h"
+#ifdef FREEORION_BUILD_SERVER
+#include "../server/ServerApp.h"
+#endif
 
 #include <stdexcept>
 #include <cmath>
@@ -41,24 +44,24 @@ std::string RomanNumber(unsigned int n)
     std::string retval;
     int e = 3;
     int mod = 1000;
-    for( ; e>=0 ; e--,mod/=10) {
-	unsigned int m = (n/mod)%10;
-	if (m%5 == 4) {
-	    retval += N[e<<1];
-	    ++m;
-	    if (m == 10) {
-		retval += N[(e<<1)+2];
-		continue;
-	    }
-	}
-	if (m >= 5) {
-	    retval += N[(e<<1)+1];
-	    m -= 5;
-	}
-	while (m) {
-	    retval += N[e<<1];
-	    m--;
-	}
+    for (; 0 <= e; e--, mod /= 10) {
+        unsigned int m = (n / mod) % 10;
+        if (m % 5 == 4) {
+            retval += N[e << 1];
+            ++m;
+            if (m == 10) {
+                retval += N[(e << 1) + 2];
+                continue;
+            }
+        }
+        if (m >= 5) {
+            retval += N[(e << 1) + 1];
+            m -= 5;
+        }
+        while (m) {
+            retval += N[e << 1];
+            --m;
+        }
     }
     return retval;
 }
@@ -239,7 +242,7 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
 
     PopulateSystems();
     GenerateHomeworlds(players + ai_players, size, homeworlds, adjacency_grid);
-    GenerateEmpires(players, ai_players, homeworlds);
+    GenerateEmpires(players + ai_players, homeworlds);
 }
 
 void Universe::CreateUniverse(const std::string& map_file, int size, int players, int ai_players)
@@ -535,7 +538,7 @@ void Universe::PopulateSystems()
     }
 }
 
-void Universe ::GenerateEmpires(int players, int ai_players, std::vector<int>& homeworlds)
+void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
 {
 #ifdef FREEORION_BUILD_SERVER
    // create empires and assign homeworlds, names, colors, and fleet ranges to
@@ -543,7 +546,9 @@ void Universe ::GenerateEmpires(int players, int ai_players, std::vector<int>& h
 
    const int FLEET_ID_RNG = (UniverseObject::MAX_SHIP_ID - UniverseObject::MIN_SHIP_ID) / players;
 
-   for (int i = 0; i < players + ai_players; ++i) {
+   const std::map<int, PlayerInfo>& player_info = ServerApp::GetApp()->NetworkCore().Players();
+   int i = 0;
+   for (std::map<int, PlayerInfo>::const_iterator it = player_info.begin(); it != player_info.end(); ++it, ++i) {
       // TODO: select name at random from default list
       std::string name = "Empire" + boost::lexical_cast<std::string>(i);
 
@@ -555,13 +560,9 @@ void Universe ::GenerateEmpires(int players, int ai_players, std::vector<int>& h
       int home_planet_id = homeworlds[i];
 
       // create new Empire object through empire manager
-      ServerEmpireManager* server_manager;
-      server_manager = dynamic_cast<ServerEmpireManager*>(&Empires());
-      if(!server_manager)
-      {
-        throw std::runtime_error("NULL dynamic cast to ServerEmpireManager.  This means you are trying to create a universe in the client, which you cant do.");
-      }
-      Empire* empire = server_manager->CreateEmpire(name, color, home_planet_id, i < players ? Empire::CONTROL_HUMAN : Empire::CONTROL_AI);
+      // TODO : ******* find a way to distinguish between humans and AIs *******
+      Empire* empire = 
+          dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, name, color, home_planet_id, Empire::CONTROL_HUMAN);
       empire->SetFleetIDs(min_fleet_id, max_fleet_id);
     
       // set ownership of home planet

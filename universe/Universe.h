@@ -1,4 +1,4 @@
-
+// -*- C++ -*-
 #ifndef _Universe_h_
 #define _Universe_h_
 
@@ -149,9 +149,6 @@ public:
     static const double UNIVERSE_WIDTH;
 
 protected:
-   ObjectMap m_objects;
-   GG::XMLObjectFactory<UniverseObject> m_factory;
-   
    typedef std::vector<std::vector<std::set<std::pair<double, double> > > > AdjacencyGrid;
 
    void GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid);  ///< creates a spiral galaxy and stores the empire homeworlds in the homeworlds vector
@@ -162,12 +159,14 @@ protected:
 
    void PopulateSystems();  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
 
-     /// Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets
-     /// NOTE: does nothing if executed client-side. This is a hack to deal with the 
-     /// dependency on ServerEmpireManager -- jdb                     
-   void GenerateEmpires(int players, int ai_players, std::vector<int>& homeworlds); 
+   /// Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets
+   /// NOTE: does nothing if executed client-side. This is a hack to deal with the 
+   /// dependency on ServerEmpireManager -- jdb                     
+   void GenerateEmpires(int players, std::vector<int>& homeworlds);
+
+   ObjectMap m_objects;
+   GG::XMLObjectFactory<UniverseObject> m_factory;
    int m_last_allocated_id;
-   
 };
 
 
