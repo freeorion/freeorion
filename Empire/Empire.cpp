@@ -438,11 +438,8 @@ void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
     if (!ResearchableTech(tech->Name()) || m_techs.find(tech->Name()) != m_techs.end())
         return;
     ResearchQueue::iterator it = m_research_queue.find(tech);
-    if (it != m_research_queue.end()) {
-        if (std::distance(m_research_queue.begin(), it) < pos)
-            --pos;
-        m_research_queue.erase(it);
-    }
+    if (it != m_research_queue.end())
+         m_research_queue.erase(it);
     if (pos < 0 || static_cast<int>(m_research_queue.size()) <= pos)
         m_research_queue.push_back(tech);
     else
