@@ -22,7 +22,7 @@
 
 ServerEmpireManager::ServerEmpireManager() :
     EmpireManager(),
-    m_next_id(1)
+    m_next_id(0)
 {
     // nothing to do yet
 }
