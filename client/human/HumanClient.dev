@@ -4336,11 +4336,11 @@ BuildCmd=
 [Project]
 FileName=HumanClient.dev
 Name=HumanClient
-UnitCount=82
+UnitCount=88
 Type=0
 Ver=1
 ObjFiles=
-Includes=C:\Dev-Cpp\include\SDL;C:\Dev-Cpp\include\c++\mingw32;C:\boost_1_30_0;C:\Dev-Cpp\include\freetype2;C:\Expat-1.95.5\Source\lib;C:\log4cpp-0.2.7\include;../../GG/include;../../GG/include/net;../../GG/include/dialogs
+Includes=C:\Dev-Cpp\include\SDL;C:\Dev-Cpp\include\c++\mingw32;C:\boost_1_30_0;C:\Dev-Cpp\include\freetype2;C:\Expat-1.95.5\Source\lib;C:\log4cpp-0.2.7\include;../../GG/include;../../GG/include/net;../../GG/include/dialogs;../../GG/include/SDL
 Libs=C:\Expat-1.95.5\StaticLibs
 PrivateResource=
 ResourceIncludes=
@@ -5161,9 +5161,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit83]
-FileName=..\..\util\Order.cpp
+FileName=..\..\UI\CUIControls.cpp
 CompileCpp=1
-Folder=util
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -5171,9 +5171,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit84]
-FileName=..\..\universe\ClientUniverse.cpp
+FileName=..\..\UI\CUIControls.h
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -5181,9 +5181,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit85]
-FileName=..\..\universe\ClientUniverse.h
+FileName=..\..\UI\CUIDrawUtil.cpp
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -5191,9 +5191,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit86]
-FileName=..\..\universe\UniverseObject.cpp
+FileName=..\..\UI\CUIDrawUtil.h
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -5201,9 +5201,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit87]
-FileName=..\..\universe\UniverseObject.h
+FileName=..\..\UI\FleetWindow.cpp
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -5211,9 +5211,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit88]
-FileName=..\..\universe\Fleet.cpp
+FileName=..\..\UI\FleetWindow.h
 CompileCpp=1
-Folder=universe
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
