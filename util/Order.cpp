@@ -624,3 +624,4 @@ GG::XMLElement DeleteFleetOrder::XMLEncode() const
     return retval;
 }
 
+
