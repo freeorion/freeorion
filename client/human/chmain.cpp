@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
     try {
         GetOptionsDB().AddFlag('h', "help", "Print this help message.");
 		GetOptionsDB().AddFlag('m', "music-off", "Disables music in the game");
-		GetOptionsDB().Add("bg-music", "Sets the background track to play", std::string("background.ogg"));
+		GetOptionsDB().Add("bg-music", "Sets the background track to play", std::string("artificial_intelligence_v3.ogg"));
         GetOptionsDB().AddFlag('f', "fullscreen", "Start the game in fullscreen");
         GG::XMLDoc doc;
         std::ifstream ifs("default/config.xml");
