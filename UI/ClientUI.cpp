@@ -89,7 +89,10 @@ const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
     "SITREP_MAX_INDUSTRY",
     "SITREP_SHIP_BUILT",
     "SITREP_TECH_RESEARCHED",
-    "SITREP_BASE_BUILT"
+    "SITREP_BASE_BUILT",
+    "SITREP_COMBAT_SYSTEM_WON",
+    "SITREP_COMBAT_SYSTEM_LOST",
+    "SITREP_COMBAT_SYSTEM_NO_VICTOR"
   };
   // command-line options
   void AddOptions(OptionsDB& db)
