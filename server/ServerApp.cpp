@@ -268,7 +268,7 @@ void ServerApp::CreateAIClients(const std::vector<AISetupData>& AIs)
     int i = 0;
     for (std::vector<AISetupData>::const_iterator it = AIs.begin(); it != AIs.end(); ++it, ++i) {
 // TODO: add other command line args to AI client invocation as needed
-        std::string player_name = "AI_" + boost::lexical_cast<std::string>(ai_client_base_number + i); // AI player's "name"
+        std::string player_name = "AI_Log/AI_" + boost::lexical_cast<std::string>(ai_client_base_number + i); // AI player's "name"
         m_expected_ai_players.insert(player_name);
         std::vector<std::string> args;
         args.push_back(AI_CLIENT_EXE);
