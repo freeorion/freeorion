@@ -33,6 +33,7 @@ private:
     void QueueItemDeletedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void QueueItemMovedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void QueueItemClickedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt);
+    void QueueItemDoubleClickedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
 
     ResearchInfoPanel* m_research_info_panel;
     CUIListBox*        m_queue_lb;

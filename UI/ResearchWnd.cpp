@@ -319,18 +319,18 @@ ResearchWnd::ResearchInfoPanel::ResearchInfoPanel() :
     m_title = new GG::TextControl(2, 4, Width() - 4, RESEARCH_TITLE_PTS + 4, UserString("RESEARCH_INFO_PANEL_TITLE"), ClientUI::FONT, RESEARCH_TITLE_PTS, TEXT_COLOR);
     m_total_RPs_label = new GG::TextControl(LEFT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("RESEARCH_INFO_TOTAL_RPS_LABEL"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_RIGHT);
     m_total_RPs = new GG::TextControl(RIGHT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
-    m_total_RPs_RP_label = new GG::TextControl(RP_LABEL_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, RP_LABEL_WIDTH, STAT_TEXT_PTS + 4, "RP", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
+    m_total_RPs_RP_label = new GG::TextControl(RP_LABEL_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, RP_LABEL_WIDTH, STAT_TEXT_PTS + 4, UserString("RESEARCH_INFO_RP"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
     //m_projected_RPs_label = new GG::TextControl(); // TODO
     //m_projected_RPs = new GG::TextControl(); // TODO
     //m_total_RPs_RP_label = new GG::TextControl(); // TODO
     m_wasted_RPs_label = new GG::TextControl(LEFT_TEXT_X, m_total_RPs_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("RESEARCH_INFO_WASTED_RPS_LABEL"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_RIGHT);
     m_wasted_RPs = new GG::TextControl(RIGHT_TEXT_X, m_total_RPs_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
-    m_wasted_RPs_RP_label = new GG::TextControl(RP_LABEL_X, m_total_RPs_label->LowerRight().y, RP_LABEL_WIDTH, STAT_TEXT_PTS + 4, "RP", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
+    m_wasted_RPs_RP_label = new GG::TextControl(RP_LABEL_X, m_total_RPs_label->LowerRight().y, RP_LABEL_WIDTH, STAT_TEXT_PTS + 4, UserString("RESEARCH_INFO_RP"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
     m_projects_in_progress_label = new GG::TextControl(LEFT_TEXT_X, m_wasted_RPs_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("RESEARCH_INFO_PROJECTS_IN_PROGRESS_LABEL"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_RIGHT);
     m_projects_in_progress = new GG::TextControl(RIGHT_TEXT_X, m_wasted_RPs_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
     m_RPs_to_underfunded_projects_label = new GG::TextControl(LEFT_TEXT_X, m_projects_in_progress_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("RESEARCH_INFO_RPS_TO_UNDERFUNDED_PROJECTS_LABEL"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_RIGHT);
     m_RPs_to_underfunded_projects = new GG::TextControl(RIGHT_TEXT_X, m_projects_in_progress_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
-    m_RPs_to_underfunded_projects_RP_label = new GG::TextControl(RP_LABEL_X, m_projects_in_progress_label->LowerRight().y, RP_LABEL_WIDTH, STAT_TEXT_PTS + 4, "RP", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
+    m_RPs_to_underfunded_projects_RP_label = new GG::TextControl(RP_LABEL_X, m_projects_in_progress_label->LowerRight().y, RP_LABEL_WIDTH, STAT_TEXT_PTS + 4, UserString("RESEARCH_INFO_RP"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
     m_projects_in_queue_label = new GG::TextControl(LEFT_TEXT_X, m_RPs_to_underfunded_projects_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("RESEARCH_INFO_PROJECTS_IN_QUEUE_LABEL"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_RIGHT);
     m_projects_in_queue = new GG::TextControl(RIGHT_TEXT_X, m_RPs_to_underfunded_projects_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
 
@@ -483,6 +483,7 @@ ResearchWnd::ResearchWnd(int w, int h) :
     GG::Connect(m_queue_lb->DroppedSignal(), &ResearchWnd::QueueItemMovedSlot, this);
     GG::Connect(m_queue_lb->DeletedSignal(), &ResearchWnd::QueueItemDeletedSlot, this);
     GG::Connect(m_queue_lb->LeftClickedSignal(), &ResearchWnd::QueueItemClickedSlot, this);
+    GG::Connect(m_queue_lb->DoubleClickedSignal(), &ResearchWnd::QueueItemDoubleClickedSlot, this);
 
     AttachChild(m_research_info_panel);
     AttachChild(m_queue_lb);
@@ -553,4 +554,9 @@ void ResearchWnd::QueueItemMovedSlot(int row_idx, const boost::shared_ptr<GG::Li
 void ResearchWnd::QueueItemClickedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt)
 {
     m_tech_tree_wnd->CenterOnTech(boost::dynamic_pointer_cast<QueueRow>(row)->tech);
+}
+
+void ResearchWnd::QueueItemDoubleClickedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
+{
+    m_queue_lb->Delete(row_idx);
 }
