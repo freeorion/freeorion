@@ -27,7 +27,7 @@
 #include "XTree.hpp"
 #include "XHash.hpp"
 
-#include "XMLDoc.h"
+#include "../GG/XML/XMLDoc.h"
 
 #include <expat.h>
 
