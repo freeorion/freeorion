@@ -21,6 +21,7 @@ namespace GG {class XMLElement;};
 
 /* the various major subclasses of UniverseObject */
 enum UniverseObjectType {
+    INVALID_UNIVERSE_OBJECT_TYPE,
     OBJ_BUILDING,
     OBJ_SHIP,
     OBJ_FLEET, 
@@ -33,6 +34,7 @@ enum UniverseObjectType {
 
 namespace GG {
     ENUM_MAP_BEGIN(UniverseObjectType)
+	ENUM_MAP_INSERT(INVALID_UNIVERSE_OBJECT_TYPE)
 	ENUM_MAP_INSERT(OBJ_BUILDING)
 	ENUM_MAP_INSERT(OBJ_SHIP)
 	ENUM_MAP_INSERT(OBJ_FLEET)
