@@ -173,7 +173,10 @@ const std::vector<EffectBase*>& EffectsGroup::EffectsList() const
 EffectsGroup::Description EffectsGroup::GetDescription() const
 {
     Description retval;
-    retval.scope_description = str(format(UserString("DESC_EFFECTS_GROUP_SCOPE")) % m_scope->Description());
+    if (dynamic_cast<const Condition::Self*>(m_scope))
+        retval.scope_description = UserString("DESC_EFFECTS_GROUP_SELF_SCOPE");
+    else
+        retval.scope_description = str(format(UserString("DESC_EFFECTS_GROUP_SCOPE")) % m_scope->Description());
     if (dynamic_cast<const Condition::Self*>(m_activation) || dynamic_cast<const Condition::All*>(m_activation))
         retval.activation_description = UserString("DESC_EFFECTS_GROUP_ALWAYS_ACTIVE");
     else
