@@ -3,7 +3,7 @@
 #define _UniverseObject_h_
 
 #ifndef _Universe_h_
-#include <Universe.h>
+#include "Universe.h"
 #endif
 
 #ifndef BOOST_SIGNAL_HPP

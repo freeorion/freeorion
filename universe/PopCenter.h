@@ -7,7 +7,7 @@
 #endif
 
 #ifndef _Meter_h_
-#include <Meter.h>
+#include "Meter.h"
 #endif
 
 /** a population center decoration for a UniverseObject.  This is a decorator class.  That is, it is designed to 

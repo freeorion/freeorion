@@ -3,7 +3,7 @@
 #define _Meter_h_
 
 #ifndef _UniverseObject_h_
-#include <UniverseObject.h>
+#include "UniverseObject.h"
 #endif
 
 /** A Meter is a value with an associated maximum value.  A typical example is the population meter.  The max represents the max 
