@@ -1,0 +1,155 @@
+Español
+
+#Esto es el archivo español de Tabla de Cuerda para FreeOrion.
+#Traduce este archivo a otros idiomas.
+
+#################
+# Common        #
+#################
+
+#Cualquiera puede utilizar éstos para botones básicos.
+
+APPNAME
+FreeOrion
+
+BROWSE_BTN
+Hojee...
+
+OK
+Avance
+
+CANCEL
+Cancele
+
+LOAD
+Carga
+
+SAVE
+Salve
+
+
+#################
+# Intro Screen  #
+#################
+
+#Window title####
+
+INTRO_WINDOW_TITLE
+FreeOrion Menú Principal
+
+
+#Button names####
+
+INTRO_BTN_START_GAME
+Comienza el Juego Nuevo
+
+INTRO_BTN_QUICK_START
+Comienzo Rápido
+
+INTRO_BTN_EXIT
+Salida
+
+
+#Error Messages####
+
+ERR_UNABLE_TO_CONNECT
+Error connecting to server
+
+
+########################
+# Server Setup Screen  #
+########################
+
+#Window title####
+
+SCONNECT_WINDOW_TITLE
+Conectar de error al camarero
+
+
+#Static labels####
+
+SCONNECT_LBL_SERVER
+Camarero:
+
+
+#Button names####
+
+SCONNECT_BTN_SEARCH_MORE
+Busque Más...
+
+#Strings####
+
+SCONNECT_RETRIEVING
+Recuperar a Más Camareros...
+
+#NOTE: do not translate the "xx" in the following string
+SCONNECT_FOUND
+Encontró a xx camareros nuevos.
+
+SCONNECT_NOMORE
+No más camareros encontraron.
+
+
+########################
+# Galaxy Setup Screen  #
+########################
+
+#Window title####
+
+GSETUP_WINDOW_TITLE
+Arreglo de Galaxia
+
+#Strings
+GSETUP_GRAPHICS_FILES
+Gráfica Archiva
+
+
+#Button names####
+
+GSETUP_VERYSMALL
+Muy Pequeña (50 Estrellas)
+GSETUP_SMALL
+Pequeña (100 Estrellas)
+GSETUP_MEDIUM
+Medio (150 Estrellas)
+GSETUP_LARGE
+Grande (200 Estrellas)
+GSETUP_VERYLARGE
+Muy Grande (250 Estrellas)
+GSETUP_ENORMOUS
+Enorme (300 Estrellas)
+
+GSETUP_2ARM
+Espiral, 2-brazo
+GSETUP_3ARM
+Espiral, 3-brazo
+GSETUP_4ARM
+Espiral, 4-brazo
+GSETUP_CLUSTER
+Grupo
+GSETUP_FROMFILE
+Del archivo...
+
+#Error messages####
+
+GSETUP_ERR_NOEXIST
+no exista.
+
+GSETUP_ERR_INVALID_GRAPHICS
+no es un archivo válido de la gráfica.
+
+
+###########################
+# Empire Selection Screen #
+###########################
+
+#Window Title####
+
+ESELECT_WINDOW_TITLE
+Selección del Imperio
+
+
+#Static text####
+
+ESELECT_EMPIRE_NAME
+Nombre:
