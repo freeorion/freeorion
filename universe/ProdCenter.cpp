@@ -78,27 +78,31 @@ ProdCenter::~ProdCenter()
 
 double ProdCenter::FarmingPoints() const
 {
-    return m_workforce * (ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][0] + 
-                          ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][0]) 
-    + ProductionDataTables()["EnviromentProductionMod"][m_planet_type][0];
+    return  m_workforce 
+          *(  ((m_primary  ==FOCUS_UNKNOWN)?0:ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][0]) 
+            + ((m_secondary==FOCUS_UNKNOWN)?0:ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][0])) 
+          + ProductionDataTables()["EnviromentProductionMod"][m_planet_type][0];
 }
 
 double ProdCenter::IndustryPoints() const
 {
-    return m_workforce * (ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][2] + 
-                          ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][2]);
+    return  m_workforce 
+          *(  ((m_primary  ==FOCUS_UNKNOWN)?0:ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][2] )
+            + ((m_secondary==FOCUS_UNKNOWN)?0:ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][2]));
 }
 
 double ProdCenter::MiningPoints() const
 {
-    return m_workforce * (ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][1] + 
-                          ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][1]);
+    return  m_workforce 
+          *(  ((m_primary  ==FOCUS_UNKNOWN)?0:ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][1]) 
+            + ((m_secondary==FOCUS_UNKNOWN)?0:ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][1]));
 }
 
 double ProdCenter::ResearchPoints() const
 {
-    return m_workforce * (ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][3] + 
-                          ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][3]);
+    return  m_workforce 
+          *(  ((m_primary  ==FOCUS_UNKNOWN)?0:ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][3])
+            + ((m_secondary==FOCUS_UNKNOWN)?0:ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][3]));
 }
 
 GG::XMLElement ProdCenter::XMLEncode(UniverseObject::Visibility vis) const
