@@ -453,6 +453,7 @@ void FleetDetailPanel::SetFleet(Fleet* fleet)
             }
         } else {
             m_panel_empty_sig(m_fleet);
+            return; // return immediately, since the signal above may invalidate this
         }
         *m_destination_text << DestinationText();
         if (fleet != old_fleet)
@@ -613,6 +614,7 @@ FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint3
     AttachSignalChildren();
     SetText(TitleText());
     GG::Connect(m_fleet_panel->NeedNewFleetSignal(), &FleetDetailWnd::PanelNeedsNewFleet, this);
+    EnableChildClipping(false);
 }
 
 FleetDetailWnd::FleetDetailWnd(const GG::XMLElement& elem) : 
@@ -750,6 +752,7 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets)
     // everyone seems to hate the rollover effect, so it's disabled here, but all the other code for it is still in place
     //GG::Connect(m_fleets_lb->BrowsedSignal(), &FleetWnd::FleetBrowsed, this);
 
+    GG::Connect(m_fleet_detail_panel->PanelEmptySignal(), &FleetWnd::FleetPanelEmpty, this);
     GG::Connect(m_fleets_lb->SelChangedSignal(), &FleetWnd::FleetSelectionChanged, this);
     GG::Connect(m_fleets_lb->RightClickedSignal(), &FleetWnd::FleetRightClicked, this);
     GG::Connect(m_fleets_lb->DoubleClickedSignal(), &FleetWnd::FleetDoubleClicked, this);
@@ -1005,6 +1008,11 @@ void FleetWnd::DeleteFleet(Fleet* fleet)
             break;
         }
     }
+}
+
+void FleetWnd::FleetPanelEmpty(Fleet* fleet)
+{
+    RemoveEmptyFleets();
 }
 
 Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)

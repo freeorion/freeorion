@@ -190,6 +190,7 @@ private:
     void        FleetDetailWndClosing(FleetDetailWnd* wnd);
     Fleet*      FleetInRow(int idx) const;
     std::string TitleText() const;
+    void        FleetPanelEmpty(Fleet* fleet);
     void        DeleteFleet(Fleet* fleet);
     Fleet*      CreateNewFleetFromDrop(int ship_id);
     void        RemoveEmptyFleets();
