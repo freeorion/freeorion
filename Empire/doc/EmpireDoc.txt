@@ -77,6 +77,9 @@
                 Added overload to Empire::XMLEncode() method which encodes an
                 empire from the perspective of another.  (Used for turn updates
                 to transmit info which the client has access to).
+  - 7-12-2003   Changed the empire update methods, removed the diffing and merging
+                 since this is now being done in a centralized place.  Added
+                 fleet ID ranges to the empire object.
 */
 
 
