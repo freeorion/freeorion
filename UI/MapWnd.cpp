@@ -411,7 +411,7 @@ void MapWnd::InitTurn(int turn_number)
     // are there any sitreps to show?
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->PlayerID() );
     m_sitrep_panel->Update();
-    if ( empire->NumSitReps( ) )
+    if ( empire->NumSitRepEntries( ) )
         m_sitrep_panel->Show();
     else
         m_sitrep_panel->Hide();
