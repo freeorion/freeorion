@@ -4,6 +4,9 @@
 #include "../client/ClientApp.h"
 #include "net2.h"
 #include "fastevents.h"
+#ifdef FREEORION_BUILD_HUMAN
+#include "../UI/MultiplayerLobbyWnd.h"
+#endif
 
 #include <log4cpp/Category.hh>
 
@@ -43,7 +46,7 @@ std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
 
    // set listen flag and initialize UDP socket
    m_listening_on_LAN = true;
-   int socket = NET2_UDPAcceptOn(NetworkCore::FIND_PORT, NetworkCore::FIND_SERVER_PACKET_MSG.size());
+   int socket = NET2_UDPAcceptOn(NetworkCore::SERVER_FIND_RESPONSE_PORT, NetworkCore::SERVER_FIND_QUERY_MSG.size());
    if (socket == -1) {
       const char* err_msg = NET2_GetError();
       logger.errorStream() << "ClientNetworkCore::DiscoverLANServers : Call to NET2_UDPAcceptOn() "
@@ -52,7 +55,7 @@ std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
       // broadcast and poll for timeout milliseconds
       std::vector<SDL_Event> ignored_events; // keep ignored events here and repush them after timeout
       IPaddress broadcast_address;
-      if (NET2_ResolveHost(&broadcast_address, "255.255.255.255", NetworkCore::FIND_PORT) == -1 ||
+      if (NET2_ResolveHost(&broadcast_address, "255.255.255.255", NetworkCore::SERVER_FIND_LISTEN_PORT) == -1 ||
           NET2_UDPSend(&broadcast_address, "255.255.255.255", 15) == -1) {
          const char* err_msg = NET2_GetError();
          logger.errorStream() << "ClientNetworkCore::DiscoverLANServers : Call to NET2_ResolveHost() "
@@ -68,8 +71,8 @@ std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
 
          // if it has been about a second since the last broadcast, do it again
          if (last_second / 1000 != last_second) {
-            if (NET2_UDPSend(&broadcast_address, const_cast<char*>(NetworkCore::FIND_SERVER_PACKET_MSG.c_str()), 
-                             NetworkCore::FIND_SERVER_PACKET_MSG.size()) == -1) {
+            if (NET2_UDPSend(&broadcast_address, const_cast<char*>(NetworkCore::SERVER_FIND_QUERY_MSG.c_str()), 
+                             NetworkCore::SERVER_FIND_QUERY_MSG.size()) == -1) {
                const char* err_msg = NET2_GetError();
                logger.errorStream() << "ClientNetworkCore::DiscoverLANServers : Call to NET2_UDPSend() "
                   "failed; SDL_net2 error: \"" << (err_msg ? err_msg : "[unknown]") << "\"";
@@ -77,7 +80,7 @@ std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
             last_second = time / 1000;
          }
 
-         // handle events, picking the ones out that are incoming UDP packets
+         // handle events, picking out the ones that are incoming UDP packets
          if (FE_PollEvent(&event)) {
             if (event.type == SDL_USEREVENT && NET2_GetEventType(&event) == NET2_UDPRECEIVEEVENT &&
                 NET2_GetSocket(&event) == socket) {
@@ -187,6 +190,16 @@ void ClientNetworkCore::DispatchMessage(const Message& msg, int socket)
   switch (msg.Module()) {
    case Message::CORE:
       ClientApp::HandleMessage(msg);
+      break;
+   case Message::CLIENT_LOBBY_MODULE:
+       if (!ClientApp::MultiplayerLobby()) {
+           logger.errorStream()<< "ClientNetworkCore::DispatchMessage : Attempted to pass message to client multiplayer lobby module when "
+               "there is no current lobby.";
+       } else {
+#ifdef FREEORION_BUILD_HUMAN
+           ClientApp::MultiplayerLobby()->HandleMessage(msg);
+#endif
+       }
       break;
    case Message::CLIENT_UNIVERSE_MODULE:
 //ClientApp::ClientUniverse().HandleMessage(msg);

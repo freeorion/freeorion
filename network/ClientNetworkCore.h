@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _ClientNetworkCore_h_
 #define _ClientNetworkCore_h_
 
