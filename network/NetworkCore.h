@@ -8,7 +8,7 @@
 #endif
 
 #ifndef _SDLnet_h
-#include "../SDL_net2/net2.h"
+#include "net2.h"
 #endif
 
 /** the states the server may be in at various points during its execution*/

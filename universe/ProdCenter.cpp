@@ -1,5 +1,5 @@
 #include "ProdCenter.h"
-#include "../GG/XML/XMLDoc.h"
+#include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;

@@ -1,7 +1,7 @@
 #include "AIClientApp.h"
 
-#include "../../SDL_net2/fastevents.h"
-#include "../../SDL_net2/net2.h"
+#include "fastevents.h"
+#include "net2.h"
 #include "../../network/Message.h"
 
 #include <boost/lexical_cast.hpp>

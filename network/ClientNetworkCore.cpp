@@ -2,8 +2,8 @@
 
 #include "Message.h"
 #include "../client/ClientApp.h"
-#include "../SDL_net2/net2.h"
-#include "../SDL_net2/fastevents.h"
+#include "net2.h"
+#include "fastevents.h"
 
 #include <log4cpp/Category.hh>
 

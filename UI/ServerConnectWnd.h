@@ -10,19 +10,19 @@
 #endif
 
 #ifndef _GGWnd_h_
-#include "../GG/GGWnd.h"
+#include "GGWnd.h"
 #endif
 
 #ifndef _GGTextControl_h_
-#include "../GG/GGTextControl.h"
+#include "GGTextControl.h"
 #endif
 
 #ifndef _GGButton_h_
-#include "../GG/GGButton.h"
+#include "GGButton.h"
 #endif
 
 #ifndef _GGDropDownList_h_
-#include "../GG/GGDropDownList.h"
+#include "GGDropDownList.h"
 #endif
 
 #ifndef _ClientUI_h_

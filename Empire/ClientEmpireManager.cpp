@@ -4,7 +4,7 @@
 #endif
 
 #ifndef _XMLObjectFactory_h_
-#include "../GG/XML/XMLObjectFactory.h"
+#include "XMLObjectFactory.h"
 #endif
 
 #ifndef _SitRepEntry_h_

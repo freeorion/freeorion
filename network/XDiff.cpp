@@ -28,7 +28,7 @@
 #include "XLut.hpp"
 #include "XParser.hpp"
 
-#include "../GG/XML/XMLDoc.h"
+#include "XMLDoc.h"
 
 #include <ctime>
 #include <sstream>

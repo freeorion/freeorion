@@ -1,8 +1,8 @@
 #include "ServerApp.h"
 
-#include "../SDL_net2/fastevents.h"
+#include "fastevents.h"
 #include "../network/Message.h"
-#include "../GG/XML/XMLDoc.h"
+#include "XMLDoc.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>

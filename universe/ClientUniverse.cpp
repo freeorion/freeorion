@@ -1,6 +1,6 @@
 #include "ClientUniverse.h"
 #include "UniverseObject.h"
-#include "../GG/XML/XMLDoc.h"
+#include "XMLDoc.h"
 
 #include <stdexcept>
 #include <cmath>

@@ -11,11 +11,11 @@
 #endif
 
 #ifndef _GGClr_h_
-#include "../GG/GGClr.h"
+#include "GGClr.h"
 #endif
 
 #ifndef _XMLDoc_h_
-#include "../GG/XML/XMLDoc.h"
+#include "XMLDoc.h"
 #endif
 
 

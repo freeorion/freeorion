@@ -2,7 +2,7 @@
 #define _Message_h_
 
 #ifndef   _XMLDoc_h_
-#include "../GG/XML/XMLDoc.h"
+#include "XMLDoc.h"
 #endif
 
 #ifndef BOOST_SHARED_PTR_HPP_INCLUDED

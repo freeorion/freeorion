@@ -2,7 +2,7 @@
 #include "UniverseObject.h"
 #include "Fleet.h"
 #include "Planet.h"
-#include "../GG/XML/XMLDoc.h"
+#include "XMLDoc.h"
 #include "../server/ServerApp.h"
 
 #include <log4cpp/Appender.hh>

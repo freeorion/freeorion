@@ -3,7 +3,7 @@
 
 
 #ifndef _XMLDoc_h_
-#include "../GG/XML/XMLDoc.h"
+#include "XMLDoc.h"
 #endif
 
 #include <string>
@@ -12,7 +12,7 @@
    
    
 #ifndef _XMLObjectFactory_h_
-#include "../GG/XML/XMLObjectFactory.h"
+#include "XMLObjectFactory.h"
 #endif
 
 enum BuildSitRepEntryType 

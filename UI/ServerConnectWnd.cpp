@@ -3,19 +3,15 @@
 #endif
 
 #ifndef _GGDrawUtil_h_
-#include "../GG/GGDrawUtil.h"
+#include "GGDrawUtil.h"
 #endif
 
 #ifndef _GGControl_h_
-#include "../GG/GGControl.h"
-#endif
-
-#ifndef _GGMessageDlg_h_
-#include "../GG/dialogs/GGMessageDlg.h"
+#include "GGControl.h"
 #endif
 
 #ifndef _GGClr_h_
-#include "../GG/GGClr.h"
+#include "GGClr.h"
 #endif
 
 //tsev{
