@@ -72,6 +72,9 @@ Rename
 ENTER_NEW_NAME
 Enter new name
 
+UNKNOWN_VALUE_SYMBOL
+?
+
 
 #################
 # File Dialog   #
@@ -427,6 +430,9 @@ Moving to %1%, ETA %2%
 
 FW_SHIP_CLASS
 Ship Class 
+
+FW_UNKNOWN_DESIGN_NAME
+Unknown
 
 # used to name new fleets when they are created
 FW_NEW_FLEET_NAME
