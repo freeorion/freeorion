@@ -5,6 +5,7 @@
 #include "GGDrawUtil.h"
 #include "GGStaticGraphic.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <boost/format.hpp>
 
@@ -163,8 +164,8 @@ struct CombatInfoRow : public GG::ListBox::Row
         data_type = "CombatInfo";
     }
 
-    void Update(const CombatUpdateMessage &combat_info) {static_cast<CombatInfoControl*>(operator[](0))->Update(combat_info);}
-    const std::string& System() const {return static_cast<CombatInfoControl*>(operator[](0))->System();}
+    void Update(const CombatUpdateMessage &combat_info) {boost::static_pointer_cast<CombatInfoControl>(operator[](0))->Update(combat_info);}
+    const std::string& System() const {return boost::static_pointer_cast<CombatInfoControl>(operator[](0))->System();}
 
 };
 

@@ -10,6 +10,20 @@
 #include "GGSpin.h"
 #endif
 
+#ifndef _HumanClientApp_h_
+#include "../client/human/HumanClientApp.h"
+#endif
+
+#ifndef _OptionsDB_h_
+#include "../util/OptionsDB.h"
+#endif
+
+
+namespace detail {
+    void PlayValueChangedSound(...);
+}
+
+
 /** a FreeOrion Spin control */
 template <class T> class CUISpin : public GG::Spin<T>
 {
@@ -22,6 +36,7 @@ public:
                     ClientUI::TEXT_COLOR, GG::CLR_ZERO, new CUIArrowButton(0, 0, 1, 1, SHAPE_UP, ClientUI::DROP_DOWN_LIST_ARROW_COLOR), 
                     new CUIArrowButton(0, 0, 1, 1, SHAPE_DOWN, ClientUI::DROP_DOWN_LIST_ARROW_COLOR))
     {
+        GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound, -1);
     }
 
     /** ctor that constructs an CUISpin object from an XMLElement. \throw std::invalid_argument May throw 
@@ -31,6 +46,8 @@ public:
     {
         if (elem.Tag() != XMLTypeName())
             throw std::invalid_argument("Attempted to construct a " + XMLTypeName() + " from an XMLElement that had a tag other than \"" + XMLTypeName() + "\"");
+
+        GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound, -1);
     }
     //@}
 
@@ -92,6 +109,18 @@ public:
         return retval;
     }
 };
+
+namespace detail {
+    inline void PlayValueChangedSound(...)
+    {
+        std::string sound_dir = GetOptionsDB().Get<std::string>("settings-dir");
+        if (!sound_dir.empty() && sound_dir[sound_dir.size() - 1] != '/')
+            sound_dir += '/';
+        sound_dir += "data/sound/";
+        if (GetOptionsDB().Get<bool>("UI.sound.enabled"))
+            HumanClientApp::GetApp()->PlaySound(sound_dir + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
+    }
+}
 
 inline std::pair<std::string, std::string> CUISpinRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}

@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "GGDrawUtil.h"
 #include "LinkText.h"
+#include "../util/MultiplayerCommon.h"
 
 namespace {
     const int    SITREP_LB_MARGIN_X = 10;
@@ -23,6 +24,8 @@ SitRepPanel::SitRepPanel(int x, int y, int w, int h) :
     m_title(new GG::TextControl(0, SITREP_TITLE_MARGIN_Y, w, static_cast<int>(ClientUI::PTS * 1.75 + 4), ClientUI::String("SITREP_PANEL_TITLE"), 
                                 ClientUI::FONT, static_cast<int>(ClientUI::PTS * 1.75), ClientUI::TEXT_COLOR, GG::TF_CENTER | GG::TF_VCENTER))
 {
+    TempUISoundDisabler sound_disabler;
+
     AttachChild(m_title);
 
     m_sitreps_lb = new CUIListBox(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y, w - (SITREP_LB_MARGIN_X * 2), SITREP_LB_HEIGHT);

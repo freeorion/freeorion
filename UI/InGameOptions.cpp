@@ -6,8 +6,8 @@
 #include "GGButton.h"
 #include "GGClr.h"
 #include "GGDrawUtil.h"
-#include "dialogs/GGFileDlg.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 
 #include <boost/filesystem/operations.hpp>
@@ -95,8 +95,7 @@ void InGameOptions::Save()
     save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("GAME_MENU_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));
 
     try {
-        GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", true, false, save_file_types, 
-                        ClientUI::FONT, ClientUI::PTS, ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
+        FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", true, false, save_file_types);
         dlg.Run();
         std::string filename;
         if (!dlg.Result().empty()) {
@@ -109,11 +108,11 @@ void InGameOptions::Save()
             if (save_succeeded) {
                 CloseClicked();
             } else {
-                ClientUI::MessageBox("Could not save game as \"" + filename + "\".");
+                ClientUI::MessageBox("Could not save game as \"" + filename + "\".", true);
             }
         }
-    } catch (const GG::FileDlg::InitialDirectoryDoesNotExistException& e) {
-        ClientUI::MessageBox(e.Message());
+    } catch (const FileDlg::InitialDirectoryDoesNotExistException& e) {
+        ClientUI::MessageBox(e.Message(), true);
     }
 }
 

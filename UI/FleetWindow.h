@@ -74,8 +74,8 @@ private:
 
     void        ShipSelectionChanged(const std::set<int>& rows);
     void        ShipBrowsed(int row_idx);
-    void        ShipDroppedIntoList(int row_idx, const GG::ListBox::Row* row);
-    void        ShipRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt);
+    void        ShipDroppedIntoList(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
+    void        ShipRightClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt);
     std::string DestinationText() const;
     std::string ShipStatusText(int ship_id) const;
 
@@ -182,10 +182,10 @@ private:
     void        DetachSignalChildren();
     void        FleetBrowsed(int row_idx);
     void        FleetSelectionChanged(const std::set<int>& rows);
-    void        FleetRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt);
-    void        FleetDoubleClicked(int row_idx, const GG::ListBox::Row* row);
+    void        FleetRightClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt);
+    void        FleetDoubleClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void        FleetDeleted(int row_idx);
-    void        ObjectDroppedIntoList(int row_idx, const GG::ListBox::Row* row);
+    void        ObjectDroppedIntoList(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void        NewFleetButtonClicked();
     Fleet*      NewFleetWndReceivedShip(FleetDetailWnd* fleet_wnd, int ship_id);
     void        FleetDetailWndClosing(FleetDetailWnd* wnd);

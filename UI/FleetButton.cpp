@@ -6,6 +6,7 @@
 #include "GGDrawUtil.h"
 #include "../client/human/HumanClientApp.h"
 #include "MapWnd.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/System.h"
 
@@ -13,6 +14,11 @@
 
 
 namespace {
+    bool PlaySounds()
+    {
+        return GetOptionsDB().Get<bool>("UI.sound.enabled");
+    }
+
     bool temp_header_bool = RecordHeaderFile(FleetButtonRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
@@ -137,6 +143,15 @@ GG::XMLElement FleetButton::XMLEncode() const
     return retval;
 }
 
+void FleetButton::MouseHere(const GG::Pt& pt, Uint32 keys)
+{
+    if (!Disabled()) {
+        if (State() != BN_ROLLOVER && PlaySounds())
+            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"));
+        SetState(BN_ROLLOVER);
+    }
+}
+
 void FleetButton::RenderUnpressed()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
@@ -185,6 +200,9 @@ void FleetButton::Clicked()
             it->second->Close();
         }
     }
+
+    if (PlaySounds())
+        HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"));
 
     GG::Pt ul = UpperLeft();
     bool read_only = *fleets[0]->Owners().begin() != HumanClientApp::GetApp()->EmpireID() || 

@@ -66,7 +66,7 @@ void StringTable::Load()
     try {
         ifs.open(m_filename.c_str());    //open the file
     } catch (const exception& e) {
-        ClientUI::MessageBox("Error opening StringTable file: \"" + m_filename + "\"");
+        ClientUI::MessageBox("Error opening StringTable file: \"" + m_filename + "\"", true);
         return;        // handle exception by showing error msg and then get out!
     }
 

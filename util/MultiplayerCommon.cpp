@@ -1,10 +1,11 @@
 #include "MultiplayerCommon.h"
 
 #include "md5.h"
+#include "OptionsDB.h"
+
+#include <log4cpp/Priority.hh>
 
 #include <fstream>
-
-#include "OptionsDB.h"
 
 namespace {
     // command-line options
@@ -40,6 +41,26 @@ const std::vector<GG::Clr>& EmpireColors()
         }
     }
     return colors;
+}
+
+int PriorityValue(const std::string& name)
+{
+    static std::map<std::string, int> priority_map;
+    static bool init = false;
+    if (!init) {
+        using namespace log4cpp;
+        priority_map["FATAL"] = Priority::FATAL;
+        priority_map["EMERG"] = Priority::EMERG;
+        priority_map["ALERT"] = Priority::ALERT;
+        priority_map["CRIT"] = Priority::CRIT;
+        priority_map["ERROR"] = Priority::ERROR;
+        priority_map["WARN"] = Priority::WARN;
+        priority_map["NOTICE"] = Priority::NOTICE;
+        priority_map["INFO"] = Priority::INFO;
+        priority_map["DEBUG"] = Priority::DEBUG;
+        priority_map["NOTSET"] = Priority::NOTSET;
+    }
+    return priority_map[name];
 }
 
 const std::vector<std::string>& VersionSensitiveSettingsFiles()

@@ -19,6 +19,7 @@
 #include "ToolContainer.h"
 #include "TurnProgressWnd.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 
 #include <log4cpp/Appender.hh>
@@ -112,8 +113,22 @@ namespace {
         db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(480, 1536));
         db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
 
-        db.Add<std::string>("UI.art-dir", "Sets UI art resource directory.", "default/data/art/");
-        db.Add<std::string>("UI.sound-dir", "Sets UI sound and music resource directory.", "default/data/sound/");
+        db.Add<std::string>("art-dir", "Sets UI art resource directory.", "default/data/art/");
+        db.Add<std::string>("sound-dir", "Sets UI sound and music resource directory.", "default/data/sound/");
+        db.Add("UI.sound.enabled", "Toggles UI sound effects on or off.", true, Validator<bool>());
+        db.Add<std::string>("UI.sound.button-rollover", "The sound file played when the mouse moves over a button.", "button_rollover.wav");
+        db.Add<std::string>("UI.sound.button-click", "The sound file played when a button is clicked.", "button_click.wav");
+        db.Add<std::string>("UI.sound.turn-button-click", "The sound file played when the turn button is clicked.", "turn_button_click.wav");
+        db.Add<std::string>("UI.sound.list-select", "The sound file played when a listbox or drop-down list item is selected.", "list_select.wav");
+        db.Add<std::string>("UI.sound.item-drop", "The sound file played when an item is dropped into a listbox.", "item_drop.wav");
+        db.Add<std::string>("UI.sound.text-typing", "The sound file played when the user types text.", "text_typing.wav");
+        db.Add<std::string>("UI.sound.window-maximize", "The sound file played when a window is maximized.", "window_maximize.wav");
+        db.Add<std::string>("UI.sound.window-minimize", "The sound file played when a window is minimized.", "window_minimize.wav");
+        db.Add<std::string>("UI.sound.window-close", "The sound file played when a window is closed.", "window_close.wav");
+        db.Add<std::string>("UI.sound.alert", "The sound file played when an error or illegal action occurs.", "alert.wav");
+        db.Add<std::string>("UI.sound.planet-button-click", "The sound file played when a planet button is clicked.", "planet_button_click.wav");
+        db.Add<std::string>("UI.sound.fleet-button-rollover", "The sound file played when mouse moves over a fleet button.", "fleet_button_rollover.wav");
+        db.Add<std::string>("UI.sound.fleet-button-click", "The sound file played when a fleet button is clicked.", "fleet_button_click.wav");
         db.Add<std::string>("UI.font", "Sets UI font resource file.", "Vera.ttf");
         db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
         db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "Vera.ttf");
@@ -314,43 +329,43 @@ ClientUI::ClientUI() :
                            GetOptionsDB().Get<int>("UI.wnd-border-color.alpha"));
 
     CTRL_COLOR = Clr(GetOptionsDB().Get<int>("UI.ctrl-color.red"),
-		     GetOptionsDB().Get<int>("UI.ctrl-color.green"),
-		     GetOptionsDB().Get<int>("UI.ctrl-color.blue"),
-		     GetOptionsDB().Get<int>("UI.ctrl-color.alpha"));
+                     GetOptionsDB().Get<int>("UI.ctrl-color.green"),
+                     GetOptionsDB().Get<int>("UI.ctrl-color.blue"),
+                     GetOptionsDB().Get<int>("UI.ctrl-color.alpha"));
 
     WND_INNER_BORDER_COLOR = Clr(GetOptionsDB().Get<int>("UI.wnd-inner-border-color.red"),
-				 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.green"),
-				 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.blue"),
-				 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.alpha"));
+                                 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.green"),
+                                 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.blue"),
+                                 GetOptionsDB().Get<int>("UI.wnd-inner-border-color.alpha"));
 
     WND_OUTER_BORDER_COLOR = Clr(GetOptionsDB().Get<int>("UI.wnd-outer-border-color.red"),
-				 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.green"),
-				 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.blue"),
-				 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.alpha"));
+                                 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.green"),
+                                 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.blue"),
+                                 GetOptionsDB().Get<int>("UI.wnd-outer-border-color.alpha"));
 
     TEXT_COLOR = Clr(GetOptionsDB().Get<int>("UI.text-color.red"),
-		     GetOptionsDB().Get<int>("UI.text-color.green"),
-		     GetOptionsDB().Get<int>("UI.text-color.blue"),
-		     GetOptionsDB().Get<int>("UI.text-color.alpha"));
+                     GetOptionsDB().Get<int>("UI.text-color.green"),
+                     GetOptionsDB().Get<int>("UI.text-color.blue"),
+                     GetOptionsDB().Get<int>("UI.text-color.alpha"));
 
     WND_COLOR = Clr(GetOptionsDB().Get<int>("UI.wnd-color.red"),
-		    GetOptionsDB().Get<int>("UI.wnd-color.green"),
-		    GetOptionsDB().Get<int>("UI.wnd-color.blue"),
-		    GetOptionsDB().Get<int>("UI.wnd-color.alpha"));
+                    GetOptionsDB().Get<int>("UI.wnd-color.green"),
+                    GetOptionsDB().Get<int>("UI.wnd-color.blue"),
+                    GetOptionsDB().Get<int>("UI.wnd-color.alpha"));
 
     PTS       = GetOptionsDB().Get<int>("UI.font-size");
     TITLE_PTS = GetOptionsDB().Get<int>("UI.title-font-size");
     DIR       = GetOptionsDB().Get<std::string>("settings-dir");
     if (!DIR.empty() && DIR[DIR.size() - 1] != '/')
-	DIR += '/';
+        DIR += '/';
     FONT      = GetOptionsDB().Get<std::string>("UI.font");
     TITLE_FONT= GetOptionsDB().Get<std::string>("UI.title-font");
-    ART_DIR   = GetOptionsDB().Get<std::string>("UI.art-dir");
+    ART_DIR   = GetOptionsDB().Get<std::string>("art-dir");
     if (!ART_DIR.empty() && ART_DIR[ART_DIR.size() - 1] != '/')
-	ART_DIR += '/';
-    SOUND_DIR   = GetOptionsDB().Get<std::string>("UI.sound-dir");
+        ART_DIR += '/';
+    SOUND_DIR   = GetOptionsDB().Get<std::string>("sound-dir");
     if (!SOUND_DIR.empty() && SOUND_DIR[SOUND_DIR.size() - 1] != '/')
-	SOUND_DIR += '/';
+        SOUND_DIR += '/';
 
     //call initialize with stringtable filename
     Initialize(DIR + GetOptionsDB().Get<std::string>("UI.stringtable-filename"));
@@ -665,11 +680,13 @@ void ClientUI::ScreenLoad()
   SwitchState(STATE_LOAD); // set to turn start
 }
 
-void ClientUI::MessageBox(const std::string& message)
+void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)
 {
     GG::ThreeButtonDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR, WND_BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
-                           new CUIButton((320-75)/2, 170, 75, "OK"));
-    dlg.Run();    
+                           new CUIButton((320-75)/2, 170, 75, String("OK")));
+    if (play_alert_sound && GetOptionsDB().Get<bool>("UI.sound.enabled"))
+        HumanClientApp::GetApp()->PlaySound(SoundDir() + "alert.wav");
+    dlg.Run();
 }
 
 void ClientUI::LogMessage(const std::string& msg)
@@ -732,6 +749,18 @@ boost::shared_ptr<GG::Texture> ClientUI::GetNumberedTexture(const std::string& d
     std::string filename = ClientUI::ART_DIR + "stars/" + 
         image_names[type].first + lexical_cast<string>(star_variant + 1) + ".png";
     return HumanClientApp::GetApp()->GetTexture(filename);
+}
+
+const std::string& ClientUI::SoundDir()
+{
+    static std::string retval;
+    if (retval == "") {
+        retval = GetOptionsDB().Get<std::string>("settings-dir");
+        if (!retval.empty() && retval[retval.size() - 1] != '/')
+            retval += '/';
+        retval += "data/sound/";
+    }
+    return retval;
 }
 
 ////////////////////////////////////////////////////
@@ -799,4 +828,17 @@ void ClientUI::SetCursor( Cursor new_cursor_type )
     {
         SDL_FreeCursor( old_cursor );
     }
+}
+
+TempUISoundDisabler::TempUISoundDisabler() :
+    m_was_enabled(GetOptionsDB().Get<bool>("UI.sound.enabled"))
+{
+    if (m_was_enabled)
+        GetOptionsDB().Set("UI.sound.enabled", false);
+}
+
+TempUISoundDisabler::~TempUISoundDisabler()
+{
+    if (m_was_enabled)
+        GetOptionsDB().Set("UI.sound.enabled", true);
 }

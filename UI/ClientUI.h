@@ -169,8 +169,9 @@ public:
     
     static ClientUI*    GetClientUI() {return s_the_UI;}   //!< returns a pointer to the singleton ClientUI class
 
-    //! @param message The message to display
-    static void MessageBox(const std::string& message);    //!< shows a message dialog box with the given message     
+    /** shows a message dialog box with the given message; if \a play_alert_sound is true, and UI sound effects are
+        currently enabled, the default alert sound will be played as the message box opens */
+    static void MessageBox(const std::string& message, bool play_alert_sound = false);
 
     static void LogMessage(const std::string& msg); //!<sends a message to the logger
     static const std::string&  String(const std::string& index);    //!< Returns a lookup from the string table
@@ -187,6 +188,9 @@ public:
         ... for an example of how to use this function. */
     static boost::shared_ptr<GG::Texture> GetNumberedTexture(const std::string& dir_name, const std::map<int, std::string>& types_to_names, 
                                                              int type, int hash_key);
+
+    /** returns the directory in which sound files can be found */
+    static const std::string& SoundDir();
 
     //! \name Static Config Data
     //!@{
@@ -264,6 +268,20 @@ private:
     static log4cpp::Category& s_logger; //!< log4cpp logging category
     static ClientUI* s_the_UI;          //!< pointer to the one and only ClientUI object
 };
+
+/** temporarily disables UI sound effects, saving the old state (on or off), for later restoration upon object destruction.  TempSoundDisablers
+    should be created at the beginning of any function in which Controls that emit sounds are to be programmatically altered, e.g. the
+    ctor of a window class that contains a ListBox with an initially-selected item.  If this were not done, the list-select sound would be
+    played when the window was constructed, which would make the sound seem to be malfunctioning. */
+struct TempUISoundDisabler
+{
+    TempUISoundDisabler();
+    ~TempUISoundDisabler();
+
+private:
+    bool m_was_enabled;
+};
+
 
 inline std::pair<std::string, std::string> ClientUIRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}

@@ -10,6 +10,9 @@
 /** The colors that are available for use for empires in the game. */
 const std::vector<GG::Clr>& EmpireColors();
 
+/** Returns the integer priority level that should be passed to log4cpp for a given priority name string. */
+int PriorityValue(const std::string& name);
+
 /** Returns a vector of the names of all settings files that must be the same between the server and clients. */
 const std::vector<std::string>& VersionSensitiveSettingsFiles();
 

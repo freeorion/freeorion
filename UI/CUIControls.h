@@ -23,6 +23,10 @@
 #include "GGEdit.h"
 #endif
 
+#ifndef _GGFileDlg_h_
+#include "GGFileDlg.h"
+#endif
+
 #ifndef _GGMenu_h_
 #include "GGMenu.h"
 #endif
@@ -62,7 +66,11 @@ public:
     int         BorderThickness() const {return m_border_thick;} ///< returns the width used to render the border of the button
 
     virtual bool            InWindow(const GG::Pt& pt) const;
-    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a Button object
+    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIButton object
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual void   MouseHere(const GG::Pt& pt, Uint32 keys);
     //@}
 
 protected:
@@ -78,6 +86,23 @@ private:
 };
 
 
+/** a FreeOrion next-turn button control */
+class CUITurnButton : public CUIButton
+{
+public:
+    /** \name Structors */ //@{
+    CUITurnButton(int x, int y, int w, const std::string& str, const std::string& font_filename = ClientUI::FONT, int pts = ClientUI::PTS, 
+                  GG::Clr color = ClientUI::BUTTON_COLOR, GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int thick = 1, 
+                  GG::Clr text_color = ClientUI::TEXT_COLOR, Uint32 flags = GG::Wnd::CLICKABLE); ///< basic ctor
+    CUITurnButton(const GG::XMLElement& elem); ///< ctor that constructs a CUITurnButton object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUITurnButton object
+    //@}
+
+    /** \name Accessors */ //@{
+    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUITurnButton object
+    //@}
+};
+
+
 /** a FreeOrion triangular arrow button */
 class CUIArrowButton : public GG::Button
 {
@@ -90,6 +115,10 @@ public:
     /** \name Accessors */ //@{
     virtual bool            InWindow(const GG::Pt& pt) const;
     virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIScroll::ScrollTab object
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual void   MouseHere(const GG::Pt& pt, Uint32 keys);
     //@}
 
 protected:
@@ -434,6 +463,16 @@ private:
     void SelectionChanged(int i);
 
     mutable ColorChangedSignalType color_changed_sig;
+};
+
+/** A GG file dialog in the FreeOrion style. */
+class FileDlg : public GG::FileDlg
+{
+public:
+    /** \name Structors */ //@{
+    FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
+            const std::vector<std::pair<std::string, std::string> >& types);
+    //@}
 };
 
 inline std::pair<std::string, std::string> CUIControlsRevision()

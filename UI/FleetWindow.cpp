@@ -8,6 +8,7 @@
 #include "GGStaticGraphic.h"
 #include "GGTextControl.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
@@ -520,7 +521,7 @@ void FleetDetailPanel::UniverseObjectDelete(const UniverseObject *obj)
 void FleetDetailPanel::ShipSelectionChanged(const std::set<int>& rows)
 {
     for (int i = 0; i < m_ships_lb->NumRows(); ++i) {
-        ShipDataPanel* ship_panel = static_cast<ShipDataPanel*>((*m_ships_lb->GetRowPtr(i))[0]);
+        boost::shared_ptr<ShipDataPanel> ship_panel = boost::static_pointer_cast<ShipDataPanel>((*m_ships_lb->GetRowPtr(i))[0]);
         ship_panel->Select(rows.find(i) != rows.end());
     }
 }
@@ -534,9 +535,9 @@ void FleetDetailPanel::ShipBrowsed(int row_idx)
     }
 }
 
-void FleetDetailPanel::ShipDroppedIntoList(int row_idx, const GG::ListBox::Row* row)
+void FleetDetailPanel::ShipDroppedIntoList(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
 {
-    const ShipRow* ship_row = dynamic_cast<const ShipRow*>(row);
+    boost::shared_ptr<ShipRow> ship_row = boost::dynamic_pointer_cast<ShipRow>(row);
     int ship_id = ship_row->ShipID();
     if (!m_fleet) {
         // creating a new fleet can fail but will be handled by listbox exception
@@ -557,9 +558,9 @@ void FleetDetailPanel::ShipDroppedIntoList(int row_idx, const GG::ListBox::Row* 
     }
 }
 
-void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt)
+void FleetDetailPanel::ShipRightClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt)
 {
-    const ShipRow* ship_row = dynamic_cast<const ShipRow*>(row);
+    const boost::shared_ptr<ShipRow> ship_row = boost::dynamic_pointer_cast<ShipRow>(row);
 
     if (ship_row->m_ship->Owners().size() != 1 || HumanClientApp::GetApp()->EmpireID() != *ship_row->m_ship->Owners().begin())
         return;
@@ -619,6 +620,7 @@ FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint3
     CUI_Wnd("", x, y, 1, 1, flags),
     m_fleet_panel(0)
 {
+    TempUISoundDisabler sound_disabler;
     m_fleet_panel = new FleetDetailPanel(LeftBorder() + 3, TopBorder() + 3, fleet, read_only);
     Resize(m_fleet_panel->Size() + GG::Pt(LeftBorder() + RightBorder() + 6, TopBorder() + BottomBorder() + 6));
     AttachSignalChildren();
@@ -681,6 +683,8 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
     m_fleets_lb(0),
     m_fleet_detail_panel(0)
 {
+    TempUISoundDisabler sound_disabler;
+
     m_fleets_lb = new CUIListBox(LeftBorder() + 3, TopBorder() + 3, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT);
     m_fleet_detail_panel = new FleetDetailPanel(LeftBorder() + 3, m_fleets_lb->LowerRight().y + CONTROL_MARGIN, 0, read_only );
 
@@ -841,12 +845,12 @@ void FleetWnd::FleetSelectionChanged(const std::set<int>& rows)
     m_fleet_detail_panel->SetFleet(fleet);
 
     for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
-        FleetDataPanel* fleet_panel = static_cast<FleetDataPanel*>((*m_fleets_lb->GetRowPtr(i))[0]);
+        boost::shared_ptr<FleetDataPanel> fleet_panel = boost::static_pointer_cast<FleetDataPanel>((*m_fleets_lb->GetRowPtr(i))[0]);
         fleet_panel->Select(rows.find(i) != rows.end());
     }
 }
 
-void FleetWnd::FleetRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt)
+void FleetWnd::FleetRightClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt)
 {
     if (!m_read_only && row_idx == m_fleets_lb->NumRows() - 1)
         return;
@@ -877,7 +881,7 @@ void FleetWnd::FleetRightClicked(int row_idx, const GG::ListBox::Row* row, const
     }
 }
 
-void FleetWnd::FleetDoubleClicked(int row_idx, const GG::ListBox::Row* row)
+void FleetWnd::FleetDoubleClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
 {
     if (!m_read_only && row_idx == m_fleets_lb->NumRows() - 1)
         return;
@@ -905,7 +909,7 @@ void FleetWnd::FleetDeleted(int row_idx)
         CloseClicked();
 }
 
-void FleetWnd::ObjectDroppedIntoList(int row_idx, const GG::ListBox::Row* row)
+void FleetWnd::ObjectDroppedIntoList(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
 {
     if (m_read_only)
         throw GG::ListBox::DontAcceptDropException();
@@ -915,8 +919,8 @@ void FleetWnd::ObjectDroppedIntoList(int row_idx, const GG::ListBox::Row* row)
     if (row_idx < 0 || m_fleets_lb->NumRows() - 1 <= row_idx)
         throw GG::ListBox::DontAcceptDropException();
 
-    const FleetRow* fleet_row = dynamic_cast<const FleetRow*>(row);
-    const ShipRow* ship_row = fleet_row ? 0 : dynamic_cast<const ShipRow*>(row);
+    boost::shared_ptr<FleetRow> fleet_row = boost::dynamic_pointer_cast<FleetRow>(row);
+    boost::shared_ptr<ShipRow> ship_row = fleet_row ? boost::shared_ptr<ShipRow>() : boost::dynamic_pointer_cast<ShipRow>(row);
 
     // disallow drops of unknown Row types
     if (!ship_row && !fleet_row)
@@ -1040,7 +1044,7 @@ Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
 
     if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID)
     {
-        ClientUI::MessageBox(ClientUI::String("SERVER_TIMEOUT"));
+        ClientUI::MessageBox(ClientUI::String("SERVER_TIMEOUT"), true);
         throw GG::ListBox::DontAcceptDropException();
     }
 

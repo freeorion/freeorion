@@ -7,6 +7,7 @@
 #include "../../UI/MapWnd.h"
 #include "../../network/Message.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
+#include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../universe/Planet.h"
 #include "../../util/Process.h"
@@ -48,7 +49,7 @@ void SigHandler(int sig)
     // corrupt the heap, but since we're dying anyway that's no big
     // deal
 
-    ClientUI::MessageBox("The client has just crashed!\nFile a bug report and\nattach the file called 'crash.txt'\nif necessary");
+    ClientUI::MessageBox("The client has just crashed!\nFile a bug report and\nattach the file called 'crash.txt'\nif necessary", true);
 
     // Try SDL-shutdown
     SDL_Quit();
@@ -107,7 +108,7 @@ HumanClientApp::HumanClientApp() :
     AddWndGenerator("CUIEdit", &NewCUIEdit);
     AddWndGenerator("CUIMultiEdit", &NewCUIMultiEdit);
 
-    Logger().setPriority(log4cpp::Priority::getPriorityValue(GetOptionsDB().Get<std::string>("log-level")));
+    Logger().setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
 
     SetMaxFPS(60.0);
 }
@@ -226,12 +227,17 @@ void HumanClientApp::StopMusic(void)
 void HumanClientApp::PlaySound(const std::string& filename, int repeats/* = 0*/, int timeout/* = -1*/)
 {
     // load and cache the sound data
+    static std::set<std::string> s_sounds_not_found;
     std::map<std::string, Mix_Chunk*>::iterator it = m_sounds.find(filename);
     if (it == m_sounds.end()) {
         Mix_Chunk* data = Mix_LoadWAV(filename.c_str());
         if (!data) {
-            Logger().errorStream() << "HumanClientApp::PlaySound : An error occured while attempting to load \"" << 
-                filename << "\"; SDL_mixer error: " << Mix_GetError();
+            // only report a missing sound once
+            if (s_sounds_not_found.find(filename) == s_sounds_not_found.end()) {
+                Logger().errorStream() << "HumanClientApp::PlaySound : An error occured while attempting to load \"" << 
+                    filename << "\"; SDL_mixer error: " << Mix_GetError();
+            }
+            s_sounds_not_found.insert(filename);
             return;
         } else {
             m_sounds[filename] = data;
@@ -311,7 +317,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
                 const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
                 while (!NetworkCore().ConnectToLocalhostServer()) {
                     if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
-                        ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"));
+                        ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"), true);
                         failed = true;
                         break;
                     }
@@ -340,7 +346,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
             return true;
         }
     } catch (const FileDlg::InitialDirectoryDoesNotExistException& e) {
-        ClientUI::MessageBox(e.Message());
+        ClientUI::MessageBox(e.Message(), true);
     }
     return false;
 }
@@ -610,7 +616,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS -- Connection rejected by server, "
                 "because different versions of the following settings and/or source files are in use by the client and the server: " << 
                 settings_files << " " << source_files;
-            ClientUI::MessageBox(ClientUI::String("ERR_VERSION_MISMATCH") + settings_files + " " + source_files);
+            ClientUI::MessageBox(ClientUI::String("ERR_VERSION_MISMATCH") + settings_files + " " + source_files, true);
             EndGame();
         }
         break;
@@ -788,7 +794,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         std::cout << "HumanClientApp::HandleMessageImpl : Message::PLAYER_ELIMINATED : m_empire_id=" << m_empire_id << " Empires().Lookup(m_empire_id)=" << Empires().Lookup(m_empire_id);
         if (Empires().Lookup(m_empire_id)->Name() == msg.GetText()) {
             // TODO: replace this with something better
-            ClientUI::MessageBox("You are defeated.");
+            ClientUI::MessageBox(ClientUI::String("PLAYER_DEFEATED"));
             EndGame();
         } else {
             // TODO: replace this with something better
@@ -799,14 +805,14 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::PLAYER_EXIT: {
         std::string message = boost::io::str(boost::format(ClientUI::String("PLAYER_DISCONNECTED")) % msg.GetText());
-        ClientUI::MessageBox(message);
+        ClientUI::MessageBox(message, true);
         break;
     }
 
     case Message::END_GAME: {
         if (msg.GetText() == "VICTORY") {
             // TODO: replace this with something better
-            ClientUI::MessageBox("You are victorious.");
+            ClientUI::MessageBox(ClientUI::String("PLAYER_VICTORIOUS"));
         } else {
             ClientUI::MessageBox(ClientUI::String("SERVER_GAME_END"));
         }
@@ -824,10 +830,10 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 void HumanClientApp::HandleServerDisconnectImpl()
 {
     if (m_multiplayer_lobby_wnd) { // in MP lobby
-        ClientUI::MessageBox(ClientUI::String("MPLOBBY_HOST_ABORTED_GAME"));
+        ClientUI::MessageBox(ClientUI::String("MPLOBBY_HOST_ABORTED_GAME"), true);
         m_multiplayer_lobby_wnd->Cancel();
     } else if (m_game_started) { // playing game
-        ClientUI::MessageBox(ClientUI::String("SERVER_LOST"));
+        ClientUI::MessageBox(ClientUI::String("SERVER_LOST"), true);
         EndGame();
     }
 }

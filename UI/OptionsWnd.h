@@ -1,97 +1,46 @@
 // -*- C++ -*-
-//OptionsWnd.h
-
 #ifndef _OptionsWnd_h_
 #define _OptionsWnd_h_
-
-#ifndef _GGWnd_h_
-#include "GGWnd.h"
-#endif
-
-#ifndef _GGEdit_h_
-#include "GGEdit.h"
-#endif
-
-#ifndef _GGButton_h_
-#include "GGButton.h"
-#endif
-
-#ifndef __GGSpin_h_
-#include "GGSpin.h"
-#endif
-
-#ifndef __GGMultiEdit_h_
-#include "GGMultiEdit.h"
-#endif
-
-#ifndef _GGStaticGraphic_h_
-#include "GGStaticGraphic.h"
-#endif
-
-#ifndef _GGTextControl_h_
-#include <GGTextControl.h> 
-#endif
 
 #ifndef _CUI_Wnd_h_
 #include "CUI_Wnd.h"
 #endif
 
-//! This is a screen showing license and credits
+class CUIButton;
+class CUIStateButton;
+namespace GG {
+    class TextControl;
+}
+
+//! This is a dialog box that allows the user to control certain basic game parameters, such as sound and music
 class OptionsWnd : public CUI_Wnd
 {
-private:
-    
 public:
-//! \name Structors
-//!@{
-    OptionsWnd();   //!< default ctor
-    ~OptionsWnd(); //!< default dtor
+    //! \name Structors
+    //!@{
+    OptionsWnd();  //!< default ctor
+    ~OptionsWnd(); //!< dtor
+    //!@}
 
-//!@}
-
-//! \name Mutators
-//!@{
-    virtual bool Render();    //!< drawing code
+    //! \name Mutators
+    //!@{
     virtual void Keypress (GG::Key key, Uint32 key_mods);
-    
-//!@}
+    //!@}
 
-public:
-//! \name Accessors
-//!@{
-
-//!@}
-
-public:
-//! \name Event Handlers
-//!@{
-    void OnDone();        //!< when OK button is pressed
-	void OnMusic(bool checked);   	//!< updates the client when a music setting is changed
-    //void OnMusic(GG::StateButton::CheckedSignalType& CS);   	//!< updates the client when a music setting is changed
-
-//!@}
-
-public:
-//! \name Data Members
-//!@{
-       bool m_end_with_done;    //!< determines whether or not we ended the dialog with OK or not
-//!@}
-private:
-//! \name Controls
-//!@{
-
-    GG::Button*      m_done_btn;    //!< Done button
-    GG::StateButton*      m_music;     //!< Music enabled/disabled
-
-    GG::TextControl*	  m_audio_str;    //!< Audio title string
-    //std::string		  m_license_str;
-
-//!@}
+    bool m_end_with_done;    //!< determines whether or not we ended the dialog with OK or not
 
 private:
-    void Init();    //!< Attaches children and connects signals
+    void Init();
+    void DoneClicked();
+	void MusicCicked(bool checked);
+	void UIEffectsCicked(bool checked);
 
-};//OptionsWnd
+    CUIButton*       m_done_btn;    //!< Done button
+    CUIStateButton*  m_music;       //!< Music enabled/disabled
+    CUIStateButton*  m_ui_effects;  //!< UI sound effects enabled/disabled
+
+    GG::TextControl* m_audio_str;   //!< Audio title string
+};
 
 inline std::pair<std::string, std::string> OptionsWndRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}

@@ -4,9 +4,10 @@
 #include "CUIControls.h"
 #include "CUISpin.h"
 #include "GGDrawUtil.h"
-#include "dialogs/GGFileDlg.h"
 #include "GGStaticGraphic.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
 
 #include <fstream>
 
@@ -40,6 +41,8 @@ GalaxySetupPanel::GalaxySetupPanel(int x, int y, int w/* = DEFAULT_WIDTH*/) :
     m_planet_density_list(0),
     m_specials_freq_list(0)
 {
+    TempUISoundDisabler sound_disabler;
+
     const int LABELS_WIDTH = (w - CONTROL_MARGIN) / 2;
     const int DROPLIST_WIDTH = LABELS_WIDTH;
     const int DROPLIST_HEIGHT = ClientUI::PTS + 4;
@@ -256,6 +259,8 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_ok(0),
     m_cancel(0)
 {
+    TempUISoundDisabler sound_disabler;
+
     m_galaxy_setup_panel = new GalaxySetupPanel(0, 22);
 
     const int LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;

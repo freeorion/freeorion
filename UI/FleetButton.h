@@ -36,6 +36,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void MouseHere(const GG::Pt& pt, Uint32 keys);
+
     /** sets the orientation of the fleet marker (must be one of SHAPE_LEFT and SHAPE_RIGHT; 
         otherwise, SHAPE_LEFT will be used) */
     void SetOrientation(ShapeOrientation orientation) {m_orientation = orientation;}

@@ -5,6 +5,7 @@
 #include "GGButton.h"
 #include "GGTextControl.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/MultiplayerCommon.h"
 #include "SDLGGApp.h"
 
 #include <sstream>
@@ -38,6 +39,8 @@ ServerConnectWnd::ServerConnectWnd() :
     m_ok_bn(0),
     m_cancel_bn(0)
 {
+    TempUISoundDisabler sound_disabler;
+
     GG::TextControl* temp = new GG::TextControl(LeftBorder() + CONTROL_MARGIN, TopBorder() + CONTROL_MARGIN, ClientUI::String("PLAYER_NAME_LABEL"), 
                                                 ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
     AttachChild(temp);

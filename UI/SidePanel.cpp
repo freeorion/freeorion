@@ -8,6 +8,7 @@
 #include "GGThreeButtonDlg.h"
 
 #include "../client/human/HumanClientApp.h"
+#include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/ShipDesign.h"
 #include "../util/Random.h"
@@ -1430,13 +1431,13 @@ void SidePanel::PlanetPanel::PlanetProdCenterChanged()
 void SidePanel::PlanetPanel::SetPrimaryFocus(FocusType focus)
 {
   Planet *planet = GetPlanet();
-  HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,0));
+  HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,true));
 }
 
 void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 {
   Planet *planet = GetPlanet();
-  HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,1));
+  HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,false));
 } 
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
@@ -1463,7 +1464,11 @@ bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys) 
 {
   if(InPlanet(pt))
+  {
+    if(GetOptionsDB().Get<bool>("UI.sound.enabled"))
+      HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.planet-button-click"));
 	m_planet_image_lclick_sig(m_planet_id);
+  }
 }
 
 bool SidePanel::PlanetPanel::RenderUnhabited(const Planet &planet)
@@ -1876,6 +1881,8 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   m_radio_btn_primary_focus  (0),
   m_radio_btn_secondary_focus(0)
 {
+  TempUISoundDisabler sound_disabler;
+
   Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
 
   EnableChildClipping(true);
@@ -1914,7 +1921,6 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   m_radio_btn_primary_focus->AddButton(new CUIStateButton(0,105,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
   m_radio_btn_primary_focus->AddButton(new CUIStateButton(0,130,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
   AttachChild(m_radio_btn_primary_focus);
-  m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::PrimaryFocusClicked, this);
 
   m_radio_btn_secondary_focus = new GG::RadioButtonGroup(40,145);
   m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0,  0,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
@@ -1923,7 +1929,6 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0,105,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
   m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0,130,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
   AttachChild(m_radio_btn_secondary_focus);
-  m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::SecondaryFocusClicked, this);
 
   m_construction = new CUIDropDownList(260,10,150,ClientUI::SIDE_PANEL_PTS,(ClientUI::SIDE_PANEL_PTS) * 15, GG::CLR_ZERO,GG::CLR_ZERO,GG::Clr(0.0,0.0,0.0,0.5));
 
@@ -1991,7 +1996,10 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
 
   GG::Connect(planet->StateChangedSignal(), &SidePanel::PlanetView::PlanetChanged, this);
   m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this);
-  PlanetChanged();PlanetProdCenterChanged();
+  PlanetChanged();
+  PlanetProdCenterChanged();
+  m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::PrimaryFocusClicked, this);
+  m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::SecondaryFocusClicked, this);
  }
 
 void SidePanel::PlanetView::PlanetChanged()
@@ -2164,10 +2172,10 @@ void SidePanel::PlanetView::PrimaryFocusClicked(int idx)
   }
   Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
   if(planet->PrimaryFocus()!=ft)
-    HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,0));
+    HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,true));
  
-  m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::PrimaryFocusClicked, this);
-  m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this);
+  m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::PrimaryFocusClicked, this, boost::signals::at_front);
+  m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this, boost::signals::at_front);
 }
 
 void SidePanel::PlanetView::SecondaryFocusClicked(int idx)
@@ -2187,10 +2195,10 @@ void SidePanel::PlanetView::SecondaryFocusClicked(int idx)
   }
   Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
   if(planet->SecondaryFocus()!=ft)
-    HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,1));
+    HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,false));
 
-  m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::SecondaryFocusClicked, this);
-  m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this);
+  m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::SecondaryFocusClicked, this, boost::signals::at_front);
+  m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this, boost::signals::at_front);
 }
 
 bool SidePanel::PlanetView::Render()
@@ -2463,6 +2471,8 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_planet_panel_container(new PlanetPanelContainer(0,100,w,h-100-30)),
     m_system_resource_summary(new SystemResourceSummary(0,100-20,w,20))
 {
+  TempUISoundDisabler sound_disabler;
+
   SetText(ClientUI::String("SIDE_PANEL"));
 
   m_system_name->DisableDropArrow();

@@ -2,11 +2,13 @@
 
 #include "CUI_Wnd.h"
 
+#include "../client/human/HumanClientApp.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "GGApp.h"
 #include "GGDrawUtil.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
 
 /** \mainpage FreeOrion User Interface
 
@@ -35,6 +37,34 @@
 */
 
 namespace {
+    bool PlaySounds()
+    {
+        return GetOptionsDB().Get<bool>("UI.sound.enabled");
+    }
+    const std::string& SoundDir()
+    {
+        static std::string retval;
+        if (retval == "") {
+            retval = GetOptionsDB().Get<std::string>("settings-dir");
+            if (!retval.empty() && retval[retval.size() - 1] != '/')
+                retval += '/';
+            retval += "data/sound/";
+        }
+        return retval;
+    }
+    void PlayMinimizeSound()
+    {
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-maximize"));
+    }
+    void PlayMaximizeSound()
+    {
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-minimize"));
+    }
+    void PlayCloseSound()
+    {
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-close"));
+    }
+
     bool temp_header_bool = RecordHeaderFile(CUI_WndRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
@@ -93,12 +123,25 @@ bool CUI_MinRestoreButton::Render()
     return true;
 }
 
+void CUI_MinRestoreButton::Toggle()
+{
+    if (m_mode == MIN_BUTTON) {
+        PlayMinimizeSound();
+        m_mode = RESTORE_BUTTON;
+    } else {
+        PlayMaximizeSound();
+        m_mode = MIN_BUTTON;
+    }
+}
+
+
 ////////////////////////////////////////////////
 // CUI_CloseButton
 ////////////////////////////////////////////////
 CUI_CloseButton::CUI_CloseButton(int x, int y) : 
     GG::Button(x, y, 7, 7, "", "", 0, ClientUI::WND_INNER_BORDER_COLOR)
 {
+    GG::Connect(ClickedSignal(), &PlayCloseSound, -1);
 }
 
 CUI_CloseButton::CUI_CloseButton(const GG::XMLElement& elem) : 
@@ -106,6 +149,8 @@ CUI_CloseButton::CUI_CloseButton(const GG::XMLElement& elem) :
 {
     if (elem.Tag() != "CUI_CloseButton")
         throw std::invalid_argument("Attempted to construct a CUI_CloseButton from an XMLElement that had a tag other than \"CUI_CloseButton\"");
+
+    GG::Connect(ClickedSignal(), &PlayCloseSound, -1);
 }
 
 GG::XMLElement CUI_CloseButton::XMLEncode() const

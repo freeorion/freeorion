@@ -48,6 +48,12 @@ The server has sent an end-game message.  Buh-bye.
 PLAYER_DISCONNECTED
 Player %1% no longer has a connection to the server.
 
+PLAYER_DEFEATED
+You are defeated.
+
+PLAYER_VICTORIOUS
+You are victorious.
+
 EMPIRE_DEFEATED
 The %1% empire is no more.
 
@@ -327,6 +333,8 @@ Audio
 OPTIONS_MUSIC
 Music
 
+OPTIONS_UI_EFFECTS
+UI Sound Effects
 
 #################
 # Main Map      #

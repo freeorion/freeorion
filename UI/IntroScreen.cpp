@@ -11,7 +11,8 @@
 #include "GGStaticGraphic.h"
 #include "GGTexture.h"
 #include "../network/Message.h"
-#include "MultiplayerLobbyWnd.h"
+#include "../UI/MultiplayerLobbyWnd.h"
+#include "../util/MultiplayerCommon.h"
 #include "OptionsWnd.h"
 #include "../util/OptionsDB.h"
 #include "ServerConnectWnd.h"
@@ -234,7 +235,7 @@ void IntroScreen::OnSinglePlayer()
         int start_time = GG::App::GetApp()->Ticks();
         while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) {
             if (SERVER_CONNECT_TIMEOUT < GG::App::GetApp()->Ticks() - start_time) {
-                ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"));
+                ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"), true);
                 failed = true;
                 break;
             }
@@ -279,7 +280,7 @@ void IntroScreen::OnMultiPlayer()
             int start_time = GG::App::GetApp()->Ticks();
             while (!HumanClientApp::GetApp()->NetworkCore().ConnectToServer(server_name)) {
                 if (SERVER_CONNECT_TIMEOUT < GG::App::GetApp()->Ticks() - start_time) {
-                    ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"));
+                    ClientUI::MessageBox(ClientUI::String("ERR_CONNECT_TIMED_OUT"), true);
                     if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
                         HumanClientApp::GetApp()->KillServer();
                     break;

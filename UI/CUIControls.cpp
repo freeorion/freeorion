@@ -7,10 +7,78 @@
 #include "GGApp.h"
 #include "GGDrawUtil.h"
 #include "GGStaticGraphic.h"
+#include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
 
 #include <boost/lexical_cast.hpp>
 
+namespace {
+    bool PlaySounds()
+    {
+        return GetOptionsDB().Get<bool>("UI.sound.enabled");
+    }
+
+    void PlayButtonClickSound()
+    {
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
+    }
+
+    void PlayTurnButtonClickSound()
+    {
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"));
+    }
+
+    struct PlayButtonCheckSound
+    {
+        PlayButtonCheckSound(bool play_only_when_checked) : m_play_only_when_checked(play_only_when_checked) {}
+        void operator()(bool checked) const
+        {
+            if ((!m_play_only_when_checked || checked) && PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
+        }
+        const bool m_play_only_when_checked;
+    };
+
+    void PlayListSelectSound(const std::set<int>&)
+    {
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.list-select"));
+    }
+
+    void PlayItemDropSound(int, const boost::shared_ptr<GG::ListBox::Row>&)
+    {
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.item-drop"));
+    }
+
+    void PlayTextTypingSound(const std::string&)
+    {
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.text-typing"));
+    }
+
+    bool temp_header_bool = RecordHeaderFile(CUIControlsRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+
+    bool temp_header_bool2 = RecordHeaderFile(CUISpinRevision());
+}
+
+#if 0
+// TODO: finish implementing these sounds, as recommended by the sound team (the ones commented out are done):
+//1) Button Click - includes clicks on regular buttons, check boxes, radio buttons
+//2) Button Rollover - includes moving the mouse over regular buttons only
+//3) Item Select - selecting/deselecting an item in a drop-down list or listbox
+//4) Item Drop - dropping a drag-and-drop item into a listbox
+//5) Alert - when a warning or error message box pops up
+//6) Minimize window
+//7) Maximize window
+//8) Close window
+//9) Turn Button Click (specialization of Button Click)
+//9) Fleet Rollover (specialization of Button Rollover)
+//10) Fleet Click (specialization of Button Click)
+//11) Planet Click (specialization of Button Click)
+//12) Text Typing
+13) Planet Background Music (music, instead of sound effect, for the planet detail view)
+14) Fleet-Type Sound (plays sound specific to the type of fleet in the fleet detail view)
+15) Turn Progressing
+#endif
 
 ///////////////////////////////////////
 // class CUIButton
@@ -44,11 +112,6 @@ namespace {
             push_back(new ColorSquare(color, h));
         }
     };
-
-    bool temp_header_bool = RecordHeaderFile(CUIControlsRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
-
-    bool temp_header_bool2 = RecordHeaderFile(CUISpinRevision());
 }
 
 CUIButton::CUIButton(int x, int y, int w, const std::string& str, const std::string& font_filename/* = ClientUI::FONT*/, 
@@ -60,6 +123,7 @@ CUIButton::CUIButton(int x, int y, int w, const std::string& str, const std::str
     m_border_color(border),
     m_border_thick(thick)
 {
+    GG::Connect(ClickedSignal(), &PlayButtonClickSound, -1);
 }
 
 CUIButton::CUIButton(const GG::XMLElement& elem) : 
@@ -73,6 +137,8 @@ CUIButton::CUIButton(const GG::XMLElement& elem) :
 
     curr_elem = &elem.Child("m_border_thick");
     m_border_thick = boost::lexical_cast<int>(curr_elem->Attribute("value"));
+
+    GG::Connect(ClickedSignal(), &PlayButtonClickSound, -1);
 }
 
 bool CUIButton::InWindow(const GG::Pt& pt) const
@@ -96,6 +162,15 @@ GG::XMLElement CUIButton::XMLEncode() const
     retval.AppendChild(temp);
 
     return retval;
+}
+
+void CUIButton::MouseHere(const GG::Pt& pt, Uint32 keys)
+{
+    if (!Disabled()) {
+        if (State() != BN_ROLLOVER && PlaySounds())
+            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+        SetState(BN_ROLLOVER);
+    }
 }
 
 void CUIButton::RenderPressed()
@@ -135,12 +210,42 @@ void CUIButton::RenderUnpressed()
 
 
 ///////////////////////////////////////
+// class CUITurnButton
+///////////////////////////////////////
+CUITurnButton::CUITurnButton(int x, int y, int w, const std::string& str, const std::string& font_filename/* = ClientUI::FONT*/, 
+                     int pts/* = ClientUI::PTS*/, GG::Clr color/* = ClientUI::BUTTON_COLOR*/, 
+                     GG::Clr border/* = ClientUI::CTRL_BORDER_COLOR*/, int thick/* = 2*/, 
+                     GG::Clr text_color/* = ClientUI::TEXT_COLOR*/, Uint32 flags/* = GG::Wnd::CLICKABLE*/) : 
+    CUIButton(x, y, w, str, font_filename, pts, color, border, thick, text_color, flags)
+{
+    GG::Connect(ClickedSignal(), &PlayTurnButtonClickSound, -1);
+}
+
+CUITurnButton::CUITurnButton(const GG::XMLElement& elem) : 
+    CUIButton(elem.Child("CUIButton"))
+{
+    if (elem.Tag() != "CUITurnButton")
+        throw std::invalid_argument("Attempted to construct a CUITurnButton from an XMLElement that had a tag other than \"CUITurnButton\"");
+
+    GG::Connect(ClickedSignal(), &PlayTurnButtonClickSound, -1);
+}
+
+GG::XMLElement CUITurnButton::XMLEncode() const
+{
+    GG::XMLElement retval("CUITurnButton");
+    retval.AppendChild(CUIButton::XMLEncode());
+    return retval;
+}
+
+
+///////////////////////////////////////
 // class CUIArrowButton
 ///////////////////////////////////////
 CUIArrowButton::CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orientation, GG::Clr color, Uint32 flags/* = GG::Wnd::CLICKABLE*/) :
     Button(x, y, w, h, "", "", 0, color, GG::CLR_ZERO, flags),
     m_orientation(orientation)
 {
+    GG::Connect(ClickedSignal(), &PlayButtonClickSound, -1);
 }
 
 CUIArrowButton::CUIArrowButton(const GG::XMLElement& elem) : 
@@ -151,6 +256,8 @@ CUIArrowButton::CUIArrowButton(const GG::XMLElement& elem) :
 
     const GG::XMLElement* curr_elem = &elem.Child("m_orientation");
     m_orientation = ShapeOrientation(boost::lexical_cast<int>(curr_elem->Attribute("value")));
+
+    GG::Connect(ClickedSignal(), &PlayButtonClickSound, -1);
 }
 
 bool CUIArrowButton::InWindow(const GG::Pt& pt) const
@@ -169,6 +276,15 @@ GG::XMLElement CUIArrowButton::XMLEncode() const
     retval.AppendChild(temp);
 
     return retval;
+}
+
+void CUIArrowButton::MouseHere(const GG::Pt& pt, Uint32 keys)
+{
+    if (!Disabled()) {
+        if (State() != BN_ROLLOVER && PlaySounds())
+            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+        SetState(BN_ROLLOVER);
+    }
 }
 
 void CUIArrowButton::RenderPressed()
@@ -203,6 +319,10 @@ CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& st
                 bn_x, bn_y, bn_w, bn_h, flags),
     m_border_color(border)
 {
+    // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
+    // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
+    // checking the redering style
+    GG::Connect(CheckedSignal(), PlayButtonCheckSound(style == CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON), -1);
 }
 
 CUIStateButton::CUIStateButton(const GG::XMLElement& elem) : 
@@ -213,6 +333,11 @@ CUIStateButton::CUIStateButton(const GG::XMLElement& elem) :
 
     const GG::XMLElement* curr_elem = &elem.Child("m_border_color");
     m_border_color = GG::Clr(curr_elem->Child("GG::Clr"));
+
+    // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
+    // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
+    // checking the redering style
+    GG::Connect(CheckedSignal(), PlayButtonCheckSound(StateButton::Style() == CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON), -1);
 }
 
 GG::XMLElement CUIStateButton::XMLEncode() const
@@ -462,6 +587,8 @@ CUIListBox::CUIListBox(int x, int y, int w, int h, GG::Clr color/* = ClientUI::C
 {
     RecreateScrolls();
     EnableChildClipping(false); // this is already done by GG::ListBox, and setting this would interfere
+    GG::Connect(SelChangedSignal(), &PlayListSelectSound, -1);
+    GG::Connect(DroppedSignal(), &PlayItemDropSound, -1);
 }
 
 CUIListBox::CUIListBox(int x, int y, int w, int h, const std::vector<int>& col_widths, 
@@ -606,6 +733,7 @@ CUIEdit::CUIEdit(int x, int y, int w, int h, const std::string& str, const std::
                  Uint32 flags/* = CLICKABLE | DRAG_KEEPER*/) : 
     Edit(x, y, w, h, str, font_filename, pts, color, text_color, interior, flags)
 {
+    GG::Connect(EditedSignal(), &PlayTextTypingSound, -1);
 }
 
 CUIEdit::CUIEdit(const GG::XMLElement& elem) : 
@@ -613,6 +741,8 @@ CUIEdit::CUIEdit(const GG::XMLElement& elem) :
 {
     if (elem.Tag() != "CUIEdit")
         throw std::invalid_argument("Attempted to construct a CUIEdit from an XMLElement that had a tag other than \"CUIEdit\"");
+
+    GG::Connect(EditedSignal(), &PlayTextTypingSound, -1);
 }
 
 GG::XMLElement CUIEdit::XMLEncode() const
@@ -824,7 +954,7 @@ EmpireColorSelector::EmpireColorSelector(int h) :
     for (unsigned int i = 0; i < colors.size(); ++i) {
         Insert(new ColorRow(colors[i], h - 2));
     }
-    Connect(SelChangedSignal(), &EmpireColorSelector::SelectionChanged, this);
+    GG::Connect(SelChangedSignal(), &EmpireColorSelector::SelectionChanged, this);
 }
 
 GG::Clr EmpireColorSelector::CurrentColor() const
@@ -848,5 +978,19 @@ void EmpireColorSelector::SelectionChanged(int i)
 {
     const std::vector<GG::Clr>& colors = EmpireColors();
     color_changed_sig(colors[i]);
+}
+
+///////////////////////////////////////
+// class FileDlg
+///////////////////////////////////////
+FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
+                 const std::vector<std::pair<std::string, std::string> >& types) :
+    GG::FileDlg(directory, filename, save, multi, types, ClientUI::FONT, ClientUI::PTS,
+                ClientUI::CTRL_COLOR, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR,
+                new CUIButton(3 * WIDTH / 4, HEIGHT - (ClientUI::PTS + 14) * 2, WIDTH / 4 - 10, ClientUI::String(save ? "SAVE" : "OPEN")),
+                new CUIButton(3 * WIDTH / 4, HEIGHT - (ClientUI::PTS + 14), WIDTH / 4 - 10, ClientUI::String("CANCEL")))
+{
+    SetFilesString(ClientUI::String("FILE_DLG_FILES"));
+    SetFileTypesString(ClientUI::String("FILE_DLG_FILE_TYPES"));
 }
 

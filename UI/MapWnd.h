@@ -5,17 +5,16 @@
 
 #include <vector>
 
-#ifndef _GGWnd_h_
-#include "GGWnd.h"
-#endif
-
-#ifndef _InGameOptions_h_
-#include "InGameOptions.h"
+#ifndef _CUI_Wnd_h_
+#include "CUI_Wnd.h"
 #endif
 
 class CUIButton;
+class CUIEdit;
+class CUITurnButton;
 class Fleet;
 class FleetButton;
+class MapWndPopup;
 class SidePanel;
 class SitRepPanel;
 class System;
@@ -30,7 +29,6 @@ namespace GG {
     class MultiEdit;
 }
 
-class MapWndPopup;
 /** This class is a window that graphically displays everything in the universe */
 class MapWnd : public GG::Wnd
 {
@@ -162,7 +160,7 @@ private:
              MovementLineData>      m_fleet_lines;   //! the lines used for moving fleets in the main map
     GG::Pt                          m_drag_offset;   //! the distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                            m_dragged;       //! tracks whether or not a drag occurs during a left button down sequence of events
-    CUIButton*                      m_turn_update;   //!< button that updates player's turn
+    CUITurnButton*                  m_turn_update;   //!< button that updates player's turn
     std::list<MapWndPopup*>         m_popups;        //!< list of currently active popup windows
     bool                            m_options_showing; //!< set during ShowOptions() to prevent reentrency
     int                             m_current_owned_system;

@@ -34,7 +34,7 @@ public:
 
    bool Render();
 
-   void Toggle() {m_mode = (m_mode == MIN_BUTTON ? RESTORE_BUTTON : MIN_BUTTON);} ///< toggles modes between MIN_BUTTON and RESTORE_BUTTON
+   void Toggle(); ///< toggles modes between MIN_BUTTON and RESTORE_BUTTON
 
 private:
    Mode m_mode;

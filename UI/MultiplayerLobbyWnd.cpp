@@ -3,7 +3,6 @@
 #include "CUIControls.h"
 #include "GGButton.h"
 #include "GGDrawUtil.h"
-#include "dialogs/GGFileDlg.h"
 #include "GGStaticGraphic.h"
 #include "GGTextControl.h"
 #include "../client/human/HumanClientApp.h"
@@ -143,6 +142,8 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     m_start_game_bn(0),
     m_cancel_bn(0)
 {
+    TempUISoundDisabler sound_disabler;
+
     int x = LeftBorder() + CONTROL_MARGIN;
     m_chat_input_edit = new CUIEdit(x, Height() - BottomBorder() - (ClientUI::PTS + 10) - CONTROL_MARGIN, CHAT_WIDTH - x, ClientUI::PTS + 10, "");
     m_chat_box = new CUIMultiEdit(x, TopBorder() + CONTROL_MARGIN, CHAT_WIDTH - x, m_chat_input_edit->UpperLeft().y - TopBorder() - 2 * CONTROL_MARGIN, "", 
@@ -238,7 +239,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
             *m_chat_box += (it != m_player_names.end() ? (it->second + ": ") : "[unknown]: ");
             *m_chat_box += doc.root_node.Child("text").Text() + "\n";
         } else if (doc.root_node.ContainsChild("abort_game")) {
-            ClientUI::MessageBox(ClientUI::String("MPLOBBY_HOST_ABORTED_GAME"));
+            ClientUI::MessageBox(ClientUI::String("MPLOBBY_HOST_ABORTED_GAME"), true);
             m_result = false;
             CUI_Wnd::CloseClicked();
         } else if (doc.root_node.ContainsChild("exit_lobby")) {

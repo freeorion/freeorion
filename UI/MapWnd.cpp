@@ -10,7 +10,9 @@
 #include "GGDrawUtil.h"
 #include "GGMultiEdit.h"
 #include "../client/human/HumanClientApp.h"
+#include "InGameOptions.h"
 #include "../network/Message.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
@@ -175,7 +177,7 @@ MapWnd::MapWnd() :
 
 
     // turn button
-    m_turn_update = new CUIButton(5, 5, END_TURN_BTN_WIDTH, "" );
+    m_turn_update = new CUITurnButton(5, 5, END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
 
 
