@@ -101,7 +101,8 @@ namespace {
         "SITREP_BASE_BUILT",
         "SITREP_COMBAT_SYSTEM_WON",
         "SITREP_COMBAT_SYSTEM_LOST",
-        "SITREP_COMBAT_SYSTEM_NO_VICTOR"
+        "SITREP_COMBAT_SYSTEM_NO_VICTOR",
+        "PLANET_LOST_STARVED_TO_DEATH"
 	};
     // command-line options
     void AddOptions(OptionsDB& db)
