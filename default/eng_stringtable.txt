@@ -30,6 +30,8 @@ Load
 SAVE
 Save
 
+SERVER_TIMEOUT
+The server is not responding
 
 #################
 # Intro Screen  #
