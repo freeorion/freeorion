@@ -704,6 +704,7 @@ void MapWnd::HideSystemNames()
 void MapWnd::HandlePlayerChatMessage(const std::string& msg)
 {
     *m_chat_display += msg;
+    m_chat_display->Show();
     g_chat_display_show_time = GG::App::GetApp()->Ticks();
 }
 
