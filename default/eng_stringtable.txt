@@ -471,6 +471,12 @@ TECH_DETAIL_DESCRIPTION_STR
 TECH_DETAIL_DESCRIPTION_STR_WITH_EFFECTS
 %1%\n\n<u>Effects</u>\n\n%2%
 
+TECH_DETAIL_CENTER_ON_TECH
+Center on Tech
+
+TECH_DETAIL_ADD_TO_QUEUE
+Add to Queue
+
 TECH_WND_TECH_COMPLETED
 COMPLETED
 
@@ -481,7 +487,7 @@ TECH_WND_TECH_INCOMPLETE
 Incomplete
 
 TECH_WND_ALL_TECH_CATEGORIES
-All Categories
+All
 
 TECH_WND_TECH_TYPES_ALL
 All Types
@@ -514,6 +520,9 @@ Research
 
 RESEARCH_INFO_PANEL_TITLE
 Research
+
+RESEARCH_INFO_RP
+RP
 
 RESEARCH_INFO_TOTAL_RPS_LABEL
 Total Available RP
@@ -1232,15 +1241,15 @@ DESC_OR_BETWEEN_OPERANDS
 ###################
 
 LEARNING_CATEGORY
-Learning Category
+Learning
 PRODUCTION_CATEGORY
-Production Category
+Production
 CONSTRUCTION_CATEGORY
-Construction Category
+Construction
 GROWTH_CATEGORY
-Growth Category
+Growth
 ECONOMICS_CATEGORY
-Economics Category
+Economics
 
 #############################
 # Tech Names & Descriptions #
