@@ -78,11 +78,14 @@ public:
 
     /** \name Mutators */ //@{
 
-    /// Called during combat when a planet changes hands
+    void AddOwnerExt   (int id);  ///< adds the Empire with ID \a id to the list of owners of this object, update system owners and emipre planets
+    void RemoveOwnerExt(int id);   ///< removes the Empire with ID \a id to the list of owners of this object, update system owners and emipre planets
+
+   /// Called during combat when a planet changes hands
     void Conquer( int conquerer ) ;
     
     //@}
-    
+
 private:
    PlanetType     m_type;
    PlanetSize     m_size;
@@ -97,4 +100,5 @@ private:
 };
 
 #endif // _Planet_h_
+
 
