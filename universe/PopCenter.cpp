@@ -115,10 +115,22 @@ void PopCenter::MovementPhase( )
    // TODO
 }
 
+double PopCenter::FuturePopGrowth() const
+{
+  return std::min(FuturePopGrowthMax(),AvailableFood()-PopPoints());
+}
+
+double PopCenter::FuturePopGrowthMax() const
+{
+  double max_pop = (m_max_pop == 0.0 ? 1.0 : m_max_pop);   // to prevent division by zero
+  return std::min((m_pop * ((max_pop - m_pop) / max_pop) * m_env_growth_mod * 0.072), m_max_pop-m_pop); // 7.2% growth means pop doubles every 10 turns
+}
+
 void PopCenter::PopGrowthProductionResearchPhase( )
 {
-    double max_pop = (m_max_pop == 0.0 ? 1.0 : m_max_pop);   // to prevent division by zero
-    m_pop = std::min(AvailableFood(),std::min(m_pop + (m_pop * ((max_pop - m_pop) / max_pop) * m_env_growth_mod * 0.072), m_max_pop)); // 7.2% growth means pop doubles every 10 turns
+    //double max_pop = (m_max_pop == 0.0 ? 1.0 : m_max_pop);   // to prevent division by zero
+    //m_pop = std::min(AvailableFood(),std::min(m_pop + (m_pop * ((max_pop - m_pop) / max_pop) * m_env_growth_mod * 0.072), m_max_pop));
+    m_pop = m_pop + FuturePopGrowth();
 }
 
 

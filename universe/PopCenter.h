@@ -39,6 +39,9 @@ public:
    DensityType  PopDensity() const;  ///< returns the density of this center, based on its population
    double       AvailableFood() const {return m_available_food;}   ///< returns the amount of food which is currently available
 
+   double       FuturePopGrowth() const;    ///< predicts by which amount the population will grow next turn, AvailableFood might limit growth rate
+   double       FuturePopGrowthMax() const; ///< predicts by which amount the population will grow at maximum next turn (assuming there is enough food)
+
    virtual GG::XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a PopCenter object with the given visibility
    //@}
 
