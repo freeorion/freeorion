@@ -21,7 +21,14 @@ public:
    
    virtual void Execute() const = 0; ///< executes the order on the server's Universe and Empires; does nothing in the client apps
    //@}
-   
+
+protected:
+    /** \name Mutators */ //@{
+    /**
+    * This is here so that I do not have to type the same 'if' 5 times.  -- jbarcz1
+    */
+    void ValidateEmpireID() const; ///< verifies that the empire ID in this order is that of an existing empire.  Throws an std::runtime_error if not
+    //@}
 private:
    int m_empire;
 };
@@ -36,7 +43,8 @@ public:
       INVALID = -1,
       INDUSTRY_BUILD,
       RESEARCH_BUILD,
-      SHIP_BUILD
+      SHIP_BUILD,
+      DEF_BASE
    };
    
    /** \name Structors */ //@{
