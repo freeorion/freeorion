@@ -1,41 +1,13 @@
+// -*- C++ -*-
 #ifndef _ClientUniverse_h_
 #define _ClientUniverse_h_
 
 #include "System.h"
+#include "XMLObjectFactory.h"
 
 #include <vector>
 #include <map>
 #include <string>
-
-// TODO: all of these #defines should be moved to a config file..
-
-// Object ID's are segregated into separate ranges by object type, primarily
-// to facilitate the creation of new objects by the client without ID-space
-// collisions
-#define MIN_SHIP_ID           1900000000
-#define MAX_SHIP_ID           2100000000
-
-// These define the size of the galaxy map.  They do not measure absolute distances,
-// and the ratio between map coordinates and actual distance varies depending on 
-// universe size
-#define UNIVERSE_X_SIZE     1000
-#define UNIVERSE_Y_SIZE     1000
-
-// Specifies the minimum map distance between stars during universe generation
-// This should also probably be made relative to galaxy size...
-#define MIN_STAR_DISTANCE   15
-
-// These specify the minimum distance of the homeworlds from each other in terms
-// of systems separating them. IE for a very small galaxy no homeworld should be 
-// within the 3 nearest systems to any other homeworld
-
-#define HOMEWORLD_PROXIMITY_LIMIT_V_SMALL_UNI    3
-#define HOMEWORLD_PROXIMITY_LIMIT_SMALL_UNI      4
-#define HOMEWORLD_PROXIMITY_LIMIT_MEDIUM_UNI     5
-#define HOMEWORLD_PROXIMITY_LIMIT_LARGE_UNI      5
-#define HOMEWORLD_PROXIMITY_LIMIT_V_LARGE_UNI    5
-#define HOMEWORLD_PROXIMITY_LIMIT_ENORMOUS_UNI   6
-
 
 
 class UniverseObject;
@@ -45,8 +17,8 @@ namespace GG {class XMLElement;}
    UniverseObjects; it allows anyone access to const pointers to these UniverseObjects, either by ID lookup 
    (with Object()), or by search using an arbitrary prediacte (with FindObjects()).  The ID numbers of 
    UniverseObjects are also freely available using arbitrary predicates and FindObjectIDs().  Nothing may be 
-   added to the ClientUniverse, and ClientUniverse's only mutator is XMLMerge(), which takes the XML diffs 
-   of the Universe created by the server during turn processing and updates the ClientUniverse.*/
+   added to the ClientUniverse, and ClientUniverse's only mutator is SetUniverse(), which replaces the entire
+   universe with the parameter supplied.*/
 class ClientUniverse 
 {
 protected:
@@ -57,10 +29,11 @@ public:
    enum Shape {SPIRAL_2,      ///< a two-armed spiral galaxy
                SPIRAL_3,      ///< a three-armed spiral galaxy
                SPIRAL_4,      ///< a four-armed spiral galaxy
-	       CLUSTER,	      ///< a cluster galaxy
+               CLUSTER,	      ///< a cluster galaxy
                ELLIPTICAL,    ///< an elliptical galaxy
                IRREGULAR,     ///< an irregular galaxy
-	       FROM_FILE      ///< a galaxy loaded from a file
+               FROM_FILE,     ///< a galaxy loaded from a file
+               GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
               }; // other types TBD
    
    typedef ObjectMap::const_iterator            const_iterator;   ///< a const_iterator for iteration over the objects in the universe
@@ -69,8 +42,6 @@ public:
 
    /** \name Structors */ //@{
    ClientUniverse(); ///< default ctor
-   ClientUniverse(Shape shape, int stars, int players); ///< ctor to create a universe from a shape, number of stars, and number of players; other params TBD
-   ClientUniverse(const std::string& map_file, int stars, int players); ///< ctor to create a universe from a shape image file, number of stars, and number of players; other params TBD
    ClientUniverse(const GG::XMLElement& elem); ///< ctor that constructs a ClientUniverse object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ClientUniverse object
    virtual ~ClientUniverse(); ///< dtor
    //@}
@@ -114,19 +85,26 @@ public:
 
    int NearestSystem(System& target_sys); ///< returns the nearest system to the target. In the case that more than 1 systems are of equal distance, uses system ID as the tie-breaker
    int NearestSystem(System& target_sys, System& prev_sys); ///< returns the nearest system to target beyond the prev.  Can be used iteratively to generate a list of nearest systems.  Will use system ID as tie-breaker for equally distant systems.  This can result in a system being returned that is of an equal distance as prev_sys.
-
    
    /** \name Mutators */ //@{
-   void PopulateUniverse(const GG::XMLElement& elem); ///< wipes out the current object map and populates the map from the XMLElement passed in.
+   void SetUniverse(const GG::XMLElement& elem); ///< wipes out the current object map and sets the map to the XMLElement passed in.
    //@}
+
+   /** defines the size of the galaxy map.  Does not measure absolute distances; the ratio between map coordinates and actual distance varies 
+       depending on universe size */
+   static const double UNIVERSE_WIDTH;
+
+   /** the minimum distance in map coordinates between stars during universe generation */
+   static const int    MIN_STAR_DISTANCE;
+
+protected:
+   ObjectMap m_objects;
+
+   GG::XMLObjectFactory<UniverseObject> m_factory;
 
 private:
    /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.  Used when decoding objects sent from server, so ID is already allocated.*/
-   int               Insert(UniverseObject* obj, int obj_id);   
-   
-protected:  
-
-   ObjectMap m_objects;
+   int Insert(UniverseObject* obj, int obj_id);   
 };
 
 #endif // _ClientUniverse_h_
