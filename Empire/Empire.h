@@ -1,11 +1,10 @@
-
+// -*- C++ -*-
 #ifndef _Empire_h_
 #define _Empire_h_
 
 #include <list>
 #include <string>
 
-// Zach was right, this DOES make things much faster
 #ifndef _GGClr_h_
 #include "GGClr.h"
 #endif
@@ -52,19 +51,19 @@ class Empire
 {
 public:
     /** 
-    * EmpireManagers must be friends so that they can have
-    * access to the constructor and keep it hidden from others
-    */
+     * EmpireManagers must be friends so that they can have
+     * access to the constructor and keep it hidden from others
+     */
     friend class EmpireManager;
     /** 
-    * EmpireManagers must be friends so that they can have
-    * access to the constructor and keep it hidden from others
-    */
+     * EmpireManagers must be friends so that they can have
+     * access to the constructor and keep it hidden from others
+     */
     friend class ServerEmpireManager;
     /** 
-    * EmpireManagers must be friends so that they can have
-    * access to the constructor and keep it hidden from others
-    */
+     * EmpireManagers must be friends so that they can have
+     * access to the constructor and keep it hidden from others
+     */
     friend class ClientEmpireManager;
     
 
@@ -92,17 +91,17 @@ public:
      * ControlStatus is used to determine whether an Empire is AI
      * or Human controlled.
      */
-	 enum ControlStatus
-	 {
-        CONTROL_AI=0,     /// under AI control
-        CONTROL_HUMAN=1   /// under human control
-	 }  ;
+    enum ControlStatus
+        {
+            CONTROL_AI=0,     /// under AI control
+            CONTROL_HUMAN=1   /// under human control
+        }  ;
 
-	 /* **************************************************
-	 *** ACCESSORS
-	 *****************************************************/
+    /* **************************************************
+    *** ACCESSORS
+    *****************************************************/
 
-	 /** \name Accessors */ //@{
+    /** \name Accessors */ //@{
     /// Returns an Empire's control state
     ControlStatus ControlState() const;
 	
@@ -117,24 +116,24 @@ public:
     
     /// Returns the Empire's accumulated RPs
     /** 
-    * Gets the empire's accumulated research points. 
-    * This number keeps accumulating even after research breakthroughs 
-    * have been achieved.
-    */
+     * Gets the empire's accumulated research points. 
+     * This number keeps accumulating even after research breakthroughs 
+     * have been achieved.
+     */
     int TotalRP() const;
     
     /// Returns the minimum fleet ID for this empire
     /** 
-    * Returns the minimum value of the empire's assigned fleet ID range.
-    * This if for informational purposes only and is not enforced in any way.
-    */
+     * Returns the minimum value of the empire's assigned fleet ID range.
+     * This if for informational purposes only and is not enforced in any way.
+     */
     int FleetIDMin() const;
     
     /// Returns the maximum fleet ID for this empire
     /** 
-    * Returns the maximum value of the empire's assigned fleet ID range.
-    * This if for informational purposes only and is not enforced in any way.
-    */
+     * Returns the maximum value of the empire's assigned fleet ID range.
+     * This if for informational purposes only and is not enforced in any way.
+     */
     int FleetIDMax() const;
 
     /// Searches for a ship design and copies over the input design and returns success/failure
@@ -142,18 +141,18 @@ public:
 
     
     /* ******************************************************
-    *  The Empire object maintains containers of the following 
-    *  objects (all referenced by their object IDs)
-    *    - Tech advances
-    *    - Explored Systems
-    *    - Owned Planets
-    *    - Owned Fleets
-    *    - Visible Fleets
-    *    - SitRepEntries
-    *********************************************************/
+     *  The Empire object maintains containers of the following 
+     *  objects (all referenced by their object IDs)
+     *    - Tech advances
+     *    - Explored Systems
+     *    - Owned Planets
+     *    - Owned Fleets
+     *    - Visible Fleets
+     *    - SitRepEntries
+     *********************************************************/
     
     /* ************************************************
-        Methods to see if items are in our lists
+       Methods to see if items are in our lists
     **************************************************/
 
     
@@ -174,7 +173,7 @@ public:
     
     
     /* *************************************
-        (const) Iterators over our various lists
+       (const) Iterators over our various lists
     ***************************************/
 
     ConstTechIDItr TechBegin() const;
@@ -199,7 +198,7 @@ public:
     ConstShipDesignItr ShipDesignEnd() const;
       
     /* *************************************
-        (non-const) Iterators over our various lists
+       (non-const) Iterators over our various lists
     ***************************************/
  
     TechIDItr TechBegin();
@@ -226,32 +225,32 @@ public:
 
     /// Encodes an empire into an XMLElement
     /**
-    * This method encodes an empire into an XMLElement, which can then
-    * be transmitted over the network and used by a client to replicate
-    * the empire object.  
-    *
-    * This method is used by the Server to generate turn updates.
-    *
-    * All data on the empire is encoded.
-    *
-    *
-    */
+     * This method encodes an empire into an XMLElement, which can then
+     * be transmitted over the network and used by a client to replicate
+     * the empire object.  
+     *
+     * This method is used by the Server to generate turn updates.
+     *
+     * All data on the empire is encoded.
+     *
+     *
+     */
     GG::XMLElement XMLEncode() const;
 
 
     /// Encodes an empire into an XMLElement, from the perspective of another
     /**
-    * This method encodes the empire into an XMLElement, but includes only
-    * the information that the specified empire will have access to.
-    * 
-    *  For version 0.1, this will only be the Empire's name, color, and control state
-    *
-    *  For future versions, technology, diplomatic status, race, and other
-    *  such data will be included as appropriate.
-    *
-    *   If the viewer has the same empire ID as the host object
-    *   then the return value is the same as the no-arg version of XMLEncode()
-    */
+     * This method encodes the empire into an XMLElement, but includes only
+     * the information that the specified empire will have access to.
+     * 
+     *  For version 0.1, this will only be the Empire's name, color, and control state
+     *
+     *  For future versions, technology, diplomatic status, race, and other
+     *  such data will be included as appropriate.
+     *
+     *   If the viewer has the same empire ID as the host object
+     *   then the return value is the same as the no-arg version of XMLEncode()
+     */
     GG::XMLElement XMLEncode(const Empire& viewer) const;
 
 
@@ -260,13 +259,13 @@ public:
     //@}
 
     /* ****************************************************
-    *** MUTATORS
-    *******************************************************/
+   *** MUTATORS
+   *******************************************************/
 
     /** \name Mutators */ //@{
 
     /* ************************************************
-        Methods to add items to our various lists
+       Methods to add items to our various lists
     **************************************************/
 
     /// Inserts the given ID into the Empire's list of Technologies.
@@ -286,20 +285,20 @@ public:
 
     /// Inserts the a pointer to given sitrep entry into the empire's sitrep list
     /**
-    *  WARNING: When you call this method, you are transferring ownership
-    *  of the entry object to the Empire.
-    *  The object pointed to by 'entry' will be deallocated when
-    *  the empire's sitrep is cleared.  Be careful you do not have any
-    *  references to SitRepEntries lieing around when this happens.
-    *  You MUST pass in a dynamically allocated sitrep entry
-    */
+     *  WARNING: When you call this method, you are transferring ownership
+     *  of the entry object to the Empire.
+     *  The object pointed to by 'entry' will be deallocated when
+     *  the empire's sitrep is cleared.  Be careful you do not have any
+     *  references to SitRepEntries lieing around when this happens.
+     *  You MUST pass in a dynamically allocated sitrep entry
+     */
     void AddSitRepEntry( SitRepEntry* entry);
     
     /// inserts a copy of the given design into the empire's design list
     int AddShipDesign(const ShipDesign& design);
     
-     /* ************************************************
-        Methods to remove items from our various lists
+    /* ************************************************
+       Methods to remove items from our various lists
     **************************************************/
 
     /// Removes the given ID from the empire's list
@@ -319,9 +318,9 @@ public:
     
     /// Removes all entries from the Empire's SitRep
     /** 
-    * Any SitRep entry objects currently referenced by the Empire's SitRep collection
-    * will be deallocated, and the pointers discarded.
-    */
+     * Any SitRep entry objects currently referenced by the Empire's SitRep collection
+     * will be deallocated, and the pointers discarded.
+     */
     void ClearSitRep();
     
     /// Removes the design with the specified ID from the empire's design list
@@ -330,24 +329,24 @@ public:
     
     /// Applies changes to the Empire object
     /**
-    * The given element (elem) is the result of an XMLDiff between the calling
-    * object and another empire object.  The appropriate changes are made
-    * to ensure that this Empire object is identical to the one used to produce
-    * the diff.
-    *
-    * This method should be used for processing turn updates in the client
-    * to ensure that an empire's state on the client side is the same as its 
-    * state server side.
-    */
+     * The given element (elem) is the result of an XMLDiff between the calling
+     * object and another empire object.  The appropriate changes are made
+     * to ensure that this Empire object is identical to the one used to produce
+     * the diff.
+     *
+     * This method should be used for processing turn updates in the client
+     * to ensure that an empire's state on the client side is the same as its 
+     * state server side.
+     */
     void XMLMerge(const GG::XMLElement& elem);
     
     /// Adds reseach points to the accumulated total.  Checks for new tech advances.
     /** 
-    * Increments the empire's accumulated research points 
-    * by the specified amount.  Returns total accumulated research points
-    * after the addition.  This method should also check for new technological
-    * advances that have been achieved, and add them to the technology list.
-    */
+     * Increments the empire's accumulated research points 
+     * by the specified amount.  Returns total accumulated research points
+     * after the addition.  This method should also check for new technological
+     * advances that have been achieved, and add them to the technology list.
+     */
     int AddRP(int moreRPs);
        	
     /// Mutator for empire color
@@ -361,9 +360,9 @@ public:
     
     /// Sets the empire's assigned fleet ID range
     /**
-    * Sets the empire's range of assigned fleet IDs.  This range
-    * is for informational purposes only and is not enforced in any way
-    */
+     * Sets the empire's range of assigned fleet IDs.  This range
+     * is for informational purposes only and is not enforced in any way
+     */
     void SetFleetIDs(int min, int max);
     
     //@}
@@ -377,19 +376,19 @@ protected:
     /** \name Constructors */ //@{
     /// Creates an empire with the given properties.
     /**
-    * Initializes the empire's fields to the specified values.  All lists
-    * (planets, fleets, owned planets, visible fleets, technologies, explored
-    * systems, sitrep entries) will be empty after creation
-    */
+     * Initializes the empire's fields to the specified values.  All lists
+     * (planets, fleets, owned planets, visible fleets, technologies, explored
+     * systems, sitrep entries) will be empty after creation
+     */
     Empire(const std::string& name, int ID, const GG::Clr& color, 
-               ControlStatus& control); 
+           ControlStatus& control); 
 
     /// Creates an empire from an XMLElement
     /**
-    * The empire's fields and lists will be initialized as specified 
-    * by the given XLMElement.  This XMLElement should have been created
-    * by Empire::XMLEncode()
-    */
+     * The empire's fields and lists will be initialized as specified 
+     * by the given XLMElement.  This XMLElement should have been created
+     * by Empire::XMLEncode()
+     */
     Empire(const GG::XMLElement& elem);
     
     //@}
@@ -397,12 +396,12 @@ protected:
 private:
     /// Helper method to encode a list of integers into an XMLElement
     /** 
-    *  The contents of the list are encoded using the encoding method described
-    *  in the GG documentation.
-    *  Each container element is an XML subelement called itemN where N is the 
-    *  index of the container element.  Each subelement has a "value" attribute
-    *  equal to the value of the container element.
-    */
+     *  The contents of the list are encoded using the encoding method described
+     *  in the GG documentation.
+     *  Each container element is an XML subelement called itemN where N is the 
+     *  index of the container element.  Each subelement has a "value" attribute
+     *  equal to the value of the container element.
+     */
     static void EncodeIntList(GG::XMLElement& container, const std::set<int>& lst);
 
     /// the minimum fleet id that should be assigned to this empire
@@ -433,8 +432,8 @@ private:
     std::list<SitRepEntry*> m_sitrep_entries;
 
 
-           // all of the following are lists of ObjectIDs which 
-           // reference objects in the Universe module
+    // all of the following are lists of ObjectIDs which 
+    // reference objects in the Universe module
 
     /// list of acquired technologies.  These are IDs
     /// referencing TechLevel objects in the techmanager

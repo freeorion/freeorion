@@ -82,8 +82,8 @@ bool ClientEmpireManager::HandleEmpireElementUpdate( GG::XMLElement empireElemen
         return false;
     }
     
-    // if it lacks the EmpireID attribute, we have an error
-    std::string sID = (sitRepElement.Attribute("EmpireID"));
+    // if it lacks the empire_id attribute, we have an error
+    std::string sID = (sitRepElement.Attribute("empire_id"));
     if( sID == "" )
     {
         return false;
