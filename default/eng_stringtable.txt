@@ -1253,23 +1253,23 @@ Lesser minds struggle with, or accept the confines of the language they have lea
 LRN_PSIONICS
 Psionics
 LRN_PSIONICS_DESC
-Telepathy, Empathy, Clairvoyance, Prescience, Mind Control, Possesion, Psychokinesis & Psychoenergitics.
+Though deep introspection or artificial enhancement, the brain may  develop abilites to directly interact with the universe around it, bypassing the limitations of a physical body.  Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives.  Applications of these powers, including mind control, personality alteration and possesion have profound implications for the relationship between talented and untalted beings.
 LRN_ARTIF_MINDS
 Artificial Minds
 LRN_ARTIF_MINDS_DESC
-HAL never makes mistakes
+While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience.  With the development of true artificial minds, these qualities may be synthesized, modified and altered.  These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
 LRN_XENOARCH
 Xenoarchaeology
 LRN_XENOARCH_DESC
-Oooh! Pretty oblilesk.
+The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy.  Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space.  Finding and decyphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
 LRN_GRAVITONICS
 Gravitonics
 LRN_GRAVITONICS_DESC
-Up is down, down is sideways, sideways is backwards, nowhere is straight...?
+Analagous to the "colour charge" of quantum chromodynamics, there are several types of graviton.  With the common attractive-force graviton, the colloqiual "anti-graviton", "right-graviton" and "left-graviton" may be combined to bend and flex the surface of spacetime arbitrarily.  This manipulation is percieved as control of the force of gravity, permitting structures, craft and investigations previously impossible, even theoretically.
 LRN_EVERYTHING
 Theory of Everything
 LRN_EVERYTHING_DESC
-Unification of Quantum Gravity with Grand Unified Theory.  All classic forces are described, and equivalent under certain ultrasymetric conditions.
+Early, naive theories describe subsets of the four fundamental forces of nature: electromagnetism, the strong and weak nuclear nuclear forces, and gravity.  A complete framework expressing all forces as special cases of a single interaction represents a holy grail of science.  This theory describes the earliest moments of the universe, the most distorted depths of a singularity, the tightest windings of hidden dimensions and the final fate of the cosmos.  Yet still, there may "exist" layers of existence beyond what can be observed and described by science...
 LRN_FORCE_FIELD
 Force-Field Harmonics
 LRN_FORCE_FIELD_DESC
@@ -1277,270 +1277,263 @@ Like Fourier analysis of sound, electromagnetism, strong and weak forces may be 
 LRN_MIND_VOID
 Mind of the Void
 LRN_MIND_VOID_DESC
-We are not alone in the cosmos... but why should the search be so limited?  Perhaps the universe itself is alive, aware, watching.
+We are not alone in the cosmos... but why should the search be so limited?  Many cultures have myths, legends or fervent belief in a higher consciousness.  Whether a loving or malevolent God, or a detatched observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.
 LRN_TIME_MECH
 Temporal Mechanics
 LRN_TIME_MECH_DESC
-1234321010101654321210303502340231501235123401234
+What are "now", "future" and "past"?  The twin paradox of special relativity, or the theoretical "wormhole" in place of the twins suggest early forms of "time travel".  Direct manipulation of spacetime and temporal flux permit these effects to be harnessed and magnified.  Temporal incursions cannot perceptible alter the past of the universe that we perceive.  Then cay however compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...
 LRN_NDIM_SUBSPACE
 N-Dimensional Subspace
 LRN_NDIM_SUBSPACE_DESC
-Early superstring theorists spoke of 10, 11 or 26 dimensional universes, with all but the 4 macrodimensions "curled up" so tightly as to be unseen.  These other dimensions may now be uncurled and opened, by shifting into levels of existance previously hidden below the surface of our limited perception.
+Early superstring theorists spoke of 10, 11 or 26 dimensional universes, with all but the 4 macrodimensions "curled up" so tightly as to be unseen.  These and other dimensions may now be uncurled and opened, and the very surface of space itself stretched and pierced by shifting matter to or from levels of existance previously hidden below the surface of our limited perception, or creating layers or bubbles where none existed before.
 LRN_MATTER_ENERGY
 Matter-Energy Conversion
 LRN_MATTER_ENERGY_DESC
-Transporters & Replicators!  WOO!
+At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon.  Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two.  Transmutation and replication, at limited scales, become possible.   However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation. 
 LRN_UNIF_CONC
 Unified Consciousness
 LRN_UNIF_CONC_DESC
-Know about the mind of the void + manipulate fields = combine brains, optionally with the universe itself
+Telepathic communication between individuals or mind-machine interfaces only permit the most basic, trivial and surface exchanges of thought and ideas.  Truely joined minds function as a single consciousness, with the summed faculties and knowledge of its constituent parts, and acting as a new unique entity.  This has great potential, but also significant risk, in that the union may not seek its own destruction, which is necessary for the original minds to be regained.  Alternatively, one of the minds may dominate the other, controlling or destroying the other, rather than forming an equal, harmonious union.
 LRN_TRANSCEND
 Singularity of Transcendence
 LRN_TRANSCEND_DESC
-Woah!  My hands are so big, man!
+What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infintitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
 GRO_PLANET_ECOL
 Planetary Ecology
 GRO_PLANET_ECOL_DESC
-
+Agriculture and medical science can drastically increase survivability, causing population growth to become hyperexponential, for a time.  Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it.  Understanding natural ecology and its interaction to stresses permits the system to be sustained, and its benefits reaped for generations to come.
 GRO_GENETIC_ENG
 Genetic Engineering
 GRO_GENETIC_ENG_DESC
-
+The palette of genetics is as varied as the forms of life from which it borrows.  Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existant or possible in nature.  As well, genes may be altered prior to reinsertion, by writing altering the base codes directly, allowing entirely new genes to be created.  Techniques are limited, however, to small modifications of existing genes that are available for study.
 GRO_MEDICAL_PATH
 Medical Pathology
 GRO_MEDICAL_PATH_DESC
-
+Treatment of diseases and injuries requires thorough understanding of their causes.  
 GRO_INDUSTY_FARM
 Industrial Farming
 GRO_INDUSTY_FARM_DESC
-
-GRO_POP_SOCIOLOGY
-Population Sociology
-GRO_POP_SOCIOLOGY_DESC
-
+Traditional, simple farming methods are sufficient for small, locally self-sufficient populations without significant limits on available space or time.  With greater specialization of more advanced socieites, however, fewer farmers must feed many more workers from much greater distances away, including even interstellar food shipment for fledgling colonies.  Hydroponics, automation, fertilization, pest control and altered illumination growth cycles become necessary.  Successful use of these tools requires understanding of their function, interactions, costs and low-level mechanims.
 GRO_ENV_ENCAPSUL
 Environmenal Encapsulation
 GRO_ENV_ENCAPSUL_DESC
-
+Covered, surrounded and sealed pockets of a particular environment are essential for space travel, colonization of hazardous planets and preservation of natural diversity on heavily industrialized worlds.  Maintaining the desired conditions is not as trivial as it may seem however, as in many cases there is no external source of pure and clean materials or organisms available.  Rather, it is necessary to create a self-sufficient and sustainable environment, often an entire ecology, capable of recycling and reusing its wastes to supply everything it needs and consumes.
 GRO_SYMBIOTIC_BIO
 Symbotic Biology
 GRO_SYMBIOTIC_BIO_DESC
-
+From the first domesticated animals or agricultural plants, societies discover the benefits of symbiotic relationships with other species.  Later, bacteria or natural parasites are often used for medical purposes.  In these early forms, however, the dominant species is (ideally) in complete control of the relationship, with the "farmed" organism existing only to server its owner.  True symbiosis only occurs when both organisms exist and prosper together, each aiding and depending on the other to mutual benefit, the combination greater than the sum of the parts alone.
 GRO_GENETIC_MED
 Genetic Medicine
 GRO_GENETIC_MED_DESC
-
+Traditional Genetic Engineering alters genetic codes and then implements or raises the modified organism.  Similar techniques may be applied to already matured individuals as well.  Goals of these treatments may be cosmetic or enhancing modifications, or corrective, preventative or time-critical medical treatments.  Reducing the delay between alteration and results from generations to months, days or hours has a corresponding increase in the range and power of possible alterations.
 GRO_LIFECYCLE_MAN
 Lifecycle Manipulation
 GRO_LIFECYCLE_MAN_DESC
-
+Most complex organisms have progress through physiological stages during a lifetime, whether distinctly separated by metamorphises, or blurred by continuous slow aging.  In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others.  By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.
 GRO_XENO_GENETICS
 Xenological Genetics
 GRO_XENO_GENETICS_DESC
-
+Early genetics is limited by the available samples of naturally occuring organims on which to base its modifications.  As well, these modifications are restricted within the limits of the physical mechanisms of genetic code storage, alteration and expression in developed individuals.  By investigating the equivalent systems in entirely different ecosystems and organisms, great insights or revalations may be reached, spurring new developments in more familiar genetic systems.
 GRO_NANOTECH_MED
 Nanotech Medicine
 GRO_NANOTECH_MED_DESC
-
+While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corretive measures.  Nanotechnology may be used to accomplish these tasks, with two important advantages:  Correction may be done without invasive surguries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.
 GRO_ORBIT_FARMING
 Orbital Farming
 GRO_ORBIT_FARMING_DESC
-
+The primary energy source for food production in most societies is solar radiation.  Bound to a planet, farms have very limited access to this energy, due to the comparatively small solid angle subtended by the planet's surface, and surface farming must also compete with other land uses.  By moving food production to orbital installations, continuous access to solar energy is gained, and any undesired spectral filtration by planetary atmospheres is eliminated.  Food production may be increased dramatically.
 GRO_INDUSRY_CLONE
 Industrial Cloning
 GRO_INDUSRY_CLONE_DESC
-
+Primitive manual nuclear transfer cloning techniques are little more than novelties for large organisms.  By applying techniques similar to industrial mass production or biochemical process engineering, it becomes possible to generate dozens, or millions, of full-grown copies of a single genetic blueprint.  Populations may be made to order, tailored to meet the specific needs of society.
 GRO_XENO_HYBRIDS
 Xenlological Hybridization
 GRO_XENO_HYBRIDS_DESC
-
+Regardless of how well understood, or how adeptly improved, a biological system is limited by its inheirent nature.  Structures and basic physiology can only be altered so far within the confines of a single planet's biology.  With understanding of other biologies, however, the disparate systems may be fused, forming an entirely new hybrid biology, with potential abilities and traits greater than those of any of its parts.
 GRO_NANO_CYBERNET
 Nanotech Cybernetics
 GRO_NANO_CYBERNET_DESC
-
+After applying nanotechnology to internally correct defects or injuries, the next step is to augment or replace natural biochemical systems with superior artificial replacements.  Rather than merely regrowing lost limbs or repairing damaged organs, augments are able to quickly grow new ones to suit their needs at any time.  Antiquated biological systems, from muscle tissue and tendons, down to organelles or enzymes may also be replaced, affording greatly increased strength, endurance and flexibility.
 GRO_ENERGY_META
 Pure-Energy Metabolism
 GRO_ENERGY_META_DESC
-
+The ultimate stage of physical development is to transcend the physical altogether.  Without bodies, individuals and society may move, grow and exist freely, unhindered by unecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.
 PRO_MICROGRAV_MAN
 Microgravity Manufacturing
 PRO_MICROGRAV_MAN_DESC
-
+The microgravity of low planetary orbit offers great potential for  novel manufaturing facility designs, equipment and techniques not possible on planet surfaces.  Solids may be held in place with minimal support.  Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated.  Factory equipment may be arranged optimally in three dimensions.  These conditions permit great increases in efficiency and productivity, if properly exploited.
 PRO_PLANET_GEOL
 Planetary Geology
 PRO_PLANET_GEOL_DESC
-
+a
 PRO_ROBOTIC_PROD
 Robotic Production
 PRO_ROBOTIC_PROD_DESC
-
+Though high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks.  Robots work continuously, without perpetual demands for greater economic compensation.  Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site.  Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.
 PRO_FUSION_GEN
 Fusion Generation
 PRO_FUSION_GEN_DESC
-
+Explosive or uncontrolled thermonuclear reactions are comparatively simple to cause at scales ranging from small tactical warheads to supergiant stellar furnaces.  Controllable, stable and practical power generation from the reaction is somewhat more difficult.  The process remains attractive, however, due to the near-limitless supply of fuel and potential for emissions-free operation.
 PRO_ASTEROID_MINE
 Asteroid Mining
 PRO_ASTEROID_MINE_DESC
-
+a
 PRO_CORE_MINE
 Deep Core Mining
 PRO_CORE_MINE_DESC
-
+The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gascious planet contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
 PRO_NANOTECH_PROD
 Nanotech Production
 PRO_NANOTECH_PROD_DESC
-
+a
 PRO_ORBITAL_GEN
 Orbital Generation
 PRO_ORBITAL_GEN_DESC
-
+a
 PRO_ORBITAL_MINE
 Orbital Mining
 PRO_ORBITAL_MINE_DESC
-
+a
 PRO_SENTIENT_FACT
 Sentient Autofactories
 PRO_SENTIENT_FACT_DESC
-
+a
 PRO_FRC_FLD_ASSMB
 Force-Field Assembly
 PRO_FRC_FLD_ASSMB_DESC
-
+a
 PRO_INTSTEL_COPRO
 Interstellar Co-Production
 PRO_INTSTEL_COPRO_DESC
-
-PRO_TRANSMUTATION
-Transmutation
-PRO_TRANSMUTATION_DESC
-
+a
 PRO_NDIM_ASSMB
 N-Dimensional Assembly
 PRO_NDIM_ASSMB_DESC
-
+a
 PRO_SINGULAR_GEN
 Singularity Generation
 PRO_SINGULAR_GEN_DESC
-
+a
 PRO_MATENG_REPLIC
 Matter-Energy Replication
 PRO_MATENG_REPLIC_DESC
-
+a
 PRO_ZERO_GEN
 Zero-Point Generation
 PRO_ZERO_GEN_DESC
-
+a
 CON_ORBITAL_CON
 Orbital Construction
 CON_ORBITAL_CON_DESC
-
+a
 CON_ARCH_PSYCH
 Architectural Psychology
 CON_ARCH_PSYCH_DESC
-
+a
 CON_INFRA_ECOL
 Infrastructure Ecology
 CON_INFRA_ECOL_DESC
-
+a
 CON_ORGANIC_STRC
 Organic Structures
 CON_ORGANIC_STRC_DESC
-
+a
 CON_METRO_INFRA
 Metroplex Architecture
 CON_METRO_INFRA_DESC
-
+a
 CON_TRANS_STRC
 Transforming Structures
 CON_TRANS_STRC_DESC
-
+a
 CON_ARCH_MONOFILS
 Architectural Monofilaments
 CON_ARCH_MONOFILS_DESC
-
+a
 CON_SELFGRAV_STRC
-Self-Gravitating Construction
+Self-Gravitating Structures
 CON_SELFGRAV_STRC_DESC
-
+a
 CON_ASYMP_MATS
 Asymptotic Materials
 CON_ASYMP_MATS_DESC
-
+a
 CON_STRC_INT_FLDS
 Structural Integrity Fields
 CON_STRC_INT_FLDS_DESC
-
+a
 CON_CONTGRAV_ARCH
 Controlled Gravity Architecture
 CON_CONTGRAV_ARCH_DESC
-
+a
 CON_GAL_INFRA
 Galactic Infrastructure
 CON_GAL_INFRA_DESC
-
+a
 CON_FRC_ENRG_STRC
 Force-Energy Structures
 CON_FRC_ENRG_STRC_DESC
-
+a
 CON_ART_HEAVENLY
 Artificial Heavenly Bodies
 CON_ART_HEAVENLY_DESC
-
+a
 CON_TRANS_ARCH
 Transcendent Architecture
 CON_TRANS_ARCH_DESC
-
+a
 CON_NDIM_STRC
 N-Dimensional Structures
 CON_NDIM_STRC_DESC
-
+a
 ECO_MARKET_ECON
 Market Economics
 ECO_MARKET_ECON_DESC
-
+a
 ECO_PLANNED_ECON
 Planned Economics
 ECO_PLANNED_ECON_DESC
-
+a
 ECO_EXTERN_INTEG
 Externality Integration
 ECO_EXTERN_INTEG_DESC
-
+a
 ECO_ECON_SPECTRO
 Economic Spectroscopy
 ECO_ECON_SPECTRO_DESC
-
+a
 ECO_INTSTEL_TRADE
 Interstellar Trade
 ECO_INTSTEL_TRADE_DESC
-
+Commerce between the stars is fundamentally similar to any other form of trade, aside from the scale of the distances involved.  Older paradigms must be adapted to space-based forms, however.  Trade routes, merchant guilds and piracy all remain, in new forms.  And as in earlier times, disruption and manipulation of these tools can have drastic effects on the economies that grow to depend on them.
 ECO_ENV_ADAPTION
 Environmental Adaption
 ECO_ENV_ADAPTION_DESC
-
+a
 ECO_GAL_MONEY_POL
 Galactic Monetary Policy
 ECO_GAL_MONEY_POL_DESC
-
+a
 ECO_ECON_FLUIDITY
 Economic Fluidity
 ECO_ECON_FLUIDITY_DESC
-
+a
 ECO_PLANET_COLONY
 Planetary Collonialism
 ECO_PLANET_COLONY_DESC
-
+a
 ECO_ECON_PRESCIEN
 Economic Prescience
 ECO_ECON_PRESCIEN_DESC
-
+a
 ECO_STAB_HYPGROW
 Stablized Hypergrowth
 ECO_STAB_HYPGROW_DESC
-
+a
 ECO_ECON_HEGEMONY
 Economic Hegemony
 ECO_ECON_HEGEMONY_DESC
+a
 
 LRN_PHYS_BRAIN_APP1
 Sample Application 1
