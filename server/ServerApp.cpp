@@ -148,15 +148,23 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
          std::string host_player_name = doc.root_node.Child("host_player_name").Text();
          m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Attribute("value"));
          m_universe_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("size"));
+	 m_universe_shape = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("shape"));
+	 if (m_universe_shape == 4)
+           m_universe_file = doc.root_node.Child("universe_params").Attribute("file");
          CreateAIClients(doc.root_node);
          m_state = SERVER_GAME_SETUP;
          m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
          m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe size set to " << m_universe_size << " (SERVER_GAME_SETUP).";
+         m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe shape set to " << m_universe_shape << " (SERVER_GAME_SETUP).";
+	 if (m_universe_shape == 4)
+           m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe file set to " << m_universe_file << " (SERVER_GAME_SETUP).";
          if (m_network_core.EstablishPlayer(m_players_info.size(), connection.socket)) {
             m_network_core.SendMessage(HostAckMessage(m_players_info.size()));
             m_network_core.SendMessage(JoinAckMessage(m_players_info.size()));
             m_players_info.push_back(PlayerInfo(connection, host_player_name, true));
          }
+
+	 // set up the universe with the details obtained from the client - currently fixed to one AI
       } else {
          const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
          m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to host "

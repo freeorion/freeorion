@@ -107,6 +107,8 @@ private:
    int                     m_expected_players;     ///< the total desired number of players in the game
 
    int                     m_universe_size;        ///< the size of the universe
+   int                     m_universe_shape;        ///< the shape of the universe
+   std::string             m_universe_file;        ///< file to use for generating universe
 
    static ServerApp*       s_app;
 };
