@@ -15,7 +15,7 @@
 #endif
 
 #ifndef _FREEORION_SITREPENTRY_H_
-#include "SitRepEntry.h"
+#include "../util/SitRepEntry.h"
 #endif
 
 #ifndef _FREEORION_TECHMANAGER_H_
