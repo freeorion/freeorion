@@ -20,7 +20,7 @@
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <ctime>
-#include <sstream>
+
 /* The interface of boost.random has changed in Version 1.31, since
  * we require 1.30+ anyway, we just check for 1.31 and up and assume
  * version 1.30 otherwise
