@@ -1,4 +1,5 @@
-SUBDIRS = Empire network UI universe util server client
+#SUBDIRS = Empire network UI universe util combat server client
+SUBDIRS = server client
 EXTRA_DIST = m4
 ACLOCAL_AMFLAGS = -I m4
 AM_CPPFLAGS = -DFREEORION_LINUX

@@ -10,12 +10,15 @@ freeorionca_exe_SOURCES =			\
 AM_CPPFLAGS = @GIGINET_CFLAGS@ @GIGISDL_CFLAGS@ @SDL_CFLAGS@ -DFREEORION_BUILD_AI
 AM_CXXFLAGS = -g3 -Wall
 
-freeorionca_exe_LDADD = @SDL_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@ \
-@top_srcdir@/Empire/libFOempire-common.a	\
-@top_srcdir@/network/libFOnetwork-ai.a		\
-@top_srcdir@/network/libFOnetwork-common.a	\
-@top_srcdir@/universe/libFOuniverse-ai.a	\
-@top_srcdir@/universe/libFOuniverse-common.a	\
-@top_srcdir@/util/libFOutil-ai.a		\
-@top_srcdir@/util/libFOutil-common.a
+include @top_srcdir@/remake_libs.mak
+
+freeorionca_exe_LDADD = @SDL_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@	\
+@top_srcdir@/Empire/libFOempire-common.a				\
+@top_srcdir@/network/libFOnetwork-ai.a					\
+@top_srcdir@/network/libFOnetwork-common.a				\
+@top_srcdir@/universe/libFOuniverse-ai.a				\
+@top_srcdir@/universe/libFOuniverse-common.a				\
+@top_srcdir@/util/libFOutil-ai.a					\
+@top_srcdir@/util/libFOutil-common.a					\
+@top_srcdir@/combat/libFOcombat-common.a
 

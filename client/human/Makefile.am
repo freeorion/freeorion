@@ -11,23 +11,19 @@ freeorion_exe_SOURCES =				\
 AM_CPPFLAGS = @FT2_CFLAGS@ @GIGI_CFLAGS@ @GIGISDL_CFLAGS@ @GIGINET_CFLAGS@ @SDL_CFLAGS@ -DFREEORION_BUILD_HUMAN 
 AM_CXXFLAGS = -g3 -Wall
 
+include @top_srcdir@/remake_libs.mak
+
 # In the following, order DOES matter!
 
-freeorion_exe_LDADD =							\
--L@top_srcdir@/network -L@top_srcdir@/universe -L@top_srcdir@/UI	\
--L@top_srcdir@/Empire -L@top_srcdir@/util				\
-@SDL_LIBS@ @GIGI_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@ @FT2_LIBS@ 	\
--lFOnetwork-human -lFOnetwork-common -lFOempire-common			\
--lFOuniverse-human -lFOuniverse-common -lFOutil-human -lFOutil-common   \
--lFOui-common 
+freeorion_exe_LDADD =						\
+@SDL_LIBS@ @GIGI_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@ @FT2_LIBS@	\
+@top_srcdir@/network/libFOnetwork-human.a			\
+@top_srcdir@/network/libFOnetwork-common.a			\
+@top_srcdir@/Empire/libFOempire-common.a			\
+@top_srcdir@/universe/libFOuniverse-human.a			\
+@top_srcdir@/universe/libFOuniverse-common.a			\
+@top_srcdir@/util/libFOutil-human.a				\
+@top_srcdir@/util/libFOutil-common.a				\
+@top_srcdir@/UI/libFOui-common.a				\
+@top_srcdir@/combat/libFOcombat-common.a
 
-
-
-#@top_srcdir@/network/libFOnetwork-common.a	\
-#@top_srcdir@/network/libFOnetwork-human.a	\
-#@top_srcdir@/universe/libFOuniverse-common.a	\
-#@top_srcdir@/universe/libFOuniverse-human.a	\
-#@top_srcdir@/UI/libFOui-common.a		\
-#@top_srcdir@/Empire/libFOempire-common.a	\
-#@top_srcdir@/util/libFOutil-human.a		\
-#@top_srcdir@/util/libFOutil-common.a		

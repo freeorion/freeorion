@@ -229,6 +229,7 @@ AC_CONFIG_FILES([Makefile
 		 UI/Makefile
 		 universe/Makefile
 		 util/Makefile 
+		 combat/Makefile
                  server/Makefile 
   		 client/Makefile
 		   client/human/Makefile

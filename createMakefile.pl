@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 $DEBUG = 0;
 
-@DIRLIST = ("Empire","util","universe","UI","network");
+@DIRLIST = ("Empire","util","universe","UI","network","combat");
 
 undef %SPECIAL; # List of files that compile differently for SERVER and CLIENT
 undef %COMMON;  # List of files that are identical for SERVER and CLIENT
