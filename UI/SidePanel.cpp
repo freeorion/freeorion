@@ -5,6 +5,8 @@
 #include "GGDrawUtil.h"
 #include "GGStaticGraphic.h"
 #include "GGDynamicGraphic.h"
+#include "GGThreeButtonDlg.h"
+
 #include "../client/human/HumanClientApp.h"
 #include "../universe/System.h"
 #include "../universe/Planet.h"
@@ -512,17 +514,26 @@ namespace {
 
     std::vector<const Fleet*> flt_vec = system->FindObjects<Fleet>();
 
+    Ship* ship=0;
+
     for(unsigned int i=0;i<flt_vec.size();i++)
       if(flt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != flt_vec[i]->Owners().end())
       {
-        Ship* ship;
+        Ship* s=0;
         for(Fleet::const_iterator it = flt_vec[i]->begin(); it != flt_vec[i]->end(); ++it)
-          if(   (ship=GetUniverse().Object<Ship>(*it))
-             && ship->Design().colonize)
-            return ship;//ship->ID();
+          if(   (s=GetUniverse().Object<Ship>(*it))
+             && s->Design().colonize)
+          {
+            ship = s;
+            
+            // prefere non moving colony ship
+            if(!IsStationaryFleetFunctor(*flt_vec[i]->Owners().begin())(flt_vec[i]))
+              break;
+            return s;
+          }
       }
 
-    return 0;//UniverseObject::INVALID_OBJECT_ID;
+    return ship;
   }
 
   void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Clr border, int thick, 
@@ -1473,13 +1484,11 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   x+=font->Height();
-  if(planet.PopPoints()>planet.AvailableFood())
-    text=GG::RgbaTag(GG::CLR_RED);
-  else
-    if(planet.PopPoints()>planet.AvailableFood())
-      text=GG::RgbaTag(GG::CLR_RED);
-    else
-      text=GG::RgbaTag(ClientUI::TEXT_COLOR);
+
+  double future_pop_growth = static_cast<int>(planet.FuturePopGrowth()*100.0) / 100.0;
+  if     (future_pop_growth<0.0)  text=GG::RgbaTag(GG::CLR_RED);
+  else if(future_pop_growth>0.0)  text=GG::RgbaTag(GG::CLR_GREEN);
+       else                       text=GG::RgbaTag(ClientUI::TEXT_COLOR);
 
   text+= boost::lexical_cast<std::string>(static_cast<int>(planet.PopPoints())) + "</rgba>/"+boost::lexical_cast<std::string>(planet.MaxPop());
   font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0, true);
@@ -1561,6 +1570,18 @@ void SidePanel::PlanetPanel::ClickColonize()
   Ship *ship=FindColonyShip(planet->SystemID());
   if(ship==0)
     throw std::runtime_error("SidePanel::PlanetPanel::ClickColonize ship not found!");
+
+
+  if(!IsStationaryFleetFunctor(*ship->GetFleet()->Owners().begin())(ship->GetFleet()))
+  {
+    GG::ThreeButtonDlg dlg(320,200,"It could only a colony ship been found which is about leaving the system!\n\nTake it anyway?",
+                           ClientUI::FONT,ClientUI::PTS,ClientUI::WND_COLOR,ClientUI::CTRL_BORDER_COLOR,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR,2,
+                           "Yes","No");
+    dlg.Run();
+
+    if(dlg.Result()!=0)
+      return;
+  }
 
   HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->EmpireID(), ship, planet->ID() ));
 }
@@ -2134,8 +2155,13 @@ bool SidePanel::PlanetView::Render()
   else                    text= " "+boost::lexical_cast<std::string>(static_cast<int>(planet->PopPoints()))+"/"+boost::lexical_cast<std::string>(planet->MaxPop()) + " Million";
 
   text+="  ";
-  text+= planet->PopGrowth()<0?(GG::RgbaTag(GG::CLR_RED)+"(-"):(GG::RgbaTag(GG::CLR_GREEN)+"(+");
-  text+=boost::lexical_cast<std::string>(planet->PopGrowth());
+
+  double future_pop_growth = static_cast<int>(planet->FuturePopGrowth()*100.0) / 100.0;
+  if     (future_pop_growth<0.0)  text+=GG::RgbaTag(GG::CLR_RED) + "(";
+  else if(future_pop_growth>0.0)  text+=GG::RgbaTag(GG::CLR_GREEN) + "(+";
+       else                       text+=GG::RgbaTag(ClientUI::TEXT_COLOR) + "(";
+
+  text+=boost::lexical_cast<std::string>(future_pop_growth);
   text+=")</rgba>";
 
   font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
@@ -2487,10 +2513,11 @@ void SidePanel::SetSystem(int system_id)
       AttachChild(m_star_graphic);MoveChildDown(m_star_graphic);
 
       // TODO: add fleet icons
+      //std::vector<const Fleet*> flt_vec = m_system->FindObjects<Fleet>();
       std::vector<const Fleet*> flt_vec = m_system->FindObjects<Fleet>();
       for(unsigned int i = 0; i < flt_vec.size(); i++) 
         GG::Connect(flt_vec[i]->StateChangedSignal(), &SidePanel::FleetsChanged, this);
-
+      
       // add planets
       std::vector<const Planet*> plt_vec = m_system->FindObjects<Planet>();
 
