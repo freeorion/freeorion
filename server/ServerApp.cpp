@@ -5,11 +5,12 @@
 #include "XMLDoc.h"
 
 #include "../network/XDiff.hpp"
-
 #include "../util/OrderSet.h"
 #include "../universe/Fleet.h"
-#include "../universe/ProdCenter.h"
-#include "../universe/PopCenter.h"
+#include "../universe/Planet.h"
+#include "../Empire/TechManager.h"
+
+
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -21,10 +22,6 @@
 #include "SDL_getenv.h"
 
 #include <ctime>
-
-namespace {
-const unsigned int MIN_TURN_PHASE_TIME = 1000;
-}
 
 
 struct AISetupData
@@ -103,10 +100,16 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_log_category.setPriority(log4cpp::Priority::DEBUG);
     m_log_category.debug("freeoriond logger initialized.");
     m_log_category.errorStream() << "ServerApp::ServerApp : Server now in mode " << SERVER_IDLE << " (SERVER_IDLE).";
+
+    // initialize tech manager
+    TechManager::instance().LoadTechTree( "" );
 }
 
 ServerApp::~ServerApp()
 {
+    // shutdown tech tree
+    TechManager::instance().ClearAll();
+
     m_log_category.debug("Shutting down freeoriond logger...");
 	log4cpp::Category::shutdown();
 }
@@ -723,12 +726,9 @@ void ServerApp::ProcessTurns( )
   OrderSet::const_iterator  order_it;
   Empire::ConstFleetIDItr   fleet_it;
   Empire::ConstPlanetIDItr  planet_it;
-  std::vector<SitRepEntry>  sit_reps;
   Fleet                     *the_fleet;
-  ProdCenter                *the_prod_center;
-  PopCenter                 *the_pop_center;
+  Planet                    *the_planet;
   UniverseObject            *the_object;
-  int                       u_ticks_start;
   
   /// First process all orders, then process turns
   for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
@@ -756,8 +756,6 @@ void ServerApp::ProcessTurns( )
   /// process turn for fleets
   for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
   {
-    u_ticks_start = SDL_GetTicks();
-    
     /// broadcast UI message to all players
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
 
@@ -774,21 +772,15 @@ void ServerApp::ProcessTurns( )
 
       the_fleet = dynamic_cast<Fleet*> ( the_object );
 
-      the_fleet->MovementPhase( sit_reps );               
+      the_fleet->MovementPhase( );               
     }
 
-    ///< we want to wait a min time as per the design spec
-    while( ( SDL_GetTicks() - u_ticks_start ) < MIN_TURN_PHASE_TIME )
-    {
-    }   
   }
 
 
   /// process turn for production and growth
   for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
   {
-    u_ticks_start = SDL_GetTicks();
-    
     /// broadcast UI message to all players
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
 
@@ -803,18 +795,13 @@ void ServerApp::ProcessTurns( )
     {
       the_object = GetUniverse().Object( *planet_it );
 
-      the_prod_center = dynamic_cast<ProdCenter*> ( the_object );
-      the_prod_center->PopGrowthProductionResearchPhase( sit_reps );               
-
-      the_pop_center = dynamic_cast<PopCenter*> ( the_object );
-      the_pop_center->PopGrowthProductionResearchPhase( sit_reps );               
-
+      the_planet = dynamic_cast<Planet*> ( the_object );
+      the_planet->PopGrowthProductionResearchPhase( );               
     }
 
-    ///< we want to wait a min time as per the design spec
-    while( ( SDL_GetTicks() - u_ticks_start ) < MIN_TURN_PHASE_TIME )
-    {
-    }   
+    ///< check now for completed research
+    pEmpire->CheckResearchProgress( );
+
   }
 
    /// loop and free all orders
@@ -823,17 +810,32 @@ void ServerApp::ProcessTurns( )
      delete it->second;
      it->second = NULL;
    }   
-
+    
    /// Increment turn
    m_current_turn++;
    
    /// broadcast UI message to all players
    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it)
    {
+     pEmpire = Empires().Lookup( player_it->first );
+
      GG::XMLDoc doc = CreateTurnUpdate( player_it->first );
+     
+     // append all sitreps to document that belong to this empire
+     GG::XMLElement sit_reps( SitRepEntry::SITREP_UPDATE_TAG );
+     
+     for ( Empire::ConstSitRepItr sitrep_it = pEmpire->SitRepBegin(); sitrep_it != pEmpire->SitRepEnd(); ++sitrep_it )
+     {
+       sit_reps.AppendChild( (*sitrep_it)->XMLEncode() );
+     }
+     doc.root_node.AppendChild( sit_reps );
+
+     // free empire sitreps
+     pEmpire->ClearSitRep( );
+
      m_network_core.SendMessage( TurnUpdateMessage( player_it->first, doc ) );
    }
-   
+
 }
 
 
