@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     // read and process command-line arguments, if any
     try {
         GetOptionsDB().AddFlag('h', "help", "Print this help message.");
-		GetOptionsDB().Add('m', "musicoff", "Disables music in the game", false);
+		GetOptionsDB().AddFlag('m', "musicoff", "Disables music in the game");
 		GetOptionsDB().Add("bgmusic", "Sets the background track to play", std::string("background.ogg"));
         GetOptionsDB().AddFlag('f', "fullscreen", "Start the game in fullscreen");
         GG::XMLDoc doc;
