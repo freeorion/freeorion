@@ -1,0 +1,40 @@
+# This is a comment.  The portion of any line after a "#" (including the "#") will be ignored.
+# Spacing is also ignored.  The columns are only for human readability.
+# The column and row labels themselves are also ignored, and are there for readability as well.
+# They are optional but should always be used.
+# 
+# Tables should be of the form:
+# <ROWSxCOLUMNS>
+# TABLE_NAME [COLUMN LABELS]
+# ...
+
+<5x4>
+PrimaryFocusMod         Food  Minerals    Industry    Research
+Balanced                3     3           3           3
+Farming                 6     1           1           1
+Industry                1     1           6           1
+Mining                  1     6           1           1
+Science                 1     1           1           6
+
+<5x4>				
+SecondaryFocusMod       Food  Minerals    Industry    Research
+Balanced                1     1           1           1
+Farming                 2     0           0           0
+Industry                0     0           2           0
+Mining                  0     2           0           0
+Science                 0     0           0           2
+
+<8x4>
+EnviromentProductionMod Food  Minerals    Industry    Research
+Swamp                   -2    0           0           0
+Toxic                   -5    0           0           0
+Inferno                 -5    0           0           0
+Radiated                -5    0           0           0
+Barren                  -4    0           0           0
+Tundra                  -2    0           0           0
+Desert                  -3    0           0           0
+Terran                  0     0           0           0
+Ocean                   -1    0           0           0
+Gaia                    3     0           0           0
+Asteroids               -8    0           0           0
+GasGiant                -10   0           0           0
