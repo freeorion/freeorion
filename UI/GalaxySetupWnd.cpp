@@ -248,7 +248,7 @@ void GalaxySetupPanel::ShapeChanged(int index)
 GalaxySetupWnd::GalaxySetupWnd() : 
     CUI_Wnd(UserString("GSETUP_WINDOW_TITLE"), (HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2, 
             (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2, GAL_SETUP_WND_WD, GAL_SETUP_WND_HT, 
-            GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
+            GG::Wnd::CLICKABLE | GG::Wnd::MODAL),
     m_ended_with_ok(false),
     m_galaxy_setup_panel(0),
     m_empire_name_label(0),
