@@ -17,13 +17,16 @@
 ////////////////////////////////////////////////
 ServerApp::PlayerInfo::PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn) : 
    ServerNetworkCore::ConnectionInfo(conn),
-   name("")
+   name(""),
+   host(false)
 {
 }
 
-ServerApp::PlayerInfo::PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn, const std::string& _name) : 
+ServerApp::PlayerInfo::PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn, const std::string& _name, 
+                                  bool _host/* = false*/) : 
 	ServerNetworkCore::ConnectionInfo(conn),
-   name(_name)
+   name(_name),
+   host(_host)
 {
 }
 
@@ -60,6 +63,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
    m_log_category.setAdditivity(true);   // ...but allow the addition of others later
    m_log_category.setPriority(log4cpp::Priority::DEBUG);
    m_log_category.debug("freeoriond logger initialized.");
+   m_log_category.errorStream() << "ServerApp::ServerApp : Server now in mode " << SERVER_IDLE << " (SERVER_IDLE).";
 }
 
 ServerApp::~ServerApp()
@@ -113,6 +117,24 @@ void ServerApp::CreateAIClients(const GG::XMLElement& elem)
 
 void ServerApp::HandleMessage(const Message& msg)
 {
+   switch (msg.Type()) {
+   case Message::END_GAME: {
+      if (0 <= msg.Sender() && msg.Sender() < m_players_info.size() && m_players_info[msg.Sender()].host) {
+         for (unsigned int i = 0; i < m_players_info.size(); ++i) {
+            if (i != msg.Sender())
+               m_network_core.SendMessage(EndGameMessage(-1, i));
+         }
+         m_network_core.DumpAllConnections();
+         Exit(0);
+      }
+      break;
+   }
+      
+   default: {
+      m_log_category.errorStream() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
+      break;
+   }
+   }
 }
 
 void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCore::ConnectionInfo& connection)
@@ -127,10 +149,11 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
          m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Attribute("value"));
          CreateAIClients(doc.root_node);
          m_state = SERVER_GAME_SETUP;
+         m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
          if (m_network_core.EstablishPlayer(m_players_info.size(), connection.socket)) {
-            m_players_info.push_back(PlayerInfo(connection, host_player_name));
-            m_network_core.SendMessage(HostAckMessage(m_players_info.size() - 1));
-            m_network_core.SendMessage(JoinAckMessage(m_players_info.size() - 1));
+            m_network_core.SendMessage(HostAckMessage(m_players_info.size()));
+            m_network_core.SendMessage(JoinAckMessage(m_players_info.size()));
+            m_players_info.push_back(PlayerInfo(connection, host_player_name, true));
          }
       } else {
          const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
@@ -148,9 +171,9 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
       if (it != m_expected_ai_players.end()) { // incoming AI player connection
          // let the server network core know what socket this player is on
          if (m_network_core.EstablishPlayer(m_players_info.size(), connection.socket)) {
+            m_network_core.SendMessage(JoinAckMessage(m_players_info.size()));
             m_players_info.push_back(PlayerInfo(connection, msg_text));
             m_expected_ai_players.erase(msg_text); // only allow one connection per AI
-            m_network_core.SendMessage(JoinAckMessage(m_players_info.size() - 1));
          }
       } else { // non-AI player connection
          if (m_expected_ai_players.size() + m_players_info.size() < m_expected_players) {
@@ -169,6 +192,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
       if (m_expected_ai_players.size() + m_players_info.size() == m_expected_players) { // if we've gotten all the players joined up
          GameInit();
          m_state = SERVER_WAITING;
+         m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
       }
       break;
    }

@@ -74,9 +74,10 @@ private:
    struct PlayerInfo : public ServerNetworkCore::ConnectionInfo
    {
       PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn); ///< default ctor
-      PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn, const std::string& _name); ///< ctor
+      PlayerInfo(const ServerNetworkCore::ConnectionInfo& conn, const std::string& _name, bool _host = false); ///< ctor
 
       std::string name;    ///< the player's name
+      bool        host;    ///< true if this is the host player
 // TODO: add other relevant player data
    };
 
