@@ -1,7 +1,7 @@
 [Project]
 FileName=Server.dev
 Name=Server
-UnitCount=59
+UnitCount=58
 Type=1
 Ver=1
 ObjFiles=
@@ -535,27 +535,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit50]
-FileName=..\universe\ShipBuilder.h
-CompileCpp=1
-Folder=universe
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit51]
-FileName=..\universe\PopCenter.h
-CompileCpp=1
-Folder=universe
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit52]
 FileName=..\universe\ProdCenter.h
 CompileCpp=1
 Folder=universe
@@ -565,7 +545,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit53]
+[Unit52]
 FileName=..\universe\Planet.h
 CompileCpp=1
 Folder=universe
@@ -575,7 +555,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit54]
+[Unit53]
 FileName=..\universe\PopCenter.cpp
 CompileCpp=1
 Folder=universe
@@ -585,7 +565,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit55]
+[Unit54]
 FileName=..\universe\ProdCenter.cpp
 CompileCpp=1
 Folder=universe
@@ -595,7 +575,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit56]
+[Unit55]
 FileName=..\universe\Ship.cpp
 CompileCpp=1
 Folder=universe
@@ -605,7 +585,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit57]
+[Unit56]
 FileName=..\universe\Ship.h
 CompileCpp=1
 Folder=universe
@@ -615,8 +595,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit58]
+[Unit57]
 FileName=..\universe\Fleet.h
+CompileCpp=1
+Folder=universe
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit58]
+FileName=..\universe\Fleet.cpp
 CompileCpp=1
 Folder=universe
 Compile=1
@@ -627,6 +617,16 @@ BuildCmd=
 
 [Unit59]
 FileName=..\universe\Fleet.cpp
+CompileCpp=1
+Folder=universe
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit50]
+FileName=..\universe\PopCenter.h
 CompileCpp=1
 Folder=universe
 Compile=1
