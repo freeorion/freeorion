@@ -3,6 +3,7 @@
 #include "Fleet.h"
 #include "Planet.h"
 #include "Ship.h"
+#include "System.h"
 #include "XMLDoc.h"
 #include "Predicates.h"
 
@@ -81,7 +82,6 @@ GG::XMLElement ClientUniverse::XMLEncode() const
     for (const_iterator it = begin(); it != end(); ++it)
         temp.AppendChild(it->second->XMLEncode());
     retval.AppendChild(temp);
-
     return retval;
 }
 

@@ -2,14 +2,20 @@
 #ifndef _ClientUniverse_h_
 #define _ClientUniverse_h_
 
-#include "System.h"
+#ifndef _XMLObjectFactory_h_
 #include "XMLObjectFactory.h"
+#endif
+
+#ifndef BOOST_NONCOPYABLE_HPP_INCLUDED
+#include <boost/noncopyable.hpp>
+#endif
 
 #include <vector>
 #include <map>
 #include <string>
 
 
+class System;
 class UniverseObject;
 namespace GG {class XMLElement;}
 
@@ -19,7 +25,7 @@ namespace GG {class XMLElement;}
    UniverseObjects are also freely available using arbitrary predicates and FindObjectIDs().  Nothing may be 
    added to the ClientUniverse, and ClientUniverse's only mutator is SetUniverse(), which replaces the entire
    universe with the parameter supplied.*/
-class ClientUniverse 
+class ClientUniverse : public boost::noncopyable
 {
 protected:
    typedef std::map<int, UniverseObject*> ObjectMap; ///< the container type that is used internally to hold the objects in the universe; keyed by ID number
@@ -76,6 +82,7 @@ public:
       }
       return retval;
    }
+
    const_iterator begin() const  {return m_objects.begin();}   ///< returns the begin const_iterator for the objects in the universe
    const_iterator end() const    {return m_objects.end();}     ///< returns the end const_iterator for the objects in the universe
    
