@@ -585,32 +585,61 @@ void MapWnd::RenderBackgrounds()
 
 void MapWnd::RenderStarlanes()
 {
-    const double LINE_SCALE = std::max(1.0, m_zoom_factor / s_min_scale_factor / 2.0);
-    const unsigned char STARLANE_ALPHA = static_cast<unsigned char>(0.6 * 255);
+    double LINE_SCALE = std::max(1.0, m_zoom_factor / s_min_scale_factor / 5.0);
+    double INNER_LINE_PORTION = 0.3;
+    double INNER_LINE_WIDTH = (LINE_SCALE / 2.0) * INNER_LINE_PORTION; // these are actually half-widths in either direction
+    double OUTER_LINE_WIDTH = (LINE_SCALE / 2.0);
+    double CENTER_ALPHA = 0.7;
+    double INNER_LINE_EDGE_ALPHA = 0.4;
+    double OUTER_LINE_EDGE_ALPHA = 0.0;
 
     glDisable(GL_TEXTURE_2D);
-    glEnable(GL_LINE_SMOOTH);
-    glLineWidth(LINE_SCALE / 2.5);
-    glBegin(GL_LINES);
 
     GG::Pt ul = ClientUpperLeft();
     for (std::set<StarlaneData>::iterator it = m_starlanes.begin(); it != m_starlanes.end(); ++it) {
-        if (it->Src()->Owners().size() != 1 || it->Dst()->Owners().size() != 1 ||
-            *it->Src()->Owners().begin() != *it->Dst()->Owners().begin()) {
-            glColor4ub(255, 255, 255, STARLANE_ALPHA);
-        } else {
-            int empire_id = *it->Src()->Owners().begin();
-            Empire* empire = Empires().Lookup(empire_id);
-            const GG::Clr& clr = empire->Color();
-            glColor4ub(clr.r, clr.g, clr.b, STARLANE_ALPHA);
+        double center1[2] = {ul.x + it->Src()->X() * m_zoom_factor, ul.y + it->Src()->Y() * m_zoom_factor};
+        double center2[2] = {ul.x + it->Dst()->X() * m_zoom_factor, ul.y + it->Dst()->Y() * m_zoom_factor};
+        double lane_length = GetUniverse().LinearDistance(it->Src()->ID(), it->Dst()->ID());
+        double left_vec[2] = {-(center2[1] - center1[1]) / lane_length, (center2[0] - center1[0]) / lane_length};
+        double far_left1[2] = {center1[0] + OUTER_LINE_WIDTH * left_vec[0], center1[1] + OUTER_LINE_WIDTH * left_vec[1]};
+        double far_left2[2] = {center2[0] + OUTER_LINE_WIDTH * left_vec[0], center2[1] + OUTER_LINE_WIDTH * left_vec[1]};
+        double left1[2] = {center1[0] + INNER_LINE_WIDTH * left_vec[0], center1[1] + INNER_LINE_WIDTH * left_vec[1]};
+        double left2[2] = {center2[0] + INNER_LINE_WIDTH * left_vec[0], center2[1] + INNER_LINE_WIDTH * left_vec[1]};
+        double right1[2] = {center1[0] - INNER_LINE_WIDTH * left_vec[0], center1[1] - INNER_LINE_WIDTH * left_vec[1]};
+        double right2[2] = {center2[0] - INNER_LINE_WIDTH * left_vec[0], center2[1] - INNER_LINE_WIDTH * left_vec[1]};
+        double far_right1[2] = {center1[0] - OUTER_LINE_WIDTH * left_vec[0], center1[1] - OUTER_LINE_WIDTH * left_vec[1]};
+        double far_right2[2] = {center2[0] - OUTER_LINE_WIDTH * left_vec[0], center2[1] - OUTER_LINE_WIDTH * left_vec[1]};
+
+        GG::Clr color = GG::CLR_WHITE;
+        if (it->Src()->Owners().size() == 1 && it->Dst()->Owners().size() == 1 &&
+            *it->Src()->Owners().begin() == *it->Dst()->Owners().begin()) {
+            color = Empires().Lookup(*it->Src()->Owners().begin())->Color();
         }
-        glVertex2d(ul.x + it->Src()->X() * m_zoom_factor, ul.y + it->Src()->Y() * m_zoom_factor);
-        glVertex2d(ul.x + it->Dst()->X() * m_zoom_factor, ul.y + it->Dst()->Y() * m_zoom_factor);
+
+        glBegin(GL_TRIANGLE_STRIP);
+        color.a = static_cast<unsigned char>(255 * OUTER_LINE_EDGE_ALPHA);
+        glColor4ubv(color.v);
+        glVertex2dv(far_left2);
+        glVertex2dv(far_left1);
+        color.a = static_cast<unsigned char>(255 * INNER_LINE_EDGE_ALPHA);
+        glColor4ubv(color.v);
+        glVertex2dv(left2);
+        glVertex2dv(left1);
+        color.a = static_cast<unsigned char>(255 * CENTER_ALPHA);
+        glColor4ubv(color.v);
+        glVertex2dv(center2);
+        glVertex2dv(center1);
+        color.a = static_cast<unsigned char>(255 * INNER_LINE_EDGE_ALPHA);
+        glColor4ubv(color.v);
+        glVertex2dv(right2);
+        glVertex2dv(right1);
+        color.a = static_cast<unsigned char>(255 * OUTER_LINE_EDGE_ALPHA);
+        glColor4ubv(color.v);
+        glVertex2dv(far_right2);
+        glVertex2dv(far_right1);
+        glEnd();
     }
 
-    glEnd();
-    glLineWidth(1.0);
-    glDisable(GL_LINE_SMOOTH);
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -620,13 +649,13 @@ void MapWnd::RenderFleetMovementLines()
     const double RATE = 0.5;
     const int SHIFT = static_cast<int>(GG::App::GetApp()->Ticks() * RATE / 32.0) % 32;
     const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (32 - SHIFT));
-    const double LINE_SCALE = std::max(1.0, m_zoom_factor / s_min_scale_factor);
+    const double LINE_SCALE = std::max(1.0, m_zoom_factor / s_min_scale_factor / 2.5);
 
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_LINE_STIPPLE);
-    glLineStipple(static_cast<int>(LINE_SCALE / 2.5), STIPPLE);
-    glLineWidth(LINE_SCALE / 2.5);
+    glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
+    glLineWidth(LINE_SCALE);
     glColor4d(1.0, 1.0, 1.0, 1.0);
     glBegin(GL_LINE_STRIP);
 
