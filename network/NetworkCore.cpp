@@ -5,6 +5,16 @@
 #include <boost/lexical_cast.hpp>
 #include <log4cpp/Category.hh>
 
+// deal with dirty, dirty MS macros
+#if defined(_MSC_VER)
+# if defined(SendMessage)
+#  undef SendMessage
+# endif
+# if defined(DispatchMessage)
+#  undef DispatchMessage
+# endif
+#endif
+
 // static(s)
 const std::string NetworkCore::EOM_STR = "_MSG_END_";
 const int         NetworkCore::SERVER_FIND_LISTEN_PORT = 12345;

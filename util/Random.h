@@ -2,9 +2,15 @@
 #ifndef _Random_h_
 #define _Random_h_
 
-// HACK! this keeps gcc 3.2 from barfing when it sees "typedef long long uint64_t;"
-// in boost/cstdint.h when compiling under windows
-#ifdef WIN32
+#if defined(_MSC_VER)
+  // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
+  // in boost/cstdint.h when compiling under windows
+#  if defined(int64_t)
+#    undef int64_t
+#  endif
+#elif defined(WIN32)
+  // HACK! this keeps gcc 3.x from barfing when it sees "typedef long long uint64_t;"
+  // in boost/cstdint.h when compiling under windows
 #  define BOOST_MSVC -1
 #endif
 #include <boost/random/mersenne_twister.hpp>
@@ -13,9 +19,6 @@
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/normal_distribution.hpp>
-#ifdef WIN32
-#  undef BOOST_MSVC
-#endif
 
 #include <ctime>
 

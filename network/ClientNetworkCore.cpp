@@ -12,6 +12,16 @@
 
 #include <sstream>
 
+// deal with dirty, dirty MS macros
+#if defined(_MSC_VER)
+# if defined(SendMessage)
+#  undef SendMessage
+# endif
+# if defined(DispatchMessage)
+#  undef DispatchMessage
+# endif
+#endif
+
 namespace {
 log4cpp::Category& logger = log4cpp::Category::getRoot();
 const unsigned int SYCHRONOUS_TIMEOUT = 5000;    // 5 seconds

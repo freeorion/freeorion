@@ -11,6 +11,11 @@
 #define FREEORION_LINUX
 #endif
 
+#ifdef FREEORION_WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 /** encapsulates a spawned child process in a platform-independent manner. A Process object holds a shared_ptr to the 
    data on the process it creates; therefore Process objects can be freely copied, with the same copy semantics as 
    a shared_ptr.  In addition, the created process is automatically killed when its owning Process object is 

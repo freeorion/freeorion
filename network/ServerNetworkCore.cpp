@@ -8,6 +8,16 @@
 
 #include <sstream>
 
+// deal with dirty, dirty MS macros
+#if defined(_MSC_VER)
+# if defined(SendMessage)
+#  undef SendMessage
+# endif
+# if defined(DispatchMessage)
+#  undef DispatchMessage
+# endif
+#endif
+
 ////////////////////////////////////////////////
 // ServerNetworkCore
 ////////////////////////////////////////////////
