@@ -875,7 +875,7 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
 
             if (planet_size == Planet::SZ_NOWORLD)
                 continue;
-            else
+            else if (planet_size != Planet::SZ_ASTEROIDS)
                 ++num_planets_in_system;
 
             if (planet_size == Planet::SZ_ASTEROIDS) {
@@ -904,7 +904,10 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
 
             Insert(planet); // add planet to universe map
             system->Insert(planet, orbit);  // add planet to system map
-            planet->Rename(system->Name() + " " + RomanNumber(num_planets_in_system));
+            if (planet_type == PT_ASTEROIDS)
+                planet->Rename("Asteroid Belt");
+            else
+                planet->Rename(system->Name() + " " + RomanNumber(num_planets_in_system));
         }
     }
 }
