@@ -621,6 +621,8 @@ class CUIIconButton : public GG::Button
     ClickedSignalType& RClickedSignal() const                    {return m_rclicked_sig;} ///< returns the clicked signal object for this Button
 
     const GG::SubTexture& Icon() const {return m_icon;}
+    const GG::Rect& IconRect() const {return m_icon_rect;}
+    const GG::Rect& TextRect() const {return m_text_rect;}
 
     //@}
 
@@ -684,6 +686,7 @@ CUIIconButton::CUIIconButton( int x, int y, int w, int h,const boost::shared_ptr
    m_value(0.0),m_decimals_to_show(0),m_show_sign(true),m_positive_color(text_color),m_negative_color(text_color),
    m_icon_rect(1+m_border_thick,1+m_border_thick,h-(1+m_border_thick),h-(1+m_border_thick)),m_text_rect(m_icon_rect.LowerRight().x,2,w-2,h-2)
 {
+  SetTextFormat(GG::TF_RIGHT | GG::TF_VCENTER);
   SetValue(0.0);
 }
 
@@ -802,18 +805,23 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
   AttachChild(m_button_colonize);
 
   const int RESOURCE_DISPLAY_HEIGHT = 2*ClientUI::PTS;
-  const int RESOURCE_DISPLAY_WIDTH  = (Width()-MAX_PLANET_SIZE/2)/6;
+  const int RESOURCE_DISPLAY_WIDTH  = 60;
   const int RESOURCE_DISPLAY_MARGIN = 8;
 
   ul=GG::Pt(Width()-2*RESOURCE_DISPLAY_WIDTH-2*RESOURCE_DISPLAY_MARGIN,m_planet_name->LowerRight().y-UpperLeft().y/*-(m_planet_name->LowerRight().y-m_planet_name->UpperLeft().y)/2*/);
-  m_button_food     = new CUIIconButton(ul.x                                               ,ul.y                                                ,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconFarming (),ClientUI::FONT,static_cast<int>(ClientUI::PTS*0.9),GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
-  m_button_mining   = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH+RESOURCE_DISPLAY_MARGIN,ul.y                                                ,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconMining  (),ClientUI::FONT,static_cast<int>(ClientUI::PTS*0.9),GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
-  m_button_research = new CUIIconButton(ul.x                                               ,ul.y+RESOURCE_DISPLAY_HEIGHT+RESOURCE_DISPLAY_MARGIN,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconResearch(),ClientUI::FONT,static_cast<int>(ClientUI::PTS*0.9),GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
-  m_button_industry = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH+RESOURCE_DISPLAY_MARGIN,ul.y+RESOURCE_DISPLAY_HEIGHT+RESOURCE_DISPLAY_MARGIN,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconIndustry(),ClientUI::FONT,static_cast<int>(ClientUI::PTS*0.9),GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
+  m_button_food     = new CUIIconButton(ul.x                                               ,ul.y                                                ,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconFarming (),ClientUI::FONT,10,GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
+  m_button_mining   = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH+RESOURCE_DISPLAY_MARGIN,ul.y                                                ,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconMining  (),ClientUI::FONT,10,GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
+  m_button_research = new CUIIconButton(ul.x                                               ,ul.y+RESOURCE_DISPLAY_HEIGHT+RESOURCE_DISPLAY_MARGIN,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconResearch(),ClientUI::FONT,10,GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
+  m_button_industry = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH+RESOURCE_DISPLAY_MARGIN,ul.y+RESOURCE_DISPLAY_HEIGHT+RESOURCE_DISPLAY_MARGIN,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconIndustry(),ClientUI::FONT,10,GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
   m_button_balanced = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH-1                      ,ul.y+RESOURCE_DISPLAY_HEIGHT-1                      ,9                     ,9                     ,IconBalance (),ClientUI::FONT,ClientUI::PTS                      ,GG::CLR_ZERO,GG::CLR_ZERO               ,2);
 
   boost::shared_ptr<GG::Texture>  icon = IconBalance ();
   m_button_balanced->SetIconRect(GG::Rect((-2),(-2),m_button_balanced->Width()-(-2),m_button_balanced->Height()-(-2)));
+
+  m_button_food    ->SetTextRect(GG::Rect(m_button_food    ->IconRect().UpperLeft().x+2,2,m_button_food    ->Width()-6,m_button_food    ->Height()-2));
+  m_button_mining  ->SetTextRect(GG::Rect(m_button_mining  ->IconRect().UpperLeft().x+2,2,m_button_mining  ->Width()-6,m_button_mining  ->Height()-2));
+  m_button_research->SetTextRect(GG::Rect(m_button_research->IconRect().UpperLeft().x+2,2,m_button_research->Width()-6,m_button_research->Height()-2));
+  m_button_industry->SetTextRect(GG::Rect(m_button_industry->IconRect().UpperLeft().x+2,2,m_button_industry->Width()-6,m_button_industry->Height()-2));
 
   m_button_food     ->SetAngledCornerLowerRight(7);
   m_button_mining   ->SetAngledCornerLowerLeft (7);
@@ -1042,9 +1050,9 @@ void SidePanel::PlanetPanel::PlanetProdCenterChanged()
       break;
     }
 
-  m_button_food    ->SetValue(planet->FarmingPoints());
+  m_button_food    ->SetValue(planet->FarmingPoints ());
   m_button_industry->SetValue(planet->IndustryPoints());
-  m_button_mining  ->SetValue(planet->MiningPoints());
+  m_button_mining  ->SetValue(planet->MiningPoints  ());
   m_button_research->SetValue(planet->ResearchPoints());
 
   m_button_food    ->SetColor((planet->PrimaryFocus()==Planet::BALANCED || planet->PrimaryFocus()==Planet::FARMING || planet->SecondaryFocus()==Planet::BALANCED || planet->SecondaryFocus()==Planet::FARMING )?GG::Clr(100,100,  0,200):GG::CLR_ZERO);
@@ -1436,6 +1444,8 @@ SidePanel::SystemResourceSummary::SystemResourceSummary(int x, int y, int w, int
 
 bool SidePanel::SystemResourceSummary::Render()
 {
+  GG::FlatRectangle(UpperLeft().x,UpperLeft().y,LowerRight().x,LowerRight().y,GG::Clr(0.0,0.0,0.0,0.3),GG::CLR_ZERO,1);
+
   int farming=m_farming,mining=m_mining,research=m_research,industry=m_industry,defense=m_defense;
 
   std::string text; int x,y; boost::shared_ptr<GG::Texture> icon;
@@ -2098,9 +2108,9 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_system(0),
     m_star_graphic(0),
     m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,ClientUI::String("SP_UNKNOWN_SYSTEM"),ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4),0,ClientUI::TEXT_COLOR)),
-    m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0, 0, 0, 0),ClientUI::SIDE_PANEL_COLOR)),
-    m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,0,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
-    m_button_next(new GG::Button(40+w-80                 ,0,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
+    m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.3),ClientUI::SIDE_PANEL_COLOR)),
+    m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
+    m_button_next(new GG::Button(40+w-80                 ,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
     m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::PTS-5,ClientUI::String("SP_SYSTEM_PRODUCTION"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR)),
     m_system_resource_summary(new SystemResourceSummary(0,100-20,w,20)),
     m_planet_panel_container(new PlanetPanelContainer(0,100,w,h-100-30)),
@@ -2146,6 +2156,7 @@ bool SidePanel::Render()
 
   GG::Pt ul = UpperLeft(), lr = LowerRight();
   FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::SIDE_PANEL_COLOR, GG::CLR_ZERO, 0);
+
   return true;
 }
 
