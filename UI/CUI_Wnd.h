@@ -115,6 +115,9 @@ public:
     virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
     virtual void LButtonUp(const GG::Pt& pt, Uint32 keys);
     virtual void LClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
+
+    void ToggleMinimized() {MinimizeClicked();}
+    void Close()           {CloseClicked();}
     //@}
 
 protected:
