@@ -302,7 +302,7 @@ void FleetMoveOrder::Execute() const
     }
     
     // set the destination
-    the_fleet->SetMoveOrders(this->DestinationSystemID());
+    the_fleet->SetDestination(this->DestinationSystemID());
     
     // TODO:  check destination validity (once ship range is decided on)
 }
@@ -541,7 +541,7 @@ void FleetColonizeOrder::Execute() const
             // add planet to the empire's list of owned planets
             if(target_planet->SystemID() != UniverseObject::INVALID_OBJECT_ID )
             {
-                universe->Object(target_planet->SystemID())->AddOwner( EmpireID() );
+                target_planet->GetSystem()->AddOwner(EmpireID());
                 empire->Lookup(EmpireID())->AddPlanet(PlanetID());
             }
             
@@ -550,7 +550,7 @@ void FleetColonizeOrder::Execute() const
             universe->Delete(curr_ship_id);
             
             // If colony ship was only ship in fleet, remove fleet
-            if(colony_fleet->ShipCount() == 0)
+            if(colony_fleet->NumShips() == 0)
             {
                 universe->Delete(colony_fleet->ID());
                 empire->Lookup(EmpireID())->RemoveFleet(colony_fleet->ID());
@@ -618,7 +618,7 @@ void DeleteFleetOrder::Execute() const
     if (!empire->HasFleet(FleetID()))
         throw std::runtime_error("Empire attempted to issue deletion order to another's fleet.");
 
-    if (fleet->ShipCount())
+    if (fleet->NumShips())
         throw std::runtime_error("Attempted to delete an unempty fleet.");
 
     GetUniverse().Delete(FleetID());
