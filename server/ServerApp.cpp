@@ -67,6 +67,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
    m_log_category.setPriority(log4cpp::Priority::DEBUG);
    m_log_category.debug("freeoriond logger initialized.");
    m_log_category.errorStream() << "ServerApp::ServerApp : Server now in mode " << SERVER_IDLE << " (SERVER_IDLE).";
+   m_temp = 0;
 }
 
 ServerApp::~ServerApp()
@@ -159,8 +160,18 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
          m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
          m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe size set to " << m_universe_size << " (SERVER_GAME_SETUP).";
          m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe shape set to " << m_universe_shape << " (SERVER_GAME_SETUP).";
-	 if (m_universe_shape == 4)
+	 if (m_universe_shape == 6)
+	 {
            m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe file set to " << m_universe_file << " (SERVER_GAME_SETUP).";
+	   ServerApp::Universe().CreateUniverse(m_universe_file, m_universe_size, 5, 2);
+           m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Created universe (SERVER_GAME_SETUP).";
+	 }
+	 else 
+	 { 
+	   ServerApp::Universe().CreateUniverse((ClientUniverse::Shape)m_universe_shape, m_universe_size, 5, 3); 
+           m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Created universe without file (SERVER_GAME_SETUP).";
+	 }
+	 
          if (m_network_core.EstablishPlayer(m_players_info.size(), connection.socket)) {
             m_network_core.SendMessage(HostAckMessage(m_players_info.size()));
             m_network_core.SendMessage(JoinAckMessage(m_players_info.size()));

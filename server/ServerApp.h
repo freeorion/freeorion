@@ -95,6 +95,8 @@ private:
    CombatModule*           m_current_combat;
    ServerNetworkCore       m_network_core;
 
+   int			   m_temp;
+
    log4cpp::Category&      m_log_category;         ///< reference to the log4cpp object used to log events to file
    
    ServerState             m_state;                ///< the server's current state of execution
