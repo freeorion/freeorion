@@ -257,8 +257,8 @@ void IntroScreen::OnMultiPlayer()
                      empire_setup.root_node.AppendChild(elem);
 
 		             // send the empire setup choices to the server
-                     HumanClientApp::GetApp()->NetworkCore().SendMessage(EmpireSetupMessage(empire_setup));
-               }
+                     HumanClientApp::GetApp()->NetworkCore().SendMessage(JoinGameSetup(empire_setup));
+		    }
                else
                    ClientUI::MessageBox(ClientUI::String("Failed empire setup!") );
                    
