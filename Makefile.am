@@ -44,8 +44,6 @@ Empire/TechLevel.cpp				\
 Empire/TechLevel.h  				\
 Empire/TechManager.cpp				\
 Empire/TechManager.h  				\
-combat/CombatSystem.cpp				\
-combat/CombatSystem.h  				\
 network/Message.cpp				\
 network/Message.h  				\
 network/NetworkCore.cpp				\
@@ -106,6 +104,8 @@ freeoriond_exe_SOURCES =			\
 server/ServerApp.cpp				\
 server/ServerApp.h				\
 server/dmain.cpp				\
+combat/CombatSystem.cpp				\
+combat/CombatSystem.h  				\
 Empire/ServerEmpireManager.cpp			\
 Empire/ServerEmpireManager.h			\
 network/ServerNetworkCore.cpp			\
