@@ -29,9 +29,6 @@ class MapWndPopup;
 class MapWnd : public GG::Wnd
 {
 public:
-    static const double MIN_SCALE_FACTOR;
-    static const double MAX_SCALE_FACTOR;
-
     //! \name Signal Types //!@{
     typedef boost::signal<void (int)> SelectedSystemSignalType; //!< emitted when the user selects a star system
     //!@}
@@ -84,7 +81,7 @@ public:
     void RemovePopup( MapWndPopup* popup );
     //!@}
         
-    static const int SIDE_PANEL_WIDTH;
+    static const int    SIDE_PANEL_WIDTH;
 
 private:
     struct MovementLineData; ///< contains all the information necessary to render a single fleet movement line on the main map
@@ -118,6 +115,8 @@ private:
     SelectedSystemSignalType m_selected_system_signal;
 
     static const int NUM_BACKGROUNDS;
+    static double s_min_scale_factor;
+    static double s_max_scale_factor;
 
     friend class GalaxyMapScreen;    //this is basically a part of that screen anyway
 };
@@ -130,13 +129,11 @@ private:
 class MapWndPopup : public CUI_Wnd
 {
 public:
-
     MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags );
     MapWndPopup(const GG::XMLElement& elem);     
     virtual ~MapWndPopup( );
 
     void Close( );      //!< closes the MapWndPopup   
-    
 };
 
 

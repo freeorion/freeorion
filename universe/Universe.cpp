@@ -29,11 +29,10 @@ namespace {
     UniverseObject* NewShip(const GG::XMLElement& elem)   {return new Ship(elem);}
     UniverseObject* NewSystem(const GG::XMLElement& elem) {return new System(elem);}
 
-    const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, Universe::UNIVERSE_WIDTH]
-    const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, Universe::UNIVERSE_WIDTH]
+    const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, s_universe_width]
+    const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, s_universe_width]
     const int     ADJACENCY_BOXES = 25;
-    const double  ADJACENCY_BOX_SIZE = Universe::UNIVERSE_WIDTH / ADJACENCY_BOXES;
-    const double PI = 3.141592;
+    const double  PI = 3.141592;
 
     // "only" defined for 1 <= n <= 3999, as we can't
     // display the symbol for 5000
@@ -276,7 +275,7 @@ namespace {
 	}
     }
 
-    void GenerateStarField(Universe &universe,const std::vector<std::pair<double,double> > &positions, Universe::AdjacencyGrid& adjacency_grid)
+    void GenerateStarField(Universe &universe,const std::vector<std::pair<double,double> > &positions, Universe::AdjacencyGrid& adjacency_grid, double adjacency_box_size)
     {
 	std::list<std::string> star_names;
 	LoadPlanetNames(star_names);
@@ -309,14 +308,14 @@ namespace {
 					 star_name + " into the object map failed.");
 	    }
 
-	    adjacency_grid[static_cast<int>(system->X() / ADJACENCY_BOX_SIZE)]
-		[static_cast<int>(system->Y() / ADJACENCY_BOX_SIZE)].insert(std::make_pair(system->X(), system->Y()));
+	    adjacency_grid[static_cast<int>(system->X() / adjacency_box_size)]
+		[static_cast<int>(system->Y() / adjacency_box_size)].insert(std::make_pair(system->X(), system->Y()));
 	}
     }
 }
 
 // static(s)
-const double Universe::UNIVERSE_WIDTH = 1000.0;
+double Universe::s_universe_width = 1000.0;
 
 Universe::Universe()
 {
@@ -355,6 +354,8 @@ void Universe::SetUniverse(const GG::XMLElement& elem)
         delete itr->second;
     m_objects.clear(); 
 
+    s_universe_width = boost::lexical_cast<double>(elem.Child("s_universe_width").Text());
+
     for (int i = 0; i < elem.Child("m_objects").NumChildren(); ++i) {
 	if (UniverseObject* obj = m_factory.GenerateObject(elem.Child("m_objects").Child(i))) {
             m_objects[obj->ID()] = obj;
@@ -381,6 +382,8 @@ GG::XMLElement Universe::XMLEncode() const
     GG::XMLElement retval("Universe");
     GG::XMLElement temp("m_objects");
 
+    retval.AppendChild(GG::XMLElement("s_universe_width", boost::lexical_cast<std::string>(s_universe_width)));
+
     for (const_iterator it = begin(); it != end(); ++it)
         temp.AppendChild(it->second->XMLEncode());
     retval.AppendChild(temp);
@@ -396,6 +399,8 @@ GG::XMLElement Universe::XMLEncode(int empire_id) const
 
    XMLElement element("Universe");
    XMLElement object_map("m_objects");
+
+   element.AppendChild(XMLElement("s_universe_width", boost::lexical_cast<std::string>(s_universe_width)));
 
    for(const_iterator itr = begin(); itr != end(); ++itr)
    {
@@ -446,6 +451,8 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
     // a grid of ADJACENCY_BOXES x ADJACENCY_BOXES boxes to hold the positions of the systems as they are generated, 
     // in order to ensure that they get spaced out properly
     AdjacencyGrid adjacency_grid(ADJACENCY_BOXES, std::vector<std::set<std::pair<double, double> > >(ADJACENCY_BOXES));
+
+    s_universe_width = size * 1000.0 / 150.0; // chosen so that the width of a medium galaxy is 1000.0
 
     // generate the stars
     switch (shape) {
@@ -558,24 +565,24 @@ void Universe::GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacenc
 {
     std::vector<std::pair<double,double> > positions;
 
-    SpiralGalaxyCalcPositions(positions,arms,stars,UNIVERSE_WIDTH,UNIVERSE_WIDTH);
-    GenerateStarField(*this,positions,adjacency_grid);
+    SpiralGalaxyCalcPositions(positions,arms,stars,s_universe_width,s_universe_width);
+    GenerateStarField(*this,positions,adjacency_grid,s_universe_width/ADJACENCY_BOXES);
 }
 
 void Universe::GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 {
     std::vector<std::pair<double,double> > positions;
     
-    EllipticalGalaxyCalcPositions(positions,stars,UNIVERSE_WIDTH,UNIVERSE_WIDTH);
-    GenerateStarField(*this,positions,adjacency_grid);
+    EllipticalGalaxyCalcPositions(positions,stars,s_universe_width,s_universe_width);
+    GenerateStarField(*this,positions,adjacency_grid,s_universe_width/ADJACENCY_BOXES);
 }
 
 void Universe::GenerateClusterGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 {
     std::vector<std::pair<double,double> > positions;
     
-    ClusterGalaxyCalcPositions(positions,5,stars,UNIVERSE_WIDTH,UNIVERSE_WIDTH);
-    GenerateStarField(*this,positions,adjacency_grid);
+    ClusterGalaxyCalcPositions(positions,5,stars,s_universe_width,s_universe_width);
+    GenerateStarField(*this,positions,adjacency_grid,s_universe_width/ADJACENCY_BOXES);
 }
 
 void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
@@ -612,13 +619,15 @@ void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
         bool placed = false;
         int attempts = 0;
 
-        System* system = new System(star_type, num_orbits, star_name, (UNIVERSE_WIDTH-.1) * RandZeroToOne(), (UNIVERSE_WIDTH-.1) * RandZeroToOne());
+        System* system = new System(star_type, num_orbits, star_name, (s_universe_width-.1) * RandZeroToOne(), (s_universe_width-.1) * RandZeroToOne());
 
         int new_sys_id = Insert(system);
         if (new_sys_id == UniverseObject::INVALID_OBJECT_ID) {
             throw std::runtime_error("Universe::GenerateIrregularGalaxy : Attemp to insert system " + 
                                      star_name + " into the object map failed.");
         }
+
+	const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
 
         while (!placed && attempts++ < 10) {
             // look in the box into which this system falls, and those boxes immediately around that box; 
@@ -678,8 +687,8 @@ void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
                 neighbor_centroid.second /= neighbors.size();
                 double move_x = system_x - neighbor_centroid.first;
                 double move_y = system_y - neighbor_centroid.second;
-                move_x = std::max(0.0, std::min(move_x + system_x, UNIVERSE_WIDTH-.1));
-                move_y = std::max(0.0, std::min(move_y + system_y, UNIVERSE_WIDTH-.1));
+                move_x = std::max(0.0, std::min(move_x + system_x, s_universe_width-.1));
+                move_y = std::max(0.0, std::min(move_y + system_y, s_universe_width-.1));
                 system->MoveTo(move_x, move_y);
             } else {
                 placed = true;

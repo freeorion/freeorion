@@ -24,14 +24,14 @@
 
 
 namespace {
-const int MAP_MARGIN_WIDTH = 50;    // the number of pixels of system-less space around all four sides of the starfield
-const double ZOOM_STEP_SIZE = 1.25;
-const int NUM_NEBULA_TEXTURES = 5;
-const int MIN_NEBULAE = 3;
-const int MAX_NEBULAE = 8;
-const int END_TURN_BTN_WIDTH = 60;
-const int SITREP_PANEL_WIDTH = 400;
-const int SITREP_PANEL_HEIGHT = 300;
+    const int MAP_MARGIN_WIDTH = 50;    // the number of pixels of system-less space around all four sides of the starfield
+    const double ZOOM_STEP_SIZE = 1.25;
+    const int NUM_NEBULA_TEXTURES = 5;
+    const int MIN_NEBULAE = 3; // this min and max are for a 1000.0-width galaxy
+    const int MAX_NEBULAE = 6;
+    const int END_TURN_BTN_WIDTH = 60;
+    const int SITREP_PANEL_WIDTH = 400;
+    const int SITREP_PANEL_HEIGHT = 300;
 }
 
 
@@ -53,9 +53,9 @@ struct MapWnd::MovementLineData
 // MapWnd
 ////////////////////////////////////////////////
 // static(s)
-const double MapWnd::MIN_SCALE_FACTOR = 0.5;
-const double MapWnd::MAX_SCALE_FACTOR = 8.0;
-const int    MapWnd::NUM_BACKGROUNDS = 3;
+const int MapWnd::NUM_BACKGROUNDS = 3;
+double    MapWnd::s_min_scale_factor = 0.5;
+double    MapWnd::s_max_scale_factor = 8.0;
 
 
 ////////////////////////////////////////////////////////////
@@ -96,8 +96,8 @@ const int MapWnd::SIDE_PANEL_WIDTH = 300;
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight(),
-            static_cast<int>(Universe::UNIVERSE_WIDTH * MAX_SCALE_FACTOR) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH, 
-            static_cast<int>(Universe::UNIVERSE_WIDTH * MAX_SCALE_FACTOR) + GG::App::GetApp()->AppHeight() + MAP_MARGIN_WIDTH, 
+            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH, 
+            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppHeight() + MAP_MARGIN_WIDTH, 
             GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
     m_backgrounds(NUM_BACKGROUNDS),
     m_bg_scroll_rate(NUM_BACKGROUNDS),
@@ -134,19 +134,6 @@ MapWnd::MapWnd() :
     m_bg_position_X[2] = 10.0;
     m_bg_position_Y[2] = 10.0;
     m_bg_scroll_rate[2] = 0.5;
-
-    // set up nebulae
-    int num_nebulae = RandSmallInt(MIN_NEBULAE, MAX_NEBULAE);
-    m_nebulae.resize(num_nebulae);
-    m_nebula_centers.resize(num_nebulae);
-    SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UNIVERSE_WIDTH));
-    SmallIntDistType nebula_type = SmallIntDist(1, NUM_NEBULA_TEXTURES);
-    for (int i = 0; i < num_nebulae; ++i) {
-        std::string nebula_filename = "nebula" + boost::lexical_cast<std::string>(nebula_type()) + ".png";
-        m_nebulae[i].reset(new GG::Texture());
-        m_nebulae[i]->Load(ClientUI::ART_DIR + nebula_filename);
-        m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
-    }                                                           ///Do seomthing
 
     // create buttons
     m_turn_update = new CUIButton(GG::App::GetApp()->AppWidth() - END_TURN_BTN_WIDTH - 5, 5, END_TURN_BTN_WIDTH, "" );
@@ -245,27 +232,27 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
     GG::Pt center = GG::Pt( GG::App::GetApp()->AppWidth() / 2,  GG::App::GetApp()->AppHeight() / 2);
     GG::Pt ul_offset = ul - center;
     if (0 < move) {
-        if (m_zoom_factor * ZOOM_STEP_SIZE < MAX_SCALE_FACTOR) {
+        if (m_zoom_factor * ZOOM_STEP_SIZE < s_max_scale_factor) {
             ul_offset.x = static_cast<int>(ul_offset.x * ZOOM_STEP_SIZE);
             ul_offset.y = static_cast<int>(ul_offset.y * ZOOM_STEP_SIZE);
             m_zoom_factor *= ZOOM_STEP_SIZE;
         } else {
-            ul_offset.x = static_cast<int>(ul_offset.x * MAX_SCALE_FACTOR / m_zoom_factor);
-            ul_offset.y = static_cast<int>(ul_offset.y * MAX_SCALE_FACTOR / m_zoom_factor);
-            m_zoom_factor = MAX_SCALE_FACTOR;
+            ul_offset.x = static_cast<int>(ul_offset.x * s_max_scale_factor / m_zoom_factor);
+            ul_offset.y = static_cast<int>(ul_offset.y * s_max_scale_factor / m_zoom_factor);
+            m_zoom_factor = s_max_scale_factor;
         }
     } else if ( 0 > move ) {
-        if (MIN_SCALE_FACTOR < m_zoom_factor / ZOOM_STEP_SIZE) {
+        if (s_min_scale_factor < m_zoom_factor / ZOOM_STEP_SIZE) {
             ul_offset.x = static_cast<int>(ul_offset.x / ZOOM_STEP_SIZE);
             ul_offset.y = static_cast<int>(ul_offset.y / ZOOM_STEP_SIZE);
             m_zoom_factor /= ZOOM_STEP_SIZE;
         } else {
-            ul_offset.x = static_cast<int>(ul_offset.x * MIN_SCALE_FACTOR / m_zoom_factor);
-            ul_offset.y = static_cast<int>(ul_offset.y * MIN_SCALE_FACTOR / m_zoom_factor);
-            m_zoom_factor = MIN_SCALE_FACTOR;
+            ul_offset.x = static_cast<int>(ul_offset.x * s_min_scale_factor / m_zoom_factor);
+            ul_offset.y = static_cast<int>(ul_offset.y * s_min_scale_factor / m_zoom_factor);
+            m_zoom_factor = s_min_scale_factor;
         }
     } else {
-      return 1; // Windows platform always sends an additional event with a move of 0. This should be ignored
+	return 1; // Windows platform always sends an additional event with a move of 0. This should be ignored
     }
 
     for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
@@ -311,6 +298,31 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 void MapWnd::InitTurn(int turn_number)
 {
     Universe& universe = ClientApp::GetUniverse();
+
+    // assumes the app is wider than it is tall, and so if it fits in the height it will fit in the width
+    if (GG::App::GetApp()->AppHeight() - 2.0 * MAP_MARGIN_WIDTH < Universe::UniverseWidth() * s_min_scale_factor)
+	s_min_scale_factor = (GG::App::GetApp()->AppHeight() - 2.0 * MAP_MARGIN_WIDTH) / Universe::UniverseWidth();
+
+    Resize(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH,
+	   static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppHeight() + MAP_MARGIN_WIDTH);
+
+    // set up nebulae on the first turn
+    if (m_nebulae.empty()) {
+	// chosen so that the density of nebulae will be about MIN_NEBULAE to MAX_NEBULAE for a 1000.0-width galaxy
+	const double DENSITY_SCALE_FACTOR = (Universe::UniverseWidth() * Universe::UniverseWidth()) / (1000.0 * 1000.0);
+	int num_nebulae = RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
+				       static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));
+	m_nebulae.resize(num_nebulae);
+	m_nebula_centers.resize(num_nebulae);
+	SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
+	SmallIntDistType nebula_type = SmallIntDist(1, NUM_NEBULA_TEXTURES);
+	for (int i = 0; i < num_nebulae; ++i) {
+	    std::string nebula_filename = "nebula" + boost::lexical_cast<std::string>(nebula_type()) + ".png";
+	    m_nebulae[i].reset(new GG::Texture());
+	    m_nebulae[i]->Load(ClientUI::ART_DIR + nebula_filename);
+	    m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
+	}
+    }
 
     // systems
     for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
@@ -368,9 +380,9 @@ void MapWnd::InitTurn(int turn_number)
 
     MoveChildUp(m_sitrep_panel);
     // are there any sitreps to show?
-    Empire *pEmpire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->PlayerID() );
+    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->PlayerID() );
     m_sitrep_panel->Update();
-    if ( pEmpire->NumSitReps( ) )
+    if ( empire->NumSitReps( ) )
         m_sitrep_panel->Show();
     else
         m_sitrep_panel->Hide();
@@ -538,7 +550,7 @@ void MapWnd::RenderFleetMovementLines()
     const double RATE = 0.5;
     const int SHIFT = static_cast<int>(GG::App::GetApp()->Ticks() * RATE / 32.0) % 32;
     const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (32 - SHIFT));
-    const double LINE_SCALE = std::max(1.0, m_zoom_factor / MIN_SCALE_FACTOR);
+    const double LINE_SCALE = std::max(1.0, m_zoom_factor / s_min_scale_factor);
 
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LINE_SMOOTH);
@@ -575,7 +587,7 @@ void MapWnd::MoveBackgrounds(const GG::Pt& move)
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 {
-    int contents_width = static_cast<int>(m_zoom_factor * Universe::UNIVERSE_WIDTH);
+    int contents_width = static_cast<int>(m_zoom_factor * Universe::UniverseWidth());
     int app_width =  GG::App::GetApp()->AppWidth();
     int app_height = GG::App::GetApp()->AppHeight();
     if (app_width < contents_width) {
@@ -615,7 +627,6 @@ void MapWnd::RegisterPopup( MapWndPopup* popup )
 void MapWnd::RemovePopup( MapWndPopup* popup )
 {
     if (popup) {
-
         std::list<MapWndPopup*>::iterator it = std::find( m_popups.begin(), m_popups.end(), popup );
         if (it != m_popups.end())
             m_popups.erase(it);
