@@ -134,6 +134,7 @@ namespace {
         db.Add<std::string>("UI.sound.turn-button-click", "The sound file played when the turn button is clicked.", "turn_button_click.wav");
         db.Add<std::string>("UI.sound.list-select", "The sound file played when a listbox or drop-down list item is selected.", "list_select.wav");
         db.Add<std::string>("UI.sound.item-drop", "The sound file played when an item is dropped into a listbox.", "item_drop.wav");
+        db.Add<std::string>("UI.sound.list-pulldown", "The sound file played when the list is opened in a drop-down list.", "list_pulldown.wav");
         db.Add<std::string>("UI.sound.text-typing", "The sound file played when the user types text.", "text_typing.wav");
         db.Add<std::string>("UI.sound.window-maximize", "The sound file played when a window is maximized.", "window_maximize.wav");
         db.Add<std::string>("UI.sound.window-minimize", "The sound file played when a window is minimized.", "window_minimize.wav");
@@ -142,6 +143,14 @@ namespace {
         db.Add<std::string>("UI.sound.planet-button-click", "The sound file played when a planet button is clicked.", "planet_button_click.wav");
         db.Add<std::string>("UI.sound.fleet-button-rollover", "The sound file played when mouse moves over a fleet button.", "fleet_button_rollover.wav");
         db.Add<std::string>("UI.sound.fleet-button-click", "The sound file played when a fleet button is clicked.", "fleet_button_click.wav");
+        db.Add<std::string>("UI.sound.sidepanel-open", "The sound file played when the system side-panel is opened.", "sidepanel_open.wav");
+        db.Add<std::string>("UI.sound.farming-focus", "The sound file played when a farming focus button is clicked.", "farm_select.wav");
+        db.Add<std::string>("UI.sound.industry-focus", "The sound file played when an industry focus button is clicked.", "industry_select.wav");
+        db.Add<std::string>("UI.sound.research-focus", "The sound file played when a research focus button is clicked.", "research_select.wav");
+        db.Add<std::string>("UI.sound.mining-focus", "The sound file played when a mining focus button is clicked.", "mining_select.wav");
+        // TODO: uncomment when trade is added to side panel
+        //db.Add<std::string>("UI.sound.trade-focus", "The sound file played when a trade focus button is clicked.", "trade_select.wav");
+        db.Add<std::string>("UI.sound.balanced-focus", "The sound file played when a balanced focus button is clicked.", "balanced_select.wav");
 
         // fonts
         db.Add<std::string>("UI.font", "Sets UI font resource file.", ClientUI::FONT);
