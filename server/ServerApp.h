@@ -127,6 +127,7 @@ private:
    GG::XMLDoc CreateTurnUpdate(int empire_id); ///< creates encoded universe and empire data for the specified empire, diffs it with the previous turn data, stores the new data over the previous turn data and returns the diff XMLElement
    GG::XMLDoc LobbyUpdateDoc() const;          ///< returns an MP lobby-mode update XMLDoc containing all relevant parts of the lobby state
    GG::XMLDoc LobbyStartDoc() const;           ///< returns an MP lobby-mode update XMLDoc containing just the initial server-side data that the clients don't have
+   GG::XMLDoc SaveGameUpdateDoc() const;       ///< returns an MP lobby-mode update XMLDoc containing just empire data for the currently-selected save game
 
    void SaveGameVars(GG::XMLDoc& doc) const;   ///< adds all game-state variables to \a doc
    void LoadGameVars(const GG::XMLDoc& doc);   ///< assigns all game-state variables from \a doc
@@ -158,17 +159,18 @@ private:
    std::string                  m_galaxy_file;     ///< file to use for generating the galaxy
    // end SERVER_GAME_SETUP variables
 
-   bool                    m_single_player_game;   ///< true when the game being played is single-player
+   bool                      m_single_player_game;    ///< true when the game being played is single-player
 
-   std::set<int>           m_players_responded;    ///< tracks which players have responded to a server request (eg for save-data)
-   std::map<int, GG::XMLElement> m_player_save_game_data; ///< stores the save game data coming in from the players during a save game operation
+   std::set<int>             m_players_responded;     ///< tracks which players have responded to a server request (eg for save-data)
+   std::map<int, GG::XMLElement> 
+                             m_player_save_game_data; ///< stores the save game data coming in from the players during a save game operation
 
-   std::map<int, GG::XMLDoc> m_last_turn_update_msg; ///< stores the xml encoded empire and universe data from the previous turn in order to generate diffs for turn update message.  Map is indexed by empire ID, with separate message data for each since each player sees different parts of the universe.
+   std::map<int, GG::XMLDoc> m_last_turn_update_msg;  ///< stores the xml encoded empire and universe data from the previous turn in order to generate diffs for turn update message.  Map is indexed by empire ID, with separate message data for each since each player sees different parts of the universe.
 
    // turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
    std::map<int, OrderSet*>  m_turn_sequence;
 
-   static ServerApp*       s_app;
+   static ServerApp*         s_app;
 };
 
 #endif // _ServerApp_h_
