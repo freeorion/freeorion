@@ -48,7 +48,7 @@ private:
     void IPAddressEdited(const std::string& str);
     void NameEdited(const std::string& str);
     void OkClicked();
-    void CancelClicked() {CUI_Wnd::Close();}
+    void CancelClicked() {CUI_Wnd::CloseClicked();}
 
     std::pair<std::string, std::string> m_result;
 

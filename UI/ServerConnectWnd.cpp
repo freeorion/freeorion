@@ -16,14 +16,13 @@ const int OK_CANCEL_BUTTON_WIDTH = 80;
 const int CONTROL_MARGIN = 5; // gap to leave between controls in the window
 const int LAN_SERVER_SEARCH_TIMEOUT = 1; // in seconds
 const int SERVER_CONNECT_WND_WIDTH = SERVERS_LIST_BOX_WIDTH + 6 * CONTROL_MARGIN;
-const int SERVER_CONNECT_WND_HEIGHT = 500 + ClientUI::PTS + 10 + 3 * CONTROL_MARGIN;
 std::set<std::string> g_LAN_servers; // semi-persistent (persists only during runtime) list of known LAN servers
 }
 
 ServerConnectWnd::ServerConnectWnd() : 
     CUI_Wnd(ClientUI::String("SCONNECT_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() - SERVER_CONNECT_WND_WIDTH) / 2, 
-            (GG::App::GetApp()->AppHeight() - SERVER_CONNECT_WND_HEIGHT) / 2, SERVER_CONNECT_WND_WIDTH, SERVER_CONNECT_WND_HEIGHT, 
-            GG::Wnd::CLICKABLE | GG::Wnd::MODAL),
+            (GG::App::GetApp()->AppHeight() - 500 + ClientUI::PTS + 10 + 3 * CONTROL_MARGIN) / 2, SERVER_CONNECT_WND_WIDTH, 
+            500 + ClientUI::PTS + 10 + 3 * CONTROL_MARGIN, GG::Wnd::CLICKABLE | GG::Wnd::MODAL),
     m_host_or_join_radio_group(0),
     m_LAN_game_label(0),
     m_servers_lb(0),
@@ -109,8 +108,8 @@ void ServerConnectWnd::PopulateServerList()
 {
     m_servers_lb->Clear();
     for (std::set<std::string>::iterator it = g_LAN_servers.begin(); it != g_LAN_servers.end(); ++it) {
-        GG::ListBox::Row row;
-        row.push_back(*it, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+        GG::ListBox::Row* row = new GG::ListBox::Row;
+        row->push_back(*it, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
         m_servers_lb->Insert(row);
     }
 }
@@ -214,5 +213,5 @@ void ServerConnectWnd::OkClicked()
         if (m_result.second == "")
             m_result.second = m_servers_lb->GetRow(*m_servers_lb->Selections().begin())[0]->WindowText();
     }
-    CUI_Wnd::Close();
+    CUI_Wnd::CloseClicked();
 }
