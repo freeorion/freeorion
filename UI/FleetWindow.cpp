@@ -62,13 +62,13 @@ FleetWindow::FleetWindow(int x, int y, int active_fleet, vector<int> other_fleet
     m_ship_list_label  = new GG::TextControl(ship_list_x, ship_list_y-20, "Ships in Fleet", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
     m_fleets_list_label = new GG::TextControl(fleet_list_x, fleet_list_y-20, "Fleets Here", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
 
-    m_ship_list = new GG::ListBox(ship_list_x, ship_list_y, ship_list_width, ship_list_height, ClientUI::INNER_BORDER_COLOR, ClientUI::CTRL_COLOR);
+    m_ship_list = new GG::ListBox(ship_list_x, ship_list_y, ship_list_width, ship_list_height, ClientUI::WND_INNER_BORDER_COLOR, ClientUI::CTRL_COLOR);
     
-    m_fleets_list = new GG::ListBox(fleet_list_x, fleet_list_y, fleet_list_width, fleet_list_height, ClientUI::INNER_BORDER_COLOR, ClientUI::CTRL_COLOR); 
+    m_fleets_list = new GG::ListBox(fleet_list_x, fleet_list_y, fleet_list_width, fleet_list_height, ClientUI::WND_INNER_BORDER_COLOR, ClientUI::CTRL_COLOR); 
     m_fleets_list->SetStyle(GG::LB_SINGLESEL);
     
     
-    m_receiving_fleet_list = new GG::ListBox(receiving_list_x, receiving_list_y, receiving_list_width, receiving_list_height, ClientUI::INNER_BORDER_COLOR, ClientUI::CTRL_COLOR); 
+    m_receiving_fleet_list = new GG::ListBox(receiving_list_x, receiving_list_y, receiving_list_width, receiving_list_height, ClientUI::WND_INNER_BORDER_COLOR, ClientUI::CTRL_COLOR); 
     m_receiving_fleet_label = new GG::TextControl(receiving_list_x, receiving_list_y-20, "Ships in Other Fleet", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
    
     m_move_button = new GG::Button(move_button_x, move_button_y, move_button_width, move_button_height, "Move", ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR);
