@@ -663,7 +663,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::PLAYER_EXIT: {
-        std::string message = ClientUI::String("PLAYER_DISCONNECTED_PART_1") + " " + msg.GetText() + " " + ClientUI::String("PLAYER_DISCONNECTED_PART_2");
+        std::string message = Format(ClientUI::String("PLAYER_DISCONNECTED").c_str(), msg.GetText().c_str());
         ClientUI::MessageBox(message);
         break;
     }
