@@ -2,6 +2,10 @@
 
 #include "../GG/XML/XMLDoc.h"
 
+#include "../../universe/Planet.h"
+#include "../../util/SitRepEntry.h"
+
+
 #include <boost/lexical_cast.hpp>
 
 
@@ -405,6 +409,16 @@ void HumanClientApp::GLInit()
    gluPerspective(50.0, ratio, 1.0, 10.0);
 
    Logger().debugStream() << "GLInit() complete.";
+   /*
+   Planet* planet_p = new Planet(Planet::RADIATED, Planet::SMALL);
+   printf("created planet\n");
+   delete planet_p;
+   printf("deleted planet\n");
+
+   BuildSitRepEntry* build_sit_rep = new BuildSitRepEntry(SHIP_BUILT, 100, 50);
+   printf("%s\n", build_sit_rep->SummaryText().c_str());
+   delete build_sit_rep;
+   */
 }
 
 void HumanClientApp::Initialize()

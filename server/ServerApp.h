@@ -6,7 +6,7 @@
 #endif 
 
 #ifndef _ServerEmpire_h_
-#include "../empire/ServerEmpireManager.h"
+#include "../Empire/ServerEmpireManager.h"
 #endif
 
 #ifndef _ServerNetworkCore_h_
