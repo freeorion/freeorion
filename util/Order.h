@@ -275,11 +275,13 @@ public:
    /** \name Structors */ //@{
    FleetColonizeOrder();
    FleetColonizeOrder(const GG::XMLElement& elem);
-   FleetColonizeOrder(int empire, int fleet, int planet);
+   FleetColonizeOrder(int empire, Ship *ship, int planet);
+
+   virtual ~FleetColonizeOrder();
    //@}
    
    /** \name Accessors */ //@{
-   int   FleetID() const   {return m_fleet;}  ///< returns ID of the colonization fleet selected in this order
+   int   EmpireID() const  {return m_empire;} ///< returns ID of the empire id of the empire which tries to colonize the planet
    int   PlanetID() const  {return m_planet;} ///< returns ID of the planet to be colonized
    
    
@@ -300,11 +302,15 @@ public:
    *     
    */
    virtual void           Execute() const;
+   //< either ExecuteServerApply or ExecuteServerRevoke is called!!!
+   virtual void           ExecuteServerApply() const; //< called if the server seconds the colonization effort 
+   virtual void           ExecuteServerRevoke() const;//< called if the server doesn't seconds the colonization effort
    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
    //@}
    
 private:
-   int   m_fleet;
+   int   m_empire;
+   Ship  *m_ship;
    int   m_planet;
 };
 

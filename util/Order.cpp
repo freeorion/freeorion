@@ -464,8 +464,9 @@ XMLElement FleetTransferOrder::XMLEncode() const
 ////////////////////////////////////////////////
 FleetColonizeOrder::FleetColonizeOrder() : 
    Order(),
-   m_fleet(-1),
-   m_planet(-1)
+   m_empire(UniverseObject::INVALID_OBJECT_ID),
+   m_ship(0),
+   m_planet(UniverseObject::INVALID_OBJECT_ID)
 {
 }
 
@@ -474,17 +475,25 @@ FleetColonizeOrder::FleetColonizeOrder(const GG::XMLElement& elem) : Order(elem.
     if(elem.Tag() != ("FleetColonizeOrder"))
         throw std::invalid_argument("Attempted to construct FleetColonizeOrder from malformed XMLElement");
     
-    m_fleet = lexical_cast<int> (elem.Child("m_fleet").Text());
+    m_empire = lexical_cast<int> (elem.Child("m_empire").Text());
+    m_ship   = new Ship(elem.Child("m_ship").Child(0));
     m_planet = lexical_cast<int> (elem.Child("m_planet").Text());
 }
 
-FleetColonizeOrder::FleetColonizeOrder(int empire, int fleet, int planet) : 
+FleetColonizeOrder::FleetColonizeOrder(int empire,Ship *ship, int planet) : 
    Order(empire),
-   m_fleet(fleet),
+   m_empire(empire),
+   m_ship(new Ship(ship->XMLEncode(empire))),
    m_planet(planet)
 {
 }
 
+FleetColonizeOrder::~FleetColonizeOrder()
+{
+  delete m_ship;
+}
+
+// first step to colonize a planet, the planet to colonize is marked
 void FleetColonizeOrder::Execute() const
 {
     ValidateEmpireID();
@@ -493,7 +502,7 @@ void FleetColonizeOrder::Execute() const
     EmpireManager* empire = &Empires();
     
     // look up the fleet in question
-    UniverseObject* the_object = universe->Object(FleetID());
+    UniverseObject* the_object = universe->Object(m_ship->FleetID());
     Fleet* colony_fleet = dynamic_cast<Fleet*> ( the_object );
    
     // sanity check -- ensure fleet exists
@@ -528,50 +537,98 @@ void FleetColonizeOrder::Execute() const
     
     // verify that fleet contains a colony ship.  We iterate until we find
     // the first colony ship, then get rid of it, and use it to populate the planet
-    for(Fleet::iterator ships = colony_fleet->begin(); ships != colony_fleet->end(); ships++)
+
+    target_planet->IsAboutToBeColonized(true);
+    
+    // remove colony ship from fleet and deallocate it
+    colony_fleet->RemoveShip(m_ship->ID());
+    universe->Delete(m_ship->ID());
+    
+    // If colony ship was only ship in fleet, remove fleet
+    if(colony_fleet->NumShips() == 0)
     {
-        int curr_ship_id = (*ships);
-        Ship* curr_ship = dynamic_cast<Ship*> (universe->Object(curr_ship_id));
-        if(curr_ship->Design().colonize)
-        {
-            // adjust planet population
-            target_planet->AdjustPop(INITIAL_COLONY_POP);
-            target_planet->SetWorkforce(INITIAL_COLONY_POP);
-            target_planet->SetMaxWorkforce( target_planet->MaxPop() );
-            
-            // make this order's empire the owner of the planet
-            target_planet->AddOwner( EmpireID() );
-            
-            // add empire to system owner list, if planet is in a system
-            // add planet to the empire's list of owned planets
-            if(target_planet->SystemID() != UniverseObject::INVALID_OBJECT_ID )
-            {
-                target_planet->GetSystem()->AddOwner(EmpireID());
-            }
-            
-            // remove colony ship from fleet and deallocate it
-            colony_fleet->RemoveShip(curr_ship_id);
-            universe->Delete(curr_ship_id);
-            
-            // If colony ship was only ship in fleet, remove fleet
-            if(colony_fleet->NumShips() == 0)
-            {
-                universe->Delete(colony_fleet->ID());
-            }
-            
-            // order processing is now done
-            return;
-        }
+        universe->Delete(colony_fleet->ID());
     }
-    throw std::runtime_error("Colonization order issued to fleet without colony ship.");
+    
+    // order processing is now done
+    return;
 }
 
+void FleetColonizeOrder::ExecuteServerApply() const
+{
+    ValidateEmpireID();
+
+    Universe* universe = &GetUniverse();
+    EmpireManager* empire = &Empires();
+       
+    // verify that planet exists and is un-occupied.
+    Planet* target_planet = dynamic_cast<Planet*> ( universe->Object(PlanetID()) );
+    if(target_planet == NULL)
+    {
+        throw std::runtime_error("Colonization order issued with invalid planet id.");
+    }
+
+    if(!target_planet->Unowned())
+    {
+        throw std::runtime_error("Colonization order issued for owned planet.");    
+    }
+       
+    // verify that fleet contains a colony ship.  We iterate until we find
+    // the first colony ship, then get rid of it, and use it to populate the planet
+
+    // adjust planet population
+    target_planet->AdjustPop(INITIAL_COLONY_POP);
+    target_planet->SetWorkforce(INITIAL_COLONY_POP);
+    target_planet->SetMaxWorkforce( target_planet->MaxPop() );
+    
+    // make this order's empire the owner of the planet
+    target_planet->AddOwner( EmpireID() );
+    
+    // add empire to system owner list, if planet is in a system
+    // add planet to the empire's list of owned planets
+    if(target_planet->SystemID() != UniverseObject::INVALID_OBJECT_ID )
+    {
+        target_planet->GetSystem()->AddOwner(EmpireID());
+    }
+   
+    // order processing is now done
+    return;
+}
+
+void FleetColonizeOrder::ExecuteServerRevoke() const
+{
+    ValidateEmpireID();
+  
+    Planet* target_planet = dynamic_cast<Planet*> ( GetUniverse().Object(PlanetID()) );
+    if(target_planet == NULL)
+    {
+        throw std::runtime_error("Colonization order issued with invalid planet id.");
+    }
+
+    int new_fleet_id = GetUniverse().GenerateObjectID();
+
+    System* system = dynamic_cast<System*>(GetUniverse().Object(target_planet->SystemID()));
+    Fleet *fleet = new Fleet("Colony Ship Fleet" + boost::lexical_cast<std::string>(new_fleet_id), system->X(), system->Y(),m_empire);
+          
+    // an ID is provided to ensure consistancy between server and client uiverses
+    GetUniverse().InsertID(fleet,new_fleet_id);
+    system->Insert(fleet);
+
+    Ship *ship = new Ship(m_ship->XMLEncode(m_empire));
+    GetUniverse().InsertID(ship, GetUniverse().GenerateObjectID());
+
+    fleet->AddShip(ship->ID());
+}
 
 XMLElement FleetColonizeOrder::XMLEncode() const
 {
     XMLElement retval("FleetColonizeOrder");
     retval.AppendChild(Order::XMLEncode());
-    retval.AppendChild(XMLElement("m_fleet", lexical_cast<std::string>(m_fleet)));
+    retval.AppendChild(XMLElement("m_empire", lexical_cast<std::string>(m_empire)));
+    
+    XMLElement ship("m_ship");
+    ship.AppendChild(m_ship->XMLEncode(m_empire));
+    retval.AppendChild(ship);
     retval.AppendChild(XMLElement("m_planet", lexical_cast<std::string>(m_planet)));
     return retval;
 }
