@@ -92,7 +92,9 @@ private:
     void RenderFleetMovementLines(); //!< renders the dashed lines indicating where each fleet is going
     void MoveBackgrounds(const GG::Pt& move); //!< scrolls the backgrounds at their respective rates
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
-    void DeleteAllPopups( ); //!< deletes all active popups. 
+    void DeleteAllPopups( ); //!< deletes all active popups.
+    bool ToggleSitRep();
+    bool ShowOptions();
 
     std::vector<boost::shared_ptr<GG::Texture> > m_backgrounds; //!< starfield backgrounds
     std::vector<boost::shared_ptr<GG::Texture> > m_nebulae;     //!< decorative nebula textures
@@ -112,7 +114,7 @@ private:
     bool                            m_dragged;       //! tracks whether or not a drag occurs during a left button down sequence of events
     CUIButton*                      m_turn_update;   //!< button that updates player's turn
     std::list<MapWndPopup*>         m_popups;        //!< list of currently active popup windows
-
+    bool                            m_options_showing; //!< set during ShowOptions() to prevent reentrency
 
     SelectedSystemSignalType m_selected_system_signal;
 

@@ -142,10 +142,16 @@ MapWnd::MapWnd() :
 
     //connect signals and slots
     GG::Connect(m_turn_update->ClickedSignal(), &MapWnd::OnTurnUpdate, this);
+
+    // register keyboard accelerators for function keys, and listen for them
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F2, 0), &MapWnd::ToggleSitRep, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowOptions, this);
 }
 
 MapWnd::~MapWnd()
 {
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F2, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F10, 0);
 }
 
 GG::Pt MapWnd::ClientUpperLeft() const
@@ -167,21 +173,6 @@ void MapWnd::Keypress (GG::Key key, Uint32 key_mods)
         HumanClientApp::GetApp()->StartTurn();
         break;
     }
-
-    case GG::GGK_F2: { // show the sitrep window
-        if (m_sitrep_panel->Visible())
-            m_sitrep_panel->Hide();
-        else
-            m_sitrep_panel->Show();
-        break;
-    }
-
-    case GG::GGK_F10: { // load up the options screen
-        InGameOptions options;
-        options.Run();
-        break;
-    }
-
     default:
         break;
     }
@@ -287,7 +278,10 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 }
 
 void MapWnd::InitTurn(int turn_number)
-{
+{ 
+    GG::App::GetApp()->SetAccelerator(GG::GGK_F2, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_F10, 0);
+
     Universe& universe = ClientApp::GetUniverse();
 
     // assumes the app is wider than it is tall, and so if it fits in the height it will fit in the width
@@ -637,3 +631,24 @@ void MapWnd::DeleteAllPopups( )
     // clear list
     m_popups.clear( );
 }
+
+bool MapWnd::ToggleSitRep()
+{
+    if (m_sitrep_panel->Visible())
+        m_sitrep_panel->Hide();
+    else
+        m_sitrep_panel->Show();
+    return true;
+}
+
+bool MapWnd::ShowOptions()
+{
+    if (!m_options_showing) {
+        m_options_showing = true;
+        InGameOptions options;
+        options.Run();
+        m_options_showing = false;
+    }
+    return true;
+}
+
