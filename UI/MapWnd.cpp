@@ -166,7 +166,8 @@ MapWnd::MapWnd() :
 
     // toolbar
     m_toolbar = new CUIToolBar(0,0,GG::App::GetApp()->AppWidth(),30);
-    AttachChild(m_toolbar);
+    GG::App::GetApp()->Register(m_toolbar);
+    m_toolbar->Hide();
 
     // system-view side panel
     m_side_panel = new SidePanel(GG::App::GetApp()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight());
@@ -296,6 +297,7 @@ MapWnd::MapWnd() :
 
 MapWnd::~MapWnd()
 {
+    delete m_toolbar;
     delete m_research_wnd;
     RemoveAccelerators();
 }
@@ -421,7 +423,7 @@ void MapWnd::Keypress (GG::Key key, Uint32 key_mods)
             }
             m_chat_edit->Clear();
             m_chat_edit->Hide();
-	    EnableAlphaNumAccels();
+            EnableAlphaNumAccels();
 
             GG::App::GetApp()->SetFocusWnd(this);
             g_chat_display_show_time = GG::App::GetApp()->Ticks();
@@ -466,7 +468,6 @@ void MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
     m_chat_display->OffsetMove(-final_move);
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
-    m_toolbar->OffsetMove(-final_move);
 
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
@@ -636,7 +637,7 @@ void MapWnd::InitTurn(int turn_number)
     GG::Connect(empire->PopulationResPool ().ChangedSignal(),&MapWnd::PopulationResourcePoolChanged,this,1);PopulationResourcePoolChanged();
     GG::Connect(empire->IndustryResPool   ().ChangedSignal(),&MapWnd::IndustryResourcePoolChanged  ,this,0);IndustryResourcePoolChanged();
     
-    MoveChildUp(m_toolbar);
+    m_toolbar->Show();
 }
 
 void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
@@ -671,7 +672,6 @@ void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
-    m_toolbar->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
@@ -681,7 +681,6 @@ void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
     m_chat_display->OffsetMove(-final_move);
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
-    m_toolbar->OffsetMove(-final_move);
 
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
@@ -728,7 +727,6 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
-    m_toolbar->OffsetMove(-map_move);
 
     // this correction ensures that the centering doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
@@ -738,7 +736,6 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     m_chat_display->OffsetMove(-final_move);
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
-    m_toolbar->OffsetMove(-final_move);
 
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
@@ -915,7 +912,6 @@ void MapWnd::Zoom(int delta)
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
-    m_toolbar->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
@@ -925,7 +921,6 @@ void MapWnd::Zoom(int delta)
     m_chat_display->OffsetMove(-final_move);
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
-    m_toolbar->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
 }
@@ -1135,6 +1130,8 @@ void MapWnd::Sanitize()
 {
     CloseAllPopups();
     RemoveAccelerators();
+    m_research_wnd->Hide();
+    m_toolbar->Hide();
 }
 
 bool MapWnd::OpenChatWindow()
@@ -1152,10 +1149,7 @@ bool MapWnd::OpenChatWindow()
 
 bool MapWnd::EndTurn()
 {
-    RemoveAccelerators();
-    CloseAllPopups( );
-    m_research_wnd->Hide();
-    HumanClientApp::GetApp()->MoveDown(m_research_wnd);
+    Sanitize();
     HumanClientApp::GetApp()->StartTurn();
     return true;
 }
