@@ -724,7 +724,204 @@ int Universe::Insert(UniverseObject* obj)
 {
    int retval = UniverseObject::INVALID_OBJECT_ID;
    if (obj) {
-dist should be used
+       if (m_last_allocated_id + 1 < UniverseObject::MAX_ID) {
+           m_objects[++m_last_allocated_id] = obj;
+           obj->SetID(m_last_allocated_id);
+           retval = m_last_allocated_id;
+       } else { // we'll probably never execute this branch, considering how many IDs are available
+           // find a hole in the assigned IDs in which to place the object
+           int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
+           for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+               if (1 < it->first - last_id_seen) {
+                   m_objects[last_id_seen + 1] = obj;
+                   obj->SetID(last_id_seen + 1);
+                   retval = last_id_seen + 1;
+                   break;
+               }
+           }
+       }
+   }
+
+   return retval;
+}
+
+bool Universe::InsertID(UniverseObject* obj, int id )
+{
+   bool retval = false;
+
+   if (obj) {
+       if ( id < UniverseObject::MAX_ID) {
+           m_objects[id] = obj;
+           obj->SetID(id);
+           retval = true;
+       }
+   }
+   return retval;
+}
+
+UniverseObject* Universe::Remove(int id)
+{
+   UniverseObject* retval = 0;
+   iterator it = m_objects.find(id);
+   if (it != m_objects.end()) {
+      retval = it->second;
+      if (System* sys = retval->GetSystem())
+          sys->Remove(id);
+      m_objects.erase(id);
+   }
+   return retval;
+}
+
+bool Universe::Delete(int id)
+{
+  UniverseObject* obj = Remove(id);
+  if (obj)
+    UniverseObjectDeleteSignal()(obj);
+  delete obj;
+  return obj;
+}
+
+void Universe::MovementPhase(std::vector<SitRepEntry>& sit_reps)
+{
+   // TODO
+}
+
+void Universe::PopGrowthProductionResearch(std::vector<SitRepEntry>& sit_reps)
+{
+   // TODO
+}
+
+void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid)
+{
+    std::list<std::string> star_names;
+    LoadSystemNames(star_names);
+
+    SmallIntDistType star_type_gen = SmallIntDist(0, System::NUM_STARTYPES - 1);
+
+    // generate star field
+    for (int star_cnt = 0; star_cnt < stars; ++star_cnt) {
+        // generate new star
+        System* system = GenerateSystem(*this, age, (s_universe_width - 0.1) * RandZeroToOne(), (s_universe_width - 0.1) * RandZeroToOne());
+
+        const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
+
+        bool placed = false;
+        int attempts_left = 25;
+        while (!placed && attempts_left--) {
+            // make sure this system doesn't get slapped down too close to or on top of any systems
+            std::set<System*> neighbors;
+            double x = (s_universe_width - 0.1) * RandZeroToOne(),
+                y = (s_universe_width - 0.1) * RandZeroToOne();
+            GetNeighbors(x, y, adjacency_grid, neighbors);
+
+            bool too_close = false;
+            for (std::set<System*>::iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
+                double x_dist = x - (*it)->X();
+                double y_dist = y - (*it)->Y();
+                if (x_dist * x_dist + y_dist * y_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
+                    too_close = true;
+                    break;
+                }
+            }
+
+            if (!too_close) {
+                System* system = GenerateSystem(*this, age, x, y);
+                adjacency_grid[static_cast<int>(system->X() / ADJACENCY_BOX_SIZE)]
+                    [static_cast<int>(system->Y() / ADJACENCY_BOX_SIZE)].insert(system);
+                placed = true;
+            }
+        }
+
+        if (!attempts_left)
+            Delete(system->ID());
+    }
+}
+
+void Universe::PopulateSystems(Universe::PlanetDensity density)
+{
+    std::vector<System*> sys_vec = FindObjects<System>();
+
+    if (sys_vec.empty())
+        throw std::runtime_error("Attempted to populate an empty galaxy.");
+
+    const std::vector<std::vector<int> >& density_mod_to_planet_size_dist = UniverseDataTables()["DensityModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >& star_color_mod_to_planet_size_dist = UniverseDataTables()["StarColorModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >& slot_mod_to_planet_size_dist = UniverseDataTables()["SlotModToPlanetSizeDist"];
+    const std::vector<std::vector<int> >& planet_size_mod_to_planet_type_dist = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
+    const std::vector<std::vector<int> >& slot_mod_to_planet_type_dist = UniverseDataTables()["SlotModToPlanetTypeDist"];
+    const std::vector<std::vector<int> >& star_color_mod_to_planet_type_dist = UniverseDataTables()["StarColorModToPlanetTypeDist"];
+
+    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+        System* system = *it;
+
+        int num_planets_in_system = 0;     // the number of slots in this system that were determined to contain planets
+        for (int orbit = 0; orbit < system->Orbits(); orbit++) {
+            // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
+            int idx = 0;
+            int max_roll = 0;
+            for (unsigned int i = 0; i < Planet::MAX_PLANET_SIZE; ++i) {
+                int roll = g_hundred_dist() + star_color_mod_to_planet_size_dist[system->Star()][i] + slot_mod_to_planet_size_dist[orbit][i]
+                    + density_mod_to_planet_size_dist[density][i];
+                if (max_roll < roll) {
+                    max_roll = roll;
+                    idx = i;
+                }
+            }
+            Planet::PlanetSize planet_size = Planet::PlanetSize(idx);
+
+            if (planet_size == Planet::SZ_NOWORLD)
+                continue;
+            else
+                ++num_planets_in_system;
+
+            if (planet_size == Planet::SZ_ASTEROIDS) {
+                idx = Planet::PT_ASTEROIDS;
+            } else if (planet_size == Planet::SZ_GASGIANT) {
+                idx = Planet::PT_GASGIANT;
+            } else {
+                // make another series of modified rolls for planet type
+                for (unsigned int i = 0; i < Planet::MAX_PLANET_TYPE; ++i) {
+                    int roll = g_hundred_dist() + planet_size_mod_to_planet_type_dist[planet_size][i] + slot_mod_to_planet_type_dist[orbit][i] + 
+                        star_color_mod_to_planet_type_dist[system->Star()][i];
+                    if (max_roll < roll) {
+                        max_roll = roll;
+                        idx = i;
+                    }
+                }
+            }
+            Planet::PlanetType planet_type = Planet::PlanetType(idx);
+
+            if (planet_type == Planet::PT_ASTEROIDS)
+                planet_size = Planet::SZ_ASTEROIDS;
+            if (planet_type == Planet::PT_GASGIANT)
+                planet_size = Planet::SZ_GASGIANT;
+
+            Planet* planet = new Planet(planet_type, planet_size);
+
+            Insert(planet); // add planet to universe map
+            system->Insert(planet, orbit);  // add planet to system map
+            planet->Rename(system->Name() + " " + RomanNumber(num_planets_in_system));
+        }
+    }
+}
+
+void Universe::GenerateStarlanes(StarlaneFreqency freq, const AdjacencyGrid& adjacency_grid)
+{
+    const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
+
+    std::vector<System*> sys_vec = FindObjects<System>();
+
+    if (sys_vec.empty())
+        throw std::runtime_error("Attempted to generate starlanes in an empty galaxy.");
+
+    int MAX_LANES = UniverseDataTables()["MaxStarlanes"][0][freq];
+    double MAX_LANE_LENGTH = static_cast<double>(UniverseDataTables()["MaxStarlaneLength"][0][0]);
+
+    if (!MAX_LANES)
+        return;
+
+    SmallIntDistType lanes_dist = SmallIntDist(1, MAX_LANES);
+    GaussianDistType lane_length_dist = GaussianDist(0.0, MAX_LANE_LENGTH / 3.0); // obviously, only the positive values generated by this dist should be used
 
     bool full_connectivity = true; // this may be optional later; for now, we should always do it
     std::list<ConnectedGroup> connected_groups;
@@ -990,7 +1187,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
         std::string planet_name;
 
 	// we can only select a planet if there are planets in this system.
-        if (system->Orbits() && !system->FindObjects<Planet>().empty()) {
+        if (system->Orbits()>0 && !system->FindObjects<Planet>().empty()) {
             System::ObjectIDVec planet_IDs;
             while (planet_IDs.empty()) {
                 home_orbit = RandSmallInt(0, system->Orbits() - 1);
