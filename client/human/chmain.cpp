@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     // read and process command-line arguments, if any
     try {
         GetOptionsDB().AddFlag('h', "help", "Print this help message.");
-        GetOptionsDB().Add('f', "fullscreen", "Start the game in fullscreen", false);
+        GetOptionsDB().AddFlag('f', "fullscreen", "Start the game in fullscreen");
         GG::XMLDoc doc;
         std::ifstream ifs("default/config.xml");
         doc.ReadDoc(ifs);
