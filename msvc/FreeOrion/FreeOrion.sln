@@ -17,16 +17,16 @@ Global
 		Release = Release
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
-		{DB6FF1B0-5485-4DB9-8390-88CE29C22261}.Debug.ActiveCfg = Debug|Win32
-		{DB6FF1B0-5485-4DB9-8390-88CE29C22261}.Debug.Build.0 = Debug|Win32
+		{DB6FF1B0-5485-4DB9-8390-88CE29C22261}.Debug.ActiveCfg = Release|Win32
+		{DB6FF1B0-5485-4DB9-8390-88CE29C22261}.Debug.Build.0 = Release|Win32
 		{DB6FF1B0-5485-4DB9-8390-88CE29C22261}.Release.ActiveCfg = Release|Win32
 		{DB6FF1B0-5485-4DB9-8390-88CE29C22261}.Release.Build.0 = Release|Win32
-		{BA9529CC-B803-4763-B803-2B374D4ECD43}.Debug.ActiveCfg = Debug|Win32
-		{BA9529CC-B803-4763-B803-2B374D4ECD43}.Debug.Build.0 = Debug|Win32
+		{BA9529CC-B803-4763-B803-2B374D4ECD43}.Debug.ActiveCfg = Release|Win32
+		{BA9529CC-B803-4763-B803-2B374D4ECD43}.Debug.Build.0 = Release|Win32
 		{BA9529CC-B803-4763-B803-2B374D4ECD43}.Release.ActiveCfg = Release|Win32
 		{BA9529CC-B803-4763-B803-2B374D4ECD43}.Release.Build.0 = Release|Win32
-		{4B69AB88-9DA9-41AB-B6D6-CACFE5F3DAD9}.Debug.ActiveCfg = Debug|Win32
-		{4B69AB88-9DA9-41AB-B6D6-CACFE5F3DAD9}.Debug.Build.0 = Debug|Win32
+		{4B69AB88-9DA9-41AB-B6D6-CACFE5F3DAD9}.Debug.ActiveCfg = Release|Win32
+		{4B69AB88-9DA9-41AB-B6D6-CACFE5F3DAD9}.Debug.Build.0 = Release|Win32
 		{4B69AB88-9DA9-41AB-B6D6-CACFE5F3DAD9}.Release.ActiveCfg = Release|Win32
 		{4B69AB88-9DA9-41AB-B6D6-CACFE5F3DAD9}.Release.Build.0 = Release|Win32
 	EndGlobalSection

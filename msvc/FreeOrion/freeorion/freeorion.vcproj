@@ -19,20 +19,27 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
-				MinimalRebuild="TRUE"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="5"
+				AdditionalIncludeDirectories="..\..\..\util;..\..\..\universe;..\..\..\UI;..\..\..\network;..\..\..\Empire;..\..\..\combat;..\..\..\client\human;..\..\..\client;&quot;C:\log4cpp-0.3.4b\include&quot;;&quot;C:\freetype-2.1.7\include&quot;;C:\DevIL\include;&quot;C:\Boost\include\boost-1_32&quot;;&quot;C:\SDL_mixer-1.2.5\include&quot;;&quot;C:\SDL-1.2.7\include&quot;;C:\zlib\include;..\..\..\GG\include\SDL;..\..\..\GG\include\net;..\..\..\GG\include\dialogs;..\..\..\GG\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
+				MinimalRebuild="FALSE"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="3"
+				ForceConformanceInForLoopScope="TRUE"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="4"
+				DisableSpecificWarnings="4099;4251;4800;4267;4275;4244;4101;4258"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib SDL_mixer.lib log4cpp.lib freetype214MT.lib"
 				OutputFile="$(OutDir)/freeorion.exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="C:\Boost\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;;&quot;C:\freetype-2.1.7\objs&quot;;C:\DevIL\lib;C:\zlib\lib;&quot;C:\SDL-1.2.7\lib&quot;;&quot;C:\SDL_mixer-1.2.5\lib&quot;;..\..\..\GG\msvc\GG\GiGi\Release;..\..\..\GG\msvc\GG\GiGiNet\Release;..\..\..\GG\msvc\GG\GiGiSDL\Release"
+				IgnoreDefaultLibraryNames="msvcrt.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/freeorion.pdb"
 				SubSystem="2"
@@ -66,7 +73,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\util;..\..\..\universe;..\..\..\UI;..\..\..\network;..\..\..\Empire;..\..\..\combat;..\..\..\client\human;..\..\..\client;&quot;C:\log4cpp-0.3.4b\include&quot;;&quot;C:\freetype-2.1.7\include&quot;;C:\DevIL\include;&quot;C:\boost-1.30.2&quot;;&quot;C:\SDL_mixer-1.2.5\include&quot;;&quot;C:\SDL-1.2.7\include&quot;;C:\zlib\include;..\..\..\GG\include\SDL;..\..\..\GG\include\net;..\..\..\GG\include\dialogs;..\..\..\GG\include"
+				AdditionalIncludeDirectories="..\..\..\util;..\..\..\universe;..\..\..\UI;..\..\..\network;..\..\..\Empire;..\..\..\combat;..\..\..\client\human;..\..\..\client;&quot;C:\log4cpp-0.3.4b\include&quot;;&quot;C:\freetype-2.1.7\include&quot;;C:\DevIL\include;&quot;C:\Boost\include\boost-1_32&quot;;&quot;C:\SDL_mixer-1.2.5\include&quot;;&quot;C:\SDL-1.2.7\include&quot;;C:\zlib\include;..\..\..\GG\include\SDL;..\..\..\GG\include\net;..\..\..\GG\include\dialogs;..\..\..\GG\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				RuntimeLibrary="2"
 				ForceConformanceInForLoopScope="TRUE"
@@ -81,10 +88,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib libboost_signals.lib libboost_filesystem.lib zdll.lib SDL.lib SDLmain.lib SDL_mixer.lib log4cpp.lib freetype214MT.lib"
+				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib SDL_mixer.lib log4cpp.lib freetype214MT.lib"
 				OutputFile="$(OutDir)/freeorion.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\boost-1.30.2\libs\signals\build\bin\libboost_signals.lib\vc7.1\release\runtime-link-dynamic&quot;;&quot;C:\boost-1.30.2\libs\filesystem\build\bin\libboost_filesystem.lib\vc7.1\release\runtime-link-dynamic&quot;;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;;&quot;C:\freetype-2.1.7\objs&quot;;C:\DevIL\lib;C:\zlib\lib;&quot;C:\SDL-1.2.7\lib&quot;;&quot;C:\SDL_mixer-1.2.5\lib&quot;;..\..\..\GG\msvc\GG\GiGi\Release;..\..\..\GG\msvc\GG\GiGiNet\Release;..\..\..\GG\msvc\GG\GiGiSDL\Release"
+				AdditionalLibraryDirectories="C:\Boost\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;;&quot;C:\freetype-2.1.7\objs&quot;;C:\DevIL\lib;C:\zlib\lib;&quot;C:\SDL-1.2.7\lib&quot;;&quot;C:\SDL_mixer-1.2.5\lib&quot;;..\..\..\GG\msvc\GG\GiGi\Release;..\..\..\GG\msvc\GG\GiGiNet\Release;..\..\..\GG\msvc\GG\GiGiSDL\Release"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -164,6 +171,12 @@
 					RelativePath="..\..\..\util\GZStream.h">
 				</File>
 				<File
+					RelativePath="..\..\..\util\md5.c">
+				</File>
+				<File
+					RelativePath="..\..\..\util\md5.h">
+				</File>
+				<File
 					RelativePath="..\..\..\util\MultiplayerCommon.cpp">
 				</File>
 				<File
@@ -189,6 +202,9 @@
 				</File>
 				<File
 					RelativePath="..\..\..\util\OrderSet.h">
+				</File>
+				<File
+					RelativePath="..\..\..\util\Parse.h">
 				</File>
 				<File
 					RelativePath="..\..\..\util\Process.cpp">
@@ -251,18 +267,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\Empire\ResourcePool.h">
-				</File>
-				<File
-					RelativePath="..\..\..\Empire\TechLevel.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\Empire\TechLevel.h">
-				</File>
-				<File
-					RelativePath="..\..\..\Empire\TechManager.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\Empire\TechManager.h">
 				</File>
 			</Filter>
 			<Filter
@@ -466,10 +470,37 @@
 				Name="universe"
 				Filter="">
 				<File
+					RelativePath="..\..\..\universe\Building.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Building.h">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Condition.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Condition.h">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Effect.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Effect.h">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Enums.h">
+				</File>
+				<File
 					RelativePath="..\..\..\universe\Fleet.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\universe\Fleet.h">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Meter.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Meter.h">
 				</File>
 				<File
 					RelativePath="..\..\..\universe\Planet.cpp">
@@ -502,10 +533,28 @@
 					RelativePath="..\..\..\universe\Ship.h">
 				</File>
 				<File
+					RelativePath="..\..\..\universe\ShipDesign.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\ShipDesign.h">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Special.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Special.h">
+				</File>
+				<File
 					RelativePath="..\..\..\universe\System.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\universe\System.h">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Tech.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Tech.h">
 				</File>
 				<File
 					RelativePath="..\..\..\universe\Universe.cpp">
@@ -518,6 +567,12 @@
 				</File>
 				<File
 					RelativePath="..\..\..\universe\UniverseObject.h">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\ValueRef.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\universe\ValueRef.h">
 				</File>
 			</Filter>
 		</Filter>
