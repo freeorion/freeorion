@@ -49,12 +49,10 @@ private:
     public:
         /** \name Signal Types */ //@{
         typedef boost::signal<void ()> DoubleClickedSignalType; ///< emitted when the planet graphic is double clicked by the user
-        typedef boost::signal<void (ProdCenter::BuildType)> ConstructionChangedSignalType; ///< emitted when a new contruction type is selected
         //@}
    
         /** \name Slot Types */ //@{
         typedef DoubleClickedSignalType::slot_type DoubleClickedSlotType; ///< type of functor(s) invoked on a DoubleClickedSignalType
-        typedef ConstructionChangedSignalType::slot_type ConstructionChangedSlotType; ///< type of functor(s) invoked on a ConstructionChangedSignalType
         //@}
 
         /** \name Structors */ //@{
@@ -69,12 +67,12 @@ private:
         virtual int Render();
 
         DoubleClickedSignalType& DoubleClickedSignal() {return m_double_clicked_sig;} ///< returns the double clicked signal object for this Planet panel
-        ConstructionChangedSignalType& ConstructionChangedSignal() {return m_construction_changed_sig;} ///< returns the construction changed signal object for this Planet panel
         //@}
 
     private:
         int  PlanetDiameter() const;
         bool InPlanet(const GG::Pt& pt) const;
+        void BuildSelected(int idx) const;
 
         const Planet&      m_planet;
 
@@ -84,7 +82,6 @@ private:
         CUIDropDownList*   m_construction;
 
         DoubleClickedSignalType       m_double_clicked_sig;
-        ConstructionChangedSignalType m_construction_changed_sig;
 
         static GG::SubTexture m_pop_icon;
         static GG::SubTexture m_industry_icon;

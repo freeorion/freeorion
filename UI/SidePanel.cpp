@@ -69,30 +69,50 @@ SidePanel::PlanetPanel::PlanetPanel(const Planet& planet, int y, int parent_widt
                                       0, 0, PLANET_IMAGE_SIZE - 1, PLANET_IMAGE_SIZE - 1);
 
     // construction drop list
-    m_construction = new CUIDropDownList(Width() - CONSTR_DROP_LIST_WIDTH - 3, 
-                                         Height() - ClientUI::SIDE_PANEL_PTS - CONSTR_PROGRESS_BAR_HT - 6,
-                                         CONSTR_DROP_LIST_WIDTH, ClientUI::SIDE_PANEL_PTS + 4, (ClientUI::SIDE_PANEL_PTS + 4) * 5,
-                                         GG::CLR_ZERO);
-    m_construction->SetStyle(GG::LB_NOSORT);
-    m_construction->OffsetMove(0, -m_construction->Height());
-    AttachChild(m_construction);
-    ////////////////////// v0.1 only!! (in v0.2 and later build this list from the production capabilities of the planet)
-    GG::ListBox::Row row;
-    row.push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-    row = GG::ListBox::Row();
-    row.push_back("Industry", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-    row = GG::ListBox::Row();
-    row.push_back("Research", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-    row = GG::ListBox::Row();
-    row.push_back("Ship", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-    row = GG::ListBox::Row();
-    row.push_back("DefBase", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-    ////////////////////// v0.1 only!!
+    if (!m_planet.Owners().empty() && *m_planet.Owners().begin() == HumanClientApp::GetApp()->PlayerID()) {
+        m_construction = new CUIDropDownList(Width() - CONSTR_DROP_LIST_WIDTH - 3, 
+                                             Height() - ClientUI::SIDE_PANEL_PTS - CONSTR_PROGRESS_BAR_HT - 6,
+                                             CONSTR_DROP_LIST_WIDTH, ClientUI::SIDE_PANEL_PTS + 4, 
+                                             (ClientUI::SIDE_PANEL_PTS + 4) * 5, GG::CLR_ZERO);
+        m_construction->SetStyle(GG::LB_NOSORT);
+        m_construction->OffsetMove(0, -m_construction->Height());
+        AttachChild(m_construction);
+        ////////////////////// v0.1 only!! (in v0.2 and later build this list from the production capabilities of the planet)
+        GG::ListBox::Row row;
+        row.push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+        m_construction->Insert(row);
+        row = GG::ListBox::Row();
+        row.push_back("Industry", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+        m_construction->Insert(row);
+        row = GG::ListBox::Row();
+        row.push_back("Research", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+        m_construction->Insert(row);
+        row = GG::ListBox::Row();
+        row.push_back("Scout", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+        m_construction->Insert(row);
+        row = GG::ListBox::Row();
+        row.push_back("Colony Ship", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+        m_construction->Insert(row);
+        row = GG::ListBox::Row();
+        row.push_back("MarkI", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+        m_construction->Insert(row);
+        row = GG::ListBox::Row();
+        row.push_back("MarkII", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+        m_construction->Insert(row);
+        row = GG::ListBox::Row();
+        row.push_back("MarkIII", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+        m_construction->Insert(row);
+        row = GG::ListBox::Row();
+        row.push_back("MarkIV", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+        m_construction->Insert(row);
+        row = GG::ListBox::Row();
+        row.push_back("DefBase", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+        m_construction->Insert(row);
+        m_construction->Select(m_planet.CurrentlyBuilding());
+
+        Connect(m_construction->SelChangedSignal(), &SidePanel::PlanetPanel::BuildSelected, this);
+        ////////////////////// v0.1 only!!
+    }
 }
 
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
@@ -122,10 +142,16 @@ int SidePanel::PlanetPanel::Render()
     const double PLANET_NAME_FONT_HALF_HT = planet_name_font->Height() / 2.0;
     double y = Height() / 2.0 - TEXT_POSITION_RADIUS + PLANET_NAME_FONT_HALF_HT;
     GG::Pt posn(ul.x + HUGE_PLANET_SIZE / 2 + CircleXFromY(y - Height() / 2.0, TEXT_POSITION_RADIUS), ul.y + static_cast<int>(y));
-    glColor4ubv(ClientUI::TEXT_COLOR.v);
+    GG::Clr planet_name_color = ClientUI::TEXT_COLOR;
+    const std::set<int>& owners = m_planet.Owners();
+    if (!owners.empty()) {
+        planet_name_color = HumanClientApp::Empires().Lookup(*owners.begin())->Color();
+    }
+    glColor4ubv(planet_name_color.v);
     int y1 = static_cast<int>(posn.y - PLANET_NAME_FONT_HALF_HT), y2 = static_cast<int>(posn.y + PLANET_NAME_FONT_HALF_HT);
     planet_name_font->RenderText(GG::Pt(posn.x, y1), GG::Pt(posn.x + 500, y2), m_planet.Name(), format, 0, false);
 
+    glColor4ubv(ClientUI::TEXT_COLOR.v);
     boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PTS);
     const double FONT_HALF_HT = font->Height() / 2.0;
     y += PLANET_NAME_FONT_HALF_HT + FONT_HALF_HT;
@@ -157,39 +183,34 @@ int SidePanel::PlanetPanel::Render()
 
     // pop
     const int ICON_MARGIN = 5;
-    y += font->Height();
-    posn = GG::Pt(ul.x + HUGE_PLANET_SIZE / 2 + CircleXFromY(y - Height() / 2.0, TEXT_POSITION_RADIUS), ul.y + static_cast<int>(y));
-    text = lexical_cast<string>(static_cast<int>(m_planet.PopPoints()));
-    text += "/";
-    text += lexical_cast<string>(static_cast<int>(m_planet.MaxPop()));
-#if 1
-    if (1) {
-        text += GG::RgbaTag(0 < 1 ? ClientUI::STAT_INCR_COLOR : ClientUI::STAT_DECR_COLOR);
-        text += (0 < 1 ? " (+" : " (") + lexical_cast<string>(1) + ")</rgba>";
-    }
-#else
-    if (m_planet.PopGrowth()) {
-        text += GG::RgbaTag(0 < m_planet.PopGrowth()* ? ClientUI::STAT_INCR_COLOR : ClientUI::STAT_DECR_COLOR);
-        text += (0 < m_planet.PopGrowth() ? " (+" : " (") + lexical_cast<string>(m_planet.PopGrowth()) + ")</rgba>";
-    }
-#endif
-    y1 = static_cast<int>(posn.y - FONT_HALF_HT);
-    y2 = static_cast<int>(posn.y + FONT_HALF_HT);
-    m_pop_icon.OrthoBlit(posn.x, y1, posn.x + font->Height(), y1 + font->Height(), false);
-    posn.x += font->Height() + ICON_MARGIN;
-    font->RenderText(GG::Pt(posn.x, y1), GG::Pt(posn.x + 500, y2), text, format, 0, true);
+    if (!m_planet.Owners().empty()) {
+        y += font->Height();
+        posn = GG::Pt(ul.x + HUGE_PLANET_SIZE / 2 + CircleXFromY(y - Height() / 2.0, TEXT_POSITION_RADIUS), ul.y + static_cast<int>(y));
+        text = lexical_cast<string>(static_cast<int>(m_planet.PopPoints()));
+        text += "/";
+        text += lexical_cast<string>(static_cast<int>(m_planet.MaxPop()));
+        if (m_planet.PopGrowth()) {
+            text += GG::RgbaTag(0 < m_planet.PopGrowth() ? ClientUI::STAT_INCR_COLOR : ClientUI::STAT_DECR_COLOR);
+            text += (0 < m_planet.PopGrowth() ? " (+" : " (") + lexical_cast<string>(m_planet.PopGrowth()) + ")</rgba>";
+        }
+        y1 = static_cast<int>(posn.y - FONT_HALF_HT);
+        y2 = static_cast<int>(posn.y + FONT_HALF_HT);
+        m_pop_icon.OrthoBlit(posn.x, y1, posn.x + font->Height(), y1 + font->Height(), false);
+        posn.x += font->Height() + ICON_MARGIN;
+        font->RenderText(GG::Pt(posn.x, y1), GG::Pt(posn.x + 500, y2), text, format, 0, true);
 
-    // industry
-    y += font->Height();
-    posn = GG::Pt(ul.x + HUGE_PLANET_SIZE / 2 + CircleXFromY(y - Height() / 2.0, TEXT_POSITION_RADIUS), ul.y + static_cast<int>(y));
-    text = lexical_cast<string>(static_cast<int>(m_planet.ProdPoints()));
-    y1 = static_cast<int>(posn.y - FONT_HALF_HT);
-    y2 = static_cast<int>(posn.y + FONT_HALF_HT);
-    m_industry_icon.OrthoBlit(posn.x, y1, posn.x + font->Height(), y1 + font->Height(), false);
-    posn.x += font->Height() + ICON_MARGIN;
-    font->RenderText(GG::Pt(posn.x, y1), GG::Pt(posn.x + 500, y2), text, format, 0, true);
+        // industry
+        y += font->Height();
+        posn = GG::Pt(ul.x + HUGE_PLANET_SIZE / 2 + CircleXFromY(y - Height() / 2.0, TEXT_POSITION_RADIUS), ul.y + static_cast<int>(y));
+        text = lexical_cast<string>(static_cast<int>(m_planet.ProdPoints()));
+        y1 = static_cast<int>(posn.y - FONT_HALF_HT);
+        y2 = static_cast<int>(posn.y + FONT_HALF_HT);
+        m_industry_icon.OrthoBlit(posn.x, y1, posn.x + font->Height(), y1 + font->Height(), false);
+        posn.x += font->Height() + ICON_MARGIN;
+        font->RenderText(GG::Pt(posn.x, y1), GG::Pt(posn.x + 500, y2), text, format, 0, true);
+    }
 
-#if 1
+#if 0
     // TODO: grab the correct values for these from the planet, universe, empires, etc. in versions 0.2 and later
 
     // research
@@ -227,26 +248,35 @@ int SidePanel::PlanetPanel::Render()
     font->RenderText(GG::Pt(posn.x, y1), GG::Pt(posn.x + 500, y2), text, format, 0, true);
 #endif
 
-    // construction progress bar
-    // TODO: grab the correct percent complete figure from the planet, universe, empires, etc.
-    double percent_complete = 0.40;
-    int x1 = ul.x + Width() - CONSTR_DROP_LIST_WIDTH - 3;
-    int x2 = x1 + CONSTR_DROP_LIST_WIDTH;
-    y1 = ul.y + Height() - ClientUI::SIDE_PANEL_PTS - CONSTR_PROGRESS_BAR_HT - 3;
-    y2 = y1 + CONSTR_PROGRESS_BAR_HT;
-    GG::FlatRectangle(x1, y1, x2, y2, GG::CLR_ZERO, ClientUI::CTRL_BORDER_COLOR, 1);
-    GG::FlatRectangle(x1, y1, x1 + static_cast<int>((x2 - x1 - 2) * percent_complete), y2, 
-                      ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR, LightColor(ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR), 1);
+    if (ProdCenter::SCOUT <= m_planet.CurrentlyBuilding()) {
+        // construction progress bar
+        // TODO : get the costs of the item from the list of available technologies
+        const int PROD_COSTS[] = {0, 0, 0, 50, 250, 100, 200, 375, 700, 200};
+        int cost = PROD_COSTS[m_planet.CurrentlyBuilding()];
+        double percent_complete = cost ? m_planet.BuildProgress() / cost : 0.0;
+        int x1 = ul.x + Width() - CONSTR_DROP_LIST_WIDTH - 3;
+        int x2 = x1 + CONSTR_DROP_LIST_WIDTH;
+        y1 = ul.y + Height() - ClientUI::SIDE_PANEL_PTS - CONSTR_PROGRESS_BAR_HT - 3;
+        y2 = y1 + CONSTR_PROGRESS_BAR_HT;
+        GG::FlatRectangle(x1, y1, x2, y2, GG::CLR_ZERO, ClientUI::CTRL_BORDER_COLOR, 1);
+        GG::FlatRectangle(x1, y1, x1 + static_cast<int>((x2 - x1 - 2) * percent_complete), y2, 
+                          ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR, LightColor(ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR), 1);
 
-    // construction progress text
-    format = GG::TF_RIGHT | GG::TF_VCENTER;
-    // TODO: grab the correct turns until complete figure from the planet, universe, empires, etc.
-    int turns_remaining = 3;
-    text = "(" + lexical_cast<string>(turns_remaining) + " turns)";
-    y1 = ul.y + Height() - font->Height();
-    y2 = y1 + font->Height();
-    glColor4ubv(ClientUI::TEXT_COLOR.v);
-    font->RenderText(x1, y1, x2, y2, text, format, 0, false);
+        // construction progress text
+        format = GG::TF_RIGHT | GG::TF_VCENTER;
+        if (cost && !m_planet.ProdPoints()) {
+            text = "(never)";
+        } else if (cost) {
+            int turns_remaining = static_cast<int>(std::ceil((cost - m_planet.BuildProgress()) / m_planet.ProdPoints()));
+            text = "(" + lexical_cast<string>(turns_remaining) + " turns)";
+        } else {
+            text = "";
+        }
+        y1 = ul.y + Height() - font->Height();
+        y2 = y1 + font->Height();
+        glColor4ubv(ClientUI::TEXT_COLOR.v);
+        font->RenderText(x1, y1, x2, y2, text, format, 0, false);
+    }
 
     return 1;
 }
@@ -262,6 +292,11 @@ bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
     GG::Pt diff = pt - center;
     int r_squared = PlanetDiameter() * PlanetDiameter() / 4;
     return diff.x * diff.x + diff.y * diff.y <= r_squared;
+}
+
+void SidePanel::PlanetPanel::BuildSelected(int idx) const
+{
+    HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*m_planet.Owners().begin(), m_planet.ID(), ProdCenter::BuildType(idx)));
 }
 
 
