@@ -1054,11 +1054,13 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
         SpiralGalaxyCalcPositions(positions, 2 + (shape - SPIRAL_2), size, s_universe_width, s_universe_width);
         GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
         break;
-    case CLUSTER:
-        // TODO: randomize clusters, instead of using 5
-        ClusterGalaxyCalcPositions(positions, 5, size, s_universe_width, s_universe_width);
+    case CLUSTER: {
+        int average_clusters = size / 20; // chosen so that a "typical" size of 100 yields about 5 clusters
+        int clusters = RandSmallInt(average_clusters * 8 / 10, average_clusters * 12 / 10); // +/- 20%
+        ClusterGalaxyCalcPositions(positions, clusters, size, s_universe_width, s_universe_width);
         GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
         break;
+    }
     case ELLIPTICAL:
         EllipticalGalaxyCalcPositions(positions, size, s_universe_width, s_universe_width);
         GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
@@ -1998,8 +2000,6 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
             ") to be home system for Empire " << empire_id;
         home_planet->AddOwner(empire_id);
 
-        // TODO: adding an owner to a planet should probably add that owner to the
-        //       system automatically...
         System* home_system = home_planet->GetSystem();
         home_system->AddOwner(empire_id);
 
