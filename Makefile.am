@@ -121,6 +121,8 @@ util/Random.cpp					\
 util/Random.h					\
 util/SitRepEntry.cpp				\
 util/SitRepEntry.h  				\
+UI/StringTable.cpp				\
+UI/StringTable.h				\
 util/VarText.cpp				\
 util/VarText.h  
 
@@ -187,8 +189,6 @@ UI/SidePanel.cpp				\
 UI/SidePanel.h					\
 UI/SitRepPanel.cpp				\
 UI/SitRepPanel.h				\
-UI/StringTable.cpp				\
-UI/StringTable.h				\
 UI/SystemIcon.cpp				\
 UI/SystemIcon.h					\
 UI/ToolContainer.cpp				\
