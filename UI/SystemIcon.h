@@ -1,3 +1,4 @@
+// -*- C++ -*-
 //SystemIcon.h
 #ifndef _SystemIcon_h_
 #define _SystemIcon_h_
@@ -67,9 +68,9 @@ public:
     RightClickedSignalType& RightClickedSignal() {return m_right_click_signal;}
     LeftDoubleClickedSignalType& LeftDoubleClickedSignal() {return m_left_double_click_signal;}
     
-    virtual int LClick(const GG::Pt& pt, Uint32 keys) {if(!ClientUI::GetClientUI()->Frozen() && !Disabled()) m_left_click_signal(m_systemID);}
-    virtual int RClick(const GG::Pt& pt, Uint32 keys) {if(!ClientUI::GetClientUI()->Frozen() && !Disabled()) m_right_click_signal(m_systemID);}
-    virtual int LDoubleClick(const GG::Pt& pt, Uint32 keys) {if(!ClientUI::GetClientUI()->Frozen() && !Disabled()) m_left_double_click_signal(m_systemID);} 
+    virtual int LClick(const GG::Pt& pt, Uint32 keys) {if(!Disabled()) m_left_click_signal(m_systemID); return 1;}
+    virtual int RClick(const GG::Pt& pt, Uint32 keys) {if(!Disabled()) m_right_click_signal(m_systemID); return 1;}
+    virtual int LDoubleClick(const GG::Pt& pt, Uint32 keys) {if(!Disabled()) m_left_double_click_signal(m_systemID); return 1;}
     
     //!@}
     
@@ -77,7 +78,6 @@ public:
     
 protected:
     int                 m_systemID;    //!< the ID of the System object associated with this SystemIcon
-    GG::Texture*        m_graphic;     //!< the graphic displayed by thie object
     GG::StaticGraphic*  m_static_graphic; //!< the control used to render the displayed texture
     GG::TextControl*    m_name;        //!< the control that holds the name of the system
     
