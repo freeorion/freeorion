@@ -409,10 +409,19 @@ void HumanClientApp::GLInit()
 
 void HumanClientApp::Initialize()
 {
+//tsev {uncomment the old lines to get your original HumanClientApp code back!}
+/*
 // ONLY TEMPORARY!!!!!
    g_net_test_wnd = boost::shared_ptr<NetTestWnd>(new NetTestWnd());
    Register(g_net_test_wnd.get());
 // ONLY TEMPORARY!!!!!
+
+*/
+
+// Allow ClientUI to take care of the UI
+    m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
+    
+    m_ui->ScreenIntro();    //start the first screen, and the UI takes over from there.
 }
 
 void HumanClientApp::HandleSDLEvent(const SDL_Event& event)
