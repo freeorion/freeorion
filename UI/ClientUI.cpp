@@ -650,6 +650,10 @@ void ClientUI::UpdateTurnProgress( const std::string& phase_str, const int empir
   m_turn_progress_wnd->UpdateTurnProgress( phase_str, empire_id );
 }
 
+void ClientUI::UpdateCombatTurnProgress( const std::string& msg)
+{
+  m_turn_progress_wnd->UpdateCombatTurnProgress(msg);
+}
 
 void ClientUI::GenerateSitRepText( SitRepEntry *p_sit_rep )
 {

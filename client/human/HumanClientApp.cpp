@@ -640,7 +640,12 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         m_ui->UpdateTurnProgress( phase_str, empire_id );
         break;
     }
-
+    case Message::COMBAT_START:
+    case Message::COMBAT_ROUND_UPDATE:
+    case Message::COMBAT_END:{
+        m_ui->UpdateCombatTurnProgress(msg.GetText());
+        break;
+    }
     case Message::HUMAN_PLAYER_MSG: {
         GetUI()->GetMapWnd()->HandlePlayerChatMessage(msg.GetText());
         break;

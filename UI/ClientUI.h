@@ -118,6 +118,9 @@ public:
 
     //!< Updates turn progress window
     void UpdateTurnProgress( const std::string& phase_str, const int empire_id );
+    
+    //!< Updates combat turn progress window
+    void UpdateCombatTurnProgress( const std::string& msg);
 
     //! @param events vector containing all the events to be listed
     void ScreenSitrep(const std::vector<SitRepEntry>& events);    //!< Sitrep Screen
