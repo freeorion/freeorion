@@ -518,7 +518,7 @@ void MapWnd::InitTurn(int turn_number)
         int n = 0;
         for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
             if (!it->second) {
-                System* dest_system = dynamic_cast<System*>(universe.Object(it->first));
+                System* dest_system = universe.Object<System>(it->first);
                 m_starlanes.insert(StarlaneData(systems[i], dest_system));
             }
         }
@@ -686,13 +686,13 @@ void MapWnd::CenterOnMapCoord(double x, double y)
 
 void MapWnd::CenterOnSystem(int systemID)
 {
-    if (System* system = dynamic_cast<System*>(GetUniverse().Object(systemID)))
+    if (System* system = GetUniverse().Object<System>(systemID))
         CenterOnSystem(system);
 }
 
 void MapWnd::CenterOnFleet(int fleetID)
 {
-    if (Fleet* fleet = dynamic_cast<Fleet*>(GetUniverse().Object(fleetID)))
+    if (Fleet* fleet = GetUniverse().Object<Fleet>(fleetID))
         CenterOnFleet(fleet);
 }
 
@@ -713,7 +713,7 @@ void MapWnd::SelectSystem(int systemID)
 
 void MapWnd::SelectFleet(int fleetID)
 {
-    if (Fleet* fleet = dynamic_cast<Fleet*>(GetUniverse().Object(fleetID)))
+    if (Fleet* fleet = GetUniverse().Object<Fleet>(fleetID))
         SelectFleet(fleet);
 }
 

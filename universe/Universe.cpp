@@ -1252,7 +1252,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
       // set ownership of home planet
       int empire_id = empire->EmpireID();
-      Planet* home_planet = dynamic_cast<Planet*>(Object(homeworlds[i]));
+      Planet* home_planet = Object<Planet>(homeworlds[i]);
       Logger().debugStream() << "Setting " << home_planet->GetSystem()->Name() << " (Planet #" <<  home_planet->ID() <<
           ") to be home system for Empire " << empire_id;
       home_planet->AddOwner(empire_id);

@@ -72,7 +72,7 @@ UniverseObject::~UniverseObject()
 
 System* UniverseObject::GetSystem() const
 {
-    return dynamic_cast<System*>(GetUniverse().Object(m_system_id));
+    return GetUniverse().Object<System>(m_system_id);
 }
 
 bool UniverseObject::Unowned() const 

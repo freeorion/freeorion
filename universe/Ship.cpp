@@ -105,7 +105,7 @@ Ship::Ship(const GG::XMLElement& elem) :
 
 Fleet* Ship::GetFleet() const
 {
-    return dynamic_cast<Fleet*>(GetUniverse().Object(m_fleet_id));
+    return GetUniverse().Object<Fleet>(m_fleet_id);
 }
 
 UniverseObject::Visibility Ship::GetVisibility(int empire_id) const

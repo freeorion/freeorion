@@ -254,7 +254,7 @@ void NewFleetOrder::Execute() const
     Universe& universe = GetUniverse();
     Fleet* fleet = 0;
     if (m_system_id != UniverseObject::INVALID_OBJECT_ID) {
-        System* system = dynamic_cast<System*>(universe.Object(m_system_id));
+        System* system = universe.Object<System>(m_system_id);
         fleet = new Fleet(m_fleet_name, system->X(), system->Y(), EmpireID());
         
         // an ID is provided to ensure consistancy between server and client uiverses
@@ -410,8 +410,8 @@ void FleetTransferOrder::Execute() const
     EmpireManager& empire = Empires();
 
     // look up the source fleet and destination fleet
-    Fleet* source_fleet = dynamic_cast<Fleet*> ( universe.Object(SourceFleet()) );
-    Fleet* target_fleet = dynamic_cast<Fleet*> ( universe.Object(DestinationFleet()) );
+    Fleet* source_fleet = universe.Object<Fleet>(SourceFleet());
+    Fleet* target_fleet = universe.Object<Fleet>(DestinationFleet());
     
     // sanity check
     if(!source_fleet || !target_fleet)
@@ -441,7 +441,7 @@ void FleetTransferOrder::Execute() const
     {
         // find the ship, verify that ID is valid
         int curr = (*itr);
-        Ship* a_ship = dynamic_cast<Ship*> ( universe.Object(curr));
+        Ship* a_ship = universe.Object<Ship>(curr);
         if(!a_ship)
         {
             throw std::runtime_error("Illegal ship id specified in fleet merge order.");
@@ -577,7 +577,7 @@ void FleetColonizeOrder::ExecuteServerApply() const
     EmpireManager* empire = &Empires();
        
     // verify that planet exists and is un-occupied.
-    Planet* target_planet = dynamic_cast<Planet*> ( universe->Object(PlanetID()) );
+    Planet* target_planet = universe->Object<Planet>(PlanetID());
     if(target_planet == NULL)
     {
         throw std::runtime_error("Colonization order issued with invalid planet id.");
@@ -614,7 +614,7 @@ void FleetColonizeOrder::ExecuteServerRevoke() const
 {
     ValidateEmpireID();
   
-    Planet* target_planet = dynamic_cast<Planet*> ( GetUniverse().Object(PlanetID()) );
+    Planet* target_planet = GetUniverse().Object<Planet>(PlanetID());
     if(target_planet == NULL)
     {
         throw std::runtime_error("Colonization order issued with invalid planet id.");
@@ -622,7 +622,7 @@ void FleetColonizeOrder::ExecuteServerRevoke() const
 
     int new_fleet_id = GetUniverse().GenerateObjectID();
 
-    System* system = dynamic_cast<System*>(GetUniverse().Object(target_planet->SystemID()));
+    System* system = GetUniverse().Object<System>(target_planet->SystemID());
     Fleet *fleet = new Fleet("Colony Ship Fleet" + boost::lexical_cast<std::string>(new_fleet_id), system->X(), system->Y(),m_empire);
           
     // an ID is provided to ensure consistancy between server and client uiverses
@@ -673,7 +673,7 @@ void DeleteFleetOrder::Execute() const
 {
     ValidateEmpireID();
 
-    Fleet* fleet = dynamic_cast<Fleet*>(GetUniverse().Object(FleetID()));
+    Fleet* fleet = GetUniverse().Object<Fleet>(FleetID());
     Empire* empire = Empires().Lookup(EmpireID());
 
     if(!fleet)
@@ -727,7 +727,7 @@ void ChangeFocusOrder::Execute() const
 {
     ValidateEmpireID();
 
-    Planet* planet = dynamic_cast<Planet*>(GetUniverse().Object(PlanetID()));
+    Planet* planet = GetUniverse().Object<Planet>(PlanetID());
     Empire* empire = Empires().Lookup(EmpireID());
 
     if(!planet)

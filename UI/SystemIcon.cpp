@@ -23,7 +23,7 @@ const int IMAGES_PER_STAR_TYPE = 2; // number of star images available per star 
 ////////////////////////////////////////////////
 SystemIcon::SystemIcon(int id, double zoom) :
     GG::Control(0, 0, 1, 1, GG::Wnd::CLICKABLE),
-    m_system(*dynamic_cast<const System*>(ClientApp::GetUniverse().Object(id))),
+    m_system(*ClientApp::GetUniverse().Object<const System>(id)),
     m_static_graphic(0)
 {
     Connect(m_system.StateChangedSignal(), &SystemIcon::Refresh, this);

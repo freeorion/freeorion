@@ -54,7 +54,7 @@ namespace
 
 static void RemoveShip(int nID)
 {
-  Ship *shp = dynamic_cast<Ship*>(GetUniverse().Object(nID));
+  Ship *shp = GetUniverse().Object<Ship>(nID);
   if(shp!=NULL)
   {
     Fleet *flt = shp->GetFleet();
@@ -184,7 +184,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
       Fleet *flt = assets[e].fleets[i];
       for(Fleet::iterator shp_it = flt->begin(); shp_it != flt->end(); ++shp_it)
       {
-        Ship *shp = dynamic_cast<Ship*>(GetUniverse().Object(*shp_it));
+        Ship *shp = GetUniverse().Object<Ship>(*shp_it);
         
         if(shp->IsArmed())
           cahp.combat_ships    .push_back(std::pair<Ship*,unsigned int> (shp,shp->Design().defense));

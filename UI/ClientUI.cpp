@@ -408,7 +408,7 @@ GG::XMLElement ClientUI::SaveGameData() const
 bool ClientUI::ZoomToPlanet(int id)
 {
     // this just zooms to the appropriate system, until we create a planet window of some kind
-    if (Planet* planet = dynamic_cast<Planet*>(GetUniverse().Object(id))) {
+    if (Planet* planet = GetUniverse().Object<Planet>(id)) {
         ZoomToSystem(planet->GetSystem());
         return true;
     }
@@ -417,7 +417,7 @@ bool ClientUI::ZoomToPlanet(int id)
 
 bool ClientUI::ZoomToSystem(int id)
 {
-    if (System* system = dynamic_cast<System*>(GetUniverse().Object(id))) {
+    if (System* system = GetUniverse().Object<System>(id)) {
         ZoomToSystem(system);
         return true;
     }
@@ -426,7 +426,7 @@ bool ClientUI::ZoomToSystem(int id)
 
 bool ClientUI::ZoomToFleet(int id)
 {
-    if (Fleet* fleet = dynamic_cast<Fleet*>(GetUniverse().Object(id))) {
+    if (Fleet* fleet = GetUniverse().Object<Fleet>(id)) {
         ZoomToFleet(fleet);
         return true;
     }
@@ -436,7 +436,7 @@ bool ClientUI::ZoomToFleet(int id)
 bool ClientUI::ZoomToShip(int id)
 {
     // this just zooms to the appropriate fleet window, until we create a ship window of some kind
-    if (Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(id))) {
+    if (Ship* ship = GetUniverse().Object<Ship>(id)) {
         ZoomToFleet(ship->GetFleet());
         return true;
     }

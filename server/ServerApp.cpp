@@ -1344,14 +1344,14 @@ void ServerApp::ProcessTurns( )
         it->second[0]->ExecuteServerApply();
       else
       {
-        const Planet *planet = dynamic_cast<Planet*>(GetUniverse().Object(it->first));
-        const System *system = dynamic_cast<System*>(GetUniverse().Object(planet->SystemID()));
+        const Planet *planet = GetUniverse().Object<Planet>(it->first);
+        const System *system = GetUniverse().Object<System>(planet->SystemID());
 
         std::vector<const Fleet*> vec_fleet = system->FindObjects<Fleet>();
         std::set<int> set_empire_with_military;
         for(unsigned int i=0;i<vec_fleet.size();i++)
           for(Fleet::const_iterator ship_it=vec_fleet[i]->begin();ship_it!=vec_fleet[i]->end();++ship_it)
-            if(dynamic_cast<Ship*>(GetUniverse().Object(*ship_it))->IsArmed())
+            if(GetUniverse().Object<Ship>(*ship_it)->IsArmed())
             {
               set_empire_with_military.insert(*vec_fleet[i]->Owners().begin());
               break;

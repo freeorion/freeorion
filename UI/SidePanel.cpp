@@ -506,7 +506,7 @@ namespace {
 
   Ship* FindColonyShip(int system_id)
   {
-    const System *system = dynamic_cast<const System *>(GetUniverse().Object(system_id));
+    const System *system = GetUniverse().Object<const System>(system_id);
     if(system==0)
       return 0;//UniverseObject::INVALID_OBJECT_ID;
 
@@ -517,7 +517,7 @@ namespace {
       {
         Ship* ship;
         for(Fleet::const_iterator it = flt_vec[i]->begin(); it != flt_vec[i]->end(); ++it)
-          if(   (ship=dynamic_cast<Ship*>(GetUniverse().Object(*it)))
+          if(   (ship=GetUniverse().Object<Ship>(*it))
              && ship->Design().colonize)
             return ship;//ship->ID();
       }
@@ -1144,7 +1144,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h,const Planet &pla
     MoveChildDown(m_planet_graphic);
   }
 
-  const Planet *plt = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
+  const Planet *plt = GetUniverse().Object<const Planet>(m_planet_id);
 
   m_connection_planet_changed = GG::Connect(plt->StateChangedSignal(), &SidePanel::PlanetPanel::PlanetChanged, this);
   m_connection_planet_production_changed= GG::Connect(plt->ProdCenterChangedSignal(), &SidePanel::PlanetPanel::PlanetProdCenterChanged, this);
@@ -1161,7 +1161,7 @@ SidePanel::PlanetPanel::~PlanetPanel()
 
 Planet* SidePanel::PlanetPanel::GetPlanet()
 {
-  Planet *planet = dynamic_cast<Planet*>(GetUniverse().Object(m_planet_id));
+  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
   if(!planet)
     throw std::runtime_error("SidePanel::PlanetPanel::GetPlanet: planet not found!");
   return planet;
@@ -1169,7 +1169,7 @@ Planet* SidePanel::PlanetPanel::GetPlanet()
 
 const Planet* SidePanel::PlanetPanel::GetPlanet() const
 {
-  const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
+  const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
   if(!planet)
     throw std::runtime_error("SidePanel::PlanetPanel::GetPlanet: planet not found!");
   return planet;
@@ -1746,7 +1746,7 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   m_radio_btn_secondary_focus(0),
   m_bShowUI(false),m_fadein_start(0),m_fadein_span(0)
 {
-  Planet *planet = dynamic_cast<Planet*>(GetUniverse().Object(m_planet_id));
+  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
 
   EnableChildClipping(true);
 
@@ -1881,7 +1881,7 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
 
 void SidePanel::PlanetView::PlanetChanged()
 {
-  Planet *planet = dynamic_cast<Planet*>(GetUniverse().Object(m_planet_id));
+  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
   if(planet==0)
     throw std::runtime_error("SidePanel::PlanetView::PlanetChanged: planet not found");
 
@@ -1898,7 +1898,7 @@ void SidePanel::PlanetView::PlanetChanged()
 
 void SidePanel::PlanetView::PlanetProdCenterChanged()
 {
-  Planet *planet = dynamic_cast<Planet*>(GetUniverse().Object(m_planet_id));
+  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
   if(planet==0)
     throw std::runtime_error("SidePanel::PlanetView::PlanetChanged: planet not found");
 
@@ -1947,7 +1947,7 @@ void SidePanel::PlanetView::Show(bool children)
 {
   GG::Wnd::Show(children);
 
-  const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
+  const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
   if(!planet)
     throw std::runtime_error("SidePanel::PlanetView::Show: planet not found!");
   enum OWNERSHIP {OS_NONE,OS_FOREIGN,OS_SELF} owner = OS_NONE;
@@ -2010,7 +2010,7 @@ void SidePanel::PlanetView::SetFadeInPlanetViewUI(int start, int span)
 
 void SidePanel::PlanetView::BuildSelected(int idx) const
 {
-  const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
+  const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
   if(!planet)
     throw std::runtime_error("SidePanel::PlanetPanel::BuildSelected planet not found!");
 
@@ -2032,7 +2032,7 @@ void SidePanel::PlanetView::PrimaryFocusClicked(int idx)
     case  4:ft=Planet::BALANCED     ;break;
     default:ft=Planet::FOCUS_UNKNOWN;break;
   }
-  Planet *planet = dynamic_cast<Planet*>(GetUniverse().Object(m_planet_id));
+  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
   if(planet->PrimaryFocus()!=ft)
     HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,0));
  
@@ -2055,7 +2055,7 @@ void SidePanel::PlanetView::SecondaryFocusClicked(int idx)
     case  4:ft=Planet::BALANCED     ;break;
     default:ft=Planet::FOCUS_UNKNOWN;break;
   }
-  Planet *planet = dynamic_cast<Planet*>(GetUniverse().Object(m_planet_id));
+  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
   if(planet->SecondaryFocus()!=ft)
     HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,1));
 
@@ -2067,7 +2067,7 @@ bool SidePanel::PlanetView::Render()
 {
   FadeIn();
 
-  const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_planet_id));
+  const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
   if(!planet)
     throw std::runtime_error("SidePanel::PlanetPanel::BuildSelected planet not found!");
 
@@ -2431,7 +2431,7 @@ void SidePanel::SetSystem(int system_id)
 
     Hide();
 
-    m_system = dynamic_cast<const System*>(HumanClientApp::GetUniverse().Object(system_id));
+    m_system = HumanClientApp::GetUniverse().Object<const System>(system_id);
 
     if (m_system)
     {
@@ -2572,7 +2572,7 @@ void SidePanel::PlanetLClicked(int planet_id)
   if(   planet_id != UniverseObject::INVALID_OBJECT_ID
      && (!m_planet_view || m_planet_view->PlanetID()!=planet_id))
   {
-    const Planet* planet = dynamic_cast<const Planet*>(GetUniverse().Object(planet_id));
+    const Planet* planet = GetUniverse().Object<const Planet>(planet_id);
 
     if(m_planet_view)
     {
@@ -2660,7 +2660,7 @@ return;
       delete m_planet_view;m_planet_view=0;
     }
 
-    const Planet* planet = dynamic_cast<const Planet*>(GetUniverse().Object(m_next_pltview_planet_id));
+    const Planet* planet = GetUniverse().Object<const Planet>(m_next_pltview_planet_id);
 
     MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
 
