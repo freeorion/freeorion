@@ -49,6 +49,9 @@ SystemIcon::SystemIcon(int id, double zoom) :
     case System::RED_DWARF:
         graphic = HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "/stars/red4.png");
         break;
+    case System::BLUE:
+        graphic = HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "/stars/blue2.png");
+        break;
     default:
         //just load a blue star for now
         graphic = HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "/stars/blue2.png");
