@@ -101,6 +101,8 @@ Tech::Tech(const GG::XMLElement& elem) :
          ++it) {
         m_unlocked_items.push_back(ItemSpec(*it));
     }
+    
+    m_graphic = elem.ContainsChild("graphic")?elem.Child("graphic").Text():"";
 }
 
 const std::string& Tech::Name() const
@@ -141,6 +143,11 @@ const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Tech::Effects
 const std::set<std::string>& Tech::Prerequisites() const
 {
     return m_prerequisites;
+}
+
+const std::string& Tech::Graphic() const
+{
+    return m_graphic;
 }
 
 const std::vector<Tech::ItemSpec>& Tech::UnlockedItems() const

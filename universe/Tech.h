@@ -57,6 +57,9 @@ public:
 
     /** returns the set of names of all techs required before this one can be researched */
     const std::set<std::string>& Prerequisites() const;
+    
+    /** returns the name of the grapic file for this tech */
+    const std::string& Graphic() const;
 
     /** returns the set all items that are unlocked by researching this tech */
     const std::vector<ItemSpec>& UnlockedItems() const;
@@ -79,6 +82,7 @@ private:
                                m_effects;
     std::set<std::string>      m_prerequisites;
     std::vector<ItemSpec>      m_unlocked_items;
+    std::string                m_graphic;
 
     // note that m_unlocked_techs is not part of the XML representation of a tech; it is filled in by the TechManager at load-time
     std::set<std::string>      m_unlocked_techs;

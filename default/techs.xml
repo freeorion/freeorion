@@ -12,6 +12,7 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>icons/pop.png</graphic>
 </Tech>
 
  <Tech>
@@ -25,6 +26,7 @@
      <prereq>LRN_PHYS_BRAIN</prereq>
    </prerequisites>
    <unlocked_items></unlocked_items>
+   <graphic>icons/xxx.png</graphic>
  </Tech>
 
  <Tech>

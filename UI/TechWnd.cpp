@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "CUIDrawUtil.h"
 #include "GGDrawUtil.h"
+#include "GGStaticGraphic.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Tech.h"
@@ -17,7 +18,7 @@
 #include <valarray>
 
 extern "C" {
-#include <dot.h>
+#include <graphviz/dot.h>
 }
 
 #include <boost/format.hpp>
@@ -410,13 +411,14 @@ private:
     void AddToQueueClickedSlot() {if (m_tech) QueueTechSignal(m_tech);}
     void Reset();
 
-    const Tech*      m_tech;
-    GG::TextControl* m_tech_name_text;
-    GG::TextControl* m_category_and_type_text;
-    GG::TextControl* m_cost_text;
-    CUIButton*       m_recenter_button;
-    CUIButton*       m_add_to_queue_button;
-    CUIMultiEdit*    m_description_box;
+    const Tech*         m_tech;
+    GG::TextControl*    m_tech_name_text;
+    GG::TextControl*    m_category_and_type_text;
+    GG::TextControl*    m_cost_text;
+    CUIButton*          m_recenter_button;
+    CUIButton*          m_add_to_queue_button;
+    CUIMultiEdit*       m_description_box;
+    GG::StaticGraphic   *m_tech_graphic;          ///< image of the tech (can be a frameset);
 };
 
 TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
@@ -428,7 +430,7 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     const int COST_PTS = ClientUI::PTS + 6;
     const int BUTTON_WIDTH = 150;
     const int BUTTON_MARGIN = 5;
-    m_tech_name_text = new GG::TextControl(1, 0, w, NAME_PTS + 4, "", ClientUI::FONT, NAME_PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
+    m_tech_name_text = new GG::TextControl(1, 0, w - 1 - BUTTON_WIDTH, NAME_PTS + 4, "", ClientUI::FONT, NAME_PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_category_and_type_text = new GG::TextControl(1, m_tech_name_text->LowerRight().y, w, CATEGORY_AND_TYPE_PTS + 4, "", ClientUI::FONT, CATEGORY_AND_TYPE_PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_cost_text = new GG::TextControl(1, m_category_and_type_text->LowerRight().y, w, COST_PTS + 4, "", ClientUI::FONT, COST_PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_add_to_queue_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, UserString("TECH_DETAIL_ADD_TO_QUEUE"));
@@ -437,8 +439,10 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     m_add_to_queue_button->Hide();
     m_recenter_button->Disable();
     m_add_to_queue_button->Disable();
-    m_description_box = new CUIMultiEdit(1, m_cost_text->LowerRight().y, w - 2, h - m_cost_text->LowerRight().y - 2, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
+    m_description_box = new CUIMultiEdit(1, m_cost_text->LowerRight().y, w - 2 - BUTTON_WIDTH, h - m_cost_text->LowerRight().y - 2, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
+
+    m_tech_graphic = NULL;
 
     GG::Connect(m_recenter_button->ClickedSignal(), &TechTreeWnd::TechDetailPanel::CenterClickedSlot, this);
     GG::Connect(m_add_to_queue_button->ClickedSignal(), &TechTreeWnd::TechDetailPanel::AddToQueueClickedSlot, this);
@@ -457,6 +461,12 @@ void TechTreeWnd::TechDetailPanel::Reset()
     m_category_and_type_text->SetText("");
     m_cost_text->SetText("");
     m_description_box->SetText("");
+
+    if(m_tech_graphic){
+      DetachChild(m_tech_graphic);
+      m_tech_graphic=NULL;
+    }
+
     if (!m_tech) {
         m_recenter_button->Hide();
         m_add_to_queue_button->Hide();
@@ -468,6 +478,13 @@ void TechTreeWnd::TechDetailPanel::Reset()
         m_add_to_queue_button->Show();
         m_recenter_button->Disable(false);
         m_add_to_queue_button->Disable(false);
+
+        if(m_tech->Graphic().length() > 0){
+          m_tech_graphic = new GG::StaticGraphic(Width() - 2 - 150+(150-128)/2,m_recenter_button->LowerRight().y -UpperLeft().y + 5,128,128,
+            HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + m_tech->Graphic()), GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+          m_tech_graphic->Show();
+          AttachChild(m_tech_graphic);
+        }
     }
     m_tech_name_text->SetText(UserString(m_tech->Name()));
     using boost::io::str;
