@@ -22,8 +22,10 @@ namespace {
                "The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.",
                std::string("save"));
     }
-
     bool foo_bool = RegisterOptions(&Options);
+
+    const int IN_GAME_OPTIONS_WIDTH = 150;
+    const int IN_GAME_OPTIONS_HEIGHT = 280;
 
     bool temp_header_bool = RecordHeaderFile(InGameOptionsRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
@@ -31,17 +33,19 @@ namespace {
 
 
 InGameOptions::InGameOptions():
-    CUI_Wnd(UserString("GAME_MENU_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() / 2) - 55,
-            (GG::App::GetApp()->AppHeight() / 2) - 140, 135, 280, GG::Wnd::CLICKABLE | GG::Wnd::MODAL)
+    CUI_Wnd(UserString("GAME_MENU_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
+            (GG::App::GetApp()->AppHeight() - IN_GAME_OPTIONS_HEIGHT) / 2, IN_GAME_OPTIONS_WIDTH, IN_GAME_OPTIONS_HEIGHT, GG::Wnd::CLICKABLE | GG::Wnd::MODAL)
 {
-    m_save_btn = new CUIButton(30,40,75,UserString("GAME_MENU_SAVE"));
-    m_load_btn = new CUIButton(30,80,75,UserString("GAME_MENU_LOAD"));
-	m_options_btn = new CUIButton(30,120,75,UserString("INTRO_BTN_OPTIONS"));
-    m_exit_btn = new CUIButton(30,160,75,UserString("GAME_MENU_RESIGN"));
-    m_done_btn = new CUIButton(30,210,75,UserString("DONE"));
+    const int BUTTON_WIDTH = IN_GAME_OPTIONS_WIDTH - 60;
+    const int BUTTON_X = (IN_GAME_OPTIONS_WIDTH - BUTTON_WIDTH) / 2;
+    m_save_btn = new CUIButton(BUTTON_X, 40, BUTTON_WIDTH, UserString("GAME_MENU_SAVE"));
+    m_load_btn = new CUIButton(BUTTON_X, 80, BUTTON_WIDTH, UserString("GAME_MENU_LOAD"));
+	m_options_btn = new CUIButton(BUTTON_X, 120, BUTTON_WIDTH, UserString("INTRO_BTN_OPTIONS"));
+    m_exit_btn = new CUIButton(BUTTON_X, 160, BUTTON_WIDTH, UserString("GAME_MENU_RESIGN"));
+    m_done_btn = new CUIButton(BUTTON_X, 210, BUTTON_WIDTH, UserString("DONE"));
 
     // call to InGameOptions::MinimizedLength() because MinimizedLength is virtual
-    SetMinSize(GG::Pt(InGameOptions::MinimizedLength(),MinSize().y));
+    SetMinSize(GG::Pt(InGameOptions::MinimizedLength(), MinSize().y));
     Init(); //attaches children and connects signals to slots
 }
 
@@ -62,7 +66,7 @@ bool InGameOptions::Render()
 
 void InGameOptions::Keypress (GG::Key key, Uint32 key_mods)
 {
-    if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE) // Same behaviour as if "done" was pressed
+    if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE || key == GG::GGK_F10) // Same behaviour as if "done" was pressed
         Done();
 }
 
