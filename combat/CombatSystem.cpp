@@ -1,4 +1,5 @@
 #include "CombatSystem.h"
+
 #include "../util/AppInterface.h"
 #include "../universe/Predicates.h"
 
@@ -10,6 +11,11 @@
 
 #include "../util/Random.h"
 #include "../util/AppInterface.h"
+
+#include "../server/ServerApp.h"
+#include "../network/Message.h"
+
+#include "Combat.h"
 
 #include <time.h>
 #include <map>
@@ -23,6 +29,12 @@ bool CombatAssetsOwner::operator==(const CombatAssetsOwner &ca) const
 
 namespace
 {
+  void SendMessageToAllPlayer(Message::MessageType msg_type,Message::ModuleType module, const GG::XMLDoc& doc)
+  {
+    for (std::map<int, PlayerInfo>::const_iterator it = ServerApp::GetApp()->NetworkCore().Players().begin(); it != ServerApp::GetApp()->NetworkCore().Players().end(); ++it)
+      ServerApp::GetApp()->NetworkCore().SendMessage(Message(msg_type,-1,it->first,module,doc));
+  }
+
   struct CombatAssetsHitPoints
   {
     Empire* owner;
@@ -98,6 +110,39 @@ static void Debugout(std::vector<CombatAssetsHitPoints> &empire_combat_forces)
 }
 #endif
 
+CombatUpdateMessage GenerateCombatUpdateMessage(int system_id,const std::vector<CombatAssetsHitPoints> &empire_combat_forces)
+{
+  CombatUpdateMessage cmb_upd_msg;
+  
+  cmb_upd_msg.m_system = GetUniverse().Object(system_id)->Name();
+  for(unsigned int e=0;e<empire_combat_forces.size();e++)
+  {
+    CombatUpdateMessage::EmpireCombatInfo eci;
+    eci.empire                    = empire_combat_forces[e].owner->Name();
+    eci.combat_ships              = empire_combat_forces[e].combat_ships.size();
+    eci.combat_ships_hitpoints    = 0;
+    for(unsigned int i = 0;i<empire_combat_forces[e].combat_ships.size();i++)
+      eci.combat_ships_hitpoints+=empire_combat_forces[e].combat_ships[i].second;
+
+    eci.non_combat_ships          = empire_combat_forces[e].non_combat_ships.size();
+    eci.non_combat_ships_hitpoints= 0;
+    for(unsigned int i = 0;i<empire_combat_forces[e].non_combat_ships.size();i++)
+      eci.non_combat_ships_hitpoints+=empire_combat_forces[e].non_combat_ships[i].second;
+
+    eci.planets                   = empire_combat_forces[e].planets.size();
+    eci.planets_defence_bases     = 0;
+    for(unsigned int i = 0;i<empire_combat_forces[e].planets.size();i++)
+      eci.planets_defence_bases+=empire_combat_forces[e].planets[i].second;
+
+    eci.destroyed_ships_destroyed = empire_combat_forces[e].destroyed_ships.size();
+    eci.retreated_ships           = empire_combat_forces[e].retreated_ships.size();
+    eci.defenseless_planets       = empire_combat_forces[e].defenseless_planets.size();
+
+    cmb_upd_msg.m_opponents.push_back(eci);
+  }
+  return cmb_upd_msg;
+}
+
 void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAssets> &assets)
 {
 #ifdef DEBUG_COMBAT
@@ -105,6 +150,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
 #endif
   const double base_chance_to_retreat = 0.25;
   const int    defence_base_hit_points= 3;
+
 
   ClockSeed();
   SmallIntDistType small_int_dist = SmallIntDist(0,10000);
@@ -155,6 +201,10 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
       break;
   if(e>=combat_assets.size())
     return;
+
+  GG::XMLDoc msg;
+  msg.root_node.AppendChild(GenerateCombatUpdateMessage(system_id,empire_combat_forces).XMLEncode());
+  SendMessageToAllPlayer(Message::COMBAT_START,Message::CORE,msg);
 
   while(combat_assets.size()>1)
   {
@@ -276,6 +326,9 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
             i--;
           }
       }
+      msg = GG::XMLDoc();
+      msg.root_node.AppendChild(GenerateCombatUpdateMessage(system_id,empire_combat_forces).XMLEncode());
+      SendMessageToAllPlayer(Message::COMBAT_ROUND_UPDATE,Message::CORE,msg);
     }
 
 #ifdef DEBUG_COMBAT
@@ -357,5 +410,9 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
     // add some information to sitreport
     empire_combat_forces[e].owner->AddSitRepEntry(CreateCombatSitRep(empire_combat_forces[e].owner->EmpireID(),victor==-1?-1:empire_combat_forces[victor].owner->EmpireID(),system_id));
   }
+
+  msg = GG::XMLDoc();
+  msg.root_node.AppendChild(GenerateCombatUpdateMessage(system_id,empire_combat_forces).XMLEncode());
+  SendMessageToAllPlayer(Message::COMBAT_END,Message::CORE,msg);
 }
 
