@@ -6,9 +6,12 @@
 #include <log4cpp/Category.hh>
 
 const std::string NetworkCore::EOM_STR = "_MSG_END_";
-const int         NetworkCore::FIND_PORT = 12345;
-const int         NetworkCore::CONNECT_PORT = 12346;
-const std::string NetworkCore::FIND_SERVER_PACKET_MSG = "HELLO?";
+const int         NetworkCore::SERVER_FIND_LISTEN_PORT = 12345;
+const int         NetworkCore::SERVER_FIND_RESPONSE_PORT = 12346;
+const int         NetworkCore::CONNECT_PORT = 12347;
+const std::string NetworkCore::SERVER_FIND_QUERY_MSG = "HELLO";
+const std::string NetworkCore::SERVER_FIND_YES_MSG = "NOPE.";
+const std::string NetworkCore::SERVER_FIND_NO_MSG = "YEAH.";
 
 namespace {
 log4cpp::Category& logger = log4cpp::Category::getRoot();

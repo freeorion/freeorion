@@ -14,10 +14,12 @@
 
 /** the states the server may be in at various points during its execution*/
 enum ServerState {SERVER_IDLE,         ///< there is no game yet and no one has send a HOST_GAME Message yet; this is the initial state
-                  SERVER_GAME_SETUP,   ///< a HOST_GAME Message has been received, and a game is being set up
+                  SERVER_MP_LOBBY,     ///< the host and possibly other players are in the multiplayer lobby, preparing to start a game
+                  SERVER_GAME_SETUP,   ///< a HOST_GAME Message has been received, and a game is being set up (the server is waiting for all players to join)
                   SERVER_WAITING,      ///< a game is in progress and currently the server is waiting for players to finish their turns
                   SERVER_PROCESSING,   ///< the server is processing a turn
-                  SERVER_DISCONNECT    ///< the server has encountered a disconnect error and is dealing with it
+                  SERVER_DISCONNECT,   ///< the server has encountered a disconnect error and is dealing with it
+                  SERVER_DYING         ///< the server is ending its execution
                  };
 
 class Message;
@@ -38,10 +40,13 @@ public:
    virtual void HandleNetEvent(SDL_Event& event) = 0; ///< directly handles SDL network events
    //@}
    
-   static const std::string   EOM_STR;                ///< the string that marks the end of a Message in a TCP byte stream
-   static const int           FIND_PORT;              ///< the port used to find the IP address(es) of server(s) on the LAN
-   static const int           CONNECT_PORT;           ///< the port used to make TCP connections
-   static const std::string   FIND_SERVER_PACKET_MSG; ///< the UDP message used to find IP address(es) of server(s) on the LAN
+   static const std::string   EOM_STR;                   ///< the string that marks the end of a Message in a TCP byte stream
+   static const int           SERVER_FIND_LISTEN_PORT;   ///< the port used by servers to their IP address(es)
+   static const int           SERVER_FIND_RESPONSE_PORT; ///< the port used to catch server responses when looking for the IP address(es) of server(s) on the LAN
+   static const int           CONNECT_PORT;              ///< the port used to make TCP connections
+   static const std::string   SERVER_FIND_QUERY_MSG;     ///< the UDP message used to ask if this server is hosting a game that the querying host may join
+   static const std::string   SERVER_FIND_YES_MSG;       ///< the UDP message used to indicate this server is hosting a game that the querying host may join
+   static const std::string   SERVER_FIND_NO_MSG;        ///< the UDP message used to indicate this server is not hosting a game that the querying host may join
    
 protected:
    /** sends \a msg to the designated socket.  Creates a log entry on error.  \throw std::invalid_argument 
