@@ -827,7 +827,7 @@ void MapWnd::OnTurnUpdate()
     //hide sidepanel
     m_side_panel->SetSystem(UniverseObject::INVALID_OBJECT_ID);
     // delete app popups
-    DeleteAllPopups( );
+    CloseAllPopups( );
 
     HumanClientApp::GetApp()->StartTurn();
 }
@@ -1036,10 +1036,10 @@ void MapWnd::RemovePopup( MapWndPopup* popup )
     }
 }
 
-void MapWnd::DeleteAllPopups( )
+void MapWnd::CloseAllPopups( )
 {
     for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ) {
-        // get popup and increment iterator first since closing the popup will change this list by removing the poup
+        // get popup and increment iterator first since closing the popup will change this list by removing the popup
         MapWndPopup* popup = *it++;
         popup->Close( );
     }   
