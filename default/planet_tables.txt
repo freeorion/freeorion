@@ -1,0 +1,24 @@
+# This is a comment.  The portion of any line after a "#" (including the "#") will be ignored.
+# Spacing is also ignored.  The columns are only for human readability.
+# The column and row labels themselves are also ignored, and are there for readability as well.
+# They are optional but should always be used.
+# 
+# Tables should be of the form:
+# <ROWSxCOLUMNS>
+# TABLE_NAME [COLUMN LABELS]
+# ...
+
+<8x5>
+PlanetMaxPop                            Inhospitable    Terrible        Adequate        Optimal Superb
+NoWorld                                 0               0               0               0       0
+Tiny                                    0               2               4               8       10
+Small                                   0               4               8               16      20
+Average                                 0               6               12              20      25
+Large                                   0               8               16              25      30
+Huge                                    0               10              20              30      35
+Asteroid                                0               0               0               0       0
+GasGiant                                0               0               0               0       0
+
+<1x5>
+PlanetEnvEffectOnPopGrowthRate          Inhospitable    Terrible        Adequate        Optimal Superb
+GrowthRate                              0               50              80              100     100        # percentages

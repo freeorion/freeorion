@@ -1,0 +1,82 @@
+# This is a comment.  The portion of any line after a "#" (including the "#") will be ignored.
+# Spacing is also ignored.  The columns are only for human readability.
+# The column and row labels themselves are also ignored, and are there for readability as well.
+# They are optional but should always be used.
+# 
+# Tables should be of the form:
+# <ROWSxCOLUMNS>
+# TABLE_NAME [COLUMN LABELS]
+# ...
+
+<3x8>
+DensityModToPlanetSizeDist      NoWorld         Planetoid       Small   Medium  Large   Massive AsteroidField   GasGiant
+LowDensity                      70              0               0       0       0       0       0               0
+AverageDensity                  50              0               0       0       0       0       0               0
+HighDensity                     30              0               0       0       0       0       0               0
+
+<7x8>
+StarColorModToPlanetSizeDist    NoWorld         Planetoid       Small   Medium  Large   Massive AsteroidField   GasGiant
+Blue                            0               0               0       0       0       0       0               0
+White                           0               0               0       0       0       0       0               0
+Yellow                          0               0               0       0       0       0       0               0
+Orange                          0               0               0       0       0       0       0               0
+Red                             0               0               0       0       0       0       0               0
+Neutron                         5               5               0       0       0       0       20              0
+Blackhole                       30              0               0       -5      -5      -5      10              -5
+
+<10x8>
+SlotModToPlanetSizeDist         NoWorld         Planetoid       Small   Medium  Large   Massive  AsteroidField  GasGiant
+Slot1                           10              15              20      10      0       0        0              -80
+Slot2                           5               10              15      20      5       0        0              -70
+Slot3                           0               5               10      30      10      5        0              -60
+Slot4                           0               5               10      30      10      5        10             -30
+Slot5                           0               5               10      20      15      10       25             0
+Slot6                           0               5               5       5       20      15       10             30
+Slot7                           0               5               5       5       15      10       5              30
+Slot8                           0               10              10      5       10      5        5              30
+Slot9                           5               15              10      5       5       5        5              30
+Slot10                          10              20              10      0       0       0        5              10
+
+<8x12>
+PlanetSizeModToPlanetTypeDist   Swamp   Toxic   Inferno Radiated        Barren  Tundra  Desert  Terran  Ocean   Gaian   AsteroidField   GasGiant
+NoWorld                         0        0      0       0               0       0       0       0       0       0       0               0
+Planetoid                       0        0      0       10              20      0       0       0       0       -20     0               0
+Small                           0        0      0       10              10      0       0       0       0       -10     0               0
+Medium                          5        0      0       0               0       5       5       10      10       0      0               0
+Large                           0        10     10      0               0       0       0       0       0       -10     0               0
+Massive                         0        10     10      0               0       0       0       0       0       -20     0               0
+Asteroid                        0        0      0       0               0       0       0       0       0       0       0               0
+GasGiant                        0        0      0       0               0       0       0       0       0       0       0               0
+
+<10x12>
+SlotModToPlanetTypeDist         Swamp   Toxic   Inferno Radiated        Barren  Tundra  Desert  Terran  Ocean   Gaian   AsteroidField   GasGiant
+Slot1                           0       5       20      30              15      -20     15      -5      -5      -50     0               0
+Slot2                           20      15      20      10              10      -10     20      10      10      -40     0               0
+Slot3                           10      0       5       0               0       0       15      30      25      -40     0               0
+Slot4                           0       0       0       0               0       5       10      25      25      -40     0               0
+Slot5                           5       5       0       0               0       5       0       10      10      -40     0               0
+Slot6                           5       10      0       0               5       10      0       5       10      -40     0               0
+Slot7                           0       0       0       0               10      10      0       0       0       -40     0               0
+Slot8                           -5      0       -5      0               15      10      -5      -5      -5      -50     0               0
+Slot9                           -10     -5      -10     -10             20      10      -10     -10     -10     -60     0               0
+Slot10                          -20     -10     -20     -20             25      5       -20     -20     -20     -70     0               0
+
+<7x12>
+StarColorModToPlanetTypeDist    Swamp  Toxic   Inferno Radiated         Barren   Tundra  Desert  Terran  Ocean  Gaian   AsteroidField   GasGiant
+Blue                            0      10      15      20               15      0       5       0       0       -5      0               0
+White                           5      5       10      5                10      0       15      0       0       0       0               0
+Yellow                          20     0       0       0                0       5       20      30      25      0       0               0
+Orange                          5      5       0       0                10      10      0       0       5       0       0               0
+Red                             0      10      0       0                20      10      0       0       0       -5      0               0
+Neutron                         -10    5       5       30               20      0       5       -30     -30     -10     0               0
+Blackhole                       -10    -10     -10     15               30      0       -30     -30     -30     -15     0               0
+
+<3x7>
+UniverseAgeModToStarTypeDist    Blue    White   Yellow  Orange  Red     Neutron Blackhole
+Young                           10      20      0       0       0       0       0
+Mature                          0        0      10      0       0       10      10
+Ancient                         0        0      0       10      10      20      20
+
+<1x7>
+BaseStarTypeDist                Blue    White   Yellow  Orange  Red     Neutron Blackhole
+Base                            30      40      50      40      30      0       0
