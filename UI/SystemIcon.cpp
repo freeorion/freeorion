@@ -16,7 +16,20 @@
 
 #include <boost/lexical_cast.hpp>
 
-const int IMAGES_PER_STAR_TYPE = 2; // number of star images available per star type (named "type1.png", "type2.png", ...)
+namespace {
+    const std::map<int, std::string>& StarTypesNames()
+    {
+        static std::map<int, std::string> star_type_names;
+        star_type_names[System::BLUE] = "blue";
+        star_type_names[System::WHITE] = "white";
+        star_type_names[System::YELLOW] = "yellow";
+        star_type_names[System::ORANGE] = "orange";
+        star_type_names[System::RED] = "red";
+        star_type_names[System::NEUTRON] = "neutron";
+        star_type_names[System::BLACK] = "black";
+        return star_type_names;
+    }
+}
 
 ////////////////////////////////////////////////
 // SystemIcon
@@ -38,20 +51,8 @@ SystemIcon::SystemIcon(int id, double zoom) :
              static_cast<int>(ul.y + ClientUI::SYSTEM_ICON_SIZE * zoom + 0.5));
 
     // star graphic
-    boost::shared_ptr<GG::Texture> graphic;
-    std::string system_image = ClientUI::ART_DIR + "stars/";
-    switch (m_system.Star()) {
-    case System::BLUE:    system_image += "blue"; break;
-    case System::WHITE:   system_image += "white"; break;
-    case System::YELLOW:  system_image += "yellow"; break;
-    case System::ORANGE:  system_image += "orange"; break;
-    case System::RED:     system_image += "red"; break;
-    case System::NEUTRON: system_image += "blue"; break;
-    case System::BLACK:   system_image += "black"; break;
-    default:              system_image += "blue"; break;
-    }
-    system_image += boost::lexical_cast<std::string>((m_system.ID() % 2/*IMAGES_PER_STAR_TYPE*/) + 1) + ".png";
-    graphic = HumanClientApp::GetApp()->GetTexture(system_image);
+    //boost::shared_ptr<GG::Texture> graphic = GetStarTexture(m_system.Star(), m_system.ID());
+    boost::shared_ptr<GG::Texture> graphic = ClientUI::GetNumberedTexture("stars", StarTypesNames(), m_system.Star(), m_system.ID());
 
     //setup static graphic
     m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::GR_FITGRAPHIC);
