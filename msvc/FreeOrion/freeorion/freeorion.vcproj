@@ -419,6 +419,12 @@
 					RelativePath="..\..\..\Ui\OptionsWnd.h">
 				</File>
 				<File
+					RelativePath="..\..\..\Ui\ResearchWnd.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\ResearchWnd.h">
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\ServerConnectWnd.cpp">
 				</File>
 				<File
