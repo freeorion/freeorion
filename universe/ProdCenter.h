@@ -10,9 +10,9 @@
 #include "Ship.h"
 #endif
 
+class Empire;
 
 /** a production center decoration for a UniverseObject.*/
-class Empire;
 class ProdCenter
 {
 public:
@@ -30,9 +30,9 @@ public:
    //@}
 
    /////////////////////////////////////////////////////////////////////////////
-   // V0.1 ONLY!!!!
-   enum BuildType {BUILD_UNKNOWN, NOT_BUILDING, INDUSTRY_BUILD, RESEARCH_BUILD, SCOUT, COLONY_SHIP, MARKI, MARKII, MARKIII, MARKIV, DEF_BASE};
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
+   enum BuildType {BUILD_UNKNOWN, NOT_BUILDING, SCOUT, COLONY_SHIP, MARKI, MARKII, MARKIII, MARKIV, DEF_BASE};
+   // V0.2 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
    /** \name Structors */ //@{
@@ -44,16 +44,19 @@ public:
    /** \name Accessors */ //@{
    FocusType      PrimaryFocus() const     {return m_primary;}
    FocusType      SecondaryFocus() const   {return m_secondary;}
-   double         ProdPoints() const;
+   double         FarmingPoints() const;
+   double         IndustryPoints() const;
+   double         MiningPoints() const;
+   double         ResearchPoints() const;
    double         BuildProgress() const    {return m_build_progress;}
    double         Rollover() const         {return m_rollover;}
-   double         Workforce() const {return m_workforce;}
+   double         Workforce() const        {return m_workforce;}
+   PlanetType     GetPlanetType() const    {return m_planet_type;}
 
    /////////////////////////////////////////////////////////////////////////////
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    BuildType     CurrentlyBuilding() const {return m_currently_building;}
-   double        IndustryFactor() const    {return m_industry_factor;}
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
    virtual GG::XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a ProdCenter object with the given visibility
@@ -66,12 +69,12 @@ public:
    void SetSecondaryFocus(FocusType focus);
    void SetWorkforce(double workforce);
    void SetMaxWorkforce(double max_workforce);
+   void SetPlanetType(PlanetType planet_type);
 
    /////////////////////////////////////////////////////////////////////////////
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    void SetProduction(ProdCenter::BuildType type);
-   bool AdjustIndustry(double industry);  /// returns true if max is hit
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
    virtual void MovementPhase( );
@@ -88,20 +91,19 @@ private:
    ///< takes a design ID and if any are build, adds the ships to a fleet.
    void UpdateShipBuildProgress( Empire *empire, const int system_id, const int planet_id, ShipDesign::V01DesignID design_id );
 
-   FocusType      m_primary;
-   FocusType      m_secondary;
+   FocusType  m_primary;
+   FocusType  m_secondary;
    
-   double         m_workforce; ///< pop points present in this center
-
-   double         m_max_workforce; ///< max pop points avail at this center
+   double     m_workforce;     ///< pop points present in this center
+   double     m_max_workforce; ///< max pop points available at this center
+   PlanetType m_planet_type;   ///< the environment at this center
 
    /////////////////////////////////////////////////////////////////////////////
-   // V0.1 ONLY!!!!
-   double         m_industry_factor; ///< a number in [0.0 1.0] representing the percentage of industrialization
+   // V0.2 ONLY!!!!
    BuildType      m_currently_building;
-   double         m_build_progress; ///< build progress in [0.0 1.0] towards the current build target (may be 0.0 if not applicable, such as when no target exists)
+   double         m_build_progress; ///< build progress towards the current build target (may be 0.0 if not applicable, such as when no target exists)
    double         m_rollover;  ///< for build types that can span multiple turns this specifies how many production points are rolled over towards the next turn.
-   // V0.1 ONLY!!!!
+   // V0.2 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
 
    mutable ProdCenterChangedSignalType m_prod_changed_sig;

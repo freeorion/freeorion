@@ -1,23 +1,36 @@
 #include "ProdCenter.h"
+
+#include "../util/AppInterface.h"
+#include "../util/DataTable.h"
+#include "../Empire/Empire.h"
+#include "Fleet.h"
 #include "Planet.h"
 #include "System.h"
-#include "Fleet.h"
 #include "XMLDoc.h"
-#include "../Empire/Empire.h"
-#include "../util/AppInterface.h"
-
 
 #include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
 
 #include <stdexcept>
+
+namespace {
+    DataTableMap& ProductionDataTables()
+    {
+        static DataTableMap map;
+        if (map.empty()) {
+            LoadDataTables("default/production_tables.txt", map);
+        }
+        return map;
+    }
+}
+
+using boost::lexical_cast;
 
 ProdCenter::ProdCenter() : 
    m_primary(BALANCED),
    m_secondary(BALANCED),
    m_workforce(0.0),
    m_max_workforce(0.0),
-   m_industry_factor(0.0),
+   m_planet_type(PT_TERRAN),
    m_currently_building(NOT_BUILDING),
    m_build_progress(0),
    m_rollover(0)
@@ -29,7 +42,7 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem) :
    m_secondary(FOCUS_UNKNOWN),
    m_workforce(0.0),
    m_max_workforce(0.0),
-   m_industry_factor(0.0),
+   m_planet_type(PT_TERRAN),
    m_currently_building(BUILD_UNKNOWN),
    m_build_progress(0),
    m_rollover(0)
@@ -45,7 +58,7 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem) :
             m_primary = FocusType(lexical_cast<int>(elem.Child("m_primary").Text()));
             m_secondary = FocusType(lexical_cast<int>(elem.Child("m_secondary").Text()));
             m_workforce = lexical_cast<double>(elem.Child("m_workforce").Text());
-            m_industry_factor = lexical_cast<double>(elem.Child("m_industry_factor").Text());
+            m_planet_type = PlanetType(lexical_cast<int>(elem.Child("m_planet_type").Text()));
             m_currently_building = BuildType(lexical_cast<int>(elem.Child("m_currently_building").Text()));
             m_rollover = lexical_cast<double>(elem.Child("m_rollover").Text());
             m_build_progress = lexical_cast<double>(elem.Child("m_build_progress").Text());
@@ -63,9 +76,29 @@ ProdCenter::~ProdCenter()
 {
 }
 
-double ProdCenter::ProdPoints() const
+double ProdCenter::FarmingPoints() const
 {
-    return m_workforce * 3.0 * (1.0 + IndustryFactor());
+    return m_workforce * (ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][0] + 
+                          ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][0]) 
+    + ProductionDataTables()["EnviromentProductionMod"][m_planet_type][0];
+}
+
+double ProdCenter::IndustryPoints() const
+{
+    return m_workforce * (ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][2] + 
+                          ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][2]);
+}
+
+double ProdCenter::MiningPoints() const
+{
+    return m_workforce * (ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][1] + 
+                          ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][1]);
+}
+
+double ProdCenter::ResearchPoints() const
+{
+    return m_workforce * (ProductionDataTables()["PrimaryFocusMod"][m_primary - 1][3] + 
+                          ProductionDataTables()["SecondaryFocusMod"][m_secondary - 1][3]);
 }
 
 GG::XMLElement ProdCenter::XMLEncode(UniverseObject::Visibility vis) const
@@ -81,8 +114,8 @@ GG::XMLElement ProdCenter::XMLEncode(UniverseObject::Visibility vis) const
    if (vis == UniverseObject::FULL_VISIBILITY) {
       retval.AppendChild(XMLElement("m_primary", lexical_cast<string>(m_primary)));
       retval.AppendChild(XMLElement("m_secondary", lexical_cast<string>(m_secondary)));
-      retval.AppendChild(XMLElement("m_industry_factor", lexical_cast<string>(m_industry_factor)));
       retval.AppendChild(XMLElement("m_workforce", lexical_cast<string>(m_workforce)));
+      retval.AppendChild(XMLElement("m_planet_type", lexical_cast<string>(m_planet_type)));
       retval.AppendChild(XMLElement("m_currently_building", lexical_cast<string>(m_currently_building)));
       retval.AppendChild(XMLElement("m_rollover", lexical_cast<string>(m_rollover)));
       retval.AppendChild(XMLElement("m_build_progress", lexical_cast<string>(m_build_progress)));
@@ -115,27 +148,16 @@ void ProdCenter::SetMaxWorkforce(double max_workforce)
    m_prod_changed_sig();
 }
 
+void ProdCenter::SetPlanetType(PlanetType planet_type)
+{
+    m_planet_type = planet_type;
+}
+
 void ProdCenter::SetProduction(ProdCenter::BuildType type)
 {
    m_currently_building = type;
    m_prod_changed_sig();
 }
-
-bool ProdCenter::AdjustIndustry(double industry)
-{
-   m_industry_factor += industry;
-
-   if ( m_industry_factor >= ( m_workforce / m_max_workforce ) )
-   {
-     /// set hard max, send true for reaching max
-     m_industry_factor = ( m_workforce / m_max_workforce );
-     
-     return true;
-   }
-
-   return false;
-}
-
 
 void ProdCenter::MovementPhase( )
 {
@@ -146,21 +168,7 @@ void ProdCenter::PopGrowthProductionResearchPhase( Empire *empire, const int sys
 {
   Universe* universe = &GetUniverse();
 
-  if (CurrentlyBuilding() == INDUSTRY_BUILD)
-  {
-    if ( AdjustIndustry(ProdPoints() / Workforce() * 0.01) )
-    {
-      /// display sitrep
-      SitRepEntry *p_entry = CreateMaxIndustrySitRep( system_id, planet_id );
-      
-      empire->AddSitRepEntry( p_entry );
-    }
-  }
-  else if (CurrentlyBuilding() == RESEARCH_BUILD )
-  {      
-    empire->AddRP( (int)( 3 * Workforce()  ) );
-  }
-  else if (CurrentlyBuilding() == DEF_BASE )
+  if (CurrentlyBuilding() == DEF_BASE )
   {
     // for v0.1 we hard-code values for cost of bases
     int new_bases = UpdateBuildProgress( 200 );
@@ -181,7 +189,7 @@ void ProdCenter::PopGrowthProductionResearchPhase( Empire *empire, const int sys
     }
   }
 
-  // 0.1 only - we would have a better way to know we're building different ships
+  // V0.2 only - we would have a better way to know we're building different ships
   // for now enumerate through the ones we can build
   else if ( CurrentlyBuilding() == ProdCenter::SCOUT )
   {
@@ -213,7 +221,7 @@ void ProdCenter::PopGrowthProductionResearchPhase( Empire *empire, const int sys
 
 int ProdCenter::UpdateBuildProgress( int item_cost )
 {
-  double new_build_progress =  BuildProgress() + Rollover() + ProdPoints();
+  double new_build_progress =  BuildProgress() + Rollover() + IndustryPoints();
 
   int new_items = (int)new_build_progress / item_cost;
     
