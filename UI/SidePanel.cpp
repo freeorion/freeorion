@@ -1753,7 +1753,6 @@ void SidePanel::PlanetPanelContainer::Clear()
   DetachChild(m_vscroll);
   DeleteChildren();
   AttachChild(m_vscroll);
-
 }
 
 void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*> &plt_vec, StarType star_type)
@@ -1770,6 +1769,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*
     m_planet_panels.push_back(planet_panel);
   }
   m_vscroll->SizeScroll(0,plt_vec.size()*PLANET_PANEL_HT,PLANET_PANEL_HT,Height());
+  VScroll(m_vscroll->PosnRange().first, 0, 0, 0);
 }
 
 void SidePanel::PlanetPanelContainer::VScroll(int from,int to,int range_min,int range_max)
