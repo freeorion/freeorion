@@ -336,7 +336,9 @@ ClientUI::ClientUI() :
 
     PTS       = GetOptionsDB().Get<int>("UI.font-size");
     TITLE_PTS = GetOptionsDB().Get<int>("UI.title-font-size");
-    DIR       = GetOptionsDB().Get<std::string>("data-dir");
+    DIR       = GetOptionsDB().Get<std::string>("settings-dir");
+    if (!DIR.empty() && DIR[DIR.size() - 1] != '/')
+	DIR += '/';
     FONT      = GetOptionsDB().Get<std::string>("UI.font");
     TITLE_FONT= GetOptionsDB().Get<std::string>("UI.title-font");
     ART_DIR   = GetOptionsDB().Get<std::string>("UI.art-dir");

@@ -9,7 +9,7 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add<std::string>("data-dir", "Sets the root directory for the settings files and UI files.", "default/");
+        db.Add<std::string>("settings-dir", "Sets the root directory for the settings and data files.", "default/");
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -22,7 +22,10 @@ const std::vector<GG::Clr>& EmpireColors()
     static std::vector<GG::Clr> colors;
     if (colors.empty()) {
         GG::XMLDoc doc;
-        std::ifstream ifs((GetOptionsDB().Get<std::string>("data-dir") + "empire_colors.xml").c_str());
+	std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+	if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+	    settings_dir += '/';
+        std::ifstream ifs((settings_dir + "empire_colors.xml").c_str());
         doc.ReadDoc(ifs);
         ifs.close();
         for (int i = 0; i < doc.root_node.NumChildren(); ++i) {

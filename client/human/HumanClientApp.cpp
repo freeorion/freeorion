@@ -129,7 +129,7 @@ void HumanClientApp::StartServer()
     const std::string SERVER_CLIENT_EXE = "freeoriond";
 #endif
     std::vector<std::string> args(1, SERVER_CLIENT_EXE);
-    args.push_back("--data-dir"); args.push_back(GetOptionsDB().Get<std::string>("data-dir"));
+    args.push_back("--settings-dir"); args.push_back(GetOptionsDB().Get<std::string>("settings-dir"));
     m_server_process = Process(SERVER_CLIENT_EXE, args);
 }
 
