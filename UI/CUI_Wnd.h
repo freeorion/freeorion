@@ -6,6 +6,10 @@
 #include "GGWnd.h"
 #endif
 
+#ifndef _GGButton_h_
+#include "GGButton.h"
+#endif
+
 #include "SDL.h"
 
 //! This class is a superclass of all modal interface windows in GG.  It takes care of
@@ -63,6 +67,8 @@ protected:
 public:
     virtual int Render();    //!< renders the window as a FreeOrion window
     virtual int LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys); //!< Respond to drag events
+    inline int Minimized() {return m_is_minimized;}//!< returns true if window is minimized
+    void OffsetChildren(const GG::Pt& move); //!< moves minimize and close buttons, should be called whenever the window gets resized or sizemoved
 //!@}
 
 private:
@@ -71,7 +77,6 @@ private:
     void OnCloseClick();    //!< mapped to the pressing of the square
     void OnMinimizeClick(); //!< mapped to pressing of the dash button
     void OnResizeClick(int x, int y); //!< mapped to resizing the window
-
     
 //!@}
 
@@ -80,8 +85,15 @@ protected:
 //!@{
     std::string m_title;        //!< title of the window
     bool        m_minimize;     //!< whether the window minimizes or not
-
+    bool        m_is_resizing;  //!< keeps resizing smooth
+    bool        m_is_minimized; //!< true if the window is currently minimized
+    
+    GG::Button* m_close_button; //!< the close button
+    GG::Button* m_minimize_button; //!< the minimize/restore button
 //!@}
+
+private:
+    GG::Pt m_lower_right;
 };//CUI_ModalWnd
 
 //! This class is a superclass of all interface windows in GG.  It takes care of
@@ -124,6 +136,8 @@ public:
     {
         MINIMIZABLE    =   256,
     };
+    
+    static int S_MINIMIZED_WND_LENGTH;
 //! \name Structors
 //!@{
     CUI_Wnd(const std::string& t, int x, int y, int h, int w, Uint32 flags = GG::Wnd::CLICKABLE); //!< Initializes the window to be a CUI window
@@ -142,6 +156,8 @@ protected:
 public:
     virtual int Render();    //!< renders the window as a FreeOrion window
     virtual int LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys); //!< Respond to drag events
+    inline int Minimized() {return m_is_minimized;}//!< returns true if window is minimized
+    void OffsetChildren(const GG::Pt& move); //!< moves minimize and close buttons, should be called whenever the window gets resized or sizemoved
 //!@}
 
 private:
@@ -159,8 +175,15 @@ protected:
     std::string m_title;        //!< title of the window
     bool        m_minimize;     //!< whether the window minimizes or not
     bool        m_is_resizing;  //!< keeps resizing smooth
+    bool        m_is_minimized; //!< true if the window is currently minimized
+    
+    GG::Button* m_close_button; //!< the close button
+    GG::Button* m_minimize_button; //!< the minimize/restore button
     
 //!@}
+
+private:
+    GG::Pt m_lower_right;    //keeps track of the lower right corner of the window before resizing
 };//CUI_Wnd
 
 #endif
