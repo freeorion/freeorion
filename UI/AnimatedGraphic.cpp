@@ -18,6 +18,25 @@ AnimatedGraphic::AnimatedGraphic(int x, int y, int w, int h, boost::shared_ptr<A
     SetColor(GG::CLR_WHITE);
 }//AnimatedGraphic(int, int, int, int, shared_ptr, Uint32, Uint32)
 
+AnimatedGraphic::AnimatedGraphic(const GG::XMLElement &elem):
+    GG::Control(elem.Child("GG::Control")),
+    m_style(0)
+{
+    using namespace GG;
+
+    if (elem.Tag() != "AnimatedGraphic")
+       throw std::invalid_argument("Attempted to construct an AnimatedGraphic from an XMLElement that had a tag other than \"AnimatedGraphic\"");
+    
+    SetColor(GG::CLR_WHITE);
+    
+    const XMLElement* curr_elem = &elem.Child("m_anim_graphic");
+    m_anim_graphic = boost::shared_ptr<AnimatedTexture>(new AnimatedTexture(curr_elem->Child("AnimatedTexture")));
+    
+    curr_elem = &elem.Child("m_style");
+    m_style = lexical_cast<GG::Uint32>(curr_elem->Attribute("value"));
+    
+}//AnimatedGraphic(XMLElement)
+
 AnimatedGraphic::~AnimatedGraphic()
 {
 
@@ -110,6 +129,25 @@ void AnimatedGraphic::ValidateStyle()
       m_style &= ~SG_FITGRAPHIC;
       m_style |= SG_SHRINKFIT;
    }
+}
+
+GG::XMLElement AnimatedGraphic::XMLEncode() const
+{
+    using namespace GG;
+    
+    XMLElement retval("AnimatedGraphic");
+    retval.AppendChild(Control::XMLEncode());
+    
+    XMLElement temp("m_anim_graphic");
+    temp.AppendChild(m_anim_graphic->XMLEncode());
+    retval.AppendChild(temp);
+    
+    temp = XMLElement("m_style");
+    temp.SetAttribute("value", lexical_cast<string>(m_style));
+    retval.AppendChild(temp);
+    
+    return retval;
+    
 }
 
 

@@ -24,6 +24,7 @@ public:
 //    AnimatedGraphic(); //!< default ctor
 //    AnimatedGraphic(int x, int y, int w, int h, AnimatedTexture* texture, Uint32 style=0, Uint32 flags=0);  //!<build a graphic from an animated texture
     AnimatedGraphic(int x, int y, int w, int h, boost::shared_ptr<AnimatedTexture> texture, Uint32 style=0, Uint32 flags=0);  //!<build a graphic from an animated texture
+    AnimatedGraphic(const GG::XMLElement& elem);    //!< construction from an XML element
     ~AnimatedGraphic();    //!<default dtor
 
 //!@}
@@ -36,6 +37,28 @@ public:
     
     inline void SetStyle(Uint32 style) {m_style=style; ValidateStyle();} //!< Sets the style. \see GG::StaticGraphic
     
+    GG::XMLElement XMLEncode() const; //!< Build an XML element from this object.    
+    
+//!@}
+
+//! \name Controls
+//!@{
+
+    //! External interface to the AnimatedTexture::Play() command associated with this object's AnimatedTexture.
+    
+    //! \see AnimatedTexture::Play()
+    inline void Play() {if(m_anim_graphic!=NULL) m_anim_graphic->Play();}
+    
+    //! External interface to the AnimatedTexture::Pause() command associated with this object's AnimatedTexture.
+    
+    //! \see AnimatedTexture::Play()
+    inline void Pause() {if(m_anim_graphic!=NULL) m_anim_graphic->Pause();}
+    
+    //! External interface to the AnimatedTexture::Stop() command associated with this object's AnimatedTexture.
+    
+    //! \see AnimatedTexture::Play()
+    inline void Stop() {if(m_anim_graphic!=NULL) m_anim_graphic->Stop();}
+
 //!@}
 protected:
 //! \name Data Members

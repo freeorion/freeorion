@@ -29,9 +29,39 @@ AnimatedTexture::AnimatedTexture::AnimatedTexture(AnimatedTexture& rhs)
 }//AnimatedTexture(AnimatedTexture&)
 
 
-AnimatedTexture::AnimatedTexture(const GG::XMLElement& elem)
+AnimatedTexture::AnimatedTexture(const GG::XMLElement& elem):
+    m_current_frame(0),
+    m_current_time(0),
+    m_state(ANIM_STOPPED)
 {
-    //TODO: Implementation.
+    using namespace GG;
+
+    if(elem.Tag() != "AnimatedTexture")
+    {
+        throw std::invalid_argument("Attempted to construct an AnimatedTexture from an XMLElement that had a tag other than \"AnimatedTexture\"");
+    }
+    
+    //clear vectors, just in case
+    m_frames.clear();
+    m_times.clear();
+    
+    //read animation type
+    const XMLElement* curr_elem = &elem.Child("m_type");
+    m_type = lexical_cast<int>(curr_elem->Attribute("value"));
+    
+    curr_elem = &elem.Child("m_frames");
+    const int num_frames = lexical_cast<int>(curr_elem->Attribute("value"));  //use this for num of frames
+    
+    //create frames
+    for(int i=0; i<num_frames; ++i)
+    {
+        const XMLElement* frame_elem = &curr_elem->Child("frame" + lexical_cast<string>(i));
+        //first get frame time
+        const XMLElement* temp_elem = &frame_elem->Child("time");
+        m_times.push_back(lexical_cast<int>(temp_elem->Attribute("value")));
+        
+        m_frames.push_back(boost::shared_ptr<GG::SubTexture>(new SubTexture(frame_elem->Child("GG::SubTexture"))));
+    }
     
 }//AnimatedTexture(XMLElement)
 
@@ -122,7 +152,37 @@ void AnimatedTexture::Animate()
 
 GG::XMLElement AnimatedTexture::XMLEncode() const 
 {
-    //TODO: Implementation
+    using namespace GG;
+    
+    XMLElement retval("AnimatedTexture"), temp, temp2;
+    
+    //m_current_frame and m_current_time always set to 0 on load
+    //m_state always set to ANIM_STOPPED on load
+    
+    temp = XMLElement("m_type");
+    temp.SetAttribute("value", lexical_cast<string>(m_type));
+    retval.AppendChild(temp);
+    
+    //do frames and times
+    temp = XMLElement("m_frames");
+    temp.SetAttribute("value", lexical_cast<string>(m_frames.size())); //value is number of frames
+    
+    
+    for(int i=0; i<m_frames.size(); ++i)
+    {
+        temp2 = XMLElement("frame"+lexical_cast<string>(i));    //write frame and number
+                
+        XMLElement time_temp("time");
+        time_temp.SetAttribute("value",lexical_cast<string>(m_times[i]));
+        
+        temp2.AppendChild(time_temp);                        //append time for this frame
+        temp2.AppendChild(m_frames[i]->XMLEncode());        //append the subtexture
+        
+        temp.AppendChild(temp2);
+    }
+    retval.AppendChild(temp);
+    
+    return retval;
     
 }//XMLEncode()
 
