@@ -74,13 +74,10 @@ ServerConnectWnd::ServerConnectWnd(const GG::XMLElement& elem) :
 
 void ServerConnectWnd::Keypress (GG::Key key, Uint32 key_mods)
 {
-    if (key == GG::GGK_RETURN) // Same behaviour as if "OK" was pressed
-    {
-      OkClicked();
-    }
-    if (key == GG::GGK_ESCAPE) // Same behaviour as if "Cancel" was pressed
-    {
-      CancelClicked();
+    if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) { // Same behaviour as if "OK" was pressed
+        OkClicked();
+    } else if (key == GG::GGK_ESCAPE) { // Same behaviour as if "Cancel" was pressed
+        CancelClicked();
     }
 }
 
@@ -103,6 +100,7 @@ void ServerConnectWnd::Init()
 
     m_host_or_join_radio_group->SetCheck(0);
     PopulateServerList();
+    GG::App::GetApp()->SetFocusWnd(m_player_name_edit);
 }
 
 void ServerConnectWnd::PopulateServerList()
