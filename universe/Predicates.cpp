@@ -1,13 +1,11 @@
 #include "Predicates.h"
 
-#if 10*__GNUC__ + __GNUC_MINOR__ <= 33
-# include "Building.h"
-# include "Fleet.h"
-# include "Planet.h"
-# include "Ship.h"
-# include "System.h"
-# include "UniverseObject.h"
-#endif
+#include "Building.h"
+#include "Fleet.h"
+#include "Planet.h"
+#include "Ship.h"
+#include "System.h"
+#include "UniverseObject.h"
 
 #include "../util/MultiplayerCommon.h"
 

@@ -2,21 +2,12 @@
 #ifndef _Predicates_h_
 #define _Predicates_h_
 
-#if 10*__GNUC__ + __GNUC_MINOR__ > 33
-# include "Building.h"
-# include "Fleet.h"
-# include "Planet.h"
-# include "Ship.h"
-# include "System.h"
-# include "UniverseObject.h"
-#else
-  class UniverseObject;
-  class Building;
-  class Fleet;
-  class Planet;
-  class Ship;
-  class System;
-#endif
+class UniverseObject;
+class Building;
+class Fleet;
+class Planet;
+class Ship;
+class System;
 
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/add_const.hpp>

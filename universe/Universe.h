@@ -42,7 +42,7 @@
 #include <set>
 
 class System;
-class UniverseObject;
+
 #ifdef __GNUC__
   // GCC doesn't allow us to forward-declare PlayerSetupData
 #  ifndef _MultiplayerCommon_h_
@@ -332,6 +332,9 @@ protected:
 inline std::pair<std::string, std::string> UniverseRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
+#if (10*__GNUC__ + __GNUC_MINOR__ > 33) && (!defined _UniverseObject_h_)
+#  include "UniverseObject.h"
+#endif
 
 // template implementations
 template <class T> 
