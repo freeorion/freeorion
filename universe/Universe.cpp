@@ -1190,18 +1190,19 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
         sys_vec.erase(sys_vec.begin() + system_index);
 
         // find a place to put the homeworld, and replace whatever planet is there already
-        int planet_id, home_orbit;
-        std::string planet_name;
+        int planet_id, home_orbit; std::string planet_name;
 
-	// we can only select a planet if there are planets in this system.
+	    // we can only select a planet if there are planets in this system.
         if (system->Orbits()>0 && !system->FindObjects<Planet>().empty()) {
-            System::ObjectIDVec planet_IDs;
-            while (planet_IDs.empty()) {
-                home_orbit = RandSmallInt(0, system->Orbits() - 1);
-                planet_IDs = system->FindObjectIDsInOrbit<Planet>(home_orbit);
-            }
-            planet_name = Object(planet_IDs.back())->Name();
-            Delete(planet_IDs.back());
+            std::vector<int> vec_orbits;
+            for(int i=0;i<system->Orbits();i++)
+              if(system->FindObjectIDsInOrbit<Planet>(i).size()>0)
+                vec_orbits.push_back(i);
+
+            int planet_index = vec_orbits.size()>1?RandSmallInt(0, vec_orbits.size() - 1):0;
+            planet_name = system->Name() + " " + RomanNumber(planet_index + 1);
+            home_orbit = vec_orbits[planet_index];
+            Delete(system->FindObjectIDsInOrbit<Planet>(home_orbit).back());
         } else {
             home_orbit = 0;
             planet_name = system->Name() + " " + RomanNumber(home_orbit + 1);
