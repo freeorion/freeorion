@@ -168,6 +168,7 @@ public:
 
     static bool FleetWndsOpen();     ///< returns true iff one or more fleet windows are open
     static bool CloseAllFleetWnds(); ///< returns true iff fleet windows were open before it was called.  Used most often for fleet window quick-close.
+    static GG::Pt LastPosition();    ///< returns the last position of the last FleetWnd that was closed
 
 protected:
     //! \name Mutators //@{
@@ -213,6 +214,7 @@ private:
     mutable NotShowingFleetSignalType m_not_showing_fleet_sig;
 
     static std::set<FleetWnd*> s_open_fleet_wnds;
+    static GG::Pt s_last_position; ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.
 };
 
 #endif

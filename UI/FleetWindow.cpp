@@ -658,6 +658,7 @@ std::string FleetDetailWnd::TitleText() const
 ////////////////////////////////////////////////
 // static(s)
 std::set<FleetWnd*> FleetWnd::s_open_fleet_wnds;
+GG::Pt FleetWnd::s_last_position;
 
 FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
     MapWndPopup("", x, y, 1, 1, flags),
@@ -710,6 +711,7 @@ FleetWnd::~FleetWnd()
 
 void FleetWnd::CloseClicked()
 {
+    s_last_position = UpperLeft();
     CUI_Wnd::CloseClicked();
     m_lb_delete_connection.disconnect();
     for (std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_windows.begin(); it != m_open_fleet_windows.end(); ++it) {
@@ -1105,4 +1107,9 @@ bool FleetWnd::CloseAllFleetWnds()
     }
     s_open_fleet_wnds.clear();
     return retval;
+}
+
+GG::Pt FleetWnd::LastPosition()
+{
+    return s_last_position;
 }
