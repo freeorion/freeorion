@@ -117,7 +117,9 @@ public:
 
     //! @param events vector containing all the events to be listed
     void ScreenSitrep(const std::vector<SitRepEntry>& events);    //!< Sitrep Screen
-   
+
+    void ScreenLoad();    //!< Loading Screen
+
     // Zooming Functions
     //! @param id address of a planet that we wish to zoom to
     //! @return true if successful, false if object doesn't exist
@@ -214,8 +216,8 @@ public:
     static GG::Clr     DROP_DOWN_LIST_INT_COLOR;
     static GG::Clr     DROP_DOWN_LIST_ARROW_COLOR;
 
+    static GG::Clr     EDIT_HILITE_COLOR;
     static GG::Clr     EDIT_INT_COLOR;
-
     static GG::Clr     MULTIEDIT_INT_COLOR;
 
     static GG::Clr     STAT_INCR_COLOR;   //!< used to color increasing stats text (eg "+2")

@@ -46,6 +46,8 @@ public:
 #else
         GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound<T>, -1);
 #endif
+        if (GetEdit())
+            GetEdit()->SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
     }
 
     /** ctor that constructs an CUISpin object from an XMLElement. \throw std::invalid_argument May throw 

@@ -71,8 +71,8 @@ int         ClientUI::SCROLL_WIDTH = 13;
 GG::Clr     ClientUI::DROP_DOWN_LIST_INT_COLOR(0, 0, 0, 255);
 GG::Clr     ClientUI::DROP_DOWN_LIST_ARROW_COLOR(130, 130, 0, 255);
 
+GG::Clr     ClientUI::EDIT_HILITE_COLOR(43, 81, 102, 255);//(31, 53, 66, 255);
 GG::Clr     ClientUI::EDIT_INT_COLOR(0, 0, 0, 255);
-
 GG::Clr     ClientUI::MULTIEDIT_INT_COLOR(0, 0, 0, 255);
 
 GG::Clr     ClientUI::STAT_INCR_COLOR(127, 255, 127, 255);
@@ -161,6 +161,8 @@ namespace {
         // colors
         db.Add("UI.wnd-color", "Sets UI window color.", StreamableColor(ClientUI::WND_COLOR), Validator<StreamableColor>());
         db.Add("UI.text-color", "Sets UI text color.", StreamableColor(ClientUI::TEXT_COLOR), Validator<StreamableColor>());
+        db.Add("UI.edit-hilite", "Sets the color of hilighting in edit controls.", StreamableColor(ClientUI::EDIT_HILITE_COLOR), Validator<StreamableColor>());
+        db.Add("UI.edit-interior", "Sets the interior color in edit controls.", StreamableColor(ClientUI::EDIT_INT_COLOR), Validator<StreamableColor>());
         db.Add("UI.ctrl-color", "Sets UI control color.", StreamableColor(ClientUI::CTRL_COLOR), Validator<StreamableColor>());
         db.Add("UI.ctrl-border-color", "Sets UI control border color.", StreamableColor(ClientUI::CTRL_BORDER_COLOR), Validator<StreamableColor>());
         db.Add("UI.wnd-outer-border-color", "Sets UI outer border color.", StreamableColor(ClientUI::WND_OUTER_BORDER_COLOR), Validator<StreamableColor>());
@@ -336,6 +338,9 @@ ClientUI::ClientUI() :
 
     WND_COLOR = GetOptionsDB().Get<StreamableColor>("UI.wnd-color").ToClr();
     TEXT_COLOR = GetOptionsDB().Get<StreamableColor>("UI.text-color").ToClr();
+    EDIT_HILITE_COLOR = GetOptionsDB().Get<StreamableColor>("UI.edit-hilite").ToClr();
+    EDIT_INT_COLOR = GetOptionsDB().Get<StreamableColor>("UI.edit-interior").ToClr();
+    MULTIEDIT_INT_COLOR = EDIT_INT_COLOR;
     CTRL_COLOR = GetOptionsDB().Get<StreamableColor>("UI.ctrl-color").ToClr();
     CTRL_BORDER_COLOR = GetOptionsDB().Get<StreamableColor>("UI.ctrl-border-color").ToClr();
     WND_OUTER_BORDER_COLOR = GetOptionsDB().Get<StreamableColor>("UI.wnd-outer-border-color").ToClr();
@@ -607,11 +612,12 @@ void ClientUI::SwitchState(State state)
     case STATE_SAVE:
         break;
     case STATE_LOAD:
+        m_map_wnd->Sanitize();
         if(m_turn_progress_wnd==0) {
           m_turn_progress_wnd = new TurnProgressWnd();
           GG::App::GetApp()->Register(m_turn_progress_wnd);
         }
-        m_turn_progress_wnd->UpdateTurnProgress( "Loading ...",-1);
+        m_turn_progress_wnd->UpdateTurnProgress( "Loading ...", -1);
         m_turn_progress_wnd->Show();
         break;
     case STATE_SHUTDOWN:
@@ -654,6 +660,11 @@ void ClientUI::UpdateCombatTurnProgress( const std::string& msg)
 void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
 {
     ScreenMap();
+}
+
+void ClientUI::ScreenLoad()
+{
+    SwitchState(STATE_LOAD);
 }
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)

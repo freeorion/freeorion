@@ -793,6 +793,7 @@ CUIEdit::CUIEdit(int x, int y, int w, int h, const std::string& str, const std::
     Edit(x, y, w, h, str, font_filename, pts, color, text_color, interior, flags)
 {
     GG::Connect(EditedSignal(), &PlayTextTypingSound, -1);
+    SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
 }
 
 CUIEdit::CUIEdit(const GG::XMLElement& elem) : 
@@ -839,6 +840,7 @@ CUIMultiEdit::CUIMultiEdit(int x, int y, int w, int h, const std::string& str, U
     MultiEdit(x, y, w, h, str, font_filename, pts, color, style, text_color, interior, flags)
 {
     RecreateScrolls();
+    SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
 }
 
 CUIMultiEdit::CUIMultiEdit(const GG::XMLElement& elem) : 
