@@ -2,9 +2,10 @@
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
 
 #include <stdexcept>
+
+using boost::lexical_cast;
 
 
 PopCenter::PopCenter() : 
@@ -33,7 +34,6 @@ PopCenter::PopCenter(double max_pop, int race) :
    
 PopCenter::PopCenter(const GG::XMLElement& elem)
 {
-
    if (elem.Tag() != "PopCenter")
       throw std::invalid_argument("Attempted to construct a PopCenter from an XMLElement that had a tag other than \"PopCenter\"");
 
@@ -93,7 +93,6 @@ GG::XMLElement PopCenter::XMLEncode() const
    element.AppendChild(race);
 
    return element;
-
 }
 
 GG::XMLElement PopCenter::XMLEncode(int empire_id) const
@@ -123,7 +122,6 @@ GG::XMLElement PopCenter::XMLEncode(int empire_id) const
    element.AppendChild(race);
 
    return element;
-
 }
 
 double PopCenter::AdjustPop(double pop)
@@ -147,7 +145,7 @@ void PopCenter::MovementPhase(std::vector<SitRepEntry>& sit_reps)
 
 void PopCenter::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
 {
-   // TODO
+    m_pop += std::min(m_pop * 1.072, m_max_pop); // 7.2% should double pop every 10 turns
 }
 
 

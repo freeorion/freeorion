@@ -20,7 +20,7 @@ public:
                     
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
-   enum BuildType {NOT_BUILDING, INDUSTRY_BUILD, RESEARCH_BUILD, SHIP_BUILD, DEF_BASE};
+   enum BuildType {NOT_BUILDING, INDUSTRY_BUILD, RESEARCH_BUILD, SCOUT, COLONY_SHIP, MARKI, MARKII, MARKIII, MARKIV, DEF_BASE};
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
@@ -32,14 +32,16 @@ public:
    //@}
 
    /** \name Accessors */ //@{
-   FocusType   PrimaryFocus() const    {return m_primary;}
-   FocusType   SecondaryFocus() const  {return m_secondary;}
-   double      ProdPoints() const;
-   double      Rollover() const        {return m_rollover;}
+   FocusType      PrimaryFocus() const     {return m_primary;}
+   FocusType      SecondaryFocus() const   {return m_secondary;}
+   double         ProdPoints() const;
+   double         BuildProgress() const    {return m_build_progress;}
+   double         Rollover() const         {return m_rollover;}
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
-   BuildType CurrentlyBuilding() const {return m_currently_building;}
+   BuildType     CurrentlyBuilding() const {return m_currently_building;}
+   double        IndustryFactor() const    {return m_industry_factor;}
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
@@ -55,17 +57,13 @@ public:
    
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
-   void BuildDefBase();
-   void BuildShip(int id);
-   void BuildIndustry();
-   void DoResearch();
+   void SetProduction(ProdCenter::BuildType type);
    void AdjustIndustry(double industry);
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
-
    //@}
    
 private:

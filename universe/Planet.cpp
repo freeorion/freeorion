@@ -48,29 +48,27 @@ Planet::Planet(const GG::XMLElement& elem) :
    ProdCenter(elem.Child("ProdCenter"))
 {
    using GG::XMLElement;
-   
+
    if (elem.Tag() != "Planet")
       throw std::invalid_argument("Attempted to construct a Planet from an XMLElement that had a tag other than \"Planet\"");
 
    m_type = (PlanetType) lexical_cast<int> ( elem.Child("m_type").Attribute("value") );
    m_size = (PlanetSize) lexical_cast<int> ( elem.Child("m_size").Attribute("value") );
    m_def_bases = lexical_cast<int> ( elem.Child("m_def_bases").Attribute("value") );
-
 }
-
 
 UniverseObject::Visibility Planet::Visible(int empire_id) const
 {
    // if system is visible, then planet is too. Full visibility
    // if owned by player, partial if not. 
-  
+
    Empire* empire = (Empires()).Lookup(empire_id);
 
    if (empire->HasPlanet(ID()))
    {
       return FULL_VISIBILITY;
    }
-       
+
    if (empire->HasExploredSystem(SystemID()))
    {
       return PARTIAL_VISIBILITY;
@@ -149,8 +147,10 @@ void Planet::MovementPhase(std::vector<SitRepEntry>& sit_reps)
 
 void Planet::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
 {
-   // TODO
-   StateChangedSignal()();
+    ProdCenter::PopGrowthProductionResearchPhase(sit_reps);
+    PopCenter::PopGrowthProductionResearchPhase(sit_reps);
+    AdjustWorkforce(PopPoints());
+    StateChangedSignal()();
 }
 
 

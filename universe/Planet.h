@@ -46,9 +46,9 @@ public:
    //@}
 
    /** \name Accessors */ //@{
-   PlanetType  Type() const {return m_type;}
-   PlanetSize  Size() const {return m_size;}
-   
+   PlanetType     Type() const {return m_type;}
+   PlanetSize     Size() const {return m_size;}
+
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
    int DefBases() const {return m_def_bases;}

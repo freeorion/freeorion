@@ -62,9 +62,7 @@ ProdCenter::~ProdCenter()
 
 double ProdCenter::ProdPoints() const
 {
-	double retval = 0.0;
-   // TODO
-   return retval;
+    return m_workforce * 3.0 * (1.0 + IndustryFactor());
 }
 
 UniverseObject::Visibility ProdCenter::Visible(int empire_id) const
@@ -165,24 +163,9 @@ void ProdCenter::AdjustWorkforce(double workforce)
    m_workforce += workforce;
 }
 
-void ProdCenter::BuildDefBase()
+void ProdCenter::SetProduction(ProdCenter::BuildType type)
 {
-   // TODO
-}
-
-void ProdCenter::BuildShip(int id)
-{
-   // TODO
-}
-
-void ProdCenter::BuildIndustry()
-{
-   // TODO
-}
-
-void ProdCenter::DoResearch()
-{
-   // TODO
+    m_currently_building = type;
 }
 
 void ProdCenter::AdjustIndustry(double industry)
@@ -198,7 +181,8 @@ void ProdCenter::MovementPhase(std::vector<SitRepEntry>& sit_reps)
 
 void ProdCenter::PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps)
 {
-   // TODO
+    if (CurrentlyBuilding() == ProdCenter::INDUSTRY_BUILD)
+        AdjustIndustry(ProdPoints() / m_workforce * 0.01);
 }
 
 
