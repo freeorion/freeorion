@@ -1,4 +1,7 @@
 //IntroScreen.cpp
+#ifndef _HumanClientApp_h_
+#include "../client/human/HumanClientApp.h"
+#endif
 
 #ifndef _IntroScreen_h_
 #include "IntroScreen.h"
@@ -87,6 +90,8 @@ IntroScreen::IntroScreen(const GG::XMLElement &elem):
 IntroScreen::~IntroScreen()
 {
     //TODO: destruction code
+
+    
     
 }// ~IntroScreen
 
@@ -114,7 +119,7 @@ int IntroScreen::Render()
 
 void IntroScreen::OnSinglePlayer()
 {
-
+    //TODO: Start the server and some AI's and go to galaxy setup screen
 }//OnSinglePlayer()
 
 void IntroScreen::OnMultiPlayer()
@@ -206,10 +211,10 @@ void IntroScreen::OnMultiPlayer()
 		// Add universe size and shape to the XML doc
                 sprintf(tmp_universe_size, "%d", galaxy_wnd.GalaxySize());
                 sprintf(tmp_universe_shape, "%d", galaxy_wnd.GalaxyShape());
-		elem = GG::XMLElement("universe_params");
+                elem = GG::XMLElement("universe_params");
                 elem.SetAttribute("size", tmp_universe_size);
                 elem.SetAttribute("shape", tmp_universe_shape);
-		if (boost::lexical_cast<int>(tmp_universe_shape) == 4)
+                if (boost::lexical_cast<int>(tmp_universe_shape) == 4)
                   elem.SetAttribute("file", galaxy_wnd.GalaxyFile().c_str());
                 game_parameters.root_node.AppendChild(elem);
 
@@ -221,22 +226,22 @@ void IntroScreen::OnMultiPlayer()
                 ClientUI::MessageBox(tmp);
             // \TEMP
 
-		if (HumanClientApp::GetApp()->PlayerID() == -1)
-		{
-		  ClientUI::MessageBox(ClientUI::String("Game already hosted or unknown error") );
-		}
-		else
-		{
-                  EmpireSelect empire_wnd;
-                  empire_wnd.Run();
-
-		  if(empire_wnd.m_end_with_ok)
-		  {
+            if (HumanClientApp::GetApp()->PlayerID() == -1)
+       		{
+    		  ClientUI::MessageBox(ClientUI::String("Game already hosted or unknown error") );
+    		}
+    		else
+    		{
+                EmpireSelect empire_wnd;
+                empire_wnd.Run();
+    
+    		    if(empire_wnd.m_end_with_ok)
+    		    {
                      // send the empire selection info
                      GG::XMLDoc empire_setup;
 
-		     //char tmp_empire_name[255];
-		     //sprintf(tmp_empire_name, "%d", empire_wnd.GalaxySize());
+		             //char tmp_empire_name[255];
+		             //sprintf(tmp_empire_name, "%d", empire_wnd.GalaxySize());
 
                      // add the empire name
                      GG::XMLElement elem("empire_name");
@@ -244,24 +249,27 @@ void IntroScreen::OnMultiPlayer()
                      empire_setup.root_node.AppendChild(elem);
 
                      // add the empire color
-		     char tmp_empire_color[255];
-		     sprintf(tmp_empire_color, "%d", empire_wnd.EmpireColor());
+                     char tmp_empire_color[255];
+                     sprintf(tmp_empire_color, "%d", empire_wnd.EmpireColor());
 
                      elem = GG::XMLElement("empire_color");
                      elem.SetAttribute("value", tmp_empire_color);
                      empire_setup.root_node.AppendChild(elem);
 
-		     // send the empire setup choices to the server
+		             // send the empire setup choices to the server
                      HumanClientApp::GetApp()->NetworkCore().SendMessage(EmpireSetupMessage(empire_setup));
-		  }
-		  else
-		     ClientUI::MessageBox(ClientUI::String("Failed empire setup!") );
-		}
-
-        }
-
-    }
-
+               }
+               else
+                   ClientUI::MessageBox(ClientUI::String("Failed empire setup!") );
+                   
+            }//else
+                        
+            //if we got this far, we can actually start up the map screen YAY!
+            GG::App::GetApp()->Logger().debug("About to call ScreenMap");
+            ClientUI::GetClientUI()->ScreenMap();
+            GG::App::GetApp()->Logger().debug("After ScreenMap");
+        }//if end with ok
+    }//if
 }//OnMultiPlayer()
 
 void IntroScreen::OnOptions()
