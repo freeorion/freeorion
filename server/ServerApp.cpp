@@ -971,7 +971,7 @@ void ServerApp::ProcessTurns( )
       std::vector<CombatAssets> empire_combat_forces;
       System* system = *it;
       
-      std::vector<Fleet*> flt_vec = GetUniverse().FindObjects<Fleet>();
+      std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
       for(std::vector<Fleet*>::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it)
       {
 	        Fleet* flt = *flt_it;
