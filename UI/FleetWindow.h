@@ -30,19 +30,18 @@ class FleetDetailPanel : public GG::Wnd
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<Fleet* (int)>             CreateNewFleetSignalType;    ///< emitted when ships are dragged and dropped into a null fleet
-    typedef boost::signal<void (Fleet*)>            ClosingEmptyFleetSignalType; ///< emitted when this listbox is being destroyed and its fleet is non-null but empty of ships
+    typedef boost::signal<void (Fleet*)>      PanelEmptySignalType;    ///< emitted when the panel is empty (no ships)
+    typedef boost::signal<Fleet* (int)>       NeedNewFleetSignalType;  ///< emitted when ships are dragged and dropped into a null fleet
     //@}
 
     /** \name Slot Types */ //@{
-    typedef CreateNewFleetSignalType::slot_type     CreateNewFleetSlotType;      ///< type of functor(s) invoked on a CreateNewFleetSignalType
-    typedef ClosingEmptyFleetSignalType::slot_type  ClosingEmptyFleetSlotType;   ///< type of functor(s) invoked on a ClosingEmptyFleetSignalType
+    typedef PanelEmptySignalType::slot_type   PanelEmptySlotType;      ///< type of functor(s) invoked on a PanelEmptySignalType
+    typedef NeedNewFleetSignalType::slot_type NeedNewFleetSlotType;    ///< type of functor(s) invoked on a CreateNewFleetSignalType
     //@}
 
     /** \name Structors */ //@{
     FleetDetailPanel(int x, int y, Fleet* fleet, bool read_only, Uint32 flags = 0); ///< ctor
     FleetDetailPanel(const GG::XMLElement& elem); ///< ctor that constructs a FleetViewPanel object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a FleetViewPanel object
-    ~FleetDetailPanel(); ///< dtor
     //@}
 
     /** \name Accessors */ //@{
@@ -51,8 +50,8 @@ public:
 
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a FleetViewPanel object
 
-    CreateNewFleetSignalType&    CreateNewFleetSignal() const    {return m_create_new_fleet_sig;}
-    ClosingEmptyFleetSignalType& ClosingEmptyFleetSignal() const {return m_closing_empty_fleet_sig;}
+    PanelEmptySignalType&   PanelEmptySignal() const    {return m_panel_empty_sig;}
+    NeedNewFleetSignalType& NeedNewFleetSignal() const  {return m_need_new_fleet_sig;}
     //@}
 
     //! \name Mutators //@{
@@ -83,19 +82,21 @@ private:
     CUIListBox*                 m_ships_lb;
     GG::TextControl*            m_ship_status_text;
 
-    mutable CreateNewFleetSignalType    m_create_new_fleet_sig;
-    mutable ClosingEmptyFleetSignalType m_closing_empty_fleet_sig;
+    mutable PanelEmptySignalType   m_panel_empty_sig;
+    mutable NeedNewFleetSignalType m_need_new_fleet_sig;
 };
 
 class FleetDetailWnd : public CUI_Wnd
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (FleetDetailWnd*)> ClosingSignalType;    ///< emitted when this window is about to close
+    typedef boost::signal<void (FleetDetailWnd*)>        ClosingSignalType;      ///< emitted when this window is about to close
+    typedef boost::signal<Fleet* (FleetDetailWnd*, int)> NeedNewFleetSignalType; ///< emitted when ships are dragged and dropped into a null fleet
     //@}
 
     /** \name Slot Types */ //@{
-    typedef ClosingSignalType::slot_type          ClosingSlotType;      ///< type of functor(s) invoked on a ClosingSignalType
+    typedef ClosingSignalType::slot_type                 ClosingSlotType;      ///< type of functor(s) invoked on a ClosingSignalType
+    typedef NeedNewFleetSignalType::slot_type            NeedNewFleetSlotType; ///< type of functor(s) invoked on a NeedNewFleetSignalType
     //@}
 
     /** \name Structors */ //@{
@@ -105,11 +106,10 @@ public:
     //@}
 
     //! \name Accessors //@{
-    FleetDetailPanel&                              GetFleetDetailPanel() const {return *m_fleet_panel;} ///< returns the internally-held fleet panel for theis window
+    FleetDetailPanel&       GetFleetDetailPanel() const {return *m_fleet_panel;} ///< returns the internally-held fleet panel for theis window
 
-    FleetDetailPanel::CreateNewFleetSignalType&    CreateNewFleetSignal() const    {return m_fleet_panel->CreateNewFleetSignal();}
-    FleetDetailPanel::ClosingEmptyFleetSignalType& ClosingEmptyFleetSignal() const {return m_fleet_panel->ClosingEmptyFleetSignal();}
-    ClosingSignalType&                             ClosingSignal() const           {return m_closing_sig;}
+    NeedNewFleetSignalType& NeedNewFleetSignal() const  {return m_need_new_fleet_sig;}
+    ClosingSignalType&      ClosingSignal() const       {return m_closing_sig;}
     //@}
 
 protected:
@@ -118,13 +118,15 @@ protected:
     //@}
 
 private:
+    Fleet*      PanelNeedsNewFleet(int ship_id) {return m_need_new_fleet_sig(this, ship_id);}
     void        AttachSignalChildren();
     void        DetachSignalChildren();
     std::string TitleText() const;
 
     FleetDetailPanel*  m_fleet_panel;
 
-    mutable ClosingSignalType m_closing_sig;
+    mutable ClosingSignalType      m_closing_sig;
+    mutable NeedNewFleetSignalType m_need_new_fleet_sig;
 };
 
 
@@ -132,13 +134,13 @@ class FleetWnd : public MapWndPopup
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (Fleet*)>          ShowingFleetSignalType;       ///< emitted to indicate that this window is showing the given fleet
-    typedef boost::signal<void (Fleet*)>          NotShowingFleetSignalType;    ///< emitted to indicate that this window is not showing the given fleet
+    typedef boost::signal<void (Fleet*)>         ShowingFleetSignalType;    ///< emitted to indicate to the rest of the UI that this window is showing the given fleet, so duplicates are avoided
+    typedef boost::signal<void (Fleet*)>         NotShowingFleetSignalType; ///< emitted to indicate that this window is not showing the given fleet
     //@}
 
     /** \name Slot Types */ //@{
-    typedef ShowingFleetSignalType::slot_type     ShowingFleetSlotType;         ///< type of functor(s) invoked on a ShowingFleetSignalType
-    typedef NotShowingFleetSignalType::slot_type  NotShowingFleetSlotType;      ///< type of functor(s) invoked on a NotShowingFleetSignalType
+    typedef ShowingFleetSignalType::slot_type    ShowingFleetSlotType;      ///< type of functor(s) invoked on a ShowingFleetSignalType
+    typedef NotShowingFleetSignalType::slot_type NotShowingFleetSlotType;   ///< type of functor(s) invoked on a NotShowingFleetSignalType
     //@}
 
     /** \name Structors */ //@{
@@ -173,11 +175,12 @@ private:
     void        FleetDoubleClicked(int row_idx, const GG::ListBox::Row* row);
     void        FleetDeleted(int row_idx);
     void        NewFleetButtonClicked();
-    Fleet*      NewFleetBoxReceivedShip(int ship_id);
-    void        EmptyFleetBoxClosing(Fleet* fleet);
+    Fleet*      NewFleetWndReceivedShip(FleetDetailWnd* fleet_wnd, int ship_id);
     void        FleetDetailWndClosing(FleetDetailWnd* wnd);
     Fleet*      FleetInRow(int idx) const;
     std::string TitleText() const;
+    void        DeleteFleet(Fleet* fleet);
+    void        RemoveEmptyFleets();
 
     const int           m_empire_id;
     const bool          m_read_only;

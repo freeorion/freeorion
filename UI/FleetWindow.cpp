@@ -71,6 +71,7 @@ FleetDetailPanel::FleetDetailPanel(int x, int y, Fleet* fleet, bool read_only, U
     m_ship_status_text = new GG::TextControl(0, m_ships_lb->LowerRight().y + CONTROL_MARGIN, m_ships_lb->Width(), ClientUI::PTS + 4, 
                                              "", ClientUI::FONT, ClientUI::PTS, GG::TF_LEFT, ClientUI::TEXT_COLOR);
     Resize(m_ship_status_text->LowerRight());
+    std::cout << "FleetDetailPanel::FleetDetailPanel() : Created ListBox @ " << m_ships_lb << "\n";
 
     SetFleet(fleet);
     Init();
@@ -96,12 +97,6 @@ FleetDetailPanel::FleetDetailPanel(const GG::XMLElement& elem) :
     m_ship_status_text = new GG::TextControl(*curr_elem);
 
     Init();
-}
-
-FleetDetailPanel::~FleetDetailPanel()
-{
-    if (m_fleet && !m_fleet->NumShips())
-        m_closing_empty_fleet_sig(m_fleet);
 }
 
 int FleetDetailPanel::GetShipIDOfListRow(int row_idx) const
@@ -138,26 +133,28 @@ GG::XMLElement FleetDetailPanel::XMLEncode() const
 
 void FleetDetailPanel::SetFleet(Fleet* fleet)
 {
-    if (m_fleet && !m_fleet->NumShips())
-        m_closing_empty_fleet_sig(m_fleet);
-    m_fleet_connection.disconnect();
+    Fleet* old_fleet = m_fleet;
+    if (fleet != old_fleet)
+	m_fleet_connection.disconnect();
     *m_destination_text << "";
     m_ships_lb->Clear();
     if (m_fleet = fleet) {
         Universe& universe = GetUniverse();
-        for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {
-            m_ships_lb->Insert(new ShipRow(dynamic_cast<Ship*>(universe.Object(*it))));
-        }
+	if (m_fleet->NumShips()) {
+	    for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {
+		m_ships_lb->Insert(new ShipRow(dynamic_cast<Ship*>(universe.Object(*it))));
+	    }
+	} else {
+	    m_panel_empty_sig(m_fleet);
+	}
         *m_destination_text << DestinationText();
-        if (m_read_only) 
-            m_fleet_connection = GG::Connect(m_fleet->StateChangedSignal(), &FleetDetailPanel::Refresh, this);
+	if (fleet != old_fleet)
+	    m_fleet_connection = GG::Connect(m_fleet->StateChangedSignal(), &FleetDetailPanel::Refresh, this);
     }
 }
 
 void FleetDetailPanel::CloseClicked()
 {
-    if (m_ships_lb->Empty())
-        m_closing_empty_fleet_sig(m_fleet);
 }
 
 void FleetDetailPanel::Init()
@@ -197,7 +194,7 @@ void FleetDetailPanel::Refresh()
 
 void FleetDetailPanel::ShipBrowsed(int row_idx)
 {
-    if (row_idx != -1) {
+    if (0 <= row_idx && row_idx < m_ships_lb->NumRows()) {
         *m_ship_status_text << ShipStatusText(GetShipIDOfListRow(row_idx));
     } else {
         *m_ship_status_text << "";
@@ -208,36 +205,37 @@ void FleetDetailPanel::ShipDroppedIntoList(int row_idx, const GG::ListBox::Row* 
 {
     int ship_id = dynamic_cast<const ShipRow*>(row)->ShipID();
     if (!m_fleet) {
-        // creating a new fleet can fail but will be handled by listbox eception
-        m_fleet = m_create_new_fleet_sig(ship_id);
+        // creating a new fleet can fail but will be handled by listbox exception
+        m_fleet = m_need_new_fleet_sig(ship_id);
+
+	m_fleet_connection.disconnect();
+	m_fleet_connection = GG::Connect(m_fleet->StateChangedSignal(), &FleetDetailPanel::Refresh, this);
         
         *m_destination_text << DestinationText();
         if (Parent())
             Parent()->SetText(m_fleet->Name());
     }
     Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
-    HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->PlayerID(), ship->FleetID(), m_fleet->ID(), std::vector<int>(1, ship_id)));
-
+    if (ship->FleetID() != m_fleet->ID())
+    {
+	HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->PlayerID(), ship->FleetID(), m_fleet->ID(), std::vector<int>(1, ship_id)));
+    } else {
+	throw  GG::ListBox::DontAcceptDropException();
+    }
 }
 
 void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt)
 {
-    /* get ship */
     int ship_id = dynamic_cast<const ShipRow*>(row)->ShipID();
     Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
 
-    if ( m_read_only )
-        return;
-
-    /* is this is colony ship? */
+    // is this is colony ship?
     if ( ship->Design().colonize )
     {
-        /* setup colonize GUI */
+        // setup colonize GUI
         HumanClientApp::GetUI()->BeginColonizeSelection( ship_id );
     }
-
 }
-
 
 std::string FleetDetailPanel::DestinationText() const
 {
@@ -282,9 +280,11 @@ FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint3
     m_fleet_panel(0)
 {
     m_fleet_panel = new FleetDetailPanel(LeftBorder() + 3, TopBorder() + 3, fleet, read_only);
+    std::cout << "FleetDetailWnd::FleetDetailWnd() : Created FleetDetailPanel @ " << m_fleet_panel << "\n";
     Resize(m_fleet_panel->WindowDimensions() + GG::Pt(LeftBorder() + RightBorder() + 6, TopBorder() + BottomBorder() + 6));
     AttachSignalChildren();
     SetText(TitleText());
+    GG::Connect(m_fleet_panel->NeedNewFleetSignal(), &FleetDetailWnd::PanelNeedsNewFleet, this);
 }
 
 FleetDetailWnd::FleetDetailWnd(const GG::XMLElement& elem) : 
@@ -379,6 +379,7 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
 {
     m_fleets_lb = new CUIListBox(LeftBorder() + 3, TopBorder() + 3, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT);
     m_fleet_detail_panel = new FleetDetailPanel(LeftBorder() + 3, m_fleets_lb->LowerRight().y + CONTROL_MARGIN, 0, read_only );
+    std::cout << "FleetWnd::FleetWnd() : Created main FleetDetailPanel @ " << m_fleet_detail_panel << "\n";
     m_new_fleet_button = new CUIButton(FLEET_LISTBOX_WIDTH + 6 + LeftBorder() - 5 - NEW_FLEET_BUTTON_WIDTH, 
                                        m_fleet_detail_panel->LowerRight().y + CONTROL_MARGIN, NEW_FLEET_BUTTON_WIDTH, "New fleet");
 
@@ -406,17 +407,16 @@ FleetWnd::FleetWnd( const GG::XMLElement& elem) :
 
 FleetWnd::~FleetWnd()
 {
+    RemoveEmptyFleets();
 }
 
 void FleetWnd::CloseClicked()
 {
     CUI_Wnd::CloseClicked();
     for (std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_windows.begin(); it != m_open_fleet_windows.end(); ++it) {
-        GG::App::GetApp()->Remove(it->second);
         delete it->second;
     }
     for (std::set<FleetDetailWnd*>::iterator it = m_new_fleet_windows.begin(); it != m_new_fleet_windows.end(); ++it) {
-        GG::App::GetApp()->Remove(*it);
         delete *it;
     }
     for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
@@ -475,16 +475,6 @@ void FleetWnd::SystemClicked(int system_id)
             Fleet* fleet = FleetInRow(*it);
             if (fleet->NumShips()) {
                 HumanClientApp::Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), system_id));
-                std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_windows.find(fleet);
-                if (it != m_open_fleet_windows.end())
-                    it->second->GetFleetDetailPanel().SetFleet(it->second->GetFleetDetailPanel().GetFleet());
-                
-                for(std::set<FleetDetailWnd*>::iterator it_new_fleets = m_new_fleet_windows.begin();it_new_fleets!=m_new_fleet_windows.end();++it_new_fleets)
-                  if((*it_new_fleets)->GetFleetDetailPanel().GetFleet()==fleet){
-                    (*it_new_fleets)->GetFleetDetailPanel().SetFleet((*it_new_fleets)->GetFleetDetailPanel().GetFleet());                  
-                    break;
-                  }
-                m_fleet_detail_panel->SetFleet(m_fleet_detail_panel->GetFleet());
             }
         }
     }
@@ -540,7 +530,6 @@ void FleetWnd::FleetDoubleClicked(int row_idx, const GG::ListBox::Row* row)
         fleet_wnd->MoveTo(window_posn);
         GG::App::GetApp()->Register(fleet_wnd);
         GG::Connect(fleet_wnd->ClosingSignal(), &FleetWnd::FleetDetailWndClosing, this);
-        GG::Connect(fleet_wnd->ClosingEmptyFleetSignal(), &FleetWnd::EmptyFleetBoxClosing, this);
     }
 }
 
@@ -562,90 +551,71 @@ void FleetWnd::NewFleetButtonClicked()
     fdw->MoveTo(window_posn);
     m_new_fleet_windows.insert(fdw);
     GG::App::GetApp()->Register(fdw);
-    GG::Connect(fdw->CreateNewFleetSignal(), &FleetWnd::NewFleetBoxReceivedShip, this);
+    GG::Connect(fdw->NeedNewFleetSignal(), &FleetWnd::NewFleetWndReceivedShip, this);
     GG::Connect(fdw->ClosingSignal(), &FleetWnd::FleetDetailWndClosing, this);
-    GG::Connect(fdw->ClosingEmptyFleetSignal(), &FleetWnd::EmptyFleetBoxClosing, this);
 }
  
-Fleet* FleetWnd::NewFleetBoxReceivedShip(int ship_id)
+Fleet* FleetWnd::NewFleetWndReceivedShip(FleetDetailWnd* fleet_wnd, int ship_id)
 {
     Fleet* existing_fleet = FleetInRow(0);
     int empire_id = HumanClientApp::GetApp()->PlayerID();
 
     int new_fleet_id = ClientApp::GetNewObjectID();
 
-    if ( new_fleet_id == UniverseObject::INVALID_OBJECT_ID )
+    if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID)
     {
-      // display message
-      ClientUI::MessageBox(ClientUI::String("SERVER_TIMEOUT"));
-
-      // throw exception to UI so drop does not occur
-      throw GG::ListBox::DontAcceptDropException( );
+	// display message
+	ClientUI::MessageBox(ClientUI::String("SERVER_TIMEOUT"));
+	// throw exception to UI so drop does not occur
+	throw GG::ListBox::DontAcceptDropException();
     }
 
-    std::string fleet_name = "New fleet " + boost::lexical_cast<std::string>( new_fleet_id );
+    std::string fleet_name = "New fleet " + boost::lexical_cast<std::string>(new_fleet_id);
 
+    Fleet* new_fleet = 0;
     if (existing_fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID) {
         HumanClientApp::Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, existing_fleet->SystemID()));
-    } else {
-        HumanClientApp::Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, existing_fleet->X(), existing_fleet->Y()));
-    }
-    Fleet* fleet = 0;
-    if (existing_fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID) {
         System::ObjectVec fleets = existing_fleet->GetSystem()->FindObjectsInOrbit(-1, IsStationaryFleetFunctor(empire_id));
         for (unsigned int i = 0; i < fleets.size(); ++i) {
             if (fleets[i]->Name() == fleet_name) {
-                fleet = dynamic_cast<Fleet*>(fleets[i]);
+                new_fleet = dynamic_cast<Fleet*>(fleets[i]);
                 break;
             }
         }
     } else {
+        HumanClientApp::Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, existing_fleet->X(), existing_fleet->Y()));
         Universe::ObjectVec fleets = GetUniverse().FindObjects(&IsFleet);
         for (unsigned int i = 0; i < fleets.size(); ++i) {
             if (fleets[i]->Name() == fleet_name && fleets[i]->X() == existing_fleet->X() && fleets[i]->Y() == existing_fleet->Y()) {
-                fleet = dynamic_cast<Fleet*>(fleets[i]);
+                new_fleet = dynamic_cast<Fleet*>(fleets[i]);
                 break;
             }
         }
     }
-    m_showing_fleet_sig(fleet);
-    m_fleets_lb->Insert(new FleetRow(fleet));
-    return fleet;
-}
 
-void FleetWnd::EmptyFleetBoxClosing(Fleet* fleet)
-{
-    Fleet* current_fleet = 0;
-    try {
-        current_fleet = FleetInRow(m_current_fleet);
-    } catch (const std::out_of_range& re) {
-        m_current_fleet = -1; // if the fleet deleted was the currently selected one, we need to fix that situation
-    }
-    if (m_fleet_detail_panel->GetFleet() == fleet)
-        m_fleet_detail_panel->SetFleet(0);
+    m_showing_fleet_sig(new_fleet);
+    m_fleets_lb->Insert(new FleetRow(new_fleet));
 
-    HumanClientApp::Orders().IssueOrder(new DeleteFleetOrder(HumanClientApp::GetApp()->PlayerID(), fleet->ID()));
-    m_not_showing_fleet_sig(fleet);
-    for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
-        if (FleetInRow(i) == fleet) {
-            m_fleets_lb->Delete(i);
-            break;
-        }
-    }
+    m_new_fleet_windows.erase(fleet_wnd);
+    m_open_fleet_windows[new_fleet] = fleet_wnd;
+
+    return new_fleet;
 }
 
 void FleetWnd::FleetDetailWndClosing(FleetDetailWnd* wnd)
 {
+    Fleet* fleet = wnd->GetFleetDetailPanel().GetFleet();
+    if (fleet && !fleet->NumShips()) {
+	DeleteFleet(fleet);
+    }
+
     if (m_new_fleet_windows.find(wnd) != m_new_fleet_windows.end()) {
         m_new_fleet_windows.erase(wnd);
     } else {
-        for (std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_windows.begin(); it != m_open_fleet_windows.end(); ++it) {
-            if (it->second == wnd) {
-                m_open_fleet_windows.erase(it);
-                break;
-            }
-        }
+	m_open_fleet_windows.erase(fleet);
     }
+
+    RemoveEmptyFleets();
 }
 
 Fleet* FleetWnd::FleetInRow(int idx) const
@@ -657,4 +627,40 @@ std::string FleetWnd::TitleText() const
 {
     Fleet* existing_fleet = FleetInRow(0);
     return "Empire " + boost::lexical_cast<std::string>(*existing_fleet->Owners().begin()) + " Fleets";
+}
+
+void FleetWnd::DeleteFleet(Fleet* fleet)
+{
+    try {
+	FleetInRow(m_current_fleet);
+    } catch (const std::out_of_range& re) {
+	m_current_fleet = -1; // if the fleet deleted was the currently selected one, we need to fix that situation
+    }
+    if (m_fleet_detail_panel->GetFleet() == fleet)
+	m_fleet_detail_panel->SetFleet(0);
+
+    HumanClientApp::Orders().IssueOrder(new DeleteFleetOrder(HumanClientApp::GetApp()->PlayerID(), fleet->ID()));
+    std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_windows.find(fleet);
+    if (it != m_open_fleet_windows.end()) {
+        delete it->second;
+	m_open_fleet_windows.erase(it);
+    }
+    m_not_showing_fleet_sig(fleet);
+    for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
+	if (FleetInRow(i) == fleet) {
+	    m_fleets_lb->Delete(i);
+	    break;
+	}
+    }
+}
+
+void FleetWnd::RemoveEmptyFleets()
+{
+    // check for leftover empty fleets in fleet list
+    for (int i = m_fleets_lb->NumRows() - 1; i >= 0; --i) {
+	Fleet* current_fleet = FleetInRow(i);
+	if (!current_fleet->NumShips()) {
+	    DeleteFleet(current_fleet);
+	}
+    }
 }
