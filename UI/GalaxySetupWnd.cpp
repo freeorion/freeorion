@@ -1,420 +1,311 @@
 //GalaxySetupWnd.cpp
-
-#ifndef _GalaxySetupWnd_h_
 #include "GalaxySetupWnd.h"
-#endif
 
-#ifndef _GGApp_h_
-#include "GGApp.h"
-#endif
-
-#ifndef _GGDrawUtil_h_
+#include "CUIControls.h"
 #include "GGDrawUtil.h"
-#endif
-
-#ifndef _GGClr_h_
-#include "GGClr.h"
-#endif
-
-#ifndef _ClientUI_h_
-#include "ClientUI.h"
-#endif
-
-#ifndef _GGFileDlg_h_
 #include "dialogs/GGFileDlg.h"
-#endif
+#include "GGStaticGraphic.h"
+#include "../client/human/HumanClientApp.h"
 
 #include <fstream>
-#include "CUIControls.h"
 
-////////////////////////////////////////////
-//   CONSTANTS
-////////////////////////////////////////////
-const int GalaxySetupWnd::GALAXY_TYPES  =  6;   //not including "From file:"
-const int GalaxySetupWnd::TYPE_ROW_HEIGHT = 35; //row height
 
-////////////////////////////////////////////
-//   CONSTRUCTION/DESTRUCTION
-////////////////////////////////////////////
+namespace {
+const int GAL_SETUP_WND_WD = 645;
+const int GAL_SETUP_WND_HT = 250;
+const int RADIO_BN_HT = ClientUI::PTS + 4;
+const int RADIO_BN_SPACING = RADIO_BN_HT + 10;
+const GG::Pt PREVIEW_UL(385, 23);
+const GG::Pt PREVIEW_SZ(248, 186);
+}
 
-GalaxySetupWnd::GalaxySetupWnd():
-    CUI_Wnd(ClientUI::String("GSETUP_WINDOW_TITLE"),200,200,645,360, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
-    m_end_with_ok(false)
+GalaxySetupWnd::GalaxySetupWnd() : 
+    CUI_Wnd(ClientUI::String("GSETUP_WINDOW_TITLE"), (HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2, 
+            (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2, GAL_SETUP_WND_WD, GAL_SETUP_WND_HT, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
+    m_ended_with_ok(false)
 {
-    //initialize size radio group
-    m_size_buttons = new GG::RadioButtonGroup(5,7);
-    CUIStateButton* temp = 0;
+    m_size_buttons = new GG::RadioButtonGroup(5, 7);
+    int y = 15;
+    m_size_buttons->AddButton(new CUIStateButton(5, y,                     100, RADIO_BN_HT, ClientUI::String("GSETUP_VERYSMALL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_size_buttons->AddButton(new CUIStateButton(5, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_SMALL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_size_buttons->AddButton(new CUIStateButton(5, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_MEDIUM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_size_buttons->AddButton(new CUIStateButton(5, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_LARGE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_size_buttons->AddButton(new CUIStateButton(5, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_VERYLARGE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_size_buttons->AddButton(new CUIStateButton(5, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_ENORMOUS"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
 
-    m_size_buttons->AddButton(new CUIStateButton(5, 10,  100, ClientUI::PTS + 4, ClientUI::String("GSETUP_VERYSMALL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_size_buttons->AddButton(new CUIStateButton(5, 65,  100, ClientUI::PTS + 4, ClientUI::String("GSETUP_SMALL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_size_buttons->AddButton(new CUIStateButton(5, 120, 100, ClientUI::PTS + 4, ClientUI::String("GSETUP_MEDIUM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_size_buttons->AddButton(new CUIStateButton(5, 175, 100, ClientUI::PTS + 4, ClientUI::String("GSETUP_LARGE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_size_buttons->AddButton(new CUIStateButton(5, 230, 100, ClientUI::PTS + 4, ClientUI::String("GSETUP_VERYLARGE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_size_buttons->AddButton(new CUIStateButton(5, 285, 100, ClientUI::PTS + 4, ClientUI::String("GSETUP_ENORMOUS"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    
-    m_type_buttons = new GG::RadioButtonGroup(125,7);
-    
-    int y = 10;
-    m_type_buttons->AddButton(temp = new CUIStateButton(125, y,                    100, ClientUI::PTS + 4, ClientUI::String("GSETUP_2ARM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_type_vector.push_back(temp);
-    m_type_buttons->AddButton(temp = new CUIStateButton(125, y += TYPE_ROW_HEIGHT, 100, ClientUI::PTS + 4, ClientUI::String("GSETUP_3ARM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_type_vector.push_back(temp);
-    m_type_buttons->AddButton(temp = new CUIStateButton(125, y += TYPE_ROW_HEIGHT, 100, ClientUI::PTS + 4, ClientUI::String("GSETUP_4ARM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_type_vector.push_back(temp);
-    m_type_buttons->AddButton(temp = new CUIStateButton(125, y += TYPE_ROW_HEIGHT, 100, ClientUI::PTS + 4, ClientUI::String("GSETUP_CLUSTER"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_type_vector.push_back(temp);
-    m_type_buttons->AddButton(temp = new CUIStateButton(125, y += TYPE_ROW_HEIGHT, 100, ClientUI::PTS + 4, ClientUI::String("GSETUP_ELLIPTICAL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_type_vector.push_back(temp);
-    m_type_buttons->AddButton(temp = new CUIStateButton(125, y += TYPE_ROW_HEIGHT, 100, ClientUI::PTS + 4, ClientUI::String("GSETUP_IRREGULAR"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_type_vector.push_back(temp);
-    m_type_buttons->AddButton(temp = new CUIStateButton(125, y += TYPE_ROW_HEIGHT, 100, ClientUI::PTS + 4, ClientUI::String("GSETUP_FROMFILE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_type_vector.push_back(temp);
+    m_type_buttons = new GG::RadioButtonGroup(125, 7);
+    y = 15;
+    m_type_buttons->AddButton(new CUIStateButton(125, y,                     100, RADIO_BN_HT, ClientUI::String("GSETUP_2ARM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_3ARM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_4ARM"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_CLUSTER"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_ELLIPTICAL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_IRREGULAR"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_type_buttons->AddButton(new CUIStateButton(125, y += RADIO_BN_SPACING, 100, RADIO_BN_HT, ClientUI::String("GSETUP_FROMFILE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
 
-    y+=20;
-    m_galaxy_file =    new CUIEdit(385, y, 168, 25, "");
-    m_galaxy_file->SetTextColor(ClientUI::TEXT_COLOR);
-    
-    m_browse_button = new CUIButton(555, y, 75, ClientUI::String("BROWSE_BTN"));
-    
-    //create a temporary texture and static graphic  
-    // this will get overwritten during construction
-    boost::shared_ptr<GG::Texture> temptex(new GG::Texture());
-    m_preview_image =  new GG::StaticGraphic(385, 30, 248, 186, temptex, GG::SG_FITGRAPHIC);    //create a blank graphic
- 
-    y+= TYPE_ROW_HEIGHT;
-    m_ok     = new CUIButton(555, y/*305*/, 75, ClientUI::String("OK"));
-    m_cancel = new CUIButton(465, y/*305*/, 75, ClientUI::String("CANCEL"));
+    // create a temporary texture and static graphic
+    boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
+    m_preview_image =  new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::SG_FITGRAPHIC); // create a blank graphic
+    GG::Pt preview_lr = m_preview_image->LowerRight();
 
-    Init();    //attaches children and connects signals to slots
-}//GalaxySetupWnd()
+    m_galaxy_file = new CUIEdit(PREVIEW_UL.x, preview_lr.y + 7, 168, ClientUI::PTS + 10, "");
+    
+    m_browse_button = new CUIButton(PREVIEW_UL.x + m_galaxy_file->WindowDimensions().x + 5, preview_lr.y + 7, 75, ClientUI::String("BROWSE_BTN"));
+    
+    m_ok     = new CUIButton(10, preview_lr.y + 10, 75, ClientUI::String("OK"));
+    m_cancel = new CUIButton(10 + m_ok->WindowDimensions().x + 15, preview_lr.y + 10, 75, ClientUI::String("CANCEL"));
+
+    Init();
+}
 
 GalaxySetupWnd::GalaxySetupWnd(const GG::XMLElement &elem):
     CUI_Wnd(elem.Child("CUI_Wnd")),
-    m_end_with_ok(false)
+    m_ended_with_ok(false)
 {
     using namespace GG;
-    
+
     if (elem.Tag() != "GalaxySetupWnd")
-       throw std::invalid_argument("Attempted to construct an GalaxySetupWnd from an XMLElement that had a tag other than \"GalaxySetupWnd\"");
-    
-    try
-    {
-        m_browse_button = new CUIButton(elem.Child("m_browse_button"));
-            
-        m_ok = new CUIButton(elem.Child("m_ok"));
-                   
-        m_cancel = new CUIButton(elem.Child("m_cancel"));
-                            
-        m_galaxy_file = new Edit(elem.Child("m_galaxy_file"));
-    
-        m_size_buttons = new RadioButtonGroup(elem.Child("m_size_buttons"));
-            
-        m_type_buttons = new RadioButtonGroup(elem.Child("m_type_buttons"));
-    
-        m_preview_image = new StaticGraphic(elem.Child("m_preview_image"));
-        
-        Init();
+        throw std::invalid_argument("Attempted to construct an GalaxySetupWnd from an XMLElement that had a tag other than \"GalaxySetupWnd\"");
+
+    m_browse_button = new CUIButton(elem.Child("m_browse_button"));
+    m_ok = new CUIButton(elem.Child("m_ok"));
+    m_cancel = new CUIButton(elem.Child("m_cancel"));
+    m_galaxy_file = new CUIEdit(elem.Child("m_galaxy_file"));
+    m_size_buttons = new RadioButtonGroup(elem.Child("m_size_buttons"));
+    m_type_buttons = new RadioButtonGroup(elem.Child("m_type_buttons"));
+    m_preview_image = new StaticGraphic(elem.Child("m_preview_image"));
+
+    Init();
+}
+
+GalaxySetupWnd::~GalaxySetupWnd()
+{
+}
+
+int GalaxySetupWnd::Render()
+{
+    CUI_Wnd::Render();
+    GG::FlatRectangle(UpperLeft().x + PREVIEW_UL.x - 2, UpperLeft().y + PREVIEW_UL.y - 2, UpperLeft().x + PREVIEW_UL.x + PREVIEW_SZ.x + 2, 
+                      UpperLeft().y + PREVIEW_UL.y + PREVIEW_SZ.y + 2, GG::CLR_BLACK, ClientUI::WND_INNER_BORDER_COLOR, 1);
+    return true;
+}
+
+GG::XMLElement GalaxySetupWnd::XMLEncode() const
+{
+    using namespace GG;
+
+    XMLElement retval("GalaxySetupWnd"), temp;
+
+    const_cast<GalaxySetupWnd*>(this)->DetachSignalChildren();
+    retval.AppendChild(CUI_Wnd::XMLEncode());
+    const_cast<GalaxySetupWnd*>(this)->AttachSignalChildren();
+
+    temp = XMLElement("m_browse_button");
+    temp.AppendChild(m_browse_button->XMLEncode());
+    retval.AppendChild(temp);
+
+    temp = XMLElement("m_cancel");
+    temp.AppendChild(m_cancel->XMLEncode());
+    retval.AppendChild(temp);
+
+    temp = XMLElement("m_ok");
+    temp.AppendChild(m_ok->XMLEncode());
+    retval.AppendChild(temp);
+
+    temp = XMLElement("m_galaxy_file");
+    temp.AppendChild(m_galaxy_file->XMLEncode());
+    retval.AppendChild(temp);
+
+    temp = XMLElement("m_size_buttons");
+    temp.AppendChild(m_size_buttons->XMLEncode());
+    retval.AppendChild(temp);
+
+    temp = XMLElement("m_type_buttons");
+    temp.AppendChild(m_type_buttons->XMLEncode());
+    retval.AppendChild(temp);
+
+    temp = XMLElement("m_preview_image");
+    temp.AppendChild(m_preview_image->XMLEncode());
+    retval.AppendChild(temp);
+
+    return retval;
+}
+
+int GalaxySetupWnd::Systems() const
+{
+    int retval = 0;
+    switch (m_size_buttons->CheckedButton()) {
+    case 0: retval = 50;  break;
+    case 1: retval = 100; break;
+    case 2: retval = 150; break;
+    case 3: retval = 200; break;
+    case 4: retval = 250; break;
+    case 5: retval = 300; break;
     }
-    catch(const std::invalid_argument& e)
-    {
-        App::GetApp()->Logger().fatal(e.what());
-        ClientUI::MessageBox(e.what());
-    }
-    
-}//GalaxySetupWnd(XMLElement)
+    return retval;
+}
+
+ClientUniverse::Shape GalaxySetupWnd::GalaxyShape() const
+{
+    return ClientUniverse::Shape(m_type_buttons->CheckedButton());
+}
+
+std::string GalaxySetupWnd::GalaxyFile() const
+{
+    return ((m_type_buttons->CheckedButton() == ClientUniverse::FROM_FILE) ? m_galaxy_file->WindowText() : "");
+}
 
 void GalaxySetupWnd::Init()
 {
-    //add children
-    AttachChild(m_size_buttons);
-    AttachChild(m_type_buttons);
-    
-    AttachChild(m_galaxy_file);
-    AttachChild(m_browse_button);
-    AttachChild(m_preview_image);
-    
-    AttachChild(m_ok);
-    AttachChild(m_cancel);
-    
-    //attach signals
+    AttachSignalChildren();
+
     GG::Connect(m_size_buttons->ButtonChangedSignal(), &GalaxySetupWnd::OnChangeSize, this);
     GG::Connect(m_type_buttons->ButtonChangedSignal(), &GalaxySetupWnd::OnChangeType, this);
     GG::Connect(m_browse_button->ClickedSignal(), &GalaxySetupWnd::OnBrowse, this);
     GG::Connect(m_ok->ClickedSignal(), &GalaxySetupWnd::OnOK, this);
     GG::Connect(m_cancel->ClickedSignal(), &GalaxySetupWnd::OnCancel, this);
-    
-    //create and load textures
+
+    // create and load textures
     m_textures.clear();
-    for(int i=0; i<GALAXY_TYPES; ++i)
-    {
+    for (int i = 0; i < ClientUniverse::GALAXY_SHAPES; ++i)
         m_textures.push_back(boost::shared_ptr<GG::Texture>(new GG::Texture()));
-    }
-    m_textures[TWO_ARM]->Load(ClientUI::ART_DIR + "gp_spiral2.png");
-    m_textures[THREE_ARM]->Load(ClientUI::ART_DIR + "gp_spiral3.png");
-    m_textures[FOUR_ARM]->Load(ClientUI::ART_DIR + "gp_spiral4.png");
-    m_textures[CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
-    //get new textures for elliptical
-    m_textures[ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
-    m_textures[IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
+    m_textures[ClientUniverse::SPIRAL_2]->Load(ClientUI::ART_DIR + "gp_spiral2.png");
+    m_textures[ClientUniverse::SPIRAL_3]->Load(ClientUI::ART_DIR + "gp_spiral3.png");
+    m_textures[ClientUniverse::SPIRAL_4]->Load(ClientUI::ART_DIR + "gp_spiral4.png");
+    m_textures[ClientUniverse::CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
+    m_textures[ClientUniverse::ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
+    m_textures[ClientUniverse::IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
     
-    //now change everything to default setting (large and spiral-2arm)
-    m_size_buttons->SetCheck(LARGE);
-    m_type_buttons->SetCheck(TWO_ARM);
-}//Init()
+    // default settings (medium and 2-arm spiral)
+    m_size_buttons->SetCheck(2);
+    m_type_buttons->SetCheck(ClientUniverse::SPIRAL_2);
+}
 
-GalaxySetupWnd::~GalaxySetupWnd()
+void GalaxySetupWnd::AttachSignalChildren()
 {
+    AttachChild(m_size_buttons);
+    AttachChild(m_type_buttons);
+    AttachChild(m_galaxy_file);
+    AttachChild(m_browse_button);
+    AttachChild(m_preview_image);
+    AttachChild(m_ok);
+    AttachChild(m_cancel);    
+}
 
-}//~GalaxySetupWnd
-
-///////////////////////////////////////////////
-//   MUTATORS
-///////////////////////////////////////////////
-
-int GalaxySetupWnd::Render()
+void GalaxySetupWnd::DetachSignalChildren()
 {
-    CUI_Wnd::Render();
-   // GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::WND_BORDER_COLOR,true);
-    //ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, "Galaxy Setup");
-    
-    //draw spot for preview image 385, 30, 248, 186
-    GG::FlatRectangle(UpperLeft().x+383, UpperLeft().y+28, UpperLeft().x+383+252, UpperLeft().y+28+190, GG::CLR_BLACK, ClientUI::WND_INNER_BORDER_COLOR, 1);
-    return true;
-}//Render()
-
-GG::XMLElement GalaxySetupWnd::XMLEncode() const
-{
-    using namespace GG;
-    
-    //DO NOT ENCODE:
-    //    m_end_with_ok
-    
-    XMLElement retval("GalaxySetupWnd"), temp;
-    
-    retval.AppendChild(CUI_Wnd::XMLEncode());
-    
-    temp = XMLElement("m_browse_button");
-    temp.AppendChild(m_browse_button->XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("m_cancel");
-    temp.AppendChild(m_cancel->XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("m_ok");
-    temp.AppendChild(m_ok->XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("m_galaxy_file");
-    temp.AppendChild(m_galaxy_file->XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("m_size_buttons");
-    temp.AppendChild(m_size_buttons->XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("m_type_buttons");
-    temp.AppendChild(m_type_buttons->XMLEncode());
-    retval.AppendChild(temp);
-    
-    temp = XMLElement("m_preview_image");
-    temp.AppendChild(m_preview_image->XMLEncode());
-    retval.AppendChild(temp);
-    
-    return retval;
-    
-}//XMLEncode()
-
-///////////////////////////////////////////////
-//   ACCESSORS
-///////////////////////////////////////////////
-
-int GalaxySetupWnd::GalaxyShape() const
-{
-    return m_type_buttons->CheckedButton();
-}//GalaxyShape()
-
-std::string GalaxySetupWnd::GalaxyFile() const
-{
-    return *m_galaxy_file;
-}//GalaxyFile()
-
-///////////////////////////////////////////////
-//   EVENT HANDLERS
-///////////////////////////////////////////////
+    DetachChild(m_size_buttons);
+    DetachChild(m_type_buttons);
+    DetachChild(m_galaxy_file);
+    DetachChild(m_browse_button);
+    DetachChild(m_preview_image);
+    DetachChild(m_ok);
+    DetachChild(m_cancel);    
+}
 
 void GalaxySetupWnd::OnOK()
 {
     //check to see if we have a valid image if file is checked
-    if(m_type_buttons->CheckedButton() == FROM_FILE)
-    {
-        //validate filename
-        std::string temp_str(*m_galaxy_file);
-        //first check that it exists by trying to open it....
-        try
-        {
-            std::ifstream f(temp_str.c_str());
-            f.close();
-        }
-        catch(const std::exception& e)
-        {
-            ClientUI::MessageBox("\"" + temp_str + "\" "+ ClientUI::String("GSETUP_ERR_NOEXIST"));
-            return;
-        }        
-        
-        //now see if it is a valid image
-        try
-        {
+    if (m_type_buttons->CheckedButton() == ClientUniverse::FROM_FILE) {
+        try {
             boost::shared_ptr<GG::Texture> tex(new GG::Texture);
-            tex->Load(temp_str);
-        }
-        catch(const std::exception& e)
-        {
-            ClientUI::MessageBox("\"" + temp_str + "\" " + ClientUI::String("GSETUP_ERR_INVALID_GRAPHICS"));
+            tex->Load(GalaxyFile());
+        } catch (const std::exception& e) {
+            ClientUI::MessageBox("\"" + GalaxyFile() + "\" " + ClientUI::String("GSETUP_ERR_INVALID_GRAPHICS"));
             return;
         }
     }
 
-    m_end_with_ok = true;
-    
+    m_ended_with_ok = true;
     m_done = true;
-}//OnOK()
+}
 
 void GalaxySetupWnd::OnCancel()
 {
-    m_end_with_ok = false;
-    
+    m_ended_with_ok = false;
     m_done = true;
-}//OnCancel()
+}
 
 void GalaxySetupWnd::OnChangeSize(int index)
 {
-    //enable all questionable controls for a microsecond or two....
-    m_type_vector[TWO_ARM]->Disable(false);
-    m_type_vector[THREE_ARM]->Disable(false);
-    m_type_vector[FOUR_ARM]->Disable(false);   
-    
-    //...then disable invalid galaxy shapes
-    switch(index)
-    {
-    case VERY_SMALL:
-        m_type_vector[TWO_ARM]->Disable();   
-    case SMALL:
-        m_type_vector[THREE_ARM]->Disable();
-    case MEDIUM:
-        m_type_vector[FOUR_ARM]->Disable();
-        
-        //if a checked button is disabled, change it to cluster
-        if( (m_type_vector[TWO_ARM]->Disabled() && m_type_buttons->CheckedButton() == TWO_ARM) ||
-            (m_type_vector[THREE_ARM]->Disabled() && m_type_buttons->CheckedButton() == THREE_ARM) ||
-            (m_type_vector[FOUR_ARM]->Disabled() && m_type_buttons->CheckedButton() == FOUR_ARM))
-        {
-            m_type_buttons->SetCheck(CLUSTER); 
-        }
-            
+    // disable invalid galaxy shapes for the chosen galaxy size
+    switch (index) {
+    case 0:
+        if (-1 < m_type_buttons->CheckedButton() && m_type_buttons->CheckedButton() <= ClientUniverse::SPIRAL_4)
+            m_type_buttons->SetCheck(ClientUniverse::CLUSTER);
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_2);
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_3);
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_4);
+        break;
+    case 1:
+        if (-1 < m_type_buttons->CheckedButton() && 
+            (m_type_buttons->CheckedButton() == ClientUniverse::SPIRAL_3 ||
+             m_type_buttons->CheckedButton() == ClientUniverse::SPIRAL_4))
+            m_type_buttons->SetCheck(ClientUniverse::SPIRAL_2);
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_2, false);
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_3);
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_4);
+        break;
+    case 2:
+        if (-1 < m_type_buttons->CheckedButton() && m_type_buttons->CheckedButton() == ClientUniverse::SPIRAL_4)
+            m_type_buttons->SetCheck(ClientUniverse::SPIRAL_3);
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_2, false);
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_3, false);
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_4);
         break;
     default:
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_2, false);
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_3, false);
+        m_type_buttons->DisableButton(ClientUniverse::SPIRAL_4, false);
         break;
-    }//switch
-    
-}//OnChangeSize()
+    }
+}
 
 void GalaxySetupWnd::OnChangeType(int index)
 {
-    //update preview image
-    if(m_type_buttons->CheckedButton() == FROM_FILE)
-    {
-        //delete current image
-        if(m_preview_image)
-        {
-            DetachChild(m_preview_image);
-            delete(m_preview_image);
-            m_preview_image = NULL;
-        }//if
-        
-        //create temp texture
-        try
-        {
+    if (m_preview_image) {
+        DeleteChild(m_preview_image);
+        m_preview_image = 0;
+    }
+    if (m_type_buttons->CheckedButton() == ClientUniverse::FROM_FILE) {
+        try {
             boost::shared_ptr<GG::Texture> tex(new GG::Texture());
-            tex->Load(*m_galaxy_file);
-        
-            //creat the new staticgraphic object
-            m_preview_image = new GG::StaticGraphic(385, 30, 248, 186, tex, GG::SG_FITGRAPHIC);
+            tex->Load(GalaxyFile());
+            m_preview_image = new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, tex, GG::SG_FITGRAPHIC);
+            AttachChild(m_preview_image);
+        } catch (const std::exception& e) {
+            GG::App::GetApp()->Logger().alert("GalaxySetupWnd: Invalid texture file specified.");
+        }
+        m_galaxy_file->Disable(false);
+        m_browse_button->Disable(false);
+    } else {
+        if (index != -1) {
+            m_preview_image = new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, m_textures[index], GG::SG_FITGRAPHIC);
             AttachChild(m_preview_image);
         }
-        catch(const std::exception& e)
-        {
-            //possible if file not found or otherwise
-             GG::App::GetApp()->Logger().alert("GalaxySetupWnd: Invalid texture file specified.");
-        }
-        
-    }//if
-    else if(index != -1)
-    {
-        //load from stored image
-        if(m_preview_image)
-        {
-            DetachChild(m_preview_image);
-            delete(m_preview_image);
-            m_preview_image = NULL;
-        }//if
-        
-        m_preview_image = new GG::StaticGraphic(385, 30, 248, 186, m_textures[index], GG::SG_FITGRAPHIC);
-        AttachChild(m_preview_image);
-    }//else
-
-}//OnChangeType()
+        m_galaxy_file->Disable();
+        m_browse_button->Disable();
+    }
+}
 
 void GalaxySetupWnd::OnBrowse()
 {
-    //open a file dialog and allow the user to browse for a graphics file
-//<<<<<<< GalaxySetupWnd.cpp
- /*   GG::FileDlg dlg(*m_galaxy_file,
-=======
+    // filter for graphics files
     std::vector<std::pair<std::string, std::string> > allowed_file_types;
-    allowed_file_types.push_back(std::pair<std::string, std::string>("Graphics Files (PNG, Targa)", "*.png, *.PNG, *.tga, *.TGA"));
-    GG::FileDlg dlg(*m_galaxy_file,
->>>>>>> 1.3
-                    false,
-                    false,
-                    allowed_file_types,
-                    ClientUI::FONT,
-                    ClientUI::PTS,
-                    GG::Clr(100,100,100,255),GG::CLR_WHITE,GG::CLR_BLACK
-                    //ClientUI::WND_COLOR,
-                    //ClientUI::WND_BORDER_COLOR,
-                    //ClientUI::TEXT_COLOR
-                    );
-<<<<<<< GalaxySetupWnd.cpp
-  */
-  
-    std::vector<std::pair<std::string, std::string> > allowed_file_types;
-    //filter for graphics files
-    allowed_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("GSETUP_GRAPHICS_FILES") + " (PNG, Targa, JPG, BMP)", "*.png, *.PNG, *.tga, *.TGA, *.jpg, *.JPG, *.bmp, *.BMP"));
-    
-    GG::FileDlg dlg(*m_galaxy_file,
+    allowed_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("GSETUP_GRAPHICS_FILES") + " (PNG, Targa, JPG, BMP)", 
+                                                                     "*.png, *.PNG, *.tga, *.TGA, *.jpg, *.JPG, *.bmp, *.BMP"));
+
+    GG::FileDlg dlg(GalaxyFile(),
                     false, false, allowed_file_types,
                     ClientUI::FONT,
                     ClientUI::PTS,
                     GG::Clr(100,100,100,255),
                     GG::CLR_WHITE,
                     GG::CLR_BLACK); 
-//=======
-
-//>>>>>>> 1.3
-    dlg.Run();
-    
-    if (dlg.Result().empty())
-        return;
-    
-    //get and store result
-    //retrieve it from the set
-    std::string filename = *(dlg.Result().begin());   
-    
-    m_galaxy_file->SetText(filename);
-    
-    //uncheck and recheck the browse box
-    m_type_buttons->SetCheck(-1);
-    m_type_buttons->SetCheck(FROM_FILE);
-
-}//OnBrowse()
+    dlg.Run();    
+    if (!dlg.Result().empty()) {
+        m_galaxy_file->SetText(*dlg.Result().begin());
+        m_type_buttons->SetCheck(-1);
+        m_type_buttons->SetCheck(ClientUniverse::FROM_FILE);
+    }
+}
