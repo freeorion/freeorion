@@ -439,7 +439,7 @@ void FleetWnd::SystemClicked(int system_id)
 {
     if (!m_read_only && system_id != -1) {
         int empire_id = HumanClientApp::GetApp()->PlayerID();
-        for (std::set<int>::iterator it = m_fleets_lb->Selections().begin(); it != m_fleets_lb->Selections().end(); ++it) {
+        for (std::set<int>::const_iterator it = m_fleets_lb->Selections().begin(); it != m_fleets_lb->Selections().end(); ++it) {
             Fleet* fleet = FleetInRow(*it);
             if (fleet->NumShips()) {
                 HumanClientApp::Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), system_id));
@@ -619,3 +619,4 @@ std::string FleetWnd::TitleText() const
     Fleet* existing_fleet = FleetInRow(0);
     return "Empire " + boost::lexical_cast<std::string>(*existing_fleet->Owners().begin()) + " Fleets";
 }
+
