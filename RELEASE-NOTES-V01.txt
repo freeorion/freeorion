@@ -1,0 +1,133 @@
+A year after our project began, we are proud to announce the release of version
+0.1 of FreeOrion - the open source turn based space strategy game.  We have
+based our design and roadmap on a number of games that we consider a good
+influence:
+Master of Orion series, Sid Meier's Alpha Centauri, Europa Universalis, Hearts
+of Iron, Shogun: Total War, and so on.  We have built the core using C++, with
+OpenGL for drawing to the screen, and Zach Laine's GG widget library
+(http://www.sourceforge.net/projects/gigi).  We have a windows installer, and
+the standard configure/make option for Linux users.
+This release is based on the specifications detailed here:
+http://www.freeorion.org/index.php?module=Static_Docs&type=user&func=view&f=specifications/requirements.html
+
+We have stayed with this except in the following areas:
+* AI - this has been left out.  The primary reason is that we hope
+to implement python for the AI, and so it would not be worth writing two
+separate AI's, one for the 0.1 release, and then again when the python
+integration is complete.  The other reason is because the AI will differ
+drastically once starlanes are implemented, again resulting in wasted effort.
+
+Other than these differences, we have remained true to the specifications. 
+Progress will begin immediately on version 0.2, details to be found here:
+http://sourceforge.net/project/showfiles.php?group_id=75752&package_id=76257
+
+You can see our roadmap here, to see where we're headed:
+http://www.artclusta.com/bb/viewtopic.php?t=97
+
+It's been an interesting year.  Our project began with a great amount of
+enthusiasm from many interested parties.  Over the months, the ones that were
+committed became apparent, and the project built on that foundation.  The
+initial interest was far more than I originally anticipated, and the project
+has grown into something much larger, with great potential.  We have an
+excellent team managing the project.
+
+We invite you to continue following our project.  This release will have bugs,
+and is essentially a milestone for a final release, not a complete, playable
+game in itself.  If you discover bugs, you can report them here:
+http://sourceforge.net/tracker/?group_id=75752&atid=544942
+We are always looking for new programmers, artists, musicians, game designers,
+and more.  However, there is an important word of caution - this is a very
+early release, and therefore will contain many bugs, and is not what we would
+consider fun to play.  We are not ready to announce our project to the world
+at large.  So we ask you all to please avoid posting it to other news sites -
+games, or other.  We would rather announce it to a larger audience in
+conjunction with a later milestone.  That being said, we are still looking for
+valuable additions to the team to help make this a great game.
+
+You can download the game from
+http://sourceforge.net/project/showfiles.php?group_id=75752
+
+For all those a part of the teams that have made this release possible, we
+invite you to carry on as you have been.  Let's begin work on 0.2 and see that
+this game continues to develop and change into something great.  We've taken
+the first step, and now the rest of the project lies ahead.
+
+There are many people who deserve thanks for this project and for carrying us
+to the first release.  You will find their names listed in the credits of the
+game.  Samual Knowlton has described their efforts below.
+
+Thanks, and enjoy!
+
+Mark Saward
+FreeOrion Lead
+March 1st, 2004
+
+
+
+To the FreeOrion Community:
+
+We are very excited to have reached the first major milestone of theFreeOrion
+project. The nature of our project is a very ambitious one, and the most
+difficult part of the road is still ahead. Nevertheless, it is only through
+the dedication of many people that FreeOrion exists at all, and only on the
+merits of their most excellent example will the project succeed. For those of
+you who have not followed FreeOrion from the beginning, it is worth commending
+some of the specific accomplishments of our first release:
+
+- The FO graphic artists, who created the look and feel of FreeOrion out of
+nothing, whose professionalism and talent has maintained the highest
+standards; even a well-designed game with the best programmers falls flat
+without a polished presentation, and I have no doubt that we have a very
+strong beginning.
+
+- The FO audio team, who created the musical and auditory identity of FreeOrion
+with no basis to start from. Very little was asked of them for this early
+release, but instead of sitting idle, they have composed about a half-hour of
+original music.
+
+(It is worth noting for both of the above teams that a great deal of work has
+been done that did not make it into the v0.1 release. Our art assets are well
+ahead of schedule and some of them are extraordinaril ypolished, so check out
+the graphics and audio forums!)
+
+- The many people who contributed to the development and design process, as
+well as the details of the design itself. Creating a concrete design for a fun
+game out of several chaotic weeks of brainstorming is a difficult task, but if
+it remains as productive and enlightening as it has been, it will be a very
+enjoyable one. Also, I would like to extend my personal thanks to Mr. Alan
+Emrich, for invaluable advice and insight on the creation, evolution, and
+management of this process.
+
+- Last, but most certainly not least, the developers that are the heart and
+soul of a project like this, who have done a masterful job with their
+unfortunate duty of actually having to solve the problems that designers
+invent. Without the direction of Mark Saward, Zach Laine, and(formerly) Joseph
+Bissonnette -- and the many efforts of their team -- this project would be
+nothing more than an idea on an Internet forum.
+
+Credit where credit is due. Now, as for what to expect and what the future
+holds:
+
+I don't think anyone who has been involved with the FreeOrion community has
+unreasonable expectations of v0.1, but it bears mentioning for the benefit of
+any new arrivals that anyone who is expecting even a complete, simple game
+with a beginning, middle, and end will be disappointed. We did not want to
+allocate resources to polishing a product whose future changes are, in many
+cases, already decided; as such, the term 'snapshot' defines this release much
+better even than 'pre-alpha,' since it is more a sampling of our process thus
+far than it is any kind of indicator of what v1.0 will look like. 
+
+The v0.1 release was intended from the beginning to be the artistic equivalent
+of dumping colors on a canvas and selecting those parts we most want to work
+with. It is a beginning, a jumping-off point; nonetheless, while many
+difficult questions remain, FreeOrion is no longer 'vaporware' - and this
+seems to me one of the most difficult hurdles for any project like this.
+
+The version v0.2 design document is published on our web site, and we are
+currently in the process of designing v0.3. Many thanks to everyone who
+contributed to FreeOrion, and I look forward to many more years of working
+with this excellent community.
+
+Samuel W. Knowlton
+FreeOrion Lead Designer
+March 1st, 2004
