@@ -78,24 +78,22 @@ Planet::Planet(const GG::XMLElement& elem) :
     }
 }
 
-UniverseObject::Visibility Planet::Visible(int empire_id) const
+UniverseObject::Visibility Planet::GetVisibility(int empire_id) const
 {
     // use the containing system's visibility
-    return GetSystem()->Visible(empire_id);
+    return GetSystem()->GetVisibility(empire_id);
 }
 
-GG::XMLElement Planet::XMLEncode(int empire_id/* = ENCODE_FOR_ALL_EMPIRES*/) const
+GG::XMLElement Planet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
     // Partial encoding of Planet for limited visibility
     using GG::XMLElement;
     using boost::lexical_cast;
     using std::string;
 
-    Visibility vis;
-    if (empire_id == ENCODE_FOR_ALL_EMPIRES)
+    Visibility vis= GetVisibility(empire_id);
+    if (empire_id == Universe::ALL_EMPIRES)
         vis = FULL_VISIBILITY;
-    else
-        vis = Visible(empire_id);
 
     XMLElement retval("Planet" + boost::lexical_cast<std::string>(ID()));
     retval.AppendChild(UniverseObject::XMLEncode(empire_id));

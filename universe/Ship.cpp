@@ -106,10 +106,10 @@ Fleet* Ship::GetFleet() const
     return dynamic_cast<Fleet*>(GetUniverse().Object(m_fleet_id));
 }
 
-UniverseObject::Visibility Ship::Visible(int empire_id) const
+UniverseObject::Visibility Ship::GetVisibility(int empire_id) const
 {
-   // Ship is visible if the fleet it is in is visible
-   return FleetID() == INVALID_OBJECT_ID ? NO_VISIBILITY : GetUniverse().Object(FleetID())->Visible(empire_id);
+   // Ship is visible if its fleet is visible
+   return FleetID() == INVALID_OBJECT_ID ? NO_VISIBILITY : GetFleet()->GetVisibility(empire_id);
 }
 
 bool Ship::IsArmed() const
@@ -117,7 +117,7 @@ bool Ship::IsArmed() const
     return (m_design.attack > 0);
 }
 
-GG::XMLElement Ship::XMLEncode(int empire_id/* = ENCODE_FOR_ALL_EMPIRES*/) const
+GG::XMLElement Ship::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
    using GG::XMLElement;
    using boost::lexical_cast;

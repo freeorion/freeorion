@@ -55,14 +55,17 @@ Fleet::Fleet(const GG::XMLElement& elem) :
     }
 }
 
-UniverseObject::Visibility Fleet::Visible(int empire_id) const
+UniverseObject::Visibility Fleet::GetVisibility(int empire_id) const
 {
-    // TODO
-    return NO_VISIBILITY;
+    Empire* empire = 0;
+    if (empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
+        return FULL_VISIBILITY;
+    else
+        return PARTIAL_VISIBILITY; // TODO: do something smarter here, such as a range check vs. owned systems and fleets
 }
 
 
-GG::XMLElement Fleet::XMLEncode(int empire_id/* = ENCODE_FOR_ALL_EMPIRES*/) const
+GG::XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
    // Fleets are either visible or not, so there is no 
    // difference between the full and partial visibilty
@@ -276,7 +279,11 @@ void Fleet::MovementPhase()
                         movement_left = 0.0;
                     }
                 }
-                // TODO : explore new system
+
+                // explore new system
+                Empire* empire = Empires().Lookup(*Owners().begin()); // assumes one owner empire per fleet
+                empire->AddExploredSystem(next_system->ID());
+                Logger().debugStream() << "    Added explored system #" << next_system->ID() << " to empire " << *Owners().begin();
             } else {
                 Logger().debugStream() << "    distance=" << distance << " > movement_left=" << movement_left << "; we're done";
                 Move(direction_x / distance * movement_left, direction_y / distance * movement_left);

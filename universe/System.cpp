@@ -53,7 +53,7 @@ System::System(const GG::XMLElement& elem) :
         m_star = StarType(lexical_cast<int>(elem.Child("m_star").Text()));
 
         Visibility vis = Visibility(lexical_cast<int>(elem.Child("UniverseObject").Child("vis").Text()));
-        if (vis == FULL_VISIBILITY) {
+        if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
             m_orbits = lexical_cast<int>(elem.Child("m_orbits").Text());
             m_objects = GG::MultimapFromString<int, int>(elem.Child("m_objects").Text());
             m_starlanes_wormholes = GG::MapFromString<int, bool>(elem.Child("m_starlanes_wormholes").Text());
@@ -103,31 +103,36 @@ bool System::HasWormholeTo(int id) const
    return (it == m_starlanes_wormholes.end() ? false : it->second == true);
 }
 
-UniverseObject::Visibility System::Visible(int empire_id) const
+UniverseObject::Visibility System::GetVisibility(int empire_id) const
 {
-   // if system is owned by this empire, or it has been explored it is fully visible, if not it
-   // will be partially visible
-
-   Empire* empire = (Empires()).Lookup(empire_id);
-       
-   if (OwnedBy(empire_id) || empire->HasExploredSystem(ID()))
-   {
-      return FULL_VISIBILITY;
-   }
-
-   return PARTIAL_VISIBILITY;
+    // if system is at least partially owned by this empire it is fully visible, if it has been explored it is partially visible, 
+    // and otherwise it will be partially visible
+    Empire* empire = 0;
+    if (empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
+        return FULL_VISIBILITY;
+    else if ((empire = Empires().Lookup(empire_id)) && empire->HasExploredSystem(ID()))
+        return PARTIAL_VISIBILITY;
+    else
+        return NO_VISIBILITY;
 }
 
 
-GG::XMLElement System::XMLEncode(int empire_id/* = ENCODE_FOR_ALL_EMPIRES*/) const
+GG::XMLElement System::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
    using GG::XMLElement;
    using boost::lexical_cast;
    using std::string;
+
+   Visibility vis = GetVisibility(empire_id);
+
    XMLElement retval("System" + boost::lexical_cast<std::string>(ID()));
    retval.AppendChild(UniverseObject::XMLEncode(empire_id)); // use partial encode so owners are not visible
    retval.AppendChild(XMLElement("m_star", lexical_cast<std::string>(m_star)));
-   if (empire_id == ENCODE_FOR_ALL_EMPIRES || Visible(empire_id) == FULL_VISIBILITY) {
+   if (vis == PARTIAL_VISIBILITY) {
+      retval.AppendChild(XMLElement("m_orbits", lexical_cast<std::string>(m_orbits)));
+      retval.AppendChild(XMLElement("m_objects", GG::StringFromMultimap<int, int>(PartiallyVisibleObjects(empire_id))));
+      retval.AppendChild(XMLElement("m_starlanes_wormholes", GG::StringFromMap<int, bool>(m_starlanes_wormholes)));
+   } else if (vis == FULL_VISIBILITY) {
       retval.AppendChild(XMLElement("m_orbits", lexical_cast<std::string>(m_orbits)));
       retval.AppendChild(XMLElement("m_objects", GG::StringFromMultimap<int, int>(m_objects)));
       retval.AppendChild(XMLElement("m_starlanes_wormholes", GG::StringFromMap<int, bool>(m_starlanes_wormholes)));
@@ -226,4 +231,15 @@ void System::MovementPhase( )
 
 void System::PopGrowthProductionResearchPhase( )
 {
+}
+
+System::ObjectMultimap System::PartiallyVisibleObjects(int empire_id) const
+{
+    ObjectMultimap retval;
+    const Universe& universe = GetUniverse();
+    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (universe.Object(it->second)->GetVisibility(empire_id) <= PARTIAL_VISIBILITY)
+            retval.insert(*it);
+    }
+    return retval;
 }

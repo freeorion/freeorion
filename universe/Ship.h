@@ -63,8 +63,8 @@ public:
    int    FleetID() const            {return m_fleet_id;} ///< returns the ID of the fleet the ship is residing in
    Fleet* GetFleet() const;                               ///< returns the ID of the fleet the ship is residing in
    
-   virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-   virtual GG::XMLElement XMLEncode(int empire_id = ENCODE_FOR_ALL_EMPIRES) const; ///< constructs an XMLElement from a Ship object with visibility limited relative to the input empire
+   virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+   virtual GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a Ship object with visibility limited relative to the input empire
    
    bool IsArmed() const; 
    

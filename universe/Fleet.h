@@ -30,9 +30,9 @@ public:
     const_iterator begin() const  {return m_ships.begin();}  ///< returns the begin const_iterator for the ships in the fleet
     const_iterator end() const    {return m_ships.end();}    ///< returns the end const_iterator for the ships in the fleet
 
-    virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+    virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
 
-    virtual GG::XMLElement XMLEncode(int empire_id = ENCODE_FOR_ALL_EMPIRES) const; ///< constructs an XMLElement from a Fleet object with visibility limited relative to the input empire
+    virtual GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a Fleet object with visibility limited relative to the input empire
 
     /** Returns the list of systems that this fleet will move through en route to its destination (may be empty). 
         If this fleet is currently at a system, that system will be the first one in the list. */

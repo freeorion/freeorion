@@ -49,12 +49,12 @@ UniverseObject::UniverseObject(const GG::XMLElement& elem)
         Visibility vis = Visibility(lexical_cast<int>(elem.Child("vis").Text()));
 
         m_id = lexical_cast<int>(elem.Child("m_id").Text());
-        m_name = elem.Child("m_name").Text();
         m_x = lexical_cast<double>(elem.Child("m_x").Text());
         m_y = lexical_cast<double>(elem.Child("m_y").Text());
         m_system_id = lexical_cast<int>(elem.Child("m_system_id").Text());
 
-        if (vis == FULL_VISIBILITY) {
+        if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
+            m_name = elem.Child("m_name").Text();
             m_owners = GG::ContainerFromString<std::set<int> >(elem.Child("m_owners").Text());
         }
     } catch (const boost::bad_lexical_cast& e) {
@@ -90,27 +90,27 @@ bool UniverseObject::WhollyOwnedBy(int empire) const
     return m_owners.size() == 1 && m_owners.find(empire) != m_owners.end();
 }
 
-UniverseObject::Visibility UniverseObject::Visible(int empire_id) const
+UniverseObject::Visibility UniverseObject::GetVisibility(int empire_id) const
 {
-    return m_owners.find(empire_id) != m_owners.end() ? FULL_VISIBILITY : PARTIAL_VISIBILITY;
+    return (empire_id == Universe::ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? FULL_VISIBILITY : NO_VISIBILITY;
 }
 
-GG::XMLElement UniverseObject::XMLEncode(int empire_id/* = ENCODE_FOR_ALL_EMPIRES*/) const
+GG::XMLElement UniverseObject::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
     // limited visibility object -- no owner info
    using GG::XMLElement;
    using boost::lexical_cast;
 
-   bool fully_visible = empire_id == ENCODE_FOR_ALL_EMPIRES || Visible(empire_id) == FULL_VISIBILITY;
+   Visibility vis = GetVisibility(empire_id);
    
    XMLElement retval("UniverseObject");
-   retval.AppendChild(XMLElement("vis", lexical_cast<std::string>(fully_visible ? FULL_VISIBILITY : PARTIAL_VISIBILITY)));
+   retval.AppendChild(XMLElement("vis", lexical_cast<std::string>(vis)));
    retval.AppendChild(XMLElement("m_id", lexical_cast<std::string>(m_id)));
-   retval.AppendChild(XMLElement("m_name", m_name));
    retval.AppendChild(XMLElement("m_x", lexical_cast<std::string>(m_x)));
    retval.AppendChild(XMLElement("m_y", lexical_cast<std::string>(m_y)));
    retval.AppendChild(XMLElement("m_system_id", lexical_cast<std::string>(m_system_id)));
-   if (fully_visible) {
+   if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
+      retval.AppendChild(XMLElement("m_name", m_name));
       retval.AppendChild(XMLElement("m_owners", GG::StringFromContainer<std::set<int> >(m_owners)));
    }
    return retval;
