@@ -31,6 +31,7 @@ class ClientUniverse;
 class ClientEmpire;
 class Tech;
 class Combat;
+class GalaxyMapScreen;
 
 //! \brief ClientUI Main Module
 //!This is the main class of the ClientUI module.

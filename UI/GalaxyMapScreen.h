@@ -39,7 +39,7 @@
 class PlanetBarWnd; //to be defined externally
 class SystemIcon;  //extends staticgraphic
 class Icon;         //a staticgraphic that responds to events, extends staticgraphic
-
+class MapWnd;
     
 
 //! Contains the main game screen
