@@ -40,17 +40,16 @@ int OrderSet::AddOrder(Order* order)
 
 bool OrderSet::RecindOrder(int order)
 {
-    // this is disabled until it decided whether or not we'll need it
-#if 0
     bool retval = false;
     OrderMap::iterator it = m_orders.find(order);
     if (it != m_orders.end()) {
-        m_orders.erase(it);
-        retval = true;
+        if (it->second->Undo()) {
+            delete it->second;
+            m_orders.erase(it);
+            retval = true;
+        }
     }
     return retval;
-#endif
-    return false;
 }
 
 void OrderSet::Reset()
