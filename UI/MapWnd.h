@@ -76,6 +76,7 @@ public:
     void SelectFleet(Fleet* fleet);            //!< allows programmatic selection of fleets
 
     void SetFleetMovement(FleetButton* fleet_button); //!< allows code that creates FleetButtons to indicate where (and whether) they are moving
+    void SetFleetMovement(Fleet* fleet);       //!< allows updates for single fleets that are already moving
 
     void OnTurnUpdate();   //!< called when m_turn_update is clicked
 
@@ -124,8 +125,6 @@ private:
     static const int NUM_BACKGROUNDS;
     static double s_min_scale_factor;
     static double s_max_scale_factor;
-
-    friend class GalaxyMapScreen;    //this is basically a part of that screen anyway
 };
 
 

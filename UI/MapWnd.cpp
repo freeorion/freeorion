@@ -531,6 +531,15 @@ void MapWnd::SetFleetMovement(FleetButton* fleet_button)
     }
 }
 
+void MapWnd::SetFleetMovement(Fleet* fleet)
+{
+    GG::Pt ul = ClientUpperLeft();
+    std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
+    if (it != m_fleet_lines.end()) {
+        m_fleet_lines[fleet].destinations = fleet->TravelRoute();
+    }
+}
+
 void MapWnd::OnTurnUpdate()
 {
     //hide sidepanel
