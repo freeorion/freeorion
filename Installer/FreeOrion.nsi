@@ -19,7 +19,7 @@ SetCompressor lzma
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "FreeOrion"
 !define PRODUCT_VERSION "0.1"
-!define PRODUCT_PUBLISHER "The FreeOrion Team"
+!define PRODUCT_PUBLISHER "The FreeOrion Community"
 !define PRODUCT_WEB_SITE "http://www.freeorion.org"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\freeorion.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -52,7 +52,6 @@ BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} Installer $$Revision$$ (NSIS v2
  NotWin9x:
   SetShellVarContext all
   StrCmp $0 "Admin" all_fine
-;  StrCmp $0 "Power" all_fine
   ; no admin privileges, installation will probably fail, so warn the user
   SetShellVarContext current
   MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONEXCLAMATION "You do not have administrator privileges required to perform the ${UN}installation! If you continue, ${UN}install is likely to fail (silently). It is strongy recommended that you abort ${UN}install! Do you still wish to proceed?" IDYES all_fine
@@ -61,17 +60,12 @@ BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION} Installer $$Revision$$ (NSIS v2
  all_fine:
   StrCmp $SMPROGRAMS "" 0 no_bug
   ; a strange bug...
-;  SetShellVarContext all
-;  StrCmp $SMPROGRAMS "" 0 +3
-  MessageBox MB_OK|MB_ICONSTOP "I'm unable to determine the startmenu-folder, sorry. THIS IS A KNOWN BUG. If you can reproduce it, please post information to the FreeOrion Forum (www.artclusta.com/bb). Quitting. (Try to renaming installer, sometimes it works, don't ask me why)"
+  MessageBox MB_OK|MB_ICONSTOP "I'm unable to determine the startmenu-folder, sorry. THIS IS A KNOWN BUG. If you can reproduce it, please post information to the FreeOrion Forum (www.artclusta.com/bb). Quitting. (Try to rename the installer, sometimes it works, don't ask me why)"
   Quit
-;  MessageBox MB_OK "Hmm. Something went wrong with determining the Startmenu-folder. $SMPROGRAMS"
  no_bug:
 !macroend
 
 Function .onInit
-  MessageBox MB_ICONINFORMATION|MB_OKCANCEL|MB_DEFBUTTON2 "This will not install FreeOrion 0.1, only an unfinished CVS snapshot." IDOK +2
-  Quit
   !insertmacro CHECKUSER ""
 FunctionEnd
 
@@ -154,7 +148,7 @@ Section "Required files" SecRequired
   SectionIn RO ; this can't be deselected
   SetOutPath "$INSTDIR"
   SetOverwrite on
-  File /r "..\default" ; for now, this will also install default\CVS, but I don't care...
+  File /r "C:\CVS-export\FreeOrion\default" ; we don't want the CVS directory included, so use an 'export'ed Repository
   File "..\zlib.dll"
   File "..\SDL_mixer.dll"
   File "..\SDL.dll"
@@ -179,10 +173,12 @@ SectionEnd
 
 Section -AdditionalIcons
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
+  WriteIniStr "$INSTDIR\FreeOrion Forums.url" "InternetShortcut" "URL" "http://www.artclusta.com/bb"
   SetOutPath "$INSTDIR" ; otherwise Shortcuts might have SOURCEDIR as working directory
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory "$SMPROGRAMS\$ICONS_GROUP"
     CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
+    CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion Forums.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
     CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk" "$INSTDIR\uninst.exe"
     CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion dedicated server.lnk" "$INSTDIR\freeoriond.exe"
     CreateShortCut "$SMPROGRAMS\$ICONS_GROUP\FreeOrion.lnk" "$INSTDIR\freeorion.exe"
@@ -209,17 +205,6 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecRequired} ""
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
-
-
-;Function un.onUninstSuccess
-;  HideWindow
-;  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) wurde erfolgreich deinstalliert."
-;FunctionEnd
-
-;Function un.onInit
-;  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Möchten Sie $(^Name) und alle seinen Komponenten deinstallieren?" IDYES +2
-;  Abort
-;FunctionEnd
 
 Section Uninstall
   ReadRegStr $ICONS_GROUP ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "${PRODUCT_STARTMENU_REGVAL}"
@@ -256,7 +241,9 @@ Section Uninstall
   SetAutoClose false
 SectionEnd
 
-; Custom Pages and other functions
+; === Custom Pages and other functions ===
+
+; This function checks whether the user wants to install the source code, and aborts if he does not.
 Function CheckIfSource
   StrCpy $SOURCEDIR "$INSTDIR\Source"
   SectionGetFlags "${SecInstallSource}" $0
