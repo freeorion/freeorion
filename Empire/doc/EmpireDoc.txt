@@ -65,8 +65,12 @@
   - 5-26-2003	Cleaned up some of the method documentation so its easier to read and more descriptive.
 			(there is still much to be done)
 		Added links to important external documents.
+  - 6-23-2003   Documentation update/cleanup.
   \section code Code Revisions
   - 5-26-2003	Initial Code Release Committed to CVS
+  - 6-23-2003   Nearly all methods implemented and partially tested.  
+               EmpireManager::UpdateEmpireStatus() changed so it does not create empires.
+               THIS IS NOT REFLECTED IN THE IDS!!!
 */
 
 
@@ -114,17 +118,23 @@
    - log4cpp 0.2.7
    - any others I may have missed.  (Please jump in people)
 
-  It is assumed that your include directories are set up such that:
-	- GG is a subdirectory of the root include directory.
-	- GG contains a subdirectory, XML, with XML related includes stored there.
-	- There is an include directory defined with Empire-related includes at its root
-	  (i.e.  #include "Empire.h" will work)
- 
+ It is also assumed that the build environment is set up with the same
+ lib/include paths as the Makefiles and .dev files in the FreeOrion CVS repository.
 */
 
 /**
  \page issues Problems and Open Issues
- None currently.
+ \section statics Static Members
+ There is a const string EmpireManager::EMPIRE_UPDATE_TAG, which is a static member of 
+ class EmpireManager.  This string is used in the ClientEmpireManager constructor,
+ and has caused access violations in my tests, in cases where a ClientEmpireManager
+ is declared as a static object.  
+ 
+ To avoid this problem, empire managers should be declared as stack or heap
+ dynamic objects to ensure that all static members are initialized prior to their creation.
+ 
+ The EmpireManager::UpdateEmpireStatus() method does not work as described in tbe IDS.
+ (It will not create new Empires).
 */
 
 

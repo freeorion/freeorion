@@ -60,17 +60,17 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = C:/FreeOrion/Empire/doc/EmpireDoc.txt \
                          C:/FreeOrion/Empire/TechManager.h \
-                         C:/FreeOrion/Empire/ClientEmpire.cpp \
-                         C:/FreeOrion/Empire/ClientEmpire.h \
                          C:/FreeOrion/Empire/Empire.cpp \
                          C:/FreeOrion/Empire/Empire.h \
                          C:/FreeOrion/Empire/EmpireManager.cpp \
                          C:/FreeOrion/Empire/EmpireManager.h \
-                         C:/FreeOrion/Empire/ServerEmpire.cpp \
-                         C:/FreeOrion/Empire/ServerEmpire.h \
                          C:/FreeOrion/Empire/TechLevel.cpp \
                          C:/FreeOrion/Empire/TechLevel.h \
-                         C:/FreeOrion/Empire/TechManager.cpp
+                         C:/FreeOrion/Empire/TechManager.cpp \
+                         C:/FreeOrion/Empire/ServerEmpireManager.cpp \
+                         C:/FreeOrion/Empire/ServerEmpireManager.h \
+                         C:/FreeOrion/Empire/ClientEmpireManager.cpp \
+                         C:/FreeOrion/Empire/ClientEmpireManager.h
 FILE_PATTERNS          = 
 RECURSIVE              = NO
 EXCLUDE                = 
