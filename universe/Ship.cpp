@@ -1,11 +1,7 @@
 #include "Ship.h"
 #include "XMLDoc.h"
 
-#ifdef FREEORION_BUILD_SERVER
-#include "../server/ServerApp.h"
-#else
-#include "../client/ClientApp.h"
-#endif
+#include "../util/AppInterface.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -98,13 +94,9 @@ Ship::Ship(int empire_id, int design_id)
 {
    // This constructor should only be used by the server, will not work if called from client.
    
-#ifdef FREEORION_BUILD_SERVER
    // Lookup empire where design is located
-   ServerApp* server_app = ServerApp::GetApp();
-   Empire* empire = (server_app->Empires()).Lookup(empire_id);
-#else
-    Empire* empire = ClientApp::Empire().Lookup(empire_id);
-#endif
+    Empire* empire = Empires().Lookup(empire_id);
+
 
    if (empire->CopyShipDesign(design_id, m_design) != true)
    {
@@ -128,12 +120,7 @@ Ship::Ship(const GG::XMLElement& elem) :
 UniverseObject::Visibility Ship::Visible(int empire_id) const
 {
    // Ship is visible if the fleet it is in is visible
-#ifdef FREEORION_BUILD_SERVER
-   ServerApp* server_app = ServerApp::GetApp();
-   Empire* empire = (server_app->Empires()).Lookup(empire_id);
-#else
-   Empire* empire = ClientApp::Empire().Lookup(empire_id);
-#endif
+    Empire* empire = Empires().Lookup(empire_id);
    if ((empire->HasFleet(FleetID())) || (empire->HasVisibleFleet(FleetID())))
    {
       return FULL_VISIBILITY;

@@ -4,10 +4,7 @@
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
-#ifdef FREEORION_BUILD_SERVER
-#include "../server/ServerApp.h"
-#endif
-
+#include "../util/AppInterface.h"
 #include <stdexcept>
 
 Planet::Planet() : 
@@ -65,10 +62,9 @@ Planet::Planet(const GG::XMLElement& elem) :
 UniverseObject::Visibility Planet::Visible(int empire_id) const
 {
    // if system is visible, then planet is too. Full visibility
-   // if owned by player, partial if not.
-#ifdef FREEORION_BUILD_SERVER 
-   ServerApp* server_app = ServerApp::GetApp();
-   Empire* empire = (server_app->Empires()).Lookup(empire_id);
+   // if owned by player, partial if not. 
+  
+   Empire* empire = (Empires()).Lookup(empire_id);
 
    if (empire->HasPlanet(ID()))
    {
@@ -79,7 +75,7 @@ UniverseObject::Visibility Planet::Visible(int empire_id) const
    {
       return PARTIAL_VISIBILITY;
    }
-#endif
+
    return NO_VISIBILITY;
 }
 

@@ -1,24 +1,37 @@
-#include "ServerUniverse.h"
-
+#include "Universe.h"
+#include "UniverseObject.h"
 #include "Fleet.h"
 #include "Planet.h"
+#include "Ship.h"
+#include "System.h"
+#include "XMLDoc.h"
 #include "Predicates.h"
 #include "../util/Random.h"
-#include "../server/ServerApp.h"
-#include "XMLDoc.h"
 
-#include <log4cpp/Appender.hh>
-#include <log4cpp/Category.hh>
-#include <log4cpp/PatternLayout.hh>
-#include <log4cpp/FileAppender.hh>
-#include <boost/lexical_cast.hpp>
+#include "../Empire/ServerEmpireManager.h"
+
+#ifdef FREEORION_BUILD_HUMAN
+#include "../client/human/HumanClientApp.h"
+#endif
+
+#include "../util/AppInterface.h"
+
+#include <stdexcept>
+#include <cmath>
+
+namespace {
+UniverseObject* NewFleet(const GG::XMLElement& elem)  {return new Fleet(elem);}
+UniverseObject* NewPlanet(const GG::XMLElement& elem) {return new Planet(elem);}
+UniverseObject* NewShip(const GG::XMLElement& elem)   {return new Ship(elem);}
+UniverseObject* NewSystem(const GG::XMLElement& elem) {return new System(elem);}
+}
 
 
 namespace {
-const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, ClientUniverse::UNIVERSE_WIDTH]
-const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, ClientUniverse::UNIVERSE_WIDTH]
+const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, Universe::UNIVERSE_WIDTH]
+const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, Universe::UNIVERSE_WIDTH]
 const int     ADJACENCY_BOXES = 25;
-const double  ADJACENCY_BOX_SIZE = ClientUniverse::UNIVERSE_WIDTH / ADJACENCY_BOXES;
+const double  ADJACENCY_BOX_SIZE = Universe::UNIVERSE_WIDTH / ADJACENCY_BOXES;
 
 // "only" defined for 1 <= n <= 3999, as we can't
 // display the symbol for 5000
@@ -62,12 +75,128 @@ void LoadPlanetNames(std::list<std::string>& names)
 }
 }
 
-ServerUniverse::ServerUniverse() : 
-    m_last_allocated_id(-1)
+
+
+// static(s)
+const double Universe::UNIVERSE_WIDTH = 1000.0;
+
+Universe::Universe()
 {
+    m_factory.AddGenerator("Fleet", &NewFleet);
+    m_factory.AddGenerator("Planet", &NewPlanet);
+    m_factory.AddGenerator("Ship", &NewShip);
+    m_factory.AddGenerator("System", &NewSystem);
+    m_last_allocated_id = -1;
+}
+   
+Universe::Universe(const GG::XMLElement& elem)
+{
+    m_factory.AddGenerator("Fleet", &NewFleet);
+    m_factory.AddGenerator("Planet", &NewPlanet);
+    m_factory.AddGenerator("Ship", &NewShip);
+    m_factory.AddGenerator("System", &NewSystem);
+
+    SetUniverse(elem);
+    m_last_allocated_id = -1;
+    
+    
 }
 
-void ServerUniverse::CreateUniverse(Shape shape, int size, int players, int ai_players)
+Universe::~Universe()
+{
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+        delete it->second;
+}
+
+void Universe::SetUniverse(const GG::XMLElement& elem)
+{
+    using GG::XMLElement;
+
+    if (elem.Tag() != "Universe")
+        throw std::invalid_argument("Attempted to construct a Universe from an XMLElement that had a tag other than \"Universe\"");
+
+    // wipe out anything present in the object map
+    for (ObjectMap::iterator itr= m_objects.begin(); itr != m_objects.end(); ++itr)
+        delete itr->second;
+    m_objects.clear();
+
+    for (int i = 0; i < elem.Child("m_objects").NumChildren(); ++i) {
+        if (UniverseObject* obj = m_factory.GenerateObject(elem.Child("m_objects").Child(i))) {
+            m_objects[obj->ID()] = obj;
+        } else {
+
+           Logger().errorStream() << "Universe::SetUniverse : Failed while trying to factory-generate "
+                "m_objects element #" << i << " of the incoming turn update universe.";
+
+        }
+    }
+}
+
+
+const UniverseObject* Universe::Object(int id) const
+{
+    const_iterator it = m_objects.find(id);
+    return (it != m_objects.end() ? it->second : 0);
+}
+
+UniverseObject* Universe::Object(int id)
+{
+    iterator it = m_objects.find(id);
+    return (it != m_objects.end() ? it->second : 0);
+}
+
+GG::XMLElement Universe::XMLEncode() const
+{
+    GG::XMLElement retval("Universe");
+
+    GG::XMLElement temp("m_objects");
+    for (const_iterator it = begin(); it != end(); ++it)
+        temp.AppendChild(it->second->XMLEncode());
+    retval.AppendChild(temp);
+    return retval;
+}
+
+GG::XMLElement Universe::XMLEncode(int empire_id) const
+{
+   using GG::XMLElement;
+
+   XMLElement element("Universe");
+
+   XMLElement object_map("m_objects");
+   for(const_iterator itr = begin(); itr != end(); ++itr)
+   {
+      // determine visibility
+      UniverseObject::Visibility vis = (*itr).second->Visible(empire_id);
+      if (vis == UniverseObject::FULL_VISIBILITY)
+      {
+         XMLElement univ_object("univ_object");
+         univ_object.AppendChild( (*itr).second->XMLEncode() );
+         object_map.AppendChild(univ_object);
+      }
+      else if (vis == UniverseObject::PARTIAL_VISIBILITY)
+      {
+         XMLElement univ_object("univ_object");
+         univ_object.AppendChild( (*itr).second->XMLEncode(empire_id) );
+         object_map.AppendChild(univ_object);
+      }
+
+      // for NO_VISIBILITY no element is added
+   }
+   element.AppendChild(object_map);
+
+   return element;
+}
+
+
+
+/********************************************************************
+ Methods for universe creation and object creation -- merged in from
+ServerUniverse
+**********************************************************************/
+
+
+
+void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players)
 {
     // wipe out anything present in the object map
     for (ObjectMap::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr)
@@ -76,7 +205,7 @@ void ServerUniverse::CreateUniverse(Shape shape, int size, int players, int ai_p
 
     m_last_allocated_id = -1;
 
-    ServerApp::GetApp()->Logger().debugStream() << "Creating universe with " << size << " stars and " << players << " players.";
+    Logger().debugStream() << "Creating universe with " << size << " stars and " << players << " players.";
 
     std::vector<int> homeworlds;
 
@@ -104,7 +233,7 @@ void ServerUniverse::CreateUniverse(Shape shape, int size, int players, int ai_p
         GenerateIrregularGalaxy(size, adjacency_grid);
         break;
     default:
-        ServerApp::GetApp()->Logger().errorStream() << "ServerUniverse::ServerUniverse : Unknown galaxy shape: "<< shape << ".  Using IRREGULAR as default.";
+        Logger().errorStream() << "Universe::Universe : Unknown galaxy shape: "<< shape << ".  Using IRREGULAR as default.";
         GenerateIrregularGalaxy(size, adjacency_grid);
     }
 
@@ -113,7 +242,7 @@ void ServerUniverse::CreateUniverse(Shape shape, int size, int players, int ai_p
     GenerateEmpires(players, ai_players, homeworlds);
 }
 
-void ServerUniverse::CreateUniverse(const std::string& map_file, int size, int players, int ai_players)
+void Universe::CreateUniverse(const std::string& map_file, int size, int players, int ai_players)
 {
     // intialize the ID counter
     m_last_allocated_id = -1;   
@@ -121,18 +250,8 @@ void ServerUniverse::CreateUniverse(const std::string& map_file, int size, int p
     // TODO
 }
 
-ServerUniverse::ServerUniverse(const GG::XMLElement& elem) : 
-    ClientUniverse(elem),
-    m_last_allocated_id(-1)
-{
-}
 
-ServerUniverse::~ServerUniverse()
-{
-    // TODO
-}
-
-int ServerUniverse::Insert(UniverseObject* obj)
+int Universe::Insert(UniverseObject* obj)
 {
    int retval = UniverseObject::INVALID_OBJECT_ID;
 #if 0 // this is turned off for now, since the functionality is not yet needed
@@ -174,7 +293,7 @@ int ServerUniverse::Insert(UniverseObject* obj)
 }
 
 
-UniverseObject* ServerUniverse::Remove(int id)
+UniverseObject* Universe::Remove(int id)
 {
    UniverseObject* retval = 0;
    iterator it = m_objects.find(id);
@@ -187,41 +306,39 @@ UniverseObject* ServerUniverse::Remove(int id)
    return retval;
 }
    
-bool ServerUniverse::Delete(int id)
+bool Universe::Delete(int id)
 {
    UniverseObject* obj = Remove(id);
    delete obj;
    return obj;
 }
    
-UniverseObject* ServerUniverse::Object(int id)
-{
-   iterator it = m_objects.find(id);
-   return (it != m_objects.end() ? it->second : 0);
-}
-
-void ServerUniverse::MovementPhase(std::vector<SitRepEntry>& sit_reps)
+   
+   
+   
+   
+void Universe::MovementPhase(std::vector<SitRepEntry>& sit_reps)
 {
    // TODO
 }
    
-void ServerUniverse::PopGrowthProductionResearch(std::vector<SitRepEntry>& sit_reps)
+void Universe::PopGrowthProductionResearch(std::vector<SitRepEntry>& sit_reps)
 {
    // TODO
 }
 
 
-void ServerUniverse::GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid)
+void Universe::GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid)
 {
    // TODO
 }
 
-void ServerUniverse::GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid)
+void Universe::GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 {
    // TODO
 }
 
-void ServerUniverse::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
+void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 {
     std::list<std::string> star_names;
     LoadPlanetNames(star_names);
@@ -257,7 +374,7 @@ void ServerUniverse::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency
         System* system = new System(star_type, num_orbits, star_name, UNIVERSE_WIDTH * RandZeroToOne(), UNIVERSE_WIDTH * RandZeroToOne());
         int new_sys_id = Insert(system);
         if (new_sys_id == UniverseObject::INVALID_OBJECT_ID) {
-            throw std::runtime_error("ServerUniverse::GenerateIrregularGalaxy : Attemp to insert system " + 
+            throw std::runtime_error("Universe::GenerateIrregularGalaxy : Attemp to insert system " + 
                                      star_name + " into the object map failed.");
         }
         while (!placed && attempts < 10) {
@@ -334,7 +451,7 @@ void ServerUniverse::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency
 
 
 
-void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>& homeworlds, AdjacencyGrid& adjacency_grid)
+void Universe::GenerateHomeworlds(int players, int stars, std::vector<int>& homeworlds, AdjacencyGrid& adjacency_grid)
 {
     homeworlds.clear();
 
@@ -380,7 +497,7 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
 }
 
 
-void ServerUniverse::PopulateSystems()
+void Universe::PopulateSystems()
 {
     ObjectVec sys_vec = FindObjects(IsSystem);
 
@@ -418,8 +535,9 @@ void ServerUniverse::PopulateSystems()
     }
 }
 
-void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<int>& homeworlds)
+void Universe ::GenerateEmpires(int players, int ai_players, std::vector<int>& homeworlds)
 {
+#ifdef FREEORION_BUILD_SERVER
    // create empires and assign homeworlds, names, colors, and fleet ranges to
    // for each one
 
@@ -437,13 +555,19 @@ void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<in
       int home_planet_id = homeworlds[i];
 
       // create new Empire object through empire manager
-      Empire* empire = ServerApp::GetApp()->Empires().CreateEmpire(name, color, home_planet_id, i < players ? Empire::CONTROL_HUMAN : Empire::CONTROL_AI);
+      ServerEmpireManager* server_manager;
+      server_manager = dynamic_cast<ServerEmpireManager*>(&Empires());
+      if(!server_manager)
+      {
+        throw std::runtime_error("NULL dynamic cast to ServerEmpireManager.  This means you are trying to create a universe in the client, which you cant do.");
+      }
+      Empire* empire = server_manager->CreateEmpire(name, color, home_planet_id, i < players ? Empire::CONTROL_HUMAN : Empire::CONTROL_AI);
       empire->SetFleetIDs(min_fleet_id, max_fleet_id);
-
+    
       // set ownership of home planet
       int empire_id = empire->EmpireID();
       Planet* home_planet = dynamic_cast<Planet*>(Object(homeworlds[i]));
-      ServerApp::GetApp()->Logger().debugStream() << "Setting " << Object(home_planet->SystemID())->Name() << " (Planet #" <<  home_planet->ID() << 
+      Logger().debugStream() << "Setting " << Object(home_planet->SystemID())->Name() << " (Planet #" <<  home_planet->ID() << 
           ") to be home system for Empire " << empire_id;
       home_planet->AddOwner(empire_id);
       // TODO: adding an owner to a planet should probably add that owner to the 
@@ -500,4 +624,5 @@ void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<in
       ship_id = Insert(new Ship(empire_id, colony_id));
       home_fleet->AddShip(ship_id);
    }
+#endif
 }

@@ -4,13 +4,6 @@
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
-#if defined(FREEORION_BUILD_SERVER)
-  #include "../server/ServerApp.h"
-#elif defined(FREEORION_BUILD_HUMAN)
-  #include "../client/human/HumanClientApp.h"
-#else
-  #include "../client/AI/AIClientApp.h"
-#endif
 
 #include <stdexcept>
 
@@ -103,15 +96,14 @@ UniverseObject::Visibility System::Visible(int empire_id) const
 {
    // if system is has been explored it is fully visible, if not it
    // will be partially visible
-#ifdef FREEORION_BUILD_SERVER 
-   ServerApp* server_app = ServerApp::GetApp();
-   Empire* empire = (server_app->Empires()).Lookup(empire_id);
+
+   Empire* empire = (Empires()).Lookup(empire_id);
        
    if (empire->HasExploredSystem(ID()))
    {
       return FULL_VISIBILITY;
    }
-#endif
+
    return PARTIAL_VISIBILITY;
 }
 
@@ -206,11 +198,9 @@ int System::Insert(int obj_id, int orbit)
 {
     if (orbit < -1)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
-#if defined(FREEORION_BUILD_SERVER)
-    const ClientUniverse& universe = ServerApp::Universe();
-#else
-    const ClientUniverse& universe = ClientApp::Universe();
-#endif
+
+    const Universe& universe = GetUniverse();
+
     if (!universe.Object(obj_id))
         throw std::invalid_argument("System::Insert() : Attempted to place an object in a System, when the object is not already in the Universe");
     if (m_orbits <= orbit)
@@ -225,11 +215,9 @@ bool System::Remove(int id)
    bool retval = false;
    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
       if (it->second == id) {
-#if defined(FREEORION_BUILD_SERVER)
-         const ClientUniverse& universe = ServerApp::Universe();
-#else
-         const ClientUniverse& universe = ClientApp::Universe();
-#endif
+
+         const Universe& universe = GetUniverse();
+
          const_cast<UniverseObject*>(universe.Object(it->second))->SetSystem(0);
          m_objects.erase(it);
          retval = true;

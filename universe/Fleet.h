@@ -37,6 +37,8 @@ public:
    /// Returns ID of system that this fleet is moving to 
    int MoveOrders() const { return m_moving_to; };
    
+   /// Returns number of ships in fleet
+   int ShipCount() const { return m_ships.size();};
    //@}
    
    /** \name Mutators */ //@{

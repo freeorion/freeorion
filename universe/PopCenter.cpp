@@ -6,6 +6,7 @@ using boost::lexical_cast;
 
 #include <stdexcept>
 
+
 PopCenter::PopCenter() : 
    m_pop(0.0),
    m_max_pop(0.0),

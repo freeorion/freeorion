@@ -4,9 +4,7 @@
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
-#ifdef FREEORION_BUILD_SERVER
-#include "../server/ServerApp.h"
-#endif
+#include "../util/AppInterface.h"
 
 #include <stdexcept>
 
@@ -47,15 +45,14 @@ UniverseObject::Visibility Fleet::Visible(int empire_id) const
 {
    // if the fleet is visible it will be listed in the empire's
    // visible fleet list
-#ifdef FREEORION_BUILD_SERVER
-   ServerApp* server_app = ServerApp::GetApp();
-   Empire* empire = (server_app->Empires()).Lookup(empire_id);
+
+   Empire* empire = Empires().Lookup(empire_id);
    
-   if ((empire->HasFleet(ID())) || (empire->HasVisibleFleet(ID())))
+   if ( empire && (empire->HasFleet(ID())) || (empire->HasVisibleFleet(ID())))
    {
       return FULL_VISIBILITY;
    }
-#endif   
+ 
    return NO_VISIBILITY;
 }
 
@@ -145,9 +142,7 @@ void Fleet::AddShip(const int ship_id)
 {
    m_ships.insert(ship_id);
 
-#ifdef FREEORION_BUILD_SERVER
-   ServerApp* server_app = ServerApp::GetApp();
-   ServerUniverse& server_uni = server_app->Universe();
+   Universe& server_uni = GetUniverse();
    
    Ship* ship = dynamic_cast<Ship*>(server_uni.Object(ship_id));
    if (ship == NULL)
@@ -157,7 +152,6 @@ void Fleet::AddShip(const int ship_id)
    }
    m_ships.insert(ship_id);
    ship->SetFleetID(ID());
-#endif
 
    StateChangedSignal()();
 }
@@ -184,9 +178,9 @@ std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
       if (!found) {
          retval.push_back(ships[i]);
       } else {
-#ifdef FREEORION_BUILD_SERVER
-         ServerApp::GetApp()->Universe().Delete(ships[i]);
-#endif
+
+         GetUniverse().Delete(ships[i]);
+
       }
    }
    StateChangedSignal()();

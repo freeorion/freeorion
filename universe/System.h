@@ -6,15 +6,7 @@
 #include "UniverseObject.h"
 #endif
 
-#ifdef FREEORION_BUILD_SERVER
-  #ifndef _ServerApp_h_
-  #include "../server/ServerApp.h"
-  #endif
-#else
-  #ifndef _ClientApp_h_
-  #include "../client/ClientApp.h"
-  #endif
-#endif
+#include "../util/AppInterface.h"
 
 #include <map>
 
@@ -78,11 +70,9 @@ public:
    template <class Pred>
    ObjectIDVec FindObjectIDs(Pred pred) const
    {
-#ifdef FREEORION_BUILD_SERVER
-      const ClientUniverse& universe = ServerApp::Universe();
-#else
-      const ClientUniverse& universe = ClientApp::Universe();
-#endif
+
+      const Universe& universe = GetUniverse();
+
       ObjectIDVec retval;
       for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
          const UniverseObject* o = universe.Object(it->second);
@@ -97,11 +87,8 @@ public:
    template <class Pred>
    ObjectIDVec FindObjectIDsInOrbit(int orbit, Pred pred) const
    {
-#ifdef FREEORION_BUILD_SERVER
-      const ClientUniverse& universe = ServerApp::Universe();
-#else
-      const ClientUniverse& universe = ClientApp::Universe();
-#endif
+      const Universe& universe = GetUniverse();
+
       ObjectIDVec retval;
       std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
       for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
@@ -117,11 +104,8 @@ public:
    template <class Pred>
    ConstObjectVec FindObjects(Pred pred) const
    {
-#ifdef FREEORION_BUILD_SERVER
-      const ClientUniverse& universe = ServerApp::Universe();
-#else
-      const ClientUniverse& universe = ClientApp::Universe();
-#endif
+      const Universe& universe = GetUniverse();
+
       ConstObjectVec retval;
       for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
          const UniverseObject* o = universe.Object(it->second);
@@ -136,11 +120,8 @@ public:
    template <class Pred>
    ConstObjectVec FindObjectsInOrbit(int orbit, Pred pred) const
    {
-#ifdef FREEORION_BUILD_SERVER
-      const ClientUniverse& universe = ServerApp::Universe();
-#else
-      const ClientUniverse& universe = ClientApp::Universe();
-#endif
+      const Universe& universe = GetUniverse();
+
       ConstObjectVec retval;
       std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
       for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
@@ -192,13 +173,13 @@ public:
    bool RemoveStarlane(int id);  ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
    bool RemoveWormhole(int id);  ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
 
-#ifdef FREEORION_BUILD_SERVER
+
    /** returns all the objects that match \a pred.  Predicates used with this function must take a single UniverseObject* 
       parameter and must return a bool or a type for which there is a conversion to bool.*/
    template <class Pred>
    ObjectVec FindObjects(Pred pred)
    {
-      const ServerUniverse& universe = ServerApp::Universe();
+      const Universe& universe = GetUniverse();
       ObjectVec retval;
       for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
          UniverseObject* o = universe.Object(it->second);
@@ -213,7 +194,7 @@ public:
    template <class Pred>
    ObjectVec FindObjectsInOrbit(int orbit, Pred pred)
    {
-      const ServerUniverse& universe = ServerApp::Universe();
+      const Universe& universe = GetUniverse();
       ObjectVec retval;
       std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
       for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
@@ -223,7 +204,7 @@ public:
       }
       return retval;
    }
-#endif
+
 
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);

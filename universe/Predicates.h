@@ -2,8 +2,8 @@
 #ifndef _Predicates_h_
 #define _Predicates_h_
 
-#ifndef _ClientUniverse_h_
-#include "Clientuniverse.h"
+#ifndef _Universe_h_
+#include "Universe.h"
 #endif
 
 #ifndef _System_h_
