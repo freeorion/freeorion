@@ -54,17 +54,8 @@ Fleet::Fleet(const GG::XMLElement& elem) :
 
 UniverseObject::Visibility Fleet::Visible(int empire_id) const
 {
-   // if the fleet is visible it will be listed in the empire's
-   // visible fleet list
-
-   Empire* empire = Empires().Lookup(empire_id);
-   
-   if ( empire && (empire->HasFleet(ID())) || (empire->HasVisibleFleet(ID())))
-   {
-      return FULL_VISIBILITY;
-   }
- 
-   return NO_VISIBILITY;
+    // TODO
+    return NO_VISIBILITY;
 }
 
 
@@ -191,14 +182,10 @@ bool Fleet::CanChangeDirectionInRoute() const
 
 bool Fleet::HasArmedShips() const
 {
-    for(Fleet::const_iterator itr = begin(); itr != end(); itr++)
-    {   
-        if( dynamic_cast<Ship*>(GetUniverse().Object(*itr) )->IsArmed() )
-        {
+    for (Fleet::const_iterator it = begin(); it != end(); it++) {   
+        if (dynamic_cast<Ship*>(GetUniverse().Object(*it))->IsArmed())
             return true;
-        }
     }
-    
     return false;
 }
 
@@ -369,21 +356,20 @@ void Fleet::PopGrowthProductionResearchPhase()
 void Fleet::CalculateRoute() const
 {
     if (m_moving_to != INVALID_OBJECT_ID && m_travel_route.empty()) {
-        m_travel_route.clear();
         m_travel_distance = 0.0;
-        if (SystemID() == m_prev_system) { // if we haven't actually left yet, we have to move from wherever we are
+        if (SystemID() == m_prev_system) { // if we haven't actually left yet, we have to move from whichever system we are at now
             std::pair<std::list<System*>, double> path = GetUniverse().ShortestPath(m_prev_system, m_moving_to);
             m_travel_route = path.first;
             m_travel_distance = path.second;
-        } else {
+        } else { // if we're between systems, the shortest route may be through either one
             std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(m_next_system, m_moving_to);
             std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(m_prev_system, m_moving_to);
             double dist_x = path1.first.front()->X() - X();
             double dist_y = path1.first.front()->Y() - Y();
-            double dist1 = dist_x * dist_x + dist_y * dist_y;
+            double dist1 = std::sqrt(dist_x * dist_x + dist_y * dist_y);
             dist_x = path2.first.front()->X() - X();
             dist_y = path2.first.front()->Y() - Y();
-            double dist2 = dist_x * dist_x + dist_y * dist_y;
+            double dist2 = std::sqrt(dist_x * dist_x + dist_y * dist_y);
             if (dist1 + path1.second < dist2 + path2.second) {
                 m_travel_route = path1.first;
                 m_travel_distance = dist1 + path1.second;
