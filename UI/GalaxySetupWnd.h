@@ -17,12 +17,14 @@
 #endif
 
 namespace GG {
-class RadioButtonGroup;
-class StaticGraphic;
-class Texture;
+    class RadioButtonGroup;
+    class StaticGraphic;
+    class TextControl;
+    class Texture;
 }
 class CUIButton;
 class CUIStateButton;
+class EmpireColorSelector;
 
 /** Encapsulates the galaxy setup options so that they may be reused in the GalaxySetupWnd and the MultiplayerLobbyWnd. */
 class GalaxySetupPanel : public GG::Control
@@ -103,7 +105,9 @@ public:
     bool                    EndedWithOk() const {return m_done && m_ended_with_ok;}
 
     /** returns the panel containing all the user-chosen options. */
-    const GalaxySetupPanel& Panel()             {return *m_galaxy_setup_panel;}
+    const GalaxySetupPanel& Panel()      const  {return *m_galaxy_setup_panel;}
+    const std::string&      EmpireName() const;
+    GG::Clr                 EmpireColor() const;
     //!@}
 
     /** \name Mutators*/ //!@{
@@ -116,15 +120,20 @@ private:
     void AttachSignalChildren();
     void DetachSignalChildren();
     void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
+    void EmpireNameChanged(const std::string& name);
     void OkClicked();
     void CancelClicked();
 
     bool m_ended_with_ok;    //!< indicates whether or not we ended the dialog with OK or not
 
-    GalaxySetupPanel*     m_galaxy_setup_panel;  //!< The GalaxySetupPanel that does most of the work of the dialog
-    GG::StaticGraphic*    m_preview_image;       //!< The galaxy shape preview image
-    CUIButton*            m_ok;                  //!< OK button
-    CUIButton*            m_cancel;              //!< Cancel button
+    GalaxySetupPanel*     m_galaxy_setup_panel;    //!< The GalaxySetupPanel that does most of the work of the dialog
+    GG::TextControl*      m_empire_name_label;
+    CUIEdit*              m_empire_name_edit;
+    GG::TextControl*      m_empire_color_label;
+    EmpireColorSelector*  m_empire_color_selector;
+    GG::StaticGraphic*    m_preview_image;         //!< The galaxy shape preview image
+    CUIButton*            m_ok;                    //!< OK button
+    CUIButton*            m_cancel;                //!< Cancel button
 };
 
 #endif

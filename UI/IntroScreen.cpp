@@ -40,7 +40,8 @@ IntroScreen::IntroScreen() :
 {
     //create staticgraphic from the image
     m_bg_graphic = new GG::StaticGraphic(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), 
-                                         GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash01.png"));
+                                         GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash01.png"), 
+                                         GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     GG::App::GetApp()->Register(m_bg_graphic);
     
     //create buttons
@@ -100,7 +101,7 @@ void IntroScreen::OnSinglePlayer()
     GalaxySetupWnd galaxy_wnd;    
     galaxy_wnd.Run();
     if (galaxy_wnd.EndedWithOk()) {
-        //TODO: Select AIs, AI difficulty setting(s), player name, and empire
+        // TODO: Select AIs, AI difficulty setting(s)
         string player_name = "Happy_Player";
         int num_AIs = 4;
 
@@ -108,9 +109,12 @@ void IntroScreen::OnSinglePlayer()
         game_parameters.root_node.AppendChild(GG::XMLElement("host_player_name", player_name));
         game_parameters.root_node.AppendChild(GG::XMLElement("num_players", lexical_cast<string>(num_AIs + 1)));
         game_parameters.root_node.AppendChild(galaxy_wnd.Panel().XMLEncode());
+        game_parameters.root_node.AppendChild(GG::XMLElement("empire_name", galaxy_wnd.EmpireName()));
+        game_parameters.root_node.AppendChild(GG::XMLElement("empire_color", galaxy_wnd.EmpireColor().XMLEncode()));
 
-        for (int i = 0; i < num_AIs; ++i)
+        for (int i = 0; i < num_AIs; ++i) {
             game_parameters.root_node.AppendChild(GG::XMLElement("AI_client"));
+        }
 
         int start_time = GG::App::GetApp()->Ticks();
         while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) {
