@@ -273,7 +273,7 @@ void ServerApp::Run()
 
 void ServerApp::SDLInit()
 {
-   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
+   if (SDL_Init(SDL_INIT_NOPARACHUTE) < 0) {
       Logger().errorStream() << "SDL initialization failed: " << SDL_GetError();
       Exit(1);
    }
