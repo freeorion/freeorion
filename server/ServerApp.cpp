@@ -1148,6 +1148,7 @@ void ServerApp::RemoveEmpireTurn( int empire_id )
             break;
         }
     }
+
 }
 
 void ServerApp::SetEmpireTurnOrders( int empire_id , OrderSet *order_set )

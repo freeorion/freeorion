@@ -32,7 +32,7 @@ AM_CONFIG_HEADER([config.h])
 dnl Do not use subdir-objects for now.
 dnl this would compile each required file only once, but some files
 dnl have #ifdef's depending whether they are built for client or server!
-AM_INIT_AUTOMAKE(foreign) dnl subdir-objects)
+AM_INIT_AUTOMAKE(foreign subdir-objects)
  
 # Checks for programs.
 AC_PROG_CXX
@@ -230,15 +230,15 @@ if test $FOUND = 0; then
 fi
 
 AC_CONFIG_FILES([Makefile
-		 Empire/Makefile
-		 network/Makefile
-		 UI/Makefile
-		 universe/Makefile
-		 util/Makefile 
-		 combat/Makefile
-                 server/Makefile 
-  		 client/Makefile
-		   client/human/Makefile
-		   client/AI/Makefile
 		])
 AC_OUTPUT
+# 		 Empire/Makefile
+# 		 network/Makefile
+# 		 UI/Makefile
+# 		 universe/Makefile
+# 		 util/Makefile 
+# 		 combat/Makefile
+#                server/Makefile 
+#  		 client/Makefile
+#		   client/human/Makefile
+#		   client/AI/Makefile
