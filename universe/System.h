@@ -179,7 +179,8 @@ public:
    template <class Pred>
    ObjectVec FindObjects(Pred pred)
    {
-      const Universe& universe = GetUniverse();
+      Universe& universe = GetUniverse();
+
       ObjectVec retval;
       for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
          UniverseObject* o = universe.Object(it->second);
@@ -194,7 +195,8 @@ public:
    template <class Pred>
    ObjectVec FindObjectsInOrbit(int orbit, Pred pred)
    {
-      const Universe& universe = GetUniverse();
+      Universe& universe = GetUniverse();
+
       ObjectVec retval;
       std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
       for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
