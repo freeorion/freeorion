@@ -1,26 +1,17 @@
 //GalaxyMapScreen.cpp
 
-#ifndef _GalaxyMapScreen_h_
 #include "GalaxyMapScreen.h"
-#endif
 
-#ifndef _GGDrawUtil_h_
-#include "GGDrawUtil.h"
-#endif
-
-#ifndef _ClientUI_h_
 #include "ClientUI.h"
-#endif
-
-#ifndef _GGApp_h_
-#include "GGApp.h"
-#endif
-
-#ifndef _FleetWindow_h_
 #include "FleetWindow.h"
-#endif
+#include "GGApp.h"
+#include "GGDrawUtil.h"
 
 #include <vector>
+
+namespace {
+const int SIDE_PANEL_WIDTH = 300;
+}
 
 GG::Rect GalaxyMapScreen::s_scissor_rect;
 double GalaxyMapScreen::s_scale_factor;
@@ -28,9 +19,9 @@ double GalaxyMapScreen::s_scale_factor;
 
 GalaxyMapScreen::GalaxyMapScreen() :
     GG::Wnd(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), GG::Wnd::DRAG_KEEPER),
+    m_map_wnd(0),
     m_selected_index(-1),
-    m_orders(0),
-    m_map_wnd(0)
+    m_orders(0)
 {
     //TODO: one-time initialization
     //set the scissor rectangle
@@ -41,15 +32,16 @@ GalaxyMapScreen::GalaxyMapScreen() :
     //set the scale factor
     s_scale_factor = 1.0;    //just draw everything at max zoom
     
-    //add the map windows
+    //add the map window
     m_map_wnd = new MapWnd();
-    
+
     AttachChild(m_map_wnd);
-    
+
+#if 0
     // ***********************************************************************
     // TEMP TEMP TEMP TEMP -- create fleetwindow for testing/demo purposes
     // ***********************************************************************
- 
+
     std::vector<int> fleets;
     
     // causes memory leak, but thats ok, this is only a test....
@@ -57,15 +49,12 @@ GalaxyMapScreen::GalaxyMapScreen() :
     
     AttachChild(wnd);
     GG::App::GetApp()->Register(wnd);
+#endif
 }
 
 GalaxyMapScreen::~GalaxyMapScreen()
 {
-    //de-initialize
-    if(m_orders)
-        delete(m_orders);
-    m_orders = 0;
-    
+    delete m_orders;
 }
 
 void GalaxyMapScreen::InitTurn()
@@ -100,4 +89,6 @@ int GalaxyMapScreen::Render()
     glEnable(GL_SCISSOR_TEST);
     GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_BLACK, GG::CLR_BLACK, 0);
     glDisable(GL_SCISSOR_TEST);
+
+    return 1;
 }
