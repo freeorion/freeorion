@@ -174,7 +174,7 @@ namespace {
         }
     }
 
-    const MAX_ATTEMPTS_PLACE_SYSTEM = 100;
+    const int MAX_ATTEMPTS_PLACE_SYSTEM = 100;
 
     void SpiralGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int arms, unsigned int stars, double width, double height)
     {
