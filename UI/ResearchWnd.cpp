@@ -505,6 +505,7 @@ void ResearchWnd::Reset()
     m_tech_tree_wnd->Reset();
     m_research_info_panel->Reset();
     UpdateQueue();
+    m_queue_lb->BringRowIntoView(0);
 }
 
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
@@ -517,11 +518,16 @@ void ResearchWnd::UpdateQueue()
     using boost::tuples::get;
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const Empire::ResearchQueue& queue = empire->GetResearchQueue();
+    int first_visible_queue_row = m_queue_lb->FirstRowShown();
+    int original_queue_length = m_queue_lb->NumRows();
     m_queue_lb->Clear();
     const int QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
     for (Empire::ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
         m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, get<0>(*it), get<1>(*it), get<2>(*it)));
     }
+    m_queue_lb->BringRowIntoView(m_queue_lb->NumRows() - 1);
+    if (m_queue_lb->NumRows() <= original_queue_length)
+        m_queue_lb->BringRowIntoView(first_visible_queue_row);
 }
 
 void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
