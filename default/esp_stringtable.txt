@@ -21,6 +21,9 @@ Avance
 CANCEL
 Cancele
 
+DONE
+Done
+
 LOAD
 Carga
 
@@ -159,3 +162,12 @@ Selección del Imperio
 
 ESELECT_EMPIRE_NAME
 Nombre:
+
+###########################
+# About Dialog            #
+###########################
+
+#License button text####
+
+LICENSE
+License

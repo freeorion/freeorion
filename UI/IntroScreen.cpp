@@ -24,6 +24,10 @@
 #include "EmpireSelect.h"
 #endif
 
+#ifndef _About_h_
+#include "About.h"
+#endif
+
 #ifndef _ServerConnectWnd_h_
 #include "ServerConnectWnd.h"
 #endif
@@ -138,7 +142,7 @@ void IntroScreen::OnMultiPlayer()
     // Add some servers
     wnd.AddServer("127.0.0.1","localhost");
     wnd.AddServer("194.23.24.21","LAN Server");
-        
+
     wnd.Run();
     
     if (wnd.IsServerSelected())
@@ -267,6 +271,8 @@ void IntroScreen::OnOptions()
 
 void IntroScreen::OnAbout()
 {
+   About about_wnd;
+   about_wnd.Run();
 
 }//OnAbout()
 

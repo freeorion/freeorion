@@ -21,6 +21,9 @@ OK
 CANCEL
 Cancel
 
+DONE
+Done
+
 LOAD
 Load
 
@@ -163,3 +166,15 @@ Empire Selection
 
 ESELECT_EMPIRE_NAME
 Empire Name:
+
+###########################
+# About Dialog		  #
+###########################
+
+#License button text####
+
+LICENSE
+License
+
+ABOUT_WINDOW_TITLE
+About FreeOrion v0.1a
