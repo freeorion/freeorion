@@ -6,6 +6,7 @@
 
 class CUIScroll;
 class Tech;
+namespace GG {class RadioButtonGroup;}
 
 class TechTreeWnd : public GG::Wnd
 {
@@ -33,8 +34,6 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual GG::Pt ClientLowerRight() const;
-
     const std::string& CategoryShown() const;
     TechTypesShown     GetTechTypesShown() const;
 
@@ -44,49 +43,27 @@ public:
     //@}
 
     //! \name Mutators //@{
-    virtual bool Render();
-    virtual void MouseHere(const GG::Pt& pt, Uint32 keys);
-
     void ShowCategory(const std::string& category);
     void SetTechTypesShown(TechTypesShown tech_types);
     void UncollapseAll();
     //@}
 
 private:
-    class TechPanel;
-    struct CollapseSubtreeFunctor;
-    typedef std::multimap<const Tech*,
-                          std::pair<const Tech*,
-                                    std::vector<std::vector<std::pair<double, double> > > > > DependencyArcsMap;
+    class LayoutPanel;
 
-    void Layout(bool keep_position);
-    bool TechVisible(const Tech* tech);
-    void CollapseTechSubtree(const Tech* tech, bool collapse);
-    void DrawArc(DependencyArcsMap::const_iterator it, GG::Clr color, bool with_arrow_head);
-    void ScrolledSlot(int, int, int, int);
     void TechBrowsedSlot(const Tech* t);
     void TechClickedSlot(const Tech* t);
     void TechDoubleClickedSlot(const Tech* t);
+    void TechTypesShownSlot(int types);
 
-    std::string    m_category_shown;
-    TechTypesShown m_tech_types_shown;
-    const Tech*    m_selected_tech;
-    
-    // indexed by category-view (including "ALL"), the techs whose subtrees are desired collapsed
-    std::map<std::string, std::set<const Tech*> > m_collapsed_subtree_techs_per_view;
-
-    std::map<const Tech*, TechPanel*> m_techs;
-    DependencyArcsMap m_dependency_arcs;
-
-    CUIScroll*     m_vscroll;
-    CUIScroll*     m_hscroll;
-    GG::Pt         m_scroll_position;
+    std::vector<CUIButton*> m_category_buttons;
+    LayoutPanel*            m_layout_panel;
+    GG::RadioButtonGroup*   m_tech_type_buttons;
+    CUIButton*              m_uncollapse_all_button;
 
     mutable TechBrowsedSignalType       m_tech_browsed_sig;
     mutable TechClickedSignalType       m_tech_clicked_sig;
     mutable TechDoubleClickedSignalType m_tech_double_clicked_sig;
-
-    friend struct CollapseSubtreeFunctor;
 };
 
 class TechWnd : public CUI_Wnd
