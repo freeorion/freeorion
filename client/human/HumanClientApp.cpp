@@ -4,7 +4,6 @@
 #include "HumanClientApp.h"
 
 #include "../../UI/CUIControls.h"
-#include "dialogs/GGFileDlg.h"
 #include "../../UI/MapWnd.h"
 #include "../../network/Message.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
@@ -224,7 +223,7 @@ void HumanClientApp::StopMusic(void)
     m_current_music = 0;
 }
 
-void HumanClientApp::PlaySound(const std::string& filename, int repeats, int timeout/* = -1*/)
+void HumanClientApp::PlaySound(const std::string& filename, int repeats/* = 0*/, int timeout/* = -1*/)
 {
     // load and cache the sound data
     std::map<std::string, Mix_Chunk*>::iterator it = m_sounds.find(filename);
@@ -243,6 +242,7 @@ void HumanClientApp::PlaySound(const std::string& filename, int repeats, int tim
     Mix_Chunk* data = m_sounds[filename];
     int channel = 0;
     int num_channels = Mix_AllocateChannels(-1);
+    m_channels.resize(num_channels);
     for (; channel < num_channels; ++channel) {
         if (m_channels[channel] == "")
             break;
@@ -250,7 +250,7 @@ void HumanClientApp::PlaySound(const std::string& filename, int repeats, int tim
     // there are not enough channels, so create one
     if (channel == num_channels) {
         Mix_AllocateChannels(channel);
-        m_channels.resize(channel);
+        m_channels.push_back("");
     }
 
     // play
@@ -296,8 +296,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
     save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("GAME_MENU_SAVE_FILES"), "*.sav"));
 
     try {
-        GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", false, false, save_file_types, 
-                        ClientUI::FONT, ClientUI::PTS, ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, ClientUI::TEXT_COLOR);
+        FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", false, false, save_file_types);
         dlg.Run();
         std::string filename;
         if (!dlg.Result().empty()) {
@@ -340,7 +339,7 @@ bool HumanClientApp::LoadSinglePlayerGame()
 
             return true;
         }
-    } catch (const GG::FileDlg::InitialDirectoryDoesNotExistException& e) {
+    } catch (const FileDlg::InitialDirectoryDoesNotExistException& e) {
         ClientUI::MessageBox(e.Message());
     }
     return false;

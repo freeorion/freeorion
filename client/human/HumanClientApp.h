@@ -72,11 +72,11 @@ public:
 	/** stops playing all music */
 	void StopMusic(void);
 
-    /** plays a sound file.  The sound will be played \a repeats + 1 times, so passing a 0 plays the sound once (1 repeat).
+    /** plays a sound file.  The sound will be played \a repeats + 1 times, so passing a 0 plays the sound once.
         To loop the sound indefinitely, pass -1 for \a repeats.  \a timeout indicates a timeout for the playback, in ms.
         So timeout == 1000 ensures that the sound plays for no more than 1000ms (1 sec); timeout == -1 means there is
         no timeout.  The data for any sound file played with this function will be cached indefinitely.*/
-    void PlaySound(const std::string& filename, int repeats, int timeout = -1);
+    void PlaySound(const std::string& filename, int repeats = 0, int timeout = -1);
 
     /** frees the cached sound data associated with the filename.  The data will only be freed immediately if the sound
         is not playing. Otherwise, the data are freed when the last currently-running playback of the sound ends.  Note
