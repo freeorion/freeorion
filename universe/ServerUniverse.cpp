@@ -195,6 +195,8 @@ UniverseObject* ServerUniverse::Remove(int id)
    if (it != m_objects.end()) {
       retval = it->second;
       m_objects.erase(id);
+      if (System* sys = dynamic_cast<System*>(Object(retval->SystemID())))
+          sys->Remove(id);
    }
    return retval;
 }
@@ -446,18 +448,6 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
          }
 
          Planet* planet = new Planet(plt_type, plt_size);
-         
-       
-         // Add planet to system map
-         int orb = system_temp->Insert(planet);
-         planet->SetSystemID(system_temp->ID());
-
-         // name the planet
-         std::string planet_name(system_temp->Name());
-         char orbit_num[2];
-         sprintf(orbit_num, " %i", orb);
-         planet_name.append(orbit_num);
-         planet->Rename(planet_name);
 
          // Add planet to universe map
          int planet_id = Insert(planet);
@@ -467,6 +457,16 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
             server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Attemp to insert planet into the object map failed.";
             server_app->Exit(1);  // TODO: should probably handle this error better... but will be difficult...
          }
+
+         // Add planet to system map
+         system_temp->Insert(planet, orbit);
+
+         // name the planet
+         std::string planet_name(system_temp->Name());
+         char orbit_num[2];
+         sprintf(orbit_num, " %i", orbit);
+         planet_name.append(orbit_num);
+         planet->Rename(planet_name);
 
          if (orbit == home_orbit)
          {
@@ -554,17 +554,6 @@ void ServerUniverse::PopulateSystems()
          
          Planet* planet = new Planet(plt_type, plt_size);
          
-         // Add planet to system map
-         int orb = system->Insert(planet);
-         planet->SetSystemID(system->ID());
-
-         // name the planet
-         std::string planet_name(system->Name());
-         char orbit_num[2];
-         sprintf(orbit_num, " %i", orb);
-         planet_name.append(orbit_num);
-         planet->Rename(planet_name);
-
          // Add planet to universe map
          int planet_id = Insert(planet);
          if (planet_id == UniverseObject::INVALID_OBJECT_ID)
@@ -573,6 +562,16 @@ void ServerUniverse::PopulateSystems()
             server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Attemp to insert planet into the object map failed.";
             server_app->Exit(1);  // TODO: should probably handle this error better... but will be difficult...
          }
+
+         // Add planet to system map
+         system->Insert(planet, planet_cnt);
+
+         // name the planet
+         std::string planet_name(system->Name());
+         char orbit_num[2];
+         sprintf(orbit_num, " %i", planet_cnt);
+         planet_name.append(orbit_num);
+         planet->Rename(planet_name);
 
       }  // end adding planets
    }

@@ -40,7 +40,7 @@ public:
    /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses an arbitrary bitmap image to determine galaxy shape. */
    void              CreateUniverse(const std::string& map_file, int size, int players, int ai_players);
 
-   /** removes the object with ID number \a id from the universe, and returns it; returns 0 if theree is no such object*/
+   /** removes the object with ID number \a id from the universe, and returns it; returns 0 if there is no such object*/
    UniverseObject*   Remove(int id);
    
    /** removes the object with ID number \a id; returns true if such an object was found, false otherwise*/
