@@ -52,7 +52,7 @@ clean: clean-custom
 
 $(BIN): $(OBJ)
 	$(CPP) $(OBJ) -o $(BIN) $(LIBS)
-	/bin/mv $(BIN) ..
+	/bin/mv $(BIN) ../../
 
 ../../objs/%.o : %.c
 	$(CC) $< -c $(CFLAGS) -o $@

@@ -13,6 +13,7 @@ public:
    /** \name Structors */ //@{
    Order() : m_empire(-1) {}  ///< default ctor
    Order(int empire) : m_empire(empire) {} ///< ctor taking the ID of the Empire issuing the order
+	virtual ~Order() {}
    //@}
    
    /** \name Accessors */ //@{

@@ -27,7 +27,9 @@ Planet::Planet(const GG::XMLElement& elem) :
 
 GG::XMLElement Planet::XMLEncode() const
 {
+	GG::XMLElement retval;
    // TODO
+   return retval;
 }
 
 void Planet::MovementPhase(std::vector<SitRepEntry>& sit_reps)

@@ -35,12 +35,16 @@ ProdCenter::~ProdCenter()
 
 double ProdCenter::ProdPoints() const
 {
+	double retval = 0.0;
    // TODO
+   return retval;
 }
 
 GG::XMLElement ProdCenter::XMLEncode() const
 {
+	GG::XMLElement retval;
    // TODO
+   return retval;
 }
 
 void ProdCenter::SetPrimaryFocus(FocusType focus)

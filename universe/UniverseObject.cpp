@@ -35,7 +35,9 @@ UniverseObject::~UniverseObject()
 
 GG::XMLElement UniverseObject::XMLEncode() const
 {
+	GG::XMLElement retval;
    // TODO
+   return retval;
 }
 
 void UniverseObject::Move(double x, double y)

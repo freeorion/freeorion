@@ -64,21 +64,29 @@ bool System::HasWormholeTo(int id) const
 
 GG::XMLElement System::XMLEncode() const
 {
-   // TODO
+   GG::XMLElement retval;
+	// TODO
+	return retval;
 }
 
 int System::Insert(UniverseObject* obj)
 {
+	int retval = -1;
+	// TODO : return gice obj a valid ID number and return it
    m_objects.insert(std::pair<int, UniverseObject*>(-1, obj));
    obj->SetSystem(this);
+	return retval;
 }
 
 int System::Insert(UniverseObject* obj, int orbit)
 {
+	int retval = -1;
+	// TODO : return gice obj a valid ID number and return it
    if (orbit < 0 || m_orbits < orbit)
       throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
    m_objects.insert(std::pair<int, UniverseObject*>(orbit, obj));
    obj->SetSystem(this);
+	return retval;
 }
 
 UniverseObject* System::Remove(int id)

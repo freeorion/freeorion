@@ -41,6 +41,7 @@ bool ClientNetworkCore::ConnectToLocalhostServer()
 
 bool ClientNetworkCore::ConnectToLANServer()
 {
+	bool retval;
 // TODO find a server on this LAN's subnet
    
    // connect to server
@@ -53,6 +54,7 @@ bool ClientNetworkCore::ConnectToLANServer()
          "failed with server= \"" << server << "\"";
    }
 */
+	return retval;
 }
 
 bool ClientNetworkCore::ConnectToInternetServer(const std::string& server)

@@ -62,6 +62,7 @@ public:
       HumanClientApp::GetApp()->Enter2DMode();
       GG::FlatRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, GG::Clr(1.0, 1.0, 1.0, 0.75), GG::CLR_WHITE, 1);
       HumanClientApp::GetApp()->Exit2DMode();
+		return 1;
    }
    
 private:

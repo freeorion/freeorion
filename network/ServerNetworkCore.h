@@ -43,7 +43,7 @@ public:
 
    /** \name Structors */ //@{
    ServerNetworkCore();
-   ~ServerNetworkCore();
+   virtual ~ServerNetworkCore();
    //@}
 
    /** \name Accessors */ //@{

@@ -44,7 +44,9 @@ PopCenter::~PopCenter()
 
 double PopCenter::Inhabitants() const
 {
+	double retval = 0.0;
    // TODO
+	return retval;
 }
 
 PopCenter::DensityType PopCenter::PopDensity() const
@@ -56,7 +58,9 @@ PopCenter::DensityType PopCenter::PopDensity() const
 
 GG::XMLElement PopCenter::XMLEncode() const
 {
+	GG::XMLElement retval;
    // TODO
+   return retval;
 }
 
 double PopCenter::AdjustPop(double pop)

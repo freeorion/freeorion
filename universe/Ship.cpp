@@ -25,7 +25,9 @@ ShipDesign::ShipDesign(const GG::XMLElement& elem)
 
 GG::XMLElement ShipDesign::XMLEncode() const
 {
-   //TODO
+	GG::XMLElement retval;
+   // TODO
+   return retval;
 }
 
 
@@ -53,7 +55,9 @@ Ship::Ship(const GG::XMLElement& elem) :
 
 GG::XMLElement Ship::XMLEncode() const
 {
-   //TODO
+	GG::XMLElement retval;
+   // TODO
+   return retval;
 }
   	
 void Ship::MovementPhase(std::vector<SitRepEntry>& sit_reps)

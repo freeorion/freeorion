@@ -25,7 +25,9 @@ Fleet::Fleet(const GG::XMLElement& elem) :
 
 GG::XMLElement Fleet::XMLEncode() const
 {
+	GG::XMLElement retval;
    // TODO
+   return retval;
 }
 
 void Fleet::SetMoveOrders(int id)

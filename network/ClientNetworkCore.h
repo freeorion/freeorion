@@ -15,7 +15,7 @@ class ClientNetworkCore : public NetworkCore
 public:
    /** \name Structors */ //@{
    ClientNetworkCore();
-   ~ClientNetworkCore();
+   virtual ~ClientNetworkCore();
    //@}
 
    /** \name Accessors */ //@{

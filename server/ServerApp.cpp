@@ -119,9 +119,9 @@ void ServerApp::HandleMessage(const Message& msg)
 {
    switch (msg.Type()) {
    case Message::END_GAME: {
-      if (0 <= msg.Sender() && msg.Sender() < m_players_info.size() && m_players_info[msg.Sender()].host) {
+      if (0 <= msg.Sender() && msg.Sender() < static_cast<int>(m_players_info.size()) && m_players_info[msg.Sender()].host) {
          for (unsigned int i = 0; i < m_players_info.size(); ++i) {
-            if (i != msg.Sender())
+				if (static_cast<int>(i) != msg.Sender())
                m_network_core.SendMessage(EndGameMessage(-1, i));
          }
          m_network_core.DumpAllConnections();
@@ -176,7 +176,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
             m_expected_ai_players.erase(msg_text); // only allow one connection per AI
          }
       } else { // non-AI player connection
-         if (m_expected_ai_players.size() + m_players_info.size() < m_expected_players) {
+         if (static_cast<int>(m_expected_ai_players.size() + m_players_info.size()) < m_expected_players) {
             if (m_network_core.EstablishPlayer(m_players_info.size(), connection.socket)) {
                m_players_info.push_back(PlayerInfo(connection, msg_text));
                m_network_core.SendMessage(JoinAckMessage(m_players_info.size() - 1));
@@ -189,7 +189,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
             m_network_core.DumpConnection(connection.socket);
          }
       }
-      if (m_expected_ai_players.size() + m_players_info.size() == m_expected_players) { // if we've gotten all the players joined up
+      if (static_cast<int>(m_expected_ai_players.size() + m_players_info.size()) == m_expected_players) { // if we've gotten all the players joined up
          GameInit();
          m_state = SERVER_WAITING;
          m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
@@ -210,7 +210,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
 
 void ServerApp::PlayerDisconnected(int id)
 {
-   if (0 <= id && id < m_players_info.size()) {
+   if (0 <= id && id < static_cast<int>(m_players_info.size())) {
       m_players_info[id].socket = -1;
       m_state = SERVER_DISCONNECT;
 // TODO: try to reconnect
