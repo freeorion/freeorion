@@ -22,7 +22,6 @@ freeoriond_exe_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGINET_LIBS@ @FT2_LIBS@	\
 @top_srcdir@/universe/libFOuniverse-common.a				\
 @top_srcdir@/util/libFOutil-server.a					\
 @top_srcdir@/util/libFOutil-common.a					\
-@top_srcdir@/combat/libFOcombat-server.a				\
 @top_srcdir@/combat/libFOcombat-common.a
 #-lboost_python  -lpython2.2
 
