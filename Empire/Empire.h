@@ -272,6 +272,7 @@ public:
     *  The object pointed to by 'entry' will be deallocated when
     *  the empire's sitrep is cleared.  Be careful you do not have any
     *  references to SitRepEntries lieing around when this happens.
+    *  You MUST pass in a dynamically allocated sitrep entry
     */
     void AddSitRepEntry( SitRepEntry* entry);
     

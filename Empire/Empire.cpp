@@ -41,17 +41,15 @@ Empire::Empire(const GG::XMLElement& elem)
     m_control_state = (ControlStatus) lexical_cast <int> ( elem.Child("m_control_state").Attribute("value") );
     m_color = GG::Clr( elem.Child("m_color").Child(0) );
     
-    // There is no need to serialize the sitrep entries since they are
-    // handled by the empire manager sitrep update functionality
-    /*GG::XMLObjectFactory<SitRepEntry> sitrep_factory;
+ 
+    GG::XMLObjectFactory<SitRepEntry> sitrep_factory;
     SitRepEntry::InitObjectFactory(sitrep_factory);
-    
     XMLElement sitrep = elem.Child("m_sitrep_entries");
     for(unsigned int i=0; i<sitrep.NumChildren(); i++)
     {
         AddSitRepEntry( sitrep_factory.GenerateObject(sitrep.Child(i)) );
     }
-    */
+    
     
     XMLElement container_elem = elem.Child("m_fleets");
     for(unsigned int i=0; i<container_elem.NumChildren(); i++)
