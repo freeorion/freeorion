@@ -19,6 +19,8 @@ class CUIListBox;
 class Fleet;
 class Ship;
 class System;
+class UniverseObject;
+
 namespace GG {
 class TextControl;
 }
@@ -42,6 +44,7 @@ public:
     /** \name Structors */ //@{
     FleetDetailPanel(int x, int y, Fleet* fleet, bool read_only, Uint32 flags = 0); ///< ctor
     FleetDetailPanel(const GG::XMLElement& elem); ///< ctor that constructs a FleetViewPanel object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a FleetViewPanel object
+    virtual ~FleetDetailPanel();
     //@}
 
     /** \name Accessors */ //@{
@@ -68,6 +71,8 @@ private:
     void        AttachSignalChildren();
     void        DetachSignalChildren();
     void        Refresh();
+    void        UniverseObjectDelete(const UniverseObject *);
+
     void        ShipBrowsed(int row_idx);
     void        ShipDroppedIntoList(int row_idx, const GG::ListBox::Row* row);
     void        ShipRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt);
@@ -77,6 +82,7 @@ private:
     Fleet*                      m_fleet;
     const bool                  m_read_only;
     boost::signals::connection  m_fleet_connection;
+    boost::signals::connection  m_universe_object_delete_connection;
 
     GG::TextControl*            m_destination_text;
     CUIListBox*                 m_ships_lb;
@@ -181,6 +187,7 @@ private:
     std::string TitleText() const;
     void        DeleteFleet(Fleet* fleet);
     void        RemoveEmptyFleets();
+    void        UniverseObjectDelete(const UniverseObject *);
 
     const int           m_empire_id;
     const bool          m_read_only;
@@ -195,6 +202,8 @@ private:
     FleetDetailPanel*   m_fleet_detail_panel;
     CUIButton*          m_new_fleet_button;
 
+    boost::signals::connection  m_universe_object_delete_connection;
+
     mutable ShowingFleetSignalType    m_showing_fleet_sig;
     mutable NotShowingFleetSignalType m_not_showing_fleet_sig;
 
@@ -202,3 +211,4 @@ private:
 };
 
 #endif
+

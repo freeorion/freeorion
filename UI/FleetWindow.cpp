@@ -76,6 +76,8 @@ FleetDetailPanel::FleetDetailPanel(int x, int y, Fleet* fleet, bool read_only, U
 
     SetFleet(fleet);
     Init();
+
+    m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetDetailPanel::UniverseObjectDelete, this);
 }
 
 FleetDetailPanel::FleetDetailPanel(const GG::XMLElement& elem) : 
@@ -98,6 +100,13 @@ FleetDetailPanel::FleetDetailPanel(const GG::XMLElement& elem) :
     m_ship_status_text = new GG::TextControl(*curr_elem);
 
     Init();
+
+    m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetDetailPanel::UniverseObjectDelete, this);
+}
+
+FleetDetailPanel::~FleetDetailPanel()
+{
+  m_universe_object_delete_connection.disconnect();
 }
 
 int FleetDetailPanel::GetShipIDOfListRow(int row_idx) const
@@ -191,6 +200,12 @@ void FleetDetailPanel::DetachSignalChildren()
 void FleetDetailPanel::Refresh()
 {
     SetFleet(m_fleet);
+}
+
+void FleetDetailPanel::UniverseObjectDelete(const UniverseObject *obj)
+{
+  if(obj == m_fleet)
+    SetFleet(NULL);
 }
 
 void FleetDetailPanel::ShipBrowsed(int row_idx)
@@ -404,6 +419,7 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
         m_new_fleet_button->Disable();
 
     Init(fleets);
+    m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetWnd::UniverseObjectDelete, this);
 }
 
 FleetWnd::FleetWnd( const GG::XMLElement& elem) : 
@@ -412,11 +428,13 @@ FleetWnd::FleetWnd( const GG::XMLElement& elem) :
     m_read_only(true)
 {
     // TODO : implement as needed (note that the initializations above must be changed as well)
+    m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetWnd::UniverseObjectDelete, this);
 }
 
 FleetWnd::~FleetWnd()
 {
     RemoveEmptyFleets();
+    m_universe_object_delete_connection.disconnect();
 }
 
 void FleetWnd::CloseClicked()
@@ -672,5 +690,33 @@ void FleetWnd::RemoveEmptyFleets()
 	if (!current_fleet->NumShips()) {
 	    DeleteFleet(current_fleet);
 	}
+    }
+}
+
+void FleetWnd::UniverseObjectDelete(const UniverseObject *obj)
+{
+    const Fleet *fleet;
+    // only look for obj if FleetWnd contains fleets and obj is a fleet
+    if(   (m_open_fleet_windows.size()==0 && m_fleets_lb->NumRows()==0)
+       || NULL==(fleet=dynamic_cast<const Fleet *>(obj)))
+       return;
+
+    if (m_fleet_detail_panel->GetFleet() == fleet)
+	  m_fleet_detail_panel->SetFleet(0);
+
+    for(std::map<Fleet*, FleetDetailWnd*>::iterator it=m_open_fleet_windows.begin(); it != m_open_fleet_windows.end();++it) 
+      if(it->first == fleet)
+      {
+          delete it->second;
+          m_open_fleet_windows.erase(it);
+          break;
+      }
+
+    for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
+	  if (FleetInRow(i) == fleet) {
+          m_not_showing_fleet_sig(FleetInRow(i));
+	      m_fleets_lb->Delete(i);
+	      break;
+	  }
     }
 }
