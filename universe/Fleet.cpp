@@ -164,6 +164,8 @@ void Fleet::AddShips(const std::vector<int>& ships)
     for (unsigned int i = 0; i < ships.size(); ++i) {
         if (Ship* s = GetUniverse().Object<Ship>(ships[i])) {
             s->SetFleetID(ID());
+            s->MoveTo(X(), Y());
+            s->SetSystem(SystemID());
             m_ships.insert(ships[i]);
         } else {
             throw std::invalid_argument("Fleet::AddShips() : Attempted to add an id of a non-ship object to a fleet.");
@@ -176,6 +178,8 @@ void Fleet::AddShip(const int ship_id)
 {
     if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
         s->SetFleetID(ID());
+        s->MoveTo(X(), Y());
+        s->SetSystem(SystemID());
         m_ships.insert(ship_id);
     } else {
         throw std::invalid_argument("Fleet::AddShip() : Attempted to add an id of a non-ship object to a fleet.");
@@ -185,15 +189,19 @@ void Fleet::AddShip(const int ship_id)
 
 std::vector<int> Fleet::RemoveShips(const std::vector<int>& ships)
 {
-   std::vector<int> retval;
-   for (unsigned int i = 0; i < ships.size(); ++i) {
-      bool found = m_ships.find(ships[i]) != m_ships.end();
-      m_ships.erase(ships[i]);
-      if (!found)
-         retval.push_back(ships[i]);
-   }
-   StateChangedSignal()();
-   return retval;
+    std::vector<int> retval;
+    for (unsigned int i = 0; i < ships.size(); ++i) {
+        bool found = m_ships.find(ships[i]) != m_ships.end();
+        if (UniverseObject* ship = GetUniverse().Object(ships[i])) {
+            ship->MoveTo(X(), Y());
+            ship->SetSystem(SystemID());
+        }
+        m_ships.erase(ships[i]);
+        if (!found)
+            retval.push_back(ships[i]);
+    }
+    StateChangedSignal()();
+    return retval;
 }
 
 std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
@@ -218,6 +226,10 @@ bool Fleet::RemoveShip(int ship)
     bool retval = false;
     iterator it = m_ships.find(ship);
     if (it != m_ships.end()) {
+        if (UniverseObject* ship = GetUniverse().Object(*it)) {
+            ship->MoveTo(X(), Y());
+            ship->SetSystem(SystemID());
+        }
         m_ships.erase(it);
         StateChangedSignal()();
         retval = true;
@@ -293,6 +305,12 @@ void Fleet::MovementPhase()
         }
         Logger().debugStream() << "[End of Fleet::MovementPhase()] SystemID()=" << SystemID() 
             << " ; movement_left=" << movement_left << " m_prev_system=" << m_prev_system << " m_next_system=" << m_next_system << "\n";
+
+        for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+            UniverseObject* ship = GetUniverse().Object(*it);
+            ship->MoveTo(X(), Y());
+            ship->SetSystem(SystemID());
+        }
     }
 }
 
