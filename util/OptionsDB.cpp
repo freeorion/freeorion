@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <string>
 
+#include <boost/spirit.hpp>
+
 namespace {
     std::vector<OptionsDBFn>& OptionsRegistry()
     {
@@ -24,6 +26,13 @@ namespace {
         }
         return retval;
     }
+
+    struct PushBack
+    {
+        PushBack(std::vector<std::string>& string_vec) : m_string_vec(string_vec) {}
+        void operator()(const char* first, const char* last) const {m_string_vec.push_back(std::string(first, last));}
+        std::vector<std::string>& m_string_vec;
+    };
 
     bool temp_header_bool = RecordHeaderFile(OptionsDBRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
@@ -130,7 +139,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
             longest_param_name = it->first.size();
     }
 
-    int description_column = (longest_param_name + 7); // 7 comes from 4 for e.g. "-P, ", 2 for "--", and 1 space afterwards
+    int description_column = 5;//(longest_param_name + 7); // 7 comes from 4 for e.g. "-P, ", 2 for "--", and 1 space afterwards
     int description_width = 80 - description_column;
 
     if (description_width <= 0)
@@ -138,46 +147,41 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
 
     for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it) {
         if (it->second.short_name)
-            os << "-" << it->second.short_name << ", --" << it->second.name;
+            os << "-" << it->second.short_name << ", --" << it->second.name << "\n";
         else
-            os << "    --" << it->second.name;
+            os << "--" << it->second.name << "\n";
 
-        os << std::string(description_column - (it->second.name.size() + 6), ' ');
+        os << std::string(description_column - 1, ' ');// - (it->second.name.size() + 7), ' ');
 
         bool first_line = true;
-        unsigned int pos = 0;
-        unsigned int last_pos = 0;
-        const char whitespace[] = " \t\n\r\f";
-        while (last_pos < std::string::npos) {
-            unsigned int next_pos = it->second.description.find_first_not_of(whitespace, pos);
-            if (next_pos != std::string::npos)
-                next_pos = it->second.description.find_first_of(whitespace, next_pos);
-            if (next_pos != std::string::npos)
-                next_pos = it->second.description.find_first_not_of(whitespace, next_pos);
-
-            if (next_pos == std::string::npos) {
-                if (!first_line)
-                    os << std::string(description_column, ' ');
-                next_pos = it->second.description.size();
-                if (static_cast<unsigned int>(description_width) < next_pos - last_pos) {
-                    os << it->second.description.substr(last_pos, pos - last_pos) << "\n";
-                    os << std::string(description_column, ' ') << it->second.description.substr(pos, next_pos) << "\n";
-                } else {
-                    os << it->second.description.substr(last_pos) << "\n";
-                }
-                last_pos = std::string::npos;
-            } else if (next_pos - last_pos <= static_cast<unsigned int>(description_width)) {
-                pos = next_pos;
+        std::vector<std::string> tokenized_strings;
+        using boost::spirit::anychar_p;
+        using boost::spirit::rule;
+        using boost::spirit::space_p;
+        rule<> tokenizer = +(*space_p >> (+(anychar_p - space_p))[PushBack(tokenized_strings)]);
+        parse(it->second.description.c_str(), tokenizer);
+        int curr_column = description_column;
+        for (unsigned int i = 0; i < tokenized_strings.size(); ++i) {
+            if (80 < curr_column + tokenized_strings[i].size() + (i ? 1 : 0)) {
+                os << "\n" << std::string(description_column, ' ') << tokenized_strings[i];
+                curr_column = description_column + tokenized_strings[i].size();
             } else {
-                if (!first_line)
-                    os << std::string(description_column, ' ');
-                os << it->second.description.substr(last_pos, pos - last_pos) << "\n";
-                last_pos = pos;
-                first_line = false;
+                os << " " << tokenized_strings[i];
+                curr_column += tokenized_strings[i].size() + 1;
             }
         }
-        if (it->second.validator)
-            os << std::string(description_column, ' ') << "default: " << it->second.default_value << "\n";
+        if (it->second.validator) {
+            std::stringstream stream;
+            stream << "Default: " << it->second.default_value;
+            if (80 < curr_column + stream.str().size() + 3) {
+                os << "\n" << std::string(description_column, ' ') << stream.str() << "\n";
+            } else {
+                os << " | " << stream.str() << "\n";
+            }
+        } else {
+            std::cout << "\n";
+        }
+        std::cout << "\n";
     }
 }
 
