@@ -556,8 +556,8 @@ std::pair<std::list<System*>, double> Universe::ShortestPath(int system1, int sy
     ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_system_graph);
     try {
         boost::dijkstra_shortest_paths(m_system_graph, system1, &predecessors[0], &distances[0], edge_weight_map, index_map, 
-                                    std::less<int>(), std::plus<int>(), std::numeric_limits<int>::max(), 0, 
-                                    boost::make_dijkstra_visitor(PathFindingDijkstraVisitor(system2)));
+                                       std::less<int>(), std::plus<int>(), std::numeric_limits<int>::max(), 0, 
+                                       boost::make_dijkstra_visitor(PathFindingDijkstraVisitor(system2)));
     } catch (const PathFindingDijkstraVisitor::FoundDestination& fd) {
         // catching this just means that the destination was found, and so the algorithm was exited early, via exception
     }
@@ -583,6 +583,26 @@ std::pair<std::list<System*>, double> Universe::ShortestPath(int system1, int sy
         retval.second = linear_distance;
     }
 
+    return retval;
+}
+
+std::map<double, System*> Universe::ImmediateNeighbors(System* system) const
+{
+    return ImmediateNeighbors(system->ID());
+}
+
+std::map<double, System*> Universe::ImmediateNeighbors(int system) const
+{
+    std::map<double, System*> retval;
+
+    m_system_distances.at(system); // for an exception-throwing bounds check
+
+    ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_system_graph);
+    ConstSystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), m_system_graph);
+    std::pair<OutEdgeIterator, OutEdgeIterator> edges = boost::out_edges(system, m_system_graph);
+    for (OutEdgeIterator it = edges.first; it != edges.second; ++it) {
+        retval[edge_weight_map[*it]] = pointer_property_map[boost::target(*it, m_system_graph)];
+    }
     return retval;
 }
 

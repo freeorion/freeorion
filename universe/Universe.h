@@ -140,6 +140,14 @@ public:
         if either system ID is out of range. */
     std::pair<std::list<System*>, double> ShortestPath(int system1, int system2) const;
 
+    /** returns the systems that are one starlane hop away from system \a system.  The returned systems are indexed by 
+        distance from \a system. */
+    std::map<double, System*> ImmediateNeighbors(System* system) const;
+
+    /** returns the systems that are one starlane hop away from system \a system.  The returned systems are indexed by 
+        distance from \a system.  \throw std::out_of_range This function will throw if the system ID is out of range. */
+    std::map<double, System*> ImmediateNeighbors(int system) const;
+
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Universe object
     virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
 
@@ -204,6 +212,10 @@ protected:
     typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS, 
                                    vertex_property_t, edge_property_t>
                                    SystemGraph;
+
+    // declare types for iteration over graph
+    typedef SystemGraph::vertex_iterator   VertexIterator;
+    typedef SystemGraph::out_edge_iterator OutEdgeIterator;
 
     // declare property map types for properties declared above
     typedef boost::property_map<SystemGraph, vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
