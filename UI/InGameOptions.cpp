@@ -31,13 +31,13 @@ namespace {
 
 
 InGameOptions::InGameOptions():
-    CUI_Wnd(ClientUI::String("INGAMEOPTIONS_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() / 2) - 55,
+    CUI_Wnd(ClientUI::String("GAME_MENU_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() / 2) - 55,
             (GG::App::GetApp()->AppHeight() / 2) - 140, 135, 280, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL)
 {
-    m_save_btn = new CUIButton(30,40,75,ClientUI::String("INGAMEOPTIONS_SAVE"));
-    m_load_btn = new CUIButton(30,80,75,ClientUI::String("INGAMEOPTIONS_LOAD"));
+    m_save_btn = new CUIButton(30,40,75,ClientUI::String("GAME_MENU_SAVE"));
+    m_load_btn = new CUIButton(30,80,75,ClientUI::String("GAME_MENU_LOAD"));
 	m_options_btn = new CUIButton(30,120,75,ClientUI::String("INTRO_BTN_OPTIONS"));
-    m_exit_btn = new CUIButton(30,160,75,ClientUI::String("INGAMEOPTIONS_RESIGN"));
+    m_exit_btn = new CUIButton(30,160,75,ClientUI::String("GAME_MENU_RESIGN"));
     m_done_btn = new CUIButton(30,210,75,ClientUI::String("DONE"));
 
     // call to InGameOptions::MinimizedLength() because MinimizedLength is virtual
@@ -92,7 +92,7 @@ void InGameOptions::Save()
     const std::string SAVE_GAME_EXTENSION = HumanClientApp::GetApp()->SinglePlayerGame() ? ".sav" : ".mps";
 
     std::vector<std::pair<std::string, std::string> > save_file_types;
-    save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("INGAMEOPTIONS_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));
+    save_file_types.push_back(std::pair<std::string, std::string>(ClientUI::String("GAME_MENU_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));
 
     try {
         GG::FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", true, false, save_file_types, 
