@@ -232,8 +232,12 @@ namespace {
 	PlanetPicker(int system_id) : 
 	    Wnd(0, 0, GG::App::GetApp()->AppWidth() - 1, GG::App::GetApp()->AppHeight() - 1, CLICKABLE | MODAL),
 	    m_side_panel(new SidePanel(GG::App::GetApp()->AppWidth() - MapWnd::SIDE_PANEL_WIDTH, 0, MapWnd::SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight())),
-	    m_planet_selected(-1)
+	    m_planet_selected(-1),
+        m_mapwnd_sidepanel_visible(HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Visible())
 	{
+        if(m_mapwnd_sidepanel_visible)
+          HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Hide();
+
 	    m_side_panel->SetSystem(system_id);
 	    AttachChild(m_side_panel);
 	    for (int i = 0; i < m_side_panel->PlanetPanels(); ++i) {
@@ -241,7 +245,12 @@ namespace {
 	    }
 	    HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_COLONIZE);
 	}
-	~PlanetPicker() {HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_DEFAULT);}
+	~PlanetPicker()
+    {
+      HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_DEFAULT);
+      if(m_mapwnd_sidepanel_visible)
+        HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Show();
+    }
 	int PlanetPicked() const {return m_planet_selected;}
 	int LButtonUp(const GG::Pt& pt, Uint32 keys) {m_done = true; return 1;}
 	int LClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
@@ -253,6 +262,7 @@ namespace {
 
 	SidePanel*       m_side_panel;
 	int              m_planet_selected;
+    bool             m_mapwnd_sidepanel_visible;
     };
 }
 
