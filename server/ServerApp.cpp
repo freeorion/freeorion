@@ -147,6 +147,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
          doc.ReadDoc(stream);
          std::string host_player_name = doc.root_node.Child("host_player_name").Text();
          m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Attribute("value"));
+         m_universe_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("size"));
          CreateAIClients(doc.root_node);
          m_state = SERVER_GAME_SETUP;
          m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";

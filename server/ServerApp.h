@@ -106,6 +106,8 @@ private:
    std::set<std::string>   m_expected_ai_players;  ///< the player names expected from valid AI clients; this prevents malicious users from "spoofing" as AI clients
    int                     m_expected_players;     ///< the total desired number of players in the game
 
+   int                     m_universe_size;        ///< the size of the universe
+
    static ServerApp*       s_app;
 };
 
