@@ -1479,7 +1479,7 @@ BuildCmd=
 [Project]
 FileName=HumanClient.dev
 Name=HumanClient
-UnitCount=144
+UnitCount=142
 Type=0
 Ver=1
 ObjFiles=
@@ -2504,46 +2504,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit100]
-FileName=..\..\UI\AnimatedGraphic.cpp
-CompileCpp=1
-Folder=ClientUI
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit101]
-FileName=..\..\UI\AnimatedGraphic.h
-CompileCpp=1
-Folder=ClientUI
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit102]
-FileName=..\..\UI\AnimatedTexture.cpp
-CompileCpp=1
-Folder=ClientUI
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit103]
-FileName=..\..\UI\AnimatedTexture.h
-CompileCpp=1
-Folder=ClientUI
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit104]
 FileName=..\..\UI\ClientUI.cpp
 CompileCpp=1
 Folder=ClientUI
@@ -2553,7 +2513,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit105]
+[Unit101]
 FileName=..\..\UI\ClientUI.h
 CompileCpp=1
 Folder=ClientUI
@@ -2563,7 +2523,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit106]
+[Unit102]
 FileName=..\..\UI\GalaxySetupWnd.cpp
 CompileCpp=1
 Folder=ClientUI
@@ -2573,7 +2533,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit107]
+[Unit103]
 FileName=..\..\UI\GalaxySetupWnd.h
 CompileCpp=1
 Folder=ClientUI
@@ -2583,7 +2543,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit108]
+[Unit104]
 FileName=..\..\UI\IntroScreen.cpp
 CompileCpp=1
 Folder=ClientUI
@@ -2593,7 +2553,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit109]
+[Unit105]
 FileName=..\..\UI\IntroScreen.h
 CompileCpp=1
 Folder=ClientUI
@@ -2603,7 +2563,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit110]
+[Unit106]
 FileName=..\..\UI\ServerConnectWnd.cpp
 CompileCpp=1
 Folder=ClientUI
@@ -2613,7 +2573,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit111]
+[Unit107]
 FileName=..\..\UI\ServerConnectWnd.h
 CompileCpp=1
 Folder=ClientUI
@@ -2623,7 +2583,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit112]
+[Unit108]
 FileName=..\..\UI\StringTable.cpp
 CompileCpp=1
 Folder=ClientUI
@@ -2633,7 +2593,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit113]
+[Unit109]
 FileName=..\..\UI\StringTable.h
 CompileCpp=1
 Folder=ClientUI
@@ -2643,7 +2603,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit114]
+[Unit110]
 FileName=..\..\UI\ToolContainer.cpp
 CompileCpp=1
 Folder=ClientUI
@@ -2653,7 +2613,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit115]
+[Unit111]
 FileName=..\..\UI\ToolContainer.h
 CompileCpp=1
 Folder=ClientUI
@@ -2663,7 +2623,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit116]
+[Unit112]
 FileName=..\..\UI\ToolWnd.cpp
 CompileCpp=1
 Folder=ClientUI
@@ -2673,7 +2633,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit117]
+[Unit113]
 FileName=..\..\UI\ToolWnd.h
 CompileCpp=1
 Folder=ClientUI
@@ -2683,7 +2643,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit118]
+[Unit114]
 FileName=..\..\GG\dialogs\GGMessageDlg.h
 CompileCpp=1
 Folder=GG/dialogs
@@ -2693,7 +2653,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit119]
+[Unit115]
 FileName=..\..\GG\dialogs\GGMessageDlg.cpp
 CompileCpp=1
 Folder=GG/dialogs
@@ -2703,7 +2663,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit120]
+[Unit116]
 FileName=..\..\GG\dialogs\GGFileDlg.h
 CompileCpp=1
 Folder=GG/dialogs
@@ -2713,7 +2673,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit121]
+[Unit117]
 FileName=..\..\GG\dialogs\GGFileDlg.cpp
 CompileCpp=1
 Folder=GG/dialogs
@@ -2723,7 +2683,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit122]
+[Unit118]
 FileName=..\..\GG\dialogs\GGOkCancelDlg.cpp
 CompileCpp=1
 Folder=GG/dialogs
@@ -2733,7 +2693,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit123]
+[Unit119]
 FileName=..\..\GG\dialogs\GGOkCancelDlg.h
 CompileCpp=1
 Folder=GG/dialogs
@@ -2743,7 +2703,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit124]
+[Unit120]
 FileName=..\..\Empire\TechManager.h
 CompileCpp=1
 Folder=empire
@@ -2753,7 +2713,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit125]
+[Unit121]
 FileName=..\..\Empire\ClientEmpireManager.cpp
 CompileCpp=1
 Folder=empire
@@ -2763,7 +2723,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit126]
+[Unit122]
 FileName=..\..\Empire\ClientEmpireManager.h
 CompileCpp=1
 Folder=empire
@@ -2773,7 +2733,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit127]
+[Unit123]
 FileName=..\..\Empire\Empire.cpp
 CompileCpp=1
 Folder=empire
@@ -2783,7 +2743,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit128]
+[Unit124]
 FileName=..\..\Empire\Empire.h
 CompileCpp=1
 Folder=empire
@@ -2793,7 +2753,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit129]
+[Unit125]
 FileName=..\..\Empire\EmpireManager.cpp
 CompileCpp=1
 Folder=empire
@@ -2803,7 +2763,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit130]
+[Unit126]
 FileName=..\..\Empire\EmpireManager.h
 CompileCpp=1
 Folder=empire
@@ -2813,7 +2773,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit131]
+[Unit127]
 FileName=..\..\Empire\ServerEmpireManager.cpp
 CompileCpp=1
 Folder=empire
@@ -2823,7 +2783,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit132]
+[Unit128]
 FileName=..\..\Empire\ServerEmpireManager.h
 CompileCpp=1
 Folder=empire
@@ -2833,7 +2793,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit133]
+[Unit129]
 FileName=..\..\Empire\TechLevel.cpp
 CompileCpp=1
 Folder=empire
@@ -2843,7 +2803,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit134]
+[Unit130]
 FileName=..\..\Empire\TechLevel.h
 CompileCpp=1
 Folder=empire
@@ -2853,7 +2813,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit135]
+[Unit131]
 FileName=..\..\Empire\TechManager.cpp
 CompileCpp=1
 Folder=empire
@@ -2863,7 +2823,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit136]
+[Unit132]
 FileName=..\..\GG\GGSpin.h
 CompileCpp=1
 Folder=GG
@@ -2873,7 +2833,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit137]
+[Unit133]
 FileName=..\..\GG\GGDynamicGraphic.cpp
 CompileCpp=1
 Folder=GG
@@ -2883,7 +2843,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit138]
+[Unit134]
 FileName=..\..\GG\GGDynamicGraphic.h
 CompileCpp=1
 Folder=GG
@@ -2893,7 +2853,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit139]
+[Unit135]
 FileName=..\..\GG\GGSlider.cpp
 CompileCpp=1
 Folder=GG
@@ -2903,7 +2863,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit140]
+[Unit136]
 FileName=..\..\GG\GGSlider.h
 CompileCpp=1
 Folder=GG
@@ -2913,7 +2873,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit141]
+[Unit137]
 FileName=..\..\UI\CUI_Wnd.h
 CompileCpp=1
 Folder=ClientUI
@@ -2923,8 +2883,48 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit142]
+[Unit138]
 FileName=..\..\UI\CUI_Wnd.cpp
+CompileCpp=1
+Folder=ClientUI
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit139]
+FileName=..\..\util\SitRepEntry.cpp
+CompileCpp=1
+Folder=util
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit140]
+FileName=..\..\util\SitRepEntry.h
+CompileCpp=1
+Folder=util
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit141]
+FileName=..\..\UI\EmpireSelect.cpp
+CompileCpp=1
+Folder=ClientUI
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit142]
+FileName=..\..\UI\EmpireSelect.h
 CompileCpp=1
 Folder=ClientUI
 Compile=1
