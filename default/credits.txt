@@ -45,7 +45,7 @@ Contributors
     "emrys"
     Andreas Bernard
     Teal Ablaze
-    "Powercrazy"
+    Bryan Patterson (PowerCrazy)
     Joseph Bissonnette (Oceanmachine)
     Zach Laine (Tzlaine)
     Mark Saward (Mark Saward)
