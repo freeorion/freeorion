@@ -23,11 +23,11 @@
 
 
 namespace log4cpp {
-class Category;
+    class Category;
 }
 namespace GG {
-class XMLDoc;
-class XMLElement;
+    class XMLDoc;
+    class XMLElement;
 }
 struct PlayerSetupData;
 class CombatModule;
@@ -131,6 +131,8 @@ private:
 
    void SaveGameVars(GG::XMLDoc& doc) const;   ///< adds all game-state variables to \a doc
    void LoadGameVars(const GG::XMLDoc& doc);   ///< assigns all game-state variables from \a doc
+
+   Empire* GetPlayerEmpire(int player_id) const; ///< returns the ID of the empire that the player with ID \a player_id is playing
    
    Universe                m_universe;
    ServerEmpireManager     m_empires;
@@ -169,6 +171,8 @@ private:
 
    // turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
    std::map<int, OrderSet*>  m_turn_sequence;
+
+   std::set<int>             m_losers;                ///< the IDs of players who have been eliminated during the normal course of the game
 
    static ServerApp*         s_app;
 };

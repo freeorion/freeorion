@@ -223,8 +223,8 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs)
     int ai_client_base_number = time(0) % 999; // get a random number from which to start numbering the AI clients
     int i = 0;
     for (std::vector<PlayerSetupData>::const_iterator it = AIs.begin(); it != AIs.end(); ++it, ++i) {
-// TODO: add other command line args to AI client invocation as needed
-        std::string player_name = "AI_Log/AI_" + boost::lexical_cast<std::string>(ai_client_base_number + i); // AI player's "name"
+        // TODO: add other command line args to AI client invocation as needed
+        std::string player_name = "AI_" + boost::lexical_cast<std::string>(ai_client_base_number + i);
         m_expected_ai_players.insert(player_name);
         std::vector<std::string> args;
         args.push_back(AI_CLIENT_EXE);
@@ -287,6 +287,23 @@ void ServerApp::HandleMessage(const Message& msg)
                     GZStream::igzstream ifs(load_filename.c_str());
                     doc.ReadDoc(ifs);
                     ifs.close();
+
+                    // set the player names of all empires to match the selected player name/empire name pairs in the lobby
+                    // (AI players' names will replace the applicable old names when the AIs connect later.)
+                    for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
+                        if (doc.root_node.Child(i).Tag() == "Player") {
+                            int player_empire_id = boost::lexical_cast<int>(doc.root_node.Child(i).Child("Empire").Child("m_id").Text());
+                            for (unsigned int j = 0; j < g_lobby_data.players.size(); ++j) {
+                                if (g_lobby_data.players[j].save_game_empire_id == player_empire_id) {
+                                    std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin();
+                                    std::advance(player_it, j);
+                                    doc.root_node.Child(i).Child("name").SetText(player_it->second.name);
+                                    doc.root_node.Child(i).Child("Empire").Child("m_player_name").SetText(player_it->second.name);
+                                    break;
+                                }
+                            }
+                        }
+                    }
 
                     m_universe.SetUniverse(doc.root_node.Child("Universe"));
                     m_expected_players = 0;
@@ -547,16 +564,20 @@ void ServerApp::HandleMessage(const Message& msg)
                 }
             }
 
+            m_log_category.debugStream() << "ServerApp::HandleMessage : Received orders from player " << msg.Sender();
+
             /* if all orders are received already, do nothing as we are processing a turn */
             if ( AllOrdersReceived( ) )
                 break;
 
             /* add orders to turn sequence */    
-            SetEmpireTurnOrders( msg.Sender(), p_order_set );        
+            SetEmpireTurnOrders( GetPlayerEmpire( msg.Sender() )->EmpireID(), p_order_set );
             
             /* look to see if all empires are done */
-            if ( AllOrdersReceived( ) )
+            if ( AllOrdersReceived( ) ) {
+                m_log_category.debugStream() << "ServerApp::HandleMessage : All orders received; processing turn...";
                 ProcessTurns( );
+            }
         }
         break;
     }
@@ -771,17 +792,21 @@ void ServerApp::PlayerDisconnected(int id)
                 }
             }
             m_network_core.DumpPlayer(id);
-        } else { // host disconnected during a regular game
+            m_state = SERVER_DYING;
+            m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Host player disconnected; server now in mode " << SERVER_DYING << " (SERVER_DYING).";
+            m_network_core.DumpAllConnections();
+            Exit(1);
+        } else if (m_losers.find(id) == m_losers.end()) { // host abnormally disconnected during a regular game
             // if the host dies, there's really nothing else we can do
             for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
                 if (it->first != id)
                     m_network_core.SendMessage(EndGameMessage(-1, it->first));
             }
+            m_state = SERVER_DYING;
+            m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Host player disconnected; server now in mode " << SERVER_DYING << " (SERVER_DYING).";
+            m_network_core.DumpAllConnections();
+            Exit(1);
         }
-        m_state = SERVER_DYING;
-        m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_DYING << " (SERVER_DYING).";
-        m_network_core.DumpAllConnections();
-        Exit(1);
     } else {
         if (m_state == SERVER_MP_LOBBY) { // player disconnected in MP lobby
             GG::XMLDoc doc;
@@ -792,10 +817,10 @@ void ServerApp::PlayerDisconnected(int id)
                     m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, doc));
             }
             m_network_core.DumpPlayer(id);
-        } else { // player disconnected during a regular game
+        } else if (m_losers.find(id) == m_losers.end()) { // player abnormally disconnected during a regular game
             m_state = SERVER_DISCONNECT;
             const PlayerInfo& disconnected_player_info = m_network_core.Players().find(id)->second;
-            m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Lost connection ot player #" << boost::lexical_cast<std::string>(id) 
+            m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Lost connection to player #" << boost::lexical_cast<std::string>(id) 
                 << ", named \"" << disconnected_player_info.name << "\"; server now in mode " << SERVER_DISCONNECT << " (SERVER_DISCONNECT).";
             std::string message = disconnected_player_info.name;
             for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
@@ -806,6 +831,14 @@ void ServerApp::PlayerDisconnected(int id)
                 }
             }
         }
+    }
+
+    // if there are no humans left, it's time to terminate
+    if (m_network_core.Players().empty() || m_ai_clients.size() == m_network_core.Players().size()) {
+        m_state = SERVER_DYING;
+        m_log_category.debugStream() << "ServerApp::PlayerDisconnected : All human players disconnected; server now in mode " << SERVER_DYING << " (SERVER_DYING).";
+        m_network_core.DumpAllConnections();
+        Exit(1);
     }
 }
 
@@ -906,7 +939,7 @@ void ServerApp::Poll()
                 Exit(0);
                 break;
 			}
-// TODO: handle other relevant SDL events here
+            // TODO: handle other relevant SDL events here
         }
     }
 }
@@ -951,18 +984,22 @@ void ServerApp::NewGameInit()
             doc.root_node.AppendChild("single_player_game");
         doc.root_node.AppendChild(m_universe.XMLEncode(ALL_OBJECTS_VISIBLE ? Universe::ALL_EMPIRES : it->first));
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
+        doc.root_node.AppendChild(GG::XMLElement("empire_id", boost::lexical_cast<std::string>(it->first)));
 
         // turn number is an attribute of the document
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
 
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
     }
+
+    m_losers.clear();
 }
 
 void ServerApp::LoadGameInit()
 {
     m_turn_sequence.clear();
-    std::map<int, GG::XMLDoc> player_docs;
+
+    std::map<int, GG::XMLDoc> player_docs; // indexed by empire id
     for (int i = 0; i < g_load_doc.root_node.NumChildren(); ++i) {
         if (g_load_doc.root_node.Child(i).Tag() == "Player") {
             GG::XMLDoc player_doc;
@@ -976,14 +1013,12 @@ void ServerApp::LoadGameInit()
 
     std::map<int, int> player_to_empire_ids;
     std::set<int> already_chosen_empire_ids;
-    if (!m_single_player_game) {
-        unsigned int i = 0;
-        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
-            if (i <= g_lobby_data.players.size())
-                g_lobby_data.players.push_back(PlayerSetupData());
-            player_to_empire_ids[it->first] = g_lobby_data.players[i].save_game_empire_id;
-            already_chosen_empire_ids.insert(g_lobby_data.players[i].save_game_empire_id);
-        }
+    unsigned int i = 0;
+    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
+        if (i <= g_lobby_data.players.size())
+            g_lobby_data.players.push_back(PlayerSetupData());
+        player_to_empire_ids[it->first] = g_lobby_data.players[i].save_game_empire_id;
+        already_chosen_empire_ids.insert(g_lobby_data.players[i].save_game_empire_id);
     }
 
     std::map<int, GG::XMLDoc>::iterator player_doc_it = player_docs.begin();
@@ -991,26 +1026,29 @@ void ServerApp::LoadGameInit()
         GG::XMLDoc doc;
         int empire_id;
         if (m_single_player_game) {
-            empire_id = player_doc_it->first;
             doc.root_node.AppendChild("single_player_game");
+        }
+        if (player_to_empire_ids[it->first] != -1) {
+            empire_id = player_to_empire_ids[it->first];
         } else {
-            if (player_to_empire_ids[it->first] != -1) {
-                empire_id = player_to_empire_ids[it->first];
-            } else {
-                for (std::map<int, GG::XMLDoc>::iterator doc_it = player_docs.begin(); doc_it != player_docs.end(); ++doc_it) {
-                    if (already_chosen_empire_ids.find(doc_it->first) == already_chosen_empire_ids.end()) {
-                        empire_id = doc_it->first;
-                    }
+            for (std::map<int, GG::XMLDoc>::iterator doc_it = player_docs.begin(); doc_it != player_docs.end(); ++doc_it) {
+                if (already_chosen_empire_ids.find(doc_it->first) == already_chosen_empire_ids.end()) {
+                    empire_id = doc_it->first;
+                    already_chosen_empire_ids.insert(empire_id);
+                    // since this must be an AI player, it does not have the correct player name set in its Empire yet, so we need to do so now
+                    Empires().Lookup(empire_id)->SetPlayerName(it->second.name);
+                    break;
                 }
             }
         }
         doc.root_node.AppendChild(m_universe.XMLEncode(ALL_OBJECTS_VISIBLE ? Universe::ALL_EMPIRES : empire_id));
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(empire_id));
+        doc.root_node.AppendChild(GG::XMLElement("empire_id", boost::lexical_cast<std::string>(empire_id)));
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
 
 #if 0
-        std::ofstream ofs(("LoadGameInit-doc-empire" + boost::lexical_cast<std::string>(it->first) + ".xml").c_str());
+        std::ofstream ofs(("LoadGameInit-doc-empire" + boost::lexical_cast<std::string>(empire_id) + ".xml").c_str());
         doc.WriteDoc(ofs);
         ofs.close();
 #endif
@@ -1018,8 +1056,10 @@ void ServerApp::LoadGameInit()
         // send saved pending orders to player
         m_network_core.SendMessage(ServerLoadGameMessage(it->first, player_docs[empire_id]));
 
-        m_turn_sequence[it->first] = 0;
+        m_turn_sequence[empire_id] = 0;
     }
+
+    m_losers.clear();
 }
 
 GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
@@ -1173,6 +1213,23 @@ void ServerApp::LoadGameVars(const GG::XMLDoc& doc)
 }
 
 
+Empire* ServerApp::GetPlayerEmpire(int player_id) const
+{
+    Empire* retval = 0;
+    std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().find(player_id);
+    if (player_it != m_network_core.Players().end()) {
+        std::string player_name = player_it->second.name;
+        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+            if (it->second->PlayerName() == player_name) {
+                retval = it->second;
+                break;
+            }
+        }
+    }
+    return retval;
+}
+
+
 void ServerApp::AddEmpireTurn( int empire_id )
 {
     // add empire
@@ -1182,16 +1239,7 @@ void ServerApp::AddEmpireTurn( int empire_id )
 
 void ServerApp::RemoveEmpireTurn( int empire_id )
 {
-    // Loop through to find empire ID and remove
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-    {
-        if ( it->first == empire_id )
-        {
-            m_turn_sequence.erase( it );
-            break;
-        }
-    }
-
+    m_turn_sequence.erase( empire_id );
 }
 
 void ServerApp::SetEmpireTurnOrders( int empire_id , OrderSet *order_set )
@@ -1206,7 +1254,9 @@ bool ServerApp::AllOrdersReceived( )
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         if ( !it->second )
+        {m_log_category.debugStream() << "ServerApp::AllOrdersReceived : still waiting on at least empire " << it->first;
             return false; 
+        }
     } 
     return true;
 }
@@ -1356,21 +1406,61 @@ void ServerApp::ProcessTurns( )
     if(combat_happend)
       SDL_Delay(5000);
 
-    // TODO : check if all empires are still alive
-
-    /// Increment turn
     ++m_current_turn;
-   
-    // broadcast UI message to all players
+
+    // send new-turn updates to all players
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it)
     {
-        pEmpire = Empires().Lookup( player_it->first );
-
-        GG::XMLDoc doc = CreateTurnUpdate( player_it->first );
-        
+        pEmpire = GetPlayerEmpire( player_it->first );
+        GG::XMLDoc doc = CreateTurnUpdate( pEmpire->EmpireID() );
         m_network_core.SendMessage( TurnUpdateMessage( player_it->first, doc ) );
     }
+
+    // check if all empires are still alive
+    std::vector<std::pair<int, int> > eliminations; // .first is the player id, .second is the empire id
+    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        if (GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(it->first)).empty()) { // when you're out of planets, your game over
+            std::string player_name = it->second->PlayerName();
+            for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); 
+                 player_it != m_network_core.Players().end(); ++player_it) {
+                if (player_it->second.name == player_name) {
+                    // record this player/empire so we can send out messages about it
+                    eliminations.push_back(std::make_pair(player_it->first, it->first));
+                    break;
+                }
+            }
+        } 
+    }
+
+    // notify all players of the eliminated players
+    for (unsigned int i = 0; i < eliminations.size(); ++i) {
+        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+            m_network_core.SendMessage(PlayerEliminatedMessage(it->first, Empires().Lookup(eliminations[i].second)->Name()));
+        }
+    }
+    // dump connections to eliminated players, and clean up defeated empires
+    for (unsigned int i = 0; i < eliminations.size(); ++i) {
+        m_log_category.debugStream() << "ServerApp::ProcessTurns : Player " << eliminations[i].first << " is marked as a loser and dumped";
+        m_losers.insert(eliminations[i].first);
+        m_network_core.DumpPlayer(eliminations[i].first);
+        // remove the empire from play
+        RemoveEmpireTurn(eliminations[i].second);
+        Empires().EliminateEmpire(eliminations[i].second);
+        // TODO: test manual elimination of all the defeated empire's units
+    }
+    // determine if victory conditions exist
+    if (m_network_core.Players().size() == 1) { // if there is only one player left, that player is the winner
+        m_log_category.debugStream() << "ServerApp::ProcessTurns : One player left -- sending victory notification and terminating.";
+        m_network_core.SendMessage(VictoryMessage(m_network_core.Players().begin()->first));
+        // TODO: flush pending messages before Exit(0), instead of waiting 5 seconds
+        SDL_Delay(5000);
+        m_network_core.DumpAllConnections();
+        Exit(0);
+    } else if (m_ai_clients.size() == m_network_core.Players().size()) { // if there are none but AI players left, we're done
+        m_log_category.debugStream() << "ServerApp::ProcessTurns : No human players left -- server terminating.";
+        // TODO: flush pending messages before Exit(0), instead of waiting 5 seconds
+        SDL_Delay(5000);
+        m_network_core.DumpAllConnections();
+        Exit(0);
+    }
 }
-
-
-

@@ -120,6 +120,8 @@ void InGameOptions::Load()
 
 void InGameOptions::Quit()
 {
+    if (HumanClientApp::GetApp()->NetworkCore().Connected())
+        HumanClientApp::GetApp()->NetworkCore().DisconnectFromServer();
     HumanClientApp::GetApp()->EndGame();
     CloseClicked();
 }

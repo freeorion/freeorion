@@ -151,8 +151,10 @@ void IntroScreen::OnMultiPlayer()
         } else {
             std::string server_name = server_connect_wnd.Result().second;
             if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
-                if (!GetOptionsDB().Get<bool>("force-external-server"))
+                if (!GetOptionsDB().Get<bool>("force-external-server")) {
                     HumanClientApp::GetApp()->StartServer();
+                    HumanClientApp::GetApp()->FreeServer();
+                }
                 server_name = "localhost";
             }
             int start_time = GG::App::GetApp()->Ticks();

@@ -184,8 +184,10 @@ bool ClientNetworkCore::ConnectToServer(const std::string& server)
 bool ClientNetworkCore::DisconnectFromServer()
 {
     bool retval = Connected();
-    if (retval)
+    if (retval) {
         NET2_TCPClose(m_server_socket);
+        m_server_socket = -1;
+    }
     return retval;
 }
 

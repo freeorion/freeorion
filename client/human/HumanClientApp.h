@@ -48,7 +48,8 @@ public:
 
     /** \name Mutators */ //@{
     void StartServer(); ///< starts a server process on localhost
-    void KillServer();  ///< kills any running process already started by this client; performs no cleanup of other processes, such as AIs
+    void FreeServer();  ///< frees (relinquishes ownership and control of) any running server process already started by this client; performs no cleanup of other processes, such as AIs
+    void KillServer();  ///< kills any running server process already started by this client; performs no cleanup of other processes, such as AIs
 
     void EndGame();     ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
 

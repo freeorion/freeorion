@@ -71,21 +71,30 @@ void HumanClientApp::StartServer()
     m_server_process = Process(SERVER_CLIENT_EXE, args);
 }
 
+void HumanClientApp::FreeServer()
+{
+    m_server_process.Free();
+    m_player_id = -1;
+    m_empire_id = -1;
+    m_player_name = "";
+}
+
 void HumanClientApp::KillServer()
 {
-    if (NetworkCore().Connected()) {
-        NetworkCore().SendMessage(EndGameMessage(m_player_id, -1));
-    } else {
-        m_server_process.Kill();
-    }
+    m_server_process.Kill();
     m_player_id = -1;
+    m_empire_id = -1;
     m_player_name = "";
 }
 
 void HumanClientApp::EndGame()
 {
     m_game_started = false;
-    KillServer();
+    m_network_core.DisconnectFromServer();
+    m_server_process.RequestTermination();
+    m_player_id = -1;
+    m_empire_id = -1;
+    m_player_name = "";
     GetUI()->ScreenIntro();
 }
 
@@ -448,10 +457,9 @@ void HumanClientApp::FinalCleanup()
     }
 
     if (NetworkCore().Connected()) {
-        NetworkCore().SendMessage(EndGameMessage(m_player_id, -1)); // this only works if we're the host
         NetworkCore().DisconnectFromServer();
     }
-    KillServer();
+    m_server_process.RequestTermination();
 }
 
 void HumanClientApp::SDLQuit()
@@ -481,7 +489,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS (status code " << 
                 doc.root_node.Child("server_state").Attribute("value") << ")";
             if (server_state == SERVER_DYING)
-                m_server_process.Kill();
+                KillServer();
         }
         break;
     } 
@@ -528,11 +536,13 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
                 doc.root_node.RemoveChild("single_player_game");
             }
 
+            m_empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Text());
+
             m_universe.SetUniverse(doc.root_node.Child("Universe"));
-            
+
             // free current sitreps, if any
-            if (Empires().Lookup(m_player_id))
-                Empires().Lookup(m_player_id)->ClearSitRep();
+            if (Empires().Lookup(m_empire_id))
+                Empires().Lookup(m_empire_id)->ClearSitRep();
 
             Orders().Reset();
 
@@ -546,7 +556,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Universe setup complete.";
 
-            for (Empire::SitRepItr it = Empires().Lookup(m_player_id)->SitRepBegin(); it != Empires().Lookup(m_player_id)->SitRepEnd(); ++it) {
+            for (Empire::SitRepItr it = Empires().Lookup(m_empire_id)->SitRepBegin(); it != Empires().Lookup(m_empire_id)->SitRepEnd(); ++it) {
                 m_ui->GenerateSitRepText(*it);
             }
 
@@ -600,7 +610,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
 
         // free current sitreps
-        Empires().Lookup( m_player_id )->ClearSitRep( );
+        Empires().Lookup( m_empire_id )->ClearSitRep( );
 
         // Update data used XPatch and needs only elements common to universe and empire
         UpdateTurnData( doc );
@@ -608,7 +618,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         // Now decode sitreps
         // Empire sitreps need UI in order to generate text, since it needs string resources
         // generate textr for all sitreps
-        for (Empire::SitRepItr sitrep_it = Empires().Lookup( m_player_id )->SitRepBegin(); sitrep_it != Empires().Lookup( m_player_id )->SitRepEnd(); ++sitrep_it) {
+        for (Empire::SitRepItr sitrep_it = Empires().Lookup( m_empire_id )->SitRepBegin(); sitrep_it != Empires().Lookup( m_empire_id )->SitRepEnd(); ++sitrep_it) {
 
             SitRepEntry *pEntry = (*sitrep_it);
                 
@@ -662,6 +672,19 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         break;
     }
 
+    case Message::PLAYER_ELIMINATED: {
+        std::cout << "HumanClientApp::HandleMessageImpl : Message::PLAYER_ELIMINATED : m_empire_id=" << m_empire_id << " Empires().Lookup(m_empire_id)=" << Empires().Lookup(m_empire_id);
+        if (Empires().Lookup(m_empire_id)->Name() == msg.GetText()) {
+            // TODO: replace this with something better
+            ClientUI::MessageBox("You are defeated.");
+            EndGame();
+        } else {
+            // TODO: replace this with something better
+            ClientUI::MessageBox(Format(ClientUI::String("EMPIRE_DEFEATED").c_str(), msg.GetText().c_str()));
+        }
+        break;
+    }
+
     case Message::PLAYER_EXIT: {
         std::string message = Format(ClientUI::String("PLAYER_DISCONNECTED").c_str(), msg.GetText().c_str());
         ClientUI::MessageBox(message);
@@ -669,7 +692,12 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::END_GAME: {
-        ClientUI::MessageBox(ClientUI::String("SERVER_GAME_END"));
+        if (msg.GetText() == "VICTORY") {
+            // TODO: replace this with something better
+            ClientUI::MessageBox("You are victorious.");
+        } else {
+            ClientUI::MessageBox(ClientUI::String("SERVER_GAME_END"));
+        }
         EndGame();
         break;
     }
