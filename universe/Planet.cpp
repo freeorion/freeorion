@@ -4,6 +4,7 @@
 #include "Building.h"
 #include "../util/DataTable.h"
 #include "Fleet.h"
+#include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
 #include "../server/ServerApp.h"
 #include "Ship.h"

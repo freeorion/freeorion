@@ -1,6 +1,7 @@
 #include "Tech.h"
 
 #include "Effect.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "XMLDoc.h"
 

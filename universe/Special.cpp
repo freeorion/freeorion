@@ -1,5 +1,6 @@
 #include "Special.h"
 
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 
 

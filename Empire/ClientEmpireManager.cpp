@@ -1,7 +1,9 @@
 #include "ClientEmpireManager.h"
-#include "XMLObjectFactory.h"
+
+#include "../util/MultiplayerCommon.h"
 #include "../util/SitRepEntry.h"
 #include "../network/XDiff.hpp"
+#include "XMLObjectFactory.h"
 
 #include <map>
 #include <list>

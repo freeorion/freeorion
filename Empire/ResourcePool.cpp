@@ -1,6 +1,7 @@
 #include "ResourcePool.h"
 
 #include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
 #include "../universe/Planet.h"
 
 #include "GGSignalsAndSlots.h"

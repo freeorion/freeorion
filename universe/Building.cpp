@@ -1,6 +1,7 @@
 #include "Building.h"
 
 #include "Effect.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "Planet.h"
 #include "Predicates.h"

@@ -2,6 +2,7 @@
 
 #include "ResourcePool.h"
 
+#include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/Planet.h"
 #include "../universe/ShipDesign.h"

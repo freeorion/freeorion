@@ -2,6 +2,7 @@
 
 #include "../util/AppInterface.h"
 #include "Meter.h"
+#include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
 #include "System.h"
 #include "Special.h"

@@ -19,6 +19,7 @@
 #include "../universe/System.h"
 #endif
 
+#include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 
 #include <boost/lexical_cast.hpp>

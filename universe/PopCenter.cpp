@@ -2,6 +2,7 @@
 
 #include "../util/AppInterface.h"
 #include "../util/DataTable.h"
+#include "../util/MultiplayerCommon.h"
 #include "Planet.h"
 #include "XMLDoc.h"
 

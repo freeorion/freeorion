@@ -1,6 +1,7 @@
 #include "ShipDesign.h"
 
 #include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>

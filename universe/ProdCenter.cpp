@@ -5,6 +5,7 @@
 #include "../util/DataTable.h"
 #include "../Empire/Empire.h"
 #include "Fleet.h"
+#include "../util/MultiplayerCommon.h"
 #include "Planet.h"
 #include "../universe/ShipDesign.h"
 #include "System.h"

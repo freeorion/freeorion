@@ -11,6 +11,7 @@
 #include "FleetWindow.h"
 #include "../client/human/HumanClientApp.h"
 #include "MapWnd.h"
+#include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/System.h"
 

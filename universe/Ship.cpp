@@ -2,6 +2,7 @@
 
 #include "../util/AppInterface.h"
 #include "Fleet.h"
+#include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
 #include "ShipDesign.h"
 #include "XMLDoc.h"

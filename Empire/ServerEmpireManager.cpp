@@ -1,5 +1,6 @@
 #include "ServerEmpireManager.h"
 
+#include "../util/MultiplayerCommon.h"
 #include "../universe/Planet.h"
 #include "../server/ServerApp.h"
 #include "../universe/Universe.h"

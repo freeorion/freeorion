@@ -1,6 +1,7 @@
 #include "CombatSystem.h"
 
 #include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 
 #include "../universe/Planet.h"

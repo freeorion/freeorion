@@ -1,6 +1,7 @@
 #include "ClientNetworkCore.h"
 
 #include "Message.h"
+#include "../util/MultiplayerCommon.h"
 #include "../client/ClientApp.h"
 #include "net2.h"
 #include "fastevents.h"

@@ -2,6 +2,7 @@
 
 #include "Building.h"
 #include "Fleet.h"
+#include "../util/MultiplayerCommon.h"
 #include "Planet.h"
 #include "System.h"
 #include "UniverseObject.h"

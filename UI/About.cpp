@@ -7,7 +7,6 @@
 #include "GGApp.h"
 #include "GGClr.h"
 #include "GGDrawUtil.h"
-#include "dialogs/GGFileDlg.h"
 #include "../util/MultiplayerCommon.h"
 
 #include <fstream>

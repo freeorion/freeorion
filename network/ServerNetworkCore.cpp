@@ -1,6 +1,7 @@
 #include "ServerNetworkCore.h"
 
 #include "Message.h"
+#include "../util/MultiplayerCommon.h"
 #include "../server/ServerApp.h"
 
 #include <log4cpp/Category.hh>

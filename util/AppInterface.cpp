@@ -10,6 +10,8 @@
 # endif
 #endif
 
+#include "../util/MultiplayerCommon.h"
+
 
 namespace {
     bool temp_header_bool = RecordHeaderFile(AppInterfaceRevision());

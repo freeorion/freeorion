@@ -1,5 +1,6 @@
 #include "ClientApp.h"
 
+#include "../util/MultiplayerCommon.h"
 #include "../network/XDiff.hpp"
 
 #include <stdexcept>

@@ -4,6 +4,7 @@
 #include "GGDrawUtil.h"
 #include "GGStaticGraphic.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/MultiplayerCommon.h"
 
 #include "CombatWnd.h"
 

@@ -1,5 +1,7 @@
 #include "Meter.h"
 
+#include "../util/MultiplayerCommon.h"
+
 namespace {
     bool temp_header_bool = RecordHeaderFile(MeterRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");

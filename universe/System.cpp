@@ -1,5 +1,6 @@
 #include "System.h"
 
+#include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
 #include "XMLDoc.h"
 
