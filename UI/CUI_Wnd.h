@@ -10,8 +10,6 @@
 #include "GGButton.h"
 #endif
 
-#include "SDL.h"
-
 /** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore*/
 class CUI_MinRestoreButton : public GG::Button
 {
@@ -85,7 +83,8 @@ class CUI_Wnd : public GG::Wnd
 {
 public:
     //! additional window creation flags
-    enum {MINIMIZABLE = 256   //!< allows the window to be minimized
+    enum {MINIMIZABLE = 1 << 10,    //!< allows the window to be minimized
+          CLOSABLE =    1 << 11     //!< allows the window to be closed
          };
 
     //! \name Structors //@{
@@ -106,23 +105,30 @@ public:
     virtual int LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
     virtual int LButtonUp(const GG::Pt& pt, Uint32 keys);
     virtual int LClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
+
+    virtual bool InWindow(const GG::Pt& pt) const;
     //@}
 
-    static int S_MINIMIZED_WND_LENGTH;
-
 protected:
+    //! \name Accessors //@{
+    int MinimizedLength() const;        //!< the width of a minimized CUI_Wnd
+    int LeftBorder() const;             //!< the distance on the left side between the outer edge of the window and the inner border
+    int TopBorder() const;              //!< the distance at the top between the outer edge of the window and the inner border
+    int RightBorder() const;            //!< the distance on the right side between the outer edge of the window and the inner border
+    int BottomBorder() const;           //!< the distance at the bottom between the outer edge of the window and the inner border
+    int InnerBorderAngleOffset() const; //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
+    //@}
+
     //! \name Mutators //@{
-    virtual void OnClose();    //!< called when window is closed via the close button
-    virtual void OnMinimize(); //!< called when window is minimized
-    virtual void OnResize(int x, int y); //!< called when window is resized
+    virtual void Close();    //!< called when window is closed via the close button
+    virtual void Minimize(); //!< called when window is minimized
     //@}
 
 private:
     void InitButtons();
-    void CloseClicked();    //!< mapped to the pressing of the square
-    void MinimizeClicked(); //!< mapped to pressing of the dash button
-    void ResizeClicked(int x, int y); //!< mapped to resizing the window
 
+    bool       m_resizable;      //!< true if the window is able to be resized
+    bool       m_closable;       //!< true if the window is able to be closed with a button press
     bool       m_minimizable;    //!< true if the window is able to be minimized
     bool       m_minimized;      //!< true if the window is currently minimized
     GG::Pt     m_resize_offset;  //!< offset from the lower-right corner of the point being used to drag-resize
