@@ -37,6 +37,7 @@ public:
    int          Race() const                 {return m_race;}       ///< returns the race that the population is composed of
    double       Inhabitants() const; ///< returns the number of inhabitants in the center (not the pop points); depends on race
    DensityType  PopDensity() const;  ///< returns the density of this center, based on its population
+   double       AvailableFood() const {return m_available_food;}   ///< returns the amount of food which is currently available
 
    virtual GG::XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a PopCenter object with the given visibility
    //@}
@@ -50,6 +51,7 @@ public:
    void SetMaxPop(double max_pop)               {m_max_pop = max_pop;} ///< sets the maximum population to \a pop
    void SetEnvGrowthMod(double env_growth_mod)  {m_env_growth_mod = env_growth_mod;} ///< sets the modifier to the growth rate due to environment
    void SetRace(int race)                       {m_race = race;}   ///< sets the race of the population to \a race
+   void SetAvailableFood(double available_food) {m_available_food = available_food;}   ///< sets the amount of food which is currently available
 
    virtual void MovementPhase( );
    virtual void PopGrowthProductionResearchPhase( );
@@ -61,7 +63,9 @@ private:
    double   m_growth;
    double   m_env_growth_mod;
    int      m_race; ///< the id of the race that occupies this planet
+   double   m_available_food;
 };
 
 #endif // _PopCenter_h_
+
 

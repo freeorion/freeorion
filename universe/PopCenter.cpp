@@ -15,7 +15,8 @@ PopCenter::PopCenter() :
    m_max_pop(0.0),
    m_growth(0.0),
    m_env_growth_mod(1.0),
-   m_race(-1)
+   m_race(-1),
+   m_available_food(0.0)
 {
 }
    
@@ -24,7 +25,8 @@ PopCenter::PopCenter(double max_pop) :
    m_max_pop(max_pop),
    m_growth(0.0),
    m_env_growth_mod(1.0),
-   m_race(-1)
+   m_race(-1),
+   m_available_food(0.0)
 {
 }
    
@@ -33,7 +35,8 @@ PopCenter::PopCenter(double max_pop, int race) :
    m_max_pop(max_pop),
    m_growth(0.0),
    m_env_growth_mod(1.0),
-   m_race(race)
+   m_race(race),
+   m_available_food(0.0)
 {
 }
    
@@ -48,6 +51,7 @@ PopCenter::PopCenter(const GG::XMLElement& elem)
         m_growth = lexical_cast<double>(elem.Child("m_growth").Text());
         m_env_growth_mod = lexical_cast<double>(elem.Child("m_env_growth_mod").Text());
         m_race = lexical_cast<int>(elem.Child("m_race").Text());
+        m_available_food = lexical_cast<double>(elem.Child("m_available_food").Text());
     } catch (const boost::bad_lexical_cast& e) {
         Logger().debugStream() << "Caught boost::bad_lexical_cast in PopCenter::PopCenter(); bad XMLElement was:";
         std::stringstream osstream;
@@ -87,6 +91,8 @@ GG::XMLElement PopCenter::XMLEncode(UniverseObject::Visibility vis) const
    element.AppendChild(XMLElement("m_growth", lexical_cast<std::string>(m_growth)));
    element.AppendChild(XMLElement("m_env_growth_mod", lexical_cast<std::string>(m_env_growth_mod)));
    element.AppendChild(XMLElement("m_race", lexical_cast<std::string>(m_race)));
+   element.AppendChild(XMLElement("m_available_food", lexical_cast<std::string>(m_available_food)));
+
    return element;
 }
 
@@ -112,7 +118,8 @@ void PopCenter::MovementPhase( )
 void PopCenter::PopGrowthProductionResearchPhase( )
 {
     double max_pop = (m_max_pop == 0.0 ? 1.0 : m_max_pop);   // to prevent division by zero
-    m_pop = std::min(m_pop + (m_pop * ((max_pop - m_pop) / max_pop) * m_env_growth_mod * 0.072), m_max_pop); // 7.2% growth means pop doubles every 10 turns
+    m_pop = std::min(AvailableFood(),std::min(m_pop + (m_pop * ((max_pop - m_pop) / max_pop) * m_env_growth_mod * 0.072), m_max_pop)); // 7.2% growth means pop doubles every 10 turns
 }
+
 
 
