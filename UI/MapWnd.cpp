@@ -17,6 +17,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../util/Random.h"
+#include "ResearchWnd.h"
 #include "SidePanel.h"
 #include "SitRepPanel.h"
 #include "../universe/System.h"
@@ -175,6 +176,9 @@ MapWnd::MapWnd() :
     m_sitrep_panel = new SitRepPanel( (GG::App::GetApp()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::App::GetApp()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);
 
+    m_research_wnd = new ResearchWnd();
+    GG::App::GetApp()->Register(m_research_wnd);
+    m_research_wnd->Hide();
 
     // turn button
     m_turn_update = new CUITurnButton(5, 5, END_TURN_BTN_WIDTH, "" );
@@ -256,6 +260,7 @@ MapWnd::MapWnd() :
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL), &MapWnd::EndTurn, this);
 
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F2, 0), &MapWnd::ToggleSitRep, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F3, 0), &MapWnd::ToggleResearch, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowOptions, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_s, 0), &MapWnd::CloseSystemView, this);
 
@@ -281,6 +286,8 @@ MapWnd::MapWnd() :
 
 MapWnd::~MapWnd()
 {
+    delete m_research_wnd;
+
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, 0);
 
@@ -288,6 +295,7 @@ MapWnd::~MapWnd()
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
 
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F2, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F3, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F10, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_s, 0);
 
@@ -514,9 +522,8 @@ void MapWnd::RClick(const GG::Pt& pt, Uint32 keys)
 
 void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 {
-    if (move != 0) {
-	Zoom(move);
-    }
+    if (move)
+        Zoom(move);
 }
 
 void MapWnd::InitTurn(int turn_number)
@@ -528,6 +535,7 @@ void MapWnd::InitTurn(int turn_number)
     GG::App::GetApp()->SetAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
 
     GG::App::GetApp()->SetAccelerator(GG::GGK_F2, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_F3, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_F10, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_s, 0);
 
@@ -649,6 +657,8 @@ void MapWnd::InitTurn(int turn_number)
         m_sitrep_panel->Show();
     else
         m_sitrep_panel->Hide();
+
+    m_research_wnd->Hide();
 
     m_chat_edit->Hide();
     EnableAlphaNumAccels();
@@ -787,6 +797,13 @@ void MapWnd::CenterOnFleet(int fleetID)
 {
     if (Fleet* fleet = GetUniverse().Object<Fleet>(fleetID))
         CenterOnFleet(fleet);
+}
+
+void MapWnd::ShowTech(const std::string& tech_name)
+{
+    if (!m_research_wnd->Visible())
+        ToggleResearch();
+    m_research_wnd->CenterOnTech(tech_name);
 }
 
 void MapWnd::CenterOnSystem(System* system)
@@ -1197,10 +1214,31 @@ bool MapWnd::EndTurn()
 
 bool MapWnd::ToggleSitRep()
 {
-    if (m_sitrep_panel->Visible())
+    if (m_sitrep_panel->Visible()) {
         m_sitrep_panel->Hide();
-    else
+    } else {
+        // hide other "competing" windows
+        m_research_wnd->Hide();
+
+        // show the sitrep window
         m_sitrep_panel->Show();
+    }
+    return true;
+}
+
+bool MapWnd::ToggleResearch()
+{
+    if (m_research_wnd->Visible()) {
+        m_research_wnd->Hide();
+    } else {
+        // hide other "competing" windows
+        m_sitrep_panel->Hide();
+
+        // show the research window
+        m_research_wnd->Show();
+        GG::App::GetApp()->MoveUp(m_research_wnd);
+        m_research_wnd->Reset();
+    }
     return true;
 }
 

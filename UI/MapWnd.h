@@ -15,6 +15,7 @@ class CUITurnButton;
 class Fleet;
 class FleetButton;
 class MapWndPopup;
+class ResearchWnd;
 class SidePanel;
 class SitRepPanel;
 class System;
@@ -80,6 +81,7 @@ public:
     void CenterOnFleet(int fleetID);           //!< centers the map on fleet \a fleetID
     void CenterOnSystem(System* system);       //!< centers the map on system \a system
     void CenterOnFleet(Fleet* fleet);          //!< centers the map on fleet \a fleet
+    void ShowTech(const std::string& tech_name);//!< brings up the research screen and centers the tech tree on \a tech_name
     void SelectSystem(int systemID);           //!< catches emitted signals from the system icons, and allows programmatic selection of planets
     void SelectFleet(int fleetID);             //!< allows programmatic selection of fleets
     void SelectSystem(System* system);         //!< allows programmatic selection of planets
@@ -124,6 +126,7 @@ private:
     bool OpenChatWindow();
     bool EndTurn();
     bool ToggleSitRep();
+    bool ToggleResearch();
     bool ShowOptions();
 	bool CloseSystemView();                      //!< closes off the current system view
     bool KeyboardZoomIn();
@@ -152,6 +155,7 @@ private:
     SidePanel*                      m_side_panel;    //! the planet view panel on the side of the main map
     std::vector<SystemIcon*>        m_system_icons;  //! the system icons in the main map
     SitRepPanel*      	            m_sitrep_panel;  //! the sitrep panel
+    ResearchWnd*      	            m_research_wnd;  //! the research screen
     GG::MultiEdit*                  m_chat_display;  //! the (read-only) MP-chat output multi-line edit box
     CUIEdit*                        m_chat_edit;     //! the MP-chat input edit box
     std::vector<FleetButton*>       m_moving_fleet_buttons; //! the moving fleets in the main map
