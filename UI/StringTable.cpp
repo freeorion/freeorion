@@ -40,72 +40,57 @@ StringTable::~StringTable()
 
 const string& StringTable::operator[] (std::string index)
 {
-    static std::string retval = ""; //keep this because we are returning a reference
+    static std::string retval = ""; // keep this because we are returning a reference
     // since we're using a map now,
     // just do a find and return
     map<string, string>::iterator pos;
     
     pos=m_strings.find(index);
     
-    if(pos == m_strings.end())
-        return(retval = S_ERROR_STRING + index);  //output the error string along with the index so we can debug
+    if (pos == m_strings.end())
+        return (retval = S_ERROR_STRING + index);  // output the error string along with the index so we can debug
         
-    //we got a value, now return the right one
+    // we got a value, now return the right one
     return pos->second;
     
 }
 
 void StringTable::Load()
 {
-    char temp[256]  = {0};
-    char temp2[256] = {0};
-    ifstream file;
-    
-    try
-    {
-        file.open(m_filename.c_str());    //open the file
-    }
-    catch(const exception& e)
-    {
-        ClientUI::MessageBox("Error opening StringTable file: \"" + m_filename + "\"");
-        return;        //handle exception by showing error msg and then get out!
-    }
-    
-    file.getline(temp,256);    //read the first line, which should be the language
-    m_language = temp;
-    
-    //we now use 1 line for an identifier and one line per string
-    while(file.peek() != EOF)
-    {
+    string temp;
+    string temp2;
+    ifstream ifs;
 
-        file.getline(temp,255);    //read identifier
-        
+    try {
+        ifs.open(m_filename.c_str());    //open the file
+    } catch (const exception& e) {
+        ClientUI::MessageBox("Error opening StringTable file: \"" + m_filename + "\"");
+        return;        // handle exception by showing error msg and then get out!
+    }
+
+    getline(ifs, m_language);
+
+    //we now use 1 line for an identifier and one line per string
+    while(ifs.peek() != EOF) {
+        getline(ifs, temp);
+
         //continue reading until we reach a pertinent line
         // i.e. once that doesn't start with a # sign or a newline
-        while( (strcmp(temp,"")==0) || (*temp == '#') )
-        {
-            //make sure we're not reading extraneous lines at the end of the file
-            if(file.peek() == EOF)
-            {
-                file.close();
+        while (temp.empty() || temp[0] == '#') {
+            // make sure we're not reading extraneous lines at the end of the file
+            if (ifs.peek() == EOF) {
                 return;
             }
-            file.getline(temp,255);        //read another line
+            getline(ifs, temp);
         }
-        file.getline(temp2,255);   //read the string
-        
-       if(!m_strings.insert(make_pair((string)temp,(string)temp2)).second)
-       {
-           //found a duplicate or invalid key
-           ClientUI::LogMessage("Duplicate string ID found: '" + (string)temp + "' in file: '" + m_filename + "'.  Ignoring duplicate.");
-       }
-       else
-       {
-           ClientUI::LogMessage("Inserted(" + (string)temp + ", " + string(temp2) + ")");
-       }       
-      
-    }
+        getline(ifs, temp2);
 
-    file.close();
+        if (!m_strings.insert(make_pair(temp, temp2)).second) {
+            //found a duplicate or invalid key
+            ClientUI::LogMessage("Duplicate string ID found: '" + (string)temp + "' in file: '" + m_filename + "'.  Ignoring duplicate.");
+        } else {
+            ClientUI::LogMessage("Inserted(" + (string)temp + ", " + string(temp2) + ")");
+        }
+    }
 }
 
