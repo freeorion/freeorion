@@ -1574,7 +1574,7 @@ void SidePanel::PlanetPanel::ClickColonize()
 
   if(!IsStationaryFleetFunctor(*ship->GetFleet()->Owners().begin())(ship->GetFleet()))
   {
-    GG::ThreeButtonDlg dlg(320,200,"It could only a colony ship been found which is about leaving the system!\n\nTake it anyway?",
+    GG::ThreeButtonDlg dlg(320,200,"All colony ships in this system have been\ngiven orders to leave the system.\n\nUse one of the departing colony ships?",
                            ClientUI::FONT,ClientUI::PTS,ClientUI::WND_COLOR,ClientUI::CTRL_BORDER_COLOR,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR,2,
                            "Yes","No");
     dlg.Run();
