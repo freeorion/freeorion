@@ -54,10 +54,9 @@ public:
                       DISPATCH_NEW_OBJECT_ID,  ///< sent by server to client with the new object ID.
                       END_GAME,                ///< sent to the server by the host client when the current game is to end
     };
-
                
     /** Represents the module which is the destination for the message */
-    enum ModuleType {CORE,                    ///< this module is the ServerCore or ClientCore, as appropriate; all server-bound messages go here
+    enum ModuleType {CORE,                           ///< this module is the ServerCore or ClientCore, as appropriate; all server-bound messages go here
                      CLIENT_LOBBY_MODULE,            ///< the human-only multiplayer lobby dialog
                      CLIENT_UNIVERSE_MODULE,         ///< the ClientUniverse module
                      CLIENT_EMPIRE_MODULE,           ///< the ClientEmpire module
@@ -66,25 +65,28 @@ public:
                      // are other server modules necessary?
     };
 
-    enum TurnProgressPhase { FLEET_MOVEMENT,           ///< fleet movement turn progress message
-                             COMBAT,                   ///< combat turn progress message
-                             EMPIRE_PRODUCTION,        ///< empire production turn progress message
-                             WAITING_FOR_PLAYERS,      ///< waiting for other to end their turn
-			     PROCESSING_ORDERS         ///< processing orders
+    enum TurnProgressPhase {FLEET_MOVEMENT,           ///< fleet movement turn progress message
+                            COMBAT,                   ///< combat turn progress message
+                            EMPIRE_PRODUCTION,        ///< empire production turn progress message
+                            WAITING_FOR_PLAYERS,      ///< waiting for other to end their turn
+                            PROCESSING_ORDERS         ///< processing orders
 
     };
 
 
     /** \name Structors */ //@{
+    /** default ctor. */
+    Message();
+
     /** standard ctor.  Senders that are not part of a game and so have no player number should send -1 as the \a 
         sender parameter.   \throw std::invalid_argument May throw std::invalid_argument if the parameters would form
         an invalid message */
-    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const std::string& text, MessageType response_msg= UNDEFINED );
+    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const std::string& text, MessageType response_msg = UNDEFINED);
  
     /** convienience ctor that converts \a doc into a std::string automatically.  Senders that are not part of a game 
         and so have no player number should send -1 as the \a sender parameter.   \throw std::invalid_argument May
         throw std::invalid_argument if the parameters would form an invalid message */
-    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const GG::XMLDoc& doc, MessageType response_msg= UNDEFINED );
+    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const GG::XMLDoc& doc, MessageType response_msg = UNDEFINED);
     //@}
 
     /** \name Accessors */ //@{
@@ -152,21 +154,31 @@ Message RenameMessage(int player_id, const std::string& new_name);
 Message EndGameMessage(int sender, int receiver);
 
 /** creates an TURN_ORDERS message. */
-Message TurnOrdersMessage(int sender, int receiver, const GG::XMLDoc& orders_data );
+Message TurnOrdersMessage(int sender, int receiver, const GG::XMLDoc& orders_data);
 
 /** creates an TURN_PROGRESS message. */
-Message TurnProgressMessage( int player_id, const Message::TurnProgressPhase phase_id, const int empire_id );
+Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id);
 
 /** creates a TURN_UPDATE message.  Contains a diff of universe and empire data */
 Message TurnUpdateMessage(int player_id, const GG::XMLDoc& start_data);
 
-/** creates an REQUEST_NEW_OBJECT_ID  message. */
-/** this message is a synchronous message, when sent it will wait for a reply form the server */
-Message RequestNewObjectIDMessage(int sender, int receiver );
+/** creates an REQUEST_NEW_OBJECT_ID  message. This message is a synchronous message, when sent it will wait for a reply form the server */
+Message RequestNewObjectIDMessage(int sender);
 
-/** creates an DISPATCH_NEW_OBJECT_ID  message. */
-/** this message is sent to a client who is waiting for a new object ID */
-Message DispatchObjectIDMessage( int player_id, const int new_id );
+/** creates an DISPATCH_NEW_OBJECT_ID  message.  This message is sent to a client who is waiting for a new object ID */
+Message DispatchObjectIDMessage(int player_id, int new_id);
+
+/** creates a SAVE_GAME request message.  This message should only be sent by the host player.*/
+Message HostSaveGameMessage(int sender, const std::string& filename);
+
+/** creates a LOAD_GAME request message.  This message should only be sent by the the host player.*/
+Message HostLoadGameMessage(int sender, const std::string& filename);
+
+/** creates a SAVE_GAME data request message.  This message should only be sent by the server to get game data from a client.*/
+Message ServerSaveGameMessage(int receiver, bool done = false);
+
+/** creates a LOAD_GAME data message.  This message should only be sent by the server to provide saved game data to a client.*/
+Message ServerLoadGameMessage(int receiver, const GG::XMLDoc& data);
 
 
 
