@@ -102,7 +102,7 @@ int About::Render()
 
 void About::OnDone()
 {
-    m_info->SetText(m_credits_str);
+    m_info->SetText(m_credits_str);	//TODO this is a hack to stop a segfault
     m_done = true;
 }//OnDone()
 
