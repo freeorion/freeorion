@@ -8,7 +8,11 @@
 #include "../util/OrderSet.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
+#include "../universe/System.h"
+#include "../universe/Predicates.h"
 #include "../Empire/TechManager.h"
+
+#include "../Combat/CombatSystem.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -943,9 +947,63 @@ void ServerApp::ProcessTurns( )
         it->second = NULL;
     }   
     
-    // TODO:  check for combats, and resolve them.
-    
-    
+    // check for combats, and resolve them.
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+      m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::COMBAT,-1) );
+
+    Universe::ObjectVec sys_vec = GetUniverse().FindObjects(IsSystem);
+    for(Universe::ObjectVec::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it)
+    {
+      std::vector<CombatAssets> empire_combat_forces;
+      System* system = dynamic_cast<System*>(*it);
+      
+      Universe::ObjectVec flt_vec = system->FindObjects(IsFleet);
+      for(Universe::ObjectVec::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it)
+      {
+	        Fleet* flt = dynamic_cast<Fleet*>(*flt_it);
+	        // a fleet should belong only to one empire!?
+ 	        if(1==flt->Owners().size())
+          {
+            std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*flt->Owners().begin())));
+
+            if(ecf_it==empire_combat_forces.end())
+            {
+              CombatAssets ca(Empires().Lookup(*flt->Owners().begin()));
+              ca.fleets.push_back(flt);
+              empire_combat_forces.push_back(ca);
+            }
+            else
+              (*ecf_it).fleets.push_back(flt);
+          }
+      }
+      Universe::ObjectVec plt_vec = system->FindObjects(IsPlanet);
+      for(Universe::ObjectVec::iterator plt_it = plt_vec.begin();plt_it != plt_vec.end(); ++plt_it)
+      {
+	        Planet* plt = dynamic_cast<Planet*>(*plt_it);
+	        // a planet should belong only to one empire!?
+          if( (1==plt->Owners().size()) && plt->DefBases()>0)
+          {           
+            std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*plt->Owners().begin())));
+
+            if(ecf_it==empire_combat_forces.end())
+            {
+              CombatAssets ca(Empires().Lookup(*plt->Owners().begin()));
+              ca.planets.push_back(plt);
+              empire_combat_forces.push_back(ca);
+            }
+            else
+              (*ecf_it).planets.push_back(plt);
+          }
+     }
+
+      if(empire_combat_forces.size()>1)
+      {
+        CombatSystem combat_system;
+        combat_system.ResolveCombat(empire_combat_forces);
+      }
+    }
+    // TODO : check if all empires are still alive
+
     /// Increment turn
     ++m_current_turn;
    
@@ -955,7 +1013,7 @@ void ServerApp::ProcessTurns( )
         pEmpire = Empires().Lookup( player_it->first );
 
         GG::XMLDoc doc = CreateTurnUpdate( player_it->first );
-
+        
         // free empire sitreps
         pEmpire->ClearSitRep( );
 
