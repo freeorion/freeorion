@@ -144,6 +144,12 @@ Galaxy Setup
 GSETUP_GRAPHICS_FILES
 Graphics Files
 
+GSETUP_EMPIRE_NAME
+Empire Name
+
+GSETUP_EMPIRE_COLOR
+Empire Color
+
 
 #Drop-down list labels and choices####
 
