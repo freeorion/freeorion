@@ -22,12 +22,16 @@ freeorion_exe_SOURCES =				\
 @top_srcdir@/UI/ClientUI.h			\
 @top_srcdir@/UI/EmpireSelect.cpp		\
 @top_srcdir@/UI/EmpireSelect.h			\
+@top_srcdir@/UI/GalaxyMapScreen.cpp		\
+@top_srcdir@/UI/GalaxyMapScreen.h		\
 @top_srcdir@/UI/GalaxySetupWnd.cpp		\
 @top_srcdir@/UI/GalaxySetupWnd.h		\
 @top_srcdir@/UI/IntroScreen.cpp			\
 @top_srcdir@/UI/IntroScreen.h			\
 @top_srcdir@/UI/LinkText.cpp			\
 @top_srcdir@/UI/LinkText.h			\
+@top_srcdir@/UI/MapWnd.cpp			\
+@top_srcdir@/UI/MapWnd.h			\
 @top_srcdir@/UI/Parser.cpp			\
 @top_srcdir@/UI/Parser.h			\
 @top_srcdir@/UI/ServerConnectWnd.cpp		\
@@ -36,6 +40,8 @@ freeorion_exe_SOURCES =				\
 @top_srcdir@/UI/ServerUI.h			\
 @top_srcdir@/UI/StringTable.cpp			\
 @top_srcdir@/UI/StringTable.h			\
+@top_srcdir@/UI/SystemIcon.cpp			\
+@top_srcdir@/UI/SystemIcon.h			\
 @top_srcdir@/UI/ToolContainer.cpp		\
 @top_srcdir@/UI/ToolContainer.h			\
 @top_srcdir@/UI/ToolWnd.cpp			\
