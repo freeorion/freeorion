@@ -51,10 +51,7 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
 
 Process::ProcessImpl::~ProcessImpl()
 {
-   if (TerminateProcess(m_process_info.hProcess, 0)) {
-      CloseHandle(m_process_info.hProcess);
-      CloseHandle(m_process_info.hThread);
-   } else {
+   if (!TerminateProcess(m_process_info.hProcess, 0)) {
       std::string err_str;
       DWORD err = GetLastError();
       DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
@@ -63,8 +60,9 @@ Process::ProcessImpl::~ProcessImpl()
          err_str += buf;
          LocalFree(buf);
       }
-      throw std::runtime_error("Process::~Process : Failed to destroy child process.  Windows error was: \"" + err_str + "\"");
    }
+   CloseHandle(m_process_info.hProcess);
+   CloseHandle(m_process_info.hThread);
 }
 
 #elif defined(LINUX_CHILD_PROCESSES)
@@ -99,7 +97,7 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
 
 Process::ProcessImpl::~ProcessImpl()
 {
-   kill(m_process_id, SIGTERM);
+   kill(m_process_id, SIGHUP);
 }
 
 #endif
