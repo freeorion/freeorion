@@ -90,6 +90,19 @@ int GalaxySetupWnd::Render()
     return true;
 }
 
+int GalaxySetupWnd::Keypress (GG::Key key, Uint32 key_mods)
+{
+    if (key == GG::GGK_RETURN) // Same behaviour as if "OK" was pressed
+    {
+      OnOK();
+    }
+    if (key == GG::GGK_ESCAPE) // Same behaviour as if "Cancel" was pressed
+    {
+      OnCancel();
+    }
+    return 1;
+}//Keypress()
+
 GG::XMLElement GalaxySetupWnd::XMLEncode() const
 {
     using namespace GG;

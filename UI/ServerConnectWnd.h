@@ -25,10 +25,17 @@ public:
     ServerConnectWnd(const GG::XMLElement& elem);
     //@}
 
+//! \name Mutators
+//!@{
+    virtual int Keypress (GG::Key key, Uint32 key_mods);
+
+//!@}
+
     /** \name Accessors */ //@{
     /** returns a the player's name (.first) and the location of the server (.second -- IP address or name), or "" if none was selected */
     const std::pair<std::string, std::string>& Result() const;
     //@}
+
 
 private:
     void Init();

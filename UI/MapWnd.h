@@ -63,7 +63,7 @@ public:
 
     //! \name Mutators //!@{
     virtual int    Render();
-    virtual int    Keypress (GG::Key key, Uint32 key_mods);    
+    virtual int    Keypress (GG::Key key, Uint32 key_mods);
     virtual int    LButtonDown(const GG::Pt& pt, Uint32 keys);
     virtual int    LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
     virtual int    LButtonUp(const GG::Pt& pt, Uint32 keys);

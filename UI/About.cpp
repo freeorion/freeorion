@@ -95,6 +95,15 @@ int About::Render()
     return true;
 }//Render()
 
+int About::Keypress (GG::Key key, Uint32 key_mods)
+{
+    if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE)) // Same behaviour as if "done" was pressed
+    {
+      OnDone();
+    }
+    return 1;
+}//Keypress()
+
 ///////////////////////////////////////////////
 //   ACCESSORS
 ///////////////////////////////////////////////

@@ -120,6 +120,14 @@ int MultiplayerLobbyWnd::Keypress(GG::Key key, Uint32 key_mods)
         m_chat_input_edit->SetText("");
         *m_chat_box += text;
     }
+    else if (key == GG::GGK_RETURN)
+    {
+        StartGameClicked();
+    }
+    else if (key == GG::GGK_ESCAPE)
+    {
+        CancelClicked();
+    }
     return 1;
 }
 

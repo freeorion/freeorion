@@ -47,6 +47,7 @@ public:
 //! \name Mutators
 //!@{
     virtual int Render();    //!< drawing code
+    virtual int Keypress (GG::Key key, Uint32 key_mods);
     
 //!@}
 

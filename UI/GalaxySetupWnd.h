@@ -43,6 +43,7 @@ public:
 
     /** \name Mutators*/ //!@{
     virtual int Render();    //!< drawing code
+    virtual int Keypress (GG::Key key, Uint32 key_mods);
 
     void OnChangeSize(int index);    //!< when the size radio buttons are changed
     void OnChangeType(int index);    //!< when the type radio buttons are changed
