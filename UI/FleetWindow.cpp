@@ -444,6 +444,7 @@ void FleetDetailPanel::SetFleet(Fleet* fleet)
     if (fleet != old_fleet)
         m_fleet_connection.disconnect();
     *m_destination_text << "";
+    *m_ship_status_text << "";
     m_ships_lb->Clear();
     if (m_fleet = fleet) {
         Universe& universe = GetUniverse();
