@@ -4,17 +4,16 @@
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
-#ifdef FREEORION_BUILD_SERVER
-#include "../server/ServerApp.h"
+#if defined(FREEORION_BUILD_SERVER)
+  #include "../server/ServerApp.h"
+#elif defined(FREEORION_BUILD_HUMAN)
+  #include "../client/human/HumanClientApp.h"
 #else
-#ifdef FREEORION_BUILD_HUMAN
-#include "../client/human/HumanClientApp.h"
-#else
-#include "../client/AI/AIClientApp.h"
-#endif
+  #include "../client/AI/AIClientApp.h"
 #endif
 
 #include <stdexcept>
+
 
 System::System() : 
    UniverseObject(),
@@ -68,29 +67,18 @@ System::System(const GG::XMLElement& elem) :
       for(int i=0; i<orbit_map.NumChildren(); i++)
       {
          XMLElement map_object = orbit_map.Child(i);
-
-         int map_key = lexical_cast<int> (map_object.Child("orbit").Attribute("value") );
-         int obj_id = lexical_cast<int> (map_object.Child("orbit_obj_id").Attribute("value") );
-         
-         Insert(obj_id, map_key);
+         int orbit = lexical_cast<int>(map_object.Attribute("orbit"));
+         int id = lexical_cast<int>(map_object.Attribute("id"));
+         m_objects.insert(std::make_pair(orbit, id));
       }
 
       XMLElement lane_map = elem.Child("m_starlanes_wormholes");
       for(int i=0; i<lane_map.NumChildren(); i++)
       {
-         XMLElement map_lane = lane_map.Child(i);
-
-         int system = lexical_cast<int> (map_lane.Child("system").Attribute("value") );
-         bool wormhole = lexical_cast<bool> (map_lane.Child("wormhole").Attribute("value") );
-
-         if (wormhole)
-         {
-            AddWormhole(system);
-         } 
-         else 
-         {
-            AddStarlane(system);
-         }
+         XMLElement lane = lane_map.Child(i);
+         int system = lexical_cast<int>(lane.Attribute("system"));
+         bool wormhole = lexical_cast<bool>(lane.Attribute("wormhole"));
+         m_starlanes_wormholes[system] = wormhole;
       }
    }      
 }
@@ -132,53 +120,40 @@ GG::XMLElement System::XMLEncode() const
 {
    using GG::XMLElement;
    using boost::lexical_cast;
+   using std::string;
 
    XMLElement element("System");
 
    XMLElement visibility("visibility");
-   visibility.SetAttribute( "value", lexical_cast<std::string>(FULL_VISIBILITY) );
+   visibility.SetAttribute( "value", lexical_cast<string>(FULL_VISIBILITY) );
    element.AppendChild(visibility);
 
    element.AppendChild( UniverseObject::XMLEncode() );
 
    XMLElement star("m_star");
-   star.SetAttribute( "value", lexical_cast<std::string>(m_star) );
+   star.SetAttribute( "value", lexical_cast<string>(m_star) );
    element.AppendChild(star);
 
    XMLElement orbits("m_orbits");
-   orbits.SetAttribute( "value", lexical_cast<std::string>(m_orbits) );
+   orbits.SetAttribute( "value", lexical_cast<string>(m_orbits) );
    element.AppendChild(orbits);
 
    XMLElement orbit_map("m_objects");
-   for(const_orbit_iterator itr= begin(); itr != end(); itr++)
+   for(const_orbit_iterator itr = begin(); itr != end(); ++itr)
    {
       XMLElement map_object("map_object");
-
-      XMLElement orbit("orbit");
-      orbit.SetAttribute( "value", lexical_cast<std::string>((*itr).first) );
-      map_object.AppendChild(orbit);
-
-      XMLElement orbit_obj_id("orbit_obj_id");
-      orbit_obj_id.SetAttribute( "value", lexical_cast<std::string>((*itr).second) );
-      map_object.AppendChild(orbit_obj_id);
-
+      map_object.SetAttribute("orbit", lexical_cast<string>(itr->first));
+      map_object.SetAttribute("id", lexical_cast<string>(itr->second));
       orbit_map.AppendChild(map_object);
    }
    element.AppendChild(orbit_map);
 
    XMLElement lane_map("m_starlanes_wormholes");
-   for(const_lane_iterator itr= begin_lanes(); itr != end_lanes(); itr++)
+   for(const_lane_iterator itr = begin_lanes(); itr != end_lanes(); ++itr)
    {
       XMLElement map_lane("map_lane");
-
-      XMLElement system("system");
-      system.SetAttribute( "value", lexical_cast<std::string>((*itr).first) );
-      map_lane.AppendChild(system);
-
-      XMLElement wormhole("wormhole");
-      wormhole.SetAttribute( "value", lexical_cast<std::string>((*itr).second) );
-      map_lane.AppendChild(wormhole);
-
+      map_lane.SetAttribute("system", lexical_cast<string>(itr->first));
+      map_lane.SetAttribute("wormhole", lexical_cast<string>(itr->second));
       lane_map.AppendChild(map_lane);
    }
    element.AppendChild(lane_map);
@@ -210,43 +185,35 @@ GG::XMLElement System::XMLEncode(int empire_id) const
    return element;
 }
 
-
 int System::Insert(UniverseObject* obj)
 {
-	int retval = -1;
-
-    // look for an empty orbit to place into
-    for (int orb = 0; orb < m_orbits; orb++)
-    {
-       if (m_objects.find(orb) == end())
-       {
-          m_objects.insert(std::pair<int, int>(orb, obj->ID()));
-          obj->SetSystem(this);
-          return orb;
-       }
-    }
-
-    // if no empty orbits, add a new one
-    m_objects.insert(std::pair<int, int>(m_orbits, obj->ID()));
-    m_orbits++;
-    
-	return retval;
+    return Insert(obj, -1);
 }
 
 int System::Insert(UniverseObject* obj, int orbit)
 {
-    if (orbit < 0 || m_orbits < orbit)
-      throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
-    m_objects.insert(std::pair<int, int>(orbit, obj->ID()));
-    obj->SetSystem(this);
-	return orbit;
+    if (!obj)
+        throw std::invalid_argument("System::Insert() : Attempted to place a null object in a System");
+    if (orbit < -1)
+        throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
+    obj->SetSystem(ID());
+	return Insert(obj->ID(), orbit);
 }
 
 
 int System::Insert(int obj_id, int orbit)
 {
-    if (orbit < 0 || m_orbits < orbit)
-      throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
+    if (orbit < -1)
+        throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
+#if defined(FREEORION_BUILD_SERVER)
+    const ClientUniverse& universe = ServerApp::Universe();
+#else
+    const ClientUniverse& universe = ClientApp::Universe();
+#endif
+    if (!universe.Object(obj_id))
+        throw std::invalid_argument("System::Insert() : Attempted to place an object in a System, when the object is not already in the Universe");
+    if (m_orbits <= orbit)
+        m_orbits = orbit + 1;
     m_objects.insert(std::pair<int, int>(orbit, obj_id));
 	return orbit;
 }

@@ -6,6 +6,16 @@
 #include "UniverseObject.h"
 #endif
 
+#ifdef FREEORION_BUILD_SERVER
+  #ifndef _ServerApp_h_
+  #include "../server/ServerApp.h"
+  #endif
+#else
+  #ifndef _ClientApp_h_
+  #include "../client/ClientApp.h"
+  #endif
+#endif
+
 #include <map>
 
 /** contains UniverseObjects and connections to other systems (starlanes and wormholes).  All systems are UniversObjects
@@ -30,8 +40,9 @@ public:
                   NUM_STARTYPES           ///< the lowest illegal StarType value
                  }; // others TBD
       
-   typedef std::vector<int>                     ObjectVec;        ///< the return type of FindObjects()
-   typedef std::vector<int>                     ObjectIDVec;      ///< the return type of FindObjectIDs()
+   typedef std::vector<UniverseObject*>       ObjectVec;          ///< the return type of FindObjects()
+   typedef std::vector<const UniverseObject*> ConstObjectVec;     ///< the return type of FindObjects()
+   typedef std::vector<int>                   ObjectIDVec;        ///< the return type of FindObjectIDs()
 
    typedef ObjectMultimap::iterator       orbit_iterator;         ///< iterator for system objects
    typedef ObjectMultimap::const_iterator const_orbit_iterator;   ///< const_iterator for system objects
@@ -62,6 +73,44 @@ public:
    bool HasStarlaneTo(int id) const;         ///< returns true if there is a starlane from this system to the system with ID number \a id
    bool HasWormholeTo(int id) const;         ///< returns true if there is a wormhole from this system to the system with ID number \a id
 
+   /** returns the IDs of all the objects that match \a pred.  Predicates used with this function must take a single const 
+      UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+   template <class Pred>
+   ObjectIDVec FindObjectIDs(Pred pred) const
+   {
+#ifdef FREEORION_BUILD_SERVER
+      const ClientUniverse& universe = ServerApp::Universe();
+#else
+      const ClientUniverse& universe = ClientApp::Universe();
+#endif
+      ObjectIDVec retval;
+      for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+         const UniverseObject* o = universe.Object(it->second);
+         if (pred(o))
+            retval.push_back(it->first);
+      }
+      return retval;
+   }
+
+   /** returns all the objects that match \a pred.  Predicates used with this function must take a single const UniverseObject* 
+      parameter and must return a bool or a type for which there is a conversion to bool.*/
+   template <class Pred>
+   ConstObjectVec FindObjects(Pred pred) const
+   {
+#ifdef FREEORION_BUILD_SERVER
+      const ClientUniverse& universe = ServerApp::Universe();
+#else
+      const ClientUniverse& universe = ClientApp::Universe();
+#endif
+      ConstObjectVec retval;
+      for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+         const UniverseObject* o = universe.Object(it->second);
+         if (pred(o))
+            retval.push_back(o);
+      }
+      return retval;
+   }
+
    const_orbit_iterator begin() const  {return m_objects.begin();}   ///< begin iterator for all system objects
    const_orbit_iterator end() const    {return m_objects.end();}     ///< end iterator for all system objects
 
@@ -73,7 +122,7 @@ public:
 
    const_lane_iterator  begin_lanes() const  {return m_starlanes_wormholes.begin();}   ///< begin iterator for all starlanes and wormholes terminating in this system
    const_lane_iterator  end_lanes() const    {return m_starlanes_wormholes.end();}     ///< end iterator for all starlanes and wormholes terminating in this system
-   
+
    virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a System object
    virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a System object with visibility limited relative to the input empire
@@ -92,7 +141,7 @@ public:
    /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound 
        objects should be inserted with this function. NOTE: This function is primarily intended for XML decoding purposes 
        and does not set the object's system to point to this system since it is assumed that this has already been done prior 
-       to encoding. If used for other purposes you must set the objects System ID manually. */
+       to encoding. If used for other purposes you must set the object's System ID manually. */
    int Insert(int obj_id, int orbit);
 
    /** removes the object with ID number \a id from the system, and returns it; returns 0 if there is no such object*/
@@ -102,6 +151,23 @@ public:
    void AddWormhole(int id);     ///< adds a wormhole between this system and the system with ID number \a id  \note Adding a wormhole to a system to which there is already a starlane erases the starlane; you may want to check for a starlane before calling this function.
    bool RemoveStarlane(int id);  ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
    bool RemoveWormhole(int id);  ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
+
+#ifdef FREEORION_BUILD_SERVER
+   /** returns all the objects that match \a pred.  Predicates used with this function must take a single UniverseObject* 
+      parameter and must return a bool or a type for which there is a conversion to bool.*/
+   template <class Pred>
+   ObjectVec FindObjects(Pred pred)
+   {
+      const ServerUniverse& universe = ServerApp::Universe();
+      ObjectVec retval;
+      for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+         UniverseObject* o = universe.Object(it->second);
+         if (pred(o))
+            retval.push_back(o);
+      }
+      return retval;
+   }
+#endif
 
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
