@@ -69,13 +69,13 @@ public:
     typedef std::list<int>::iterator FleetIDItr;
     typedef std::list<int>::iterator SystemIDItr;
     typedef std::list<int>::iterator TechIDItr;
-    typedef std::list<SitRepEntry>::iterator SitRepItr;
+    typedef std::list<SitRepEntry*>::iterator SitRepItr;
     
     typedef std::list<int>::const_iterator    ConstPlanetIDItr;
     typedef std::list<int>::const_iterator    ConstFleetIDItr;
     typedef std::list<int>::const_iterator    ConstSystemIDItr;
     typedef std::list<int>::const_iterator    ConstTechIDItr;
-    typedef std::list<SitRepEntry>::const_iterator    ConstSitRepItr;
+    typedef std::list<SitRepEntry*>::const_iterator    ConstSitRepItr;
     //@}
     
     /**
@@ -218,8 +218,8 @@ public:
     /// Inserts the given ID into the Empire's list of visible fleets.
     void AddVisibleFleet(int ID);
 
-    /// Inserts the given sitrep entry into the empire's sitrep list
-    void AddSitRepEntry(SitRepEntry& entry);
+    /// Inserts the a pointer to given sitrep entry into the empire's sitrep list
+    void AddSitRepEntry( SitRepEntry* entry);
     
      /* ************************************************
         Methods to remove items from our various lists
@@ -339,7 +339,7 @@ private:
 	Empire::ControlStatus m_control_state;
     
     /// The Empire's sitrep entries
-    std::list<SitRepEntry> m_sitrep_entries;
+    std::list<SitRepEntry*> m_sitrep_entries;
 
 
            // all of the following are lists of ObjectIDs which 

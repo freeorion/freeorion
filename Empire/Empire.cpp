@@ -241,7 +241,7 @@ void Empire::AddVisibleFleet(int ID)
 }
 
 /// Inserts the given sitrep entry into the empire's sitrep list
-void Empire::AddSitRepEntry(SitRepEntry& entry)
+void Empire::AddSitRepEntry( SitRepEntry* entry)
 {
     m_sitrep_entries.push_back(entry);
 }
