@@ -42,15 +42,6 @@ HumanClientApp::HumanClientApp(const GG::XMLElement& elem) :
 
 HumanClientApp::~HumanClientApp()
 {
-    if (m_current_music) {
-        Mix_HaltMusic();
-        Mix_FreeMusic(m_current_music);
-        m_current_music = 0;
-    }
-    Mix_HaltChannel(-1); // stop all sound playback
-    for (std::map<std::string, Mix_Chunk*>::iterator it = m_sounds.begin(); it != m_sounds.end(); ++it) {
-        Mix_FreeChunk(it->second);
-    }
 }
 
 void HumanClientApp::StartServer()
@@ -62,7 +53,11 @@ void HumanClientApp::StartServer()
 
 void HumanClientApp::KillServer()
 {
-    m_server_process.Kill();
+    if (NetworkCore().Connected()) {
+        NetworkCore().SendMessage(EndGameMessage(m_player_id, -1));
+    } else {
+        m_server_process.Kill();
+    }
 }
 
 void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/* = 0*/, double position/* = 0.0*/)
@@ -395,10 +390,21 @@ void HumanClientApp::Render()
 
 void HumanClientApp::FinalCleanup()
 {
+    if (m_current_music) {
+        Mix_HaltMusic();
+        Mix_FreeMusic(m_current_music);
+        m_current_music = 0;
+    }
+    Mix_HaltChannel(-1); // stop all sound playback
+    for (std::map<std::string, Mix_Chunk*>::iterator it = m_sounds.begin(); it != m_sounds.end(); ++it) {
+        Mix_FreeChunk(it->second);
+    }
+
     if (NetworkCore().Connected()) {
+        NetworkCore().SendMessage(EndGameMessage(m_player_id, -1)); // this only works if we're the host
         NetworkCore().DisconnectFromServer();
     }
-    m_server_process.Kill();
+    KillServer();
 }
 
 void HumanClientApp::SDLQuit()
