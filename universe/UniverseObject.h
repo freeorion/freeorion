@@ -33,6 +33,9 @@ public:
         NO_VISIBILITY
     };
 
+    /** the value passed to XMLEncode() when the entire object is desired, not just the portion visible to one empire */
+    enum {ENCODE_FOR_ALL_EMPIRES = -1};
+
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()> StateChangedSignalType; ///< emitted when the UniverseObject is altered in any way
     //@}
@@ -67,8 +70,7 @@ public:
 
     virtual Visibility Visible(int empire_id) const = 0; ///< returns the visibility status of this universe object relative to the input empire.
    
-    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a UniverseObject object
-    virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a UniverseObject object with visibility limited relative to the input empire
+    virtual GG::XMLElement XMLEncode(int empire_id = ENCODE_FOR_ALL_EMPIRES) const; ///< constructs an XMLElement from a UniverseObject object with visibility limited relative to the input empire
 
     StateChangedSignalType& StateChangedSignal() const {return m_changed_sig;} ///< returns the state changed signal object for this UniverseObject
     //@}

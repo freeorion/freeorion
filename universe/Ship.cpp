@@ -32,13 +32,13 @@ ShipDesign::ShipDesign(const GG::XMLElement& elem)
    if (elem.Tag() != "ShipDesign" )
       throw std::invalid_argument("Attempted to construct a ShipDesign from an XMLElement that had a tag other than \"ShipDesign\"");
 
-   id = lexical_cast<int> ( elem.Child("id").Attribute("value") );
-   empire = lexical_cast<int> ( elem.Child("empire").Attribute("value") );
+   id = lexical_cast<int>(elem.Child("id").Text());
+   empire = lexical_cast<int>(elem.Child("empire").Text());
    name = elem.Child("name").Text();
-   attack = lexical_cast<int> ( elem.Child("attack").Attribute("value") );
-   defense = lexical_cast<int> ( elem.Child("defense").Attribute("value") );
-   cost = lexical_cast<int> ( elem.Child("cost").Attribute("value") );
-   colonize = lexical_cast<bool> ( elem.Child("colonize").Attribute("value") );
+   attack = lexical_cast<int>(elem.Child("attack").Text());
+   defense = lexical_cast<int>(elem.Child("defense").Text());
+   cost = lexical_cast<int>(elem.Child("cost").Text());
+   colonize = lexical_cast<bool>(elem.Child("colonize").Text());
 
 }
 
@@ -47,37 +47,15 @@ GG::XMLElement ShipDesign::XMLEncode() const
    using GG::XMLElement;
    using boost::lexical_cast;
 
-   XMLElement element("ShipDesign");
-
-   XMLElement sd_ID("id");
-   sd_ID.SetAttribute( "value", lexical_cast<std::string>(id) );
-   element.AppendChild(sd_ID);
-
-   XMLElement sd_empire("empire");
-   sd_empire.SetAttribute( "value", lexical_cast<std::string>(empire) );
-   element.AppendChild(sd_empire);
-   
-   XMLElement sd_name("name");
-   sd_name.SetText(name);
-   element.AppendChild(sd_name);
-
-   XMLElement sd_attack("attack");
-   sd_attack.SetAttribute( "value", lexical_cast<std::string>(attack) );
-   element.AppendChild(sd_attack);
-
-   XMLElement sd_defense("defense");
-   sd_defense.SetAttribute( "value", lexical_cast<std::string>(defense) );
-   element.AppendChild(sd_defense);
-
-   XMLElement sd_cost("cost");
-   sd_cost.SetAttribute( "value", lexical_cast<std::string>(cost) );
-   element.AppendChild(sd_cost);
-
-   XMLElement sd_colonize("colonize");
-   sd_colonize.SetAttribute( "value", lexical_cast<std::string>(colonize) );
-   element.AppendChild(sd_colonize);
-
-   return element;
+   XMLElement retval("ShipDesign");
+   retval.AppendChild(XMLElement("id", lexical_cast<std::string>(id)));
+   retval.AppendChild(XMLElement("empire", lexical_cast<std::string>(empire)));
+   retval.AppendChild(XMLElement("name", name));
+   retval.AppendChild(XMLElement("attack", lexical_cast<std::string>(attack)));
+   retval.AppendChild(XMLElement("defense", lexical_cast<std::string>(defense)));
+   retval.AppendChild(XMLElement("cost", lexical_cast<std::string>(cost)));
+   retval.AppendChild(XMLElement("colonize", lexical_cast<std::string>(colonize)));
+   return retval;
 
 }
 
@@ -109,10 +87,18 @@ Ship::Ship(const GG::XMLElement& elem) :
   UniverseObject(elem.Child("UniverseObject")),
   m_design(ShipDesign(elem.Child("ShipDesign")))
 {
-   if (elem.Tag().find( "Ship" ) == std::string::npos )
-      throw std::invalid_argument("Attempted to construct a Ship from an XMLElement that had a tag other than \"Ship\"");
+    if (elem.Tag().find( "Ship" ) == std::string::npos )
+        throw std::invalid_argument("Attempted to construct a Ship from an XMLElement that had a tag other than \"Ship\"");
 
-   m_fleet_id = lexical_cast<int> ( elem.Child("m_fleet_id").Attribute("value") );
+    try {
+        m_fleet_id = lexical_cast<int> ( elem.Child("m_fleet_id").Text() );
+    } catch (const boost::bad_lexical_cast& e) {
+        Logger().debugStream() << "Caught boost::bad_lexical_cast in Ship::Ship(); bad XMLElement was:";
+        std::stringstream osstream;
+        elem.WriteElement(osstream);
+        Logger().debugStream() << "\n" << osstream.str();
+        throw;
+    }
 }
 
 Fleet* Ship::GetFleet() const
@@ -131,44 +117,16 @@ bool Ship::IsArmed() const
     return (m_design.attack > 0);
 }
 
-GG::XMLElement Ship::XMLEncode() const
+GG::XMLElement Ship::XMLEncode(int empire_id/* = ENCODE_FOR_ALL_EMPIRES*/) const
 {
    using GG::XMLElement;
    using boost::lexical_cast;
    using std::string;
-
-   string ship_name( "Ship" );
-   ship_name += boost::lexical_cast<std::string>( ID() );
-   XMLElement element( ship_name );
-
-   element.AppendChild( UniverseObject::XMLEncode() );
-
-   element.AppendChild( m_design.XMLEncode() );
-
-   XMLElement fleet_id("m_fleet_id");
-   fleet_id.SetAttribute( "value", lexical_cast<std::string>(m_fleet_id) );
-   element.AppendChild(fleet_id);
-
-   return element;
-}
-
-GG::XMLElement Ship::XMLEncode(int empire_id) const
-{
-   // ships are always fully encoded so partial version is
-   // the same as the full
-   using GG::XMLElement;
-   using boost::lexical_cast;
-   using std::string;
-
-   string ship_name( "Ship" );
-   ship_name += boost::lexical_cast<std::string>( ID() );
-   XMLElement element( ship_name );
-
-   element.AppendChild( UniverseObject::XMLEncode() );
-
-   element.AppendChild( m_design.XMLEncode() );
-
-   return element;
+   XMLElement retval("Ship" + boost::lexical_cast<std::string>(ID()));
+   retval.AppendChild(UniverseObject::XMLEncode(empire_id));
+   retval.AppendChild(m_design.XMLEncode());
+   retval.AppendChild(XMLElement("m_fleet_id", lexical_cast<std::string>(m_fleet_id)));
+   return retval;
 }
   	
 void Ship::MovementPhase( )

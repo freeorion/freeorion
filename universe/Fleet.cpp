@@ -36,20 +36,23 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
 Fleet::Fleet(const GG::XMLElement& elem) : 
    UniverseObject(elem.Child("UniverseObject"))
 {
-   using GG::XMLElement;
+    using GG::XMLElement;
 
-   if (elem.Tag().find( "Fleet" ) == std::string::npos )
-      throw std::invalid_argument("Attempted to construct a Fleet from an XMLElement that had a tag other than \"Fleet\"");
+    if (elem.Tag().find("Fleet") == std::string::npos )
+        throw std::invalid_argument("Attempted to construct a Fleet from an XMLElement that had a tag other than \"Fleet\"");
 
-   XMLElement ships = elem.Child("m_ships");
-   for(int i=0; i<ships.NumChildren(); i++)
-   {
-      m_ships.insert(  lexical_cast<int> (ships.Child(i).Attribute("value") ) );
-   }
-
-   m_moving_to = lexical_cast<int> ( elem.Child("m_moving_to").Attribute("value") );
-   m_prev_system = lexical_cast<int> ( elem.Child("m_prev_system").Attribute("value") );
-   m_next_system = lexical_cast<int> ( elem.Child("m_next_system").Attribute("value") );
+    try {
+        m_ships = GG::ContainerFromString<ShipIDSet>(elem.Child("m_ships").Text());
+        m_moving_to = lexical_cast<int>(elem.Child("m_moving_to").Text());
+        m_prev_system = lexical_cast<int>(elem.Child("m_prev_system").Text());
+        m_next_system = lexical_cast<int>(elem.Child("m_next_system").Text());
+    } catch (const boost::bad_lexical_cast& e) {
+        Logger().debugStream() << "Caught boost::bad_lexical_cast in Fleet::Fleet(); bad XMLElement was:";
+        std::stringstream osstream;
+        elem.WriteElement(osstream);
+        Logger().debugStream() << "\n" << osstream.str();
+        throw;
+    }
 }
 
 UniverseObject::Visibility Fleet::Visible(int empire_id) const
@@ -59,87 +62,22 @@ UniverseObject::Visibility Fleet::Visible(int empire_id) const
 }
 
 
-GG::XMLElement Fleet::XMLEncode() const
-{
-   using GG::XMLElement;
-   using boost::lexical_cast;
-   using std::string;
-
-   string ship_name( "Fleet" );
-   ship_name += boost::lexical_cast<std::string>( ID()  );
-   XMLElement element( ship_name );
-
-   element.AppendChild( UniverseObject::XMLEncode() );
-
-   XMLElement ships("m_ships");
-   for(const_iterator itr=begin(); itr != end(); itr++)
-   {
-       string name( "ship" );
-       name += boost::lexical_cast<std::string>( *itr  );
-       XMLElement ship( name );
-
-       ship.SetAttribute( "value", lexical_cast<std::string>(*itr) );
-       ships.AppendChild(ship);
-   }
-   element.AppendChild(ships);
-
-   XMLElement moving_to("m_moving_to");
-   moving_to.SetAttribute( "value", lexical_cast<std::string>(m_moving_to) );
-   element.AppendChild(moving_to);
-
-   XMLElement prev_system("m_prev_system");
-   prev_system.SetAttribute( "value", lexical_cast<std::string>(m_prev_system) );
-   element.AppendChild(prev_system);
-
-   XMLElement next_system("m_next_system");
-   next_system.SetAttribute( "value", lexical_cast<std::string>(m_next_system) );
-   element.AppendChild(next_system);
-
-   return element;
-}
-
-
-GG::XMLElement Fleet::XMLEncode(int empire_id) const
+GG::XMLElement Fleet::XMLEncode(int empire_id/* = ENCODE_FOR_ALL_EMPIRES*/) const
 {
    // Fleets are either visible or not, so there is no 
    // difference between the full and partial visibilty
-   // XMLEncodes for this class
-
+   // encodings for this class
    using GG::XMLElement;
    using boost::lexical_cast;
    using std::string;
 
-   string ship_name( "Fleet" );
-   ship_name += boost::lexical_cast<std::string>( ID()  );
-   XMLElement element( ship_name );
-
-   element.AppendChild( UniverseObject::XMLEncode() );
-
-   XMLElement ships("m_ships");
-   for(const_iterator itr=begin(); itr != end(); itr++)
-   {
-       string name( "ship" );
-       name += boost::lexical_cast<std::string>( *itr  );
-       XMLElement ship( name );
-
-       ship.SetAttribute( "value", lexical_cast<std::string>(*itr) );
-       ships.AppendChild(ship);
-   }
-   element.AppendChild(ships);
-
-   XMLElement moving_to("m_moving_to");
-   moving_to.SetAttribute( "value", lexical_cast<std::string>(m_moving_to) );
-   element.AppendChild(moving_to);
-
-   XMLElement prev_system("m_prev_system");
-   prev_system.SetAttribute( "value", lexical_cast<std::string>(m_prev_system) );
-   element.AppendChild(prev_system);
-
-   XMLElement next_system("m_next_system");
-   next_system.SetAttribute( "value", lexical_cast<std::string>(m_next_system) );
-   element.AppendChild(next_system);
-
-   return element;
+   XMLElement retval("Fleet" + boost::lexical_cast<std::string>(ID()));
+   retval.AppendChild(UniverseObject::XMLEncode(empire_id));
+   retval.AppendChild(XMLElement("m_ships", GG::StringFromContainer<ShipIDSet>(m_ships)));
+   retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_moving_to)));
+   retval.AppendChild(XMLElement("m_prev_system", lexical_cast<std::string>(m_prev_system)));
+   retval.AppendChild(XMLElement("m_next_system", lexical_cast<std::string>(m_next_system)));
+   return retval;
 }
 
 const std::list<System*>& Fleet::TravelRoute() const
@@ -346,6 +284,8 @@ void Fleet::MovementPhase()
                 movement_left = 0.0;
             }
         }
+        Logger().debugStream() << "[End of Fleet::MovementPhase()] SystemID()=" << SystemID() 
+            << " ; movement_left=" << movement_left << " m_prev_system=" << m_prev_system << " m_next_system=" << m_next_system << "\n";
     }
 }
 

@@ -1,4 +1,6 @@
 #include "PopCenter.h"
+
+#include "../util/AppInterface.h"
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
@@ -37,14 +39,22 @@ PopCenter::PopCenter(double max_pop, int race) :
    
 PopCenter::PopCenter(const GG::XMLElement& elem)
 {
-   if (elem.Tag() != "PopCenter")
-      throw std::invalid_argument("Attempted to construct a PopCenter from an XMLElement that had a tag other than \"PopCenter\"");
+    if (elem.Tag() != "PopCenter")
+        throw std::invalid_argument("Attempted to construct a PopCenter from an XMLElement that had a tag other than \"PopCenter\"");
 
-   m_pop = lexical_cast<double> ( elem.Child("m_pop").Text() );
-   m_max_pop = lexical_cast<double> ( elem.Child("m_max_pop").Text() );
-   m_growth = lexical_cast<double> ( elem.Child("m_growth").Text() );
-   m_env_growth_mod = lexical_cast<double> ( elem.Child("m_env_growth_mod").Text() );
-   m_race = lexical_cast<int> ( elem.Child("m_race").Text() );
+    try {
+        m_pop = lexical_cast<double>(elem.Child("m_pop").Text());
+        m_max_pop = lexical_cast<double>(elem.Child("m_max_pop").Text());
+        m_growth = lexical_cast<double>(elem.Child("m_growth").Text());
+        m_env_growth_mod = lexical_cast<double>(elem.Child("m_env_growth_mod").Text());
+        m_race = lexical_cast<int>(elem.Child("m_race").Text());
+    } catch (const boost::bad_lexical_cast& e) {
+        Logger().debugStream() << "Caught boost::bad_lexical_cast in PopCenter::PopCenter(); bad XMLElement was:";
+        std::stringstream osstream;
+        elem.WriteElement(osstream);
+        Logger().debugStream() << "\n" << osstream.str();
+        throw;
+    }
 }
 
 PopCenter::~PopCenter()
@@ -65,57 +75,9 @@ PopCenter::DensityType PopCenter::PopDensity() const
    return retval;
 }
 
-UniverseObject::Visibility PopCenter::Visible(int empire_id) const
+GG::XMLElement PopCenter::XMLEncode(UniverseObject::Visibility vis) const
 {
-   // For a PopCenter visibility will always be checked against
-   // the implementing object, so this function will never be used.
-
-   return UniverseObject::FULL_VISIBILITY;
-}
-
-GG::XMLElement PopCenter::XMLEncode() const
-{
-   using GG::XMLElement;
-   using boost::lexical_cast;
-
-   XMLElement element("PopCenter");
-
-#if 1 // how to do it...
-   element.AppendChild(XMLElement("m_pop", lexical_cast<std::string>(m_pop)));
-   element.AppendChild(XMLElement("m_max_pop", lexical_cast<std::string>(m_max_pop)));
-   element.AppendChild(XMLElement("m_growth", lexical_cast<std::string>(m_growth)));
-   element.AppendChild(XMLElement("m_env_growth_mod", lexical_cast<std::string>(m_env_growth_mod)));
-   element.AppendChild(XMLElement("m_race", lexical_cast<std::string>(m_race)));
-#else // and how not to do it...
-   XMLElement pop("m_pop");
-   pop.SetAttribute( "value", lexical_cast<std::string>(m_pop) );
-   element.AppendChild(pop);
-
-   XMLElement max_pop("m_max_pop");
-   max_pop.SetAttribute( "value", lexical_cast<std::string>(m_max_pop) );
-   element.AppendChild(max_pop);
-
-   XMLElement growth("m_growth");
-   growth.SetAttribute( "value", lexical_cast<std::string>(m_growth) );
-   element.AppendChild(growth);
-
-   XMLElement env_growth_mod("m_env_growth_mod");
-   env_growth_mod.SetAttribute( "value", lexical_cast<std::string>(m_env_growth_mod) );
-   element.AppendChild(env_growth_mod);
-
-   XMLElement race("m_race");
-   race.SetAttribute( "value", lexical_cast<std::string>(m_race) );
-   element.AppendChild(race);
-#endif
-
-   return element;
-}
-
-GG::XMLElement PopCenter::XMLEncode(int empire_id) const
-{
-   // partial encode version.  PopCenter is always fully encoded
-   // so this function is identical to the full encode version
-
+   // partial encode version.  PopCenter is always fully visible
    using GG::XMLElement;
    using boost::lexical_cast;
 

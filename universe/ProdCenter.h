@@ -17,7 +17,8 @@ class ProdCenter
 {
 public:
    /** the types of production focus*/
-   enum FocusType {BALANCED,
+   enum FocusType {FOCUS_UNKNOWN,
+                   BALANCED,
                    FARMING,
                    INDUSTRY,
                    MINING,
@@ -26,7 +27,7 @@ public:
                     
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
-   enum BuildType {NOT_BUILDING, INDUSTRY_BUILD, RESEARCH_BUILD, SCOUT, COLONY_SHIP, MARKI, MARKII, MARKIII, MARKIV, DEF_BASE};
+   enum BuildType {BUILD_UNKNOWN, NOT_BUILDING, INDUSTRY_BUILD, RESEARCH_BUILD, SCOUT, COLONY_SHIP, MARKI, MARKII, MARKIII, MARKIV, DEF_BASE};
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
@@ -51,9 +52,7 @@ public:
    // V0.1 ONLY!!!!
    /////////////////////////////////////////////////////////////////////////////
    
-   virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a ProdCenter object
-   virtual GG::XMLElement XMLEncode(int empire_id) const; ///< constructs an XMLElement from a ProdCenter object with visibility limited relative to the input empire
+   virtual GG::XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a ProdCenter object with the given visibility
    //@}
 
    /** \name Mutators */ //@{

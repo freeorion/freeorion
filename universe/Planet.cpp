@@ -52,17 +52,30 @@ Planet::Planet(PlanetType type, PlanetSize size) :
 Planet::Planet(const GG::XMLElement& elem) :
    UniverseObject(elem.Child("UniverseObject")),
    PopCenter(elem.Child("PopCenter")),
-   ProdCenter(elem.Child("ProdCenter"))
+   ProdCenter(elem.Child("ProdCenter")),
+   m_def_bases(0)
 {
     using GG::XMLElement;
 
     if (elem.Tag().find( "Planet" ) == std::string::npos )
         throw std::invalid_argument("Attempted to construct a Planet from an XMLElement that had a tag other than \"Planet\"");
 
-    m_type = (PlanetType) lexical_cast<int> ( elem.Child("m_type").Attribute("value") );
-    m_size = (PlanetSize) lexical_cast<int> ( elem.Child("m_size").Attribute("value") );
-    m_def_bases = lexical_cast<int> ( elem.Child("m_def_bases").Attribute("value") );
-    m_just_conquered = lexical_cast<int> (elem.Child("m_just_conquered").Attribute("value") );
+    try {
+        m_type = PlanetType(lexical_cast<int>(elem.Child("m_type").Text()));
+        m_size = PlanetSize(lexical_cast<int>(elem.Child("m_size").Text()));
+        m_just_conquered = lexical_cast<int>(elem.Child("m_just_conquered").Text());
+
+        Visibility vis = Visibility(lexical_cast<int>(elem.Child("UniverseObject").Child("vis").Text()));
+        if (vis == FULL_VISIBILITY) {
+            m_def_bases = lexical_cast<int>(elem.Child("m_def_bases").Text());
+        }
+    } catch (const boost::bad_lexical_cast& e) {
+        Logger().debugStream() << "Caught boost::bad_lexical_cast in Planet::Planet(); bad XMLElement was:";
+        std::stringstream osstream;
+        elem.WriteElement(osstream);
+        Logger().debugStream() << "\n" << osstream.str();
+        throw;
+    }
 }
 
 UniverseObject::Visibility Planet::Visible(int empire_id) const
@@ -71,80 +84,30 @@ UniverseObject::Visibility Planet::Visible(int empire_id) const
     return GetSystem()->Visible(empire_id);
 }
 
-
-GG::XMLElement Planet::XMLEncode() const
-{
-    using GG::XMLElement;
-    using boost::lexical_cast;
-    using std::string;
-
-    string planet_name( "Planet" );
-    planet_name += boost::lexical_cast<std::string>( ID()  );
-    XMLElement element( planet_name );
-
-    element.AppendChild( UniverseObject::XMLEncode() );
-
-    element.AppendChild( PopCenter::XMLEncode() );
-
-    element.AppendChild( ProdCenter::XMLEncode() );
-
-    XMLElement type("m_type");
-    type.SetAttribute( "value", lexical_cast<std::string>(m_type) );
-    element.AppendChild(type);
-
-    XMLElement size("m_size");
-    size.SetAttribute( "value", lexical_cast<std::string>(m_size) );
-    element.AppendChild(size);
-
-    XMLElement def_bases("m_def_bases");
-    def_bases.SetAttribute( "value", lexical_cast<std::string>(m_def_bases) );
-    element.AppendChild(def_bases);
-
-    XMLElement just_conquered("m_just_conquered");
-    just_conquered.SetAttribute( "value", lexical_cast<std::string>(m_just_conquered));
-    element.AppendChild(just_conquered);
-
-    return element;
-}
-
-GG::XMLElement Planet::XMLEncode(int empire_id) const
+GG::XMLElement Planet::XMLEncode(int empire_id/* = ENCODE_FOR_ALL_EMPIRES*/) const
 {
     // Partial encoding of Planet for limited visibility
-
     using GG::XMLElement;
     using boost::lexical_cast;
     using std::string;
 
-    string planet_name( "Planet" );
-    planet_name += boost::lexical_cast<std::string>( ID() );
-    XMLElement element( planet_name );
+    Visibility vis;
+    if (empire_id == ENCODE_FOR_ALL_EMPIRES)
+        vis = FULL_VISIBILITY;
+    else
+        vis = Visible(empire_id);
 
-    // full encode of UniverseObject since owner list should be visible
-    element.AppendChild( UniverseObject::XMLEncode() );
-
-    // full encode for PopCenter, nothing is hidden there
-    element.AppendChild( PopCenter::XMLEncode() );
-
-    // partial encode of ProdCenter to hide the current build option info
-    element.AppendChild( ProdCenter::XMLEncode(empire_id) );
-
-    XMLElement type("m_type");
-    type.SetAttribute( "value", lexical_cast<std::string>(m_type) );
-    element.AppendChild(type);
-
-    XMLElement size("m_size");
-    size.SetAttribute( "value", lexical_cast<std::string>(m_size) );
-    element.AppendChild(size);
-
-    XMLElement def_bases("m_def_bases");
-    def_bases.SetAttribute( "value", lexical_cast<std::string>(m_def_bases) );
-    element.AppendChild(def_bases);
-
-    XMLElement just_conquered("m_just_conquered");
-    just_conquered.SetAttribute( "value", lexical_cast<std::string>(m_just_conquered));
-    element.AppendChild(just_conquered);
-
-    return element;
+    XMLElement retval("Planet" + boost::lexical_cast<std::string>(ID()));
+    retval.AppendChild(UniverseObject::XMLEncode(empire_id));
+    retval.AppendChild(PopCenter::XMLEncode(vis));
+    retval.AppendChild(ProdCenter::XMLEncode(vis));
+    retval.AppendChild(XMLElement("m_type", lexical_cast<std::string>(m_type)));
+    retval.AppendChild(XMLElement("m_size", lexical_cast<std::string>(m_size)));
+    retval.AppendChild(XMLElement("m_just_conquered", lexical_cast<std::string>(m_just_conquered)));
+    if (vis == FULL_VISIBILITY) {
+        retval.AppendChild(XMLElement("m_def_bases", lexical_cast<std::string>(m_def_bases)));
+    }
+    return retval;
 }
 
 void Planet::AddOwner   (int id)

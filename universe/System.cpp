@@ -41,39 +41,30 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
 }
    
 System::System(const GG::XMLElement& elem) : 
-   UniverseObject(elem.Child("UniverseObject"))
+   UniverseObject(elem.Child("UniverseObject")),
+   m_orbits(0)
 {
-   using GG::XMLElement;
+    using GG::XMLElement;
 
-   if (elem.Tag().find( "System" ) == std::string::npos )
-      throw std::invalid_argument("Attempted to construct a System from an XMLElement that had a tag other than \"System\"");
+    if (elem.Tag().find( "System" ) == std::string::npos )
+        throw std::invalid_argument("Attempted to construct a System from an XMLElement that had a tag other than \"System\"");
 
-   Visibility vis = (Visibility) lexical_cast<int> ( elem.Child("visibility").Attribute("value") );
+    try {
+        m_star = StarType(lexical_cast<int>(elem.Child("m_star").Text()));
 
-   m_star = (StarType) lexical_cast<int> ( elem.Child("m_star").Attribute("value") );
-
-   if (vis == FULL_VISIBILITY)
-   {
-      m_orbits = lexical_cast<int> ( elem.Child("m_orbits").Attribute("value") );
-      
-      XMLElement orbit_map = elem.Child("m_objects");
-      for(int i=0; i<orbit_map.NumChildren(); i++)
-      {
-         XMLElement map_object = orbit_map.Child(i);
-         int orbit = lexical_cast<int>(map_object.Attribute("orbit"));
-         int id = lexical_cast<int>(map_object.Attribute("id"));
-         m_objects.insert(std::make_pair(orbit, id));
-      }
-
-      XMLElement lane_map = elem.Child("m_starlanes_wormholes");
-      for(int i=0; i<lane_map.NumChildren(); i++)
-      {
-         XMLElement lane = lane_map.Child(i);
-         int system = lexical_cast<int>(lane.Attribute("system"));
-         bool wormhole = lexical_cast<bool>(lane.Attribute("wormhole"));
-         m_starlanes_wormholes[system] = wormhole;
-      }
-   }      
+        Visibility vis = Visibility(lexical_cast<int>(elem.Child("UniverseObject").Child("vis").Text()));
+        if (vis == FULL_VISIBILITY) {
+            m_orbits = lexical_cast<int>(elem.Child("m_orbits").Text());
+            m_objects = GG::MultimapFromString<int, int>(elem.Child("m_objects").Text());
+            m_starlanes_wormholes = GG::MapFromString<int, bool>(elem.Child("m_starlanes_wormholes").Text());
+        }      
+    } catch (const boost::bad_lexical_cast& e) {
+        Logger().debugStream() << "Caught boost::bad_lexical_cast in System::System(); bad XMLElement was:";
+        std::stringstream osstream;
+        elem.WriteElement(osstream);
+        Logger().debugStream() << "\n" << osstream.str();
+        throw;
+    }
 }
 
 System::~System()
@@ -114,12 +105,12 @@ bool System::HasWormholeTo(int id) const
 
 UniverseObject::Visibility System::Visible(int empire_id) const
 {
-   // if system is has been explored it is fully visible, if not it
+   // if system is owned by this empire, or it has been explored it is fully visible, if not it
    // will be partially visible
 
    Empire* empire = (Empires()).Lookup(empire_id);
        
-   if (empire->HasExploredSystem(ID()))
+   if (OwnedBy(empire_id) || empire->HasExploredSystem(ID()))
    {
       return FULL_VISIBILITY;
    }
@@ -128,114 +119,20 @@ UniverseObject::Visibility System::Visible(int empire_id) const
 }
 
 
-GG::XMLElement System::XMLEncode() const
+GG::XMLElement System::XMLEncode(int empire_id/* = ENCODE_FOR_ALL_EMPIRES*/) const
 {
    using GG::XMLElement;
    using boost::lexical_cast;
    using std::string;
-
-   string system_name( "System" );
-   system_name += boost::lexical_cast<std::string>( ID() );
-   XMLElement element( system_name );
-
-   XMLElement visibility("visibility");
-   visibility.SetAttribute( "value", lexical_cast<string>(FULL_VISIBILITY) );
-   element.AppendChild(visibility);
-
-   element.AppendChild( UniverseObject::XMLEncode() );
-
-   XMLElement star("m_star");
-   star.SetAttribute( "value", lexical_cast<string>(m_star) );
-   element.AppendChild(star);
-
-   XMLElement orbits("m_orbits");
-   orbits.SetAttribute( "value", lexical_cast<string>(m_orbits) );
-   element.AppendChild(orbits);
-
-   XMLElement orbit_map("m_objects");
-   for(const_orbit_iterator itr = begin(); itr != end(); ++itr)
-   {
-       string object_name( "map_object" );
-       object_name += boost::lexical_cast<std::string>( itr->second);
-       XMLElement map_object( object_name );
-
-       map_object.SetAttribute("orbit", lexical_cast<string>(itr->first));
-       map_object.SetAttribute("id", lexical_cast<string>(itr->second));
-       orbit_map.AppendChild(map_object);
+   XMLElement retval("System" + boost::lexical_cast<std::string>(ID()));
+   retval.AppendChild(UniverseObject::XMLEncode(empire_id)); // use partial encode so owners are not visible
+   retval.AppendChild(XMLElement("m_star", lexical_cast<std::string>(m_star)));
+   if (empire_id == ENCODE_FOR_ALL_EMPIRES || Visible(empire_id) == FULL_VISIBILITY) {
+      retval.AppendChild(XMLElement("m_orbits", lexical_cast<std::string>(m_orbits)));
+      retval.AppendChild(XMLElement("m_objects", GG::StringFromMultimap<int, int>(m_objects)));
+      retval.AppendChild(XMLElement("m_starlanes_wormholes", GG::StringFromMap<int, bool>(m_starlanes_wormholes)));
    }
-   element.AppendChild(orbit_map);
-
-   XMLElement lane_map("m_starlanes_wormholes");
-   for(const_lane_iterator itr = begin_lanes(); itr != end_lanes(); ++itr)
-   {
-       string lane_name( "map_lane" );
-       lane_name += boost::lexical_cast<std::string>( itr->first );
-       XMLElement map_lane( lane_name );
-
-       map_lane.SetAttribute("system", lexical_cast<string>(itr->first));
-       map_lane.SetAttribute("wormhole", lexical_cast<string>(itr->second));
-       lane_map.AppendChild(map_lane);
-   }
-   element.AppendChild(lane_map);
-
-   return element;
-}
-
-
-GG::XMLElement System::XMLEncode(int empire_id) const
-{
-   // Partial visibility version.  Displays only the star type.
-
-   using GG::XMLElement;
-   using boost::lexical_cast;
-   using std::string;
-
-   string system_name( "System" );
-   system_name += boost::lexical_cast<std::string>( ID() );
-   XMLElement element( system_name );
-
-   XMLElement visibility("visibility");
-   visibility.SetAttribute( "value", lexical_cast<std::string>(PARTIAL_VISIBILITY) );
-   element.AppendChild(visibility);
-
-   // use partial encode so owners are not visible
-   element.AppendChild( UniverseObject::XMLEncode(empire_id) );
-
-   XMLElement star("m_star");
-   star.SetAttribute( "value", lexical_cast<std::string>(m_star) );
-   element.AppendChild(star);
-
-   XMLElement orbits("m_orbits");
-   orbits.SetAttribute( "value", lexical_cast<std::string>(m_orbits) );
-   element.AppendChild(orbits);
-
-   XMLElement orbit_map("m_objects");
-   for(const_orbit_iterator itr = begin(); itr != end(); ++itr)
-   {
-       string object_name( "map_object" );
-       object_name += boost::lexical_cast<std::string>( itr->first );
-       XMLElement map_object( object_name );
-     
-       map_object.SetAttribute("orbit", lexical_cast<std::string>(itr->first));
-       map_object.SetAttribute("id", lexical_cast<std::string>(itr->second));
-       orbit_map.AppendChild(map_object);
-   }
-   element.AppendChild(orbit_map);
-
-   XMLElement lane_map("m_starlanes_wormholes");
-   for(const_lane_iterator itr = begin_lanes(); itr != end_lanes(); ++itr)
-   {
-       string lane_name( "map_lane" );
-       lane_name += boost::lexical_cast<std::string>( itr->first );
-       XMLElement map_lane( lane_name );
-
-       map_lane.SetAttribute("system", lexical_cast<std::string>(itr->first));
-       map_lane.SetAttribute("wormhole", lexical_cast<std::string>(itr->second));
-       lane_map.AppendChild(map_lane);
-   }
-   element.AppendChild(lane_map);
-
-   return element;
+   return retval;
 }
 
 int System::Insert(UniverseObject* obj)
