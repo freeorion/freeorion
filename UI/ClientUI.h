@@ -182,7 +182,10 @@ public:
 
     //! \name Static Config Data
     //!@{
-    static std::string FONT;    //!< The default font to use
+    static std::string FONT;            //!< The default font to use
+    static std::string FONT_BOLD;       //!< The default bold font to use
+    static std::string FONT_ITALIC;     //!< The default italic font to use
+    static std::string FONT_BOLD_ITALIC;//!< The default bold and italic font to use
     static int         PTS;    //!< default point size
     static std::string TITLE_FONT;    //!< The default font to use for the window title
     static int         TITLE_PTS;    //!< default point size to use for window title

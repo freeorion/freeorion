@@ -31,6 +31,9 @@
 
 //static members
 std::string ClientUI::FONT          = "Vera.ttf";
+std::string ClientUI::FONT_BOLD     = "VeraBd.ttf";
+std::string ClientUI::FONT_ITALIC   = "VeraIt.ttf";
+std::string ClientUI::FONT_BOLD_ITALIC= "VeraBI.ttf";
 int         ClientUI::PTS           = 12;
 std::string ClientUI::TITLE_FONT    = "Vera.ttf";
 int         ClientUI::TITLE_PTS     = 12;
