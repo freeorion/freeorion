@@ -3,6 +3,7 @@
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 
 #ifdef __cplusplus
 extern "C" // use C-linkage, as required by SDL
@@ -45,6 +46,8 @@ int main(int argc, char* argv[])
         app.Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();
     } catch (const std::runtime_error& e) {
         app.Logger().errorStream() << "main() caught exception(std::runtime_error): " << e.what();
+    } catch (const  boost::io::format_error& e) {
+        app.Logger().errorStream() << "main() caught exception(boost::io::format_error): " << e.what();
     } catch (const std::exception& e) {
         app.Logger().errorStream() << "main() caught exception(std::exception): " << e.what();
     }
