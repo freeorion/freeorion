@@ -150,7 +150,7 @@ namespace {
 	unsigned int attempts = 0;
 
 	// For each attempt to place a star...
-	for (unsigned int i = 0; i < stars and attempts < fail_attempts; ++i, ++attempts){
+	for (unsigned int i = 0; i < stars && attempts < fail_attempts; ++i, ++attempts){
 	    double radius = radius_dist();
 	    // Adjust for bigger density near center and create gap.
 	    radius = radius * radius * radius + gap_size;
@@ -169,17 +169,17 @@ namespace {
 	    y = (y + 1.0) * height / 2.0;
 
 	    // Discard stars that are outside boundaries (due to possible rounding errors).
-	    if (x < 0 or x >= width or y < 0 or y >= height)
-		continue;
+	    if (x < 0 || x >= width || y < 0 || y >= height)
+	      continue;
 
 	    // See if new star is too close to any existing star.
 	    unsigned int j = 0;
 	    for(; j < positions.size(); ++j){
-		if((positions[j].first - x) * (positions[j].first - x) + 
-		   (positions[j].second - y) * (positions[j].second - y)
-		   < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION)
-		    break;
-	    }
+        if((positions[j].first - x) * (positions[j].first - x) + 
+           (positions[j].second - y) * (positions[j].second - y)
+          < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION)
+          break;
+      }
 	    // If so, we try again.
 	    if(j < positions.size()){
 		--i;
