@@ -150,8 +150,8 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const ServerNetworkCo
          m_universe_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("size"));
          CreateAIClients(doc.root_node);
          m_state = SERVER_GAME_SETUP;
-         m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
-         m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Universe size set to " << m_universe_size << " (SERVER_GAME_SETUP).";
+         m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
+         m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe size set to " << m_universe_size << " (SERVER_GAME_SETUP).";
          if (m_network_core.EstablishPlayer(m_players_info.size(), connection.socket)) {
             m_network_core.SendMessage(HostAckMessage(m_players_info.size()));
             m_network_core.SendMessage(JoinAckMessage(m_players_info.size()));
