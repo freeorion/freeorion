@@ -23,7 +23,7 @@ AnimatedTexture::AnimatedTexture(int type):
     m_times.clear();
 }//AnimatedTexture(int)
 
-AnimatedTexture::AnimatedTexture::AnimatedTexture(AnimatedTexture& rhs)
+AnimatedTexture::AnimatedTexture(AnimatedTexture& rhs)
 {
     *this=rhs;
 }//AnimatedTexture(AnimatedTexture&)
@@ -126,10 +126,8 @@ void AnimatedTexture::Stop()
 
 void AnimatedTexture::Animate()
 {
-    ClientUI::s_logger.debug("Animate() entered");
     if(SDL_GetTicks() >= (m_current_time + m_times[m_current_frame]))
     {
-    ClientUI::s_logger.debug("Advancing frame");
         //time to increment animations
         if(m_current_frame >= m_frames.size()-1) 
         {
@@ -147,7 +145,6 @@ void AnimatedTexture::Animate()
         ++m_current_frame;
         m_current_time=SDL_GetTicks(); //get a new time reference for next frame
     }
-    ClientUI::s_logger.debug("Animate() left");
 }//Animate()
 
 GG::XMLElement AnimatedTexture::XMLEncode() const 
