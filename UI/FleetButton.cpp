@@ -135,6 +135,11 @@ void FleetButton::Clicked()
 
     bool multiple_fleet_windows = GetOptionsDB().Get<bool>("UI.multiple-fleet-windows");
 
+    // this is the screen position at which fleet windows will appear in single-fleet-window mode
+    // if there is one already open, we'll use it's position; otherwise, a default value of (0,0) 
+    // indicates that we should use the default position
+    GG::Pt fleet_wnd_position;
+
     if (multiple_fleet_windows) {
         // only open a fleet window if there is not one open already for these fleets
         for (unsigned int i = 0; i < fleets.size(); ++i) {
@@ -145,6 +150,7 @@ void FleetButton::Clicked()
         // close the open fleet window, if there is one
         std::map<Fleet*, FleetWnd*>::iterator it = s_open_fleets.begin();
         if (it != s_open_fleets.end()) {
+            fleet_wnd_position = it->second->UpperLeft();
             it->second->Close();
         }
     }
@@ -164,7 +170,9 @@ void FleetButton::Clicked()
             fleet_wnd->OffsetMove(0, fleet_wnd->LowerRight().y - GG::App::GetApp()->AppHeight() - 5);
     } else {
         // for one-fleet-at-a-time, place them in the lower-left corner of the screen
-        fleet_wnd->MoveTo(5, GG::App::GetApp()->AppHeight() - fleet_wnd->Height() - 5);
+        fleet_wnd->MoveTo(fleet_wnd_position == GG::Pt() ? 
+                          GG::Pt(5, GG::App::GetApp()->AppHeight() - fleet_wnd->Height() - 5) : 
+                          fleet_wnd_position);
     }
 
     if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
