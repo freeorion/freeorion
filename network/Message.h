@@ -45,7 +45,8 @@ public:
                      COMBAT_END,          ///< sent to clients when a combat is concluded
                      HUMAN_PLAYER_MSG,    ///< sent when one player sends a text message to another in multiplayer
                      PLAYER_ELIMINATED,   ///< sent to all clients when a player is eliminated from play
-                     PLAYER_EXIT          ///< sent to the "host" client when another player leaves the game
+                     PLAYER_EXIT,         ///< sent to the "host" client when another player leaves the game
+                     END_GAME,            ///< sent to the server by the host client when the current game is to end
                     };
                
    /** Represents the module which is the destination for the message */
@@ -103,14 +104,19 @@ private:
 /** creates a HOST_GAME message*/
 Message HostGameMessage(const GG::XMLDoc& game_parameters);
 
-/** creates a JOIN_GAME message*/
+/** creates a JOIN_GAME message.  The sender's player name is sent in the message.*/
 Message JoinGameMessage(const std::string& player_name);
 
-/** creates a HOST_GAME acknowledgement message*/
+/** creates a HOST_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message 
+   should only be sent by the server.*/
 Message HostAckMessage(int player_id);
 
-/** creates a JOIN_GAME acknowledgement message*/
+/** creates a JOIN_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message 
+   should only be sent by the server.*/
 Message JoinAckMessage(int player_id);
+
+/** creates an END_GAME message.  Only END_GAME messages sent from the host client and the server are considered valid*/
+Message EndGameMessage(int sender, int receiver);
 
 #endif // _Message_h_
 
