@@ -6,42 +6,47 @@ OrderSet::OrderSet()
 
 OrderSet::~OrderSet()
 {
-   Reset();
+    Reset();
 }
 
 const Order* OrderSet::ExamineOrder(int order) const
 {
-   const Order* retval = 0;
-   OrderMap::const_iterator it = m_orders.find(order);
-   if (it != m_orders.end()) {
-      retval = it->second;
-   }
-   return retval;
+    const Order* retval = 0;
+    OrderMap::const_iterator it = m_orders.find(order);
+    if (it != m_orders.end()) {
+        retval = it->second;
+    }
+    return retval;
 }
    
 int OrderSet::IssueOrder(Order* order)
 {
-   int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
-   m_orders[retval] = order;
-   return retval;
+    order->Execute();
+    int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
+    m_orders[retval] = order;
+    return retval;
 }
 
 bool OrderSet::RecindOrder(int order)
 {
-   bool retval = false;
-   OrderMap::iterator it = m_orders.find(order);
-   if (it != m_orders.end()) {
-      m_orders.erase(it);
-      retval = true;
-   }
-   return retval;
+    // this is disabled until it decided whether or not we'll need it
+#if 0
+    bool retval = false;
+    OrderMap::iterator it = m_orders.find(order);
+    if (it != m_orders.end()) {
+        m_orders.erase(it);
+        retval = true;
+    }
+    return retval;
+#endif
+    return false;
 }
 
 void OrderSet::Reset()
 {
-   for (OrderMap::iterator it = m_orders.begin(); it != m_orders.end(); ++it) {
-      delete it->second;
-   }
-   m_orders.clear();
+    for (OrderMap::iterator it = m_orders.begin(); it != m_orders.end(); ++it) {
+        delete it->second;
+    }
+    m_orders.clear();
 }
 

@@ -90,8 +90,7 @@ void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
 PlanetBuildOrder::PlanetBuildOrder() : 
    Order(),
    m_planet(UniverseObject::INVALID_OBJECT_ID),
-   m_build_type(INVALID),
-   m_ship_type(-1)
+   m_build_type(ProdCenter::NOT_BUILDING)
 {
 }
 
@@ -102,16 +101,14 @@ PlanetBuildOrder::PlanetBuildOrder(const GG::XMLElement& elem) : Order(elem.Chil
         throw std::invalid_argument("Tried to construct PlanetBuildOrder from malformed XMLElement");
     }
 
-    m_planet = lexical_cast<int> (elem.Child("m_planet").Attribute("value"));
-    m_build_type = (BuildType)lexical_cast<int> (elem.Child("m_build_type").Attribute("value"));
-    m_ship_type = lexical_cast<int> (elem.Child("m_ship_type").Attribute("value"));
+    m_planet = lexical_cast<int>(elem.Child("m_planet").Attribute("value"));
+    m_build_type = ProdCenter::BuildType(lexical_cast<int>(elem.Child("m_build_type").Attribute("value")));
 }
 
-PlanetBuildOrder::PlanetBuildOrder(int empire, int planet, BuildType build, int ship_type/* = -1*/) : 
+PlanetBuildOrder::PlanetBuildOrder(int empire, int planet, ProdCenter::BuildType build) : 
    Order(empire),
    m_planet(planet),
-   m_build_type(build),
-   m_ship_type(ship_type)
+   m_build_type(build)
 {
 }
 
@@ -141,26 +138,7 @@ void PlanetBuildOrder::Execute() const
         throw std::runtime_error("Empire specified in planet build order does not own specified planet.");
     }
     
-    // change the build type
-    switch(this->BuildOrder())
-    {
-        case INDUSTRY_BUILD:
-            the_planet->BuildIndustry();
-            break;
-            
-        case RESEARCH_BUILD:
-            the_planet->DoResearch();
-            break;
-            
-        case SHIP_BUILD:
-            the_planet->BuildShip( ShipType() );
-            break;
-        
-        case DEF_BASE:  
-            the_planet->BuildDefBase();
-            break;
-        
-    }
+    the_planet->SetProduction(m_build_type);
 }
 
 GG::XMLElement PlanetBuildOrder::XMLEncode() const
@@ -174,12 +152,10 @@ GG::XMLElement PlanetBuildOrder::XMLEncode() const
     
     planet.SetAttribute("value", lexical_cast<std::string>(m_planet));
     build_type.SetAttribute("value", lexical_cast<std::string>(m_build_type));
-    ship_type.SetAttribute("value", lexical_cast<std::string>(m_ship_type));
     
     elem.AppendChild(planet);
     elem.AppendChild(build_type);
     elem.AppendChild(ship_type);
-    
    
     return elem;
 }
@@ -611,6 +587,7 @@ void FleetColonizeOrder::Execute() const
         {
             // adjust planet population
             target_planet->AdjustPop(INITIAL_COLONY_POP);
+            target_planet->AdjustWorkforce(INITIAL_COLONY_POP);
             
             // make this order's empire the owner of the planet
             target_planet->AddOwner( EmpireID() );

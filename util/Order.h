@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _Order_h_
 #define _Order_h_
 
@@ -9,6 +10,10 @@
 
 #ifndef _XMLObjectFactory_h_
 #include "XMLObjectFactory.h"
+#endif
+
+#ifndef _ProdCenter_h_
+#include "../universe/ProdCenter.h"
 #endif
 
 
@@ -70,25 +75,15 @@ private:
 class PlanetBuildOrder : public Order
 {
 public:
-   enum BuildType
-   {
-      INVALID = -1,
-      INDUSTRY_BUILD,
-      RESEARCH_BUILD,
-      SHIP_BUILD,
-      DEF_BASE
-   };
-   
    /** \name Structors */ //@{
    PlanetBuildOrder();
    PlanetBuildOrder(const GG::XMLElement& elem);
-   PlanetBuildOrder(int empire, int planet, BuildType build, int ship_type = -1);
+   PlanetBuildOrder(int empire, int planet, ProdCenter::BuildType build);
    //@}
    
    /** \name Accessors */ //@{
-   int   PlanetID() const     {return m_planet;}       ///< returns ID of planet selected in this order
-   int   BuildOrder() const   {return m_build_type;}   ///< returns the build selection set in this order
-   int   ShipType() const     {return m_ship_type;}    ///< returns the ship type selected for build.  Returns -1 if build type is not SHIP_BUILD.
+   int                   PlanetID() const {return m_planet;}       ///< returns ID of planet selected in this order
+   ProdCenter::BuildType Type() const     {return m_build_type;}   ///< returns the build selection set in this order
    
    /**
    * Preconditions for executing planet build order:
@@ -105,9 +100,8 @@ public:
    //@}
    
 private:
-   int         m_planet;
-   BuildType   m_build_type;
-   int         m_ship_type;
+   int                     m_planet;
+   ProdCenter::BuildType   m_build_type;
 };
 
 
