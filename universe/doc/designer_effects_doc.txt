@@ -469,6 +469,27 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
  AVAILABLE    bool
  INCLUDE_TECH bool
 
+
+===RefineBuildingType===
+<br>Descr.:     Adds additional EffectsGroups <effects> to the BUILDING_TYPE_NAME BuildingType definition for Empire EMPIRE_ID.  This is intended to be used for Refinement Techs and special events.
+<br>XML format:
+ <Effect::RefineBuildingType>
+     <building_type_name>BUILDING_TYPE_NAME</building_type_name>
+     <empire_id>EMPIRE_ID</empire_id>
+     <effects>
+          EFFECTS_GROUP0
+          EFFECTS_GROUP1
+          ...
+          EFFECTS_GROUPN
+     </effects>
+ </Effect::RefineBuildingType>
+
+<br>Param Types:
+ BUILDING_TYPE_NAME  string
+ EMPIRE_ID           int-expression
+ EFFECTS_GROUPX      EffectsGroup
+
+
 <br>
 <br>
 ==EffectsGroup==
