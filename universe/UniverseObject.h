@@ -45,7 +45,7 @@ public:
    double               X() const      {return m_x;}        ///< the X-coordinate of this object
    double               Y() const      {return m_y;}        ///< the Y-coordinate of this object
    const std::set<int>& Owners() const {return m_owners;}   ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
-   const System*        GetSystem() const {return m_system;}///< returns a pointer to the system in which this object can be found, or 0 if the object is not within any system
+   int                  SystemID() const{return m_system_id;}///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
 
    virtual Visibility Visible(int empire_id) const = 0; ///< returns the visibility status of this universe object relative to the input empire.
    
@@ -67,7 +67,7 @@ public:
    
    void AddOwner(int id)            {m_owners.insert(id);}  ///< adds the Empire with ID \a id to the list of owners of this object
    void RemoveOwner(int id)         {m_owners.erase(id);}   ///< removes the Empire with ID \a id to the list of owners of this object
-   void SetSystem(const System* sys){m_system = sys;}       ///< assigns this object to a System
+   void SetSystem(int sys)          {m_system_id = sys;}    ///< assigns this object to a System
    
    /** performs the movement that this object is responsible for this object's actions during the movement phase of 
       a turn.  Called by ServerUniverse::MovementPhase().*/
@@ -90,7 +90,7 @@ private:
    double         m_x;
    double         m_y;
    std::set<int>  m_owners;
-   const System*  m_system;
+   int            m_system_id;
 };
 
 #endif // _UniverseObject_h_

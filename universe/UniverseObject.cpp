@@ -19,7 +19,8 @@ const unsigned int  UniverseObject::MAX_SHIP_ID       = 2000000000;
 UniverseObject::UniverseObject() : 
    m_id(INVALID_OBJECT_ID),
    m_x(INVALID_POSITION),
-   m_y(INVALID_POSITION)
+   m_y(INVALID_POSITION),
+   m_system_id(INVALID_OBJECT_ID)
 {
 }
 
@@ -29,7 +30,8 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
    m_name(name),
    m_x(x),
    m_y(y),
-   m_owners(owners)
+   m_owners(owners),
+   m_system_id(INVALID_OBJECT_ID)
 {
    if (m_x < 0.0 || ClientUniverse::UNIVERSE_WIDTH < m_x || m_y < 0.0 || ClientUniverse::UNIVERSE_WIDTH < m_y)
       throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
@@ -48,16 +50,16 @@ UniverseObject::UniverseObject(const GG::XMLElement& elem)
    m_name = elem.Child("m_name").Text();
    m_x = lexical_cast<int> ( elem.Child("m_x").Attribute("value") );
    m_y = lexical_cast<int> ( elem.Child("m_y").Attribute("value") );
+   m_system_id = lexical_cast<int> ( elem.Child("m_system_id").Attribute("value") );
 
    if (vis == FULL_VISIBILITY)
    {
       XMLElement owners = elem.Child("m_owners");
       for(int i=0; i<owners.NumChildren(); i++)
       {
-        m_owners.insert(  lexical_cast<int> (owners.Child(i).Attribute("value") ) );
+          m_owners.insert(  lexical_cast<int> (owners.Child(i).Attribute("value") ) );
       }
    }       
-   
 }
 
 UniverseObject::~UniverseObject()
@@ -99,6 +101,10 @@ GG::XMLElement UniverseObject::XMLEncode() const
       owners.AppendChild(owner);
    }
    element.AppendChild(owners);
+
+   XMLElement system_id("m_system_id");
+   system_id.SetAttribute( "value", lexical_cast<std::string>(m_system_id) );
+   element.AppendChild(system_id);
 
    return element;
 }
