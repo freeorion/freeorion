@@ -198,8 +198,33 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
             Logger().errorStream() << "AIClientApp::HandleMessageImpl : Received erroneous JOIN_GAME acknowledgement when already in a game";
          }
       }
+      }
+      break;
+
+   case Message::GAME_START: {
+       if (msg.Sender() == -1) {
+            Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received GAME_START message; "
+                "starting AI turn...";
+	    
+	    // as it stands now, just start turn	   
+	    StartTurn( );
+       }
       break;
    }
+
+   case Message::TURN_UPDATE: {
+       if (msg.Sender() == -1) {
+            Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received TURN_UPDATE message; "
+                "...";
+	    
+	    // as it stands now, just start turn	   
+	    StartTurn( );
+       }
+      break;
+   }
+
+   case Message::TURN_PROGRESS: 
+     break;
       
    case Message::END_GAME: {
       Exit(0);
@@ -212,4 +237,5 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
    }
    }
 }
+
 
