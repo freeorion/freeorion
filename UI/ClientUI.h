@@ -88,10 +88,16 @@ public:
 //!@{
     static std::string FONT;    //!< The default font to use
     static int         PTS;    //!< default point size
+    static std::string TITLE_FONT;    //!< The default font to use for the window title
+    static int         TITLE_PTS;    //!< default point size to use for window title
+    
     static std::string DIR;     //!< directory currently being used, contains config files
     static std::string ART_DIR;    //!< directory holding artwork, ("*/art/small/" or "*/art/large/"
+    
     static GG::Clr     WND_COLOR; //!< color of a UI window
     static GG::Clr     BORDER_COLOR; //!< color of window borders
+    static GG::Clr     OUTER_BORDER_COLOR; //!< color of the outermost border
+    static GG::Clr     INNER_BORDER_COLOR; //!< color of the innermost border
     static GG::Clr     CTRL_COLOR; //!< color of UI controls
     static GG::Clr     TEXT_COLOR; //!< color of UI text    
 
@@ -114,8 +120,8 @@ public:
     //inline const log4cpp::Category& Logger() {return s_logger;}//!< Returns the logger associated with ClientUI
     
     static inline ClientUI* GetClientUI() {if(the_UI) return the_UI; return NULL;} //!< returns a pointer to the singleton ClientUI class
-    inline const std::string& Language() {return m_string_table->Language();} //!< Returns the language of the StringTable object associated with ClientUI
-    inline const std::string& String(std::string index) {return m_string_table->String(index); } //!< Returns a lookup from the string table
+    inline const std::string& Language() const {return m_string_table->Language();} //!< Returns the language of the StringTable object associated with ClientUI
+    inline const std::string& String(std::string index) const {return m_string_table->String(index); } //!< Returns a lookup from the string table
     static inline void LogMessage(const std::string& msg) {s_logger.debug(msg);} //!<sends a message to the logger
     
     //!@}
@@ -133,6 +139,17 @@ public:
     //! @param parent A pointer to the Wnd that should contain the tooltip
     //! @param tool A pointer to a ToolWnd to be associated with that window
     inline bool AttachToolWnd(GG::Wnd* parent, ToolWnd* tool) {if(m_tooltips) return m_tooltips->AttachToolWnd(parent, tool);};    //!< Adds a ToolWnd to the given window
+    
+    //!@}
+    
+    //! \name Utilities
+    //!@{
+    
+    //! draws an interface window
+    static void DrawWindow(int x1, int y1, int x2, int y2, const std::string& title = "", bool close=true, bool min=true, bool resize=true, const std::string& font = TITLE_FONT, int pts = TITLE_PTS);    
+    
+    //! @param message The message to display
+    static void MessageBox(const std::string& message);    //!< shows a message dialog box with the given message     
     
     //!@}
 
@@ -192,12 +209,7 @@ public:
     //! @return true if successful, false if object doesn't exist
     bool ZoomTo(const Tech& t);    //!< Opens the technology screen and presents a description of the given technology
    
-   //!@}
-
-    //! @param message The message to display
-    static void MessageBox(const std::string& message);        //!< displays a the message in a popup window for debugging
-    
-   
+   //!@}  
 
 private:
     //! \name Internal Functions

@@ -23,14 +23,27 @@
 #include "IntroScreen.h"
 #endif
 
+#ifndef _GGDrawUtil_h_
+#include "GGDrawUtil.h"
+#endif
+
+//include OpenGL headers
+#include <gl/gl.h>
+#include <gl/glu.h>
+
 //static members
 std::string ClientUI::FONT          = "arial.ttf";    
 int         ClientUI::PTS           = 12;   
+std::string ClientUI::TITLE_FONT    = "arial.ttf";
+int         ClientUI::TITLE_PTS     = 9;
+
 std::string ClientUI::DIR           = "default/";     
 std::string ClientUI::ART_DIR       = ClientUI::DIR + "art/small/";    
 
 GG::Clr     ClientUI::WND_COLOR(0,0,0,210);
-GG::Clr     ClientUI::BORDER_COLOR(255,255,255,255);
+GG::Clr     ClientUI::BORDER_COLOR(0,0,0,255);
+GG::Clr     ClientUI::OUTER_BORDER_COLOR(64,64,64,255);
+GG::Clr     ClientUI::INNER_BORDER_COLOR(255,255,255,255);
 GG::Clr     ClientUI::CTRL_COLOR(30,30,30,255); 
 GG::Clr     ClientUI::TEXT_COLOR(255,255,255,255);
 
@@ -256,6 +269,8 @@ void ClientUI::UnregisterCurrent(bool delete_it /*= false */)
 }//UnregisterCurrent
 
 /////////////////////////////////////////////////////
+//Utilities
+/////////////////////////////////////////////////////
 
 void ClientUI::MessageBox(const std::string& message)
 {
@@ -268,4 +283,113 @@ void ClientUI::MessageBox(const std::string& message)
     dlg.Run();    
 }//MessageBox()
 
+void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& title, bool close, bool min, bool resize, const std::string& font, int pts)
+{
+    const int o_x1=x1, o_y1=y1, o_x2=x2, o_y2=y2; //stores original values of these
+    //draws a rectangle like the burndaddy prototype
+    //first draw a flat rectangle of the current window color
+    GG::App::GetApp()->Enter2DMode();
+    GG::FlatRectangle(x1, y1, x2, y2, WND_COLOR, OUTER_BORDER_COLOR, 1);
+    
+    //draw a wire rectangle
+    // 15 gap on top, 5 gap around
+    //start at upper left
+    x1 += 5;
+    y1 += 15;
+    x2 -= 5;
+    y2 -= 5; 
+    
+    //use GL to draw the lines
+    glDisable(GL_TEXTURE_2D);
+    
+    if(resize)
+    {
+        LogMessage("Resizable window!");
+        //if it is resizable, draw a line strip that has a diagonal at lower right corner
+        
+        glBegin(GL_LINE_STRIP);
+            glColor4ubv(INNER_BORDER_COLOR.v);
+            glVertex2i(x1, y1);
+            glVertex2i(x2, y1);
+            
+            //line down to 15 px from total bottom
+            glVertex2i(x2, y2-10);
+            //line diagonal to bottom
+            glVertex2i(x2-10, y2);
+            //line back to lower left
+            glVertex2i(x1, y2);
+            glVertex2i(x1, y1-1);
+        glEnd();
+    }//end if resize
+    else
+    {
+        LogMessage("NOT A Resizable window!");
+        //...otherwise, make a clear rectangle with a thin border
+//        GG::FlatRectangle(x1, y1, x2, y2, GG::CLR_ZERO, INNER_BORDER_COLOR, 1);
+        glBegin(GL_LINE_STRIP);
+            glColor4ubv(INNER_BORDER_COLOR.v);
+            glVertex2i(x1,y1);
+            glVertex2i(x2,y1);
+            glVertex2i(x2,y2);
+            glVertex2i(x1,y2);
+            glVertex2i(x1,y1);
+        glEnd();
+    }//end else
+
+    //draw extra details
+    
+        
+    if(resize)
+    {
+        LogMessage("Resizable window! Part II.");
+        
+        glBegin(GL_LINES);
+            //draw the extra lines if its a resizable window
+            glColor4ubv(INNER_BORDER_COLOR.v);
+            glVertex2i(x2, y2-6);
+            glVertex2i(x2-6, y2);
+            
+            glVertex2i(x2, y2-2);
+            glVertex2i(x2-2, y2);
+        glEnd();
+    }
+    if(min)
+    {    
+        LogMessage("Minimizable window!");
+        //draw dash if minimizable
+        //draw the lines for the dash and the x
+        //dash
+        
+        glBegin(GL_LINES);
+            glColor4ubv(INNER_BORDER_COLOR.v);
+            glVertex2i(o_x2-30, o_y1+7);
+            glVertex2i(o_x2-23, o_y1+7);
+        glEnd();
+    }
+    if(close)
+    {
+        LogMessage("Closable Window!");
+        //if closable, draw the "X"
+        //draw cross
+        
+        glBegin(GL_LINES);
+            glColor4ubv(INNER_BORDER_COLOR.v);
+            glVertex2i(o_x2-15, o_y1+3);
+            glVertex2i(o_x2-8, o_y1+10);
+            
+            glVertex2i(o_x2-15, o_y1+10);
+            glVertex2i(o_x2-8, o_y1+3); 
+        glEnd();
+    }
+    
+//    glFlush();
+    
+    glEnable(GL_TEXTURE_2D);
+    //now draw the text title
+    GG::TextImage title_img(title, font, pts);
+    title_img.OrthoBlit(o_x1+3, o_y1+2);
+    
+    
+    GG::App::GetApp()->Exit2DMode();
+}
 
