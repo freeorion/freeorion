@@ -34,7 +34,7 @@ InGameOptions::InGameOptions():
     m_save_btn = new CUIButton(30,40,75,ClientUI::String("INGAMEOPTIONS_SAVE"));
     m_load_btn = new CUIButton(30,80,75,ClientUI::String("INGAMEOPTIONS_LOAD"));
 	m_options_btn = new CUIButton(30,120,75,ClientUI::String("INTRO_BTN_OPTIONS"));
-    m_exit_btn = new CUIButton(30,160,75,ClientUI::String("INGAMEOPTIONS_EXITGAME"));
+    m_exit_btn = new CUIButton(30,160,75,ClientUI::String("INGAMEOPTIONS_RESIGN"));
     m_done_btn = new CUIButton(30,210,75,ClientUI::String("DONE"));
 
     // call to InGameOptions::MinimizedLength() because MinimizedLength is virtual
