@@ -58,6 +58,40 @@ const double MapWnd::MIN_SCALE_FACTOR = 0.5;
 const double MapWnd::MAX_SCALE_FACTOR = 8.0;
 const int    MapWnd::NUM_BACKGROUNDS = 3;
 
+
+////////////////////////////////////////////////////////////
+// MapWndPopup
+////////////////////////////////////////////////////////////
+
+MapWndPopup::MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags ):
+    CUI_Wnd( t, x, y, h, w, flags )
+{
+    // register with map wnd
+    HumanClientApp::GetUI()->GetMapWnd()->RegisterPopup( this );
+}
+
+MapWndPopup::MapWndPopup(const GG::XMLElement& elem):
+    CUI_Wnd( elem )
+{
+
+}
+
+MapWndPopup::~MapWndPopup( )
+{
+    // remove from map wnd
+    HumanClientApp::GetUI()->GetMapWnd()->RemovePopup( this );
+}
+
+void MapWndPopup::Close( )
+{
+    // close window as though it's been clicked closed by the user.
+    CloseClicked( );
+}
+
+////////////////////////////////////////////////////////////
+// MapWndPopup
+////////////////////////////////////////////////////////////
+
 MapWnd::MapWnd() :
     GG::Wnd(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight(),
             static_cast<int>(Universe::UNIVERSE_WIDTH * MAX_SCALE_FACTOR) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH, 
@@ -456,6 +490,9 @@ void MapWnd::SetFleetMovement(FleetButton* fleet_button)
 
 void MapWnd::OnTurnUpdate()
 {
+    // delete app popups
+    DeleteAllPopups( );
+
     HumanClientApp::GetApp()->StartTurn();
 }
 
@@ -560,4 +597,36 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
         if (app_height - contents_width < move_to_pt.y)
             move_to_pt.y = app_height - contents_width;
     }
+}
+
+
+void MapWnd::RegisterPopup( MapWndPopup* popup )
+{
+    if (popup) {
+        m_popups.push_back(popup);
+    }
+}
+
+
+void MapWnd::RemovePopup( MapWndPopup* popup )
+{
+    if (popup) {
+
+        std::list<MapWndPopup*>::iterator it = std::find( m_popups.begin(), m_popups.end(), popup );
+        if (it != m_popups.end())
+            m_popups.erase(it);
+    }
+}
+
+
+void MapWnd::DeleteAllPopups( )
+{
+    for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ++it) {
+        // get popup and increment iterator first since closing the popup will change this list by removing the poup
+        MapWndPopup *popup = *it;
+        it++;
+        popup->Close( );
+    }   
+    // clear list
+    m_popups.clear( );
 }

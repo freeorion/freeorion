@@ -24,6 +24,7 @@ namespace GG {
 class Texture;
 }
 
+class MapWndPopup;
 /** This class is a window that graphically displays everything in the universe */
 class MapWnd : public GG::Wnd
 {
@@ -78,6 +79,9 @@ public:
     void SetFleetMovement(FleetButton* fleet_button); //!< allows code that creates FleetButtons to indicate where (and whether) they are moving
 
     void OnTurnUpdate();   //!< called when m_turn_update is clicked
+
+    void RegisterPopup( MapWndPopup* popup );
+    void RemovePopup( MapWndPopup* popup );
     //!@}
         
 private:
@@ -87,6 +91,7 @@ private:
     void RenderFleetMovementLines(); //!< renders the dashed lines indicating where each fleet is going
     void MoveBackgrounds(const GG::Pt& move); //!< scrolls the backgrounds at their respective rates
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
+    void DeleteAllPopups( ); //!< deletes all active popups. 
 
     std::vector<boost::shared_ptr<GG::Texture> > m_backgrounds; //!< starfield backgrounds
     std::vector<boost::shared_ptr<GG::Texture> > m_nebulae;     //!< decorative nebula textures
@@ -102,11 +107,11 @@ private:
     std::vector<FleetButton*>       m_fleet_buttons; //! the moving fleets in the main map
     std::map<Fleet*, 
              MovementLineData>      m_fleet_lines;   //! the lines used for moving fleets in the main map
+    GG::Pt                          m_drag_offset;   //! the distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
+    bool                            m_dragged;       //! tracks whether or not a drag occurs during a left button down sequence of events
+    CUIButton*                      m_turn_update;   //!< button that updates player's turn
+    std::list<MapWndPopup*>         m_popups;        //!< list of currently active popup windows
 
-    GG::Pt     m_drag_offset;  //! the distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
-    bool       m_dragged;      //! tracks whether or not a drag occurs during a left button down sequence of events
-
-    CUIButton* m_turn_update;    //!< button that updates player's turn
 
     SelectedSystemSignalType m_selected_system_signal;
 
@@ -114,5 +119,23 @@ private:
 
     friend class GalaxyMapScreen;    //this is basically a part of that screen anyway
 };
+
+
+/**
+   Derive any window from this class to have it managed by MapWnd. For example, MapWnd will delete all open popups
+   when the end turn button is hit
+*/
+class MapWndPopup : public CUI_Wnd
+{
+public:
+
+    MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags );
+    MapWndPopup(const GG::XMLElement& elem);     
+    virtual ~MapWndPopup( );
+
+    void Close( );      //!< closes the MapWndPopup   
+    
+};
+
 
 #endif
