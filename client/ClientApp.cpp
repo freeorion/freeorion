@@ -2,6 +2,8 @@
 
 #include "../network/Message.h"
 
+#include "../Empire/TechManager.h"
+
 #include <stdexcept>
 
 
@@ -17,10 +19,16 @@ ClientApp::ClientApp() :
         throw std::runtime_error("Attempted to construct a second instance of ClientApp");
    
     s_app = this;
+
+    // initialize tech manager
+    TechManager::instance().LoadTechTree( "" );
+
 }
 
 ClientApp::~ClientApp()
 {
+    // shutdown tech tree
+    TechManager::instance().ClearAll();
 }
 
 void ClientApp::HandleMessage(const Message& msg)

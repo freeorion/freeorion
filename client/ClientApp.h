@@ -58,14 +58,13 @@ public:
 protected:
     MultiplayerLobbyWnd* m_multiplayer_lobby_wnd;
 
-    Universe             m_universe;
-    ClientEmpireManager  m_empires;
-    CombatModule*        m_current_combat;
-    OrderSet             m_orders;
-    ClientNetworkCore    m_network_core;
-   
-    std::string          m_player_name;
-    int                  m_player_id;
+    Universe                m_universe;
+    ClientEmpireManager     m_empires;
+    CombatModule*           m_current_combat;
+    OrderSet                m_orders;
+    ClientNetworkCore       m_network_core;
+    std::string             m_player_name;
+    int                     m_player_id;
    
 private:
     const ClientApp& operator=(const ClientApp&); // disabled
