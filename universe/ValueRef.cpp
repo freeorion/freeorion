@@ -39,6 +39,16 @@ namespace {
         }
         return obj;
     }
+
+    std::string ReconstructName(const std::vector<std::string>& name, bool source_ref)
+    {
+        std::string retval(source_ref ? "Source" : "Target");
+        for (unsigned int i = 0; i < name.size(); ++i) {
+            retval += '.';
+            retval += name[i];
+        }
+        return retval;
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -53,7 +63,7 @@ PlanetSize ValueRef::Variable<PlanetSize>::Eval(const UniverseObject* source, co
         if (const Planet* p = dynamic_cast<const Planet*>(object))
             retval = p->Size();
     } else {
-        throw std::runtime_error("Attempted to read a value other than PlanetSize using a ValueRef of type PlanetSize.");
+        throw std::runtime_error("Attempted to read a non-PlanetSize value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetSize.");
     }
     return retval;
 }
@@ -67,7 +77,7 @@ PlanetType ValueRef::Variable<PlanetType>::Eval(const UniverseObject* source, co
         if (const Planet* p = dynamic_cast<const Planet*>(object))
             retval = p->Type();
     } else {
-        throw std::runtime_error("Attempted to read a value other than PlanetType using a ValueRef of type PlanetType.");
+        throw std::runtime_error("Attempted to read a non-PlanetType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetType.");
     }
     return retval;
 }
@@ -81,7 +91,7 @@ PlanetEnvironment ValueRef::Variable<PlanetEnvironment>::Eval(const UniverseObje
         if (const Planet* p = dynamic_cast<const Planet*>(object))
             retval = p->Environment();
     } else {
-        throw std::runtime_error("Attempted to read a value other than PlanetEnvironment using a ValueRef of type PlanetEnvironment.");
+        throw std::runtime_error("Attempted to read a non-PlanetEnvironment value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetEnvironment.");
     }
     return retval;
 }
@@ -108,7 +118,7 @@ UniverseObjectType ValueRef::Variable<UniverseObjectType>::Eval(const UniverseOb
             return OBJ_PROD_CENTER;
         }
     } else {
-        throw std::runtime_error("Attempted to read a value other than UniverseObjectType using a ValueRef of type UniverseObjectType.");
+        throw std::runtime_error("Attempted to read a non-ObjectType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type ObjectType.");
     }
     return retval;
 }
@@ -122,7 +132,7 @@ StarType ValueRef::Variable<StarType>::Eval(const UniverseObject* source, const 
         if (const System* s = dynamic_cast<const System*>(object))
             retval = s->Star();
     } else {
-        throw std::runtime_error("Attempted to read a value other than StarType using a ValueRef of type StarType.");
+        throw std::runtime_error("Attempted to read a non-StarType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type StarType.");
     }
     return retval;
 }
@@ -140,7 +150,7 @@ FocusType ValueRef::Variable<FocusType>::Eval(const UniverseObject* source, cons
         if (const ProdCenter* pc = dynamic_cast<const ProdCenter*>(object))
             retval = pc->SecondaryFocus();
     } else {
-        throw std::runtime_error("Attempted to read a value other than FocusType using a ValueRef of type FocusType.");
+        throw std::runtime_error("Attempted to read a non-FocusType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type FocusType.");
     }
     return retval;
 }
@@ -217,7 +227,7 @@ double ValueRef::Variable<double>::Eval(const UniverseObject* source, const Univ
     } else if (m_property_name.back() == "ScienceProduction") {
         // TODO
     } else {
-        throw std::runtime_error("Attempted to read a non-double value using a ValueRef of type double.");
+        throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type double.");
     }
 
     return retval;
@@ -226,6 +236,20 @@ double ValueRef::Variable<double>::Eval(const UniverseObject* source, const Univ
 template <>
 int ValueRef::Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
-    throw std::runtime_error("Attempted to read an integer value using a ValueRef of type int (there are no integer properties).");
-    return 0;
+    int retval = 0;
+
+    const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+
+    if (m_property_name.back() == "Owner") {
+        if (object->Owners().size() == 1)
+            retval = *object->Owners().begin();
+        else
+            retval = -1;
+    } else if (m_property_name.back() == "ID") {
+        retval = object->ID();
+    } else {
+        throw std::runtime_error("Attempted to read a non-int value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type int.");
+    }
+
+    return retval;
 }
