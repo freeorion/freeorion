@@ -5,7 +5,13 @@
 //include relevant controls
 
 #include "ToolContainer.h"
-#include "CUIControls.h"
+//#include "CUIControls.h"
+
+//include log4cpp stuff
+#include <log4cpp/Appender.hh>
+#include <log4cpp/Category.hh>
+#include <log4cpp/PatternLayout.hh>
+#include <log4cpp/FileAppender.hh>
 
 //FreeOrion defines
 class ClientNetwork;
@@ -131,7 +137,7 @@ public:
    
 #ifdef DEBUG
 
-    // \name Debugging Functions
+    //! \name Debugging Functions
     //!@{
     
     //! @param message The message to display
@@ -140,10 +146,13 @@ public:
     //!@}
 #endif
 
+public:
+    static log4cpp::Category& s_logger;        //!< log4cpp logging category
+
 private:
-    static const Uint32 TOOLTIP_DELAY;    //!<number of milliseconds to initialize tooltips to
-    static ToolContainer* m_tooltips;        //!< the single toolcontainer object
-    static int m_state;                    //!< represents the screen currently being displayed
+    const Uint32 TOOLTIP_DELAY;    //!<number of milliseconds to initialize tooltips to
+    ToolContainer* m_tooltips;        //!< the single toolcontainer object
+    int m_state;                    //!< represents the screen currently being displayed
 
 };//ClientUI
 
