@@ -25,7 +25,9 @@ CommandLine=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=000000000000000100
+CompilerSettings=0000000001001001000
+UseCustomMakefile=0
+CustomMakefile=
 
 [Unit1]
 FileName=dmain.cpp
