@@ -647,10 +647,10 @@ Fleet* FleetWnd::NewFleetWndReceivedShip(FleetDetailWnd* fleet_wnd, int ship_id)
         }
     } else {
         HumanClientApp::Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, existing_fleet->X(), existing_fleet->Y()));
-        Universe::ObjectVec fleets = GetUniverse().FindObjects(&IsFleet);
+        std::vector<Fleet*> fleets = GetUniverse().FindObjects<Fleet>();
         for (unsigned int i = 0; i < fleets.size(); ++i) {
             if (fleets[i]->Name() == fleet_name && fleets[i]->X() == existing_fleet->X() && fleets[i]->Y() == existing_fleet->Y()) {
-                new_fleet = dynamic_cast<Fleet*>(fleets[i]);
+                new_fleet = fleets[i];
                 break;
             }
         }

@@ -975,18 +975,18 @@ void ServerApp::ProcessTurns( )
     
     // check for combats, and resolve them.
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-      m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::COMBAT,-1) );
+       m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::COMBAT,-1) );
 
-    Universe::ObjectVec sys_vec = GetUniverse().FindObjects(IsSystem);
-    for(Universe::ObjectVec::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it)
+    std::vector<System*> sys_vec = GetUniverse().FindObjects<System>();
+    for(std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it)
     {
       std::vector<CombatAssets> empire_combat_forces;
-      System* system = dynamic_cast<System*>(*it);
+      System* system = *it;
       
-      Universe::ObjectVec flt_vec = system->FindObjects(IsFleet);
-      for(Universe::ObjectVec::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it)
+      std::vector<Fleet*> flt_vec = GetUniverse().FindObjects<Fleet>();
+      for(std::vector<Fleet*>::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it)
       {
-	        Fleet* flt = dynamic_cast<Fleet*>(*flt_it);
+	        Fleet* flt = *flt_it;
 	        // a fleet should belong only to one empire!?
  	        if(1==flt->Owners().size())
           {
@@ -1002,10 +1002,10 @@ void ServerApp::ProcessTurns( )
               (*ecf_it).fleets.push_back(flt);
           }
       }
-      Universe::ObjectVec plt_vec = system->FindObjects(IsPlanet);
-      for(Universe::ObjectVec::iterator plt_it = plt_vec.begin();plt_it != plt_vec.end(); ++plt_it)
+      std::vector<Planet*> plt_vec = system->FindObjects<Planet>();
+      for(std::vector<Planet*>::iterator plt_it = plt_vec.begin();plt_it != plt_vec.end(); ++plt_it)
       {
-	        Planet* plt = dynamic_cast<Planet*>(*plt_it);
+	        Planet* plt = *plt_it;
 	        // a planet should belong only to one empire!?
           if(1==plt->Owners().size())
           {           

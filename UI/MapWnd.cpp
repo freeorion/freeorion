@@ -315,7 +315,7 @@ void MapWnd::InitTurn(int turn_number)
     }
     m_system_icons.clear();
 
-    Universe::ObjectIDVec system_IDs = universe.FindObjectIDs(IsSystem);
+    Universe::ObjectIDVec system_IDs = universe.FindObjectIDs<System>();
     for (unsigned int i = 0; i < system_IDs.size(); ++i) {
         SystemIcon* icon = new SystemIcon(system_IDs[i], m_zoom_factor);
         m_system_icons.push_back(icon);
