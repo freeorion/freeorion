@@ -15,27 +15,28 @@ BOOST_SIG_LIB = /usr/boost_1_30_0/libs/signals/build/bin/libboost_signals.a/gcc/
 OBJ  = ../objs/dmain.o ../objs/ServerApp.o ../objs/SDLnetUDP.o ../objs/SDLnet.o ../objs/SDLnetselect.o ../objs/SDLnetTCP.o ../objs/fastevents.o ../objs/net2.o ../objs/trace.o ../objs/Message.o ../objs/NetworkCore.o ../objs/ServerNetworkCore.o ../objs/XDiff.o ../objs/XHash.o ../objs/XLut.o ../objs/XParser.o ../objs/XTree.o ../objs/XMLDoc.o ../objs/Process.o 
 LINKOBJ  = ../objs/dmain.o ../objs/ServerApp.o ../objs/SDLnetUDP.o ../objs/SDLnet.o ../objs/SDLnetselect.o ../objs/SDLnetTCP.o ../objs/fastevents.o ../objs/net2.o ../objs/trace.o ../objs/Message.o ../objs/NetworkCore.o ../objs/ServerNetworkCore.o ../objs/XDiff.o ../objs/XHash.o ../objs/XLut.o ../objs/XParser.o ../objs/XTree.o ../objs/XMLDoc.o ../objs/Process.o
 
-LIBS =  -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz
+LIBS =  -L/usr/lib -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz -lpthread
 
 INCS =  -I/usr/include  -I/usr/include/GL  -I$(SDL_INC)  -I$(BOOST_INC)  -I../SDL_net  -I../SDL_net2  -I../GG  -I../GG/XML
 
 CXXINCS =  $(INCS)
 
-BIN  = ../freeoriond.exe
+BIN  = freeoriond.exe
 
 CXXFLAGS = $(CXXINCS) -g3
 CFLAGS = $(INCS) -g3
 
 .PHONY: all all-before all-after clean clean-custom
 
-all: all-before ../freeoriond.exe all-after
+all: all-before freeoriond.exe all-after
 
 
 clean: clean-custom
 	rm -f $(OBJ) $(BIN)
 
 $(BIN): $(LINKOBJ)
-	$(CPP) $(LINKOBJ) -o "..\freeoriond.exe" $(LIBS)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+	/bin/mv $(BIN) ..
 
 ../objs/dmain.o: dmain.cpp
 	$(CPP) -c dmain.cpp -o ../objs/dmain.o $(CXXFLAGS)

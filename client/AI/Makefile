@@ -15,27 +15,28 @@ BOOST_SIG_LIB = /usr/boost_1_30_0/libs/signals/build/bin/libboost_signals.a/gcc/
 OBJ  = ../../objs/camain.o ../../objs/AIClientApp.o ../../objs/ClientApp.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/SDLnetUDP.o ../../objs/SDLnet.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/XMLDoc.o ../../objs/OrderSet.o
 LINKOBJ  = ../../objs/camain.o ../../objs/AIClientApp.o ../../objs/ClientApp.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/SDLnetUDP.o ../../objs/SDLnet.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/XMLDoc.o ../../objs/OrderSet.o
 
-LIBS =  -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz
+LIBS =  -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lboost_signals -lexpat -llog4cpp -lz -lpthread
 
 INCS =  -I/usr/include  -I/usr/include/GL  -I$(SDL_INC)  -I$(BOOST_INC)  -I../../SDL_net  -I../../SDL_net2  -I../../GG  -I../../GG/XML
 
 CXXINCS =  $(INCS)
 
-BIN  = ../../freeorionca.exe
+BIN  = freeorionca.exe
 
 CXXFLAGS = $(CXXINCS) -g3
 CFLAGS = $(INCS) -g3
 
 .PHONY: all all-before all-after clean clean-custom
 
-all: all-before ../../freeorionca.exe all-after
+all: all-before freeorionca.exe all-after
 
 
 clean: clean-custom
 	rm -f $(OBJ) $(BIN)
 
 $(BIN): $(LINKOBJ)
-	$(CPP) $(LINKOBJ) -o "..\..\freeorionca.exe" $(LIBS)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+	/bin/mv $(BIN) ../../
 
 ../../objs/camain.o: camain.cpp
 	$(CPP) -c camain.cpp -o ../../objs/camain.o $(CXXFLAGS)

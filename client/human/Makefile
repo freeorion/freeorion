@@ -15,27 +15,28 @@ BOOST_SIG_LIB = /usr/boost_1_30_0/libs/signals/build/bin/libboost_signals.a/gcc/
 OBJ  = ../../objs/chmain.o ../../objs/HumanClientApp.o ../../objs/ClientApp.o ../../objs/GGApp.o ../../objs/GGButton.o ../../objs/GGClr.o ../../objs/GGControl.o ../../objs/GGDrawUtil.o ../../objs/GGDropDownList.o ../../objs/GGEdit.o ../../objs/GGListBox.o ../../objs/GGMenu.o ../../objs/GGPtRect.o ../../objs/GGScroll.o ../../objs/GGStaticGraphic.o ../../objs/GGText.o ../../objs/GGTextControl.o ../../objs/GGTexture.o ../../objs/GGWnd.o ../../objs/GGZList.o ../../objs/SDL_ttf.o ../../objs/SDLGGApp.o ../../objs/XMLDoc.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/SDLnetUDP.o ../../objs/SDLnet.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/Process.o ../../objs/OrderSet.o
 LINKOBJ  = ../../objs/chmain.o ../../objs/HumanClientApp.o ../../objs/ClientApp.o ../../objs/GGApp.o ../../objs/GGButton.o ../../objs/GGClr.o ../../objs/GGControl.o ../../objs/GGDrawUtil.o ../../objs/GGDropDownList.o ../../objs/GGEdit.o ../../objs/GGListBox.o ../../objs/GGMenu.o ../../objs/GGPtRect.o ../../objs/GGScroll.o ../../objs/GGStaticGraphic.o ../../objs/GGText.o ../../objs/GGTextControl.o ../../objs/GGTexture.o ../../objs/GGWnd.o ../../objs/GGZList.o ../../objs/SDL_ttf.o ../../objs/SDLGGApp.o ../../objs/XMLDoc.o ../../objs/ClientNetworkCore.o ../../objs/Message.o ../../objs/NetworkCore.o ../../objs/XDiff.o ../../objs/XHash.o ../../objs/XLut.o ../../objs/XParser.o ../../objs/XTree.o ../../objs/SDLnetUDP.o ../../objs/SDLnet.o ../../objs/SDLnetselect.o ../../objs/SDLnetTCP.o ../../objs/fastevents.o ../../objs/net2.o ../../objs/trace.o ../../objs/Process.o ../../objs/OrderSet.o
 
-LIBS =  -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lSDL_image -lGL -lGLU -lfreetype -lboost_signals -lexpat -llog4cpp -lz
+LIBS =  -L/usr/lib -L/usr/X11R6/lib -L$(BOOST_SIG_LIB) -lSDLmain -lSDL -lSDL_image -lGL -lGLU -lfreetype -lboost_signals -lexpat -llog4cpp -lz -lpthread
 
 INCS =  -I/usr/include  -I/usr/include/GL  -I$(SDL_INC)  -I$(FREETYPE_INC)  -I$(BOOST_INC)  -I../../SDL_net  -I../../SDL_net2  -I../../GG  -I../../GG/XML
 
 CXXINCS =  $(INCS)
 
-BIN  = ../../freeorionca.exe
+BIN  = freeorion.exe
 
 CXXFLAGS = $(CXXINCS) -g3
 CFLAGS = $(INCS) -g3
 
 .PHONY: all all-before all-after clean clean-custom
 
-all: all-before ../../freeorion.exe all-after
+all: all-before freeorion.exe all-after
 
 
 clean: clean-custom
 	rm -f $(OBJ) $(BIN)
 
 $(BIN): $(LINKOBJ)
-	$(CPP) $(LINKOBJ) -o "..\..\freeorion.exe" $(LIBS)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+	/bin/mv $(BIN) ../../
 
 ../../objs/chmain.o: chmain.cpp
 	$(CPP) -c chmain.cpp -o ../../objs/chmain.o $(CXXFLAGS)
