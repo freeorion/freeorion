@@ -43,12 +43,12 @@ Empire* ServerEmpireManager::CreateEmpire(const std::string& name,
     emp->AddPlanet(planetID);
 
     // Add system homeplanet is in to the ExploredSystem list
-  /*  ServerApp* server_app = ServerApp::GetApp();
+    ServerApp* server_app = ServerApp::GetApp();
     ServerUniverse* universe = &(server_app->Universe());
     UniverseObject*   uni_obj = universe->Object(planetID);
     Planet*   planet = dynamic_cast<Planet*>(uni_obj);
     emp->AddExploredSystem(planet->SystemID());
-    */
+    
   
     InsertEmpire(emp);
     
