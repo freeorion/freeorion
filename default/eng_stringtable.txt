@@ -480,4 +480,5 @@ A combat has taken place in system %system%. You lost!
 SITREP_COMBAT_SYSTEM_NO_VICTOR
 A combat has taken place in system %system%. The encounter was a draw.
 
-
+PLANET_LOST_STARVED_TO_DEATH
+Your population at planet %planet% in system %system% starved to death. The planet is lost!
