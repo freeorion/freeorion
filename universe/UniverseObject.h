@@ -19,34 +19,6 @@ class System;
 class SitRepEntry;
 namespace GG {class XMLElement;};
 
-/* the various major subclasses of UniverseObject */
-enum UniverseObjectType {
-    INVALID_UNIVERSE_OBJECT_TYPE,
-    OBJ_BUILDING,
-    OBJ_SHIP,
-    OBJ_FLEET, 
-    OBJ_PLANET,
-    OBJ_POP_CENTER,
-    OBJ_PROD_CENTER,
-    OBJ_SYSTEM,
-    NUM_OBJ_TYPES
-};
-
-namespace GG {
-    ENUM_MAP_BEGIN(UniverseObjectType)
-	ENUM_MAP_INSERT(INVALID_UNIVERSE_OBJECT_TYPE)
-	ENUM_MAP_INSERT(OBJ_BUILDING)
-	ENUM_MAP_INSERT(OBJ_SHIP)
-	ENUM_MAP_INSERT(OBJ_FLEET)
-	ENUM_MAP_INSERT(OBJ_PLANET)
-	ENUM_MAP_INSERT(OBJ_POP_CENTER)
-	ENUM_MAP_INSERT(OBJ_PROD_CENTER)
-	ENUM_MAP_INSERT(OBJ_SYSTEM)
-    ENUM_MAP_END
-}
-ENUM_STREAM_IN(UniverseObjectType)
-ENUM_STREAM_OUT(UniverseObjectType)
-
 /** the abstract base class for all objects in the universe.  The UniverseObject class itself has only an ID, a name, 
     a position, possibly a System in which it is, and zero or more owners.  The position can range from 0 (left) to 1000 
     (right) in X, and 0 (top) to 1000 (bottom) in Y.  This coordinate system was chosen to help with conversion to 

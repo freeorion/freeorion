@@ -21,30 +21,6 @@
 class Empire;
 
 
-/** The general type of construction being done at a ProdCenter.  Within each valid type, a specific kind 
-    of item is being built, e.g. under BUILDING a kind of building called "SuperFarm" might be built. */
-enum BuildType {
-    INVALID_BUILD_TYPE = -1,
-    BT_NOT_BUILDING,         ///< no building is taking place
-    BT_BUILDING,             ///< a Building object is being built
-    BT_SHIP,                 ///< a Ship object is being built
-    BT_ORBITAL,              ///< an Orbital object is being built
-    NUM_BUILD_TYPES
-};
-
-namespace GG {
-    ENUM_MAP_BEGIN(BuildType)
-	ENUM_MAP_INSERT(INVALID_BUILD_TYPE)
-	ENUM_MAP_INSERT(BT_NOT_BUILDING)
-	ENUM_MAP_INSERT(BT_BUILDING)
-	ENUM_MAP_INSERT(BT_SHIP)
-	ENUM_MAP_INSERT(BT_ORBITAL)
-    ENUM_MAP_END
-}
-ENUM_STREAM_IN(BuildType)
-ENUM_STREAM_OUT(BuildType)
-
-
 /** a production center decoration for a UniverseObject. */
 class ProdCenter
 {
