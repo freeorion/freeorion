@@ -1,6 +1,6 @@
 
-#ifndef _FREEORION_EMPIRE_H_
-#define _FREEORION_EMPIRE_H_
+#ifndef _FREEORION_Empire_h_
+#define _FREEORION_Empire_h_
 
 #include <list>
 #include <string>
@@ -54,12 +54,12 @@ public:
     * EmpireManagers must be friends so that they can have
     * access to the constructor and keep it hidden from others
     */
-    friend class ServerEmpire;
+    friend class ServerEmpireManager;
     /** 
     * EmpireManagers must be friends so that they can have
     * access to the constructor and keep it hidden from others
     */
-    friend class ClientEmpire;
+    friend class ClientEmpireManager;
     
 
     /** \name Iterator Types */ //@{

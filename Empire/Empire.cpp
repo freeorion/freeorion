@@ -1,5 +1,6 @@
-
+#ifndef _FREEORION_Empire_h_
 #include "Empire.h"
+#endif
 
 /** Constructors */ 
 

@@ -1,5 +1,5 @@
 
-#ifndef _FREEORION_EMPIREMANAGER_H_
+#ifndef _FREEORION_EmpireManager_h_
 #include "EmpireManager.h"
 #endif
 

@@ -1,8 +1,8 @@
-#ifndef _FREEORION_SERVEREMPIRE_H_ 
-#include "ServerEmpire.h"
+#ifndef _FREEORION_ServerEmpireManager_h_ 
+#include "ServerEmpireManager.h"
 #endif
 
-ServerEmpire::ServerEmpire() :
+ServerEmpireManager::ServerEmpireManager() :
     m_next_id(1)
 {
     // nothing to do yet
@@ -19,8 +19,8 @@ ServerEmpire::ServerEmpire() :
    I do this because GameCore may want to call this under a variety of
    circumstances, and I do not want it to be too specific.
 */
-Empire* ServerEmpire::CreateEmpire(std::string& name, 
-                                   GG::Clr color, 
+Empire* ServerEmpireManager::CreateEmpire(const std::string& name, 
+                                   const GG::Clr& color, 
                                    int planetID, 
                                    Empire::ControlStatus state)
 {
@@ -47,7 +47,7 @@ Empire* ServerEmpire::CreateEmpire(std::string& name,
   This method returns true if the empire was removed, false if it
   doesn't exist.
 */
-bool ServerEmpire::EliminateEmpire(int ID)
+bool ServerEmpireManager::EliminateEmpire(int ID)
 {
     Empire* emp = Lookup(ID);
     RemoveEmpire(emp);
@@ -62,14 +62,14 @@ bool ServerEmpire::EliminateEmpire(int ID)
 * the current turn.
 *
 * The returned element can be passed to the 
-* ClientManager::HandleEmpireUpdate() method to bring the ClientManager
+* ClientEmpireManager::HandleEmpireUpdate() method to bring the ClientEmpireManager
 * in sync with the server manager.  
 *
 * When this method is called, the stored XMLElements for the empires at
 * the beginning of the turn are replaced by fresh elements representing
 * their current states.
 */
-GG::XMLElement ServerEmpire::CreateClientEmpireUpdate(int EmpireID)
+GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int EmpireID)
 {
     GG::XMLElement update;
     // FINISH ME!!!
@@ -82,7 +82,7 @@ GG::XMLElement ServerEmpire::CreateClientEmpireUpdate(int EmpireID)
 * sent to the client and decoded to put the proper sitrep events in
 * the client's queue
 */
-GG::XMLElement ServerEmpire::CreateClientSitrepUpdate(int EmpireID)
+GG::XMLElement ServerEmpireManager::CreateClientSitrepUpdate(int EmpireID)
 {
     GG::XMLElement update;
     // FINISH ME!!!

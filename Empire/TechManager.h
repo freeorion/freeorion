@@ -1,10 +1,10 @@
 
-#ifndef _FREEORION_TECHMANAGER_H_
-#define _FREEORION_TECHMANAGER_H_
+#ifndef _FREEORION_TechManager_h_
+#define _FREEORION_TechManager_h_
 
 #include <map>
 
-#ifndef _FREEORION_TECHLEVEL_H_
+#ifndef _FREEORION_TechLevel_h_
 #include "TechLevel.h"
 #endif
 

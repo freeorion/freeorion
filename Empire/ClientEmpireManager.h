@@ -1,8 +1,8 @@
 
-#ifndef _FREEORION_CLIENTEMPIRE_H_
-#define _FREEORION_CLIENTEMPIRE_H_
+#ifndef _FREEORION_ClientEmpireManager_h_
+#define _FREEORION_ClientEmpireManager_h_
 
-#ifndef _FREEORION_EMPIREMANAGER_H_
+#ifndef _FREEORION_EmpireManager_h_
 #include "EmpireManager.h"
 #endif
 
@@ -12,13 +12,13 @@
 * ServerEmpire
 *
 */
-class ClientEmpire : public EmpireManager
+class ClientEmpireManager : public EmpireManager
 {
 public:
     /** \name Constructors */ //@{
 
     /// Creates an empty Client empire manager.
-    ClientEmpire();
+    ClientEmpireManager();
    
    //@}
    

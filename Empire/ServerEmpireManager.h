@@ -1,8 +1,8 @@
 
-#ifndef _FREEORION_SERVEREMPIRE_H_
-#define _FREEORION_SERVEREMPIRE_H_
+#ifndef _FREEORION_ServerEmpireManager_h_
+#define _FREEORION_ServerEmpireManager_h_
 
-#ifndef _FREEORION_EMPIREMANAGER_H_
+#ifndef _FREEORION_EmpireManager_h_
 #include "EmpireManager.h"
 #endif
 
@@ -11,14 +11,14 @@
 *  It supports methods for generating turn updates to send to clients.
 *
 */
-class ServerEmpire : public EmpireManager
+class ServerEmpireManager : public EmpireManager
 {
 public:
    
    /** \name Constructors */ //@{
    /// Default Constructor
    /** Initializes the empire ID counter */
-   ServerEmpire();
+   ServerEmpireManager();
    //@}
    
    /** \name Mutators */ //@{
@@ -34,7 +34,7 @@ public:
        I do this because GameCore may want to call this under a variety of
        circumstances, and I do not want it to be too specific.
     */
-    Empire* CreateEmpire(std::string& name, GG::Clr color, int planetID, Empire::ControlStatus state);
+    Empire* CreateEmpire(const std::string& name, const GG::Clr& color, int planetID, Empire::ControlStatus state);
 
     /// Removes all traces of the Empire with the specified ID.
     /**
