@@ -326,19 +326,14 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
       const Fleet  *flt=empire_combat_forces[e].retreated_ships[0]->GetFleet();
       const System *sys=NULL; double range = 0.0;
 
-      // retreat to nearest system
-      for(Empire::ConstPlanetIDItr plt_it=empire_combat_forces[e].owner->PlanetBegin();plt_it != empire_combat_forces[e].owner->PlanetEnd();++plt_it)
-      {
-        const System *s=dynamic_cast<const Planet*>(GetUniverse().Object(*plt_it))->GetSystem();
-        double r = sqrt((s->X()-flt->X())*(s->X()-flt->X()) + (s->Y()-flt->Y())*(s->Y()-flt->Y()));
-
-        if(sys==s)
-          continue;
-
-        if(sys==NULL || r<range)
-          {sys = s; range = r;}
+      // retreat to nearest non-hostile system
+      std::map<double, System*> neighbors = GetUniverse().ImmediateNeighbors(system_id);
+      for (std::map<double, System*>::iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
+          if (it->second->Owners().empty() || it->second->Owners().find(empire_combat_forces[e].owner->EmpireID()) != it->second->Owners().end()) {
+              sys = it->second;
+              break;
+          }
       }
-
       if(sys==NULL) 
       {
         for(unsigned int i=0; i<empire_combat_forces[e].retreated_ships.size(); i++)
@@ -352,8 +347,8 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
           System *current_system = dynamic_cast<System *>(GetUniverse().Object(flt->SystemID()));
 
           current_system->Remove(flt->ID());// set flt-SystemId() to INVALID_OBJECT_ID
-          flt->MoveTo(current_system->X(),current_system->Y());
-          flt->SetDestination(sys->ID());
+          std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(system_id, sys->ID());
+          flt->SetRoute(route.first, route.second);
         }
     }
 
