@@ -48,7 +48,6 @@ public:
    /** \name Accessors */ //@{
    PlanetType  Type() const {return m_type;}
    PlanetSize  Size() const {return m_size;}
-   int         SystemID() const {return m_system_id;}
    
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
@@ -64,7 +63,6 @@ public:
    /** \name Mutators */ //@{
    virtual void MovementPhase(std::vector<SitRepEntry>& sit_reps);
    virtual void PopGrowthProductionResearchPhase(std::vector<SitRepEntry>& sit_reps);
-   void         SetSystemID(int system_id) {m_system_id = system_id;}
 
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!
@@ -77,7 +75,6 @@ public:
 private:
    PlanetType     m_type;
    PlanetSize     m_size;
-   int            m_system_id;
    
    /////////////////////////////////////////////////////////////////////////////
    // V0.1 ONLY!!!!

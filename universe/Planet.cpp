@@ -25,7 +25,6 @@ Planet::Planet(PlanetType type, PlanetSize size) :
    m_type = type;
    m_size = size;
    m_def_bases = 0;
-   m_system_id = -1;
 
    switch(size) {
    case SZ_TINY:
@@ -41,7 +40,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
       SetMaxPop(70);
       break;
    case SZ_HUGE:
-      SetMaxPop(900);
+       SetMaxPop(90);
    }
 
 }
@@ -58,7 +57,6 @@ Planet::Planet(const GG::XMLElement& elem) :
 
    m_type = (PlanetType) lexical_cast<int> ( elem.Child("m_type").Attribute("value") );
    m_size = (PlanetSize) lexical_cast<int> ( elem.Child("m_size").Attribute("value") );
-   m_system_id = lexical_cast<int> ( elem.Child("m_system_id").Attribute("value") );
    m_def_bases = lexical_cast<int> ( elem.Child("m_def_bases").Attribute("value") );
 
 }
@@ -107,10 +105,6 @@ GG::XMLElement Planet::XMLEncode() const
    size.SetAttribute( "value", lexical_cast<std::string>(m_size) );
    element.AppendChild(size);
 
-   XMLElement system_id("m_system_id");
-   system_id.SetAttribute( "value", lexical_cast<std::string>(m_system_id) );
-   element.AppendChild(system_id);
-
    XMLElement def_bases("m_def_bases");
    def_bases.SetAttribute( "value", lexical_cast<std::string>(m_def_bases) );
    element.AppendChild(def_bases);
@@ -143,10 +137,6 @@ GG::XMLElement Planet::XMLEncode(int empire_id) const
    XMLElement size("m_size");
    size.SetAttribute( "value", lexical_cast<std::string>(m_size) );
    element.AppendChild(size);
-
-   XMLElement system_id("m_system_id");
-   system_id.SetAttribute( "value", lexical_cast<std::string>(m_system_id) );
-   element.AppendChild(system_id);
 
    XMLElement def_bases("m_def_bases");
    def_bases.SetAttribute( "value", lexical_cast<std::string>(m_def_bases) );
