@@ -34,6 +34,7 @@ public:
 
     enum        
     {
+        STATE_STARTUP     = 0,
         STATE_INTRO       = 1,
         STATE_SETTINGS    = 2,
         STATE_EMPIRESEL   = 3,
@@ -140,7 +141,9 @@ public:
 #endif
 
 private:
-    static ToolContainer* tooltips;        //!< the single toolcontainer object
+    static const Uint32 TOOLTIP_DELAY;    //!<number of milliseconds to initialize tooltips to
+    static ToolContainer* m_tooltips;        //!< the single toolcontainer object
+    static int m_state;                    //!< represents the screen currently being displayed
 
 };//ClientUI
 
