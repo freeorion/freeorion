@@ -15,69 +15,6 @@ namespace {
 
     const int PLAYER_ROW_HEIGHT = 22;
     const int EMPIRE_NAME_WIDTH = 170;
-    const int COLOR_SELECTOR_WIDTH = 75;
-
-    struct ColorRow : public GG::ListBox::Row
-    {
-        struct ColorSquare : GG::Control
-        {
-            ColorSquare(const GG::Clr& color) : 
-                GG::Control(0, 0, COLOR_SELECTOR_WIDTH - 40, 10, 0)
-            {
-                SetColor(color);
-            }
-
-            virtual bool Render()
-            {
-                GG::Pt ul = UpperLeft(), lr = LowerRight();
-                GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, Color(), GG::CLR_ZERO, 0);
-                return true;
-            }
-        };
-
-        ColorRow(const GG::Clr& color)
-        {
-            push_back(new ColorSquare(color));
-        }
-    };
-
-    class EmpireColorSelector : public CUIDropDownList
-    {
-    public:
-        typedef boost::signal<void (const GG::Clr&)> ColorChangedSignalType;
-
-        EmpireColorSelector(int w, int h) : CUIDropDownList(0, 0, w, h, 5 * h)
-        {
-            const std::vector<GG::Clr>& colors = EmpireColors();
-            for (unsigned int i = 0; i < colors.size(); ++i) {
-                Insert(new ColorRow(colors[i]));
-            }
-            Connect(SelChangedSignal(), &EmpireColorSelector::SelectionChanged, this);
-        }
-
-        ColorChangedSignalType& ColorChangedSignal() const {return color_changed_sig;}
-
-        void SelectColor(const GG::Clr& clr)
-        {
-            Select(0);
-            const std::vector<GG::Clr>& colors = EmpireColors();
-            for (unsigned int i = 0; i < colors.size(); ++i) {
-                if (colors[i] == clr) {
-                    Select(i);
-                    break;
-                }
-            }
-        }
-
-    private:
-        void SelectionChanged(int i)
-        {
-            const std::vector<GG::Clr>& colors = EmpireColors();
-            color_changed_sig(colors[i]);
-        }
-
-        mutable ColorChangedSignalType color_changed_sig;
-    };
 
     struct PlayerRow : GG::ListBox::Row
     {
@@ -98,7 +35,7 @@ namespace {
             push_back(player_name, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
             CUIEdit* edit = new CUIEdit(0, 0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, player_data.empire_name, ClientUI::FONT, ClientUI::PTS, GG::CLR_ZERO, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
             push_back(edit);
-            EmpireColorSelector* color_selector = new EmpireColorSelector(COLOR_SELECTOR_WIDTH, PLAYER_ROW_HEIGHT);
+            EmpireColorSelector* color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
             color_selector->SelectColor(player_data.empire_color);
             push_back(color_selector);
             height = PLAYER_ROW_HEIGHT + 6;
@@ -141,7 +78,7 @@ namespace {
                 }
             }
             push_back(empire_list);
-            m_color_selector = new EmpireColorSelector(COLOR_SELECTOR_WIDTH, PLAYER_ROW_HEIGHT);
+            m_color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
             if (0 <= player_data.save_game_empire_id)
                 player_data.empire_color = g_save_game_empire_data[player_data.save_game_empire_id].color;
             m_color_selector->SelectColor(player_data.empire_color);
@@ -215,7 +152,8 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
                                                           GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
 
     m_saved_games_list = new CUIDropDownList(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y + CONTROL_MARGIN, 
-                                              GALAXY_SETUP_PANEL_WIDTH, SAVED_GAMES_LIST_ROW_HEIGHT, SAVED_GAMES_LIST_DROP_HEIGHT);
+                                             GALAXY_SETUP_PANEL_WIDTH, SAVED_GAMES_LIST_ROW_HEIGHT, SAVED_GAMES_LIST_DROP_HEIGHT);
+    m_saved_games_list->SetStyle(GG::LB_NOSORT);
 
     g_preview_ul = GG::Pt(Width() - RightBorder() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, TopBorder() + CONTROL_MARGIN + PREVIEW_MARGIN);
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
