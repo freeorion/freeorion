@@ -250,13 +250,14 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
 void ServerNetworkCore::DispatchMessage(const Message& msg, int socket)
 {
    bool sender_unknown = true;
+   bool spoofed_sender = false;
    ConnectionInfo conn_info;
-   for (std::map<int, ConnectionInfo>::iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
-      if (it->second.socket == socket) {
-         sender_unknown = false;
-         conn_info = it->second;
-         break;
-      }
+   std::map<int, ConnectionInfo>::iterator sender_conn_it = m_player_connections.find(msg.Sender());
+   if (sender_conn_it != m_player_connections.end()) {
+      sender_unknown = false;
+      conn_info = sender_conn_it->second;
+      if (sender_conn_it->second.socket != socket)
+         spoofed_sender = true;
    }
    if (sender_unknown) {
       for (std::vector<ConnectionInfo>::iterator it = m_new_connections.begin(); it != m_new_connections.end(); ++it) {
@@ -266,8 +267,13 @@ void ServerNetworkCore::DispatchMessage(const Message& msg, int socket)
          }
       }
    }
-// TODO: add better Message screening
-   if (msg.Receiver() == -1) { // a message destined for server
+// TODO: add more Message screening
+   if (spoofed_sender) {
+      ServerApp::GetApp()->Logger().errorStream() << "ServerNetworkCore::DispatchMessage : Player #" << sender_conn_it->first << 
+         " sent this message pretending to be player #" << msg.Sender() << " (spoofing player will be dumped): " << 
+         msg.Type() << " " << msg.Sender() << " " << msg.Receiver() << " " << msg.Module() << " " << msg.GetText();
+         DumpConnection(conn_info.socket);
+   } else if (msg.Receiver() == -1) { // a message destined for server
       switch (msg.Module()) {
       case Message::CORE:
          if (sender_unknown) {
