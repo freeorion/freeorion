@@ -140,13 +140,13 @@ class FleetWnd : public MapWndPopup
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (Fleet*)>         ShowingFleetSignalType;    ///< emitted to indicate to the rest of the UI that this window is showing the given fleet, so duplicates are avoided
-    typedef boost::signal<void (Fleet*)>         NotShowingFleetSignalType; ///< emitted to indicate that this window is not showing the given fleet
+    typedef boost::signal<void (Fleet*, FleetWnd*)> ShowingFleetSignalType;    ///< emitted to indicate to the rest of the UI that this window is showing the given fleet, so duplicates are avoided
+    typedef boost::signal<void (Fleet*)>            NotShowingFleetSignalType; ///< emitted to indicate that this window is not showing the given fleet
     //@}
 
     /** \name Slot Types */ //@{
-    typedef ShowingFleetSignalType::slot_type    ShowingFleetSlotType;      ///< type of functor(s) invoked on a ShowingFleetSignalType
-    typedef NotShowingFleetSignalType::slot_type NotShowingFleetSlotType;   ///< type of functor(s) invoked on a NotShowingFleetSignalType
+    typedef ShowingFleetSignalType::slot_type       ShowingFleetSlotType;      ///< type of functor(s) invoked on a ShowingFleetSignalType
+    typedef NotShowingFleetSignalType::slot_type    NotShowingFleetSlotType;   ///< type of functor(s) invoked on a NotShowingFleetSignalType
     //@}
 
     /** \name Structors */ //@{
@@ -165,6 +165,8 @@ public:
     //! \name Mutators //@{
     void SystemClicked(int system_id); ///< invoked when a system is clicked on the main map, possibly indicating that the currently-selected fleet should move there
     //@}
+
+    static bool CloseAllFleetWnds(); ///< returns true iff fleet windows were open before it was called.  Used most often for fleet window quick-close.
 
 protected:
     //! \name Mutators //@{
@@ -209,7 +211,7 @@ private:
     mutable ShowingFleetSignalType    m_showing_fleet_sig;
     mutable NotShowingFleetSignalType m_not_showing_fleet_sig;
 
-    static int          s_new_fleet_count;
+    static std::set<FleetWnd*> s_open_fleet_wnds;
 };
 
 #endif

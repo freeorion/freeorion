@@ -62,10 +62,10 @@ private:
         (if this one is stationary or moving, respectively) */
     FleetButton* m_compliment;
 
-    static void FleetIsBeingExamined(Fleet* fleet);
+    static void FleetIsBeingExamined(Fleet* fleet, FleetWnd* fleet_wnd);
     static void FleetIsNotBeingExamined(Fleet* fleet);
 
-    static std::set<Fleet*> s_open_fleets;
+    static std::map<Fleet*, FleetWnd*> s_open_fleets;
 };
 
 #endif // _FleetButton_h_

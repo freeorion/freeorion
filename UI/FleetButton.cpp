@@ -6,6 +6,7 @@
 #include "GGDrawUtil.h"
 #include "../client/human/HumanClientApp.h"
 #include "MapWnd.h"
+#include "../util/OptionsDB.h"
 #include "../universe/System.h"
 
 #include <algorithm>
@@ -15,7 +16,7 @@
 ////////////////////////////////////////////////
 
 // static(s)
-std::set<Fleet*> FleetButton::s_open_fleets;
+std::map<Fleet*, FleetWnd*> FleetButton::s_open_fleets;
 
 FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, double zoom) : 
     Button(0, 0, 1, 1, "", "", 0, color),
@@ -132,10 +133,18 @@ void FleetButton::Clicked()
     if (m_compliment)
         fleets.insert(fleets.end(), m_compliment->m_fleets.begin(), m_compliment->m_fleets.end());
 
-    // only open a fleet window if there is not one open already for these fleets
-    for (unsigned int i = 0; i < fleets.size(); ++i) {
-        if (s_open_fleets.find(fleets[i]) != s_open_fleets.end())
-            return;
+    if (GetOptionsDB().Get<bool>("UI.multiple-fleet-windows")) {
+        // only open a fleet window if there is not one open already for these fleets
+        for (unsigned int i = 0; i < fleets.size(); ++i) {
+            if (s_open_fleets.find(fleets[i]) != s_open_fleets.end())
+                return;
+        }
+    } else {
+        // close the open fleet window, if there is one
+        std::map<Fleet*, FleetWnd*>::iterator it = s_open_fleets.begin();
+        if (it != s_open_fleets.end()) {
+            it->second->Close();
+        }
     }
 
     GG::Pt ul = UpperLeft();
@@ -154,7 +163,7 @@ void FleetButton::Clicked()
         fleet_wnd->OffsetMove(0, fleet_wnd->LowerRight().y - GG::App::GetApp()->AppHeight() - 5);
 
     for (unsigned int i = 0; i < fleets.size(); ++i) {
-        s_open_fleets.insert(fleets[i]);
+        s_open_fleets[fleets[i]] = fleet_wnd;
     }
 
     GG::Connect(fleet_wnd->ShowingFleetSignal(), &FleetButton::FleetIsBeingExamined);
@@ -162,9 +171,9 @@ void FleetButton::Clicked()
     GG::App::GetApp()->Register(fleet_wnd);
 }
 
-void FleetButton::FleetIsBeingExamined(Fleet* fleet)
+void FleetButton::FleetIsBeingExamined(Fleet* fleet, FleetWnd* fleet_wnd)
 {
-    s_open_fleets.insert(fleet);
+    s_open_fleets[fleet] = fleet_wnd;
 }
 
 void FleetButton::FleetIsNotBeingExamined(Fleet* fleet)

@@ -8,6 +8,7 @@
 #include "GGStaticGraphic.h"
 #include "GGTextControl.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/OptionsDB.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../universe/Ship.h"
@@ -684,6 +685,9 @@ std::string FleetDetailWnd::TitleText() const
 ////////////////////////////////////////////////
 // FleetWnd
 ////////////////////////////////////////////////
+// static(s)
+std::set<FleetWnd*> FleetWnd::s_open_fleet_wnds;
+
 FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
     MapWndPopup("", x, y, 1, 1, flags),
     m_empire_id(-1),
@@ -714,6 +718,8 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
 
     Init(fleets);
     m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetWnd::UniverseObjectDelete, this);
+
+    s_open_fleet_wnds.insert(this);
 }
 
 FleetWnd::FleetWnd( const GG::XMLElement& elem) : 
@@ -723,12 +729,16 @@ FleetWnd::FleetWnd( const GG::XMLElement& elem) :
 {
     // TODO : implement as needed (note that the initializations above must be changed as well)
     m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetWnd::UniverseObjectDelete, this);
+
+    s_open_fleet_wnds.insert(this);
 }
 
 FleetWnd::~FleetWnd()
 {
     RemoveEmptyFleets();
     m_universe_object_delete_connection.disconnect();
+
+    s_open_fleet_wnds.erase(this);
 }
 
 void FleetWnd::CloseClicked()
@@ -759,7 +769,7 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets)
 
     for (unsigned int i = 0; i < fleets.size(); ++i) {
         m_fleets_lb->Insert(new FleetRow(fleets[i]));
-        m_showing_fleet_sig(fleets[i]);
+        m_showing_fleet_sig(fleets[i], this);
     }
     if (!m_read_only) {
         m_fleets_lb->Insert(new FleetRow(0));
@@ -778,6 +788,12 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets)
     GG::Connect(m_new_fleet_button->ClickedSignal(), &FleetWnd::NewFleetButtonClicked, this);
 
     SetText(TitleText());
+
+    if (GetOptionsDB().Get<bool>("UI.fleet-autoselect") && 1 <= fleets.size()) {
+        m_fleets_lb->SelectRow(0);
+        m_current_fleet = 0;
+        m_fleet_detail_panel->SetFleet(FleetInRow(0));
+    }
 }
 
 void FleetWnd::AttachSignalChildren()
@@ -981,7 +997,7 @@ void FleetWnd::NewFleetButtonClicked()
 Fleet* FleetWnd::NewFleetWndReceivedShip(FleetDetailWnd* fleet_wnd, int ship_id)
 {
     Fleet* new_fleet = CreateNewFleetFromDrop(ship_id);
-    m_showing_fleet_sig(new_fleet);
+    m_showing_fleet_sig(new_fleet, this);
     m_new_fleet_windows.erase(fleet_wnd);
     m_open_fleet_windows[new_fleet] = fleet_wnd;
     return new_fleet;
@@ -1082,7 +1098,7 @@ Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
     }
 
     m_fleets_lb->Insert(new FleetRow(new_fleet), m_read_only ? m_fleets_lb->NumRows() : m_fleets_lb->NumRows() - 1);
-    m_showing_fleet_sig(new_fleet);
+    m_showing_fleet_sig(new_fleet, this);
 
     return new_fleet;
 }
@@ -1109,19 +1125,31 @@ void FleetWnd::UniverseObjectDelete(const UniverseObject *obj)
     if (m_fleet_detail_panel->GetFleet() == fleet)
         m_fleet_detail_panel->SetFleet(0);
 
-    for(std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_windows.begin(); it != m_open_fleet_windows.end(); ++it) 
+    for (std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_windows.begin(); it != m_open_fleet_windows.end(); ++it) {
         if (it->first == fleet)
         {
             delete it->second;
             m_open_fleet_windows.erase(it);
             break;
         }
+    }
 
-        for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
-            if (FleetInRow(i) == fleet) {
-                m_not_showing_fleet_sig(FleetInRow(i));
-                m_fleets_lb->Delete(i);
-                break;
-            }
+    for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
+        if (FleetInRow(i) == fleet) {
+            m_not_showing_fleet_sig(FleetInRow(i));
+            m_fleets_lb->Delete(i);
+            break;
         }
+    }
+}
+
+bool FleetWnd::CloseAllFleetWnds()
+{
+    bool retval = false;
+    for (std::set<FleetWnd*>::iterator it = s_open_fleet_wnds.begin(); it != s_open_fleet_wnds.end(); ++it) {
+        (*it)->Close();
+        retval = true;
+    }
+    s_open_fleet_wnds.clear();
+    return retval;
 }
