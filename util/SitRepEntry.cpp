@@ -62,7 +62,8 @@ const std::string& BuildSitRepEntry::SummaryText()
      
       case MAX_INDUSTRY_HIT:
          uni_obj = universe.Object(m_planet_id);
-         if (planet = dynamic_cast<const Planet*>(uni_obj))
+         planet = dynamic_cast<const Planet*>(uni_obj);
+         if (!planet)
          {
             client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Planet with ID " << m_planet_id << " is NULL or of the wrong type in universe object list!";
             m_summary_text = "An error has occurred.  Invalid event.";
@@ -77,7 +78,8 @@ const std::string& BuildSitRepEntry::SummaryText()
 
       case SHIP_BUILT:  
          uni_obj = universe.Object(m_planet_id);
-         if (planet = dynamic_cast<const Planet*>(uni_obj))
+         planet = dynamic_cast<const Planet*>(uni_obj);
+         if (!planet)
          {
             client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Planet with ID " << m_planet_id << " is NULL or of the wrong type in universe object list!";
             m_summary_text = "An error has occurred.  Invalid event.";
@@ -85,7 +87,8 @@ const std::string& BuildSitRepEntry::SummaryText()
          }
 
          uni_obj = universe.Object(m_fleet_id);
-         if (fleet = dynamic_cast<const Fleet*>(uni_obj))
+         fleet = dynamic_cast<const Fleet*>(uni_obj);
+         if (!fleet)
          {
             client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Fleet with ID " << m_fleet_id << " is NULL or of the wrong type in universe object list!";
             m_summary_text = "An error has occurred.  Invalid event.";
@@ -94,7 +97,8 @@ const std::string& BuildSitRepEntry::SummaryText()
          fleet_citr = fleet->begin();
 
          uni_obj = universe.Object(*fleet_citr);
-         if (ship = dynamic_cast<const Ship*>(uni_obj))
+         ship = dynamic_cast<const Ship*>(uni_obj);
+         if (!ship)
          {
             client_app->Logger().errorStream() << "BuildSitRepEntry::SummaryText : Ship with ID " << *fleet_citr << " is NULL or of the wrong type in universe object list!";
             m_summary_text = "An error has occurred.  Invalid event.";
@@ -107,7 +111,7 @@ const std::string& BuildSitRepEntry::SummaryText()
          }
          else
          {
-            m_summary_text = "2 new " + ship->Name() + " have been build on " + planet->Name() + " and are awaiting orders.";
+            m_summary_text = "2 new " + ship->Name() + "'s have been build on " + planet->Name() + " and are awaiting orders.";
          }
          break;
 
@@ -135,7 +139,8 @@ bool BuildSitRepEntry::ExecuteLink()
    switch(m_build_type) {
    case MAX_INDUSTRY_HIT:
       uni_obj = universe.Object(m_planet_id);
-      if (planet = dynamic_cast<const Planet*>(uni_obj))
+      planet = dynamic_cast<const Planet*>(uni_obj);
+      if (!planet)
       {
          client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Planet with ID " << m_planet_id << " is NULL or of the wrong type in universe object list!";
          m_summary_text = "An error has occurred.  Invalid event.";
@@ -152,7 +157,8 @@ bool BuildSitRepEntry::ExecuteLink()
       break;
 
    case MAX_TECH_HIT:
-      // there is no link for the event. TODO: add LinkExists() to all SitRepEntries
+      // there is no link for the event. 
+      // TODO: add LinkExists() to all SitRepEntries
       client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteLink : Attempting to link for MAX TECH entry for which no link exists.";
       return false;
       break;
@@ -160,7 +166,8 @@ bool BuildSitRepEntry::ExecuteLink()
    case SHIP_BUILT:
       // zoom to fleet
       uni_obj = universe.Object(m_fleet_id);
-      if (fleet = dynamic_cast<const Fleet*>(uni_obj))
+      fleet = dynamic_cast<const Fleet*>(uni_obj);
+      if (!fleet)
       {
          client_app->Logger().errorStream() << "BuildSitRepEntry::ExecuteText : Fleet with ID " << m_fleet_id << " is NULL or of the wrong type in universe object list!";
          m_summary_text = "An error has occurred.  Invalid event.";
