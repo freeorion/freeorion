@@ -531,6 +531,7 @@ namespace {
 
   int GetPlanetTextures(const Planet &planet,std::vector<boost::shared_ptr<GG::Texture> > &textures, int &start_frame, double &fps)
   {
+#if 0 // this code causes a segfault in Linux, and the dynamic textures code is not used right now any more anyway
     try
     {
       return GetPlanetTexturesDynamic(GetPlanetArtNodeName(planet),planet.Size(),planet.ID(),textures,start_frame,fps);
@@ -540,6 +541,10 @@ namespace {
       textures.push_back(GetPlanetTextureStatic(planet));
       return textures.size();
     }
+#else
+      textures.push_back(GetPlanetTextureStatic(planet));
+      return textures.size();
+#endif
   }
 
   std::string GetPlanetSizeName(const Planet &planet)
