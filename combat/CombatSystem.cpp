@@ -6,6 +6,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
 
@@ -138,13 +139,13 @@ CombatUpdateMessage GenerateCombatUpdateMessage(int system_id,const std::vector<
     eci.non_combat_ships_destroyed = 0;
 
     for(unsigned int i = 0;i<empire_combat_forces[e].destroyed_ships.size();i++)
-      if(empire_combat_forces[e].destroyed_ships[i]->Design().attack>0)
+      if(empire_combat_forces[e].destroyed_ships[i]->Design()->attack>0)
         eci.combat_ships_destroyed++;
       else
         eci.non_combat_ships_destroyed++;
 
     for(unsigned int i = 0;i<empire_combat_forces[e].retreated_ships.size();i++)
-      if(empire_combat_forces[e].retreated_ships[i]->Design().attack>0)
+      if(empire_combat_forces[e].retreated_ships[i]->Design()->attack>0)
         eci.combat_ships_retreated++;
       else
         eci.non_combat_ships_retreated++;
@@ -187,9 +188,9 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
         Ship *shp = GetUniverse().Object<Ship>(*shp_it);
         
         if(shp->IsArmed())
-          cahp.combat_ships    .push_back(std::pair<Ship*,unsigned int> (shp,shp->Design().defense));
+          cahp.combat_ships    .push_back(std::pair<Ship*,unsigned int> (shp,shp->Design()->defense));
         else   
-          cahp.non_combat_ships.push_back(std::pair<Ship*,unsigned int> (shp,shp->Design().defense));
+          cahp.non_combat_ships.push_back(std::pair<Ship*,unsigned int> (shp,shp->Design()->defense));
       }
     }
     for(unsigned int i=0; i<assets[e].planets.size(); i++)
@@ -254,7 +255,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
       {
         Ship *shp = empire_combat_forces[e].combat_ships[i].first;
 
-        damage_done[e] += small_int_dist()%(shp->Design().attack+1);
+        damage_done[e] += small_int_dist()%(shp->Design()->attack+1);
       }
 
 #ifdef DEBUG_COMBAT

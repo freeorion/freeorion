@@ -9,6 +9,7 @@
 
 #include "../client/human/HumanClientApp.h"
 #include "../universe/Predicates.h"
+#include "../universe/ShipDesign.h"
 #include "../Empire/TechLevel.h"
 #include "../util/Random.h"
 
@@ -357,9 +358,13 @@ namespace {
   struct ConstructionRow : public GG::ListBox::Row
   {
     public:
-      ConstructionRow(ProdCenter::BuildType build_type) : m_build_type(build_type) {data_type = "BuildType";}
+      ConstructionRow(BuildType build_type, const std::string& item) :
+          m_build(build_type, item)
+      {
+          data_type = "BuildType";
+      }
 
-      ProdCenter::BuildType m_build_type;
+      std::pair<BuildType, std::string> m_build;
   };
 
   boost::shared_ptr<GG::Texture> GetPlanetTextureStatic(const Planet &planet)
@@ -574,7 +579,7 @@ namespace {
         Ship* s=0;
         for(Fleet::const_iterator it = flt_vec[i]->begin(); it != flt_vec[i]->end(); ++it)
           if(   (s=GetUniverse().Object<Ship>(*it))
-             && s->Design().colonize)
+             && s->Design()->colonize)
           {
             ship = s;
             
@@ -1161,47 +1166,47 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   //m_construction->OffsetMove(0, -m_construction->Height());
   AttachChild(m_construction);
 
-  ////////////////////// v0.2 only!! (in v0.3 and later build this list from the production capabilities of the planet)
-  GG::ListBox::Row* row = new ConstructionRow(ProdCenter::NOT_BUILDING);
+  ////////////////////// v0.3 only!!
+  GG::ListBox::Row* row = new ConstructionRow(BT_NOT_BUILDING, "");
   row->push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
 
-  row = new ConstructionRow(ProdCenter::SCOUT);
+  row = new ConstructionRow(BT_SHIP, "Scout");
   row->push_back("Scout", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
 
-  row = new ConstructionRow(ProdCenter::COLONY_SHIP);
+  row = new ConstructionRow(BT_SHIP, "Colony Ship");
   row->push_back("Colony Ship", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
 
-  row = new ConstructionRow(ProdCenter::MARKI);
-  row->push_back("MarkI", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+  row = new ConstructionRow(BT_SHIP, "Mark I");
+  row->push_back("Mark I", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
 
-  if( empire->HasTech( Tech::TECH_MARK2 ) )
+  if( empire->TechAvailable( "Mark II" ) )
   {
-    row = new ConstructionRow(ProdCenter::MARKII);
-    row->push_back("MarkII", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+    row = new ConstructionRow(BT_SHIP, "Mark II");
+    row->push_back("Mark II", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
     m_construction->Insert(row);
   }
 
-  if( empire->HasTech( Tech::TECH_MARK3 ) )
+  if( empire->TechAvailable( "Mark III" ) )
   {
-    row = new ConstructionRow(ProdCenter::MARKIII);
-    row->push_back("MarkIII", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+    row = new ConstructionRow(BT_SHIP, "Mark III");
+    row->push_back("Mark III", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
     m_construction->Insert(row);
   }
 
-  if( empire->HasTech( Tech::TECH_MARK4 ) )
+  if( empire->TechAvailable( "Mark IV" ) )
   {
-    row = new ConstructionRow(ProdCenter::MARKIV);
-    row->push_back("MarkIV", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+    row = new ConstructionRow(BT_SHIP, "Mark IV");
+    row->push_back("Mark IV", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
     m_construction->Insert(row);
   }
 
-  if( empire->HasTech( Tech::TECH_BASE ) )
+  if( empire->TechAvailable( "DefBase" ) )
   {
-    row = new ConstructionRow(ProdCenter::DEF_BASE);
+    row = new ConstructionRow(BT_ORBITAL, "");
     row->push_back("DefBase", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
     m_construction->Insert(row);
   }
@@ -1209,13 +1214,13 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   // find the index we need to set in the list 
   int selection_idx = -1;
   for(int i = 0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet.CurrentlyBuilding().first )
+    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build == planet.CurrentlyBuilding())
        selection_idx =i;
   
   if(selection_idx!=-1)
     m_construction->Select( selection_idx );
   Connect(m_construction->SelChangedSignal(), &SidePanel::PlanetPanel::BuildSelected, this);
-  ////////////////////// v0.2 only!!
+  ////////////////////// v0.3 only!!
 
   if (planet.Type() == PT_ASTEROIDS) 
   {
@@ -1380,7 +1385,7 @@ void SidePanel::PlanetPanel::PlanetProdCenterChanged()
 
   int i;
   for(i=0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet->CurrentlyBuilding().first )
+    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build == planet->CurrentlyBuilding())
     {
       m_construction->Select(i);
       break;
@@ -1587,7 +1592,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   x+=font->TextExtent(text, format).x+ICON_MARGIN;
 
 
-  if(ProdCenter::SCOUT <= planet.CurrentlyBuilding().first)
+  if(BT_NOT_BUILDING <= planet.CurrentlyBuilding().first)
   {
     // construction progress bar
     // TODO : get the costs of the item from the list of available technologies
@@ -1653,7 +1658,8 @@ void SidePanel::PlanetPanel::BuildSelected(int idx) const
 {
   const Planet *planet = GetPlanet();
 
-  HumanClientApp::Orders().IssueOrder(new BuildOrder(*planet->Owners().begin(), planet->ID(),static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build_type, ""));
+  std::pair<BuildType, std::string>& build = static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build;
+  HumanClientApp::Orders().IssueOrder(new BuildOrder(*planet->Owners().begin(), planet->ID(),build.first,build.second));
 }
 
 void SidePanel::PlanetPanel::ClickColonize()
@@ -1923,49 +1929,49 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   //m_construction->OffsetMove(0, -m_construction->Height());
   AttachChild(m_construction);
 
-  ////////////////////// v0.2 only!! (in v0.3 and later build this list from the production capabilities of the planet)
-  GG::ListBox::Row* row = new ConstructionRow(ProdCenter::NOT_BUILDING);
+  ////////////////////// v0.3 only!!
+  GG::ListBox::Row* row = new ConstructionRow(BT_BUILDING, "");
   row->push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
 
-  row = new ConstructionRow(ProdCenter::SCOUT);
+  row = new ConstructionRow(BT_SHIP, "Scout");
   row->push_back("Scout", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
 
-  row = new ConstructionRow(ProdCenter::COLONY_SHIP);
+  row = new ConstructionRow(BT_SHIP, "Colony Ship");
   row->push_back("Colony Ship", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
 
-  row = new ConstructionRow(ProdCenter::MARKI);
-  row->push_back("MarkI", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+  row = new ConstructionRow(BT_SHIP, "Mark I");
+  row->push_back("Mark I", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
 
 
   Empire *empire = HumanClientApp::Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-  if( empire->HasTech( Tech::TECH_MARK2 ) )
+  if( empire->TechAvailable( "Mark II" ) )
   {
-    row = new ConstructionRow(ProdCenter::MARKII);
-    row->push_back("MarkII", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+    row = new ConstructionRow(BT_SHIP, "Mark II");
+    row->push_back("Mark II", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
     m_construction->Insert(row);
   }
 
-  if( empire->HasTech( Tech::TECH_MARK3 ) )
+  if( empire->TechAvailable( "Mark III" ) )
   {
-    row = new ConstructionRow(ProdCenter::MARKIII);
-    row->push_back("MarkIII", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+    row = new ConstructionRow(BT_SHIP, "Mark III");
+    row->push_back("Mark III", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
     m_construction->Insert(row);
   }
 
-  if( empire->HasTech( Tech::TECH_MARK4 ) )
+  if( empire->TechAvailable( "Mark IV" ) )
   {
-    row = new ConstructionRow(ProdCenter::MARKIV);
-    row->push_back("MarkIV", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
+    row = new ConstructionRow(BT_SHIP, "Mark IV");
+    row->push_back("Mark IV", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
     m_construction->Insert(row);
   }
 
-  if( empire->HasTech( Tech::TECH_BASE ) )
+  if( empire->TechAvailable( "DefBase" ) )
   {
-    row = new ConstructionRow(ProdCenter::DEF_BASE);
+      row = new ConstructionRow(BT_ORBITAL, "");
     row->push_back("DefBase", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
     m_construction->Insert(row);
   }
@@ -1973,13 +1979,13 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   // find the index we need to set in the list 
   int selection_idx = -1;
   for(int i = 0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet->CurrentlyBuilding().first )
+    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build == planet->CurrentlyBuilding())
       selection_idx =i;
   
   if(selection_idx!=-1)
     m_construction->Select( selection_idx );
   Connect(m_construction->SelChangedSignal(), &SidePanel::PlanetView::BuildSelected, this);
-  ////////////////////// v0.2 only!!
+  ////////////////////// v0.3 only!!
 
   GG::Connect(planet->StateChangedSignal(), &SidePanel::PlanetView::PlanetChanged, this);
   m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this);
@@ -2010,23 +2016,35 @@ void SidePanel::PlanetView::PlanetProdCenterChanged()
     throw std::runtime_error("SidePanel::PlanetView::PlanetChanged: planet not found");
 
   boost::shared_ptr<GG::Texture> texture;
-  switch(planet->CurrentlyBuilding().first)
+  if (planet->CurrentlyBuilding().first == BT_SHIP)
   {
-    case ProdCenter::COLONY_SHIP: texture=GetTexture(ClientUI::ART_DIR + "misc/colony1.png");break;
-    case ProdCenter::SCOUT      : texture=GetTexture(ClientUI::ART_DIR + "misc/scout1.png");break;
-    case ProdCenter::MARKI      : texture=GetTexture(ClientUI::ART_DIR + "misc/mark1.png");break;
-    case ProdCenter::MARKII     : texture=GetTexture(ClientUI::ART_DIR + "misc/mark2.png");break;
-    case ProdCenter::MARKIII    : texture=GetTexture(ClientUI::ART_DIR + "misc/mark3.png");break;
-    case ProdCenter::MARKIV     : texture=GetTexture(ClientUI::ART_DIR + "misc/mark4.png");break;
-    case ProdCenter::DEF_BASE   : texture=GetTexture(ClientUI::ART_DIR + "misc/base1.png");break;
-    default                     : texture=GetTexture(ClientUI::ART_DIR + "misc/missing.png");break;
+      if (planet->CurrentlyBuilding().second == "Colony Ship")
+          texture=GetTexture(ClientUI::ART_DIR + "misc/colony1.png");
+      else if (planet->CurrentlyBuilding().second == "Scout")
+          texture=GetTexture(ClientUI::ART_DIR + "misc/scout1.png");
+      else if (planet->CurrentlyBuilding().second == "Mark I")
+          texture=GetTexture(ClientUI::ART_DIR + "misc/mark1.png");
+      else if (planet->CurrentlyBuilding().second == "Mark II")
+          texture=GetTexture(ClientUI::ART_DIR + "misc/mark2.png");
+      else if (planet->CurrentlyBuilding().second == "Mark III")
+          texture=GetTexture(ClientUI::ART_DIR + "misc/mark3.png");
+      else if (planet->CurrentlyBuilding().second == "Mark IV")
+          texture=GetTexture(ClientUI::ART_DIR + "misc/mark4.png");
+  }
+  else if (planet->CurrentlyBuilding().first == BT_ORBITAL)
+  {
+      texture=GetTexture(ClientUI::ART_DIR + "misc/base1.png");
+  }
+  else
+  {
+      texture=GetTexture(ClientUI::ART_DIR + "misc/missing.png");
   }
 
   m_build_image = GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultHeight());
 
   int i;
   for(i=0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build_type ==  planet->CurrentlyBuilding().first )
+    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build == planet->CurrentlyBuilding())
     {
       m_construction->Select(i);
       break;
@@ -2123,7 +2141,8 @@ void SidePanel::PlanetView::BuildSelected(int idx) const
   if(!planet)
     throw std::runtime_error("SidePanel::PlanetPanel::BuildSelected planet not found!");
 
-  HumanClientApp::Orders().IssueOrder(new BuildOrder(*planet->Owners().begin(), planet->ID(),static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build_type, ""));
+  std::pair<BuildType, std::string>& build = static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build;
+  HumanClientApp::Orders().IssueOrder(new BuildOrder(*planet->Owners().begin(), planet->ID(),build.first,build.second));
 }
 
 void SidePanel::PlanetView::PrimaryFocusClicked(int idx)
@@ -2344,7 +2363,7 @@ bool SidePanel::PlanetView::Render()
                         rc_build_image_border.Right(),rc_build_image_border.Bottom(), GG::CLR_ZERO,GG::Clr(200,200,200,255), 1,0,0,0,0);
   glColor4ubv(alpha_color.v);
   
-  if(ProdCenter::SCOUT <= planet->CurrentlyBuilding().first)
+  if(BT_NOT_BUILDING < planet->CurrentlyBuilding().first)
   {
     // construction progress bar
     double cost = planet->ItemBuildCost();
@@ -2374,34 +2393,13 @@ bool SidePanel::PlanetView::Render()
     glColor4ubv(ClientUI::TEXT_COLOR.v);
     font->RenderText(x1, y1, x1+500, y2, text, format, 0, false);
 
-    ShipDesign::V02DesignID design_id=static_cast<ShipDesign::V02DesignID>(0);
-
-    switch(planet->CurrentlyBuilding().first)
+    if (planet->CurrentlyBuilding().first == BT_SHIP)
     {
-      case ProdCenter::BUILD_UNKNOWN  : break;
-      case ProdCenter::NOT_BUILDING   : break;
-      case ProdCenter::SCOUT          : design_id = ShipDesign::SCOUT;break;
-      case ProdCenter::COLONY_SHIP    : design_id = ShipDesign::COLONY;break;
-      case ProdCenter::MARKI          : design_id = ShipDesign::MARK1;break;
-      case ProdCenter::MARKII         : design_id = ShipDesign::MARK2;break;
-      case ProdCenter::MARKIII        : design_id = ShipDesign::MARK3;break;
-      case ProdCenter::MARKIV         : design_id = ShipDesign::MARK4;break;
-      case ProdCenter::BUILDING       : break;
-      case ProdCenter::DEF_BASE       : break;
-    }
-
-    Empire *empire=HumanClientApp::Empires().Lookup(*(planet->Owners().begin()));
-    Empire::ShipDesignItr itr;
-   
-    for(itr=empire->ShipDesignBegin();itr != empire->ShipDesignEnd();++itr)
-      if((*itr).first==design_id)
-        break;
-    if(itr != empire->ShipDesignEnd())
-    {
-      ShipDesign design = (*itr).second;
+      Empire *empire=HumanClientApp::Empires().Lookup(*(planet->Owners().begin()));
+      const ShipDesign* design = empire->GetShipDesign(planet->CurrentlyBuilding().second);
 
       format = GG::TF_LEFT | GG::TF_VCENTER;
-      text = design.name;
+      text = design->name;
       font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT_BOLD, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));
       font->RenderText(ul.x+260,ul.y+180,ul.x+500,ul.y+180+font->Height(), text, format, 0, false);
 
@@ -2413,7 +2411,7 @@ bool SidePanel::PlanetView::Render()
       font->RenderText(ul.x+385,y,ul.x+50,y+font->Height(), text, format, 0, false);
 
       format = GG::TF_RIGHT | GG::TF_VCENTER;
-      text = boost::lexical_cast<std::string>(design.attack);
+      text = boost::lexical_cast<std::string>(design->attack);
       font->RenderText(ul.x+385+50,y,ul.x+484,y+font->Height(), text, format, 0, false);
 
       y+=font->Height();
@@ -2423,7 +2421,7 @@ bool SidePanel::PlanetView::Render()
       font->RenderText(ul.x+385,y,ul.x+200,y+font->Height(), text, format, 0, false);
 
       format = GG::TF_RIGHT | GG::TF_VCENTER;
-      text = boost::lexical_cast<std::string>(design.defense);
+      text = boost::lexical_cast<std::string>(design->defense);
       font->RenderText(ul.x+385+50,y,ul.x+484,y+font->Height(), text, format, 0, false);
       
       y+=font->Height();
@@ -2433,13 +2431,13 @@ bool SidePanel::PlanetView::Render()
       font->RenderText(ul.x+385,y,ul.x+200,y+font->Height(), text, format, 0, false);
 
       format = GG::TF_RIGHT | GG::TF_VCENTER;
-      text = boost::lexical_cast<std::string>(design.cost);
+      text = boost::lexical_cast<std::string>(design->cost);
       font->RenderText(ul.x+385+50,y,ul.x+484,y+font->Height(), text, format, 0, false);
 
       y+=font->Height();
 
       format = GG::TF_LEFT | GG::TF_TOP | GG::TF_WORDBREAK;
-      font->RenderText(ul.x+260,y,ul.x+484,ul.y+285, design.description, format, 0, false);
+      font->RenderText(ul.x+260,y,ul.x+484,ul.y+285, design->description, format, 0, false);
     }
   }
 
