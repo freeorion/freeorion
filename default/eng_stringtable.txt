@@ -217,6 +217,9 @@ Quit Game
 # Main Map      #
 #################
 
+MAP_BTN_TURN_UPDATE
+Turn 
+
 #################
 # SidePanel     #
 #################
@@ -257,3 +260,29 @@ PL_TERRAN
 Terran
 PL_GAIA
 Gaia
+
+
+####################
+# TurnProgress     #
+####################
+
+TURN_PROGRESS_WND
+Turn Progress
+
+TURN_PROGRESS_PHASE_FLEET_MOVEMENT
+Fleet Movement
+
+TURN_PROGRESS_PHASE_COMBAT
+Resolving Combat
+
+TURN_PROGRESS_PHASE_EMPIRE_GROWTH
+Production And Growth
+
+TURN_PROGRESS_PHASE_WAITING
+Waiting for Players to End Turn
+
+TURN_PROGRESS_PHASE_ORDERS
+Executing Orders
+
+
+
