@@ -56,7 +56,7 @@ bool ClientEmpireManager::HandleEmpireElementUpdate( GG::XMLElement empireElemen
         {
             throw std::runtime_error("Memory allocation failure: ClientEmpireManager::HandleEmpireElementUpdate()");
         }
-        
+        decoded_empire->UpdateResourcePool();
         InsertEmpire(decoded_empire);
   
     }
