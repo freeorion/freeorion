@@ -1264,7 +1264,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
 
       // create new Empire object through empire manager
       Empire* empire =
-          dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, name, color, home_planet_id, Empire::CONTROL_HUMAN);
+          dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, name, it->second.name, color, home_planet_id, Empire::CONTROL_HUMAN);
 
       // set ownership of home planet
       int empire_id = empire->EmpireID();
