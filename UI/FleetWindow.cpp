@@ -1,5 +1,4 @@
 #include "FleetWindow.h"
-
 #include "../util/AppInterface.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
@@ -14,7 +13,7 @@
 
 
 namespace {
-const int CONTROL_MARGIN = 5; // gap to leave between controls in these windows
+const int CONTROL_MARGIN = 5; // gap to leave between controls in these window
 
 struct FleetRow : public GG::ListBox::Row
 {
@@ -174,6 +173,7 @@ void FleetDetailPanel::Init()
 
     GG::Connect(m_ships_lb->BrowsedSignal(), &FleetDetailPanel::ShipBrowsed, this);
     GG::Connect(m_ships_lb->DroppedSignal(), &FleetDetailPanel::ShipDroppedIntoList, this);
+    GG::Connect(m_ships_lb->RightClickedSignal(), &FleetDetailPanel::ShipRightClicked, this);
 }
 
 void FleetDetailPanel::AttachSignalChildren()
@@ -217,7 +217,27 @@ void FleetDetailPanel::ShipDroppedIntoList(int row_idx, const GG::ListBox::Row* 
     }
     Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
     HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->PlayerID(), ship->FleetID(), m_fleet->ID(), std::vector<int>(1, ship_id)));
+
 }
+
+void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt)
+{
+    /* get ship */
+    int ship_id = dynamic_cast<const ShipRow*>(row)->ShipID();
+    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
+
+    if ( m_read_only )
+        return;
+
+    /* is this is colony ship? */
+    if ( ship->Design().colonize )
+    {
+        /* setup colonize GUI */
+        HumanClientApp::GetUI()->BeginColonizeSelection( ship_id );
+    }
+
+}
+
 
 std::string FleetDetailPanel::DestinationText() const
 {
@@ -234,9 +254,21 @@ std::string FleetDetailPanel::DestinationText() const
 
 std::string FleetDetailPanel::ShipStatusText(int ship_id) const
 {
-    std::string retval = "Ship Class \"";
-    retval += dynamic_cast<const Ship*>(GetUniverse().Object(ship_id))->Design().name;
-    retval += "\"";
+    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_id));
+    std::string retval;
+
+    // if we do not own the fleet or it's not a colony ship
+    if ( m_read_only || !ship->Design().colonize )
+    {
+        retval = "Ship Class \"";
+        retval += ship->Design().name;
+        retval += "\"";
+    }
+    else
+    {
+        // the colonization UI is probably temporary, do not put string in translation table until UI is solidified
+        retval = "Right-Click to Colonize";
+    }
     return retval;
 }
 
@@ -346,7 +378,7 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
     m_new_fleet_button(0)
 {
     m_fleets_lb = new CUIListBox(LeftBorder() + 3, TopBorder() + 3, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT);
-    m_fleet_detail_panel = new FleetDetailPanel(LeftBorder() + 3, m_fleets_lb->LowerRight().y + CONTROL_MARGIN, 0, true);
+    m_fleet_detail_panel = new FleetDetailPanel(LeftBorder() + 3, m_fleets_lb->LowerRight().y + CONTROL_MARGIN, 0, read_only );
     m_new_fleet_button = new CUIButton(FLEET_LISTBOX_WIDTH + 6 + LeftBorder() - 5 - NEW_FLEET_BUTTON_WIDTH, 
                                        m_fleet_detail_panel->LowerRight().y + CONTROL_MARGIN, NEW_FLEET_BUTTON_WIDTH, "New fleet");
 
@@ -619,4 +651,3 @@ std::string FleetWnd::TitleText() const
     Fleet* existing_fleet = FleetInRow(0);
     return "Empire " + boost::lexical_cast<std::string>(*existing_fleet->Owners().begin()) + " Fleets";
 }
-

@@ -166,6 +166,22 @@ bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
     return ((ul <= pt && pt < lr) || InPlanet(pt));
 }
 
+
+int SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys) 
+{
+    m_left_clicked_sig( ); 
+
+    /* determine if planet was clicked and we want to colonize */
+    if ( InPlanet( pt ) && HumanClientApp::GetUI()->InColonizeSelection( ) )
+    {
+        /* send colonize order */
+        HumanClientApp::GetUI()->EndColonizeSelection( m_planet_id );
+    }
+
+    return 1;
+}
+
+
 int SidePanel::PlanetPanel::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();

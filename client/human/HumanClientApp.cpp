@@ -443,6 +443,11 @@ void HumanClientApp::HandleSDLEvent(const SDL_Event& event)
     }
     if (send_to_gg)
         GG::App::HandleEvent(gg_event, key, key_mods, mouse_pos, mouse_rel);
+
+    /* Send event to UI to handle some global events */
+    if ( m_ui )
+        m_ui->HandleEvent( gg_event, key, key_mods, mouse_pos, mouse_rel );
+    
 }
 
 void HumanClientApp::Update()

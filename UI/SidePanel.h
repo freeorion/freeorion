@@ -48,11 +48,11 @@ private:
     {
     public:
         /** \name Signal Types */ //@{
-        typedef boost::signal<void ()> DoubleClickedSignalType; ///< emitted when the planet graphic is double clicked by the user
+        typedef boost::signal<void ()> LeftClickedSignalType; ///< emitted when the planet graphic is left clicked by the user
         //@}
    
         /** \name Slot Types */ //@{
-        typedef DoubleClickedSignalType::slot_type DoubleClickedSlotType; ///< type of functor(s) invoked on a DoubleClickedSignalType
+        typedef LeftClickedSignalType::slot_type LeftClickedSlotType; ///< type of functor(s) invoked on a LeftClickedSignalType
         //@}
 
         /** \name Structors */ //@{
@@ -65,8 +65,9 @@ private:
 
         /** \name Mutators */ //@{
         virtual int Render();
+        virtual int LClick(const GG::Pt& pt, Uint32 keys);
 
-        DoubleClickedSignalType& DoubleClickedSignal() {return m_double_clicked_sig;} ///< returns the double clicked signal object for this Planet panel
+        LeftClickedSignalType& LeftClickedSignal() {return m_left_clicked_sig;} ///< returns the left clicked signal object for this Planet panel
         //@}
 
     private:
@@ -82,7 +83,7 @@ private:
         CUIDropDownList*   m_construction;
         std::vector< ProdCenter::BuildType > m_construction_prod_idx;
 
-        DoubleClickedSignalType       m_double_clicked_sig;
+        LeftClickedSignalType   m_left_clicked_sig;
 
         static GG::SubTexture m_pop_icon;
         static GG::SubTexture m_industry_icon;
