@@ -39,6 +39,10 @@ public:
     /** sets the orientation of the fleet marker (must be one of SHAPE_LEFT and SHAPE_RIGHT; 
         otherwise, SHAPE_LEFT will be used) */
     void SetOrientation(ShapeOrientation orientation) {m_orientation = orientation;}
+
+    /** sets the FleetButton that represents moving fleets at the same system as this button (if this button represents stationary fleets at a system)
+        or stationary fleets at the same system as this button (if this button represents moving fleets at a system) */
+    void SetCompliment(FleetButton* compliment) {m_compliment = compliment;}
     //@}
 
 protected:
@@ -53,6 +57,10 @@ private:
 
     std::vector<Fleet*> m_fleets;   ///< the fleets represented by this button
     ShapeOrientation m_orientation;
+
+    /** the FleetButton that represents the other moving or stationary fleets at the same system as this button 
+        (if this one is stationary or moving, respectively) */
+    FleetButton* m_compliment;
 
     static void FleetIsBeingExamined(Fleet* fleet);
     static void FleetIsNotBeingExamined(Fleet* fleet);

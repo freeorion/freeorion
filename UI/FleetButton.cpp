@@ -8,6 +8,8 @@
 #include "MapWnd.h"
 #include "../universe/System.h"
 
+#include <algorithm>
+
 ////////////////////////////////////////////////
 // SystemIcon::FleetButton
 ////////////////////////////////////////////////
@@ -17,7 +19,8 @@ std::set<Fleet*> FleetButton::s_open_fleets;
 
 FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, double zoom) : 
     Button(0, 0, 1, 1, "", "", 0, color),
-    m_orientation()
+    m_orientation(),
+    m_compliment(0)
 {
     Universe& universe = GetUniverse();
     for (unsigned int i = 0; i < fleet_IDs.size(); ++i) {
@@ -39,7 +42,8 @@ FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, doubl
 
 FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs, ShapeOrientation orientation) : 
     Button(x, y, w, h, "", "", 0, color),
-    m_orientation(orientation)
+    m_orientation(orientation),
+    m_compliment(0)
 {
     Universe& universe = GetUniverse();
     for (unsigned int i = 0; i < fleet_IDs.size(); ++i) {
@@ -49,7 +53,8 @@ FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::v
 }
 
 FleetButton::FleetButton(const GG::XMLElement& elem) : 
-    Button(elem.Child("GG::Button"))
+    Button(elem.Child("GG::Button")),
+    m_compliment(0)
 {
     if (elem.Tag() != "FleetButton")
         throw std::invalid_argument("Attempted to construct a FleetButton from an XMLElement that had a tag other than \"FleetButton\"");
@@ -123,17 +128,21 @@ void FleetButton::RenderRollover()
 
 void FleetButton::Clicked()
 {
+    std::vector<Fleet*> fleets(m_fleets);
+    if (m_compliment)
+        fleets.insert(fleets.end(), m_compliment->m_fleets.begin(), m_compliment->m_fleets.end());
+
     // only open a fleet window if there is not one open already for these fleets
-    for (unsigned int i = 0; i < m_fleets.size(); ++i) {
-        if (s_open_fleets.find(m_fleets[i]) != s_open_fleets.end())
+    for (unsigned int i = 0; i < fleets.size(); ++i) {
+        if (s_open_fleets.find(fleets[i]) != s_open_fleets.end())
             return;
     }
 
     GG::Pt ul = UpperLeft();
-    bool read_only = *m_fleets[0]->Owners().begin() != HumanClientApp::GetApp()->PlayerID() || 
-        (m_fleets[0]->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID && 
-         m_fleets[0]->SystemID() == UniverseObject::INVALID_OBJECT_ID);
-    FleetWnd* fleet_wnd = new FleetWnd(ul.x + 50, ul.y + 50, m_fleets, read_only);
+    bool read_only = *fleets[0]->Owners().begin() != HumanClientApp::GetApp()->PlayerID() || 
+        (fleets[0]->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID && 
+         fleets[0]->SystemID() == UniverseObject::INVALID_OBJECT_ID);
+    FleetWnd* fleet_wnd = new FleetWnd(ul.x + 50, ul.y + 50, fleets, read_only);
 
     if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
         GG::Connect(map_wnd->SelectedSystemSignal(), &FleetWnd::SystemClicked, fleet_wnd);
@@ -144,8 +153,8 @@ void FleetButton::Clicked()
     if (GG::App::GetApp()->AppHeight() < fleet_wnd->LowerRight().y)
         fleet_wnd->OffsetMove(0, fleet_wnd->LowerRight().y - GG::App::GetApp()->AppHeight() - 5);
 
-    for (unsigned int i = 0; i < m_fleets.size(); ++i) {
-        s_open_fleets.insert(m_fleets[i]);
+    for (unsigned int i = 0; i < fleets.size(); ++i) {
+        s_open_fleets.insert(fleets[i]);
     }
 
     GG::Connect(fleet_wnd->ShowingFleetSignal(), &FleetButton::FleetIsBeingExamined);

@@ -155,20 +155,26 @@ void SystemIcon::CreateFleetButtons()
     int moving_y = size.y - BUTTON_SIZE;
     for (EmpireManager::const_iterator it = HumanClientApp::Empires().begin(); it != HumanClientApp::Empires().end(); ++it) {
         std::vector<int> fleet_IDs = m_system.FindObjectIDs(IsStationaryFleetFunctor(it->first));
+        FleetButton* stationary_fb = 0;
         if (!fleet_IDs.empty()) {
-            FleetButton* fb = new FleetButton(size.x - BUTTON_SIZE, stationary_y, BUTTON_SIZE, BUTTON_SIZE, it->second->Color(), fleet_IDs, SHAPE_LEFT);
-            m_stationary_fleet_markers[it->first] = fb;
+            stationary_fb = new FleetButton(size.x - BUTTON_SIZE, stationary_y, BUTTON_SIZE, BUTTON_SIZE, it->second->Color(), fleet_IDs, SHAPE_LEFT);
+            m_stationary_fleet_markers[it->first] = stationary_fb;
             AttachChild(m_stationary_fleet_markers[it->first]);
-            map_wnd->SetFleetMovement(fb);
+            map_wnd->SetFleetMovement(stationary_fb);
             stationary_y += BUTTON_SIZE;
         }
         fleet_IDs = m_system.FindObjectIDs(IsOrderedMovingFleetFunctor(it->first));
+        FleetButton* moving_fb = 0;
         if (!fleet_IDs.empty()) {
-            FleetButton* fb = new FleetButton(0, moving_y, BUTTON_SIZE, BUTTON_SIZE, it->second->Color(), fleet_IDs, SHAPE_RIGHT);
-            m_moving_fleet_markers[it->first] = fb;
+            moving_fb = new FleetButton(0, moving_y, BUTTON_SIZE, BUTTON_SIZE, it->second->Color(), fleet_IDs, SHAPE_RIGHT);
+            m_moving_fleet_markers[it->first] = moving_fb;
             AttachChild(m_moving_fleet_markers[it->first]);
-            map_wnd->SetFleetMovement(fb);
+            map_wnd->SetFleetMovement(moving_fb);
             moving_y -= BUTTON_SIZE;
+        }
+        if (stationary_fb && moving_fb) {
+            moving_fb->SetCompliment(stationary_fb);
+            stationary_fb->SetCompliment(moving_fb);
         }
     }
 }
