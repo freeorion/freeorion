@@ -2,6 +2,7 @@
 # This Makefile assumes you've installed boost in /usr/boost_1_30_0, and that
 # you've built it using bjam (see boost build docs for explanation of bjam).
 # If you've put boost somewhere else, change BOOST_DIR accordingly.
+#
 
 ###############################
 ## Variables ##################
