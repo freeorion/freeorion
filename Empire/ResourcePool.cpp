@@ -67,7 +67,11 @@ void ResourcePool::SetPlanets(const Universe::ObjectVec &planet_vec)
     {
         Planet *planet = universe_object_cast<Planet*>(planet_vec[i]);
         m_planets.push_back(planet);
-        m_connections.push_back(GG::Connect(planet->ProdCenterChangedSignal(), PlanetChangedFunctor<ResourcePool>(*this,planet->ID())));
+        // The design has changed, and due to the incremental growth of meters there should not be immediate
+        // UI changes when planet updates occur (focus changes, etc.); therefore, these signals should not
+        // exist.  However, I'm leaving this here since later we may want projections of output to be
+        // displayed in the new SidePanel design, so this or something similar may be required or desired.
+        //m_connections.push_back(GG::Connect(planet->ProdCenterChangedSignal(), PlanetChangedFunctor<ResourcePool>(*this,planet->ID())));
     }
     std::sort(m_planets.begin(),m_planets.end(),SortFunc());
 
