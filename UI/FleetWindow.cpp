@@ -1095,6 +1095,11 @@ void FleetWnd::UniverseObjectDelete(const UniverseObject *obj)
     }
 }
 
+bool FleetWnd::FleetWndsOpen()
+{
+    return !s_open_fleet_wnds.empty();
+}
+
 bool FleetWnd::CloseAllFleetWnds()
 {
     bool retval = false;

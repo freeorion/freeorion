@@ -31,11 +31,13 @@ class MapWnd : public GG::Wnd
 {
 public:
     //! \name Signal Types //!@{
-    typedef boost::signal<void (int)> SelectedSystemSignalType; //!< emitted when the user selects a star system
+    typedef boost::signal<void (int)> SystemLeftClickedSignalType;  //!< emitted when the user left-clicks a star system
+    typedef boost::signal<void (int)> SystemRightClickedSignalType; //!< emitted when the user right-clicks a star system
     //!@}
 
     //! \name Slot Types //!@{
-    typedef SelectedSystemSignalType::slot_type SelectedSystemSlotType; //!< type of functor invoked when the user selects a star system
+    typedef SystemLeftClickedSignalType::slot_type  SystemLeftClickedSlotType;  //!< type of functor invoked when the user left-clicks a star system
+    typedef SystemRightClickedSignalType::slot_type SystemRightClickedSlotType; //!< type of functor invoked when the user right-clicks a star system
     //!@}
 
     //! \name Structors //!@{
@@ -67,7 +69,8 @@ public:
     void           HideSystemNames();                               //!< disables the system name text
     void           HandlePlayerChatMessage(const std::string& msg); //!< displays incoming player chat text
 
-    SelectedSystemSignalType& SelectedSystemSignal() {return m_selected_system_signal;}
+    SystemLeftClickedSignalType&  SystemLeftClickedSignal()  {return m_left_clicked_system_signal;}
+    SystemRightClickedSignalType& SystemRightClickedSignal() {return m_right_clicked_system_signal;}
 
     void CenterOnMapCoord(double x, double y); //!< centers the map on map position (x, y)
     void CenterOnSystem(int systemID);         //!< centers the map on system \a systemID
@@ -104,6 +107,7 @@ private:
     void RenderFleetMovementLines();             //!< renders the dashed lines indicating where each fleet is going
     void MoveBackgrounds(const GG::Pt& move);    //!< scrolls the backgrounds at their respective rates
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
+    void SystemRightClicked(int system_id);
     bool OpenChatWindow();
     bool EndTurn();
     bool ToggleSitRep();
@@ -142,7 +146,8 @@ private:
     std::list<MapWndPopup*>         m_popups;        //!< list of currently active popup windows
     bool                            m_options_showing; //!< set during ShowOptions() to prevent reentrency
 
-    SelectedSystemSignalType m_selected_system_signal;
+    SystemLeftClickedSignalType  m_left_clicked_system_signal;
+    SystemRightClickedSignalType m_right_clicked_system_signal;
 
     static const int NUM_BACKGROUNDS;
     static double s_min_scale_factor;

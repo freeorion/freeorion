@@ -154,7 +154,7 @@ void FleetButton::Clicked()
     FleetWnd* fleet_wnd = new FleetWnd(ul.x + 50, ul.y + 50, fleets, read_only);
 
     if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
-        GG::Connect(map_wnd->SelectedSystemSignal(), &FleetWnd::SystemClicked, fleet_wnd);
+        GG::Connect(map_wnd->SystemRightClickedSignal(), &FleetWnd::SystemClicked, fleet_wnd);
 
     if (GG::App::GetApp()->AppWidth() < fleet_wnd->LowerRight().x)
         fleet_wnd->OffsetMove(fleet_wnd->LowerRight().x - GG::App::GetApp()->AppWidth() - 5, 0);

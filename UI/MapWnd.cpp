@@ -200,7 +200,7 @@ MapWnd::MapWnd() :
     // system-view side panel
     m_side_panel = new SidePanel(GG::App::GetApp()->AppWidth() - SIDE_PANEL_WIDTH, 0, SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight());
     AttachChild(m_side_panel);
-    Connect(SelectedSystemSignal(), &SidePanel::SetSystem, m_side_panel);
+    Connect(m_left_clicked_system_signal, &SidePanel::SetSystem, m_side_panel);
 
     m_sitrep_panel = new SitRepPanel( (GG::App::GetApp()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::App::GetApp()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);
@@ -471,7 +471,7 @@ void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
     if (!m_dragged)
-        m_selected_system_signal(UniverseObject::INVALID_OBJECT_ID);
+        m_left_clicked_system_signal(UniverseObject::INVALID_OBJECT_ID);
     m_dragged = false;
 }
 
@@ -563,6 +563,7 @@ void MapWnd::InitTurn(int turn_number)
         icon->InstallEventFilter(this);
         AttachChild(icon);
         GG::Connect(icon->LeftClickedSignal(), &MapWnd::SelectSystem, this);
+        GG::Connect(icon->RightClickedSignal(), &MapWnd::SystemRightClicked, this);
 
         // system's starlanes
         int n = 0;
@@ -761,7 +762,7 @@ void MapWnd::CenterOnFleet(Fleet* fleet)
 
 void MapWnd::SelectSystem(int systemID)
 {
-    m_selected_system_signal(systemID);
+    m_left_clicked_system_signal(systemID);
 }
 
 void MapWnd::SelectFleet(int fleetID)
@@ -834,14 +835,11 @@ void MapWnd::OnTurnUpdate()
 
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::Wnd::Event& event)
 {
-    if (event.Type() == GG::Wnd::Event::RClick) {
-        // Attempt to close open fleet windows (if any are open and this is allowed), then attempt to close the SidePanel (if open);
-        // if these fail, just let Wnd w handle it.  Note that this enforces a one-close-per-click policy.
+    if (event.Type() == GG::Wnd::Event::RClick && !FleetWnd::FleetWndsOpen()) {
+        // Attempt to close the SidePanel (if open); if this fails, just let Wnd w handle it.  
+        // Note that this enforces a one-close-per-click policy.
 
         if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
-            if (FleetWnd::CloseAllFleetWnds())
-                return true;
-
             if (m_side_panel->Visible()) {
                 m_side_panel->Hide();
                 return true;
@@ -1102,6 +1100,11 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
     }
 }
 
+void MapWnd::SystemRightClicked(int system_id)
+{
+    m_right_clicked_system_signal(system_id);
+}
+
 void MapWnd::RegisterPopup( MapWndPopup* popup )
 {
     if (popup) {
@@ -1170,7 +1173,7 @@ bool MapWnd::ShowOptions()
 
 bool MapWnd::CloseSystemView()
 {
-    m_selected_system_signal(UniverseObject::INVALID_OBJECT_ID);
+    m_left_clicked_system_signal(UniverseObject::INVALID_OBJECT_ID);
 	return true;
 }
 

@@ -166,6 +166,7 @@ public:
     void SystemClicked(int system_id); ///< invoked when a system is clicked on the main map, possibly indicating that the currently-selected fleet should move there
     //@}
 
+    static bool FleetWndsOpen();     ///< returns true iff one or more fleet windows are open
     static bool CloseAllFleetWnds(); ///< returns true iff fleet windows were open before it was called.  Used most often for fleet window quick-close.
 
 protected:
