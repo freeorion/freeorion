@@ -33,12 +33,9 @@
 #include <stdlib.h>
 #include <string>
 
-#include "../network/Message.h"
-
 IntroScreen::IntroScreen():
-    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024+300)/2, 300, 300, 400, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE | CUI_Wnd::MINIMIZABLE)
+    CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024+300)/2, 300, 300, 400, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE | CUI_Wnd::MINIMIZABLE | CUI_Wnd::CLOSABLE)
 {
-
     //get a texture to fill the background with
     
     m_background = new GG::Texture();

@@ -53,7 +53,7 @@ public:
     void OnQuickStart();    //!< called when m_quick_start is clicked
     void OnExitGame();    //!< called when m_exit_game is clicked
     
-    inline virtual void OnClose() {OnExitGame();}    //!< override to exit the game 
+    inline virtual void Close() {OnExitGame();}    //!< override to exit the game 
 
 //!@}
 
