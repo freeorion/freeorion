@@ -44,6 +44,7 @@ void SitRepPanel::Keypress (GG::Key key, Uint32 key_mods)
 {
     switch (key) {
     case GG::GGK_RETURN:
+    case GG::GGK_KP_ENTER:
     case GG::GGK_ESCAPE:
     case GG::GGK_F2: {
         Hide();
