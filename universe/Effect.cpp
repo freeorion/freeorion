@@ -54,9 +54,9 @@ EffectsGroup::EffectsGroup(const Condition::ConditionBase* scope, const Conditio
 
 EffectsGroup::EffectsGroup(const GG::XMLElement& elem)
 {
-    m_scope = Condition::ConditionFactory().GenerateObject(elem.Child("m_scope"));
-    m_activation = Condition::ConditionFactory().GenerateObject(elem.Child("m_activation"));
-    for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
+    m_scope = Condition::ConditionFactory().GenerateObject(elem.Child("scope").Child(1));
+    m_activation = Condition::ConditionFactory().GenerateObject(elem.Child("activation").Child(1));
+    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_effects.push_back(EffectFactory().GenerateObject(*it));
     }
 }

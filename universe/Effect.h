@@ -24,6 +24,12 @@ namespace Effect {
     GG::XMLObjectFactory<EffectBase> EffectFactory(); ///< an XML factory that creates the right subclass of EffectBase from a given XML element
 }
 
+/** Contains one or more Effects, a Condition which indicates the objects in the scope of the Effect(s), and a Condition which
+    indicates whether or not the Effect(s) will be executed on the objects in scope during the current turn.  Since Conditions
+    operate on sets of objects (usually all objects in the universe), the activation condition bears some explanation.  It
+    exists to allow an EffectsGroup to be activated or suppressed based on the source object only (the object to which the
+    EffectsGroup is attached).  It does this by considering the "universe" containing only the source object. If the source
+    object meets the activation condition, the EffectsGroup will be active in the current turn. */
 class Effect::EffectsGroup
 {
 public:
@@ -39,6 +45,9 @@ protected:
     std::vector<EffectBase*>        m_effects;
 };
 
+/** The base class for all Effects.  When an Effect is executed, the source object (the object to which the Effect or its containing
+    EffectGroup is attached) and the target object are both required.  Note that this means that ValueRefs contained within Effects
+    can refer to values in either the source or target objects. */
 class Effect::EffectBase
 {
 public:
