@@ -3,8 +3,9 @@
 
 TechLevel::TechLevel(int ID, std::string name, int MinPts) :
     m_id(ID),
-    m_name(name),
-    m_min_pts(MinPts)
+    m_min_pts(MinPts),
+    m_name(name)
+
 {
     // no other stuff to do
 }
