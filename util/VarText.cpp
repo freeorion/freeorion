@@ -3,7 +3,6 @@
 #include "AppInterface.h"
 #include "Parse.h"
 #include "../universe/UniverseObject.h"
-#include "../Empire/TechManager.h"
 
 #include <boost/spirit.hpp>
 
@@ -38,7 +37,8 @@ namespace {
 
                 m_str += open_tag + obj->Name() + close_tag;
             } else if (token == VarText::TECH_ID_TAG) {
-                int tech_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
+                std::string tech_name = token_elem.Attribute("value");
+#if 0
                 Tech *tech = TechManager::instance().Lookup(tech_id);
 
                 if (!tech) {
@@ -47,6 +47,10 @@ namespace {
                 }
 
                 m_str += open_tag + tech->GetName() + close_tag;
+#else
+                m_str += "ERROR";
+                return;
+#endif
             }
         }
 

@@ -48,10 +48,6 @@ Empire/EmpireManager.cpp			\
 Empire/EmpireManager.h  			\
 Empire/ResourcePool.cpp				\
 Empire/ResourcePool.h				\
-Empire/TechLevel.cpp				\
-Empire/TechLevel.h  				\
-Empire/TechManager.cpp				\
-Empire/TechManager.h  				\
 network/Message.cpp				\
 network/Message.h  				\
 network/NetworkCore.cpp				\

@@ -1,6 +1,5 @@
 #include "ClientApp.h"
 
-#include "../Empire/TechManager.h"
 #include "../network/XDiff.hpp"
 
 #include <stdexcept>
@@ -25,16 +24,10 @@ ClientApp::ClientApp() :
         throw std::runtime_error("Attempted to construct a second instance of ClientApp");
    
     s_app = this;
-
-    // initialize tech manager
-    TechManager::instance().LoadTechTree( "" );
-
 }
 
 ClientApp::~ClientApp()
 {
-    // shutdown tech tree
-    TechManager::instance().ClearAll();
 }
 
 Message ClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const

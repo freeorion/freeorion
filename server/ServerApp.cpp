@@ -14,7 +14,6 @@
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Predicates.h"
-#include "../Empire/TechManager.h"
 
 #include "../combat/CombatSystem.h"
 
@@ -211,16 +210,10 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_log_category.setPriority(log4cpp::Priority::DEBUG);
     m_log_category.debug("freeoriond logger initialized.");
     m_log_category.errorStream() << "ServerApp::ServerApp : Server now in mode " << SERVER_IDLE << " (SERVER_IDLE).";
-
-    // initialize tech manager
-    TechManager::instance().LoadTechTree( "" );
 }
 
 ServerApp::~ServerApp()
 {
-    // shutdown tech tree
-    TechManager::instance().ClearAll();
-
     m_log_category.debug("Shutting down freeoriond logger...");
 	log4cpp::Category::shutdown();
 }

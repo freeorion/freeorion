@@ -10,7 +10,6 @@
 #include "../client/human/HumanClientApp.h"
 #include "../universe/Predicates.h"
 #include "../universe/ShipDesign.h"
-#include "../Empire/TechLevel.h"
 #include "../util/Random.h"
 
 #include "XMLDoc.h"
