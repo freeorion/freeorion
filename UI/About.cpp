@@ -102,6 +102,7 @@ int About::Render()
 
 void About::OnDone()
 {
+    m_info->SetText(m_credits_str);
     m_done = true;
 }//OnDone()
 
