@@ -6,8 +6,15 @@
 #include "GGApp.h"
 #include "GGClr.h"
 #include "GGDrawUtil.h"
-#include "dialogs/GGThreeButtonDlg.h"
 #include "IntroScreen.h"
+#include "dialogs/GGThreeButtonDlg.h"
+#include "MapWnd.h"
+#include "ToolContainer.h"
+
+#include <log4cpp/Appender.hh>
+#include <log4cpp/Category.hh>
+#include <log4cpp/PatternLayout.hh>
+#include <log4cpp/FileAppender.hh>
 
 #include <string>
 #include <fstream>
@@ -48,28 +55,38 @@ GG::Clr     ClientUI::EDIT_INT_COLOR(0, 0, 0, 255);
 
 GG::Clr     ClientUI::MULTIEDIT_INT_COLOR(0, 0, 0, 255);
 
+GG::Clr     ClientUI::STAT_INCR_COLOR(127, 255, 127, 255);
+GG::Clr     ClientUI::STAT_DECR_COLOR(255, 127, 127, 255);
+
+// game UI windows
 GG::Clr     ClientUI::SIDE_PANEL_COLOR(0, 0, 0, 150);
+GG::Clr     ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR(25, 40, 140, 150);
+int         ClientUI::SIDE_PANEL_PLANET_NAME_PTS = 15;
+int         ClientUI::SIDE_PANEL_PTS = 11;
 
 //private static members
 log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
-ClientUI* ClientUI::the_UI = NULL;
+ClientUI* ClientUI::s_the_UI = 0;
 
 //Init and Cleanup//////////////////////////////////////
-
-ClientUI::ClientUI(const std::string& string_table_file /* = StringTable::S_DEFAULT_FILENAME */):
+ClientUI::ClientUI(const std::string& string_table_file /* = StringTable::S_DEFAULT_FILENAME */) :
     TOOLTIP_DELAY(1000), //1 second delay for tooltips to appear
-    m_galaxy_map(0)
+    m_tooltips(0),
+    m_state(STATE_STARTUP),
+    m_string_table(0),
+    m_intro_screen(0),
+    m_map_wnd(0)
 {
-    the_UI = this;    
+    s_the_UI = this;    
     Initialize(string_table_file);
 }//ClientUI()
 
 ClientUI::ClientUI(const GG::XMLElement& elem) :
-    m_galaxy_map(0)
+    m_map_wnd(0)
 {
     using namespace GG;
     
-    the_UI = this;
+    s_the_UI = this;
     
     if(elem.Tag() != "ClientUI")
         throw std::invalid_argument("Tried to construct a 'ClientUI' object from an XML tag that was not 'ClientUI'.");
@@ -126,12 +143,11 @@ bool ClientUI::Initialize(const std::string& string_table_file)
     
     //initialize UI state & window
     m_state = STATE_STARTUP;
-    m_current_window = NULL;
     
-    //TODO: Initialize variables.
-    
-    
-    
+    m_map_wnd = new MapWnd();
+    GG::App::GetApp()->Register(m_map_wnd);
+    m_map_wnd->Hide();
+
     //clear logging file
     std::ofstream ofs_outfile("ClientUI.log");    
     ofs_outfile.close();
@@ -158,15 +174,20 @@ ClientUI::~ClientUI()
 
 bool ClientUI::Cleanup()
 {
-    if(m_tooltips!=NULL)
-        delete(m_tooltips);
-    m_tooltips=NULL;
+    delete m_tooltips;
+    m_tooltips = 0;
     
-    if(m_string_table!=NULL)
-        delete(m_string_table);
-    m_string_table=NULL;
+    delete m_string_table;
+    m_string_table = 0;
 
-    the_UI=NULL;
+    delete m_intro_screen;
+    m_intro_screen = 0;
+
+    delete m_map_wnd;
+    m_map_wnd = 0;
+
+    s_the_UI = 0;
+
     //TODO: Destroy variables, etc.   
 
     return true; 
@@ -248,6 +269,12 @@ GG::XMLElement ClientUI::XMLEncode() const
     
 }//XMLEncode()
 
+bool ClientUI::AttachToolWnd(GG::Wnd* parent, ToolWnd* tool) 
+{
+    return (m_tooltips ? m_tooltips->AttachToolWnd(parent, tool) : false);
+}
+
+
 //////////////////////////////////////////////////////////
 
 //Utilities////////////////////////////////////////////////
@@ -307,94 +334,122 @@ bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
 /////////////////////////////////////////////////////
 
 //Screen Functions///////////////////////////////////
+void ClientUI::InitTurn()
+{
+    m_map_wnd->InitTurn();
+}
+    
 void ClientUI::ScreenIntro()
 {
-    //This will display a splash screen and a menu.
+    HideAllWindows();
     
-    //all Screen* functions should call this
-    UnregisterCurrent(true); //remove from z-list and delete (if it exists)
+    m_state = STATE_INTRO; // set to intro screen state
     
-    m_state = STATE_INTRO;    //set to intro screen state
-    
-    //TODO: Create options screen
-    //TEMP
-    m_current_window = new IntroScreen();
-    GG::App::GetApp()->Register(m_current_window);
+    m_intro_screen = new IntroScreen();
+    GG::App::GetApp()->Register(m_intro_screen);
 
 }//ScreenIntro()
                       
 void ClientUI::ScreenSettings(const ClientNetworkCore &net)
 {
+    // TODO: modally run options dialog here on top of whatever screen(s) is(are) already active
 
 }//ScreenSettings()
 
 void ClientUI::ScreenEmpireSelect()
 {
+    // TODO: run modally
 
 }//ScreenEmpireSelect()
 
 void ClientUI::ScreenTurnStart()
 {
- 
+    ScreenMap();
+
+    // TODO: pop up a turn start screen that displays for a set period of time
+
 }//ScreenTurnStart()
 
 void ClientUI::ScreenMap()
 {
-    //remove current window, and load the map screen
+    HideAllWindows();
 
-    UnregisterCurrent(true);
-    
-    // TODO: background image is still there, but covered.
-    //   this needs to be removed at some point
-    
-    
-    GG::App::GetApp()->Logger().debug("Unregistered current window");
+    // clean up prvious windows, based on previous state
+    switch (m_state) {
+    case STATE_STARTUP:
+        break;
+    case STATE_INTRO:
+        GG::App::GetApp()->Remove(m_intro_screen);
+        delete m_intro_screen;
+        break;
+    case STATE_SETTINGS:
+        break;
+    case STATE_EMPIRESEL:
+        break;
+    case STATE_TURNSTART:
+        break;
+    case STATE_MAP:
+        break;
+    case STATE_SITREP:
+        break;
+    case STATE_PROCESS:
+        break;
+    case STATE_BATTLE:
+        break;
+    case STATE_SAVE:
+        break;
+    case STATE_LOAD:
+        break;
+    case STATE_SHUTDOWN:
+        break;
+    default:
+        break;
+    }
+
     m_state = STATE_MAP;
-    
-    //load and register the map screen
-    m_galaxy_map = new GalaxyMapScreen();
-    GG::App::GetApp()->Logger().debug("Created map screen");
-    //init the new turn
-    m_galaxy_map->InitTurn();
-    GG::App::GetApp()->Logger().debug("Initialized first turn");
-    m_current_window = m_galaxy_map;
-    GG::App::GetApp()->Register(m_current_window);
-    GG::App::GetApp()->Logger().debug("Registered map screen");
+
+    m_map_wnd->Show();
+
 }//ScreenMap()
 
 void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
 {
+    ScreenMap();
+
+    // TODO: run sitrep as an on-top window, layered over the main map
 
 }//ScreenSitrep()
 
 void ClientUI::ScreenProcessTurn(int state)
 {
+    ScreenMap();
+
+    // TODO: pop up a turn processing turn screen that displays until server returns new turn update
 
 }//ScreenProcessTurn()
 
 void ClientUI::ScreenBattle(Combat* combat)
 {
+    // TODO: run battle screen by iteself
 
 }//ScreenBattle()
 
 void ClientUI::ScreenSave(bool show)
 {
+    // TODO: modally run save dialog here on top of whatever screen(s) is(are) already active
 
 }//ScreenSave()
 
 void ClientUI::ScreenLoad(bool show)
 {
+    // TODO: modally run load dialog here on top of whatever screen(s) is(are) already active
 
 }//ScreenLoad()
 
 void ClientUI::MessageBox(const std::string& message)
 {
- //   std::string dbg_msg = "MessageBox( \"" + message + "\" )";
- //   s_logger.debug(dbg_msg);    //write message to log
-    
     GG::ThreeButtonDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR, WND_BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
-        new CUIButton((320-75)/2, 170, 75, "OK"));
-    
+                           new CUIButton((320-75)/2, 170, 75, "OK"));
     dlg.Run();    
 }//MessageBox()
 
@@ -405,20 +460,15 @@ void ClientUI::LogMessage(const std::string& msg)
 
 const std::string& ClientUI::String(const std::string& index)
 {
-    return the_UI->m_string_table->String(index);
+    return s_the_UI->m_string_table->String(index);
 }
 
 ////////////////////////////////////////////////////
-void ClientUI::UnregisterCurrent(bool delete_it /*= false */)
+void ClientUI::HideAllWindows()
 {
-    if(m_current_window)
-    {
-        GG::App::GetApp()->Remove(m_current_window);
-        if(delete_it)
-        {
-            delete(m_current_window);
-            m_current_window=NULL;
-        }
-    }
-}//UnregisterCurrent
+    if (m_intro_screen)
+        m_intro_screen->Hide();
+    if (m_map_wnd)
+        m_map_wnd->Hide();
+}
 
