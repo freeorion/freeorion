@@ -1,9 +1,22 @@
 #ifndef _ClientUniverse_h_
 #define _ClientUniverse_h_
 
+#include "System.h"
+
 #include <vector>
 #include <map>
 #include <string>
+
+
+
+// Object ID's are segregated into separate ranges by object type, primarily
+// to facilitate the creation of new objects by the client without ID-space
+// collisions
+#define INVALID_OBJECT_ID              0
+#define MIN_SHIP_ID           1900000000
+#define MAX_SHIP_ID           2100000000
+
+
 
 class UniverseObject;
 namespace GG {class XMLElement;}
@@ -74,12 +87,17 @@ public:
    const_iterator begin() const  {return m_objects.begin();}   ///< returns the begin const_iterator for the objects in the universe
    const_iterator end() const    {return m_objects.end();}     ///< returns the end const_iterator for the objects in the universe
    
-  	virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a ClientUniverse object
+   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a ClientUniverse object
    //@}
+
+   int NearestSystem(System& target_sys); ///< returns the nearest system to the target. In the case that more than 1 systems are of equal distance, uses system ID as the tie-breaker
+   int NearestSystem(System& target_sys, System& prev_sys); ///< returns the nearest system to target beyond the prev.  Can be used iteratively to generate a list of nearest systems.  Will use system ID as tie-breaker for equally distant systems.  This can result in a system being returned that is of an equal distance as prev_sys.
+
    
    /** \name Mutators */ //@{
-  	void XMLMerge(const GG::XMLElement& elem); ///< updates the ClientUniverse object from an XMLElement object that represents the updates
+   void XMLMerge(const GG::XMLElement& elem); ///< updates the ClientUniverse object from an XMLElement object that represents the updates
    //@}
+
    
 protected:
    ObjectMap m_objects;

@@ -5,6 +5,8 @@
 #include "ClientUniverse.h"
 #endif
 
+
+
 class UniverseObject;
 class SitRepEntry;
 namespace GG {class XMLElement;}
@@ -22,15 +24,15 @@ public:
    
    /** \name Structors */ //@{
    ServerUniverse(); ///< default ctor
-   ServerUniverse(Shape shape, int stars, int players); ///< ctor to create a universe from a shape, number of stars, and number of players; other params TBD
-   ServerUniverse(const std::string& map_file, int stars, int players); ///< ctor to create a universe from a shape image file, number of stars, and number of players; other params TBD
+   ServerUniverse(Shape shape, int stars, int players, int ai_players); ///< ctor to create a universe from a shape, number of stars, and number of players; other params TBD
+   ServerUniverse(const std::string& map_file, int stars, int players, int ai_players); ///< ctor to create a universe from a shape image file, number of stars, and number of players; other params TBD
    ServerUniverse(const GG::XMLElement& elem); ///< ctor that constructs a ServerUniverse object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ServerUniverse object
    ~ServerUniverse(); ///< dtor
    //@}
    
    /** \name Mutators */ //@{
    /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.  
-      \note ServerUniverse gains ownerchip of \a obj once it is inserted; the caller should \a never delete \a obj after 
+      \note ServerUniverse gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after 
       passing it to Insert().*/
    int               Insert(UniverseObject* obj);
    
@@ -68,6 +70,15 @@ public:
    iterator begin()  {return m_objects.begin();}   ///< returns the begin const_iterator for the objects in the universe
    iterator end()    {return m_objects.end();}     ///< returns the end const_iterator for the objects in the universe
    //@}
+   
+private:
+
+   void generate_spiral_galaxy(int arms, int stars, int players, std::vector<int>& homeworlds);  ///< creates a spiral galaxy and stores the empire homeworlds in the homeworlds vector
+   void generate_eliptical_galaxy(int stars, int players, std::vector<int>& homeworlds);  ///< creates an eliptical galaxy and stores the empire homeworlds in the homeworlds vector
+   void generate_irregular_galaxy(int stars, int players, std::vector<int>& homeworlds);  ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
+
+   int m_last_allocated_id;
+   
 };
 
 #endif // _ServerUniverse_h_
