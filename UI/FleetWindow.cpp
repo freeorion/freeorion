@@ -555,9 +555,6 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem("Rename", 1, false, false));
 
-    if (ship->Design().colonize && m_fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID)
-        menu_contents.next_level.push_back(GG::MenuItem("Colonize Planet", 2, false, false));
-
     GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
 
     if (popup.Run()) {
@@ -569,21 +566,6 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row
             if (edit_wnd.Result() != "") {
                 HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), ship->ID(), edit_wnd.Result()));
                 m_ships_lb->GetRow(row_idx)[0]->SetText(edit_wnd.Result());
-            }
-            break;}
-        case 2: { // colonize planet
-            int planet_id = HumanClientApp::GetUI()->SelectPlanet(m_fleet->SystemID());
-            if ( planet_id != UniverseObject::INVALID_OBJECT_ID )
-            {
-                // check some conditions. If this is ever the final UI for colonization, once should display a cursor to reflect
-                // the fact colonization cannot happen. For now, clicking on an invalid system will NOT end the UI
-                const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object( planet_id ));
-                if ( planet->Owners().size() != 0 )
-                    return;
-
-                HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->EmpireID(), ship, planet_id ));
-
-                HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->SetSystem(planet->SystemID());
             }
             break;}
         default:
