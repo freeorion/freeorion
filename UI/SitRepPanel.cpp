@@ -16,7 +16,7 @@ const int    SITREP_TITLE_MARGIN_Y = 15;
 
 
 SitRepPanel::SitRepPanel(int x, int y, int w, int h) : 
-    CUI_Wnd(ClientUI::String("SITREP_PANEL_TITLE"), x, y, w, h, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | CUI_Wnd::MINIMIZABLE),
+    CUI_Wnd(ClientUI::String("SITREP_PANEL_TITLE"), x, y, w, h, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE/* | CUI_Wnd::MINIMIZABLE*/),
     m_title(new GG::TextControl(0, SITREP_TITLE_MARGIN_Y, w, static_cast<int>(ClientUI::PTS * 1.75 + 4), ClientUI::String("SITREP_PANEL_TITLE"), 
                                 ClientUI::FONT, static_cast<int>(ClientUI::PTS * 1.75), GG::TF_CENTER | GG::TF_VCENTER, ClientUI::TEXT_COLOR))
 {
