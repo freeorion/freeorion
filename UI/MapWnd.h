@@ -128,13 +128,18 @@ private:
 	bool CloseSystemView();                      //!< closes off the current system view
     bool KeyboardZoomIn();
     bool KeyboardZoomOut();
+    bool ZoomToHomeSystem();
+    bool ZoomToPrevOwnedSystem();
+    bool ZoomToNextOwnedSystem();
+    bool ZoomToPrevIdleFleet();
+    bool ZoomToNextIdleFleet();
+    bool ZoomToPrevFleet();
+    bool ZoomToNextFleet();
 
     void DisableAlphaNumAccels();
     void EnableAlphaNumAccels();
 
-    std::vector<GG::Key> m_disabled_accels_list;     //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
-    signed short m_disabled_accels_count;          //!< counter for \a DisableAlphaNumAccels
-    
+    std::set<GG::Key> m_disabled_accels_list;     //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
 
     std::vector<boost::shared_ptr<GG::Texture> > m_backgrounds; //!< starfield backgrounds
     std::vector<boost::shared_ptr<GG::Texture> > m_nebulae;     //!< decorative nebula textures
@@ -158,6 +163,8 @@ private:
     CUIButton*                      m_turn_update;   //!< button that updates player's turn
     std::list<MapWndPopup*>         m_popups;        //!< list of currently active popup windows
     bool                            m_options_showing; //!< set during ShowOptions() to prevent reentrency
+    int                             m_current_owned_system;
+    int                             m_current_fleet;
 
     CUIToolBar                      *m_toolbar;
     StatisticIconDualValue          *m_food,*m_mineral,*m_population;

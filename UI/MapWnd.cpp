@@ -138,48 +138,6 @@ namespace {
     const int MAP_MARGIN_WIDTH = MapWnd::SIDE_PANEL_WIDTH; // the number of pixels of system-less space around all four sides of the starfield
 }
 
-/** Disables keyboard accelerators that use an alphanumeric key
-    without modifiers. This is useful if a keyboard input is required,
-    so that the keys aren't interpreted as an accelerator.
-    @note Repeated calls of DisableAlphaNumAccels have to be followed by the
-    same number of calls to EnableAlphaNumAccels to re-enable the
-    accelerators.
-*/
-void MapWnd::DisableAlphaNumAccels()
-{
-    if (++m_disabled_accels_count > 1)
-	return;
-    
-    for (GG::App::const_accel_iterator i = GG::App::GetApp()->accel_begin() ;
-	 i != GG::App::GetApp()->accel_end() ; ++i) {
-	if (i->second != 0) // we only want to disable keys without modifiers
-	    continue; 
-	GG::Key key = i->first;
-	if ((key >= GG::GGK_a && key <= GG::GGK_z) || 
-	    (key >= GG::GGK_0 && key <= GG::GGK_9)) {
-	    m_disabled_accels_list.push_back(key);
-	}
-    }
-    for (std::vector<GG::Key>::iterator i = m_disabled_accels_list.begin() ;
-	 i != m_disabled_accels_list.end() ; ++i) {
-	GG::App::GetApp()->RemoveAccelerator(*i, 0);
-    }
-}
-
-/// Re-enable accelerators disabled by DisableAlphaNumAccels
-void MapWnd::EnableAlphaNumAccels()
-{
-    if (--m_disabled_accels_count >= 1)
-	return;
-
-    for (std::vector<GG::Key>::iterator i = m_disabled_accels_list.begin() ;
-	 i != m_disabled_accels_list.end() ; ++i) {
-	GG::App::GetApp()->SetAccelerator(*i, 0);
-    }
-    m_disabled_accels_list.clear();
-	
-}
-
 MapWnd::MapWnd() :
     GG::Wnd(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight(),
             static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH, 
@@ -193,7 +151,9 @@ MapWnd::MapWnd() :
     m_drag_offset(-1, -1),
     m_dragged(false),
     m_disabled_accels_list(),
-    m_disabled_accels_count(0)
+    m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
+    m_current_fleet(UniverseObject::INVALID_OBJECT_ID)
+
 {
     SetText("MapWnd");
 
@@ -299,7 +259,18 @@ MapWnd::MapWnd() :
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_PLUS, 0), &MapWnd::KeyboardZoomIn, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_r, 0), &MapWnd::KeyboardZoomOut, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_MINUS, 0), &MapWnd::KeyboardZoomOut, this);
-    
+
+    // Keys for showing systems
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_s, 0), &MapWnd::ZoomToHomeSystem, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_x, 0), &MapWnd::ZoomToPrevOwnedSystem, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_c, 0), &MapWnd::ZoomToNextOwnedSystem, this);
+
+    // Keys for showing fleets
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_f, 0), &MapWnd::ZoomToPrevIdleFleet, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_g, 0), &MapWnd::ZoomToNextIdleFleet, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_v, 0), &MapWnd::ZoomToPrevFleet, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_b, 0), &MapWnd::ZoomToNextFleet, this);
+
     g_chat_edit_history.push_front("");
 }
 
@@ -320,6 +291,17 @@ MapWnd::~MapWnd()
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_r, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_PLUS, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_MINUS, 0);
+
+    // Keys for showing systems
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_s, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_x, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_c, 0);
+
+    // Keys for showing fleets
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_f, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_g, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_v, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_b, 0);
 }
 
 GG::Pt MapWnd::ClientUpperLeft() const
@@ -551,6 +533,17 @@ void MapWnd::InitTurn(int turn_number)
     GG::App::GetApp()->SetAccelerator(GG::GGK_r, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_KP_PLUS, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_KP_MINUS, 0);
+
+    // Keys for showing systems
+    GG::App::GetApp()->SetAccelerator(GG::GGK_s, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_x, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_c, 0);
+
+    // Keys for showing fleets
+    GG::App::GetApp()->SetAccelerator(GG::GGK_f, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_g, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_v, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_b, 0);
 
     Universe& universe = ClientApp::GetUniverse();
 
@@ -1180,7 +1173,7 @@ bool MapWnd::OpenChatWindow()
 {
     if (!m_chat_display->Visible() || !m_chat_edit->Visible()) {
         m_chat_display->Show();
-	DisableAlphaNumAccels();
+        DisableAlphaNumAccels();
         m_chat_edit->Show();
         GG::App::GetApp()->SetFocusWnd(m_chat_edit);
         g_chat_display_show_time = GG::App::GetApp()->Ticks();
@@ -1269,4 +1262,167 @@ void MapWnd::PopulationResourcePoolChanged()
 
   m_population->SetValue      (empire->PopulationResPool().Available());
   m_population->SetValueSecond(empire->PopulationResPool().Growth   ());
+}
+
+bool MapWnd::ZoomToHomeSystem()
+{
+    int id = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->HomeworldID();
+
+    if (id != UniverseObject::INVALID_OBJECT_ID) {
+        CenterOnSystem(GetUniverse().Object(id)->SystemID());
+        SelectSystem(GetUniverse().Object(id)->SystemID());
+    }
+
+    return true;
+}
+
+bool MapWnd::ZoomToPrevOwnedSystem()
+{
+    // TODO: go through these in some sorted order (the sort method used in the SidePanel system name drop-list)
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsOwnedObjectFunctor<System>(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_owned_system);
+    if (it == vec.end()) {
+        m_current_owned_system = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
+    } else {
+        m_current_owned_system = it == vec.begin() ? vec.back() : *--it;
+    }
+
+    if (m_current_owned_system != UniverseObject::INVALID_OBJECT_ID) {
+        CenterOnSystem(m_current_owned_system);
+        SelectSystem(m_current_owned_system);
+    }
+
+    return true;
+}
+
+bool MapWnd::ZoomToNextOwnedSystem()
+{
+    // TODO: go through these in some sorted order (the sort method used in the SidePanel system name drop-list)
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsOwnedObjectFunctor<System>(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_owned_system);
+    if (it == vec.end()) {
+        m_current_owned_system = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
+    } else {
+        Universe::ObjectIDVec::iterator next_it = it;
+        ++next_it;
+        m_current_owned_system = next_it == vec.end() ? vec.front() : *next_it;
+    }
+
+    if (m_current_owned_system != UniverseObject::INVALID_OBJECT_ID) {
+        CenterOnSystem(m_current_owned_system);
+        SelectSystem(m_current_owned_system);
+    }
+
+    return true;
+}
+
+bool MapWnd::ZoomToPrevIdleFleet()
+{
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsStationaryFleetFunctor(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
+    if (it == vec.end()) {
+        m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
+    } else {
+        m_current_fleet = it == vec.begin() ? vec.back() : *--it;
+    }
+
+    if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
+        CenterOnFleet(m_current_fleet);
+        SelectFleet(m_current_fleet);
+    }
+
+    return true;
+}
+
+bool MapWnd::ZoomToNextIdleFleet()
+{
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsStationaryFleetFunctor(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
+    if (it == vec.end()) {
+        m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
+    } else {
+        Universe::ObjectIDVec::iterator next_it = it;
+        ++next_it;
+        m_current_fleet = next_it == vec.end() ? vec.front() : *next_it;
+    }
+
+    if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
+        CenterOnFleet(m_current_fleet);
+        SelectFleet(m_current_fleet);
+    }
+
+    return true;
+}
+
+bool MapWnd::ZoomToPrevFleet()
+{
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsOwnedObjectFunctor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
+    if (it == vec.end()) {
+        m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
+    } else {
+        m_current_fleet = it == vec.begin() ? vec.back() : *--it;
+    }
+
+    if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
+        CenterOnFleet(m_current_fleet);
+        SelectFleet(m_current_fleet);
+    }
+
+    return true;
+}
+
+bool MapWnd::ZoomToNextFleet()
+{
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsOwnedObjectFunctor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
+    if (it == vec.end()) {
+        m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
+    } else {
+        Universe::ObjectIDVec::iterator next_it = it;
+        ++next_it;
+        m_current_fleet = next_it == vec.end() ? vec.front() : *next_it;
+    }
+
+    if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
+        CenterOnFleet(m_current_fleet);
+        SelectFleet(m_current_fleet);
+    }
+
+    return true;
+}
+
+/* Disables keyboard accelerators that use an alphanumeric key
+   without modifiers. This is useful if a keyboard input is required,
+   so that the keys aren't interpreted as an accelerator.
+   @note Repeated calls of DisableAlphaNumAccels have to be followed by the
+   same number of calls to EnableAlphaNumAccels to re-enable the
+   accelerators.
+*/
+void MapWnd::DisableAlphaNumAccels()
+{
+    for (GG::App::const_accel_iterator i = GG::App::GetApp()->accel_begin();
+         i != GG::App::GetApp()->accel_end(); ++i) {
+        if (i->second != 0) // we only want to disable keys without modifiers
+            continue; 
+        GG::Key key = i->first;
+        if ((key >= GG::GGK_a && key <= GG::GGK_z) || 
+            (key >= GG::GGK_0 && key <= GG::GGK_9)) {
+            m_disabled_accels_list.insert(key);
+        }
+    }
+    for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
+         i != m_disabled_accels_list.end(); ++i) {
+        GG::App::GetApp()->RemoveAccelerator(*i, 0);
+    }
+}
+
+// Re-enable accelerators disabled by DisableAlphaNumAccels
+void MapWnd::EnableAlphaNumAccels()
+{
+    for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
+         i != m_disabled_accels_list.end(); ++i) {
+        GG::App::GetApp()->SetAccelerator(*i, 0);
+    }
+    m_disabled_accels_list.clear();
 }
