@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------
 # General configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = "FreeOrion Network Module"
+PROJECT_NAME           = "FreeOrion Server Module"
 PROJECT_NUMBER         = "v 0.0.1.0"
 OUTPUT_DIRECTORY       = 
 OUTPUT_LANGUAGE        = English
