@@ -26,7 +26,7 @@
 #include "MapWnd.h"
 
 namespace {
-int CircleXFromY(double y, double r) {return static_cast<int>(std::sqrt(r * r - y * y) + 0.5);}
+    int CircleXFromY(double y, double r) {return static_cast<int>(std::sqrt(r * r - y * y) + 0.5);}
 }
 
 ////////////////////////////////////////////////
@@ -57,16 +57,6 @@ namespace {
   boost::shared_ptr<GG::Texture> IconMining    () {return GetTexture(ClientUI::ART_DIR + "icons/mining.png"     );}
   boost::shared_ptr<GG::Texture> IconFarming   () {return GetTexture(ClientUI::ART_DIR + "icons/farming.png"    );}
   boost::shared_ptr<GG::Texture> IconDefense   () {return GetTexture(ClientUI::ART_DIR + "icons/defensebase.png");}
-
-  std::string Format(const char *fmt,...)
-  {
-    char buffer[1024]; va_list args;
-    
-    va_start(args,fmt);
-    vsprintf(buffer,fmt,args);
-
-    return buffer;
-  }
 
   struct SystemRow : public GG::ListBox::Row
   {
