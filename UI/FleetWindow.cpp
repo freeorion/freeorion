@@ -249,29 +249,33 @@ void FleetDetailPanel::ShipDroppedIntoList(int row_idx, const GG::ListBox::Row* 
 
 void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt)
 {
-    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(dynamic_cast<const ShipRow*>(row)->ShipID()));
+    const ShipRow* ship_row = dynamic_cast<const ShipRow*>(row);
+
+    if (ship_row->m_ship->Owners().size() != 1 || HumanClientApp::GetApp()->PlayerID() != *ship_row->m_ship->Owners().begin())
+        return;
+
+    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(ship_row->ShipID()));
 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem("Rename", 1, false, false));
 
-    if(ship->Design().colonize)
-      menu_contents.next_level.push_back(GG::MenuItem("Colonize Planet", 2, false, false));
+    if (ship->Design().colonize && m_fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID)
+        menu_contents.next_level.push_back(GG::MenuItem("Colonize Planet", 2, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
 
-    if(popup.Run())
-      switch (popup.MenuID()) {
-      case 1: { // rename ship
-          std::string ship_name = m_ships_lb->GetRow(row_idx)[row_idx]->WindowText();
-          CUIEditWnd edit_wnd(350, "Enter new name", ship_name);
-          edit_wnd.Run();
-          if (edit_wnd.Result() != "") {
-              HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->PlayerID(), ship->ID(), edit_wnd.Result()));
-              m_ships_lb->GetRow(row_idx)[row_idx]->SetText(edit_wnd.Result());
-          }
-          break;
-      }
-      case 2:{ // colonize planet
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 1: { // rename ship
+            std::string ship_name = m_ships_lb->GetRow(row_idx)[row_idx]->WindowText();
+            CUIEditWnd edit_wnd(350, "Enter new name", ship_name);
+            edit_wnd.Run();
+            if (edit_wnd.Result() != "") {
+                HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->PlayerID(), ship->ID(), edit_wnd.Result()));
+                m_ships_lb->GetRow(row_idx)[row_idx]->SetText(edit_wnd.Result());
+            }
+            break;}
+        case 2: { // colonize planet
             int planet_id = HumanClientApp::GetUI()->SelectPlanet(m_fleet->SystemID());
             if ( planet_id != UniverseObject::INVALID_OBJECT_ID )
             {
@@ -279,18 +283,17 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row
                 // the fact colonization cannot happen. For now, clicking on an invalid system will NOT end the UI
                 const Planet *planet = dynamic_cast<const Planet*>(GetUniverse().Object( planet_id ));
                 if ( planet->Owners().size() != 0 )
-	              return;
+                    return;
 
                 HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->PlayerID(), ship->GetFleet()->ID(), planet_id ));
 
                 HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->SetSystem(planet->SystemID());
             }
-          }
-          break;
-      default:
-          break;
-      }
-
+            break;}
+        default:
+            break;
+        }
+    }
 }
 
 std::string FleetDetailPanel::DestinationText() const
@@ -539,7 +542,11 @@ void FleetWnd::FleetSelectionChanged(const std::set<int>& rows)
 
 void FleetWnd::FleetRightClicked(int row_idx, const GG::ListBox::Row* row, const GG::Pt& pt)
 {
-    if (m_read_only || row_idx == m_fleets_lb->NumRows() - 1)
+    if (!m_read_only && row_idx == m_fleets_lb->NumRows() - 1)
+        return;
+
+    Fleet* fleet = FleetInRow(row_idx);
+    if (fleet->Owners().size() != 1 || HumanClientApp::GetApp()->PlayerID() != *fleet->Owners().begin())
         return;
 
     GG::MenuItem menu_contents;
@@ -549,7 +556,6 @@ void FleetWnd::FleetRightClicked(int row_idx, const GG::ListBox::Row* row, const
     if (popup.Run()) {
       switch (popup.MenuID()) {
       case 1: { // rename fleet
-          Fleet* fleet = FleetInRow(row_idx);
           std::string fleet_name = fleet->Name();
           CUIEditWnd edit_wnd(350, "Enter new name", fleet_name);
           edit_wnd.Run();
