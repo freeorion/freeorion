@@ -163,6 +163,11 @@ GG::XMLElement MineralResourcePool::XMLEncode() const
     return retval;
 }
 
+void MineralResourcePool::SetStockpile(double d)
+{
+    m_stockpile = d;
+}
+
 //////////////////////////////////////////////////
 //FoodResourcePool
 //////////////////////////////////////////////////
@@ -241,6 +246,11 @@ GG::XMLElement FoodResourcePool::XMLEncode() const
     GG::XMLElement retval("FoodResourcePool");
     retval.AppendChild(GG::XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
     return retval;
+}
+
+void FoodResourcePool::SetStockpile(double d)
+{
+    m_stockpile = d;
 }
 
 
@@ -414,4 +424,9 @@ GG::XMLElement TradeResourcePool::XMLEncode() const
     GG::XMLElement retval("TradeResourcePool");
     retval.AppendChild(GG::XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
     return retval;
+}
+
+void TradeResourcePool::SetStockpile(double d)
+{
+    m_stockpile = d;
 }

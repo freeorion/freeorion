@@ -202,6 +202,14 @@ void Empire::AddTech(const std::string& name)
     m_techs.insert(name);
 }
 
+void Empire::UnlockItem(const Tech::ItemSpec& item)
+{
+    // TODO: handle other types (such as ship components) as they are implemented
+    if (item.type == UIT_BUILDING) {
+        AddBuildingType(item.name);
+    }
+}
+
 void Empire::AddBuildingType(const std::string& name)
 {
     m_building_types.insert(name);
@@ -229,6 +237,14 @@ void Empire::AddSitRepEntry(SitRepEntry* entry)
 void Empire::RemoveTech(const std::string& name)
 {
     m_techs.erase(name);
+}
+
+void Empire::LockItem(const Tech::ItemSpec& item)
+{
+    // TODO: handle other types (such as ship components) as they are implemented
+    if (item.type == UIT_BUILDING) {
+        RemoveBuildingType(item.name);
+    }
 }
 
 void Empire::RemoveBuildingType(const std::string& name)
@@ -341,6 +357,8 @@ int Empire::AddRP(int moreRPs)
 
 void Empire::CheckResearchProgress()
 {
+    // TODO: implement
+    // TODO: when a tech is discovered, add its unlocked items as well
 }
 
 void Empire::SetColor(const GG::Clr& color)

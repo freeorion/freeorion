@@ -2,29 +2,30 @@
 #ifndef _Empire_h_
 #define _Empire_h_
 
-#include <list>
-#include <string>
-
 #ifndef _GGClr_h_
 #include "GGClr.h"
 #endif
 
-#ifndef _XMLDoc_h_
-#include "XMLDoc.h"
+#ifndef _ResourcePool_h_
+#include "ResourcePool.h"
 #endif
 
 #ifndef _SitRepEntry_h_
 #include "../util/SitRepEntry.h"
 #endif
 
-// include ship.h so we can see the shipdesign object
-#ifndef _Ship_h_
-#include "../universe/Ship.h"
+#ifndef _Tech_h_
+#include "../universe/Tech.h"
 #endif
 
-#ifndef _ResourcePool_h_
-#include "ResourcePool.h"
+#ifndef _XMLDoc_h_
+#include "XMLDoc.h"
 #endif
+
+#include <list>
+#include <string>
+
+class ShipDesign;
 
 /**
 * Class to maintain the state of a single empire.  
@@ -176,6 +177,13 @@ public:
     SitRepItr SitRepBegin() const;
     SitRepItr SitRepEnd() const;
 
+    const MineralResourcePool&    MineralResPool    () const {return m_mineral_resource_pool;}
+    const FoodResourcePool&       FoodResPool       () const {return m_food_resource_pool;}
+    const ResearchResourcePool&   ResearchResPool   () const {return m_research_resource_pool;}
+    const PopulationResourcePool& PopulationResPool () const {return m_population_resource_pool;}
+    const IndustryResourcePool&   IndustryResPool   () const {return m_industry_resource_pool;}
+    const TradeResourcePool&      TradeResPool      () const {return m_trade_resource_pool;}
+
     /// Encodes an empire into an XMLElement
     /**
      * This method encodes an empire into an XMLElement, which can then
@@ -211,6 +219,9 @@ public:
     /// Inserts the given Tech into the Empire's list of available technologies.
     void AddTech(const std::string& name);
 
+    /// Adds a given buildable item (Building, Ship Component, etc.) to the list of available buildable items.
+    void UnlockItem(const Tech::ItemSpec& item);
+
     /// Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     void AddBuildingType(const std::string& name);
 
@@ -236,6 +247,9 @@ public:
 
     /// Removes the given Tech from the empire's list
     void RemoveTech(const std::string& name);
+
+    /// Removes a given buildable item (Building, ShipComponent, etc.) from the list of available buildable items.
+    void LockItem(const Tech::ItemSpec& item);
 
     /// Removes the given BuildingType from the empire's list
     void RemoveBuildingType(const std::string& name);
@@ -271,12 +285,12 @@ public:
 
     void UpdateResourcePool();
 
-    const MineralResourcePool&    MineralResPool    () const {return m_mineral_resource_pool;}
-    const FoodResourcePool&       FoodResPool       () const {return m_food_resource_pool;}
-    const ResearchResourcePool&   ResearchResPool   () const {return m_research_resource_pool;}
-    const PopulationResourcePool& PopulationResPool () const {return m_population_resource_pool;}
-    const IndustryResourcePool&   IndustryResPool   () const {return m_industry_resource_pool;}
-    const TradeResourcePool&      TradeResPool      () const {return m_trade_resource_pool;}
+    MineralResourcePool&    MineralResPool    () {return m_mineral_resource_pool;}
+    FoodResourcePool&       FoodResPool       () {return m_food_resource_pool;}
+    ResearchResourcePool&   ResearchResPool   () {return m_research_resource_pool;}
+    PopulationResourcePool& PopulationResPool () {return m_population_resource_pool;}
+    IndustryResourcePool&   IndustryResPool   () {return m_industry_resource_pool;}
+    TradeResourcePool&      TradeResPool      () {return m_trade_resource_pool;}
 
 private:
     /// Empire's unique numeric id

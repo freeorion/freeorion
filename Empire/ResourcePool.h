@@ -40,16 +40,14 @@ public:
     typedef boost::signal<void ()> ChangedSignalType;
     //@}
 
+    const std::vector<Planet*>& Planets() const {return m_planets;} ///< returns the planet vector 
+    virtual double Stockpile() const;
+    virtual GG::XMLElement XMLEncode() const = 0;
     ChangedSignalType& ChangedSignal() const {return m_changed_sig;} ///< returns the changed signal object for this ResourcePool
 
-    virtual GG::XMLElement XMLEncode() const = 0;
-
-    virtual double Stockpile() const;
-
-    std::vector<Planet*>& Planets()       {return m_planets;} ///< returns the planet vector 
-    const std::vector<Planet*>& Planets() const {return m_planets;} ///< returns the planet vector 
-
-    void SetPlanets(const Universe::ObjectVec &planet_vec);///< sets the planet vector 
+    std::vector<Planet*>& Planets() {return m_planets;} ///< returns the planet vector 
+    void                  SetPlanets(const Universe::ObjectVec &planet_vec);///< sets the planet vector 
+    virtual void          SetStockpile(double d) {}
 
 protected:
     virtual SortFuncType SortFunc() const; ///< used to order planet list
@@ -78,8 +76,9 @@ public:
     double Needed   () const {return m_needed_pool;}///< amount of mineral which is needed to support planet production
 
     virtual double Stockpile() const;
-
     virtual GG::XMLElement XMLEncode() const;
+
+    virtual void SetStockpile(double d);
 
 protected:
     virtual SortFuncType SortFunc() const; 
@@ -102,8 +101,9 @@ public:
     double Needed   () const {return m_needed_pool;}
 
     virtual double Stockpile() const;
-
     virtual GG::XMLElement XMLEncode() const;
+
+    virtual void SetStockpile(double d);
 
 protected:
     virtual SortFuncType SortFunc() const; 
@@ -187,8 +187,9 @@ public:
     double Needed   () const {return m_needed_pool;}
 
     virtual double Stockpile() const;
-
     virtual GG::XMLElement XMLEncode() const;
+
+    virtual void SetStockpile(double d);
 
 protected:
     virtual SortFuncType SortFunc() const; 
