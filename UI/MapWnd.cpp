@@ -491,7 +491,7 @@ void MapWnd::SetFleetMovement(FleetButton* fleet_button)
 void MapWnd::OnTurnUpdate()
 {
     //hide sidepanel
-    m_side_panel->SetSystem(INVALID_OBJECT_ID);
+    m_side_panel->SetSystem(UniverseObject::INVALID_OBJECT_ID);
     // delete app popups
     DeleteAllPopups( );
 
