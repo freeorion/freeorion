@@ -34,6 +34,8 @@ freeorionca_exe_SHORTNAME = ai
 # (conditional compiles via FREEORION_SERVER/CLIENT will be handled
 # automatically)
 COMMON_FILES=					\
+combat/Combat.cpp				\
+combat/Combat.h					\
 Empire/ClientEmpireManager.cpp			\
 Empire/ClientEmpireManager.h			\
 Empire/Empire.cpp				\
@@ -112,7 +114,7 @@ network/ServerNetworkCore.cpp			\
 network/ServerNetworkCore.h			\
 $(COMMON_FILES)
 
-# Files specific to CLIENT
+# Files specific to (human) CLIENT
 freeorion_exe_SOURCES =				\
 client/ClientApp.cpp				\
 client/ClientApp.h				\
@@ -130,6 +132,8 @@ UI/CUI_Wnd.cpp					\
 UI/CUI_Wnd.h					\
 UI/ClientUI.cpp					\
 UI/ClientUI.h					\
+UI/CombatWnd.cpp				\
+UI/CombatWnd.h					\
 UI/EmpireSelect.cpp				\
 UI/EmpireSelect.h				\
 UI/FleetButton.cpp				\
@@ -172,7 +176,7 @@ network/ClientNetworkCore.cpp			\
 network/ClientNetworkCore.h			\
 $(COMMON_FILES)
 
-# Files specific for AI
+# Files specific for AI (client)
 freeorionca_exe_SOURCES =			\
 client/ClientApp.cpp				\
 client/ClientApp.h				\
