@@ -14,7 +14,7 @@ namespace {
 const int SERVERS_LIST_BOX_WIDTH = 400;
 const int OK_CANCEL_BUTTON_WIDTH = 80;
 const int CONTROL_MARGIN = 5; // gap to leave between controls in the window
-const int LAN_SERVER_SEARCH_TIMEOUT = 5; // in seconds
+const int LAN_SERVER_SEARCH_TIMEOUT = 1; // in seconds
 const int SERVER_CONNECT_WND_WIDTH = SERVERS_LIST_BOX_WIDTH + 6 * CONTROL_MARGIN;
 const int SERVER_CONNECT_WND_HEIGHT = 500 + ClientUI::PTS + 10 + 3 * CONTROL_MARGIN;
 std::set<std::string> g_LAN_servers; // semi-persistent (persists only during runtime) list of known LAN servers
