@@ -778,12 +778,6 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets)
     GG::Connect(m_new_fleet_button->ClickedSignal(), &FleetWnd::NewFleetButtonClicked, this);
 
     SetText(TitleText());
-
-    if (fleets.size() == 1) {
-        m_fleets_lb->SelectRow(0);
-        m_current_fleet = 0;
-        m_fleet_detail_panel->SetFleet(FleetInRow(0));
-    }
 }
 
 void FleetWnd::AttachSignalChildren()
@@ -809,6 +803,18 @@ void FleetWnd::SystemClicked(int system_id)
             if (fleet->NumShips()) {
                 // TODO: allow technologies or other factors to allow a fleet to turn around in mid-flight, without completing its current leg
                 int start_system = fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID ? fleet->NextSystemID() : fleet->SystemID();
+
+                // disallow "offroad" (non-starlane, non-wormhole) travel
+                std::list<System*> route = GetUniverse().ShortestPath(start_system, system_id).first;
+                for (std::list<System*>::iterator it = route.begin(); it != route.end(); ) {
+                    std::list<System*>::iterator curr_it = it;
+                    std::list<System*>::iterator next_it = ++it;
+                    if (next_it == route.end() || *curr_it == *next_it)
+                        break;
+                    if (!(*curr_it)->HasStarlaneTo((*next_it)->ID()) && !(*curr_it)->HasWormholeTo((*next_it)->ID()))
+                        return;
+                }
+
                 HumanClientApp::Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id));
                 if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID)
                     ClientUI::GetClientUI()->GetMapWnd()->SetFleetMovement(fleet);
