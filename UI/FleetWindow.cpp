@@ -744,6 +744,7 @@ FleetWnd::~FleetWnd()
 void FleetWnd::CloseClicked()
 {
     CUI_Wnd::CloseClicked();
+    m_lb_delete_connection.disconnect();
     for (std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_windows.begin(); it != m_open_fleet_windows.end(); ++it) {
         delete it->second;
     }
@@ -783,7 +784,7 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets)
     GG::Connect(m_fleets_lb->SelChangedSignal(), &FleetWnd::FleetSelectionChanged, this);
     GG::Connect(m_fleets_lb->RightClickedSignal(), &FleetWnd::FleetRightClicked, this);
     GG::Connect(m_fleets_lb->DoubleClickedSignal(), &FleetWnd::FleetDoubleClicked, this);
-    GG::Connect(m_fleets_lb->DeletedSignal(), &FleetWnd::FleetDeleted, this);
+    m_lb_delete_connection = GG::Connect(m_fleets_lb->DeletedSignal(), &FleetWnd::FleetDeleted, this);
     GG::Connect(m_fleets_lb->DroppedSignal(), &FleetWnd::ObjectDroppedIntoList, this);
     GG::Connect(m_new_fleet_button->ClickedSignal(), &FleetWnd::NewFleetButtonClicked, this);
 

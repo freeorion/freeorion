@@ -207,6 +207,7 @@ private:
     CUIButton*          m_new_fleet_button;
 
     boost::signals::connection  m_universe_object_delete_connection;
+    boost::signals::connection  m_lb_delete_connection;
 
     mutable ShowingFleetSignalType    m_showing_fleet_sig;
     mutable NotShowingFleetSignalType m_not_showing_fleet_sig;
