@@ -22,6 +22,7 @@
    \verbatim
    <host_player_name>"NAME"</host_player_name>
    <num_players value="NUM">
+   <universe_params size="NUM">
    <AI_client/>
    <AI_client/>
    ...
