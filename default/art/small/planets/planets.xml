@@ -188,7 +188,7 @@
         <FPS Default="25.0" Tiny="23.0" Small="21.0" Medium="19.0" Large="17.0" Huge="15.0"/>
       </Art>
     </Asteroids>
-    <GasGiant>
+    <Gasgiant>
       <Art>
         <File Filename="gasgiant/gasgiant1_%%%.png" From="0" To="255"/>
         <StartFrame value="-1"/>
@@ -204,6 +204,13 @@
         <StartFrame value="-1"/>
         <FPS Default="25.0" Tiny="23.0" Small="21.0" Medium="19.0" Large="17.0" Huge="15.0"/>
       </Art>
-    </Asteroids>
+    </Gasgiant>
+    <Lights>
+      <Art>
+        <File Filename="lights/lights1_%%%.png" From="0" To="255"/>
+        <StartFrame value="-1"/>
+        <FPS Default="25.0" Tiny="23.0" Small="21.0" Medium="19.0" Large="17.0" Huge="15.0"/>
+      </Art>
+    </Lights>
   </ArtPlanets>
 </GG::XMLDoc>
