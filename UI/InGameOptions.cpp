@@ -80,8 +80,6 @@ void InGameOptions::Init()
     GG::Connect(m_done_btn->ClickedSignal(), &InGameOptions::Done, this);
 
     if (!HumanClientApp::GetApp()->SinglePlayerGame()) {
-        if (HumanClientApp::GetApp()->PlayerID() != NetworkCore::HOST_PLAYER_ID)
-            m_save_btn->Disable();
         m_load_btn->Disable();
     }
 }

@@ -431,7 +431,7 @@ void ServerApp::HandleMessage(const Message& msg)
     }
 
     case Message::SAVE_GAME: {
-        if (m_network_core.Players().find(msg.Sender())->second.host) {
+        if (m_network_core.Players().find(msg.Sender()) != m_network_core.Players().end()) {
             std::string save_filename = msg.GetText();
             GG::XMLDoc doc;
 
@@ -495,8 +495,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 m_network_core.SendMessage(ServerSaveGameMessage(msg.Sender(), true));
             }
         } else {
-            m_log_category.errorStream() << "Player #" << msg.Sender() << " attempted to initiate a game save, but is not the host player, or is "
-                "not found in the player list.";
+            m_log_category.errorStream() << "Player #" << msg.Sender() << " attempted to initiate a game save, but is not found in the player list.";
         }
         break;
     }
