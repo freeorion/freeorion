@@ -1,6 +1,9 @@
 #include "ProdCenter.h"
 #include "../GG/XML/XMLDoc.h"
 
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
+
 #include <stdexcept>
 
 ProdCenter::ProdCenter() : 
@@ -42,9 +45,33 @@ double ProdCenter::ProdPoints() const
 
 GG::XMLElement ProdCenter::XMLEncode() const
 {
-	GG::XMLElement retval;
-   // TODO
-   return retval;
+   using GG::XMLElement;
+   using boost::lexical_cast;
+
+   XMLElement element("ProdCenter.h");
+
+   XMLElement primary("m_primary");
+   primary.SetAttribute( "value", lexical_cast<std::string>(m_primary) );
+   element.AppendChild(primary);
+
+   XMLElement secondary("m_secondary");
+   secondary.SetAttribute( "value", lexical_cast<std::string>(m_secondary) );
+   element.AppendChild(secondary);
+
+   XMLElement workforce("m_workforce");
+   workforce.SetAttribute( "value", lexical_cast<std::string>(m_workforce) );
+   element.AppendChild(workforce);
+
+   XMLElement industry("m_industry_factor");
+   industry.SetAttribute( "value", lexical_cast<std::string>(m_industry_factor) );
+   element.AppendChild(industry);
+
+   XMLElement currently_building("m_currently_building");
+   currently_building.SetAttribute( "value", lexical_cast<std::string>(m_currently_building) );
+   element.AppendChild(currently_building);
+
+   return element;
+
 }
 
 void ProdCenter::SetPrimaryFocus(FocusType focus)

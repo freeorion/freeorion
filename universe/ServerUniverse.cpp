@@ -25,6 +25,9 @@ ServerUniverse::ServerUniverse()
 
 void ServerUniverse::CreateUniverse(Shape shape, int stars, int players, int ai_players)
 {
+   ServerApp* server_app = ServerApp::GetApp();
+   server_app->Logger().debugStream() << "Creating universe with " << stars << " stars and " << players << " players.";
+
    std::vector<int> homeworlds;
 
    // TODO:  wipe out any currently loaded universe
@@ -51,7 +54,6 @@ void ServerUniverse::CreateUniverse(Shape shape, int stars, int players, int ai_
       break;
    default:
       // unknown shape, use irregular as default
-      ServerApp* server_app = ServerApp::GetApp();
       server_app->Logger().errorStream() << "ServerUniverse::ServerUniverse : Unknown galaxy shape: "<< shape << ".  Using IRREGULAR as default.";
       GenerateIrregularGalaxy(stars);
    }
@@ -456,10 +458,17 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
 
          Planet* planet = new Planet(plt_type, plt_size);
          
-         
+       
          // Add planet to system map
-         system_temp->Insert(planet);
+         int orb = system_temp->Insert(planet);
          planet->SetSystemID(system_temp->ID());
+
+         // name the planet
+         std::string planet_name(system_temp->Name());
+         char orbit_num[2];
+         sprintf(orbit_num, " %i", orb);
+         planet_name.append(orbit_num);
+         planet->Rename(planet_name);
 
          // Add planet to universe map
          int planet_id = Insert(planet);
@@ -536,8 +545,15 @@ void ServerUniverse::PopulateSystems()
          Planet* planet = new Planet(plt_type, plt_size);
          
          // Add planet to system map
-         system->Insert(planet);
+         int orb = system->Insert(planet);
          planet->SetSystemID(system->ID());
+
+         // name the planet
+         std::string planet_name(system->Name());
+         char orbit_num[2];
+         sprintf(orbit_num, " %i", orb);
+         planet_name.append(orbit_num);
+         planet->Rename(planet_name);
 
          // Add planet to universe map
          int planet_id = Insert(planet);
@@ -606,6 +622,9 @@ void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<in
       Planet* home_planet = dynamic_cast<Planet*>(Object(homeworlds[empire_cnt]));
       home_planet->AddOwner(empire_id);
 
+      ServerApp* server_app = ServerApp::GetApp();
+      server_app->Logger().debugStream() << "Setting Planet " <<  home_planet->ID() << " to be home planet for Empire " << empire_id;
+
       // TODO: adding an owner to a planet should probably add that owner to the 
       //       system automatically...
       System* home_system = dynamic_cast<System*>(Object(home_planet->SystemID()));
@@ -613,7 +632,8 @@ void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<in
 
       // create population and industry on home planet
       home_planet->AdjustPop(20);
-      home_planet->AdjustIndustry(0.10);  // NEED TO ADD THIS FUNCTION!!!
+      home_planet->AdjustWorkforce(20);
+      home_planet->AdjustIndustry(0.10);
       home_planet->AdjustDefBases(3);
 
       // TODO: create starting fleet. Will need to add the default ship types to the empire

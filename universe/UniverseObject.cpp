@@ -1,6 +1,10 @@
 #include "UniverseObject.h"
 #include "../GG/XML/XMLDoc.h"
 
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
+#include <stdexcept>
+
 #include <stdexcept>
 
 UniverseObject::UniverseObject() : 
@@ -35,9 +39,37 @@ UniverseObject::~UniverseObject()
 
 GG::XMLElement UniverseObject::XMLEncode() const
 {
-	GG::XMLElement retval;
-   // TODO
-   return retval;
+    using GG::XMLElement;
+    using boost::lexical_cast;
+    
+    XMLElement element("UniverseObject");
+    
+    XMLElement ID("m_id");
+    ID.SetAttribute( "value", lexical_cast<std::string>(m_id) );
+    element.AppendChild(ID);
+
+   XMLElement name("m_name");
+   name.SetText(Name());
+   element.AppendChild(name);
+
+   XMLElement x("m_x");
+   x.SetAttribute( "value", lexical_cast<std::string>(m_x) );
+   element.AppendChild(x);
+
+   XMLElement y("m_y");
+   y.SetAttribute( "value", lexical_cast<std::string>(m_y) );
+   element.AppendChild(y);
+
+   XMLElement owners("m_owners");
+   for(std::set<int>::const_iterator itr=m_owners.begin(); itr != m_owners.end(); itr++)
+   {
+      XMLElement owner("owner");
+      owner.SetAttribute( "value", lexical_cast<std::string>(*itr) );
+      owners.AppendChild(owner);
+   }
+   element.AppendChild(owners);
+
+   return element;
 }
 
 void UniverseObject::Move(double x, double y)

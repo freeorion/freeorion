@@ -51,6 +51,7 @@ public:
       returns the (positive) pop surplus, or the (negative) pop deficit that would result from 
       adjusting the population by \a pop points, or 0 if the adjustment falls within [0.0, MaxPop()]*/
    double AdjustPop(double pop);
+   void SetMaxPop(double max_pop) {m_max_pop = max_pop;}
    
    void SetRace(int race)  {m_race = race;}   ///< sets the race of the population to \a race
    

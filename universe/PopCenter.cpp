@@ -1,6 +1,9 @@
 #include "PopCenter.h"
 #include "../GG/XML/XMLDoc.h"
 
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
+
 #include <stdexcept>
 
 PopCenter::PopCenter() : 
@@ -58,9 +61,29 @@ PopCenter::DensityType PopCenter::PopDensity() const
 
 GG::XMLElement PopCenter::XMLEncode() const
 {
-	GG::XMLElement retval;
-   // TODO
-   return retval;
+   using GG::XMLElement;
+   using boost::lexical_cast;
+
+   XMLElement element("PopCenter");
+
+   XMLElement pop("m_pop");
+   pop.SetAttribute( "value", lexical_cast<std::string>(m_pop) );
+   element.AppendChild(pop);
+
+   XMLElement max_pop("m_max_pop");
+   max_pop.SetAttribute( "value", lexical_cast<std::string>(m_max_pop) );
+   element.AppendChild(max_pop);
+
+   XMLElement growth("m_growth");
+   growth.SetAttribute( "value", lexical_cast<std::string>(m_growth) );
+   element.AppendChild(growth);
+
+   XMLElement race("m_race");
+   race.SetAttribute( "value", lexical_cast<std::string>(m_race) );
+   element.AppendChild(race);
+
+   return element;
+
 }
 
 double PopCenter::AdjustPop(double pop)

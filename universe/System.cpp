@@ -1,6 +1,9 @@
 #include "System.h"
 #include "../GG/XML/XMLDoc.h"
 
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
+
 #include <stdexcept>
 
 System::System() : 
@@ -64,29 +67,81 @@ bool System::HasWormholeTo(int id) const
 
 GG::XMLElement System::XMLEncode() const
 {
-   GG::XMLElement retval;
-	// TODO
-	return retval;
+   using GG::XMLElement;
+   using boost::lexical_cast;
+
+   XMLElement element("System");
+
+   element.AppendChild( UniverseObject::XMLEncode() );
+
+   XMLElement star("m_star");
+   star.SetAttribute( "value", lexical_cast<std::string>(m_star) );
+   element.AppendChild(star);
+
+   XMLElement orbits("m_orbits");
+   orbits.SetAttribute( "value", lexical_cast<std::string>(m_orbits) );
+   element.AppendChild(orbits);
+
+   XMLElement orbit_map("m_objects");
+   for(const_orbit_iterator itr= begin(); itr != end(); itr++)
+   {
+      XMLElement map_object("map_object");
+
+      XMLElement orbit("orbit");
+      orbit.SetAttribute( "value", lexical_cast<std::string>((*itr).first) );
+      map_object.AppendChild(orbit);
+
+      XMLElement orbit_obj_id("orbit_obj_id");
+      orbit_obj_id.SetAttribute( "value", lexical_cast<std::string>((*itr).second->ID()) );
+      map_object.AppendChild(orbit_obj_id);
+
+      orbit_map.AppendChild(map_object);
+   }
+   element.AppendChild(orbit_map);
+
+   XMLElement lane_map("m_starlanes_wormholes");
+   for(const_lane_iterator itr= begin_lanes(); itr != end_lanes(); itr++)
+   {
+      XMLElement map_lane("map_lane");
+
+      XMLElement system("system");
+      system.SetAttribute( "value", lexical_cast<std::string>((*itr).first) );
+      map_lane.AppendChild(system);
+
+      XMLElement wormhole("wormhole");
+      wormhole.SetAttribute( "value", lexical_cast<std::string>((*itr).second) );
+      map_lane.AppendChild(wormhole);
+
+      lane_map.AppendChild(map_lane);
+   }
+   element.AppendChild(lane_map);
+
+   return element;
 }
 
 int System::Insert(UniverseObject* obj)
 {
 	int retval = -1;
-	// TODO : return gice obj a valid ID number and return it
-   m_objects.insert(std::pair<int, UniverseObject*>(-1, obj));
-   obj->SetSystem(this);
+    for (int orb = 0; orb < m_orbits; orb++)
+    {
+       if (m_objects.find(orb) == end())
+       {
+          m_objects.insert(std::pair<int, UniverseObject*>(orb, obj));
+          obj->SetSystem(this);
+          return orb;
+       }
+    }
+    printf("No available orbits\n");
 	return retval;
 }
 
 int System::Insert(UniverseObject* obj, int orbit)
 {
-	int retval = -1;
-	// TODO : return gice obj a valid ID number and return it
-   if (orbit < 0 || m_orbits < orbit)
+    if (orbit < 0 || m_orbits < orbit)
       throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
-   m_objects.insert(std::pair<int, UniverseObject*>(orbit, obj));
-   obj->SetSystem(this);
-	return retval;
+    m_objects.insert(std::pair<int, UniverseObject*>(orbit, obj));
+    obj->SetSystem(this);
+	return orbit;
 }
 
 UniverseObject* System::Remove(int id)

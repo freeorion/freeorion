@@ -1,6 +1,9 @@
 #include "Fleet.h"
 #include "../GG/XML/XMLDoc.h"
 
+#include <boost/lexical_cast.hpp>
+using boost::lexical_cast;
+
 #ifdef FREEORION_BUILD_SERVER
 #include "../server/ServerApp.h"
 #endif
@@ -25,9 +28,27 @@ Fleet::Fleet(const GG::XMLElement& elem) :
 
 GG::XMLElement Fleet::XMLEncode() const
 {
-	GG::XMLElement retval;
-   // TODO
-   return retval;
+   using GG::XMLElement;
+   using boost::lexical_cast;
+
+   XMLElement element("Fleet");
+
+   element.AppendChild( UniverseObject::XMLEncode() );
+
+   XMLElement ships("m_ships");
+   for(const_iterator itr=begin(); itr != end(); itr++)
+   {
+      XMLElement ship("ship");
+      ship.SetAttribute( "value", lexical_cast<std::string>(*itr) );
+      ships.AppendChild(ship);
+   }
+   element.AppendChild(ships);
+
+   XMLElement moving_to("m_moving_to");
+   moving_to.SetAttribute( "value", lexical_cast<std::string>(m_moving_to) );
+   element.AppendChild(moving_to);
+
+   return element;
 }
 
 void Fleet::SetMoveOrders(int id)

@@ -27,7 +27,37 @@ ShipDesign::ShipDesign(const GG::XMLElement& elem)
 
 GG::XMLElement ShipDesign::XMLEncode() const
 {
+   using GG::XMLElement;
+   using boost::lexical_cast;
 
+   XMLElement element("ShipDesign");
+
+   XMLElement sd_ID("id");
+   sd_ID.SetAttribute( "value", lexical_cast<std::string>(id) );
+   element.AppendChild(sd_ID);
+
+   XMLElement sd_race("race");
+   sd_race.SetAttribute( "value", lexical_cast<std::string>(race) );
+   element.AppendChild(sd_race);
+   
+   XMLElement sd_name("name");
+   sd_name.SetText(name);
+   element.AppendChild(sd_name);
+
+   XMLElement sd_attack("attack");
+   sd_attack.SetAttribute( "value", lexical_cast<std::string>(attack) );
+   element.AppendChild(sd_attack);
+
+   XMLElement sd_defense("defense");
+   sd_defense.SetAttribute( "value", lexical_cast<std::string>(defense) );
+   element.AppendChild(sd_defense);
+
+   XMLElement sd_cost("cost");
+   sd_cost.SetAttribute( "value", lexical_cast<std::string>(cost) );
+   element.AppendChild(sd_cost);
+
+
+   return element;
 
 }
 

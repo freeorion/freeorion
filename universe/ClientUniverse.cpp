@@ -42,9 +42,21 @@ const UniverseObject* ClientUniverse::ClientUniverse::Object(int id) const
 
 GG::XMLElement ClientUniverse::XMLEncode() const
 {
-   GG::XMLElement retval;
-   // TODO
-   return retval;
+   using GG::XMLElement;
+
+   XMLElement element("Universe");
+
+   XMLElement object_map("m_objects");
+   for(const_iterator itr= begin(); itr != end(); itr++)
+   {
+      XMLElement univ_object("univ_object");
+      univ_object.AppendChild( (*itr).second->XMLEncode() );
+      object_map.AppendChild(univ_object);
+   }
+   element.AppendChild(object_map);
+   
+
+   return element;
 }
 
 void ClientUniverse::XMLMerge(const GG::XMLElement& elem)
