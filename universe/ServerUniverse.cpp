@@ -175,9 +175,9 @@ UniverseObject* ServerUniverse::Remove(int id)
    iterator it = m_objects.find(id);
    if (it != m_objects.end()) {
       retval = it->second;
-      m_objects.erase(id);
       if (System* sys = dynamic_cast<System*>(Object(retval->SystemID())))
           sys->Remove(id);
+      m_objects.erase(id);
    }
    return retval;
 }
@@ -364,9 +364,10 @@ void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>
 
         // find a place to put the homeworld, and replace whatever planet is there already
         int home_orbit = RandSmallInt(0, system->Orbits() - 1);
-        System::ObjectIDVec planet_IDs = system->FindObjectIDs(IsPlanet);
-        Delete(planet_IDs[home_orbit]);
+        System::ObjectIDVec planet_IDs = system->FindObjectIDsInOrbit(home_orbit, IsPlanet);
         Planet* planet = new Planet(Planet::TERRAN, Planet::SZ_MEDIUM);
+        planet->Rename(Object(planet_IDs.back())->Name());
+        Delete(planet_IDs.back());
         int planet_id = Insert(planet);
         system->Insert(planet, home_orbit);
         homeworlds.push_back(planet_id);
