@@ -333,8 +333,14 @@ Audio
 OPTIONS_MUSIC
 Music
 
-OPTIONS_UI_EFFECTS
-UI Sound Effects
+OPTIONS_UI_SOUNDS
+UI Sounds
+
+OPTIONS_MUSIC_VOLUME
+Music Volume
+
+OPTIONS_UI_SOUNDS_VOLUME
+UI Sounds Volume
 
 #################
 # Main Map      #
