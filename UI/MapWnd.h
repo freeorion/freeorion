@@ -82,10 +82,11 @@ public:
     void SetFleetMovement(FleetButton* fleet_button); //!< allows code that creates FleetButtons to indicate where (and whether) they are moving
     void SetFleetMovement(Fleet* fleet);       //!< allows updates for single fleets that are already moving
 
-    void OnTurnUpdate();   //!< called when m_turn_update is clicked
+    void OnTurnUpdate();                       //!< called when m_turn_update is clicked
 
-    void RegisterPopup( MapWndPopup* popup );
-    void RemovePopup( MapWndPopup* popup );
+    void RegisterPopup( MapWndPopup* popup );  //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
+    void RemovePopup( MapWndPopup* popup );    //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
+    void CloseAllPopups( );                    //!< closes all active MapWndPopup popups
     //!@}
         
     static const int    SIDE_PANEL_WIDTH;
@@ -102,7 +103,6 @@ private:
     void RenderFleetMovementLines();             //!< renders the dashed lines indicating where each fleet is going
     void MoveBackgrounds(const GG::Pt& move);    //!< scrolls the backgrounds at their respective rates
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
-    void DeleteAllPopups( );                     //!< deletes all active popups.
     bool OpenChatWindow();
     bool EndTurn();
     bool ToggleSitRep();
