@@ -33,8 +33,6 @@
  *
  *  The string for this entry would be:
  *  "The planet %m_planet% in the system %m_system% has reached it's maximum industry."
- *
- *
  */
 
 #ifndef _VarText_h_
@@ -48,18 +46,19 @@ public:
     /** tag name of sitrep update */
     static const std::string SITREP_UPDATE_TAG;
 
-    /** an enumeration of the types of entries */
-    /** WARNING: make sure to update the LUT in UICLient.cpp which contain stringIDs for each type of SitRep */
-    /** This LUT is in Client because the server has no need for it - it's a UI issue. This design ina way breaks */
-    /** the data-hiding feature of a class, but is needed because both clients and server share this code. It's better */
-    /** to have the discrepancy here than to bloat the server with data it will not use */
-    typedef enum EntryType {INVALID_ENTRY_TYPE = -1,  ///< this is the EntryType for default-constructed SitRepEntrys; no others should have this type
-                    MAX_INDUSTRY_HIT,
-                    SHIP_BUILT,
-		    TECH_RESEARCHED,
-		    BASE_BUILT,
-		    NUM_SITREP_TYPES
-                   };
+    /** an enumeration of the types of entries 
+        WARNING: make sure to update the LUT in UIClient.cpp which contain stringIDs for each type of SitRep
+        This LUT is in Client because the server has no need for it - it's a UI issue. This design in a way breaks
+        the data-hiding feature of a class, but is needed because both clients and server share this code. It's better
+        to have the discrepancy here than to bloat the server with data it will not use */
+    enum EntryType {
+        INVALID_ENTRY_TYPE = -1,  ///< this is the EntryType for default-constructed SitRepEntrys; no others should have this type
+        MAX_INDUSTRY_HIT,
+        SHIP_BUILT,
+        TECH_RESEARCHED,
+        BASE_BUILT,
+        NUM_SITREP_TYPES
+    };
 
     /** \name Structors */ //@{
     SitRepEntry() : m_type(INVALID_ENTRY_TYPE) {} ///< default ctor
@@ -79,11 +78,10 @@ public:
 private:
 
     EntryType                  m_type; ///< the type of SitRep this is
-
 };
 
 
-/** Sitrep constructors - for each SitRep type, there is a global constructor function
+/*  Sitrep constructors - for each SitRep type, there is a global constructor function
  *  See implementation file for examples
  */
 
