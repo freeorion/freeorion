@@ -40,6 +40,10 @@ public:
     */
     bool HandleEmpireElementUpdate( GG::XMLElement empireElement);
 
+
+    /// Encodes current empire knowledge to XML for use in determining update diffs
+    GG::XMLElement EncodeEmpires( );
+
     /// Handles SitRep updates from server.
     /**
     *  Takes an XMLElement representing a list of sitrep events

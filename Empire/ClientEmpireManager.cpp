@@ -65,6 +65,28 @@ bool ClientEmpireManager::HandleEmpireElementUpdate( GG::XMLElement empireElemen
     return true;
 }
 
+
+GG::XMLElement ClientEmpireManager::EncodeEmpires( )
+{
+    GG::XMLElement this_turn(EmpireManager::EMPIRE_UPDATE_TAG);
+
+    // ****************************************************************
+    // For version 0.1, we simply encode the states of all empires
+    // since all information about all empires is always known to all others
+    // ****************************************************************
+    for (EmpireManager::iterator it = begin(); it != end(); it++)
+    {
+        GG::XMLElement current_empire("Empire" + boost::lexical_cast<std::string>(it->second->EmpireID()));
+        current_empire.AppendChild(it->second->XMLEncode());
+        this_turn.AppendChild(current_empire);
+    }
+
+    return this_turn;
+}
+
+
+
+
 /**
 *  Takes an XMLElement representing a list of sitrep events
 *  The list will be decoded, one entry at a time, and the entries
