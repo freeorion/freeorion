@@ -52,6 +52,7 @@ struct MapWnd::StarlaneData
             return src < rhs.src; 
         if (dst != rhs.dst) 
             return dst < rhs.dst;
+        return false;
     }
     void SetSystems(const System* src_system, const System* dst_system) 
     {
@@ -576,7 +577,7 @@ void MapWnd::RenderBackgrounds()
 
 void MapWnd::RenderStarlanes()
 {
-    const double LINE_SCALE = std::max(1.0, m_zoom_factor / s_min_scale_factor);
+    const double LINE_SCALE = std::max(1.0, m_zoom_factor / s_min_scale_factor / 2.0);
     const unsigned char STARLANE_ALPHA = static_cast<unsigned char>(0.6 * 255);
 
     glDisable(GL_TEXTURE_2D);
