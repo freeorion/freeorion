@@ -1,3 +1,4 @@
+// -*- C++ -*-
 //ClientUI.h
 #ifndef _ClientUI_h_
 #define _ClientUI_h_
@@ -59,45 +60,6 @@ public:
         STATE_SHUTDOWN    = 11
     };//enum
     
-    //! \name Static Config Data
-    //!@{
-    static std::string FONT;    //!< The default font to use
-    static int         PTS;    //!< default point size
-    static std::string TITLE_FONT;    //!< The default font to use for the window title
-    static int         TITLE_PTS;    //!< default point size to use for window title
-    
-    static std::string DIR;     //!< directory currently being used, contains config files
-    static std::string ART_DIR;    //!< directory holding artwork, ("*/art/small/" or "*/art/large/"
-
-    static GG::Clr     TEXT_COLOR; //!< color of UI text
-    
-    // windows
-    static GG::Clr     WND_COLOR; //!< color of a UI window
-    static GG::Clr     WND_BORDER_COLOR; //!< color of window borders
-    static GG::Clr     WND_OUTER_BORDER_COLOR; //!< color of the outermost border
-    static GG::Clr     WND_INNER_BORDER_COLOR; //!< color of the innermost border
-
-    // controls
-    static GG::Clr     CTRL_COLOR; //!< color of UI controls
-    static GG::Clr     CTRL_BORDER_COLOR;
-
-    static GG::Clr     BUTTON_COLOR;
-    static int         BUTTON_WIDTH;    //!< default width to use for window buttons
-
-    static GG::Clr     STATE_BUTTON_COLOR;
-
-    static GG::Clr     SCROLL_TAB_COLOR;
-    static int         SCROLL_WIDTH;
-
-    static GG::Clr     DROP_DOWN_LIST_INT_COLOR;
-	static GG::Clr     DROP_DOWN_LIST_ARROW_COLOR;
-
-	static GG::Clr     EDIT_INT_COLOR;
-
-	static GG::Clr     MULTIEDIT_INT_COLOR;
-
-    //!@}
-
     //! \name Structors //!@{
     ClientUI(const std::string& string_table_file = StringTable::S_DEFAULT_FILENAME);        //!< construction (calls Initialize())
     ClientUI(const GG::XMLElement& elem); //!< construct via XML
@@ -119,9 +81,6 @@ public:
     //! @param width screen width
     //! @param height screen height
     bool ChangeResolution(int width, int height);    //!< changes the screen resolution and modifies any images or data required to make the change.  
-    bool Freeze();                        //!< freezes the interface so that user input is ignored.
-    bool Unfreeze();                    //!< unfreezes the UI and input is recognized again
-    bool Frozen();                //!< returns true if interface is frozen, false otherwise
     
     GG::XMLElement XMLEncode() const; //!< encodes ClientUI to XML
     
@@ -135,16 +94,14 @@ public:
     // see Interface Doc for details
     //!@{
     void ScreenIntro();                        //!< Intro Screen
-    void ScreenSettings(const ClientNetworkCore &net);    //!< Game/Network Options Screen
+    void ScreenSettings(const ClientNetworkCore& net);    //!< Game/Network Options Screen
     void ScreenEmpireSelect();                    //!< Empire Selection Screen
     void ScreenTurnStart();                    //!< Turn Start Splash Screen
     
-    //! @param u address of ClientUniverse module
-    //! @param e address of ClientEmpire module
     void ScreenMap();     //!< Universe Map Screen
 
     //! @param events vector containing all the events to be listed
-    void ScreenSitrep(const std::vector<SitRepEntry> &events);    //!< Sitrep Screen
+    void ScreenSitrep(const std::vector<SitRepEntry>& events);    //!< Sitrep Screen
     
     //! @param state integer code pertaining to the message to display on the turn-processing screen
     void ScreenProcessTurn(int state);                //!< Turn-processing screen
@@ -192,6 +149,47 @@ public:
     static void LogMessage(const std::string& msg); //!<sends a message to the logger
     static const std::string&  String(const std::string& index);    //!< Returns a lookup from the string table
 
+    //! \name Static Config Data
+    //!@{
+    static std::string FONT;    //!< The default font to use
+    static int         PTS;    //!< default point size
+    static std::string TITLE_FONT;    //!< The default font to use for the window title
+    static int         TITLE_PTS;    //!< default point size to use for window title
+    
+    static std::string DIR;     //!< directory currently being used, contains config files
+    static std::string ART_DIR;    //!< directory holding artwork, ("*/art/small/" or "*/art/large/"
+
+    static GG::Clr     TEXT_COLOR; //!< color of UI text
+    
+    // generic UI windows
+    static GG::Clr     WND_COLOR; //!< color of a UI window
+    static GG::Clr     WND_BORDER_COLOR; //!< color of window borders
+    static GG::Clr     WND_OUTER_BORDER_COLOR; //!< color of the outermost border
+    static GG::Clr     WND_INNER_BORDER_COLOR; //!< color of the innermost border
+
+    // controls
+    static GG::Clr     CTRL_COLOR; //!< color of UI controls
+    static GG::Clr     CTRL_BORDER_COLOR;
+
+    static GG::Clr     BUTTON_COLOR;
+    static int         BUTTON_WIDTH;    //!< default width to use for window buttons
+
+    static GG::Clr     STATE_BUTTON_COLOR;
+
+    static GG::Clr     SCROLL_TAB_COLOR;
+    static int         SCROLL_WIDTH;
+
+    static GG::Clr     DROP_DOWN_LIST_INT_COLOR;
+    static GG::Clr     DROP_DOWN_LIST_ARROW_COLOR;
+
+    static GG::Clr     EDIT_INT_COLOR;
+
+    static GG::Clr     MULTIEDIT_INT_COLOR;
+
+    // game UI windows
+    static GG::Clr     SIDE_PANEL_COLOR;
+    //!@}
+
 private:
     void UnregisterCurrent(bool delete_it = false);    //!< removes the current window from the Zlist and deletes it if delete_it is true
 
@@ -199,7 +197,6 @@ private:
     ToolContainer* m_tooltips;        //!< the single toolcontainer object
     int m_state;                    //!< represents the screen currently being displayed
     GG::Wnd* m_current_window;    //!< a pointer to the window (screen) currently being displays
-    bool m_frozen;    //!< true if the interface is frozen and false if it isn't
     
     StringTable* m_string_table;    //!< a string table to lookup international strings
     
