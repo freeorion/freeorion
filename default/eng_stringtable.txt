@@ -361,6 +361,9 @@ Menu
 MAP_BTN_SITREP
 SitRep
 
+MAP_BTN_RESEARCH
+Research
+
 #################
 # SidePanel     #
 #################
