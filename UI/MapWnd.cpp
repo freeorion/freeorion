@@ -197,48 +197,50 @@ MapWnd::MapWnd() :
 {
     SetText("MapWnd");
 
+    // toolbar
+    m_toolbar = new CUIToolBar(0,0,GG::App::GetApp()->AppWidth(),30);
+    AttachChild(m_toolbar);
+
     // system-view side panel
-    m_side_panel = new SidePanel(GG::App::GetApp()->AppWidth() - SIDE_PANEL_WIDTH, 0, SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight());
+    m_side_panel = new SidePanel(GG::App::GetApp()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight());
     AttachChild(m_side_panel);
     Connect(m_left_clicked_system_signal, &SidePanel::SetSystem, m_side_panel);
 
     m_sitrep_panel = new SitRepPanel( (GG::App::GetApp()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::App::GetApp()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);
 
-    // toolbar
-    m_toolbar = new CUIToolBar(0,0,GG::App::GetApp()->AppWidth(),30);
-    AttachChild(m_toolbar);
 
     // turn button
     m_turn_update = new CUIButton(5, 5, END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
 
-    m_food = new StatisticIconDualValue(m_turn_update->LowerRight().x+5,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0);
-    m_food->SetPositiveColor(GG::CLR_GREEN); m_food->SetNegativeColor(GG::CLR_RED);
-    m_toolbar->AttachChild(m_food);
 
-    m_mineral = new StatisticIconDualValue(m_food->LowerRight().x+5,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0);
-    m_mineral->SetPositiveColor(GG::CLR_GREEN); m_mineral->SetNegativeColor(GG::CLR_RED);
-    m_toolbar->AttachChild(m_mineral);
-
-    m_research= new StatisticIcon(m_mineral->LowerRight().x+5,5,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0);
-    m_toolbar->AttachChild(m_research);
+    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-5-40, 5, 40, "Menu" );
+    m_toolbar->AttachChild(m_btn_menu);
+    GG::Connect(m_btn_menu->ClickedSignal(), &MapWnd::MenuBtnClicked, this);
     
-    m_industry= new StatisticIcon(m_research->LowerRight().x+5,5,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/industry.png",GG::CLR_WHITE,0);
-    m_toolbar->AttachChild(m_industry);
-    
-    m_population= new StatisticIconDualValue(m_industry->LowerRight().x+5,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0);
-    m_population->SetPositiveColor(GG::CLR_GREEN); m_population->SetNegativeColor(GG::CLR_RED);
-    m_population->SetDecimalsShown(2);
-    m_toolbar->AttachChild(m_population);
-
-    m_btn_siterep = new CUIButton(m_population->LowerRight().x+5, 5, 50, "Siterep" );
+    m_btn_siterep = new CUIButton(m_btn_menu->UpperLeft().x-5-50, 5, 50, "Sitrep" );
     m_toolbar->AttachChild(m_btn_siterep);
     GG::Connect(m_btn_siterep->ClickedSignal(), &MapWnd::SiteRepBtnClicked, this);
     
-    m_btn_menu = new CUIButton(m_btn_siterep->LowerRight().x+5, 5, 40, "Menu" );
-    m_toolbar->AttachChild(m_btn_menu);
-    GG::Connect(m_btn_menu->ClickedSignal(), &MapWnd::MenuBtnClicked, this);
+    m_population= new StatisticIconDualValue(m_btn_siterep->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0);
+    m_population->SetPositiveColor(GG::CLR_GREEN); m_population->SetNegativeColor(GG::CLR_RED);
+    m_population->SetDecimalsShown(2);
+    m_toolbar->AttachChild(m_population);
+   
+    m_industry= new StatisticIcon(m_population->UpperLeft().x-5-50,5,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/industry.png",GG::CLR_WHITE,0);
+    m_toolbar->AttachChild(m_industry);
+
+    m_research= new StatisticIcon(m_industry->UpperLeft().x-5-50,5,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0);
+    m_toolbar->AttachChild(m_research);
+
+    m_mineral = new StatisticIconDualValue(m_research->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0);
+    m_mineral->SetPositiveColor(GG::CLR_GREEN); m_mineral->SetNegativeColor(GG::CLR_RED);
+    m_toolbar->AttachChild(m_mineral);
+
+    m_food = new StatisticIconDualValue(m_mineral->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0);
+    m_food->SetPositiveColor(GG::CLR_GREEN); m_food->SetNegativeColor(GG::CLR_RED);
+    m_toolbar->AttachChild(m_food);
 
     // chat display and chat input box
     const int CHAT_WIDTH = 400;
@@ -636,8 +638,6 @@ void MapWnd::InitTurn(int turn_number)
         }
     }
 
-    MoveChildUp(m_toolbar);
-
     MoveChildUp(m_side_panel);
     if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
         m_side_panel->Hide();
@@ -673,6 +673,8 @@ void MapWnd::InitTurn(int turn_number)
     GG::Connect(empire->ResearchResPool   ().ChangedSignal(),&MapWnd::ResearchResourcePoolChanged  ,this,0);ResearchResourcePoolChanged();
     GG::Connect(empire->PopulationResPool ().ChangedSignal(),&MapWnd::PopulationResourcePoolChanged,this,1);PopulationResourcePoolChanged();
     GG::Connect(empire->IndustryResPool   ().ChangedSignal(),&MapWnd::IndustryResourcePoolChanged  ,this,0);IndustryResourcePoolChanged();
+    
+    MoveChildUp(m_toolbar);
 }
 
 void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
