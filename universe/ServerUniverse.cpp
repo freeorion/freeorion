@@ -20,27 +20,32 @@ const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, Cli
 const int     ADJACENCY_BOXES = 25;
 const double  ADJACENCY_BOX_SIZE = ClientUniverse::UNIVERSE_WIDTH / ADJACENCY_BOXES;
 
-// only defined for 1 <= n <= 15
-std::string RomanNumber(int n)
+// "only" defined for 1 <= n <= 3999, as we can't
+// display the symbol for 5000
+std::string RomanNumber(unsigned int n)
 {
-    std::string retval;
-    switch (n) {
-    case  1: retval = "I"; break;
-    case  2: retval = "II"; break;
-    case  3: retval = "III"; break;
-    case  4: retval = "IV"; break;
-    case  5: retval = "V"; break;
-    case  6: retval = "VI"; break;
-    case  7: retval = "VII"; break;
-    case  8: retval = "VIII"; break;
-    case  9: retval = "IX"; break;
-    case 10: retval = "X"; break;
-    case 11: retval = "XI"; break;
-    case 12: retval = "XII"; break;
-    case 13: retval = "XIII"; break;
-    case 14: retval = "XIV"; break;
-    case 15: retval = "XV"; break;
-    default: retval = "ERROR"; break;
+    static const char N[] = "IVXLCDM??";
+    string retval;
+    int e = 3;
+    int mod = 1000;
+    for( ; e>=0 ; e--,mod/=10) {
+	unsigned int m = (n/mod)%10;
+	if (m%5 == 4) {
+	    retval += N[e<<1];
+	    ++m;
+	    if (m == 10) {
+		retval += N[(e<<1)+2];
+		continue;
+	    }
+	}
+	if (m >= 5) {
+	    retval += N[(e<<1)+1];
+	    m -= 5;
+	}
+	while (m) {
+	    retval += N[e<<1];
+	    m--;
+	}
     }
     return retval;
 }
