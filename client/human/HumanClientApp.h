@@ -63,6 +63,12 @@ public:
         the end of playback.*/
     void PlayMusic(const std::string& filename, int repeats, int ms = 0, double position = 0.0);
 
+	/** starts the playing of FreeOrion's music */
+	void StartMusic(void);
+	
+	/** stops playing all music */
+	void StopMusic(void);
+
     /** plays a sound file.  The sound will be played \a repeats + 1 times, so passing a 0 plays the sound once (1 repeat).
         To loop the sound indefinitely, pass -1 for \a repeats.  \a timeout indicates a timeout for the playback, in ms.
         So timeout == 1000 ensures that the sound plays for no more than 1000ms (1 sec); timeout == -1 means there is

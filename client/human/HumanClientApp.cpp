@@ -108,6 +108,8 @@ void HumanClientApp::SetLobby(MultiplayerLobbyWnd* lobby)
 
 void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/* = 0*/, double position/* = 0.0*/)
 {
+	if (repeats == -1) 
+		repeats = -2;
     if (m_current_music) {
         Mix_HaltMusic();
         Mix_FreeMusic(m_current_music);
@@ -126,6 +128,19 @@ void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/
         Logger().errorStream() << "HumanClientApp::PlayMusic : An error occured while attempting to load \"" << 
             filename << "\"; SDL_mixer error: " << Mix_GetError();
     }
+}
+
+void HumanClientApp::StartMusic(void)
+{
+	HumanClientApp::GetApp()->StopMusic();
+	HumanClientApp::GetApp()->PlayMusic(ClientUI::MUSIC_DIR+GetOptionsDB().Get<std::string>("bgmusic"), -1, 0, 0.0);
+}
+
+void HumanClientApp::StopMusic(void)
+{
+	Mix_HaltMusic();
+	Mix_FreeMusic(m_current_music);
+	m_current_music = 0;
 }
 
 void HumanClientApp::PlaySound(const std::string& filename, int repeats, int timeout/* = -1*/)
@@ -427,6 +442,9 @@ void HumanClientApp::Initialize()
 {
     m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
     m_ui->ScreenIntro();    //start the first screen; the UI takes over from there.
+	
+	if (!(GetOptionsDB().Get<bool>("musicoff")))
+		HumanClientApp::GetApp()->StartMusic();
 }
 
 void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
