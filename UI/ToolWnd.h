@@ -37,7 +37,9 @@ public:
     //! @param y the y coordinate of the tooltip.
     //! @param text the string that the tooltip will display
     //! @param clr the background color of the window.  Text is always black.
-    ToolWnd(int x, int y, char* text, GG::Clr clr); 
+   // ToolWnd(int x, int y, char* text, const GG::Clr& clr); 
+    
+    ToolWnd(int x, int y, const std::string& text, const GG::Clr& clr);
     
 //!@} 
 

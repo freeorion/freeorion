@@ -11,10 +11,11 @@ ToolWnd::ToolWnd()
 
 }
 
-ToolWnd::ToolWnd(int x, int y, char* text, GG::Clr clr):
+//ToolWnd::ToolWnd(int x, int y, char* text, GG::Clr clr):
+ToolWnd::ToolWnd(int x, int y, const std::string& text, const GG::Clr& clr):
     GG::Wnd(x,y,10,10,0)
 {
-    textwnd=new GG::StaticText(4,4,text,"arial.ttf",10);
+    textwnd=new GG::StaticText(4,4,text.c_str(),"arial.ttf",10);
     color=clr;
     //resize this window to match the size of the text field
     Resize(textwnd->GG::Wnd::Width()+6,textwnd->GG::Wnd::Height()+6);
