@@ -11,6 +11,9 @@ namespace {
     void AddOptions(OptionsDB& db)
     {
         db.Add<std::string>("settings-dir", "Sets the root directory for the settings and data files.", "default/");
+        db.Add<std::string>("log-level", "Sets the level at or above which log messages will be output "
+                            "(levels in order of increasing verbosity: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, "
+                            "ALERT, FATAL, EMERG", "WARN");
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

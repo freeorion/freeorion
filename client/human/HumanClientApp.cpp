@@ -108,6 +108,8 @@ HumanClientApp::HumanClientApp() :
     AddWndGenerator("CUIEdit", &NewCUIEdit);
     AddWndGenerator("CUIMultiEdit", &NewCUIMultiEdit);
 
+    Logger().setPriority(log4cpp::Priority::getPriorityValue(GetOptionsDB().Get<std::string>("log-level")));
+
     SetMaxFPS(60.0);
 }
 
@@ -937,13 +939,10 @@ void HumanClientApp::StartTurn( )
 
 boost::shared_ptr<GG::Texture> HumanClientApp::GetTextureOrDefault(const std::string& name, bool mipmap)
 {
-  try
-  {
-    return SDLGGApp::GetTexture(name,mipmap);
-  }
-  catch(...)
-  {
-    return SDLGGApp::GetTexture(ClientUI::ART_DIR+"misc/missing.png",mipmap);
-  }
+    try {
+        return SDLGGApp::GetTexture(name,mipmap);
+    } catch(...) {
+        return SDLGGApp::GetTexture(ClientUI::ART_DIR + "misc/missing.png", mipmap);
+    }
 }
 

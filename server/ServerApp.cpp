@@ -207,7 +207,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_log_category.setAdditivity(false);  // make appender the only appender used...
     m_log_category.setAppender(appender);
     m_log_category.setAdditivity(true);   // ...but allow the addition of others later
-    m_log_category.setPriority(log4cpp::Priority::DEBUG);
+    m_log_category.setPriority(log4cpp::Priority::getPriorityValue(GetOptionsDB().Get<std::string>("log-level")));
     m_log_category.debug("freeoriond logger initialized.");
     m_log_category.errorStream() << "ServerApp::ServerApp : Server now in mode " << SERVER_IDLE << " (SERVER_IDLE).";
 }

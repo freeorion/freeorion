@@ -1,5 +1,6 @@
 #include "AIClientApp.h"
 
+#include "../../util/OptionsDB.h"
 #include "fastevents.h"
 #include "net2.h"
 #include "../../network/Message.h"
@@ -45,7 +46,7 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     m_log_category.setAdditivity(false);  // make appender the only appender used...
     m_log_category.setAppender(appender);
     m_log_category.setAdditivity(true);   // ...but allow the addition of others later
-    m_log_category.setPriority(log4cpp::Priority::DEBUG);
+    m_log_category.setPriority(log4cpp::Priority::getPriorityValue(GetOptionsDB().Get<std::string>("log-level")));
     m_log_category.debug(m_player_name + " logger initialized.");
 }
 
