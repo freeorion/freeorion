@@ -127,7 +127,7 @@ public:
      * @param   eid      The text node id
      * @return   the position vector.
      */
-   std::vector<unsigned int>& getCDATA(int eid);
+   std::vector<size_t>& getCDATA(int eid);
 
    int getChildrenCount(int eid);
 
