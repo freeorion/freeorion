@@ -1,10 +1,11 @@
 #include "ServerUniverse.h"
-#include "UniverseObject.h"
+
 #include "Fleet.h"
 #include "Planet.h"
-#include "XMLDoc.h"
-#include "../server/ServerApp.h"
 #include "Predicates.h"
+#include "../util/Random.h"
+#include "../server/ServerApp.h"
+#include "XMLDoc.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -12,21 +13,12 @@
 #include <log4cpp/FileAppender.hh>
 #include <boost/lexical_cast.hpp>
 
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-
 
 namespace {
-// These specify the minimum distance of the homeworlds from each other in terms
-// of systems separating them. i.e. for a very small galaxy no homeworld should be 
-// within the 3 nearest systems to any other homeworld
-const int HOMEWORLD_PROXIMITY_LIMIT_V_SMALL_UNI  =   3;
-const int HOMEWORLD_PROXIMITY_LIMIT_SMALL_UNI    =   4;
-const int HOMEWORLD_PROXIMITY_LIMIT_MEDIUM_UNI   =   5;
-const int HOMEWORLD_PROXIMITY_LIMIT_LARGE_UNI    =   5;
-const int HOMEWORLD_PROXIMITY_LIMIT_V_LARGE_UNI  =   5;
-const int HOMEWORLD_PROXIMITY_LIMIT_ENORMOUS_UNI =   6;
+const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, ClientUniverse::UNIVERSE_WIDTH]
+const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, ClientUniverse::UNIVERSE_WIDTH]
+const int     ADJACENCY_BOXES = 25;
+const double  ADJACENCY_BOX_SIZE = ClientUniverse::UNIVERSE_WIDTH / ADJACENCY_BOXES;
 
 // only defined for 1 <= n <= 15
 std::string RomanNumber(int n)
@@ -72,155 +64,108 @@ ServerUniverse::ServerUniverse() :
 
 void ServerUniverse::CreateUniverse(Shape shape, int size, int players, int ai_players)
 {
-   ServerApp* server_app = ServerApp::GetApp();
-   server_app->Logger().debugStream() << "Creating universe with " << size << " stars and " << players << " players.";
+    // wipe out anything present in the object map
+    for (ObjectMap::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr)
+        delete itr->second;
+    m_objects.clear();
 
-   std::vector<int> homeworlds;
+    m_last_allocated_id = -1;
 
-   // wipe out anything present in the object map
-   for (ObjectMap::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr)
-      delete itr->second;
-   m_objects.clear();
+    ServerApp::GetApp()->Logger().debugStream() << "Creating universe with " << size << " stars and " << players << " players.";
 
-   m_last_allocated_id = -1;
+    std::vector<int> homeworlds;
 
-   // generate the stars
-   switch (shape) {
+    // a grid of ADJACENCY_BOXES x ADJACENCY_BOXES boxes to hold the positions of the systems as they are generated, 
+    // in order to ensure that they get spaced out properly
+    AdjacencyGrid adjacency_grid(ADJACENCY_BOXES, std::vector<std::set<std::pair<double, double> > >(ADJACENCY_BOXES));
+
+    // generate the stars
+    switch (shape) {
 #if 0
-   case SPIRAL_2:
-      GenerateSpiralGalaxy(2, size);
-      break;
-   case SPIRAL_3:
-      GenerateSpiralGalaxy(3, size);
-      break;
-   case SPIRAL_4:
-      GenerateSpiralGalaxy(4, size);
-      break;
-   case ELLIPTICAL:
-      GenerateElipticalGalaxy(size);
-      break;
+    case SPIRAL_2:
+        GenerateSpiralGalaxy(2, size, adjacency_grid);
+        break;
+    case SPIRAL_3:
+        GenerateSpiralGalaxy(3, size, adjacency_grid);
+        break;
+    case SPIRAL_4:
+        GenerateSpiralGalaxy(4, size, adjacency_grid);
+        break;
+    case ELLIPTICAL:
+        GenerateEllipticalGalaxy(size, adjacency_grid);
+        break;
 #endif
-   case IRREGULAR:
-      GenerateIrregularGalaxy(size);
-      break;
-   default:
-      server_app->Logger().errorStream() << "ServerUniverse::ServerUniverse : Unknown galaxy shape: "<< shape << ".  Using IRREGULAR as default.";
-      GenerateIrregularGalaxy(size);
-   }
+    case IRREGULAR:
+        GenerateIrregularGalaxy(size, adjacency_grid);
+        break;
+    default:
+        ServerApp::GetApp()->Logger().errorStream() << "ServerUniverse::ServerUniverse : Unknown galaxy shape: "<< shape << ".  Using IRREGULAR as default.";
+        GenerateIrregularGalaxy(size, adjacency_grid);
+    }
 
-#if 1
-   GenerateHomeworlds(players, size, homeworlds);
-#endif
-#if 1
-   PopulateSystems();
-#endif
-#if 1
-   GenerateEmpires(players, ai_players, homeworlds);
-#endif
+    PopulateSystems();
+    GenerateHomeworlds(players + ai_players, size, homeworlds, adjacency_grid);
+    GenerateEmpires(players, ai_players, homeworlds);
 }
 
 void ServerUniverse::CreateUniverse(const std::string& map_file, int size, int players, int ai_players)
 {
-   // intialize the ID counter
-   m_last_allocated_id = -1;   
+    // intialize the ID counter
+    m_last_allocated_id = -1;   
 
-   // TODO
+    // TODO
 }
 
 ServerUniverse::ServerUniverse(const GG::XMLElement& elem) : 
-   ClientUniverse(elem)
+    ClientUniverse(elem),
+    m_last_allocated_id(-1)
 {
 }
 
 ServerUniverse::~ServerUniverse()
 {
-   // TODO
+    // TODO
 }
 
 int ServerUniverse::Insert(UniverseObject* obj)
 {
-   if (obj == NULL)
-   {
-      ServerApp* server_app = ServerApp::GetApp();
-      server_app->Logger().errorStream() << "ServerUniverse::Insert : Attempt to add object to object map failed because the object pointer is NULL.";
-            
-      return UniverseObject::INVALID_OBJECT_ID;
+   int retval = UniverseObject::INVALID_OBJECT_ID;
+#if 0 // this is turned off for now, since the functionality is not yet needed
+   if (dynamic_cast<Fleet*>(obj)) {
+       const std::set<int> owners = obj->Owners(); // for a fleet there will only be 1 owner
+       Empire* empire = ServerApp::GetApp()->Empires().Lookup(*owners.begin());
+       int empire_fleet_id_min = empire->FleetIDMin();
+       int empire_fleet_id_max = empire->FleetIDMax();
+       for (int i = empire_fleet_id_min; i < empire_fleet_id_max; ++i) {
+           if (m_objects.find(i) == m_objects.end()) {
+               m_objects[i] = obj;
+               obj->SetID(i);
+               retval = i;
+               break;
+           }
+       }
+   } else 
+#endif
+   if (obj) {
+       if (m_last_allocated_id + 1 < UniverseObject::MIN_SHIP_ID) {
+           m_objects[++m_last_allocated_id] = obj;
+           obj->SetID(m_last_allocated_id);
+           retval = m_last_allocated_id;
+       } else { // we'll probably never execute this branch, considering how many IDs are available
+           // find a hole in the assigned IDs in which to place the object
+           int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
+           for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+               if (1 < it->first - last_id_seen) {
+                   m_objects[last_id_seen + 1] = obj;
+                   obj->SetID(last_id_seen + 1);
+                   retval = last_id_seen + 1;
+                   break;
+               }
+           }
+       }
    }
 
-   int object_id;
-
-   //Need to determine if object is a fleet before allocating ID
-   if (dynamic_cast<Fleet*>(obj))
-   {
-      // Fleet ID may have already been allocated by
-      // the client in the case of a fleet split order.
-      // In this case the previously allocated ID is used.
-      if (obj->ID() != UniverseObject::INVALID_OBJECT_ID)
-      {
-         if (m_objects.find(obj->ID()) != m_objects.end())
-         {
-            // This ID is already in use!  The object will not be added.
-            ServerApp* server_app = ServerApp::GetApp();
-            server_app->Logger().errorStream() << "ServerUniverse::Insert : Attempt to add fleet to object map failed because ID (" << obj->ID() << ") previously assigned to the fleet is already in use.";
-            
-            return UniverseObject::INVALID_OBJECT_ID;           
-         }   
-         m_objects[obj->ID()] = obj;
-         return obj->ID();                  
-      }
-      else
-      {
-         ServerApp* server_app = ServerApp::GetApp();
-         const std::set<int> obj_owners = obj->Owners();  // for a fleet there will only be 1 owner
-      
-         Empire* empire = (server_app->Empires()).Lookup(*(obj_owners.begin()));
-         int empire_fleet_id_min = empire->FleetIDMin();
-         int empire_fleet_id_max = empire->FleetIDMax();
-         for (object_id = empire_fleet_id_min; object_id <= empire_fleet_id_max; object_id++)
-         {
-            if (m_objects.find(object_id) == m_objects.end())
-            {
-               // ID is unused, store object here
-               m_objects[object_id] = obj;
-               obj->SetID(object_id);
-               return object_id;
-            }
-         }
-         
-         // No available ID's!
-         server_app->Logger().errorStream() << "ServerUniverse::Insert : Attempt to add fleet to object map failed because ID pool is exhausted.";
-         
-         return UniverseObject::INVALID_OBJECT_ID;         
-      }
-   }
-   
-   // Object is not a fleet.  Search the general pool starting after the last 
-   // allocated ID.
-   object_id = m_last_allocated_id + 1;
-   for (; object_id != m_last_allocated_id; object_id++)
-   {
-      if (m_objects.find(object_id) == m_objects.end())
-      {
-         // ID is unused, store object here
-         m_objects[object_id] = obj;
-         m_last_allocated_id = object_id;
-         // ID must be stored into the object as well
-         obj->SetID(object_id);
-         return object_id;
-      }
-      
-      // need to roll the counter over if it hits the ID ceiling
-      if (object_id + 1 == UniverseObject::MIN_SHIP_ID)
-      {
-         object_id = 0;
-      }
-   }
-
-   // No available ID's!
-   ServerApp* server_app = ServerApp::GetApp();
-   server_app->Logger().errorStream() << "ServerUniverse::Insert : Attempt to add object to object map failed because ID pool is exhausted.";
-   
-   return UniverseObject::INVALID_OBJECT_ID;         
+   return retval;
 }
 
 
@@ -261,411 +206,240 @@ void ServerUniverse::PopGrowthProductionResearch(std::vector<SitRepEntry>& sit_r
 }
 
 
-void ServerUniverse::GenerateSpiralGalaxy(int arms, int stars)
+void ServerUniverse::GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid)
 {
    // TODO
 }
 
-void ServerUniverse::GenerateElipticalGalaxy(int stars)
+void ServerUniverse::GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 {
    // TODO
 }
 
-void ServerUniverse::GenerateIrregularGalaxy(int stars)
+void ServerUniverse::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
 {
     std::list<std::string> star_names;
     LoadPlanetNames(star_names);
 
+    SmallIntDistType star_type_gen = SmallIntDist(0, System::NUM_STARTYPES - 1);
+
     // generate star field
     for (int star_cnt = 0; star_cnt < stars; ++star_cnt) {
         // generate new star
-        int star_name_idx = rand() % star_names.size();
+        int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
         std::list<std::string>::iterator it = star_names.begin();
         std::advance(it, star_name_idx);
         std::string star_name(*it);
         star_names.erase(it);
-        System::StarType star_type = (System::StarType) (System::NUM_STARTYPES * ((double)rand()/(double)RAND_MAX));
+        System::StarType star_type = System::StarType(star_type_gen());
         int num_orbits = 5;
-        float orbits_rand = (float) ((double)rand()/(double)RAND_MAX);
-        if (orbits_rand < 0.05) 
-        {
+        double orbits_rand = RandZeroToOne();
+        if (orbits_rand < 0.05) {
             num_orbits = 0;
-        } 
-        else if (orbits_rand < 0.25) 
-        {
+        } else if (orbits_rand < 0.25) {
             num_orbits = 1;
-        } 
-        else if (orbits_rand < 0.55) 
-        {
+        } else if (orbits_rand < 0.55) {
             num_orbits = 2;
-        }
-        else if (orbits_rand < 0.85) 
-        {
+        } else if (orbits_rand < 0.85) {
             num_orbits = 3;
-        }
-        else if (orbits_rand < 0.95) 
-        {
+        } else if (orbits_rand < 0.95) {
             num_orbits = 4;
         }
         // above 0.95 stays at the default 5
 
-        bool valid_position = false;
-        System* sys_temp = 0;
-
-        while (!valid_position) {
-            int x_coord = (int) (UNIVERSE_WIDTH * ((double)rand()/(double)RAND_MAX));
-            int y_coord = (int) (UNIVERSE_WIDTH * ((double)rand()/(double)RAND_MAX));
-         
-            sys_temp = new System(star_type, num_orbits, star_name, x_coord, y_coord);       
-
-#if 0
-            int nearest_id = NearestSystem(*sys_temp);
-            if (nearest_id == UniverseObject::INVALID_OBJECT_ID) {
-                // occurs when no other systems have been created yet
-
-                valid_position = true;
-            } else {
-                System* sys_nearest = dynamic_cast<System*>(Object(nearest_id));
-                if (sys_nearest == NULL) {
-                    ServerApp* server_app = ServerApp::GetApp();
-                    server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Attempt to retrieve System object with ID " << Object(nearest_id) << " resulted in a null pointer.  Skipping distance check.";
-                    valid_position = true;
-                } else {
-                    float sys_dist = sqrt(pow((sys_temp->X()-sys_nearest->X()),2) + pow(sys_temp->Y()-sys_nearest->Y(),2));
-                    if (sys_dist > MIN_STAR_DISTANCE) {
-                        // TODO: min star dist should probably be relative to galaxy size..
-
-                        valid_position = true;
-                    } else {
-                        // position is no good, delete the object and try again
-                        delete sys_temp;
-                    }
+        bool placed = false;
+        int attempts = 0;
+        System* system = new System(star_type, num_orbits, star_name, UNIVERSE_WIDTH * RandZeroToOne(), UNIVERSE_WIDTH * RandZeroToOne());
+        int new_sys_id = Insert(system);
+        if (new_sys_id == UniverseObject::INVALID_OBJECT_ID) {
+            throw std::runtime_error("ServerUniverse::GenerateIrregularGalaxy : Attemp to insert system " + 
+                                     star_name + " into the object map failed.");
+        }
+        while (!placed && attempts < 10) {
+            // look in the box into which this system falls, and those boxes immediately around that box; 
+            // make sure this system doesn't get slapped down too close to or on top of any systems
+            std::pair<unsigned int, unsigned int> grid_box(static_cast<unsigned int>(system->X() / ADJACENCY_BOX_SIZE), 
+                                                           static_cast<unsigned int>(system->Y() / ADJACENCY_BOX_SIZE));
+            std::set<std::pair<double, double> > neighbors(adjacency_grid[grid_box.first][grid_box.second]);
+            if (0 < grid_box.first) {
+                if (0 < grid_box.second) {
+                    std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second - 1];
+                    neighbors.insert(grid_square.begin(), grid_square.end());
+                }
+                std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+                if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
+                    std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second + 1];
+                    neighbors.insert(grid_square.begin(), grid_square.end());
                 }
             }
-#else
-            valid_position = true;
-#endif
-        }
+            if (0 < grid_box.second) {
+                std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first][grid_box.second - 1];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+            }
+            if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
+                std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first][grid_box.second + 1];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+            }
+            if (grid_box.first < adjacency_grid.size() - 1) {
+                if (0 < grid_box.second) {
+                    std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second - 1];
+                    neighbors.insert(grid_square.begin(), grid_square.end());
+                }
+                std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+                if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
+                    std::set<std::pair<double, double> >& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second + 1];
+                    neighbors.insert(grid_square.begin(), grid_square.end());
+                }
+            }
 
-        // star is ready to go in the object map
-        int new_sys_id = Insert(sys_temp);
+            std::pair<double, double> neighbor_centroid;
+            bool too_close = false;
+            double system_x = system->X();
+            double system_y = system->Y();
+            for (std::set<std::pair<double, double> >::iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
+                double x_dist = system_x - it->first;
+                double y_dist = system_y - it->second;
+                if (x_dist * x_dist + y_dist * y_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION)
+                    too_close = true;
+                neighbor_centroid.first += it->first;
+                neighbor_centroid.second += it->second;
+            }
 
-        if (new_sys_id == UniverseObject::INVALID_OBJECT_ID) {
-            ServerApp* server_app = ServerApp::GetApp();
-            server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Attemp to insert system " << star_name << " into the object map failed.";
-            server_app->Exit(1);  // TODO: should probably handle this error better... but will be difficult...
+            if (too_close) {
+                neighbor_centroid.first /= neighbors.size();
+                neighbor_centroid.second /= neighbors.size();
+                double move_x = system_x - neighbor_centroid.first;
+                double move_y = system_y - neighbor_centroid.second;
+                move_x = std::max(0.0, std::min(move_x + system_x, UNIVERSE_WIDTH));
+                move_y = std::max(0.0, std::min(move_y + system_y, UNIVERSE_WIDTH));
+                system->MoveTo(move_x, move_y);
+            } else {
+                placed = true;
+            }
+
+            if (placed || ++attempts == 20) {
+                adjacency_grid[static_cast<int>(system->X() / ADJACENCY_BOX_SIZE)]
+                    [static_cast<int>(system->Y() / ADJACENCY_BOX_SIZE)].insert(std::make_pair(system->X(), system->Y()));
+            }
         }
     }
-    // stars have all been created
 }
 
 
 
-void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>& homeworlds)
+void ServerUniverse::GenerateHomeworlds(int players, int stars, std::vector<int>& homeworlds, AdjacencyGrid& adjacency_grid)
 {
-   int safety = 0;
+    homeworlds.clear();
 
-   // find the min range between homeworlds
-   int prox_limit = 0;
-   
-   if (stars <= 50)
-       prox_limit = HOMEWORLD_PROXIMITY_LIMIT_V_SMALL_UNI;
-   else if (stars <= 100)
-       prox_limit = HOMEWORLD_PROXIMITY_LIMIT_SMALL_UNI;
-   else if (stars <= 150)
-      prox_limit = HOMEWORLD_PROXIMITY_LIMIT_MEDIUM_UNI;
-   else if (stars <= 200)
-      prox_limit = HOMEWORLD_PROXIMITY_LIMIT_LARGE_UNI;
-   else if (stars <= 250)
-      prox_limit = HOMEWORLD_PROXIMITY_LIMIT_V_LARGE_UNI;
-   else
-      prox_limit = HOMEWORLD_PROXIMITY_LIMIT_ENORMOUS_UNI;
+    ObjectVec sys_vec = FindObjects(IsSystem);
 
-   // select homeworld systems, add planets appropriately
-   homeworlds.clear();
+    if (sys_vec.empty())
+        throw std::runtime_error("Attempted to generate homeworlds in an empty galaxy.");
 
-   // get a vector of all the systems
-   ObjectVec sys_obj_vec = FindObjects(IsSystem);
+    for (int i = 0; i < players; ++i) {
+        int system_index = RandSmallInt(0, static_cast<int>(sys_vec.size()) - 1);
 
-   assert(!sys_obj_vec.empty());
-      
-   while (static_cast<int>(homeworlds.size()) < players)
-   {
-      // select a system at random
-      int system_index = (int) (sys_obj_vec.size() * ((double)rand()/(double)RAND_MAX));
+        System* system = dynamic_cast<System*>(sys_vec[system_index]);
 
-      System* system_temp = dynamic_cast<System*>(sys_obj_vec[system_index]);
-
-      // make sure it has planets
-      if (system_temp->Orbits() == 0)
-      {
-         continue;
-      }
-      
-      // make sure it is not already in the homeworlds list 
-      // (only homeworlds will have planets at this point)
-      if (system_temp->begin() != system_temp->end())
-      {
-         continue;
-      }         
-
-#if 0
-      // next, need to verify that no systems within the proximity limit
-      // have been selected already as homewords
-
-      // check nearest system
-      int nearest_id = NearestSystem(*system_temp);
-      System* sys_nearest = dynamic_cast<System*>(Object(nearest_id));
-      
-      if (sys_nearest->begin() != sys_nearest->end())
-      {
-         continue;
-      }
-        
-      int prox_cnt = 1;
-      for (; prox_cnt < prox_limit; prox_cnt++)
-      {
-         nearest_id = NearestSystem(*system_temp, *sys_nearest);
-         sys_nearest = dynamic_cast<System*>(Object(nearest_id));
-            
-         if (sys_nearest->begin() != sys_nearest->end())
-         {
-            break;
-         }
-      }
-      
-      // check how loop was exited
-      if (prox_cnt != prox_limit)
-      {
-         // homeworld detected
-         continue;
-      }
-#endif
-      // all checks have passed, this system will host a homeworld.
-        
-      // select an orbit at random.  Note: ultimately this orbit number may not be
-      // the one that the system object places this planet at. It is still good to
-      // randomize the order in which the homeworlds are added to the system's map.
-      int home_orbit = (int) (system_temp->Orbits() * ((double)rand()/(double)RAND_MAX));
-
-      for (int orbit = 0; orbit < system_temp->Orbits(); orbit++)
-      {
-         Planet::PlanetSize plt_size;       
-
-         // Type is selected at random. Type only affects the planet's image in v0.1
-         Planet::PlanetType plt_type = (Planet::PlanetType) (Planet::MAX_PLANET_TYPE * ((double)rand()/(double)RAND_MAX));
-
-         if (orbit == home_orbit)
-         {
-            // create a sufficiently sized planet for a homeworld
-            plt_size = Planet::SZ_LARGE;
-            
-         }
-         else
-         {
-            float size_rnd = (float) (100 * (double)rand()/(double)RAND_MAX);
-            if (size_rnd < 10)
-            {
-               plt_size = Planet::SZ_TINY;
+        // make sure it has planets and it's not too close to the other homeworlds
+        bool too_close = true;
+        int attempts = 0;
+        while ((!system->Orbits() || too_close) && ++attempts < 50) {
+            too_close = false;
+            system = dynamic_cast<System*>(sys_vec[system_index]);
+            for (unsigned int j = 0; j < homeworlds.size(); ++j) {
+                UniverseObject* existing_system = Object(Object(homeworlds[j])->SystemID());
+                double x_dist = existing_system->X() - system->X();
+                double y_dist = existing_system->Y() - system->Y();
+                if (x_dist * x_dist + y_dist * y_dist < MIN_HOME_SYSTEM_SEPARATION * MIN_HOME_SYSTEM_SEPARATION) {
+                    too_close = true;
+                    break;
+                }
             }
-            else if (size_rnd < 35)
-            {
-               plt_size = Planet::SZ_SMALL;
-            }
-            else if (size_rnd < 65)
-            {
-               plt_size = Planet::SZ_MEDIUM;
-            }
-            else if (size_rnd < 90)
-            {
-               plt_size = Planet::SZ_LARGE;
-            }
-            else
-            {
-               plt_size = Planet::SZ_HUGE;
-            }
+        }
 
-         }
+        sys_vec.erase(sys_vec.begin() + system_index);
 
-         Planet* planet = new Planet(plt_type, plt_size);
-
-         // Add planet to universe map
-         int planet_id = Insert(planet);
-         if (planet_id == UniverseObject::INVALID_OBJECT_ID)
-         {
-            ServerApp* server_app = ServerApp::GetApp();
-            server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Attemp to insert planet into the object map failed.";
-            server_app->Exit(1);  // TODO: should probably handle this error better... but will be difficult...
-         }
-
-         // Add planet to system map
-         system_temp->Insert(planet, orbit);
-
-         // name the planet
-         planet->Rename(system_temp->Name() + " " + RomanNumber(orbit + 1));
-
-         if (orbit == home_orbit)
-         {
-            // add to the homeworlds list
-            homeworlds.push_back(planet_id);
-
-         }
-      }  // end adding planets
-
-
-      // It is possible, given the configuration (number of stars, number of players)
-      // and particular geography generated, that it will be impossible to find suitable
-      // home systems for all players. This would result in an infinite loop since the
-      // system list is being searched and tested at random. The following is a half-assed
-      // effort to bail out when this occurs.
-
-      safety++;
-      
-      if (safety >= (stars*players*1.5))
-      {
-         // may not be possible to satisfy homeworld conditions
-         // fail the setup..
-             ServerApp* server_app = ServerApp::GetApp();
-             server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Could not find enough eligible homeworld planets.";
-             server_app->Exit(1);  // TODO: should probably handle this error better... but will be difficult...        
-      }       
-        
-   }  // end adding homeworld systems
-
+        // find a place to put the homeworld, and replace whatever planet is there already
+        int home_orbit = RandSmallInt(0, system->Orbits() - 1);
+        System::ObjectIDVec planet_IDs = system->FindObjectIDs(IsPlanet);
+        Delete(planet_IDs[home_orbit]);
+        Planet* planet = new Planet(Planet::TERRAN, Planet::SZ_MEDIUM);
+        int planet_id = Insert(planet);
+        system->Insert(planet, home_orbit);
+        homeworlds.push_back(planet_id);
+    }
 }
 
 
 void ServerUniverse::PopulateSystems()
 {
-   // populate non-homeworld systems
+    ObjectVec sys_vec = FindObjects(IsSystem);
 
-   // get a vector of all the systems
-   ObjectVec sys_obj_vec = FindObjects(IsSystem);
+    if (sys_vec.empty())
+        throw std::runtime_error("Attempted to populate an empty galaxy.");
 
-   assert(!sys_obj_vec.empty());
+    SmallIntDistType planet_type_gen = SmallIntDist(0, Planet::MAX_PLANET_TYPE - 1);
 
-   for (ObjectVec::iterator sys_itr = sys_obj_vec.begin(); sys_itr != sys_obj_vec.end(); sys_itr++)
-   {
-      System* system = dynamic_cast<System*>(*sys_itr);
-   
-      // check whether this system has already been populated
-      if (system->begin() != system->end())
-      {
-         continue;
-      }
+    for (ObjectVec::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+        System* system = dynamic_cast<System*>(*it);
 
-      if (system->Orbits() == 0)
-      {
-         // no planets...
-         continue;
-      }
-      
-      for (int planet_cnt = 0; planet_cnt < system->Orbits(); planet_cnt++)
-      {
-         Planet::PlanetSize plt_size;       
+        for (int orbit = 0; orbit < system->Orbits(); orbit++) {
+            Planet::PlanetSize plt_size;       
 
-         // Type is selected at random. Type only affects the planet's image in v0.1
-         Planet::PlanetType plt_type = (Planet::PlanetType) (Planet::MAX_PLANET_TYPE * ((double)rand()/(double)RAND_MAX));
-         float size_rnd = (float) (100 * (double)rand()/(double)RAND_MAX);
-         if (size_rnd < 10)
-         {
-            plt_size = Planet::SZ_TINY;
-         }
-         else if (size_rnd < 35)
-         {
-            plt_size = Planet::SZ_SMALL;
-         }
-         else if (size_rnd < 65)
-         {
-            plt_size = Planet::SZ_MEDIUM;
-         }
-         else if (size_rnd < 90)
-         {
-            plt_size = Planet::SZ_LARGE;
-         }
-         else
-         {
-            plt_size = Planet::SZ_HUGE;
-         }
-         
-         Planet* planet = new Planet(plt_type, plt_size);
-         
-         // Add planet to universe map
-         int planet_id = Insert(planet);
-         if (planet_id == UniverseObject::INVALID_OBJECT_ID)
-         {
-            ServerApp* server_app = ServerApp::GetApp();
-            server_app->Logger().errorStream() << "ServerUniverse::GenerateIrregularGalaxy : Attemp to insert planet into the object map failed.";
-            server_app->Exit(1);  // TODO: should probably handle this error better... but will be difficult...
-         }
+            // Type is selected at random. Type only affects the planet's image in v0.1
+            Planet::PlanetType plt_type = Planet::PlanetType(planet_type_gen());
+            double size_rnd = RandZeroToOne();
+            if (size_rnd < 0.10)
+                plt_size = Planet::SZ_TINY;
+            else if (size_rnd < 0.35)
+                plt_size = Planet::SZ_SMALL;
+            else if (size_rnd < 0.65)
+                plt_size = Planet::SZ_MEDIUM;
+            else if (size_rnd < 0.90)
+                plt_size = Planet::SZ_LARGE;
+            else
+                plt_size = Planet::SZ_HUGE;
 
-         // Add planet to system map
-         system->Insert(planet, planet_cnt);
+            Planet* planet = new Planet(plt_type, plt_size);
 
-         // name the planet
-         planet->Rename(system->Name() + " " + RomanNumber(planet_cnt + 1));
-
-      }  // end adding planets
-   }
-
+            Insert(planet); // add planet to universe map
+            system->Insert(planet, orbit);  // add planet to system map
+            planet->Rename(system->Name() + " " + RomanNumber(orbit + 1));
+        }
+    }
 }
 
 void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<int>& homeworlds)
 {
-   // create empires and assign homeworlds, names, colors, and fleet ranges to them
-   // for each empire
-   
-   int fleet_id_rng_size = (int)((UniverseObject::MAX_SHIP_ID - UniverseObject::MIN_SHIP_ID) / players);
-   
-   ServerApp* server_app = ServerApp::GetApp();
-   ServerEmpireManager* empire_mgr = &(server_app->Empires());
+   // create empires and assign homeworlds, names, colors, and fleet ranges to
+   // for each one
 
-   for (int empire_cnt = 0; empire_cnt < players; empire_cnt++)
-   {
+   const int FLEET_ID_RNG = (UniverseObject::MAX_SHIP_ID - UniverseObject::MIN_SHIP_ID) / players;
+
+   for (int i = 0; i < players + ai_players; ++i) {
       // TODO: select name at random from default list
-      std::string empire_name("Empire");
-      char empire_num[3];
-      sprintf(empire_num, "%i", empire_cnt);
-      empire_name.append(empire_num);
-
+      std::string name = "Empire" + boost::lexical_cast<std::string>(i);
 
       // TODO: select color at random from default list
-      GG::Clr* empire_color = new GG::Clr(((double)rand()/(double)RAND_MAX), ((double)rand()/(double)RAND_MAX), ((double)rand()/(double)RAND_MAX), (double) 0);
+      GG::Clr color(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
   
-      // select fleet ID range, based on loop itr
-      int empire_min_flt_id = UniverseObject::MIN_SHIP_ID + (fleet_id_rng_size * empire_cnt);
-      int empire_max_flt_id = UniverseObject::MIN_SHIP_ID + (fleet_id_rng_size * (empire_cnt+1)) - 1;
-
-      // select homeworld, based on loop itr
-      int home_planet_id = homeworlds[empire_cnt];
-
-      // determine control status
-      Empire::ControlStatus control;
-
-      if (empire_cnt < ai_players)
-      {
-         control = Empire::CONTROL_AI;
-      }
-      else
-      {
-         control = Empire::CONTROL_HUMAN;
-      }
+      int min_fleet_id = UniverseObject::MIN_SHIP_ID + (FLEET_ID_RNG * i);
+      int max_fleet_id = UniverseObject::MIN_SHIP_ID + (FLEET_ID_RNG * (i + 1)) - 1;
+      int home_planet_id = homeworlds[i];
 
       // create new Empire object through empire manager
-      Empire* new_empire = empire_mgr->CreateEmpire(empire_name, *empire_color, home_planet_id, control);
-
-      // store the the empire's valid fleet ID range
-      new_empire->SetFleetIDs(empire_min_flt_id, empire_max_flt_id);
+      Empire* empire = ServerApp::GetApp()->Empires().CreateEmpire(name, color, home_planet_id, i < players ? Empire::CONTROL_HUMAN : Empire::CONTROL_AI);
+      empire->SetFleetIDs(min_fleet_id, max_fleet_id);
 
       // set ownership of home planet
-      int empire_id = new_empire->EmpireID();
-
-      Planet* home_planet = dynamic_cast<Planet*>(Object(homeworlds[empire_cnt]));
+      int empire_id = empire->EmpireID();
+      Planet* home_planet = dynamic_cast<Planet*>(Object(homeworlds[i]));
+      ServerApp::GetApp()->Logger().debugStream() << "Setting " << Object(home_planet->SystemID())->Name() << " (Planet #" <<  home_planet->ID() << 
+          ") to be home system for Empire " << empire_id;
       home_planet->AddOwner(empire_id);
-
-      ServerApp* server_app = ServerApp::GetApp();
-      server_app->Logger().debugStream() << "Setting Planet " <<  home_planet->ID() << " to be home planet for Empire " << empire_id;
-
       // TODO: adding an owner to a planet should probably add that owner to the 
       //       system automatically...
       System* home_system = dynamic_cast<System*>(Object(home_planet->SystemID()));
@@ -677,67 +451,47 @@ void ServerUniverse::GenerateEmpires(int players, int ai_players, std::vector<in
       home_planet->AdjustIndustry(0.10);
       home_planet->AdjustDefBases(3);
 
-#if 1
       // create the empire's initial ship designs
-      ShipDesign* scout_design = new ShipDesign();
-      scout_design->name = "Scout";
-      scout_design->attack = 0;
-      scout_design->defense = 0;
-      scout_design->cost = 50;
-      scout_design->colonize = false;
-      scout_design->empire = empire_id;
+      ShipDesign scout_design;
+      scout_design.name = "Scout";
+      scout_design.attack = 0;
+      scout_design.defense = 0;
+      scout_design.cost = 50;
+      scout_design.colonize = false;
+      scout_design.empire = empire_id;
+      int scout_id = empire->AddShipDesign(scout_design);
 
-      int scout_id = new_empire->AddShipDesign(*scout_design);
+      ShipDesign colony_ship_design;
+      colony_ship_design.name = "Colony Ship";
+      colony_ship_design.attack = 0;
+      colony_ship_design.defense = 0;
+      colony_ship_design.cost = 250;
+      colony_ship_design.colonize = true;
+      colony_ship_design.empire = empire_id;
+      int colony_id = empire->AddShipDesign(colony_ship_design);
 
-      delete scout_design;
-      
-      ShipDesign* colony_ship_design = new ShipDesign();
-      colony_ship_design->name = "Colony Ship";
-      colony_ship_design->attack = 0;
-      colony_ship_design->defense = 0;
-      colony_ship_design->cost = 250;
-      colony_ship_design->colonize = true;
-      colony_ship_design->empire = empire_id;
+      ShipDesign mark_1_design;
+      mark_1_design.name = "Mark I";
+      mark_1_design.attack = 2;
+      mark_1_design.defense = 1;
+      mark_1_design.cost = 100;
+      mark_1_design.colonize = false;
+      mark_1_design.empire = empire_id;
+      empire->AddShipDesign(mark_1_design);
 
-      int colony_id = new_empire->AddShipDesign(*colony_ship_design);
-
-      delete colony_ship_design;
-
-      ShipDesign* mark_1_design = new ShipDesign();
-      mark_1_design->name = "Mark I";
-      mark_1_design->attack = 2;
-      mark_1_design->defense = 1;
-      mark_1_design->cost = 100;
-      mark_1_design->colonize = false;
-      mark_1_design->empire = empire_id;
-
-      new_empire->AddShipDesign(*mark_1_design);
-
-      delete mark_1_design;
-
-      
       // create the empire's starting fleet
-      
       Fleet* home_fleet = new Fleet("Home Fleet", home_system->X(), home_system->Y(), empire_id);
-      
       int fleet_id = Insert(home_fleet);
       home_system->Insert(home_fleet);
-      new_empire->AddFleet(fleet_id);
-    
-      Ship* scout = new Ship(empire_id, scout_id);
+      empire->AddFleet(fleet_id);
 
-      int ship_id = Insert(scout);
+      int ship_id = Insert(new Ship(empire_id, scout_id));
       home_fleet->AddShip(ship_id);
 
-      scout = new Ship(empire_id, scout_id);
-
-      ship_id = Insert(scout);
+      ship_id = Insert(new Ship(empire_id, scout_id));
       home_fleet->AddShip(ship_id);
 
-      Ship* colony_ship = new Ship(empire_id, colony_id);
-
-      ship_id = Insert(colony_ship);
+      ship_id = Insert(new Ship(empire_id, colony_id));
       home_fleet->AddShip(ship_id);
-#endif
    }
 }

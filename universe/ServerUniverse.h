@@ -6,6 +6,8 @@
 #include "ClientUniverse.h"
 #endif
 
+#include <set>
+
 
 
 class UniverseObject;
@@ -76,19 +78,19 @@ public:
    //@}
    
 private:
+   typedef std::vector<std::vector<std::set<std::pair<double, double> > > > AdjacencyGrid;
 
-   void GenerateSpiralGalaxy(int arms, int stars);  ///< creates a spiral galaxy and stores the empire homeworlds in the homeworlds vector
-   void GenerateElipticalGalaxy(int stars);  ///< creates an eliptical galaxy and stores the empire homeworlds in the homeworlds vector
-   void GenerateIrregularGalaxy(int stars);  ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
+   void GenerateSpiralGalaxy(int arms, int stars, AdjacencyGrid& adjacency_grid);  ///< creates a spiral galaxy and stores the empire homeworlds in the homeworlds vector
+   void GenerateEllipticalGalaxy(int stars, AdjacencyGrid& adjacency_grid);  ///< creates an eliptical galaxy and stores the empire homeworlds in the homeworlds vector
+   void GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
-   void GenerateHomeworlds(int players, int stars, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
+   void GenerateHomeworlds(int players, int stars, std::vector<int>& homeworlds, AdjacencyGrid& adjacency_grid);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
 
    void PopulateSystems();  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
 
    void GenerateEmpires(int players, int ai_players, std::vector<int>& homeworlds);  ///< Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets
 
    int m_last_allocated_id;
-   
 };
 
 #endif // _ServerUniverse_h_
