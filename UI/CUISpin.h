@@ -43,7 +43,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual int  Render()
+    virtual bool Render()
     {
         Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
         Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
@@ -60,7 +60,7 @@ public:
         m_dn_bn->Render();
         m_up_bn->OffsetMove(-UpperLeft());
         m_dn_bn->OffsetMove(-UpperLeft());
-        return 1;
+        return true;
     }
     //@}
 

@@ -51,13 +51,13 @@ public:
     //!@}
 
     //! \name Mutators //!@{
-    virtual int    Render();
-    virtual int    Keypress (GG::Key key, Uint32 key_mods);
-    virtual int    LButtonDown(const GG::Pt& pt, Uint32 keys);
-    virtual int    LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
-    virtual int    LButtonUp(const GG::Pt& pt, Uint32 keys);
-    virtual int    LClick(const GG::Pt& pt, Uint32 keys);
-    virtual int    MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
+    virtual bool   Render();
+    virtual void   Keypress (GG::Key key, Uint32 key_mods);
+    virtual void   LButtonDown(const GG::Pt& pt, Uint32 keys);
+    virtual void   LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
+    virtual void   LButtonUp(const GG::Pt& pt, Uint32 keys);
+    virtual void   LClick(const GG::Pt& pt, Uint32 keys);
+    virtual void   MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
 
     void           InitTurn( int turn_number );        //!< called at the start of each turn by
     void           ShowSystemNames(); //!< enables the system name text

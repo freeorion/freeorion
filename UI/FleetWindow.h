@@ -20,7 +20,6 @@ class Fleet;
 class Ship;
 class System;
 class UniverseObject;
-
 namespace GG {
 class TextControl;
 }

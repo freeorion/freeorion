@@ -27,7 +27,7 @@ public:
 
 //! \name Mutators
 //!@{
-    virtual int Keypress (GG::Key key, Uint32 key_mods);
+    virtual void Keypress (GG::Key key, Uint32 key_mods);
 
 //!@}
 

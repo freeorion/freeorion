@@ -209,11 +209,10 @@ void IntroScreen::OnExitGame()
     GG::App::GetApp()->Exit(0); //exit with 0, good error code
 }
 
-int IntroScreen::Keypress (GG::Key key, Uint32 key_mods)
+void IntroScreen::Keypress (GG::Key key, Uint32 key_mods)
 {
     if (key == GG::GGK_ESCAPE) // Same behaviour as if "done" was pressed
     {
       OnExitGame();
     }
-    return 1;
 }

@@ -191,7 +191,7 @@ GG::XMLElement CUIStateButton::XMLEncode() const
     return retval;
 }
 
-int CUIStateButton::Render()
+bool CUIStateButton::Render()
 {
     if (static_cast<int>(Style()) == SBSTYLE_CUI_CHECKBOX || 
         static_cast<int>(Style()) == SBSTYLE_CUI_RADIO_BUTTON) {
@@ -279,7 +279,7 @@ int CUIStateButton::Render()
     } else {
         StateButton::Render();
     }
-    return 1;
+    return true;
 }
 
 
@@ -320,7 +320,7 @@ GG::XMLElement CUIScroll::ScrollTab::XMLEncode() const
     return retval;
 }
 
-int CUIScroll::ScrollTab::Render()
+bool CUIScroll::ScrollTab::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
@@ -349,7 +349,7 @@ int CUIScroll::ScrollTab::Render()
     glEnable(GL_TEXTURE_2D);
     // border
     AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, m_border_color, CUISCROLL_ANGLE_OFFSET, 1);
-    return 1;
+    return true;
 }
 
 
@@ -386,7 +386,7 @@ GG::XMLElement CUIScroll::XMLEncode() const
     return retval;
 }
 
-int CUIScroll::Render()
+bool CUIScroll::Render()
 {
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
@@ -398,7 +398,7 @@ int CUIScroll::Render()
         TabButton()->Render();
         TabButton()->OffsetMove(-UpperLeft());
     }
-    return 1;
+    return true;
 }
 
 void CUIScroll::SizeMove(int x1, int y1, int x2, int y2)
@@ -448,7 +448,7 @@ GG::XMLElement CUIListBox::XMLEncode() const
     return retval;
 }
 
-int CUIListBox::Render()
+bool CUIListBox::Render()
 {
     GG::Clr color = Color(); // save color
     SetColor(GG::CLR_ZERO); // disable the default border by rendering it transparently
@@ -458,7 +458,7 @@ int CUIListBox::Render()
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, color_to_use, 1);
-    return 0;
+    return false;
 }
 
 GG::Scroll* CUIListBox::NewVScroll(bool horz_scroll)
@@ -505,7 +505,7 @@ GG::XMLElement CUIDropDownList::XMLEncode() const
     return retval;
 }
 
-int CUIDropDownList::Render()
+bool CUIDropDownList::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::Clr color = LB()->Color();
@@ -529,7 +529,7 @@ int CUIDropDownList::Render()
     AngledCornerRectangle(lr.x - outline_width - margin, ul.y + margin, lr.x - margin, lr.y - margin, GG::CLR_ZERO, 
                           color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
 
-    return 1;
+    return true;
 }
 
 
@@ -558,7 +558,7 @@ GG::XMLElement CUIEdit::XMLEncode() const
     return retval;
 }
 
-int CUIEdit::Render()
+bool CUIEdit::Render()
 {
     GG::Clr color = Color();
     GG::Clr color_to_use = Disabled() ? DisabledColor(color) : color;
@@ -573,7 +573,7 @@ int CUIEdit::Render()
     Edit::Render();
     SetColor(color);
     
-    return 1;
+    return true;
 }
 
 ///////////////////////////////////////
@@ -603,7 +603,7 @@ GG::XMLElement CUIMultiEdit::XMLEncode() const
     return retval;
 }
 
-int CUIMultiEdit::Render()
+bool CUIMultiEdit::Render()
 {
     GG::Clr color = Color();
     GG::Clr color_to_use = Disabled() ? DisabledColor(color) : color;
@@ -618,7 +618,7 @@ int CUIMultiEdit::Render()
     MultiEdit::Render();
     SetColor(color);
     
-    return 1;
+    return true;
 }
 
 GG::Scroll* CUIMultiEdit::NewVScroll(bool horz_scroll)

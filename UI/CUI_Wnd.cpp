@@ -65,7 +65,7 @@ GG::XMLElement CUI_MinRestoreButton::XMLEncode() const
     return retval;
 }
    
-int CUI_MinRestoreButton::Render()
+bool CUI_MinRestoreButton::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
@@ -83,7 +83,7 @@ int CUI_MinRestoreButton::Render()
         // draw a square to signify the restore command
         GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, ClientUI::WND_INNER_BORDER_COLOR, 1);
     }
-    return 1;
+    return true;
 }
 
 ////////////////////////////////////////////////
@@ -108,7 +108,7 @@ GG::XMLElement CUI_CloseButton::XMLEncode() const
     return retval;
 }
    
-int CUI_CloseButton::Render()
+bool CUI_CloseButton::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
@@ -126,7 +126,7 @@ int CUI_CloseButton::Render()
     }
     glEnd();
     glEnable(GL_TEXTURE_2D);
-    return 1;
+    return true;
 }
 
 
@@ -228,7 +228,7 @@ void CUI_Wnd::SizeMove(int x1, int y1, int x2, int y2)
         m_minimize_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET);
 }
 
-int CUI_Wnd::Render()
+bool CUI_Wnd::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
@@ -300,10 +300,10 @@ int CUI_Wnd::Render()
     boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::TITLE_FONT, ClientUI::TITLE_PTS);
     font->RenderText(ul.x + BORDER_LEFT, ul.y, WindowText());
 
-    return 1;
+    return true;
 }
 
-int CUI_Wnd::LButtonDown(const GG::Pt& pt, Uint32 keys)
+void CUI_Wnd::LButtonDown(const GG::Pt& pt, Uint32 keys)
 {
     if (!m_minimized && m_resizable) {
         GG::Pt cl_lr = LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
@@ -312,24 +312,21 @@ int CUI_Wnd::LButtonDown(const GG::Pt& pt, Uint32 keys)
             m_resize_offset = LowerRight() - pt;
         }
     }
-    return 1;
 }
 
-int CUI_Wnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
+void CUI_Wnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
 {
     // if we're resize-dragging
     if (m_resize_offset != GG::Pt(-1, -1)) {
         SizeMove(UpperLeft(), pt + m_resize_offset);
-        return 1;
     } else { // if we're normal-dragging
-        return GG::Wnd::LDrag(pt, move, keys);
+        GG::Wnd::LDrag(pt, move, keys);
     }
 }
 
-int CUI_Wnd::LButtonUp(const GG::Pt& pt, Uint32 keys)
+void CUI_Wnd::LButtonUp(const GG::Pt& pt, Uint32 keys)
 {
     m_resize_offset = GG::Pt(-1, -1);
-    return 1;
 }
 
 bool CUI_Wnd::InWindow(const GG::Pt& pt) const

@@ -72,7 +72,6 @@ MapWndPopup::MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint
 MapWndPopup::MapWndPopup(const GG::XMLElement& elem):
     CUI_Wnd( elem )
 {
-
 }
 
 MapWndPopup::~MapWndPopup( )
@@ -154,14 +153,14 @@ GG::Pt MapWnd::ClientUpperLeft() const
     return UpperLeft() + GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight());
 }
 
-int MapWnd::Render()
+bool MapWnd::Render()
 {
     RenderBackgrounds();
     RenderFleetMovementLines();
-    return 1;
+    return true;
 }
 
-int MapWnd::Keypress (GG::Key key, Uint32 key_mods)
+void MapWnd::Keypress (GG::Key key, Uint32 key_mods)
 {
     switch (key) {
     case GG::GGK_RETURN: { // start turn
@@ -186,17 +185,14 @@ int MapWnd::Keypress (GG::Key key, Uint32 key_mods)
     default:
         break;
     }
-
-    return 1;
 }
 
-int MapWnd::LButtonDown (const GG::Pt &pt, Uint32 keys)
+void MapWnd::LButtonDown (const GG::Pt &pt, Uint32 keys)
 {
     m_drag_offset = pt - ClientUpperLeft();
-    return 1;
 }
 
-int MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
+void MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
 {
     GG::Pt move_to_pt = pt - m_drag_offset;
     CorrectMapPosition(move_to_pt);
@@ -207,26 +203,23 @@ int MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
     m_dragged = true;
-    return 1;
 }
 
-int MapWnd::LButtonUp (const GG::Pt &pt, Uint32 keys)
+void MapWnd::LButtonUp (const GG::Pt &pt, Uint32 keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
     m_dragged = false;
-    return 1;
 }
 
-int MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
+void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
     if (!m_dragged)
         m_selected_system_signal(UniverseObject::INVALID_OBJECT_ID);
     m_dragged = false;
-    return 1;
 }
 
-int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
+void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 {
     GG::Pt ul = ClientUpperLeft();
     GG::Pt center = GG::Pt( GG::App::GetApp()->AppWidth() / 2,  GG::App::GetApp()->AppHeight() / 2);
@@ -252,7 +245,7 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
             m_zoom_factor = s_min_scale_factor;
         }
     } else {
-	return 1; // Windows platform always sends an additional event with a move of 0. This should be ignored
+        return; // Windows platform always sends an additional event with a move of 0. This should be ignored
     }
 
     for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
@@ -291,8 +284,6 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
     m_sitrep_panel->OffsetMove(-final_move);
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
-
-    return 1;
 }
 
 void MapWnd::InitTurn(int turn_number)

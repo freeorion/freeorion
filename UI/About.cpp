@@ -76,7 +76,6 @@ void About::Init()
     GG::Connect(m_done_btn->ClickedSignal(), &About::OnDone, this);
     GG::Connect(m_license->ClickedSignal(), &About::OnLicense, this);
     GG::Connect(m_credits->ClickedSignal(), &About::OnCredits, this);
-
 }//Init()
 
 About::~About()
@@ -88,20 +87,19 @@ About::~About()
 //   MUTATORS
 ///////////////////////////////////////////////
 
-int About::Render()
+bool About::Render()
 {
     CUI_Wnd::Render();
 
     return true;
 }//Render()
 
-int About::Keypress (GG::Key key, Uint32 key_mods)
+void About::Keypress (GG::Key key, Uint32 key_mods)
 {
     if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE)) // Same behaviour as if "done" was pressed
     {
       OnDone();
     }
-    return 1;
 }//Keypress()
 
 ///////////////////////////////////////////////

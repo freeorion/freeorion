@@ -167,18 +167,16 @@ bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 }
 
 
-int SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys) 
+void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys) 
 {
     if ( InPlanet( pt ) )
     {
 	m_left_clicked_sig( m_planet_id );
     }
-
-    return 1;
 }
 
 
-int SidePanel::PlanetPanel::Render()
+bool SidePanel::PlanetPanel::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
 
@@ -218,24 +216,24 @@ int SidePanel::PlanetPanel::Render()
     posn = GG::Pt(ul.x + HUGE_PLANET_SIZE / 2 + CircleXFromY(y - Height() / 2.0, TEXT_POSITION_RADIUS), ul.y + static_cast<int>(y));
     std::string text;
     switch (planet->Size()) {
-    case Planet::SZ_TINY: text += ClientUI::String("PL_SZ_TINY"); break;
-    case Planet::SZ_SMALL: text += ClientUI::String("PL_SZ_SMALL"); break;
-    case Planet::SZ_MEDIUM: text += ClientUI::String("PL_SZ_MEDIUM"); break;
-    case Planet::SZ_LARGE: text += ClientUI::String("PL_SZ_LARGE"); break;
-    case Planet::SZ_HUGE: text += ClientUI::String("PL_SZ_HUGE"); break;
-    default: text += "ERROR "; break;
+        case Planet::SZ_TINY: text += ClientUI::String("PL_SZ_TINY"); break;
+        case Planet::SZ_SMALL: text += ClientUI::String("PL_SZ_SMALL"); break;
+        case Planet::SZ_MEDIUM: text += ClientUI::String("PL_SZ_MEDIUM"); break;
+        case Planet::SZ_LARGE: text += ClientUI::String("PL_SZ_LARGE"); break;
+        case Planet::SZ_HUGE: text += ClientUI::String("PL_SZ_HUGE"); break;
+        default: text += "ERROR "; break;
     }
     text += " ";
     switch (planet->Type()) {
-    case Planet::TOXIC: text += ClientUI::String("PL_TOXIC"); break;
-    case Planet::RADIATED: text += ClientUI::String("PL_RADIATED"); break;
-    case Planet::BARREN: text += ClientUI::String("PL_BARREN"); break;
-    case Planet::DESERT: text += ClientUI::String("PL_DESERT"); break;
-    case Planet::TUNDRA: text += ClientUI::String("PL_TUNDRA"); break;
-    case Planet::OCEAN: text += ClientUI::String("PL_OCEAN"); break;
-    case Planet::TERRAN: text += ClientUI::String("PL_TERRAN"); break;
-    case Planet::GAIA: text += ClientUI::String("PL_GAIA"); break;
-    default: text += "ERROR "; break;
+        case Planet::TOXIC: text += ClientUI::String("PL_TOXIC"); break;
+        case Planet::RADIATED: text += ClientUI::String("PL_RADIATED"); break;
+        case Planet::BARREN: text += ClientUI::String("PL_BARREN"); break;
+        case Planet::DESERT: text += ClientUI::String("PL_DESERT"); break;
+        case Planet::TUNDRA: text += ClientUI::String("PL_TUNDRA"); break;
+        case Planet::OCEAN: text += ClientUI::String("PL_OCEAN"); break;
+        case Planet::TERRAN: text += ClientUI::String("PL_TERRAN"); break;
+        case Planet::GAIA: text += ClientUI::String("PL_GAIA"); break;
+        default: text += "ERROR "; break;
     }
     y1 = static_cast<int>(posn.y - FONT_HALF_HT);
     y2 = static_cast<int>(posn.y + FONT_HALF_HT);
@@ -338,7 +336,7 @@ int SidePanel::PlanetPanel::Render()
         font->RenderText(x1, y1, x2, y2, text, format, 0, false);
     }
 
-    return 1;
+    return true;
 }
 
 int SidePanel::PlanetPanel::PlanetDiameter() const
@@ -396,11 +394,11 @@ bool SidePanel::InWindow(const GG::Pt& pt) const
     return retval;
 }
 
-int SidePanel::Render()
+bool SidePanel::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::SIDE_PANEL_COLOR, GG::CLR_ZERO, 0);
-    return 1;
+    return true;
 }
 
 void SidePanel::SetSystem(int system_id)

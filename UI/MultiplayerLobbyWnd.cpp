@@ -102,16 +102,16 @@ MultiplayerLobbyWnd::~MultiplayerLobbyWnd()
     HumanClientApp::GetApp()->SetLobby(0);
 }
 
-int MultiplayerLobbyWnd::Render()
+bool MultiplayerLobbyWnd::Render()
 {
     CUI_Wnd::Render();
     GG::Pt image_ul = g_preview_ul + ClientUpperLeft(), image_lr = image_ul + PREVIEW_SZ;
     GG::FlatRectangle(image_ul.x - PREVIEW_MARGIN, image_ul.y - PREVIEW_MARGIN, image_lr.x + PREVIEW_MARGIN, image_lr.y + PREVIEW_MARGIN, 
                       GG::CLR_BLACK, ClientUI::WND_INNER_BORDER_COLOR, 1);
-    return 1;
+    return true;
 }
 
-int MultiplayerLobbyWnd::Keypress(GG::Key key, Uint32 key_mods)
+void MultiplayerLobbyWnd::Keypress(GG::Key key, Uint32 key_mods)
 {
     if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) && GG::App::GetApp()->FocusWnd() == m_chat_input_edit) {
         int receiver = -1; // all players by default
@@ -128,7 +128,6 @@ int MultiplayerLobbyWnd::Keypress(GG::Key key, Uint32 key_mods)
     {
         CancelClicked();
     }
-    return 1;
 }
 
 void MultiplayerLobbyWnd::HandleMessage(const Message& msg)

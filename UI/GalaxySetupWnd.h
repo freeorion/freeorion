@@ -35,15 +35,15 @@ public:
     /** \name Accessors*/ //!@{
     bool                  EndedWithOk() const {return m_done && m_ended_with_ok;} ///< retursn true iff the dialog is finished running and it was closed with the "OK" button
     int                   Systems() const;     ///< number of star systems to use in generating the galaxy
-    Universe::Shape         GalaxyShape() const; //!< Returns the shape of the galaxy: TWO_ARM, THREE_ARM, etc.
+    Universe::Shape       GalaxyShape() const; //!< Returns the shape of the galaxy: TWO_ARM, THREE_ARM, etc.
     std::string           GalaxyFile() const;  //!< Returns the filename of the image-based galaxy file if it exists
 
     virtual GG::XMLElement XMLEncode() const;  //!< encode to XML
     //!@}
 
     /** \name Mutators*/ //!@{
-    virtual int Render();    //!< drawing code
-    virtual int Keypress (GG::Key key, Uint32 key_mods);
+    virtual bool Render();    //!< drawing code
+    virtual void Keypress (GG::Key key, Uint32 key_mods);
 
     void OnChangeSize(int index);    //!< when the size radio buttons are changed
     void OnChangeType(int index);    //!< when the type radio buttons are changed

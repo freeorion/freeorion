@@ -96,25 +96,22 @@ void SystemIcon::SizeMove(int x1, int y1, int x2, int y2)
     }
 }
 
-int SystemIcon::LClick(const GG::Pt& pt, Uint32 keys) 
+void SystemIcon::LClick(const GG::Pt& pt, Uint32 keys) 
 {
     if (!Disabled()) 
         m_left_click_signal(m_system.ID()); 
-    return 1;
 }
 
-int SystemIcon::RClick(const GG::Pt& pt, Uint32 keys) 
+void SystemIcon::RClick(const GG::Pt& pt, Uint32 keys) 
 {
     if (!Disabled()) 
         m_right_click_signal(m_system.ID()); 
-    return 1;
 }
 
-int SystemIcon::LDoubleClick(const GG::Pt& pt, Uint32 keys) 
+void SystemIcon::LDoubleClick(const GG::Pt& pt, Uint32 keys) 
 {
     if (!Disabled()) 
         m_left_double_click_signal(m_system.ID()); 
-    return 1;
 }
 
 void SystemIcon::ClickFleetButton(Fleet* fleet)

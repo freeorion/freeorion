@@ -35,9 +35,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual int Render();
-    virtual int Keypress(GG::Key key, Uint32 key_mods);
-    void        HandleMessage(const Message& msg);
+    virtual bool Render();
+    virtual void Keypress(GG::Key key, Uint32 key_mods);
+    void         HandleMessage(const Message& msg);
     //@}
 
 private:

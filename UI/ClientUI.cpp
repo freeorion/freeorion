@@ -252,10 +252,10 @@ namespace {
         HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Show();
     }
 	int PlanetPicked() const {return m_planet_selected;}
-	int LButtonUp(const GG::Pt& pt, Uint32 keys) {m_done = true; return 1;}
-	int LClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
-	int RButtonUp(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
-	int RClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
+	void LButtonUp(const GG::Pt& pt, Uint32 keys) {m_done = true;}
+	void LClick(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
+	void RButtonUp(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
+	void RClick(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
 
     private:
 	void PlanetClicked(int planet_id) {m_planet_selected = planet_id; m_done = true;}

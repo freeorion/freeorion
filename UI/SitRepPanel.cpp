@@ -40,7 +40,7 @@ SitRepPanel::SitRepPanel(int x, int y, int w, int h) :
     Hide();
 }
 
-int SitRepPanel::Keypress (GG::Key key, Uint32 key_mods)
+void SitRepPanel::Keypress (GG::Key key, Uint32 key_mods)
 {
     switch (key) {
     case GG::GGK_RETURN:
@@ -52,7 +52,6 @@ int SitRepPanel::Keypress (GG::Key key, Uint32 key_mods)
     default:
         break;
     }
-    return 1;
 }
 
 void SitRepPanel::OnClose()

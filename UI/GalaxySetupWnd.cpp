@@ -82,7 +82,7 @@ GalaxySetupWnd::~GalaxySetupWnd()
 {
 }
 
-int GalaxySetupWnd::Render()
+bool GalaxySetupWnd::Render()
 {
     CUI_Wnd::Render();
     GG::FlatRectangle(UpperLeft().x + PREVIEW_UL.x - 2, UpperLeft().y + PREVIEW_UL.y - 2, UpperLeft().x + PREVIEW_UL.x + PREVIEW_SZ.x + 2, 
@@ -90,7 +90,7 @@ int GalaxySetupWnd::Render()
     return true;
 }
 
-int GalaxySetupWnd::Keypress (GG::Key key, Uint32 key_mods)
+void GalaxySetupWnd::Keypress (GG::Key key, Uint32 key_mods)
 {
     if (key == GG::GGK_RETURN) // Same behaviour as if "OK" was pressed
     {
@@ -100,8 +100,7 @@ int GalaxySetupWnd::Keypress (GG::Key key, Uint32 key_mods)
     {
       OnCancel();
     }
-    return 1;
-}//Keypress()
+}
 
 GG::XMLElement GalaxySetupWnd::XMLEncode() const
 {

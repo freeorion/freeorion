@@ -37,7 +37,7 @@ public:
     //!@{
     
     //! Called to render the window.
-    int Render();
+    bool Render();
     
     //!@}
     

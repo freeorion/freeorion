@@ -51,8 +51,8 @@ public:
         //@}
 
         /** \name Mutators */ //@{
-        virtual int Render();
-        virtual int LClick(const GG::Pt& pt, Uint32 keys);
+        virtual bool Render();
+        virtual void LClick(const GG::Pt& pt, Uint32 keys);
         //@}
 
     private:
@@ -89,7 +89,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual int  Render();
+    virtual bool Render();
 
     void         SetSystem(int system_id); ///< sets the system currently being viewed in the side panel
     //@}

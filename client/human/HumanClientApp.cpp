@@ -39,6 +39,8 @@ HumanClientApp::HumanClientApp() :
     AddWndGenerator("CUIDropDownList", &NewCUIDropDownList);
     AddWndGenerator("CUIEdit", &NewCUIEdit);
     AddWndGenerator("CUIMultiEdit", &NewCUIMultiEdit);
+
+    SetMaxFPS(60.0);
 }
 
 HumanClientApp::~HumanClientApp()
@@ -388,15 +390,14 @@ void HumanClientApp::HandleSDLEvent(const SDL_Event& event)
 
     // it would be much easier if GG::App::EventType had a non event type
     //GG::App::EventType gg_event;
-    typedef struct GGEventHelper {
+    struct GGEventHelper {
         GGEventHelper() :assigned(false) {} 
         bool IsGGEvent() const {return assigned;}
         GGEventHelper& operator =(GG::App::EventType event) {gg_event=event;assigned=true; return *this;}
         operator GG::App::EventType() {return gg_event;}
       private:
         GG::App::EventType gg_event; bool assigned;
-    };
-    GGEventHelper gg_event;
+    } gg_event;
 
     switch(event.type) {
     case SDL_KEYDOWN: {

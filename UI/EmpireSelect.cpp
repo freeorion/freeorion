@@ -160,16 +160,16 @@ EmpireSelect::~EmpireSelect()
 //   MUTATORS
 ///////////////////////////////////////////////
 
-int EmpireSelect::Render()
+bool EmpireSelect::Render()
 {
     CUI_Wnd::Render();
-   // GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::WND_BORDER_COLOR,true);
+    // GG::BeveledRectangle(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y,ClientUI::WND_COLOR,ClientUI::WND_BORDER_COLOR,true);
     //ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, "Galaxy Setup");
 
     //draw square of the selected color
     GG::Clr newcolor(SelectColor(m_cur_color));
     GG::FlatRectangle(UpperLeft().x+30, UpperLeft().y+70, UpperLeft().x+80, UpperLeft().y+120, newcolor, ClientUI::WND_INNER_BORDER_COLOR, 1);
-    
+
     return true;
 }//Render()
 

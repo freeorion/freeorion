@@ -70,7 +70,7 @@ ServerConnectWnd::ServerConnectWnd(const GG::XMLElement& elem) :
     // TODO : implement if needed
 }
 
-int ServerConnectWnd::Keypress (GG::Key key, Uint32 key_mods)
+void ServerConnectWnd::Keypress (GG::Key key, Uint32 key_mods)
 {
     if (key == GG::GGK_RETURN) // Same behaviour as if "OK" was pressed
     {
@@ -80,8 +80,7 @@ int ServerConnectWnd::Keypress (GG::Key key, Uint32 key_mods)
     {
       CancelClicked();
     }
-    return 1;
-}//Keypress()
+}
 
 const std::pair<std::string, std::string>& ServerConnectWnd::Result() const
 {

@@ -27,7 +27,7 @@ public:
 
    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a CUI_MinRestoreButton object
 
-   int Render();
+   bool Render();
 
    void Toggle() {m_mode = (m_mode == MIN_BUTTON ? RESTORE_BUTTON : MIN_BUTTON);} ///< toggles modes between MIN_BUTTON and RESTORE_BUTTON
 
@@ -44,7 +44,7 @@ public:
 
    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a CUI_CloseButton object
 
-   int Render();
+   bool Render();
 };
 
 //! This class is a superclass of all interface windows in GG.  It takes care of
@@ -98,19 +98,18 @@ public:
 
     //! \name Accessors //@{
     bool Minimized() const {return m_minimized;} //!< returns true if window is minimized
+    virtual bool InWindow(const GG::Pt& pt) const;
 
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a CUI_Wnd object
     //@}
 
     //! \name Mutators //@{
     virtual void SizeMove(int x1, int y1, int x2, int y2);
-    virtual int  Render();
-    virtual int  LButtonDown(const GG::Pt& pt, Uint32 keys);
-    virtual int  LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
-    virtual int  LButtonUp(const GG::Pt& pt, Uint32 keys);
-    virtual int  LClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
-
-    virtual bool InWindow(const GG::Pt& pt) const;
+    virtual bool Render();
+    virtual void LButtonDown(const GG::Pt& pt, Uint32 keys);
+    virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
+    virtual void LButtonUp(const GG::Pt& pt, Uint32 keys);
+    virtual void LClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
     //@}
 
 protected:

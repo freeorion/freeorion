@@ -43,7 +43,7 @@ public:
 
 //! \name Mutators
 //!@{
-    virtual int Render();    //!< drawing code
+    virtual bool Render();    //!< drawing code
     
 //!@}
 

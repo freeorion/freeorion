@@ -38,7 +38,7 @@ public:
     void OnOptions();       //!< called when options is clicked
     void OnAbout();         //!< called when about is clicked
     void OnExitGame();      //!< called when exit_game is clicked
-    virtual int Keypress (GG::Key key, Uint32 key_mods);
+    virtual void Keypress (GG::Key key, Uint32 key_mods);
     
     virtual void Close() {OnExitGame();} //!< override to exit the game 
     //!@}

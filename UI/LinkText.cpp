@@ -53,19 +53,17 @@ LinkText::LinkText(const GG::XMLElement& elem) :
     FindLinks();
 }
 
-int LinkText::LButtonDown(const GG::Pt& pt, Uint32 keys)
+void LinkText::LButtonDown(const GG::Pt& pt, Uint32 keys)
 {
     m_old_sel_link = GetLinkUnderPt(pt);
-    return 1;
 }
 
-int LinkText::LButtonUp(const GG::Pt& pt, Uint32 keys)
+void LinkText::LButtonUp(const GG::Pt& pt, Uint32 keys)
 {
     m_old_sel_link = -1;
-    return 1;
 }
 
-int LinkText::LClick(const GG::Pt& pt, Uint32 keys)
+void LinkText::LClick(const GG::Pt& pt, Uint32 keys)
 {
     using boost::lexical_cast;
     int sel_link = GetLinkUnderPt(pt);
@@ -85,10 +83,9 @@ int LinkText::LClick(const GG::Pt& pt, Uint32 keys)
         }
     }
     m_old_sel_link = -1;
-    return 1;
 }
 
-int LinkText::MouseHere(const GG::Pt& pt, Uint32 keys)
+void LinkText::MouseHere(const GG::Pt& pt, Uint32 keys)
 {
     int rollover_link = GetLinkUnderPt(pt);
     if (rollover_link != m_old_rollover_link) {
@@ -101,13 +98,11 @@ int LinkText::MouseHere(const GG::Pt& pt, Uint32 keys)
             m_old_rollover_link = rollover_link;
         }
     }
-    return 1;
 }
 
-int LinkText::MouseLeave(const GG::Pt& pt, Uint32 keys)
+void LinkText::MouseLeave(const GG::Pt& pt, Uint32 keys)
 {
     ClearOldRollover();
-	return 1;
 }
    
 void LinkText::SetText(const std::string& str)

@@ -90,11 +90,10 @@ bool ClientNetworkCore::SendSynchronousMessage( const Message& msg, Message& res
                     response_msg = m_response_msg;
                     break;
                 }
-
             } else {
               SDL_Delay(100); // reduce cpu load while waiting
+            }
 	    }
-	}
     }
 
     return success;

@@ -123,7 +123,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual int  Render();
+    virtual bool  Render();
     //@}
 
 private:
@@ -144,7 +144,7 @@ public:
         ScrollTab(GG::Scroll::Orientation orientation, int scroll_width, GG::Clr color, GG::Clr border_color); ///< basic ctor
         ScrollTab(const GG::XMLElement& elem); ///< ctor that constructs a CUIScroll::ScrollTab object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIScroll::ScrollTab object
         virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIScroll::ScrollTab object
-        virtual int Render();
+        virtual bool Render();
     private:
         GG::Clr m_border_color;
     };
@@ -162,7 +162,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual int     Render();
+    virtual bool    Render();
     virtual void    SizeMove(int x1, int y1, int x2, int y2);
     //@}
 
@@ -193,7 +193,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual int    Render();
+    virtual bool   Render();
     //@}
 
 protected:
@@ -220,7 +220,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual int    Render();
+    virtual bool   Render();
     //@}
 };
 
@@ -242,7 +242,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual int    Render();
+    virtual bool   Render();
     //@}
 };
 
@@ -264,7 +264,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual int    Render();
+    virtual bool   Render();
     //@}
 
 protected:

@@ -45,20 +45,21 @@ InGameOptions::~InGameOptions()
 }
 
 int InGameOptions::MinimizedLength() const
-{ return 135;}
-
-int InGameOptions::Render()
-{
-    CUI_Wnd::Render();
-    return 1;
+{ 
+    return 135;
 }
 
-int InGameOptions::Keypress (GG::Key key, Uint32 key_mods)
+bool InGameOptions::Render()
+{
+    CUI_Wnd::Render();
+    return true;
+}
+
+void InGameOptions::Keypress (GG::Key key, Uint32 key_mods)
 {
     if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE)) {
         Done(); // Same behaviour as if "done" was pressed
     }
-    return 1;
 }
 
 void InGameOptions::Init()

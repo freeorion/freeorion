@@ -54,10 +54,10 @@ public:
 
     //! \name Mutators //!@{
     virtual void   SizeMove(int x1, int y1, int x2, int y2);
-    virtual int    Render() {return 1;}
-    virtual int    LClick(const GG::Pt& pt, Uint32 keys);
-    virtual int    RClick(const GG::Pt& pt, Uint32 keys);
-    virtual int    LDoubleClick(const GG::Pt& pt, Uint32 keys);
+    virtual bool   Render() {return 1;}
+    virtual void   LClick(const GG::Pt& pt, Uint32 keys);
+    virtual void   RClick(const GG::Pt& pt, Uint32 keys);
+    virtual void   LDoubleClick(const GG::Pt& pt, Uint32 keys);
 
     void           ClickFleetButton(Fleet* fleet); //!< clicks the FleetButton containing \a fleet
     void           ShowName(); //!< enables the system name text
