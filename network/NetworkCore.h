@@ -12,6 +12,16 @@
 #include "net2.h"
 #endif
 
+// deal with dirty, dirty MS macros
+#if defined(_MSC_VER)
+# if defined(SendMessage)
+#  undef SendMessage
+# endif
+# if defined(DispatchMessage)
+#  undef DispatchMessage
+# endif
+#endif
+
 /** the states the server may be in at various points during its execution*/
 enum ServerState {SERVER_IDLE,         ///< there is no game yet and no one has send a HOST_GAME Message yet; this is the initial state
                   SERVER_MP_LOBBY,     ///< the host and possibly other players are in the multiplayer lobby, preparing to start a game
