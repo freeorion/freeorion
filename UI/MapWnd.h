@@ -9,18 +9,15 @@
 #include "GGWnd.h"
 #endif
 
-#ifndef _GGTexture_h_
-#include "GGTexture.h"
-#endif
-
-#ifndef _ClientUI_h_
-#include "ClientUI.h"
-#endif
-
 #define GMAP_NUM_BACKGROUNDS 3
 
+class SidePanel;
 class SystemIcon;
 class Icon;
+namespace GG {
+class Texture;
+}
+
 /**
     This class is a huge window that stores EVERYTHING in the whole universe graphically
 */
@@ -62,12 +59,16 @@ public:
     //!@}
     
     //! \name Mutators //!@{
-    virtual int Render();    //!< custom rendering code
-    void InitTurn();        //!< called at the start of each turn by
-    virtual int LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys); //!< override this code so we don't drag too far
+    void           InitTurn();        //!< called at the start of each turn by
+
+    virtual int    Render();
+    virtual int    LButtonDown(const GG::Pt& pt, Uint32 keys);
+    virtual int    LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
+    virtual int    LButtonUp(const GG::Pt& pt, Uint32 keys);
+    virtual int    LClick(const GG::Pt& pt, Uint32 keys);
     
-    SelectedSystemSignalType& SelectedSystemSignal() {return m_selected_system_signal; }
-    
+    SelectedSystemSignalType& SelectedSystemSignal() {return m_selected_system_signal;}
+
     void SelectSystem(int systemID); //!< catches emitted signals from the system icons
     //!@}
 
@@ -87,16 +88,20 @@ private:
     float           m_bg_position_Y[GMAP_NUM_BACKGROUNDS]; //!< array, the Y positions of the backgrounds
     
     //!@}
+
+    SidePanel*      m_side_panel;     //! the planet view panel on the side of the main map
     StarControlVec  m_stars;          //! a vector of StarControls
-    
     IconVec         m_icons;          //! a list of icons
+
+    GG::Pt          m_drag_offset;    //! the distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
+    bool            m_dragged;        //! tracks whether or not a drag occurs during a left button down sequence of events
     
     //! \name Signals //!@{
     SelectedSystemSignalType m_selected_system_signal;
     
     //!@}
 
-friend class GalaxyMapScreen;    //this is basically a part of that screen anyway
+    friend class GalaxyMapScreen;    //this is basically a part of that screen anyway
 };
 
 #endif
