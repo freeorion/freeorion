@@ -19,7 +19,14 @@ namespace {
             for (GG::XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
                 if (it->Tag() != "Special")
                     throw std::runtime_error("ERROR: Encountered non-Special in specials.xml!");
-                Special* special = new Special(*it);
+                Special* special = 0;
+                try {
+                    special = new Special(*it);
+                } catch (const std::runtime_error& e) {
+                    std::stringstream stream;
+                    it->WriteElement(stream);
+                    throw std::runtime_error(std::string("ERROR: \"") + e.what() + "\" encountered when loading this Special XML code:\n" + stream.str());
+                }
                 if (m_specials.find(special->Name()) != m_specials.end())
                     throw std::runtime_error(("ERROR: More than one special in specials.xml has the name " + special->Name()).c_str());
                 m_specials[special->Name()] = special;

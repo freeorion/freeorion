@@ -22,7 +22,14 @@ namespace {
             for (GG::XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
                 if (it->Tag() != "BuildingType")
                     throw std::runtime_error("ERROR: Encountered non-BuildingType in buildings.xml!");
-                BuildingType* building_type = new BuildingType(*it);
+                BuildingType* building_type = 0;
+                try {
+                    building_type = new BuildingType(*it);
+                } catch (const std::runtime_error& e) {
+                    std::stringstream stream;
+                    it->WriteElement(stream);
+                    throw std::runtime_error(std::string("ERROR: \"") + e.what() + "\" encountered when loading this Building XML code:\n" + stream.str());
+                }
                 if (m_building_types.find(building_type->Name()) != m_building_types.end())
                     throw std::runtime_error(("ERROR: More than one building type in buildings.xml has the name " + building_type->Name()).c_str());
                 m_building_types[building_type->Name()] = building_type;
