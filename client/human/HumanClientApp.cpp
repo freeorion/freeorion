@@ -15,27 +15,25 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 #include <string>
+#include <ctime>
 class NetTestWnd : public GG::Wnd
 {
 public:
    NetTestWnd() : 
       GG::Wnd(100, 100, 300, 600)
    {
-      m_start_server =     new GG::Button(20,  20, 260, 30, "Start server process", "arial.ttf", 12, GG::Clr(1.0, 1.0, 1.0, 0.75));
-      m_local_connect_bn = new GG::Button(20,  70, 260, 30, "Connect to localhost", "arial.ttf", 12, GG::Clr(1.0, 1.0, 1.0, 0.75));
-      m_start_game =       new GG::Button(20, 120, 260, 30, "Start a game (3 AIs, 2 humans)", "arial.ttf", 12, GG::Clr(1.0, 1.0, 1.0, 0.75));
-      m_send_doc_bn =      new GG::Button(20, 220, 260, 30, "Send an XMLDoc", "arial.ttf", 12, GG::Clr(1.0, 1.0, 1.0, 0.75));
-      m_send_text_bn =     new GG::Button(20, 270, 260, 30, "Send plain text", "arial.ttf", 12, GG::Clr(1.0, 1.0, 1.0, 0.75));
+      m_start_game =       new GG::Button(20,  20, 260, 30, "Start a game (3 AIs, 2 humans)", "arial.ttf", 12, GG::Clr(1.0, 1.0, 1.0, 0.75));
+      m_terminate =        new GG::Button(20,  70, 260, 30, "Terminate", "arial.ttf", 12, GG::Clr(1.0, 1.0, 1.0, 0.75));
+      m_send_doc_bn =      new GG::Button(20, 120, 260, 30, "Send an XMLDoc", "arial.ttf", 12, GG::Clr(1.0, 1.0, 1.0, 0.75));
+      m_send_text_bn =     new GG::Button(20, 170, 260, 30, "Send plain text", "arial.ttf", 12, GG::Clr(1.0, 1.0, 1.0, 0.75));
       
-      AttachChild(m_start_server);
-      AttachChild(m_local_connect_bn);
       AttachChild(m_start_game);
+      AttachChild(m_terminate);
       AttachChild(m_send_doc_bn);
       AttachChild(m_send_text_bn);
-      
-      GG::Connect(m_start_server->ClickedSignal(), &NetTestWnd::StartServerClicked, this);
-      GG::Connect(m_local_connect_bn->ClickedSignal(), &NetTestWnd::LocalConnectClicked, this);
+
       GG::Connect(m_start_game->ClickedSignal(), &NetTestWnd::StartGameClicked, this);
+      GG::Connect(m_terminate->ClickedSignal(), &NetTestWnd::TerminateClicked, this);
       GG::Connect(m_send_doc_bn->ClickedSignal(), &NetTestWnd::SendDocClicked, this);
       GG::Connect(m_send_text_bn->ClickedSignal(), &NetTestWnd::SendTextClicked, this);
    }
@@ -48,35 +46,6 @@ public:
    }
    
 private:
-   void StartServerClicked()
-   {
-      if (m_start_server->WindowText() == "Start server process") {
-         std::string cmd = "freeoriond.exe";
-         std::vector<std::string> cmd_line;
-         cmd_line.push_back(cmd);
-         // add command line params to server here
-         m_server_process = Process(cmd, cmd_line);
-         m_start_server->SetText("Stop server process");
-      } else {
-         m_server_process.Kill();
-         m_start_server->SetText("Start server process");
-      }
-
-   }
-
-   void LocalConnectClicked()
-   {
-      if (m_local_connect_bn->WindowText() == "Connect to localhost") {
-         bool successful = HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer();
-         if (successful) {
-            m_local_connect_bn->SetText("Disconnect from localhost");
-         }
-      } else {
-         HumanClientApp::GetApp()->NetworkCore().DisconnectFromServer();
-         m_local_connect_bn->SetText("Connect to localhost");
-      }
-   }
-
    void StartGameClicked()
    {
       // start server
@@ -84,9 +53,11 @@ private:
       std::vector<std::string> args;
       args.push_back(SERVER_EXE);
       m_server_process = Process(SERVER_EXE, args);
-      
+
       // connect to server
       while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) ;
+
+		sleep(1);
 
       // start a game on the server
       GG::XMLDoc game_parameters;
@@ -106,8 +77,13 @@ private:
       elem = GG::XMLElement("AI_client");
       game_parameters.root_node.AppendChild(elem);
       // one slot for another human player
-      
+
       HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(game_parameters));
+   }
+
+   void TerminateClicked()
+   {
+      HumanClientApp::GetApp()->Exit(0);
    }
 
    void SendDocClicked()
@@ -132,9 +108,8 @@ private:
       HumanClientApp::GetApp()->NetworkCore().SendMessage(msg);
    }
 
-   GG::Button* m_start_server;
-   GG::Button* m_local_connect_bn;
    GG::Button* m_start_game;
+   GG::Button* m_terminate;
    GG::Button* m_send_doc_bn;
    GG::Button* m_send_text_bn;
    
@@ -236,6 +211,71 @@ void HumanClientApp::Initialize()
 // ONLY TEMPORARY!!!!!
 }
 
+void HumanClientApp::HandleSDLEvent(const SDL_Event& event)
+{
+   bool send_to_gg = false;
+   GG::App::EventType gg_event;
+   GG::Key key = GGKeyFromSDLKey(event.key.keysym);
+   Uint32 key_mods = SDL_GetModState();
+   GG::Pt mouse_pos(event.motion.x, event.motion.y);
+   GG::Pt mouse_rel(event.motion.xrel, event.motion.yrel);
+
+   switch(event.type) {
+   case SDL_KEYDOWN: {
+      if (key < GG::GGK_NUMLOCK)
+         send_to_gg = true;
+      gg_event = GG::App::KEYPRESS;
+      break;
+	}
+
+   case SDL_MOUSEMOTION: {
+      send_to_gg = true;
+      gg_event = GG::App::MOUSEMOVE;
+      break;
+	}
+
+   case SDL_MOUSEBUTTONDOWN: {
+      send_to_gg = true;
+      switch (event.button.button) {
+      case SDL_BUTTON_LEFT:   gg_event = GG::App::LPRESS; break;
+      case SDL_BUTTON_MIDDLE: gg_event = GG::App::MPRESS; break;
+      case SDL_BUTTON_RIGHT:  gg_event = GG::App::RPRESS; break;
+      }
+      key_mods = SDL_GetModState();
+      break;
+	}
+
+   case SDL_MOUSEBUTTONUP: {
+      send_to_gg = true;
+      switch (event.button.button) {
+      case SDL_BUTTON_LEFT:   gg_event = GG::App::LRELEASE; break;
+      case SDL_BUTTON_MIDDLE: gg_event = GG::App::MRELEASE; break;
+      case SDL_BUTTON_RIGHT:  gg_event = GG::App::RRELEASE; break;
+      }
+      key_mods = SDL_GetModState();
+      break;
+	}
+
+   case SDL_USEREVENT: {
+      int net2_type = NET2_GetEventType(const_cast<SDL_Event*>(&event));
+      if (net2_type == NET2_ERROREVENT || 
+			 net2_type == NET2_TCPACCEPTEVENT || 
+			 net2_type == NET2_TCPRECEIVEEVENT || 
+			 net2_type == NET2_TCPCLOSEEVENT || 
+			 net2_type == NET2_UDPRECEIVEEVENT)
+		   m_network_core.HandleNetEvent(const_cast<SDL_Event&>(event));
+      break;
+	}
+
+   case SDL_QUIT: {
+      Exit(0);
+      break;
+	}
+   }
+   if (send_to_gg)
+      GG::App::HandleEvent(gg_event, key, key_mods, mouse_pos, mouse_rel);
+}
+
 void HumanClientApp::Enter2DMode()
 {
 	glPushAttrib(GL_ENABLE_BIT | GL_PIXEL_MODE_BIT | GL_TEXTURE_BIT);
@@ -286,6 +326,10 @@ void HumanClientApp::Render()
 
 void HumanClientApp::FinalCleanup()
 {
+   if (NetworkCore().Connected()) {
+      NetworkCore().DisconnectFromServer();
+   }
+   m_server_process.Kill();
 }
 
 void HumanClientApp::HandleMessageImpl(const Message& msg)
