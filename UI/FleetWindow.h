@@ -24,7 +24,7 @@ public:
     };
     
 
-    FleetWindow(int x, int y, int active_fleet, std::vector<int> other_fleets);
+    FleetWindow(int x, int y, std::vector<int> fleets_here);
     FleetWindow(const GG::XMLElement& elem);
     ~FleetWindow();
     
@@ -42,16 +42,14 @@ public:
     
     /// Callback method which is invoked when user clicks the 'done' button
     void DoneButtonClicked();
+   
     
     /// Sets the current dialog mode for the fleet dialog.  
     void SetDialogMode(DialogMode mode);
     
 private:
-    void DisplayFleet(int fleet);
-
-    void DestroyChild(GG::ListBox*& child);
-    void DestroyChild(GG::Button*& child);
-    void DestroyChild(GG::TextControl*& child);
+    void RefreshFleetList();
+    void FillShipList(int fleet);
 
     /// listbox containing ships in current fleet (sorted by design)
     GG::ListBox* m_ship_list;
@@ -72,10 +70,6 @@ private:
     
     /// a 'done' button to go back to browsing mode
     GG::Button* m_done_button;
-    
-    
-    /// fleet currently being browsed in the fleet window
-    int m_active_fleet;
     
     /// other fleets in the same system
     std::vector<int> m_fleets;

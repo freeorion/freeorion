@@ -9,6 +9,7 @@
 #include "ClientUI.h"
 #endif
 
+#include "../universe/Fleet.h"
 
 using std::vector;
 
@@ -52,12 +53,11 @@ namespace
 
 
 
-FleetWindow::FleetWindow(int x, int y, int active_fleet, vector<int> other_fleets) :
-    m_active_fleet(active_fleet),
-    m_fleets(other_fleets),
+FleetWindow::FleetWindow(int x, int y, vector<int> fleets_here) :
+    m_fleets(fleets_here),
     CUI_Wnd("Fleet Window", x, y, 400, 400, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | CUI_Wnd::CLOSABLE | CUI_Wnd::MINIMIZABLE | GG::Wnd::ONTOP)
 {
-    // create the common controls which are always visible in the window
+
     m_ship_list_label  = new GG::TextControl(ship_list_x, ship_list_y-20, "Ships in Fleet", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
     m_fleets_list_label = new GG::TextControl(fleet_list_x, fleet_list_y-20, "Fleets Here", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
 
@@ -89,8 +89,9 @@ FleetWindow::FleetWindow(int x, int y, int active_fleet, vector<int> other_fleet
     GG::Connect(m_move_button->ClickedSignal(), &FleetWindow::MoveButtonClicked, this);   
     GG::Connect(m_split_button->ClickedSignal(), &FleetWindow::SplitButtonClicked, this);
     GG::Connect(m_merge_button->ClickedSignal(), &FleetWindow::MergeButtonClicked, this);
-
+   
     SetDialogMode(FLEET_VIEW);
+    RefreshFleetList();
 }
 
 
@@ -124,13 +125,11 @@ void FleetWindow::DoneButtonClicked()
     SetDialogMode(FLEET_VIEW);
 }
 
-
-
-// I do not like this approach of destroying and recreating controls,
-// but it appears it will be necessary for now.   When GG hides a control and creates
-// shows another that was previously underneath it, it appears that messages do
-//  not get to the new window, but instead are routed to the old, invisible one.
-
+void FleetWindow::OnSwitchFleet()
+{
+    // this should be called when the selected fleet is changed,
+    // and should fill the ship list with the ships in that fleet.
+}
 
 void FleetWindow::SetDialogMode(FleetWindow::DialogMode mode)
 {
@@ -141,7 +140,10 @@ void FleetWindow::SetDialogMode(FleetWindow::DialogMode mode)
             m_move_button->Show();
             m_split_button->Show();
             m_merge_button->Show();
+            
             m_done_button->Hide();
+            m_done_button->MoveTo(-100,-100);
+
             m_receiving_fleet_list->Hide();
             m_receiving_fleet_label->Hide();
             break;
@@ -151,7 +153,10 @@ void FleetWindow::SetDialogMode(FleetWindow::DialogMode mode)
             m_move_button->Hide();
             m_split_button->Hide();
             m_merge_button->Hide();
+
+            m_done_button->MoveTo(done_button_x, done_button_y);
             m_done_button->Show();
+                        
             m_receiving_fleet_list->Show();
             m_receiving_fleet_label->Show();
             break;
@@ -160,32 +165,42 @@ void FleetWindow::SetDialogMode(FleetWindow::DialogMode mode)
 
 
 
-void FleetWindow::DestroyChild(GG::ListBox*& child)
+void FleetWindow::RefreshFleetList()
 {
-    if(child)
+    m_fleets_list->Clear();
+    
+    for(std::vector<int>::iterator itr = m_fleets.begin(); itr != m_fleets.end(); itr++)
     {
-        DetachChild(child);
-        delete child;
-        child = NULL;
+        const Fleet* flt = dynamic_cast<const Fleet*>(ClientApp::GetUniverse().Object(*itr));
+        if(!flt)
+        {
+            throw std::runtime_error("RefreshFleetList(): Bad fleet ID found in m_fleets.");
+        }
+        GG::ListBox::Row new_row;
+        
+        new_row.push_back(flt->Name(), ClientUI::FONT, ClientUI::PTS);
+        m_fleets_list->Insert(new_row);
     }
 }
 
-void FleetWindow::DestroyChild(GG::Button*& child)
+void FleetWindow::FillShipList(int fleet)
 {
-    if(child)
+    const Fleet* flt = dynamic_cast<const Fleet*>(ClientApp::GetUniverse().Object(fleet));
+    if(!flt)
     {
-        DetachChild(child);
-        delete child;
-        child = NULL;
+        throw std::runtime_error("FillShipList(): Bad fleet ID passed.");
     }
-}
-
-void FleetWindow::DestroyChild(GG::TextControl*& child)
-{  
-    if(child)
+    
+    GG::ListBox::Row new_row;
+    
+    for(Fleet::const_iterator itr = flt->begin(); itr != flt->end(); itr++)
     {
-        DetachChild(child);
-        delete child;
-        child = NULL;
+        const Ship* shp = dynamic_cast<const Ship*>(ClientApp::GetUniverse().Object(*itr));
+        if(!shp)
+        {
+            throw std::runtime_error("FillShipList(): Bad Ship ID discovered in fleet.");
+        }
+        new_row.push_back(shp->Name(), ClientUI::FONT, ClientUI::PTS);
+        m_ship_list->Insert(new_row);
     }
 }
