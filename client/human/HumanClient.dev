@@ -675,16 +675,6 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit65]
-FileName=..\..\SDL_net\SDLnetUDP.c
-CompileCpp=0
-Folder=SDL_net
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=$(CC) -c SDLnetUDP.c -o ../../objs/SDLnetUDP.o $(CFLAGS)
-
 [Unit66]
 FileName=..\..\SDL_net\SDL_net.h
 CompileCpp=1
@@ -746,9 +736,9 @@ OverrideBuildCmd=0
 BuildCmd=$(CC) -c fastevents.c -o ../../objs/fastevents.o $(CFLAGS)
 
 [Unit72]
-FileName=..\..\util\SitRepEntry.h
+FileName=..\..\UI\EmpireSelect.h
 CompileCpp=1
-Folder=util
+Folder=ClientUI
 Compile=1
 Link=1
 Priority=1000
@@ -1459,7 +1449,7 @@ BuildCmd=
 [Project]
 FileName=HumanClient.dev
 Name=HumanClient
-UnitCount=76
+UnitCount=74
 Type=0
 Ver=1
 ObjFiles=
@@ -2133,37 +2123,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit65]
-FileName=..\..\Empire\ServerEmpireManager.cpp
-CompileCpp=1
-Folder=empire
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit66]
-FileName=..\..\Empire\ServerEmpireManager.h
-CompileCpp=1
-Folder=empire
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit67]
-FileName=..\..\Empire\TechLevel.cpp
-CompileCpp=1
-Folder=empire
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit68]
 FileName=..\..\Empire\TechLevel.h
 CompileCpp=1
 Folder=empire
@@ -2173,7 +2133,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit69]
+[Unit67]
 FileName=..\..\Empire\TechManager.cpp
 CompileCpp=1
 Folder=empire
@@ -2183,7 +2143,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit70]
+[Unit68]
 FileName=..\..\UI\CUI_Wnd.h
 CompileCpp=1
 Folder=ClientUI
@@ -2193,7 +2153,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit71]
+[Unit69]
 FileName=..\..\UI\CUI_Wnd.cpp
 CompileCpp=1
 Folder=ClientUI
@@ -2203,7 +2163,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit73]
+[Unit70]
+FileName=..\..\util\SitRepEntry.h
+CompileCpp=1
+Folder=util
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit71]
 FileName=..\..\UI\EmpireSelect.cpp
 CompileCpp=1
 Folder=ClientUI
@@ -2213,8 +2183,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit73]
+FileName=..\..\UI\LinkText.h
+CompileCpp=1
+Folder=ClientUI
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [Unit74]
-FileName=..\..\UI\EmpireSelect.h
+FileName=..\..\UI\LinkText.cpp
 CompileCpp=1
 Folder=ClientUI
 Compile=1
@@ -2886,6 +2866,16 @@ BuildCmd=
 
 [Unit118]
 FileName=..\..\Empire\ClientEmpireManager.h
+CompileCpp=1
+Folder=empire
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit65]
+FileName=..\..\Empire\TechLevel.cpp
 CompileCpp=1
 Folder=empire
 Compile=1

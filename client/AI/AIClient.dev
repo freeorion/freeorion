@@ -1,7 +1,7 @@
 [Project]
 FileName=AIClient.dev
 Name=AIClient
-UnitCount=54
+UnitCount=52
 Type=0
 Ver=1
 ObjFiles=
@@ -525,18 +525,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit49]
-FileName=..\..\Empire\ServerEmpireManager.cpp
-CompileCpp=1
-Folder=empire
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit50]
-FileName=..\..\Empire\ServerEmpireManager.h
+FileName=..\..\Empire\TechLevel.h
 CompileCpp=1
 Folder=empire
 Compile=1
@@ -546,7 +536,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit51]
-FileName=..\..\Empire\TechLevel.cpp
+FileName=..\..\Empire\TechManager.cpp
 CompileCpp=1
 Folder=empire
 Compile=1
@@ -556,9 +546,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit52]
-FileName=..\..\Empire\TechLevel.h
+FileName=..\..\util\SitRepEntry.h
 CompileCpp=1
-Folder=empire
+Folder=util
 Compile=1
 Link=1
 Priority=1000
@@ -739,6 +729,16 @@ BuildCmd=
 FileName=..\..\GG\GGClr.cpp
 CompileCpp=1
 Folder=GG
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit49]
+FileName=..\..\Empire\TechLevel.cpp
+CompileCpp=1
+Folder=empire
 Compile=1
 Link=1
 Priority=1000
