@@ -80,3 +80,11 @@ Ancient                         0        0      0       10      10      20      
 <1x7>
 BaseStarTypeDist                Blue    White   Yellow  Orange  Red     Neutron Blackhole
 Base                            30      40      50      40      30      0       0
+
+<1x6>
+MaxStarlanes                    None    Few     Some    Average Many    VeryMany
+Max                             0       1       1       2       2       3
+
+<1x3>
+StarlaneRanges                  Short   Medium  Long
+Ranges                          30      90      270
