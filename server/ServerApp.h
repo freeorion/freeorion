@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _ServerApp_h_
 #define _ServerApp_h_
 
@@ -97,8 +98,6 @@ private:
    CombatModule*           m_current_combat;
    ServerNetworkCore       m_network_core;
 
-   int			   m_temp;
-
    log4cpp::Category&      m_log_category;         ///< reference to the log4cpp object used to log events to file
    
    ServerState             m_state;                ///< the server's current state of execution
@@ -106,16 +105,16 @@ private:
    std::vector<PlayerInfo> m_players_info;         ///< the basic info on every player is stored here
    std::vector<Process>    m_ai_clients;           ///< AI client child processes
    
-   // SERVER_GAME_SETUP variables
-   std::set<std::string>   m_expected_ai_players;  ///< the player names expected from valid AI clients; this prevents malicious users from "spoofing" as AI clients
+   // SERVER_GAME_SETUP variables -- These should only be useful when a new game is being set up
+   std::set<std::string>   m_expected_ai_players;  ///< the player names expected from valid AI clients; this prevents malicious users from "spoofing" as AI clients.  Should be empty after all players have joined a game.
    int                     m_expected_players;     ///< the total desired number of players in the game
 
-   int                     m_universe_size;        ///< the size of the universe
-   int                     m_universe_shape;        ///< the shape of the universe
+   int                     m_universe_size;        ///< the size of the universe (the number of star systems)
+   ClientUniverse::Shape   m_universe_shape;       ///< the shape of the universe
    std::string             m_universe_file;        ///< file to use for generating universe
+   // end SERVER_GAME_SETUP variables
 
    std::map<int, GG::XMLDoc> m_last_turn_update_msg; ///< stores the xml encoded empire and universe data from the previous turn in order to generate diffs for turn update message.  Map is indexed by empire ID, with separate message data for each since each player sees different parts of the universe.
-
 
    static ServerApp*       s_app;
 };
