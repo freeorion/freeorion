@@ -307,12 +307,14 @@ void ServerApp::Run()
 
 void ServerApp::SDLInit()
 {
+#ifndef FREEORION_WIN32
    /* Dirty hack to active the dummy video handler of SDL
     * if the user has already set SDL_VIDEODRIVER, we trust him */
    if (getenv("SDL_VIDEODRIVER") == NULL) {
        putenv("SDL_VIDEODRIVER=dummy");
    }
- 
+#endif
+
    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
       Logger().errorStream() << "SDL initialization failed: " << SDL_GetError();
       Exit(1);
