@@ -136,7 +136,7 @@ GG::XMLElement System::XMLEncode() const
    for(const_orbit_iterator itr = begin(); itr != end(); ++itr)
    {
        string object_name( "map_object" );
-       object_name += boost::lexical_cast<std::string>( itr->first );
+       object_name += boost::lexical_cast<std::string>( itr->second);
        XMLElement map_object( object_name );
 
        map_object.SetAttribute("orbit", lexical_cast<string>(itr->first));
