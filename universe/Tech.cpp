@@ -422,9 +422,10 @@ std::string TechManager::FindRedundantDependency()
             std::map<std::string, std::string>::const_iterator map_it = techs_unlocked_by_prereqs.find(*prereq_it);
             if (map_it != techs_unlocked_by_prereqs.end()) {
                 std::stringstream stream;
-                stream << "ERROR: Redundant dependency found: " << map_it->second << " --> " << map_it->first << ", "
-                       << map_it->first << " --> " << (*it)->Name() << ", "
-                       << map_it->second << " --> " << (*it)->Name() << "; remove the " << map_it->second << " --> " << (*it)->Name()
+                stream << "ERROR: Redundant dependency found in tech.xml (A <-- B means A is a prerequisite of B): "
+                       << map_it->second << " <-- " << map_it->first << ", "
+                       << map_it->first << " <-- " << (*it)->Name() << ", "
+                       << map_it->second << " <-- " << (*it)->Name() << "; remove the " << map_it->second << " <-- " << (*it)->Name()
                        << " dependency.";
                 return stream.str();
             }
