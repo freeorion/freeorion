@@ -26,8 +26,8 @@ class LinkText : public GG::DynamicText
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (int)>         IDSignalType;     ///< emitted a link that refers to an ID number is clicked
-    typedef boost::signal<void (std::string)> StringSignalType; ///< emitted a link that refers to an string is clicked
+    typedef boost::signal<bool (int)>                IDSignalType;     ///< emitted when a link that refers to an ID number is clicked
+    typedef boost::signal<bool (const std::string&)> StringSignalType; ///< emitted when a link that refers to an string is clicked
     //@}
 
     /** \name Slot Types */ //@{
