@@ -258,24 +258,8 @@ void Universe::CreateUniverse(const std::string& map_file, int size, int players
 int Universe::Insert(UniverseObject* obj)
 {
    int retval = UniverseObject::INVALID_OBJECT_ID;
-#if 0 // this is turned off for now, since the functionality is not yet needed
-   if (dynamic_cast<Fleet*>(obj)) {
-       const std::set<int> owners = obj->Owners(); // for a fleet there will only be 1 owner
-       Empire* empire = ServerApp::GetApp()->Empires().Lookup(*owners.begin());
-       int empire_fleet_id_min = empire->FleetIDMin();
-       int empire_fleet_id_max = empire->FleetIDMax();
-       for (int i = empire_fleet_id_min; i < empire_fleet_id_max; ++i) {
-           if (m_objects.find(i) == m_objects.end()) {
-               m_objects[i] = obj;
-               obj->SetID(i);
-               retval = i;
-               break;
-           }
-       }
-   } else 
-#endif
    if (obj) {
-       if (m_last_allocated_id + 1 < UniverseObject::MIN_SHIP_ID) {
+       if (m_last_allocated_id + 1 < UniverseObject::MAX_ID) {
            m_objects[++m_last_allocated_id] = obj;
            obj->SetID(m_last_allocated_id);
            retval = m_last_allocated_id;
@@ -291,6 +275,21 @@ int Universe::Insert(UniverseObject* obj)
                }
            }
        }
+   }
+
+   return retval;
+}
+
+bool Universe::InsertID(UniverseObject* obj, int id )
+{
+   bool retval = false;
+
+   if (obj) {
+       if ( id < UniverseObject::MAX_ID) {
+           m_objects[id] = obj;
+           obj->SetID(id);
+           retval = true;
+       }       
    }
 
    return retval;
@@ -545,8 +544,6 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
    // create empires and assign homeworlds, names, colors, and fleet ranges to
    // for each one
 
-   const int FLEET_ID_RNG = (UniverseObject::MAX_SHIP_ID - UniverseObject::MIN_SHIP_ID) / players;
-
    const std::map<int, PlayerInfo>& player_info = ServerApp::GetApp()->NetworkCore().Players();
    int i = 0;
    for (std::map<int, PlayerInfo>::const_iterator it = player_info.begin(); it != player_info.end(); ++it, ++i) {
@@ -556,15 +553,12 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       // TODO: select color at random from default list
       GG::Clr color(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
   
-      int min_fleet_id = UniverseObject::MIN_SHIP_ID + (FLEET_ID_RNG * i);
-      int max_fleet_id = UniverseObject::MIN_SHIP_ID + (FLEET_ID_RNG * (i + 1)) - 1;
       int home_planet_id = homeworlds[i];
 
       // create new Empire object through empire manager
       // TODO : ******* find a way to distinguish between humans and AIs *******
       Empire* empire = 
           dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, name, color, home_planet_id, Empire::CONTROL_HUMAN);
-      empire->SetFleetIDs(min_fleet_id, max_fleet_id);
     
       // set ownership of home planet
       int empire_id = empire->EmpireID();
@@ -630,4 +624,9 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       home_fleet->AddShip(ship_id);
    }
 #endif
+}
+
+int Universe::GenerateObjectID( )
+{
+  return( ++m_last_allocated_id );
 }

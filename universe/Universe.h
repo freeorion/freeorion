@@ -30,7 +30,7 @@ protected:
    typedef std::map<int, UniverseObject*> ObjectMap; ///< the container type that is used internally to hold the objects in the universe; keyed by ID number
    
 public:
-   /** the types of universe shapes available in FreeOrion*/
+   /** the types of universe shapes available in FeeOrion*/
    enum Shape {SPIRAL_2,      ///< a two-armed spiral galaxy
                SPIRAL_3,      ///< a three-armed spiral galaxy
                SPIRAL_4,      ///< a four-armed spiral galaxy
@@ -120,6 +120,12 @@ public:
       \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after 
       passing it to Insert().*/
     int               Insert(UniverseObject* obj);
+
+     /** inserts object \a obj of given ID into the universe; returns true on proper insert , or false on failure.  
+      \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after 
+      passing it to InsertID().
+      Useful mostly for times when ID needs to be consistant on client and server*/
+    bool               InsertID(UniverseObject* obj, int id );
    
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
     void              CreateUniverse(Shape shape, int size, int players, int ai_players);
@@ -147,6 +153,9 @@ public:
    /** defines the size of the galaxy map.  Does not measure absolute distances; the ratio between map coordinates and actual distance varies 
        depending on universe size */
     static const double UNIVERSE_WIDTH;
+
+  int GenerateObjectID( );  ///< generates an object ID for a future object. Usually used by the server to service new ID requests
+
 
 protected:
    typedef std::vector<std::vector<std::set<std::pair<double, double> > > > AdjacencyGrid;
