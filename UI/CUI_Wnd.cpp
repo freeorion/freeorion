@@ -380,7 +380,10 @@ void CUI_Wnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
         GG::Pt parent_offset = Parent() ? Parent()->ClientUpperLeft() : GG::Pt();
         SizeMove(UpperLeft() - parent_offset, LowerRight() - parent_offset + move);
     } else { // if we're normal-dragging
-        GG::Wnd::LDrag(pt, move, keys);
+        GG::Pt ul = UpperLeft(), lr = LowerRight();
+        if ((0 <= ul.x + move.x) && (lr.x + move.x < GG::App::GetApp()->AppWidth()) &&
+            (0 <= ul.y + move.y) && (lr.y + move.y < GG::App::GetApp()->AppHeight()))
+            GG::Wnd::LDrag(pt, move, keys);
     }
 }
 
