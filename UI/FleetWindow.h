@@ -151,7 +151,7 @@ public:
 
     /** \name Structors */ //@{
     /** constructs a fleet window for fleets in transit between systems */
-    FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uint32 flags = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE);
+    FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only, Uint32 flags = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE);
 
     FleetWnd(const GG::XMLElement& elem); ///< ctor that constructs a FleetsWnd object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a FleetsWnd object
     ~FleetWnd(); ///< dtor
@@ -177,7 +177,7 @@ protected:
     //@}
 
 private:
-    void        Init(const std::vector<Fleet*>& fleet_ids);
+    void        Init(const std::vector<Fleet*>& fleet_ids, int selected_fleet);
     void        AttachSignalChildren();
     void        DetachSignalChildren();
     void        FleetBrowsed(int row_idx);

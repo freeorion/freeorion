@@ -683,7 +683,8 @@ std::string FleetDetailWnd::TitleText() const
 std::set<FleetWnd*> FleetWnd::s_open_fleet_wnds;
 GG::Pt FleetWnd::s_last_position;
 
-FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
+FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
+                   Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
     MapWndPopup("", x, y, 1, 1, flags),
     m_empire_id(-1),
     m_read_only(read_only),
@@ -692,6 +693,8 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
     m_fleets_lb(0),
     m_fleet_detail_panel(0)
 {
+    assert(0 <= selected_fleet && selected_fleet < fleets.size());
+
     TempUISoundDisabler sound_disabler;
 
     m_fleets_lb = new CUIListBox(LeftBorder() + 3, TopBorder() + 3, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT);
@@ -709,7 +712,7 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
 
     EnableChildClipping(false);
 
-    Init(fleets);
+    Init(fleets, selected_fleet);
     m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetWnd::UniverseObjectDelete, this);
 
     s_open_fleet_wnds.insert(this);
@@ -752,7 +755,7 @@ void FleetWnd::CloseClicked()
     delete this;
 }
 
-void FleetWnd::Init(const std::vector<Fleet*>& fleets)
+void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
 {
     if (m_read_only) {
         m_fleets_lb->SetStyle(GG::LB_NOSORT | GG::LB_BROWSEUPDATES | GG::LB_SINGLESEL);
@@ -762,11 +765,11 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets)
         m_fleets_lb->AllowDropType("Fleet");
     }
 
-    for (unsigned int i = 0; i < fleets.size(); ++i) {
-        AddFleet(fleets[i]);
-    }
     if (!m_read_only) {
         m_fleets_lb->Insert(new FleetRow(0));
+    }
+    for (unsigned int i = 0; i < fleets.size(); ++i) {
+        AddFleet(fleets[i]);
     }
 
     AttachSignalChildren();
@@ -783,10 +786,11 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets)
 
     SetText(TitleText());
 
-    if (GetOptionsDB().Get<bool>("UI.fleet-autoselect") && 1 <= fleets.size()) {
-        m_fleets_lb->SelectRow(0);
-        m_current_fleet = 0;
-        m_fleet_detail_panel->SetFleet(FleetInRow(0));
+    if (GetOptionsDB().Get<bool>("UI.fleet-autoselect") && !fleets.empty()) {
+        m_fleets_lb->SelectRow(selected_fleet);
+        m_current_fleet = selected_fleet;
+        m_fleet_detail_panel->SetFleet(FleetInRow(selected_fleet));
+        m_fleets_lb->BringRowIntoView(selected_fleet);
     }
 }
 

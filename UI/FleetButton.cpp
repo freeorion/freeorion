@@ -153,9 +153,12 @@ void FleetButton::RenderRollover()
 
 void FleetButton::Clicked()
 {
+    int selected_fleet = 0;
     std::vector<Fleet*> fleets(m_fleets);
-    if (m_compliment)
-        fleets.insert(fleets.end(), m_compliment->m_fleets.begin(), m_compliment->m_fleets.end());
+    if (m_compliment) {
+        fleets.insert(m_orientation == SHAPE_RIGHT ? fleets.end() : fleets.begin(), m_compliment->m_fleets.begin(), m_compliment->m_fleets.end());
+        selected_fleet = m_orientation == SHAPE_RIGHT ? 0 : m_compliment->m_fleets.size();
+    }
 
     bool multiple_fleet_windows = GetOptionsDB().Get<bool>("UI.multiple-fleet-windows");
 
@@ -180,7 +183,7 @@ void FleetButton::Clicked()
     bool read_only = *fleets[0]->Owners().begin() != HumanClientApp::GetApp()->EmpireID() || 
         (fleets[0]->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID && 
          fleets[0]->SystemID() == UniverseObject::INVALID_OBJECT_ID);
-    FleetWnd* fleet_wnd = new FleetWnd(ul.x + 50, ul.y + 50, fleets, read_only);
+    FleetWnd* fleet_wnd = new FleetWnd(ul.x + 50, ul.y + 50, fleets, selected_fleet, read_only);
 
     if (multiple_fleet_windows) {
         // for multiple windows, place them at the screen location of the fleet button
