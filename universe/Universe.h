@@ -207,8 +207,7 @@ protected:
     void GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
     /** creates starlanes and adds them systems already generated */
-    void GenerateStarlanes(StarlaneFreqency short_freq, StarlaneFreqency medium_freq, StarlaneFreqency long_freq,
-                           const AdjacencyGrid& adjacency_grid);
+    void GenerateStarlanes(StarlaneFreqency freq, const AdjacencyGrid& adjacency_grid);
 
     void GenerateHomeworlds(int players, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
 

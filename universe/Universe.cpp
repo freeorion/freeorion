@@ -20,6 +20,8 @@
 #include "../server/ServerApp.h"
 #endif
 
+#include <boost/tuple/tuple.hpp>
+
 #include <stdexcept>
 #include <cmath>
 
@@ -44,6 +46,71 @@ namespace {
             LoadDataTables("default/universe_tables.txt", map);
         }
         return map;
+    }
+
+    // use this to track the starlane-connected groups of systems, and the systems that make up each groups "corners".
+    // we'll do a final pass to ensure that the entire galaxy is connected, at which point we'll connect the nearest corners of all groups
+    struct ConnectedGroup
+    {
+        std::set<System*> systems;
+
+        // "corner" systems, needed later in order to connect groups
+        System* upper_left;
+        System* upper_right;
+        System* lower_right;
+        System* lower_left;
+    };
+
+    // these return the System whose position is the farthest in a particular "corner" direction
+    System* UpperLeft(System* s1, System *s2)  
+    {
+        double x_offset = s2->X() - s1->X();
+        double y_offset = s2->Y() - s1->Y();
+        return ((y_offset <= 0 && (x_offset <= 0 || x_offset < -y_offset)) || 
+                (x_offset <= 0 && (y_offset <= 0 || y_offset < -x_offset))) ? s2 : s1;
+    }
+    System* UpperRight(System* s1, System *s2)
+    {
+        double x_offset = s2->X() - s1->X();
+        double y_offset = s2->Y() - s1->Y();
+        return ((y_offset <= 0 && (0 <= x_offset || -x_offset < -y_offset)) || 
+                (0 <= x_offset && (y_offset <= 0 || y_offset < x_offset))) ? s2 : s1;
+    }
+    System* LowerRight(System* s1, System *s2)
+    {
+        double x_offset = s2->X() - s1->X();
+        double y_offset = s2->Y() - s1->Y();
+        return ((0 <= y_offset && (0 <= x_offset || -x_offset < y_offset)) || 
+                (0 <= x_offset && (0 <= y_offset || -y_offset < x_offset))) ? s2 : s1;
+    }
+    System* LowerLeft(System* s1, System *s2)
+    {
+        double x_offset = s2->X() - s1->X();
+        double y_offset = s2->Y() - s1->Y();
+        return ((0 <= y_offset && (x_offset <= 0 || x_offset < y_offset)) || 
+                (x_offset <= 0 && (0 <= y_offset || -y_offset < x_offset))) ? s2 : s1;
+    }
+
+    typedef boost::tuple<System*, System*, std::list<ConnectedGroup>::iterator, std::list<ConnectedGroup>::iterator> DistanceInfo;
+    void InsertDistances(std::multimap<double, DistanceInfo>& distances, System* s1, 
+                         std::list<ConnectedGroup>::iterator group1_it, std::list<ConnectedGroup>::iterator group2_it)
+    {
+        System* s2 = group2_it->upper_left;
+        double x_dist = s2->X() - s1->X();
+        double y_dist = s2->Y() - s1->Y();
+        distances.insert(std::make_pair(x_dist * x_dist + y_dist * y_dist, DistanceInfo(s1, s2, group1_it, group2_it)));
+        s2 = group2_it->upper_right;
+        x_dist = s2->X() - s1->X();
+        y_dist = s2->Y() - s1->Y();
+        distances.insert(std::make_pair(x_dist * x_dist + y_dist * y_dist, DistanceInfo(s1, s2, group1_it, group2_it)));
+        s2 = group2_it->lower_right;
+        x_dist = s2->X() - s1->X();
+        y_dist = s2->Y() - s1->Y();
+        distances.insert(std::make_pair(x_dist * x_dist + y_dist * y_dist, DistanceInfo(s1, s2, group1_it, group2_it)));
+        s2 = group2_it->lower_left;
+        x_dist = s2->X() - s1->X();
+        y_dist = s2->Y() - s1->Y();
+        distances.insert(std::make_pair(x_dist * x_dist + y_dist * y_dist, DistanceInfo(s1, s2, group1_it, group2_it)));
     }
 
     // "only" defined for 1 <= n <= 3999, as we can't
@@ -491,11 +558,6 @@ GG::XMLElement Universe::XMLEncode(int empire_id) const
    return element;
 }
 
-/********************************************************************
- Methods for universe creation and object creation -- merged in from
-ServerUniverse
-**********************************************************************/
-
 void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players)
 {
     // wipe out anything present in the object map
@@ -541,7 +603,7 @@ void Universe::CreateUniverse(Shape shape, int size, int players, int ai_players
     }
 
     PopulateSystems(PD_AVERAGE);
-    GenerateStarlanes(LANES_AVERAGE, LANES_AVERAGE, LANES_AVERAGE, adjacency_grid);
+    GenerateStarlanes(LANES_AVERAGE, adjacency_grid);
     GenerateHomeworlds(players + ai_players, homeworlds);
     GenerateEmpires(players + ai_players, homeworlds);
 }
@@ -695,8 +757,7 @@ void Universe::GenerateIrregularGalaxy(int stars, AdjacencyGrid& adjacency_grid)
     }
 }
 
-void Universe::GenerateStarlanes(StarlaneFreqency short_freq, StarlaneFreqency medium_freq, StarlaneFreqency long_freq,
-                                 const AdjacencyGrid& adjacency_grid)
+void Universe::GenerateStarlanes(StarlaneFreqency freq, const AdjacencyGrid& adjacency_grid)
 {
     const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
 
@@ -705,98 +766,194 @@ void Universe::GenerateStarlanes(StarlaneFreqency short_freq, StarlaneFreqency m
     if (sys_vec.empty())
         throw std::runtime_error("Attempted to generate starlanes in an empty galaxy.");
 
-    const std::vector<int>& max_starlanes = UniverseDataTables()["MaxStarlanes"][0];
-    std::vector<int> starlane_ranges = UniverseDataTables()["StarlaneRanges"][0];
-    for (unsigned int i = 0; i < starlane_ranges.size(); ++i) {
-        starlane_ranges[i] /= ADJACENCY_BOX_SIZE;
+    int MAX_LANES = UniverseDataTables()["MaxStarlanes"][0][freq];
+    double MAX_LANE_LENGTH = static_cast<double>(UniverseDataTables()["MaxStarlaneLength"][0][0]);
+
+    if (!MAX_LANES)
+        return;
+
+    SmallIntDistType lanes_dist = SmallIntDist(1, MAX_LANES);
+    GaussianDistType lane_length_dist = GaussianDist(0.0, MAX_LANE_LENGTH / 3.0); // obviously, only the positive values generated by this dist should be used
+
+    bool full_connectivity = true; // this may be optional later; for now, we should always do it
+    std::list<ConnectedGroup> connected_groups;
+
+    // generate the number of starlanes that each system should have
+    std::map<System*, int> starlanes;
+    for (unsigned int i = 0; i < sys_vec.size(); ++i) {
+        starlanes[sys_vec[i]] = lanes_dist();
     }
 
-    SmallIntDistType short_dist = SmallIntDist(0, max_starlanes[short_freq]);
-    SmallIntDistType medium_dist = SmallIntDist(0, max_starlanes[medium_freq]);
-    SmallIntDistType long_dist = SmallIntDist(0, max_starlanes[long_freq]);
-    SmallIntDistType short_range_dist = SmallIntDist(-starlane_ranges[0], starlane_ranges[0] + 1);
-    SmallIntDistType medium_range_dist = SmallIntDist(-starlane_ranges[1], starlane_ranges[1] + 1);
-    SmallIntDistType long_range_dist = SmallIntDist(-starlane_ranges[2], starlane_ranges[2] + 1);
+    for (unsigned int i = 0; i < sys_vec.size(); ++i) {
+        System* system = sys_vec[i];
+        // subtract any starlanes that might have already been placed when processing other systems
+        int lanes = starlanes[sys_vec[i]] - system->Starlanes();
 
-    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
-        System* system = *it;
-        int grid_x = static_cast<int>(system->X() / ADJACENCY_BOX_SIZE);
-        int grid_y = static_cast<int>(system->Y() / ADJACENCY_BOX_SIZE);
-        int short_lanes = short_dist();
-        int medium_lanes = medium_dist();
-        int long_lanes = long_dist();
-
-        Logger().debugStream() << "System #" << system->ID() << " needs " << short_lanes << " short lanes, " 
-            << medium_lanes << " medium lanes, and " << long_lanes << " long lanes; generating...\n";
-
-        int attempts = 0;
-        while ((long_lanes || medium_lanes || short_lanes) && attempts++ < 10) {
-            Logger().debugStream() << "  top of while(): still need " << short_lanes << " short lanes, " 
-                << medium_lanes << " medium lanes, and " << long_lanes << " long lanes\n";
-            int x_offset;
-            int y_offset;
-            if (long_lanes) {
-                x_offset = long_range_dist();
-                y_offset = long_range_dist();
-                Logger().debugStream() << "  rolled long lane with offset (" << x_offset << ", " << y_offset << ")\n";
-            } else if (medium_lanes) {
-                x_offset = medium_range_dist();
-                y_offset = medium_range_dist();
-                Logger().debugStream() << "  rolled medium lane with offset (" << x_offset << ", " << y_offset << ")\n";
-            } else if (short_lanes) {
-                x_offset = short_range_dist();
-                y_offset = short_range_dist();
-                Logger().debugStream() << "  rolled short lane with offset (" << x_offset << ", " << y_offset << ")\n";
+        double system_x = system->X();
+        double system_y = system->Y();
+        while (0 < lanes) {
+            double lane_length = -1.0;
+            while (lane_length < 0.0) {
+                lane_length = std::min(lane_length_dist(), MAX_LANE_LENGTH);
             }
 
-            if (grid_x + x_offset < 0 || ADJACENCY_BOXES <= grid_x + x_offset ||
-                grid_y + y_offset < 0 || ADJACENCY_BOXES <= grid_y + y_offset)
-            {Logger().debugStream() << "  *** position plus offset (" << (grid_x + x_offset) << ", " << (y_offset + grid_y) << ") is out of bounds! ***\n";
-                continue;
+            // look in the circle of adjacency grid boxes for a candidate.  If none is found, 
+            // keep looking in circles of one grid-box-size smaller in radius each.  If still
+            // nothing is found, look outside of lane_length until another system is found.
+            bool placed = false;
+            double current_lane_length = lane_length;
+            bool first_chance = true;
+            int attempts = 0;
+            const int MAX_PLACEMENT_ATTEMPTS = 35;
+            while (!placed && ++attempts < MAX_PLACEMENT_ATTEMPTS) {
+                std::set<std::pair<unsigned int, unsigned int> > searched_grid_squares;
+                // a simple heuristic for getting the approximate number of slices that will catch all the grid boxes 
+                // in a cirle of the given grid-box radius
+                const int SLICES = std::max(1, static_cast<int>(current_lane_length / ADJACENCY_BOX_SIZE * PI));
+                const double SLICE_ANGLE = 2.0 * PI / SLICES;
+                const int FIRST_SLICE = RandSmallInt(0, SLICES - 1); // this randomizes the direction in which we start looking
+                for (int j = FIRST_SLICE; j < FIRST_SLICE + SLICES; ++j) {
+                    double theta = SLICE_ANGLE * j;
+                    unsigned int grid_x = static_cast<unsigned int>((system_x + current_lane_length * std::cos(theta)) / ADJACENCY_BOX_SIZE);
+                    unsigned int grid_y = static_cast<unsigned int>((system_y + current_lane_length * std::sin(theta)) / ADJACENCY_BOX_SIZE);
+
+                    if (grid_x < 0 || adjacency_grid.size() <= grid_x || grid_y < 0 || adjacency_grid.size() <= grid_y ||
+                        searched_grid_squares.find(std::make_pair(grid_x, grid_y)) != searched_grid_squares.end())
+                        continue;
+
+                    searched_grid_squares.insert(std::make_pair(grid_x, grid_y));
+                    const std::set<System*> grid_box = adjacency_grid[grid_x][grid_y];
+                    if (!grid_box.empty()) {
+                        std::set<System*>::const_iterator grid_box_it = grid_box.begin();
+                        std::advance(grid_box_it, RandSmallInt(0, grid_box.size() - 1));
+                        System* dest_system = *grid_box_it;
+                        // don't place a starlane to yourself, or a system with enough starlanes already; but if we're 
+                        // in second-chance mode, take any connection you can find
+                        if (system != dest_system && (!first_chance || dest_system->Starlanes() < starlanes[dest_system])) {
+                            system->AddStarlane(dest_system->ID());
+                            dest_system->AddStarlane(system->ID());
+                            placed = true;
+                            --lanes;
+
+                            if (full_connectivity) {
+                                // record connectivity info; first, find out which group each system is already in, if any
+                                std::list<ConnectedGroup>::iterator system_group_it, dest_system_group_it;
+                                for (system_group_it = connected_groups.begin(); system_group_it != connected_groups.end(); ++system_group_it) {
+                                    if (system_group_it->systems.find(system) != system_group_it->systems.end())
+                                        break;
+                                }
+                                for (dest_system_group_it = connected_groups.begin(); dest_system_group_it != connected_groups.end(); ++dest_system_group_it) {
+                                    if (dest_system_group_it->systems.find(dest_system) != dest_system_group_it->systems.end())
+                                        break;
+                                }
+
+                                if (system_group_it == connected_groups.end() && dest_system_group_it == connected_groups.end()) {
+                                    // niether belongs to a group, so create a new group
+                                    connected_groups.push_back(ConnectedGroup());
+                                    connected_groups.back().systems.insert(system);
+                                    connected_groups.back().systems.insert(dest_system);
+                                    connected_groups.back().upper_left = UpperLeft(system, dest_system);
+                                    connected_groups.back().upper_right = UpperRight(system, dest_system);
+                                    connected_groups.back().lower_right = LowerRight(system, dest_system);
+                                    connected_groups.back().lower_left = LowerLeft(system, dest_system);
+                                } else if (system_group_it != connected_groups.end() && dest_system_group_it != connected_groups.end() && system_group_it != dest_system_group_it) {
+                                    std::string group1, group2, final_group;
+                                    for (std::set<System*>::iterator sys_it = system_group_it->systems.begin(); sys_it != system_group_it->systems.end(); ++sys_it) {
+                                        group1 += (*sys_it)->Name() + " ";
+                                    }
+                                    for (std::set<System*>::iterator sys_it = dest_system_group_it->systems.begin(); sys_it != dest_system_group_it->systems.end(); ++sys_it) {
+                                        group2 += (*sys_it)->Name() + " ";
+                                    }
+                                    // each belongs to a group, so merge them
+                                    system_group_it->systems.insert(dest_system_group_it->systems.begin(), dest_system_group_it->systems.end());
+                                    for (std::set<System*>::iterator sys_it = system_group_it->systems.begin(); sys_it != system_group_it->systems.end(); ++sys_it) {
+                                        final_group += (*sys_it)->Name() + " ";
+                                    }
+                                    system_group_it->upper_left = UpperLeft(system_group_it->upper_left, dest_system_group_it->upper_left);
+                                    system_group_it->upper_right = UpperRight(system_group_it->upper_right, dest_system_group_it->upper_right);
+                                    system_group_it->lower_right = LowerRight(system_group_it->lower_right, dest_system_group_it->lower_right);
+                                    system_group_it->lower_left = LowerLeft(system_group_it->lower_left, dest_system_group_it->lower_left);
+                                    connected_groups.erase(dest_system_group_it);
+                                } else if (system_group_it != connected_groups.end()) {
+                                    // add dest_system to system's group
+                                    system_group_it->systems.insert(dest_system);
+                                    system_group_it->upper_left = UpperLeft(system_group_it->upper_left, dest_system);
+                                    system_group_it->upper_right = UpperRight(system_group_it->upper_right, dest_system);
+                                    system_group_it->lower_right = LowerRight(system_group_it->lower_right, dest_system);
+                                    system_group_it->lower_left = LowerLeft(system_group_it->lower_left, dest_system);
+                                } else if (dest_system_group_it != connected_groups.end()) {
+                                    // add system to dest_system's group
+                                    dest_system_group_it->systems.insert(system);
+                                    dest_system_group_it->upper_left = UpperLeft(dest_system_group_it->upper_left, system);
+                                    dest_system_group_it->upper_right = UpperRight(dest_system_group_it->upper_right, system);
+                                    dest_system_group_it->lower_right = LowerRight(dest_system_group_it->lower_right, system);
+                                    dest_system_group_it->lower_left = LowerLeft(dest_system_group_it->lower_left, system);
+                                }
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                // bad luck; try again with a different length
+                if (first_chance) {
+                    current_lane_length -= ADJACENCY_BOX_SIZE;
+                    // there's nothing suitable inside radius lane_length, so look outside of it now
+                    if (current_lane_length < 0.0) {
+                        current_lane_length = lane_length + ADJACENCY_BOX_SIZE;
+                        first_chance = false;
+                    }
+                } else {
+                    current_lane_length += ADJACENCY_BOX_SIZE;
+                }
             }
 
-            const std::set<System*>& dest_grid_square = adjacency_grid[grid_x + x_offset][grid_y + y_offset];
-            if (dest_grid_square.empty())
-                continue;
-
-            if (x_offset <= starlane_ranges[0] && y_offset <= starlane_ranges[0]) { // the destination falls in the short range
-                if (!short_lanes)
-                    continue;
-                std::set<System*>::const_iterator system_it = dest_grid_square.begin();
-                std::advance(system_it, RandSmallInt(0, dest_grid_square.size() - 1));
-                System* dest_system = *system_it;
-                if (system != dest_system) {
-                    dest_system->AddStarlane(system->ID());
-                    system->AddStarlane(dest_system->ID());
-                    --short_lanes;
-                }
-            } else if (x_offset <= starlane_ranges[1] && y_offset <= starlane_ranges[1]) { // the destination falls in the medium range
-                if (!medium_lanes)
-                    continue;
-                std::set<System*>::const_iterator system_it = dest_grid_square.begin();
-                std::advance(system_it, RandSmallInt(0, dest_grid_square.size() - 1));
-                System* dest_system = *system_it;
-                if (system != dest_system) {
-                    dest_system->AddStarlane(system->ID());
-                    system->AddStarlane(dest_system->ID());
-                    --medium_lanes;
-                }
-            } else { // the destination falls in the long range
-                if (!long_lanes)
-                    continue;
-                std::set<System*>::const_iterator system_it = dest_grid_square.begin();
-                std::advance(system_it, RandSmallInt(0, dest_grid_square.size() - 1));
-                System* dest_system = *system_it;
-                if (system != dest_system) {
-                    dest_system->AddStarlane(system->ID());
-                    system->AddStarlane(dest_system->ID());
-                    --long_lanes;
-                }
-            }
+            // give up on this lane after excessive attempts
+            if (attempts == MAX_PLACEMENT_ATTEMPTS)
+                --lanes;
         }
     }
 
-    // TODO: make another pass to ensure every system has at least one starlane
+    // warning: this algorithm is O(N^2), where N is the number of groups. 
+    // normally, with a small number of groups, this is fine
+    if (1 < connected_groups.size()) {
+        // find the distances between the "corner" systems in all the groups
+        std::multimap<double, DistanceInfo> distances;
+        for (std::list<ConnectedGroup>::iterator it = connected_groups.begin(); it != connected_groups.end(); ++it) {
+            for (std::list<ConnectedGroup>::iterator inner_it = it; inner_it != connected_groups.end(); ++inner_it) {
+                if (it == inner_it)
+                    continue;
+
+                System* s1;
+                s1 = it->upper_left;
+                InsertDistances(distances, s1, it, inner_it);
+                s1 = it->lower_left;
+                InsertDistances(distances, s1, it, inner_it);
+                s1 = it->lower_right;
+                InsertDistances(distances, s1, it, inner_it);
+                s1 = it->lower_left;
+                InsertDistances(distances, s1, it, inner_it);
+            }
+        }
+
+        std::set<int> groups_eliminated;
+        for (unsigned int i = 0; i < connected_groups.size() - 1; ++i) {
+            std::multimap<double, DistanceInfo>::iterator map_it = distances.begin();
+            while (groups_eliminated.find(std::distance(connected_groups.begin(), map_it->second.get<2>())) != groups_eliminated.end() || 
+                   groups_eliminated.find(std::distance(connected_groups.begin(), map_it->second.get<3>())) != groups_eliminated.end()) {\
+               ++map_it;
+            }
+            DistanceInfo distance_info = map_it->second;
+            std::list<ConnectedGroup>::iterator it1 = distance_info.get<2>();
+            std::list<ConnectedGroup>::iterator it2 = distance_info.get<3>();
+            System* system = distance_info.get<0>();
+            System* dest_system = distance_info.get<1>();
+            system->AddStarlane(dest_system->ID());
+            dest_system->AddStarlane(system->ID());
+            groups_eliminated.insert(std::distance(connected_groups.begin(), it2));
+        }
+    }
 }
 
 void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
