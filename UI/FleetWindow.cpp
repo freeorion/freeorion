@@ -358,6 +358,9 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
         window_posn.y = GG::App::GetApp()->AppHeight() - Height();
     MoveTo(window_posn);
 
+    if (read_only)
+        m_new_fleet_button->Disable();
+
     Init(fleets);
 }
 
