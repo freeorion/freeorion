@@ -72,6 +72,21 @@ System* UniverseObject::GetSystem() const
     return dynamic_cast<System*>(GetUniverse().Object(m_system_id));
 }
 
+bool UniverseObject::Unowned() const 
+{
+    return m_owners.empty();
+}
+
+bool UniverseObject::OwnedBy(int empire) const 
+{
+    return m_owners.find(empire) != m_owners.end();
+}
+
+bool UniverseObject::WhollyOwnedBy(int empire) const 
+{
+    return m_owners.size() == 1 && m_owners.find(empire) != m_owners.end();
+}
+
 GG::XMLElement UniverseObject::XMLEncode() const
 {
    using GG::XMLElement;

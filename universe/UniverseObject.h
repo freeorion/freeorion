@@ -61,6 +61,10 @@ public:
     int                  SystemID() const{return m_system_id;}///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
     System*              GetSystem() const;                  ///< returns system in which this object can be found, or null if the object is not within any system
 
+    bool                 Unowned() const;                 ///< returns true iff there are no owners of this object
+    bool                 OwnedBy(int empire) const;       ///< returns true iff the empire with id \a empire is an owner of this object
+    bool                 WhollyOwnedBy(int empire) const; ///< returns true iff the empire with id \a empire is the only owner of this object
+
     virtual Visibility Visible(int empire_id) const = 0; ///< returns the visibility status of this universe object relative to the input empire.
    
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a UniverseObject object
