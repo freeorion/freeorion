@@ -61,8 +61,8 @@ Exit
 
 #Error Messages####
 
-ERR_UNABLE_TO_CONNECT
-Error connecting to server
+ERR_CONNECT_TIMED_OUT
+Timed out while attempting to connect to server
 
 
 ########################
@@ -77,26 +77,41 @@ Connect to Server
 
 #Static labels####
 
-SCONNECT_LBL_SERVER
-Server:
+LAN_GAME_LABEL
+Lan game at:
+INTERNET_GAME_LABEL
+Internet game at:
+PLAYER_NAME_LABEL
+Player name:
 
 
 #Button names####
 
-SCONNECT_BTN_SEARCH_MORE
-Search more...
+HOST_GAME_BN
+Host a new game
+JOIN_GAME_BN
+Join a game
+REFRESH_LIST_BN
+Refresh list
 
-#Strings####
 
-SCONNECT_RETRIEVING
-Retrieving more servers...
+########################
+# Multiplayer Lobby    #
+########################
 
-#NOTE: do not translate the "xx" in the following string
-SCONNECT_FOUND
-Found xx new servers.
+#Window title####
 
-SCONNECT_NOMORE
-No more servers found.
+MPLOBBY_WINDOW_TITLE
+Multiplayer Setup
+
+#Strings
+MPLOBBY_HOST_ABORTED_GAME
+The host player has terminated this game setup.
+
+#Button names####
+
+START_GAME_BN
+Start game
 
 
 ########################
