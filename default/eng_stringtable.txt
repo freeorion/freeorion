@@ -42,11 +42,8 @@ The connection to the server has been lost.
 SERVER_GAME_END
 The server has sent an end-game message.  Buh-bye.
 
-PLAYER_DISCONNECTED_PART_1
-Player
-
-PLAYER_DISCONNECTED_PART_2
-no longer has a connection to the server.
+PLAYER_DISCONNECTED
+Player %s no longer has a connection to the server.
 
 
 #################
@@ -103,7 +100,7 @@ Lan game at:
 INTERNET_GAME_LABEL
 Internet game at:
 PLAYER_NAME_LABEL
-Player name:
+Player name
 
 
 #Button names####
@@ -258,7 +255,7 @@ LICENSE
 License
 
 ABOUT_WINDOW_TITLE
-About FreeOrion v0.1a
+About FreeOrion
 
 CREDITS
 Credits
