@@ -22,7 +22,7 @@ class OptionsDB;
 typedef void (*OptionsDBFn)(OptionsDB&); ///< the function signature for functions that add Options to the OptionsDB (void (OptionsDB&))
 
 /** adds \a function to a vector of pointers to functions that add Options to the OptionsDB.  This function returns a 
-    boolean so that it can be used to declare dummy a static variable that causes \a function to be registered as a side 
+    boolean so that it can be used to declare a dummy static variable that causes \a function to be registered as a side 
     effect (e.g. at file scope: "bool unused_bool = RegisterOption(&foo)"). */
 bool RegisterOptions(OptionsDBFn function);
 
@@ -40,13 +40,16 @@ OptionsDB& GetOptionsDB();
     allows overrides of these settings from the command line.  
     <br><br>OptionsDB must have its options and their types specified before any values are 
     assigned to those options.  This is because setting an option in the DB requires the type of the option to be known in advance.  To specify the 
-    options, you may either use static initialization time or normal runtime calls to Add().  Note that the exact type of added item must 
-    be specified with Add(), so that subsequent calls to Get() do not throw.  For instance, if you want to add an unsigned value accessible 
-    as "foo", you should call: \verbatim
+    options, you may either use static initialization time or normal runtime calls to Add() and AddFlag().  Note that the exact type of added 
+    item must be specified with Add*(), so that subsequent calls to Get() do not throw.  For instance, if you want to add an unsigned value 
+    accessible as "foo", you should call: \verbatim
         Add("foo", "The number of foos.", 1u);\endverbatim
     Making the same call as above with "1" instead of "1u" will cause a later call to Get<unsigned int>("foo") to throw, since "foo" would be 
     an int, not an unsigned int.  To guard against this, you may wish to call Add() with an explicit template parameterization, such as 
     Add<unsigned int>(...).
+    <br><br>Flag options are just boolean values that are false by default.  Their values may be read and set normally, the same as any other 
+    boolean option.  For exapmple, reading a flag's value form the DB can be done using using: \verbatim
+        Get<bool>(flag_name);endverbatim
     <br><br>Adding options at static initialization time means that the options specified will be available before main()
     is called, and yet you do not have to fill main.cpp with all your option specifications.  Instead, you can put them in the files in which their
     options are used.
@@ -60,14 +63,15 @@ OptionsDB& GetOptionsDB();
     This allows options to be grouped in ways that are sensible for the application.  This is only done as a convenience to the user.  It does 
     not change the way the options are treated in any way.  Note that is is perfectly legal also to have an option "foo" containing a value "z" in 
     the example above.
-    <br><br>A few things should be said about the command-line version of options.  All boolean command-line options are assumed to 
-    have false as their default value.  This means that their mere presence on the command line means that they indicate a value of true.  Therefore 
-    they need no argument.  For example, you would specify "--help" on the command line, instead of the more awkward "--help 1".
+    <br><br>A few things should be said about the command-line version of options.  All flag command-line options (specified with AddFlag()) are 
+    assumed to have false as their default value.  This means that their mere presence on the command line means that they indicate a value of true;  
+    they need no argument.  For example, specifying "--help" on the command line sets the option "help" in the DB to true, and leaving it out sets 
+    the option to false.
     <br><br>Long-form names should be preceded with "--", and the single-character version should be preceded with "-".  An exception 
     to this is that multiple single-character (boolean) options may be run together (e.g. "-cxvf").  Also, the last option in such a group may take an 
     argument, which must immediately follow the group, separated by a space as usual.
     <br><br>Finally, note that std::runtime_error exceptions will be thrown
-    any time a problem occurs with an option (calling Get() for one that doesn't exist, Add()ing  one twice, etc.), and boost::bad_any_cast exceptions 
+    any time a problem occurs with an option (calling Get() for one that doesn't exist, Add()ing one twice, etc.), and boost::bad_any_cast exceptions 
     will be thrown in situations in which an invalid type-conversion occurs, including string-to-type, type-to-string or type-to-type as in the case 
     of Get() calls with the wrong tempate parameter.
     \see RegisterOptions (for static-time options specification) */
@@ -122,6 +126,26 @@ public:
         m_option_added_sig(name);
     }
 
+	/** adds a flag Option, which is treated as a boolean value with a default of false.  Using the flag on the command line at all indicates 
+        that its value it set to true. */
+    void AddFlag(const std::string& name, const std::string& description)
+    {
+        if (m_options.find(name) != m_options.end())
+            throw std::runtime_error("Option " + name + " was specified twice.");
+        m_options[name] = Option(static_cast<char>(0), name, false, boost::lexical_cast<std::string>(false), description);
+        m_option_added_sig(name);
+    }
+
+	/** adds an Option with an alternative one-character shortened name, which is treated as a boolean value with a default of false.  
+        Using the flag on the command line at all indicates that its value it set to true. */
+    void AddFlag(char short_name, const std::string& name, const std::string& description)
+    {
+        if (m_options.find(name) != m_options.end())
+            throw std::runtime_error("Option " + name + " was specified twice.");
+        m_options[name] = Option(short_name, name, false, boost::lexical_cast<std::string>(false), description);
+        m_option_added_sig(name);
+    }
+
     void Remove(const std::string& name); ///< removes an Option 
 
     /** sets the value of option \a name to \a value */
@@ -156,7 +180,7 @@ private:
         std::string       default_value; ///< a string representation of the option's default value
         std::string       description;   ///< a desription of the option
         boost::shared_ptr<const ValidatorBase>
-                          validator;     ///< a validator for the option
+                          validator;     ///< a validator for the option. Flags have no validators; lexical_cast boolean conversions oare done for them.
 
         static std::map<char, std::string> short_names;   ///< the master list of abbreviated option names, and their corresponding long-form names
     };

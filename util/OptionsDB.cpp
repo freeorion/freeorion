@@ -5,22 +5,22 @@
 #include <string>
 
 namespace {
-std::vector<OptionsDBFn>& OptionsRegistry()
-{
-    static std::vector<OptionsDBFn> options_db_registry;
-    return options_db_registry;
-}
-
-std::string PreviousSectionName(const std::vector<GG::XMLElement*>& elem_stack)
-{
-    std::string retval;
-    for (unsigned int i = 1; i < elem_stack.size(); ++i) {
-        retval += elem_stack[i]->Tag();
-        if (i != elem_stack.size() - 1)
-            retval += '.';
+    std::vector<OptionsDBFn>& OptionsRegistry()
+    {
+        static std::vector<OptionsDBFn> options_db_registry;
+        return options_db_registry;
     }
-    return retval;
-}
+
+    std::string PreviousSectionName(const std::vector<GG::XMLElement*>& elem_stack)
+    {
+        std::string retval;
+        for (unsigned int i = 1; i < elem_stack.size(); ++i) {
+            retval += elem_stack[i]->Tag();
+            if (i != elem_stack.size() - 1)
+                retval += '.';
+        }
+        return retval;
+    }
 }
 
 /////////////////////////////////////////////
@@ -69,12 +69,20 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
 
 void OptionsDB::Option::FromString(const std::string& str)
 {
-    value = validator->Validate(str);
+    if (validator) { // non-flag
+        value = validator->Validate(str);
+    } else { // flag
+        value = boost::lexical_cast<bool>(str);
+    }
 }
 
 std::string OptionsDB::Option::ToString() const
 {
-    return validator->String(value);
+    if (validator) { // non-flag
+        return validator->String(value);
+    } else { // flag
+        return boost::lexical_cast<std::string>(boost::any_cast<bool>(value));
+    }
 }
 
 
@@ -98,7 +106,11 @@ void OptionsDB::Validate(const std::string& name, const std::string& value) cons
     if (it == m_options.end())
         throw std::runtime_error("Attempted to validate unknown option \"" + name + "\".");
 
-    it->second.validator->Validate(value);
+    if (it->second.validator) { // non-flag
+        it->second.validator->Validate(value);
+    } else { // flag
+        boost::lexical_cast<bool>(value);
+    }
 }
 
 void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = ""*/) const
@@ -111,7 +123,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
             longest_param_name = it->first.size();
     }
 
-    int description_column = (longest_param_name + 7); // 7 == 4 for e.g. "-P, ", 2 for "--", and 1 space afterwards
+    int description_column = (longest_param_name + 7); // 7 comes from 4 for e.g. "-P, ", 2 for "--", and 1 space afterwards
     int description_width = 80 - description_column;
 
     if (description_width <= 0)
@@ -157,7 +169,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
                 first_line = false;
             }
         }
-        if (it->second.value.type() != typeid(bool))
+        if (it->second.validator)
             os << std::string(description_column, ' ') << "default: " << it->second.default_value << "\n";
     }
 }
@@ -171,21 +183,40 @@ GG::XMLDoc OptionsDB::GetXML() const
 
     for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it) {
         unsigned int last_dot = it->first.find_last_of('.');
-        std::string section_name = last_dot == std::string::npos ? doc.root_node.Tag() : it->first.substr(0, last_dot);
+        std::string section_name = last_dot == std::string::npos ? "" : it->first.substr(0, last_dot);
         std::string name = it->first.substr(last_dot == std::string::npos ? 0 : last_dot + 1);
-        while (1 < elem_stack.size() && section_name != PreviousSectionName(elem_stack))
+        while (1 < elem_stack.size()) {
+            std::string prev_section = PreviousSectionName(elem_stack);
+            if (prev_section == section_name) {
+                section_name = "";
+                break;
+            } else if (section_name.find(prev_section + '.') == 0) {
+                section_name = section_name.substr(prev_section.size() + 1);
+                break;
+            }
             elem_stack.pop_back();
-        if (section_name != PreviousSectionName(elem_stack)) {
+        }
+        if (!section_name.empty()) {
             unsigned int last_pos = 0;
             unsigned int pos = 0;
-            while ((pos = it->first.find('.', last_pos)) != std::string::npos) {
-                GG::XMLElement temp(it->first.substr(last_pos, pos - last_pos));
+            while ((pos = section_name.find('.', last_pos)) != std::string::npos) {
+                GG::XMLElement temp(section_name.substr(last_pos, pos - last_pos));
                 elem_stack.back()->AppendChild(temp);
                 elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
                 last_pos = pos + 1;
             }
+            GG::XMLElement temp(section_name.substr(last_pos));
+            elem_stack.back()->AppendChild(temp);
+            elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
         }
-        GG::XMLElement temp(name, it->second.ToString());
+
+        GG::XMLElement temp(name);
+        if (it->second.validator) { // non-flag
+            temp.SetText(it->second.ToString());
+        } else { // flag
+            if (!boost::any_cast<bool>(it->second.value))
+                continue;
+        }
         elem_stack.back()->AppendChild(temp);
         elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
     }
@@ -215,16 +246,16 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
             std::map<std::string, Option>::iterator it = m_options.find(option_name);
             
             if (it == m_options.end())
-                throw std::runtime_error("Option \"--" + option_name + "\", could not be found.");
+                throw std::runtime_error("Option \"" + current_token + "\", could not be found.");
             
             Option& option = it->second;
             if (option.value.empty())
                 throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
 
-            if (option.value.type() == typeid(bool))
-                option.value = true;
-            else
+            if (option.validator) // non-flag
                 option.FromString(argv[++i]);
+            else // flag
+                option.value = true;
 
             option_changed = true;
         } else if (current_token.find('-') == 0) {
@@ -248,13 +279,13 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
                     if (option.value.empty())
                         throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");
 
-                    if (option.value.type() == typeid(bool)) {
-                        option.value = true;
-                    } else {
+                    if (option.validator) { // non-flag
                         if (j < single_char_options.size() - 1)
                             throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
                         else
                             option.FromString(argv[++i]);
+                    } else { // flag
+                        option.value = true;
                     }
 
                     option_changed = true;
@@ -279,9 +310,11 @@ void OptionsDB::SetFromXML(const GG::XMLDoc& doc)
 void OptionsDB::SetFromXMLRecursive(const GG::XMLElement& elem, const std::string& section_name)
 {
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
-    std::string option_value= elem.Text()!=""?elem.Text():elem.Attribute("value");
 
-    if(option_value != "") {
+    // flags have no text or children; their presence at all indicates a value of true
+    std::string option_value = elem.NumChildren() || elem.Text() != "" ? elem.Text() : "true";
+
+    if (option_value != "") {
         std::map<std::string, Option>::iterator it = m_options.find(option_name);
 
         if (it == m_options.end())
@@ -293,6 +326,7 @@ void OptionsDB::SetFromXMLRecursive(const GG::XMLElement& elem, const std::strin
 
         option.FromString(option_value);
     }
+
     for (int i = 0; i < elem.NumChildren(); ++i) {
         SetFromXMLRecursive(elem.Child(i), option_name);
     }
