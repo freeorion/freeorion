@@ -294,9 +294,7 @@ Message ServerLobbyUpdateMessage(int receiver, const GG::XMLDoc& doc)
 Message LobbyChatMessage(int sender, int receiver, const std::string& text)
 {
     GG::XMLDoc doc;
-    GG::XMLElement temp("receiver");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(receiver));
-    doc.root_node.AppendChild(temp);
+    doc.root_node.AppendChild(GG::XMLElement("receiver", boost::lexical_cast<std::string>(receiver)));
     doc.root_node.AppendChild(GG::XMLElement("text", text));
     return Message(Message::LOBBY_UPDATE, sender, -1, Message::CORE, doc);
 }
@@ -304,9 +302,7 @@ Message LobbyChatMessage(int sender, int receiver, const std::string& text)
 Message ServerLobbyChatMessage(int sender, int receiver, const std::string& text)
 {
     GG::XMLDoc doc;
-    GG::XMLElement temp("sender");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(sender));
-    doc.root_node.AppendChild(temp);
+    doc.root_node.AppendChild(GG::XMLElement("sender", boost::lexical_cast<std::string>(sender)));
     doc.root_node.AppendChild(GG::XMLElement("text", text));
     return Message(Message::LOBBY_UPDATE, -1, receiver, Message::CLIENT_LOBBY_MODULE, doc);
 }
