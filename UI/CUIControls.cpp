@@ -458,7 +458,7 @@ int CUIListBox::Render()
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, color_to_use, 1);
-    return 1;
+    return 0;
 }
 
 GG::Scroll* CUIListBox::NewVScroll(bool horz_scroll)

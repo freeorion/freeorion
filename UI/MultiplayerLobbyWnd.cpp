@@ -63,7 +63,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
 
     g_preview_ul = GG::Pt(Width() - RightBorder() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, TopBorder() + CONTROL_MARGIN + PREVIEW_MARGIN);
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
-    m_galaxy_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::SG_FITGRAPHIC);
+    m_galaxy_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GR_FITGRAPHIC);
     m_galaxy_image_file_edit = new CUIEdit(g_preview_ul.x - PREVIEW_MARGIN, m_galaxy_preview_image->LowerRight().y + CONTROL_MARGIN + PREVIEW_MARGIN, 175, 
                                            ClientUI::PTS + 10, "");
     m_image_file_browse_bn = new CUIButton(m_galaxy_image_file_edit->LowerRight().x + CONTROL_MARGIN, 
@@ -308,7 +308,7 @@ void MultiplayerLobbyWnd::GalaxyTypeClicked(int idx)
         try {
             boost::shared_ptr<GG::Texture> tex(new GG::Texture());
             tex->Load(m_galaxy_image_file_edit->WindowText());
-            m_galaxy_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, tex, GG::SG_FITGRAPHIC);
+            m_galaxy_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, tex, GG::GR_FITGRAPHIC);
             AttachChild(m_galaxy_preview_image);
         } catch (const std::exception& e) {
             GG::App::GetApp()->Logger().alert("MultiplayerLobbyWnd::GalaxyTypeClicked : Invalid texture file specified.");
@@ -317,7 +317,7 @@ void MultiplayerLobbyWnd::GalaxyTypeClicked(int idx)
         m_image_file_browse_bn->Disable(false);
     } else {
         if (idx != -1) {
-            m_galaxy_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, m_textures[idx], GG::SG_FITGRAPHIC);
+            m_galaxy_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, m_textures[idx], GG::GR_FITGRAPHIC);
             AttachChild(m_galaxy_preview_image);
         }
         m_galaxy_image_file_edit->Disable();

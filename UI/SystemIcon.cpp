@@ -59,7 +59,7 @@ SystemIcon::SystemIcon(int id, double zoom) :
     }
 
     //setup static graphic
-    m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::SG_FITGRAPHIC);
+    m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::GR_FITGRAPHIC);
     AttachChild(m_static_graphic);
 
     //set up the name text control

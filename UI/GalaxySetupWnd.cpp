@@ -45,7 +45,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     // create a temporary texture and static graphic
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
-    m_preview_image =  new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::SG_FITGRAPHIC); // create a blank graphic
+    m_preview_image =  new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GR_FITGRAPHIC); // create a blank graphic
     GG::Pt preview_lr = m_preview_image->LowerRight();
 
     m_galaxy_file = new CUIEdit(PREVIEW_UL.x, preview_lr.y + 7, 168, ClientUI::PTS + 10, "");
@@ -284,7 +284,7 @@ void GalaxySetupWnd::OnChangeType(int index)
         try {
             boost::shared_ptr<GG::Texture> tex(new GG::Texture());
             tex->Load(GalaxyFile());
-            m_preview_image = new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, tex, GG::SG_FITGRAPHIC);
+            m_preview_image = new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, tex, GG::GR_FITGRAPHIC);
             AttachChild(m_preview_image);
         } catch (const std::exception& e) {
             GG::App::GetApp()->Logger().alert("GalaxySetupWnd: Invalid texture file specified.");
@@ -293,7 +293,7 @@ void GalaxySetupWnd::OnChangeType(int index)
         m_browse_button->Disable(false);
     } else {
         if (index != -1) {
-            m_preview_image = new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, m_textures[index], GG::SG_FITGRAPHIC);
+            m_preview_image = new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, m_textures[index], GG::GR_FITGRAPHIC);
             AttachChild(m_preview_image);
         }
         m_galaxy_file->Disable();
