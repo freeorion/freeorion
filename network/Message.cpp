@@ -265,6 +265,17 @@ Message ServerLoadGameMessage(int receiver, const GG::XMLDoc& data)
     return Message(Message::LOAD_GAME, -1, receiver, Message::CORE, data);
 }
 
+Message ChatMessage(int sender, const std::string& msg)
+{
+    return Message(Message::HUMAN_PLAYER_MSG, sender, -1, Message::CORE, msg);
+}
+
+Message ChatMessage(int sender, int receiver, const std::string& msg)
+{
+    return Message(Message::HUMAN_PLAYER_MSG, sender, receiver, Message::CORE, msg);
+}
+
+
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Messages

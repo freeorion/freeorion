@@ -180,6 +180,13 @@ Message ServerSaveGameMessage(int receiver, bool done = false);
 /** creates a LOAD_GAME data message.  This message should only be sent by the server to provide saved game data to a client.*/
 Message ServerLoadGameMessage(int receiver, const GG::XMLDoc& data);
 
+/** creates a HUMAN_PLAYER_MSG, which is sent to the server, and then from the server to all human players, including the 
+    originating player.  This is used for MP chat.*/
+Message ChatMessage(int sender, const std::string& msg);
+
+/** creates a HUMAN_PLAYER_MSG, which is sent to the specific indicated receiver.  This is used for MP chat.*/
+Message ChatMessage(int sender, int receiver, const std::string& msg);
+
 
 
 ////////////////////////////////////////////////
