@@ -38,25 +38,29 @@ bool foo_bool = RegisterOptions(&Options);
 class CreditsWnd : public GG::Wnd
 {
   public:
-    CreditsWnd(int x, int y, int w, int h,const std::vector<std::string> &credits,int cx, int cy, int cw, int ch,int co);
+    CreditsWnd(int x, int y, int w, int h,const GG::XMLElement &credits,int cx, int cy, int cw, int ch,int co);
         
     virtual bool Render();
+    virtual void LClick(const GG::Pt& pt, Uint32 keys) {m_bRender=false;}
 
   private:
-    std::vector<std::string> m_credits;
+    GG::XMLElement m_credits;
     int m_cx,m_cy,m_cw,m_ch,m_co;
     int m_start_time;
+    int m_bRender,m_bFadeIn;
 };
 
-CreditsWnd::CreditsWnd(int x, int y, int w, int h,
-                       const std::vector<std::string> &credits,
-                       int cx, int cy, int cw, int ch,int co)
-: GG::Wnd(x, y, w, h,0),m_credits(credits),m_cx(cx),m_cy(cy),m_cw(cw),m_ch(ch),m_co(co),
+CreditsWnd::CreditsWnd(int x, int y, int w, int h,const GG::XMLElement &credits,int cx, int cy, int cw, int ch,int co)
+: GG::Wnd(x, y, w, h,GG::Wnd::CLICKABLE),m_credits(credits),m_cx(cx),m_cy(cy),m_cw(cw),m_ch(ch),m_co(co),
+  m_bRender(true),m_bFadeIn(true),
   m_start_time(GG::App::GetApp()->Ticks())
 {}
 
 bool CreditsWnd::Render()
 {
+  if(!m_bRender)
+    return true;
+
   GG::Pt ul = UpperLeft(), lr = LowerRight();
   boost::shared_ptr<GG::Font> font=HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));;
   Uint32 format = GG::TF_CENTER | GG::TF_TOP;
@@ -68,11 +72,50 @@ bool CreditsWnd::Render()
 
   offset -= (GG::App::GetApp()->Ticks() - m_start_time)/40;
 
-  GG::BeginScissorClipping(ul.x+m_cx,ul.y+m_cy,ul.x+m_cx+m_cw,ul.y+ul.y+m_ch);
-  for(unsigned int i =0;i<m_credits.size();i++)
+  int transparency = 255;
+
+  if(m_bFadeIn)
   {
-    font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+ul.y+m_ch, m_credits[i], format, 0, true);
-    offset+=font->TextExtent(m_credits[i], format).y+2;
+    double fade_in = (GG::App::GetApp()->Ticks() - m_start_time)/2000.0;
+    if(fade_in>1.0)
+      m_bFadeIn=false;
+    else
+      transparency = 255*fade_in;
+  }
+
+  glColor4ubv(GG::Clr(transparency,transparency,transparency,255).v);
+
+  GG::BeginScissorClipping(ul.x+m_cx,ul.y+m_cy,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch);
+
+  std::string credit;
+  for(int i = 0; i<m_credits.NumChildren();i++)
+    if(0==m_credits.Child(i).Tag().compare("GROUP"))
+    {
+      GG::XMLElement group = m_credits.Child(i);
+      for(int j = 0; j<group.NumChildren();j++)
+        if(0==group.Child(j).Tag().compare("PERSON"))
+        {
+          GG::XMLElement person = group.Child(j);
+          credit = "";
+          if(person.ContainsAttribute("name"))
+            credit+=person.Attribute("name");
+          if(person.ContainsAttribute("nick") && person.Attribute("nick").length()>0)
+          {
+            credit+=" <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) +">(";
+            credit+=person.Attribute("nick");
+            credit+=")</rgba>";
+          }
+          if(person.ContainsAttribute("task") && person.Attribute("task").length()>0)
+          {
+            credit+=" - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) +">";
+            credit+=person.Attribute("task");
+            credit+="</rgba>";
+          }
+          font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,credit, format, 0, true);
+          offset+=font->TextExtent(credit, format).y+2;
+        }
+      font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,"", format, 0, true);
+      offset+=font->TextExtent("", format).y+2;
   }
   GG::EndScissorClipping();
 
@@ -304,38 +347,6 @@ void IntroScreen::OnCredits()
     return;
 
   GG::XMLElement credits = doc.root_node.Child("CREDITS");
-  std::vector<std::string> credits_vec;
-  for(int i = 0; i<credits.NumChildren();i++)
-    if(0==credits.Child(i).Tag().compare("GROUP"))
-    {
-      if(credits_vec.size()>0)
-        credits_vec.push_back("");
-
-      GG::XMLElement group = credits.Child(i);
-      for(int j = 0; j<group.NumChildren();j++)
-        if(0==group.Child(j).Tag().compare("PERSON"))
-        {
-          GG::XMLElement person = group.Child(j);
-          std::string entry;
-          entry = "";
-          if(person.ContainsAttribute("name"))
-            entry+=person.Attribute("name");
-          if(person.ContainsAttribute("nick") && person.Attribute("nick").length()>0)
-          {
-            entry+=" <rgba 153 153 153 255>(";
-            entry+=person.Attribute("nick");
-            entry+=")</rgba>";
-          }
-          if(person.ContainsAttribute("task") && person.Attribute("task").length()>0)
-          {
-            entry+=" - <rgba 204 204 204 255>";
-            entry+=person.Attribute("task");
-            entry+="</rgba>";
-          }
-          credits_vec.push_back(entry);
-        }
-  }
-
   // only the area between the upper and lower line of the splash screen should be darkend
   // if we use another splash screen we have the chenge the following values
   int nUpperLine = ( 79 * GG::App::GetApp()->AppHeight()) / 768,
@@ -343,8 +354,8 @@ void IntroScreen::OnCredits()
 
   m_credits_wnd = new CreditsWnd(0,nUpperLine,
                                  GG::App::GetApp()->AppWidth(),nLowerLine-nUpperLine,
-                                 credits_vec,
-                                 60,50,600,(nLowerLine-nUpperLine)-60*2,((nLowerLine-nUpperLine)-60*2)/2);
+                                 credits,
+                                 60,0,600,(nLowerLine-nUpperLine),((nLowerLine-nUpperLine))/2);
 
   GG::App::GetApp()->Register(m_credits_wnd);
 }
