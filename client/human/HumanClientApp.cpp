@@ -294,6 +294,8 @@ void HumanClientApp::SDLInit()
         Exit(1);
     }
 
+    SDL_WM_SetCaption("FreeOrion v0.2", "FreeOrion v0.2");
+
     int freq = MIX_DEFAULT_FREQUENCY; // sampling frequency
     Uint16 format = MIX_DEFAULT_FORMAT;
     int channels = 2; // stereo
