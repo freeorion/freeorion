@@ -140,6 +140,9 @@ void Building::PopGrowthProductionResearchPhase()
 BuildingType::BuildingType() :
     m_name(""),
     m_description(""),
+    m_build_cost(0.0),
+    m_build_time(0),
+    m_maintenance_cost(0.0),
     m_effects(0)
 {
 }
@@ -147,6 +150,9 @@ BuildingType::BuildingType() :
 BuildingType::BuildingType(const std::string& name, const std::string& description, const Effect::EffectsGroup* effects) :
     m_name(name),
     m_description(description),
+    m_build_cost(0.0),
+    m_build_time(0),
+    m_maintenance_cost(0.0),
     m_effects(effects)
 {
 }
@@ -161,6 +167,7 @@ BuildingType::BuildingType(const GG::XMLElement& elem)
     m_name = elem.Child("name").Text();
     m_description = elem.Child("description").Text();
     m_build_cost = lexical_cast<double>(elem.Child("build_cost").Text());
+    m_build_time = lexical_cast<int>(elem.Child("build_time").Text());
     m_maintenance_cost = lexical_cast<double>(elem.Child("maintenance_cost").Text());
     m_effects = new Effect::EffectsGroup(elem.Child("EffectsGroup"));
 }
@@ -178,6 +185,11 @@ const std::string& BuildingType::Description() const
 double BuildingType::BuildCost() const
 {
     return m_build_cost;
+}
+
+int BuildingType::BuildTime() const
+{
+    return m_build_time;
 }
 
 double BuildingType::MaintenanceCost() const

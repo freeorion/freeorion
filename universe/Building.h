@@ -63,6 +63,7 @@ public:
     const std::string&          Name() const;             ///< returns the unique name for this type of building
     const std::string&          Description() const;      ///< returns a text description of this type of building
     double                      BuildCost() const;        ///< returns the number of production points required to build this building
+    int                         BuildTime() const;        ///< returns the number of turns required to build this building
     double                      MaintenanceCost() const;  ///< returns the number of monetary points required per turn to operate this building
     const Effect::EffectsGroup* Effects() const;          ///< returns the EffectsGroup that encapsulates the effects that buildings of this type have when operational
     //@}
@@ -71,6 +72,7 @@ private:
     std::string                 m_name;
     std::string                 m_description;
     double                      m_build_cost;
+    int                         m_build_time;
     double                      m_maintenance_cost;
     const Effect::EffectsGroup* m_effects;
 };
