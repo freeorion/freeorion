@@ -1397,6 +1397,9 @@ void ServerApp::ProcessTurns( )
 
 
     /// process production and growth phase
+    for (ServerEmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
+        it->second->UpdateResourcePool();
+
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
         m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::EMPIRE_PRODUCTION, -1));
 
