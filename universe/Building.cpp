@@ -1,0 +1,142 @@
+#include "Building.h"
+
+#include "Effect.h"
+#include "../util/OptionsDB.h"
+#include "Planet.h"
+
+Building::Building() :
+    m_building_type(""),
+    m_planet_id(INVALID_OBJECT_ID)
+{
+}
+
+Building::Building(int empire_id, const std::string& building_type, int planet_id) :
+    m_building_type(building_type),
+    m_planet_id(planet_id)
+{
+   AddOwner(empire_id);
+}
+
+Building::Building(const GG::XMLElement& elem) :
+    UniverseObject(elem.Child("UniverseObject"))
+{
+    if (elem.Tag().find("Building") == std::string::npos )
+        throw std::invalid_argument("Attempted to construct a Building from an XMLElement that had a tag other than \"Building\"");
+
+    using boost::lexical_cast;
+
+    m_building_type = elem.Child("m_building_type").Text();
+    m_planet_id = lexical_cast<int>(elem.Child("m_planet_id").Text());
+}
+
+const std::string& Building::BuildingTypeName() const
+{
+    return m_building_type;
+}
+
+int Building::PlanetID() const
+{
+    return m_planet_id;
+}
+
+Planet* Building::GetPlanet() const
+{
+    return m_planet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Planet>(m_planet_id);
+}
+
+GG::XMLElement Building::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+{
+    using GG::XMLElement;
+    using boost::lexical_cast;
+
+    XMLElement retval("Building" + lexical_cast<std::string>(ID()));
+    retval.AppendChild(UniverseObject::XMLEncode(empire_id));
+    retval.AppendChild(XMLElement("m_building_type", m_building_type));
+    retval.AppendChild(XMLElement("m_planet_id", lexical_cast<std::string>(m_planet_id)));
+
+    return retval;
+}
+
+void Building::SetPlanetID(int planet_id)
+{
+    if (Planet* planet = GetPlanet())
+	planet->RemoveBuilding(ID());
+    m_planet_id = planet_id;
+}
+
+void Building::MovementPhase()
+{
+}
+
+void Building::PopGrowthProductionResearchPhase()
+{
+}
+
+
+BuildingType::BuildingType() :
+    m_name(""),
+    m_description(""),
+    m_effects(0)
+{
+}
+
+BuildingType::BuildingType(const std::string& name, const std::string& description, const Effect::EffectsGroup* effects) :
+    m_name(name),
+    m_description(description),
+    m_effects(effects)
+{
+}
+
+BuildingType::BuildingType(const GG::XMLElement& elem)
+{
+    if (elem.Tag() != "BuildingType")
+        throw std::invalid_argument("Attempted to construct a BuildingType from an XMLElement that had a tag other than \"BuildingType\"");
+
+    m_name = elem.Child("name").Text();
+    m_description = elem.Child("description").Text();
+    m_effects = new Effect::EffectsGroup(elem.Child("EffectsGroup"));
+}
+
+const std::string& BuildingType::Name() const
+{
+    return m_name;
+}
+
+const std::string& BuildingType::Description() const
+{
+    return m_description;
+}
+
+const Effect::EffectsGroup* BuildingType::Effects() const
+{
+    return m_effects;
+}
+
+
+BuildingTypeManager::BuildingTypeManager()
+{
+    std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+    if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+	settings_dir += '/';
+    std::ifstream ifs((settings_dir + "buildings.xml").c_str());
+    GG::XMLDoc doc;
+    doc.ReadDoc(ifs);
+    for (GG::XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
+	if (it->Tag() != "BuildingType")
+	    throw std::runtime_error("ERROR: Encountered non-BuildingType in buildings.xml!");
+	m_building_types[it->Child("name").Text()] = new BuildingType(*it);
+    }
+    ifs.close();
+}
+
+BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const
+{
+    std::map<std::string, BuildingType*>::const_iterator it = m_building_types.find(name);
+    return it != m_building_types.end() ? it->second : 0;
+}
+
+BuildingType* GetBuildingType(const std::string& name)
+{
+    static BuildingTypeManager manager;
+    return manager.GetBuildingType(name);
+}
