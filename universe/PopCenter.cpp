@@ -154,17 +154,16 @@ void PopCenter::AdjustMaxMeters()
     m_pop.AdjustMax(MaxPopModFromObject(m_object));
     m_health.AdjustMax(MaxHealthModFromObject(m_object));
     if (m_available_food < m_pop.Current()) { // starvation
-        // TODO: add starvation special
-        // TODO: reduce happiness when it is implemented
+        m_object->AddSpecial("STARVATION_SPECIAL");
         m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][0]);
     } else if (m_available_food < 2 * m_pop.Current()) {
-        // TODO: remove starvation special
+        m_object->RemoveSpecial("STARVATION_SPECIAL");
         m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][1]);
     } else if (m_available_food < 4 * m_pop.Current()) {
-        // TODO: remove starvation special
+        m_object->RemoveSpecial("STARVATION_SPECIAL");
         m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][2]);
     } else {
-        // TODO: remove starvation special
+        m_object->RemoveSpecial("STARVATION_SPECIAL");
         m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
     }
 }
