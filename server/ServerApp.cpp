@@ -367,9 +367,12 @@ void ServerApp::SDLQuit()
 
 void ServerApp::GameInit()
 {
-    m_universe.CreateUniverse(m_universe_shape, m_universe_size, m_players_info.size() - m_ai_clients.size(), m_ai_clients.size());
+    m_universe.CreateUniverse(m_universe_shape, m_universe_size, m_players_info.size(), m_ai_clients.size());
     m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Created universe " << 
         (m_universe_shape == ClientUniverse::FROM_FILE ? ("from file " + m_universe_file) : "") << " (SERVER_GAME_SETUP).";
+
+    // the universe creation caused the creation of empires.  But now we
+    // need to assign empires to players.  
 
     for (unsigned int i = 0; i < m_players_info.size(); ++i) {
         GG::XMLDoc doc;
