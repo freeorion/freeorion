@@ -144,13 +144,8 @@ private:
     void ShowDialog(const std::string& msg);
     GG::XMLElement XMLEncode();
 
-   
     // inline
-    void FormatRow(const IPValue& rstr,GG::DropDownList::Row* row)
-	{
-	    row->push_back(rstr.Name(),ClientUI::GetClientUI()->FONT,ClientUI::GetClientUI()->PTS);  // display the name/URL of server
-	    row->data_type = rstr.Address();             // store the real ip address
-	}
+    void FormatRow(const IPValue& rstr, GG::DropDownList::Row* row);
    
     bool m_ended_with_ok;
     RowsVector m_server_list;
