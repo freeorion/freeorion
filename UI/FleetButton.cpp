@@ -123,7 +123,7 @@ void FleetButton::RenderRollover()
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     glDisable(GL_TEXTURE_2D);
-    FleetMarker(ul.x, ul.y, lr.x, lr.y, m_orientation, color_to_use);
+    FleetMarker(ul.x-Width()/4, ul.y-Height()/4, lr.x+Width()/4, lr.y+Height()/4, m_orientation, color_to_use);
     glEnable(GL_TEXTURE_2D);
 }
 
