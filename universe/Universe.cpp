@@ -426,6 +426,7 @@ namespace {
         std::string star_name(*it);
         star_names.erase(it);
         int num_orbits = 10; // this is fixed at 10 in the v0.2 DD
+	Logger().debugStream() << "Generating " << star_name;
 
         // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
         int idx = 0;
@@ -444,7 +445,7 @@ namespace {
             throw std::runtime_error("Universe::GenerateIrregularGalaxy() : Attempt to insert system " +
                                     star_name + " into the object map failed.");
         }
-
+	Logger().debugStream() << "finished.";
         return system;
     }
 
@@ -714,11 +715,17 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFreqency s
         GenerateIrregularGalaxy(size, age, adjacency_grid);
     }
 
+    Logger().debugStream() << "Calling Pop";
     PopulateSystems(planet_density);
+    Logger().debugStream() << "Calling GenStarlanes";
     GenerateStarlanes(starlane_freq, adjacency_grid);
+    Logger().debugStream() << "Calling Initia";
     InitializeSystemGraph();
+    Logger().debugStream() << "Calling GenHome";
     GenerateHomeworlds(players + ai_players, homeworlds);
+    Logger().debugStream() << "Calling GenEmp";
     GenerateEmpires(players + ai_players, homeworlds);
+    Logger().debugStream() << "done 2";
 }
 
 int Universe::Insert(UniverseObject* obj)
@@ -1187,7 +1194,8 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
         int planet_id, home_orbit;
         std::string planet_name;
 
-        if (system->Orbits() > 0) {
+	// we can only select a planet if there are planets in this system.
+        if (! system->FindObjects<Planet>().empty()) {
             System::ObjectIDVec planet_IDs;
             while (planet_IDs.empty()) {
                 home_orbit = RandSmallInt(0, system->Orbits() - 1);
