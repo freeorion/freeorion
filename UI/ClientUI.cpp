@@ -28,8 +28,8 @@
 #endif
 
 //include OpenGL headers
-#include <gl/gl.h>
-#include <gl/glu.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 //static members
 std::string ClientUI::FONT          = "arial.ttf";    
