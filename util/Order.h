@@ -44,7 +44,7 @@ public:
    *  Subclasses add additional preconditions.  An std::runtime_error
    *   should be thrown if any precondition fails.
    */
-   virtual void           Execute() const = 0; ///< executes the order on the server's Universe and Empires; does nothing in the client apps
+   virtual void           Execute() const = 0; ///< executes the order on the Universe and Empires
    virtual GG::XMLElement XMLEncode() const;   ///< constructs an XMLElement for the order
    
    //@}
