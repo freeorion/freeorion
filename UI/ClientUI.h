@@ -258,7 +258,9 @@ private:
     TurnProgressWnd* m_turn_progress_wnd; //!< the turn progress window
 
     SDL_Cursor*      m_default_cursor;    //!< used to store default cursor
- 
+
+    int              m_previously_shown_system; //!< the ID of the system that was shown in the sidepanel before the last call to HideAllWindows()
+
     static log4cpp::Category& s_logger; //!< log4cpp logging category
     static ClientUI* s_the_UI;          //!< pointer to the one and only ClientUI object
 };

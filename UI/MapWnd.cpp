@@ -604,7 +604,8 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     MoveChildUp(m_side_panel);
-    m_side_panel->Hide();
+    if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+        m_side_panel->Hide();
 
     // set turn button to current turn
     m_turn_update->SetText( ClientUI::String("MAP_BTN_TURN_UPDATE") + boost::lexical_cast<std::string>(turn_number ) );    
@@ -825,8 +826,6 @@ void MapWnd::SetFleetMovement(Fleet* fleet)
 
 void MapWnd::OnTurnUpdate()
 {
-    //hide sidepanel
-    m_side_panel->SetSystem(UniverseObject::INVALID_OBJECT_ID);
     // delete app popups
     CloseAllPopups( );
 

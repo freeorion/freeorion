@@ -295,7 +295,8 @@ ClientUI::ClientUI() :
     m_intro_screen(0),
     m_map_wnd(0),
     m_turn_progress_wnd(0),
-    m_default_cursor(NULL)
+    m_default_cursor(NULL),
+    m_previously_shown_system(UniverseObject::INVALID_OBJECT_ID)
 {
     using namespace GG;
 
@@ -513,6 +514,10 @@ void ClientUI::SwitchState(State state)
         m_turn_progress_wnd = 0;
         break;
     case STATE_MAP:
+        if (state != STATE_LOAD)
+            m_previously_shown_system = m_map_wnd->GetSidePanel()->SystemID();
+        //hide sidepanel
+        m_map_wnd->SelectSystem(UniverseObject::INVALID_OBJECT_ID);
         break;
     case STATE_SITREP:
         break;
@@ -535,8 +540,10 @@ void ClientUI::SwitchState(State state)
 
     switch (m_state=state) {
     case STATE_STARTUP:
+        m_previously_shown_system = UniverseObject::INVALID_OBJECT_ID;
         break;
     case STATE_INTRO:
+        m_previously_shown_system = UniverseObject::INVALID_OBJECT_ID;
         if(m_intro_screen==0) {
           m_intro_screen = new IntroScreen();
           GG::App::GetApp()->Register(m_intro_screen);
@@ -556,6 +563,7 @@ void ClientUI::SwitchState(State state)
         break;
     case STATE_MAP:
         m_map_wnd->Show();
+        m_map_wnd->SelectSystem(m_previously_shown_system);
         break;
     case STATE_SITREP:
         break;
