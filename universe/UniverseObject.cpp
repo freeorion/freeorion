@@ -2,6 +2,7 @@
 
 #include "../util/AppInterface.h"
 #include "Meter.h"
+#include "Predicates.h"
 #include "System.h"
 #include "Special.h"
 #include "Universe.h"
@@ -137,6 +138,10 @@ GG::XMLElement UniverseObject::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES
     return retval;
 }
 
+UniverseObject* UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
+{
+    return visitor.Visit(const_cast<UniverseObject* const>(this));
+}
 
 void UniverseObject::Move(double x, double y)
 {

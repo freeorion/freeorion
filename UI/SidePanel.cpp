@@ -586,7 +586,7 @@ namespace {
             ship = s;
             
             // prefere non moving colony ship
-            if(!IsStationaryFleetFunctor(*flt_vec[i]->Owners().begin())(flt_vec[i]))
+            if(!flt_vec[i]->Accept(StationaryFleetVisitor(*flt_vec[i]->Owners().begin())))
               break;
             return s;
           }
@@ -1661,7 +1661,7 @@ void SidePanel::PlanetPanel::BuildSelected(int idx) const
   const Planet *planet = GetPlanet();
 
   std::pair<BuildType, std::string>& build = static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build;
-  HumanClientApp::Orders().IssueOrder(new BuildOrder(*planet->Owners().begin(), planet->ID(),build.first,build.second));
+  HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*planet->Owners().begin(), planet->ID(),build.first,build.second));
 }
 
 void SidePanel::PlanetPanel::ClickColonize()
@@ -1676,7 +1676,7 @@ void SidePanel::PlanetPanel::ClickColonize()
     if(ship==0)
       throw std::runtime_error("SidePanel::PlanetPanel::ClickColonize ship not found!");
 
-    if(!IsStationaryFleetFunctor(*ship->GetFleet()->Owners().begin())(ship->GetFleet()))
+    if(!ship->GetFleet()->Accept(StationaryFleetVisitor(*ship->GetFleet()->Owners().begin())))
     {
       GG::ThreeButtonDlg dlg(320,200,ClientUI::String("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
                              ClientUI::FONT,ClientUI::PTS,ClientUI::WND_COLOR,ClientUI::CTRL_BORDER_COLOR,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR,2,
@@ -2144,7 +2144,7 @@ void SidePanel::PlanetView::BuildSelected(int idx) const
     throw std::runtime_error("SidePanel::PlanetPanel::BuildSelected planet not found!");
 
   std::pair<BuildType, std::string>& build = static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build;
-  HumanClientApp::Orders().IssueOrder(new BuildOrder(*planet->Owners().begin(), planet->ID(),build.first,build.second));
+  HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*planet->Owners().begin(), planet->ID(),build.first,build.second));
 }
 
 void SidePanel::PlanetView::PrimaryFocusClicked(int idx)

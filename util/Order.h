@@ -116,19 +116,19 @@ private:
 /////////////////////////////////////////////////////
 /** the Order subclass that represents planetary production.  BuildOrder's when issued, cause ProdCenters
     to change their production project. */
-class BuildOrder : public Order
+class PlanetBuildOrder : public Order
 {
 public:
     /** \name Structors */ //@{
-    BuildOrder();
-    BuildOrder(const GG::XMLElement& elem);
-    BuildOrder(int empire, int prodcenter_id, BuildType build, const std::string& name);
+    PlanetBuildOrder();
+    PlanetBuildOrder(const GG::XMLElement& elem);
+    PlanetBuildOrder(int empire, int planet_id, BuildType build, const std::string& name);
     //@}
 
     /** \name Accessors */ //@{
-    int                ProdCenterID() const {return m_prodcenter;} ///< returns ID of planet selected in this order
-    BuildType          Type() const         {return m_build_type;} ///< returns the build type set in this order (eg BUILDING)
-    const std::string& Name() const         {return m_name;}       ///< returns the name of the exact type of item within the build type that should be produced (eg "SuperFarm")
+    int                PlanetID() const {return m_planet;}     ///< returns ID of planet selected in this order
+    BuildType          Type() const     {return m_build_type;} ///< returns the build type set in this order (eg BUILDING)
+    const std::string& Name() const     {return m_name;}       ///< returns the name of the exact type of item within the build type that should be produced (eg "SuperFarm")
 
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
@@ -145,7 +145,7 @@ private:
      */
     virtual void ExecuteImpl() const;
 
-    int         m_prodcenter;
+    int         m_planet;
     BuildType   m_build_type;
     std::string m_name;
 };

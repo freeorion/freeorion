@@ -1049,7 +1049,7 @@ Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
     Fleet* new_fleet = 0;
     if (existing_fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID) {
         HumanClientApp::Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, existing_fleet->SystemID()));
-        System::ObjectVec fleets = existing_fleet->GetSystem()->FindObjectsInOrbit(-1, IsStationaryFleetFunctor(empire_id));
+        System::ObjectVec fleets = existing_fleet->GetSystem()->FindObjectsInOrbit(-1, StationaryFleetVisitor(empire_id));
         for (unsigned int i = 0; i < fleets.size(); ++i) {
             if (fleets[i]->Name() == fleet_name) {
                 new_fleet = dynamic_cast<Fleet*>(fleets[i]);

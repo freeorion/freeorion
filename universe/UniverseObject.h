@@ -17,7 +17,8 @@
 class Meter;
 class System;
 class SitRepEntry;
-namespace GG {class XMLElement;};
+struct UniverseObjectVisitor;
+namespace GG {class XMLElement;}
 
 /** the abstract base class for all objects in the universe.  The UniverseObject class itself has only an ID, a name, 
     a position, possibly a System in which it is, and zero or more owners.  The position can range from 0 (left) to 1000 
@@ -78,6 +79,9 @@ public:
     virtual Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
    
     virtual GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a UniverseObject object with visibility limited relative to the input empire
+
+    /** accepts a visitor object \see UniverseObjectVisitor */
+    virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
     StateChangedSignalType& StateChangedSignal() const {return m_changed_sig;} ///< returns the state changed signal object for this UniverseObject
     //@}

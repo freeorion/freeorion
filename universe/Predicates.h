@@ -3,73 +3,137 @@
 #define _Predicates_h_
 
 #if 10*__GNUC__ + __GNUC_MINOR__ > 33
-# ifndef _UniverseObject_h_
-#  include "../universe/UniverseObject.h"
-# endif
+# include "Building.h"
+# include "Fleet.h"
+# include "Planet.h"
+# include "Ship.h"
+# include "System.h"
+# include "UniverseObject.h"
 #else
   class UniverseObject;
+  class Building;
+  class Fleet;
+  class Planet;
+  class Ship;
+  class System;
 #endif
 
 #include <string>
 
-/** returns true iff \a obj is a Fleet belonging to the given empire object that is under orders to move, but is not yet moving. 
+
+/** the base class for UniverseObject visitor classes.  These visitors have Visit() overloads for each type in the UniversObject-based
+    class herarchy.  Calling Visit() returns the \a obj parameter, if some predicate is true of that object.  Each UniverseObject
+    subclass needs to have an Accept(const UniverseObjectVisitor& visitor) method that consists only of "visitor->Visit(this)".  Because
+    of the specific-type overloads, passing a UniverseObjectVisitor into the Accept() method of a UniverseObject will cause the
+    UniverseObjectVisitor's appropriate Visit() method to be called.  Since the specific type of the \a obj parameter is known within
+    each Visit() method, \a obj can be accessed by type, without using a dynamic_cast.  Note that is is therefore safe to static_cast a
+    UniversObject pointer that is returned from a UniverseObjectVisitor subclass that only returns a nonzero for one specific
+    UniverseObject subclass (e.g. UniverseObjectSubclassVisitor<Planet>).  The default behavior of all Visit() methods besides
+    Visit(UniverseObject*) is to return the result of a call to Visit(UniverseObject*).  This means that UniverseObjectVisitor
+    subclasses can override Visit(UniverseObject*) only, and calls to all Visit() overloads will work.  The default return value for
+    Visit(UniverseObject*) is 0, so overridding any \a one Visit() method besides this one will ensure that only UniverseObjects
+    of a single subclass are recognized by the visitor. */
+struct UniverseObjectVisitor
+{
+    virtual UniverseObject* Visit(UniverseObject* obj) const;
+    virtual UniverseObject* Visit(Building* obj) const;
+    virtual UniverseObject* Visit(Fleet* obj) const;
+    virtual UniverseObject* Visit(Planet* obj) const;
+    virtual UniverseObject* Visit(Ship* obj) const;
+    virtual UniverseObject* Visit(System* obj) const;
+};
+
+/** returns obj iff \a obj is of type T */
+template <class T>
+struct UniverseObjectSubclassVisitor : UniverseObjectVisitor
+{
+    virtual UniverseObject* Visit(T* obj) const;
+};
+
+/** returns obj iff \a obj is a Fleet belonging to the given empire, and that is under orders to move, but is not yet moving. 
     If the given empire is -1, all stationary fleets will be returned.  Note that it is preferable to use this functor on System
     searches, rather than Universe ones. */
-struct IsStationaryFleetFunctor
+struct StationaryFleetVisitor : UniverseObjectVisitor
 {
-    IsStationaryFleetFunctor(int empire = -1) : empire_id(empire) {}
-    bool operator()(const UniverseObject* obj) const;
+    StationaryFleetVisitor(int empire = -1);
+    virtual UniverseObject* Visit(Fleet* obj) const;
     const int empire_id;
 };
 
-/** returns true iff \a obj is a Fleet belonging to the given empire object that is parked at a System, not under orders to move.  
+/** returns obj iff \a obj is a Fleet belonging to the given empire object that is parked at a System, not under orders to move.  
     If the given empire is -1, all orderd moving fleets will be returned.  Note that it is preferable to use this functor on System
     searches, rather than Universe ones. */
-struct IsOrderedMovingFleetFunctor
+struct OrderedMovingFleetVisitor : UniverseObjectVisitor
 {
-    IsOrderedMovingFleetFunctor(int empire = -1) : empire_id(empire) {}
-    bool operator()(const UniverseObject* obj) const;
+    OrderedMovingFleetVisitor(int empire = -1);
+    virtual UniverseObject* Visit(Fleet* obj) const;
     const int empire_id;
 };
 
-/** returns true iff \a obj is a moving Fleet belonging to the given empire object that is moving between systems.  
+/** returns obj iff \a obj is a moving Fleet belonging to the given empire, and that is moving between systems.  
     If the given empire is -1, all moving fleets will be returned. */
-struct IsMovingFleetFunctor
+struct MovingFleetVisitor : UniverseObjectVisitor
 {
-    IsMovingFleetFunctor(int empire = -1) : empire_id(empire) {}
-    bool operator()(const UniverseObject* obj) const;
+    MovingFleetVisitor(int empire = -1);
+    virtual UniverseObject* Visit(Fleet* obj) const;
     const int empire_id;
 };
 
-/** returns true iff the given empire is an owner of \a obj. */
-struct IsOwnedByFunctor
+/** returns obj iff \a obj is owned by the empire with id \a empire, and \a obj is of type T. */
+template <class T>
+struct OwnedVisitor : UniverseObjectVisitor
 {
-    IsOwnedByFunctor(int empire = -1) : empire_id(empire) {}
-    bool operator()(const UniverseObject* obj) const;
+    OwnedVisitor(int empire = -1);
+    virtual T* Visit(T* obj) const;
     const int empire_id;
 };
 
-/** returns true iff the given empire is the only owner of \a obj. */
-struct IsWhollyOwnedByFunctor
+/** returns obj iff \a obj is owned by \a only the empire with id \a empire, and \a obj is of type T. */
+template <class T>
+struct WhollyOwnedVisitor : UniverseObjectVisitor
 {
-    IsWhollyOwnedByFunctor(int empire = -1) : empire_id(empire) {}
-    bool operator()(const UniverseObject* obj) const;
-    const int empire_id;
-};
-
-/** returns true iff \a obj is owned by the empire with id \a empire, and \a obj is of type T. */
-template <class T> 
-struct IsOwnedObjectFunctor
-{
-    IsOwnedObjectFunctor(int empire) : empire_id(empire) {}
-    bool operator()(const UniverseObject* obj) const 
-    {
-        return obj->Owners().find(empire_id) != obj->Owners().end() && dynamic_cast<const T*>(obj);
-    }
+    WhollyOwnedVisitor(int empire = -1);
+    virtual T* Visit(T* obj) const;
     const int empire_id;
 };
 
 inline std::pair<std::string, std::string> PredicatesRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+// template implementations
+
+template <class T>
+UniverseObject* UniverseObjectSubclassVisitor<T>::Visit(T* obj) const
+{
+    return const_cast<T*>(obj);
+}
+
+template <class T>
+OwnedVisitor<T>::OwnedVisitor(int empire) :
+    empire_id(empire)
+{
+}
+
+template <class T>
+T* OwnedVisitor<T>::Visit(T* obj) const
+{
+    if (obj->OwnedBy(empire_id))
+        return const_cast<T*>(obj);
+    return 0;
+}
+
+template <class T>
+WhollyOwnedVisitor<T>::WhollyOwnedVisitor(int empire) :
+    empire_id(empire)
+{
+}
+
+template <class T>
+T* WhollyOwnedVisitor<T>::Visit(T* obj) const
+{
+    if (obj->WhollyOwnedBy(empire_id))
+        return const_cast<T*>(obj);
+    return 0;
+}
 
 #endif // _Predicates_h_

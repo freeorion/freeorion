@@ -899,6 +899,36 @@ UniverseObject* Universe::Object(int id)
     return (it != m_objects.end() ? it->second : 0);
 }
 
+Universe::ConstObjectVec Universe::FindObjects(const UniverseObjectVisitor& visitor) const
+{
+    ConstObjectVec retval;
+    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (UniverseObject* obj = it->second->Accept(visitor))
+            retval.push_back(obj);
+    }
+    return retval;
+}
+
+Universe::ObjectVec Universe::FindObjects(const UniverseObjectVisitor& visitor)
+{
+    ObjectVec retval;
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (UniverseObject* obj = it->second->Accept(visitor))
+            retval.push_back(obj);
+    }
+    return retval;
+}
+
+Universe::ObjectIDVec Universe::FindObjectIDs(const UniverseObjectVisitor& visitor) const
+{
+    ObjectIDVec retval;
+    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (it->second->Accept(visitor))
+            retval.push_back(it->first);
+    }
+    return retval;
+}
+
 double Universe::LinearDistance(System* system1, System* system2) const
 {
     return LinearDistance(system1->ID(), system2->ID());

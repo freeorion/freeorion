@@ -1927,7 +1927,7 @@ void ServerApp::ProcessTurns( )
     // check if all empires are still alive
     std::map<int, int> eliminations; // map from player ids to empire ids
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        if (GetUniverse().FindObjects(IsOwnedObjectFunctor<Planet>(it->first)).empty()) { // when you're out of planets, your game over
+        if (GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(it->first)).empty()) { // when you're out of planets, your game is over
             std::string player_name = it->second->PlayerName();
             for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); 
                  player_it != m_network_core.Players().end(); ++player_it) {
@@ -1943,7 +1943,7 @@ void ServerApp::ProcessTurns( )
     // clean up defeated empires
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
         // remove the empire from play
-        Universe::ObjectVec object_vec = GetUniverse().FindObjects(IsOwnedByFunctor(it->second));
+        Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(it->second));
         for (unsigned int j = 0; j < object_vec.size(); ++j) {
             if (object_vec[j]->WhollyOwnedBy(it->second)) {
                 GetUniverse().Remove(object_vec[j]->ID());

@@ -156,7 +156,7 @@ void SystemIcon::CreateFleetButtons()
     int stationary_y = 0;
     int moving_y = size.y - BUTTON_SIZE;
     for (EmpireManager::const_iterator it = HumanClientApp::Empires().begin(); it != HumanClientApp::Empires().end(); ++it) {
-        std::vector<int> fleet_IDs = m_system.FindObjectIDs(IsStationaryFleetFunctor(it->first));
+        std::vector<int> fleet_IDs = m_system.FindObjectIDs(StationaryFleetVisitor(it->first));
         FleetButton* stationary_fb = 0;
         if (!fleet_IDs.empty()) {
             stationary_fb = new FleetButton(size.x - BUTTON_SIZE, stationary_y, BUTTON_SIZE, BUTTON_SIZE, it->second->Color(), fleet_IDs, SHAPE_LEFT);
@@ -165,7 +165,7 @@ void SystemIcon::CreateFleetButtons()
             map_wnd->SetFleetMovement(stationary_fb);
             stationary_y += BUTTON_SIZE;
         }
-        fleet_IDs = m_system.FindObjectIDs(IsOrderedMovingFleetFunctor(it->first));
+        fleet_IDs = m_system.FindObjectIDs(OrderedMovingFleetVisitor(it->first));
         FleetButton* moving_fb = 0;
         if (!fleet_IDs.empty()) {
             moving_fb = new FleetButton(0, moving_y, BUTTON_SIZE, BUTTON_SIZE, it->second->Color(), fleet_IDs, SHAPE_RIGHT);

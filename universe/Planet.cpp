@@ -181,6 +181,11 @@ GG::XMLElement Planet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) cons
     return retval;
 }
 
+UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const
+{
+    return visitor.Visit(const_cast<Planet* const>(this));
+}
+
 void Planet::SetType(PlanetType type)
 {
     if (type <= INVALID_PLANET_TYPE)

@@ -610,7 +610,7 @@ void MapWnd::InitTurn(int turn_number)
     }
     m_moving_fleet_buttons.clear();
 
-    Universe::ObjectVec fleets = universe.FindObjects(IsMovingFleetFunctor());
+    Universe::ObjectVec fleets = universe.FindObjects(MovingFleetVisitor());
     typedef std::multimap<std::pair<double, double>, UniverseObject*> SortedFleetMap;
     SortedFleetMap position_sorted_fleets;
     for (unsigned int i = 0; i < fleets.size(); ++i) {
@@ -1286,7 +1286,7 @@ bool MapWnd::ZoomToHomeSystem()
 bool MapWnd::ZoomToPrevOwnedSystem()
 {
     // TODO: go through these in some sorted order (the sort method used in the SidePanel system name drop-list)
-    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsOwnedObjectFunctor<System>(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(OwnedVisitor<System>(HumanClientApp::GetApp()->EmpireID()));
     Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_owned_system);
     if (it == vec.end()) {
         m_current_owned_system = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
@@ -1305,7 +1305,7 @@ bool MapWnd::ZoomToPrevOwnedSystem()
 bool MapWnd::ZoomToNextOwnedSystem()
 {
     // TODO: go through these in some sorted order (the sort method used in the SidePanel system name drop-list)
-    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsOwnedObjectFunctor<System>(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(OwnedVisitor<System>(HumanClientApp::GetApp()->EmpireID()));
     Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_owned_system);
     if (it == vec.end()) {
         m_current_owned_system = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
@@ -1325,7 +1325,7 @@ bool MapWnd::ZoomToNextOwnedSystem()
 
 bool MapWnd::ZoomToPrevIdleFleet()
 {
-    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsStationaryFleetFunctor(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
     Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
     if (it == vec.end()) {
         m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
@@ -1343,7 +1343,7 @@ bool MapWnd::ZoomToPrevIdleFleet()
 
 bool MapWnd::ZoomToNextIdleFleet()
 {
-    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsStationaryFleetFunctor(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
     Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
     if (it == vec.end()) {
         m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
@@ -1363,7 +1363,7 @@ bool MapWnd::ZoomToNextIdleFleet()
 
 bool MapWnd::ZoomToPrevFleet()
 {
-    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsOwnedObjectFunctor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
     Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
     if (it == vec.end()) {
         m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
@@ -1381,7 +1381,7 @@ bool MapWnd::ZoomToPrevFleet()
 
 bool MapWnd::ZoomToNextFleet()
 {
-    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(IsOwnedObjectFunctor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
+    Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
     Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
     if (it == vec.end()) {
         m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();

@@ -1,11 +1,12 @@
 #include "Fleet.h"
+
+#include "../util/AppInterface.h"
+#include "System.h"
+#include "Predicates.h"
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
-
-#include "../util/AppInterface.h"
-#include "System.h"
 
 #include <stdexcept>
 
@@ -130,6 +131,11 @@ bool Fleet::HasArmedShips() const
             return true;
     }
     return false;
+}
+
+UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
+{
+    return visitor.Visit(const_cast<Fleet* const>(this));
 }
 
 void Fleet::SetRoute(const std::list<System*>& route, double distance)

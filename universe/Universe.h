@@ -10,6 +10,14 @@
 #include <boost/signal.hpp>
 #endif
 
+#ifndef _Enums_h_
+#include "Enums.h"
+#endif
+
+#ifndef _Predicates_h_
+#include "Predicates.h"
+#endif
+
 #if defined(_MSC_VER)
   // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
   // in boost/cstdint.h when compiling under windows
@@ -24,6 +32,8 @@
 #ifndef BOOST_GRAPH_ADJACENCY_LIST_HPP
 #include <boost/graph/adjacency_list.hpp>
 #endif
+
+#include <boost/type_traits/remove_const.hpp>
 
 #include <vector>
 #include <list>
@@ -41,9 +51,9 @@ class UniverseObject;
 #else
   struct PlayerSetupData;
 #endif
-namespace GG {class XMLElement;}
 
-#include "Enums.h"
+struct UniverseObjectVisitor;
+namespace GG {class XMLElement;}
 
 
 class Universe
@@ -123,13 +133,11 @@ public:
     template <class T> const T* Object(int id) const; ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
     template <class T> T* Object(int id);  ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
 
-    /** returns all the objects that match \a pred.  Predicates used with this function must take a single const
-        UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-    template <class Pred> ConstObjectVec FindObjects(Pred pred) const;
+    /** returns all the objects that match \a visitor */
+    ConstObjectVec FindObjects(const UniverseObjectVisitor& visitor) const;
 
-    /** returns all the objects that match \a pred.  Predicates used with this function must take a single
-        UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-    template <class Pred> ObjectVec FindObjects(Pred pred);
+    /** returns all the objects that match \a visitor */
+    ObjectVec FindObjects(const UniverseObjectVisitor& visitor);
 
     /** returns all the objects of type T. */
     template <class T> std::vector<const T*> FindObjects() const;
@@ -137,9 +145,8 @@ public:
     /** returns all the objects of type T. */
     template <class T> std::vector<T*> FindObjects();
 
-    /** returns the IDs of all the objects that match \a pred.  Predicates used with this function must take a single const
-        UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-    template <class Pred> ObjectIDVec FindObjectIDs(Pred pred) const;
+    /** returns the IDs of all the objects that match \a visitor */
+    ObjectIDVec FindObjectIDs(const UniverseObjectVisitor& visitor) const;
 
     /** returns the IDs of all the objects of type T. */
     template <class T> ObjectIDVec FindObjectIDs() const;
@@ -317,38 +324,18 @@ template <class T>
 const T* Universe::Object(int id) const
 {
     const_iterator it = m_objects.find(id);
-    return (it != m_objects.end() ? dynamic_cast<const T*>(it->second) : 0);
+    return (it != m_objects.end() ?
+            static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
+            0);
 }
 
 template <class T> 
 T* Universe::Object(int id)
 {
-    const_iterator it = m_objects.find(id);
-    return (it != m_objects.end() ? dynamic_cast<T*>(it->second) : 0);
-}
-
-template <class Pred>
-Universe::ConstObjectVec Universe::FindObjects(Pred pred) const
-{
-    ConstObjectVec retval;
-    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        const UniverseObject* o = it->second;
-        if (pred(o))
-            retval.push_back(o);
-    }
-    return retval;
-}
-
-template <class Pred>
-Universe::ObjectVec Universe::FindObjects(Pred pred)
-{
-    ObjectVec retval;
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        UniverseObject* o = it->second;
-        if (pred(o))
-            retval.push_back(o);
-    }
-    return retval;
+    iterator it = m_objects.find(id);
+    return (it != m_objects.end() ?
+            static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
+            0);
 }
 
 template <class T>
@@ -356,8 +343,8 @@ std::vector<const T*> Universe::FindObjects() const
 {
     std::vector<const T*> retval;
     for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const T* t = dynamic_cast<T*>(it->second))
-            retval.push_back(t);
+        if (const T* obj = static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
+            retval.push_back(obj);
     }
     return retval;
 }
@@ -367,20 +354,8 @@ std::vector<T*> Universe::FindObjects()
 {
     std::vector<T*> retval;
     for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (T* t = dynamic_cast<T*>(it->second))
-            retval.push_back(t);
-    }
-    return retval;
-}
-
-template <class Pred>
-Universe::ObjectIDVec Universe::FindObjectIDs(Pred pred) const
-{
-    ObjectIDVec retval;
-    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        const UniverseObject* o = it->second;
-        if (pred(o))
-            retval.push_back(it->first);
+        if (T* obj = static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
+            retval.push_back(obj);
     }
     return retval;
 }
@@ -390,7 +365,7 @@ Universe::ObjectIDVec Universe::FindObjectIDs() const
 {
     Universe::ObjectIDVec retval;
     for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (dynamic_cast<T*>(it->second))
+        if (static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
             retval.push_back(it->first);
     }
     return retval;

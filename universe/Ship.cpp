@@ -2,6 +2,7 @@
 
 #include "../util/AppInterface.h"
 #include "Fleet.h"
+#include "Predicates.h"
 #include "ShipDesign.h"
 #include "XMLDoc.h"
 
@@ -96,7 +97,12 @@ GG::XMLElement Ship::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
     retval.AppendChild(XMLElement("m_design_name", m_design_name));
     return retval;
 }
-  	
+
+UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const
+{
+    return visitor.Visit(const_cast<Ship* const>(this));
+}
+
 void Ship::MovementPhase()
 {
 }

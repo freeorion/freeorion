@@ -28,6 +28,8 @@ public:
     Planet*            GetPlanet() const;        ///< returns a pointer to the planet this building is on
 
     virtual GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a Building object with visibility limited relative to the input empire
+
+    virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
     //@}
 
     /** \name Mutators */ //@{

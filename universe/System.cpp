@@ -1,4 +1,6 @@
 #include "System.h"
+
+#include "Predicates.h"
 #include "XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
@@ -108,6 +110,52 @@ bool System::HasWormholeTo(int id) const
    return (it == m_starlanes_wormholes.end() ? false : it->second == true);
 }
 
+System::ObjectIDVec System::FindObjectIDs(const UniverseObjectVisitor& visitor) const
+{
+    const Universe& universe = GetUniverse();
+    ObjectIDVec retval;
+    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (universe.Object(it->second)->Accept(visitor))
+            retval.push_back(it->second);
+    }
+    return retval;
+}
+
+System::ObjectIDVec System::FindObjectIDsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const
+{
+    const Universe& universe = GetUniverse();
+    ObjectIDVec retval;
+    std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
+    for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
+        if (universe.Object(it->second)->Accept(visitor))
+            retval.push_back(it->second);
+    }
+    return retval;
+}
+
+System::ConstObjectVec System::FindObjects(const UniverseObjectVisitor& visitor) const
+{
+    const Universe& universe = GetUniverse();
+    ConstObjectVec retval;
+    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (const UniverseObject* obj = universe.Object(it->second)->Accept(visitor))
+            retval.push_back(obj);
+    }
+    return retval;
+}
+
+System::ConstObjectVec System::FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const
+{
+    const Universe& universe = GetUniverse();
+    ConstObjectVec retval;
+    std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
+    for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
+        if (const UniverseObject* obj = universe.Object(it->second)->Accept(visitor))
+            retval.push_back(obj);
+    }
+    return retval;
+}
+
 UniverseObject::Visibility System::GetVisibility(int empire_id) const
 {
     // if system is at least partially owned by this empire it is fully visible, if it has been explored it is partially visible, 
@@ -120,7 +168,6 @@ UniverseObject::Visibility System::GetVisibility(int empire_id) const
     else
         return NO_VISIBILITY;
 }
-
 
 GG::XMLElement System::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
@@ -143,6 +190,11 @@ GG::XMLElement System::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) cons
       retval.AppendChild(XMLElement("m_starlanes_wormholes", GG::StringFromMap<int, bool>(m_starlanes_wormholes)));
    }
    return retval;
+}
+
+UniverseObject* System::Accept(const UniverseObjectVisitor& visitor) const
+{
+    return visitor.Visit(const_cast<System* const>(this));
 }
 
 int System::Insert(UniverseObject* obj)
@@ -231,6 +283,29 @@ bool System::RemoveWormhole(int id)
       StateChangedSignal()();
    }
    return retval;
+}
+
+System::ObjectVec System::FindObjects(const UniverseObjectVisitor& visitor)
+{
+    Universe& universe = GetUniverse();
+    ObjectVec retval;
+    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (UniverseObject* obj = universe.Object(it->second)->Accept(visitor))
+            retval.push_back(obj);
+    }
+    return retval;
+}
+
+System::ObjectVec System::FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor)
+{
+    Universe& universe = GetUniverse();
+    ObjectVec retval;
+    std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
+    for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
+        if (UniverseObject* obj = universe.Object(it->second)->Accept(visitor))
+            retval.push_back(obj);
+    }
+    return retval;
 }
 
 void System::AddOwner(int id)

@@ -37,7 +37,7 @@ const int INITIAL_COLONY_POP = 1;
 
 namespace
 {
-    Order* GenBuildOrder(const XMLElement& elem)         {return new BuildOrder(elem);}
+    Order* GenPlanetBuildOrder(const XMLElement& elem)   {return new PlanetBuildOrder(elem);}
     Order* GenRenameOrder(const XMLElement& elem)        {return new RenameOrder(elem);}
     Order* GenNewFleetOrder(const XMLElement& elem)      {return new NewFleetOrder(elem);}
     Order* GenFleetMoveOrder(const XMLElement& elem)     {return new FleetMoveOrder(elem);}
@@ -108,7 +108,7 @@ bool Order::UndoImpl() const
 
 void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
 {
-    fact.AddGenerator("BuildOrder",         &GenBuildOrder);
+    fact.AddGenerator("PlanetBuildOrder",   &GenPlanetBuildOrder);
     fact.AddGenerator("RenameOrder",        &GenRenameOrder);
     fact.AddGenerator("FleetSplitOrder",    &GenNewFleetOrder);
     fact.AddGenerator("FleetMoveOrder",     &GenFleetMoveOrder);
@@ -175,45 +175,45 @@ void RenameOrder::ExecuteImpl() const
 
 
 ////////////////////////////////////////////////
-// BuildOrder
+// PlanetBuildOrder
 ////////////////////////////////////////////////
-BuildOrder::BuildOrder() : 
+PlanetBuildOrder::PlanetBuildOrder() : 
     Order(),
-    m_prodcenter(UniverseObject::INVALID_OBJECT_ID),
+    m_planet(UniverseObject::INVALID_OBJECT_ID),
     m_build_type(BT_NOT_BUILDING),
     m_name("")
 {
 }
 
-BuildOrder::BuildOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
+PlanetBuildOrder::PlanetBuildOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
 {   
-    if (elem.Tag() != ("BuildOrder"))
-        throw std::invalid_argument("Tried to construct BuildOrder from malformed XMLElement");
+    if (elem.Tag() != ("PlanetBuildOrder"))
+        throw std::invalid_argument("Tried to construct PlanetBuildOrder from malformed XMLElement");
 
-    m_prodcenter = lexical_cast<int>(elem.Child("m_prodcenter").Text());
+    m_planet = lexical_cast<int>(elem.Child("m_planet").Text());
     m_build_type = lexical_cast<BuildType>(elem.Child("m_build_type").Text());
     m_name = elem.Child("m_name").Text();
 }
 
-BuildOrder::BuildOrder(int empire, int planet, BuildType build, const std::string& name) : 
+PlanetBuildOrder::PlanetBuildOrder(int empire, int planet, BuildType build, const std::string& name) : 
     Order(empire),
-    m_prodcenter(planet),
+    m_planet(planet),
     m_build_type(build),
     m_name(name)
 {
 }
 
-GG::XMLElement BuildOrder::XMLEncode() const
+GG::XMLElement PlanetBuildOrder::XMLEncode() const
 {
-    XMLElement retval("BuildOrder");
+    XMLElement retval("PlanetBuildOrder");
     retval.AppendChild(Order::XMLEncode());
-    retval.AppendChild(XMLElement("m_prodcenter", lexical_cast<std::string>(m_prodcenter)));
+    retval.AppendChild(XMLElement("m_planet", lexical_cast<std::string>(m_planet)));
     retval.AppendChild(XMLElement("m_build_type", lexical_cast<std::string>(m_build_type)));
     retval.AppendChild(XMLElement("m_name", m_name));
     return retval;
 }
 
-void BuildOrder::ExecuteImpl() const
+void PlanetBuildOrder::ExecuteImpl() const
 {
     // TODO:  unit test this code once universe building methods
     // are in place.  the semantics of the building methods may change
@@ -223,17 +223,17 @@ void BuildOrder::ExecuteImpl() const
     Universe& universe = GetUniverse();
     
     // look up object
-    ProdCenter* prodcenter = universe.Object<ProdCenter>(m_prodcenter);
+    Planet* planet = universe.Object<Planet>(m_planet);
     
     // sanity check
-    if(!prodcenter)
-        throw std::runtime_error("Non-ProdCenter object ID specified in build order.");
+    if(!planet)
+        throw std::runtime_error("Non-Planet object ID specified in build order.");
     
     //  verify that empire specified in order owns specified planet
-    if(!dynamic_cast<UniverseObject*>(prodcenter)->OwnedBy(EmpireID()))
-        throw std::runtime_error("Empire specified in build order does not own specified ProdCenter.");
+    if(!planet->OwnedBy(EmpireID()))
+        throw std::runtime_error("Empire specified in build order does not own specified Planet.");
     
-    prodcenter->SetProduction(m_build_type, m_name);
+    planet->SetProduction(m_build_type, m_name);
 }
 
 

@@ -64,6 +64,8 @@ public:
 
     /// Returns true iff this Fleet contains a ship with ID \a id.
     bool ContainsShip(int id) const {return m_ships.find(id) != m_ships.end();}
+
+    virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
     //@}
    
     /** \name Mutators */ //@{

@@ -28,6 +28,8 @@ public:
     virtual GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a Ship object with visibility limited relative to the input empire
 
     bool IsArmed() const;
+
+    virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
     //@}
 
     /** \name Mutators */ //@{   
