@@ -186,6 +186,16 @@ bool System::Remove(int id)
    return retval;
 }
 
+void System::SetStarType(StarType type)
+{
+    m_star = type;
+    if (m_star <= INVALID_STAR_TYPE)
+	m_star = STAR_BLUE;
+    if (NUM_STAR_TYPES <= m_star)
+	m_star = STAR_BLACK;
+    StateChangedSignal()();
+}
+
 void System::AddStarlane(int id)
 {
    m_starlanes_wormholes[id] = false;

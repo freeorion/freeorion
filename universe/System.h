@@ -20,153 +20,154 @@
 class System : public UniverseObject
 {
 private:
-   typedef std::multimap<int, int>  ObjectMultimap;
-   typedef std::map<int, bool>      StarlaneMap;
+    typedef std::multimap<int, int>  ObjectMultimap;
+    typedef std::map<int, bool>      StarlaneMap;
 
 public:
-   typedef std::vector<UniverseObject*>       ObjectVec;          ///< the return type of FindObjects()
-   typedef std::vector<const UniverseObject*> ConstObjectVec;     ///< the return type of FindObjects()
-   typedef std::vector<int>                   ObjectIDVec;        ///< the return type of FindObjectIDs()
+    typedef std::vector<UniverseObject*>       ObjectVec;          ///< the return type of FindObjects()
+    typedef std::vector<const UniverseObject*> ConstObjectVec;     ///< the return type of FindObjects()
+    typedef std::vector<int>                   ObjectIDVec;        ///< the return type of FindObjectIDs()
 
-   typedef ObjectMultimap::iterator       orbit_iterator;         ///< iterator for system objects
-   typedef ObjectMultimap::const_iterator const_orbit_iterator;   ///< const_iterator for system objects
-   typedef StarlaneMap::iterator          lane_iterator;          ///< iterator for starlanes and wormholes
-   typedef StarlaneMap::const_iterator    const_lane_iterator;    ///< const_iterator for starlanes and wormholes
+    typedef ObjectMultimap::iterator       orbit_iterator;         ///< iterator for system objects
+    typedef ObjectMultimap::const_iterator const_orbit_iterator;   ///< const_iterator for system objects
+    typedef StarlaneMap::iterator          lane_iterator;          ///< iterator for starlanes and wormholes
+    typedef StarlaneMap::const_iterator    const_lane_iterator;    ///< const_iterator for starlanes and wormholes
 
-   /** \name Structors */ //@{
-   System();    ///< default ctor
+    /** \name Structors */ //@{
+    System();    ///< default ctor
 
-   /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
-      of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
-   System(StarType star, int orbits, const std::string& name, double x, double y,
-          const std::set<int>& owners = std::set<int>());
+    /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
+	of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
+    System(StarType star, int orbits, const std::string& name, double x, double y,
+	   const std::set<int>& owners = std::set<int>());
 
-   /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
-      of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
-   System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
-          const std::string& name, double x, double y, const std::set<int>& owners = std::set<int>());
+    /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
+	of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
+    System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
+	   const std::string& name, double x, double y, const std::set<int>& owners = std::set<int>());
 
-   System(const GG::XMLElement& elem); ///< ctor that constructs a System object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a System object
-   ~System();   ///< dtor
-   //@}
+    System(const GG::XMLElement& elem); ///< ctor that constructs a System object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a System object
+    ~System();   ///< dtor
+    //@}
 
-   /** \name Accessors */ //@{
-   StarType Star() const   {return m_star;}  ///< returns the type of star for this system
-   int      Orbits() const {return m_orbits;}///< returns the number of orbits in this system
+    /** \name Accessors */ //@{
+    StarType Star() const   {return m_star;}  ///< returns the type of star for this system
+    int      Orbits() const {return m_orbits;}///< returns the number of orbits in this system
 
-   int  Starlanes() const;                   ///< returns the number of starlanes from this system to other systems
-   int  Wormholes() const;                   ///< returns the number of wormholes from this system to other systems
-   bool HasStarlaneTo(int id) const;         ///< returns true if there is a starlane from this system to the system with ID number \a id
-   bool HasWormholeTo(int id) const;         ///< returns true if there is a wormhole from this system to the system with ID number \a id
+    int  Starlanes() const;                   ///< returns the number of starlanes from this system to other systems
+    int  Wormholes() const;                   ///< returns the number of wormholes from this system to other systems
+    bool HasStarlaneTo(int id) const;         ///< returns true if there is a starlane from this system to the system with ID number \a id
+    bool HasWormholeTo(int id) const;         ///< returns true if there is a wormhole from this system to the system with ID number \a id
 
-   /** returns the IDs of all the objects that match \a pred.  Predicates used with this function must take a single const
-      UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred> ObjectIDVec FindObjectIDs(Pred pred) const;
+    /** returns the IDs of all the objects that match \a pred.  Predicates used with this function must take a single const
+	UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+    template <class Pred> ObjectIDVec FindObjectIDs(Pred pred) const;
 
-   /** returns the IDs of all the objects of type T. */
-   template <class T> ObjectIDVec FindObjectIDs() const;
+    /** returns the IDs of all the objects of type T. */
+    template <class T> ObjectIDVec FindObjectIDs() const;
 
-   /** returns the IDs of all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take
-      a single const UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred> ObjectIDVec FindObjectIDsInOrbit(int orbit, Pred pred) const;
+    /** returns the IDs of all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take
+	a single const UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+    template <class Pred> ObjectIDVec FindObjectIDsInOrbit(int orbit, Pred pred) const;
 
-   /** returns the IDs of all the objects of type T in orbit \a orbit. */
-   template <class T> ObjectIDVec FindObjectIDsInOrbit(int orbit) const;
+    /** returns the IDs of all the objects of type T in orbit \a orbit. */
+    template <class T> ObjectIDVec FindObjectIDsInOrbit(int orbit) const;
 
-   /** returns all the objects that match \a pred.  Predicates used with this function must take a single const UniverseObject*
-      parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred> ConstObjectVec FindObjects(Pred pred) const;
+    /** returns all the objects that match \a pred.  Predicates used with this function must take a single const UniverseObject*
+	parameter and must return a bool or a type for which there is a conversion to bool.*/
+    template <class Pred> ConstObjectVec FindObjects(Pred pred) const;
 
-   /** returns all the objects of type T. */
-   template <class T> std::vector<const T*> FindObjects() const;
+    /** returns all the objects of type T. */
+    template <class T> std::vector<const T*> FindObjects() const;
 
-   /** returns all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take a single const
-      UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred> ConstObjectVec FindObjectsInOrbit(int orbit, Pred pred) const;
+    /** returns all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take a single const
+	UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+    template <class Pred> ConstObjectVec FindObjectsInOrbit(int orbit, Pred pred) const;
 
-   /** returns all the objects of type T in orbit \a orbit. */
-   template <class T> std::vector<const T*> FindObjectsInOrbit(int orbit) const;
+    /** returns all the objects of type T in orbit \a orbit. */
+    template <class T> std::vector<const T*> FindObjectsInOrbit(int orbit) const;
 
-   const_orbit_iterator begin() const  {return m_objects.begin();}   ///< begin iterator for all system objects
-   const_orbit_iterator end() const    {return m_objects.end();}     ///< end iterator for all system objects
+    const_orbit_iterator begin() const  {return m_objects.begin();}   ///< begin iterator for all system objects
+    const_orbit_iterator end() const    {return m_objects.end();}     ///< end iterator for all system objects
 
-   /** returns begin and end iterators for all system objects in orbit \a o*/
-   std::pair<const_orbit_iterator, const_orbit_iterator> orbit_range(int o) const {return m_objects.equal_range(o);}
+    /** returns begin and end iterators for all system objects in orbit \a o*/
+    std::pair<const_orbit_iterator, const_orbit_iterator> orbit_range(int o) const {return m_objects.equal_range(o);}
 
-   /** returns begin and end iterators for all system objects not in an orbit*/
-   std::pair<const_orbit_iterator, const_orbit_iterator> non_orbit_range() const {return m_objects.equal_range(-1);}
+    /** returns begin and end iterators for all system objects not in an orbit*/
+    std::pair<const_orbit_iterator, const_orbit_iterator> non_orbit_range() const {return m_objects.equal_range(-1);}
 
-   const_lane_iterator  begin_lanes() const  {return m_starlanes_wormholes.begin();}   ///< begin iterator for all starlanes and wormholes terminating in this system
-   const_lane_iterator  end_lanes() const    {return m_starlanes_wormholes.end();}     ///< end iterator for all starlanes and wormholes terminating in this system
+    const_lane_iterator  begin_lanes() const  {return m_starlanes_wormholes.begin();}   ///< begin iterator for all starlanes and wormholes terminating in this system
+    const_lane_iterator  end_lanes() const    {return m_starlanes_wormholes.end();}     ///< end iterator for all starlanes and wormholes terminating in this system
 
-   virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-   virtual GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a System object with visibility limited relative to the input empire
-   //@}
+    virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+    virtual GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a System object with visibility limited relative to the input empire
+    //@}
 
-   /** \name Mutators */ //@{
-   /** inserts a UniversObject into the system, though not in any particular orbit.  Only objects free of any
-      particular orbit, such as ships, should be inserted using this function.  This function calls obj->SetSystem(this).*/
-   int Insert(UniverseObject* obj);
+    /** \name Mutators */ //@{
+    /** inserts a UniversObject into the system, though not in any particular orbit.  Only objects free of any
+	particular orbit, such as ships, should be inserted using this function.  This function calls obj->SetSystem(this).*/
+    int Insert(UniverseObject* obj);
 
-   /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
-      objects should be inserted with this function.  This function calls obj->SetSystem(this).  \throw
-      std::invalid_arugment May throw std::invalid_arugment if \a orbit is out of the range [0, Orbits()].*/
-   int Insert(UniverseObject* obj, int orbit);
+    /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
+	objects should be inserted with this function.  This function calls obj->SetSystem(this).  \throw
+	std::invalid_arugment May throw std::invalid_arugment if \a orbit is out of the range [0, Orbits()].*/
+    int Insert(UniverseObject* obj, int orbit);
 
-   /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
-       objects should be inserted with this function. NOTE: This function is primarily intended for XML decoding purposes
-       and does not set the object's system to point to this system since it is assumed that this has already been done prior
-       to encoding. If used for other purposes you must set the object's System ID manually. */
-   int Insert(int obj_id, int orbit);
+    /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
+	objects should be inserted with this function. NOTE: This function is primarily intended for XML decoding purposes
+	and does not set the object's system to point to this system since it is assumed that this has already been done prior
+	to encoding. If used for other purposes you must set the object's System ID manually. */
+    int Insert(int obj_id, int orbit);
 
-   /** removes the object with ID number \a id from the system, and returns it; returns 0 if there is no such object*/
-   bool   Remove(int id);
+    /** removes the object with ID number \a id from the system, and returns it; returns 0 if there is no such object*/
+    bool Remove(int id);
 
-   void AddStarlane(int id);     ///< adds a starlane between this system and the system with ID number \a id.  \note Adding a starlane to a system to which there is already a wormhole erases the wormhole; you may want to check for a wormhole before calling this function.
-   void AddWormhole(int id);     ///< adds a wormhole between this system and the system with ID number \a id  \note Adding a wormhole to a system to which there is already a starlane erases the starlane; you may want to check for a starlane before calling this function.
-   bool RemoveStarlane(int id);  ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
-   bool RemoveWormhole(int id);  ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
+    void SetStarType(StarType type); ///< sets the type of the star in this Systems to \a StarType
+    void AddStarlane(int id);     ///< adds a starlane between this system and the system with ID number \a id.  \note Adding a starlane to a system to which there is already a wormhole erases the wormhole; you may want to check for a wormhole before calling this function.
+    void AddWormhole(int id);     ///< adds a wormhole between this system and the system with ID number \a id  \note Adding a wormhole to a system to which there is already a starlane erases the starlane; you may want to check for a starlane before calling this function.
+    bool RemoveStarlane(int id);  ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
+    bool RemoveWormhole(int id);  ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
 
-   /** returns all the objects that match \a pred.  Predicates used with this function must take a single UniverseObject*
-      parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred> ObjectVec FindObjects(Pred pred);
+    /** returns all the objects that match \a pred.  Predicates used with this function must take a single UniverseObject*
+	parameter and must return a bool or a type for which there is a conversion to bool.*/
+    template <class Pred> ObjectVec FindObjects(Pred pred);
 
-   /** returns all the objects of type T. */
-   template <class T> std::vector<T*> FindObjects();
+    /** returns all the objects of type T. */
+    template <class T> std::vector<T*> FindObjects();
 
-   /** returns all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take a single
-      UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
-   template <class Pred> ObjectVec FindObjectsInOrbit(int orbit, Pred pred);
+    /** returns all the objects that match \a pred in orbit \a orbit.  Predicates used with this function must take a single
+	UniverseObject* parameter and must return a bool or a type for which there is a conversion to bool.*/
+    template <class Pred> ObjectVec FindObjectsInOrbit(int orbit, Pred pred);
 
-   /** returns all the objects of type T in orbit \a orbit. */
-   template <class T> std::vector<T*> FindObjectsInOrbit(int orbit);
+    /** returns all the objects of type T in orbit \a orbit. */
+    template <class T> std::vector<T*> FindObjectsInOrbit(int orbit);
 
-   virtual void AddOwner   (int id);  ///< adding owner to system objects is not allowed
-   virtual void RemoveOwner(int id);  ///< removing owner from system objects is not allowed
+    virtual void AddOwner   (int id);  ///< adding owner to system objects is not allowed
+    virtual void RemoveOwner(int id);  ///< removing owner from system objects is not allowed
 
-   virtual void MovementPhase( );
-   virtual void PopGrowthProductionResearchPhase( );
+    virtual void MovementPhase( );
+    virtual void PopGrowthProductionResearchPhase( );
 
-   orbit_iterator begin()  {return m_objects.begin();}   ///< begin iterator for all system objects
-   orbit_iterator end()    {return m_objects.end();}     ///< end iterator for all system objects
+    orbit_iterator begin()  {return m_objects.begin();}   ///< begin iterator for all system objects
+    orbit_iterator end()    {return m_objects.end();}     ///< end iterator for all system objects
 
-   /** returns begin and end iterators for all system objects in orbit \a o*/
-   std::pair<orbit_iterator, orbit_iterator> orbit_range(int o) {return m_objects.equal_range(o);}
+    /** returns begin and end iterators for all system objects in orbit \a o*/
+    std::pair<orbit_iterator, orbit_iterator> orbit_range(int o) {return m_objects.equal_range(o);}
 
-   /** returns begin and end iterators for all system objects not in an orbit*/
-   std::pair<orbit_iterator, orbit_iterator> non_orbit_range() {return m_objects.equal_range(-1);}
+    /** returns begin and end iterators for all system objects not in an orbit*/
+    std::pair<orbit_iterator, orbit_iterator> non_orbit_range() {return m_objects.equal_range(-1);}
 
-   lane_iterator  begin_lanes()  {return m_starlanes_wormholes.begin();}   ///< begin iterator for all starlanes and wormholes terminating in this system
-   lane_iterator  end_lanes()    {return m_starlanes_wormholes.end();}     ///< end iterator for all starlanes and wormholes terminating in this system
-   //@}
+    lane_iterator  begin_lanes()  {return m_starlanes_wormholes.begin();}   ///< begin iterator for all starlanes and wormholes terminating in this system
+    lane_iterator  end_lanes()    {return m_starlanes_wormholes.end();}     ///< end iterator for all starlanes and wormholes terminating in this system
+    //@}
 
 private:
-   ObjectMultimap PartiallyVisibleObjects(int empire_id) const; ///< returns the subset of m_objects that is visible when this System's visibility is only PARTIAL_VISIBILITY
+    ObjectMultimap PartiallyVisibleObjects(int empire_id) const; ///< returns the subset of m_objects that is visible when this System's visibility is only PARTIAL_VISIBILITY
 
-   StarType       m_star;
-   int            m_orbits;
-   ObjectMultimap m_objects;              ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
-   StarlaneMap    m_starlanes_wormholes;  ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
+    StarType       m_star;
+    int            m_orbits;
+    ObjectMultimap m_objects;              ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
+    StarlaneMap    m_starlanes_wormholes;  ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
 };
 
 
