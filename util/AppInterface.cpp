@@ -19,7 +19,7 @@
         #ifdef FREEORION_BUILD_SERVER
             return ServerApp::GetApp()->Empires();
         #else
-            return ClientApp::Empire();
+            return ClientApp::Empires();
         #endif
     }
 

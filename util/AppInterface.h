@@ -35,7 +35,4 @@ log4cpp::Category& Logger();
         access will vary and requires an #ifdef
     */
 
-
-
-
 #endif
