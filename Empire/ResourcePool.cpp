@@ -27,13 +27,17 @@ ResourcePool::ResourcePool()
 {}
 
 ResourcePool::~ResourcePool()
-{}
+{
+  for(unsigned int i=0;i<m_connections.size();i++)
+    m_connections[i].disconnect();
+  m_connections.clear();
+  m_planets.clear();
+}
 
 void ResourcePool::SetPlanets(const Universe::ObjectVec &planet_vec)
 {
   for(unsigned int i=0;i<m_connections.size();i++)
     m_connections[i].disconnect();
-
   m_connections.clear();
   m_planets.clear();
 
@@ -49,6 +53,11 @@ void ResourcePool::SetPlanets(const Universe::ObjectVec &planet_vec)
 }
 
 ResourcePool::SortFuncType ResourcePool::SortFunc() const {return lower;}
+
+void ResourcePool::OnPlanetChanged(int m_planet_id)
+{
+  PlanetChanged(m_planet_id);
+}
 
 // MineralResourcePool
 MineralResourcePool::MineralResourcePool()

@@ -12,7 +12,7 @@
 
 class Planet;
  template <class T> 
- class PlanetChangedFunctor : public boost::signals::trackable
+ class PlanetChangedFunctor //: public boost::signals::trackable
  {
    public:
        PlanetChangedFunctor(T &parent, int planet_id) : m_parent(parent), m_planet_id(planet_id) {}
@@ -48,7 +48,7 @@ class ResourcePool
     virtual SortFuncType SortFunc() const; ///< used to order planet list
     virtual void PlanetChanged(int m_planet_id) = 0; ///< called when a planet of the planet vector has changed
   private:
-    void OnPlanetChanged(int m_planet_id) {PlanetChanged(m_planet_id);}///< called through the PlanetChangedFunctor when a planet has changed
+    void OnPlanetChanged(int m_planet_id);///< called through the PlanetChangedFunctor when a planet has changed
 
     std::vector<Planet*> m_planets; ///< list of planet which feed/consume the resource
     std::vector<boost::signals::connection > m_connections;///< connection list of planets
