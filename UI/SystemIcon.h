@@ -62,20 +62,16 @@ public:
     
     //!@}
     //! \name Mutators //!@{
-    virtual int Render();    //!< rendering code
-    
-    LeftClickedSignalType&  LeftClickedSignal() {return m_left_click_signal;}
-    RightClickedSignalType& RightClickedSignal() {return m_right_click_signal;}
-    LeftDoubleClickedSignalType& LeftDoubleClickedSignal() {return m_left_double_click_signal;}
-    
+    virtual int Render() {return 1;}
     virtual int LClick(const GG::Pt& pt, Uint32 keys) {if(!Disabled()) m_left_click_signal(m_systemID); return 1;}
     virtual int RClick(const GG::Pt& pt, Uint32 keys) {if(!Disabled()) m_right_click_signal(m_systemID); return 1;}
     virtual int LDoubleClick(const GG::Pt& pt, Uint32 keys) {if(!Disabled()) m_left_double_click_signal(m_systemID); return 1;}
     
+    LeftClickedSignalType&       LeftClickedSignal() {return m_left_click_signal;}
+    RightClickedSignalType&      RightClickedSignal() {return m_right_click_signal;}
+    LeftDoubleClickedSignalType& LeftDoubleClickedSignal() {return m_left_double_click_signal;}
     //!@}
-    
-    
-    
+
 protected:
     int                 m_systemID;    //!< the ID of the System object associated with this SystemIcon
     GG::StaticGraphic*  m_static_graphic; //!< the control used to render the displayed texture
@@ -86,7 +82,6 @@ private:
     LeftClickedSignalType       m_left_click_signal;
     RightClickedSignalType      m_right_click_signal;
     LeftDoubleClickedSignalType m_left_double_click_signal;
-    
     //!@}
 };
 
