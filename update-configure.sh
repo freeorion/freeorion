@@ -24,7 +24,7 @@ while test $# != 0; do
       echo "          $URL"
       echo
       echo "-f        Force operation regardless whether $FILENAME was changed."
-      echo "          Useful if unpacking leaded to an error"
+      echo "          Useful if unpacking lead to an error"
       echo 
       echo "-h --help This message"
       exit
@@ -43,7 +43,8 @@ if test x$NO_DOWNLOAD != xyes; then
     echo >&2 "*** An error occured while trying to download $FILENAME from"
     echo >&2 "*** $URL."
     echo >&2 "(I'll need wget to download the file automatically)"
-    echo >&2 "You can try to download the file yourself from $URL"
+    echo >&2 "You can try to download the file yourself from"
+    echo >&2 "$URL"
     echo >&2 "then place it into thus directory and execute this script with"
     echo >&2 "the '-n' option to skip automatic downloading."
     exit 1
