@@ -183,9 +183,8 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_btn_siterep);
     GG::Connect(m_btn_siterep->ClickedSignal(), &MapWnd::SiteRepBtnClicked, this);
     
-    m_population= new StatisticIconDualValue(m_btn_siterep->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0);
+    m_population= new StatisticIconDualValue(m_btn_siterep->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0,0,2,false,false);
     m_population->SetPositiveColor(GG::CLR_GREEN); m_population->SetNegativeColor(GG::CLR_RED);
-    m_population->SetDecimalsShown(2);
     m_toolbar->AttachChild(m_population);
    
     m_industry= new StatisticIcon(m_population->UpperLeft().x-5-50,5,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/industry.png",GG::CLR_WHITE,0);
@@ -194,11 +193,11 @@ MapWnd::MapWnd() :
     m_research= new StatisticIcon(m_industry->UpperLeft().x-5-50,5,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0);
     m_toolbar->AttachChild(m_research);
 
-    m_mineral = new StatisticIconDualValue(m_research->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0);
+    m_mineral = new StatisticIconDualValue(m_research->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0,0,0,false,false);
     m_mineral->SetPositiveColor(GG::CLR_GREEN); m_mineral->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_mineral);
 
-    m_food = new StatisticIconDualValue(m_mineral->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0);
+    m_food = new StatisticIconDualValue(m_mineral->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0,0,0,false,false);
     m_food->SetPositiveColor(GG::CLR_GREEN); m_food->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_food);
 
