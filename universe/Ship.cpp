@@ -1,7 +1,8 @@
 #include "Ship.h"
-#include "XMLDoc.h"
 
 #include "../util/AppInterface.h"
+#include "Fleet.h"
+#include "XMLDoc.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -116,6 +117,11 @@ Ship::Ship(const GG::XMLElement& elem) :
       throw std::invalid_argument("Attempted to construct a Ship from an XMLElement that had a tag other than \"Ship\"");
 
    m_fleet_id = lexical_cast<int> ( elem.Child("m_fleet_id").Attribute("value") );
+}
+
+Fleet* Ship::GetFleet() const
+{
+    return dynamic_cast<Fleet*>(GetUniverse().Object(m_fleet_id));
 }
 
 UniverseObject::Visibility Ship::Visible(int empire_id) const

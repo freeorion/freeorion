@@ -6,6 +6,8 @@
 #include "UniverseObject.h"
 #endif
 
+class Fleet;
+
 /** a class representing a FreeOrion designed ship class*/
 struct ShipDesign
 {
@@ -24,13 +26,13 @@ struct ShipDesign
    // V0.1 ONLY!!!!
    enum V01DesignID
    {
-     SCOUT = 1,  // Ship desing IDs star at 1
+     SCOUT = 1,  // Ship designs IDs start at 1
      COLONY,
      MARK1,
      MARK2,
      MARK3,
      MARK4
-    };
+   };
 
    int         attack;  ///< the attack value of the design
    int         defense; ///< the defense value of the design
@@ -56,8 +58,9 @@ public:
    //@}
 
    /** \name Accessors */ //@{
-   const ShipDesign& Design() const {return m_design;} ///< returns the design of the ship, containing engine type, weapons, etc.
-   int   FleetID() const            {return m_fleet_id;} ///< returns the ID of the fleet the ship is residing in
+   const  ShipDesign& Design() const {return m_design;}   ///< returns the design of the ship, containing engine type, weapons, etc.
+   int    FleetID() const            {return m_fleet_id;} ///< returns the ID of the fleet the ship is residing in
+   Fleet* GetFleet() const;                               ///< returns the ID of the fleet the ship is residing in
    
    virtual UniverseObject::Visibility Visible(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a Ship object
