@@ -344,6 +344,65 @@ private:
 };
 
 
+class StatisticIconDualValue : public GG::Control
+{
+public:
+    /** \name Structors */ //@{
+    StatisticIconDualValue(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color, 
+                           double value, double value_second,  int decimals_to_show = 0, bool show_sign = false);
+    //@}
+
+    /** \name Accessors */ //@{
+    double  Value         () const {return m_value;}            ///< returns the value displayed
+    double  ValueSecond   () const {return m_value_second;}     ///< returns the second value displayed
+    int     DecimalsShown () const {return m_decimals_to_show;} ///< returns the number of places after the decimal point to be shown
+    bool    ShowsSign     () const {return m_show_sign;}        ///< returns true iff a sign should always be shown, even for positive values
+    GG::Clr PositiveColor () const {return m_positive_color;}   ///< returns the color that will be used to display positive values
+    GG::Clr NegativeColor () const {return m_negative_color;}   ///< returns the color that will be used to display negative values
+    //@}
+
+    /** \name Mutators */ //@{
+    bool Render() {return true;}
+
+    void SetValue         (double value); ///< sets the value to be displayed
+    void SetValueSecond   (double value); ///< sets the value to be displayed
+    void SetDecimalsShown (int        d) {m_decimals_to_show  = d; UpdateTextControl();} ///< sets the number of places after the decimal point to be shown
+    void ShowSign         (bool       b) {m_show_sign         = b; UpdateTextControl();}        ///< sets whether a sign should always be shown, even for positive values
+    void SetPositiveColor (GG::Clr    c) {m_positive_color    = c; UpdateTextControl();}   ///< sets the color that will be used to display positive values
+    void SetNegativeColor (GG::Clr    c) {m_negative_color    = c; UpdateTextControl();}   ///< sets the color that will be used to display negative values
+   //@}
+
+private:
+    ///< sets the textcontrol form cuurent state
+    virtual void UpdateTextControl();
+
+    double m_value,m_value_second;
+
+    int m_decimals_to_show;
+    bool m_show_sign;
+    GG::Clr m_positive_color;
+    GG::Clr m_negative_color;
+    GG::StaticGraphic* m_icon;
+    GG::TextControl* m_text;
+};
+
+class CUIToolBar : public GG::Control
+{
+public:
+    /** \name Structors */ //@{
+    CUIToolBar(int x, int y, int w, int h);
+    //@}
+
+    /** \name Accessors */ //@{
+    //@}
+
+    /** \name Mutators */ //@{
+    bool Render();
+    //@}
+
+private:
+};
+
 /** A control used to pick from the empire colors returned by EmpireColors(). */
 class EmpireColorSelector : public CUIDropDownList
 {

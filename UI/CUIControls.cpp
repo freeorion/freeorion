@@ -732,6 +732,78 @@ void StatisticIcon::Refresh()
 }
 
 ///////////////////////////////////////
+// class StatisticIconDualValue
+///////////////////////////////////////
+StatisticIconDualValue::StatisticIconDualValue(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color, double value,double value_second,
+                                     int decimals_to_show/* = 0*/, bool show_sign/* = false*/) :
+    GG::Control(x, y, w, h, 0),
+    m_value(value),
+    m_decimals_to_show(decimals_to_show),
+    m_show_sign(show_sign),
+    m_positive_color(text_color),
+    m_negative_color(text_color),
+    m_icon(new GG::StaticGraphic(0, 0, h, h, GG::App::GetApp()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
+    m_text(new GG::TextControl(h, 0, w - h, h, "", ClientUI::FONT, ClientUI::PTS, GG::TF_LEFT | GG::TF_VCENTER, text_color))
+{
+    AttachChild(m_icon);
+    AttachChild(m_text);
+    UpdateTextControl();
+}
+
+void StatisticIconDualValue::UpdateTextControl()
+{
+    std::string value        = (ShowsSign() && 0.0 <= Value      () ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(Value      ()));
+    std::string value_second = (ShowsSign() && 0.0 <= ValueSecond() ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(ValueSecond()));
+
+    if (DecimalsShown()) 
+    {
+        char buf[128];
+        sprintf(buf, (ShowsSign() ? "%+#.*g" : "%#.*g"), DecimalsShown(), Value());
+        value = buf;
+        sprintf(buf, (ShowsSign() ? "%+#.*g" : "%#.*g"), DecimalsShown(), ValueSecond());
+        value_second = buf;
+    } 
+
+    std::string text;
+
+    text+=value + " (";
+    if(ValueSecond()<0.0) text+= GG::RgbaTag(NegativeColor());
+    else                  text+= GG::RgbaTag(PositiveColor());
+    text+=value_second + "</rgba>)";
+
+    m_text->SetText(text);
+
+    m_text->SetColor(GG::CLR_WHITE);
+    //SetColor(Value() < 0.0 ? NegativeColor() : PositiveColor());
+}
+
+void StatisticIconDualValue::SetValue(double value)
+{
+  m_value = value;
+  UpdateTextControl();
+}
+
+void StatisticIconDualValue::SetValueSecond(double value)
+{
+  m_value_second = value;
+  UpdateTextControl();
+}
+
+///////////////////////////////////////
+// class CUIToolBar
+///////////////////////////////////////
+CUIToolBar::CUIToolBar(int x, int y, int w, int h) :
+    GG::Control(x, y, w, h, 0)
+{}
+
+bool CUIToolBar::Render()
+{
+  GG::Pt ul(UpperLeft()),lr(LowerRight());
+  GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::Clr(0.0,0.0,0.0,0.8),GG::CLR_ZERO,0);
+  return true;
+}
+
+///////////////////////////////////////
 // class EmpireColorSelector
 ///////////////////////////////////////
 EmpireColorSelector::EmpireColorSelector(int h) : 
