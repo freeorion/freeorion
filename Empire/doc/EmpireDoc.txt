@@ -1,0 +1,136 @@
+/**
+ \page overview Overview
+ \section mod_overview Overview
+
+  The purpose of the Empire module is to manage information related to the overall
+  state of each Empire in a FreeOrion game.  Information handled by the Empire module
+  will include: 
+	- All planets, fleets, etc that are owned by the Empire.
+	- Events currently in the empire's sitrep
+	- An empire's accumulated research and technological advancement.
+	- A list of star systems explored by the empire.
+
+  And, In later revisions:
+	- racial advantages
+	- diplomatic status
+	- whatever else they decide to make us add... :)
+
+  The Empire module is also responsible for managing "global" data such as
+  technology research fields, ship designs, etc. etc.
+
+
+ \section classes Major Classes
+
+ The Empire class will be the most fundamental class to the empire module.  It encapsulates
+ the state of a single empire at any point during the game.  Empires are created and managed
+ by EmpireManager objects.  Other modules which need to manipulate Empire objects must
+ first obtain a pointer to the object from an EmpireManager.
+
+ Other FreeOrion modules will interact with the Empire module through the EmpireManager class
+ (actually, through a subclass of EmpireManager).  The EmpireManagers have methods for looking
+ up specific empires based on their unique numeric identifiers.  In addition, the ServerEmpire
+ manager has the ability to create XML updates for transmission to clients between turns 
+ (to keep the client empire state in sync with the rest of the game).  The ClientEmpire manager 
+ is able to process these updates and bring itself in sync with the server.
+
+ A similar object manager pattern is used for technology items.  The TechLevel class is used to
+ represent a particular field of technological progress, and it is created and managed by a TechManager
+ object.  These objects may be used by both client and server to provide controlled access to the technologies
+ that will eventually be incorporated into FreeOrion.  For Version 0.1, the TechManager creates hardcoded
+ TechLevels and provides access to these.  
+
+*/
+
+
+
+/**
+  \page history Revision History
+  \section doc Documentation Revisions
+  - 5-15-2003	Initial posting of code and documentation.
+  - 5-15-2003	Added DoxyGen groups to header files.
+  - 5-26-2003	Cleaned up some of the method documentation so its easier to read and more descriptive.
+			(there is still much to be done)
+		Added links to important external documents.
+  \section code Code Revisions
+  - 5-26-2003	Initial Code Release Committed to CVS
+*/
+
+
+/**
+ \page docs Documentation
+ External documents will be linked here.
+ 
+ \section gen General
+
+ \htmlonly
+
+ <a href="http://www.freeorion.org/index.php?module=Static_Docs&type=user&func=view&f=programming/codestandards.html">
+ FreeOrion Coding Standards
+ </a>
+
+ \endhtmlonly
+
+
+ \section 01 Version
+
+ \htmlonly
+
+ <a href="http://us.f1.yahoofs.com/users/f7aaeadc/bc/freeorion/FreeOrion+Interface+Design+Specification.htm?bcw1o0.A.Y.mmjpn">
+ Version 0.1 Interface Specification
+ </a>
+ 
+ <br>
+ 
+ <a href="http://us.f1.yahoofs.com/users/f7aaeadc/bc/freeorion/FreeOrion+HLD+html.htm?bc2swk.AjWGzpqCp">
+ Version 0.1 High Level Design
+ </a>
+ 
+ \endhtmlonly
+
+
+*/
+
+/**
+ \page tools Build Instructions
+ The standard FreeOrion toolset is required to build the Empire module.
+ This includes the following: 
+   - The gcc compiler, version 3.0 or higher
+   - Expat 1.95.5
+   - Boost 1.30.0
+   - log4cpp 0.2.7
+   - any others I may have missed.  (Please jump in people)
+
+  It is assumed that your include directories are set up such that:
+	- GG is a subdirectory of the root include directory.
+	- GG contains a subdirectory, XML, with XML related includes stored there.
+	- There is an include directory defined with Empire-related includes at its root
+	  (i.e.  #include "Empire.h" will work)
+ 
+*/
+
+/**
+ \page issues Problems and Open Issues
+ None currently.
+*/
+
+
+
+/** \mainpage Empire Documentation
+   - \ref overview
+   - \ref history
+   - \ref docs
+   - \ref tools
+   - \ref issues
+
+ 
+  This is the central documentation nexus for the Empire Module.  The Empire module
+  is a component of the FreeOrion project (see http://www.FreeOrion.org ).
+  Documentation and updates of interest to the Empire team will be posted here.   
+  
+  
+  I'm sorry there are so many annoying Empire hyperlinks, but I can't figure
+  out how to get Doxygen to not make links unless I use that verbatim thingie
+  and that makes things ugly.
+  
+
+*/
