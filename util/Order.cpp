@@ -555,15 +555,26 @@ void FleetColonizeOrder::Execute() const
 
     target_planet->IsAboutToBeColonized(true);
     
-    // remove colony ship from fleet and deallocate it
-    colony_fleet->RemoveShip(m_ship->ID());
+
+    //!!! Possible sideeffect
+    //!!! if a fleet wnd is open with the colony ship in a single fleet
+    //!!! the fleet wnd with catch a change fleet state signal and issue 
+    //!!! a delete fleet order if the fleet is empty, that's why we have 
+    //!!! to delete the colony fleet without removing the colony ship first
+
+    // If colony ship is only ship in fleet, remove fleet
+    if(colony_fleet->NumShips() == 1)
+    {
+       universe->Delete(colony_fleet->ID());
+    }
+    else // remove colony ship from fleet
+    {
+      colony_fleet->RemoveShip(m_ship->ID());
+    }
+
+    //delete the colony ship
     universe->Delete(m_ship->ID());
     
-    // If colony ship was only ship in fleet, remove fleet
-    if(colony_fleet->NumShips() == 0)
-    {
-        universe->Delete(colony_fleet->ID());
-    }
     
     // order processing is now done
     return;
