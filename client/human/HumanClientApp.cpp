@@ -23,13 +23,12 @@ GG::Wnd* NewCUIDropDownList(const GG::XMLElement& elem)   {return new CUIDropDow
 GG::Wnd* NewCUIEdit(const GG::XMLElement& elem)           {return new CUIEdit(elem);}
 GG::Wnd* NewCUIMultiEdit(const GG::XMLElement& elem)      {return new CUIMultiEdit(elem);}
 }
-  
-HumanClientApp::HumanClientApp(const GG::XMLElement& elem) : 
+ 
+HumanClientApp::HumanClientApp() : 
     ClientApp(), 
-    SDLGGApp::SDLGGApp(boost::lexical_cast<int>(elem.Child("width").Attribute("value")), 
-                       boost::lexical_cast<int>(elem.Child("height").Attribute("value")), 
-                       boost::lexical_cast<bool>(elem.Child("calc_FPS").Attribute("value")),
-                       elem.Child("app_name").Text()),
+    SDLGGApp(GetOptionsDB().Get<int>("app-width"), 
+             GetOptionsDB().Get<int>("app-height"),
+             false, "freeorion"),
     m_current_music(0),
     m_single_player_game(true)
 {
@@ -328,7 +327,7 @@ void HumanClientApp::SDLInit()
         Exit(1);
     }
 
-    int bpp = boost::lexical_cast<int>(m_config_doc.root_node.Child("HumanClientApp").Child("bpp").Attribute("value"));
+    int bpp = boost::lexical_cast<int>(GetOptionsDB().Get<int>("color-depth"));
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     if (24 <= bpp) {
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -373,7 +372,7 @@ void HumanClientApp::GLInit()
 
 void HumanClientApp::Initialize()
 {
-    m_ui = boost::shared_ptr<ClientUI>(new ClientUI(m_config_doc.root_node.Child("ClientUI")));
+    m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
     m_ui->ScreenIntro();    //start the first screen; the UI takes over from there.
 }
 

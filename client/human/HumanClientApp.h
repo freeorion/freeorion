@@ -35,7 +35,7 @@ class HumanClientApp : public ClientApp, public SDLGGApp
 {
 public:
     /** \name Structors */ //@{
-    HumanClientApp(const GG::XMLElement& elem);
+    HumanClientApp();
     virtual ~HumanClientApp();
     //@}
 
@@ -74,8 +74,6 @@ public:
         that this means an infinitely-looping sound will never be freed without being explicitly interrupted.*/
     void FreeAllSounds();
 
-    void SetXMLDoc(const GG::XMLDoc& doc) {m_config_doc = doc;}///< sets the m_config_doc variable
-
     bool LoadSinglePlayerGame(); ///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
     void SetSaveFileName(const std::string& filename) {m_save_filename = filename;} ///< records the current game's filename
 
@@ -113,7 +111,6 @@ private:
     boost::shared_ptr<ClientUI>       m_ui;                 ///< the one and only ClientUI object!
     std::string                       m_save_filename;      ///< the name under which the current game has been saved
     bool                              m_single_player_game; ///< true when this game is a single-player game
-    GG::XMLDoc                        m_config_doc;         ///< the XML document this was configured with
 
     static void EndOfMusicCallback();
     static void EndOfSoundCallback(int channel);
