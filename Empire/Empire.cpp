@@ -21,13 +21,15 @@ using boost::lexical_cast;
 
 Empire::Empire(const std::string& name, int ID, const GG::Clr& color, ControlStatus& control) :
  // initialize members
- m_name(name), 
- m_id(ID), 
+ m_min_fleet_id(0),
+ m_max_fleet_id(0x7FFFFFFF),
+ m_id(ID),
+ m_total_rp(0),
+ m_name(name),  
  m_color(color), 
  m_control_state(control),
- m_total_rp(0),
- m_min_fleet_id(0),    // I forget what the fleet ID ranges were, and I'm sure everybody else does too
- m_max_fleet_id(0x7FFFFFFF)
+ m_next_design_id(1)
+
 {
     // nothing else to do
 }
@@ -42,47 +44,59 @@ Empire::Empire(const GG::XMLElement& elem)
     m_total_rp = lexical_cast<int> ( elem.Child("m_total_rp").Attribute("value") );
     m_control_state = (ControlStatus) lexical_cast <int> ( elem.Child("m_control_state").Attribute("value") );
     m_color = GG::Clr( elem.Child("m_color").Child(0) );
+    m_next_design_id = lexical_cast<int> ( elem.Child("m_next_design_id").Attribute("value") );
     
  
     GG::XMLObjectFactory<SitRepEntry> sitrep_factory;
     //SitRepEntry::InitObjectFactory(sitrep_factory);
     XMLElement sitrep = elem.Child("m_sitrep_entries");
-    for(unsigned int i=0; i<sitrep.NumChildren(); i++)
+    for(int i=0; i<sitrep.NumChildren(); i++)
     {
         AddSitRepEntry( sitrep_factory.GenerateObject(sitrep.Child(i)) );
     }
-    
-    
+     
     XMLElement container_elem = elem.Child("m_fleets");
-    for(unsigned int i=0; i<container_elem.NumChildren(); i++)
+    for(int i=0; i<container_elem.NumChildren(); i++)
     {
         m_fleets.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
     }
     
     container_elem = elem.Child("m_planets");
-    for(unsigned int i=0; i<container_elem.NumChildren(); i++)
+    for(int i=0; i<container_elem.NumChildren(); i++)
     {
         m_planets.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
     }
     
     container_elem = elem.Child("m_explored_systems");
-    for(unsigned int i=0; i<container_elem.NumChildren(); i++)
+    for(int i=0; i<container_elem.NumChildren(); i++)
     {
         m_explored_systems.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
     }
     
     container_elem = elem.Child("m_visible_fleets");
-    for(unsigned int i=0; i<container_elem.NumChildren(); i++)
+    for(int i=0; i<container_elem.NumChildren(); i++)
     {
         m_visible_fleets.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
     }
     
     container_elem = elem.Child("m_techs");
-    for(unsigned int i=0; i<container_elem.NumChildren(); i++)
+    for(int i=0; i<container_elem.NumChildren(); i++)
     {
         m_techs.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
     }
     
+    container_elem = elem.Child("m_ship_designs");
+    for (int i=0; i<container_elem.NumChildren(); i++)
+    {
+       XMLElement design_elem = container_elem.Child(i);
+
+       ShipDesign* ship_design = new ShipDesign(design_elem);
+       int design_id = ship_design->id;
+
+       m_ship_designs.insert(std::pair<int, ShipDesign>(design_id, *ship_design));
+       delete ship_design;
+    }
+
 }
   
 
@@ -129,6 +143,20 @@ int Empire::FleetIDMax() const
     return m_max_fleet_id;
 }
 
+
+/// Searches for a ship design and copies over the input design and returns success/failure
+bool Empire::CopyShipDesign(int design_id, ShipDesign& design_target)
+{
+   Empire::ShipDesignItr itr = m_ship_designs.find(design_id);
+   
+   if (itr != ShipDesignEnd())
+   {
+      design_target = (*itr).second;
+      return true;
+   }
+
+   return false;
+}
 
 
 // Each of the following
@@ -350,9 +378,14 @@ void Empire::AddSitRepEntry( SitRepEntry* entry)
     m_sitrep_entries.push_back(entry);
 }
 
-void Empire::AddShipDesign(const ShipDesign& design)
+/// Inserts the design into the empire's ship design list, assigns it an ID and returns the ID.
+int Empire::AddShipDesign(const ShipDesign& design)
 {
-    m_ship_designs.push_back(design);
+   ShipDesign new_design = design;
+   new_design.id = m_next_design_id;
+   m_ship_designs.insert(std::pair<int, ShipDesign>(m_next_design_id, new_design));
+    
+   return m_next_design_id++;
 }
 
  /* ************************************************
@@ -403,17 +436,13 @@ void Empire::ClearSitRep()
 
 void Empire::RemoveShipDesign(int id)
 {
-    Empire::ShipDesignItr itr = ShipDesignBegin();
-    while(itr != ShipDesignEnd())
+    Empire::ShipDesignItr itr = m_ship_designs.find(id);
+    
+    if (itr != ShipDesignEnd())
     {
-        if( (*itr).id == id )
-        {
-            m_ship_designs.erase( itr );
-            return;
-        }
+      m_ship_designs.erase( itr );
     }
     
-    // it ain't here
     return;
 }
 
@@ -453,6 +482,10 @@ GG::XMLElement Empire::XMLEncode() const
     GG::XMLElement colorelem = m_color.XMLEncode();
     color.AppendChild(colorelem);
     element.AppendChild(color);
+
+    XMLElement design_id("m_next_design_id");
+    design_id.SetAttribute( "value", lexical_cast<std::string>(m_next_design_id) );
+    element.AppendChild(design_id);
     
     // There is no need to serialize the sitrep entries since they are
     // handled by the empire manager sitrep update functionality
@@ -467,7 +500,7 @@ GG::XMLElement Empire::XMLEncode() const
     XMLElement ship_designs("m_ship_designs");
     for(ConstShipDesignItr itr = ShipDesignBegin(); itr != ShipDesignEnd(); itr++)
     {
-       ship_designs.AppendChild( (*itr).XMLEncode() );
+       ship_designs.AppendChild( (*itr).second.XMLEncode() );
     }
     element.AppendChild(ship_designs);
     

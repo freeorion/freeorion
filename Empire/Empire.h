@@ -84,8 +84,8 @@ public:
     typedef std::list<SitRepEntry*>::iterator SitRepItr;
     typedef std::list<SitRepEntry*>::const_iterator    ConstSitRepItr;
     
-    typedef std::list<ShipDesign>::iterator ShipDesignItr;
-    typedef std::list<ShipDesign>::const_iterator ConstShipDesignItr;
+    typedef std::map<int, ShipDesign>::iterator ShipDesignItr;
+    typedef std::map<int, ShipDesign>::const_iterator ConstShipDesignItr;
     //@}
     
     /**
@@ -136,6 +136,10 @@ public:
     * This if for informational purposes only and is not enforced in any way.
     */
     int FleetIDMax() const;
+
+    /// Searches for a ship design and copies over the input design and returns success/failure
+    bool CopyShipDesign(int design_id, ShipDesign& design_target);
+
     
     /* ******************************************************
     *  The Empire object maintains containers of the following 
@@ -250,6 +254,9 @@ public:
     */
     GG::XMLElement XMLEncode(const Empire& viewer) const;
 
+
+
+
     //@}
 
     /* ****************************************************
@@ -289,7 +296,7 @@ public:
     void AddSitRepEntry( SitRepEntry* entry);
     
     /// inserts a copy of the given design into the empire's design list
-    void AddShipDesign(const ShipDesign& design);
+    int AddShipDesign(const ShipDesign& design);
     
      /* ************************************************
         Methods to remove items from our various lists
@@ -418,6 +425,9 @@ private:
     
     /// Empire's control status
 	Empire::ControlStatus m_control_state;
+
+    /// the next available ship design ID
+    int m_next_design_id;
     
     /// The Empire's sitrep entries
     std::list<SitRepEntry*> m_sitrep_entries;
@@ -442,7 +452,7 @@ private:
     /// fleets you can see but dont own    
     std::set<int> m_visible_fleets;   
     
-    std::list<ShipDesign> m_ship_designs; 
+    std::map<int, ShipDesign> m_ship_designs; 
     
 };
 
