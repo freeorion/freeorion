@@ -96,7 +96,6 @@ Universe::Universe(const GG::XMLElement& elem)
     m_factory.AddGenerator("System", &NewSystem);
 
     SetUniverse(elem);
-    m_last_allocated_id = -1;
 }
 
 Universe::~Universe()
@@ -122,6 +121,8 @@ void Universe::SetUniverse(const GG::XMLElement& elem)
             m_objects[obj->ID()] = obj;
       }
     }
+
+    m_last_allocated_id = boost::lexical_cast<int>(elem.Child("m_last_allocated_id").Text());
 }
 
 const UniverseObject* Universe::Object(int id) const
@@ -144,6 +145,9 @@ GG::XMLElement Universe::XMLEncode() const
     for (const_iterator it = begin(); it != end(); ++it)
         temp.AppendChild(it->second->XMLEncode());
     retval.AppendChild(temp);
+
+    retval.AppendChild(GG::XMLElement("m_last_allocated_id", boost::lexical_cast<std::string>(m_last_allocated_id)));
+
     return retval;
 }
 
@@ -176,6 +180,8 @@ GG::XMLElement Universe::XMLEncode(int empire_id) const
       // for NO_VISIBILITY no element is added
    }
    element.AppendChild(object_map);
+
+   element.AppendChild(GG::XMLElement("m_last_allocated_id", boost::lexical_cast<std::string>(m_last_allocated_id)));
 
    return element;
 }
