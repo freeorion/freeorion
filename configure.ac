@@ -146,7 +146,11 @@ AC_CACHE_SAVE
 #AC_CHECK_LIB(SDL_image,IMG_Load,[],[AC_MSG_FAILURE([SDL_image is needed])])
 #CPPFLAGS="$X_OLD_CPPFLAGS"
 
-# Check for OpenGL
+### Check for OpenGL
+
+# Some OpenGL-libraries seem to need pthread !?
+AC_CHECK_LIB(pthread_create, pthread)
+
 AC_CHECK_HEADERS([GL/gl.h GL/glu.h],,[AC_MSG_FAILURE([I can't find the OpenGL headers.
 Make sure you have the OpenGL-developer-libraries installed and have given
 the correct include path!])])
