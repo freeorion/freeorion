@@ -45,9 +45,9 @@ public:
     //! \name Accessors //!@{
     virtual GG::Pt ClientUpperLeft() const;
 
-    double ZoomFactor() const {return m_zoom_factor;}
-
-    SidePanel* GetSidePanel() {return m_side_panel;}
+    double         ZoomFactor() const    {return m_zoom_factor;}
+    SidePanel*     GetSidePanel() const  {return m_side_panel;}
+    GG::XMLElement SaveGameData() const; //!< returns the relevant data that should be restored after a save-and-load cycle
     //!@}
 
     //! \name Mutators //!@{
@@ -59,9 +59,10 @@ public:
     virtual void   LClick(const GG::Pt& pt, Uint32 keys);
     virtual void   MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
 
-    void           InitTurn( int turn_number );        //!< called at the start of each turn
-    void           ShowSystemNames(); //!< enables the system name text
-    void           HideSystemNames(); //!< disables the system name text
+    void           InitTurn( int turn_number );                     //!< called at the start of each turn
+    void           RestoreFromSaveData(const GG::XMLElement& elem); //!< restores the UI state that was saved in an earlier call to SaveGameData().
+    void           ShowSystemNames();                               //!< enables the system name text
+    void           HideSystemNames();                               //!< disables the system name text
 
     SelectedSystemSignalType& SelectedSystemSignal() {return m_selected_system_signal;}
 

@@ -192,6 +192,20 @@ GG::Pt MapWnd::ClientUpperLeft() const
     return UpperLeft() + GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight());
 }
 
+GG::XMLElement MapWnd::SaveGameData() const
+{
+    GG::XMLElement retval("MapWnd");
+    retval.AppendChild(GG::XMLElement("upper_left", UpperLeft().XMLEncode()));
+    retval.AppendChild(GG::XMLElement("m_zoom_factor", boost::lexical_cast<std::string>(m_zoom_factor)));
+    retval.AppendChild(GG::XMLElement("m_nebulae"));
+    for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
+        retval.LastChild().AppendChild(GG::XMLElement("nebula" + boost::lexical_cast<std::string>(i)));
+        retval.LastChild().LastChild().AppendChild(GG::XMLElement("filename", m_nebulae[i]->Filename()));
+        retval.LastChild().LastChild().AppendChild(GG::XMLElement("position", m_nebula_centers[i].XMLEncode()));
+    }
+    return retval;
+}
+
 bool MapWnd::Render()
 {
     RenderBackgrounds();
@@ -415,6 +429,25 @@ void MapWnd::InitTurn(int turn_number)
         m_sitrep_panel->Show();
     else
         m_sitrep_panel->Hide();
+}
+
+void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
+{
+    MoveTo(GG::Pt(elem.Child("upper_left").Child("GG::Pt")));
+    m_zoom_factor = boost::lexical_cast<double>(elem.Child("m_zoom_factor").Text());
+    m_nebulae.clear();
+    m_nebula_centers.clear();
+    const GG::XMLElement& nebulae = elem.Child("m_nebulae");
+    for (int i = 0; i < nebulae.NumChildren(); ++i) {
+        const GG::XMLElement& curr_nebula = nebulae.Child(i);
+        m_nebulae.push_back(GG::App::GetApp()->GetTexture(curr_nebula.Child("filename").Text()));
+        m_nebula_centers.push_back(GG::Pt(curr_nebula.Child("position").Child("GG::Pt")));
+    }
+
+    // this is a hack to force an update so that we leave the MapWnd in a reasonable state; this is needed because the info 
+    // above is not the entire picture, but just the minimal set of data needed to restore the previous state
+    MouseWheel(GG::Pt(), 1, 0);
+    MouseWheel(GG::Pt(), -1, 0);
 }
 
 void MapWnd::ShowSystemNames()

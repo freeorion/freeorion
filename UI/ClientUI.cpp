@@ -369,7 +369,7 @@ bool ClientUI::Cleanup()
     //TODO: Destroy variables, etc.   
 
     return true; 
-}//Cleanup()
+}
 
 const std::string& ClientUI::Language() const 
 {
@@ -381,16 +381,12 @@ bool ClientUI::AttachToolWnd(GG::Wnd* parent, ToolWnd* tool)
     return (m_tooltips ? m_tooltips->AttachToolWnd(parent, tool) : false);
 }
 
-
-//////////////////////////////////////////////////////////
-
-//Utilities////////////////////////////////////////////////
-bool ClientUI::ChangeResolution(int width, int height)
+GG::XMLElement ClientUI::SaveGameData() const
 {
-    // TODO: Determine ability to reinitialize SDL with OpenGL.
-
-    return false;
-}//ChangeResolution()
+    GG::XMLElement retval("UI");
+    retval.AppendChild(m_map_wnd->SaveGameData());
+    return retval;
+}
 
 
 ///////////////////////////////////////////////////
@@ -473,7 +469,12 @@ void ClientUI::InitTurn( int turn_number )
 {
     m_map_wnd->InitTurn( turn_number );
 }
-    
+
+void ClientUI::RestoreFromSaveData(const GG::XMLElement& elem)
+{
+    m_map_wnd->RestoreFromSaveData(elem.Child("MapWnd"));
+}
+
 void ClientUI::ScreenIntro()
 {
     HideAllWindows();

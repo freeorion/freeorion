@@ -91,14 +91,10 @@ public:
 
     const GG::SubTexture& SitRepIcon(SitRepEntry::EntryType type) const; //!< returns the icon for this sitrep entry type; returns the default icon if \a type has no associated icon
 
-    GG::XMLElement XMLEncode() const; //!< encodes ClientUI to XML
+    GG::XMLElement SaveGameData() const; //!< returns the relevant data that should be restored after a save-and-load cycle
     //!@}
     
     //! \name Mutators //!@{
-    //! @param width screen width
-    //! @param height screen height
-    bool ChangeResolution(int width, int height);    //!< changes the screen resolution and modifies any images or data required to make the change.  
-    
     //! @param parent A pointer to the Wnd that should contain the tooltip
     //! @param tool A pointer to a ToolWnd to be associated with that window
     bool AttachToolWnd(GG::Wnd* parent, ToolWnd* tool);    //!< Adds a ToolWnd to the given window
@@ -110,6 +106,8 @@ public:
     // takes as a paramter the new turn number
     //!@{
     void InitTurn( int turn_number );      //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
+
+    void RestoreFromSaveData(const GG::XMLElement& elem); ///< restores the UI state that was saved in an earlier call to SaveGameData().
     
     void ScreenIntro();                        //!< Intro Screen
     void ScreenSettings(const ClientNetworkCore& net);    //!< Game/Network Options Screen
