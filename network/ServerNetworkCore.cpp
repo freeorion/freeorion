@@ -273,7 +273,7 @@ void ServerNetworkCore::DispatchMessage(const Message& msg, int socket)
          if (sender_unknown) {
             ServerApp::GetApp()->HandleNonPlayerMessage(msg, conn_info);
          } else {
-            ServerApp::GetApp()->HandleMessage(msg, conn_info);
+            ServerApp::GetApp()->HandleMessage(msg);
          }
          break;
       default:

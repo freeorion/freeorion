@@ -51,6 +51,7 @@ public:
 //! \name Accessors
 //!@{
     std::string EmpireName() const; //!< Returns the arbitrarily chosen name of the empire
+    int EmpireColor();	//!< Returns the color player selected for his/her empire
 
 //!@}
 
@@ -100,6 +101,7 @@ private:
 
 private:
     void Init();    //!< Attaches children and connects signals
+    GG::Clr SelectColor(int colnum);	//!< Takes a number and returns a color for that number
 
 };//EmpireSelect
 #endif

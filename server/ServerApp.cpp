@@ -125,7 +125,7 @@ void ServerApp::CreateAIClients(const GG::XMLElement& elem)
    }
 }
 
-void ServerApp::HandleMessage(const Message& msg, const ServerNetworkCore::ConnectionInfo& connection)
+void ServerApp::HandleMessage(const Message& msg)
 {
    switch (msg.Type()) {
    case Message::EMPIRE_SETUP: {

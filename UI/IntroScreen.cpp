@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string>
 
-#include "SitRepWnd.h"
+//#include "SitRepWnd.h"
 
 IntroScreen::IntroScreen():
     CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024+300)/2, 300, 300, 400, 
@@ -220,16 +220,19 @@ void IntroScreen::OnStartGame()
                      GG::XMLDoc empire_setup;
 
 		     //char tmp_empire_name[255];
-		     //sprintf(tmp_empire_name, "%d", galaxy_wnd.GalaxySize());
+		     //sprintf(tmp_empire_name, "%d", empire_wnd.GalaxySize());
 
                      // add the empire name
                      GG::XMLElement elem("empire_name");
-                     elem.SetText("Tyrethzor");
+                     elem.SetText(empire_wnd.EmpireName().c_str());
                      empire_setup.root_node.AppendChild(elem);
 
                      // add the empire color
+		     char tmp_empire_color[255];
+		     sprintf(tmp_empire_color, "%d", empire_wnd.EmpireColor());
+
                      elem = GG::XMLElement("empire_color");
-                     elem.SetAttribute("value", "2");
+                     elem.SetAttribute("value", tmp_empire_color);
                      empire_setup.root_node.AppendChild(elem);
 
 		     // send the empire setup choices to the server

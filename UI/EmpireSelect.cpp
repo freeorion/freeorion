@@ -97,6 +97,76 @@ void EmpireSelect::Init()
     
 }//Init()
 
+GG::Clr EmpireSelect::SelectColor(int colnum)
+{
+
+   // TEMPORARY - This is just a placeholder to get something working quickly
+
+   switch (colnum) {
+   case 0:
+   {
+      GG::Clr newcolor(100,50,200,255);
+      return newcolor;
+   }
+   case 1:
+   {
+      GG::Clr newcolor(100,100,100,255);
+      return newcolor;
+   }
+   case 2:
+   {
+      GG::Clr newcolor(100,0,0,255);
+      return newcolor;
+   }
+   case 3:
+   {
+      GG::Clr newcolor(0,100,0,255);
+      return newcolor;
+   }
+   case 4:
+   {
+      GG::Clr newcolor(0,0,100,255);
+      return newcolor;
+   }
+   case 5:
+   {
+      GG::Clr newcolor(100,100,0,255);
+      return newcolor;
+   }
+   case 6:
+   {
+      GG::Clr newcolor(100,0,100,255);
+      return newcolor;
+   }
+   case 7:
+   {
+      GG::Clr newcolor(0,100,100,255);
+      return newcolor;
+   }
+   case 8:
+   {
+      GG::Clr newcolor(200,100,0,255);
+      return newcolor;
+   }
+   case 9:
+   {
+      GG::Clr newcolor(200,0,100,255);
+      return newcolor;
+   }
+   case 10:
+   {
+      GG::Clr newcolor(100,200,0,255);
+      return newcolor;
+   }
+   default:
+   {
+      GG::Clr newcolor(0,0,0,255);
+      return newcolor;
+   }
+   }
+
+}//SelectColor()
+
 EmpireSelect::~EmpireSelect()
 {
 
@@ -113,7 +183,7 @@ int EmpireSelect::Render()
     //ClientUI::DrawWindow(UpperLeft().x, UpperLeft().y, LowerRight().x, LowerRight().y, "Galaxy Setup");
 
     //draw square of the selected color
-    GG::Clr newcolor(m_cur_color, 0, 0, 255);
+    GG::Clr newcolor(SelectColor(m_cur_color));
     GG::FlatRectangle(UpperLeft().x+30, UpperLeft().y+70, UpperLeft().x+80, UpperLeft().y+120, newcolor, ClientUI::INNER_BORDER_COLOR, 1);
     
     return true;
@@ -127,6 +197,11 @@ std::string EmpireSelect::EmpireName() const
 {
     return *m_empire_name;
 }//EmpireName()
+
+int EmpireSelect::EmpireColor()
+{
+   return m_cur_color;
+}//EmpireColor()
 
 ///////////////////////////////////////////////
 //   EVENT HANDLERS
@@ -148,16 +223,20 @@ void EmpireSelect::OnCancel()
 
 void EmpireSelect::OnLeftArrow()
 {
-
-  m_cur_color -= 20;
+  if (m_cur_color <= 0)
+    m_cur_color = 10;
+  else
+    m_cur_color -= 1;
   Render();
 
 }//OnLeftArrow()
 
 void EmpireSelect::OnRightArrow()
 {
-
-  m_cur_color += 20;
+  if (m_cur_color >= 10)
+    m_cur_color = 0;
+  else
+    m_cur_color += 1;
   Render();
 
 }//OnRightArrow()

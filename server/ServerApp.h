@@ -48,13 +48,13 @@ public:
    void CreateAIClients(const GG::XMLElement& elem);
 
    /** handles an incoming message from the server with the appropriate action or response */
-   void HandleMessage(const Message& msg, const ServerNetworkCore::ConnectionInfo& connection);
-   
+   void HandleMessage(const Message& msg);
+
    /** when Messages arrive from connections that are not established players, they arrive via a call to this function*/
    void HandleNonPlayerMessage(const Message& msg, const ServerNetworkCore::ConnectionInfo& connection); 
    
    /** called by ServerNetworkCore when a player's TCP connection is closed*/
-   void PlayerDisconnected(int id); 
+   void PlayerDisconnected(int id);
    //@}
 
    static ServerApp*             GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
