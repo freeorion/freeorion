@@ -79,7 +79,7 @@ void Order::ValidateEmpireID() const
 void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
 {
     fact.AddGenerator("PlanetBuildOrder",   &GenPlanetBuildOrder);
-    fact.AddGenerator("NewFleetOrder",      &GenNewFleetOrder);
+    fact.AddGenerator("FleetSplitOrder",    &GenNewFleetOrder);
     fact.AddGenerator("FleetMoveOrder",     &GenFleetMoveOrder);
     fact.AddGenerator("FleetTransferOrder", &GenFleetTransferOrder);
     fact.AddGenerator("FleetColonizeOrder", &GenFleetColonizeOrder);
@@ -174,7 +174,7 @@ NewFleetOrder::NewFleetOrder() :
 NewFleetOrder::NewFleetOrder(const XMLElement& elem) : 
     Order(elem.Child("Order"))
 {
-    if(elem.Tag() != ("CreateFleetOrder"))
+    if(elem.Tag() != ("FleetSplitOrder"))
         throw std::invalid_argument("Attempted to construct CreateFleetOrder from malformed XMLElement");
     
     const XMLElement* curr_elem = &elem.Child("m_fleet_name");
@@ -212,7 +212,7 @@ void NewFleetOrder::Execute() const
     if (m_system_id != UniverseObject::INVALID_OBJECT_ID) {
         System* system = dynamic_cast<System*>(universe.Object(m_system_id));
         fleet = new Fleet(m_fleet_name, system->X(), system->Y(), EmpireID());
-        universe.Insert(fleet);
+        int id = universe.Insert(fleet);
         system->Insert(fleet);
     } else {
         fleet = new Fleet(m_fleet_name, m_position.first, m_position.second, EmpireID());
