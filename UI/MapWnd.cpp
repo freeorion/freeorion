@@ -146,7 +146,7 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
             ul_offset.y = static_cast<int>(ul_offset.y * MAX_SCALE_FACTOR / m_zoom_factor);
             m_zoom_factor = MAX_SCALE_FACTOR;
         }
-    } else {
+    } else if ( 0 > move ) {
         if (MIN_SCALE_FACTOR < m_zoom_factor) {
             ul_offset.x = static_cast<int>(ul_offset.x / ZOOM_STEP_SIZE);
             ul_offset.y = static_cast<int>(ul_offset.y / ZOOM_STEP_SIZE);
@@ -157,6 +157,9 @@ int MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
             m_zoom_factor = MIN_SCALE_FACTOR;
         }
     }
+    else
+      // Windows platform always sends an additional event with a move of 0. This should be ignored
+      return 0;
 
     for (unsigned int i = 0; i < m_stars.size(); ++i) {
         const System* system = 
