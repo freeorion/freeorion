@@ -111,7 +111,6 @@ FleetDetailPanel::FleetDetailPanel(int x, int y, Fleet* fleet, bool read_only, U
     m_ship_status_text = new GG::TextControl(0, m_ships_lb->LowerRight().y + CONTROL_MARGIN, m_ships_lb->Width(), ClientUI::PTS + 4, 
                                              "", ClientUI::FONT, ClientUI::PTS, GG::TF_LEFT, ClientUI::TEXT_COLOR);
     Resize(m_ship_status_text->LowerRight());
-    std::cout << "FleetDetailPanel::FleetDetailPanel() : Created ListBox @ " << m_ships_lb << "\n";
 
     SetFleet(fleet);
     Init();
@@ -330,10 +329,13 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const GG::ListBox::Row* row
 std::string FleetDetailPanel::DestinationText() const
 {
     std::string retval = "ERROR";
-    System* dest = m_fleet->Destination();
+    System* dest = m_fleet->FinalDestination();
     System* current = m_fleet->GetSystem();
     if (dest && dest != current) {
-        retval = "En route to " + dest->Name() + " System (ETA " + boost::lexical_cast<std::string>(m_fleet->ETA()) + " turns)";
+        std::pair<int, int> eta = m_fleet->ETA();
+        retval = "Moving to " + dest->Name() + ", ETA " + boost::lexical_cast<std::string>(eta.first);
+        if (eta.first != eta.second)
+            retval += "(" + boost::lexical_cast<std::string>(m_fleet->ETA().second) + ")";
     } else if (current) {
         retval = "At " + current->Name() + " System";
     }
@@ -370,7 +372,6 @@ FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint3
     m_fleet_panel(0)
 {
     m_fleet_panel = new FleetDetailPanel(LeftBorder() + 3, TopBorder() + 3, fleet, read_only);
-    std::cout << "FleetDetailWnd::FleetDetailWnd() : Created FleetDetailPanel @ " << m_fleet_panel << "\n";
     Resize(m_fleet_panel->Size() + GG::Pt(LeftBorder() + RightBorder() + 6, TopBorder() + BottomBorder() + 6));
     AttachSignalChildren();
     SetText(TitleText());
@@ -430,7 +431,6 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, bool read_only, Uin
 {
     m_fleets_lb = new CUIListBox(LeftBorder() + 3, TopBorder() + 3, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT);
     m_fleet_detail_panel = new FleetDetailPanel(LeftBorder() + 3, m_fleets_lb->LowerRight().y + CONTROL_MARGIN, 0, read_only );
-    std::cout << "FleetWnd::FleetWnd() : Created main FleetDetailPanel @ " << m_fleet_detail_panel << "\n";
     m_new_fleet_button = new CUIButton(FLEET_LISTBOX_WIDTH + 6 + LeftBorder() - 5 - NEW_FLEET_BUTTON_WIDTH, 
                                        m_fleet_detail_panel->LowerRight().y + CONTROL_MARGIN, NEW_FLEET_BUTTON_WIDTH, "New fleet");
 
@@ -528,7 +528,7 @@ void FleetWnd::SystemClicked(int system_id)
         for (std::set<int>::const_iterator it = m_fleets_lb->Selections().begin(); it != m_fleets_lb->Selections().end(); ++it) {
             Fleet* fleet = FleetInRow(*it);
             if (fleet->NumShips()) {
-                HumanClientApp::Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), system_id));
+                HumanClientApp::Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), system_id));
             }
         }
     }

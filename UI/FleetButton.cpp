@@ -32,7 +32,7 @@ FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, doubl
              static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * zoom + 0.5), 
              static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * zoom + 0.5));
 
-    m_orientation = fleet->Destination()->X() - fleet->X() < 0 ? SHAPE_LEFT : SHAPE_RIGHT;
+    m_orientation = fleet->FinalDestination()->X() - fleet->X() < 0 ? SHAPE_LEFT : SHAPE_RIGHT;
 
     GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
 }
@@ -131,7 +131,7 @@ void FleetButton::Clicked()
 
     GG::Pt ul = UpperLeft();
     bool read_only = *m_fleets[0]->Owners().begin() != HumanClientApp::GetApp()->PlayerID() || 
-        (m_fleets[0]->DestinationID() != UniverseObject::INVALID_OBJECT_ID && 
+        (m_fleets[0]->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID && 
          m_fleets[0]->SystemID() == UniverseObject::INVALID_OBJECT_ID);
     FleetWnd* fleet_wnd = new FleetWnd(ul.x + 50, ul.y + 50, m_fleets, read_only);
 
