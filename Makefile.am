@@ -4,31 +4,34 @@ include common_files.inc
 
 EXTRA_DIST = m4 remake_libs.mak default Vera.ttf create_commonfilesinc.pl
 ACLOCAL_AMFLAGS = -I m4
-noinst_DATA = freeoriond.exe freeorion.exe freeorionca.exe save
-CLEANFILES = freeoriond.exe freeorion.exe freeorionca.exe
+noinst_DATA = freeoriond freeorion freeorionca save
+CLEANFILES = freeoriond freeorion freeorionca
 install:
-	@echo For now, you have to run ./freeorion.exe from the source-directory.
-save :
+	@echo For now, you have to run ./freeorion from the source-directory.
+save:
 	mkdir -p save
 
 #AM_CXXFLAGS = -Wall
 
-bin_PROGRAMS = freeoriond.exe freeorion.exe freeorionca.exe 
+bin_PROGRAMS = freeoriond freeorion freeorionca
 
-freeorion_exe_CPPFLAGS=@FT2_CFLAGS@ @GIGI_CFLAGS@ @GIGISDL_CFLAGS@ @GIGINET_CFLAGS@ @SDL_CFLAGS@ -DFREEORION_BUILD_HUMAN
-freeorion_exe_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGINET_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@ @FT2_LIBS@
+#freeorion_exe_CPPFLAGS=@FT2_CFLAGS@ @GIGI_CFLAGS@ @GIGISDL_CFLAGS@ @GIGINET_CFLAGS@ @SDL_CFLAGS@ -DFREEORION_BUILD_HUMAN
+#freeorion_exe_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGINET_LIBS@ @GIGISDL_LIBS@ @FT2_LIBS@
 
-freeoriond_exe_CPPFLAGS = @GIGI_CFLAGS@ @GIGINET_CFLAGS@ @FT2_CFLAGS@ @SDL_CFLAGS@ -DFREEORION_BUILD_SERVER #-DWITH_PYTHON -I/usr/include/python2.2 
-freeoriond_exe_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGINET_LIBS@ @FT2_LIBS@	#-lboost_python  -lpython2.2 
+freeorion_CPPFLAGS = @SDL_CFLAGS@ @FT2_CFLAGS@ @GIGI_CFLAGS@ @GIGISDL_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_HUMAN
+freeorion_LDADD = @GIGI_LIBS@ @GIGINET_LIBS@ @GIGISDL_LIBS@
 
-freeorionca_exe_CPPFLAGS = @GIGINET_CFLAGS@ @GIGISDL_CFLAGS@ @SDL_CFLAGS@ -DFREEORION_BUILD_AI
-freeorionca_exe_LDADD = @SDL_LIBS@ @GIGISDL_LIBS@ @GIGINET_LIBS@
+freeoriond_CPPFLAGS = @FT2_CFLAGS@ @SDL_CFLAGS@ @GIGI_CFLAGS@ @GIGINET_CFLAGS@ -DFREEORION_BUILD_SERVER #-DWITH_PYTHON -I/usr/include/python2.2 
+freeoriond_LDADD = @SDL_LIBS@ @GIGI_LIBS@ @GIGINET_LIBS@ 	#-lboost_python  -lpython2.2 
+
+freeorionca_CPPFLAGS = @SDL_CFLAGS@ @GIGINET_CFLAGS@ @GIGISDL_CFLAGS@ -DFREEORION_BUILD_AI
+freeorionca_LDADD = @GIGISDL_LIBS@ @GIGINET_LIBS@ @GIGI_LIBS@
 
 # The list of prefixes that will be prepended to the names of the object files
 # THESE HAVE TO BE IDENTICAL TO THOSE DEFINED IN create_commonfilesinc.pl!
-freeoriond_exe_SHORTNAME = server
-freeorion_exe_SHORTNAME = client
-freeorionca_exe_SHORTNAME = ai
+freeoriond_SHORTNAME = server
+freeorion_SHORTNAME = client
+freeorionca_SHORTNAME = ai
 
 # Add files that are needed by server and client here
 # (conditional compiles via FREEORION_SERVER/CLIENT will be handled
@@ -105,7 +108,7 @@ util/VarText.h
 
 # Files specific to SERVER
 #Python/universe.cpp
-freeoriond_exe_SOURCES =			\
+freeoriond_SOURCES =				\
 server/ServerApp.cpp				\
 server/ServerApp.h				\
 server/dmain.cpp				\
@@ -118,7 +121,7 @@ network/ServerNetworkCore.h			\
 $(COMMON_FILES)
 
 # Files specific to (human) CLIENT
-freeorion_exe_SOURCES =				\
+freeorion_SOURCES =				\
 client/ClientApp.cpp				\
 client/ClientApp.h				\
 client/human/HumanClientApp.cpp			\
@@ -182,7 +185,7 @@ network/ClientNetworkCore.h			\
 $(COMMON_FILES)
 
 # Files specific for AI (client)
-freeorionca_exe_SOURCES =			\
+freeorionca_SOURCES =				\
 client/ClientApp.cpp				\
 client/ClientApp.h				\
 client/AI/AIClientApp.cpp			\
