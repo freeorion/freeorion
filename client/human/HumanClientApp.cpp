@@ -418,6 +418,8 @@ void HumanClientApp::HandleSDLEvent(const SDL_Event& event)
         case SDL_BUTTON_LEFT:   gg_event = GG::App::LRELEASE; break;
         case SDL_BUTTON_MIDDLE: gg_event = GG::App::MRELEASE; break;
         case SDL_BUTTON_RIGHT:  gg_event = GG::App::RRELEASE; break;
+        case SDL_BUTTON_WHEELUP:   gg_event = GG::App::MOUSEWHEEL; break;
+        case SDL_BUTTON_WHEELDOWN: gg_event = GG::App::MOUSEWHEEL; break;
         }
         key_mods = SDL_GetModState();
         break;
