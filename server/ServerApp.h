@@ -22,8 +22,13 @@
 #include <vector>
 
 
-namespace log4cpp {class Category;}
-namespace GG {class XMLDoc; class XMLElement;}
+namespace log4cpp {
+class Category;
+}
+namespace GG {
+class XMLDoc;
+class XMLElement;
+}
 struct AISetupData;
 class CombatModule;
 class Message;
@@ -117,7 +122,8 @@ private:
    void FinalCleanup();    ///< app final cleanup
    void SDLQuit();         ///< cleans up FE and SDL
 
-   void GameInit();        ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
+   void NewGameInit();     ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
+   void LoadGameInit();    ///< restores saved game universe, sends out game state and saved pending orders to clients, and signals clients to finish current turn
 
    GG::XMLDoc CreateTurnUpdate(int empire_id); ///< creates encoded universe and empire data for the specified empire, diffs it with the previous turn data, stores the new data over the previous turn data and returns the diff XMLElement
    GG::XMLDoc LobbyUpdateDoc() const;          ///< returns an MP lobby-mode update XMLDoc containing all relevant parts of the lobby state
@@ -135,6 +141,7 @@ private:
    int                     m_current_turn;         ///< current turn number */
 
    std::vector<Process>    m_ai_clients;           ///< AI client child processes
+   std::set<int>           m_ai_IDs;               ///< player IDs of AI clients
 
    // SERVER_GAME_SETUP variables -- These should only be useful when a new game is being set up
    std::set<std::string>   m_expected_ai_players;  ///< the player names expected from valid AI clients; this prevents malicious users from "spoofing" as AI clients.  Should be empty after all players have joined a game.
@@ -145,12 +152,17 @@ private:
    std::string             m_galaxy_file;          ///< file to use for generating the galaxy
    // end SERVER_GAME_SETUP variables
 
+   bool                    m_single_player_game;   ///< true when the game being played is single-player
+
+   std::set<int>           m_players_responded;    ///< tracks which players have responded to a server request (eg for save-data)
+   std::map<int, GG::XMLElement> m_player_save_game_data; ///< stores the save game data coming in from the players during a save game operation
+
    std::map<int, GG::XMLDoc> m_last_turn_update_msg; ///< stores the xml encoded empire and universe data from the previous turn in order to generate diffs for turn update message.  Map is indexed by empire ID, with separate message data for each since each player sees different parts of the universe.
 
-   static ServerApp*       s_app;
+   // turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
+   std::map<int, OrderSet*>  m_turn_sequence;
 
-   /// turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
-   std::map<int, OrderSet*> m_turn_sequence;
+   static ServerApp*       s_app;
 };
 
 #endif // _ServerApp_h_

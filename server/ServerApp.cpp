@@ -10,8 +10,6 @@
 #include "../universe/Planet.h"
 #include "../Empire/TechManager.h"
 
-
-
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
 #include <log4cpp/PatternLayout.hh>
@@ -44,8 +42,8 @@ struct LobbyModeData
     std::vector<AISetupData> AIs;
 
 } g_lobby_data;
-
-const unsigned int HOST_PLAYER_ID = 0;
+const std::string AI_CLIENT_EXE = "freeorionca.exe";
+GG::XMLDoc g_load_doc;
 }
 
 ////////////////////////////////////////////////
@@ -57,10 +55,10 @@ PlayerInfo::PlayerInfo() :
 }
 
 PlayerInfo::PlayerInfo(int sock, const IPaddress& addr, const std::string& player_name/* = ""*/, bool host_/* = false*/) : 
-   socket(sock),
-   address(addr),
-   name(player_name),
-   host(host_)
+    socket(sock),
+    address(addr),
+    name(player_name),
+    host(host_)
 {
 }
 
@@ -77,7 +75,6 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_log_category(log4cpp::Category::getRoot()),
     m_state(SERVER_IDLE),
     m_current_turn(1)
-
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class ServerApp");
@@ -142,8 +139,15 @@ log4cpp::Category& ServerApp::Logger()
 
 void ServerApp::CreateAIClients(const std::vector<AISetupData>& AIs)
 {
+    m_expected_ai_players.clear();
+    int player_id;
+    for (std::set<int>::iterator it = m_ai_IDs.begin(); it != m_ai_IDs.end(); ++it) {
+        m_network_core.DumpPlayer(*it);
+    }
+    m_ai_clients.clear();
+    m_ai_IDs.clear();
+
     int ai_client_base_number = time(0) % 999; // get a random number from which to start numbering the AI clients
-    const std::string AI_CLIENT_EXE = "freeorionca.exe";
     int i = 0;
     for (std::vector<AISetupData>::const_iterator it = AIs.begin(); it != AIs.end(); ++it, ++i) {
 // TODO: add other command line args to AI client invocation as needed
@@ -185,9 +189,13 @@ void ServerApp::HandleMessage(const Message& msg)
             }
             m_state = SERVER_GAME_SETUP;
             CreateAIClients(g_lobby_data.AIs);
+            g_load_doc.root_node = GG::XMLElement();
             m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
             if (m_expected_players == static_cast<int>(m_network_core.Players().size())) {
-                GameInit();
+                if (g_load_doc.root_node.NumChildren())
+                    LoadGameInit();
+                else
+                    NewGameInit();
                 m_state = SERVER_WAITING;
                 m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
             }
@@ -196,14 +204,11 @@ void ServerApp::HandleMessage(const Message& msg)
             m_log_category.errorStream() << "ServerApp::HandleMessage : A human player attempted to host "
                 "a new MP game with the wrong player name, or while one was not being setup.  Terminating connection to " << 
                 (socket_hostname ? socket_hostname : "[unknown host]") << " (player #" << msg.Sender() << ")";
-            std::cout << "**** TEXT= " << host_player_name << " **** ";
-            std::cout << ((it == m_network_core.Players().end()) ? "NOT" : "FOUND") << " in m_network_core ";
-            if (it != m_network_core.Players().end())
-                std::cout << " name in m_network_core: " << it->second.name << "\n";
             m_network_core.DumpPlayer(msg.Sender());
         }
         break;
     }
+
     case Message::LOBBY_UPDATE: {
         std::stringstream stream(msg.GetText());
         GG::XMLDoc doc;
@@ -244,7 +249,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 g_lobby_data.galaxy_image_filename = doc.root_node.Child("galaxy_image_filename").Text();
             }
             if (doc.root_node.ContainsChild("players")) {
-// TODO : handle player updates when there are options for players
+                // TODO : handle player updates when there are options for players
             }
             for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
                 if (it->first != msg.Sender())
@@ -253,6 +258,154 @@ void ServerApp::HandleMessage(const Message& msg)
         }
         break;
     }
+
+    case Message::SAVE_GAME: {
+        if (m_network_core.Players().find(msg.Sender())->second.host) {
+            std::string save_filename = msg.GetText();
+            GG::XMLDoc doc;
+
+            // send out all save game data requests
+            std::set<int> needed_reponses;
+            m_players_responded.clear();
+            m_player_save_game_data.clear();
+            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+                m_network_core.SendMessage(ServerSaveGameMessage(it->first));
+                needed_reponses.insert(it->first);
+            }
+
+            // wait for them all to come in
+            SDL_Event ev;            
+            const unsigned int SYCHRONOUS_TIMEOUT = 15000; // give up after this many ms without any valid responses
+            unsigned int start_time = SDL_GetTicks();
+            while (1) {
+                unsigned int starting_responses = m_players_responded.size();
+                FE_PollEvent(&ev);
+                if (ev.type == SDL_USEREVENT) {
+                    int net2_type = NET2_GetEventType(&ev);
+                    if (net2_type == NET2_ERROREVENT || 
+                        net2_type == NET2_TCPACCEPTEVENT || 
+                        net2_type == NET2_TCPRECEIVEEVENT || 
+                        net2_type == NET2_TCPCLOSEEVENT || 
+                        net2_type == NET2_UDPRECEIVEEVENT) {
+                        m_network_core.HandleNetEvent(ev);
+                    }
+                }
+                if (starting_responses < m_players_responded.size())
+                    start_time = SDL_GetTicks(); // reset timeout whenever there's a valid response
+                if (m_players_responded == needed_reponses || SYCHRONOUS_TIMEOUT < SDL_GetTicks() - start_time)
+                    break;
+            }
+            if (m_players_responded == needed_reponses) {
+                doc.root_node.AppendChild(GG::XMLElement("turn_number", boost::lexical_cast<std::string>(m_current_turn)));
+                for (std::map<int, GG::XMLElement>::iterator it = m_player_save_game_data.begin(); it != m_player_save_game_data.end(); ++it) {
+                    GG::XMLElement player_element("Player");
+                    player_element.AppendChild(GG::XMLElement("name", m_network_core.Players().find(it->first)->second.name));
+                    player_element.AppendChild(m_empires.Lookup(it->first)->XMLEncode());//CreateClientEmpireUpdate(it->first));
+                    player_element.AppendChild(it->second);
+                    doc.root_node.AppendChild(player_element);
+                }
+                doc.root_node.AppendChild(m_universe.XMLEncode());
+                std::ofstream ofs(save_filename.c_str());
+                doc.WriteDoc(ofs);
+                ofs.close();
+                m_network_core.SendMessage(ServerSaveGameMessage(msg.Sender(), true));
+            }
+        } else {
+            m_log_category.errorStream() << "Player #" << msg.Sender() << " attempted to initiate a game save, but is not the host player, or is "
+                "not found in the player list.";
+        }
+        break;
+    }
+
+    case Message::LOAD_GAME: { // single-player loading (multiplayer loading is handled through the lobby interface)
+        std::map<int, PlayerInfo>::const_iterator sender_it = m_network_core.Players().find(msg.Sender());
+        if (sender_it != m_network_core.Players().end() && sender_it->second.host) {
+            m_empires.RemoveAllEmpires();
+            m_single_player_game = true;
+
+            std::string load_filename = msg.GetText();
+            GG::XMLDoc doc;
+            std::ifstream ifs(load_filename.c_str());
+            doc.ReadDoc(ifs);
+            ifs.close();
+
+            m_universe.SetUniverse(doc.root_node.Child("Universe"));
+            m_expected_players = 0;
+            for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
+                if (doc.root_node.Child(i).Tag() == "Player") {
+                    m_empires.InsertEmpire(new Empire(doc.root_node.Child(i).Child("Empire")));
+                    ++m_expected_players;
+                }
+            }
+            m_current_turn = boost::lexical_cast<int>(doc.root_node.Child("turn_number").Text());
+
+            CreateAIClients(std::vector<AISetupData>(m_expected_players - 1));
+            g_load_doc = doc;
+            m_state = SERVER_GAME_SETUP;
+        } else {
+            m_log_category.errorStream() << "Player #" << msg.Sender() << " attempted to initiate a game save, but is not the host, or is "
+                "not found in the player list.";
+        }
+        break;
+    }
+
+    case Message::TURN_ORDERS: {
+        /* decode order set */
+	    std::stringstream stream(msg.GetText());
+	    GG::XMLDoc doc;
+	    doc.ReadDoc(stream);
+
+        if (doc.root_node.ContainsChild("save_game_data")) { // the Orders were in answer to a save game data request
+            doc.root_node.SetTag("Orders");
+            doc.root_node.RemoveChild("save_game_data");
+            m_player_save_game_data[msg.Sender()] = doc.root_node;
+            m_players_responded.insert(msg.Sender());
+        } else { // the Orders were sent from a Player who has finished her turn
+            /* debug information */
+            std::string dbg_file( "turn_orders_server_" );
+            dbg_file += boost::lexical_cast<std::string>(msg.Sender());
+            dbg_file += ".txt";
+            std::ofstream output( dbg_file.c_str() );
+            doc.WriteDoc(output);
+            output.close();
+
+            OrderSet *p_order_set;
+            p_order_set = new OrderSet( );
+            GG::XMLObjectFactory<Order> order_factory;
+            Order::InitOrderFactory(order_factory);
+            GG::XMLElement root = doc.root_node;
+
+            for (int i = 0; i < root.NumChildren(); ++i) {
+                Order *p_order = order_factory.GenerateObject(root.Child(i));
+
+                if ( p_order ) {
+                    p_order_set->AddOrder( p_order );
+                } else {
+                    // log error
+                    m_log_category.errorStream() << "An Order has been received that has no factory - ignoring.";        
+                }
+            }
+
+            /* if all orders are received already, do nothing as we are processing a turn */
+            if ( AllOrdersReceived( ) )
+                break;
+
+            /* add orders to turn sequence */    
+            SetEmpireTurnOrders( msg.Sender(), p_order_set );        
+            
+            /* look to see if all empires are done */
+            if ( AllOrdersReceived( ) )
+                ProcessTurns( );
+        }
+        break;
+    }
+
+    case Message::REQUEST_NEW_OBJECT_ID: {
+        /* get get ID and send back to client, it's waiting for this */
+        m_network_core.SendMessage(DispatchObjectIDMessage(msg.Sender(), GetUniverse().GenerateObjectID( ) ) );
+        break;
+	}
+
     case Message::END_GAME: {
         std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().find(msg.Sender());
         if (it != m_network_core.Players().end() && it->second.host) {
@@ -268,65 +421,6 @@ void ServerApp::HandleMessage(const Message& msg)
         }
         break;
     }
-    
-    case Message::TURN_ORDERS:
-        {
-            /* decode order set */
-            std::stringstream stream(msg.GetText());
-            GG::XMLDoc doc;
-            doc.ReadDoc(stream);
-
-            /* debug information */
-            std::string dbg_file( "turn_orders_server_" );
-            dbg_file += boost::lexical_cast<std::string>(msg.Sender() );
-            dbg_file += ".txt";
-            std::ofstream output( dbg_file.c_str() );
-            doc.WriteDoc(output);
-            output.close();
-
-            OrderSet *p_order_set;
-            p_order_set = new OrderSet( );
-            GG::XMLObjectFactory<Order> order_factory;
-            Order::InitOrderFactory(order_factory);
-            GG::XMLElement root = doc.root_node;
-
-            for(int i=0; i< root.NumChildren(); i++)
-            {
-                Order *p_order = order_factory.GenerateObject( root.Child(i));
-
-                if ( p_order )
-                {
-                    p_order_set->AddOrder( p_order );
-                }
-                else
-                {
-                    // log error
-                    m_log_category.errorStream() << "An Order has been received that has no factory - ignoring.";        
-                }
-            }
-
-            /* if all orders are received already, do nothing as we are processing a trun */
-            if ( AllOrdersReceived( ) )
-                break;
-
-            /* add orders to turn sequence */    
-            SetEmpireTurnOrders( msg.Sender(), p_order_set );        
-            
-            /* look to see if all empires are done */
-            if ( AllOrdersReceived( ) )
-            {
-                ProcessTurns( );
-            }
-        }
-        break;
-
-    case Message::REQUEST_NEW_OBJECT_ID:
-        {
-            /* get get ID and send back to client, it's waiting for this */
-            m_network_core.SendMessage(DispatchObjectIDMessage(msg.Sender(), GetUniverse().GenerateObjectID( ) ) );
-
-        }
-        break;
 
     default: {
         m_log_category.errorStream() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
@@ -346,8 +440,9 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
             std::string host_player_name = doc.root_node.Child("host_player_name").Text();
 
             PlayerInfo host_player_info(connection.socket, connection.address, host_player_name, true);
-            int player_id = HOST_PLAYER_ID;
+            int player_id = NetworkCore::HOST_PLAYER_ID;
             if (doc.root_node.NumChildren() == 1) { // start an MP lobby situation so that game settings can be established
+                m_single_player_game = false;
                 m_state = SERVER_MP_LOBBY;
                 g_lobby_data = LobbyModeData();
                 m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_MP_LOBBY << " (SERVER_MP_LOBBY).";
@@ -356,12 +451,14 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                     m_network_core.SendMessage(JoinAckMessage(player_id));
                 }
             } else { // immediately start a new game with the given parameters
+                m_single_player_game = true;
                 m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Attribute("value"));
                 m_galaxy_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("size"));
                 m_galaxy_shape = Universe::Shape(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Attribute("shape")));
                 if (m_galaxy_shape == Universe::FROM_FILE)
                     m_galaxy_file = doc.root_node.Child("universe_params").Child("file").Text();
                 CreateAIClients(doc.root_node);
+                g_load_doc.root_node = GG::XMLElement();
                 m_state = SERVER_GAME_SETUP;
                 if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
                     m_network_core.SendMessage(HostAckMessage(player_id));
@@ -385,7 +482,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
     case Message::JOIN_GAME: {
         std::string player_name = msg.GetText(); // the player name should be the entire text
         PlayerInfo player_info(connection.socket, connection.address, player_name, false);
-        int player_id = std::max(HOST_PLAYER_ID + 1, m_network_core.Players().size());
+        int player_id = std::max(NetworkCore::HOST_PLAYER_ID + 1, static_cast<int>(m_network_core.Players().size()));
         if (player_id) {
             player_id = m_network_core.Players().rbegin()->first + 1;
         }
@@ -405,6 +502,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                 if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
                     m_network_core.SendMessage(JoinAckMessage(player_id));
                     m_expected_ai_players.erase(player_name); // only allow one connection per AI
+                    m_ai_IDs.insert(player_id);
                 }
             } else { // non-AI player connection
                 if (static_cast<int>(m_expected_ai_players.size() + m_network_core.Players().size()) < m_expected_players) {
@@ -421,7 +519,10 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
             }
 
             if (static_cast<int>(m_network_core.Players().size()) == m_expected_players) { // if we've gotten all the players joined up
-                GameInit();
+                if (g_load_doc.root_node.NumChildren())
+                    LoadGameInit();
+                else
+                    NewGameInit();
                 m_state = SERVER_WAITING;
                 m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
             }
@@ -492,7 +593,7 @@ void ServerApp::Run()
 void ServerApp::SDLInit()
 {
 #ifndef FREEORION_WIN32
-    // Dirty hack to active the dummy video handler of SDL; if the user has already set SDL_VIDEODRIVER, we trust him
+    // Dirty hack to active the dummy video handler of SDL; if the user has already set SDL_VIDEODRIVER, we'll trust him
     if (getenv("SDL_VIDEODRIVER") == NULL) {
         putenv("SDL_VIDEODRIVER=dummy");
     }
@@ -567,7 +668,7 @@ void ServerApp::SDLQuit()
     Logger().debugStream() << "SDLQuit() complete.";
 }
 
-void ServerApp::GameInit()
+void ServerApp::NewGameInit()
 {
     int i = 0;
     std::map<int, PlayerInfo>::const_iterator it;
@@ -576,7 +677,6 @@ void ServerApp::GameInit()
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << 
         (m_galaxy_shape == Universe::FROM_FILE ? ("from file " + m_galaxy_file) : "") << " (SERVER_GAME_SETUP).";
 
-
     // add empires to turn sequence map
     // according to spec this should be done randomly
     // for now it's not
@@ -584,20 +684,48 @@ void ServerApp::GameInit()
         AddEmpireTurn( it->first );
     }
 
-
     // the universe creation caused the creation of empires.  But now we
     // need to assign the empires to players.
     for (it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
         GG::XMLDoc doc;
+        if (m_single_player_game)
+            doc.root_node.AppendChild("single_player_game");
         doc.root_node.AppendChild(m_universe.XMLEncode());
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(i));
 
-	// turn number is an attribute of the document
-	doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
+        // turn number is an attribute of the document
+        doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
 
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
     }
+}
 
+void ServerApp::LoadGameInit()
+{
+    m_turn_sequence.clear();
+    std::vector<GG::XMLDoc> order_docs;
+    for (int i = 0; i < g_load_doc.root_node.NumChildren(); ++i) {
+        if (g_load_doc.root_node.Child(i).Tag() == "Player") {
+            GG::XMLDoc orders;
+            orders.root_node = g_load_doc.root_node.Child(i).Child("Orders");
+            orders.root_node.SetTag("GG::XMLDoc");
+            order_docs.push_back(orders);
+        }
+    }
+    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+        GG::XMLDoc doc;
+        if (m_single_player_game)
+            doc.root_node.AppendChild("single_player_game");
+        doc.root_node.AppendChild(m_universe.XMLEncode());
+        doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
+        doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
+        m_network_core.SendMessage(GameStartMessage(it->first, doc));
+
+        // send saved pending orders to player
+        m_network_core.SendMessage(ServerLoadGameMessage(it->first, order_docs[it->first]));
+
+        m_turn_sequence[it->first] = 0;
+    }
 }
 
 GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
@@ -610,7 +738,7 @@ GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
     // for the final game, we'd have visibility
     // but for now we are able to see the whole universe
     XMLElement universe_data = m_universe.XMLEncode( );
-    XMLElement empire_data = m_empires.CreateClientEmpireUpdate(empire_id );
+    XMLElement empire_data = m_empires.CreateClientEmpireUpdate(empire_id);
 
     // build the new turn doc
     this_turn.root_node.AppendChild(universe_data);
@@ -657,7 +785,6 @@ GG::XMLDoc ServerApp::LobbyUpdateDoc() const
 GG::XMLDoc ServerApp::LobbyPlayerUpdateDoc() const
 
 {
-
     GG::XMLDoc retval;
     GG::XMLElement temp("players");
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
@@ -672,39 +799,39 @@ GG::XMLDoc ServerApp::LobbyPlayerUpdateDoc() const
 
 void ServerApp::AddEmpireTurn( int empire_id )
 {
-  /// add empire
-  m_turn_sequence[ empire_id ] = NULL;
+    // add empire
+    m_turn_sequence[ empire_id ] = NULL;
 }
 
 
 void ServerApp::RemoveEmpireTurn( int empire_id )
 {
-  /// Loop through to find empire ID and remove
-  for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-  {
-    if ( it->first == empire_id )
+    // Loop through to find empire ID and remove
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
-      m_turn_sequence.erase( it, it );
-      return; 
+        if ( it->first == empire_id )
+        {
+            m_turn_sequence.erase( it, it );
+            return; 
+        }
     }
-  }
 }
 
 void ServerApp::SetEmpireTurnOrders( int empire_id , OrderSet *pOrderSet )
 {
-   m_turn_sequence[ empire_id ] = pOrderSet;
+    m_turn_sequence[ empire_id ] = pOrderSet;
 }
 
 
 bool ServerApp::AllOrdersReceived( )
 {
-  /// Loop through to find empire ID and check for valid orders pointer
-  for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-  {
-    if ( !it->second )
-          return false; 
-  } 
-  return true;
+    // Loop through to find empire ID and check for valid orders pointer
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
+    {
+        if ( !it->second )
+            return false; 
+    } 
+    return true;
 }
 
 
@@ -739,9 +866,8 @@ void ServerApp::ProcessTurns( )
         }
     }    
 
-
     // now that orders are executed, universe and empire data are the same as on the client, since 
-    // they execute orders locally
+    // clients execute orders locally
     // here we encode the states so that we can diff later
     // note tha for v0.1 all clients see the same universe, but this will not always be the case
     // hence we store the universe data for each empire
@@ -763,7 +889,6 @@ void ServerApp::ProcessTurns( )
         }
         m_last_turn_update_msg[ it->first ] = game_state;
     }
-
   
     /// process turn for fleets
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
@@ -785,7 +910,6 @@ void ServerApp::ProcessTurns( )
             the_fleet->MovementPhase( );               
         }
     }
-
 
     /// process turn for production and growth
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
@@ -819,33 +943,29 @@ void ServerApp::ProcessTurns( )
     }   
     
     /// Increment turn
-    m_current_turn++;
+    ++m_current_turn;
    
-   /// broadcast UI message to all players
-   for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it)
-   {
+    // broadcast UI message to all players
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it)
+    {
         pEmpire = Empires().Lookup( player_it->first );
 
-        // add all sitreps to document that belong to this empire
+        GG::XMLDoc doc = CreateTurnUpdate( player_it->first );
+
+        // append all sitreps to document that belong to this empire
         GG::XMLElement sit_reps( SitRepEntry::SITREP_UPDATE_TAG );
-     
+
         for ( Empire::ConstSitRepItr sitrep_it = pEmpire->SitRepBegin(); sitrep_it != pEmpire->SitRepEnd(); ++sitrep_it )
         {
             sit_reps.AppendChild( (*sitrep_it)->XMLEncode() );
         }
+        doc.root_node.AppendChild( sit_reps );
 
         // free empire sitreps
         pEmpire->ClearSitRep( );
 
-        // create turn update
-        GG::XMLDoc doc = CreateTurnUpdate( player_it->first );
-
-        // append sitreps
-        doc.root_node.AppendChild( sit_reps );
-
         m_network_core.SendMessage( TurnUpdateMessage( player_it->first, doc ) );
     }
-
 }
 
 
