@@ -284,6 +284,47 @@ Terran
 PL_GAIA
 Gaia
 
+PL_UNHABITABLE
+unhabitable
+
+PL_UNINHABITED
+unhabited
+
+PL_PRIMARY_FOCUS
+primary 
+
+PL_SECONDARY_FOCUS
+secondary
+
+PL_BALANCED
+balanced
+PL_FARMING
+farming
+PL_INDUSTRY
+industry
+PL_MINING
+mining
+PL_SCIENCE
+research
+
+PL_PRODUCTION_TIME_NEVER
+(never)
+
+PL_PRODUCTION_TIME_TURNS
+(%d turns)
+
+PL_COLONIZE
+Colonize
+
+SP_UNKNOWN_SYSTEM
+unknown system
+
+SP_SYSTEM_NAME
+The %s System
+
+SP_SYSTEM_PRODUCTION
+System Production
+
 
 ####################
 # TurnProgress     #
