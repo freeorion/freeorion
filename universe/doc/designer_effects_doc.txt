@@ -375,10 +375,10 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
 ===SetEmpireStockpile===
 <br>Descr.:     Sets the empire stockpile of STOCKPILE of the target's owning empire to VALUE.  If the target does not have exactly one owner, nothing is done.
 <br>XML format:
- <Effect::SetPlanetType>
+ <Effect::SetEmpireStockpile>
      <stockpile>STOCKPILE</stockpile>
      <value>VALUE</value>
- </Effect::SetPlanetType>
+ </Effect::SetEmpireStockpile>
 
 <br>Param Types:
  STOCKPILE StockpileType
