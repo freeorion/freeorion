@@ -29,7 +29,7 @@ class Message;
 class ServerNetworkCore : public NetworkCore
 {
 public:
-   /** holds the connection state for a single player*/
+	/** holds the connection state for a single player*/
    struct ConnectionInfo
    {
       ConnectionInfo(); ///< default ctor
@@ -54,6 +54,7 @@ public:
    void ListenToPorts(); ///< closes any currently-open listen-ports, then sets up ports for incoming connections
    bool DumpConnection(int socket); ///< disconnects the connection on socket number \a socket; returns true if a connection on \a socket existed and was terminated
    bool EstablishPlayer(int player_id, int socket); ///< establishes player with ID number \a id as being the connection on \a socket; returns true in success
+   void DumpAllConnections(); ///< closes all connections
 
    virtual void HandleNetEvent(SDL_Event& event);
    //@}
