@@ -336,15 +336,21 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
         empire_combat_forces[e].retreated_ships.clear();
       }
       else
+      {
+        std::set<Fleet*> flt_set;
         for(unsigned int i=0; i<empire_combat_forces[e].retreated_ships.size(); i++)
+          flt_set.insert(empire_combat_forces[e].retreated_ships[i]->GetFleet());
+
+        for(std::set<Fleet*>::iterator it = flt_set.begin(); it != flt_set.end(); ++it)
         {
-          Fleet *flt = empire_combat_forces[e].retreated_ships[i]->GetFleet();
+          Fleet *flt = *it;
           System *current_system = dynamic_cast<System *>(GetUniverse().Object(flt->SystemID()));
 
           current_system->Remove(flt->ID());// set flt-SystemId() to INVALID_OBJECT_ID
           std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(system_id, sys->ID());
           flt->SetRoute(route.first, route.second);
         }
+      }
     }
 
     //remove destroyed ships
