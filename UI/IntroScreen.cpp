@@ -24,6 +24,9 @@
 #include "ServerConnectWnd.h"
 #endif
 
+#include <stdlib.h>
+#include <string>
+
 IntroScreen::IntroScreen():
     GG::Wnd(600, 100, 300, 600)
 {
@@ -136,6 +139,14 @@ void IntroScreen::OnStartGame()
         if(galaxy_wnd.m_end_with_ok)
         {
             //TODO: Open Empire selection window if user clicked OK
+            
+            //TEMP
+                //display the chosen settings
+                char tmp[255];
+                sprintf(tmp, "Size: %d\nShape: %d\nFilename: %s",
+                         galaxy_wnd.GalaxySize(), galaxy_wnd.GalaxyShape(), galaxy_wnd.GalaxyFile().c_str());
+                ClientUI::MessageBox(tmp);
+            // \TEMP
         }
     }
 

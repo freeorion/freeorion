@@ -29,7 +29,7 @@ int         ClientUI::PTS           = 12;
 std::string ClientUI::DIR           = "default/";     
 std::string ClientUI::ART_DIR       = ClientUI::DIR + "art/small/";    
 
-GG::Clr     ClientUI::WND_COLOR(0,0,0,192);
+GG::Clr     ClientUI::WND_COLOR(0,0,0,210);
 GG::Clr     ClientUI::BORDER_COLOR(255,255,255,255);
 GG::Clr     ClientUI::CTRL_COLOR(30,30,30,255); 
 GG::Clr     ClientUI::TEXT_COLOR(255,255,255,255);

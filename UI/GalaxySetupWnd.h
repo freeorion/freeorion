@@ -23,6 +23,28 @@
 //! that allows the user to choose a galaxy style, size, etc.
 class GalaxySetupWnd : public GG::ModalWnd
 {
+private:
+    //! enum for galaxy sizes
+    enum
+    {
+        VERY_SMALL = 0,
+        SMALL      = 1,
+        MEDIUM     = 2,
+        LARGE      = 3,
+        VERY_LARGE = 4,
+        ENORMOUS   = 5
+    };//enum
+    
+    //! enum for galaxy types
+    enum
+    {       
+        TWO_ARM    = 0,
+        THREE_ARM  = 1,
+        FOUR_ARM   = 2,
+        CLUSTER    = 3,
+        FROM_FILE  = 4
+    };//enum
+    
 public:
 //! \name Structors
 //!@{
@@ -39,9 +61,13 @@ public:
     virtual GG::XMLElement XMLEncode() const; //!< encode to XML
 //!@}
 
+public:
 //! \name Accessors
 //!@{
-
+    //! Returns the size of the galaxy: VERY_SMALL, SMALL, etc.
+    inline int GalaxySize() const {return m_size_buttons->CheckedButton();}
+    int GalaxyShape() const; //!< Returns the shape of the galaxy: TWO_ARM, THREE_ARM, etc.
+    std::string GalaxyFile() const; //!< Returns the filename of the image-based galaxy file if it exists
 
 //!@}
 
@@ -51,6 +77,7 @@ public:
     void OnChangeSize(int index);    //!< when the size radio buttons are changed
     void OnChangeType(int index);    //!< when the type radio buttons are changed
 
+    void OnBrowse();    //!< when Browse button is pressed
     void OnOK();        //!< when OK button is pressed
     void OnCancel();    //!< when CAncel button is pressed
 
@@ -63,6 +90,11 @@ public:
 
 //!@}
 private:
+//! \name Private Constants
+//!@{
+    static const int GALAXY_TYPES;
+
+//!@}
 //! \name Controls
 //!@{
     GG::RadioButtonGroup* m_size_buttons;    //!< The radio buttons determining size
@@ -72,8 +104,14 @@ private:
     GG::Button*           m_browse_button;   //!< Button that allows browsing for a file
     GG::Button*           m_ok;              //!< OK button
     GG::Button*           m_cancel;          //!< Cancel button
+    
+    std::vector<GG::StateButton*> m_type_vector; //!< vector storing all type radio buttons
+    std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
 
 //!@}
+
+private:
+    void Init();    //!< Attaches children and connects signals
 
 };//GalaxySetupWnd
 #endif
