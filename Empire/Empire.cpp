@@ -17,12 +17,14 @@ using boost::lexical_cast;
 
 
 /** Constructors */ 
-Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, ControlStatus& control) :
+Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id, 
+               ControlStatus& control) :
     m_id(ID),
     m_total_rp(0),
     m_name(name),
     m_player_name(player_name),
     m_color(color), 
+    m_homeworld_id(homeworld_id), 
     m_control_state(control),
     m_next_design_id(1),
     m_mineral_resource_pool(),m_food_resource_pool(),m_research_resource_pool(),m_population_resource_pool()
@@ -39,6 +41,8 @@ Empire::Empire(const GG::XMLElement& elem) :
     m_total_rp = lexical_cast<int>(elem.Child("m_total_rp").Text());
     m_control_state = ControlStatus(lexical_cast<int>(elem.Child("m_control_state").Text()));
     m_color = GG::Clr(elem.Child("m_color").Child("GG::Clr"));
+    m_homeworld_id = elem.Child("m_homeworld_id").Text().empty() ? 
+        UniverseObject::INVALID_OBJECT_ID : lexical_cast<int>(elem.Child("m_homeworld_id").Text());
     m_next_design_id = lexical_cast<int>(elem.Child("m_next_design_id").Text());
 
     const XMLElement& sitreps_elem = elem.Child("m_sitrep_entries");
@@ -84,6 +88,11 @@ int Empire::EmpireID() const
 const GG::Clr& Empire::Color() const
 {
     return m_color;
+}
+
+int Empire::HomeworldID() const
+{
+    return m_homeworld_id;
 }
 
 int Empire::TotalRP() const
@@ -231,6 +240,7 @@ GG::XMLElement Empire::XMLEncode() const
     retval.AppendChild(XMLElement("m_total_rp", lexical_cast<std::string>(m_total_rp)));
     retval.AppendChild(XMLElement("m_control_state", lexical_cast<std::string>(m_control_state)));
     retval.AppendChild(XMLElement("m_color", m_color.XMLEncode()));
+    retval.AppendChild(XMLElement("m_homeworld_id", lexical_cast<std::string>(m_homeworld_id)));
     retval.AppendChild(XMLElement("m_next_design_id", lexical_cast<std::string>(m_next_design_id)));
 
     retval.AppendChild(XMLElement("m_sitrep_entries"));
@@ -255,7 +265,7 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
     // same empire --->  call other version
     if (viewer.EmpireID() == this->EmpireID())
     {
-        return this->XMLEncode();
+        return XMLEncode();
     }
     
     using GG::XMLElement;
@@ -271,6 +281,7 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
     retval.AppendChild(XMLElement("m_next_design_id", lexical_cast<std::string>(m_next_design_id)));
 
     // leave these in, but unpopulated
+    retval.AppendChild(XMLElement("m_homeworld_id"));
     retval.AppendChild(XMLElement("m_sitrep_entries"));
     retval.AppendChild(XMLElement("m_ship_designs"));
     retval.AppendChild(XMLElement("m_explored_systems"));

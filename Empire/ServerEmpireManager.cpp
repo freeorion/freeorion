@@ -24,7 +24,7 @@ Empire* ServerEmpireManager::CreateEmpire(int id,
                                           int planetID, 
                                           Empire::ControlStatus state)
 {
-    Empire* emp = new Empire(name, player_name, id, color, state);
+    Empire* emp = new Empire(name, player_name, id, color, planetID, state);
     if(emp == NULL)
     {
         throw std::runtime_error("Memory allocation failed.  ServerEmpireManager::CreateEmpire()");

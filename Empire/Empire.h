@@ -95,7 +95,7 @@ public:
      * (planets, fleets, owned planets, visible fleets, technologies, explored
      * systems, sitrep entries) will be empty after creation
      */
-    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, 
+    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id,
            ControlStatus& control); 
 
     /// Creates an empire from an XMLElement
@@ -127,9 +127,12 @@ public:
 
     /// Returns the Empire's unique numeric ID
     int EmpireID() const;
-    
+
     /// Returns the Empire's color
     const GG::Clr& Color() const;
+
+    /// Returns the numeric ID of the empire's homeworld
+    int HomeworldID() const;
 
     /// Returns the Empire's accumulated RPs
     /** 
@@ -306,6 +309,9 @@ private:
 
     /// Empire's color
     GG::Clr m_color;
+
+    /// the ID of the empire's homeworld
+    int m_homeworld_id;
     
     /// Empire's control status
 	Empire::ControlStatus m_control_state;
