@@ -11,7 +11,9 @@ ProdCenter::ProdCenter() :
    m_secondary(BALANCED),
    m_workforce(0),
    m_industry_factor(0.0),
-   m_currently_building(NOT_BUILDING)
+   m_currently_building(NOT_BUILDING),
+   m_build_progress(0),
+   m_rollover(0)
 {
 }
 
@@ -20,11 +22,20 @@ ProdCenter::ProdCenter(double workforce) :
    m_secondary(BALANCED),
    m_workforce(workforce),
    m_industry_factor(0.0),
-   m_currently_building(NOT_BUILDING)
+   m_currently_building(NOT_BUILDING),
+   m_build_progress(0),
+   m_rollover(0)
 {
 }
 
-ProdCenter::ProdCenter(const GG::XMLElement& elem)
+ProdCenter::ProdCenter(const GG::XMLElement& elem) : 
+   m_primary(BALANCED),
+   m_secondary(BALANCED),
+   m_workforce(0.0),
+   m_industry_factor(0.0),
+   m_currently_building(NOT_BUILDING),
+   m_build_progress(0),
+   m_rollover(0)
 {
 
    if (elem.Tag() != "ProdCenter")
