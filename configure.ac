@@ -183,8 +183,10 @@ YG_CHECK_BOOST([1.30.0],,[FAILED=yes])
 AC_LANG(C++)
 AC_CHECK_HEADER([boost/graph/adjacency_list.hpp],[],[FAILED=yes])
 #AC_CHECK_LIB(boost_regex,main,[],[FAILED=yes])
-AC_CHECK_LIB(boost_filesystem,main,[],[FAILED=yes])
-AC_CHECK_LIB(boost_signals,main,[],[FAILED=yes])
+AC_CHECK_LIB(boost_filesystem,main,[],[
+    AC_CHECK_LIB(boost_filesystem-gcc,main,[],[FAILED=yes])])
+AC_CHECK_LIB(boost_signals,main,[],[
+    AC_CHECK_LIB(boost_signals-gcc,main,[],[FAILED=yes])])
 
 if test $FAILED = yes; then 
   AC_MSG_FAILURE([boost libs not found.
