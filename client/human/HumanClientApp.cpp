@@ -58,6 +58,13 @@ void HumanClientApp::KillServer()
     } else {
         m_server_process.Kill();
     }
+    m_player_id = -1;
+    m_player_name = "";
+}
+
+void HumanClientApp::SetLobby(MultiplayerLobbyWnd* lobby)
+{
+    m_multiplayer_lobby_wnd = lobby;
 }
 
 void HumanClientApp::PlayMusic(const std::string& filename, int repeats, int ms/* = 0*/, double position/* = 0.0*/)
@@ -425,8 +432,17 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         std::stringstream stream(msg.GetText());
         GG::XMLDoc doc;
         doc.ReadDoc(stream);
-        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS (status code " << 
-            doc.root_node.Child("server_state").Attribute("value") << ")";
+        if (doc.root_node.ContainsChild("new_name")) {
+            m_player_name = doc.root_node.Child("new_name").Text();
+            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS -- server has renamed this player \"" << 
+                m_player_name  << "\"";
+        } else if (doc.root_node.ContainsChild("server_state")) {
+            ServerState server_state = ServerState(boost::lexical_cast<int>(doc.root_node.Child("server_state").Attribute("value")));
+            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS (status code " << 
+                doc.root_node.Child("server_state").Attribute("value") << ")";
+            if (server_state == SERVER_DYING)
+                m_server_process.Kill();
+        }
         break;
     } 
     case Message::HOST_GAME: {
@@ -465,13 +481,10 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             
             // if we have empire data, then process it.  As it stands now,
             // we may not, so dont assume we do.
-            if(doc.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG))
-            {
-                Logger().debugStream() <<"About to call HandleEmpireElementUpdate.";
-                m_empire.HandleEmpireElementUpdate(doc.root_node.Child(EmpireManager::EMPIRE_UPDATE_TAG));
-            }
-            else
-            {
+            if(doc.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG)) {
+                    Logger().debugStream() <<"About to call HandleEmpireElementUpdate.";
+                    m_empire.HandleEmpireElementUpdate(doc.root_node.Child(EmpireManager::EMPIRE_UPDATE_TAG));
+            } else {
                 Logger().debugStream() <<"No Empire data received from server.  Update Server Code.";
             }
             
