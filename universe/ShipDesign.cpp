@@ -6,6 +6,11 @@
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
 
+namespace {
+    bool temp_header_bool = RecordHeaderFile(ShipDesignRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
 ////////////////////////////////////////////////
 // ShipDesign
 ////////////////////////////////////////////////

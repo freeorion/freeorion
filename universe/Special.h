@@ -28,4 +28,7 @@ private:
 /** Returns the Special object used to represent specials of type \a name.  If no such Special exists, 0 is returned instead. */
 Special* GetSpecial(const std::string& name);
 
+inline std::pair<std::string, std::string> SpecialRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _Special_h_

@@ -68,4 +68,7 @@ private:
     static std::map<Fleet*, FleetWnd*> s_open_fleets;
 };
 
+inline std::pair<std::string, std::string> FleetButtonRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _FleetButton_h_

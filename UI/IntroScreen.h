@@ -61,4 +61,7 @@ private:
     //!@}
 };
 
-#endif
+inline std::pair<std::string, std::string> IntroScreenRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _IntroScreen_h_

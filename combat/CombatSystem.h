@@ -1,6 +1,8 @@
-#ifndef _FREEORION_COMBAT_SYSTEM_H_
-#define _FREEORION_COMBAT_SYSTEM_H_
+// -*- C++ -*-
+#ifndef _CombatSystem_h_
+#define _CombatSystem_h_
 
+#include <string>
 #include <vector>
 
 class Empire;
@@ -42,7 +44,10 @@ public:
 
 };
 
-#endif
+inline std::pair<std::string, std::string> CombatSystemRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _CombatSystem_h_
 
 
 

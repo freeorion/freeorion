@@ -11,6 +11,13 @@
 
 #include <algorithm>
 
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(FleetButtonRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
+
 ////////////////////////////////////////////////
 // SystemIcon::FleetButton
 ////////////////////////////////////////////////

@@ -195,5 +195,7 @@ public:
     void Close( );      //!< closes the MapWndPopup   
 };
 
+inline std::pair<std::string, std::string> MapWndRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
-#endif
+#endif // _MapWnd_h_

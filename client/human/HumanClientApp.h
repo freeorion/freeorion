@@ -136,4 +136,7 @@ private:
     static void EndOfSoundCallback(int channel);
 };
 
+inline std::pair<std::string, std::string> HumanClientAppRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _HumanClientApp_h_

@@ -14,6 +14,12 @@ using boost::lexical_cast;
 #include <stdexcept>
 
 
+namespace {
+    bool temp_header_bool = RecordHeaderFile(UniverseObjectRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
+
 // static(s)
 const double UniverseObject::INVALID_POSITION =  -100000.0;
 const int    UniverseObject::INVALID_OBJECT_ID = -1;

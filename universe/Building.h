@@ -77,4 +77,8 @@ private:
     exists, 0 is returned instead. */
 BuildingType* GetBuildingType(const std::string& name);
 
+
+inline std::pair<std::string, std::string> BuildingRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _Building_h_

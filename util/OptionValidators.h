@@ -139,4 +139,7 @@ public:
     const T m_max;
 };
 
+inline std::pair<std::string, std::string> OptionValidatorsRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _OptionValidators_h_

@@ -24,6 +24,9 @@ namespace {
             doc.root_node.AppendChild(GG::XMLElement(it->first, it->second));
         }
     }
+
+    bool temp_header_bool = RecordHeaderFile(MessageRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 ////////////////////////////////////////////////

@@ -176,5 +176,7 @@ private:
     static const int CONTROL_MARGIN = 5;
 };
 
+inline std::pair<std::string, std::string> CUI_WndRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
-#endif
+#endif // _CUI_Wnd_h_

@@ -6,6 +6,7 @@
 #include "CUIControls.h"
 #include "GGApp.h"
 #include "GGDrawUtil.h"
+#include "../util/MultiplayerCommon.h"
 
 /** \mainpage FreeOrion User Interface
 
@@ -32,6 +33,11 @@
     </ul>
     
 */
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(CUI_WndRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
 
 ////////////////////////////////////////////////
 // CUI_MinRestoreButton

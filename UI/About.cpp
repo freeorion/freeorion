@@ -8,12 +8,15 @@
 #include "GGClr.h"
 #include "GGDrawUtil.h"
 #include "dialogs/GGFileDlg.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <fstream>
 
-////////////////////////////////////////////
-//   CONSTANTS
-////////////////////////////////////////////
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(AboutRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
 
 
 ////////////////////////////////////////////

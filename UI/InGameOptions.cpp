@@ -15,15 +15,18 @@
 #include <fstream>
 
 namespace {
-void Options(OptionsDB& db)
-{
-    db.Add('S',
-           "save-dir", 
-           "The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.",
-           std::string("save"));
-}
+    void Options(OptionsDB& db)
+    {
+        db.Add('S',
+               "save-dir", 
+               "The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.",
+               std::string("save"));
+    }
 
-bool foo_bool = RegisterOptions(&Options);
+    bool foo_bool = RegisterOptions(&Options);
+
+    bool temp_header_bool = RecordHeaderFile(InGameOptionsRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 

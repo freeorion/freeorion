@@ -1,3 +1,4 @@
+// -*- C++ -*-
 //OptionsWnd.h
 
 #ifndef _OptionsWnd_h_
@@ -91,4 +92,8 @@ private:
     void Init();    //!< Attaches children and connects signals
 
 };//OptionsWnd
-#endif
+
+inline std::pair<std::string, std::string> OptionsWndRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _OptionsWnd_h_

@@ -10,6 +10,8 @@
   class UniverseObject;
 #endif
 
+#include <string>
+
 /** returns true iff \a obj is a Fleet belonging to the given empire object that is under orders to move, but is not yet moving. 
     If the given empire is -1, all stationary fleets will be returned.  Note that it is preferable to use this functor on System
     searches, rather than Universe ones. */
@@ -66,5 +68,8 @@ struct IsOwnedObjectFunctor
     }
     const int empire_id;
 };
+
+inline std::pair<std::string, std::string> PredicatesRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
 #endif // _Predicates_h_

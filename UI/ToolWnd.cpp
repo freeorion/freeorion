@@ -1,10 +1,15 @@
 //ToolWnd.cpp
 
-#ifndef _GGDrawUtil_h_
 #include "GGDrawUtil.h"
-#endif
-
+#include "../util/MultiplayerCommon.h"
 #include "ToolWnd.h"
+
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(ToolWndRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
 
 //ToolWnd::ToolWnd(int x, int y, char* text, GG::Clr clr):
 ToolWnd::ToolWnd(int x, int y, const std::string& text, const GG::Clr& clr, const std::string& font_name /* = "arial.ttf"*/, int pts /*= 10*/):

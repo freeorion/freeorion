@@ -28,8 +28,8 @@
 // Modified by Dennis Brakhane at 2004-03-11: added set_gzparams-wrapper
 
 
-#ifndef GZSTREAM_H
-#define GZSTREAM_H 1
+#ifndef _GZStream_h_
+#define _GZStream_h_ 1
 
 // standard C++ with new header file names and std:: namespace
 #include <iostream>
@@ -116,4 +116,7 @@ public:
 
 }
 
-#endif // GZSTREAM_H
+inline std::pair<std::string, std::string> GZStreamRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _GZStream_h_

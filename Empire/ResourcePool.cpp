@@ -23,6 +23,9 @@ namespace {
     {
         return elem1->PopPoints() < elem2->PopPoints();
     }
+
+    bool temp_header_bool = RecordHeaderFile(ResourcePoolRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 //////////////////////////////////////////////////

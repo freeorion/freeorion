@@ -1,6 +1,7 @@
 #include "NetworkCore.h"
 
 #include "Message.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <boost/lexical_cast.hpp>
 #include <log4cpp/Category.hh>
@@ -22,11 +23,14 @@ const int         NetworkCore::SERVER_FIND_RESPONSE_PORT = 12346;
 const int         NetworkCore::CONNECT_PORT = 12347;
 const int         NetworkCore::HOST_PLAYER_ID = 0;
 const std::string NetworkCore::SERVER_FIND_QUERY_MSG = "HELLO";
-const std::string NetworkCore::SERVER_FIND_YES_MSG = "NOPE.";
-const std::string NetworkCore::SERVER_FIND_NO_MSG = "YEAH.";
+const std::string NetworkCore::SERVER_FIND_YES_MSG = "YEAH.";
+const std::string NetworkCore::SERVER_FIND_NO_MSG = "NOPE.";
 
 namespace {
-log4cpp::Category& logger = log4cpp::Category::getRoot();
+    log4cpp::Category& logger = log4cpp::Category::getRoot();
+
+    bool temp_header_bool = RecordHeaderFile(NetworkCoreRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 void NetworkCore::SendMessage(const Message& msg, int socket, const std::string& app_name) const

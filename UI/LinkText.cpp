@@ -1,6 +1,15 @@
 #include "LinkText.h"
 
+#include "../util/MultiplayerCommon.h"
+
 #include <boost/lexical_cast.hpp>
+
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(LinkTextRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
 
 // initialize static(s)
 bool LinkText::s_link_tags_registered = false;

@@ -81,4 +81,7 @@ private:
     int m_next_id;
 };
 
-#endif
+inline std::pair<std::string, std::string> TechManagerRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _TechManager_h_

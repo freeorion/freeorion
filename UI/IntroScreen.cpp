@@ -20,18 +20,21 @@
 #include <string>
 
 namespace {
-const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
+    const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
 
-void Options(OptionsDB& db)
-{
-    db.AddFlag("force-external-server", 
-               "Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.");
+    void Options(OptionsDB& db)
+    {
+        db.AddFlag("force-external-server", 
+                   "Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.");
    
-    db.Add("UI.main-menu.left", "Position of the intro screen main menu (left)",(1024 + 300) / 2);
-    db.Add("UI.main-menu.top", "Position of the intro screen main menu (top)",300);
-}
+        db.Add("UI.main-menu.left", "Position of the intro screen main menu (left)",(1024 + 300) / 2);
+        db.Add("UI.main-menu.top", "Position of the intro screen main menu (top)",300);
+    }
 
-bool foo_bool = RegisterOptions(&Options);
+    bool foo_bool = RegisterOptions(&Options);
+
+    bool temp_header_bool = RecordHeaderFile(IntroScreenRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 //****************************************************************************************************

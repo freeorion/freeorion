@@ -1,6 +1,14 @@
 #include "Combat.h"
 
+#include "../util/MultiplayerCommon.h"
 #include "XMLDoc.h"
+
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(CombatRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
 
 ////////////////////////////////////////////////
 // CombatUpdateMessage

@@ -219,5 +219,8 @@ private:
     static GG::Pt s_last_position; ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.
 };
 
-#endif
+inline std::pair<std::string, std::string> FleetWindowRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _FleetWindow_h_
 

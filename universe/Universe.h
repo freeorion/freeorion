@@ -513,6 +513,10 @@ protected:
 };
 
 
+inline std::pair<std::string, std::string> UniverseRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+
 // template implementations
 template <class T> 
 const T* Universe::Object(int id) const

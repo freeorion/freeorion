@@ -33,4 +33,7 @@ private:
     GG::TextControl*      m_title;
 };
 
-#endif // _SidePanel_h_
+inline std::pair<std::string, std::string> SitRepPanelRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _SitRepPanel_h_

@@ -8,24 +8,26 @@
 #include "../combat/Combat.h"
 namespace
 {
-  boost::shared_ptr<GG::Texture> GetTexture(const std::string& name, bool mipmap = false)
-  {
-    try
+    boost::shared_ptr<GG::Texture> GetTexture(const std::string& name, bool mipmap = false)
     {
-      return HumanClientApp::GetApp()->GetTexture(name,mipmap);
+        try
+        {
+            return HumanClientApp::GetApp()->GetTexture(name,mipmap);
+        }
+        catch(...)
+        {
+            return HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "misc/missing.png",mipmap);
+        }
     }
-    catch(...)
+
+    GG::SubTexture GetSubTexture(const std::string& name, bool mipmap = false)
     {
-      return HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "misc/missing.png",mipmap);
+        boost::shared_ptr<GG::Texture> texture(GetTexture(name,mipmap));
+        return GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultHeight());
     }
-  }
 
-  GG::SubTexture GetSubTexture(const std::string& name, bool mipmap = false)
-  {
-    boost::shared_ptr<GG::Texture> texture(GetTexture(name,mipmap));
-    return GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultHeight());
-  }
-
+    bool temp_header_bool = RecordHeaderFile(CombatWndRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 class CombatInfoControl : public GG::Control

@@ -46,6 +46,9 @@ namespace {
         db.Add("condition-test-source", "Selects source object (id) for the Condition class tests.", 528, Validator<int>());
     }
     bool condition_test_temp_bool = RegisterOptions(&AddConditionTestOptions);
+
+    bool temp_header_bool = RecordHeaderFile(ServerAppRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 #endif
 

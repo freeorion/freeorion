@@ -1,5 +1,14 @@
 #include "TechLevel.h"
 
+#include "../util/MultiplayerCommon.h"
+
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(TechLevelRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
+
 Tech::Tech(int ID, std::string name, int MinPts) :
     m_id(ID),
     m_min_pts(MinPts),

@@ -271,6 +271,9 @@ namespace {
 
         return static_cast<int>(MIN_PLANET_DIAMETER + (MAX_PLANET_DIAMETER - MIN_PLANET_DIAMETER) * scale);
     }
+
+    bool temp_header_bool = RecordHeaderFile(SidePanelRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 class RotatingPlanetControl : public GG::Control

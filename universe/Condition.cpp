@@ -30,6 +30,9 @@ namespace {
     Condition::ConditionBase* NewAnd(const GG::XMLElement& elem)                    {return new Condition::And(elem);}
     Condition::ConditionBase* NewOr(const GG::XMLElement& elem)                     {return new Condition::Or(elem);}
     Condition::ConditionBase* NewNot(const GG::XMLElement& elem)                    {return new Condition::Not(elem);}
+
+    bool temp_header_bool = RecordHeaderFile(ConditionRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 GG::XMLObjectFactory<Condition::ConditionBase> Condition::ConditionFactory()

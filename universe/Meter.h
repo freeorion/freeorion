@@ -35,4 +35,7 @@ private:
     double    m_max;
 };
 
+inline std::pair<std::string, std::string> MeterRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _Meter_h_

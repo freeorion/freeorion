@@ -79,5 +79,8 @@ private:
    net/net2 involves hostname resolution.*/
 std::string ToString(const IPaddress& addr);
 
+inline std::pair<std::string, std::string> NetworkCoreRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _NetworkCore_h_
 

@@ -155,4 +155,7 @@ T ValueRef::Operation<T>::Eval(const UniverseObject* source, const UniverseObjec
     }
 }
 
-#endif // _EffectValueRef_h_
+inline std::pair<std::string, std::string> ValueRefRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _ValueRef_h_

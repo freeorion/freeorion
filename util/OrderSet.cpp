@@ -1,5 +1,12 @@
 #include "OrderSet.h"
 
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(OrderSetRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
+
 OrderSet::OrderSet()
 {
 }

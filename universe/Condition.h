@@ -330,4 +330,7 @@ private:
     const ConditionBase* m_operand;
 };
 
+inline std::pair<std::string, std::string> ConditionRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _Condition_h_

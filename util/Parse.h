@@ -3,7 +3,7 @@
 #define _Parse_h_
 
 #ifndef _ValueRef_h_
-#include <ValueRef.h>
+#include "../universe/ValueRef.h"
 #endif
 
 #ifndef _GGEnum_h_
@@ -289,5 +289,8 @@ ValueRef::ValueRefBase<T>* ParseArithmeticExpression(const std::string& str)
 	boost::spirit::tree_parse_info<> info = boost::spirit::ast_parse(str.c_str(), arithmetic_expression);
     return info.full ? EvalArithExpr<T>(info.trees.begin()) : 0;
 }
+
+inline std::pair<std::string, std::string> ParseRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
 #endif // _Parse_h_

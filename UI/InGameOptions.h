@@ -40,4 +40,7 @@ private:
     CUIButton*  m_exit_btn;	  //!< Quit game button
 };
 
-#endif
+inline std::pair<std::string, std::string> InGameOptionsRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _InGameOptions_h_

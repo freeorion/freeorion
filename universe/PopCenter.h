@@ -76,6 +76,9 @@ private:
     UniverseObject* const m_object; ///< the UniverseObject of which this center is a part
 };
 
+inline std::pair<std::string, std::string> PopCenterRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _PopCenter_h_
 
 

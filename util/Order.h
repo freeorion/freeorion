@@ -411,5 +411,8 @@ private:
     bool      m_primary;
 };
 
+inline std::pair<std::string, std::string> OrderRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _Order_h_
 

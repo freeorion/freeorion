@@ -23,6 +23,9 @@ namespace {
     const GG::Pt PREVIEW_UL(385, 23);
     const GG::Pt PREVIEW_SZ(248, 186);
     const bool ALLOW_NO_STARLANES = false;
+
+    bool temp_header_bool = RecordHeaderFile(GalaxySetupWndRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 ////////////////////////////////////////////////

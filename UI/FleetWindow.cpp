@@ -357,6 +357,9 @@ namespace {
         const Fleet* home_fleet = ship->GetFleet();
         return home_fleet->ID() != fleet->ID() && (home_fleet->X() == fleet->X() && home_fleet->Y() == fleet->Y());
     }
+
+    bool temp_header_bool = RecordHeaderFile(FleetWindowRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 ////////////////////////////////////////////////

@@ -103,4 +103,7 @@ private:
     std::map<int, GG::XMLElement> m_last_turn_empire_states;
 };
 
-#endif
+inline std::pair<std::string, std::string> ServerEmpireManagerRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _ServerEmpireManager_h_

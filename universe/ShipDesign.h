@@ -35,6 +35,9 @@ struct ShipDesign
 
 const ShipDesign* GetShipDesign(int empire_id, const std::string& name);
 
+inline std::pair<std::string, std::string> ShipDesignRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _ShipDesign_h_
 
 

@@ -165,123 +165,126 @@ namespace {
 
     static SDL_Cursor *createColonizeCursor( )
     {
-	/* cursor code taken from SDL examples */
+        /* cursor code taken from SDL examples */
 
-	static const char *image[] = {
+        static const char *image[] = {
 
-	    /* width height num_colors chars_per_pixel */
-	    "    32    32        3            1",
-	    /* colors */
-	    "X c #000000",
-	    ". c #ffffff",
-	    "  c None",
-	    /* pixels */
-	    "X                               ",
-	    "XX                              ",
-	    "X.X                             ",
-	    "X..X                            ",
-	    "X...X                           ",
-	    "X....X         XXXXXXXXX        ",
-	    "X.....X        X.......X        ",
-	    "X......X       XXXXXXX.X        ",
-	    "X.......X            X.X        ",
-	    "X........X           X.X        ",
-	    "X.....XXXXX          X.X        ",
-	    "X..X..X           XXXX.X        ",
-	    "X.X X..X          X....X        ",
-	    "XX  X..X          X.XXXX        ",
-	    "X    X..X         X.X           ",
-	    "     X..X         XXX           ",
-	    "      X..X                      ",
-	    "      X..X        XXXX          ",
-	    "       XX         X..X          ",
-	    "                  XXXX          ",
-	    "                                ",
-	    "                                ",
-	    "                                ",
-	    "                                ",
-	    "                                ",
-	    "                                ",
-	    "                                ",
-	    "                                ",
-	    "                                ",
-	    "                                ",
-	    "                                ",
-	    "                                ",
-	    "0,0"
-	};
+            /* width height num_colors chars_per_pixel */
+            "    32    32        3            1",
+            /* colors */
+            "X c #000000",
+            ". c #ffffff",
+            "  c None",
+            /* pixels */
+            "X                               ",
+            "XX                              ",
+            "X.X                             ",
+            "X..X                            ",
+            "X...X                           ",
+            "X....X         XXXXXXXXX        ",
+            "X.....X        X.......X        ",
+            "X......X       XXXXXXX.X        ",
+            "X.......X            X.X        ",
+            "X........X           X.X        ",
+            "X.....XXXXX          X.X        ",
+            "X..X..X           XXXX.X        ",
+            "X.X X..X          X....X        ",
+            "XX  X..X          X.XXXX        ",
+            "X    X..X         X.X           ",
+            "     X..X         XXX           ",
+            "      X..X                      ",
+            "      X..X        XXXX          ",
+            "       XX         X..X          ",
+            "                  XXXX          ",
+            "                                ",
+            "                                ",
+            "                                ",
+            "                                ",
+            "                                ",
+            "                                ",
+            "                                ",
+            "                                ",
+            "                                ",
+            "                                ",
+            "                                ",
+            "                                ",
+            "0,0"
+        };
 
-	int i, row, col;
-	Uint8 data[4*32];
-	Uint8 mask[4*32];
-	int hot_x, hot_y;
+        int i, row, col;
+        Uint8 data[4*32];
+        Uint8 mask[4*32];
+        int hot_x, hot_y;
 
-	i = -1;
-	for ( row=0; row<32; ++row ) {
-	    for ( col=0; col<32; ++col ) {
-		if ( col % 8 ) {
-		    data[i] <<= 1;
-		    mask[i] <<= 1;
-		} else {
-		    ++i;
-		    data[i] = mask[i] = 0;
-		}
-		switch (image[4+row][col]) {
-		case 'X':
-		    data[i] |= 0x01;
-		    mask[i] |= 0x01;
-		    break;
-		case '.':
-		    mask[i] |= 0x01;
-		    break;
-		case ' ':
-		    break;
-		}
-	    }
-	}
-	sscanf(image[4+row], "%d,%d", &hot_x, &hot_y);
+        i = -1;
+        for ( row=0; row<32; ++row ) {
+            for ( col=0; col<32; ++col ) {
+                if ( col % 8 ) {
+                    data[i] <<= 1;
+                    mask[i] <<= 1;
+                } else {
+                    ++i;
+                    data[i] = mask[i] = 0;
+                }
+                switch (image[4+row][col]) {
+                case 'X':
+                    data[i] |= 0x01;
+                    mask[i] |= 0x01;
+                    break;
+                case '.':
+                    mask[i] |= 0x01;
+                    break;
+                case ' ':
+                    break;
+                }
+            }
+        }
+        sscanf(image[4+row], "%d,%d", &hot_x, &hot_y);
 
-	return( SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y) );
+        return( SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y) );
     }
 
     class PlanetPicker : public GG::Wnd
     {
     public:
-	PlanetPicker(int system_id) : 
-	    Wnd(0, 0, GG::App::GetApp()->AppWidth() - 1, GG::App::GetApp()->AppHeight() - 1, CLICKABLE | MODAL),
-	    m_side_panel(new SidePanel(GG::App::GetApp()->AppWidth() - MapWnd::SIDE_PANEL_WIDTH, 0, MapWnd::SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight())),
-	    m_planet_selected(-1),
-        m_mapwnd_sidepanel_visible(HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Visible())
-	{
-        if(m_mapwnd_sidepanel_visible)
-          HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Hide();
+        PlanetPicker(int system_id) : 
+            Wnd(0, 0, GG::App::GetApp()->AppWidth() - 1, GG::App::GetApp()->AppHeight() - 1, CLICKABLE | MODAL),
+            m_side_panel(new SidePanel(GG::App::GetApp()->AppWidth() - MapWnd::SIDE_PANEL_WIDTH, 0, MapWnd::SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight())),
+            m_planet_selected(-1),
+            m_mapwnd_sidepanel_visible(HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Visible())
+        {
+            if(m_mapwnd_sidepanel_visible)
+                HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Hide();
 
-	    m_side_panel->SetSystem(system_id);
-	    AttachChild(m_side_panel);
-	    for (int i = 0; i < m_side_panel->PlanetPanels(); ++i) {
-		GG::Connect(m_side_panel->GetPlanetPanel(i)->PlanetImageLClickedSignal(), &PlanetPicker::PlanetClicked, this);
-	    }
-	    HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_COLONIZE);
-	}
-	~PlanetPicker()
-    {
-      HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_DEFAULT);
-      if(m_mapwnd_sidepanel_visible)
-        HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Show();
-    }
-	int PlanetPicked() const {return m_planet_selected;}
-	void LButtonUp(const GG::Pt& pt, Uint32 keys) {m_done = true;}
-	void LClick(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
-	void RButtonUp(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
-	void RClick(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
+            m_side_panel->SetSystem(system_id);
+            AttachChild(m_side_panel);
+            for (int i = 0; i < m_side_panel->PlanetPanels(); ++i) {
+                GG::Connect(m_side_panel->GetPlanetPanel(i)->PlanetImageLClickedSignal(), &PlanetPicker::PlanetClicked, this);
+            }
+            HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_COLONIZE);
+        }
+        ~PlanetPicker()
+        {
+            HumanClientApp::GetUI()->SetCursor(ClientUI::CURSOR_DEFAULT);
+            if(m_mapwnd_sidepanel_visible)
+                HumanClientApp::GetUI()->GetMapWnd()->GetSidePanel()->Show();
+        }
+        int PlanetPicked() const {return m_planet_selected;}
+        void LButtonUp(const GG::Pt& pt, Uint32 keys) {m_done = true;}
+        void LClick(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
+        void RButtonUp(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
+        void RClick(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
 
     private:
-	void PlanetClicked(int planet_id) {m_planet_selected = planet_id; m_done = true;}
+        void PlanetClicked(int planet_id) {m_planet_selected = planet_id; m_done = true;}
 
-	SidePanel*       m_side_panel;
-	int              m_planet_selected;
-    bool             m_mapwnd_sidepanel_visible;
+        SidePanel*       m_side_panel;
+        int              m_planet_selected;
+        bool             m_mapwnd_sidepanel_visible;
     };
+
+    bool temp_header_bool = RecordHeaderFile(ClientUIRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 

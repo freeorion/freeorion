@@ -26,6 +26,9 @@ namespace {
         }
         return map;
     }
+
+    bool temp_header_bool = RecordHeaderFile(PlanetRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 Planet::Planet() :

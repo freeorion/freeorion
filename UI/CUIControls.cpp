@@ -3,6 +3,7 @@
 #include "CUIControls.h"
 
 #include "CUIDrawUtil.h"
+#include "CUISpin.h"
 #include "GGApp.h"
 #include "GGDrawUtil.h"
 #include "GGStaticGraphic.h"
@@ -44,6 +45,10 @@ namespace {
         }
     };
 
+    bool temp_header_bool = RecordHeaderFile(CUIControlsRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+
+    bool temp_header_bool2 = RecordHeaderFile(CUISpinRevision());
 }
 
 CUIButton::CUIButton(int x, int y, int w, const std::string& str, const std::string& font_filename/* = ClientUI::FONT*/, 

@@ -304,4 +304,7 @@ private:
     SystemResourceSummary *m_system_resource_summary;
 };
 
+inline std::pair<std::string, std::string> SidePanelRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _SidePanel_h_

@@ -227,6 +227,8 @@ Message LobbyChatMessage(int sender, int receiver, const std::string& text);
     This message should only be sent by the server.*/
 Message ServerLobbyChatMessage(int sender, int receiver, const std::string& text);
 
+inline std::pair<std::string, std::string> MessageRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
 #endif // _Message_h_
 

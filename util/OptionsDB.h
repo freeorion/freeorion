@@ -196,4 +196,7 @@ private:
     static OptionsDB*                s_options_db;
 };
 
+inline std::pair<std::string, std::string> OptionsDBRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _OptionsDB_h_

@@ -101,4 +101,7 @@ SitRepEntry *CreateCombatSitRep(const int empire_id, const int victor_id, const 
 
 SitRepEntry *CreatePlanetStarvedToDeathSitRep(const int system_id, const int planet_id);
 
+inline std::pair<std::string, std::string> SitRepEntryRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _SitRepEntry_h_

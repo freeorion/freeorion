@@ -6,12 +6,15 @@
 #include "LinkText.h"
 
 namespace {
-const int    SITREP_LB_MARGIN_X = 10;
-const int    SITREP_LB_MARGIN_Y = 45;
-const int    SITREP_LB_HEIGHT = 200;
-const int    SITREP_CLOSE_MARGIN_Y = 5;
-const int    SITREP_CLOSE_WIDTH = 60;
-const int    SITREP_TITLE_MARGIN_Y = 15;
+    const int    SITREP_LB_MARGIN_X = 10;
+    const int    SITREP_LB_MARGIN_Y = 45;
+    const int    SITREP_LB_HEIGHT = 200;
+    const int    SITREP_CLOSE_MARGIN_Y = 5;
+    const int    SITREP_CLOSE_WIDTH = 60;
+    const int    SITREP_TITLE_MARGIN_Y = 15;
+
+    bool temp_header_bool = RecordHeaderFile(SitRepPanelRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 

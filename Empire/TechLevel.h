@@ -1,6 +1,6 @@
 // -*- C++ -*-
-#ifndef _Tech_h_
-#define _Tech_h_
+#ifndef _TechLevel_h_
+#define _TechLevel_h_
 
 #include <string>
 
@@ -72,4 +72,7 @@ private:
     std::string m_name;
 };
 
-#endif
+inline std::pair<std::string, std::string> TechLevelRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _TechLevel_h_

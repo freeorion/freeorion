@@ -1,5 +1,4 @@
 // -*- C++ -*-
-
 #ifndef _EmpireManager_h_
 #define _EmpireManager_h_
 
@@ -137,12 +136,7 @@ private:
 
 };
 
+inline std::pair<std::string, std::string> EmpireManagerRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
-
-
-
-
-
-
-
-#endif
+#endif // _EmpireManager_h_

@@ -33,6 +33,8 @@ namespace {
         std::map<std::string, Special*> m_specials;
     };
 
+    bool temp_header_bool = RecordHeaderFile(SpecialRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 Special::Special(const std::string& name, const std::string& description, Effect::EffectsGroup* effects) :

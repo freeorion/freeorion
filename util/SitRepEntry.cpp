@@ -1,5 +1,13 @@
 #include "SitRepEntry.h"
 
+#include "MultiplayerCommon.h"
+
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(SitRepEntryRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
 
 const std::string SitRepEntry::SITREP_UPDATE_TAG = "SitRepUpdate";
 

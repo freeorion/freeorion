@@ -18,6 +18,9 @@ namespace {
     Effect::EffectBase* NewSetStarType(const GG::XMLElement& elem)          {return new Effect::SetStarType(elem);}
     Effect::EffectBase* NewSetAvailability(const GG::XMLElement& elem)      {return new Effect::SetAvailability(elem);}
     Effect::EffectBase* NewSetEffectTarget(const GG::XMLElement& elem)      {return new Effect::SetEffectTarget(elem);}
+
+    bool temp_header_bool = RecordHeaderFile(EffectRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 GG::XMLObjectFactory<Effect::EffectBase> Effect::EffectFactory()

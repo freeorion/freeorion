@@ -103,5 +103,7 @@ private:
     static bool s_link_tags_registered;
 };
 
+inline std::pair<std::string, std::string> LinkTextRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
 #endif // _LinkText_h_

@@ -86,6 +86,9 @@ namespace {
         }
         return retval;
     }
+
+    bool temp_header_bool = RecordHeaderFile(ProdCenterRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 ProdCenter::ProdCenter(const Meter& pop, UniverseObject* object) : 

@@ -38,6 +38,9 @@ namespace {
         }
         return retval;
     }
+
+    bool temp_header_bool = RecordHeaderFile(PopCenterRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 PopCenter::PopCenter(UniverseObject* object) : 

@@ -19,6 +19,9 @@ namespace {
     std::set<std::string> g_LAN_servers; // semi-persistent list of known LAN servers (persists only during runtime, but longer than the server connect window)
 
     bool NameOK(const std::string& name) {return !name.empty() && name.find_first_of(" \t:") == std::string::npos;}
+
+    bool temp_header_bool = RecordHeaderFile(ServerConnectWndRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 ServerConnectWnd::ServerConnectWnd() : 

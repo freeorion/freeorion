@@ -171,6 +171,10 @@ private:
 };
 
 
+inline std::pair<std::string, std::string> SystemRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+
 // template implementations
 
 template <class Pred>

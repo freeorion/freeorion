@@ -11,6 +11,12 @@
 #include <log4cpp/FileAppender.hh>
 
 
+namespace {
+    bool temp_header_bool = RecordHeaderFile(AIClientAppRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
+
 // static member(s)
 AIClientApp*  AIClientApp::s_app = 0;
 

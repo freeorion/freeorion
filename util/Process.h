@@ -83,5 +83,8 @@ private:
    bool                             m_empty; ///< true iff this is a default-constructed Process (no associated process exists)
 };
 
+inline std::pair<std::string, std::string> ProcessRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _Process_h_
 

@@ -15,6 +15,12 @@ using std::find;
 using boost::lexical_cast;
 
 
+namespace {
+    bool temp_header_bool = RecordHeaderFile(EmpireRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
+
 /** Constructors */ 
 Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id) :
     m_id(ID),

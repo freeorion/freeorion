@@ -561,6 +561,9 @@ namespace {
             }
         }
     }
+
+    bool temp_header_bool = RecordHeaderFile(UniverseRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 namespace Delauney {

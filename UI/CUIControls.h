@@ -436,4 +436,7 @@ private:
     mutable ColorChangedSignalType color_changed_sig;
 };
 
-#endif
+inline std::pair<std::string, std::string> CUIControlsRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _CUIControls_h_

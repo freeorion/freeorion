@@ -93,4 +93,7 @@ public:
     }
 };
 
+inline std::pair<std::string, std::string> CUISpinRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _CUISpin_h_

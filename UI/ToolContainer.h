@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _ToolContainer_h_
 #define _ToolContainer_h_
 
@@ -62,4 +63,7 @@ protected:
 //!@}
 };    //ToolContainer
 
-#endif
+inline std::pair<std::string, std::string> ToolContainerRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _ToolContainer_h_

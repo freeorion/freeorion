@@ -1,5 +1,7 @@
 #include "CUIDrawUtil.h"
 
+#include "../util/MultiplayerCommon.h"
+
 namespace {
     void FindIsoscelesTriangleVertices(int x1, int y1, int x2, int y2, ShapeOrientation orientation,
                                        int& x1_, int& y1_, int& x2_, int& y2_, int& x3_, int& y3_)
@@ -39,6 +41,9 @@ namespace {
             break;
         }
     }
+
+    bool temp_header_bool = RecordHeaderFile(CUIDrawUtilRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 void AdjustBrightness(GG::Clr& color, int amount)

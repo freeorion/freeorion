@@ -29,8 +29,18 @@
 
 
 #include "GZStream.h"
+
+#include "MultiplayerCommon.h"
+
 #include <iostream>
-#include <string.h>  // for memcpy
+#include <cstring>
+
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(GZStreamRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
 
 namespace GZStream {
 

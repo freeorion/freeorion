@@ -1,10 +1,16 @@
 //ToolContainer.cpp
 
-#ifndef _GGApp_h_
-#include "GGApp.h"
-#endif
-
 #include "ToolContainer.h"
+
+#include "GGApp.h"
+#include "../util/MultiplayerCommon.h"
+
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(ToolContainerRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
 
 ToolContainer::ToolContainer(int delay)
 {

@@ -38,5 +38,8 @@ public:
 };
 
 
-#endif
+inline std::pair<std::string, std::string> ClientEmpireManagerRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _ClientEmpireManager_h_
 

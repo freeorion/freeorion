@@ -139,6 +139,9 @@ private:
     mutable ProdCenterChangedSignalType m_prod_changed_sig;
 };
 
+inline std::pair<std::string, std::string> ProdCenterRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _ProdCenter_h_
 
 

@@ -44,4 +44,7 @@ private:
     CombatWnd* m_combat_wnd;
 };
 
+inline std::pair<std::string, std::string> TurnProgressWndRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _TurnProgressWnd_h_

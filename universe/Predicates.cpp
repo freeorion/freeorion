@@ -6,6 +6,11 @@
 #include "System.h"
 #include "UniverseObject.h"
 
+namespace {
+    bool temp_header_bool = RecordHeaderFile(PredicatesRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
 bool IsStationaryFleetFunctor::operator()(const UniverseObject* obj) const
 {
     if (const Fleet* fleet = dynamic_cast<const Fleet*>(obj)) {

@@ -81,4 +81,7 @@ private:
     CUIButton*            m_cancel_bn;
 };
 
+inline std::pair<std::string, std::string> MultiplayerLobbyWndRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _MultiplayerLobbyWnd_h_

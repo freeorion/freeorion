@@ -10,6 +10,12 @@
 #include <stdexcept>
 
 
+namespace {
+    bool temp_header_bool = RecordHeaderFile(ServerEmpireManagerRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
+
 ServerEmpireManager::ServerEmpireManager() :
     EmpireManager()
 {

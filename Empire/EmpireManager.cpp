@@ -1,7 +1,11 @@
-
-#ifndef _EmpireManager_h_
 #include "EmpireManager.h"
-#endif
+
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(EmpireManagerRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
 
 const std::string EmpireManager::EMPIRE_UPDATE_TAG = "EmpireUpdate";
 

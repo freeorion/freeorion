@@ -1,68 +1,73 @@
 #include "VarText.h"
 
 #include "AppInterface.h"
+#include "Parse.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/TechManager.h"
 
 #include <boost/spirit.hpp>
 
 namespace {
-// converts (first, last) to a string, looks up its value in the Universe, then appends this to the end of a std::string
-struct SubstituteAndAppend
-{
-    SubstituteAndAppend(const GG::XMLElement& variables, std::string& str) : m_variables(variables), m_str(str) {}
-    void operator()(const char* first, const char* last) const 
+    // converts (first, last) to a string, looks up its value in the Universe, then appends this to the end of a std::string
+    struct SubstituteAndAppend
     {
-        std::string token(first, last);
+        SubstituteAndAppend(const GG::XMLElement& variables, std::string& str) : m_variables(variables), m_str(str) {}
+        void operator()(const char* first, const char* last) const 
+        {
+            std::string token(first, last);
 
-        // look up child
-        if (!m_variables.ContainsChild(token)) {
-            m_str += "ERROR";
-            return;
-        }
-
-        const GG::XMLElement& token_elem = m_variables.Child(token);
-        std::string open_tag = "<" + token_elem.Tag() + " " + token_elem.Attribute("value") + ">";
-        std::string close_tag = "</" + token_elem.Tag() + ">";
-
-        // universe object token types
-        if (token == VarText::PLANET_ID_TAG || token == VarText::SYSTEM_ID_TAG || token == VarText::SHIP_ID_TAG) {
-            int object_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
-            UniverseObject* obj = GetUniverse().Object(object_id);
-
-            if (!obj) {
+            // look up child
+            if (!m_variables.ContainsChild(token)) {
                 m_str += "ERROR";
                 return;
             }
 
-            m_str += open_tag + obj->Name() + close_tag;
-        } else if (token == VarText::TECH_ID_TAG) {
-            int tech_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
-            Tech *tech = TechManager::instance().Lookup(tech_id);
+            const GG::XMLElement& token_elem = m_variables.Child(token);
+            std::string open_tag = "<" + token_elem.Tag() + " " + token_elem.Attribute("value") + ">";
+            std::string close_tag = "</" + token_elem.Tag() + ">";
 
-            if (!tech) {
-                m_str += "ERROR";
-                return;
+            // universe object token types
+            if (token == VarText::PLANET_ID_TAG || token == VarText::SYSTEM_ID_TAG || token == VarText::SHIP_ID_TAG) {
+                int object_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
+                UniverseObject* obj = GetUniverse().Object(object_id);
+
+                if (!obj) {
+                    m_str += "ERROR";
+                    return;
+                }
+
+                m_str += open_tag + obj->Name() + close_tag;
+            } else if (token == VarText::TECH_ID_TAG) {
+                int tech_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
+                Tech *tech = TechManager::instance().Lookup(tech_id);
+
+                if (!tech) {
+                    m_str += "ERROR";
+                    return;
+                }
+
+                m_str += open_tag + tech->GetName() + close_tag;
             }
-
-            m_str += open_tag + tech->GetName() + close_tag;
         }
-    }
 
-    const GG::XMLElement&  m_variables;
-    std::string&           m_str;
-};
+        const GG::XMLElement&  m_variables;
+        std::string&           m_str;
+    };
 
-// sticks a sequence of characters onto the end of a std::string
-struct StringAppend
-{
-    StringAppend(std::string& str) : m_str(str) {}
-    void operator()(const char* first, const char* last) const 
+    // sticks a sequence of characters onto the end of a std::string
+    struct StringAppend
     {
-        m_str += std::string(first, last);
-    }
-    std::string& m_str;
-};
+        StringAppend(std::string& str) : m_str(str) {}
+        void operator()(const char* first, const char* last) const 
+        {
+            m_str += std::string(first, last);
+        }
+        std::string& m_str;
+    };
+
+    bool temp_header_bool = RecordHeaderFile(VarTextRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_header_bool2 = RecordHeaderFile(ParseRevision());
 }
 
 // static(s)

@@ -1,5 +1,14 @@
 #include "TechManager.h"
 
+#include "../util/MultiplayerCommon.h"
+
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(TechManagerRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
+
 TechManager& TechManager::instance()
 {
     static TechManager it;

@@ -6,6 +6,12 @@
 #include <stdexcept>
 
 
+namespace {
+    bool temp_header_bool = RecordHeaderFile(ClientAppRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
+
 // static member(s)
 ClientApp* ClientApp::s_app = 0;
 

@@ -21,7 +21,12 @@
 #include <time.h>
 #include <map>
 
-//#define DEBUG_COMBAT
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(CombatSystemRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
 
 bool CombatAssetsOwner::operator==(const CombatAssetsOwner &ca) const  
 {

@@ -1,4 +1,4 @@
-
+// -*- C++ -*-
 #ifndef _AppInterface_h_
 #define _AppInterface_h_
 
@@ -35,4 +35,7 @@ log4cpp::Category& Logger();
         access will vary and requires an #ifdef
     */
 
-#endif
+inline std::pair<std::string, std::string> AppInterfaceRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _AppInterface_h_

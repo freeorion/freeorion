@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _AIClientApp_h_
 #define _AIClientApp_h_
 
@@ -42,6 +43,9 @@ private:
 
    static AIClientApp*  s_app;
 };
+
+inline std::pair<std::string, std::string> AIClientAppRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
 #endif // _AIClientApp_h_
 

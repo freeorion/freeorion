@@ -1,3 +1,4 @@
+// -*- C++ -*-
 //StringTable.h
 #ifndef _StringTable_h_
 #define _StringTable_h_
@@ -92,4 +93,7 @@ private:
     
 };
 
-#endif
+inline std::pair<std::string, std::string> StringTableRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _StringTable_h_

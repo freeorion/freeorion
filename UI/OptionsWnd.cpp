@@ -14,9 +14,11 @@
 
 #include <fstream>
 
-////////////////////////////////////////////
-//   CONSTANTS
-////////////////////////////////////////////
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(OptionsWndRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
 
 
 ////////////////////////////////////////////

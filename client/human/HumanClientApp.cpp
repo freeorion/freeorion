@@ -76,6 +76,9 @@ namespace {
         db.Add("autosave.saves", "Sets the number of autosaved games that should be kept.", 10, RangedValidator<int>(1, 50));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    bool temp_header_bool = RecordHeaderFile(HumanClientAppRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
  
 HumanClientApp::HumanClientApp() : 

@@ -23,8 +23,11 @@
 #endif
 
 namespace {
-log4cpp::Category& logger = log4cpp::Category::getRoot();
-const unsigned int SYCHRONOUS_TIMEOUT = 30000;    // 30 seconds
+    log4cpp::Category& logger = log4cpp::Category::getRoot();
+    const unsigned int SYCHRONOUS_TIMEOUT = 30000;    // 30 seconds
+
+    bool temp_header_bool = RecordHeaderFile(ClientNetworkCoreRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 ClientNetworkCore::ClientNetworkCore() : 

@@ -1,3 +1,4 @@
+// -*- C++ -*-
 //ToolWnd.h
 #ifndef _ToolWnd_h_
 #define _ToolWnd_h_
@@ -51,5 +52,7 @@ protected:
     //!@}
 };//ToolWnd
 
+inline std::pair<std::string, std::string> ToolWndRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
-#endif
+#endif // _ToolWnd_h_

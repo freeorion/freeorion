@@ -136,4 +136,7 @@ private:
     CUIButton*            m_cancel;                //!< Cancel button
 };
 
-#endif
+inline std::pair<std::string, std::string> GalaxySetupWndRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _GalaxySetupWnd_h_

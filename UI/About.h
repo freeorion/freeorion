@@ -1,3 +1,4 @@
+// -*- C++ -*-
 //About.h
 
 #ifndef _About_h_
@@ -91,4 +92,8 @@ private:
     void Init();    //!< Attaches children and connects signals
 
 };//About
-#endif
+
+inline std::pair<std::string, std::string> AboutRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _About_h_

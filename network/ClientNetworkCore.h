@@ -68,5 +68,8 @@ private:
     Message              m_response_msg;     ///< the synchronous response will contain data which the calling sender is expecting
 };
 
+inline std::pair<std::string, std::string> ClientNetworkCoreRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _ClientNetworkCore_h_
 

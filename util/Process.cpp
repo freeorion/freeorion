@@ -1,5 +1,14 @@
 #include "Process.h"
+
+#include "MultiplayerCommon.h"
+
 #include <stdexcept>
+
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(ProcessRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
 
 
 Process::Process() : 

@@ -45,6 +45,9 @@ namespace
     Order* GenFleetColonizeOrder(const XMLElement& elem) {return new FleetColonizeOrder(elem);}
     Order* GenDeleteFleetOrder(const XMLElement& elem)   {return new DeleteFleetOrder(elem);}
     Order* GenChangeFocusOrder(const XMLElement& elem)   {return new ChangeFocusOrder(elem);}
+
+    bool temp_header_bool = RecordHeaderFile(OrderRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 

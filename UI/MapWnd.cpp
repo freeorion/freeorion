@@ -45,6 +45,9 @@ namespace {
         db.Add("UI.chat-edit-history", "The number of outgoing messages to keep in the chat edit box history.", 50, RangedValidator<int>(0, 1000));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    bool temp_header_bool = RecordHeaderFile(MapWndRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 

@@ -166,5 +166,8 @@ private:
     mutable StateChangedSignalType m_changed_sig;
 };
 
+inline std::pair<std::string, std::string> UniverseObjectRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _UniverseObject_h_
 

@@ -42,5 +42,8 @@ void FleetMarker(int x1, int y1, int x2, int y2, ShapeOrientation orientation, G
 /** returns true iff \a pt falls within the fleet marker described by the other parameters */
 bool InFleetMarker(const GG::Pt& pt, int x1, int y1, int x2, int y2, ShapeOrientation orientation);
 
-#endif
+inline std::pair<std::string, std::string> CUIDrawUtilRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
+#endif // _CUIDrawUtil_h_
 

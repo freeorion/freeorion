@@ -1,5 +1,8 @@
 #include "OptionsDB.h"
 
+#include "MultiplayerCommon.h"
+#include "OptionValidators.h"
+
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -21,6 +24,10 @@ namespace {
         }
         return retval;
     }
+
+    bool temp_header_bool = RecordHeaderFile(OptionsDBRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_header_bool2 = RecordHeaderFile(OptionValidatorsRevision());
 }
 
 /////////////////////////////////////////////

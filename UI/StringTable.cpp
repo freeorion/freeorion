@@ -1,6 +1,7 @@
 #include "StringTable.h"
 
 #include "ClientUI.h"
+#include "../util/MultiplayerCommon.h"
 
 using namespace std;
 
@@ -12,6 +13,9 @@ namespace {
             str.replace(pos, 2, "\n");
         }
     }
+
+    bool temp_header_bool = RecordHeaderFile(StringTableRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 // static(s)

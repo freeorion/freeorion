@@ -133,4 +133,7 @@ inline double RandZeroToOne() {return zero_to_one_gen();}
   inline double RandGaussian(double mean, double sigma) {return GaussianDist(mean, sigma)();}
 #endif
 
+inline std::pair<std::string, std::string> RandomRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+
 #endif // _Random_h_

@@ -265,5 +265,7 @@ private:
     static ClientUI* s_the_UI;          //!< pointer to the one and only ClientUI object
 };
 
+inline std::pair<std::string, std::string> ClientUIRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
-#endif
+#endif // _ClientUI_h_

@@ -1,5 +1,7 @@
 #include "DataTable.h"
 
+#include "MultiplayerCommon.h"
+
 #include <boost/spirit.hpp>
 #include <boost/spirit/dynamic/for.hpp>
 
@@ -76,6 +78,9 @@ namespace
         if (g_echo)
             std::cout << std::string(first, last);
     }
+
+    bool temp_header_bool = RecordHeaderFile(DataTableRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 void LoadDataTables(const std::string& filename, DataTableMap& tables, bool echo/* = false*/)

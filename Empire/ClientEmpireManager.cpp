@@ -1,23 +1,17 @@
-
-#ifndef _ClientEmpireManager_h_
 #include "ClientEmpireManager.h"
-#endif
-
-#ifndef _XMLObjectFactory_h_
 #include "XMLObjectFactory.h"
-#endif
-
-#ifndef _SitRepEntry_h_
 #include "../util/SitRepEntry.h"
-#endif
-
-#ifndef __XDIFF__
 #include "../network/XDiff.hpp"
-#endif
-
 
 #include <map>
 #include <list>
+
+
+namespace {
+    bool temp_header_bool = RecordHeaderFile(ClientEmpireManagerRevision());
+    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+}
+
 
 ClientEmpireManager::ClientEmpireManager() :
     EmpireManager()
