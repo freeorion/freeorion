@@ -383,6 +383,8 @@ public:
     void SetNegativeColor(GG::Clr c) {m_negative_color = c; Refresh();}   ///< sets the color that will be used to display negative values
     //@}
 
+    static const double UNKNOWN_VALUE;
+
 private:
     void Refresh();
 
@@ -428,6 +430,8 @@ public:
     void SetPositiveColor (GG::Clr    c) {m_positive_color    = c; UpdateTextControl();}   ///< sets the color that will be used to display positive values
     void SetNegativeColor (GG::Clr    c) {m_negative_color    = c; UpdateTextControl();}   ///< sets the color that will be used to display negative values
    //@}
+
+    static const double UNKNOWN_VALUE;
 
 private:
     ///< sets the textcontrol form cuurent state

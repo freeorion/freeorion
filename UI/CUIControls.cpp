@@ -13,6 +13,8 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include <limits>
+
 namespace {
     bool PlaySounds()
     {
@@ -924,6 +926,9 @@ bool CUISlider::Render()
 ///////////////////////////////////////
 // class StatisticIcon
 ///////////////////////////////////////
+// static(s)
+const double StatisticIcon::UNKNOWN_VALUE = std::numeric_limits<double>::infinity();
+
 StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color, double value,
                              int decimals_to_show/* = 0*/, bool show_sign/* = false*/) :
     GG::Control(x, y, w, h, 0),
@@ -943,12 +948,16 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon
 void StatisticIcon::SetValue(double value) 
 {
     m_value = value;
-    if (m_decimals_to_show) {
-        char buf[128];
-        sprintf(buf, (m_show_sign ? "%+#.*g" : "%#.*g"), m_decimals_to_show, value);
-        m_text->SetText(buf);
+    if (value == UNKNOWN_VALUE) {
+        m_text->SetText(UserString("UNKNOWN_VALUE_SYMBOL"));
     } else {
-        m_text->SetText((m_show_sign && 0.0 <= value ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(value)));
+        if (m_decimals_to_show) {
+            char buf[128];
+            sprintf(buf, (m_show_sign ? "%+#.*g" : "%#.*g"), m_decimals_to_show, value);
+            m_text->SetText(buf);
+        } else {
+            m_text->SetText((m_show_sign && 0.0 <= value ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(value)));
+        }
     }
 }
 
@@ -961,6 +970,9 @@ void StatisticIcon::Refresh()
 ///////////////////////////////////////
 // class StatisticIconDualValue
 ///////////////////////////////////////
+// static(s)
+const double StatisticIconDualValue::UNKNOWN_VALUE = std::numeric_limits<double>::infinity();
+
 StatisticIconDualValue::StatisticIconDualValue(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color, 
                                                double value,double value_second,
                                                int decimals_to_show/* = 0*/,int decimals_to_show_second/* = 0*/,
@@ -989,13 +1001,18 @@ void StatisticIconDualValue::UpdateTextControl()
     {
         sprintf(buf, (ShowsSign() ? "%+.*f" : "%.*f"), DecimalsShown(), Value());
         value = buf;
-    } 
+    }
 
     if (DecimalsShownSecond()) 
     {
         sprintf(buf, (ShowsSignSecond() ? "%+.*f" : "%.*f"), DecimalsShownSecond(), ValueSecond());
         value_second = buf;
-    } 
+    }
+
+    if (Value() == UNKNOWN_VALUE)
+        value = UserString("UNKNOWN_VALUE_SYMBOL");
+    if (ValueSecond() == UNKNOWN_VALUE)
+        value_second = UserString("UNKNOWN_VALUE_SYMBOL");
 
     std::string text;
 
