@@ -39,6 +39,16 @@ The server is not responding
 SERVER_LOST
 The connection to the server has been lost.
 
+SERVER_GAME_END
+The server has sent an end-game message.  Buh-bye.
+
+PLAYER_DISCONNECTED_PART_1
+Player
+
+PLAYER_DISCONNECTED_PART_2
+no longer has a connection to the server.
+
+
 #################
 # Intro Screen  #
 #################
