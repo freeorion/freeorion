@@ -34,6 +34,7 @@ namespace {
     const int END_TURN_BTN_WIDTH = 60;
     const int SITREP_PANEL_WIDTH = 400;
     const int SITREP_PANEL_HEIGHT = 300;
+    const int MIN_SYSTEM_NAME_SIZE = 10;
     int g_chat_display_show_time = 0;
     std::deque<std::string> g_chat_edit_history;
     int g_history_position = 0; // the current edit contents are in history position 0
@@ -461,6 +462,11 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
         return; // Windows platform always sends an additional event with a move of 0. This should be ignored
     }
 
+    if (m_zoom_factor * ClientUI::PTS < MIN_SYSTEM_NAME_SIZE)
+        HideSystemNames();
+    else
+        ShowSystemNames();
+
     for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
         const System& system = m_system_icons[i]->GetSystem();
         GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor), 
@@ -616,6 +622,15 @@ void MapWnd::InitTurn(int turn_number)
         m_sitrep_panel->Hide();
 
     m_chat_edit->Hide();
+
+    if (m_zoom_factor * ClientUI::PTS < MIN_SYSTEM_NAME_SIZE)
+        HideSystemNames();
+    else
+        ShowSystemNames();
+
+    // center the map at the start of the game (if we're at the default start position, the ods are very good that this is a fresh game)
+    if (ClientUpperLeft() == GG::Pt())
+        CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
 }
 
 void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
