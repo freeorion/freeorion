@@ -43,7 +43,7 @@ Empire::Empire(const GG::XMLElement& elem)
     
  
     GG::XMLObjectFactory<SitRepEntry> sitrep_factory;
-    SitRepEntry::InitObjectFactory(sitrep_factory);
+    //SitRepEntry::InitObjectFactory(sitrep_factory);
     XMLElement sitrep = elem.Child("m_sitrep_entries");
     for(unsigned int i=0; i<sitrep.NumChildren(); i++)
     {
