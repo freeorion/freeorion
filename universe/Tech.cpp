@@ -148,6 +148,11 @@ const std::vector<Tech::ItemSpec>& Tech::UnlockedItems() const
     return m_unlocked_items;
 }
 
+const std::set<std::string>& Tech::UnlockedTechs() const
+{
+    return m_unlocked_techs;
+}
+
 
 ///////////////////////////////////////////////////////////
 // Tech::ItemSpec                                        //
@@ -311,6 +316,19 @@ TechManager::TechManager()
     if (!cycle_str.empty()) {
         throw std::runtime_error(cycle_str.c_str());
     }
+
+    // fill in the unlocked techs data for each loaded tech
+    for (iterator it = begin(); it != end(); ++it) {
+        const std::set<std::string>& prereqs = (*it)->Prerequisites();
+        for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
+            const_cast<Tech*>(GetTech(*prereq_it))->m_unlocked_techs.insert((*it)->Name());
+        }
+    }
+
+    std::string redundant_dependency = FindRedundantDependency();
+    if (!redundant_dependency.empty()) {
+        throw std::runtime_error(redundant_dependency.c_str());
+    }
 }
 
 std::string TechManager::FindIllegalDependencies()
@@ -322,8 +340,8 @@ std::string TechManager::FindIllegalDependencies()
         const Tech* tech = *it;
         TechType tech_type = tech->Type();
         const std::set<std::string>& prereqs = tech->Prerequisites();
-        for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
-            const Tech* prereq_tech = GetTech(*it);
+        for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
+            const Tech* prereq_tech = GetTech(*prereq_it);
             TechType prereq_type = prereq_tech->Type();
             if (tech_type == TT_THEORY && prereq_type != TT_THEORY)
                 retval += "ERROR: Theory tech \"" + tech->Name() + "\" requires non-Theory tech \"" + prereq_tech->Name() + "\"; Theory techs can only require other Theory techs.\n";
@@ -385,6 +403,43 @@ std::string TechManager::FindFirstDependencyCycle()
         }
     }
     return "";
+}
+
+std::string TechManager::FindRedundantDependency()
+{
+    assert(!m_techs.empty());
+
+    for (iterator it = begin(); it != end(); ++it) {
+        const Tech* tech = *it;
+        TechType tech_type = tech->Type();
+        std::set<std::string> prereqs = tech->Prerequisites();
+        std::map<std::string, std::string> techs_unlocked_by_prereqs;
+        for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
+            const Tech* prereq_tech = GetTech(*prereq_it);
+            AllChildren(prereq_tech, techs_unlocked_by_prereqs);
+        }
+        for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
+            std::map<std::string, std::string>::const_iterator map_it = techs_unlocked_by_prereqs.find(*prereq_it);
+            if (map_it != techs_unlocked_by_prereqs.end()) {
+                std::stringstream stream;
+                stream << "ERROR: Redundant dependency found: " << map_it->second << " --> " << map_it->first << ", "
+                       << map_it->first << " --> " << (*it)->Name() << ", "
+                       << map_it->second << " --> " << (*it)->Name() << "; remove the " << map_it->second << " --> " << (*it)->Name()
+                       << " dependency.";
+                return stream.str();
+            }
+        }
+    }
+    return "";
+}
+
+void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::string>& children)
+{
+    const std::set<std::string>& unlocked_techs = tech->UnlockedTechs();
+    for (std::set<std::string>::const_iterator it = unlocked_techs.begin(); it != unlocked_techs.end(); ++it) {
+        children[*it] = tech->Name();
+        AllChildren(GetTech(*it), children);
+    }
 }
 
 TechManager& TechManager::GetTechManager()

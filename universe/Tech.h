@@ -19,6 +19,7 @@ namespace Effect {
 namespace GG {
     class XMLElement;
 }
+class TechManager;
 
 
 /** encasulates the data for a single FreeOrion technology */
@@ -59,6 +60,9 @@ public:
 
     /** returns the set all items that are unlocked by researching this tech */
     const std::vector<ItemSpec>& UnlockedItems() const;
+
+    /** returns the set of names of all techs for which this one is a prerequisite */
+    const std::set<std::string>& UnlockedTechs() const;
     //@}
 
 private:
@@ -75,6 +79,11 @@ private:
                                m_effects;
     std::set<std::string>      m_prerequisites;
     std::vector<ItemSpec>      m_unlocked_items;
+
+    // note that m_unlocked_techs is not part of the XML representation of a tech; it is filled in by the TechManager at load-time
+    std::set<std::string>      m_unlocked_techs;
+
+    friend class TechManager;
 };
 
 
@@ -174,6 +183,12 @@ private:
     /** returns an error string indicating the first prerequisite dependency cycle found in m_techs, or an
         empty string if there are no dependency cycles */
     std::string FindFirstDependencyCycle();
+
+    /** returns an error string indicating the first instance of a redundant dependency, or an empty string if there
+        are no redundant dependencies.  An example of a redundant dependency is A --> C, if A --> B and B --> C. */
+    std::string FindRedundantDependency();
+
+    void AllChildren(const Tech* tech, std::map<std::string, std::string>& children);
 
     std::vector<std::string> m_categories;
     TechContainer            m_techs;
