@@ -27,7 +27,6 @@
 
 #include <string>
 
-
 /** a more efficient replacement for dynamic_cast that only works for UniverseObject and its subclasses */
 template <class T1, class T2>
 T1 universe_object_cast(T2 ptr);
@@ -108,9 +107,6 @@ struct WhollyOwnedVisitor : UniverseObjectVisitor
     const int empire_id;
 };
 
-inline std::pair<std::string, std::string> PredicatesRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
-
 // template implementations
 
 template <class T1, class T2>
@@ -118,7 +114,6 @@ T1 universe_object_cast(T2 ptr)
 {
     using namespace boost;
 
-    typedef typename remove_const<T1>::type T1ConstFreeType;
     typedef typename add_pointer<
         typename remove_const<
             typename remove_pointer<
@@ -126,18 +121,22 @@ T1 universe_object_cast(T2 ptr)
             >::type
         >::type
     >::type T2ConstFreeType;
-    typedef UniverseObjectSubclassVisitor<typename remove_pointer<T2ConstFreeType>::type> VisitorType;
+    typedef typename add_pointer<
+        typename remove_const<
+            typename remove_pointer<
+                T1
+            >::type
+        >::type
+    >::type T1ConstFreeType;
+    typedef UniverseObjectSubclassVisitor<typename remove_pointer<T1ConstFreeType>::type> VisitorType;
 
-    return static_cast<typename mpl::if_<is_const<T2>,
-                                         typename add_const<T1ConstFreeType>::type,
-                                         T1
-                                        >::type>(ptr->Accept(VisitorType()));
+    return static_cast<T1ConstFreeType>(ptr->Accept(VisitorType()));
 }
 
 template <class T>
 UniverseObject* UniverseObjectSubclassVisitor<T>::Visit(T* obj) const
 {
-    return const_cast<T*>(obj);
+    return obj;
 }
 
 template <class T>
@@ -150,7 +149,7 @@ template <class T>
 T* OwnedVisitor<T>::Visit(T* obj) const
 {
     if (obj->OwnedBy(empire_id))
-        return const_cast<T*>(obj);
+        return obj;
     return 0;
 }
 
@@ -164,8 +163,11 @@ template <class T>
 T* WhollyOwnedVisitor<T>::Visit(T* obj) const
 {
     if (obj->WhollyOwnedBy(empire_id))
-        return const_cast<T*>(obj);
+        return obj;
     return 0;
 }
+
+inline std::pair<std::string, std::string> PredicatesRevision()
+{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
 #endif // _Predicates_h_
