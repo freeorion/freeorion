@@ -382,7 +382,10 @@ void HumanClientApp::SDLInit()
     // Set Fullscreen if specified at command line or in config-file
     DoFullScreen = GetOptionsDB().Get<bool>("fullscreen") ? SDL_FULLSCREEN : 0;
 
-#ifdef FREEORION_WIN32
+    // SDL on MacOsX crashes if the Eventhandling-thread isn't the
+    // application's main thread. It seems that only the applications
+    // main-thread is able to receive events...
+#if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) < 0) {
 #else
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE | SDL_INIT_EVENTTHREAD) < 0) {
@@ -497,7 +500,8 @@ void HumanClientApp::GLInit()
     gluLookAt(0.0, 0.0, 5.0, 
               0.0, 0.0, 0.0, 
               0.0, 1.0, 0.0);
-
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    SDL_GL_SwapBuffers();
     Logger().debugStream() << "GLInit() complete.";
 }
 
@@ -867,7 +871,7 @@ void HumanClientApp::Autosave(int turn_number, bool new_game)
 
         unsigned int max_autosaves = GetOptionsDB().Get<int>("autosave.saves");
         std::set<std::string>::reverse_iterator rit = similar_save_files.rbegin();
-        std::advance(rit, std::min(similar_save_files.size(), max_autosaves - 1));
+        std::advance(rit, std::min(similar_save_files.size(), (size_t)(max_autosaves - 1)));
         for (; rit != similar_save_files.rend(); ++rit) {
             fs::remove(save_dir / *rit);
         }
