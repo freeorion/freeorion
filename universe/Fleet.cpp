@@ -148,7 +148,7 @@ System* Fleet::Destination() const
 bool Fleet::HasArmedShips() const
 {
     
-    for(Fleet::iterator itr = begin(); itr != end(); itr++)
+    for(Fleet::const_iterator itr = begin(); itr != end(); itr++)
     {   
         if( dynamic_cast<Ship*>(GetUniverse().Object(*itr) )->IsArmed() )
         {
@@ -247,6 +247,7 @@ void Fleet::MovementPhase( )
         double distance = std::sqrt(direction_x * direction_x + direction_y * direction_y);
         if (distance < SHIP_SPEED) {
             destination_system->Insert(this);
+            MoveTo(destination_system->X(),destination_system->Y());
             SetDestination(INVALID_OBJECT_ID);
             // TODO : explore new system
         } else {
@@ -258,6 +259,4 @@ void Fleet::MovementPhase( )
 void Fleet::PopGrowthProductionResearchPhase()
 {
 }
-
-
 
