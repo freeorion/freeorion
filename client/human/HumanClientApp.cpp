@@ -870,7 +870,7 @@ void HumanClientApp::StartTurn( )
   ClientApp::StartTurn();
 }
 
-boost::shared_ptr<GG::Texture> HumanClientApp::GetTexture(const std::string& name, bool mipmap)
+boost::shared_ptr<GG::Texture> HumanClientApp::GetTextureOrDefault(const std::string& name, bool mipmap)
 {
   try
   {

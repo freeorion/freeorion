@@ -101,7 +101,7 @@ public:
 
     ///< loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true
     ///< load default missing.png if name isn't found
-    boost::shared_ptr<GG::Texture> GetTexture(const std::string& name, bool mipmap = false); 
+    boost::shared_ptr<GG::Texture> GetTextureOrDefault(const std::string& name, bool mipmap = false); 
 
 private:
     virtual void SDLInit();
