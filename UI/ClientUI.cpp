@@ -16,6 +16,7 @@
 #include "../universe/Ship.h"
 #include "ToolContainer.h"
 #include "TurnProgressWnd.h"
+#include "../client/human/HumanClientApp.h"
 #include "../util/OptionsDB.h"
 
 #include <log4cpp/Appender.hh>
@@ -154,7 +155,9 @@ ClientUI::ClientUI() :
     m_string_table(0),
     m_intro_screen(0),
     m_map_wnd(0),
-    m_turn_progress_wnd(0)
+    m_turn_progress_wnd(0),
+    m_colonize_ship_id(-1),
+    m_default_cursor(0)
 {
     using namespace GG;
 
@@ -515,4 +518,191 @@ void ClientUI::HideAllWindows()
         m_map_wnd->Hide();
     if (m_turn_progress_wnd)
         m_turn_progress_wnd->Hide();
+}
+
+
+void ClientUI::BeginColonizeSelection( int colony_ship_id )
+{
+    m_colonize_ship_id = colony_ship_id;
+
+    /* determine which system ship is orbiting and display side panel */
+    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(m_colonize_ship_id));
+    
+    /* Zoom to system */
+    m_map_wnd->SelectSystem(  ship->GetFleet()->SystemID( ) );
+
+    /* set UI cursor */
+    SetCursor( CURSOR_COLONIZE );
+}
+
+
+void ClientUI::EndColonizeSelection( int planet_id  )
+{
+    Ship* ship = dynamic_cast<Ship*>(GetUniverse().Object(m_colonize_ship_id));
+
+    if ( planet_id != -1 )
+    {
+        // check some conditions. If this is ever the final UI for colonization, once should display a cursor to reflect
+        // the fact colonization cannot happen. For now, clicking on an invalid system will NOT end the UI
+        if( dynamic_cast<const Planet*>(GetUniverse().Object( planet_id ))->Owners().size() != 0 )
+        {
+            return;
+        }
+        HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( HumanClientApp::GetApp()->PlayerID(), ship->GetFleet( )->ID(), planet_id ));
+    }
+    m_colonize_ship_id = -1;
+
+    /* clear UI cursor */
+    SetCursor( CURSOR_DEFAULT );
+}
+
+
+bool ClientUI::InColonizeSelection( )
+{
+    if ( m_colonize_ship_id != -1 ) 
+        return( true ); 
+    else
+        return( false ); 
+}
+
+
+void ClientUI::HandleEvent(GG::App::EventType event, GG::Key key, Uint32 key_mods, const GG::Pt& pos, const GG::Pt& rel)
+{
+    if ( event == GG::App::RPRESS && InColonizeSelection( ) )
+    {
+        /* cancel selection mode */
+        EndColonizeSelection( -1 );
+    }
+}
+
+static SDL_Cursor *createColonizeCursor( )
+{
+    /* cursor code taken from SDL examples */
+
+    static const char *image[] = {
+
+  /* width height num_colors chars_per_pixel */
+  "    32    32        3            1",
+  /* colors */
+  "X c #000000",
+  ". c #ffffff",
+  "  c None",
+  /* pixels */
+  "X                               ",
+  "XX                              ",
+  "X.X                             ",
+  "X..X                            ",
+  "X...X                           ",
+  "X....X         XXXXXXXXX        ",
+  "X.....X        X.......X        ",
+  "X......X       XXXXXXX.X        ",
+  "X.......X            X.X        ",
+  "X........X           X.X        ",
+  "X.....XXXXX          X.X        ",
+  "X..X..X           XXXX.X        ",
+  "X.X X..X          X....X        ",
+  "XX  X..X          X.XXXX        ",
+  "X    X..X         X.X           ",
+  "     X..X         XXX           ",
+  "      X..X                      ",
+  "      X..X        XXXX          ",
+  "       XX         X..X          ",
+  "                  XXXX          ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "0,0"
+    };
+
+  int i, row, col;
+  Uint8 data[4*32];
+  Uint8 mask[4*32];
+  int hot_x, hot_y;
+
+  i = -1;
+  for ( row=0; row<32; ++row ) {
+    for ( col=0; col<32; ++col ) {
+      if ( col % 8 ) {
+        data[i] <<= 1;
+        mask[i] <<= 1;
+      } else {
+        ++i;
+        data[i] = mask[i] = 0;
+      }
+      switch (image[4+row][col]) {
+        case 'X':
+          data[i] |= 0x01;
+          mask[i] |= 0x01;
+          break;
+        case '.':
+          mask[i] |= 0x01;
+          break;
+        case ' ':
+          break;
+      }
+    }
+  }
+  sscanf(image[4+row], "%d,%d", &hot_x, &hot_y);
+
+  return( SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y) );
+}
+
+
+void ClientUI::SetCursor( Cursor new_cursor_type )
+{
+    SDL_Cursor *new_cursor;
+    SDL_Cursor *old_cursor;
+
+    if ( new_cursor_type == CURSOR_DEFAULT )
+    {
+        /* if m_default_cursor is not assigned, all we've ever had is the default, do nothing */
+        if ( m_default_cursor )
+        {
+            SDL_SetCursor( m_default_cursor );
+        }
+        return;
+    }
+
+    /* save default cursor if not assigned yet */
+    if ( !m_default_cursor )
+    {
+        m_default_cursor = SDL_GetCursor( );
+    }
+
+    /* If there are a lot of cursors, eventually we may want to pre-create them or at least */
+    /* cache them once created */
+    switch ( new_cursor_type )
+    {
+        case CURSOR_COLONIZE:
+
+            /* create colonize cursor */
+            new_cursor = createColonizeCursor( );
+            break;
+
+        default:
+            throw std::invalid_argument("Invalid cursor type sent to SetCursor()");
+            break;
+    }
+
+    /* get current cursor*/
+    old_cursor = SDL_GetCursor( );
+
+    /* set new one */
+    SDL_SetCursor( new_cursor );
+
+    /* delete old if not the default */
+    if ( old_cursor != m_default_cursor )
+    {
+        SDL_FreeCursor( old_cursor );
+    }
+
 }
