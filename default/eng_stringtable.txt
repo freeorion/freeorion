@@ -36,6 +36,9 @@ Save
 SERVER_TIMEOUT
 The server is not responding
 
+SERVER_LOST
+The connection to the server has been lost.
+
 #################
 # Intro Screen  #
 #################
@@ -118,6 +121,12 @@ The host player has terminated this game setup.
 
 #Button names####
 
+NEW_GAME_BN
+New game
+
+LOAD_GAME_BN
+Load game
+
 START_GAME_BN
 Start game
 
@@ -136,20 +145,20 @@ GSETUP_GRAPHICS_FILES
 Graphics Files
 
 
-#Button names####
+#Drop-down list labels and choices####
 
-GSETUP_VERYSMALL
-Very Small (50 Stars)
-GSETUP_SMALL
-Small (100 Stars)
-GSETUP_MEDIUM
-Medium (150 Stars)
-GSETUP_LARGE
-Large (200 Stars)
-GSETUP_VERYLARGE
-Very Large (250 Stars)
-GSETUP_ENORMOUS
-Enormous (300 Stars)
+GSETUP_STARS
+Stars
+GSETUP_SHAPE
+Galaxy Shape
+GSETUP_AGE
+Galaxy Age
+GSETUP_STARLANE_FREQ
+Starlane Frequency
+GSETUP_PLANET_DENSITY
+Planet Density
+GSETUP_SPECIALS_FREQ
+Specials Frequency
 
 GSETUP_2ARM
 Spiral, 2-arm
@@ -159,8 +168,6 @@ GSETUP_4ARM
 Spiral, 4-arm
 GSETUP_CLUSTER
 Cluster
-GSETUP_FROMFILE
-From file...
 GSETUP_ELLIPTICAL
 Elliptical
 GSETUP_IRREGULAR
@@ -168,13 +175,46 @@ Irregular
 GSETUP_RING
 Ring
 
+GSETUP_NONE
+None
+
+GSETUP_YOUNG
+Young
+GSETUP_MATURE
+Mature
+GSETUP_ANCIENT
+Ancient
+
+GSETUP_FEW
+Few
+GSETUP_SOME
+Some
+GSETUP_SEVERAL
+Several
+GSETUP_MANY
+Many
+GSETUP_VERY_MANY
+Very Many
+
+GSETUP_LOW
+Low
+GSETUP_MEDIUM
+Medium
+GSETUP_HIGH
+High
+
+GSETUP_RARE
+Rare
+GSETUP_UNCOMMON
+Uncommon
+GSETUP_COMMON
+Common
+
+
 #Error messages####
 
 GSETUP_ERR_NOEXIST
 does not exist.
-
-GSETUP_ERR_INVALID_GRAPHICS
-is not a valid graphics file.
 
 
 ###########################
