@@ -13,7 +13,7 @@
 #endif
 
 class CUIButton;
-namespace GG {class Texture;}
+namespace GG {class StaticGraphic;}
 
 //! This is the first screen the user sees in FreeOrion.  It will always be the
 //! size of the Application main window.  It will display a splash screen with 
@@ -43,11 +43,8 @@ public:
     virtual GG::XMLElement XMLEncode() const;    //!< load from XML element
 
 private:
-    /** \name Data Members*/ //!@{
-    GG::Texture* m_background;    //!< the background texture
-    //!@}
-
     /** \name GG Controls*/ //!@{
+    GG::StaticGraphic* m_bg_graphic; //!< the background image shown in the intro screen
     CUIButton* m_single_player;    //!< opens up the single player game dialog
     CUIButton* m_multi_player;    //!< opens up the multi player game dialog
     CUIButton* m_options;	//!< opens the options dialog

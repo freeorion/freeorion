@@ -23,18 +23,15 @@ const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
 }
 
 
-IntroScreen::IntroScreen():
+IntroScreen::IntroScreen() :
     CUI_Wnd(ClientUI::String("INTRO_WINDOW_TITLE"), (1024+300)/2, 300, 200, 400, 
             GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE | 
             CUI_Wnd::MINIMIZABLE | CUI_Wnd::CLOSABLE)
 {
-    //get the background texture
-    m_background = new GG::Texture();
-    m_background->Load(ClientUI::ART_DIR + "splash01.png");
-    
     //create staticgraphic from the image
-    GG::StaticGraphic* bg_graphic = new GG::StaticGraphic(0,0,GG::App::GetApp()->AppWidth(),GG::App::GetApp()->AppHeight(),m_background);
-    GG::App::GetApp()->Register(bg_graphic);
+    m_bg_graphic = new GG::StaticGraphic(0, 0, GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight(), 
+                                         GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash01.png"));
+    GG::App::GetApp()->Register(m_bg_graphic);
     
     //create buttons
     m_single_player = new CUIButton(20, 30, 160, ClientUI::String("INTRO_BTN_SINGLE_PLAYER"));
@@ -67,6 +64,8 @@ IntroScreen::IntroScreen(const GG::XMLElement &elem):
 
 IntroScreen::~IntroScreen()
 {
+    GG::App::GetApp()->Remove(m_bg_graphic);
+    delete m_bg_graphic;
 }
 
 GG::XMLElement IntroScreen::XMLEncode() const
