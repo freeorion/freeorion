@@ -14,7 +14,7 @@ class ResearchWnd : public CUI_Wnd
 {
 public:
     /** \name Structors */ //@{
-    ResearchWnd();
+    ResearchWnd(int w, int h);
     //@}
 
     /** \name Mutators */ //@{

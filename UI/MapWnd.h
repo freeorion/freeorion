@@ -90,8 +90,6 @@ public:
     void SetFleetMovement(FleetButton* fleet_button); //!< allows code that creates FleetButtons to indicate where (and whether) they are moving
     void SetFleetMovement(Fleet* fleet);       //!< allows updates for single fleets that are already moving
 
-    void OnTurnUpdate();                       //!< called when m_turn_update is clicked
-
     void RegisterPopup( MapWndPopup* popup );  //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void RemovePopup( MapWndPopup* popup );    //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
     void CloseAllPopups( );                    //!< closes all active MapWndPopup popups
@@ -109,7 +107,9 @@ private:
     void PopulationResourcePoolChanged();
     void IndustryResourcePoolChanged();
 
+    void TurnBtnClicked() {EndTurn();}
     void MenuBtnClicked() {ShowOptions();}
+    void ResearchBtnClicked() {ToggleResearch();}
     void SiteRepBtnClicked() {ToggleSitRep();}
 
     struct StarlaneData;     ///< contains all the information necessary to render a single fleet movement line on the main map
@@ -174,7 +174,7 @@ private:
     StatisticIconDualValue          *m_food,*m_mineral,*m_population;
     StatisticIcon                   *m_research,*m_industry;
 
-    CUIButton                       *m_btn_siterep,*m_btn_menu;
+    CUIButton                       *m_btn_siterep,*m_btn_research,*m_btn_menu;
 
     SystemLeftClickedSignalType  m_left_clicked_system_signal;
     SystemRightClickedSignalType m_right_clicked_system_signal;

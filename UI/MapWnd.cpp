@@ -176,45 +176,58 @@ MapWnd::MapWnd() :
     m_sitrep_panel = new SitRepPanel( (GG::App::GetApp()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::App::GetApp()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);
 
-    m_research_wnd = new ResearchWnd();
+    m_research_wnd = new ResearchWnd(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight() - m_toolbar->Height());
+    m_research_wnd->MoveTo(0, m_toolbar->Height());
     GG::App::GetApp()->Register(m_research_wnd);
     m_research_wnd->Hide();
 
+    const int LAYOUT_MARGIN = 5;
+
     // turn button
-    m_turn_update = new CUITurnButton(5, 5, END_TURN_BTN_WIDTH, "" );
+    m_turn_update = new CUITurnButton(LAYOUT_MARGIN, LAYOUT_MARGIN, END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
+    GG::Connect(m_turn_update->ClickedSignal(), &MapWnd::TurnBtnClicked, this);
 
+    boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
+    const int BUTTON_TOTAL_MARGIN = 8;
 
-    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-5-40, 5, 40, UserString("MAP_BTN_MENU") );
+    int button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
+    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_MENU") );
     m_toolbar->AttachChild(m_btn_menu);
     GG::Connect(m_btn_menu->ClickedSignal(), &MapWnd::MenuBtnClicked, this);
-    
-    m_btn_siterep = new CUIButton(m_btn_menu->UpperLeft().x-5-50, 5, 50, UserString("MAP_BTN_SITREP") );
+
+    button_width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
+    m_btn_research = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_RESEARCH") );
+    m_toolbar->AttachChild(m_btn_research);
+    GG::Connect(m_btn_research->ClickedSignal(), &MapWnd::ResearchBtnClicked, this);
+
+    button_width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
+    m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_SITREP") );
     m_toolbar->AttachChild(m_btn_siterep);
     GG::Connect(m_btn_siterep->ClickedSignal(), &MapWnd::SiteRepBtnClicked, this);
     
-    m_population= new StatisticIconDualValue(m_btn_siterep->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0,0,2,false,false);
+    m_population= new StatisticIconDualValue(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0,0,2,false,false);
     m_population->SetPositiveColor(GG::CLR_GREEN); m_population->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_population);
    
-    m_industry= new StatisticIcon(m_population->UpperLeft().x-5-50,5,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/industry.png",GG::CLR_WHITE,0);
+    m_industry= new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-50,LAYOUT_MARGIN,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/industry.png",GG::CLR_WHITE,0);
     m_toolbar->AttachChild(m_industry);
 
-    m_research= new StatisticIcon(m_industry->UpperLeft().x-5-50,5,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0);
+    m_research= new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-50,LAYOUT_MARGIN,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0);
     m_toolbar->AttachChild(m_research);
 
-    m_mineral = new StatisticIconDualValue(m_research->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0,0,0,false,false);
+    m_mineral = new StatisticIconDualValue(m_research->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0,0,0,false,false);
     m_mineral->SetPositiveColor(GG::CLR_GREEN); m_mineral->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_mineral);
 
-    m_food = new StatisticIconDualValue(m_mineral->UpperLeft().x-5-80,5,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0,0,0,false,false);
+    m_food = new StatisticIconDualValue(m_mineral->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0,0,0,false,false);
     m_food->SetPositiveColor(GG::CLR_GREEN); m_food->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_food);
 
     // chat display and chat input box
     const int CHAT_WIDTH = 400;
     const int CHAT_HEIGHT = 400;
-    m_chat_display = new GG::MultiEdit(5, m_turn_update->LowerRight().y + 5, CHAT_WIDTH, CHAT_HEIGHT, "", ClientUI::FONT, ClientUI::PTS, GG::CLR_ZERO, 
+    m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", ClientUI::FONT, ClientUI::PTS, GG::CLR_ZERO, 
                                        GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE | GG::MultiEdit::INTEGRAL_HEIGHT | GG::MultiEdit::NO_VSCROLL, 
                                        ClientUI::TEXT_COLOR, GG::CLR_ZERO, 0);
     AttachChild(m_chat_display);
@@ -222,7 +235,7 @@ MapWnd::MapWnd() :
     m_chat_display->Hide();
 
     const int CHAT_EDIT_HEIGHT = 30;
-    m_chat_edit = new CUIEdit(5, GG::App::GetApp()->AppHeight() - CHAT_EDIT_HEIGHT - 5, CHAT_WIDTH, CHAT_EDIT_HEIGHT, "", 
+    m_chat_edit = new CUIEdit(LAYOUT_MARGIN, GG::App::GetApp()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, CHAT_EDIT_HEIGHT, "", 
                               ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
     AttachChild(m_chat_edit);
     m_chat_edit->Hide();
@@ -248,9 +261,6 @@ MapWnd::MapWnd() :
     m_bg_position_X[2] = 10.0;
     m_bg_position_Y[2] = 10.0;
     m_bg_scroll_rate[2] = 0.5;
-
-    // connect signals and slots
-    GG::Connect(m_turn_update->ClickedSignal(), &MapWnd::OnTurnUpdate, this);
 
     // connect keyboard accelerators
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_RETURN, 0), &MapWnd::OpenChatWindow, this);
@@ -881,14 +891,6 @@ void MapWnd::SetFleetMovement(Fleet* fleet)
     }
 }
 
-void MapWnd::OnTurnUpdate()
-{
-    // delete app popups
-    CloseAllPopups( );
-
-    HumanClientApp::GetApp()->StartTurn();
-}
-
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::Wnd::Event& event)
 {
     if (event.Type() == GG::Wnd::Event::RClick && !FleetWnd::FleetWndsOpen()) {
@@ -1208,6 +1210,9 @@ bool MapWnd::OpenChatWindow()
 
 bool MapWnd::EndTurn()
 {
+    CloseAllPopups( );
+    m_research_wnd->Hide();
+    HumanClientApp::GetApp()->MoveDown(m_research_wnd);
     HumanClientApp::GetApp()->StartTurn();
     return true;
 }
@@ -1219,6 +1224,7 @@ bool MapWnd::ToggleSitRep()
     } else {
         // hide other "competing" windows
         m_research_wnd->Hide();
+        HumanClientApp::GetApp()->MoveDown(m_research_wnd);
 
         // show the sitrep window
         m_sitrep_panel->Show();
