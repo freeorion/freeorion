@@ -16,7 +16,7 @@
     <system ID>
     <fleet ID>
     <ship ID>
-    <tech ID>
+    <tech [string]>
     <encyclopedia [string]>\endverbatim
     The ID parameters refer to the UniverseObjects that should be zoomed to for each link; encyclopedia entries are refered
     to by strings.
@@ -69,7 +69,7 @@ public:
     IDSignalType&     SystemLinkSignal()       const {return m_system_sig;}       ///< returns the system link signal object for this LinkText
     IDSignalType&     FleetLinkSignal()        const {return m_fleet_sig;}        ///< returns the fleet link signal object for this LinkText
     IDSignalType&     ShipLinkSignal()         const {return m_ship_sig;}         ///< returns the ship link signal object for this LinkText
-    IDSignalType&     TechLinkSignal()         const {return m_tech_sig;}         ///< returns the tech link signal object for this LinkText
+    StringSignalType& TechLinkSignal()         const {return m_tech_sig;}         ///< returns the tech link signal object for this LinkText
     StringSignalType& EncyclopediaLinkSignal() const {return m_encyclopedia_sig;} ///< returns the encyclopedia link signal object for this LinkText
 
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a LinkText object
@@ -97,7 +97,7 @@ private:
     mutable IDSignalType m_system_sig;
     mutable IDSignalType m_fleet_sig;
     mutable IDSignalType m_ship_sig;
-    mutable IDSignalType m_tech_sig;
+    mutable StringSignalType m_tech_sig;
     mutable StringSignalType m_encyclopedia_sig;
 
     static bool s_link_tags_registered;

@@ -86,7 +86,7 @@ void LinkText::LClick(const GG::Pt& pt, Uint32 keys)
         } else if (m_links[sel_link].type == "ship") {
             m_ship_sig(lexical_cast<int>(m_links[sel_link].data));
         } else if (m_links[sel_link].type == "tech") {
-            m_tech_sig(lexical_cast<int>(m_links[sel_link].data));
+            m_tech_sig(m_links[sel_link].data);
         } else if (m_links[sel_link].type == "encyclopedia") {
             m_encyclopedia_sig(m_links[sel_link].data);
         }
