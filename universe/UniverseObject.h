@@ -59,6 +59,7 @@ public:
     double               Y() const      {return m_y;}        ///< the Y-coordinate of this object
     const std::set<int>& Owners() const {return m_owners;}   ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
     int                  SystemID() const{return m_system_id;}///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
+    System*              GetSystem() const;                  ///< returns system in which this object can be found, or null if the object is not within any system
 
     virtual Visibility Visible(int empire_id) const = 0; ///< returns the visibility status of this universe object relative to the input empire.
    

@@ -1,5 +1,7 @@
 #include "UniverseObject.h"
 
+#include "../util/AppInterface.h"
+#include "System.h"
 #include "Universe.h"
 #include "XMLDoc.h"
 
@@ -64,6 +66,11 @@ UniverseObject::UniverseObject(const GG::XMLElement& elem)
 
 UniverseObject::~UniverseObject()
 {
+}
+
+System* UniverseObject::GetSystem() const
+{
+    return dynamic_cast<System*>(GetUniverse().Object(m_system_id));
 }
 
 GG::XMLElement UniverseObject::XMLEncode() const
