@@ -16,7 +16,7 @@
 #endif
 
 #ifndef _GGMessageDlg_h_
-#include "dialogs/GGMessageDlg.h"
+#include "dialogs/GGThreeButtonDlg.h"
 #endif
 
 #ifndef _IntroScreen_h_
@@ -403,8 +403,8 @@ void ClientUI::MessageBox(const std::string& message)
  //   std::string dbg_msg = "MessageBox( \"" + message + "\" )";
  //   s_logger.debug(dbg_msg);    //write message to log
     
-    GG::MessageDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR,BORDER_COLOR,TEXT_COLOR,
-        new GG::Button( (320-75)/2, 170, 75, 25, "OK", FONT, PTS, CTRL_COLOR, TEXT_COLOR));
+    GG::ThreeButtonDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR, BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
+        new GG::Button((320-75)/2, 170, 75, 25, "OK", FONT, PTS, CTRL_COLOR, TEXT_COLOR));
     
     dlg.Run();    
 }//MessageBox()
