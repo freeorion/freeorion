@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _SitRepEntry_h_
 #define _SitRepEntry_h_
 
@@ -10,6 +11,7 @@
 #endif
 
 #include <string>
+#include <stdexcept>
 
 /** a simple SitRepEntry to be displayed in the SitRep screen. */
 struct SitRepEntry
