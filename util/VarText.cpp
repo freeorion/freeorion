@@ -4,124 +4,107 @@
 #include "../universe/UniverseObject.h"
 #include "../Empire/TechManager.h"
 
+#include <boost/spirit.hpp>
 
-const std::string VarText::PLANET_ID_TAG = "m_planet";
-const std::string VarText::SYSTEM_ID_TAG = "m_system";
-const std::string VarText::TECH_ID_TAG = "m_tech";
-const std::string VarText::SHIP_ID_TAG = "m_ship";
+namespace {
+// converts (first, last) to a string, looks up its value in the Universe, then appends this to the end of a std::string
+struct SubstituteAndAppend
+{
+    SubstituteAndAppend(const GG::XMLElement& variables, std::string& str) : m_variables(variables), m_str(str) {}
+    void operator()(const char* first, const char* last) const 
+    {
+        std::string token(first, last);
+
+        // look up child
+        if (!m_variables.ContainsChild(token)) {
+            m_str += "ERROR";
+            return;
+        }
+
+        const GG::XMLElement& token_elem = m_variables.Child(token);
+        std::string open_tag = "<" + token_elem.Tag() + " " + token_elem.Attribute("value") + ">";
+        std::string close_tag = "</" + token_elem.Tag() + ">";
+
+        // universe object token types
+        if (token == VarText::PLANET_ID_TAG || token == VarText::SYSTEM_ID_TAG || token == VarText::SHIP_ID_TAG) {
+            int object_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
+            UniverseObject* obj = GetUniverse().Object(object_id);
+
+            if (!obj) {
+                m_str += "ERROR";
+                return;
+            }
+
+            m_str += open_tag + obj->Name() + close_tag;
+        } else if (token == VarText::TECH_ID_TAG) {
+            int tech_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
+            Tech *tech = TechManager::instance().Lookup(tech_id);
+
+            if (!tech) {
+                m_str += "ERROR";
+                return;
+            }
+
+            m_str += open_tag + tech->GetName() + close_tag;
+        }
+    }
+
+    const GG::XMLElement&  m_variables;
+    std::string&           m_str;
+};
+
+// sticks a sequence of characters onto the end of a std::string
+struct StringAppend
+{
+    StringAppend(std::string& str) : m_str(str) {}
+    void operator()(const char* first, const char* last) const 
+    {
+        m_str += std::string(first, last);
+    }
+    std::string& m_str;
+};
+}
+
+// static(s)
+const std::string VarText::START_VAR = "%";
+const std::string VarText::END_VAR = "%";
+const std::string VarText::PLANET_ID_TAG = "planet";
+const std::string VarText::SYSTEM_ID_TAG = "system";
+const std::string VarText::TECH_ID_TAG = "tech";
+const std::string VarText::SHIP_ID_TAG = "ship";
 
 VarText::VarText(const GG::XMLElement& elem)
 {
-  // copy variables
-  for ( int i = 0; i < elem.NumChildren(); i++ )
-  {
-     m_variables.AppendChild( elem.Child( i ) );
-  }   
+    // copy variables
+    for (int i = 0; i < elem.NumChildren(); ++i) {
+        m_variables.AppendChild(elem.Child(i));
+    }
 }
 
 
 GG::XMLElement VarText::XMLEncode() const
 {
-  GG::XMLElement retval;
-
-  for ( int i = 0; i < m_variables.NumChildren(); i++ )
-  {
-    retval.AppendChild( m_variables.Child( i ) );
-  }   
-
-  return retval;
+    GG::XMLElement retval;
+    for (int i = 0; i < m_variables.NumChildren(); ++i) {
+        retval.AppendChild(m_variables.Child(i));
+    }
+    return retval;
 }
 
-
-void VarText::GenerateVarText( std::string template_str )
+void VarText::GenerateVarText(const std::string& template_str)
 {
-  // generates a string complete with substituted variables and hyperlinks
-  // the procedure here is to replace any tokens within %% with variables of the same name in the SitRep XML data
+    // generates a string complete with substituted variables and hyperlinks
+    // the procedure here is to replace any tokens within %% with variables of the same name in the SitRep XML data
 
-  // get template string
-  std::string final_str;
+    // get template string
+    std::string final_str;
 
-  // begin parsing
-  int len = template_str.size();
-  std::string::iterator next_token;
-  std::string::iterator end_token;
-  std::string::iterator cur_pos = template_str.begin();
-  GG::XMLElement token_elem;
-  Universe* universe = &GetUniverse();
-    
-  for ( int i = 0; i < len; i++ )
-  {
-    next_token = std::find( cur_pos, template_str.end(), '%');
+    using namespace boost::spirit;
+    rule<> token = *(anychar_p - space_p - END_VAR.c_str());
+    rule<> var = START_VAR.c_str() >> token[SubstituteAndAppend(m_variables, final_str)] >> END_VAR.c_str();
+    rule<> non_var = anychar_p - START_VAR.c_str();
 
-    if ( next_token == template_str.end() )
-    {
-       final_str += std::string( cur_pos, template_str.end() );
-       break;
-    }
+    parse(template_str.c_str(), *(non_var[StringAppend(final_str)] | var));
 
-    // copy what we have, update cur pos
-    final_str += std::string( cur_pos, next_token);
-
-    cur_pos = next_token+1;
-
-    end_token = std::find( cur_pos, template_str.end(), '%');
-
-    if ( end_token == template_str.end() )
-    {
-       throw std::runtime_error("Missing closing % in VarText template string.");
-    }
-
-
-    // update cur pos 
-    cur_pos = end_token + 1;
-    
-    // extract token
-    std::string token( next_token+1, end_token );    
-
-    // look up child
-    if (!m_variables.ContainsChild( token )) 
-    {
-      throw std::runtime_error("The variable defined in template string does not exist in VarText data");
-    }
-
-    token_elem = m_variables.Child( token );
-
-    // extract string based on token type
-    if ( token == PLANET_ID_TAG || token == SYSTEM_ID_TAG || token == SHIP_ID_TAG )
-    {
-      // it's a universe object
-      int object_id = boost::lexical_cast<int>( token_elem.Attribute("value") );
-      
-      // look up object
-      UniverseObject* the_object = universe->Object( object_id );
-
-      // set name
-      if ( !the_object )
-      {      
-	throw std::runtime_error("The VarText variable does not exist in game data");
-      }
-      final_str += the_object->Name();      
-    }
-    else if ( token == TECH_ID_TAG )
-    {
-      int tech_id = boost::lexical_cast<int>( token_elem.Attribute("value") );
-      
-      TechLevel *tech_level = TechManager::instance().Lookup( tech_id );
-
-      if ( !tech_level )
-      {
-	throw std::runtime_error("The VarText variable does not exist in game data");
-      }
-
-      // set name
-      final_str += tech_level->GetName();      
-      	
-    }
-
-  }
-  
-  // set string
-  m_text = final_str;
-
-
+    m_text = final_str;
 }

@@ -1,4 +1,4 @@
-
+// -*- C++ -*-
 #ifndef _VarText_h_
 #define _VarText_h_
 
@@ -27,32 +27,30 @@
 
 class VarText
 {
- public:
+public:
+    VarText( ) { };
+    VarText(const GG::XMLElement& elem);
 
-  static const std::string PLANET_ID_TAG;
-  static const std::string SYSTEM_ID_TAG;
-  static const std::string TECH_ID_TAG;
-  static const std::string SHIP_ID_TAG;
+    GG::XMLElement XMLEncode() const;
 
-  VarText(const GG::XMLElement& elem);
+    /** combines the given template with the varaibles ontained in object to create a string with live variables replaced with text
+        will produce exceptions if invalid variables are found ( no not exist in XML data or in universe ) */
+    void GenerateVarText( const std::string& template_str );
 
-  VarText( ) { };
-   
-  GG::XMLElement XMLEncode() const;
+    GG::XMLElement& GetVariables( )   { return m_variables; }
+    std::string& GetText( )           { return m_text; }
+    void SetText( std::string &text ) { m_text = text; }
 
-  ///< combines the gien template with the varaibles ontained in object to create a string with live variables replaced with text
-  ///< will produce exceptions if invalid variables are found ( no not exist in XML data or in universe )
-  void GenerateVarText( std::string template_str );
+    static const std::string START_VAR;
+    static const std::string END_VAR;
+    static const std::string PLANET_ID_TAG;
+    static const std::string SYSTEM_ID_TAG;
+    static const std::string TECH_ID_TAG;
+    static const std::string SHIP_ID_TAG;
 
-  GG::XMLElement &GetVariables( ) { return( m_variables ); }
-  std::string& GetText( ) { return( m_text ); }
-  void SetText( std::string &text ) { m_text = text; }
-
- protected:
-     
-  GG::XMLElement             m_variables; ///< the data describing the sitrep. See class comments for description
-  std::string                m_text; ///<the text, including hyperlinks, that describes this entry. Built from XML data
-
+protected:
+    GG::XMLElement             m_variables; ///< the data describing the sitrep. See class comments for description
+    std::string                m_text;      ///< the text, including hyperlinks, that describes this entry. Built from XML data
 };
 
 
