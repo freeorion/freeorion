@@ -1,5 +1,5 @@
 #include "SitRepEntry.h"
-#ifndef FREEORION_BUILD_SERVER
+#ifdef FREEORION_BUILD_HUMAN
 #include "../client/human/HumanClientApp.h"
 #include "../universe/ClientUniverse.h"
 #include "../universe/Planet.h"
@@ -36,7 +36,6 @@ BuildSitRepEntry::BuildSitRepEntry(BuildSitRepEntryType buildType, int planetID,
    m_planet_id = planetID;
    m_fleet_id = fleetID;
    m_build_type = buildType;
-   printf("BuiltSitRepEntry created.\n");
    
 }
 
@@ -48,8 +47,7 @@ int BuildSitRepEntry::ImageID()
 
 const std::string& BuildSitRepEntry::SummaryText()
 {
-#ifndef FREEORION_BUILD_SERVER
-   printf("In SummaryText\n");
+#ifdef FREEORION_BUILD_HUMAN
    if (m_summary_text.empty())
    {
       HumanClientApp* client_app = HumanClientApp::GetApp();
@@ -77,7 +75,6 @@ const std::string& BuildSitRepEntry::SummaryText()
         m_summary_text = "Your empire has now reached the maximum technology level.  Nothing can be gained by further research.";
         break;
       case SHIP_BUILT:  
-        printf("In SHIP_BUILT\n");
         uni_obj = universe.Object(m_planet_id);
         if (uni_obj == NULL)
         {
@@ -126,7 +123,7 @@ const std::string& BuildSitRepEntry::SummaryText()
 
 bool BuildSitRepEntry::ExecuteLink()
 {
-#ifndef FREEORION_BUILD_SERVER
+#ifdef FREEORION_BUILD_HUMAN
    HumanClientApp* client_app = HumanClientApp::GetApp();
    ClientUniverse universe = client_app->Universe();
    const UniverseObject* uni_obj;
@@ -230,7 +227,7 @@ int ColonizeSitRepEntry::FailEmpireID()
 
 const std::string& ColonizeSitRepEntry::SummaryText()
 {
-#ifndef FREEORION_BUILD_SERVER
+#ifdef FREEORION_BUILD_HUMAN
    if (m_summary_text.empty())
    {
       HumanClientApp* client_app = HumanClientApp::GetApp();
@@ -253,7 +250,7 @@ const std::string& ColonizeSitRepEntry::SummaryText()
 
 bool ColonizeSitRepEntry::ExecuteLink()
 {
-#ifndef FREEORION_BUILD_SERVER
+#ifdef FREEORION_BUILD_HUMAN
    HumanClientApp* client_app = HumanClientApp::GetApp();
 
    // zoom to planet
@@ -292,7 +289,7 @@ int CombatSitRepEntry::InitialOwnerID()
 
 const std::string& CombatSitRepEntry::SummaryText()
 {
-#ifndef FREEORION_BUILD_SERVER
+#ifdef FREEORION_BUILD_HUMAN
    if (m_summary_text.empty())
    {
       HumanClientApp* client_app = HumanClientApp::GetApp();
@@ -316,7 +313,7 @@ const CombatFleetMap* CombatSitRepEntry::FleetDataMapPtr()
 
 bool CombatSitRepEntry::ExecuteLink()
 {
-#ifndef FREEORION_BUILD_SERVER
+#ifdef FREEORION_BUILD_HUMAN
    HumanClientApp* client_app = HumanClientApp::GetApp();
    // zoom to system
 #endif
@@ -360,7 +357,7 @@ bool FleetArrivalSitRepEntry::NewExplore()
 
 const std::string& FleetArrivalSitRepEntry::SummaryText()
 {
-#ifndef FREEORION_BUILD_SERVER
+#ifdef FREEORION_BUILD_HUMAN
    if (m_summary_text.empty())
    {
       HumanClientApp* client_app = HumanClientApp::GetApp();
@@ -374,7 +371,7 @@ const std::string& FleetArrivalSitRepEntry::SummaryText()
 
 bool FleetArrivalSitRepEntry::ExecuteLink()
 {
-#ifndef FREEORION_BUILD_SERVER
+#ifdef FREEORION_BUILD_HUMAN
    // zoom to fleet
 #endif
    return true;
