@@ -270,9 +270,6 @@ public:
     //@}
    
 private:
-    /// Helper method to encode a list of integers into an XMLElement
-    static void EncodeIntList(GG::XMLElement& container, const std::set<int>& lst);
-
     /// Empire's unique numeric id
     int m_id;
     

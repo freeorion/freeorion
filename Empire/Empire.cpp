@@ -25,41 +25,26 @@ Empire::Empire(const GG::XMLElement& elem)
 {
     using GG::XMLElement;
 
-    m_id = lexical_cast<int> ( elem.Child("m_id").Attribute("value") );
+    m_id = lexical_cast<int>(elem.Child("m_id").Text());
     m_name = elem.Child("m_name").Text();
-    m_total_rp = lexical_cast<int> ( elem.Child("m_total_rp").Attribute("value") );
-    m_control_state = (ControlStatus) lexical_cast <int> ( elem.Child("m_control_state").Attribute("value") );
-    m_color = GG::Clr( elem.Child("m_color").Child(0) );
-    m_next_design_id = lexical_cast<int> ( elem.Child("m_next_design_id").Attribute("value") );
+    m_total_rp = lexical_cast<int>(elem.Child("m_total_rp").Text());
+    m_control_state = ControlStatus(lexical_cast<int>(elem.Child("m_control_state").Text()));
+    m_color = GG::Clr(elem.Child("m_color").Child("GG::Clr"));
+    m_next_design_id = lexical_cast<int>(elem.Child("m_next_design_id").Text());
 
-    XMLElement sitrep = elem.Child("m_sitrep_entries");
-    for(int i=0; i<sitrep.NumChildren(); i++)
-    {
-        AddSitRepEntry( new SitRepEntry( sitrep.Child(i) ) );
+    const XMLElement& sitreps_elem = elem.Child("m_sitrep_entries");
+    for (int i = 0; i < sitreps_elem.NumChildren(); ++i) {
+        AddSitRepEntry(new SitRepEntry(sitreps_elem.Child(i)));
     }
 
-    XMLElement container_elem = elem.Child("m_explored_systems");
-    for(int i=0; i<container_elem.NumChildren(); i++)
-    {
-        m_explored_systems.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
-    }
+    m_explored_systems = GG::ContainerFromString<std::set<int> >(elem.Child("m_explored_systems").Text());
+    m_techs = GG::ContainerFromString<std::set<int> >(elem.Child("m_techs").Text());
 
-    container_elem = elem.Child("m_techs");
-    for(int i=0; i<container_elem.NumChildren(); i++)
+    const XMLElement& designs_elem = elem.Child("m_ship_designs");
+    for (int i = 0; i < designs_elem.NumChildren(); ++i)
     {
-        m_techs.insert(  lexical_cast<int> (container_elem.Child(i).Attribute("value") ) );
-    }
-    
-    container_elem = elem.Child("m_ship_designs");
-    for (int i = 0; i < container_elem.NumChildren(); ++i)
-    {
-       XMLElement design_elem = container_elem.Child(i);
-
-       ShipDesign* ship_design = new ShipDesign(design_elem);
-       int design_id = ship_design->id;
-
-       m_ship_designs.insert(std::pair<int, ShipDesign>(design_id, *ship_design));
-       delete ship_design;
+       ShipDesign ship_design(designs_elem.Child(i));
+       m_ship_designs.insert(std::make_pair(ship_design.id, ship_design));
     }
 }
 
@@ -221,114 +206,57 @@ GG::XMLElement Empire::XMLEncode() const
 {
     using GG::XMLElement;
     using boost::lexical_cast;
-    
-    XMLElement element("Empire");
-    
-    XMLElement ID("m_id");
-    ID.SetAttribute( "value", lexical_cast<std::string>(m_id) );
-    element.AppendChild(ID);
-    
-    XMLElement name("m_name");
-    name.SetText(m_name);
-    element.AppendChild(name);
-    
-    XMLElement total_rp("m_total_rp");
-    total_rp.SetAttribute( "value", lexical_cast<std::string>(m_total_rp) );
-    element.AppendChild(total_rp);
-    
-    XMLElement control("m_control_state");
-    control.SetAttribute( "value",  lexical_cast<std::string>( (int) m_control_state) );
-    element.AppendChild(control);
-    
-    XMLElement color("m_color");
-    GG::XMLElement colorelem = m_color.XMLEncode();
-    color.AppendChild(colorelem);
-    element.AppendChild(color);
 
-    XMLElement design_id("m_next_design_id");
-    design_id.SetAttribute( "value", lexical_cast<std::string>(m_next_design_id) );
-    element.AppendChild(design_id);
-    
-    XMLElement sitrep("m_sitrep_entries");
-    for(SitRepItr itr = SitRepBegin(); itr != SitRepEnd(); itr++)
+    XMLElement retval("Empire");
+    retval.AppendChild(XMLElement("m_id", lexical_cast<std::string>(m_id)));
+    retval.AppendChild(XMLElement("m_name", m_name));
+    retval.AppendChild(XMLElement("m_total_rp", lexical_cast<std::string>(m_total_rp)));
+    retval.AppendChild(XMLElement("m_control_state", lexical_cast<std::string>(m_control_state)));
+    retval.AppendChild(XMLElement("m_color", m_color.XMLEncode()));
+    retval.AppendChild(XMLElement("m_next_design_id", lexical_cast<std::string>(m_next_design_id)));
+
+    retval.AppendChild(XMLElement("m_sitrep_entries"));
+    for (SitRepItr it = SitRepBegin(); it != SitRepEnd(); ++it)
     {
-       sitrep.AppendChild( (*itr)->XMLEncode() );
+       retval.LastChild().AppendChild((*it)->XMLEncode());
     }
-    element.AppendChild(sitrep);
-    
-    XMLElement ship_designs("m_ship_designs");
-    for(ShipDesignItr itr = ShipDesignBegin(); itr != ShipDesignEnd(); itr++)
+
+    retval.AppendChild(XMLElement("m_ship_designs"));
+    for (ShipDesignItr it = ShipDesignBegin(); it != ShipDesignEnd(); ++it)
     {
-       ship_designs.AppendChild( (*itr).second.XMLEncode() );
+        retval.LastChild().AppendChild(it->second.XMLEncode());
     }
-    element.AppendChild(ship_designs);
-    
-    XMLElement explored("m_explored_systems");
-    EncodeIntList(explored, m_explored_systems);
-    element.AppendChild(explored);
-    
-    XMLElement techs("m_techs");
-    EncodeIntList(techs, m_techs);
-    element.AppendChild(techs);
-    
-    return element;
+
+    retval.AppendChild(XMLElement("m_explored_systems", GG::StringFromContainer<std::set<int> >(m_explored_systems)));
+    retval.AppendChild(XMLElement("m_techs", GG::StringFromContainer<std::set<int> >(m_techs)));
+    return retval;
 }
 
 GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
 {
     // same empire --->  call other version
-    if(viewer.EmpireID() == this->EmpireID())
+    if (viewer.EmpireID() == this->EmpireID())
     {
         return this->XMLEncode();
     }
     
     using GG::XMLElement;
     using boost::lexical_cast;
-    
-    XMLElement element("Empire");
-    
-    XMLElement ID("m_id");
-    ID.SetAttribute( "value", lexical_cast<std::string>(m_id) );
-    element.AppendChild(ID);
-    
-    XMLElement name("m_name");
-    name.SetText(m_name);
-    element.AppendChild(name);
-    
-    // total_rp member needs to have a value so just use 0
-    XMLElement total_rp("m_total_rp");
-    total_rp.SetAttribute( "value", lexical_cast<std::string>(0) );
-    element.AppendChild(total_rp);
-    
-    XMLElement control("m_control_state");
-    control.SetAttribute( "value",  lexical_cast<std::string>( (int) m_control_state) );
-    element.AppendChild(control);
-    
-    XMLElement color("m_color");
-    GG::XMLElement colorelem = m_color.XMLEncode();
-    color.AppendChild(colorelem);
-    element.AppendChild(color);
-    
-    XMLElement design_id("m_next_design_id");
-    design_id.SetAttribute( "value", lexical_cast<std::string>(m_next_design_id) );
-    element.AppendChild(design_id);
-    
-    
-    // for the lists, put the child elements in but do not populate them
-    
-    XMLElement sitrep("m_sitrep_entries");
-    element.AppendChild(sitrep);
-    
-    XMLElement ship_designs("m_ship_designs");
-    element.AppendChild(ship_designs);
-    
-    XMLElement explored("m_explored_systems");
-    element.AppendChild(explored);
-    
-    XMLElement techs("m_techs");
-    element.AppendChild(techs);
-    
-    return element;
+
+    XMLElement retval("Empire");
+    retval.AppendChild(XMLElement("m_id", lexical_cast<std::string>(m_id)));
+    retval.AppendChild(XMLElement("m_name", m_name));
+    retval.AppendChild(XMLElement("m_total_rp", lexical_cast<std::string>(m_total_rp)));
+    retval.AppendChild(XMLElement("m_control_state", lexical_cast<std::string>(m_control_state)));
+    retval.AppendChild(XMLElement("m_color", m_color.XMLEncode()));
+    retval.AppendChild(XMLElement("m_next_design_id", lexical_cast<std::string>(m_next_design_id)));
+
+    // leave these in, but unpopulated
+    retval.AppendChild(XMLElement("m_sitrep_entries"));
+    retval.AppendChild(XMLElement("m_ship_designs"));
+    retval.AppendChild(XMLElement("m_explored_systems"));
+    retval.AppendChild(XMLElement("m_techs"));
+    return retval;
 }
 
 
@@ -379,17 +307,4 @@ void Empire::ControlState(ControlStatus state)
 void Empire::Name(const std::string& name)
 {
     m_name = name;
-}
-
-void Empire::EncodeIntList(GG::XMLElement& container, const std::set<int>& lst)
-{
-    
-    int i=0;
-    for(std::set<int>::const_iterator itr = lst.begin(); itr != lst.end(); itr++)
-    {
-        GG::XMLElement item("index" + lexical_cast<std::string>(i) );
-        i++;
-        item.SetAttribute("value", lexical_cast<std::string>( (*itr) ) );
-        container.AppendChild(item);
-    }
 }
