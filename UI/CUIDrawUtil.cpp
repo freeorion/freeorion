@@ -5,8 +5,8 @@ void FindIsoscelesTriangleVertices(int x1, int y1, int x2, int y2, ShapeOrientat
                                    int& x1_, int& y1_, int& x2_, int& y2_, int& x3_, int& y3_)
 {
     // make sure triangle width is odd, for symmetry
-    if (((orientation & (SHAPE_UP | SHAPE_DOWN)) ? y2 - y1 : x2 - x1) % 2)
-        --((orientation & (SHAPE_UP | SHAPE_DOWN)) ? y2 : x2);
+    if ((!((orientation & (SHAPE_UP | SHAPE_DOWN)) ? x2 - x1 : y2 - y1) % 2))
+        ++((orientation & (SHAPE_UP | SHAPE_DOWN)) ? x2 : y2);
 
     switch (orientation) {
     case SHAPE_UP:
@@ -204,9 +204,9 @@ bool InTriangle(const GG::Pt& pt, int x1, int y1, int x2, int y2, int x3, int y3
     GG::Pt vec_B(x3 - x2, y3 - y2); // side B is the vector from pt2 to pt3
     GG::Pt vec_C(x1 - x3, y1 - y3); // side C is the vector from pt3 to pt1
     // take dot products of perpendicular vectors (normals of sides) with point pt, and sum the signs of these products
-    int sum = (0 < pt.x * vec_A.y + pt.y * -vec_A.x ? 1 : 0) + 
-              (0 < pt.x * vec_B.y + pt.y * -vec_B.x ? 1 : 0) +
-              (0 < pt.x * vec_C.y + pt.y * -vec_C.x ? 1 : 0);
+    int sum = (0 < (pt.x - x1) * vec_A.y + (pt.y - y1) * -vec_A.x ? 1 : 0) + 
+              (0 < (pt.x - x2) * vec_B.y + (pt.y - y2) * -vec_B.x ? 1 : 0) +
+              (0 < (pt.x - x3) * vec_C.y + (pt.y - y3) * -vec_C.x ? 1 : 0);
     // if the products are all the same sign, the point is in the triangle
     return (sum == 3 || sum == 0);
 }
@@ -225,3 +225,87 @@ bool InIsoscelesTriangle(const GG::Pt& pt, int x1, int y1, int x2, int y2, Shape
     return InTriangle(pt, x1_, y1_, x2_, y2_, x3_, y3_);
 }
 
+void FleetMarker(int x1, int y1, int x2, int y2, ShapeOrientation orientation, GG::Clr color)
+{
+    if (orientation == SHAPE_UP || orientation == SHAPE_DOWN)
+        orientation = SHAPE_LEFT;
+
+    // make sure triangle width is odd, for symmetry
+    if (!((y2 - y1) % 2))
+        ++y2;
+
+    double point = orientation == SHAPE_LEFT ? x1 : x2;
+    double base =  orientation == SHAPE_LEFT ? x2 : x1;
+    double cutout_point = base + (point - base) * 0.2;
+    double top = y1;
+    double middle = (y2 + y1) * 0.5;
+    double bottom = y2;
+    double cutout_top = top + (y2 - y1) * 0.25;
+    double cutout_bottom = bottom - (y2 - y1) * 0.25;
+
+    GG::Clr border_color = color;
+    AdjustBrightness(border_color, 75);
+    border_color.a = 255;
+    if (orientation == SHAPE_LEFT) {
+        glColor4ubv(color.v);
+        glBegin(GL_QUADS);
+        glVertex2d(cutout_point, middle);
+        glVertex2d(base, cutout_top);
+        glVertex2d(base, top);
+        glVertex2d(point, middle);
+        glVertex2d(point, middle);
+        glVertex2d(base, bottom);
+        glVertex2d(base, cutout_bottom);
+        glVertex2d(cutout_point, middle);
+        glEnd();
+
+        glColor4ubv(border_color.v);
+        glBegin(GL_LINE_STRIP);
+        glVertex2d(cutout_point, middle);
+        glVertex2d(base, cutout_top);
+        glVertex2d(base, top);
+        glVertex2d(point, middle);
+        glEnd();
+        glBegin(GL_LINE_STRIP);
+        glVertex2d(point, middle);
+        glVertex2d(base, bottom);
+        glVertex2d(base, cutout_bottom);
+        glVertex2d(cutout_point, middle);
+        glEnd();
+    } else {
+        glColor4ubv(color.v);
+        glBegin(GL_QUADS);
+        glVertex2d(point, middle);
+        glVertex2d(base, top);
+        glVertex2d(base, cutout_top);
+        glVertex2d(cutout_point, middle);
+        glVertex2d(cutout_point, middle);
+        glVertex2d(base, cutout_bottom);
+        glVertex2d(base, bottom);
+        glVertex2d(point, middle);
+        glEnd();
+
+        glColor4ubv(border_color.v);
+        glBegin(GL_LINE_STRIP);
+        glVertex2d(point, middle);
+        glVertex2d(base, top);
+        glVertex2d(base, cutout_top);
+        glVertex2d(cutout_point, middle);
+        glEnd();
+        glBegin(GL_LINE_STRIP);
+        glVertex2d(cutout_point, middle);
+        glVertex2d(base, cutout_bottom);
+        glVertex2d(base, bottom);
+        glVertex2d(point, middle);
+        glEnd();
+    }
+}
+
+bool InFleetMarker(const GG::Pt& pt, int x1, int y1, int x2, int y2, ShapeOrientation orientation)
+{
+    if (orientation == SHAPE_UP || orientation == SHAPE_DOWN)
+        orientation = SHAPE_LEFT;
+    int x1_, y1_, x2_, y2_, x3_, y3_;
+    FindIsoscelesTriangleVertices(x1, y1, x2, y2, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
+    return InTriangle(pt, x1_, y1_, x2_, y2_, x3_, y3_);
+}

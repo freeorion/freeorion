@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _CUIDrawUtil_h_
 #define _CUIDrawUtil_h_
 
@@ -33,6 +34,13 @@ void IsoscelesTriangle(int x1, int y1, int x2, int y2, ShapeOrientation orientat
 
 /** returns true iff \a pt falls within the isosceles triangle described by the other parameters */
 bool InIsoscelesTriangle(const GG::Pt& pt, int x1, int y1, int x2, int y2, ShapeOrientation orientation);
+
+/** renders a semi-triangular shape with two equal-length sides, oriented in the desired direction.  
+    Only SHAPE_LEFT and SHAPE_RIGHT are supported. */
+void FleetMarker(int x1, int y1, int x2, int y2, ShapeOrientation orientation, GG::Clr color);
+
+/** returns true iff \a pt falls within the fleet marker described by the other parameters */
+bool InFleetMarker(const GG::Pt& pt, int x1, int y1, int x2, int y2, ShapeOrientation orientation);
 
 #endif
 
