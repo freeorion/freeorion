@@ -1095,12 +1095,12 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
                 int source_fleet_next_system_id = source_fleet->NextSystemID();
                 int target_fleet_prev_system_id = target_fleet->PreviousSystemID();
                 int target_fleet_next_system_id = target_fleet->NextSystemID();
-                std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(source_fleet_prev_system_id, target_fleet_prev_system_id);
-                std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(source_fleet_prev_system_id, target_fleet_next_system_id);
-                std::pair<std::list<System*>, double> path3 = GetUniverse().ShortestPath(source_fleet_next_system_id, target_fleet_prev_system_id);
-                std::pair<std::list<System*>, double> path4 = GetUniverse().ShortestPath(source_fleet_next_system_id, target_fleet_next_system_id);
-                if (int jumps = static_cast<int>(std::max(std::max(path1.first.size(), path2.first.size()),
-                                                          std::max(path1.first.size(), path2.first.size()))))
+                std::pair<std::list<System*>, int> path1 = GetUniverse().LeastJumpsPath(source_fleet_prev_system_id, target_fleet_prev_system_id);
+                std::pair<std::list<System*>, int> path2 = GetUniverse().LeastJumpsPath(source_fleet_prev_system_id, target_fleet_next_system_id);
+                std::pair<std::list<System*>, int> path3 = GetUniverse().LeastJumpsPath(source_fleet_next_system_id, target_fleet_prev_system_id);
+                std::pair<std::list<System*>, int> path4 = GetUniverse().LeastJumpsPath(source_fleet_next_system_id, target_fleet_next_system_id);
+                if (int jumps = static_cast<int>(std::max(std::max(path1.second, path2.second),
+                                                          std::max(path3.second, path4.second))))
                     return jumps - 1 <= jump_limit;
             }
         }
