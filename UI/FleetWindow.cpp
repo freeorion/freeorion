@@ -43,6 +43,8 @@ namespace {
             m_colonizer_icon(0),
             m_selected(false)
         {
+            EnableChildClipping();
+
             AttachChild(m_fleet_name_text);
 
             if (m_fleet) {
@@ -210,6 +212,8 @@ namespace {
             if (!m_ship)
                 throw std::invalid_argument("ShipDataPanel::ShipDataPanel() : Attempted to construct a ShipDataPanel from a null ship pointer.");
 
+            EnableChildClipping();
+
             AttachChild(m_ship_name_text);
 
             m_ship_strength_stat = new StatisticIcon(h, SHIP_NAME_HT, STAT_ICON_WD, h - SHIP_NAME_HT - 1, ClientUI::ART_DIR + "icons/combatstrength.png", 
@@ -316,6 +320,7 @@ namespace {
 
         FleetRow(Fleet* fleet) : m_fleet(fleet) 
         {
+            EnableChildClipping();
             push_back(new FleetDataPanel(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT, m_fleet));
             data_type = "Fleet";
             height = PANEL_HT + 4;
@@ -335,7 +340,7 @@ namespace {
             if (!ship)
                 throw std::invalid_argument("ShipRow::ShipRow() : Attempted to contruct a ShipRow using a null ship pointer.");
 
-            //push_back(ship->Name().empty() ? ship->Design().name : ship->Name(), ClientUI::FONT,  ClientUI::PTS,  ClientUI::TEXT_COLOR);
+            EnableChildClipping();
             push_back(new ShipDataPanel(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT, m_ship));
             data_type = "Ship";
             height = PANEL_HT + 4;
