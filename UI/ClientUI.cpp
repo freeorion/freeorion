@@ -485,46 +485,9 @@ void ClientUI::RestoreFromSaveData(const GG::XMLElement& elem)
     m_map_wnd->RestoreFromSaveData(elem.Child("MapWnd"));
 }
 
-void ClientUI::ScreenIntro()
+void ClientUI::SwitchState(State state)
 {
     HideAllWindows();
-    
-    m_state = STATE_INTRO; // set to intro screen state
-    
-    m_intro_screen = new IntroScreen();
-    GG::App::GetApp()->Register(m_intro_screen);
-
-}//ScreenIntro()
-      
-
-void ClientUI::ScreenProcessTurn()
-{
-    HideAllWindows();
-    
-    m_state = STATE_TURNSTART; // set to turn start
-    
-    m_turn_progress_wnd = new TurnProgressWnd();
-    GG::App::GetApp()->Register(m_turn_progress_wnd);
-
-}//ScreenTurnStart()
-
-                
-void ClientUI::ScreenSettings(const ClientNetworkCore &net)
-{
-    // TODO: modally run options dialog here on top of whatever screen(s) is(are) already active
-
-}//ScreenSettings()
-
-void ClientUI::ScreenEmpireSelect()
-{
-    // TODO: run modally
-
-}//ScreenEmpireSelect()
-
-void ClientUI::ScreenMap()
-{
-    HideAllWindows();
-
     // clean up previous windows, based on previous state
     switch (m_state) {
     case STATE_STARTUP:
@@ -554,6 +517,9 @@ void ClientUI::ScreenMap()
     case STATE_SAVE:
         break;
     case STATE_LOAD:
+        GG::App::GetApp()->Remove(m_turn_progress_wnd );
+        delete m_turn_progress_wnd;
+        m_turn_progress_wnd = 0;
         break;
     case STATE_SHUTDOWN:
         break;
@@ -561,10 +527,80 @@ void ClientUI::ScreenMap()
         break;
     }
 
-    m_state = STATE_MAP;
+    switch (m_state=state) {
+    case STATE_STARTUP:
+        break;
+    case STATE_INTRO:
+        if(m_intro_screen==0) {
+          m_intro_screen = new IntroScreen();
+          GG::App::GetApp()->Register(m_intro_screen);
+        }
+        m_intro_screen->Show();
+        break;
+    case STATE_SETTINGS:
+        break;
+    case STATE_EMPIRESEL:
+        break;
+    case STATE_TURNSTART:
+        if(m_turn_progress_wnd==0) {
+          m_turn_progress_wnd = new TurnProgressWnd();
+          GG::App::GetApp()->Register(m_turn_progress_wnd);
+        }
+        m_turn_progress_wnd->Show();
+        break;
+    case STATE_MAP:
+        m_map_wnd->Show();
+        break;
+    case STATE_SITREP:
+        break;
+    case STATE_PROCESS:
+        break;
+    case STATE_BATTLE:
+        break;
+    case STATE_SAVE:
+        break;
+    case STATE_LOAD:
+        if(m_turn_progress_wnd==0) {
+          m_turn_progress_wnd = new TurnProgressWnd();
+          GG::App::GetApp()->Register(m_turn_progress_wnd);
+        }
+        m_turn_progress_wnd->UpdateTurnProgress( "Loading ...",-1);
+        m_turn_progress_wnd->Show();
+        break;
+    case STATE_SHUTDOWN:
+        break;
+    default:
+        break;
+    }
+}
 
-    m_map_wnd->Show();
+void ClientUI::ScreenIntro()
+{
+    SwitchState(STATE_INTRO); // set to intro screen state
+}//ScreenIntro()
+      
 
+void ClientUI::ScreenProcessTurn()
+{
+    SwitchState(STATE_TURNSTART); // set to turn start
+}//ScreenTurnStart()
+
+                
+void ClientUI::ScreenSettings(const ClientNetworkCore &net)
+{
+    // TODO: modally run options dialog here on top of whatever screen(s) is(are) already active
+
+}//ScreenSettings()
+
+void ClientUI::ScreenEmpireSelect()
+{
+    // TODO: run modally
+
+}//ScreenEmpireSelect()
+
+void ClientUI::ScreenMap()
+{
+    SwitchState(STATE_MAP);
 }//ScreenMap()
 
 void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
@@ -587,10 +623,9 @@ void ClientUI::ScreenSave(bool show)
 
 }//ScreenSave()
 
-void ClientUI::ScreenLoad(bool show)
+void ClientUI::ScreenLoad()
 {
-    // TODO: modally run load dialog here on top of whatever screen(s) is(are) already active
-
+  SwitchState(STATE_LOAD); // set to turn start
 }//ScreenLoad()
 
 void ClientUI::MessageBox(const std::string& message)

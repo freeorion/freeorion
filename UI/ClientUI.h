@@ -128,8 +128,7 @@ public:
     //! @param show true if the screen is to be displayed, false if it is to be turned off
     void ScreenSave(bool show);                    //!< Savegame Screen
     
-    //! @param show true if the screen is to be displayed, false if it is to be turned off
-    void ScreenLoad(bool show);                    //!< Load Game Screen
+    void ScreenLoad(); //!< Load Game Screen
 
     // Zooming Functions
     //! @param id address of a planet that we wish to zoom to
@@ -232,6 +231,8 @@ public:
 
 private:
     void HideAllWindows();              //!< hides all the UI windows from view
+    
+    void SwitchState(State state);     //!< switch current state to >state<, free's last state window and create the one for the new state
 
     const Uint32 TOOLTIP_DELAY;         //!< number of milliseconds to initialize tooltips to
     ToolContainer* m_tooltips;          //!< the single toolcontainer object
