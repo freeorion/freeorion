@@ -1,48 +1,44 @@
 #include "CUIDrawUtil.h"
 
 namespace {
-void FindIsoscelesTriangleVertices(int x1, int y1, int x2, int y2, ShapeOrientation orientation,
-                                   int& x1_, int& y1_, int& x2_, int& y2_, int& x3_, int& y3_)
-{
-    // make sure triangle width is odd, for symmetry
-    if (!(((orientation & (SHAPE_UP | SHAPE_DOWN)) ? x2 - x1 : y2 - y1) % 2))
-        ++((orientation & (SHAPE_UP | SHAPE_DOWN)) ? x2 : y2);
-
-    switch (orientation) {
-    case SHAPE_UP:
-        x1_ = x1;
-        y1_ = y2;
-        x2_ = x2;
-        y2_ = y2;
-        x3_ = (x1 + x2) / 2;
-        y3_ = y1;
-        break;
-    case SHAPE_DOWN:
-        x1_ = x2;
-        y1_ = y1;
-        x2_ = x1;
-        y2_ = y1;
-        x3_ = (x1 + x2) / 2;
-        y3_ = y2;
-        break;
-    case SHAPE_LEFT:
-        x1_ = x2;
-        y1_ = y2;
-        x2_ = x2;
-        y2_ = y1;
-        x3_ = x1;
-        y3_ = (y1 + y2) / 2;
-        break;
-    case SHAPE_RIGHT:
-        x1_ = x1;
-        y1_ = y1;
-        x2_ = x1;
-        y2_ = y2;
-        x3_ = x2;
-        y3_ = (y1 + y2) / 2;
-        break;
+    void FindIsoscelesTriangleVertices(int x1, int y1, int x2, int y2, ShapeOrientation orientation,
+                                       int& x1_, int& y1_, int& x2_, int& y2_, int& x3_, int& y3_)
+    {
+        switch (orientation) {
+        case SHAPE_UP:
+            x1_ = x1;
+            y1_ = y2;
+            x2_ = x2;
+            y2_ = y2;
+            x3_ = (x1 + x2) / 2;
+            y3_ = y1;
+            break;
+        case SHAPE_DOWN:
+            x1_ = x2;
+            y1_ = y1;
+            x2_ = x1;
+            y2_ = y1;
+            x3_ = (x1 + x2) / 2;
+            y3_ = y2;
+            break;
+        case SHAPE_LEFT:
+            x1_ = x2;
+            y1_ = y2;
+            x2_ = x2;
+            y2_ = y1;
+            x3_ = x1;
+            y3_ = (y1 + y2) / 2;
+            break;
+        case SHAPE_RIGHT:
+            x1_ = x1;
+            y1_ = y1;
+            x2_ = x1;
+            y2_ = y2;
+            x3_ = x2;
+            y3_ = (y1 + y2) / 2;
+            break;
+        }
     }
-}
 }
 
 void AdjustBrightness(GG::Clr& color, int amount)
