@@ -41,13 +41,10 @@ Empire::Empire(const GG::XMLElement& elem)
     m_color = GG::Clr( elem.Child("m_color").Child(0) );
     m_next_design_id = lexical_cast<int> ( elem.Child("m_next_design_id").Attribute("value") );
     
- 
-    GG::XMLObjectFactory<SitRepEntry> sitrep_factory;
-    //SitRepEntry::InitObjectFactory(sitrep_factory);
     XMLElement sitrep = elem.Child("m_sitrep_entries");
     for(int i=0; i<sitrep.NumChildren(); i++)
     {
-        AddSitRepEntry( sitrep_factory.GenerateObject(sitrep.Child(i)) );
+        AddSitRepEntry( new SitRepEntry( sitrep.Child(i) ) );
     }
      
     XMLElement container_elem = elem.Child("m_fleets");
