@@ -141,10 +141,13 @@ public:
        Methods to see if items are in our lists
     **************************************************/
 
-    /// Returns true if the given item is in the appropriate list, false if it is not.  
+    /// Returns the set of all available techs.
+    const std::set<std::string>& AvailableTechs() const;
+
+    /// Returns true if the given item is in the appropriate list, false if it is not.
     bool TechAvailable(const std::string& name) const;
 
-    /// Returns true if the given item is in the appropriate list, false if it is not.  
+    /// Returns true if the given item is in the appropriate list, false if it is not.
     bool BuildingTypeAvailable(const std::string& name) const;
 
     /// Returns true if the given item is in the appropriate list, false if it is not.

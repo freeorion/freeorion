@@ -115,6 +115,11 @@ const ShipDesign* Empire::GetShipDesign(const std::string& name) const
     return (it == m_ship_designs.end()) ? 0 : &it->second;
 }
 
+const std::set<std::string>& Empire::AvailableTechs() const
+{
+    return m_techs;
+}
+
 bool Empire::TechAvailable(const std::string& name) const
 {
     Empire::TechItr item = m_techs.find(name);
