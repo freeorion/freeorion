@@ -104,9 +104,9 @@ bool EmpireManager::UpdateEmpireStatus(int empireID,
     
     if(emp != NULL)
     {
-        emp->Name(name);
-        emp->Color(color);
-        emp->ControlState(control);
+        emp->SetName(name);
+        emp->SetColor(color);
+        emp->SetControlState(control);
         
         return true;
     }
