@@ -41,10 +41,10 @@ namespace {
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
-Special::Special(const std::string& name, const std::string& description, Effect::EffectsGroup* effects) :
+Special::Special(const std::string& name, const std::string& description) :
     m_name(name),
     m_description(description),
-    m_effects(effects)
+    m_effects()
 {
 }
 
@@ -55,12 +55,16 @@ Special::Special(const GG::XMLElement& elem)
 
     m_name = elem.Child("name").Text();
     m_description = elem.Child("description").Text();
-    m_effects = new Effect::EffectsGroup(elem.Child("EffectsGroup"));
+    for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
+        m_effects.push_back(new Effect::EffectsGroup(*it));
+    }
 }
 
 Special::~Special()
 {
-    delete m_effects;
+    for (unsigned int i = 0; i < m_effects.size(); ++i) {
+        delete m_effects[i];
+    }
 }
 
 const std::string& Special::Name() const
@@ -73,14 +77,17 @@ const std::string& Special::Description() const
     return m_description;
 }
 
-const Effect::EffectsGroup* Special::Effects() const
+const std::vector<Effect::EffectsGroup*>& Special::Effects() const
 {
     return m_effects;
 }
 
 void Special::Execute(int host_id) const
 {
-    m_effects->Execute(host_id);
+    const std::vector<Effect::EffectsGroup*>& effects = Effects();
+    for (unsigned int i = 0; i < effects.size(); ++i) {
+        effects[i]->Execute(host_id);
+    }
 }
 
 Special* GetSpecial(const std::string& name)

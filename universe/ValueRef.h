@@ -234,16 +234,37 @@ T ValueRef::Operation<T>::Eval(const UniverseObject* source, const UniverseObjec
 template <class T>
 std::string ValueRef::Operation<T>::Description() const
 {
-    std::string retval = m_operand1->Description();
+    if (m_op_type == NEGATE)
+        return ("-(" + m_operand1->Description() + ")");
+
+    bool parenthesize_lhs = false;
+    bool parenthesize_rhs = false;
+    if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
+        if ((m_op_type == TIMES || m_op_type == DIVIDES) &&
+            (lhs->GetOpType() == PLUS || lhs->GetOpType() == MINUS))
+            parenthesize_lhs = true;
+    }
+    if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand2)) {
+        if ((m_op_type == TIMES || m_op_type == DIVIDES) &&
+            (rhs->GetOpType() == PLUS || rhs->GetOpType() == MINUS))
+            parenthesize_rhs = true;
+    }
+    std::string retval;
+    if (parenthesize_lhs)
+        retval += '(' + m_operand1->Description() + ')';
+    else
+        retval += m_operand1->Description();
     switch (m_op_type) {
     case PLUS:    retval += " + "; break;
     case MINUS:   retval += " - "; break;
     case TIMES:   retval += " * "; break;
     case DIVIDES: retval += " / "; break;
-    case NEGATE:
-        return ("-(" + m_operand1->Description() + ")");
+    default:      retval += " ? "; break;
     }
-    retval += m_operand2->Description();
+    if (parenthesize_rhs)
+        retval += '(' + m_operand2->Description() + ')';
+    else
+        retval += m_operand2->Description();
     return retval;
 }
 

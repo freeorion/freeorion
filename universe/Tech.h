@@ -28,6 +28,7 @@ public:
 
     /** \name Structors */ //@{
     Tech(const GG::XMLElement& elem); ///< XML ctor
+    ~Tech(); ///< dtor
     //@}
 
     /** \name Accessors */ //@{
@@ -49,9 +50,9 @@ public:
     /** returns the number of turns required to research this tech, if ResearchCost() RPs are spent per turn */
     int ResearchTurns() const;
 
-    /** returns the effects that are applied to the imperial capitol when this tech is researched;
+    /** returns the effects that are applied to the discovering empire's capitol when this tech is researched;
         not all techs have effects, in which case this returns 0 */
-    const Effect::EffectsGroup* Effects() const;
+    const std::vector<const Effect::EffectsGroup*>& Effects() const;
 
     /** returns the set of names of all techs required before this one can be researched */
     const std::set<std::string>& Prerequisites() const;
@@ -64,15 +65,15 @@ private:
     Tech(const Tech&);                  // disabled
     const Tech& operator=(const Tech&); // disabled
 
-    std::string m_name;
-    std::string m_description;
-    std::string m_category;
-    TechType m_type;
-    double m_research_cost;
-    int m_research_turns;
-    const Effect::EffectsGroup* m_effects;
-    std::set<std::string> m_prerequisites;
-    std::vector<ItemSpec> m_unlocked_items;
+    std::string                              m_name;
+    std::string                              m_description;
+    std::string                              m_category;
+    TechType                                 m_type;
+    double                                   m_research_cost;
+    int                                      m_research_turns;
+    std::vector<const Effect::EffectsGroup*> m_effects;
+    std::set<std::string>                    m_prerequisites;
+    std::vector<ItemSpec>                    m_unlocked_items;
 };
 
 
@@ -94,13 +95,13 @@ struct Tech::ItemSpec
 class TechManager
 {
 private:
-    struct ContainerIndex {};
+    struct CategoryIndex {};
     struct NameIndex {};
     typedef boost::multi_index_container<
         const Tech*,
         boost::multi_index::indexed_by<
             boost::multi_index::ordered_non_unique<
-                boost::multi_index::tag<ContainerIndex>,
+                boost::multi_index::tag<CategoryIndex>,
                 boost::multi_index::const_mem_fun<
                     Tech,
                     const std::string&,
@@ -120,10 +121,10 @@ private:
 
 public:
     /** iterator that runs over techs within a category */
-    typedef TechContainer::index<ContainerIndex>::type::const_iterator category_iterator;
+    typedef TechContainer::index<CategoryIndex>::type::const_iterator category_iterator;
 
     /** iterator that runs over all techs */
-    typedef TechContainer::index<NameIndex>::type::const_iterator      iterator;
+    typedef TechContainer::index<NameIndex>::type::const_iterator     iterator;
 
     /** \name Accessors */ //@{
     /** returns the tech with the name \a name; you should use the free function GetTech() instead */

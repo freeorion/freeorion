@@ -889,25 +889,28 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 # Effects
 
 DESC_EFFECTS_GROUP_SCOPE
-Objects affected:\nAll objects
+Objects affected:\nAny object%1%
 
 DESC_EFFECTS_GROUP_ACTIVATION
-Effect fires if there is at least one object
+Effect is active if the source is an object%1%
+
+DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
+Effect is always active
 
 
 # SetMeter
 
 DESC_SIMPLE_SET_METER_MAX
-max %1% %2%%3%
+Max %1% %2%%3%
 
 DESC_SIMPLE_SET_METER_CURRENT
-current %1% %2%%3%
+Current %1% %2%%3%
 
 DESC_COMPLEX_SET_METER_MAX
-set max %1% to %2%
+Set max %1% to %2%
 
 DESC_COMPLEX_SET_METER_CURRENT
-set current %1% to %2%
+Set current %1% to %2%
 
 
 # others
@@ -961,80 +964,152 @@ DESC_ALL
  in the universe
 
 DESC_EMPIRE_AFFILIATION_SELF
- belonging to empire %1%
+ that belongs to %1% empire
+
+DESC_EMPIRE_AFFILIATION_SELF_NOT
+ that belongs to %1% empire
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
- belonging only to empire %1%
+ that belongs only to %1% empire
+
+DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE_NOT
+ that belongs only to %1% empire
 
 DESC_EMPIRE_AFFILIATION
- belonging to an %1% of empire %1%
+ that belongs to an %1% of %1% empire
+
+DESC_EMPIRE_AFFILIATION_NOT
+ that belongs to an %1% of %1% empire
 
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE
- belonging only to an %1% of empire %1%
+ that belongs only to an %1% of %1% empire
+
+DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
+ that belongs only to an %1% of %1% empire
 
 # this one is intentionally left empty
 DESC_SELF
 
 
+DESC_SELF_NOT
+ that is not the source object
+
 DESC_TYPE
- of type %1%
+ that is of type %1%
+
+DESC_TYPE_NOT
+ that is not of type %1%
 
 DESC_BUILDING
- containing a %1% building
+ that contains a %1% building
+
+DESC_BUILDING_NOT
+ that does't contain a %1% building
 
 DESC_SPECIAL
- with a %1% special
+ that has a %1% special
+
+DESC_SPECIAL_NOT
+ that doesn't have a %1% special
 
 DESC_CONTAINS
- containing objects %1%
+ that contains an object%1%
+
+DESC_CONTAINS_NOT
+ that doesn't contain an object%1%
 
 DESC_PLANET_TYPE
- that are %1% planets
+ that is a %1% planet
+
+DESC_PLANET_TYPE_NOT
+ that is not a %1% planet
 
 DESC_PLANET_SIZE
- that are %1% planets
+ that is %1% a planet
+
+DESC_PLANET_SIZE_NOT
+ that is not %1% a planet
 
 DESC_PLANET_ENVIRONMENT
- that are %1% planets
+ that is %1% a planet
+
+DESC_PLANET_ENVIRONMENT_NOT
+ that is not %1% a planet
 
 DESC_FOCUS_TYPE_PRIMARY
- with primary focus %1%
+ that has primary focus %1%
+
+DESC_FOCUS_TYPE_PRIMARY_NOT
+ that doesn't have primary focus %1%
 
 DESC_FOCUS_TYPE_SECONDARY
- with secondary focus %1%
+ that has secondary focus %1%
+
+DESC_FOCUS_TYPE_SECONDARY_NOT
+ that doesn't have secondary focus %1%
 
 DESC_STAR_TYPE
- that are systems with %1% stars
+ that is a system with a %1% star
+
+DESC_STAR_TYPE_NOT
+ that is not a system with a %1% star
+
+DESC_CHANCE_PERCENTAGE
+ on a %1%% chance
+
+DESC_CHANCE_PERCENTAGE_NOT
+ on a (100 - %1%)% chance
 
 DESC_CHANCE
- with a %1% probability
+ with a probability of %1%
+
+DESC_CHANCE_NOT
+ with a probability of 1 - %1%
 
 DESC_METER_VALUE_MAX
- with a max %1% between %2% and %3%
+ that has a max %1% between %2% and %3%
+
+DESC_METER_VALUE_MAX_NOT
+ that doesn't have a max %1% between %2% and %3%
 
 DESC_METER_VALUE_CURRENT
- with a current %1% between %2% and %3%
+ that has a current %1% between %2% and %3%
+
+DESC_METER_VALUE_CURRENT_NOT
+ that doesn't have a current %1% between %2% and %3%
 
 DESC_EMPIRE_STOCKPILE_VALUE
- belonging to an empire with a %1% stockpile between %2% and %3%
+ that belongs to an empire with a %1% stockpile between %2% and %3%
+
+DESC_EMPIRE_STOCKPILE_VALUE_NOT
+ that doesn't belong to an empire with a %1% stockpile between %2% and %3%
 
 DESC_VISIBLE_TO_SINGLE_EMPIRE
- visible to %1% empire
+ that is visible to the %1% empire
+
+DESC_VISIBLE_TO_SINGLE_EMPIRE_NOT
+ that is not visible to the %1% empire
 
 DESC_VISIBLE_TO_EMPIRES
- visible to %1% empires
+ that is visible to one of the %1% empires
+
+DESC_VISIBLE_TO_EMPIRES_NOT
+ that is not visible to one of the %1% empires
 
 DESC_WITHIN_DISTANCE
- within %1% of any object%2%
+ that is within %1% of any object%2%
+
+DESC_WITHIN_DISTANCE_NOT
+ that is not within %1% of any object%2%
 
 DESC_WITHIN_STARLANE_JUMPS
- within %1% starlane jumps of any object%2%
+ that is within %1% starlane jumps of any object%2%
+
+DESC_WITHIN_STARLANE_JUMPS_NOT
+ that is not within %1% starlane jumps of any object%2%
 
 DESC_AND_BETWEEN_OPERANDS
-, that are also objects
+ and
 
 DESC_OR_BETWEEN_OPERANDS
-, or objects
-
-DESC_NOT
- that are not objects
+ or

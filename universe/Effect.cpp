@@ -35,16 +35,22 @@ namespace {
                 return retval;
             if (const ValueRef::Variable<double>* var = dynamic_cast<const ValueRef::Variable<double>*>(op->LHS())) {
                 if (const ValueRef::Constant<double>* constant = dynamic_cast<const ValueRef::Constant<double>*>(op->RHS())) {
+                    std::string meter_str = UserString(lexical_cast<std::string>(meter));
+                    if (!meter_str.empty())
+                        meter_str[0] = std::toupper(meter_str[0]);
                     retval.get<0>() = var->PropertyName().size() == 1 &&
-                        (max ? "Max" : "Current") + UserString(lexical_cast<std::string>(meter)) == var->PropertyName()[0];
+                        ((max ? "Max" : "Current") + meter_str) == var->PropertyName()[0];
                     retval.get<1>() = op->GetOpType();
                     retval.get<2>() = constant->Value();
                     return retval;
                 }
-            } else if (const ValueRef::Variable<double>* var = dynamic_cast<const ValueRef::Variable<double>*>(op->LHS())) {
+            } else if (const ValueRef::Variable<double>* var = dynamic_cast<const ValueRef::Variable<double>*>(op->RHS())) {
                 if (const ValueRef::Constant<double>* constant = dynamic_cast<const ValueRef::Constant<double>*>(op->LHS())) {
+                    std::string meter_str = UserString(lexical_cast<std::string>(meter));
+                    if (!meter_str.empty())
+                        meter_str[0] = std::toupper(meter_str[0]);
                     retval.get<0>() = var->PropertyName().size() == 1 &&
-                        (max ? "Max" : "Current") + UserString(lexical_cast<std::string>(meter)) == var->PropertyName()[0];
+                        ((max ? "Max" : "Current") + meter_str) == var->PropertyName()[0];
                     retval.get<1>() = op->GetOpType();
                     retval.get<2>() = constant->Value();
                     return retval;
@@ -99,7 +105,8 @@ EffectsGroup::EffectsGroup(const GG::XMLElement& elem)
 
     m_scope = Condition::ConditionFactory().GenerateObject(elem.Child("scope").Child(0));
     m_activation = Condition::ConditionFactory().GenerateObject(elem.Child("activation").Child(0));
-    m_stacking_group = elem.Child("stacking_group").Text();
+    if (elem.ContainsChild("stacking_group"))
+        m_stacking_group = elem.Child("stacking_group").Text();
     for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
         m_effects.push_back(EffectFactory().GenerateObject(*it));
     }
@@ -159,7 +166,10 @@ EffectsGroup::Description EffectsGroup::GetDescription() const
 {
     Description retval;
     retval.scope_description = str(format(UserString("DESC_EFFECTS_GROUP_SCOPE")) % m_scope->Description());
-    retval.activation_description = str(format(UserString("DESC_EFFECTS_GROUP_ACTIVATION")) % m_activation->Description());
+    if (dynamic_cast<const Condition::Self*>(m_activation) || dynamic_cast<const Condition::All*>(m_activation))
+        retval.activation_description = UserString("DESC_EFFECTS_GROUP_ALWAYS_ACTIVE");
+    else
+        retval.activation_description = str(format(UserString("DESC_EFFECTS_GROUP_ACTIVATION")) % m_activation->Description());
     for (unsigned int i = 0; i < m_effects.size(); ++i) {
         retval.effect_descriptions.push_back(m_effects[i]->Description());
     }
@@ -210,7 +220,6 @@ void SetMeter::Execute(const UniverseObject* source, UniverseObject* target) con
 
 std::string SetMeter::Description() const
 {
-    std::string retval;
     bool simple;
     ValueRef::OpType op;
     double const_operand;
@@ -218,22 +227,21 @@ std::string SetMeter::Description() const
     if (simple) {
         char op_char = '+';
         switch (op) {
-        case ValueRef::PLUS: op_char = '+';
-        case ValueRef::MINUS: op_char = '-';
-        case ValueRef::TIMES: op_char = '*';
-        case ValueRef::DIVIDES: op_char = '/';
+        case ValueRef::PLUS:    op_char = '+'; break;
+        case ValueRef::MINUS:   op_char = '-'; break;
+        case ValueRef::TIMES:   op_char = '*'; break;
+        case ValueRef::DIVIDES: op_char = '/'; break;
         default: op_char = '?';
         }
-        str(format(UserString(m_max ? "DESC_SIMPLE_SET_METER_MAX" : "DESC_SIMPLE_SET_METER_CURRENT"))
-            % UserString(lexical_cast<std::string>(m_meter))
-            % op_char
-            % lexical_cast<std::string>(const_operand));
+        return str(format(UserString(m_max ? "DESC_SIMPLE_SET_METER_MAX" : "DESC_SIMPLE_SET_METER_CURRENT"))
+                   % UserString(lexical_cast<std::string>(m_meter))
+                   % op_char
+                   % lexical_cast<std::string>(const_operand));
     } else {
-        str(format(UserString(m_max ? "DESC_COMPLEX_SET_METER_MAX" : "DESC_COMPLEX_SET_METER_CURRENT"))
-            % UserString(lexical_cast<std::string>(m_meter))
-            % lexical_cast<std::string>(const_operand));
+        return str(format(UserString(m_max ? "DESC_COMPLEX_SET_METER_MAX" : "DESC_COMPLEX_SET_METER_CURRENT"))
+                   % UserString(lexical_cast<std::string>(m_meter))
+                   % m_value->Description());
     }
-    return retval;
 }
 
 

@@ -125,7 +125,10 @@ void Building::SetPlanetID(int planet_id)
 
 void Building::ExecuteEffects()
 {
-    GetBuildingType(m_building_type)->Effects()->Execute(ID());
+    const std::vector<const Effect::EffectsGroup*>& effects = GetBuildingType(m_building_type)->Effects();
+    for (unsigned int i = 0; i < effects.size(); ++i) {
+        effects[i]->Execute(ID());
+    }
 }
 
 void Building::MovementPhase()
@@ -147,13 +150,13 @@ BuildingType::BuildingType() :
 {
 }
 
-BuildingType::BuildingType(const std::string& name, const std::string& description, const Effect::EffectsGroup* effects) :
+BuildingType::BuildingType(const std::string& name, const std::string& description) :
     m_name(name),
     m_description(description),
     m_build_cost(0.0),
     m_build_time(0),
     m_maintenance_cost(0.0),
-    m_effects(effects)
+    m_effects()
 {
 }
 
@@ -169,7 +172,16 @@ BuildingType::BuildingType(const GG::XMLElement& elem)
     m_build_cost = lexical_cast<double>(elem.Child("build_cost").Text());
     m_build_time = lexical_cast<int>(elem.Child("build_time").Text());
     m_maintenance_cost = lexical_cast<double>(elem.Child("maintenance_cost").Text());
-    m_effects = new Effect::EffectsGroup(elem.Child("EffectsGroup"));
+    for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
+        m_effects.push_back(new Effect::EffectsGroup(*it));
+    }
+}
+
+BuildingType::~BuildingType()
+{
+    for (unsigned int i = 0; i < m_effects.size(); ++i) {
+        delete m_effects[i];
+    }
 }
 
 const std::string& BuildingType::Name() const
@@ -197,7 +209,7 @@ double BuildingType::MaintenanceCost() const
     return m_maintenance_cost;
 }
 
-const Effect::EffectsGroup* BuildingType::Effects() const
+const std::vector<const Effect::EffectsGroup*>& BuildingType::Effects() const
 {
     return m_effects;
 }

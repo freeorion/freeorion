@@ -51,7 +51,7 @@ struct Condition::ConditionBase
     ConditionBase();
     virtual ~ConditionBase();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -63,7 +63,7 @@ struct Condition::All : Condition::ConditionBase
     All();
     All(const GG::XMLElement& elem);
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 };
 
 /** Matches all objects that are owned (if \a exclusive == false) or only owned (if \a exclusive == true) by an empire that has
@@ -73,7 +73,7 @@ struct Condition::EmpireAffiliation : Condition::ConditionBase
     EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation, bool exclusive);
     EmpireAffiliation(const GG::XMLElement& elem);
     virtual ~EmpireAffiliation();
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -87,7 +87,7 @@ struct Condition::Self : Condition::ConditionBase
 {
     Self();
     Self(const GG::XMLElement& elem);
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -98,7 +98,7 @@ struct Condition::Type : Condition::ConditionBase
 {
     Type(const ValueRef::ValueRefBase<UniverseObjectType>* type);
     Type(const GG::XMLElement& elem);
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -110,7 +110,7 @@ struct Condition::Building : Condition::ConditionBase
 {
     Building(const std::string& name);
     Building(const GG::XMLElement& elem);
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -123,7 +123,7 @@ struct Condition::HasSpecial : Condition::ConditionBase
 {
     HasSpecial(const std::string& name);
     HasSpecial(const GG::XMLElement& elem);
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -136,7 +136,7 @@ struct Condition::Contains : Condition::ConditionBase
 {
     Contains(const ConditionBase* condition);
     Contains(const GG::XMLElement& elem);
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -150,7 +150,7 @@ struct Condition::PlanetType : Condition::ConditionBase
     PlanetType(const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>& types);
     PlanetType(const GG::XMLElement& elem);
     virtual ~PlanetType();
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -164,7 +164,7 @@ struct Condition::PlanetSize : Condition::ConditionBase
     PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes);
     PlanetSize(const GG::XMLElement& elem);
     virtual ~PlanetSize();
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -178,7 +178,7 @@ struct Condition::PlanetEnvironment : Condition::ConditionBase
     PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments);
     PlanetEnvironment(const GG::XMLElement& elem);
     virtual ~PlanetEnvironment();
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -191,7 +191,7 @@ struct Condition::FocusType : Condition::ConditionBase
     FocusType(const std::vector<const ValueRef::ValueRefBase< ::FocusType>*>& foci, bool primary);
     FocusType(const GG::XMLElement& elem);
     virtual ~FocusType();
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -206,7 +206,7 @@ struct Condition::StarType : Condition::ConditionBase
     StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types);
     StarType(const GG::XMLElement& elem);
     virtual ~StarType();
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -219,7 +219,7 @@ struct Condition::Chance : Condition::ConditionBase
     Chance(const ValueRef::ValueRefBase<double>* chance);
     Chance(const GG::XMLElement& elem);
     virtual ~Chance();
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -233,7 +233,7 @@ struct Condition::MeterValue : Condition::ConditionBase
     MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high, bool max_meter);
     MeterValue(const GG::XMLElement& elem);
     virtual ~MeterValue();
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -250,7 +250,7 @@ struct Condition::EmpireStockpileValue : Condition::ConditionBase
     EmpireStockpileValue(StockpileType stockpile, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high);
     EmpireStockpileValue(const GG::XMLElement& elem);
     virtual ~EmpireStockpileValue();
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -265,7 +265,7 @@ struct Condition::VisibleToEmpire : Condition::ConditionBase
     VisibleToEmpire(const std::vector<const ValueRef::ValueRefBase<int>*>& empire_ids);
     VisibleToEmpire(const GG::XMLElement& elem);
     virtual ~VisibleToEmpire();
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -281,7 +281,7 @@ struct Condition::WithinDistance : Condition::ConditionBase
     WithinDistance(const GG::XMLElement& elem);
     virtual ~WithinDistance();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -298,7 +298,7 @@ struct Condition::WithinStarlaneJumps : Condition::ConditionBase
     WithinStarlaneJumps(const GG::XMLElement& elem);
     virtual ~WithinStarlaneJumps();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -310,7 +310,7 @@ struct Condition::EffectTarget : Condition::ConditionBase
 {
     EffectTarget();
     EffectTarget(const GG::XMLElement& elem);
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
@@ -323,7 +323,7 @@ struct Condition::And : Condition::ConditionBase
     And(const GG::XMLElement& elem);
     virtual ~And();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     std::vector<const ConditionBase*> m_operands;
@@ -336,7 +336,7 @@ struct Condition::Or : Condition::ConditionBase
     Or(const GG::XMLElement& elem);
     virtual ~Or();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     std::vector<const ConditionBase*> m_operands;
@@ -349,7 +349,7 @@ struct Condition::Not : Condition::ConditionBase
     Not(const GG::XMLElement& elem);
     virtual ~Not();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
-    virtual std::string Description() const;
+    virtual std::string Description(bool negated = false) const;
 
 private:
     const ConditionBase* m_operand;

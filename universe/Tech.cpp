@@ -84,8 +84,11 @@ Tech::Tech(const GG::XMLElement& elem) :
     m_research_cost = lexical_cast<double>(elem.Child("research_cost").Text());
     m_research_turns = lexical_cast<int>(elem.Child("research_turns").Text());
 
-    if (elem.ContainsChild("EffectsGroup"))
-        m_effects = new Effect::EffectsGroup(elem.Child("EffectsGroup"));
+    if (elem.ContainsChild("effects")) {
+        for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
+            m_effects.push_back(new Effect::EffectsGroup(*it));
+        }
+    }
 
     for (GG::XMLElement::const_child_iterator it = elem.Child("prerequisites").child_begin();
          it != elem.Child("prerequisites").child_end();
@@ -97,6 +100,13 @@ Tech::Tech(const GG::XMLElement& elem) :
          it != elem.Child("unlocked_items").child_end();
          ++it) {
         m_unlocked_items.push_back(ItemSpec(*it));
+    }
+}
+
+Tech::~Tech()
+{
+    for (unsigned int i = 0; i < m_effects.size(); ++i) {
+        delete m_effects[i];
     }
 }
 
@@ -130,7 +140,7 @@ int Tech::ResearchTurns() const
     return m_research_turns;
 }
 
-const Effect::EffectsGroup* Tech::Effects() const
+const std::vector<const Effect::EffectsGroup*>& Tech::Effects() const
 {
     return m_effects;
 }
@@ -225,12 +235,12 @@ TechManager::iterator TechManager::end() const
 
 TechManager::category_iterator TechManager::category_begin(const std::string& name) const
 {
-    return m_techs.get<ContainerIndex>().lower_bound(name);
+    return m_techs.get<CategoryIndex>().lower_bound(name);
 }
 
 TechManager::category_iterator TechManager::category_end(const std::string& name) const
 {
-    return m_techs.get<ContainerIndex>().upper_bound(name);
+    return m_techs.get<CategoryIndex>().upper_bound(name);
 }
 
 TechManager::TechManager()
@@ -251,7 +261,14 @@ TechManager::TechManager()
         if (it->Tag() != "Tech" && it->Tag() != "Category")
             throw std::runtime_error("ERROR: Encountered non-Tech, non-Category in techs.xml!");
         if (it->Tag() == "Tech") {
-            Tech* tech = new Tech(*it);
+            Tech* tech = 0;
+            try {
+                tech = new Tech(*it);
+            } catch (const std::runtime_error& e) {
+                std::stringstream stream;
+                it->WriteElement(stream);
+                throw std::runtime_error(std::string("ERROR: \"") + e.what() + "\" encountered when loading this Tech XML code:\n" + stream.str());
+            }
             categories_seen_in_techs.insert(tech->Category());
             if (m_techs.get<NameIndex>().find(tech->Name()) != m_techs.get<NameIndex>().end())
                 throw std::runtime_error(("ERROR: More than one tech in techs.xml has the name " + tech->Name()).c_str());

@@ -101,7 +101,7 @@ void Condition::ConditionBase::Eval(const UniverseObject* source, ObjectSet& tar
     }
 }
 
-std::string Condition::ConditionBase::Description() const
+std::string Condition::ConditionBase::Description(bool negated/* = false*/) const
 {
     return "";
 }
@@ -132,7 +132,7 @@ void Condition::All::Eval(const UniverseObject* source, ObjectSet& targets, Obje
     }
 }
 
-std::string Condition::All::Description() const
+std::string Condition::All::Description(bool negated/* = false*/) const
 {
     return UserString("DESC_ALL");
 }
@@ -162,15 +162,22 @@ Condition::EmpireAffiliation::~EmpireAffiliation()
     delete m_empire_id;
 }
 
-std::string Condition::EmpireAffiliation::Description() const
+std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) const
 {
     std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
-    if (m_affiliation == AFFIL_SELF)
-        return str(format(UserString(m_exclusive ? "DESC_EMPIRE_AFFILIATION_SELF" : "DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE")) % value_str);
-    else
-        return str(format(UserString(m_exclusive ? "DESC_EMPIRE_AFFILIATION" : "DESC_EMPIRE_AFFILIATION_EXCLUSIVE"))
+    if (m_affiliation == AFFIL_SELF) {
+        std::string description_str = m_exclusive ? "DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE" : "DESC_EMPIRE_AFFILIATION_SELF";
+        if (negated)
+            description_str += "_NOT";
+        return str(format(UserString(description_str)) % value_str);
+    } else {
+        std::string description_str = m_exclusive ? "DESC_EMPIRE_AFFILIATION_EXCLUSIVE" : "DESC_EMPIRE_AFFILIATION";
+        if (negated)
+            description_str += "_NOT";
+        return str(format(UserString(description_str))
                    % UserString(lexical_cast<std::string>(m_affiliation))
                    % value_str);
+    }
 }
 
 bool Condition::EmpireAffiliation::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -204,9 +211,12 @@ Condition::Self::Self(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::Self : Attempted to create a Self condition from an XML element with a tag other than \"Condition::Self\".");
 }
 
-std::string Condition::Self::Description() const
+std::string Condition::Self::Description(bool negated/* = false*/) const
 {
-    return UserString("DESC_SELF");
+    std::string description_str = "DESC_SELF";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
 }
 
 bool Condition::Self::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -230,10 +240,13 @@ Condition::Type::Type(const GG::XMLElement& elem)
     m_type = ParseArithmeticExpression<UniverseObjectType>(elem.Text());
 }
 
-std::string Condition::Type::Description() const
+std::string Condition::Type::Description(bool negated/* = false*/) const
 {
     std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
-    return str(format(UserString("DESC_TYPE")) % value_str);
+    std::string description_str = "DESC_TYPE";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str)) % value_str);
 }
 
 bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -282,9 +295,12 @@ Condition::Building::Building(const GG::XMLElement& elem)
     m_name = elem.Text();
 }
 
-std::string Condition::Building::Description() const
+std::string Condition::Building::Description(bool negated/* = false*/) const
 {
-    return str(format(UserString("DESC_BUILDING")) % UserString(m_name));
+    std::string description_str = "DESC_BUILDING";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str)) % UserString(m_name));
 }
 
 bool Condition::Building::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -309,9 +325,12 @@ Condition::HasSpecial::HasSpecial(const GG::XMLElement& elem)
     m_name = elem.Text();
 }
 
-std::string Condition::HasSpecial::Description() const
+std::string Condition::HasSpecial::Description(bool negated/* = false*/) const
 {
-    return str(format(UserString("DESC_SPECIAL")) % UserString(m_name));
+    std::string description_str = "DESC_SPECIAL";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str)) % UserString(m_name));
 }
 
 bool Condition::HasSpecial::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -335,9 +354,12 @@ Condition::Contains::Contains(const GG::XMLElement& elem)
     m_condition = ConditionFactory().GenerateObject(elem.Child(0));
 }
 
-std::string Condition::Contains::Description() const
+std::string Condition::Contains::Description(bool negated/* = false*/) const
 {
-    return str(format(UserString("DESC_CONTAINS")) % m_condition->Description());
+    std::string description_str = "DESC_CONTAINS";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str)) % m_condition->Description());
 }
 
 bool Condition::Contains::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -411,7 +433,7 @@ Condition::PlanetType::~PlanetType()
     }
 }
 
-std::string Condition::PlanetType::Description() const
+std::string Condition::PlanetType::Description(bool negated/* = false*/) const
 {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
@@ -424,7 +446,10 @@ std::string Condition::PlanetType::Description() const
             values_str += " ";
         }
     }
-    return str(format(UserString("DESC_PLANET_TYPE")) % values_str);
+    std::string description_str = "DESC_PLANET_TYPE";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str)) % values_str);
 }
 
 bool Condition::PlanetType::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -468,7 +493,7 @@ Condition::PlanetSize::~PlanetSize()
     }
 }
 
-std::string Condition::PlanetSize::Description() const
+std::string Condition::PlanetSize::Description(bool negated/* = false*/) const
 {
     std::string values_str;
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
@@ -481,7 +506,10 @@ std::string Condition::PlanetSize::Description() const
             values_str += " ";
         }
     }
-    return str(format(UserString("DESC_PLANET_SIZE")) % values_str);
+    std::string description_str = "DESC_PLANET_SIZE";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str)) % values_str);
 }
 
 bool Condition::PlanetSize::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -525,7 +553,7 @@ Condition::PlanetEnvironment::~PlanetEnvironment()
     }
 }
 
-std::string Condition::PlanetEnvironment::Description() const
+std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) const
 {
     std::string values_str;
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
@@ -538,7 +566,10 @@ std::string Condition::PlanetEnvironment::Description() const
             values_str += " ";
         }
     }
-    return str(format(UserString("DESC_PLANET_ENVIRONMENT")) % values_str);
+    std::string description_str = "DESC_PLANET_ENVIRONMENT";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str)) % values_str);
 }
 
 bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -584,7 +615,7 @@ Condition::FocusType::~FocusType()
     }
 }
 
-std::string Condition::FocusType::Description() const
+std::string Condition::FocusType::Description(bool negated/* = false*/) const
 {
     std::string values_str;
     for (unsigned int i = 0; i < m_foci.size(); ++i) {
@@ -597,7 +628,10 @@ std::string Condition::FocusType::Description() const
             values_str += " ";
         }
     }
-    return str(format(UserString(m_primary ? "DESC_FOCUS_TYPE_PRIMARY" : "DESC_FOCUS_TYPE_SECONDARY")) % values_str);
+    std::string description_str = m_primary ? "DESC_FOCUS_TYPE_PRIMARY" : "DESC_FOCUS_TYPE_SECONDARY";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str)) % values_str);
 }
 
 bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -636,7 +670,7 @@ Condition::StarType::~StarType()
     }
 }
 
-std::string Condition::StarType::Description() const
+std::string Condition::StarType::Description(bool negated/* = false*/) const
 {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
@@ -649,7 +683,10 @@ std::string Condition::StarType::Description() const
             values_str += " ";
         }
     }
-    return str(format(UserString("DESC_STAR_TYPE")) % values_str);
+    std::string description_str = "DESC_STAR_TYPE";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str)) % values_str);
 }
 
 bool Condition::StarType::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -685,10 +722,20 @@ Condition::Chance::~Chance()
     delete m_chance;
 }
 
-std::string Condition::Chance::Description() const
+std::string Condition::Chance::Description(bool negated/* = false*/) const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_chance) ? lexical_cast<std::string>(m_chance->Eval(0, 0)) : m_chance->Description();
-    return str(format(UserString("DESC_CHANCE")) % value_str);
+    std::string value_str;
+    if (ValueRef::ConstantExpr(m_chance)) {
+        std::string description_str = "DESC_CHANCE_PERCENTAGE";
+        if (negated)
+            description_str += "_NOT";
+        return str(format(UserString(description_str)) % lexical_cast<std::string>(std::max(0.0, std::min(m_chance->Eval(0, 0), 1.0)) * 100));
+    } else {
+        std::string description_str = "DESC_CHANCE";
+        if (negated)
+            description_str += "_NOT";
+        return str(format(UserString(description_str)) % m_chance->Description());
+    }
 }
 
 bool Condition::Chance::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -725,11 +772,14 @@ Condition::MeterValue::~MeterValue()
     delete m_high;
 }
 
-std::string Condition::MeterValue::Description() const
+std::string Condition::MeterValue::Description(bool negated/* = false*/) const
 {
     std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
     std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
-    return str(format(UserString(m_max_meter ? "DESC_METER_VALUE_MAX" : "DESC_METER_VALUE_CURRENT"))
+    std::string description_str = m_max_meter ? "DESC_METER_VALUE_MAX" : "DESC_METER_VALUE_CURRENT";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str))
                % UserString(lexical_cast<std::string>(m_meter))
                % low_str
                % high_str);
@@ -772,11 +822,14 @@ Condition::EmpireStockpileValue::~EmpireStockpileValue()
     delete m_high;
 }
 
-std::string Condition::EmpireStockpileValue::Description() const
+std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*/) const
 {
     std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
     std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
-    return str(format(UserString("DESC_EMPIRE_STOCKPILE_VALUE"))
+    std::string description_str = "DESC_EMPIRE_STOCKPILE_VALUE";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str))
                % UserString(lexical_cast<std::string>(m_stockpile))
                % low_str
                % high_str);
@@ -825,11 +878,14 @@ Condition::VisibleToEmpire::~VisibleToEmpire()
     }
 }
 
-std::string Condition::VisibleToEmpire::Description() const
+std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) const
 {
     if (m_empire_ids.size() == 1) {
         std::string value_str = ValueRef::ConstantExpr(m_empire_ids[0]) ? Empires().Lookup(m_empire_ids[0]->Eval(0, 0))->Name() : m_empire_ids[0]->Description();
-        return str(format(UserString("DESC_VISIBLE_TO_SINGLE_EMPIRE")) % value_str);
+        std::string description_str = "DESC_VISIBLE_TO_SINGLE_EMPIRE";
+        if (negated)
+            description_str += "_NOT";
+        return str(format(UserString(description_str)) % value_str);
     } else {
         std::string values_str;
         for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
@@ -842,7 +898,10 @@ std::string Condition::VisibleToEmpire::Description() const
                 values_str += " ";
             }
         }
-        return str(format(UserString("DESC_VISIBLE_TO_EMPIRES")) % values_str);
+        std::string description_str = "DESC_VISIBLE_TO_EMPIRES";
+        if (negated)
+            description_str += "_NOT";
+        return str(format(UserString(description_str)) % values_str);
     }
 }
 
@@ -910,10 +969,13 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
     }
 }
 
-std::string Condition::WithinDistance::Description() const
+std::string Condition::WithinDistance::Description(bool negated/* = false*/) const
 {
     std::string value_str = ValueRef::ConstantExpr(m_distance) ? lexical_cast<std::string>(m_distance->Eval(0, 0)) : m_distance->Description();
-    return str(format(UserString("DESC_WITHIN_DISTANCE"))
+    std::string description_str = "DESC_WITHIN_DISTANCE";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str))
                % value_str
                % m_condition->Description());
 }
@@ -981,10 +1043,13 @@ void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSe
     }
 }
 
-std::string Condition::WithinStarlaneJumps::Description() const
+std::string Condition::WithinStarlaneJumps::Description(bool negated/* = false*/) const
 {
     std::string value_str = ValueRef::ConstantExpr(m_jumps) ? lexical_cast<std::string>(m_jumps->Eval(0, 0)) : m_jumps->Description();
-    return str(format(UserString("DESC_WITHIN_DISTANCE"))
+    std::string description_str = "DESC_WITHIN_STARLANE_JUMPS";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str))
                % value_str
                % m_condition->Description());
 }
@@ -1059,7 +1124,7 @@ Condition::EffectTarget::EffectTarget(const GG::XMLElement& elem)
     // TODO
 }
 
-std::string Condition::EffectTarget::Description() const
+std::string Condition::EffectTarget::Description(bool negated/* = false*/) const
 {
     std::string retval;
     // TODO
@@ -1129,7 +1194,7 @@ void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, Obje
     }
 }
 
-std::string Condition::And::Description() const
+std::string Condition::And::Description(bool negated/* = false*/) const
 {
     if (m_operands.size() == 1) {
         return m_operands[0]->Description();
@@ -1204,7 +1269,7 @@ void Condition::Or::Eval(const UniverseObject* source, ObjectSet& targets, Objec
     }
 }
 
-std::string Condition::Or::Description() const
+std::string Condition::Or::Description(bool negated/* = false*/) const
 {
     if (m_operands.size() == 1) {
         return m_operands[0]->Description();
@@ -1253,7 +1318,7 @@ void Condition::Not::Eval(const UniverseObject* source, ObjectSet& targets, Obje
     m_operand->Eval(source, non_targets, targets, search_domain == TARGETS ? NON_TARGETS : TARGETS);
 }
 
-std::string Condition::Not::Description() const
+std::string Condition::Not::Description(bool negated/* = false*/) const
 {
-    return UserString("DESC_NOT") + m_operand->Description();
+    return m_operand->Description(true);
 }

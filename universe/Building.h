@@ -55,8 +55,9 @@ class BuildingType
 public:
     /** \name Structors */ //@{
     BuildingType(); ///< default ctor
-    BuildingType(const std::string& name, const std::string& description, const Effect::EffectsGroup* effects); ///< basic ctor
+    BuildingType(const std::string& name, const std::string& description); ///< basic ctor
     BuildingType(const GG::XMLElement& elem); ///< ctor that constructs a BuildingType object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a BuildingType object
+    ~BuildingType(); ///< dtor
     //@}
 
     /** \name Accessors */ //@{
@@ -65,16 +66,17 @@ public:
     double                      BuildCost() const;        ///< returns the number of production points required to build this building
     int                         BuildTime() const;        ///< returns the number of turns required to build this building
     double                      MaintenanceCost() const;  ///< returns the number of monetary points required per turn to operate this building
-    const Effect::EffectsGroup* Effects() const;          ///< returns the EffectsGroup that encapsulates the effects that buildings of this type have when operational
+    const std::vector<const Effect::EffectsGroup*>&
+                                Effects() const;            ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
     //@}
 
 private:
-    std::string                 m_name;
-    std::string                 m_description;
-    double                      m_build_cost;
-    int                         m_build_time;
-    double                      m_maintenance_cost;
-    const Effect::EffectsGroup* m_effects;
+    std::string                              m_name;
+    std::string                              m_description;
+    double                                   m_build_cost;
+    int                                      m_build_time;
+    double                                   m_maintenance_cost;
+    std::vector<const Effect::EffectsGroup*> m_effects;
 };
 
 /** Returns the BuildingType specification object for a building of type \a name.  If no such BuildingType
