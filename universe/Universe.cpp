@@ -1377,13 +1377,21 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds)
       int fleet_id = Insert(home_fleet);
       home_system->Insert(home_fleet);
 
-      int ship_id = Insert(new Ship(empire_id, scout_id));
+      Ship* ship = 0;
+
+      ship = new Ship(empire_id, scout_id);
+      ship->Rename("Scout");
+      int ship_id = Insert(ship);
       home_fleet->AddShip(ship_id);
 
-      ship_id = Insert(new Ship(empire_id, scout_id));
+      ship = new Ship(empire_id, scout_id);
+      ship->Rename("Scout");
+      ship_id = Insert(ship);
       home_fleet->AddShip(ship_id);
 
-      ship_id = Insert(new Ship(empire_id, colony_id));
+      ship = new Ship(empire_id, colony_id);
+      ship->Rename("Colony Ship");
+      ship_id = Insert(ship);
       home_fleet->AddShip(ship_id);
    }
 #endif
