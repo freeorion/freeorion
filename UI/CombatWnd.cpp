@@ -6,6 +6,27 @@
 #include "../client/human/HumanClientApp.h"
 
 #include "../combat/Combat.h"
+namespace
+{
+  boost::shared_ptr<GG::Texture> GetTexture(const std::string& name, bool mipmap = false)
+  {
+    try
+    {
+      return HumanClientApp::GetApp()->GetTexture(name,mipmap);
+    }
+    catch(...)
+    {
+      return HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "misc/missing.png",mipmap);
+    }
+  }
+
+  GG::SubTexture GetSubTexture(const std::string& name, bool mipmap = false)
+  {
+    boost::shared_ptr<GG::Texture> texture(GetTexture(name,mipmap));
+    return GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultHeight());
+  }
+
+}
 
 class CombatInfoControl : public GG::Control
 {
@@ -19,44 +40,105 @@ class CombatInfoControl : public GG::Control
 
     virtual bool Render()
     {
+      const int ITEM_WIDTH = 230;
+      const GG::Rect  item_txt[4] ={GG::Rect(  7,27,100,45),
+                                    GG::Rect(  4,84, 81,99),
+                                    GG::Rect(124,49,205,67),
+                                    GG::Rect(124,78,205,96)},
+                      item_img_topic        ( 24,48,24+40,48+40),
+                      item_img_arrow_split  ( 65,40,65+64,40+64),
+                      rc_txt_empire         ( 25, 6,500,19);
+      const GG::Clr border_color(0.5,0.5,0.5,1.0),bg_color(0.25,0.25,0.25,1.0),bg_item_color(0.15,0.15,0.15,1.0);
+
       GG::Pt ul(UpperLeft()),lr(LowerRight());
+      GG::FlatRectangle(ul.x+1,ul.y+1,lr.x,lr.y,bg_color,border_color,2);
 
       boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
       Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
       std::string text;
 
+      GG::SubTexture img_topic[3],img_ship_civil,img_planet,img_arrow_split;
+
+      img_topic[0]    = GetSubTexture(ClientUI::ART_DIR + "misc/mark2icon.png");
+      img_topic[1]    = GetSubTexture(ClientUI::ART_DIR + "misc/colonyicon.png");
+      img_topic[2]    = GetSubTexture(ClientUI::ART_DIR + "icons/colonymarker.png");
+      img_arrow_split = GetSubTexture(ClientUI::ART_DIR + "misc/forkedarrow.png");
+
       int y=ul.y;
+
+      GG::Rect rc;
+
+      rc = GG::Rect(ul+GG::Pt(20,5),ul+GG::Pt(500,25));
+      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
+      glColor4ubv(ClientUI::TEXT_COLOR.v);format = GG::TF_LEFT | GG::TF_BOTTOM;
+      font->RenderText(rc.UpperLeft(),rc.LowerRight(),"BATTLE : ", format, 0, true);
+
+      rc = GG::Rect(ul+GG::Pt(20+50,5),ul+GG::Pt(500,28));
+      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.7));
+      glColor4ubv(ClientUI::TEXT_COLOR.v);format = GG::TF_LEFT | GG::TF_BOTTOM;
+      font->RenderText(rc.UpperLeft(),rc.LowerRight(),"The " + m_combat_info.m_system +" System", format, 0, true);
+      
+
       for(unsigned int i=0;i<m_combat_info.m_opponents.size();i++,y+=font->Height()+2)
       {
-        int x = ul.x+5;
-        glColor4ubv(ClientUI::TEXT_COLOR.v);
-        font->RenderText(x,y,x+50,y+font->Height(),m_combat_info.m_opponents[i].empire, format, 0, true);
-        x+=50;
+        CombatUpdateMessage::EmpireCombatInfo *eci = &m_combat_info.m_opponents[i];
 
-        text= "combat ships "+boost::lexical_cast<std::string>(m_combat_info.m_opponents[i].combat_ships)
-             + "("+boost::lexical_cast<std::string>(m_combat_info.m_opponents[i].combat_ships_hitpoints)+")";
-        font->RenderText(x,y,x+130,y+font->Height(),text, format, 0, true);
-        x+=110;
+        GG::Rect area (ul.x+20,ul.y+30+i*110,ul.x+20+ITEM_WIDTH*3,ul.y+30+(i+1)*110-5);
+        struct 
+        {
+          std::string txt;Uint32 txt_fmt;
+          //GG::Clr txt_clr;
+          GG::Clr bg_clr;GG::Clr border_clr;unsigned int border_width;
+        } entries[3][4] =
+        {
+          {
+            {"Military Ships" ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
+            {boost::lexical_cast<std::string>(eci->combat_ships          ) + " Remaining",GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->combat_ships_retreated) + " Retreated",GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->combat_ships_retreated)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->combat_ships_destroyed) + " Destroyed",GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->combat_ships_destroyed)?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
+          },
+          {
+            {"Civilian Ships" ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
+            {boost::lexical_cast<std::string>(eci->non_combat_ships          )+" Remaining"    ,GG::TF_CENTER | GG::TF_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->non_combat_ships_retreated)+" Retreated"    ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->non_combat_ships_retreated)?GG::CLR_ZERO : GG::Clr(128,64,64,255)  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->non_combat_ships_destroyed)+" Destroyed"    ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->non_combat_ships_destroyed)?GG::CLR_ZERO : GG::CLR_RED   ,GG::CLR_ZERO ,0}
+          },
+          {
+            {"Planets"        ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
+            {boost::lexical_cast<std::string>(eci->planets            )+" Remaining"    ,GG::TF_CENTER | GG::TF_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->planets_defenseless)+" Defenceless"  ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->planets_defenseless)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->planets_lost       )+" Lost!"        ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->planets_lost       )?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
+          }
+        };
+        
+        GG::FlatRectangle(area.Left(), area.Top(), area.Right()+2, area.Bottom(),bg_item_color,border_color, 2);
 
-        text= "non combat ships "+boost::lexical_cast<std::string>(m_combat_info.m_opponents[i].non_combat_ships)
-             + "("+boost::lexical_cast<std::string>(m_combat_info.m_opponents[i].non_combat_ships_hitpoints)+")";
-        font->RenderText(x,y,x+130,y+font->Height(),text, format, 0, true);
-        x+=130;
+        font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.2));
 
-        text= "planets "+boost::lexical_cast<std::string>(m_combat_info.m_opponents[i].planets)
-             + "("+boost::lexical_cast<std::string>(m_combat_info.m_opponents[i].planets_defence_bases)+")";
-        font->RenderText(x,y,x+80,y+font->Height(),text, format, 0, true);
-        x+=80;
+        rc = GG::Rect(area.UpperLeft()+rc_txt_empire.UpperLeft(),area.UpperLeft()+rc_txt_empire.LowerRight());
+        glColor4ubv(ClientUI::TEXT_COLOR.v);format = GG::TF_LEFT | GG::TF_VCENTER;
+        font->RenderText(rc.UpperLeft(),rc.LowerRight(),m_combat_info.m_opponents[i].empire, format, 0, true);
 
-        text= "destroyed/retreated/conquered "+boost::lexical_cast<std::string>(m_combat_info.m_opponents[i].destroyed_ships_destroyed)
-             + "/"+boost::lexical_cast<std::string>(m_combat_info.m_opponents[i].retreated_ships)
-             + "/"+boost::lexical_cast<std::string>(m_combat_info.m_opponents[i].defenseless_planets);
-        font->RenderText(x,y,x+130,y+font->Height(),text, format, 0, true);
-        x+=130;
+        for(unsigned int c=0;c<3;c++)
+        {
+          GG::Rect col (area.Left()+c*ITEM_WIDTH, area.Top(),area.Left()+(c+1)*ITEM_WIDTH, area.Bottom());
+          
+          GG::FlatRectangle(col.Left(), col.Top()+38, col.Right()+2, col.Bottom(), GG::CLR_ZERO,border_color, 2);
+          glColor4ubv(ClientUI::TEXT_COLOR.v);
+
+          img_topic[c]    .OrthoBlit(col.UpperLeft()+item_img_topic      .UpperLeft(),col.UpperLeft()+item_img_topic      .LowerRight());
+          img_arrow_split .OrthoBlit(col.UpperLeft()+item_img_arrow_split.UpperLeft(),col.UpperLeft()+item_img_arrow_split.LowerRight());
+
+          font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
+          for(unsigned int j=0;j<4;j++)
+          {
+            rc = GG::Rect(col.UpperLeft()+item_txt[j].UpperLeft(),col.UpperLeft()+item_txt[j].LowerRight());
+            GG::FlatRectangle(rc.Left(), rc.Top(), rc.Right(), rc.Bottom(),entries[c][j].bg_clr,entries[c][j].border_clr,entries[c][j].border_width);
+            glColor4ubv(ClientUI::TEXT_COLOR.v);
+            font->RenderText(rc.UpperLeft(),rc.LowerRight(),entries[c][j].txt, entries[c][j].txt_fmt, 0, true);
+          }
+        }
       }
-
-
-      GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, GG::CLR_WHITE, 1);
       return true;
     }
 
@@ -70,7 +152,7 @@ struct CombatInfoRow : public GG::ListBox::Row
 {
     CombatInfoRow(int w,const CombatUpdateMessage &combat_info)
     {
-        height = 30 + 4;
+        height = 30+combat_info.m_opponents.size()*110;//200;
         push_back(new CombatInfoControl(w,height,combat_info));
         data_type = "CombatInfo";
     }
@@ -84,7 +166,7 @@ struct CombatInfoRow : public GG::ListBox::Row
 // CombatWnd
 ////////////////////////////////////////////////
 CombatWnd::CombatWnd(int x,int y)
-: CUI_Wnd("Combat Window",x,y, WIDTH, HEIGHT,  GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | CUI_Wnd::MINIMIZABLE)
+: CUI_Wnd("Combat Window",x,y, WIDTH, HEIGHT,  GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE | CUI_Wnd::MINIMIZABLE)
 
 {
   m_combats_lb = new CUIListBox(LeftBorder(),TopBorder(),Width()-(LeftBorder()+RightBorder()),Height()-(TopBorder()+BottomBorder()),GG::CLR_ZERO,GG::CLR_ZERO);

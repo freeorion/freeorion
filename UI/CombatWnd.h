@@ -16,7 +16,7 @@ class CUIListBox;
 class CombatWnd : public CUI_Wnd
 {
   public:
-    enum { WIDTH = 600, HEIGHT = 300}; 
+    enum { WIDTH = 800, HEIGHT = 300}; 
 
     /** \name Structors */ //@{
     CombatWnd(int x,int y);
