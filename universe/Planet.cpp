@@ -190,9 +190,6 @@ void Planet::RemoveOwner(int id)
 
 void Planet::Conquer(int conquerer)
 {
-#ifndef FREEORION_BUILD_SERVER
-  throw std::runtime_error("call to Planet::Conquer from AI o human client");
-#else
   m_just_conquered = 1;
 
   // RemoveOwner will change owners - without temp_owner => side effect
@@ -201,7 +198,6 @@ void Planet::Conquer(int conquerer)
     RemoveOwner(*own_it);
 
   AddOwner(conquerer);
-#endif
 }
 
 
