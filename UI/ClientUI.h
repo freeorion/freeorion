@@ -149,7 +149,7 @@ public:
     //!@{
     
     //! draws an interface window
-    static void DrawWindow(int x1, int y1, int x2, int y2, const std::string& title = "", bool close=true, bool min=true, bool resize=true, const std::string& font = TITLE_FONT, int pts = TITLE_PTS);    
+    static void DrawWindow(int x1, int y1, int x2, int y2, const std::string& title = "", bool close=true, bool min=true, bool resize=true, bool minimized = false, const std::string& font = TITLE_FONT, int pts = TITLE_PTS);    
     
     //! @param message The message to display
     static void MessageBox(const std::string& message);    //!< shows a message dialog box with the given message     

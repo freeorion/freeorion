@@ -407,13 +407,19 @@ void ClientUI::MessageBox(const std::string& message)
     dlg.Run();    
 }//MessageBox()
 
-void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& title, bool close, bool min, bool resize, const std::string& font, int pts)
+void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& title, bool close, bool min, bool resize, bool minimized, const std::string& font, int pts)
 {
     const int o_x1=x1, o_y1=y1, o_x2=x2, o_y2=y2; //stores original values of these
     //draws a rectangle like the burndaddy prototype
     //first draw a flat rectangle of the current window color
     GG::App::GetApp()->Enter2DMode();
-    GG::FlatRectangle(x1, y1, x2, y2, WND_COLOR, OUTER_BORDER_COLOR, 1);
+    
+    if(!minimized)
+        GG::FlatRectangle(x1, y1, x2, y2, WND_COLOR, OUTER_BORDER_COLOR, 1);
+    else
+    {
+        GG::FlatRectangle(x1,y1,x2,y1+15, WND_COLOR, OUTER_BORDER_COLOR, 1);
+    }
     
     //draw a wire rectangle
     // 15 gap on top, 5 gap around
@@ -425,8 +431,8 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
     
     //use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
-    
-    if(resize)
+
+    if(resize && !minimized)
     {
         //if it is resizable, draw a line strip that has a diagonal at lower right corner
         
@@ -444,7 +450,7 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
             glVertex2i(x1, y1-1);
         glEnd();
     }//end if resize
-    else
+    else if(!minimized)
     {
         //...otherwise, make a clear rectangle with a thin border
 //        GG::FlatRectangle(x1, y1, x2, y2, GG::CLR_ZERO, INNER_BORDER_COLOR, 1);
@@ -461,7 +467,7 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
     //draw extra details
     
         
-    if(resize)
+    if(resize && !minimized)
     {
         
         glBegin(GL_LINES);
@@ -474,7 +480,8 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
             glVertex2i(x2-2, y2);
         glEnd();
     }
-    if(min)
+    
+    if(min && !minimized)
     {    
         //draw dash if minimizable
         //draw the lines for the dash and the x
@@ -486,6 +493,19 @@ void ClientUI::DrawWindow(int x1, int y1, int x2, int y2, const std::string& tit
             glVertex2i(o_x2-23, o_y1+7);
         glEnd();
     }
+    else if(minimized)
+    {
+        //draw a square to signify the restore command
+        glBegin(GL_LINE_STRIP);
+            glColor4ubv(INNER_BORDER_COLOR.v);
+            glVertex2i(o_x2-30, o_y1+3);
+            glVertex2i(o_x2-23, o_y1+3);
+            glVertex2i(o_x2-23, o_y1+10);
+            glVertex2i(o_x2-30, o_y1+10);
+            glVertex2i(o_x2-30, o_y1+3);
+        glEnd();
+    }
+    
     if(close)
     {
         //if closable, draw the "X"
