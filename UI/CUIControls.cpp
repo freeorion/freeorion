@@ -516,6 +516,7 @@ bool CUIScroll::ScrollTab::Render()
 
 ///////////////////////////////////////
 // class CUIScroll
+///////////////////////////////////////
 CUIScroll::CUIScroll(int x, int y, int w, int h, GG::Scroll::Orientation orientation, GG::Clr color/* = GG::CLR_ZERO*/, 
                      GG::Clr border/* = ClientUI::CTRL_BORDER_COLOR*/, GG::Clr interior/* = GG::CLR_ZERO*/, 
                      Uint32 flags/* = CLICKABLE*/) : 
@@ -725,7 +726,7 @@ void CUIDropDownList::EnableDropArrow()
 
 
 ///////////////////////////////////////
-// class CUIDropDownList
+// class CUIEdit
 ///////////////////////////////////////
 CUIEdit::CUIEdit(int x, int y, int w, int h, const std::string& str, const std::string& font_filename/* = ClientUI::FONT*/, 
                  int pts/* = ClientUI::PTS*/, GG::Clr color/* = ClientUI::CTRL_BORDER_COLOR*/, 
@@ -771,7 +772,7 @@ bool CUIEdit::Render()
 }
 
 ///////////////////////////////////////
-// class CUIDropDownList
+// class CUIMultiEdit
 ///////////////////////////////////////
 CUIMultiEdit::CUIMultiEdit(int x, int y, int w, int h, const std::string& str, Uint32 style/* = TF_LINEWRAP*/, 
                            const std::string& font_filename/* = ClientUI::FONT*/, int pts/* = ClientUI::PTS*/, 
@@ -827,6 +828,55 @@ GG::Scroll* CUIMultiEdit::NewHScroll(bool vert_scroll)
     const int GAP = PIXEL_MARGIN - 2; // the space between the client area and the border
     GG::Pt cl_sz = Edit::ClientLowerRight() - Edit::ClientUpperLeft();
     return new CUIScroll(-GAP, cl_sz.y + GAP - SCROLL_WIDTH, cl_sz.x + 2 * GAP - (vert_scroll ? SCROLL_WIDTH : 0), SCROLL_WIDTH, GG::Scroll::HORIZONTAL);
+}
+
+///////////////////////////////////////
+// class CUISlider
+///////////////////////////////////////
+CUISlider::CUISlider(int x, int y, int w, int h, int min, int max, Orientation orientation, Uint32 flags/* = CLICKABLE*/) :
+    Slider(x, y, w, h, min, max, orientation, FLAT, ClientUI::CTRL_COLOR,
+           new CUIScroll::ScrollTab(GG::Scroll::Orientation(orientation), orientation == VERTICAL ? w : h, 
+                                    ClientUI::SCROLL_TAB_COLOR, ClientUI::CTRL_BORDER_COLOR),
+           5, flags)
+{
+}
+
+CUISlider::CUISlider(const GG::XMLElement& elem) :
+    Slider(elem.Child("GG::Slider"))
+{
+    if (elem.Tag() != "CUISlider")
+        throw std::invalid_argument("Attempted to construct a CUISlider from an XMLElement that had a tag other than \"CUISlider\"");
+}
+
+GG::XMLElement CUISlider::XMLEncode() const
+{
+    GG::XMLElement retval("CUISlider");
+    retval.AppendChild(Slider::XMLEncode());
+    return retval;
+}
+
+bool CUISlider::Render()
+{
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Clr border_color_to_use = Disabled() ? GG::DisabledColor(ClientUI::CTRL_BORDER_COLOR) : ClientUI::CTRL_BORDER_COLOR;
+    int tab_width = GetOrientation() == VERTICAL ? Tab()->Height() : Tab()->Width();
+    int x_start, x_end, y_start, y_end;
+    if (GetOrientation() == VERTICAL) {
+        x_start = ((lr.x + ul.x) - LineWidth()) / 2;
+        x_end   = x_start + LineWidth();
+        y_start = ul.y + tab_width / 2;
+        y_end   = lr.y - tab_width / 2;
+    } else {
+        x_start = ul.x + tab_width / 2;
+        x_end   = lr.x - tab_width / 2;
+        y_start = ((lr.y + ul.y) - LineWidth()) / 2;
+        y_end   = y_start + LineWidth();
+    }
+    GG::FlatRectangle(x_start, y_start, x_end, y_end, GG::CLR_ZERO, border_color_to_use, 1);
+    Tab()->OffsetMove(UpperLeft());
+    Tab()->Render();
+    Tab()->OffsetMove(-UpperLeft());
+    return true;
 }
 
 ///////////////////////////////////////

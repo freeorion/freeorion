@@ -39,6 +39,10 @@
 #include "GGScroll.h"
 #endif
 
+#ifndef _GGSlider_h_
+#include "GGSlider.h"
+#endif
+
 namespace GG {
     class StaticGraphic;
 }
@@ -315,6 +319,24 @@ protected:
     //@}
 };
 
+
+/** a FreeOrion slider, much feared in the forums */
+class CUISlider : public GG::Slider
+{
+public:
+    /** \name Structors */ //@{
+    CUISlider(int x, int y, int w, int h, int min, int max, Orientation orientation, Uint32 flags = CLICKABLE);
+    CUISlider(const GG::XMLElement& elem);
+    //@}
+
+    /** \name Accessors */ //@{
+    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUISlider object
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual bool   Render();
+    //@}
+};
 
 /** A simple GG::ListBox::Row subclass designed for use in text-only drop-down lists, such as the ones used in the game setup dialogs. */
 struct CUISimpleDropDownListRow : public GG::ListBox::Row
