@@ -46,6 +46,10 @@ void ClientApp::HandleMessage(const Message& msg)
     s_app->HandleMessageImpl(msg);
 }
 
+void ClientApp::HandleServerDisconnect()
+{
+    s_app->HandleServerDisconnectImpl();
+}
 
 Universe& ClientApp::GetUniverse()
 {

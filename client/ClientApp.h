@@ -54,8 +54,11 @@ public:
     /** handles an incoming message from the server with the appropriate action or response */
     static void          HandleMessage(const Message& msg);
 
-    /** returns a universe object ID which can be used for new objects created by the client */
-    /** can return UniverseObject::INVALID_OBJECT_ID if ID cannot be found.  */
+    /** handles the situation in which this client is disconnected from the server unexpectedly */
+    static void          HandleServerDisconnect();
+
+    /** returns a universe object ID which can be used for new objects created by the client.
+        Can return UniverseObject::INVALID_OBJECT_ID if an ID cannot be created. */
     static int           GetNewObjectID( );
 
     static MultiplayerLobbyWnd*   MultiplayerLobby(); ///< returns the multiplayer lobby window, or 0 if none exists
@@ -84,8 +87,8 @@ private:
     const ClientApp& operator=(const ClientApp&); // disabled
     ClientApp(const ClientApp&); // disabled
    
-    /** handles an incoming message from the server with the appropriate action or response */
     virtual void HandleMessageImpl(const Message& msg) = 0;
+    virtual void HandleServerDisconnectImpl() {}
 
     static ClientApp* s_app; ///< a ClientApp pointer to the singleton instance of the app
 };
