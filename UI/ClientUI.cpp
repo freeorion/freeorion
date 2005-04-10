@@ -78,7 +78,7 @@ GG::Clr     ClientUI::MULTIEDIT_INT_COLOR(0, 0, 0, 255);
 GG::Clr     ClientUI::STAT_INCR_COLOR(127, 255, 127, 255);
 GG::Clr     ClientUI::STAT_DECR_COLOR(255, 127, 127, 255);
 
-int         ClientUI::SYSTEM_ICON_SIZE = 24;
+int         ClientUI::SYSTEM_ICON_SIZE = 12;
 double      ClientUI::FLEET_BUTTON_SIZE = 0.2;
 
 // game UI windows
