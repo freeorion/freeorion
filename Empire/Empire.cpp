@@ -631,7 +631,7 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
 void Empire::CheckResearchProgress()
 {
     m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
-    for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ) {
+    /*for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ) {
         const Tech* tech = it->get<0>();
         double& status = m_research_status[tech->Name()];
         status += it->get<1>();
@@ -652,7 +652,31 @@ void Empire::CheckResearchProgress()
         } else {
             ++it;
         }
+    }*/
+    std::vector<const Tech*> to_erase;
+    for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ++it) {
+        const Tech* tech = it->get<0>();
+        double& status = m_research_status[tech->Name()];
+        status += it->get<1>();
+        if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= status) {
+            m_techs.insert(tech->Name());
+            const std::vector<Tech::ItemSpec>& unlocked_items = tech->UnlockedItems();
+            for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
+                UnlockItem(unlocked_items[i]);
+            }
+            AddSitRepEntry(CreateTechResearchedSitRep(tech->Name()));
+            // TODO: create unlocked item sitreps?
+            m_research_status.erase(tech->Name());
+            to_erase.push_back(tech);
+        }
     }
+
+    for (std::vector<const Tech*>::iterator it = to_erase.begin(); it != to_erase.end(); ++it) {
+      ResearchQueue::iterator temp_it = m_research_queue.find(*it);
+      if(temp_it!=m_research_queue.end())
+        m_research_queue.erase(temp_it);
+    }
+
 }
 
 void Empire::SetColor(const GG::Clr& color)
