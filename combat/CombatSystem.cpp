@@ -64,11 +64,18 @@ static void RemoveShip(int nID)
   Ship *shp = GetUniverse().Object<Ship>(nID);
   if(shp!=NULL)
   {
+    System *sys;
+    if(sys = shp->GetSystem()) sys->Remove(shp->ID());
+
     Fleet *flt = shp->GetFleet();
-    flt->RemoveShip(shp->ID());
-    if(flt->NumShips()==0)
+    if(flt = shp->GetFleet())
     {
-      GetUniverse().Remove(flt->ID());
+      flt->RemoveShip(shp->ID());
+      if(flt->NumShips()==0)
+      {
+        if(sys = flt->GetSystem()) sys->Remove(flt->ID());
+        GetUniverse().Remove(flt->ID());
+      }
     }
     GetUniverse().Remove(shp->ID());
   }
@@ -420,6 +427,11 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
           std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(system_id, sys->ID());
           (*it)->SetRoute(route.first, route.second);
           (*it)->GetSystem()->Remove((*it)->ID());
+          for(Fleet::iterator shp_it = (*it)->begin(); shp_it != (*it)->end(); ++shp_it)
+          {
+            Ship *shp = GetUniverse().Object<Ship>(*shp_it);
+            shp->GetSystem()->Remove(shp->ID());
+          }
         }
       }
     }
@@ -436,4 +448,3 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
   msg.root_node.AppendChild(GenerateCombatUpdateMessage(system_id,empire_combat_forces).XMLEncode());
   SendMessageToAllPlayer(Message::COMBAT_END,Message::CORE,msg);
 }
-
