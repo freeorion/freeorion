@@ -39,6 +39,9 @@ public:
     typedef StarlaneMap::iterator          lane_iterator;          ///< iterator for starlanes and wormholes
     typedef StarlaneMap::const_iterator    const_lane_iterator;    ///< const_iterator for starlanes and wormholes
 
+    /** \name Signal Types */ //@{
+    typedef boost::signal<void (const Fleet&)> FleetSignalType;    ///< emitted when a fleet is inserted or removed from a system
+
     /** \name Structors */ //@{
     System();    ///< default ctor
 
@@ -105,6 +108,10 @@ public:
     virtual GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a System object with visibility limited relative to the input empire
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
+ 
+    FleetSignalType& FleetAddedSignal  () const {return m_fleet_added_sig;} ///< returns the fleet added signal object for this System
+    FleetSignalType& FleetRemovedSignal() const {return m_fleet_removed_sig;} ///< returns the fleet removed changed signal object for this System
+    
     //@}
 
     /** \name Mutators */ //@{
@@ -170,6 +177,9 @@ private:
     int            m_orbits;
     ObjectMultimap m_objects;              ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
     StarlaneMap    m_starlanes_wormholes;  ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
+
+    mutable FleetSignalType m_fleet_added_sig; 
+    mutable FleetSignalType m_fleet_removed_sig;
 };
 
 
