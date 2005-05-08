@@ -24,6 +24,8 @@
 #include "../universe/Ship.h"
 #include "../util/OptionsDB.h"
 
+#include "../UI/FleetWindow.h"
+
 #include <boost/format.hpp>
 
 #include "MapWnd.h"
@@ -1685,7 +1687,26 @@ void SidePanel::PlanetPanel::ClickColonize()
   }
   else // cancel colonization
   {
+    const FleetColonizeOrder *col_order = dynamic_cast<const FleetColonizeOrder*>(HumanClientApp::Orders().ExamineOrder(it->second));
+    int ship_id = col_order?col_order->ShipID():UniverseObject::INVALID_OBJECT_ID;
+
     HumanClientApp::Orders().RecindOrder(it->second);
+    
+    // if the ship now buils a fleet of its own, make sure that fleet appears
+    // at a possibly opend FleetWnd
+    Ship  *ship = GetUniverse().Object<Ship>(ship_id);
+    Fleet *fleet= ship?GetUniverse().Object<Fleet>(ship->FleetID()):NULL;
+    if(fleet)
+      for( FleetWnd::FleetWndItr it = FleetWnd::FleetWndBegin();it != FleetWnd::FleetWndEnd();++it)
+      {
+        FleetWnd *fleet_wnd = *it;
+        if(   fleet->SystemID() == fleet_wnd->SystemID()
+          && !fleet_wnd->ContainsFleet(fleet->ID()))
+        {
+          fleet_wnd->AddFleet(GetUniverse().Object<Fleet>(fleet->ID()));
+          break;
+        }
+      }
   }
 }
 
@@ -2488,8 +2509,6 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
   GG::Connect(m_button_prev->ClickedSignal(), &SidePanel::PrevButtonClicked, this);
   GG::Connect(m_button_next->ClickedSignal(), &SidePanel::NextButtonClicked, this);
 
-  GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &SidePanel::UniverseObjectDelete, this);
-
   Hide();
 }
 
@@ -2557,6 +2576,9 @@ void SidePanel::SetSystem(int system_id)
 
     if (m_system)
     {
+      GG::Connect(m_system->FleetAddedSignal  (), &SidePanel::SystemFleetAdded  , this);
+      GG::Connect(m_system->FleetRemovedSignal(), &SidePanel::SystemFleetRemoved, this);
+
       std::vector<const System*> sys_vec = GetUniverse().FindObjects<const System>();
       GG::ListBox::Row *select_row=0;
 
@@ -2613,7 +2635,7 @@ void SidePanel::SetSystem(int system_id)
       std::vector<const Fleet*> flt_vec = m_system->FindObjects<Fleet>();
       for(unsigned int i = 0; i < flt_vec.size(); i++) 
         GG::Connect(flt_vec[i]->StateChangedSignal(), &SidePanel::FleetsChanged, this);
-      
+
       // add planets
       std::vector<const Planet*> plt_vec = m_system->FindObjects<Planet>();
 
@@ -2646,11 +2668,14 @@ void SidePanel::SetSystem(int system_id)
     }
 }
 
-void SidePanel::UniverseObjectDelete(const UniverseObject *obj)
+void SidePanel::SystemFleetAdded  (const Fleet &flt)
 {
-    const Fleet *fleet = universe_object_cast<const Fleet *>(obj);
-    if(fleet)
-      FleetsChanged();
+  GG::Connect(flt.StateChangedSignal(), &SidePanel::FleetsChanged, this);
+  FleetsChanged();
+}
+
+void SidePanel::SystemFleetRemoved(const Fleet &)
+{
 }
 
 void SidePanel::FleetsChanged()

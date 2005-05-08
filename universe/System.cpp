@@ -1,5 +1,7 @@
 #include "System.h"
 
+#include "Fleet.h"
+
 #include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
 #include "XMLDoc.h"
@@ -225,6 +227,11 @@ int System::Insert(int obj_id, int orbit)
     if (m_orbits <= orbit)
         m_orbits = orbit + 1;
     m_objects.insert(std::pair<int, int>(orbit, obj_id));
+    
+    Fleet *fleet = GetUniverse().Object<Fleet>(obj_id);
+    if(fleet)
+      FleetAddedSignal()(*fleet);
+
     StateChangedSignal()();
 	return orbit;
 }
@@ -237,6 +244,10 @@ bool System::Remove(int id)
          GetUniverse().Object(it->second)->SetSystem(INVALID_OBJECT_ID);
          m_objects.erase(it);
          retval = true;
+         
+         Fleet *fleet = GetUniverse().Object<Fleet>(id);
+         if(fleet)
+           FleetRemovedSignal()(*fleet);
          StateChangedSignal()();
          break;
       }

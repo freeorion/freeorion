@@ -178,7 +178,9 @@ private:
     void AdjustScrolls();
 
     void SystemSelectionChanged(int selection);
-    void UniverseObjectDelete(const UniverseObject *);
+
+    void SystemFleetAdded  (const Fleet &);
+    void SystemFleetRemoved(const Fleet &);
 
     void FleetsChanged();
     void PlanetsChanged();
