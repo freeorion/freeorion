@@ -296,6 +296,7 @@ public:
 
     /** \name Accessors */ //@{
     int   PlanetID() const  {return m_planet;} ///< returns ID of the planet to be colonized
+    int   ShipID  () const  {return m_ship  ;} ///< returns ID of the ship which is colonizing the planet
 
     virtual void           ServerExecute() const; //< called if the server allows the colonization effort 
 
