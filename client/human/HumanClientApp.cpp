@@ -312,6 +312,8 @@ void HumanClientApp::StopMusic()
         FSOUND_Stream_Close(m_current_music);
         m_current_music = 0;
         m_music_channel = -1;
+	m_next_music_time = 0;
+	m_music_loops = 0;
     }
 }
 
