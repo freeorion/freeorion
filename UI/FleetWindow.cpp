@@ -682,6 +682,8 @@ std::string FleetDetailWnd::TitleText() const
 // static(s)
 std::set<FleetWnd*> FleetWnd::s_open_fleet_wnds;
 GG::Pt FleetWnd::s_last_position;
+FleetWnd::FleetWndItr FleetWnd::FleetWndBegin() {return s_open_fleet_wnds.begin();}
+FleetWnd::FleetWndItr FleetWnd::FleetWndEnd  () {return s_open_fleet_wnds.end();}
 
 FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
                    Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
@@ -691,9 +693,18 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
     m_moving_fleets(true),
     m_current_fleet(-1),
     m_fleets_lb(0),
-    m_fleet_detail_panel(0)
+    m_fleet_detail_panel(0),
+    m_system_id(UniverseObject::INVALID_OBJECT_ID)
 {
     assert(0 <= selected_fleet && selected_fleet < fleets.size());
+
+    if(fleets.size()>0)
+    {
+      m_system_id = fleets[0]->SystemID();
+      for(unsigned int i=1;i<fleets.size();i++)
+        if(m_system_id != fleets[i]->SystemID())
+          m_system_id = UniverseObject::INVALID_OBJECT_ID;
+    }
 
     TempUISoundDisabler sound_disabler;
 
@@ -721,7 +732,8 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
 FleetWnd::FleetWnd( const GG::XMLElement& elem) : 
     MapWndPopup(elem.Child("CUI_Wnd")),
     m_empire_id(-1),
-    m_read_only(true)
+    m_read_only(true),
+    m_system_id(UniverseObject::INVALID_OBJECT_ID)
 {
     // TODO : implement as needed (note that the initializations above must be changed as well)
     m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetWnd::UniverseObjectDelete, this);
@@ -836,6 +848,17 @@ void FleetWnd::AddFleet(Fleet* fleet)
 {
     m_fleets_lb->Insert(new FleetRow(fleet), m_fleets_lb->NumRows() - (m_read_only ? 0 : 1));
     m_showing_fleet_sig(fleet, this);
+}
+
+bool FleetWnd::ContainsFleet(int fleet_id) const
+{
+  for (int i = 0; i < m_fleets_lb->NumRows(); i++) 
+  {
+    Fleet *fleet = FleetInRow(i);
+    if(fleet && fleet->ID() == fleet_id)
+      return true;
+  }
+  return false;
 }
 
 void FleetWnd::FleetBrowsed(int row_idx)

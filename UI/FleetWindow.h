@@ -166,10 +166,17 @@ public:
     void SystemClicked(int system_id); ///< invoked when a system is clicked on the main map, possibly indicating that the currently-selected fleet should move there
     void AddFleet(Fleet* fleet); ///< adds a new fleet to a currently-open FletWnd
     //@}
+    
+    int SystemID() const {return m_system_id;}
+    bool ContainsFleet(int fleet_id) const;
 
     static bool FleetWndsOpen();     ///< returns true iff one or more fleet windows are open
     static bool CloseAllFleetWnds(); ///< returns true iff fleet windows were open before it was called.  Used most often for fleet window quick-close.
     static GG::Pt LastPosition();    ///< returns the last position of the last FleetWnd that was closed
+    
+    typedef std::set<FleetWnd*>::const_iterator FleetWndItr;
+    static FleetWndItr FleetWndBegin();
+    static FleetWndItr FleetWndEnd  ();
 
 protected:
     //! \name Mutators //@{
@@ -198,6 +205,7 @@ private:
     void        UniverseObjectDelete(const UniverseObject *);
 
     const int           m_empire_id;
+    int                 m_system_id;
     const bool          m_read_only;
     bool                m_moving_fleets;
 
