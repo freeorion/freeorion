@@ -1947,7 +1947,7 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   AttachChild(m_construction);
 
   ////////////////////// v0.3 only!!
-  GG::ListBox::Row* row = new ConstructionRow(BT_BUILDING, "");
+  GG::ListBox::Row* row = new ConstructionRow(BT_NOT_BUILDING, "");
   row->push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
   m_construction->Insert(row);
 
