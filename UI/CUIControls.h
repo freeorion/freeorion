@@ -7,7 +7,7 @@
 #include "ClientUI.h"
 #endif
 
-#ifndef _GGButton_
+#ifndef _GGButton_h_
 #include "GGButton.h"
 #endif
 
