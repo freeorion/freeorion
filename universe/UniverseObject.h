@@ -1,16 +1,16 @@
 // -*- C++ -*-
 
+#ifndef _UniverseObject_h_
+#define _UniverseObject_h_
+
 // We need to include Universe.h before trying to define
 // UniverseObject. This is necessary to make GCC 3.4+ happy.
 #ifndef _Universe_h_
 #include "Universe.h"
 #endif
 
-#ifndef _UniverseObject_h_
-#define _UniverseObject_h_
-
-#ifndef BOOST_SIGNAL_HPP
-#include <boost/signal.hpp>
+#ifndef _InhibitableSignal_h_
+#include "InhibitableSignal.h"
 #endif
 
 #include <set>
@@ -43,7 +43,8 @@ public:
     };
 
     /** \name Signal Types */ //@{
-    typedef boost::signal<void ()> StateChangedSignalType; ///< emitted when the UniverseObject is altered in any way
+    typedef boost::signal<void ()> StateChangedSignalBaseType; ///< used to define StateChangedSignalType
+    typedef InhibitableSignal<StateChangedSignalBaseType> StateChangedSignalType; ///< emitted when the UniverseObject is altered in any way
     //@}
    
     /** \name Slot Types */ //@{

@@ -173,6 +173,9 @@ void Fleet::AddShips(const std::vector<int>& ships)
 {
     for (unsigned int i = 0; i < ships.size(); ++i) {
         if (Ship* s = GetUniverse().Object<Ship>(ships[i])) {
+            if (Fleet* old_fleet = s->GetFleet()) {
+                old_fleet->RemoveShip(ships[i]);
+            }
             s->SetFleetID(ID());
             s->MoveTo(X(), Y());
             if (System* system = GetSystem()) {
@@ -191,6 +194,9 @@ void Fleet::AddShips(const std::vector<int>& ships)
 void Fleet::AddShip(const int ship_id)
 {
     if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
+        if (Fleet* old_fleet = s->GetFleet()) {
+            old_fleet->RemoveShip(ship_id);
+        }
         s->SetFleetID(ID());
         s->MoveTo(X(), Y());
         if (System* system = GetSystem()) {

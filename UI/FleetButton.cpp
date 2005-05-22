@@ -53,6 +53,7 @@ FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, doubl
     m_orientation = GetUniverse().Object<System>(fleet->NextSystemID())->X() - fleet->X() < 0 ? SHAPE_LEFT : SHAPE_RIGHT;
 
     GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
+    GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetButton::FleetDeleted, this);
 }
 
 FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs, ShapeOrientation orientation) : 
@@ -66,6 +67,7 @@ FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::v
         m_fleets.push_back(fleet);
     }
     GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
+    GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetButton::FleetDeleted, this);
 }
 
 FleetButton::FleetButton(const GG::XMLElement& elem) : 
@@ -85,6 +87,7 @@ FleetButton::FleetButton(const GG::XMLElement& elem) :
     }
 
     GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
+    GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetButton::FleetDeleted, this);
 }
 
 bool FleetButton::InWindow(const GG::Pt& pt) const
@@ -209,6 +212,16 @@ void FleetButton::Clicked()
     GG::Connect(fleet_wnd->ShowingFleetSignal(), &FleetButton::FleetIsBeingExamined);
     GG::Connect(fleet_wnd->NotShowingFleetSignal(), &FleetButton::FleetIsNotBeingExamined);
     GG::App::GetApp()->Register(fleet_wnd);
+}
+
+void FleetButton::FleetDeleted(const UniverseObject* obj)
+{
+    if (const Fleet* fleet = dynamic_cast<const Fleet*>(obj)) {
+        std::vector<Fleet*>::iterator it = std::find(m_fleets.begin(), m_fleets.end(), const_cast<Fleet*>(fleet));
+        if (it != m_fleets.end())
+            m_fleets.erase(it);
+        s_open_fleets.erase(const_cast<Fleet*>(fleet));
+    }
 }
 
 void FleetButton::FleetIsBeingExamined(Fleet* fleet, FleetWnd* fleet_wnd)

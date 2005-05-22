@@ -194,7 +194,6 @@ private:
     void        FleetDeleted(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void        ObjectDroppedIntoList(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void        NewFleetButtonClicked();
-    Fleet*      NewFleetWndReceivedShip(FleetDetailWnd* fleet_wnd, int ship_id);
     void        FleetDetailWndClosing(FleetDetailWnd* wnd);
     Fleet*      FleetInRow(int idx) const;
     std::string TitleText() const;
@@ -203,6 +202,7 @@ private:
     Fleet*      CreateNewFleetFromDrop(int ship_id);
     void        RemoveEmptyFleets();
     void        UniverseObjectDelete(const UniverseObject *);
+    void        SystemChangedSlot();
 
     const int           m_empire_id;
     int                 m_system_id;
@@ -219,6 +219,7 @@ private:
 
     boost::signals::connection  m_universe_object_delete_connection;
     boost::signals::connection  m_lb_delete_connection;
+    boost::signals::connection  m_system_changed_connection;
 
     mutable ShowingFleetSignalType    m_showing_fleet_sig;
     mutable NotShowingFleetSignalType m_not_showing_fleet_sig;

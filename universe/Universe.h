@@ -233,6 +233,8 @@ public:
 
     typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
 
+    static const bool& InhibitUniverseObjectSignals() {return s_inhibit_universe_object_signals;}
+
 protected:
     typedef std::vector< std::vector<double> > DistanceMatrix;
 
@@ -326,6 +328,9 @@ protected:
     static double s_universe_width;
 
     mutable UniverseObjectDeleteSignalType m_universe_object_delete_sig;
+
+private:
+    static bool s_inhibit_universe_object_signals;
 };
 
 

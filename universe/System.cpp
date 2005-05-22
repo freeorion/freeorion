@@ -213,10 +213,8 @@ int System::Insert(UniverseObject* obj, int orbit)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
     obj->SetSystem(ID());
     obj->MoveTo(X(), Y());
-    StateChangedSignal()();
-	return Insert(obj->ID(), orbit);
+    return Insert(obj->ID(), orbit);
 }
-
 
 int System::Insert(int obj_id, int orbit)
 {
@@ -226,13 +224,20 @@ int System::Insert(int obj_id, int orbit)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in a System, when the object is not already in the Universe");
     if (m_orbits <= orbit)
         m_orbits = orbit + 1;
-    m_objects.insert(std::pair<int, int>(orbit, obj_id));
-    
-    Fleet *fleet = GetUniverse().Object<Fleet>(obj_id);
-    if(fleet)
-      FleetAddedSignal()(*fleet);
-
-    StateChangedSignal()();
+    std::pair<int, int> insertion(orbit, obj_id);
+    bool already_in_system = false;
+    for (orbit_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (it->second == obj_id) {
+            already_in_system = true;
+            break;
+        }
+    }
+    if (!already_in_system) {
+        m_objects.insert(insertion);
+        if (Fleet *fleet = GetUniverse().Object<Fleet>(obj_id))
+            FleetAddedSignal()(*fleet);
+        StateChangedSignal()();
+    }
 	return orbit;
 }
 
@@ -259,9 +264,9 @@ void System::SetStarType(StarType type)
 {
     m_star = type;
     if (m_star <= INVALID_STAR_TYPE)
-	m_star = STAR_BLUE;
+        m_star = STAR_BLUE;
     if (NUM_STAR_TYPES <= m_star)
-	m_star = STAR_BLACK;
+        m_star = STAR_BLACK;
     StateChangedSignal()();
 }
 

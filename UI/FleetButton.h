@@ -13,6 +13,7 @@
 
 class Fleet;
 class FleetWnd;
+class UniverseObject;
 
 /** represents a group of same-empire fleets at the same location.  Clicking a FleetButton brings up a fleet window 
     from which the user can view and/or give orders to the fleets shown. */
@@ -56,6 +57,7 @@ protected:
 
 private:
     void Clicked();
+    void FleetDeleted(const UniverseObject* obj);
 
     std::vector<Fleet*> m_fleets;   ///< the fleets represented by this button
     ShapeOrientation m_orientation;

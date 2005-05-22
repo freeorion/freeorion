@@ -48,7 +48,7 @@ namespace {
     void AddOptions(OptionsDB& db)
     {
         db.Add("UI.chat-hide-interval", "Time interval, in seconds, after which the multiplayer chat window will disappear if "
-               "nothing is added to it.  A value of 0 indicates that the window should never diappear.", 10, RangedValidator<int>(0, 3600));
+               "nothing is added to it.  A value of 0 indicates that the window should never disappear.", 10, RangedValidator<int>(0, 3600));
         db.Add("UI.chat-edit-history", "The number of outgoing messages to keep in the chat edit box history.", 50, RangedValidator<int>(0, 1000));
     }
     bool temp_bool = RegisterOptions(&AddOptions);

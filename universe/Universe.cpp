@@ -837,6 +837,7 @@ namespace Delauney {
 
 // static(s)
 double Universe::s_universe_width = 1000.0;
+bool Universe::s_inhibit_universe_object_signals = false;
 
 Universe::Universe()
 {
@@ -1265,7 +1266,11 @@ UniverseObject* Universe::Remove(int id)
 
 bool Universe::Delete(int id)
 {
+    // the UniverseObjectDeleteSignal supercedes the StateChangedSignals emitted by the universe objects(s)
+    // affected by the Remove() call
+    s_inhibit_universe_object_signals = true;
     UniverseObject* obj = Remove(id);
+    s_inhibit_universe_object_signals = false;
     if (obj)
         UniverseObjectDeleteSignal()(obj);
     delete obj;

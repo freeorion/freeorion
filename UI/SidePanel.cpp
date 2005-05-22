@@ -580,7 +580,7 @@ namespace {
              && s->Design()->colonize)
           {
             ship = s;
-            
+
             // prefere non moving colony ship
             if(!flt_vec[i]->Accept(StationaryFleetVisitor(*flt_vec[i]->Owners().begin())))
               break;
@@ -2632,6 +2632,15 @@ void SidePanel::SetSystem(int system_id)
 
       // TODO: add fleet icons
       //std::vector<const Fleet*> flt_vec = m_system->FindObjects<Fleet>();
+      std::pair<System::const_orbit_iterator, System::const_orbit_iterator> range = m_system->non_orbit_range();
+      std::cout << "System " << m_system->ID() << ": " << m_system->Name() << " " << std::distance(range.first, range.second) << " objects {" << std::endl;
+      for (System::const_orbit_iterator it = range.first; it != range.second; ++it) {
+          UniverseObject* uo = GetUniverse().Object(it->second);
+          std::cout << "    object " << it->second << " @" << uo << std::endl;
+          if (uo)
+              std::cout << "    object " << uo->ID() << ": " << uo->Name() << std::endl;
+      }
+      std::cout << "}" << std::endl;
       std::vector<const Fleet*> flt_vec = m_system->FindObjects<Fleet>();
       for(unsigned int i = 0; i < flt_vec.size(); i++) 
         GG::Connect(flt_vec[i]->StateChangedSignal(), &SidePanel::FleetsChanged, this);

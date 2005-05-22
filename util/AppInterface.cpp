@@ -48,3 +48,13 @@ log4cpp::Category& Logger()
     return log4cpp::Category::getRoot();
 }
 
+int GetNewObjectID()
+{
+#ifdef FREEORION_BUILD_SERVER
+    return GetUniverse().GenerateObjectID();
+#elif defined(FREEORION_BUILD_UTIL)
+    return UniverseObject::INVALID_OBJECT_ID;
+#else
+    return ClientApp::GetNewObjectID();
+#endif
+}

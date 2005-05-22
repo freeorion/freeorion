@@ -21,9 +21,8 @@ namespace {
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
-
 // static(s)
-const double UniverseObject::INVALID_POSITION =  -100000.0;
+const double UniverseObject::INVALID_POSITION  = -100000.0;
 const int    UniverseObject::INVALID_OBJECT_ID = -1;
 const int    UniverseObject::MAX_ID            = 2000000000;
 
@@ -31,7 +30,8 @@ UniverseObject::UniverseObject() :
     m_id(INVALID_OBJECT_ID),
     m_x(INVALID_POSITION),
     m_y(INVALID_POSITION),
-    m_system_id(INVALID_OBJECT_ID)
+    m_system_id(INVALID_OBJECT_ID),
+    m_changed_sig(Universe::InhibitUniverseObjectSignals())
 {
 }
 
@@ -42,13 +42,15 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
     m_x(x),
     m_y(y),
     m_owners(owners),
-    m_system_id(INVALID_OBJECT_ID)
+    m_system_id(INVALID_OBJECT_ID),
+    m_changed_sig(Universe::InhibitUniverseObjectSignals())
 {
     if (m_x < 0.0 || Universe::UniverseWidth() < m_x || m_y < 0.0 || Universe::UniverseWidth() < m_y)
         throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
 }
 
-UniverseObject::UniverseObject(const GG::XMLElement& elem)
+UniverseObject::UniverseObject(const GG::XMLElement& elem) :
+    m_changed_sig(Universe::InhibitUniverseObjectSignals())
 {
     using GG::XMLElement;
 
@@ -143,7 +145,19 @@ UniverseObject* UniverseObject::Accept(const UniverseObjectVisitor& visitor) con
 {
     return visitor.Visit(const_cast<UniverseObject* const>(this));
 }
+#if 0
+void UniverseObject::SetID(int id)
+{
+    m_id = id;
+    m_changed_sig();
+}
 
+void UniverseObject::Rename(const std::string& name)
+{
+    m_name = name;
+    m_changed_sig();
+}
+#endif
 void UniverseObject::Move(double x, double y)
 {
     if (m_x + x < 0.0 || Universe::UniverseWidth() < m_x + x || m_y + y < 0.0 || Universe::UniverseWidth() < m_y + y)
@@ -178,7 +192,13 @@ void UniverseObject::RemoveOwner(int id)
     m_owners.erase(id);
     m_changed_sig();
 }
-
+#if 0
+void UniverseObject::SetSystem(int sys)
+{
+    m_system_id = sys;
+    m_changed_sig();
+}
+#endif
 void UniverseObject::ResetMaxMeters()
 {
     for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
