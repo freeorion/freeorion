@@ -18,7 +18,11 @@
 #include <valarray>
 
 extern "C" {
+#ifdef FREEORION_WIN32
+#include <dot.h>
+#else
 #include <graphviz/dot.h>
+#endif
 }
 
 #include <boost/format.hpp>
