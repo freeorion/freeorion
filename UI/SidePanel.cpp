@@ -1683,7 +1683,7 @@ void SidePanel::PlanetPanel::ClickColonize()
         return;
     }
 
-    HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID() ));
+    HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID()));
   }
   else // cancel colonization
   {
@@ -2685,6 +2685,7 @@ void SidePanel::SystemFleetAdded  (const Fleet &flt)
 
 void SidePanel::SystemFleetRemoved(const Fleet &)
 {
+  FleetsChanged();
 }
 
 void SidePanel::FleetsChanged()
