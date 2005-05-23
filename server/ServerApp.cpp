@@ -1887,13 +1887,13 @@ void ServerApp::ProcessTurns()
 
     // find planets which have starved to death
     std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();
-    for(std::vector<Planet*>::iterator it = plt_vec.begin();it!=plt_vec.end();++it)
-        if((*it)->Owners().size()>0 && (*it)->PopPoints()==0.0)
+    for (std::vector<Planet*>::iterator it = plt_vec.begin();it!=plt_vec.end();++it)
+        if ((*it)->Owners().size()>0 && (*it)->PopPoints()==0.0)
         {
             // add some information to sitreport
             Empire *empire = Empires().Lookup(*(*it)->Owners().begin());
             empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(),(*it)->ID()));
-            (*it)->RemoveOwner(*(*it)->Owners().begin());
+            (*it)->Reset();
         }
 
     // loop and free all orders

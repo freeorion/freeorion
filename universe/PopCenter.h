@@ -64,6 +64,9 @@ public:
 
     virtual void AdjustMaxMeters();
     virtual void PopGrowthProductionResearchPhase();
+
+    /// Resets the meters, etc.  This should be called when a PopCenter is wiped out due to starvation, etc.
+    void Reset(double max_pop_mod, double max_health_mod);
     //@}
    
 private:

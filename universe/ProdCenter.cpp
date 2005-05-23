@@ -93,22 +93,11 @@ namespace {
 }
 
 ProdCenter::ProdCenter(const Meter& pop, UniverseObject* object) : 
-    m_primary(FOCUS_BALANCED),
-    m_secondary(FOCUS_BALANCED),
     m_pop(pop),
-    m_object(object),
-    m_available_minerals(0.0),
-    m_currently_building(BT_NOT_BUILDING, ""),
-    m_rollover(0)
+    m_object(object)
 {
     assert(m_object);
-
-    double balanced_balanced_max = ProductionDataTables()["FocusMods"][2][0] + ProductionDataTables()["FocusMods"][3][0];
-    m_farming.SetMax(balanced_balanced_max);
-    m_industry.SetMax(balanced_balanced_max);
-    m_mining.SetMax(balanced_balanced_max);
-    m_research.SetMax(balanced_balanced_max);
-    m_trade.SetMax(balanced_balanced_max);
+    Reset();
 }
 
 ProdCenter::ProdCenter(const GG::XMLElement& elem, const Meter& pop, UniverseObject* object) : 
@@ -118,7 +107,7 @@ ProdCenter::ProdCenter(const GG::XMLElement& elem, const Meter& pop, UniverseObj
     m_object(object),
     m_available_minerals(0.0),
     m_currently_building(BT_NOT_BUILDING, ""),
-    m_rollover(0)
+    m_rollover(0.0)
 {
     assert(m_object);
 
@@ -338,6 +327,31 @@ void ProdCenter::PopGrowthProductionResearchPhase()
         UpdateBuildingBuildProgress( empire, m_currently_building.second );
     }
     // v0.3 ONLY
+}
+
+
+void ProdCenter::Reset()
+{
+    m_primary = FOCUS_BALANCED;
+    m_secondary = FOCUS_BALANCED;
+
+    m_farming = Meter();
+    m_industry = Meter();
+    m_mining = Meter();
+    m_research = Meter();
+    m_trade = Meter();
+    m_construction = Meter();
+
+    double balanced_balanced_max = ProductionDataTables()["FocusMods"][2][0] + ProductionDataTables()["FocusMods"][3][0];
+    m_farming.SetMax(balanced_balanced_max);
+    m_industry.SetMax(balanced_balanced_max);
+    m_mining.SetMax(balanced_balanced_max);
+    m_research.SetMax(balanced_balanced_max);
+    m_trade.SetMax(balanced_balanced_max);
+
+    m_available_minerals = 0.0;
+    m_currently_building = std::pair<BuildType, std::string>(BT_NOT_BUILDING, "");
+    m_rollover = 0.0;
 }
 
 

@@ -293,6 +293,20 @@ void Planet::RemoveOwner(int id)
     UniverseObject::RemoveOwner(id);
 }
 
+void Planet::Reset()
+{
+    std::set<int> owners = Owners();
+    for (std::set<int>::iterator it = owners.begin(); it != owners.end(); ++it) {
+        RemoveOwner(*it);
+    }
+    PopCenter::Reset(MaxPopMod(Size(), Environment(Type())), MaxHealthMod(Environment(Type())));
+    ProdCenter::Reset();
+    m_buildings.clear();
+    m_available_trade = 0.0;
+    m_just_conquered = false;
+    m_is_about_to_be_colonized = 0;
+}
+
 void Planet::Conquer(int conquerer)
 {
     m_just_conquered = true;

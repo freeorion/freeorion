@@ -81,6 +81,9 @@ public:
 
     virtual void AdjustMaxMeters();
     virtual void PopGrowthProductionResearchPhase();
+
+    /// Resets the meters, etc.  This should be called when a ProdCenter is wiped out due to starvation, etc.
+    void Reset();
     //@}
 
 private:

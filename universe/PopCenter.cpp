@@ -41,25 +41,18 @@ namespace {
 }
 
 PopCenter::PopCenter(UniverseObject* object, double max_pop_mod, double max_health_mod) : 
-    m_pop(0.0, max_pop_mod),
-    m_health(max_health_mod, max_health_mod),
-    m_growth(0.0),
-    m_race(-1),
-    m_available_food(0.0),
     m_object(object)
 {
     assert(m_object);
+    Reset(max_pop_mod, max_health_mod);
 }
-   
+
 PopCenter::PopCenter(int race, UniverseObject* object, double max_pop_mod, double max_health_mod) : 
-    m_pop(0.0, max_pop_mod),
-    m_health(max_health_mod, max_health_mod),
-    m_growth(0.0),
-    m_race(race),
-    m_available_food(0.0),
     m_object(object)
 {
     assert(m_object);
+    Reset(max_pop_mod, max_health_mod);
+    m_race = race;
 }
    
 PopCenter::PopCenter(const GG::XMLElement& elem, UniverseObject* object) :
@@ -174,5 +167,12 @@ void PopCenter::PopGrowthProductionResearchPhase()
     m_health.AdjustCurrent(m_health.Current() * (((m_health.Max() + 1.0) - m_health.Current()) / (m_health.Max() + 1.0)));
 }
 
-
+void PopCenter::Reset(double max_pop_mod, double max_health_mod)
+{
+    m_pop = Meter(0.0, max_pop_mod);
+    m_health = Meter(max_health_mod, max_health_mod);
+    m_growth = 0.0;
+    m_race = -1;
+    m_available_food = 0.0;
+}
 
