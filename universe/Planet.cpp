@@ -204,9 +204,15 @@ void Planet::SetType(PlanetType type)
         type = PT_SWAMP;
     if (NUM_PLANET_TYPES <= type)
         type = PT_GASGIANT;
-    double old_modifier = PlanetDataTables()["PlanetEnvFarmingMod"][0][Environment(m_type)];
-    double new_modifier = PlanetDataTables()["PlanetEnvFarmingMod"][0][Environment(type)];
-    GetMeter(METER_FARMING)->AdjustMax(new_modifier - old_modifier);
+    double old_farming_modifier = PlanetDataTables()["PlanetEnvFarmingMod"][0][Environment(m_type)];
+    double new_farming_modifier = PlanetDataTables()["PlanetEnvFarmingMod"][0][Environment(type)];
+    GetMeter(METER_FARMING)->AdjustMax(new_farming_modifier - old_farming_modifier);
+    double old_health_modifier = PlanetDataTables()["PlanetEnvHealthMod"][0][Environment(m_type)];
+    double new_health_modifier = PlanetDataTables()["PlanetEnvHealthMod"][0][Environment(type)];
+    GetMeter(METER_HEALTH)->AdjustMax(new_health_modifier - old_health_modifier);
+    double old_population_modifier = PlanetDataTables()["PlanetMaxPop"][m_size][Environment(m_type)];
+    double new_population_modifier = PlanetDataTables()["PlanetMaxPop"][m_size][Environment(type)];
+    GetMeter(METER_POPULATION)->AdjustMax(new_population_modifier - old_population_modifier);
     m_type = type;
     StateChangedSignal()();
 }
@@ -217,9 +223,12 @@ void Planet::SetSize(PlanetSize size)
         size = SZ_TINY;
     if (NUM_PLANET_SIZES <= size)
         size = SZ_GASGIANT;
-    double old_modifier = PlanetDataTables()["PlanetSizeIndustryMod"][0][m_size];
-    double new_modifier = PlanetDataTables()["PlanetSizeIndustryMod"][0][size];
-    GetMeter(METER_INDUSTRY)->AdjustMax(new_modifier - old_modifier);
+    double old_industry_modifier = PlanetDataTables()["PlanetSizeIndustryMod"][0][m_size];
+    double new_industry_modifier = PlanetDataTables()["PlanetSizeIndustryMod"][0][size];
+    GetMeter(METER_INDUSTRY)->AdjustMax(new_industry_modifier - old_industry_modifier);
+    double old_population_modifier = PlanetDataTables()["PlanetMaxPop"][m_size][Environment(m_type)];
+    double new_population_modifier = PlanetDataTables()["PlanetMaxPop"][size][Environment(m_type)];
+    GetMeter(METER_POPULATION)->AdjustMax(new_population_modifier - old_population_modifier);
     m_size = size;
     StateChangedSignal()();
 }

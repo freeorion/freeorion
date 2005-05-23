@@ -356,7 +356,16 @@ SetPlanetType::~SetPlanetType()
 void SetPlanetType::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     if (Planet* p = universe_object_cast<Planet*>(target)) {
-        p->SetType(m_type->Eval(source, target));
+        PlanetType type = m_type->Eval(source, target);
+        p->SetType(type);
+        if (type == PT_ASTEROIDS)
+            p->SetSize(SZ_ASTEROIDS);
+        else if (type == PT_GASGIANT)
+            p->SetSize(SZ_GASGIANT);
+        else if (p->Size() == SZ_ASTEROIDS)
+            p->SetSize(SZ_TINY);
+        else if (p->Size() == SZ_GASGIANT)
+            p->SetSize(SZ_HUGE);
     }
 }
 
@@ -391,7 +400,14 @@ SetPlanetSize::~SetPlanetSize()
 void SetPlanetSize::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     if (Planet* p = universe_object_cast<Planet*>(target)) {
-        p->SetSize(m_size->Eval(source, target));
+        PlanetSize size = m_size->Eval(source, target);
+        p->SetSize(size);
+        if (size == SZ_ASTEROIDS)
+            p->SetType(PT_ASTEROIDS);
+        else if (size == SZ_GASGIANT)
+            p->SetType(PT_GASGIANT);
+        else if (p->Type() == PT_ASTEROIDS || p->Type() == PT_GASGIANT)
+            p->SetType(PT_BARREN);
     }
 }
 
