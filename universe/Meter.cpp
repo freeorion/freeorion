@@ -56,7 +56,7 @@ void Meter::ResetMax()
 
 void Meter::SetCurrent(double current)
 {
-    m_current = std::max(METER_MIN, std::min(current, m_max));
+    m_current = std::max(METER_MIN, std::min(current, METER_MAX));
 }
 
 void Meter::SetMax(double max)
@@ -64,12 +64,17 @@ void Meter::SetMax(double max)
     m_max = std::max(METER_MIN, std::min(max, METER_MAX));
 }
 
-void Meter::AdjustCurrent(double current)
+void Meter::AdjustCurrent(double adjustment)
 {
-    SetCurrent(m_current + current);
+    SetCurrent(m_current + adjustment);
 }
 
 void Meter::AdjustMax(double max)
 {
     SetMax(m_max + max);
+}
+
+void Meter::Clamp()
+{
+    m_current = std::max(METER_MIN, std::min(m_current, m_max));
 }

@@ -192,13 +192,7 @@ void UniverseObject::RemoveOwner(int id)
     m_owners.erase(id);
     m_changed_sig();
 }
-#if 0
-void UniverseObject::SetSystem(int sys)
-{
-    m_system_id = sys;
-    m_changed_sig();
-}
-#endif
+
 void UniverseObject::ResetMaxMeters()
 {
     for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
@@ -210,4 +204,13 @@ void UniverseObject::ResetMaxMeters()
 
 void UniverseObject::AdjustMaxMeters()
 {
+}
+
+void UniverseObject::ClampMeters()
+{
+    for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
+        if (Meter* meter = GetMeter(i)) {
+            meter->Clamp();
+        }
+    }
 }

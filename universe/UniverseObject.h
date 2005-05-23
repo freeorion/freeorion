@@ -119,8 +119,11 @@ public:
     void ResetMaxMeters();
 
     /** adjusts the max meter values for all meters in this UniverseObject, based on its own properties.  This does not include
-        Effects acting on the object, which should already have been executed before this fucntion is called. */
+        Effects acting on the object, which should already have been executed before this function is called. */
     virtual void AdjustMaxMeters();
+
+    /** calls Clamp() on each meter in this UniverseObject, to ensure that no Meter's Current() value exceed its Max() value. */
+    void ClampMeters();
 
     /** performs the movement that this object is responsible for this object's actions during the pop growth/production/research
         phase of a turn. */

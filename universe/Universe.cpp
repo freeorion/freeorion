@@ -1242,6 +1242,10 @@ void Universe::ApplyEffects()
             }
         }
     }
+
+    for (iterator it = begin(); it != end(); ++it) {
+        it->second->ClampMeters();
+    }
 }
 
 UniverseObject* Universe::Remove(int id)
