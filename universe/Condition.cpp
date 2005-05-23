@@ -37,6 +37,16 @@ namespace {
     Condition::ConditionBase* NewOr(const GG::XMLElement& elem)                     {return new Condition::Or(elem);}
     Condition::ConditionBase* NewNot(const GG::XMLElement& elem)                    {return new Condition::Not(elem);}
 
+    const Fleet* FleetFromObject(const UniverseObject* obj)
+    {
+        const Fleet* retval = universe_object_cast<const Fleet*>(obj);
+        if (!retval) {
+            if (const Ship* ship = universe_object_cast<const Ship*>(obj))
+                retval = ship->GetFleet();
+        }
+        return retval;
+    }
+
     bool temp_header_bool = RecordHeaderFile(ConditionRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
@@ -1074,22 +1084,22 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
                 return (static_cast<int>(path.first.size()) - 1) <= jump_limit;
             }
         } else if (source_system) {
-            if (const Fleet* target_fleet = universe_object_cast<const Fleet*>(target)) {
+            if (const Fleet* target_fleet = FleetFromObject(target)) {
                 std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(source_system->ID(), target_fleet->PreviousSystemID());
                 std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(source_system->ID(), target_fleet->NextSystemID());
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())) - 1)
                     return jumps <= jump_limit;
             }
         } else if (target_system) {
-            if (const Fleet* source_fleet = universe_object_cast<const Fleet*>(source)) {
+           if (const Fleet* source_fleet = FleetFromObject(source)) {
                 std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(source_fleet->PreviousSystemID(), target_system->ID());
                 std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(source_fleet->NextSystemID(), target_system->ID());
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())))
                     return jumps - 1 <= jump_limit;
             }
         } else {
-            const Fleet* target_fleet = universe_object_cast<const Fleet*>(target);
-            const Fleet* source_fleet = universe_object_cast<const Fleet*>(source);
+            const Fleet* source_fleet = FleetFromObject(source);
+            const Fleet* target_fleet = FleetFromObject(target);
             if (source_fleet && target_fleet) {
                 int source_fleet_prev_system_id = source_fleet->PreviousSystemID();
                 int source_fleet_next_system_id = source_fleet->NextSystemID();
