@@ -1,26 +1,14 @@
 #include "Order.h"
-#include "../universe/UniverseObject.h"
 
-#include "./AppInterface.h"
-
-#ifndef _Planet_h_
-#include "../universe/Planet.h"
-#endif
-
-#ifndef _Fleet_h_
+#include "AppInterface.h"
 #include "../universe/Fleet.h"
-#endif
-
-#ifndef _Ship_h_
-#include "../universe/Ship.h"
-#endif
-
-#ifndef _System_h_
-#include "../universe/System.h"
-#endif
-
 #include "../util/MultiplayerCommon.h"
+#include "../util/OrderSet.h"
+#include "../universe/Planet.h"
 #include "../universe/Predicates.h"
+#include "../universe/Ship.h"
+#include "../universe/System.h"
+#include "../universe/UniverseObject.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -522,7 +510,8 @@ FleetColonizeOrder::FleetColonizeOrder() :
 {
 }
 
-FleetColonizeOrder::FleetColonizeOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
+FleetColonizeOrder::FleetColonizeOrder(const GG::XMLElement& elem) :
+    Order(elem.Child("Order"))
 {
     if(elem.Tag() != ("FleetColonizeOrder"))
         throw std::invalid_argument("Attempted to construct FleetColonizeOrder from malformed XMLElement");
@@ -533,7 +522,7 @@ FleetColonizeOrder::FleetColonizeOrder(const GG::XMLElement& elem) : Order(elem.
     m_colony_fleet_name = elem.Child("m_colony_fleet_name").Text();
 }
 
-FleetColonizeOrder::FleetColonizeOrder(int empire, int ship, int planet) : 
+FleetColonizeOrder::FleetColonizeOrder(int empire, int ship, int planet) :
     Order(empire),
     m_ship(ship),
     m_planet(planet)
@@ -634,8 +623,8 @@ bool FleetColonizeOrder::UndoImpl() const
     // if the fleet from which the colony ship came no longer exists or has moved, recreate it
     if (!fleet || fleet->SystemID() != ship->SystemID()) {
         System* system = planet->GetSystem();
+        int new_fleet_id = !fleet ? m_colony_fleet_id : GetNewObjectID();
         fleet = new Fleet(!fleet ? m_colony_fleet_name : "Colony Fleet", system->X(), system->Y(), EmpireID());
-        int new_fleet_id = GetNewObjectID();
         if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID)
             throw std::runtime_error("FleetColonizeOrder::UndoImpl(): Unable to obtain a new fleet ID");
         universe.InsertID(fleet, new_fleet_id);
