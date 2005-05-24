@@ -517,7 +517,7 @@ Destroy::Destroy(const GG::XMLElement& elem)
 
 void Destroy::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    GetUniverse().Delete(target->ID());
+    GetUniverse().EffectDestroy(target->ID());
 }
 
 std::string Destroy::Description() const
