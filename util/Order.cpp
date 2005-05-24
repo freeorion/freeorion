@@ -540,8 +540,6 @@ void FleetColonizeOrder::ServerExecute() const
     planet->GetMeter(METER_FARMING)->SetCurrent(INITIAL_COLONY_POP);
     planet->GetMeter(METER_HEALTH)->SetCurrent(planet->GetMeter(METER_HEALTH)->Max());
     planet->AddOwner(EmpireID());
-    if (System* system = planet->GetSystem())
-        system->AddOwner(EmpireID());
 }
 
 XMLElement FleetColonizeOrder::XMLEncode() const
