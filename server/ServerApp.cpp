@@ -22,8 +22,9 @@
 #include <GGFont.h>
 
 #include <boost/lexical_cast.hpp>
-#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -87,13 +88,19 @@ namespace {
                 fs::path save_dir = boost::filesystem::initial_path() / SAVE_DIR_NAME;
                 fs::directory_iterator end_it;
                 for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
-                    if (fs::exists(*it) && !fs::is_directory(*it) && it->leaf()[0] != '.') {
-                        std::string filename = it->leaf();
-                        // disallow filenames that begin with a dot, and filenames with spaces in them
-                        if (filename.find('.') != 0 && filename.find(' ') == std::string::npos && 
-                            filename.find(SAVE_FILE_EXTENSION) == filename.size() - SAVE_FILE_EXTENSION.size()) {
-                            save_games.push_back(filename);
+                    try {
+                        if (fs::exists(*it) && !fs::is_directory(*it) && it->leaf()[0] != '.') {
+                            std::string filename = it->leaf();
+                            // disallow filenames that begin with a dot, and filenames with spaces in them
+                            if (filename.find('.') != 0 && filename.find(' ') == std::string::npos && 
+                                filename.find(SAVE_FILE_EXTENSION) == filename.size() - SAVE_FILE_EXTENSION.size()) {
+                                save_games.push_back(filename);
+                            }
                         }
+                    } catch (const fs::filesystem_error& e) {
+                        // ignore files for which permission is denied, and rethrow other exceptions
+                        if (e.error() != fs::security_error)
+                            throw;
                     }
                 }
 
