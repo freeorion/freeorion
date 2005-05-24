@@ -1169,11 +1169,7 @@ bool Universe::InsertID(UniverseObject* obj, int id )
 
 void Universe::ApplyEffects()
 {
-    // reset max meter state that is affected by the application of effects
-    for (const_iterator it = begin(); it != end(); ++it) {
-        it->second->ResetMaxMeters();
-        it->second->AdjustMaxMeters();
-    }
+    m_marked_destroyed.clear();
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
@@ -1219,6 +1215,12 @@ void Universe::ApplyEffects()
         }
     }
 
+    // reset max meter state that is affected by the application of effects
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ResetMaxMeters();
+        it->second->AdjustMaxMeters();
+    }
+
     // execute effects on cached results
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
     for (EffectsAndTargetsMap::const_iterator it = effects_targets_map.begin(); it != effects_targets_map.end(); ++it) {
@@ -1245,6 +1247,10 @@ void Universe::ApplyEffects()
 
     for (iterator it = begin(); it != end(); ++it) {
         it->second->ClampMeters();
+    }
+
+    for (std::set<int>::iterator it = m_marked_destroyed.begin(); it != m_marked_destroyed.end(); ++it) {
+        DestroyImpl(*it);
     }
 }
 
@@ -1279,6 +1285,11 @@ bool Universe::Delete(int id)
         UniverseObjectDeleteSignal()(obj);
     delete obj;
     return obj;
+}
+
+void Universe::EffectDestroy(int id)
+{
+    m_marked_destroyed.insert(id);
 }
 
 void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid)
@@ -2232,4 +2243,30 @@ int Universe::GenerateObjectID()
     return ++m_last_allocated_id;
 }
 
-
+void Universe::DestroyImpl(int id)
+{
+    UniverseObject* obj = Object(id);
+    if (!obj)
+        return;
+    if (Ship* ship = universe_object_cast<Ship*>(obj)) {
+        // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
+        Fleet* fleet = ship->GetFleet();
+        Delete(id);
+        if (fleet && fleet->NumShips() == 0)
+            Delete(fleet->ID());
+    } else if (Fleet* fleet = universe_object_cast<Fleet*>(obj)) {
+        for (Fleet::iterator it = fleet->begin(); it != fleet->end(); ++it) {
+            Delete(*it);
+        }
+        Delete(id);
+    } else if (Planet* planet = universe_object_cast<Planet*>(obj)) {
+        for (std::set<int>::const_iterator it = planet->Buildings().begin(); it != planet->Buildings().end(); ++it) {
+            Delete (*it);
+        }
+        Delete(id);
+    } else if (System* system = universe_object_cast<System*>(obj)) {
+        // unsupported: do nothing
+    } else {
+        Delete(id);
+    }
+}

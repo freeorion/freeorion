@@ -207,7 +207,7 @@ public:
         \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
         passing it to InsertID().
         Useful mostly for times when ID needs to be consistant on client and server*/
-    bool               InsertID(UniverseObject* obj, int id );
+    bool              InsertID(UniverseObject* obj, int id );
 
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
     void              CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
@@ -215,7 +215,7 @@ public:
                                      const std::vector<PlayerSetupData>& player_setup_data = std::vector<PlayerSetupData>());
 
     /** Applies all Effects from Buildings, Specials, Techs, etc. */
-    void ApplyEffects();
+    void              ApplyEffects();
 
     /** removes the object with ID number \a id from the universe and any containing UniverseObjects (e.g. the containing System),
         and returns it; returns 0 if there is no such object*/
@@ -223,6 +223,9 @@ public:
 
     /** removes and deletes the object with ID number \a id; returns true if such an object was found, false otherwise*/
     bool              Delete(int id);
+
+    /** marks an object for destruction by the Destroy effect. */
+    void              EffectDestroy(int id);
     //@}
 
     /** returns the size of the galaxy map.  Does not measure absolute distances; the ratio between map coordinates and actual distance varies
@@ -319,11 +322,14 @@ protected:
     /// dependency on ServerEmpireManager -- jdb
     void GenerateEmpires(int players, std::vector<int>& homeworlds, const std::vector<PlayerSetupData>& player_setup_data);
 
+    void DestroyImpl(int id);
+
     ObjectMap m_objects;                                ///< note that for the system graph algorithms to work more easily, the first N elements should be the N systems
     DistanceMatrix m_system_distances;                  ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
     SystemGraph m_system_graph;                         ///< a graph in which the systems are vertices and the starlanes are edges
     NumberedElementFactory<UniverseObject> m_factory;   ///< generates new object IDs for all new objects
     int m_last_allocated_id;
+    std::set<int> m_marked_destroyed;
 
     static double s_universe_width;
 
