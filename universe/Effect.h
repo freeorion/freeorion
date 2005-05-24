@@ -76,8 +76,9 @@ public:
     virtual std::string Description() const = 0;
 };
 
-/** Sets the meter of the given kind to \a value.  The max value of the meter is set if \a max == true; otherwise the current value of the
-    meter is set.  If the target of the Effect has no meters, nothing is done. */
+/** Sets the meter of the given kind to \a value.  The max value of the meter is set if \a max == true; otherwise the
+    current value of the meter is set.  If the target of the Effect does not have the requested meter, nothing is
+    done. */
 class Effect::SetMeter : public Effect::EffectBase
 {
 public:
@@ -94,7 +95,8 @@ private:
     bool                                  m_max;
 };
 
-/** Sets the empire stockpile of the target's owning empire to \a value.  If the target does not have exactly one owner, nothing is done. */
+/** Sets the empire stockpile of the target's owning empire to \a value.  If the target does not have exactly one owner,
+    nothing is done. */
 class Effect::SetEmpireStockpile : public Effect::EffectBase
 {
 public:
@@ -110,7 +112,10 @@ private:
     const ValueRef::ValueRefBase<double>* m_value;
 };
 
-/** Sets the planet type of the target to \a type.  This has no effect on non-Planet targets. */
+/** Sets the planet type of the target to \a type.  This has no effect on non-Planet targets.  Note that changing the
+    type of a PT_ASTEROID or PT_GASGIANT planet will also change its size to SZ_TINY or SZ_HUGE, respectively.
+    Similarly, changing type to PT_ASTEROID or PT_GASGIANT will also cause the size to change to SZ_ASTEROID or
+    SZ_GASGIANT, respectively. */
 class Effect::SetPlanetType : public Effect::EffectBase
 {
 public:
@@ -125,7 +130,9 @@ private:
     const ValueRef::ValueRefBase<PlanetType>* m_type;
 };
 
-/** Sets the planet size of the target to \a size.  This has no effect on non-Planet targets. */
+/** Sets the planet size of the target to \a size.  This has no effect on non-Planet targets.  Note that changing the
+    size of a PT_ASTEROID or PT_GASGIANT planet will also change its type to PT_BARREN.  Similarly, changing size to
+    SZ_ASTEROID or SZ_GASGIANT will also cause the type to change to PT_ASTEROID or PT_GASGIANT, respectively. */
 class Effect::SetPlanetSize : public Effect::EffectBase
 {
 public:
@@ -181,7 +188,9 @@ public:
     virtual std::string Description() const;
 };*/
 
-/** Destroys the target object. */
+/** Destroys the target object.  When executed on objects that contain other objects (such as Fleets and Planets), all
+    contained objects are destroyed as well.  Has no effect on System objects.  Destroy effects are executed after all
+    other effects. */
 class Effect::Destroy : public Effect::EffectBase
 {
 public:
