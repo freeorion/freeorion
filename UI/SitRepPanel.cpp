@@ -61,6 +61,7 @@ void SitRepPanel::Update()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
+    int first_visible_sitrep = m_sitreps_lb->FirstRowShown();
     m_sitreps_lb->Clear();
 
     boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
@@ -80,5 +81,10 @@ void SitRepPanel::Update()
         row->height = font->TextExtent(link_text->WindowText(), format, width).y;
         row->push_back(link_text);
         m_sitreps_lb->Insert(row);                
+    }
+
+    if (!m_sitreps_lb->Empty()) {
+        m_sitreps_lb->BringRowIntoView(m_sitreps_lb->NumRows() - 1);
+        m_sitreps_lb->BringRowIntoView(first_visible_sitrep);
     }
 }
