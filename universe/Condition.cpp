@@ -616,7 +616,7 @@ Condition::FocusType::FocusType(const GG::XMLElement& elem)
         if (it->Tag() == "FocusType")
             m_foci.push_back(ParseArithmeticExpression< ::FocusType>(it->Text()));
     }
-    m_primary = lexical_cast< ::FocusType>(elem.Child("primary").Text());
+    m_primary = lexical_cast<bool>(elem.Child("primary").Text());
 }
 
 Condition::FocusType::~FocusType()
