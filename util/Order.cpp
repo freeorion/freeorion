@@ -534,6 +534,8 @@ void FleetColonizeOrder::ServerExecute() const
     Universe& universe = GetUniverse();
     universe.Delete(m_ship);
     Planet* planet = universe.Object<Planet>(m_planet);
+    planet->SetPrimaryFocus(FOCUS_BALANCED);
+    planet->SetSecondaryFocus(FOCUS_BALANCED);
     planet->ResetMaxMeters();
     planet->AdjustMaxMeters();
     planet->AdjustPop(INITIAL_COLONY_POP);

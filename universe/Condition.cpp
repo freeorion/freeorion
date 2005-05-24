@@ -613,7 +613,8 @@ Condition::FocusType::FocusType(const GG::XMLElement& elem)
         throw std::runtime_error("Condition::FocusType : Attempted to create a FocusType condition from an XML element with a tag other than \"Condition::FocusType\".");
 
     for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
-        m_foci.push_back(ParseArithmeticExpression< ::FocusType>(it->Text()));
+        if (it->Tag() == "FocusType")
+            m_foci.push_back(ParseArithmeticExpression< ::FocusType>(it->Text()));
     }
     m_primary = lexical_cast< ::FocusType>(elem.Child("primary").Text());
 }

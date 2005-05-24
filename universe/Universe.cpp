@@ -2130,6 +2130,8 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
         // create population and industry on home planet
         home_planet->AddSpecial("HOMEWORLD_SPECIAL");
+        home_planet->SetPrimaryFocus(FOCUS_BALANCED);
+        home_planet->SetSecondaryFocus(FOCUS_BALANCED);
         home_planet->ResetMaxMeters();
         home_planet->AdjustMaxMeters();
         Effect::EffectsGroup::TargetSet target_set;

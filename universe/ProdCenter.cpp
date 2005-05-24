@@ -56,6 +56,8 @@ namespace {
         double secondary_specialized_factor = ProductionDataTables()["FocusMods"][1][0];
         double primary_balanced_factor = ProductionDataTables()["FocusMods"][2][0];
         double secondary_balanced_factor = ProductionDataTables()["FocusMods"][3][0];
+        if (old_focus == FOCUS_UNKNOWN)
+            old_focus = FOCUS_BALANCED;
         if (old_focus != new_focus) {
             if (old_focus == FOCUS_BALANCED && new_focus == meter) {
                 return primary ? (primary_specialized_factor - primary_balanced_factor) : (secondary_specialized_factor - secondary_balanced_factor);
@@ -101,8 +103,8 @@ ProdCenter::ProdCenter(const Meter& pop, UniverseObject* object) :
 }
 
 ProdCenter::ProdCenter(const GG::XMLElement& elem, const Meter& pop, UniverseObject* object) : 
-    m_primary(FOCUS_BALANCED),
-    m_secondary(FOCUS_BALANCED),
+    m_primary(FOCUS_UNKNOWN),
+    m_secondary(FOCUS_UNKNOWN),
     m_pop(pop),
     m_object(object),
     m_available_minerals(0.0),
@@ -332,8 +334,8 @@ void ProdCenter::PopGrowthProductionResearchPhase()
 
 void ProdCenter::Reset()
 {
-    m_primary = FOCUS_BALANCED;
-    m_secondary = FOCUS_BALANCED;
+    m_primary = FOCUS_UNKNOWN;
+    m_secondary = FOCUS_UNKNOWN;
 
     m_farming = Meter();
     m_industry = Meter();
