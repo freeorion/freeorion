@@ -172,6 +172,7 @@ public:
 
 private:
     ObjectMultimap PartiallyVisibleObjects(int empire_id) const; ///< returns the subset of m_objects that is visible when this System's visibility is only PARTIAL_VISIBILITY
+    void           UpdateOwnership();
 
     StarType       m_star;
     int            m_orbits;

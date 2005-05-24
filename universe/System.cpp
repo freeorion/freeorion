@@ -1,6 +1,7 @@
 #include "System.h"
 
 #include "Fleet.h"
+#include "Planet.h"
 
 #include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
@@ -234,6 +235,8 @@ int System::Insert(int obj_id, int orbit)
     }
     if (!already_in_system) {
         m_objects.insert(insertion);
+        if (Planet *planet = GetUniverse().Object<Planet>(obj_id))
+            UpdateOwnership();
         if (Fleet *fleet = GetUniverse().Object<Fleet>(obj_id))
             FleetAddedSignal()(*fleet);
         StateChangedSignal()();
@@ -243,21 +246,21 @@ int System::Insert(int obj_id, int orbit)
 
 bool System::Remove(int id)
 {
-   bool retval = false;
-   for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-      if (it->second == id) {
-         GetUniverse().Object(it->second)->SetSystem(INVALID_OBJECT_ID);
-         m_objects.erase(it);
-         retval = true;
-         
-         Fleet *fleet = GetUniverse().Object<Fleet>(id);
-         if(fleet)
-           FleetRemovedSignal()(*fleet);
-         StateChangedSignal()();
-         break;
-      }
-   }
-   return retval;
+    bool retval = false;
+    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (it->second == id) {
+            GetUniverse().Object(it->second)->SetSystem(INVALID_OBJECT_ID);
+            m_objects.erase(it);
+            retval = true;
+            if (Planet *planet = GetUniverse().Object<Planet>(id))
+                UpdateOwnership();
+            if (Fleet *fleet = GetUniverse().Object<Fleet>(id))
+                FleetRemovedSignal()(*fleet);
+            StateChangedSignal()();
+            break;
+        }
+    }
+    return retval;
 }
 
 void System::SetStarType(StarType type)
@@ -350,4 +353,19 @@ System::ObjectMultimap System::PartiallyVisibleObjects(int empire_id) const
             retval.insert(*it);
     }
     return retval;
+}
+
+void System::UpdateOwnership()
+{
+    std::set<int> owners = Owners();
+    for (std::set<int>::iterator it = owners.begin(); it != owners.end(); ++it) {
+        UniverseObject::RemoveOwner(*it);
+    }
+    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (Planet *planet = GetUniverse().Object<Planet>(it->second)) {
+            for (std::set<int>::const_iterator it2 = planet->Owners().begin(); it2 != planet->Owners().end(); ++it2) {
+                UniverseObject::AddOwner(*it2);
+            }
+        }
+    }
 }
