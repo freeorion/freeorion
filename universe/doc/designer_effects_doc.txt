@@ -55,9 +55,9 @@ Now about types.  The "double" type listed above, is a double-precision floating
 
 In the Conditions and Effects below, certain parameters have types.  It is illegal to provide a parameter of the wrong type, and it will result in a thrown exception (a purposeful crash of FreeOrion).  There is one major exceptions to this.  It is legal to provide a int value for any parameter of any type.  This is mainly to support easy expression syntax, which is the next thing that needs to be addressed.
 
-Instead of providing a singe variable or constant value (such as 3.14, 5, or STAR_BLUE), you can instead provide an arithmetic expression.  Legal expressions may contain parentheses, +, -, *, and /.  The - operator can be binary as in "3 + 4", or unary as in "-Source.MaxHealth".  Whitespace (spaces, tabs, and newlines) is ignored.  Expressions may be arbtrarily complex.  The type of the entire expression must match the type of the parameter for which it is intended.  For instance, it is illegal to supply "1 + 3.14" as a value for an int-type parameter, since 3.14 is not an int. As mentioned before, though, it is legal to supply "STAR_BLUE + 1" as a value for a StarType parameter, since integers are always ok.
+Instead of providing a singe variable or constant value (such as 3.14, 5, or STAR_BLUE), you can instead provide an arithmetic expression.  Legal expressions may contain parentheses, +, -, *, and /.  The - operator can be binary as in "3 - 4", or unary as in "-Source.MaxHealth".  Whitespace (spaces, tabs, and newlines) is ignored.  Expressions may be arbtrarily complex.  The type of the entire expression must match the type of the parameter for which it is intended.  For instance, it is illegal to supply "1 + 3.14" as a value for an int-type parameter, since 3.14 is not an int. As mentioned before, though, it is legal to supply "STAR_BLUE + 1" as a value for a StarType parameter, since integers are always ok.
 
-Note that since arbitrarily complex expressions are allowed in Effects, and multiple Effects may affect a single target in a single turn, the order in which the Effects are applied to the target may matter.  For instance, if Effect A is sets the current industry meter to "Target.CurrentIndustry + 20", and Effect B sets the current industry meter to "Target.CurrentIndustry * 3", the answer could be X * 3 + 20 or (X + 20) * 3, depending on the order of execution.  To minimize this, and in keeping with the guidelines for Effects in general, such Effects should have small magnitude, which will make the problem largely disappear.  For instance,  if "Target.CurrentIndustry + 3" and "Target.CurrentIndustry * 1.05" are used instead, the difference between X * 1.05 + 3 and (X + 3) * 1.05 is a negligible 0.15.
+Note that since arbitrarily complex expressions are allowed in Effects, and multiple Effects may affect a single target in a single turn, the order in which the Effects are applied to the target may matter.  For instance, if Effect A sets the current industry meter to "Target.CurrentIndustry + 20", and Effect B sets the current industry meter to "Target.CurrentIndustry * 3", the answer could be X * 3 + 20 or (X + 20) * 3, depending on the order of execution.  To minimize this, and in keeping with the guidelines for Effects in general, such Effects should have small magnitude, which will make the problem largely disappear.  For instance,  if "Target.CurrentIndustry + 3" and "Target.CurrentIndustry * 1.05" are used instead, the difference between X * 1.05 + 3 and (X + 3) * 1.05 is a negligible 0.15.
 
 Note that some of the parameters in the Conditions and Effects below ask for a certain type, sometimes a type-expression.  Those paramters that do not explicitly allow type-expressions cannot handle them.
 
@@ -358,7 +358,7 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
 ==Effects==
 
 ===SetMeter===
-<br>Descr.:     Sets the meter of the given kind to VALUE.  The max value of the meter is set if MAX == true; otherwise the current value of the meter is set.  If the target of the Effect has no meters, nothing is done.
+<br>Descr.:     Sets the meter of the given kind to VALUE.  The max value of the meter is set if MAX == true; otherwise the current value of the meter is set.  If the target of the Effect does not have the requested meter, nothing is done.
 <br>XML format:
  <Effect::SetMeter>
      <meter>METER</meter>
@@ -386,7 +386,7 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
 
 
 ===SetPlanetType===
-<br>Descr.:     Sets the planet type of the target to TYPE.  This has no effect on non-Planet targets.
+<br>Descr.:     Sets the planet type of the target to TYPE.  This has no effect on non-Planet targets.  Note that changing the type of a PT_ASTEROID or PT_GASGIANT planet will also change its size to SZ_TINY or SZ_HUGE, respectively.  Similarly, changing type to PT_ASTEROID or PT_GASGIANT will also cause the size to change to SZ_ASTEROID or SZ_GASGIANT, respectively.
 <br>XML format:
  <Effect::SetPlanetType>TYPE</Effect::SetPlanetType>
 
@@ -394,7 +394,7 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
  TYPE PlanetSize-expression
 
 ===SetPlanetSize===
-<br>Descr.:     Sets the planet size of the target to SIZE.  This has no effect on non-Planet targets.
+<br>Descr.:     Sets the planet size of the target to SIZE.  This has no effect on non-Planet targets.  Note that changing the size of a PT_ASTEROID or PT_GASGIANT planet will also change its type to PT_BARREN.  Similarly, changing size to SZ_ASTEROID or SZ_GASGIANT will also cause the type to change to PT_ASTEROID or PT_GASGIANT, respectively.
 <br>XML format:
  <Effect::SetPlanetSize>SIZE</Effect::SetPlanetSize>
 
@@ -421,7 +421,7 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
 
 
 ===Destroy===
-<br>Descr.:     Destroys the target object.
+<br>Descr.:     Destroys the target object.  Destroy effects are executed after all other effects.
 <br>XML format:
  <Effect::Destroy/>
 
