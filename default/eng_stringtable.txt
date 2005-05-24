@@ -1176,10 +1176,10 @@ DESC_STAR_TYPE_NOT
  that is not a system with a %1% star
 
 DESC_CHANCE_PERCENTAGE
- on a %1%% chance
+ on a %1%%% chance
 
 DESC_CHANCE_PERCENTAGE_NOT
- on a (100 - %1%)% chance
+ on a (100 - %1%)%% chance
 
 DESC_CHANCE
  with a probability of %1%
