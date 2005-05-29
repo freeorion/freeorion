@@ -212,7 +212,7 @@ CUI_Wnd::CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags)
     m_closable(flags & CLOSABLE),
     m_minimizable(flags & MINIMIZABLE),
     m_minimized(false),
-    m_resizing(false),
+    m_drag_offset(-1, -1),
     m_close_button(0),
     m_minimize_button(0)
 {
@@ -368,18 +368,16 @@ void CUI_Wnd::LButtonDown(const GG::Pt& pt, Uint32 keys)
         GG::Pt cl_lr = LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
         GG::Pt dist_from_lr = cl_lr - pt;
         if (dist_from_lr.x + dist_from_lr.y <= INNER_BORDER_ANGLE_OFFSET) {
-            m_resizing = true;
+            m_drag_offset = pt - LowerRight();
         }
     }
 }
 
 void CUI_Wnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
 {
-    // if we're resize-dragging
-    if (m_resizing) {
-        GG::Pt parent_offset = Parent() ? Parent()->ClientUpperLeft() : GG::Pt();
-        SizeMove(UpperLeft() - parent_offset, LowerRight() - parent_offset + move);
-    } else { // if we're normal-dragging
+    if (m_drag_offset != GG::Pt(-1, -1)) { // resize-dragging
+        Resize((pt - m_drag_offset) - UpperLeft());
+    } else { // normal-dragging
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         if ((0 <= ul.x + move.x) && (lr.x + move.x < GG::App::GetApp()->AppWidth()) &&
             (0 <= ul.y + move.y) && (lr.y + move.y < GG::App::GetApp()->AppHeight()))
@@ -389,7 +387,7 @@ void CUI_Wnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
 
 void CUI_Wnd::LButtonUp(const GG::Pt& pt, Uint32 keys)
 {
-    m_resizing = false;
+    m_drag_offset = GG::Pt(-1, -1);
 }
 
 bool CUI_Wnd::InWindow(const GG::Pt& pt) const
