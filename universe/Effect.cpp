@@ -328,7 +328,7 @@ void SetEmpireStockpile::Execute(const UniverseObject* source, UniverseObject* t
 
 std::string SetEmpireStockpile::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_value) ? UserString(lexical_cast<std::string>(m_value->Eval(0, 0))) : m_value->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_value) ? lexical_cast<std::string>(m_value->Eval(0, 0)) : m_value->Description();
     return str(format(UserString("DESC_SET_EMPIRE_STOCKPILE")) % UserString(lexical_cast<std::string>(m_stockpile)) % value_str);
 }
 
