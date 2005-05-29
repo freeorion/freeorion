@@ -79,6 +79,7 @@ GG::XMLObjectFactory<EffectBase> Effect::EffectFactory()
         factory.AddGenerator("Effect::Destroy", &NewDestroy);
         factory.AddGenerator("Effect::AddSpecial", &NewAddSpecial);
         factory.AddGenerator("Effect::RemoveSpecial", &NewRemoveSpecial);
+        factory.AddGenerator("Effect::SetStarType", &NewSetStarType);
         factory.AddGenerator("Effect::SetTechAvailability", &NewSetTechAvailability);
         factory.AddGenerator("Effect::SetEffectTarget", &NewSetEffectTarget);
         init = true;
@@ -549,7 +550,7 @@ void AddSpecial::Execute(const UniverseObject* source, UniverseObject* target) c
 
 std::string AddSpecial::Description() const
 {
-    return str(format(UserString("DESC_ADD_SPECIAL")) % m_name);
+    return str(format(UserString("DESC_ADD_SPECIAL")) % UserString(m_name));
 }
 
 
@@ -576,7 +577,7 @@ void RemoveSpecial::Execute(const UniverseObject* source, UniverseObject* target
 
 std::string RemoveSpecial::Description() const
 {
-    return str(format(UserString("DESC_REMOVE_SPECIAL")) % m_name);
+    return str(format(UserString("DESC_REMOVE_SPECIAL")) % UserString(m_name));
 }
 
 
