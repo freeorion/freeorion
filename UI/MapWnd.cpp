@@ -145,7 +145,7 @@ double    MapWnd::s_max_scale_factor = 8.0;
 const int MapWnd::SIDE_PANEL_WIDTH = 300;
 
 namespace {
-    const int MAP_MARGIN_WIDTH = MapWnd::SIDE_PANEL_WIDTH; // the number of pixels of system-less space around all four sides of the starfield
+    const int MAP_MARGIN_WIDTH = MapWnd::SIDE_PANEL_WIDTH + 25; // the number of pixels of starless space around all four sides of the starfield
 }
 
 MapWnd::MapWnd() :
@@ -1079,27 +1079,28 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
     int contents_width = static_cast<int>(m_zoom_factor * Universe::UniverseWidth());
     int app_width =  GG::App::GetApp()->AppWidth();
     int app_height = GG::App::GetApp()->AppHeight();
-    if (app_width < contents_width * 1.25) {
+
+    if (app_width - MAP_MARGIN_WIDTH < contents_width) {
         if (MAP_MARGIN_WIDTH < move_to_pt.x)
             move_to_pt.x = MAP_MARGIN_WIDTH;
-        if (move_to_pt.x < app_width - contents_width - 2 * MAP_MARGIN_WIDTH)
-            move_to_pt.x = app_width - contents_width - 2 * MAP_MARGIN_WIDTH;
+        if (move_to_pt.x + contents_width < app_width - MAP_MARGIN_WIDTH)
+            move_to_pt.x = app_width - MAP_MARGIN_WIDTH - contents_width;
     } else {
         if (move_to_pt.x < 0)
             move_to_pt.x = 0;
-        if (app_width - contents_width < move_to_pt.x)
+        if (app_width < move_to_pt.x + contents_width)
             move_to_pt.x = app_width - contents_width;
     }
 
-    if (app_height < contents_width * 1.25) {
+    if (app_height - MAP_MARGIN_WIDTH < contents_width) {
         if (MAP_MARGIN_WIDTH < move_to_pt.y)
             move_to_pt.y = MAP_MARGIN_WIDTH;
-        if (move_to_pt.y < app_height - contents_width - 2 * MAP_MARGIN_WIDTH)
-            move_to_pt.y = app_height - contents_width - 2 * MAP_MARGIN_WIDTH;
+        if (move_to_pt.y + contents_width < app_height - MAP_MARGIN_WIDTH)
+            move_to_pt.y = app_height - MAP_MARGIN_WIDTH - contents_width;
     } else {
         if (move_to_pt.y < 0)
             move_to_pt.y = 0;
-        if (app_height - contents_width < move_to_pt.y)
+        if (app_height < move_to_pt.y + contents_width)
             move_to_pt.y = app_height - contents_width;
     }
 }
