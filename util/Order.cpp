@@ -465,17 +465,6 @@ FleetColonizeOrder::FleetColonizeOrder(int empire, int ship, int planet) :
 
 void FleetColonizeOrder::ServerExecute() const
 {
-    if (its_time) {
-        std::cerr << "FleetColonizeOrder::ServerExecute(m_ship=" << m_ship << "); system intially contains:" << std::endl;
-        std::cerr << "    m_ship " << (GetUniverse().Object(m_ship) ? "STILL" : "NOT") << " in universe" << std::endl;
-        if (GetUniverse().Object(m_ship))
-            std::cerr << "    universe.Object(m_ship)->SystemID()=" << GetUniverse().Object(m_ship)->SystemID() << std::endl;
-        if (const System* system = GetUniverse().Object(m_planet)->GetSystem()) {
-            for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
-                std::cerr << "    " << it->second << std::endl;
-            }
-        }
-    }
     Universe& universe = GetUniverse();
     universe.Delete(m_ship);
     Planet* planet = universe.Object<Planet>(m_planet);
@@ -487,17 +476,6 @@ void FleetColonizeOrder::ServerExecute() const
     planet->GetMeter(METER_FARMING)->SetCurrent(INITIAL_COLONY_POP);
     planet->GetMeter(METER_HEALTH)->SetCurrent(planet->GetMeter(METER_HEALTH)->Max());
     planet->AddOwner(EmpireID());
-    if (its_time) {
-        std::cerr << "final system contents:" << std::endl;
-        std::cerr << "    m_ship " << (GetUniverse().Object(m_ship) ? "STILL" : "NOT") << " in universe" << std::endl;
-        if (GetUniverse().Object(m_ship))
-            std::cerr << "    universe.Object(m_ship)->SystemID()=" << GetUniverse().Object(m_ship)->SystemID() << std::endl;
-        if (const System* system = GetUniverse().Object(m_planet)->GetSystem()) {
-            for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
-                std::cerr << "    " << it->second << std::endl;
-            }
-        }
-    }
 }
 
 XMLElement FleetColonizeOrder::XMLEncode() const
@@ -513,18 +491,6 @@ XMLElement FleetColonizeOrder::XMLEncode() const
 
 void FleetColonizeOrder::ExecuteImpl() const
 {
-    if (its_time) {
-        std::cerr << "FleetColonizeOrder::ExecuteImpl(m_ship=" << m_ship << "); system intially contains:" << std::endl;
-        std::cerr << "    m_ship " << (GetUniverse().Object(m_ship) ? "STILL" : "NOT") << " in universe" << std::endl;
-        if (GetUniverse().Object(m_ship))
-            std::cerr << "    universe.Object(m_ship)->SystemID()=" << GetUniverse().Object(m_ship)->SystemID() << std::endl;
-        if (const System* system = GetUniverse().Object(m_planet)->GetSystem()) {
-            for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
-                std::cerr << "    " << it->second << std::endl;
-            }
-        }
-    }
-
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
@@ -570,18 +536,6 @@ void FleetColonizeOrder::ExecuteImpl() const
         universe.Delete(fleet->ID());
     } else {
         fleet->RemoveShip(m_ship);
-    }
-
-    if (its_time) {
-        std::cerr << "final system contents:" << std::endl;
-        std::cerr << "    m_ship " << (GetUniverse().Object(m_ship) ? "STILL" : "NOT") << " in universe" << std::endl;
-        if (GetUniverse().Object(m_ship))
-            std::cerr << "    universe.Object(m_ship)->SystemID()=" << GetUniverse().Object(m_ship)->SystemID() << std::endl;
-        if (const System* system = GetUniverse().Object(m_planet)->GetSystem()) {
-            for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
-                std::cerr << "    " << it->second << std::endl;
-            }
-        }
     }
 }
 
