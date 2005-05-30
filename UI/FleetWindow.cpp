@@ -968,6 +968,13 @@ void FleetWnd::ObjectDroppedIntoList(int row_idx, const boost::shared_ptr<GG::Li
     if (row_idx == m_fleets_lb->NumRows() - 2) { // drop was into the new fleet row; "- 2" is used, because the list is now 1 larger, since the ShipRow was just dropped into it
         if (ship_row) {
             int ship_id = ship_row->ShipID();
+            // special case: disallow drag-dropping a ship into the new fleet row when there is only 1, and only 1 fleet
+            if (m_fleets_lb->NumRows() == 3) { // if there is exactly one fleet in the window ("3" is used because there is also the new fleet row and the just-dropped ship
+                Ship* ship = GetUniverse().Object<Ship>(ship_id);
+                assert(ship->GetFleet());
+                if (ship->GetFleet()->NumShips() == 1)
+                    throw GG::ListBox::DontAcceptDropException();
+            }
             m_fleets_lb->Delete(row_idx); // remove the ship from the list, since it will be placed into a fleet
             CreateNewFleetFromDrop(ship_id);
         } else if (fleet_row) { // disallow drops of fleets onto the new fleet row
