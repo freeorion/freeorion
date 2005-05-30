@@ -64,15 +64,15 @@ public:
     //@}
    
     /** \name Accessors */ //@{
-    int                  ID() const     {return m_id;}       ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
-    const std::string&   Name() const   {return m_name;}     ///< returns the name of this object; some valid objects will have no name
-    double               X() const      {return m_x;}        ///< the X-coordinate of this object
-    double               Y() const      {return m_y;}        ///< the Y-coordinate of this object
-    const std::set<int>& Owners() const {return m_owners;}   ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
-    int                  SystemID() const{return m_system_id;}///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
-    System*              GetSystem() const;                  ///< returns system in which this object can be found, or null if the object is not within any system
+    int                  ID() const;        ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
+    const std::string&   Name() const;      ///< returns the name of this object; some valid objects will have no name
+    double               X() const;         ///< the X-coordinate of this object
+    double               Y() const;         ///< the Y-coordinate of this object
+    const std::set<int>& Owners() const;    ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
+    int                  SystemID() const;  ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
+    System*              GetSystem() const; ///< returns system in which this object can be found, or null if the object is not within any system
     const std::set<std::string>&
-    Specials() const {return m_specials;}///< returns the set of names of the Specials attached to this object
+    Specials() const;                       ///< returns the set of names of the Specials attached to this object
 
     virtual const Meter* GetMeter(MeterType type) const;  ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
@@ -87,12 +87,12 @@ public:
     /** accepts a visitor object \see UniverseObjectVisitor */
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
-    StateChangedSignalType& StateChangedSignal() const {return m_changed_sig;} ///< returns the state changed signal object for this UniverseObject
+    StateChangedSignalType& StateChangedSignal() const; ///< returns the state changed signal object for this UniverseObject
     //@}
    
     /** \name Mutators */ //@{
-    void SetID(int id)                   {m_id = id; m_changed_sig();}      ///< sets the ID number of the object to \a id
-    void Rename(const std::string& name) {m_name = name; m_changed_sig();}  ///< renames this object to \a name
+    void SetID(int id);                   ///< sets the ID number of the object to \a id
+    void Rename(const std::string& name); ///< renames this object to \a name
    
     /** moves the object using the vector (x, y). \throw std::runtime_error May throw std::runtime_error if the result 
         of the move would place either coordinate outside the map area.*/
@@ -104,11 +104,11 @@ public:
    
     virtual Meter* GetMeter(MeterType type);  ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
-    virtual void AddOwner(int id);  ///< adds the Empire with ID \a id to the list of owners of this object
-    virtual void RemoveOwner(int id);   ///< removes the Empire with ID \a id to the list of owners of this object
-    void SetSystem(int sys)  {m_system_id = sys; m_changed_sig();}    ///< assigns this object to a System
-    virtual void AddSpecial(const std::string& name) {m_specials.insert(name);}  ///< adds the Special \a name to this object, if it is not already present
-    virtual void RemoveSpecial(const std::string& name) {m_specials.erase(name);}   ///< removes the Special \a name from this object, if it is already present
+    virtual void AddOwner(int id);                       ///< adds the Empire with ID \a id to the list of owners of this object
+    virtual void RemoveOwner(int id);                    ///< removes the Empire with ID \a id to the list of owners of this object
+    void SetSystem(int sys);                             ///< assigns this object to a System
+    virtual void AddSpecial(const std::string& name);    ///< adds the Special \a name to this object, if it is not already present
+    virtual void RemoveSpecial(const std::string& name); ///< removes the Special \a name from this object, if it is already present
    
     /** performs the movement that this object is responsible for this object's actions during the movement phase of 
         a turn. */

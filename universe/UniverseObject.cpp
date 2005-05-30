@@ -85,9 +85,44 @@ UniverseObject::~UniverseObject()
 {
 }
 
+int UniverseObject::ID() const
+{
+    return m_id;
+}
+
+const std::string& UniverseObject::Name() const
+{
+    return m_name;
+}
+
+double UniverseObject::X() const
+{
+    return m_x;
+}
+
+double UniverseObject::Y() const
+{
+    return m_y;
+}
+
+const std::set<int>& UniverseObject::Owners() const
+{
+    return m_owners;
+}
+
+int UniverseObject::SystemID() const
+{
+    return m_system_id;
+}
+
 System* UniverseObject::GetSystem() const
 {
     return m_system_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<System>(m_system_id);
+}
+
+const std::set<std::string>& UniverseObject::Specials() const
+{
+    return m_specials;
 }
 
 const Meter* UniverseObject::GetMeter(MeterType type) const
@@ -145,7 +180,12 @@ UniverseObject* UniverseObject::Accept(const UniverseObjectVisitor& visitor) con
 {
     return visitor.Visit(const_cast<UniverseObject* const>(this));
 }
-#if 0
+
+UniverseObject::StateChangedSignalType& UniverseObject::StateChangedSignal() const
+{
+    return m_changed_sig;
+}
+
 void UniverseObject::SetID(int id)
 {
     m_id = id;
@@ -157,7 +197,7 @@ void UniverseObject::Rename(const std::string& name)
     m_name = name;
     m_changed_sig();
 }
-#endif
+
 void UniverseObject::Move(double x, double y)
 {
     if (m_x + x < 0.0 || Universe::UniverseWidth() < m_x + x || m_y + y < 0.0 || Universe::UniverseWidth() < m_y + y)
@@ -191,6 +231,22 @@ void UniverseObject::RemoveOwner(int id)
 {
     m_owners.erase(id);
     m_changed_sig();
+}
+
+void UniverseObject::SetSystem(int sys)
+{
+    m_system_id = sys;
+    m_changed_sig();
+}
+
+void UniverseObject::AddSpecial(const std::string& name)
+{
+    m_specials.insert(name);
+}
+
+void UniverseObject::RemoveSpecial(const std::string& name)
+{
+    m_specials.erase(name);
 }
 
 void UniverseObject::ResetMaxMeters()
