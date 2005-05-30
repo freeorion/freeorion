@@ -224,6 +224,8 @@ void SystemIcon::Refresh()
     std::vector<const Fleet*> fleets = m_system.FindObjects<Fleet>();
     for (unsigned int i = 0; i < fleets.size(); ++i)
         Connect(fleets[i]->StateChangedSignal(), &SystemIcon::CreateFleetButtons, this);
+    Connect(m_system.FleetAddedSignal(), &SystemIcon::FleetCreatedOrDestroyed, this);
+    Connect(m_system.FleetRemovedSignal(), &SystemIcon::FleetCreatedOrDestroyed, this);
 
     CreateFleetButtons();
 }
@@ -241,4 +243,9 @@ void SystemIcon::PositionSystemName()
             m_name[i]->MoveTo((Width() - total_width) / 2 + extents[i], Height());
         }
     }
+}
+
+void SystemIcon::FleetCreatedOrDestroyed(const Fleet&)
+{
+    CreateFleetButtons();
 }

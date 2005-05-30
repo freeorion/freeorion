@@ -73,6 +73,7 @@ private:
     void CreateFleetButtons();
     void Refresh();
     void PositionSystemName();
+    void FleetCreatedOrDestroyed(const Fleet&);
 
     const System&                 m_system;         //!< the System object associated with this SystemIcon
     GG::StaticGraphic*            m_static_graphic; //!< the control used to render the displayed texture
