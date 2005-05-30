@@ -121,30 +121,13 @@ public:
     void ScreenLoad();    //!< Loading Screen
 
     // Zooming Functions
-    //! @param id address of a planet that we wish to zoom to
-    //! @return true if successful, false if object doesn't exist
-    bool ZoomToPlanet(int id);    //!< Zooms to a particular planet on the galaxy map and opens the planet screen for that planet
-
-    //! @param id address of system that we wish to zoom to
-    //! @return true if successful, false if object doesn't exist
-    bool ZoomToSystem(int id);    //!< Zooms to a particular system on the galaxy map
-    
-    //! @param id address of fleet that we wish to zoom to
-    //! @return true if successful, false if object doesn't exist
-    bool ZoomToFleet(int id);    //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
-    
-    //! @param id address of ship that we wish to zoom to
-    //! @return true if successful, false if object doesn't exist
+    bool ZoomToPlanet(int id);  //!< Zooms to a particular planet on the galaxy map and opens the planet screen for that planet
+    bool ZoomToSystem(int id);  //!< Zooms to a particular system on the galaxy map
+    bool ZoomToFleet(int id);   //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
     bool ZoomToShip(int id);    //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
-    
-    //! @param id address of technology that we wish to zoom to
-    //! @return true if successful, false if object doesn't exist
-    bool ZoomToTech(const std::string& tech_name);    //!< Opens the technology screen and presents a description of the given technology
-   
-    //! @param str address of encyclopedia entry that we wish to zoom to
-    //! @return true if successful, false if object doesn't exist
-    bool ZoomToEncyclopediaEntry(const std::string& str);    //!< Opens the encyclodedia screen and presents the entry for the given item
-
+    bool ZoomToTech(const std::string& tech_name); //!< Opens the technology screen and presents a description of the given technology
+    bool ZoomToBuildingType(const std::string& building_type_name); //!< Opens the building type screen and presents a description of the given building type
+    bool ZoomToEncyclopediaEntry(const std::string& str); //!< Opens the encyclodedia screen and presents the entry for the given item
     void ZoomToSystem(System* system); //!< Zooms to a particular system on the galaxy map
     void ZoomToFleet(Fleet* fleet);    //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
 

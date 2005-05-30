@@ -12,8 +12,8 @@
 #include "XMLObjectFactory.h"
 #endif
 
-#ifndef _ProdCenter_h_
-#include "../universe/ProdCenter.h"
+#ifndef _ResourceCenter_h_
+#include "../universe/ResourceCenter.h"
 #endif
 
 
@@ -108,46 +108,6 @@ private:
 
     int           m_object;
     std::string   m_name;
-};
-
-
-/////////////////////////////////////////////////////
-// BuildOrder
-/////////////////////////////////////////////////////
-/** the Order subclass that represents planetary production.  BuildOrder's when issued, cause ProdCenters
-    to change their production project. */
-class PlanetBuildOrder : public Order
-{
-public:
-    /** \name Structors */ //@{
-    PlanetBuildOrder();
-    PlanetBuildOrder(const GG::XMLElement& elem);
-    PlanetBuildOrder(int empire, int planet_id, BuildType build, const std::string& name);
-    //@}
-
-    /** \name Accessors */ //@{
-    int                PlanetID() const {return m_planet;}     ///< returns ID of planet selected in this order
-    BuildType          Type() const     {return m_build_type;} ///< returns the build type set in this order (eg BUILDING)
-    const std::string& Name() const     {return m_name;}       ///< returns the name of the exact type of item within the build type that should be produced (eg "SuperFarm")
-
-    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
-    //@}
-
-private:
-    /**
-     * Preconditions for executing planet build order:
-     *  - m_prodcenter must be the ID of a planet, owned by the empire
-     *     issuing the order
-     *
-     *  Postconditions:
-     *    - the specified planet will have its build orders set 
-     *       to the specified build type and ship type (if building ships)
-     */
-    virtual void ExecuteImpl() const;
-
-    int         m_planet;
-    BuildType   m_build_type;
-    std::string m_name;
 };
 
 

@@ -30,6 +30,161 @@
 class BuildingType;
 class ShipDesign;
 
+struct ResearchQueue
+{
+    /** The type of a single element in the research queue.  Such an element includes the tech itself, the
+        spending being done on this tech, and the number of turns until this tech is completed. */
+    typedef boost::tuple<const Tech*, double, int> Element;
+
+    typedef std::deque<Element> QueueType;
+
+    /** The ResearchQueue iterator type.  Dereference yields a Element. */
+    typedef QueueType::iterator iterator;
+    /** The const ResearchQueue iterator type.  Dereference yields a Element. */
+    typedef QueueType::const_iterator const_iterator;
+
+    /** \name Structors */ //@{
+    ResearchQueue(); ///< Basic ctor.
+    ResearchQueue(const GG::XMLElement& elem); ///< Constructs a ResearchQueue from an XMLElement.
+    //@}
+
+    /** \name Accessors */ //@{
+    bool InQueue(const Tech* tech) const; ///< Returns true iff \a tech is in this queue.
+    int ProjectsInProgress() const;       ///< Returns the number of research projects currently (perhaps partially) funded.
+    double TotalRPsSpent() const;         ///< Returns the number of RPs currently spent on the projects in this queue.
+
+    // STL container-like interface
+    bool empty() const;
+    unsigned int size() const;
+    const_iterator begin() const;
+    const_iterator end() const;
+    const_iterator find(const Tech* tech) const;
+
+    /** Returns an iterator to the underfunded research project, or end() if none exists. */
+    const_iterator UnderfundedProject() const;
+
+    GG::XMLElement XMLEncode() const; ///< Encodes this queue as an XMLElement.
+    //@}
+
+    /** \name Mutators */ //@{
+    /** Recalculates the RPs spent on and number of turns left for each project in the queue.  Also
+        determines the number of projects in prgress, and the total number of RPs spent on the projects
+        in the queue.  \note A precondition of this function that \a RPs must be greater than some
+        epsilon > 0; see the implementation for the actual value used for epsilon. */
+    void Update(double RPs, const std::map<std::string, double>& research_status);
+
+    // STL container-like interface
+    void push_back(const Tech* tech);
+    void insert(iterator it, const Tech* tech);
+    void erase(iterator it);
+
+    iterator begin();
+    iterator end();
+    iterator find(const Tech* tech);
+
+    /** Returns an iterator to the underfunded research project, or end() if none exists. */
+    iterator UnderfundedProject();
+    //@}
+
+private:
+    QueueType m_queue;
+    int       m_projects_in_progress;
+    double    m_total_RPs_spent;
+};
+
+struct ProductionQueue
+{
+    /** The type that specifies a single production item (BuildType and name string). */
+    struct ProductionItem
+    {
+        ProductionItem(); ///< default ctor.
+        ProductionItem(BuildType build_type_, std::string name_); ///< basic ctor.
+        ProductionItem(const GG::XMLElement& elem); ///< XML ctor.
+
+        GG::XMLElement XMLEncode() const; ///< Encodes this item as an XMLElement.
+
+        BuildType   build_type;
+        std::string name;
+    };
+
+    /** The type of a single element in the research queue. */
+    struct Element
+    {
+        Element(); ///< default ctor.
+        Element(ProductionItem item_, int ordered_, int remaining_, int location_); ///< basic ctor.
+        Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_); ///< basic ctor.
+        Element(const GG::XMLElement& elem); ///< XML ctor.
+
+        GG::XMLElement XMLEncode() const; ///< Encodes this element as an XMLElement.
+
+        ProductionItem item;
+        int            ordered;
+        int            remaining;
+        int            location;                 ///< the ID of the UniverseObject at which this item is being produced
+        double         spending;
+        int            turns_left_to_next_item;
+        int            turns_left_to_completion;
+    };
+
+    typedef std::deque<Element> QueueType;
+
+    /** The ProductionQueue iterator type.  Dereference yields a Element. */
+    typedef QueueType::iterator iterator;
+    /** The const ProductionQueue iterator type.  Dereference yields a Element. */
+    typedef QueueType::const_iterator const_iterator;
+
+    /** \name Structors */ //@{
+    ProductionQueue(); ///< Basic ctor.
+    ProductionQueue(const GG::XMLElement& elem); ///< Constructs a ProductionQueue from an XMLElement.
+    //@}
+
+    /** \name Accessors */ //@{
+    int InQueue(BuildType build_type, std::string name) const; ///< Returns true iff \a tech is in this queue.
+    int ProjectsInProgress() const;       ///< Returns the number of research projects currently (perhaps partially) funded.
+    double TotalPPsSpent() const;         ///< Returns the number of PPs currently spent on the projects in this queue.
+
+    // STL container-like interface
+    bool empty() const;
+    unsigned int size() const;
+    const_iterator begin() const;
+    const_iterator end() const;
+    std::vector<const_iterator> find(BuildType build_type, std::string name) const;
+    const Element& operator[](int i) const;
+
+    /** Returns an iterator to the underfunded research project, or end() if none exists. */
+    const_iterator UnderfundedProject(const Empire* empire) const;
+
+    GG::XMLElement XMLEncode() const; ///< Encodes this queue as an XMLElement.
+    //@}
+
+    /** \name Mutators */ //@{
+    /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
+        determines the number of projects in prgress, and the total number of PPs spent on the projects
+        in the queue.  \note A precondition of this function that \a PPs must be greater than some
+        epsilon > 0; see the implementation for the actual value used for epsilon. */
+    void Update(Empire* empire, double PPs, const std::vector<double>& research_status);
+
+    // STL container-like interface
+    void push_back(BuildType build_type, std::string name, int number, int remaining, int location);
+    void insert(iterator it, const Element& tech);
+    void erase(int i);
+    void erase(iterator it);
+
+    iterator begin();
+    iterator end();
+    std::vector<iterator> find(BuildType build_type, std::string name);
+    Element& operator[](int i);
+
+    /** Returns an iterator to the underfunded research project, or end() if none exists. */
+    iterator UnderfundedProject(const Empire* empire);
+    //@}
+
+private:
+    QueueType m_queue;
+    int       m_projects_in_progress;
+    double    m_total_PPs_spent;
+};
+
 /**
 * Class to maintain the state of a single empire.  
 * This class keeps track of the following information:
@@ -77,72 +232,6 @@ public:
     typedef std::list<SitRepEntry*>::const_iterator           SitRepItr;
     //@}
 
-    struct ResearchQueue
-    {
-        /** The type of a single element in the research queue.  Such an element includes the tech itself, the
-            spending being done on this tech, and the number of turns until this tech is completed. */
-        typedef boost::tuple<const Tech*, double, int> QueueElement;
-
-        typedef std::deque<QueueElement> QueueType;
-
-        /** The ResearchQueue iterator type.  Dereference yields a QueueElement. */
-        typedef QueueType::iterator iterator;
-        /** The const ResearchQueue iterator type.  Dereference yields a QueueElement. */
-        typedef QueueType::const_iterator const_iterator;
-
-        /** \name Structors */ //@{
-        ResearchQueue(); ///< Basic ctor.
-        ResearchQueue(const GG::XMLElement& elem); ///< Constructs a ResearchQueue from an XMLElement.
-        //@}
-
-        /** \name Accessors */ //@{
-        bool InQueue(const Tech* tech) const; ///< Returns true iff \a tech is in this queue.
-        int ProjectsInProgress() const;       ///< Returns the number of research projects currently (perhaps partially) funded.
-        double TotalRPsSpent() const;         ///< Returns the number of RPs spent on the projects in this queue.
-
-        // STL container-like interface
-        bool empty() const;
-        unsigned int size() const;
-        const_iterator begin() const;
-        const_iterator end() const;
-        const_iterator find(const Tech* tech) const;
-
-        /** Returns an iterator to the underfunded research project, or end() if none exists. */
-        const_iterator UnderfundedProject() const;
-
-        GG::XMLElement XMLEncode() const; ///< Encodes this queue as an XMLElement.
-        //@}
-
-        /** \name Mutators */ //@{
-        /** Recalculates the RPs spent on and number of turns left for each project in the queue.  Also
-            determines the number of projects in prgress, and the total number of RPs spent on the projects
-            in the queue.  \note A precondition of this function that \a RPs must be greater than some
-            epsilon > 0; see the implementation for the actual value used for epsilon. */
-        void Update(double RPs, const std::map<std::string, double>& research_status);
-
-        // STL container-like interface
-        void push_back(const Tech* tech);
-        void insert(iterator it, const Tech* tech);
-        void erase(iterator it);
-
-        iterator begin();
-        iterator end();
-        iterator find(const Tech* tech);
-
-        /** Returns an iterator to the underfunded research project, or end() if none exists. */
-        iterator UnderfundedProject();
-        //@}
-
-    private:
-        QueueType m_queue;
-        int       m_projects_in_progress;
-        double    m_total_RPs_spent;
-    };
-
-    /* *****************************************************
-    ** CONSTRUCTORS
-    ********************************************************/
-
     /** \name Constructors */ //@{
     /// Creates an empire with the given properties.
     /**
@@ -164,10 +253,6 @@ public:
     /** \name Destructors */ //@{
     ~Empire();
     //@}
-
-    /* **************************************************
-   *** ACCESSORS
-   *****************************************************/
 
     /** \name Accessors */ //@{
     /// Returns the Empire's name
@@ -206,11 +291,7 @@ public:
      *    - Explored Systems
      *********************************************************/
 
-    /* ************************************************
-       Methods to see if items are in our lists
-    **************************************************/
-
-    /// Returns true iff \a name is an unavailable tech, and it has not unavailable prerequisites.
+    /// Returns true iff \a name is an unavailable tech, and it has no unavailable prerequisites.
     bool ResearchableTech(const std::string& name) const;
 
     /// Returns the queue of techs being or queued to be researched.
@@ -223,7 +304,7 @@ public:
     /// Returns the set of all available techs.
     const std::set<std::string>& AvailableTechs() const;
 
-    /// progress of partially-researched techs; fully researched techs are cannot be found in this container
+    /// progress of partially-researched techs; fully researched techs cannot be found in this container
     bool TechAvailable(const std::string& name) const;
 
     /// Returns true if the given building type is known to this empire, false if it is not.
@@ -234,29 +315,24 @@ public:
         any Techs that modify it, or the modified version otherwise. */
     const BuildingType* GetBuildingType(const std::string& name) const;
 
+    /** Returns the cost per turn and the number of turns required to produce the indicated item, or (-1.0, -1) if the
+        item is unknown, unavailable, or invalid. */
+    std::pair<double, int> ProductionCostAndTime(BuildType build_type, std::string name) const;
+
     /// Returns true if the given item is in the appropriate list, false if it is not.
     bool HasExploredSystem(int ID) const;
 
     /// Returns the number of entries in the SitRep.
     int NumSitRepEntries() const;
 
-
-    /* *************************************
-       (const) Iterators over our various lists
-    ***************************************/
-
     TechItr TechBegin() const;
     TechItr TechEnd() const;
-
     BuildingTypeItr BuildingTypeBegin() const;
     BuildingTypeItr BuildingTypeEnd() const;
-
     SystemIDItr ExploredBegin() const;
     SystemIDItr ExploredEnd() const;
-
     ShipDesignItr ShipDesignBegin() const;
     ShipDesignItr ShipDesignEnd() const;
-
     SitRepItr SitRepBegin() const;
     SitRepItr SitRepEnd() const;
 
@@ -295,10 +371,6 @@ public:
 
 
     /** \name Mutators */ //@{
-    /* ************************************************
-       Methods to add items to our various lists
-    **************************************************/
-
     /** Adds \a tech to the research queue, placing it before position \a pos.  If \a tech is already in the queue,
         it is moved to \a pos, then removed from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
         is placed at the end of the queue. If \a tech is already available, no action is taken. */
@@ -338,10 +410,6 @@ public:
      */
     void AddSitRepEntry( SitRepEntry* entry);
 
-    /* ************************************************
-       Methods to remove items from our various lists
-    **************************************************/
-
     /// Removes the given Tech from the empire's list
     void RemoveTech(const std::string& name);
 
@@ -354,14 +422,11 @@ public:
     /// Clears all sitrep entries;
     void ClearSitRep();
 
-
-    /// Adds reseach points to the accumulated total. 
-    /// Checks for new tech advances.
-    /** 
-     * This method checks for new technological
-     * advances that have been achieved, and add them to the technology list.
-     */
+    /// Checks for tech projects that have been completed, and adds them to the known techs list.
     void CheckResearchProgress();
+
+    /// Checks for production projects that have been completed, and places them at their respective production sites.
+    void CheckProductionProgress();
    	
     /// Mutator for empire color
     void SetColor(const GG::Clr& color);
@@ -375,6 +440,7 @@ public:
 
     void UpdateResourcePool();
     void UpdateResearchQueue();
+    void UpdateProductionQueue();
 
     MineralResourcePool&    MineralResPool    () {return m_mineral_resource_pool;}
     FoodResourcePool&       FoodResPool       () {return m_food_resource_pool;}
@@ -407,6 +473,12 @@ private:
 
     /// progress of partially-researched techs; fully researched techs are removed
     std::map<std::string, double> m_research_status;
+
+    /// the queue of items being or waiting to be built
+    ProductionQueue m_production_queue;
+
+    /// progress of partially-completed builds; completed items are removed
+    std::vector<double> m_production_status;
 
     /// list of acquired BuildingType.  These are string names referencing BuildingType objects
     std::set<std::string> m_building_types;

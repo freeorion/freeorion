@@ -53,10 +53,10 @@ public:
         to have the discrepancy here than to bloat the server with data it will not use */
     enum EntryType {
         INVALID_ENTRY_TYPE = -1,  ///< this is the EntryType for default-constructed SitRepEntrys; no others should have this type
-        MAX_INDUSTRY_HIT,
-        SHIP_BUILT,
-        TECH_RESEARCHED,
         BASE_BUILT,
+        SHIP_BUILT,
+        BUILDING_BUILT,
+        TECH_RESEARCHED,
         COMBAT_SYSTEM_WON,
         COMBAT_SYSTEM_LOST,
         COMBAT_SYSTEM_NO_VICTOR,
@@ -89,17 +89,17 @@ private:
  *  See implementation file for examples
  */
 
-SitRepEntry *CreateMaxIndustrySitRep( const int system_id, const int planet_id );
+SitRepEntry *CreateTechResearchedSitRep(const std::string& tech_name);
 
-SitRepEntry *CreateTechResearchedSitRep( const std::string& tech_name );
+SitRepEntry *CreateBaseBuiltSitRep(int system_id, int planet_id);
 
-SitRepEntry *CreateBaseBuiltSitRep( const int system_id, const int planet_id );
+SitRepEntry *CreateShipBuiltSitRep(int ship_id, int system_id);
 
-SitRepEntry *CreateShipBuiltSitRep( const int ship_id, const int planet_id );
+SitRepEntry *CreateBuildingBuiltSitRep(int building_id, int planet_id);
 
-SitRepEntry *CreateCombatSitRep(const int empire_id, const int victor_id, const int system_id);
+SitRepEntry *CreateCombatSitRep(int empire_id, int victor_id, int system_id);
 
-SitRepEntry *CreatePlanetStarvedToDeathSitRep(const int system_id, const int planet_id);
+SitRepEntry *CreatePlanetStarvedToDeathSitRep(int system_id, int planet_id);
 
 inline std::pair<std::string, std::string> SitRepEntryRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}

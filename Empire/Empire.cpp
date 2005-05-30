@@ -1,11 +1,13 @@
 #include "Empire.h"
 
 #include "../universe/Building.h"
+#include "../universe/Fleet.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/Planet.h"
 #include "ResourcePool.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 #include <algorithm>
@@ -19,11 +21,11 @@ using boost::lexical_cast;
 namespace {
     const double EPSILON = 1.0e-5;
 
-    void UpdateQueue(double RPs, const std::map<std::string, double>& research_status, Empire::ResearchQueue::QueueType& queue, double& total_RPs_spent, int& projects_in_progress)
+    void UpdateTechQueue(double RPs, const std::map<std::string, double>& research_status, ResearchQueue::QueueType& queue, double& total_RPs_spent, int& projects_in_progress)
     {
         total_RPs_spent = 0.0;
         projects_in_progress = 0;
-        for (Empire::ResearchQueue::iterator it = queue.begin(); it != queue.end(); ++it) {
+        for (ResearchQueue::iterator it = queue.begin(); it != queue.end(); ++it) {
             const Tech* tech = it->get<0>();
             std::map<std::string, double>::const_iterator progress_it = research_status.find(tech->Name());
             double progress = progress_it == research_status.end() ? 0.0 : progress_it->second;
@@ -43,22 +45,50 @@ namespace {
         }
     }
 
+    void UpdateProdQueue(Empire* empire, double PPs, const std::vector<double>& production_status, ProductionQueue::QueueType& queue, double& total_PPs_spent, int& projects_in_progress)
+    {
+        total_PPs_spent = 0.0;
+        projects_in_progress = 0;
+        for (unsigned int i = 0; i < queue.size(); ++i) {
+            double item_cost;
+            int build_turns;
+            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(queue[i].item.build_type, queue[i].item.name);
+            double progress = production_status[i];
+            double PPs_needed = item_cost * build_turns - progress;
+            double PPs_to_spend = std::min(PPs_needed, item_cost);
+            if (total_PPs_spent + PPs_to_spend <= PPs - EPSILON) {
+                queue[i].spending = PPs_to_spend;
+                total_PPs_spent += queue[i].spending;
+                ++projects_in_progress;
+            } else if (total_PPs_spent < PPs - EPSILON) {
+                queue[i].spending = PPs - total_PPs_spent;
+                total_PPs_spent += queue[i].spending;
+                ++projects_in_progress;
+            } else {
+                queue[i].spending = 0.0;
+            }
+        }
+    }
+
     bool temp_header_bool = RecordHeaderFile(EmpireRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 
-Empire::ResearchQueue::ResearchQueue() :
+////////////////////////////////////////
+// ResearchQueue              //
+////////////////////////////////////////
+ResearchQueue::ResearchQueue() :
     m_projects_in_progress(0),
     m_total_RPs_spent(0.0)
 {}
 
-Empire::ResearchQueue::ResearchQueue(const GG::XMLElement& elem) :
+ResearchQueue::ResearchQueue(const GG::XMLElement& elem) :
     m_projects_in_progress(0),
     m_total_RPs_spent(0.0)
 {
-    if (elem.Tag() != "Empire::ResearchQueue")
-        throw std::invalid_argument("Attempted to construct a Empire::ResearchQueue from an XMLElement that had a tag other than \"Empire::ResearchQueue\"");
+    if (elem.Tag() != "ResearchQueue")
+        throw std::invalid_argument("Attempted to construct a ResearchQueue from an XMLElement that had a tag other than \"ResearchQueue\"");
 
     // note that this leaves the queue elements incompletely specified, and does not find values for m_projects_in_progress or m_total_RPs_spent.
     // the owner of this object must call Update() after this object is constructed
@@ -67,42 +97,42 @@ Empire::ResearchQueue::ResearchQueue(const GG::XMLElement& elem) :
     }
 }
 
-bool Empire::ResearchQueue::InQueue(const Tech* tech) const
+bool ResearchQueue::InQueue(const Tech* tech) const
 {
     return find(tech) != end();
 }
 
-int Empire::ResearchQueue::ProjectsInProgress() const
+int ResearchQueue::ProjectsInProgress() const
 {
     return m_projects_in_progress;
 }
 
-double Empire::ResearchQueue::TotalRPsSpent() const
+double ResearchQueue::TotalRPsSpent() const
 {
     return m_total_RPs_spent;
 }
 
-bool Empire::ResearchQueue::empty() const
+bool ResearchQueue::empty() const
 {
     return !m_queue.size();
 }
 
-unsigned int Empire::ResearchQueue::size() const
+unsigned int ResearchQueue::size() const
 {
     return m_queue.size();
 }
 
-Empire::ResearchQueue::const_iterator Empire::ResearchQueue::begin() const
+ResearchQueue::const_iterator ResearchQueue::begin() const
 {
     return m_queue.begin();
 }
 
-Empire::ResearchQueue::const_iterator Empire::ResearchQueue::end() const
+ResearchQueue::const_iterator ResearchQueue::end() const
 {
     return m_queue.end();
 }
 
-Empire::ResearchQueue::const_iterator Empire::ResearchQueue::find(const Tech* tech) const
+ResearchQueue::const_iterator ResearchQueue::find(const Tech* tech) const
 {
     for (const_iterator it = begin(); it != end(); ++it) {
         if (it->get<0>() == tech)
@@ -111,7 +141,7 @@ Empire::ResearchQueue::const_iterator Empire::ResearchQueue::find(const Tech* te
     return end();
 }
 
-Empire::ResearchQueue::const_iterator Empire::ResearchQueue::UnderfundedProject() const
+ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
 {
     for (const_iterator it = begin(); it != end(); ++it) {
         if (it->get<1>() && it->get<1>() < it->get<0>()->ResearchCost())
@@ -120,9 +150,9 @@ Empire::ResearchQueue::const_iterator Empire::ResearchQueue::UnderfundedProject(
     return end();
 }
 
-GG::XMLElement Empire::ResearchQueue::XMLEncode() const
+GG::XMLElement ResearchQueue::XMLEncode() const
 {
-    GG::XMLElement retval("Empire::ResearchQueue");
+    GG::XMLElement retval("ResearchQueue");
     retval.AppendChild("m_queue");
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
         retval.LastChild().AppendChild(m_queue[i].get<0>()->Name());
@@ -130,9 +160,9 @@ GG::XMLElement Empire::ResearchQueue::XMLEncode() const
     return retval;
 }
 
-void Empire::ResearchQueue::Update(double RPs, const std::map<std::string, double>& research_status)
+void ResearchQueue::Update(double RPs, const std::map<std::string, double>& research_status)
 {
-    UpdateQueue(RPs, research_status, m_queue, m_total_RPs_spent, m_projects_in_progress);
+    UpdateTechQueue(RPs, research_status, m_queue, m_total_RPs_spent, m_projects_in_progress);
 
     if (EPSILON < RPs) {
         // simulate future turns in order to determine when the techs in the queue will be finished
@@ -143,7 +173,7 @@ void Empire::ResearchQueue::Update(double RPs, const std::map<std::string, doubl
         while (!sim_queue.empty()) {
             double total_RPs_spent = 0.0;
             int projects_in_progress = 0;
-            UpdateQueue(RPs, sim_research_status, sim_queue, total_RPs_spent, projects_in_progress);
+            UpdateTechQueue(RPs, sim_research_status, sim_queue, total_RPs_spent, projects_in_progress);
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
                 const Tech* tech = sim_queue[i].get<0>();
                 double& status = sim_research_status[tech->Name()];
@@ -166,22 +196,23 @@ void Empire::ResearchQueue::Update(double RPs, const std::map<std::string, doubl
     }
 }
 
-void Empire::ResearchQueue::push_back(const Tech* tech)
+void ResearchQueue::push_back(const Tech* tech)
 {
-    m_queue.push_back(QueueElement(tech, 0.0, -1));
+    m_queue.push_back(Element(tech, 0.0, -1));
 }
 
-void Empire::ResearchQueue::insert(iterator it, const Tech* tech)
+void ResearchQueue::insert(iterator it, const Tech* tech)
 {
-    m_queue.insert(it, QueueElement(tech, 0.0, -1));
+    m_queue.insert(it, Element(tech, 0.0, -1));
 }
 
-void Empire::ResearchQueue::erase(iterator it)
+void ResearchQueue::erase(iterator it)
 {
+    assert(it != end());
     m_queue.erase(it);
 }
 
-Empire::ResearchQueue::iterator Empire::ResearchQueue::find(const Tech* tech)
+ResearchQueue::iterator ResearchQueue::find(const Tech* tech)
 {
     for (iterator it = begin(); it != end(); ++it) {
         if (it->get<0>() == tech)
@@ -190,17 +221,17 @@ Empire::ResearchQueue::iterator Empire::ResearchQueue::find(const Tech* tech)
     return end();
 }
 
-Empire::ResearchQueue::iterator Empire::ResearchQueue::begin()
+ResearchQueue::iterator ResearchQueue::begin()
 {
     return m_queue.begin();
 }
 
-Empire::ResearchQueue::iterator Empire::ResearchQueue::end()
+ResearchQueue::iterator ResearchQueue::end()
 {
     return m_queue.end();
 }
 
-Empire::ResearchQueue::iterator Empire::ResearchQueue::UnderfundedProject()
+ResearchQueue::iterator ResearchQueue::UnderfundedProject()
 {
     for (iterator it = begin(); it != end(); ++it) {
         if (it->get<2>() && it->get<2>() < it->get<0>()->ResearchCost())
@@ -209,22 +240,328 @@ Empire::ResearchQueue::iterator Empire::ResearchQueue::UnderfundedProject()
     return end();
 }
 
-    
-/** Constructors */ 
+
+////////////////////////////////////////
+// ProductionQueue            //
+////////////////////////////////////////
+
+// ProductionQueue::ProductionItem
+ProductionQueue::ProductionItem::ProductionItem()
+{}
+
+ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::string name_) :
+    build_type(build_type_),
+    name(name_)
+{}
+
+ProductionQueue::ProductionItem::ProductionItem(const GG::XMLElement& elem)
+{
+    if (elem.Tag() != "ProductionItem")
+        throw std::invalid_argument("Attempted to construct a ProductionQueue::ProductionItem from an XMLElement that had a tag other than \"ProductionItem\"");
+
+    build_type = boost::lexical_cast<BuildType>(elem.Child("build_type").Text());
+    name = elem.Child("name").Text();
+}
+
+GG::XMLElement ProductionQueue::ProductionItem::XMLEncode() const
+{
+    GG::XMLElement retval("ProductionItem");
+    retval.AppendChild(GG::XMLElement("build_type", boost::lexical_cast<std::string>(build_type)));
+    retval.AppendChild(GG::XMLElement("name", name));
+    return retval;
+}
+
+// Empire::Elemnt
+ProductionQueue::Element::Element() :
+    ordered(0),
+    remaining(0),
+    location(UniverseObject::INVALID_OBJECT_ID),
+    spending(0.0),
+    turns_left_to_next_item(-1),
+    turns_left_to_completion(-1)
+{}
+
+ProductionQueue::Element::Element(ProductionItem item_, int ordered_, int remaining_, int location_) :
+    item(item_),
+    ordered(ordered_),
+    remaining(remaining_),
+    location(location_),
+    spending(0.0),
+    turns_left_to_next_item(-1),
+    turns_left_to_completion(-1)
+{}
+
+ProductionQueue::Element::Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_) :
+    item(build_type, name),
+    ordered(ordered_),
+    remaining(remaining_),
+    location(location_),
+    spending(0.0),
+    turns_left_to_next_item(-1),
+    turns_left_to_completion(-1)
+{}
+
+ProductionQueue::Element::Element(const GG::XMLElement& elem) :
+    spending(0.0),
+    turns_left_to_next_item(-1),
+    turns_left_to_completion(-1)
+{
+    if (elem.Tag() != "Element")
+        throw std::invalid_argument("Attempted to construct a ProductionQueue::Element from an XMLElement that had a tag other than \"Element\"");
+
+    // note that this leaves the queue element incompletely specified; see ProductionQueue::ProductionQueue() for details
+    item = ProductionItem(elem.Child("item").Text());
+    ordered = boost::lexical_cast<int>(elem.Child("ordered").Text());
+    remaining = boost::lexical_cast<int>(elem.Child("remaining").Text());
+    location = boost::lexical_cast<int>(elem.Child("location").Text());
+}
+
+GG::XMLElement ProductionQueue::Element::XMLEncode() const
+{
+    GG::XMLElement retval("ProductionItem");
+    retval.AppendChild(GG::XMLElement("item", item.XMLEncode()));
+    retval.AppendChild(GG::XMLElement("ordered", boost::lexical_cast<std::string>(ordered)));
+    retval.AppendChild(GG::XMLElement("remaining", boost::lexical_cast<std::string>(remaining)));
+    retval.AppendChild(GG::XMLElement("location", boost::lexical_cast<std::string>(location)));
+    return retval;
+}
+
+
+// ProductionQueue
+ProductionQueue::ProductionQueue() :
+    m_projects_in_progress(0),
+    m_total_PPs_spent(0.0)
+{}
+
+ProductionQueue::ProductionQueue(const GG::XMLElement& elem) :
+    m_projects_in_progress(0),
+    m_total_PPs_spent(0.0)
+{
+    if (elem.Tag() != "ProductionQueue")
+        throw std::invalid_argument("Attempted to construct a ProductionQueue from an XMLElement that had a tag other than \"ProductionQueue\"");
+
+    // note that this leaves the queue elements incompletely specified, and does not find values for m_projects_in_progress or m_total_PPs_spent.
+    // the owner of this object must call Update() after this object is constructed
+    for (GG::XMLElement::const_child_iterator it = elem.Child("m_queue").child_begin(); it != elem.Child("m_queue").child_end(); ++it) {
+        m_queue.push_back(Element(it->Child("Element")));
+    }
+}
+
+int ProductionQueue::InQueue(BuildType build_type, std::string name) const
+{
+    int retval = 0;
+    std::vector<const_iterator> items = find(build_type, name);
+    for (unsigned int i = 0; i < items.size(); ++i) {
+        retval += items[i]->remaining;
+    }
+    return retval;
+}
+
+int ProductionQueue::ProjectsInProgress() const
+{
+    return m_projects_in_progress;
+}
+
+double ProductionQueue::TotalPPsSpent() const
+{
+    return m_total_PPs_spent;
+}
+
+bool ProductionQueue::empty() const
+{
+    return !m_queue.size();
+}
+
+unsigned int ProductionQueue::size() const
+{
+    return m_queue.size();
+}
+
+ProductionQueue::const_iterator ProductionQueue::begin() const
+{
+    return m_queue.begin();
+}
+
+ProductionQueue::const_iterator ProductionQueue::end() const
+{
+    return m_queue.end();
+}
+
+std::vector<ProductionQueue::const_iterator> ProductionQueue::find(BuildType build_type, std::string name) const
+{
+    std::vector<const_iterator> retval;
+#if 0 // TODO
+    ProductionItem key(build_type, name);
+    for (const_iterator it = begin(); it != end(); ++it) {
+        if (it->item == key)
+            retval.push_back(it);
+    }
+#endif
+    return retval;
+}
+
+const ProductionQueue::Element& ProductionQueue::operator[](int i) const
+{
+    assert(0 <= i && i < m_queue.size());
+    return m_queue[i];
+}
+
+ProductionQueue::const_iterator ProductionQueue::UnderfundedProject(const Empire* empire) const
+{
+    for (const_iterator it = begin(); it != end(); ++it) {
+        double item_cost;
+        int build_turns;
+        boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(it->item.build_type, it->item.name);
+        if (it->spending && it->spending < item_cost)
+            return it;
+    }
+    return end();
+}
+
+GG::XMLElement ProductionQueue::XMLEncode() const
+{
+    GG::XMLElement retval("ProductionQueue");
+    retval.AppendChild("m_queue");
+    for (unsigned int i = 0; i < m_queue.size(); ++i) {
+        retval.LastChild().AppendChild(m_queue[i].XMLEncode());
+    }
+    return retval;
+}
+
+void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<double>& production_status)
+{
+    UpdateProdQueue(empire, PPs, production_status, m_queue, m_total_PPs_spent, m_projects_in_progress);
+
+    if (EPSILON < PPs) {
+        // simulate future turns in order to determine when the techs in the queue will be finished
+        int turns = 1;
+        QueueType sim_queue = m_queue;
+        std::vector<double> sim_production_status = production_status;
+        std::vector<int> simulation_results(sim_production_status.size(), -1);
+        std::vector<int> sim_queue_original_indices(sim_production_status.size());
+        for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i) {
+            sim_queue_original_indices[i] = i;
+        }
+        while (!sim_queue.empty()) {
+            double total_PPs_spent = 0.0;
+            int projects_in_progress = 0;
+            UpdateProdQueue(empire, PPs, sim_production_status, sim_queue, total_PPs_spent, projects_in_progress);
+            for (unsigned int i = 0; i < sim_queue.size(); ++i) {
+                double item_cost;
+                int build_turns;
+                boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(sim_queue[i].item.build_type, sim_queue[i].item.name);
+                double& status = sim_production_status[i];
+                status += sim_queue[i].spending;
+                if (item_cost * build_turns - EPSILON <= status) {
+                    if (sim_queue[i].remaining == m_queue[i].remaining) {
+                        m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = turns;
+                    }
+                    if (!--sim_queue[i].remaining) {
+                        m_queue[sim_queue_original_indices[i]].turns_left_to_completion = turns;
+                        sim_queue.erase(sim_queue.begin() + i);
+                        sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
+                    }
+                }
+            }
+            ++turns;
+        }
+    } else {
+        // since there are so few PPs, indicate that the number of turns left is indeterminate by providing a number < 0
+        for (unsigned int i = 0; i < m_queue.size(); ++i) {
+            m_queue[i].turns_left_to_next_item = -1;
+            m_queue[i].turns_left_to_completion = -1;
+        }
+    }
+}
+
+void ProductionQueue::push_back(BuildType build_type, std::string name, int number, int remaining, int location)
+{
+    m_queue.push_back(Element(build_type, name, number, remaining == -1 ? number : remaining, location));
+}
+
+void ProductionQueue::insert(iterator it, const Element& element)
+{
+    m_queue.insert(it, element);
+}
+
+void ProductionQueue::erase(int i)
+{
+    assert(i <= size());
+    m_queue.erase(begin() + i);
+}
+
+void ProductionQueue::erase(iterator it)
+{
+    assert(it != end());
+    m_queue.erase(it);
+}
+
+ProductionQueue::iterator ProductionQueue::begin()
+{
+    return m_queue.begin();
+}
+
+ProductionQueue::iterator ProductionQueue::end()
+{
+    return m_queue.end();
+}
+
+std::vector<ProductionQueue::iterator> ProductionQueue::find(BuildType build_type, std::string name)
+{
+    std::vector<iterator> retval;
+#if 0 // TODO
+    std::pair<BuildType, std::string> key(build_type, name);
+    for (iterator it = begin(); it != end(); ++it) {
+        if (it->item == key)
+            retval.push_back(it);
+    }
+#endif
+    return retval;
+}
+
+ProductionQueue::Element& ProductionQueue::operator[](int i)
+{
+    assert(0 <= i && i < m_queue.size());
+    return m_queue[i];
+}
+
+ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empire)
+{
+    for (iterator it = begin(); it != end(); ++it) {
+        double item_cost;
+        int build_turns;
+        boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(it->item.build_type, it->item.name);
+        if (it->spending && it->spending < item_cost)
+            return it;
+    }
+    return end();
+}
+
+
+////////////////////////////////////////
+// class Empire                       //
+////////////////////////////////////////
 Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id) :
     m_id(ID),
     m_name(name),
     m_player_name(player_name),
     m_color(color), 
     m_homeworld_id(homeworld_id), 
-    m_mineral_resource_pool(),m_food_resource_pool(),m_research_resource_pool(),m_population_resource_pool(),m_trade_resource_pool()
+    m_mineral_resource_pool(),
+    m_food_resource_pool(),
+    m_research_resource_pool(),
+    m_industry_resource_pool(),
+    m_population_resource_pool(),
+    m_trade_resource_pool()
 {}
 
 Empire::Empire(const GG::XMLElement& elem) :
-    m_research_queue(elem.Child("m_research_queue").Child("Empire::ResearchQueue")),
+    m_research_queue(elem.Child("m_research_queue").Child("ResearchQueue")),
+    m_production_queue(elem.Child("m_production_queue").Child("ProductionQueue")),
     m_mineral_resource_pool(elem.Child("m_mineral_resource_pool").Child("MineralResourcePool")),
     m_food_resource_pool(elem.Child("m_food_resource_pool").Child("FoodResourcePool")),
     m_research_resource_pool(elem.Child("m_research_resource_pool").Child("ResearchResourcePool")),
+    m_industry_resource_pool(elem.Child("m_industry_resource_pool").Child("IndustryResourcePool")),
     m_population_resource_pool(elem.Child("m_population_resource_pool").Child("PopulationResourcePool")),
     m_trade_resource_pool(elem.Child("m_trade_resource_pool").Child("TradeResourcePool"))
 
@@ -254,6 +591,7 @@ Empire::Empire(const GG::XMLElement& elem) :
     }
 
     m_explored_systems = GG::ContainerFromString<std::set<int> >(elem.Child("m_explored_systems").Text());
+
     const XMLElement& techs_elem = elem.Child("m_techs");
     for (int i = 0; i < techs_elem.NumChildren(); ++i) {
         m_techs.insert(techs_elem.Child(i).Text());
@@ -264,12 +602,15 @@ Empire::Empire(const GG::XMLElement& elem) :
         m_research_status[research_status_elem.Child(i).Tag()] = lexical_cast<double>(research_status_elem.Child(i).Text());
     }
 
+    m_production_status = GG::ContainerFromString<std::vector<double> >(elem.Child("m_production_status").Text());
+
     const XMLElement& building_types_elem = elem.Child("m_building_types");
     for (int i = 0; i < building_types_elem.NumChildren(); ++i) {
         m_building_types.insert(building_types_elem.Child(i).Text());
     }
 
     m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
+    m_production_queue.Update(this, m_industry_resource_pool.Production(), m_production_status);
 }
 
 Empire::~Empire()
@@ -331,7 +672,7 @@ bool Empire::ResearchableTech(const std::string& name) const
     return true;
 }
 
-const Empire::ResearchQueue& Empire::GetResearchQueue() const
+const ResearchQueue& Empire::GetResearchQueue() const
 {
     return m_research_queue;
 }
@@ -366,6 +707,16 @@ const BuildingType* Empire::GetBuildingType(const std::string& name) const
         return it->second;
     } else {
         return ::GetBuildingType(name);
+    }
+}
+
+std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, std::string name) const
+{
+    switch (build_type) {
+    case BT_BUILDING: return std::make_pair(GetBuildingType(name)->BuildCost(), GetBuildingType(name)->BuildTime());
+    case BT_SHIP:     return std::make_pair(GetShipDesign(name)->cost, 1); // TODO: add build times as appropriate
+    case BT_ORBITAL:  return std::make_pair(200.0, 1); // v0.3 only
+    default:          return std::make_pair(-1.0, -1);
     }
 }
 
@@ -429,10 +780,6 @@ Empire::SitRepItr Empire::SitRepEnd() const
     return m_sitrep_entries.end();
 }
 
-
-/*************************************************
-    Methods to add items to our various lists
-**************************************************/
 void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
 {
     if (!ResearchableTech(tech->Name()) || m_techs.find(tech->Name()) != m_techs.end())
@@ -534,10 +881,6 @@ void Empire::ClearSitRep()
     m_sitrep_entries.clear();
 }
 
-
-/*************************************************
-    Methods to support XML Serialization
-**************************************************/
 GG::XMLElement Empire::XMLEncode() const
 {
     using GG::XMLElement;
@@ -574,6 +917,9 @@ GG::XMLElement Empire::XMLEncode() const
         retval.LastChild().AppendChild(XMLElement(it->first, lexical_cast<std::string>(it->second)));
     }
 
+    retval.AppendChild(XMLElement("m_production_queue", m_production_queue.XMLEncode()));
+    retval.AppendChild(XMLElement("m_production_status", GG::StringFromContainer(m_production_status)));
+
     retval.AppendChild(XMLElement("m_building_types"));
     i = 0;
     for (BuildingTypeItr it = BuildingTypeBegin(); it != BuildingTypeEnd(); ++it) {
@@ -583,6 +929,7 @@ GG::XMLElement Empire::XMLEncode() const
     retval.AppendChild(XMLElement("m_mineral_resource_pool", m_mineral_resource_pool.XMLEncode()));
     retval.AppendChild(XMLElement("m_food_resource_pool", m_food_resource_pool.XMLEncode()));
     retval.AppendChild(XMLElement("m_research_resource_pool", m_research_resource_pool.XMLEncode()));
+    retval.AppendChild(XMLElement("m_industry_resource_pool", m_industry_resource_pool.XMLEncode()));
     retval.AppendChild(XMLElement("m_population_resource_pool", m_population_resource_pool.XMLEncode()));
     retval.AppendChild(XMLElement("m_trade_resource_pool", m_trade_resource_pool.XMLEncode()));
 
@@ -614,45 +961,22 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
     retval.AppendChild(XMLElement("m_techs"));
     retval.AppendChild(XMLElement("m_research_queue", ResearchQueue().XMLEncode()));
     retval.AppendChild(XMLElement("m_research_status"));
+    retval.AppendChild(XMLElement("m_production_queue", ProductionQueue().XMLEncode()));
+    retval.AppendChild(XMLElement("m_production_status"));
     retval.AppendChild(XMLElement("m_building_types"));
     retval.AppendChild(XMLElement("m_mineral_resource_pool", MineralResourcePool().XMLEncode()));
     retval.AppendChild(XMLElement("m_food_resource_pool", FoodResourcePool().XMLEncode()));
     retval.AppendChild(XMLElement("m_research_resource_pool", ResearchResourcePool().XMLEncode()));
+    retval.AppendChild(XMLElement("m_industry_resource_pool", IndustryResourcePool().XMLEncode()));
     retval.AppendChild(XMLElement("m_population_resource_pool", PopulationResourcePool().XMLEncode()));
     retval.AppendChild(XMLElement("m_trade_resource_pool", TradeResourcePool().XMLEncode()));
 
     return retval;
 }
 
-
-/*************************************************
-    Miscellaneous mutators
-**************************************************/
 void Empire::CheckResearchProgress()
 {
     m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
-    /*for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ) {
-        const Tech* tech = it->get<0>();
-        double& status = m_research_status[tech->Name()];
-        status += it->get<1>();
-        if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= status) {
-            m_techs.insert(tech->Name());
-            const std::vector<Tech::ItemSpec>& unlocked_items = tech->UnlockedItems();
-            for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
-                UnlockItem(unlocked_items[i]);
-            }
-            AddSitRepEntry(CreateTechResearchedSitRep(tech->Name()));
-            // TODO: create unlocked item sitreps?
-            m_research_status.erase(tech->Name());
-            ResearchQueue::iterator temp_it = it++;
-            bool last_element = it == m_research_queue.end();
-            m_research_queue.erase(temp_it);
-            if (last_element)
-                break;
-        } else {
-            ++it;
-        }
-    }*/
     std::vector<const Tech*> to_erase;
     for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ++it) {
         const Tech* tech = it->get<0>();
@@ -672,11 +996,88 @@ void Empire::CheckResearchProgress()
     }
 
     for (std::vector<const Tech*>::iterator it = to_erase.begin(); it != to_erase.end(); ++it) {
-      ResearchQueue::iterator temp_it = m_research_queue.find(*it);
-      if(temp_it!=m_research_queue.end())
-        m_research_queue.erase(temp_it);
+        ResearchQueue::iterator temp_it = m_research_queue.find(*it);
+        if (temp_it != m_research_queue.end())
+            m_research_queue.erase(temp_it);
+    }
+}
+
+void Empire::CheckProductionProgress()
+{
+    m_production_queue.Update(this, m_industry_resource_pool.Production(), m_production_status);
+    std::vector<int> to_erase;
+    for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
+        double item_cost;
+        int build_turns;
+        boost::tie(item_cost, build_turns) = ProductionCostAndTime(m_production_queue[i].item.build_type, m_production_queue[i].item.name);
+        double& status = m_production_status[i];
+        status += m_production_queue[i].spending;
+        if (item_cost * build_turns - EPSILON <= status) {
+            switch (m_production_queue[i].item.build_type) {
+            case BT_BUILDING: {
+                Universe& universe = GetUniverse();
+                Planet* planet = universe.Object<Planet>(m_production_queue[i].location);
+                assert(planet);
+                Building* building = new Building(m_id, m_production_queue[i].item.name, planet->ID());
+                int building_id = universe.Insert(building);
+                planet->AddBuilding(building->ID());
+                SitRepEntry *entry = CreateBuildingBuiltSitRep(building_id, planet->ID());
+                AddSitRepEntry(entry);
+                break;
+            }
+
+            case BT_SHIP: {
+                Universe& universe = GetUniverse();
+                System* system = universe.Object<System>(m_production_queue[i].location);
+                // TODO: account for shipyards and/or other ship production sites that are in interstellar space, if needed
+                assert(system);
+
+                // create new fleet with new ship
+                Fleet* fleet = new Fleet("", system->X(), system->Y(), m_id);
+                int fleet_id = universe.Insert(fleet);
+                // TODO: What is the mechanism for determining new fleet name?
+                std::string fleet_name("New fleet ");
+                fleet_name += boost::lexical_cast<std::string>(fleet_id);
+                fleet->Rename(fleet_name);
+                system->Insert(fleet);
+  
+                // add ship
+                const ShipDesign* ship_design = GetShipDesign(m_production_queue[i].item.name);
+                Ship *ship = new Ship(m_id, m_production_queue[i].item.name);
+                int ship_id = universe.Insert(ship);
+                std::string ship_name(ship_design->name);
+                ship_name += boost::lexical_cast<std::string>(ship_id);
+                ship->Rename(ship_name);
+                fleet->AddShip(ship_id);
+
+                // add sitrep
+                SitRepEntry *entry = CreateShipBuiltSitRep(ship_id, system->ID());
+                AddSitRepEntry(entry);
+                break;
+            }
+
+            case BT_ORBITAL: {
+                // v0.3 only
+                Planet* planet = GetUniverse().Object<Planet>(m_production_queue[i].location);
+                assert(planet);
+                planet->AdjustDefBases(1);
+                AddSitRepEntry(CreateBaseBuiltSitRep(planet->SystemID(), planet->ID()));
+                break;
+            }
+            }
+
+            if (!--m_production_queue[i].remaining) {
+                m_production_status.erase(m_production_status.begin() + i);
+                to_erase.push_back(i);
+            }
+        }
     }
 
+    for (std::vector<int>::iterator it = to_erase.begin(); it != to_erase.end(); ++it) {
+        m_production_queue.erase(*it);
+    }
+
+    m_mineral_resource_pool.SetStockpile(m_mineral_resource_pool.Stockpile() + (m_mineral_resource_pool.Production() - m_production_queue.TotalPPsSpent()));
 }
 
 void Empire::SetColor(const GG::Clr& color)
@@ -699,6 +1100,7 @@ void Empire::UpdateResourcePool()
     m_mineral_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
     m_food_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
     m_research_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
+    m_industry_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
     m_population_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
     m_industry_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
     m_trade_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
@@ -707,4 +1109,9 @@ void Empire::UpdateResourcePool()
 void Empire::UpdateResearchQueue()
 {
     m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
+}
+
+void Empire::UpdateProductionQueue()
+{
+    m_production_queue.Update(this, m_industry_resource_pool.Production(), m_production_status);
 }

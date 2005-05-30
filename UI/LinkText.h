@@ -17,6 +17,7 @@
     <fleet ID>
     <ship ID>
     <tech [string]>
+    <building [string]>
     <encyclopedia [string]>\endverbatim
     The ID parameters refer to the UniverseObjects that should be zoomed to for each link; encyclopedia entries are refered
     to by strings.
@@ -37,8 +38,8 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    LinkText(int x, int y, int w, int h, const std::string& str, const boost::shared_ptr<GG::Font>& font, Uint32 text_fmt = 0, GG::Clr color = GG::CLR_BLACK, Uint32 flags = CLICKABLE); ///< ctor taking a font directly
-    LinkText(int x, int y, int w, int h, const std::string& str, const std::string& font_filename, int pts, Uint32 text_fmt = 0, GG::Clr color = GG::CLR_BLACK, Uint32 flags = CLICKABLE); ///< ctor taking a font filename and font point size
+    LinkText(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font, Uint32 text_fmt = 0, GG::Clr color = GG::CLR_BLACK, Uint32 flags = CLICKABLE); ///< ctor taking a font directly
+    LinkText(int x, int y, int w, const std::string& str, const std::string& font_filename, int pts, Uint32 text_fmt = 0, GG::Clr color = GG::CLR_BLACK, Uint32 flags = CLICKABLE); ///< ctor taking a font filename and font point size
 
     /** ctor that does not require window size.
         Window size is determined from the string and font; the window will be large enough to fit the text as rendered, 
@@ -54,6 +55,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual bool   Render();
     virtual void   LButtonDown(const GG::Pt& pt, Uint32 keys);
     virtual void   LButtonUp(const GG::Pt& pt, Uint32 keys);
     virtual void   LClick(const GG::Pt& pt, Uint32 keys);
@@ -70,6 +72,7 @@ public:
     IDSignalType&     FleetLinkSignal()        const {return m_fleet_sig;}        ///< returns the fleet link signal object for this LinkText
     IDSignalType&     ShipLinkSignal()         const {return m_ship_sig;}         ///< returns the ship link signal object for this LinkText
     StringSignalType& TechLinkSignal()         const {return m_tech_sig;}         ///< returns the tech link signal object for this LinkText
+    StringSignalType& BuildingLinkSignal()     const {return m_building_sig;}     ///< returns the building link signal object for this LinkText
     StringSignalType& EncyclopediaLinkSignal() const {return m_encyclopedia_sig;} ///< returns the encyclopedia link signal object for this LinkText
 
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a LinkText object
@@ -98,6 +101,7 @@ private:
     mutable IDSignalType m_fleet_sig;
     mutable IDSignalType m_ship_sig;
     mutable StringSignalType m_tech_sig;
+    mutable StringSignalType m_building_sig;
     mutable StringSignalType m_encyclopedia_sig;
 
     static bool s_link_tags_registered;

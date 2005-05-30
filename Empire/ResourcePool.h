@@ -51,11 +51,9 @@ public:
 
 protected:
     virtual SortFuncType SortFunc() const; ///< used to order planet list
-    virtual void PlanetChanged(int m_planet_id) = 0; ///< called when a planet of the planet vector has changed
+    virtual void PlanetChanged() = 0; ///< called when a planet of the planet vector has changed
 
 private:
-    void OnPlanetChanged(int m_planet_id);///< called through the PlanetChangedFunctor when a planet has changed
-
     std::vector<Planet*> m_planets; ///< list of planet which feed/consume the resource
     std::vector<boost::signals::connection > m_connections;///< connection list of planets
 
@@ -74,15 +72,14 @@ public:
     
     double Production() const {return m_pool_production;}
     double ExcessShortfall() const {return m_pool_production - m_needed_pool;}
-    double Needed   () const {return m_needed_pool;}
+    double Needed() const {return m_needed_pool;}
     virtual double Stockpile() const;
     virtual GG::XMLElement XMLEncode() const;
 
     virtual void SetStockpile(double d);
 
 protected:
-    virtual SortFuncType SortFunc() const; 
-    virtual void PlanetChanged(int m_planet_id);
+    virtual void PlanetChanged();
 
 private:
     double m_pool_production,m_needed_pool,m_stockpile;
@@ -107,7 +104,7 @@ public:
 
 protected:
     virtual SortFuncType SortFunc() const; 
-    virtual void PlanetChanged(int m_planet_id);
+    virtual void PlanetChanged();
 
 private:
     double m_pool_production,m_needed_pool,m_stockpile;
@@ -127,7 +124,7 @@ public:
     virtual GG::XMLElement XMLEncode() const;
 
 protected:
-    virtual void PlanetChanged(int m_planet_id);
+    virtual void PlanetChanged();
 
 private:
     double m_pool_production;
@@ -148,7 +145,7 @@ public:
     virtual GG::XMLElement XMLEncode() const;
 
 protected:
-    virtual void PlanetChanged(int m_planet_id);
+    virtual void PlanetChanged();
 
 private:
     double m_overall_pool,m_growth;
@@ -168,7 +165,7 @@ public:
     virtual GG::XMLElement XMLEncode() const;
 
 protected:
-    virtual void PlanetChanged(int m_planet_id);
+    virtual void PlanetChanged();
 
 private:
     double m_pool_production;
@@ -193,7 +190,7 @@ public:
 
 protected:
     virtual SortFuncType SortFunc() const; 
-    virtual void PlanetChanged(int m_planet_id);
+    virtual void PlanetChanged();
 
 private:
     double m_pool_production,m_needed_pool,m_stockpile;

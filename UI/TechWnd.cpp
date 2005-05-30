@@ -896,7 +896,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
     if (empire->TechAvailable(m_tech->Name())) {
         known_tech = true;
     } else {
-        Empire::ResearchQueue queue = empire->GetResearchQueue();
+        ResearchQueue queue = empire->GetResearchQueue();
         if (queue.InQueue(m_tech))
             queued_tech = true;
         double rps_spent = empire->ResearchStatus(m_tech->Name());

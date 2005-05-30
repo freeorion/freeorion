@@ -26,7 +26,6 @@ const int INITIAL_COLONY_POP = 1;
 
 namespace
 {
-    Order* GenPlanetBuildOrder(const XMLElement& elem)   {return new PlanetBuildOrder(elem);}
     Order* GenRenameOrder(const XMLElement& elem)        {return new RenameOrder(elem);}
     Order* GenNewFleetOrder(const XMLElement& elem)      {return new NewFleetOrder(elem);}
     Order* GenFleetMoveOrder(const XMLElement& elem)     {return new FleetMoveOrder(elem);}
@@ -98,9 +97,8 @@ bool Order::UndoImpl() const
 
 void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
 {
-    fact.AddGenerator("PlanetBuildOrder",   &GenPlanetBuildOrder);
     fact.AddGenerator("RenameOrder",        &GenRenameOrder);
-    fact.AddGenerator("FleetSplitOrder",    &GenNewFleetOrder);
+    fact.AddGenerator("NewFleetOrder",      &GenNewFleetOrder);
     fact.AddGenerator("FleetMoveOrder",     &GenFleetMoveOrder);
     fact.AddGenerator("FleetTransferOrder", &GenFleetTransferOrder);
     fact.AddGenerator("FleetColonizeOrder", &GenFleetColonizeOrder);
@@ -164,70 +162,6 @@ void RenameOrder::ExecuteImpl() const
 }
 
 
-
-////////////////////////////////////////////////
-// PlanetBuildOrder
-////////////////////////////////////////////////
-PlanetBuildOrder::PlanetBuildOrder() : 
-    Order(),
-    m_planet(UniverseObject::INVALID_OBJECT_ID),
-    m_build_type(BT_NOT_BUILDING),
-    m_name("")
-{
-}
-
-PlanetBuildOrder::PlanetBuildOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
-{   
-    if (elem.Tag() != ("PlanetBuildOrder"))
-        throw std::invalid_argument("Tried to construct PlanetBuildOrder from malformed XMLElement");
-
-    m_planet = lexical_cast<int>(elem.Child("m_planet").Text());
-    m_build_type = lexical_cast<BuildType>(elem.Child("m_build_type").Text());
-    m_name = elem.Child("m_name").Text();
-}
-
-PlanetBuildOrder::PlanetBuildOrder(int empire, int planet, BuildType build, const std::string& name) : 
-    Order(empire),
-    m_planet(planet),
-    m_build_type(build),
-    m_name(name)
-{
-}
-
-GG::XMLElement PlanetBuildOrder::XMLEncode() const
-{
-    XMLElement retval("PlanetBuildOrder");
-    retval.AppendChild(Order::XMLEncode());
-    retval.AppendChild(XMLElement("m_planet", lexical_cast<std::string>(m_planet)));
-    retval.AppendChild(XMLElement("m_build_type", lexical_cast<std::string>(m_build_type)));
-    retval.AppendChild(XMLElement("m_name", m_name));
-    return retval;
-}
-
-void PlanetBuildOrder::ExecuteImpl() const
-{
-    // TODO:  unit test this code once universe building methods
-    // are in place.  the semantics of the building methods may change
-    
-    ValidateEmpireID();
- 
-    Universe& universe = GetUniverse();
-    
-    // look up object
-    Planet* planet = universe.Object<Planet>(m_planet);
-    
-    // sanity check
-    if(!planet)
-        throw std::runtime_error("Non-Planet object ID specified in build order.");
-    
-    //  verify that empire specified in order owns specified planet
-    if(!planet->OwnedBy(EmpireID()))
-        throw std::runtime_error("Empire specified in build order does not own specified Planet.");
-    
-    planet->SetProduction(m_build_type, m_name);
-}
-
-
 ////////////////////////////////////////////////
 // CreateFleetOrder
 ////////////////////////////////////////////////
@@ -239,7 +173,7 @@ NewFleetOrder::NewFleetOrder() :
 NewFleetOrder::NewFleetOrder(const XMLElement& elem) : 
     Order(elem.Child("Order"))
 {
-    if (elem.Tag() != "FleetSplitOrder")
+    if (elem.Tag() != "NewFleetOrder")
         throw std::invalid_argument("Attempted to construct CreateFleetOrder from malformed XMLElement");
     
     m_fleet_name = elem.Child("m_fleet_name").Text();
@@ -272,7 +206,7 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,  const i
 
 XMLElement NewFleetOrder::XMLEncode() const
 {
-    XMLElement retval("FleetSplitOrder");
+    XMLElement retval("NewFleetOrder");
     retval.AppendChild(Order::XMLEncode());
     retval.AppendChild(XMLElement("m_fleet_name", m_fleet_name));
     retval.AppendChild(XMLElement("m_system_id", lexical_cast<std::string>(m_system_id)));
@@ -295,12 +229,12 @@ void NewFleetOrder::ExecuteImpl() const
         fleet = new Fleet(m_fleet_name, system->X(), system->Y(), EmpireID());
         // an ID is provided to ensure consistancy between server and client universes
         universe.InsertID(fleet, m_new_id);
+        system->Insert(fleet);
         if (m_ship_id != UniverseObject::INVALID_OBJECT_ID)
             fleet->AddShip(m_ship_id);
-        system->Insert(fleet);
     } else {
         fleet = new Fleet(m_fleet_name, m_position.first, m_position.second, EmpireID());
-        // an ID is provided to ensure consistancy between server and client universes
+        // an ID is provided to ensure consistency between server and client universes
         universe.InsertID(fleet, m_new_id);
         if (m_ship_id != UniverseObject::INVALID_OBJECT_ID)
             fleet->AddShip(m_ship_id);
@@ -531,6 +465,17 @@ FleetColonizeOrder::FleetColonizeOrder(int empire, int ship, int planet) :
 
 void FleetColonizeOrder::ServerExecute() const
 {
+    if (its_time) {
+        std::cerr << "FleetColonizeOrder::ServerExecute(m_ship=" << m_ship << "); system intially contains:" << std::endl;
+        std::cerr << "    m_ship " << (GetUniverse().Object(m_ship) ? "STILL" : "NOT") << " in universe" << std::endl;
+        if (GetUniverse().Object(m_ship))
+            std::cerr << "    universe.Object(m_ship)->SystemID()=" << GetUniverse().Object(m_ship)->SystemID() << std::endl;
+        if (const System* system = GetUniverse().Object(m_planet)->GetSystem()) {
+            for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
+                std::cerr << "    " << it->second << std::endl;
+            }
+        }
+    }
     Universe& universe = GetUniverse();
     universe.Delete(m_ship);
     Planet* planet = universe.Object<Planet>(m_planet);
@@ -542,6 +487,17 @@ void FleetColonizeOrder::ServerExecute() const
     planet->GetMeter(METER_FARMING)->SetCurrent(INITIAL_COLONY_POP);
     planet->GetMeter(METER_HEALTH)->SetCurrent(planet->GetMeter(METER_HEALTH)->Max());
     planet->AddOwner(EmpireID());
+    if (its_time) {
+        std::cerr << "final system contents:" << std::endl;
+        std::cerr << "    m_ship " << (GetUniverse().Object(m_ship) ? "STILL" : "NOT") << " in universe" << std::endl;
+        if (GetUniverse().Object(m_ship))
+            std::cerr << "    universe.Object(m_ship)->SystemID()=" << GetUniverse().Object(m_ship)->SystemID() << std::endl;
+        if (const System* system = GetUniverse().Object(m_planet)->GetSystem()) {
+            for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
+                std::cerr << "    " << it->second << std::endl;
+            }
+        }
+    }
 }
 
 XMLElement FleetColonizeOrder::XMLEncode() const
@@ -557,6 +513,18 @@ XMLElement FleetColonizeOrder::XMLEncode() const
 
 void FleetColonizeOrder::ExecuteImpl() const
 {
+    if (its_time) {
+        std::cerr << "FleetColonizeOrder::ExecuteImpl(m_ship=" << m_ship << "); system intially contains:" << std::endl;
+        std::cerr << "    m_ship " << (GetUniverse().Object(m_ship) ? "STILL" : "NOT") << " in universe" << std::endl;
+        if (GetUniverse().Object(m_ship))
+            std::cerr << "    universe.Object(m_ship)->SystemID()=" << GetUniverse().Object(m_ship)->SystemID() << std::endl;
+        if (const System* system = GetUniverse().Object(m_planet)->GetSystem()) {
+            for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
+                std::cerr << "    " << it->second << std::endl;
+            }
+        }
+    }
+
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
@@ -602,6 +570,18 @@ void FleetColonizeOrder::ExecuteImpl() const
         universe.Delete(fleet->ID());
     } else {
         fleet->RemoveShip(m_ship);
+    }
+
+    if (its_time) {
+        std::cerr << "final system contents:" << std::endl;
+        std::cerr << "    m_ship " << (GetUniverse().Object(m_ship) ? "STILL" : "NOT") << " in universe" << std::endl;
+        if (GetUniverse().Object(m_ship))
+            std::cerr << "    universe.Object(m_ship)->SystemID()=" << GetUniverse().Object(m_ship)->SystemID() << std::endl;
+        if (const System* system = GetUniverse().Object(m_planet)->GetSystem()) {
+            for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
+                std::cerr << "    " << it->second << std::endl;
+            }
+        }
     }
 }
 

@@ -32,7 +32,7 @@
 
 using boost::lexical_cast;
 
-#define ROTATING_PLANET_IMAGES 0 // set this to 1 to use the OpenGL-rendered rotating planets code
+#define ROTATING_PLANET_IMAGES 1 // set this to 1 to use the OpenGL-rendered rotating planets code
 
 namespace {
     bool PlaySounds() {return GetOptionsDB().Get<bool>("UI.sound.enabled");}
@@ -317,23 +317,22 @@ public:
 private:
     double SizeRotationFactor(PlanetSize size) const
     {
-        switch (size)
-        {
-        case SZ_TINY      : return 2.0;
-        case SZ_SMALL     : return 1.5;
-        case SZ_MEDIUM    : return 1.0;
-        case SZ_LARGE     : return 0.75;
-        case SZ_HUGE      : return 0.5;
-        case SZ_GASGIANT  : return 0.25;
-        default                   : return 1.0;
+        switch (size) {
+        case SZ_TINY:     return 2.0;
+        case SZ_SMALL:    return 1.5;
+        case SZ_MEDIUM:   return 1.0;
+        case SZ_LARGE:    return 0.75;
+        case SZ_HUGE:     return 0.5;
+        case SZ_GASGIANT: return 0.25;
+        default:          return 1.0;
         }
         return 1.0;
     }
 
     RotatingPlanetData              m_planet_data;
-    PlanetSize              m_size;
+    PlanetSize                      m_size;
     boost::shared_ptr<GG::Texture>  m_texture;
-    StarType                m_star_type;
+    StarType                        m_star_type;
 };
 
 ////////////////////////////////////////////////
@@ -369,18 +368,6 @@ namespace {
       SystemRow(int system_id) : m_system_id(system_id) {data_type = "SystemID";}
 
       int m_system_id;
-  };
-
-  struct ConstructionRow : public GG::ListBox::Row
-  {
-    public:
-      ConstructionRow(BuildType build_type, const std::string& item) :
-          m_build(build_type, item)
-      {
-          data_type = "BuildType";
-      }
-
-      std::pair<BuildType, std::string> m_build;
   };
 
   boost::shared_ptr<GG::Texture> GetPlanetTextureStatic(const Planet &planet)
@@ -1037,8 +1024,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   m_button_colonize(0),
   m_planet_graphic(0),
   m_rotating_planet_graphic(0),
-  m_button_food(0),m_button_mining(0),m_button_industry(0),m_button_research(0),m_button_balanced(0),
-  m_construction(0)
+  m_button_food(0),m_button_mining(0),m_button_industry(0),m_button_research(0),m_button_balanced(0)
 {
   SetText(UserString("PLANET_PANEL"));
 
@@ -1050,7 +1036,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   GG::Pt planet_image_pos(MAX_PLANET_DIAMETER / 2 - planet_image_sz / 2, Height() / 2 - planet_image_sz / 2);
 
 #if ROTATING_PLANET_IMAGES
-  if (planet.Type() == PT_ASTEROIDS)
+  if (0)//TODO: revert to planet.Type() == PT_ASTEROIDS)
   {
 #endif
       std::vector<boost::shared_ptr<GG::Texture> > textures; int start_frame; double fps;
@@ -1068,7 +1054,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
       textures.clear();
 #if ROTATING_PLANET_IMAGES
   }
-  else if (planet.Type() < MAX_PLANET_TYPE)
+  else if (planet.Type() < NUM_PLANET_TYPES)
   {
       const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
       std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet.Type());
@@ -1159,75 +1145,6 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
 
   AttachChild(m_button_food);AttachChild(m_button_mining);AttachChild(m_button_industry);
   AttachChild(m_button_research);AttachChild(m_button_balanced);
-  
-
-  // for v.1 some of these only appear after tech is researched
-  Empire *empire = HumanClientApp::Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-
-  m_construction = new CUIDropDownList(m_planet_name->UpperLeft ().x+10, 
-                                       m_button_research->LowerRight().y-UpperLeft().y+10,
-                                       100, ClientUI::SIDE_PANEL_PTS, 
-                                       (ClientUI::SIDE_PANEL_PTS) * 5, GG::CLR_ZERO);
-
-  m_construction->SetStyle(GG::LB_NOSORT);
-  //m_construction->OffsetMove(0, -m_construction->Height());
-  AttachChild(m_construction);
-
-  ////////////////////// v0.3 only!!
-  GG::ListBox::Row* row = new ConstructionRow(BT_NOT_BUILDING, "");
-  row->push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
-  row = new ConstructionRow(BT_SHIP, "Scout");
-  row->push_back("Scout", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
-  row = new ConstructionRow(BT_SHIP, "Colony Ship");
-  row->push_back("Colony Ship", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
-  row = new ConstructionRow(BT_SHIP, "Mark I");
-  row->push_back("Mark I", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
-  if( empire->TechAvailable( "Mark II" ) )
-  {
-    row = new ConstructionRow(BT_SHIP, "Mark II");
-    row->push_back("Mark II", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-  }
-
-  if( empire->TechAvailable( "Mark III" ) )
-  {
-    row = new ConstructionRow(BT_SHIP, "Mark III");
-    row->push_back("Mark III", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-  }
-
-  if( empire->TechAvailable( "Mark IV" ) )
-  {
-    row = new ConstructionRow(BT_SHIP, "Mark IV");
-    row->push_back("Mark IV", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-  }
-
-  if( empire->TechAvailable( "DefBase" ) )
-  {
-    row = new ConstructionRow(BT_ORBITAL, "");
-    row->push_back("DefBase", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-  }
-
-  // find the index we need to set in the list 
-  int selection_idx = -1;
-  for(int i = 0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build == planet.CurrentlyBuilding())
-       selection_idx =i;
-  
-  if(selection_idx!=-1)
-    m_construction->Select( selection_idx );
-  Connect(m_construction->SelChangedSignal(), &SidePanel::PlanetPanel::BuildSelected, this);
-  ////////////////////// v0.3 only!!
 
   if (planet.Type() == PT_ASTEROIDS) 
   {
@@ -1239,7 +1156,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   if (System* system = plt->GetSystem())
     m_connection_system_changed = GG::Connect(system->StateChangedSignal(), &SidePanel::PlanetPanel::PlanetChanged, this);
   m_connection_planet_changed = GG::Connect(plt->StateChangedSignal(), &SidePanel::PlanetPanel::PlanetChanged, this);
-  m_connection_planet_production_changed= GG::Connect(plt->ProdCenterChangedSignal(), &SidePanel::PlanetPanel::PlanetProdCenterChanged, this);
+  m_connection_planet_production_changed= GG::Connect(plt->ResourceCenterChangedSignal(), &SidePanel::PlanetPanel::PlanetResourceCenterChanged, this);
 
   Update();
 }
@@ -1269,7 +1186,7 @@ const Planet* SidePanel::PlanetPanel::GetPlanet() const
 
 void SidePanel::PlanetPanel::Update()
 {
-  PlanetChanged();PlanetProdCenterChanged();
+  PlanetChanged();PlanetResourceCenterChanged();
 }
 
 void SidePanel::PlanetPanel::EnableControl(GG::Wnd *control,bool enable)
@@ -1385,22 +1302,13 @@ void SidePanel::PlanetPanel::PlanetChanged()
   EnableControl(m_button_industry,(owner==OS_SELF));
   EnableControl(m_button_research,(owner==OS_SELF));
   EnableControl(m_button_balanced,(owner==OS_SELF));
-  EnableControl(m_construction   ,(owner==OS_SELF));
 }
 
-void SidePanel::PlanetPanel::PlanetProdCenterChanged()
+void SidePanel::PlanetPanel::PlanetResourceCenterChanged()
 {
   TempUISoundDisabler sound_disabler;
 
   const Planet *planet = GetPlanet();
-
-  int i;
-  for(i=0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build == planet->CurrentlyBuilding())
-    {
-      m_construction->Select(i);
-      break;
-    }
 
   m_button_food    ->SetValue(planet->FarmingPoints ());
   m_button_industry->SetValue(planet->IndustryPoints());
@@ -1454,6 +1362,7 @@ void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
   if((parent=Parent()))
     parent->MouseWheel(pt,move,keys);
 }
+
 void SidePanel::PlanetPanel::MouseEnter(const GG::Pt& pt, Uint32 keys)
 {
 }
@@ -1590,38 +1499,6 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0);
   x+=font->TextExtent(text, format).x+ICON_MARGIN;
 
-
-  if(BT_NOT_BUILDING <= planet.CurrentlyBuilding().first)
-  {
-    // construction progress bar
-    double cost = planet.ItemBuildCost();
-    double percent_complete = planet.PercentComplete();
-
-    int x1 = m_construction->UpperLeft ().x;
-    int x2 = m_construction->LowerRight().x;
-    int y1,y2;
-    y1 = m_construction->LowerRight().y;
-    y2 = y1 + 5;
-    GG::FlatRectangle(x1, y1, x2, y2, GG::CLR_ZERO, ClientUI::CTRL_BORDER_COLOR, 1);
-    GG::FlatRectangle(x1, y1, x1 + static_cast<int>((x2 - x1 - 2) * std::min(percent_complete,1.0)), y2,
-                      ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR, LightColor(ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR), 1);
-
-    // construction progress text
-    font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-    format = GG::TF_LEFT | GG::TF_VCENTER;
-    text = "";
-    if(cost>0.0 && planet.ProductionPoints()<0.0) text = UserString("PL_PRODUCTION_TIME_NEVER");
-    else
-      if(cost>0.0)
-        text = boost::io::str(boost::format(UserString("PL_PRODUCTION_TIME_TURNS")) % std::max(1,static_cast<int>(std::ceil((cost - planet.Rollover()) / planet.ProductionPoints()))));
-
-    x1 = m_construction->LowerRight().x;
-    y1 = m_construction->UpperLeft ().y;
-    y2 = m_construction->LowerRight().y;
-    glColor4ubv(ClientUI::TEXT_COLOR.v);
-    font->RenderText(x1, y1, x1+500, y2, text, format, 0);
-  }
-
   return true;
 }
 
@@ -1650,14 +1527,6 @@ bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
     GG::Pt diff = pt - center;
     int r_squared = PlanetDiameter() * PlanetDiameter() / 4;
     return diff.x * diff.x + diff.y * diff.y <= r_squared;
-}
-
-void SidePanel::PlanetPanel::BuildSelected(int idx) const
-{
-  const Planet *planet = GetPlanet();
-
-  std::pair<BuildType, std::string>& build = static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build;
-  HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*planet->Owners().begin(), planet->ID(),build.first,build.second));
 }
 
 void SidePanel::PlanetPanel::ClickColonize()
@@ -1887,7 +1756,6 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   m_bShowUI(false),
   m_fadein_start(0),m_fadein_span(0),
   m_bg_image(),
-  m_build_image(),
   m_radio_btn_primary_focus  (0),
   m_radio_btn_secondary_focus(0)
 {
@@ -1940,74 +1808,10 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0,130,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
   AttachChild(m_radio_btn_secondary_focus);
 
-  m_construction = new CUIDropDownList(260,10,150,ClientUI::SIDE_PANEL_PTS,(ClientUI::SIDE_PANEL_PTS) * 15, GG::CLR_ZERO,GG::CLR_ZERO,GG::Clr(0.0,0.0,0.0,0.5));
-
-  m_construction->SetStyle(GG::LB_NOSORT);
-  //m_construction->OffsetMove(0, -m_construction->Height());
-  AttachChild(m_construction);
-
-  ////////////////////// v0.3 only!!
-  GG::ListBox::Row* row = new ConstructionRow(BT_NOT_BUILDING, "");
-  row->push_back("No Building", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
-  row = new ConstructionRow(BT_SHIP, "Scout");
-  row->push_back("Scout", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
-  row = new ConstructionRow(BT_SHIP, "Colony Ship");
-  row->push_back("Colony Ship", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
-  row = new ConstructionRow(BT_SHIP, "Mark I");
-  row->push_back("Mark I", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-  m_construction->Insert(row);
-
-
-  Empire *empire = HumanClientApp::Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-  if( empire->TechAvailable( "Mark II" ) )
-  {
-    row = new ConstructionRow(BT_SHIP, "Mark II");
-    row->push_back("Mark II", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-  }
-
-  if( empire->TechAvailable( "Mark III" ) )
-  {
-    row = new ConstructionRow(BT_SHIP, "Mark III");
-    row->push_back("Mark III", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-  }
-
-  if( empire->TechAvailable( "Mark IV" ) )
-  {
-    row = new ConstructionRow(BT_SHIP, "Mark IV");
-    row->push_back("Mark IV", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-  }
-
-  if( empire->TechAvailable( "DefBase" ) )
-  {
-      row = new ConstructionRow(BT_ORBITAL, "");
-    row->push_back("DefBase", ClientUI::FONT, ClientUI::SIDE_PANEL_PTS, ClientUI::TEXT_COLOR);
-    m_construction->Insert(row);
-  }
-
-  // find the index we need to set in the list 
-  int selection_idx = -1;
-  for(int i = 0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build == planet->CurrentlyBuilding())
-      selection_idx =i;
-  
-  if(selection_idx!=-1)
-    m_construction->Select( selection_idx );
-  Connect(m_construction->SelChangedSignal(), &SidePanel::PlanetView::BuildSelected, this);
-  ////////////////////// v0.3 only!!
-
   GG::Connect(planet->StateChangedSignal(), &SidePanel::PlanetView::PlanetChanged, this);
-  m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this);
+  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal(), &SidePanel::PlanetView::PlanetResourceCenterChanged, this);
   PlanetChanged();
-  PlanetProdCenterChanged();
+  PlanetResourceCenterChanged();
   m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::PrimaryFocusClicked, this);
   m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::SecondaryFocusClicked, this);
  }
@@ -2020,56 +1824,16 @@ void SidePanel::PlanetView::PlanetChanged()
 
   bool is_owner = planet->OwnedBy(HumanClientApp::GetApp()->EmpireID());
 
-  is_owner?m_construction->Show():m_construction->Hide();
   is_owner?m_radio_btn_primary_focus->Show():m_radio_btn_primary_focus->Hide();
   is_owner?m_radio_btn_secondary_focus->Show():m_radio_btn_secondary_focus->Hide();
-  is_owner?m_construction->Show():m_construction->Hide();
-  is_owner?m_construction->Show():m_construction->Hide();
-  is_owner?m_construction->Show():m_construction->Hide();
-  is_owner?m_construction->Show():m_construction->Hide();
 }
 
-void SidePanel::PlanetView::PlanetProdCenterChanged()
+void SidePanel::PlanetView::PlanetResourceCenterChanged()
 {
   TempUISoundDisabler soud_disabler;
   Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
   if(planet==0)
     throw std::runtime_error("SidePanel::PlanetView::PlanetChanged: planet not found");
-
-  boost::shared_ptr<GG::Texture> texture;
-  if (planet->CurrentlyBuilding().first == BT_SHIP)
-  {
-      if (planet->CurrentlyBuilding().second == "Colony Ship")
-          texture=GetTexture(ClientUI::ART_DIR + "misc/colony1.png");
-      else if (planet->CurrentlyBuilding().second == "Scout")
-          texture=GetTexture(ClientUI::ART_DIR + "misc/scout1.png");
-      else if (planet->CurrentlyBuilding().second == "Mark I")
-          texture=GetTexture(ClientUI::ART_DIR + "misc/mark1.png");
-      else if (planet->CurrentlyBuilding().second == "Mark II")
-          texture=GetTexture(ClientUI::ART_DIR + "misc/mark2.png");
-      else if (planet->CurrentlyBuilding().second == "Mark III")
-          texture=GetTexture(ClientUI::ART_DIR + "misc/mark3.png");
-      else if (planet->CurrentlyBuilding().second == "Mark IV")
-          texture=GetTexture(ClientUI::ART_DIR + "misc/mark4.png");
-  }
-  else if (planet->CurrentlyBuilding().first == BT_ORBITAL)
-  {
-      texture=GetTexture(ClientUI::ART_DIR + "misc/base1.png");
-  }
-  else
-  {
-      texture=GetTexture(ClientUI::ART_DIR + "misc/missing.png");
-  }
-
-  m_build_image = GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultHeight());
-
-  int i;
-  for(i=0; i< m_construction->NumRows();i++)
-    if(static_cast<ConstructionRow&>(m_construction->GetRow(i)).m_build == planet->CurrentlyBuilding())
-    {
-      m_construction->Select(i);
-      break;
-    }
 
   switch(planet->PrimaryFocus())
   {
@@ -2110,7 +1874,6 @@ void SidePanel::PlanetView::Show(bool children)
       owner = OS_SELF;
 
   // visibility
-  (m_bShowUI && owner==OS_SELF)?m_construction             ->Show():m_construction             ->Hide();
   (m_bShowUI && owner==OS_SELF)?m_radio_btn_primary_focus  ->Show():m_radio_btn_primary_focus  ->Hide();
   (m_bShowUI && owner==OS_SELF)?m_radio_btn_secondary_focus->Show():m_radio_btn_secondary_focus->Hide();
 }
@@ -2156,16 +1919,6 @@ void SidePanel::PlanetView::SetFadeInPlanetViewUI(int start, int span)
     Show();
 }
 
-void SidePanel::PlanetView::BuildSelected(int idx) const
-{
-  const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
-  if(!planet)
-    throw std::runtime_error("SidePanel::PlanetPanel::BuildSelected planet not found!");
-
-  std::pair<BuildType, std::string>& build = static_cast<ConstructionRow&>(m_construction->GetRow(idx)).m_build;
-  HumanClientApp::Orders().IssueOrder(new PlanetBuildOrder(*planet->Owners().begin(), planet->ID(),build.first,build.second));
-}
-
 void SidePanel::PlanetView::PrimaryFocusClicked(int idx)
 {
   m_connection_planet_production_changed.disconnect();
@@ -2186,7 +1939,7 @@ void SidePanel::PlanetView::PrimaryFocusClicked(int idx)
     HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,true));
  
   m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::PrimaryFocusClicked, this, boost::signals::at_front);
-  m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this, boost::signals::at_front);
+  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal(), &SidePanel::PlanetView::PlanetResourceCenterChanged, this, boost::signals::at_front);
 }
 
 void SidePanel::PlanetView::SecondaryFocusClicked(int idx)
@@ -2209,7 +1962,7 @@ void SidePanel::PlanetView::SecondaryFocusClicked(int idx)
     HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,false));
 
   m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::SecondaryFocusClicked, this, boost::signals::at_front);
-  m_connection_planet_production_changed=GG::Connect(planet->ProdCenterChangedSignal(), &SidePanel::PlanetView::PlanetProdCenterChanged, this, boost::signals::at_front);
+  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal(), &SidePanel::PlanetView::PlanetResourceCenterChanged, this, boost::signals::at_front);
 }
 
 bool SidePanel::PlanetView::Render()
@@ -2218,7 +1971,7 @@ bool SidePanel::PlanetView::Render()
 
   const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
   if(!planet)
-    throw std::runtime_error("SidePanel::PlanetPanel::BuildSelected planet not found!");
+    throw std::runtime_error("SidePanel::PlanetView::Render planet not found!");
 
   GG::Pt ul = UpperLeft(), lr = LowerRight();
   GG::Pt client_ul = ClientUpperLeft(), client_lr = ClientLowerRight();
@@ -2368,99 +2121,6 @@ bool SidePanel::PlanetView::Render()
   font->RenderText(x+icon_dim,y,x+icon_dim+35, y+icon_dim, text, format, 0);
 
   AngledCornerRectangle(ul.x+255, ul.y+10,ul.x+489, ul.y+289, GG::Clr(0.0,0.0,0.0,0.6), GG::CLR_ZERO,0,0,0,0,0);
-  glColor4ubv(alpha_color.v);
-
-  GG::Rect rc_build_image_border(260,35,484,175);
-  rc_build_image_border+=UpperLeft();
-
-  height = (rc_build_image_border.Width() * m_build_image.Height()) / m_build_image.Width();
-  
-  GG::BeginScissorClipping(rc_build_image_border.UpperLeft(),rc_build_image_border.LowerRight());
-  m_build_image.OrthoBlit(rc_build_image_border.Left (),rc_build_image_border.Top()+(rc_build_image_border.Height()-height)/2,
-                          rc_build_image_border.Right(),rc_build_image_border.Top()+(rc_build_image_border.Height()-height)/2+height,false);
-  GG::EndScissorClipping();
-  
-  AngledCornerRectangle(rc_build_image_border.Left (),rc_build_image_border.Top   (),
-                        rc_build_image_border.Right(),rc_build_image_border.Bottom(), GG::CLR_ZERO,GG::Clr(200,200,200,255), 1,0,0,0,0);
-  glColor4ubv(alpha_color.v);
-  
-  if(BT_NOT_BUILDING < planet->CurrentlyBuilding().first)
-  {
-    // construction progress bar
-    double cost = planet->ItemBuildCost();
-    double percent_complete = planet->PercentComplete();
-
-    int x1 = m_construction->UpperLeft ().x;
-    int x2 = m_construction->LowerRight().x;
-    int y1,y2;
-    y1 = m_construction->LowerRight().y-2;
-    y2 = y1 + 5;
-    GG::FlatRectangle(x1, y1, x2, y2, GG::CLR_ZERO, ClientUI::CTRL_BORDER_COLOR, 1);
-    GG::FlatRectangle(x1, y1, x1 + static_cast<int>((x2 - x1 - 2) * std::min(percent_complete,1.0)), y2,
-                      ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR, LightColor(ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR), 1);
-
-    // construction progress text
-    font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-    Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
-    text = "";
-    if(cost>0.0 && planet->ProductionPoints()<0.0) text = UserString("PL_PRODUCTION_TIME_NEVER");
-    else
-      if(cost>0.0)
-          text = boost::io::str(boost::format(UserString("PL_PRODUCTION_TIME_TURNS")) % std::max(1,static_cast<int>(std::ceil((cost - planet->Rollover()) / planet->ProductionPoints()))));
-
-    x1 = m_construction->LowerRight().x;
-    y1 = m_construction->UpperLeft ().y;
-    y2 = m_construction->LowerRight().y;
-    glColor4ubv(ClientUI::TEXT_COLOR.v);
-    font->RenderText(x1, y1, x1+500, y2, text, format, 0);
-
-    if (planet->CurrentlyBuilding().first == BT_SHIP)
-    {
-      Empire *empire=HumanClientApp::Empires().Lookup(*(planet->Owners().begin()));
-      const ShipDesign* design = empire->GetShipDesign(planet->CurrentlyBuilding().second);
-
-      format = GG::TF_LEFT | GG::TF_VCENTER;
-      text = design->name;
-      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT_BOLD, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));
-      font->RenderText(ul.x+260,ul.y+180,ul.x+500,ul.y+180+font->Height(), text, format, 0);
-
-      y = ul.y+180;
-      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-     
-      format = GG::TF_LEFT | GG::TF_VCENTER;
-      text = "Attack";
-      font->RenderText(ul.x+385,y,ul.x+50,y+font->Height(), text, format, 0);
-
-      format = GG::TF_RIGHT | GG::TF_VCENTER;
-      text = lexical_cast<std::string>(design->attack);
-      font->RenderText(ul.x+385+50,y,ul.x+484,y+font->Height(), text, format, 0);
-
-      y+=font->Height();
-
-      format = GG::TF_LEFT | GG::TF_VCENTER;
-      text = "Defence";
-      font->RenderText(ul.x+385,y,ul.x+200,y+font->Height(), text, format, 0);
-
-      format = GG::TF_RIGHT | GG::TF_VCENTER;
-      text = lexical_cast<std::string>(design->defense);
-      font->RenderText(ul.x+385+50,y,ul.x+484,y+font->Height(), text, format, 0);
-      
-      y+=font->Height();
-
-      format = GG::TF_LEFT | GG::TF_VCENTER;
-      text = "Cost";
-      font->RenderText(ul.x+385,y,ul.x+200,y+font->Height(), text, format, 0);
-
-      format = GG::TF_RIGHT | GG::TF_VCENTER;
-      text = lexical_cast<std::string>(design->cost);
-      font->RenderText(ul.x+385+50,y,ul.x+484,y+font->Height(), text, format, 0);
-
-      y+=font->Height();
-
-      format = GG::TF_LEFT | GG::TF_TOP | GG::TF_WORDBREAK;
-      font->RenderText(ul.x+260,y,ul.x+484,ul.y+285, design->description, format, 0);
-    }
-  }
 
   return true;
 }
@@ -2652,7 +2312,7 @@ void SidePanel::SetSystem(int system_id)
       for(unsigned int i = 0; i < plt_vec.size(); i++) 
       {
         GG::Connect(plt_vec[i]->StateChangedSignal(), &SidePanel::PlanetsChanged, this);
-        GG::Connect(plt_vec[i]->ProdCenterChangedSignal(), &SidePanel::PlanetsChanged, this);
+        GG::Connect(plt_vec[i]->ResourceCenterChangedSignal(), &SidePanel::PlanetsChanged, this);
       }
 
       m_planet_panel_container->SetPlanets(plt_vec, m_system->Star());

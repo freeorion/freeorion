@@ -46,7 +46,7 @@ namespace {
 Planet::Planet() :
     UniverseObject(),
     PopCenter(this, MaxPopMod(SZ_MEDIUM, Environment(PT_TERRAN)), MaxHealthMod(Environment(PT_TERRAN))),
-    ProdCenter(PopCenter::PopulationMeter(), this),
+    ResourceCenter(PopCenter::PopulationMeter(), this),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
     m_available_trade(0.0),
@@ -58,7 +58,7 @@ Planet::Planet() :
 Planet::Planet(PlanetType type, PlanetSize size) :
     UniverseObject(),
     PopCenter(this, MaxPopMod(size, Environment(type)), MaxHealthMod(Environment(type))),
-    ProdCenter(PopCenter::PopulationMeter(), this),
+    ResourceCenter(PopCenter::PopulationMeter(), this),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
     m_available_trade(0.0),
@@ -73,7 +73,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
 Planet::Planet(const GG::XMLElement& elem) :
     UniverseObject(elem.Child("UniverseObject")),
     PopCenter(elem.Child("PopCenter"), this),
-    ProdCenter(elem.Child("ProdCenter"), PopCenter::PopulationMeter(), this),
+    ResourceCenter(elem.Child("ResourceCenter"), PopCenter::PopulationMeter(), this),
     m_is_about_to_be_colonized(0),
     m_def_bases(0)
 {
@@ -180,7 +180,7 @@ GG::XMLElement Planet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) cons
     XMLElement retval("Planet" + boost::lexical_cast<std::string>(ID()));
     retval.AppendChild(UniverseObject::XMLEncode(empire_id));
     retval.AppendChild(PopCenter::XMLEncode(vis));
-    retval.AppendChild(ProdCenter::XMLEncode(vis));
+    retval.AppendChild(ResourceCenter::XMLEncode(vis));
     retval.AppendChild(XMLElement("m_type", lexical_cast<std::string>(m_type)));
     retval.AppendChild(XMLElement("m_size", lexical_cast<std::string>(m_size)));
     retval.AppendChild(XMLElement("m_just_conquered", lexical_cast<std::string>(m_just_conquered)));
@@ -309,7 +309,7 @@ void Planet::Reset()
         RemoveOwner(*it);
     }
     PopCenter::Reset(MaxPopMod(Size(), Environment(Type())), MaxHealthMod(Environment(Type())));
-    ProdCenter::Reset();
+    ResourceCenter::Reset();
     m_buildings.clear();
     m_available_trade = 0.0;
     m_just_conquered = false;
@@ -382,7 +382,7 @@ void Planet::MovementPhase()
 
 void Planet::AdjustMaxMeters()
 {
-    ProdCenter::AdjustMaxMeters();
+    ResourceCenter::AdjustMaxMeters();
     PopCenter::AdjustMaxMeters();
 }
 
@@ -392,7 +392,7 @@ void Planet::PopGrowthProductionResearchPhase( )
     if (m_just_conquered)
         m_just_conquered = false;
     else
-        ProdCenter::PopGrowthProductionResearchPhase();
+        ResourceCenter::PopGrowthProductionResearchPhase();
 
     PopCenter::PopGrowthProductionResearchPhase();
 

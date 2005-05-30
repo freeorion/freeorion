@@ -75,17 +75,12 @@ void ResourcePool::SetPlanets(const Universe::ObjectVec &planet_vec)
     }
     std::sort(m_planets.begin(),m_planets.end(),SortFunc());
 
-    PlanetChanged(UniverseObject::INVALID_OBJECT_ID);
+    PlanetChanged();
 }
 
 ResourcePool::SortFuncType ResourcePool::SortFunc() const
 {
     return &Lower;
-}
-
-void ResourcePool::OnPlanetChanged(int m_planet_id)
-{
-    PlanetChanged(m_planet_id);
 }
 
 //////////////////////////////////////////////////
@@ -105,12 +100,7 @@ MineralResourcePool::MineralResourcePool(const GG::XMLElement& elem)
     m_stockpile = boost::lexical_cast<double>(elem.Child("m_stockpile").Text());
 }
 
-ResourcePool::SortFuncType MineralResourcePool::SortFunc() const
-{
-    return &Lower;
-}
-
-void MineralResourcePool::PlanetChanged(int m_planet_id)
+void MineralResourcePool::PlanetChanged()
 {
     m_pool_production=0.0;
     m_needed_pool=0.0;
@@ -118,47 +108,13 @@ void MineralResourcePool::PlanetChanged(int m_planet_id)
     // sum all minerals
     for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
     {
-        Planet *planet=*it;
-        planet->SetAvailableMinerals(0.0);
-        m_pool_production+=planet->MiningPoints();
-        m_needed_pool+=planet->IndustryPoints();
-    }
-    double available = m_pool_production + m_stockpile;
-
-    // first run: give all planets required mineral limited by local mineral production
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
-    {
-        Planet *planet=*it;
-        planet->SetAvailableMinerals(std::min(available,std::min(planet->MiningPoints(),planet->IndustryPoints())));
-        available-=planet->AvailableMinerals();
+        m_pool_production+=(*it)->MiningPoints();
+        m_needed_pool+=(*it)->IndustryPoints();
     }
 
-    // second run: give all planets required mineral to build one unit or support max required minerals
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
-    {
-        Planet *planet=*it;
-        double complete_one_item_cost = (planet->ItemBuildCost()-planet->Rollover())-planet->ProductionPoints();
-        if(complete_one_item_cost>0.0 && planet->IndustryPoints()>planet->AvailableMinerals())
-        {
-            double receives = std::min(available,std::min(complete_one_item_cost,planet->IndustryPoints()-planet->AvailableMinerals()));
-            planet->SetAvailableMinerals(planet->AvailableMinerals()+receives);
-            available-=receives;
-        }
-    }
-
-    // third run: give all planets required mineral up to the maximum needed
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
-    {
-        Planet *planet=*it;
-        if(planet->IndustryPoints()>planet->AvailableMinerals())
-        {
-            double receives = std::min(available,planet->IndustryPoints()-planet->AvailableMinerals());
-            planet->SetAvailableMinerals(planet->AvailableMinerals()+receives);
-            available-=receives;
-        }
-    }
-
-    m_stockpile=std::max(0.0, available);
+    // Note that m_stockpile is not updated; this should be done via a call the SetStockpile() by the owning empire's
+    // production queue, at the point at which production uses minerals.  This is important because the amount of actual
+    // production during a turn may be less than m_needed_pool, which is the sum of all industrial capacity.
 
     ChangedSignal()();
 }
@@ -202,7 +158,7 @@ ResourcePool::SortFuncType FoodResourcePool::SortFunc() const
     return &Greater;
 }
 
-void FoodResourcePool::PlanetChanged(int m_planet_id)
+void FoodResourcePool::PlanetChanged()
 {
     m_pool_production=0.0;
     m_needed_pool=0.0;
@@ -271,7 +227,7 @@ ResearchResourcePool::ResearchResourcePool(const GG::XMLElement& elem)
         throw std::invalid_argument("Attempted to construct a ResearchResourcePool from an XMLElement that had a tag other than \"ResearchResourcePool\"");
 }
 
-void ResearchResourcePool::PlanetChanged(int m_planet_id)
+void ResearchResourcePool::PlanetChanged()
 {
     m_pool_production=0.0;
 
@@ -305,7 +261,7 @@ PopulationResourcePool::PopulationResourcePool(const GG::XMLElement& elem)
         throw std::invalid_argument("Attempted to construct a PopulationResourcePool from an XMLElement that had a tag other than \"PopulationResourcePool\"");
 }
 
-void PopulationResourcePool::PlanetChanged(int m_planet_id)
+void PopulationResourcePool::PlanetChanged()
 {
     m_overall_pool=m_growth=0.0;
 
@@ -339,7 +295,7 @@ IndustryResourcePool::IndustryResourcePool(const GG::XMLElement& elem)
         throw std::invalid_argument("Attempted to construct a IndustryResourcePool from an XMLElement that had a tag other than \"IndustryResourcePool\"");
 }
 
-void IndustryResourcePool::PlanetChanged(int m_planet_id)
+void IndustryResourcePool::PlanetChanged()
 {
     m_pool_production=0.0;
 
@@ -380,7 +336,7 @@ ResourcePool::SortFuncType TradeResourcePool::SortFunc() const
     return &Greater;
 }
 
-void TradeResourcePool::PlanetChanged(int m_planet_id)
+void TradeResourcePool::PlanetChanged()
 {
     m_pool_production=0.0;
     m_needed_pool=0.0;

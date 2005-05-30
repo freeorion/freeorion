@@ -8,9 +8,7 @@ namespace {
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
-
 const std::string SitRepEntry::SITREP_UPDATE_TAG = "SitRepUpdate";
-
 
 SitRepEntry::SitRepEntry(const GG::XMLElement& elem) : VarText( elem )
 {
@@ -20,7 +18,6 @@ SitRepEntry::SitRepEntry(const GG::XMLElement& elem) : VarText( elem )
   // set type
   m_type = (EntryType)(boost::lexical_cast<int>(elem.Attribute("EntryType" ) ) );
 }
-
 
 GG::XMLElement SitRepEntry::XMLEncode() const
 {
@@ -32,7 +29,6 @@ GG::XMLElement SitRepEntry::XMLEncode() const
 
   return retval;
 }
-
 
 SitRepEntry *CreateTechResearchedSitRep( const std::string& tech_name )
 {
@@ -47,25 +43,7 @@ SitRepEntry *CreateTechResearchedSitRep( const std::string& tech_name )
   return( pSitRep );
 }
  
-
-SitRepEntry *CreateMaxIndustrySitRep( const int system_id, const int planet_id )
-{
-  SitRepEntry  *pSitRep = new SitRepEntry( );
-
-  pSitRep->SetType( SitRepEntry:: MAX_INDUSTRY_HIT );
-
-  GG::XMLElement system_elem( VarText::SYSTEM_ID_TAG );
-  system_elem.SetAttribute("value",  boost::lexical_cast<std::string>( system_id ));
-  pSitRep->GetVariables( ).AppendChild( system_elem );
-
-  GG::XMLElement planet_elem( VarText::PLANET_ID_TAG  );
-  planet_elem.SetAttribute("value",  boost::lexical_cast<std::string>( planet_id ));
-  pSitRep->GetVariables( ).AppendChild( planet_elem );
-
-  return( pSitRep );
-}
-
-SitRepEntry *CreateBaseBuiltSitRep( const int system_id, const int planet_id )
+SitRepEntry *CreateBaseBuiltSitRep( int system_id, int planet_id )
 {
   SitRepEntry  *pSitRep = new SitRepEntry( );
 
@@ -82,15 +60,15 @@ SitRepEntry *CreateBaseBuiltSitRep( const int system_id, const int planet_id )
   return( pSitRep );
 }
 
-SitRepEntry *CreateShipBuiltSitRep( const int ship_id, const int planet_id )
+SitRepEntry *CreateShipBuiltSitRep( int ship_id, int system_id )
 {
   SitRepEntry  *pSitRep = new SitRepEntry( );
 
   pSitRep->SetType( SitRepEntry::SHIP_BUILT );
 
-  GG::XMLElement planet_elem( VarText::PLANET_ID_TAG );
-  planet_elem.SetAttribute("value",  boost::lexical_cast<std::string>( planet_id ));
-  pSitRep->GetVariables( ).AppendChild( planet_elem );
+  GG::XMLElement system_elem( VarText::SYSTEM_ID_TAG );
+  system_elem.SetAttribute("value",  boost::lexical_cast<std::string>( system_id ));
+  pSitRep->GetVariables( ).AppendChild( system_elem );
 
   GG::XMLElement ship_elem( VarText::SHIP_ID_TAG );
   ship_elem.SetAttribute("value",  boost::lexical_cast<std::string>( ship_id ));
@@ -99,7 +77,24 @@ SitRepEntry *CreateShipBuiltSitRep( const int ship_id, const int planet_id )
   return( pSitRep );
 }
 
-SitRepEntry *CreateCombatSitRep(const int empire_id, const int victor_id, const int system_id)
+SitRepEntry *CreateBuildingBuiltSitRep(int building_id, int planet_id)
+{
+  SitRepEntry  *pSitRep = new SitRepEntry( );
+
+  pSitRep->SetType( SitRepEntry::BUILDING_BUILT );
+
+  GG::XMLElement planet_elem( VarText::PLANET_ID_TAG );
+  planet_elem.SetAttribute("value",  boost::lexical_cast<std::string>( planet_id ));
+  pSitRep->GetVariables( ).AppendChild( planet_elem );
+
+  GG::XMLElement building_elem( VarText::BUILDING_ID_TAG );
+  building_elem.SetAttribute("value",  boost::lexical_cast<std::string>( building_id ));
+  pSitRep->GetVariables( ).AppendChild( building_elem );
+
+  return( pSitRep );
+}
+
+SitRepEntry *CreateCombatSitRep(int empire_id, int victor_id, int system_id)
 {
   SitRepEntry  *pSitRep = new SitRepEntry( );
 
@@ -113,7 +108,7 @@ SitRepEntry *CreateCombatSitRep(const int empire_id, const int victor_id, const 
   return( pSitRep );
 }
 
-SitRepEntry *CreatePlanetStarvedToDeathSitRep(const int system_id, const int planet_id)
+SitRepEntry *CreatePlanetStarvedToDeathSitRep(int system_id, int planet_id)
 {
   SitRepEntry  *pSitRep = new SitRepEntry( );
 

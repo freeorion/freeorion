@@ -47,10 +47,11 @@ public:
     static const std::string SYSTEM_ID_TAG;
     static const std::string TECH_ID_TAG;
     static const std::string SHIP_ID_TAG;
+    static const std::string BUILDING_ID_TAG;
 
 protected:
-    GG::XMLElement             m_variables; ///< the data describing the sitrep. See class comments for description
-    std::string                m_text;      ///< the text, including hyperlinks, that describes this entry. Built from XML data
+    GG::XMLElement m_variables; ///< the data describing the sitrep. See class comments for description
+    std::string    m_text;      ///< the text, including hyperlinks, that describes this entry. Built from XML data
 };
 
 inline std::pair<std::string, std::string> VarTextRevision()

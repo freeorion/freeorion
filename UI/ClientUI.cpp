@@ -3,6 +3,7 @@
 #include "ClientUI.h"
 
 #include "../util/AppInterface.h"
+#include "../universe/Building.h"
 #include "CUIControls.h"
 #include "../universe/Fleet.h"
 #include "GGApp.h"
@@ -108,10 +109,10 @@ namespace {
     // should be rendered - this is up to the client UI
     const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
 	{
-        "SITREP_MAX_INDUSTRY",
-        "SITREP_SHIP_BUILT",
-        "SITREP_TECH_RESEARCHED",
         "SITREP_BASE_BUILT",
+        "SITREP_SHIP_BUILT",
+        "SITREP_BUILDING_BUILT",
+        "SITREP_TECH_RESEARCHED",
         "SITREP_COMBAT_SYSTEM_WON",
         "SITREP_COMBAT_SYSTEM_LOST",
         "SITREP_COMBAT_SYSTEM_NO_VICTOR",
@@ -477,6 +478,18 @@ bool ClientUI::ZoomToTech(const std::string& tech_name)
     if (!GetTech(tech_name))
         return false;
     m_map_wnd->ShowTech(tech_name);
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool ClientUI::ZoomToBuildingType(const std::string& building_type_name)
+{
+#ifndef FREEORION_BUILD_UTIL
+    if (!GetBuildingType(building_type_name))
+        return false;
+    // TODO
     return true;
 #else
     return false;

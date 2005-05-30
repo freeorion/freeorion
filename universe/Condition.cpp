@@ -278,7 +278,7 @@ bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* 
         return dynamic_cast<const PopCenter*>(target);
         break;
     case OBJ_PROD_CENTER:
-        return dynamic_cast<const ProdCenter*>(target);
+        return dynamic_cast<const ResourceCenter*>(target);
         break;
     case OBJ_SYSTEM:
         return universe_object_cast<const System*>(target);
@@ -647,7 +647,7 @@ std::string Condition::FocusType::Description(bool negated/* = false*/) const
 
 bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    if (const ProdCenter* prod_center = dynamic_cast<const ProdCenter*>(target)) {
+    if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(target)) {
         for (unsigned int i = 0; i < m_foci.size(); ++i) {
             if (m_foci[i]->Eval(source, target) == (m_primary ? prod_center->PrimaryFocus() : prod_center->SecondaryFocus()))
                 return true;

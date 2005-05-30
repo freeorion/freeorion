@@ -447,11 +447,11 @@ bool ResearchWnd::ResearchInfoPanel::Render()
 void ResearchWnd::ResearchInfoPanel::Reset()
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    const Empire::ResearchQueue& queue = empire->GetResearchQueue();
+    const ResearchQueue& queue = empire->GetResearchQueue();
     double RPs = empire->ResearchResPool().Production();
     double total_queue_cost = queue.TotalRPsSpent();
     int projects_in_progress = queue.ProjectsInProgress();
-    Empire::ResearchQueue::const_iterator underfunded_it = queue.UnderfundedProject();
+    ResearchQueue::const_iterator underfunded_it = queue.UnderfundedProject();
     double RPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->get<1>();
     double wasted_RPs = total_queue_cost < RPs ? RPs - total_queue_cost : 0.0;
     m_total_RPs->SetText(boost::lexical_cast<std::string>(static_cast<int>(RPs)));
@@ -517,12 +517,12 @@ void ResearchWnd::UpdateQueue()
 {
     using boost::tuples::get;
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    const Empire::ResearchQueue& queue = empire->GetResearchQueue();
+    const ResearchQueue& queue = empire->GetResearchQueue();
     int first_visible_queue_row = m_queue_lb->FirstRowShown();
     int original_queue_length = m_queue_lb->NumRows();
     m_queue_lb->Clear();
     const int QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
-    for (Empire::ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
+    for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
         m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, get<0>(*it), get<1>(*it), get<2>(*it)));
     }
     m_queue_lb->BringRowIntoView(m_queue_lb->NumRows() - 1);
@@ -533,7 +533,7 @@ void ResearchWnd::UpdateQueue()
 void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    const Empire::ResearchQueue& queue = empire->GetResearchQueue();
+    const ResearchQueue& queue = empire->GetResearchQueue();
     if (!queue.InQueue(tech)) {
         HumanClientApp::Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1));
         UpdateQueue();

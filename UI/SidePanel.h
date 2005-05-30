@@ -22,8 +22,8 @@
 #include "GGTexture.h"
 #endif
 
-#ifndef _ProdCenter_h_
-#include "../universe/ProdCenter.h"
+#ifndef _ResourceCenter_h_
+#include "../universe/ResourceCenter.h"
 #endif
 
 #ifndef _Planet_h_
@@ -47,7 +47,7 @@ class RotatingPlanetControl;
 class SidePanel : public GG::Wnd
 {
   class PlanetView;
-  public:
+public:
     /** a single planet's info and controls; several of these may appear at any one time in a SidePanel */
     class PlanetPanel : public GG::Wnd
     {
@@ -104,8 +104,7 @@ class SidePanel : public GG::Wnd
         bool InPlanet(const GG::Pt& pt) const;///< returns true if pt is within the planet image
 
         void PlanetChanged();                 ///< called when a planet was changed to handle rendering and wich control are enabled
-        void PlanetProdCenterChanged();       ///< called when a planet production was changed
-        void BuildSelected(int idx) const;    ///< called when a planet production was changed
+        void PlanetResourceCenterChanged();   ///< called when a planet resource production was changed
 
         void SetPrimaryFocus  (FocusType focus); ///< set the primary focus of the planet to focus
         void SetSecondaryFocus(FocusType focus); ///< set the secondary focus of the planet to focus
@@ -139,11 +138,9 @@ class SidePanel : public GG::Wnd
                               *m_button_research,         ///< research focus btn (lclick - set primary focus,rclick - ser secondary focus)
                               *m_button_balanced;         ///< balanced focus btn (lclick - set primary focus,rclick - ser secondary focus)
 
-        CUIDropDownList       *m_construction;            ///< drop down list which hold planet build projects
-
         boost::signals::connection m_connection_system_changed;           ///< stores connection used to handle a system change
         boost::signals::connection m_connection_planet_changed;           ///< stores connection used to handle a planet change
-        boost::signals::connection m_connection_planet_production_changed;///< stores connection used to handle a planet production change
+        boost::signals::connection m_connection_planet_production_changed;///< stores connection used to handle a planet resource production change
 
         /** planet panel is constructed without taking care of which controls
             are needed by current planet ownership state. All control which aren't
@@ -151,7 +148,6 @@ class SidePanel : public GG::Wnd
             and can be used when for instance planet ownership changes
         */
         std::vector<GG::Wnd*> m_vec_unused_controls;
-
 
         mutable LeftClickedSignalType m_planet_image_lclick_sig;///< fired if planet image get an left click
     };
@@ -171,7 +167,7 @@ class SidePanel : public GG::Wnd
     /** \name Mutators */ //@{
     virtual bool  Render();
 
-    void         SetSystem(int system_id); ///< sets the system currently being viewed in the side panel
+    void          SetSystem(int system_id); ///< sets the system currently being viewed in the side panel
     //@}
 
 private:
@@ -271,9 +267,7 @@ private:
       protected:
 
         void PlanetChanged();
-        void PlanetProdCenterChanged();
-
-        void BuildSelected(int idx) const;
+        void PlanetResourceCenterChanged();
 
         void PrimaryFocusClicked(int idx);
         void SecondaryFocusClicked(int idx);
@@ -288,18 +282,14 @@ private:
         int m_transparency;
 
         GG::SubTexture      m_bg_image;
-        GG::SubTexture      m_build_image;
         GG::SubTexture      m_foci_image;
-        CUIDropDownList     *m_construction;
 
         GG::RadioButtonGroup *m_radio_btn_primary_focus,*m_radio_btn_secondary_focus;
         CUITextureButton *m_btn_fullscreen;
 
-
         boost::signals::connection m_connection_btn_primary_focus_changed;
         boost::signals::connection m_connection_btn_secondary_focus_changed;
         boost::signals::connection m_connection_planet_production_changed;
-
     };
 
     PlanetPanelContainer  *m_planet_panel_container;

@@ -10,8 +10,8 @@
 #include "PopCenter.h"
 #endif
 
-#ifndef _ProdCenter_h_
-#include "ProdCenter.h"
+#ifndef _ResourceCenter_h_
+#include "ResourceCenter.h"
 #endif
 
 #ifndef _Ship_h_
@@ -20,7 +20,7 @@
 
 
 /** a class representing a FreeOrion planet.*/
-class Planet : public UniverseObject, public PopCenter, public ProdCenter
+class Planet : public UniverseObject, public PopCenter, public ResourceCenter
 {
 public:
     /** \name Structors */ //@{

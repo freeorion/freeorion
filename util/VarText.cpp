@@ -1,6 +1,7 @@
 #include "VarText.h"
 
 #include "AppInterface.h"
+#include "../universe/Building.h"
 #include "Parse.h"
 #include "../universe/UniverseObject.h"
 
@@ -14,6 +15,12 @@ namespace {
         void operator()(const char* first, const char* last) const 
         {
             std::string token(first, last);
+
+            // special case: "%%" is interpreted to be a '%' character
+            if (token.empty()) {
+                m_str += "%";
+                return;
+            }
 
             // look up child
             if (!m_variables.ContainsChild(token)) {
@@ -45,6 +52,15 @@ namespace {
                 }
 
                 m_str += open_tag + UserString(tech_name) + close_tag;
+            } else if (token == VarText::BUILDING_ID_TAG) {
+                std::string building_name = token_elem.Attribute("value");
+
+                if (!GetBuildingType(building_name)) {
+                    m_str += "ERROR";
+                    return;
+                }
+
+                m_str += open_tag + UserString(building_name) + close_tag;
             }
         }
 
@@ -75,6 +91,7 @@ const std::string VarText::PLANET_ID_TAG = "planet";
 const std::string VarText::SYSTEM_ID_TAG = "system";
 const std::string VarText::TECH_ID_TAG = "tech";
 const std::string VarText::SHIP_ID_TAG = "ship";
+const std::string VarText::BUILDING_ID_TAG = "building";
 
 VarText::VarText(const GG::XMLElement& elem)
 {

@@ -615,29 +615,29 @@ Situation Report
 # Sit Rep Entries  #
 ####################
 
-SITREP_MAX_INDUSTRY
-The planet %planet% in system %system% has reached its maximum production.
+SITREP_BASE_BUILT
+%planet% has completed a defense base.
 
 SITREP_SHIP_BUILT
-A new ship %ship% is now orbiting planet %planet%.
+A new %ship% is now available in the %system% system.
+
+SITREP_BUILDING_BUILT
+A new %building% is now available on %planet%.
 
 SITREP_TECH_RESEARCHED
-The technology %tech% has been discovered.
-
-SITREP_BASE_BUILT
-The planet %planet% in system %system% has completed a defense base.
+%tech% has been discovered.
 
 SITREP_COMBAT_SYSTEM_WON
-A combat has taken place in system %system%. You won!
+A combat has taken place in %system%. We won!
 
 SITREP_COMBAT_SYSTEM_LOST
-A combat has taken place in system %system%. You lost!
+A combat has taken place in %system%. We were defeated!
 
 SITREP_COMBAT_SYSTEM_NO_VICTOR
-A combat has taken place in system %system%. The encounter was a draw.
+A combat has taken place in %system%. The encounter was inconclusive.
 
 PLANET_LOST_STARVED_TO_DEATH
-Your population at planet %planet% in system %system% starved to death. The planet is lost!
+The entire population of %planet% has starved to death. The planet is lost!
 
 
 ####################
@@ -1116,10 +1116,10 @@ DESC_SELF_NOT
  that is not the source object
 
 DESC_TYPE
- that is of type %1%
+ that is a %1%
 
 DESC_TYPE_NOT
- that is not of type %1%
+ that is not a %1%
 
 DESC_BUILDING
  that contains a %1% building
@@ -1146,16 +1146,16 @@ DESC_PLANET_TYPE_NOT
  that is not a %1% planet
 
 DESC_PLANET_SIZE
- that is %1% a planet
+ that is a %1% planet
 
 DESC_PLANET_SIZE_NOT
- that is not %1% a planet
+ that is not a %1% planet
 
 DESC_PLANET_ENVIRONMENT
- that is %1% a planet
+ that is a %1% planet
 
 DESC_PLANET_ENVIRONMENT_NOT
- that is not %1% a planet
+ that is not a %1% planet
 
 DESC_FOCUS_TYPE_PRIMARY
  that has primary focus %1%

@@ -117,7 +117,7 @@ UniverseObjectType ValueRef::Variable<UniverseObjectType>::Eval(const UniverseOb
             return OBJ_FLEET;
         } else if (dynamic_cast<const PopCenter*>(object)) {
             return OBJ_POP_CENTER;
-        } else if (dynamic_cast<const ProdCenter*>(object)) {
+        } else if (dynamic_cast<const ResourceCenter*>(object)) {
             return OBJ_PROD_CENTER;
         }
     } else {
@@ -146,11 +146,11 @@ FocusType ValueRef::Variable<FocusType>::Eval(const UniverseObject* source, cons
     FocusType retval = INVALID_FOCUS_TYPE;
     if (m_property_name.back() == "PrimaryFocus") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
-        if (const ProdCenter* pc = dynamic_cast<const ProdCenter*>(object))
+        if (const ResourceCenter* pc = dynamic_cast<const ResourceCenter*>(object))
             retval = pc->PrimaryFocus();
     }else if (m_property_name.back() == "SecondaryFocus") {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
-        if (const ProdCenter* pc = dynamic_cast<const ProdCenter*>(object))
+        if (const ResourceCenter* pc = dynamic_cast<const ResourceCenter*>(object))
             retval = pc->SecondaryFocus();
     } else {
         throw std::runtime_error("Attempted to read a non-FocusType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type FocusType.");
@@ -229,23 +229,23 @@ double ValueRef::Variable<double>::Eval(const UniverseObject* source, const Univ
             retval = empire->FoodResPool().Stockpile();
         }
     } else if (m_property_name.back() == "TradeProduction") {
-        if (const ProdCenter* prod_center = dynamic_cast<const ProdCenter*>(object)) {
+        if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
             retval = prod_center->TradePoints();
         }
     } else if (m_property_name.back() == "FoodProduction") {
-        if (const ProdCenter* prod_center = dynamic_cast<const ProdCenter*>(object)) {
+        if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
             retval = prod_center->FarmingPoints();
         }
     } else if (m_property_name.back() == "MineralProduction") {
-        if (const ProdCenter* prod_center = dynamic_cast<const ProdCenter*>(object)) {
+        if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
             retval = prod_center->MiningPoints();
         }
     } else if (m_property_name.back() == "IndustryProduction") {
-        if (const ProdCenter* prod_center = dynamic_cast<const ProdCenter*>(object)) {
+        if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
             retval = prod_center->IndustryPoints();
         }
     } else if (m_property_name.back() == "ResearchProduction") {
-        if (const ProdCenter* prod_center = dynamic_cast<const ProdCenter*>(object)) {
+        if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
             retval = prod_center->ResearchPoints();
         }
     } else {
