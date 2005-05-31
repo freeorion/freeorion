@@ -144,14 +144,10 @@ double    MapWnd::s_min_scale_factor = 0.5;
 double    MapWnd::s_max_scale_factor = 8.0;
 const int MapWnd::SIDE_PANEL_WIDTH = 300;
 
-namespace {
-    const int MAP_MARGIN_WIDTH = MapWnd::SIDE_PANEL_WIDTH + 25; // the number of pixels of starless space around all four sides of the starfield
-}
-
 MapWnd::MapWnd() :
     GG::Wnd(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight(),
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH, 
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppHeight() + MAP_MARGIN_WIDTH, 
+            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::App::GetApp()->AppWidth() * 1.5), 
+            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::App::GetApp()->AppHeight() * 1.5), 
             GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
     m_disabled_accels_list(),
     m_backgrounds(NUM_BACKGROUNDS),
@@ -519,12 +515,8 @@ void MapWnd::InitTurn(int turn_number)
 
     Universe& universe = ClientApp::GetUniverse();
 
-    // assumes the app is wider than it is tall, and so if it fits in the height it will fit in the width
-    if (GG::App::GetApp()->AppHeight() - 2.0 * MAP_MARGIN_WIDTH < Universe::UniverseWidth() * s_min_scale_factor)
-        s_min_scale_factor = std::max(0.05, (GG::App::GetApp()->AppHeight() - 2.0 * MAP_MARGIN_WIDTH) / Universe::UniverseWidth());
-
-    Resize(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppWidth() + MAP_MARGIN_WIDTH,
-	   static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor) + GG::App::GetApp()->AppHeight() + MAP_MARGIN_WIDTH);
+    Resize(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::App::GetApp()->AppWidth() * 1.5),
+           static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::App::GetApp()->AppHeight() * 1.5));
 
     // set up nebulae on the first turn
     if (m_nebulae.empty()) {
@@ -858,26 +850,27 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::Wnd::Event& event)
 void MapWnd::Zoom(int delta)
 {
     GG::Pt ul = ClientUpperLeft();
-    GG::Pt center = GG::Pt( GG::App::GetApp()->AppWidth() / 2,  GG::App::GetApp()->AppHeight() / 2);
-    GG::Pt ul_offset = ul - center;
+    double ul_x = ul.x, ul_y = ul.y;
+    double center_x = GG::App::GetApp()->AppWidth() / 2.0, center_y = GG::App::GetApp()->AppHeight() / 2.0;
+    double ul_offset_x = ul_x - center_x, ul_offset_y = ul_y - center_y;
     if (delta > 0) {
         if (m_zoom_factor * ZOOM_STEP_SIZE < s_max_scale_factor) {
-            ul_offset.x = static_cast<int>(ul_offset.x * ZOOM_STEP_SIZE);
-            ul_offset.y = static_cast<int>(ul_offset.y * ZOOM_STEP_SIZE);
+            ul_offset_x *= ZOOM_STEP_SIZE;
+            ul_offset_y *= ZOOM_STEP_SIZE;
             m_zoom_factor *= ZOOM_STEP_SIZE;
         } else {
-            ul_offset.x = static_cast<int>(ul_offset.x * s_max_scale_factor / m_zoom_factor);
-            ul_offset.y = static_cast<int>(ul_offset.y * s_max_scale_factor / m_zoom_factor);
+            ul_offset_x *= s_max_scale_factor / m_zoom_factor;
+            ul_offset_y *= s_max_scale_factor / m_zoom_factor;
             m_zoom_factor = s_max_scale_factor;
         }
-    } else if ( delta < 0) {
+    } else if (delta < 0) {
         if (s_min_scale_factor < m_zoom_factor / ZOOM_STEP_SIZE) {
-            ul_offset.x = static_cast<int>(ul_offset.x / ZOOM_STEP_SIZE);
-            ul_offset.y = static_cast<int>(ul_offset.y / ZOOM_STEP_SIZE);
+            ul_offset_x /= ZOOM_STEP_SIZE;
+            ul_offset_y /= ZOOM_STEP_SIZE;
             m_zoom_factor /= ZOOM_STEP_SIZE;
         } else {
-            ul_offset.x = static_cast<int>(ul_offset.x * s_min_scale_factor / m_zoom_factor);
-            ul_offset.y = static_cast<int>(ul_offset.y * s_min_scale_factor / m_zoom_factor);
+            ul_offset_x *= s_min_scale_factor / m_zoom_factor;
+            ul_offset_y *= s_min_scale_factor / m_zoom_factor;
             m_zoom_factor = s_min_scale_factor;
         }
     } else {
@@ -891,25 +884,26 @@ void MapWnd::Zoom(int delta)
 
     for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
         const System& system = m_system_icons[i]->GetSystem();
-        GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor), 
-                       static_cast<int>((system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor));
+        GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2.0) * m_zoom_factor), 
+                       static_cast<int>((system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2.0) * m_zoom_factor));
         m_system_icons[i]->SizeMove(icon_ul.x, icon_ul.y, 
-                             static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5), 
-                             static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5));
+                                    static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor), 
+                                    static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor));
     }
 
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
         Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
         double x = fleet->X();
         double y = fleet->Y();
-        GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor), 
-                         static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor));
+        GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2.0) * m_zoom_factor), 
+                         static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2.0) * m_zoom_factor));
         m_moving_fleet_buttons[i]->SizeMove(button_ul.x, button_ul.y, 
-                                     static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5), 
-                                     static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5));
+                                            static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor), 
+                                            static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor));
     }
 
-    GG::Pt map_move = ul_offset + center - ul;
+    GG::Pt map_move(static_cast<int>((center_x + ul_offset_x) - ul_x),
+                    static_cast<int>((center_y + ul_offset_y) - ul_y));
     OffsetMove(map_move);
     MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
@@ -1079,25 +1073,22 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
     int contents_width = static_cast<int>(m_zoom_factor * Universe::UniverseWidth());
     int app_width =  GG::App::GetApp()->AppWidth();
     int app_height = GG::App::GetApp()->AppHeight();
+    int map_margin_width = static_cast<int>(app_width / 2.0);
 
-    if (app_width - MAP_MARGIN_WIDTH < contents_width) {
-        if (MAP_MARGIN_WIDTH < move_to_pt.x)
-            move_to_pt.x = MAP_MARGIN_WIDTH;
-        if (move_to_pt.x + contents_width < app_width - MAP_MARGIN_WIDTH)
-            move_to_pt.x = app_width - MAP_MARGIN_WIDTH - contents_width;
+    if (app_width - map_margin_width < contents_width || app_height - map_margin_width < contents_width) {
+        if (map_margin_width < move_to_pt.x)
+            move_to_pt.x = map_margin_width;
+        if (move_to_pt.x + contents_width < app_width - map_margin_width)
+            move_to_pt.x = app_width - map_margin_width - contents_width;
+        if (map_margin_width < move_to_pt.y)
+            move_to_pt.y = map_margin_width;
+        if (move_to_pt.y + contents_width < app_height - map_margin_width)
+            move_to_pt.y = app_height - map_margin_width - contents_width;
     } else {
         if (move_to_pt.x < 0)
             move_to_pt.x = 0;
         if (app_width < move_to_pt.x + contents_width)
             move_to_pt.x = app_width - contents_width;
-    }
-
-    if (app_height - MAP_MARGIN_WIDTH < contents_width) {
-        if (MAP_MARGIN_WIDTH < move_to_pt.y)
-            move_to_pt.y = MAP_MARGIN_WIDTH;
-        if (move_to_pt.y + contents_width < app_height - MAP_MARGIN_WIDTH)
-            move_to_pt.y = app_height - MAP_MARGIN_WIDTH - contents_width;
-    } else {
         if (move_to_pt.y < 0)
             move_to_pt.y = 0;
         if (app_height < move_to_pt.y + contents_width)
