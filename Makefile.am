@@ -79,8 +79,8 @@ universe/PopCenter.cpp				\
 universe/PopCenter.h  				\
 universe/Predicates.cpp				\
 universe/Predicates.h  				\
-universe/ProdCenter.cpp				\
-universe/ProdCenter.h  				\
+universe/ResourceCenter.cpp				\
+universe/ResourceCenter.h  				\
 universe/Ship.cpp				\
 universe/Ship.h  				\
 universe/ShipDesign.cpp				\
@@ -130,7 +130,7 @@ util/VarText.h
 # Python/PFleet.cpp				\
 # Python/PPlanet.cpp				\
 # Python/PPopCenter.cpp				\
-# Python/PProdCenter.cpp				\
+# Python/PResourceCenter.cpp				\
 # Python/PShip.cpp				\
 # Python/PSystem.cpp				\
 # Python/PUniverse.cpp				\
