@@ -1,3 +1,4 @@
+// -*- C++ -*-
 /** Copyright 2004 T. Zachary Laine 
     Permission is granted to use this file by anyone for any purpose, without restriction. */
 
