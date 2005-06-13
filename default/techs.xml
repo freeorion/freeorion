@@ -12,48 +12,8 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
-  <graphic>icons/pop.png</graphic>
+  <graphic>tech_icons/The_Physical_Brain.png</graphic>
 </Tech>
-
- <Tech>
-   <name>LRN_PHYS_BRAIN_APP1</name>
-   <description>LRN_PHYS_BRAIN_APP1_DESC</description>
-   <type>TT_APPLICATION</type>
-   <category>LEARNING_CATEGORY</category>
-   <research_cost>10</research_cost>
-   <research_turns>5</research_turns>
-   <prerequisites>
-     <prereq>LRN_PHYS_BRAIN</prereq>
-   </prerequisites>
-   <unlocked_items></unlocked_items>
-   <graphic>icons/xxx.png</graphic>
- </Tech>
-
- <Tech>
-   <name>LRN_PHYS_BRAIN_APP2</name>
-   <description>LRN_PHYS_BRAIN_APP2_DESC</description>
-   <type>TT_APPLICATION</type>
-   <category>LEARNING_CATEGORY</category>
-   <research_cost>10</research_cost>
-   <research_turns>5</research_turns>
-   <prerequisites>
-     <prereq>LRN_PHYS_BRAIN</prereq>
-   </prerequisites>
-   <unlocked_items></unlocked_items>
- </Tech>
-
- <Tech>
-   <name>LRN_PHYS_BRAIN_APP2_REF</name>
-   <description>LRN_PHYS_BRAIN_APP2_REF_DESC</description>
-   <type>TT_REFINEMENT</type>
-   <category>LEARNING_CATEGORY</category>
-   <research_cost>10</research_cost>
-   <research_turns>5</research_turns>
-   <prerequisites>
-     <prereq>LRN_PHYS_BRAIN_APP2</prereq>
-   </prerequisites>
-   <unlocked_items></unlocked_items>
- </Tech>
 
 <Tech>
   <name>LRN_ALGO_ELEGANCE</name>
@@ -64,6 +24,7 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Algorithmic_Elegance.png</graphic>
 </Tech>
 
 <Tech>
@@ -75,6 +36,7 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Galactic_Exploration.png</graphic>
 </Tech>
 
 <Tech>
@@ -89,6 +51,7 @@
     <prereq>LRN_GAL_EXPLO</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Translingustic_Thought.png</graphic>
 </Tech>
 
 <Tech>
@@ -102,6 +65,7 @@
     <prereq>LRN_PHYS_BRAIN</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Psionics.png</graphic>
 </Tech>
 
 <Tech>
@@ -116,6 +80,7 @@
     <prereq>LRN_ALGO_ELEGANCE</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Artificial_Minds.png</graphic>
 </Tech>
 
 <Tech>
@@ -129,6 +94,7 @@
     <prereq>LRN_GAL_EXPLO</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Xenoarchaeology.png</graphic>
 </Tech>
 
 <Tech>
@@ -142,6 +108,7 @@
     <prereq>LRN_TRANSLING_THT</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Gravitonics.png</graphic>
 </Tech>
 
 <Tech>
@@ -156,6 +123,7 @@
     <prereq>LRN_ARTIF_MINDS</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/The_Theory_of_Everything.png</graphic>
 </Tech>
 
 <Tech>
@@ -170,6 +138,7 @@
     <prereq>LRN_PSIONICS</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Force-Field_Harmonics.png</graphic>
 </Tech>
 
 <Tech>
@@ -184,6 +153,7 @@
     <prereq>LRN_PSIONICS</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Mind_of_the_Void.png</graphic>
 </Tech>
 
 <Tech>
@@ -198,6 +168,7 @@
     <prereq>LRN_EVERYTHING</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Temporal_Mechanics.png</graphic>
 </Tech>
 
 <Tech>
@@ -212,6 +183,7 @@
     <prereq>LRN_EVERYTHING</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/N-Dimensional_Subspace.png</graphic>
 </Tech>
 
 <Tech>
@@ -225,6 +197,7 @@
     <prereq>LRN_EVERYTHING</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Matter-Energy_Conversion.png</graphic>
 </Tech>
 
 <Tech>
@@ -239,6 +212,7 @@
     <prereq>LRN_MIND_VOID</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Unified_Conscious.png</graphic>
 </Tech>
 
 <Tech>
@@ -256,6 +230,7 @@
     <prereq>ECO_STAB_HYPGROW</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Singularity_of_Transcendence.png</graphic>
 </Tech>
 
 <Category>GROWTH_CATEGORY</Category>
@@ -269,6 +244,7 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Planetary_Ecology.png</graphic>
 </Tech>
 
 <Tech>
@@ -280,6 +256,7 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Genetic_Engineering.png</graphic>
 </Tech>
 
 <Tech>
@@ -291,6 +268,7 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Medical_Pathology.png</graphic>
 </Tech>
 
 <Tech>
@@ -302,6 +280,7 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Industrial_Farming.png</graphic>
 </Tech>
 
 <Tech>
@@ -315,6 +294,7 @@
     <prereq>GRO_PLANET_ECOL</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Environmental_Encapsulation.png</graphic>
 </Tech>
 
 <Tech>
@@ -329,6 +309,7 @@
     <prereq>GRO_MEDICAL_PATH</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Symbiosis_Biology.png</graphic>
 </Tech>
 
 <Tech>
@@ -343,6 +324,7 @@
     <prereq>GRO_MEDICAL_PATH</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Genetic_Medicine.png</graphic>
 </Tech>
 
 <Tech>
@@ -356,6 +338,7 @@
     <prereq>GRO_SYMBIOTIC_BIO</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Lifecycle_Manipulation.png</graphic>
 </Tech>
 
 <Tech>
@@ -371,6 +354,7 @@
     <prereq>LRN_GAL_EXPLO</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Xenological_Genetics.png</graphic>
 </Tech>
 
 <Tech>
@@ -385,6 +369,7 @@
     <prereq>PRO_NANOTECH_PROD</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Nanotech_Medicine.png</graphic>
 </Tech>
 
 <Tech>
@@ -400,6 +385,7 @@
     <prereq>GRO_ENV_ENCAPSUL</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Orbital_Farming.png</graphic>
 </Tech>
 
 <Tech>
@@ -414,6 +400,7 @@
     <prereq>GRO_NANOTECH_MED</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Industrial_Cloning.png</graphic>
 </Tech>
 
 <Tech>
@@ -428,6 +415,7 @@
     <prereq>GRO_NANOTECH_MED</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Xenological_Hybridization.png</graphic>
 </Tech>
 
 <Tech>
@@ -441,6 +429,7 @@
     <prereq>GRO_NANOTECH_MED</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Nanotech_Cybernetics.png</graphic>
 </Tech>
 
 <Tech>
@@ -456,6 +445,7 @@
     <prereq>PRO_FUSION_GEN</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Pure-Energy_Metabolism.png</graphic>
 </Tech>
 
 <Category>PRODUCTION_CATEGORY</Category>
@@ -469,6 +459,7 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Microgravity_Manufacturing.png</graphic>
 </Tech>
 
 <Tech>
@@ -480,6 +471,7 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Planetary_Geology.png</graphic>
 </Tech>
 
 <Tech>
@@ -491,6 +483,7 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Robotic_Production.png</graphic>
 </Tech>
 
 <Tech>
@@ -502,6 +495,7 @@
   <research_turns>5</research_turns>
   <prerequisites></prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Fusion_Generation.png</graphic>
 </Tech>
 
 <Tech>
@@ -516,6 +510,7 @@
     <prereq>PRO_PLANET_GEOL</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Asteroid_Mining.png</graphic>
 </Tech>
 
 <Tech>
@@ -530,6 +525,7 @@
     <prereq>PRO_ROBOTIC_PROD</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Deep_Core_Mining.png</graphic>
 </Tech>
 
 <Tech>
@@ -613,6 +609,7 @@
     <prereq>ECO_INTSTEL_TRADE</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Interstellar_Co-Production.png</graphic>
 </Tech>
 
 <Tech>
