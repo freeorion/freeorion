@@ -55,6 +55,17 @@ namespace {
 
     const double OUTER_LINE_THICKNESS = 2.0;
 
+    GG::Clr CategoryColor(const std::string& category_name)
+    {
+        const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
+        std::vector<std::string>::const_iterator it = std::find(tech_categories.begin(), tech_categories.end(), category_name);
+        if (it != tech_categories.end()) {
+            int category_index = std::distance(tech_categories.begin(), it) + 1;
+            return GetOptionsDB().Get<StreamableColor>("UI.tech-category-" + boost::lexical_cast<std::string>(category_index)).ToClr();
+        }
+        return GG::Clr();
+    }
+
     std::vector<std::pair<double, double> > Spline(const std::vector<std::pair<int, int> >& control_points)
     {
         std::vector<std::pair<double, double> > retval;
@@ -446,7 +457,7 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     m_description_box = new CUIMultiEdit(1, m_cost_text->LowerRight().y, w - 2 - BUTTON_WIDTH, h - m_cost_text->LowerRight().y - 2, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
 
-    m_tech_graphic = NULL;
+    m_tech_graphic = 0;
 
     GG::Connect(m_recenter_button->ClickedSignal(), &TechTreeWnd::TechDetailPanel::CenterClickedSlot, this);
     GG::Connect(m_add_to_queue_button->ClickedSignal(), &TechTreeWnd::TechDetailPanel::AddToQueueClickedSlot, this);
@@ -466,9 +477,9 @@ void TechTreeWnd::TechDetailPanel::Reset()
     m_cost_text->SetText("");
     m_description_box->SetText("");
 
-    if(m_tech_graphic){
-      DetachChild(m_tech_graphic);
-      m_tech_graphic=NULL;
+    if (m_tech_graphic) {
+        DeleteChild(m_tech_graphic);
+        m_tech_graphic = 0;
     }
 
     if (!m_tech) {
@@ -483,11 +494,13 @@ void TechTreeWnd::TechDetailPanel::Reset()
         m_recenter_button->Disable(false);
         m_add_to_queue_button->Disable(false);
 
-        if(m_tech->Graphic().length() > 0){
-          m_tech_graphic = new GG::StaticGraphic(Width() - 2 - 150+(150-128)/2,m_recenter_button->LowerRight().y -UpperLeft().y + 5,128,128,
-            HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + m_tech->Graphic()), GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-          m_tech_graphic->Show();
-          AttachChild(m_tech_graphic);
+        if (!m_tech->Graphic().empty()) {
+            m_tech_graphic = new GG::StaticGraphic(Width() - 2 - 150 + (150 - 128) / 2, m_recenter_button->LowerRight().y - UpperLeft().y + 5, 128, 128,
+                                                   HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + m_tech->Graphic()), 
+                                                   GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+            m_tech_graphic->Show();
+            m_tech_graphic->SetColor(CategoryColor(m_tech->Category()));
+            AttachChild(m_tech_graphic);
         }
     }
     m_tech_name_text->SetText(UserString(m_tech->Name()));

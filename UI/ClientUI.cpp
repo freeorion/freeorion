@@ -178,15 +178,25 @@ namespace {
         db.Add("UI.tech-progress-background", "Sets background color of progress bars in the tech tree.", StreamableColor(ClientUI::TECH_WND_PROGRESS_BAR_BACKGROUND), Validator<StreamableColor>());
         db.Add("UI.tech-progress", "Sets color of progress bars in the tech tree.", StreamableColor(ClientUI::TECH_WND_PROGRESS_BAR), Validator<StreamableColor>());
 
-        db.Add("UI.tooltip-delay", "Sets UI tooltip popup delay, in ms.", 1000, RangedValidator<int>(0, 3000));
+        // tech category colors
+        const GG::Clr LEARNING_CATEGORY(93, 155, 246, 255);
+        const GG::Clr GROWTH_CATEGORY(116, 225, 107, 255);
+        const GG::Clr PRODUCTION_CATEGORY(240, 106, 106, 255);
+        const GG::Clr CONSTRUCTION_CATEGORY(241, 233, 87, 255);
+        const GG::Clr ECONOMICS_CATEGORY(255, 112, 247, 255);
+        db.Add("UI.tech-category-1", "Sets color of the first category of techs defined in techs.xml.", StreamableColor(LEARNING_CATEGORY), Validator<StreamableColor>());
+        db.Add("UI.tech-category-2", "Sets color of the second category of techs defined in techs.xml.", StreamableColor(GROWTH_CATEGORY), Validator<StreamableColor>());
+        db.Add("UI.tech-category-3", "Sets color of the third category of techs defined in techs.xml.", StreamableColor(PRODUCTION_CATEGORY), Validator<StreamableColor>());
+        db.Add("UI.tech-category-4", "Sets color of the fourth category of techs defined in techs.xml.", StreamableColor(CONSTRUCTION_CATEGORY), Validator<StreamableColor>());
+        db.Add("UI.tech-category-5", "Sets color of the fifth category of techs defined in techs.xml.", StreamableColor(ECONOMICS_CATEGORY), Validator<StreamableColor>());
 
+        // UI behavior
+        db.Add("UI.tooltip-delay", "Sets UI tooltip popup delay, in ms.", 1000, RangedValidator<int>(0, 3000));
         db.Add("UI.multiple-fleet-windows", "If true, clicks on multiple fleet buttons will open multiple fleet "
                "windows at the same time.  Otherwise, opening a fleet window will close any currently-open fleet window.", 
                false);
-
         db.Add("UI.fleet-autoselect", "Auto-select the top fleet when a fleet window "
                "is opened.  Consider using this flag if you use UI.multiple-fleet-windows.", true);
-
         db.Add("UI.window-quickclose", "Close open windows such as fleet windows and the system-view side panel when you "
                "right-click on the main map.", true);
     }
