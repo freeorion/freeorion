@@ -62,7 +62,9 @@ namespace {
             axis_angle = lexical_cast<double>(elem.Child("axis_angle").Text());
             shininess = lexical_cast<double>(elem.Child("shininess").Text());
 
-            shininess = std::max(0.0, std::min(shininess, 128.0)); // ensure proper bounds
+            // ensure proper bounds
+            axis_angle = std::max(-75.0, std::min(axis_angle, 88.0)); // these values ensure that GLUT-sphere artifacting does not show itself
+            shininess = std::max(0.0, std::min(shininess, 128.0));
         }
 
         GG::XMLElement XMLEncode() const
@@ -237,13 +239,9 @@ namespace {
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        glTranslated(center.x, center.y, -(diameter / 2 + 1));
-        glRotated(100.0, -1.0, 0.0, 0.0); // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
-        glRotated(axis_tilt, 0.0, 1.0, 0.0);  // axis tilt
 
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
         GLfloat* light_position = GetLightPosition();
-        //GLfloat light_position[] = {1.5, -0.8, -1.0, 0.0};
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
@@ -252,6 +250,9 @@ namespace {
         glLightfv(GL_LIGHT0, GL_SPECULAR, &star_light_colors.find(star_type)->second[0]);
         glEnable(GL_TEXTURE_2D);
 
+        glTranslated(center.x, center.y, -(diameter / 2 + 1));
+        glRotated(100.0, -1.0, 0.0, 0.0); // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
+        glRotated(axis_tilt, 0.0, 1.0, 0.0);  // axis tilt
         double intensity = GetRotatingPlanetAmbientIntensity();
         GG::Clr ambient(intensity, intensity, intensity, 1.0);
         intensity = GetRotatingPlanetDiffuseIntensity();
@@ -296,9 +297,10 @@ public:
         GG::Control(x, y, PlanetDiameter(size), PlanetDiameter(size), 0),
         m_planet_data(planet_data),
         m_size(size),
-        m_texture(GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + m_planet_data.filename)),
+        m_texture(GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + m_planet_data.filename, true)),
         m_star_type(star_type)
     {
+        m_texture->SetFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
     }
 
     virtual bool Render()
@@ -386,7 +388,7 @@ namespace {
   {
     const int NUM_ASTEROID_SETS = 3;
     const int NUM_IMAGES_PER_SET = 256;
-    const int SET = planet_id % NUM_ASTEROID_SETS + 1;
+    const int SET = (planet_id % NUM_ASTEROID_SETS) + 1;
 
     for (int i = 0; i < NUM_IMAGES_PER_SET; ++i) {
       char buf[256];
@@ -911,8 +913,17 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
       int num_planets_of_type;
       if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet.Type())->second.size()))
       {
+          // using algorithm from Thomas Wang's 32 bit Mix Function; assumes that only the lower 16 bits of the system and
+          // planet ID's are significant
+          Uint32 hash_value = (static_cast<Uint32>(planet.SystemID()) & 0xFFFF) + (static_cast<Uint32>(planet.ID()) & 0xFFFF);
+          hash_value += ~(hash_value << 15);
+          hash_value ^= hash_value >> 10;
+          hash_value += hash_value << 3;
+          hash_value ^= hash_value >> 6;
+          hash_value += ~(hash_value << 11);
+          hash_value ^= hash_value >> 16;
           m_rotating_planet_graphic = new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, planet.Size(), star_type,
-                                                                it->second[planet.ID() % num_planets_of_type]);
+                                                                it->second[hash_value % num_planets_of_type]);
           AttachChild(m_rotating_planet_graphic);
       }
   }
