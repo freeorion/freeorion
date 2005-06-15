@@ -224,14 +224,14 @@ namespace {
         return light_colors;
     }
 
-    void RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture, double RPM, double axis_tilt, double shininess, StarType star_type)
+    void RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture, double initial_rotation, double RPM, double axis_tilt, double shininess, StarType star_type)
     {
         HumanClientApp::GetApp()->Exit2DMode();
 
         // slide the texture coords to simulate a rotating axis
         glMatrixMode(GL_TEXTURE);
         glLoadIdentity();
-        glTranslated(GG::App::GetApp()->Ticks() / 1000.0 * RPM * 1.0 / 60.0, 0, 0.0);
+        glTranslated(initial_rotation - GG::App::GetApp()->Ticks() / 1000.0 * RPM / 60.0, 0.0, 0.0);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -298,6 +298,7 @@ public:
         m_planet_data(planet_data),
         m_size(size),
         m_texture(GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + m_planet_data.filename, true)),
+        m_initial_rotation(RandZeroToOne()),
         m_star_type(star_type)
     {
         m_texture->SetFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
@@ -305,7 +306,7 @@ public:
 
     virtual bool Render()
     {
-        RenderPlanet(UpperLeft() + GG::Pt(Width() / 2, Height() / 2), Width(), m_texture, 
+        RenderPlanet(UpperLeft() + GG::Pt(Width() / 2, Height() / 2), Width(), m_texture, m_initial_rotation,
                      SizeRotationFactor(m_size) * m_planet_data.RPM, m_planet_data.axis_angle, m_planet_data.shininess, m_star_type);
         return true;
     }
@@ -334,6 +335,7 @@ private:
     RotatingPlanetData              m_planet_data;
     PlanetSize                      m_size;
     boost::shared_ptr<GG::Texture>  m_texture;
+    double                          m_initial_rotation;
     StarType                        m_star_type;
 };
 
@@ -392,7 +394,7 @@ namespace {
 
     for (int i = 0; i < NUM_IMAGES_PER_SET; ++i) {
       char buf[256];
-      sprintf(buf, "asteroids%d_%03d.png", SET, NUM_IMAGES_PER_SET - 1 - i);
+      sprintf(buf, "asteroids%d_%03d.png", SET, i);
       textures.push_back(HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "planets/asteroids/" + buf));
     }
   }
@@ -901,7 +903,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
       std::vector<boost::shared_ptr<GG::Texture> > textures;
       GetAsteroidTextures(planet.ID(), textures);
       m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-      m_planet_graphic->SetFPS(8.0);
+      m_planet_graphic->SetFPS(10.0);
       m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
       AttachChild(m_planet_graphic);
       m_planet_graphic->Play();
@@ -2144,23 +2146,13 @@ void SidePanel::SetSystem(int system_id)
       
       textures.push_back(graphic);
 
-      //m_star_graphic = new GG::DynamicGraphic((Width()*2)/3,-(Width()*2)/3,Width(),Width(),true,textures.back()->Width(),textures.back()->Height(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
       int star_dim = (Width()*4)/5;
       m_star_graphic = new GG::DynamicGraphic(Width()-(star_dim*2)/3,-(star_dim*1)/3,star_dim,star_dim,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
 
       AttachChild(m_star_graphic);MoveChildDown(m_star_graphic);
 
       // TODO: add fleet icons
-      //std::vector<const Fleet*> flt_vec = m_system->FindObjects<Fleet>();
       std::pair<System::const_orbit_iterator, System::const_orbit_iterator> range = m_system->non_orbit_range();
-      std::cout << "System " << m_system->ID() << ": " << m_system->Name() << " " << std::distance(range.first, range.second) << " objects {" << std::endl;
-      for (System::const_orbit_iterator it = range.first; it != range.second; ++it) {
-          UniverseObject* uo = GetUniverse().Object(it->second);
-          std::cout << "    object " << it->second << " @" << uo << std::endl;
-          if (uo)
-              std::cout << "    object " << uo->ID() << ": " << uo->Name() << std::endl;
-      }
-      std::cout << "}" << std::endl;
       std::vector<const Fleet*> flt_vec = m_system->FindObjects<Fleet>();
       for(unsigned int i = 0; i < flt_vec.size(); i++) 
         GG::Connect(flt_vec[i]->StateChangedSignal(), &SidePanel::FleetsChanged, this);
