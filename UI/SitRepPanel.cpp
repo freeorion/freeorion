@@ -19,7 +19,6 @@ SitRepPanel::SitRepPanel(int x, int y, int w, int h) :
     CUI_Wnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE)
 {
     TempUISoundDisabler sound_disabler;
-
     m_sitreps_lb = new CUIListBox(LeftBorder() + SITREP_LB_MARGIN_X, TopBorder() + SITREP_LB_MARGIN_Y,
                                   w - (LeftBorder() + SITREP_LB_MARGIN_X), h - (TopBorder() + SITREP_LB_MARGIN_Y));
     m_sitreps_lb->SetStyle(GG::LB_NOSORT);

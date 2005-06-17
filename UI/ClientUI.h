@@ -15,19 +15,20 @@
 #include "SDLGGApp.h"
 #endif
 
+class ClientEmpire;
 class ClientNetworkCore;
 class ClientUniverse;
-class ClientEmpire;
 class Combat;
 class Fleet;
-class MapWnd;
 class IntroScreen;
-class TurnProgressWnd;
+class MapWnd;
+class PythonConsoleWnd;
+class SitRepEntry;
+class System;
 class Tech;
 class ToolContainer;
 class ToolWnd;
-class SitRepEntry;
-class System;
+class TurnProgressWnd;
 namespace GG {
     class Clr;
     class SubTexture;
@@ -237,6 +238,7 @@ private:
 
     IntroScreen*     m_intro_screen;      //!< the intro (and main menu) screen first showed when the game starts up
     MapWnd*          m_map_wnd;           //!< the galaxy map
+    PythonConsoleWnd*m_python_console;    //!< the python console
     TurnProgressWnd* m_turn_progress_wnd; //!< the turn progress window
 
     SDL_Cursor*      m_default_cursor;    //!< used to store default cursor

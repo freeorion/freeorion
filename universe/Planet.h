@@ -2,6 +2,10 @@
 #ifndef _Planet_h_
 #define _Planet_h_
 
+#ifndef _Universe_h_
+#include "Universe.h"
+#endif
+
 #ifndef _UniverseObject_h_
 #include "UniverseObject.h"
 #endif

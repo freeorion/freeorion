@@ -2,9 +2,9 @@
 #ifndef _SitRepEntry_h_
 #define _SitRepEntry_h_
 
-#ifndef _XMLDoc_h_
-#include "XMLDoc.h"
-#endif
+// #ifndef _XMLDoc_h_
+// #include "XMLDoc.h"
+// #endif
 
 #ifndef BOOST_LEXICAL_CAST_INCLUDED
 #include <boost/lexical_cast.hpp>

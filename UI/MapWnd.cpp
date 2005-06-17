@@ -919,6 +919,7 @@ void MapWnd::Zoom(int delta)
     m_chat_display->OffsetMove(-final_move);
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
+
     MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
 }
@@ -1144,6 +1145,7 @@ void MapWnd::Sanitize()
 bool MapWnd::OpenChatWindow()
 {
     if (!m_chat_display->Visible() || !m_chat_edit->Visible()) {
+	EnableAlphaNumAccels();
         m_chat_display->Show();
         DisableAlphaNumAccels();
         m_chat_edit->Show();
@@ -1171,7 +1173,7 @@ bool MapWnd::ToggleSitRep()
         HumanClientApp::GetApp()->MoveDown(m_research_wnd);
 
         // show the sitrep window
-        m_sitrep_panel->Show();
+	m_sitrep_panel->Show();
     }
     return true;
 }
@@ -1430,7 +1432,7 @@ void MapWnd::RemoveAccelerators()
 {
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, 0);
-
+    
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
 

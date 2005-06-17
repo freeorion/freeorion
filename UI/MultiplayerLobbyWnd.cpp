@@ -10,7 +10,7 @@
 #include "../util/MultiplayerCommon.h"
 
 namespace {
-    std::vector<SaveGameEmpireData> g_save_game_empire_data; // the save-game data for all empires in a saved game that is being started, indexed by save-game empire ID
+    std::vector<SaveGameEmpireData> g_save_game_empire_data; ///< the save-game data for all empires in a saved game that is being started, indexed by save-game empire ID
 
     const int PLAYER_ROW_HEIGHT = 22;
     const int EMPIRE_NAME_WIDTH = 170;

@@ -22,6 +22,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "PythonConsoleWnd.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -564,6 +565,8 @@ void ClientUI::SwitchState(State state)
         GG::App::GetApp()->Remove(m_intro_screen);
         delete m_intro_screen;
         m_intro_screen = 0;
+	delete m_python_console;
+	m_python_console = 0;
         break;
     case STATE_SETTINGS:
         break;
@@ -608,6 +611,8 @@ void ClientUI::SwitchState(State state)
         if(m_intro_screen==0) {
           m_intro_screen = new IntroScreen();
           GG::App::GetApp()->Register(m_intro_screen);
+	  m_python_console = new PythonConsoleWnd();
+	  GG::App::GetApp()->Register(m_python_console);
         }
         m_intro_screen->Show();
         break;

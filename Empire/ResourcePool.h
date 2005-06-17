@@ -6,8 +6,12 @@
 #include <boost/signal.hpp>
 #endif
 
+#ifndef _Universe_h_
+#  include "../universe/Universe.h"
+#endif
+
 #ifndef _UniverseObject_h_
-#include "../universe/UniverseObject.h"
+#  include "../universe/UniverseObject.h"
 #endif
 
 class Planet;

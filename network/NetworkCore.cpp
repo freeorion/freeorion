@@ -95,6 +95,9 @@ void NetworkCore::ReceiveData(int socket, std::string& stream, const std::string
    }
 }
 
+NetworkCore::~NetworkCore()
+{}
+
 std::string ToString(const IPaddress& addr)
 {
    std::string retval;

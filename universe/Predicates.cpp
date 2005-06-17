@@ -17,6 +17,9 @@ namespace {
 ////////////////////////////////////////////////
 // UniverseObjectVisitor
 ////////////////////////////////////////////////
+UniverseObjectVisitor::~UniverseObjectVisitor()
+{}
+
 UniverseObject* UniverseObjectVisitor::Visit(UniverseObject* obj) const
 {
     return 0;
@@ -51,6 +54,9 @@ UniverseObject* UniverseObjectVisitor::Visit(System* obj) const
 ////////////////////////////////////////////////
 // StationaryFleetVisitor
 ////////////////////////////////////////////////
+StationaryFleetVisitor::~StationaryFleetVisitor()
+{}
+
 StationaryFleetVisitor::StationaryFleetVisitor(int empire/* = -1*/) :
     empire_id(empire)
 {
@@ -68,6 +74,9 @@ UniverseObject* StationaryFleetVisitor::Visit(Fleet* obj) const
 ////////////////////////////////////////////////
 // OrderedMovingFleetVisitor
 ////////////////////////////////////////////////
+OrderedMovingFleetVisitor::~OrderedMovingFleetVisitor()
+{}
+
 OrderedMovingFleetVisitor::OrderedMovingFleetVisitor(int empire/* = -1*/) :
     empire_id(empire)
 {
@@ -86,6 +95,9 @@ UniverseObject* OrderedMovingFleetVisitor::Visit(Fleet* obj) const
 ////////////////////////////////////////////////
 // MovingFleetVisitor
 ////////////////////////////////////////////////
+MovingFleetVisitor::~MovingFleetVisitor()
+{}
+
 MovingFleetVisitor::MovingFleetVisitor(int empire/* = -1*/) :
     empire_id(empire)
 {

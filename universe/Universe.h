@@ -53,9 +53,9 @@ class System;
 #endif
 
 class Empire;
-struct UniverseObjectVisitor;
 namespace GG {class XMLElement;}
 
+struct UniverseObjectVisitor;
 
 class Universe
 {
@@ -353,7 +353,7 @@ const T* Universe::Object(int id) const
 {
     const_iterator it = m_objects.find(id);
     return (it != m_objects.end() ?
-            static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
+	    static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
             0);
 }
 

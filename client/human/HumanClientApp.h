@@ -2,7 +2,6 @@
 #ifndef _HumanClientApp_h_
 #define _HumanClientApp_h_
 
-
 #ifndef _SDLGGApp_h_
 #include "SDLGGApp.h"
 #endif

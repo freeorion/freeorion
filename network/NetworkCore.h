@@ -58,7 +58,8 @@ public:
    static const std::string   SERVER_FIND_QUERY_MSG;     ///< the UDP message used to ask if this server is hosting a game that the querying host may join
    static const std::string   SERVER_FIND_YES_MSG;       ///< the UDP message used to indicate this server is hosting a game that the querying host may join
    static const std::string   SERVER_FIND_NO_MSG;        ///< the UDP message used to indicate this server is not hosting a game that the querying host may join
-   
+
+    virtual ~NetworkCore();
 protected:
    /** sends \a msg to the designated socket.  Creates a log entry on error.  \throw std::invalid_argument 
       Throws std::invalid_argument if \a socket is < 0.*/

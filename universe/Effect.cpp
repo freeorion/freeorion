@@ -617,7 +617,7 @@ std::string SetStarType::Description() const
 
 
 ///////////////////////////////////////////////////////////
-// SetTechAvailability                                           //
+// SetTechAvailability                                   //
 ///////////////////////////////////////////////////////////
 SetTechAvailability::SetTechAvailability(const std::string& tech_name, const ValueRef::ValueRefBase<int>* empire_id, bool available, bool include_tech) :
     m_tech_name(tech_name),

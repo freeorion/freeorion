@@ -142,7 +142,7 @@ IntroScreen::IntroScreen() :
     CUI_Wnd(UserString("INTRO_WINDOW_TITLE"), 
             static_cast<int>(GG::App::GetApp()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.x") - MAIN_MENU_WIDTH / 2),
             static_cast<int>(GG::App::GetApp()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.y") - MAIN_MENU_HEIGHT / 2),
-            MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE),
+            MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
     m_credits_wnd(NULL)
 {
     boost::shared_ptr<GG::Texture> texture00 = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash00.png");

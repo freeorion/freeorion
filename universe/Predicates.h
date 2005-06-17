@@ -42,6 +42,7 @@ struct UniverseObjectVisitor
     virtual UniverseObject* Visit(Planet* obj) const;
     virtual UniverseObject* Visit(Ship* obj) const;
     virtual UniverseObject* Visit(System* obj) const;
+    virtual ~UniverseObjectVisitor();
 };
 
 /** returns obj iff \a obj is of type T */
@@ -49,6 +50,7 @@ template <class T>
 struct UniverseObjectSubclassVisitor : UniverseObjectVisitor
 {
     virtual UniverseObject* Visit(T* obj) const;
+    virtual ~UniverseObjectSubclassVisitor() {}
 };
 
 /** returns obj iff \a obj is a Fleet belonging to the given empire, and that is under orders to move, but is not yet moving. 
@@ -58,6 +60,7 @@ struct StationaryFleetVisitor : UniverseObjectVisitor
 {
     StationaryFleetVisitor(int empire = -1);
     virtual UniverseObject* Visit(Fleet* obj) const;
+    virtual ~StationaryFleetVisitor();
     const int empire_id;
 };
 
@@ -68,6 +71,7 @@ struct OrderedMovingFleetVisitor : UniverseObjectVisitor
 {
     OrderedMovingFleetVisitor(int empire = -1);
     virtual UniverseObject* Visit(Fleet* obj) const;
+    virtual ~OrderedMovingFleetVisitor();
     const int empire_id;
 };
 
@@ -77,6 +81,7 @@ struct MovingFleetVisitor : UniverseObjectVisitor
 {
     MovingFleetVisitor(int empire = -1);
     virtual UniverseObject* Visit(Fleet* obj) const;
+    virtual ~MovingFleetVisitor();
     const int empire_id;
 };
 
@@ -86,6 +91,7 @@ struct OwnedVisitor : UniverseObjectVisitor
 {
     OwnedVisitor(int empire = -1);
     virtual T* Visit(T* obj) const;
+    virtual ~OwnedVisitor() {} 
     const int empire_id;
 };
 
@@ -95,6 +101,7 @@ struct WhollyOwnedVisitor : UniverseObjectVisitor
 {
     WhollyOwnedVisitor(int empire = -1);
     virtual T* Visit(T* obj) const;
+    virtual ~WhollyOwnedVisitor() {}
     const int empire_id;
 };
 

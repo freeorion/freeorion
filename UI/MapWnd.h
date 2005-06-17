@@ -126,6 +126,7 @@ private:
     void SystemRightClicked(int system_id);
     void UniverseObjectDeleted(const UniverseObject *obj);
     bool OpenChatWindow();
+    bool OpenConsoleWindow();
     bool EndTurn();
     bool ToggleSitRep();
     bool ToggleResearch();

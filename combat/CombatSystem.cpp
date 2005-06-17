@@ -1,5 +1,6 @@
 #include "CombatSystem.h"
 
+#include "../universe/Universe.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
@@ -65,15 +66,15 @@ static void RemoveShip(int nID)
   if(shp!=NULL)
   {
     System *sys;
-    if(sys = shp->GetSystem()) sys->Remove(shp->ID());
+    if( (sys = shp->GetSystem()) ) sys->Remove(shp->ID());
 
     Fleet *flt = shp->GetFleet();
-    if(flt = shp->GetFleet())
+    if( (flt = shp->GetFleet()) )
     {
       flt->RemoveShip(shp->ID());
       if(flt->NumShips()==0)
       {
-        if(sys = flt->GetSystem()) sys->Remove(flt->ID());
+        if( (sys = flt->GetSystem()) ) sys->Remove(flt->ID());
         GetUniverse().Remove(flt->ID());
       }
     }

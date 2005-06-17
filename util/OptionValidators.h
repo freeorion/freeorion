@@ -35,6 +35,7 @@ template <> inline long double mod<long double>(long double dividend, long doubl
 /** base class for all OptionsDB validators. Simply provides the basic interface. */
 struct ValidatorBase
 {
+    virtual ~ValidatorBase() {}
     /** returns normally if \a str is a valid value, or throws otherwise */
     virtual boost::any Validate(const std::string& str) const = 0;
 
