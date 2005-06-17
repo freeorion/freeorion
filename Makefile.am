@@ -189,8 +189,6 @@ UI/MultiplayerLobbyWnd.cpp			\
 UI/MultiplayerLobbyWnd.h			\
 UI/OptionsWnd.cpp				\
 UI/OptionsWnd.h					\
-UI/PythonConsoleWnd.cpp				\
-UI/PythonConsoleWnd.h				\
 UI/ResearchWnd.cpp				\
 UI/ResearchWnd.h				\
 UI/ServerConnectWnd.cpp				\
