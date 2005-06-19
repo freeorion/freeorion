@@ -245,19 +245,19 @@ namespace {
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
-        const std::map<StarType, std::vector<float> >& star_light_colors = GetStarLightColors();
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, &star_light_colors.find(star_type)->second[0]);
-        glLightfv(GL_LIGHT0, GL_SPECULAR, &star_light_colors.find(star_type)->second[0]);
+        const std::vector<float>& star_light_colors = GetStarLightColors().find(star_type)->second;
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, &star_light_colors[0]);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, &star_light_colors[0]);
         glEnable(GL_TEXTURE_2D);
 
         glTranslated(center.x, center.y, -(diameter / 2 + 1));
         glRotated(100.0, -1.0, 0.0, 0.0); // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
         glRotated(axis_tilt, 0.0, 1.0, 0.0);  // axis tilt
         double intensity = GetRotatingPlanetAmbientIntensity();
-        GG::Clr ambient(intensity, intensity, intensity, 1.0);
+        GG::Clr ambient(intensity * star_light_colors[0], intensity * star_light_colors[1], intensity * star_light_colors[2], 1.0);
         intensity = GetRotatingPlanetDiffuseIntensity();
-        GG::Clr diffuse(intensity, intensity, intensity, 1.0);
-        RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
+        GG::Clr diffuse(intensity * star_light_colors[0], intensity * star_light_colors[1], intensity * star_light_colors[2], 1.0);
+        RenderSphere(diameter / 2, ambient, diffuse, GG::Clr(star_light_colors[0], star_light_colors[1], star_light_colors[2], 1.0), shininess, texture);
 
         glPopAttrib();
 
