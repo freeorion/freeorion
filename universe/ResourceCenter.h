@@ -52,7 +52,7 @@ public:
 
     virtual GG::XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a ResourceCenter object with the given visibility
      
-    ResourceCenterChangedSignalType& ResourceCenterChangedSignal() const {return m_changed_sig;} ///< returns the state changed signal object for this UniverseObject
+    mutable ResourceCenterChangedSignalType ResourceCenterChangedSignal; ///< the state changed signal object for this UniverseObject
     //@}
 
     /** \name Mutators */ //@{
@@ -85,8 +85,6 @@ private:
 
     const Meter&          m_pop;    ///< current / max pop present in this center (may be the one from m_object, e.g. if m_object is a Planet)
     UniverseObject* const m_object; ///< the UniverseObject of which this center is a part
-
-    mutable ResourceCenterChangedSignalType m_changed_sig;
 };
 
 inline std::pair<std::string, std::string> ResourceCenterRevision()

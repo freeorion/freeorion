@@ -479,11 +479,11 @@ ResearchWnd::ResearchWnd(int w, int h) :
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
     m_tech_tree_wnd->MoveTo(m_research_info_panel->Width() + 3, 3);
 
-    GG::Connect(m_tech_tree_wnd->AddTechToQueueSignal(), &ResearchWnd::AddTechToQueueSlot, this);
-    GG::Connect(m_queue_lb->DroppedSignal(), &ResearchWnd::QueueItemMovedSlot, this);
-    GG::Connect(m_queue_lb->DeletedSignal(), &ResearchWnd::QueueItemDeletedSlot, this);
-    GG::Connect(m_queue_lb->LeftClickedSignal(), &ResearchWnd::QueueItemClickedSlot, this);
-    GG::Connect(m_queue_lb->DoubleClickedSignal(), &ResearchWnd::QueueItemDoubleClickedSlot, this);
+    GG::Connect(m_tech_tree_wnd->AddTechToQueueSignal, &ResearchWnd::AddTechToQueueSlot, this);
+    GG::Connect(m_queue_lb->DroppedSignal, &ResearchWnd::QueueItemMovedSlot, this);
+    GG::Connect(m_queue_lb->DeletedSignal, &ResearchWnd::QueueItemDeletedSlot, this);
+    GG::Connect(m_queue_lb->LeftClickedSignal, &ResearchWnd::QueueItemClickedSlot, this);
+    GG::Connect(m_queue_lb->DoubleClickedSignal, &ResearchWnd::QueueItemDoubleClickedSlot, this);
 
     AttachChild(m_research_info_panel);
     AttachChild(m_queue_lb);

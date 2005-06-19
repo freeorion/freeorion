@@ -38,9 +38,9 @@ public:
     const std::string& CategoryShown() const;
     TechTypesShown     GetTechTypesShown() const;
 
-    TechBrowsedSignalType&       TechBrowsedSignal() const    {return m_tech_browsed_sig;}
-    TechClickedSignalType&       TechSelectedSignal() const   {return m_tech_selected_sig;}
-    TechDoubleClickedSignalType& AddTechToQueueSignal() const {return m_add_tech_to_queue_sig;}
+    mutable TechBrowsedSignalType       TechBrowsedSignal;
+    mutable TechClickedSignalType       TechSelectedSignal;
+    mutable TechDoubleClickedSignalType AddTechToQueueSignal;
     //@}
 
     //! \name Mutators //@{
@@ -69,10 +69,6 @@ private:
     LayoutPanel*            m_layout_panel;
     GG::RadioButtonGroup*   m_tech_type_buttons;
     CUIButton*              m_uncollapse_all_button;
-
-    mutable TechBrowsedSignalType       m_tech_browsed_sig;
-    mutable TechClickedSignalType       m_tech_selected_sig;
-    mutable TechDoubleClickedSignalType m_add_tech_to_queue_sig;
 };
 
 inline std::pair<std::string, std::string> TechWndRevision()

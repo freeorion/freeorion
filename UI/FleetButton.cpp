@@ -52,8 +52,8 @@ FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, doubl
 
     m_orientation = GetUniverse().Object<System>(fleet->NextSystemID())->X() - fleet->X() < 0 ? SHAPE_LEFT : SHAPE_RIGHT;
 
-    GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
-    GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetButton::FleetDeleted, this);
+    GG::Connect(ClickedSignal, &FleetButton::Clicked, this);
+    GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetButton::FleetDeleted, this);
 }
 
 FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs, ShapeOrientation orientation) : 
@@ -66,8 +66,8 @@ FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::v
         Fleet* fleet = universe.Object<Fleet>(fleet_IDs[i]);
         m_fleets.push_back(fleet);
     }
-    GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
-    GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetButton::FleetDeleted, this);
+    GG::Connect(ClickedSignal, &FleetButton::Clicked, this);
+    GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetButton::FleetDeleted, this);
 }
 
 FleetButton::FleetButton(const GG::XMLElement& elem) : 
@@ -86,8 +86,8 @@ FleetButton::FleetButton(const GG::XMLElement& elem) :
         m_fleets.push_back(universe.Object<Fleet>(boost::lexical_cast<int>(curr_elem->Child(i).Attribute("value"))));
     }
 
-    GG::Connect(ClickedSignal(), &FleetButton::Clicked, this);
-    GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetButton::FleetDeleted, this);
+    GG::Connect(ClickedSignal, &FleetButton::Clicked, this);
+    GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetButton::FleetDeleted, this);
 }
 
 bool FleetButton::InWindow(const GG::Pt& pt) const
@@ -203,14 +203,14 @@ void FleetButton::Clicked()
     }
 
     if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
-        GG::Connect(map_wnd->SystemRightClickedSignal(), &FleetWnd::SystemClicked, fleet_wnd);
+        GG::Connect(map_wnd->SystemRightClickedSignal, &FleetWnd::SystemClicked, fleet_wnd);
 
     for (unsigned int i = 0; i < fleets.size(); ++i) {
         s_open_fleets[fleets[i]] = fleet_wnd;
     }
 
-    GG::Connect(fleet_wnd->ShowingFleetSignal(), &FleetButton::FleetIsBeingExamined);
-    GG::Connect(fleet_wnd->NotShowingFleetSignal(), &FleetButton::FleetIsNotBeingExamined);
+    GG::Connect(fleet_wnd->ShowingFleetSignal, &FleetButton::FleetIsBeingExamined);
+    GG::Connect(fleet_wnd->NotShowingFleetSignal, &FleetButton::FleetIsNotBeingExamined);
     GG::App::GetApp()->Register(fleet_wnd);
 }
 

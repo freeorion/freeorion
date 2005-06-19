@@ -214,7 +214,7 @@ void Planet::SetType(PlanetType type)
     double new_population_modifier = PlanetDataTables()["PlanetMaxPop"][m_size][Environment(type)];
     GetMeter(METER_POPULATION)->AdjustMax(new_population_modifier - old_population_modifier);
     m_type = type;
-    StateChangedSignal()();
+    StateChangedSignal();
 }
 
 void Planet::SetSize(PlanetSize size)
@@ -230,7 +230,7 @@ void Planet::SetSize(PlanetSize size)
     double new_population_modifier = PlanetDataTables()["PlanetMaxPop"][size][Environment(m_type)];
     GetMeter(METER_POPULATION)->AdjustMax(new_population_modifier - old_population_modifier);
     m_size = size;
-    StateChangedSignal()();
+    StateChangedSignal();
 }
 
 void Planet::AddBuilding(int building_id)
@@ -245,7 +245,7 @@ void Planet::AddBuilding(int building_id)
         building->MoveTo(X(), Y());
         m_buildings.insert(building_id);
     }
-    StateChangedSignal()();
+    StateChangedSignal();
 }
 
 bool Planet::RemoveBuilding(int building_id)
@@ -256,7 +256,7 @@ bool Planet::RemoveBuilding(int building_id)
             building->SetSystem(INVALID_OBJECT_ID);
         }
         m_buildings.erase(building_id);
-        StateChangedSignal()();
+        StateChangedSignal();
         return true;
     }
     return false;
@@ -267,7 +267,7 @@ bool Planet::DeleteBuilding(int building_id)
     if (m_buildings.find(building_id) != m_buildings.end()) {
         GetUniverse().Delete(building_id);
         m_buildings.erase(building_id);
-        StateChangedSignal()();
+        StateChangedSignal();
         return true;
     }
     return false;
@@ -335,7 +335,7 @@ void Planet::SetIsAboutToBeColonized(bool b)
     if (m_is_about_to_be_colonized < 0)
         m_is_about_to_be_colonized = 0;
     if (overall_status != static_cast<bool>(m_is_about_to_be_colonized))
-        StateChangedSignal()();
+        StateChangedSignal();
 }
 
 void Planet::ResetIsAboutToBeColonized()
@@ -396,7 +396,7 @@ void Planet::PopGrowthProductionResearchPhase( )
 
     PopCenter::PopGrowthProductionResearchPhase();
 
-    StateChangedSignal()();
+    StateChangedSignal();
 }
 
 PlanetEnvironment Planet::Environment(PlanetType type)

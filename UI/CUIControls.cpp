@@ -144,7 +144,7 @@ CUIButton::CUIButton(int x, int y, int w, const std::string& str, const std::str
     m_border_color(border),
     m_border_thick(thick)
 {
-    GG::Connect(ClickedSignal(), &PlayButtonClickSound, -1);
+    GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
 }
 
 CUIButton::CUIButton(const GG::XMLElement& elem) : 
@@ -159,7 +159,7 @@ CUIButton::CUIButton(const GG::XMLElement& elem) :
     curr_elem = &elem.Child("m_border_thick");
     m_border_thick = boost::lexical_cast<int>(curr_elem->Attribute("value"));
 
-    GG::Connect(ClickedSignal(), &PlayButtonClickSound, -1);
+    GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
 }
 
 bool CUIButton::InWindow(const GG::Pt& pt) const
@@ -241,7 +241,7 @@ CUITurnButton::CUITurnButton(int x, int y, int w, const std::string& str, const 
                      GG::Clr text_color/* = ClientUI::TEXT_COLOR*/, Uint32 flags/* = GG::Wnd::CLICKABLE*/) : 
     CUIButton(x, y, w, str, font_filename, pts, color, border, thick, text_color, flags)
 {
-    GG::Connect(ClickedSignal(), &PlayTurnButtonClickSound, -1);
+    GG::Connect(ClickedSignal, &PlayTurnButtonClickSound, -1);
 }
 
 CUITurnButton::CUITurnButton(const GG::XMLElement& elem) : 
@@ -250,7 +250,7 @@ CUITurnButton::CUITurnButton(const GG::XMLElement& elem) :
     if (elem.Tag() != "CUITurnButton")
         throw std::invalid_argument("Attempted to construct a CUITurnButton from an XMLElement that had a tag other than \"CUITurnButton\"");
 
-    GG::Connect(ClickedSignal(), &PlayTurnButtonClickSound, -1);
+    GG::Connect(ClickedSignal, &PlayTurnButtonClickSound, -1);
 }
 
 GG::XMLElement CUITurnButton::XMLEncode() const
@@ -268,7 +268,7 @@ CUIArrowButton::CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orie
     Button(x, y, w, h, "", "", 0, color, GG::CLR_ZERO, flags),
     m_orientation(orientation)
 {
-    GG::Connect(ClickedSignal(), &PlayButtonClickSound, -1);
+    GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
 }
 
 CUIArrowButton::CUIArrowButton(const GG::XMLElement& elem) : 
@@ -280,7 +280,7 @@ CUIArrowButton::CUIArrowButton(const GG::XMLElement& elem) :
     const GG::XMLElement* curr_elem = &elem.Child("m_orientation");
     m_orientation = ShapeOrientation(boost::lexical_cast<int>(curr_elem->Attribute("value")));
 
-    GG::Connect(ClickedSignal(), &PlayButtonClickSound, -1);
+    GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
 }
 
 bool CUIArrowButton::InWindow(const GG::Pt& pt) const
@@ -347,7 +347,7 @@ CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& st
     // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
     // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
     // checking the redering style
-    GG::Connect(CheckedSignal(), PlayButtonCheckSound(style == CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON), -1);
+    GG::Connect(CheckedSignal, PlayButtonCheckSound(style == CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON), -1);
 }
 
 CUIStateButton::CUIStateButton(const GG::XMLElement& elem) : 
@@ -362,7 +362,7 @@ CUIStateButton::CUIStateButton(const GG::XMLElement& elem) :
     // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
     // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
     // checking the redering style
-    GG::Connect(CheckedSignal(),
+    GG::Connect(CheckedSignal,
                 PlayButtonCheckSound(static_cast<int>(StateButton::Style()) ==
                                      static_cast<int>(CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON)),
                 -1);
@@ -639,8 +639,8 @@ CUIListBox::CUIListBox(int x, int y, int w, int h, GG::Clr color/* = ClientUI::C
 {
     RecreateScrolls();
     EnableChildClipping(false); // this is already done by GG::ListBox, and setting this would interfere
-    GG::Connect(SelChangedSignal(), &PlayListSelectSound, -1);
-    GG::Connect(DroppedSignal(), &PlayItemDropSound, -1);
+    GG::Connect(SelChangedSignal, &PlayListSelectSound, -1);
+    GG::Connect(DroppedSignal, &PlayItemDropSound, -1);
 }
 
 CUIListBox::CUIListBox(int x, int y, int w, int h, const std::vector<int>& col_widths, 
@@ -792,7 +792,7 @@ CUIEdit::CUIEdit(int x, int y, int w, int h, const std::string& str, const std::
                  Uint32 flags/* = CLICKABLE | DRAG_KEEPER*/) : 
     Edit(x, y, w, h, str, font_filename, pts, color, text_color, interior, flags)
 {
-    GG::Connect(EditedSignal(), &PlayTextTypingSound, -1);
+    GG::Connect(EditedSignal, &PlayTextTypingSound, -1);
     SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
 }
 
@@ -802,7 +802,7 @@ CUIEdit::CUIEdit(const GG::XMLElement& elem) :
     if (elem.Tag() != "CUIEdit")
         throw std::invalid_argument("Attempted to construct a CUIEdit from an XMLElement that had a tag other than \"CUIEdit\"");
 
-    GG::Connect(EditedSignal(), &PlayTextTypingSound, -1);
+    GG::Connect(EditedSignal, &PlayTextTypingSound, -1);
 }
 
 GG::XMLElement CUIEdit::XMLEncode() const
@@ -1079,7 +1079,7 @@ EmpireColorSelector::EmpireColorSelector(int h) :
     for (unsigned int i = 0; i < colors.size(); ++i) {
         Insert(new ColorRow(colors[i], h - 2));
     }
-    GG::Connect(SelChangedSignal(), &EmpireColorSelector::SelectionChanged, this);
+    GG::Connect(SelChangedSignal, &EmpireColorSelector::SelectionChanged, this);
 }
 
 GG::Clr EmpireColorSelector::CurrentColor() const
@@ -1102,7 +1102,7 @@ void EmpireColorSelector::SelectColor(const GG::Clr& clr)
 void EmpireColorSelector::SelectionChanged(int i)
 {
     const std::vector<GG::Clr>& colors = EmpireColors();
-    color_changed_sig(colors[i]);
+    ColorChangedSignal(colors[i]);
 }
 
 ///////////////////////////////////////

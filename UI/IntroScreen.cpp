@@ -189,13 +189,13 @@ IntroScreen::IntroScreen() :
     AttachChild(m_exit_game);
 
     //connect signals and slots
-    GG::Connect(m_single_player->ClickedSignal(), &IntroScreen::OnSinglePlayer, this);
-    GG::Connect(m_multi_player->ClickedSignal(), &IntroScreen::OnMultiPlayer, this);
-    GG::Connect(m_load_game->ClickedSignal(), &IntroScreen::OnLoadGame, this);
-    GG::Connect(m_options->ClickedSignal(), &IntroScreen::OnOptions, this);
-    GG::Connect(m_about->ClickedSignal(), &IntroScreen::OnAbout, this);
-    GG::Connect(m_credits->ClickedSignal(), &IntroScreen::OnCredits, this);
-    GG::Connect(m_exit_game->ClickedSignal(), &IntroScreen::OnExitGame, this);
+    GG::Connect(m_single_player->ClickedSignal, &IntroScreen::OnSinglePlayer, this);
+    GG::Connect(m_multi_player->ClickedSignal, &IntroScreen::OnMultiPlayer, this);
+    GG::Connect(m_load_game->ClickedSignal, &IntroScreen::OnLoadGame, this);
+    GG::Connect(m_options->ClickedSignal, &IntroScreen::OnOptions, this);
+    GG::Connect(m_about->ClickedSignal, &IntroScreen::OnAbout, this);
+    GG::Connect(m_credits->ClickedSignal, &IntroScreen::OnCredits, this);
+    GG::Connect(m_exit_game->ClickedSignal, &IntroScreen::OnExitGame, this);
 }
 
 IntroScreen::IntroScreen(const GG::XMLElement &elem):

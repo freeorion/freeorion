@@ -43,8 +43,8 @@ namespace {
                 edit->Disable();
                 color_selector->Disable();
             } else {
-                Connect(edit->EditedSignal(), &NewGamePlayerRow::NameChanged, this);
-                Connect(color_selector->ColorChangedSignal(), &NewGamePlayerRow::ColorChanged, this);
+                Connect(edit->EditedSignal, &NewGamePlayerRow::NameChanged, this);
+                Connect(color_selector->ColorChangedSignal, &NewGamePlayerRow::ColorChanged, this);
             }
         }
 
@@ -91,7 +91,7 @@ namespace {
             if (disabled) {
                 empire_list->Disable();
             } else {
-                Connect(empire_list->SelChangedSignal(), &LoadGamePlayerRow::EmpireChanged, this);
+                Connect(empire_list->SelChangedSignal, &LoadGamePlayerRow::EmpireChanged, this);
             }
         }
 
@@ -329,14 +329,14 @@ void MultiplayerLobbyWnd::Init()
     AttachSignalChildren();
 
     if (m_host) {
-        Connect(m_new_load_game_buttons->ButtonChangedSignal(), &MultiplayerLobbyWnd::NewLoadClicked, this);
-        Connect(m_galaxy_setup_panel->SettingsChangedSignal(), &MultiplayerLobbyWnd::GalaxySetupPanelChanged, this);
-        Connect(m_saved_games_list->SelChangedSignal(), &MultiplayerLobbyWnd::SaveGameChanged, this);
+        Connect(m_new_load_game_buttons->ButtonChangedSignal, &MultiplayerLobbyWnd::NewLoadClicked, this);
+        Connect(m_galaxy_setup_panel->SettingsChangedSignal, &MultiplayerLobbyWnd::GalaxySetupPanelChanged, this);
+        Connect(m_saved_games_list->SelChangedSignal, &MultiplayerLobbyWnd::SaveGameChanged, this);
     }
-    Connect(m_galaxy_setup_panel->ImageChangedSignal(), &MultiplayerLobbyWnd::PreviewImageChanged, this);
+    Connect(m_galaxy_setup_panel->ImageChangedSignal, &MultiplayerLobbyWnd::PreviewImageChanged, this);
     if (m_host)
-        Connect(m_start_game_bn->ClickedSignal(), &MultiplayerLobbyWnd::StartGameClicked, this);
-    Connect(m_cancel_bn->ClickedSignal(), &MultiplayerLobbyWnd::CancelClicked, this);
+        Connect(m_start_game_bn->ClickedSignal, &MultiplayerLobbyWnd::StartGameClicked, this);
+    Connect(m_cancel_bn->ClickedSignal, &MultiplayerLobbyWnd::CancelClicked, this);
 
     // default settings (new game)
     m_new_load_game_buttons->SetCheck(0);

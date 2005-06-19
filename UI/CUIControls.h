@@ -484,13 +484,11 @@ public:
     /** \name Mutators */ //@{
     void SelectColor(const GG::Clr& clr);
 
-    ColorChangedSignalType& ColorChangedSignal() const {return color_changed_sig;}
+    mutable ColorChangedSignalType ColorChangedSignal;
     //@}
 
 private:
     void SelectionChanged(int i);
-
-    mutable ColorChangedSignalType color_changed_sig;
 };
 
 /** A GG file dialog in the FreeOrion style. */

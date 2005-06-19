@@ -82,7 +82,7 @@ CUI_MinRestoreButton::CUI_MinRestoreButton(int x, int y) :
     GG::Button(x, y, 7, 7, "", "", 0, ClientUI::WND_INNER_BORDER_COLOR),
     m_mode(MIN_BUTTON)
 {
-    GG::Connect(ClickedSignal(), &CUI_MinRestoreButton::Toggle, this);
+    GG::Connect(ClickedSignal, &CUI_MinRestoreButton::Toggle, this);
 }
 
 CUI_MinRestoreButton::CUI_MinRestoreButton(const GG::XMLElement& elem) : 
@@ -93,7 +93,7 @@ CUI_MinRestoreButton::CUI_MinRestoreButton(const GG::XMLElement& elem) :
 
     m_mode = static_cast<Mode>(boost::lexical_cast<int>(elem.Child("m_mode").Attribute("value")));
 
-    GG::Connect(ClickedSignal(), &CUI_MinRestoreButton::Toggle, this);
+    GG::Connect(ClickedSignal, &CUI_MinRestoreButton::Toggle, this);
 }
 
 GG::XMLElement CUI_MinRestoreButton::XMLEncode() const
@@ -147,7 +147,7 @@ void CUI_MinRestoreButton::Toggle()
 CUI_CloseButton::CUI_CloseButton(int x, int y) : 
     GG::Button(x, y, 7, 7, "", "", 0, ClientUI::WND_INNER_BORDER_COLOR)
 {
-    GG::Connect(ClickedSignal(), &PlayCloseSound, -1);
+    GG::Connect(ClickedSignal, &PlayCloseSound, -1);
 }
 
 CUI_CloseButton::CUI_CloseButton(const GG::XMLElement& elem) : 
@@ -156,7 +156,7 @@ CUI_CloseButton::CUI_CloseButton(const GG::XMLElement& elem) :
     if (elem.Tag() != "CUI_CloseButton")
         throw std::invalid_argument("Attempted to construct a CUI_CloseButton from an XMLElement that had a tag other than \"CUI_CloseButton\"");
 
-    GG::Connect(ClickedSignal(), &PlayCloseSound, -1);
+    GG::Connect(ClickedSignal, &PlayCloseSound, -1);
 }
 
 GG::XMLElement CUI_CloseButton::XMLEncode() const
@@ -403,14 +403,14 @@ void CUI_Wnd::InitButtons()
     // create the close button
     if (m_closable) {
         m_close_button = new CUI_CloseButton(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
-        GG::Connect(m_close_button->ClickedSignal(), &CUI_Wnd::CloseClicked, this);
+        GG::Connect(m_close_button->ClickedSignal, &CUI_Wnd::CloseClicked, this);
         AttachChild(m_close_button);
     }
 
     // create the minimize button
     if (m_minimizable) {
         m_minimize_button = new CUI_MinRestoreButton(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET);
-        GG::Connect(m_minimize_button->ClickedSignal(), &CUI_Wnd::MinimizeClicked, this);
+        GG::Connect(m_minimize_button->ClickedSignal, &CUI_Wnd::MinimizeClicked, this);
         AttachChild(m_minimize_button);      
     }    
 }
@@ -502,8 +502,8 @@ CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string&
     AttachChild(m_ok_bn);
     AttachChild(m_cancel_bn);
 
-    GG::Connect(m_ok_bn->ClickedSignal(), &CUIEditWnd::OkClicked, this);
-    GG::Connect(m_cancel_bn->ClickedSignal(), &CUI_Wnd::CloseClicked, static_cast<CUI_Wnd*>(this));
+    GG::Connect(m_ok_bn->ClickedSignal, &CUIEditWnd::OkClicked, this);
+    GG::Connect(m_cancel_bn->ClickedSignal, &CUI_Wnd::CloseClicked, static_cast<CUI_Wnd*>(this));
 
     m_edit->SelectAll();
 }

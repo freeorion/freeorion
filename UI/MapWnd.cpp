@@ -162,7 +162,7 @@ MapWnd::MapWnd() :
 {
     SetText("MapWnd");
 
-    Connect(GetUniverse().UniverseObjectDeleteSignal(), &MapWnd::UniverseObjectDeleted, this);
+    Connect(GetUniverse().UniverseObjectDeleteSignal, &MapWnd::UniverseObjectDeleted, this);
 
     // toolbar
     m_toolbar = new CUIToolBar(0,0,GG::App::GetApp()->AppWidth(),30);
@@ -172,7 +172,7 @@ MapWnd::MapWnd() :
     // system-view side panel
     m_side_panel = new SidePanel(GG::App::GetApp()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight());
     AttachChild(m_side_panel);
-    Connect(m_left_clicked_system_signal, &SidePanel::SetSystem, m_side_panel);
+    Connect(SystemLeftClickedSignal, &SidePanel::SetSystem, m_side_panel);
 
     m_sitrep_panel = new SitRepPanel( (GG::App::GetApp()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::App::GetApp()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);
@@ -185,7 +185,7 @@ MapWnd::MapWnd() :
     // turn button
     m_turn_update = new CUITurnButton(LAYOUT_MARGIN, LAYOUT_MARGIN, END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
-    GG::Connect(m_turn_update->ClickedSignal(), &MapWnd::TurnBtnClicked, this);
+    GG::Connect(m_turn_update->ClickedSignal, &MapWnd::TurnBtnClicked, this);
 
     boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
     const int BUTTON_TOTAL_MARGIN = 8;
@@ -193,17 +193,17 @@ MapWnd::MapWnd() :
     int button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
     m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_MENU") );
     m_toolbar->AttachChild(m_btn_menu);
-    GG::Connect(m_btn_menu->ClickedSignal(), &MapWnd::MenuBtnClicked, this);
+    GG::Connect(m_btn_menu->ClickedSignal, &MapWnd::MenuBtnClicked, this);
 
     button_width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
     m_btn_research = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_RESEARCH") );
     m_toolbar->AttachChild(m_btn_research);
-    GG::Connect(m_btn_research->ClickedSignal(), &MapWnd::ResearchBtnClicked, this);
+    GG::Connect(m_btn_research->ClickedSignal, &MapWnd::ResearchBtnClicked, this);
 
     button_width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
     m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_SITREP") );
     m_toolbar->AttachChild(m_btn_siterep);
-    GG::Connect(m_btn_siterep->ClickedSignal(), &MapWnd::SiteRepBtnClicked, this);
+    GG::Connect(m_btn_siterep->ClickedSignal, &MapWnd::SiteRepBtnClicked, this);
     
     m_population= new StatisticIconDualValue(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0,0,2,false,false);
     m_population->SetPositiveColor(GG::CLR_GREEN); m_population->SetNegativeColor(GG::CLR_RED);
@@ -483,7 +483,7 @@ void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
     if (!m_dragged)
-        m_left_clicked_system_signal(UniverseObject::INVALID_OBJECT_ID);
+        SystemLeftClickedSignal(UniverseObject::INVALID_OBJECT_ID);
     m_dragged = false;
 }
 
@@ -553,8 +553,8 @@ void MapWnd::InitTurn(int turn_number)
         m_system_icons.push_back(icon);
         icon->InstallEventFilter(this);
         AttachChild(icon);
-        GG::Connect(icon->LeftClickedSignal(), &MapWnd::SelectSystem, this);
-        GG::Connect(icon->RightClickedSignal(), &MapWnd::SystemRightClicked, this);
+        GG::Connect(icon->LeftClickedSignal, &MapWnd::SelectSystem, this);
+        GG::Connect(icon->RightClickedSignal, &MapWnd::SystemRightClicked, this);
 
         // system's starlanes
         for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
@@ -626,12 +626,12 @@ void MapWnd::InitTurn(int turn_number)
     if (ClientUpperLeft() == GG::Pt())
         CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
 
-    GG::Connect(empire->FoodResPool       ().ChangedSignal(),&MapWnd::FoodResourcePoolChanged      ,this,0);FoodResourcePoolChanged();
-    GG::Connect(empire->MineralResPool    ().ChangedSignal(),&MapWnd::MineralResourcePoolChanged   ,this,0);MineralResourcePoolChanged();
-    GG::Connect(empire->TradeResPool      ().ChangedSignal(),&MapWnd::TradeResourcePoolChanged     ,this,0);TradeResourcePoolChanged();
-    GG::Connect(empire->ResearchResPool   ().ChangedSignal(),&MapWnd::ResearchResourcePoolChanged  ,this,0);ResearchResourcePoolChanged();
-    GG::Connect(empire->PopulationResPool ().ChangedSignal(),&MapWnd::PopulationResourcePoolChanged,this,1);PopulationResourcePoolChanged();
-    GG::Connect(empire->IndustryResPool   ().ChangedSignal(),&MapWnd::IndustryResourcePoolChanged  ,this,0);IndustryResourcePoolChanged();
+    GG::Connect(empire->FoodResPool       ().ChangedSignal,&MapWnd::FoodResourcePoolChanged      ,this,0);FoodResourcePoolChanged();
+    GG::Connect(empire->MineralResPool    ().ChangedSignal,&MapWnd::MineralResourcePoolChanged   ,this,0);MineralResourcePoolChanged();
+    GG::Connect(empire->TradeResPool      ().ChangedSignal,&MapWnd::TradeResourcePoolChanged     ,this,0);TradeResourcePoolChanged();
+    GG::Connect(empire->ResearchResPool   ().ChangedSignal,&MapWnd::ResearchResourcePoolChanged  ,this,0);ResearchResourcePoolChanged();
+    GG::Connect(empire->PopulationResPool ().ChangedSignal,&MapWnd::PopulationResourcePoolChanged,this,1);PopulationResourcePoolChanged();
+    GG::Connect(empire->IndustryResPool   ().ChangedSignal,&MapWnd::IndustryResourcePoolChanged  ,this,0);IndustryResourcePoolChanged();
     
     m_toolbar->Show();
 }
@@ -768,7 +768,7 @@ void MapWnd::CenterOnFleet(Fleet* fleet)
 
 void MapWnd::SelectSystem(int systemID)
 {
-    m_left_clicked_system_signal(systemID);
+    SystemLeftClickedSignal(systemID);
 }
 
 void MapWnd::SelectFleet(int fleetID)
@@ -1099,7 +1099,7 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 
 void MapWnd::SystemRightClicked(int system_id)
 {
-    m_right_clicked_system_signal(system_id);
+    SystemRightClickedSignal(system_id);
 }
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
@@ -1207,7 +1207,7 @@ bool MapWnd::ShowOptions()
 
 bool MapWnd::CloseSystemView()
 {
-    m_left_clicked_system_signal(UniverseObject::INVALID_OBJECT_ID);
+    SystemLeftClickedSignal(UniverseObject::INVALID_OBJECT_ID);
 	return true;
 }
 

@@ -71,7 +71,7 @@ void ResourcePool::SetPlanets(const Universe::ObjectVec &planet_vec)
         // UI changes when planet updates occur (focus changes, etc.); therefore, these signals should not
         // exist.  However, I'm leaving this here since later we may want projections of output to be
         // displayed in the new SidePanel design, so this or something similar may be required or desired.
-        //m_connections.push_back(GG::Connect(planet->ProdCenterChangedSignal(), PlanetChangedFunctor<ResourcePool>(*this,planet->ID())));
+        //m_connections.push_back(GG::Connect(planet->ProdCenterChangedSignal, PlanetChangedFunctor<ResourcePool>(*this,planet->ID())));
     }
     std::sort(m_planets.begin(),m_planets.end(),SortFunc());
 
@@ -116,7 +116,7 @@ void MineralResourcePool::PlanetChanged()
     // production queue, at the point at which production uses minerals.  This is important because the amount of actual
     // production during a turn may be less than m_needed_pool, which is the sum of all industrial capacity.
 
-    ChangedSignal()();
+    ChangedSignal();
 }
 
 double MineralResourcePool::Stockpile() const
@@ -192,7 +192,7 @@ void FoodResourcePool::PlanetChanged()
 
     m_stockpile=std::max(0.0, available);
 
-    ChangedSignal()();
+    ChangedSignal();
 }
 
 double FoodResourcePool::Stockpile() const
@@ -238,7 +238,7 @@ void ResearchResourcePool::PlanetChanged()
         m_pool_production+=planet->ResearchPoints();
     }
 
-    ChangedSignal()();
+    ChangedSignal();
 }
 
 GG::XMLElement ResearchResourcePool::XMLEncode() const
@@ -272,7 +272,7 @@ void PopulationResourcePool::PlanetChanged()
         m_growth+=planet->FuturePopGrowth();
     }
 
-    ChangedSignal()();
+    ChangedSignal();
 }
 
 GG::XMLElement PopulationResourcePool::XMLEncode() const
@@ -305,7 +305,7 @@ void IndustryResourcePool::PlanetChanged()
         m_pool_production+=planet->IndustryPoints();
     }
 
-    ChangedSignal()();
+    ChangedSignal();
 }
 
 GG::XMLElement IndustryResourcePool::XMLEncode() const
@@ -370,7 +370,7 @@ void TradeResourcePool::PlanetChanged()
 
     m_stockpile=available;
 
-    ChangedSignal()();
+    ChangedSignal();
 }
 
 double TradeResourcePool::Stockpile() const

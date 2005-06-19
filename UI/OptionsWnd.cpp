@@ -59,11 +59,11 @@ void OptionsWnd::Init()
 	AttachChild(m_ui_sounds_volume_label);
     AttachChild(m_done_btn);
 
-    GG::Connect(m_done_btn->ClickedSignal(), &OptionsWnd::DoneClicked, this);
-    GG::Connect(m_music->CheckedSignal(), &OptionsWnd::MusicCicked, this);
-    GG::Connect(m_ui_effects->CheckedSignal(), &OptionsWnd::UIEffectsCicked, this);
-    GG::Connect(m_music_volume->SlidSignal(), &OptionsWnd::MusicVolumeSlid, this);
-    GG::Connect(m_ui_sounds_volume->SlidAndStoppedSignal(), &OptionsWnd::UISoundsVolumeSlid, this);
+    GG::Connect(m_done_btn->ClickedSignal, &OptionsWnd::DoneClicked, this);
+    GG::Connect(m_music->CheckedSignal, &OptionsWnd::MusicCicked, this);
+    GG::Connect(m_ui_effects->CheckedSignal, &OptionsWnd::UIEffectsCicked, this);
+    GG::Connect(m_music_volume->SlidSignal, &OptionsWnd::MusicVolumeSlid, this);
+    GG::Connect(m_ui_sounds_volume->SlidAndStoppedSignal, &OptionsWnd::UISoundsVolumeSlid, this);
 }
 
 OptionsWnd::~OptionsWnd()

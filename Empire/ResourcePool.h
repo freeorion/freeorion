@@ -47,7 +47,7 @@ public:
     const std::vector<Planet*>& Planets() const {return m_planets;} ///< returns the planet vector 
     virtual double Stockpile() const;
     virtual GG::XMLElement XMLEncode() const = 0;
-    ChangedSignalType& ChangedSignal() const {return m_changed_sig;} ///< returns the changed signal object for this ResourcePool
+    mutable ChangedSignalType ChangedSignal; ///< the changed signal object for this ResourcePool
 
     std::vector<Planet*>& Planets() {return m_planets;} ///< returns the planet vector 
     void                  SetPlanets(const Universe::ObjectVec &planet_vec);///< sets the planet vector 
@@ -62,7 +62,6 @@ private:
     std::vector<boost::signals::connection > m_connections;///< connection list of planets
 
     friend class PlanetChangedFunctor<ResourcePool>;
-    mutable ChangedSignalType m_changed_sig;
 };
 
 /**

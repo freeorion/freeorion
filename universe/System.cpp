@@ -238,8 +238,8 @@ int System::Insert(int obj_id, int orbit)
         if (GetUniverse().Object<Planet>(obj_id))
             UpdateOwnership();
         if (Fleet *fleet = GetUniverse().Object<Fleet>(obj_id))
-            FleetAddedSignal()(*fleet);
-        StateChangedSignal()();
+            FleetAddedSignal(*fleet);
+        StateChangedSignal();
     }
 	return orbit;
 }
@@ -255,8 +255,8 @@ bool System::Remove(int id)
             if (GetUniverse().Object<Planet>(id))
                 UpdateOwnership();
             if (Fleet *fleet = GetUniverse().Object<Fleet>(id))
-                FleetRemovedSignal()(*fleet);
-            StateChangedSignal()();
+                FleetRemovedSignal(*fleet);
+            StateChangedSignal();
             break;
         }
     }
@@ -270,19 +270,19 @@ void System::SetStarType(StarType type)
         m_star = STAR_BLUE;
     if (NUM_STAR_TYPES <= m_star)
         m_star = STAR_BLACK;
-    StateChangedSignal()();
+    StateChangedSignal();
 }
 
 void System::AddStarlane(int id)
 {
    m_starlanes_wormholes[id] = false;
-   StateChangedSignal()();
+   StateChangedSignal();
 }
 
 void System::AddWormhole(int id)
 {
    m_starlanes_wormholes[id] = true;
-   StateChangedSignal()();
+   StateChangedSignal();
 }
 
 bool System::RemoveStarlane(int id)
@@ -290,7 +290,7 @@ bool System::RemoveStarlane(int id)
    bool retval = false;
    if (retval = HasStarlaneTo(id)) {
       m_starlanes_wormholes.erase(id);
-      StateChangedSignal()();
+      StateChangedSignal();
    }
    return retval;
 }
@@ -300,7 +300,7 @@ bool System::RemoveWormhole(int id)
    bool retval = false;
    if (retval = HasWormholeTo(id)) {
       m_starlanes_wormholes.erase(id);
-      StateChangedSignal()();
+      StateChangedSignal();
    }
    return retval;
 }

@@ -80,11 +80,11 @@ void InGameOptions::Init()
     AttachChild(m_done_btn);
 
     //attach signals
-    GG::Connect(m_save_btn->ClickedSignal(), &InGameOptions::Save, this);
-    GG::Connect(m_load_btn->ClickedSignal(), &InGameOptions::Load, this);
-	GG::Connect(m_options_btn->ClickedSignal(), &InGameOptions::Options, this);
-    GG::Connect(m_exit_btn->ClickedSignal(), &InGameOptions::Exit, this);
-    GG::Connect(m_done_btn->ClickedSignal(), &InGameOptions::Done, this);
+    GG::Connect(m_save_btn->ClickedSignal, &InGameOptions::Save, this);
+    GG::Connect(m_load_btn->ClickedSignal, &InGameOptions::Load, this);
+	GG::Connect(m_options_btn->ClickedSignal, &InGameOptions::Options, this);
+    GG::Connect(m_exit_btn->ClickedSignal, &InGameOptions::Exit, this);
+    GG::Connect(m_done_btn->ClickedSignal, &InGameOptions::Done, this);
 
     if (!HumanClientApp::GetApp()->SinglePlayerGame()) {
         m_load_btn->Disable();

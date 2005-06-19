@@ -166,7 +166,7 @@ void Fleet::SetRoute(const std::list<System*>& route, double distance)
     std::list<System*>::const_iterator it = m_travel_route.begin();
     m_next_system = m_prev_system == SystemID() ? (*++it)->ID() : (*it)->ID();
 
-    StateChangedSignal()();
+    StateChangedSignal();
 }
 
 void Fleet::AddShips(const std::vector<int>& ships)
@@ -188,7 +188,7 @@ void Fleet::AddShips(const std::vector<int>& ships)
             throw std::invalid_argument("Fleet::AddShips() : Attempted to add an id of a non-ship object to a fleet.");
         }
     }
-    StateChangedSignal()();
+    StateChangedSignal();
 }
 
 void Fleet::AddShip(const int ship_id)
@@ -208,7 +208,7 @@ void Fleet::AddShip(const int ship_id)
     } else {
         throw std::invalid_argument("Fleet::AddShip() : Attempted to add an id of a non-ship object to a fleet.");
     }
-    StateChangedSignal()();
+    StateChangedSignal();
 }
 
 std::vector<int> Fleet::RemoveShips(const std::vector<int>& ships)
@@ -220,7 +220,7 @@ std::vector<int> Fleet::RemoveShips(const std::vector<int>& ships)
         if (!found)
             retval.push_back(ships[i]);
     }
-    StateChangedSignal()();
+    StateChangedSignal();
     return retval;
 }
 
@@ -236,7 +236,7 @@ std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
          GetUniverse().Delete(ships[i]);
       }
    }
-   StateChangedSignal()();
+   StateChangedSignal();
    return retval;
 }
 
@@ -247,7 +247,7 @@ bool Fleet::RemoveShip(int ship)
     iterator it = m_ships.find(ship);
     if (it != m_ships.end()) {
         m_ships.erase(it);
-        StateChangedSignal()();
+        StateChangedSignal();
         retval = true;
     }
     return retval;

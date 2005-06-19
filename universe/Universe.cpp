@@ -1282,7 +1282,7 @@ bool Universe::Delete(int id)
     UniverseObject* obj = Remove(id);
     s_inhibit_universe_object_signals = false;
     if (obj)
-        UniverseObjectDeleteSignal()(obj);
+        UniverseObjectDeleteSignal(obj);
     delete obj;
     return obj;
 }

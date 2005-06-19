@@ -60,8 +60,8 @@ public:
         as universe creation parameters. */
     GG::XMLElement XMLEncode() const;
 
-    SettingsChangedSignalType& SettingsChangedSignal() const {return m_settings_changed_sig;} ///< returns the settings changed signal object for this GalaxySetupPanel
-    ImageChangedSignalType&    ImageChangedSignal() const    {return m_image_changed_sig;}    ///< returns the image changed signal object for this GalaxySetupPanel
+    mutable SettingsChangedSignalType SettingsChangedSignal; ///< the settings changed signal object for this GalaxySetupPanel
+    mutable ImageChangedSignalType    ImageChangedSignal;    ///< the image changed signal object for this GalaxySetupPanel
     //!@}
 
     /** \name Mutators*/ //!@{
@@ -86,9 +86,6 @@ private:
     CUIDropDownList*      m_specials_freq_list;  //!< The frequency of specials in systems and on planets
     
     std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
-
-    mutable SettingsChangedSignalType m_settings_changed_sig;
-    mutable ImageChangedSignalType    m_image_changed_sig;
 };
 
 //! This class is the Galaxy Setup window.  It is a modal window

@@ -87,7 +87,7 @@ public:
     /** accepts a visitor object \see UniverseObjectVisitor */
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
-    StateChangedSignalType& StateChangedSignal() const; ///< returns the state changed signal object for this UniverseObject
+    mutable StateChangedSignalType StateChangedSignal; ///< returns the state changed signal object for this UniverseObject
     //@}
    
     /** \name Mutators */ //@{
@@ -142,8 +142,6 @@ private:
     std::set<int>         m_owners;
     int                   m_system_id;
     std::set<std::string> m_specials;
-
-    mutable StateChangedSignalType m_changed_sig;
 };
 
 inline std::pair<std::string, std::string> UniverseObjectRevision()

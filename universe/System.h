@@ -109,8 +109,8 @@ public:
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
  
-    FleetSignalType& FleetAddedSignal  () const {return m_fleet_added_sig;} ///< returns the fleet added signal object for this System
-    FleetSignalType& FleetRemovedSignal() const {return m_fleet_removed_sig;} ///< returns the fleet removed changed signal object for this System
+    mutable FleetSignalType FleetAddedSignal;   ///< returns the fleet added signal object for this System
+    mutable FleetSignalType FleetRemovedSignal; ///< returns the fleet removed changed signal object for this System
     
     //@}
 
@@ -178,9 +178,6 @@ private:
     int            m_orbits;
     ObjectMultimap m_objects;              ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
     StarlaneMap    m_starlanes_wormholes;  ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
-
-    mutable FleetSignalType m_fleet_added_sig; 
-    mutable FleetSignalType m_fleet_removed_sig;
 };
 
 

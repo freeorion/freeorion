@@ -43,7 +43,7 @@ SystemIcon::SystemIcon(int id, double zoom) :
     m_system(*ClientApp::GetUniverse().Object<const System>(id)),
     m_static_graphic(0)
 {
-    Connect(m_system.StateChangedSignal(), &SystemIcon::Refresh, this);
+    Connect(m_system.StateChangedSignal, &SystemIcon::Refresh, this);
 
     SetText(m_system.Name());
 
@@ -94,19 +94,19 @@ void SystemIcon::SizeMove(int x1, int y1, int x2, int y2)
 void SystemIcon::LClick(const GG::Pt& pt, Uint32 keys)
 {
     if (!Disabled())
-        m_left_click_signal(m_system.ID());
+        LeftClickedSignal(m_system.ID());
 }
 
 void SystemIcon::RClick(const GG::Pt& pt, Uint32 keys)
 {
     if (!Disabled())
-        m_right_click_signal(m_system.ID());
+        RightClickedSignal(m_system.ID());
 }
 
 void SystemIcon::LDoubleClick(const GG::Pt& pt, Uint32 keys)
 {
     if (!Disabled())
-        m_left_double_click_signal(m_system.ID());
+        LeftDoubleClickedSignal(m_system.ID());
 }
 
 void SystemIcon::ClickFleetButton(Fleet* fleet)
@@ -223,9 +223,9 @@ void SystemIcon::Refresh()
 
     std::vector<const Fleet*> fleets = m_system.FindObjects<Fleet>();
     for (unsigned int i = 0; i < fleets.size(); ++i)
-        Connect(fleets[i]->StateChangedSignal(), &SystemIcon::CreateFleetButtons, this);
-    Connect(m_system.FleetAddedSignal(), &SystemIcon::FleetCreatedOrDestroyed, this);
-    Connect(m_system.FleetRemovedSignal(), &SystemIcon::FleetCreatedOrDestroyed, this);
+        Connect(fleets[i]->StateChangedSignal, &SystemIcon::CreateFleetButtons, this);
+    Connect(m_system.FleetAddedSignal, &SystemIcon::FleetCreatedOrDestroyed, this);
+    Connect(m_system.FleetRemovedSignal, &SystemIcon::FleetCreatedOrDestroyed, this);
 
     CreateFleetButtons();
 }

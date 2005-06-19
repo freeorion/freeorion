@@ -73,8 +73,8 @@ public:
     void           HideSystemNames();                               //!< disables the system name text
     void           HandlePlayerChatMessage(const std::string& msg); //!< displays incoming player chat text
 
-    SystemLeftClickedSignalType&  SystemLeftClickedSignal()  {return m_left_clicked_system_signal;}
-    SystemRightClickedSignalType& SystemRightClickedSignal() {return m_right_clicked_system_signal;}
+    mutable SystemLeftClickedSignalType  SystemLeftClickedSignal;
+    mutable SystemRightClickedSignalType SystemRightClickedSignal;
 
     void CenterOnMapCoord(double x, double y); //!< centers the map on map position (x, y)
     void CenterOnSystem(int systemID);         //!< centers the map on system \a systemID
@@ -181,9 +181,6 @@ private:
     StatisticIcon                   *m_research,*m_industry;
 
     CUIButton                       *m_btn_siterep,*m_btn_research,*m_btn_menu;
-
-    SystemLeftClickedSignalType  m_left_clicked_system_signal;
-    SystemRightClickedSignalType m_right_clicked_system_signal;
 
     static const int NUM_BACKGROUNDS;
     static double s_min_scale_factor;

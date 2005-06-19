@@ -63,10 +63,10 @@ public:
     void           ShowName(); //!< enables the system name text
     void           HideName(); //!< disables the system name text
 
-    BrowsedSignalType&           BrowsedSignal()           {return m_browse_signal;}
-    LeftClickedSignalType&       LeftClickedSignal()       {return m_left_click_signal;}
-    RightClickedSignalType&      RightClickedSignal()      {return m_right_click_signal;}
-    LeftDoubleClickedSignalType& LeftDoubleClickedSignal() {return m_left_double_click_signal;}
+    mutable BrowsedSignalType           BrowsedSignal;
+    mutable LeftClickedSignalType       LeftClickedSignal;
+    mutable RightClickedSignalType      RightClickedSignal;
+    mutable LeftDoubleClickedSignalType LeftDoubleClickedSignal;
     //!@}
 
 private:
@@ -81,11 +81,6 @@ private:
 
     std::map<int, FleetButton*> m_stationary_fleet_markers; //!< the fleet buttons for the fleets that are stationary in the system, indexed by Empire ID of the owner
     std::map<int, FleetButton*> m_moving_fleet_markers;     //!< the fleet buttons for the fleets that are under orders to move out of the system, indexed by Empire ID of the owner
-
-    BrowsedSignalType           m_browse_signal;
-    LeftClickedSignalType       m_left_click_signal;
-    RightClickedSignalType      m_right_click_signal;
-    LeftDoubleClickedSignalType m_left_double_click_signal;
 
     friend class FleetButtonClickedFunctor;
 };

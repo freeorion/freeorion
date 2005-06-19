@@ -52,8 +52,8 @@ public:
 
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a FleetViewPanel object
 
-    PanelEmptySignalType&   PanelEmptySignal() const    {return m_panel_empty_sig;}
-    NeedNewFleetSignalType& NeedNewFleetSignal() const  {return m_need_new_fleet_sig;}
+    mutable PanelEmptySignalType   PanelEmptySignal;
+    mutable NeedNewFleetSignalType NeedNewFleetSignal;
     //@}
 
     //! \name Mutators //@{
@@ -87,9 +87,6 @@ private:
     GG::TextControl*            m_destination_text;
     CUIListBox*                 m_ships_lb;
     GG::TextControl*            m_ship_status_text;
-
-    mutable PanelEmptySignalType   m_panel_empty_sig;
-    mutable NeedNewFleetSignalType m_need_new_fleet_sig;
 };
 
 class FleetDetailWnd : public CUI_Wnd
@@ -114,8 +111,8 @@ public:
     //! \name Accessors //@{
     FleetDetailPanel&       GetFleetDetailPanel() const {return *m_fleet_panel;} ///< returns the internally-held fleet panel for theis window
 
-    NeedNewFleetSignalType& NeedNewFleetSignal() const  {return m_need_new_fleet_sig;}
-    ClosingSignalType&      ClosingSignal() const       {return m_closing_sig;}
+    mutable NeedNewFleetSignalType NeedNewFleetSignal;
+    mutable ClosingSignalType      ClosingSignal;
     //@}
 
 protected:
@@ -124,15 +121,12 @@ protected:
     //@}
 
 private:
-    Fleet*      PanelNeedsNewFleet(int ship_id) {return m_need_new_fleet_sig(this, ship_id);}
+    Fleet*      PanelNeedsNewFleet(int ship_id) {return NeedNewFleetSignal(this, ship_id);}
     void        AttachSignalChildren();
     void        DetachSignalChildren();
     std::string TitleText() const;
 
     FleetDetailPanel*  m_fleet_panel;
-
-    mutable ClosingSignalType      m_closing_sig;
-    mutable NeedNewFleetSignalType m_need_new_fleet_sig;
 };
 
 
@@ -158,8 +152,8 @@ public:
     //@}
 
     //! \name Mutators //@{
-    ShowingFleetSignalType&                       ShowingFleetSignal() const     {return m_showing_fleet_sig;}
-    NotShowingFleetSignalType&                    NotShowingFleetSignal() const  {return m_not_showing_fleet_sig;}
+    mutable ShowingFleetSignalType    ShowingFleetSignal;
+    mutable NotShowingFleetSignalType NotShowingFleetSignal;
     //@}
 
     //! \name Mutators //@{
@@ -220,9 +214,6 @@ private:
     boost::signals::connection  m_universe_object_delete_connection;
     boost::signals::connection  m_lb_delete_connection;
     boost::signals::connection  m_system_changed_connection;
-
-    mutable ShowingFleetSignalType    m_showing_fleet_sig;
-    mutable NotShowingFleetSignalType m_not_showing_fleet_sig;
 
     static std::set<FleetWnd*> s_open_fleet_wnds;
     static GG::Pt s_last_position; ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.

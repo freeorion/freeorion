@@ -42,9 +42,9 @@ public:
                     new CUIArrowButton(0, 0, 1, 1, SHAPE_DOWN, ClientUI::DROP_DOWN_LIST_ARROW_COLOR))
     {
 #ifdef _MSC_VER
-        GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound, -1);
+        GG::Connect(ValueChangedSignal, &detail::PlayValueChangedSound, -1);
 #else
-        GG::Connect(GG::Spin<T>::ValueChangedSignal(), &detail::PlayValueChangedSound<T>, -1);
+        GG::Connect(GG::Spin<T>::ValueChangedSignal, &detail::PlayValueChangedSound<T>, -1);
 #endif
         if (GG::Spin<T>::GetEdit())
             GG::Spin<T>::GetEdit()->SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
@@ -59,9 +59,9 @@ public:
             throw std::invalid_argument("Attempted to construct a " + XMLTypeName() + " from an XMLElement that had a tag other than \"" + XMLTypeName() + "\"");
 
 #ifdef _MSC_VER
-        GG::Connect(ValueChangedSignal(), &detail::PlayValueChangedSound, -1);
+        GG::Connect(ValueChangedSignal, &detail::PlayValueChangedSound, -1);
 #else
-        GG::Connect(GG::Spin<T>::ValueChangedSignal(), &detail::PlayValueChangedSound<T>, -1);
+        GG::Connect(GG::Spin<T>::ValueChangedSignal, &detail::PlayValueChangedSound<T>, -1);
 #endif
     }
     //@}

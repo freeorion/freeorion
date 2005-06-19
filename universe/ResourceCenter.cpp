@@ -180,7 +180,7 @@ void ResourceCenter::SetPrimaryFocus(FocusType focus)
     m_research.SetMax(m_research.Max() + MaxMeterAdjustment(FOCUS_RESEARCH, m_primary, focus, true));
     m_trade.SetMax(m_trade.Max() + MaxMeterAdjustment(FOCUS_TRADE, m_primary, focus, true));
     m_primary = focus;
-    m_changed_sig();
+    ResourceCenterChangedSignal();
 }
 
 void ResourceCenter::SetSecondaryFocus(FocusType focus)
@@ -191,7 +191,7 @@ void ResourceCenter::SetSecondaryFocus(FocusType focus)
     m_research.SetMax(m_research.Max() + MaxMeterAdjustment(FOCUS_RESEARCH, m_secondary, focus, false));
     m_trade.SetMax(m_trade.Max() + MaxMeterAdjustment(FOCUS_TRADE, m_secondary, focus, false));
     m_secondary = focus;
-    m_changed_sig();
+    ResourceCenterChangedSignal();
 }
 
 void ResourceCenter::AdjustMaxMeters()

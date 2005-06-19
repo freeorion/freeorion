@@ -67,13 +67,13 @@ public:
         space the newly rendered text occupies. */
     virtual void   SetText(const std::string& str);
 
-    IDSignalType&     PlanetLinkSignal()       const {return m_planet_sig;}       ///< returns the planet link signal object for this LinkText
-    IDSignalType&     SystemLinkSignal()       const {return m_system_sig;}       ///< returns the system link signal object for this LinkText
-    IDSignalType&     FleetLinkSignal()        const {return m_fleet_sig;}        ///< returns the fleet link signal object for this LinkText
-    IDSignalType&     ShipLinkSignal()         const {return m_ship_sig;}         ///< returns the ship link signal object for this LinkText
-    StringSignalType& TechLinkSignal()         const {return m_tech_sig;}         ///< returns the tech link signal object for this LinkText
-    StringSignalType& BuildingLinkSignal()     const {return m_building_sig;}     ///< returns the building link signal object for this LinkText
-    StringSignalType& EncyclopediaLinkSignal() const {return m_encyclopedia_sig;} ///< returns the encyclopedia link signal object for this LinkText
+    mutable IDSignalType     PlanetLinkSignal;       ///< returns the planet link signal object for this LinkText
+    mutable IDSignalType     SystemLinkSignal;       ///< returns the system link signal object for this LinkText
+    mutable IDSignalType     FleetLinkSignal;        ///< returns the fleet link signal object for this LinkText
+    mutable IDSignalType     ShipLinkSignal;         ///< returns the ship link signal object for this LinkText
+    mutable StringSignalType TechLinkSignal;         ///< returns the tech link signal object for this LinkText
+    mutable StringSignalType BuildingLinkSignal;     ///< returns the building link signal object for this LinkText
+    mutable StringSignalType EncyclopediaLinkSignal; ///< returns the encyclopedia link signal object for this LinkText
 
     virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a LinkText object
     //@}
@@ -95,14 +95,6 @@ private:
     std::vector<Link> m_links;
     int               m_old_sel_link;
     int               m_old_rollover_link;
-
-    mutable IDSignalType m_planet_sig;
-    mutable IDSignalType m_system_sig;
-    mutable IDSignalType m_fleet_sig;
-    mutable IDSignalType m_ship_sig;
-    mutable StringSignalType m_tech_sig;
-    mutable StringSignalType m_building_sig;
-    mutable StringSignalType m_encyclopedia_sig;
 
     static bool s_link_tags_registered;
 };

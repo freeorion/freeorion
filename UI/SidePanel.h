@@ -73,7 +73,7 @@ public:
 
         int PlanetID() const {return m_planet_id;}
 
-        LeftClickedSignalType& PlanetImageLClickedSignal() const {return m_planet_image_lclick_sig;} ///< returns the left clicked signal object for this Planet panel
+        mutable LeftClickedSignalType PlanetImageLClickedSignal; ///< returns the left clicked signal object for this Planet panel
         //@}
 
         /** \name Mutators */ //@{
@@ -148,8 +148,6 @@ public:
             and can be used when for instance planet ownership changes
         */
         std::vector<GG::Wnd*> m_vec_unused_controls;
-
-        mutable LeftClickedSignalType m_planet_image_lclick_sig;///< fired if planet image get an left click
     };
 
     /** \name Structors */ //@{

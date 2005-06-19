@@ -60,9 +60,9 @@ void About::Init()
     AttachChild(m_vision);
     AttachChild(m_info);
 
-    GG::Connect(m_done_btn->ClickedSignal(), &About::OnDone, this);
-    GG::Connect(m_license->ClickedSignal(), &About::OnLicense, this);
-    GG::Connect(m_vision->ClickedSignal(), &About::OnVision, this);
+    GG::Connect(m_done_btn->ClickedSignal, &About::OnDone, this);
+    GG::Connect(m_license->ClickedSignal, &About::OnLicense, this);
+    GG::Connect(m_vision->ClickedSignal, &About::OnVision, this);
 }
 
 About::~About()

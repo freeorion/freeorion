@@ -299,7 +299,7 @@ namespace {
             m_side_panel->SetSystem(system_id);
             AttachChild(m_side_panel);
             for (int i = 0; i < m_side_panel->PlanetPanels(); ++i) {
-                GG::Connect(m_side_panel->GetPlanetPanel(i)->PlanetImageLClickedSignal(), &PlanetPicker::PlanetClicked, this);
+                GG::Connect(m_side_panel->GetPlanetPanel(i)->PlanetImageLClickedSignal, &PlanetPicker::PlanetClicked, this);
             }
             ClientUI::GetClientUI()->SetCursor(ClientUI::CURSOR_COLONIZE);
         }

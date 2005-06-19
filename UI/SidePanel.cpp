@@ -245,19 +245,19 @@ namespace {
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
-        const std::vector<float>& star_light_colors = GetStarLightColors().find(star_type)->second;
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, &star_light_colors[0]);
-        glLightfv(GL_LIGHT0, GL_SPECULAR, &star_light_colors[0]);
+        const std::map<StarType, std::vector<float> >& star_light_colors = GetStarLightColors();
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, &star_light_colors.find(star_type)->second[0]);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, &star_light_colors.find(star_type)->second[0]);
         glEnable(GL_TEXTURE_2D);
 
         glTranslated(center.x, center.y, -(diameter / 2 + 1));
         glRotated(100.0, -1.0, 0.0, 0.0); // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
         glRotated(axis_tilt, 0.0, 1.0, 0.0);  // axis tilt
         double intensity = GetRotatingPlanetAmbientIntensity();
-        GG::Clr ambient(intensity * star_light_colors[0], intensity * star_light_colors[1], intensity * star_light_colors[2], 1.0);
+        GG::Clr ambient(intensity, intensity, intensity, 1.0);
         intensity = GetRotatingPlanetDiffuseIntensity();
-        GG::Clr diffuse(intensity * star_light_colors[0], intensity * star_light_colors[1], intensity * star_light_colors[2], 1.0);
-        RenderSphere(diameter / 2, ambient, diffuse, GG::Clr(star_light_colors[0], star_light_colors[1], star_light_colors[2], 1.0), shininess, texture);
+        GG::Clr diffuse(intensity, intensity, intensity, 1.0);
+        RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
 
         glPopAttrib();
 
@@ -724,12 +724,12 @@ class CUITextureButton : public GG::Button
     virtual void   RButtonDown(const GG::Pt& pt, Uint32 keys)          {if (!Disabled()) SetState(BN_PRESSED);}
     virtual void   RDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys){if (!Disabled()) SetState(BN_PRESSED);}
     virtual void   RButtonUp(const GG::Pt& pt, Uint32 keys)            {if (!Disabled()) SetState(BN_UNPRESSED);}
-    virtual void   RClick(const GG::Pt& pt, Uint32 keys)               {if (!Disabled()) {SetState(BN_UNPRESSED); m_rclicked_sig(); SetState(BN_UNPRESSED);}}
+    virtual void   RClick(const GG::Pt& pt, Uint32 keys)               {if (!Disabled()) {SetState(BN_UNPRESSED); RClickedSignal(); SetState(BN_UNPRESSED);}}
+
+    mutable ClickedSignalType RClickedSignal;
 
   private:
     void Refresh();
-
-    mutable ClickedSignalType m_rclicked_sig;
 
     GG::SubTexture m_texture;
 
@@ -752,7 +752,6 @@ class CUIIconButton : public GG::Button
     /** \name Accessors */ //@{
     virtual bool            InWindow(const GG::Pt& pt) const;
     //virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIScroll::ScrollTab object
-    ClickedSignalType& RClickedSignal() const                    {return m_rclicked_sig;} ///< returns the clicked signal object for this Button
 
     const GG::SubTexture& Icon() const {return m_icon;}
     const GG::Rect& IconRect() const {return m_icon_rect;}
@@ -779,6 +778,8 @@ class CUIIconButton : public GG::Button
     
     //@}
 
+    mutable ClickedSignalType RClickedSignal; ///< the clicked signal object for this Button
+
   protected:
     /** \name Mutators control */ //@{
     virtual void RenderPressed();
@@ -789,12 +790,10 @@ class CUIIconButton : public GG::Button
     virtual void   RButtonDown(const GG::Pt& pt, Uint32 keys)          {if (!Disabled()) SetState(BN_PRESSED);}
     virtual void   RDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys){if (!Disabled()) SetState(BN_PRESSED);}
     virtual void   RButtonUp(const GG::Pt& pt, Uint32 keys)            {if (!Disabled()) SetState(BN_UNPRESSED);}
-    virtual void   RClick(const GG::Pt& pt, Uint32 keys)               {if (!Disabled()) {SetState(BN_UNPRESSED); m_rclicked_sig(); SetState(BN_UNPRESSED);}}
+    virtual void   RClick(const GG::Pt& pt, Uint32 keys)               {if (!Disabled()) {SetState(BN_UNPRESSED); RClickedSignal(); SetState(BN_UNPRESSED);}}
 
   private:
     void Refresh();
-
-    mutable ClickedSignalType m_rclicked_sig;
 
     double m_value;
     int m_decimals_to_show;
@@ -934,7 +933,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   AttachChild(m_planet_info);
 
   m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::SIDE_PANEL_PTS)/2,60,UserString("PL_COLONIZE"),ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::Wnd::CLICKABLE);
-  Connect(m_button_colonize->ClickedSignal(), &SidePanel::PlanetPanel::ClickColonize, this);
+  Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
   AttachChild(m_button_colonize);
 
   const int RESOURCE_DISPLAY_HEIGHT = 2*ClientUI::PTS;
@@ -981,28 +980,28 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   //m_button_industry->SetPositiveColor(GG::CLR_ZERO );m_button_industry->SetNegativeColor(GG::CLR_ZERO);
   m_button_balanced->SetPositiveColor(GG::CLR_ZERO );m_button_balanced->SetNegativeColor(GG::CLR_ZERO);
 
-  Connect(m_button_food    ->ClickedSignal (), &SidePanel::PlanetPanel::LClickFarming , this);
-  Connect(m_button_food    ->RClickedSignal(), &SidePanel::PlanetPanel::RClickFarming , this);
-  Connect(m_button_mining  ->ClickedSignal (), &SidePanel::PlanetPanel::LClickMining  , this);
-  Connect(m_button_mining  ->RClickedSignal(), &SidePanel::PlanetPanel::RClickMining  , this);
-  Connect(m_button_research->ClickedSignal (), &SidePanel::PlanetPanel::LClickResearch, this);
-  Connect(m_button_research->RClickedSignal(), &SidePanel::PlanetPanel::RClickResearch, this);
-  Connect(m_button_industry->ClickedSignal (), &SidePanel::PlanetPanel::LClickIndustry, this);
-  Connect(m_button_industry->RClickedSignal(), &SidePanel::PlanetPanel::RClickIndustry, this);
-  Connect(m_button_balanced->ClickedSignal (), &SidePanel::PlanetPanel::LClickBalanced, this);
-  Connect(m_button_balanced->RClickedSignal(), &SidePanel::PlanetPanel::RClickBalanced, this);
+  Connect(m_button_food    ->ClickedSignal, &SidePanel::PlanetPanel::LClickFarming , this);
+  Connect(m_button_food    ->RClickedSignal, &SidePanel::PlanetPanel::RClickFarming , this);
+  Connect(m_button_mining  ->ClickedSignal, &SidePanel::PlanetPanel::LClickMining  , this);
+  Connect(m_button_mining  ->RClickedSignal, &SidePanel::PlanetPanel::RClickMining  , this);
+  Connect(m_button_research->ClickedSignal, &SidePanel::PlanetPanel::LClickResearch, this);
+  Connect(m_button_research->RClickedSignal, &SidePanel::PlanetPanel::RClickResearch, this);
+  Connect(m_button_industry->ClickedSignal, &SidePanel::PlanetPanel::LClickIndustry, this);
+  Connect(m_button_industry->RClickedSignal, &SidePanel::PlanetPanel::RClickIndustry, this);
+  Connect(m_button_balanced->ClickedSignal, &SidePanel::PlanetPanel::LClickBalanced, this);
+  Connect(m_button_balanced->RClickedSignal, &SidePanel::PlanetPanel::RClickBalanced, this);
 
   // UI sounds
-  GG::Connect(m_button_food    ->ClickedSignal (), &PlayFarmingFocusClickSound);
-  GG::Connect(m_button_food    ->RClickedSignal(), &PlayFarmingFocusClickSound);
-  GG::Connect(m_button_mining  ->ClickedSignal (), &PlayMiningFocusClickSound);
-  GG::Connect(m_button_mining  ->RClickedSignal(), &PlayMiningFocusClickSound);
-  GG::Connect(m_button_research->ClickedSignal (), &PlayResearchFocusClickSound);
-  GG::Connect(m_button_research->RClickedSignal(), &PlayResearchFocusClickSound);
-  GG::Connect(m_button_industry->ClickedSignal (), &PlayIndustryFocusClickSound);
-  GG::Connect(m_button_industry->RClickedSignal(), &PlayIndustryFocusClickSound);
-  GG::Connect(m_button_balanced->ClickedSignal (), &PlayBalancedFocusClickSound);
-  GG::Connect(m_button_balanced->RClickedSignal(), &PlayBalancedFocusClickSound);
+  GG::Connect(m_button_food    ->ClickedSignal, &PlayFarmingFocusClickSound);
+  GG::Connect(m_button_food    ->RClickedSignal, &PlayFarmingFocusClickSound);
+  GG::Connect(m_button_mining  ->ClickedSignal, &PlayMiningFocusClickSound);
+  GG::Connect(m_button_mining  ->RClickedSignal, &PlayMiningFocusClickSound);
+  GG::Connect(m_button_research->ClickedSignal, &PlayResearchFocusClickSound);
+  GG::Connect(m_button_research->RClickedSignal, &PlayResearchFocusClickSound);
+  GG::Connect(m_button_industry->ClickedSignal, &PlayIndustryFocusClickSound);
+  GG::Connect(m_button_industry->RClickedSignal, &PlayIndustryFocusClickSound);
+  GG::Connect(m_button_balanced->ClickedSignal, &PlayBalancedFocusClickSound);
+  GG::Connect(m_button_balanced->RClickedSignal, &PlayBalancedFocusClickSound);
   // TODO: connect trade when it gets added
 
   AttachChild(m_button_food);AttachChild(m_button_mining);AttachChild(m_button_industry);
@@ -1016,9 +1015,9 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   const Planet *plt = GetUniverse().Object<const Planet>(m_planet_id);
 
   if (System* system = plt->GetSystem())
-    m_connection_system_changed = GG::Connect(system->StateChangedSignal(), &SidePanel::PlanetPanel::PlanetChanged, this);
-  m_connection_planet_changed = GG::Connect(plt->StateChangedSignal(), &SidePanel::PlanetPanel::PlanetChanged, this);
-  m_connection_planet_production_changed= GG::Connect(plt->ResourceCenterChangedSignal(), &SidePanel::PlanetPanel::PlanetResourceCenterChanged, this);
+    m_connection_system_changed = GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::PlanetChanged, this);
+  m_connection_planet_changed = GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::PlanetChanged, this);
+  m_connection_planet_production_changed= GG::Connect(plt->ResourceCenterChangedSignal, &SidePanel::PlanetPanel::PlanetResourceCenterChanged, this);
 
   Update();
 }
@@ -1246,7 +1245,7 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys)
   {
     if(GetOptionsDB().Get<bool>("UI.sound.enabled"))
       HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.planet-button-click"));
-	m_planet_image_lclick_sig(m_planet_id);
+	PlanetImageLClickedSignal(m_planet_id);
   }
 }
 
@@ -1482,7 +1481,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h
 {
   EnableChildClipping(true);
   AttachChild(m_vscroll);
-  Connect(m_vscroll->ScrolledSignal(), &SidePanel::PlanetPanelContainer::VScroll,this);
+  Connect(m_vscroll->ScrolledSignal, &SidePanel::PlanetPanelContainer::VScroll,this);
 }
 
 bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
@@ -1670,12 +1669,12 @@ SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
   m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0,130,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
   AttachChild(m_radio_btn_secondary_focus);
 
-  GG::Connect(planet->StateChangedSignal(), &SidePanel::PlanetView::PlanetChanged, this);
-  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal(), &SidePanel::PlanetView::PlanetResourceCenterChanged, this);
+  GG::Connect(planet->StateChangedSignal, &SidePanel::PlanetView::PlanetChanged, this);
+  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal, &SidePanel::PlanetView::PlanetResourceCenterChanged, this);
   PlanetChanged();
   PlanetResourceCenterChanged();
-  m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::PrimaryFocusClicked, this);
-  m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::SecondaryFocusClicked, this);
+  m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal, &SidePanel::PlanetView::PrimaryFocusClicked, this);
+  m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal, &SidePanel::PlanetView::SecondaryFocusClicked, this);
  }
 
 void SidePanel::PlanetView::PlanetChanged()
@@ -1800,8 +1799,8 @@ void SidePanel::PlanetView::PrimaryFocusClicked(int idx)
   if(planet->PrimaryFocus()!=ft)
     HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,true));
  
-  m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::PrimaryFocusClicked, this, boost::signals::at_front);
-  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal(), &SidePanel::PlanetView::PlanetResourceCenterChanged, this, boost::signals::at_front);
+  m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal, &SidePanel::PlanetView::PrimaryFocusClicked, this, boost::signals::at_front);
+  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal, &SidePanel::PlanetView::PlanetResourceCenterChanged, this, boost::signals::at_front);
 }
 
 void SidePanel::PlanetView::SecondaryFocusClicked(int idx)
@@ -1823,8 +1822,8 @@ void SidePanel::PlanetView::SecondaryFocusClicked(int idx)
   if(planet->SecondaryFocus()!=ft)
     HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,false));
 
-  m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal(), &SidePanel::PlanetView::SecondaryFocusClicked, this, boost::signals::at_front);
-  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal(), &SidePanel::PlanetView::PlanetResourceCenterChanged, this, boost::signals::at_front);
+  m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal, &SidePanel::PlanetView::SecondaryFocusClicked, this, boost::signals::at_front);
+  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal, &SidePanel::PlanetView::PlanetResourceCenterChanged, this, boost::signals::at_front);
 }
 
 bool SidePanel::PlanetView::Render()
@@ -2027,9 +2026,9 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
   AttachChild(m_system_resource_summary);
   AttachChild(m_planet_panel_container);
 
-  GG::Connect(m_system_name->SelChangedSignal(), &SidePanel::SystemSelectionChanged, this);
-  GG::Connect(m_button_prev->ClickedSignal(), &SidePanel::PrevButtonClicked, this);
-  GG::Connect(m_button_next->ClickedSignal(), &SidePanel::NextButtonClicked, this);
+  GG::Connect(m_system_name->SelChangedSignal, &SidePanel::SystemSelectionChanged, this);
+  GG::Connect(m_button_prev->ClickedSignal, &SidePanel::PrevButtonClicked, this);
+  GG::Connect(m_button_next->ClickedSignal, &SidePanel::NextButtonClicked, this);
 
   Hide();
 }
@@ -2098,8 +2097,8 @@ void SidePanel::SetSystem(int system_id)
 
     if (m_system)
     {
-      GG::Connect(m_system->FleetAddedSignal  (), &SidePanel::SystemFleetAdded  , this);
-      GG::Connect(m_system->FleetRemovedSignal(), &SidePanel::SystemFleetRemoved, this);
+      GG::Connect(m_system->FleetAddedSignal  , &SidePanel::SystemFleetAdded  , this);
+      GG::Connect(m_system->FleetRemovedSignal, &SidePanel::SystemFleetRemoved, this);
 
       std::vector<const System*> sys_vec = GetUniverse().FindObjects<const System>();
       GG::ListBox::Row *select_row=0;
@@ -2155,7 +2154,7 @@ void SidePanel::SetSystem(int system_id)
       std::pair<System::const_orbit_iterator, System::const_orbit_iterator> range = m_system->non_orbit_range();
       std::vector<const Fleet*> flt_vec = m_system->FindObjects<Fleet>();
       for(unsigned int i = 0; i < flt_vec.size(); i++) 
-        GG::Connect(flt_vec[i]->StateChangedSignal(), &SidePanel::FleetsChanged, this);
+        GG::Connect(flt_vec[i]->StateChangedSignal, &SidePanel::FleetsChanged, this);
 
       // add planets
       std::vector<const Planet*> plt_vec = m_system->FindObjects<Planet>();
@@ -2163,13 +2162,13 @@ void SidePanel::SetSystem(int system_id)
       m_planet_panel_container->SetPlanets(plt_vec, m_system->Star());
       for(unsigned int i = 0; i < plt_vec.size(); i++) 
       {
-        GG::Connect(plt_vec[i]->StateChangedSignal(), &SidePanel::PlanetsChanged, this);
-        GG::Connect(plt_vec[i]->ResourceCenterChangedSignal(), &SidePanel::PlanetsChanged, this);
+        GG::Connect(plt_vec[i]->StateChangedSignal, &SidePanel::PlanetsChanged, this);
+        GG::Connect(plt_vec[i]->ResourceCenterChangedSignal, &SidePanel::PlanetsChanged, this);
       }
 
       m_planet_panel_container->SetPlanets(plt_vec, m_system->Star());
       for(int i = 0; i < m_planet_panel_container->PlanetPanels(); i++) 
-        GG::Connect(m_planet_panel_container->GetPlanetPanel(i)->PlanetImageLClickedSignal(),&SidePanel::PlanetLClicked,this);
+        GG::Connect(m_planet_panel_container->GetPlanetPanel(i)->PlanetImageLClickedSignal,&SidePanel::PlanetLClicked,this);
 
       Show();PlanetsChanged();
       if(select_row==0)
@@ -2191,7 +2190,7 @@ void SidePanel::SetSystem(int system_id)
 
 void SidePanel::SystemFleetAdded  (const Fleet &flt)
 {
-  GG::Connect(flt.StateChangedSignal(), &SidePanel::FleetsChanged, this);
+  GG::Connect(flt.StateChangedSignal, &SidePanel::FleetsChanged, this);
   FleetsChanged();
 }
 

@@ -459,8 +459,8 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
 
     m_tech_graphic = 0;
 
-    GG::Connect(m_recenter_button->ClickedSignal(), &TechTreeWnd::TechDetailPanel::CenterClickedSlot, this);
-    GG::Connect(m_add_to_queue_button->ClickedSignal(), &TechTreeWnd::TechDetailPanel::AddToQueueClickedSlot, this);
+    GG::Connect(m_recenter_button->ClickedSignal, &TechTreeWnd::TechDetailPanel::CenterClickedSlot, this);
+    GG::Connect(m_add_to_queue_button->ClickedSignal, &TechTreeWnd::TechDetailPanel::AddToQueueClickedSlot, this);
 
     AttachChild(m_tech_name_text);
     AttachChild(m_category_and_type_text);
@@ -756,9 +756,9 @@ public:
     const std::string&           CategoryShown() const;
     TechTreeWnd::TechTypesShown  GetTechTypesShown() const;
 
-    TechBrowsedSignalType&       TechBrowsedSignal() const       {return m_tech_browsed_sig;}
-    TechClickedSignalType&       TechClickedSignal() const       {return m_tech_clicked_sig;}
-    TechDoubleClickedSignalType& TechDoubleClickedSignal() const {return m_tech_double_clicked_sig;}
+    mutable TechBrowsedSignalType       TechBrowsedSignal;
+    mutable TechClickedSignalType       TechClickedSignal;
+    mutable TechDoubleClickedSignalType TechDoubleClickedSignal;
     //@}
 
     //! \name Mutators //@{
@@ -810,10 +810,6 @@ private:
     CUIScroll*     m_hscroll;
     GG::Pt         m_scroll_position;
 
-    mutable TechBrowsedSignalType       m_tech_browsed_sig;
-    mutable TechClickedSignalType       m_tech_clicked_sig;
-    mutable TechDoubleClickedSignalType m_tech_double_clicked_sig;
-
     friend struct CollapseSubtreeFunctor;
 };
 
@@ -860,7 +856,7 @@ public:
     mutable boost::signal<void (const Tech*)> TechBrowsedSignal;
     mutable boost::signal<void (const Tech*)> TechClickedSignal;
     mutable boost::signal<void (const Tech*)> TechDoubleClickedSignal;
-    GG::StateButton::CheckedSignalType& CollapseSubtreeSignal() {return m_toggle_button->CheckedSignal();}
+    GG::StateButton::CheckedSignalType& CollapseSubtreeSignal() {return m_toggle_button->CheckedSignal;}
 
 private:
     GG::Rect ProgressPanelRect(const GG::Pt& ul, const GG::Pt& lr);
@@ -1081,8 +1077,8 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
     AttachChild(m_vscroll);
     AttachChild(m_hscroll);
 
-    GG::Connect(m_vscroll->ScrolledSignal(), &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
-    GG::Connect(m_hscroll->ScrolledSignal(), &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
+    GG::Connect(m_vscroll->ScrolledSignal, &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
+    GG::Connect(m_hscroll->ScrolledSignal, &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
 }
 
 GG::Pt TechTreeWnd::LayoutPanel::ClientLowerRight() const
@@ -1473,7 +1469,7 @@ void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int)
 
 void TechTreeWnd::LayoutPanel::TechBrowsedSlot(const Tech* tech)
 {
-    m_tech_browsed_sig(tech);
+    TechBrowsedSignal(tech);
 }
 
 void TechTreeWnd::LayoutPanel::TechClickedSlot(const Tech* tech)
@@ -1482,12 +1478,12 @@ void TechTreeWnd::LayoutPanel::TechClickedSlot(const Tech* tech)
         m_techs[m_selected_tech]->Select(false);
     if ((m_selected_tech = tech) && m_techs.find(m_selected_tech) != m_techs.end())
         m_techs[m_selected_tech]->Select(true);
-    m_tech_clicked_sig(tech);
+    TechClickedSignal(tech);
 }
 
 void TechTreeWnd::LayoutPanel::TechDoubleClickedSlot(const Tech* tech)
 {
-    m_tech_double_clicked_sig(tech);
+    TechDoubleClickedSignal(tech);
 }
 
 
@@ -1505,7 +1501,7 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     const int UNCOLLAPSE_ALL_BUTTON_WIDTH = 125;
     const int BUTTON_MARGIN = 4;
     m_uncollapse_all_button = new CUIButton(0, 0, UNCOLLAPSE_ALL_BUTTON_WIDTH, UserString("TECH_WND_UNCOLLAPSE_TECHS"));
-    GG::Connect(m_uncollapse_all_button->ClickedSignal(), &TechTreeWnd::UncollapseAll, this);
+    GG::Connect(m_uncollapse_all_button->ClickedSignal, &TechTreeWnd::UncollapseAll, this);
     AttachChild(m_uncollapse_all_button);
 
     const int NAVIGATOR_WIDTH = 214;
@@ -1529,18 +1525,18 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     const int BUTTON_SPACING = BUTTON_WIDTH + BUTTON_MARGIN;
     for (unsigned int i = 0; i < tech_categories.size(); ++i) {
         m_category_buttons.push_back(new CUIButton(BUTTON_MARGIN / 2 + i * BUTTON_SPACING, NAVIGATOR_AND_DETAIL_HEIGHT + 2, BUTTON_WIDTH, UserString(tech_categories[i])));
-        GG::Connect(m_category_buttons.back()->ClickedSignal(), SelectCategoryFunctor(this, tech_categories[i]));
+        GG::Connect(m_category_buttons.back()->ClickedSignal, SelectCategoryFunctor(this, tech_categories[i]));
         AttachChild(m_category_buttons.back());
     }
     m_category_buttons.push_back(new CUIButton(BUTTON_MARGIN / 2 + tech_categories.size() * BUTTON_SPACING, NAVIGATOR_AND_DETAIL_HEIGHT + 2, BUTTON_WIDTH, UserString("TECH_WND_ALL_TECH_CATEGORIES")));
-    GG::Connect(m_category_buttons.back()->ClickedSignal(), SelectCategoryFunctor(this, "ALL"));
+    GG::Connect(m_category_buttons.back()->ClickedSignal, SelectCategoryFunctor(this, "ALL"));
     AttachChild(m_category_buttons.back());
 
     m_layout_panel = new LayoutPanel(w, h - (LAYOUT_MARGIN_TOP + LAYOUT_MARGIN_BOTTOM));
     m_layout_panel->OffsetMove(0, LAYOUT_MARGIN_TOP);
-    GG::Connect(m_layout_panel->TechBrowsedSignal(), &TechTreeWnd::TechBrowsedSlot, this);
-    GG::Connect(m_layout_panel->TechClickedSignal(), &TechTreeWnd::TechClickedSlot, this);
-    GG::Connect(m_layout_panel->TechDoubleClickedSignal(), &TechTreeWnd::TechDoubleClickedSlot, this);
+    GG::Connect(m_layout_panel->TechBrowsedSignal, &TechTreeWnd::TechBrowsedSlot, this);
+    GG::Connect(m_layout_panel->TechClickedSignal, &TechTreeWnd::TechClickedSlot, this);
+    GG::Connect(m_layout_panel->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
     AttachChild(m_layout_panel);
 
     boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
@@ -1561,7 +1557,7 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     text_width = font->TextExtent(UserString("TECH_WND_TECH_TYPES_THEORIES_ONLY")).x + RADIO_BUTTON_MARGIN;
     m_tech_type_buttons->AddButton(new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM, UserString("TECH_WND_TECH_TYPES_THEORIES_ONLY"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
     m_tech_type_buttons->SetCheck(0);
-    GG::Connect(m_tech_type_buttons->ButtonChangedSignal(), &TechTreeWnd::TechTypesShownSlot, this);
+    GG::Connect(m_tech_type_buttons->ButtonChangedSignal, &TechTreeWnd::TechTypesShownSlot, this);
     AttachChild(m_tech_type_buttons);
 }
 
@@ -1615,19 +1611,19 @@ void TechTreeWnd::CenterOnTech(const Tech* tech)
 
 void TechTreeWnd::TechBrowsedSlot(const Tech* tech)
 {
-    m_tech_browsed_sig(tech);
+    TechBrowsedSignal(tech);
 }
 
 void TechTreeWnd::TechClickedSlot(const Tech* tech)
 {
     m_tech_navigator->SetTech(tech);
     m_tech_detail_panel->SetTech(tech);
-    m_tech_selected_sig(tech);
+    TechSelectedSignal(tech);
 }
 
 void TechTreeWnd::TechDoubleClickedSlot(const Tech* tech)
 {
-    m_add_tech_to_queue_sig(tech);
+    AddTechToQueueSignal(tech);
 }
 
 void TechTreeWnd::TechTypesShownSlot(int types)

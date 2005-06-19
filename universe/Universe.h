@@ -192,7 +192,7 @@ public:
 
     virtual GG::XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
 
-    UniverseObjectDeleteSignalType& UniverseObjectDeleteSignal() const {return m_universe_object_delete_sig;} ///< returns the state changed signal object for this UniverseObject
+    mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
 
     /** \name Mutators */ //@{
@@ -332,8 +332,6 @@ protected:
     std::set<int> m_marked_destroyed;
 
     static double s_universe_width;
-
-    mutable UniverseObjectDeleteSignalType m_universe_object_delete_sig;
 
 private:
     static bool s_inhibit_universe_object_signals;

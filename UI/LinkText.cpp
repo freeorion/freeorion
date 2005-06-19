@@ -103,19 +103,19 @@ void LinkText::LClick(const GG::Pt& pt, Uint32 keys)
     int sel_link = GetLinkUnderPt(pt);
     if (sel_link == m_old_sel_link && sel_link != -1) {
         if (m_links[sel_link].type == "planet") {
-            m_planet_sig(lexical_cast<int>(m_links[sel_link].data));
+            PlanetLinkSignal(lexical_cast<int>(m_links[sel_link].data));
         } else if (m_links[sel_link].type == "system") {
-            m_system_sig(lexical_cast<int>(m_links[sel_link].data));
+            SystemLinkSignal(lexical_cast<int>(m_links[sel_link].data));
         } else if (m_links[sel_link].type == "fleet") {
-            m_fleet_sig(lexical_cast<int>(m_links[sel_link].data));
+            FleetLinkSignal(lexical_cast<int>(m_links[sel_link].data));
         } else if (m_links[sel_link].type == "ship") {
-            m_ship_sig(lexical_cast<int>(m_links[sel_link].data));
+            ShipLinkSignal(lexical_cast<int>(m_links[sel_link].data));
         } else if (m_links[sel_link].type == "tech") {
-            m_tech_sig(m_links[sel_link].data);
+            TechLinkSignal(m_links[sel_link].data);
         } else if (m_links[sel_link].type == "building") {
-            m_building_sig(m_links[sel_link].data);
+            BuildingLinkSignal(m_links[sel_link].data);
         } else if (m_links[sel_link].type == "encyclopedia") {
-            m_encyclopedia_sig(m_links[sel_link].data);
+            EncyclopediaLinkSignal(m_links[sel_link].data);
         }
     }
     m_old_sel_link = -1;
