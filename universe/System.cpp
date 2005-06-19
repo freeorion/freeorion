@@ -235,7 +235,7 @@ int System::Insert(int obj_id, int orbit)
     }
     if (!already_in_system) {
         m_objects.insert(insertion);
-        if (Planet *planet = GetUniverse().Object<Planet>(obj_id))
+        if (GetUniverse().Object<Planet>(obj_id))
             UpdateOwnership();
         if (Fleet *fleet = GetUniverse().Object<Fleet>(obj_id))
             FleetAddedSignal()(*fleet);
@@ -252,7 +252,7 @@ bool System::Remove(int id)
             GetUniverse().Object(it->second)->SetSystem(INVALID_OBJECT_ID);
             m_objects.erase(it);
             retval = true;
-            if (Planet *planet = GetUniverse().Object<Planet>(id))
+            if (GetUniverse().Object<Planet>(id))
                 UpdateOwnership();
             if (Fleet *fleet = GetUniverse().Object<Fleet>(id))
                 FleetRemovedSignal()(*fleet);

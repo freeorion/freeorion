@@ -2266,7 +2266,7 @@ void Universe::DestroyImpl(int id)
             Delete (*it);
         }
         Delete(id);
-    } else if (System* system = universe_object_cast<System*>(obj)) {
+    } else if (universe_object_cast<System*>(obj)) {
         // unsupported: do nothing
     } else {
         Delete(id);

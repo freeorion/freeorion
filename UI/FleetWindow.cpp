@@ -689,14 +689,14 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
                    Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
     MapWndPopup("", x, y, 1, 1, flags),
     m_empire_id(-1),
+    m_system_id(UniverseObject::INVALID_OBJECT_ID),
     m_read_only(read_only),
     m_moving_fleets(true),
     m_current_fleet(-1),
     m_fleets_lb(0),
-    m_fleet_detail_panel(0),
-    m_system_id(UniverseObject::INVALID_OBJECT_ID)
+    m_fleet_detail_panel(0)
 {
-    assert(0 <= selected_fleet && selected_fleet < fleets.size());
+    assert(0 <= selected_fleet && selected_fleet < static_cast<int>(fleets.size()));
 
     if(fleets.size()>0)
     {
@@ -735,8 +735,8 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
 FleetWnd::FleetWnd( const GG::XMLElement& elem) : 
     MapWndPopup(elem.Child("CUI_Wnd")),
     m_empire_id(-1),
-    m_read_only(true),
-    m_system_id(UniverseObject::INVALID_OBJECT_ID)
+    m_system_id(UniverseObject::INVALID_OBJECT_ID),
+    m_read_only(true)
 {
     // TODO : implement as needed (note that the initializations above must be changed as well)
     m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal(), &FleetWnd::UniverseObjectDelete, this);

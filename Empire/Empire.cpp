@@ -402,7 +402,7 @@ std::vector<ProductionQueue::const_iterator> ProductionQueue::find(BuildType bui
 
 const ProductionQueue::Element& ProductionQueue::operator[](int i) const
 {
-    assert(0 <= i && i < m_queue.size());
+    assert(0 <= i && i < static_cast<int>(m_queue.size()));
     return m_queue[i];
 }
 
@@ -486,7 +486,7 @@ void ProductionQueue::insert(iterator it, const Element& element)
 
 void ProductionQueue::erase(int i)
 {
-    assert(i <= size());
+    assert(i <= static_cast<int>(size()));
     m_queue.erase(begin() + i);
 }
 
@@ -521,7 +521,7 @@ std::vector<ProductionQueue::iterator> ProductionQueue::find(BuildType build_typ
 
 ProductionQueue::Element& ProductionQueue::operator[](int i)
 {
-    assert(0 <= i && i < m_queue.size());
+    assert(0 <= i && i < static_cast<int>(m_queue.size()));
     return m_queue[i];
 }
 
@@ -550,8 +550,8 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_mineral_resource_pool(),
     m_food_resource_pool(),
     m_research_resource_pool(),
-    m_industry_resource_pool(),
     m_population_resource_pool(),
+    m_industry_resource_pool(),
     m_trade_resource_pool()
 {}
 
@@ -561,8 +561,8 @@ Empire::Empire(const GG::XMLElement& elem) :
     m_mineral_resource_pool(elem.Child("m_mineral_resource_pool").Child("MineralResourcePool")),
     m_food_resource_pool(elem.Child("m_food_resource_pool").Child("FoodResourcePool")),
     m_research_resource_pool(elem.Child("m_research_resource_pool").Child("ResearchResourcePool")),
-    m_industry_resource_pool(elem.Child("m_industry_resource_pool").Child("IndustryResourcePool")),
     m_population_resource_pool(elem.Child("m_population_resource_pool").Child("PopulationResourcePool")),
+    m_industry_resource_pool(elem.Child("m_industry_resource_pool").Child("IndustryResourcePool")),
     m_trade_resource_pool(elem.Child("m_trade_resource_pool").Child("TradeResourcePool"))
 
 {
@@ -1064,6 +1064,9 @@ void Empire::CheckProductionProgress()
                 AddSitRepEntry(CreateBaseBuiltSitRep(planet->SystemID(), planet->ID()));
                 break;
             }
+
+            default:
+                break;
             }
 
             if (!--m_production_queue[i].remaining) {
