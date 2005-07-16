@@ -11,6 +11,7 @@
 #include "../UI/TechWnd.h"
 
 #include <boost/format.hpp>
+#include <cmath>
 
 namespace {
     const int RESEARCH_INFO_AND_QUEUE_WIDTH = 325;

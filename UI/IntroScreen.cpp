@@ -18,6 +18,7 @@
 #include "ServerConnectWnd.h"
 
 #include <cstdlib>
+#include <fstream>
 #include <string>
 
 namespace {
@@ -143,7 +144,7 @@ IntroScreen::IntroScreen() :
             static_cast<int>(GG::App::GetApp()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.x") - MAIN_MENU_WIDTH / 2),
             static_cast<int>(GG::App::GetApp()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.y") - MAIN_MENU_HEIGHT / 2),
             MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
-    m_credits_wnd(NULL)
+    m_credits_wnd(0)
 {
     boost::shared_ptr<GG::Texture> texture00 = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash00.png");
     boost::shared_ptr<GG::Texture> texture01 = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash01.png");
@@ -198,41 +199,20 @@ IntroScreen::IntroScreen() :
     GG::Connect(m_exit_game->ClickedSignal, &IntroScreen::OnExitGame, this);
 }
 
-IntroScreen::IntroScreen(const GG::XMLElement &elem):
-    CUI_Wnd(elem.Child("CUI_Wnd"))
-{
-    //TODO: load from XML
-}
-
 IntroScreen::~IntroScreen()
 {
-    GG::App::GetApp()->Remove(m_bg_graphic00);
-    GG::App::GetApp()->Remove(m_bg_graphic01);
-    GG::App::GetApp()->Remove(m_bg_graphic10);
-    GG::App::GetApp()->Remove(m_bg_graphic11);
     delete m_bg_graphic00;
     delete m_bg_graphic01;
     delete m_bg_graphic10;
     delete m_bg_graphic11;
-
-    if(m_credits_wnd){
-        GG::App::GetApp()->Register(m_credits_wnd);
-        delete m_credits_wnd;
-    }
-}
-
-GG::XMLElement IntroScreen::XMLEncode() const
-{
-    GG::XMLElement retval("IntroScreen");
-    //TODO: encode to XML
-    return retval;
+    delete m_credits_wnd;
 }
 
 void IntroScreen::OnSinglePlayer()
 {
-    if(m_credits_wnd){
-        GG::App::GetApp()->Register(m_credits_wnd);
-        delete m_credits_wnd;m_credits_wnd=0;
+    if (m_credits_wnd) {
+        delete m_credits_wnd;
+        m_credits_wnd = 0;
     }
     using boost::lexical_cast;
     using std::string;
@@ -254,7 +234,7 @@ void IntroScreen::OnSinglePlayer()
         game_parameters.root_node.AppendChild(GG::XMLElement("num_players", lexical_cast<string>(num_AIs + 1)));
         game_parameters.root_node.AppendChild(galaxy_wnd.Panel().XMLEncode());
         game_parameters.root_node.AppendChild(GG::XMLElement("empire_name", galaxy_wnd.EmpireName()));
-        game_parameters.root_node.AppendChild(GG::XMLElement("empire_color", galaxy_wnd.EmpireColor().XMLEncode()));
+        game_parameters.root_node.AppendChild(GG::XMLElement("empire_color", ClrToXML(galaxy_wnd.EmpireColor())));
 
         for (int i = 0; i < num_AIs; ++i) {
             game_parameters.root_node.AppendChild(GG::XMLElement("AI_client"));
@@ -283,9 +263,9 @@ void IntroScreen::OnSinglePlayer()
 
 void IntroScreen::OnMultiPlayer()
 {
-    if(m_credits_wnd){
-        GG::App::GetApp()->Register(m_credits_wnd);
-        delete m_credits_wnd;m_credits_wnd=0;
+    if (m_credits_wnd) {
+        delete m_credits_wnd;
+        m_credits_wnd = 0;
     }
     bool failed = false;
     Hide();
@@ -334,9 +314,9 @@ void IntroScreen::OnMultiPlayer()
 
 void IntroScreen::OnLoadGame()
 {  
-    if(m_credits_wnd){
-        GG::App::GetApp()->Register(m_credits_wnd);
-        delete m_credits_wnd;m_credits_wnd=0;
+    if (m_credits_wnd) {
+        delete m_credits_wnd;
+        m_credits_wnd = 0;
     }
     Hide();
     if (!HumanClientApp::GetApp()->LoadSinglePlayerGame())
@@ -345,9 +325,9 @@ void IntroScreen::OnLoadGame()
 
 void IntroScreen::OnOptions()
 {
-    if(m_credits_wnd){
-        GG::App::GetApp()->Register(m_credits_wnd);
-        delete m_credits_wnd;m_credits_wnd=0;
+    if (m_credits_wnd) {
+        delete m_credits_wnd;
+        m_credits_wnd = 0;
     }
     OptionsWnd options_wnd;
 	options_wnd.Run();
@@ -355,9 +335,9 @@ void IntroScreen::OnOptions()
 
 void IntroScreen::OnAbout()
 {
-    if(m_credits_wnd){
-        GG::App::GetApp()->Register(m_credits_wnd);
-        delete m_credits_wnd;m_credits_wnd=0;
+    if (m_credits_wnd) {
+        delete m_credits_wnd;
+        m_credits_wnd = 0;
     }
     About about_wnd;
     about_wnd.Run();
@@ -365,9 +345,9 @@ void IntroScreen::OnAbout()
 
 void IntroScreen::OnCredits()
 {
-    if(m_credits_wnd){
-        GG::App::GetApp()->Register(m_credits_wnd);
-        delete m_credits_wnd;m_credits_wnd=0;
+    if (m_credits_wnd) {
+        delete m_credits_wnd;
+        m_credits_wnd = 0;
     }
 
     GG::XMLDoc doc;
@@ -395,9 +375,9 @@ void IntroScreen::OnCredits()
 
 void IntroScreen::OnExitGame()
 {
-    if(m_credits_wnd){
-        GG::App::GetApp()->Register(m_credits_wnd);
-        delete m_credits_wnd;m_credits_wnd=0;
+    if (m_credits_wnd) {
+        delete m_credits_wnd;
+        m_credits_wnd = 0;
     }
     //exit the application
     GG::App::GetApp()->Exit(0); //exit with 0, good error code

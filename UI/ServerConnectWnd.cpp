@@ -73,12 +73,6 @@ ServerConnectWnd::ServerConnectWnd() :
     Init();
 }
 
-ServerConnectWnd::ServerConnectWnd(const GG::XMLElement& elem) : 
-    CUI_Wnd(elem.Child("CUI_Wnd"))
-{
-    // TODO : implement if needed
-}
-
 void ServerConnectWnd::ModalInit()
 {
     GG::App::GetApp()->SetFocusWnd(m_player_name_edit);

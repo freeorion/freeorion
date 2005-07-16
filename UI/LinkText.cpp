@@ -57,17 +57,6 @@ LinkText::LinkText(int x, int y, const std::string& str, const std::string& font
     Init();
 }
 
-LinkText::LinkText(const GG::XMLElement& elem) : 
-    GG::TextControl(elem.Child("GG::TextControl")),
-    m_old_sel_link(-1),
-    m_old_rollover_link(-1)
-{
-    if (elem.Tag() != "LinkText")
-        throw std::invalid_argument("Attempted to construct a LinkText from an XMLElement that had a tag other than \"LinkText\"");
-   
-    Init();
-}
-
 bool LinkText::Render()
 {
 #if RENDER_DEBUGGING_LINK_RECTS
@@ -145,13 +134,6 @@ void LinkText::SetText(const std::string& str)
 {
     GG::TextControl::SetText(str);
     FindLinks();
-}
-
-GG::XMLElement LinkText::XMLEncode() const
-{
-    GG::XMLElement retval("LinkText");
-    retval.AppendChild(GG::TextControl::XMLEncode());
-    return retval;
 }
 
 void LinkText::Init()

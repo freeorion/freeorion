@@ -29,8 +29,9 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 
-#include <stdexcept>
 #include <cmath>
+#include <fstream>
+#include <stdexcept>
 
 namespace {
     // for UniverseObject factory

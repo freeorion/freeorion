@@ -62,7 +62,6 @@ public:
     CUIButton(int x, int y, int w, const std::string& str, const std::string& font_filename = ClientUI::FONT, int pts = ClientUI::PTS, 
               GG::Clr color = ClientUI::BUTTON_COLOR, GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int thick = 1, 
               GG::Clr text_color = ClientUI::TEXT_COLOR, Uint32 flags = GG::Wnd::CLICKABLE); ///< basic ctor
-    CUIButton(const GG::XMLElement& elem); ///< ctor that constructs a CUIButton object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIButton object
     //@}
 
     /** \name Accessors */ //@{
@@ -70,7 +69,6 @@ public:
     int         BorderThickness() const {return m_border_thick;} ///< returns the width used to render the border of the button
 
     virtual bool            InWindow(const GG::Pt& pt) const;
-    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIButton object
     //@}
 
     /** \name Mutators */ //@{
@@ -98,11 +96,6 @@ public:
     CUITurnButton(int x, int y, int w, const std::string& str, const std::string& font_filename = ClientUI::FONT, int pts = ClientUI::PTS, 
                   GG::Clr color = ClientUI::BUTTON_COLOR, GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int thick = 1, 
                   GG::Clr text_color = ClientUI::TEXT_COLOR, Uint32 flags = GG::Wnd::CLICKABLE); ///< basic ctor
-    CUITurnButton(const GG::XMLElement& elem); ///< ctor that constructs a CUITurnButton object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUITurnButton object
-    //@}
-
-    /** \name Accessors */ //@{
-    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUITurnButton object
     //@}
 };
 
@@ -113,12 +106,10 @@ class CUIArrowButton : public GG::Button
 public:
     /** \name Structors */ //@{
     CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orientation, GG::Clr color, Uint32 flags = GG::Wnd::CLICKABLE); ///< basic ctor
-    CUIArrowButton(const GG::XMLElement& elem); ///< ctor that constructs a CUIScroll::ScrollTab object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIScroll::ScrollTab object
     //@}
 
     /** \name Accessors */ //@{
     virtual bool            InWindow(const GG::Pt& pt) const;
-    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIScroll::ScrollTab object
     //@}
 
     /** \name Mutators */ //@{
@@ -150,13 +141,10 @@ public:
                    int pts = ClientUI::PTS, GG::Clr text_color = ClientUI::TEXT_COLOR, GG::Clr interior = GG::CLR_ZERO, 
                    GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int bn_x = -1, int bn_y = -1, int bn_w = -1, int bn_h = -1, 
                    Uint32 flags = CLICKABLE); ///< ctor
-    CUIStateButton(const GG::XMLElement& elem); ///< ctor that constructs a CUIStateButton object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIStateButton object
     //@}
 
     /** \name Accessors */ //@{
     GG::Clr     BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
-
-    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a Button object
     //@}
 
     /** \name Mutators */ //@{
@@ -179,8 +167,6 @@ public:
     {
     public:
         ScrollTab(GG::Scroll::Orientation orientation, int scroll_width, GG::Clr color, GG::Clr border_color); ///< basic ctor
-        ScrollTab(const GG::XMLElement& elem); ///< ctor that constructs a CUIScroll::ScrollTab object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIScroll::ScrollTab object
-        virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIScroll::ScrollTab object
         virtual bool Render();
     private:
         GG::Clr m_border_color;
@@ -190,13 +176,10 @@ public:
     /** \name Structors */ //@{
     CUIScroll(int x, int y, int w, int h, Orientation orientation, GG::Clr color = GG::CLR_ZERO, 
               GG::Clr border = ClientUI::CTRL_BORDER_COLOR, GG::Clr interior = GG::CLR_ZERO, Uint32 flags = CLICKABLE); ///< basic ctor
-    CUIScroll(const GG::XMLElement& elem); ///< ctor that constructs a CUIScroll object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIScroll object
     //@}
 
     /** \name Accessors */ //@{
     GG::Clr BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the control
-
-    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIScroll object
     //@}
 
     /** \name Mutators */ //@{
@@ -222,12 +205,6 @@ public:
     /** ctor that allows the specification of column widths */
     CUIListBox(int x, int y, int w, int h, const std::vector<int>& col_widths, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, 
                GG::Clr interior = GG::CLR_ZERO, Uint32 flags = CLICKABLE | DRAG_KEEPER);
-
-    CUIListBox(const GG::XMLElement& elem); ///< ctor that constructs a CUIListBox object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIListBox object
-    //@}
-
-    /** \name Accessors */ //@{
-    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIListBox object
     //@}
 
     /** \name Mutators */ //@{
@@ -250,12 +227,6 @@ public:
     CUIDropDownList(int x, int y, int w, int row_ht, int drop_ht, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, 
                     GG::Clr interior = ClientUI::DROP_DOWN_LIST_INT_COLOR, GG::Clr drop_list_interior = ClientUI::DROP_DOWN_LIST_INT_COLOR, 
                     Uint32 flags = CLICKABLE); ///< basic ctor
-
-    CUIDropDownList(const GG::XMLElement& elem); ///< ctor that constructs a CUIDropDownList object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIDropDownList object
-    //@}
-
-    /** \name Accessors */ //@{
-    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIDropDownList object
     //@}
 
     /** \name Mutators */ //@{
@@ -280,12 +251,6 @@ public:
     CUIEdit(int x, int y, int w, int h, const std::string& str, const std::string& font_filename = ClientUI::FONT, 
             int pts = ClientUI::PTS, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr text_color = ClientUI::TEXT_COLOR, 
             GG::Clr interior = ClientUI::EDIT_INT_COLOR, Uint32 flags = CLICKABLE | DRAG_KEEPER); ///< basic ctor
-
-    CUIEdit(const GG::XMLElement& elem); ///< ctor that constructs a CUIEdit object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIEdit object
-    //@}
-
-    /** \name Accessors */ //@{
-    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIDropDownList object
     //@}
 
     /** \name Mutators */ //@{
@@ -302,12 +267,6 @@ public:
     CUIMultiEdit(int x, int y, int w, int h, const std::string& str, Uint32 style = GG::TF_LINEWRAP, const std::string& font_filename = ClientUI::FONT, 
                  int pts = ClientUI::PTS, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr text_color = ClientUI::TEXT_COLOR, 
                  GG::Clr interior = ClientUI::MULTIEDIT_INT_COLOR, Uint32 flags = CLICKABLE | DRAG_KEEPER); ///< basic ctor
-
-    CUIMultiEdit(const GG::XMLElement& elem); ///< ctor that constructs a CUIListBox object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIListBox object
-    //@}
-
-    /** \name Accessors */ //@{
-    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIListBox object
     //@}
 
     /** \name Mutators */ //@{
@@ -328,11 +287,6 @@ class CUISlider : public GG::Slider
 public:
     /** \name Structors */ //@{
     CUISlider(int x, int y, int w, int h, int min, int max, Orientation orientation, Uint32 flags = CLICKABLE);
-    CUISlider(const GG::XMLElement& elem);
-    //@}
-
-    /** \name Accessors */ //@{
-    virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUISlider object
     //@}
 
     /** \name Mutators */ //@{

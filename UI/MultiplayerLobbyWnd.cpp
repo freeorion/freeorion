@@ -191,12 +191,6 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     HumanClientApp::GetApp()->SetLobby(this);
 }
 
-MultiplayerLobbyWnd::MultiplayerLobbyWnd(const GG::XMLElement& elem) : 
-    CUI_Wnd(elem.Child("CUI_Wnd"))
-{
-    // TODO : implement if needed
-}
-
 MultiplayerLobbyWnd::~MultiplayerLobbyWnd()
 {
     HumanClientApp::GetApp()->SetLobby(0);

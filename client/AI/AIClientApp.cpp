@@ -12,6 +12,8 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
+#include <fstream>
+
 
 namespace {
     bool temp_header_bool = RecordHeaderFile(AIClientAppRevision());

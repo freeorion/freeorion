@@ -61,15 +61,6 @@ void SigHandler(int sig)
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
-    GG::Wnd* NewCUIButton(const GG::XMLElement& elem)         {return new CUIButton(elem);}
-    GG::Wnd* NewCUIStateButton(const GG::XMLElement& elem)    {return new CUIStateButton(elem);}
-    GG::Wnd* NewCUIScroll(const GG::XMLElement& elem)         {return new CUIScroll(elem);}
-    GG::Wnd* NewCUIScrollTab(const GG::XMLElement& elem)      {return new CUIScroll::ScrollTab(elem);}
-    GG::Wnd* NewCUIListBox(const GG::XMLElement& elem)        {return new CUIListBox(elem);}
-    GG::Wnd* NewCUIDropDownList(const GG::XMLElement& elem)   {return new CUIDropDownList(elem);}
-    GG::Wnd* NewCUIEdit(const GG::XMLElement& elem)           {return new CUIEdit(elem);}
-    GG::Wnd* NewCUIMultiEdit(const GG::XMLElement& elem)      {return new CUIMultiEdit(elem);}
-
     // command-line options
     void AddOptions(OptionsDB& db)
     {
@@ -207,14 +198,6 @@ HumanClientApp::HumanClientApp() :
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
 #endif
-    AddWndGenerator("CUIButton", &NewCUIButton);
-    AddWndGenerator("CUIStateButton", &NewCUIStateButton);
-    AddWndGenerator("CUIScroll", &NewCUIScroll);
-    AddWndGenerator("CUIScroll::ScrollTab", &NewCUIScrollTab);
-    AddWndGenerator("CUIListBox", &NewCUIListBox);
-    AddWndGenerator("CUIDropDownList", &NewCUIDropDownList);
-    AddWndGenerator("CUIEdit", &NewCUIEdit);
-    AddWndGenerator("CUIMultiEdit", &NewCUIMultiEdit);
 
     Logger().setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
 

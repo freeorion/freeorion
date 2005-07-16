@@ -11,12 +11,13 @@
 #include "../universe/UniverseObject.h"
 
 #include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
 
-
+#include <fstream>
 #include <vector>
-using std::vector;
 
+
+using boost::lexical_cast;
+using std::vector;
 using GG::XMLElement;
 
 // TEMPORARY!  This should go into some sort of external

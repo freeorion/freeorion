@@ -6,6 +6,8 @@
 #include "Planet.h"
 #include "Predicates.h"
 
+#include <fstream>
+
 namespace {
     // loads and stores BuildingTypes specified in [settings-dir]/buildings.xml
     class BuildingTypeManager

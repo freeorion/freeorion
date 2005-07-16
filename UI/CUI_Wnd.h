@@ -26,11 +26,8 @@ public:
              };
               
    CUI_MinRestoreButton(int x, int y); ///< basic ctor
-   CUI_MinRestoreButton(const GG::XMLElement& elem); ///< ctor that constructs a CUI_MinRestoreButton object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUI_MinRestoreButton object
 
    Mode GetMode() const {return m_mode;} ///< returns the current mode of this button (is it a minimize button or a restore button?)
-
-   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a CUI_MinRestoreButton object
 
    bool Render();
 
@@ -45,9 +42,6 @@ class CUI_CloseButton : public GG::Button
 {
 public:
    CUI_CloseButton(int x, int y);
-   CUI_CloseButton(const GG::XMLElement& elem); ///< ctor that constructs a CUI_CloseButton object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUI_CloseButton object
-
-   virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a CUI_CloseButton object
 
    bool Render();
 };
@@ -97,15 +91,12 @@ public:
 
     //! \name Structors //@{
     CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags = GG::Wnd::CLICKABLE); //!< Constructs the window to be a CUI window
-    CUI_Wnd(const GG::XMLElement& elem); //!< Construction through XML
     ~CUI_Wnd();    //!< Destructor
     //@}
 
     //! \name Accessors //@{
     bool Minimized() const {return m_minimized;} //!< returns true if window is minimized
     virtual bool InWindow(const GG::Pt& pt) const;
-
-    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a CUI_Wnd object
     //@}
 
     //! \name Mutators //@{

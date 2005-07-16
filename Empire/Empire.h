@@ -24,6 +24,7 @@
 
 #include <boost/tuple/tuple.hpp>
 
+#include <deque>
 #include <list>
 #include <string>
 

@@ -50,32 +50,6 @@ public:
             GG::Spin<T>::GetEdit()->SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
     }
 
-    /** ctor that constructs an CUISpin object from an XMLElement. \throw std::invalid_argument May throw 
-        std::invalid_argument if \a elem does not encode a CUISpin object*/
-    CUISpin(const GG::XMLElement& elem) : 
-        GG::Spin<T>(elem.Child(GG::Spin<T>::XMLTypeName()))
-    {
-        if (elem.Tag() != XMLTypeName())
-            throw std::invalid_argument("Attempted to construct a " + XMLTypeName() + " from an XMLElement that had a tag other than \"" + XMLTypeName() + "\"");
-
-#ifdef _MSC_VER
-        GG::Connect(ValueChangedSignal, &detail::PlayValueChangedSound, -1);
-#else
-        GG::Connect(GG::Spin<T>::ValueChangedSignal, &detail::PlayValueChangedSound<T>, -1);
-#endif
-    }
-    //@}
-
-    /** \name Accessors */ //@{
-    /** constructs an XMLElement from a CUISpin object*/
-    virtual GG::XMLElement XMLEncode() const
-    {
-        GG::XMLElement retval(XMLTypeName());
-        retval.AppendChild(GG::Spin<T>::XMLEncode());
-        return retval;
-    }
-    //@}
-
     /** \name Mutators */ //@{
     virtual bool Render()
     {

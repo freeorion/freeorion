@@ -19,6 +19,7 @@
 #include "SidePanel.h"
 
 #include <boost/format.hpp>
+#include <iostream>
 
 namespace {
     const int NEW_FLEET_BUTTON_WIDTH = 75;
@@ -396,30 +397,6 @@ FleetDetailPanel::FleetDetailPanel(int x, int y, Fleet* fleet, bool read_only, U
     m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetDetailPanel::UniverseObjectDelete, this);
 }
 
-FleetDetailPanel::FleetDetailPanel(const GG::XMLElement& elem) : 
-    Wnd(elem.Child("GG::ListBox")),
-    m_read_only(boost::lexical_cast<bool>(elem.Child("m_read_only").Attribute("value")))
-{
-    if (elem.Tag() != "FleetDetailPanel")
-        throw std::invalid_argument("Attempted to construct a FleetDetailPanel from an XMLElement that had a tag other than \"FleetDetailPanel\"");
-
-    const GG::XMLElement* curr_elem = &elem.Child("m_fleet");
-    SetFleet(GetUniverse().Object<Fleet>(boost::lexical_cast<int>(curr_elem->Attribute("value"))));
-
-    curr_elem = &elem.Child("m_destination_text");
-    m_destination_text = new GG::TextControl(*curr_elem);
-
-    curr_elem = &elem.Child("m_ships_lb");
-    m_ships_lb = new CUIListBox(*curr_elem);
-
-    curr_elem = &elem.Child("m_ship_status_text");
-    m_ship_status_text = new GG::TextControl(*curr_elem);
-
-    Init();
-
-    m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetDetailPanel::UniverseObjectDelete, this);
-}
-
 FleetDetailPanel::~FleetDetailPanel()
 {
   m_universe_object_delete_connection.disconnect();
@@ -428,33 +405,6 @@ FleetDetailPanel::~FleetDetailPanel()
 int FleetDetailPanel::GetShipIDOfListRow(int row_idx) const
 {
     return dynamic_cast<ShipRow&>(m_ships_lb->GetRow(row_idx)).ShipID();
-}
-
-GG::XMLElement FleetDetailPanel::XMLEncode() const
-{
-    GG::XMLElement retval("FleetDetailPanel");
-    const_cast<FleetDetailPanel*>(this)->DetachSignalChildren();
-    retval.AppendChild(Wnd::XMLEncode());
-    const_cast<FleetDetailPanel*>(this)->AttachSignalChildren();
-
-    GG::XMLElement temp("m_fleet");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_fleet ? m_fleet->ID() : UniverseObject::INVALID_OBJECT_ID));
-    retval.AppendChild(temp);
-
-    temp = GG::XMLElement("m_read_only");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_read_only));
-    retval.AppendChild(temp);
-
-    temp = GG::XMLElement("m_destination_text");
-    temp.AppendChild(m_destination_text->XMLEncode());
-
-    temp = GG::XMLElement("m_ships_lb");
-    temp.AppendChild(m_ships_lb->XMLEncode());
-
-    temp = GG::XMLElement("m_ship_status_text");
-    temp.AppendChild(m_ship_status_text->XMLEncode());
-
-    return retval;
 }
 
 void FleetDetailPanel::SetFleet(Fleet* fleet)
@@ -638,12 +588,6 @@ FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint3
     EnableChildClipping(false);
 }
 
-FleetDetailWnd::FleetDetailWnd(const GG::XMLElement& elem) : 
-    CUI_Wnd(elem.Child("CUI_Wnd"))
-{
-    // TODO : implement as needed
-}
-
 FleetDetailWnd::~FleetDetailWnd()
 {
 }
@@ -728,18 +672,6 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
 
     if (const System* system = fleets.back()->GetSystem())
         m_system_changed_connection = Connect(system->StateChangedSignal, &FleetWnd::SystemChangedSlot, this);
-
-    s_open_fleet_wnds.insert(this);
-}
-
-FleetWnd::FleetWnd( const GG::XMLElement& elem) : 
-    MapWndPopup(elem.Child("CUI_Wnd")),
-    m_empire_id(-1),
-    m_system_id(UniverseObject::INVALID_OBJECT_ID),
-    m_read_only(true)
-{
-    // TODO : implement as needed (note that the initializations above must be changed as well)
-    m_universe_object_delete_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetWnd::UniverseObjectDelete, this);
 
     s_open_fleet_wnds.insert(this);
 }

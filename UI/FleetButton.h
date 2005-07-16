@@ -23,12 +23,10 @@ public:
     /** \name Structors */ //@{
     FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, double zoom); ///< ctor for moving fleets
     FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs, ShapeOrientation orientation); ///< ctor for a fleets at a System
-    FleetButton(const GG::XMLElement& elem); ///< ctor that constructs a FleetButton object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a FleetButton object
     //@}
 
     /** \name Accessors */ //@{
     virtual bool           InWindow(const GG::Pt& pt) const;
-    virtual GG::XMLElement XMLEncode() const;
 
     const std::vector<Fleet*>& Fleets() const {return m_fleets;} ///< returns the ID numbers of the fleets represented by this control
 

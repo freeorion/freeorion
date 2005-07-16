@@ -70,52 +70,10 @@ FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::v
     GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetButton::FleetDeleted, this);
 }
 
-FleetButton::FleetButton(const GG::XMLElement& elem) : 
-    Button(elem.Child("GG::Button")),
-    m_compliment(0)
-{
-    if (elem.Tag() != "FleetButton")
-        throw std::invalid_argument("Attempted to construct a FleetButton from an XMLElement that had a tag other than \"FleetButton\"");
-
-    const GG::XMLElement* curr_elem = &elem.Child("m_orientation");
-    m_orientation = ShapeOrientation(boost::lexical_cast<int>(curr_elem->Attribute("value")));
-
-    curr_elem = &elem.Child("m_fleets");
-    Universe& universe = GetUniverse();
-    for (int i = 0; i < curr_elem->NumChildren(); ++i) {
-        m_fleets.push_back(universe.Object<Fleet>(boost::lexical_cast<int>(curr_elem->Child(i).Attribute("value"))));
-    }
-
-    GG::Connect(ClickedSignal, &FleetButton::Clicked, this);
-    GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetButton::FleetDeleted, this);
-}
-
 bool FleetButton::InWindow(const GG::Pt& pt) const
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     return InFleetMarker(pt, ul.x, ul.y, lr.x, lr.y, m_orientation);
-}
-
-GG::XMLElement FleetButton::XMLEncode() const
-{
-    GG::XMLElement retval("FleetButton");
-    retval.AppendChild(Button::XMLEncode());
-
-    GG::XMLElement temp;
-
-    temp = GG::XMLElement("m_orientation");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_orientation));
-    retval.AppendChild(temp);
-
-    temp = GG::XMLElement("m_fleets");
-    for (unsigned int i = 0; i < m_fleets.size(); ++i) {
-        GG::XMLElement temp2("ID");
-        temp2.SetAttribute("value", boost::lexical_cast<std::string>(m_fleets[i]->ID()));
-        temp.AppendChild(temp2);
-    }
-    retval.AppendChild(temp);
-
-    return retval;
 }
 
 void FleetButton::MouseHere(const GG::Pt& pt, Uint32 keys)

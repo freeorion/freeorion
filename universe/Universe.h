@@ -6,6 +6,10 @@
 #include "../util/SitRepEntry.h"
 #endif
 
+#ifndef BOOST_SERIALIZATION_SHARED_PTR_HPP
+#include <boost/serialization/shared_ptr.hpp>
+#endif
+
 #ifndef BOOST_SIGNAL_HPP
 #include <boost/signal.hpp>
 #endif

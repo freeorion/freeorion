@@ -10,6 +10,12 @@
 /** The colors that are available for use for empires in the game. */
 const std::vector<GG::Clr>& EmpireColors();
 
+/** Returns an XML representation of a GG::Clr object. */
+GG::XMLElement ClrToXML(const GG::Clr& clr);
+
+/** Returns a GG::Clr object constructed from its XML representation. */
+GG::Clr XMLToClr(const GG::XMLElement& clr);
+
 /** Returns the integer priority level that should be passed to log4cpp for a given priority name string. */
 int PriorityValue(const std::string& name);
 

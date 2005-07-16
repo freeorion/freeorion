@@ -42,15 +42,12 @@ public:
 
     /** \name Structors */ //@{
     FleetDetailPanel(int x, int y, Fleet* fleet, bool read_only, Uint32 flags = 0); ///< ctor
-    FleetDetailPanel(const GG::XMLElement& elem); ///< ctor that constructs a FleetViewPanel object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a FleetViewPanel object
     virtual ~FleetDetailPanel();
     //@}
 
     /** \name Accessors */ //@{
     int          GetShipIDOfListRow(int row_idx) const; ///< returns the ID number of the ship in row \a row_idx of the ships listbox
     Fleet*       GetFleet() const {return m_fleet;} ///< returns the currently-displayed fleet (may be 0)
-
-    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a FleetViewPanel object
 
     mutable PanelEmptySignalType   PanelEmptySignal;
     mutable NeedNewFleetSignalType NeedNewFleetSignal;
@@ -104,7 +101,6 @@ public:
 
     /** \name Structors */ //@{
     FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint32 flags = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE); ///< basic ctor
-    FleetDetailWnd(const GG::XMLElement& elem); ///< ctor that constructs a FleetContentsWnd object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a FleetContentsWnd object
     ~FleetDetailWnd(); ///< dtor
     //@}
 
@@ -146,8 +142,6 @@ public:
     /** \name Structors */ //@{
     /** constructs a fleet window for fleets in transit between systems */
     FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only, Uint32 flags = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE);
-
-    FleetWnd(const GG::XMLElement& elem); ///< ctor that constructs a FleetsWnd object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a FleetsWnd object
     ~FleetWnd(); ///< dtor
     //@}
 

@@ -85,29 +85,6 @@ CUI_MinRestoreButton::CUI_MinRestoreButton(int x, int y) :
     GG::Connect(ClickedSignal, &CUI_MinRestoreButton::Toggle, this);
 }
 
-CUI_MinRestoreButton::CUI_MinRestoreButton(const GG::XMLElement& elem) : 
-    GG::Button(elem.Child("GG::Button"))
-{
-    if (elem.Tag() != "CUI_MinRestoreButton")
-        throw std::invalid_argument("Attempted to construct a CUI_MinRestoreButton from an XMLElement that had a tag other than \"CUI_MinRestoreButton\"");
-
-    m_mode = static_cast<Mode>(boost::lexical_cast<int>(elem.Child("m_mode").Attribute("value")));
-
-    GG::Connect(ClickedSignal, &CUI_MinRestoreButton::Toggle, this);
-}
-
-GG::XMLElement CUI_MinRestoreButton::XMLEncode() const
-{
-    GG::XMLElement retval("CUI_MinRestoreButton");
-    retval.AppendChild(GG::Button::XMLEncode());
-
-    GG::XMLElement temp("m_mode");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_mode));
-    retval.AppendChild(temp);
-
-    return retval;
-}
-   
 bool CUI_MinRestoreButton::Render()
 {
     GG::Pt ul = UpperLeft();
@@ -150,22 +127,6 @@ CUI_CloseButton::CUI_CloseButton(int x, int y) :
     GG::Connect(ClickedSignal, &PlayCloseSound, -1);
 }
 
-CUI_CloseButton::CUI_CloseButton(const GG::XMLElement& elem) : 
-    GG::Button(elem.Child("GG::Button"))
-{
-    if (elem.Tag() != "CUI_CloseButton")
-        throw std::invalid_argument("Attempted to construct a CUI_CloseButton from an XMLElement that had a tag other than \"CUI_CloseButton\"");
-
-    GG::Connect(ClickedSignal, &PlayCloseSound, -1);
-}
-
-GG::XMLElement CUI_CloseButton::XMLEncode() const
-{
-    GG::XMLElement retval("CUI_CloseButton");
-    retval.AppendChild(GG::Button::XMLEncode());
-    return retval;
-}
-   
 bool CUI_CloseButton::Render()
 {
     GG::Pt ul = UpperLeft();
@@ -224,48 +185,8 @@ CUI_Wnd::CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags)
     EnableChildClipping(true);
 }
 
-CUI_Wnd::CUI_Wnd(const GG::XMLElement& elem) : 
-    GG::Wnd(elem.Child("GG::Wnd"))
-{
-    if (elem.Tag() != "CUI_Wnd")
-        throw std::invalid_argument("Attempted to construct a CUI_Wnd from an XMLElement that had a tag other than \"CUI_Wnd\"");
-
-    m_resizable = boost::lexical_cast<bool>(elem.Child("m_resizable").Attribute("value"));
-    m_closable = boost::lexical_cast<bool>(elem.Child("m_closable").Attribute("value"));
-    m_minimizable = boost::lexical_cast<bool>(elem.Child("m_minimizable").Attribute("value"));
-    m_minimized = boost::lexical_cast<bool>(elem.Child("m_minimized").Attribute("value"));
-
-    InitButtons();
-}
-
 CUI_Wnd::~CUI_Wnd()
 {
-}
-
-GG::XMLElement CUI_Wnd::XMLEncode() const
-{
-    GG::XMLElement retval("CUI_Wnd");
-    retval.AppendChild(GG::Wnd::XMLEncode());
-
-    GG::XMLElement temp;
-
-    temp = GG::XMLElement("m_resizable");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_resizable));
-    retval.AppendChild(temp);
-
-    temp = GG::XMLElement("m_closable");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_closable));
-    retval.AppendChild(temp);
-
-    temp = GG::XMLElement("m_minimizable");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_minimizable));
-    retval.AppendChild(temp);
-
-    temp = GG::XMLElement("m_minimized");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_minimized));
-    retval.AppendChild(temp);
-
-    return retval;
 }
 
 void CUI_Wnd::SizeMove(int x1, int y1, int x2, int y2)

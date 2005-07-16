@@ -2,10 +2,6 @@
 #ifndef _ResourcePool_h_
 #define _ResourcePool_h_
 
-#ifndef BOOST_SIGNAL_HPP
-#include <boost/signal.hpp>
-#endif
-
 #ifndef _Universe_h_
 #  include "../universe/Universe.h"
 #endif

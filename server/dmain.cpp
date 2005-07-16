@@ -2,6 +2,8 @@
 
 #include "../util/OptionsDB.h"
 
+#include <iostream>
+
 #ifdef WITH_PYTHON
 #  include <boost/python.hpp>
 #  include <Python.h>

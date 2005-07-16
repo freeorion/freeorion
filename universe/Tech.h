@@ -2,12 +2,13 @@
 #ifndef _Tech_h_
 #define _Tech_h_
 
+#include <boost/serialization/shared_ptr.hpp>
+
 #include "Enums.h"
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/key_extractors.hpp>
 #include <boost/multi_index/ordered_index.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include <set>
 #include <string>

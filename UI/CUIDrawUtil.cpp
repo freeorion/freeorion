@@ -2,6 +2,8 @@
 
 #include "../util/MultiplayerCommon.h"
 
+#include <cmath>
+
 namespace {
     void FindIsoscelesTriangleVertices(int x1, int y1, int x2, int y2, ShapeOrientation orientation,
                                        int& x1_, int& y1_, int& x2_, int& y2_, int& x3_, int& y3_)

@@ -2,9 +2,10 @@
 #ifndef _Process_h_
 #define _Process_h_
 
+#include <boost/serialization/shared_ptr.hpp>
+
 #include <vector>
 #include <string>
-#include <boost/shared_ptr.hpp>
 
 // assume Linux environment by default
 #if (!defined(FREEORION_WIN32) && !defined(FREEORION_LINUX))

@@ -50,8 +50,6 @@ public:
         Window size is determined from the string and font; the window will be large enough to fit the text as rendered, 
         and no larger.  \see DynamicText::DynamicText() */
     LinkText(int x, int y, const std::string& str, const std::string& font_filename, int pts, GG::Clr color = GG::CLR_BLACK, Uint32 flags = CLICKABLE);
-   
-    LinkText(const GG::XMLElement& elem); ///< ctor that constructs a LinkText object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a LinkText object
     //@}
 
     /** \name Mutators */ //@{
@@ -74,8 +72,6 @@ public:
     mutable StringSignalType TechLinkSignal;         ///< returns the tech link signal object for this LinkText
     mutable StringSignalType BuildingLinkSignal;     ///< returns the building link signal object for this LinkText
     mutable StringSignalType EncyclopediaLinkSignal; ///< returns the encyclopedia link signal object for this LinkText
-
-    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a LinkText object
     //@}
     
 private:

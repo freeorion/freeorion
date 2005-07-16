@@ -2,12 +2,12 @@
 #ifndef _Message_h_
 #define _Message_h_
 
-#ifndef   _XMLDoc_h_
-#include "XMLDoc.h"
+#ifndef BOOST_SERIALIZATION_SHARED_PTR_HPP
+#include <boost/serialization/shared_ptr.hpp>
 #endif
 
-#ifndef BOOST_SHARED_PTR_HPP_INCLUDED
-#include <boost/shared_ptr.hpp>
+#ifndef   _XMLDoc_h_
+#include "XMLDoc.h"
 #endif
 
 #include <string>

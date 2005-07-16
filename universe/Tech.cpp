@@ -8,6 +8,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include <sstream>
+#include <fstream>
 
 
 namespace {

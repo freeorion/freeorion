@@ -118,11 +118,6 @@ MapWndPopup::MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint
     ClientUI::GetClientUI()->GetMapWnd()->RegisterPopup( this );
 }
 
-MapWndPopup::MapWndPopup(const GG::XMLElement& elem):
-    CUI_Wnd( elem )
-{
-}
-
 MapWndPopup::~MapWndPopup( )
 {
     // remove from map wnd
@@ -309,13 +304,15 @@ GG::Pt MapWnd::ClientUpperLeft() const
 GG::XMLElement MapWnd::SaveGameData() const
 {
     GG::XMLElement retval("MapWnd");
-    retval.AppendChild(GG::XMLElement("upper_left", UpperLeft().XMLEncode()));
+    retval.AppendChild(GG::XMLElement("upper_left_x", boost::lexical_cast<std::string>(UpperLeft().x)));
+    retval.AppendChild(GG::XMLElement("upper_left_y", boost::lexical_cast<std::string>(UpperLeft().y)));
     retval.AppendChild(GG::XMLElement("m_zoom_factor", boost::lexical_cast<std::string>(m_zoom_factor)));
     retval.AppendChild(GG::XMLElement("m_nebulae"));
     for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
         retval.LastChild().AppendChild(GG::XMLElement("nebula" + boost::lexical_cast<std::string>(i)));
         retval.LastChild().LastChild().AppendChild(GG::XMLElement("filename", m_nebulae[i]->Filename()));
-        retval.LastChild().LastChild().AppendChild(GG::XMLElement("position", m_nebula_centers[i].XMLEncode()));
+        retval.LastChild().LastChild().AppendChild(GG::XMLElement("position_x", boost::lexical_cast<std::string>(m_nebula_centers[i].x)));
+        retval.LastChild().LastChild().AppendChild(GG::XMLElement("position_y", boost::lexical_cast<std::string>(m_nebula_centers[i].y)));
     }
     return retval;
 }
@@ -661,7 +658,10 @@ void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
     }
 
     GG::Pt ul = UpperLeft();
-    GG::Pt map_move = GG::Pt(elem.Child("upper_left").Child("GG::Pt")) - ul;
+    GG::Pt map_move =
+        GG::Pt(boost::lexical_cast<int>(elem.Child("upper_left_x").Text()),
+               boost::lexical_cast<int>(elem.Child("upper_left_y").Text())) -
+        ul;
     OffsetMove(map_move);
     MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
@@ -687,7 +687,8 @@ void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
     for (int i = 0; i < nebulae.NumChildren(); ++i) {
         const GG::XMLElement& curr_nebula = nebulae.Child(i);
         m_nebulae.push_back(GG::App::GetApp()->GetTexture(curr_nebula.Child("filename").Text()));
-        m_nebula_centers.push_back(GG::Pt(curr_nebula.Child("position").Child("GG::Pt")));
+        m_nebula_centers.push_back(GG::Pt(boost::lexical_cast<int>(curr_nebula.Child("position_x").Text()),
+                                          boost::lexical_cast<int>(curr_nebula.Child("position_y").Text())));
     }
 }
 

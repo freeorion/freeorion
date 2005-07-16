@@ -3,6 +3,8 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 
+#include <fstream>
+
 
 namespace {
     class SpecialManager

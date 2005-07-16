@@ -25,12 +25,7 @@ class IntroScreen : public CUI_Wnd
 public:
     /** \name Structors*/ //!@{
     IntroScreen();                              //!< default ctor
-    IntroScreen(const GG::XMLElement &elem);    //!< construction from an XML element
     ~IntroScreen();                             //!< default dtor
-    //!@}
-
-    /** \name Accessors*/ //!@{
-    virtual GG::XMLElement XMLEncode() const;   //!< load from XML element
     //!@}
 
     /** \name Mutators*/ //!@{

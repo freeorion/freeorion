@@ -125,7 +125,7 @@ namespace {
                         data.id = boost::lexical_cast<int>(elem.Child("m_id").Text());
                         data.name = elem.Child("m_name").Text();
                         data.player_name = elem.Child("m_player_name").Text();
-                        data.color = GG::Clr(elem.Child("m_color").Child("GG::Clr"));
+                        data.color = XMLToClr(elem.Child("m_color").Child("GG::Clr"));
                         save_game_empire_data.push_back(data);
                     }
                 }
@@ -1109,7 +1109,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                 g_lobby_data.players.clear();
                 g_lobby_data.players.push_back(PlayerSetupData());
                 g_lobby_data.players.back().empire_name = doc.root_node.Child("empire_name").Text();
-                g_lobby_data.players.back().empire_color = GG::Clr(doc.root_node.Child("empire_color").Child("GG::Clr"));
+                g_lobby_data.players.back().empire_color = XMLToClr(doc.root_node.Child("empire_color").Child("GG::Clr"));
                 m_state = SERVER_GAME_SETUP;
                 if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
                     m_network_core.SendMessage(HostAckMessage(player_id));
@@ -1491,6 +1491,7 @@ void ServerApp::LoadGameInit()
 
 bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, const PlayerInfo& connection, const GG::XMLDoc& doc)
 {
+#if 0
     std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
     if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
         settings_dir += '/';
@@ -1531,7 +1532,7 @@ bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, co
         }
         return true;
     }
-
+#endif
     return false;
 }
 
@@ -1632,7 +1633,7 @@ GG::XMLDoc ServerApp::LobbyStartDoc() const
 
     retval.root_node.AppendChild(GG::XMLElement("empire_colors"));
     for (unsigned int i = 0; i < g_lobby_data.empire_colors.size(); ++i) {
-        retval.root_node.LastChild().AppendChild(g_lobby_data.empire_colors[i].XMLEncode());
+        retval.root_node.LastChild().AppendChild(ClrToXML(g_lobby_data.empire_colors[i]));
     }
 
     retval.root_node.AppendChild(GG::XMLElement("players"));

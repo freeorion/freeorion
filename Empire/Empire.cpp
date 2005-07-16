@@ -574,7 +574,7 @@ Empire::Empire(const GG::XMLElement& elem) :
     m_id = lexical_cast<int>(elem.Child("m_id").Text());
     m_name = elem.Child("m_name").Text();
     m_player_name = elem.Child("m_player_name").Text();
-    m_color = GG::Clr(elem.Child("m_color").Child("GG::Clr"));
+    m_color = XMLToClr(elem.Child("m_color").Child("GG::Clr"));
     m_homeworld_id = elem.Child("m_homeworld_id").Text().empty() ? 
         UniverseObject::INVALID_OBJECT_ID :
         lexical_cast<int>(elem.Child("m_homeworld_id").Text());
@@ -890,7 +890,7 @@ GG::XMLElement Empire::XMLEncode() const
     retval.AppendChild(XMLElement("m_id", lexical_cast<std::string>(m_id)));
     retval.AppendChild(XMLElement("m_name", m_name));
     retval.AppendChild(XMLElement("m_player_name", m_player_name));
-    retval.AppendChild(XMLElement("m_color", m_color.XMLEncode()));
+    retval.AppendChild(XMLElement("m_color", ClrToXML(m_color)));
     retval.AppendChild(XMLElement("m_homeworld_id", lexical_cast<std::string>(m_homeworld_id)));
 
     retval.AppendChild(XMLElement("m_sitrep_entries"));
@@ -951,7 +951,7 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
     retval.AppendChild(XMLElement("m_id", lexical_cast<std::string>(m_id)));
     retval.AppendChild(XMLElement("m_name", m_name));
     retval.AppendChild(XMLElement("m_player_name", m_player_name));
-    retval.AppendChild(XMLElement("m_color", m_color.XMLEncode()));
+    retval.AppendChild(XMLElement("m_color", ClrToXML(m_color)));
 
     // leave these in, but unpopulated or default-populated
     retval.AppendChild(XMLElement("m_homeworld_id"));

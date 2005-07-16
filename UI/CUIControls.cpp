@@ -147,42 +147,11 @@ CUIButton::CUIButton(int x, int y, int w, const std::string& str, const std::str
     GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
 }
 
-CUIButton::CUIButton(const GG::XMLElement& elem) : 
-    Button(elem.Child("GG::Button"))
-{
-    if (elem.Tag() != "CUIButton")
-        throw std::invalid_argument("Attempted to construct a CUIButton from an XMLElement that had a tag other than \"CUIButton\"");
-
-    const GG::XMLElement* curr_elem = &elem.Child("m_border_color");
-    m_border_color = GG::Clr(curr_elem->Child("GG::Clr"));
-
-    curr_elem = &elem.Child("m_border_thick");
-    m_border_thick = boost::lexical_cast<int>(curr_elem->Attribute("value"));
-
-    GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
-}
-
 bool CUIButton::InWindow(const GG::Pt& pt) const
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     return InAngledCornerRect(pt, ul.x, ul.y, lr.x, lr.y, CUIBUTTON_ANGLE_OFFSET);
-}
-
-GG::XMLElement CUIButton::XMLEncode() const
-{
-    GG::XMLElement retval("CUIButton");
-    retval.AppendChild(GG::Button::XMLEncode());
-
-    GG::XMLElement temp("m_border_color");
-    temp.AppendChild(m_border_color.XMLEncode());
-    retval.AppendChild(temp);
-
-    temp = GG::XMLElement("m_border_thick");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_border_thick));
-    retval.AppendChild(temp);
-
-    return retval;
 }
 
 void CUIButton::MouseHere(const GG::Pt& pt, Uint32 keys)
@@ -244,22 +213,6 @@ CUITurnButton::CUITurnButton(int x, int y, int w, const std::string& str, const 
     GG::Connect(ClickedSignal, &PlayTurnButtonClickSound, -1);
 }
 
-CUITurnButton::CUITurnButton(const GG::XMLElement& elem) : 
-    CUIButton(elem.Child("CUIButton"))
-{
-    if (elem.Tag() != "CUITurnButton")
-        throw std::invalid_argument("Attempted to construct a CUITurnButton from an XMLElement that had a tag other than \"CUITurnButton\"");
-
-    GG::Connect(ClickedSignal, &PlayTurnButtonClickSound, -1);
-}
-
-GG::XMLElement CUITurnButton::XMLEncode() const
-{
-    GG::XMLElement retval("CUITurnButton");
-    retval.AppendChild(CUIButton::XMLEncode());
-    return retval;
-}
-
 
 ///////////////////////////////////////
 // class CUIArrowButton
@@ -271,34 +224,10 @@ CUIArrowButton::CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orie
     GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
 }
 
-CUIArrowButton::CUIArrowButton(const GG::XMLElement& elem) : 
-    Button(elem.Child("GG::Button"))
-{
-    if (elem.Tag() != "CUIArrowButton")
-        throw std::invalid_argument("Attempted to construct a CUIArrowButton from an XMLElement that had a tag other than \"CUIArrowButton\"");
-
-    const GG::XMLElement* curr_elem = &elem.Child("m_orientation");
-    m_orientation = ShapeOrientation(boost::lexical_cast<int>(curr_elem->Attribute("value")));
-
-    GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
-}
-
 bool CUIArrowButton::InWindow(const GG::Pt& pt) const
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     return InIsoscelesTriangle(pt, ul.x, ul.y, lr.x, lr.y, m_orientation);
-}
-
-GG::XMLElement CUIArrowButton::XMLEncode() const
-{
-    GG::XMLElement retval("CUIArrowButton");
-    retval.AppendChild(GG::Button::XMLEncode());
-
-    GG::XMLElement temp("m_orientation");
-    temp.SetAttribute("value", boost::lexical_cast<std::string>(m_orientation));
-    retval.AppendChild(temp);
-
-    return retval;
 }
 
 void CUIArrowButton::MouseHere(const GG::Pt& pt, Uint32 keys)
@@ -348,36 +277,6 @@ CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& st
     // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
     // checking the redering style
     GG::Connect(CheckedSignal, PlayButtonCheckSound(style == CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON), -1);
-}
-
-CUIStateButton::CUIStateButton(const GG::XMLElement& elem) : 
-    StateButton(elem.Child("GG::StateButton"))
-{
-    if (elem.Tag() != "CUIStateButton")
-        throw std::invalid_argument("Attempted to construct a CUIStateButton from an XMLElement that had a tag other than \"CUIStateButton\"");
-
-    const GG::XMLElement* curr_elem = &elem.Child("m_border_color");
-    m_border_color = GG::Clr(curr_elem->Child("GG::Clr"));
-
-    // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
-    // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
-    // checking the redering style
-    GG::Connect(CheckedSignal,
-                PlayButtonCheckSound(static_cast<int>(StateButton::Style()) ==
-                                     static_cast<int>(CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON)),
-                -1);
-}
-
-GG::XMLElement CUIStateButton::XMLEncode() const
-{
-    GG::XMLElement retval("CUIStateButton");
-    retval.AppendChild(StateButton::XMLEncode());
-
-    GG::XMLElement temp("m_border_color");
-    temp.AppendChild(m_border_color.XMLEncode());
-    retval.AppendChild(temp);
-
-    return retval;
 }
 
 bool CUIStateButton::Render()
@@ -493,26 +392,6 @@ CUIScroll::ScrollTab::ScrollTab(GG::Scroll::Orientation orientation, int scroll_
                       m_orientation == GG::Scroll::VERTICAL ? 10 : MinSize().y));
 }
 
-CUIScroll::ScrollTab::ScrollTab(const GG::XMLElement& elem) : 
-    Button(elem.Child("GG::Button"))
-{
-    if (elem.Tag() != "CUIScroll::ScrollTab")
-        throw std::invalid_argument("Attempted to construct a CUIScroll::ScrollTab from an XMLElement that had a tag other than \"CUIScroll::ScrollTab\"");
-    m_border_color = GG::Clr(elem.Child("m_border_color").Child("GG::Clr"));
-}
-
-GG::XMLElement CUIScroll::ScrollTab::XMLEncode() const
-{
-    GG::XMLElement retval("CUIScroll::ScrollTab");
-    retval.AppendChild(Button::XMLEncode());
-
-    GG::XMLElement temp("m_border_color");
-    temp.AppendChild(m_border_color.XMLEncode());
-    retval.AppendChild(temp);
-
-    return retval;
-}
-
 bool CUIScroll::ScrollTab::Render()
 {
     GG::Pt ul = UpperLeft();
@@ -579,26 +458,6 @@ CUIScroll::CUIScroll(int x, int y, int w, int h, GG::Scroll::Orientation orienta
 {
 }
 
-CUIScroll::CUIScroll(const GG::XMLElement& elem) : 
-    Scroll(elem.Child("GG::Scroll"))
-{
-    if (elem.Tag() != "CUIScroll")
-        throw std::invalid_argument("Attempted to construct a CUIScroll from an XMLElement that had a tag other than \"CUIScroll\"");
-    m_border_color = GG::Clr(elem.Child("m_border_color").Child("GG::Clr"));
-}
-
-GG::XMLElement CUIScroll::XMLEncode() const
-{
-    GG::XMLElement retval("CUIScroll");
-    retval.AppendChild(Scroll::XMLEncode());
-
-    GG::XMLElement temp("m_border_color");
-    temp.AppendChild(m_border_color.XMLEncode());
-    retval.AppendChild(temp);
-
-    return retval;
-}
-
 bool CUIScroll::Render()
 {
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
@@ -652,20 +511,6 @@ CUIListBox::CUIListBox(int x, int y, int w, int h, const std::vector<int>& col_w
     EnableChildClipping(false); // this is already done by GG::ListBox, and setting this would interfere
 }
 
-CUIListBox::CUIListBox(const GG::XMLElement& elem) : 
-    ListBox(elem.Child("GG::ListBox"))
-{
-    RecreateScrolls();
-    EnableChildClipping(false); // this is already done by GG::ListBox, and setting this would interfere
-}
-
-GG::XMLElement CUIListBox::XMLEncode() const
-{
-    GG::XMLElement retval("CUIListBox");
-    retval.AppendChild(ListBox::XMLEncode());
-    return retval;
-}
-
 bool CUIListBox::Render()
 {
     GG::Clr color = Color(); // save color
@@ -710,25 +555,6 @@ CUIDropDownList::CUIDropDownList(int x, int y, int w, int row_ht, int drop_ht, G
     m_render_drop_arrow(true),
     m_interior_color(interior)
 {
-}
-
-CUIDropDownList::CUIDropDownList(const GG::XMLElement& elem) : 
-    DropDownList(elem.Child("GG::DropDownList"))
-{
-    if (elem.Tag() != "CUIDropDownList")
-        throw std::invalid_argument("Attempted to construct a CUIDropDownList from an XMLElement that had a tag other than \"CUIDropDownList\"");
-
-    m_render_drop_arrow = boost::lexical_cast<bool>(elem.Child("m_render_drop_arrow").Text());
-    m_interior_color = GG::Clr(elem.Child("m_interior_color"));
-}
-
-GG::XMLElement CUIDropDownList::XMLEncode() const
-{
-    GG::XMLElement retval("CUIDropDownList");
-    retval.AppendChild(DropDownList::XMLEncode());
-    retval.AppendChild(GG::XMLElement("m_render_drop_arrow", boost::lexical_cast<std::string>(m_render_drop_arrow)));
-    retval.AppendChild(m_interior_color.XMLEncode());
-    return retval;
 }
 
 bool CUIDropDownList::Render()
@@ -796,22 +622,6 @@ CUIEdit::CUIEdit(int x, int y, int w, int h, const std::string& str, const std::
     SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
 }
 
-CUIEdit::CUIEdit(const GG::XMLElement& elem) : 
-    Edit(elem.Child("GG::Edit"))
-{
-    if (elem.Tag() != "CUIEdit")
-        throw std::invalid_argument("Attempted to construct a CUIEdit from an XMLElement that had a tag other than \"CUIEdit\"");
-
-    GG::Connect(EditedSignal, &PlayTextTypingSound, -1);
-}
-
-GG::XMLElement CUIEdit::XMLEncode() const
-{
-    GG::XMLElement retval("CUIEdit");
-    retval.AppendChild(Edit::XMLEncode());
-    return retval;
-}
-
 bool CUIEdit::Render()
 {
     GG::Clr color = Color();
@@ -841,21 +651,6 @@ CUIMultiEdit::CUIMultiEdit(int x, int y, int w, int h, const std::string& str, U
 {
     RecreateScrolls();
     SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
-}
-
-CUIMultiEdit::CUIMultiEdit(const GG::XMLElement& elem) : 
-    MultiEdit(elem.Child("GG::MultiEdit"))
-{
-    if (elem.Tag() != "CUIMultiEdit")
-        throw std::invalid_argument("Attempted to construct a CUIMultiEdit from an XMLElement that had a tag other than \"CUIMultiEdit\"");
-    RecreateScrolls();
-}
-
-GG::XMLElement CUIMultiEdit::XMLEncode() const
-{
-    GG::XMLElement retval("CUIMultiEdit");
-    retval.AppendChild(MultiEdit::XMLEncode());
-    return retval;
 }
 
 bool CUIMultiEdit::Render()
@@ -899,20 +694,6 @@ CUISlider::CUISlider(int x, int y, int w, int h, int min, int max, Orientation o
                                     ClientUI::SCROLL_TAB_COLOR, ClientUI::CTRL_BORDER_COLOR),
            5, flags)
 {
-}
-
-CUISlider::CUISlider(const GG::XMLElement& elem) :
-    Slider(elem.Child("GG::Slider"))
-{
-    if (elem.Tag() != "CUISlider")
-        throw std::invalid_argument("Attempted to construct a CUISlider from an XMLElement that had a tag other than \"CUISlider\"");
-}
-
-GG::XMLElement CUISlider::XMLEncode() const
-{
-    GG::XMLElement retval("CUISlider");
-    retval.AppendChild(Slider::XMLEncode());
-    return retval;
 }
 
 bool CUISlider::Render()

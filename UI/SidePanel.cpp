@@ -30,6 +30,8 @@
 
 #include "MapWnd.h"
 
+#include <fstream>
+
 using boost::lexical_cast;
 
 #define ROTATING_PLANET_IMAGES 1 // set this to 1 to use the OpenGL-rendered rotating planets code
@@ -208,7 +210,7 @@ namespace {
             if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").NumChildren()) {
                 for (GG::XMLElement::child_iterator it = doc.root_node.Child("GLStars").child_begin(); it != doc.root_node.Child("GLStars").child_end(); ++it) {
                     std::vector<float>& color_vec = light_colors[lexical_cast<StarType>(it->Child("star_type").Text())];
-                    GG::Clr color(it->Child("GG::Clr"));
+                    GG::Clr color(XMLToClr(it->Child("GG::Clr")));
                     color_vec.push_back(color.r / 255.0);
                     color_vec.push_back(color.g / 255.0);
                     color_vec.push_back(color.b / 255.0);

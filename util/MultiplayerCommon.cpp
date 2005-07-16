@@ -7,6 +7,7 @@
 #include <log4cpp/Priority.hh>
 
 #include <fstream>
+#include <iostream>
 
 namespace {
     // command-line options
@@ -54,10 +55,30 @@ const std::vector<GG::Clr>& EmpireColors()
         doc.ReadDoc(ifs);
         ifs.close();
         for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
-            colors.push_back(GG::Clr(doc.root_node.Child(i)));
+            colors.push_back(XMLToClr(doc.root_node.Child(i)));
         }
     }
     return colors;
+}
+
+GG::XMLElement ClrToXML(const GG::Clr& clr)
+{
+    GG::XMLElement retval("GG::Clr");
+    retval.AppendChild(GG::XMLElement("red", boost::lexical_cast<std::string>(static_cast<int>(clr.r))));
+    retval.AppendChild(GG::XMLElement("green", boost::lexical_cast<std::string>(static_cast<int>(clr.g))));
+    retval.AppendChild(GG::XMLElement("blue", boost::lexical_cast<std::string>(static_cast<int>(clr.b))));
+    retval.AppendChild(GG::XMLElement("alpha", boost::lexical_cast<std::string>(static_cast<int>(clr.a))));
+    return retval;
+}
+
+GG::Clr XMLToClr(const GG::XMLElement& clr)
+{
+    GG::Clr retval;
+    retval.r = boost::lexical_cast<int>(clr.Child("red").Text());
+    retval.g = boost::lexical_cast<int>(clr.Child("green").Text());
+    retval.b = boost::lexical_cast<int>(clr.Child("blue").Text());
+    retval.a = boost::lexical_cast<int>(clr.Child("alpha").Text());
+    return retval;
 }
 
 int PriorityValue(const std::string& name)
@@ -187,7 +208,7 @@ SaveGameEmpireData::SaveGameEmpireData(const GG::XMLElement& elem)
     id = boost::lexical_cast<int>(elem.Child("id").Text());
     name = elem.Child("name").Text();
     player_name = elem.Child("player_name").Text();
-    color = GG::Clr(elem.Child("color").Child("GG::Clr"));
+    color = XMLToClr(elem.Child("color").Child("GG::Clr"));
 }
 
 GG::XMLElement SaveGameEmpireData::XMLEncode()
@@ -199,7 +220,7 @@ GG::XMLElement SaveGameEmpireData::XMLEncode()
     retval.AppendChild(XMLElement("id", lexical_cast<std::string>(id)));
     retval.AppendChild(XMLElement("name", name));
     retval.AppendChild(XMLElement("player_name", player_name));
-    retval.AppendChild(XMLElement("color", color.XMLEncode()));
+    retval.AppendChild(XMLElement("color", ClrToXML(color)));
     return retval;
 }
 
@@ -217,7 +238,7 @@ PlayerSetupData::PlayerSetupData() :
 PlayerSetupData::PlayerSetupData(const GG::XMLElement& elem)
 {
     empire_name = elem.Child("empire_name").Text();
-    empire_color = GG::Clr(elem.Child("empire_color").Child("GG::Clr"));
+    empire_color = XMLToClr(elem.Child("empire_color").Child("GG::Clr"));
     save_game_empire_id = boost::lexical_cast<int>(elem.Child("save_game_empire_id").Text());
 }
 
@@ -228,7 +249,7 @@ GG::XMLElement PlayerSetupData::XMLEncode() const
 
     XMLElement retval("PlayerSetupData");
     retval.AppendChild(XMLElement("empire_name", empire_name));
-    retval.AppendChild(XMLElement("empire_color", empire_color.XMLEncode()));
+    retval.AppendChild(XMLElement("empire_color", ClrToXML(empire_color)));
     retval.AppendChild(XMLElement("save_game_empire_id", lexical_cast<std::string>(save_game_empire_id)));
     return retval;
 }

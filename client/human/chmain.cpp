@@ -5,6 +5,10 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
+#include <fstream>
+#include <iostream>
+
+
 extern "C" // use C-linkage, as required by SDL
 int main(int argc, char* argv[])
 {
