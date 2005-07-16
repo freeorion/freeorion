@@ -211,9 +211,6 @@ YG_SEARCH_LIBS([for log4cpp],[log4cpp],
                [],[AC_MSG_FAILURE(log4cpp is missing)])
 dnl AC_CHECK_LIB(z,deflate,[],[AC_MSG_FAILURE(Zlib is missing!)])
 
-# Check for SDL_mixer
-AC_CHECK_LIB(SDL_mixer,Mix_OpenAudio,[],[AC_MSG_FAILURE([SDL_mixer not found])])
-
 # Search for GiGi
 FOUND=0
 if test $cross_compiling = no; then
