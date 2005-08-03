@@ -18,6 +18,10 @@
 #include "../../UI/ClientUI.h"
 #endif
 
+#ifndef _LOG4CPP_CATEGORY_HH
+#include <log4cpp/Category.hh>
+#endif
+
 #include <string>
 #include <map>
 #include <set>
@@ -80,6 +84,8 @@ public:
 
     virtual void Enter2DMode();
     virtual void Exit2DMode();
+
+    log4cpp::Category& Logger();
     //@}
 
     static HumanClientApp* GetApp(); ///< returns HumanClientApp pointer to the single instance of the app

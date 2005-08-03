@@ -17,6 +17,11 @@
 #include <fmod.h>
 #include <fmod_errors.h>
 
+#include <log4cpp/Appender.hh>
+#include <log4cpp/Category.hh>
+#include <log4cpp/PatternLayout.hh>
+#include <log4cpp/FileAppender.hh>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -199,6 +204,19 @@ HumanClientApp::HumanClientApp() :
     signal(SIGSEGV, SigHandler);
 #endif
 
+    const std::string LOG_FILENAME("freeorion.log");
+
+    // a platform-independent way to erase the old log
+    std::ofstream temp(LOG_FILENAME.c_str());
+    temp.close();
+
+    log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", LOG_FILENAME);
+    log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
+    layout->setConversionPattern("%d %p : %m%n");
+    appender->setLayout(layout);
+    Logger().setAdditivity(false);  // make appender the only appender used...
+    Logger().setAppender(appender);
+    Logger().setAdditivity(true);   // ...but allow the addition of others later
     Logger().setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
 
     SetMaxFPS(60.0);
@@ -446,6 +464,11 @@ void HumanClientApp::Exit2DMode()
     glPopMatrix();
 
     glPopAttrib();
+}
+
+log4cpp::Category& HumanClientApp::Logger()
+{
+    return log4cpp::Category::getRoot();
 }
 
 HumanClientApp* HumanClientApp::GetApp()

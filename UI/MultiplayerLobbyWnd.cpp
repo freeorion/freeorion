@@ -313,7 +313,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
     }
 
     default:
-        GG::App::GetApp()->Logger().errorStream() << "MultiplayerLobbyWnd::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
+        HumanClientApp::GetApp()->Logger().errorStream() << "MultiplayerLobbyWnd::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
         break;
     }
 }
