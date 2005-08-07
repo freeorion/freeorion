@@ -167,6 +167,8 @@ UI/CUIControls.h				\
 UI/CUIDrawUtil.cpp				\
 UI/CUIDrawUtil.h 				\
 UI/CUISpin.h					\
+UI/CUITabbedPages.cpp				\
+UI/CUITabbedPages.h				\
 UI/CUI_Wnd.cpp					\
 UI/CUI_Wnd.h					\
 UI/CombatWnd.cpp				\

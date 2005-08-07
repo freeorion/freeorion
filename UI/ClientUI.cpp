@@ -376,7 +376,7 @@ ClientUI::ClientUI() :
     ART_DIR   = GetOptionsDB().Get<std::string>("art-dir");
     if (!ART_DIR.empty() && ART_DIR[ART_DIR.size() - 1] != '/')
         ART_DIR += '/';
-    SOUND_DIR   = GetOptionsDB().Get<std::string>("sound-dir");
+    SOUND_DIR = GetOptionsDB().Get<std::string>("sound-dir");
     if (!SOUND_DIR.empty() && SOUND_DIR[SOUND_DIR.size() - 1] != '/')
         SOUND_DIR += '/';
 
@@ -761,14 +761,7 @@ ClientUI::GetNumberedTexture(const std::string& dir_name, const std::map<int, st
 
 const std::string& ClientUI::SoundDir()
 {
-    static std::string retval;
-    if (retval == "") {
-        retval = GetOptionsDB().Get<std::string>("settings-dir");
-        if (!retval.empty() && retval[retval.size() - 1] != '/')
-            retval += '/';
-        retval += "data/sound/";
-    }
-    return retval;
+	return SOUND_DIR;
 }
 
 ////////////////////////////////////////////////////

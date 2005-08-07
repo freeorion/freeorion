@@ -445,6 +445,26 @@ private:
     void SelectionChanged(int i);
 };
 
+/** A control used to pick arbitrary colors using GG::ColorDlg. */
+class ColorSelector : public GG::Control
+{
+public:
+    /** \name Signal Types */ //@{
+    typedef boost::signal<void (const GG::Clr&)> ColorChangedSignalType;
+    //@}
+
+    /** \name Structors */ //@{
+    ColorSelector(int x, int y, int w, int h, GG::Clr color);
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual bool Render();
+    virtual void LClick(const GG::Pt& pt, Uint32 keys);
+    //@}
+
+    mutable ColorChangedSignalType ColorChangedSignal;
+};
+
 /** A GG file dialog in the FreeOrion style. */
 class FileDlg : public GG::FileDlg
 {

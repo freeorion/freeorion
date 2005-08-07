@@ -7,6 +7,7 @@
 #include "GGApp.h"
 #include "GGDrawUtil.h"
 #include "GGStaticGraphic.h"
+#include "dialogs/GGColorDlg.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
@@ -887,6 +888,33 @@ void EmpireColorSelector::SelectionChanged(int i)
 }
 
 ///////////////////////////////////////
+// class ColorSelector
+///////////////////////////////////////
+ColorSelector::ColorSelector(int x, int y, int w, int h, GG::Clr color) :
+    Control(x, y, w, h)
+{
+    SetColor(color);
+}
+
+bool ColorSelector::Render()
+{
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, Color(), GG::CLR_WHITE, 1);
+    return true;
+}
+
+void ColorSelector::LClick(const GG::Pt& pt, Uint32 keys)
+{
+    GG::ColorDlg dlg(pt.x, pt.y, Color(), ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_COLOR, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR);
+    dlg.Run();
+    if (dlg.ColorWasSelected()) {
+        GG::Clr clr = dlg.Result();
+        SetColor(clr);
+        ColorChangedSignal(clr);
+    }
+}
+
+///////////////////////////////////////
 // class FileDlg
 ///////////////////////////////////////
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
@@ -894,9 +922,13 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
     GG::FileDlg(directory, filename, save, multi, types, ClientUI::FONT, ClientUI::PTS,
                 ClientUI::CTRL_COLOR, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR,
                 new CUIButton(3 * WIDTH / 4, HEIGHT - (ClientUI::PTS + 14) * 2, WIDTH / 4 - 10, UserString(save ? "SAVE" : "OPEN")),
-                new CUIButton(3 * WIDTH / 4, HEIGHT - (ClientUI::PTS + 14), WIDTH / 4 - 10, UserString("CANCEL")))
+                new CUIButton(3 * WIDTH / 4, HEIGHT - (ClientUI::PTS + 14), WIDTH / 4 - 10, UserString("CANCEL")),
+                new CUIListBox(0, 0, 1, 1),
+                new CUIEdit(0, 0, 1, 1, ""),
+                new CUIDropDownList(0, 0, 1,
+                                    GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS)->Lineskip(),
+                                    3 * GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS)->Lineskip()))
 {
     SetFilesString(UserString("FILE_DLG_FILES"));
     SetFileTypesString(UserString("FILE_DLG_FILE_TYPES"));
 }
-
