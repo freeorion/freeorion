@@ -177,6 +177,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(FOCUS_INDUSTRY)
     GG_ENUM_MAP_INSERT(FOCUS_MINING)
     GG_ENUM_MAP_INSERT(FOCUS_RESEARCH)
+    GG_ENUM_MAP_INSERT(FOCUS_TRADE)
     GG_ENUM_MAP_END
 }
 GG_ENUM_STREAM_IN(FocusType)
@@ -317,6 +318,12 @@ namespace GG {
 }
 GG_ENUM_STREAM_IN(StockpileType)
 GG_ENUM_STREAM_OUT(StockpileType)
+
+/** Returns the equivalent focus type for the given meter; if no such focus exists, returns INVALID_METER_TYPE. */
+MeterType FocusToMeter(FocusType type);
+
+/** Returns the equivalent meter type for the given focus; if no such focus exists, returns INVALID_FOCUS_TYPE. */
+FocusType MeterToFocus(MeterType type);
 
 inline std::pair<std::string, std::string> EnumsRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
