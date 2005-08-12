@@ -68,6 +68,7 @@ universe/Condition.cpp				\
 universe/Condition.h	 			\
 universe/Effect.cpp				\
 universe/Effect.h	 			\
+universe/Enums.cpp	 			\
 universe/Enums.h	 			\
 universe/Fleet.cpp				\
 universe/Fleet.h	 			\
@@ -178,6 +179,8 @@ UI/FleetButton.h 				\
 UI/FleetWindow.cpp				\
 UI/FleetWindow.h				\
 UI/GalaxySetupWnd.cpp				\
+UI/FocusSelector.h				\
+UI/FocusSelector.cpp			\
 UI/GalaxySetupWnd.h				\
 UI/InGameOptions.cpp				\
 UI/InGameOptions.h				\
