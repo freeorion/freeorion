@@ -12,6 +12,7 @@
 #include "../universe/Predicates.h"
 #include "../universe/ShipDesign.h"
 #include "../util/Random.h"
+#include "FocusSelector.h"
 
 #include "XMLDoc.h"
 #include "GGBase.h"
@@ -360,7 +361,6 @@ namespace {
     }
   }
 
-  boost::shared_ptr<GG::Texture> IconBalance   () {return GetTexture(ClientUI::ART_DIR + "icons/focusbuttoncrossicon.png"        );}
   boost::shared_ptr<GG::Texture> IconPopulation() {return GetTexture(ClientUI::ART_DIR + "icons/pop.png"        );}
   boost::shared_ptr<GG::Texture> IconIndustry  () {return GetTexture(ClientUI::ART_DIR + "icons/industry.png"   );}
   boost::shared_ptr<GG::Texture> IconResearch  () {return GetTexture(ClientUI::ART_DIR + "icons/research.png"   );}
@@ -443,452 +443,18 @@ namespace {
     return ship;
   }
 
-  void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Clr border, int thick, 
-                             int upper_left_angle_offset, int upper_right_angle_offset, 
-                             int lower_right_angle_offset, int lower_left_angle_offset)
-  {
-    glDisable(GL_TEXTURE_2D);
-
-    int inner_x1 = x1 + thick;
-    int inner_y1 = y1 + thick;
-    int inner_x2 = x2 - thick;
-    int inner_y2 = y2 - thick;
-
-    // these are listed in CCW order for convenience
-    int ul_corner_x1 = x1 + upper_left_angle_offset ; int ul_corner_y1 = y1;
-    int ul_corner_x2 = x1                           ; int ul_corner_y2 = y1 + upper_left_angle_offset;
-    int lr_corner_x1 = x2 - lower_right_angle_offset; int lr_corner_y1 = y2;
-    int lr_corner_x2 = x2                           ; int lr_corner_y2 = y2 - lower_right_angle_offset;
-
-    int ll_corner_x1 = x1 + lower_left_angle_offset ; int ll_corner_y1 = y2;
-    int ll_corner_x2 = x1                           ; int ll_corner_y2 = y2 - lower_left_angle_offset;
-    int ur_corner_x1 = x2 - upper_right_angle_offset; int ur_corner_y1 = y1;
-    int ur_corner_x2 = x2                           ; int ur_corner_y2 = y1 + upper_right_angle_offset;
-
-    int inner_ul_corner_x1 = ul_corner_x1 + thick; int inner_ul_corner_y1 = ul_corner_y1 + thick;
-    int inner_ul_corner_x2 = ul_corner_x2 + thick; int inner_ul_corner_y2 = ul_corner_y2 + thick;
-    int inner_lr_corner_x1 = lr_corner_x1 - thick; int inner_lr_corner_y1 = lr_corner_y1 - thick;
-    int inner_lr_corner_x2 = lr_corner_x2 - thick; int inner_lr_corner_y2 = lr_corner_y2 - thick;
-
-    int inner_ll_corner_x1 = ll_corner_x1 + thick; int inner_ll_corner_y1 = ll_corner_y1 - thick;
-    int inner_ll_corner_x2 = ll_corner_x2 + thick; int inner_ll_corner_y2 = ll_corner_y2 - thick;
-    int inner_ur_corner_x1 = ur_corner_x1 - thick; int inner_ur_corner_y1 = ur_corner_y1 + thick;
-    int inner_ur_corner_x2 = ur_corner_x2 - thick; int inner_ur_corner_y2 = ur_corner_y2 + thick;
-
-    // draw beveled edges
-    if (thick) 
-    {
-      glBegin(GL_QUADS);
-      glColor4ubv(border.v);
-
-      // the top =>
-      if(upper_right_angle_offset>0)
-      {
-        glVertex2i(inner_ur_corner_x1, inner_ur_corner_y1);
-        glVertex2i(ur_corner_x1, ur_corner_y1);
-      }
-      else
-      {
-        glVertex2i(inner_x2, inner_y1);
-        glVertex2i(x2, y1);
-      }
-
-      if(upper_left_angle_offset>0)
-      {
-        glVertex2i(ul_corner_x1, ul_corner_y1);
-        glVertex2i(inner_ul_corner_x1, inner_ul_corner_y1);
-	  } 
-      else
-      {
-        glVertex2i(x1, y1);
-        glVertex2i(inner_x1, inner_y1);
-      }
-      // <= the top 
-
-      // the left side => 
-      if(upper_left_angle_offset>0)
-      {
-        glVertex2i(inner_ul_corner_x2, inner_ul_corner_y2);
-        glVertex2i(ul_corner_x2, ul_corner_y2);
-      } 
-      else
-      {
-        glVertex2i(inner_x1, inner_y1);
-        glVertex2i(x1, y1);
-      }
-
-      if(lower_left_angle_offset>0)
-      {
-        glVertex2i(ll_corner_x2,ll_corner_y2);
-        glVertex2i(inner_ll_corner_x2,inner_ll_corner_y2);
-      }
-      else
-      {
-        glVertex2i(x1, y2);
-        glVertex2i(inner_x1, inner_y2);
-      }
-      // <= the left side 
-
-      // the bottom =>
-      if(lower_left_angle_offset>0)
-      {
-        glVertex2i(inner_ll_corner_x1,inner_ll_corner_y1);
-        glVertex2i(ll_corner_x1,ll_corner_y1);
-      }
-      else
-      {
-        glVertex2i(inner_x1, inner_y2);
-        glVertex2i(x1, y2);
-      }
-      if(lower_right_angle_offset>0)
-      {
-        glVertex2i(lr_corner_x1, lr_corner_y1);
-        glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
-      }
-      else
-      {
-        glVertex2i(x2, y2);
-        glVertex2i(inner_x2, inner_y2);
-      }
-      // <= the bottom 
-
-      // the right side =>
-      if(lower_right_angle_offset>0)
-      {
-        glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
-        glVertex2i(lr_corner_x2, lr_corner_y2);
-      }
-      else
-      {
-        glVertex2i(inner_x2, inner_y2);
-        glVertex2i(x2, y2);
-      }
-      if(upper_right_angle_offset>0)
-      {
-        glVertex2i(ur_corner_x2, ur_corner_y2);
-        glVertex2i(inner_ur_corner_x2, inner_ur_corner_y2);
-      }
-      else
-      {
-        glVertex2i(x2, y1);
-        glVertex2i(inner_x2, inner_y1);
-      }
-      // <= the right side
-
-
-      // the lower-right angled side
-      if(lower_right_angle_offset>0) 
-      {
-        glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
-        glVertex2i(lr_corner_x1, lr_corner_y1);
-        glVertex2i(lr_corner_x2, lr_corner_y2);
-        glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
-      }
-
-      // the upper-left angled side
-      if(upper_left_angle_offset>0) 
-      {
-        glVertex2i(inner_ul_corner_x1, inner_ul_corner_y1);
-        glVertex2i(ul_corner_x1, ul_corner_y1);
-        glVertex2i(ul_corner_x2, ul_corner_y2);
-        glVertex2i(inner_ul_corner_x2, inner_ul_corner_y2);
-      }
-
-      // the upper-right angled side
-      if(upper_right_angle_offset>0) 
-      {
-        glVertex2i(inner_ur_corner_x1, inner_ur_corner_y1);
-        glVertex2i(ur_corner_x1, ur_corner_y1);
-        glVertex2i(ur_corner_x2, ur_corner_y2);
-        glVertex2i(inner_ur_corner_x2, inner_ur_corner_y2);
-      }
-
-      // the lower-left angled side
-      if(lower_left_angle_offset>0) 
-      {
-        glVertex2i(inner_ll_corner_x1, inner_ll_corner_y1);
-        glVertex2i(ll_corner_x1, ll_corner_y1);
-        glVertex2i(ll_corner_x2, ll_corner_y2);
-        glVertex2i(inner_ll_corner_x2, inner_ll_corner_y2);
-      }
-
-      glEnd();
-    }
-
-    // draw interior of rectangle
-    if(!(color==GG::CLR_ZERO))
-    {
-      glColor4ubv(color.v);
-      glBegin(GL_POLYGON);
-      if(upper_left_angle_offset>0)
-      {
-        glVertex2i(inner_ul_corner_x1, inner_ul_corner_y1);
-        glVertex2i(inner_ul_corner_x2, inner_ul_corner_y2);
-      } 
-      else 
-        glVertex2i(inner_x1, inner_y1);
-
-
-      if(lower_left_angle_offset>0)
-      {
-        glVertex2i(inner_ll_corner_x2, inner_ll_corner_y2);
-        glVertex2i(inner_ll_corner_x1, inner_ll_corner_y1);
-      } 
-      else 
-        glVertex2i(inner_x1, inner_y2);
-
-      if(lower_right_angle_offset>0)
-      {
-        glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
-        glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
-      }
-      else
-        glVertex2i(inner_x2, inner_y2);
-
-      if(upper_right_angle_offset>0)
-      {
-        glVertex2i(inner_ur_corner_x2, inner_ur_corner_y2);
-        glVertex2i(inner_ur_corner_x1, inner_ur_corner_y1);
-      }
-      else
-        glVertex2i(inner_x2, inner_y1);
-
-      glEnd();
-    }
-
-    glEnable(GL_TEXTURE_2D);
-  }
-
-  bool InAngledCornerRect(const GG::Pt& pt, int x1, int y1, int x2, int y2, 
-                             int upper_left_angle_offset, int upper_right_angle_offset, 
-                             int lower_right_angle_offset, int lower_left_angle_offset)
-  {
-    GG::Pt ul(x1, y1),lr(x2, y2);
-    if(!(ul <= pt && pt < lr))
-      return false;
-
-    GG::Pt dist = pt-GG::Pt(x1,y1);
-    if((upper_left_angle_offset>0) && (dist.x*dist.x + dist.y*dist.y < upper_left_angle_offset*upper_left_angle_offset))
-      return false;
-
-    dist = pt-GG::Pt(x2,y1);
-    if((upper_right_angle_offset>0) && (dist.x*dist.x + dist.y*dist.y < upper_right_angle_offset*upper_right_angle_offset))
-      return false;
-
-    dist = pt-GG::Pt(x2,y2);
-    if((lower_right_angle_offset>0) && (dist.x*dist.x + dist.y*dist.y < lower_right_angle_offset*lower_right_angle_offset))
-      return false;
-
-    dist = pt-GG::Pt(x1,y2);
-    if((lower_left_angle_offset>0) && (dist.x*dist.x + dist.y*dist.y < lower_left_angle_offset*lower_left_angle_offset))
-      return false;
-
-    return true;
-  }
-}
-class CUITextureButton : public GG::Button
-{
-  public:
-    /** \name Structors */ //@{
-    CUITextureButton(int x, int y, int w, int h,const boost::shared_ptr<GG::Texture> &texture,GG::Clr color = ClientUI::BUTTON_COLOR, GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int thick = 1, Uint32 flags = GG::Wnd::CLICKABLE)
-      :  Button(x, y, w, h, "", "", 0, color, GG::CLR_ZERO, flags),
-         m_texture(GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultWidth())),
-	 m_border_color(border), m_border_thick(thick)
-    {}
-
-    //@}
-
-    /** \name Accessors */ //@{
-    const GG::SubTexture& Texture() const {return m_texture;}
-    //@}
-
-    /** \name Mutators control */ //@{
-    virtual void   SetBorderColor(GG::Clr c) {m_border_color=c;}   ///< sets the control's border color;   
-    //@}
-
-  protected:
-    /** \name Mutators control */ //@{
-    virtual void RenderPressed () {OffsetMove(1, 1);RenderUnpressed();OffsetMove(-1, -1);}
-    virtual void RenderRollover() {RenderUnpressed();}
-    virtual void RenderUnpressed()
-    { 
-      GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-      GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
-
-      GG::Pt ul = UpperLeft(), lr = LowerRight();
-      AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y,color_to_use,border_color_to_use,m_border_thick,0,0,0,0);    
-      
-      glColor4ubv(GG::CLR_WHITE.v);
-      m_texture.OrthoBlit(ul,lr,false);
-    }
-    //@}
-
-    virtual void   RButtonDown(const GG::Pt& pt, Uint32 keys)          {if (!Disabled()) SetState(BN_PRESSED);}
-    virtual void   RDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys){if (!Disabled()) SetState(BN_PRESSED);}
-    virtual void   RButtonUp(const GG::Pt& pt, Uint32 keys)            {if (!Disabled()) SetState(BN_UNPRESSED);}
-    virtual void   RClick(const GG::Pt& pt, Uint32 keys)               {if (!Disabled()) {SetState(BN_UNPRESSED); RClickedSignal(); SetState(BN_UNPRESSED);}}
-
-    mutable ClickedSignalType RClickedSignal;
-
-  private:
-    void Refresh();
-
-    GG::SubTexture m_texture;
-
-    GG::Clr m_border_color;
-    int     m_border_thick;
-};
-
-class CUIIconButton : public GG::Button
-{
-  public:
-    enum Styles {IBS_LEFT,IBS_RIGHT,IBS_HCENTER,IBS_TOP,IBS_BOTTOM,IBS_VCENTER,IBS_OVERLAPPED};
-
-    /** \name Structors */ //@{
-    CUIIconButton(int x, int y, int w, int h,const boost::shared_ptr<GG::Texture> &icon, const std::string& font_filename = ClientUI::FONT, int pts = ClientUI::PTS, 
-          GG::Clr color = ClientUI::BUTTON_COLOR, GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int thick = 1, 
-          GG::Clr text_color = ClientUI::TEXT_COLOR, Uint32 flags = GG::Wnd::CLICKABLE); ///< basic ctor
-    //CUIIconButton(const GG::XMLElement& elem); ///< ctor that constructs a CUIScroll::ScrollTab object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a CUIScroll::ScrollTab object
-    //@}
-
-    /** \name Accessors */ //@{
-    virtual bool            InWindow(const GG::Pt& pt) const;
-    //virtual GG::XMLElement  XMLEncode() const; ///< constructs an XMLElement from a CUIScroll::ScrollTab object
-
-    const GG::SubTexture& Icon() const {return m_icon;}
-    const GG::Rect& IconRect() const {return m_icon_rect;}
-    const GG::Rect& TextRect() const {return m_text_rect;}
-
-    //@}
-
-    /** \name Mutators control */ //@{
-    virtual void   SetBorderColor(GG::Clr c) {m_border_color=c;}   ///< sets the control's border color;
-    
-    void SetValue(double value); ///< sets the value to be displayed
-    void SetDecimalsShown(int d)     {m_decimals_to_show = d; SetValue(m_value);} ///< sets the number of places after the decimal point to be shown
-    void ShowSign(bool b)            {m_show_sign = b; SetValue(m_value);}        ///< sets whether a sign should always be shown, even for positive values
-    void SetPositiveColor(GG::Clr c) {m_positive_color = c; SetValue(m_value);}   ///< sets the color that will be used to display positive values
-    void SetNegativeColor(GG::Clr c) {m_negative_color = c; SetValue(m_value);}   ///< sets the color that will be used to display negative values
-    
-    void SetAngledCornerUpperLeft (int angled_corner) {m_angled_corner_upperleft =angled_corner;} 
-    void SetAngledCornerUpperRight(int angled_corner) {m_angled_corner_upperright=angled_corner;} 
-    void SetAngledCornerLowerRight(int angled_corner) {m_angled_corner_lowerright=angled_corner;} 
-    void SetAngledCornerLowerLeft (int angled_corner) {m_angled_corner_lowerleft =angled_corner;} 
-
-    void SetIconRect(const GG::Rect &rect) {m_icon_rect=rect;}
-    void SetTextRect(const GG::Rect &rect) {m_text_rect=rect;}
-    
-    //@}
-
-    mutable ClickedSignalType RClickedSignal; ///< the clicked signal object for this Button
-
-  protected:
-    /** \name Mutators control */ //@{
-    virtual void RenderPressed();
-    virtual void RenderRollover();
-    virtual void RenderUnpressed();
-    //@}
-
-    virtual void   RButtonDown(const GG::Pt& pt, Uint32 keys)          {if (!Disabled()) SetState(BN_PRESSED);}
-    virtual void   RDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys){if (!Disabled()) SetState(BN_PRESSED);}
-    virtual void   RButtonUp(const GG::Pt& pt, Uint32 keys)            {if (!Disabled()) SetState(BN_UNPRESSED);}
-    virtual void   RClick(const GG::Pt& pt, Uint32 keys)               {if (!Disabled()) {SetState(BN_UNPRESSED); RClickedSignal(); SetState(BN_UNPRESSED);}}
-
-  private:
-    void Refresh();
-
-    double m_value;
-    int m_decimals_to_show;
-    bool m_show_sign;
-    GG::Clr m_positive_color;
-    GG::Clr m_negative_color;
-
-    GG::SubTexture m_icon;
-
-    GG::Clr m_border_color;
-    int     m_border_thick;
-
-    int     m_angled_corner_upperleft,m_angled_corner_upperright,m_angled_corner_lowerright,m_angled_corner_lowerleft;
-
-    GG::Rect  m_icon_rect,m_text_rect;
-};
-
-CUIIconButton::CUIIconButton( int x, int y, int w, int h,const boost::shared_ptr<GG::Texture> &icon,const std::string& font_filename, 
-                              int pts, GG::Clr color, GG::Clr border, int thick, GG::Clr text_color, Uint32 flags)
-:  Button(x, y, w, h, "", font_filename, pts, color, text_color, flags),
-   m_value(0.0),m_decimals_to_show(0),m_show_sign(true),m_positive_color(text_color),m_negative_color(text_color),
-   m_icon(GG::SubTexture(icon,0,0,icon->DefaultWidth(),icon->DefaultWidth())),
-   m_border_color(border), m_border_thick(thick),
-   m_angled_corner_upperleft(0),m_angled_corner_upperright(0),m_angled_corner_lowerright(0),m_angled_corner_lowerleft(0),
-   m_icon_rect(1+m_border_thick,1+m_border_thick,h-(1+m_border_thick),h-(1+m_border_thick)),m_text_rect(m_icon_rect.LowerRight().x,2,w-2,h-2)
-{
-  SetTextFormat(GG::TF_RIGHT | GG::TF_VCENTER);
-  SetValue(0.0);
-}
-
-bool CUIIconButton::InWindow(const GG::Pt& pt) const
-{
-  GG::Pt ul = UpperLeft(), lr = LowerRight();
-  return InAngledCornerRect(pt,ul.x, ul.y, lr.x, lr.y,m_angled_corner_upperleft,m_angled_corner_upperright,m_angled_corner_lowerright,m_angled_corner_lowerleft);    
-}
-
-void CUIIconButton::SetValue(double value) 
-{
-  m_value = value;
-  if(m_decimals_to_show)
-  { 
-    char buf[128];
-    sprintf(buf, (m_show_sign ? "%+#.*g" : "%#.*g"), m_decimals_to_show, value);
-    SetText(buf);
-  } 
-  else
-    SetText((m_show_sign?(m_value < 0.0?"-":"+"):"") + lexical_cast<std::string>(static_cast<int>(value)));
-  
-  SetTextColor(m_value < 0.0 ? m_negative_color : m_positive_color);
-}
-
-void CUIIconButton::RenderPressed()
-{
-  OffsetMove(1, 1);
-  RenderUnpressed();
-  OffsetMove(-1, -1);
-}
-
-void CUIIconButton::RenderRollover()
-{
-  RenderUnpressed();
-}
-
-void CUIIconButton::RenderUnpressed()
-{ 
-  GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-  GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
-
-  GG::Pt ul = UpperLeft(), lr = LowerRight();
-  AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y,color_to_use,border_color_to_use,m_border_thick,
-                        m_angled_corner_upperleft,m_angled_corner_upperright,m_angled_corner_lowerright,m_angled_corner_lowerleft);    
-  //glColor4ubv(Disabled() ? DisabledColor(m_color).v : m_color.v);
-  
-  glColor4ubv(GG::CLR_WHITE.v);
-  m_icon.OrthoBlit(UpperLeft()+m_icon_rect.UpperLeft(),UpperLeft()+m_icon_rect.LowerRight(),false);
-
-  std::string text; GG::SubTexture icon;
-
-  Uint32 format = TextFormat();
-  
-  glColor4ubv(TextColor().v);
-  GetFont()->RenderText(UpperLeft()+m_text_rect.UpperLeft(),UpperLeft()+m_text_rect.LowerRight(), *this, format, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &planet, StarType star_type)
-: Wnd(0, y, w, h, GG::Wnd::CLICKABLE),
+SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &planet, StarType star_type) :
+  Wnd(0, y, w, h, GG::Wnd::CLICKABLE),
   m_planet_id(planet.ID()),
-  m_planet_name(0),m_planet_info(0),
+  m_planet_name(0),
+  m_planet_info(0),
+  m_focus_selector(0),
   m_button_colonize(0),
   m_planet_graphic(0),
-  m_rotating_planet_graphic(0),
-  m_button_food(0),m_button_mining(0),m_button_industry(0),m_button_research(0),m_button_balanced(0)
+  m_rotating_planet_graphic(0)
 {
   SetText(UserString("PLANET_PANEL"));
 
@@ -938,76 +504,12 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
   AttachChild(m_button_colonize);
 
-  const int RESOURCE_DISPLAY_HEIGHT = 2*ClientUI::PTS;
-  const int RESOURCE_DISPLAY_WIDTH  = 60;
-  const int RESOURCE_DISPLAY_MARGIN = 8;
-
-  ul=GG::Pt(Width()-2*RESOURCE_DISPLAY_WIDTH-2*RESOURCE_DISPLAY_MARGIN,m_planet_name->LowerRight().y-UpperLeft().y/*-(m_planet_name->LowerRight().y-m_planet_name->UpperLeft().y)/2*/);
-  m_button_food     = new CUIIconButton(ul.x                                               ,ul.y                                                ,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconFarming (),ClientUI::FONT,10,GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
-  m_button_mining   = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH+RESOURCE_DISPLAY_MARGIN,ul.y                                                ,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconMining  (),ClientUI::FONT,10,GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
-  m_button_research = new CUIIconButton(ul.x                                               ,ul.y+RESOURCE_DISPLAY_HEIGHT+RESOURCE_DISPLAY_MARGIN,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconResearch(),ClientUI::FONT,10,GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
-  m_button_industry = new CUIIconButton(ul.x+RESOURCE_DISPLAY_WIDTH+RESOURCE_DISPLAY_MARGIN,ul.y+RESOURCE_DISPLAY_HEIGHT+RESOURCE_DISPLAY_MARGIN,RESOURCE_DISPLAY_WIDTH,RESOURCE_DISPLAY_HEIGHT,IconIndustry(),ClientUI::FONT,10,GG::CLR_ZERO,ClientUI::CTRL_BORDER_COLOR,2);
-
-  const boost::shared_ptr<GG::Texture> icon=IconBalance ();
-  m_button_balanced = new CUIIconButton(m_button_food->LowerRight().x-7,m_button_food->LowerRight().y-7,
-                                        m_button_industry->UpperLeft().x-m_button_food->LowerRight().x+2*7,
-                                        m_button_industry->UpperLeft().y-m_button_food->LowerRight().y+2*7,
-                                        icon,ClientUI::FONT,ClientUI::PTS ,GG::CLR_ZERO,GG::CLR_ZERO               ,1);
-
-  //m_button_balanced->SetIconRect(GG::Rect(3,3,m_button_balanced->Width()-4,m_button_balanced->Height()-4));
-  m_button_balanced->SetIconRect(GG::Rect((m_button_balanced->Width ()-icon->DefaultWidth ())/2,
-                                          (m_button_balanced->Height()-icon->DefaultHeight())/2,
-                                          (m_button_balanced->Width ()-icon->DefaultWidth ())/2+icon->DefaultWidth (),
-                                          (m_button_balanced->Height()-icon->DefaultHeight())/2+icon->DefaultHeight()));
-
-  m_button_food    ->SetTextRect(GG::Rect(m_button_food    ->IconRect().UpperLeft().x+2,2,m_button_food    ->Width()-6,m_button_food    ->Height()-2));
-  m_button_mining  ->SetTextRect(GG::Rect(m_button_mining  ->IconRect().UpperLeft().x+2,2,m_button_mining  ->Width()-6,m_button_mining  ->Height()-2));
-  m_button_research->SetTextRect(GG::Rect(m_button_research->IconRect().UpperLeft().x+2,2,m_button_research->Width()-6,m_button_research->Height()-2));
-  m_button_industry->SetTextRect(GG::Rect(m_button_industry->IconRect().UpperLeft().x+2,2,m_button_industry->Width()-6,m_button_industry->Height()-2));
-
-  m_button_food     ->SetAngledCornerLowerRight(7);
-  m_button_mining   ->SetAngledCornerLowerLeft (7);
-  m_button_research ->SetAngledCornerUpperRight(7);
-  m_button_industry ->SetAngledCornerUpperLeft (7);
-
-
-  m_button_balanced ->SetAngledCornerLowerRight(7);
-  m_button_balanced ->SetAngledCornerLowerLeft (7);
-  m_button_balanced ->SetAngledCornerUpperRight(7);
-  m_button_balanced ->SetAngledCornerUpperLeft (7);
-
-  m_button_food    ->SetPositiveColor(GG::CLR_GREEN);m_button_food    ->SetNegativeColor(GG::CLR_RED );
-  //m_button_mining  ->SetPositiveColor(GG::CLR_ZERO );m_button_mining  ->SetNegativeColor(GG::CLR_ZERO);
-  //m_button_research->SetPositiveColor(GG::CLR_ZERO );m_button_research->SetNegativeColor(GG::CLR_ZERO);
-  //m_button_industry->SetPositiveColor(GG::CLR_ZERO );m_button_industry->SetNegativeColor(GG::CLR_ZERO);
-  m_button_balanced->SetPositiveColor(GG::CLR_ZERO );m_button_balanced->SetNegativeColor(GG::CLR_ZERO);
-
-  Connect(m_button_food    ->ClickedSignal, &SidePanel::PlanetPanel::LClickFarming , this);
-  Connect(m_button_food    ->RClickedSignal, &SidePanel::PlanetPanel::RClickFarming , this);
-  Connect(m_button_mining  ->ClickedSignal, &SidePanel::PlanetPanel::LClickMining  , this);
-  Connect(m_button_mining  ->RClickedSignal, &SidePanel::PlanetPanel::RClickMining  , this);
-  Connect(m_button_research->ClickedSignal, &SidePanel::PlanetPanel::LClickResearch, this);
-  Connect(m_button_research->RClickedSignal, &SidePanel::PlanetPanel::RClickResearch, this);
-  Connect(m_button_industry->ClickedSignal, &SidePanel::PlanetPanel::LClickIndustry, this);
-  Connect(m_button_industry->RClickedSignal, &SidePanel::PlanetPanel::RClickIndustry, this);
-  Connect(m_button_balanced->ClickedSignal, &SidePanel::PlanetPanel::LClickBalanced, this);
-  Connect(m_button_balanced->RClickedSignal, &SidePanel::PlanetPanel::RClickBalanced, this);
-
-  // UI sounds
-  GG::Connect(m_button_food    ->ClickedSignal, &PlayFarmingFocusClickSound);
-  GG::Connect(m_button_food    ->RClickedSignal, &PlayFarmingFocusClickSound);
-  GG::Connect(m_button_mining  ->ClickedSignal, &PlayMiningFocusClickSound);
-  GG::Connect(m_button_mining  ->RClickedSignal, &PlayMiningFocusClickSound);
-  GG::Connect(m_button_research->ClickedSignal, &PlayResearchFocusClickSound);
-  GG::Connect(m_button_research->RClickedSignal, &PlayResearchFocusClickSound);
-  GG::Connect(m_button_industry->ClickedSignal, &PlayIndustryFocusClickSound);
-  GG::Connect(m_button_industry->RClickedSignal, &PlayIndustryFocusClickSound);
-  GG::Connect(m_button_balanced->ClickedSignal, &PlayBalancedFocusClickSound);
-  GG::Connect(m_button_balanced->RClickedSignal, &PlayBalancedFocusClickSound);
-  // TODO: connect trade when it gets added
-
-  AttachChild(m_button_food);AttachChild(m_button_mining);AttachChild(m_button_industry);
-  AttachChild(m_button_research);AttachChild(m_button_balanced);
+  m_focus_selector = new FocusSelector(175, planet);
+  m_focus_selector->MoveTo(Width() - m_focus_selector->Width(),
+                           (Height() - m_focus_selector->Height()) / 2);
+  AttachChild(m_focus_selector);
+  GG::Connect(m_focus_selector->PrimaryFocusChangedSignal, &SidePanel::PlanetPanel::SetPrimaryFocus, this);
+  GG::Connect(m_focus_selector->SecondaryFocusChangedSignal, &SidePanel::PlanetPanel::SetSecondaryFocus, this);
 
   if (planet.Type() == PT_ASTEROIDS) 
   {
@@ -1049,7 +551,8 @@ const Planet* SidePanel::PlanetPanel::GetPlanet() const
 
 void SidePanel::PlanetPanel::Update()
 {
-  PlanetChanged();PlanetResourceCenterChanged();
+  PlanetChanged();
+  PlanetResourceCenterChanged();
 }
 
 void SidePanel::PlanetPanel::EnableControl(GG::Wnd *control,bool enable)
@@ -1160,11 +663,7 @@ void SidePanel::PlanetPanel::PlanetChanged()
      }
   }
 
-  EnableControl(m_button_food    ,(owner==OS_SELF));
-  EnableControl(m_button_mining  ,(owner==OS_SELF));
-  EnableControl(m_button_industry,(owner==OS_SELF));
-  EnableControl(m_button_research,(owner==OS_SELF));
-  EnableControl(m_button_balanced,(owner==OS_SELF));
+  EnableControl(m_focus_selector, (owner==OS_SELF));
 }
 
 void SidePanel::PlanetPanel::PlanetResourceCenterChanged()
@@ -1172,39 +671,7 @@ void SidePanel::PlanetPanel::PlanetResourceCenterChanged()
   TempUISoundDisabler sound_disabler;
 
   const Planet *planet = GetPlanet();
-
-  m_button_food    ->SetValue(planet->FarmingPoints ());
-  m_button_industry->SetValue(planet->IndustryPoints());
-  m_button_mining  ->SetValue(planet->MiningPoints  ());
-  m_button_research->SetValue(planet->ResearchPoints());
-
-  m_button_food    ->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_FARMING || planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_FARMING )?GG::Clr(100,100,  0,200):GG::CLR_ZERO);
-  m_button_mining  ->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_MINING  || planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_MINING  )?GG::Clr(100,  0,  0,200):GG::CLR_ZERO);
-  m_button_industry->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_INDUSTRY|| planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_INDUSTRY)?GG::Clr(  0,  0,100,200):GG::CLR_ZERO);
-  m_button_research->SetColor((planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_RESEARCH|| planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_RESEARCH)?GG::Clr(  0,100,  0,200):GG::CLR_ZERO);
-  
-  GG::Clr color;
-
-  color = ClientUI::CTRL_BORDER_COLOR;
-  if(planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_FARMING)
-    color = (planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_FARMING)?GG::CLR_WHITE:GG::Clr(255,255,0,255);
-  m_button_food->SetBorderColor(color);
-
-  color = ClientUI::CTRL_BORDER_COLOR;
-  if(planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_MINING)
-    color = (planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_MINING) ?GG::CLR_WHITE:GG::Clr(255,0,0,255);
-  m_button_mining->SetBorderColor(color);
-
-  color = ClientUI::CTRL_BORDER_COLOR;
-  if(planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_INDUSTRY)
-    color = (planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_INDUSTRY)?GG::CLR_WHITE:GG::Clr(0,0,255,255);
-  m_button_industry->SetBorderColor(color);
-
-  color = ClientUI::CTRL_BORDER_COLOR;
-  if(planet->PrimaryFocus()==FOCUS_BALANCED || planet->PrimaryFocus()==FOCUS_RESEARCH)
-    color = (planet->SecondaryFocus()==FOCUS_BALANCED || planet->SecondaryFocus()==FOCUS_RESEARCH) ?GG::CLR_WHITE:GG::Clr(0,255,0,255);
-  m_button_research->SetBorderColor(color);
-
+  m_focus_selector->Update(*planet);
 }
 
 void SidePanel::PlanetPanel::SetPrimaryFocus(FocusType focus)
@@ -1317,31 +784,6 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   //text = GetPlanetTypeName(planet);
   //font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0);
   y+=font->Height();
-
-
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*0.9));
-  text = UserString("PL_PRIMARY_FOCUS") + " ";
-  text += UserString(lexical_cast<std::string>(planet.PrimaryFocus()));
-  font->RenderText(m_button_food->UpperLeft().x,
-                   m_button_food->UpperLeft().y-font->Height(),
-                   m_button_food->UpperLeft().x+ 500,
-                   m_button_food->UpperLeft().y, text, format, 0);
-
-  text = UserString("PL_SECONDARY_FOCUS") + " ";
-  text += UserString(lexical_cast<std::string>(planet.SecondaryFocus()));
-  font->RenderText(m_button_research->UpperLeft ().x,
-                   m_button_research->LowerRight().y,
-                   m_button_research->UpperLeft ().x+ 500,
-                   m_button_research->LowerRight().y+font->Height(), text, format, 0);
-
-  int farming=0,mining=0,research=0,industry=0;
-
-  farming   +=static_cast<int>(planet.FarmingPoints());
-  industry  +=static_cast<int>(planet.IndustryPoints());
-  mining    +=static_cast<int>(planet.MiningPoints());
-  research  +=static_cast<int>(planet.ResearchPoints());
-  //defense   +=;
-
 
   boost::shared_ptr<GG::Texture> icon;
   const int ICON_MARGIN    =  5;
@@ -1474,7 +916,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
     }
 }
 
- ////////////////////////////////////////////////
+////////////////////////////////////////////////
 // SidePanel::PlanetPanelContainer
 ////////////////////////////////////////////////
 SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h)
@@ -1611,384 +1053,6 @@ bool SidePanel::SystemResourceSummary::Render()
 }
 
 ////////////////////////////////////////////////
-// SidePanel::PlanetView
-////////////////////////////////////////////////
-SidePanel::PlanetView::PlanetView(int x, int y, int w, int h,const Planet &plt)
-: Wnd(x, y, w, h, GG::Wnd::CLICKABLE | GG::Wnd::ONTOP),
-  m_planet_id(plt.ID()),
-  m_bShowUI(false),
-  m_fadein_start(0),m_fadein_span(0),
-  m_bg_image(),
-  m_radio_btn_primary_focus  (0),
-  m_radio_btn_secondary_focus(0)
-{
-  TempUISoundDisabler sound_disabler;
-
-  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
-
-  EnableChildClipping(true);
-
-  boost::shared_ptr<GG::Texture> texture;
-  switch(planet->Type())
-  {
-    case PT_SWAMP     : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/swamp1.png");break;
-    case PT_TOXIC     : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/toxic1.png");break;
-    case PT_INFERNO   : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/inferno1.png");break;
-    case PT_RADIATED  : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/irradiated1.png");break;
-    case PT_BARREN    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/barren1.png");break;
-    case PT_TUNDRA    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/tundra1.png");break;
-    case PT_DESERT    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/desert1.png");break;
-    case PT_TERRAN    : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
-    case PT_OCEAN     : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/ocean1.png");break;
-    case PT_GAIA      : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
-    case PT_ASTEROIDS : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
-    case PT_GASGIANT  : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;       
-    default           : texture=GetTexture(ClientUI::ART_DIR + "planets_bg/terran1.png");break;
-  }
-  m_bg_image = GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultHeight());
-
-  texture=GetTexture(ClientUI::ART_DIR + "misc/planetpanelpictures.png");
-  m_foci_image = GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultHeight());
-
-  GG::Pt ul = UpperLeft();
-
-  m_btn_fullscreen = new CUITextureButton(20,70-15,15,15,GetTexture(ClientUI::ART_DIR + "icons/fullscreenbutton.png"),GG::CLR_ZERO,GG::CLR_ZERO);
-  AttachChild(m_btn_fullscreen);
-
-  m_radio_btn_primary_focus = new GG::RadioButtonGroup(20,145);
-  m_radio_btn_primary_focus->AddButton(new CUIStateButton(0,  0,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
-  m_radio_btn_primary_focus->AddButton(new CUIStateButton(0, 35,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
-  m_radio_btn_primary_focus->AddButton(new CUIStateButton(0, 70,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
-  m_radio_btn_primary_focus->AddButton(new CUIStateButton(0,105,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
-  m_radio_btn_primary_focus->AddButton(new CUIStateButton(0,130,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
-  AttachChild(m_radio_btn_primary_focus);
-
-  m_radio_btn_secondary_focus = new GG::RadioButtonGroup(40,145);
-  m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0,  0,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
-  m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0, 35,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
-  m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0, 70,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
-  m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0,105,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
-  m_radio_btn_secondary_focus->AddButton(new CUIStateButton(0,130,10,10,"",0,CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON,GG::CLR_WHITE));
-  AttachChild(m_radio_btn_secondary_focus);
-
-  GG::Connect(planet->StateChangedSignal, &SidePanel::PlanetView::PlanetChanged, this);
-  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal, &SidePanel::PlanetView::PlanetResourceCenterChanged, this);
-  PlanetChanged();
-  PlanetResourceCenterChanged();
-  m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal, &SidePanel::PlanetView::PrimaryFocusClicked, this);
-  m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal, &SidePanel::PlanetView::SecondaryFocusClicked, this);
- }
-
-void SidePanel::PlanetView::PlanetChanged()
-{
-  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
-  if(planet==0)
-    throw std::runtime_error("SidePanel::PlanetView::PlanetChanged: planet not found");
-
-  bool is_owner = planet->OwnedBy(HumanClientApp::GetApp()->EmpireID());
-
-  is_owner?m_radio_btn_primary_focus->Show():m_radio_btn_primary_focus->Hide();
-  is_owner?m_radio_btn_secondary_focus->Show():m_radio_btn_secondary_focus->Hide();
-}
-
-void SidePanel::PlanetView::PlanetResourceCenterChanged()
-{
-  TempUISoundDisabler soud_disabler;
-  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
-  if(planet==0)
-    throw std::runtime_error("SidePanel::PlanetView::PlanetChanged: planet not found");
-
-  switch(planet->PrimaryFocus())
-  {
-    case FOCUS_FARMING  : m_radio_btn_primary_focus->SetCheck(0);break;
-    case FOCUS_MINING   : m_radio_btn_primary_focus->SetCheck(1);break;
-    case FOCUS_RESEARCH : m_radio_btn_primary_focus->SetCheck(2);break;
-    case FOCUS_INDUSTRY : m_radio_btn_primary_focus->SetCheck(3);break;
-    case FOCUS_BALANCED : m_radio_btn_primary_focus->SetCheck(4);break;
-    default: break;
-  }
-  switch(planet->SecondaryFocus())
-  {
-    case FOCUS_FARMING  : m_radio_btn_secondary_focus->SetCheck(0);break;
-    case FOCUS_MINING   : m_radio_btn_secondary_focus->SetCheck(1);break;
-    case FOCUS_RESEARCH : m_radio_btn_secondary_focus->SetCheck(2);break;
-    case FOCUS_INDUSTRY : m_radio_btn_secondary_focus->SetCheck(3);break;
-    case FOCUS_BALANCED : m_radio_btn_secondary_focus->SetCheck(4);break;
-    default: break;
-  }
-}
-
-void SidePanel::PlanetView::Show(bool children)
-{
-  GG::Wnd::Show(children);
-
-  const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
-  if(!planet)
-    throw std::runtime_error("SidePanel::PlanetView::Show: planet not found!");
-  enum OWNERSHIP {OS_NONE,OS_FOREIGN,OS_SELF} owner = OS_NONE;
-
-  std::string text;
-  if(planet->Owners().size()==0) 
-    owner = OS_NONE;
-  else 
-    if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-      owner = OS_FOREIGN;
-    else
-      owner = OS_SELF;
-
-  // visibility
-  (m_bShowUI && owner==OS_SELF)?m_radio_btn_primary_focus  ->Show():m_radio_btn_primary_focus  ->Hide();
-  (m_bShowUI && owner==OS_SELF)?m_radio_btn_secondary_focus->Show():m_radio_btn_secondary_focus->Hide();
-}
-
-void SidePanel::PlanetView::FadeIn()
-{
-  double fade_in = static_cast<double>((GG::App::GetApp()->Ticks()-m_fadein_start))/static_cast<double>(m_fadein_span);
-
-  if(fade_in>=1.0)
-  {
-    m_transparency=255;
-
-    if(!m_bShowUI)
-    {
-      m_bShowUI = true;
-      if(Visible())
-        Show();
-    }
-  }
-  else
-    m_transparency = static_cast<int>(fade_in*255);
-}
-
-void SidePanel::PlanetView::SetFadeInPlanetView  (int start, int span)
-{
-  m_bShowUI=false;
-  m_fadein_start=start;m_fadein_span=span;
-
-  m_transparency = 0;
-
-  if(Visible())
-    Show();
-}
-
-void SidePanel::PlanetView::SetFadeInPlanetViewUI(int start, int span)
-{
-  m_bShowUI=true;
-  m_fadein_start=start;m_fadein_span=span;
-
-  m_transparency = 255;
-
-  if(Visible())
-    Show();
-}
-
-void SidePanel::PlanetView::PrimaryFocusClicked(int idx)
-{
-  m_connection_planet_production_changed.disconnect();
-  m_connection_btn_primary_focus_changed.disconnect();
-
-  FocusType ft=FOCUS_UNKNOWN;
-  switch(idx)
-  {
-    case  0:ft=FOCUS_FARMING      ;break;
-    case  1:ft=FOCUS_MINING       ;break;
-    case  2:ft=FOCUS_RESEARCH     ;break;
-    case  3:ft=FOCUS_INDUSTRY     ;break;
-    case  4:ft=FOCUS_BALANCED     ;break;
-    default:ft=FOCUS_UNKNOWN;break;
-  }
-  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
-  if(planet->PrimaryFocus()!=ft)
-    HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,true));
- 
-  m_connection_btn_primary_focus_changed = GG::Connect(m_radio_btn_primary_focus->ButtonChangedSignal, &SidePanel::PlanetView::PrimaryFocusClicked, this, boost::signals::at_front);
-  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal, &SidePanel::PlanetView::PlanetResourceCenterChanged, this, boost::signals::at_front);
-}
-
-void SidePanel::PlanetView::SecondaryFocusClicked(int idx)
-{
-  m_connection_planet_production_changed.disconnect();
-  m_connection_btn_secondary_focus_changed.disconnect();
-
-  FocusType ft=FOCUS_UNKNOWN;
-  switch(idx)
-  {
-    case  0:ft=FOCUS_FARMING      ;break;
-    case  1:ft=FOCUS_MINING       ;break;
-    case  2:ft=FOCUS_RESEARCH     ;break;
-    case  3:ft=FOCUS_INDUSTRY     ;break;
-    case  4:ft=FOCUS_BALANCED     ;break;
-    default:ft=FOCUS_UNKNOWN;break;
-  }
-  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
-  if(planet->SecondaryFocus()!=ft)
-    HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),ft,false));
-
-  m_connection_btn_secondary_focus_changed = GG::Connect(m_radio_btn_secondary_focus->ButtonChangedSignal, &SidePanel::PlanetView::SecondaryFocusClicked, this, boost::signals::at_front);
-  m_connection_planet_production_changed=GG::Connect(planet->ResourceCenterChangedSignal, &SidePanel::PlanetView::PlanetResourceCenterChanged, this, boost::signals::at_front);
-}
-
-bool SidePanel::PlanetView::Render()
-{
-  FadeIn();
-
-  const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
-  if(!planet)
-    throw std::runtime_error("SidePanel::PlanetView::Render planet not found!");
-
-  GG::Pt ul = UpperLeft(), lr = LowerRight();
-  GG::Pt client_ul = ClientUpperLeft(), client_lr = ClientLowerRight();
-
-  GG::BeginScissorClipping(ClientUpperLeft(), ClientLowerRight());
-  int height = (Width() * m_bg_image.Height()) / m_bg_image.Width();
-  
-  GG::Clr border_color=GG::CLR_WHITE;
-
-  if(!m_bShowUI)
-  {
-    glColor4ubv(GG::Clr(m_transparency,m_transparency,m_transparency,255).v);
-    border_color = GG::Clr(m_transparency,m_transparency,m_transparency,255);
-  }
-
-  m_bg_image.OrthoBlit(ul.x,ul.y+(Height()-height)/2,lr.x,ul.y+(Height()-height)/2+height,false);
-  GG::EndScissorClipping();
-  
-  AngledCornerRectangle(ul.x-2,ul.y-2,lr.x+2, lr.y+2, GG::CLR_ZERO, GG::Clr(200,200,200,255), 1,0,0,0,0);
-  AngledCornerRectangle(ul.x-1,ul.y-1,lr.x+1, lr.y+1, GG::CLR_ZERO, GG::Clr(125,125,125,255), 1,0,0,0,0);
-
-  if(!m_bShowUI)
-    return true;
-
-  if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))    
-    return true;
-
-  GG::Clr alpha_color(GG::CLR_WHITE);
-  if(m_bShowUI)
-  {
-    alpha_color=GG::Clr(m_transparency,m_transparency,m_transparency,255).v;
-  }
-
-  AngledCornerRectangle(ul.x+10, ul.y+35,ul.x+244, ul.y+ 70, GG::Clr(0.0,0.0,0.0,0.3), GG::CLR_ZERO,0,0,0,0,0);
-  AngledCornerRectangle(ul.x+10, ul.y+70,ul.x+244, ul.y+290, GG::Clr(0.0,0.0,0.0,0.6), GG::CLR_ZERO,0,0,0,0,0);
-  glColor4ubv(alpha_color.v);
-
-  m_foci_image.OrthoBlit(ul+GG::Pt(65,130),ul+GG::Pt(85+m_foci_image.Width(),140+130),false);
-
-  boost::shared_ptr<GG::Font> font;std::string text; int y;
-  Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
-
-  glColor4ubv(alpha_color.v);
-
-  y = ul.y+40;
-  text = planet->Name();
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT_BOLD, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));
-  font->RenderText(ul.x+40,y,ul.x+500,y+font->Height(), text, format, 0);
-  y+=font->Height();
-
-  text = GetPlanetSizeName(*planet);if(text.length()>0) text+=" "; text+= GetPlanetTypeName(*planet);
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+40,y-2,ul.x+500,y-2+font->Height(), text, format, 0);
-  y+=font->Height();
-
-  y = ul.y+80;
-  text = "Population";
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+20,y,ul.x+500,y+font->Height(), text, format, 0);
-
-  if(planet->MaxPop()==0) text= UserString("PE_UNINHABITABLE");
-  else                    text= " "+lexical_cast<std::string>(static_cast<int>(planet->PopPoints()))+"/"+lexical_cast<std::string>(planet->MaxPop()) + " Million";
-
-  text+="  ";
-
-  double future_pop_growth = static_cast<int>(planet->FuturePopGrowth()*100.0) / 100.0;
-  if     (future_pop_growth<0.0)  text+=GG::RgbaTag(GG::CLR_RED) + "(";
-  else if(future_pop_growth>0.0)  text+=GG::RgbaTag(GG::CLR_GREEN) + "(+";
-       else                       text+=GG::RgbaTag(ClientUI::TEXT_COLOR) + "(";
-
-  text+=lexical_cast<std::string>(future_pop_growth);
-  text+=")</rgba>";
-
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+20+80,y,ul.x+500,y+font->Height(), text, format, 0);
-  y+=font->Height();
-
-
-  text = "Immigration";
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*0.9));
-  font->RenderText(ul.x+20,y,ul.x+500,y+font->Height(), text, format, 0);
-  y+=font->Height();
-
-  y+= 5;
-
-  text = "Focus";
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+20,y,ul.x+500,y+font->Height(), text, format, 0);
-  
-  text = "Production";
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+175,y,ul.x+500,y+font->Height(), text, format, 0);
-  y+=font->Height();
-
-  text = "pri";
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*0.9));
-  font->RenderText(ul.x+20,y,ul.x+500,y+font->Height(), text, format, 0);
-
-  text = "sec";
-  font->RenderText(ul.x+40,y,ul.x+500,y+font->Height(), text, format, 0);
-  
-  y+=font->Height();
-
-  text = "FOCUS_BALANCED Focus";
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-  font->RenderText(ul.x+65,ul.y+145+128,ul.x+500,ul.y+145+128+font->Height(), text, format, 0);
-  y+=font->Height();
-
-
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
-
-  int farming=0,mining=0,research=0,industry=0,population=0;
-
-  farming   +=static_cast<int>(planet->FarmingPoints());
-  industry  +=static_cast<int>(planet->IndustryPoints());
-  mining    +=static_cast<int>(planet->MiningPoints());
-  research  +=static_cast<int>(planet->ResearchPoints());
-  //defense   +=;
-  population+=static_cast<int>(planet->PopPoints());
-
-  int x,icon_dim = static_cast<int>(font->Height()*1.5);  boost::shared_ptr<GG::Texture> icon;
-
-  format = GG::TF_RIGHT | GG::TF_VCENTER;
-  x = UpperLeft().x+175;
-  //farming
-  y = UpperLeft().y+140;
-  icon=IconFarming(); icon->OrthoBlit(x,y,x+icon_dim,y+icon_dim, 0, false);
-  text = (farming<0?"-":"+") + lexical_cast<std::string>(farming);
-  font->RenderText(x+icon_dim,y,x+icon_dim+35, y+icon_dim, text, format, 0);
-
-  //mining
-  y = UpperLeft().y+140+35;
-  icon=IconMining(); icon->OrthoBlit(x,y,x+icon_dim,y+icon_dim, 0, false);
-  text = (mining<0?"-":"+") + lexical_cast<std::string>(mining);
-  font->RenderText(x+icon_dim,y,x+icon_dim+35, y+icon_dim, text, format, 0);
-
-  //research
-  y = UpperLeft().y+140+70;
-  icon=IconResearch(); icon->OrthoBlit(x,y,x+icon_dim,y+icon_dim, 0, false);
-  text = (research<0?"-":"+") + lexical_cast<std::string>(research);
-  font->RenderText(x+icon_dim,y,x+icon_dim+35, y+icon_dim, text, format, 0);
-
-  //industy
-  y = UpperLeft().y+140+105;
-  icon=IconIndustry(); icon->OrthoBlit(x,y,x+icon_dim,y+icon_dim, 0, false);
-  text = (industry<0?"-":"+") + lexical_cast<std::string>(industry);
-  font->RenderText(x+icon_dim,y,x+icon_dim+35, y+icon_dim, text, format, 0);
-
-  AngledCornerRectangle(ul.x+255, ul.y+10,ul.x+489, ul.y+289, GG::Clr(0.0,0.0,0.0,0.6), GG::CLR_ZERO,0,0,0,0,0);
-
-  return true;
-}
-
-////////////////////////////////////////////////
 // SidePanel
 ////////////////////////////////////////////////
 SidePanel::SidePanel(int x, int y, int w, int h) : 
@@ -2001,7 +1065,6 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_star_graphic(0),
     m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::PTS-5,UserString("SP_SYSTEM_PRODUCTION"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR)),
     m_next_pltview_fade_in(0),m_next_pltview_planet_id(UniverseObject::INVALID_OBJECT_ID),m_next_pltview_fade_out(-1),
-    m_planet_view(0),
     m_planet_panel_container(new PlanetPanelContainer(0,100,w,h-100-30)),
     m_system_resource_summary(new SystemResourceSummary(0,100-20,w,20))
 {
@@ -2042,8 +1105,6 @@ bool SidePanel::InWindow(const GG::Pt& pt) const
 
 bool SidePanel::Render()
 {
-  PlanetViewFadeIn();
-
   GG::Pt ul = UpperLeft(), lr = LowerRight();
   FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::SIDE_PANEL_COLOR, GG::CLR_ZERO, 0);
 
@@ -2086,7 +1147,6 @@ void SidePanel::SetSystem(int system_id)
         PlaySidePanelOpenSound();
     TempUISoundDisabler sound_disabler;
 
-    delete m_planet_view;m_planet_view=0;
     m_fleet_icons.clear();
     m_planet_panel_container->Clear();
     m_system_name->Clear();
@@ -2169,8 +1229,6 @@ void SidePanel::SetSystem(int system_id)
       }
 
       m_planet_panel_container->SetPlanets(plt_vec, m_system->Star());
-      for(int i = 0; i < m_planet_panel_container->PlanetPanels(); i++) 
-        GG::Connect(m_planet_panel_container->GetPlanetPanel(i)->PlanetImageLClickedSignal,&SidePanel::PlanetLClicked,this);
 
       Show();PlanetsChanged();
       if(select_row==0)
@@ -2242,113 +1300,5 @@ void SidePanel::PlanetsChanged()
       m_system_resource_summary->Show();
       m_static_text_systemproduction->Show();
     }
-  }
-}
-
-void SidePanel::PlanetLClicked(int planet_id)
-{
-  if(   planet_id != UniverseObject::INVALID_OBJECT_ID
-     && (!m_planet_view || m_planet_view->PlanetID()!=planet_id))
-  {
-    const Planet* planet = GetUniverse().Object<const Planet>(planet_id);
-
-    if(m_planet_view)
-    {
-      GG::App::GetApp()->Remove(m_planet_view);
-      delete m_planet_view;m_planet_view=0;
-    }
-
-    // don't show planetview for gas giants or asteriods fields
-    if(planet->Type() == PT_ASTEROIDS || planet->Type() == PT_GASGIANT)
-      return;
-
-    int app_width = GetOptionsDB().Get<int>("app-width") - MapWnd::SIDE_PANEL_WIDTH, 
-        app_height= GetOptionsDB().Get<int>("app-height");
-
-    int pltview_width = 500, 
-        pltview_height= 300;
-
-    m_planet_view = new PlanetView((app_width-pltview_width)/2,(app_height-pltview_height)/2,pltview_width,pltview_height,*planet);
-    m_planet_view->SetFadeInPlanetView(GG::App::GetApp()->Ticks(),/*40*/0);
-    GG::App::GetApp()->Register(m_planet_view);
-
-    m_next_pltview_planet_id=-1;
-    m_next_pltview_fade_in=-1;
-  }
-}
-
-void SidePanel::PlanetViewFadeIn()
-{
-  GG::Pt mouse_pos = GG::App::GetApp()->MousePosition();
-  int plt_idx=-1; int planet_id=UniverseObject::INVALID_OBJECT_ID;
-  
-  // check if mouse is on top of a planet panel
-  for(plt_idx=0;plt_idx<m_planet_panel_container->PlanetPanels();plt_idx++)
-    if(m_planet_panel_container->GetPlanetPanel(plt_idx)->InWindow(mouse_pos))
-    {
-      planet_id = m_planet_panel_container->GetPlanetPanel(plt_idx)->PlanetID();
-      break;
-    }
-
-  if(m_planet_view && m_planet_view->InWindow(mouse_pos))
-    planet_id = m_planet_view->PlanetID();
-
-  // set fadeout time index or cancel fade out
-  if(!m_planet_view)
-  {
-    m_next_pltview_fade_out=-1;
-  }
-  else
-    if(planet_id == m_planet_view->PlanetID())
-    {
-      m_next_pltview_fade_in =-1;
-      m_next_pltview_fade_out=-1;
-    }
-    else
-    {
-      if(m_next_pltview_fade_out==-1)
-        m_next_pltview_fade_out = GG::App::GetApp()->Ticks()+200;
-    }
-
-  if(m_next_pltview_fade_out!=-1 && m_next_pltview_fade_out<GG::App::GetApp()->Ticks())
-  {
-    GG::App::GetApp()->Remove(m_planet_view);
-    delete m_planet_view;m_planet_view=0;
-  }
-
-// cancel fade in for now
-return;
-
-  if(   planet_id != UniverseObject::INVALID_OBJECT_ID
-     && planet_id != m_next_pltview_planet_id
-     && !(m_planet_view && m_planet_view->PlanetID()==planet_id))
-  {
-    m_next_pltview_planet_id = planet_id;
-    m_next_pltview_fade_in = GG::App::GetApp()->Ticks()+1000;
-  }
-
-  if(   m_next_pltview_planet_id != UniverseObject::INVALID_OBJECT_ID 
-     && m_next_pltview_fade_in!=-1 && m_next_pltview_fade_in < GG::App::GetApp()->Ticks())
-  {
-    if(m_planet_view)
-    {
-      GG::App::GetApp()->Remove(m_planet_view);
-      delete m_planet_view;m_planet_view=0;
-    }
-
-    const Planet* planet = GetUniverse().Object<const Planet>(m_next_pltview_planet_id);
-
-    int app_width = GetOptionsDB().Get<int>("app-width") - MapWnd::SIDE_PANEL_WIDTH, 
-        app_height= GetOptionsDB().Get<int>("app-height");
-
-    int pltview_width = 500, 
-        pltview_height= 300;
-
-    m_planet_view = new PlanetView((app_width-pltview_width)/2,(app_height-pltview_height)/2,pltview_width,pltview_height,*planet);
-    m_planet_view->SetFadeInPlanetView(GG::App::GetApp()->Ticks(),400);
-    GG::App::GetApp()->Register(m_planet_view);
-
-    m_next_pltview_planet_id=-1;
-    m_next_pltview_fade_in=-1;
   }
 }

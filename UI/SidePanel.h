@@ -43,10 +43,10 @@ class CUIScroll;
 class CUITextureButton;
 namespace GG {class TextControl;}
 class RotatingPlanetControl;
+class FocusSelector;
 
 class SidePanel : public GG::Wnd
 {
-  class PlanetView;
 public:
     /** a single planet's info and controls; several of these may appear at any one time in a SidePanel */
     class PlanetPanel : public GG::Wnd
@@ -89,11 +89,11 @@ public:
             additional conditions applies. If a control is being enabled, it's
             moved from the list of disabled controls (m_vec_unused_controls) to
             the child list of planet panel, if the control isn't found at m_vec_unused_controls
-            is assumed that it is already enable. after that control->Show() is called. Disableing a
+            is assumed that it is already enable. after that control->Show() is called. Disabling a
             control is done in reverse.
             for example: colonize btn is only enable/visible if there is a colony ship in orbit 
                          and the planet is unowned and inhabitable*/
-        void EnableControl(GG::Wnd *control,bool enable);
+        void EnableControl(GG::Wnd *control, bool enable);
 
 
         bool RenderUnhabited(const Planet &planet); ///< it's call if the planet isn't inhabited
@@ -103,23 +103,11 @@ public:
         int  PlanetDiameter() const;
         bool InPlanet(const GG::Pt& pt) const;///< returns true if pt is within the planet image
 
-        void PlanetChanged();                 ///< called when a planet was changed to handle rendering and wich control are enabled
+        void PlanetChanged();                 ///< called when a planet was changed to handle rendering and which controls are enabled
         void PlanetResourceCenterChanged();   ///< called when a planet resource production was changed
 
         void SetPrimaryFocus  (FocusType focus); ///< set the primary focus of the planet to focus
         void SetSecondaryFocus(FocusType focus); ///< set the secondary focus of the planet to focus
-
-        void LClickFarming () {SetPrimaryFocus(FOCUS_FARMING );}///< set the primary focus of the planet to farming
-        void LClickMining  () {SetPrimaryFocus(FOCUS_MINING  );}///< set the primary focus of the planet to mining
-        void LClickIndustry() {SetPrimaryFocus(FOCUS_INDUSTRY);}///< set the primary focus of the planet to industry
-        void LClickResearch() {SetPrimaryFocus(FOCUS_RESEARCH );}///< set the primary focus of the planet to science
-        void LClickBalanced() {SetPrimaryFocus(FOCUS_BALANCED);}///< set the primary focus of the planet to balanced
-
-        void RClickFarming () {SetSecondaryFocus(FOCUS_FARMING );}///< set the secondary focus of the planet to farming
-        void RClickMining  () {SetSecondaryFocus(FOCUS_MINING  );}///< set the secondary focus of the planet to mining
-        void RClickIndustry() {SetSecondaryFocus(FOCUS_INDUSTRY);}///< set the secondary focus of the planet to industry
-        void RClickResearch() {SetSecondaryFocus(FOCUS_RESEARCH );}///< set the secondary focus of the planet to science
-        void RClickBalanced() {SetSecondaryFocus(FOCUS_BALANCED);}///< set the secondary focus of the planet to balanced
 
         void ClickColonize();///< called if btn colonize is pressed
 
@@ -129,14 +117,10 @@ public:
         int                   m_planet_id;                ///< id for the planet with is representet by this planet panel
         GG::TextControl       *m_planet_name;             ///< planet name
         GG::TextControl       *m_planet_info;             ///< planet size and type info
+        FocusSelector         *m_focus_selector;          ///< buttons and displays for foci and associated meters
         CUIButton             *m_button_colonize;         ///< btn which can be pressed to colonize this planet
         GG::DynamicGraphic    *m_planet_graphic;          ///< image of the planet (can be a frameset); this is now used only for asteroids
         RotatingPlanetControl *m_rotating_planet_graphic; ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
-        CUIIconButton         *m_button_food,             ///< food focus btn (lclick - set primary focus,rclick - ser secondary focus)
-                              *m_button_mining,           ///< mining focus btn (lclick - set primary focus,rclick - ser secondary focus)
-                              *m_button_industry,         ///< industry focus btn (lclick - set primary focus,rclick - ser secondary focus)
-                              *m_button_research,         ///< research focus btn (lclick - set primary focus,rclick - ser secondary focus)
-                              *m_button_balanced;         ///< balanced focus btn (lclick - set primary focus,rclick - ser secondary focus)
 
         boost::signals::connection m_connection_system_changed;           ///< stores connection used to handle a system change
         boost::signals::connection m_connection_planet_changed;           ///< stores connection used to handle a planet change
@@ -181,8 +165,6 @@ private:
     void PrevButtonClicked();
     void NextButtonClicked();
 
-    void PlanetLClicked(int planet_id);
-
     const System        *m_system;
     CUIDropDownList     *m_system_name;
     GG::TextControl     *m_system_name_unknown;
@@ -190,12 +172,9 @@ private:
     GG::DynamicGraphic  *m_star_graphic;
     GG::TextControl     *m_static_text_systemproduction;
 
-    void PlanetViewFadeIn();
-
     int                 m_next_pltview_fade_in;
     int                 m_next_pltview_planet_id;
     int                 m_next_pltview_fade_out;
-    PlanetView          *m_planet_view;
 
     std::vector<GG::SubTexture> m_fleet_icons;
 
@@ -245,49 +224,6 @@ private:
 
       private:
         int m_farming,m_mining,m_research,m_industry,m_defense;
-    };
-
-    class PlanetView : public GG::Wnd
-    {
-      public:
-        PlanetView(int x, int y, int w, int h,const Planet &planet);
-
-        virtual bool Render();
-        virtual void Show(bool children = true);
-
-        int PlanetID() const {return m_planet_id;}
-
-        bool ShowUI() const {return m_bShowUI;}
-
-        void SetFadeInPlanetView  (int start, int span);
-        void SetFadeInPlanetViewUI(int start, int span);
-
-      protected:
-
-        void PlanetChanged();
-        void PlanetResourceCenterChanged();
-
-        void PrimaryFocusClicked(int idx);
-        void SecondaryFocusClicked(int idx);
-
-        int m_planet_id;
-
-        bool m_bShowUI;
-        int m_fadein_start,m_fadein_span;
-        
-        void FadeIn();
-
-        int m_transparency;
-
-        GG::SubTexture      m_bg_image;
-        GG::SubTexture      m_foci_image;
-
-        GG::RadioButtonGroup *m_radio_btn_primary_focus,*m_radio_btn_secondary_focus;
-        CUITextureButton *m_btn_fullscreen;
-
-        boost::signals::connection m_connection_btn_primary_focus_changed;
-        boost::signals::connection m_connection_btn_secondary_focus_changed;
-        boost::signals::connection m_connection_planet_production_changed;
     };
 
     PlanetPanelContainer  *m_planet_panel_container;
