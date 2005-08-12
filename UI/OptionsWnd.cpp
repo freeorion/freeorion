@@ -212,7 +212,7 @@ void OptionsWnd::AddFontControls(int x, int y, const std::string& userString, GG
 	textControl->MoveTo(PAGE_WIDTH - 55 - textControl->Width(), y + 3);
 	combo->Resize(PAGE_WIDTH - 60 - textControl->Width() - x, combo->Height());
 	pageWnd->AttachChild(textControl);
-    spin = new CUISpin<int>(PAGE_WIDTH - 50, y - 1, 75, GetOptionsDB().Get<int>("UI.font-size"), 1, 6, 72, true);
+    spin = new CUISpin<int>(PAGE_WIDTH - 50, y - 1, 50, GetOptionsDB().Get<int>("UI.font-size"), 1, 6, 72, true);
 	pageWnd->AttachChild(spin);
 }
 
@@ -729,7 +729,7 @@ OptionsWnd::~OptionsWnd()
 
 void OptionsWnd::Keypress (GG::Key key, Uint32 key_mods)
 {
-	if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) // Same behaviour as if "done" was pressed
+	if (key == GG::GGK_ESCAPE || key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) // Same behaviour as if "done" was pressed
 		DoneClicked();
 }
 
