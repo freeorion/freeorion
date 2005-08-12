@@ -6,6 +6,8 @@
 #include "UniverseObject.h"
 #endif
 
+class ServerApp;
+
 /** A Meter is a value with an associated maximum value.  A typical example is the population meter.  The max represents the max 
     pop for a planet, and the current represents the current pop there.  The max may be adjusted upwards or downwards, and the 
     current may be as well. */
@@ -18,6 +20,13 @@ public:
 
     double    Current() const; ///< returns the current value of the meter, which will be in [METER_MIN, Max()]
     double    Max() const;     ///< returns the maximum value of the meter, which will be in [METER_MIN, METER_MAX]
+
+    double    InitialCurrent() const;  ///< returns the current value of the meter, as it was at the beginning of the turn
+    double    InitialMax() const;      ///< returns the maximum value of the meter, as it was at the beginning of the turn
+    double    PreviousCurrent() const; ///< returns the current value of the meter, as it was at the beginning of last turn
+    double    PreviousMax() const;     ///< returns the maximum value of the meter, as it was at the beginning of last turn
+    double    DeltaCurrent() const;    ///< returns InitialCurrent() - PreviousCurrent()
+    double    DeltaMax() const;        ///< returns InitialMax() - PreviousMax()
 
     GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a System object with visibility limited relative to the input empire
 
@@ -34,6 +43,13 @@ public:
 private:
     double    m_current;
     double    m_max;
+    double    m_initial_current;
+    double    m_initial_max;
+    double    m_previous_current;
+    double    m_previous_max;
+
+    friend class ServerApp;
+    friend class Universe;
 };
 
 inline std::pair<std::string, std::string> MeterRevision()

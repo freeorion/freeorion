@@ -44,11 +44,16 @@ public:
     const Meter&   ResearchMeter() const    {return m_research;}     ///< returns the research Meter for this center
     const Meter&   TradeMeter() const       {return m_trade;}        ///< returns the trade Meter for this center
     const Meter&   ConstructionMeter() const{return m_construction;} ///< returns the construction Meter for this center
+    const Meter*   GetMeter(MeterType type) const;
     double         FarmingPoints() const;
     double         IndustryPoints() const;
     double         MiningPoints() const;
     double         ResearchPoints() const;
     double         TradePoints() const;
+
+    /** Returns the Current() value that the requested type of meter is projected to have next turn.  This projection is
+        only a rough estimate, based on the meter's current and max from this turn. */
+    double         ProjectedCurrent(MeterType type) const;
 
     virtual GG::XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a ResourceCenter object with the given visibility
      
@@ -64,6 +69,7 @@ public:
     Meter&   ResearchMeter()                 {return m_research;}     ///< returns the research Meter for this center
     Meter&   TradeMeter()                    {return m_trade;}        ///< returns the trade Meter for this center
     Meter&   ConstructionMeter()             {return m_construction;} ///< returns the construction Meter for this center
+    Meter*   GetMeter(MeterType type);
 
     virtual void AdjustMaxMeters();
     virtual void PopGrowthProductionResearchPhase();

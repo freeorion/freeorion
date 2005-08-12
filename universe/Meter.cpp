@@ -12,13 +12,21 @@ const double Meter::METER_MAX = 100.0;
 
 Meter::Meter() :
     m_current(METER_MIN),
-    m_max(METER_MIN)
+    m_max(METER_MIN),
+    m_initial_current(METER_MIN),
+    m_initial_max(METER_MIN),
+    m_previous_current(METER_MIN),
+    m_previous_max(METER_MIN)
 {
 }
 
 Meter::Meter(double current, double max) :
     m_current(current),
-    m_max(max)
+    m_max(max),
+    m_initial_current(METER_MIN),
+    m_initial_max(METER_MIN),
+    m_previous_current(METER_MIN),
+    m_previous_max(METER_MIN)
 {
 }
 
@@ -29,6 +37,10 @@ Meter::Meter(const GG::XMLElement& elem)
 
     m_current = boost::lexical_cast<double>(elem.Child("m_current").Text());
     m_max = boost::lexical_cast<double>(elem.Child("m_max").Text());
+    m_initial_current = boost::lexical_cast<double>(elem.Child("m_initial_current").Text());
+    m_initial_max = boost::lexical_cast<double>(elem.Child("m_initial_max").Text());
+    m_previous_current = boost::lexical_cast<double>(elem.Child("m_previous_current").Text());
+    m_previous_max = boost::lexical_cast<double>(elem.Child("m_previous_max").Text());
 }
 
 double Meter::Current() const
@@ -41,11 +53,45 @@ double Meter::Max() const
     return m_max;
 }
 
+double Meter::InitialCurrent() const
+{
+    return m_initial_current;
+}
+
+double Meter::InitialMax() const
+{
+    return m_initial_max;
+}
+
+double Meter::PreviousCurrent() const
+{
+    return m_previous_current;
+}
+
+double Meter::PreviousMax() const
+{
+    return m_previous_max;
+}
+
+double Meter::DeltaCurrent() const
+{
+    return m_initial_current - m_previous_current;
+}
+
+double Meter::DeltaMax() const
+{
+    return m_initial_max - m_previous_max;
+}
+
 GG::XMLElement Meter::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
     GG::XMLElement retval("Meter");
     retval.AppendChild(GG::XMLElement("m_current", boost::lexical_cast<std::string>(m_current)));
     retval.AppendChild(GG::XMLElement("m_max", boost::lexical_cast<std::string>(m_max)));
+    retval.AppendChild(GG::XMLElement("m_initial_current", boost::lexical_cast<std::string>(m_initial_current)));
+    retval.AppendChild(GG::XMLElement("m_initial_max", boost::lexical_cast<std::string>(m_initial_max)));
+    retval.AppendChild(GG::XMLElement("m_previous_current", boost::lexical_cast<std::string>(m_previous_current)));
+    retval.AppendChild(GG::XMLElement("m_previous_max", boost::lexical_cast<std::string>(m_previous_max)));
     return retval;
 }
 

@@ -44,28 +44,6 @@ namespace {
         return map;
     }
 
-    double MaxMeterAdjustment(FocusType meter, FocusType old_focus, FocusType new_focus, bool primary)
-    {
-        double primary_specialized_factor = ProductionDataTables()["FocusMods"][0][0];
-        double secondary_specialized_factor = ProductionDataTables()["FocusMods"][1][0];
-        double primary_balanced_factor = ProductionDataTables()["FocusMods"][2][0];
-        double secondary_balanced_factor = ProductionDataTables()["FocusMods"][3][0];
-        if (old_focus == FOCUS_UNKNOWN)
-            old_focus = FOCUS_BALANCED;
-        if (old_focus != new_focus) {
-            if (old_focus == FOCUS_BALANCED && new_focus == meter) {
-                return primary ? (primary_specialized_factor - primary_balanced_factor) : (secondary_specialized_factor - secondary_balanced_factor);
-            } else if (old_focus == FOCUS_BALANCED) {
-                return primary ? -primary_balanced_factor : -secondary_balanced_factor;
-            } else if (old_focus == meter && new_focus == FOCUS_BALANCED) {
-                return primary ? (primary_balanced_factor - primary_specialized_factor) : (secondary_balanced_factor - secondary_specialized_factor);
-            } else if (new_focus == FOCUS_BALANCED) {
-                return primary ? primary_balanced_factor : secondary_balanced_factor;
-            }
-        }
-        return 0.0;
-    }
-
     double MaxFarmingModFromObject(const UniverseObject* object)
     {
         double retval = 0.0;
@@ -82,6 +60,21 @@ namespace {
             retval = PlanetDataTables()["PlanetSizeIndustryMod"][0][planet->Environment()];
         }
         return retval;
+    }
+
+    void Growth(Meter& construction, Meter& farming, Meter& industry, Meter& mining, Meter& research, Meter& trade, const Meter& pop)
+    {
+        // update the construction meter
+        double construction_delta =
+            (construction.Current() + 1) * ((construction.Max() - construction.Current()) / (construction.Max() + 1)) * (pop.Current() * 10.0) * 0.01;
+        construction.AdjustCurrent(construction_delta);
+
+        // update the resource meters
+        farming.AdjustCurrent(construction.Current() / (10.0 + farming.Current()));
+        industry.AdjustCurrent(construction.Current() / (10.0 + industry.Current()));
+        mining.AdjustCurrent(construction.Current() / (10.0 + mining.Current()));
+        research.AdjustCurrent(construction.Current() / (10.0 + research.Current()));
+        trade.AdjustCurrent(construction.Current() / (10.0 + trade.Current()));
     }
 
     bool temp_header_bool = RecordHeaderFile(ResourceCenterRevision());
@@ -132,6 +125,19 @@ ResourceCenter::~ResourceCenter()
 {
 }
 
+const Meter* ResourceCenter::GetMeter(MeterType type) const
+{
+    switch (type) {
+    case METER_FARMING: return &m_farming;
+    case METER_INDUSTRY: return &m_industry;
+    case METER_RESEARCH: return &m_research;
+    case METER_TRADE: return &m_trade;
+    case METER_MINING: return &m_mining;
+    case METER_CONSTRUCTION: return &m_construction;
+    default: return 0;
+    }
+}
+
 double ResourceCenter::FarmingPoints() const
 {
     return m_pop.Current() / 10.0 * m_farming.Current();
@@ -155,6 +161,36 @@ double ResourceCenter::ResearchPoints() const
 double ResourceCenter::TradePoints() const
 {
     return m_pop.Current() / 10.0 * m_trade.Current();
+}
+
+double ResourceCenter::ProjectedCurrent(MeterType type) const
+{
+    Meter construction = m_construction, farming = m_farming, industry = m_industry, mining = m_mining, research = m_research, trade = m_trade;
+    Growth(construction, farming, industry, mining, research, trade, m_pop);
+    switch (type) {
+    case METER_FARMING: return farming.Current();
+    case METER_INDUSTRY: return industry.Current();
+    case METER_RESEARCH: return research.Current();
+    case METER_TRADE: return trade.Current();
+    case METER_MINING: return mining.Current();
+    case METER_CONSTRUCTION: return construction.Current();
+    default:
+        assert(0);
+        return 0.0;
+    }
+}
+
+Meter* ResourceCenter::GetMeter(MeterType type)
+{
+    switch (type) {
+    case METER_FARMING: return &m_farming;
+    case METER_INDUSTRY: return &m_industry;
+    case METER_RESEARCH: return &m_research;
+    case METER_TRADE: return &m_trade;
+    case METER_MINING: return &m_mining;
+    case METER_CONSTRUCTION: return &m_construction;
+    default: return 0;
+    }
 }
 
 GG::XMLElement ResourceCenter::XMLEncode(UniverseObject::Visibility vis) const
@@ -182,22 +218,40 @@ GG::XMLElement ResourceCenter::XMLEncode(UniverseObject::Visibility vis) const
 
 void ResourceCenter::SetPrimaryFocus(FocusType focus)
 {
-    m_farming.SetMax(m_farming.Max() + MaxMeterAdjustment(FOCUS_FARMING, m_primary, focus, true));
-    m_industry.SetMax(m_industry.Max() + MaxMeterAdjustment(FOCUS_INDUSTRY, m_primary, focus, true));
-    m_mining.SetMax(m_mining.Max() + MaxMeterAdjustment(FOCUS_MINING, m_primary, focus, true));
-    m_research.SetMax(m_research.Max() + MaxMeterAdjustment(FOCUS_RESEARCH, m_primary, focus, true));
-    m_trade.SetMax(m_trade.Max() + MaxMeterAdjustment(FOCUS_TRADE, m_primary, focus, true));
+    for (MeterType i = METER_FARMING; i <= METER_MINING; i = MeterType(i + 1)) {
+        double old_max_mods = 0.0;
+        if (m_primary == MeterToFocus(i))
+            old_max_mods = ProductionDataTables()["FocusMods"][0][0];
+        else if (m_primary == FOCUS_BALANCED)
+            old_max_mods = ProductionDataTables()["FocusMods"][2][0];
+        double new_max_mods = 0.0;
+        if (focus == MeterToFocus(i))
+            new_max_mods = ProductionDataTables()["FocusMods"][0][0];
+        else if (focus == FOCUS_BALANCED)
+            new_max_mods = ProductionDataTables()["FocusMods"][2][0];
+        Meter* meter = GetMeter(i);
+        meter->SetMax(meter->Max() + new_max_mods - old_max_mods);
+    }
     m_primary = focus;
     ResourceCenterChangedSignal();
 }
 
 void ResourceCenter::SetSecondaryFocus(FocusType focus)
 {
-    m_farming.SetMax(m_farming.Max() + MaxMeterAdjustment(FOCUS_FARMING, m_secondary, focus, false));
-    m_industry.SetMax(m_industry.Max() + MaxMeterAdjustment(FOCUS_INDUSTRY, m_secondary, focus, false));
-    m_mining.SetMax(m_mining.Max() + MaxMeterAdjustment(FOCUS_MINING, m_secondary, focus, false));
-    m_research.SetMax(m_research.Max() + MaxMeterAdjustment(FOCUS_RESEARCH, m_secondary, focus, false));
-    m_trade.SetMax(m_trade.Max() + MaxMeterAdjustment(FOCUS_TRADE, m_secondary, focus, false));
+    for (MeterType i = METER_FARMING; i <= METER_MINING; i = MeterType(i + 1)) {
+        double old_max_mods = 0.0;
+        if (m_secondary == MeterToFocus(i))
+            old_max_mods = ProductionDataTables()["FocusMods"][1][0];
+        else if (m_secondary == FOCUS_BALANCED)
+            old_max_mods = ProductionDataTables()["FocusMods"][3][0];
+        double new_max_mods = 0.0;
+        if (focus == MeterToFocus(i))
+            new_max_mods = ProductionDataTables()["FocusMods"][1][0];
+        else if (focus == FOCUS_BALANCED)
+            new_max_mods = ProductionDataTables()["FocusMods"][3][0];
+        Meter* meter = GetMeter(i);
+        meter->SetMax(meter->Max() + new_max_mods - old_max_mods);
+    }
     m_secondary = focus;
     ResourceCenterChangedSignal();
 }
@@ -250,17 +304,7 @@ void ResourceCenter::AdjustMaxMeters()
 
 void ResourceCenter::PopGrowthProductionResearchPhase()
 {
-    // update the construction meter
-    double construction_delta =
-        (m_construction.Current() + 1) * ((m_construction.Max() - m_construction.Current()) / (m_construction.Max() + 1)) * (m_pop.Current() * 10.0) * 0.01;
-    m_construction.AdjustCurrent(construction_delta);
-
-    // update the resource meters
-    m_farming.AdjustCurrent(m_construction.Current() / (10.0 + m_farming.Current()));
-    m_industry.AdjustCurrent(m_construction.Current() / (10.0 + m_industry.Current()));
-    m_mining.AdjustCurrent(m_construction.Current() / (10.0 + m_mining.Current()));
-    m_research.AdjustCurrent(m_construction.Current() / (10.0 + m_research.Current()));
-    m_trade.AdjustCurrent(m_construction.Current() / (10.0 + m_trade.Current()));
+    Growth(m_construction, m_farming, m_industry, m_mining, m_research, m_trade, m_pop);
 }
 
 

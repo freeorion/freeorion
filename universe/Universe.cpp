@@ -2152,6 +2152,21 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         home_planet->GetMeter(METER_TRADE)->SetCurrent(home_planet->GetMeter(METER_TRADE)->Max() * 0.75);
         home_planet->AdjustDefBases(3);
 
+        home_planet->GetMeter(METER_HEALTH)->m_initial_current = home_planet->GetMeter(METER_HEALTH)->Current();
+        home_planet->GetMeter(METER_HEALTH)->m_initial_max = home_planet->GetMeter(METER_HEALTH)->Max();
+        home_planet->GetMeter(METER_CONSTRUCTION)->m_initial_current = home_planet->GetMeter(METER_CONSTRUCTION)->Current();
+        home_planet->GetMeter(METER_CONSTRUCTION)->m_initial_max = home_planet->GetMeter(METER_CONSTRUCTION)->Max();
+        home_planet->GetMeter(METER_FARMING)->m_initial_current = home_planet->GetMeter(METER_FARMING)->Current();
+        home_planet->GetMeter(METER_FARMING)->m_initial_max = home_planet->GetMeter(METER_FARMING)->Max();
+        home_planet->GetMeter(METER_INDUSTRY)->m_initial_current = home_planet->GetMeter(METER_INDUSTRY)->Current();
+        home_planet->GetMeter(METER_INDUSTRY)->m_initial_max = home_planet->GetMeter(METER_INDUSTRY)->Max();
+        home_planet->GetMeter(METER_MINING)->m_initial_current = home_planet->GetMeter(METER_MINING)->Current();
+        home_planet->GetMeter(METER_MINING)->m_initial_max = home_planet->GetMeter(METER_MINING)->Max();
+        home_planet->GetMeter(METER_RESEARCH)->m_initial_current = home_planet->GetMeter(METER_RESEARCH)->Current();
+        home_planet->GetMeter(METER_RESEARCH)->m_initial_max = home_planet->GetMeter(METER_RESEARCH)->Max();
+        home_planet->GetMeter(METER_TRADE)->m_initial_current = home_planet->GetMeter(METER_TRADE)->Current();
+        home_planet->GetMeter(METER_TRADE)->m_initial_max = home_planet->GetMeter(METER_TRADE)->Max();
+
         // create the empire's initial ship designs
         // for now, the order that these are created need to match
         // the enums for ship designs in ships.h

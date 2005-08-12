@@ -1885,6 +1885,14 @@ void ServerApp::ProcessTurns()
 
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
+        for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
+            if (Meter* meter = it->second->GetMeter(i)) {
+                meter->m_previous_current = meter->m_initial_current;
+                meter->m_previous_max = meter->m_initial_max;
+                meter->m_initial_current = meter->m_current;
+                meter->m_initial_max = meter->m_max;
+            }
+        }
     }
 
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
