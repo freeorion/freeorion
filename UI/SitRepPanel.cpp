@@ -60,6 +60,9 @@ void SitRepPanel::Update()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
+    if (!empire)
+        return;
+
     int first_visible_sitrep = m_sitreps_lb->FirstRowShown();
     m_sitreps_lb->Clear();
 
