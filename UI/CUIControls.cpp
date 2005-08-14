@@ -932,3 +932,233 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
     SetFilesString(UserString("FILE_DLG_FILES"));
     SetFileTypesString(UserString("FILE_DLG_FILE_TYPES"));
 }
+
+//////////////////////////////////////////////////
+// ProductionInfoPanel
+//////////////////////////////////////////////////
+// static(s)
+const int ProductionInfoPanel::CORNER_RADIUS = 9;
+const int ProductionInfoPanel::VERTICAL_SECTION_GAP = 4;
+
+ProductionInfoPanel::ProductionInfoPanel(int w, int h, const std::string& title, const std::string& points_str,
+                                         double border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color) :
+    GG::Wnd(0, 0, w, h, 0),
+    m_border_thickness(border_thickness),
+    m_color(color),
+    m_text_and_border_color(text_and_border_color)
+{
+    const int RESEARCH_TITLE_PTS = ClientUI::PTS + 10;
+    const int STAT_TEXT_PTS = ClientUI::PTS;
+    const int CENTERLINE_GAP = 4;
+    const int LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 2 / 3;
+    const int VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
+    const int LEFT_TEXT_X = 0;
+    const int RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
+    const int P_LABEL_X = RIGHT_TEXT_X + 40;
+    const int P_LABEL_WIDTH = Width() - 2 - 5 - P_LABEL_X;
+    const GG::Clr TEXT_COLOR = ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR;
+    m_center_gap = std::make_pair(LABEL_TEXT_WIDTH + 2, LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP);
+
+    m_title = new GG::TextControl(2, 4, Width() - 4, RESEARCH_TITLE_PTS + 4, title, ClientUI::FONT, RESEARCH_TITLE_PTS, TEXT_COLOR);
+    m_total_points_label = new GG::TextControl(LEFT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_RIGHT);
+    m_total_points = new GG::TextControl(RIGHT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
+    m_total_points_P_label = new GG::TextControl(P_LABEL_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
+    m_wasted_points_label = new GG::TextControl(LEFT_TEXT_X, m_total_points_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_RIGHT);
+    m_wasted_points = new GG::TextControl(RIGHT_TEXT_X, m_total_points_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
+    m_wasted_points_P_label = new GG::TextControl(P_LABEL_X, m_total_points_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
+    m_projects_in_progress_label = new GG::TextControl(LEFT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_RIGHT);
+    m_projects_in_progress = new GG::TextControl(RIGHT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
+    m_points_to_underfunded_projects_label = new GG::TextControl(LEFT_TEXT_X, m_projects_in_progress_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_RIGHT);
+    m_points_to_underfunded_projects = new GG::TextControl(RIGHT_TEXT_X, m_projects_in_progress_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
+    m_points_to_underfunded_projects_P_label = new GG::TextControl(P_LABEL_X, m_projects_in_progress_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
+    m_projects_in_queue_label = new GG::TextControl(LEFT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_RIGHT);
+    m_projects_in_queue = new GG::TextControl(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::FONT, STAT_TEXT_PTS, TEXT_COLOR, GG::TF_LEFT);
+
+    Resize(Width(), m_projects_in_queue_label->LowerRight().y + 5);
+
+    AttachChild(m_title);
+    AttachChild(m_total_points_label);
+    AttachChild(m_total_points);
+    AttachChild(m_total_points_P_label);
+    AttachChild(m_wasted_points_label);
+    AttachChild(m_wasted_points);
+    AttachChild(m_wasted_points_P_label);
+    AttachChild(m_projects_in_progress_label);
+    AttachChild(m_projects_in_progress);
+    AttachChild(m_points_to_underfunded_projects_label);
+    AttachChild(m_points_to_underfunded_projects);
+    AttachChild(m_points_to_underfunded_projects_P_label);
+    AttachChild(m_projects_in_queue_label);
+    AttachChild(m_projects_in_queue);
+}
+
+bool ProductionInfoPanel::Render()
+{
+    glDisable(GL_TEXTURE_2D);
+    Draw(ClientUI::KNOWN_TECH_FILL_COLOR, true);
+    glEnable(GL_LINE_SMOOTH);
+    glLineWidth(m_border_thickness);
+    Draw(GG::Clr(ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.r, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.g, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.b, 127), false);
+    glLineWidth(1.0);
+    glDisable(GL_LINE_SMOOTH);
+    Draw(GG::Clr(ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.r, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.g, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.b, 255), false);
+    glEnable(GL_TEXTURE_2D);
+    return true;
+}
+
+void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, int projects_in_progress, double points_to_underfunded_projects, int queue_size)
+{
+    double wasted_points = total_queue_cost < total_points ? total_points - total_queue_cost : 0.0;
+    *m_total_points << static_cast<int>(total_points);
+    *m_wasted_points << static_cast<int>(wasted_points);
+    *m_projects_in_progress << projects_in_progress;
+    *m_points_to_underfunded_projects << static_cast<int>(points_to_underfunded_projects);
+    *m_projects_in_queue << queue_size;
+}
+
+void ProductionInfoPanel::Draw(GG::Clr clr, bool fill)
+{
+    GG::Pt ul = UpperLeft() + GG::Pt(3, 3), lr = LowerRight() - GG::Pt(3, 3);
+    glColor4ubv(clr.v);
+    PartlyRoundedRect(ul, GG::Pt(lr.x, m_title->LowerRight().y + 2),
+                      CORNER_RADIUS, true, true, false, false, fill);
+    std::pair<int, int> gap_to_use(m_center_gap.first + ul.x, m_center_gap.second + ul.x);
+    PartlyRoundedRect(GG::Pt(ul.x, m_total_points_label->UpperLeft().y - 2), GG::Pt(gap_to_use.first, m_wasted_points_label->LowerRight().y + 2),
+                      CORNER_RADIUS, false, false, false, false, fill);
+    PartlyRoundedRect(GG::Pt(gap_to_use.second, m_total_points_label->UpperLeft().y - 2), GG::Pt(lr.x, m_wasted_points_label->LowerRight().y + 2),
+                      CORNER_RADIUS, false, false, false, false, fill);
+    PartlyRoundedRect(GG::Pt(ul.x, m_projects_in_progress_label->UpperLeft().y - 2), GG::Pt(gap_to_use.first, m_projects_in_queue_label->LowerRight().y + 2),
+                      CORNER_RADIUS, false, false, true, false, fill);
+    PartlyRoundedRect(GG::Pt(gap_to_use.second, m_projects_in_progress_label->UpperLeft().y - 2), GG::Pt(lr.x, m_projects_in_queue_label->LowerRight().y + 2),
+                      CORNER_RADIUS, false, false, false, true, fill);
+}
+
+//////////////////////////////////////////////////
+// MultiTurnProgressBar
+//////////////////////////////////////////////////
+MultiTurnProgressBar::MultiTurnProgressBar(int w, int h, int total_turns, int turns_completed, double partially_complete_turn,
+                                           const GG::Clr& bar_color, const GG::Clr& background, const GG::Clr& outline_color) :
+    Control(0, 0, w, h, 0),
+    m_total_turns(total_turns),
+    m_turns_completed(turns_completed),
+    m_partially_complete_turn(partially_complete_turn),
+    m_bar_color(bar_color),
+    m_background(background),
+    m_outline_color(outline_color)
+{}
+
+bool MultiTurnProgressBar::Render()
+{
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    int h = Height();
+    const double TURN_SEGMENT_WIDTH = Width() / static_cast<double>(m_total_turns);
+    glDisable(GL_TEXTURE_2D);
+    glColor4ubv(m_background.v);
+    if (m_partially_complete_turn && m_turns_completed == m_total_turns - 1) {
+        GG::BeginScissorClipping(static_cast<int>(lr.x - TURN_SEGMENT_WIDTH), ul.y,
+                                 lr.x, static_cast<int>(lr.y - m_partially_complete_turn * h));
+        glBegin(GL_POLYGON);
+        RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
+        glEnd();
+        GG::EndScissorClipping();
+        GG::BeginScissorClipping(static_cast<int>(lr.x - TURN_SEGMENT_WIDTH),
+                                 static_cast<int>(lr.y - m_partially_complete_turn * h),
+                                 lr.x, lr.y);
+        glColor4ubv(m_bar_color.v);
+        glBegin(GL_POLYGON);
+        RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
+        glEnd();
+        GG::EndScissorClipping();
+        glColor4ubv(m_background.v);
+    } else {
+        glBegin(GL_POLYGON);
+        RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
+        glEnd();
+    }
+    glBegin(GL_QUADS);
+    if (m_turns_completed != m_total_turns - 1) {
+        glVertex2d(lr.x - TURN_SEGMENT_WIDTH, ul.y);
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), ul.y);
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y);
+        glVertex2d(lr.x - TURN_SEGMENT_WIDTH, lr.y);
+    }
+    if (0 < m_turns_completed && m_turns_completed < m_total_turns - 1) {
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), ul.y);
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, ul.y);
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y - h * m_partially_complete_turn);
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y - h * m_partially_complete_turn);
+    }
+    glColor4ubv(m_bar_color.v);
+    if (0 < m_turns_completed && m_turns_completed < m_total_turns - 1) {
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y - h * m_partially_complete_turn);
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y - h * m_partially_complete_turn);
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y);
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y);
+    }
+    if (m_turns_completed) {
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, ul.y);
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH, ul.y);
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH, lr.y);
+        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y);
+    }
+    glEnd();
+    if (m_partially_complete_turn && !m_turns_completed) {
+        GG::BeginScissorClipping(ul.x, static_cast<int>(lr.y - m_partially_complete_turn * h),
+                                 static_cast<int>(ul.x + TURN_SEGMENT_WIDTH), lr.y);
+        glBegin(GL_POLYGON);
+        LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
+        glEnd();
+        GG::EndScissorClipping();
+        GG::BeginScissorClipping(ul.x, ul.y,
+                                 static_cast<int>(ul.x + TURN_SEGMENT_WIDTH),
+                                 static_cast<int>(lr.y - m_partially_complete_turn * h));
+        glColor4ubv(m_background.v);
+        glBegin(GL_POLYGON);
+        LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
+        glEnd();
+        GG::EndScissorClipping();
+    } else {
+        if (!m_turns_completed)
+            glColor4ubv(m_background.v);
+        glBegin(GL_POLYGON);
+        LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
+        glEnd();
+    }
+    glColor4ubv(m_outline_color.v);
+    glBegin(GL_LINES);
+    for (double x = ul.x + TURN_SEGMENT_WIDTH; x < lr.x - 1.0e-5; x += TURN_SEGMENT_WIDTH) {
+        glVertex2d(x, ul.y);
+        glVertex2d(x, lr.y);
+    }
+    glEnd();
+    glEnable(GL_LINE_SMOOTH);
+    glBegin(GL_LINE_LOOP);
+    LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
+    RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
+    glEnd();
+    glDisable(GL_LINE_SMOOTH);
+
+    glEnable(GL_TEXTURE_2D);
+
+    return true;
+}
+
+void MultiTurnProgressBar::LeftEndVertices(double x1, double y1, double x2, double y2)
+{
+    glVertex2d(x2, y1);
+    glVertex2d(x1 + 5, y1);
+    glVertex2d(x1, y1 + 4);
+    glVertex2d(x1, y2 - 4);
+    glVertex2d(x1 + 5, y2);
+    glVertex2d(x2, y2);
+}
+
+void MultiTurnProgressBar::RightEndVertices(double x1, double y1, double x2, double y2)
+{
+    glVertex2d(x1, y2);
+    glVertex2d(x2 - 5, y2);
+    glVertex2d(x2, y2 - 4);
+    glVertex2d(x2, y1 + 4);
+    glVertex2d(x2 - 5, y1);
+    glVertex2d(x1, y1);
+}

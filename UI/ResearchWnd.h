@@ -8,6 +8,7 @@
 class CUIListBox;
 class Tech;
 class TechTreeWnd;
+class ProductionInfoPanel;
 
 /** Contains a TechTreeWnd, some stats on the empire-wide research queue, and the queue itself. */
 class ResearchWnd : public CUI_Wnd
@@ -26,18 +27,17 @@ public:
     //@}
 
 private:
-    class ResearchInfoPanel;
-
     void UpdateQueue();
+    void ResetInfoPanel();
     void AddTechToQueueSlot(const Tech* tech);
     void QueueItemDeletedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void QueueItemMovedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void QueueItemClickedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt);
     void QueueItemDoubleClickedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
 
-    ResearchInfoPanel* m_research_info_panel;
-    CUIListBox*        m_queue_lb;
-    TechTreeWnd*       m_tech_tree_wnd;
+    ProductionInfoPanel* m_research_info_panel;
+    CUIListBox*          m_queue_lb;
+    TechTreeWnd*         m_tech_tree_wnd;
 };
 
 inline std::pair<std::string, std::string> ResearchWndRevision()

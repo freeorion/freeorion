@@ -368,3 +368,75 @@ void CircleArc(int x1, int y1, int x2, int y2, double theta1, double theta2, boo
     if (filled_shape)
         glEnd();
 }
+
+void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_round, bool ul_round, bool ll_round, bool lr_round, bool fill)
+{
+    const double PI = 3.141594;
+    if (fill) {
+        if (ur_round)
+            CircleArc(lr.x - 2 * radius, ul.y, lr.x, ul.y + 2 * radius, 0.0, PI / 2.0, fill);
+        if (ul_round)
+            CircleArc(ul.x, ul.y, ul.x + 2 * radius, ul.y + 2 * radius, PI / 2.0, PI, fill);
+        if (ll_round)
+            CircleArc(ul.x, lr.y - 2 * radius, ul.x + 2 * radius, lr.y, PI, 3.0 * PI / 2.0, fill);
+        if (lr_round)
+            CircleArc(lr.x - 2 * radius, lr.y - 2 * radius, lr.x, lr.y, 3.0 * PI / 2.0, 0.0, fill);
+        glBegin(GL_QUADS);
+        glVertex2i(lr.x, ul.y + radius);
+        glVertex2i(ul.x, ul.y + radius);
+        glVertex2i(ul.x, lr.y - radius);
+        glVertex2i(lr.x, lr.y - radius);
+        glVertex2i(lr.x - radius, ul.y);
+        glVertex2i(ul.x + radius, ul.y);
+        glVertex2i(ul.x + radius, ul.y + radius);
+        glVertex2i(lr.x - radius, ul.y + radius);
+        glVertex2i(lr.x - radius, lr.y - radius);
+        glVertex2i(ul.x + radius, lr.y - radius);
+        glVertex2i(ul.x + radius, lr.y);
+        glVertex2i(lr.x - radius, lr.y);
+        if (!ur_round) {
+            glVertex2i(lr.x, ul.y);
+            glVertex2i(lr.x - radius, ul.y);
+            glVertex2i(lr.x - radius, ul.y + radius);
+            glVertex2i(lr.x, ul.y + radius);
+        }
+        if (!ul_round) {
+            glVertex2i(ul.x + radius, ul.y);
+            glVertex2i(ul.x, ul.y);
+            glVertex2i(ul.x, ul.y + radius);
+            glVertex2i(ul.x + radius, ul.y + radius);
+        }
+        if (!ll_round) {
+            glVertex2i(ul.x + radius, lr.y - radius);
+            glVertex2i(ul.x, lr.y - radius);
+            glVertex2i(ul.x, lr.y);
+            glVertex2i(ul.x + radius, lr.y);
+        }
+        if (!lr_round) {
+            glVertex2i(lr.x, lr.y - radius);
+            glVertex2i(lr.x - radius, lr.y - radius);
+            glVertex2i(lr.x - radius, lr.y);
+            glVertex2i(lr.x, lr.y);
+        }
+        glEnd();
+    } else {
+        glBegin(GL_LINE_LOOP);
+        if (ur_round)
+            CircleArc(lr.x - 2 * radius, ul.y, lr.x, ul.y + 2 * radius, 0.0, PI / 2.0, fill);
+        else
+            glVertex2i(lr.x, ul.y);
+        if (ul_round)
+            CircleArc(ul.x, ul.y, ul.x + 2 * radius, ul.y + 2 * radius, PI / 2.0, PI, fill);
+        else
+            glVertex2i(ul.x, ul.y);
+        if (ll_round)
+            CircleArc(ul.x, lr.y - 2 * radius, ul.x + 2 * radius, lr.y, PI, 3.0 * PI / 2.0, fill);
+        else
+            glVertex2i(ul.x, lr.y);
+        if (lr_round)
+            CircleArc(lr.x - 2 * radius, lr.y - 2 * radius, lr.x, lr.y, 3.0 * PI / 2.0, 0.0, fill);
+        else
+            glVertex2i(lr.x, lr.y);
+        glEnd();
+    }
+}

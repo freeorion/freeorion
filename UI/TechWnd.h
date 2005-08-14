@@ -15,7 +15,13 @@ public:
     enum TechTypesShown {
         THEORY_TECHS,
         APPLICATION_AND_THEORY_TECHS,
-        ALL_TECHS
+        ALL_TECH_TYPES
+    };
+
+    enum TechStatusesShown {
+        RESEARCHABLE_TECHS,
+        COMPLETE_AND_RESEARCHABLE_TECHS,
+        ALL_TECH_STATUSES
     };
 
     /** \name Signal Types */ //@{
@@ -37,6 +43,7 @@ public:
     /** \name Accessors */ //@{
     const std::string& CategoryShown() const;
     TechTypesShown     GetTechTypesShown() const;
+    TechStatusesShown  GetTechStatusesShown() const;
 
     mutable TechBrowsedSignalType       TechBrowsedSignal;
     mutable TechClickedSignalType       TechSelectedSignal;
@@ -49,6 +56,7 @@ public:
     void Reset();
     void ShowCategory(const std::string& category);
     void SetTechTypesShown(TechTypesShown tech_types);
+    void SetTechStatusesShown(TechStatusesShown tech_statuses);
     void UncollapseAll();
     void CenterOnTech(const Tech* tech);
     //@}
@@ -62,12 +70,14 @@ private:
     void TechClickedSlot(const Tech* tech);
     void TechDoubleClickedSlot(const Tech* tech);
     void TechTypesShownSlot(int types);
+    void TechStatusesShownSlot(int statuses);
 
     std::vector<CUIButton*> m_category_buttons;
     TechDetailPanel*        m_tech_detail_panel;
     TechNavigator*          m_tech_navigator;
     LayoutPanel*            m_layout_panel;
     GG::RadioButtonGroup*   m_tech_type_buttons;
+    GG::RadioButtonGroup*   m_tech_status_buttons;
     CUIButton*              m_uncollapse_all_button;
 };
 

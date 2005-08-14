@@ -89,14 +89,14 @@ int         ClientUI::SIDE_PANEL_PLANET_NAME_PTS = 15;
 int         ClientUI::SIDE_PANEL_PTS = 11;
 
 // tech screen
-GG::Clr     ClientUI::KNOWN_TECH_FILL_COLOR(43, 81, 102, 255);
-GG::Clr     ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR(119, 190, 210, 255);
-GG::Clr     ClientUI::RESEARCHABLE_TECH_FILL_COLOR(31, 53, 66, 255);
-GG::Clr     ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR = KNOWN_TECH_TEXT_AND_BORDER_COLOR;
-GG::Clr     ClientUI::UNRESEARCHABLE_TECH_FILL_COLOR = ClientUI::CTRL_COLOR;
-GG::Clr     ClientUI::UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR = ClientUI::CTRL_BORDER_COLOR;
-GG::Clr     ClientUI::TECH_WND_PROGRESS_BAR_BACKGROUND(53, 80, 125, 255);
-GG::Clr     ClientUI::TECH_WND_PROGRESS_BAR(6, 27, 92, 255);
+GG::Clr     ClientUI::KNOWN_TECH_FILL_COLOR(72, 72, 72, 255);
+GG::Clr     ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR(164, 164, 164, 255);
+GG::Clr     ClientUI::RESEARCHABLE_TECH_FILL_COLOR(48, 48, 48, 255);
+GG::Clr     ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR = ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR;
+GG::Clr     ClientUI::UNRESEARCHABLE_TECH_FILL_COLOR(30, 30, 30, 255);
+GG::Clr     ClientUI::UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR(86, 86, 86, 255);
+GG::Clr     ClientUI::TECH_WND_PROGRESS_BAR_BACKGROUND = ClientUI::KNOWN_TECH_FILL_COLOR;
+GG::Clr     ClientUI::TECH_WND_PROGRESS_BAR(40, 40, 40, 255);
 
 
 // private static members
@@ -155,6 +155,7 @@ namespace {
 
         // fonts
         db.Add<std::string>("UI.font", "Sets UI font resource file.", ClientUI::FONT);
+        db.Add<std::string>("UI.font-bold", "Sets UI bold font resource file.", ClientUI::FONT_BOLD);
         db.Add("UI.font-size", "Sets UI font size.", ClientUI::PTS, RangedValidator<int>(4, 40));
         db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", ClientUI::TITLE_FONT);
         db.Add("UI.title-font-size", "Sets UI title font size.", ClientUI::TITLE_PTS, RangedValidator<int>(4, 40));

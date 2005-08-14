@@ -475,6 +475,74 @@ public:
     //@}
 };
 
+/** Despite the name, this is actually used to display info in both the Research and Production screens. */
+class ProductionInfoPanel : public GG::Wnd
+{
+public:
+    /** \name Structors */ //@{
+    ProductionInfoPanel(int w, int h, const std::string& title, const std::string& points_str,
+                        double border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color);
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual bool Render();
+
+    void Reset(double total_points, double total_queue_cost, int projects_in_progress, double points_to_underfunded_projects, int queue_size);
+    //@}
+
+private:
+    void Draw(GG::Clr clr, bool fill);
+
+    GG::TextControl* m_title;
+    GG::TextControl* m_total_points_label;
+    GG::TextControl* m_total_points;
+    GG::TextControl* m_total_points_P_label;
+    GG::TextControl* m_wasted_points_label;
+    GG::TextControl* m_wasted_points;
+    GG::TextControl* m_wasted_points_P_label;
+    GG::TextControl* m_projects_in_progress_label;
+    GG::TextControl* m_projects_in_progress;
+    GG::TextControl* m_points_to_underfunded_projects_label;
+    GG::TextControl* m_points_to_underfunded_projects;
+    GG::TextControl* m_points_to_underfunded_projects_P_label;
+    GG::TextControl* m_projects_in_queue_label;
+    GG::TextControl* m_projects_in_queue;
+
+    std::pair<int, int> m_center_gap;
+    double m_border_thickness;
+    GG::Clr m_color;
+    GG::Clr m_text_and_border_color;
+
+    static const int CORNER_RADIUS;
+    static const int VERTICAL_SECTION_GAP;
+};
+
+/** Displays progress that is divided over mulitple turns, as in the Research and Production screens. */
+class MultiTurnProgressBar : public GG::Control
+{
+public:
+    /** \name Structors */ //@{
+    /** ctor */
+    MultiTurnProgressBar(int w, int h, int total_turns, int turns_completed, double partially_complete_turn,
+                         const GG::Clr& bar_color, const GG::Clr& background, const GG::Clr& outline_color);
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual bool Render();
+    //@}
+
+private:
+    void LeftEndVertices(double x1, double y1, double x2, double y2);
+    void RightEndVertices(double x1, double y1, double x2, double y2);
+
+    int     m_total_turns;
+    int     m_turns_completed;
+    double  m_partially_complete_turn;
+    GG::Clr m_bar_color;
+    GG::Clr m_background;
+    GG::Clr m_outline_color;
+};
+
 inline std::pair<std::string, std::string> CUIControlsRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 

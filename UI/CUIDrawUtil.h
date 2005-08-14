@@ -46,6 +46,9 @@ bool InFleetMarker(const GG::Pt& pt, int x1, int y1, int x2, int y2, ShapeOrient
     or provides the vertices for a portion of a circle (calling glVertex2f() ...;). when \a filled_shape is false. */
 void CircleArc(int x1, int y1, int x2, int y2, double theta1, double theta2, bool filled_shape);
 
+/** Draws a rectangle whose corners are rounded with radius \a radius as indicated by the \a *_round parameters.  If \a
+    fill is true, the resulting rectangle is solid; it is drawn in outline otherwise. */
+void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_round, bool ul_round, bool ll_round, bool lr_round, bool fill);
 
 inline std::pair<std::string, std::string> CUIDrawUtilRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}

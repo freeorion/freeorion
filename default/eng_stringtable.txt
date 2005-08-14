@@ -683,10 +683,10 @@ TECH_TOTAL_COST_STR
 %1% RP / %2% Turns
 
 TECH_TURN_COST_STR
-%1% RP
+%1% RP / %2% Turns
 
 TECH_TURNS_LEFT_STR
-%1% Turns
+%1% Turns left
 
 TECH_TURNS_LEFT_NEVER
 Never
@@ -718,6 +718,9 @@ Incomplete
 TECH_WND_ALL_TECH_CATEGORIES
 All
 
+TECH_WND_TECH_TYPES_TO_SHOW
+Tech types to show:
+
 TECH_WND_TECH_TYPES_ALL
 All Types
 
@@ -725,19 +728,48 @@ TECH_WND_TECH_TYPES_THEORIES_AND_APPS
 Theories and Apps
 
 TECH_WND_TECH_TYPES_THEORIES_ONLY
-Theories only
+Theories Only
+
+TECH_WND_TECH_STATUSES_TO_SHOW
+Tech statuses to show:
+
+TECH_WND_TECH_STATUS_ALL
+All Statuses
+
+TECH_WND_TECH_STATUS_AVAILABLE_AND_COMPLETE
+Researchable or Complete
+
+TECH_WND_TECH_STATUS_AVAILABLE_ONLY
+Researchable Only
 
 TECH_WND_UNCOLLAPSE_TECHS
 Uncollapse all
-
-TECH_WND_TECH_TYPES_TO_SHOW
-Tech types to show:
 
 TECH_WND_REQUIRES
 Requires
 
 TECH_WND_UNLOCKS
 Unlocks
+
+
+#######################
+# ProductionInfoPanel #
+#######################
+
+PRODUCTION_INFO_TOTAL_PS_LABEL
+Total Available Points
+
+PRODUCTION_INFO_WASTED_PS_LABEL
+Wasted Points
+
+PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
+Projects in Progress
+
+PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
+Underfunded Projects
+
+PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
+Projects in Queue
 
 
 ###############
@@ -753,20 +785,19 @@ Research
 RESEARCH_INFO_RP
 RP
 
-RESEARCH_INFO_TOTAL_RPS_LABEL
-Total Available RP
 
-RESEARCH_INFO_WASTED_RPS_LABEL
-Wasted RP
+#################
+# ProductionWnd #
+#################
 
-RESEARCH_INFO_PROJECTS_IN_PROGRESS_LABEL
-Projects in Progress
+PRODUCTION_WND_TITLE
+Production
 
-RESEARCH_INFO_RPS_TO_UNDERFUNDED_PROJECTS_LABEL
-RP Going to Underfunded Project
+PRODUCTION_INFO_PANEL_TITLE
+Production
 
-RESEARCH_INFO_PROJECTS_IN_QUEUE_LABEL
-Projects in Queue
+PRODUCTION_INFO_RP
+PP
 
 
 ####################
