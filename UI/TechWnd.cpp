@@ -992,8 +992,9 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
                                             CategoryIcon(m_tech->Category()), GG::GR_FITGRAPHIC);
     m_category_icon->SetColor(CategoryColor(m_tech->Category()));
 
-    m_tech_name_text = new GG::TextControl(m_category_icon->LowerRight().x + 4, TECH_TEXT_OFFSET.y, Width() - (m_category_icon->Width() + 4) - PROGRESS_PANEL_LEFT_EXTRUSION,
+    m_tech_name_text = new GG::TextControl(m_category_icon->LowerRight().x + 4, TECH_TEXT_OFFSET.y, Width() - (m_category_icon->LowerRight().x + 4) - PROGRESS_PANEL_LEFT_EXTRUSION - 4,
                                            font->Lineskip(), UserString(m_tech->Name()), font, m_text_and_border_color, GG::TF_TOP | GG::TF_LEFT);
+    m_tech_name_text->ClipText(true);
     AttachChild(m_category_icon);
     AttachChild(m_tech_name_text);
 

@@ -78,6 +78,7 @@ namespace {
     {
         GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR) : ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
         m_name_text = new GG::TextControl(4, 2, w - 4, QueueRow::HEIGHT - 2, UserString(tech->Name()), ClientUI::FONT, ClientUI::PTS + 2, text_and_border, GG::TF_TOP | GG::TF_LEFT);
+        m_name_text->ClipText(true);
         using boost::io::str;
         using boost::format;
         const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::PTS + 4) - 2;
