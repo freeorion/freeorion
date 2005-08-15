@@ -477,7 +477,7 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     m_add_to_queue_button->Hide();
     m_recenter_button->Disable();
     m_add_to_queue_button->Disable();
-    m_description_box = new CUIMultiEdit(1, m_category_and_type_text->LowerRight().y, w - 2 - BUTTON_WIDTH, h - m_cost_text->LowerRight().y - 2, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
+    m_description_box = new CUIMultiEdit(1, m_category_and_type_text->LowerRight().y, w - 2 - BUTTON_WIDTH, h - m_category_and_type_text->LowerRight().y - 2, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
 
