@@ -1,153 +1,153 @@
 <?xml version="1.0"?>
 <GG::XMLDoc>
-    <Special>
-        <name>HOMEWORLD_SPECIAL</name>
-        <description>HOMEWORLD_SPECIAL_DESCRIPTION</description>
+  <Special>
+    <name>HOMEWORLD_SPECIAL</name>
+    <description>HOMEWORLD_SPECIAL_DESCRIPTION</description>
+    <effects>
+      <EffectsGroup>
+        <scope><Condition::Self/></scope>
+        <activation><Condition::Self/></activation>
         <effects>
-            <EffectsGroup>
-                <scope><Condition::Self/></scope>
-                <activation><Condition::Self/></activation>
-                <effects>
-                    <Effect::SetMeter>
-                        <meter>METER_POPULATION</meter>
-                        <value>Source.MaxPopulation + 10</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_CONSTRUCTION</meter>
-                        <value>Source.MaxConstruction + 20</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_FARMING</meter>
-                        <value>Source.MaxFarming + 10</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_MINING</meter>
-                        <value>Source.MaxMining + 10</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_INDUSTRY</meter>
-                        <value>Source.MaxIndustry + 10</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_RESEARCH</meter>
-                        <value>Source.MaxResearch + 10</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_TRADE</meter>
-                        <value>Source.MaxTrade + 10</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_HEALTH</meter>
-                        <value>Source.MaxHealth + 10</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                </effects>
-            </EffectsGroup>
+          <Effect::SetMeter>
+            <meter>METER_POPULATION</meter>
+            <value>Source.MaxPopulation + 10</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_CONSTRUCTION</meter>
+            <value>Source.MaxConstruction + 20</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_FARMING</meter>
+            <value>Source.MaxFarming + 10</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_MINING</meter>
+            <value>Source.MaxMining + 10</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_INDUSTRY</meter>
+            <value>Source.MaxIndustry + 10</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_RESEARCH</meter>
+            <value>Source.MaxResearch + 10</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_TRADE</meter>
+            <value>Source.MaxTrade + 10</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_HEALTH</meter>
+            <value>Source.MaxHealth + 10</value>
+            <max>1</max>
+          </Effect::SetMeter>
         </effects>
-    </Special>
-    <Special>
-        <name>STARVATION_SPECIAL</name>
-        <description>STARVATION_SPECIAL_DESCRIPTION</description>
+      </EffectsGroup>
+    </effects>
+  </Special>
+  <Special>
+    <name>STARVATION_SPECIAL</name>
+    <description>STARVATION_SPECIAL_DESCRIPTION</description>
+    <effects>
+      <EffectsGroup>
+        <scope><Condition::Self/></scope>
+        <activation><Condition::Self/></activation>
         <effects>
-            <EffectsGroup>
-                <scope><Condition::Self/></scope>
-                <activation><Condition::Self/></activation>
-                <effects>
-                    <Effect::SetMeter>
-                        <meter>METER_CONSTRUCTION</meter>
-                        <value>Source.MaxConstruction / 2</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_MINING</meter>
-                        <value>Source.MaxMining / 2</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_INDUSTRY</meter>
-                        <value>Source.MaxIndustry / 2</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_RESEARCH</meter>
-                        <value>Source.MaxResearch / 2</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_TRADE</meter>
-                        <value>Source.MaxTrade / 2</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                    <Effect::SetMeter>
-                        <meter>METER_HEALTH</meter>
-                        <value>Source.MaxHealth / 2</value>
-                        <max>1</max>
-                    </Effect::SetMeter>
-                </effects>
-            </EffectsGroup>
+          <Effect::SetMeter>
+            <meter>METER_CONSTRUCTION</meter>
+            <value>Source.MaxConstruction / 2</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_MINING</meter>
+            <value>Source.MaxMining / 2</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_INDUSTRY</meter>
+            <value>Source.MaxIndustry / 2</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_RESEARCH</meter>
+            <value>Source.MaxResearch / 2</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_TRADE</meter>
+            <value>Source.MaxTrade / 2</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_HEALTH</meter>
+            <value>Source.MaxHealth / 2</value>
+            <max>1</max>
+          </Effect::SetMeter>
         </effects>
-    </Special>
-	<Special>
-		<name>ANCIENT_RUINS_SPECIAL</name>
-		<description>ANCIENT_RUINS_SPECIAL_DESCRIPTION</description>
-		<effects>
-			<EffectsGroup>
-				<scope><Condition::Self/></scope>
-				<activation><Condition::Self/></activation>
-				<effects>
-					<Effect::SetMeter>
-						<meter>METER_RESEARCH</meter>
-						<value>Source.MaxResearch + 4</value>
-						<max>1</max>
-					</Effect::SetMeter>
-				</effects>
-			</EffectsGroup>
-		</effects>
-    </Special>
-	<Special>
-		<name>MINERALS_SPECIAL</name>
-		<description>MINERALS_SPECIAL_DESCRIPTION</description>
-		<effects>
-			<EffectsGroup>
-				<scope><Condition::Self/></scope>
-				<activation><Condition::Self/></activation>
-				<effects>
-					<Effect::SetMeter>
-						<meter>METER_MINING</meter>
-						<value>Source.MaxMining + 3</value>
-						<max>1</max>
-					</Effect::SetMeter>
-					<Effect::SetMeter>
-						<meter>METER_TRADE</meter>
-						<value>Source.MaxTrade + 1</value>
-						<max>1</max>
-                    </Effect::SetMeter>
-				</effects>
-			</EffectsGroup>
-		</effects>
-    </Special>
-	<Special>
-		<name>TUNNELS_SPECIAL</name>
-		<description>TUNNELS_SPECIAL_DESCRIPTION</description>
-		<effects>
-			<EffectsGroup>
-				<scope><Condition::Self/></scope>
-				<activation><Condition::Self/></activation>
-				<effects>
-					<Effect::SetMeter>
-						<meter>METER_POPULATION</meter>
-						<value>Source.MaxPopulation + 3</value>
-						<max>1</max>
-                    </Effect::SetMeter>
-				</effects>
-			</EffectsGroup>
-		</effects>
-    </Special>
+      </EffectsGroup>
+    </effects>
+  </Special>
+  <Special>
+    <name>ANCIENT_RUINS_SPECIAL</name>
+    <description>ANCIENT_RUINS_SPECIAL_DESCRIPTION</description>
+    <effects>
+      <EffectsGroup>
+        <scope><Condition::Self/></scope>
+        <activation><Condition::Self/></activation>
+        <effects>
+          <Effect::SetMeter>
+            <meter>METER_RESEARCH</meter>
+            <value>Source.MaxResearch + 4</value>
+            <max>1</max>
+          </Effect::SetMeter>
+        </effects>
+      </EffectsGroup>
+    </effects>
+  </Special>
+  <Special>
+    <name>MINERALS_SPECIAL</name>
+    <description>MINERALS_SPECIAL_DESCRIPTION</description>
+    <effects>
+      <EffectsGroup>
+        <scope><Condition::Self/></scope>
+        <activation><Condition::Self/></activation>
+        <effects>
+          <Effect::SetMeter>
+            <meter>METER_MINING</meter>
+            <value>Source.MaxMining + 3</value>
+            <max>1</max>
+          </Effect::SetMeter>
+          <Effect::SetMeter>
+            <meter>METER_TRADE</meter>
+            <value>Source.MaxTrade + 1</value>
+            <max>1</max>
+          </Effect::SetMeter>
+        </effects>
+      </EffectsGroup>
+    </effects>
+  </Special>
+  <Special>
+    <name>TUNNELS_SPECIAL</name>
+    <description>TUNNELS_SPECIAL_DESCRIPTION</description>
+    <effects>
+      <EffectsGroup>
+        <scope><Condition::Self/></scope>
+        <activation><Condition::Self/></activation>
+        <effects>
+          <Effect::SetMeter>
+            <meter>METER_POPULATION</meter>
+            <value>Source.MaxPopulation + 3</value>
+            <max>1</max>
+          </Effect::SetMeter>
+        </effects>
+      </EffectsGroup>
+    </effects>
+  </Special>
 </GG::XMLDoc>
