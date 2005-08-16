@@ -916,6 +916,23 @@ Starvation
 STARVATION_SPECIAL_DESCRIPTION
 This planet is starving!  The people will not do anything as well as they normally do, except produce nutrients.
 
+ANCIENT_RUINS_SPECIAL
+Ancient Ruins
+
+ANCIENT_RUINS_SPECIAL_DESCRIPTION
+This planet holds the ruins of an advanced ancient race, who have been forgotten in the history books, giving a bonus to research.
+
+MINERALS_SPECIAL
+Mineral Rich
+
+MINERALS_SPECIAL_DESCRIPTION
+This planet has a rich natural deposit of minerals, boosting mining and trade.
+
+TUNNELS_SPECIAL
+Natural Tunnels
+
+TUNNELS_SPECIAL_DESCRIPTION
+This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonised.
 
 #######################
 # Enumeration  values #
