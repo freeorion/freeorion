@@ -57,9 +57,7 @@ if platform_str == 'win32':
                'C:/SDL-1.2.7/lib',
                'C:/graphviz/lib',
                'C:/fmodapi374win/api/lib',
-               gg_dir + 'msvc/GG/GiGi/Release',
-               gg_dir + 'msvc/GG/GiGiNet/Release',
-               gg_dir + 'msvc/GG/GiGiSDL/Release']
+               gg_dir]
     common_ccflags = '/O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "FREEORION_WIN32" /D "BOOST_SIGNALS_STATIC_LINK" /D "_MBCS" /FD /EHsc /MD /GS /Zc:forScope /GR /W3 /nologo /c /Wp64 /Zi /wd4099 /wd4251 /wd4800 /wd4267 /wd4275 /wd4244 /wd4101 /wd4258'
     freeoriond_ccflags = common_ccflags + ' /D "FREEORION_BUILD_SERVER"'
     freeorionca_ccflags = common_ccflags + ' /D "FREEORION_BUILD_AI"'
@@ -85,6 +83,7 @@ common_source = ['combat/Combat.cpp',
                  'universe/Building.cpp',
                  'universe/Condition.cpp',
                  'universe/Effect.cpp',
+                 'universe/Enums.cpp',
                  'universe/Fleet.cpp',
                  'universe/Meter.cpp',
                  'universe/Planet.cpp',
@@ -134,10 +133,12 @@ freeorion_source = ['client/human/HumanClientApp.cpp',
                     'UI/ClientUI.cpp',
                     'UI/CUIControls.cpp',
                     'UI/CUIDrawUtil.cpp',
+                    'UI/CUITabbedPages.cpp',
                     'UI/CUI_Wnd.cpp',
                     'UI/CombatWnd.cpp',
                     'UI/FleetButton.cpp',
                     'UI/FleetWindow.cpp',
+                    'UI/FocusSelector.cpp',
                     'UI/GalaxySetupWnd.cpp',
                     'UI/InGameOptions.cpp',
                     'UI/IntroScreen.cpp',
