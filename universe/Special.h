@@ -32,6 +32,11 @@ private:
 /** Returns the Special object used to represent specials of type \a name.  If no such Special exists, 0 is returned instead. */
 Special* GetSpecial(const std::string& name);
 
+/** Returns the names of all "planet specials"; though there are other specials that may be applied to planets, these
+    are ok to use when generating random specials during universe creation.  Note that "planet specials" can be attached
+    to non-planet UniverseObjects, just like all Specials, and are not restricted to use during universe creation. */
+const std::set<std::string>& PlanetSpecialNames();
+
 inline std::pair<std::string, std::string> SpecialRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 

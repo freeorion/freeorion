@@ -68,46 +68,51 @@ protected:
 
 public:
 /** the types of universe shapes available in FreeOrion*/
-    enum Shape {SPIRAL_2,      ///< a two-armed spiral galaxy
-                SPIRAL_3,      ///< a three-armed spiral galaxy
-                SPIRAL_4,      ///< a four-armed spiral galaxy
-                CLUSTER,       ///< a cluster galaxy
-                ELLIPTICAL,    ///< an elliptical galaxy
-                IRREGULAR,     ///< an irregular galaxy
-                RING,          ///< a ring galaxy
-                GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
+    enum Shape {
+        SPIRAL_2,      ///< a two-armed spiral galaxy
+        SPIRAL_3,      ///< a three-armed spiral galaxy
+        SPIRAL_4,      ///< a four-armed spiral galaxy
+        CLUSTER,       ///< a cluster galaxy
+        ELLIPTICAL,    ///< an elliptical galaxy
+        IRREGULAR,     ///< an irregular galaxy
+        RING,          ///< a ring galaxy
+        GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
     };
 
     /** types of Univervse ages*/
-    enum Age {AGE_YOUNG,
-              AGE_MATURE,
-              AGE_ANCIENT,
-              NUM_UNIVERSE_AGES    // keep this last, the number of universe age options
+    enum Age {
+        AGE_YOUNG,
+        AGE_MATURE,
+        AGE_ANCIENT,
+        NUM_UNIVERSE_AGES    // keep this last, the number of universe age options
     };
 
     /** types of Planet Density */
-    enum PlanetDensity {PD_LOW,
-                        PD_AVERAGE,
-                        PD_HIGH,
-                        NUM_UNIVERSE_PLANET_DENSITIES        //keep this last, the number of planet density options
+    enum PlanetDensity {
+        PD_LOW,
+        PD_AVERAGE,
+        PD_HIGH,
+        NUM_UNIVERSE_PLANET_DENSITIES        //keep this last, the number of planet density options
     };
 
     /** types of starlane frequencies */
-    enum StarlaneFrequency{LANES_NONE, 
-                           LANES_FEW, 
-                           LANES_SOME, 
-                           LANES_SEVERAL, 
-                           LANES_MANY, 
-                           LANES_VERY_MANY,
-                           NUM_STARLANE_FREQENCIES    // keep this last, the number of starlane frequency options
+    enum StarlaneFrequency{
+        LANES_NONE, 
+        LANES_FEW, 
+        LANES_SOME, 
+        LANES_SEVERAL, 
+        LANES_MANY, 
+        LANES_VERY_MANY,
+        NUM_STARLANE_FREQENCIES    // keep this last, the number of starlane frequency options
     };
 
     /** types of starlane frequencies */
-    enum SpecialsFrequency{SPECIALS_NONE, 
-                           SPECIALS_RARE, 
-                           SPECIALS_UNCOMMON, 
-                           SPECIALS_COMMON, 
-                           NUM_SPECIALS_FREQENCIES    // keep this last, the number of specials frequency options
+    enum SpecialsFrequency{
+        SPECIALS_NONE, 
+        SPECIALS_RARE, 
+        SPECIALS_UNCOMMON, 
+        SPECIALS_COMMON, 
+        NUM_SPECIALS_FREQENCIES    // keep this last, the number of specials frequency options
     };
 
     /** the value passed to XMLEncode() when the entire object is desired, not just the portion visible to one empire */
@@ -310,13 +315,13 @@ protected:
 
     void GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
-    void PopulateSystems(Universe::PlanetDensity density);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
+    void PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
     
     //old version -- void GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated
     void GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated
-	bool ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray); // used by GenerateStarlanes.  Determines if two systems are connected by maxLaneJumps or less edges on graph
-	void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems); // Removes lanes from passed graph that are angularly too close to eachother
-	void GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray); // grows trees to connect stars...  takes an array of sets of potential starlanes for each star, and puts the starlanes of the tree into another set
+    bool ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray); // used by GenerateStarlanes.  Determines if two systems are connected by maxLaneJumps or less edges on graph
+    void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems); // Removes lanes from passed graph that are angularly too close to eachother
+    void GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray); // grows trees to connect stars...  takes an array of sets of potential starlanes for each star, and puts the starlanes of the tree into another set
     
     void InitializeSystemGraph(); ///< resizes the system graph to the appropriate size and populates m_system_distances 
     void GenerateHomeworlds(int players, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector

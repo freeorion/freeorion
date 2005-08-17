@@ -1011,7 +1011,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
         GenerateIrregularGalaxy(size, age, adjacency_grid);
     }
 
-    PopulateSystems(planet_density);
+    PopulateSystems(planet_density, specials_freq);
     GenerateStarlanes(starlane_freq, adjacency_grid);
     InitializeSystemGraph();
     GenerateHomeworlds(players + ai_players, homeworlds);
@@ -1228,7 +1228,7 @@ void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjace
     }
 }
 
-void Universe::PopulateSystems(Universe::PlanetDensity density)
+void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq)
 {
     std::vector<System*> sys_vec = FindObjects<System>();
 
@@ -1241,6 +1241,10 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
     const std::vector<std::vector<int> >& planet_size_mod_to_planet_type_dist = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
     const std::vector<std::vector<int> >& slot_mod_to_planet_type_dist = UniverseDataTables()["SlotModToPlanetTypeDist"];
     const std::vector<std::vector<int> >& star_color_mod_to_planet_type_dist = UniverseDataTables()["StarColorModToPlanetTypeDist"];
+
+    double planetary_special_chance = UniverseDataTables()["SpecialsFrequency"][0][specials_freq] / 10000.0;
+    const std::set<std::string>& special_names = PlanetSpecialNames();
+    SmallIntDistType specials_dist = SmallIntDist(0, special_names.size() - 1);
 
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
@@ -1289,6 +1293,12 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
 
             Planet* planet = new Planet(planet_type, planet_size);
 
+            if (planet_type != PT_ASTEROIDS && planet_type != PT_GASGIANT && !special_names.empty() && RandZeroToOne() < planetary_special_chance) {
+                std::set<std::string>::const_iterator name_it = special_names.begin();
+                std::advance(name_it, specials_dist());
+                planet->AddSpecial(*name_it);
+            }
+
             Insert(planet); // add planet to universe map
             system->Insert(planet, orbit);  // add planet to system map
             if (planet_type == PT_ASTEROIDS)
@@ -1300,6 +1310,9 @@ void Universe::PopulateSystems(Universe::PlanetDensity density)
 }
 
 void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid) {
+    if (freq == LANES_NONE)
+        return;
+
 	int numSys, s1, s2, s3; // numbers of systems, indices in vec_sys
 	int n; // loop counter
 
@@ -1327,23 +1340,9 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
 	Delauney::DTTriangle tri;
 
 	// convert passed StarlaneFrequency freq into maximum number of starlane jumps between systems that are
-	// "adjacent" in the delayney triangulation.  (separated by a signle potential starlane).
+	// "adjacent" in the delauney triangulation.  (separated by a single potential starlane).
 	// these numbers can and should be tweaked or extended
-	int maxJumpsBetweenSystems;
-	switch (freq) {
-    case LANES_SOME:
-        maxJumpsBetweenSystems = 6;
-        break;
-    case LANES_SEVERAL:
-        maxJumpsBetweenSystems = 4;
-        break;
-    case LANES_MANY:
-        maxJumpsBetweenSystems = 3;
-        break;
-    case LANES_VERY_MANY:
-    default:
-        maxJumpsBetweenSystems = 2;			
-	}
+	int maxJumpsBetweenSystems = UniverseDataTables()["MaxJumpsBetweenSystems"][0][freq];
 	
 	numSys = sys_vec.size();  // (actually = number of systems + 1)
 
