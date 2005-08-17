@@ -885,7 +885,7 @@ SITREP_BUILDING_BUILT
 A new %building% is now available on %planet%.
 
 SITREP_TECH_RESEARCHED
-%tech% has been discovered.
+%tech% has been researched.
 
 SITREP_COMBAT_SYSTEM_WON
 A combat has taken place in %system%. We won!
@@ -1841,3 +1841,47 @@ Sample Application 2
 
 LRN_PHYS_BRAIN_APP2_REF
 Sample Refinement
+
+#########################################
+# Tech Application Names & Descriptions #
+#########################################
+
+CON_MEGALITH
+Megalith Construction
+
+CON_MEGALITH_DESC
+Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring Megalith.
+
+LRN_ROBOT_SCIENTIST
+Robot Scientist
+
+LRN_ROBOT_SCIENTIST_DESC
+With the creation of AI, and AI robots, it was inevitable that robots should be able to build more robots and make themselves better. The robot scientist is the ultimate achievement in robot construction. Able to advance robotics and AI technology as well as construct the most technically advanced AI robots imaginable.
+
+LRN_COLLECTIVE_NET
+Collective Thought Network 
+
+LRN_COLLECTIVE_NET_DESC
+By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
+
+#################################
+# Building Names & Descriptions #
+#################################
+
+BLD_MEGALITH
+Megalith
+
+BLD_MEGALITH_DESC
+A marvel of Exodus-era Architecture, the Megalith is an abnormally massive Starscrapper, kilometers in diameter. The Megalith is an inspiration to architects sector-wide and is often the crown jewel of a powerful real estate mogul’s empire.
+
+BLD_ROBOT_SCIENTIST 
+Robot Scientist 
+
+BLD_ROBOT_SCIENTIST_DESC 
+With the creation of AI, and AI robots, it was inevitable that robots should be able to build more robots and make themselves better. The robot scientist is the ultimate achievement in robot construction. Able to advance robotics and AI technology as well as construct the most technically advanced AI robots imaginable.
+
+BLD_COLLECTIVE_NET
+Collective Thought Network 
+
+BLD_COLLECTIVE_NET_DESC
+By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.

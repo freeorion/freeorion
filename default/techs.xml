@@ -233,6 +233,42 @@
   <graphic>tech_icons/Singularity_of_Transcendence.png</graphic>
 </Tech>
 
+<Tech> 
+  <name>LRN_ROBOT_SCIENTIST</name> 
+  <description>LRN_ROBOT_SCIENTIST_DESC</description> 
+  <type>TT_APPLICATION</type> 
+  <category>LEARNING_CATEGORY</category> 
+  <research_cost>50</research_cost> 
+  <research_turns>10</research_turns> 
+  <prerequisites>
+    <prereq>LRN_PHYS_BRAIN</prereq>
+  </prerequisites>
+  <unlocked_items> 
+    <Item> 
+      <type>UIT_BUILDING</type> 
+      <name>BLD_ROBOT_SCIENTIST</name> 
+    </Item> 
+  </unlocked_items> 
+</Tech>
+
+<Tech>
+  <name>LRN_COLLECTIVE_NET</name> 
+  <description>LRN_COLLECTIVE_NET_DESC</description> 
+  <type>TT_APPLICATION</type> 
+  <category>LEARNING_CATEGORY</category> 
+  <research_cost>75</research_cost> 
+  <research_turns>15</research_turns> 
+  <prerequisites>
+    <prereq>LRN_PHYS_BRAIN</prereq>
+  </prerequisites>
+  <unlocked_items>
+    <Item> 
+      <type>UIT_BUILDING</type> 
+      <name>BLD_COLLECTIVE_NET</name> 
+    </Item> 
+  </unlocked_items>
+</Tech>
+
 <Category>GROWTH_CATEGORY</Category>
 
 <Tech>
@@ -883,6 +919,24 @@
   <unlocked_items></unlocked_items>
 </Tech>
 
+<Tech>
+  <name>CON_MEGALITH</name>
+  <description>CON_MEGALITH_DESC</description>
+  <type>TT_APPLICATION</type>
+  <category>CONSTRUCTION_CATEGORY</category>
+  <research_cost>15</research_cost>
+  <research_turns>3</research_turns>
+  <prerequisites>
+    <prereq>CON_ORBITAL_CON</prereq>
+  </prerequisites>
+  <unlocked_items>
+    <Item>
+      <type>UIT_BUILDING</type>
+      <name>BLD_MEGALITH</name>
+    </Item>
+  </unlocked_items>
+</Tech>
+
 <Category>ECONOMICS_CATEGORY</Category>
 
 <Tech>
@@ -1048,6 +1102,5 @@
   </prerequisites>
   <unlocked_items></unlocked_items>
 </Tech>
-
 
 </GG::XMLDoc>
