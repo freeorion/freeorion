@@ -1,5 +1,7 @@
 #include "Enums.h"
 
+#include <cassert>
+
 MeterType FocusToMeter(FocusType type)
 {
     switch (type) {
