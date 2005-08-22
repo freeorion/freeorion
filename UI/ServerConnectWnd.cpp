@@ -6,7 +6,7 @@
 #include "GGTextControl.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
-#include "SDLGGApp.h"
+#include "SDL/SDLGGApp.h"
 
 #include <sstream>
 #include <iomanip>

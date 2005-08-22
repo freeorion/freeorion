@@ -12,7 +12,7 @@
 #endif
 
 #ifndef _SDLGGApp_h_
-#include "SDLGGApp.h"
+#include "SDL/SDLGGApp.h"
 #endif
 
 class ClientEmpire;
