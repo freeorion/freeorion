@@ -2,8 +2,8 @@
 
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
-#include "fastevents.h"
-#include "net2.h"
+#include "net/fastevents.h"
+#include "net/net2.h"
 #include "../../network/Message.h"
 
 #include <boost/lexical_cast.hpp>
