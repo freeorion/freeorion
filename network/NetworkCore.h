@@ -9,7 +9,7 @@
 #endif
 
 #ifndef _SDLnet_h
-#include "net2.h"
+#include "net/net2.h"
 #endif
 
 // deal with dirty, dirty MS macros

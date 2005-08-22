@@ -3,8 +3,8 @@
 #include "Message.h"
 #include "../util/MultiplayerCommon.h"
 #include "../client/ClientApp.h"
-#include "net2.h"
-#include "fastevents.h"
+#include "net/net2.h"
+#include "net/fastevents.h"
 #ifdef FREEORION_BUILD_HUMAN
 #include "../UI/MultiplayerLobbyWnd.h"
 #endif
