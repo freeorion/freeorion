@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\util;..\..\..\universe;..\..\..\UI;..\..\..\network;..\..\..\Empire;..\..\..\combat;..\..\..\client\human;..\..\..\client;&quot;C:\log4cpp-0.3.4b\include&quot;;&quot;C:\freetype-2.1.7\include&quot;;C:\DevIL\include;&quot;C:\Boost\include\boost-1_32&quot;;&quot;C:\SDL_mixer-1.2.5\include&quot;;&quot;C:\SDL-1.2.7\include&quot;;C:\zlib\include;..\..\..\GG\include\SDL;..\..\..\GG\include\net;..\..\..\GG\include\dialogs;..\..\..\GG\include"
+				AdditionalIncludeDirectories="..\..\..\GG\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
@@ -38,7 +38,7 @@
 				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib SDL_mixer.lib log4cpp.lib freetype214MT.lib"
 				OutputFile="$(OutDir)/freeorion.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="C:\Boost\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;;&quot;C:\freetype-2.1.7\objs&quot;;C:\DevIL\lib;C:\zlib\lib;&quot;C:\SDL-1.2.7\lib&quot;;&quot;C:\SDL_mixer-1.2.5\lib&quot;;..\..\..\GG\msvc\GG\GiGi\Release;..\..\..\GG\msvc\GG\GiGiNet\Release;..\..\..\GG\msvc\GG\GiGiSDL\Release"
+				AdditionalLibraryDirectories="..\..\..\GG\msvc\GG\GiGi\Release;..\..\..\GG\msvc\GG\GiGiNet\Release;..\..\..\GG\msvc\GG\GiGiSDL\Release"
 				IgnoreDefaultLibraryNames="msvcrt.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/freeorion.pdb"
@@ -67,13 +67,13 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
+			OutputDirectory="C:\Projects\!Bin"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\util;..\..\..\universe;..\..\..\UI;..\..\..\network;..\..\..\Empire;..\..\..\combat;..\..\..\client\human;..\..\..\client;&quot;C:\log4cpp-0.3.4b\include&quot;;&quot;C:\freetype-2.1.7\include&quot;;C:\DevIL\include;&quot;C:\Boost\include\boost-1_32&quot;;&quot;C:\SDL_mixer-1.2.5\include&quot;;&quot;C:\SDL-1.2.7\include&quot;;C:\zlib\include;..\..\..\GG\include\SDL;..\..\..\GG\include\net;..\..\..\GG\include\dialogs;..\..\..\GG\include;C:\fmodapi374win\api\inc;C:\graphviz\include"
+				AdditionalIncludeDirectories="..\..\..\..\GG\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				RuntimeLibrary="2"
 				ForceConformanceInForLoopScope="TRUE"
@@ -91,7 +91,7 @@
 				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib fmodvc.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib dotgen.lib dotneato.lib gd.lib gfx.lib graph.lib gvrender.lib pathplan.lib libexpat.lib png.lib jpeg.lib"
 				OutputFile="$(OutDir)/freeorion.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\Boost\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;;&quot;C:\freetype-2.1.7\objs&quot;;C:\DevIL\lib;C:\zlib\lib;&quot;C:\SDL-1.2.7\lib&quot;;&quot;C:\SDL_mixer-1.2.5\lib&quot;;..\..\..\GG\msvc\GG\GiGi\Release;..\..\..\GG\msvc\GG\GiGiNet\Release;..\..\..\GG\msvc\GG\GiGiSDL\Release;C:\fmodapi374win\api\lib;C:\graphviz\lib"
+				AdditionalLibraryDirectories="..\..\..\..\GG\msvc\GG\GiGi\Release;..\..\..\..\GG\msvc\GG\GiGiNet\Release;..\..\..\..\GG\msvc\GG\GiGiSDL\Release"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
@@ -365,6 +365,12 @@
 					RelativePath="..\..\..\Ui\CUISpin.h">
 				</File>
 				<File
+					RelativePath="..\..\..\Ui\CUITabbedPages.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\CUITabbedPages.h">
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\FleetButton.cpp">
 				</File>
 				<File
@@ -375,6 +381,12 @@
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\FleetWindow.h">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\FocusSelector.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\FocusSelector.h">
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\GalaxySetupWnd.cpp">
@@ -501,6 +513,9 @@
 					RelativePath="..\..\..\universe\Effect.h">
 				</File>
 				<File
+					RelativePath="..\..\..\universe\Enums.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\universe\Enums.h">
 				</File>
 				<File
@@ -534,10 +549,10 @@
 					RelativePath="..\..\..\universe\Predicates.h">
 				</File>
 				<File
-					RelativePath="..\..\..\universe\ProdCenter.cpp">
+					RelativePath="..\..\..\universe\ResourceCenter.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\universe\ProdCenter.h">
+					RelativePath="..\..\..\universe\ResourceCenter.h">
 				</File>
 				<File
 					RelativePath="..\..\..\universe\Ship.cpp">
