@@ -431,6 +431,12 @@
 					RelativePath="..\..\..\Ui\OptionsWnd.h">
 				</File>
 				<File
+					RelativePath="..\..\..\Ui\PlanetDetailWnd.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\PlanetDetailWnd.h">
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\ResearchWnd.cpp">
 				</File>
 				<File
