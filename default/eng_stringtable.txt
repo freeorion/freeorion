@@ -42,6 +42,9 @@ or
 AND
 and
 
+LOADING
+Loading ...
+
 SERVER_TIMEOUT
 The server is not responding
 

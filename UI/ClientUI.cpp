@@ -641,7 +641,7 @@ void ClientUI::SwitchState(State state)
           m_turn_progress_wnd = new TurnProgressWnd();
           GG::App::GetApp()->Register(m_turn_progress_wnd);
         }
-        m_turn_progress_wnd->UpdateTurnProgress( "Loading ...", -1);
+        m_turn_progress_wnd->UpdateTurnProgress(UserString("LOADING"), -1);
         m_turn_progress_wnd->Show();
         break;
     case STATE_SHUTDOWN:
