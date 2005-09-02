@@ -448,7 +448,8 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
                 double& status = sim_production_status[i];
                 status += sim_queue[i].spending;
                 if (item_cost * build_turns - EPSILON <= status) {
-                    if (sim_queue[i].remaining == m_queue[i].remaining) {
+                    sim_production_status[i] -= item_cost * build_turns;
+                    if (sim_queue[i].remaining == m_queue[sim_queue_original_indices[i]].remaining) {
                         m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = turns;
                     }
                     if (!--sim_queue[i].remaining) {
@@ -553,7 +554,6 @@ Empire::Empire(const GG::XMLElement& elem) :
     m_population_resource_pool(elem.Child("m_population_resource_pool").Child("PopulationResourcePool")),
     m_industry_resource_pool(elem.Child("m_industry_resource_pool").Child("IndustryResourcePool")),
     m_trade_resource_pool(elem.Child("m_trade_resource_pool").Child("TradeResourcePool"))
-
 {
     if (elem.Tag() != "Empire")
         throw std::invalid_argument("Attempted to construct a Empire from an XMLElement that had a tag other than \"Empire\"");
@@ -598,6 +598,7 @@ Empire::Empire(const GG::XMLElement& elem) :
         m_building_types.insert(building_types_elem.Child(i).Text());
     }
 
+    UpdateResourcePool();
     m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
     m_production_queue.Update(this, ProductionPoints(), m_production_status);
 }
@@ -804,7 +805,7 @@ Empire::SitRepItr Empire::SitRepEnd() const
 
 double Empire::ProductionPoints() const
 {
-    return std::min(m_industry_resource_pool.Production(), m_mineral_resource_pool.Production());
+    return std::min(m_industry_resource_pool.Production(), m_mineral_resource_pool.Stockpile());
 }
 
 void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
@@ -1085,6 +1086,7 @@ void Empire::CheckProductionProgress()
         double& status = m_production_status[i];
         status += m_production_queue[i].spending;
         if (item_cost * build_turns - EPSILON <= status) {
+            m_production_status[i] -= item_cost * build_turns;
             switch (m_production_queue[i].item.build_type) {
             case BT_BUILDING: {
                 Universe& universe = GetUniverse();
