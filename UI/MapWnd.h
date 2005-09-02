@@ -15,6 +15,7 @@ class CUITurnButton;
 class Fleet;
 class FleetButton;
 class MapWndPopup;
+class ProductionWnd;
 class ResearchWnd;
 class SidePanel;
 class SitRepPanel;
@@ -54,7 +55,8 @@ public:
 
     double         ZoomFactor() const    {return m_zoom_factor;}
     SidePanel*     GetSidePanel() const  {return m_side_panel;}
-    GG::XMLElement SaveGameData() const; //!< returns the relevant data that should be restored after a save-and-load cycle
+    GG::XMLElement SaveGameData() const;         //!< returns the relevant data that should be restored after a save-and-load cycle
+    bool           InProductionViewMode() const; //!< returns tru iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
     //!@}
 
     //! \name Mutators //!@{
@@ -111,8 +113,9 @@ private:
 
     void TurnBtnClicked() {EndTurn();}
     void MenuBtnClicked() {ShowOptions();}
+    void ProductionBtnClicked() {ToggleProduction();}
     void ResearchBtnClicked() {ToggleResearch();}
-    void SiteRepBtnClicked() {ToggleSitRep();}
+    void SitRepBtnClicked() {ToggleSitRep();}
 
     struct StarlaneData;     ///< contains all the information necessary to render a single fleet movement line on the main map
     struct MovementLineData; ///< contains all the information necessary to render a single fleet movement line on the main map
@@ -125,11 +128,13 @@ private:
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
     void SystemRightClicked(int system_id);
     void UniverseObjectDeleted(const UniverseObject *obj);
+    bool ReturnToMap();
     bool OpenChatWindow();
     bool OpenConsoleWindow();
     bool EndTurn();
     bool ToggleSitRep();
     bool ToggleResearch();
+    bool ToggleProduction();
     bool ShowOptions();
 	bool CloseSystemView();                      //!< closes off the current system view
     bool KeyboardZoomIn();
@@ -147,6 +152,8 @@ private:
     void DisableAlphaNumAccels();
     void EnableAlphaNumAccels();
     void CloseAllPopups();
+    void HideAllPopups();
+    void ShowAllPopups();
 
     std::set<GG::Key> m_disabled_accels_list;     //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
 
@@ -162,6 +169,7 @@ private:
     std::vector<SystemIcon*>        m_system_icons;  //! the system icons in the main map
     SitRepPanel*      	            m_sitrep_panel;  //! the sitrep panel
     ResearchWnd*      	            m_research_wnd;  //! the research screen
+    ProductionWnd*      	        m_production_wnd;  //! the production screen
     GG::MultiEdit*                  m_chat_display;  //! the (read-only) MP-chat output multi-line edit box
     CUIEdit*                        m_chat_edit;     //! the MP-chat input edit box
     std::vector<FleetButton*>       m_moving_fleet_buttons; //! the moving fleets in the main map
@@ -175,12 +183,13 @@ private:
     bool                            m_options_showing; //!< set during ShowOptions() to prevent reentrency
     int                             m_current_owned_system;
     int                             m_current_fleet;
+    bool                            m_in_production_view_mode;
 
     CUIToolBar                      *m_toolbar;
     StatisticIconDualValue          *m_food,*m_mineral,*m_trade,*m_population;
     StatisticIcon                   *m_research,*m_industry;
 
-    CUIButton                       *m_btn_siterep,*m_btn_research,*m_btn_menu;
+    CUIButton                       *m_btn_siterep,*m_btn_research,*m_btn_production,*m_btn_menu;
 
     static const int NUM_BACKGROUNDS;
     static double s_min_scale_factor;

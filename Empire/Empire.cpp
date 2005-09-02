@@ -14,6 +14,8 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include <iostream>
+
 using std::find;
 using boost::lexical_cast;
 
@@ -47,27 +49,36 @@ namespace {
 
     void UpdateProdQueue(Empire* empire, double PPs, const std::vector<double>& production_status, ProductionQueue::QueueType& queue, double& total_PPs_spent, int& projects_in_progress)
     {
+        std::cout << "UpdateProdQueue()\n";
+        assert(production_status.size() == queue.size());
         total_PPs_spent = 0.0;
         projects_in_progress = 0;
-        for (unsigned int i = 0; i < queue.size(); ++i) {
+        int i = 0;
+        for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
             double item_cost;
             int build_turns;
-            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(queue[i].item.build_type, queue[i].item.name);
+            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(it->item.build_type, it->item.name);
             double progress = production_status[i];
-            double PPs_needed = item_cost * build_turns - progress;
+            double PPs_needed = item_cost * build_turns * it->remaining - progress;
             double PPs_to_spend = std::min(PPs_needed, item_cost);
+            std::cout << "build item " << it->remaining << " X " << it->item.build_type << " " << it->item.name
+                      << " (" << item_cost << "PP / " << build_turns << " turns) " << progress << "/" << (item_cost * build_turns * it->remaining) << ":\n";
             if (total_PPs_spent + PPs_to_spend <= PPs - EPSILON) {
-                queue[i].spending = PPs_to_spend;
-                total_PPs_spent += queue[i].spending;
+                it->spending = PPs_to_spend;
+                total_PPs_spent += it->spending;
                 ++projects_in_progress;
+                std::cout << "    unit completed, spending=" << it->spending << "\n";
             } else if (total_PPs_spent < PPs - EPSILON) {
-                queue[i].spending = PPs - total_PPs_spent;
-                total_PPs_spent += queue[i].spending;
+                it->spending = PPs - total_PPs_spent;
+                total_PPs_spent += it->spending;
                 ++projects_in_progress;
+                std::cout << "    unit in progress, spending=" << it->spending << "\n";
             } else {
-                queue[i].spending = 0.0;
+                it->spending = 0.0;
+                std::cout << "    NOT in progress, spending=0.0\n";
             }
         }
+        std::cout << "\n" << std::endl;
     }
 
     bool temp_header_bool = RecordHeaderFile(EmpireRevision());
@@ -76,7 +87,7 @@ namespace {
 
 
 ////////////////////////////////////////
-// ResearchQueue              //
+// ResearchQueue                      //
 ////////////////////////////////////////
 ResearchQueue::ResearchQueue() :
     m_projects_in_progress(0),
@@ -242,7 +253,7 @@ ResearchQueue::iterator ResearchQueue::UnderfundedProject()
 
 
 ////////////////////////////////////////
-// ProductionQueue            //
+// ProductionQueue                    //
 ////////////////////////////////////////
 
 // ProductionQueue::ProductionItem
@@ -271,7 +282,7 @@ GG::XMLElement ProductionQueue::ProductionItem::XMLEncode() const
     return retval;
 }
 
-// Empire::Elemnt
+// ProductionQueue::Elemnt
 ProductionQueue::Element::Element() :
     ordered(0),
     remaining(0),
@@ -310,7 +321,7 @@ ProductionQueue::Element::Element(const GG::XMLElement& elem) :
         throw std::invalid_argument("Attempted to construct a ProductionQueue::Element from an XMLElement that had a tag other than \"Element\"");
 
     // note that this leaves the queue element incompletely specified; see ProductionQueue::ProductionQueue() for details
-    item = ProductionItem(elem.Child("item").Text());
+    item = ProductionItem(elem.Child("item").Child("ProductionItem"));
     ordered = boost::lexical_cast<int>(elem.Child("ordered").Text());
     remaining = boost::lexical_cast<int>(elem.Child("remaining").Text());
     location = boost::lexical_cast<int>(elem.Child("location").Text());
@@ -318,7 +329,7 @@ ProductionQueue::Element::Element(const GG::XMLElement& elem) :
 
 GG::XMLElement ProductionQueue::Element::XMLEncode() const
 {
-    GG::XMLElement retval("ProductionItem");
+    GG::XMLElement retval("Element");
     retval.AppendChild(GG::XMLElement("item", item.XMLEncode()));
     retval.AppendChild(GG::XMLElement("ordered", boost::lexical_cast<std::string>(ordered)));
     retval.AppendChild(GG::XMLElement("remaining", boost::lexical_cast<std::string>(remaining)));
@@ -343,18 +354,8 @@ ProductionQueue::ProductionQueue(const GG::XMLElement& elem) :
     // note that this leaves the queue elements incompletely specified, and does not find values for m_projects_in_progress or m_total_PPs_spent.
     // the owner of this object must call Update() after this object is constructed
     for (GG::XMLElement::const_child_iterator it = elem.Child("m_queue").child_begin(); it != elem.Child("m_queue").child_end(); ++it) {
-        m_queue.push_back(Element(it->Child("Element")));
+        m_queue.push_back(Element(*it));
     }
-}
-
-int ProductionQueue::InQueue(BuildType build_type, std::string name) const
-{
-    int retval = 0;
-    std::vector<const_iterator> items = find(build_type, name);
-    for (unsigned int i = 0; i < items.size(); ++i) {
-        retval += items[i]->remaining;
-    }
-    return retval;
 }
 
 int ProductionQueue::ProjectsInProgress() const
@@ -387,17 +388,9 @@ ProductionQueue::const_iterator ProductionQueue::end() const
     return m_queue.end();
 }
 
-std::vector<ProductionQueue::const_iterator> ProductionQueue::find(BuildType build_type, std::string name) const
+ProductionQueue::const_iterator ProductionQueue::find(int i) const
 {
-    std::vector<const_iterator> retval;
-#if 0 // TODO
-    ProductionItem key(build_type, name);
-    for (const_iterator it = begin(); it != end(); ++it) {
-        if (it->item == key)
-            retval.push_back(it);
-    }
-#endif
-    return retval;
+    return (0 <= i && i < static_cast<int>(size())) ? (begin() + i) : end();
 }
 
 const ProductionQueue::Element& ProductionQueue::operator[](int i) const
@@ -430,6 +423,7 @@ GG::XMLElement ProductionQueue::XMLEncode() const
 
 void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<double>& production_status)
 {
+    std::cout << "Update()\nTurn 0:\n";
     UpdateProdQueue(empire, PPs, production_status, m_queue, m_total_PPs_spent, m_projects_in_progress);
 
     if (EPSILON < PPs) {
@@ -445,6 +439,7 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
         while (!sim_queue.empty()) {
             double total_PPs_spent = 0.0;
             int projects_in_progress = 0;
+            std::cout << "Turn " << turns << "\n";
             UpdateProdQueue(empire, PPs, sim_production_status, sim_queue, total_PPs_spent, projects_in_progress);
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
                 double item_cost;
@@ -459,12 +454,14 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
                     if (!--sim_queue[i].remaining) {
                         m_queue[sim_queue_original_indices[i]].turns_left_to_completion = turns;
                         sim_queue.erase(sim_queue.begin() + i);
+                        sim_production_status.erase(sim_production_status.begin() + i);
                         sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
                     }
                 }
             }
             ++turns;
         }
+        std::cout << std::endl;
     } else {
         // since there are so few PPs, indicate that the number of turns left is indeterminate by providing a number < 0
         for (unsigned int i = 0; i < m_queue.size(); ++i) {
@@ -474,9 +471,9 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
     }
 }
 
-void ProductionQueue::push_back(BuildType build_type, std::string name, int number, int remaining, int location)
+void ProductionQueue::push_back(const Element& element)
 {
-    m_queue.push_back(Element(build_type, name, number, remaining == -1 ? number : remaining, location));
+    m_queue.push_back(element);
 }
 
 void ProductionQueue::insert(iterator it, const Element& element)
@@ -506,17 +503,9 @@ ProductionQueue::iterator ProductionQueue::end()
     return m_queue.end();
 }
 
-std::vector<ProductionQueue::iterator> ProductionQueue::find(BuildType build_type, std::string name)
+ProductionQueue::iterator ProductionQueue::find(int i)
 {
-    std::vector<iterator> retval;
-#if 0 // TODO
-    std::pair<BuildType, std::string> key(build_type, name);
-    for (iterator it = begin(); it != end(); ++it) {
-        if (it->item == key)
-            retval.push_back(it);
-    }
-#endif
-    return retval;
+    return (0 <= i && i < static_cast<int>(size())) ? (begin() + i) : end();
 }
 
 ProductionQueue::Element& ProductionQueue::operator[](int i)
@@ -610,7 +599,7 @@ Empire::Empire(const GG::XMLElement& elem) :
     }
 
     m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
-    m_production_queue.Update(this, m_industry_resource_pool.Production(), m_production_status);
+    m_production_queue.Update(this, ProductionPoints(), m_production_status);
 }
 
 Empire::~Empire()
@@ -694,6 +683,11 @@ bool Empire::TechAvailable(const std::string& name) const
     return item != m_techs.end();
 }
 
+const std::set<std::string>& Empire::AvailableBuildingTypes() const
+{
+    return m_building_types;
+}
+
 bool Empire::BuildingTypeAvailable(const std::string& name) const
 {
     Empire::BuildingTypeItr item = m_building_types.find(name);
@@ -710,20 +704,48 @@ const BuildingType* Empire::GetBuildingType(const std::string& name) const
     }
 }
 
+const ProductionQueue& Empire::GetProductionQueue() const
+{
+    return m_production_queue;
+}
+
+double Empire::ProductionStatus(int i) const
+{
+    return (0 <= i && i < static_cast<int>(m_production_status.size())) ? m_production_status[i] : -1.0;
+}
+
 std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, std::string name) const
 {
     switch (build_type) {
-    case BT_BUILDING: return std::make_pair(GetBuildingType(name)->BuildCost(), GetBuildingType(name)->BuildTime());
-    case BT_SHIP:     return std::make_pair(GetShipDesign(name)->cost, 1); // TODO: add build times as appropriate
-    case BT_ORBITAL:  return std::make_pair(200.0, 1); // v0.3 only
-    default:          return std::make_pair(-1.0, -1);
+    case BT_BUILDING: {
+        const BuildingType* building_type = GetBuildingType(name);
+        if (!building_type)
+            break;
+        return std::make_pair(building_type->BuildCost(), building_type->BuildTime());
     }
+    case BT_SHIP: {
+        const ShipDesign* ship_design = GetShipDesign(name);
+        if (!ship_design)
+            break;
+        return std::make_pair(ship_design->cost, 5); // v0.3 only
+    }
+    case BT_ORBITAL:
+        return std::make_pair(20.0, 10); // v0.3 only
+    default:
+        break;
+    }
+    return std::make_pair(-1.0, -1);
 }
 
 bool Empire::HasExploredSystem(int ID) const
 {
     Empire::SystemIDItr item = find(ExploredBegin(), ExploredEnd(), ID);
     return (item != ExploredEnd());
+}
+
+bool Empire::BuildableItem(BuildType build_type, std::string name) const
+{
+    return ProductionCostAndTime(build_type, name) != std::make_pair(-1.0, -1);
 }
 
 int Empire::NumSitRepEntries() const
@@ -780,17 +802,27 @@ Empire::SitRepItr Empire::SitRepEnd() const
     return m_sitrep_entries.end();
 }
 
+double Empire::ProductionPoints() const
+{
+    return std::min(m_industry_resource_pool.Production(), m_mineral_resource_pool.Production());
+}
+
 void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
 {
     if (!ResearchableTech(tech->Name()) || m_techs.find(tech->Name()) != m_techs.end())
         return;
     ResearchQueue::iterator it = m_research_queue.find(tech);
-    if (it != m_research_queue.end())
-         m_research_queue.erase(it);
-    if (pos < 0 || static_cast<int>(m_research_queue.size()) <= pos)
+    if (pos < 0 || static_cast<int>(m_research_queue.size()) <= pos) {
+        if (it != m_research_queue.end())
+            m_research_queue.erase(it);
         m_research_queue.push_back(tech);
-    else
+    } else {
+        if (it < m_research_queue.begin() + pos)
+            --pos;
+        if (it != m_research_queue.end())
+            m_research_queue.erase(it);
         m_research_queue.insert(m_research_queue.begin() + pos, tech);
+    }
     m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
 }
 
@@ -800,6 +832,46 @@ void Empire::RemoveTechFromQueue(const Tech* tech)
     if (it != m_research_queue.end()) {
         m_research_queue.erase(it);
         m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
+    }
+}
+
+void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/)
+{
+    if (!BuildableItem(build_type, name))
+        return;
+    ProductionQueue::Element build(build_type, name, number, number, location);
+    if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos) {
+        m_production_queue.push_back(build);
+        m_production_status.push_back(0.0);
+    } else {
+        m_production_queue.insert(m_production_queue.begin() + pos, build);
+        m_production_status.insert(m_production_status.begin() + pos, 0.0);
+    }
+    m_production_queue.Update(this, ProductionPoints(), m_production_status);
+}
+
+void Empire::MoveBuildWithinQueue(int index, int new_index)
+{
+    if (index < new_index)
+        --new_index;
+    if (0 <= index && index < static_cast<int>(m_production_queue.size()) &&
+        0 <= new_index) {
+        ProductionQueue::Element build = m_production_queue[index];
+        double status = m_production_status[index];
+        m_production_queue.erase(index);
+        m_production_status.erase(m_production_status.begin() + index);
+        m_production_queue.insert(m_production_queue.begin() + new_index, build);
+        m_production_status.insert(m_production_status.begin() + new_index, status);
+        m_production_queue.Update(this, ProductionPoints(), m_production_status);
+    }
+}
+
+void Empire::RemoveBuildFromQueue(int index)
+{
+    if (0 <= index && index < static_cast<int>(m_production_queue.size())) {
+        m_production_queue.erase(index);
+        m_production_status.erase(m_production_status.begin() + index);
+        m_production_queue.Update(this, ProductionPoints(), m_production_status);
     }
 }
 
@@ -1004,7 +1076,7 @@ void Empire::CheckResearchProgress()
 
 void Empire::CheckProductionProgress()
 {
-    m_production_queue.Update(this, m_industry_resource_pool.Production(), m_production_status);
+    m_production_queue.Update(this, ProductionPoints(), m_production_status);
     std::vector<int> to_erase;
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
         double item_cost;
@@ -1028,7 +1100,10 @@ void Empire::CheckProductionProgress()
 
             case BT_SHIP: {
                 Universe& universe = GetUniverse();
-                System* system = universe.Object<System>(m_production_queue[i].location);
+                UniverseObject* build_location = universe.Object(m_production_queue[i].location);
+                System* system = universe_object_cast<System*>(build_location);
+                if (!system && build_location)
+                    system = build_location->GetSystem();
                 // TODO: account for shipyards and/or other ship production sites that are in interstellar space, if needed
                 assert(system);
 
@@ -1069,14 +1144,13 @@ void Empire::CheckProductionProgress()
                 break;
             }
 
-            if (!--m_production_queue[i].remaining) {
-                m_production_status.erase(m_production_status.begin() + i);
+            if (!--m_production_queue[i].remaining)
                 to_erase.push_back(i);
-            }
         }
     }
 
     for (std::vector<int>::iterator it = to_erase.begin(); it != to_erase.end(); ++it) {
+        m_production_status.erase(m_production_status.begin() + *it);
         m_production_queue.erase(*it);
     }
 

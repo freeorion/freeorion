@@ -23,7 +23,8 @@ ShipDesign::ShipDesign() :
     speed(1.0),
     colonize(false),
     attack(0),
-    defense(0)
+    defense(0),
+    graphic("")
 {
 }
 
@@ -43,6 +44,7 @@ ShipDesign::ShipDesign(const GG::XMLElement& elem)
     // V0.3 ONLY!!!!
     attack = lexical_cast<int>(elem.Child("attack").Text());
     defense = lexical_cast<int>(elem.Child("defense").Text());
+    graphic = elem.Child("graphic").Text();
     // V0.3 ONLY!!!!
     /////////////////////////////////////////////////////////////////////////////
 }
@@ -63,6 +65,7 @@ GG::XMLElement ShipDesign::XMLEncode() const
     // V0.3 ONLY!!!!
     retval.AppendChild(XMLElement("attack", lexical_cast<std::string>(attack)));
     retval.AppendChild(XMLElement("defense", lexical_cast<std::string>(defense)));
+    retval.AppendChild(XMLElement("graphic", graphic));
     // V0.3 ONLY!!!!
     /////////////////////////////////////////////////////////////////////////////
     return retval;

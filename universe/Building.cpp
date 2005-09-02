@@ -156,7 +156,8 @@ BuildingType::BuildingType() :
     m_build_cost(0.0),
     m_build_time(0),
     m_maintenance_cost(0.0),
-    m_effects(0)
+    m_effects(0),
+    m_graphic("")
 {
 }
 
@@ -166,7 +167,8 @@ BuildingType::BuildingType(const std::string& name, const std::string& descripti
     m_build_cost(0.0),
     m_build_time(0),
     m_maintenance_cost(0.0),
-    m_effects()
+    m_effects(0),
+    m_graphic("")
 {
 }
 
@@ -185,6 +187,7 @@ BuildingType::BuildingType(const GG::XMLElement& elem)
     for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
         m_effects.push_back(boost::shared_ptr<const Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
     }
+    m_graphic = elem.Child("graphic").Text();
 }
 
 const std::string& BuildingType::Name() const
@@ -215,6 +218,11 @@ double BuildingType::MaintenanceCost() const
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& BuildingType::Effects() const
 {
     return m_effects;
+}
+
+const std::string& BuildingType::Graphic() const
+{
+    return m_graphic;
 }
 
 void BuildingType::AddEffects(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects)

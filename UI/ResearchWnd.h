@@ -24,6 +24,7 @@ public:
 
     void Reset();
     void CenterOnTech(const std::string& tech_name);
+    void Sanitize();
     //@}
 
 private:

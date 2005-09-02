@@ -114,6 +114,10 @@ void FleetButton::RenderRollover()
 
 void FleetButton::Clicked()
 {
+    MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    if (map_wnd && map_wnd->InProductionViewMode())
+        return;
+
     int selected_fleet = 0;
     std::vector<Fleet*> fleets(m_fleets);
     if (m_compliment) {
@@ -160,7 +164,7 @@ void FleetButton::Clicked()
                           FleetWnd::LastPosition());
     }
 
-    if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
+    if (map_wnd)
         GG::Connect(map_wnd->SystemRightClickedSignal, &FleetWnd::SystemClicked, fleet_wnd);
 
     for (unsigned int i = 0; i < fleets.size(); ++i) {

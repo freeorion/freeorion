@@ -102,10 +102,13 @@ EffectsGroup::EffectsGroup(const Condition::ConditionBase* scope, const Conditio
 EffectsGroup::EffectsGroup(const GG::XMLElement& elem)
 {
     if (elem.Tag() != "EffectsGroup")
-        throw std::invalid_argument(("Attempted to construct a EffectsGroup from an XMLElement that had a tag other than \"EffectsGroup\"" + (" (\"" + elem.Tag() + ")")).c_str());
+        throw std::invalid_argument(("Attempted to construct a EffectsGroup from an XMLElement that had a tag other than \"EffectsGroup\"" + (" (\"" + elem.Tag() + "\")")).c_str());
 
     m_scope = Condition::ConditionFactory().GenerateObject(elem.Child("scope").Child(0));
-    m_activation = Condition::ConditionFactory().GenerateObject(elem.Child("activation").Child(0));
+    if (elem.ContainsChild("activation"))
+        m_activation = Condition::ConditionFactory().GenerateObject(elem.Child("activation").Child(0));
+    else
+        m_activation = new Condition::Self();
     if (elem.ContainsChild("stacking_group"))
         m_stacking_group = elem.Child("stacking_group").Text();
     for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {

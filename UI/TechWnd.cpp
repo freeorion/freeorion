@@ -1288,7 +1288,7 @@ void TechTreeWnd::LayoutPanel::Clear()
 
 void TechTreeWnd::LayoutPanel::Reset()
 {
-    Layout(false);
+    Layout(true);
 }
 
 void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category)
@@ -1581,7 +1581,6 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     AttachChild(m_uncollapse_all_button);
 
     const int NAVIGATOR_WIDTH = 214;
-    const int NAVIGATOR_AND_DETAIL_HEIGHT = 200;
     m_tech_detail_panel = new TechDetailPanel(w - NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
     GG::Connect(m_tech_detail_panel->CenterOnTechSignal, &TechTreeWnd::CenterOnTech, this);
     GG::Connect(m_tech_detail_panel->QueueTechSignal, &TechTreeWnd::TechDoubleClickedSlot, this);

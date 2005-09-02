@@ -161,6 +161,8 @@ client/human/HumanClientApp.h			\
 client/human/chmain.cpp				\
 UI/About.cpp					\
 UI/About.h					\
+UI/BuildDesignatorWnd.cpp		\
+UI/BuildDesignatorWnd.h			\
 UI/ClientUI.cpp					\
 UI/ClientUI.h					\
 UI/CUIControls.cpp				\
@@ -194,6 +196,8 @@ UI/MultiplayerLobbyWnd.cpp			\
 UI/MultiplayerLobbyWnd.h			\
 UI/OptionsWnd.cpp				\
 UI/OptionsWnd.h					\
+UI/ProductionWnd.cpp			\
+UI/ProductionWnd.h				\
 UI/ResearchWnd.cpp				\
 UI/ResearchWnd.h				\
 UI/ServerConnectWnd.cpp				\

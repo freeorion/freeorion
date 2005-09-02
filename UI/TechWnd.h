@@ -44,10 +44,6 @@ public:
     const std::string& CategoryShown() const;
     TechTypesShown     GetTechTypesShown() const;
     TechStatusesShown  GetTechStatusesShown() const;
-
-    mutable TechBrowsedSignalType       TechBrowsedSignal;
-    mutable TechClickedSignalType       TechSelectedSignal;
-    mutable TechDoubleClickedSignalType AddTechToQueueSignal;
     //@}
 
     //! \name Mutators //@{
@@ -60,6 +56,12 @@ public:
     void UncollapseAll();
     void CenterOnTech(const Tech* tech);
     //@}
+
+    static const int NAVIGATOR_AND_DETAIL_HEIGHT = 200;
+
+    mutable TechBrowsedSignalType       TechBrowsedSignal;
+    mutable TechClickedSignalType       TechSelectedSignal;
+    mutable TechDoubleClickedSignalType AddTechToQueueSignal;
 
 private:
     class TechDetailPanel;

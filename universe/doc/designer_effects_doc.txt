@@ -501,7 +501,7 @@ Effects are evaluated and then applied while processing a FreeOrion turn.  When 
 <br>XML format:
  <EffectsGroup>
      <scope>SCOPE</scope>
-     <activation>ACTIVATION</activation>
+     <activation>ACTIVATION</activation>             [optional -- may be left out]
      <stacking_group>STACKING_GROUP</stacking_group> [optional -- may be left out]
      <effects>
          EFFECT0
@@ -560,6 +560,7 @@ See [[XML_Description_Examples#Buildings|example Building XML descriptions]]
           ...
           EFFECTS_GROUPN
      </effects>
+     <graphic>GRAPHIC_FILENAME</graphic>
  </BuildingType>
 
 <br>Param Types:
@@ -569,8 +570,10 @@ See [[XML_Description_Examples#Buildings|example Building XML descriptions]]
  BUILD_TIME       int
  MAINTENANCE_COST double
  EFFECTS_GROUPX   EffectsGroup
+ GRAPHIC_FILENAME string
 
-Note: The note about Special name and description text also applies to BuildingTypes.
+Note 1: The note about Special name and description text also applies to BuildingTypes.
+Note 2: GRAPHIC_FILENAME should be relative to the art directory.  So it should appear in the form "foo/bar.png" instead of "default/data/art/foo/bar.png".
 
 <br>
 <br>
@@ -621,7 +624,7 @@ See [[XML_Description_Examples#Techs|example Technology XML descriptions]]
           ...
           EFFECTS_GROUPN
      </effects>
-     EFFECTS_GROUP
+     <graphic>GRAPHIC_FILENAME</graphic>
  </Tech>
 
 <br>Param Types:
@@ -635,4 +638,5 @@ See [[XML_Description_Examples#Techs|example Technology XML descriptions]]
  ITEMX            Item
  EFFECTS_GROUPX   EffectsGroup
 
-Note: The note about Special and BuildingType name and description text also applies to Tech names, descriptions, and category names.
+Note 1: The note about Special and BuildingType name and description text also applies to Tech names, descriptions, and category names.
+Note 2: GRAPHIC_FILENAME should be relative to the art directory.  So it should appear in the form "foo/bar.png" instead of "default/data/art/foo/bar.png".

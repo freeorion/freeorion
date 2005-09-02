@@ -1895,10 +1895,11 @@ void ServerApp::ProcessTurns()
         }
     }
 
+    // check now for completed research and production
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        ///< check now for completed research
         Empire* empire = Empires().Lookup(it->first);
         empire->CheckResearchProgress();
+        empire->CheckProductionProgress();
     }
 
     // find planets which have starved to death

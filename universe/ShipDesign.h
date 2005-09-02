@@ -25,6 +25,7 @@ struct ShipDesign
     // V0.3 ONLY!!!!
     int         attack;      ///< the attack value of the design
     int         defense;     ///< the defense value of the design
+    std::string graphic;     ///< the name of the grapic file for this ship design
     // V0.3 ONLY!!!!
     /////////////////////////////////////////////////////////////////////////////
 

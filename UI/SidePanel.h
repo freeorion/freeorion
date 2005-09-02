@@ -48,91 +48,11 @@ class FocusSelector;
 class SidePanel : public GG::Wnd
 {
 public:
-    /** a single planet's info and controls; several of these may appear at any one time in a SidePanel */
-    class PlanetPanel : public GG::Wnd
-    {
-    public:
-        /** \name Signal Types */ //@{
-        typedef boost::signal<void (int)> LeftClickedSignalType; ///< emitted when the planet graphic is left clicked by the user
-        //@}
-   
-        /** \name Slot Types */ //@{
-        typedef LeftClickedSignalType::slot_type LeftClickedSlotType; ///< type of functor(s) invoked on a LeftClickedSignalType
-        //@}
+    class PlanetPanel;
 
-        /** \name Structors */ //@{
-        PlanetPanel(int x, int y, int w, int h, const Planet &planet, StarType star_type); ///< basic ctor
-        ~PlanetPanel();
-        //@}
-
-        /** \name Accessors */ //@{
-        virtual bool InWindow(const GG::Pt& pt) const;
-        virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
-        virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);            ///< respond to cursor entering window's coords
-        virtual void MouseLeave(const GG::Pt& pt, Uint32 keys);            ///< respond to cursor leaving window's coords
-
-        int PlanetID() const {return m_planet_id;}
-
-        mutable LeftClickedSignalType PlanetImageLClickedSignal; ///< returns the left clicked signal object for this Planet panel
-        //@}
-
-        /** \name Mutators */ //@{
-        virtual bool Render();
-        virtual void LClick(const GG::Pt& pt, Uint32 keys);
-        virtual void RClick(const GG::Pt& pt, Uint32 keys);
-        void Update();
-        //@}
-
-    private:
-        /** some of the elements at planet panel are only used if a specific
-            planet ownership state is present, some others are only used if
-            additional conditions applies. If a control is being enabled, it's
-            moved from the list of disabled controls (m_vec_unused_controls) to
-            the child list of planet panel, if the control isn't found at m_vec_unused_controls
-            is assumed that it is already enable. after that control->Show() is called. Disabling a
-            control is done in reverse.
-            for example: colonize btn is only enable/visible if there is a colony ship in orbit 
-                         and the planet is unowned and inhabitable*/
-        void EnableControl(GG::Wnd *control, bool enable);
-
-
-        bool RenderUnhabited(const Planet &planet); ///< it's call if the planet isn't inhabited
-        bool RenderInhabited(const Planet &planet); ///< it's call if the planet is inhabited by someone else
-        bool RenderOwned    (const Planet &planet); ///< it's call if the planet is inhabited by te player
-
-        int  PlanetDiameter() const;
-        bool InPlanet(const GG::Pt& pt) const;///< returns true if pt is within the planet image
-
-        void PlanetChanged();                 ///< called when a planet was changed to handle rendering and which controls are enabled
-        void PlanetResourceCenterChanged();   ///< called when a planet resource production was changed
-
-        void SetPrimaryFocus  (FocusType focus); ///< set the primary focus of the planet to focus
-        void SetSecondaryFocus(FocusType focus); ///< set the secondary focus of the planet to focus
-
-        void ClickColonize();///< called if btn colonize is pressed
-
-              Planet* GetPlanet(); ///< returns the planet with ID m_planet_id
-        const Planet* GetPlanet() const;
-
-        int                   m_planet_id;                ///< id for the planet with is representet by this planet panel
-        GG::TextControl       *m_planet_name;             ///< planet name
-        GG::TextControl       *m_planet_info;             ///< planet size and type info
-        FocusSelector         *m_focus_selector;          ///< buttons and displays for foci and associated meters
-        CUIButton             *m_button_colonize;         ///< btn which can be pressed to colonize this planet
-        GG::DynamicGraphic    *m_planet_graphic;          ///< image of the planet (can be a frameset); this is now used only for asteroids
-        RotatingPlanetControl *m_rotating_planet_graphic; ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
-
-        boost::signals::connection m_connection_system_changed;           ///< stores connection used to handle a system change
-        boost::signals::connection m_connection_planet_changed;           ///< stores connection used to handle a planet change
-        boost::signals::connection m_connection_planet_production_changed;///< stores connection used to handle a planet resource production change
-
-        /** planet panel is constructed without taking care of which controls
-            are needed by current planet ownership state. All control which aren't
-            needed by current planet ownership state are stored in m_vec_unused_controls
-            and can be used when for instance planet ownership changes
-        */
-        std::vector<GG::Wnd*> m_vec_unused_controls;
-    };
+    /** \name Signal Types */ //@{
+    typedef boost::signal<void (int)> PlanetSelectedSignalType; ///< emitted when a rotating planet in the side panel is clicked by the user
+    //@}
 
     /** \name Structors */ //@{
     SidePanel(int x, int y, int w, int h);
@@ -141,18 +61,29 @@ public:
     /** \name Accessors */ //@{
     virtual bool InWindow(const GG::Pt& pt) const;
 
-    int                PlanetPanels() const        {return m_planet_panel_container->PlanetPanels();}
-    const PlanetPanel* GetPlanetPanel(int n) const {return m_planet_panel_container->GetPlanetPanel(n);}
+    int                PlanetPanels() const;
+    const PlanetPanel* GetPlanetPanel(int n) const;
     int                SystemID() const;
+    int                PlanetID() const; ///< returns the id of the currently-selected planet, if any
     //@}
 
     /** \name Mutators */ //@{
     virtual bool  Render();
 
     void          SetSystem(int system_id); ///< sets the system currently being viewed in the side panel
+    void          SelectPlanet(int planet_id); ///< selects the planet with id \a planet_id within the current system, if such a planet exists
+    void          HiliteSelectedPlanet(bool b); ///< enables/disables hiliting the currently-selected planet in the side panel
     //@}
 
+    static const int MAX_PLANET_DIAMETER; // size of a huge planet, in on-screen pixels
+    static const int MIN_PLANET_DIAMETER; // size of a tiny planet, in on-screen pixels
+
+    mutable PlanetSelectedSignalType PlanetSelectedSignal;
+
 private:
+    class PlanetPanelContainer;
+    class SystemResourceSummary;
+
     void AdjustScrolls();
 
     void SystemSelectionChanged(int selection);
@@ -164,6 +95,7 @@ private:
     void PlanetsChanged();
     void PrevButtonClicked();
     void NextButtonClicked();
+    void PlanetSelected(int planet_id);
 
     const System        *m_system;
     CUIDropDownList     *m_system_name;
@@ -177,54 +109,6 @@ private:
     int                 m_next_pltview_fade_out;
 
     std::vector<GG::SubTexture> m_fleet_icons;
-
-    class PlanetPanelContainer : public GG::Wnd
-    {
-      public:
-        /** \name Structors */ //@{
-        PlanetPanelContainer(int x, int y, int w, int h);
-        //@}
-
-        void Clear();
-        void SetPlanets(const std::vector<const Planet*> &plt_vec, StarType star_type);
-
-        /** \name Accessors */ //@{
-        virtual bool InWindow(const GG::Pt& pt) const;
-        virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
-
-        int                PlanetPanels() const        {return m_planet_panels.size();}
-        const PlanetPanel* GetPlanetPanel(int n) const {return m_planet_panels[n];}
-        //@}
-
-        PlanetPanel* GetPlanetPanel(int n) {return m_planet_panels[n];}
-
-      private:
-        std::vector<PlanetPanel*>   m_planet_panels;
-    
-        void VScroll(int,int,int,int);
-        CUIScroll*        m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
-    };
-
-    class SystemResourceSummary : public GG::Wnd
-    {
-      public:
-        /** \name Structors */ //@{
-        SystemResourceSummary(int x, int y, int w, int h);
-        //@}
-
-        /** \name Mutators */ //@{
-        virtual bool  Render();
-
-        void SetFarming (int farming ) {m_farming = farming;}
-        void SetMining  (int mining  ) {m_mining  = mining;}
-        void SetResearch(int research) {m_research= research;}
-        void SetIndustry(int industry) {m_industry= industry;}
-        void SetDefense (int defense ) {m_defense = defense;}
-        //@}
-
-      private:
-        int m_farming,m_mining,m_research,m_industry,m_defense;
-    };
 
     PlanetPanelContainer  *m_planet_panel_container;
     SystemResourceSummary *m_system_resource_summary;

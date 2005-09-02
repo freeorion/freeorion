@@ -152,21 +152,6 @@ bool CUI_CloseButton::Render()
 ////////////////////////////////////////////////
 // CUI_Wnd
 ////////////////////////////////////////////////
-
-namespace {
-const int BUTTON_TOP_OFFSET = 3;
-const int BUTTON_RIGHT_OFFSET = 15;
-const int MINIMIZED_WND_LENGTH = 150;
-const int BORDER_LEFT = 5;
-const int BORDER_TOP = 18;
-const int BORDER_RIGHT = 5;
-const int BORDER_BOTTOM = 5;
-const int OUTER_EDGE_ANGLE_OFFSET = 8;
-const int INNER_BORDER_ANGLE_OFFSET = 11;
-const int RESIZE_HASHMARK1_OFFSET = 7;
-const int RESIZE_HASHMARK2_OFFSET = 3;
-}
-
 CUI_Wnd::CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags) : 
     GG::Wnd(x, y, w, h, flags & ~GG::Wnd::RESIZABLE),
     m_resizable (flags & GG::Wnd::RESIZABLE),

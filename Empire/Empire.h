@@ -108,7 +108,7 @@ struct ProductionQueue
         std::string name;
     };
 
-    /** The type of a single element in the research queue. */
+    /** The type of a single element in the production queue. */
     struct Element
     {
         Element(); ///< default ctor.
@@ -140,8 +140,7 @@ struct ProductionQueue
     //@}
 
     /** \name Accessors */ //@{
-    int InQueue(BuildType build_type, std::string name) const; ///< Returns true iff \a tech is in this queue.
-    int ProjectsInProgress() const;       ///< Returns the number of research projects currently (perhaps partially) funded.
+    int ProjectsInProgress() const;       ///< Returns the number of production projects currently (perhaps partially) funded.
     double TotalPPsSpent() const;         ///< Returns the number of PPs currently spent on the projects in this queue.
 
     // STL container-like interface
@@ -149,10 +148,10 @@ struct ProductionQueue
     unsigned int size() const;
     const_iterator begin() const;
     const_iterator end() const;
-    std::vector<const_iterator> find(BuildType build_type, std::string name) const;
+    const_iterator find(int i) const;
     const Element& operator[](int i) const;
 
-    /** Returns an iterator to the underfunded research project, or end() if none exists. */
+    /** Returns an iterator to the underfunded production project, or end() if none exists. */
     const_iterator UnderfundedProject(const Empire* empire) const;
 
     GG::XMLElement XMLEncode() const; ///< Encodes this queue as an XMLElement.
@@ -160,23 +159,23 @@ struct ProductionQueue
 
     /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
-        determines the number of projects in prgress, and the total number of PPs spent on the projects
+        determines the number of projects in progress, and the total number of PPs spent on the projects
         in the queue.  \note A precondition of this function that \a PPs must be greater than some
         epsilon > 0; see the implementation for the actual value used for epsilon. */
-    void Update(Empire* empire, double PPs, const std::vector<double>& research_status);
+    void Update(Empire* empire, double PPs, const std::vector<double>& production_status);
 
     // STL container-like interface
-    void push_back(BuildType build_type, std::string name, int number, int remaining, int location);
-    void insert(iterator it, const Element& tech);
+    void push_back(const Element& element);
+    void insert(iterator it, const Element& element);
     void erase(int i);
     void erase(iterator it);
 
     iterator begin();
     iterator end();
-    std::vector<iterator> find(BuildType build_type, std::string name);
+    iterator find(int i);
     Element& operator[](int i);
 
-    /** Returns an iterator to the underfunded research project, or end() if none exists. */
+    /** Returns an iterator to the underfunded production project, or end() if none exists. */
     iterator UnderfundedProject(const Empire* empire);
     //@}
 
@@ -308,6 +307,9 @@ public:
     /// progress of partially-researched techs; fully researched techs cannot be found in this container
     bool TechAvailable(const std::string& name) const;
 
+    /// Returns the set of all available building types.
+    const std::set<std::string>& AvailableBuildingTypes() const;
+
     /// Returns true if the given building type is known to this empire, false if it is not.
     bool BuildingTypeAvailable(const std::string& name) const;
 
@@ -316,9 +318,19 @@ public:
         any Techs that modify it, or the modified version otherwise. */
     const BuildingType* GetBuildingType(const std::string& name) const;
 
+    /// Returns the queue of items being or queued to be produced.
+    const ProductionQueue& GetProductionQueue() const;
+
+    /** Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such
+        index in the production queue. */
+    double ProductionStatus(int i) const;
+
     /** Returns the cost per turn and the number of turns required to produce the indicated item, or (-1.0, -1) if the
         item is unknown, unavailable, or invalid. */
     std::pair<double, int> ProductionCostAndTime(BuildType build_type, std::string name) const;
+
+    /** Returns true iff this empire can produce the specified item. */
+    bool BuildableItem(BuildType build_type, std::string name) const;
 
     /// Returns true if the given item is in the appropriate list, false if it is not.
     bool HasExploredSystem(int ID) const;
@@ -343,6 +355,9 @@ public:
     const PopulationResourcePool& PopulationResPool () const {return m_population_resource_pool;}
     const IndustryResourcePool&   IndustryResPool   () const {return m_industry_resource_pool;}
     const TradeResourcePool&      TradeResPool      () const {return m_trade_resource_pool;}
+
+    /// Returns the number of production points available to the empire (this is the minimum of current industry and mineral outputs).
+    double ProductionPoints() const;
 
     /// Encodes an empire into an XMLElement
     /**
@@ -379,6 +394,16 @@ public:
 
     /// Removes \a tech from the research queue, if it is in the research queue already.
     void RemoveTechFromQueue(const Tech* tech);
+
+    /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
+        queue.size() <= pos, the build is placed at the end of the queue. */
+    void PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos = -1);
+
+    /// Mmoves \a tech from the production queue, if it is in the production queue already.
+    void MoveBuildWithinQueue(int index, int new_index);
+
+    /// Removes the build at position \a index in the production queue, if such an index exists.
+    void RemoveBuildFromQueue(int index);
 
     /// Inserts the given Tech into the Empire's list of available technologies.
     void AddTech(const std::string& name);

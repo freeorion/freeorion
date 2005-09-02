@@ -378,7 +378,7 @@ private:
 /////////////////////////////////////////////////////
 // ResearchQueueOrder
 /////////////////////////////////////////////////////
-/** The Order subclass that represents changing an empire's research queue.  The 2-arg ctor removes the names
+/** The Order subclass that represents changing an empire's research queue.  The 2-arg ctor removes the named
     tech from \a empire's queue, whereas the 3-arg ctor places \a tech_name at position \a position in
     \a empire's research queue. */
 class ResearchQueueOrder : public Order
@@ -401,6 +401,41 @@ private:
     std::string m_tech_name;
     int         m_position;
     bool        m_remove;
+};
+
+
+/////////////////////////////////////////////////////
+// ProductionQueueOrder
+/////////////////////////////////////////////////////
+/** The Order subclass that represents changing an empire's production queue.  The 5-arg ctor adds the build to the end
+    of \a empire's queue, the 3-arg ctor moves an existing build from its current location at \a index to a new one at
+    \a new_index, and the 2-arg ctor removes the build at \a index from \a empire's queue. */
+class ProductionQueueOrder : public Order
+{
+public:
+    /** \name Structors */ //@{
+    ProductionQueueOrder();
+    ProductionQueueOrder(const GG::XMLElement& elem);
+    ProductionQueueOrder(int empire, BuildType build_type, const std::string& item, int number, int location);
+    ProductionQueueOrder(int empire, int index, int new_index);
+    ProductionQueueOrder(int empire, int index);
+    //@}
+
+    /** \name Accessors */ //@{
+    virtual GG::XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
+    //@}
+
+private:
+    virtual void ExecuteImpl() const;
+
+    BuildType   m_build_type;
+    std::string m_item;
+    int         m_number;
+    int         m_location;
+    int         m_index;
+    int         m_new_index;
+
+    static const int INVALID_INDEX = -500;
 };
 
 inline std::pair<std::string, std::string> OrderRevision()

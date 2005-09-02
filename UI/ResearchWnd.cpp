@@ -14,7 +14,7 @@
 #include <cmath>
 
 namespace {
-    const int RESEARCH_INFO_AND_QUEUE_WIDTH = 275;
+    const int RESEARCH_INFO_AND_QUEUE_WIDTH = 250;
     const double PI = 3.141594;
     const double OUTER_LINE_THICKNESS = 2.0;
 
@@ -182,6 +182,11 @@ void ResearchWnd::Reset()
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
 {
     m_tech_tree_wnd->CenterOnTech(GetTech(tech_name));
+}
+
+void ResearchWnd::Sanitize()
+{
+    m_tech_tree_wnd->Clear();
 }
 
 void ResearchWnd::UpdateQueue()

@@ -517,7 +517,7 @@ void HumanClientApp::SDLInit()
         Exit(1);
     }
 
-    SDL_WM_SetCaption("FreeOrion v0.2", "FreeOrion v0.2");
+    SDL_WM_SetCaption("FreeOrion v0.3", "FreeOrion v0.3");
 
     InitFMOD();
 

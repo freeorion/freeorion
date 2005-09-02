@@ -27,14 +27,15 @@ const int INITIAL_COLONY_POP = 1;
 
 namespace
 {
-    Order* GenRenameOrder(const XMLElement& elem)        {return new RenameOrder(elem);}
-    Order* GenNewFleetOrder(const XMLElement& elem)      {return new NewFleetOrder(elem);}
-    Order* GenFleetMoveOrder(const XMLElement& elem)     {return new FleetMoveOrder(elem);}
-    Order* GenFleetTransferOrder(const XMLElement& elem) {return new FleetTransferOrder(elem);}
-    Order* GenFleetColonizeOrder(const XMLElement& elem) {return new FleetColonizeOrder(elem);}
-    Order* GenDeleteFleetOrder(const XMLElement& elem)   {return new DeleteFleetOrder(elem);}
-    Order* GenChangeFocusOrder(const XMLElement& elem)   {return new ChangeFocusOrder(elem);}
-    Order* GenResearchQueueOrder(const XMLElement& elem) {return new ResearchQueueOrder(elem);}
+    Order* GenRenameOrder(const XMLElement& elem)          {return new RenameOrder(elem);}
+    Order* GenNewFleetOrder(const XMLElement& elem)        {return new NewFleetOrder(elem);}
+    Order* GenFleetMoveOrder(const XMLElement& elem)       {return new FleetMoveOrder(elem);}
+    Order* GenFleetTransferOrder(const XMLElement& elem)   {return new FleetTransferOrder(elem);}
+    Order* GenFleetColonizeOrder(const XMLElement& elem)   {return new FleetColonizeOrder(elem);}
+    Order* GenDeleteFleetOrder(const XMLElement& elem)     {return new DeleteFleetOrder(elem);}
+    Order* GenChangeFocusOrder(const XMLElement& elem)     {return new ChangeFocusOrder(elem);}
+    Order* GenResearchQueueOrder(const XMLElement& elem)   {return new ResearchQueueOrder(elem);}
+    Order* GenProductionQueueOrder(const XMLElement& elem) {return new ProductionQueueOrder(elem);}
 
     bool temp_header_bool = RecordHeaderFile(OrderRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
@@ -98,14 +99,15 @@ bool Order::UndoImpl() const
 
 void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
 {
-    fact.AddGenerator("RenameOrder",        &GenRenameOrder);
-    fact.AddGenerator("NewFleetOrder",      &GenNewFleetOrder);
-    fact.AddGenerator("FleetMoveOrder",     &GenFleetMoveOrder);
-    fact.AddGenerator("FleetTransferOrder", &GenFleetTransferOrder);
-    fact.AddGenerator("FleetColonizeOrder", &GenFleetColonizeOrder);
-    fact.AddGenerator("DeleteFleetOrder",   &GenDeleteFleetOrder);
-    fact.AddGenerator("ChangeFocusOrder",   &GenChangeFocusOrder);
-    fact.AddGenerator("ResearchQueueOrder", &GenResearchQueueOrder);
+    fact.AddGenerator("RenameOrder",          &GenRenameOrder);
+    fact.AddGenerator("NewFleetOrder",        &GenNewFleetOrder);
+    fact.AddGenerator("FleetMoveOrder",       &GenFleetMoveOrder);
+    fact.AddGenerator("FleetTransferOrder",   &GenFleetTransferOrder);
+    fact.AddGenerator("FleetColonizeOrder",   &GenFleetColonizeOrder);
+    fact.AddGenerator("DeleteFleetOrder",     &GenDeleteFleetOrder);
+    fact.AddGenerator("ChangeFocusOrder",     &GenChangeFocusOrder);
+    fact.AddGenerator("ResearchQueueOrder",   &GenResearchQueueOrder);
+    fact.AddGenerator("ProductionQueueOrder", &GenProductionQueueOrder);
 }
 
 
@@ -694,7 +696,7 @@ ResearchQueueOrder::ResearchQueueOrder() :
 {
 }
 
-ResearchQueueOrder::ResearchQueueOrder(const GG::XMLElement& elem):
+ResearchQueueOrder::ResearchQueueOrder(const GG::XMLElement& elem) :
     Order(elem.Child("Order"))
 {
     if (elem.Tag() != ("ResearchQueueOrder"))
@@ -740,4 +742,84 @@ void ResearchQueueOrder::ExecuteImpl() const
         empire->RemoveTechFromQueue(GetTech(m_tech_name));
     else
         empire->PlaceTechInQueue(GetTech(m_tech_name), m_position);
+}
+
+ProductionQueueOrder::ProductionQueueOrder() : 
+    Order(),
+    m_build_type(INVALID_BUILD_TYPE),
+    m_item(""),
+    m_number(0),
+    m_location(UniverseObject::INVALID_OBJECT_ID),
+    m_index(INVALID_INDEX),
+    m_new_index(INVALID_INDEX)
+{}
+
+ProductionQueueOrder::ProductionQueueOrder(const GG::XMLElement& elem) :
+    Order(elem.Child("Order"))
+{
+    if (elem.Tag() != ("ProductionQueueOrder"))
+        throw std::invalid_argument("Attempted to construct ProductionQueueOrder from malformed XMLElement");
+
+    m_build_type = lexical_cast<BuildType>(elem.Child("m_build_type").Text());
+    m_item = elem.Child("m_item").Text();
+    m_number = lexical_cast<int>(elem.Child("m_number").Text());
+    m_location = lexical_cast<int>(elem.Child("m_location").Text());
+    m_index = lexical_cast<int>(elem.Child("m_index").Text());
+    m_new_index = lexical_cast<int>(elem.Child("m_new_index").Text());
+}
+
+ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, const std::string& item, int number, int location) :
+    Order(empire),
+    m_build_type(build_type),
+    m_item(item),
+    m_number(number),
+    m_location(location),
+    m_index(INVALID_INDEX),
+    m_new_index(INVALID_INDEX)
+{}
+
+ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_index) :
+    Order(empire),
+    m_build_type(INVALID_BUILD_TYPE),
+    m_item(""),
+    m_number(0),
+    m_location(UniverseObject::INVALID_OBJECT_ID),
+    m_index(index),
+    m_new_index(new_index)
+{}
+
+ProductionQueueOrder::ProductionQueueOrder(int empire, int index) :
+    Order(empire),
+    m_build_type(INVALID_BUILD_TYPE),
+    m_item(""),
+    m_number(0),
+    m_location(UniverseObject::INVALID_OBJECT_ID),
+    m_index(index),
+    m_new_index(INVALID_INDEX)
+{}
+
+GG::XMLElement ProductionQueueOrder::XMLEncode() const
+{
+    XMLElement retval("ProductionQueueOrder");
+    retval.AppendChild(Order::XMLEncode());
+    retval.AppendChild(XMLElement("m_build_type", lexical_cast<std::string>(m_build_type)));
+    retval.AppendChild(XMLElement("m_item", m_item));
+    retval.AppendChild(XMLElement("m_number", lexical_cast<std::string>(m_number)));
+    retval.AppendChild(XMLElement("m_location", lexical_cast<std::string>(m_location)));
+    retval.AppendChild(XMLElement("m_index", lexical_cast<std::string>(m_index)));
+    retval.AppendChild(XMLElement("m_new_index", lexical_cast<std::string>(m_new_index)));
+    return retval;
+}
+
+void ProductionQueueOrder::ExecuteImpl() const
+{
+    ValidateEmpireID();
+
+    Empire* empire = Empires().Lookup(EmpireID());
+    if (m_build_type != INVALID_BUILD_TYPE)
+        empire->PlaceBuildInQueue(m_build_type, m_item, m_number, m_location);
+    else if (m_new_index != INVALID_INDEX)
+        empire->MoveBuildWithinQueue(m_index, m_new_index);
+    else
+        empire->RemoveBuildFromQueue(m_index);
 }

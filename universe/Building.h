@@ -69,7 +69,8 @@ public:
     int                         BuildTime() const;        ///< returns the number of turns required to build this building
     double                      MaintenanceCost() const;  ///< returns the number of monetary points required per turn to operate this building
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
-                                Effects() const;            ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
+                                Effects() const;          ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
+    const std::string&          Graphic() const;          ///< returns the name of the grapic file for this building type
     //@}
 
     /** \name Mutators */ //@{
@@ -83,6 +84,7 @@ private:
     int                                                         m_build_time;
     double                                                      m_maintenance_cost;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
+    std::string                                                 m_graphic;
 };
 
 /** Returns the BuildingType specification object for a building of type \a name.  If no such BuildingType

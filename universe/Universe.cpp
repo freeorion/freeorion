@@ -2064,61 +2064,67 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         design.name = "Scout";
         design.attack = 0;
         design.defense = 1;
-        design.cost = 50;
+        design.cost = 10;
         design.speed = 1;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Small and cheap unarmed vessel designed for recon and exploration.";
+        design.graphic = "misc/scout1.png";
         empire->AddShipDesign(design);
 
         design.name = "Colony Ship";
         design.attack = 0;
         design.defense = 1;
-        design.cost = 250;
+        design.cost = 50;
         design.speed = 1;
         design.colonize = true;
         design.empire = empire_id;
         design.description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
+        design.graphic = "misc/colony1.png";
         empire->AddShipDesign(design);
 
         design.name = "Mark I";
         design.attack = 2;
         design.defense = 1;
-        design.cost = 100;
+        design.cost = 20;
         design.speed = 1;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Affordable armed patrol frigate.";
+        design.graphic = "misc/mark1.png";
         empire->AddShipDesign(design);
 
         design.name = "Mark II";
         design.attack = 5;
         design.defense = 2;
-        design.cost = 200;
+        design.cost = 40;
         design.speed = 1;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Cruiser with storng defensive and offensive capabilities.";
+        design.graphic = "misc/mark2.png";
         empire->AddShipDesign(design);
 
         design.name = "Mark III";
         design.attack = 10;
         design.defense = 3;
-        design.cost = 375;
+        design.cost = 75;
         design.speed = 1;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
+        design.graphic = "misc/mark3.png";
         empire->AddShipDesign(design);
 
         design.name = "Mark IV";
         design.attack = 15;
         design.defense = 5;
-        design.cost = 700;
+        design.cost = 140;
         design.speed = 1;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";
+        design.graphic = "misc/mark4.png";
         empire->AddShipDesign(design);
 
         // create the empire's starting fleet

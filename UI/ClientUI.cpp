@@ -141,7 +141,7 @@ namespace {
         db.Add<std::string>("UI.sound.window-minimize", "The sound file played when a window is minimized.", "window_minimize.wav");
         db.Add<std::string>("UI.sound.window-close", "The sound file played when a window is closed.", "window_close.wav");
         db.Add<std::string>("UI.sound.alert", "The sound file played when an error or illegal action occurs.", "alert.wav");
-        db.Add<std::string>("UI.sound.planet-button-click", "The sound file played when a planet button is clicked.", "planet_button_click.wav");
+        db.Add<std::string>("UI.sound.planet-button-click", "The sound file played when a planet button is clicked.", "button_click.wav");
         db.Add<std::string>("UI.sound.fleet-button-rollover", "The sound file played when mouse moves over a fleet button.", "fleet_button_rollover.wav");
         db.Add<std::string>("UI.sound.fleet-button-click", "The sound file played when a fleet button is clicked.", "fleet_button_click.wav");
         db.Add<std::string>("UI.sound.sidepanel-open", "The sound file played when the system side-panel is opened.", "sidepanel_open.wav");
@@ -203,128 +203,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    static SDL_Cursor *createColonizeCursor( )
-    {
-        /* cursor code taken from SDL examples */
-
-        static const char *image[] = {
-
-            /* width height num_colors chars_per_pixel */
-            "    32    32        3            1",
-            /* colors */
-            "X c #000000",
-            ". c #ffffff",
-            "  c None",
-            /* pixels */
-            "X                               ",
-            "XX                              ",
-            "X.X                             ",
-            "X..X                            ",
-            "X...X                           ",
-            "X....X         XXXXXXXXX        ",
-            "X.....X        X.......X        ",
-            "X......X       XXXXXXX.X        ",
-            "X.......X            X.X        ",
-            "X........X           X.X        ",
-            "X.....XXXXX          X.X        ",
-            "X..X..X           XXXX.X        ",
-            "X.X X..X          X....X        ",
-            "XX  X..X          X.XXXX        ",
-            "X    X..X         X.X           ",
-            "     X..X         XXX           ",
-            "      X..X                      ",
-            "      X..X        XXXX          ",
-            "       XX         X..X          ",
-            "                  XXXX          ",
-            "                                ",
-            "                                ",
-            "                                ",
-            "                                ",
-            "                                ",
-            "                                ",
-            "                                ",
-            "                                ",
-            "                                ",
-            "                                ",
-            "                                ",
-            "                                ",
-            "0,0"
-        };
-
-        int i, row, col;
-        Uint8 data[4*32];
-        Uint8 mask[4*32];
-        int hot_x, hot_y;
-
-        i = -1;
-        for ( row=0; row<32; ++row ) {
-            for ( col=0; col<32; ++col ) {
-                if ( col % 8 ) {
-                    data[i] <<= 1;
-                    mask[i] <<= 1;
-                } else {
-                    ++i;
-                    data[i] = mask[i] = 0;
-                }
-                switch (image[4+row][col]) {
-                case 'X':
-                    data[i] |= 0x01;
-                    mask[i] |= 0x01;
-                    break;
-                case '.':
-                    mask[i] |= 0x01;
-                    break;
-                case ' ':
-                    break;
-                }
-            }
-        }
-        sscanf(image[4+row], "%d,%d", &hot_x, &hot_y);
-
-        return( SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y) );
-    }
-
-#ifndef FREEORION_BUILD_UTIL
-    class PlanetPicker : public GG::Wnd
-    {
-    public:
-        PlanetPicker(int system_id) : 
-            Wnd(0, 0, GG::App::GetApp()->AppWidth() - 1, GG::App::GetApp()->AppHeight() - 1, CLICKABLE | MODAL),
-            m_side_panel(new SidePanel(GG::App::GetApp()->AppWidth() - MapWnd::SIDE_PANEL_WIDTH, 0, MapWnd::SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight())),
-            m_planet_selected(-1),
-            m_mapwnd_sidepanel_visible(ClientUI::GetClientUI()->GetMapWnd()->GetSidePanel()->Visible())
-        {
-            if(m_mapwnd_sidepanel_visible)
-                ClientUI::GetClientUI()->GetMapWnd()->GetSidePanel()->Hide();
-
-            m_side_panel->SetSystem(system_id);
-            AttachChild(m_side_panel);
-            for (int i = 0; i < m_side_panel->PlanetPanels(); ++i) {
-                GG::Connect(m_side_panel->GetPlanetPanel(i)->PlanetImageLClickedSignal, &PlanetPicker::PlanetClicked, this);
-            }
-            ClientUI::GetClientUI()->SetCursor(ClientUI::CURSOR_COLONIZE);
-        }
-        ~PlanetPicker()
-        {
-            ClientUI::GetClientUI()->SetCursor(ClientUI::CURSOR_DEFAULT);
-            if(m_mapwnd_sidepanel_visible)
-                ClientUI::GetClientUI()->GetMapWnd()->GetSidePanel()->Show();
-        }
-        int PlanetPicked() const {return m_planet_selected;}
-        void LButtonUp(const GG::Pt& pt, Uint32 keys) {m_done = true;}
-        void LClick(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
-        void RButtonUp(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
-        void RClick(const GG::Pt& pt, Uint32 keys) {LButtonUp(pt, keys);}
-
-    private:
-        void PlanetClicked(int planet_id) {m_planet_selected = planet_id; m_done = true;}
-
-        SidePanel*       m_side_panel;
-        int              m_planet_selected;
-        bool             m_mapwnd_sidepanel_visible;
-    };
-#endif
-
     bool temp_header_bool = RecordHeaderFile(ClientUIRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
@@ -341,7 +219,6 @@ ClientUI::ClientUI() :
     m_intro_screen(0),
     m_map_wnd(0),
     m_turn_progress_wnd(0),
-    m_default_cursor(NULL),
     m_previously_shown_system(UniverseObject::INVALID_OBJECT_ID)
 {
     using namespace GG;
@@ -776,66 +653,6 @@ void ClientUI::HideAllWindows()
     if (m_turn_progress_wnd)
         m_turn_progress_wnd->Hide();
 #endif
-}
-
-int ClientUI::SelectPlanet(int system_id)
-{
-#ifdef FREEORION_BUILD_UTIL
-    return -1;
-#else
-    PlanetPicker planet_picker(system_id);
-    planet_picker.Run();
-    return planet_picker.PlanetPicked();
-#endif
-}
-
-void ClientUI::SetCursor( Cursor new_cursor_type )
-{
-    SDL_Cursor *new_cursor;
-    SDL_Cursor *old_cursor;
-
-    if ( new_cursor_type == CURSOR_DEFAULT )
-    {
-        /* if m_default_cursor is not assigned, all we've ever had is the default, do nothing */
-        if ( m_default_cursor )
-        {
-            SDL_SetCursor( m_default_cursor );
-        }
-        return;
-    }
-
-    /* save default cursor if not assigned yet */
-    if ( !m_default_cursor )
-    {
-        m_default_cursor = SDL_GetCursor( );
-    }
-
-    /* If there are a lot of cursors, eventually we may want to pre-create them or at least */
-    /* cache them once created */
-    switch ( new_cursor_type )
-    {
-        case CURSOR_COLONIZE:
-
-            /* create colonize cursor */
-            new_cursor = createColonizeCursor( );
-            break;
-
-        default:
-            throw std::invalid_argument("Invalid cursor type sent to SetCursor()");
-            break;
-    }
-
-    /* get current cursor*/
-    old_cursor = SDL_GetCursor( );
-
-    /* set new one */
-    SDL_SetCursor( new_cursor );
-
-    /* delete old if not the default */
-    if ( old_cursor != m_default_cursor )
-    {
-        SDL_FreeCursor( old_cursor );
-    }
 }
 
 TempUISoundDisabler::TempUISoundDisabler() :

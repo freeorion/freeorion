@@ -21,9 +21,10 @@ class CUI_MinRestoreButton : public GG::Button
 {
 public:
    /** the two modes of operation of this class of button: as a minimize button or as a restore button */
-   enum Mode {MIN_BUTTON, 
-              RESTORE_BUTTON
-             };
+   enum Mode {
+       MIN_BUTTON, 
+       RESTORE_BUTTON
+   };
               
    CUI_MinRestoreButton(int x, int y); ///< basic ctor
 
@@ -85,9 +86,10 @@ public:
     using Wnd::SizeMove;
 
     //! additional window creation flags
-    enum {MINIMIZABLE = 1 << 10,    //!< allows the window to be minimized
-          CLOSABLE =    1 << 11     //!< allows the window to be closed
-         };
+    enum {
+        MINIMIZABLE = 1 << 10,    //!< allows the window to be minimized
+        CLOSABLE =    1 << 11     //!< allows the window to be closed
+    };
 
     //! \name Structors //@{
     CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags = GG::Wnd::CLICKABLE); //!< Constructs the window to be a CUI window
@@ -111,6 +113,10 @@ public:
     void Close()           {CloseClicked();}
     //@}
 
+    //! \name Mutators //@{
+    virtual void CloseClicked();    //!< called when window is closed via the close button
+    //@}
+
 protected:
     //! \name Accessors //@{
     virtual int MinimizedLength() const;//!< the width of a minimized CUI_Wnd
@@ -122,14 +128,9 @@ protected:
     //@}
 
     //! \name Mutators //@{
-public:
-    virtual void CloseClicked();    //!< called when window is closed via the close button
-protected:
     virtual void MinimizeClicked(); //!< called when window is minimized or restored via the minimize/restore button
-    //@}
-
-private:
     void InitButtons();
+    //@}
 
     bool       m_resizable;      //!< true if the window is able to be resized
     bool       m_closable;       //!< true if the window is able to be closed with a button press
@@ -140,6 +141,18 @@ private:
     
     CUI_CloseButton*       m_close_button;     //!< the close button
     CUI_MinRestoreButton*  m_minimize_button;  //!< the minimize/restore button
+
+    static const int BUTTON_TOP_OFFSET = 3;
+    static const int BUTTON_RIGHT_OFFSET = 15;
+    static const int MINIMIZED_WND_LENGTH = 150;
+    static const int BORDER_LEFT = 5;
+    static const int BORDER_TOP = 18;
+    static const int BORDER_RIGHT = 5;
+    static const int BORDER_BOTTOM = 5;
+    static const int OUTER_EDGE_ANGLE_OFFSET = 8;
+    static const int INNER_BORDER_ANGLE_OFFSET = 11;
+    static const int RESIZE_HASHMARK1_OFFSET = 7;
+    static const int RESIZE_HASHMARK2_OFFSET = 3;
 };
 
 

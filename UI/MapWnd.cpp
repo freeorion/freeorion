@@ -17,6 +17,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../util/Random.h"
+#include "ProductionWnd.h"
 #include "ResearchWnd.h"
 #include "SidePanel.h"
 #include "SitRepPanel.h"
@@ -153,7 +154,8 @@ MapWnd::MapWnd() :
     m_drag_offset(-1, -1),
     m_dragged(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
-    m_current_fleet(UniverseObject::INVALID_OBJECT_ID)
+    m_current_fleet(UniverseObject::INVALID_OBJECT_ID),
+    m_in_production_view_mode(false)
 {
     SetText("MapWnd");
 
@@ -177,6 +179,11 @@ MapWnd::MapWnd() :
     GG::App::GetApp()->Register(m_research_wnd);
     m_research_wnd->Hide();
 
+    m_production_wnd = new ProductionWnd(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight() - m_toolbar->Height());
+    m_production_wnd->MoveTo(0, m_toolbar->Height());
+    GG::App::GetApp()->Register(m_production_wnd);
+    m_production_wnd->Hide();
+
     // turn button
     m_turn_update = new CUITurnButton(LAYOUT_MARGIN, LAYOUT_MARGIN, END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
@@ -190,16 +197,21 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_btn_menu);
     GG::Connect(m_btn_menu->ClickedSignal, &MapWnd::MenuBtnClicked, this);
 
+    button_width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
+    m_btn_production = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_PRODUCTION") );
+    m_toolbar->AttachChild(m_btn_production);
+    GG::Connect(m_btn_production->ClickedSignal, &MapWnd::ProductionBtnClicked, this);
+
     button_width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_research = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_RESEARCH") );
+    m_btn_research = new CUIButton(m_btn_production->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_RESEARCH") );
     m_toolbar->AttachChild(m_btn_research);
     GG::Connect(m_btn_research->ClickedSignal, &MapWnd::ResearchBtnClicked, this);
 
     button_width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
     m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_SITREP") );
     m_toolbar->AttachChild(m_btn_siterep);
-    GG::Connect(m_btn_siterep->ClickedSignal, &MapWnd::SiteRepBtnClicked, this);
-    
+    GG::Connect(m_btn_siterep->ClickedSignal, &MapWnd::SitRepBtnClicked, this);
+
     m_population= new StatisticIconDualValue(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0,0,2,false,false);
     m_population->SetPositiveColor(GG::CLR_GREEN); m_population->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_population);
@@ -258,6 +270,8 @@ MapWnd::MapWnd() :
     m_bg_scroll_rate[2] = 0.5;
 
     // connect keyboard accelerators
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_ESCAPE, 0), &MapWnd::ReturnToMap, this);
+
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_RETURN, 0), &MapWnd::OpenChatWindow, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_ENTER, 0), &MapWnd::OpenChatWindow, this);
 
@@ -266,6 +280,7 @@ MapWnd::MapWnd() :
 
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F2, 0), &MapWnd::ToggleSitRep, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F3, 0), &MapWnd::ToggleResearch, this);
+    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F4, 0), &MapWnd::ToggleProduction, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowOptions, this);
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_s, 0), &MapWnd::CloseSystemView, this);
 
@@ -293,6 +308,7 @@ MapWnd::~MapWnd()
 {
     delete m_toolbar;
     delete m_research_wnd;
+    delete m_production_wnd;
     RemoveAccelerators();
 }
 
@@ -315,6 +331,11 @@ GG::XMLElement MapWnd::SaveGameData() const
         retval.LastChild().LastChild().AppendChild(GG::XMLElement("position_y", boost::lexical_cast<std::string>(m_nebula_centers[i].y)));
     }
     return retval;
+}
+
+bool MapWnd::InProductionViewMode() const
+{
+    return m_in_production_view_mode;
 }
 
 bool MapWnd::Render()
@@ -479,7 +500,7 @@ void MapWnd::LButtonUp (const GG::Pt &pt, Uint32 keys)
 void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
-    if (!m_dragged)
+    if (!m_dragged && !m_in_production_view_mode)
         SystemLeftClickedSignal(UniverseObject::INVALID_OBJECT_ID);
     m_dragged = false;
 }
@@ -609,6 +630,8 @@ void MapWnd::InitTurn(int turn_number)
         m_sitrep_panel->Hide();
 
     m_research_wnd->Hide();
+    m_production_wnd->Hide();
+    m_in_production_view_mode = false;
 
     m_chat_edit->Hide();
     EnableAlphaNumAccels();
@@ -769,7 +792,12 @@ void MapWnd::CenterOnFleet(Fleet* fleet)
 
 void MapWnd::SelectSystem(int systemID)
 {
-    SystemLeftClickedSignal(systemID);
+    if (m_in_production_view_mode) {
+        m_production_wnd->SelectSystem(systemID);
+    } else {
+        if (systemID != m_side_panel->SystemID())
+            SystemLeftClickedSignal(systemID);
+    }
 }
 
 void MapWnd::SelectFleet(int fleetID)
@@ -1100,7 +1128,8 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 
 void MapWnd::SystemRightClicked(int system_id)
 {
-    SystemRightClickedSignal(system_id);
+    if (!m_in_production_view_mode)
+        SystemRightClickedSignal(system_id);
 }
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
@@ -1129,6 +1158,8 @@ void MapWnd::Cleanup()
     CloseAllPopups();
     RemoveAccelerators();
     m_research_wnd->Hide();
+    m_production_wnd->Hide();
+    m_in_production_view_mode = false;
     m_toolbar->Hide();
 }
 
@@ -1141,12 +1172,35 @@ void MapWnd::Sanitize()
     m_sitrep_panel->MoveTo((GG::App::GetApp()->AppWidth() - SITREP_PANEL_WIDTH) / 2, (GG::App::GetApp()->AppHeight() - SITREP_PANEL_HEIGHT) / 2);
     MoveTo(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight());
     m_zoom_factor = 1.0;
+    m_research_wnd->Sanitize();
+    m_production_wnd->Sanitize();
+}
+
+bool MapWnd::ReturnToMap()
+{
+    if (m_sitrep_panel->Visible())
+        m_sitrep_panel->Hide();
+    if (m_research_wnd->Visible()) {
+        m_research_wnd->Hide();
+        HumanClientApp::GetApp()->MoveDown(m_research_wnd);
+    }
+    if (m_production_wnd->Visible()) {
+        m_production_wnd->Hide();
+        if (m_in_production_view_mode) {
+            m_in_production_view_mode = false;
+            ShowAllPopups();
+            if (m_side_panel->SystemID() != UniverseObject::INVALID_OBJECT_ID)
+                m_side_panel->Show();
+        }
+        HumanClientApp::GetApp()->MoveDown(m_production_wnd);
+    }
+    return true;
 }
 
 bool MapWnd::OpenChatWindow()
 {
     if (!m_chat_display->Visible() || !m_chat_edit->Visible()) {
-	EnableAlphaNumAccels();
+        EnableAlphaNumAccels();
         m_chat_display->Show();
         DisableAlphaNumAccels();
         m_chat_edit->Show();
@@ -1172,9 +1226,17 @@ bool MapWnd::ToggleSitRep()
         // hide other "competing" windows
         m_research_wnd->Hide();
         HumanClientApp::GetApp()->MoveDown(m_research_wnd);
+        m_production_wnd->Hide();
+        if (m_in_production_view_mode) {
+            m_in_production_view_mode = false;
+            ShowAllPopups();
+            if (m_side_panel->SystemID() != UniverseObject::INVALID_OBJECT_ID)
+                m_side_panel->Show();
+        }
+        HumanClientApp::GetApp()->MoveDown(m_production_wnd);
 
         // show the sitrep window
-	m_sitrep_panel->Show();
+        m_sitrep_panel->Show();
     }
     return true;
 }
@@ -1186,11 +1248,42 @@ bool MapWnd::ToggleResearch()
     } else {
         // hide other "competing" windows
         m_sitrep_panel->Hide();
+        m_production_wnd->Hide();
+        if (m_in_production_view_mode) {
+            m_in_production_view_mode = false;
+            ShowAllPopups();
+            if (m_side_panel->SystemID() != UniverseObject::INVALID_OBJECT_ID)
+                m_side_panel->Show();
+        }
 
         // show the research window
         m_research_wnd->Show();
         GG::App::GetApp()->MoveUp(m_research_wnd);
         m_research_wnd->Reset();
+    }
+    return true;
+}
+
+bool MapWnd::ToggleProduction()
+{
+    if (m_production_wnd->Visible()) {
+        m_production_wnd->Hide();
+        m_in_production_view_mode = false;
+        ShowAllPopups();
+        if (m_side_panel->SystemID() != UniverseObject::INVALID_OBJECT_ID)
+            m_side_panel->Show();
+    } else {
+        // hide other "competing" windows
+        m_sitrep_panel->Hide();
+        m_research_wnd->Hide();
+
+        // show the production window
+        m_production_wnd->Show();
+        m_in_production_view_mode = true;
+        HideAllPopups();
+        m_side_panel->Hide();
+        GG::App::GetApp()->MoveUp(m_production_wnd);
+        m_production_wnd->Reset();
     }
     return true;
 }
@@ -1208,7 +1301,10 @@ bool MapWnd::ShowOptions()
 
 bool MapWnd::CloseSystemView()
 {
-    SystemLeftClickedSignal(UniverseObject::INVALID_OBJECT_ID);
+    if (m_in_production_view_mode)
+        m_production_wnd->SelectSystem(UniverseObject::INVALID_OBJECT_ID);
+    else
+        SystemLeftClickedSignal(UniverseObject::INVALID_OBJECT_ID);
 	return true;
 }
 
@@ -1400,6 +1496,8 @@ bool MapWnd::ZoomToNextFleet()
 
 void MapWnd::SetAccelerators()
 {
+    GG::App::GetApp()->SetAccelerator(GG::GGK_ESCAPE, 0);
+
     GG::App::GetApp()->SetAccelerator(GG::GGK_RETURN, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_KP_ENTER, 0);
 
@@ -1408,6 +1506,7 @@ void MapWnd::SetAccelerators()
 
     GG::App::GetApp()->SetAccelerator(GG::GGK_F2, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_F3, 0);
+    GG::App::GetApp()->SetAccelerator(GG::GGK_F4, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_F10, 0);
     GG::App::GetApp()->SetAccelerator(GG::GGK_s, 0);
 
@@ -1431,6 +1530,8 @@ void MapWnd::SetAccelerators()
 
 void MapWnd::RemoveAccelerators()
 {
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_ESCAPE, 0);
+
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, 0);
     
@@ -1439,6 +1540,7 @@ void MapWnd::RemoveAccelerators()
 
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F2, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F3, 0);
+    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F4, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_F10, 0);
     GG::App::GetApp()->RemoveAccelerator(GG::GGK_s, 0);
 
@@ -1504,4 +1606,18 @@ void MapWnd::CloseAllPopups()
     }   
     // clear list
     m_popups.clear();
+}
+
+void MapWnd::HideAllPopups()
+{
+    for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ++it) {
+        (*it)->Hide();
+    }
+}
+
+void MapWnd::ShowAllPopups()
+{
+    for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ++it) {
+        (*it)->Show();
+    }
 }

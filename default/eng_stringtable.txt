@@ -78,6 +78,12 @@ Enter new name
 UNKNOWN_VALUE_SYMBOL
 ?
 
+DEFENSE_BASE
+Defense Base
+
+DEFENSE_BASE_DESCRIPTION
+An orbital defense platform that aids in the defense of the planet at which it is located.\n\nAttack: 1\nDefense: 3
+
 
 #################
 # File Dialog   #
@@ -599,6 +605,9 @@ SitRep
 MAP_BTN_RESEARCH
 Research
 
+MAP_BTN_PRODUCTION
+Production
+
 #################
 # SidePanel     #
 #################
@@ -789,6 +798,44 @@ RESEARCH_INFO_RP
 RP
 
 
+####################
+# BuildSelectorWnd #
+####################
+
+PRODUCTION_WND_BUILD_ITEMS_TITLE
+Buildable Items
+
+PRODUCTION_WND_CATEGORY_BT_BUILDING
+Buildings
+
+PRODUCTION_WND_CATEGORY_BT_SHIP
+Ships
+
+PRODUCTION_WND_CATEGORY_BT_ORBITAL
+Orbitals
+
+PRODUCTION_TOTAL_COST_STR
+%1% RP / %2% Turns
+
+PRODUCTION_TURN_COST_STR
+%1% PP / %2% Turns
+
+PRODUCTION_TURNS_LEFT_STR
+%1% Turns left
+
+PRODUCTION_TURNS_LEFT_NEVER
+Never
+
+PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR
+%1%
+
+PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
+%1%\n\n<u>Effects</u>\n\n%2%
+
+PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
+%1%\n\nAttack: %2%\nDefense: %3%\nSpeed: %4%
+
+
 #################
 # ProductionWnd #
 #################
@@ -799,8 +846,14 @@ Production
 PRODUCTION_INFO_PANEL_TITLE
 Production
 
-PRODUCTION_INFO_RP
+PRODUCTION_INFO_PP
 PP
+
+PRODUCTION_DETAIL_ADD_TO_QUEUE
+Add to Queue
+
+PRODUCTION_DETAIL_CENTER_ON_BUILD
+Center on Build
 
 
 ####################
@@ -1877,10 +1930,10 @@ Megalith
 BLD_MEGALITH_DESC
 A marvel of Exodus-era Architecture, the Megalith is an abnormally massive Starscrapper, kilometers in diameter. The Megalith is an inspiration to architects sector-wide and is often the crown jewel of a powerful real estate mogul’s empire.
 
-BLD_ROBOT_SCIENTIST 
+BLD_ROBOT_SCIENTIST
 Robot Scientist 
 
-BLD_ROBOT_SCIENTIST_DESC 
+BLD_ROBOT_SCIENTIST_DESC
 With the creation of AI, and AI robots, it was inevitable that robots should be able to build more robots and make themselves better. The robot scientist is the ultimate achievement in robot construction. Able to advance robotics and AI technology as well as construct the most technically advanced AI robots imaginable.
 
 BLD_COLLECTIVE_NET

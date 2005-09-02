@@ -63,13 +63,6 @@ public:
         STATE_SHUTDOWN    = 11
     };
 
-    enum Cursor
-    {
-        CURSOR_DEFAULT     = 0,
-        CURSOR_COLONIZE    = 1,
-    };
-
-    
     //! \name Structors //!@{
     ClientUI();        //!< construction (calls Initialize())
     ~ClientUI();    //!< destruction (calls Cleanup())
@@ -131,12 +124,6 @@ public:
     bool ZoomToEncyclopediaEntry(const std::string& str); //!< Opens the encyclodedia screen and presents the entry for the given item
     void ZoomToSystem(System* system); //!< Zooms to a particular system on the galaxy map
     void ZoomToFleet(Fleet* fleet);    //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
-
-    /** brings up the SidePanel as a modal window, and allows the user to select one of the planets in system \a system_id;
-	returns -1 if no planet is selected */
-    int SelectPlanet(int system_id);
-
-    void SetCursor( Cursor new_cursor ); //! < Sets the current cursor
     //!@}
     
     static ClientUI*    GetClientUI() {return s_the_UI;}   //!< returns a pointer to the singleton ClientUI class
@@ -240,8 +227,6 @@ private:
     MapWnd*          m_map_wnd;           //!< the galaxy map
     PythonConsoleWnd*m_python_console;    //!< the python console
     TurnProgressWnd* m_turn_progress_wnd; //!< the turn progress window
-
-    SDL_Cursor*      m_default_cursor;    //!< used to store default cursor
 
     int              m_previously_shown_system; //!< the ID of the system that was shown in the sidepanel before the last call to HideAllWindows()
 

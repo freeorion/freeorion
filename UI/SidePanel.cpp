@@ -17,7 +17,7 @@
 #include "XMLDoc.h"
 #include "GGBase.h"
 
-#ifndef __GGScroll_h_
+#ifndef _GGScroll_h_
 #include "GGScroll.h"
 #endif
 
@@ -46,9 +46,6 @@ namespace {
     void PlayMiningFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.mining-focus"));}
     void PlayTradeFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.trade-focus"));}
     void PlayBalancedFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.balanced-focus"));}
-
-    const int MAX_PLANET_DIAMETER = 128; // size of a huge planet, in on-screen pixels
-    const int MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER / 3; // size of a tiny planet, in on-screen pixels
 
     int CircleXFromY(double y, double r) {return static_cast<int>(std::sqrt(r * r - y * y) + 0.5);}
 
@@ -88,6 +85,40 @@ namespace {
         double shininess;       ///< the exponent of specular (shiny) reflection off of the planet; must be in [0.0, 128.0]
     };
 
+    struct PlanetAtmosphereData
+    {
+        struct Atmosphere
+        {
+            Atmosphere() {}
+            Atmosphere(const GG::XMLElement& elem)
+            {
+                if (elem.Tag() != "Atmosphere")
+                    throw std::invalid_argument("Attempted to construct a Atmosphere from an XMLElement that had a tag other than \"Atmosphere\"");
+                filename = elem.Child("filename").Text();
+                alpha = lexical_cast<int>(elem.Child("alpha").Text());
+                alpha = std::max(0, std::min(alpha, 255));
+            }
+
+            std::string filename;
+            int         alpha;
+        };
+
+        PlanetAtmosphereData() {}
+        PlanetAtmosphereData(const GG::XMLElement& elem)
+        {
+            if (elem.Tag() != "PlanetAtmosphereData")
+                throw std::invalid_argument("Attempted to construct a PlanetAtmosphereData from an XMLElement that had a tag other than \"PlanetAtmosphereData\"");
+            planet_filename = elem.Child("planet_filename").Text();
+            const GG::XMLElement& atmospheres_elem = elem.Child("atmospheres");
+            for (GG::XMLElement::const_child_iterator it = atmospheres_elem.child_begin(); it != atmospheres_elem.child_end(); ++it) {
+                atmospheres.push_back(Atmosphere(*it));
+            }
+        }
+
+        std::string             planet_filename; ///< the filename of the planet image that this atmosphere image data goes with
+        std::vector<Atmosphere> atmospheres;     ///< the filenames of the atmosphere images suitable for use with this planet image
+    };
+
     const std::map<PlanetType, std::vector<RotatingPlanetData> >& GetRotatingPlanetData()
     {
         static std::map<PlanetType, std::vector<RotatingPlanetData> > data;
@@ -108,6 +139,44 @@ namespace {
             }
         }
         return data;
+    }
+
+    const std::map<std::string, PlanetAtmosphereData>& GetPlanetAtmosphereData()
+    {
+        static std::map<std::string, PlanetAtmosphereData> data;
+        if (data.empty()) {
+            GG::XMLDoc doc;
+            std::ifstream ifs((ClientUI::ART_DIR + "planets/atmospheres.xml").c_str());
+            doc.ReadDoc(ifs);
+            ifs.close();
+
+            for (GG::XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
+                if (it->Tag() == "PlanetAtmosphereData") {
+                    PlanetAtmosphereData current_data(*it);
+                    data[current_data.planet_filename] = current_data;
+                }
+            }
+        }
+        return data;
+    }
+
+    double GetAsteroidsFPS()
+    {
+        static double retval = -1.0;
+        if (retval == -1.0) {
+            GG::XMLDoc doc;
+            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            doc.ReadDoc(ifs);
+            ifs.close();
+
+            if (doc.root_node.ContainsChild("asteroids_fps"))
+                retval = lexical_cast<double>(doc.root_node.Child("asteroids_fps").Text());
+            else
+                retval = 15.0;
+
+            retval = std::max(0.0, std::min(retval, 60.0));
+        }
+        return retval;
     }
 
     double GetRotatingPlanetAmbientIntensity()
@@ -229,6 +298,7 @@ namespace {
 
     void RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture, double initial_rotation, double RPM, double axis_tilt, double shininess, StarType star_type)
     {
+        glPushAttrib(GL_ENABLE_BIT | GL_PIXEL_MODE_BIT | GL_TEXTURE_BIT | GL_SCISSOR_BIT);
         HumanClientApp::GetApp()->Exit2DMode();
 
         // slide the texture coords to simulate a rotating axis
@@ -269,6 +339,7 @@ namespace {
         glMatrixMode(GL_MODELVIEW);
 
         HumanClientApp::GetApp()->Enter2DMode();
+        glPopAttrib();
     }
 
     int PlanetDiameter(PlanetSize size)
@@ -286,12 +357,159 @@ namespace {
         default                   : scale = 2.0/5.0; break;
         }
 
-        return static_cast<int>(MIN_PLANET_DIAMETER + (MAX_PLANET_DIAMETER - MIN_PLANET_DIAMETER) * scale);
+        return static_cast<int>(SidePanel::MIN_PLANET_DIAMETER + (SidePanel::MAX_PLANET_DIAMETER - SidePanel::MIN_PLANET_DIAMETER) * scale);
     }
 
     bool temp_header_bool = RecordHeaderFile(SidePanelRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
+
+/** a single planet's info and controls; several of these may appear at any one time in a SidePanel */
+class SidePanel::PlanetPanel : public GG::Wnd
+{
+public:
+    /** \name Signal Types */ //@{
+    typedef boost::signal<void (int)> LeftClickedSignalType; ///< emitted when the planet graphic is left clicked by the user
+    //@}
+   
+    /** \name Slot Types */ //@{
+    typedef LeftClickedSignalType::slot_type LeftClickedSlotType; ///< type of functor(s) invoked on a LeftClickedSignalType
+    //@}
+
+    /** \name Structors */ //@{
+    PlanetPanel(int x, int y, int w, int h, const Planet &planet, StarType star_type); ///< basic ctor
+    ~PlanetPanel();
+    //@}
+
+    /** \name Accessors */ //@{
+    virtual bool InWindow(const GG::Pt& pt) const;
+    int PlanetID() const {return m_planet_id;}
+    bool Hilited() const;
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual bool Render();
+    virtual void LClick(const GG::Pt& pt, Uint32 keys);
+    virtual void RClick(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    void Update();
+    void Hilite(bool b);
+    //@}
+
+    mutable LeftClickedSignalType PlanetImageLClickedSignal; ///< returns the left clicked signal object for this Planet panel
+
+private:
+    /** some of the elements at planet panel are only used if a specific
+        planet ownership state is present, some others are only used if
+        additional conditions applies. If a control is being enabled, it's
+        moved from the list of disabled controls (m_vec_unused_controls) to
+        the child list of planet panel, if the control isn't found at m_vec_unused_controls
+        is assumed that it is already enable. after that control->Show() is called. Disabling a
+        control is done in reverse.
+        for example: colonize btn is only enable/visible if there is a colony ship in orbit 
+        and the planet is unowned and inhabitable*/
+    void EnableControl(GG::Wnd *control, bool enable);
+
+
+    bool RenderUnhabited(const Planet &planet); ///< it's call if the planet isn't inhabited
+    bool RenderInhabited(const Planet &planet); ///< it's call if the planet is inhabited by someone else
+    bool RenderOwned    (const Planet &planet); ///< it's call if the planet is inhabited by te player
+
+    int  PlanetDiameter() const;
+    bool InPlanet(const GG::Pt& pt) const;///< returns true if pt is within the planet image
+
+    void PlanetChanged();                 ///< called when a planet was changed to handle rendering and which controls are enabled
+    void PlanetResourceCenterChanged();   ///< called when a planet resource production was changed
+
+    void SetPrimaryFocus  (FocusType focus); ///< set the primary focus of the planet to focus
+    void SetSecondaryFocus(FocusType focus); ///< set the secondary focus of the planet to focus
+
+    void ClickColonize();///< called if btn colonize is pressed
+
+    Planet* GetPlanet(); ///< returns the planet with ID m_planet_id
+    const Planet* GetPlanet() const;
+
+    int                   m_planet_id;                ///< id for the planet with is representet by this planet panel
+    GG::TextControl       *m_planet_name;             ///< planet name
+    GG::TextControl       *m_planet_info;             ///< planet size and type info
+    FocusSelector         *m_focus_selector;          ///< buttons and displays for foci and associated meters
+    CUIButton             *m_button_colonize;         ///< btn which can be pressed to colonize this planet
+    GG::DynamicGraphic    *m_planet_graphic;          ///< image of the planet (can be a frameset); this is now used only for asteroids
+    RotatingPlanetControl *m_rotating_planet_graphic; ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
+    bool                  m_hilited;
+
+    boost::signals::connection m_connection_system_changed;           ///< stores connection used to handle a system change
+    boost::signals::connection m_connection_planet_changed;           ///< stores connection used to handle a planet change
+    boost::signals::connection m_connection_planet_production_changed;///< stores connection used to handle a planet resource production change
+
+    /** planet panel is constructed without taking care of which controls
+        are needed by current planet ownership state. All controls which aren't
+        needed by current planet ownership state are stored in m_vec_unused_controls
+        and can be used when for instance planet ownership changes
+    */
+    std::vector<GG::Wnd*> m_vec_unused_controls;
+};
+
+class SidePanel::PlanetPanelContainer : public GG::Wnd
+{
+public:
+    /** \name Signal Types */ //@{
+    typedef boost::signal<void (int)> PlanetSelectedSignalType; ///< emitted when a rotating planet in a planet panel is clicked by the user
+    //@}
+
+    /** \name Structors */ //@{
+    PlanetPanelContainer(int x, int y, int w, int h);
+    //@}
+
+    void Clear();
+    void SetPlanets(const std::vector<const Planet*> &plt_vec, StarType star_type);
+    void HiliteSelectedPlanet(bool b); ///< enables/disables hiliting the currently-selected planet in the container
+    void SelectPlanet(int planet_id);
+
+    /** \name Accessors */ //@{
+    virtual bool InWindow(const GG::Pt& pt) const;
+    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+
+    int                PlanetID() const            {return m_planet_id;}
+    int                PlanetPanels() const        {return m_planet_panels.size();}
+    const PlanetPanel* GetPlanetPanel(int n) const {return m_planet_panels[n];}
+    //@}
+
+    PlanetPanel* GetPlanetPanel(int n) {return m_planet_panels[n];}
+
+    mutable PlanetSelectedSignalType PlanetSelectedSignal;
+
+private:
+    void PlanetSelected(int planet_id);
+
+    std::vector<PlanetPanel*> m_planet_panels;
+    int                       m_planet_id;
+    bool                      m_hilite_selected_planet;
+
+    void VScroll(int,int,int,int);
+    CUIScroll*        m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
+};
+
+class SidePanel::SystemResourceSummary : public GG::Wnd
+{
+public:
+    /** \name Structors */ //@{
+    SystemResourceSummary(int x, int y, int w, int h);
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual bool  Render();
+
+    void SetFarming (int farming ) {m_farming = farming;}
+    void SetMining  (int mining  ) {m_mining  = mining;}
+    void SetResearch(int research) {m_research= research;}
+    void SetIndustry(int industry) {m_industry= industry;}
+    void SetDefense (int defense ) {m_defense = defense;}
+    //@}
+
+private:
+    int m_farming,m_mining,m_research,m_industry,m_defense;
+};
 
 class RotatingPlanetControl : public GG::Control
 {
@@ -300,24 +518,47 @@ public:
         GG::Control(x, y, PlanetDiameter(size), PlanetDiameter(size), 0),
         m_planet_data(planet_data),
         m_size(size),
-        m_texture(GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + m_planet_data.filename, true)),
+        m_surface_texture(GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + m_planet_data.filename, true)),
+        m_atmosphere_texture(),
         m_initial_rotation(RandZeroToOne()),
         m_star_type(star_type)
     {
-        m_texture->SetFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+        m_surface_texture->SetFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+        const std::map<std::string, PlanetAtmosphereData>& atmosphere_data = GetPlanetAtmosphereData();
+        std::map<std::string, PlanetAtmosphereData>::const_iterator it = atmosphere_data.find(m_planet_data.filename);
+        if (it != atmosphere_data.end()) {
+            const PlanetAtmosphereData::Atmosphere& atmosphere = it->second.atmospheres[RandSmallInt(0, it->second.atmospheres.size() - 1)];
+            m_atmosphere_texture = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + atmosphere.filename, true);
+            m_atmosphere_texture->SetFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+            m_atmosphere_alpha = atmosphere.alpha;
+            m_atmosphere_planet_rect = GG::Rect(1, 1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
+        }
     }
 
     virtual bool Render()
     {
-        RenderPlanet(UpperLeft() + GG::Pt(Width() / 2, Height() / 2), Width(), m_texture, m_initial_rotation,
+        GG::Pt ul = UpperLeft(), lr = LowerRight();
+        RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Width(), m_surface_texture, m_initial_rotation,
                      SizeRotationFactor(m_size) * m_planet_data.RPM, m_planet_data.axis_angle, m_planet_data.shininess, m_star_type);
+        if (m_atmosphere_texture) {
+            int texture_w = m_atmosphere_texture->DefaultWidth();
+            int texture_h = m_atmosphere_texture->DefaultHeight();
+            double x_scale = PlanetDiameter(m_size) / static_cast<double>(texture_w);
+            double y_scale = PlanetDiameter(m_size) / static_cast<double>(texture_h);
+            glColor4ub(255, 255, 255, m_atmosphere_alpha);
+            m_atmosphere_texture->OrthoBlit(ul.x - m_atmosphere_planet_rect.ul.x * x_scale,
+                                            ul.y - m_atmosphere_planet_rect.ul.y * y_scale,
+                                            lr.x + (texture_w - m_atmosphere_planet_rect.lr.x) * x_scale,
+                                            lr.y + (texture_h - m_atmosphere_planet_rect.lr.y) * y_scale,
+                                            0, false);
+        }
         return true;
     }
 
     void SetRotatingPlanetData(const RotatingPlanetData& planet_data)
     {
         m_planet_data = planet_data;
-        m_texture = GG::App::GetApp()->GetTexture(m_planet_data.filename);
+        m_surface_texture = GG::App::GetApp()->GetTexture(m_planet_data.filename);
     }
 
 private:
@@ -337,7 +578,10 @@ private:
 
     RotatingPlanetData              m_planet_data;
     PlanetSize                      m_size;
-    boost::shared_ptr<GG::Texture>  m_texture;
+    boost::shared_ptr<GG::Texture>  m_surface_texture;
+    boost::shared_ptr<GG::Texture>  m_atmosphere_texture;
+    int                             m_atmosphere_alpha;
+    GG::Rect                        m_atmosphere_planet_rect;
     double                          m_initial_rotation;
     StarType                        m_star_type;
 };
@@ -454,7 +698,8 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
   m_focus_selector(0),
   m_button_colonize(0),
   m_planet_graphic(0),
-  m_rotating_planet_graphic(0)
+  m_rotating_planet_graphic(0),
+  m_hilited(false)
 {
   SetText(UserString("PLANET_PANEL"));
 
@@ -470,7 +715,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
       std::vector<boost::shared_ptr<GG::Texture> > textures;
       GetAsteroidTextures(planet.ID(), textures);
       m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-      m_planet_graphic->SetFPS(10.0);
+      m_planet_graphic->SetFPS(GetAsteroidsFPS());
       m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
       AttachChild(m_planet_graphic);
       m_planet_graphic->Play();
@@ -553,6 +798,11 @@ void SidePanel::PlanetPanel::Update()
 {
   PlanetChanged();
   PlanetResourceCenterChanged();
+}
+
+void SidePanel::PlanetPanel::Hilite(bool b)
+{
+    m_hilited = b;
 }
 
 void SidePanel::PlanetPanel::EnableControl(GG::Wnd *control,bool enable)
@@ -693,19 +943,16 @@ void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
     parent->MouseWheel(pt,move,keys);
 }
 
-void SidePanel::PlanetPanel::MouseEnter(const GG::Pt& pt, Uint32 keys)
-{
-}
-
-void SidePanel::PlanetPanel::MouseLeave(const GG::Pt& pt, Uint32 keys)
-{
-}
-
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     ul.x += MAX_PLANET_DIAMETER / 2;
     return ((ul <= pt && pt < lr) || InPlanet(pt));
+}
+
+bool SidePanel::PlanetPanel::Hilited() const
+{
+    return m_hilited;
 }
 
 void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys) 
@@ -725,9 +972,6 @@ bool SidePanel::PlanetPanel::RenderUnhabited(const Planet &planet)
 
 bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 {
-  //if (planet.Type() != PT_ASTEROIDS)
-    //RenderPlanet(UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER / 2, Height() / 2), PlanetDiameter(), GG::App::GetApp()->GetTexture("moon.png"));
-
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS);
   Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
@@ -765,9 +1009,6 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 
 bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 {
-  //if (planet.Type() != PT_ASTEROIDS)
-    //RenderPlanet(UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER / 2, Height() / 2), PlanetDiameter(), GG::App::GetApp()->GetTexture("moon.png"));
-
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS);
   Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
@@ -809,16 +1050,23 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 
 bool SidePanel::PlanetPanel::Render()
 {
-  const Planet *planet = GetPlanet();
+    const Planet *planet = GetPlanet();
 
-  if(planet->Owners().size()==0 || planet->IsAboutToBeColonized())  
-    RenderUnhabited(*planet);
-  else 
-    if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))     
-      RenderInhabited(*planet);
-    else
-      RenderOwned    (*planet);
-  return true;
+    if(planet->Owners().size()==0 || planet->IsAboutToBeColonized()) {
+        RenderUnhabited(*planet);
+    } else {
+        if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))     
+            RenderInhabited(*planet);
+        else
+            RenderOwned    (*planet);
+    }
+
+    if (m_hilited && planet->Type() != PT_ASTEROIDS) {
+        GG::Rect planet_rect(m_rotating_planet_graphic->UpperLeft(), m_rotating_planet_graphic->LowerRight());
+        GG::FlatCircle(planet_rect.ul.x - 3, planet_rect.ul.y - 3, planet_rect.lr.x + 3, planet_rect.lr.y + 3, GG::CLR_WHITE, GG::CLR_ZERO, 0);
+    }
+
+    return true;
 }
 
 int SidePanel::PlanetPanel::PlanetDiameter() const
@@ -919,13 +1167,17 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
 ////////////////////////////////////////////////
 // SidePanel::PlanetPanelContainer
 ////////////////////////////////////////////////
-SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h)
-: Wnd(x-MAX_PLANET_DIAMETER/2, y, w+MAX_PLANET_DIAMETER/2, h, GG::Wnd::CLICKABLE),m_planet_panels(),
-  m_vscroll(new CUIScroll(Width()-10,0,10,Height(),GG::Scroll::VERTICAL))
+SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h) :
+    Wnd(x-MAX_PLANET_DIAMETER/2, y, w+MAX_PLANET_DIAMETER/2, h, GG::Wnd::CLICKABLE),
+    m_planet_panels(),
+    m_planet_id(UniverseObject::INVALID_OBJECT_ID),
+    m_hilite_selected_planet(false),
+    m_vscroll(new CUIScroll(Width()-10,0,10,Height(),GG::Scroll::VERTICAL))
 {
+  SetText("PlanetPanelContainer");
   EnableChildClipping(true);
   AttachChild(m_vscroll);
-  Connect(m_vscroll->ScrolledSignal, &SidePanel::PlanetPanelContainer::VScroll,this);
+  GG::Connect(m_vscroll->ScrolledSignal, &SidePanel::PlanetPanelContainer::VScroll,this);
 }
 
 bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
@@ -949,7 +1201,8 @@ void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, Uin
 void SidePanel::PlanetPanelContainer::Clear()
 {
   m_planet_panels.clear();
-
+  m_planet_id = UniverseObject::INVALID_OBJECT_ID;
+  PlanetSelectedSignal(m_planet_id);
   DetachChild(m_vscroll);
   DeleteChildren();
   AttachChild(m_vscroll);
@@ -967,9 +1220,57 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*
     PlanetPanel* planet_panel = new PlanetPanel(0, y, Width()-m_vscroll->Width(), PLANET_PANEL_HT, *planet, star_type);
     AttachChild(planet_panel);
     m_planet_panels.push_back(planet_panel);
+    GG::Connect(m_planet_panels.back()->PlanetImageLClickedSignal, &SidePanel::PlanetPanelContainer::PlanetSelected, this);
   }
   m_vscroll->SizeScroll(0,plt_vec.size()*PLANET_PANEL_HT,PLANET_PANEL_HT,Height());
   VScroll(m_vscroll->PosnRange().first, 0, 0, 0);
+}
+
+void SidePanel::PlanetPanelContainer::HiliteSelectedPlanet(bool b)
+{
+    m_hilite_selected_planet = b;
+    PlanetPanel* current_panel = 0;
+    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
+        if ((*it)->PlanetID() == m_planet_id) {
+            current_panel = *it;
+            break;
+        }
+    }
+    if (current_panel)
+        current_panel->Hilite(m_hilite_selected_planet);
+}
+
+void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id)
+{
+    PlanetSelected(planet_id);
+}
+
+void SidePanel::PlanetPanelContainer::PlanetSelected(int planet_id)
+{
+    if (planet_id != m_planet_id) {
+        if (m_hilite_selected_planet) {
+            PlanetPanel* current_panel = 0;
+            for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
+                if ((*it)->PlanetID() == m_planet_id) {
+                    current_panel = *it;
+                    break;
+                }
+            }
+            if (current_panel)
+                current_panel->Hilite(false);
+            m_planet_id = planet_id;
+            current_panel = 0;
+            for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
+                if ((*it)->PlanetID() == m_planet_id) {
+                    current_panel = *it;
+                    break;
+                }
+            }
+            if (current_panel)
+                current_panel->Hilite(true);
+        }
+        PlanetSelectedSignal(m_planet_id);
+    }
 }
 
 void SidePanel::PlanetPanelContainer::VScroll(int from,int to,int range_min,int range_max)
@@ -1055,6 +1356,10 @@ bool SidePanel::SystemResourceSummary::Render()
 ////////////////////////////////////////////////
 // SidePanel
 ////////////////////////////////////////////////
+// static(s)
+const int SidePanel::MAX_PLANET_DIAMETER = 128; // size of a huge planet, in on-screen pixels
+const int SidePanel::MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER / 3; // size of a tiny planet, in on-screen pixels
+
 SidePanel::SidePanel(int x, int y, int w, int h) : 
     Wnd(x, y, w, h, GG::Wnd::CLICKABLE),
     m_system(0),
@@ -1094,6 +1399,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
   GG::Connect(m_system_name->SelChangedSignal, &SidePanel::SystemSelectionChanged, this);
   GG::Connect(m_button_prev->ClickedSignal, &SidePanel::PrevButtonClicked, this);
   GG::Connect(m_button_next->ClickedSignal, &SidePanel::NextButtonClicked, this);
+  GG::Connect(m_planet_panel_container->PlanetSelectedSignal, &SidePanel::PlanetSelected, this);
 
   Hide();
 }
@@ -1138,7 +1444,30 @@ void SidePanel::NextButtonClicked()
     m_system_name->Select(selected+1);
 }
 
-int SidePanel::SystemID() const {return m_system!=0?m_system->ID():UniverseObject::INVALID_OBJECT_ID;}
+void SidePanel::PlanetSelected(int planet_id)
+{
+    PlanetSelectedSignal(planet_id);
+}
+
+int SidePanel::PlanetPanels() const
+{
+    return m_planet_panel_container->PlanetPanels();
+}
+
+const SidePanel::PlanetPanel* SidePanel::GetPlanetPanel(int n) const
+{
+    return m_planet_panel_container->GetPlanetPanel(n);
+}
+
+int SidePanel::SystemID() const
+{
+    return m_system!=0?m_system->ID():UniverseObject::INVALID_OBJECT_ID;
+}
+
+int SidePanel::PlanetID() const
+{
+    return m_planet_panel_container->PlanetID();
+}
 
 void SidePanel::SetSystem(int system_id)
 {
@@ -1246,6 +1575,16 @@ void SidePanel::SetSystem(int system_id)
         m_button_next->Show();
       }
     }
+}
+
+void SidePanel::SelectPlanet(int planet_id)
+{
+    m_planet_panel_container->SelectPlanet(planet_id);
+}
+
+void SidePanel::HiliteSelectedPlanet(bool b)
+{
+    m_planet_panel_container->HiliteSelectedPlanet(b);
 }
 
 void SidePanel::SystemFleetAdded  (const Fleet &flt)
