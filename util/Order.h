@@ -417,6 +417,7 @@ public:
     ProductionQueueOrder();
     ProductionQueueOrder(const GG::XMLElement& elem);
     ProductionQueueOrder(int empire, BuildType build_type, const std::string& item, int number, int location);
+    ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy);
     ProductionQueueOrder(int empire, int index, int new_index);
     ProductionQueueOrder(int empire, int index);
     //@}
@@ -433,9 +434,11 @@ private:
     int         m_number;
     int         m_location;
     int         m_index;
+    int         m_new_quantity;
     int         m_new_index;
 
     static const int INVALID_INDEX = -500;
+    static const int INVALID_QUANTITY = -1000;
 };
 
 inline std::pair<std::string, std::string> OrderRevision()

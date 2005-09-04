@@ -26,7 +26,7 @@ public:
     virtual bool   Render();
 
     void Reset();
-    void CenterOnBuild(/*TODO*/);
+    void CenterOnBuild(int queue_idx);
     void SelectSystem(int system);
     void Sanitize();
     //@}
@@ -35,6 +35,7 @@ private:
     void UpdateQueue();
     void ResetInfoPanel();
     void AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location);
+    void ChangeBuildQuantitySlot(int queue_idx, int quantity);
     void QueueItemDeletedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void QueueItemMovedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
     void QueueItemClickedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt);

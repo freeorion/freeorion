@@ -12,6 +12,7 @@
 #include <boost/format.hpp>
 #include <cmath>
 
+
 namespace {
     const int PRODUCTION_INFO_AND_QUEUE_WIDTH = 250;
     const double PI = 3.141594;
@@ -33,7 +34,7 @@ namespace {
     class QueueBuildPanel : public GG::Control
     {
     public:
-        QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_cost, int turns, int turns_completed, double partially_complete_turn);
+        QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_cost, int turns, int number, int turns_completed, double partially_complete_turn);
         virtual bool Render();
 
     private:
@@ -64,13 +65,13 @@ namespace {
         double progress = empire->ProductionStatus(queue_index);
         if (progress == -1.0)
             progress = 0.0;
-        push_back(new QueueBuildPanel(w, build, turn_cost, turns, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost));
+        push_back(new QueueBuildPanel(w, build, turn_cost, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost));
     }
 
     //////////////////////////////////////////////////
     // QueueBuildPanel implementation
     //////////////////////////////////////////////////
-    QueueBuildPanel::QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_cost, int turns, int turns_completed, double partially_complete_turn) :
+    QueueBuildPanel::QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_cost, int turns, int number, int turns_completed, double partially_complete_turn) :
         GG::Control(0, 0, w, QueueRow::HEIGHT, 0),
         m_build(build),
         m_in_progress(build.spending),
@@ -82,6 +83,8 @@ namespace {
         std::string name_text = UserString(build.item.name);
         if (build.item.build_type == BT_SHIP)
             name_text = build.item.name;
+        if (build.item.build_type != BT_BUILDING)
+            name_text = boost::lexical_cast<std::string>(number) + " " + name_text;
         m_name_text = new GG::TextControl(4, 2, w - 4, QueueRow::HEIGHT - 2, name_text, ClientUI::FONT, ClientUI::PTS + 2, text_and_border, GG::TF_TOP | GG::TF_LEFT);
         m_name_text->ClipText(true);
         using boost::io::str;
@@ -157,6 +160,7 @@ ProductionWnd::ProductionWnd(int w, int h) :
     m_buid_designator_wnd->MoveTo(m_production_info_panel->Width() + 3, 3);
 
     GG::Connect(m_buid_designator_wnd->AddBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this);
+    GG::Connect(m_buid_designator_wnd->BuildQuantityChangedSignal, &ProductionWnd::ChangeBuildQuantitySlot, this);
     GG::Connect(m_queue_lb->DroppedSignal, &ProductionWnd::QueueItemMovedSlot, this);
     GG::Connect(m_queue_lb->DeletedSignal, &ProductionWnd::QueueItemDeletedSlot, this);
     GG::Connect(m_queue_lb->LeftClickedSignal, &ProductionWnd::QueueItemClickedSlot, this);
@@ -286,9 +290,9 @@ void ProductionWnd::Reset()
     m_buid_designator_wnd->Reset();
 }
 
-void ProductionWnd::CenterOnBuild(/* TODO */)
+void ProductionWnd::CenterOnBuild(int queue_idx)
 {
-    m_buid_designator_wnd->CenterOnBuild(/* TODO */);
+    m_buid_designator_wnd->CenterOnBuild(queue_idx);
 }
 
 void ProductionWnd::SelectSystem(int system)
@@ -334,6 +338,14 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string&
     HumanClientApp::Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, name, number, location));
     UpdateQueue();
     ResetInfoPanel();
+    m_buid_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
+}
+
+void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity)
+{
+    HumanClientApp::Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true));
+    UpdateQueue();
+    ResetInfoPanel();
 }
 
 void ProductionWnd::QueueItemDeletedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
@@ -341,6 +353,11 @@ void ProductionWnd::QueueItemDeletedSlot(int row_idx, const boost::shared_ptr<GG
     HumanClientApp::Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), row_idx));
     UpdateQueue();
     ResetInfoPanel();
+    if (row_idx == m_buid_designator_wnd->QueueIndexShown()) {
+        m_buid_designator_wnd->CenterOnBuild(-1);
+    } else if (row_idx < m_buid_designator_wnd->QueueIndexShown()) {
+        m_buid_designator_wnd->CenterOnBuild(m_buid_designator_wnd->QueueIndexShown() - 1);
+    }
 }
 
 void ProductionWnd::QueueItemMovedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
@@ -352,10 +369,11 @@ void ProductionWnd::QueueItemMovedSlot(int row_idx, const boost::shared_ptr<GG::
 
 void ProductionWnd::QueueItemClickedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt)
 {
-    m_buid_designator_wnd->CenterOnBuild(/*TODO*/);
+    m_buid_designator_wnd->CenterOnBuild(row_idx);
 }
 
 void ProductionWnd::QueueItemDoubleClickedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
 {
+    // TODO: if there is progress on this item, ask for confirmation before actually deleting it
     m_queue_lb->Delete(row_idx);
 }

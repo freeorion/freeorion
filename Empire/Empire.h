@@ -399,7 +399,10 @@ public:
         queue.size() <= pos, the build is placed at the end of the queue. */
     void PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos = -1);
 
-    /// Mmoves \a tech from the production queue, if it is in the production queue already.
+    /// Changes the remaining number to build for queue item \a index to \a quantity
+    void SetBuildQuantity(int index, int quantity);
+
+    /// Moves \a tech from the production queue, if it is in the production queue already.
     void MoveBuildWithinQueue(int index, int new_index);
 
     /// Removes the build at position \a index in the production queue, if such an index exists.

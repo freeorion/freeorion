@@ -2,6 +2,7 @@
 
 #include "../util/AppInterface.h"
 #include "../universe/Building.h"
+#include "CUISpin.h"
 #include "GGDrawUtil.h"
 #include "GGStaticGraphic.h"
 #include "../universe/Effect.h"
@@ -18,6 +19,15 @@
 namespace {
     const int DEFENSE_BASE_BUILD_TURNS = 10; // this is a kludge for v0.3 only
     const int DEFENSE_BASE_BUILD_COST = 20; // this is a kludge for v0.3 only
+
+    class BuildableItemsListBox : public CUIListBox
+    {
+    public:
+        BuildableItemsListBox(int x, int y, int w, int h) :
+            CUIListBox(x, y, w, h)
+        {}
+        virtual void GainingFocus() {ClearSelection();}
+    };
 }
 
 //////////////////////////////////////////////////
@@ -27,51 +37,67 @@ class BuildDesignatorWnd::BuildDetailPanel : public GG::Wnd
 {
 public:
     BuildDetailPanel(int w, int h);
+    int QueueIndexShown() const;
     virtual bool Render();
     void SelectedBuildLocation(int location);
     void SetBuildItem(BuildType build_type, const std::string& item);
-    //void SetBuild(BuildType build_type, const std::string& item, ...);
+    void SetBuild(int queue_idx);
     void Reset();
-    mutable boost::signal<void (BuildType, const std::string&)> CenterOnBuildSignal;
-    mutable boost::signal<void (BuildType, const std::string&)> RequestBuildItemSignal;
+    void Clear();
+    mutable boost::signal<void (int)> CenterOnBuildSignal;
+    mutable boost::signal<void (BuildType, const std::string&, int)> RequestBuildItemSignal;
+    mutable boost::signal<void (int, int)> BuildQuantityChangedSignal;
 
 private:
     GG::Pt ItemGraphicUpperLeft() const;
+    bool DisplayingQueueItem() const;
     void CenterClickedSlot();
     void AddToQueueClickedSlot();
+    void ItemsToBuildChangedSlot(int value);
     void CheckBuildability();
+    void ConfigureForQueueItemView();
+    void ConfigureForNewBuildView();
 
     BuildType           m_build_type;
     std::string         m_item;
+    int                 m_queue_idx;
     int                 m_build_location;
+    GG::TextControl*    m_build_location_name_text;
     GG::TextControl*    m_item_name_text;
     GG::TextControl*    m_cost_text;
     CUIButton*          m_recenter_button;
     CUIButton*          m_add_to_queue_button;
+    GG::TextControl*    m_num_items_to_build_label;
+    CUISpin<int>*       m_num_items_to_build;
     CUIMultiEdit*       m_description_box;
     GG::StaticGraphic*  m_item_graphic;
+
+    boost::signals::connection m_num_items_to_build_connect;
 };
 
 BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
     Wnd(0, 0, w, h, GG::Wnd::CLICKABLE),
     m_build_type(INVALID_BUILD_TYPE),
     m_item(""),
+    m_queue_idx(-1),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
     const int NAME_PTS = ClientUI::PTS + 8;
-    const int CATEGORY_AND_TYPE_PTS = ClientUI::PTS + 4;
     const int COST_PTS = ClientUI::PTS;
     const int BUTTON_WIDTH = 150;
-    const int BUTTON_MARGIN = 5;
     m_item_name_text = new GG::TextControl(1, 0, w - 1 - BUTTON_WIDTH, NAME_PTS + 4, "", ClientUI::FONT_BOLD, NAME_PTS, ClientUI::TEXT_COLOR);
     m_cost_text = new GG::TextControl(1, m_item_name_text->LowerRight().y, w - 1 - BUTTON_WIDTH, COST_PTS + 4, "", ClientUI::FONT, COST_PTS, ClientUI::TEXT_COLOR);
     m_add_to_queue_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"));
-    m_recenter_button = new CUIButton(w - 1 - BUTTON_WIDTH, m_add_to_queue_button->LowerRight().y + BUTTON_MARGIN, BUTTON_WIDTH, UserString("PRODUCTION_DETAIL_CENTER_ON_BUILD"));
-    m_recenter_button->Hide();
-    m_add_to_queue_button->Hide();
+    m_recenter_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, UserString("PRODUCTION_DETAIL_CENTER_ON_BUILD"));
     m_recenter_button->Disable();
     m_add_to_queue_button->Disable();
-    m_description_box = new CUIMultiEdit(1, m_cost_text->LowerRight().y, w - 2 - BUTTON_WIDTH, h - m_cost_text->LowerRight().y - 2, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
+    m_num_items_to_build = new CUISpin<int>(0, 0, 75, 1, 1, 1, 1000, true);
+    m_num_items_to_build->MoveTo(1, h - m_num_items_to_build->Height() - 1);
+    m_num_items_to_build_label = new GG::TextControl(m_num_items_to_build->LowerRight().x + 3, m_num_items_to_build->UpperLeft().y + (m_num_items_to_build->Height() - (NAME_PTS + 4)) / 2, w - 1 - BUTTON_WIDTH - 3 - (m_num_items_to_build->LowerRight().x + 3), NAME_PTS + 4,
+                                                     UserString("PRODUCTION_DETAIL_NUMBER_TO_BUILD"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
+    m_build_location_name_text = new GG::TextControl(w - 1 - BUTTON_WIDTH, m_num_items_to_build->UpperLeft().y + (m_num_items_to_build->Height() - (NAME_PTS + 4)) / 2, BUTTON_WIDTH, ClientUI::PTS + 4,
+                                                     "", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+    m_description_box = new CUIMultiEdit(1, m_cost_text->LowerRight().y, w - 2 - BUTTON_WIDTH, m_num_items_to_build_label->UpperLeft().y - 2 - m_cost_text->LowerRight().y, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
 
@@ -79,12 +105,21 @@ BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
 
     GG::Connect(m_recenter_button->ClickedSignal, &BuildDesignatorWnd::BuildDetailPanel::CenterClickedSlot, this);
     GG::Connect(m_add_to_queue_button->ClickedSignal, &BuildDesignatorWnd::BuildDetailPanel::AddToQueueClickedSlot, this);
+    m_num_items_to_build_connect = GG::Connect(m_num_items_to_build->ValueChangedSignal, &BuildDesignatorWnd::BuildDetailPanel::ItemsToBuildChangedSlot, this);
 
     AttachChild(m_item_name_text);
     AttachChild(m_cost_text);
     AttachChild(m_recenter_button);
     AttachChild(m_add_to_queue_button);
+    AttachChild(m_num_items_to_build);
+    AttachChild(m_num_items_to_build_label);
+    AttachChild(m_build_location_name_text);
     AttachChild(m_description_box);
+}
+
+int BuildDesignatorWnd::BuildDetailPanel::QueueIndexShown() const
+{
+    return m_queue_idx;
 }
 
 bool BuildDesignatorWnd::BuildDetailPanel::Render()
@@ -104,6 +139,23 @@ void BuildDesignatorWnd::BuildDetailPanel::SetBuildItem(BuildType build_type, co
 {
     m_build_type = build_type;
     m_item = item;
+    m_queue_idx = -1;
+    Reset();
+}
+
+void BuildDesignatorWnd::BuildDetailPanel::SetBuild(int queue_idx)
+{
+    Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const ProductionQueue& queue = empire->GetProductionQueue();
+    if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
+        m_build_type = queue[queue_idx].item.build_type;
+        m_item = queue[queue_idx].item.name;
+        m_queue_idx = queue_idx;
+    } else {
+        m_build_type = INVALID_BUILD_TYPE;
+        m_item = "";
+        m_queue_idx = -1;
+    }
     Reset();
 }
 
@@ -111,6 +163,7 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
 {
     m_item_name_text->SetText("");
     m_cost_text->SetText("");
+    m_build_location_name_text->SetText("");
     m_description_box->SetText("");
 
     if (m_item_graphic) {
@@ -119,20 +172,51 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
     }
 
     if (m_build_type == INVALID_BUILD_TYPE) {
-        m_recenter_button->Hide();
-        m_add_to_queue_button->Hide();
-        m_recenter_button->Disable();
-        m_add_to_queue_button->Disable();
+        DetachChild(m_recenter_button);
+        DetachChild(m_add_to_queue_button);
+        DetachChild(m_num_items_to_build);
+        DetachChild(m_build_location_name_text);
+        DetachChild(m_num_items_to_build_label);
         return;
     }
 
     m_recenter_button->Show();
     m_add_to_queue_button->Show();
-    //m_recenter_button->Disable(false); // TODO: enable conditioned upon the type of details being shown
+    m_num_items_to_build->Show();
+    m_num_items_to_build_label->Show();
+    m_build_location_name_text->Show();
+    m_recenter_button->Disable(!DisplayingQueueItem());
+    m_num_items_to_build_connect.disconnect();
+    m_num_items_to_build->SetValue(1);
 
     Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire)
+    if (!empire) {
+        m_num_items_to_build_connect = GG::Connect(m_num_items_to_build->ValueChangedSignal, &BuildDesignatorWnd::BuildDetailPanel::ItemsToBuildChangedSlot, this);
         return;
+    }
+
+    const ProductionQueue& queue = empire->GetProductionQueue();
+    if (static_cast<int>(queue.size()) <= m_queue_idx) {
+        if (!queue.empty()) {
+            m_queue_idx = queue.size() - 1;
+            m_build_type = queue[m_queue_idx].item.build_type;
+            m_item = queue[m_queue_idx].item.name;
+        } else {
+            m_build_type = INVALID_BUILD_TYPE;
+            m_item = "";
+            m_queue_idx = -1;
+        }
+    }
+
+    if (DisplayingQueueItem()) {
+        ConfigureForQueueItemView();
+        m_num_items_to_build->SetValue(queue[m_queue_idx].remaining);
+        m_build_location_name_text->SetText(GetUniverse().Object(queue[m_queue_idx].location)->Name());
+    } else {
+        ConfigureForNewBuildView();
+    }
+
+    m_num_items_to_build_connect = GG::Connect(m_num_items_to_build->ValueChangedSignal, &BuildDesignatorWnd::BuildDetailPanel::ItemsToBuildChangedSlot, this);
 
     CheckBuildability();
 
@@ -194,34 +278,74 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
     m_description_box->SetText(description_str);
 }
 
+void BuildDesignatorWnd::BuildDetailPanel::Clear()
+{
+    SetBuildItem(INVALID_BUILD_TYPE, "");
+}
+
 GG::Pt BuildDesignatorWnd::BuildDetailPanel::ItemGraphicUpperLeft() const
 {
-    return GG::Pt(Width() - 2 - 150 + (150 - 128) / 2, m_recenter_button->LowerRight().y - UpperLeft().y + 5);
+    return GG::Pt(Width() - 2 - 150 + (150 - 128) / 2, 1 + m_recenter_button->Height() + 5);
+}
+
+bool BuildDesignatorWnd::BuildDetailPanel::DisplayingQueueItem() const
+{
+    return m_queue_idx != -1;
 }
 
 void BuildDesignatorWnd::BuildDetailPanel::CenterClickedSlot()
 {
-    if (m_build_type != INVALID_BUILD_TYPE)
-        CenterOnBuildSignal(m_build_type, m_item);
+    if (m_build_type != INVALID_BUILD_TYPE && DisplayingQueueItem())
+        CenterOnBuildSignal(m_queue_idx);
 }
 
 void BuildDesignatorWnd::BuildDetailPanel::AddToQueueClickedSlot()
 {
     if (m_build_type != INVALID_BUILD_TYPE)
-        RequestBuildItemSignal(m_build_type, m_item);
+        RequestBuildItemSignal(m_build_type, m_item, m_num_items_to_build->Value());
+}
+
+void BuildDesignatorWnd::BuildDetailPanel::ItemsToBuildChangedSlot(int value)
+{
+    if (DisplayingQueueItem())
+        BuildQuantityChangedSignal(m_queue_idx, value);
 }
 
 void BuildDesignatorWnd::BuildDetailPanel::CheckBuildability()
 {
     m_add_to_queue_button->Disable(true);
+    if (!DisplayingQueueItem()) {
+        m_num_items_to_build->Disable(true);
+        m_num_items_to_build_label->Disable(true);
+    }
     Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     UniverseObject* object = GetUniverse().Object(m_build_location);
     if (m_build_type != INVALID_BUILD_TYPE &&
         empire && object && object->Owners().size() == 1 &&
         object->Owners().find(empire->EmpireID()) != object->Owners().end()) {
-        // TODO: after v0.3, check for shipyards, etc.
+        // TODO: after v0.3, check for shipyards, building location limitations, etc.
         m_add_to_queue_button->Disable(false);
+        m_num_items_to_build->Disable(false);
+        m_num_items_to_build_label->Disable(false);
     }
+}
+
+void BuildDesignatorWnd::BuildDetailPanel::ConfigureForQueueItemView()
+{
+    DetachChild(m_add_to_queue_button);
+    AttachChild(m_recenter_button);
+    AttachChild(m_num_items_to_build);
+    AttachChild(m_num_items_to_build_label);
+    AttachChild(m_build_location_name_text);
+}
+
+void BuildDesignatorWnd::BuildDetailPanel::ConfigureForNewBuildView()
+{
+    AttachChild(m_add_to_queue_button);
+    DetachChild(m_recenter_button);
+    AttachChild(m_num_items_to_build);
+    AttachChild(m_num_items_to_build_label);
+    DetachChild(m_build_location_name_text);
 }
 
 
@@ -238,7 +362,7 @@ public:
     void Reset();
 
     mutable boost::signal<void (BuildType, const std::string&)> DisplayBuildItemSignal;
-    mutable boost::signal<void (BuildType, const std::string&)> RequestBuildItemSignal;
+    mutable boost::signal<void (BuildType, const std::string&, int)> RequestBuildItemSignal;
 
 private:
     struct CategoryClickedFunctor
@@ -255,7 +379,7 @@ private:
 
     BuildType               m_current_build_type;
     std::vector<CUIButton*> m_build_category_buttons;
-    CUIListBox*             m_buildable_items;
+    BuildableItemsListBox*  m_buildable_items;
     GG::Pt                  m_original_ul;
 
     friend struct PopulateListFunctor;
@@ -277,7 +401,6 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
 {
     GG::Pt client_size(w - BORDER_LEFT - BORDER_RIGHT, h - BORDER_TOP - BORDER_BOTTOM);
     GG::Layout* layout = new GG::Layout(BORDER_LEFT, BORDER_TOP, client_size.x, client_size.y, 1, 1, 3, 5);
-    const int NUM_CATEGORY_BUTTONS = NUM_BUILD_TYPES - (BT_NOT_BUILDING + 1);
     int button_height;
     for (BuildType i = BuildType(BT_NOT_BUILDING + 1); i < NUM_BUILD_TYPES; i = BuildType(i + 1)) {
         CUIButton* button = new CUIButton(0, 0, 1, UserString("PRODUCTION_WND_CATEGORY_" + boost::lexical_cast<std::string>(i)));
@@ -286,7 +409,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
         m_build_category_buttons.push_back(button);
         layout->Add(button, 0, i - (BT_NOT_BUILDING + 1));
     }
-    m_buildable_items = new CUIListBox(0, 0, 1, 1);
+    m_buildable_items = new BuildableItemsListBox(0, 0, 1, 1);
     GG::Connect(m_buildable_items->SelChangedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemSelected, this);
     GG::Connect(m_buildable_items->DoubleClickedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
     m_buildable_items->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
@@ -369,13 +492,13 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type)
 
 void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const std::set<int>& selections)
 {
-    assert(selections.size() == 1);
-    DisplayBuildItemSignal(m_current_build_type, m_buildable_items->GetRow(*selections.begin()).data_type);
+    if (selections.size() == 1)
+        DisplayBuildItemSignal(m_current_build_type, m_buildable_items->GetRow(*selections.begin()).data_type);
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(int row_index, const boost::shared_ptr<GG::ListBox::Row>& row)
 {
-    RequestBuildItemSignal(m_current_build_type, row->data_type);
+    RequestBuildItemSignal(m_current_build_type, row->data_type, 1);
 }
 
 
@@ -398,6 +521,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     m_side_panel->Hide();
 
     GG::Connect(m_build_detail_panel->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
+    GG::Connect(m_build_detail_panel->BuildQuantityChangedSignal, BuildQuantityChangedSignal);
     GG::Connect(m_build_selector->DisplayBuildItemSignal, &BuildDesignatorWnd::BuildDetailPanel::SetBuildItem, m_build_detail_panel);
     GG::Connect(m_build_selector->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
     GG::Connect(m_side_panel->PlanetSelectedSignal, &BuildDesignatorWnd::SelectPlanet, this);
@@ -430,9 +554,27 @@ GG::Rect BuildDesignatorWnd::MapViewHole() const
     return m_map_view_hole;
 }
 
-void BuildDesignatorWnd::CenterOnBuild(/* TODO */)
+int BuildDesignatorWnd::QueueIndexShown() const
 {
-    // TODO
+    return m_build_detail_panel->QueueIndexShown();
+}
+
+void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
+{
+    m_build_detail_panel->SetBuild(queue_idx);
+    Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const ProductionQueue& queue = empire->GetProductionQueue();
+    if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
+        UniverseObject* build_location = GetUniverse().Object(queue[queue_idx].location);
+        assert(build_location);
+        // this code assumes that the build site is a planet
+        int system = build_location->SystemID();
+        MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
+        map->CenterOnSystem(system);
+        if (m_side_panel->SystemID() != system)
+            m_side_panel->SetSystem(system);
+        m_side_panel->SelectPlanet(queue[queue_idx].location);
+    }
 }
 
 void BuildDesignatorWnd::SelectSystem(int system)
@@ -455,18 +597,24 @@ void BuildDesignatorWnd::Reset()
     int planet_id = m_side_panel->PlanetID();
     m_side_panel->SetSystem(m_side_panel->SystemID());
     m_side_panel->SelectPlanet(planet_id);
+    m_build_detail_panel->Reset();
 }
 
 void BuildDesignatorWnd::Clear()
 {
-    m_build_detail_panel->Reset();
+    m_build_detail_panel->Clear();
     m_build_selector->Reset();
     m_side_panel->SetSystem(UniverseObject::INVALID_OBJECT_ID);
     m_build_location = UniverseObject::INVALID_OBJECT_ID;
 }
 
-void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::string& item)
+void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build)
 {
     if (m_build_location != UniverseObject::INVALID_OBJECT_ID)
-        AddBuildToQueueSignal(build_type, item, 1, m_build_location);
+        AddBuildToQueueSignal(build_type, item, num_to_build, m_build_location);
+}
+
+void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)
+{
+    BuildQuantityChangedSignal(queue_idx, quantity);
 }

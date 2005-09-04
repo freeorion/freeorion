@@ -751,6 +751,7 @@ ProductionQueueOrder::ProductionQueueOrder() :
     m_number(0),
     m_location(UniverseObject::INVALID_OBJECT_ID),
     m_index(INVALID_INDEX),
+    m_new_quantity(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {}
 
@@ -765,6 +766,7 @@ ProductionQueueOrder::ProductionQueueOrder(const GG::XMLElement& elem) :
     m_number = lexical_cast<int>(elem.Child("m_number").Text());
     m_location = lexical_cast<int>(elem.Child("m_location").Text());
     m_index = lexical_cast<int>(elem.Child("m_index").Text());
+    m_new_quantity = lexical_cast<int>(elem.Child("m_new_quantity").Text());
     m_new_index = lexical_cast<int>(elem.Child("m_new_index").Text());
 }
 
@@ -775,6 +777,18 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, con
     m_number(number),
     m_location(location),
     m_index(INVALID_INDEX),
+    m_new_quantity(INVALID_QUANTITY),
+    m_new_index(INVALID_INDEX)
+{}
+
+ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy) :
+    Order(empire),
+    m_build_type(INVALID_BUILD_TYPE),
+    m_item(""),
+    m_number(0),
+    m_location(UniverseObject::INVALID_OBJECT_ID),
+    m_index(index),
+    m_new_quantity(new_quantity),
     m_new_index(INVALID_INDEX)
 {}
 
@@ -785,6 +799,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_index)
     m_number(0),
     m_location(UniverseObject::INVALID_OBJECT_ID),
     m_index(index),
+    m_new_quantity(INVALID_QUANTITY),
     m_new_index(new_index)
 {}
 
@@ -795,6 +810,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index) :
     m_number(0),
     m_location(UniverseObject::INVALID_OBJECT_ID),
     m_index(index),
+    m_new_quantity(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {}
 
@@ -807,6 +823,7 @@ GG::XMLElement ProductionQueueOrder::XMLEncode() const
     retval.AppendChild(XMLElement("m_number", lexical_cast<std::string>(m_number)));
     retval.AppendChild(XMLElement("m_location", lexical_cast<std::string>(m_location)));
     retval.AppendChild(XMLElement("m_index", lexical_cast<std::string>(m_index)));
+    retval.AppendChild(XMLElement("m_new_quantity", lexical_cast<std::string>(m_new_quantity)));
     retval.AppendChild(XMLElement("m_new_index", lexical_cast<std::string>(m_new_index)));
     return retval;
 }
@@ -818,8 +835,12 @@ void ProductionQueueOrder::ExecuteImpl() const
     Empire* empire = Empires().Lookup(EmpireID());
     if (m_build_type != INVALID_BUILD_TYPE)
         empire->PlaceBuildInQueue(m_build_type, m_item, m_number, m_location);
+    else if (m_new_quantity != INVALID_QUANTITY)
+        empire->SetBuildQuantity(m_index, m_new_quantity);
     else if (m_new_index != INVALID_INDEX)
         empire->MoveBuildWithinQueue(m_index, m_new_index);
-    else
+    else if (m_index != INVALID_INDEX)
         empire->RemoveBuildFromQueue(m_index);
+    else
+        throw std::runtime_error("Malformed ProductionQueueOrder.");
 }
