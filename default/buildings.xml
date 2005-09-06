@@ -10,7 +10,7 @@
      <EffectsGroup>
        <scope>
          <Condition::Contains>
-           <Condition::Self>
+           <Condition::Self/>
          </Condition::Contains> 
        </scope>
        <activation>
@@ -66,6 +66,7 @@
        </effects>
      </EffectsGroup>
    </effects>
+   <graphic/>
  </BuildingType>
  
  <BuildingType> 
@@ -74,13 +75,14 @@
    <build_cost>100</build_cost> 
    <build_time>7</build_time> 
    <maintenance_cost>20</maintenance_cost> 
-   <EffectsGroup> 
-     <scope>
-       <Condition::Contains>
-         <Condition::Self>
+   <effects>
+     <EffectsGroup>
+       <scope>
+         <Condition::Contains>
+           <Condition::Self/>
          </Condition::Contains> 
        </scope>
-       <effects> 
+       <effects>
          <Effect::SetMeter> 
            <meter>METER_CONSTRUCTION</meter> 
            <value>Target.MaxConstruction+1</value> 
@@ -93,6 +95,8 @@
          </Effect::SetMeter> 
        </effects> 
      </EffectsGroup> 
+   </effects>
+   <graphic/>
  </BuildingType> 
 
  <BuildingType> 
@@ -101,20 +105,23 @@
    <build_cost>100</build_cost> 
    <build_time>7</build_time> 
    <maintenance_cost>20</maintenance_cost> 
-   <EffectsGroup> 
-     <scope> 
-       <Condition::Focus> 
-         <primary>1</primary> 
-         <FocusType>FOCUS_RESEARCH</FocusType> 
-       </Condition::Focus> 
-     </scope> 
-     <effects> 
-       <Effect::SetMeter> 
-         <meter>METER_RESEARCH</meter> 
-         <value>Target.MaxResearch+3</value> 
-         <max>1</max> 
-       </Effect::SetMeter> 
-     </effects> 
-   </EffectsGroup> 
+   <effects>
+     <EffectsGroup>
+       <scope> 
+         <Condition::FocusType> 
+           <primary>1</primary> 
+           <FocusType>FOCUS_RESEARCH</FocusType> 
+         </Condition::FocusType> 
+       </scope>
+       <effects>
+         <Effect::SetMeter> 
+           <meter>METER_RESEARCH</meter> 
+           <value>Target.MaxResearch+3</value> 
+           <max>1</max> 
+         </Effect::SetMeter> 
+       </effects> 
+     </EffectsGroup> 
+   </effects>
+   <graphic/>
  </BuildingType> 
 </GG::XMLDoc>
