@@ -79,16 +79,16 @@ namespace {
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
     {
+        using boost::io::str;
+        using boost::format;
         GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR) : ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
         std::string name_text = UserString(build.item.name);
         if (build.item.build_type == BT_SHIP)
             name_text = build.item.name;
         if (build.item.build_type != BT_BUILDING)
-            name_text = boost::lexical_cast<std::string>(number) + " " + name_text;
+            name_text = str(format(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
         m_name_text = new GG::TextControl(4, 2, w - 4, QueueRow::HEIGHT - 2, name_text, ClientUI::FONT, ClientUI::PTS + 2, text_and_border, GG::TF_TOP | GG::TF_LEFT);
         m_name_text->ClipText(true);
-        using boost::io::str;
-        using boost::format;
         const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::PTS + 4) - 2;
         m_PPs_and_turns_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::PTS + 4,
                                                    str(format(UserString("PRODUCTION_TURN_COST_STR")) % turn_cost % turns),

@@ -631,12 +631,6 @@ Primary
 PL_SECONDARY_FOCUS
 Secondary
 
-PL_PRODUCTION_TIME_NEVER
-(never)
-
-PL_PRODUCTION_TIME_TURNS
-(%1% turns)
-
 PL_COLONIZE
 Colonize
 
@@ -645,9 +639,6 @@ unknown system
 
 SP_SYSTEM_NAME
 The %1% System
-
-SP_SYSTEM_PRODUCTION
-System Production
 
 SP_RENAME_PLANET
 Rename Planet
@@ -838,6 +829,12 @@ PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Quantity
 
+PRODUCTION_DETAIL_ADD_TO_QUEUE
+Add to Queue
+
+PRODUCTION_DETAIL_CENTER_ON_BUILD
+Center on Build
+
 
 #################
 # ProductionWnd #
@@ -852,11 +849,8 @@ Production
 PRODUCTION_INFO_PP
 PP
 
-PRODUCTION_DETAIL_ADD_TO_QUEUE
-Add to Queue
-
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-Center on Build
+PRODUCTION_QUEUE_MULTIPLES
+%1%x 
 
 
 ####################

@@ -329,8 +329,8 @@ public:
         item is unknown, unavailable, or invalid. */
     std::pair<double, int> ProductionCostAndTime(BuildType build_type, std::string name) const;
 
-    /** Returns true iff this empire can produce the specified item. */
-    bool BuildableItem(BuildType build_type, std::string name) const;
+    /** Returns true iff this empire can produce the specified item at the specified location. */
+    bool BuildableItem(BuildType build_type, std::string name, int location) const;
 
     /// Returns true if the given item is in the appropriate list, false if it is not.
     bool HasExploredSystem(int ID) const;

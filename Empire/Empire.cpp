@@ -732,9 +732,16 @@ bool Empire::HasExploredSystem(int ID) const
     return (item != ExploredEnd());
 }
 
-bool Empire::BuildableItem(BuildType build_type, std::string name) const
+bool Empire::BuildableItem(BuildType build_type, std::string name, int location) const
 {
-    return ProductionCostAndTime(build_type, name) != std::make_pair(-1.0, -1);
+    if (ProductionCostAndTime(build_type, name) != std::make_pair(-1.0, -1)) {
+        UniverseObject* build_location = GetUniverse().Object(location);
+        // TODO: after v0.3, check for shipyards, building location limitations, etc.
+        return build_location && build_location->Owners().size() == 1 &&
+            *build_location->Owners().begin() == m_id;
+    } else {
+        return false;
+    }
 }
 
 int Empire::NumSitRepEntries() const
@@ -743,8 +750,8 @@ int Empire::NumSitRepEntries() const
 }
 
 
-/* *************************************
-    (const) Iterators over our various lists
+/**************************************
+(const) Iterators over our various lists
 ***************************************/
 Empire::TechItr Empire::TechBegin() const
 {
@@ -827,7 +834,7 @@ void Empire::RemoveTechFromQueue(const Tech* tech)
 
 void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/)
 {
-    if (!BuildableItem(build_type, name))
+    if (!BuildableItem(build_type, name, location))
         throw std::runtime_error("Empire::PlaceBuildInQueue() : Attempted to build a non-buildable item.");
     ProductionQueue::Element build(build_type, name, number, number, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos) {

@@ -314,19 +314,17 @@ void BuildDesignatorWnd::BuildDetailPanel::ItemsToBuildChangedSlot(int value)
 void BuildDesignatorWnd::BuildDetailPanel::CheckBuildability()
 {
     m_add_to_queue_button->Disable(true);
-    if (!DisplayingQueueItem()) {
+    if (!DisplayingQueueItem() || m_build_type == BT_BUILDING) {
         m_num_items_to_build->Disable(true);
         m_num_items_to_build_label->Disable(true);
     }
     Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    UniverseObject* object = GetUniverse().Object(m_build_location);
-    if (m_build_type != INVALID_BUILD_TYPE &&
-        empire && object && object->Owners().size() == 1 &&
-        object->Owners().find(empire->EmpireID()) != object->Owners().end()) {
-        // TODO: after v0.3, check for shipyards, building location limitations, etc.
+    if (empire && empire->BuildableItem(m_build_type, m_item, m_build_location)) {
         m_add_to_queue_button->Disable(false);
-        m_num_items_to_build->Disable(false);
-        m_num_items_to_build_label->Disable(false);
+        if (m_build_type != BT_BUILDING) {
+            m_num_items_to_build->Disable(false);
+            m_num_items_to_build_label->Disable(false);
+        }
     }
 }
 
@@ -610,7 +608,8 @@ void BuildDesignatorWnd::Clear()
 
 void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build)
 {
-    if (m_build_location != UniverseObject::INVALID_OBJECT_ID)
+    Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire && empire->BuildableItem(build_type, item, m_build_location))
         AddBuildToQueueSignal(build_type, item, num_to_build, m_build_location);
 }
 
