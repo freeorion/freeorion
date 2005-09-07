@@ -78,7 +78,8 @@ bool FleetButton::InWindow(const GG::Pt& pt) const
 
 void FleetButton::MouseHere(const GG::Pt& pt, Uint32 keys)
 {
-    if (!Disabled()) {
+    MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode())) {
         if (State() != BN_ROLLOVER && PlaySounds())
             HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"));
         SetState(BN_ROLLOVER);
