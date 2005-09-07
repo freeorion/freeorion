@@ -95,7 +95,7 @@ SitRepEntry *CreateBaseBuiltSitRep(int system_id, int planet_id);
 
 SitRepEntry *CreateShipBuiltSitRep(int ship_id, int system_id);
 
-SitRepEntry *CreateBuildingBuiltSitRep(int building_id, int planet_id);
+SitRepEntry *CreateBuildingBuiltSitRep(const std::string& building_name, int planet_id);
 
 SitRepEntry *CreateCombatSitRep(int empire_id, int victor_id, int system_id);
 

@@ -26,10 +26,17 @@
     even though overlap with regular GG::Font tags if fine. */
 class LinkText : public GG::TextControl
 {
+private:
+    struct BoolCombiner 
+    {
+        typedef bool result_type; 
+        template<class InIt> result_type operator()(InIt first, InIt last) const;
+    };
+
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<bool (int)>                IDSignalType;     ///< emitted when a link that refers to an ID number is clicked
-    typedef boost::signal<bool (const std::string&)> StringSignalType; ///< emitted when a link that refers to an string is clicked
+    typedef boost::signal<bool (int), BoolCombiner>                IDSignalType;     ///< emitted when a link that refers to an ID number is clicked
+    typedef boost::signal<bool (const std::string&), BoolCombiner> StringSignalType; ///< emitted when a link that refers to an string is clicked
     //@}
 
     /** \name Slot Types */ //@{
@@ -94,6 +101,15 @@ private:
 
     static bool s_link_tags_registered;
 };
+
+// template implementations
+template<class InIt>
+LinkText::BoolCombiner::result_type LinkText::BoolCombiner::operator()(InIt first, InIt last) const
+{
+    while (first != last)
+        *first++;
+    return true;
+}
 
 inline std::pair<std::string, std::string> LinkTextRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}

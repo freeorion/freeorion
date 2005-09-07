@@ -1103,8 +1103,8 @@ void Empire::CheckProductionProgress()
                 assert(planet);
                 Building* building = new Building(m_id, m_production_queue[i].item.name, planet->ID());
                 int building_id = universe.Insert(building);
-                planet->AddBuilding(building->ID());
-                SitRepEntry *entry = CreateBuildingBuiltSitRep(building_id, planet->ID());
+                planet->AddBuilding(building_id);
+                SitRepEntry *entry = CreateBuildingBuiltSitRep(m_production_queue[i].item.name, planet->ID());
                 AddSitRepEntry(entry);
                 break;
             }

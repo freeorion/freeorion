@@ -77,7 +77,7 @@ SitRepEntry *CreateShipBuiltSitRep( int ship_id, int system_id )
   return( pSitRep );
 }
 
-SitRepEntry *CreateBuildingBuiltSitRep(int building_id, int planet_id)
+SitRepEntry *CreateBuildingBuiltSitRep(const std::string& building_name, int planet_id)
 {
   SitRepEntry  *pSitRep = new SitRepEntry( );
 
@@ -88,7 +88,7 @@ SitRepEntry *CreateBuildingBuiltSitRep(int building_id, int planet_id)
   pSitRep->GetVariables( ).AppendChild( planet_elem );
 
   GG::XMLElement building_elem( VarText::BUILDING_ID_TAG );
-  building_elem.SetAttribute("value",  boost::lexical_cast<std::string>( building_id ));
+  building_elem.SetAttribute("value",  building_name);
   pSitRep->GetVariables( ).AppendChild( building_elem );
 
   return( pSitRep );
