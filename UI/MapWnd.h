@@ -126,6 +126,7 @@ private:
     void RenderFleetMovementLines();             //!< renders the dashed lines indicating where each fleet is going
     void MoveBackgrounds(const GG::Pt& move);    //!< scrolls the backgrounds at their respective rates
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
+    void SystemDoubleClicked(int system_id);
     void SystemRightClicked(int system_id);
     void UniverseObjectDeleted(const UniverseObject *obj);
     bool ReturnToMap();

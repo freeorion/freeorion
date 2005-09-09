@@ -572,6 +572,7 @@ void MapWnd::InitTurn(int turn_number)
         icon->InstallEventFilter(this);
         AttachChild(icon);
         GG::Connect(icon->LeftClickedSignal, &MapWnd::SelectSystem, this);
+        GG::Connect(icon->LeftDoubleClickedSignal, &MapWnd::SystemDoubleClicked, this);
         GG::Connect(icon->RightClickedSignal, &MapWnd::SystemRightClicked, this);
 
         // system's starlanes
@@ -1124,6 +1125,14 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
         if (app_height < move_to_pt.y + contents_width)
             move_to_pt.y = app_height - contents_width;
     }
+}
+
+void MapWnd::SystemDoubleClicked(int system_id)
+{
+    if (!m_production_wnd->Visible())
+        ToggleProduction();
+    CenterOnSystem(system_id);
+    m_production_wnd->SelectSystem(system_id);
 }
 
 void MapWnd::SystemRightClicked(int system_id)
