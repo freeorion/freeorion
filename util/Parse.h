@@ -249,7 +249,9 @@ ValueRef::ValueRefBase<T>* ParseArithmeticExpression(const std::string& str)
 {
     static ArithmeticExpression<T> arithmetic_expression;
 	boost::spirit::tree_parse_info<> info = boost::spirit::ast_parse(str.c_str(), arithmetic_expression);
-    return info.full ? EvalArithExpr<T>(info.trees.begin()) : 0;
+    if (!info.full)
+        throw std::runtime_error("ERROR: Could not parse \"" + str + "\"");
+    return EvalArithExpr<T>(info.trees.begin());
 }
 
 inline std::pair<std::string, std::string> ParseRevision()
