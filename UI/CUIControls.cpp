@@ -529,16 +529,20 @@ GG::Scroll* CUIListBox::NewVScroll(bool horz_scroll)
 {
     GG::Pt cl_sz = ((LowerRight() - GG::Pt(BORDER_THICK, BORDER_THICK)) -
                     (UpperLeft() + GG::Pt(BORDER_THICK, BORDER_THICK + (ColHeaders().size() ? ColHeaders().Height() : 0))));
-    return new CUIScroll(cl_sz.x - ClientUI::SCROLL_WIDTH, 0, ClientUI::SCROLL_WIDTH, 
+    CUIScroll* s = new CUIScroll(cl_sz.x - ClientUI::SCROLL_WIDTH, 0, ClientUI::SCROLL_WIDTH, 
                          cl_sz.y - (horz_scroll ? ClientUI::SCROLL_WIDTH : 0), GG::Scroll::VERTICAL);
+    s->SetText("Scroll");
+    return s;
 }
 
 GG::Scroll* CUIListBox::NewHScroll(bool vert_scroll)
 {
     GG::Pt cl_sz = ((LowerRight() - GG::Pt(BORDER_THICK, BORDER_THICK)) -
                     (UpperLeft() + GG::Pt(BORDER_THICK, BORDER_THICK + (ColHeaders().size() ? ColHeaders().Height() : 0))));
-    return new CUIScroll(0, cl_sz.y - ClientUI::SCROLL_WIDTH, cl_sz.x - (vert_scroll ? ClientUI::SCROLL_WIDTH : 0), 
+    CUIScroll* s = new CUIScroll(0, cl_sz.y - ClientUI::SCROLL_WIDTH, cl_sz.x - (vert_scroll ? ClientUI::SCROLL_WIDTH : 0), 
                          ClientUI::SCROLL_WIDTH, GG::Scroll::HORIZONTAL);
+    s->SetText("Scroll");
+    return s;
 }
 
 

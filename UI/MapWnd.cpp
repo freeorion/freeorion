@@ -30,6 +30,18 @@
 #include <vector>
 #include <deque>
 
+#include "GGBrowseInfoWnd.h"
+class BrowseFoo : public GG::TextBoxBrowseInfoWnd
+{
+public:
+    BrowseFoo() :
+        TextBoxBrowseInfoWnd(200, "Vera.ttf", 12, GG::CLR_SHADOW, GG::CLR_WHITE, GG::CLR_WHITE)
+        {}
+
+    void Update(int mode, const GG::Wnd* target)
+        { SetText("mode=" + boost::lexical_cast<std::string>(mode) + " wnd=" + target->WindowText()); }
+};
+
 namespace {
     const double ZOOM_STEP_SIZE = 1.25;
     const int NUM_NEBULA_TEXTURES = 5;
@@ -302,6 +314,9 @@ MapWnd::MapWnd() :
     GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_b, 0), &MapWnd::ZoomToNextFleet, this);
 
     g_chat_edit_history.push_front("");
+
+    boost::shared_ptr<GG::BrowseInfoWnd> browser_wnd(new BrowseFoo());
+    GG::Wnd::SetDefaultBrowseInfoWnd(browser_wnd);
 }
 
 MapWnd::~MapWnd()
@@ -572,7 +587,6 @@ void MapWnd::InitTurn(int turn_number)
         icon->InstallEventFilter(this);
         AttachChild(icon);
         GG::Connect(icon->LeftClickedSignal, &MapWnd::SelectSystem, this);
-        GG::Connect(icon->LeftDoubleClickedSignal, &MapWnd::SystemDoubleClicked, this);
         GG::Connect(icon->RightClickedSignal, &MapWnd::SystemRightClicked, this);
 
         // system's starlanes
