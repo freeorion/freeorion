@@ -271,6 +271,82 @@
 
 <Category>GROWTH_CATEGORY</Category>
 
+<Tech> 
+	<name>GRO_PLANET_GENOME</name> 
+	<description>GRO_PLANET_GENOME_DESC</description> 
+	<type>TT_APPLICATION</type> 
+	<category>GROWTH_CATEGORY</category> 
+	<research_cost>20</research_cost> 
+	<research_turns>5</research_turns> 
+	<prerequisites> 
+		<prereq>GRO_GENETIC_ENG</prereq> 
+	</prerequisites> 
+	<unlocked_items> 
+		<Item> 
+			<type>UIT_BUILDING</type> 
+			<name>BLD_PLANET_GENOME</name> 
+		</Item> 
+	</unlocked_items> 
+	<graphic></graphic> 
+</Tech> 
+
+<Tech> 
+	<name>GRO_PLANET_CONSC</name> 
+	<description>GRO_PLANET_CONSC_DESC</description> 
+	<type>TT_APPLICATION</type> 
+	<category>GROWTH_CATEGORY</category> 
+	<research_cost>40</research_cost> 
+	<research_turns>5</research_turns> 
+	<prerequisites> 
+		<prereq>GRO_SYMBIOTIC_BIO</prereq> 
+	</prerequisites> 
+	<unlocked_items> 
+		<Item> 
+			<type>UIT_BUILDING</type> 
+			<name>BLD_PLANET_CONSC</name> 
+		</Item> 
+	</unlocked_items> 
+	<graphic></graphic> 
+</Tech> 
+
+<Tech> 
+	<name>GRO_ORBITAL_FARM</name> 
+	<description>GRO_ORBITAL_FARM_DESC</description> 
+	<type>TT_APPLICATION</type> 
+	<category>GROWTH_CATEGORY</category> 
+	<research_cost>80</research_cost> 
+	<research_turns>5</research_turns> 
+	<prerequisites> 
+		<prereq>GRO_ORBIT_FARMING</prereq> 
+	</prerequisites> 
+	<unlocked_items> 
+		<Item> 
+			<type>UIT_BUILDING</type> 
+			<name>BLD_ORBITAL_FARM</name> 
+		</Item> 
+	</unlocked_items> 
+	<graphic></graphic> 
+</Tech> 
+
+<Tech> 
+	<name>GRO_CLONE_CENTER</name> 
+	<description>GRO_CLONE_CENTER_DESC</description> 
+	<type>TT_APPLICATION</type> 
+	<category>GROWTH_CATEGORY</category> 
+	<research_cost>150</research_cost> 
+	<research_turns>5</research_turns> 
+	<prerequisites> 
+		<prereq>GRO_INDUSRY_CLONE</prereq> 
+	</prerequisites> 
+	<unlocked_items> 
+		<Item> 
+			<type>UIT_BUILDING</type> 
+			<name>BLD_CLONE_CENTER</name> 
+		</Item> 
+	</unlocked_items> 
+	<graphic></graphic> 
+ </Tech> 
+
 <Tech>
   <name>GRO_PLANET_ECOL</name>
   <description>GRO_PLANET_ECOL_DESC</description>

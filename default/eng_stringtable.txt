@@ -1632,7 +1632,7 @@ We are not alone in the cosmos... but why should the search be so limited?  Many
 LRN_TIME_MECH
 Temporal Mechanics
 LRN_TIME_MECH_DESC
-What are "now", "future" and "past"?  The twin paradox of special relativity, or the theoretical "wormhole" in place of the twins suggest early forms of "time travel".  Direct manipulation of spacetime and temporal flux permit these effects to be harnessed and magnified.  Temporal incursions cannot perceptible alter the past of the universe that we perceive.  Then cay however compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...
+What are "now", "future" and "past"?  The twin paradox of special relativity, or the theoretical "wormhole" in its place, suggest early forms of "time travel".  Direct manipulation of spacetime and temporal flux permit these effects to be harnessed and magnified.  Temporal incursions cannot perceptibly alter the past of the universe that we perceive.  They can, however, compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...
 LRN_NDIM_SUBSPACE
 N-Dimensional Subspace
 LRN_NDIM_SUBSPACE_DESC
@@ -1716,7 +1716,7 @@ The microgravity of low planetary orbit offers great potential for  novel manufa
 PRO_PLANET_GEOL
 Planetary Geology
 PRO_PLANET_GEOL_DESC
-a
+Useful minerals are created throughout the volume of planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis.  After creation processes such as plate techtonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources.  Understanding these processes, their effects, causes and signs is essential for large scale efficient mining operations.
 PRO_ROBOTIC_PROD
 Robotic Production
 PRO_ROBOTIC_PROD_DESC
@@ -1728,7 +1728,7 @@ Explosive or uncontrolled thermonuclear reactions are comparatively simple to ca
 PRO_ASTEROID_MINE
 Asteroid Mining
 PRO_ASTEROID_MINE_DESC
-a
+Mineral resource extraction from subplanetoid-sized bodies involves challenges, and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
 PRO_CORE_MINE
 Deep Core Mining
 PRO_CORE_MINE_DESC
@@ -1736,79 +1736,79 @@ The pressure and temperatures in terrestrial planet mantles and cores create lar
 PRO_NANOTECH_PROD
 Nanotech Production
 PRO_NANOTECH_PROD_DESC
-a
+Traditional production techniques are fundamentally limited by the size and form of the tools it employs.  As a product takes form, its outer may layers prevent direct access and manipulation of the inner structure, requiring inconvenient and inefficient adjustment to the order of assembly.  Further, the components of a larger product must be carefully formed and assembled to exacting specifications to ensure they will function as intended when combined.  By using nanotechnology to form a complete product in one step, directly from the stock materials, these limitations can be bypassed, dramatically improving efficiency and production speed.
 PRO_ORBITAL_GEN
 Orbital Generation
 PRO_ORBITAL_GEN_DESC
-a
+Low orbit of planetary bodies provides numerous benefits for power generation compared to planetary surfaces.  Direct exposure to nearby solar radiation without atmospheric attenuation, and the orders of magnitude larger structures that may be assembled in microgravity to collect it are significant advantages.  The resulting power may be used in orbit, or may be beamed to the planet to support surface industry.  As well, new mechanisms of energy conversion become available in orbit, including planetary magnetic field coupling, orbital momentum exchange, and frictional heating with planetary atmospheres, which are uniquely beneficial for specialized applications.
 PRO_ORBITAL_MINE
 Orbital Mining
 PRO_ORBITAL_MINE_DESC
-a
+On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minearals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
 PRO_SENTIENT_FACT
 Sentient Autofactories
 PRO_SENTIENT_FACT_DESC
-a
+As manufacturing equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce.  When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.
 PRO_FRC_FLD_ASSMB
 Force-Field Assembly
 PRO_FRC_FLD_ASSMB_DESC
-a
+Whether effected through artificial means, or psychokinesis, or a combination thereof, remote manipulation represents a revolutionary improvement in assembly techniques.  At nanoscopic scales, fully controlled chemical reactions and custom assembled molecules become almost trivial.  At larger scales, up to and including manipulation of celestial bodies, locally reactionless and non-contact force impartion permit previously impossible non-destructive testing, and are particularly suited to manipulation within an enclosed or covered region, without compromising isolation seals, nor removing masses of previously obstructing matter.
 PRO_INTSTEL_COPRO
 Interstellar Co-Production
 PRO_INTSTEL_COPRO_DESC
-a
+Traditional means of production are limited by the necessity of self-sufficiency due to transportation and other logistical problems.  Later planetary regional cooperation permits some degree of specialization and co-operation, with each facility producing only a few parts or subsystem, and the whole system benefitting from concentrated expertize and economy of scale.  Expanding this concept several orders of magnitude, it may adapted to a galactic scale, with individual planets or entire systems functioning in the role of the single specialized facility.  The logistical difficulties inherent in this paradigm are also similar to those of the earlier iteration, and are scaled up to the same degree as the potential benefits.
 PRO_NDIM_ASSMB
 N-Dimensional Assembly
 PRO_NDIM_ASSMB_DESC
-a
+The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be colocated, and volumes cannot be simultaneously enclosed and open if their existance is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and continguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.
 PRO_SINGULAR_GEN
 Singularity Generation
 PRO_SINGULAR_GEN_DESC
-a
+As matter is drawn towards a singularity by the intense spacetime curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated.  High energy radiation emitted from the disk may be captured and harnessed for power generation.  The event horizon of the singularity itself also emits radiation do to annihilation of virtual particle-antiparticle pairs that form in its vicinity.  This method of power generation is significantly more delicate and unstable than that with the accretion disk method, but can produce even greater output as well.
 PRO_MATENG_REPLIC
 Matter-Energy Replication
 PRO_MATENG_REPLIC_DESC
-a
+Previous iterations of assembly techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter.  None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of smaller parts, be they prefabricated subsections, or individual atoms.  By converting pure energy directly into the desired material object, eliminating the need for precursor parts or supplied materials, the ultimate level of flexible and efficient assembly is achieved.
 PRO_ZERO_GEN
 Zero-Point Generation
 PRO_ZERO_GEN_DESC
-a
+Any power generation mechanism that involves a material fuel supply is limited by the relativistic mass-energy relationship: no more energy can be produced than equivalent mass consumed, even with perfect efficiency.  By tapping the inherent energy of the vacuum, or zero-point energy, an effectively infinite source is made available.  The rate, or power, of this extraction is also theoretically unbounded, with limits only in the available means to collect and use the output.
 CON_ORBITAL_CON
 Orbital Construction
 CON_ORBITAL_CON_DESC
-a
+On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfraces, the practical use of these spaces will be initial primarily by those who are used to, and adapated for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.
 CON_ARCH_PSYCH
 Architectural Psychology
 CON_ARCH_PSYCH_DESC
-a
+The form of a structure or inhabited space is not merely guided by the physical limitations of the materials from which it is constructed.  Psychological effects on the inhabitants within, or observers outside can have a far greater influence on the success of a design than the strength of a wall or sturdiness of a foundation.
 CON_INFRA_ECOL
 Infrastructure Ecology
 CON_INFRA_ECOL_DESC
-a
+The basic infrastructure of an established planetary colony may seem to be created entirely by the colonizers, and to function only according to their designs.  In reality, however, the ecology of the planet on which it is built is the foundation and support mechanism for the added infrastructure, and often forms an integral part of its function.  Understanding the interaction between natural and artificial components, and the limits of the resources an ecological system can provide are essential to the development of an optimal and sustainable infrastructure for any colony.
 CON_ORGANIC_STRC
 Organic Structures
 CON_ORGANIC_STRC_DESC
-a
+Buildings formed of inanitmate minerals are functional and occasionally elegant, and those of harvested but dead organics are often simple and inexpensive.  Actual living structures, however, can be grown into their final shape with no additional labour, as well effect some degree of self-repair when damaged.  They may also naturally self-regulate their internal environments, or potentially adapt to varied or changing surroundings as necessary, during or after their initial growth.
 CON_METRO_INFRA
 Metroplex Architecture
 CON_METRO_INFRA_DESC
-a
+When the entire surface of a world is covered, continued development must occur above and below pre-existing construction.   Care must be taken to ensure the stability of the undercut or overshadowed structures are not damaged, and transportation and supply routes must be rethought to support vastly increased population densities.  Furthermore, novel stylistic and functional issues must be considered, to ensure that the newer levels, and the combined whole, are worth inhabiting.
 CON_TRANS_STRC
 Transforming Structures
 CON_TRANS_STRC_DESC
-a
+A shutter functions as both a solid wall and open window, according to the desire of its user.  A room may be refurnished to serve an entirely new purpose, within the limits of the space available.  This concept may also be extended to the actual form and structure of an entire building or city, whether mechanical or organic.  Eliminating the need for demolition and rebulding permits much greater infrastructure flexibility and efficiency.  Single or isolated structures may also serve many purposes simultaneously, that would previously have required much larger and elaborate fixed designs.
 CON_ARCH_MONOFILS
 Architectural Monofilaments
 CON_ARCH_MONOFILS_DESC
-a
+Essentially unbreakable and merely a few atoms in diamater, single-crystal filaments have many uses in improving traditional structure designs in durability and economy of construction.  The capacity to suspend or stress other materials in previously impossible configurations also permits a wholly new designs.  Low weight and high strength filaments are of particular use in large-scale orbital or surface to orbit spanning structures, where variations in gravity across lengths were previously very prohibative.
 CON_SELFGRAV_STRC
 Self-Gravitating Structures
 CON_SELFGRAV_STRC_DESC
-a
+As orbital construction grows ever larger in scale, eventually the mass of a single installation is sufficient to appreciably self-gravitate.  Where previously the microgravity environment was fundamental, designs must be rethought again, just as they were when originally moving surface activity into orbit.  Rather than expanding endlessly in efficient regular patterns, the natural curved shapes of planetary bodies begins to emerge in artificial bodies as well.  Advantages over surface construction are retained, however, as the artifical mass is designed and built with its purpose in mind.
 CON_ASYMP_MATS
 Asymptotic Materials
 CON_ASYMP_MATS_DESC
-a
+Once certain thresholds of performance are passed, measuring the physical properties of materials for relative comparison becomes impractical in any terms other than orders of magnitude or logarithmic scales.  Much like superconductivity in electronics, the tensile strength, toughness, density, elasticity, refractory index and other mechanical properties of materials may be controlled with effectively no limits.  With all previously significant limitations removed, structure designs are further unhindered, and may extend or change by similar order of magnitude scales.
 CON_STRC_INT_FLDS
 Structural Integrity Fields
 CON_STRC_INT_FLDS_DESC
@@ -1917,6 +1917,30 @@ Collective Thought Network
 LRN_COLLECTIVE_NET_DESC
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
 
+GRO_PLANET_GENOME
+Planetary Genome Project
+
+GRO_PLANET_GENOME_DESC
+To truly master the genetic destiny of a race, it is insufficient to map the genome of the race in isolation. One must map the genome of the entire planet--every single species, every choromosone, every gene.
+
+GRO_PLANET_CONSC
+Planetary Consciousness
+
+GRO_PLANET_CONSC_DESC
+Symbiotic biology is just an arcane set of equations restricted to the laboratory. To truly realize symbiosis, the means must be developed to make every conscious citizen aware of their place in the planetary biosphere.
+
+GRO_ORBITAL_FARM
+Orbital Farm Complex
+
+GRO_ORBITAL_FARM_DESC
+To truly realize the potential of orbital farming, it would be necessary to develop a vast orbiting network of farms capable of producing every required environment and tether the entire structure to a space elevator.
+
+GRO_CLONE_CENTER
+Cloning Center
+
+GRO_CLONE_CENTER_DESC
+It would be possible to convert a planets entire reproduction to cloning. It would require a vast genetic database, and an enormous dedicated facility--probably several networked together.
+
 #################################
 # Building Names & Descriptions #
 #################################
@@ -1938,3 +1962,27 @@ Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
+
+BLD_PLANET_GENOME
+Planetary Genome Project
+
+BLD_PLANET_GENOME_DESC
+Map the genome of every single species on a planet. This greatly improves health and farming potential for that world, and slightly increases the maximum population.
+
+BLD_PLANET_CONSC
+Planetary Consciousness
+
+BLD_PLANET_CONSC_DESC
+Using a vast network of computers, coupled with relatively simple brainwave transceivers, grant all citizens of a planet an awareness of all living things around them and their place within. Greatly improves farming potential with some side benefit to health, happiness and trade.
+
+BLD_ORBITAL_FARM
+Orbital Farm Complex
+
+BLD_ORBITAL_FARM_DESC
+A monumental network of orbiting farms with every conceivable environment required to produce any food, tethered by a space elevator to the planet. Greatly increases both base and maximum farming output.
+
+BLD_CLONE_CENTER
+Cloning Center
+
+BLD_CLONE_CENTER_DESC
+A network of cloning facilities that produce tailored individuals for an entire planet. Population growth increases greatly and genetic disease is effectively eliminated.
