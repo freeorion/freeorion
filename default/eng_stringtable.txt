@@ -615,6 +615,9 @@ Production
 SIDE_PANEL
 Side Panel
 
+SP_SYSTEM_PRODUCTION
+System Production
+
 ##Planet Panel#############
 PLANET_PANEL
 Planet Panel
