@@ -54,7 +54,7 @@ public:
     int NextSystemID() const {return m_next_system;}
 
     /// Returns true iff this fleet can change its direction while in interstellar space.
-    bool CanChangeDirectionInRoute() const;
+    bool CanChangeDirectionEnRoute() const;
 
     /// Returns true if there is at least one armed ship in the fleet.
     bool HasArmedShips() const;

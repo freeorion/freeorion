@@ -121,7 +121,7 @@ System* Fleet::FinalDestination() const
     return GetUniverse().Object<System>(m_moving_to);
 }
 
-bool Fleet::CanChangeDirectionInRoute() const
+bool Fleet::CanChangeDirectionEnRoute() const
 {
     // TODO: check tech levels or game options to allow this
     return false;
@@ -146,7 +146,7 @@ void Fleet::SetRoute(const std::list<System*>& route, double distance)
     if (route.empty())
         throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an empty route.");
 
-    if (m_prev_system != SystemID() && m_prev_system == route.front()->ID() && !CanChangeDirectionInRoute())
+    if (m_prev_system != SystemID() && m_prev_system == route.front()->ID() && !CanChangeDirectionEnRoute())
         throw std::invalid_argument("Fleet::SetRoute() : Illegally attempted to change a fleet's direction while it was in transit.");
 
     m_travel_route = route;
