@@ -32,6 +32,11 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
 
     s_app = this;
 
+    if (argc < 2) {
+	m_log_category.fatal("The AI client should not be called directly!");
+	Exit(1);
+    }
+	
     // read command line args
     m_player_name = argv[1];
 
