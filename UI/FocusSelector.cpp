@@ -186,7 +186,6 @@ FocusSelector::FocusSelector(int w, const ResourceCenter& resource_center) :
             delta_str << '+';
         } else if (delta < 0.0) {
             delta_color = GG::CLR_RED;
-            delta_str << '-';
         }
         if (delta <= -1.0 || 1.0 <= delta)
             delta_str << boost::format("%.2g") % delta;
