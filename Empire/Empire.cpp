@@ -1160,7 +1160,7 @@ void Empire::CheckProductionProgress()
         }
     }
 
-    for (std::vector<int>::iterator it = to_erase.begin(); it != to_erase.end(); ++it) {
+    for (std::vector<int>::reverse_iterator it = to_erase.rbegin(); it != to_erase.rend(); ++it) {
         m_production_status.erase(m_production_status.begin() + *it);
         m_production_queue.erase(*it);
     }
