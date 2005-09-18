@@ -6,6 +6,7 @@
 #include "../universe/Building.h"
 #include "CUIControls.h"
 #include "../universe/Fleet.h"
+#include "FleetWindow.h"
 #include "GGApp.h"
 #include "GGClr.h"
 #include "GGDrawUtil.h"
@@ -410,6 +411,12 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
 #ifndef FREEORION_BUILD_UTIL
     m_map_wnd->CenterOnFleet(fleet->ID());
     m_map_wnd->SelectFleet(fleet->ID());
+    for (FleetWnd::FleetWndItr it = FleetWnd::FleetWndBegin(); it != FleetWnd::FleetWndEnd(); ++it) {
+        if ((*it)->ContainsFleet(fleet->ID())) {
+            (*it)->SelectFleet(fleet);
+            break;
+        }
+    }
 #endif
 }
 

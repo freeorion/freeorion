@@ -153,6 +153,7 @@ public:
     //! \name Mutators //@{
     void SystemClicked(int system_id); ///< invoked when a system is clicked on the main map, possibly indicating that the currently-selected fleet should move there
     void AddFleet(Fleet* fleet); ///< adds a new fleet to a currently-open FletWnd
+    void SelectFleet(Fleet* fleet); ///< selects the indicated fleet, bringing it into the fleet detail window
     //@}
     
     int SystemID() const {return m_system_id;}

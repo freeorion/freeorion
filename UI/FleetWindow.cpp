@@ -785,15 +785,29 @@ void FleetWnd::AddFleet(Fleet* fleet)
     ShowingFleetSignal(fleet, this);
 }
 
+void FleetWnd::SelectFleet(Fleet* fleet)
+{
+    for (int i = 0; i < m_fleets_lb->NumRows(); i++) {
+        FleetRow* row = dynamic_cast<FleetRow*>(&m_fleets_lb->GetRow(i));
+        if (row && row->m_fleet == fleet) {
+            m_fleets_lb->ClearSelection();
+            m_fleets_lb->SelectRow(i);
+            m_current_fleet = i;
+            m_fleet_detail_panel->SetFleet(fleet);
+            m_fleets_lb->BringRowIntoView(i);
+            break;
+        }
+    }
+}
+
 bool FleetWnd::ContainsFleet(int fleet_id) const
 {
-  for (int i = 0; i < m_fleets_lb->NumRows(); i++) 
-  {
-    Fleet *fleet = FleetInRow(i);
-    if(fleet && fleet->ID() == fleet_id)
-      return true;
-  }
-  return false;
+    for (int i = 0; i < m_fleets_lb->NumRows(); i++) {
+        Fleet* fleet = FleetInRow(i);
+        if (fleet && fleet->ID() == fleet_id)
+            return true;
+    }
+    return false;
 }
 
 void FleetWnd::FleetBrowsed(int row_idx)
