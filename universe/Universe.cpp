@@ -1137,10 +1137,6 @@ void Universe::ApplyEffects()
         }
     }
 
-    for (iterator it = begin(); it != end(); ++it) {
-        it->second->ClampMeters();
-    }
-
     for (std::set<int>::iterator it = m_marked_destroyed.begin(); it != m_marked_destroyed.end(); ++it) {
         DestroyImpl(*it);
     }
