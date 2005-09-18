@@ -30,6 +30,8 @@
 #include <vector>
 #include <deque>
 
+#define TEST_BROWSE_INFO 0
+#if TEST_BROWSE_INFO
 #include "GGBrowseInfoWnd.h"
 class BrowseFoo : public GG::TextBoxBrowseInfoWnd
 {
@@ -41,6 +43,7 @@ public:
     void Update(int mode, const GG::Wnd* target)
         { SetText("mode=" + boost::lexical_cast<std::string>(mode) + " wnd=" + target->WindowText()); }
 };
+#endif
 
 namespace {
     const double ZOOM_STEP_SIZE = 1.25;
@@ -315,8 +318,10 @@ MapWnd::MapWnd() :
 
     g_chat_edit_history.push_front("");
 
+#if TEST_BROWSE_INFO
     boost::shared_ptr<GG::BrowseInfoWnd> browser_wnd(new BrowseFoo());
     GG::Wnd::SetDefaultBrowseInfoWnd(browser_wnd);
+#endif
 }
 
 MapWnd::~MapWnd()
