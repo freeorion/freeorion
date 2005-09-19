@@ -327,7 +327,7 @@ FreeOrion, an open-source game based on Master of Orion, is a turn-based game of
 ###########################
 
 GAME_MENU_WINDOW_TITLE
-Options
+Menu
 
 GAME_MENU_SAVE
 Save Game
