@@ -593,6 +593,7 @@ void MapWnd::InitTurn(int turn_number)
         AttachChild(icon);
         GG::Connect(icon->LeftClickedSignal, &MapWnd::SelectSystem, this);
         GG::Connect(icon->RightClickedSignal, &MapWnd::SystemRightClicked, this);
+        GG::Connect(icon->LeftDoubleClickedSignal, &MapWnd::SystemDoubleClicked, this);
 
         // system's starlanes
         for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
@@ -1148,10 +1149,12 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 
 void MapWnd::SystemDoubleClicked(int system_id)
 {
-    if (!m_production_wnd->Visible())
-        ToggleProduction();
-    CenterOnSystem(system_id);
-    m_production_wnd->SelectSystem(system_id);
+    if (!m_in_production_view_mode) {
+        if (!m_production_wnd->Visible())
+            ToggleProduction();
+        CenterOnSystem(system_id);
+        m_production_wnd->SelectSystem(system_id);
+    }
 }
 
 void MapWnd::SystemRightClicked(int system_id)
