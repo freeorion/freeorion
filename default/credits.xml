@@ -5,7 +5,7 @@
       <PERSON name="Mark Saward"     nick="Tyreth"          task="Project Lead, Programming, Game Design, Graphics"/>
       <PERSON name="Zach Laine"      nick="Tzlaine"         task="Programming Lead, Game Design"/>
       <PERSON name="Samuel Knowlton" nick="Aquitaine"       task="Game Design Lead"/>
-      <PERSON name="Anton Ruonala"   nick="Miu"             task="Graphics Lead"/>
+      <PERSON name="Jonathan Hill"   nick="Obiwan"          task="Graphics Lead"/>
       <PERSON name="Kenneth Welch"   nick="LithiumMongoose" task="Audio Lead"/>
     </GROUP>
     <GROUP name ="PROGRAMMING">
@@ -30,15 +30,18 @@
       <PERSON name="Teal Ablaze"     nick=""           task="Game Design"/>
       <PERSON name="Bryan Patterson" nick="PowerCrazy" task="Game Design"/>
       <PERSON name="Geoff the Medio" nick=""           task="Game Design"/>
+      <PERSON name="Andrew Hull"     nick="moxy"       task="Game Design"/>
     </GROUP>
     <GROUP name ="GRAPHICS">
       <PERSON name="Ka"               nick=""          task="Graphics"/>
       <PERSON name="Alex Kaludis"     nick="That Guy"  task="Graphics"/>
-      <PERSON name="Jonathan Hill"    nick="Obiwan"    task="Graphics"/>
       <PERSON name="Chris Montgomery" nick=""          task="Graphics"/>
       <PERSON name="Mathias Köhler"   nick="pd"        task="Graphics"/>
+      <PERSON name="Anton Ruonala"    nick="Miu"       task="Graphics"/>
       <PERSON name="Tim Gilmour"      nick="burndaddy" task="Graphics"/>
       <PERSON name="Zanzibar"         nick=""          task="Graphics"/>
+      <PERSON name="Tomi Hartikka"    nick="Mystiqq"   task="Graphics"/>
+      <PERSON name="Brendan Mauro"    nick="BreadMan"  task="Graphics"/>
     </GROUP>
     <GROUP name ="AUDIO">
       <PERSON name="Shannon Roberts" nick="Guiguibaah" task="Audio"/>
