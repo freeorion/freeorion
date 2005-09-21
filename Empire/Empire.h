@@ -273,14 +273,6 @@ public:
     /// Returns the numeric ID of the empire's capitol
     int CapitolID() const;
 
-    /// Returns the Empire's accumulated RPs
-    /** 
-     * Gets the empire's accumulated research points. 
-     * This number keeps accumulating even after research breakthroughs 
-     * have been achieved.
-     */
-    int TotalRP() const;
-
     /// Returns the ship design with the requested name, or 0 if none exists.
     const ShipDesign* GetShipDesign(const std::string& name) const;
 
