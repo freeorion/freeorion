@@ -655,7 +655,12 @@ std::string Condition::FocusType::Description(bool negated/* = false*/) const
 
 bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(target)) {
+    const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(target);
+    const ::Building* building = 0;
+    if (!prod_center && (building = universe_object_cast<const ::Building*>(target))) {
+        prod_center = static_cast<const ResourceCenter*>(building->GetPlanet());
+    }
+    if (prod_center) {
         for (unsigned int i = 0; i < m_foci.size(); ++i) {
             if (m_foci[i]->Eval(source, target) == (m_primary ? prod_center->PrimaryFocus() : prod_center->SecondaryFocus()))
                 return true;
