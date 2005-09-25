@@ -125,7 +125,7 @@ static void Debugout(std::vector<CombatAssetsHitPoints> &empire_combat_forces)
 }
 #endif
 
-CombatUpdateMessage GenerateCombatUpdateMessage(int system_id,const std::vector<CombatAssetsHitPoints> &empire_combat_forces)
+CombatUpdateMessage GenerateCombatUpdateMessage(int victor_id,int system_id,const std::vector<CombatAssetsHitPoints> &empire_combat_forces)
 {
   CombatUpdateMessage cmb_upd_msg;
   
@@ -164,7 +164,7 @@ CombatUpdateMessage GenerateCombatUpdateMessage(int system_id,const std::vector<
       else
         eci.non_combat_ships_retreated++;
 
-    eci.planets_lost       = empire_combat_forces[e].defenseless_planets.size();
+    eci.planets_lost       = victor_id==e?0:empire_combat_forces[e].defenseless_planets.size();
     eci.planets_defenseless= 0;
 
     cmb_upd_msg.m_opponents.push_back(eci);
@@ -232,7 +232,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
     return;
 
   GG::XMLDoc msg;
-  msg.root_node.AppendChild(GenerateCombatUpdateMessage(system_id,empire_combat_forces).XMLEncode());
+  msg.root_node.AppendChild(GenerateCombatUpdateMessage(-1,system_id,empire_combat_forces).XMLEncode());
   SendMessageToAllPlayer(Message::COMBAT_START,Message::CORE,msg);
 
   while(combat_assets.size()>1)
@@ -356,7 +356,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
           }
       }
       msg = GG::XMLDoc();
-      msg.root_node.AppendChild(GenerateCombatUpdateMessage(system_id,empire_combat_forces).XMLEncode());
+      msg.root_node.AppendChild(GenerateCombatUpdateMessage(-1,system_id,empire_combat_forces).XMLEncode());
       SendMessageToAllPlayer(Message::COMBAT_ROUND_UPDATE,Message::CORE,msg);
       //SDL_Delay(1000); maybe we add an delay to illustrate players a ongoing combat
     }
@@ -446,6 +446,6 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
   }
 
   msg = GG::XMLDoc();
-  msg.root_node.AppendChild(GenerateCombatUpdateMessage(system_id,empire_combat_forces).XMLEncode());
+  msg.root_node.AppendChild(GenerateCombatUpdateMessage(victor,system_id,empire_combat_forces).XMLEncode());
   SendMessageToAllPlayer(Message::COMBAT_END,Message::CORE,msg);
 }
