@@ -1068,6 +1068,20 @@ void Universe::ApplyEffects()
     typedef std::multimap<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMap;
     typedef std::pair<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMapElem;
     EffectsAndTargetsMap effects_targets_map;
+    for (Universe::const_iterator it = begin(); it != end(); ++it) {
+        for (std::set<std::string>::const_iterator special_it = it->second->Specials().begin();
+             special_it != it->second->Specials().end();
+             ++special_it) {
+            const Special* special = GetSpecial(*special_it);
+            assert(special);
+            for (unsigned int i = 0; i < special->Effects().size(); ++i) {
+                boost::shared_ptr<const Effect::EffectsGroup> effect = special->Effects()[i];
+                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->first, Effect::EffectsGroup::TargetSet()));
+                special->Effects()[i]->GetTargetSet(it->first, map_elem.second.second);
+                effects_targets_map.insert(map_elem);
+            }
+        }
+    }
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
         it->second->ClearRefinements();
         for (Empire::TechItr tech_it = it->second->TechBegin(); tech_it != it->second->TechEnd(); ++tech_it) {
@@ -1090,20 +1104,6 @@ void Universe::ApplyEffects()
             EffectsAndTargetsMapElem map_elem(effect, std::make_pair(buildings[i]->ID(), Effect::EffectsGroup::TargetSet()));
             building_type->Effects()[j]->GetTargetSet(buildings[i]->ID(), map_elem.second.second);
             effects_targets_map.insert(map_elem);
-        }
-    }
-    for (Universe::const_iterator it = begin(); it != end(); ++it) {
-        for (std::set<std::string>::const_iterator special_it = it->second->Specials().begin();
-             special_it != it->second->Specials().end();
-             ++special_it) {
-            const Special* special = GetSpecial(*special_it);
-            assert(special);
-            for (unsigned int i = 0; i < special->Effects().size(); ++i) {
-                boost::shared_ptr<const Effect::EffectsGroup> effect = special->Effects()[i];
-                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->first, Effect::EffectsGroup::TargetSet()));
-                special->Effects()[i]->GetTargetSet(it->first, map_elem.second.second);
-                effects_targets_map.insert(map_elem);
-            }
         }
     }
 
