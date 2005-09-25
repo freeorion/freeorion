@@ -18,7 +18,7 @@ struct ResourcePoolWrap : ResourcePool, wrapper<ResourcePool>
 	    if (override o = this->get_override("Stockpile"))
 		return o();
 	    else
-		ResourcePool::Stockpile();
+		return ResourcePool::Stockpile();
 	}
     double default_Stockpile() const
 	{
@@ -60,7 +60,7 @@ void ExportResourcePool()
 	.def("Stockpile", &ResourcePool::Stockpile, &ResourcePoolWrap::default_Stockpile)
 	.def("SetStockpile", &ResourcePool::SetStockpile, &ResourcePoolWrap::default_SetStockpile)
 
-	.def("PlanetChanged", pure_virtual(&ResourcePool::PlanetChanged))
+//	.def("PlanetChanged", pure_virtual(&ResourcePool::PlanetChanged))
 	;
 }
 

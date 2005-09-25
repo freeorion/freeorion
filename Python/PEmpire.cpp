@@ -41,7 +41,7 @@ void ExportEmpire()
 						     return_internal_reference<>()))
 	.def("ResearchStatus", &Empire::ResearchStatus)
 	.add_property("AvailableTechs", make_function(&Empire::AvailableTechs,
-						      return_internal_reference<>()))
+						      return_value_policy<copy_const_reference>()))
 	.def("TechAvailable", &Empire::TechAvailable)
 	.add_property("AvailableBuildingTypes", make_function(&Empire::AvailableBuildingTypes,
 							      return_internal_reference<>()))
