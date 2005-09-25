@@ -546,10 +546,10 @@ public:
             double x_scale = PlanetDiameter(m_size) / static_cast<double>(texture_w);
             double y_scale = PlanetDiameter(m_size) / static_cast<double>(texture_h);
             glColor4ub(255, 255, 255, m_atmosphere_alpha);
-            m_atmosphere_texture->OrthoBlit(ul.x - m_atmosphere_planet_rect.ul.x * x_scale,
-                                            ul.y - m_atmosphere_planet_rect.ul.y * y_scale,
-                                            lr.x + (texture_w - m_atmosphere_planet_rect.lr.x) * x_scale,
-                                            lr.y + (texture_h - m_atmosphere_planet_rect.lr.y) * y_scale,
+            m_atmosphere_texture->OrthoBlit(static_cast<int>(ul.x - m_atmosphere_planet_rect.ul.x * x_scale),
+                                            static_cast<int>(ul.y - m_atmosphere_planet_rect.ul.y * y_scale),
+                                            static_cast<int>(lr.x + (texture_w - m_atmosphere_planet_rect.lr.x) * x_scale),
+                                            static_cast<int>(lr.y + (texture_h - m_atmosphere_planet_rect.lr.y) * y_scale),
                                             0, false);
         }
         return true;
@@ -845,7 +845,7 @@ void SidePanel::PlanetPanel::PlanetChanged()
   
     text+="\n";
     if(planet->MaxPop()==0) text+= UserString("PE_UNINHABITABLE");
-    else                    text+= UserString("PL_SIZE") + " " + lexical_cast<std::string>(planet->MaxPop());
+    else                    text+= UserString("PL_SIZE") + " " + lexical_cast<std::string>(static_cast<int>(planet->MaxPop()));
 
     m_planet_info->SetText(text);
   }
@@ -1000,7 +1000,7 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
   glColor4ubv(ClientUI::TEXT_COLOR.v);
   icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   x+=font->Height();
-  text = lexical_cast<std::string>(population)+"/"+lexical_cast<std::string>(planet.MaxPop());
+  text = lexical_cast<std::string>(population)+"/"+lexical_cast<std::string>(static_cast<int>(planet.MaxPop()));
   font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0);
   x+=font->TextExtent(text, format).x+ICON_MARGIN;
 
@@ -1041,7 +1041,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   else if(future_pop_growth>0.0)  text=GG::RgbaTag(GG::CLR_GREEN);
        else                       text=GG::RgbaTag(ClientUI::TEXT_COLOR);
 
-  text+= lexical_cast<std::string>(static_cast<int>(planet.PopPoints())) + "</rgba>/"+lexical_cast<std::string>(planet.MaxPop());
+  text+= lexical_cast<std::string>(static_cast<int>(planet.PopPoints())) + "</rgba>/"+lexical_cast<std::string>(static_cast<int>(planet.MaxPop()));
   font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0);
   x+=font->TextExtent(text, format).x+ICON_MARGIN;
 
