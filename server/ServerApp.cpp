@@ -156,7 +156,7 @@ namespace {
 #endif    
     const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
     GG::XMLDoc g_load_doc;
-    const bool ALL_OBJECTS_VISIBLE = false; // set this to true to turn off visibility for debugging purposes
+    const bool ALL_OBJECTS_VISIBLE = true; // set this to true to turn off visibility for debugging purposes
 
     // command-line options
     void AddOptions(OptionsDB& db)
@@ -1767,7 +1767,7 @@ void ServerApp::ProcessTurns()
     {
         GG::XMLDoc game_state;
 
-        GG::XMLElement universe_data = m_universe.XMLEncode(ALL_OBJECTS_VISIBLE ? Universe::ALL_EMPIRES : it->first);
+        GG::XMLElement universe_data = m_universe.XMLEncode(it->first);
         GG::XMLElement empire_data = m_empires.CreateClientEmpireUpdate( it->first );
 
         // build the new turn doc
