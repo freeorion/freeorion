@@ -142,11 +142,11 @@ namespace {
     void FillApplicationPanel(const GG::Rect& panel, int corner_radius)
     {
         CircleArc(panel.lr.x - 2 * corner_radius, panel.ul.y,
-                panel.lr.x, panel.ul.y + 2 * corner_radius,
-                0.0, PI / 2.0, true);
+                  panel.lr.x, panel.ul.y + 2 * corner_radius,
+                  0.0, PI / 2.0, true);
         CircleArc(panel.ul.x, panel.ul.y,
-                panel.ul.x + 2 * corner_radius, panel.ul.y + 2 * corner_radius,
-                PI / 2.0, PI, true);
+                  panel.ul.x + 2 * corner_radius, panel.ul.y + 2 * corner_radius,
+                  PI / 2.0, PI, true);
         glBegin(GL_QUADS);
         glVertex2i(panel.ul.x + corner_radius, panel.ul.y + corner_radius);
         glVertex2i(panel.ul.x + corner_radius, panel.ul.y);
@@ -227,70 +227,70 @@ namespace {
             if (show_progress) {
                 glVertex2i(main_panel.lr.x, progress_panel.ul.y);
                 CircleArc(main_panel.lr.x - 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y,
-                        main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
-                        0.0, PI / 2.0, false);
+                          main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
+                          0.0, PI / 2.0, false);
                 CircleArc(main_panel.ul.x, main_panel.ul.y,
-                        main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
-                        PI / 2.0, PI, false);
+                          main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
+                          PI / 2.0, PI, false);
                 CircleArc(main_panel.ul.x, main_panel.lr.y - 2 * MAIN_PANEL_CORNER_RADIUS,
-                        main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.lr.y,
-                        PI, 3.0 * PI / 2.0, false);
+                          main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.lr.y,
+                          PI, 3.0 * PI / 2.0, false);
                 glVertex2i(progress_panel.ul.x, main_panel.lr.y);
                 CircleArc(progress_panel.ul.x, progress_panel.lr.y - 2 * PROGRESS_PANEL_CORNER_RADIUS,
-                        progress_panel.ul.x + 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.lr.y,
-                        PI, 3.0 * PI / 2.0, false);
+                          progress_panel.ul.x + 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.lr.y,
+                          PI, 3.0 * PI / 2.0, false);
                 CircleArc(progress_panel.lr.x - 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.lr.y - 2 * PROGRESS_PANEL_CORNER_RADIUS,
-                        progress_panel.lr.x, progress_panel.lr.y,
-                        3.0 * PI / 2.0, 0.0, false);
+                          progress_panel.lr.x, progress_panel.lr.y,
+                          3.0 * PI / 2.0, 0.0, false);
                 CircleArc(progress_panel.lr.x - 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.ul.y,
-                        progress_panel.lr.x, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS,
-                        0.0, PI / 2.0, false);
+                          progress_panel.lr.x, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS,
+                          0.0, PI / 2.0, false);
                 CircleArc(progress_panel.ul.x, progress_panel.ul.y,
-                        progress_panel.ul.x + 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS,
-                        PI / 2.0, PI, false);
+                          progress_panel.ul.x + 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS,
+                          PI / 2.0, PI, false);
                 glVertex2i(progress_panel.ul.x, main_panel.lr.y);
             } else {
                 CircleArc(main_panel.lr.x - 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y,
-                        main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
-                        0.0, PI / 2.0, false);
+                          main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
+                          0.0, PI / 2.0, false);
                 CircleArc(main_panel.ul.x, main_panel.ul.y,
-                        main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
-                        PI / 2.0, PI, false);
+                          main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
+                          PI / 2.0, PI, false);
                 CircleArc(main_panel.ul.x, main_panel.lr.y - 2 * MAIN_PANEL_CORNER_RADIUS,
-                        main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.lr.y,
-                        PI, 3.0 * PI / 2.0, false);
+                          main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.lr.y,
+                          PI, 3.0 * PI / 2.0, false);
                 CircleArc(main_panel.lr.x - 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.lr.y - 2 * MAIN_PANEL_CORNER_RADIUS,
-                        main_panel.lr.x, main_panel.lr.y,
-                        3.0 * PI / 2.0, 0.0, false);
+                          main_panel.lr.x, main_panel.lr.y,
+                          3.0 * PI / 2.0, 0.0, false);
                 glVertex2i(main_panel.lr.x, main_panel.ul.y + MAIN_PANEL_CORNER_RADIUS);
             }
         } else if (tech_type == TT_APPLICATION) {
             if (show_progress) {
                 glVertex2i(main_panel.lr.x, progress_panel.ul.y);
                 CircleArc(main_panel.lr.x - 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y,
-                        main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
-                        0.0, PI / 2.0, false);
+                          main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
+                          0.0, PI / 2.0, false);
                 CircleArc(main_panel.ul.x, main_panel.ul.y,
-                        main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
-                        PI / 2.0, PI, false);
+                          main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
+                          PI / 2.0, PI, false);
                 glVertex2i(main_panel.ul.x, main_panel.lr.y);
                 glVertex2i(progress_panel.ul.x, main_panel.lr.y);
                 glVertex2i(progress_panel.ul.x, progress_panel.lr.y);
                 glVertex2i(progress_panel.lr.x, progress_panel.lr.y);
                 CircleArc(progress_panel.lr.x - 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.ul.y,
-                        progress_panel.lr.x, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS,
-                        0.0, PI / 2.0, false);
+                          progress_panel.lr.x, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS,
+                          0.0, PI / 2.0, false);
                 CircleArc(progress_panel.ul.x, progress_panel.ul.y,
-                        progress_panel.ul.x + 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS,
-                        PI / 2.0, PI, false);
+                          progress_panel.ul.x + 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS,
+                          PI / 2.0, PI, false);
                 glVertex2i(progress_panel.ul.x, main_panel.lr.y);
             } else {
                 CircleArc(main_panel.lr.x - 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y,
-                        main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
-                        0.0, PI / 2.0, false);
+                          main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
+                          0.0, PI / 2.0, false);
                 CircleArc(main_panel.ul.x, main_panel.ul.y,
-                        main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
-                        PI / 2.0, PI, false);
+                          main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS,
+                          PI / 2.0, PI, false);
                 glVertex2i(main_panel.ul.x, main_panel.lr.y);
                 glVertex2i(main_panel.lr.x, main_panel.lr.y);
                 glVertex2i(main_panel.lr.x, main_panel.ul.y + MAIN_PANEL_CORNER_RADIUS);
@@ -326,66 +326,66 @@ namespace {
         ExpandCollapseButton(const GG::Clr& color, const GG::Clr& border_color) :
             StateButton(0, 0, SIZE, SIZE, "", ClientUI::FONT, ClientUI::PTS, 0, border_color, color),
             m_selected(false)
-        {}
+            {}
 
         virtual bool InWindow(const GG::Pt& pt) const
-        {
-            GG::Pt ul = UpperLeft(), sz = Size();
-            double dx = pt.x - (ul.x + sz.x / 2.0);
-            double dy = pt.y - (ul.y + sz.y / 2.0);
-            double r = std::min(sz.x / 2.0, sz.y / 2.0);
-            return dx * dx + dy * dy < r * r;
-        }
+            {
+                GG::Pt ul = UpperLeft(), sz = Size();
+                double dx = pt.x - (ul.x + sz.x / 2.0);
+                double dy = pt.y - (ul.y + sz.y / 2.0);
+                double r = std::min(sz.x / 2.0, sz.y / 2.0);
+                return dx * dx + dy * dy < r * r;
+            }
 
         virtual bool Render()
-        {
-            GG::Pt ul = UpperLeft(), lr = LowerRight();
-            GG::Clr color = TextColor();
-            GG::Clr border_color = Color();
-            if (m_selected) {
-                color = GG::LightColor(color);
-                border_color = GG::LightColor(border_color);
+            {
+                GG::Pt ul = UpperLeft(), lr = LowerRight();
+                GG::Clr color = TextColor();
+                GG::Clr border_color = Color();
+                if (m_selected) {
+                    color = GG::LightColor(color);
+                    border_color = GG::LightColor(border_color);
+                }
+                glDisable(GL_TEXTURE_2D);
+                glColor4ubv(color.v);
+                CircleArc(ul.x, ul.y, lr.x, lr.y, 0.0, 0.0, true);
+                glEnable(GL_LINE_SMOOTH);
+                glLineWidth(OUTER_LINE_THICKNESS);
+                DrawOutline(ul, lr, border_color, 63, 127);
+                glLineWidth(1.0);
+                glDisable(GL_LINE_SMOOTH);
+                DrawOutline(ul, lr, border_color, 255, 255);
+                glEnable(GL_TEXTURE_2D);
+                return true;
             }
-            glDisable(GL_TEXTURE_2D);
-            glColor4ubv(color.v);
-            CircleArc(ul.x, ul.y, lr.x, lr.y, 0.0, 0.0, true);
-            glEnable(GL_LINE_SMOOTH);
-            glLineWidth(OUTER_LINE_THICKNESS);
-            DrawOutline(ul, lr, border_color, 63, 127);
-            glLineWidth(1.0);
-            glDisable(GL_LINE_SMOOTH);
-            DrawOutline(ul, lr, border_color, 255, 255);
-            glEnable(GL_TEXTURE_2D);
-            return true;
-        }
 
         void SetSelected(bool s) {m_selected = s;}
 
     private:
         void DrawOutline(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, int alpha1, int alpha2)
-        {
-            glColor4ub(color.r, color.g, color.b, alpha1);
-            glBegin(GL_LINES);
-            // trace the lines both ways for symmetry, since the shape is so small
-            GG::Pt center(static_cast<int>((lr.x + ul.x) / 2.0 + 0.5),
-                          static_cast<int>((lr.y + ul.y) / 2.0 + 0.5));
-            glVertex2i(ul.x + 3, center.y);
-            glVertex2i(lr.x - 3, center.y);
-            glVertex2i(lr.x - 3, center.y);
-            glVertex2i(ul.x + 3, center.y);
-            if (Checked()) {
-                glVertex2i(center.x, ul.y + 3);
-                glVertex2i(center.x, lr.y - 3);
-                glVertex2i(center.x, lr.y - 3);
-                glVertex2i(center.x, ul.y + 3);
+            {
+                glColor4ub(color.r, color.g, color.b, alpha1);
+                glBegin(GL_LINES);
+                // trace the lines both ways for symmetry, since the shape is so small
+                GG::Pt center(static_cast<int>((lr.x + ul.x) / 2.0 + 0.5),
+                              static_cast<int>((lr.y + ul.y) / 2.0 + 0.5));
+                glVertex2i(ul.x + 3, center.y);
+                glVertex2i(lr.x - 3, center.y);
+                glVertex2i(lr.x - 3, center.y);
+                glVertex2i(ul.x + 3, center.y);
+                if (Checked()) {
+                    glVertex2i(center.x, ul.y + 3);
+                    glVertex2i(center.x, lr.y - 3);
+                    glVertex2i(center.x, lr.y - 3);
+                    glVertex2i(center.x, ul.y + 3);
+                }
+                glEnd();
+                if (alpha1 != alpha2)
+                    glColor4ub(color.r, color.g, color.b, alpha2);
+                glBegin(GL_LINE_STRIP);
+                CircleArc(ul.x, ul.y, lr.x, lr.y, 0.0, 0.0, false);
+                glEnd();
             }
-            glEnd();
-            if (alpha1 != alpha2)
-                glColor4ub(color.r, color.g, color.b, alpha2);
-            glBegin(GL_LINE_STRIP);
-            CircleArc(ul.x, ul.y, lr.x, lr.y, 0.0, 0.0, false);
-            glEnd();
-        }
 
         bool m_selected;
         static const int SIZE = 17;
@@ -893,7 +893,7 @@ public:
     typedef TechDoubleClickedSignalType::slot_type TechDoubleClickedSlotType; ///< type of functor(s) invoked on a TechDoubleClickedSignalType
     //@}
 
-    TechPanel(const Tech* tech, bool selected, bool collapsed_subtree, const std::string& category_shown, TechTypesShown types_shown);
+    TechPanel(const Tech* tech, bool selected, bool collapsed_subtree, const std::string& category_shown, TechTypesShown types_shown, TechStatusesShown statuses_shown);
 
     virtual bool InWindow(const GG::Pt& pt) const;
     virtual bool Render();
@@ -924,7 +924,8 @@ private:
 };
 
 TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, bool collapsed_subtree,
-                                               const std::string& category_shown, TechTypesShown types_shown) :
+                                               const std::string& category_shown, TechTypesShown types_shown,
+                                               TechStatusesShown statuses_shown) :
     GG::Wnd(0, 0, 1, 1, GG::Wnd::CLICKABLE),
     m_tech(tech),
     m_progress(0.0),
@@ -1025,6 +1026,9 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
         const Tech* unlocked_tech = GetTech(*it);
         if ((category_shown == "ALL" || unlocked_tech->Category() == category_shown) &&
             ((unlocked_tech->Type() - TT_THEORY) <= (types_shown - TechTreeWnd::THEORY_TECHS)) &&
+            ((statuses_shown == RESEARCHABLE_TECHS && empire->ResearchableTech(unlocked_tech->Name()) && !empire->TechAvailable(unlocked_tech->Name())) ||
+             (statuses_shown == COMPLETE_AND_RESEARCHABLE_TECHS && (empire->ResearchableTech(unlocked_tech->Name()) || empire->TechAvailable(unlocked_tech->Name()))) ||
+             statuses_shown == ALL_TECH_STATUSES) &&
             RootOfSubtree(unlocked_tech, category_shown)) {
             show_toggle_button = true;
             break;
@@ -1339,6 +1343,7 @@ void TechTreeWnd::LayoutPanel::UncollapseAll()
     }
 }
 
+#include <iostream>
 void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
 {
     GG::Pt final_position = keep_position ? m_scroll_position : GG::Pt();
@@ -1383,7 +1388,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
              prereq_it != (*it)->Prerequisites().end();
              ++prereq_it) {
             if (!TechVisible(GetTech(*prereq_it)))
-                continue;
+            continue;
             agedge(graph, name_to_node_map[*prereq_it], name_to_node_map[(*it)->Name()]);
         }
     }
@@ -1397,7 +1402,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
     for (Agnode_t* node = agfstnode(graph); node; node = agnxtnode(graph, node)) {
         const Tech* tech = GetTech(node->name);
         assert(tech);
-        m_techs[tech] = new TechPanel(tech, tech == m_selected_tech, collapsed_subtree_techs.find(tech) != collapsed_subtree_techs.end(), m_category_shown, m_tech_types_shown);
+        m_techs[tech] = new TechPanel(tech, tech == m_selected_tech, collapsed_subtree_techs.find(tech) != collapsed_subtree_techs.end(), m_category_shown, m_tech_types_shown, m_tech_statuses_shown);
         m_techs[tech]->MoveTo(static_cast<int>(PS2INCH(ND_coord_i(node).x) - m_techs[tech]->Width() / 2 + TECH_PANEL_MARGIN),
                               static_cast<int>(PS2INCH(ND_coord_i(node).y) - (m_techs[tech]->Height() - PROGRESS_PANEL_BOTTOM_EXTRUSION) / 2 + TECH_PANEL_MARGIN));
         AttachChild(m_techs[tech]);
@@ -1465,10 +1470,13 @@ bool TechTreeWnd::LayoutPanel::TechVisible(const Tech* tech)
     if (m_category_shown != "ALL" && tech->Category() != m_category_shown)
         return false;
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire->TechAvailable(tech->Name()) && m_tech_statuses_shown == RESEARCHABLE_TECHS)
-        return false;
-    if (!empire->ResearchableTech(tech->Name()) && m_tech_statuses_shown != ALL_TECH_STATUSES)
-        return false;
+    if (m_tech_statuses_shown == RESEARCHABLE_TECHS) {
+        if (empire->TechAvailable(tech->Name()) || !empire->ResearchableTech(tech->Name()))
+            return false;
+    } else if (m_tech_statuses_shown == COMPLETE_AND_RESEARCHABLE_TECHS) {
+        if (!empire->TechAvailable(tech->Name()) && !empire->ResearchableTech(tech->Name()))
+            return false;
+    }
     std::set<std::string> category_prereqs;
     const std::set<std::string> prereqs = tech->Prerequisites();
     for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
@@ -1481,8 +1489,6 @@ bool TechTreeWnd::LayoutPanel::TechVisible(const Tech* tech)
         const Tech* prereq = GetTech(*category_prereqs.begin());
         if (collapsed_subtree_techs.find(prereq) != collapsed_subtree_techs.end())
             return false;
-        else
-            return TechVisible(prereq);
     }
     return true;
 }
