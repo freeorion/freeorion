@@ -935,6 +935,9 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
 {
     SetFilesString(UserString("FILE_DLG_FILES"));
     SetFileTypesString(UserString("FILE_DLG_FILE_TYPES"));
+    SetSaveString(UserString("SAVE"));
+    SetOpenString(UserString("OPEN"));
+    SetCancelString(UserString("CANCEL"));
 }
 
 //////////////////////////////////////////////////
