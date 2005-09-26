@@ -18,7 +18,7 @@ struct OrderWrap : Order, wrapper<Order>
 
 void ExportOrder()
 {
-    class_<OrderWrap,boost::noncopyable>("Order")
+    class_<OrderWrap,std::auto_ptr<OrderWrap>,boost::noncopyable>("Order")
 
 	.def(init<int>())
 
@@ -33,32 +33,36 @@ void ExportOrder()
 //	.def("InitOrderFactory",&Order::InitOrderFactory)
 	//.staticmethod("InitOrderFactory")
 	;
+    implicitly_convertible<std::auto_ptr<OrderWrap>,std::auto_ptr<Order> >();
 
 
-    class_<ResearchQueueOrder,bases<Order>,boost::noncopyable>("ResearchQueueOrder")
+    class_<ResearchQueueOrder,std::auto_ptr<ResearchQueueOrder>,bases<Order>,
+	boost::noncopyable>("ResearchQueueOrder")
 	.def(init<int,const std::string&,optional<int> >())
 	;
+    implicitly_convertible<std::auto_ptr<ResearchQueueOrder>,std::auto_ptr<Order> >();
 
-
-    class_<RenameOrder,bases<Order>,boost::noncopyable>("RenameOrder")
+    class_<RenameOrder,std::auto_ptr<RenameOrder>,
+	bases<Order>,boost::noncopyable>("RenameOrder")
 	.def(init<int,int,const std::string&>())
 	
 	.add_property("ObjectID", &RenameOrder::ObjectID)
 	.add_property("Name", make_function(&RenameOrder::Name,
 					    return_internal_reference<>()))
 	;
+    implicitly_convertible<std::auto_ptr<RenameOrder>,std::auto_ptr<Order> >();
 
-
-    class_<ProductionQueueOrder,bases<Order>,boost::noncopyable>("ProductionQueueOrder")
+    class_<ProductionQueueOrder,std::auto_ptr<ProductionQueueOrder>,
+bases<Order>,boost::noncopyable>("ProductionQueueOrder")
 	.def(init<int,BuildType,const std::string&,int,int>())
 	.def(init<int,int,int,bool>())
 	.def(init<int,int,optional<int> >())
 	;
+    implicitly_convertible<std::auto_ptr<ProductionQueueOrder>,std::auto_ptr<Order> >();
 
-
-    class_<NewFleetOrder, bases<Order>, boost::noncopyable>("NewFleetOrder")
-	.def(init<int,const std::string&,const int,int,optional<int> >())
-	.def(init<int,const std::string&,const int,double,double,optional<int> >())
+    class_<NewFleetOrder, bases<Order>, std::auto_ptr<NewFleetOrder>, boost::noncopyable>("NewFleetOrder")
+	.def(init<int,const std::string&,const int,int,optional<int> >()[with_custodian_and_ward<1,3>()])
+	.def(init<int,const std::string&,const int,double,double,optional<int> >()[with_custodian_and_ward<1,3>()])
 
 	.add_property("FleetName", make_function(&NewFleetOrder::FleetName,
 						 return_internal_reference<>()))
@@ -67,9 +71,10 @@ void ExportOrder()
 	.add_property("NewID", &NewFleetOrder::NewID)
 	.add_property("ShipID", &NewFleetOrder::ShipID)
 	;
+    implicitly_convertible<std::auto_ptr<NewFleetOrder>,std::auto_ptr<Order> >();
     
-    
-    class_<FleetTransferOrder, bases<Order>, boost::noncopyable>("FleetTransferOrder")
+    class_<FleetTransferOrder, std::auto_ptr<FleetTransferOrder>,
+	bases<Order>, boost::noncopyable>("FleetTransferOrder")
 	.def(init<int,int,int,const std::vector<int>&>())
 
 	.add_property("SourceFleet", &FleetTransferOrder::SourceFleet)
@@ -77,9 +82,10 @@ void ExportOrder()
 	.add_property("Ships", make_function(&FleetTransferOrder::Ships,
 					     return_internal_reference<>()))
 	;
+    implicitly_convertible<std::auto_ptr<FleetTransferOrder>,std::auto_ptr<Order> >();
 
-
-    class_<FleetMoveOrder,bases<Order>,boost::noncopyable>("FleetMoveOrder")
+    class_<FleetMoveOrder,std::auto_ptr<FleetMoveOrder>,
+	bases<Order>,boost::noncopyable>("FleetMoveOrder")
 	.def(init<int,int,int,int>())
 
 	.add_property("FleetID", &FleetMoveOrder::FleetID)
@@ -89,27 +95,32 @@ void ExportOrder()
 					    return_internal_reference<>()))
 	.add_property("RouteLength",&FleetMoveOrder::RouteLength)
 	;
-
-    class_<FleetColonizeOrder,bases<Order>,boost::noncopyable>("FleetColonizeOrder")
+    implicitly_convertible<std::auto_ptr<FleetMoveOrder>,std::auto_ptr<Order> >();
+    
+    class_<FleetColonizeOrder,std::auto_ptr<FleetColonizeOrder>,
+	bases<Order>,boost::noncopyable>("FleetColonizeOrder")
 	.def(init<int,int,int>())
 
 	.add_property("PlanetID", &FleetColonizeOrder::PlanetID)
 	.add_property("ShipID", &FleetColonizeOrder::ShipID)
 	.def("ServerExecute",&FleetColonizeOrder::ServerExecute)
 	;
+    implicitly_convertible<std::auto_ptr<FleetColonizeOrder>,std::auto_ptr<Order> >();
 
-    class_<DeleteFleetOrder,bases<Order>,boost::noncopyable>("DeleteFleetOrder")
+    class_<DeleteFleetOrder,std::auto_ptr<DeleteFleetOrder>,
+	bases<Order>,boost::noncopyable>("DeleteFleetOrder")
 	.def(init<int,int>())
-
-
 	.add_property("FleetID", &DeleteFleetOrder::FleetID)
 	;
+    implicitly_convertible<std::auto_ptr<DeleteFleetOrder>,std::auto_ptr<Order> >();
 
-    class_<ChangeFocusOrder,bases<Order>,boost::noncopyable>("ChangeFocusOrder")
+    class_<ChangeFocusOrder,std::auto_ptr<ChangeFocusOrder>,
+	bases<Order>,boost::noncopyable>("ChangeFocusOrder")
 	.def(init<int,int,FocusType,bool>())
 
 	.add_property("PlanetID", &ChangeFocusOrder::PlanetID)
 
 	;
+    implicitly_convertible<std::auto_ptr<ChangeFocusOrder>,std::auto_ptr<Order> >();
 }
 

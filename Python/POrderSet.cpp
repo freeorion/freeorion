@@ -4,6 +4,24 @@
 
 using namespace boost::python;
 
+namespace {
+
+int OrderSet_IssueOrder_Wrap(OrderSet& os, std::auto_ptr<Order> op)
+{
+    int retval = os.IssueOrder(op.get());
+    op.release();
+    return retval;
+}
+
+int OrderSet_AddOrder_Wrap(OrderSet& os, std::auto_ptr<Order> op)
+{
+    int retval = os.AddOrder(op.get());
+    op.release();
+    return retval;
+}
+
+}
+
 void ExportOrderSet()
 {
     class_<OrderSet>("OrderSet")
@@ -14,8 +32,8 @@ void ExportOrderSet()
 
 	// Mutators
 
-	.def("IssueOrder",&OrderSet::IssueOrder)
-	.def("AddOrder",&OrderSet::AddOrder)
+	.def("IssueOrder",&OrderSet_IssueOrder_Wrap)
+	.def("AddOrder",&OrderSet_AddOrder_Wrap)
 	.def("RecindOrder",&OrderSet::RecindOrder)
 	.def("Reset",&OrderSet::Reset)
 
