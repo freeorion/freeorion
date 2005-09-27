@@ -345,7 +345,7 @@ ProductionQueue::ProductionQueue(const GG::XMLElement& elem) :
     // note that this leaves the queue elements incompletely specified, and does not find values for m_projects_in_progress or m_total_PPs_spent.
     // the owner of this object must call Update() after this object is constructed
     for (GG::XMLElement::const_child_iterator it = elem.Child("m_queue").child_begin(); it != elem.Child("m_queue").child_end(); ++it) {
-        m_queue.push_back(Element(*it));
+        m_queue.push_back(Element(it->Child(0)));
     }
 }
 
@@ -407,7 +407,7 @@ GG::XMLElement ProductionQueue::XMLEncode() const
     GG::XMLElement retval("ProductionQueue");
     retval.AppendChild("m_queue");
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
-        retval.LastChild().AppendChild(m_queue[i].XMLEncode());
+        retval.LastChild().AppendChild(GG::XMLElement("Element" + boost::lexical_cast<std::string>(i), m_queue[i].XMLEncode()));
     }
     return retval;
 }
