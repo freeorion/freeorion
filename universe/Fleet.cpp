@@ -22,26 +22,26 @@ namespace {
 
 
 Fleet::Fleet() : 
-   UniverseObject(),
-   m_moving_to(INVALID_OBJECT_ID),
-   m_prev_system(INVALID_OBJECT_ID),
-   m_next_system(INVALID_OBJECT_ID),
-   m_travel_distance(0.0)
+    UniverseObject(),
+    m_moving_to(INVALID_OBJECT_ID),
+    m_prev_system(INVALID_OBJECT_ID),
+    m_next_system(INVALID_OBJECT_ID),
+    m_travel_distance(0.0)
 {
 }
 
 Fleet::Fleet(const std::string& name, double x, double y, int owner) :
-   UniverseObject(name, x, y),
-   m_moving_to(INVALID_OBJECT_ID),
-   m_prev_system(INVALID_OBJECT_ID),
-   m_next_system(INVALID_OBJECT_ID),
-   m_travel_distance(0.0)
+    UniverseObject(name, x, y),
+    m_moving_to(INVALID_OBJECT_ID),
+    m_prev_system(INVALID_OBJECT_ID),
+    m_next_system(INVALID_OBJECT_ID),
+    m_travel_distance(0.0)
 {
-   AddOwner(owner);
+    AddOwner(owner);
 }
 
 Fleet::Fleet(const GG::XMLElement& elem) : 
-   UniverseObject(elem.Child("UniverseObject"))
+    UniverseObject(elem.Child("UniverseObject"))
 {
     using GG::XMLElement;
 
@@ -73,20 +73,20 @@ UniverseObject::Visibility Fleet::GetVisibility(int empire_id) const
 
 GG::XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
-   // Fleets are either visible or not, so there is no 
-   // difference between the full and partial visibilty
-   // encodings for this class
-   using GG::XMLElement;
-   using boost::lexical_cast;
-   using std::string;
+    // Fleets are either visible or not, so there is no 
+    // difference between the full and partial visibilty
+    // encodings for this class
+    using GG::XMLElement;
+    using boost::lexical_cast;
+    using std::string;
 
-   XMLElement retval("Fleet" + boost::lexical_cast<std::string>(ID()));
-   retval.AppendChild(UniverseObject::XMLEncode(empire_id));
-   retval.AppendChild(XMLElement("m_ships", GG::StringFromContainer<ShipIDSet>(m_ships)));
-   retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_moving_to)));
-   retval.AppendChild(XMLElement("m_prev_system", lexical_cast<std::string>(m_prev_system)));
-   retval.AppendChild(XMLElement("m_next_system", lexical_cast<std::string>(m_next_system)));
-   return retval;
+    XMLElement retval("Fleet" + boost::lexical_cast<std::string>(ID()));
+    retval.AppendChild(UniverseObject::XMLEncode(empire_id));
+    retval.AppendChild(XMLElement("m_ships", GG::StringFromContainer<ShipIDSet>(m_ships)));
+    retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_moving_to)));
+    retval.AppendChild(XMLElement("m_prev_system", lexical_cast<std::string>(m_prev_system)));
+    retval.AppendChild(XMLElement("m_next_system", lexical_cast<std::string>(m_next_system)));
+    return retval;
 }
 
 const std::list<System*>& Fleet::TravelRoute() const
@@ -123,7 +123,7 @@ System* Fleet::FinalDestination() const
 
 bool Fleet::CanChangeDirectionEnRoute() const
 {
-    // TODO: check tech levels or game options to allow this
+    // TODO: enable this code when technologies or other factors to allow a fleet to turn around in mid-flight, without completing its current leg
     return false;
 }
 
@@ -227,18 +227,18 @@ std::vector<int> Fleet::RemoveShips(const std::vector<int>& ships)
 
 std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
 {
-   std::vector<int> retval;
-   for (unsigned int i = 0; i < ships.size(); ++i) {
-      bool found = m_ships.find(ships[i]) != m_ships.end();
-      m_ships.erase(ships[i]);
-      if (!found) {
-         retval.push_back(ships[i]);
-      } else {
-         GetUniverse().Delete(ships[i]);
-      }
-   }
-   StateChangedSignal();
-   return retval;
+    std::vector<int> retval;
+    for (unsigned int i = 0; i < ships.size(); ++i) {
+        bool found = m_ships.find(ships[i]) != m_ships.end();
+        m_ships.erase(ships[i]);
+        if (!found) {
+            retval.push_back(ships[i]);
+        } else {
+            GetUniverse().Delete(ships[i]);
+        }
+    }
+    StateChangedSignal();
+    return retval;
 }
 
 
@@ -331,6 +331,9 @@ void Fleet::MovementPhase()
 
 void Fleet::PopGrowthProductionResearchPhase()
 {
+    // ensure that any newly opened or closed routes are taken into account
+    m_travel_route.clear();
+    CalculateRoute();
 }
 
 void Fleet::CalculateRoute() const
@@ -342,7 +345,7 @@ void Fleet::CalculateRoute() const
             m_travel_route = path.first;
             m_travel_distance = path.second;
         } else { // if we're between systems, the shortest route may be through either one
-            if (0) { // TODO: enable this code when technologies or other factors to allow a fleet to turn around in mid-flight, without completing its current leg
+            if (CanChangeDirectionEnRoute()) {
                 std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(m_next_system, m_moving_to);
                 std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(m_prev_system, m_moving_to);
                 double dist_x = path1.first.front()->X() - X();
