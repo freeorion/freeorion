@@ -162,6 +162,7 @@ namespace {
     void AddOptions(OptionsDB& db)
     {
         db.Add("debug.log-turn-orders", "Enables the logging of orders coming in from each player.", false, Validator<bool>());
+        db.Add("debug.log-turn-update-universe", "Enables the logging of turn-update universes that are sent to each player.", false, Validator<bool>());
         db.Add("debug.log-new-game-universe", "Enables the logging of new-game universes that are sent to each player.", false, Validator<bool>());
         db.Add("debug.log-load-game-universe", "Enables the logging of loaded-game universes that are sent to each player.", false, Validator<bool>());
     }
@@ -2019,6 +2020,13 @@ void ServerApp::ProcessTurns()
     {
         pEmpire = GetPlayerEmpire( player_it->first );
         GG::XMLDoc doc = CreateTurnUpdate( pEmpire->EmpireID() );
+        if (GetOptionsDB().Get<bool>("debug.log-turn-update-universe")) {
+            std::ofstream ofs(("TurnUpdate" + boost::lexical_cast<std::string>(m_current_turn) +
+                               "-empire" + boost::lexical_cast<std::string>(pEmpire->EmpireID()) +
+                               "-doc.xml").c_str());
+            doc.WriteDoc(ofs);
+            ofs.close();
+        }
         m_network_core.SendMessage( TurnUpdateMessage( player_it->first, doc ) );
     }
 
