@@ -64,7 +64,7 @@ Fleet::Fleet(const GG::XMLElement& elem) :
 
 UniverseObject::Visibility Fleet::GetVisibility(int empire_id) const
 {
-    if (empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
+    if (ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
         return FULL_VISIBILITY;
     else
         return PARTIAL_VISIBILITY; // TODO: do something smarter here, such as a range check vs. owned systems and fleets

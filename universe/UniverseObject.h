@@ -35,6 +35,9 @@ namespace GG {class XMLElement;}
 class UniverseObject
 {
 public:
+    /// Set to true to make everything visible for everyone. Useful for debugging
+    static const bool ALL_OBJECTS_VISIBLE = false;
+
     /** the three different visibility levels */
     enum Visibility { 
         FULL_VISIBILITY,

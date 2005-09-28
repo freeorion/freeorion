@@ -73,7 +73,7 @@ UniverseObject::Visibility Ship::GetVisibility(int empire_id) const
 {
     UniverseObject::Visibility vis = NO_VISIBILITY;
 
-    if (empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
+    if (ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
         vis = FULL_VISIBILITY;
     else
         vis = PARTIAL_VISIBILITY; // TODO: do something smarter here, such as a range check vs. owned systems and fleets

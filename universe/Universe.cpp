@@ -44,7 +44,7 @@ namespace {
     const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, s_universe_width]
     const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, s_universe_width]
     const int     ADJACENCY_BOXES = 25;
-    const double  PI = 3.141592;
+    const double  PI = 3.141592653589793;
     const int     MAX_SYSTEM_ORBITS = 10;   // maximum slots where planets can be, in v0.2
     SmallIntDistType g_hundred_dist = SmallIntDist(1, 100); // a linear distribution [1, 100] used in most universe generation
     const double  OFFROAD_SLOWDOWN_FACTOR = 1000.0; // the factor by which non-starlane travel is slower than starlane travel

@@ -147,7 +147,7 @@ bool UniverseObject::WhollyOwnedBy(int empire) const
 
 UniverseObject::Visibility UniverseObject::GetVisibility(int empire_id) const
 {
-    return (empire_id == Universe::ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? FULL_VISIBILITY : NO_VISIBILITY;
+    return (ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? FULL_VISIBILITY : NO_VISIBILITY;
 }
 
 GG::XMLElement UniverseObject::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const

@@ -156,7 +156,6 @@ namespace {
 #endif    
     const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
     GG::XMLDoc g_load_doc;
-    const bool ALL_OBJECTS_VISIBLE = false; // set this to true to turn off visibility for debugging purposes
 
     // command-line options
     void AddOptions(OptionsDB& db)
@@ -1404,7 +1403,7 @@ void ServerApp::NewGameInit()
         GG::XMLDoc doc;
         if (m_single_player_game)
             doc.root_node.AppendChild("single_player_game");
-        doc.root_node.AppendChild(m_universe.XMLEncode(ALL_OBJECTS_VISIBLE ? Universe::ALL_EMPIRES : it->first));
+        doc.root_node.AppendChild(m_universe.XMLEncode(it->first));
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
         doc.root_node.AppendChild(GG::XMLElement("empire_id", boost::lexical_cast<std::string>(it->first)));
 
@@ -1469,7 +1468,7 @@ void ServerApp::LoadGameInit()
                 }
             }
         }
-        doc.root_node.AppendChild(m_universe.XMLEncode(ALL_OBJECTS_VISIBLE ? Universe::ALL_EMPIRES : empire_id));
+        doc.root_node.AppendChild(m_universe.XMLEncode(empire_id));
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(empire_id));
         doc.root_node.AppendChild(GG::XMLElement("empire_id", boost::lexical_cast<std::string>(empire_id)));
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
@@ -1546,7 +1545,7 @@ GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
     // generate new data for this turn
     // for the final game, we'd have visibility
     // but for now we are able to see the whole universe
-    XMLElement universe_data = m_universe.XMLEncode(ALL_OBJECTS_VISIBLE ? Universe::ALL_EMPIRES : empire_id);
+    XMLElement universe_data = m_universe.XMLEncode(empire_id);
     XMLElement empire_data = m_empires.CreateClientEmpireUpdate(empire_id);
 
     // build the new turn doc
