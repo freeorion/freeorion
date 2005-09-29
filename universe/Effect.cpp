@@ -114,6 +114,8 @@ EffectsGroup::EffectsGroup(const GG::XMLElement& elem)
     for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
         m_effects.push_back(EffectFactory().GenerateObject(*it));
     }
+    if (elem.ContainsChild("description"))
+        m_explicit_description = elem.Child("description").Text();
 }
 
 EffectsGroup::~EffectsGroup()
@@ -193,15 +195,19 @@ EffectsGroup::Description EffectsGroup::GetDescription() const
 
 std::string EffectsGroup::DescriptionString() const
 {
-    std::stringstream retval;
-    Description description = GetDescription();
-    retval << str(format(UserString("DESC_EFFECTS_GROUP_SCOPE_DESC")) % description.scope_description);
-    if (!dynamic_cast<const Condition::Self*>(m_activation) && !dynamic_cast<const Condition::All*>(m_activation))
-        retval << str(format(UserString("DESC_EFFECTS_GROUP_ACTIVATION_DESC")) % description.activation_description);
-    for (unsigned int i = 0; i < description.effect_descriptions.size(); ++i) {
-        retval << str(format(UserString("DESC_EFFECTS_GROUP_EFFECT_DESC")) % description.effect_descriptions[i]);
+    if (!m_explicit_description.empty()) {
+        return UserString(m_explicit_description);
+    } else {
+        std::stringstream retval;
+        Description description = GetDescription();
+        retval << str(format(UserString("DESC_EFFECTS_GROUP_SCOPE_DESC")) % description.scope_description);
+        if (!dynamic_cast<const Condition::Self*>(m_activation) && !dynamic_cast<const Condition::All*>(m_activation))
+            retval << str(format(UserString("DESC_EFFECTS_GROUP_ACTIVATION_DESC")) % description.activation_description);
+        for (unsigned int i = 0; i < description.effect_descriptions.size(); ++i) {
+            retval << str(format(UserString("DESC_EFFECTS_GROUP_EFFECT_DESC")) % description.effect_descriptions[i]);
+        }
+        return retval.str();
     }
-    return retval.str();
 }
 
 

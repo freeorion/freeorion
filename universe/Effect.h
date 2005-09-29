@@ -58,6 +58,7 @@ protected:
     const Condition::ConditionBase* m_scope;
     const Condition::ConditionBase* m_activation;
     std::string                     m_stacking_group;
+    std::string                     m_explicit_description;
     std::vector<EffectBase*>        m_effects;
 };
 
