@@ -78,13 +78,10 @@ GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int empire_id)
     // set ID attribute of the update to indicate whose empire this is
     this_turn.SetAttribute("empire_id", boost::lexical_cast<std::string>(empire_id));
 
-    // ****************************************************************
-    // For version 0.1, we simply encode the states of all empires
-    // since all information about all empires is always known to all others
-    // ****************************************************************
     for (EmpireManager::iterator it = begin(); it != end(); it++)
     {
         GG::XMLElement current_empire("Empire" + boost::lexical_cast<std::string>(it->second->EmpireID()));
+	// Only append visible information
         current_empire.AppendChild(it->second->XMLEncode(*emp));
         this_turn.AppendChild(current_empire);
     }
