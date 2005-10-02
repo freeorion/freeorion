@@ -1739,7 +1739,24 @@ void ServerApp::ProcessTurns()
     OrderSet                  *pOrderSet;
     OrderSet::const_iterator  order_it;
 
-    // First process all orders, then process turns
+
+    // Some orders, like NewFleetOrder, change the state of the universe, 
+    // we therefore need to get the state before these are executed,
+    // to be able to sucessfully diff later.
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
+    {
+        GG::XMLDoc game_state;
+
+        GG::XMLElement universe_data = m_universe.XMLEncode(it->first);
+
+        // build the new turn doc
+        game_state.root_node.AppendChild(universe_data);
+
+	// We will append to it later
+        m_last_turn_update_msg[ it->first ] = game_state;
+    }
+
+    // Now all orders, then process turns
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         // broadcast UI message to all players
@@ -1760,26 +1777,13 @@ void ServerApp::ProcessTurns()
         }
     }    
 
-    // now that orders are executed, universe and empire data are the same as on the client, since 
-    // clients execute orders locally
-    // here we encode the states so that we can diff later
+    // After the Orders are processed, save the Empire states.
+    // Unlike Universe, orders do not change Empire states the client does
+    // not know about
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
-        GG::XMLDoc game_state;
-
-        GG::XMLElement universe_data = m_universe.XMLEncode(it->first);
         GG::XMLElement empire_data = m_empires.CreateClientEmpireUpdate( it->first );
-
-        // build the new turn doc
-        game_state.root_node.AppendChild(universe_data);
-        game_state.root_node.AppendChild(empire_data);
-
-        // erase previous saved data
-        std::map<int, GG::XMLDoc>::iterator itr =  m_last_turn_update_msg.find( it->first );
-        if (itr != m_last_turn_update_msg.end()) {
-            m_last_turn_update_msg.erase(itr);
-        }
-        m_last_turn_update_msg[ it->first ] = game_state;
+        m_last_turn_update_msg[ it->first ].root_node.AppendChild(empire_data);
     }
  
     // filter FleetColonizeOrder for later processing

@@ -108,7 +108,6 @@ int ClientApp::GetNewObjectID( )
     return new_id;
 }
 
-
 void ClientApp::UpdateTurnData( const GG::XMLDoc &diff )
 {
     GG::XMLDoc new_doc;
@@ -117,7 +116,7 @@ void ClientApp::UpdateTurnData( const GG::XMLDoc &diff )
     if (diff.root_node.ContainsChild("Universe")) 
     {
         // get old universe data
-        new_doc.root_node.AppendChild(m_universe.XMLEncode(m_empire_id));
+	new_doc.root_node.AppendChild(m_previous_universe);
     }
  
     if (diff.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG))
@@ -132,7 +131,8 @@ void ClientApp::UpdateTurnData( const GG::XMLDoc &diff )
     // apply universe
     if (new_doc.root_node.ContainsChild( "Universe" ) )
     {
-        m_universe.SetUniverse( new_doc.root_node.Child( "Universe" ) );
+	m_previous_universe = new_doc.root_node.Child("Universe");
+        m_universe.SetUniverse( m_previous_universe );
     }
 
     // apply empire

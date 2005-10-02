@@ -86,6 +86,7 @@ protected:
     std::string             m_player_name;
     int                     m_player_id;
     int                     m_empire_id;
+    GG::XMLElement          m_previous_universe;
    
 private:
     const ClientApp& operator=(const ClientApp&); // disabled

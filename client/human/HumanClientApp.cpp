@@ -707,7 +707,8 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
             m_empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Text());
 
-            m_universe.SetUniverse(doc.root_node.Child("Universe"));
+	    m_previous_universe = doc.root_node.Child("Universe");
+            m_universe.SetUniverse(m_previous_universe);
 
             // free current sitreps, if any
             if (Empires().Lookup(m_empire_id))
@@ -770,11 +771,10 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         doc.ReadDoc(stream);
 
         turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
-
+	
         // free current sitreps
         Empires().Lookup( m_empire_id )->ClearSitRep( );
         
-
         // Update data used XPatch and needs only elements common to universe and empire
         UpdateTurnData( doc );
 
