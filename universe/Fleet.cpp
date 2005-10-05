@@ -86,7 +86,7 @@ GG::XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
     // Disclose real fleet name only to fleet owners. Rationale: a player
     // might become suspicious if the incoming foreign fleet is called "Decoy"
     if (empire_id != Universe::ALL_EMPIRES && 
-	Owners().find(empire_id) != Owners().end()) {
+	Owners().find(empire_id) == Owners().end()) {
 	retval.Child("UniverseObject").Child("m_name").SetText("Foreign fleet");
     }
 
