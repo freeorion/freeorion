@@ -403,7 +403,7 @@ OPTIONS_RESOLUTION
 Resolution
 
 OPTIONS_COLOR_DEPTH
-Colors
+Color bit-depth
 
 OPTIONS_CHAT
 Chat
@@ -703,8 +703,14 @@ TECH_DETAIL_TYPE_STR
 TECH_DETAIL_DESCRIPTION_STR
 %1%
 
-TECH_DETAIL_DESCRIPTION_STR_WITH_EFFECTS
-%1%\n\n<u>Effects</u>\n\n%2%
+TECH_DETAIL_EFFECTS_STR
+\n\n<u>Effects</u>\n\n%1%
+
+TECH_DETAIL_UNLOCKS_SECTION_STR
+\n\n<u>Unlocks</u>\n\n
+
+TECH_DETAIL_UNLOCKED_ITEM_STR
+%1%: %2%\n
 
 TECH_DETAIL_CENTER_ON_TECH
 Center on Tech
@@ -1143,9 +1149,9 @@ ally
 # UnlockableItemTypes
 
 UIT_BUILDING
-building
+Building
 UIT_SHIP_COMPONENT
-ship component
+Ship Component
 
 
 # TechTypes

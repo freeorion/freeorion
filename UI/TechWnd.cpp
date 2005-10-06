@@ -553,14 +553,21 @@ void TechTreeWnd::TechDetailPanel::Reset()
     m_cost_text->SetText(str(format(UserString("TECH_TOTAL_COST_STR"))
         % static_cast<int>(m_tech->ResearchCost() + 0.5)
         % m_tech->ResearchTurns()));
-    if (m_tech->Effects().empty()) {
-        m_description_box->SetText(str(format(UserString("TECH_DETAIL_DESCRIPTION_STR"))
-            % UserString(m_tech->Description())));
-    } else {
-        m_description_box->SetText(str(format(UserString("TECH_DETAIL_DESCRIPTION_STR_WITH_EFFECTS"))
-            % UserString(m_tech->Description())
-            % EffectsDescription(m_tech->Effects())));
+    std::string description_str = str(format(UserString("TECH_DETAIL_DESCRIPTION_STR"))
+                                      % UserString(m_tech->Description()));
+    if (!m_tech->Effects().empty()) {
+        description_str += str(format(UserString("TECH_DETAIL_EFFECTS_STR"))
+                               % EffectsDescription(m_tech->Effects()));
     }
+    const std::vector<Tech::ItemSpec>& unlocked_items = m_tech->UnlockedItems();
+    if (!unlocked_items.empty())
+        description_str += UserString("TECH_DETAIL_UNLOCKS_SECTION_STR");
+    for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
+        description_str += str(format(UserString("TECH_DETAIL_UNLOCKED_ITEM_STR"))
+                               % UserString(boost::lexical_cast<std::string>(unlocked_items[i].type))
+                               % UserString(unlocked_items[i].name));
+    }
+    m_description_box->SetText(description_str);
 }
 
 GG::Pt TechTreeWnd::TechDetailPanel::TechGraphicUpperLeft() const
