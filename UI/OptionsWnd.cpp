@@ -987,8 +987,6 @@ void OptionsWnd::FillLists()
 
 	// Fill up the resolution list
 	m_resolutions.clear();
-	m_resolutions.push_back("640 x 480");
-	m_resolutions.push_back("800 x 600");
 	m_resolutions.push_back("1024 x 768");
 	m_resolutions.push_back("1280 x 1024");
 	m_resolutions.push_back("1600 x 1200");
