@@ -59,6 +59,7 @@ public:
     virtual void   RClick(const GG::Pt& pt, Uint32 keys);
     virtual void   LDoubleClick(const GG::Pt& pt, Uint32 keys);
 
+    void           Refresh(); //!< sets up the icon's fleet buttons, generates fleet movement lines, etc.  Should be called after an icon is attached to the map
     void           ClickFleetButton(Fleet* fleet); //!< clicks the FleetButton containing \a fleet
     void           ShowName(); //!< enables the system name text
     void           HideName(); //!< disables the system name text
@@ -71,7 +72,6 @@ public:
 
 private:
     void CreateFleetButtons();
-    void Refresh();
     void PositionSystemName();
     void FleetCreatedOrDestroyed(const Fleet&);
 

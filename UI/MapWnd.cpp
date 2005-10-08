@@ -78,7 +78,7 @@ namespace {
 // MapWnd::StarlaneData
 ////////////////////////////////////////////////
 /* Note that an order is imposed on the two systems the starlane spans.  The "source" system is the one with the lower pointer.
-    This is so StarlaneDatas can be stored in a std::set and duplicates will not be a problem. */
+   This is so StarlaneDatas can be stored in a std::set and duplicates will not be a problem. */
 struct MapWnd::StarlaneData
 {
     StarlaneData() {}
@@ -591,6 +591,7 @@ void MapWnd::InitTurn(int turn_number)
         m_system_icons.push_back(icon);
         icon->InstallEventFilter(this);
         AttachChild(icon);
+        icon->Refresh();
         GG::Connect(icon->LeftClickedSignal, &MapWnd::SelectSystem, this);
         GG::Connect(icon->RightClickedSignal, &MapWnd::SystemRightClicked, this);
         GG::Connect(icon->LeftDoubleClickedSignal, &MapWnd::SystemDoubleClicked, this);
@@ -663,7 +664,7 @@ void MapWnd::InitTurn(int turn_number)
     else
         ShowSystemNames();
 
-    // center the map at the start of the game (if we're at the default start position, the ods are very good that this is a fresh game)
+    // center the map at the start of the game (if we're at the default start position, the odds are very good that this is a fresh game)
     if (ClientUpperLeft() == GG::Pt())
         CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
 

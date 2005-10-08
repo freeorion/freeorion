@@ -61,8 +61,6 @@ SystemIcon::SystemIcon(int id, double zoom) :
     //setup static graphic
     m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::GR_FITGRAPHIC);
     AttachChild(m_static_graphic);
-
-    Refresh();
 }
 
 
@@ -107,6 +105,54 @@ void SystemIcon::LDoubleClick(const GG::Pt& pt, Uint32 keys)
 {
     if (!Disabled())
         LeftDoubleClickedSignal(m_system.ID());
+}
+
+void SystemIcon::Refresh()
+{
+    SetText(m_system.Name());
+
+    // set up the name text controls
+    for (unsigned int i = 0; i < m_name.size(); ++i) {
+        DeleteChild(m_name[i]);
+    }
+    m_name.clear();
+
+    const std::set<int>& owners = m_system.Owners();
+    if (owners.size() < 2) {
+        GG::Clr text_color = ClientUI::TEXT_COLOR;
+        if (!owners.empty()) {
+            text_color = HumanClientApp::Empires().Lookup(*owners.begin())->Color();
+        }
+        m_name.push_back(new GG::TextControl(0, 0, m_system.Name(), ClientUI::FONT, ClientUI::PTS, text_color));
+        AttachChild(m_name[0]);
+    } else {
+        boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
+        Uint32 format = 0;
+        std::vector<GG::Font::LineData> lines;
+        GG::Pt extent = font->DetermineLines(m_system.Name(), format, 1000, lines);
+        unsigned int first_char_pos = 0;
+        unsigned int last_char_pos = 0;
+        int pixels_per_owner = extent.x / owners.size() + 1; // the +1 is to make sure there is not a stray character left off the end
+        int owner_idx = 1;
+        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
+            while (last_char_pos < m_system.Name().size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
+                ++last_char_pos;
+            }
+            m_name.push_back(new GG::TextControl(0, 0, m_system.Name().substr(first_char_pos, last_char_pos - first_char_pos), 
+                                                 ClientUI::FONT, ClientUI::PTS, HumanClientApp::Empires().Lookup(*it)->Color()));
+            AttachChild(m_name.back());
+            first_char_pos = last_char_pos;
+        }
+    }
+    PositionSystemName();
+
+    std::vector<const Fleet*> fleets = m_system.FindObjects<Fleet>();
+    for (unsigned int i = 0; i < fleets.size(); ++i)
+        Connect(fleets[i]->StateChangedSignal, &SystemIcon::CreateFleetButtons, this);
+    Connect(m_system.FleetAddedSignal, &SystemIcon::FleetCreatedOrDestroyed, this);
+    Connect(m_system.FleetRemovedSignal, &SystemIcon::FleetCreatedOrDestroyed, this);
+
+    CreateFleetButtons();
 }
 
 void SystemIcon::ClickFleetButton(Fleet* fleet)
@@ -180,54 +226,6 @@ void SystemIcon::CreateFleetButtons()
             stationary_fb->SetCompliment(moving_fb);
         }
     }
-}
-
-void SystemIcon::Refresh()
-{
-    SetText(m_system.Name());
-
-    // set up the name text controls
-    for (unsigned int i = 0; i < m_name.size(); ++i) {
-        DeleteChild(m_name[i]);
-    }
-    m_name.clear();
-
-    const std::set<int>& owners = m_system.Owners();
-    if (owners.size() < 2) {
-        GG::Clr text_color = ClientUI::TEXT_COLOR;
-        if (!owners.empty()) {
-            text_color = HumanClientApp::Empires().Lookup(*owners.begin())->Color();
-        }
-        m_name.push_back(new GG::TextControl(0, 0, m_system.Name(), ClientUI::FONT, ClientUI::PTS, text_color));
-        AttachChild(m_name[0]);
-    } else {
-        boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
-        Uint32 format = 0;
-        std::vector<GG::Font::LineData> lines;
-        GG::Pt extent = font->DetermineLines(m_system.Name(), format, 1000, lines);
-        unsigned int first_char_pos = 0;
-        unsigned int last_char_pos = 0;
-        int pixels_per_owner = extent.x / owners.size() + 1; // the +1 is to make sure there is not a stray character left off the end
-        int owner_idx = 1;
-        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
-            while (last_char_pos < m_system.Name().size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
-                ++last_char_pos;
-            }
-            m_name.push_back(new GG::TextControl(0, 0, m_system.Name().substr(first_char_pos, last_char_pos - first_char_pos), 
-                                                 ClientUI::FONT, ClientUI::PTS, HumanClientApp::Empires().Lookup(*it)->Color()));
-            AttachChild(m_name.back());
-            first_char_pos = last_char_pos;
-        }
-    }
-    PositionSystemName();
-
-    std::vector<const Fleet*> fleets = m_system.FindObjects<Fleet>();
-    for (unsigned int i = 0; i < fleets.size(); ++i)
-        Connect(fleets[i]->StateChangedSignal, &SystemIcon::CreateFleetButtons, this);
-    Connect(m_system.FleetAddedSignal, &SystemIcon::FleetCreatedOrDestroyed, this);
-    Connect(m_system.FleetRemovedSignal, &SystemIcon::FleetCreatedOrDestroyed, this);
-
-    CreateFleetButtons();
 }
 
 void SystemIcon::PositionSystemName()
