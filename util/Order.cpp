@@ -625,8 +625,10 @@ void DeleteFleetOrder::ExecuteImpl() const
     if (!fleet->OwnedBy(EmpireID()))
         throw std::runtime_error("Empire attempted to issue deletion order to another's fleet.");
 
+    // this needs to be a no-op, instead of an exception case, because of its interaction with cancelled colonize orders
+    // that cause a fleet to be deleted, then silently reconsistuted
     if (fleet->NumShips())
-        throw std::runtime_error("Attempted to delete an unempty fleet.");
+        return;
 
     GetUniverse().Delete(FleetID());
 }
