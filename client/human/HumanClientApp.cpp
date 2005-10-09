@@ -282,7 +282,6 @@ void HumanClientApp::KillServer()
 
 void HumanClientApp::EndGame()
 {
-    std::cout << "HumanClientApp::EndGame() : m_game_started = false;\n";
     m_game_started = false;
     m_network_core.DisconnectFromServer();
     m_server_process.RequestTermination();
@@ -758,7 +757,6 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         if (msg.Sender() == -1) {
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
                 "starting player turn...";
-            std::cout << "HumanClientApp::HandleMessageImpl() : Message::GAME_START: m_game_started = true;\n";
             m_game_started = true;
 
             std::stringstream stream(msg.GetText());
@@ -829,7 +827,6 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::TURN_UPDATE: {
-        std::cout << "HumanClientApp::HandleMessageImpl() : Message::TURN_UPDATE\n";
         int turn_number;
 
         std::stringstream stream(msg.GetText());
@@ -928,7 +925,6 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::END_GAME: {
         if (m_game_started) {
-            std::cout << "HumanClientApp::HandleMessageImpl : Message::END_GAME: m_game_started == true\n";
             if (msg.GetText() == "VICTORY") {
                 EndGame();
                 // TODO: replace this with something better
