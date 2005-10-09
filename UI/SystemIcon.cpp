@@ -157,17 +157,15 @@ void SystemIcon::Refresh()
 
 void SystemIcon::ClickFleetButton(Fleet* fleet)
 {
-    for (unsigned int i = 0; i < m_stationary_fleet_markers.size(); ++i) {
-        if (std::find(m_stationary_fleet_markers[i]->Fleets().begin(), m_stationary_fleet_markers[i]->Fleets().end(), fleet) !=
-            m_stationary_fleet_markers[i]->Fleets().end()) {
-            m_stationary_fleet_markers[i]->LClick(GG::Pt(), 0);
+    for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
+        if (std::find(it->second->Fleets().begin(), it->second->Fleets().end(), fleet) != it->second->Fleets().end()) {
+            it->second->LClick(GG::Pt(), 0);
             return;
         }
     }
-    for (unsigned int i = 0; i < m_moving_fleet_markers.size(); ++i) {
-        if (std::find(m_moving_fleet_markers[i]->Fleets().begin(), m_moving_fleet_markers[i]->Fleets().end(), fleet) !=
-            m_moving_fleet_markers[i]->Fleets().end()) {
-            m_moving_fleet_markers[i]->LClick(GG::Pt(), 0);
+    for (std::map<int, FleetButton*>::iterator it = m_moving_fleet_markers.begin(); it != m_moving_fleet_markers.end(); ++it) {
+        if (std::find(it->second->Fleets().begin(), it->second->Fleets().end(), fleet) != it->second->Fleets().end()) {
+            it->second->LClick(GG::Pt(), 0);
             return;
         }
     }
