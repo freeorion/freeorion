@@ -291,6 +291,7 @@ void IntroScreen::OnMultiPlayer()
                     ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                     if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
                         HumanClientApp::GetApp()->KillServer();
+                    failed = true;
                     break;
                 }
             }
