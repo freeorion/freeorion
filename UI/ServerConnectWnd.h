@@ -49,6 +49,7 @@ private:
     void NameEdited(const std::string& str);
     void OkClicked();
     void CancelClicked() {CUI_Wnd::CloseClicked();}
+    void EnableDisableControls();
 
     std::pair<std::string, std::string> m_result;
 

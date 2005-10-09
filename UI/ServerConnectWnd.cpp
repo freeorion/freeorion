@@ -19,7 +19,10 @@ namespace {
     const int SERVER_CONNECT_WND_WIDTH = SERVERS_LIST_BOX_WIDTH + 6 * CONTROL_MARGIN;
     std::set<std::string> g_LAN_servers; // semi-persistent list of known LAN servers (persists only during runtime, but longer than the server connect window)
 
-    bool NameOK(const std::string& name) {return !name.empty() && name.find_first_of(" \t:") == std::string::npos;}
+    bool NameOK(const std::string& name)
+    {
+        return !name.empty() && name.find_first_of(" \t:") == std::string::npos;
+    }
 
     bool temp_header_bool = RecordHeaderFile(ServerConnectWndRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
@@ -156,59 +159,25 @@ void ServerConnectWnd::RefreshServerList()
 
 void ServerConnectWnd::HostOrJoinClicked(int idx)
 {
-    if (!idx) { // host
-        m_LAN_game_label->Disable();
-        m_servers_lb->Disable();
-        m_find_LAN_servers_bn->Disable();
-        m_internet_game_label->Disable();
-        m_IP_address_edit->Disable();
-        if (NameOK(m_player_name_edit->WindowText()))
-            m_ok_bn->Disable(false);
-        else
-            m_ok_bn->Disable();
-    } else { // join
-        m_LAN_game_label->Disable(false);
-        m_servers_lb->Disable(false);
-        m_find_LAN_servers_bn->Disable(false);
-        m_internet_game_label->Disable(false);
-        m_IP_address_edit->Disable(false);
-        if ((m_servers_lb->Selections().empty() && m_IP_address_edit->WindowText() == "") || !NameOK(m_player_name_edit->WindowText()))
-            m_ok_bn->Disable();
-    }
+    EnableDisableControls();
 }
 
 void ServerConnectWnd::ServerSelected(const std::set<int>& selections)
 {
-    if (!selections.empty()) {
+    if (!selections.empty())
         *m_IP_address_edit << "";
-        if (NameOK(m_player_name_edit->WindowText()))
-            m_ok_bn->Disable(false);
-    } else if (m_IP_address_edit->WindowText() == "") {
-        m_ok_bn->Disable();
-    }
+    EnableDisableControls();
 }
 
 void ServerConnectWnd::IPAddressEdited(const std::string& str)
 {
-    if (str != "") {
+    if (str != "")
         m_servers_lb->ClearSelection();
-        if (NameOK(m_player_name_edit->WindowText()))
-            m_ok_bn->Disable(false);
-    } else if (m_servers_lb->Selections().empty()) {
-        m_ok_bn->Disable();
-    }
 }
 
 void ServerConnectWnd::NameEdited(const std::string& str)
 {
-    if (str != "") {
-        if (m_host_or_join_radio_group->CheckedButton() == 0)
-            m_ok_bn->Disable(false);
-        else if (!m_servers_lb->Selections().empty() || m_IP_address_edit->WindowText() != "")
-            m_ok_bn->Disable(false);
-    } else {
-        m_ok_bn->Disable();
-    }
+    EnableDisableControls();
 }
 
 void ServerConnectWnd::OkClicked()
@@ -222,4 +191,19 @@ void ServerConnectWnd::OkClicked()
             m_result.second = m_servers_lb->GetRow(*m_servers_lb->Selections().begin())[0]->WindowText();
     }
     CUI_Wnd::CloseClicked();
+}
+
+void ServerConnectWnd::EnableDisableControls()
+{
+    bool host_selected = m_host_or_join_radio_group->CheckedButton() == 0;
+    m_LAN_game_label->Disable(host_selected);
+    m_servers_lb->Disable(host_selected);
+    m_find_LAN_servers_bn->Disable(host_selected);
+    m_internet_game_label->Disable(host_selected);
+    m_IP_address_edit->Disable(host_selected);
+    bool disable_ok_bn =
+        !NameOK(m_player_name_edit->WindowText()) ||
+        (!host_selected && m_servers_lb->Selections().empty() &&
+         m_IP_address_edit->WindowText().empty());
+    m_ok_bn->Disable(disable_ok_bn);
 }
