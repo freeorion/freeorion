@@ -102,6 +102,7 @@ private:
     virtual void GLInit();
     virtual void Initialize();
 
+    virtual void HandleSystemEvents(int& last_mouse_event_time);
     virtual void HandleNonGGEvent(const SDL_Event& event);
 
     virtual void RenderBegin();
@@ -127,6 +128,7 @@ private:
     bool                              m_single_player_game; ///< true when this game is a single-player game
     bool                              m_game_started;       ///< true when a game is currently in progress
     int                               m_turns_since_autosave; ///< the number of turns that have elapsed since the last autosave
+    bool                              m_handling_message;
 };
 
 inline std::pair<std::string, std::string> HumanClientAppRevision()

@@ -198,7 +198,8 @@ HumanClientApp::HumanClientApp() :
     m_next_music_time(0),
     m_single_player_game(true),
     m_game_started(false),
-    m_turns_since_autosave(0)
+    m_turns_since_autosave(0),
+    m_handling_message(false)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -281,6 +282,7 @@ void HumanClientApp::KillServer()
 
 void HumanClientApp::EndGame()
 {
+    std::cout << "HumanClientApp::EndGame() : m_game_started = false;\n";
     m_game_started = false;
     m_network_core.DisconnectFromServer();
     m_server_process.RequestTermination();
@@ -313,8 +315,8 @@ void HumanClientApp::StopMusic()
         FSOUND_Stream_Close(m_current_music);
         m_current_music = 0;
         m_music_channel = -1;
-	m_next_music_time = 0;
-	m_music_loops = 0;
+        m_next_music_time = 0;
+        m_music_loops = 0;
     }
 }
 
@@ -594,6 +596,67 @@ void HumanClientApp::Initialize()
         PlayMusic(ClientUI::SOUND_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1);
 }
 
+void HumanClientApp::HandleSystemEvents(int& last_mouse_event_time)
+{
+    // handle events
+    SDL_Event event;
+    while (0 < (m_handling_message ?
+                FE_PollMaskedEvent(&event, SDL_ALLEVENTS & ~SDL_EVENTMASK(SDL_USEREVENT)) :
+                FE_PollEvent(&event))) {
+        if (event.type  == SDL_MOUSEBUTTONDOWN || event.type  == SDL_MOUSEBUTTONUP || event.type == SDL_MOUSEMOTION)
+            last_mouse_event_time = Ticks();
+
+        bool send_to_gg = false;
+        EventType gg_event = MOUSEMOVE;
+        GG::Key key = GGKeyFromSDLKey(event.key.keysym);
+        Uint32 key_mods = SDL_GetModState();
+#ifdef __APPLE__
+        GG::Pt mouse_pos(event.motion.x, m_app_height - event.motion.y);
+        GG::Pt mouse_rel(event.motion.xrel, -event.motion.yrel);
+#else
+        GG::Pt mouse_pos(event.motion.x, event.motion.y);
+        GG::Pt mouse_rel(event.motion.xrel, event.motion.yrel);
+#endif
+
+        switch (event.type) {
+        case SDL_KEYDOWN:
+            if (key < GG::GGK_NUMLOCK)
+                send_to_gg = true;
+            gg_event = KEYPRESS;
+            break;
+        case SDL_MOUSEMOTION:
+            send_to_gg = true;
+            gg_event = MOUSEMOVE;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            send_to_gg = true;
+            switch (event.button.button) {
+                case SDL_BUTTON_LEFT:      gg_event = LPRESS; break;
+                case SDL_BUTTON_MIDDLE:    gg_event = MPRESS; break;
+                case SDL_BUTTON_RIGHT:     gg_event = RPRESS; break;
+                case SDL_BUTTON_WHEELUP:   gg_event = MOUSEWHEEL; mouse_rel = GG::Pt(0, 1); break;
+                case SDL_BUTTON_WHEELDOWN: gg_event = MOUSEWHEEL; mouse_rel = GG::Pt(0, -1); break;
+            }
+            key_mods = SDL_GetModState();
+            break;
+        case SDL_MOUSEBUTTONUP:
+            send_to_gg = true;
+            switch (event.button.button) {
+                case SDL_BUTTON_LEFT:   gg_event = LRELEASE; break;
+                case SDL_BUTTON_MIDDLE: gg_event = MRELEASE; break;
+                case SDL_BUTTON_RIGHT:  gg_event = RRELEASE; break;
+            }
+            key_mods = SDL_GetModState();
+            break;
+        }
+
+        if (send_to_gg)
+            HandleGGEvent(gg_event, key, key_mods, mouse_pos, mouse_rel);
+        else
+            HandleNonGGEvent(event);
+    }
+}
+
 void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
 {
     switch(event.type) {
@@ -643,6 +706,7 @@ void HumanClientApp::SDLQuit()
 
 void HumanClientApp::HandleMessageImpl(const Message& msg)
 {
+    m_handling_message = true;
     switch (msg.Type()) {
     case Message::SERVER_STATUS: {
         std::stringstream stream(msg.GetText());
@@ -694,6 +758,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         if (msg.Sender() == -1) {
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
                 "starting player turn...";
+            std::cout << "HumanClientApp::HandleMessageImpl() : Message::GAME_START: m_game_started = true;\n";
             m_game_started = true;
 
             std::stringstream stream(msg.GetText());
@@ -707,7 +772,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
             m_empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Text());
 
-	    m_previous_universe = doc.root_node.Child("Universe");
+            m_previous_universe = doc.root_node.Child("Universe");
             m_universe.SetUniverse(m_previous_universe);
 
             // free current sitreps, if any
@@ -764,6 +829,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::TURN_UPDATE: {
+        std::cout << "HumanClientApp::HandleMessageImpl() : Message::TURN_UPDATE\n";
         int turn_number;
 
         std::stringstream stream(msg.GetText());
@@ -773,28 +839,31 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
 	
         // free current sitreps
-        Empires().Lookup( m_empire_id )->ClearSitRep( );
+        Empires().Lookup(m_empire_id)->ClearSitRep();
         
         // Update data used XPatch and needs only elements common to universe and empire
-        UpdateTurnData( doc );
+        UpdateTurnData(doc);
 
         Empires().Lookup(m_empire_id)->UpdateResourcePool();
 
         // Now decode sitreps
         // Empire sitreps need UI in order to generate text, since it needs string resources
         // generate textr for all sitreps
-        for (Empire::SitRepItr sitrep_it = Empires().Lookup( m_empire_id )->SitRepBegin(); sitrep_it != Empires().Lookup( m_empire_id )->SitRepEnd(); ++sitrep_it) {
-
-            SitRepEntry *pEntry = (*sitrep_it);
-                
-            // create string
-             m_ui->GenerateSitRepText( pEntry );
+        for (Empire::SitRepItr sitrep_it = Empires().Lookup(m_empire_id)->SitRepBegin(); sitrep_it != Empires().Lookup( m_empire_id )->SitRepEnd(); ++sitrep_it) {
+            SitRepEntry *pEntry = *sitrep_it;
+            m_ui->GenerateSitRepText(pEntry);
         }
-        Logger().debugStream() <<"HumanClientApp::HandleMessageImpl : Sitrep creation complete";
+        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Sitrep creation complete";
 
         Autosave(turn_number, false);
+
+        // if this is the last turn, the TCP message handling inherent in Autosave()'s synchronous message may have
+        // processed an end-of-game message, in which case we need *not* to execute these last two lines below
+        if (!m_game_started || !NetworkCore().Connected())
+            break;
+
         m_ui->ScreenMap(); 
-        m_ui->InitTurn( turn_number ); // init the new turn
+        m_ui->InitTurn(turn_number);
         break;
     }
 
@@ -858,13 +927,17 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::END_GAME: {
-        if (msg.GetText() == "VICTORY") {
-            // TODO: replace this with something better
-            ClientUI::MessageBox(UserString("PLAYER_VICTORIOUS"));
-        } else {
-            ClientUI::MessageBox(UserString("SERVER_GAME_END"));
+        if (m_game_started) {
+            std::cout << "HumanClientApp::HandleMessageImpl : Message::END_GAME: m_game_started == true\n";
+            if (msg.GetText() == "VICTORY") {
+                EndGame();
+                // TODO: replace this with something better
+                ClientUI::MessageBox(UserString("PLAYER_VICTORIOUS"));
+            } else {
+                EndGame();
+                ClientUI::MessageBox(UserString("SERVER_GAME_END"));
+            }
         }
-        EndGame();
         break;
     }
 
@@ -873,6 +946,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         break;
     }
     }
+    m_handling_message = false;
 }
 
 void HumanClientApp::HandleServerDisconnectImpl()
@@ -950,7 +1024,7 @@ void HumanClientApp::Autosave(int turn_number, bool new_game)
         Message response;
         bool save_succeeded = 
             NetworkCore().SendSynchronousMessage(HostSaveGameMessage(PlayerID(), "save/" + save_filename), response);
-        if (!save_succeeded)
+        if (!save_succeeded && m_game_started && NetworkCore().Connected())
             Logger().errorStream() << "HumanClientApp::Autosave : An error occured while attempting to save the autosave file \"" << save_filename << "\"";
     }
 }

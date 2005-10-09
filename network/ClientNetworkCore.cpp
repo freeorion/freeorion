@@ -41,7 +41,7 @@ ClientNetworkCore::~ClientNetworkCore()
 {
     if (m_server_socket != -1) {
         NET2_TCPClose(m_server_socket);
-        logger.debug("ClientNetworkCore::HandleNetEvent : Connection to server terminated.");
+        logger.debug("ClientNetworkCore::~ClientNetworkCore : Connection to server terminated.");
     }
 }
 
@@ -73,9 +73,9 @@ bool ClientNetworkCore::SendSynchronousMessage( const Message& msg, Message& res
         m_response_msg = Message();
 
         // this requires a timeout since if there is a chance that we'll never get a response
-        unsigned int start_time = SDL_GetTicks();
+        m_synch_message_start_time = SDL_GetTicks();
 
-        while (( SDL_GetTicks() - start_time ) < SYCHRONOUS_TIMEOUT) {
+        while (( SDL_GetTicks() - m_synch_message_start_time ) < SYCHRONOUS_TIMEOUT) {
             if (FE_PollEvent(&ev)) {
                 // ignore all but network  messages
                 if ( ev.type == SDL_USEREVENT ) {
@@ -101,6 +101,11 @@ bool ClientNetworkCore::SendSynchronousMessage( const Message& msg, Message& res
     }
 
     return success;
+}
+
+void ClientNetworkCore::SynchronousMessageEarlyTimout()
+{
+    m_synch_message_start_time = 0;
 }
 
 std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
@@ -192,6 +197,7 @@ bool ClientNetworkCore::DisconnectFromServer()
         NET2_TCPClose(m_server_socket);
         m_server_socket = -1;
     }
+    SynchronousMessageEarlyTimout();
     return retval;
 }
 
@@ -224,6 +230,7 @@ void ClientNetworkCore::HandleNetEvent(SDL_Event& event)
             if (closing_socket == m_server_socket) { // connection to server
                 logger.debug("ClientNetworkCore::HandleNetEvent : Connection to server terminated.");
                 m_server_socket = -1;
+                SynchronousMessageEarlyTimout();
                 ClientApp::HandleServerDisconnect();
             } else { // unknown connection
                 IPaddress* addr = NET2_TCPGetPeerAddress(closing_socket);

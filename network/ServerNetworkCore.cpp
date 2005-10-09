@@ -165,18 +165,16 @@ bool ServerNetworkCore::DumpConnection(int socket)
 void ServerNetworkCore::DumpAllConnections()
 {
    for (std::map<int, PlayerInfo>::iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
-      int player_id = -1;
+      int player_id = it->first;
       int socket = it->second.socket;
-      player_id = it->first;
       IPaddress* addr = NET2_TCPGetPeerAddress(socket);
       const char* socket_hostname = SDLNet_ResolveIP(addr);
       NET2_TCPClose(socket);
       ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::DumpAllConnections : Connection to " << 
          (player_id == -1 ? "" : "player " + boost::lexical_cast<std::string>(player_id)) << " " << 
          (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << socket << " terminated.";
-      m_player_connections.erase(it);
-      break;
    }
+   m_player_connections.clear();
    for (unsigned int i = 0; i < m_new_connections.size(); ++i) {
       int socket = m_new_connections[i].socket;
       IPaddress* addr = NET2_TCPGetPeerAddress(socket);
@@ -184,9 +182,8 @@ void ServerNetworkCore::DumpAllConnections()
       NET2_TCPClose(socket);
       ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::DumpAllConnections : Connection to non-player " <<
           (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << socket << " terminated.";
-      m_new_connections.erase(m_new_connections.begin() + i);
-      break;
    }
+   m_new_connections.clear();
 }
 
 void ServerNetworkCore::HandleNetEvent(SDL_Event& event)

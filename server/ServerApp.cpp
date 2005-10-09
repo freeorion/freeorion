@@ -1527,6 +1527,7 @@ bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, co
             conflict_details.root_node.AppendChild(GG::XMLElement("settings_files", settings_files_mismatches));
             conflict_details.root_node.AppendChild(GG::XMLElement("source_files", source_files_mismatches));
             m_network_core.SendMessage(VersionConflictMessage(player_id, conflict_details));
+            
             SDL_Delay(5000);
             m_network_core.DumpPlayer(player_id);
         }
@@ -1984,8 +1985,8 @@ void ServerApp::ProcessTurns()
     }
 
     // if a combat happened, give the human user a chance to look at the results
-    if(combat_happend)
-        SDL_Delay(1000);
+    if (combat_happend)
+        SDL_Delay(1500);
 
     ++m_current_turn;
 
@@ -2053,15 +2054,14 @@ void ServerApp::ProcessTurns()
     // determine if victory conditions exist
     if (m_network_core.Players().size() == 1) { // if there is only one player left, that player is the winner
         m_log_category.debugStream() << "ServerApp::ProcessTurns : One player left -- sending victory notification and terminating.";
-        m_network_core.SendMessage(VictoryMessage(m_network_core.Players().begin()->first));
-        // TODO: flush pending messages before Exit(0), instead of waiting 5 seconds
-        SDL_Delay(5000);
+        while (m_network_core.Players().size() == 1) {
+            m_network_core.SendMessage(VictoryMessage(m_network_core.Players().begin()->first));
+            SDL_Delay(100);
+        }
         m_network_core.DumpAllConnections();
         Exit(0);
     } else if (m_ai_IDs.size() == m_network_core.Players().size()) { // if there are none but AI players left, we're done
         m_log_category.debugStream() << "ServerApp::ProcessTurns : No human players left -- server terminating.";
-        // TODO: flush pending messages before Exit(0), instead of waiting 5 seconds
-        SDL_Delay(5000);
         m_network_core.DumpAllConnections();
         Exit(0);
     }
