@@ -199,7 +199,8 @@ void OptionsWnd::FillFontCombo(CUIDropDownList* combo, const std::string& option
 	FillCombo(combo, m_fonts, s);
 }
 
-void OptionsWnd::AddFontControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, CUIDropDownList*& combo, const std::string& optionName, const std::string& userStringSize, CUISpin<int>*& spin)
+void OptionsWnd::AddFontControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, CUIDropDownList*& combo,
+                                 const std::string& optionName, const std::string& userStringSize, CUISpin<int>*& spin)
 {
 	GG::TextControl* textControl = new GG::TextControl(x, y + 3, UserString(userString), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
 	pageWnd->AttachChild(textControl);
@@ -212,7 +213,7 @@ void OptionsWnd::AddFontControls(int x, int y, const std::string& userString, GG
 	textControl->MoveTo(PAGE_WIDTH - 55 - textControl->Width(), y + 3);
 	combo->Resize(PAGE_WIDTH - 60 - textControl->Width() - x, combo->Height());
 	pageWnd->AttachChild(textControl);
-    spin = new CUISpin<int>(PAGE_WIDTH - 50, y - 1, 50, GetOptionsDB().Get<int>("UI.font-size"), 1, 6, 72, true);
+    spin = new CUISpin<int>(PAGE_WIDTH - 50, y - 1, 50, GetOptionsDB().Get<int>(optionName + "-size"), 1, 6, 72, true);
 	pageWnd->AttachChild(spin);
 }
 
