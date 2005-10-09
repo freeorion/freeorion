@@ -956,9 +956,9 @@ void ServerApp::HandleMessage(const Message& msg)
             m_players_responded.insert(msg.Sender());
         } else { // the Orders were sent from a Player who has finished her turn
             if (GetOptionsDB().Get<bool>("debug.log-turn-orders")) {
-                std::string dbg_file("TurnOrdersReceived_");
+                std::string dbg_file("TurnOrdersReceived_empire");
                 dbg_file += boost::lexical_cast<std::string>(msg.Sender());
-                dbg_file += ".txt";
+                dbg_file += ".xml";
                 std::ofstream output(dbg_file.c_str());
                 doc.WriteDoc(output);
                 output.close();
@@ -972,13 +972,10 @@ void ServerApp::HandleMessage(const Message& msg)
 
             for (int i = 0; i < root.NumChildren(); ++i) {
                 Order *p_order = order_factory.GenerateObject(root.Child(i));
-
-                if ( p_order ) {
-                    p_order_set->AddOrder( p_order );
-                } else {
-                    // log error
-                    m_log_category.errorStream() << "An Order has been received that has no factory - ignoring.";        
-                }
+                if (p_order)
+                    p_order_set->AddOrder(p_order);
+                else
+                    m_log_category.errorStream() << "An Order has been received that has no factory - ignoring.";
             }
 
             m_log_category.debugStream() << "ServerApp::HandleMessage : Received orders from player " << msg.Sender();
