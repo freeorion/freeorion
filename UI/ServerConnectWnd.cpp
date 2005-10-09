@@ -173,6 +173,7 @@ void ServerConnectWnd::IPAddressEdited(const std::string& str)
 {
     if (str != "")
         m_servers_lb->ClearSelection();
+    EnableDisableControls();
 }
 
 void ServerConnectWnd::NameEdited(const std::string& str)
