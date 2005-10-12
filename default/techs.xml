@@ -666,6 +666,7 @@
     <prereq>CON_ARCH_MONOFILS</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Orbital_Generation.png</graphic>
 </Tech>
 
 <Tech>
@@ -680,6 +681,7 @@
     <prereq>PRO_CORE_MINE</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Orbital_Mining.png</graphic>
 </Tech>
 
 <Tech>
@@ -694,6 +696,7 @@
     <prereq>PRO_NANOTECH_PROD</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Sentient_Autofactories.png</graphic>
 </Tech>
 
 <Tech>
@@ -751,6 +754,7 @@
     <prereq>PRO_FUSION_GEN</prereq>
   </prerequisites>
   <unlocked_items></unlocked_items>
+  <graphic>tech_icons/Singularity_Generation.png</graphic>
 </Tech>
 
 <Tech>
