@@ -282,30 +282,17 @@ protected:
         typedef T* (*Generator)(const GG::XMLElement&); ///< this defines the function signature for object generators
 
         /** \name Structors */ //@{
-        NumberedElementFactory() {} ///< ctor
+        NumberedElementFactory(); ///< ctor
         //@}
 
-        /** Generates objects whose tag name contains but is not limited to the generator name  */ //@{
-        T* GenerateObject(const GG::XMLElement& elem) const ///< returns a heap-allocated subclass object of the appropriate type
-        {
-            T* retval = 0;
-
-            for ( typename std::map<std::string, Generator>::const_iterator it = m_generators.begin(); it != m_generators.end(); ++it ) {
-                // is the string anywhere in the tag?
-                std::string tag_name = elem.Tag();
-                std::string tag_alpha = tag_name.substr(0, tag_name.find_first_of("0123456789"));
-
-                if (tag_alpha == it->first) {
-                    retval = it->second(elem);
-                    break;
-                }
-            }
-            return retval;
-        }
+        /** \name Accessors */ //@{
+        /** Generates objects whose tag name contains but is not limited to the generator name  */
+        T* GenerateObject(const GG::XMLElement& elem) const;
+        //@}
 
         /** \name Mutators */ //@{
         /** adds (or overrides) a new generator that can generate subclass objects described by \a name */
-        void AddGenerator(const std::string& name, Generator gen) {m_generators[name] = gen;}
+        void AddGenerator(const std::string& name, Generator gen);
         //@}
 
     private:
@@ -321,6 +308,7 @@ protected:
     void GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated
     bool ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray); // used by GenerateStarlanes.  Determines if two systems are connected by maxLaneJumps or less edges on graph
     void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems); // Removes lanes from passed graph that are angularly too close to eachother
+    void CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems); // Removes lanes from passed graph that are too long
     void GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray); // grows trees to connect stars...  takes an array of sets of potential starlanes for each star, and puts the starlanes of the tree into another set
     
     void InitializeSystemGraph(); ///< resizes the system graph to the appropriate size and populates m_system_distances 
@@ -405,5 +393,34 @@ Universe::ObjectIDVec Universe::FindObjectIDs() const
     }
     return retval;
 }
+
+template <class T>
+Universe::NumberedElementFactory<T>::NumberedElementFactory()
+{}
+
+template <class T>
+T* Universe::NumberedElementFactory<T>::GenerateObject(const GG::XMLElement& elem) const ///< returns a heap-allocated subclass object of the appropriate type
+{
+    T* retval = 0;
+
+    for (typename std::map<std::string, Generator>::const_iterator it = m_generators.begin(); it != m_generators.end(); ++it) {
+        // is the object type name a prefix of the tag?
+        std::string tag_name = elem.Tag();
+        std::string tag_alpha = tag_name.substr(0, tag_name.find_first_of("0123456789"));
+
+        if (tag_alpha == it->first) {
+            retval = it->second(elem);
+            break;
+        }
+    }
+    return retval;
+}
+
+template <class T>
+void Universe::NumberedElementFactory<T>::AddGenerator(const std::string& name, Generator gen)
+{
+    m_generators[name] = gen;
+}
+
 
 #endif // _Universe_h_

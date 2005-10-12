@@ -538,6 +538,7 @@ namespace Delauney {
 			return true;
 		return false;
 	};
+
 	DTTriangle::DTTriangle(int vert1, int vert2, int vert3, std::vector<Delauney::DTPoint> &points) {
 		double a, Sx, Sy, b;
 		double x1, x2, x3, y1, y2, y3;
@@ -592,6 +593,7 @@ namespace Delauney {
 		centre.y = 0;
 		radius2 = 0;
 	};
+
 	const std::vector<int>& DTTriangle::getVerts() {
 		return verts;
 	};
@@ -616,7 +618,7 @@ namespace Delauney {
 	
 		// extract systems positions, and store in vector.  Can't use actual systems data since
 		// systems have position limitations which would interfere with algorithm	
-		theSize = (int)(systems.size());
+		theSize = static_cast<int>(systems.size());
 		for (n = 0; n < theSize; n++) {		
 			points.push_back(Delauney::DTPoint(systems[n]->X(), systems[n]->Y()));	
 		}
@@ -632,7 +634,7 @@ namespace Delauney {
 		triList = new std::list<Delauney::DTTriangle>;
 		
 		// add last three points into the first triangle, the "covering triangle"
-		theSize = (int)points.size();
+		theSize = static_cast<int>(points.size());
 		triList->push_front(Delauney::DTTriangle(theSize-1, theSize-2, theSize-3, points));
 	
 		
@@ -1387,6 +1389,9 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
 
 	//Logger().debugStream() << "Extracted Potential Starlanes from Triangulation";
 	
+	double maxStarlaneLength = UniverseDataTables()["MaxStarlaneLength"][0][0];
+	CullTooLongLanes(maxStarlaneLength, potentialLaneSetArray, sys_vec);
+
 	CullAngularlyTooCloseLanes(0.98, potentialLaneSetArray, sys_vec);
 
 	//Logger().debugStream() << "Culled Agularly Too Close Lanes";
@@ -1399,7 +1404,7 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
 	std::vector<int> roots(4);
 	roots[0] = 0;  roots[1] = 1;  roots[2] = 2;  roots[3] = 3;
 	GrowSpanningTrees(roots, potentialLaneSetArray, laneSetArray);
-	Logger().debugStream() << "Constructed initial spanning trees.";
+	//Logger().debugStream() << "Constructed initial spanning trees.";
 	
 	// add starlanes of spanning tree to stars
 	for (n = 0; n < numSys; n++) {
@@ -1437,6 +1442,7 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
 			laneSetIter++;
 		} // end while
 	} // end for n
+	//Logger().debugStream() << "Done generating starlanes.";
 }
 
 // used by GenerateStarlanes.  Determines if system1 and system2 are connected by maxLaneJumps or less edges
@@ -1472,7 +1478,7 @@ bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::
 	if (0 == maxLaneJumps) return false; // no system is connected to any other system by less than 1 jump
 	if (0 == (laneSetArray[system1]).size()) return false; // no lanes out of start system
 	if (0 == (laneSetArray[system2]).size()) return false; // no lanes into destination system
-	if (system1 >= (int)(laneSetArray.size()) || system2 >= (int)(laneSetArray.size())) return false; // out of range
+	if (system1 >= static_cast<int>(laneSetArray.size()) || system2 >= static_cast<int>(laneSetArray.size())) return false; // out of range
 	if (system1 < 0 || system2 < 0) return false; // out of range
 	
     // add starting system to list and set of accessible systems
@@ -1520,8 +1526,8 @@ bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::
 }
 
 // Removes lanes from passed graph that are angularly too close to other lanes emanating from the same star
-// Preferentially removes longer lanes in the case of two conficting lanes, and also checks to ensure
-// that removing the lane doesn't remove the only connection between the stars on either end of the lane
+// Preferentially removes longer lanes in the case of two conficting lanes
+// Ensures that removing a lane does not create any isoalted subgraphs
 void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems) {
 		
 	// start and end systems of a new lane being considered, and end points of lanes that already exist with that
@@ -1679,16 +1685,110 @@ void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vecto
 		laneSetArray[lane1.first].erase(lane1.second);
 		laneSetArray[lane1.second].erase(lane1.first);
 
+		// check that removing lane hasn't disconnected systems
+		if (!ConnectedWithin(lane1.first, lane1.second, numSys, laneSetArray)) {
+			// they aren't connected... reconnect them
+			laneSetArray[lane1.first].insert(lane1.second);
+			laneSetArray[lane1.second].insert(lane1.first);
+		}
+
 		lanesToRemoveIter++;
 	}
 }
 
-// grows trees to connect stars.  should produce a single, or nearly singly connected graph.
-// takes an array of indices of starting systems for the growing trees
-// takes potential lanes as an array of sets for each system, and puts lanes of tree(s) into other array of sets
+// Removes lanes from passed graph that are too long Ensures that removing a lane does not create any isoalted subgraphs
+void Universe::CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems) {
+	// start and end systems of a new lane being considered, and end points of lanes that already exist with that start
+	// at the start or destination of the new lane
+	int curSys, dest;
+	
+	// geometry stuff... points components, vector componenets
+	double startX, startY, vectX, vectY;
+	
+	// iterators to go through sets of lanes in array
+	std::set<int>::iterator laneSetIter, laneSetEnd;
+	
+	// map, indexed by lane length, of start and end stars of lanes to be removed
+	std::multimap<double, std::pair<int, int>, std::greater<double> > lanesToRemoveMap;
+	std::multimap<double, std::pair<int, int>, std::greater<double> >::iterator lanesToRemoveIter, lanesToRemoveEnd;
+	std::pair<int, int> lane;
+	typedef std::pair<double, std::pair<int, int> > MapInsertableTypeQQ;
+
+	int numSys = systems.size();
+	// make sure data is consistent
+	if (static_cast<int>(laneSetArray.size()) != numSys) {
+		return;
+	}
+	
+	if (numSys < 2) return;  // nothing worth doing for less than two systems (no lanes!)
+
+	// get squared max lane lenth, so as to eliminate the need to take square roots of lane lenths...
+	double maxLaneLength2 = maxLaneLength*maxLaneLength;
+
+	// loop through systems
+	for (curSys = 0; curSys < numSys; curSys++) {
+		// get position of current system (for use in calculating vector)
+		startX = systems[curSys]->X();
+		startY = systems[curSys]->Y();
+
+		// iterate through all lanes in system, checking lengths and marking to be removed if necessary
+		laneSetIter = laneSetArray[curSys].begin();
+		laneSetEnd = laneSetArray[curSys].end();
+		while (laneSetIter != laneSetEnd) {
+			// get destination for this lane
+			dest = *laneSetIter;
+			// convert start and end into ordered pair to represent lane
+			if (curSys < dest) 
+				lane = std::pair<int, int>(curSys, dest);
+			else
+				lane = std::pair<int, int>(dest, curSys);
+
+			// get vector to this lane destination
+			vectX = systems[dest]->X() - startX;
+			vectY = systems[dest]->Y() - startY;
+			
+			// compare magnitude of vector to max allowed
+			double laneLength2 = vectX*vectX + vectY*vectY;
+			if (laneLength2 > maxLaneLength2) {
+				// lane is too long!  mark it to be removed
+				lanesToRemoveMap.insert( MapInsertableTypeQQ(laneLength2, lane) );
+			}			
+
+			laneSetIter++;			
+		}
+	}
+
+	// Iterate through set of lanes to remove, and remove them in turn.  Since lanes were inserted in the map indexed by
+	// their length, iteration starting with begin starts with the longest lane first, then moves through the lanes as
+	// they get shorter, ensuring that the longest lanes are removed first.
+	lanesToRemoveIter = lanesToRemoveMap.begin();
+	lanesToRemoveEnd = lanesToRemoveMap.end();
+	while (lanesToRemoveIter != lanesToRemoveEnd) {
+		lane = lanesToRemoveIter->second;
+
+		// ensure the lane still exists
+		if (laneSetArray[lane.first].count(lane.second) > 0 &&
+			laneSetArray[lane.second].count(lane.first) > 0) {
+
+			// remove lane
+			laneSetArray[lane.first].erase(lane.second);
+			laneSetArray[lane.second].erase(lane.first);
+
+			// if removing lane has disconnected systems, reconnect them
+			if (!ConnectedWithin(lane.first, lane.second, numSys, laneSetArray)) {
+				laneSetArray[lane.first].insert(lane.second);
+				laneSetArray[lane.second].insert(lane.first);
+			}
+		}	
+		lanesToRemoveIter++;
+	}
+}
+
+// Grows trees to connect stars.  Should produce a single, or nearly singly connected graph.  Takes an array of indices
+// of starting systems for the growing trees takes potential lanes as an array of sets for each system, and puts lanes
+// of tree(s) into other array of sets.
 void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray) {
-	// array to keep track of whether a given system (index #) has been connected to by growing
-	// tree algorithm
+	// array to keep track of whether a given system (index #) has been connected to by growing tree algorithm
 	std::vector<int> treeOfSystemArray; // which growing tree a particular system has been assigned to
 	
 	//  map index by tree number, containing a list for each tree, each of which contains the systems in a particular tree
@@ -1716,7 +1816,7 @@ void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<in
 		//Logger().debugStream() << "GrowSpanningTrees was asked to grow too many or too few trees simultaneously.  Doing nothing.";
 		return;
 	}
-	if ((int)(roots.size()) > numSys) {
+	if (static_cast<int>(roots.size()) > numSys) {
 		//Logger().debugStream() << "GrowSpanningTrees was asked to grow more separate trees than there are systems to grow from.  Doing nothing.";
 		return;
 	}
