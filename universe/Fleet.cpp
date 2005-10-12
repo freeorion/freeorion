@@ -66,8 +66,22 @@ UniverseObject::Visibility Fleet::GetVisibility(int empire_id) const
 {
     if (ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
         return FULL_VISIBILITY;
-    else
-        return PARTIAL_VISIBILITY; // TODO: do something smarter here, such as a range check vs. owned systems and fleets
+    else {
+	// A fleet is visible to another player, iff
+        // the previous system on the route or the next system on the route
+        // is visible to the player.
+	System * system;
+	if ((system = GetUniverse().Object<System>(SystemID())) &&
+	    system->GetVisibility(empire_id) != NO_VISIBILITY)
+	    return PARTIAL_VISIBILITY;
+	if ((system = GetUniverse().Object<System>(NextSystemID())) &&
+	    system->GetVisibility(empire_id) != NO_VISIBILITY)
+	    return PARTIAL_VISIBILITY;
+	if ((system = GetUniverse().Object<System>(PreviousSystemID())) &&
+	    system->GetVisibility(empire_id) != NO_VISIBILITY)
+	    return PARTIAL_VISIBILITY;
+	return NO_VISIBILITY;
+    }
 }
 
 
@@ -85,13 +99,16 @@ GG::XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 
     // Disclose real fleet name only to fleet owners. Rationale: a player
     // might become suspicious if the incoming foreign fleet is called "Decoy"
-    if (empire_id != Universe::ALL_EMPIRES && 
-	Owners().find(empire_id) == Owners().end()) {
+    if (!ALL_OBJECTS_VISIBLE &&
+	empire_id != Universe::ALL_EMPIRES && !OwnedBy(empire_id)) {
 	retval.Child("UniverseObject").Child("m_name").SetText("Foreign fleet");
+	// the player also only sees the immediate destination of the fleet,
+	// not the entire route.
+	retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_next_system)));
+    } else {
+	retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_moving_to)));
     }
-
     retval.AppendChild(XMLElement("m_ships", GG::StringFromContainer<ShipIDSet>(m_ships)));
-    retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_moving_to)));
     retval.AppendChild(XMLElement("m_prev_system", lexical_cast<std::string>(m_prev_system)));
     retval.AppendChild(XMLElement("m_next_system", lexical_cast<std::string>(m_next_system)));
     return retval;
