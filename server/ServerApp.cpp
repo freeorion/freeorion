@@ -63,7 +63,7 @@ namespace {
 // define this as nonzero to save games in gzip-compressed form;
 // define this as zero when this is inconvenient, such as when testing
 // and debugging
-#define GZIP_SAVE_FILES_COMPRESSION_LEVEL 0
+#define GZIP_SAVE_FILES_COMPRESSION_LEVEL 6
 
 
 namespace {
