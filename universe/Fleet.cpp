@@ -101,7 +101,7 @@ GG::XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
     // might become suspicious if the incoming foreign fleet is called "Decoy"
     if (!ALL_OBJECTS_VISIBLE &&
 	empire_id != Universe::ALL_EMPIRES && !OwnedBy(empire_id)) {
-	retval.Child("UniverseObject").Child("m_name").SetText("Foreign fleet");
+	retval.Child("UniverseObject").Child("m_name").SetText(UserString("FW_FOREIGN_FLEET"));
 	// the player also only sees the immediate destination of the fleet,
 	// not the entire route.
 	retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_next_system)));

@@ -680,6 +680,9 @@ New Fleet
 FW_EMPIRE_FLEETS
 %1% Fleets
 
+# the name that is used for fleets the player does not control
+FW_FOREIGN_FLEET
+Foreign fleet
 
 ###############
 # TechTreeWnd #
