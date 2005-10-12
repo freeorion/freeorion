@@ -122,8 +122,8 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add(    "app-width", "Sets horizontal app resolution.", 1280, RangedValidator<int>(640, 2048));
-        db.Add(    "app-height", "Sets vertical app resolution.", 1024, RangedValidator<int>(480, 1536));
+        db.Add(    "app-width", "Sets horizontal app resolution.", 1024, RangedValidator<int>(800, 2048));
+        db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(600, 1536));
         db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
 
         // sound
