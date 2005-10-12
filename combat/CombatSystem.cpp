@@ -125,7 +125,7 @@ static void Debugout(std::vector<CombatAssetsHitPoints> &empire_combat_forces)
 }
 #endif
 
-CombatUpdateMessage GenerateCombatUpdateMessage(int victor_id,int system_id,const std::vector<CombatAssetsHitPoints> &empire_combat_forces)
+CombatUpdateMessage GenerateCombatUpdateMessage(int victor_id, int system_id, const std::vector<CombatAssetsHitPoints> &empire_combat_forces)
 {
   CombatUpdateMessage cmb_upd_msg;
   
@@ -164,7 +164,7 @@ CombatUpdateMessage GenerateCombatUpdateMessage(int victor_id,int system_id,cons
       else
         eci.non_combat_ships_retreated++;
 
-    eci.planets_lost       = victor_id==e?0:empire_combat_forces[e].defenseless_planets.size();
+    eci.planets_lost       = victor_id == static_cast<int>(e) ? 0 : empire_combat_forces[e].defenseless_planets.size();
     eci.planets_defenseless= 0;
 
     cmb_upd_msg.m_opponents.push_back(eci);
