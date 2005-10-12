@@ -124,7 +124,7 @@ namespace {
     {
         db.Add(    "app-width", "Sets horizontal app resolution.", 1024, RangedValidator<int>(800, 2048));
         db.Add(    "app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(600, 1536));
-        db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
+        db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 16, RangedStepValidator<int>(8, 16, 32));
 
         // sound
         db.Add<std::string>("art-dir", "Sets UI art resource directory.", "default/data/art/");
