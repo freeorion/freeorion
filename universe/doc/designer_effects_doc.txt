@@ -75,7 +75,7 @@ Finally, note that in places below where a bool value is requested, you must ent
 
 
 ===EmpireAffiliation===
-<br>Descr.:     Matches all objects that are owned (if EXCLUSIVE == false) or only owned (if EXCLUSIVE == true) by an empire that  has affilitation type affilitation with Empire EMPIRE_ID.
+<br>Descr.:     Matches all objects that are owned (if EXCLUSIVE == false) or only owned (if EXCLUSIVE == true) by an empire that  has affilitation type [[Tech_Description_Enums#EmpireAffiliationType|EmpireAffiliationType]] AFFILIATION with Empire EMPIRE_ID.
 <br>XML format:
  <Condition::EmpireAffiliation>
      <empire_id>EMPIRE_ID</empire_id>
@@ -96,7 +96,7 @@ Finally, note that in places below where a bool value is requested, you must ent
 
 
 ===Type===
-<br>Descr.:     Matches all objects that are of UniverseObjectType TYPE.
+<br>Descr.:     Matches all objects that are of [[Tech_Description_Enums#UniverseObjectType|UniverseObjectType]] TYPE.
 <br>XML format:
  <Condition::Type>TYPE</Condition::Type>
 
@@ -133,7 +133,7 @@ Finally, note that in places below where a bool value is requested, you must ent
 
 
 ===PlanetType===
-<br>Descr.:     Matches all Planet objects that have one of the given PlanetTypes.  Note that all Building objects which are on matching planets are also matched.
+<br>Descr.:     Matches all Planet objects that have one of the given [[Tech_Description_Enums#PlanetType|PlanetTypes]].  Note that all Building objects which are on matching planets are also matched.
 <br>XML format:
  <Condition::PlanetType>
      <PlanetType>TYPE0</PlanetType>
@@ -147,7 +147,7 @@ Finally, note that in places below where a bool value is requested, you must ent
 
 
 ===PlanetSize===
-<br>Descr.:     Matches all Planet objects that have one of the given PlanetSizes.  Note that all Building objects which are on matching planets are also matched.
+<br>Descr.:     Matches all Planet objects that have one of the given [[Tech_Description_Enums#PlanetSize|PlanetSizes]].  Note that all Building objects which are on matching planets are also matched.
 <br>XML format:
  <Condition::PlanetSize>
      <PlanetSize>SIZE0</PlanetSize>
@@ -161,7 +161,7 @@ Finally, note that in places below where a bool value is requested, you must ent
 
 
 ===PlanetEnvironment===
-<br>Descr.:     Matches all Planet objects that have one of the given PlanetEnvironments. Note that all Building objects which are on matching planets are also matched.
+<br>Descr.:     Matches all Planet objects that have one of the given [[Tech_Description_Enums#PlanetEnvironment|PlanetEnvironments]]. Note that all Building objects which are on matching planets are also matched.
 <br>XML format:
  <Condition::PlanetEnvironment>
      <PlanetEnvironment>ENVIRONMENT0</PlanetEnvironment>
@@ -175,7 +175,7 @@ Finally, note that in places below where a bool value is requested, you must ent
 
 
 ===FocusType===
-<br>Descr.:     Matches all ProdCenter objects that have one of the given FocusTypes.  Note that all objects in matching ProdCenter are also matched (currently only applies to Buildings on Planets).
+<br>Descr.:     Matches all ProdCenter objects that have one of the given [[Tech_Description_Enums#FocusType|FocusTypes]].  Note that all objects in matching ProdCenter are also matched (currently only applies to Buildings on Planets).
 <br>XML format:
  <Condition::FocusType>
      <primary>PRIMARY</primary>
@@ -190,7 +190,7 @@ Finally, note that in places below where a bool value is requested, you must ent
  FOCUSX FocusType-expression
 
 ===StarType===
-<br>Descr.:     Matches all System objects that have one of the given StarTypes.  Note that all objects in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.).
+<br>Descr.:     Matches all System objects that have one of the given [[Tech_Description_Enums#StarType|StarTypes]].  Note that all objects in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.).
 <br>XML format:
  <Condition::StarType>
      <StarType>TYPE0</StarType>
@@ -215,7 +215,7 @@ Finally, note that in places below where a bool value is requested, you must ent
 
 
 ===MeterValue===
-<br>Descr.:     Matches all objects that have a meter of type METER, and whose current value (if MAX_METER == false) or maximum value (if MAX_METER == true) of that meter is >= LOW and     < HIGH.
+<br>Descr.:     Matches all objects that have a meter of [[Tech_Description_Enums#MeterType|MeterType]] METER, and whose current value (if MAX_METER == false) or maximum value (if MAX_METER == true) of that meter is >= LOW and     < HIGH.
 <br>XML format:
  <Condition::MeterValue>
      <meter>METER</meter>
@@ -232,7 +232,7 @@ Finally, note that in places below where a bool value is requested, you must ent
 
 
 ===EmpireStockpileValue===
-<br>Descr.:     Matches all objects with exactly one owner, whose owner's stockpile of STOCKPILE is between LOW and HIGH, inclusive.
+<br>Descr.:     Matches all objects with exactly one owner, whose owner's [[Tech_Description_Enums#StockpileType|stockpile]] of STOCKPILE is between LOW and HIGH, inclusive.
 <br>XML format:
  <Condition::EmpireStockpileValue>
      <stockpile>STOCKPILE</stockpile>
@@ -358,7 +358,7 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
 ==Effects==
 
 ===SetMeter===
-<br>Descr.:     Sets the meter of the given kind to VALUE.  The max value of the meter is set if MAX == true; otherwise the current value of the meter is set.  If the target of the Effect does not have the requested meter, nothing is done.
+<br>Descr.:     Sets the meter of the given kind to VALUE.  The max value of the meter is set if MAX == true; otherwise the current value of the meter is set.  If the target of the Effect does not have the requested meter, nothing is done.  The meter to alter is indicated by its [[Tech_Description_Enums#MeterType|MeterType]] in the METER field. 
 <br>XML format:
  <Effect::SetMeter>
      <meter>METER</meter>
@@ -373,7 +373,7 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
 
 
 ===SetEmpireStockpile===
-<br>Descr.:     Sets the empire stockpile of STOCKPILE of the target's owning empire to VALUE.  If the target does not have exactly one owner, nothing is done.
+<br>Descr.:     Sets the empire [[Tech_Description_Enums#StockpileType|stockpile]] of STOCKPILE of the target's owning empire to VALUE.  If the target does not have exactly one owner, nothing is done.
 <br>XML format:
  <Effect::SetEmpireStockpile>
      <stockpile>STOCKPILE</stockpile>
@@ -386,7 +386,7 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
 
 
 ===SetPlanetType===
-<br>Descr.:     Sets the planet type of the target to TYPE.  This has no effect on non-Planet targets.  Note that changing the type of a PT_ASTEROID or PT_GASGIANT planet will also change its size to SZ_TINY or SZ_HUGE, respectively.  Similarly, changing type to PT_ASTEROID or PT_GASGIANT will also cause the size to change to SZ_ASTEROID or SZ_GASGIANT, respectively.
+<br>Descr.:     Sets the [[Tech_Description_Enums#PlanetType|planet type]] of the target to TYPE.  This has no effect on non-Planet targets.  Note that changing the type of a PT_ASTEROID or PT_GASGIANT planet will also change its size to SZ_TINY or SZ_HUGE, respectively.  Similarly, changing type to PT_ASTEROID or PT_GASGIANT will also cause the size to change to SZ_ASTEROID or SZ_GASGIANT, respectively.
 <br>XML format:
  <Effect::SetPlanetType>TYPE</Effect::SetPlanetType>
 
@@ -394,7 +394,7 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
  TYPE PlanetSize-expression
 
 ===SetPlanetSize===
-<br>Descr.:     Sets the planet size of the target to SIZE.  This has no effect on non-Planet targets.  Note that changing the size of a PT_ASTEROID or PT_GASGIANT planet will also change its type to PT_BARREN.  Similarly, changing size to SZ_ASTEROID or SZ_GASGIANT will also cause the type to change to PT_ASTEROID or PT_GASGIANT, respectively.
+<br>Descr.:     Sets the [[Tech_Description_Enums#PlanetSize|planet size]] of the target to SIZE.  This has no effect on non-Planet targets.  Note that changing the size of a PT_ASTEROID or PT_GASGIANT planet will also change its type to PT_BARREN.  Similarly, changing size to SZ_ASTEROID or SZ_GASGIANT will also cause the type to change to PT_ASTEROID or PT_GASGIANT, respectively.
 <br>XML format:
  <Effect::SetPlanetSize>SIZE</Effect::SetPlanetSize>
 
@@ -445,7 +445,7 @@ The And and Or Conditions are designed to work as efficiently as possible, by on
 
 
 ===SetStarType===
-<br>Descr.:     Sets the star type of the target to TYPE.  This has no effect on non-System targets.
+<br>Descr.:     Sets the [[Tech_Description_Enums#StarType|star type]] of the target to TYPE.  This has no effect on non-System targets.
 <br>XML format:
  <Effect::SetStarType>TYPE</Effect::SetStarType>
 
