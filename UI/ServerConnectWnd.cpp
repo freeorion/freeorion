@@ -21,7 +21,11 @@ namespace {
 
     bool NameOK(const std::string& name)
     {
-        return !name.empty() && name.find_first_of(" \t:") == std::string::npos;
+        for (unsigned int i = 0; i < name.size(); ++i) {
+            if (!std::isalnum(name[i]) && name[i] != '_' && name[i] != '-')
+                return false;
+        }
+        return true;
     }
 
     bool temp_header_bool = RecordHeaderFile(ServerConnectWndRevision());
