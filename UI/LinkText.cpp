@@ -60,20 +60,16 @@ LinkText::LinkText(int x, int y, const std::string& str, const std::string& font
 bool LinkText::Render()
 {
 #if RENDER_DEBUGGING_LINK_RECTS
-#if 1
     GG::Rect bounds(TextUpperLeft(), TextLowerRight());
     FlatRectangle(bounds.ul.x, bounds.ul.y, bounds.lr.x, bounds.lr.y, GG::CLR_ZERO, GG::CLR_YELLOW, 1);
-#endif
     for (unsigned int i = 0; i < m_links.size(); ++i) {
         for (unsigned int j = 0; j < m_links[i].rects.size(); ++j) {
             GG::Rect r = TextUpperLeft() + m_links[i].rects[j];
             FlatRectangle(r.ul.x, r.ul.y, r.lr.x, r.lr.y, GG::CLR_ZERO, GG::CLR_RED, 1);
         }
     }
-    return GG::TextControl::Render();
-#else
-    return GG::TextControl::Render();
 #endif
+    return GG::TextControl::Render();
 }
 
 void LinkText::LButtonDown(const GG::Pt& pt, Uint32 keys)
@@ -84,6 +80,7 @@ void LinkText::LButtonDown(const GG::Pt& pt, Uint32 keys)
 void LinkText::LButtonUp(const GG::Pt& pt, Uint32 keys)
 {
     m_old_sel_link = -1;
+    ClearOldRollover();
 }
 
 void LinkText::LClick(const GG::Pt& pt, Uint32 keys)
