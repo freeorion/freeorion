@@ -861,9 +861,9 @@ std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*
 
 bool Condition::EmpireStockpileValue::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    if (source->Owners().size() != 1)
+    if (target->Owners().size() != 1)
         return false;
-    Empire* empire = Empires().Lookup(*source->Owners().begin());
+    Empire* empire = Empires().Lookup(*target->Owners().begin());
     if (m_stockpile == ST_FOOD) {
         double stockpile = empire->FoodResPool().Stockpile();
         return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
