@@ -59,11 +59,13 @@ namespace {
 
 #include <ctime>
 
-// The compression level of savegames. Range 0-9.
-// define this as nonzero to save games in gzip-compressed form;
-// define this as zero when this is inconvenient, such as when testing
-// and debugging
-#define GZIP_SAVE_FILES_COMPRESSION_LEVEL 6
+// The compression level of savegames. Range 0-9.  Define this as nonzero to save games in gzip-compressed form; define
+// this as zero when this is inconvenient, such as when testing and debugging.
+#ifdef FREEORION_RELEASE
+#  define GZIP_SAVE_FILES_COMPRESSION_LEVEL 6
+#else
+#  define GZIP_SAVE_FILES_COMPRESSION_LEVEL 0
+#endif
 
 
 namespace {

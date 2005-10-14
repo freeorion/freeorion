@@ -181,7 +181,9 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
   const int    defence_base_hit_points= 3;
 
 
+#ifdef FREEORION_RELEASE
   ClockSeed();
+#endif
   SmallIntDistType small_int_dist = SmallIntDist(0,10000);
 
   std::vector<CombatAssetsHitPoints> empire_combat_forces;

@@ -963,6 +963,10 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
                               SpecialsFrequency specials_freq, int players, int ai_players, 
                               const std::vector<PlayerSetupData>& player_setup_data/* = std::vector<PlayerSetupData>()*/)
 {
+#ifdef FREEORION_RELEASE
+    ClockSeed();
+#endif
+
     // wipe out anything present in the object map
     for (ObjectMap::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr)
         delete itr->second;
