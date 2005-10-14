@@ -10,6 +10,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <cctype>
 
 namespace {
     const int SERVERS_LIST_BOX_WIDTH = 400;
