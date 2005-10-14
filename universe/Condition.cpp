@@ -887,8 +887,8 @@ Condition::VisibleToEmpire::VisibleToEmpire(const std::vector<const ValueRef::Va
 
 Condition::VisibleToEmpire::VisibleToEmpire(const GG::XMLElement& elem)
 {
-    if (elem.Tag() != "Condition::TargetVisibleToEmpire")
-        throw std::runtime_error("Condition::TargetVisibleToEmpire : Attempted to create a TargetVisibleToEmpire condition from an XML element with a tag other than \"Condition::TargetVisibleToEmpire\".");
+    if (elem.Tag() != "Condition::VisibleToEmpire")
+        throw std::runtime_error("Condition::VisibleToEmpire : Attempted to create a VisibleToEmpire condition from an XML element with a tag other than \"Condition::VisibleToEmpire\".");
 
     for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_empire_ids.push_back(ParseArithmeticExpression<int>(it->Text()));

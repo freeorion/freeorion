@@ -1430,25 +1430,25 @@ DESC_EMPIRE_AFFILIATION_SELF
  that belongs to %1% empire
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
- that belongs to %1% empire
+ that does not belong to %1% empire
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
  that belongs only to %1% empire
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE_NOT
- that belongs only to %1% empire
+ that does not belong only to %1% empire
 
 DESC_EMPIRE_AFFILIATION
- that belongs to an %1% of %1% empire
+ that belongs to an %1% of %2% empire
 
 DESC_EMPIRE_AFFILIATION_NOT
- that belongs to an %1% of %1% empire
+ that does not belong to an %1% of %2% empire
 
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE
- that belongs only to an %1% of %1% empire
+ that belongs only to an %1% of %2% empire
 
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
- that belongs only to an %1% of %1% empire
+ that does not belong only to an %1% of %2% empire
 
 # this one is intentionally left empty
 DESC_SELF
