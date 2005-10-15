@@ -222,8 +222,8 @@ GG_ENUM_STREAM_OUT(MeterType)
 enum EmpireAffiliationType {
     INVALID_EMPIRE_AFFIL_TYPE = -1,
     AFFIL_SELF,     ///< not an affiliation as such; this indicates that the given empire, rather than its affiliates
-    AFFIL_ENEMY,    ///< allies of the given empire
-    AFFIL_ALLY,     ///< enamies of the given empire
+    AFFIL_ENEMY,    ///< enemies of the given empire
+    AFFIL_ALLY,     ///< allies of the given empire
     NUM_AFFIL_TYPES
 };
 
