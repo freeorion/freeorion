@@ -47,24 +47,18 @@ class ClientUI
 public:
     //!Internal States
     //!These determine what screen is currently being displayed
-    enum State
-    {
-        STATE_STARTUP     = 0,
-        STATE_INTRO       = 1,
-        STATE_SETTINGS    = 2,
-        STATE_EMPIRESEL   = 3,
-        STATE_TURNSTART   = 4,
-        STATE_MAP         = 5,
-        STATE_SITREP      = 6,
-        STATE_PROCESS     = 7,
-        STATE_BATTLE      = 8,
-        STATE_SAVE        = 9,
-        STATE_LOAD        = 10,
-        STATE_SHUTDOWN    = 11
+    enum State {
+        STATE_STARTUP,
+        STATE_INTRO,
+        STATE_TURNSTART,
+        STATE_MAP,
+        STATE_COMBAT,
+        STATE_NEW_GAME,
+        STATE_LOAD
     };
 
     //! \name Structors //!@{
-    ClientUI();        //!< construction (calls Initialize())
+    ClientUI();     //!< construction (calls Initialize())
     ~ClientUI();    //!< destruction (calls Cleanup())
 
     bool Initialize();    //!< provided to setup initial variables. 
@@ -112,7 +106,8 @@ public:
     //! @param events vector containing all the events to be listed
     void ScreenSitrep(const std::vector<SitRepEntry>& events);    //!< Sitrep Screen
 
-    void ScreenLoad();    //!< Loading Screen
+    void ScreenNewGame();    //!< New Game Screen
+    void ScreenLoad();       //!< Loading Screen
 
     // Zooming Functions
     bool ZoomToPlanet(int id);  //!< Zooms to a particular planet on the galaxy map and opens the planet screen for that planet

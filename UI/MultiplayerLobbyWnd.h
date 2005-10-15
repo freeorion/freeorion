@@ -35,6 +35,7 @@ public:
     
     /** \name Accessors */ //@{
     bool Result() const {return m_result;}  ///< returns true iff a new game was successfully launched from the lobby
+    bool LoadSelected() const; ///< returns true iff a load game is selected (as opposed to a new one)
     //@}
 
     /** \name Mutators */ //@{

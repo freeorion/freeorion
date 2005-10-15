@@ -225,7 +225,7 @@ void IntroScreen::OnSinglePlayer()
     GalaxySetupWnd galaxy_wnd;    
     galaxy_wnd.Run();
     if (galaxy_wnd.EndedWithOk()) {
-        // TODO: Select AIs, AI difficulty setting(s)
+        // TODO: Select number and difficulty of AIs
         string player_name = "Happy_Player";
         int num_AIs = 4;
 
@@ -249,15 +249,17 @@ void IntroScreen::OnSinglePlayer()
             }
         }
 
-        if (!failed)
+        if (!failed) {
+            ClientUI::GetClientUI()->ScreenNewGame();
             HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(HumanClientApp::GetApp()->PlayerID(), game_parameters));
+        }
     } else {
         failed = true;
     }
 
     if (failed) {
         HumanClientApp::GetApp()->KillServer();
-        Show();
+        ClientUI::GetClientUI()->ScreenIntro();
     }
 }
 
@@ -299,7 +301,7 @@ void IntroScreen::OnMultiPlayer()
     }
 
     if (failed) {
-        Show();
+        ClientUI::GetClientUI()->ScreenIntro();
     } else {
         HumanClientApp::GetApp()->NetworkCore().SendMessage(server_connect_wnd.Result().second == "HOST GAME SELECTED" ? 
                                                             HostGameMessage(HumanClientApp::GetApp()->PlayerID(), server_connect_wnd.Result().first) : 
@@ -308,7 +310,12 @@ void IntroScreen::OnMultiPlayer()
         multiplayer_lobby_wnd.Run();
         if (!multiplayer_lobby_wnd.Result()) {
             HumanClientApp::GetApp()->KillServer();
-            Show();
+            ClientUI::GetClientUI()->ScreenIntro();
+        } else {
+            if (multiplayer_lobby_wnd.LoadSelected())
+                ClientUI::GetClientUI()->ScreenLoad();
+            else
+                ClientUI::GetClientUI()->ScreenNewGame();
         }
     }
 }
@@ -380,8 +387,7 @@ void IntroScreen::OnExitGame()
         delete m_credits_wnd;
         m_credits_wnd = 0;
     }
-    //exit the application
-    GG::App::GetApp()->Exit(0); //exit with 0, good error code
+    GG::App::GetApp()->Exit(0); // exit with 0, good error code
 }
 
 void IntroScreen::Keypress (GG::Key key, Uint32 key_mods)

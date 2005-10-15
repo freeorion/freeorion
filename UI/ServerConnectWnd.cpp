@@ -26,7 +26,7 @@ namespace {
             if (!std::isalnum(name[i]) && name[i] != '_' && name[i] != '-')
                 return false;
         }
-        return true;
+        return !name.empty();
     }
 
     bool temp_header_bool = RecordHeaderFile(ServerConnectWndRevision());

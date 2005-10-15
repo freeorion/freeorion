@@ -446,16 +446,14 @@ void ClientUI::SwitchState(State state)
     case STATE_STARTUP:
         break;
     case STATE_INTRO:
-        GG::App::GetApp()->Remove(m_intro_screen);
-        delete m_intro_screen;
-        m_intro_screen = 0;
-        break;
-    case STATE_SETTINGS:
-        break;
-    case STATE_EMPIRESEL:
+        // when loading a game or starting a new game, defer removal of the intro screen until the new game has actually
+        // started, since either operation may fail due to the server
+        if (state != STATE_NEW_GAME && state != STATE_LOAD) {
+            delete m_intro_screen;
+            m_intro_screen = 0;
+        }
         break;
     case STATE_TURNSTART:
-        GG::App::GetApp()->Remove(m_turn_progress_wnd );
         delete m_turn_progress_wnd;
         m_turn_progress_wnd = 0;
         break;
@@ -465,45 +463,37 @@ void ClientUI::SwitchState(State state)
         //hide sidepanel
         m_map_wnd->SelectSystem(UniverseObject::INVALID_OBJECT_ID);
         break;
-    case STATE_SITREP:
+    case STATE_COMBAT:
         break;
-    case STATE_PROCESS:
-        break;
-    case STATE_BATTLE:
-        break;
-    case STATE_SAVE:
-        break;
+    case STATE_NEW_GAME:
     case STATE_LOAD:
-        GG::App::GetApp()->Remove(m_turn_progress_wnd );
+        if (m_intro_screen) {
+            delete m_intro_screen;
+            m_intro_screen = 0;
+        }
         delete m_turn_progress_wnd;
         m_turn_progress_wnd = 0;
-        break;
-    case STATE_SHUTDOWN:
         break;
     default:
         break;
     }
 
-    switch (m_state=state) {
+    switch (m_state = state) {
     case STATE_STARTUP:
         m_previously_shown_system = UniverseObject::INVALID_OBJECT_ID;
         break;
     case STATE_INTRO:
         m_previously_shown_system = UniverseObject::INVALID_OBJECT_ID;
-        if(m_intro_screen==0) {
-          m_intro_screen = new IntroScreen();
-          GG::App::GetApp()->Register(m_intro_screen);
+        if (!m_intro_screen) {
+            m_intro_screen = new IntroScreen();
+            GG::App::GetApp()->Register(m_intro_screen);
         }
         m_intro_screen->Show();
         break;
-    case STATE_SETTINGS:
-        break;
-    case STATE_EMPIRESEL:
-        break;
     case STATE_TURNSTART:
-        if(m_turn_progress_wnd==0) {
-          m_turn_progress_wnd = new TurnProgressWnd();
-          GG::App::GetApp()->Register(m_turn_progress_wnd);
+        if (!m_turn_progress_wnd) {
+            m_turn_progress_wnd = new TurnProgressWnd();
+            GG::App::GetApp()->Register(m_turn_progress_wnd);
         }
         m_turn_progress_wnd->Show();
         break;
@@ -511,24 +501,17 @@ void ClientUI::SwitchState(State state)
         m_map_wnd->Show();
         m_map_wnd->SelectSystem(m_previously_shown_system);
         break;
-    case STATE_SITREP:
+    case STATE_COMBAT:
         break;
-    case STATE_PROCESS:
-        break;
-    case STATE_BATTLE:
-        break;
-    case STATE_SAVE:
-        break;
+    case STATE_NEW_GAME:
     case STATE_LOAD:
         m_map_wnd->Sanitize();
-        if(m_turn_progress_wnd==0) {
-          m_turn_progress_wnd = new TurnProgressWnd();
-          GG::App::GetApp()->Register(m_turn_progress_wnd);
+        if (!m_turn_progress_wnd) {
+            m_turn_progress_wnd = new TurnProgressWnd();
+            GG::App::GetApp()->Register(m_turn_progress_wnd);
         }
-        m_turn_progress_wnd->UpdateTurnProgress(UserString("LOADING"), -1);
+        m_turn_progress_wnd->UpdateTurnProgress(UserString(m_state == STATE_NEW_GAME ? "NEW_GAME" : "LOADING"), -1);
         m_turn_progress_wnd->Show();
-        break;
-    case STATE_SHUTDOWN:
         break;
     default:
         break;
@@ -568,6 +551,11 @@ void ClientUI::UpdateCombatTurnProgress( const std::string& msg)
 void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
 {
     ScreenMap();
+}
+
+void ClientUI::ScreenNewGame()
+{
+    SwitchState(STATE_NEW_GAME);
 }
 
 void ClientUI::ScreenLoad()

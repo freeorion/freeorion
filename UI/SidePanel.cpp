@@ -708,7 +708,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
 
   GG::Pt ul = UpperLeft(), lr = LowerRight();
   int planet_image_sz = PlanetDiameter();
-  GG::Pt planet_image_pos(MAX_PLANET_DIAMETER / 2 - planet_image_sz / 2, Height() / 2 - planet_image_sz / 2);
+  GG::Pt planet_image_pos(MAX_PLANET_DIAMETER / 2 - planet_image_sz / 2 + 3, Height() / 2 - planet_image_sz / 2);
 
   if (planet.Type() == PT_ASTEROIDS)
   {

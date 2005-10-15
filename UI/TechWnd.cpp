@@ -1616,7 +1616,7 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
         GG::Connect(m_category_buttons.back()->ClickedSignal, SelectCategoryFunctor(this, tech_categories[i]));
         AttachChild(m_category_buttons.back());
     }
-    m_category_buttons.push_back(new CUIButton(BUTTON_MARGIN / 2 + tech_categories.size() * BUTTON_SPACING, NAVIGATOR_AND_DETAIL_HEIGHT + 2, BUTTON_WIDTH, UserString("TECH_WND_ALL_TECH_CATEGORIES")));
+    m_category_buttons.push_back(new CUIButton(BUTTON_MARGIN / 2 + tech_categories.size() * BUTTON_SPACING, NAVIGATOR_AND_DETAIL_HEIGHT + 2, BUTTON_WIDTH, UserString("ALL")));
     GG::Connect(m_category_buttons.back()->ClickedSignal, SelectCategoryFunctor(this, "ALL"));
     AttachChild(m_category_buttons.back());
 

@@ -42,6 +42,9 @@ or
 AND
 and
 
+NEW_GAME
+Generating universe and AIs ...
+
 LOADING
 Loading ...
 
@@ -65,6 +68,9 @@ You are victorious.
 
 EMPIRE_DEFEATED
 The %1% empire is no more.
+
+ALL
+All
 
 UNKNOWN_SYSTEM
 unknown system
@@ -730,9 +736,6 @@ Queued
 TECH_WND_TECH_INCOMPLETE
 Incomplete
 
-TECH_WND_ALL_TECH_CATEGORIES
-All
-
 TECH_WND_TECH_TYPES_TO_SHOW
 Tech types to show:
 
@@ -818,7 +821,7 @@ PRODUCTION_WND_CATEGORY_BT_ORBITAL
 Orbitals
 
 PRODUCTION_TOTAL_COST_STR
-%1% RP / %2% Turns
+%1% PP / %2% Turns
 
 PRODUCTION_TURN_COST_STR
 %1% PP / %2% Turns

@@ -234,7 +234,7 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
         turns = building_type->BuildTime();
         boost::tie(cost_per_turn, turns) = empire->ProductionCostAndTime(BT_BUILDING, m_item);
         if (building_type->Effects().empty()) {
-            description_str = str(format(UserString("TECH_DETAIL_BUILDING_DESCRIPTION_STR"))
+            description_str = str(format(UserString("PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR"))
                                   % UserString(building_type->Description()));
         } else {
             description_str = str(format(UserString("PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS"))
@@ -398,7 +398,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
     m_current_build_type(BT_BUILDING)
 {
     GG::Pt client_size(w - BORDER_LEFT - BORDER_RIGHT, h - BORDER_TOP - BORDER_BOTTOM);
-    GG::Layout* layout = new GG::Layout(BORDER_LEFT, BORDER_TOP, client_size.x, client_size.y, 1, 1, 3, 5);
+    GG::Layout* layout = new GG::Layout(BORDER_LEFT, BORDER_TOP, client_size.x, client_size.y, 1, 1, 3, 6);
     int button_height;
     for (BuildType i = BuildType(BT_NOT_BUILDING + 1); i < NUM_BUILD_TYPES; i = BuildType(i + 1)) {
         CUIButton* button = new CUIButton(0, 0, 1, UserString("PRODUCTION_WND_CATEGORY_" + boost::lexical_cast<std::string>(i)));
@@ -407,6 +407,11 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
         m_build_category_buttons.push_back(button);
         layout->Add(button, 0, i - (BT_NOT_BUILDING + 1));
     }
+    CUIButton* button = new CUIButton(0, 0, 1, UserString("ALL"));
+    button_height = button->Height();
+    GG::Connect(button->ClickedSignal, CategoryClickedFunctor(NUM_BUILD_TYPES, *this));
+    m_build_category_buttons.push_back(button);
+    layout->Add(button, 0, NUM_BUILD_TYPES - (BT_NOT_BUILDING + 1));
     m_buildable_items = new BuildableItemsListBox(0, 0, 1, 1);
     GG::Connect(m_buildable_items->SelChangedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemSelected, this);
     GG::Connect(m_buildable_items->DoubleClickedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
@@ -470,9 +475,9 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
     Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
-    if (build_type == BT_BUILDING) {
+    int i = 0;
+    if (build_type == BT_BUILDING || build_type == NUM_BUILD_TYPES) {
         Empire::BuildingTypeItr end_it = empire->BuildingTypeEnd();
-        int i = 0;
         for (Empire::BuildingTypeItr it = empire->BuildingTypeBegin(); it != end_it; ++it, ++i) {
             GG::ListBox::Row* row = new GG::ListBox::Row();
             row->data_type = *it;
@@ -481,9 +486,9 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
             if (row->data_type == selected_row_data_type)
                 row_to_select = i;
         }
-    } else if (build_type == BT_SHIP) {
+    }
+    if (build_type == BT_SHIP || build_type == NUM_BUILD_TYPES) {
         Empire::ShipDesignItr end_it = empire->ShipDesignEnd();
-        int i = 0;
         for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != end_it; ++it, ++i) {
             GG::ListBox::Row* row = new GG::ListBox::Row();
             row->data_type = it->first;
@@ -492,13 +497,14 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
             if (row->data_type == selected_row_data_type)
                 row_to_select = i;
         }
-    } else if (build_type == BT_ORBITAL) {
+    }
+    if (build_type == BT_ORBITAL || build_type == NUM_BUILD_TYPES) {
         GG::ListBox::Row* row = new GG::ListBox::Row();
         row->data_type = "DEFENSE_BASE";
         row->push_back(UserString(row->data_type), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
         m_buildable_items->Insert(row);
         if (row->data_type == selected_row_data_type)
-            row_to_select = 0;
+            row_to_select = i;
     }
 
     if (row_to_select != -1)

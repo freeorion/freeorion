@@ -197,6 +197,11 @@ MultiplayerLobbyWnd::~MultiplayerLobbyWnd()
     HumanClientApp::GetApp()->SetLobby(0);
 }
 
+bool MultiplayerLobbyWnd::LoadSelected() const
+{
+    return m_new_load_game_buttons->CheckedButton() == 1;
+}
+
 bool MultiplayerLobbyWnd::Render()
 {
     CUI_Wnd::Render();
