@@ -87,7 +87,7 @@ MaxJumpsBetweenSystems          None    Few     Some    Several Many    VeryMany
 Max                             0       8       6       4       3       2
 
 <1x1>
-MaxStarlaneLength               200
+MaxStarlaneLength               120
 
 # since only integer values are expected in this file, each value X below will be taken to be X / 10,000 in the code
 <1x7>
