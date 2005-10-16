@@ -206,6 +206,8 @@ UI/SidePanel.cpp				\
 UI/SidePanel.h					\
 UI/SitRepPanel.cpp				\
 UI/SitRepPanel.h				\
+UI/Splash.cpp				\
+UI/Splash.h				\
 UI/SystemIcon.cpp				\
 UI/SystemIcon.h					\
 UI/TechWnd.cpp				\

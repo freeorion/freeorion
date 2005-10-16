@@ -42,11 +42,6 @@ public:
     //!@}
 
 private:
-    /** \name GG Controls*/ //!@{
-    GG::StaticGraphic* m_bg_graphic00;  //!< a tile of the the background image shown in the intro screen
-    GG::StaticGraphic* m_bg_graphic01;  //!< a tile of the the background image shown in the intro screen
-    GG::StaticGraphic* m_bg_graphic10;  //!< a tile of the the background image shown in the intro screen
-    GG::StaticGraphic* m_bg_graphic11;  //!< a tile of the the background image shown in the intro screen
     CUIButton*         m_single_player; //!< opens up the single player game dialog
     CUIButton*         m_multi_player;  //!< opens up the multi player game dialog
     CUIButton*         m_load_game;     //!< loads a saved single player game
@@ -56,7 +51,8 @@ private:
     CUIButton*         m_exit_game;     //!< button that exits the program
 
     CreditsWnd*        m_credits_wnd;
-    //!@}
+
+    std::vector<std::vector<GG::StaticGraphic*> > m_bg_graphics;
 };
 
 inline std::pair<std::string, std::string> IntroScreenRevision()

@@ -36,15 +36,10 @@ public:
     bool InWindow(const GG::Pt& pt) const;
 
 private:
-
     GG::TextControl*   m_phase_text;
     GG::TextControl*   m_empire_text;
-    GG::StaticGraphic* m_bg_graphic00; //!< one tile of the background image 
-    GG::StaticGraphic* m_bg_graphic01; //!< one tile of the background image 
-    GG::StaticGraphic* m_bg_graphic10; //!< one tile of the background image 
-    GG::StaticGraphic* m_bg_graphic11; //!< one tile of the background image 
-    
     CombatWnd*         m_combat_wnd;
+    std::vector<std::vector<GG::StaticGraphic*> > m_bg_graphics;
 };
 
 inline std::pair<std::string, std::string> TurnProgressWndRevision()
