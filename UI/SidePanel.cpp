@@ -502,13 +502,14 @@ public:
 
     void SetFarming (int farming ) {m_farming = farming;}
     void SetMining  (int mining  ) {m_mining  = mining;}
+    void SetTrade   (int trade   ) {m_trade   = trade;}
     void SetResearch(int research) {m_research= research;}
     void SetIndustry(int industry) {m_industry= industry;}
     void SetDefense (int defense ) {m_defense = defense;}
     //@}
 
 private:
-    int m_farming,m_mining,m_research,m_industry,m_defense;
+    int m_farming,m_mining,m_trade,m_research,m_industry,m_defense;
 };
 
 class RotatingPlanetControl : public GG::Control
@@ -607,6 +608,7 @@ namespace {
 
   boost::shared_ptr<GG::Texture> IconPopulation() {return GetTexture(ClientUI::ART_DIR + "icons/pop.png"        );}
   boost::shared_ptr<GG::Texture> IconIndustry  () {return GetTexture(ClientUI::ART_DIR + "icons/industry.png"   );}
+  boost::shared_ptr<GG::Texture> IconTrade     () {return GetTexture(ClientUI::ART_DIR + "icons/trade.png"      );}
   boost::shared_ptr<GG::Texture> IconResearch  () {return GetTexture(ClientUI::ART_DIR + "icons/research.png"   );}
   boost::shared_ptr<GG::Texture> IconMining    () {return GetTexture(ClientUI::ART_DIR + "icons/mining.png"     );}
   boost::shared_ptr<GG::Texture> IconFarming   () {return GetTexture(ClientUI::ART_DIR + "icons/farming.png"    );}
@@ -1286,7 +1288,7 @@ void SidePanel::PlanetPanelContainer::VScroll(int from,int to,int range_min,int 
 ////////////////////////////////////////////////
 SidePanel::SystemResourceSummary::SystemResourceSummary(int x, int y, int w, int h)
 : Wnd(x, y, w, h, GG::Wnd::CLICKABLE),
-  m_farming(0),m_mining(0),m_research(0),m_industry(0),m_defense(0)
+  m_farming(0),m_mining(0),m_trade(0),m_research(0),m_industry(0),m_defense(0)
 {
 }
 
@@ -1294,7 +1296,7 @@ bool SidePanel::SystemResourceSummary::Render()
 {
   GG::FlatRectangle(UpperLeft().x,UpperLeft().y,LowerRight().x,LowerRight().y,GG::Clr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,1);
 
-  int farming=m_farming,mining=m_mining,research=m_research,industry=m_industry,defense=m_defense;
+  int farming=m_farming,mining=m_mining,trade=m_trade,research=m_research,industry=m_industry,defense=m_defense;
 
   std::string text; int x,y; boost::shared_ptr<GG::Texture> icon;
   boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.2));
@@ -1303,7 +1305,7 @@ bool SidePanel::SystemResourceSummary::Render()
   
   x=UpperLeft().x;y=UpperLeft().y;
 
-  int info_elem_width = (Width()-(5+1)*ICON_MARGIN)/5;
+  int info_elem_width = (Width()-(6+1)*ICON_MARGIN)/6;
 
   //farming
   glColor4ubv(ClientUI::TEXT_COLOR.v);
@@ -1319,6 +1321,15 @@ bool SidePanel::SystemResourceSummary::Render()
   icon=IconMining(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (mining<0?"-":"+") + lexical_cast<std::string>(mining);
+  font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
+  //x+=font->TextExtent(text, format).x+ICON_MARGIN;
+  x+=info_elem_width+ICON_MARGIN;
+
+  //trade
+  glColor4ubv(ClientUI::TEXT_COLOR.v);
+  icon=IconTrade(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
+  //x+=font->Height();
+  text = (trade<0?"-":"+") + lexical_cast<std::string>(trade);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
   //x+=font->TextExtent(text, format).x+ICON_MARGIN;
   x+=info_elem_width+ICON_MARGIN;
@@ -1609,14 +1620,15 @@ void SidePanel::PlanetsChanged()
   if(m_system)
   {
     std::vector<const Planet*> plt_vec = m_system->FindObjects<Planet>();
-    int farming=0,mining=0,research=0,industry=0,defense=0,num_empire_planets=0;
+    int farming=0,mining=0,trade=0,research=0,industry=0,defense=0,num_empire_planets=0;
 
     for(unsigned int i=0;i<plt_vec.size();i++)
       if(plt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != plt_vec[i]->Owners().end())
       {
         farming   +=static_cast<int>(plt_vec[i]->FarmingPoints());
-        industry  +=static_cast<int>(plt_vec[i]->IndustryPoints());
         mining    +=static_cast<int>(plt_vec[i]->MiningPoints());
+        trade     +=static_cast<int>(plt_vec[i]->TradePoints());
+        industry  +=static_cast<int>(plt_vec[i]->IndustryPoints());
         research  +=static_cast<int>(plt_vec[i]->ResearchPoints());
         defense   +=plt_vec[i]->DefBases();
         
@@ -1625,6 +1637,7 @@ void SidePanel::PlanetsChanged()
 
     m_system_resource_summary->SetFarming (farming );
     m_system_resource_summary->SetMining  (mining  );
+    m_system_resource_summary->SetTrade   (trade   );
     m_system_resource_summary->SetResearch(research);
     m_system_resource_summary->SetIndustry(industry);
     m_system_resource_summary->SetDefense (defense );
