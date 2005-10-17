@@ -959,12 +959,14 @@ void ServerApp::HandleMessage(const Message& msg)
         } else { // the Orders were sent from a Player who has finished her turn
             if (GetOptionsDB().Get<bool>("debug.log-turn-orders")) {
                 std::string dbg_file("TurnOrdersReceived_empire");
-                dbg_file += boost::lexical_cast<std::string>(msg.Sender());
+                dbg_file += boost::lexical_cast<std::string>(GetPlayerEmpire(msg.Sender())->EmpireID());
                 dbg_file += ".xml";
                 std::ofstream output(dbg_file.c_str());
                 doc.WriteDoc(output);
                 output.close();
             }
+
+            m_network_core.SendMessage(TurnProgressMessage(msg.Sender(), Message::WAITING_FOR_PLAYERS, -1));
 
             OrderSet *p_order_set;
             p_order_set = new OrderSet( );
@@ -1988,6 +1990,10 @@ void ServerApp::ProcessTurns()
         SDL_Delay(1500);
 
     ++m_current_turn;
+
+    // indicate that the clients are waiting for their new Universes
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+        m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::DOWNLOADING, -1) );
 
     // check if all empires are still alive
     std::map<int, int> eliminations; // map from player ids to empire ids

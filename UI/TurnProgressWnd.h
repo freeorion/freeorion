@@ -26,14 +26,15 @@ class TurnProgressWnd : public GG::Wnd
 {
 public:
     /** \name Structors */ //@{
-    TurnProgressWnd( );
-    //@}
+    TurnProgressWnd();
     ~TurnProgressWnd();
+    //@}
   
-    void UpdateTurnProgress( const std::string& phase_str, const int empire_id );
+    void UpdateTurnProgress(const std::string& phase_str, const int empire_id);
     void UpdateCombatTurnProgress(const std::string& message);
     
-    bool InWindow(const GG::Pt& pt) const;
+    virtual bool InWindow(const GG::Pt& pt) const;
+    virtual bool Render();
 
 private:
     GG::TextControl*   m_phase_text;

@@ -877,18 +877,20 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Attribute("value"));
 
         // given IDs, build message
-        if ( phase_id == Message::FLEET_MOVEMENT )
-            phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT" );
-        else if ( phase_id == Message::COMBAT )
+        if (phase_id == Message::FLEET_MOVEMENT)
+            phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT");
+        else if (phase_id == Message::COMBAT)
             phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT" );
-        else if ( phase_id == Message::EMPIRE_PRODUCTION )
-            phase_str = UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH" );
-        else if ( phase_id == Message::WAITING_FOR_PLAYERS )
+        else if (phase_id == Message::EMPIRE_PRODUCTION)
+            phase_str = UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH");
+        else if (phase_id == Message::WAITING_FOR_PLAYERS)
             phase_str = UserString("TURN_PROGRESS_PHASE_WAITING");
-        else if ( phase_id == Message::PROCESSING_ORDERS )
+        else if (phase_id == Message::PROCESSING_ORDERS)
             phase_str = UserString("TURN_PROGRESS_PHASE_ORDERS");
+        else if (phase_id == Message::DOWNLOADING)
+            phase_str = UserString("TURN_PROGRESS_PHASE_DOWNLOADING");
 
-        m_ui->UpdateTurnProgress( phase_str, empire_id );
+        m_ui->UpdateTurnProgress( phase_str, empire_id);
         break;
     }
 

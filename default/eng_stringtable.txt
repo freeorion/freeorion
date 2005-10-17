@@ -914,19 +914,22 @@ TURN_PROGRESS_WND
 Turn Progress
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
-Fleet Movement
+Fleet movement ...
 
 TURN_PROGRESS_PHASE_COMBAT
-Resolving Combat
+Resolving combat ...
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
-Production And Growth
+Production and growth ..
 
 TURN_PROGRESS_PHASE_WAITING
-Waiting for Players to End Turn
+Waiting for players to end turn ...
 
 TURN_PROGRESS_PHASE_ORDERS
-Executing Orders
+Executing Orders ...
+
+TURN_PROGRESS_PHASE_DOWNLOADING
+Downloading new game state ...
 
 
 ########################
