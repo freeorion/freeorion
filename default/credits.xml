@@ -16,6 +16,7 @@
       <PERSON name="Ronald Nölte"        nick="Noelte"       task="Programming"/>
       <PERSON name="Tony Casale"         nick="Tsev"         task="Programming"/>
       <PERSON name="Michael J. Agostini" nick=""             task="Programming"/>
+      <PERSON name="Geoff Topping"	nick="Geoff the Medio"	task="Programming"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Krum Stanoev"    nick=""           task="Game Design"/>
@@ -29,7 +30,7 @@
       <PERSON name="Andreas Bernard" nick=""           task="Game Design"/>
       <PERSON name="Teal Ablaze"     nick=""           task="Game Design"/>
       <PERSON name="Bryan Patterson" nick="PowerCrazy" task="Game Design"/>
-      <PERSON name="Geoff the Medio" nick=""           task="Game Design"/>
+      <PERSON name="Geoff Topping"   nick="Geoff the Medio"	task="Game Design"/>
       <PERSON name="Andrew Hull"     nick="moxy"       task="Game Design"/>
     </GROUP>
     <GROUP name ="GRAPHICS">
