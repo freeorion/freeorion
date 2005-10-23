@@ -80,12 +80,10 @@ class OptionsDB
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void ()>                     OptionsChangedSignalType;  ///< emitted when one or more options are changed
-    typedef boost::signal<void (const std::string&)>   OptionAddedSignalType;     ///< emitted when an option is added
-    typedef boost::signal<void (const std::string&)>   OptionRemovedSignalType;   ///< emitted when an option is removed
+    typedef boost::signal<void ()>                     OptionChangedSignalType;  ///< emitted when an option has changed
+    typedef boost::signal<void (const std::string&)>   OptionAddedSignalType;    ///< emitted when an option is added
+    typedef boost::signal<void (const std::string&)>   OptionRemovedSignalType;  ///< emitted when an option is removed
     //@}
-
-    OptionsDB(); ///< default ctor
 
 	void Validate(const std::string& name, const std::string& value) const; ///< validates a value for an option
 
@@ -96,25 +94,25 @@ public:
     {
         std::map<std::string, Option>::const_iterator it = m_options.find(name);
         if (it == m_options.end())
-            throw std::runtime_error("Attempted to get nonexistent option \"" + name + "\".");
+            throw std::runtime_error("OptionsDB::Get<>() : Attempted to get nonexistent option \"" + name + "\".");
         return boost::any_cast<T>(it->second.value);
     }
 
     void        GetUsage(std::ostream& os, const std::string& command_line = "") const; ///< writes a usage message to \a os
     GG::XMLDoc  GetXML() const;                                                         ///< returns the contents of the DB as an XMLDoc
 
-    OptionsChangedSignalType&   OptionsChangedSignal() const {return m_options_changed_sig;} ///< returns the options changed signal object for this DB
-    OptionAddedSignalType&      OptionAddedSignal() const    {return m_option_added_sig;}    ///< returns the option added signal object for this DB
-    OptionRemovedSignalType&    OptionRemovedSignal() const  {return m_option_removed_sig;}  ///< returns the change removed signal object for this DB
+    OptionChangedSignalType&        OptionChangedSignal(const std::string& option); ///< the option changed signal object for the given option
+    mutable OptionAddedSignalType   OptionAddedSignal;   ///< the option added signal object for this DB
+    mutable OptionRemovedSignalType OptionRemovedSignal; ///< the change removed signal object for this DB
 
 	/** adds an Option, optionally with a custom validator */
 	template <class T>
     void Add(const std::string& name, const std::string& description, T default_value, const ValidatorBase& validator = Validator<T>())
     {
         if (m_options.find(name) != m_options.end())
-            throw std::runtime_error("Option " + name + " was specified twice.");
+            throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was specified twice.");
         m_options[name] = Option(static_cast<char>(0), name, default_value, boost::lexical_cast<std::string>(default_value), description, validator.Clone());
-        m_option_added_sig(name);
+        OptionAddedSignal(name);
     }
 
 	/** adds an Option with an alternative one-character shortened name, optionally with a custom validator */
@@ -122,9 +120,9 @@ public:
     void Add(char short_name, const std::string& name, const std::string& description, T default_value, const ValidatorBase& validator = Validator<T>())
     {
         if (m_options.find(name) != m_options.end())
-            throw std::runtime_error("Option " + name + " was specified twice.");
+            throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was specified twice.");
         m_options[name] = Option(short_name, name, default_value, boost::lexical_cast<std::string>(default_value), description, validator.Clone());
-        m_option_added_sig(name);
+        OptionAddedSignal(name);
     }
 
 	/** adds a flag Option, which is treated as a boolean value with a default of false.  Using the flag on the command line at all indicates 
@@ -132,9 +130,9 @@ public:
     void AddFlag(const std::string& name, const std::string& description)
     {
         if (m_options.find(name) != m_options.end())
-            throw std::runtime_error("Option " + name + " was specified twice.");
+            throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
         m_options[name] = Option(static_cast<char>(0), name, false, boost::lexical_cast<std::string>(false), description);
-        m_option_added_sig(name);
+        OptionAddedSignal(name);
     }
 
 	/** adds an Option with an alternative one-character shortened name, which is treated as a boolean value with a default of false.  
@@ -142,9 +140,9 @@ public:
     void AddFlag(char short_name, const std::string& name, const std::string& description)
     {
         if (m_options.find(name) != m_options.end())
-            throw std::runtime_error("Option " + name + " was specified twice.");
+            throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
         m_options[name] = Option(short_name, name, false, boost::lexical_cast<std::string>(false), description);
-        m_option_added_sig(name);
+        OptionAddedSignal(name);
     }
 
     void Remove(const std::string& name); ///< removes an Option 
@@ -155,11 +153,11 @@ public:
     {
         std::map<std::string, Option>::iterator it = m_options.find(name);
         if (it == m_options.end())
-            throw std::runtime_error("Attempted to set nonexistent option \"" + name + "\".");
+            throw std::runtime_error("OptionsDB::Set<>() : Attempted to set nonexistent option \"" + name + "\".");
         if (it->second.value.type() != typeid(T))
             throw boost::bad_any_cast();
         it->second.value = value;
-        m_options_changed_sig();
+        (*it->second.option_changed_sig_ptr)();
     }
 
     void SetFromCommandLine(int argc, char* argv[]); ///< fills some or all of the options of the DB from values passed in from the command line
@@ -183,18 +181,20 @@ private:
         boost::shared_ptr<const ValidatorBase>
                           validator;     ///< a validator for the option. Flags have no validators; lexical_cast boolean conversions oare done for them.
 
+        mutable boost::shared_ptr<boost::signal<void ()> > option_changed_sig_ptr;
+
         static std::map<char, std::string> short_names;   ///< the master list of abbreviated option names, and their corresponding long-form names
     };
+
+    OptionsDB();
 
     void SetFromXMLRecursive(const GG::XMLElement& elem, const std::string& section_name);
 
     std::map<std::string, Option>    m_options;
 
-    mutable OptionsChangedSignalType m_options_changed_sig;
-    mutable OptionAddedSignalType    m_option_added_sig;
-    mutable OptionRemovedSignalType  m_option_removed_sig;
-
     static OptionsDB*                s_options_db;
+
+    friend OptionsDB& GetOptionsDB();
 };
 
 inline std::pair<std::string, std::string> OptionsDBRevision()

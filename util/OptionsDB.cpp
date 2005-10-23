@@ -77,7 +77,8 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
 	value(value_),
 	default_value(default_value_),
 	description(description_),
-    validator(validator_)
+    validator(validator_),
+    option_changed_sig_ptr(new boost::signal<void ()>())
 {
     if (short_name_)
         short_names[short_name_] = name;
@@ -234,6 +235,14 @@ GG::XMLDoc OptionsDB::GetXML() const
     return doc;
 }
 
+OptionsDB::OptionChangedSignalType& OptionsDB::OptionChangedSignal(const std::string& option)
+{
+    std::map<std::string, Option>::const_iterator it = m_options.find(option);
+    if (it == m_options.end())
+        throw std::runtime_error("OptionsDB::OptionChangedSignal() : Attempted to get signal for nonexistent option \"" + option + "\".");
+    return *it->second.option_changed_sig_ptr;
+}
+
 void OptionsDB::Remove(const std::string& name)
 {
     std::map<std::string, Option>::iterator it = m_options.find(name);
@@ -241,7 +250,7 @@ void OptionsDB::Remove(const std::string& name)
         Option::short_names.erase(it->second.short_name);
         m_options.erase(it);
     }
-    m_option_removed_sig(name);
+    OptionRemovedSignal(name);
 }
 
 void OptionsDB::SetFromCommandLine(int argc, char* argv[])
@@ -308,9 +317,6 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
             }
         }
     }
-
-    if (option_changed)
-        m_options_changed_sig();
 }
 
 void OptionsDB::SetFromXML(const GG::XMLDoc& doc)
@@ -318,8 +324,6 @@ void OptionsDB::SetFromXML(const GG::XMLDoc& doc)
     for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
         SetFromXMLRecursive(doc.root_node.Child(i), "");
     }
-
-    m_options_changed_sig();
 }
 
 void OptionsDB::SetFromXMLRecursive(const GG::XMLElement& elem, const std::string& section_name)
