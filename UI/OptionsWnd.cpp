@@ -219,6 +219,8 @@ void OptionsWnd::AddFontControls(int x, int y, const std::string& userString, GG
 
 void OptionsWnd::Init()
 {
+    bool UI_sound_enabled = GetOptionsDB().Get<bool>("UI.sound.enabled");
+
     TempUISoundDisabler sound_disabler;
 
 	FillLists();
@@ -458,7 +460,7 @@ void OptionsWnd::Init()
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN;
     stateBtn = new CUIStateButton(x, y, 75, 20, UserString("OPTIONS_UI_SOUNDS"), GG::TF_LEFT);
-	stateBtn->SetCheck(GetOptionsDB().Get<bool>("UI.sound.enabled"));
+	stateBtn->SetCheck(UI_sound_enabled);
     GG::Connect(stateBtn->CheckedSignal, &OptionsWnd::UIEffectsClicked, this);
 	sound_page->AttachChild(stateBtn);
     sliderControl = new CUISlider(PAGE_WIDTH - 150, 40, 150, 14, 0, 255, CUISlider::HORIZONTAL);
