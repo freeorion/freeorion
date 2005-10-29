@@ -4,14 +4,6 @@
 
 #include <iostream>
 
-#ifdef WITH_PYTHON
-#  include <boost/python.hpp>
-#  include <Python.h>
-#  include <cstdio>
-
-  extern "C" void inituniverse(void);
-#endif
-
 extern "C" // use C-linkage, as required by SDL
 int main(int argc, char* argv[])
 {
@@ -40,19 +32,6 @@ int main(int argc, char* argv[])
     }
 
    ServerApp g_app(argc, argv);
-#ifdef WITH_PYTHON
-
-   Py_Initialize();
-   inituniverse();
-//   PyRun_SimpleString("import Universe\nprint dir(Universe)\nprint
-//   \"Hallo\"");
-   PyRun_InteractiveLoop(stdin, "Console");
-   
-   
-   Py_Finalize();
-   
-#endif
-
    g_app(); // run app (intialization and main process loop)
    return 0;
 }
