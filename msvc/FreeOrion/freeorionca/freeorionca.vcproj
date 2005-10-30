@@ -66,13 +66,13 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="C:\Projects\!Bin"
+			OutputDirectory="ProjectDir\..\..\..\..\..\!Bin"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\..\GG\include"
+				AdditionalIncludeDirectories="ProjectDir\..\..\..\..\..\GG\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_AI;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				RuntimeLibrary="2"
 				ForceConformanceInForLoopScope="TRUE"
@@ -89,7 +89,7 @@
 				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib SDL_mixer.lib log4cpp.lib freetype214MT.lib"
 				OutputFile="$(OutDir)/freeorionca.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\..\GG\msvc\GG\GiGi\Release;..\..\..\..\GG\msvc\GG\GiGiNet\Release;..\..\..\..\GG\msvc\GG\GiGiSDL\Release"
+				AdditionalLibraryDirectories="ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGi\Release;ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGiNet\Release;ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGiSDL\Release"
 				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"

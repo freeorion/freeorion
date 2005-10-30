@@ -67,13 +67,13 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="C:\Projects\!Bin"
+			OutputDirectory="ProjectDir\..\..\..\..\..\!Bin"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\..\GG\include"
+				AdditionalIncludeDirectories="ProjectDir\..\..\..\..\..\GG\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				RuntimeLibrary="2"
 				ForceConformanceInForLoopScope="TRUE"
@@ -91,7 +91,7 @@
 				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib fmodvc.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib dotgen.lib dotneato.lib gd.lib gfx.lib graph.lib gvrender.lib pathplan.lib libexpat.lib png.lib jpeg.lib"
 				OutputFile="$(OutDir)/freeorion.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\..\..\GG\msvc\GG\GiGi\Release;..\..\..\..\GG\msvc\GG\GiGiNet\Release;..\..\..\..\GG\msvc\GG\GiGiSDL\Release"
+				AdditionalLibraryDirectories="ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGi\Release;ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGiNet\Release;ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGiSDL\Release"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
@@ -332,6 +332,12 @@
 					RelativePath="..\..\..\Ui\About.h">
 				</File>
 				<File
+					RelativePath="..\..\..\Ui\BuildDesignatorWnd.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\BuildDesignatorWnd.h">
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\ClientUI.cpp">
 				</File>
 				<File
@@ -437,6 +443,12 @@
 					RelativePath="..\..\..\Ui\PlanetDetailWnd.h">
 				</File>
 				<File
+					RelativePath="..\..\..\Ui\ProductionWnd.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\ProductionWnd.h">
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\ResearchWnd.cpp">
 				</File>
 				<File
@@ -459,6 +471,12 @@
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\SitRepPanel.h">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\Splash.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\Splash.h">
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\StringTable.cpp">
