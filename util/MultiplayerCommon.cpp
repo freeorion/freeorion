@@ -24,11 +24,10 @@ namespace {
     std::string SettingsDir()
     {
         std::string retval = GetOptionsDB().Get<std::string>("settings-dir");
-        if (retval.empty() || retval[retval.size()] != '/')
+        if (retval.empty() || retval[retval.size()-1] != '/')
             retval += '/';
         return retval;
     }
-
     StringTable* GetStringTable()
     {
         static StringTable* string_table =
