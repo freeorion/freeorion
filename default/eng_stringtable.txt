@@ -364,7 +364,7 @@ OPTIONS_QUICK_CLOSE_WNDS
 Quick-close windows
 
 OPTIONS_AUTOSAVE
-Austosave
+Autosave
 
 OPTIONS_SINGLEPLAYER
 Single player
