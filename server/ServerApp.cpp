@@ -8,6 +8,7 @@
 #include "../universe/Building.h"
 #include "../util/OrderSet.h"
 #include "../util/GZStream.h"
+#include "../util/Directories.h"
 #include "../universe/Effect.h"
 #include "../universe/Fleet.h"
 #include "../util/MultiplayerCommon.h"
@@ -116,7 +117,10 @@ namespace {
             save_game_empire_data.clear();
             if (0 <= save_file && save_file < static_cast<int>(save_games.size())) {
                 GG::XMLDoc doc;
-                GZStream::igzstream ifs((SAVE_DIR_NAME + save_games[save_file]).c_str());
+		// GZStream does not yet support
+		// boost::filesystem::path, so we do it manually
+		
+                GZStream::igzstream ifs( (GetLocalDir() / SAVE_DIR_NAME / save_games[save_file]).native_file_string().c_str());
                 doc.ReadDoc(ifs);
                 ifs.close();
 
@@ -152,9 +156,9 @@ namespace {
     } g_lobby_data(false);
 
 #ifdef FREEORION_WIN32
-    const std::string AI_CLIENT_EXE = "freeorionca.exe";
+    const std::string AI_CLIENT_EXE = (GetBinDir() / "freeorionca.exe").native_file_string();
 #else
-    const std::string AI_CLIENT_EXE = "freeorionca";
+    const std::string AI_CLIENT_EXE = (GetBinDir() / "freeorionca").native_file_string();
 #endif    
     const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
     GG::XMLDoc g_load_doc;
@@ -205,7 +209,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
    
     s_app = this;
    
-    const std::string SERVER_LOG_FILENAME("freeoriond.log");
+    const std::string SERVER_LOG_FILENAME((GetLocalDir() / "freeoriond.log").native_file_string());
    
     // a platform-independent way to erase the old log
     std::ofstream temp(SERVER_LOG_FILENAME.c_str());
@@ -274,7 +278,9 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs)
         args.push_back(AI_CLIENT_EXE);
         args.push_back(player_name);
         args.push_back("--settings-dir"); args.push_back(GetOptionsDB().Get<std::string>("settings-dir"));
+	Logger().debugStream() << "starting " << AI_CLIENT_EXE;
         m_ai_clients.push_back(Process(AI_CLIENT_EXE, args));
+	Logger().debugStream() << "done starting " << AI_CLIENT_EXE;
     }
 }
 
@@ -327,7 +333,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     m_empires.RemoveAllEmpires();
                     m_single_player_game = false;
 
-                    std::string load_filename = SAVE_DIR_NAME + g_lobby_data.save_games[g_lobby_data.save_file];
+                    std::string load_filename = (GetLocalDir() / SAVE_DIR_NAME / g_lobby_data.save_games[g_lobby_data.save_file]).native_file_string();
                     GG::XMLDoc doc;
                     GZStream::igzstream ifs(load_filename.c_str());
                     doc.ReadDoc(ifs);
@@ -525,7 +531,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 // The default is: ofs.set_gzparams(6, Z_DEFAULT_STRATEGY);
                 ofs.set_gzparams(GZIP_SAVE_FILES_COMPRESSION_LEVEL, Z_DEFAULT_STRATEGY);
 #else
-                std::ofstream ofs(save_filename.c_str());
+                boost::filesystem::ofstream ofs(save_filename);
 #endif
                 doc.WriteDoc(ofs, GZIP_SAVE_FILES_COMPRESSION_LEVEL ? false : true);
                 ofs.close();
@@ -961,7 +967,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 std::string dbg_file("TurnOrdersReceived_empire");
                 dbg_file += boost::lexical_cast<std::string>(GetPlayerEmpire(msg.Sender())->EmpireID());
                 dbg_file += ".xml";
-                std::ofstream output(dbg_file.c_str());
+                boost::filesystem::ofstream output(GetLocalDir() / dbg_file);
                 doc.WriteDoc(output);
                 output.close();
             }
@@ -1412,7 +1418,7 @@ void ServerApp::NewGameInit()
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
 
         if (GetOptionsDB().Get<bool>("debug.log-new-game-universe")) {
-            std::ofstream ofs(("NewGameInit-empire" + boost::lexical_cast<std::string>(it->first) + "-doc.xml").c_str());
+            boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameInit-empire" + boost::lexical_cast<std::string>(it->first) + "-doc.xml"));
             doc.WriteDoc(ofs);
             ofs.close();
         }
@@ -1476,7 +1482,7 @@ void ServerApp::LoadGameInit()
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
 
         if (GetOptionsDB().Get<bool>("debug.log-load-game-universe")) {
-            std::ofstream ofs(("LoadGameInit-empire" + boost::lexical_cast<std::string>(empire_id) + "-doc.xml").c_str());
+            boost::filesystem::ofstream ofs(GetLocalDir() / ("LoadGameInit-empire" + boost::lexical_cast<std::string>(empire_id) + "-doc.xml"));
             doc.WriteDoc(ofs);
             ofs.close();
         }
@@ -2030,9 +2036,9 @@ void ServerApp::ProcessTurns()
         pEmpire = GetPlayerEmpire( player_it->first );
         GG::XMLDoc doc = CreateTurnUpdate( pEmpire->EmpireID() );
         if (GetOptionsDB().Get<bool>("debug.log-turn-update-universe")) {
-            std::ofstream ofs(("TurnUpdate" + boost::lexical_cast<std::string>(m_current_turn) +
+            boost::filesystem::ofstream ofs(GetLocalDir() / ("TurnUpdate" + boost::lexical_cast<std::string>(m_current_turn) +
                                "-empire" + boost::lexical_cast<std::string>(pEmpire->EmpireID()) +
-                               "-doc.xml").c_str());
+                               "-doc.xml"));
             doc.WriteDoc(ofs);
             ofs.close();
         }

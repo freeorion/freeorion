@@ -12,6 +12,7 @@
 #include "../../universe/Planet.h"
 #include "../../util/Process.h"
 #include "../../util/SitRepEntry.h"
+#include "../../util/Directories.h"
 #include "XMLDoc.h"
 
 #include <fmod.h>
@@ -205,9 +206,12 @@ HumanClientApp::HumanClientApp() :
     signal(SIGSEGV, SigHandler);
 #endif
 
-    const std::string LOG_FILENAME("freeorion.log");
+    const std::string LOG_FILENAME((GetLocalDir() / "freeorion.log").native_file_string());
 
-    // a platform-independent way to erase the old log
+    // a platform-independent way to erase the old log We cannot use
+    // boost::filesystem::ofstream here, as stupid b::f won't allow us
+    // to have a dot in the directory name, which is where local data
+    // is kept under unix.
     std::ofstream temp(LOG_FILENAME.c_str());
     temp.close();
 
@@ -255,9 +259,9 @@ std::map<int, int> HumanClientApp::PendingColonizationOrders() const
 void HumanClientApp::StartServer()
 {
 #ifdef FREEORION_WIN32
-    const std::string SERVER_CLIENT_EXE = "freeoriond.exe";
+    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond.exe").native_file_string();
 #else
-    const std::string SERVER_CLIENT_EXE = "freeoriond";
+    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").native_file_string();
 #endif
     std::vector<std::string> args(1, SERVER_CLIENT_EXE);
     args.push_back("--settings-dir"); args.push_back(GetOptionsDB().Get<std::string>("settings-dir"));

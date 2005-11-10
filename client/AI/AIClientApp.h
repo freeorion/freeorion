@@ -12,6 +12,8 @@ namespace log4cpp {class Category;}
 class AIClientApp : public ClientApp
 {
 public:
+    virtual void StartTurn();
+
    /** \name Structors */ //@{   
    AIClientApp(int argc, char* argv[]);
    ~AIClientApp();

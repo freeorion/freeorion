@@ -37,7 +37,7 @@ class BrowseFoo : public GG::TextBoxBrowseInfoWnd
 {
 public:
     BrowseFoo() :
-        TextBoxBrowseInfoWnd(200, "Vera.ttf", 12, GG::CLR_SHADOW, GG::CLR_WHITE, GG::CLR_WHITE)
+        TextBoxBrowseInfoWnd(200, ClientUI::FONT, 12, GG::CLR_SHADOW, GG::CLR_WHITE, GG::CLR_WHITE)
         {}
 
     void Update(int mode, const GG::Wnd* target)

@@ -9,6 +9,7 @@
 #include "GGDrawUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/Directories.h"
 
 /** \mainpage FreeOrion User Interface
 

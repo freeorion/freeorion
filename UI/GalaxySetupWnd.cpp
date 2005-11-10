@@ -9,8 +9,6 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 
-#include <fstream>
-
 
 namespace {
     const int CONTROL_MARGIN = 5;

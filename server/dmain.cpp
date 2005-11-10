@@ -1,12 +1,15 @@
 #include "ServerApp.h"
 
 #include "../util/OptionsDB.h"
+#include "../util/Directories.h"
 
 #include <iostream>
 
 extern "C" // use C-linkage, as required by SDL
 int main(int argc, char* argv[])
 {
+    InitDirs();
+
     try {
         GetOptionsDB().AddFlag('h', "help", "Print this help message.");
         GetOptionsDB().SetFromCommandLine(argc, argv);

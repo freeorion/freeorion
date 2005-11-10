@@ -498,11 +498,11 @@ void FleetColonizeOrder::ExecuteImpl() const
 
     Universe& universe = GetUniverse();
 
-    GG::XMLDoc doc;
-    doc.root_node = universe.XMLEncode(EmpireID());
-    std::ofstream ofs("before.xml");
-    doc.WriteDoc(ofs);
-    ofs.close();
+//     GG::XMLDoc doc;
+//     doc.root_node = universe.XMLEncode(EmpireID());
+//     std::ofstream ofs("before.xml");
+//     doc.WriteDoc(ofs);
+//     ofs.close();
 
     // look up the ship and fleet in question
     Ship* ship = universe.Object<Ship>(m_ship);
@@ -571,11 +571,11 @@ bool FleetColonizeOrder::UndoImpl() const
         fleet->AddShip(ship->ID());
     }
 
-    GG::XMLDoc doc;
-    doc.root_node = universe.XMLEncode(EmpireID());
-    std::ofstream ofs("after.xml");
-    doc.WriteDoc(ofs);
-    ofs.close();
+//     GG::XMLDoc doc;
+//     doc.root_node = universe.XMLEncode(EmpireID());
+//     std::ofstream ofs("after.xml");
+//     doc.WriteDoc(ofs);
+//     ofs.close();
 
     return true;
 }

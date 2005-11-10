@@ -98,6 +98,7 @@ void Process::ProcessImpl::Kill()
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
+#include <cstdio>
 
 Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std::string>& argv) :
     m_free(false)
@@ -115,7 +116,8 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
     }
 
     case 0: { // child process side of fork
-       execv(cmd.c_str(), &args[0]);
+	execv(cmd.c_str(), &args[0]);
+	perror("execv failed");
        break;
     }
 

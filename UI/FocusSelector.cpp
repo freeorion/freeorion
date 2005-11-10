@@ -197,7 +197,7 @@ FocusSelector::FocusSelector(int w, const ResourceCenter& resource_center) :
             else
                 delta_str << boost::format("%.2g") % delta;
         }
-        m_meter_deltas.push_back(new GG::TextControl(0, 0, 1, 1, delta_str.str(), "Vera.ttf", 11, delta_color, GG::TF_TOP)); // TODO: use ClientUI font
+        m_meter_deltas.push_back(new GG::TextControl(0, 0, 1, 1, delta_str.str(), ClientUI::FONT, 11, delta_color, GG::TF_TOP));
         layout->Add(m_meter_deltas.back(), 2, m_meter_deltas.size() - 1);
     }
     glDisable(GL_TEXTURE_2D);

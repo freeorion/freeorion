@@ -82,12 +82,12 @@ namespace
     bool temp_header_bool = RecordHeaderFile(DataTableRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
-
+#include <iostream>
 void LoadDataTables(const std::string& filename, DataTableMap& tables, bool echo/* = false*/)
 {
     if (echo)
         g_echo = true;
-
+    std::cerr << "loading " << filename << std::endl;
     file_iterator<> first(filename.c_str());
     file_iterator<> last = first.make_end();
 

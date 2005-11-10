@@ -23,6 +23,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/Directories.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -33,22 +34,21 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/spirit.hpp>
 
-#include <fstream>
 #include <string>
 
 
 //static members
-std::string ClientUI::FONT          = "Vera.ttf";
-std::string ClientUI::FONT_BOLD     = "VeraBd.ttf";
-std::string ClientUI::FONT_ITALIC   = "VeraIt.ttf";
-std::string ClientUI::FONT_BOLD_ITALIC= "VeraBI.ttf";
+std::string ClientUI::FONT          = (GetGlobalDir() / "Vera.ttf").native_file_string();
+std::string ClientUI::FONT_BOLD     = (GetGlobalDir() / "VeraBd.ttf").native_file_string();
+std::string ClientUI::FONT_ITALIC   = (GetGlobalDir() / "VeraIt.ttf").native_file_string();
+std::string ClientUI::FONT_BOLD_ITALIC= (GetGlobalDir() / "VeraBI.ttf").native_file_string();
 int         ClientUI::PTS           = 12;
-std::string ClientUI::TITLE_FONT    = "Vera.ttf";
+std::string ClientUI::TITLE_FONT    = (GetGlobalDir() / "Vera.ttf").native_file_string();
 int         ClientUI::TITLE_PTS     = 12;
 
-std::string ClientUI::DIR           = "default/";
-std::string ClientUI::ART_DIR       = "default/data/art/";
-std::string ClientUI::SOUND_DIR	    = "default/data/sound/";
+std::string ClientUI::DIR           = (GetGlobalDir() / "default/").native_directory_string();
+std::string ClientUI::ART_DIR       = (GetGlobalDir() / "default/data/art/").native_directory_string();
+std::string ClientUI::SOUND_DIR	    = (GetGlobalDir() / "default/data/sound/").native_directory_string();
 
 GG::Clr     ClientUI::TEXT_COLOR(255,255,255,255);
 
@@ -127,8 +127,8 @@ namespace {
         db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
 
         // sound
-        db.Add<std::string>("art-dir", "Sets UI art resource directory.", "default/data/art/");
-        db.Add<std::string>("sound-dir", "Sets UI sound and music resource directory.", "default/data/sound/");
+        db.Add<std::string>("art-dir", "Sets UI art resource directory.", (GetGlobalDir() / "default/data/art/").native_directory_string());
+        db.Add<std::string>("sound-dir", "Sets UI sound and music resource directory.", (GetGlobalDir() / "default/data/sound/").native_directory_string());
         db.Add("UI.sound.enabled", "Toggles UI sound effects on or off.", true, Validator<bool>());
         db.Add("UI.sound.volume", "The volume (0 to 255) at which UI sound effects should be played.", 255, RangedValidator<int>(0, 255));
         db.Add<std::string>("UI.sound.button-rollover", "The sound file played when the mouse moves over a button.", "button_rollover.wav");
@@ -251,6 +251,7 @@ ClientUI::ClientUI() :
     if (!DIR.empty() && DIR[DIR.size() - 1] != '/')
         DIR += '/';
     FONT      = GetOptionsDB().Get<std::string>("UI.font");
+    FONT_BOLD = GetOptionsDB().Get<std::string>("UI.font-bold");
     TITLE_FONT= GetOptionsDB().Get<std::string>("UI.title-font");
     ART_DIR   = GetOptionsDB().Get<std::string>("art-dir");
     if (!ART_DIR.empty() && ART_DIR[ART_DIR.size() - 1] != '/')
@@ -603,7 +604,7 @@ ClientUI::GetNumberedTexture(const std::string& dir_name, const std::map<int, st
         }
 
         namespace fs = boost::filesystem;
-        fs::path star_dir = ClientUI::ART_DIR + dir_name;
+        fs::path star_dir(ClientUI::ART_DIR + dir_name,fs::native);
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(star_dir); it != end_it; ++it) {
             if (!fs::is_directory(*it)) {

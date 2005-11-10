@@ -4,6 +4,7 @@
 
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/Directories.h"
 
 #include "ClientUI.h"
 #include "GGApp.h"
@@ -11,7 +12,7 @@
 #include "CUISpin.h"
 #include "dialogs/GGThreeButtonDlg.h"
 
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/exception.hpp>
@@ -739,7 +740,7 @@ void OptionsWnd::Keypress (GG::Key key, Uint32 key_mods)
 void OptionsWnd::DoneClicked()
 {
 	// Save the changes:
-    std::ofstream ofs("default/config.xml");
+    boost::filesystem::ofstream ofs(GetConfigPath());
     GetOptionsDB().GetXML().WriteDoc(ofs);
     m_done = true;
 }

@@ -2,6 +2,7 @@
 
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
+#include "../../util/Directories.h"
 #include "net/fastevents.h"
 #include "net/net2.h"
 #include "../../network/Message.h"
@@ -12,7 +13,7 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 
 
 namespace {
@@ -40,7 +41,7 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     // read command line args
     m_player_name = argv[1];
 
-    const std::string AICLIENT_LOG_FILENAME("AI_Log/" + m_player_name + ".log");
+    const std::string AICLIENT_LOG_FILENAME((GetLocalDir() / (m_player_name + ".log")).native_file_string());
 
     // a platform-independent way to erase the old log
     std::ofstream temp(AICLIENT_LOG_FILENAME.c_str());
@@ -54,7 +55,7 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     m_log_category.setAdditivity(false);  // make appender the only appender used...
     m_log_category.setAppender(appender);
     m_log_category.setAdditivity(true);   // ...but allow the addition of others later
-    m_log_category.setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
+    m_log_category.setPriority(PriorityValue("DEBUG"));//GetOptionsDB().Get<std::string>("log-level")));
     m_log_category.debug(m_player_name + " logger initialized.");
 }
 
@@ -268,4 +269,8 @@ void AIClientApp::HandleServerDisconnectImpl()
     Exit(1);
 }
 
+void AIClientApp::StartTurn()
+{
+    ClientApp::StartTurn();
+}
 

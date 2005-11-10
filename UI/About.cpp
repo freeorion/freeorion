@@ -8,8 +8,9 @@
 #include "GGClr.h"
 #include "GGDrawUtil.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/Directories.h"
 
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 
 
 namespace {
@@ -37,10 +38,10 @@ About::About():
 
 
     // Read in the copyright info from a file
-    std::fstream fin;
+    boost::filesystem::fstream fin;
     std::string temp_str;
 
-    fin.open("default/COPYING", std::ios::in);
+    fin.open(GetGlobalDir() / "default/COPYING", std::ios::in);
     if (!fin.is_open()) return;
     while (!fin.eof())
     {

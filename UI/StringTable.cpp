@@ -2,6 +2,9 @@
 
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/Directories.h"
+
+#include <boost/filesystem/fstream.hpp>
 
 using namespace std;
 
@@ -56,17 +59,19 @@ const string& StringTable::operator[] (std::string index)
     return pos->second;
     
 }
+#include <iostream>
 
 void StringTable::Load()
 {
     string temp;
     string temp2;
-    ifstream ifs;
-
+    std::ifstream ifs;
     try {
-        ifs.open(m_filename.c_str());    //open the file
+	std::cerr << "FN: " << m_filename << std::endl;
+	//        ifs.open((GetGlobalDir().native_directory_string() + m_filename).c_str());    //open the file
+	ifs.open(m_filename.c_str());
     } catch (const exception& e) {
-        Logger().errorStream() << "Error opening StringTable file: \"" << m_filename << "\"";
+        Logger().errorStream() << "Error opening StringTable file \"" << m_filename << "\": " << e.what();
         return;        // handle exception by showing error msg and then get out!
     }
 

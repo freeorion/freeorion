@@ -9,6 +9,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/Directories.h"
 
 #include <boost/filesystem/operations.hpp>
 
@@ -20,7 +21,7 @@ namespace {
         db.Add('S',
                "save-dir", 
                "The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.",
-               std::string("save"));
+               (GetLocalDir() / "save").native_directory_string());
     }
     bool foo_bool = RegisterOptions(&Options);
 
