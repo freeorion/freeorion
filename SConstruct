@@ -1,12 +1,161 @@
 # -*- Python -*-
 
-import os
-platform_str = "%s" % Platform()
+sources = {
+  # Files in this list are used by server and client alike, and do not contain #ifdef FREEORION_BUILD directives
+  "common": [
+    'combat/Combat.cpp',
+    'Empire/ClientEmpireManager.cpp',
+    'Empire/Empire.cpp',
+    'Empire/EmpireManager.cpp',
+    'Empire/ResourcePool.cpp',
+    'network/Message.cpp',
+    'network/NetworkCore.cpp',
+    'network/XDiff.cpp',
+    'network/XHash.cpp',
+    'network/XLut.cpp',
+    'network/XParser.cpp',
+    'network/XTree.cpp',
+    'universe/Building.cpp',
+    'universe/Condition.cpp',
+    'universe/Effect.cpp',
+    'universe/Enums.cpp',
+    'universe/Fleet.cpp',
+    'universe/Meter.cpp',
+    'universe/Planet.cpp',
+    'universe/PopCenter.cpp',
+    'universe/Predicates.cpp',
+    'universe/ResourceCenter.cpp',
+    'universe/Ship.cpp',
+    'universe/ShipDesign.cpp',
+    'universe/Special.cpp',
+    'universe/System.cpp',
+    'universe/Tech.cpp',
+    'universe/UniverseObject.cpp',
+    'universe/ValueRef.cpp',
+    'util/DataTable.cpp',
+    'util/GZStream.cpp',
+    'util/md5.c',
+    'util/MultiplayerCommon.cpp',
+    'util/OptionsDB.cpp',
+    'util/Order.cpp',
+    'util/OrderSet.cpp',
+    'util/Process.cpp',
+    'util/Random.cpp',
+    'util/SitRepEntry.cpp',
+    'util/VarText.cpp',
+    'UI/StringTable.cpp',
+    # StringTable needs this
+    'util/binreloc.c',
+    'util/Directories.cpp',
+  ],
 
-# posix -- not yet implemented
+  # Files in the following sections are either unique to a particular
+  # binary or must be recompiled for every binary because they contain
+  # conditional compilation directives like FREEORION_BUILD_SERVER
+  "server": [
+    'universe/Universe.cpp',
+    'util/AppInterface.cpp',
+    'server/ServerApp.cpp',
+    'server/dmain.cpp',
+    'combat/CombatSystem.cpp',
+    'Empire/ServerEmpireManager.cpp',
+    'network/ServerNetworkCore.cpp'
+  ],
+
+  "ai": [
+    'universe/Universe.cpp',
+    'util/AppInterface.cpp',
+    'network/ClientNetworkCore.cpp',
+    'client/ClientApp.cpp',
+    'client/AI/AIClientApp.cpp',
+    'client/AI/camain.cpp'
+  ],
+
+  "human": [
+    'universe/Universe.cpp',
+    'util/AppInterface.cpp',
+    'network/ClientNetworkCore.cpp',
+    'client/ClientApp.cpp',
+    'client/human/HumanClientApp.cpp',
+    'client/human/chmain.cpp',
+    'UI/About.cpp',
+    'UI/BuildDesignatorWnd.cpp',
+    'UI/ClientUI.cpp',
+    'UI/CUIControls.cpp',
+    'UI/CUIDrawUtil.cpp',
+    'UI/CUITabbedPages.cpp',
+    'UI/CUI_Wnd.cpp',
+    'UI/CombatWnd.cpp',
+    'UI/FleetButton.cpp',
+    'UI/FleetWindow.cpp',
+    'UI/FocusSelector.cpp',
+    'UI/GalaxySetupWnd.cpp',
+    'UI/InGameOptions.cpp',
+    'UI/IntroScreen.cpp',
+    'UI/LinkText.cpp',
+    'UI/MapWnd.cpp',
+    'UI/MultiplayerLobbyWnd.cpp',
+    'UI/OptionsWnd.cpp',
+    'UI/ProductionWnd.cpp',
+    'UI/ResearchWnd.cpp',
+    'UI/ServerConnectWnd.cpp',
+    'UI/SidePanel.cpp',
+    'UI/SitRepPanel.cpp',
+    'UI/Splash.cpp',
+    'UI/SystemIcon.cpp',
+    'UI/TechWnd.cpp',
+    'UI/ToolContainer.cpp',
+    'UI/ToolWnd.cpp',
+    'UI/TurnProgressWnd.cpp'
+  ]
+}
+
+import os
+env["ENV"]["PATH"] = os.environ["PATH"]
+try:
+    env["CXX"] = ARGUMENTS["CXX"]
+except KeyError:
+    pass
+
+if str(Platform()) == "posix":
+    
+    # Minimal linux config, might need manual adjusment
+    env = Environment(CPPDEFINES=["FREEORION_LINUX","ENABLE_BINRELOC",
+                                  #"FREEORION_BUILD_AUTOPACKAGE",
+                                  "FREEORION_RELEASE",
+                                  "BOOST_SIGNALS_STATIC_LINK"],
+                      CPPPATH=["/usr/local/include/GG",
+                               "/usr/local/include/GG/dialogs",
+                               "/usr/local/include/GG/net",
+                               #"/usr/include/python2.3",
+                               "/usr/local/include/GG/SDL"
+                               ],
+                      CXXFLAGS="-O2",
+                      CCFLAGS="-O2"
+                      )
+
+    env.ParseConfig("sdl-config --cflags --libs")
+    env.ParseConfig("freetype-config --cflags --libs")
+    #Help(opts.GenerateHelpText(env))
+    env.Append(LIBS=["log4cpp",
+                 #"boost_signals",
+                 "GiGi",
+                 "GiGiSDL",
+                 "GiGiNet",
+                 "fmod-3.74",
+                 'cdt',
+                 'common',
+                 'dotgen',
+                 'dotneato',
+                 'graph',
+                 #'boost_python',
+                 'gvrender'
+                 ])
+    env.Append(LIBPATH="/usr/lib/graphviz")
+    env.Append(LINKFLAGS=["-Wl,-rpath,/usr/lib/graphviz"])
 
 # windows
-if platform_str == 'win32':
+elif platform_str == 'win32':
     print 'Win32 platform detected ...'
     gg_dir = 'GG/'
     cpppath = ['C:/log4cpp-0.3.4b/include',
@@ -59,116 +208,33 @@ if platform_str == 'win32':
                'C:/fmodapi374win/api/lib',
                gg_dir]
     common_ccflags = '/O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "FREEORION_WIN32" /D "BOOST_SIGNALS_STATIC_LINK" /D "_MBCS" /FD /EHsc /MD /GS /Zc:forScope /GR /W3 /nologo /c /Wp64 /Zi /wd4099 /wd4251 /wd4800 /wd4267 /wd4275 /wd4244 /wd4101 /wd4258'
-    freeoriond_ccflags = common_ccflags + ' /D "FREEORION_BUILD_SERVER"'
-    freeorionca_ccflags = common_ccflags + ' /D "FREEORION_BUILD_AI"'
-    freeorion_ccflags = common_ccflags + ' /D "FREEORION_BUILD_HUMAN"'
     env = Environment(CCFLAGS = '',
                       CPPPATH = cpppath,
                       LIBS = libs,
                       LIBPATH = libpath,
                       LINKFLAGS = '/INCREMENTAL:NO /NOLOGO /NODEFAULTLIB:"LIBCMT" /DEBUG /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /MACHINE:X86')
+else:
+    print "Platform '%s' unrecognized" % Platform()
+    Exit(1)
 
-common_source = ['combat/Combat.cpp',
-                 'Empire/ClientEmpireManager.cpp',
-                 'Empire/Empire.cpp',
-                 'Empire/EmpireManager.cpp',
-                 'Empire/ResourcePool.cpp',
-                 'network/Message.cpp',
-                 'network/NetworkCore.cpp',
-                 'network/XDiff.cpp',
-                 'network/XHash.cpp',
-                 'network/XLut.cpp',
-                 'network/XParser.cpp',
-                 'network/XTree.cpp',
-                 'universe/Building.cpp',
-                 'universe/Condition.cpp',
-                 'universe/Effect.cpp',
-                 'universe/Enums.cpp',
-                 'universe/Fleet.cpp',
-                 'universe/Meter.cpp',
-                 'universe/Planet.cpp',
-                 'universe/PopCenter.cpp',
-                 'universe/Predicates.cpp',
-                 'universe/ResourceCenter.cpp',
-                 'universe/Ship.cpp',
-                 'universe/ShipDesign.cpp',
-                 'universe/Special.cpp',
-                 'universe/System.cpp',
-                 'universe/Tech.cpp',
-                 'universe/UniverseObject.cpp',
-                 'universe/ValueRef.cpp',
-                 'util/DataTable.cpp',
-                 'util/GZStream.cpp',
-                 'util/md5.c',
-                 'util/MultiplayerCommon.cpp',
-                 'util/OptionsDB.cpp',
-                 'util/Order.cpp',
-                 'util/OrderSet.cpp',
-                 'util/Process.cpp',
-                 'util/Random.cpp',
-                 'util/SitRepEntry.cpp',
-                 'util/VarText.cpp',
-                 'UI/StringTable.cpp']
-common_objects = Flatten([Object(x, CCFLAGS=common_ccflags, CPPPATH=cpppath) for x in common_source])
+# We reasonably assume every complete source file path contains exactly one dot!
 
-freeoriond_source = ['server/ServerApp.cpp',
-                     'server/dmain.cpp',
-                     'combat/CombatSystem.cpp',
-                     'Empire/ServerEmpireManager.cpp',
-                     'network/ServerNetworkCore.cpp']
-freeoriond_objects = Flatten([Object(x, CCFLAGS=freeoriond_ccflags, CPPPATH=cpppath) for x in freeoriond_source])
-freeoriond_objects.append(Object('universe/Universe-d', 'universe/Universe.cpp', CCFLAGS=freeoriond_ccflags, CPPPATH=cpppath))
-freeoriond_objects.append(Object('util/AppInterface-d', 'util/AppInterface.cpp', CCFLAGS=freeoriond_ccflags, CPPPATH=cpppath))
+objects={}
+for exe in sources:
+    env2 = env.Copy()
+    env2.Append(CPPDEFINES="FREEORION_BUILD_"+exe.upper())
+    objects[exe] = [env2.Object(target=name.split(".")[0]+'-'+exe,
+                               source=name) for name in sources[exe]]
 
-freeorionca_source = ['client/AI/AIClientApp.cpp',
-                      'client/AI/camain.cpp']
-freeorionca_objects = Flatten([Object(x, CCFLAGS=freeorionca_ccflags, CPPPATH=cpppath) for x in freeorionca_source])
-freeorionca_objects.append(Object('universe/Universe-ca', 'universe/Universe.cpp', CCFLAGS=freeorionca_ccflags, CPPPATH=cpppath))
-freeorionca_objects.append(Object('util/AppInterface-ca', 'util/AppInterface.cpp', CCFLAGS=freeorionca_ccflags, CPPPATH=cpppath))
-freeorionca_objects.append(Object('network/ClientNetworkCore-ca', 'network/ClientNetworkCore.cpp', CCFLAGS=freeorionca_ccflags, CPPPATH=cpppath))
 
-freeorion_source = ['client/human/HumanClientApp.cpp',
-                    'client/human/chmain.cpp',
-                    'UI/About.cpp',
-                    'UI/BuildDesignatorWnd.cpp',
-                    'UI/ClientUI.cpp',
-                    'UI/CUIControls.cpp',
-                    'UI/CUIDrawUtil.cpp',
-                    'UI/CUITabbedPages.cpp',
-                    'UI/CUI_Wnd.cpp',
-                    'UI/CombatWnd.cpp',
-                    'UI/FleetButton.cpp',
-                    'UI/FleetWindow.cpp',
-                    'UI/FocusSelector.cpp',
-                    'UI/GalaxySetupWnd.cpp',
-                    'UI/InGameOptions.cpp',
-                    'UI/IntroScreen.cpp',
-                    'UI/LinkText.cpp',
-                    'UI/MapWnd.cpp',
-                    'UI/MultiplayerLobbyWnd.cpp',
-                    'UI/OptionsWnd.cpp',
-                    'UI/ProductionWnd.cpp',
-                    'UI/ResearchWnd.cpp',
-                    'UI/ServerConnectWnd.cpp',
-                    'UI/SidePanel.cpp',
-                    'UI/SitRepPanel.cpp',
-                    'UI/Splash.cpp',
-                    'UI/SystemIcon.cpp',
-                    'UI/TechWnd.cpp',
-                    'UI/ToolContainer.cpp',
-                    'UI/ToolWnd.cpp',
-                    'UI/TurnProgressWnd.cpp']
-freeorion_objects = Flatten([Object(x, CCFLAGS=freeorion_ccflags, CPPPATH=cpppath) for x in freeorion_source])
-freeorion_objects.append(Object('universe/Universe-h', 'universe/Universe.cpp', CCFLAGS=freeorion_ccflags, CPPPATH=cpppath))
-freeorion_objects.append(Object('util/AppInterface-h', 'util/AppInterface.cpp', CCFLAGS=freeorion_ccflags, CPPPATH=cpppath))
-freeorion_objects.append(Object('network/ClientNetworkCore-h', 'network/ClientNetworkCore.cpp', CCFLAGS=freeorion_ccflags, CPPPATH=cpppath))
+env.Program("freeorionca",objects["ai"] + objects["common"])
+env.Program("freeorion",objects["human"] + objects["common"])
+env.Program("freeoriond",objects["server"] + objects["common"])
 
-client_app_object = Object('client/ClientApp.cpp', CCFLAGS=common_ccflags, CPPPATH=cpppath)
+#env.Install(ARGUMENTS["IDIR"],Split("freeorion freeoriond freeorionca"))
+#Execute(Copy(ARGUMENTS["IDIR"]+"/default/","default/"))
 
-env.Program('freeoriond', freeoriond_objects + common_objects)
-env.Program('freeorionca', freeorionca_objects + client_app_object + common_objects)
-env.Program('freeorion', freeorion_objects + client_app_object + common_objects)
 
-CacheDir('scons_cache')
-TargetSignatures('content')
-SetOption('implicit_cache', 1)
+#CacheDir('scons_cache')
+#TargetSignatures('content')
+#SetOption('implicit_cache', 1)
