@@ -10,6 +10,7 @@
 #include "../universe/ShipDesign.h"
 #include "System.h"
 #include "XMLDoc.h"
+#include "../util/OptionsDB.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -30,7 +31,11 @@ namespace {
     {
         static DataTableMap map;
         if (map.empty()) {
-            LoadDataTables("default/production_tables.txt", map);
+            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+                settings_dir += '/';
+
+            LoadDataTables(settings_dir + "production_tables.txt", map);
         }
         return map;
     }
@@ -39,7 +44,11 @@ namespace {
     {
         static DataTableMap map;
         if (map.empty()) {
-            LoadDataTables("default/planet_tables.txt", map);
+            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+                settings_dir += '/';
+
+            LoadDataTables(settings_dir + "planet_tables.txt", map);
         }
         return map;
     }

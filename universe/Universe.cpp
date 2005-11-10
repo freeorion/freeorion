@@ -6,6 +6,8 @@
 #include "Fleet.h"
 #include "../util/DataTable.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
+#include "../util/Directories.h"
 #include "Planet.h"
 #include "Predicates.h"
 #include "../util/Random.h"
@@ -30,7 +32,7 @@
 #include <boost/graph/breadth_first_search.hpp>
 
 #include <cmath>
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 #include <stdexcept>
 
 namespace {
@@ -53,7 +55,11 @@ namespace {
     {
         static DataTableMap map;
         if (map.empty()) {
-            LoadDataTables("default/universe_tables.txt", map);
+            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+                settings_dir += '/';
+
+            LoadDataTables(settings_dir + "universe_tables.txt", map);
         }
         return map;
     }
@@ -107,7 +113,7 @@ namespace {
 
     void LoadSystemNames(std::list<std::string>& names)
     {
-        std::ifstream ifs("default/starnames.txt");
+        boost::filesystem::ifstream ifs(GetGlobalDir() / "default/starnames.txt");
         while (ifs) {
             std::string latest_name;
             std::getline(ifs, latest_name);
