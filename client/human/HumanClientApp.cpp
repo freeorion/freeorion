@@ -98,7 +98,7 @@ namespace {
     {
         std::vector<SoundDriver> retval;
         
-#if defined(FREEORION_WINDOWS)
+#if defined(FREEORION_WIN32)
         if (FSOUND_SetOutput(FSOUND_OUTPUT_DSOUND) && FSOUND_GetNumDrivers())
             retval.push_back(SOUND_DRIVER_DIRECT_SOUND);
         if (FSOUND_SetOutput(FSOUND_OUTPUT_WINMM) && FSOUND_GetNumDrivers())

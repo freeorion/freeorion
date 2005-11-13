@@ -1,110 +1,114 @@
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/convenience.hpp>
-
 #include "Directories.h"
 
-using namespace boost::filesystem;
+#include <boost/filesystem/convenience.hpp>
+#include <boost/filesystem/operations.hpp>
+
+#include <cstdlib>
+
+namespace fs = boost::filesystem;
+
+namespace {
+    bool g_initialized = false;
+}
 
 #if defined(FREEORION_LINUX)
 #include "binreloc.h"
-#include <stdlib.h>
-#include <iostream>
-
-static bool Initialized = false;
 
 void InitDirs()
 {
-    if (Initialized) return;
-    // store working dir
-    boost::filesystem::initial_path();
+    if (g_initialized)
+        return;
 
-    std::cerr << __PRETTY_FUNCTION__ << std::endl;
-    // initialise binreloc
-    br_init(NULL);
-    std::cerr << br_find_exe("UNDEFINED") << std::endl;
-    path p = GetLocalDir();
-    std::cerr << GetLocalDir().native_directory_string() << std::endl;
+    // store working dir
+    fs::initial_path();
+
+    br_init(0);
+
+    fs::path p = GetLocalDir();
     if (!exists(p)) {
-	create_directories(p);
+        fs::create_directories(p);
     }
     
     p /= "save";
     if (!exists(p)) {
-	create_directories(p);
+        fs::create_directories(p);
     }
-    Initialized = true;
+
+    g_initialized = true;
 }
 
-const path GetLocalDir()
+const fs::path GetLocalDir()
 {
-    static path p = path(getenv("HOME"),native) / path(".freeorion",native);
+    static fs::path p = fs::path(getenv("HOME"), fs::native) / path(".freeorion", fs::native);
     return p;
 }
 
-const path GetGlobalDir()
+const fs::path GetGlobalDir()
 {
-    if (!Initialized) InitDirs();
-    path p(br_find_data_dir("/usr/local/share"),native);
+    if (!g_initialized) InitDirs();
+    fs::path p(br_find_data_dir("/usr/local/share"), fs::native);
     p /= "freeorion";
-    /* if the path does not exist, we fall back to the working directory */
+    // if the path does not exist, we fall back to the working directory
     if (!exists(p)) {
-	return initial_path();
+        return fs::initial_path();
     } else {
-	return p;
+        return p;
     }
 }
 
-const path GetBinDir()
+const fs::path GetBinDir()
 {
-    if (!Initialized) InitDirs();
-    path p(br_find_bin_dir("/usr/local/bin"),native);
-    std::cerr << "bindir: " << p.native_directory_string() << std::endl;
-    /* if the path does not exist, we fall back to the working directory */
+    if (!g_initialized) InitDirs();
+    fs::path p(br_find_bin_dir("/usr/local/bin"), fs::native);
+    // if the path does not exist, we fall back to the working directory
     if (!exists(p)) {
-	return initial_path();
+        return fs::initial_path();
     } else {
-	return p;
+        return p;
     }
 }
 
-const path GetConfigPath()
+const fs::path GetConfigPath()
 {
-    static const path p = GetLocalDir() / "config.xml";
+    static const fs::path p = GetLocalDir() / "config.xml";
     return p;
 }
 
-#elif defined(FREEORION_WINDOWS)
+#elif defined(FREEORION_WIN32)
 
-// FIXME: UNIMPLEMENTED
 void InitDirs()
 {
-    initial_path();
+    if (g_initialized)
+        return;
+
+    fs::path p = fs::initial_path() / "save";
+    if (!exists(p))
+        fs::create_directories(p);
+
+    g_initialized = true;
 }
 
-// FIXME: UNIMPLEMENTED
-const path GetLocalDir()
+const fs::path GetLocalDir()
 {
-    return initial_path();
+    return fs::initial_path();
 }
 
-const path GetGlobalDir()
+const fs::path GetGlobalDir()
 {
-    return initial_path();
+    return fs::initial_path();
 }
 
-// FIXME: UNIMPLEMENTED
-const path GetBinDir()
+const fs::path GetBinDir()
 {
-    return initial_path();
+    return fs::initial_path();
 }
 
-const path GetConfigPath()
+const fs::path GetConfigPath()
 {
-    static const path p(GetLocalDir() / "default/config.xml",native);
+    static const fs::path p = GetLocalDir() / "config.xml";
     return p;
 }
 
 #else
-#  error Neither FREEORION_LINUX nor FREEORION_WINDOWS set
+#  error Neither FREEORION_LINUX nor FREEORION_WIN32 set
 #endif
-

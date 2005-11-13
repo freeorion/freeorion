@@ -110,126 +110,162 @@ sources = {
   ]
 }
 
-import os
-env["ENV"]["PATH"] = os.environ["PATH"]
-try:
-    env["CXX"] = ARGUMENTS["CXX"]
-except KeyError:
-    pass
-
 if str(Platform()) == "posix":
     
     # Minimal linux config, might need manual adjusment
-    env = Environment(CPPDEFINES=["FREEORION_LINUX","ENABLE_BINRELOC",
-                                  #"FREEORION_BUILD_AUTOPACKAGE",
-                                  "FREEORION_RELEASE",
-                                  "BOOST_SIGNALS_STATIC_LINK"],
-                      CPPPATH=["/usr/local/include/GG",
-                               "/usr/local/include/GG/dialogs",
-                               "/usr/local/include/GG/net",
-                               #"/usr/include/python2.3",
-                               "/usr/local/include/GG/SDL"
-                               ],
-                      CXXFLAGS="-O2",
-                      CCFLAGS="-O2"
+    env = Environment(CPPDEFINES = ["FREEORION_LINUX","ENABLE_BINRELOC",
+                                    #"FREEORION_BUILD_AUTOPACKAGE",
+                                    "FREEORION_RELEASE"
+                                    ],
+                      CPPPATH = ["/usr/local/include/GG",
+                                 "/usr/local/include/GG/dialogs",
+                                 "/usr/local/include/GG/net",
+                                 #"/usr/include/python2.3",
+                                 "/usr/local/include/GG/SDL"
+                                 ],
+                      CXXFLAGS = "-O2",
+                      CCFLAGS = "-O2"
                       )
+
+    import os
+    env["ENV"]["PATH"] = os.environ["PATH"]
+    try:
+        env["CXX"] = ARGUMENTS["CXX"]
+    except KeyError:
+        pass
 
     env.ParseConfig("sdl-config --cflags --libs")
     env.ParseConfig("freetype-config --cflags --libs")
     #Help(opts.GenerateHelpText(env))
-    env.Append(LIBS=["log4cpp",
-                 #"boost_signals",
-                 "GiGi",
-                 "GiGiSDL",
-                 "GiGiNet",
-                 "fmod-3.74",
-                 'cdt',
-                 'common',
-                 'dotgen',
-                 'dotneato',
-                 'graph',
-                 #'boost_python',
-                 'gvrender'
-                 ])
-    env.Append(LIBPATH="/usr/lib/graphviz")
-    env.Append(LINKFLAGS=["-Wl,-rpath,/usr/lib/graphviz"])
+    env.Append(LIBS = ["log4cpp",
+                       #"boost_signals",
+                       "GiGi",
+                       "GiGiSDL",
+                       "GiGiNet",
+                       "fmod-3.74",
+                       'cdt',
+                       'common',
+                       'dotgen',
+                       'dotneato',
+                       'graph',
+                       #'boost_python',
+                       'gvrender'
+                       ])
+    env.Append(LIBPATH = "/usr/lib/graphviz")
+    env.Append(LINKFLAGS = ["-Wl,-rpath,/usr/lib/graphviz"])
 
 # windows
-elif platform_str == 'win32':
+elif str(Platform()) == 'win32':
     print 'Win32 platform detected ...'
     gg_dir = 'GG/'
-    cpppath = ['C:/log4cpp-0.3.4b/include',
-               'C:/Boost/include/boost-1_32',
-               'C:/SDL-1.2.7/include',
-               'C:/log4cpp-0.3.4b/include',
-               'C:/freetype-2.1.7/include',
-               'C:/zlib/include',
-               'C:/graphviz/include',
-               'C:/fmodapi374win/api/inc',
-               gg_dir + 'include',
-               gg_dir + 'include/dialogs',
-               gg_dir + 'include/net',
-               gg_dir + 'include/SDL']
-    libs = ['GiGiNet',
-            'GiGiSDL',
-            'GiGi',
-            'opengl32',
-            'glu32',
-            'wsock32',
-            'kernel32',
-            'user32',
-            'gdi32.lib',
-            'winspool.lib',
-            'comdlg32.lib',
-            'zdll',
-            'SDL',
-            'SDLmain',
-            'log4cpp',
-            'freetype214MT',
-            'cdt',
-            'common',
-            'dotgen',
-            'dotneato',
-            'gd',
-            'gfx',
-            'graph',
-            'gvrender',
-            'pathplan',
-            'libexpat',
-            'png',
-            'jpeg',
-            'fmodvc.lib']
-    libpath = ['C:/Boost/lib',
-               'C:/log4cpp-0.3.4b/msvc6/log4cppDLL/Release',
-               'C:/freetype-2.1.7/objs',
-               'C:/zlib/lib',
-               'C:/SDL-1.2.7/lib',
-               'C:/graphviz/lib',
-               'C:/fmodapi374win/api/lib',
-               gg_dir]
-    common_ccflags = '/O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "FREEORION_WIN32" /D "BOOST_SIGNALS_STATIC_LINK" /D "_MBCS" /FD /EHsc /MD /GS /Zc:forScope /GR /W3 /nologo /c /Wp64 /Zi /wd4099 /wd4251 /wd4800 /wd4267 /wd4275 /wd4244 /wd4101 /wd4258'
-    env = Environment(CCFLAGS = '',
+    cpppath = [
+        'C:/log4cpp-0.3.4b/include',
+        'C:/Boost/include/boost-1_32',
+        'C:/SDL-1.2.7/include',
+        'C:/log4cpp-0.3.4b/include',
+        'C:/freetype-2.1.7/include',
+        'C:/zlib/include',
+        'C:/graphviz/include',
+        'C:/fmodapi374win/api/inc',
+        gg_dir + 'include',
+        gg_dir + 'include/dialogs',
+        gg_dir + 'include/net',
+        gg_dir + 'include/SDL'
+        ]
+    libs = [
+        'GiGiNet',
+        'GiGiSDL',
+        'GiGi',
+        'opengl32',
+        'glu32',
+        'wsock32',
+        'kernel32',
+        'user32',
+        'gdi32.lib',
+        'winspool.lib',
+        'comdlg32.lib',
+        'zdll',
+        'SDL',
+        'SDLmain',
+        'log4cpp',
+        'freetype214MT',
+        'cdt',
+        'common',
+        'dotgen',
+        'dotneato',
+        'gd',
+        'gfx',
+        'graph',
+        'gvrender',
+        'pathplan',
+        'libexpat',
+        'png',
+        'jpeg',
+        'fmodvc.lib'
+        ]
+    libpath = [
+        'C:/Boost/lib',
+        'C:/log4cpp-0.3.4b/msvc6/log4cppDLL/Release',
+        'C:/freetype-2.1.7/objs',
+        'C:/zlib/lib',
+        'C:/SDL-1.2.7/lib',
+        'C:/graphviz/lib',
+        'C:/fmodapi374win/api/lib',
+        gg_dir
+        ]
+    ccflags = [
+        '/O2',
+        '/MD',
+        '/EHsc',
+        '/W3',
+        '/Zc:forScope',
+        '/GR',
+        '/Gd',
+        '/Zi',
+        '/nologo',
+        '/wd4099', '/wd4251', '/wd4800', '/wd4267', '/wd4275', '/wd4244', '/wd4101', '/wd4258'
+        ]
+    defines = [
+        '_DEBUG',
+        'WIN32',
+        '_WINDOWS',
+        'FREEORION_WIN32',
+        'BOOST_SIGNALS_STATIC_LINK',
+        '_MBCS'
+        ]
+    linkflags = [
+        '/INCREMENTAL:NO',
+        '/NOLOGO',
+        '/NODEFAULTLIB:"LIBCMT"',
+        '/DEBUG',
+        '/SUBSYSTEM:CONSOLE',
+        '/OPT:REF',
+        '/OPT:ICF',
+        '/MACHINE:X86'
+        ]
+    env = Environment(CCFLAGS = ccflags,
+                      CPPDEFINES = defines,
                       CPPPATH = cpppath,
                       LIBS = libs,
                       LIBPATH = libpath,
-                      LINKFLAGS = '/INCREMENTAL:NO /NOLOGO /NODEFAULTLIB:"LIBCMT" /DEBUG /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /MACHINE:X86')
+                      LINKFLAGS = linkflags)
 else:
     print "Platform '%s' unrecognized" % Platform()
     Exit(1)
 
 # We reasonably assume every complete source file path contains exactly one dot!
 
-objects={}
+objects = {}
 for exe in sources:
     env2 = env.Copy()
-    env2.Append(CPPDEFINES="FREEORION_BUILD_"+exe.upper())
-    objects[exe] = [env2.Object(target=name.split(".")[0]+'-'+exe,
-                               source=name) for name in sources[exe]]
+    env2.Append(CPPDEFINES = "FREEORION_BUILD_" + exe.upper())
+    objects[exe] = [env2.Object(target = name.split(".")[0] + '-' + exe,
+                                source = name) for name in sources[exe]]
 
 
-env.Program("freeorionca",objects["ai"] + objects["common"])
-env.Program("freeorion",objects["human"] + objects["common"])
-env.Program("freeoriond",objects["server"] + objects["common"])
+env.Program("freeorionca", objects["ai"] + objects["common"])
+env.Program("freeorion", objects["human"] + objects["common"])
+env.Program("freeoriond", objects["server"] + objects["common"])
 
 #env.Install(ARGUMENTS["IDIR"],Split("freeorion freeoriond freeorionca"))
 #Execute(Copy(ARGUMENTS["IDIR"]+"/default/","default/"))
