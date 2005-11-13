@@ -88,7 +88,7 @@ namespace {
             if (build_save_game_list) {
                 // build a list of save files
                 namespace fs = boost::filesystem;
-                fs::path save_dir = boost::filesystem::initial_path() / SAVE_DIR_NAME;
+                fs::path save_dir((GetLocalDir() / SAVE_DIR_NAME).native_directory_string(),fs::native);
                 fs::directory_iterator end_it;
                 for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
                     try {
