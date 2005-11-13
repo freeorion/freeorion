@@ -123,12 +123,9 @@ if str(Platform()) == "posix":
                                  #"/usr/include/python2.3",
                                  "/usr/local/include/GG/SDL"
                                  ],
-                      CXXFLAGS = "-O2",
-                      CCFLAGS = "-O2"
+                      CCFLAGS = ["-O2"]
                       )
 
-    import os
-    env["ENV"]["PATH"] = os.environ["PATH"]
     try:
         env["CXX"] = ARGUMENTS["CXX"]
     except KeyError:
