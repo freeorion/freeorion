@@ -39,7 +39,7 @@ void InitDirs()
 
 const fs::path GetLocalDir()
 {
-    static fs::path p = fs::path(getenv("HOME"), fs::native) / path(".freeorion", fs::native);
+    static fs::path p = fs::path(getenv("HOME"), fs::native) / fs::path(".freeorion", fs::native);
     return p;
 }
 
