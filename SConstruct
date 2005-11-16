@@ -113,9 +113,10 @@ sources = {
 if str(Platform()) == "posix":
     
     # Minimal linux config, might need manual adjusment
-    env = Environment(CPPDEFINES = ["FREEORION_LINUX","ENABLE_BINRELOC",
+    env = Environment(CPPDEFINES = ["FREEORION_LINUX",
                                     #"FREEORION_BUILD_AUTOPACKAGE",
-                                    "FREEORION_RELEASE"
+                                    #"FREEORION_RELEASE",
+                                    "ENABLE_BINRELOC",
                                     ],
                       CPPPATH = ["/usr/local/include/GG",
                                  "/usr/local/include/GG/dialogs",
