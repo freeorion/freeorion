@@ -36,18 +36,22 @@
 
 #include <string>
 
+namespace fs = boost::filesystem;
 
 // static members
 #if FREEORION_LINUX
-std::string ClientUI::FONT             = (GetGlobalDir() / "Vera.ttf").native_file_string();
-std::string ClientUI::FONT_BOLD        = (GetGlobalDir() / "VeraBd.ttf").native_file_string();
-std::string ClientUI::FONT_ITALIC      = (GetGlobalDir() / "VeraIt.ttf").native_file_string();
-std::string ClientUI::FONT_BOLD_ITALIC = (GetGlobalDir() / "VeraBI.ttf").native_file_string();
-std::string ClientUI::TITLE_FONT       = (GetGlobalDir() / "Vera.ttf").native_file_string();
+namespace {
+    const fs::path GLOBAL_DIR = GetGlobalDir();
+}
+std::string ClientUI::FONT             = (GLOBAL_DIR / "Vera.ttf").native_file_string();
+std::string ClientUI::FONT_BOLD        = (GLOBAL_DIR / "VeraBd.ttf").native_file_string();
+std::string ClientUI::FONT_ITALIC      = (GLOBAL_DIR / "VeraIt.ttf").native_file_string();
+std::string ClientUI::FONT_BOLD_ITALIC = (GLOBAL_DIR / "VeraBI.ttf").native_file_string();
+std::string ClientUI::TITLE_FONT       = (GLOBAL_DIR / "Vera.ttf").native_file_string();
 
-std::string ClientUI::DIR              = (GetGlobalDir() / "default/").native_directory_string();
-std::string ClientUI::ART_DIR          = (GetGlobalDir() / "default/data/art/").native_directory_string();
-std::string ClientUI::SOUND_DIR	       = (GetGlobalDir() / "default/data/sound/").native_directory_string();
+std::string ClientUI::DIR              = (GLOBAL_DIR / "default/").native_directory_string();
+std::string ClientUI::ART_DIR          = (GLOBAL_DIR / "default/data/art/").native_directory_string();
+std::string ClientUI::SOUND_DIR	       = (GLOBAL_DIR / "default/data/sound/").native_directory_string();
 #else
 std::string ClientUI::FONT             = "Vera.ttf";
 std::string ClientUI::FONT_BOLD        = "VeraBd.ttf";
@@ -621,7 +625,6 @@ ClientUI::GetNumberedTexture(const std::string& dir_name, const std::map<int, st
             image_names[it->first].first = it->second;
         }
 
-        namespace fs = boost::filesystem;
         fs::path star_dir(ClientUI::ART_DIR + dir_name);
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(star_dir); it != end_it; ++it) {
