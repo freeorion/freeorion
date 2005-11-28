@@ -14,7 +14,11 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
+#ifdef FREEORION_LINUX
         db.Add<std::string>("settings-dir", "Sets the root directory for the settings and data files.", (GetGlobalDir() / "default/").native_directory_string());
+#else
+        db.Add<std::string>("settings-dir", "Sets the root directory for the settings and data files.", "default/");
+#endif
         db.Add<std::string>("log-level", "Sets the level at or above which log messages will be output "
                             "(levels in order of decreasing verbosity: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, "
                             "ALERT, FATAL, EMERG", "WARN");

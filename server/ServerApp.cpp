@@ -32,6 +32,8 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
+namespace fs = boost::filesystem;
+
 #define TEST_VALUE_REF_VARIABLE 0
 #if TEST_VALUE_REF_VARIABLE
 #include "../universe/ValueRef.h"
@@ -87,8 +89,11 @@ namespace {
         {
             if (build_save_game_list) {
                 // build a list of save files
-                namespace fs = boost::filesystem;
-                fs::path save_dir((GetLocalDir() / SAVE_DIR_NAME).native_directory_string(),fs::native);
+#ifdef FREEORION_LINUX
+                fs::path save_dir((GetLocalDir() / SAVE_DIR_NAME).native_directory_string(), fs::native);
+#else
+                fs::path save_dir = boost::filesystem::initial_path() / SAVE_DIR_NAME;
+#endif
                 fs::directory_iterator end_it;
                 for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
                     try {
@@ -117,10 +122,13 @@ namespace {
             save_game_empire_data.clear();
             if (0 <= save_file && save_file < static_cast<int>(save_games.size())) {
                 GG::XMLDoc doc;
-		// GZStream does not yet support
-		// boost::filesystem::path, so we do it manually
-		
-                GZStream::igzstream ifs( (GetLocalDir() / SAVE_DIR_NAME / save_games[save_file]).native_file_string().c_str());
+                // GZStream does not yet support
+                // boost::filesystem::path, so we do it manually
+#ifdef FREEORION_LINUX
+                GZStream::igzstream ifs((GetLocalDir() / SAVE_DIR_NAME / save_games[save_file]).native_file_string().c_str());
+#else
+                GZStream::igzstream ifs((fs::path(SAVE_DIR_NAME) / save_games[save_file]).native_file_string().c_str());
+#endif
                 doc.ReadDoc(ifs);
                 ifs.close();
 
@@ -156,7 +164,7 @@ namespace {
     } g_lobby_data(false);
 
 #ifdef FREEORION_WIN32
-    const std::string AI_CLIENT_EXE = (GetBinDir() / "freeorionca.exe").native_file_string();
+    const std::string AI_CLIENT_EXE = "freeorionca.exe";
 #else
     const std::string AI_CLIENT_EXE = (GetBinDir() / "freeorionca").native_file_string();
 #endif    
@@ -208,8 +216,12 @@ ServerApp::ServerApp(int argc, char* argv[]) :
         throw std::runtime_error("Attempted to construct a second instance of singleton class ServerApp");
    
     s_app = this;
-   
+
+#ifdef FREEORION_LINUX
     const std::string SERVER_LOG_FILENAME((GetLocalDir() / "freeoriond.log").native_file_string());
+#else
+    const std::string SERVER_LOG_FILENAME = "freeoriond.log";
+#endif
    
     // a platform-independent way to erase the old log
     std::ofstream temp(SERVER_LOG_FILENAME.c_str());
@@ -333,7 +345,11 @@ void ServerApp::HandleMessage(const Message& msg)
                     m_empires.RemoveAllEmpires();
                     m_single_player_game = false;
 
+#ifdef FREEORION_LINUX
                     std::string load_filename = (GetLocalDir() / SAVE_DIR_NAME / g_lobby_data.save_games[g_lobby_data.save_file]).native_file_string();
+#else
+                    std::string load_filename = (fs::path(SAVE_DIR_NAME) / g_lobby_data.save_games[g_lobby_data.save_file]).native_file_string();
+#endif
                     GG::XMLDoc doc;
                     GZStream::igzstream ifs(load_filename.c_str());
                     doc.ReadDoc(ifs);
@@ -967,7 +983,11 @@ void ServerApp::HandleMessage(const Message& msg)
                 std::string dbg_file("TurnOrdersReceived_empire");
                 dbg_file += boost::lexical_cast<std::string>(GetPlayerEmpire(msg.Sender())->EmpireID());
                 dbg_file += ".xml";
+#ifdef FREEORION_LINUX
                 boost::filesystem::ofstream output(GetLocalDir() / dbg_file);
+#else
+                std::ofstream output(dbg_file.c_str());
+#endif
                 doc.WriteDoc(output);
                 output.close();
             }
@@ -1418,7 +1438,11 @@ void ServerApp::NewGameInit()
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
 
         if (GetOptionsDB().Get<bool>("debug.log-new-game-universe")) {
+#ifdef FREEORION_LINUX
             boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameInit-empire" + boost::lexical_cast<std::string>(it->first) + "-doc.xml"));
+#else
+            std::ofstream ofs(("NewGameInit-empire" + boost::lexical_cast<std::string>(it->first) + "-doc.xml").c_str());
+#endif
             doc.WriteDoc(ofs);
             ofs.close();
         }
@@ -1482,7 +1506,11 @@ void ServerApp::LoadGameInit()
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
 
         if (GetOptionsDB().Get<bool>("debug.log-load-game-universe")) {
+#ifdef FREEORION_LINUX
             boost::filesystem::ofstream ofs(GetLocalDir() / ("LoadGameInit-empire" + boost::lexical_cast<std::string>(empire_id) + "-doc.xml"));
+#else
+            std::ofstream ofs(("LoadGameInit-empire" + boost::lexical_cast<std::string>(empire_id) + "-doc.xml").c_str());
+#endif
             doc.WriteDoc(ofs);
             ofs.close();
         }
@@ -2036,9 +2064,14 @@ void ServerApp::ProcessTurns()
         pEmpire = GetPlayerEmpire( player_it->first );
         GG::XMLDoc doc = CreateTurnUpdate( pEmpire->EmpireID() );
         if (GetOptionsDB().Get<bool>("debug.log-turn-update-universe")) {
-            boost::filesystem::ofstream ofs(GetLocalDir() / ("TurnUpdate" + boost::lexical_cast<std::string>(m_current_turn) +
-                               "-empire" + boost::lexical_cast<std::string>(pEmpire->EmpireID()) +
-                               "-doc.xml"));
+            std::string filename = "TurnUpdate" + boost::lexical_cast<std::string>(m_current_turn) +
+                "-empire" + boost::lexical_cast<std::string>(pEmpire->EmpireID()) +
+                "-doc.xml";
+#ifdef FREEORION_LINUX
+            boost::filesystem::ofstream ofs(GetLocalDir() / filename);
+#else
+            std::ofstream ofs(filename.c_str());
+#endif
             doc.WriteDoc(ofs);
             ofs.close();
         }

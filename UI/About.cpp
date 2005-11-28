@@ -38,11 +38,13 @@ About::About():
 
 
     // Read in the copyright info from a file
-    boost::filesystem::fstream fin;
-    std::string temp_str;
-
-    fin.open(GetGlobalDir() / "default/COPYING", std::ios::in);
+#ifdef FREEORION_LINUX
+    boost::filesystem::ifstream fin(GetGlobalDir() / "default/COPYING");
+#else
+    std::ifstream fin("default/COPYING");
+#endif
     if (!fin.is_open()) return;
+    std::string temp_str;
     while (!fin.eof())
     {
       std::getline(fin, temp_str, '\n');

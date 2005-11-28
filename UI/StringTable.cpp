@@ -67,8 +67,8 @@ void StringTable::Load()
     string temp2;
     std::ifstream ifs;
     try {
-	std::cerr << "FN: " << m_filename << std::endl;
-	//        ifs.open((GetGlobalDir().native_directory_string() + m_filename).c_str());    //open the file
+        //std::cerr << "FN: " << m_filename << std::endl;
+        //        ifs.open((GetGlobalDir().native_directory_string() + m_filename).c_str());    //open the file
 	ifs.open(m_filename.c_str());
     } catch (const exception& e) {
         Logger().errorStream() << "Error opening StringTable file \"" << m_filename << "\": " << e.what();

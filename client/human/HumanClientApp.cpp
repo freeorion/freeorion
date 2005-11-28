@@ -206,7 +206,11 @@ HumanClientApp::HumanClientApp() :
     signal(SIGSEGV, SigHandler);
 #endif
 
+#ifdef FREEORION_LINUX
     const std::string LOG_FILENAME((GetLocalDir() / "freeorion.log").native_file_string());
+#else
+    const std::string LOG_FILENAME = "freeorion.log";
+#endif
 
     // a platform-independent way to erase the old log We cannot use
     // boost::filesystem::ofstream here, as stupid b::f won't allow us
@@ -259,7 +263,7 @@ std::map<int, int> HumanClientApp::PendingColonizationOrders() const
 void HumanClientApp::StartServer()
 {
 #ifdef FREEORION_WIN32
-    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond.exe").native_file_string();
+    const std::string SERVER_CLIENT_EXE = "freeoriond.exe";
 #else
     const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").native_file_string();
 #endif
