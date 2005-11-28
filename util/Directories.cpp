@@ -14,6 +14,15 @@ namespace {
 #if defined(FREEORION_LINUX)
 #include "binreloc.h"
 
+namespace {
+    bool FooFunction()
+    {
+        fs::path::default_name_check(fs::native);
+        return true;
+    }
+    bool foo = FooFunction();
+}
+
 void InitDirs()
 {
     if (g_initialized)
@@ -39,14 +48,14 @@ void InitDirs()
 
 const fs::path GetLocalDir()
 {
-    static fs::path p = fs::path(getenv("HOME"), fs::native) / fs::path(".freeorion", fs::native);
+    static fs::path p = fs::path(getenv("HOME")) / ".freeorion";
     return p;
 }
 
 const fs::path GetGlobalDir()
 {
     if (!g_initialized) InitDirs();
-    fs::path p(br_find_data_dir("/usr/local/share"), fs::native);
+    fs::path p(br_find_data_dir("/usr/local/share"));
     p /= "freeorion";
     // if the path does not exist, we fall back to the working directory
     if (!exists(p)) {
@@ -59,7 +68,7 @@ const fs::path GetGlobalDir()
 const fs::path GetBinDir()
 {
     if (!g_initialized) InitDirs();
-    fs::path p(br_find_bin_dir("/usr/local/bin"), fs::native);
+    fs::path p(br_find_bin_dir("/usr/local/bin"));
     // if the path does not exist, we fall back to the working directory
     if (!exists(p)) {
         return fs::initial_path();
@@ -80,6 +89,8 @@ void InitDirs()
 {
     if (g_initialized)
         return;
+
+    fs::path::default_name_check(fs::native);
 
     fs::path p = fs::initial_path() / "save";
     if (!exists(p))

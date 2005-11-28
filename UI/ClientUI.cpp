@@ -622,7 +622,7 @@ ClientUI::GetNumberedTexture(const std::string& dir_name, const std::map<int, st
         }
 
         namespace fs = boost::filesystem;
-        fs::path star_dir(ClientUI::ART_DIR + dir_name,fs::native);
+        fs::path star_dir(ClientUI::ART_DIR + dir_name);
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(star_dir); it != end_it; ++it) {
             if (!fs::is_directory(*it)) {

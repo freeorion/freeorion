@@ -90,7 +90,7 @@ namespace {
             if (build_save_game_list) {
                 // build a list of save files
 #ifdef FREEORION_LINUX
-                fs::path save_dir((GetLocalDir() / SAVE_DIR_NAME).native_directory_string(), fs::native);
+                fs::path save_dir((GetLocalDir() / SAVE_DIR_NAME).native_directory_string());
 #else
                 fs::path save_dir = boost::filesystem::initial_path() / SAVE_DIR_NAME;
 #endif

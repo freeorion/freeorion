@@ -47,7 +47,7 @@ namespace {
 	{
 		boost::filesystem::path value_path;
 		try {
-			value_path = boost::filesystem::path(path, boost::filesystem::native);
+			value_path = boost::filesystem::path(path);
 		} catch (const boost::filesystem::filesystem_error& e) {
 			return false;
 		}
@@ -842,7 +842,7 @@ bool OptionsWnd::TestFolder(std::string& value)
 
 	boost::filesystem::path value_path, dir;
 	try {
-		value_path = boost::filesystem::path(value, boost::filesystem::native);
+		value_path = boost::filesystem::path(value);
 	} catch (const boost::filesystem::filesystem_error& e) {
 		GG::ThreeButtonDlg dlg(300, 125, "\"" + value + "\"\nis an invalid file name.", ClientUI::FONT, ClientUI::PTS + 2, ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
 		dlg.Run();
@@ -933,7 +933,7 @@ std::string OptionsWnd::BrowseForFile(const std::string& directory, const std::s
 {
     try {
 		boost::filesystem::path settings = boost::filesystem::system_complete(boost::filesystem::path(directory));
-		boost::filesystem::path file = settings / boost::filesystem::path(aFile, boost::filesystem::native);
+		boost::filesystem::path file = settings / aFile;
 		file.normalize();
 		FileDlg dlg(file.branch_path().string(), file.leaf(), false, false, file_types);
         dlg.Run();
@@ -943,7 +943,7 @@ std::string OptionsWnd::BrowseForFile(const std::string& directory, const std::s
 		std::string filename = *dlg.Result().begin();
 		if (!filename.empty()) {
 			// Make it into a path relative to the settings-dir
-			boost::filesystem::path newFile(filename, boost::filesystem::native);
+			boost::filesystem::path newFile(filename);
 			boost::filesystem::path::iterator iSettings, iNewFile = newFile.begin();
 			boost::filesystem::path relative;
 			for (iSettings = settings.begin(); (iSettings != settings.end()) && (iNewFile != newFile.end()); iSettings++, iNewFile++)
