@@ -31,6 +31,17 @@ namespace {
     const int DROPLIST_HEIGHT = ClientUI::PTS + 4;
     const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
 
+    const std::vector<GG::Pt>& AppResolutions()
+    {
+        static std::vector<GG::Pt> retval;
+        if (retval.empty()) {
+            retval.push_back(GG::Pt(1024, 768));
+            retval.push_back(GG::Pt(1280, 1024));
+            retval.push_back(GG::Pt(1600, 1200));
+        }
+        return retval;
+    }
+
 	bool OptionPathToNativePath(std::string& path)
 	{
 		boost::filesystem::path value_path;
@@ -789,34 +800,9 @@ void OptionsWnd::TitleFont(int selection)
 
 void OptionsWnd::Resolution(int selection)
 {
-	int width, height;
-	switch (selection)
-	{
-	case 0:
-		width = 640;
-		height = 480;
-		break;
-	case 1:
-		width = 800;
-		height = 600;
-		break;
-	case 2:
-		width = 1024;
-		height = 768;
-		break;
-	case 3:
-		width = 1280;
-		height = 1024;
-		break;
-	case 4:
-		width = 1600;
-		height = 1200;
-		break;
-	default:
-		return;
-	}
-	GetOptionsDB().Set<int>("app-width", width);
-	GetOptionsDB().Set<int>("app-height", height);
+    assert(0 <= selection && selection <= static_cast<int>(AppResolutions().size()));
+	GetOptionsDB().Set<int>("app-width", AppResolutions()[selection].x);
+	GetOptionsDB().Set<int>("app-height", AppResolutions()[selection].y);
 }
 
 void OptionsWnd::ColorDepth(int selection)
@@ -990,10 +976,14 @@ void OptionsWnd::FillLists()
 	FillFontList();
 
 	// Fill up the resolution list
-	m_resolutions.clear();
-	m_resolutions.push_back("1024 x 768");
-	m_resolutions.push_back("1280 x 1024");
-	m_resolutions.push_back("1600 x 1200");
+    const std::vector<GG::Pt>& app_resolutions = AppResolutions();
+	m_resolutions.resize(app_resolutions.size());
+    for (unsigned int i = 0; i < app_resolutions.size(); ++i) {
+        m_resolutions[i] =
+            boost::lexical_cast<std::string>(app_resolutions[i].x) +
+            " x " +
+            boost::lexical_cast<std::string>(app_resolutions[i].y);
+    }
 
 	// Fill up the color-depth list
 	m_colorDepth.clear();
