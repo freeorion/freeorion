@@ -160,7 +160,8 @@ public:
 	PageWnd(int x, int y, int w, int h) : GG::Wnd(x, y, w, h, 0) {};
 };
 
-void OptionsWnd::AddSoundControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName, CUIEdit*& editControl, CUIButton*& btn, bool connect_file_browser/* = true*/)
+void OptionsWnd::AddSoundControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName,
+                                  CUIEdit*& editControl, CUIButton*& btn, bool connect_file_browser/* = true*/)
 {
 	GG::TextControl* textControl = new GG::TextControl(x, y + 2, UserString(userString), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
 	pageWnd->AttachChild(textControl);
@@ -342,7 +343,6 @@ void OptionsWnd::Init()
 	btn = new CUIButton(260, y, textControl->Height(), "...");
 	btn->MoveTo(PAGE_WIDTH - btn->Width(), y);
 	ui_page->AttachChild(btn);
-	GG::Connect(btn->ClickedSignal, BrowseForFileFunctor("stringtable-filename", "settings-dir", "OPTIONS_LANGUAGE_FILE", "stringtable.txt", m_language_edit, this));
 	x += textControl->Width() + 5;
 	s = GetOptionsDB().Get<std::string>("stringtable-filename");
 	if (!OptionPathToNativePath(s))
@@ -351,6 +351,7 @@ void OptionsWnd::Init()
 	ui_page->AttachChild(editControl);
 	GG::Connect(editControl->EditedSignal, SetFileStringFunctor("stringtable-filename"));
 	m_language_edit = editControl;
+	GG::Connect(btn->ClickedSignal, BrowseForFileFunctor("stringtable-filename", "settings-dir", "OPTIONS_LANGUAGE_FILE", "stringtable.txt", m_language_edit, this));
 	// Fonts
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN;
@@ -911,7 +912,7 @@ void OptionsWnd::Browse(const std::string& optionName, const std::string& option
 		dlg.Run();
 	} else {
 		GetOptionsDB().Set<std::string>(optionName, option_filename);
-		editControl->SetText(filename);
+		editControl->SetText(option_filename);
 	}
 }
 
