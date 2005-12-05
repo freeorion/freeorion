@@ -82,6 +82,16 @@ System::~System()
 {
 }
    
+StarType System::Star() const
+{
+    return m_star;
+}
+
+int System::Orbits() const
+{
+    return m_orbits;
+}
+
 int System::Starlanes() const
 {
     int retval = 0;
@@ -148,6 +158,36 @@ System::ConstObjectVec System::FindObjects(const UniverseObjectVisitor& visitor)
     return retval;
 }
 
+System::const_orbit_iterator System::begin() const
+{
+    return m_objects.begin();
+}
+
+System::const_orbit_iterator System::end() const
+{
+    return m_objects.end();
+}
+
+std::pair<System::const_orbit_iterator, System::const_orbit_iterator> System::orbit_range(int o) const
+{
+    return m_objects.equal_range(o);
+}
+
+std::pair<System::const_orbit_iterator, System::const_orbit_iterator> System::non_orbit_range() const
+{
+    return m_objects.equal_range(-1);
+}
+
+System::const_lane_iterator System::begin_lanes() const
+{
+    return m_starlanes_wormholes.begin();
+}
+
+System::const_lane_iterator System::end_lanes() const
+{
+    return m_starlanes_wormholes.end();
+}
+
 System::ConstObjectVec System::FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const
 {
     const Universe& universe = GetUniverse();
@@ -187,7 +227,7 @@ GG::XMLElement System::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) cons
    if (vis == PARTIAL_VISIBILITY) {
       retval.AppendChild(XMLElement("m_orbits", lexical_cast<std::string>(m_orbits)));
       retval.AppendChild(XMLElement("m_objects", GG::StringFromMultimap<int, int>(PartiallyVisibleObjects(empire_id))));
-      retval.AppendChild(XMLElement("m_starlanes_wormholes", GG::StringFromMap<int, bool>(m_starlanes_wormholes)));
+      retval.AppendChild(XMLElement("m_starlanes_wormholes", GG::StringFromMap<int, bool>(VisibleStarlanes(empire_id))));
    } else if (vis == FULL_VISIBILITY) {
       retval.AppendChild(XMLElement("m_orbits", lexical_cast<std::string>(m_orbits)));
       retval.AppendChild(XMLElement("m_objects", GG::StringFromMultimap<int, int>(m_objects)));
@@ -336,12 +376,55 @@ void System::RemoveOwner(int id)
 {
 }
 
-void System::MovementPhase( )
+void System::MovementPhase()
 {
 }
 
-void System::PopGrowthProductionResearchPhase( )
+void System::PopGrowthProductionResearchPhase()
 {
+}
+
+System::orbit_iterator System::begin()
+{
+    return m_objects.begin();
+}
+
+System::orbit_iterator System::end()
+{
+    return m_objects.end();
+}
+
+std::pair<System::orbit_iterator, System::orbit_iterator> System::orbit_range(int o)
+{
+    return m_objects.equal_range(o);
+}
+
+std::pair<System::orbit_iterator, System::orbit_iterator> System::non_orbit_range()
+{
+    return m_objects.equal_range(-1);
+}
+
+System::lane_iterator System::begin_lanes()
+{
+    return m_starlanes_wormholes.begin();
+}
+
+System::lane_iterator System::end_lanes()
+{
+    return m_starlanes_wormholes.end();
+}
+
+System::StarlaneMap System::VisibleStarlanes(int empire_id) const
+{
+    const Empire* empire = Empires().Lookup(empire_id);
+    if (empire->HasExploredSystem(ID()))
+        return m_starlanes_wormholes;
+    StarlaneMap retval;
+    for (StarlaneMap::const_iterator it = m_starlanes_wormholes.begin(); it != m_starlanes_wormholes.end(); ++it) {
+        if (empire->HasExploredSystem(it->first))
+            retval.insert(*it);
+    }
+    return retval;
 }
 
 System::ObjectMultimap System::PartiallyVisibleObjects(int empire_id) const

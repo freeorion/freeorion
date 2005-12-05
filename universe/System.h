@@ -26,13 +26,13 @@ struct UniverseObjectVisitor;
 class System : public UniverseObject
 {
 private:
-    typedef std::multimap<int, int>  ObjectMultimap;
-    typedef std::map<int, bool>      StarlaneMap;
+    typedef std::multimap<int, int>  ObjectMultimap; 
 
 public:
     typedef std::vector<UniverseObject*>       ObjectVec;          ///< the return type of FindObjects()
     typedef std::vector<const UniverseObject*> ConstObjectVec;     ///< the return type of FindObjects()
     typedef std::vector<int>                   ObjectIDVec;        ///< the return type of FindObjectIDs()
+    typedef std::map<int, bool>                StarlaneMap;        ///< the return type of VisibleStarlanes()
 
     typedef ObjectMultimap::iterator       orbit_iterator;         ///< iterator for system objects
     typedef ObjectMultimap::const_iterator const_orbit_iterator;   ///< const_iterator for system objects
@@ -48,20 +48,20 @@ public:
     /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
 	of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
     System(StarType star, int orbits, const std::string& name, double x, double y,
-	   const std::set<int>& owners = std::set<int>());
+           const std::set<int>& owners = std::set<int>());
 
     /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
 	of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
     System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
-	   const std::string& name, double x, double y, const std::set<int>& owners = std::set<int>());
+           const std::string& name, double x, double y, const std::set<int>& owners = std::set<int>());
 
     System(const GG::XMLElement& elem); ///< ctor that constructs a System object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a System object
     ~System();   ///< dtor
     //@}
 
     /** \name Accessors */ //@{
-    StarType Star() const   {return m_star;}  ///< returns the type of star for this system
-    int      Orbits() const {return m_orbits;}///< returns the number of orbits in this system
+    StarType Star() const;   ///< returns the type of star for this system
+    int      Orbits() const; ///< returns the number of orbits in this system
 
     int  Starlanes() const;                   ///< returns the number of starlanes from this system to other systems
     int  Wormholes() const;                   ///< returns the number of wormholes from this system to other systems
@@ -92,17 +92,17 @@ public:
     /** returns all the objects of type T in orbit \a orbit. */
     template <class T> std::vector<const T*> FindObjectsInOrbit(int orbit) const;
 
-    const_orbit_iterator begin() const  {return m_objects.begin();}   ///< begin iterator for all system objects
-    const_orbit_iterator end() const    {return m_objects.end();}     ///< end iterator for all system objects
+    const_orbit_iterator begin() const;   ///< begin iterator for all system objects
+    const_orbit_iterator end() const;     ///< end iterator for all system objects
 
     /** returns begin and end iterators for all system objects in orbit \a o*/
-    std::pair<const_orbit_iterator, const_orbit_iterator> orbit_range(int o) const {return m_objects.equal_range(o);}
+    std::pair<const_orbit_iterator, const_orbit_iterator> orbit_range(int o) const;
 
     /** returns begin and end iterators for all system objects not in an orbit*/
-    std::pair<const_orbit_iterator, const_orbit_iterator> non_orbit_range() const {return m_objects.equal_range(-1);}
+    std::pair<const_orbit_iterator, const_orbit_iterator> non_orbit_range() const;
 
-    const_lane_iterator  begin_lanes() const  {return m_starlanes_wormholes.begin();}   ///< begin iterator for all starlanes and wormholes terminating in this system
-    const_lane_iterator  end_lanes() const    {return m_starlanes_wormholes.end();}     ///< end iterator for all starlanes and wormholes terminating in this system
+    const_lane_iterator  begin_lanes() const;   ///< begin iterator for all starlanes and wormholes terminating in this system
+    const_lane_iterator  end_lanes() const;     ///< end iterator for all starlanes and wormholes terminating in this system
 
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
     virtual GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a System object with visibility limited relative to the input empire
@@ -151,23 +151,27 @@ public:
     /** returns all the objects of type T in orbit \a orbit. */
     template <class T> std::vector<T*> FindObjectsInOrbit(int orbit);
 
-    virtual void AddOwner   (int id);  ///< adding owner to system objects is not allowed
-    virtual void RemoveOwner(int id);  ///< removing owner from system objects is not allowed
+    virtual void AddOwner(int id);    ///< adding owner to system objects is a no-op
+    virtual void RemoveOwner(int id); ///< removing owner from system objects is a no-op
 
-    virtual void MovementPhase( );
-    virtual void PopGrowthProductionResearchPhase( );
+    virtual void MovementPhase();
+    virtual void PopGrowthProductionResearchPhase();
 
-    orbit_iterator begin()  {return m_objects.begin();}   ///< begin iterator for all system objects
-    orbit_iterator end()    {return m_objects.end();}     ///< end iterator for all system objects
+    orbit_iterator begin();   ///< begin iterator for all system objects
+    orbit_iterator end();     ///< end iterator for all system objects
 
     /** returns begin and end iterators for all system objects in orbit \a o*/
-    std::pair<orbit_iterator, orbit_iterator> orbit_range(int o) {return m_objects.equal_range(o);}
+    std::pair<orbit_iterator, orbit_iterator> orbit_range(int o);
 
     /** returns begin and end iterators for all system objects not in an orbit*/
-    std::pair<orbit_iterator, orbit_iterator> non_orbit_range() {return m_objects.equal_range(-1);}
+    std::pair<orbit_iterator, orbit_iterator> non_orbit_range();
 
-    lane_iterator  begin_lanes()  {return m_starlanes_wormholes.begin();}   ///< begin iterator for all starlanes and wormholes terminating in this system
-    lane_iterator  end_lanes()    {return m_starlanes_wormholes.end();}     ///< end iterator for all starlanes and wormholes terminating in this system
+    lane_iterator  begin_lanes();   ///< begin iterator for all starlanes and wormholes terminating in this system
+    lane_iterator  end_lanes();     ///< end iterator for all starlanes and wormholes terminating in this system
+
+    /** returns a map of the starlanes and wormholes visible to empire \a empire_id; the map contains keys that are IDs
+        of connected systems, and bool values indicating whether each is a starlane (false) or a wormhole (true)*/
+    StarlaneMap VisibleStarlanes(int empire_id) const;
     //@}
 
 private:
