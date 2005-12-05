@@ -366,13 +366,13 @@ void Fleet::CalculateRoute() const
     if (m_moving_to != INVALID_OBJECT_ID && m_travel_route.empty()) {
         m_travel_distance = 0.0;
         if (SystemID() == m_prev_system) { // if we haven't actually left yet, we have to move from whichever system we are at now
-            std::pair<std::list<System*>, double> path = GetUniverse().ShortestPath(m_prev_system, m_moving_to);
+            std::pair<std::list<System*>, double> path = GetUniverse().ShortestPath(m_prev_system, m_moving_to, *Owners().begin());
             m_travel_route = path.first;
             m_travel_distance = path.second;
         } else { // if we're between systems, the shortest route may be through either one
             if (CanChangeDirectionEnRoute()) {
-                std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(m_next_system, m_moving_to);
-                std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(m_prev_system, m_moving_to);
+                std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(m_next_system, m_moving_to, *Owners().begin());
+                std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(m_prev_system, m_moving_to, *Owners().begin());
                 double dist_x = path1.first.front()->X() - X();
                 double dist_y = path1.first.front()->Y() - Y();
                 double dist1 = std::sqrt(dist_x * dist_x + dist_y * dist_y);
@@ -387,7 +387,7 @@ void Fleet::CalculateRoute() const
                     m_travel_distance = dist2 + path2.second;
                 }
             } else {
-                std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(m_next_system, m_moving_to);
+                std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(m_next_system, m_moving_to, *Owners().begin());
                 double dist_x = route.first.front()->X() - X();
                 double dist_y = route.first.front()->Y() - Y();
                 double dist = std::sqrt(dist_x * dist_x + dist_y * dist_y);

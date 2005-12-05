@@ -274,7 +274,7 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest
     m_start_system(start_system),
     m_dest_system(dest_system)
 {
-    std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(start_system, dest_system);
+    std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(start_system, dest_system, empire);
     for (std::list<System*>::iterator it = route.first.begin(); it != route.first.end(); ++it) {
         m_route.push_back((*it)->ID());
     }

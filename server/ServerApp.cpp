@@ -1789,7 +1789,7 @@ void ServerApp::ProcessTurns()
         // build the new turn doc
         game_state.root_node.AppendChild(universe_data);
 
-	// We will append to it later
+        // We will append to it later
         m_last_turn_update_msg[ it->first ] = game_state;
     }
 
@@ -1910,58 +1910,17 @@ void ServerApp::ProcessTurns()
         it->second->MovementPhase();
 
 
-    // process production and growth phase
-    for (ServerEmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
-        it->second->UpdateResourcePool();
-
-    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::EMPIRE_PRODUCTION, -1));
-
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ResetMaxMeters();
-        it->second->AdjustMaxMeters();
-    }
-
-    GetUniverse().ApplyEffects();
-
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->PopGrowthProductionResearchPhase();
-        it->second->ClampMeters();
-        for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
-            if (Meter* meter = it->second->GetMeter(i)) {
-                meter->m_previous_current = meter->m_initial_current;
-                meter->m_previous_max = meter->m_initial_max;
-                meter->m_initial_current = meter->m_current;
-                meter->m_initial_max = meter->m_max;
-            }
-        }
-    }
-
-    // check now for completed research and production
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        Empire* empire = Empires().Lookup(it->first);
-        empire->CheckResearchProgress();
-        empire->CheckProductionProgress();
-    }
-
     // find planets which have starved to death
     std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();
     for (std::vector<Planet*>::iterator it = plt_vec.begin();it!=plt_vec.end();++it)
         if ((*it)->Owners().size()>0 && (*it)->PopPoints()==0.0)
         {
-            // add some information to sitreport
+            // add some information to sitrep
             Empire *empire = Empires().Lookup(*(*it)->Owners().begin());
             empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(),(*it)->ID()));
             (*it)->Reset();
         }
 
-    // loop and free all orders
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-    {
-        delete it->second;
-        it->second = NULL;
-    }   
-    
     // check for combats, and resolve them.
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
         m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::COMBAT, -1) );
@@ -2024,6 +1983,48 @@ void ServerApp::ProcessTurns()
     if (combat_happend)
         SDL_Delay(1500);
 
+    // process production and growth phase
+    for (ServerEmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
+        it->second->UpdateResourcePool();
+
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+        m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::EMPIRE_PRODUCTION, -1));
+
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+        it->second->ResetMaxMeters();
+        it->second->AdjustMaxMeters();
+    }
+
+    GetUniverse().ApplyEffects();
+    GetUniverse().RebuildEmpireViewSystemGraphs();
+
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+        it->second->PopGrowthProductionResearchPhase();
+        it->second->ClampMeters();
+        for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
+            if (Meter* meter = it->second->GetMeter(i)) {
+                meter->m_previous_current = meter->m_initial_current;
+                meter->m_previous_max = meter->m_initial_max;
+                meter->m_initial_current = meter->m_current;
+                meter->m_initial_max = meter->m_max;
+            }
+        }
+    }
+
+    // check now for completed research and production
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
+        Empire* empire = Empires().Lookup(it->first);
+        empire->CheckResearchProgress();
+        empire->CheckProductionProgress();
+    }
+
+    // loop and free all orders
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
+    {
+        delete it->second;
+        it->second = NULL;
+    }   
+    
     ++m_current_turn;
 
     // indicate that the clients are waiting for their new Universes

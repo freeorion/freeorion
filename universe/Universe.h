@@ -36,6 +36,9 @@
 #ifndef BOOST_GRAPH_ADJACENCY_LIST_HPP
 #include <boost/graph/adjacency_list.hpp>
 #endif
+#ifndef BOOST_FILTERED_GRAPH_HPP
+#include <boost/graph/filtered_graph.hpp>
+#endif
 
 #include <boost/type_traits/remove_const.hpp>
 
@@ -67,7 +70,7 @@ protected:
     typedef std::map<int, UniverseObject*> ObjectMap; ///< the container type that is used internally to hold the objects in the universe; keyed by ID number
 
 public:
-/** the types of universe shapes available in FreeOrion*/
+    /** the types of universe shapes available in FreeOrion*/
     enum Shape {
         SPIRAL_2,      ///< a two-armed spiral galaxy
         SPIRAL_3,      ///< a three-armed spiral galaxy
@@ -118,8 +121,15 @@ public:
     /** the value passed to XMLEncode() when the entire object is desired, not just the portion visible to one empire */
     enum {ALL_EMPIRES = -1};
 
-    typedef ObjectMap::const_iterator            const_iterator;   ///< a const_iterator for iteration over the objects in the universe
-    typedef ObjectMap::iterator                  iterator;
+    struct vertex_system_pointer_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
+    typedef boost::property<vertex_system_pointer_t, System*,
+                            boost::property<boost::vertex_index_t, int> > 
+    vertex_property_t; ///< a system graph property map type
+    typedef boost::property<boost::edge_weight_t, double> 
+    edge_property_t; ///< a system graph property map type
+
+    typedef ObjectMap::const_iterator            const_iterator;   ///< a const_iterator for sequences over the objects in the universe
+    typedef ObjectMap::iterator                  iterator;         ///< an iterator for sequences over the objects in the universe
 
     typedef std::vector<const UniverseObject*>   ConstObjectVec;   ///< the return type of FindObjects()
     typedef std::vector<UniverseObject*>         ObjectVec;        ///< the return type of the non-const FindObjects()
@@ -167,37 +177,27 @@ public:
     const_iterator begin() const  {return m_objects.begin();}   ///< returns the begin const_iterator for the objects in the universe
     const_iterator end() const    {return m_objects.end();}     ///< returns the end const_iterator for the objects in the universe
 
-    double LinearDistance(System* system1, System* system2) const; ///< returns the straight-line distance between the given systems
     double LinearDistance(int system1, int system2) const; ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
-    /** returns the sequence of systems, including \a system1 and \a system2, that defines the shortest path from \a system1 to 
-        \a system2, and the distance travelled to get there.  If no such path exists, the list will be empty.  Note that the 
-        path returned may be via one or more starlane, or may be "offroad". */
-    std::pair<std::list<System*>, double> ShortestPath(System* system1, System* system2) const;
-
-    /** returns the sequence of systems, including \a system1 and \a system2, that defines the shortest path from \a system1 to 
-        \a system2, and the distance travelled to get there.  If no such path exists, the list will be empty.  Note that the 
-        path returned may be via one or more starlane, or may be "offroad".  \throw std::out_of_range This function will throw 
-        if either system ID is out of range. */
-    std::pair<std::list<System*>, double> ShortestPath(int system1, int system2) const;
+    /** returns the sequence of systems, including \a system1 and \a system2, that defines the shortest path from \a
+        system1 to \a system2, and the distance travelled to get there.  If no such path exists, the list will be empty.
+        Note that the path returned may be via one or more starlane, or may be "offroad".  The path is calculated using
+        the visiblity for empire \a empire_id, or without regard to visibility if \a empire_id == ALL_EMPIRES.  \throw
+        std::out_of_range This function will throw if either system ID is out of range. */
+    std::pair<std::list<System*>, double> ShortestPath(int system1, int system2, int empire_id = ALL_EMPIRES) const;
 
     /** returns the sequence of systems, including \a system1 and \a system2, that defines the path with the fewest
         jumps from \a system1 to \a system2, and the number of jumps to get there.  If no such path exists, the list
-        will be empty. */
-    std::pair<std::list<System*>, int> LeastJumpsPath(System* system1, System* system2) const;
+        will be empty.  The path is calculated using the visiblity for empire \a empire_id, or without regard to
+        visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function will throw if either system
+        ID is out of range. */
+    std::pair<std::list<System*>, int> LeastJumpsPath(int system1, int system2, int empire_id = ALL_EMPIRES) const;
 
-    /** returns the sequence of systems, including \a system1 and \a system2, that defines the path with the fewest
-        jumps from \a system1 to \a system2, and the number of jumps to get there.  If no such path exists, the list
-        will be empty.  \throw std::out_of_range This function will throw if either system ID is out of range. */
-    std::pair<std::list<System*>, int> LeastJumpsPath(int system1, int system2) const;
-
-    /** returns the systems that are one starlane hop away from system \a system.  The returned systems are indexed by 
-        distance from \a system. */
-    std::map<double, System*> ImmediateNeighbors(System* system) const;
-
-    /** returns the systems that are one starlane hop away from system \a system.  The returned systems are indexed by 
-        distance from \a system.  \throw std::out_of_range This function will throw if the system ID is out of range. */
-    std::map<double, System*> ImmediateNeighbors(int system) const;
+    /** returns the systems that are one starlane hop away from system \a system.  The returned systems are indexed by
+        distance from \a system.  The neighborhood is calculated using the visiblity for empire \a empire_id, or without
+        regard to visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function will throw if the
+        system ID is out of range. */
+    std::map<double, System*> ImmediateNeighbors(int system, int empire_id = ALL_EMPIRES) const;
 
     virtual GG::XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
 
@@ -226,6 +226,9 @@ public:
     /** Applies all Effects from Buildings, Specials, Techs, etc. */
     void              ApplyEffects();
 
+    /** Reconstructs the per-empire system graph views needed to calculate routes based on visibility. */
+    void              RebuildEmpireViewSystemGraphs();
+
     /** removes the object with ID number \a id from the universe and any containing UniverseObjects (e.g. the containing System),
         and returns it; returns 0 if there is no such object*/
     UniverseObject*   Remove(int id);
@@ -250,22 +253,28 @@ public:
 protected:
     typedef std::vector< std::vector<double> > DistanceMatrix;
 
-    // declare property map types
-    struct vertex_system_pointer_t {typedef boost::vertex_property_tag kind;};
-    typedef boost::property<vertex_system_pointer_t, System*,
-                            boost::property<boost::vertex_index_t, int> > 
-    vertex_property_t;
-    typedef boost::property<boost::edge_weight_t, double> 
-    edge_property_t;
-
     // declare main graph types, including properties declared above
-    typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS, 
-                                   vertex_property_t, edge_property_t>
+    typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, 
+                                  vertex_property_t, edge_property_t>
     SystemGraph;
 
     // declare types for iteration over graph
     typedef SystemGraph::vertex_iterator   VertexIterator;
     typedef SystemGraph::out_edge_iterator OutEdgeIterator;
+
+    struct EdgeVisibilityFilter
+    {
+        EdgeVisibilityFilter();
+        EdgeVisibilityFilter(const SystemGraph* graph, int empire_id);
+        template <typename EdgeDescriptor>
+        bool operator()(const EdgeDescriptor& edge) const;
+        static bool CanSeeAtLeastOneSystem(const Empire* empire, int system1, int system2);
+    private:
+        const SystemGraph* m_graph;
+        const Empire* m_empire;
+    };
+    typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
+    typedef std::map<int, boost::shared_ptr<EmpireViewSystemGraph> > EmpireViewSystemGraphMap;
 
     // declare property map types for properties declared above
     typedef boost::property_map<SystemGraph, vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
@@ -321,10 +330,11 @@ protected:
 
     void DestroyImpl(int id);
 
-    ObjectMap m_objects;                                ///< note that for the system graph algorithms to work more easily, the first N elements should be the N systems
-    DistanceMatrix m_system_distances;                  ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
-    SystemGraph m_system_graph;                         ///< a graph in which the systems are vertices and the starlanes are edges
-    NumberedElementFactory<UniverseObject> m_factory;   ///< generates new object IDs for all new objects
+    ObjectMap m_objects;                                  ///< note that for the system graph algorithms to work more easily, the first N elements should be the N systems
+    DistanceMatrix m_system_distances;                    ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
+    SystemGraph m_system_graph;                           ///< a graph in which the systems are vertices and the starlanes are edges
+    EmpireViewSystemGraphMap m_empire_system_graph_views; ///< a map of empire IDs to the views of the system graph by those empires
+    NumberedElementFactory<UniverseObject> m_factory;     ///< generates new object IDs for all new objects
     int m_last_allocated_id;
     std::set<int> m_marked_destroyed;
 
@@ -392,6 +402,13 @@ Universe::ObjectIDVec Universe::FindObjectIDs() const
             retval.push_back(it->first);
     }
     return retval;
+}
+
+
+template <typename EdgeDescriptor>
+bool Universe::EdgeVisibilityFilter::operator()(const EdgeDescriptor& edge) const
+{
+    return m_empire && m_graph ? CanSeeAtLeastOneSystem(m_empire, boost::source(edge, *m_graph), boost::target(edge, *m_graph)) : false;
 }
 
 template <class T>
