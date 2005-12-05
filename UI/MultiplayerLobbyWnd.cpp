@@ -219,7 +219,7 @@ void MultiplayerLobbyWnd::Keypress(GG::Key key, Uint32 key_mods)
         HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
         m_chat_input_edit->SetText("");
         *m_chat_box += m_player_names[HumanClientApp::GetApp()->PlayerID()] + ": " + text + "\n";
-    } else if (!m_start_game_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
+    } else if (m_start_game_bn && !m_start_game_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
         StartGameClicked();
     } else if (key == GG::GGK_ESCAPE) {
         CancelClicked();
