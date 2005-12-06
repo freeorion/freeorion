@@ -128,16 +128,16 @@ void ClientApp::UpdateTurnData( const GG::XMLDoc &diff )
     // XPatch
     XPatch( new_doc, diff );
 
-    // apply universe
-    if (new_doc.root_node.ContainsChild( "Universe" ) )
-    {
-	m_previous_universe = new_doc.root_node.Child("Universe");
-        m_universe.SetUniverse( m_previous_universe );
-    }
-
     // apply empire
     if (new_doc.root_node.ContainsChild( EmpireManager::EMPIRE_UPDATE_TAG ) ) 
     {
         m_empires.HandleEmpireElementUpdate( new_doc.root_node.Child( EmpireManager::EMPIRE_UPDATE_TAG ) );
+    }
+
+    // apply universe
+    if (new_doc.root_node.ContainsChild( "Universe" ) )
+    {
+        m_previous_universe = new_doc.root_node.Child("Universe");
+        m_universe.SetUniverse( m_previous_universe );
     }
 }
