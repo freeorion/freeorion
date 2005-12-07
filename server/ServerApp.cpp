@@ -373,7 +373,6 @@ void ServerApp::HandleMessage(const Message& msg)
                         }
                     }
 
-                    m_universe.SetUniverse(doc.root_node.Child("Universe"));
                     m_expected_players = 0;
                     for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
                         if (doc.root_node.Child(i).Tag() == "Player") {
@@ -381,6 +380,7 @@ void ServerApp::HandleMessage(const Message& msg)
                             ++m_expected_players;
                         }
                     }
+                    m_universe.SetUniverse(doc.root_node.Child("Universe"));
                     LoadGameVars(doc);
 
                     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
@@ -572,7 +572,6 @@ void ServerApp::HandleMessage(const Message& msg)
             doc.ReadDoc(ifs);
             ifs.close();
 
-            m_universe.SetUniverse(doc.root_node.Child("Universe"));
             m_expected_players = 0;
             for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
                 if (doc.root_node.Child(i).Tag() == "Player") {
@@ -580,6 +579,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     ++m_expected_players;
                 }
             }
+            m_universe.SetUniverse(doc.root_node.Child("Universe"));
             LoadGameVars(doc);
 
 #if TEST_VALUE_REF_VARIABLE

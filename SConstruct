@@ -124,7 +124,7 @@ if str(Platform()) == "posix":
                                  #"/usr/include/python2.3",
                                  "/usr/local/include/GG/SDL"
                                  ],
-                      CCFLAGS = ["-O2"]
+                      CCFLAGS = ["-O0", "-g"]
                       )
 
     try:
@@ -149,7 +149,7 @@ if str(Platform()) == "posix":
                        #'boost_python',
                        'gvrender'
                        ])
-    env.Append(LIBPATH = "/usr/lib/graphviz")
+    env.Append(LIBPATH = "/usr/local/lib/graphviz")
     env.Append(LINKFLAGS = ["-Wl,-rpath,/usr/lib/graphviz"])
 
 # windows
