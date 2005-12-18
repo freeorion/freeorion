@@ -6,7 +6,10 @@ import re
 from build_config import *
 from build_support import *
 
-env = Environment()
+env = Environment(MSVS_VERSION='7.1')
+
+print env['MSVS']
+
 
 mising_pkg_config = not WhereIs('pkg-config')
 
@@ -408,7 +411,7 @@ if str(Platform()) == 'win32':
         '_USRDLL',
         '_WINDLL'
         ])
-    env.Append(LINKFLAGS = ['/SUBSYSTEM:WINDOWS', '/DEBUG'])
+    env.Append(LINKFLAGS = ['/SUBSYSTEM:CONSOLE', '/DEBUG'])
     env.Append(LIBS = [
         'comdlg32',
         'gd',
