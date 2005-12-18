@@ -6,10 +6,7 @@ import re
 from build_config import *
 from build_support import *
 
-env = Environment(MSVS_VERSION='7.1')
-
-print env['MSVS']
-
+env = Environment()
 
 mising_pkg_config = not WhereIs('pkg-config')
 
