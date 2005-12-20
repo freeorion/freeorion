@@ -375,10 +375,11 @@ private:
     void BuildItemSelected(const std::set<int>& selections);
     void BuildItemDoubleClicked(int row_index, const boost::shared_ptr<GG::ListBox::Row>& row);
 
-    BuildType               m_current_build_type;
-    std::vector<CUIButton*> m_build_category_buttons;
-    BuildableItemsListBox*  m_buildable_items;
-    GG::Pt                  m_original_ul;
+    BuildType                              m_current_build_type;
+    std::vector<CUIButton*>                m_build_category_buttons;
+    BuildableItemsListBox*                 m_buildable_items;
+    std::map<GG::ListBox::Row*, BuildType> m_build_types;
+    GG::Pt                                 m_original_ul;
 
     friend struct PopulateListFunctor;
 };
@@ -472,6 +473,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
 
     m_current_build_type = build_type;
     m_buildable_items->Clear();
+    m_build_types.clear();
     Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
@@ -483,6 +485,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
             row->data_type = *it;
             row->push_back(UserString(*it), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
             m_buildable_items->Insert(row);
+            m_build_types[row] = BT_BUILDING;
             if (row->data_type == selected_row_data_type)
                 row_to_select = i;
         }
@@ -494,6 +497,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
             row->data_type = it->first;
             row->push_back(it->first, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
             m_buildable_items->Insert(row);
+            m_build_types[row] = BT_SHIP;
             if (row->data_type == selected_row_data_type)
                 row_to_select = i;
         }
@@ -503,6 +507,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
         row->data_type = "DEFENSE_BASE";
         row->push_back(UserString(row->data_type), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
         m_buildable_items->Insert(row);
+        m_build_types[row] = BT_ORBITAL;
         if (row->data_type == selected_row_data_type)
             row_to_select = i;
     }
@@ -513,13 +518,15 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
 
 void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const std::set<int>& selections)
 {
-    if (selections.size() == 1)
-        DisplayBuildItemSignal(m_current_build_type, m_buildable_items->GetRow(*selections.begin()).data_type);
+    if (selections.size() == 1) {
+        boost::shared_ptr<GG::ListBox::Row> row = m_buildable_items->GetRowPtr(*selections.begin());
+        DisplayBuildItemSignal(m_build_types[row.get()], row->data_type);
+    }
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(int row_index, const boost::shared_ptr<GG::ListBox::Row>& row)
 {
-    RequestBuildItemSignal(m_current_build_type, row->data_type, 1);
+    RequestBuildItemSignal(m_build_types[row.get()], row->data_type, 1);
 }
 
 
