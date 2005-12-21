@@ -674,7 +674,9 @@ void MapWnd::InitTurn(int turn_number)
     GG::Connect(empire->ResearchResPool   ().ChangedSignal,&MapWnd::ResearchResourcePoolChanged  ,this,0);ResearchResourcePoolChanged();
     GG::Connect(empire->PopulationResPool ().ChangedSignal,&MapWnd::PopulationResourcePoolChanged,this,1);PopulationResourcePoolChanged();
     GG::Connect(empire->IndustryResPool   ().ChangedSignal,&MapWnd::IndustryResourcePoolChanged  ,this,0);IndustryResourcePoolChanged();
-    
+
+    empire->UpdateResourcePool();
+
     m_toolbar->Show();
 }
 
@@ -817,7 +819,7 @@ void MapWnd::SelectSystem(int systemID)
     if (m_in_production_view_mode) {
         m_production_wnd->SelectSystem(systemID);
     } else {
-        if (systemID != m_side_panel->SystemID())
+        if (!m_side_panel->Visible() || systemID != m_side_panel->SystemID())
             SystemLeftClickedSignal(systemID);
     }
 }
@@ -1221,8 +1223,8 @@ bool MapWnd::ReturnToMap()
         if (m_in_production_view_mode) {
             m_in_production_view_mode = false;
             ShowAllPopups();
-            if (m_side_panel->SystemID() != UniverseObject::INVALID_OBJECT_ID)
-                m_side_panel->Show();
+            if (!m_side_panel->Visible())
+                m_side_panel->SetSystem(m_side_panel->SystemID());
         }
         HumanClientApp::GetApp()->MoveDown(m_production_wnd);
     }
@@ -1262,8 +1264,8 @@ bool MapWnd::ToggleSitRep()
         if (m_in_production_view_mode) {
             m_in_production_view_mode = false;
             ShowAllPopups();
-            if (m_side_panel->SystemID() != UniverseObject::INVALID_OBJECT_ID)
-                m_side_panel->Show();
+            if (!m_side_panel->Visible())
+                m_side_panel->SetSystem(m_side_panel->SystemID());
         }
         HumanClientApp::GetApp()->MoveDown(m_production_wnd);
 
@@ -1284,8 +1286,8 @@ bool MapWnd::ToggleResearch()
         if (m_in_production_view_mode) {
             m_in_production_view_mode = false;
             ShowAllPopups();
-            if (m_side_panel->SystemID() != UniverseObject::INVALID_OBJECT_ID)
-                m_side_panel->Show();
+            if (!m_side_panel->Visible())
+                m_side_panel->SetSystem(m_side_panel->SystemID());
         }
 
         // show the research window
@@ -1302,8 +1304,8 @@ bool MapWnd::ToggleProduction()
         m_production_wnd->Hide();
         m_in_production_view_mode = false;
         ShowAllPopups();
-        if (m_side_panel->SystemID() != UniverseObject::INVALID_OBJECT_ID)
-            m_side_panel->Show();
+        if (!m_side_panel->Visible())
+            m_side_panel->SetSystem(m_side_panel->SystemID());
     } else {
         // hide other "competing" windows
         m_sitrep_panel->Hide();
