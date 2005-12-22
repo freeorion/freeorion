@@ -19,9 +19,11 @@
 
 extern "C" {
 #ifdef FREEORION_WIN32
-#include <dot.h>
+#include <render.h>
+#include <dotprocs.h>
 #else
-#include <graphviz/dot.h>
+#include <graphviz/render.h>
+#include <graphviz/dotprocs.h>
 #endif
 }
 

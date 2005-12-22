@@ -311,7 +311,7 @@ int main() {
         if pkg_config:
             if conf.CheckPkg('graphviz', graphviz_pkgconfig_version):
                 env.ParseConfig('pkg-config --cflags --libs graphviz')
-        if not conf.CheckCHeader('graphviz/dot.h') and not conf.CheckCHeader('dot.h'):
+        if not conf.CheckCHeader('graphviz/render.h') and not conf.CheckCHeader('render.h'):
             Exit(1)
         env.Append(LIBS = [
             'cdt',
@@ -324,17 +324,21 @@ int main() {
             ])
         if str(Platform()) != 'win32':
             old_libs = env['LIBS']
-            if not conf.CheckLib('dotgen', 'begin_component', header = '#include <graphviz/dot.h>'):
+            if not conf.CheckLib('dotgen', 'begin_component', header = '#include <graphviz/render.h>\n#include <graphviz/dotprocs.h>'):
                 Exit(1)
 
         # GG
         AppendPackagePaths('gg', env)
-        if env['with_gg_include']:
+        try:
             env.Append(CPPPATH = [
                 os.path.normpath(os.path.join(env['with_gg_include'], 'net')),
                 os.path.normpath(os.path.join(env['with_gg_include'], 'SDL')),
                 os.path.normpath(os.path.join(env['with_gg_include'], 'dialogs'))
                 ])
+        except KeyError:
+            # no with_gg_include set
+            pass
+        
 
         # zlib
         if str(Platform()) == 'win32':
