@@ -455,7 +455,15 @@ freeorionca = env.Program("freeorionca", ai_objects)
 # define human objects
 env['target_define'] = 'FREEORION_BUILD_HUMAN'
 human_objects = SConscript(os.path.normpath('SConscript'))
-freeorion = env.Program("freeorion", human_objects)
+if str(Platform()) == 'win32':
+    rc_file = open('win32_resources.rc', 'w')
+    rc_file.write('IDI_ICON ICON "client/human/HumanClient.ico"')
+    rc_file.close()
+    env.RES('win32_resources.rc', CPPPATH = [], CPPDEFINES = [])
+    env.Command('icon.rbj', 'win32_resources.res', ['cvtres /out:icon.rbj /machine:ix86 win32_resources.res'])
+    freeorion = env.Program("freeorion", human_objects + ['icon.rbj'])
+else:
+    freeorion = env.Program("freeorion", human_objects)
 
 # install target
 Alias('install', Install(env['bindir'], freeoriond))
