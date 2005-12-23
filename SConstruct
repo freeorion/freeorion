@@ -460,6 +460,7 @@ if str(Platform()) == 'win32':
     rc_file.write('IDI_ICON ICON "client/human/HumanClient.ico"')
     rc_file.close()
     env.RES('win32_resources.rc', CPPPATH = [], CPPDEFINES = [])
+    env.Depends('win32_resources.res', 'client/human/HumanClient.ico')
     env.Command('icon.rbj', 'win32_resources.res', ['cvtres /out:icon.rbj /machine:ix86 win32_resources.res'])
     freeorion = env.Program("freeorion", human_objects + ['icon.rbj'])
 else:
