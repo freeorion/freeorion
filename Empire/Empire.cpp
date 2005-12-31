@@ -1192,6 +1192,8 @@ void Empire::UpdateResourcePool()
     m_population_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
     m_industry_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
     m_trade_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
+    UpdateResearchQueue();
+    UpdateProductionQueue();
 }
 
 void Empire::UpdateResearchQueue()
