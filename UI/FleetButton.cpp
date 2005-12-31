@@ -34,6 +34,7 @@ std::map<Fleet*, FleetWnd*> FleetButton::s_open_fleets;
 FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, double zoom) : 
     Button(0, 0, 1, 1, "", "", 0, color),
     m_orientation(),
+    m_selected_fleet(0),
     m_compliment(0)
 {
     Universe& universe = GetUniverse();
@@ -59,6 +60,7 @@ FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, doubl
 FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs, ShapeOrientation orientation) : 
     Button(x, y, w, h, "", "", 0, color),
     m_orientation(orientation),
+    m_selected_fleet(0),
     m_compliment(0)
 {
     Universe& universe = GetUniverse();
@@ -84,6 +86,11 @@ void FleetButton::MouseHere(const GG::Pt& pt, Uint32 keys)
             HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"));
         SetState(BN_ROLLOVER);
     }
+}
+
+void FleetButton::SelectFleet(Fleet* fleet)
+{
+    m_selected_fleet = fleet;
 }
 
 void FleetButton::RenderUnpressed()
@@ -121,8 +128,12 @@ void FleetButton::Clicked()
 
     int selected_fleet = 0;
     std::vector<Fleet*> fleets(m_fleets);
-    if (m_compliment) {
+    if (m_compliment)
         fleets.insert(m_orientation == SHAPE_RIGHT ? fleets.end() : fleets.begin(), m_compliment->m_fleets.begin(), m_compliment->m_fleets.end());
+    if (m_selected_fleet) {
+        selected_fleet = std::distance(fleets.begin(), std::find(fleets.begin(), fleets.end(), m_selected_fleet));
+        m_selected_fleet = 0;
+    } else if (m_compliment) {
         selected_fleet = m_orientation == SHAPE_RIGHT ? 0 : m_compliment->m_fleets.size();
     }
 

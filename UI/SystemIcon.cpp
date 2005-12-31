@@ -159,12 +159,14 @@ void SystemIcon::ClickFleetButton(Fleet* fleet)
 {
     for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
         if (std::find(it->second->Fleets().begin(), it->second->Fleets().end(), fleet) != it->second->Fleets().end()) {
+            it->second->SelectFleet(fleet);
             it->second->LClick(GG::Pt(), 0);
             return;
         }
     }
     for (std::map<int, FleetButton*>::iterator it = m_moving_fleet_markers.begin(); it != m_moving_fleet_markers.end(); ++it) {
         if (std::find(it->second->Fleets().begin(), it->second->Fleets().end(), fleet) != it->second->Fleets().end()) {
+            it->second->SelectFleet(fleet);
             it->second->LClick(GG::Pt(), 0);
             return;
         }

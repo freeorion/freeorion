@@ -44,6 +44,9 @@ public:
     /** sets the FleetButton that represents moving fleets at the same system as this button (if this button represents stationary fleets at a system)
         or stationary fleets at the same system as this button (if this button represents moving fleets at a system) */
     void SetCompliment(FleetButton* compliment) {m_compliment = compliment;}
+
+    /** Makes fleet \a fleet the currently-selected fleet the next time the button is clicked. */
+    void SelectFleet(Fleet* fleet);
     //@}
 
 protected:
@@ -59,6 +62,8 @@ private:
 
     std::vector<Fleet*> m_fleets;   ///< the fleets represented by this button
     ShapeOrientation m_orientation;
+
+    Fleet* m_selected_fleet;
 
     /** the FleetButton that represents the other moving or stationary fleets at the same system as this button 
         (if this one is stationary or moving, respectively) */
