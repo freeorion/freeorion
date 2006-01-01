@@ -166,6 +166,12 @@
 					RelativePath="..\..\..\util\DataTable.h">
 				</File>
 				<File
+					RelativePath="..\..\..\util\Directories.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\util\Directories.h">
+				</File>
+				<File
 					RelativePath="..\..\..\util\GZStream.cpp">
 				</File>
 				<File
