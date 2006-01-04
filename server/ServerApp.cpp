@@ -1333,12 +1333,17 @@ void ServerApp::Run()
     }
 }
 
+#ifdef FREEORION_LINUX
+#  include <iostream> // for informal dummy videodriver message
+#endif
+
 void ServerApp::SDLInit()
 {
 #ifdef FREEORION_LINUX
     // Dirty hack to active the dummy video handler of SDL; if the user has already set SDL_VIDEODRIVER, we'll trust him
     if (getenv("SDL_VIDEODRIVER") == NULL) {
         putenv("SDL_VIDEODRIVER=dummy");
+	std::cerr << "NOTE: All warnings about using \"the SDL dummy video driver\" can safely be ignored." << std::endl;
     }
 #endif
 
