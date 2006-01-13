@@ -49,7 +49,7 @@ namespace {
     const double  PI = 3.141592653589793;
     const int     MAX_SYSTEM_ORBITS = 10;   // maximum slots where planets can be, in v0.2
     SmallIntDistType g_hundred_dist = SmallIntDist(1, 100); // a linear distribution [1, 100] used in most universe generation
-    const double  OFFROAD_SLOWDOWN_FACTOR = 1000.0; // the factor by which non-starlane travel is slower than starlane travel
+    const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0; // the factor by which non-starlane travel is slower than starlane travel
 
     DataTableMap& UniverseDataTables()
     {
@@ -502,6 +502,7 @@ namespace {
             retval.first.push_front(pointer_property_map[current_system]);
         }
 
+#if 0   // disabled for now
         // if system2 is unreachable or it would be faster to travel "offroad", use the linear distance
         if (linear_distance * OFFROAD_SLOWDOWN_FACTOR < retval.second || retval.first.empty()) {
             retval.first.clear();
@@ -509,6 +510,7 @@ namespace {
             retval.first.push_back(pointer_property_map[system2]);
             retval.second = linear_distance;
         }
+#endif
         
         return retval;
     }
