@@ -224,6 +224,8 @@ void IntroScreen::OnSinglePlayer()
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 failed = true;
                 break;
+            } else {
+                FE_PumpEvents();
             }
         }
 
@@ -273,6 +275,8 @@ void IntroScreen::OnMultiPlayer()
                         HumanClientApp::GetApp()->KillServer();
                     failed = true;
                     break;
+                } else {
+                    FE_PumpEvents();
                 }
             }
         }
