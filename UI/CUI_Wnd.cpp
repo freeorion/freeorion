@@ -5,11 +5,12 @@
 #include "../client/human/HumanClientApp.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
-#include "GGApp.h"
-#include "GGDrawUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+
+#include <GG/GUI.h>
+#include <GG/DrawUtil.h>
 
 /** \mainpage FreeOrion User Interface
 
@@ -80,13 +81,13 @@ namespace {
 // CUI_MinRestoreButton
 ////////////////////////////////////////////////
 CUI_MinRestoreButton::CUI_MinRestoreButton(int x, int y) : 
-    GG::Button(x, y, 7, 7, "", "", 0, ClientUI::WND_INNER_BORDER_COLOR),
+    GG::Button(x, y, 7, 7, "", boost::shared_ptr<GG::Font>(), ClientUI::WND_INNER_BORDER_COLOR),
     m_mode(MIN_BUTTON)
 {
     GG::Connect(ClickedSignal, &CUI_MinRestoreButton::Toggle, this);
 }
 
-bool CUI_MinRestoreButton::Render()
+void CUI_MinRestoreButton::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
@@ -104,7 +105,6 @@ bool CUI_MinRestoreButton::Render()
         // draw a square to signify the restore command
         GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, ClientUI::WND_INNER_BORDER_COLOR, 1);
     }
-    return true;
 }
 
 void CUI_MinRestoreButton::Toggle()
@@ -123,12 +123,12 @@ void CUI_MinRestoreButton::Toggle()
 // CUI_CloseButton
 ////////////////////////////////////////////////
 CUI_CloseButton::CUI_CloseButton(int x, int y) : 
-    GG::Button(x, y, 7, 7, "", "", 0, ClientUI::WND_INNER_BORDER_COLOR)
+    GG::Button(x, y, 7, 7, "", boost::shared_ptr<GG::Font>(), ClientUI::WND_INNER_BORDER_COLOR)
 {
     GG::Connect(ClickedSignal, &PlayCloseSound, -1);
 }
 
-bool CUI_CloseButton::Render()
+void CUI_CloseButton::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
@@ -146,7 +146,6 @@ bool CUI_CloseButton::Render()
     }
     glEnd();
     glEnable(GL_TEXTURE_2D);
-    return true;
 }
 
 
@@ -154,8 +153,8 @@ bool CUI_CloseButton::Render()
 // CUI_Wnd
 ////////////////////////////////////////////////
 CUI_Wnd::CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags) : 
-    GG::Wnd(x, y, w, h, flags & ~GG::Wnd::RESIZABLE),
-    m_resizable (flags & GG::Wnd::RESIZABLE),
+    GG::Wnd(x, y, w, h, flags & ~GG::RESIZABLE),
+    m_resizable (flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
     m_minimizable(flags & MINIMIZABLE),
     m_minimized(false),
@@ -177,24 +176,24 @@ CUI_Wnd::~CUI_Wnd()
 
 void CUI_Wnd::SizeMove(int x1, int y1, int x2, int y2)
 {
-    Wnd::SizeMove(x1, y1, x2, y2);
+    Wnd::SizeMove(GG::Pt(x1, y1), GG::Pt(x2, y2));
     if (Width() < MinSize().x)
-        Resize(MinSize().x, Height());
+        Resize(GG::Pt(MinSize().x, Height()));
     if (MaxSize().x < Width())
-        Resize(MaxSize().x, Height());
+        Resize(GG::Pt(MaxSize().x, Height()));
 
     if (Height() < MinSize().y)
-        Resize(Width(), MinSize().y);
+        Resize(GG::Pt(Width(), MinSize().y));
     if (MaxSize().y < Height())
-        Resize(Width(), MaxSize().y);
+        Resize(GG::Pt(Width(), MaxSize().y));
 
     if (m_close_button)
-        m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
+        m_close_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET));
     if (m_minimize_button)
-        m_minimize_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET);
+        m_minimize_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET));
 }
 
-bool CUI_Wnd::Render()
+void CUI_Wnd::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
@@ -263,10 +262,8 @@ bool CUI_Wnd::Render()
     }
 
     glColor4ubv(ClientUI::TEXT_COLOR.v);
-    boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::TITLE_FONT, ClientUI::TITLE_PTS);
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::TITLE_FONT, ClientUI::TITLE_PTS);
     font->RenderText(ul.x + BORDER_LEFT, ul.y, WindowText());
-
-    return true;
 }
 
 void CUI_Wnd::LButtonDown(const GG::Pt& pt, Uint32 keys)
@@ -286,8 +283,8 @@ void CUI_Wnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
         Resize((pt - m_drag_offset) - UpperLeft());
     } else { // normal-dragging
         GG::Pt ul = UpperLeft(), lr = LowerRight();
-        if ((0 <= ul.x + move.x) && (lr.x + move.x < GG::App::GetApp()->AppWidth()) &&
-            (0 <= ul.y + move.y) && (lr.y + move.y < GG::App::GetApp()->AppHeight()))
+        if ((0 <= ul.x + move.x) && (lr.x + move.x < GG::GUI::GetGUI()->AppWidth()) &&
+            (0 <= ul.y + move.y) && (lr.y + move.y < GG::GUI::GetGUI()->AppHeight()))
             GG::Wnd::LDrag(pt, move, keys);
     }
 }
@@ -358,7 +355,7 @@ void CUI_Wnd::CloseClicked()
     if (Parent()) {
         Parent()->DeleteChild(this);
     } else {
-        GG::App::GetApp()->Remove(this);
+        GG::GUI::GetGUI()->Remove(this);
     }
 }
 
@@ -367,11 +364,11 @@ void CUI_Wnd::MinimizeClicked()
     if (!m_minimized) {
         m_original_size = Size();
         SetMinSize(GG::Pt(MinimizedLength(), BORDER_TOP));
-        Resize(MINIMIZED_WND_LENGTH, BORDER_TOP);
+        Resize(GG::Pt(MINIMIZED_WND_LENGTH, BORDER_TOP));
         if (m_close_button)
-            m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
+            m_close_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET));
         if (m_minimize_button)
-            m_minimize_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET);
+            m_minimize_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET));
         Hide();
         Show(false);
         if (m_close_button)
@@ -381,11 +378,11 @@ void CUI_Wnd::MinimizeClicked()
         m_minimized = true;
     } else {
         SetMinSize(GG::Pt(MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
-        Resize(m_original_size);
+        Resize(GG::Pt(m_original_size));
         if (m_close_button)
-            m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
+            m_close_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET));
         if (m_minimize_button)
-            m_minimize_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET);
+            m_minimize_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET));
         Show();
         m_minimized = false;
     }
@@ -398,12 +395,12 @@ void CUI_Wnd::MinimizeClicked()
 CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, Uint32 flags/* = Wnd::MODAL*/) : 
     CUI_Wnd(prompt_text, 0, 0, 1, 1, flags)
 {
-    m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, w - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), ClientUI::PTS + 10, edit_text);
+    m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, w - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), edit_text);
     m_ok_bn = new CUIButton(m_edit->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, UserString("OK"));
     m_cancel_bn = new CUIButton(m_ok_bn->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, UserString("CANCEL"));
 
-    Resize(w, std::max(m_edit->LowerRight().y, m_cancel_bn->LowerRight().y) + BottomBorder() + 3);
-    MoveTo((GG::App::GetApp()->AppWidth() - w) / 2, (GG::App::GetApp()->AppHeight() - Height()) / 2);
+    Resize(GG::Pt(w, std::max(m_edit->LowerRight().y, m_cancel_bn->LowerRight().y) + BottomBorder() + 3));
+    MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - w) / 2, (GG::GUI::GetGUI()->AppHeight() - Height()) / 2));
 
     AttachChild(m_edit);
     AttachChild(m_ok_bn);
@@ -417,7 +414,7 @@ CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string&
 
 void CUIEditWnd::ModalInit()
 {
-    GG::App::GetApp()->SetFocusWnd(m_edit);
+    GG::GUI::GetGUI()->SetFocusWnd(m_edit);
 }
 
 void CUIEditWnd::Keypress(GG::Key key, Uint32 key_mods)

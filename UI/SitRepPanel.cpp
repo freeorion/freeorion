@@ -2,9 +2,11 @@
  
 #include "../client/human/HumanClientApp.h"
 #include "CUIControls.h"
-#include "GGDrawUtil.h"
 #include "LinkText.h"
 #include "../util/MultiplayerCommon.h"
+
+#include <GG/DrawUtil.h>
+
 
 namespace {
     const int    SITREP_LB_MARGIN_X = 5;
@@ -16,7 +18,7 @@ namespace {
 
 
 SitRepPanel::SitRepPanel(int x, int y, int w, int h) : 
-    CUI_Wnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE)
+    CUI_Wnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE)
 {
     TempUISoundDisabler sound_disabler;
     m_sitreps_lb = new CUIListBox(LeftBorder() + SITREP_LB_MARGIN_X, TopBorder() + SITREP_LB_MARGIN_Y,
@@ -46,8 +48,8 @@ void SitRepPanel::Keypress (GG::Key key, Uint32 key_mods)
 void SitRepPanel::SizeMove(int x1, int y1, int x2, int y2)
 {
     CUI_Wnd::SizeMove(x1, y1, x2, y2);
-    m_sitreps_lb->SizeMove(LeftBorder() + SITREP_LB_MARGIN_X, TopBorder() + SITREP_LB_MARGIN_Y,
-                           Width() - (LeftBorder() + SITREP_LB_MARGIN_X), Height() - (TopBorder() + SITREP_LB_MARGIN_Y));
+    m_sitreps_lb->SizeMove(GG::Pt(LeftBorder() + SITREP_LB_MARGIN_X, TopBorder() + SITREP_LB_MARGIN_Y),
+                           GG::Pt(Width() - (LeftBorder() + SITREP_LB_MARGIN_X), Height() - (TopBorder() + SITREP_LB_MARGIN_Y)));
     Update();
 }
 
@@ -66,21 +68,20 @@ void SitRepPanel::Update()
     int first_visible_sitrep = m_sitreps_lb->FirstRowShown();
     m_sitreps_lb->Clear();
 
-    boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
     Uint32 format = GG::TF_LEFT | GG::TF_WORDBREAK;
     int width = m_sitreps_lb->Width() - 8;
 
     // loop through sitreps and display
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
-        GG::ListBox::Row *row = new GG::ListBox::Row;
         LinkText* link_text = new LinkText(0, 0, width, (*sitrep_it)->GetText(), font, format, ClientUI::TEXT_COLOR);
+        GG::ListBox::Row *row = new GG::ListBox::Row(width, font->TextExtent(link_text->WindowText(), format, width).y, "");
         GG::Connect(link_text->PlanetLinkSignal, &ClientUI::ZoomToPlanet, ClientUI::GetClientUI());
         GG::Connect(link_text->SystemLinkSignal, &ClientUI::ZoomToSystem, ClientUI::GetClientUI());
         GG::Connect(link_text->FleetLinkSignal, &ClientUI::ZoomToFleet, ClientUI::GetClientUI());
         GG::Connect(link_text->ShipLinkSignal, &ClientUI::ZoomToShip, ClientUI::GetClientUI());
         GG::Connect(link_text->TechLinkSignal, &ClientUI::ZoomToTech, ClientUI::GetClientUI());
         GG::Connect(link_text->EncyclopediaLinkSignal, &ClientUI::ZoomToEncyclopediaEntry, ClientUI::GetClientUI());
-        row->height = font->TextExtent(link_text->WindowText(), format, width).y;
         row->push_back(link_text);
         m_sitreps_lb->Insert(row);                
     }

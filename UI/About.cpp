@@ -4,11 +4,12 @@
 
 #include "ClientUI.h"
 #include "CUIControls.h"
-#include "GGApp.h"
-#include "GGClr.h"
-#include "GGDrawUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Directories.h"
+
+#include <GG/GUI.h>
+#include <GG/Clr.h>
+#include <GG/DrawUtil.h>
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -24,7 +25,7 @@ namespace {
 ////////////////////////////////////////////
 
 About::About():
-    CUI_Wnd(UserString("ABOUT_WINDOW_TITLE"),80,130,600,500, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
+    CUI_Wnd(UserString("ABOUT_WINDOW_TITLE"),80,130,600,500, GG::CLICKABLE | GG::DRAGABLE | GG::MODAL),
     m_end_with_done(false)
 {
 
@@ -32,9 +33,10 @@ About::About():
     m_license = new CUIButton(310,440,75,UserString("LICENSE"));
     m_vision = new CUIButton(220,440,75,UserString("VISION"));
     m_info = new CUIMultiEdit(20, 20, 550, 400, UserString("FREEORION_VISION"), 
-                 GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY, ClientUI::FONT,
-                 ClientUI::PTS, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR,
-                 ClientUI::MULTIEDIT_INT_COLOR, CLICKABLE | DRAG_KEEPER);
+                              GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY,
+                              GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
+                              ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR,
+                              ClientUI::MULTIEDIT_INT_COLOR, GG::CLICKABLE | GG::DRAG_KEEPER);
 
 
     // Read in the copyright info from a file
@@ -77,11 +79,9 @@ About::~About()
 //   MUTATORS
 ///////////////////////////////////////////////
 
-bool About::Render()
+void About::Render()
 {
     CUI_Wnd::Render();
-
-    return true;
 }
 
 void About::Keypress (GG::Key key, Uint32 key_mods)

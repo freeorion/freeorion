@@ -22,28 +22,28 @@ using boost::format;
 #endif
 
 namespace {
-    Condition::ConditionBase* NewAll(const GG::XMLElement& elem)                    {return new Condition::All(elem);}
-    Condition::ConditionBase* NewEmpireAffiliation(const GG::XMLElement& elem)      {return new Condition::EmpireAffiliation(elem);}
-    Condition::ConditionBase* NewSelf(const GG::XMLElement& elem)                   {return new Condition::Self(elem);}
-    Condition::ConditionBase* NewType(const GG::XMLElement& elem)                   {return new Condition::Type(elem);}
-    Condition::ConditionBase* NewBuilding(const GG::XMLElement& elem)               {return new Condition::Building(elem);}
-    Condition::ConditionBase* NewHasSpecial(const GG::XMLElement& elem)             {return new Condition::HasSpecial(elem);}
-    Condition::ConditionBase* NewContains(const GG::XMLElement& elem)               {return new Condition::Contains(elem);}
-    Condition::ConditionBase* NewPlanetSize(const GG::XMLElement& elem)             {return new Condition::PlanetSize(elem);}
-    Condition::ConditionBase* NewPlanetType(const GG::XMLElement& elem)             {return new Condition::PlanetType(elem);}
-    Condition::ConditionBase* NewPlanetEnvironment(const GG::XMLElement& elem)      {return new Condition::PlanetEnvironment(elem);}
-    Condition::ConditionBase* NewFocusType(const GG::XMLElement& elem)              {return new Condition::FocusType(elem);}
-    Condition::ConditionBase* NewStarType(const GG::XMLElement& elem)               {return new Condition::StarType(elem);}
-    Condition::ConditionBase* NewChance(const GG::XMLElement& elem)                 {return new Condition::Chance(elem);}
-    Condition::ConditionBase* NewMeterValue(const GG::XMLElement& elem)             {return new Condition::MeterValue(elem);}
-    Condition::ConditionBase* NewEmpireStockpileValue(const GG::XMLElement& elem)   {return new Condition::EmpireStockpileValue(elem);}
-    Condition::ConditionBase* NewVisibleToEmpire(const GG::XMLElement& elem)        {return new Condition::VisibleToEmpire(elem);}
-    Condition::ConditionBase* NewWithinDistance(const GG::XMLElement& elem)         {return new Condition::WithinDistance(elem);}
-    Condition::ConditionBase* NewWithinStarlaneJumps(const GG::XMLElement& elem)    {return new Condition::WithinStarlaneJumps(elem);}
-    Condition::ConditionBase* NewEffectTarget(const GG::XMLElement& elem)           {return new Condition::EffectTarget(elem);}
-    Condition::ConditionBase* NewAnd(const GG::XMLElement& elem)                    {return new Condition::And(elem);}
-    Condition::ConditionBase* NewOr(const GG::XMLElement& elem)                     {return new Condition::Or(elem);}
-    Condition::ConditionBase* NewNot(const GG::XMLElement& elem)                    {return new Condition::Not(elem);}
+    Condition::ConditionBase* NewAll(const XMLElement& elem)                    {return new Condition::All(elem);}
+    Condition::ConditionBase* NewEmpireAffiliation(const XMLElement& elem)      {return new Condition::EmpireAffiliation(elem);}
+    Condition::ConditionBase* NewSelf(const XMLElement& elem)                   {return new Condition::Self(elem);}
+    Condition::ConditionBase* NewType(const XMLElement& elem)                   {return new Condition::Type(elem);}
+    Condition::ConditionBase* NewBuilding(const XMLElement& elem)               {return new Condition::Building(elem);}
+    Condition::ConditionBase* NewHasSpecial(const XMLElement& elem)             {return new Condition::HasSpecial(elem);}
+    Condition::ConditionBase* NewContains(const XMLElement& elem)               {return new Condition::Contains(elem);}
+    Condition::ConditionBase* NewPlanetSize(const XMLElement& elem)             {return new Condition::PlanetSize(elem);}
+    Condition::ConditionBase* NewPlanetType(const XMLElement& elem)             {return new Condition::PlanetType(elem);}
+    Condition::ConditionBase* NewPlanetEnvironment(const XMLElement& elem)      {return new Condition::PlanetEnvironment(elem);}
+    Condition::ConditionBase* NewFocusType(const XMLElement& elem)              {return new Condition::FocusType(elem);}
+    Condition::ConditionBase* NewStarType(const XMLElement& elem)               {return new Condition::StarType(elem);}
+    Condition::ConditionBase* NewChance(const XMLElement& elem)                 {return new Condition::Chance(elem);}
+    Condition::ConditionBase* NewMeterValue(const XMLElement& elem)             {return new Condition::MeterValue(elem);}
+    Condition::ConditionBase* NewEmpireStockpileValue(const XMLElement& elem)   {return new Condition::EmpireStockpileValue(elem);}
+    Condition::ConditionBase* NewVisibleToEmpire(const XMLElement& elem)        {return new Condition::VisibleToEmpire(elem);}
+    Condition::ConditionBase* NewWithinDistance(const XMLElement& elem)         {return new Condition::WithinDistance(elem);}
+    Condition::ConditionBase* NewWithinStarlaneJumps(const XMLElement& elem)    {return new Condition::WithinStarlaneJumps(elem);}
+    Condition::ConditionBase* NewEffectTarget(const XMLElement& elem)           {return new Condition::EffectTarget(elem);}
+    Condition::ConditionBase* NewAnd(const XMLElement& elem)                    {return new Condition::And(elem);}
+    Condition::ConditionBase* NewOr(const XMLElement& elem)                     {return new Condition::Or(elem);}
+    Condition::ConditionBase* NewNot(const XMLElement& elem)                    {return new Condition::Not(elem);}
 
     const Fleet* FleetFromObject(const UniverseObject* obj)
     {
@@ -59,9 +59,9 @@ namespace {
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
-GG::XMLObjectFactory<Condition::ConditionBase> Condition::ConditionFactory()
+XMLObjectFactory<Condition::ConditionBase> Condition::ConditionFactory()
 {
-    static GG::XMLObjectFactory<Condition::ConditionBase> factory;
+    static XMLObjectFactory<Condition::ConditionBase> factory;
     static bool init = false;
     if (!init) {
         factory.AddGenerator("Condition::All", &NewAll);
@@ -136,7 +136,7 @@ Condition::All::All()
 {
 }
 
-Condition::All::All(const GG::XMLElement& elem)
+Condition::All::All(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::All")
         throw std::runtime_error("Condition::All : Attempted to create a All condition from an XML element with a tag other than \"Condition::All\".");
@@ -165,7 +165,7 @@ Condition::EmpireAffiliation::EmpireAffiliation(const ValueRef::ValueRefBase<int
 {
 }
 
-Condition::EmpireAffiliation::EmpireAffiliation(const GG::XMLElement& elem)
+Condition::EmpireAffiliation::EmpireAffiliation(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::EmpireAffiliation")
         throw std::runtime_error("Condition::EmpireAffiliation : Attempted to create a EmpireAffiliation condition from an XML element with a tag other than \"Condition::EmpireAffiliation\".");
@@ -223,7 +223,7 @@ Condition::Self::Self()
 {
 }
 
-Condition::Self::Self(const GG::XMLElement& elem)
+Condition::Self::Self(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::Self")
         throw std::runtime_error("Condition::Self : Attempted to create a Self condition from an XML element with a tag other than \"Condition::Self\".");
@@ -250,7 +250,7 @@ Condition::Type::Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
 {
 }
 
-Condition::Type::Type(const GG::XMLElement& elem)
+Condition::Type::Type(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::Type")
         throw std::runtime_error("Condition::Type : Attempted to create aType condition from an XML element with a tag other than \"Condition::Type\".");
@@ -305,7 +305,7 @@ Condition::Building::Building(const std::string& name) :
 {
 }
 
-Condition::Building::Building(const GG::XMLElement& elem)
+Condition::Building::Building(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::Building")
         throw std::runtime_error("Condition::Building : Attempted to create a Building condition from an XML element with a tag other than \"Condition::Building\".");
@@ -335,7 +335,7 @@ Condition::HasSpecial::HasSpecial(const std::string& name) :
 {
 }
 
-Condition::HasSpecial::HasSpecial(const GG::XMLElement& elem)
+Condition::HasSpecial::HasSpecial(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::HasSpecial")
         throw std::runtime_error("Condition::HasSpecial : Attempted to create a HasSpecial condition from an XML element with a tag other than \"Condition::HasSpecial\".");
@@ -364,7 +364,7 @@ Condition::Contains::Contains(const ConditionBase* condition) :
 {
 }
 
-Condition::Contains::Contains(const GG::XMLElement& elem)
+Condition::Contains::Contains(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::Contains")
         throw std::runtime_error("Condition::Contains : Attempted to create a Contains condition from an XML element with a tag other than \"Condition::Contains\".");
@@ -434,12 +434,12 @@ Condition::PlanetType::PlanetType(const std::vector<const ValueRef::ValueRefBase
 {
 }
 
-Condition::PlanetType::PlanetType(const GG::XMLElement& elem)
+Condition::PlanetType::PlanetType(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::PlanetType")
         throw std::runtime_error("Condition::PlanetType : Attempted to create a PlanetType condition from an XML element with a tag other than \"Condition::PlanetType\".");
 
-    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_types.push_back(ParseArithmeticExpression< ::PlanetType>(it->Text()));
     }
 }
@@ -494,12 +494,12 @@ Condition::PlanetSize::PlanetSize(const std::vector<const ValueRef::ValueRefBase
 {
 }
 
-Condition::PlanetSize::PlanetSize(const GG::XMLElement& elem)
+Condition::PlanetSize::PlanetSize(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::PlanetSize")
         throw std::runtime_error("Condition::PlanetSize : Attempted to create a PlanetSize condition from an XML element with a tag other than \"Condition::PlanetSize\".");
 
-    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_sizes.push_back(ParseArithmeticExpression< ::PlanetSize>(it->Text()));
     }
 }
@@ -554,12 +554,12 @@ Condition::PlanetEnvironment::PlanetEnvironment(const std::vector<const ValueRef
 {
 }
 
-Condition::PlanetEnvironment::PlanetEnvironment(const GG::XMLElement& elem)
+Condition::PlanetEnvironment::PlanetEnvironment(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::PlanetEnvironment")
         throw std::runtime_error("Condition::PlanetEnvironment : Attempted to create a PlanetEnvironment condition from an XML element with a tag other than \"Condition::PlanetEnvironment\".");
 
-    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_environments.push_back(ParseArithmeticExpression< ::PlanetEnvironment>(it->Text()));
     }
 }
@@ -615,12 +615,12 @@ Condition::FocusType::FocusType(const std::vector<const ValueRef::ValueRefBase< 
 {
 }
 
-Condition::FocusType::FocusType(const GG::XMLElement& elem)
+Condition::FocusType::FocusType(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::FocusType")
         throw std::runtime_error("Condition::FocusType : Attempted to create a FocusType condition from an XML element with a tag other than \"Condition::FocusType\".");
 
-    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         if (it->Tag() == "FocusType")
             m_foci.push_back(ParseArithmeticExpression< ::FocusType>(it->Text()));
     }
@@ -677,12 +677,12 @@ Condition::StarType::StarType(const std::vector<const ValueRef::ValueRefBase< ::
 {
 }
 
-Condition::StarType::StarType(const GG::XMLElement& elem)
+Condition::StarType::StarType(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::StarType")
         throw std::runtime_error("Condition::StarType : Attempted to create a StarType condition from an XML element with a tag other than \"Condition::StarType\".");
 
-    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_types.push_back(ParseArithmeticExpression< ::StarType>(it->Text()));
     }
 }
@@ -733,7 +733,7 @@ Condition::Chance::Chance(const ValueRef::ValueRefBase<double>* chance) :
 {
 }
 
-Condition::Chance::Chance(const GG::XMLElement& elem)
+Condition::Chance::Chance(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::Chance")
         throw std::runtime_error("Condition::Chance : Attempted to create aChance condition from an XML element with a tag other than \"Condition::Chance\".");
@@ -779,7 +779,7 @@ Condition::MeterValue::MeterValue(MeterType meter, const ValueRef::ValueRefBase<
 {
 }
 
-Condition::MeterValue::MeterValue(const GG::XMLElement& elem)
+Condition::MeterValue::MeterValue(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::MeterValue")
         throw std::runtime_error("Condition::MeterValue : Attempted to create a MeterValue condition from an XML element with a tag other than \"Condition::MeterValue\".");
@@ -830,7 +830,7 @@ Condition::EmpireStockpileValue::EmpireStockpileValue(StockpileType stockpile, c
 {
 }
 
-Condition::EmpireStockpileValue::EmpireStockpileValue(const GG::XMLElement& elem)
+Condition::EmpireStockpileValue::EmpireStockpileValue(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::EmpireStockpileValue")
         throw std::runtime_error("Condition::StockpileValue : Attempted to create a StockpileValue condition from an XML element with a tag other than \"Condition::StockpileValue\".");
@@ -885,12 +885,12 @@ Condition::VisibleToEmpire::VisibleToEmpire(const std::vector<const ValueRef::Va
 {
 }
 
-Condition::VisibleToEmpire::VisibleToEmpire(const GG::XMLElement& elem)
+Condition::VisibleToEmpire::VisibleToEmpire(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::VisibleToEmpire")
         throw std::runtime_error("Condition::VisibleToEmpire : Attempted to create a VisibleToEmpire condition from an XML element with a tag other than \"Condition::VisibleToEmpire\".");
 
-    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_empire_ids.push_back(ParseArithmeticExpression<int>(it->Text()));
     }
 }
@@ -948,7 +948,7 @@ Condition::WithinDistance::WithinDistance(const ValueRef::ValueRefBase<double>* 
 {
 }
 
-Condition::WithinDistance::WithinDistance(const GG::XMLElement& elem)
+Condition::WithinDistance::WithinDistance(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::WithinDistance")
         throw std::runtime_error("Condition::WithinDistance : Attempted to create a WithinDistance condition from an XML element with a tag other than \"Condition::WithinDistance\".");
@@ -1022,7 +1022,7 @@ Condition::WithinStarlaneJumps::WithinStarlaneJumps(const ValueRef::ValueRefBase
 {
 }
 
-Condition::WithinStarlaneJumps::WithinStarlaneJumps(const GG::XMLElement& elem)
+Condition::WithinStarlaneJumps::WithinStarlaneJumps(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::WithinStarlaneJumps")
         throw std::runtime_error("Condition::WithinStarlaneJumps : Attempted to create a WithinStarlaneJumps condition from an XML element with a tag other than \"Condition::WithinStarlaneJumps\".");
@@ -1140,7 +1140,7 @@ Condition::EffectTarget::EffectTarget()
 {
 }
 
-Condition::EffectTarget::EffectTarget(const GG::XMLElement& elem)
+Condition::EffectTarget::EffectTarget(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::EffectTarget")
         throw std::runtime_error("Condition::EffectTarget : Attempted to create a EffectTarget condition from an XML element with a tag other than \"Condition::EffectTarget\".");
@@ -1169,12 +1169,12 @@ Condition::And::And(const std::vector<const ConditionBase*>& operands) :
     assert(!m_operands.empty());
 }
 
-Condition::And::And(const GG::XMLElement& elem)
+Condition::And::And(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::And")
         throw std::runtime_error("Condition::And : Attempted to create a And condition from an XML element with a tag other than \"Condition::And\".");
 
-    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_operands.push_back(ConditionFactory().GenerateObject(*it));
     }
 
@@ -1244,12 +1244,12 @@ Condition::Or::Or(const std::vector<const ConditionBase*>& operands) :
     assert(!m_operands.empty());
 }
 
-Condition::Or::Or(const GG::XMLElement& elem)
+Condition::Or::Or(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::Or")
         throw std::runtime_error("Condition::Or : Attempted to create a Or condition from an XML element with a tag other than \"Condition::Or\".");
 
-    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         m_operands.push_back(ConditionFactory().GenerateObject(*it));
     }
 
@@ -1319,7 +1319,7 @@ Condition::Not::Not(const ConditionBase* operand) :
     assert(m_operand);
 }
 
-Condition::Not::Not(const GG::XMLElement& elem)
+Condition::Not::Not(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::Not")
         throw std::runtime_error("Condition::Not : Attempted to create a Not condition from an XML element with a tag other than \"Condition::Not\".");

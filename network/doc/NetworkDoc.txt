@@ -5,7 +5,7 @@
 /** \page msg_specs Message Specifications
 
    Each of these is a MessageType value.  See class Message for details.  Each format section shows how the data in the text of the Message are to be laid out.  
-   Formats that include XML tags are to be enclosed in a GG::XMLDoc before being packaged as a Message, though only the elements in the document are shown here.
+   Formats that include XML tags are to be enclosed in a XMLDoc before being packaged as a Message, though only the elements in the document are shown here.
 
    \section serv_stat SERVER_STATUS
    \subsection use_0 Usage

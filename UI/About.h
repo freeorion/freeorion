@@ -4,32 +4,36 @@
 #ifndef _About_h_
 #define _About_h_
 
-#ifndef _GGWnd_h_
-#include "GGWnd.h"
+#ifndef _GG_Wnd_h_
+#include <GG/Wnd.h>
 #endif
 
-#ifndef _GGEdit_h_
-#include "GGEdit.h"
+#ifndef _GG_Edit_h_
+#include <GG/Edit.h>
 #endif
 
-#ifndef _GGButton_h_
-#include "GGButton.h"
+#ifndef _GG_Button_h_
+#include <GG/Button.h>
 #endif
 
-#ifndef __GGSpin_h_
-#include "GGSpin.h"
+#ifndef _GG_Spin_h_
+#include <GG/Spin.h>
 #endif
 
-#ifndef __GGMultiEdit_h_
-#include "GGMultiEdit.h"
+#ifndef _GG_MultiEdit_h_
+#include <GG/MultiEdit.h>
 #endif
 
-#ifndef _GGStaticGraphic_h_
-#include "GGStaticGraphic.h"
+#ifndef _GG_StaticGraphic_h_
+#include <GG/StaticGraphic.h>
 #endif
 
 #ifndef _CUI_Wnd_h_
 #include "CUI_Wnd.h"
+#endif
+
+#ifndef _XMLDoc_h_
+#include "../util/XMLDoc.h"
 #endif
 
 //! This is a screen showing license and vision
@@ -47,7 +51,7 @@ public:
 
 //! \name Mutators
 //!@{
-    virtual bool Render();    //!< drawing code
+    virtual void Render();    //!< drawing code
     virtual void Keypress (GG::Key key, Uint32 key_mods);
     
 //!@}
@@ -76,11 +80,11 @@ private:
 //! \name Controls
 //!@{
 
-    GG::Button*           m_done_btn;    //!< Done button
-    GG::Button*           m_license;     //!< License button
-    GG::Button*           m_vision;        //!< Vision button
+    GG::Button*       m_done_btn;    //!< Done button
+    GG::Button*       m_license;     //!< License button
+    GG::Button*       m_vision;        //!< Vision button
 
-    GG::XMLDoc 		  m_vision_doc; //!< XML document containing the project vision
+    XMLDoc 		      m_vision_doc; //!< XML document containing the project vision
 
     GG::MultiEdit *	  m_info;	//!< Displays the license or vision information
 

@@ -13,7 +13,7 @@
 #include "../../util/Process.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
-#include "XMLDoc.h"
+#include "../../util/XMLDoc.h"
 
 #include <fmod.h>
 #include <fmod_errors.h>
@@ -190,9 +190,9 @@ namespace {
  
 HumanClientApp::HumanClientApp() : 
     ClientApp(), 
-    SDLGGApp(GetOptionsDB().Get<int>("app-width"), 
-             GetOptionsDB().Get<int>("app-height"),
-             false, "freeorion"),
+    SDLGUI(GetOptionsDB().Get<int>("app-width"), 
+           GetOptionsDB().Get<int>("app-height"),
+           false, "freeorion"),
     m_current_music(0),
     m_music_channel(-1),
     m_music_loops(0),
@@ -237,12 +237,12 @@ HumanClientApp::~HumanClientApp()
 
 Message HumanClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
 {
-    GG::XMLDoc orders_doc;
+    XMLDoc orders_doc;
     if (save_game_data) {
         orders_doc.root_node.AppendChild("save_game_data");
         orders_doc.root_node.AppendChild(ClientUI::GetClientUI()->SaveGameData()); // include relevant UI state
     }
-    orders_doc.root_node.AppendChild(GG::XMLElement("Orders"));
+    orders_doc.root_node.AppendChild(XMLElement("Orders"));
     for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
         orders_doc.root_node.LastChild().AppendChild(order_it->second->XMLEncode());
     }
@@ -312,7 +312,7 @@ void HumanClientApp::PlayMusic(const std::string& filename, int loops)
     m_music_channel = FSOUND_Stream_Play(FSOUND_FREE, m_current_music);
     FSOUND_SetVolumeAbsolute(m_music_channel, GetOptionsDB().Get<int>("music-volume"));
     m_music_loops = loops;
-    m_next_music_time = m_music_loops ? GG::App::GetApp()->Ticks() + FSOUND_Stream_GetLengthMs(m_current_music) : 0;
+    m_next_music_time = m_music_loops ? GG::GUI::GetGUI()->Ticks() + FSOUND_Stream_GetLengthMs(m_current_music) : 0;
     m_music_name = filename;
 }
 
@@ -423,15 +423,15 @@ bool HumanClientApp::LoadSinglePlayerGame()
 
             // HACK!  send the multiplayer form of the HostGameMessage, since it establishes us as the host, and the single-player 
             // LOAD_GAME message will establish us as a single-player game
-            GG::XMLDoc parameters;
-            parameters.root_node.AppendChild(GG::XMLElement("host_player_name", std::string("Happy_Player")));
+            XMLDoc parameters;
+            parameters.root_node.AppendChild(XMLElement("host_player_name", std::string("Happy_Player")));
             NetworkCore().SendMessage(HostGameMessage(NetworkCore::HOST_PLAYER_ID, parameters));
             NetworkCore().SendMessage(HostLoadGameMessage(NetworkCore::HOST_PLAYER_ID, filename));
 
             return true;
         }
-    } catch (const FileDlg::InitialDirectoryDoesNotExistException& e) {
-        ClientUI::MessageBox(e.Message(), true);
+    } catch (const FileDlg::BadInitialDirectory& e) {
+        ClientUI::MessageBox(e.what(), true);
     }
     return false;
 }
@@ -482,7 +482,7 @@ log4cpp::Category& HumanClientApp::Logger()
 
 HumanClientApp* HumanClientApp::GetApp()
 {
-    return dynamic_cast<HumanClientApp*>(GG::App::GetApp());
+    return dynamic_cast<HumanClientApp*>(GG::GUI::GetGUI());
 }
 
 void HumanClientApp::StartTurn()
@@ -497,9 +497,9 @@ void HumanClientApp::StartTurn()
 boost::shared_ptr<GG::Texture> HumanClientApp::GetTextureOrDefault(const std::string& name, bool mipmap)
 {
     try {
-        return SDLGGApp::GetTexture(name,mipmap);
+        return SDLGUI::GetTexture(name,mipmap);
     } catch(...) {
-        return SDLGGApp::GetTexture(ClientUI::ART_DIR + "misc/missing.png", mipmap);
+        return SDLGUI::GetTexture(ClientUI::ART_DIR + "misc/missing.png", mipmap);
     }
 }
 
@@ -687,9 +687,9 @@ void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
 
 void HumanClientApp::RenderBegin()
 {
-    if (m_next_music_time && m_next_music_time <= GG::App::GetApp()->Ticks() && (m_music_loops == -1 || (--m_music_loops + 1)))
+    if (m_next_music_time && m_next_music_time <= GG::GUI::GetGUI()->Ticks() && (m_music_loops == -1 || (--m_music_loops + 1)))
         PlayMusic(m_music_name, m_music_loops);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // this is the only line in SDLGGApp::RenderBegin()
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // this is the only line in SDLGUI::RenderBegin()
 }
 
 void HumanClientApp::FinalCleanup()
@@ -717,7 +717,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     switch (msg.Type()) {
     case Message::SERVER_STATUS: {
         std::stringstream stream(msg.GetText());
-        GG::XMLDoc doc;
+        XMLDoc doc;
         doc.ReadDoc(stream);
         if (doc.root_node.ContainsChild("new_name")) {
             m_player_name = doc.root_node.Child("new_name").Text();
@@ -768,7 +768,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             m_game_started = true;
 
             std::stringstream stream(msg.GetText());
-            GG::XMLDoc doc;
+            XMLDoc doc;
             doc.ReadDoc(stream);
 
             if (m_single_player_game = doc.root_node.ContainsChild("single_player_game")) {
@@ -817,11 +817,11 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::LOAD_GAME: {
         std::stringstream stream(msg.GetText());
-        GG::XMLDoc doc;
+        XMLDoc doc;
         doc.ReadDoc(stream);
 
         // re-issue orders given earlier in the saved turn
-        GG::XMLObjectFactory<Order> factory;
+        XMLObjectFactory<Order> factory;
         Order::InitOrderFactory(factory);
         for (int i = 0; i < doc.root_node.Child("Orders").NumChildren(); ++i) {
             Orders().IssueOrder(factory.GenerateObject(doc.root_node.Child("Orders").Child(i)));
@@ -838,7 +838,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         int turn_number;
 
         std::stringstream stream(msg.GetText());
-        GG::XMLDoc doc;
+        XMLDoc doc;
         doc.ReadDoc(stream);
 
         turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
@@ -873,7 +873,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::TURN_PROGRESS: {
-        GG::XMLDoc doc;
+        XMLDoc doc;
         int phase_id;
         int empire_id;
         std::string phase_str;

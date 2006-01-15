@@ -2,8 +2,8 @@
 #ifndef _LinkText_h_
 #define _LinkText_h_
 
-#ifndef _GGTextControl_h_
-#include "GGTextControl.h"
+#ifndef _GG_TextControl_h_
+#include <GG/TextControl.h>
 #endif
 
 /** allows text that the user sees to emit signals when clicked, and indicates to the user visually which text 
@@ -45,22 +45,16 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    LinkText(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font, Uint32 text_fmt = 0, GG::Clr color = GG::CLR_BLACK, Uint32 flags = CLICKABLE); ///< ctor taking a font directly
-    LinkText(int x, int y, int w, const std::string& str, const std::string& font_filename, int pts, Uint32 text_fmt = 0, GG::Clr color = GG::CLR_BLACK, Uint32 flags = CLICKABLE); ///< ctor taking a font filename and font point size
+    LinkText(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font, Uint32 text_fmt = 0, GG::Clr color = GG::CLR_BLACK, Uint32 flags = GG::CLICKABLE); ///< ctor taking a font directly
 
     /** ctor that does not require window size.
         Window size is determined from the string and font; the window will be large enough to fit the text as rendered, 
         and no larger.  \see DynamicText::DynamicText() */
-    LinkText(int x, int y, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK, Uint32 flags = CLICKABLE);
-   
-    /** ctor that does not require window size.
-        Window size is determined from the string and font; the window will be large enough to fit the text as rendered, 
-        and no larger.  \see DynamicText::DynamicText() */
-    LinkText(int x, int y, const std::string& str, const std::string& font_filename, int pts, GG::Clr color = GG::CLR_BLACK, Uint32 flags = CLICKABLE);
+    LinkText(int x, int y, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK, Uint32 flags = GG::CLICKABLE);
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool   Render();
+    virtual void   Render();
     virtual void   LButtonDown(const GG::Pt& pt, Uint32 keys);
     virtual void   LButtonUp(const GG::Pt& pt, Uint32 keys);
     virtual void   LClick(const GG::Pt& pt, Uint32 keys);

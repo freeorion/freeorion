@@ -1,8 +1,7 @@
 #include "ServerApp.h"
 
-#include "net/fastevents.h"
 #include "../network/Message.h"
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #include "../network/XDiff.hpp"
 #include "../universe/Building.h"
@@ -20,7 +19,8 @@
 
 #include "../combat/CombatSystem.h"
 
-#include <GGFont.h>
+#include <GG/Font.h>
+#include <GG/net/fastevents.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/exception.hpp>
@@ -121,7 +121,7 @@ namespace {
         {
             save_game_empire_data.clear();
             if (0 <= save_file && save_file < static_cast<int>(save_games.size())) {
-                GG::XMLDoc doc;
+                XMLDoc doc;
                 // GZStream does not yet support
                 // boost::filesystem::path, so we do it manually
 #ifdef FREEORION_LINUX
@@ -134,7 +134,7 @@ namespace {
 
                 for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
                     if (doc.root_node.Child(i).Tag() == "Player") {
-                        const GG::XMLElement& elem = doc.root_node.Child(i).Child("Empire");
+                        const XMLElement& elem = doc.root_node.Child(i).Child("Empire");
                         SaveGameEmpireData data;
                         data.id = boost::lexical_cast<int>(elem.Child("m_id").Text());
                         data.name = elem.Child("m_name").Text();
@@ -170,7 +170,7 @@ namespace {
     const std::string AI_CLIENT_EXE = (BIN_DIR / "freeorionca").native_file_string();
 #endif    
     const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
-    GG::XMLDoc g_load_doc;
+    XMLDoc g_load_doc;
 
     // command-line options
     void AddOptions(OptionsDB& db)
@@ -246,10 +246,10 @@ ServerApp::~ServerApp()
 	log4cpp::Category::shutdown();
 }
 
-GG::XMLDoc ServerApp::ServerStatusDoc() const
+XMLDoc ServerApp::ServerStatusDoc() const
 {
-    GG::XMLDoc retval;
-    GG::XMLElement elem("server_state");
+    XMLDoc retval;
+    XMLElement elem("server_state");
     elem.SetAttribute("value", boost::lexical_cast<std::string>(m_state));
     retval.root_node.AppendChild(elem);
     return retval;
@@ -297,7 +297,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs)
     }
 }
 
-void ServerApp::CreateAIClients(const GG::XMLElement& elem)
+void ServerApp::CreateAIClients(const XMLElement& elem)
 {
     std::vector<PlayerSetupData> AIs;
     for (int i = 0; i < elem.NumChildren(); ++i) {
@@ -330,7 +330,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 }
                 m_state = SERVER_GAME_SETUP;
                 CreateAIClients(g_lobby_data.AIs);
-                g_load_doc.root_node = GG::XMLElement();
+                g_load_doc.root_node = XMLElement();
                 m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
                 if (m_expected_players == static_cast<int>(m_network_core.Players().size())) {
                     if (g_load_doc.root_node.NumChildren())
@@ -351,7 +351,7 @@ void ServerApp::HandleMessage(const Message& msg)
 #else
                     std::string load_filename = (fs::path(SAVE_DIR_NAME) / g_lobby_data.save_games[g_lobby_data.save_file]).native_file_string();
 #endif
-                    GG::XMLDoc doc;
+                    XMLDoc doc;
                     GZStream::igzstream ifs(load_filename.c_str());
                     doc.ReadDoc(ifs);
                     ifs.close();
@@ -412,7 +412,7 @@ void ServerApp::HandleMessage(const Message& msg)
 
     case Message::LOBBY_UPDATE: {
         std::stringstream stream(msg.GetText());
-        GG::XMLDoc doc;
+        XMLDoc doc;
         doc.ReadDoc(stream);
         if (doc.root_node.ContainsChild("receiver")) { // chat message
             int receiver = boost::lexical_cast<int>(doc.root_node.Child("receiver").Text());
@@ -433,7 +433,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 }
             }
         } else if (doc.root_node.ContainsChild("exit_lobby")) { // player is exiting the lobby (must be a non-host to be valid)
-            doc.root_node.Child("exit_lobby").AppendChild(GG::XMLElement("id", boost::lexical_cast<std::string>(msg.Sender())));
+            doc.root_node.Child("exit_lobby").AppendChild(XMLElement("id", boost::lexical_cast<std::string>(msg.Sender())));
             unsigned int i = 0;
             for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
                 if (it->first != msg.Sender()) {
@@ -471,7 +471,7 @@ void ServerApp::HandleMessage(const Message& msg)
 
             if (doc.root_node.ContainsChild("players")) {
                 g_lobby_data.players.clear();
-                for (GG::XMLElement::child_iterator it = doc.root_node.Child("players").child_begin(); 
+                for (XMLElement::child_iterator it = doc.root_node.Child("players").child_begin(); 
                      it != doc.root_node.Child("players").child_end(); 
                      ++it) {
                     g_lobby_data.players.push_back(PlayerSetupData(*it));
@@ -493,7 +493,7 @@ void ServerApp::HandleMessage(const Message& msg)
     case Message::SAVE_GAME: {
         if (m_network_core.Players().find(msg.Sender()) != m_network_core.Players().end()) {
             std::string save_filename = msg.GetText();
-            GG::XMLDoc doc;
+            XMLDoc doc;
 
             // send out all save game data requests
             std::set<int> needed_reponses;
@@ -528,12 +528,12 @@ void ServerApp::HandleMessage(const Message& msg)
             }
             if (m_players_responded == needed_reponses) {
                 SaveGameVars(doc);
-                for (std::map<int, GG::XMLElement>::iterator it = m_player_save_game_data.begin(); it != m_player_save_game_data.end(); ++it) {
-                    GG::XMLElement player_element("Player");
-                    player_element.AppendChild(GG::XMLElement("name", m_network_core.Players().find(it->first)->second.name));
+                for (std::map<int, XMLElement>::iterator it = m_player_save_game_data.begin(); it != m_player_save_game_data.end(); ++it) {
+                    XMLElement player_element("Player");
+                    player_element.AppendChild(XMLElement("name", m_network_core.Players().find(it->first)->second.name));
                     Empire* player_empire = GetPlayerEmpire(it->first);
                     player_element.AppendChild(m_empires.Lookup(player_empire->EmpireID())->XMLEncode());
-                    for (GG::XMLElement::const_child_iterator elem_it = it->second.child_begin(); elem_it != it->second.child_end(); ++elem_it) {
+                    for (XMLElement::const_child_iterator elem_it = it->second.child_begin(); elem_it != it->second.child_end(); ++elem_it) {
                         player_element.AppendChild(*elem_it);
                     }
                     doc.root_node.AppendChild(player_element);
@@ -567,7 +567,7 @@ void ServerApp::HandleMessage(const Message& msg)
             m_single_player_game = true;
 
             std::string load_filename = msg.GetText();
-            GG::XMLDoc doc;
+            XMLDoc doc;
             GZStream::igzstream ifs(load_filename.c_str());
             doc.ReadDoc(ifs);
             ifs.close();
@@ -587,7 +587,7 @@ void ServerApp::HandleMessage(const Message& msg)
 
             // first, create the XML representation of an arbitrary UniverseObject
             UniverseObject* object = m_universe.Object(530);
-            GG::XMLDoc debug_doc;
+            XMLDoc debug_doc;
             debug_doc.root_node.AppendChild(object->XMLEncode());
             debug_doc.WriteDoc(ofs);
 
@@ -930,7 +930,7 @@ void ServerApp::HandleMessage(const Message& msg)
 #endif
                     UniverseObject* source = m_universe.Object(GetOptionsDB().Get<int>("condition-test-source"));
 #if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
-                    GG::XMLDoc debug_doc;
+                    XMLDoc debug_doc;
                     debug_doc.root_node.AppendChild(source->XMLEncode());
                     debug_doc.WriteDoc(ofs2);
 #endif
@@ -970,7 +970,7 @@ void ServerApp::HandleMessage(const Message& msg)
     case Message::TURN_ORDERS: {
         /* decode order set */
 	    std::stringstream stream(msg.GetText());
-	    GG::XMLDoc doc;
+	    XMLDoc doc;
 	    doc.ReadDoc(stream);
 
         if (doc.root_node.ContainsChild("save_game_data")) { // the Orders were in answer to a save game data request
@@ -997,9 +997,9 @@ void ServerApp::HandleMessage(const Message& msg)
 
             OrderSet *p_order_set;
             p_order_set = new OrderSet( );
-            GG::XMLObjectFactory<Order> order_factory;
+            XMLObjectFactory<Order> order_factory;
             Order::InitOrderFactory(order_factory);
-            const GG::XMLElement& root = doc.root_node.Child("Orders");
+            const XMLElement& root = doc.root_node.Child("Orders");
 
             for (int i = 0; i < root.NumChildren(); ++i) {
                 Order *p_order = order_factory.GenerateObject(root.Child(i));
@@ -1037,7 +1037,7 @@ void ServerApp::HandleMessage(const Message& msg)
         // target_player_names.empty() implies that all players should be sent the message; otherwise, only the indicated players will receive the message
         std::set<std::string> target_player_names;
         if (colon_position != std::string::npos) {
-            std::vector<std::string> tokens = GG::Tokenize(text.substr(0, colon_position));
+            std::vector<std::string> tokens = Tokenize(text.substr(0, colon_position));
             for (unsigned int i = 0; i < tokens.size(); ++i) {
                 bool token_is_name = false;
                 for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
@@ -1058,7 +1058,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 return;
         }
         Empire* sender_empire = GetPlayerEmpire(msg.Sender());
-        std::string final_text = GG::RgbaTag(Empires().Lookup(sender_empire->EmpireID())->Color()) + m_network_core.Players().find(msg.Sender())->second.name + 
+        std::string final_text = RgbaTag(Empires().Lookup(sender_empire->EmpireID())->Color()) + m_network_core.Players().find(msg.Sender())->second.name + 
             (target_player_names.empty() ? ": " : " (whisper):") + text + "</rgba>\n";
         for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
             if (target_player_names.empty() || target_player_names.find(it->second.name) != target_player_names.end())
@@ -1102,7 +1102,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
     case Message::HOST_GAME: {
         if (m_network_core.Players().empty() && m_expected_ai_players.empty()) {
             std::stringstream stream(msg.GetText());
-            GG::XMLDoc doc;
+            XMLDoc doc;
             doc.ReadDoc(stream);
             std::string host_player_name = doc.root_node.Child("host_player_name").Text();
 
@@ -1133,7 +1133,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                 m_planet_density = Universe::PlanetDensity(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("planet_density").Text()));
                 m_specials_freq = Universe::SpecialsFrequency(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("specials_freq").Text()));
                 CreateAIClients(doc.root_node);
-                g_load_doc.root_node = GG::XMLElement();
+                g_load_doc.root_node = XMLElement();
                 g_lobby_data.players.clear();
                 g_lobby_data.players.push_back(PlayerSetupData());
                 g_lobby_data.players.back().empire_name = doc.root_node.Child("empire_name").Text();
@@ -1160,7 +1160,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
       
     case Message::JOIN_GAME: {
         std::stringstream stream(msg.GetText());
-        GG::XMLDoc doc;
+        XMLDoc doc;
         doc.ReadDoc(stream);
         std::string player_name = doc.root_node.Child("player_name").Text();
 
@@ -1233,7 +1233,7 @@ void ServerApp::PlayerDisconnected(int id)
     // this will not usually happen, since the host process usually owns the server process, and will usually take it down if it fails
     if (id == NetworkCore::HOST_PLAYER_ID) {
         if (m_state == SERVER_MP_LOBBY) { // host disconnected in MP lobby
-            GG::XMLDoc doc;
+            XMLDoc doc;
             doc.root_node.AppendChild("abort_game");
             for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
                 if (it->first != id) {
@@ -1259,9 +1259,9 @@ void ServerApp::PlayerDisconnected(int id)
         }
     } else {
         if (m_state == SERVER_MP_LOBBY) { // player disconnected in MP lobby
-            GG::XMLDoc doc;
+            XMLDoc doc;
             doc.root_node.AppendChild("exit_lobby");
-            doc.root_node.LastChild().AppendChild(GG::XMLElement("id", boost::lexical_cast<std::string>(id)));
+            doc.root_node.LastChild().AppendChild(XMLElement("id", boost::lexical_cast<std::string>(id)));
             for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
                 if (it->first != id)
                     m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, doc));
@@ -1433,12 +1433,12 @@ void ServerApp::NewGameInit()
     // the universe creation caused the creation of empires.  But now we
     // need to assign the empires to players.
     for (it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-        GG::XMLDoc doc;
+        XMLDoc doc;
         if (m_single_player_game)
             doc.root_node.AppendChild("single_player_game");
         doc.root_node.AppendChild(m_universe.XMLEncode(it->first));
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
-        doc.root_node.AppendChild(GG::XMLElement("empire_id", boost::lexical_cast<std::string>(it->first)));
+        doc.root_node.AppendChild(XMLElement("empire_id", boost::lexical_cast<std::string>(it->first)));
 
         // turn number is an attribute of the document
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
@@ -1463,11 +1463,11 @@ void ServerApp::LoadGameInit()
 {
     m_turn_sequence.clear();
 
-    std::map<int, GG::XMLDoc> player_docs; // indexed by empire id
+    std::map<int, XMLDoc> player_docs; // indexed by empire id
     for (int i = 0; i < g_load_doc.root_node.NumChildren(); ++i) {
         if (g_load_doc.root_node.Child(i).Tag() == "Player") {
-            GG::XMLDoc player_doc;
-            player_doc.root_node.SetTag("GG::XMLDoc");
+            XMLDoc player_doc;
+            player_doc.root_node.SetTag("XMLDoc");
             player_doc.root_node.AppendChild(g_load_doc.root_node.Child(i).Child("Orders"));
             if (g_load_doc.root_node.Child(i).ContainsChild("UI"))
                 player_doc.root_node.AppendChild(g_load_doc.root_node.Child(i).Child("UI"));
@@ -1485,9 +1485,9 @@ void ServerApp::LoadGameInit()
         already_chosen_empire_ids.insert(g_lobby_data.players[i].save_game_empire_id);
     }
 
-    std::map<int, GG::XMLDoc>::iterator player_doc_it = player_docs.begin();
+    std::map<int, XMLDoc>::iterator player_doc_it = player_docs.begin();
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++player_doc_it) {
-        GG::XMLDoc doc;
+        XMLDoc doc;
         int empire_id;
         if (m_single_player_game) {
             doc.root_node.AppendChild("single_player_game");
@@ -1495,7 +1495,7 @@ void ServerApp::LoadGameInit()
         if (player_to_empire_ids[it->first] != -1) {
             empire_id = player_to_empire_ids[it->first];
         } else {
-            for (std::map<int, GG::XMLDoc>::iterator doc_it = player_docs.begin(); doc_it != player_docs.end(); ++doc_it) {
+            for (std::map<int, XMLDoc>::iterator doc_it = player_docs.begin(); doc_it != player_docs.end(); ++doc_it) {
                 if (already_chosen_empire_ids.find(doc_it->first) == already_chosen_empire_ids.end()) {
                     empire_id = doc_it->first;
                     already_chosen_empire_ids.insert(empire_id);
@@ -1507,7 +1507,7 @@ void ServerApp::LoadGameInit()
         }
         doc.root_node.AppendChild(m_universe.XMLEncode(empire_id));
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(empire_id));
-        doc.root_node.AppendChild(GG::XMLElement("empire_id", boost::lexical_cast<std::string>(empire_id)));
+        doc.root_node.AppendChild(XMLElement("empire_id", boost::lexical_cast<std::string>(empire_id)));
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
 
@@ -1530,7 +1530,7 @@ void ServerApp::LoadGameInit()
     m_losers.clear();
 }
 
-bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, const PlayerInfo& connection, const GG::XMLDoc& doc)
+bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, const PlayerInfo& connection, const XMLDoc& doc)
 {
 #if 0
     std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
@@ -1564,9 +1564,9 @@ bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, co
             settings_files_mismatches << " " << source_files_mismatches <<
             ".  This player will be notified of the conflicts, then dumped.";
         if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
-            GG::XMLDoc conflict_details;
-            conflict_details.root_node.AppendChild(GG::XMLElement("settings_files", settings_files_mismatches));
-            conflict_details.root_node.AppendChild(GG::XMLElement("source_files", source_files_mismatches));
+            XMLDoc conflict_details;
+            conflict_details.root_node.AppendChild(XMLElement("settings_files", settings_files_mismatches));
+            conflict_details.root_node.AppendChild(XMLElement("source_files", source_files_mismatches));
             m_network_core.SendMessage(VersionConflictMessage(player_id, conflict_details));
             
             SDL_Delay(5000);
@@ -1578,11 +1578,10 @@ bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, co
     return false;
 }
 
-GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
+XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
 {
-    using GG::XMLElement;
-    GG::XMLDoc this_turn;
-    GG::XMLDoc update_patch;
+    XMLDoc this_turn;
+    XMLDoc update_patch;
 
     // generate new data for this turn
     // for the final game, we'd have visibility
@@ -1594,9 +1593,9 @@ GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
     this_turn.root_node.AppendChild(universe_data);
     this_turn.root_node.AppendChild(empire_data);
 
-    std::map<int, GG::XMLDoc>::iterator itr =  m_last_turn_update_msg.find(empire_id);
+    std::map<int, XMLDoc>::iterator itr =  m_last_turn_update_msg.find(empire_id);
 
-    GG::XMLDoc last_turn = itr->second;
+    XMLDoc last_turn = itr->second;
    
     // diff this turn with previous turn
     XDiff(last_turn, this_turn, update_patch);
@@ -1608,22 +1607,22 @@ GG::XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
     return update_patch;
 }
 
-GG::XMLDoc ServerApp::LobbyUpdateDoc() const
+XMLDoc ServerApp::LobbyUpdateDoc() const
 {
-    GG::XMLDoc retval;
+    XMLDoc retval;
 
-    retval.root_node.AppendChild(GG::XMLElement(g_lobby_data.new_game ? "new_game" : "load_game"));
+    retval.root_node.AppendChild(XMLElement(g_lobby_data.new_game ? "new_game" : "load_game"));
 
-    retval.root_node.AppendChild(GG::XMLElement("universe_params"));
-    retval.root_node.LastChild().AppendChild(GG::XMLElement("size", boost::lexical_cast<std::string>(g_lobby_data.size)));
-    retval.root_node.LastChild().AppendChild(GG::XMLElement("shape", boost::lexical_cast<std::string>(g_lobby_data.shape)));
-    retval.root_node.LastChild().AppendChild(GG::XMLElement("age", boost::lexical_cast<std::string>(g_lobby_data.age)));
-    retval.root_node.LastChild().AppendChild(GG::XMLElement("starlane_freq", boost::lexical_cast<std::string>(g_lobby_data.starlane_freq)));
-    retval.root_node.LastChild().AppendChild(GG::XMLElement("planet_density", boost::lexical_cast<std::string>(g_lobby_data.planet_density)));
-    retval.root_node.LastChild().AppendChild(GG::XMLElement("specials_freq", boost::lexical_cast<std::string>(g_lobby_data.specials_freq)));
+    retval.root_node.AppendChild(XMLElement("universe_params"));
+    retval.root_node.LastChild().AppendChild(XMLElement("size", boost::lexical_cast<std::string>(g_lobby_data.size)));
+    retval.root_node.LastChild().AppendChild(XMLElement("shape", boost::lexical_cast<std::string>(g_lobby_data.shape)));
+    retval.root_node.LastChild().AppendChild(XMLElement("age", boost::lexical_cast<std::string>(g_lobby_data.age)));
+    retval.root_node.LastChild().AppendChild(XMLElement("starlane_freq", boost::lexical_cast<std::string>(g_lobby_data.starlane_freq)));
+    retval.root_node.LastChild().AppendChild(XMLElement("planet_density", boost::lexical_cast<std::string>(g_lobby_data.planet_density)));
+    retval.root_node.LastChild().AppendChild(XMLElement("specials_freq", boost::lexical_cast<std::string>(g_lobby_data.specials_freq)));
 
     if (!g_lobby_data.save_games.empty()) {
-        retval.root_node.AppendChild(GG::XMLElement("save_games"));
+        retval.root_node.AppendChild(XMLElement("save_games"));
         std::string save_games;
         for (unsigned int i = 0; i < g_lobby_data.save_games.size(); ++i) {
             save_games += g_lobby_data.save_games[i] + " ";
@@ -1631,20 +1630,20 @@ GG::XMLDoc ServerApp::LobbyUpdateDoc() const
         retval.root_node.LastChild().SetText(save_games);
     }
 
-    retval.root_node.AppendChild(GG::XMLElement("save_file", boost::lexical_cast<std::string>(g_lobby_data.save_file)));
+    retval.root_node.AppendChild(XMLElement("save_file", boost::lexical_cast<std::string>(g_lobby_data.save_file)));
 
     if (!g_lobby_data.save_game_empire_data.empty()) {
-        retval.root_node.AppendChild(GG::XMLElement("save_game_empire_data"));
+        retval.root_node.AppendChild(XMLElement("save_game_empire_data"));
         for (unsigned int i = 0; i < g_lobby_data.save_game_empire_data.size(); ++i) {
             retval.root_node.LastChild().AppendChild(g_lobby_data.save_game_empire_data[i].XMLEncode());
         }
     }
 
-    retval.root_node.AppendChild(GG::XMLElement("players"));
+    retval.root_node.AppendChild(XMLElement("players"));
     unsigned int i = 0;
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
-        retval.root_node.LastChild().AppendChild(GG::XMLElement(it->second.name));
-        retval.root_node.LastChild().LastChild().AppendChild(GG::XMLElement("id", boost::lexical_cast<std::string>(it->first)));
+        retval.root_node.LastChild().AppendChild(XMLElement(it->second.name));
+        retval.root_node.LastChild().LastChild().AppendChild(XMLElement("id", boost::lexical_cast<std::string>(it->first)));
         if (i <= g_lobby_data.players.size())
             g_lobby_data.players.push_back(PlayerSetupData());
         retval.root_node.LastChild().LastChild().AppendChild(g_lobby_data.players[i].XMLEncode());
@@ -1653,19 +1652,19 @@ GG::XMLDoc ServerApp::LobbyUpdateDoc() const
     return retval;
 }
 
-GG::XMLDoc ServerApp::LobbyStartDoc() const
+XMLDoc ServerApp::LobbyStartDoc() const
 {
-    GG::XMLDoc retval;
+    XMLDoc retval;
 
     if (!g_lobby_data.save_game_empire_data.empty()) {
-        retval.root_node.AppendChild(GG::XMLElement("save_game_empire_data"));
+        retval.root_node.AppendChild(XMLElement("save_game_empire_data"));
         for (unsigned int i = 0; i < g_lobby_data.save_game_empire_data.size(); ++i) {
             retval.root_node.LastChild().AppendChild(g_lobby_data.save_game_empire_data[i].XMLEncode());
         }
     }
 
     if (!g_lobby_data.save_games.empty()) {
-        retval.root_node.AppendChild(GG::XMLElement("save_games"));
+        retval.root_node.AppendChild(XMLElement("save_games"));
         std::string save_games;
         for (unsigned int i = 0; i < g_lobby_data.save_games.size(); ++i) {
             save_games += g_lobby_data.save_games[i] + " ";
@@ -1673,16 +1672,16 @@ GG::XMLDoc ServerApp::LobbyStartDoc() const
         retval.root_node.LastChild().SetText(save_games);
     }
 
-    retval.root_node.AppendChild(GG::XMLElement("empire_colors"));
+    retval.root_node.AppendChild(XMLElement("empire_colors"));
     for (unsigned int i = 0; i < g_lobby_data.empire_colors.size(); ++i) {
         retval.root_node.LastChild().AppendChild(ClrToXML(g_lobby_data.empire_colors[i]));
     }
 
-    retval.root_node.AppendChild(GG::XMLElement("players"));
+    retval.root_node.AppendChild(XMLElement("players"));
     unsigned int i = 0;
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
-        retval.root_node.LastChild().AppendChild(GG::XMLElement(it->second.name));
-        retval.root_node.LastChild().LastChild().AppendChild(GG::XMLElement("id", boost::lexical_cast<std::string>(it->first)));
+        retval.root_node.LastChild().AppendChild(XMLElement(it->second.name));
+        retval.root_node.LastChild().LastChild().AppendChild(XMLElement("id", boost::lexical_cast<std::string>(it->first)));
         if (i <= g_lobby_data.players.size())
             g_lobby_data.players.push_back(PlayerSetupData());
         retval.root_node.LastChild().LastChild().AppendChild(g_lobby_data.players[i].XMLEncode());
@@ -1691,14 +1690,14 @@ GG::XMLDoc ServerApp::LobbyStartDoc() const
     return retval;
 }
 
-GG::XMLDoc ServerApp::SaveGameUpdateDoc() const
+XMLDoc ServerApp::SaveGameUpdateDoc() const
 {
-    GG::XMLDoc retval;
+    XMLDoc retval;
 
-    retval.root_node.AppendChild(GG::XMLElement("load_game"));
+    retval.root_node.AppendChild(XMLElement("load_game"));
 
     if (!g_lobby_data.save_game_empire_data.empty()) {
-        retval.root_node.AppendChild(GG::XMLElement("save_game_empire_data"));
+        retval.root_node.AppendChild(XMLElement("save_game_empire_data"));
         for (unsigned int i = 0; i < g_lobby_data.save_game_empire_data.size(); ++i) {
             retval.root_node.LastChild().AppendChild(g_lobby_data.save_game_empire_data[i].XMLEncode());
         }
@@ -1707,23 +1706,23 @@ GG::XMLDoc ServerApp::SaveGameUpdateDoc() const
     return retval;
 }
 
-void ServerApp::SaveGameVars(GG::XMLDoc& doc) const
+void ServerApp::SaveGameVars(XMLDoc& doc) const
 {
-    doc.root_node.AppendChild(GG::XMLElement("turn_number", boost::lexical_cast<std::string>(m_current_turn)));
+    doc.root_node.AppendChild(XMLElement("turn_number", boost::lexical_cast<std::string>(m_current_turn)));
 
-    GG::XMLElement temp("m_last_turn_update_msg");
-    for (std::map<int, GG::XMLDoc>::const_iterator it = m_last_turn_update_msg.begin(); it != m_last_turn_update_msg.end(); ++it) {
-        temp.AppendChild(GG::XMLElement(LAST_TURN_UPDATE_SAVE_ELEM_PREFIX + boost::lexical_cast<std::string>(it->first), it->second.root_node));
+    XMLElement temp("m_last_turn_update_msg");
+    for (std::map<int, XMLDoc>::const_iterator it = m_last_turn_update_msg.begin(); it != m_last_turn_update_msg.end(); ++it) {
+        temp.AppendChild(XMLElement(LAST_TURN_UPDATE_SAVE_ELEM_PREFIX + boost::lexical_cast<std::string>(it->first), it->second.root_node));
     }
     doc.root_node.AppendChild(temp);
 }
 
-void ServerApp::LoadGameVars(const GG::XMLDoc& doc)
+void ServerApp::LoadGameVars(const XMLDoc& doc)
 {
     m_current_turn = boost::lexical_cast<int>(doc.root_node.Child("turn_number").Text());
 
-    const GG::XMLElement& last_turn_update_elem = doc.root_node.Child("m_last_turn_update_msg");
-    for (GG::XMLElement::const_child_iterator it = last_turn_update_elem.child_begin(); it != last_turn_update_elem.child_end(); ++it) {
+    const XMLElement& last_turn_update_elem = doc.root_node.Child("m_last_turn_update_msg");
+    for (XMLElement::const_child_iterator it = last_turn_update_elem.child_begin(); it != last_turn_update_elem.child_end(); ++it) {
         m_last_turn_update_msg[boost::lexical_cast<int>(it->Tag().substr(LAST_TURN_UPDATE_SAVE_ELEM_PREFIX.size()))].root_node = it->Child(0);
     }
 }
@@ -1787,9 +1786,9 @@ void ServerApp::ProcessTurns()
     // to be able to sucessfully diff later.
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
-        GG::XMLDoc game_state;
+        XMLDoc game_state;
 
-        GG::XMLElement universe_data = m_universe.XMLEncode(it->first);
+        XMLElement universe_data = m_universe.XMLEncode(it->first);
 
         // build the new turn doc
         game_state.root_node.AppendChild(universe_data);
@@ -1824,7 +1823,7 @@ void ServerApp::ProcessTurns()
     // not know about
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
-        GG::XMLElement empire_data = m_empires.CreateClientEmpireUpdate( it->first );
+        XMLElement empire_data = m_empires.CreateClientEmpireUpdate( it->first );
         m_last_turn_update_msg[ it->first ].root_node.AppendChild(empire_data);
     }
  
@@ -2069,7 +2068,7 @@ void ServerApp::ProcessTurns()
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it)
     {
         pEmpire = GetPlayerEmpire( player_it->first );
-        GG::XMLDoc doc = CreateTurnUpdate( pEmpire->EmpireID() );
+        XMLDoc doc = CreateTurnUpdate( pEmpire->EmpireID() );
         if (GetOptionsDB().Get<bool>("debug.log-turn-update-universe")) {
             std::string filename = "TurnUpdate" + boost::lexical_cast<std::string>(m_current_turn) +
                 "-empire" + boost::lexical_cast<std::string>(pEmpire->EmpireID()) +

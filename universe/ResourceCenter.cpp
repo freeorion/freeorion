@@ -9,7 +9,7 @@
 #include "Planet.h"
 #include "../universe/ShipDesign.h"
 #include "System.h"
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 #include "../util/OptionsDB.h"
 
 #include <boost/lexical_cast.hpp>
@@ -98,7 +98,7 @@ ResourceCenter::ResourceCenter(const Meter& pop, UniverseObject* object) :
     Reset();
 }
 
-ResourceCenter::ResourceCenter(const GG::XMLElement& elem, const Meter& pop, UniverseObject* object) : 
+ResourceCenter::ResourceCenter(const XMLElement& elem, const Meter& pop, UniverseObject* object) : 
     m_primary(FOCUS_UNKNOWN),
     m_secondary(FOCUS_UNKNOWN),
     m_pop(pop),
@@ -202,10 +202,9 @@ Meter* ResourceCenter::GetMeter(MeterType type)
     }
 }
 
-GG::XMLElement ResourceCenter::XMLEncode(UniverseObject::Visibility vis) const
+XMLElement ResourceCenter::XMLEncode(UniverseObject::Visibility vis) const
 {
     // partial encode version -- no current production info
-    using GG::XMLElement;
     using boost::lexical_cast;
     using std::string;
 

@@ -3,9 +3,10 @@
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
-#include "net/fastevents.h"
-#include "net/net2.h"
 #include "../../network/Message.h"
+
+#include <GG/net/fastevents.h>
+#include <GG/net/net2.h>
 
 #include <boost/lexical_cast.hpp>
 #include <log4cpp/Appender.hh>
@@ -191,7 +192,7 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
     switch (msg.Type()) {
     case Message::SERVER_STATUS: {
         std::stringstream stream(msg.GetText());
-        GG::XMLDoc doc;
+        XMLDoc doc;
         doc.ReadDoc(stream);
         if (doc.root_node.ContainsChild("new_name")) {
             m_player_name = doc.root_node.Child("new_name").Text();
@@ -234,9 +235,9 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::LOAD_GAME: {
         std::stringstream stream(msg.GetText());
-        GG::XMLDoc doc;
+        XMLDoc doc;
         doc.ReadDoc(stream);
-        GG::XMLObjectFactory<Order> factory;
+        XMLObjectFactory<Order> factory;
         Order::InitOrderFactory(factory);
         for (int i = 0; i < doc.root_node.Child("Orders").NumChildren(); ++i) {
             Orders().IssueOrder(factory.GenerateObject(doc.root_node.Child("Orders").Child(i)));

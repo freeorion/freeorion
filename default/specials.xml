@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<GG::XMLDoc>
+<XMLDoc>
   <Special>
     <name>HOMEWORLD_SPECIAL</name>
     <description>HOMEWORLD_SPECIAL_DESCRIPTION</description>
@@ -94,4 +94,4 @@
       </EffectsGroup>
     </effects>
   </Special>
-</GG::XMLDoc>
+</XMLDoc>

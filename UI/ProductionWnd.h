@@ -3,8 +3,9 @@
 #define _ProductionWnd_h_
 
 #include "CUI_Wnd.h"
-#include "GGListBox.h"
 #include "../universe/Enums.h"
+
+#include <GG/ListBox.h>
 
 class CUIListBox;
 class ProductionInfoPanel;
@@ -23,7 +24,7 @@ public:
     virtual GG::Pt ClientLowerRight() const;
     virtual bool   InWindow(const GG::Pt& pt) const;
     virtual bool   InClient(const GG::Pt& pt) const;
-    virtual bool   Render();
+    virtual void   Render();
 
     void Reset();
     void CenterOnBuild(int queue_idx);
@@ -36,10 +37,10 @@ private:
     void ResetInfoPanel();
     void AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location);
     void ChangeBuildQuantitySlot(int queue_idx, int quantity);
-    void QueueItemDeletedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
-    void QueueItemMovedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
-    void QueueItemClickedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt);
-    void QueueItemDoubleClickedSlot(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
+    void QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row);
+    void QueueItemMovedSlot(int row_idx, GG::ListBox::Row* row);
+    void QueueItemClickedSlot(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);
+    void QueueItemDoubleClickedSlot(int row_idx, GG::ListBox::Row* row);
 
     ProductionInfoPanel* m_production_info_panel;
     CUIListBox*          m_queue_lb;

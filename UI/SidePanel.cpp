@@ -2,10 +2,6 @@
 
 #include "CUI_Wnd.h"
 #include "CUIControls.h"
-#include "GGDrawUtil.h"
-#include "GGStaticGraphic.h"
-#include "GGDynamicGraphic.h"
-#include "GGThreeButtonDlg.h"
 
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
@@ -13,13 +9,13 @@
 #include "../universe/ShipDesign.h"
 #include "../util/Random.h"
 #include "FocusSelector.h"
+#include "../util/XMLDoc.h"
 
-#include "XMLDoc.h"
-#include "GGBase.h"
-
-#ifndef _GGScroll_h_
-#include "GGScroll.h"
-#endif
+#include <GG/DrawUtil.h>
+#include <GG/StaticGraphic.h>
+#include <GG/DynamicGraphic.h>
+#include <GG/Scroll.h>
+#include <GG/dialogs/ThreeButtonDlg.h>
 
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
@@ -51,7 +47,7 @@ namespace {
 
     struct RotatingPlanetData
     {
-        RotatingPlanetData(const GG::XMLElement& elem)
+        RotatingPlanetData(const XMLElement& elem)
         {
             if (elem.Tag() != "RotatingPlanetData")
                 throw std::invalid_argument("Attempted to construct a RotatingPlanetData from an XMLElement that had a tag other than \"RotatingPlanetData\"");
@@ -67,14 +63,14 @@ namespace {
             shininess = std::max(0.0, std::min(shininess, 128.0));
         }
 
-        GG::XMLElement XMLEncode() const
+        XMLElement XMLEncode() const
         {
-            GG::XMLElement retval("RotatingPlanetData");
-            retval.AppendChild(GG::XMLElement("planet_type", lexical_cast<std::string>(planet_type)));
-            retval.AppendChild(GG::XMLElement("filename", filename));
-            retval.AppendChild(GG::XMLElement("RPM", lexical_cast<std::string>(RPM)));
-            retval.AppendChild(GG::XMLElement("axis_angle", lexical_cast<std::string>(axis_angle)));
-            retval.AppendChild(GG::XMLElement("shininess", lexical_cast<std::string>(shininess)));
+            XMLElement retval("RotatingPlanetData");
+            retval.AppendChild(XMLElement("planet_type", lexical_cast<std::string>(planet_type)));
+            retval.AppendChild(XMLElement("filename", filename));
+            retval.AppendChild(XMLElement("RPM", lexical_cast<std::string>(RPM)));
+            retval.AppendChild(XMLElement("axis_angle", lexical_cast<std::string>(axis_angle)));
+            retval.AppendChild(XMLElement("shininess", lexical_cast<std::string>(shininess)));
             return retval;
         }
 
@@ -90,7 +86,7 @@ namespace {
         struct Atmosphere
         {
             Atmosphere() {}
-            Atmosphere(const GG::XMLElement& elem)
+            Atmosphere(const XMLElement& elem)
             {
                 if (elem.Tag() != "Atmosphere")
                     throw std::invalid_argument("Attempted to construct a Atmosphere from an XMLElement that had a tag other than \"Atmosphere\"");
@@ -104,13 +100,13 @@ namespace {
         };
 
         PlanetAtmosphereData() {}
-        PlanetAtmosphereData(const GG::XMLElement& elem)
+        PlanetAtmosphereData(const XMLElement& elem)
         {
             if (elem.Tag() != "PlanetAtmosphereData")
                 throw std::invalid_argument("Attempted to construct a PlanetAtmosphereData from an XMLElement that had a tag other than \"PlanetAtmosphereData\"");
             planet_filename = elem.Child("planet_filename").Text();
-            const GG::XMLElement& atmospheres_elem = elem.Child("atmospheres");
-            for (GG::XMLElement::const_child_iterator it = atmospheres_elem.child_begin(); it != atmospheres_elem.child_end(); ++it) {
+            const XMLElement& atmospheres_elem = elem.Child("atmospheres");
+            for (XMLElement::const_child_iterator it = atmospheres_elem.child_begin(); it != atmospheres_elem.child_end(); ++it) {
                 atmospheres.push_back(Atmosphere(*it));
             }
         }
@@ -123,14 +119,14 @@ namespace {
     {
         static std::map<PlanetType, std::vector<RotatingPlanetData> > data;
         if (data.empty()) {
-            GG::XMLDoc doc;
+            XMLDoc doc;
             std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
             doc.ReadDoc(ifs);
             ifs.close();
 
             if (doc.root_node.ContainsChild("GLPlanets")) {
-                const GG::XMLElement& elem = doc.root_node.Child("GLPlanets");
-                for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+                const XMLElement& elem = doc.root_node.Child("GLPlanets");
+                for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
                     if (it->Tag() == "RotatingPlanetData") {
                         RotatingPlanetData current_data(*it);
                         data[current_data.planet_type].push_back(current_data);
@@ -145,12 +141,12 @@ namespace {
     {
         static std::map<std::string, PlanetAtmosphereData> data;
         if (data.empty()) {
-            GG::XMLDoc doc;
+            XMLDoc doc;
             std::ifstream ifs((ClientUI::ART_DIR + "planets/atmospheres.xml").c_str());
             doc.ReadDoc(ifs);
             ifs.close();
 
-            for (GG::XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
+            for (XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
                 if (it->Tag() == "PlanetAtmosphereData") {
                     PlanetAtmosphereData current_data(*it);
                     data[current_data.planet_filename] = current_data;
@@ -164,7 +160,7 @@ namespace {
     {
         static double retval = -1.0;
         if (retval == -1.0) {
-            GG::XMLDoc doc;
+            XMLDoc doc;
             std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
             doc.ReadDoc(ifs);
             ifs.close();
@@ -184,7 +180,7 @@ namespace {
         static double retval = -1.0;
 
         if (retval == -1.0) {
-            GG::XMLDoc doc;
+            XMLDoc doc;
             std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
             doc.ReadDoc(ifs);
             ifs.close();
@@ -205,7 +201,7 @@ namespace {
         static double retval = -1.0;
 
         if (retval == -1.0) {
-            GG::XMLDoc doc;
+            XMLDoc doc;
             std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
             doc.ReadDoc(ifs);
             ifs.close();
@@ -254,7 +250,7 @@ namespace {
         static GLfloat retval[] = {0.0, 0.0, 0.0, 0.0};
 
         if (retval[0] == 0.0 && retval[1] == 0.0 && retval[2] == 0.0) {
-            GG::XMLDoc doc;
+            XMLDoc doc;
             std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
             doc.ReadDoc(ifs);
             ifs.close();
@@ -272,13 +268,13 @@ namespace {
         static std::map<StarType, std::vector<float> > light_colors;
 
         if (light_colors.empty()) {
-            GG::XMLDoc doc;
+            XMLDoc doc;
             std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
             doc.ReadDoc(ifs);
             ifs.close();
 
             if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").NumChildren()) {
-                for (GG::XMLElement::child_iterator it = doc.root_node.Child("GLStars").child_begin(); it != doc.root_node.Child("GLStars").child_end(); ++it) {
+                for (XMLElement::child_iterator it = doc.root_node.Child("GLStars").child_begin(); it != doc.root_node.Child("GLStars").child_end(); ++it) {
                     std::vector<float>& color_vec = light_colors[lexical_cast<StarType>(it->Child("star_type").Text())];
                     GG::Clr color(XMLToClr(it->Child("GG::Clr")));
                     color_vec.push_back(color.r / 255.0);
@@ -304,7 +300,7 @@ namespace {
         // slide the texture coords to simulate a rotating axis
         glMatrixMode(GL_TEXTURE);
         glLoadIdentity();
-        glTranslated(initial_rotation - GG::App::GetApp()->Ticks() / 1000.0 * RPM / 60.0, 0.0, 0.0);
+        glTranslated(initial_rotation - GG::GUI::GetGUI()->Ticks() / 1000.0 * RPM / 60.0, 0.0, 0.0);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -388,7 +384,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool Render();
+    virtual void Render();
     virtual void LClick(const GG::Pt& pt, Uint32 keys);
     virtual void RClick(const GG::Pt& pt, Uint32 keys);
     virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
@@ -498,7 +494,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool  Render();
+    virtual void Render();
 
     void SetFarming (int farming ) {m_farming = farming;}
     void SetMining  (int mining  ) {m_mining  = mining;}
@@ -519,7 +515,7 @@ public:
         GG::Control(x, y, PlanetDiameter(size), PlanetDiameter(size), 0),
         m_planet_data(planet_data),
         m_size(size),
-        m_surface_texture(GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + m_planet_data.filename, true)),
+        m_surface_texture(GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + m_planet_data.filename, true)),
         m_atmosphere_texture(),
         m_initial_rotation(RandZeroToOne()),
         m_star_type(star_type)
@@ -529,14 +525,14 @@ public:
         std::map<std::string, PlanetAtmosphereData>::const_iterator it = atmosphere_data.find(m_planet_data.filename);
         if (it != atmosphere_data.end()) {
             const PlanetAtmosphereData::Atmosphere& atmosphere = it->second.atmospheres[RandSmallInt(0, it->second.atmospheres.size() - 1)];
-            m_atmosphere_texture = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + atmosphere.filename, true);
+            m_atmosphere_texture = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + atmosphere.filename, true);
             m_atmosphere_texture->SetFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
             m_atmosphere_alpha = atmosphere.alpha;
             m_atmosphere_planet_rect = GG::Rect(1, 1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
         }
     }
 
-    virtual bool Render()
+    virtual void Render()
     {
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Width(), m_surface_texture, m_initial_rotation,
@@ -553,13 +549,12 @@ public:
                                             static_cast<int>(lr.y + (texture_h - m_atmosphere_planet_rect.lr.y) * y_scale),
                                             0, false);
         }
-        return true;
     }
 
     void SetRotatingPlanetData(const RotatingPlanetData& planet_data)
     {
         m_planet_data = planet_data;
-        m_surface_texture = GG::App::GetApp()->GetTexture(m_planet_data.filename);
+        m_surface_texture = GG::GUI::GetGUI()->GetTexture(m_planet_data.filename);
     }
 
 private:
@@ -617,21 +612,20 @@ namespace {
   struct SystemRow : public GG::ListBox::Row
   {
     public:
-      SystemRow(int system_id) : m_system_id(system_id) {data_type = "SystemID";}
-
+      SystemRow(int system_id) : m_system_id(system_id) {SetDragDropDataType("SystemID");}
       int m_system_id;
   };
 
-  GG::XMLElement GetXMLChild(GG::XMLElement &node,const std::string &child_path)
+  XMLElement GetXMLChild(XMLElement &node,const std::string &child_path)
   {
     int index;
 
     if(-1==(index=child_path.find_first_of('.')))
-      return node.ContainsChild(child_path)?node.Child(child_path):GG::XMLElement();
+      return node.ContainsChild(child_path)?node.Child(child_path):XMLElement();
     else
       return node.ContainsChild(child_path.substr(0,index))
               ?GetXMLChild(node.Child(child_path.substr(0,index)),child_path.substr(index+1,child_path.length()-index-1))
-              :GG::XMLElement();
+              :XMLElement();
   }
 
   void GetAsteroidTextures(int planet_id, std::vector<boost::shared_ptr<GG::Texture> > &textures)
@@ -693,7 +687,7 @@ namespace {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &planet, StarType star_type) :
-  Wnd(0, y, w, h, GG::Wnd::CLICKABLE),
+  Wnd(0, y, w, h, GG::CLICKABLE),
   m_planet_id(planet.ID()),
   m_planet_name(0),
   m_planet_info(0),
@@ -705,7 +699,7 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
 {
   SetText(UserString("PLANET_PANEL"));
 
-  m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),ClientUI::FONT,ClientUI::SIDE_PANEL_PLANET_NAME_PTS,ClientUI::TEXT_COLOR);
+  m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PLANET_NAME_PTS),ClientUI::TEXT_COLOR);
   AttachChild(m_planet_name);
 
   GG::Pt ul = UpperLeft(), lr = LowerRight();
@@ -744,16 +738,16 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
       }
   }
 
-  m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::TEXT_COLOR,GG::TF_LEFT|GG::TF_TOP);
+  m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS),ClientUI::TEXT_COLOR,GG::TF_LEFT|GG::TF_TOP);
   AttachChild(m_planet_info);
 
-  m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::SIDE_PANEL_PTS)/2,60,UserString("PL_COLONIZE"),ClientUI::FONT,ClientUI::SIDE_PANEL_PTS,ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::Wnd::CLICKABLE);
+  m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::SIDE_PANEL_PTS)/2,60,UserString("PL_COLONIZE"),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS),ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::CLICKABLE);
   Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
   AttachChild(m_button_colonize);
 
   m_focus_selector = new FocusSelector(175, planet);
-  m_focus_selector->MoveTo(Width() - m_focus_selector->Width(),
-                           (Height() - m_focus_selector->Height()) / 2);
+  m_focus_selector->MoveTo(GG::Pt(Width() - m_focus_selector->Width(),
+                                  (Height() - m_focus_selector->Height()) / 2));
   AttachChild(m_focus_selector);
   GG::Connect(m_focus_selector->PrimaryFocusChangedSignal, &SidePanel::PlanetPanel::SetPrimaryFocus, this);
   GG::Connect(m_focus_selector->SecondaryFocusChangedSignal, &SidePanel::PlanetPanel::SetSecondaryFocus, this);
@@ -1050,7 +1044,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
   return true;
 }
 
-bool SidePanel::PlanetPanel::Render()
+void SidePanel::PlanetPanel::Render()
 {
     const Planet *planet = GetPlanet();
 
@@ -1067,8 +1061,6 @@ bool SidePanel::PlanetPanel::Render()
         GG::Rect planet_rect(m_rotating_planet_graphic->UpperLeft(), m_rotating_planet_graphic->LowerRight());
         GG::FlatCircle(planet_rect.ul.x - 3, planet_rect.ul.y - 3, planet_rect.lr.x + 3, planet_rect.lr.y + 3, GG::CLR_WHITE, GG::CLR_ZERO, 0);
     }
-
-    return true;
 }
 
 int SidePanel::PlanetPanel::PlanetDiameter() const
@@ -1099,8 +1091,8 @@ void SidePanel::PlanetPanel::ClickColonize()
     if(!ship->GetFleet()->Accept(StationaryFleetVisitor(*ship->GetFleet()->Owners().begin())))
     {
       GG::ThreeButtonDlg dlg(320,200,UserString("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
-                             ClientUI::FONT,ClientUI::PTS,ClientUI::WND_COLOR,ClientUI::CTRL_BORDER_COLOR,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR,2,
-                             "Yes","No");
+                             GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::PTS),ClientUI::WND_COLOR,ClientUI::CTRL_BORDER_COLOR,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR,2,
+                             UserString("YES"),UserString("NO"));
       dlg.Run();
 
       if(dlg.Result()!=0)
@@ -1144,7 +1136,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
 
   GG::MenuItem menu_contents;
   menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false));
-  GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
+  GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
 
   if(popup.Run()) 
     switch (popup.MenuID())
@@ -1170,11 +1162,11 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
 // SidePanel::PlanetPanelContainer
 ////////////////////////////////////////////////
 SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h) :
-    Wnd(x-MAX_PLANET_DIAMETER/2, y, w+MAX_PLANET_DIAMETER/2, h, GG::Wnd::CLICKABLE),
+    Wnd(x-MAX_PLANET_DIAMETER/2, y, w+MAX_PLANET_DIAMETER/2, h, GG::CLICKABLE),
     m_planet_panels(),
     m_planet_id(UniverseObject::INVALID_OBJECT_ID),
     m_hilite_selected_planet(false),
-    m_vscroll(new CUIScroll(Width()-10,0,10,Height(),GG::Scroll::VERTICAL))
+    m_vscroll(new CUIScroll(Width()-10,0,10,Height(),GG::VERTICAL))
 {
   SetText("PlanetPanelContainer");
   EnableChildClipping(true);
@@ -1280,19 +1272,19 @@ void SidePanel::PlanetPanelContainer::VScroll(int from,int to,int range_min,int 
   int y = -from;
   const int PLANET_PANEL_HT = MAX_PLANET_DIAMETER;
   for (unsigned int i = 0; i < m_planet_panels.size(); ++i, y += PLANET_PANEL_HT)
-    m_planet_panels[i]->MoveTo(UpperLeft().x-m_planet_panels[i]->UpperLeft().x,y);
+      m_planet_panels[i]->MoveTo(GG::Pt(UpperLeft().x-m_planet_panels[i]->UpperLeft().x,y));
 }
 
 ////////////////////////////////////////////////
 // SidePanel::SystemResourceSummary
 ////////////////////////////////////////////////
 SidePanel::SystemResourceSummary::SystemResourceSummary(int x, int y, int w, int h)
-: Wnd(x, y, w, h, GG::Wnd::CLICKABLE),
+: Wnd(x, y, w, h, GG::CLICKABLE),
   m_farming(0),m_mining(0),m_trade(0),m_research(0),m_industry(0),m_defense(0)
 {
 }
 
-bool SidePanel::SystemResourceSummary::Render()
+void SidePanel::SystemResourceSummary::Render()
 {
   GG::FlatRectangle(UpperLeft().x,UpperLeft().y,LowerRight().x,LowerRight().y,GG::Clr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,1);
 
@@ -1360,8 +1352,6 @@ bool SidePanel::SystemResourceSummary::Render()
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
   //x+=font->TextExtent(text, format).x+ICON_MARGIN;
   x+=info_elem_width+ICON_MARGIN;
-
-  return true;
 }
 
 ////////////////////////////////////////////////
@@ -1372,14 +1362,14 @@ const int SidePanel::MAX_PLANET_DIAMETER = 128; // size of a huge planet, in on-
 const int SidePanel::MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER / 3; // size of a tiny planet, in on-screen pixels
 
 SidePanel::SidePanel(int x, int y, int w, int h) : 
-    Wnd(x, y, w, h, GG::Wnd::CLICKABLE),
+    Wnd(x, y, w, h, GG::CLICKABLE),
     m_system(0),
     m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5),ClientUI::SIDE_PANEL_COLOR)),
-    m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,UserString("SP_UNKNOWN_SYSTEM"),ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4),ClientUI::TEXT_COLOR)),
-    m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
-    m_button_next(new GG::Button(40+w-80                 ,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",ClientUI::FONT,SYSTEM_NAME_FONT_SIZE,GG::CLR_WHITE,GG::Wnd::CLICKABLE)),
+    m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,UserString("SP_UNKNOWN_SYSTEM"),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4)),ClientUI::TEXT_COLOR)),
+    m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),GG::CLR_WHITE,GG::CLICKABLE)),
+    m_button_next(new GG::Button(40+w-80                 ,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),GG::CLR_WHITE,GG::CLICKABLE)),
     m_star_graphic(0),
-    m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::PTS-5,UserString("SP_SYSTEM_PRODUCTION"),ClientUI::FONT,ClientUI::PTS,ClientUI::TEXT_COLOR)),
+    m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::PTS-5,UserString("SP_SYSTEM_PRODUCTION"),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::PTS),ClientUI::TEXT_COLOR)),
     m_next_pltview_fade_in(0),m_next_pltview_planet_id(UniverseObject::INVALID_OBJECT_ID),m_next_pltview_fade_out(-1),
     m_planet_panel_container(new PlanetPanelContainer(0,100,w,h-100-30)),
     m_system_resource_summary(new SystemResourceSummary(0,100-20,w,20))
@@ -1420,12 +1410,10 @@ bool SidePanel::InWindow(const GG::Pt& pt) const
   return (UpperLeft() <= pt && pt < LowerRight()) || m_planet_panel_container->InWindow(pt);
 }
 
-bool SidePanel::Render()
+void SidePanel::Render()
 {
   GG::Pt ul = UpperLeft(), lr = LowerRight();
   FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::SIDE_PANEL_COLOR, GG::CLR_ZERO, 0);
-
-  return true;
 }
 
 void SidePanel::SystemSelectionChanged(int selection)

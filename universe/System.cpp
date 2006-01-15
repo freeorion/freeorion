@@ -5,7 +5,7 @@
 
 #include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -51,12 +51,10 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
       throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
 }
    
-System::System(const GG::XMLElement& elem) : 
+System::System(const XMLElement& elem) : 
    UniverseObject(elem.Child("UniverseObject")),
    m_orbits(0)
 {
-    using GG::XMLElement;
-
     if (elem.Tag().find( "System" ) == std::string::npos )
         throw std::invalid_argument("Attempted to construct a System from an XMLElement that had a tag other than \"System\"");
 
@@ -66,8 +64,8 @@ System::System(const GG::XMLElement& elem) :
         Visibility vis = Visibility(lexical_cast<int>(elem.Child("UniverseObject").Child("vis").Text()));
         if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
             m_orbits = lexical_cast<int>(elem.Child("m_orbits").Text());
-            m_objects = GG::MultimapFromString<int, int>(elem.Child("m_objects").Text());
-            m_starlanes_wormholes = GG::MapFromString<int, bool>(elem.Child("m_starlanes_wormholes").Text());
+            m_objects = MultimapFromString<int, int>(elem.Child("m_objects").Text());
+            m_starlanes_wormholes = MapFromString<int, bool>(elem.Child("m_starlanes_wormholes").Text());
         }      
     } catch (const boost::bad_lexical_cast& e) {
         Logger().debugStream() << "Caught boost::bad_lexical_cast in System::System(); bad XMLElement was:";
@@ -213,9 +211,8 @@ UniverseObject::Visibility System::GetVisibility(int empire_id) const
         return NO_VISIBILITY;
 }
 
-GG::XMLElement System::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement System::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
-   using GG::XMLElement;
    using boost::lexical_cast;
    using std::string;
 
@@ -226,12 +223,12 @@ GG::XMLElement System::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) cons
    retval.AppendChild(XMLElement("m_star", lexical_cast<std::string>(m_star)));
    if (vis == PARTIAL_VISIBILITY) {
       retval.AppendChild(XMLElement("m_orbits", lexical_cast<std::string>(m_orbits)));
-      retval.AppendChild(XMLElement("m_objects", GG::StringFromMultimap<int, int>(PartiallyVisibleObjects(empire_id))));
-      retval.AppendChild(XMLElement("m_starlanes_wormholes", GG::StringFromMap<int, bool>(VisibleStarlanes(empire_id))));
+      retval.AppendChild(XMLElement("m_objects", StringFromMultimap<int, int>(PartiallyVisibleObjects(empire_id))));
+      retval.AppendChild(XMLElement("m_starlanes_wormholes", StringFromMap<int, bool>(VisibleStarlanes(empire_id))));
    } else if (vis == FULL_VISIBILITY) {
       retval.AppendChild(XMLElement("m_orbits", lexical_cast<std::string>(m_orbits)));
-      retval.AppendChild(XMLElement("m_objects", GG::StringFromMultimap<int, int>(m_objects)));
-      retval.AppendChild(XMLElement("m_starlanes_wormholes", GG::StringFromMap<int, bool>(m_starlanes_wormholes)));
+      retval.AppendChild(XMLElement("m_objects", StringFromMultimap<int, int>(m_objects)));
+      retval.AppendChild(XMLElement("m_starlanes_wormholes", StringFromMap<int, bool>(m_starlanes_wormholes)));
    }
    return retval;
 }

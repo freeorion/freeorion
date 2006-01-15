@@ -3,16 +3,17 @@
 #include "../util/AppInterface.h"
 #include "../universe/Building.h"
 #include "CUISpin.h"
-#include "GGDrawUtil.h"
-#include "GGStaticGraphic.h"
 #include "../universe/Effect.h"
 #include "../client/human/HumanClientApp.h"
-#include "GGLayout.h"
 #include "MapWnd.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/ShipDesign.h"
 #include "SidePanel.h"
 #include "TechWnd.h"
+
+#include <GG/DrawUtil.h>
+#include <GG/Layout.h>
+#include <GG/StaticGraphic.h>
 
 #include <boost/format.hpp>
 
@@ -26,7 +27,7 @@ namespace {
         BuildableItemsListBox(int x, int y, int w, int h) :
             CUIListBox(x, y, w, h)
         {}
-        virtual void GainingFocus() {ClearSelection();}
+        virtual void GainingFocus() {DeselectAll();}
     };
 }
 
@@ -38,7 +39,7 @@ class BuildDesignatorWnd::BuildDetailPanel : public GG::Wnd
 public:
     BuildDetailPanel(int w, int h);
     int QueueIndexShown() const;
-    virtual bool Render();
+    virtual void Render();
     void SelectedBuildLocation(int location);
     void SetBuildItem(BuildType build_type, const std::string& item);
     void SetBuild(int queue_idx);
@@ -76,7 +77,7 @@ private:
 };
 
 BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
-    Wnd(0, 0, w, h, GG::Wnd::CLICKABLE),
+    Wnd(0, 0, w, h, GG::CLICKABLE),
     m_build_type(INVALID_BUILD_TYPE),
     m_item(""),
     m_queue_idx(-1),
@@ -85,18 +86,19 @@ BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
     const int NAME_PTS = ClientUI::PTS + 8;
     const int COST_PTS = ClientUI::PTS;
     const int BUTTON_WIDTH = 150;
-    m_item_name_text = new GG::TextControl(1, 0, w - 1 - BUTTON_WIDTH, NAME_PTS + 4, "", ClientUI::FONT_BOLD, NAME_PTS, ClientUI::TEXT_COLOR);
-    m_cost_text = new GG::TextControl(1, m_item_name_text->LowerRight().y, w - 1 - BUTTON_WIDTH, COST_PTS + 4, "", ClientUI::FONT, COST_PTS, ClientUI::TEXT_COLOR);
+    boost::shared_ptr<GG::Font> default_font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
+    m_item_name_text = new GG::TextControl(1, 0, w - 1 - BUTTON_WIDTH, NAME_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT_BOLD, NAME_PTS), ClientUI::TEXT_COLOR);
+    m_cost_text = new GG::TextControl(1, m_item_name_text->LowerRight().y, w - 1 - BUTTON_WIDTH, COST_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, COST_PTS), ClientUI::TEXT_COLOR);
     m_add_to_queue_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"));
     m_recenter_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, UserString("PRODUCTION_DETAIL_CENTER_ON_BUILD"));
     m_recenter_button->Disable();
     m_add_to_queue_button->Disable();
     m_num_items_to_build = new CUISpin<int>(0, 0, 75, 1, 1, 1, 1000, true);
-    m_num_items_to_build->MoveTo(1, h - m_num_items_to_build->Height() - 1);
+    m_num_items_to_build->MoveTo(GG::Pt(1, h - m_num_items_to_build->Height() - 1));
     m_num_items_to_build_label = new GG::TextControl(m_num_items_to_build->LowerRight().x + 3, m_num_items_to_build->UpperLeft().y + (m_num_items_to_build->Height() - (NAME_PTS + 4)) / 2, w - 1 - BUTTON_WIDTH - 3 - (m_num_items_to_build->LowerRight().x + 3), NAME_PTS + 4,
-                                                     UserString("PRODUCTION_DETAIL_NUMBER_TO_BUILD"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
+                                                     UserString("PRODUCTION_DETAIL_NUMBER_TO_BUILD"), default_font, ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_build_location_name_text = new GG::TextControl(w - 1 - BUTTON_WIDTH, m_num_items_to_build->UpperLeft().y + (m_num_items_to_build->Height() - (NAME_PTS + 4)) / 2, BUTTON_WIDTH, ClientUI::PTS + 4,
-                                                     "", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+                                                     "", default_font, ClientUI::TEXT_COLOR);
     m_description_box = new CUIMultiEdit(1, m_cost_text->LowerRight().y, w - 2 - BUTTON_WIDTH, m_num_items_to_build_label->UpperLeft().y - 2 - m_cost_text->LowerRight().y, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
@@ -122,11 +124,10 @@ int BuildDesignatorWnd::BuildDetailPanel::QueueIndexShown() const
     return m_queue_idx;
 }
 
-bool BuildDesignatorWnd::BuildDetailPanel::Render()
+void BuildDesignatorWnd::BuildDetailPanel::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WND_COLOR, GG::CLR_ZERO, 0);
-    return true;
 }
 
 void BuildDesignatorWnd::BuildDetailPanel::SelectedBuildLocation(int location)
@@ -373,7 +374,7 @@ private:
 
     void PopulateList(BuildType build_type, bool keep_selection);
     void BuildItemSelected(const std::set<int>& selections);
-    void BuildItemDoubleClicked(int row_index, const boost::shared_ptr<GG::ListBox::Row>& row);
+    void BuildItemDoubleClicked(int row_index, GG::ListBox::Row* row);
 
     BuildType                              m_current_build_type;
     std::vector<CUIButton*>                m_build_category_buttons;
@@ -395,7 +396,7 @@ void BuildDesignatorWnd::BuildSelector::CategoryClickedFunctor::operator()()
 }
 
 BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
-    CUI_Wnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), 0, 0, w, h, GG::Wnd::CLICKABLE | CUI_Wnd::MINIMIZABLE),
+    CUI_Wnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), 0, 0, w, h, GG::CLICKABLE | CUI_Wnd::MINIMIZABLE),
     m_current_build_type(BT_BUILDING)
 {
     GG::Pt client_size(w - BORDER_LEFT - BORDER_RIGHT, h - BORDER_TOP - BORDER_BOTTOM);
@@ -432,12 +433,12 @@ void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
         m_original_ul = UpperLeft() - (Parent() ? Parent()->ClientUpperLeft() : GG::Pt());
         GG::Pt original_lr = m_original_ul + m_original_size;
         GG::Pt new_size(Width(), BORDER_TOP);
-        SetMinSize(new_size.x, new_size.y);
+        SetMinSize(GG::Pt(new_size.x, new_size.y));
         SizeMove(original_lr - new_size, original_lr);
         if (m_close_button)
-            m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
+            m_close_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET));
         if (m_minimize_button)
-            m_minimize_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET);
+            m_minimize_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET));
         Hide();
         Show(false);
         if (m_close_button)
@@ -449,9 +450,9 @@ void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
         SetMinSize(GG::Pt(Width(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
         SizeMove(m_original_ul, m_original_ul + m_original_size);
         if (m_close_button)
-            m_close_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
+            m_close_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET));
         if (m_minimize_button)
-            m_minimize_button->MoveTo(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET);
+            m_minimize_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET));
         Show();
         m_minimized = false;
     }
@@ -468,7 +469,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
     std::string selected_row_data_type;
     int row_to_select = -1;
     if (keep_selection && build_type == m_current_build_type && m_buildable_items->Selections().size() == 1) {
-        selected_row_data_type = m_buildable_items->GetRow(*m_buildable_items->Selections().begin()).data_type;
+        selected_row_data_type = m_buildable_items->GetRow(*m_buildable_items->Selections().begin()).DragDropDataType();
     }
 
     m_current_build_type = build_type;
@@ -477,16 +478,17 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
     Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
+    boost::shared_ptr<GG::Font> default_font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
     int i = 0;
     if (build_type == BT_BUILDING || build_type == NUM_BUILD_TYPES) {
         Empire::BuildingTypeItr end_it = empire->BuildingTypeEnd();
         for (Empire::BuildingTypeItr it = empire->BuildingTypeBegin(); it != end_it; ++it, ++i) {
             GG::ListBox::Row* row = new GG::ListBox::Row();
-            row->data_type = *it;
-            row->push_back(UserString(*it), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+            row->SetDragDropDataType(*it);
+            row->push_back(UserString(*it), default_font, ClientUI::TEXT_COLOR);
             m_buildable_items->Insert(row);
             m_build_types[row] = BT_BUILDING;
-            if (row->data_type == selected_row_data_type)
+            if (row->DragDropDataType() == selected_row_data_type)
                 row_to_select = i;
         }
     }
@@ -494,21 +496,21 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
         Empire::ShipDesignItr end_it = empire->ShipDesignEnd();
         for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != end_it; ++it, ++i) {
             GG::ListBox::Row* row = new GG::ListBox::Row();
-            row->data_type = it->first;
-            row->push_back(it->first, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+            row->SetDragDropDataType(it->first);
+            row->push_back(it->first, default_font, ClientUI::TEXT_COLOR);
             m_buildable_items->Insert(row);
             m_build_types[row] = BT_SHIP;
-            if (row->data_type == selected_row_data_type)
+            if (row->DragDropDataType() == selected_row_data_type)
                 row_to_select = i;
         }
     }
     if (build_type == BT_ORBITAL || build_type == NUM_BUILD_TYPES) {
         GG::ListBox::Row* row = new GG::ListBox::Row();
-        row->data_type = "DEFENSE_BASE";
-        row->push_back(UserString(row->data_type), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+        row->SetDragDropDataType("DEFENSE_BASE");
+        row->push_back(UserString(row->DragDropDataType()), default_font, ClientUI::TEXT_COLOR);
         m_buildable_items->Insert(row);
         m_build_types[row] = BT_ORBITAL;
-        if (row->data_type == selected_row_data_type)
+        if (row->DragDropDataType() == selected_row_data_type)
             row_to_select = i;
     }
 
@@ -519,14 +521,14 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
 void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const std::set<int>& selections)
 {
     if (selections.size() == 1) {
-        boost::shared_ptr<GG::ListBox::Row> row = m_buildable_items->GetRowPtr(*selections.begin());
-        DisplayBuildItemSignal(m_build_types[row.get()], row->data_type);
+        GG::ListBox::Row* row = &m_buildable_items->GetRow(*selections.begin());
+        DisplayBuildItemSignal(m_build_types[row], row->DragDropDataType());
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(int row_index, const boost::shared_ptr<GG::ListBox::Row>& row)
+void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(int row_index, GG::ListBox::Row* row)
 {
-    RequestBuildItemSignal(m_build_types[row.get()], row->data_type, 1);
+    RequestBuildItemSignal(m_build_types[row], row->DragDropDataType(), 1);
 }
 
 
@@ -534,7 +536,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(int row_index, co
 // BuildDesignatorWnd
 //////////////////////////////////////////////////
 BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
-    Wnd(0, 0, w, h, GG::Wnd::CLICKABLE),
+    Wnd(0, 0, w, h, GG::CLICKABLE),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
     const int SIDE_PANEL_PLANET_RADIUS = SidePanel::MAX_PLANET_DIAMETER / 2;
@@ -543,7 +545,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     const int BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
     m_build_detail_panel = new BuildDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT);
     m_build_selector = new BuildSelector(CHILD_WIDTHS, BUILD_SELECTOR_HEIGHT);
-    m_build_selector->MoveTo(0, h - BUILD_SELECTOR_HEIGHT);
+    m_build_selector->MoveTo(GG::Pt(0, h - BUILD_SELECTOR_HEIGHT));
     m_side_panel = new SidePanel(CHILD_WIDTHS + SIDE_PANEL_PLANET_RADIUS, 0, MapWnd::SIDE_PANEL_WIDTH, h);
     m_side_panel->HiliteSelectedPlanet(true);
     m_side_panel->Hide();

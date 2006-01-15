@@ -33,7 +33,7 @@ protected:
 
 		bool			IsSelected() const;
 
-	    virtual bool	Render();
+	    virtual void	Render();
 		void			SetSelected(bool bSelected = true);
 
 	protected:

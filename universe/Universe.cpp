@@ -17,7 +17,7 @@
 #include "ShipDesign.h"
 #include "System.h"
 #include "UniverseObject.h"
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #ifdef FREEORION_BUILD_HUMAN
 #include "../client/human/HumanClientApp.h"
@@ -37,11 +37,11 @@
 
 namespace {
     // for UniverseObject factory
-    UniverseObject* NewBuilding(const GG::XMLElement& elem) {return new Building(elem);}
-    UniverseObject* NewFleet(const GG::XMLElement& elem)    {return new Fleet(elem);}
-    UniverseObject* NewPlanet(const GG::XMLElement& elem)   {return new Planet(elem);}
-    UniverseObject* NewShip(const GG::XMLElement& elem)     {return new Ship(elem);}
-    UniverseObject* NewSystem(const GG::XMLElement& elem)   {return new System(elem);}
+    UniverseObject* NewBuilding(const XMLElement& elem) {return new Building(elem);}
+    UniverseObject* NewFleet(const XMLElement& elem)    {return new Fleet(elem);}
+    UniverseObject* NewPlanet(const XMLElement& elem)   {return new Planet(elem);}
+    UniverseObject* NewShip(const XMLElement& elem)     {return new Ship(elem);}
+    UniverseObject* NewSystem(const XMLElement& elem)   {return new System(elem);}
 
     const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, s_universe_width]
     const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, s_universe_width]
@@ -876,7 +876,7 @@ Universe::Universe()
     m_last_allocated_id = -1;
 }
 
-Universe::Universe(const GG::XMLElement& elem)
+Universe::Universe(const XMLElement& elem)
 {
     m_factory.AddGenerator("Building", &NewBuilding);
     m_factory.AddGenerator("Fleet", &NewFleet);
@@ -893,10 +893,8 @@ Universe::~Universe()
         delete it->second;
 }
 
-void Universe::SetUniverse(const GG::XMLElement& elem)
+void Universe::SetUniverse(const XMLElement& elem)
 {
-    using GG::XMLElement;
-
     if (elem.Tag() != "Universe")
         throw std::invalid_argument("Attempted to construct a Universe from an XMLElement that had a tag other than \"Universe\"");
 
@@ -1003,9 +1001,8 @@ std::map<double, System*> Universe::ImmediateNeighbors(int system, int empire_id
     return std::map<double, System*>();
 }
 
-GG::XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
+XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 {
-    using GG::XMLElement;
     XMLElement retval("Universe");
     retval.AppendChild(XMLElement("s_universe_width", boost::lexical_cast<std::string>(s_universe_width)));
     retval.AppendChild(XMLElement("m_objects"));

@@ -29,7 +29,7 @@ class MultiplayerLobbyWnd : public CUI_Wnd
 public:
     /** \name Structors */ //@{
     MultiplayerLobbyWnd(bool host);
-    MultiplayerLobbyWnd(const GG::XMLElement& elem);
+    MultiplayerLobbyWnd(const XMLElement& elem);
     virtual ~MultiplayerLobbyWnd();
     //@}
     
@@ -39,7 +39,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool Render();
+    virtual void Render();
     virtual void Keypress(GG::Key key, Uint32 key_mods);
 
     void         HandleMessage(const Message& msg);
@@ -61,7 +61,7 @@ private:
     void SendUpdate();
     bool PlayerDataAcceptable() const;
     bool CanStart() const;
-    GG::XMLDoc LobbyUpdateDoc() const;
+    XMLDoc LobbyUpdateDoc() const;
 
     bool m_result;
 

@@ -7,7 +7,7 @@
 #include "System.h"
 #include "Special.h"
 #include "Universe.h"
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -49,11 +49,9 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
         throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
 }
 
-UniverseObject::UniverseObject(const GG::XMLElement& elem) :
+UniverseObject::UniverseObject(const XMLElement& elem) :
     StateChangedSignal(Universe::InhibitUniverseObjectSignals())
 {
-    using GG::XMLElement;
-
     if (elem.Tag() != "UniverseObject")
         throw std::invalid_argument("Attempted to construct a UniverseObject from an XMLElement that had tag: \"" +  elem.Tag() + "\"." );
 
@@ -67,8 +65,8 @@ UniverseObject::UniverseObject(const GG::XMLElement& elem) :
 
         if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
             m_name = elem.Child("m_name").Text();
-            m_owners = GG::ContainerFromString<std::set<int> >(elem.Child("m_owners").Text());
-            for (GG::XMLElement::const_child_iterator it = elem.Child("m_specials").child_begin(); it != elem.Child("m_specials").child_end(); ++it) {
+            m_owners = ContainerFromString<std::set<int> >(elem.Child("m_owners").Text());
+            for (XMLElement::const_child_iterator it = elem.Child("m_specials").child_begin(); it != elem.Child("m_specials").child_end(); ++it) {
                 m_specials.insert(it->Text());
             }
         }
@@ -150,10 +148,9 @@ UniverseObject::Visibility UniverseObject::GetVisibility(int empire_id) const
     return (ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? FULL_VISIBILITY : NO_VISIBILITY;
 }
 
-GG::XMLElement UniverseObject::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement UniverseObject::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
     // limited visibility object -- no owner info
-    using GG::XMLElement;
     using boost::lexical_cast;
 
     Visibility vis = GetVisibility(empire_id);
@@ -166,7 +163,7 @@ GG::XMLElement UniverseObject::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES
     retval.AppendChild(XMLElement("m_system_id", lexical_cast<std::string>(m_system_id)));
     if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
         retval.AppendChild(XMLElement("m_name", m_name));
-        retval.AppendChild(XMLElement("m_owners", GG::StringFromContainer<std::set<int> >(m_owners)));
+        retval.AppendChild(XMLElement("m_owners", StringFromContainer<std::set<int> >(m_owners)));
         retval.AppendChild(XMLElement("m_specials"));
         int i = 0;
         for (std::set<std::string>::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it) {

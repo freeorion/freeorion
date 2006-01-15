@@ -85,7 +85,7 @@ ResearchQueue::ResearchQueue() :
     m_total_RPs_spent(0.0)
 {}
 
-ResearchQueue::ResearchQueue(const GG::XMLElement& elem) :
+ResearchQueue::ResearchQueue(const XMLElement& elem) :
     m_projects_in_progress(0),
     m_total_RPs_spent(0.0)
 {
@@ -94,7 +94,7 @@ ResearchQueue::ResearchQueue(const GG::XMLElement& elem) :
 
     // note that this leaves the queue elements incompletely specified, and does not find values for m_projects_in_progress or m_total_RPs_spent.
     // the owner of this object must call Update() after this object is constructed
-    for (GG::XMLElement::const_child_iterator it = elem.Child("m_queue").child_begin(); it != elem.Child("m_queue").child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.Child("m_queue").child_begin(); it != elem.Child("m_queue").child_end(); ++it) {
         push_back(GetTech(it->Tag()));
     }
 }
@@ -152,9 +152,9 @@ ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
     return end();
 }
 
-GG::XMLElement ResearchQueue::XMLEncode() const
+XMLElement ResearchQueue::XMLEncode() const
 {
-    GG::XMLElement retval("ResearchQueue");
+    XMLElement retval("ResearchQueue");
     retval.AppendChild("m_queue");
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
         retval.LastChild().AppendChild(m_queue[i].get<0>()->Name());
@@ -256,7 +256,7 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::stri
     name(name_)
 {}
 
-ProductionQueue::ProductionItem::ProductionItem(const GG::XMLElement& elem)
+ProductionQueue::ProductionItem::ProductionItem(const XMLElement& elem)
 {
     if (elem.Tag() != "ProductionItem")
         throw std::invalid_argument("Attempted to construct a ProductionQueue::ProductionItem from an XMLElement that had a tag other than \"ProductionItem\"");
@@ -265,11 +265,11 @@ ProductionQueue::ProductionItem::ProductionItem(const GG::XMLElement& elem)
     name = elem.Child("name").Text();
 }
 
-GG::XMLElement ProductionQueue::ProductionItem::XMLEncode() const
+XMLElement ProductionQueue::ProductionItem::XMLEncode() const
 {
-    GG::XMLElement retval("ProductionItem");
-    retval.AppendChild(GG::XMLElement("build_type", boost::lexical_cast<std::string>(build_type)));
-    retval.AppendChild(GG::XMLElement("name", name));
+    XMLElement retval("ProductionItem");
+    retval.AppendChild(XMLElement("build_type", boost::lexical_cast<std::string>(build_type)));
+    retval.AppendChild(XMLElement("name", name));
     return retval;
 }
 
@@ -303,7 +303,7 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int or
     turns_left_to_completion(-1)
 {}
 
-ProductionQueue::Element::Element(const GG::XMLElement& elem) :
+ProductionQueue::Element::Element(const XMLElement& elem) :
     spending(0.0),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1)
@@ -318,13 +318,13 @@ ProductionQueue::Element::Element(const GG::XMLElement& elem) :
     location = boost::lexical_cast<int>(elem.Child("location").Text());
 }
 
-GG::XMLElement ProductionQueue::Element::XMLEncode() const
+XMLElement ProductionQueue::Element::XMLEncode() const
 {
-    GG::XMLElement retval("Element");
-    retval.AppendChild(GG::XMLElement("item", item.XMLEncode()));
-    retval.AppendChild(GG::XMLElement("ordered", boost::lexical_cast<std::string>(ordered)));
-    retval.AppendChild(GG::XMLElement("remaining", boost::lexical_cast<std::string>(remaining)));
-    retval.AppendChild(GG::XMLElement("location", boost::lexical_cast<std::string>(location)));
+    XMLElement retval("Element");
+    retval.AppendChild(XMLElement("item", item.XMLEncode()));
+    retval.AppendChild(XMLElement("ordered", boost::lexical_cast<std::string>(ordered)));
+    retval.AppendChild(XMLElement("remaining", boost::lexical_cast<std::string>(remaining)));
+    retval.AppendChild(XMLElement("location", boost::lexical_cast<std::string>(location)));
     return retval;
 }
 
@@ -335,7 +335,7 @@ ProductionQueue::ProductionQueue() :
     m_total_PPs_spent(0.0)
 {}
 
-ProductionQueue::ProductionQueue(const GG::XMLElement& elem) :
+ProductionQueue::ProductionQueue(const XMLElement& elem) :
     m_projects_in_progress(0),
     m_total_PPs_spent(0.0)
 {
@@ -344,7 +344,7 @@ ProductionQueue::ProductionQueue(const GG::XMLElement& elem) :
 
     // note that this leaves the queue elements incompletely specified, and does not find values for m_projects_in_progress or m_total_PPs_spent.
     // the owner of this object must call Update() after this object is constructed
-    for (GG::XMLElement::const_child_iterator it = elem.Child("m_queue").child_begin(); it != elem.Child("m_queue").child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.Child("m_queue").child_begin(); it != elem.Child("m_queue").child_end(); ++it) {
         m_queue.push_back(Element(it->Child(0)));
     }
 }
@@ -402,12 +402,12 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject(const Empire
     return end();
 }
 
-GG::XMLElement ProductionQueue::XMLEncode() const
+XMLElement ProductionQueue::XMLEncode() const
 {
-    GG::XMLElement retval("ProductionQueue");
+    XMLElement retval("ProductionQueue");
     retval.AppendChild("m_queue");
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
-        retval.LastChild().AppendChild(GG::XMLElement("Element" + boost::lexical_cast<std::string>(i), m_queue[i].XMLEncode()));
+        retval.LastChild().AppendChild(XMLElement("Element" + boost::lexical_cast<std::string>(i), m_queue[i].XMLEncode()));
     }
     return retval;
 }
@@ -533,7 +533,7 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_trade_resource_pool()
 {}
 
-Empire::Empire(const GG::XMLElement& elem) :
+Empire::Empire(const XMLElement& elem) :
     m_research_queue(elem.Child("m_research_queue").Child("ResearchQueue")),
     m_production_queue(elem.Child("m_production_queue").Child("ProductionQueue")),
     m_mineral_resource_pool(elem.Child("m_mineral_resource_pool").Child("MineralResourcePool")),
@@ -545,8 +545,6 @@ Empire::Empire(const GG::XMLElement& elem) :
 {
     if (elem.Tag() != "Empire")
         throw std::invalid_argument("Attempted to construct a Empire from an XMLElement that had a tag other than \"Empire\"");
-
-    using GG::XMLElement;
 
     m_id = lexical_cast<int>(elem.Child("m_id").Text());
     m_name = elem.Child("m_name").Text();
@@ -567,7 +565,7 @@ Empire::Empire(const GG::XMLElement& elem) :
         m_ship_designs[ship_design.name] = ship_design;
     }
 
-    m_explored_systems = GG::ContainerFromString<std::set<int> >(elem.Child("m_explored_systems").Text());
+    m_explored_systems = ContainerFromString<std::set<int> >(elem.Child("m_explored_systems").Text());
 
     const XMLElement& techs_elem = elem.Child("m_techs");
     for (int i = 0; i < techs_elem.NumChildren(); ++i) {
@@ -579,7 +577,7 @@ Empire::Empire(const GG::XMLElement& elem) :
         m_research_status[research_status_elem.Child(i).Tag()] = lexical_cast<double>(research_status_elem.Child(i).Text());
     }
 
-    m_production_status = GG::ContainerFromString<std::vector<double> >(elem.Child("m_production_status").Text());
+    m_production_status = ContainerFromString<std::vector<double> >(elem.Child("m_production_status").Text());
 
     const XMLElement& building_types_elem = elem.Child("m_building_types");
     for (int i = 0; i < building_types_elem.NumChildren(); ++i) {
@@ -963,9 +961,8 @@ void Empire::ClearSitRep()
     m_sitrep_entries.clear();
 }
 
-GG::XMLElement Empire::XMLEncode() const
+XMLElement Empire::XMLEncode() const
 {
-    using GG::XMLElement;
     using boost::lexical_cast;
 
     XMLElement retval("Empire");
@@ -986,7 +983,7 @@ GG::XMLElement Empire::XMLEncode() const
         retval.LastChild().AppendChild(XMLElement("design" + lexical_cast<std::string>(i++), it->second.XMLEncode()));
     }
 
-    retval.AppendChild(XMLElement("m_explored_systems", GG::StringFromContainer<std::set<int> >(m_explored_systems)));
+    retval.AppendChild(XMLElement("m_explored_systems", StringFromContainer<std::set<int> >(m_explored_systems)));
     retval.AppendChild(XMLElement("m_techs"));
     i = 0;
     for (TechItr it = TechBegin(); it != TechEnd(); ++it) {
@@ -1000,7 +997,7 @@ GG::XMLElement Empire::XMLEncode() const
     }
 
     retval.AppendChild(XMLElement("m_production_queue", m_production_queue.XMLEncode()));
-    retval.AppendChild(XMLElement("m_production_status", GG::StringFromContainer(m_production_status)));
+    retval.AppendChild(XMLElement("m_production_status", StringFromContainer(m_production_status)));
 
     retval.AppendChild(XMLElement("m_building_types"));
     i = 0;
@@ -1018,7 +1015,7 @@ GG::XMLElement Empire::XMLEncode() const
     return retval;
 }
 
-GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
+XMLElement Empire::XMLEncode(const Empire& viewer) const
 {
     // same empire --->  call other version
     if (viewer.EmpireID() == this->EmpireID())
@@ -1026,7 +1023,6 @@ GG::XMLElement Empire::XMLEncode(const Empire& viewer) const
         return XMLEncode();
     }
     
-    using GG::XMLElement;
     using boost::lexical_cast;
 
     XMLElement retval("Empire");

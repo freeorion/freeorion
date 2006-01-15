@@ -19,9 +19,9 @@ namespace {
             if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
                 settings_dir += '/';
             std::ifstream ifs((settings_dir + "buildings.xml").c_str());
-            GG::XMLDoc doc;
+            XMLDoc doc;
             doc.ReadDoc(ifs);
-            for (GG::XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
+            for (XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
                 if (it->Tag() != "BuildingType")
                     throw std::runtime_error("ERROR: Encountered non-BuildingType in buildings.xml!");
                 BuildingType* building_type = 0;
@@ -68,7 +68,7 @@ Building::Building(int empire_id, const std::string& building_type, int planet_i
    AddOwner(empire_id);
 }
 
-Building::Building(const GG::XMLElement& elem) :
+Building::Building(const XMLElement& elem) :
     UniverseObject(elem.Child("UniverseObject"))
 {
     if (elem.Tag().find("Building") == std::string::npos )
@@ -110,9 +110,8 @@ Planet* Building::GetPlanet() const
     return m_planet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Planet>(m_planet_id);
 }
 
-GG::XMLElement Building::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement Building::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
-    using GG::XMLElement;
     using boost::lexical_cast;
 
     XMLElement retval("Building" + lexical_cast<std::string>(ID()));
@@ -172,7 +171,7 @@ BuildingType::BuildingType(const std::string& name, const std::string& descripti
 {
 }
 
-BuildingType::BuildingType(const GG::XMLElement& elem)
+BuildingType::BuildingType(const XMLElement& elem)
 {
     if (elem.Tag() != "BuildingType")
         throw std::invalid_argument("Attempted to construct a BuildingType from an XMLElement that had a tag other than \"BuildingType\"");
@@ -184,7 +183,7 @@ BuildingType::BuildingType(const GG::XMLElement& elem)
     m_build_cost = lexical_cast<double>(elem.Child("build_cost").Text());
     m_build_time = lexical_cast<int>(elem.Child("build_time").Text());
     m_maintenance_cost = lexical_cast<double>(elem.Child("maintenance_cost").Text());
-    for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
         m_effects.push_back(boost::shared_ptr<const Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
     }
     m_graphic = elem.Child("graphic").Text();

@@ -7,23 +7,22 @@
 #include "CUIControls.h"
 #include "../universe/Fleet.h"
 #include "FleetWindow.h"
-#include "GGApp.h"
-#include "GGClr.h"
-#include "GGDrawUtil.h"
-#include "dialogs/GGThreeButtonDlg.h"
 #include "IntroScreen.h"
 #include "MapWnd.h"
 #include "SidePanel.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
-#include "ToolWnd.h"
-#include "ToolContainer.h"
 #include "TurnProgressWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+
+#include <GG/GUI.h>
+#include <GG/Clr.h>
+#include <GG/DrawUtil.h>
+#include <GG/dialogs/ThreeButtonDlg.h>
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -236,8 +235,6 @@ namespace {
 ////////////////////////////////////////////////
 //Init and Cleanup//////////////////////////////////////
 ClientUI::ClientUI() :
-    TOOLTIP_DELAY(GetOptionsDB().Get<int>("UI.tooltip-delay")), // 1 second delay for tooltips to appear
-    m_tooltips(0),
     m_state(STATE_STARTUP),
     m_intro_screen(0),
     m_map_wnd(0),
@@ -287,15 +284,12 @@ ClientUI::ClientUI() :
 
 bool ClientUI::Initialize()
 {
-    //initialize Tooltip engine
-    m_tooltips = new ToolContainer(TOOLTIP_DELAY);
-
     //initialize UI state & window
     m_state = STATE_STARTUP;
 
 #ifndef FREEORION_BUILD_UTIL
     m_map_wnd = new MapWnd();
-    GG::App::GetApp()->Register(m_map_wnd);
+    GG::GUI::GetGUI()->Register(m_map_wnd);
     m_map_wnd->Hide();
 #endif
 
@@ -309,9 +303,6 @@ ClientUI::~ClientUI()
 
 bool ClientUI::Cleanup()
 {
-    delete m_tooltips;
-    m_tooltips = 0;
-    
 #ifndef FREEORION_BUILD_UTIL
     delete m_intro_screen;
     m_intro_screen = 0;
@@ -328,14 +319,9 @@ bool ClientUI::Cleanup()
     return true; 
 }
 
-bool ClientUI::AttachToolWnd(GG::Wnd* parent, ToolWnd* tool)
+XMLElement ClientUI::SaveGameData() const
 {
-    return (m_tooltips ? m_tooltips->AttachToolWnd(parent, tool) : false);
-}
-
-GG::XMLElement ClientUI::SaveGameData() const
-{
-    GG::XMLElement retval("UI");
+    XMLElement retval("UI");
 #ifndef FREEORION_BUILD_UTIL
     retval.AppendChild(m_map_wnd->SaveGameData());
 #endif
@@ -453,7 +439,7 @@ void ClientUI::InitTurn( int turn_number )
 #endif
 }
 
-void ClientUI::RestoreFromSaveData(const GG::XMLElement& elem)
+void ClientUI::RestoreFromSaveData(const XMLElement& elem)
 {
 #ifndef FREEORION_BUILD_UTIL
     m_map_wnd->RestoreFromSaveData(elem.Child("MapWnd"));
@@ -509,14 +495,14 @@ void ClientUI::SwitchState(State state)
         m_previously_shown_system = UniverseObject::INVALID_OBJECT_ID;
         if (!m_intro_screen) {
             m_intro_screen = new IntroScreen();
-            GG::App::GetApp()->Register(m_intro_screen);
+            GG::GUI::GetGUI()->Register(m_intro_screen);
         }
         m_intro_screen->Show();
         break;
     case STATE_TURNSTART:
         if (!m_turn_progress_wnd) {
             m_turn_progress_wnd = new TurnProgressWnd();
-            GG::App::GetApp()->Register(m_turn_progress_wnd);
+            GG::GUI::GetGUI()->Register(m_turn_progress_wnd);
         }
         m_turn_progress_wnd->Show();
         break;
@@ -531,7 +517,7 @@ void ClientUI::SwitchState(State state)
         m_map_wnd->Sanitize();
         if (!m_turn_progress_wnd) {
             m_turn_progress_wnd = new TurnProgressWnd();
-            GG::App::GetApp()->Register(m_turn_progress_wnd);
+            GG::GUI::GetGUI()->Register(m_turn_progress_wnd);
         }
         m_turn_progress_wnd->UpdateTurnProgress(UserString(m_state == STATE_NEW_GAME ? "NEW_GAME" : "LOADING"), -1);
         m_turn_progress_wnd->Show();
@@ -588,8 +574,8 @@ void ClientUI::ScreenLoad()
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)
 {
-    GG::ThreeButtonDlg dlg(320,200,message,FONT,PTS+2,WND_COLOR, WND_BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
-                           new CUIButton((320-75)/2, 170, 75, UserString("OK")));
+    GG::ThreeButtonDlg dlg(320,200,message,GG::GUI::GetGUI()->GetFont(FONT,PTS+2),WND_COLOR, WND_BORDER_COLOR, CTRL_COLOR, TEXT_COLOR, 1,
+                           UserString("OK"));
 #ifndef FREEORION_BUILD_UTIL
     if (play_alert_sound && GetOptionsDB().Get<bool>("UI.sound.enabled"))
         HumanClientApp::GetApp()->PlaySound(SoundDir() + "alert.wav");
@@ -651,7 +637,7 @@ ClientUI::GetNumberedTexture(const std::string& dir_name, const std::map<int, st
     int star_variant = image_names[type].second!=0?(hash_key % image_names[type].second):0;
     std::string filename = ClientUI::ART_DIR + "stars/" + 
         image_names[type].first + lexical_cast<string>(star_variant + 1) + ".png";
-    return GG::App::GetApp()->GetTexture(filename);
+    return GG::GUI::GetGUI()->GetTexture(filename);
 }
 
 const std::string& ClientUI::SoundDir()

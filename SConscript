@@ -43,7 +43,8 @@ common_sources = [
     'util/SitRepEntry.cpp',
     'util/VarText.cpp',
     'util/binreloc.c',
-    'util/Directories.cpp'
+    'util/Directories.cpp',
+    'util/XMLDoc.cpp'
     ]
 
 if env['target_define'] == 'FREEORION_BUILD_SERVER':
@@ -101,8 +102,6 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'UI/Splash.cpp',
         'UI/SystemIcon.cpp',
         'UI/TechWnd.cpp',
-        'UI/ToolContainer.cpp',
-        'UI/ToolWnd.cpp',
         'UI/TurnProgressWnd.cpp',
         'universe/Universe.cpp',
         'util/AppInterface.cpp'

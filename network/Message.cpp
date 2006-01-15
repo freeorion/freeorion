@@ -10,18 +10,18 @@
 #include <sstream>
 
 namespace {
-    void AddVersionInfo(GG::XMLDoc& doc)
+    void AddVersionInfo(XMLDoc& doc)
     {
         std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
         if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
             settings_dir += '/';
         const std::vector<std::string>& settings_files = VersionSensitiveSettingsFiles();
         for (unsigned int i = 0; i < settings_files.size(); ++i) {
-            doc.root_node.AppendChild(GG::XMLElement(settings_files[i], MD5FileSum(settings_dir + settings_files[i])));
+            doc.root_node.AppendChild(XMLElement(settings_files[i], MD5FileSum(settings_dir + settings_files[i])));
         }
         const std::map<std::string, std::string>& source_files = SourceFiles();
         for (std::map<std::string, std::string>::const_iterator it = source_files.begin(); it != source_files.end(); ++it) {
-            doc.root_node.AppendChild(GG::XMLElement(it->first, it->second));
+            doc.root_node.AppendChild(XMLElement(it->first, it->second));
         }
     }
 
@@ -83,7 +83,7 @@ Message::Message(MessageType msg_type, int sender, int receiver, ModuleType modu
     m_uncompressed_size = text.size();
 }
 
-Message::Message(MessageType msg_type, int sender, int receiver, ModuleType module, const GG::XMLDoc& doc,  MessageType response_msg) : 
+Message::Message(MessageType msg_type, int sender, int receiver, ModuleType module, const XMLDoc& doc,  MessageType response_msg) : 
     m_message_type(msg_type),
     m_sending_player(sender),
     m_receiving_player(receiver),
@@ -183,42 +183,42 @@ void Message::DecompressMessage(std::string& uncompressed_msg) const
 ////////////////////////////////////////////////
 // Message-Creation Free Functions
 ////////////////////////////////////////////////
-Message HostGameMessage(int player_id, const GG::XMLDoc& game_parameters)
+Message HostGameMessage(int player_id, const XMLDoc& game_parameters)
 {
-    GG::XMLDoc doc(game_parameters);
+    XMLDoc doc(game_parameters);
     AddVersionInfo(doc);
     return Message(Message::HOST_GAME, player_id, -1, Message::CORE, doc);
 }
 
 Message HostGameMessage(int player_id, const std::string& host_player_name)
 {
-    GG::XMLDoc doc;
-    doc.root_node.AppendChild(GG::XMLElement("host_player_name", host_player_name));
+    XMLDoc doc;
+    doc.root_node.AppendChild(XMLElement("host_player_name", host_player_name));
     AddVersionInfo(doc);
     return Message(Message::HOST_GAME, player_id, -1, Message::CORE, doc);
 }
 
 Message JoinGameMessage(const std::string& player_name)
 {
-    GG::XMLDoc doc;
-    doc.root_node.AppendChild(GG::XMLElement("player_name", player_name));
+    XMLDoc doc;
+    doc.root_node.AppendChild(XMLElement("player_name", player_name));
     AddVersionInfo(doc);
     return Message(Message::JOIN_GAME, -1, -1, Message::CORE, doc);
 }
 
-Message JoinGameSetup(const GG::XMLDoc& player_setup)
+Message JoinGameSetup(const XMLDoc& player_setup)
 {
-    GG::XMLDoc doc(player_setup);
+    XMLDoc doc(player_setup);
     AddVersionInfo(doc);
     return Message(Message::JOIN_GAME, -1, -1, Message::CORE, doc);
 }
 
-Message VersionConflictMessage(int player_id, const GG::XMLDoc& conflict_details)
+Message VersionConflictMessage(int player_id, const XMLDoc& conflict_details)
 {
     return Message(Message::SERVER_STATUS, -1, player_id, Message::CORE, conflict_details);
 }
 
-Message GameStartMessage(int player_id, const GG::XMLDoc& start_data)
+Message GameStartMessage(int player_id, const XMLDoc& start_data)
 {
     return Message(Message::GAME_START, -1, player_id, Message::CORE, start_data);
 }
@@ -235,8 +235,8 @@ Message JoinAckMessage(int player_id)
 
 Message RenameMessage(int player_id, const std::string& new_name)
 {
-    GG::XMLDoc doc;
-    doc.root_node.AppendChild(GG::XMLElement("new_name", new_name));
+    XMLDoc doc;
+    doc.root_node.AppendChild(XMLElement("new_name", new_name));
     return Message(Message::SERVER_STATUS, -1, player_id, Message::CORE, doc);
 }
 
@@ -250,7 +250,7 @@ Message VictoryMessage(int receiver)
     return Message(Message::END_GAME, -1, receiver, Message::CORE, "VICTORY");
 }
 
-Message TurnOrdersMessage(int sender, int receiver, const GG::XMLDoc& orders_data)
+Message TurnOrdersMessage(int sender, int receiver, const XMLDoc& orders_data)
 {
     return Message(Message::TURN_ORDERS, sender, receiver, Message::CORE, orders_data);
 }
@@ -259,19 +259,19 @@ Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, 
 {
     /// Turn progres message sends down message ID instead of text for faster transfer
     /// The data is a number indicating the phase being started and the empire ID
-    GG::XMLDoc doc;
+    XMLDoc doc;
 
-    GG::XMLElement phase_id_elt("phase_id");
+    XMLElement phase_id_elt("phase_id");
     phase_id_elt.SetAttribute("value", boost::lexical_cast<std::string>(phase_id));
     doc.root_node.AppendChild( phase_id_elt );
 
-    GG::XMLElement empire_id_elt("empire_id");
+    XMLElement empire_id_elt("empire_id");
     empire_id_elt.SetAttribute("value", boost::lexical_cast<std::string>(empire_id));
     doc.root_node.AppendChild( empire_id_elt );
     return Message(Message::TURN_PROGRESS, -1, player_id, Message::CORE, doc);
 }
 
-Message TurnUpdateMessage(int player_id, const GG::XMLDoc& start_data)
+Message TurnUpdateMessage(int player_id, const XMLDoc& start_data)
 {
     return Message(Message::TURN_UPDATE, -1, player_id, Message::CORE, start_data);
 }
@@ -301,7 +301,7 @@ Message ServerSaveGameMessage(int receiver, bool done/* = false*/)
     return Message(Message::SAVE_GAME, -1, receiver, done ? Message::CLIENT_SYNCHRONOUS_RESPONSE : Message::CORE, "");
 }
 
-Message ServerLoadGameMessage(int receiver, const GG::XMLDoc& data)
+Message ServerLoadGameMessage(int receiver, const XMLDoc& data)
 {
     return Message(Message::LOAD_GAME, -1, receiver, Message::CORE, data);
 }
@@ -331,28 +331,28 @@ Message PlayerEliminatedMessage(int receiver, const std::string& empire_name)
 // Multiplayer Lobby Messages
 ////////////////////////////////////////////////
 
-Message LobbyUpdateMessage(int sender, const GG::XMLDoc& doc)
+Message LobbyUpdateMessage(int sender, const XMLDoc& doc)
 {
     return Message(Message::LOBBY_UPDATE, sender, -1, Message::CORE, doc);
 }
 
-Message ServerLobbyUpdateMessage(int receiver, const GG::XMLDoc& doc)
+Message ServerLobbyUpdateMessage(int receiver, const XMLDoc& doc)
 {
     return Message(Message::LOBBY_UPDATE, -1, receiver, Message::CLIENT_LOBBY_MODULE, doc);
 }
 
 Message LobbyChatMessage(int sender, int receiver, const std::string& text)
 {
-    GG::XMLDoc doc;
-    doc.root_node.AppendChild(GG::XMLElement("receiver", boost::lexical_cast<std::string>(receiver)));
-    doc.root_node.AppendChild(GG::XMLElement("text", text));
+    XMLDoc doc;
+    doc.root_node.AppendChild(XMLElement("receiver", boost::lexical_cast<std::string>(receiver)));
+    doc.root_node.AppendChild(XMLElement("text", text));
     return Message(Message::LOBBY_UPDATE, sender, -1, Message::CORE, doc);
 }
 
 Message ServerLobbyChatMessage(int sender, int receiver, const std::string& text)
 {
-    GG::XMLDoc doc;
-    doc.root_node.AppendChild(GG::XMLElement("sender", boost::lexical_cast<std::string>(sender)));
-    doc.root_node.AppendChild(GG::XMLElement("text", text));
+    XMLDoc doc;
+    doc.root_node.AppendChild(XMLElement("sender", boost::lexical_cast<std::string>(sender)));
+    doc.root_node.AppendChild(XMLElement("text", text));
     return Message(Message::LOBBY_UPDATE, -1, receiver, Message::CLIENT_LOBBY_MODULE, doc);
 }

@@ -35,7 +35,7 @@
 
 
 class XLut;
-namespace GG {class XMLDoc;}
+class XMLDoc;
 
 /** computes the difference between two XML documents.  The result of this computation reflects the changes that 
    must be made to argument 1 to recreate argument 2, so the result is analogous to arg2 - arg1. Only the 
@@ -82,8 +82,8 @@ namespace GG {class XMLDoc;}
 class XDiff
 {
 public:
-   /** ctor that takes two GG::XMLDoc's as input, and writes the result of the xdiff operation to \a output. */
-   XDiff(const GG::XMLDoc& doc1, const GG::XMLDoc& doc2, GG::XMLDoc& output);
+   /** ctor that takes two XMLDoc's as input, and writes the result of the xdiff operation to \a output. */
+   XDiff(const XMLDoc& doc1, const XMLDoc& doc2, XMLDoc& output);
    
    ~XDiff(); ///< dtor
 
@@ -132,9 +132,9 @@ private:
 };
 
 /** patches an old version of an XML doc with a diff to produce the new version.  Here new and old versions of
-   a doc refer to the parameters in the creation of the XDiff object that created \a diff.  So for GG::XMLDocs 
+   a doc refer to the parameters in the creation of the XDiff object that created \a diff.  So for XMLDocs 
    doc1, doc2, and diff, after executing XDiff(doc1, doc2, diff) and XPatch(doc1, diff), doc1 == doc2.*/
-void XPatch(GG::XMLDoc& old, const GG::XMLDoc& diff);
+void XPatch(XMLDoc& old, const XMLDoc& diff);
 
 #endif
 

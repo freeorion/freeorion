@@ -2,8 +2,8 @@
 #ifndef _Empire_h_
 #define _Empire_h_
 
-#ifndef _GGClr_h_
-#include "GGClr.h"
+#ifndef _GG_Clr_h_
+#include <GG/Clr.h>
 #endif
 
 #ifndef _ResourcePool_h_
@@ -19,7 +19,7 @@
 #endif
 
 #ifndef _XMLDoc_h_
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 #endif
 
 #include <boost/tuple/tuple.hpp>
@@ -46,7 +46,7 @@ struct ResearchQueue
 
     /** \name Structors */ //@{
     ResearchQueue(); ///< Basic ctor.
-    ResearchQueue(const GG::XMLElement& elem); ///< Constructs a ResearchQueue from an XMLElement.
+    ResearchQueue(const XMLElement& elem); ///< Constructs a ResearchQueue from an XMLElement.
     //@}
 
     /** \name Accessors */ //@{
@@ -64,7 +64,7 @@ struct ResearchQueue
     /** Returns an iterator to the underfunded research project, or end() if none exists. */
     const_iterator UnderfundedProject() const;
 
-    GG::XMLElement XMLEncode() const; ///< Encodes this queue as an XMLElement.
+    XMLElement XMLEncode() const; ///< Encodes this queue as an XMLElement.
     //@}
 
     /** \name Mutators */ //@{
@@ -100,9 +100,9 @@ struct ProductionQueue
     {
         ProductionItem(); ///< default ctor.
         ProductionItem(BuildType build_type_, std::string name_); ///< basic ctor.
-        ProductionItem(const GG::XMLElement& elem); ///< XML ctor.
+        ProductionItem(const XMLElement& elem); ///< XML ctor.
 
-        GG::XMLElement XMLEncode() const; ///< Encodes this item as an XMLElement.
+        XMLElement XMLEncode() const; ///< Encodes this item as an XMLElement.
 
         BuildType   build_type;
         std::string name;
@@ -114,9 +114,9 @@ struct ProductionQueue
         Element(); ///< default ctor.
         Element(ProductionItem item_, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_); ///< basic ctor.
-        Element(const GG::XMLElement& elem); ///< XML ctor.
+        Element(const XMLElement& elem); ///< XML ctor.
 
-        GG::XMLElement XMLEncode() const; ///< Encodes this element as an XMLElement.
+        XMLElement XMLEncode() const; ///< Encodes this element as an XMLElement.
 
         ProductionItem item;
         int            ordered;
@@ -136,7 +136,7 @@ struct ProductionQueue
 
     /** \name Structors */ //@{
     ProductionQueue(); ///< Basic ctor.
-    ProductionQueue(const GG::XMLElement& elem); ///< Constructs a ProductionQueue from an XMLElement.
+    ProductionQueue(const XMLElement& elem); ///< Constructs a ProductionQueue from an XMLElement.
     //@}
 
     /** \name Accessors */ //@{
@@ -154,7 +154,7 @@ struct ProductionQueue
     /** Returns an iterator to the underfunded production project, or end() if none exists. */
     const_iterator UnderfundedProject(const Empire* empire) const;
 
-    GG::XMLElement XMLEncode() const; ///< Encodes this queue as an XMLElement.
+    XMLElement XMLEncode() const; ///< Encodes this queue as an XMLElement.
     //@}
 
     /** \name Mutators */ //@{
@@ -247,7 +247,7 @@ public:
      * by the given XLMElement.  This XMLElement should have been created
      * by Empire::XMLEncode()
      */
-    Empire(const GG::XMLElement& elem);
+    Empire(const XMLElement& elem);
 
     //@}
     /** \name Destructors */ //@{
@@ -363,7 +363,7 @@ public:
      *
      *
      */
-    GG::XMLElement XMLEncode() const;
+    XMLElement XMLEncode() const;
 
 
     /// Encodes an empire into an XMLElement, from the perspective of another
@@ -374,7 +374,7 @@ public:
      *   If the viewer has the same empire ID as the host object
      *   then the return value is the same as the no-arg version of XMLEncode()
      */
-    GG::XMLElement XMLEncode(const Empire& viewer) const;
+    XMLElement XMLEncode(const Empire& viewer) const;
     //@}
 
 

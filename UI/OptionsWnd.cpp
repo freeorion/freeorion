@@ -7,10 +7,11 @@
 #include "../util/Directories.h"
 
 #include "ClientUI.h"
-#include "GGApp.h"
 #include "CUITabbedPages.h"
 #include "CUISpin.h"
-#include "dialogs/GGThreeButtonDlg.h"
+
+#include <GG/GUI.h>
+#include <GG/dialogs/ThreeButtonDlg.h>
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -144,9 +145,9 @@ void OptionsWnd::BrowseForSoundFileFunctor::operator()()
 
 OptionsWnd::OptionsWnd():
     CUI_Wnd(UserString("OPTIONS_TITLE"),
-            (GG::App::GetApp()->AppWidth() - (PAGE_WIDTH + 20)) / 2,
-            (GG::App::GetApp()->AppHeight() - (PAGE_HEIGHT + 70)) / 2,
-            PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::MODAL),
+            (GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + 20)) / 2,
+            (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + 70)) / 2,
+            PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::CLICKABLE | GG::DRAGABLE | GG::MODAL),
     m_end_with_done(false)
 {
     m_done_btn = new CUIButton(20, PAGE_HEIGHT + 35, 75, UserString("DONE"));
@@ -163,16 +164,16 @@ public:
 void OptionsWnd::AddSoundControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName,
                                   CUIEdit*& editControl, CUIButton*& btn, bool connect_file_browser/* = true*/)
 {
-	GG::TextControl* textControl = new GG::TextControl(x, y + 2, UserString(userString), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	GG::TextControl* textControl = new GG::TextControl(x, y + 2, UserString(userString), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	pageWnd->AttachChild(textControl);
 	btn = new CUIButton(260, y, textControl->Height(), "...");
-	btn->MoveTo(PAGE_WIDTH - btn->Width(), y);
+	btn->MoveTo(GG::Pt(PAGE_WIDTH - btn->Width(), y));
 	pageWnd->AttachChild(btn);
 	x += textControl->Width() + 5;
 	std::string path(GetOptionsDB().Get<std::string>(optionName));
 	if (!OptionPathToNativePath(path))
 		path = "";
-	editControl = new CUIEdit(x, y - 4, PAGE_WIDTH - btn->Width() - x - 5, 26, path);
+	editControl = new CUIEdit(x, y - 4, PAGE_WIDTH - btn->Width() - x - 5, path);
 	pageWnd->AttachChild(editControl);
     if (connect_file_browser)
         GG::Connect(btn->ClickedSignal, BrowseForSoundFileFunctor(optionName, editControl, this));
@@ -181,7 +182,7 @@ void OptionsWnd::AddSoundControls(int x, int y, const std::string& userString, G
 
 void OptionsWnd::AddColorControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName, ColorSelector*& comboColor)
 {
-	GG::TextControl* textControl = new GG::TextControl(x, y + 2, UserString(userString), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	GG::TextControl* textControl = new GG::TextControl(x, y + 2, UserString(userString), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	pageWnd->AttachChild(textControl);
     const int WIDTH = 75;
 	comboColor = new ColorSelector(PAGE_WIDTH - WIDTH, y, WIDTH, ClientUI::PTS + 4,
@@ -192,7 +193,7 @@ void OptionsWnd::AddColorControls(int x, int y, const std::string& userString, G
 
 void OptionsWnd::AddFolderControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName, CUIEdit*& editControl)
 {
-	GG::TextControl* textControl = new GG::TextControl(x, y + 2, UserString(userString), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	GG::TextControl* textControl = new GG::TextControl(x, y + 2, UserString(userString), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	pageWnd->AttachChild(textControl);
 	x += textControl->Width() + 5;
 	std::string path(GetOptionsDB().Get<std::string>(optionName));
@@ -200,7 +201,7 @@ void OptionsWnd::AddFolderControls(int x, int y, const std::string& userString, 
 		path = "";
 	else if (!path.empty() && (*path.rbegin() != SLASH))
 		path += SLASH;
-	editControl = new CUIEdit(x, y - 4, PAGE_WIDTH - x, 26, path);
+	editControl = new CUIEdit(x, y - 4, PAGE_WIDTH - x, path);
 	pageWnd->AttachChild(editControl);
 }
 void OptionsWnd::FillFontCombo(CUIDropDownList* combo, const std::string& option_name)
@@ -215,16 +216,16 @@ void OptionsWnd::FillFontCombo(CUIDropDownList* combo, const std::string& option
 void OptionsWnd::AddFontControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, CUIDropDownList*& combo,
                                  const std::string& optionName, const std::string& userStringSize, CUISpin<int>*& spin)
 {
-	GG::TextControl* textControl = new GG::TextControl(x, y + 3, UserString(userString), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	GG::TextControl* textControl = new GG::TextControl(x, y + 3, UserString(userString), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	pageWnd->AttachChild(textControl);
 	x += textControl->Width() + 5;
 	combo = new CUIDropDownList(x, y, 200, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
 	combo->SetStyle(GG::LB_NOSORT);
 	FillFontCombo(combo, optionName);
 	pageWnd->AttachChild(combo);
-	textControl = new GG::TextControl(x, y + 3, UserString(userStringSize), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
-	textControl->MoveTo(PAGE_WIDTH - 55 - textControl->Width(), y + 3);
-	combo->Resize(PAGE_WIDTH - 60 - textControl->Width() - x, combo->Height());
+	textControl = new GG::TextControl(x, y + 3, UserString(userStringSize), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
+	textControl->MoveTo(GG::Pt(PAGE_WIDTH - 55 - textControl->Width(), y + 3));
+	combo->Resize(GG::Pt(PAGE_WIDTH - 60 - textControl->Width() - x, combo->Height()));
 	pageWnd->AttachChild(textControl);
     spin = new CUISpin<int>(PAGE_WIDTH - 50, y - 1, 50, GetOptionsDB().Get<int>(optionName + "-size"), 1, 6, 72, true);
 	pageWnd->AttachChild(spin);
@@ -292,7 +293,7 @@ void OptionsWnd::Init()
 	control_page->AttachChild(stateBtn);
 	// Autosave
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(x, y, UserString("OPTIONS_AUTOSAVE"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y, UserString("OPTIONS_AUTOSAVE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	control_page->AttachChild(textControl);
 	// [x] Single Player [x] Multiplayer
 	y += PAGE_ROW_HEIGHT - 5;
@@ -307,14 +308,14 @@ void OptionsWnd::Init()
 	control_page->AttachChild(stateBtn);
 	// Autosaves to keep [number]^
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(x, y, UserString("OPTIONS_AUTOSAVE_TO_KEEP"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y, UserString("OPTIONS_AUTOSAVE_TO_KEEP"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	control_page->AttachChild(textControl);
     spinControlInt = new CUISpin<int>(190, y - 5, 75, GetOptionsDB().Get<int>("autosave.saves"), 1, 1, 100, true);
 	GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("autosave.saves"));
 	control_page->AttachChild(spinControlInt);
 	// Turns between saves [number]^
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(x, y, UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y, UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	control_page->AttachChild(textControl);
     spinControlInt = new CUISpin<int>(190, y - 5, 75, GetOptionsDB().Get<int>("autosave.turns"), 1, 1, 100, true);
 	GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("autosave.turns"));
@@ -338,16 +339,16 @@ void OptionsWnd::Init()
 	// *Language [file]
 	y = PAGE_VERT_MARGIN;
 	x = PAGE_HORZ_MARGIN;
-	textControl = new GG::TextControl(x, y + 2, UserString("OPTIONS_LANGUAGE"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y + 2, UserString("OPTIONS_LANGUAGE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
 	btn = new CUIButton(260, y, textControl->Height(), "...");
-	btn->MoveTo(PAGE_WIDTH - btn->Width(), y);
+	btn->MoveTo(GG::Pt(PAGE_WIDTH - btn->Width(), y));
 	ui_page->AttachChild(btn);
 	x += textControl->Width() + 5;
 	s = GetOptionsDB().Get<std::string>("stringtable-filename");
 	if (!OptionPathToNativePath(s))
 		s = "";
-	editControl = new CUIEdit(x, y - 4, PAGE_WIDTH - btn->Width() - x - 5, 26, s);
+	editControl = new CUIEdit(x, y - 4, PAGE_WIDTH - btn->Width() - x - 5, s);
 	ui_page->AttachChild(editControl);
 	GG::Connect(editControl->EditedSignal, SetFileStringFunctor("stringtable-filename"));
 	m_language_edit = editControl;
@@ -355,7 +356,7 @@ void OptionsWnd::Init()
 	// Fonts
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN;
-	textControl = new GG::TextControl(x, y, UserString("OPTIONS_FONTS"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y, UserString("OPTIONS_FONTS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
 	// *Text [font] *Size [size]^
 	y += PAGE_ROW_HEIGHT - 5;
@@ -372,28 +373,28 @@ void OptionsWnd::Init()
 	// Tech Spacing
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN;
-	textControl = new GG::TextControl(x, y, UserString("OPTIONS_TECH_SPACING"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y, UserString("OPTIONS_TECH_SPACING"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
 	// *Horz [space]^ *Vert[space]^
 	y += PAGE_ROW_HEIGHT - 5;
 	x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-	textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_HORIZONTAL"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_HORIZONTAL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
 	x += textControl->Width() + 5;
     spinControlDouble = new CUISpin<double>(x, y, 60, GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing"), 0.05, 0.1, 10.0, true);
 	GG::Connect(spinControlDouble->ValueChangedSignal, SetOptionFunctor<double>("UI.tech-layout-horz-spacing"));
 	ui_page->AttachChild(spinControlDouble);
 	x += 65;
-	textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_VERTICAL"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_VERTICAL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
-	textControl->MoveTo(PAGE_WIDTH - 65 - textControl->Width(), y + 4);
+	textControl->MoveTo(GG::Pt(PAGE_WIDTH - 65 - textControl->Width(), y + 4));
     spinControlDouble = new CUISpin<double>(PAGE_WIDTH - 60, y, 60, GetOptionsDB().Get<double>("UI.tech-layout-vert-spacing"), 0.05, 0.1, 10.0, true);
 	GG::Connect(spinControlDouble->ValueChangedSignal, SetOptionFunctor<double>("UI.tech-layout-vert-spacing"));
 	ui_page->AttachChild(spinControlDouble);
 	// Tooltip Delay (ms.) [time]^
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN;
-	textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_TOOLTIP_DELAY"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_TOOLTIP_DELAY"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
     spinControlInt = new CUISpin<int>(PAGE_WIDTH - 110, y, 110, GetOptionsDB().Get<int>("UI.tooltip-delay"), 50, 0, 3000, true);
 	GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("UI.tooltip-delay"));
@@ -401,7 +402,7 @@ void OptionsWnd::Init()
 	// *Resolution [list]
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN;
-	textControl = new GG::TextControl(x, y + 3, UserString("OPTIONS_RESOLUTION"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y + 3, UserString("OPTIONS_RESOLUTION"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
 	comboControl = new CUIDropDownList(PAGE_WIDTH - 110, y, 110, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
 	comboControl->SetStyle(GG::LB_NOSORT);
@@ -412,7 +413,7 @@ void OptionsWnd::Init()
 	// *Color Depth [list]
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN;
-	textControl = new GG::TextControl(x, y + 3, UserString("OPTIONS_COLOR_DEPTH"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y + 3, UserString("OPTIONS_COLOR_DEPTH"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
 	comboControl = new CUIDropDownList(PAGE_WIDTH - 110, y, 110, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
 	comboControl->SetStyle(GG::LB_NOSORT);
@@ -423,12 +424,12 @@ void OptionsWnd::Init()
 	// Chat
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN;
-	textControl = new GG::TextControl(x, y, UserString("OPTIONS_CHAT"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y, UserString("OPTIONS_CHAT"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
 	// History [count]^
 	y += PAGE_ROW_HEIGHT - 5;
 	x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-	textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_CHAT_HISTORY"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_CHAT_HISTORY"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
     spinControlInt = new CUISpin<int>(PAGE_WIDTH - 110, y, 110, GetOptionsDB().Get<int>("UI.chat-edit-history"), 10, 0, 1000, true);
 	GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("UI.chat-edit-history"));
@@ -436,7 +437,7 @@ void OptionsWnd::Init()
 	// Hide Interval [Interval]^
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-	textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_CHAT_HIDE"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_CHAT_HIDE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
     spinControlInt = new CUISpin<int>(PAGE_WIDTH - 110, y, 110, GetOptionsDB().Get<int>("UI.chat-hide-interval"), 10, 0, 3600, true);
 	GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("UI.chat-hide-interval"));
@@ -465,7 +466,7 @@ void OptionsWnd::Init()
 	stateBtn->SetCheck(!GetOptionsDB().Get<bool>("music-off"));
     GG::Connect(stateBtn->CheckedSignal, &OptionsWnd::MusicClicked, this);
 	sound_page->AttachChild(stateBtn);
-    sliderControl = new CUISlider(PAGE_WIDTH - 150, y, 150, 14, 0, 255, CUISlider::HORIZONTAL);
+    sliderControl = new CUISlider(PAGE_WIDTH - 150, y, 150, 14, 0, 255, GG::HORIZONTAL);
     sliderControl->SlideTo(GetOptionsDB().Get<int>("music-volume"));
     GG::Connect(sliderControl->SlidSignal, &OptionsWnd::MusicVolumeSlid, this);
 	sound_page->AttachChild(sliderControl);
@@ -476,7 +477,7 @@ void OptionsWnd::Init()
 	stateBtn->SetCheck(UI_sound_enabled);
     GG::Connect(stateBtn->CheckedSignal, &OptionsWnd::UIEffectsClicked, this);
 	sound_page->AttachChild(stateBtn);
-    sliderControl = new CUISlider(PAGE_WIDTH - 150, 40, 150, 14, 0, 255, CUISlider::HORIZONTAL);
+    sliderControl = new CUISlider(PAGE_WIDTH - 150, 40, 150, 14, 0, 255, GG::HORIZONTAL);
     sliderControl->SlideTo(GetOptionsDB().Get<int>("UI.sound.volume"));
     GG::Connect(sliderControl->SlidAndStoppedSignal, &OptionsWnd::UISoundsVolumeSlid, this);
 	sound_page->AttachChild(sliderControl);
@@ -488,7 +489,7 @@ void OptionsWnd::Init()
 	// Window
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_WINDOW"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_WINDOW"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	sound_page->AttachChild(textControl);
 	// Close [sound] 
 	y += PAGE_ROW_HEIGHT - 5;
@@ -501,7 +502,7 @@ void OptionsWnd::Init()
 	AddSoundControls(x, y, "OPTIONS_SOUND_MINIMIZE", sound_page, "UI.sound.window-minimize", m_minimize_edit, btn);
 	// Button
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_BUTTON"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_BUTTON"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	sound_page->AttachChild(textControl);
 	// Click [sound] 
 	y += PAGE_ROW_HEIGHT - 5;
@@ -511,7 +512,7 @@ void OptionsWnd::Init()
 	AddSoundControls(x, y, "OPTIONS_SOUND_ROLLOVER", sound_page, "UI.sound.button-rollover", m_rolloverButton_edit, btn);
 	// Fleet
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_FLEET"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_FLEET"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	sound_page->AttachChild(textControl);
 	// Click [sound] 
 	y += PAGE_ROW_HEIGHT - 5;
@@ -556,7 +557,7 @@ void OptionsWnd::Init()
 	AddSoundControls(PAGE_HORZ_MARGIN, y, "OPTIONS_SOUND_PLANET", sound_page2, "UI.sound.planet-button-click", m_planet_edit, btn);
 	// Focus
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_FOCUS"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_FOCUS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	sound_page2->AttachChild(textControl);
 	// Balanced [sound]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -575,7 +576,7 @@ void OptionsWnd::Init()
 	AddSoundControls(x, y, "OPTIONS_SOUND_RESEARCH", sound_page2, "UI.sound.research-focus", m_research_edit, btn);
 	// List
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_LIST"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_LIST"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	sound_page2->AttachChild(textControl);
 	// Drop [sound] 
 	y += PAGE_ROW_HEIGHT - 5;
@@ -605,7 +606,7 @@ void OptionsWnd::Init()
 	y = PAGE_VERT_MARGIN;
 	x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
 	// General
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_GENERAL"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_GENERAL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	colors_page->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -618,7 +619,7 @@ void OptionsWnd::Init()
 	AddColorControls(x, y, "OPTIONS_COLOR_TEXT", colors_page, "UI.text-color", comboColor);
 	// Edit
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_EDIT"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_EDIT"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	colors_page->AttachChild(textControl);
 	// Highlight [color] 
 	y += PAGE_ROW_HEIGHT - 5;
@@ -628,7 +629,7 @@ void OptionsWnd::Init()
 	AddColorControls(x, y, "OPTIONS_COLOR_INTERIOR", colors_page, "UI.edit-interior", comboColor);
 	// Window
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_WINDOW"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_WINDOW"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	colors_page->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -661,7 +662,7 @@ void OptionsWnd::Init()
 	y = PAGE_VERT_MARGIN;
 	x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
 	// Known Tech
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_KNOWN"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_KNOWN"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	colors_page2->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -671,7 +672,7 @@ void OptionsWnd::Init()
 	AddColorControls(x, y, "OPTIONS_COLOR_BORDER", colors_page2, "UI.known-tech-border", comboColor);
 	// Researchable Tech
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_RESEARCHABLE"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_RESEARCHABLE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	colors_page2->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -681,7 +682,7 @@ void OptionsWnd::Init()
 	AddColorControls(x, y, "OPTIONS_COLOR_BORDER", colors_page2, "UI.researchable-tech-border", comboColor);
 	// Unresearchable Tech
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_UNRESEARCHABLE"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_UNRESEARCHABLE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	colors_page2->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -691,7 +692,7 @@ void OptionsWnd::Init()
 	AddColorControls(x, y, "OPTIONS_COLOR_BORDER", colors_page2, "UI.unresearchable-tech-border", comboColor);
 	// Tech Progress
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_PROGRESS"), ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS, ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_PROGRESS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
 	colors_page2->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -831,19 +832,19 @@ bool OptionsWnd::TestFolder(std::string& value)
 	try {
 		value_path = boost::filesystem::path(value);
 	} catch (const boost::filesystem::filesystem_error& e) {
-		GG::ThreeButtonDlg dlg(300, 125, "\"" + value + "\"\nis an invalid file name.", ClientUI::FONT, ClientUI::PTS + 2, ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
+		GG::ThreeButtonDlg dlg(300, 125, "\"" + value + "\"\nis an invalid file name.", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS + 2), ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
 		dlg.Run();
 		return false;
 	}
 
 	dir = boost::filesystem::system_complete(value_path);
 	if (!boost::filesystem::exists(dir)) {
-		GG::ThreeButtonDlg dlg(300, 125, "\"" + value + "\"\ndoes not exist.", ClientUI::FONT, ClientUI::PTS + 2, ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
+		GG::ThreeButtonDlg dlg(300, 125, "\"" + value + "\"\ndoes not exist.", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS + 2), ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
 		dlg.Run();
 		return false;
 	}
 	if (!boost::filesystem::is_directory(dir)) {
-		GG::ThreeButtonDlg dlg(300, 125, "\"" + value + "\"\nisn't a directory.", ClientUI::FONT, ClientUI::PTS + 2, ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
+		GG::ThreeButtonDlg dlg(300, 125, "\"" + value + "\"\nisn't a directory.", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS + 2), ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
 		dlg.Run();
 		return false;
 	}
@@ -908,7 +909,7 @@ void OptionsWnd::Browse(const std::string& optionName, const std::string& option
 
 	std::string option_filename = filename;
 	if (!NativePathToOptionPath(option_filename, false)) {
-		GG::ThreeButtonDlg dlg(300, 125, "\"" + filename + "\"\nIs invalid.", ClientUI::FONT, ClientUI::PTS + 2, ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
+		GG::ThreeButtonDlg dlg(300, 125, "\"" + filename + "\"\nIs invalid.", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS + 2), ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
 		dlg.Run();
 	} else {
 		GetOptionsDB().Set<std::string>(optionName, option_filename);
@@ -948,8 +949,8 @@ std::string OptionsWnd::BrowseForFile(const std::string& directory, const std::s
 			}
 			return relative.native_directory_string();
 		}
-    } catch (const FileDlg::InitialDirectoryDoesNotExistException& e) {
-        ClientUI::MessageBox(e.Message(), true);
+    } catch (const FileDlg::BadInitialDirectory& e) {
+        ClientUI::MessageBox(e.what(), true);
     }
 	return "";
 }

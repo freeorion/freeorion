@@ -2,10 +2,6 @@
 #ifndef _SitRepEntry_h_
 #define _SitRepEntry_h_
 
-// #ifndef _XMLDoc_h_
-// #include "XMLDoc.h"
-// #endif
-
 #ifndef BOOST_LEXICAL_CAST_INCLUDED
 #include <boost/lexical_cast.hpp>
 #endif
@@ -68,12 +64,12 @@ public:
     SitRepEntry() : m_type(INVALID_ENTRY_TYPE) {} ///< default ctor
 
     /** ctor that constructs a SitRepEntry object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a SitRepEntry object */
-    SitRepEntry(const GG::XMLElement& elem);
+    SitRepEntry(const XMLElement& elem);
     //@}
    
     /** \name Accessors */ //@{
     /** encodes the SitRepEntry into an XML element */
-    GG::XMLElement XMLEncode() const;
+    XMLElement XMLEncode() const;
     //@}
 
     void SetType( EntryType type ) { m_type = type; }

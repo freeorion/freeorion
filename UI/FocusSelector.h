@@ -4,7 +4,7 @@
 
 #include "../universe/Enums.h"
 
-#include "GGButton.h"
+#include <GG/Button.h>
 
 class ResourceCenter;
 
@@ -13,7 +13,7 @@ class FocusButton : public GG::Button
 public:
     FocusButton(GG::Clr color, const boost::shared_ptr<GG::Texture>& image);
 
-    virtual bool Render();
+    virtual void Render();
     virtual void RClick(const GG::Pt& pt, Uint32 keys);
     void SetImage(const boost::shared_ptr<GG::Texture>& image);
 
@@ -28,7 +28,7 @@ class MeterStatusBar : public GG::Wnd
 public:
     MeterStatusBar(int w, int h, double initial_max, double initial_current, double max, double current);
 
-    virtual bool Render();
+    virtual void Render();
 
     void SetProjectedCurrent(double current);
     void SetProjectedMax(double max);
@@ -47,7 +47,7 @@ public:
 
     FocusSelector(int w, const ResourceCenter& resource_center);
 
-    virtual bool Render();
+    virtual void Render();
     virtual void LClick(const GG::Pt& pt, Uint32 keys);
     virtual void RClick(const GG::Pt& pt, Uint32 keys);
     void Update(const ResourceCenter& resource_center);

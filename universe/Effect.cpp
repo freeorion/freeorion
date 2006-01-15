@@ -12,19 +12,19 @@ using boost::lexical_cast;
 using boost::format;
 
 namespace {
-    EffectBase* NewSetMeter(const GG::XMLElement& elem)             {return new SetMeter(elem);}
-    EffectBase* NewSetEmpireStockpile(const GG::XMLElement& elem)   {return new SetEmpireStockpile(elem);}
-    EffectBase* NewSetPlanetType(const GG::XMLElement& elem)        {return new SetPlanetType(elem);}
-    EffectBase* NewSetPlanetSize(const GG::XMLElement& elem)        {return new SetPlanetSize(elem);}
-    EffectBase* NewAddOwner(const GG::XMLElement& elem)             {return new AddOwner(elem);}
-    EffectBase* NewRemoveOwner(const GG::XMLElement& elem)          {return new RemoveOwner(elem);}
-    //EffectBase* NewCreate(const GG::XMLElement& elem)             {return new Create(elem);}
-    EffectBase* NewDestroy(const GG::XMLElement& elem)              {return new Destroy(elem);}
-    EffectBase* NewAddSpecial(const GG::XMLElement& elem)           {return new AddSpecial(elem);}
-    EffectBase* NewRemoveSpecial(const GG::XMLElement& elem)        {return new RemoveSpecial(elem);}
-    EffectBase* NewSetStarType(const GG::XMLElement& elem)          {return new SetStarType(elem);}
-    EffectBase* NewSetTechAvailability(const GG::XMLElement& elem)  {return new SetTechAvailability(elem);}
-    EffectBase* NewSetEffectTarget(const GG::XMLElement& elem)      {return new SetEffectTarget(elem);}
+    EffectBase* NewSetMeter(const XMLElement& elem)             {return new SetMeter(elem);}
+    EffectBase* NewSetEmpireStockpile(const XMLElement& elem)   {return new SetEmpireStockpile(elem);}
+    EffectBase* NewSetPlanetType(const XMLElement& elem)        {return new SetPlanetType(elem);}
+    EffectBase* NewSetPlanetSize(const XMLElement& elem)        {return new SetPlanetSize(elem);}
+    EffectBase* NewAddOwner(const XMLElement& elem)             {return new AddOwner(elem);}
+    EffectBase* NewRemoveOwner(const XMLElement& elem)          {return new RemoveOwner(elem);}
+    //EffectBase* NewCreate(const XMLElement& elem)             {return new Create(elem);}
+    EffectBase* NewDestroy(const XMLElement& elem)              {return new Destroy(elem);}
+    EffectBase* NewAddSpecial(const XMLElement& elem)           {return new AddSpecial(elem);}
+    EffectBase* NewRemoveSpecial(const XMLElement& elem)        {return new RemoveSpecial(elem);}
+    EffectBase* NewSetStarType(const XMLElement& elem)          {return new SetStarType(elem);}
+    EffectBase* NewSetTechAvailability(const XMLElement& elem)  {return new SetTechAvailability(elem);}
+    EffectBase* NewSetEffectTarget(const XMLElement& elem)      {return new SetEffectTarget(elem);}
 
     boost::tuple<bool, ValueRef::OpType, double>
     SimpleMeterModification(MeterType meter, bool max, const ValueRef::ValueRefBase<double>* ref)
@@ -64,9 +64,9 @@ namespace {
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
-GG::XMLObjectFactory<EffectBase> Effect::EffectFactory()
+XMLObjectFactory<EffectBase> Effect::EffectFactory()
 {
-    static GG::XMLObjectFactory<EffectBase> factory;
+    static XMLObjectFactory<EffectBase> factory;
     static bool init = false;
     if (!init) {
         factory.AddGenerator("Effect::SetMeter", &NewSetMeter);
@@ -99,7 +99,7 @@ EffectsGroup::EffectsGroup(const Condition::ConditionBase* scope, const Conditio
 {
 }
 
-EffectsGroup::EffectsGroup(const GG::XMLElement& elem)
+EffectsGroup::EffectsGroup(const XMLElement& elem)
 {
     if (elem.Tag() != "EffectsGroup")
         throw std::invalid_argument(("Attempted to construct a EffectsGroup from an XMLElement that had a tag other than \"EffectsGroup\"" + (" (\"" + elem.Tag() + "\")")).c_str());
@@ -111,7 +111,7 @@ EffectsGroup::EffectsGroup(const GG::XMLElement& elem)
         m_activation = new Condition::Self();
     if (elem.ContainsChild("stacking_group"))
         m_stacking_group = elem.Child("stacking_group").Text();
-    for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
         m_effects.push_back(EffectFactory().GenerateObject(*it));
     }
     if (elem.ContainsChild("description"))
@@ -246,7 +246,7 @@ SetMeter::SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value,
 {
 }
 
-SetMeter::SetMeter(const GG::XMLElement& elem)
+SetMeter::SetMeter(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::SetMeter")
         throw std::invalid_argument("Attempted to construct a Effect::SetMeter from an XMLElement that had a tag other than \"Effect::SetMeter\"");
@@ -305,7 +305,7 @@ SetEmpireStockpile::SetEmpireStockpile(StockpileType stockpile, const ValueRef::
 {
 }
 
-SetEmpireStockpile::SetEmpireStockpile(const GG::XMLElement& elem)
+SetEmpireStockpile::SetEmpireStockpile(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::SetEmpireStockpile")
         throw std::invalid_argument("Attempted to construct a Effect::SetEmpireStockpile from an XMLElement that had a tag other than \"Effect::SetEmpireStockpile\"");
@@ -350,7 +350,7 @@ SetPlanetType::SetPlanetType(const ValueRef::ValueRefBase<PlanetType>* type) :
 {
 }
 
-SetPlanetType::SetPlanetType(const GG::XMLElement& elem)
+SetPlanetType::SetPlanetType(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::SetPlanetType")
         throw std::invalid_argument("Attempted to construct a Effect::SetPlanetType from an XMLElement that had a tag other than \"Effect::SetPlanetType\"");
@@ -394,7 +394,7 @@ SetPlanetSize::SetPlanetSize(const ValueRef::ValueRefBase<PlanetSize>* size) :
 {
 }
 
-SetPlanetSize::SetPlanetSize(const GG::XMLElement& elem)
+SetPlanetSize::SetPlanetSize(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::SetPlanetSize")
         throw std::invalid_argument("Attempted to construct a Effect::SetPlanetSize from an XMLElement that had a tag other than \"Effect::SetPlanetSize\"");
@@ -436,7 +436,7 @@ AddOwner::AddOwner(const ValueRef::ValueRefBase<int>* empire_id) :
 {
 }
 
-AddOwner::AddOwner(const GG::XMLElement& elem)
+AddOwner::AddOwner(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::AddOwner")
         throw std::invalid_argument("Attempted to construct a Effect::AddOwner from an XMLElement that had a tag other than \"Effect::AddOwner\"");
@@ -471,7 +471,7 @@ RemoveOwner::RemoveOwner(const ValueRef::ValueRefBase<int>* empire_id) :
 {
 }
 
-RemoveOwner::RemoveOwner(const GG::XMLElement& elem)
+RemoveOwner::RemoveOwner(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::RemoveOwner")
         throw std::invalid_argument("Attempted to construct a Effect::RemoveOwner from an XMLElement that had a tag other than \"Effect::RemoveOwner\"");
@@ -506,7 +506,7 @@ std::string RemoveOwner::Description() const
 {
 public:
     Create();
-    Create(const GG::XMLElement& elem);
+    Create(const XMLElement& elem);
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
 };*/
@@ -519,7 +519,7 @@ Destroy::Destroy()
 {
 }
 
-Destroy::Destroy(const GG::XMLElement& elem)
+Destroy::Destroy(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::Destroy")
         throw std::invalid_argument("Attempted to construct a Effect::Destroy from an XMLElement that had a tag other than \"Effect::Destroy\"");
@@ -544,7 +544,7 @@ AddSpecial::AddSpecial(const std::string& name) :
 {
 }
 
-AddSpecial::AddSpecial(const GG::XMLElement& elem)
+AddSpecial::AddSpecial(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::AddSpecial")
         throw std::invalid_argument("Attempted to construct a Effect::AddSpecial from an XMLElement that had a tag other than \"Effect::AddSpecial\"");
@@ -571,7 +571,7 @@ RemoveSpecial::RemoveSpecial(const std::string& name) :
 {
 }
 
-RemoveSpecial::RemoveSpecial(const GG::XMLElement& elem)
+RemoveSpecial::RemoveSpecial(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::RemoveSpecial")
         throw std::invalid_argument("Attempted to construct a Effect::RemoveSpecial from an XMLElement that had a tag other than \"Effect::RemoveSpecial\"");
@@ -598,7 +598,7 @@ SetStarType::SetStarType(const ValueRef::ValueRefBase<StarType>* type) :
 {
 }
 
-SetStarType::SetStarType(const GG::XMLElement& elem)
+SetStarType::SetStarType(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::SetStarType")
         throw std::invalid_argument("Attempted to construct a Effect::SetStarType from an XMLElement that had a tag other than \"Effect::SetStarType\"");
@@ -636,7 +636,7 @@ SetTechAvailability::SetTechAvailability(const std::string& tech_name, const Val
 {
 }
 
-SetTechAvailability::SetTechAvailability(const GG::XMLElement& elem)
+SetTechAvailability::SetTechAvailability(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::SetTechAvailability")
         throw std::invalid_argument("Attempted to construct a Effect::SetTechAvailability from an XMLElement that had a tag other than \"Effect::SetTechAvailability\"");
@@ -696,14 +696,14 @@ RefineBuildingType::RefineBuildingType(const std::string& building_type_name,
 {
 }
 
-RefineBuildingType::RefineBuildingType(const GG::XMLElement& elem)
+RefineBuildingType::RefineBuildingType(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::RefineBuildingType")
         throw std::invalid_argument("Attempted to construct a Effect::RefineBuildingType from an XMLElement that had a tag other than \"Effect::RefineBuildingType\"");
 
     m_building_type_name = elem.Child("building_type").Text();
     m_empire_id = ParseArithmeticExpression<int>(elem.Child("empire_id").Text());
-    for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
         m_effects.push_back(boost::shared_ptr<const Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
     }
 }
@@ -752,7 +752,7 @@ SetEffectTarget::SetEffectTarget(const ValueRef::ValueRefBase<int>* effect_targe
 {
 }
 
-SetEffectTarget::SetEffectTarget(const GG::XMLElement& elem)
+SetEffectTarget::SetEffectTarget(const XMLElement& elem)
 {
     if (elem.Tag() != "Effect::SetEffectTarget")
         throw std::invalid_argument("Attempted to construct a Effect::SetEffectTarget from an XMLElement that had a tag other than \"Effect::SetEffectTarget\"");

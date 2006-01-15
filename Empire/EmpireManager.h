@@ -2,21 +2,16 @@
 #ifndef _EmpireManager_h_
 #define _EmpireManager_h_
 
+#include "Empire.h"
+#include "../util/XMLDoc.h"
+
+#ifndef _GG_Clr_h_
+#include <GG/Clr.h>
+#endif
+
 #include <list>
 #include <map>
 #include <string>
-
-#ifndef _Empire_h_
-#include "Empire.h"
-#endif
-
-#ifndef _GGClr_h_
-#include "GGClr.h"
-#endif
-
-#ifndef _XMLDoc_h_
-#include "XMLDoc.h"
-#endif
 
 
 /**

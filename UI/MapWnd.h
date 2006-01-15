@@ -5,9 +5,8 @@
 
 #include <vector>
 
-#ifndef _CUI_Wnd_h_
 #include "CUI_Wnd.h"
-#endif
+#include "../util/XMLDoc.h"
 
 class CUIButton;
 class CUIEdit;
@@ -55,12 +54,12 @@ public:
 
     double         ZoomFactor() const    {return m_zoom_factor;}
     SidePanel*     GetSidePanel() const  {return m_side_panel;}
-    GG::XMLElement SaveGameData() const;         //!< returns the relevant data that should be restored after a save-and-load cycle
+    XMLElement     SaveGameData() const;         //!< returns the relevant data that should be restored after a save-and-load cycle
     bool           InProductionViewMode() const; //!< returns tru iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
     //!@}
 
     //! \name Mutators //!@{
-    virtual bool   Render();
+    virtual void   Render();
     virtual void   Keypress (GG::Key key, Uint32 key_mods);
     virtual void   LButtonDown(const GG::Pt& pt, Uint32 keys);
     virtual void   LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
@@ -70,7 +69,7 @@ public:
     virtual void   MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
 
     void           InitTurn( int turn_number );                     //!< called at the start of each turn
-    void           RestoreFromSaveData(const GG::XMLElement& elem); //!< restores the UI state that was saved in an earlier call to SaveGameData().
+    void           RestoreFromSaveData(const XMLElement& elem); //!< restores the UI state that was saved in an earlier call to SaveGameData().
     void           ShowSystemNames();                               //!< enables the system name text
     void           HideSystemNames();                               //!< disables the system name text
     void           HandlePlayerChatMessage(const std::string& msg); //!< displays incoming player chat text
@@ -204,7 +203,7 @@ class MapWndPopup : public CUI_Wnd
 {
 public:
     MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags );
-    MapWndPopup(const GG::XMLElement& elem);     
+    MapWndPopup(const XMLElement& elem);     
     virtual ~MapWndPopup( );
 
     void Close( );      //!< closes the MapWndPopup   

@@ -29,11 +29,11 @@ public:
        deallocated and recreated.  Pointers to Empires will not be
        valid after an update is handled.
     */
-    bool HandleEmpireElementUpdate(const GG::XMLElement& empireElement);
+    bool HandleEmpireElementUpdate(const XMLElement& empireElement);
 
 
     /// Encodes current empire knowledge to XML for use in determining update diffs
-    GG::XMLElement EncodeEmpires();
+    XMLElement EncodeEmpires();
     //@}
 };
 

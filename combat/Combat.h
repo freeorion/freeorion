@@ -8,9 +8,8 @@
 namespace GG {
   class TextControl;
   class StaticGraphic;
-
-  class XMLElement;
 }
+class XMLElement;
 
 //! This struct is used to transmit combat turn update messages to players.
 //! It's expected to change very frequently while coding goes toward v1.0
@@ -21,17 +20,17 @@ struct CombatUpdateMessage
     CombatUpdateMessage();
     ~CombatUpdateMessage();
 
-    CombatUpdateMessage(const GG::XMLElement&);
-    GG::XMLElement XMLEncode() const;
+    CombatUpdateMessage(const XMLElement&);
+    XMLElement XMLEncode() const;
     
     //! Combat asserts info for one empire
     struct EmpireCombatInfo
     {
         EmpireCombatInfo();
         ~EmpireCombatInfo();
-        EmpireCombatInfo(const GG::XMLElement&);
+        EmpireCombatInfo(const XMLElement&);
 
-        GG::XMLElement XMLEncode() const;
+        XMLElement XMLEncode() const;
 
         std::string empire;
         int         combat_ships;

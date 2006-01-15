@@ -2,12 +2,10 @@
 #ifndef _Message_h_
 #define _Message_h_
 
+#include "../util/XMLDoc.h"
+
 #ifndef BOOST_SERIALIZATION_SHARED_PTR_HPP
 #include <boost/serialization/shared_ptr.hpp>
-#endif
-
-#ifndef   _XMLDoc_h_
-#include "XMLDoc.h"
 #endif
 
 #include <string>
@@ -88,7 +86,7 @@ public:
     /** convienience ctor that converts \a doc into a std::string automatically.  Senders that are not part of a game 
         and so have no player number should send -1 as the \a sender parameter. \throw std::invalid_argument May throw 
         std::invalid_argument if the parameters would form an invalid message */
-    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const GG::XMLDoc& doc, MessageType response_msg = UNDEFINED);
+    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const XMLDoc& doc, MessageType response_msg = UNDEFINED);
     //@}
 
     /** \name Accessors */ //@{
@@ -126,7 +124,7 @@ private:
 };
 
 /** creates a HOST_GAME message*/
-Message HostGameMessage(int player_id, const GG::XMLDoc& game_parameters);
+Message HostGameMessage(int player_id, const XMLDoc& game_parameters);
 
 /** creates a minimal HOST_GAME message used to enter and finalize the multiplayer "lobby" setup*/
 Message HostGameMessage(int player_id, const std::string& host_player_name);
@@ -135,15 +133,15 @@ Message HostGameMessage(int player_id, const std::string& host_player_name);
 Message JoinGameMessage(const std::string& player_name);
 
 /** creates a JOIN_GAME message.  Sends an xml document of the player's details.*/
-Message JoinGameSetup(const GG::XMLDoc& player_setup);
+Message JoinGameSetup(const XMLDoc& player_setup);
 
 /** creates a SERVER_STATUS message that indicates that the JOIN_GAME message just received from the client will
     not be honored because the client and server are using different versions of code or essential configuration
     files.  This message should only be sent by the server.*/
-Message VersionConflictMessage(int player_id, const GG::XMLDoc& conflict_details);
+Message VersionConflictMessage(int player_id, const XMLDoc& conflict_details);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
-Message GameStartMessage(int player_id, const GG::XMLDoc& start_data);
+Message GameStartMessage(int player_id, const XMLDoc& start_data);
 
 /** creates a HOST_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
    should only be sent by the server.*/
@@ -165,13 +163,13 @@ Message EndGameMessage(int sender, int receiver);
 Message VictoryMessage(int receiver);
 
 /** creates an TURN_ORDERS message. */
-Message TurnOrdersMessage(int sender, int receiver, const GG::XMLDoc& orders_data);
+Message TurnOrdersMessage(int sender, int receiver, const XMLDoc& orders_data);
 
 /** creates an TURN_PROGRESS message. */
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id);
 
 /** creates a TURN_UPDATE message.  Contains a diff of universe and empire data */
-Message TurnUpdateMessage(int player_id, const GG::XMLDoc& start_data);
+Message TurnUpdateMessage(int player_id, const XMLDoc& start_data);
 
 /** creates an REQUEST_NEW_OBJECT_ID  message. This message is a synchronous message, when sent it will wait for a reply form the server */
 Message RequestNewObjectIDMessage(int sender);
@@ -189,7 +187,7 @@ Message HostLoadGameMessage(int sender, const std::string& filename);
 Message ServerSaveGameMessage(int receiver, bool done = false);
 
 /** creates a LOAD_GAME data message.  This message should only be sent by the server to provide saved game data to a client.*/
-Message ServerLoadGameMessage(int receiver, const GG::XMLDoc& data);
+Message ServerLoadGameMessage(int receiver, const XMLDoc& data);
 
 /** creates a HUMAN_PLAYER_MSG, which is sent to the server, and then from the server to all human players, including the 
     originating player.  This is used for MP chat.*/
@@ -215,11 +213,11 @@ Message PlayerEliminatedMessage(int receiver, const std::string& empire_name);
 /** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the 
     server, then to other users.  Clients must send all such updates to the server directly; the server
     will send updates to the other clients as needed.*/
-Message LobbyUpdateMessage(int sender, const GG::XMLDoc& doc);
+Message LobbyUpdateMessage(int sender, const XMLDoc& doc);
 
 /** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the users.  
     This message should only be sent by the server.*/
-Message ServerLobbyUpdateMessage(int receiver, const GG::XMLDoc& doc);
+Message ServerLobbyUpdateMessage(int receiver, const XMLDoc& doc);
 
 /** creates an LOBBY_UPDATE message containing a chat string to be broadcast to player \a receiver, or all players if 
     \a receiver is -1. Note that the receiver of this message is always the server.*/

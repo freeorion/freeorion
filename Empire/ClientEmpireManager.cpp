@@ -2,8 +2,8 @@
 
 #include "../util/MultiplayerCommon.h"
 #include "../util/SitRepEntry.h"
+#include "../util/XMLObjectFactory.h"
 #include "../network/XDiff.hpp"
-#include "XMLObjectFactory.h"
 
 #include <map>
 #include <list>
@@ -20,7 +20,7 @@ ClientEmpireManager::ClientEmpireManager() :
 {
 }
    
-bool ClientEmpireManager::HandleEmpireElementUpdate(const GG::XMLElement& elem)
+bool ClientEmpireManager::HandleEmpireElementUpdate(const XMLElement& elem)
 {   
     if (elem.Tag() != EmpireManager::EMPIRE_UPDATE_TAG)
         throw std::runtime_error("Attempted to construct a " + EmpireManager::EMPIRE_UPDATE_TAG + " from an XMLElement that had a tag other than \"" + EmpireManager::EMPIRE_UPDATE_TAG + "\"");
@@ -37,12 +37,12 @@ bool ClientEmpireManager::HandleEmpireElementUpdate(const GG::XMLElement& elem)
 }
 
 
-GG::XMLElement ClientEmpireManager::EncodeEmpires( )
+XMLElement ClientEmpireManager::EncodeEmpires( )
 {
-    GG::XMLElement this_turn(EmpireManager::EMPIRE_UPDATE_TAG);
+    XMLElement this_turn(EmpireManager::EMPIRE_UPDATE_TAG);
 
     for (EmpireManager::iterator it = begin(); it != end(); it++) {
-        GG::XMLElement current_empire("Empire" + boost::lexical_cast<std::string>(it->second->EmpireID()));
+        XMLElement current_empire("Empire" + boost::lexical_cast<std::string>(it->second->EmpireID()));
         current_empire.AppendChild(it->second->XMLEncode());
         this_turn.AppendChild(current_empire);
     }

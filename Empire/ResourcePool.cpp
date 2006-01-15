@@ -1,11 +1,11 @@
 #include "ResourcePool.h"
 
+#include "../universe/Planet.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
-#include "../universe/Planet.h"
+#include "../util/XMLDoc.h"
 
-#include "GGSignalsAndSlots.h"
-#include "XMLDoc.h"
+#include <GG/SignalsAndSlots.h>
 
 namespace {
     bool Greater(const Planet* elem1, const Planet* elem2)
@@ -91,7 +91,7 @@ MineralResourcePool::MineralResourcePool() :
     m_stockpile(0.0)
 {}
 
-MineralResourcePool::MineralResourcePool(const GG::XMLElement& elem)
+MineralResourcePool::MineralResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "MineralResourcePool")
@@ -124,10 +124,10 @@ double MineralResourcePool::Stockpile() const
     return m_stockpile;
 }
 
-GG::XMLElement MineralResourcePool::XMLEncode() const
+XMLElement MineralResourcePool::XMLEncode() const
 {
-    GG::XMLElement retval("MineralResourcePool");
-    retval.AppendChild(GG::XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
+    XMLElement retval("MineralResourcePool");
+    retval.AppendChild(XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
     return retval;
 }
 
@@ -144,7 +144,7 @@ FoodResourcePool::FoodResourcePool() :
     m_stockpile(0.0)
 {}
 
-FoodResourcePool::FoodResourcePool(const GG::XMLElement& elem)
+FoodResourcePool::FoodResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "FoodResourcePool")
@@ -200,10 +200,10 @@ double FoodResourcePool::Stockpile() const
     return m_stockpile;
 }
 
-GG::XMLElement FoodResourcePool::XMLEncode() const
+XMLElement FoodResourcePool::XMLEncode() const
 {
-    GG::XMLElement retval("FoodResourcePool");
-    retval.AppendChild(GG::XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
+    XMLElement retval("FoodResourcePool");
+    retval.AppendChild(XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
     return retval;
 }
 
@@ -220,7 +220,7 @@ ResearchResourcePool::ResearchResourcePool() :
     ResourcePool()
 {}
 
-ResearchResourcePool::ResearchResourcePool(const GG::XMLElement& elem)
+ResearchResourcePool::ResearchResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "ResearchResourcePool")
@@ -241,9 +241,9 @@ void ResearchResourcePool::PlanetChanged()
     ChangedSignal();
 }
 
-GG::XMLElement ResearchResourcePool::XMLEncode() const
+XMLElement ResearchResourcePool::XMLEncode() const
 {
-    return GG::XMLElement("ResearchResourcePool");
+    return XMLElement("ResearchResourcePool");
 }
 
 
@@ -254,7 +254,7 @@ PopulationResourcePool::PopulationResourcePool() :
     ResourcePool()
 {}
 
-PopulationResourcePool::PopulationResourcePool(const GG::XMLElement& elem)
+PopulationResourcePool::PopulationResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "PopulationResourcePool")
@@ -275,9 +275,9 @@ void PopulationResourcePool::PlanetChanged()
     ChangedSignal();
 }
 
-GG::XMLElement PopulationResourcePool::XMLEncode() const
+XMLElement PopulationResourcePool::XMLEncode() const
 {
-    return GG::XMLElement("PopulationResourcePool");
+    return XMLElement("PopulationResourcePool");
 }
 
 
@@ -288,7 +288,7 @@ IndustryResourcePool::IndustryResourcePool() :
     ResourcePool()
 {}
 
-IndustryResourcePool::IndustryResourcePool(const GG::XMLElement& elem)
+IndustryResourcePool::IndustryResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "IndustryResourcePool")
@@ -308,9 +308,9 @@ void IndustryResourcePool::PlanetChanged()
     ChangedSignal();
 }
 
-GG::XMLElement IndustryResourcePool::XMLEncode() const
+XMLElement IndustryResourcePool::XMLEncode() const
 {
-    return GG::XMLElement("IndustryResourcePool");
+    return XMLElement("IndustryResourcePool");
 }
 
 
@@ -322,7 +322,7 @@ TradeResourcePool::TradeResourcePool() :
     m_stockpile(0.0)
 {}
 
-TradeResourcePool::TradeResourcePool(const GG::XMLElement& elem)
+TradeResourcePool::TradeResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "TradeResourcePool")
@@ -378,10 +378,10 @@ double TradeResourcePool::Stockpile() const
     return m_stockpile;
 }
 
-GG::XMLElement TradeResourcePool::XMLEncode() const
+XMLElement TradeResourcePool::XMLEncode() const
 {
-    GG::XMLElement retval("TradeResourcePool");
-    retval.AppendChild(GG::XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
+    XMLElement retval("TradeResourcePool");
+    retval.AppendChild(XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
     return retval;
 }
 

@@ -2,7 +2,7 @@
 
 #include "../util/MultiplayerCommon.h"
 
-#include "GGDrawUtil.h"
+#include <GG/DrawUtil.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -20,7 +20,7 @@ bool LinkText::s_link_tags_registered = false;
 
 
 LinkText::LinkText(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
-                   Uint32 text_fmt/* = 0*/, GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = CLICKABLE*/) : 
+                   Uint32 text_fmt/* = 0*/, GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = GG::CLICKABLE*/) : 
     GG::TextControl(x, y, w, 1, str, font, color, text_fmt, flags),
     m_old_sel_link(-1),
     m_old_rollover_link(-1)
@@ -29,18 +29,8 @@ LinkText::LinkText(int x, int y, int w, const std::string& str, const boost::sha
     Init();
 }
 
-LinkText::LinkText(int x, int y, int w, const std::string& str, const std::string& font_filename, int pts, 
-                   Uint32 text_fmt/* = 0*/, GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = CLICKABLE*/) : 
-    GG::TextControl(x, y, w, 1, str, font_filename, pts, color, text_fmt, flags),
-    m_old_sel_link(-1),
-    m_old_rollover_link(-1)
-{
-    Resize(TextLowerRight() - TextUpperLeft());
-    Init();
-}
-
 LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
-                   GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = CLICKABLE*/) : 
+                   GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = GG::CLICKABLE*/) : 
     GG::TextControl(x, y, str, font, color, 0, flags),
     m_old_sel_link(-1),
     m_old_rollover_link(-1)
@@ -48,16 +38,7 @@ LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr
     Init();
 }
 
-LinkText::LinkText(int x, int y, const std::string& str, const std::string& font_filename, int pts, 
-                   GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = CLICKABLE*/) : 
-    GG::TextControl(x, y, str, font_filename, pts, color, 0, flags),
-    m_old_sel_link(-1),
-    m_old_rollover_link(-1)
-{
-    Init();
-}
-
-bool LinkText::Render()
+void LinkText::Render()
 {
 #if RENDER_DEBUGGING_LINK_RECTS
     GG::Rect bounds(TextUpperLeft(), TextLowerRight());
@@ -69,7 +50,7 @@ bool LinkText::Render()
         }
     }
 #endif
-    return GG::TextControl::Render();
+    GG::TextControl::Render();
 }
 
 void LinkText::LButtonDown(const GG::Pt& pt, Uint32 keys)

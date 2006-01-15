@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<GG::XMLDoc>
+<XMLDoc>
   <Special>
     <name>ANCIENT_RUINS_SPECIAL</name>
     <description>ANCIENT_RUINS_SPECIAL_DESCRIPTION</description>
@@ -56,4 +56,4 @@
       </EffectsGroup>
     </effects>
   </Special>
-</GG::XMLDoc>
+</XMLDoc>

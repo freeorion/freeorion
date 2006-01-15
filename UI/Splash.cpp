@@ -1,8 +1,10 @@
 #include "Splash.h"
 
 #include "ClientUI.h"
-#include "GGStaticGraphic.h"
 #include "../util/MultiplayerCommon.h"
+
+#include <GG/StaticGraphic.h>
+
 
 namespace {
     bool temp_header_bool = RecordHeaderFile(SplashRevision());
@@ -24,7 +26,7 @@ void LoadSplashGraphics(std::vector<std::vector<GG::StaticGraphic*> >& graphics)
                                     boost::lexical_cast<std::string>(x) +
                                     ".png") << "\"" << std::endl;
 #endif
-            textures[y][x] = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "splash" +
+            textures[y][x] = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "splash" +
                                                            boost::lexical_cast<std::string>(y) +
                                                            boost::lexical_cast<std::string>(x) +
                                                            ".png");
@@ -33,8 +35,8 @@ void LoadSplashGraphics(std::vector<std::vector<GG::StaticGraphic*> >& graphics)
         }
         total_height += textures[y][0]->DefaultHeight();
     }
-    double x_scale_factor = GG::App::GetApp()->AppWidth() / static_cast<double>(total_width);
-    double y_scale_factor = GG::App::GetApp()->AppHeight() / static_cast<double>(total_height);
+    double x_scale_factor = GG::GUI::GetGUI()->AppWidth() / static_cast<double>(total_width);
+    double y_scale_factor = GG::GUI::GetGUI()->AppHeight() / static_cast<double>(total_height);
 
     int graphic_position_x = 0;
     int graphic_position_y = 0;
@@ -45,7 +47,7 @@ void LoadSplashGraphics(std::vector<std::vector<GG::StaticGraphic*> >& graphics)
         for (int x = 0; x < IMAGE_CELLS_X; ++x) {
             int width = static_cast<int>(textures[0][x]->DefaultWidth() * x_scale_factor);
             graphics[y][x] = new GG::StaticGraphic(graphic_position_x, graphic_position_y, width, height, textures[y][x], GG::GR_FITGRAPHIC);
-            GG::App::GetApp()->Register(graphics[y][x]);
+            GG::GUI::GetGUI()->Register(graphics[y][x]);
             graphic_position_x += width;
         }
         graphic_position_y += height;

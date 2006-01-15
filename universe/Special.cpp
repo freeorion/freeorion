@@ -34,10 +34,10 @@ namespace {
         void ProcessSpecialsFile(const std::string& filename, bool planet_specials)
         {
             std::ifstream ifs(filename.c_str());
-            GG::XMLDoc doc;
+            XMLDoc doc;
             doc.ReadDoc(ifs);
             ifs.close();
-            for (GG::XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
+            for (XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
                 if (it->Tag() != "Special")
                     throw std::runtime_error("ERROR: Encountered non-Special in specials.xml or planet_specials.xml!");
                 Special* special = 0;
@@ -76,14 +76,14 @@ Special::Special(const std::string& name, const std::string& description) :
 {
 }
 
-Special::Special(const GG::XMLElement& elem)
+Special::Special(const XMLElement& elem)
 {
     if (elem.Tag() != "Special")
         throw std::invalid_argument("Attempted to construct a Special from an XMLElement that had a tag other than \"Special\"");
 
     m_name = elem.Child("name").Text();
     m_description = elem.Child("description").Text();
-    for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
         m_effects.push_back(boost::shared_ptr<Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
     }
 }

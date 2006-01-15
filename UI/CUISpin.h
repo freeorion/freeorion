@@ -6,8 +6,8 @@
 #include "CUIControls.h"
 #endif
 
-#ifndef _GGSpin_h_
-#include "GGSpin.h"
+#ifndef _GG_Spin_h_
+#include <GG/Spin.h>
 #endif
 
 #ifndef _HumanClientApp_h_
@@ -37,9 +37,8 @@ public:
 
     /** \name Structors */ //@{
     CUISpin(int x, int y, int w, T value, T step, T min, T max, bool edits) :
-        GG::Spin<T>(x, y, w, value, step, min, max, edits, ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_BORDER_COLOR, 
-                    ClientUI::TEXT_COLOR, GG::CLR_ZERO, new CUIArrowButton(0, 0, 1, 1, SHAPE_UP, ClientUI::DROP_DOWN_LIST_ARROW_COLOR), 
-                    new CUIArrowButton(0, 0, 1, 1, SHAPE_DOWN, ClientUI::DROP_DOWN_LIST_ARROW_COLOR))
+        GG::Spin<T>(x, y, w, value, step, min, max, edits, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::CTRL_BORDER_COLOR, 
+                    ClientUI::TEXT_COLOR, GG::CLR_ZERO)
     {
 #ifdef _MSC_VER
         GG::Connect(ValueChangedSignal, &detail::PlayValueChangedSound, -1);
@@ -51,9 +50,8 @@ public:
     }
 
     /** \name Mutators */ //@{
-    virtual bool Render()
+    virtual void Render()
     {
-	/* the "this->" stuff is needed to make GCC 3.4 (and possible other strict ISO C++ conforming compilers) happy */
         GG::Clr color_to_use = this->Disabled() ? DisabledColor(this->Color()) : this->Color();
         GG::Clr int_color_to_use = this->Disabled() ? DisabledColor(this->InteriorColor()) : this->InteriorColor();
         GG::Pt ul = this->UpperLeft(), lr = this->LowerRight();
@@ -69,22 +67,21 @@ public:
         this->DownButton()->Render();
         this->UpButton()->OffsetMove(-this->UpperLeft());
         this->DownButton()->OffsetMove(-this->UpperLeft());
-        return true;
     }
 
-    virtual void SizeMove(int x1, int y1, int x2, int y2)
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     {
-        GG::Wnd::SizeMove(x1, y1, x2, y2);
+        GG::Wnd::SizeMove(ul, lr);
         const int BORDER_THICK = 1;
         const int BUTTON_MARGIN = 3;
         const int BN_HEIGHT = (this->Height() - 3 * BUTTON_MARGIN) / 2;
         const int BN_WIDTH = BN_HEIGHT;
         const int BN_X_POS = this->Width() - BN_WIDTH - BORDER_THICK;
-        this->GetEdit()->SizeMove(0, 0, BN_X_POS, this->Height());
-        this->UpButton()->SizeMove(BN_X_POS, BORDER_THICK,
-                             BN_X_POS + BN_WIDTH, BUTTON_MARGIN + BN_HEIGHT);
-        this->DownButton()->SizeMove(BN_X_POS, BUTTON_MARGIN + BN_HEIGHT + BUTTON_MARGIN,
-                               BN_X_POS + BN_WIDTH, BUTTON_MARGIN + BN_HEIGHT + BUTTON_MARGIN + BN_HEIGHT);
+        this->GetEdit()->SizeMove(GG::Pt(0, 0), GG::Pt(BN_X_POS, this->Height()));
+        this->UpButton()->SizeMove(GG::Pt(BN_X_POS, BORDER_THICK),
+                                   GG::Pt(BN_X_POS + BN_WIDTH, BUTTON_MARGIN + BN_HEIGHT));
+        this->DownButton()->SizeMove(GG::Pt(BN_X_POS, BUTTON_MARGIN + BN_HEIGHT + BUTTON_MARGIN),
+                                     GG::Pt(BN_X_POS + BN_WIDTH, BUTTON_MARGIN + BN_HEIGHT + BUTTON_MARGIN + BN_HEIGHT));
     }
     //@}
 

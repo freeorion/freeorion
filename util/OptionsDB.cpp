@@ -16,7 +16,7 @@ namespace {
         return options_db_registry;
     }
 
-    std::string PreviousSectionName(const std::vector<GG::XMLElement*>& elem_stack)
+    std::string PreviousSectionName(const std::vector<XMLElement*>& elem_stack)
     {
         std::string retval;
         for (unsigned int i = 1; i < elem_stack.size(); ++i) {
@@ -185,11 +185,11 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
     }
 }
 
-GG::XMLDoc OptionsDB::GetXML() const
+XMLDoc OptionsDB::GetXML() const
 {
-    GG::XMLDoc doc;
+    XMLDoc doc;
 
-    std::vector<GG::XMLElement*> elem_stack;
+    std::vector<XMLElement*> elem_stack;
     elem_stack.push_back(&doc.root_node);
 
     for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it) {
@@ -211,17 +211,17 @@ GG::XMLDoc OptionsDB::GetXML() const
             unsigned int last_pos = 0;
             unsigned int pos = 0;
             while ((pos = section_name.find('.', last_pos)) != std::string::npos) {
-                GG::XMLElement temp(section_name.substr(last_pos, pos - last_pos));
+                XMLElement temp(section_name.substr(last_pos, pos - last_pos));
                 elem_stack.back()->AppendChild(temp);
                 elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
                 last_pos = pos + 1;
             }
-            GG::XMLElement temp(section_name.substr(last_pos));
+            XMLElement temp(section_name.substr(last_pos));
             elem_stack.back()->AppendChild(temp);
             elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
         }
 
-        GG::XMLElement temp(name);
+        XMLElement temp(name);
         if (it->second.validator) { // non-flag
             temp.SetText(it->second.ToString());
         } else { // flag
@@ -319,14 +319,14 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
     }
 }
 
-void OptionsDB::SetFromXML(const GG::XMLDoc& doc)
+void OptionsDB::SetFromXML(const XMLDoc& doc)
 {
     for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
         SetFromXMLRecursive(doc.root_node.Child(i), "");
     }
 }
 
-void OptionsDB::SetFromXMLRecursive(const GG::XMLElement& elem, const std::string& section_name)
+void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name)
 {
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
 

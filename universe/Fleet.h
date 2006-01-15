@@ -23,7 +23,7 @@ public:
     /** \name Structors */ //@{
     Fleet(); ///< default ctor
     Fleet(const std::string& name, double x, double y, int owner);
-    Fleet(const GG::XMLElement& elem); ///< ctor that constructs a Fleet object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Fleet object
+    Fleet(const XMLElement& elem); ///< ctor that constructs a Fleet object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Fleet object
     //@}
 
     /** \name Accessors */ //@{
@@ -32,7 +32,7 @@ public:
 
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
 
-    virtual GG::XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a Fleet object with visibility limited relative to the input empire
+    virtual XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a Fleet object with visibility limited relative to the input empire
 
     /** Returns the list of systems that this fleet will move through en route to its destination (may be empty). 
         If this fleet is currently at a system, that system will be the first one in the list. */

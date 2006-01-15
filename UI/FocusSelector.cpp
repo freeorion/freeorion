@@ -4,9 +4,9 @@
 #include "../util/OptionsDB.h"
 #include "../UI/ClientUI.h"
 
-#include "GGApp.h"
-#include "GGDrawUtil.h"
-#include "GGLayout.h"
+#include <GG/GUI.h>
+#include <GG/DrawUtil.h>
+#include <GG/Layout.h>
 
 #include <boost/format.hpp>
 
@@ -44,18 +44,17 @@ namespace {
 }
 
 FocusButton::FocusButton(GG::Clr color, const boost::shared_ptr<GG::Texture>& image) :
-    Button(0, 0, 1, 1, "", "", 0, color),
+    Button(0, 0, 1, 1, "", boost::shared_ptr<GG::Font>(), color),
     m_texture(image)
 {}
 
-bool FocusButton::Render()
+void FocusButton::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_texture) {
         glColor4ubv(GG::CLR_WHITE.v);
         m_texture->OrthoBlit(ul, lr, 0, false);
     }
-    return true;
 }
 
 void FocusButton::RClick(const GG::Pt& pt, Uint32 keys)
@@ -80,7 +79,7 @@ MeterStatusBar::MeterStatusBar(int w, int h, double initial_max, double initial_
     assert(Meter::METER_MIN <= m_projected_max && m_projected_max <= Meter::METER_MAX);
 }
 
-bool MeterStatusBar::Render()
+void MeterStatusBar::Render()
 {
     assert(Height() % 2); // non-odd heights look messed up
     const GG::Pt MARGIN = GG::Pt(1, 2);
@@ -120,7 +119,6 @@ bool MeterStatusBar::Render()
         GG::FlatRectangle(growth_rect.ul.x, growth_rect.ul.y, growth_rect.lr.x, growth_rect.lr.y,
                           METER_STATUS_BAR_GROWTH_COLOR, GG::CLR_ZERO, 0);
     }
-    return true;
 }
 
 void MeterStatusBar::SetProjectedCurrent(double current)
@@ -164,9 +162,9 @@ FocusSelector::FocusSelector(int w, const ResourceCenter& resource_center) :
     for (FocusType i = FOCUS_SELECTOR_FIRST_FOCUS; i < FOCUS_SELECTOR_LAST_FOCUS; i = FocusType(i + 1)) {
         boost::shared_ptr<GG::Texture> texture;
         if (MonoImage(m_focus_buttons.size() - 1))
-            texture = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + MONO_IMAGES[i], true);
+            texture = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + MONO_IMAGES[i], true);
         else
-            texture = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + IMAGES[i], true);
+            texture = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + IMAGES[i], true);
         m_focus_buttons.push_back(new FocusButton(GG::CLR_WHITE, texture));
         GG::Connect(m_focus_buttons.back()->ClickedSignal, FocusClickFunctor(m_focus_buttons.size() - 1, true, this));
         GG::Connect(m_focus_buttons.back()->RightClickedSignal, FocusClickFunctor(m_focus_buttons.size() - 1, false, this));
@@ -197,14 +195,14 @@ FocusSelector::FocusSelector(int w, const ResourceCenter& resource_center) :
             else
                 delta_str << boost::format("%.2g") % delta;
         }
-        m_meter_deltas.push_back(new GG::TextControl(0, 0, 1, 1, delta_str.str(), ClientUI::FONT, 11, delta_color, GG::TF_TOP));
+        m_meter_deltas.push_back(new GG::TextControl(0, 0, 1, 1, delta_str.str(), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, 11), delta_color, GG::TF_TOP));
         layout->Add(m_meter_deltas.back(), 2, m_meter_deltas.size() - 1);
     }
     glDisable(GL_TEXTURE_2D);
     AttachChild(layout);
 }
 
-bool FocusSelector::Render()
+void FocusSelector::Render()
 {
     for (unsigned int i = 0; i < m_focus_buttons.size(); ++i) {
         GG::Pt ul = m_focus_buttons[i]->UpperLeft() - GG::Pt(1, 1),
@@ -221,7 +219,6 @@ bool FocusSelector::Render()
         lr = m_focus_buttons[button]->LowerRight() + GG::Pt(1, 1);
     }
     GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, FOCUS_SELECTOR_SECONDARY_OUTLINE_COLOR, 1);
-    return true;
 }
 
 void FocusSelector::LClick(const GG::Pt& pt, Uint32 keys)
@@ -257,9 +254,9 @@ void FocusSelector::AdjustButtonImages()
 {
     for (unsigned int i = 0; i < m_focus_buttons.size(); ++i) {
         if (MonoImage(i))
-            m_focus_buttons[i]->SetImage(GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + MONO_IMAGES[ButtonFocus(i)]));
+            m_focus_buttons[i]->SetImage(GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + MONO_IMAGES[ButtonFocus(i)]));
         else
-            m_focus_buttons[i]->SetImage(GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + IMAGES[ButtonFocus(i)]));
+            m_focus_buttons[i]->SetImage(GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + IMAGES[ButtonFocus(i)]));
     }
 }
 

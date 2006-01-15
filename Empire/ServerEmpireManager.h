@@ -72,7 +72,7 @@ public:
      *
      * An std::runtime_error is thrown if no empire exists with the given ID
      */
-	GG::XMLElement CreateClientEmpireUpdate(int empire_id);
+	XMLElement CreateClientEmpireUpdate(int empire_id);
     
     /// Creates an XML encoding of an Empire's sitrep, to send to a Client.
     /**
@@ -84,7 +84,7 @@ public:
      *
      *  This method is depracated.  It does nothing.
      */
-	//GG::XMLElement CreateClientSitrepUpdate(int empire_id);
+	//XMLElement CreateClientSitrepUpdate(int empire_id);
     
     //@}
 private:
@@ -100,7 +100,7 @@ private:
      * the corresponding entry for each empire is repopulated whenever CreateClientEmpireUpdate()
      * is called for that empire.
      */
-    std::map<int, GG::XMLElement> m_last_turn_empire_states;
+    std::map<int, XMLElement> m_last_turn_empire_states;
 };
 
 inline std::pair<std::string, std::string> ServerEmpireManagerRevision()

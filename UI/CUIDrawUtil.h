@@ -2,8 +2,8 @@
 #ifndef _CUIDrawUtil_h_
 #define _CUIDrawUtil_h_
 
-#ifndef _GGClr_h_
-#include "GGClr.h"
+#ifndef _GG_Clr_h_
+#include <GG/Clr.h>
 #endif
 
 /** adjusts the intensity of the color up or down by \a amount units per color channel; leaves alpha unchanged */

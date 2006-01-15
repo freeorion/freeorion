@@ -2,8 +2,10 @@
 #ifndef _BuildDesignatorWnd_h_
 #define _BuildDesignatorWnd_h_
 
-#include "GGWnd.h"
 #include "../universe/Enums.h"
+
+#include <GG/Wnd.h>
+
 
 class SidePanel;
 

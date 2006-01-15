@@ -51,7 +51,7 @@ const std::vector<GG::Clr>& EmpireColors()
 {
     static std::vector<GG::Clr> colors;
     if (colors.empty()) {
-        GG::XMLDoc doc;
+        XMLDoc doc;
         std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
         if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
             settings_dir += '/';
@@ -65,17 +65,17 @@ const std::vector<GG::Clr>& EmpireColors()
     return colors;
 }
 
-GG::XMLElement ClrToXML(const GG::Clr& clr)
+XMLElement ClrToXML(const GG::Clr& clr)
 {
-    GG::XMLElement retval("GG::Clr");
-    retval.AppendChild(GG::XMLElement("red", boost::lexical_cast<std::string>(static_cast<int>(clr.r))));
-    retval.AppendChild(GG::XMLElement("green", boost::lexical_cast<std::string>(static_cast<int>(clr.g))));
-    retval.AppendChild(GG::XMLElement("blue", boost::lexical_cast<std::string>(static_cast<int>(clr.b))));
-    retval.AppendChild(GG::XMLElement("alpha", boost::lexical_cast<std::string>(static_cast<int>(clr.a))));
+    XMLElement retval("GG::Clr");
+    retval.AppendChild(XMLElement("red", boost::lexical_cast<std::string>(static_cast<int>(clr.r))));
+    retval.AppendChild(XMLElement("green", boost::lexical_cast<std::string>(static_cast<int>(clr.g))));
+    retval.AppendChild(XMLElement("blue", boost::lexical_cast<std::string>(static_cast<int>(clr.b))));
+    retval.AppendChild(XMLElement("alpha", boost::lexical_cast<std::string>(static_cast<int>(clr.a))));
     return retval;
 }
 
-GG::Clr XMLToClr(const GG::XMLElement& clr)
+GG::Clr XMLToClr(const XMLElement& clr)
 {
     GG::Clr retval;
     retval.r = boost::lexical_cast<int>(clr.Child("red").Text());
@@ -126,6 +126,7 @@ const std::map<std::string, std::string>& SourceFiles()
 
 bool RecordSourceFile(const std::string& filename, const std::string& revision)
 {
+#if 0 // TODO: re-enable this when the validity check is re-enabled in the server
     std::string::size_type filename_start = filename.find_first_of(" \t");
     filename_start = filename.find_first_not_of(" \t", filename_start);
     std::string::size_type filename_length = filename.find_last_of(',') - filename_start;
@@ -146,6 +147,7 @@ bool RecordSourceFile(const std::string& filename, const std::string& revision)
         std::cerr << message << "\n";
         throw std::runtime_error(message.c_str());
     }
+#endif
     return true;
 }
 
@@ -207,7 +209,7 @@ SaveGameEmpireData::SaveGameEmpireData()
 {
 }
 
-SaveGameEmpireData::SaveGameEmpireData(const GG::XMLElement& elem)
+SaveGameEmpireData::SaveGameEmpireData(const XMLElement& elem)
 {
     id = boost::lexical_cast<int>(elem.Child("id").Text());
     name = elem.Child("name").Text();
@@ -215,9 +217,8 @@ SaveGameEmpireData::SaveGameEmpireData(const GG::XMLElement& elem)
     color = XMLToClr(elem.Child("color").Child("GG::Clr"));
 }
 
-GG::XMLElement SaveGameEmpireData::XMLEncode()
+XMLElement SaveGameEmpireData::XMLEncode()
 {
-    using GG::XMLElement;
     using boost::lexical_cast;
 
     XMLElement retval("SaveGameEmpireData");
@@ -239,16 +240,15 @@ PlayerSetupData::PlayerSetupData() :
 {
 }
 
-PlayerSetupData::PlayerSetupData(const GG::XMLElement& elem)
+PlayerSetupData::PlayerSetupData(const XMLElement& elem)
 {
     empire_name = elem.Child("empire_name").Text();
     empire_color = XMLToClr(elem.Child("empire_color").Child("GG::Clr"));
     save_game_empire_id = boost::lexical_cast<int>(elem.Child("save_game_empire_id").Text());
 }
 
-GG::XMLElement PlayerSetupData::XMLEncode() const
+XMLElement PlayerSetupData::XMLEncode() const
 {
-    using GG::XMLElement;
     using boost::lexical_cast;
 
     XMLElement retval("PlayerSetupData");

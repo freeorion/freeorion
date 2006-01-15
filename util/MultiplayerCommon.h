@@ -2,8 +2,9 @@
 #ifndef _MultiplayerCommon_h_
 #define _MultiplayerCommon_h_
 
-#include "GGClr.h"
 #include "XMLDoc.h"
+
+#include <GG/Clr.h>
 
 #include <vector>
 
@@ -11,10 +12,10 @@
 const std::vector<GG::Clr>& EmpireColors();
 
 /** Returns an XML representation of a GG::Clr object. */
-GG::XMLElement ClrToXML(const GG::Clr& clr);
+XMLElement ClrToXML(const GG::Clr& clr);
 
 /** Returns a GG::Clr object constructed from its XML representation. */
-GG::Clr XMLToClr(const GG::XMLElement& clr);
+GG::Clr XMLToClr(const XMLElement& clr);
 
 /** Returns the integer priority level that should be passed to log4cpp for a given priority name string. */
 int PriorityValue(const std::string& name);
@@ -68,11 +69,11 @@ struct SaveGameEmpireData
 {
     /** \name Structors */ //@{
     SaveGameEmpireData(); ///< default ctor.
-    SaveGameEmpireData(const GG::XMLElement& elem); ///< GG::XMLElement ctor.
+    SaveGameEmpireData(const XMLElement& elem); ///< XMLElement ctor.
     //@}
 
     /** \name Accessors */ //@{
-    GG::XMLElement XMLEncode();
+    XMLElement XMLEncode();
     //@}
 
     int         id;
@@ -86,11 +87,11 @@ struct PlayerSetupData
 {
     /** \name Structors */ //@{
     PlayerSetupData(); ///< default ctor.
-    PlayerSetupData(const GG::XMLElement& elem); ///< GG::XMLElement ctor.
+    PlayerSetupData(const XMLElement& elem); ///< XMLElement ctor.
     //@}
 
     /** \name Accessors */ //@{
-    GG::XMLElement XMLEncode() const;
+    XMLElement XMLEncode() const;
     //@}
 
     std::string empire_name;  ///< the name of the player's empire

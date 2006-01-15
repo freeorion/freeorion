@@ -62,9 +62,9 @@ bool ServerEmpireManager::EliminateEmpire(int id)
     
 
 
-GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int empire_id)
+XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int empire_id)
 {
-    GG::XMLElement this_turn(EmpireManager::EMPIRE_UPDATE_TAG);
+    XMLElement this_turn(EmpireManager::EMPIRE_UPDATE_TAG);
 
     // find whatever empire they're talking about
     Empire* emp = Lookup(empire_id);
@@ -80,7 +80,7 @@ GG::XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int empire_id)
 
     for (EmpireManager::iterator it = begin(); it != end(); it++)
     {
-        GG::XMLElement current_empire("Empire" + boost::lexical_cast<std::string>(it->second->EmpireID()));
+        XMLElement current_empire("Empire" + boost::lexical_cast<std::string>(it->second->EmpireID()));
 	// Only append visible information
         current_empire.AppendChild(it->second->XMLEncode(*emp));
         this_turn.AppendChild(current_empire);

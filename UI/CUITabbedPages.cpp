@@ -32,7 +32,7 @@ bool CUITabControl::TabButton::IsSelected() const
     return m_selected;
 }
 
-bool CUITabControl::TabButton::Render()
+void CUITabControl::TabButton::Render()
 {
     switch (State())
     {
@@ -49,7 +49,6 @@ bool CUITabControl::TabButton::Render()
         RenderRollover();
         break;
     }
-    return true;
 }
 
 void CUITabControl::TabButton::SetSelected(bool bSelected/* = true*/)
@@ -110,8 +109,8 @@ void CUITabControl::AddTab(const std::string& title)
 	TabButton* button = new TabButton(pos, 0, title);
 	// Set height of control according to the height of the font:
 	if (m_buttons.empty()) {
-		Resize(Width(), button->Height());
-		m_container->Resize(Width(), button->Height());
+		Resize(GG::Pt(Width(), button->Height()));
+		m_container->Resize(GG::Pt(Width(), button->Height()));
 	}
 	// Add the new button
 	m_buttons.push_back(button);
@@ -122,10 +121,10 @@ void CUITabControl::AddTab(const std::string& title)
 	if ((button->LowerRight().x > Width()) && !m_scrollRight->Visible()) {
 		int width = button->Height() / 2;
 		int pos = Width() - width - 2;
-		m_scrollRight->SizeMove(pos, 0, pos + width, button->Height());
+		m_scrollRight->SizeMove(GG::Pt(pos, 0), GG::Pt(pos + width, button->Height()));
 		pos -= width + TABCONTROL_XOFFSET;
-		m_scrollLeft->SizeMove(pos, 0, pos + width, button->Height());
-		m_container->SizeMove(0, 0, pos - TABCONTROL_XOFFSET, Height());
+		m_scrollLeft->SizeMove(GG::Pt(pos, 0), GG::Pt(pos + width, button->Height()));
+        m_container->SizeMove(GG::Pt(0, 0), GG::Pt(pos - TABCONTROL_XOFFSET, Height()));
 		m_scrollLeft->Show();
 		m_scrollRight->Show();
 	}
@@ -139,7 +138,7 @@ void CUITabControl::OnScrollRight()
     if (m_first_tab_shown < static_cast<int>(m_buttons.size()) - 1) {
         int offset = m_buttons[m_first_tab_shown + 1]->UpperLeft().x - m_buttons[m_first_tab_shown]->UpperLeft().x;
         for (std::vector<TabButton*>::iterator it = m_buttons.begin(); it != m_buttons.end(); ++it) {
-			(*it)->OffsetMove(-offset, 0);
+			(*it)->OffsetMove(GG::Pt(-offset, 0));
         }
         ++m_first_tab_shown;
     }
@@ -150,7 +149,7 @@ void CUITabControl::OnScrollLeft()
     if (0 < m_first_tab_shown) {
         int offset = m_buttons[m_first_tab_shown]->UpperLeft().x - m_buttons[m_first_tab_shown - 1]->UpperLeft().x;
         for (std::vector<TabButton*>::iterator it = m_buttons.begin(); it != m_buttons.end(); ++it) {
-			(*it)->OffsetMove(offset, 0);
+			(*it)->OffsetMove(GG::Pt(offset, 0));
         }
         --m_first_tab_shown;
     }
@@ -192,7 +191,7 @@ void CUITabbedPages::AddPage(GG::Wnd* page, const std::string& title)
 	m_tabs->AddTab(title);
 	m_pages.push_back(page);
 	AttachChild(page);
-	page->SizeMove(0, m_tabs->Height(), Width(), Height() - m_tabs->Height());
+	page->SizeMove(GG::Pt(0, m_tabs->Height()), GG::Pt(Width(), Height() - m_tabs->Height()));
 	if (m_pages.size() == 1)
 		m_tabs->SelectTab(0);
     else

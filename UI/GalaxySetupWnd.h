@@ -58,17 +58,17 @@ public:
 
     /** encodes the values of the controls in an XMLElement with the tag "universe_params", so they can be sent to the server 
         as universe creation parameters. */
-    GG::XMLElement XMLEncode() const;
+    XMLElement XMLEncode() const;
 
     mutable SettingsChangedSignalType SettingsChangedSignal; ///< the settings changed signal object for this GalaxySetupPanel
     mutable ImageChangedSignalType    ImageChangedSignal;    ///< the image changed signal object for this GalaxySetupPanel
     //!@}
 
     /** \name Mutators*/ //!@{
-    virtual bool Render() {return true;}
+    virtual void Render() {}
     virtual void Disable(bool b = true);
 
-    void SetFromXML(const GG::XMLElement& elem); ///< sets the controls from an XMLElement created in a previous call to XMLEncode()
+    void SetFromXML(const XMLElement& elem); ///< sets the controls from an XMLElement created in a previous call to XMLEncode()
     //!@}
 
 private:
@@ -108,7 +108,7 @@ public:
     //!@}
 
     /** \name Mutators*/ //!@{
-    virtual bool Render();    //!< drawing code
+    virtual void Render();    //!< drawing code
     virtual void Keypress (GG::Key key, Uint32 key_mods);
     //!@}
 

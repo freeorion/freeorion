@@ -2,10 +2,11 @@
 
 #include "../combat/Combat.h"
 #include "CUIControls.h"
-#include "GGDrawUtil.h"
-#include "GGStaticGraphic.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
+
+#include <GG/DrawUtil.h>
+#include <GG/StaticGraphic.h>
 
 #include <boost/format.hpp>
 
@@ -43,7 +44,7 @@ class CombatInfoControl : public GG::Control
 
     void Update(const CombatUpdateMessage &combat_info) {m_combat_info=combat_info;}
 
-    virtual bool Render()
+    virtual void Render()
     {
       const int ITEM_WIDTH = 230;
       const GG::Rect  item_txt[4] ={GG::Rect(  7,27,100,45),
@@ -146,7 +147,6 @@ class CombatInfoControl : public GG::Control
           }
         }
       }
-      return true;
     }
 
     const std::string& System() const {return m_combat_info.m_system;}
@@ -157,15 +157,14 @@ class CombatInfoControl : public GG::Control
 
 struct CombatInfoRow : public GG::ListBox::Row
 {
-    CombatInfoRow(int w,const CombatUpdateMessage &combat_info)
+    CombatInfoRow(int w,const CombatUpdateMessage &combat_info) :
+        GG::ListBox::Row(w, 30+combat_info.m_opponents.size()*110, "CombatInfo")
     {
-        height = 30+combat_info.m_opponents.size()*110;//200;
-        push_back(new CombatInfoControl(w,height,combat_info));
-        data_type = "CombatInfo";
+        push_back(new CombatInfoControl(w, Height(), combat_info));
     }
 
-    void Update(const CombatUpdateMessage &combat_info) {boost::static_pointer_cast<CombatInfoControl>(operator[](0))->Update(combat_info);}
-    const std::string& System() const {return boost::static_pointer_cast<CombatInfoControl>(operator[](0))->System();}
+    void Update(const CombatUpdateMessage &combat_info) {static_cast<CombatInfoControl*>(operator[](0))->Update(combat_info);}
+    const std::string& System() const {return static_cast<CombatInfoControl*>(operator[](0))->System();}
 
 };
 
@@ -173,8 +172,7 @@ struct CombatInfoRow : public GG::ListBox::Row
 // CombatWnd
 ////////////////////////////////////////////////
 CombatWnd::CombatWnd(int x,int y)
-    : CUI_Wnd(UserString("COMBAT_WINDOW_TITLE"),x,y, WIDTH, HEIGHT,  GG::Wnd::ONTOP | GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE | GG::Wnd::RESIZABLE | CUI_Wnd::MINIMIZABLE)
-
+    : CUI_Wnd(UserString("COMBAT_WINDOW_TITLE"),x,y, WIDTH, HEIGHT,  GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | CUI_Wnd::MINIMIZABLE)
 {
   m_combats_lb = new CUIListBox(LeftBorder(),TopBorder(),Width()-(LeftBorder()+RightBorder()),Height()-(TopBorder()+BottomBorder()),GG::CLR_ZERO,GG::CLR_ZERO);
   AttachChild(m_combats_lb);
@@ -188,7 +186,7 @@ CombatWnd::~CombatWnd( )
 void CombatWnd::UpdateCombatTurnProgress(const std::string& message)
 {
   std::stringstream stream(message);
-  GG::XMLDoc doc;
+  XMLDoc doc;
   doc.ReadDoc(stream);          
 
   CombatUpdateMessage msg(doc.root_node.Child("combat-update-message"));

@@ -6,8 +6,8 @@
 #include "CUI_Wnd.h"
 #endif
 
-#ifndef _GGListBox_h_
-#include "GGListBox.h"
+#ifndef _GG_ListBox_h_
+#include <GG/ListBox.h>
 #endif
 
 #ifndef _MapWnd_h_
@@ -71,8 +71,8 @@ private:
 
     void        ShipSelectionChanged(const std::set<int>& rows);
     void        ShipBrowsed(int row_idx);
-    void        ShipDroppedIntoList(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
-    void        ShipRightClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt);
+    void        ShipDroppedIntoList(int row_idx, GG::ListBox::Row* row);
+    void        ShipRightClicked(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);
     std::string DestinationText() const;
     std::string ShipStatusText(int ship_id) const;
 
@@ -100,7 +100,7 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint32 flags = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE); ///< basic ctor
+    FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint32 flags = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | MINIMIZABLE); ///< basic ctor
     ~FleetDetailWnd(); ///< dtor
     //@}
 
@@ -141,7 +141,7 @@ public:
 
     /** \name Structors */ //@{
     /** constructs a fleet window for fleets in transit between systems */
-    FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only, Uint32 flags = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE);
+    FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only, Uint32 flags = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | MINIMIZABLE);
     ~FleetWnd(); ///< dtor
     //@}
 
@@ -178,10 +178,10 @@ private:
     void        DetachSignalChildren();
     void        FleetBrowsed(int row_idx);
     void        FleetSelectionChanged(const std::set<int>& rows);
-    void        FleetRightClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt);
-    void        FleetDoubleClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
-    void        FleetDeleted(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
-    void        ObjectDroppedIntoList(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row);
+    void        FleetRightClicked(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);
+    void        FleetDoubleClicked(int row_idx, GG::ListBox::Row* row);
+    void        FleetDeleted(int row_idx, GG::ListBox::Row* row);
+    void        ObjectDroppedIntoList(int row_idx, GG::ListBox::Row* row);
     void        NewFleetButtonClicked();
     void        FleetDetailWndClosing(FleetDetailWnd* wnd);
     Fleet*      FleetInRow(int idx) const;

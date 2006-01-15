@@ -3,7 +3,7 @@
 #include "Effect.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -70,7 +70,7 @@ namespace {
 ///////////////////////////////////////////////////////////
 // Tech                                                  //
 ///////////////////////////////////////////////////////////
-Tech::Tech(const GG::XMLElement& elem) :
+Tech::Tech(const XMLElement& elem) :
     m_effects(0)
 {
     if (elem.Tag() != "Tech")
@@ -86,18 +86,18 @@ Tech::Tech(const GG::XMLElement& elem) :
     m_research_turns = lexical_cast<int>(elem.Child("research_turns").Text());
 
     if (elem.ContainsChild("effects")) {
-        for (GG::XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
+        for (XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
             m_effects.push_back(boost::shared_ptr<Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
         }
     }
 
-    for (GG::XMLElement::const_child_iterator it = elem.Child("prerequisites").child_begin();
+    for (XMLElement::const_child_iterator it = elem.Child("prerequisites").child_begin();
          it != elem.Child("prerequisites").child_end();
          ++it) {
         m_prerequisites.insert(it->Text());
     }
 
-    for (GG::XMLElement::const_child_iterator it = elem.Child("unlocked_items").child_begin();
+    for (XMLElement::const_child_iterator it = elem.Child("unlocked_items").child_begin();
          it != elem.Child("unlocked_items").child_end();
          ++it) {
         m_unlocked_items.push_back(ItemSpec(*it));
@@ -171,7 +171,7 @@ Tech::ItemSpec::ItemSpec() :
 {
 }
 
-Tech::ItemSpec::ItemSpec(const GG::XMLElement& elem)
+Tech::ItemSpec::ItemSpec(const XMLElement& elem)
 {
     if (elem.Tag() != "Item")
         throw std::invalid_argument(("Attempted to construct a Item from an XMLElement that had a tag other than \"Item\"" + (" (\"" + elem.Tag() + ")")).c_str());
@@ -260,10 +260,10 @@ TechManager::TechManager()
     if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
         settings_dir += '/';
     std::ifstream ifs((settings_dir + "techs.xml").c_str());
-    GG::XMLDoc doc;
+    XMLDoc doc;
     doc.ReadDoc(ifs);
     std::set<std::string> categories_seen_in_techs;
-    for (GG::XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
         if (it->Tag() != "Tech" && it->Tag() != "Category")
             throw std::runtime_error("ERROR: Encountered non-Tech, non-Category in techs.xml!");
         if (it->Tag() == "Tech") {

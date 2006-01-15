@@ -3,8 +3,8 @@
 #ifndef _SystemIcon_h_
 #define _SystemIcon_h_
 
-#ifndef _GGButton_h_
-#include "GGButton.h"
+#ifndef _GG_Button_h_
+#include <GG/Button.h>
 #endif
 
 #ifndef _CUIDrawUtil_h_
@@ -54,7 +54,7 @@ public:
 
     //! \name Mutators //!@{
     virtual void   SizeMove(int x1, int y1, int x2, int y2);
-    virtual bool   Render() {return 1;}
+    virtual void   Render() {}
     virtual void   LClick(const GG::Pt& pt, Uint32 keys);
     virtual void   RClick(const GG::Pt& pt, Uint32 keys);
     virtual void   LDoubleClick(const GG::Pt& pt, Uint32 keys);

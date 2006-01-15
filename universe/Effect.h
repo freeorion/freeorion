@@ -21,7 +21,7 @@ namespace Effect {
     class SetTechAvailability;
     class RefineBuildingType;
     class SetEffectTarget;
-    GG::XMLObjectFactory<EffectBase> EffectFactory(); ///< an XML factory that creates the right subclass of EffectBase from a given XML element
+    XMLObjectFactory<EffectBase> EffectFactory(); ///< an XML factory that creates the right subclass of EffectBase from a given XML element
 }
 
 /** Contains one or more Effects, a Condition which indicates the objects in the scope of the Effect(s), and a Condition which
@@ -44,7 +44,7 @@ public:
 
     EffectsGroup(const Condition::ConditionBase* scope, const Condition::ConditionBase* activation,
                  const std::vector<EffectBase*>& effects, const std::string& stacking_group = "");
-    EffectsGroup(const GG::XMLElement& elem);
+    EffectsGroup(const XMLElement& elem);
     virtual ~EffectsGroup();
 
     void GetTargetSet(int source_id, TargetSet& targets) const;
@@ -84,7 +84,7 @@ class Effect::SetMeter : public Effect::EffectBase
 {
 public:
     SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value, bool max);
-    SetMeter(const GG::XMLElement& elem);
+    SetMeter(const XMLElement& elem);
     virtual ~SetMeter();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -102,7 +102,7 @@ class Effect::SetEmpireStockpile : public Effect::EffectBase
 {
 public:
     SetEmpireStockpile(StockpileType stockpile, const ValueRef::ValueRefBase<double>* value);
-    SetEmpireStockpile(const GG::XMLElement& elem);
+    SetEmpireStockpile(const XMLElement& elem);
     virtual ~SetEmpireStockpile();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -121,7 +121,7 @@ class Effect::SetPlanetType : public Effect::EffectBase
 {
 public:
     SetPlanetType(const ValueRef::ValueRefBase<PlanetType>* type);
-    SetPlanetType(const GG::XMLElement& elem);
+    SetPlanetType(const XMLElement& elem);
     virtual ~SetPlanetType();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -138,7 +138,7 @@ class Effect::SetPlanetSize : public Effect::EffectBase
 {
 public:
     SetPlanetSize(const ValueRef::ValueRefBase<PlanetSize>* size);
-    SetPlanetSize(const GG::XMLElement& elem);
+    SetPlanetSize(const XMLElement& elem);
     virtual ~SetPlanetSize();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -153,7 +153,7 @@ class Effect::AddOwner : public Effect::EffectBase
 {
 public:
     AddOwner(const ValueRef::ValueRefBase<int>* empire_id);
-    AddOwner(const GG::XMLElement& elem);
+    AddOwner(const XMLElement& elem);
     virtual ~AddOwner();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -168,7 +168,7 @@ class Effect::RemoveOwner : public Effect::EffectBase
 {
 public:
     RemoveOwner(const ValueRef::ValueRefBase<int>* empire_id);
-    RemoveOwner(const GG::XMLElement& elem);
+    RemoveOwner(const XMLElement& elem);
     virtual ~RemoveOwner();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -183,7 +183,7 @@ private:
 {
 public:
     Create();
-    Create(const GG::XMLElement& elem);
+    Create(const XMLElement& elem);
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
@@ -196,7 +196,7 @@ class Effect::Destroy : public Effect::EffectBase
 {
 public:
     Destroy();
-    Destroy(const GG::XMLElement& elem);
+    Destroy(const XMLElement& elem);
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
@@ -207,7 +207,7 @@ class Effect::AddSpecial : public Effect::EffectBase
 {
 public:
     AddSpecial(const std::string& name);
-    AddSpecial(const GG::XMLElement& elem);
+    AddSpecial(const XMLElement& elem);
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
@@ -221,7 +221,7 @@ class Effect::RemoveSpecial : public Effect::EffectBase
 {
 public:
     RemoveSpecial(const std::string& name);
-    RemoveSpecial(const GG::XMLElement& elem);
+    RemoveSpecial(const XMLElement& elem);
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
@@ -235,7 +235,7 @@ class Effect::SetStarType : public Effect::EffectBase
 {
 public:
     SetStarType(const ValueRef::ValueRefBase<StarType>* type);
-    SetStarType(const GG::XMLElement& elem);
+    SetStarType(const XMLElement& elem);
     virtual ~SetStarType();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -252,7 +252,7 @@ class Effect::SetTechAvailability : public Effect::EffectBase
 {
 public:
     SetTechAvailability(const std::string& tech_name, const ValueRef::ValueRefBase<int>* empire_id, bool available, bool include_tech);
-    SetTechAvailability(const GG::XMLElement& elem);
+    SetTechAvailability(const XMLElement& elem);
     virtual ~SetTechAvailability();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -272,7 +272,7 @@ class Effect::RefineBuildingType : public Effect::EffectBase
 public:
     RefineBuildingType(const std::string& building_type_name, const ValueRef::ValueRefBase<int>* empire_id,
                        const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects);
-    RefineBuildingType(const GG::XMLElement& elem);
+    RefineBuildingType(const XMLElement& elem);
     virtual ~RefineBuildingType();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -288,7 +288,7 @@ class Effect::SetEffectTarget : public Effect::EffectBase
 {
 public:
     SetEffectTarget(const ValueRef::ValueRefBase<int>* effect_target_id);
-    SetEffectTarget(const GG::XMLElement& elem);
+    SetEffectTarget(const XMLElement& elem);
     virtual ~SetEffectTarget();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;

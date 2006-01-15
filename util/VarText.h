@@ -29,15 +29,15 @@ class VarText
 {
 public:
     VarText( ) { };
-    VarText(const GG::XMLElement& elem);
+    VarText(const XMLElement& elem);
 
-    GG::XMLElement XMLEncode() const;
+    XMLElement XMLEncode() const;
 
     /** combines the given template with the varaibles ontained in object to create a string with live variables replaced with text
         will produce exceptions if invalid variables are found ( no not exist in XML data or in universe ) */
     void GenerateVarText( const std::string& template_str );
 
-    GG::XMLElement& GetVariables( )   { return m_variables; }
+    XMLElement& GetVariables( )   { return m_variables; }
     std::string& GetText( )           { return m_text; }
     void SetText( std::string &text ) { m_text = text; }
 
@@ -50,7 +50,7 @@ public:
     static const std::string BUILDING_ID_TAG;
 
 protected:
-    GG::XMLElement m_variables; ///< the data describing the sitrep. See class comments for description
+    XMLElement m_variables; ///< the data describing the sitrep. See class comments for description
     std::string    m_text;      ///< the text, including hyperlinks, that describes this entry. Built from XML data
 };
 

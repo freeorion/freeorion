@@ -3,11 +3,12 @@
 
 #include "CUIControls.h"
 #include "CUISpin.h"
-#include "GGDrawUtil.h"
-#include "GGStaticGraphic.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+
+#include <GG/DrawUtil.h>
+#include <GG/StaticGraphic.h>
 
 
 namespace {
@@ -47,33 +48,35 @@ GalaxySetupPanel::GalaxySetupPanel(int x, int y, int w/* = DEFAULT_WIDTH*/) :
     const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
     int row = -1;
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARS"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
-    m_stars_spin = new CUISpin<int>(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, 75, 100, 1, 10, 500, true);
-    m_stars_spin->OffsetMove(0, (PANEL_CONTROL_SPACING - m_stars_spin->Height()) / 2);
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SHAPE"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARS"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    m_stars_spin = new CUISpin<int>(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, 75, 100, 1, 10, 500, true);
+    m_stars_spin->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_stars_spin->Height()) / 2));
+
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SHAPE"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_galaxy_shapes_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
-    m_galaxy_shapes_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_galaxy_shapes_list->Height()) / 2);
+    m_galaxy_shapes_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_galaxy_shapes_list->Height()) / 2));
     m_galaxy_shapes_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_AGE"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_AGE"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_galaxy_ages_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
-    m_galaxy_ages_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_galaxy_ages_list->Height()) / 2);
+    m_galaxy_ages_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_galaxy_ages_list->Height()) / 2));
     m_galaxy_ages_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARLANE_FREQ"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARLANE_FREQ"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_starlane_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
-    m_starlane_freq_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_starlane_freq_list->Height()) / 2);
+    m_starlane_freq_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_starlane_freq_list->Height()) / 2));
     m_starlane_freq_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_PLANET_DENSITY"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_PLANET_DENSITY"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_planet_density_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
-    m_planet_density_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_planet_density_list->Height()) / 2);
+    m_planet_density_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_planet_density_list->Height()) / 2));
     m_planet_density_list->SetStyle(GG::LB_NOSORT);
 
-    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row* PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SPECIALS_FREQ"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row* PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SPECIALS_FREQ"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
     m_specials_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
-    m_specials_freq_list->OffsetMove(0, (PANEL_CONTROL_SPACING - m_specials_freq_list->Height()) / 2);
+    m_specials_freq_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_specials_freq_list->Height()) / 2));
     m_specials_freq_list->SetStyle(GG::LB_NOSORT);
 
     Init();
@@ -114,18 +117,18 @@ boost::shared_ptr<GG::Texture> GalaxySetupPanel::PreviewImage() const
     return m_textures[GalaxyShape()];
 }
 
-GG::XMLElement GalaxySetupPanel::XMLEncode() const
+XMLElement GalaxySetupPanel::XMLEncode() const
 {
     using boost::lexical_cast;
     using std::string;
 
-    GG::XMLElement retval("universe_params");
-    retval.AppendChild(GG::XMLElement("size", lexical_cast<string>(Systems())));
-    retval.AppendChild(GG::XMLElement("shape", lexical_cast<string>(GalaxyShape())));
-    retval.AppendChild(GG::XMLElement("age", lexical_cast<string>(GalaxyAge())));
-    retval.AppendChild(GG::XMLElement("starlane_freq", lexical_cast<string>(StarlaneFrequency())));
-    retval.AppendChild(GG::XMLElement("planet_density", lexical_cast<string>(PlanetDensity())));
-    retval.AppendChild(GG::XMLElement("specials_freq", lexical_cast<string>(SpecialsFrequency())));
+    XMLElement retval("universe_params");
+    retval.AppendChild(XMLElement("size", lexical_cast<string>(Systems())));
+    retval.AppendChild(XMLElement("shape", lexical_cast<string>(GalaxyShape())));
+    retval.AppendChild(XMLElement("age", lexical_cast<string>(GalaxyAge())));
+    retval.AppendChild(XMLElement("starlane_freq", lexical_cast<string>(StarlaneFrequency())));
+    retval.AppendChild(XMLElement("planet_density", lexical_cast<string>(PlanetDensity())));
+    retval.AppendChild(XMLElement("specials_freq", lexical_cast<string>(SpecialsFrequency())));
     return retval;
 }
 
@@ -136,7 +139,7 @@ void GalaxySetupPanel::Disable(bool b/* = true*/)
     }
 }
 
-void GalaxySetupPanel::SetFromXML(const GG::XMLElement& elem)
+void GalaxySetupPanel::SetFromXML(const XMLElement& elem)
 {
     using boost::lexical_cast;
     m_stars_spin->SetValue(lexical_cast<int>(elem.Child("size").Text()));
@@ -246,7 +249,7 @@ void GalaxySetupPanel::ShapeChanged(int index)
 GalaxySetupWnd::GalaxySetupWnd() : 
     CUI_Wnd(UserString("GSETUP_WINDOW_TITLE"), (HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2, 
             (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2, GAL_SETUP_WND_WD, GAL_SETUP_WND_HT, 
-            GG::Wnd::CLICKABLE | GG::Wnd::MODAL),
+            GG::CLICKABLE | GG::MODAL),
     m_ended_with_ok(false),
     m_galaxy_setup_panel(0),
     m_empire_name_label(0),
@@ -261,16 +264,18 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     m_galaxy_setup_panel = new GalaxySetupPanel(0, 22);
 
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
+
     const int LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
-    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_COLOR"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT);
+    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_COLOR"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT);
     m_empire_color_selector = new EmpireColorSelector(ClientUI::PTS + 4);
-    m_empire_color_selector->MoveTo(LABELS_WIDTH + 2 * CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING + (PANEL_CONTROL_SPACING - m_empire_color_selector->Height()) / 2);
+    m_empire_color_selector->MoveTo(GG::Pt(LABELS_WIDTH + 2 * CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING + (PANEL_CONTROL_SPACING - m_empire_color_selector->Height()) / 2));
     m_empire_color_selector->Select(0);
-    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y, LABELS_WIDTH, m_empire_color_selector->Height(), UserString("GSETUP_EMPIRE_NAME"), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_RIGHT);
+    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y, LABELS_WIDTH, m_empire_color_selector->Height(), UserString("GSETUP_EMPIRE_NAME"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT);
     m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y,
-                                     LABELS_WIDTH, CONTROL_HEIGHT, "Human");
-    m_empire_name_label->OffsetMove(0, (PANEL_CONTROL_SPACING - m_empire_name_label->Height()) / 2);
-    m_empire_name_edit->OffsetMove(0, (PANEL_CONTROL_SPACING - m_empire_name_edit->Height()) / 2);
+                                     LABELS_WIDTH, "Human");
+    m_empire_name_label->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_empire_name_label->Height()) / 2));
+    m_empire_name_edit->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_empire_name_edit->Height()) / 2));
 
     // create a temporary texture and static graphic
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
@@ -292,12 +297,11 @@ GG::Clr GalaxySetupWnd::EmpireColor() const
     return m_empire_color_selector->CurrentColor();
 }
 
-bool GalaxySetupWnd::Render()
+void GalaxySetupWnd::Render()
 {
     CUI_Wnd::Render();
     GG::FlatRectangle(UpperLeft().x + PREVIEW_UL.x - 2, UpperLeft().y + PREVIEW_UL.y - 2, UpperLeft().x + PREVIEW_UL.x + PREVIEW_SZ.x + 2, 
                       UpperLeft().y + PREVIEW_UL.y + PREVIEW_SZ.y + 2, GG::CLR_BLACK, ClientUI::WND_INNER_BORDER_COLOR, 1);
-    return true;
 }
 
 void GalaxySetupWnd::Keypress (GG::Key key, Uint32 key_mods)

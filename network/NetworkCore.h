@@ -8,8 +8,8 @@
 #include "SDL.h"
 #endif
 
-#ifndef _SDLnet_h
-#include "net/net2.h"
+#ifndef _NET2_H_
+#include <GG/net/net2.h>
 #endif
 
 // deal with dirty, dirty MS macros

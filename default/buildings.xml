@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<GG::XMLDoc>
+<XMLDoc>
 
 <BuildingType>
   <name>BLD_MEGALITH</name>
@@ -982,4 +982,4 @@
   <graphic/>
 </BuildingType>
 
-</GG::XMLDoc>
+</XMLDoc>

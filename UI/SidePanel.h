@@ -6,20 +6,20 @@
 #include "CUIControls.h"
 #endif
 
-#ifndef _GGDynamicGraphic_h_
-#include "GGDynamicGraphic.h"
+#ifndef _GG_DynamicGraphic_h_
+#include <GG/DynamicGraphic.h>
 #endif
 
-#ifndef _GGWnd_h_
-#include "GGWnd.h"
+#ifndef _GG_Wnd_h_
+#include <GG/Wnd.h>
 #endif
 
-#ifndef _GGSignalsAndSlots_h_
-#include "GGSignalsAndSlots.h"
+#ifndef _GG_SignalsAndSlots_h_
+#include <GG/SignalsAndSlots.h>
 #endif
 
-#ifndef _GGTexture_h_
-#include "GGTexture.h"
+#ifndef _GG_Texture_h_
+#include <GG/Texture.h>
 #endif
 
 #ifndef _ResourceCenter_h_
@@ -68,7 +68,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool  Render();
+    virtual void  Render();
 
     void          SetSystem(int system_id); ///< sets the system currently being viewed in the side panel
     void          SelectPlanet(int planet_id); ///< selects the planet with id \a planet_id within the current system, if such a planet exists

@@ -5,7 +5,6 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 #include "OptionValidators.h"
-
 #include "XMLDoc.h"
 
 #include <boost/any.hpp>
@@ -99,7 +98,7 @@ public:
     }
 
     void        GetUsage(std::ostream& os, const std::string& command_line = "") const; ///< writes a usage message to \a os
-    GG::XMLDoc  GetXML() const;                                                         ///< returns the contents of the DB as an XMLDoc
+    XMLDoc  GetXML() const;                                                         ///< returns the contents of the DB as an XMLDoc
 
     OptionChangedSignalType&        OptionChangedSignal(const std::string& option); ///< the option changed signal object for the given option
     mutable OptionAddedSignalType   OptionAddedSignal;   ///< the option added signal object for this DB
@@ -161,7 +160,7 @@ public:
     }
 
     void SetFromCommandLine(int argc, char* argv[]); ///< fills some or all of the options of the DB from values passed in from the command line
-    void SetFromXML(const GG::XMLDoc& doc);          ///< fills some or all of the options of the DB from values stored in XMLDoc \a doc
+    void SetFromXML(const XMLDoc& doc);          ///< fills some or all of the options of the DB from values stored in XMLDoc \a doc
 
 private:
     struct Option
@@ -188,7 +187,7 @@ private:
 
     OptionsDB();
 
-    void SetFromXMLRecursive(const GG::XMLElement& elem, const std::string& section_name);
+    void SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name);
 
     std::map<std::string, Option>    m_options;
 

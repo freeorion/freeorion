@@ -3,12 +3,12 @@
 #ifndef _CUI_Wnd_h_
 #define _CUI_Wnd_h_
 
-#ifndef _GGWnd_h_
-#include "GGWnd.h"
+#ifndef _GG_Wnd_h_
+#include <GG/Wnd.h>
 #endif
 
-#ifndef _GGButton_h_
-#include "GGButton.h"
+#ifndef _GG_Button_h_
+#include <GG/Button.h>
 #endif
 
 class CUIEdit;
@@ -30,7 +30,7 @@ public:
 
    Mode GetMode() const {return m_mode;} ///< returns the current mode of this button (is it a minimize button or a restore button?)
 
-   bool Render();
+   void Render();
 
    void Toggle(); ///< toggles modes between MIN_BUTTON and RESTORE_BUTTON
 
@@ -44,7 +44,7 @@ class CUI_CloseButton : public GG::Button
 public:
    CUI_CloseButton(int x, int y);
 
-   bool Render();
+   void Render();
 };
 
 //! This class is a superclass of all interface windows in GG.  It takes care of
@@ -92,7 +92,7 @@ public:
     };
 
     //! \name Structors //@{
-    CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags = GG::Wnd::CLICKABLE); //!< Constructs the window to be a CUI window
+    CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags = GG::CLICKABLE); //!< Constructs the window to be a CUI window
     ~CUI_Wnd();    //!< Destructor
     //@}
 
@@ -103,7 +103,7 @@ public:
 
     //! \name Mutators //@{
     virtual void SizeMove(int x1, int y1, int x2, int y2);
-    virtual bool Render();
+    virtual void Render();
     virtual void LButtonDown(const GG::Pt& pt, Uint32 keys);
     virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
     virtual void LButtonUp(const GG::Pt& pt, Uint32 keys);
@@ -161,7 +161,7 @@ protected:
 class CUIEditWnd : public CUI_Wnd
 {
 public:
-    CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, Uint32 flags = Wnd::MODAL);
+    CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, Uint32 flags = GG::MODAL);
 
     virtual void ModalInit();
     virtual void Keypress(GG::Key key, Uint32 key_mods);

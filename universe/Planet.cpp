@@ -10,8 +10,7 @@
 #include "../server/ServerApp.h"
 #include "Ship.h"
 #include "System.h"
-
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -74,15 +73,13 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_def_bases = 0;
 }
 
-Planet::Planet(const GG::XMLElement& elem) :
+Planet::Planet(const XMLElement& elem) :
     UniverseObject(elem.Child("UniverseObject")),
     PopCenter(elem.Child("PopCenter"), this),
     ResourceCenter(elem.Child("ResourceCenter"), PopCenter::PopulationMeter(), this),
     m_is_about_to_be_colonized(0),
     m_def_bases(0)
 {
-    using GG::XMLElement;
-
     if (elem.Tag().find( "Planet" ) == std::string::npos )
         throw std::invalid_argument("Attempted to construct a Planet from an XMLElement that had a tag other than \"Planet\"");
 
@@ -95,7 +92,7 @@ Planet::Planet(const GG::XMLElement& elem) :
         if (vis == FULL_VISIBILITY) {
             m_def_bases = lexical_cast<int>(elem.Child("m_def_bases").Text());
             m_is_about_to_be_colonized = lexical_cast<int>(elem.Child("m_is_about_to_be_colonized").Text());
-            m_buildings = GG::ContainerFromString<std::set<int> >(elem.Child("m_buildings").Text());
+            m_buildings = ContainerFromString<std::set<int> >(elem.Child("m_buildings").Text());
             m_available_trade  = lexical_cast<double>(elem.Child("m_available_trade").Text());
         }
     } catch (const boost::bad_lexical_cast& e) {
@@ -170,10 +167,9 @@ UniverseObject::Visibility Planet::GetVisibility(int empire_id) const
     return GetSystem()->GetVisibility(empire_id);
 }
 
-GG::XMLElement Planet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement Planet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
     // Partial encoding of Planet for limited visibility
-    using GG::XMLElement;
     using boost::lexical_cast;
     using std::string;
 
@@ -191,7 +187,7 @@ GG::XMLElement Planet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) cons
     if (vis == FULL_VISIBILITY) {
         retval.AppendChild(XMLElement("m_def_bases", lexical_cast<std::string>(m_def_bases)));
         retval.AppendChild(XMLElement("m_is_about_to_be_colonized", lexical_cast<std::string>(m_is_about_to_be_colonized)));
-        retval.AppendChild(XMLElement("m_buildings", GG::StringFromContainer<std::set<int> >(m_buildings)));
+        retval.AppendChild(XMLElement("m_buildings", StringFromContainer<std::set<int> >(m_buildings)));
         retval.AppendChild(XMLElement("m_available_trade", lexical_cast<std::string>(m_available_trade)));
     }
     return retval;

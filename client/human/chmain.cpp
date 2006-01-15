@@ -1,7 +1,7 @@
 #include "HumanClientApp.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
-#include "XMLDoc.h"
+#include "../../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 		GetOptionsDB().Add<std::string>("bg-music", "Sets the background track to play", "artificial_intelligence_v3.ogg");
 #endif
         GetOptionsDB().AddFlag('f', "fullscreen", "Start the game in fullscreen");
-        GG::XMLDoc doc;
+        XMLDoc doc;
         boost::filesystem::ifstream ifs(GetConfigPath());
         doc.ReadDoc(ifs);
         ifs.close();

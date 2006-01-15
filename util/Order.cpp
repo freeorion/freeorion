@@ -18,7 +18,6 @@
 
 using boost::lexical_cast;
 using std::vector;
-using GG::XMLElement;
 
 // TEMPORARY!  This should go into some sort of external
 // XML file that the server uses for game rules like this
@@ -51,13 +50,13 @@ Order::Order() :
 {
 }
 
-Order::Order(const GG::XMLElement& elem)
+Order::Order(const XMLElement& elem)
 {
     m_empire = lexical_cast<int>(elem.Child("m_empire").Text());
     m_executed = lexical_cast<bool>(elem.Child("m_executed").Text());
 }
 
-GG::XMLElement Order::XMLEncode() const
+XMLElement Order::XMLEncode() const
 {
     XMLElement retval("Order");
     retval.AppendChild(XMLElement("m_empire", lexical_cast<std::string>(m_empire)));
@@ -97,7 +96,7 @@ bool Order::UndoImpl() const
     return false;
 }
 
-void Order::InitOrderFactory(GG::XMLObjectFactory<Order>& fact)
+void Order::InitOrderFactory(XMLObjectFactory<Order>& fact)
 {
     fact.AddGenerator("RenameOrder",          &GenRenameOrder);
     fact.AddGenerator("NewFleetOrder",        &GenNewFleetOrder);
@@ -120,7 +119,7 @@ RenameOrder::RenameOrder() :
 {
 }
    
-RenameOrder::RenameOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
+RenameOrder::RenameOrder(const XMLElement& elem) : Order(elem.Child("Order"))
 {
     if (elem.Tag()!=("RenameOrder"))
         throw std::invalid_argument("Attempted to construct RenameOrder from malformed XMLElement");
@@ -138,7 +137,7 @@ RenameOrder::RenameOrder(int empire, int fleet, const std::string& name) :
         throw std::invalid_argument("RenameOrder::RenameOrder() : Attempted to name an object \"\".");
 }
 
-GG::XMLElement RenameOrder::XMLEncode() const
+XMLElement RenameOrder::XMLEncode() const
 {
     XMLElement retval("RenameOrder");
     retval.AppendChild(Order::XMLEncode());
@@ -256,7 +255,7 @@ FleetMoveOrder::FleetMoveOrder() :
 {
 }
 
-FleetMoveOrder::FleetMoveOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
+FleetMoveOrder::FleetMoveOrder(const XMLElement& elem) : Order(elem.Child("Order"))
 {
     if(elem.Tag()!=("FleetMoveOrder"))
         throw std::invalid_argument("Attempted to construct FleetMoveOrder from malformed XMLElement");
@@ -264,7 +263,7 @@ FleetMoveOrder::FleetMoveOrder(const GG::XMLElement& elem) : Order(elem.Child("O
     m_fleet = lexical_cast<int>(elem.Child("m_fleet").Text());
     m_start_system = lexical_cast<int>(elem.Child("m_start_system").Text());
     m_dest_system = lexical_cast<int>(elem.Child("m_dest_system").Text());
-    m_route = GG::ContainerFromString<std::vector<int> >(elem.Child("m_route").Text());
+    m_route = ContainerFromString<std::vector<int> >(elem.Child("m_route").Text());
     m_route_length = lexical_cast<double>(elem.Child("m_route_length").Text());
 }
 
@@ -288,7 +287,7 @@ XMLElement FleetMoveOrder::XMLEncode() const
     retval.AppendChild(XMLElement("m_fleet", lexical_cast<std::string>(m_fleet)));
     retval.AppendChild(XMLElement("m_start_system", lexical_cast<std::string>(m_start_system)));
     retval.AppendChild(XMLElement("m_dest_system", lexical_cast<std::string>(m_dest_system)));
-    retval.AppendChild(XMLElement("m_route", GG::StringFromContainer<std::vector<int> >(m_route)));
+    retval.AppendChild(XMLElement("m_route", StringFromContainer<std::vector<int> >(m_route)));
     retval.AppendChild(XMLElement("m_route_length", lexical_cast<std::string>(m_route_length)));
     return retval;
 }
@@ -347,14 +346,14 @@ FleetTransferOrder::FleetTransferOrder() :
 {
 }
 
-FleetTransferOrder::FleetTransferOrder(const GG::XMLElement& elem) : Order(elem.Child("Order"))
+FleetTransferOrder::FleetTransferOrder(const XMLElement& elem) : Order(elem.Child("Order"))
 {
     if(elem.Tag() !=("FleetTransferOrder"))
         throw std::invalid_argument("Attempted to construct FleetTransferOrder from malformed XMLElement");
     
     m_fleet_from = lexical_cast<int> (elem.Child("m_fleet_from").Text());
     m_fleet_to = lexical_cast<int> (elem.Child("m_fleet_to").Text());
-    m_add_ships = GG::ContainerFromString<std::vector<int> >(elem.Child("m_add_ships").Text());
+    m_add_ships = ContainerFromString<std::vector<int> >(elem.Child("m_add_ships").Text());
 }
 
 FleetTransferOrder::FleetTransferOrder(int empire, int fleet_from, int fleet_to, const std::vector<int>& ships) : 
@@ -371,7 +370,7 @@ XMLElement FleetTransferOrder::XMLEncode() const
     retval.AppendChild(Order::XMLEncode());
     retval.AppendChild(XMLElement("m_fleet_from", lexical_cast<std::string>(m_fleet_from)));
     retval.AppendChild(XMLElement("m_fleet_to", lexical_cast<std::string>(m_fleet_to)));
-    retval.AppendChild(XMLElement("m_add_ships", GG::StringFromContainer<std::vector<int> >(m_add_ships)));
+    retval.AppendChild(XMLElement("m_add_ships", StringFromContainer<std::vector<int> >(m_add_ships)));
     return retval;
 }
 
@@ -447,7 +446,7 @@ FleetColonizeOrder::FleetColonizeOrder() :
 {
 }
 
-FleetColonizeOrder::FleetColonizeOrder(const GG::XMLElement& elem) :
+FleetColonizeOrder::FleetColonizeOrder(const XMLElement& elem) :
     Order(elem.Child("Order"))
 {
     if(elem.Tag() != ("FleetColonizeOrder"))
@@ -498,7 +497,7 @@ void FleetColonizeOrder::ExecuteImpl() const
 
     Universe& universe = GetUniverse();
 
-//     GG::XMLDoc doc;
+//     XMLDoc doc;
 //     doc.root_node = universe.XMLEncode(EmpireID());
 //     std::ofstream ofs("before.xml");
 //     doc.WriteDoc(ofs);
@@ -571,7 +570,7 @@ bool FleetColonizeOrder::UndoImpl() const
         fleet->AddShip(ship->ID());
     }
 
-//     GG::XMLDoc doc;
+//     XMLDoc doc;
 //     doc.root_node = universe.XMLEncode(EmpireID());
 //     std::ofstream ofs("after.xml");
 //     doc.WriteDoc(ofs);
@@ -590,7 +589,7 @@ DeleteFleetOrder::DeleteFleetOrder() :
 {
 }
 
-DeleteFleetOrder::DeleteFleetOrder(const GG::XMLElement& elem):
+DeleteFleetOrder::DeleteFleetOrder(const XMLElement& elem):
     Order(elem.Child("Order"))
 {
     if(elem.Tag() != ("DeleteFleetOrder"))
@@ -605,7 +604,7 @@ DeleteFleetOrder::DeleteFleetOrder(int empire, int fleet) :
 {
 }
 
-GG::XMLElement DeleteFleetOrder::XMLEncode() const
+XMLElement DeleteFleetOrder::XMLEncode() const
 {
     XMLElement retval("DeleteFleetOrder");
     retval.AppendChild(Order::XMLEncode());
@@ -644,7 +643,7 @@ ChangeFocusOrder::ChangeFocusOrder() :
 {
 }
 
-ChangeFocusOrder::ChangeFocusOrder(const GG::XMLElement& elem):
+ChangeFocusOrder::ChangeFocusOrder(const XMLElement& elem):
     Order(elem.Child("Order"))
 {
     if(elem.Tag() != ("ChangeFocusOrder"))
@@ -663,7 +662,7 @@ ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, FocusType focus, bool
 {
 }
 
-GG::XMLElement ChangeFocusOrder::XMLEncode() const
+XMLElement ChangeFocusOrder::XMLEncode() const
 {
     XMLElement retval("ChangeFocusOrder");
     retval.AppendChild(Order::XMLEncode());
@@ -698,7 +697,7 @@ ResearchQueueOrder::ResearchQueueOrder() :
 {
 }
 
-ResearchQueueOrder::ResearchQueueOrder(const GG::XMLElement& elem) :
+ResearchQueueOrder::ResearchQueueOrder(const XMLElement& elem) :
     Order(elem.Child("Order"))
 {
     if (elem.Tag() != ("ResearchQueueOrder"))
@@ -725,7 +724,7 @@ ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name,
 {
 }
 
-GG::XMLElement ResearchQueueOrder::XMLEncode() const
+XMLElement ResearchQueueOrder::XMLEncode() const
 {
     XMLElement retval("ResearchQueueOrder");
     retval.AppendChild(Order::XMLEncode());
@@ -757,7 +756,7 @@ ProductionQueueOrder::ProductionQueueOrder() :
     m_new_index(INVALID_INDEX)
 {}
 
-ProductionQueueOrder::ProductionQueueOrder(const GG::XMLElement& elem) :
+ProductionQueueOrder::ProductionQueueOrder(const XMLElement& elem) :
     Order(elem.Child("Order"))
 {
     if (elem.Tag() != ("ProductionQueueOrder"))
@@ -816,7 +815,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index) :
     m_new_index(INVALID_INDEX)
 {}
 
-GG::XMLElement ProductionQueueOrder::XMLEncode() const
+XMLElement ProductionQueueOrder::XMLEncode() const
 {
     XMLElement retval("ProductionQueueOrder");
     retval.AppendChild(Order::XMLEncode());

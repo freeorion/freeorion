@@ -7,40 +7,40 @@
 #include "ClientUI.h"
 #endif
 
-#ifndef _GGButton_h_
-#include "GGButton.h"
+#ifndef _GG_Button_h_
+#include <GG/Button.h>
 #endif
 
 #ifndef _CUIDrawUtil_h_
 #include "CUIDrawUtil.h"
 #endif
 
-#ifndef _GGListbox_h_
-#include "GGDropDownList.h"
+#ifndef _GG_Listbox_h_
+#include <GG/DropDownList.h>
 #endif
 
-#ifndef _GGEdit_h_
-#include "GGEdit.h"
+#ifndef _GG_Edit_h_
+#include <GG/Edit.h>
 #endif
 
-#ifndef _GGFileDlg_h_
-#include "GGFileDlg.h"
+#ifndef _GG_FileDlg_h_
+#include <GG/dialogs/FileDlg.h>
 #endif
 
-#ifndef _GGMenu_h_
-#include "GGMenu.h"
+#ifndef _GG_Menu_h_
+#include <GG/Menu.h>
 #endif
 
-#ifndef _GGMultiEdit_h_
-#include "GGMultiEdit.h"
+#ifndef _GG_MultiEdit_h_
+#include <GG/MultiEdit.h>
 #endif
 
-#ifndef _GGScroll_h_
-#include "GGScroll.h"
+#ifndef _GG_Scroll_h_
+#include <GG/Scroll.h>
 #endif
 
-#ifndef _GGSlider_h_
-#include "GGSlider.h"
+#ifndef _GG_Slider_h_
+#include <GG/Slider.h>
 #endif
 
 namespace GG {
@@ -59,9 +59,9 @@ class CUIButton : public GG::Button
 {
 public:
     /** \name Structors */ //@{
-    CUIButton(int x, int y, int w, const std::string& str, const std::string& font_filename = ClientUI::FONT, int pts = ClientUI::PTS, 
+    CUIButton(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
               GG::Clr color = ClientUI::BUTTON_COLOR, GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int thick = 1, 
-              GG::Clr text_color = ClientUI::TEXT_COLOR, Uint32 flags = GG::Wnd::CLICKABLE); ///< basic ctor
+              GG::Clr text_color = ClientUI::TEXT_COLOR, Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -93,9 +93,9 @@ class CUITurnButton : public CUIButton
 {
 public:
     /** \name Structors */ //@{
-    CUITurnButton(int x, int y, int w, const std::string& str, const std::string& font_filename = ClientUI::FONT, int pts = ClientUI::PTS, 
+    CUITurnButton(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
                   GG::Clr color = ClientUI::BUTTON_COLOR, GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int thick = 1, 
-                  GG::Clr text_color = ClientUI::TEXT_COLOR, Uint32 flags = GG::Wnd::CLICKABLE); ///< basic ctor
+                  GG::Clr text_color = ClientUI::TEXT_COLOR, Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 };
 
@@ -105,7 +105,7 @@ class CUIArrowButton : public GG::Button
 {
 public:
     /** \name Structors */ //@{
-    CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orientation, GG::Clr color, Uint32 flags = GG::Wnd::CLICKABLE); ///< basic ctor
+    CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orientation, GG::Clr color, Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -136,11 +136,10 @@ public:
     enum CUIStateButtonStyle {SBSTYLE_CUI_CHECKBOX = 5, SBSTYLE_CUI_RADIO_BUTTON};
 
     /** \name Structors */ //@{
-    CUIStateButton(int x, int y, int w, int h, const std::string& str, Uint32 text_fmt, Uint32 style = SBSTYLE_CUI_CHECKBOX, 
-                   GG::Clr color = ClientUI::STATE_BUTTON_COLOR, const std::string& font_filename = ClientUI::FONT, 
-                   int pts = ClientUI::PTS, GG::Clr text_color = ClientUI::TEXT_COLOR, GG::Clr interior = GG::CLR_ZERO, 
-                   GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int bn_x = -1, int bn_y = -1, int bn_w = -1, int bn_h = -1, 
-                   Uint32 flags = CLICKABLE); ///< ctor
+    CUIStateButton(int x, int y, int w, int h, const std::string& str, Uint32 text_fmt, Uint32 style = SBSTYLE_CUI_CHECKBOX,
+                   GG::Clr color = ClientUI::STATE_BUTTON_COLOR, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
+                   GG::Clr text_color = ClientUI::TEXT_COLOR, GG::Clr interior = GG::CLR_ZERO,
+                   GG::Clr border = ClientUI::CTRL_BORDER_COLOR, Uint32 flags = GG::CLICKABLE); ///< ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -148,7 +147,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool  Render();
+    virtual void  Render();
     //@}
 
 private:
@@ -166,16 +165,16 @@ public:
     class ScrollTab : public GG::Button
     {
     public:
-        ScrollTab(GG::Scroll::Orientation orientation, int scroll_width, GG::Clr color, GG::Clr border_color); ///< basic ctor
-        virtual bool Render();
+        ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color, GG::Clr border_color); ///< basic ctor
+        virtual void Render();
     private:
         GG::Clr m_border_color;
-        GG::Scroll::Orientation m_orientation;
+        GG::Orientation m_orientation;
     };
 
     /** \name Structors */ //@{
-    CUIScroll(int x, int y, int w, int h, Orientation orientation, GG::Clr color = GG::CLR_ZERO, 
-              GG::Clr border = ClientUI::CTRL_BORDER_COLOR, GG::Clr interior = GG::CLR_ZERO, Uint32 flags = CLICKABLE); ///< basic ctor
+    CUIScroll(int x, int y, int w, int h, GG::Orientation orientation, GG::Clr color = GG::CLR_ZERO, 
+              GG::Clr border = ClientUI::CTRL_BORDER_COLOR, GG::Clr interior = GG::CLR_ZERO, Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -183,7 +182,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool    Render();
+    virtual void    Render();
     virtual void    SizeMove(int x1, int y1, int x2, int y2);
     //@}
 
@@ -200,15 +199,11 @@ class CUIListBox : public GG::ListBox
 public:
     /** \name Structors */ //@{
     CUIListBox(int x, int y, int w, int h, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr interior = GG::CLR_ZERO, 
-               Uint32 flags = CLICKABLE | DRAG_KEEPER); ///< basic ctor
-
-    /** ctor that allows the specification of column widths */
-    CUIListBox(int x, int y, int w, int h, const std::vector<int>& col_widths, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, 
-               GG::Clr interior = GG::CLR_ZERO, Uint32 flags = CLICKABLE | DRAG_KEEPER);
+               Uint32 flags = GG::CLICKABLE | GG::DRAG_KEEPER); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool   Render();
+    virtual void   Render();
     //@}
 
 protected:
@@ -224,13 +219,13 @@ class CUIDropDownList : public GG::DropDownList
 {
 public:
     /** \name Structors */ //@{
-    CUIDropDownList(int x, int y, int w, int row_ht, int drop_ht, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, 
+    CUIDropDownList(int x, int y, int w, int h, int drop_ht, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, 
                     GG::Clr interior = ClientUI::DROP_DOWN_LIST_INT_COLOR, GG::Clr drop_list_interior = ClientUI::DROP_DOWN_LIST_INT_COLOR, 
-                    Uint32 flags = CLICKABLE); ///< basic ctor
+                    Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool   Render();
+    virtual void   Render();
     virtual void   LClick(const GG::Pt& pt, Uint32 keys);
 
     void DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
@@ -239,7 +234,6 @@ public:
 
 private:
     bool m_render_drop_arrow;
-    GG::Clr m_interior_color;
 };
 
 
@@ -248,13 +242,13 @@ class CUIEdit : public GG::Edit
 {
 public:
     /** \name Structors */ //@{
-    CUIEdit(int x, int y, int w, int h, const std::string& str, const std::string& font_filename = ClientUI::FONT, 
-            int pts = ClientUI::PTS, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr text_color = ClientUI::TEXT_COLOR, 
-            GG::Clr interior = ClientUI::EDIT_INT_COLOR, Uint32 flags = CLICKABLE | DRAG_KEEPER); ///< basic ctor
+    CUIEdit(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
+            GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr text_color = ClientUI::TEXT_COLOR, 
+            GG::Clr interior = ClientUI::EDIT_INT_COLOR, Uint32 flags = GG::CLICKABLE | GG::DRAG_KEEPER); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool   Render();
+    virtual void   Render();
     //@}
 };
 
@@ -264,13 +258,14 @@ class CUIMultiEdit : public GG::MultiEdit
 {
 public:
     /** \name Structors */ //@{
-    CUIMultiEdit(int x, int y, int w, int h, const std::string& str, Uint32 style = GG::TF_LINEWRAP, const std::string& font_filename = ClientUI::FONT, 
-                 int pts = ClientUI::PTS, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr text_color = ClientUI::TEXT_COLOR, 
-                 GG::Clr interior = ClientUI::MULTIEDIT_INT_COLOR, Uint32 flags = CLICKABLE | DRAG_KEEPER); ///< basic ctor
+    CUIMultiEdit(int x, int y, int w, int h, const std::string& str, Uint32 style = GG::TF_LINEWRAP,
+                 const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
+                 GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr text_color = ClientUI::TEXT_COLOR, 
+                 GG::Clr interior = ClientUI::MULTIEDIT_INT_COLOR, Uint32 flags = GG::CLICKABLE | GG::DRAG_KEEPER); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool   Render();
+    virtual void   Render();
     //@}
 
 protected:
@@ -286,11 +281,11 @@ class CUISlider : public GG::Slider
 {
 public:
     /** \name Structors */ //@{
-    CUISlider(int x, int y, int w, int h, int min, int max, Orientation orientation, Uint32 flags = CLICKABLE);
+    CUISlider(int x, int y, int w, int h, int min, int max, GG::Orientation orientation, Uint32 flags = GG::CLICKABLE);
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool   Render();
+    virtual void   Render();
     //@}
 };
 
@@ -299,7 +294,7 @@ struct CUISimpleDropDownListRow : public GG::ListBox::Row
 {
     enum {DEFAULT_ROW_HEIGHT = 22};
     CUISimpleDropDownListRow(const std::string& row_text, int row_height = DEFAULT_ROW_HEIGHT) :
-        GG::ListBox::Row("", row_height)
+        GG::ListBox::Row(1, row_height, "")
     {
         push_back(row_text, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
     }
@@ -328,7 +323,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    bool Render() {return true;}
+    void Render() {}
 
     void SetValue(double value); ///< sets the value to be displayed
 
@@ -374,7 +369,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    bool Render() {return true;}
+    void Render() {}
 
     void SetValue         (double value); ///< sets the value to be displayed
     void SetValueSecond   (double value); ///< sets the value to be displayed
@@ -413,7 +408,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    bool Render();
+    void Render();
     //@}
 
 private:
@@ -458,7 +453,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool Render();
+    virtual void Render();
     virtual void LClick(const GG::Pt& pt, Uint32 keys);
     //@}
 
@@ -485,7 +480,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool Render();
+    virtual void Render();
 
     void Reset(double total_points, double total_queue_cost, int projects_in_progress, double points_to_underfunded_projects, int queue_size);
     //@}
@@ -528,7 +523,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool Render();
+    virtual void Render();
     //@}
 
 private:

@@ -19,6 +19,8 @@ options.Add(BoolOption('debug', 'Generate debug code', 0))
 options.Add(BoolOption('multithreaded', 'Generate multithreaded code', 1))
 if str(Platform()) == 'win32':
     options.Add(BoolOption('dynamic', 'Generate a dynamic-link code', 1))
+if WhereIs('ccache'):
+    options.Add(BoolOption('use_ccache', 'Use ccache to build GG', 0))
 if WhereIs('distcc'):
     options.Add(BoolOption('use_distcc', 'Use distcc to build FreeOrion', 0))
 if str(Platform()) == 'posix':
@@ -114,6 +116,30 @@ if env.has_key('use_distcc') and env['use_distcc']:
               'DISTCC_TCP_CORK',
               'DISTCC_SSH'
               ]:
+        if os.environ.has_key(i) and not env.has_key(i):
+            env['ENV'][i] = os.environ[i]
+
+if env.has_key('use_ccache') and env['use_ccache']:
+    env['CC'] = 'ccache %s' % env['CC']
+    env['CXX'] = 'ccache %s' % env['CXX']
+    for i in ['HOME',
+              'CCACHE_DIR',
+              'CCACHE_TEMPDIR',
+              'CCACHE_LOGFILE',
+              'CCACHE_PATH',
+              'CCACHE_CC',
+              'CCACHE_PREFIX',
+              'CCACHE_DISABLE',
+              'CCACHE_READONLY',
+              'CCACHE_CPP2',
+              'CCACHE_NOSTATS',
+              'CCACHE_NLEVELS',
+              'CCACHE_HARDLINK',
+              'CCACHE_RECACHE',
+              'CCACHE_UMASK',
+              'CCACHE_HASHDIR',
+              'CCACHE_UNIFY',
+              'CCACHE_EXTENSION']:
         if os.environ.has_key(i) and not env.has_key(i):
             env['ENV'][i] = os.environ[i]
 
@@ -270,23 +296,6 @@ int main() {
         # End of GG requirements #
         ##########################
 
-        # Log4cpp
-        AppendPackagePaths('log4cpp', env)
-        found_it_with_pkg_config = False
-        if pkg_config:
-            if conf.CheckPkg('log4cpp', log4cpp_version):
-                env.ParseConfig('pkg-config --cflags --libs log4cpp')
-                found_it_with_pkg_config = True
-        if not found_it_with_pkg_config:
-            version_regex = re.compile(r'LOG4CPP_VERSION\s*\"([^"]*)\"', re.DOTALL)
-            if not conf.CheckVersionHeader('log4cpp', 'log4cpp/config.h', version_regex, log4cpp_version, False):
-                Exit(1)
-        if not conf.CheckCXXHeader('log4cpp/Category.hh'):
-            Exit(1)
-        if str(Platform()) != 'win32':
-            if not conf.CheckLibWithHeader('log4cpp', 'log4cpp/Category.hh', 'C++', 'log4cpp::Category::getRoot();'):
-                Exit(1)
-
         # FMOD
         AppendPackagePaths('fmod', env)
         found_it_with_pkg_config = False
@@ -325,6 +334,23 @@ int main() {
         if str(Platform()) != 'win32':
             old_libs = env['LIBS']
             if not conf.CheckLib('dotgen', 'begin_component', header = '#include <graphviz/render.h>\n#include <graphviz/dotprocs.h>'):
+                Exit(1)
+
+        # Log4cpp
+        AppendPackagePaths('log4cpp', env)
+        found_it_with_pkg_config = False
+        if pkg_config:
+            if conf.CheckPkg('log4cpp', log4cpp_version):
+                env.ParseConfig('pkg-config --cflags --libs log4cpp')
+                found_it_with_pkg_config = True
+        if not found_it_with_pkg_config:
+            version_regex = re.compile(r'LOG4CPP_VERSION\s*\"([^"]*)\"', re.DOTALL)
+            if not conf.CheckVersionHeader('log4cpp', 'log4cpp/config.h', version_regex, log4cpp_version, False):
+                Exit(1)
+        if not conf.CheckCXXHeader('log4cpp/Category.hh'):
+            Exit(1)
+        if str(Platform()) != 'win32':
+            if not conf.CheckLibWithHeader('log4cpp', 'log4cpp/Category.hh', 'C++', 'log4cpp::Category::getRoot();'):
                 Exit(1)
 
         # GG

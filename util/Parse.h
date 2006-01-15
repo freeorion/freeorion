@@ -6,8 +6,8 @@
 #include "../universe/ValueRef.h"
 #endif
 
-#ifndef _GGEnum_h_
-#include <GGEnum.h>
+#ifndef _GG_Enum_h_
+#include <GG/Enum.h>
 #endif
 
 #ifndef SPIRIT_HPP

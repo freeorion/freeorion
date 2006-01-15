@@ -2,7 +2,7 @@
 
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -28,7 +28,7 @@ ShipDesign::ShipDesign() :
 {
 }
 
-ShipDesign::ShipDesign(const GG::XMLElement& elem)
+ShipDesign::ShipDesign(const XMLElement& elem)
 {
     if (elem.Tag() != "ShipDesign" )
         throw std::invalid_argument("Attempted to construct a ShipDesign from an XMLElement that had a tag other than \"ShipDesign\"");
@@ -49,9 +49,8 @@ ShipDesign::ShipDesign(const GG::XMLElement& elem)
     /////////////////////////////////////////////////////////////////////////////
 }
 
-GG::XMLElement ShipDesign::XMLEncode() const
+XMLElement ShipDesign::XMLEncode() const
 {
-    using GG::XMLElement;
     using boost::lexical_cast;
 
     XMLElement retval("ShipDesign");

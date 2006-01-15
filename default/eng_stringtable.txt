@@ -42,6 +42,12 @@ or
 AND
 and
 
+YES
+Yes
+
+NO
+No
+
 NEW_GAME
 Generating universe and AIs ...
 
@@ -100,6 +106,56 @@ File(s):
 
 FILE_DLG_FILE_TYPES
 Type(s):
+
+FILE_DLG_MALFORMED_FILENAME
+Invalid file name.
+
+FILE_DLG_OVERWRITE_PROMPT
+%1% exists.\nOk to overwrite it?
+
+FILE_DLG_INVALID_FILENAME
+"%1%"\nis an invalid file name.
+
+FILE_DLG_FILENAME_IS_A_DIRECTORY
+"%1%"\nis a directory.
+
+FILE_DLG_FILE_DOES_NOT_EXIST
+File "%1%"\ndoes not exist.
+
+FILE_DLG_DEVICE_IS_NOT_READY
+Device is not ready.
+
+
+#################
+# Color Dialog  #
+#################
+
+COLOR_DLG_NEW
+New
+
+COLOR_DLG_OLD
+Old
+
+COLOR_DLG_RED
+R:
+
+COLOR_DLG_GREEN
+G:
+
+COLOR_DLG_BLUE
+B:
+
+COLOR_DLG_HUE
+H:
+
+COLOR_DLG_SATURATION
+S:
+
+COLOR_DLG_VALUE
+V:
+
+COLOR_DLG_ALPHA
+A:
 
 
 #################

@@ -2,8 +2,8 @@
 #ifndef _HumanClientApp_h_
 #define _HumanClientApp_h_
 
-#ifndef _SDLGGApp_h_
-#include "SDL/SDLGGApp.h"
+#ifndef _GG_SDLGUI_h_
+#include <GG/SDL/SDLGUI.h>
 #endif
 
 #ifndef _ClientApp_h_
@@ -31,7 +31,7 @@ class MultiplayerLobbyWnd;
 struct FSOUND_STREAM;
 
 /** the application framework class for the human player FreeOrion client. */
-class HumanClientApp : public ClientApp, public SDLGGApp
+class HumanClientApp : public ClientApp, public SDLGUI
 {
 public:
     /** \name Structors */ //@{

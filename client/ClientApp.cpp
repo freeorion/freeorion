@@ -33,10 +33,10 @@ ClientApp::~ClientApp()
 
 Message ClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
 {
-    GG::XMLDoc orders_doc;
+    XMLDoc orders_doc;
     if (save_game_data)
         orders_doc.root_node.AppendChild("save_game_data");
-    orders_doc.root_node.AppendChild(GG::XMLElement("Orders"));
+    orders_doc.root_node.AppendChild(XMLElement("Orders"));
     for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
         orders_doc.root_node.LastChild().AppendChild(order_it->second->XMLEncode());
     }
@@ -108,9 +108,9 @@ int ClientApp::GetNewObjectID( )
     return new_id;
 }
 
-void ClientApp::UpdateTurnData( const GG::XMLDoc &diff )
+void ClientApp::UpdateTurnData( const XMLDoc &diff )
 {
-    GG::XMLDoc new_doc;
+    XMLDoc new_doc;
 
     // we may not have a universe object if nothing has changed 
     if (diff.root_node.ContainsChild("Universe")) 

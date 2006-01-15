@@ -30,21 +30,19 @@
 #include <string>
 
 
-namespace GG {
 class XMLDoc;
 class XMLElement;
-}
 class XTree;
 
-/** takes an XML file or GG::XMLDoc and constructs an XTree from it. */
+/** takes an XML file or XMLDoc and constructs an XTree from it. */
 class XParser
 {
 public:
     XTree* parse(const std::string& filename);
-    XTree* parse(const GG::XMLDoc& doc);
+    XTree* parse(const XMLDoc& doc);
 
 private:
-    void recursive_parse(const GG::XMLElement& elem);
+    void recursive_parse(const XMLElement& elem);
    
     XTree*                           _xtree;
     std::vector<int>                 _idStack;

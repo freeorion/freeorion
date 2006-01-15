@@ -5,7 +5,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
 #include "ShipDesign.h"
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -36,7 +36,7 @@ Ship::Ship(int empire_id, const std::string& design_name) :
    AddOwner(empire_id);
 }
 
-Ship::Ship(const GG::XMLElement& elem) : 
+Ship::Ship(const XMLElement& elem) : 
   UniverseObject(elem.Child("UniverseObject"))
 {
     if (elem.Tag().find("Ship") == std::string::npos)
@@ -87,9 +87,8 @@ bool Ship::IsArmed() const
     return Design()->attack > 0;
 }
 
-GG::XMLElement Ship::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement Ship::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
-    using GG::XMLElement;
     using boost::lexical_cast;
     using std::string;
     XMLElement retval("Ship" + boost::lexical_cast<std::string>(ID()));

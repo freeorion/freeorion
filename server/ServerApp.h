@@ -25,14 +25,12 @@
 namespace log4cpp {
     class Category;
 }
-namespace GG {
-    class XMLDoc;
-    class XMLElement;
-}
-struct PlayerSetupData;
 class CombatModule;
 class Message;
 class OrderSet;
+struct PlayerSetupData;
+class XMLDoc;
+class XMLElement;
 
 /** contains the info needed to manage one player, including connection info */
 struct PlayerInfo
@@ -60,7 +58,7 @@ public:
 
     /** \name Accessors */ //@{
     ServerState State() const {return m_state;} ///< returns the current state of the server (one of the ServerState enum values)
-    GG::XMLDoc  ServerStatusDoc() const;        ///< returns an XMLDoc that represents the status of the server, suitable for transmission to a client
+    XMLDoc  ServerStatusDoc() const;        ///< returns an XMLDoc that represents the status of the server, suitable for transmission to a client
     //@}
 
     /** \name Mutators */ //@{
@@ -73,7 +71,7 @@ public:
 
     /** creates a single AI client child process for each AI_client subelement of \a elem.  This function is provided as a convenience 
         interface to void CreateAIClients(const LobbyModeData& AIs).*/
-    void CreateAIClients(const GG::XMLElement& elem);
+    void CreateAIClients(const XMLElement& elem);
 
     /** handles an incoming message from the server with the appropriate action or response */
     void HandleMessage(const Message& msg);
@@ -126,15 +124,15 @@ private:
 
     /** Returns true iff the versions of settings files and/or source code differ between the server and the client sending \a doc.
         As a side effect, logs an error message and sends a failure message to the sending player as appropriate. */
-    bool VersionMismatch(int player_id, const PlayerInfo& player_info, const PlayerInfo& connection, const GG::XMLDoc& doc);
+    bool VersionMismatch(int player_id, const PlayerInfo& player_info, const PlayerInfo& connection, const XMLDoc& doc);
 
-    GG::XMLDoc CreateTurnUpdate(int empire_id); ///< creates encoded universe and empire data for the specified empire, diffs it with the previous turn data, stores the new data over the previous turn data and returns the diff XMLElement
-    GG::XMLDoc LobbyUpdateDoc() const;          ///< returns an MP lobby-mode update XMLDoc containing all relevant parts of the lobby state
-    GG::XMLDoc LobbyStartDoc() const;           ///< returns an MP lobby-mode update XMLDoc containing just the initial server-side data that the clients don't have
-    GG::XMLDoc SaveGameUpdateDoc() const;       ///< returns an MP lobby-mode update XMLDoc containing just empire data for the currently-selected save game
+    XMLDoc CreateTurnUpdate(int empire_id); ///< creates encoded universe and empire data for the specified empire, diffs it with the previous turn data, stores the new data over the previous turn data and returns the diff XMLElement
+    XMLDoc LobbyUpdateDoc() const;          ///< returns an MP lobby-mode update XMLDoc containing all relevant parts of the lobby state
+    XMLDoc LobbyStartDoc() const;           ///< returns an MP lobby-mode update XMLDoc containing just the initial server-side data that the clients don't have
+    XMLDoc SaveGameUpdateDoc() const;       ///< returns an MP lobby-mode update XMLDoc containing just empire data for the currently-selected save game
 
-    void SaveGameVars(GG::XMLDoc& doc) const;   ///< adds all game-state variables to \a doc
-    void LoadGameVars(const GG::XMLDoc& doc);   ///< assigns all game-state variables from \a doc
+    void SaveGameVars(XMLDoc& doc) const;   ///< adds all game-state variables to \a doc
+    void LoadGameVars(const XMLDoc& doc);   ///< assigns all game-state variables from \a doc
 
     Empire* GetPlayerEmpire(int player_id) const; ///< returns the ID of the empire that the player with ID \a player_id is playing
    
@@ -168,10 +166,10 @@ private:
     bool                      m_single_player_game;    ///< true when the game being played is single-player
 
     std::set<int>             m_players_responded;     ///< tracks which players have responded to a server request (eg for save-data)
-    std::map<int, GG::XMLElement> 
+    std::map<int, XMLElement> 
     m_player_save_game_data; ///< stores the save game data coming in from the players during a save game operation
 
-    std::map<int, GG::XMLDoc> m_last_turn_update_msg;  ///< stores the xml encoded empire and universe data from the previous turn in order to generate diffs for turn update message.  Map is indexed by empire ID, with separate message data for each since each player sees different parts of the universe.
+    std::map<int, XMLDoc> m_last_turn_update_msg;  ///< stores the xml encoded empire and universe data from the previous turn in order to generate diffs for turn update message.  Map is indexed by empire ID, with separate message data for each since each player sees different parts of the universe.
 
     // turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
     std::map<int, OrderSet*>  m_turn_sequence;

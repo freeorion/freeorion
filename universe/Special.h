@@ -12,7 +12,7 @@ class Special
 public:
     /** \name Structors */ //@{
     Special(const std::string& name, const std::string& description); ///< basic ctor
-    Special(const GG::XMLElement& elem); ///< XML ctor
+    Special(const XMLElement& elem); ///< XML ctor
     //@}
 
     /** \name Accessors */ //@{

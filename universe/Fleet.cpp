@@ -1,11 +1,11 @@
 #include "Fleet.h"
 
-#include "../util/AppInterface.h"
 #include "System.h"
 #include "Ship.h"
-#include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
-#include "XMLDoc.h"
+#include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
+#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -40,16 +40,14 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     AddOwner(owner);
 }
 
-Fleet::Fleet(const GG::XMLElement& elem) : 
+Fleet::Fleet(const XMLElement& elem) : 
     UniverseObject(elem.Child("UniverseObject"))
 {
-    using GG::XMLElement;
-
     if (elem.Tag().find("Fleet") == std::string::npos )
         throw std::invalid_argument("Attempted to construct a Fleet from an XMLElement that had a tag other than \"Fleet\"");
 
     try {
-        m_ships = GG::ContainerFromString<ShipIDSet>(elem.Child("m_ships").Text());
+        m_ships = ContainerFromString<ShipIDSet>(elem.Child("m_ships").Text());
         m_moving_to = lexical_cast<int>(elem.Child("m_moving_to").Text());
         m_prev_system = lexical_cast<int>(elem.Child("m_prev_system").Text());
         m_next_system = lexical_cast<int>(elem.Child("m_next_system").Text());
@@ -85,12 +83,11 @@ UniverseObject::Visibility Fleet::GetVisibility(int empire_id) const
 }
 
 
-GG::XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
     // Fleets are either visible or not, so there is no 
     // difference between the full and partial visibilty
     // encodings for this class
-    using GG::XMLElement;
     using boost::lexical_cast;
     using std::string;
 
@@ -108,7 +105,7 @@ GG::XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
     } else {
 	retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_moving_to)));
     }
-    retval.AppendChild(XMLElement("m_ships", GG::StringFromContainer<ShipIDSet>(m_ships)));
+    retval.AppendChild(XMLElement("m_ships", StringFromContainer<ShipIDSet>(m_ships)));
     retval.AppendChild(XMLElement("m_prev_system", lexical_cast<std::string>(m_prev_system)));
     retval.AppendChild(XMLElement("m_next_system", lexical_cast<std::string>(m_next_system)));
     return retval;

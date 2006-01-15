@@ -3,10 +3,6 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "../universe/Fleet.h"
-#include "GGDrawUtil.h"
-#include "GGMenu.h"
-#include "GGStaticGraphic.h"
-#include "GGTextControl.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
@@ -17,6 +13,11 @@
 #include "../universe/System.h"
 #include "../network/Message.h"
 #include "SidePanel.h"
+
+#include <GG/DrawUtil.h>
+#include <GG/Menu.h>
+#include <GG/StaticGraphic.h>
+#include <GG/TextControl.h>
 
 #include <boost/format.hpp>
 #include <iostream>
@@ -39,7 +40,7 @@ namespace {
             m_fleet(fleet),
             m_fleet_icon(0),
             m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + UserString("FW_NEW_FLEET_LABEL") + "</i>", 
-                                                  ClientUI::FONT, ClientUI::PTS, m_fleet ? ClientUI::TEXT_COLOR : GG::CLR_BLACK, GG::TF_RIGHT | GG::TF_VCENTER)),
+                                                  GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), m_fleet ? ClientUI::TEXT_COLOR : GG::CLR_BLACK, GG::TF_RIGHT | GG::TF_VCENTER)),
             m_num_ships_stat(0),
             m_fleet_strength_stat(0),
             m_damage_icon(0),
@@ -63,7 +64,7 @@ namespace {
             Refresh();
         }
 
-        virtual bool Render()
+        virtual void Render()
         {
             const GG::Clr& unselected_color = GG::CLR_GRAY;
             const GG::Clr& selected_color = GG::CLR_WHITE;
@@ -78,8 +79,6 @@ namespace {
 
             GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, color_to_use, 1);
             GG::FlatRectangle(text_ul.x, text_ul.y, text_lr.x + 5, text_lr.y, color_to_use, GG::CLR_ZERO, 0);
-
-            return true;
         }
 
         void Select(bool b)
@@ -112,10 +111,10 @@ namespace {
 
             if (m_fleet) { // a regular fleet data panel
                 if (2 <= m_fleet->NumShips() && m_fleet->NumShips() <= 5) {
-                    icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/" + 
+                    icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/" + 
                                                          boost::lexical_cast<std::string>(m_fleet->NumShips()) + "shipfleet.png");
                 } else if (5 < m_fleet->NumShips()) {
-                    icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/5shipfleet.png");
+                    icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/5shipfleet.png");
                 } else if (m_fleet->NumShips() == 1) {
                     Ship* ship = GetUniverse().Object<Ship>(*m_fleet->begin());
                     std::string design_name;
@@ -128,10 +127,10 @@ namespace {
                     } else {
                         design_name = "Scout";
                     }
-                    icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png");
+                    icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png");
                 }
             } else { // the "new fleet" data panel
-                icon = GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/newfleet.png");
+                icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/newfleet.png");
             }
 
             if (icon) {
@@ -168,7 +167,7 @@ namespace {
                 if (damaged_ships) {
                     if (!m_damage_icon) {
                         m_damage_icon = new GG::StaticGraphic(x_position, FLEET_NAME_HT, ICON_SZ, ICON_SZ, 
-                                                              GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/damagemarker.png"), GG::GR_FITGRAPHIC);
+                                                              GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/damagemarker.png"), GG::GR_FITGRAPHIC);
                         AttachChild(m_damage_icon);
                     }
                     x_position += m_damage_icon->Width() + ICON_SPACING;
@@ -178,7 +177,7 @@ namespace {
                 if (contains_colony_ship) {
                     if (!m_colonizer_icon) {
                         m_colonizer_icon = new GG::StaticGraphic(x_position, FLEET_NAME_HT, ICON_SZ, ICON_SZ, 
-                                                                 GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/colonymarker.png"), GG::GR_FITGRAPHIC);
+                                                                 GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/colonymarker.png"), GG::GR_FITGRAPHIC);
                         AttachChild(m_colonizer_icon);
                     }
                     x_position += m_colonizer_icon->Width() + ICON_SPACING;
@@ -209,7 +208,7 @@ namespace {
             Control(0, 0, w, h, 0),
             m_ship(ship),
             m_ship_icon(0),
-            m_ship_name_text(new GG::TextControl(h, 0, w - h - 5, SHIP_NAME_HT, m_ship->Name(), ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, 
+            m_ship_name_text(new GG::TextControl(h, 0, w - h - 5, SHIP_NAME_HT, m_ship->Name(), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR, 
                                                  GG::TF_RIGHT | GG::TF_VCENTER)),
             m_ship_strength_stat(0),
             m_damage_stat(0),
@@ -231,7 +230,7 @@ namespace {
             Refresh();
         }
 
-        virtual bool Render()
+        virtual void Render()
         {
             const GG::Clr& unselected_color = GG::CLR_GRAY;
             const GG::Clr& selected_color = GG::CLR_WHITE;
@@ -246,8 +245,6 @@ namespace {
 
             GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, color_to_use, 1);
             GG::FlatRectangle(text_ul.x, text_ul.y, text_lr.x + 5, text_lr.y, color_to_use, GG::CLR_ZERO, 0);
-
-            return true;
         }
 
         void Select(bool b)
@@ -282,7 +279,7 @@ namespace {
                 design_name = "Scout";
             }
             m_ship_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, SHIP_ICON_SZ, SHIP_ICON_SZ, 
-                                                GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png"), GG::GR_FITGRAPHIC);
+                                                GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png"), GG::GR_FITGRAPHIC);
             AttachChild(m_ship_icon);
         }
         void Refresh()
@@ -308,7 +305,7 @@ namespace {
             if (m_ship->Design() && m_ship->Design()->colonize) {
                 if (!m_colonizer_icon) {
                     m_colonizer_icon = new GG::StaticGraphic(x_position, SHIP_NAME_HT, ICON_SZ, ICON_SZ, 
-                                                             GG::App::GetApp()->GetTexture(ClientUI::ART_DIR + "icons/colonymarker.png"), GG::GR_FITGRAPHIC);
+                                                             GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/colonymarker.png"), GG::GR_FITGRAPHIC);
                     AttachChild(m_colonizer_icon);
                 }
                 x_position += m_colonizer_icon->Width() + ICON_SPACING;
@@ -330,12 +327,12 @@ namespace {
     {
         enum {PANEL_WD = FLEET_LISTBOX_WIDTH - 8, PANEL_HT = 38};
 
-        FleetRow(Fleet* fleet) : m_fleet(fleet) 
+        FleetRow(Fleet* fleet) :
+            GG::ListBox::Row(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT + 4, "Fleet"),
+            m_fleet(fleet)
         {
             EnableChildClipping();
-            push_back(new FleetDataPanel(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT, m_fleet));
-            data_type = "Fleet";
-            height = PANEL_HT + 4;
+            push_back(new FleetDataPanel(Width(), PANEL_HT, m_fleet));
         }
 
         int FleetID() const {return m_fleet ? m_fleet->ID() : UniverseObject::INVALID_OBJECT_ID;}
@@ -347,15 +344,15 @@ namespace {
     {
         enum {PANEL_WD = FleetRow::PANEL_WD, PANEL_HT = FleetRow::PANEL_HT};
 
-        ShipRow(Ship* ship) : m_ship(ship) 
+        ShipRow(Ship* ship) :
+            GG::ListBox::Row(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT + 4, "Ship"),
+            m_ship(ship)
         {
             if (!ship)
                 throw std::invalid_argument("ShipRow::ShipRow() : Attempted to contruct a ShipRow using a null ship pointer.");
 
             EnableChildClipping();
-            push_back(new ShipDataPanel(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT, m_ship));
-            data_type = "Ship";
-            height = PANEL_HT + 4;
+            push_back(new ShipDataPanel(Width(), PANEL_HT, m_ship));
        }
 
         int ShipID() const {return m_ship->ID();}
@@ -384,10 +381,10 @@ FleetDetailPanel::FleetDetailPanel(int x, int y, Fleet* fleet, bool read_only, U
     m_ships_lb(0),
     m_ship_status_text(0)
 {
-    m_destination_text = new GG::TextControl(0, 0, FLEET_LISTBOX_WIDTH, ClientUI::PTS + 4, "", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
+    m_destination_text = new GG::TextControl(0, 0, FLEET_LISTBOX_WIDTH, ClientUI::PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_ships_lb = new CUIListBox(0, m_destination_text->LowerRight().y + CONTROL_MARGIN, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT);
     m_ship_status_text = new GG::TextControl(0, m_ships_lb->LowerRight().y + CONTROL_MARGIN, m_ships_lb->Width(), ClientUI::PTS + 4, 
-                                             "", ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR, GG::TF_LEFT);
+                                             "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
     Resize(m_ship_status_text->LowerRight());
 
@@ -440,7 +437,7 @@ void FleetDetailPanel::Init()
     if (m_read_only) {
         m_ships_lb->SetStyle(GG::LB_NOSEL | GG::LB_BROWSEUPDATES);
     } else {
-        m_ships_lb->SetStyle(GG::LB_QUICKSEL | GG::LB_DRAGDROP | GG::LB_BROWSEUPDATES);
+        m_ships_lb->SetStyle(GG::LB_QUICKSEL | GG::LB_BROWSEUPDATES);
         m_ships_lb->AllowDropType("Ship");
     }
 
@@ -480,7 +477,7 @@ void FleetDetailPanel::UniverseObjectDelete(const UniverseObject *obj)
 void FleetDetailPanel::ShipSelectionChanged(const std::set<int>& rows)
 {
     for (int i = 0; i < m_ships_lb->NumRows(); ++i) {
-        boost::shared_ptr<ShipDataPanel> ship_panel = boost::static_pointer_cast<ShipDataPanel>((*m_ships_lb->GetRowPtr(i))[0]);
+        ShipDataPanel* ship_panel = static_cast<ShipDataPanel*>(m_ships_lb->GetRow(i)[0]);
         ship_panel->Select(rows.find(i) != rows.end());
     }
 }
@@ -494,9 +491,9 @@ void FleetDetailPanel::ShipBrowsed(int row_idx)
     }
 }
 
-void FleetDetailPanel::ShipDroppedIntoList(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
+void FleetDetailPanel::ShipDroppedIntoList(int row_idx, GG::ListBox::Row* row)
 {
-    boost::shared_ptr<ShipRow> ship_row = boost::dynamic_pointer_cast<ShipRow>(row);
+    ShipRow* ship_row = dynamic_cast<ShipRow*>(row);
     int ship_id = ship_row->ShipID();
     if (!m_fleet) {
         // creating a new fleet can fail but will be handled by listbox exception
@@ -513,13 +510,13 @@ void FleetDetailPanel::ShipDroppedIntoList(int row_idx, const boost::shared_ptr<
     if (CanJoin(ship, m_fleet)) {
         HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ship->FleetID(), m_fleet->ID(), std::vector<int>(1, ship_id)));
     } else {
-        throw GG::ListBox::DontAcceptDropException();
+        throw GG::ListBox::DontAcceptDrop();
     }
 }
 
-void FleetDetailPanel::ShipRightClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt)
+void FleetDetailPanel::ShipRightClicked(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt)
 {
-    const boost::shared_ptr<ShipRow> ship_row = boost::dynamic_pointer_cast<ShipRow>(row);
+    ShipRow* ship_row = dynamic_cast<ShipRow*>(row);
 
     if (ship_row->m_ship->Owners().size() != 1 || HumanClientApp::GetApp()->EmpireID() != *ship_row->m_ship->Owners().begin())
         return;
@@ -529,7 +526,7 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, const boost::shared_ptr<GG:
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
 
-    GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
+    GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
 
     if (popup.Run()) {
         switch (popup.MenuID()) {
@@ -659,10 +656,10 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
 
     Resize(m_fleet_detail_panel->LowerRight() + GG::Pt(RightBorder() + 5, BottomBorder() + 5));
     GG::Pt window_posn = UpperLeft();
-    if (GG::App::GetApp()->AppWidth() < LowerRight().x)
-        window_posn.x = GG::App::GetApp()->AppWidth() - Width();
-    if (GG::App::GetApp()->AppHeight() < LowerRight().y)
-        window_posn.y = GG::App::GetApp()->AppHeight() - Height();
+    if (GG::GUI::GetGUI()->AppWidth() < LowerRight().x)
+        window_posn.x = GG::GUI::GetGUI()->AppWidth() - Width();
+    if (GG::GUI::GetGUI()->AppHeight() < LowerRight().y)
+        window_posn.y = GG::GUI::GetGUI()->AppHeight() - Height();
     MoveTo(window_posn);
 
     EnableChildClipping(false);
@@ -707,7 +704,7 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
     if (m_read_only) {
         m_fleets_lb->SetStyle(GG::LB_NOSORT | GG::LB_BROWSEUPDATES | GG::LB_SINGLESEL);
     } else {
-        m_fleets_lb->SetStyle(GG::LB_NOSORT | GG::LB_BROWSEUPDATES | GG::LB_DRAGDROP);
+        m_fleets_lb->SetStyle(GG::LB_NOSORT | GG::LB_BROWSEUPDATES);
         m_fleets_lb->AllowDropType("Ship");
         m_fleets_lb->AllowDropType("Fleet");
     }
@@ -728,7 +725,7 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
     GG::Connect(m_fleets_lb->SelChangedSignal, &FleetWnd::FleetSelectionChanged, this);
     GG::Connect(m_fleets_lb->RightClickedSignal, &FleetWnd::FleetRightClicked, this);
     GG::Connect(m_fleets_lb->DoubleClickedSignal, &FleetWnd::FleetDoubleClicked, this);
-    m_lb_delete_connection = GG::Connect(m_fleets_lb->DeletedSignal, &FleetWnd::FleetDeleted, this);
+    m_lb_delete_connection = GG::Connect(m_fleets_lb->ErasedSignal, &FleetWnd::FleetDeleted, this);
     GG::Connect(m_fleets_lb->DroppedSignal, &FleetWnd::ObjectDroppedIntoList, this);
 
     SetText(TitleText());
@@ -790,7 +787,7 @@ void FleetWnd::SelectFleet(Fleet* fleet)
     for (int i = 0; i < m_fleets_lb->NumRows(); i++) {
         FleetRow* row = dynamic_cast<FleetRow*>(&m_fleets_lb->GetRow(i));
         if (row && row->m_fleet == fleet) {
-            m_fleets_lb->ClearSelection();
+            m_fleets_lb->DeselectAll();
             m_fleets_lb->SelectRow(i);
             m_current_fleet = i;
             m_fleet_detail_panel->SetFleet(fleet);
@@ -821,7 +818,7 @@ void FleetWnd::FleetSelectionChanged(const std::set<int>& rows)
 {
     // disallow selection of the new fleet slot
     if (!m_read_only && rows.find(m_fleets_lb->NumRows() - 1) != rows.end()) {
-        m_fleets_lb->ClearRow(m_fleets_lb->NumRows() - 1);
+        m_fleets_lb->DeselectRow(m_fleets_lb->NumRows() - 1);
     }
 
     m_current_fleet = m_fleets_lb->Caret();
@@ -830,12 +827,12 @@ void FleetWnd::FleetSelectionChanged(const std::set<int>& rows)
     m_fleet_detail_panel->SetFleet(fleet);
 
     for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
-        boost::shared_ptr<FleetDataPanel> fleet_panel = boost::static_pointer_cast<FleetDataPanel>((*m_fleets_lb->GetRowPtr(i))[0]);
+        FleetDataPanel* fleet_panel = static_cast<FleetDataPanel*>(m_fleets_lb->GetRow(i)[0]);
         fleet_panel->Select(rows.find(i) != rows.end());
     }
 }
 
-void FleetWnd::FleetRightClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row, const GG::Pt& pt)
+void FleetWnd::FleetRightClicked(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt)
 {
     if (!m_read_only && row_idx == m_fleets_lb->NumRows() - 1)
         return;
@@ -846,7 +843,7 @@ void FleetWnd::FleetRightClicked(int row_idx, const boost::shared_ptr<GG::ListBo
 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
-    GG::PopupMenu popup(pt.x, pt.y, GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
+    GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
 
     if (popup.Run()) {
       switch (popup.MenuID()) {
@@ -866,7 +863,7 @@ void FleetWnd::FleetRightClicked(int row_idx, const boost::shared_ptr<GG::ListBo
     }
 }
 
-void FleetWnd::FleetDoubleClicked(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
+void FleetWnd::FleetDoubleClicked(int row_idx, GG::ListBox::Row* row)
 {
     if (!m_read_only && row_idx == m_fleets_lb->NumRows() - 1)
         return;
@@ -876,17 +873,17 @@ void FleetWnd::FleetDoubleClicked(int row_idx, const boost::shared_ptr<GG::ListB
     GG::Pt window_posn(std::max(0, 25 + LowerRight().x + num_open_windows * 25), std::max(0, UpperLeft().y + num_open_windows * 25));
     if (!m_open_fleet_windows[row_fleet]) {
         FleetDetailWnd* fleet_wnd = m_open_fleet_windows[row_fleet] = new FleetDetailWnd(window_posn.x, window_posn.y, row_fleet, m_read_only);
-        if (GG::App::GetApp()->AppWidth() < fleet_wnd->LowerRight().x)
-            window_posn.x = GG::App::GetApp()->AppWidth() - fleet_wnd->Width();
-        if (GG::App::GetApp()->AppHeight() < fleet_wnd->LowerRight().y)
-            window_posn.y = GG::App::GetApp()->AppHeight() - fleet_wnd->Height();
+        if (GG::GUI::GetGUI()->AppWidth() < fleet_wnd->LowerRight().x)
+            window_posn.x = GG::GUI::GetGUI()->AppWidth() - fleet_wnd->Width();
+        if (GG::GUI::GetGUI()->AppHeight() < fleet_wnd->LowerRight().y)
+            window_posn.y = GG::GUI::GetGUI()->AppHeight() - fleet_wnd->Height();
         fleet_wnd->MoveTo(window_posn);
-        GG::App::GetApp()->Register(fleet_wnd);
+        GG::GUI::GetGUI()->Register(fleet_wnd);
         GG::Connect(fleet_wnd->ClosingSignal, &FleetWnd::FleetDetailWndClosing, this);
     }
 }
 
-void FleetWnd::FleetDeleted(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
+void FleetWnd::FleetDeleted(int row_idx, GG::ListBox::Row* row)
 {
     if (m_current_fleet == row_idx)
         m_current_fleet = -1;
@@ -894,22 +891,22 @@ void FleetWnd::FleetDeleted(int row_idx, const boost::shared_ptr<GG::ListBox::Ro
         CloseClicked();
 }
 
-void FleetWnd::ObjectDroppedIntoList(int row_idx, const boost::shared_ptr<GG::ListBox::Row>& row)
+void FleetWnd::ObjectDroppedIntoList(int row_idx, GG::ListBox::Row* row)
 {
     if (m_read_only)
-        throw GG::ListBox::DontAcceptDropException();
+        throw GG::ListBox::DontAcceptDrop();
 
     // disallow drops that aren't over an item; "- 1" is used, because the list 
     // is now 1 larger, since "row" was just dropped into it
     if (row_idx < 0 || m_fleets_lb->NumRows() - 1 <= row_idx)
-        throw GG::ListBox::DontAcceptDropException();
+        throw GG::ListBox::DontAcceptDrop();
 
-    boost::shared_ptr<FleetRow> fleet_row = boost::dynamic_pointer_cast<FleetRow>(row);
-    boost::shared_ptr<ShipRow> ship_row = fleet_row ? boost::shared_ptr<ShipRow>() : boost::dynamic_pointer_cast<ShipRow>(row);
+    FleetRow* fleet_row = dynamic_cast<FleetRow*>(row);
+    ShipRow* ship_row = fleet_row ? 0 : dynamic_cast<ShipRow*>(row);
 
     // disallow drops of unknown Row types
     if (!ship_row && !fleet_row)
-        throw GG::ListBox::DontAcceptDropException();
+        throw GG::ListBox::DontAcceptDrop();
 
     if (row_idx == m_fleets_lb->NumRows() - 2) { // drop was into the new fleet row; "- 2" is used, because the list is now 1 larger, since the ShipRow was just dropped into it
         if (ship_row) {
@@ -919,21 +916,21 @@ void FleetWnd::ObjectDroppedIntoList(int row_idx, const boost::shared_ptr<GG::Li
                 Ship* ship = GetUniverse().Object<Ship>(ship_id);
                 assert(ship->GetFleet());
                 if (ship->GetFleet()->NumShips() == 1)
-                    throw GG::ListBox::DontAcceptDropException();
+                    throw GG::ListBox::DontAcceptDrop();
             }
-            m_fleets_lb->Delete(row_idx); // remove the ship from the list, since it will be placed into a fleet
+            delete m_fleets_lb->Erase(row_idx); // remove the ship from the list, since it will be placed into a fleet
             CreateNewFleetFromDrop(ship_id);
         } else if (fleet_row) { // disallow drops of fleets onto the new fleet row
-            throw GG::ListBox::DontAcceptDropException();
+            throw GG::ListBox::DontAcceptDrop();
         }
     } else { // drop was onto some existing fleet
         if (ship_row) {
             Fleet* target_fleet = FleetInRow(row_idx + 1);
 
             if (!CanJoin(ship_row->m_ship, target_fleet))
-                throw GG::ListBox::DontAcceptDropException();
+                throw GG::ListBox::DontAcceptDrop();
 
-            m_fleets_lb->Delete(row_idx); // remove the ship from the list, since it will be placed into a fleet
+            delete m_fleets_lb->Erase(row_idx); // remove the ship from the list, since it will be placed into a fleet
             HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ship_row->m_ship->FleetID(), 
                                                                        target_fleet->ID(), std::vector<int>(1, ship_row->ShipID())));
         } else if (fleet_row) {
@@ -941,9 +938,9 @@ void FleetWnd::ObjectDroppedIntoList(int row_idx, const boost::shared_ptr<GG::Li
 
             // disallow drops across fleet windows; fleets must be at the same location
             if (target_fleet == fleet_row->m_fleet || target_fleet->X() != fleet_row->m_fleet->X() || target_fleet->Y() != fleet_row->m_fleet->Y())
-                throw GG::ListBox::DontAcceptDropException();
+                throw GG::ListBox::DontAcceptDrop();
 
-            m_fleets_lb->Delete(row_idx); // remove the fleet from the list; we don't want this duplicate lying about
+            delete m_fleets_lb->Erase(row_idx); // remove the fleet from the list; we don't want this duplicate lying about
             std::vector<int> ships;
             ships.insert(ships.end(), fleet_row->m_fleet->begin(), fleet_row->m_fleet->end());
             HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), fleet_row->FleetID(), 
@@ -1001,7 +998,7 @@ void FleetWnd::DeleteFleet(Fleet* fleet)
     NotShowingFleetSignal(fleet);
     for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
         if (FleetInRow(i) == fleet) {
-            m_fleets_lb->Delete(i);
+            delete m_fleets_lb->Erase(i);
             break;
         }
     }
@@ -1019,7 +1016,7 @@ Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
     Ship *ship = GetUniverse().Object<Ship>(ship_id);
 
     if (!existing_fleet || !ship || existing_fleet->SystemID() != ship->GetFleet()->SystemID())
-        throw GG::ListBox::DontAcceptDropException();
+        throw GG::ListBox::DontAcceptDrop();
 
     System* system = existing_fleet->GetSystem();
     double existing_fleet_x = existing_fleet->X();
@@ -1030,7 +1027,7 @@ Fleet* FleetWnd::CreateNewFleetFromDrop(int ship_id)
 
     if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID) {
         ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
-        throw GG::ListBox::DontAcceptDropException();
+        throw GG::ListBox::DontAcceptDrop();
     }
 
     std::string fleet_name = UserString("FW_NEW_FLEET_NAME") + boost::lexical_cast<std::string>(new_fleet_id);
@@ -1097,7 +1094,7 @@ void FleetWnd::UniverseObjectDelete(const UniverseObject *obj)
     for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
         if (FleetInRow(i) == fleet) {
             NotShowingFleetSignal(FleetInRow(i));
-            m_fleets_lb->Delete(i);
+            delete m_fleets_lb->Erase(i);
             break;
         }
     }

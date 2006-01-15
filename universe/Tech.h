@@ -17,10 +17,8 @@
 namespace Effect {
     class EffectsGroup;
 }
-namespace GG {
-    class XMLElement;
-}
 class TechManager;
+class XMLElement;
 
 
 /** encasulates the data for a single FreeOrion technology */
@@ -30,7 +28,7 @@ public:
     struct ItemSpec;
 
     /** \name Structors */ //@{
-    Tech(const GG::XMLElement& elem); ///< XML ctor
+    Tech(const XMLElement& elem); ///< XML ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -98,7 +96,7 @@ private:
 struct Tech::ItemSpec
 {
     ItemSpec(); ///< default ctor
-    ItemSpec(const GG::XMLElement& elem); ///< XML ctor
+    ItemSpec(const XMLElement& elem); ///< XML ctor
 
     UnlockableItemType type; ///< the kind of item this is
     std::string        name; ///< the exact item this is

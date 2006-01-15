@@ -27,8 +27,7 @@
 #include "XTree.hpp"
 #include "XLut.hpp"
 #include "XParser.hpp"
-
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #include <ctime>
 #include <sstream>
@@ -61,7 +60,7 @@ bool           oFlag = false;
 bool           gFlag = false;
 }
 
-XDiff::XDiff(const GG::XMLDoc& doc1, const GG::XMLDoc& doc2, GG::XMLDoc& output) : 
+XDiff::XDiff(const XMLDoc& doc1, const XMLDoc& doc2, XMLDoc& output) : 
    _attrList1(ATTRIBUTE_SIZE),
    _attrList2(ATTRIBUTE_SIZE),
    _textList1(TEXT_SIZE),
@@ -2190,17 +2189,17 @@ void XDiff::writeDiffNode(ostream &out, int node1, int node2)
    }
 }
 
-void XPatch(GG::XMLDoc& old, const GG::XMLDoc& diff)
+void XPatch(XMLDoc& old, const XMLDoc& diff)
 {
-   vector<const GG::XMLElement*> diff_stack;
-   vector<GG::XMLElement*> old_stack;
+   vector<const XMLElement*> diff_stack;
+   vector<XMLElement*> old_stack;
    diff_stack.push_back(&diff.root_node);
    old_stack.push_back(&old.root_node);
    
    enum {INS, DEL, MATCH} curr_elem_type = MATCH;
    while (!diff_stack.empty()) {
-      const GG::XMLElement* curr_diff_elem = diff_stack.back();
-      GG::XMLElement* curr_old_elem = old_stack.back();
+      const XMLElement* curr_diff_elem = diff_stack.back();
+      XMLElement* curr_old_elem = old_stack.back();
       diff_stack.pop_back();
       old_stack.pop_back();
       
@@ -2209,7 +2208,7 @@ void XPatch(GG::XMLDoc& old, const GG::XMLDoc& diff)
       string change_str = curr_diff_elem->Attribute(CHANGE_ATTR_STR);
       if (change_str == INSERT_PREFIX) {
          curr_elem_type = INS;
-         GG::XMLElement ins_elem(*curr_diff_elem);
+         XMLElement ins_elem(*curr_diff_elem);
          ins_elem.RemoveAttribute(CHANGE_ATTR_STR);
          curr_old_elem->AppendChild(ins_elem);
       } else if (change_str == DELETE_PREFIX) {
@@ -2220,20 +2219,20 @@ void XPatch(GG::XMLDoc& old, const GG::XMLDoc& diff)
          if (change_str != "") {
             // adjust attributes
             if (change_str.find(DELETEATTR_PREFIX) != string::npos) {
-               for (GG::XMLElement::const_attr_iterator it = curr_diff_elem->attr_begin(); 
+               for (XMLElement::const_attr_iterator it = curr_diff_elem->attr_begin(); 
                     it != curr_diff_elem->attr_end(); 
                     ++it)
                   curr_old_elem->RemoveAttribute(it->first);
             } else if (change_str.find(REDOATTR_PREFIX) != string::npos) {
                curr_old_elem->RemoveAttributes();
-               for (GG::XMLElement::const_attr_iterator it = curr_diff_elem->attr_begin(); 
+               for (XMLElement::const_attr_iterator it = curr_diff_elem->attr_begin(); 
                     it != curr_diff_elem->attr_end(); 
                     ++it) {
                   if (it->first != CHANGE_ATTR_STR)
                      curr_old_elem->SetAttribute(it->first, it->second);
                }
             } else if (change_str.find(UPDATEATTR_PREFIX) != string::npos) {
-               for (GG::XMLElement::const_attr_iterator it = curr_diff_elem->attr_begin(); 
+               for (XMLElement::const_attr_iterator it = curr_diff_elem->attr_begin(); 
                     it != curr_diff_elem->attr_end(); 
                     ++it) {
                   if (it->first != CHANGE_ATTR_STR)
@@ -2249,7 +2248,7 @@ void XPatch(GG::XMLDoc& old, const GG::XMLDoc& diff)
          // before they get pushed on their respective stacks
          for (int i = 0; i < curr_diff_elem->NumChildren(); ++i) {
             if (curr_diff_elem->Child(i).Attribute(CHANGE_ATTR_STR) == INSERT_PREFIX) {
-               GG::XMLElement ins_elem(curr_diff_elem->Child(i));
+               XMLElement ins_elem(curr_diff_elem->Child(i));
                ins_elem.RemoveAttribute(CHANGE_ATTR_STR);
                curr_old_elem->AppendChild(ins_elem);
             } else if (curr_diff_elem->Child(i).Attribute(CHANGE_ATTR_STR) == DELETE_PREFIX) {

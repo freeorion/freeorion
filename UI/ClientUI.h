@@ -7,12 +7,12 @@
 #include "../util/SitRepEntry.h"
 #endif
 
-#ifndef _GGWnd_h_
-#include "GGWnd.h"
+#ifndef _GG_Wnd_h_
+#include <GG/Wnd.h>
 #endif
 
-#ifndef _SDLGGApp_h_
-#include "SDL/SDLGGApp.h"
+#ifndef _GG_SDLGUI_h_
+#include <GG/SDL/SDLGUI.h>
 #endif
 
 class ClientEmpire;
@@ -26,13 +26,11 @@ class PythonConsoleWnd;
 class SitRepEntry;
 class System;
 class Tech;
-class ToolContainer;
-class ToolWnd;
 class TurnProgressWnd;
+class XMLElement;
 namespace GG {
     class Clr;
     class SubTexture;
-    class XMLElement;
 }
 namespace log4cpp {
     class Category;
@@ -74,14 +72,10 @@ public:
 
     const GG::SubTexture& SitRepIcon(SitRepEntry::EntryType type) const; //!< returns the icon for this sitrep entry type; returns the default icon if \a type has no associated icon
 
-    GG::XMLElement SaveGameData() const; //!< returns the relevant data that should be restored after a save-and-load cycle
+    XMLElement SaveGameData() const; //!< returns the relevant data that should be restored after a save-and-load cycle
     //!@}
     
     //! \name Mutators //!@{
-    //! @param parent A pointer to the Wnd that should contain the tooltip
-    //! @param tool A pointer to a ToolWnd to be associated with that window
-    bool AttachToolWnd(GG::Wnd* parent, ToolWnd* tool);    //!< Adds a ToolWnd to the given window
-
     // GameCore Interface functions
     // calling these changes internal state to display the proper screen
     // and initializes and displays the screen
@@ -90,7 +84,7 @@ public:
     //!@{
     void InitTurn( int turn_number );      //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
 
-    void RestoreFromSaveData(const GG::XMLElement& elem); ///< restores the UI state that was saved in an earlier call to SaveGameData().
+    void RestoreFromSaveData(const XMLElement& elem); ///< restores the UI state that was saved in an earlier call to SaveGameData().
     
     void ScreenIntro();                        //!< Intro Screen
     void ScreenProcessTurn();                     //!< Turn Star Progress Splash Screen
@@ -214,8 +208,6 @@ private:
     
     void SwitchState(State state);      //!< switch current state to >state<, free's last state window and create the one for the new state
 
-    const Uint32 TOOLTIP_DELAY;         //!< number of milliseconds to initialize tooltips to
-    ToolContainer* m_tooltips;          //!< the single toolcontainer object
     State m_state;                      //!< represents the screen currently being displayed
 
     IntroScreen*     m_intro_screen;      //!< the intro (and main menu) screen first showed when the game starts up

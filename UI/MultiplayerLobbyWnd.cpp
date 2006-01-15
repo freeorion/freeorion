@@ -1,13 +1,15 @@
 #include "MultiplayerLobbyWnd.h"
 
 #include "CUIControls.h"
-#include "GGButton.h"
-#include "GGDrawUtil.h"
-#include "GGStaticGraphic.h"
-#include "GGTextControl.h"
 #include "../client/human/HumanClientApp.h"
 #include "../network/Message.h"
 #include "../util/MultiplayerCommon.h"
+
+#include <GG/Button.h>
+#include <GG/DrawUtil.h>
+#include <GG/StaticGraphic.h>
+#include <GG/TextControl.h>
+
 
 namespace {
     // the save-game data for all empires in a saved game that is being started, indexed by save-game empire ID
@@ -32,13 +34,13 @@ namespace {
         NewGamePlayerRow(const std::string& player_name, const PlayerSetupData& player_data_, bool disabled) : 
             PlayerRow(player_data_)
         {
+            Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
             push_back(player_name, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
-            CUIEdit* edit = new CUIEdit(0, 0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, player_data.empire_name, ClientUI::FONT, ClientUI::PTS, GG::CLR_ZERO, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
+            CUIEdit* edit = new CUIEdit(0, 0, EMPIRE_NAME_WIDTH, player_data.empire_name, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), GG::CLR_ZERO, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
             push_back(edit);
             EmpireColorSelector* color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
             color_selector->SelectColor(player_data.empire_color);
             push_back(color_selector);
-            height = PLAYER_ROW_HEIGHT + 6;
 
             if (disabled) {
                 edit->Disable();
@@ -67,6 +69,7 @@ namespace {
         LoadGamePlayerRow(const std::string& player_name, const PlayerSetupData& player_data_, bool disabled) : 
             PlayerRow(player_data_)
         {
+            Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
             push_back(player_name, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
             CUIDropDownList* empire_list = new CUIDropDownList(0, 0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, 5 * PLAYER_ROW_HEIGHT);
             empire_list->SetStyle(GG::LB_NOSORT);
@@ -85,7 +88,6 @@ namespace {
             push_back(m_color_selector);
             push_back(0 <= player_data.save_game_empire_id ? g_save_game_empire_data[player_data.save_game_empire_id].player_name : "", 
                       ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
-            height = PLAYER_ROW_HEIGHT + 6;
 
             m_color_selector->Disable();
 
@@ -128,9 +130,9 @@ namespace {
 }
 
 MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) : 
-    CUI_Wnd(UserString("MPLOBBY_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() - LOBBY_WND_WIDTH) / 2, 
-            (GG::App::GetApp()->AppHeight() - LOBBY_WND_HEIGHT) / 2, LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT, 
-            GG::Wnd::CLICKABLE | GG::Wnd::MODAL),
+    CUI_Wnd(UserString("MPLOBBY_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - LOBBY_WND_WIDTH) / 2, 
+            (GG::GUI::GetGUI()->AppHeight() - LOBBY_WND_HEIGHT) / 2, LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT, 
+            GG::CLICKABLE | GG::MODAL),
     m_result(false),
     m_host(host),
     m_chat_box(0),
@@ -146,16 +148,15 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     TempUISoundDisabler sound_disabler;
 
     int x = LeftBorder() + CONTROL_MARGIN;
-    m_chat_input_edit = new CUIEdit(x, Height() - BottomBorder() - (ClientUI::PTS + 10) - CONTROL_MARGIN, CHAT_WIDTH - x, ClientUI::PTS + 10, "");
+    m_chat_input_edit = new CUIEdit(x, Height() - BottomBorder() - (ClientUI::PTS + 10) - CONTROL_MARGIN, CHAT_WIDTH - x, "");
     m_chat_box = new CUIMultiEdit(x, TopBorder() + CONTROL_MARGIN, CHAT_WIDTH - x, m_chat_input_edit->UpperLeft().y - TopBorder() - 2 * CONTROL_MARGIN, "", 
                                   GG::TF_LINEWRAP | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
 
-    m_new_load_game_buttons = new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, TopBorder() + CONTROL_MARGIN);
+    m_galaxy_setup_panel = new GalaxySetupPanel(CHAT_WIDTH + 2 * CONTROL_MARGIN, RADIO_BN_HT, GALAXY_SETUP_PANEL_WIDTH);
+
+    m_new_load_game_buttons = new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, TopBorder() + CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + 100, 2 * RADIO_BN_HT, GG::VERTICAL);
     m_new_load_game_buttons->AddButton(new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-
-    m_galaxy_setup_panel = new GalaxySetupPanel(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y, GALAXY_SETUP_PANEL_WIDTH);
-
     m_new_load_game_buttons->AddButton(new CUIStateButton(0, m_galaxy_setup_panel->LowerRight().y, 100, RADIO_BN_HT, UserString("LOAD_GAME_BN"), 
                                                           GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
 
@@ -175,9 +176,9 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     if (m_host)
         m_start_game_bn = new CUIButton(0, 0, 125, UserString("START_GAME_BN"));
     m_cancel_bn = new CUIButton(0, 0, 125, UserString("CANCEL"));
-    m_cancel_bn->MoveTo(Width() - RightBorder() - m_cancel_bn->Width() - CONTROL_MARGIN, Height() - BottomBorder() - m_cancel_bn->Height() - CONTROL_MARGIN);
+    m_cancel_bn->MoveTo(GG::Pt(Width() - RightBorder() - m_cancel_bn->Width() - CONTROL_MARGIN, Height() - BottomBorder() - m_cancel_bn->Height() - CONTROL_MARGIN));
     if (m_host)
-        m_start_game_bn->MoveTo(m_cancel_bn->UpperLeft().x - CONTROL_MARGIN - m_start_game_bn->Width(), Height() - BottomBorder() - m_cancel_bn->Height() - CONTROL_MARGIN);
+        m_start_game_bn->MoveTo(GG::Pt(m_cancel_bn->UpperLeft().x - CONTROL_MARGIN - m_start_game_bn->Width(), Height() - BottomBorder() - m_cancel_bn->Height() - CONTROL_MARGIN));
 
     Init();
 
@@ -202,18 +203,17 @@ bool MultiplayerLobbyWnd::LoadSelected() const
     return m_new_load_game_buttons->CheckedButton() == 1;
 }
 
-bool MultiplayerLobbyWnd::Render()
+void MultiplayerLobbyWnd::Render()
 {
     CUI_Wnd::Render();
     GG::Pt image_ul = g_preview_ul + ClientUpperLeft(), image_lr = image_ul + PREVIEW_SZ;
     GG::FlatRectangle(image_ul.x - PREVIEW_MARGIN, image_ul.y - PREVIEW_MARGIN, image_lr.x + PREVIEW_MARGIN, image_lr.y + PREVIEW_MARGIN, 
                       GG::CLR_BLACK, ClientUI::WND_INNER_BORDER_COLOR, 1);
-    return true;
 }
 
 void MultiplayerLobbyWnd::Keypress(GG::Key key, Uint32 key_mods)
 {
-    if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) && GG::App::GetApp()->FocusWnd() == m_chat_input_edit) {
+    if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) && GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit) {
         int receiver = -1; // all players by default
         std::string text = m_chat_input_edit->WindowText();
         HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
@@ -231,7 +231,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
     switch (msg.Type()) {
     case Message::LOBBY_UPDATE: {
         std::stringstream stream(msg.GetText());
-        GG::XMLDoc doc;
+        XMLDoc doc;
         doc.ReadDoc(stream);
         if (doc.root_node.ContainsChild("sender")) {
             int sender = boost::lexical_cast<int>(doc.root_node.Child("sender").Text());
@@ -247,7 +247,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
             std::string player_name = m_player_names[player_id];
             for (int i = 0; i < m_players_lb->NumRows(); ++i) {
                 if (player_name == m_players_lb->GetRow(i)[0]->WindowText()) {
-                    m_players_lb->Delete(i);
+                    delete m_players_lb->Erase(i);
                     break;
                 }
             }
@@ -271,7 +271,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
 
             if (doc.root_node.ContainsChild("save_games")) {
                 m_saved_games_list->Clear();
-                std::vector<std::string> files = GG::Tokenize(doc.root_node.Child("save_games").Text());
+                std::vector<std::string> files = Tokenize(doc.root_node.Child("save_games").Text());
                 for (unsigned int i = 0; i < files.size(); ++i) {
                     m_saved_games_list->Insert(new CUISimpleDropDownListRow(files[i]));
                 }
@@ -425,13 +425,13 @@ void MultiplayerLobbyWnd::StartGameClicked()
 
 void MultiplayerLobbyWnd::CancelClicked()
 {
-    GG::XMLDoc doc;
+    XMLDoc doc;
     int player_id = HumanClientApp::GetApp()->PlayerID();
     if (m_host) { // tell everyone the game is off
-        doc.root_node.AppendChild(GG::XMLElement("abort_game"));
+        doc.root_node.AppendChild(XMLElement("abort_game"));
         HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, doc));
     } else { // tell everyone we've left
-        doc.root_node.AppendChild(GG::XMLElement("exit_lobby"));
+        doc.root_node.AppendChild(XMLElement("exit_lobby"));
         HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, doc));
     }
     m_result = false;
@@ -464,11 +464,11 @@ void MultiplayerLobbyWnd::PopulatePlayerList(bool loading_game)
 
     if (loading_game) {
         m_players_lb->SetNumCols(4);
-        m_players_lb->SetColAlignment(2, GG::LB_RIGHT);
-        m_players_lb->SetColAlignment(3, GG::LB_RIGHT);
+        m_players_lb->SetColAlignment(2, GG::ALIGN_RIGHT);
+        m_players_lb->SetColAlignment(3, GG::ALIGN_RIGHT);
     } else {
         m_players_lb->SetNumCols(3);
-        m_players_lb->SetColAlignment(2, GG::LB_RIGHT);
+        m_players_lb->SetColAlignment(2, GG::ALIGN_RIGHT);
     }
 }
 
@@ -500,13 +500,13 @@ bool MultiplayerLobbyWnd::CanStart() const
     return PlayerDataAcceptable() && 1 < m_players_lb->NumRows();
 }
 
-GG::XMLDoc MultiplayerLobbyWnd::LobbyUpdateDoc() const
+XMLDoc MultiplayerLobbyWnd::LobbyUpdateDoc() const
 {
-    GG::XMLDoc retval;
-    retval.root_node.AppendChild(GG::XMLElement(m_new_load_game_buttons->CheckedButton() ? "load_game" : "new_game"));
+    XMLDoc retval;
+    retval.root_node.AppendChild(XMLElement(m_new_load_game_buttons->CheckedButton() ? "load_game" : "new_game"));
     retval.root_node.AppendChild(m_galaxy_setup_panel->XMLEncode());
-    retval.root_node.AppendChild(GG::XMLElement("save_file", boost::lexical_cast<std::string>(m_saved_games_list->CurrentItemIndex())));
-    retval.root_node.AppendChild(GG::XMLElement("players"));
+    retval.root_node.AppendChild(XMLElement("save_file", boost::lexical_cast<std::string>(m_saved_games_list->CurrentItemIndex())));
+    retval.root_node.AppendChild(XMLElement("players"));
     for (int i = 0; i < m_players_lb->NumRows(); ++i) {
         const PlayerRow* row = dynamic_cast<const PlayerRow*>(&m_players_lb->GetRow(i));
         retval.root_node.LastChild().AppendChild(row->player_data.XMLEncode());

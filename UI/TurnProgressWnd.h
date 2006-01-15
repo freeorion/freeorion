@@ -2,16 +2,16 @@
 #ifndef _TurnProgressWnd_h_
 #define _TurnProgressWnd_h_
 
-#ifndef _GGWnd_h_
-#include "GGWnd.h"
+#ifndef _GG_Wnd_h_
+#include <GG/Wnd.h>
 #endif
 
-#ifndef _GGSignalsAndSlots_h_
-#include "GGSignalsAndSlots.h"
+#ifndef _GG_SignalsAndSlots_h_
+#include <GG/SignalsAndSlots.h>
 #endif
 
-#ifndef _GGTexture_h_
-#include "GGTexture.h"
+#ifndef _GG_Texture_h_
+#include <GG/Texture.h>
 #endif
 
 
@@ -34,7 +34,7 @@ public:
     void UpdateCombatTurnProgress(const std::string& message);
     
     virtual bool InWindow(const GG::Pt& pt) const;
-    virtual bool Render();
+    virtual void Render();
 
 private:
     GG::TextControl*   m_phase_text;

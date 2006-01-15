@@ -29,7 +29,7 @@ public:
     /** \name Structors */ //@{
     PopCenter(UniverseObject* object, double max_pop_mod, double max_health_mod); ///< basic ctor
     PopCenter(int race, UniverseObject* object, double max_pop_mod, double max_health_mod); ///< basic ctor
-    PopCenter(const GG::XMLElement& elem, UniverseObject* object); ///< ctor that constructs a PopCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a PopCenter object
+    PopCenter(const XMLElement& elem, UniverseObject* object); ///< ctor that constructs a PopCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a PopCenter object
     virtual ~PopCenter(); ///< dtor
     //@}
 
@@ -47,7 +47,7 @@ public:
     double       FuturePopGrowth() const;    ///< predicts by which amount the population will grow next turn, AvailableFood might limit growth rate
     double       FuturePopGrowthMax() const; ///< predicts by which amount the population will grow at maximum next turn (assuming there is enough food)
 
-    virtual GG::XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a PopCenter object with the given visibility
+    virtual XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a PopCenter object with the given visibility
     //@}
 
     /** \name Mutators */ //@{

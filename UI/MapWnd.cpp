@@ -7,8 +7,6 @@
 #include "../universe/Fleet.h"
 #include "FleetButton.h"
 #include "FleetWindow.h"
-#include "GGDrawUtil.h"
-#include "GGMultiEdit.h"
 #include "../client/human/HumanClientApp.h"
 #include "InGameOptions.h"
 #include "../network/Message.h"
@@ -27,12 +25,15 @@
 #include "../universe/UniverseObject.h"
 #include "TurnProgressWnd.h"
 
+#include <GG/DrawUtil.h>
+#include <GG/MultiEdit.h>
+
 #include <vector>
 #include <deque>
 
 #define TEST_BROWSE_INFO 0
 #if TEST_BROWSE_INFO
-#include "GGBrowseInfoWnd.h"
+#include <GG/BrowseInfoWnd.h>
 class BrowseFoo : public GG::TextBoxBrowseInfoWnd
 {
 public:
@@ -94,11 +95,6 @@ struct MapWnd::StarlaneData
             return dst < rhs.dst;
         return false;
     }
-    void SetSystems(const System* src_system, const System* dst_system) 
-    {
-        src = std::max(src_system, dst_system); 
-        dst = std::min(src_system, dst_system);
-    }
 
     const System* Src() const {return src;}
     const System* Dst() const {return dst;}
@@ -156,10 +152,10 @@ double    MapWnd::s_max_scale_factor = 8.0;
 const int MapWnd::SIDE_PANEL_WIDTH = 300;
 
 MapWnd::MapWnd() :
-    GG::Wnd(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight(),
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::App::GetApp()->AppWidth() * 1.5), 
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::App::GetApp()->AppHeight() * 1.5), 
-            GG::Wnd::CLICKABLE | GG::Wnd::DRAGABLE),
+    GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
+            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5), 
+            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5), 
+            GG::CLICKABLE | GG::DRAGABLE),
     m_disabled_accels_list(),
     m_backgrounds(NUM_BACKGROUNDS),
     m_bg_scroll_rate(NUM_BACKGROUNDS),
@@ -177,26 +173,26 @@ MapWnd::MapWnd() :
     Connect(GetUniverse().UniverseObjectDeleteSignal, &MapWnd::UniverseObjectDeleted, this);
 
     // toolbar
-    m_toolbar = new CUIToolBar(0,0,GG::App::GetApp()->AppWidth(),30);
-    GG::App::GetApp()->Register(m_toolbar);
+    m_toolbar = new CUIToolBar(0,0,GG::GUI::GetGUI()->AppWidth(),30);
+    GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
 
     // system-view side panel
-    m_side_panel = new SidePanel(GG::App::GetApp()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::App::GetApp()->AppHeight());
+    m_side_panel = new SidePanel(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
     AttachChild(m_side_panel);
     Connect(SystemLeftClickedSignal, &SidePanel::SetSystem, m_side_panel);
 
-    m_sitrep_panel = new SitRepPanel( (GG::App::GetApp()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::App::GetApp()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
+    m_sitrep_panel = new SitRepPanel( (GG::GUI::GetGUI()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::GUI::GetGUI()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);
 
-    m_research_wnd = new ResearchWnd(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight() - m_toolbar->Height());
-    m_research_wnd->MoveTo(0, m_toolbar->Height());
-    GG::App::GetApp()->Register(m_research_wnd);
+    m_research_wnd = new ResearchWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
+    m_research_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
+    GG::GUI::GetGUI()->Register(m_research_wnd);
     m_research_wnd->Hide();
 
-    m_production_wnd = new ProductionWnd(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight() - m_toolbar->Height());
-    m_production_wnd->MoveTo(0, m_toolbar->Height());
-    GG::App::GetApp()->Register(m_production_wnd);
+    m_production_wnd = new ProductionWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
+    m_production_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
+    GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
 
     // turn button
@@ -204,7 +200,7 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_turn_update);
     GG::Connect(m_turn_update->ClickedSignal, &MapWnd::TurnBtnClicked, this);
 
-    boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
     const int BUTTON_TOTAL_MARGIN = 8;
 
     int button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
@@ -250,15 +246,15 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_food);
 
     // chat display and chat input box
-    m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", ClientUI::FONT, ClientUI::PTS, GG::CLR_ZERO, 
+    m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), GG::CLR_ZERO, 
                                        GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE | GG::MultiEdit::INTEGRAL_HEIGHT | GG::MultiEdit::NO_VSCROLL, 
                                        ClientUI::TEXT_COLOR, GG::CLR_ZERO, 0);
     AttachChild(m_chat_display);
     m_chat_display->SetMaxLinesOfHistory(100);
     m_chat_display->Hide();
 
-    m_chat_edit = new CUIEdit(LAYOUT_MARGIN, GG::App::GetApp()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, CHAT_EDIT_HEIGHT, "", 
-                              ClientUI::FONT, ClientUI::PTS, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
+    m_chat_edit = new CUIEdit(LAYOUT_MARGIN, GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
+                              GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
     AttachChild(m_chat_edit);
     m_chat_edit->Hide();
     EnableAlphaNumAccels();
@@ -285,36 +281,36 @@ MapWnd::MapWnd() :
     m_bg_scroll_rate[2] = 0.5;
 
     // connect keyboard accelerators
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_ESCAPE, 0), &MapWnd::ReturnToMap, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE, 0), &MapWnd::ReturnToMap, this);
 
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_RETURN, 0), &MapWnd::OpenChatWindow, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_ENTER, 0), &MapWnd::OpenChatWindow, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN, 0), &MapWnd::OpenChatWindow, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, 0), &MapWnd::OpenChatWindow, this);
 
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_RETURN, GG::GGKMOD_CTRL), &MapWnd::EndTurn, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL), &MapWnd::EndTurn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN, GG::GGKMOD_CTRL), &MapWnd::EndTurn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL), &MapWnd::EndTurn, this);
 
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F2, 0), &MapWnd::ToggleSitRep, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F3, 0), &MapWnd::ToggleResearch, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F4, 0), &MapWnd::ToggleProduction, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowOptions, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_s, 0), &MapWnd::CloseSystemView, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2, 0), &MapWnd::ToggleSitRep, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3, 0), &MapWnd::ToggleResearch, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4, 0), &MapWnd::ToggleProduction, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowOptions, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s, 0), &MapWnd::CloseSystemView, this);
 
     // Keys for zooming
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_e, 0), &MapWnd::KeyboardZoomIn, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_PLUS, 0), &MapWnd::KeyboardZoomIn, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_r, 0), &MapWnd::KeyboardZoomOut, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_KP_MINUS, 0), &MapWnd::KeyboardZoomOut, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e, 0), &MapWnd::KeyboardZoomIn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS, 0), &MapWnd::KeyboardZoomIn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, 0), &MapWnd::KeyboardZoomOut, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS, 0), &MapWnd::KeyboardZoomOut, this);
 
     // Keys for showing systems
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_d, 0), &MapWnd::ZoomToHomeSystem, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_x, 0), &MapWnd::ZoomToPrevOwnedSystem, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_c, 0), &MapWnd::ZoomToNextOwnedSystem, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_d, 0), &MapWnd::ZoomToHomeSystem, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x, 0), &MapWnd::ZoomToPrevOwnedSystem, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c, 0), &MapWnd::ZoomToNextOwnedSystem, this);
 
     // Keys for showing fleets
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_f, 0), &MapWnd::ZoomToPrevIdleFleet, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_g, 0), &MapWnd::ZoomToNextIdleFleet, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_v, 0), &MapWnd::ZoomToPrevFleet, this);
-    GG::Connect(GG::App::GetApp()->AcceleratorSignal(GG::GGK_b, 0), &MapWnd::ZoomToNextFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f, 0), &MapWnd::ZoomToPrevIdleFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g, 0), &MapWnd::ZoomToNextIdleFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v, 0), &MapWnd::ZoomToPrevFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b, 0), &MapWnd::ZoomToNextFleet, this);
 
     g_chat_edit_history.push_front("");
 
@@ -334,21 +330,21 @@ MapWnd::~MapWnd()
 
 GG::Pt MapWnd::ClientUpperLeft() const
 {
-    return UpperLeft() + GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight());
+    return UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
 }
 
-GG::XMLElement MapWnd::SaveGameData() const
+XMLElement MapWnd::SaveGameData() const
 {
-    GG::XMLElement retval("MapWnd");
-    retval.AppendChild(GG::XMLElement("upper_left_x", boost::lexical_cast<std::string>(UpperLeft().x)));
-    retval.AppendChild(GG::XMLElement("upper_left_y", boost::lexical_cast<std::string>(UpperLeft().y)));
-    retval.AppendChild(GG::XMLElement("m_zoom_factor", boost::lexical_cast<std::string>(m_zoom_factor)));
-    retval.AppendChild(GG::XMLElement("m_nebulae"));
+    XMLElement retval("MapWnd");
+    retval.AppendChild(XMLElement("upper_left_x", boost::lexical_cast<std::string>(UpperLeft().x)));
+    retval.AppendChild(XMLElement("upper_left_y", boost::lexical_cast<std::string>(UpperLeft().y)));
+    retval.AppendChild(XMLElement("m_zoom_factor", boost::lexical_cast<std::string>(m_zoom_factor)));
+    retval.AppendChild(XMLElement("m_nebulae"));
     for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
-        retval.LastChild().AppendChild(GG::XMLElement("nebula" + boost::lexical_cast<std::string>(i)));
-        retval.LastChild().LastChild().AppendChild(GG::XMLElement("filename", m_nebulae[i]->Filename()));
-        retval.LastChild().LastChild().AppendChild(GG::XMLElement("position_x", boost::lexical_cast<std::string>(m_nebula_centers[i].x)));
-        retval.LastChild().LastChild().AppendChild(GG::XMLElement("position_y", boost::lexical_cast<std::string>(m_nebula_centers[i].y)));
+        retval.LastChild().AppendChild(XMLElement("nebula" + boost::lexical_cast<std::string>(i)));
+        retval.LastChild().LastChild().AppendChild(XMLElement("filename", m_nebulae[i]->Filename()));
+        retval.LastChild().LastChild().AppendChild(XMLElement("position_x", boost::lexical_cast<std::string>(m_nebula_centers[i].x)));
+        retval.LastChild().LastChild().AppendChild(XMLElement("position_y", boost::lexical_cast<std::string>(m_nebula_centers[i].y)));
     }
     return retval;
 }
@@ -358,7 +354,7 @@ bool MapWnd::InProductionViewMode() const
     return m_in_production_view_mode;
 }
 
-bool MapWnd::Render()
+void MapWnd::Render()
 {
     RenderBackgrounds();
     RenderStarlanes();
@@ -366,12 +362,10 @@ bool MapWnd::Render()
 
     int interval = GetOptionsDB().Get<int>("UI.chat-hide-interval");
     if (!m_chat_edit->Visible() && g_chat_display_show_time && interval && 
-        (interval < (GG::App::GetApp()->Ticks() - g_chat_display_show_time) / 1000)) {
+        (interval < (GG::GUI::GetGUI()->Ticks() - g_chat_display_show_time) / 1000)) {
         m_chat_display->Hide();
         g_chat_display_show_time = 0;
     }
-
-    return true;
 }
 
 void MapWnd::Keypress (GG::Key key, Uint32 key_mods)
@@ -462,8 +456,8 @@ void MapWnd::Keypress (GG::Key key, Uint32 key_mods)
             m_chat_edit->Hide();
             EnableAlphaNumAccels();
 
-            GG::App::GetApp()->SetFocusWnd(this);
-            g_chat_display_show_time = GG::App::GetApp()->Ticks();
+            GG::GUI::GetGUI()->SetFocusWnd(this);
+            g_chat_display_show_time = GG::GUI::GetGUI()->Ticks();
         }
         break;
     }
@@ -507,7 +501,7 @@ void MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveBackgrounds(final_move);
-    MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
+    MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
     m_dragged = true;
 }
 
@@ -553,8 +547,8 @@ void MapWnd::InitTurn(int turn_number)
 
     Universe& universe = ClientApp::GetUniverse();
 
-    Resize(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::App::GetApp()->AppWidth() * 1.5),
-           static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::App::GetApp()->AppHeight() * 1.5));
+    Resize(GG::Pt(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
+                  static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5)));
 
     // set up nebulae on the first turn
     if (m_nebulae.empty()) {
@@ -680,7 +674,7 @@ void MapWnd::InitTurn(int turn_number)
     m_toolbar->Show();
 }
 
-void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
+void MapWnd::RestoreFromSaveData(const XMLElement& elem)
 {
     m_zoom_factor = boost::lexical_cast<double>(elem.Child("m_zoom_factor").Text());
 
@@ -699,9 +693,9 @@ void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
         double y = fleet->Y();
         GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor), 
                          static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor));
-        m_moving_fleet_buttons[i]->SizeMove(button_ul.x, button_ul.y, 
-                                     static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5), 
-                                     static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5));
+        m_moving_fleet_buttons[i]->SizeMove(GG::Pt(button_ul.x, button_ul.y), 
+                                            GG::Pt(static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5), 
+                                                   static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5)));
     }
 
     GG::Pt ul = UpperLeft();
@@ -726,14 +720,14 @@ void MapWnd::RestoreFromSaveData(const GG::XMLElement& elem)
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveBackgrounds(final_move);
-    MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
+    MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 
     m_nebulae.clear();
     m_nebula_centers.clear();
-    const GG::XMLElement& nebulae = elem.Child("m_nebulae");
+    const XMLElement& nebulae = elem.Child("m_nebulae");
     for (int i = 0; i < nebulae.NumChildren(); ++i) {
-        const GG::XMLElement& curr_nebula = nebulae.Child(i);
-        m_nebulae.push_back(GG::App::GetApp()->GetTexture(curr_nebula.Child("filename").Text()));
+        const XMLElement& curr_nebula = nebulae.Child(i);
+        m_nebulae.push_back(GG::GUI::GetGUI()->GetTexture(curr_nebula.Child("filename").Text()));
         m_nebula_centers.push_back(GG::Pt(boost::lexical_cast<int>(curr_nebula.Child("position_x").Text()),
                                           boost::lexical_cast<int>(curr_nebula.Child("position_y").Text())));
     }
@@ -755,14 +749,14 @@ void MapWnd::HandlePlayerChatMessage(const std::string& msg)
 {
     *m_chat_display += msg;
     m_chat_display->Show();
-    g_chat_display_show_time = GG::App::GetApp()->Ticks();
+    g_chat_display_show_time = GG::GUI::GetGUI()->Ticks();
 }
 
 void MapWnd::CenterOnMapCoord(double x, double y)
 {
     GG::Pt ul = ClientUpperLeft();
-    double current_x = (GG::App::GetApp()->AppWidth() / 2 - ul.x) / m_zoom_factor;
-    double current_y = (GG::App::GetApp()->AppHeight() / 2 - ul.y) / m_zoom_factor;
+    double current_x = (GG::GUI::GetGUI()->AppWidth() / 2 - ul.x) / m_zoom_factor;
+    double current_y = (GG::GUI::GetGUI()->AppHeight() / 2 - ul.y) / m_zoom_factor;
     GG::Pt map_move = GG::Pt(static_cast<int>((current_x - x) * m_zoom_factor), 
                              static_cast<int>((current_y - y) * m_zoom_factor));
     OffsetMove(map_move);
@@ -782,7 +776,7 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveBackgrounds(final_move);
-    MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
+    MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 }
 
 void MapWnd::CenterOnSystem(int systemID)
@@ -904,7 +898,7 @@ void MapWnd::Zoom(int delta)
 {
     GG::Pt ul = ClientUpperLeft();
     double ul_x = ul.x, ul_y = ul.y;
-    double center_x = GG::App::GetApp()->AppWidth() / 2.0, center_y = GG::App::GetApp()->AppHeight() / 2.0;
+    double center_x = GG::GUI::GetGUI()->AppWidth() / 2.0, center_y = GG::GUI::GetGUI()->AppHeight() / 2.0;
     double ul_offset_x = ul_x - center_x, ul_offset_y = ul_y - center_y;
     if (delta > 0) {
         if (m_zoom_factor * ZOOM_STEP_SIZE < s_max_scale_factor) {
@@ -950,9 +944,9 @@ void MapWnd::Zoom(int delta)
         double y = fleet->Y();
         GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2.0) * m_zoom_factor), 
                          static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2.0) * m_zoom_factor));
-        m_moving_fleet_buttons[i]->SizeMove(button_ul.x, button_ul.y, 
-                                            static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor), 
-                                            static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor));
+        m_moving_fleet_buttons[i]->SizeMove(GG::Pt(button_ul.x, button_ul.y), 
+                                            GG::Pt(static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor), 
+                                                   static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor)));
     }
 
     GG::Pt map_move(static_cast<int>((center_x + ul_offset_x) - ul_x),
@@ -974,7 +968,7 @@ void MapWnd::Zoom(int delta)
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveBackgrounds(final_move);
-    MoveTo(move_to_pt - GG::Pt(GG::App::GetApp()->AppWidth(), GG::App::GetApp()->AppHeight()));
+    MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 }
 
 void MapWnd::RenderBackgrounds()
@@ -984,8 +978,8 @@ void MapWnd::RenderBackgrounds()
     for (int i = 0; i < NUM_BACKGROUNDS; ++i) {
         int bg_width = m_backgrounds[i]->Width();
         int bg_height = m_backgrounds[i]->Height();
-        int app_width = GG::App::GetApp()->AppWidth();
-        int app_height = GG::App::GetApp()->AppHeight();
+        int app_width = GG::GUI::GetGUI()->AppWidth();
+        int app_height = GG::GUI::GetGUI()->AppHeight();
         x = std::fmod(m_bg_position_X[i], bg_width);
         while (x < app_width + bg_width) {
             y = std::fmod(m_bg_position_Y[i], bg_height);
@@ -1075,7 +1069,7 @@ void MapWnd::RenderFleetMovementLines()
     const GLushort PATTERN = 0xF0F0;
     const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
     const double RATE = 0.25;
-    const int SHIFT = static_cast<int>(GG::App::GetApp()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
+    const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
     const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
     double LINE_SCALE = std::max(1.0, 1.333 * m_zoom_factor);
 
@@ -1125,8 +1119,8 @@ void MapWnd::MoveBackgrounds(const GG::Pt& move)
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 {
     int contents_width = static_cast<int>(m_zoom_factor * Universe::UniverseWidth());
-    int app_width =  GG::App::GetApp()->AppWidth();
-    int app_height = GG::App::GetApp()->AppHeight();
+    int app_width =  GG::GUI::GetGUI()->AppWidth();
+    int app_height = GG::GUI::GetGUI()->AppHeight();
     int map_margin_width = static_cast<int>(app_width / 2.0);
 
     if (app_width - map_margin_width < contents_width || app_height - map_margin_width < contents_width) {
@@ -1200,11 +1194,11 @@ void MapWnd::Cleanup()
 void MapWnd::Sanitize()
 {
     Cleanup();
-    m_side_panel->MoveTo(GG::App::GetApp()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y);
-    m_chat_display->MoveTo(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN);
-    m_chat_edit->MoveTo(LAYOUT_MARGIN, GG::App::GetApp()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN);
-    m_sitrep_panel->MoveTo((GG::App::GetApp()->AppWidth() - SITREP_PANEL_WIDTH) / 2, (GG::App::GetApp()->AppHeight() - SITREP_PANEL_HEIGHT) / 2);
-    MoveTo(-GG::App::GetApp()->AppWidth(), -GG::App::GetApp()->AppHeight());
+    m_side_panel->MoveTo(GG::Pt(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y));
+    m_chat_display->MoveTo(GG::Pt(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN));
+    m_chat_edit->MoveTo(GG::Pt(LAYOUT_MARGIN, GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
+    m_sitrep_panel->MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - SITREP_PANEL_WIDTH) / 2, (GG::GUI::GetGUI()->AppHeight() - SITREP_PANEL_HEIGHT) / 2));
+    MoveTo(GG::Pt(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight()));
     m_zoom_factor = 1.0;
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();
@@ -1238,8 +1232,8 @@ bool MapWnd::OpenChatWindow()
         m_chat_display->Show();
         DisableAlphaNumAccels();
         m_chat_edit->Show();
-        GG::App::GetApp()->SetFocusWnd(m_chat_edit);
-        g_chat_display_show_time = GG::App::GetApp()->Ticks();
+        GG::GUI::GetGUI()->SetFocusWnd(m_chat_edit);
+        g_chat_display_show_time = GG::GUI::GetGUI()->Ticks();
         return true;
     }
     return false;
@@ -1292,7 +1286,7 @@ bool MapWnd::ToggleResearch()
 
         // show the research window
         m_research_wnd->Show();
-        GG::App::GetApp()->MoveUp(m_research_wnd);
+        GG::GUI::GetGUI()->MoveUp(m_research_wnd);
         m_research_wnd->Reset();
     }
     return true;
@@ -1316,7 +1310,7 @@ bool MapWnd::ToggleProduction()
         m_in_production_view_mode = true;
         HideAllPopups();
         m_side_panel->Hide();
-        GG::App::GetApp()->MoveUp(m_production_wnd);
+        GG::GUI::GetGUI()->MoveUp(m_production_wnd);
         m_production_wnd->Reset();
     }
     return true;
@@ -1530,70 +1524,70 @@ bool MapWnd::ZoomToNextFleet()
 
 void MapWnd::SetAccelerators()
 {
-    GG::App::GetApp()->SetAccelerator(GG::GGK_ESCAPE, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_ESCAPE, 0);
 
-    GG::App::GetApp()->SetAccelerator(GG::GGK_RETURN, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_ENTER, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER, 0);
 
-    GG::App::GetApp()->SetAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
 
-    GG::App::GetApp()->SetAccelerator(GG::GGK_F2, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_F3, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_F4, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_F10, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_s, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F2, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F3, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F4, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F10, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_s, 0);
 
     // Keys for zooming
-    GG::App::GetApp()->SetAccelerator(GG::GGK_e, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_r, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_PLUS, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_KP_MINUS, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_e, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_r, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_PLUS, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_MINUS, 0);
 
     // Keys for showing systems
-    GG::App::GetApp()->SetAccelerator(GG::GGK_d, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_x, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_c, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_d, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_x, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_c, 0);
 
     // Keys for showing fleets
-    GG::App::GetApp()->SetAccelerator(GG::GGK_f, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_g, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_v, 0);
-    GG::App::GetApp()->SetAccelerator(GG::GGK_b, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_f, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_g, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_b, 0);
 }
 
 void MapWnd::RemoveAccelerators()
 {
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_ESCAPE, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_ESCAPE, 0);
 
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_RETURN, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_ENTER, 0);
     
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
 
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F2, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F3, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F4, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_F10, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_s, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F2, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F3, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F4, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F10, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_s, 0);
 
     // Zoom keys
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_e, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_r, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_PLUS, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_KP_MINUS, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_e, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_r, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_PLUS, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_MINUS, 0);
 
     // Keys for showing systems
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_d, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_x, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_c, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_d, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_x, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_c, 0);
 
     // Keys for showing fleets
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_f, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_g, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_v, 0);
-    GG::App::GetApp()->RemoveAccelerator(GG::GGK_b, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_f, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_g, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_v, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_b, 0);
 }
 
 /* Disables keyboard accelerators that use an alphanumeric key
@@ -1605,8 +1599,8 @@ void MapWnd::RemoveAccelerators()
 */
 void MapWnd::DisableAlphaNumAccels()
 {
-    for (GG::App::const_accel_iterator i = GG::App::GetApp()->accel_begin();
-         i != GG::App::GetApp()->accel_end(); ++i) {
+    for (GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
+         i != GG::GUI::GetGUI()->accel_end(); ++i) {
         if (i->second != 0) // we only want to disable keys without modifiers
             continue; 
         GG::Key key = i->first;
@@ -1617,7 +1611,7 @@ void MapWnd::DisableAlphaNumAccels()
     }
     for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
          i != m_disabled_accels_list.end(); ++i) {
-        GG::App::GetApp()->RemoveAccelerator(*i, 0);
+        GG::GUI::GetGUI()->RemoveAccelerator(*i, 0);
     }
 }
 
@@ -1626,7 +1620,7 @@ void MapWnd::EnableAlphaNumAccels()
 {
     for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
          i != m_disabled_accels_list.end(); ++i) {
-        GG::App::GetApp()->SetAccelerator(*i, 0);
+        GG::GUI::GetGUI()->SetAccelerator(*i, 0);
     }
     m_disabled_accels_list.clear();
 }

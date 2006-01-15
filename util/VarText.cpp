@@ -11,7 +11,7 @@ namespace {
     // converts (first, last) to a string, looks up its value in the Universe, then appends this to the end of a std::string
     struct SubstituteAndAppend
     {
-        SubstituteAndAppend(const GG::XMLElement& variables, std::string& str) : m_variables(variables), m_str(str) {}
+        SubstituteAndAppend(const XMLElement& variables, std::string& str) : m_variables(variables), m_str(str) {}
         void operator()(const char* first, const char* last) const 
         {
             std::string token(first, last);
@@ -28,7 +28,7 @@ namespace {
                 return;
             }
 
-            const GG::XMLElement& token_elem = m_variables.Child(token);
+            const XMLElement& token_elem = m_variables.Child(token);
             std::string open_tag = "<" + token_elem.Tag() + " " + token_elem.Attribute("value") + ">";
             std::string close_tag = "</" + token_elem.Tag() + ">";
 
@@ -64,7 +64,7 @@ namespace {
             }
         }
 
-        const GG::XMLElement&  m_variables;
+        const XMLElement&  m_variables;
         std::string&           m_str;
     };
 
@@ -93,7 +93,7 @@ const std::string VarText::TECH_ID_TAG = "tech";
 const std::string VarText::SHIP_ID_TAG = "ship";
 const std::string VarText::BUILDING_ID_TAG = "building";
 
-VarText::VarText(const GG::XMLElement& elem)
+VarText::VarText(const XMLElement& elem)
 {
     // copy variables
     for (int i = 0; i < elem.NumChildren(); ++i) {
@@ -102,9 +102,9 @@ VarText::VarText(const GG::XMLElement& elem)
 }
 
 
-GG::XMLElement VarText::XMLEncode() const
+XMLElement VarText::XMLEncode() const
 {
-    GG::XMLElement retval;
+    XMLElement retval;
     for (int i = 0; i < m_variables.NumChildren(); ++i) {
         retval.AppendChild(m_variables.Child(i));
     }

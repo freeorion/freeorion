@@ -2,18 +2,18 @@
 #ifndef _ServerConnectWnd_h_
 #define _ServerConnectWnd_h_
 
-#ifndef _CUI_Wnd_h_
 #include "CUI_Wnd.h"
-#endif
+#include "../util/XMLDoc.h"
 
 #include <string>
+
 
 class CUIButton;
 class CUIListBox;
 class CUIEdit;
 namespace GG {
-class RadioButtonGroup; 
-class TextControl;
+    class RadioButtonGroup;
+    class TextControl;
 }
 
 /** server connections window */
@@ -22,7 +22,7 @@ class ServerConnectWnd : public CUI_Wnd
 public:
     /** \name Structors */ //@{
     ServerConnectWnd();
-    ServerConnectWnd(const GG::XMLElement& elem);
+    ServerConnectWnd(const XMLElement& elem);
     //@}
 
     //! \name Mutators

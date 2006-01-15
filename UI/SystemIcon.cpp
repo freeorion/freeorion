@@ -4,9 +4,6 @@
 
 #include "ClientUI.h"
 #include "../universe/Fleet.h"
-#include "GGDrawUtil.h"
-#include "GGStaticGraphic.h"
-#include "GGTextControl.h"
 #include "FleetButton.h"
 #include "FleetWindow.h"
 #include "../client/human/HumanClientApp.h"
@@ -14,6 +11,10 @@
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/System.h"
+
+#include <GG/DrawUtil.h>
+#include <GG/StaticGraphic.h>
+#include <GG/TextControl.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -39,7 +40,7 @@ namespace {
 // SystemIcon
 ////////////////////////////////////////////////
 SystemIcon::SystemIcon(int id, double zoom) :
-    GG::Control(0, 0, 1, 1, GG::Wnd::CLICKABLE),
+    GG::Control(0, 0, 1, 1, GG::CLICKABLE),
     m_system(*ClientApp::GetUniverse().Object<const System>(id)),
     m_static_graphic(0)
 {
@@ -70,21 +71,21 @@ SystemIcon::~SystemIcon()
 
 void SystemIcon::SizeMove(int x1, int y1, int x2, int y2)
 {
-    Wnd::SizeMove(x1, y1, x2, y2);
+    Wnd::SizeMove(GG::Pt(x1, y1), GG::Pt(x2, y2));
     if (m_static_graphic)
-        m_static_graphic->SizeMove(0, 0, x2 - x1, y2 - y1);
+        m_static_graphic->SizeMove(GG::Pt(0, 0), GG::Pt(x2 - x1, y2 - y1));
     PositionSystemName();
 
     const int BUTTON_SIZE = static_cast<int>(Height() * ClientUI::FLEET_BUTTON_SIZE);
     GG::Pt size = Size();
     int stationary_y = 0;
     for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
-        it->second->SizeMove(size.x - BUTTON_SIZE, stationary_y, size.x, stationary_y + BUTTON_SIZE);
+        it->second->SizeMove(GG::Pt(size.x - BUTTON_SIZE, stationary_y), GG::Pt(size.x, stationary_y + BUTTON_SIZE));
         stationary_y += BUTTON_SIZE;
     }
     int moving_y = size.y - BUTTON_SIZE;
     for (std::map<int, FleetButton*>::iterator it = m_moving_fleet_markers.begin(); it != m_moving_fleet_markers.end(); ++it) {
-        it->second->SizeMove(0, moving_y, BUTTON_SIZE, moving_y + BUTTON_SIZE);
+        it->second->SizeMove(GG::Pt(0, moving_y), GG::Pt(BUTTON_SIZE, moving_y + BUTTON_SIZE));
         moving_y -= BUTTON_SIZE;
     }
 }
@@ -123,10 +124,10 @@ void SystemIcon::Refresh()
         if (!owners.empty()) {
             text_color = HumanClientApp::Empires().Lookup(*owners.begin())->Color();
         }
-        m_name.push_back(new GG::TextControl(0, 0, m_system.Name(), ClientUI::FONT, ClientUI::PTS, text_color));
+        m_name.push_back(new GG::TextControl(0, 0, m_system.Name(), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), text_color));
         AttachChild(m_name[0]);
     } else {
-        boost::shared_ptr<GG::Font> font = GG::App::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
+        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
         Uint32 format = 0;
         std::vector<GG::Font::LineData> lines;
         GG::Pt extent = font->DetermineLines(m_system.Name(), format, 1000, lines);
@@ -139,7 +140,8 @@ void SystemIcon::Refresh()
                 ++last_char_pos;
             }
             m_name.push_back(new GG::TextControl(0, 0, m_system.Name().substr(first_char_pos, last_char_pos - first_char_pos), 
-                                                 ClientUI::FONT, ClientUI::PTS, HumanClientApp::Empires().Lookup(*it)->Color()));
+                                                 GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
+                                                 HumanClientApp::Empires().Lookup(*it)->Color()));
             AttachChild(m_name.back());
             first_char_pos = last_char_pos;
         }
@@ -238,7 +240,7 @@ void SystemIcon::PositionSystemName()
             total_width += m_name[i]->Width();
         }
         for (unsigned int i = 0; i < m_name.size(); ++i) {
-            m_name[i]->MoveTo((Width() - total_width) / 2 + extents[i], Height());
+            m_name[i]->MoveTo(GG::Pt((Width() - total_width) / 2 + extents[i], Height()));
         }
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
- <GG::XMLDoc>
+ <XMLDoc>
 
 <Category>LEARNING_CATEGORY</Category>
 
@@ -1804,4 +1804,4 @@
   <graphic/>
 </Tech>
 
-</GG::XMLDoc>
+</XMLDoc>

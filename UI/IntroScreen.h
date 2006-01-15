@@ -4,8 +4,8 @@
 #ifndef _IntroScreen_h_
 #define _IntroScreen_h_
 
-#ifndef _GGApp_h_
-#include "GGApp.h"
+#ifndef _GG_GUI_h_
+#include <GG/GUI.h>
 #endif
 
 #ifndef _CUI_Wnd_h_

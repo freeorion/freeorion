@@ -3,13 +3,14 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "OptionsWnd.h"
-#include "GGButton.h"
-#include "GGClr.h"
-#include "GGDrawUtil.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+
+#include <GG/Button.h>
+#include <GG/Clr.h>
+#include <GG/DrawUtil.h>
 
 #include <boost/filesystem/operations.hpp>
 
@@ -38,8 +39,8 @@ namespace {
 
 
 InGameOptions::InGameOptions():
-    CUI_Wnd(UserString("GAME_MENU_WINDOW_TITLE"), (GG::App::GetApp()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
-            (GG::App::GetApp()->AppHeight() - IN_GAME_OPTIONS_HEIGHT) / 2, IN_GAME_OPTIONS_WIDTH, IN_GAME_OPTIONS_HEIGHT, GG::Wnd::CLICKABLE | GG::Wnd::MODAL)
+    CUI_Wnd(UserString("GAME_MENU_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
+            (GG::GUI::GetGUI()->AppHeight() - IN_GAME_OPTIONS_HEIGHT) / 2, IN_GAME_OPTIONS_WIDTH, IN_GAME_OPTIONS_HEIGHT, GG::CLICKABLE | GG::MODAL)
 {
     const int BUTTON_WIDTH = IN_GAME_OPTIONS_WIDTH - 60;
     const int BUTTON_X = (IN_GAME_OPTIONS_WIDTH - BUTTON_WIDTH) / 2;
@@ -63,10 +64,9 @@ int InGameOptions::MinimizedLength() const
     return 135;
 }
 
-bool InGameOptions::Render()
+void InGameOptions::Render()
 {
     CUI_Wnd::Render();
-    return true;
 }
 
 void InGameOptions::Keypress (GG::Key key, Uint32 key_mods)
@@ -120,8 +120,8 @@ void InGameOptions::Save()
                 ClientUI::MessageBox("Could not save game as \"" + filename + "\".", true);
             }
         }
-    } catch (const FileDlg::InitialDirectoryDoesNotExistException& e) {
-        ClientUI::MessageBox(e.Message(), true);
+    } catch (const FileDlg::BadInitialDirectory& e) {
+        ClientUI::MessageBox(e.what(), true);
     }
 }
 

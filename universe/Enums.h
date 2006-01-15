@@ -2,7 +2,7 @@
 #ifndef _Enums_h_
 #define _Enums_h_
 
-#include "GGEnum.h"
+#include <GG/Enum.h>
 
 /* the various major subclasses of UniverseObject */
 enum UniverseObjectType {

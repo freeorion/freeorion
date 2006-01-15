@@ -26,8 +26,7 @@
 #include "XParser.hpp"
 #include "XTree.hpp"
 #include "XHash.hpp"
-
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #include <string>
 #include <fstream>
@@ -47,7 +46,7 @@ bool found_last_quote = false;
 
 XTree* XParser::parse(const string& filename)
 {
-    GG::XMLDoc doc;
+    XMLDoc doc;
     ifstream ifs(filename.c_str());
     doc.ReadDoc(ifs);
     ifs.close();
@@ -55,7 +54,7 @@ XTree* XParser::parse(const string& filename)
     return parse(doc);
 }
 
-XTree* XParser::parse(const GG::XMLDoc& doc)
+XTree* XParser::parse(const XMLDoc& doc)
 {
     _idStack = vector<int>(STACK_SZ, 0);
     _lsidStack = vector<int>(STACK_SZ, 0);
@@ -71,7 +70,7 @@ XTree* XParser::parse(const GG::XMLDoc& doc)
     return _xtree;
 }
 
-void XParser::recursive_parse(const GG::XMLElement& elem)
+void XParser::recursive_parse(const XMLElement& elem)
 {
     // if text is mixed with elements.
     if (!_elementBuffer.empty()) {
@@ -95,7 +94,7 @@ void XParser::recursive_parse(const GG::XMLElement& elem)
     _valueStack[_stackTop] = XHash::hash(elem.Tag());
 
     // Take care of attributes
-    for (GG::XMLElement::const_attr_iterator it = elem.attr_begin(); it != elem.attr_end(); ++it) {
+    for (XMLElement::const_attr_iterator it = elem.attr_begin(); it != elem.attr_end(); ++it) {
         unsigned long long namehash = XHash::hash(it->first);
         unsigned long long attrhash = namehash;
         attrhash += XHash::hash(it->second);
@@ -109,7 +108,7 @@ void XParser::recursive_parse(const GG::XMLElement& elem)
     _elementBuffer = elem.Text();
 
 
-    for (GG::XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
+    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
         recursive_parse(*it);
     }
 

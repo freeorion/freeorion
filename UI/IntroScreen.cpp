@@ -7,9 +7,6 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "GalaxySetupWnd.h"
-#include "GGDrawUtil.h"
-#include "GGStaticGraphic.h"
-#include "GGTexture.h"
 #include "../network/Message.h"
 #include "../UI/MultiplayerLobbyWnd.h"
 #include "../util/MultiplayerCommon.h"
@@ -17,6 +14,10 @@
 #include "../util/OptionsDB.h"
 #include "Splash.h"
 #include "ServerConnectWnd.h"
+
+#include <GG/DrawUtil.h>
+#include <GG/StaticGraphic.h>
+#include <GG/Texture.h>
 
 #include <cstdlib>
 #include <fstream>
@@ -46,29 +47,29 @@ namespace {
 class CreditsWnd : public GG::Wnd
 {
 public:
-    CreditsWnd(int x, int y, int w, int h,const GG::XMLElement &credits,int cx, int cy, int cw, int ch,int co);
+    CreditsWnd(int x, int y, int w, int h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co);
         
-    virtual bool Render();
+    virtual void Render();
     virtual void LClick(const GG::Pt& pt, Uint32 keys) {m_bRender=false;}
 
 private:
-    GG::XMLElement m_credits;
+    XMLElement m_credits;
     int m_cx,m_cy,m_cw,m_ch,m_co;
     int m_start_time;
     int m_bRender,m_bFadeIn;
 };
 
-CreditsWnd::CreditsWnd(int x, int y, int w, int h,const GG::XMLElement &credits,int cx, int cy, int cw, int ch,int co) :
-    GG::Wnd(x, y, w, h,GG::Wnd::CLICKABLE),m_credits(credits),m_cx(cx),m_cy(cy),m_cw(cw),m_ch(ch),m_co(co),
-    m_start_time(GG::App::GetApp()->Ticks()),
+CreditsWnd::CreditsWnd(int x, int y, int w, int h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co) :
+    GG::Wnd(x, y, w, h,GG::CLICKABLE),m_credits(credits),m_cx(cx),m_cy(cy),m_cw(cw),m_ch(ch),m_co(co),
+    m_start_time(GG::GUI::GetGUI()->Ticks()),
     m_bRender(true),
     m_bFadeIn(true)
 {}
 
-bool CreditsWnd::Render()
+void CreditsWnd::Render()
 {
     if(!m_bRender)
-        return true;
+        return;
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     boost::shared_ptr<GG::Font> font=HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));;
@@ -79,13 +80,13 @@ bool CreditsWnd::Render()
 
     int offset=m_co;
 
-    offset -= (GG::App::GetApp()->Ticks() - m_start_time)/40;
+    offset -= (GG::GUI::GetGUI()->Ticks() - m_start_time)/40;
 
     int transparency = 255;
 
     if (m_bFadeIn)
     {
-        double fade_in = (GG::App::GetApp()->Ticks() - m_start_time)/2000.0;
+        double fade_in = (GG::GUI::GetGUI()->Ticks() - m_start_time)/2000.0;
         if(fade_in>1.0)
             m_bFadeIn=false;
         else
@@ -100,11 +101,11 @@ bool CreditsWnd::Render()
     for(int i = 0; i<m_credits.NumChildren();i++)
         if(0==m_credits.Child(i).Tag().compare("GROUP"))
         {
-            GG::XMLElement group = m_credits.Child(i);
+            XMLElement group = m_credits.Child(i);
             for(int j = 0; j<group.NumChildren();j++)
                 if(0==group.Child(j).Tag().compare("PERSON"))
                 {
-                    GG::XMLElement person = group.Child(j);
+                    XMLElement person = group.Child(j);
                     credit = "";
                     if(person.ContainsAttribute("name"))
                         credit+=person.Attribute("name");
@@ -131,19 +132,16 @@ bool CreditsWnd::Render()
     if(offset<0)
     {
         m_co = 0;
-        m_start_time = GG::App::GetApp()->Ticks()+m_ch*40;
+        m_start_time = GG::GUI::GetGUI()->Ticks()+m_ch*40;
     }
-
-
-    return true;
 }
 //****************************************************************************************************
 
 IntroScreen::IntroScreen() :
     CUI_Wnd(UserString("INTRO_WINDOW_TITLE"), 
-            static_cast<int>(GG::App::GetApp()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.x") - MAIN_MENU_WIDTH / 2),
-            static_cast<int>(GG::App::GetApp()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.y") - MAIN_MENU_HEIGHT / 2),
-            MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::Wnd::ONTOP | GG::Wnd::CLICKABLE),
+            static_cast<int>(GG::GUI::GetGUI()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.x") - MAIN_MENU_WIDTH / 2),
+            static_cast<int>(GG::GUI::GetGUI()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.y") - MAIN_MENU_HEIGHT / 2),
+            MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::CLICKABLE),
     m_credits_wnd(0)
 {
     LoadSplashGraphics(m_bg_graphics);
@@ -207,20 +205,20 @@ void IntroScreen::OnSinglePlayer()
         string player_name = "Happy_Player";
         int num_AIs = 4;
 
-        GG::XMLDoc game_parameters;
-        game_parameters.root_node.AppendChild(GG::XMLElement("host_player_name", player_name));
-        game_parameters.root_node.AppendChild(GG::XMLElement("num_players", lexical_cast<string>(num_AIs + 1)));
+        XMLDoc game_parameters;
+        game_parameters.root_node.AppendChild(XMLElement("host_player_name", player_name));
+        game_parameters.root_node.AppendChild(XMLElement("num_players", lexical_cast<string>(num_AIs + 1)));
         game_parameters.root_node.AppendChild(galaxy_wnd.Panel().XMLEncode());
-        game_parameters.root_node.AppendChild(GG::XMLElement("empire_name", galaxy_wnd.EmpireName()));
-        game_parameters.root_node.AppendChild(GG::XMLElement("empire_color", ClrToXML(galaxy_wnd.EmpireColor())));
+        game_parameters.root_node.AppendChild(XMLElement("empire_name", galaxy_wnd.EmpireName()));
+        game_parameters.root_node.AppendChild(XMLElement("empire_color", ClrToXML(galaxy_wnd.EmpireColor())));
 
         for (int i = 0; i < num_AIs; ++i) {
-            game_parameters.root_node.AppendChild(GG::XMLElement("AI_client"));
+            game_parameters.root_node.AppendChild(XMLElement("AI_client"));
         }
 
-        int start_time = GG::App::GetApp()->Ticks();
+        int start_time = GG::GUI::GetGUI()->Ticks();
         while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) {
-            if (SERVER_CONNECT_TIMEOUT < GG::App::GetApp()->Ticks() - start_time) {
+            if (SERVER_CONNECT_TIMEOUT < GG::GUI::GetGUI()->Ticks() - start_time) {
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 failed = true;
                 break;
@@ -267,9 +265,9 @@ void IntroScreen::OnMultiPlayer()
                 }
                 server_name = "localhost";
             }
-            int start_time = GG::App::GetApp()->Ticks();
+            int start_time = GG::GUI::GetGUI()->Ticks();
             while (!HumanClientApp::GetApp()->NetworkCore().ConnectToServer(server_name)) {
-                if (SERVER_CONNECT_TIMEOUT < GG::App::GetApp()->Ticks() - start_time) {
+                if (SERVER_CONNECT_TIMEOUT < GG::GUI::GetGUI()->Ticks() - start_time) {
                     ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                     if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
                         HumanClientApp::GetApp()->KillServer();
@@ -340,7 +338,7 @@ void IntroScreen::OnCredits()
         m_credits_wnd = 0;
     }
 
-    GG::XMLDoc doc;
+    XMLDoc doc;
     std::ifstream ifs((ClientUI::DIR + "credits.xml").c_str());
     doc.ReadDoc(ifs);
     ifs.close();
@@ -349,18 +347,18 @@ void IntroScreen::OnCredits()
     if (!doc.root_node.ContainsChild("CREDITS"))
         return;
 
-    GG::XMLElement credits = doc.root_node.Child("CREDITS");
+    XMLElement credits = doc.root_node.Child("CREDITS");
     // only the area between the upper and lower line of the splash screen should be darkend
     // if we use another splash screen we have the chenge the following values
-    int nUpperLine = ( 79 * GG::App::GetApp()->AppHeight()) / 768,
-        nLowerLine = (692 * GG::App::GetApp()->AppHeight()) / 768;
+    int nUpperLine = ( 79 * GG::GUI::GetGUI()->AppHeight()) / 768,
+        nLowerLine = (692 * GG::GUI::GetGUI()->AppHeight()) / 768;
 
     m_credits_wnd = new CreditsWnd(0,nUpperLine,
-                                   GG::App::GetApp()->AppWidth(),nLowerLine-nUpperLine,
+                                   GG::GUI::GetGUI()->AppWidth(),nLowerLine-nUpperLine,
                                    credits,
                                    60,0,600,(nLowerLine-nUpperLine),((nLowerLine-nUpperLine))/2);
 
-    GG::App::GetApp()->Register(m_credits_wnd);
+    GG::GUI::GetGUI()->Register(m_credits_wnd);
 }
 
 void IntroScreen::OnExitGame()
@@ -369,7 +367,7 @@ void IntroScreen::OnExitGame()
         delete m_credits_wnd;
         m_credits_wnd = 0;
     }
-    GG::App::GetApp()->Exit(0); // exit with 0, good error code
+    GG::GUI::GetGUI()->Exit(0); // exit with 0, good error code
 }
 
 void IntroScreen::Keypress (GG::Key key, Uint32 key_mods)

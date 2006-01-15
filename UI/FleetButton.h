@@ -3,8 +3,8 @@
 #ifndef _FleetButton_h_
 #define _FleetButton_h_
 
-#ifndef _GGButton_h_
-#include "GGButton.h"
+#ifndef _GG_Button_h_
+#include <GG/Button.h>
 #endif
 
 #ifndef _CUIDrawUtil_h_

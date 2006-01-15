@@ -60,9 +60,8 @@ class System;
 #endif
 
 class Empire;
-namespace GG {class XMLElement;}
-
 struct UniverseObjectVisitor;
+class XMLElement;
 
 class Universe
 {
@@ -142,7 +141,7 @@ public:
 
     /** \name Structors */ //@{
     Universe(); ///< default ctor
-    Universe(const GG::XMLElement& elem); ///< ctor that constructs a Universe object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Universe object
+    Universe(const XMLElement& elem); ///< ctor that constructs a Universe object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Universe object
     virtual ~Universe(); ///< dtor
     //@}
 
@@ -199,13 +198,13 @@ public:
         system ID is out of range. */
     std::map<double, System*> ImmediateNeighbors(int system, int empire_id = ALL_EMPIRES) const;
 
-    virtual GG::XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
+    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
 
     /** \name Mutators */ //@{
-    void SetUniverse(const GG::XMLElement& elem ); ///< wipes out the current object map and sets the map to the XMLElement passed in.
+    void SetUniverse(const XMLElement& elem ); ///< wipes out the current object map and sets the map to the XMLElement passed in.
 
     /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.
         \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
@@ -288,7 +287,7 @@ protected:
     template <class T> class NumberedElementFactory
     {
     public:
-        typedef T* (*Generator)(const GG::XMLElement&); ///< this defines the function signature for object generators
+        typedef T* (*Generator)(const XMLElement&); ///< this defines the function signature for object generators
 
         /** \name Structors */ //@{
         NumberedElementFactory(); ///< ctor
@@ -296,7 +295,7 @@ protected:
 
         /** \name Accessors */ //@{
         /** Generates objects whose tag name contains but is not limited to the generator name  */
-        T* GenerateObject(const GG::XMLElement& elem) const;
+        T* GenerateObject(const XMLElement& elem) const;
         //@}
 
         /** \name Mutators */ //@{
@@ -416,7 +415,7 @@ Universe::NumberedElementFactory<T>::NumberedElementFactory()
 {}
 
 template <class T>
-T* Universe::NumberedElementFactory<T>::GenerateObject(const GG::XMLElement& elem) const ///< returns a heap-allocated subclass object of the appropriate type
+T* Universe::NumberedElementFactory<T>::GenerateObject(const XMLElement& elem) const ///< returns a heap-allocated subclass object of the appropriate type
 {
     T* retval = 0;
 

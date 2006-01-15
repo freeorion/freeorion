@@ -11,7 +11,7 @@
 #endif
 
 class Planet;
-namespace GG {class XMLElement;}
+class XMLElement;
 
 template <class PoolT> 
 class PlanetChangedFunctor
@@ -42,7 +42,7 @@ public:
 
     const std::vector<Planet*>& Planets() const {return m_planets;} ///< returns the planet vector 
     virtual double Stockpile() const;
-    virtual GG::XMLElement XMLEncode() const = 0;
+    virtual XMLElement XMLEncode() const = 0;
     mutable ChangedSignalType ChangedSignal; ///< the changed signal object for this ResourcePool
 
     std::vector<Planet*>& Planets() {return m_planets;} ///< returns the planet vector 
@@ -67,13 +67,13 @@ class MineralResourcePool : public ResourcePool
 {
 public:
     MineralResourcePool();
-    MineralResourcePool(const GG::XMLElement& elem);
+    MineralResourcePool(const XMLElement& elem);
     
     double Production() const {return m_pool_production;}
     double ExcessShortfall() const {return m_pool_production - m_needed_pool;}
     double Needed() const {return m_needed_pool;}
     virtual double Stockpile() const;
-    virtual GG::XMLElement XMLEncode() const;
+    virtual XMLElement XMLEncode() const;
 
     virtual void SetStockpile(double d);
 
@@ -91,13 +91,13 @@ class FoodResourcePool : public ResourcePool
 {
 public:
     FoodResourcePool();
-    FoodResourcePool(const GG::XMLElement& elem);
+    FoodResourcePool(const XMLElement& elem);
 
     double Production() const {return m_pool_production;}
     double ExcessShortfall() const {return m_pool_production - m_needed_pool;}
     double Needed() const {return m_needed_pool;}
     virtual double Stockpile() const;
-    virtual GG::XMLElement XMLEncode() const;
+    virtual XMLElement XMLEncode() const;
 
     virtual void SetStockpile(double d);
 
@@ -116,11 +116,11 @@ class ResearchResourcePool : public ResourcePool
 {
 public:
     ResearchResourcePool();
-    ResearchResourcePool(const GG::XMLElement& elem);
+    ResearchResourcePool(const XMLElement& elem);
 
     double Production() const {return m_pool_production;}
 
-    virtual GG::XMLElement XMLEncode() const;
+    virtual XMLElement XMLEncode() const;
 
 protected:
     virtual void PlanetChanged();
@@ -136,12 +136,12 @@ class PopulationResourcePool : public ResourcePool
 {
 public:
     PopulationResourcePool();
-    PopulationResourcePool(const GG::XMLElement& elem);
+    PopulationResourcePool(const XMLElement& elem);
 
     double Available() const {return m_overall_pool;}
     double Growth   () const {return m_growth;}
 
-    virtual GG::XMLElement XMLEncode() const;
+    virtual XMLElement XMLEncode() const;
 
 protected:
     virtual void PlanetChanged();
@@ -157,11 +157,11 @@ class IndustryResourcePool : public ResourcePool
 {
 public:
     IndustryResourcePool();
-    IndustryResourcePool(const GG::XMLElement& elem);
+    IndustryResourcePool(const XMLElement& elem);
 
     double Production() const {return m_pool_production;}
 
-    virtual GG::XMLElement XMLEncode() const;
+    virtual XMLElement XMLEncode() const;
 
 protected:
     virtual void PlanetChanged();
@@ -177,13 +177,13 @@ class TradeResourcePool : public ResourcePool
 {
 public:
     TradeResourcePool();
-    TradeResourcePool(const GG::XMLElement& elem);
+    TradeResourcePool(const XMLElement& elem);
 
     double Production() const {return m_pool_production;}
     double ExcessShortfall() const {return m_pool_production - m_needed_pool;}
     double Needed   () const {return m_needed_pool;}
     virtual double Stockpile() const;
-    virtual GG::XMLElement XMLEncode() const;
+    virtual XMLElement XMLEncode() const;
 
     virtual void SetStockpile(double d);
 

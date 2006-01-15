@@ -5,7 +5,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "Planet.h"
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -59,7 +59,7 @@ PopCenter::PopCenter(int race, UniverseObject* object, double max_pop_mod, doubl
     m_race = race;
 }
    
-PopCenter::PopCenter(const GG::XMLElement& elem, UniverseObject* object) :
+PopCenter::PopCenter(const XMLElement& elem, UniverseObject* object) :
     m_object(object)
 {
     assert(m_object);
@@ -100,10 +100,9 @@ PopCenter::DensityType PopCenter::PopDensity() const
     return retval;
 }
 
-GG::XMLElement PopCenter::XMLEncode(UniverseObject::Visibility vis) const
+XMLElement PopCenter::XMLEncode(UniverseObject::Visibility vis) const
 {
     // partial encode version.  PopCenter is always fully visible
-    using GG::XMLElement;
     using boost::lexical_cast;
 
     XMLElement element("PopCenter");

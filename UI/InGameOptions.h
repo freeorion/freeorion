@@ -18,7 +18,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool Render();
+    virtual void Render();
     virtual void Keypress (GG::Key key, Uint32 key_mods);
     //@}
 

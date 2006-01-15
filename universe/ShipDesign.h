@@ -2,7 +2,7 @@
 #ifndef _ShipDesign_h_
 #define _ShipDesign_h_
 
-#include "XMLDoc.h"
+#include "../util/XMLDoc.h"
 
 #include <string>
 
@@ -11,7 +11,7 @@ struct ShipDesign
 {
     /** \name Structors */ //@{
     ShipDesign(); ///< default ctor
-    ShipDesign(const GG::XMLElement& elem); ///< ctor that constructs a ShipDesign object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ShipDesign object
+    ShipDesign(const XMLElement& elem); ///< ctor that constructs a ShipDesign object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ShipDesign object
     //@}
 
     int         empire;      ///< the empire that designed this ship
@@ -30,7 +30,7 @@ struct ShipDesign
     /////////////////////////////////////////////////////////////////////////////
 
     /** \name Accessors */ //@{
-  	GG::XMLElement XMLEncode() const; ///< constructs an XMLElement from a ShipDesign object
+  	XMLElement XMLEncode() const; ///< constructs an XMLElement from a ShipDesign object
     //@}
 };
 

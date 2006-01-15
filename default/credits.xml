@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<GG::XMLDoc>
+<XMLDoc>
   <CREDITS>
     <GROUP name ="LEAD">
       <PERSON name="Mark Saward"     nick="Tyreth"          task="Project Lead, Programming, Game Design, Graphics"/>
@@ -50,4 +50,4 @@
       <PERSON name="_Robbob_"        nick=""           task="Audio"/>
     </GROUP>
   </CREDITS>
-</GG::XMLDoc>
+</XMLDoc>
