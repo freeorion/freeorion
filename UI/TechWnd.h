@@ -2,7 +2,7 @@
 #ifndef _TechWnd_h_
 #define _TechWnd_h_
 
-#include "CUI_Wnd.h"
+#include "CUIWnd.h"
 
 class CUIScroll;
 class Tech;

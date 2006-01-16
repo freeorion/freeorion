@@ -2,8 +2,8 @@
 #ifndef _CombatWnd_h_
 #define _CombatWnd_h_
 
-#ifndef _CUI_Wnd_h_
-#include "CUI_Wnd.h"
+#ifndef _CUIWnd_h_
+#include "CUIWnd.h"
 #endif
 
 namespace GG {
@@ -13,7 +13,7 @@ namespace GG {
 
 class CUIListBox;
 
-class CombatWnd : public CUI_Wnd
+class CombatWnd : public CUIWnd
 {
   public:
     enum { WIDTH = 800, HEIGHT = 300}; 

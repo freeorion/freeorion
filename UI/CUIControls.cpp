@@ -477,9 +477,9 @@ void CUIScroll::Render()
     }
 }
 
-void CUIScroll::SizeMove(int x1, int y1, int x2, int y2)
+void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
-    Wnd::SizeMove(GG::Pt(x1, y1), GG::Pt(x2, y2));
+    Wnd::SizeMove(ul, lr);
     int bn_width = (ScrollOrientation() == GG::VERTICAL) ? Size().x : Size().y;
     TabButton()->SizeMove(TabButton()->UpperLeft(), 
                           (ScrollOrientation() == GG::VERTICAL) ? GG::Pt(bn_width, TabButton()->LowerRight().y) :

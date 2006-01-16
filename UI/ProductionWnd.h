@@ -2,7 +2,7 @@
 #ifndef _ProductionWnd_h_
 #define _ProductionWnd_h_
 
-#include "CUI_Wnd.h"
+#include "CUIWnd.h"
 #include "../universe/Enums.h"
 
 #include <GG/ListBox.h>
@@ -12,7 +12,7 @@ class ProductionInfoPanel;
 class BuildDesignatorWnd;
 
 /** Contains a BuildDesignatorWnd, some stats on the empire-wide production queue, and the queue itself. */
-class ProductionWnd : public CUI_Wnd
+class ProductionWnd : public CUIWnd
 {
 public:
     /** \name Structors */ //@{

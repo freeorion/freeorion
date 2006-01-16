@@ -1,6 +1,6 @@
 #include "SidePanel.h"
 
-#include "CUI_Wnd.h"
+#include "CUIWnd.h"
 #include "CUIControls.h"
 
 #include "../client/human/HumanClientApp.h"

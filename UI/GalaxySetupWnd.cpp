@@ -20,7 +20,6 @@ namespace {
     const int GAL_SETUP_WND_HT = 326;
     const int RADIO_BN_HT = ClientUI::PTS + 4;
     const int RADIO_BN_SPACING = RADIO_BN_HT + 10;
-    const GG::Pt PREVIEW_UL(385, 23);
     const GG::Pt PREVIEW_SZ(248, 186);
     const bool ALLOW_NO_STARLANES = false;
 
@@ -247,9 +246,9 @@ void GalaxySetupPanel::ShapeChanged(int index)
 // GalaxySetupWnd
 ////////////////////////////////////////////////
 GalaxySetupWnd::GalaxySetupWnd() : 
-    CUI_Wnd(UserString("GSETUP_WINDOW_TITLE"), (HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2, 
-            (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2, GAL_SETUP_WND_WD, GAL_SETUP_WND_HT, 
-            GG::CLICKABLE | GG::MODAL),
+    CUIWnd(UserString("GSETUP_WINDOW_TITLE"), (HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2, 
+           (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2, GAL_SETUP_WND_WD, GAL_SETUP_WND_HT, 
+           GG::CLICKABLE | GG::MODAL),
     m_ended_with_ok(false),
     m_galaxy_setup_panel(0),
     m_empire_name_label(0),
@@ -262,7 +261,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
 {
     TempUISoundDisabler sound_disabler;
 
-    m_galaxy_setup_panel = new GalaxySetupPanel(0, 22);
+    m_galaxy_setup_panel = new GalaxySetupPanel(0, 4);
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
 
@@ -277,9 +276,11 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_empire_name_label->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_empire_name_label->Height()) / 2));
     m_empire_name_edit->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_empire_name_edit->Height()) / 2));
 
+    m_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - 7, 7);
+
     // create a temporary texture and static graphic
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
-    m_preview_image =  new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GR_FITGRAPHIC); // create a blank graphic
+    m_preview_image =  new GG::StaticGraphic(m_preview_ul.x, m_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GR_FITGRAPHIC); // create a blank graphic
 
     m_ok = new CUIButton(10, m_empire_color_selector->LowerRight().y + 10, 75, UserString("OK"));
     m_cancel = new CUIButton(10 + m_ok->Size().x + 15, m_empire_color_selector->LowerRight().y + 10, 75, UserString("CANCEL"));
@@ -299,9 +300,9 @@ GG::Clr GalaxySetupWnd::EmpireColor() const
 
 void GalaxySetupWnd::Render()
 {
-    CUI_Wnd::Render();
-    GG::FlatRectangle(UpperLeft().x + PREVIEW_UL.x - 2, UpperLeft().y + PREVIEW_UL.y - 2, UpperLeft().x + PREVIEW_UL.x + PREVIEW_SZ.x + 2, 
-                      UpperLeft().y + PREVIEW_UL.y + PREVIEW_SZ.y + 2, GG::CLR_BLACK, ClientUI::WND_INNER_BORDER_COLOR, 1);
+    CUIWnd::Render();
+    GG::FlatRectangle(ClientUpperLeft().x + m_preview_ul.x - 2, ClientUpperLeft().y + m_preview_ul.y - 2, ClientUpperLeft().x + m_preview_ul.x + PREVIEW_SZ.x + 2, 
+                      ClientUpperLeft().y + m_preview_ul.y + PREVIEW_SZ.y + 2, GG::CLR_BLACK, ClientUI::WND_INNER_BORDER_COLOR, 1);
 }
 
 void GalaxySetupWnd::Keypress (GG::Key key, Uint32 key_mods)
@@ -354,7 +355,7 @@ void GalaxySetupWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_imag
         DeleteChild(m_preview_image);
         m_preview_image = 0;
     }
-    m_preview_image = new GG::StaticGraphic(PREVIEW_UL.x, PREVIEW_UL.y, PREVIEW_SZ.x, PREVIEW_SZ.y, new_image, GG::GR_FITGRAPHIC);
+    m_preview_image = new GG::StaticGraphic(m_preview_ul.x, m_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, new_image, GG::GR_FITGRAPHIC);
     AttachChild(m_preview_image);
 }
 

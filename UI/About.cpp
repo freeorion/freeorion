@@ -9,7 +9,7 @@
 
 #include <GG/GUI.h>
 #include <GG/Clr.h>
-#include <GG/DrawUtil.h>
+#include <GG/Layout.h>
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -25,10 +25,9 @@ namespace {
 ////////////////////////////////////////////
 
 About::About():
-    CUI_Wnd(UserString("ABOUT_WINDOW_TITLE"),80,130,600,500, GG::CLICKABLE | GG::DRAGABLE | GG::MODAL),
+    CUIWnd(UserString("ABOUT_WINDOW_TITLE"),80,130,600,500, GG::CLICKABLE | GG::DRAGABLE | GG::MODAL),
     m_end_with_done(false)
 {
-
     m_done_btn = new CUIButton(400,440,75,UserString("DONE"));
     m_license = new CUIButton(310,440,75,UserString("LICENSE"));
     m_vision = new CUIButton(220,440,75,UserString("VISION"));
@@ -37,7 +36,14 @@ About::About():
                               GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
                               ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR,
                               ClientUI::MULTIEDIT_INT_COLOR, GG::CLICKABLE | GG::DRAG_KEEPER);
-
+    GG::Layout* layout = new GG::Layout(0, 0, ClientWidth(), ClientHeight(), 2, 6, 5);
+    layout->SetMinimumRowHeight(1, m_license->Height() + 5);
+    layout->SetRowStretch(0, 1);
+    layout->Add(m_info, 0, 0, 1, 6);
+    layout->Add(m_vision, 1, 3);
+    layout->Add(m_license, 1, 4);
+    layout->Add(m_done_btn, 1, 5);
+    AttachChild(layout);
 
     // Read in the copyright info from a file
 #ifdef FREEORION_LINUX
@@ -49,9 +55,9 @@ About::About():
     std::string temp_str;
     while (!fin.eof())
     {
-      std::getline(fin, temp_str, '\n');
-      m_license_str.append(temp_str);
-      m_license_str.append("\n"); // To ensure new lines are read
+        std::getline(fin, temp_str, '\n');
+        m_license_str.append(temp_str);
+        m_license_str.append("\n"); // To ensure new lines are read
     }
     fin.close();
 
@@ -60,11 +66,6 @@ About::About():
 
 void About::Init()
 {
-    AttachChild(m_done_btn);
-    AttachChild(m_license);
-    AttachChild(m_vision);
-    AttachChild(m_info);
-
     GG::Connect(m_done_btn->ClickedSignal, &About::OnDone, this);
     GG::Connect(m_license->ClickedSignal, &About::OnLicense, this);
     GG::Connect(m_vision->ClickedSignal, &About::OnVision, this);
@@ -81,7 +82,7 @@ About::~About()
 
 void About::Render()
 {
-    CUI_Wnd::Render();
+    CUIWnd::Render();
 }
 
 void About::Keypress (GG::Key key, Uint32 key_mods)

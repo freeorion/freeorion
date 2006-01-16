@@ -1,6 +1,6 @@
-//CUI_Wnd.cpp
+//CUIWnd.cpp
 
-#include "CUI_Wnd.h"
+#include "CUIWnd.h"
 
 #include "../client/human/HumanClientApp.h"
 #include "ClientUI.h"
@@ -23,7 +23,7 @@
     \section s_interface_classes Interface Classes
     <ul>
     <li>ClientUI - the main driver class of the module.
-    <li>CUI_Wnd - parent class of all non-modal interface windows.
+    <li>CUIWnd - parent class of all non-modal interface windows.
     <li>IntroScreen - a combination main menu/splash screen.  The first thing the user sees.
     <li>ServerConnectWnd - a modal window that allows the user to find and choose a game server.
     <li>GalaxySetupWnd - a modal window that allows the user to setup the galaxy size and shape.
@@ -73,7 +73,7 @@ namespace {
 #endif
     }
 
-    bool temp_header_bool = RecordHeaderFile(CUI_WndRevision());
+    bool temp_header_bool = RecordHeaderFile(CUIWndRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
@@ -150,9 +150,9 @@ void CUI_CloseButton::Render()
 
 
 ////////////////////////////////////////////////
-// CUI_Wnd
+// CUIWnd
 ////////////////////////////////////////////////
-CUI_Wnd::CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags) : 
+CUIWnd::CUIWnd(const std::string& t, int x, int y, int w, int h, Uint32 flags) : 
     GG::Wnd(x, y, w, h, flags & ~GG::RESIZABLE),
     m_resizable (flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
@@ -164,19 +164,19 @@ CUI_Wnd::CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags)
 {
     // set window text
     SetText(t);
-    // call to CUI_Wnd::MinimizedLength() because MinimizedLength is virtual
-    SetMinSize(GG::Pt(CUI_Wnd::MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
+    // call to CUIWnd::MinimizedLength() because MinimizedLength is virtual
+    SetMinSize(GG::Pt(CUIWnd::MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
     InitButtons();
     EnableChildClipping(true);
 }
 
-CUI_Wnd::~CUI_Wnd()
+CUIWnd::~CUIWnd()
 {
 }
 
-void CUI_Wnd::SizeMove(int x1, int y1, int x2, int y2)
+void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
-    Wnd::SizeMove(GG::Pt(x1, y1), GG::Pt(x2, y2));
+    Wnd::SizeMove(ul, lr);
     if (Width() < MinSize().x)
         Resize(GG::Pt(MinSize().x, Height()));
     if (MaxSize().x < Width())
@@ -187,18 +187,19 @@ void CUI_Wnd::SizeMove(int x1, int y1, int x2, int y2)
     if (MaxSize().y < Height())
         Resize(GG::Pt(Width(), MaxSize().y));
 
+    GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET) + UpperLeft() - ClientUpperLeft();
     if (m_close_button)
-        m_close_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET));
+        m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
     if (m_minimize_button)
-        m_minimize_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET));
+        m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : 0), button_ul.y));
 }
 
-void CUI_Wnd::Render()
+void CUIWnd::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, BORDER_TOP);
-    GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
+    GG::Pt cl_ul = ClientUpperLeft();
+    GG::Pt cl_lr = ClientLowerRight();
 
     if (!m_minimized) {
         // use GL to draw the lines
@@ -266,7 +267,7 @@ void CUI_Wnd::Render()
     font->RenderText(ul.x + BORDER_LEFT, ul.y, WindowText());
 }
 
-void CUI_Wnd::LButtonDown(const GG::Pt& pt, Uint32 keys)
+void CUIWnd::LButtonDown(const GG::Pt& pt, Uint32 keys)
 {
     if (!m_minimized && m_resizable) {
         GG::Pt cl_lr = LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
@@ -277,7 +278,7 @@ void CUI_Wnd::LButtonDown(const GG::Pt& pt, Uint32 keys)
     }
 }
 
-void CUI_Wnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
+void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
 {
     if (m_drag_offset != GG::Pt(-1, -1)) { // resize-dragging
         Resize((pt - m_drag_offset) - UpperLeft());
@@ -289,12 +290,22 @@ void CUI_Wnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
     }
 }
 
-void CUI_Wnd::LButtonUp(const GG::Pt& pt, Uint32 keys)
+void CUIWnd::LButtonUp(const GG::Pt& pt, Uint32 keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
 }
 
-bool CUI_Wnd::InWindow(const GG::Pt& pt) const
+GG::Pt CUIWnd::ClientUpperLeft() const
+{
+    return m_minimized ? UpperLeft() : UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_TOP);
+}
+
+GG::Pt CUIWnd::ClientLowerRight() const
+{
+    return m_minimized ? LowerRight() : LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
+}
+
+bool CUIWnd::InWindow(const GG::Pt& pt) const
 {
     GG::Pt lr = LowerRight();
     GG::Pt dist_from_lr = lr - pt;
@@ -302,54 +313,55 @@ bool CUI_Wnd::InWindow(const GG::Pt& pt) const
     return (UpperLeft() <= pt && pt < LowerRight() && inside_lower_right_corner);
 }
 
-void CUI_Wnd::InitButtons()
+void CUIWnd::InitButtons()
 {
     // create the close button
+    GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET) + UpperLeft() - ClientUpperLeft();
     if (m_closable) {
-        m_close_button = new CUI_CloseButton(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
-        GG::Connect(m_close_button->ClickedSignal, &CUI_Wnd::CloseClicked, this);
+        m_close_button = new CUI_CloseButton(button_ul.x, button_ul.y);
+        GG::Connect(m_close_button->ClickedSignal, &CUIWnd::CloseClicked, this);
         AttachChild(m_close_button);
     }
 
     // create the minimize button
     if (m_minimizable) {
-        m_minimize_button = new CUI_MinRestoreButton(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET);
-        GG::Connect(m_minimize_button->ClickedSignal, &CUI_Wnd::MinimizeClicked, this);
+        m_minimize_button = new CUI_MinRestoreButton(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : 0), button_ul.y);
+        GG::Connect(m_minimize_button->ClickedSignal, &CUIWnd::MinimizeClicked, this);
         AttachChild(m_minimize_button);      
     }    
 }
 
-int CUI_Wnd::MinimizedLength() const 
+int CUIWnd::MinimizedLength() const 
 {
     return MINIMIZED_WND_LENGTH;
 }
 
-int CUI_Wnd::LeftBorder() const
+int CUIWnd::LeftBorder() const
 {
     return BORDER_LEFT;
 }
 
-int CUI_Wnd::TopBorder() const
+int CUIWnd::TopBorder() const
 {
     return BORDER_TOP;
 }
 
-int CUI_Wnd::RightBorder() const
+int CUIWnd::RightBorder() const
 {
     return BORDER_RIGHT;
 }
 
-int CUI_Wnd::BottomBorder() const
+int CUIWnd::BottomBorder() const
 {
     return BORDER_BOTTOM;
 }
 
-int CUI_Wnd::InnerBorderAngleOffset() const
+int CUIWnd::InnerBorderAngleOffset() const
 {
     return INNER_BORDER_ANGLE_OFFSET;
 }
 
-void CUI_Wnd::CloseClicked()
+void CUIWnd::CloseClicked()
 {
     m_done = true;
     if (Parent()) {
@@ -359,32 +371,34 @@ void CUI_Wnd::CloseClicked()
     }
 }
 
-void CUI_Wnd::MinimizeClicked()
+void CUIWnd::MinimizeClicked()
 {
     if (!m_minimized) {
+        m_minimized = true;
         m_original_size = Size();
         SetMinSize(GG::Pt(MinimizedLength(), BORDER_TOP));
         Resize(GG::Pt(MINIMIZED_WND_LENGTH, BORDER_TOP));
+        GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
         if (m_close_button)
-            m_close_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET));
+            m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
         if (m_minimize_button)
-            m_minimize_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET));
+            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : 0), button_ul.y));
         Hide();
         Show(false);
         if (m_close_button)
             m_close_button->Show();
         if (m_minimize_button)
             m_minimize_button->Show();
-        m_minimized = true;
     } else {
-        SetMinSize(GG::Pt(MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
-        Resize(GG::Pt(m_original_size));
-        if (m_close_button)
-            m_close_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET));
-        if (m_minimize_button)
-            m_minimize_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET));
-        Show();
         m_minimized = false;
+        SetMinSize(GG::Pt(MinimizedLength(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 10));
+        Resize(GG::Pt(m_original_size));
+        GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET) + UpperLeft() - ClientUpperLeft();
+        if (m_close_button)
+            m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
+        if (m_minimize_button)
+            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : 0), button_ul.y));
+        Show();
     }
 }
 
@@ -393,7 +407,7 @@ void CUI_Wnd::MinimizeClicked()
 ///////////////////////////////////////
 
 CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, Uint32 flags/* = Wnd::MODAL*/) : 
-    CUI_Wnd(prompt_text, 0, 0, 1, 1, flags)
+    CUIWnd(prompt_text, 0, 0, 1, 1, flags)
 {
     m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, w - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), edit_text);
     m_ok_bn = new CUIButton(m_edit->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, UserString("OK"));
@@ -407,7 +421,7 @@ CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string&
     AttachChild(m_cancel_bn);
 
     GG::Connect(m_ok_bn->ClickedSignal, &CUIEditWnd::OkClicked, this);
-    GG::Connect(m_cancel_bn->ClickedSignal, &CUI_Wnd::CloseClicked, static_cast<CUI_Wnd*>(this));
+    GG::Connect(m_cancel_bn->ClickedSignal, &CUIWnd::CloseClicked, static_cast<CUIWnd*>(this));
 
     m_edit->SelectAll();
 }

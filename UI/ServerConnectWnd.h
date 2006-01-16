@@ -2,7 +2,7 @@
 #ifndef _ServerConnectWnd_h_
 #define _ServerConnectWnd_h_
 
-#include "CUI_Wnd.h"
+#include "CUIWnd.h"
 #include "../util/XMLDoc.h"
 
 #include <string>
@@ -17,7 +17,7 @@ namespace GG {
 }
 
 /** server connections window */
-class ServerConnectWnd : public CUI_Wnd
+class ServerConnectWnd : public CUIWnd
 {
 public:
     /** \name Structors */ //@{
@@ -48,7 +48,7 @@ private:
     void IPAddressEdited(const std::string& str);
     void NameEdited(const std::string& str);
     void OkClicked();
-    void CancelClicked() {CUI_Wnd::CloseClicked();}
+    void CancelClicked() {CUIWnd::CloseClicked();}
     void EnableDisableControls();
 
     std::pair<std::string, std::string> m_result;

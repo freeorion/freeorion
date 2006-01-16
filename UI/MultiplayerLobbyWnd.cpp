@@ -130,9 +130,9 @@ namespace {
 }
 
 MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) : 
-    CUI_Wnd(UserString("MPLOBBY_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - LOBBY_WND_WIDTH) / 2, 
-            (GG::GUI::GetGUI()->AppHeight() - LOBBY_WND_HEIGHT) / 2, LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT, 
-            GG::CLICKABLE | GG::MODAL),
+    CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - LOBBY_WND_WIDTH) / 2, 
+           (GG::GUI::GetGUI()->AppHeight() - LOBBY_WND_HEIGHT) / 2, LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT, 
+           GG::CLICKABLE | GG::MODAL),
     m_result(false),
     m_host(host),
     m_chat_box(0),
@@ -147,15 +147,15 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
 {
     TempUISoundDisabler sound_disabler;
 
-    int x = LeftBorder() + CONTROL_MARGIN;
-    m_chat_input_edit = new CUIEdit(x, Height() - BottomBorder() - (ClientUI::PTS + 10) - CONTROL_MARGIN, CHAT_WIDTH - x, "");
-    m_chat_box = new CUIMultiEdit(x, TopBorder() + CONTROL_MARGIN, CHAT_WIDTH - x, m_chat_input_edit->UpperLeft().y - TopBorder() - 2 * CONTROL_MARGIN, "", 
+    int x = CONTROL_MARGIN;
+    m_chat_input_edit = new CUIEdit(x, ClientHeight() - (ClientUI::PTS + 10) - 2 * CONTROL_MARGIN, CHAT_WIDTH - x, "");
+    m_chat_box = new CUIMultiEdit(x, CONTROL_MARGIN, CHAT_WIDTH - x, m_chat_input_edit->UpperLeft().y - 2 * CONTROL_MARGIN, "", 
                                   GG::TF_LINEWRAP | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
 
     m_galaxy_setup_panel = new GalaxySetupPanel(CHAT_WIDTH + 2 * CONTROL_MARGIN, RADIO_BN_HT, GALAXY_SETUP_PANEL_WIDTH);
 
-    m_new_load_game_buttons = new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, TopBorder() + CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + 100, 2 * RADIO_BN_HT, GG::VERTICAL);
+    m_new_load_game_buttons = new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + 100, 2 * RADIO_BN_HT, GG::VERTICAL);
     m_new_load_game_buttons->AddButton(new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
     m_new_load_game_buttons->AddButton(new CUIStateButton(0, m_galaxy_setup_panel->LowerRight().y, 100, RADIO_BN_HT, UserString("LOAD_GAME_BN"), 
                                                           GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
@@ -164,21 +164,21 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
                                              GALAXY_SETUP_PANEL_WIDTH, SAVED_GAMES_LIST_ROW_HEIGHT, SAVED_GAMES_LIST_DROP_HEIGHT);
     m_saved_games_list->SetStyle(GG::LB_NOSORT);
 
-    g_preview_ul = GG::Pt(Width() - RightBorder() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, TopBorder() + CONTROL_MARGIN + PREVIEW_MARGIN);
+    g_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, CONTROL_MARGIN + PREVIEW_MARGIN);
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GR_FITGRAPHIC);
 
     x = CHAT_WIDTH + CONTROL_MARGIN;
     int y = std::max(m_saved_games_list->LowerRight().y, m_preview_image->LowerRight().y) + CONTROL_MARGIN;
-    m_players_lb = new CUIListBox(x, y, Width() - RightBorder() - CONTROL_MARGIN - x, m_chat_input_edit->UpperLeft().y - CONTROL_MARGIN - y);
+    m_players_lb = new CUIListBox(x, y, ClientWidth() - CONTROL_MARGIN - x, m_chat_input_edit->UpperLeft().y - CONTROL_MARGIN - y);
     m_players_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL);
 
     if (m_host)
         m_start_game_bn = new CUIButton(0, 0, 125, UserString("START_GAME_BN"));
     m_cancel_bn = new CUIButton(0, 0, 125, UserString("CANCEL"));
-    m_cancel_bn->MoveTo(GG::Pt(Width() - RightBorder() - m_cancel_bn->Width() - CONTROL_MARGIN, Height() - BottomBorder() - m_cancel_bn->Height() - CONTROL_MARGIN));
+    m_cancel_bn->MoveTo(GG::Pt(ClientWidth() - m_cancel_bn->Width() - CONTROL_MARGIN, ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
     if (m_host)
-        m_start_game_bn->MoveTo(GG::Pt(m_cancel_bn->UpperLeft().x - CONTROL_MARGIN - m_start_game_bn->Width(), Height() - BottomBorder() - m_cancel_bn->Height() - CONTROL_MARGIN));
+        m_start_game_bn->MoveTo(GG::Pt(m_cancel_bn->UpperLeft().x - CONTROL_MARGIN - m_start_game_bn->Width(), ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
 
     Init();
 
@@ -205,7 +205,7 @@ bool MultiplayerLobbyWnd::LoadSelected() const
 
 void MultiplayerLobbyWnd::Render()
 {
-    CUI_Wnd::Render();
+    CUIWnd::Render();
     GG::Pt image_ul = g_preview_ul + ClientUpperLeft(), image_lr = image_ul + PREVIEW_SZ;
     GG::FlatRectangle(image_ul.x - PREVIEW_MARGIN, image_ul.y - PREVIEW_MARGIN, image_lr.x + PREVIEW_MARGIN, image_lr.y + PREVIEW_MARGIN, 
                       GG::CLR_BLACK, ClientUI::WND_INNER_BORDER_COLOR, 1);
@@ -241,7 +241,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
         } else if (doc.root_node.ContainsChild("abort_game")) {
             ClientUI::MessageBox(UserString("MPLOBBY_HOST_ABORTED_GAME"), true);
             m_result = false;
-            CUI_Wnd::CloseClicked();
+            CUIWnd::CloseClicked();
         } else if (doc.root_node.ContainsChild("exit_lobby")) {
             int player_id = boost::lexical_cast<int>(doc.root_node.Child("exit_lobby").Child("id").Text());
             std::string player_name = m_player_names[player_id];
@@ -314,7 +314,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
 
     case Message::GAME_START: {
         m_result = true;
-        CUI_Wnd::CloseClicked();
+        CUIWnd::CloseClicked();
         break;
     }
 
@@ -420,7 +420,7 @@ void MultiplayerLobbyWnd::StartGameClicked()
 {
     HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(HumanClientApp::GetApp()->PlayerID(), HumanClientApp::GetApp()->PlayerName()));
     m_result = true;
-    CUI_Wnd::CloseClicked();
+    CUIWnd::CloseClicked();
 }
 
 void MultiplayerLobbyWnd::CancelClicked()
@@ -435,7 +435,7 @@ void MultiplayerLobbyWnd::CancelClicked()
         HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, doc));
     }
     m_result = false;
-    CUI_Wnd::CloseClicked();
+    CUIWnd::CloseClicked();
 }
 
 void MultiplayerLobbyWnd::PopulatePlayerList(bool loading_game)

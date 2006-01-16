@@ -8,8 +8,8 @@
 #include <GG/GUI.h>
 #endif
 
-#ifndef _CUI_Wnd_h_
-#include "CUI_Wnd.h"
+#ifndef _CUIWnd_h_
+#include "CUIWnd.h"
 #endif
 
 class CreditsWnd;
@@ -20,7 +20,7 @@ namespace GG {class StaticGraphic;}
 //! This is the first screen the user sees in FreeOrion.  It will always be the
 //! size of the Application main window.  It will display a splash screen with 
 //! a menu window on one side.
-class IntroScreen : public CUI_Wnd
+class IntroScreen : public CUIWnd
 {
 public:
     /** \name Structors*/ //!@{

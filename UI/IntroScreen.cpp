@@ -138,22 +138,22 @@ void CreditsWnd::Render()
 //****************************************************************************************************
 
 IntroScreen::IntroScreen() :
-    CUI_Wnd(UserString("INTRO_WINDOW_TITLE"), 
-            static_cast<int>(GG::GUI::GetGUI()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.x") - MAIN_MENU_WIDTH / 2),
-            static_cast<int>(GG::GUI::GetGUI()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.y") - MAIN_MENU_HEIGHT / 2),
-            MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::CLICKABLE),
+    CUIWnd(UserString("INTRO_WINDOW_TITLE"), 
+           static_cast<int>(GG::GUI::GetGUI()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.x") - MAIN_MENU_WIDTH / 2),
+           static_cast<int>(GG::GUI::GetGUI()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.y") - MAIN_MENU_HEIGHT / 2),
+           MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::CLICKABLE),
     m_credits_wnd(0)
 {
     LoadSplashGraphics(m_bg_graphics);
     
     //create buttons
-    m_single_player = new CUIButton(20, 30, 160, UserString("INTRO_BTN_SINGLE_PLAYER"));
-    m_multi_player = new CUIButton(20, 70, 160, UserString("INTRO_BTN_MULTI_PLAYER"));
-    m_load_game = new CUIButton(20, 110, 160, UserString("INTRO_BTN_LOAD_GAME"));
-    m_options = new CUIButton(20, 150, 160, UserString("INTRO_BTN_OPTIONS"));
-    m_about = new CUIButton(20, 190, 160, UserString("INTRO_BTN_ABOUT"));
-    m_credits = new CUIButton(20, 230, 160, UserString("INTRO_BTN_CREDITS"));
-    m_exit_game = new CUIButton(20, 300, 160, UserString("INTRO_BTN_EXIT"));
+    m_single_player = new CUIButton(15, 12, 160, UserString("INTRO_BTN_SINGLE_PLAYER"));
+    m_multi_player = new CUIButton(15, 52, 160, UserString("INTRO_BTN_MULTI_PLAYER"));
+    m_load_game = new CUIButton(15, 92, 160, UserString("INTRO_BTN_LOAD_GAME"));
+    m_options = new CUIButton(15, 132, 160, UserString("INTRO_BTN_OPTIONS"));
+    m_about = new CUIButton(15, 172, 160, UserString("INTRO_BTN_ABOUT"));
+    m_credits = new CUIButton(15, 212, 160, UserString("INTRO_BTN_CREDITS"));
+    m_exit_game = new CUIButton(15, 282, 160, UserString("INTRO_BTN_EXIT"));
     
     //attach buttons
     AttachChild(m_single_player);

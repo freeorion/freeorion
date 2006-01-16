@@ -2,8 +2,8 @@
 #ifndef _FleetWindow_h_
 #define _FleetWindow_h_
 
-#ifndef _CUI_Wnd_h_
-#include "CUI_Wnd.h"
+#ifndef _CUIWnd_h_
+#include "CUIWnd.h"
 #endif
 
 #ifndef _GG_ListBox_h_
@@ -86,7 +86,7 @@ private:
     GG::TextControl*            m_ship_status_text;
 };
 
-class FleetDetailWnd : public CUI_Wnd
+class FleetDetailWnd : public CUIWnd
 {
 public:
     /** \name Signal Types */ //@{

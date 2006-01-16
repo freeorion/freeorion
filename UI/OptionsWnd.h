@@ -2,8 +2,8 @@
 #ifndef _OptionsWnd_h_
 #define _OptionsWnd_h_
 
-#ifndef _CUI_Wnd_h_
-#include "CUI_Wnd.h"
+#ifndef _CUIWnd_h_
+#include "CUIWnd.h"
 #endif
 
 #ifndef _OptionsDB_h_
@@ -18,7 +18,7 @@ class CUITabbedPages;
 class ColorSelector;
 
 //! This is a dialog box that allows the user to control certain basic game parameters, such as sound and music
-class OptionsWnd : public CUI_Wnd
+class OptionsWnd : public CUIWnd
 {
 public:
     //! \name Structors

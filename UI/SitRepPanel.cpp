@@ -18,11 +18,11 @@ namespace {
 
 
 SitRepPanel::SitRepPanel(int x, int y, int w, int h) : 
-    CUI_Wnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE)
+    CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE)
 {
     TempUISoundDisabler sound_disabler;
-    m_sitreps_lb = new CUIListBox(LeftBorder() + SITREP_LB_MARGIN_X, TopBorder() + SITREP_LB_MARGIN_Y,
-                                  w - (LeftBorder() + SITREP_LB_MARGIN_X), h - (TopBorder() + SITREP_LB_MARGIN_Y));
+    m_sitreps_lb = new CUIListBox(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y,
+                                  ClientWidth() - SITREP_LB_MARGIN_X, ClientHeight() - SITREP_LB_MARGIN_Y);
     m_sitreps_lb->SetStyle(GG::LB_NOSORT);
 
     AttachChild(m_sitreps_lb);
@@ -45,11 +45,11 @@ void SitRepPanel::Keypress (GG::Key key, Uint32 key_mods)
     }
 }
 
-void SitRepPanel::SizeMove(int x1, int y1, int x2, int y2)
+void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
-    CUI_Wnd::SizeMove(x1, y1, x2, y2);
-    m_sitreps_lb->SizeMove(GG::Pt(LeftBorder() + SITREP_LB_MARGIN_X, TopBorder() + SITREP_LB_MARGIN_Y),
-                           GG::Pt(Width() - (LeftBorder() + SITREP_LB_MARGIN_X), Height() - (TopBorder() + SITREP_LB_MARGIN_Y)));
+    CUIWnd::SizeMove(ul, lr);
+    m_sitreps_lb->SizeMove(GG::Pt(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y),
+                           GG::Pt(ClientWidth() - SITREP_LB_MARGIN_X, ClientHeight() - SITREP_LB_MARGIN_Y));
     Update();
 }
 

@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include "CUI_Wnd.h"
+#include "CUIWnd.h"
 #include "../util/XMLDoc.h"
 
 class CUIButton;
@@ -199,7 +199,7 @@ private:
 
 /** Derive any window from this class to have it managed by MapWnd. For example, MapWnd will delete all open popups
    when the end turn button is hit. */
-class MapWndPopup : public CUI_Wnd
+class MapWndPopup : public CUIWnd
 {
 public:
     MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags );

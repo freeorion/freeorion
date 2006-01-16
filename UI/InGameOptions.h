@@ -3,13 +3,13 @@
 #ifndef _InGameOptions_h_
 #define _InGameOptions_h_
 
-#ifndef _CUI_Wnd_h_
-#include "CUI_Wnd.h"
+#ifndef _CUIWnd_h_
+#include "CUIWnd.h"
 #endif
 
 class CUIButton;
 
-class InGameOptions : public CUI_Wnd
+class InGameOptions : public CUIWnd
 {
 public:
     /** \name Structors */ //@{

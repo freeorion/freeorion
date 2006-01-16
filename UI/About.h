@@ -28,8 +28,8 @@
 #include <GG/StaticGraphic.h>
 #endif
 
-#ifndef _CUI_Wnd_h_
-#include "CUI_Wnd.h"
+#ifndef _CUIWnd_h_
+#include "CUIWnd.h"
 #endif
 
 #ifndef _XMLDoc_h_
@@ -37,7 +37,7 @@
 #endif
 
 //! This is a screen showing license and vision
-class About : public CUI_Wnd
+class About : public CUIWnd
 {
 private:
     

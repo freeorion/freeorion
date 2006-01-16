@@ -83,7 +83,7 @@ namespace {
         m_name_text->ClipText(true);
         using boost::io::str;
         using boost::format;
-        const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::PTS + 4) - 2;
+        const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::PTS + 4) - 4;
         m_RPs_and_turns_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::PTS + 4,
                                                    str(format(UserString("TECH_TURN_COST_STR")) % tech->ResearchCost() % tech->ResearchTurns()),
                                                    GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), text_and_border, GG::TF_LEFT);
@@ -136,7 +136,7 @@ namespace {
 // ResearchWnd                                  //
 //////////////////////////////////////////////////
 ResearchWnd::ResearchWnd(int w, int h) :
-    CUI_Wnd(UserString("RESEARCH_WND_TITLE"), 0, 0, w, h, GG::CLICKABLE | GG::ONTOP),
+    CUIWnd(UserString("RESEARCH_WND_TITLE"), 0, 0, w, h, GG::CLICKABLE | GG::ONTOP),
     m_research_info_panel(0),
     m_queue_lb(0),
     m_tech_tree_wnd(0)

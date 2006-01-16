@@ -51,9 +51,9 @@ SystemIcon::SystemIcon(int id, double zoom) :
     //resize to the proper size
     GG::Pt ul(static_cast<int>((m_system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * zoom),
               static_cast<int>((m_system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2) * zoom));
-    SizeMove(ul.x, ul.y,
-             static_cast<int>(ul.x + ClientUI::SYSTEM_ICON_SIZE * zoom + 0.5),
-             static_cast<int>(ul.y + ClientUI::SYSTEM_ICON_SIZE * zoom + 0.5));
+    SizeMove(ul,
+             GG::Pt(static_cast<int>(ul.x + ClientUI::SYSTEM_ICON_SIZE * zoom + 0.5),
+                    static_cast<int>(ul.y + ClientUI::SYSTEM_ICON_SIZE * zoom + 0.5)));
 
     // star graphic
     //boost::shared_ptr<GG::Texture> graphic = GetStarTexture(m_system.Star(), m_system.ID());
@@ -69,11 +69,11 @@ SystemIcon::~SystemIcon()
 {
 }
 
-void SystemIcon::SizeMove(int x1, int y1, int x2, int y2)
+void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
-    Wnd::SizeMove(GG::Pt(x1, y1), GG::Pt(x2, y2));
+    Wnd::SizeMove(ul, lr);
     if (m_static_graphic)
-        m_static_graphic->SizeMove(GG::Pt(0, 0), GG::Pt(x2 - x1, y2 - y1));
+        m_static_graphic->SizeMove(GG::Pt(0, 0), lr - ul);
     PositionSystemName();
 
     const int BUTTON_SIZE = static_cast<int>(Height() * ClientUI::FLEET_BUTTON_SIZE);

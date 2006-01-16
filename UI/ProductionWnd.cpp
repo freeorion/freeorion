@@ -91,7 +91,7 @@ namespace {
             name_text = str(format(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
         m_name_text = new GG::TextControl(4, 2, w - 4, QueueRow::HEIGHT - 2, name_text, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS + 2), text_and_border, GG::TF_TOP | GG::TF_LEFT);
         m_name_text->ClipText(true);
-        const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::PTS + 4) - 2;
+        const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::PTS + 4) - 4;
         m_PPs_and_turns_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::PTS + 4,
                                                    str(format(UserString("PRODUCTION_TURN_COST_STR")) % turn_cost % turns),
                                                    GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), text_and_border, GG::TF_LEFT);
@@ -145,7 +145,7 @@ namespace {
 // ProductionWnd                                //
 //////////////////////////////////////////////////
 ProductionWnd::ProductionWnd(int w, int h) :
-    CUI_Wnd(UserString("PRODUCTION_WND_TITLE"), 0, 0, w, h, GG::CLICKABLE | GG::ONTOP),
+    CUIWnd(UserString("PRODUCTION_WND_TITLE"), 0, 0, w, h, GG::CLICKABLE | GG::ONTOP),
     m_production_info_panel(0),
     m_queue_lb(0),
     m_buid_designator_wnd(0)
@@ -183,13 +183,13 @@ GG::Pt ProductionWnd::ClientLowerRight() const
 bool ProductionWnd::InWindow(const GG::Pt& pt) const
 {
     GG::Rect clip_rect = m_buid_designator_wnd->MapViewHole() + m_buid_designator_wnd->UpperLeft();
-    return clip_rect.Contains(pt) ? m_buid_designator_wnd->InWindow(pt) : CUI_Wnd::InWindow(pt);
+    return clip_rect.Contains(pt) ? m_buid_designator_wnd->InWindow(pt) : CUIWnd::InWindow(pt);
 }
 
 bool ProductionWnd::InClient(const GG::Pt& pt) const
 {
     GG::Rect clip_rect = m_buid_designator_wnd->MapViewHole() + m_buid_designator_wnd->UpperLeft();
-    return clip_rect.Contains(pt) ? m_buid_designator_wnd->InClient(pt) : CUI_Wnd::InClient(pt);
+    return clip_rect.Contains(pt) ? m_buid_designator_wnd->InClient(pt) : CUIWnd::InClient(pt);
 }
 
 void ProductionWnd::Render()

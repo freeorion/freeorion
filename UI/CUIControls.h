@@ -159,8 +159,6 @@ private:
 class CUIScroll : public GG::Scroll
 {
 public:
-    using Wnd::SizeMove;
-
     /** represents the tab button for a CUIScroll */
     class ScrollTab : public GG::Button
     {
@@ -183,7 +181,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    Render();
-    virtual void    SizeMove(int x1, int y1, int x2, int y2);
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 
 private:

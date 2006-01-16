@@ -9,6 +9,7 @@
 #include "../universe/Effect.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
 #ifndef FREEORION_BUILD_UTIL
@@ -1643,13 +1644,20 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     AttachChild(tech_types_to_show_label);
     int accum = 0;
     text_width = font->TextExtent(UserString("TECH_WND_TECH_TYPES_ALL")).x + RADIO_BUTTON_MARGIN;
-    m_tech_type_buttons->AddButton(new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_TYPES_ALL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    CUIStateButton* button = new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_TYPES_ALL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON);
+    m_tech_type_buttons->AddButton(button);
+    GG::Layout* layout = m_tech_type_buttons->GetLayout();
+    layout->SetColumnStretch(0, text_width);
     accum += text_width;
     text_width = font->TextExtent(UserString("TECH_WND_TECH_TYPES_THEORIES_AND_APPS")).x + RADIO_BUTTON_MARGIN;
-    m_tech_type_buttons->AddButton(new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_TYPES_THEORIES_AND_APPS"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    button = new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_TYPES_THEORIES_AND_APPS"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON);
+    m_tech_type_buttons->AddButton(button);
+    layout->SetColumnStretch(1, text_width);
     accum += text_width;
     text_width = font->TextExtent(UserString("TECH_WND_TECH_TYPES_THEORIES_ONLY")).x + RADIO_BUTTON_MARGIN;
-    m_tech_type_buttons->AddButton(new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_TYPES_THEORIES_ONLY"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    button = new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_TYPES_THEORIES_ONLY"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON);
+    m_tech_type_buttons->AddButton(button);
+    layout->SetColumnStretch(2, text_width);
     m_tech_type_buttons->SetCheck(0);
     GG::Connect(m_tech_type_buttons->ButtonChangedSignal, &TechTreeWnd::TechTypesShownSlot, this);
 
@@ -1666,13 +1674,20 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     AttachChild(tech_statuses_to_show_label);
     accum = 0;
     text_width = font->TextExtent(UserString("TECH_WND_TECH_STATUS_ALL")).x + RADIO_BUTTON_MARGIN;
-    m_tech_status_buttons->AddButton(new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_STATUS_ALL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    button = new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_STATUS_ALL"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON);
+    m_tech_status_buttons->AddButton(button);
+    layout = m_tech_status_buttons->GetLayout();
+    layout->SetColumnStretch(0, text_width);
     accum += text_width;
     text_width = font->TextExtent(UserString("TECH_WND_TECH_STATUS_AVAILABLE_AND_COMPLETE")).x + RADIO_BUTTON_MARGIN;
-    m_tech_status_buttons->AddButton(new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_STATUS_AVAILABLE_AND_COMPLETE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    button = new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_STATUS_AVAILABLE_AND_COMPLETE"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON);
+    m_tech_status_buttons->AddButton(button);
+    layout->SetColumnStretch(1, text_width);
     accum += text_width;
     text_width = font->TextExtent(UserString("TECH_WND_TECH_STATUS_AVAILABLE_ONLY")).x + RADIO_BUTTON_MARGIN;
-    m_tech_status_buttons->AddButton(new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_STATUS_AVAILABLE_ONLY"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    button = new CUIStateButton(accum, 0, text_width, LAYOUT_MARGIN_BOTTOM / 2, UserString("TECH_WND_TECH_STATUS_AVAILABLE_ONLY"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON);
+    m_tech_status_buttons->AddButton(button);
+    layout->SetColumnStretch(2, text_width);
     m_tech_status_buttons->SetCheck(0);
     GG::Connect(m_tech_status_buttons->ButtonChangedSignal, &TechTreeWnd::TechStatusesShownSlot, this);
 

@@ -8,8 +8,8 @@
 #include "../universe/Universe.h"
 #endif
 
-#ifndef _CUI_Wnd_h_
-#include "CUI_Wnd.h"
+#ifndef _CUIWnd_h_
+#include "CUIWnd.h"
 #endif
 
 #ifndef _CUISpin_h_
@@ -90,7 +90,7 @@ private:
 
 //! This class is the Galaxy Setup window.  It is a modal window
 //! that allows the user to choose a galaxy style, size, etc.
-class GalaxySetupWnd : public CUI_Wnd
+class GalaxySetupWnd : public CUIWnd
 {
 public:
     /** \name Structors*/ //!@{
@@ -131,6 +131,8 @@ private:
     GG::StaticGraphic*    m_preview_image;         //!< The galaxy shape preview image
     CUIButton*            m_ok;                    //!< OK button
     CUIButton*            m_cancel;                //!< Cancel button
+
+    GG::Pt                m_preview_ul;
 };
 
 inline std::pair<std::string, std::string> GalaxySetupWndRevision()

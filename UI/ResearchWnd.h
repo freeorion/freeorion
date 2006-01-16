@@ -2,7 +2,7 @@
 #ifndef _ResearchWnd_h_
 #define _ResearchWnd_h_
 
-#include "CUI_Wnd.h"
+#include "CUIWnd.h"
 
 #include <GG/ListBox.h>
 
@@ -12,7 +12,7 @@ class TechTreeWnd;
 class ProductionInfoPanel;
 
 /** Contains a TechTreeWnd, some stats on the empire-wide research queue, and the queue itself. */
-class ResearchWnd : public CUI_Wnd
+class ResearchWnd : public CUIWnd
 {
 public:
     /** \name Structors */ //@{

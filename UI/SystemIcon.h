@@ -27,8 +27,6 @@ class TextControl;
 class SystemIcon : public GG::Control
 {
 public:
-    using Wnd::SizeMove;
-
     //! \name Signal Types //!@{
     typedef boost::signal<void (int)> BrowsedSignalType; //!< emitted when the user moves the cursor over the icon; returns the object id
     typedef boost::signal<void (int)> LeftClickedSignalType; //!< emitted when the user left clicks the icon; returns the objectID
@@ -53,7 +51,7 @@ public:
     //!@}
 
     //! \name Mutators //!@{
-    virtual void   SizeMove(int x1, int y1, int x2, int y2);
+    virtual void   SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void   Render() {}
     virtual void   LClick(const GG::Pt& pt, Uint32 keys);
     virtual void   RClick(const GG::Pt& pt, Uint32 keys);

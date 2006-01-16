@@ -4,6 +4,7 @@
 #include "HumanClientApp.h"
 
 #include "../../UI/CUIControls.h"
+#include "../../UI/CUIStyle.h"
 #include "../../UI/MapWnd.h"
 #include "../../network/Message.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
@@ -229,6 +230,9 @@ HumanClientApp::HumanClientApp() :
     Logger().setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
 
     SetMaxFPS(60.0);
+
+    boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
+    SetStyleFactory(style);
 }
 
 HumanClientApp::~HumanClientApp()

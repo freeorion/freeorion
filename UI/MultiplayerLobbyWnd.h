@@ -2,8 +2,8 @@
 #ifndef _MultiplayerLobbyWnd_h_
 #define _MultiplayerLobbyWnd_h_
 
-#ifndef _CUI_Wnd_h_
-#include "CUI_Wnd.h"
+#ifndef _CUIWnd_h_
+#include "CUIWnd.h"
 #endif
 
 #ifndef _GalaxySetupWnd_h_
@@ -24,7 +24,7 @@ class TextControl;
 }
 
 /** multiplayer lobby window */
-class MultiplayerLobbyWnd : public CUI_Wnd
+class MultiplayerLobbyWnd : public CUIWnd
 {
 public:
     /** \name Structors */ //@{

@@ -351,7 +351,7 @@ void BuildDesignatorWnd::BuildDetailPanel::ConfigureForNewBuildView()
 //////////////////////////////////////////////////
 // BuildDesignatorWnd::BuildSelector
 //////////////////////////////////////////////////
-class BuildDesignatorWnd::BuildSelector : public CUI_Wnd
+class BuildDesignatorWnd::BuildSelector : public CUIWnd
 {
 public:
     BuildSelector(int w, int h);
@@ -396,11 +396,11 @@ void BuildDesignatorWnd::BuildSelector::CategoryClickedFunctor::operator()()
 }
 
 BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
-    CUI_Wnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), 0, 0, w, h, GG::CLICKABLE | CUI_Wnd::MINIMIZABLE),
+    CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), 0, 0, w, h, GG::CLICKABLE | CUIWnd::MINIMIZABLE),
     m_current_build_type(BT_BUILDING)
 {
-    GG::Pt client_size(w - BORDER_LEFT - BORDER_RIGHT, h - BORDER_TOP - BORDER_BOTTOM);
-    GG::Layout* layout = new GG::Layout(BORDER_LEFT, BORDER_TOP, client_size.x, client_size.y, 1, 1, 3, 6);
+    GG::Pt client_size = ClientSize();
+    GG::Layout* layout = new GG::Layout(0, 0, client_size.x, client_size.y, 1, 1, 3, 6);
     int button_height;
     for (BuildType i = BuildType(BT_NOT_BUILDING + 1); i < NUM_BUILD_TYPES; i = BuildType(i + 1)) {
         CUIButton* button = new CUIButton(0, 0, 1, UserString("PRODUCTION_WND_CATEGORY_" + boost::lexical_cast<std::string>(i)));
@@ -429,32 +429,34 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
 void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
 {
     if (!m_minimized) {
+        m_minimized = true;
         m_original_size = Size();
-        m_original_ul = UpperLeft() - (Parent() ? Parent()->ClientUpperLeft() : GG::Pt());
+        m_original_ul = RelativeUpperLeft();
         GG::Pt original_lr = m_original_ul + m_original_size;
         GG::Pt new_size(Width(), BORDER_TOP);
         SetMinSize(GG::Pt(new_size.x, new_size.y));
         SizeMove(original_lr - new_size, original_lr);
+        GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
         if (m_close_button)
-            m_close_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET));
+            m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
         if (m_minimize_button)
-            m_minimize_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET));
+            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : 0), button_ul.y));
         Hide();
         Show(false);
         if (m_close_button)
             m_close_button->Show();
         if (m_minimize_button)
             m_minimize_button->Show();
-        m_minimized = true;
     } else {
+        m_minimized = false;
         SetMinSize(GG::Pt(Width(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM));
         SizeMove(m_original_ul, m_original_ul + m_original_size);
+        GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET) + UpperLeft() - ClientUpperLeft();
         if (m_close_button)
-            m_close_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET));
+            m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
         if (m_minimize_button)
-            m_minimize_button->MoveTo(GG::Pt(Width() - BUTTON_RIGHT_OFFSET * (m_close_button ? 2 : 1), BUTTON_TOP_OFFSET));
+            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : 0), button_ul.y));
         Show();
-        m_minimized = false;
     }
 }
 

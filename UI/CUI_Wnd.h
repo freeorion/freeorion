@@ -1,7 +1,7 @@
 // -*- C++ -*-
-//CUI_Wnd.h
-#ifndef _CUI_Wnd_h_
-#define _CUI_Wnd_h_
+//CUIWnd.h
+#ifndef _CUIWnd_h_
+#define _CUIWnd_h_
 
 #ifndef _GG_Wnd_h_
 #include <GG/Wnd.h>
@@ -51,7 +51,7 @@ public:
 /** the drawing and handling of common window interfaces like the close button, minimize
     button, and resize handle, if applicable.<br>
     
-    CUI_Wnd's contain built in close buttons.  They also have optional
+    CUIWnd's contain built in close buttons.  They also have optional
     minimize buttons.  Resizable windows will have a different look from non-resizable windows.
     
     All windows contain a close button.  Pressing this button will un-register the window
@@ -59,7 +59,7 @@ public:
     referencing the window become invalid if the window is closed.
     
     The minimize button functionality is available as
-    a window creation flag: CUI_Wnd::MINIMIZE.  You can bitwise-OR it together
+    a window creation flag: CUIWnd::MINIMIZE.  You can bitwise-OR it together
     with regular GG::Wnd creation flags.
     
     When  the GG::Wnd::RESIZABLE flag is specified, the window will receive the 
@@ -69,8 +69,8 @@ public:
     when utilizing these classes.<br>
     
     - Pass the title of the window as the first argument of the constructor.<br>
-    - CUI_Wnd's do their own rendering.  Do not override the render function
-      unless you have specific needs.  If you do, make sure you call CUI_Wnd::Render() before
+    - CUIWnd's do their own rendering.  Do not override the render function
+      unless you have specific needs.  If you do, make sure you call CUIWnd::Render() before
       adding your own drawing. <br>
     - Three functions are user-overridable so that new events may be responded to.  OnClose()
       is called before the window's memory is deallocated after the user clicks the close button.
@@ -80,11 +80,9 @@ public:
       to the resize signal.
     
 */
-class CUI_Wnd : public GG::Wnd
+class CUIWnd : public GG::Wnd
 {
 public:
-    using Wnd::SizeMove;
-
     //! additional window creation flags
     enum {
         MINIMIZABLE = 1 << 10,    //!< allows the window to be minimized
@@ -92,17 +90,19 @@ public:
     };
 
     //! \name Structors //@{
-    CUI_Wnd(const std::string& t, int x, int y, int w, int h, Uint32 flags = GG::CLICKABLE); //!< Constructs the window to be a CUI window
-    ~CUI_Wnd();    //!< Destructor
+    CUIWnd(const std::string& t, int x, int y, int w, int h, Uint32 flags = GG::CLICKABLE); //!< Constructs the window to be a CUI window
+    ~CUIWnd();    //!< Destructor
     //@}
 
     //! \name Accessors //@{
     bool Minimized() const {return m_minimized;} //!< returns true if window is minimized
-    virtual bool InWindow(const GG::Pt& pt) const;
+    virtual GG::Pt ClientUpperLeft() const;
+    virtual GG::Pt ClientLowerRight() const;
+    virtual bool   InWindow(const GG::Pt& pt) const;
     //@}
 
     //! \name Mutators //@{
-    virtual void SizeMove(int x1, int y1, int x2, int y2);
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void Render();
     virtual void LButtonDown(const GG::Pt& pt, Uint32 keys);
     virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
@@ -119,7 +119,7 @@ public:
 
 protected:
     //! \name Accessors //@{
-    virtual int MinimizedLength() const;//!< the width of a minimized CUI_Wnd
+    virtual int MinimizedLength() const;//!< the width of a minimized CUIWnd
     int LeftBorder() const;             //!< the distance on the left side between the outer edge of the window and the inner border
     int TopBorder() const;              //!< the distance at the top between the outer edge of the window and the inner border
     int RightBorder() const;            //!< the distance on the right side between the outer edge of the window and the inner border
@@ -158,7 +158,7 @@ protected:
 
 // This didn't seem big enough to warrant its own file, so this seemed like a good enough place for it....
 /** provides a convenient modal wnd for getting text user input. */
-class CUIEditWnd : public CUI_Wnd
+class CUIEditWnd : public CUIWnd
 {
 public:
     CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, Uint32 flags = GG::MODAL);
@@ -181,7 +181,7 @@ private:
     static const int CONTROL_MARGIN = 5;
 };
 
-inline std::pair<std::string, std::string> CUI_WndRevision()
+inline std::pair<std::string, std::string> CUIWndRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
-#endif // _CUI_Wnd_h_
+#endif // _CUIWnd_h_

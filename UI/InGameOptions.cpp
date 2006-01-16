@@ -39,16 +39,16 @@ namespace {
 
 
 InGameOptions::InGameOptions():
-    CUI_Wnd(UserString("GAME_MENU_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
-            (GG::GUI::GetGUI()->AppHeight() - IN_GAME_OPTIONS_HEIGHT) / 2, IN_GAME_OPTIONS_WIDTH, IN_GAME_OPTIONS_HEIGHT, GG::CLICKABLE | GG::MODAL)
+    CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
+           (GG::GUI::GetGUI()->AppHeight() - IN_GAME_OPTIONS_HEIGHT) / 2, IN_GAME_OPTIONS_WIDTH, IN_GAME_OPTIONS_HEIGHT, GG::CLICKABLE | GG::MODAL)
 {
     const int BUTTON_WIDTH = IN_GAME_OPTIONS_WIDTH - 60;
-    const int BUTTON_X = (IN_GAME_OPTIONS_WIDTH - BUTTON_WIDTH) / 2;
-    m_save_btn = new CUIButton(BUTTON_X, 40, BUTTON_WIDTH, UserString("GAME_MENU_SAVE"));
-    m_load_btn = new CUIButton(BUTTON_X, 80, BUTTON_WIDTH, UserString("GAME_MENU_LOAD"));
-	m_options_btn = new CUIButton(BUTTON_X, 120, BUTTON_WIDTH, UserString("INTRO_BTN_OPTIONS"));
-    m_exit_btn = new CUIButton(BUTTON_X, 160, BUTTON_WIDTH, UserString("GAME_MENU_RESIGN"));
-    m_done_btn = new CUIButton(BUTTON_X, 210, BUTTON_WIDTH, UserString("DONE"));
+    const int BUTTON_X = (ClientWidth() - BUTTON_WIDTH) / 2;
+    m_save_btn = new CUIButton(BUTTON_X, 22, BUTTON_WIDTH, UserString("GAME_MENU_SAVE"));
+    m_load_btn = new CUIButton(BUTTON_X, 62, BUTTON_WIDTH, UserString("GAME_MENU_LOAD"));
+	m_options_btn = new CUIButton(BUTTON_X, 102, BUTTON_WIDTH, UserString("INTRO_BTN_OPTIONS"));
+    m_exit_btn = new CUIButton(BUTTON_X, 142, BUTTON_WIDTH, UserString("GAME_MENU_RESIGN"));
+    m_done_btn = new CUIButton(BUTTON_X, 192, BUTTON_WIDTH, UserString("DONE"));
 
     // call to InGameOptions::MinimizedLength() because MinimizedLength is virtual
     SetMinSize(GG::Pt(InGameOptions::MinimizedLength(), MinSize().y));
@@ -66,7 +66,7 @@ int InGameOptions::MinimizedLength() const
 
 void InGameOptions::Render()
 {
-    CUI_Wnd::Render();
+    CUIWnd::Render();
 }
 
 void InGameOptions::Keypress (GG::Key key, Uint32 key_mods)

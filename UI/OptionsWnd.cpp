@@ -144,14 +144,14 @@ void OptionsWnd::BrowseForSoundFileFunctor::operator()()
 }
 
 OptionsWnd::OptionsWnd():
-    CUI_Wnd(UserString("OPTIONS_TITLE"),
-            (GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + 20)) / 2,
-            (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + 70)) / 2,
-            PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::CLICKABLE | GG::DRAGABLE | GG::MODAL),
+    CUIWnd(UserString("OPTIONS_TITLE"),
+           (GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + 20)) / 2,
+           (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + 70)) / 2,
+           PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::CLICKABLE | GG::DRAGABLE | GG::MODAL),
     m_end_with_done(false)
 {
-    m_done_btn = new CUIButton(20, PAGE_HEIGHT + 35, 75, UserString("DONE"));
-	m_tabs = new CUITabbedPages(10, 20, PAGE_WIDTH, PAGE_HEIGHT + 20);
+    m_done_btn = new CUIButton(15, PAGE_HEIGHT + 17, 75, UserString("DONE"));
+	m_tabs = new CUITabbedPages(5, 2, PAGE_WIDTH, PAGE_HEIGHT + 20);
     Init();
 }
 

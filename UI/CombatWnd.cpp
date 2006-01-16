@@ -172,9 +172,9 @@ struct CombatInfoRow : public GG::ListBox::Row
 // CombatWnd
 ////////////////////////////////////////////////
 CombatWnd::CombatWnd(int x,int y)
-    : CUI_Wnd(UserString("COMBAT_WINDOW_TITLE"),x,y, WIDTH, HEIGHT,  GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | CUI_Wnd::MINIMIZABLE)
+    : CUIWnd(UserString("COMBAT_WINDOW_TITLE"),x,y, WIDTH, HEIGHT,  GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | CUIWnd::MINIMIZABLE)
 {
-  m_combats_lb = new CUIListBox(LeftBorder(),TopBorder(),Width()-(LeftBorder()+RightBorder()),Height()-(TopBorder()+BottomBorder()),GG::CLR_ZERO,GG::CLR_ZERO);
+  m_combats_lb = new CUIListBox(0,0,ClientWidth(),ClientHeight(),GG::CLR_ZERO,GG::CLR_ZERO);
   AttachChild(m_combats_lb);
 }
 

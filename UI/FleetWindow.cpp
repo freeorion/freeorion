@@ -573,12 +573,12 @@ std::string FleetDetailPanel::ShipStatusText(int ship_id) const
 // FleetDetailWnd
 ////////////////////////////////////////////////
 FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
-    CUI_Wnd("", x, y, 1, 1, flags),
+    CUIWnd("", x, y, 1, 1, flags),
     m_fleet_panel(0)
 {
     TempUISoundDisabler sound_disabler;
-    m_fleet_panel = new FleetDetailPanel(LeftBorder() + 3, TopBorder() + 3, fleet, read_only);
-    Resize(m_fleet_panel->Size() + GG::Pt(LeftBorder() + RightBorder() + 6, TopBorder() + BottomBorder() + 6));
+    m_fleet_panel = new FleetDetailPanel(3, 3, fleet, read_only);
+    Resize(m_fleet_panel->Size() + GG::Pt(3, 3) + (Size() - ClientSize()));
     AttachSignalChildren();
     SetText(TitleText());
     GG::Connect(m_fleet_panel->NeedNewFleetSignal, &FleetDetailWnd::PanelNeedsNewFleet, this);
@@ -591,7 +591,7 @@ FleetDetailWnd::~FleetDetailWnd()
 
 void FleetDetailWnd::CloseClicked()
 {
-    CUI_Wnd::CloseClicked();
+    CUIWnd::CloseClicked();
     ClosingSignal(this);
     delete this;
 }
@@ -628,7 +628,7 @@ FleetWnd::FleetWndItr FleetWnd::FleetWndEnd  () {return s_open_fleet_wnds.end();
 
 FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
                    Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
-    MapWndPopup("", x, y, 1, 1, flags),
+    MapWndPopup("", x, y, 1, 1, flags | GG::RESIZABLE),
     m_empire_id(-1),
     m_system_id(UniverseObject::INVALID_OBJECT_ID),
     m_read_only(read_only),
@@ -639,22 +639,23 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
 {
     assert(0 <= selected_fleet && selected_fleet < static_cast<int>(fleets.size()));
 
-    if(fleets.size()>0)
+    if (!fleets.empty())
     {
-      m_system_id = fleets[0]->SystemID();
-      for(unsigned int i=1;i<fleets.size();i++)
-        if(m_system_id != fleets[i]->SystemID())
-          m_system_id = UniverseObject::INVALID_OBJECT_ID;
+        m_system_id = fleets[0]->SystemID();
+        for (unsigned int i = 1; i < fleets.size(); ++i) {
+            if (m_system_id != fleets[i]->SystemID())
+                m_system_id = UniverseObject::INVALID_OBJECT_ID;
+        }
     }
 
     TempUISoundDisabler sound_disabler;
 
-    m_fleets_lb = new CUIListBox(LeftBorder() + 3, TopBorder() + 3, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT);
-    m_fleet_detail_panel = new FleetDetailPanel(LeftBorder() + 3, m_fleets_lb->LowerRight().y + CONTROL_MARGIN, 0, read_only );
+    m_fleets_lb = new CUIListBox(3, 3, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT);
+    m_fleet_detail_panel = new FleetDetailPanel(3, m_fleets_lb->LowerRight().y + CONTROL_MARGIN, 0, read_only);
 
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
 
-    Resize(m_fleet_detail_panel->LowerRight() + GG::Pt(RightBorder() + 5, BottomBorder() + 5));
+    Resize(m_fleet_detail_panel->LowerRight() + GG::Pt(3, 3) + (Size() - ClientSize()));
     GG::Pt window_posn = UpperLeft();
     if (GG::GUI::GetGUI()->AppWidth() < LowerRight().x)
         window_posn.x = GG::GUI::GetGUI()->AppWidth() - Width();
@@ -684,7 +685,7 @@ FleetWnd::~FleetWnd()
 void FleetWnd::CloseClicked()
 {
     s_last_position = UpperLeft();
-    CUI_Wnd::CloseClicked();
+    CUIWnd::CloseClicked();
     m_lb_delete_connection.disconnect();
     for (std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_windows.begin(); it != m_open_fleet_windows.end(); ++it) {
         delete it->second;

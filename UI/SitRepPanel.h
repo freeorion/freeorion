@@ -2,8 +2,8 @@
 #ifndef _SitRepPanel_h_
 #define _SitRepPanel_h_
 
-#ifndef _CUI_Wnd_h_
-#include "CUI_Wnd.h"
+#ifndef _CUIWnd_h_
+#include "CUIWnd.h"
 #endif
 
 
@@ -12,7 +12,7 @@ class CUIButton;
 namespace GG {class TextControl;}
 
 
-class SitRepPanel : public CUI_Wnd
+class SitRepPanel : public CUIWnd
 {
 public:
     /** \name Structors */ //@{
@@ -21,7 +21,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void Keypress (GG::Key key, Uint32 key_mods);
-    virtual void SizeMove(int x1, int y1, int x2, int y2);
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void Update(); ///< loads all the relevant SitReps into the window
 

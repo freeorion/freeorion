@@ -124,7 +124,7 @@ struct MapWnd::MovementLineData
 ////////////////////////////////////////////////////////////
 
 MapWndPopup::MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags ):
-    CUI_Wnd( t, x, y, h, w, flags )
+    CUIWnd( t, x, y, h, w, flags )
 {
     // register with map wnd
     ClientUI::GetClientUI()->GetMapWnd()->RegisterPopup( this );
@@ -682,9 +682,9 @@ void MapWnd::RestoreFromSaveData(const XMLElement& elem)
         const System& system = m_system_icons[i]->GetSystem();
         GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor), 
                        static_cast<int>((system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor));
-        m_system_icons[i]->SizeMove(icon_ul.x, icon_ul.y, 
-                             static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5), 
-                             static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5));
+        m_system_icons[i]->SizeMove(icon_ul, 
+                                    GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5), 
+                                           static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5)));
     }
 
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
@@ -693,7 +693,7 @@ void MapWnd::RestoreFromSaveData(const XMLElement& elem)
         double y = fleet->Y();
         GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor), 
                          static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor));
-        m_moving_fleet_buttons[i]->SizeMove(GG::Pt(button_ul.x, button_ul.y), 
+        m_moving_fleet_buttons[i]->SizeMove(button_ul, 
                                             GG::Pt(static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5), 
                                                    static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5)));
     }
@@ -933,9 +933,9 @@ void MapWnd::Zoom(int delta)
         const System& system = m_system_icons[i]->GetSystem();
         GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2.0) * m_zoom_factor), 
                        static_cast<int>((system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2.0) * m_zoom_factor));
-        m_system_icons[i]->SizeMove(icon_ul.x, icon_ul.y, 
-                                    static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor), 
-                                    static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor));
+        m_system_icons[i]->SizeMove(icon_ul,
+                                    GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor), 
+                                           static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor)));
     }
 
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
@@ -944,7 +944,7 @@ void MapWnd::Zoom(int delta)
         double y = fleet->Y();
         GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2.0) * m_zoom_factor), 
                          static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2.0) * m_zoom_factor));
-        m_moving_fleet_buttons[i]->SizeMove(GG::Pt(button_ul.x, button_ul.y), 
+        m_moving_fleet_buttons[i]->SizeMove(button_ul,
                                             GG::Pt(static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor), 
                                                    static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor)));
     }
