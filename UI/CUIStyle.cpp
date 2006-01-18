@@ -73,6 +73,76 @@ GG::Spin<double>* CUIStyle::NewDoubleSpin(int x, int y, int w, double value, dou
     return new CUISpin<double>(x, y, w, value, step, min, max, edits);
 }
 
+GG::Button* CUIStyle::NewScrollUpButton(int x, int y, int w, int h, const std::string& str,
+                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                        Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    return new GG::Button(-1, -1, 1, 1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO, GG::CLR_ZERO, 0);
+}
+
+GG::Button* CUIStyle::NewScrollDownButton(int x, int y, int w, int h, const std::string& str,
+                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    return NewScrollUpButton(x, y, w, h, str, font, color, text_color, flags);
+}
+
+GG::Button* CUIStyle::NewVScrollTabButton(int x, int y, int w, int h, const std::string& str,
+                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    return new CUIScroll::ScrollTab(GG::VERTICAL, w, (color == GG::CLR_ZERO) ? ClientUI::SCROLL_TAB_COLOR : color, ClientUI::CTRL_BORDER_COLOR);
+}
+
+GG::Button* CUIStyle::NewScrollLeftButton(int x, int y, int w, int h, const std::string& str,
+                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    return NewScrollUpButton(x, y, w, h, str, font, color, text_color, flags);
+}
+
+GG::Button* CUIStyle::NewScrollRightButton(int x, int y, int w, int h, const std::string& str,
+                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                           Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    return NewScrollUpButton(x, y, w, h, str, font, color, text_color, flags);
+}
+
+GG::Button* CUIStyle::NewHScrollTabButton(int x, int y, int w, int h, const std::string& str,
+                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    return new CUIScroll::ScrollTab(GG::HORIZONTAL, h, (color == GG::CLR_ZERO) ? ClientUI::SCROLL_TAB_COLOR : color, ClientUI::CTRL_BORDER_COLOR);
+}
+
+GG::Button* CUIStyle::NewVSliderTabButton(int x, int y, int w, int h, const std::string& str,
+                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    return new CUIScroll::ScrollTab(GG::VERTICAL, w, ClientUI::SCROLL_TAB_COLOR, ClientUI::CTRL_BORDER_COLOR);
+}
+
+GG::Button* CUIStyle::NewHSliderTabButton(int x, int y, int w, int h, const std::string& str,
+                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    return new CUIScroll::ScrollTab(GG::HORIZONTAL, h, ClientUI::SCROLL_TAB_COLOR, ClientUI::CTRL_BORDER_COLOR);
+}
+
+GG::Button* CUIStyle::NewSpinIncrButton(int x, int y, int w, int h, const std::string& str,
+                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                        Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    return new CUIArrowButton(0, 0, 1, 1, SHAPE_UP, ClientUI::DROP_DOWN_LIST_ARROW_COLOR);
+}
+
+GG::Button* CUIStyle::NewSpinDecrButton(int x, int y, int w, int h, const std::string& str,
+                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                        Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    return new CUIArrowButton(0, 0, 1, 1, SHAPE_DOWN, ClientUI::DROP_DOWN_LIST_ARROW_COLOR);
+}
+
 void CUIStyle::DeleteWnd(GG::Wnd* wnd) const
 {
     delete wnd;

@@ -203,12 +203,6 @@ public:
     /** \name Mutators */ //@{
     virtual void   Render();
     //@}
-
-protected:
-    /** \name Mutators */ //@{
-    virtual GG::Scroll* NewVScroll(bool horz_scroll);
-    virtual GG::Scroll* NewHScroll(bool vert_scroll);
-    //@}
 };
 
 
@@ -264,12 +258,6 @@ public:
 
     /** \name Mutators */ //@{
     virtual void   Render();
-    //@}
-
-protected:
-    /** \name Mutators */ //@{
-    virtual GG::Scroll* NewVScroll(bool horz_scroll);
-    virtual GG::Scroll* NewHScroll(bool vert_scroll);
     //@}
 };
 

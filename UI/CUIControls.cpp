@@ -223,7 +223,7 @@ CUITurnButton::CUITurnButton(int x, int y, int w, const std::string& str, const 
 // class CUIArrowButton
 ///////////////////////////////////////
 CUIArrowButton::CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orientation, GG::Clr color, Uint32 flags/* = GG::CLICKABLE*/) :
-    Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO, flags),
+    Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), color, flags),
     m_orientation(orientation)
 {
     GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
@@ -255,12 +255,22 @@ void CUIArrowButton::RenderPressed()
 
 void CUIArrowButton::RenderRollover()
 {
-    RenderUnpressed();
+    GG::Pt ul = UpperLeft() + GG::Pt(2, 1), lr = LowerRight() - GG::Pt(2, 1);
+    GG::Clr color_to_use = Color();
+    if (Disabled()) {
+        color_to_use = DisabledColor(Color());
+    } else {
+        const double SCALE_FACTOR = 1.5;
+        color_to_use.r = std::min(static_cast<int>(color_to_use.r * SCALE_FACTOR), 255);
+        color_to_use.g = std::min(static_cast<int>(color_to_use.g * SCALE_FACTOR), 255);
+        color_to_use.b = std::min(static_cast<int>(color_to_use.b * SCALE_FACTOR), 255);
+    }
+    IsoscelesTriangle(ul.x, ul.y, lr.x, lr.y, m_orientation, color_to_use);
 }
 
 void CUIArrowButton::RenderUnpressed()
 {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt ul = UpperLeft() + GG::Pt(2, 1), lr = LowerRight() - GG::Pt(2, 1);
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     IsoscelesTriangle(ul.x, ul.y, lr.x, lr.y, m_orientation, color_to_use);
 }
@@ -451,14 +461,7 @@ void CUIScroll::ScrollTab::Render()
 CUIScroll::CUIScroll(int x, int y, int w, int h, GG::Orientation orientation, GG::Clr color/* = GG::CLR_ZERO*/, 
                      GG::Clr border/* = ClientUI::CTRL_BORDER_COLOR*/, GG::Clr interior/* = GG::CLR_ZERO*/, 
                      Uint32 flags/* = CLICKABLE*/) :
-#if 0
-    Scroll(x, y, w, h, orientation, color, interior, NewDummyButton(), NewDummyButton(), 
-           new ScrollTab(orientation, orientation == GG::VERTICAL ? w : h, 
-                         (color == GG::CLR_ZERO) ? ClientUI::SCROLL_TAB_COLOR : color, border), 
-               flags),
-#else
     Scroll(x, y, w, h, orientation, color, interior, flags),
-#endif
     m_border_color(border)
 {
 }
@@ -501,7 +504,6 @@ CUIListBox::CUIListBox(int x, int y, int w, int h, GG::Clr color/* = ClientUI::C
     ListBox(x, y, w, h, color, interior, flags)
 {
     RecreateScrolls();
-    EnableChildClipping(false); // this is already done by GG::ListBox, and setting this would interfere
     GG::Connect(SelChangedSignal, &PlayListSelectSound, -1);
     GG::Connect(DroppedSignal, &PlayItemDropSound, -1);
 }
@@ -516,26 +518,6 @@ void CUIListBox::Render()
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, color_to_use, 1);
-}
-
-GG::Scroll* CUIListBox::NewVScroll(bool horz_scroll)
-{
-    GG::Pt cl_sz = ((LowerRight() - GG::Pt(BORDER_THICK, BORDER_THICK)) -
-                    (UpperLeft() + GG::Pt(BORDER_THICK, BORDER_THICK + (ColHeaders().size() ? ColHeaders().Height() : 0))));
-    CUIScroll* s = new CUIScroll(cl_sz.x - ClientUI::SCROLL_WIDTH, 0, ClientUI::SCROLL_WIDTH, 
-                         cl_sz.y - (horz_scroll ? ClientUI::SCROLL_WIDTH : 0), GG::VERTICAL);
-    s->SetText("Scroll");
-    return s;
-}
-
-GG::Scroll* CUIListBox::NewHScroll(bool vert_scroll)
-{
-    GG::Pt cl_sz = ((LowerRight() - GG::Pt(BORDER_THICK, BORDER_THICK)) -
-                    (UpperLeft() + GG::Pt(BORDER_THICK, BORDER_THICK + (ColHeaders().size() ? ColHeaders().Height() : 0))));
-    CUIScroll* s = new CUIScroll(0, cl_sz.y - ClientUI::SCROLL_WIDTH, cl_sz.x - (vert_scroll ? ClientUI::SCROLL_WIDTH : 0), 
-                         ClientUI::SCROLL_WIDTH, GG::HORIZONTAL);
-    s->SetText("Scroll");
-    return s;
 }
 
 
@@ -663,32 +645,11 @@ void CUIMultiEdit::Render()
     SetColor(color);
 }
 
-GG::Scroll* CUIMultiEdit::NewVScroll(bool horz_scroll)
-{
-    const int GAP = PIXEL_MARGIN - 2; // the space between the client area and the border
-    GG::Pt cl_sz = Edit::ClientLowerRight() - Edit::ClientUpperLeft();
-    return new CUIScroll(cl_sz.x + GAP - SCROLL_WIDTH, -GAP, SCROLL_WIDTH, cl_sz.y + 2 * GAP - (horz_scroll ? SCROLL_WIDTH : 0), GG::VERTICAL);
-}
-
-GG::Scroll* CUIMultiEdit::NewHScroll(bool vert_scroll)
-{
-    const int GAP = PIXEL_MARGIN - 2; // the space between the client area and the border
-    GG::Pt cl_sz = Edit::ClientLowerRight() - Edit::ClientUpperLeft();
-    return new CUIScroll(-GAP, cl_sz.y + GAP - SCROLL_WIDTH, cl_sz.x + 2 * GAP - (vert_scroll ? SCROLL_WIDTH : 0), SCROLL_WIDTH, GG::HORIZONTAL);
-}
-
 ///////////////////////////////////////
 // class CUISlider
 ///////////////////////////////////////
 CUISlider::CUISlider(int x, int y, int w, int h, int min, int max, GG::Orientation orientation, Uint32 flags/* = CLICKABLE*/) :
-#if 0
-    Slider(x, y, w, h, min, max, orientation, GG::FLAT, ClientUI::CTRL_COLOR,
-           new CUIScroll::ScrollTab(GG::Orientation(orientation), orientation == GG::VERTICAL ? w : h, 
-                                    ClientUI::SCROLL_TAB_COLOR, ClientUI::CTRL_BORDER_COLOR),
-           5, flags)
-#else
     Slider(x, y, w, h, min, max, orientation, GG::FLAT, ClientUI::CTRL_COLOR, orientation == GG::VERTICAL ? w : h, 5, flags)
-#endif
 {
 }
 
@@ -922,20 +883,8 @@ void ColorSelector::LClick(const GG::Pt& pt, Uint32 keys)
 ///////////////////////////////////////
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
                  const std::vector<std::pair<std::string, std::string> >& types) :
-#if 0
-    GG::FileDlg(directory, filename, save, multi, types, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
-                ClientUI::CTRL_COLOR, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR,
-                new CUIButton(3 * WIDTH / 4, HEIGHT - (ClientUI::PTS + 14) * 2, WIDTH / 4 - 10, UserString(save ? "SAVE" : "OPEN")),
-                new CUIButton(3 * WIDTH / 4, HEIGHT - (ClientUI::PTS + 14), WIDTH / 4 - 10, UserString("CANCEL")),
-                new CUIListBox(0, 0, 1, 1),
-                new CUIEdit(0, 0, 1, 1, ""),
-                new CUIDropDownList(0, 0, 1,
-                                    GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS)->Lineskip(),
-                                    3 * GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS)->Lineskip()))
-#else
     GG::FileDlg(directory, filename, save, multi, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
                 ClientUI::CTRL_COLOR, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR)
-#endif
 {
     SetFileFilters(types);
 

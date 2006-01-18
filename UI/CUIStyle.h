@@ -46,6 +46,46 @@ public:
                                                  const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                  GG::Clr interior = GG::CLR_ZERO, Uint32 flags = GG::CLICKABLE | GG::DRAG_KEEPER) const;
 
+    virtual GG::Button*            NewScrollUpButton(int x, int y, int w, int h, const std::string& str,
+                                                     const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                                                     Uint32 flags = GG::CLICKABLE) const;
+
+    virtual GG::Button*            NewScrollDownButton(int x, int y, int w, int h, const std::string& str,
+                                                       const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                                                       Uint32 flags = GG::CLICKABLE) const;
+
+    virtual GG::Button*            NewVScrollTabButton(int x, int y, int w, int h, const std::string& str,
+                                                       const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                                                       Uint32 flags = GG::CLICKABLE) const;
+
+    virtual GG::Button*            NewScrollLeftButton(int x, int y, int w, int h, const std::string& str,
+                                                       const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                                                       Uint32 flags = GG::CLICKABLE) const;
+
+    virtual GG::Button*            NewScrollRightButton(int x, int y, int w, int h, const std::string& str,
+                                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                                                        Uint32 flags = GG::CLICKABLE) const;
+
+    virtual GG::Button*            NewHScrollTabButton(int x, int y, int w, int h, const std::string& str,
+                                                       const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                                                       Uint32 flags = GG::CLICKABLE) const;
+
+    virtual GG::Button*            NewVSliderTabButton(int x, int y, int w, int h, const std::string& str,
+                                                       const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                                                       Uint32 flags = GG::CLICKABLE) const;
+
+    virtual GG::Button*            NewHSliderTabButton(int x, int y, int w, int h, const std::string& str,
+                                                       const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                                                       Uint32 flags = GG::CLICKABLE) const;
+
+    virtual GG::Button*            NewSpinIncrButton(int x, int y, int w, int h, const std::string& str,
+                                                     const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                                                     Uint32 flags = GG::CLICKABLE) const;
+
+    virtual GG::Button*            NewSpinDecrButton(int x, int y, int w, int h, const std::string& str,
+                                                     const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
+                                                     Uint32 flags = GG::CLICKABLE) const;
+
     virtual void                   DeleteWnd(GG::Wnd* wnd) const;
 };
 
