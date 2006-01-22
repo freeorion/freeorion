@@ -1,7 +1,7 @@
 // -*- C++ -*-
-//InGameOptions.h
-#ifndef _InGameOptions_h_
-#define _InGameOptions_h_
+//InGameMenu.h
+#ifndef _InGameMenu_h_
+#define _InGameMenu_h_
 
 #ifndef _CUIWnd_h_
 #include "CUIWnd.h"
@@ -9,12 +9,12 @@
 
 class CUIButton;
 
-class InGameOptions : public CUIWnd
+class InGameMenu : public CUIWnd
 {
 public:
     /** \name Structors */ //@{
-    InGameOptions();  //!< default ctor
-    ~InGameOptions(); //!< dtor
+    InGameMenu();  //!< default ctor
+    ~InGameMenu(); //!< dtor
     //@}
 
     /** \name Mutators */ //@{
@@ -23,7 +23,7 @@ public:
     //@}
 
 protected:
-    virtual int MinimizedLength() const;//!< the width of a minimized InGameOptions wnd
+    virtual int MinimizedLength() const;//!< the width of a minimized InGameMenu wnd
 
 private:
     void Init();          //!< Attaches children and connects signals
@@ -40,7 +40,7 @@ private:
     CUIButton*  m_exit_btn;	  //!< Quit game button
 };
 
-inline std::pair<std::string, std::string> InGameOptionsRevision()
+inline std::pair<std::string, std::string> InGameMenuRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
-#endif // _InGameOptions_h_
+#endif // _InGameMenu_h_

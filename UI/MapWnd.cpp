@@ -8,7 +8,7 @@
 #include "FleetButton.h"
 #include "FleetWindow.h"
 #include "../client/human/HumanClientApp.h"
-#include "InGameOptions.h"
+#include "InGameMenu.h"
 #include "../network/Message.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
@@ -1320,8 +1320,8 @@ bool MapWnd::ShowOptions()
 {
     if (!m_options_showing) {
         m_options_showing = true;
-        InGameOptions options;
-        options.Run();
+        InGameMenu menu;
+        menu.Run();
         m_options_showing = false;
     }
     return true;

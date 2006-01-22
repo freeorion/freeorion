@@ -1,4 +1,4 @@
-#include "InGameOptions.h"
+#include "InGameMenu.h"
 
 #include "ClientUI.h"
 #include "CUIControls.h"
@@ -33,12 +33,12 @@ namespace {
     const int IN_GAME_OPTIONS_WIDTH = 150;
     const int IN_GAME_OPTIONS_HEIGHT = 280;
 
-    bool temp_header_bool = RecordHeaderFile(InGameOptionsRevision());
+    bool temp_header_bool = RecordHeaderFile(InGameMenuRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 
 
-InGameOptions::InGameOptions():
+InGameMenu::InGameMenu():
     CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
            (GG::GUI::GetGUI()->AppHeight() - IN_GAME_OPTIONS_HEIGHT) / 2, IN_GAME_OPTIONS_WIDTH, IN_GAME_OPTIONS_HEIGHT, GG::CLICKABLE | GG::MODAL)
 {
@@ -50,32 +50,32 @@ InGameOptions::InGameOptions():
     m_exit_btn = new CUIButton(BUTTON_X, 142, BUTTON_WIDTH, UserString("GAME_MENU_RESIGN"));
     m_done_btn = new CUIButton(BUTTON_X, 192, BUTTON_WIDTH, UserString("DONE"));
 
-    // call to InGameOptions::MinimizedLength() because MinimizedLength is virtual
-    SetMinSize(GG::Pt(InGameOptions::MinimizedLength(), MinSize().y));
+    // call to InGameMenu::MinimizedLength() because MinimizedLength is virtual
+    SetMinSize(GG::Pt(InGameMenu::MinimizedLength(), MinSize().y));
     Init(); //attaches children and connects signals to slots
 }
 
-InGameOptions::~InGameOptions()
+InGameMenu::~InGameMenu()
 {
 }
 
-int InGameOptions::MinimizedLength() const
+int InGameMenu::MinimizedLength() const
 { 
     return 135;
 }
 
-void InGameOptions::Render()
+void InGameMenu::Render()
 {
     CUIWnd::Render();
 }
 
-void InGameOptions::Keypress (GG::Key key, Uint32 key_mods)
+void InGameMenu::Keypress (GG::Key key, Uint32 key_mods)
 {
     if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE || key == GG::GGK_F10) // Same behaviour as if "done" was pressed
         Done();
 }
 
-void InGameOptions::Init()
+void InGameMenu::Init()
 {
     //add children
     AttachChild(m_save_btn);
@@ -85,18 +85,18 @@ void InGameOptions::Init()
     AttachChild(m_done_btn);
 
     //attach signals
-    GG::Connect(m_save_btn->ClickedSignal, &InGameOptions::Save, this);
-    GG::Connect(m_load_btn->ClickedSignal, &InGameOptions::Load, this);
-	GG::Connect(m_options_btn->ClickedSignal, &InGameOptions::Options, this);
-    GG::Connect(m_exit_btn->ClickedSignal, &InGameOptions::Exit, this);
-    GG::Connect(m_done_btn->ClickedSignal, &InGameOptions::Done, this);
+    GG::Connect(m_save_btn->ClickedSignal, &InGameMenu::Save, this);
+    GG::Connect(m_load_btn->ClickedSignal, &InGameMenu::Load, this);
+	GG::Connect(m_options_btn->ClickedSignal, &InGameMenu::Options, this);
+    GG::Connect(m_exit_btn->ClickedSignal, &InGameMenu::Exit, this);
+    GG::Connect(m_done_btn->ClickedSignal, &InGameMenu::Done, this);
 
     if (!HumanClientApp::GetApp()->SinglePlayerGame()) {
         m_load_btn->Disable();
     }
 }
 
-void InGameOptions::Save()
+void InGameMenu::Save()
 {
     const std::string SAVE_GAME_EXTENSION = HumanClientApp::GetApp()->SinglePlayerGame() ? ".sav" : ".mps";
 
@@ -125,19 +125,19 @@ void InGameOptions::Save()
     }
 }
 
-void InGameOptions::Load()
+void InGameMenu::Load()
 {
     if (HumanClientApp::GetApp()->LoadSinglePlayerGame())
         CloseClicked();
 }
 
-void InGameOptions::Options()
+void InGameMenu::Options()
 {
     OptionsWnd options_wnd;
 	options_wnd.Run();
 }
 
-void InGameOptions::Exit()
+void InGameMenu::Exit()
 {
     if (HumanClientApp::GetApp()->NetworkCore().Connected())
         HumanClientApp::GetApp()->NetworkCore().DisconnectFromServer();
@@ -145,7 +145,7 @@ void InGameOptions::Exit()
     CloseClicked();
 }
 
-void InGameOptions::Done()
+void InGameMenu::Done()
 {
     m_done = true;
 }

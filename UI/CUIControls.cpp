@@ -258,10 +258,8 @@ void CUIArrowButton::RenderPressed()
 void CUIArrowButton::RenderRollover()
 {
     GG::Pt ul = UpperLeft() + GG::Pt(2, 1), lr = LowerRight() - GG::Pt(2, 1);
-    GG::Clr color_to_use = Color();
-    if (Disabled())
-        color_to_use = DisabledColor(Color());
-    else
+    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+    if (!Disabled())
         AdjustBrightness(color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
     IsoscelesTriangle(ul.x, ul.y, lr.x, lr.y, m_orientation, color_to_use);
 }
@@ -553,7 +551,7 @@ void CUIDropDownList::Render()
 
     if (m_render_drop_arrow) {
         GG::Clr triangle_color_to_use = ClientUI::DROP_DOWN_LIST_ARROW_COLOR;
-        if (m_mouse_here)
+        if (m_mouse_here && !Disabled())
             AdjustBrightness(triangle_color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
         IsoscelesTriangle(lr.x - triangle_width - margin * 5 / 2, ul.y + 2 * margin, lr.x - margin * 5 / 2, lr.y - 2 * margin, 
                           SHAPE_DOWN, triangle_color_to_use);
