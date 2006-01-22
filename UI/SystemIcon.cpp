@@ -42,7 +42,8 @@ namespace {
 SystemIcon::SystemIcon(int id, double zoom) :
     GG::Control(0, 0, 1, 1, GG::CLICKABLE),
     m_system(*ClientApp::GetUniverse().Object<const System>(id)),
-    m_static_graphic(0)
+    m_static_graphic(0),
+    m_default_star_color(GG::CLR_WHITE)
 {
     Connect(m_system.StateChangedSignal, &SystemIcon::Refresh, this);
 
@@ -61,13 +62,14 @@ SystemIcon::SystemIcon(int id, double zoom) :
 
     //setup static graphic
     m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::GR_FITGRAPHIC);
+    AdjustBrightness(m_default_star_color, 0.70);
+    m_static_graphic->SetColor(m_default_star_color);
     AttachChild(m_static_graphic);
 }
 
 
 SystemIcon::~SystemIcon()
-{
-}
+{}
 
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
@@ -106,6 +108,16 @@ void SystemIcon::LDoubleClick(const GG::Pt& pt, Uint32 keys)
 {
     if (!Disabled())
         LeftDoubleClickedSignal(m_system.ID());
+}
+
+void SystemIcon::MouseEnter(const GG::Pt& pt, Uint32 keys)
+{
+    m_static_graphic->SetColor(GG::CLR_WHITE);
+}
+
+void SystemIcon::MouseLeave(const GG::Pt& pt, Uint32 keys)
+{
+    m_static_graphic->SetColor(m_default_star_color);
 }
 
 void SystemIcon::Refresh()

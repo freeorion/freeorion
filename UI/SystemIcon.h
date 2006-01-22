@@ -56,6 +56,8 @@ public:
     virtual void   LClick(const GG::Pt& pt, Uint32 keys);
     virtual void   RClick(const GG::Pt& pt, Uint32 keys);
     virtual void   LDoubleClick(const GG::Pt& pt, Uint32 keys);
+    virtual void   MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void   MouseLeave(const GG::Pt& pt, Uint32 keys);
 
     void           Refresh(); //!< sets up the icon's fleet buttons, generates fleet movement lines, etc.  Should be called after an icon is attached to the map
     void           ClickFleetButton(Fleet* fleet); //!< clicks the FleetButton containing \a fleet
@@ -76,6 +78,7 @@ private:
     const System&                 m_system;         //!< the System object associated with this SystemIcon
     GG::StaticGraphic*            m_static_graphic; //!< the control used to render the displayed texture
     std::vector<GG::TextControl*> m_name;           //!< the control that holds the name of the system (multiple controls may be needed, since there may be multiple owners and thus colors)
+    GG::Clr                       m_default_star_color;
 
     std::map<int, FleetButton*> m_stationary_fleet_markers; //!< the fleet buttons for the fleets that are stationary in the system, indexed by Empire ID of the owner
     std::map<int, FleetButton*> m_moving_fleet_markers;     //!< the fleet buttons for the fleets that are under orders to move out of the system, indexed by Empire ID of the owner
