@@ -55,10 +55,29 @@ namespace {
 }
 
 ///////////////////////////////////////////////////////////
+// Constant                                              //
+///////////////////////////////////////////////////////////
+namespace ValueRef {
+template <>
+std::string Constant<int>::Description() const
+{
+    return boost::lexical_cast<std::string>(m_value);
+}
+
+template <>
+std::string Constant<double>::Description() const
+{
+    return boost::lexical_cast<std::string>(m_value);
+}
+}
+
+
+///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
+namespace ValueRef {
 template <>
-PlanetSize ValueRef::Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target) const
+PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
     PlanetSize retval = INVALID_PLANET_SIZE;
     if (m_property_name.back() == "PlanetSize") {
@@ -72,7 +91,7 @@ PlanetSize ValueRef::Variable<PlanetSize>::Eval(const UniverseObject* source, co
 }
 
 template <>
-PlanetType ValueRef::Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target) const
+PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
     PlanetType retval = INVALID_PLANET_TYPE;
     if (m_property_name.back() == "PlanetType") {
@@ -86,7 +105,7 @@ PlanetType ValueRef::Variable<PlanetType>::Eval(const UniverseObject* source, co
 }
 
 template <>
-PlanetEnvironment ValueRef::Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target) const
+PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
     PlanetEnvironment retval = INVALID_PLANET_ENVIRONMENT;
     if (m_property_name.back() == "PlanetEnvironment") {
@@ -100,7 +119,7 @@ PlanetEnvironment ValueRef::Variable<PlanetEnvironment>::Eval(const UniverseObje
 }
 
 template <>
-UniverseObjectType ValueRef::Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target) const
+UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
     UniverseObjectType retval = INVALID_UNIVERSE_OBJECT_TYPE;
     if (m_property_name.back() == "ObjectType") {
@@ -127,7 +146,7 @@ UniverseObjectType ValueRef::Variable<UniverseObjectType>::Eval(const UniverseOb
 }
 
 template <>
-StarType ValueRef::Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target) const
+StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
     StarType retval = INVALID_STAR_TYPE;
     if (m_property_name.back() == "StarType") {
@@ -141,7 +160,7 @@ StarType ValueRef::Variable<StarType>::Eval(const UniverseObject* source, const 
 }
 
 template <>
-FocusType ValueRef::Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target) const
+FocusType Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
     FocusType retval = INVALID_FOCUS_TYPE;
     if (m_property_name.back() == "PrimaryFocus") {
@@ -159,7 +178,7 @@ FocusType ValueRef::Variable<FocusType>::Eval(const UniverseObject* source, cons
 }
 
 template <>
-double ValueRef::Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target) const
+double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
     double retval = 0.0;
 
@@ -256,7 +275,7 @@ double ValueRef::Variable<double>::Eval(const UniverseObject* source, const Univ
 }
 
 template <>
-int ValueRef::Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target) const
+int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target) const
 {
     int retval = 0;
 
@@ -274,4 +293,5 @@ int ValueRef::Variable<int>::Eval(const UniverseObject* source, const UniverseOb
     }
 
     return retval;
+}
 }

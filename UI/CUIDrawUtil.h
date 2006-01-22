@@ -9,6 +9,9 @@
 /** adjusts the intensity of the color up or down by \a amount units per color channel; leaves alpha unchanged */
 void AdjustBrightness(GG::Clr& color, int amount);
 
+/** adjusts the intensity of the color up or down by multiplying the non-alpa channels by \a amount */
+void AdjustBrightness(GG::Clr& color, double amount);
+
 /** renders a rectangle whose upper left and lower right corners are angled.  If \a upper_left_angled == false, 
     the upper left corner is drawn as a normal corner */
 void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Clr border, int angle_offset, int thick, 

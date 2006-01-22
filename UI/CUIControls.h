@@ -109,7 +109,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool            InWindow(const GG::Pt& pt) const;
+    virtual bool   InWindow(const GG::Pt& pt) const;
     //@}
 
     /** \name Mutators */ //@{
@@ -164,6 +164,7 @@ public:
     {
     public:
         ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color, GG::Clr border_color); ///< basic ctor
+        virtual void SetColor(GG::Clr c);
         virtual void Render();
     private:
         GG::Clr m_border_color;
@@ -172,7 +173,8 @@ public:
 
     /** \name Structors */ //@{
     CUIScroll(int x, int y, int w, int h, GG::Orientation orientation, GG::Clr color = GG::CLR_ZERO, 
-              GG::Clr border = ClientUI::CTRL_BORDER_COLOR, GG::Clr interior = GG::CLR_ZERO, Uint32 flags = GG::CLICKABLE); ///< basic ctor
+              GG::Clr border = ClientUI::CTRL_BORDER_COLOR, GG::Clr interior = GG::CLR_ZERO,
+              Uint32 flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN); ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -186,8 +188,6 @@ public:
 
 private:
     GG::Clr m_border_color;
-
-    static GG::Button* NewDummyButton(); ///< creates "dummy up and down buttons, not actually used in FreeOrion's scrolls
 };
 
 
@@ -212,13 +212,14 @@ class CUIDropDownList : public GG::DropDownList
 public:
     /** \name Structors */ //@{
     CUIDropDownList(int x, int y, int w, int h, int drop_ht, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, 
-                    GG::Clr interior = ClientUI::DROP_DOWN_LIST_INT_COLOR, GG::Clr drop_list_interior = ClientUI::DROP_DOWN_LIST_INT_COLOR, 
-                    Uint32 flags = GG::CLICKABLE); ///< basic ctor
+                    GG::Clr interior = ClientUI::DROP_DOWN_LIST_INT_COLOR, Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
     virtual void   Render();
     virtual void   LClick(const GG::Pt& pt, Uint32 keys);
+    virtual void   MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void   MouseLeave(const GG::Pt& pt, Uint32 keys);
 
     void DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
     void EnableDropArrow();   ///< enables rendering of the small downward-facing arrow on the right of the control
@@ -226,6 +227,7 @@ public:
 
 private:
     bool m_render_drop_arrow;
+    bool m_mouse_here;
 };
 
 

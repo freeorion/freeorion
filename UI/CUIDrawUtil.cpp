@@ -50,9 +50,16 @@ namespace {
 
 void AdjustBrightness(GG::Clr& color, int amount)
 {
-	color.r = (color.r + amount < 0 ? 0 : (255 < color.r + amount ? 255 : color.r + amount));
-	color.g = (color.g + amount < 0 ? 0 : (255 < color.g + amount ? 255 : color.g + amount));
-	color.b = (color.b + amount < 0 ? 0 : (255 < color.b + amount ? 255 : color.b + amount));
+	color.r = std::max(0, std::min(color.r + amount, 255));
+	color.g = std::max(0, std::min(color.g + amount, 255));
+	color.b = std::max(0, std::min(color.b + amount, 255));
+}
+
+void AdjustBrightness(GG::Clr& color, double amount)
+{
+	color.r = std::max(0, std::min(static_cast<int>(color.r * amount), 255));
+	color.g = std::max(0, std::min(static_cast<int>(color.g * amount), 255));
+	color.b = std::max(0, std::min(static_cast<int>(color.b * amount), 255));
 }
 
 void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Clr border, int angle_offset, int thick, 

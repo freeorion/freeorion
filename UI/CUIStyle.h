@@ -32,7 +32,7 @@ public:
                                                 Uint32 flags = GG::CLICKABLE |GG::DRAG_KEEPER) const;
 
     virtual GG::Scroll*            NewScroll(int x, int y, int w, int h, GG::Orientation orientation, GG::Clr color, GG::Clr interior,
-                                             Uint32 flags = GG::CLICKABLE) const;
+                                             Uint32 flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN) const;
 
     virtual GG::Slider*            NewSlider(int x, int y, int w, int h, int min, int max, GG::Orientation orientation,
                                              GG::SliderLineStyle style, GG::Clr color, int tab_width, int line_width = 5,
@@ -48,11 +48,11 @@ public:
 
     virtual GG::Button*            NewScrollUpButton(int x, int y, int w, int h, const std::string& str,
                                                      const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                     Uint32 flags = GG::CLICKABLE) const;
+                                                     Uint32 flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN) const;
 
     virtual GG::Button*            NewScrollDownButton(int x, int y, int w, int h, const std::string& str,
                                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                       Uint32 flags = GG::CLICKABLE) const;
+                                                       Uint32 flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN) const;
 
     virtual GG::Button*            NewVScrollTabButton(int x, int y, int w, int h, const std::string& str,
                                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
@@ -60,11 +60,11 @@ public:
 
     virtual GG::Button*            NewScrollLeftButton(int x, int y, int w, int h, const std::string& str,
                                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                       Uint32 flags = GG::CLICKABLE) const;
+                                                       Uint32 flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN) const;
 
     virtual GG::Button*            NewScrollRightButton(int x, int y, int w, int h, const std::string& str,
                                                         const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                        Uint32 flags = GG::CLICKABLE) const;
+                                                        Uint32 flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN) const;
 
     virtual GG::Button*            NewHScrollTabButton(int x, int y, int w, int h, const std::string& str,
                                                        const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
@@ -80,11 +80,11 @@ public:
 
     virtual GG::Button*            NewSpinIncrButton(int x, int y, int w, int h, const std::string& str,
                                                      const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                     Uint32 flags = GG::CLICKABLE) const;
+                                                     Uint32 flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN) const;
 
     virtual GG::Button*            NewSpinDecrButton(int x, int y, int w, int h, const std::string& str,
                                                      const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                     Uint32 flags = GG::CLICKABLE) const;
+                                                     Uint32 flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN) const;
 
     virtual void                   DeleteWnd(GG::Wnd* wnd) const;
 };

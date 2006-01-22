@@ -82,6 +82,8 @@ namespace {
         return font ? font : GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
     }
 
+    const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
+
     bool temp_header_bool = RecordHeaderFile(CUIControlsRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 
@@ -223,7 +225,7 @@ CUITurnButton::CUITurnButton(int x, int y, int w, const std::string& str, const 
 // class CUIArrowButton
 ///////////////////////////////////////
 CUIArrowButton::CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orientation, GG::Clr color, Uint32 flags/* = GG::CLICKABLE*/) :
-    Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), color, flags),
+    Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), color, GG::CLR_ZERO, flags),
     m_orientation(orientation)
 {
     GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
@@ -257,14 +259,10 @@ void CUIArrowButton::RenderRollover()
 {
     GG::Pt ul = UpperLeft() + GG::Pt(2, 1), lr = LowerRight() - GG::Pt(2, 1);
     GG::Clr color_to_use = Color();
-    if (Disabled()) {
+    if (Disabled())
         color_to_use = DisabledColor(Color());
-    } else {
-        const double SCALE_FACTOR = 1.5;
-        color_to_use.r = std::min(static_cast<int>(color_to_use.r * SCALE_FACTOR), 255);
-        color_to_use.g = std::min(static_cast<int>(color_to_use.g * SCALE_FACTOR), 255);
-        color_to_use.b = std::min(static_cast<int>(color_to_use.b * SCALE_FACTOR), 255);
-    }
+    else
+        AdjustBrightness(color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
     IsoscelesTriangle(ul.x, ul.y, lr.x, lr.y, m_orientation, color_to_use);
 }
 
@@ -404,6 +402,11 @@ CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, G
                       m_orientation == GG::VERTICAL ? 10 : MinSize().y));
 }
 
+void CUIScroll::ScrollTab::SetColor(GG::Clr c)
+{
+    // ignore
+}
+
 void CUIScroll::ScrollTab::Render()
 {
     GG::Pt ul = UpperLeft();
@@ -460,11 +463,10 @@ void CUIScroll::ScrollTab::Render()
 ///////////////////////////////////////
 CUIScroll::CUIScroll(int x, int y, int w, int h, GG::Orientation orientation, GG::Clr color/* = GG::CLR_ZERO*/, 
                      GG::Clr border/* = ClientUI::CTRL_BORDER_COLOR*/, GG::Clr interior/* = GG::CLR_ZERO*/, 
-                     Uint32 flags/* = CLICKABLE*/) :
+                     Uint32 flags/* = CLICKABLE | REPEAT_BUTTON_DOWN*/) :
     Scroll(x, y, w, h, orientation, color, interior, flags),
     m_border_color(border)
-{
-}
+{}
 
 void CUIScroll::Render()
 {
@@ -473,26 +475,16 @@ void CUIScroll::Render()
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     FlatRectangle(ul.x, ul.y, lr.x, lr.y, color_to_use, border_color_to_use, 1);
-    if (!Disabled()) { // hide tab if disabled
-        TabButton()->OffsetMove(UpperLeft());
-        TabButton()->Render();
-        TabButton()->OffsetMove(-UpperLeft());
-    }
 }
 
 void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
     int bn_width = (ScrollOrientation() == GG::VERTICAL) ? Size().x : Size().y;
-    TabButton()->SizeMove(TabButton()->UpperLeft(), 
-                          (ScrollOrientation() == GG::VERTICAL) ? GG::Pt(bn_width, TabButton()->LowerRight().y) :
-                          GG::Pt(TabButton()->LowerRight().x, bn_width));
+    TabButton()->SizeMove(TabButton()->RelativeUpperLeft(), 
+                          (ScrollOrientation() == GG::VERTICAL) ? GG::Pt(bn_width, TabButton()->RelativeLowerRight().y) :
+                          GG::Pt(TabButton()->RelativeLowerRight().x, bn_width));
     SizeScroll(ScrollRange().first, ScrollRange().second, LineSize(), PageSize()); // update tab size and position
-}
-
-GG::Button* CUIScroll::NewDummyButton()
-{
-    return new GG::Button(-2, -2, 2, 2, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO);
 }
 
 
@@ -525,14 +517,14 @@ void CUIListBox::Render()
 // class CUIDropDownList
 ///////////////////////////////////////
 namespace {
-const int CUIDROPDOWNLIST_ANGLE_OFFSET = 5;
+    const int CUIDROPDOWNLIST_ANGLE_OFFSET = 5;
 }
 
 CUIDropDownList::CUIDropDownList(int x, int y, int w, int h, int drop_ht, GG::Clr color/* = ClientUI::CTRL_BORDER_COLOR*/,
-                                 GG::Clr interior/* = ClientUI::DROP_DOWN_LIST_INT_COLOR*/, 
-                                 GG::Clr drop_list_interior/* = ClientUI::DROP_DOWN_LIST_INT_COLOR*/, Uint32 flags/* = CLICKABLE*/) : 
+                                 GG::Clr interior/* = ClientUI::DROP_DOWN_LIST_INT_COLOR*/, Uint32 flags/* = CLICKABLE*/) : 
     DropDownList(x, y, w, h, drop_ht, color),
-    m_render_drop_arrow(true)
+    m_render_drop_arrow(true),
+    m_mouse_here(false)
 {
     SetInteriorColor(interior);
 }
@@ -560,8 +552,11 @@ void CUIDropDownList::Render()
     int outline_width = triangle_width + 3 * margin;
 
     if (m_render_drop_arrow) {
+        GG::Clr triangle_color_to_use = ClientUI::DROP_DOWN_LIST_ARROW_COLOR;
+        if (m_mouse_here)
+            AdjustBrightness(triangle_color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
         IsoscelesTriangle(lr.x - triangle_width - margin * 5 / 2, ul.y + 2 * margin, lr.x - margin * 5 / 2, lr.y - 2 * margin, 
-                          SHAPE_DOWN, ClientUI::DROP_DOWN_LIST_ARROW_COLOR);
+                          SHAPE_DOWN, triangle_color_to_use);
     }
 
     AngledCornerRectangle(lr.x - outline_width - margin, ul.y + margin, lr.x - margin, lr.y - margin, GG::CLR_ZERO, 
@@ -573,6 +568,17 @@ void CUIDropDownList::LClick(const GG::Pt& pt, Uint32 keys)
     if (!Disabled())
         PlayDropDownListOpenSound();
     DropDownList::LClick(pt, keys);
+}
+
+void CUIDropDownList::MouseEnter(const GG::Pt& pt, Uint32 keys)
+{
+    HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+    m_mouse_here = true;
+}
+
+void CUIDropDownList::MouseLeave(const GG::Pt& pt, Uint32 keys)
+{
+    m_mouse_here = false;
 }
 
 void CUIDropDownList::DisableDropArrow()
@@ -650,8 +656,7 @@ void CUIMultiEdit::Render()
 ///////////////////////////////////////
 CUISlider::CUISlider(int x, int y, int w, int h, int min, int max, GG::Orientation orientation, Uint32 flags/* = CLICKABLE*/) :
     Slider(x, y, w, h, min, max, orientation, GG::FLAT, ClientUI::CTRL_COLOR, orientation == GG::VERTICAL ? w : h, 5, flags)
-{
-}
+{}
 
 void CUISlider::Render()
 {

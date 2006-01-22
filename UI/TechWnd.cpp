@@ -459,7 +459,7 @@ private:
     CUIButton*          m_recenter_button;
     CUIButton*          m_add_to_queue_button;
     CUIMultiEdit*       m_description_box;
-    GG::StaticGraphic   *m_tech_graphic;          ///< image of the tech (can be a frameset);
+    GG::StaticGraphic*  m_tech_graphic;
 };
 
 TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
@@ -1140,10 +1140,8 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
 {
     EnableChildClipping(true);
 
-    m_vscroll = new CUIScroll(w - ClientUI::SCROLL_WIDTH, 0, ClientUI::SCROLL_WIDTH, h - ClientUI::SCROLL_WIDTH, GG::VERTICAL,
-                              GG::CLR_BLACK, ClientUI::CTRL_BORDER_COLOR, GG::CLR_BLACK);
-    m_hscroll = new CUIScroll(0, h - ClientUI::SCROLL_WIDTH, w - ClientUI::SCROLL_WIDTH, ClientUI::SCROLL_WIDTH, GG::HORIZONTAL,
-                              GG::CLR_BLACK, ClientUI::CTRL_BORDER_COLOR, GG::CLR_BLACK);
+    m_vscroll = new CUIScroll(w - ClientUI::SCROLL_WIDTH, 0, ClientUI::SCROLL_WIDTH, h - ClientUI::SCROLL_WIDTH, GG::VERTICAL);
+    m_hscroll = new CUIScroll(0, h - ClientUI::SCROLL_WIDTH, w - ClientUI::SCROLL_WIDTH, ClientUI::SCROLL_WIDTH, GG::HORIZONTAL);
 
     AttachChild(m_vscroll);
     AttachChild(m_hscroll);

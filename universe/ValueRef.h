@@ -2,6 +2,7 @@
 #ifndef _ValueRef_h_
 #define _ValueRef_h_
 
+#include "Enums.h"
 #include "../util/MultiplayerCommon.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -131,16 +132,12 @@ std::string ValueRef::Constant<T>::Description() const
     return UserString(boost::lexical_cast<std::string>(m_value));
 }
 
+namespace ValueRef {
 template <>
-inline std::string ValueRef::Constant<int>::Description() const
-{
-    return boost::lexical_cast<std::string>(m_value);
-}
+std::string Constant<int>::Description() const;
 
 template <>
-inline std::string ValueRef::Constant<double>::Description() const
-{
-    return boost::lexical_cast<std::string>(m_value);
+std::string Constant<double>::Description() const;
 }
 
 ///////////////////////////////////////////////////////////
@@ -174,6 +171,32 @@ std::string ValueRef::Variable<T>::Description() const
         formatter % UserString("DESC_VAR_" + boost::to_upper_copy(m_property_name[i]));
     }
     return boost::io::str(formatter);
+}
+
+namespace ValueRef {
+template <>
+PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+
+template <>
+PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+
+template <>
+PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+
+template <>
+UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+
+template <>
+StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+
+template <>
+FocusType Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+
+template <>
+double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+
+template <>
+int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target) const;
 }
 
 ///////////////////////////////////////////////////////////

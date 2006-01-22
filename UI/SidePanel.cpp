@@ -1364,7 +1364,7 @@ const int SidePanel::MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER / 3; // size of a
 SidePanel::SidePanel(int x, int y, int w, int h) : 
     Wnd(x, y, w, h, GG::CLICKABLE),
     m_system(0),
-    m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5),ClientUI::SIDE_PANEL_COLOR)),
+    m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5))),
     m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,UserString("SP_UNKNOWN_SYSTEM"),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4)),ClientUI::TEXT_COLOR)),
     m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),GG::CLR_WHITE,GG::CLICKABLE)),
     m_button_next(new GG::Button(40+w-80                 ,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),GG::CLR_WHITE,GG::CLICKABLE)),

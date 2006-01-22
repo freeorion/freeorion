@@ -137,7 +137,7 @@ public:
     const XMLElement& LastChild() const;
 
     /** returns the value of the attribute with name \a key, or "" if no such named attribute is found */
-    const std::string& XMLElement::Attribute(const std::string& attrib) const;
+    const std::string& Attribute(const std::string& attrib) const;
 
     /** writes the XMLElement to an output stream; returns the stream */
     std::ostream& WriteElement(std::ostream& os, int indent = 0, bool whitespace = true) const;
