@@ -20,8 +20,8 @@ class CombatWnd : public CUIWnd
 
     /** \name Structors */ //@{
     CombatWnd(int x,int y);
-    //@}
     ~CombatWnd();
+    //@}
 
     void UpdateCombatTurnProgress(const std::string& message);
 

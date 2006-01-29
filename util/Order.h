@@ -122,8 +122,8 @@ public:
     /** \name Structors */ //@{
     NewFleetOrder();
     NewFleetOrder(const XMLElement& elem);
-    explicit NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, int ship_id = UniverseObject::INVALID_OBJECT_ID);
-    explicit NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, double x, double y, int ship_id = UniverseObject::INVALID_OBJECT_ID);
+    explicit NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, const std::vector<int>& ship_ids);
+    explicit NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, double x, double y, const std::vector<int>& ship_ids);
     //@}
 
     /** \name Accessors */ //@{
@@ -131,7 +131,7 @@ public:
     int                       SystemID() const     {return m_system_id;}  ///< returns the system the new fleet will be placed into (may be INVALID_OBJECT_ID if a position is specified)
     std::pair<double, double> Position() const     {return m_position;}   ///< returns the position of the new fleet (may be (INVALID_POSITION, INVALID_POSITION) if in a system)
     int                       NewID() const        {return m_new_id;}     ///< returns the ID for this fleet 
-    int                       ShipID() const       {return m_ship_id;}    ///< returns the ID for the ship used to start this fleet, or UniverseObject::INVALID_OBJECT_ID if no such ship exists
+    const std::vector<int>&   ShipIDs() const      {return m_ship_ids;}   ///< returns the IDa for the ships used to start this fleet
 
     virtual XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
@@ -152,7 +152,7 @@ private:
     int                       m_system_id;
     int                       m_new_id;
     std::pair<double, double> m_position;
-    int                       m_ship_id;
+    std::vector<int>          m_ship_ids;
 };
 
 

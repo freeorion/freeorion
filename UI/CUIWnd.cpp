@@ -364,11 +364,10 @@ int CUIWnd::InnerBorderAngleOffset() const
 void CUIWnd::CloseClicked()
 {
     m_done = true;
-    if (Parent()) {
-        Parent()->DeleteChild(this);
-    } else {
+    if (Parent())
+        Parent()->DetachChild(this);
+    else
         GG::GUI::GetGUI()->Remove(this);
-    }
 }
 
 void CUIWnd::MinimizeClicked()
@@ -447,5 +446,6 @@ const std::string& CUIEditWnd::Result() const
 
 void CUIEditWnd::OkClicked() 
 {
-    m_result = m_edit->WindowText(); CloseClicked();
+    m_result = m_edit->WindowText();
+    CloseClicked();
 }

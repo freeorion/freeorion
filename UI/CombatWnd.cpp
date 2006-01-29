@@ -182,7 +182,6 @@ CombatWnd::~CombatWnd( )
 {
 }
 
-
 void CombatWnd::UpdateCombatTurnProgress(const std::string& message)
 {
   std::stringstream stream(message);

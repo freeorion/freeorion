@@ -56,7 +56,7 @@ public:
 
     /** \name Structors */ //@{
     UniverseObject();    ///< default ctor
-   
+
     /** general ctor.  \throw std::invalid_argument May throw
         std::invalid_argument if the either x or y coordinate is
         outside the map area.*/

@@ -44,7 +44,7 @@ private:
 
     ProductionInfoPanel* m_production_info_panel;
     CUIListBox*          m_queue_lb;
-    BuildDesignatorWnd*  m_buid_designator_wnd;
+    BuildDesignatorWnd*  m_build_designator_wnd;
 };
 
 inline std::pair<std::string, std::string> ProductionWndRevision()

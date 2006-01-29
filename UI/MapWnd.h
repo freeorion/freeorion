@@ -204,9 +204,11 @@ class MapWndPopup : public CUIWnd
 public:
     MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags );
     MapWndPopup(const XMLElement& elem);     
-    virtual ~MapWndPopup( );
+    virtual ~MapWndPopup();
 
-    void Close( );      //!< closes the MapWndPopup   
+    void CloseClicked();
+
+    void Close();      //!< closes the MapWndPopup   
 };
 
 inline std::pair<std::string, std::string> MapWndRevision()

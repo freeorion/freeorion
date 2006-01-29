@@ -136,6 +136,12 @@ MapWndPopup::~MapWndPopup( )
     ClientUI::GetClientUI()->GetMapWnd()->RemovePopup( this );
 }
 
+void MapWndPopup::CloseClicked()
+{
+    CUIWnd::CloseClicked();
+    delete this;
+}
+
 void MapWndPopup::Close( )
 {
     // close window as though it's been clicked closed by the user.

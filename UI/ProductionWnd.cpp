@@ -148,18 +148,18 @@ ProductionWnd::ProductionWnd(int w, int h) :
     CUIWnd(UserString("PRODUCTION_WND_TITLE"), 0, 0, w, h, GG::CLICKABLE | GG::ONTOP),
     m_production_info_panel(0),
     m_queue_lb(0),
-    m_buid_designator_wnd(0)
+    m_build_designator_wnd(0)
 {
     m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, 200, UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                       OUTER_LINE_THICKNESS, ClientUI::KNOWN_TECH_FILL_COLOR, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR);
     m_queue_lb = new CUIListBox(2, m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height());
     m_queue_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL | GG::LB_USERDELETE);
     GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width() + 6, 6);
-    m_buid_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
-    m_buid_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width() + 3, 3));
+    m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
+    m_build_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width() + 3, 3));
 
-    GG::Connect(m_buid_designator_wnd->AddBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this);
-    GG::Connect(m_buid_designator_wnd->BuildQuantityChangedSignal, &ProductionWnd::ChangeBuildQuantitySlot, this);
+    GG::Connect(m_build_designator_wnd->AddBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this);
+    GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal, &ProductionWnd::ChangeBuildQuantitySlot, this);
     GG::Connect(m_queue_lb->DroppedSignal, &ProductionWnd::QueueItemMovedSlot, this);
     GG::Connect(m_queue_lb->ErasedSignal, &ProductionWnd::QueueItemDeletedSlot, this);
     GG::Connect(m_queue_lb->LeftClickedSignal, &ProductionWnd::QueueItemClickedSlot, this);
@@ -167,7 +167,7 @@ ProductionWnd::ProductionWnd(int w, int h) :
 
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_lb);
-    AttachChild(m_buid_designator_wnd);
+    AttachChild(m_build_designator_wnd);
 }
 
 GG::Pt ProductionWnd::ClientUpperLeft() const
@@ -182,19 +182,19 @@ GG::Pt ProductionWnd::ClientLowerRight() const
 
 bool ProductionWnd::InWindow(const GG::Pt& pt) const
 {
-    GG::Rect clip_rect = m_buid_designator_wnd->MapViewHole() + m_buid_designator_wnd->UpperLeft();
-    return clip_rect.Contains(pt) ? m_buid_designator_wnd->InWindow(pt) : CUIWnd::InWindow(pt);
+    GG::Rect clip_rect = m_build_designator_wnd->MapViewHole() + m_build_designator_wnd->UpperLeft();
+    return clip_rect.Contains(pt) ? m_build_designator_wnd->InWindow(pt) : CUIWnd::InWindow(pt);
 }
 
 bool ProductionWnd::InClient(const GG::Pt& pt) const
 {
-    GG::Rect clip_rect = m_buid_designator_wnd->MapViewHole() + m_buid_designator_wnd->UpperLeft();
-    return clip_rect.Contains(pt) ? m_buid_designator_wnd->InClient(pt) : CUIWnd::InClient(pt);
+    GG::Rect clip_rect = m_build_designator_wnd->MapViewHole() + m_build_designator_wnd->UpperLeft();
+    return clip_rect.Contains(pt) ? m_build_designator_wnd->InClient(pt) : CUIWnd::InClient(pt);
 }
 
 void ProductionWnd::Render()
 {
-    GG::Rect clip_rect = m_buid_designator_wnd->MapViewHole() + m_buid_designator_wnd->UpperLeft();
+    GG::Rect clip_rect = m_build_designator_wnd->MapViewHole() + m_build_designator_wnd->UpperLeft();
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, BORDER_TOP);
@@ -284,22 +284,22 @@ void ProductionWnd::Reset()
     ResetInfoPanel();
     UpdateQueue();
     m_queue_lb->BringRowIntoView(0);
-    m_buid_designator_wnd->Reset();
+    m_build_designator_wnd->Reset();
 }
 
 void ProductionWnd::CenterOnBuild(int queue_idx)
 {
-    m_buid_designator_wnd->CenterOnBuild(queue_idx);
+    m_build_designator_wnd->CenterOnBuild(queue_idx);
 }
 
 void ProductionWnd::SelectSystem(int system)
 {
-    m_buid_designator_wnd->SelectSystem(system);
+    m_build_designator_wnd->SelectSystem(system);
 }
 
 void ProductionWnd::Sanitize()
 {
-    m_buid_designator_wnd->Clear();
+    m_build_designator_wnd->Clear();
 }
 
 void ProductionWnd::UpdateQueue()
@@ -335,7 +335,7 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string&
     HumanClientApp::Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, name, number, location));
     UpdateQueue();
     ResetInfoPanel();
-    m_buid_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
+    m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
 }
 
 void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity)
@@ -350,10 +350,10 @@ void ProductionWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
     HumanClientApp::Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), row_idx));
     UpdateQueue();
     ResetInfoPanel();
-    if (row_idx == m_buid_designator_wnd->QueueIndexShown()) {
-        m_buid_designator_wnd->CenterOnBuild(-1);
-    } else if (row_idx < m_buid_designator_wnd->QueueIndexShown()) {
-        m_buid_designator_wnd->CenterOnBuild(m_buid_designator_wnd->QueueIndexShown() - 1);
+    if (row_idx == m_build_designator_wnd->QueueIndexShown()) {
+        m_build_designator_wnd->CenterOnBuild(-1);
+    } else if (row_idx < m_build_designator_wnd->QueueIndexShown()) {
+        m_build_designator_wnd->CenterOnBuild(m_build_designator_wnd->QueueIndexShown() - 1);
     }
 }
 
@@ -366,7 +366,7 @@ void ProductionWnd::QueueItemMovedSlot(int row_idx, GG::ListBox::Row* row)
 
 void ProductionWnd::QueueItemClickedSlot(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt)
 {
-    m_buid_designator_wnd->CenterOnBuild(row_idx);
+    m_build_designator_wnd->CenterOnBuild(row_idx);
 }
 
 void ProductionWnd::QueueItemDoubleClickedSlot(int row_idx, GG::ListBox::Row* row)

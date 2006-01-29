@@ -19,6 +19,12 @@
 using boost::lexical_cast;
 using std::vector;
 
+#define DEBUG_CREATE_FLEET_ORDER 0
+#define DEBUG_FLEET_MOVE_ORDER   0
+#if DEBUG_CREATE_FLEET_ORDER || DEBUG_FLEET_MOVE_ORDER
+#  include <iostream>
+#endif
+
 // TEMPORARY!  This should go into some sort of external
 // XML file that the server uses for game rules like this
 // I will be coding such a class in the near future -- jbarcz1
@@ -68,7 +74,7 @@ XMLElement Order::XMLEncode() const
 void Order::ValidateEmpireID() const
 {
     EmpireManager* empire = &Empires(); 
-    if(empire->Lookup(EmpireID()) == NULL)
+    if (empire->Lookup(EmpireID()) == NULL)
     {
         throw std::runtime_error("Invalid empire ID specified for order.");
     }
@@ -183,27 +189,58 @@ NewFleetOrder::NewFleetOrder(const XMLElement& elem) :
     m_position = std::make_pair(lexical_cast<double>(elem.Child("m_position").Child("x").Text()), 
                                 lexical_cast<double>(elem.Child("m_position").Child("y").Text()));
     m_new_id = lexical_cast<int>(elem.Child("m_new_id").Text());
-    m_ship_id = lexical_cast<int>(elem.Child("m_ship_id").Text());
+    m_ship_ids = ContainerFromString<std::vector<int> >(elem.Child("m_ship_ids").Text());
+
+#if DEBUG_CREATE_FLEET_ORDER
+    std::cerr << "NewFleetOrder(const XMLElement& elem) : \n"
+              << "    m_empire=" << EmpireID() << "\n"
+              << "    m_fleet_name=" << m_fleet_name << "\n"
+              << "    m_system_id=" << m_system_id << "\n"
+              << "    m_position=(" << m_position.first << " " << m_position.second << ")\n"
+              << "    m_new_id=" << m_new_id << "\n"
+              << "    m_ship_ids.size()=" << m_ship_ids.size() << "\n"
+              << std::endl;
+#endif
 }
 
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, int ship_id/* = UniverseObject::INVALID_OBJECT_ID*/) :
+NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, const std::vector<int>& ship_ids) :
     Order(empire),
     m_fleet_name(fleet_name),
     m_system_id(system_id),
     m_new_id( new_id ),
     m_position(std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION)),
-    m_ship_id(ship_id)
+    m_ship_ids(ship_ids)
 {
+#if DEBUG_CREATE_FLEET_ORDER
+    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, int ship_id) : \n"
+              << "    m_empire=" << EmpireID() << "\n"
+              << "    m_fleet_name=" << m_fleet_name << "\n"
+              << "    m_system_id=" << m_system_id << "\n"
+              << "    m_position=(" << m_position.first << " " << m_position.second << ")\n"
+              << "    m_new_id=" << m_new_id << "\n"
+              << "    m_ship_ids.size()=" << m_ship_ids.size() << "\n"
+              << std::endl;
+#endif
 }
 
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,  const int new_id, double x, double y, int ship_id/* = UniverseObject::INVALID_OBJECT_ID*/) :
+NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,  const int new_id, double x, double y, const std::vector<int>& ship_ids) :
     Order(empire),
     m_fleet_name(fleet_name),
     m_system_id(-1),
-    m_new_id( new_id ),
+    m_new_id(new_id),
     m_position(std::make_pair(x, y)),
-    m_ship_id(ship_id)
+    m_ship_ids(ship_ids)
 {
+#if DEBUG_CREATE_FLEET_ORDER
+    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name,  const int new_id, double x, double y, int ship_id : \n"
+              << "    m_empire=" << EmpireID() << "\n"
+              << "    m_fleet_name=" << m_fleet_name << "\n"
+              << "    m_system_id=" << m_system_id << "\n"
+              << "    m_position=(" << m_position.first << " " << m_position.second << ")\n"
+              << "    m_new_id=" << m_new_id << "\n"
+              << "    m_ship_ids.size()=" << m_ship_ids.size() << "\n"
+              << std::endl;
+#endif
 }
 
 XMLElement NewFleetOrder::XMLEncode() const
@@ -216,7 +253,7 @@ XMLElement NewFleetOrder::XMLEncode() const
     retval.AppendChild(XMLElement("m_position"));
     retval.LastChild().AppendChild(XMLElement("x", lexical_cast<std::string>(m_position.first)));
     retval.LastChild().AppendChild(XMLElement("y", lexical_cast<std::string>(m_position.second)));
-    retval.AppendChild(XMLElement("m_ship_id", lexical_cast<std::string>(m_ship_id)));
+    retval.AppendChild(XMLElement("m_ship_ids", StringFromContainer<std::vector<int> >(m_ship_ids)));
     return retval;
 }
 
@@ -232,14 +269,16 @@ void NewFleetOrder::ExecuteImpl() const
         // an ID is provided to ensure consistancy between server and client universes
         universe.InsertID(fleet, m_new_id);
         system->Insert(fleet);
-        if (m_ship_id != UniverseObject::INVALID_OBJECT_ID)
-            fleet->AddShip(m_ship_id);
+        for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
+            fleet->AddShip(m_ship_ids[i]);
+        }
     } else {
         fleet = new Fleet(m_fleet_name, m_position.first, m_position.second, EmpireID());
         // an ID is provided to ensure consistency between server and client universes
         universe.InsertID(fleet, m_new_id);
-        if (m_ship_id != UniverseObject::INVALID_OBJECT_ID)
-            fleet->AddShip(m_ship_id);
+        for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
+            fleet->AddShip(m_ship_ids[i]);
+        }
     }
 }
 
@@ -257,7 +296,7 @@ FleetMoveOrder::FleetMoveOrder() :
 
 FleetMoveOrder::FleetMoveOrder(const XMLElement& elem) : Order(elem.Child("Order"))
 {
-    if(elem.Tag()!=("FleetMoveOrder"))
+    if (elem.Tag()!=("FleetMoveOrder"))
         throw std::invalid_argument("Attempted to construct FleetMoveOrder from malformed XMLElement");
     
     m_fleet = lexical_cast<int>(elem.Child("m_fleet").Text());
@@ -265,6 +304,17 @@ FleetMoveOrder::FleetMoveOrder(const XMLElement& elem) : Order(elem.Child("Order
     m_dest_system = lexical_cast<int>(elem.Child("m_dest_system").Text());
     m_route = ContainerFromString<std::vector<int> >(elem.Child("m_route").Text());
     m_route_length = lexical_cast<double>(elem.Child("m_route_length").Text());
+
+#if DEBUG_FLEET_MOVE_ORDER
+    std::cerr << "FleetMoveOrder(const XMLElement& elem) : \n"
+              << "    m_empire=" << EmpireID() << "\n"
+              << "    m_fleet=" << m_fleet << "\n"
+              << "    m_start_system=" << m_start_system << "\n"
+              << "    m_dest_system=" << m_dest_system << "\n"
+              << "    m_route.size()=" << m_route.size() << "\n"
+              << "    m_route_length=" << m_route_length << "\n"
+              << std::endl;
+#endif
 }
 
 FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : 
@@ -278,6 +328,17 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest
         m_route.push_back((*it)->ID());
     }
     m_route_length = route.second;
+
+#if DEBUG_FLEET_MOVE_ORDER
+    std::cerr << "FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : \n"
+              << "    m_empire=" << EmpireID() << "\n"
+              << "    m_fleet=" << m_fleet << "\n"
+              << "    m_start_system=" << m_start_system << "\n"
+              << "    m_dest_system=" << m_dest_system << "\n"
+              << "    m_route.size()=" << m_route.size() << "\n"
+              << "    m_route_length=" << m_route_length << "\n"
+              << std::endl;
+#endif
 }
 
 XMLElement FleetMoveOrder::XMLEncode() const
@@ -303,13 +364,13 @@ void FleetMoveOrder::ExecuteImpl() const
     Fleet* the_fleet = universe_object_cast<Fleet*> ( the_object );
     
     // perform sanity check
-    if(the_fleet == NULL)
+    if (the_fleet == NULL)
     {
         throw std::runtime_error("Non-fleet object ID specified in fleet move order.");
     }
     
     // verify that empire specified in order owns specified fleet
-    if( !the_fleet->OwnedBy(EmpireID()) )
+    if ( !the_fleet->OwnedBy(EmpireID()) )
     {
         throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) + 
                                  " specified in fleet order does not own specified fleet " + boost::lexical_cast<std::string>(FleetID()) + ".");
@@ -320,7 +381,7 @@ void FleetMoveOrder::ExecuteImpl() const
     System* the_system = universe_object_cast<System*> (another_object);
     
     // perform another sanity check
-    if(the_system == NULL)
+    if (the_system == NULL)
     {
         throw std::runtime_error("Non-system destination ID specified in fleet move order.");
     }
@@ -348,7 +409,7 @@ FleetTransferOrder::FleetTransferOrder() :
 
 FleetTransferOrder::FleetTransferOrder(const XMLElement& elem) : Order(elem.Child("Order"))
 {
-    if(elem.Tag() !=("FleetTransferOrder"))
+    if (elem.Tag() !=("FleetTransferOrder"))
         throw std::invalid_argument("Attempted to construct FleetTransferOrder from malformed XMLElement");
     
     m_fleet_from = lexical_cast<int> (elem.Child("m_fleet_from").Text());
@@ -386,13 +447,13 @@ void FleetTransferOrder::ExecuteImpl() const
     Fleet* target_fleet = universe.Object<Fleet>(DestinationFleet());
     
     // sanity check
-    if(!source_fleet || !target_fleet)
+    if (!source_fleet || !target_fleet)
     {
         throw std::runtime_error("Illegal fleet id specified in fleet merge order.");
     }
     
     // verify that empire is not trying to take ships from somebody else's fleet
-    if( !source_fleet->OwnedBy(EmpireID()) )
+    if ( !source_fleet->OwnedBy(EmpireID()) )
     {
         throw std::runtime_error("Empire attempted to merge ships from another's fleet.");
     }
@@ -401,7 +462,7 @@ void FleetTransferOrder::ExecuteImpl() const
     // this is just an additional security measure.  IT could be removed to
     // allow 'donations' of ships to other players, provided the server
     // verifies IDs of the Empires issuing the orders.
-    if( !target_fleet->OwnedBy(EmpireID()) )
+    if ( !target_fleet->OwnedBy(EmpireID()) )
     {
         throw std::runtime_error("Empire attempted to merge ships into another's fleet.");
     }
@@ -414,14 +475,14 @@ void FleetTransferOrder::ExecuteImpl() const
         // find the ship, verify that ID is valid
         int curr = (*itr);
         Ship* a_ship = universe.Object<Ship>(curr);
-        if(!a_ship)
+        if (!a_ship)
         {
             throw std::runtime_error("Illegal ship id specified in fleet merge order.");
         }
         
         // figure out what fleet this ship is coming from -- verify its the one we
         // said it comes from
-        if(a_ship->FleetID() != SourceFleet() )
+        if (a_ship->FleetID() != SourceFleet() )
         {
             throw std::runtime_error("Ship in merge order is not in specified source fleet.");
         }
@@ -449,7 +510,7 @@ FleetColonizeOrder::FleetColonizeOrder() :
 FleetColonizeOrder::FleetColonizeOrder(const XMLElement& elem) :
     Order(elem.Child("Order"))
 {
-    if(elem.Tag() != ("FleetColonizeOrder"))
+    if (elem.Tag() != ("FleetColonizeOrder"))
         throw std::invalid_argument("Attempted to construct FleetColonizeOrder from malformed XMLElement");
     
     m_ship   = lexical_cast<int>(elem.Child("m_ship").Text());
@@ -592,7 +653,7 @@ DeleteFleetOrder::DeleteFleetOrder() :
 DeleteFleetOrder::DeleteFleetOrder(const XMLElement& elem):
     Order(elem.Child("Order"))
 {
-    if(elem.Tag() != ("DeleteFleetOrder"))
+    if (elem.Tag() != ("DeleteFleetOrder"))
         throw std::invalid_argument("Attempted to construct DeleteFleetOrder from malformed XMLElement");
 
     m_fleet = lexical_cast<int>(elem.Child("m_fleet").Text());
@@ -646,7 +707,7 @@ ChangeFocusOrder::ChangeFocusOrder() :
 ChangeFocusOrder::ChangeFocusOrder(const XMLElement& elem):
     Order(elem.Child("Order"))
 {
-    if(elem.Tag() != ("ChangeFocusOrder"))
+    if (elem.Tag() != ("ChangeFocusOrder"))
         throw std::invalid_argument("Attempted to construct ChangeFocusOrder from malformed XMLElement");
 
     m_planet = lexical_cast<int>(elem.Child("m_planet").Text());
@@ -678,7 +739,7 @@ void ChangeFocusOrder::ExecuteImpl() const
 
     Planet* planet = GetUniverse().Object<Planet>(PlanetID());
 
-    if(!planet)
+    if (!planet)
         throw std::runtime_error("Illegal planet id specified in change planet focus order.");
 
     if (!planet->OwnedBy(EmpireID()))
