@@ -16,6 +16,7 @@
 
 class CUIListBox;
 class Fleet;
+class FleetDataPanel;
 class FleetDetailPanel;
 class FleetsListBox;
 class Ship;
@@ -129,6 +130,7 @@ private:
     std::map<FleetDetailWnd*, boost::signals::connection> m_open_fleet_detail_wnd_connections;
 
     FleetsListBox*      m_fleets_lb;
+    FleetDataPanel*     m_new_fleet_drop_target;
     FleetDetailPanel*   m_fleet_detail_panel;
 
     boost::signals::connection  m_lb_delete_connection;

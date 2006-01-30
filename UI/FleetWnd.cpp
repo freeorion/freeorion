@@ -23,6 +23,38 @@
 #include <boost/format.hpp>
 #include <iostream>
 
+
+class FleetDataPanel : public GG::Control
+{
+public:
+    enum {
+        FLEET_ICON_SZ = 38, 
+        FLEET_NAME_HT = 20, 
+        STAT_ICON_WD = 40
+    };
+
+    FleetDataPanel(int w, int h, const Fleet* fleet);
+
+    virtual void Render();
+    virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt);
+    void Select(bool b);
+
+    mutable boost::signal<void (Ship*, const std::vector<int>&)> NewFleetFromShipsSignal;
+
+private:
+    void SetFleetIcon();
+    void Refresh();
+
+    const Fleet* const m_fleet;
+    GG::StaticGraphic* m_fleet_icon;
+    GG::TextControl* m_fleet_name_text;
+    StatisticIcon* m_num_ships_stat;
+    StatisticIcon* m_fleet_strength_stat;
+    GG::StaticGraphic* m_damage_icon;
+    GG::StaticGraphic* m_colonizer_icon;
+    bool m_selected;
+};
+
 namespace {
     const int NEW_FLEET_BUTTON_WIDTH = 75;
     const int FLEET_LISTBOX_WIDTH =  250;
@@ -30,178 +62,6 @@ namespace {
     const int CONTROL_MARGIN = 5; // gap to leave between controls in these window
     const std::string SHIP_DROP_TYPE_STRING = "FLeetWnd ShipRow";
     const std::string FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
-
-    class FleetDataPanel : public GG::Control
-    {
-    public:
-        enum {
-            FLEET_ICON_SZ = 38, 
-            FLEET_NAME_HT = 20, 
-            STAT_ICON_WD = 40
-        };
-
-        FleetDataPanel(int w, int h, const Fleet* fleet) :
-            Control(0, 0, w, h, 0),
-            m_fleet(fleet),
-            m_fleet_icon(0),
-            m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + UserString("FW_NEW_FLEET_LABEL") + "</i>",
-                                                  GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), m_fleet ? ClientUI::TEXT_COLOR : GG::CLR_BLACK,
-                                                  GG::TF_RIGHT | GG::TF_VCENTER)),
-            m_num_ships_stat(0),
-            m_fleet_strength_stat(0),
-            m_damage_icon(0),
-            m_colonizer_icon(0),
-            m_selected(false)
-        {
-            EnableChildClipping();
-
-            AttachChild(m_fleet_name_text);
-
-            if (m_fleet) {
-                m_num_ships_stat = new StatisticIcon(h, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
-                                                     ClientUI::ART_DIR + "icons/3shipfleet.png", ClientUI::TEXT_COLOR, 0);
-                m_fleet_strength_stat = new StatisticIcon(h + STAT_ICON_WD, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
-                                                          ClientUI::ART_DIR + "icons/combatstrength.png", ClientUI::TEXT_COLOR, 0);
-                AttachChild(m_num_ships_stat);
-                AttachChild(m_fleet_strength_stat);
-                GG::Connect(m_fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
-            }
-
-            Refresh();
-        }
-
-        virtual void Render()
-        {
-            const GG::Clr& unselected_color = GG::CLR_GRAY;
-            const GG::Clr& selected_color = GG::CLR_WHITE;
-
-            GG::Clr color_to_use = m_selected ? selected_color : unselected_color;
-
-            if (Disabled())
-                color_to_use = DisabledColor(color_to_use);
-
-            GG::Pt ul = UpperLeft(), lr = LowerRight();
-            GG::Pt text_ul = m_fleet_name_text->UpperLeft(), text_lr = m_fleet_name_text->LowerRight();
-
-            GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, color_to_use, 1);
-            GG::FlatRectangle(text_ul.x, text_ul.y, text_lr.x + 5, text_lr.y, color_to_use, GG::CLR_ZERO, 0);
-        }
-
-        void Select(bool b)
-        {
-            if (m_selected != b) {
-                m_selected = b;
-
-                const GG::Clr& unselected_text_color = ClientUI::TEXT_COLOR;
-                const GG::Clr& selected_text_color = GG::CLR_BLACK;
-
-                GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
-
-                if (!m_fleet) // use different colors for the "new fleet" panel
-                    text_color_to_use = GG::CLR_BLACK;
-
-                if (Disabled())
-                    text_color_to_use = DisabledColor(text_color_to_use);
-
-                m_fleet_name_text->SetTextColor(text_color_to_use);
-            }
-        }
-
-    private:
-        void SetFleetIcon()
-        {
-            DeleteChild(m_fleet_icon);
-
-            const int ICON_OFFSET = (Size().y - FLEET_ICON_SZ) / 2;
-            boost::shared_ptr<GG::Texture> icon;
-
-            if (m_fleet) { // a regular fleet data panel
-                if (2 <= m_fleet->NumShips() && m_fleet->NumShips() <= 5) {
-                    icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/" + 
-                                                         boost::lexical_cast<std::string>(m_fleet->NumShips()) + "shipfleet.png");
-                } else if (5 < m_fleet->NumShips()) {
-                    icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/5shipfleet.png");
-                } else if (m_fleet->NumShips() == 1) {
-                    Ship* ship = GetUniverse().Object<Ship>(*m_fleet->begin());
-                    std::string design_name;
-                    if (ship->Design()) {
-                        design_name = ship->Design()->name;
-                        unsigned int space;
-                        if ((space = design_name.find(' ')) != std::string::npos) {
-                            design_name[space] = '_';
-                        }
-                    } else {
-                        design_name = "Scout";
-                    }
-                    icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png");
-                }
-            } else { // the "new fleet" data panel
-                icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/newfleet.png");
-            }
-
-            if (icon) {
-                m_fleet_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, FLEET_ICON_SZ, FLEET_ICON_SZ, icon, GG::GR_FITGRAPHIC);
-                AttachChild(m_fleet_icon);
-            }
-        }
-        void Refresh()
-        {
-            SetFleetIcon();
-            if (m_fleet) {
-                m_fleet_name_text->SetText(m_fleet->Name());
-                m_num_ships_stat->SetValue(m_fleet->NumShips());
-                int attack_strength = 0;
-                bool damaged_ships = false;
-                bool contains_colony_ship = false;
-                bool attack_factor_unknown = true;
-                for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {
-                    Ship* ship = GetUniverse().Object<Ship>(*it);
-                    const ShipDesign* design = ship->Design();
-                    if (design) {
-                        if (design->colonize)
-                            contains_colony_ship = true;
-                        attack_strength += design->attack;
-                        attack_factor_unknown = false;
-                    }
-                    // TODO: account for damaged ships once damage system is in place
-                }
-                m_fleet_strength_stat->SetValue(attack_factor_unknown ? StatisticIcon::UNKNOWN_VALUE : attack_strength);
-
-                const int ICON_SPACING = 5;
-                const int ICON_SZ = Height() - FLEET_NAME_HT - 1;
-                int x_position = m_fleet_strength_stat->LowerRight().x - ClientUpperLeft().x + ICON_SPACING;
-                if (damaged_ships) {
-                    if (!m_damage_icon) {
-                        m_damage_icon = new GG::StaticGraphic(x_position, FLEET_NAME_HT, ICON_SZ, ICON_SZ, 
-                                                              GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/damagemarker.png"), GG::GR_FITGRAPHIC);
-                        AttachChild(m_damage_icon);
-                    }
-                    x_position += m_damage_icon->Width() + ICON_SPACING;
-                } else if (m_damage_icon) {
-                    DeleteChild(m_damage_icon);
-                }
-                if (contains_colony_ship) {
-                    if (!m_colonizer_icon) {
-                        m_colonizer_icon = new GG::StaticGraphic(x_position, FLEET_NAME_HT, ICON_SZ, ICON_SZ, 
-                                                                 GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/colonymarker.png"), GG::GR_FITGRAPHIC);
-                        AttachChild(m_colonizer_icon);
-                    }
-                    x_position += m_colonizer_icon->Width() + ICON_SPACING;
-                } else if (m_colonizer_icon) {
-                    DeleteChild(m_colonizer_icon);
-                }
-            }
-        }
-
-        const Fleet* const m_fleet;
-        GG::StaticGraphic* m_fleet_icon;
-        GG::TextControl* m_fleet_name_text;
-        StatisticIcon* m_num_ships_stat;
-        StatisticIcon* m_fleet_strength_stat;
-        GG::StaticGraphic* m_damage_icon;
-        GG::StaticGraphic* m_colonizer_icon;
-        bool m_selected;
-    };
 
     class ShipDataPanel : public GG::Control
     {
@@ -381,6 +241,182 @@ namespace {
 }
 
 ////////////////////////////////////////////////
+// FleetDataPanel
+////////////////////////////////////////////////
+FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet) :
+    Control(0, 0, w, h, fleet ? 0 : GG::CLICKABLE),
+    m_fleet(fleet),
+    m_fleet_icon(0),
+    m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + UserString("FW_NEW_FLEET_LABEL") + "</i>",
+                                          GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), m_fleet ? ClientUI::TEXT_COLOR : GG::CLR_BLACK,
+                                          GG::TF_RIGHT | GG::TF_VCENTER)),
+    m_num_ships_stat(0),
+    m_fleet_strength_stat(0),
+    m_damage_icon(0),
+    m_colonizer_icon(0),
+    m_selected(false)
+{
+    EnableChildClipping();
+
+    AttachChild(m_fleet_name_text);
+
+    if (m_fleet) {
+        m_num_ships_stat = new StatisticIcon(h, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
+                                             ClientUI::ART_DIR + "icons/3shipfleet.png", ClientUI::TEXT_COLOR, 0);
+        m_fleet_strength_stat = new StatisticIcon(h + STAT_ICON_WD, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
+                                                  ClientUI::ART_DIR + "icons/combatstrength.png", ClientUI::TEXT_COLOR, 0);
+        AttachChild(m_num_ships_stat);
+        AttachChild(m_fleet_strength_stat);
+        GG::Connect(m_fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
+    }
+
+    Refresh();
+}
+
+void FleetDataPanel::Render()
+{
+    const GG::Clr& unselected_color = GG::CLR_GRAY;
+    const GG::Clr& selected_color = GG::CLR_WHITE;
+
+    GG::Clr color_to_use = m_selected ? selected_color : unselected_color;
+
+    if (Disabled())
+        color_to_use = DisabledColor(color_to_use);
+
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt text_ul = m_fleet_name_text->UpperLeft(), text_lr = m_fleet_name_text->LowerRight();
+
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, color_to_use, 1);
+    GG::FlatRectangle(text_ul.x, text_ul.y, text_lr.x + 5, text_lr.y, color_to_use, GG::CLR_ZERO, 0);
+}
+
+void FleetDataPanel::AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
+{
+    std::vector<Ship*> ships;
+    std::vector<int> ship_ids;
+    for (std::list<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
+        if ((*it)->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
+            ships.push_back(static_cast<ShipRow*>(*it)->m_ship);
+            ship_ids.push_back(ships.back()->ID());
+        } else {
+            wnds.clear();
+            return;
+        }
+    }
+    if (wnds.front()->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
+        NewFleetFromShipsSignal(ships[0], ship_ids);
+    }
+    wnds.clear();
+}
+
+void FleetDataPanel::Select(bool b)
+{
+    if (m_fleet && m_selected != b) {
+        m_selected = b;
+
+        const GG::Clr& unselected_text_color = ClientUI::TEXT_COLOR;
+        const GG::Clr& selected_text_color = GG::CLR_BLACK;
+
+        GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
+
+        if (!m_fleet) // use different colors for the "new fleet" panel
+            text_color_to_use = GG::CLR_BLACK;
+
+        if (Disabled())
+            text_color_to_use = DisabledColor(text_color_to_use);
+
+        m_fleet_name_text->SetTextColor(text_color_to_use);
+    }
+}
+
+void FleetDataPanel::SetFleetIcon()
+{
+    DeleteChild(m_fleet_icon);
+
+    const int ICON_OFFSET = (Size().y - FLEET_ICON_SZ) / 2;
+    boost::shared_ptr<GG::Texture> icon;
+
+    if (m_fleet) { // a regular fleet data panel
+        if (2 <= m_fleet->NumShips() && m_fleet->NumShips() <= 5) {
+            icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/" + 
+                                                 boost::lexical_cast<std::string>(m_fleet->NumShips()) + "shipfleet.png");
+        } else if (5 < m_fleet->NumShips()) {
+            icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/5shipfleet.png");
+        } else if (m_fleet->NumShips() == 1) {
+            Ship* ship = GetUniverse().Object<Ship>(*m_fleet->begin());
+            std::string design_name;
+            if (ship->Design()) {
+                design_name = ship->Design()->name;
+                unsigned int space;
+                if ((space = design_name.find(' ')) != std::string::npos) {
+                    design_name[space] = '_';
+                }
+            } else {
+                design_name = "Scout";
+            }
+            icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png");
+        }
+    } else { // the "new fleet" data panel
+        icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/newfleet.png");
+    }
+
+    if (icon) {
+        m_fleet_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, FLEET_ICON_SZ, FLEET_ICON_SZ, icon, GG::GR_FITGRAPHIC);
+        AttachChild(m_fleet_icon);
+    }
+}
+
+void FleetDataPanel::Refresh()
+{
+    SetFleetIcon();
+    if (m_fleet) {
+        m_fleet_name_text->SetText(m_fleet->Name());
+        m_num_ships_stat->SetValue(m_fleet->NumShips());
+        int attack_strength = 0;
+        bool damaged_ships = false;
+        bool contains_colony_ship = false;
+        bool attack_factor_unknown = true;
+        for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {
+            Ship* ship = GetUniverse().Object<Ship>(*it);
+            const ShipDesign* design = ship->Design();
+            if (design) {
+                if (design->colonize)
+                    contains_colony_ship = true;
+                attack_strength += design->attack;
+                attack_factor_unknown = false;
+            }
+            // TODO: account for damaged ships once damage system is in place
+        }
+        m_fleet_strength_stat->SetValue(attack_factor_unknown ? StatisticIcon::UNKNOWN_VALUE : attack_strength);
+
+        const int ICON_SPACING = 5;
+        const int ICON_SZ = Height() - FLEET_NAME_HT - 1;
+        int x_position = m_fleet_strength_stat->LowerRight().x - ClientUpperLeft().x + ICON_SPACING;
+        if (damaged_ships) {
+            if (!m_damage_icon) {
+                m_damage_icon = new GG::StaticGraphic(x_position, FLEET_NAME_HT, ICON_SZ, ICON_SZ, 
+                                                      GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/damagemarker.png"), GG::GR_FITGRAPHIC);
+                AttachChild(m_damage_icon);
+            }
+            x_position += m_damage_icon->Width() + ICON_SPACING;
+        } else if (m_damage_icon) {
+            DeleteChild(m_damage_icon);
+        }
+        if (contains_colony_ship) {
+            if (!m_colonizer_icon) {
+                m_colonizer_icon = new GG::StaticGraphic(x_position, FLEET_NAME_HT, ICON_SZ, ICON_SZ, 
+                                                         GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/colonymarker.png"), GG::GR_FITGRAPHIC);
+                AttachChild(m_colonizer_icon);
+            }
+            x_position += m_colonizer_icon->Width() + ICON_SPACING;
+        } else if (m_colonizer_icon) {
+            DeleteChild(m_colonizer_icon);
+        }
+    }
+}
+
+
+////////////////////////////////////////////////
 // FleetsListBox
 ////////////////////////////////////////////////
 class FleetsListBox : public CUIListBox
@@ -416,41 +452,26 @@ public:
             return;
         }
 
-        if (static_cast<FleetRow*>(&GetRow(row_index))->m_fleet) {
-            if (wnds.front()->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-                Fleet* target_fleet = static_cast<FleetRow*>(&GetRow(row_index))->m_fleet;
-                if (!CanJoin(ships[0], target_fleet)) {
-                    wnds.clear();
-                    return;
-                }
-                HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ships[0]->FleetID(), 
-                                                                           target_fleet->ID(), ship_ids));
-            } else if (wnds.front()->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
-                FleetRow* fleet_row = static_cast<FleetRow*>(wnds.front());
-                Fleet* target_fleet = static_cast<FleetRow*>(&GetRow(row_index))->m_fleet;
-                // disallow drops across fleet windows; fleets must be at the same location
-                if (target_fleet->X() != fleet_row->m_fleet->X() || target_fleet->Y() != fleet_row->m_fleet->Y()) {
-                    wnds.clear();
-                    return;
-                }
-                HumanClientApp::Orders().IssueOrder(
-                    new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), fleet_row->FleetID(), 
-                                           target_fleet->ID(), std::vector<int>(fleet_row->m_fleet->begin(), fleet_row->m_fleet->end())));
+        assert(static_cast<FleetRow*>(&GetRow(row_index))->m_fleet);
+        if (wnds.front()->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
+            Fleet* target_fleet = static_cast<FleetRow*>(&GetRow(row_index))->m_fleet;
+            if (!CanJoin(ships[0], target_fleet)) {
+                wnds.clear();
+                return;
             }
-        } else {
-            if (wnds.front()->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-                // special case: disallow drag-dropping a ship into the new fleet row when there is exactly 1 fleet
-                // containing exactly 1 ship
-                // TODO: This "2" need to change when the new fleet row is no longer a row.
-                if (NumRows() == 2) { // if there is exactly one fleet in the window ("2" is used because there is also the new fleet row)
-                    assert(ships[0]->GetFleet());
-                    if (ships[0]->GetFleet()->NumShips() == 1) {
-                        wnds.clear();
-                        return;
-                    }
-                }
-                NewFleetFromShipsSignal(ships[0], ship_ids);
+            HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ships[0]->FleetID(), 
+                                                                       target_fleet->ID(), ship_ids));
+        } else if (wnds.front()->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
+            FleetRow* fleet_row = static_cast<FleetRow*>(wnds.front());
+            Fleet* target_fleet = static_cast<FleetRow*>(&GetRow(row_index))->m_fleet;
+            // disallow drops across fleet windows; fleets must be at the same location
+            if (target_fleet->X() != fleet_row->m_fleet->X() || target_fleet->Y() != fleet_row->m_fleet->Y()) {
+                wnds.clear();
+                return;
             }
+            HumanClientApp::Orders().IssueOrder(
+                new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), fleet_row->FleetID(), 
+                                       target_fleet->ID(), std::vector<int>(fleet_row->m_fleet->begin(), fleet_row->m_fleet->end())));
         }
         wnds.clear();
     }
@@ -759,6 +780,7 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
     m_moving_fleets(true),
     m_current_fleet(-1),
     m_fleets_lb(0),
+    m_new_fleet_drop_target(0),
     m_fleet_detail_panel(0)
 {
     assert(0 <= selected_fleet && selected_fleet < static_cast<int>(fleets.size()));
@@ -775,8 +797,13 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
     TempUISoundDisabler sound_disabler;
 
     m_fleets_lb = new FleetsListBox(0, 0, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT, read_only);
+    if (!m_read_only) {
+        m_new_fleet_drop_target = new FleetDataPanel(FleetRow::PANEL_WD, FleetRow::PANEL_HT, 0);
+        m_new_fleet_drop_target->SetMinSize(GG::Pt(1, FleetRow::PANEL_HT));
+        m_new_fleet_drop_target->MoveTo(GG::Pt(0, 5));
+    }
     m_fleet_detail_panel = new FleetDetailPanel(0, read_only);
-    m_fleet_detail_panel->MoveTo(GG::Pt(1, 1));
+    m_fleet_detail_panel->MoveTo(GG::Pt(0, 10));
 
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
     m_fleets_lb->SetMinSize(m_fleets_lb->Size());
@@ -832,16 +859,19 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
         m_fleets_lb->AllowDropType(FLEET_DROP_TYPE_STRING);
     }
 
-    if (!m_read_only) {
-        m_fleets_lb->Insert(new FleetRow(0));
-    }
     for (unsigned int i = 0; i < fleets.size(); ++i) {
         AddFleet(fleets[i]);
     }
 
     AttachChild(m_fleets_lb);
     AttachChild(m_fleet_detail_panel);
+    if (!m_read_only)
+        AttachChild(m_new_fleet_drop_target);
     VerticalLayout();
+    if (!m_read_only) {
+        GetLayout()->SetRowStretch(0, 1.0);
+        GetLayout()->SetRowStretch(2, 1.0);
+    }
     GetLayout()->SetBorderMargin(7);
 
     GG::Connect(m_fleet_detail_panel->PanelEmptySignal, &FleetWnd::DeleteFleet, this);
@@ -849,7 +879,8 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
     GG::Connect(m_fleets_lb->RightClickedSignal, &FleetWnd::FleetRightClicked, this);
     GG::Connect(m_fleets_lb->DoubleClickedSignal, &FleetWnd::FleetDoubleClicked, this);
     m_lb_delete_connection = GG::Connect(m_fleets_lb->ErasedSignal, &FleetWnd::FleetDeleted, this);
-    GG::Connect(m_fleets_lb->NewFleetFromShipsSignal, &FleetWnd::CreateNewFleetFromDrops, this);
+    if (!m_read_only)
+        GG::Connect(m_new_fleet_drop_target->NewFleetFromShipsSignal, &FleetWnd::CreateNewFleetFromDrops, this);
 
     SetText(TitleText());
 
@@ -889,7 +920,7 @@ void FleetWnd::SystemClicked(int system_id)
 
 void FleetWnd::AddFleet(Fleet* fleet)
 {
-    m_fleets_lb->Insert(new FleetRow(fleet), m_fleets_lb->NumRows() - (m_read_only ? 0 : 1));
+    m_fleets_lb->Insert(new FleetRow(fleet));
     ShowingFleetSignal(fleet, this);
 }
 
@@ -925,11 +956,6 @@ bool FleetWnd::ContainsFleet(int fleet_id) const
 
 void FleetWnd::FleetSelectionChanged(const std::set<int>& rows)
 {
-    // disallow selection of the new fleet slot
-    if (!m_read_only && rows.find(m_fleets_lb->NumRows() - 1) != rows.end()) {
-        m_fleets_lb->DeselectRow(m_fleets_lb->NumRows() - 1);
-    }
-
     m_current_fleet = m_fleets_lb->Caret();
 
     Fleet* fleet = 0 <= m_current_fleet ? FleetInRow(m_current_fleet) : 0;
@@ -943,9 +969,6 @@ void FleetWnd::FleetSelectionChanged(const std::set<int>& rows)
 
 void FleetWnd::FleetRightClicked(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt)
 {
-    if (!m_read_only && row_idx == m_fleets_lb->NumRows() - 1)
-        return;
-
     Fleet* fleet = FleetInRow(row_idx);
     if (fleet->Owners().size() != 1 || HumanClientApp::GetApp()->EmpireID() != *fleet->Owners().begin())
         return;
@@ -974,9 +997,6 @@ void FleetWnd::FleetRightClicked(int row_idx, GG::ListBox::Row* row, const GG::P
 
 void FleetWnd::FleetDoubleClicked(int row_idx, GG::ListBox::Row* row)
 {
-    if (!m_read_only && row_idx == m_fleets_lb->NumRows() - 1)
-        return;
-
     Fleet* row_fleet = FleetInRow(row_idx);
     int num_open_windows = m_open_fleet_detail_wnds.size();
     GG::Pt window_posn(std::max(0, 25 + LowerRight().x + num_open_windows * 25), std::max(0, UpperLeft().y + num_open_windows * 25));
@@ -1051,6 +1071,13 @@ void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>&
 {
     Fleet* some_existing_fleet = FleetInRow(0);
 
+    // special case: disallow creating a new fleet from a ship when there is exactly 1 fleet containing exactly 1 ship
+    if (m_fleets_lb->NumRows() == 1) { // if there is exactly one fleet in the list
+        assert(first_ship->GetFleet());
+        if (first_ship->GetFleet()->NumShips() == 1)
+            return;
+    }
+
     if (!some_existing_fleet || !first_ship ||
         some_existing_fleet->SystemID() != first_ship->GetFleet()->SystemID() ||
         some_existing_fleet->X() != first_ship->GetFleet()->X() ||
@@ -1097,8 +1124,7 @@ void FleetWnd::UniverseObjectDeleted(const UniverseObject *obj)
 {
     const Fleet* fleet;
     // only look for obj if FleetWnd contains fleets and obj is a fleet
-    // TODO: change the 0 : 1 when the new fleet row is no longer a row
-    if ((m_open_fleet_detail_wnds.empty() && m_fleets_lb->NumRows() == (m_read_only ? 0 : 1)) ||
+    if ((m_open_fleet_detail_wnds.empty() && m_fleets_lb->NumRows() == 0) ||
         !(fleet = universe_object_cast<const Fleet*>(obj)))
         return;
 
