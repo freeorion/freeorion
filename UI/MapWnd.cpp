@@ -374,7 +374,7 @@ void MapWnd::Render()
     }
 }
 
-void MapWnd::Keypress (GG::Key key, Uint32 key_mods)
+void MapWnd::KeyPress (GG::Key key, Uint32 key_mods)
 {
     switch (key) {
     case GG::GGK_TAB: { // auto-complete current chat edit word

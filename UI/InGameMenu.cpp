@@ -69,7 +69,7 @@ void InGameMenu::Render()
     CUIWnd::Render();
 }
 
-void InGameMenu::Keypress (GG::Key key, Uint32 key_mods)
+void InGameMenu::KeyPress (GG::Key key, Uint32 key_mods)
 {
     if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE || key == GG::GGK_F10) // Same behaviour as if "done" was pressed
         Done();

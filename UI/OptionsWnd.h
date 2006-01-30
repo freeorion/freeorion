@@ -29,7 +29,7 @@ public:
 
     //! \name Mutators
     //!@{
-    virtual void Keypress (GG::Key key, Uint32 key_mods);
+    virtual void KeyPress (GG::Key key, Uint32 key_mods);
     //!@}
 
     bool m_end_with_done;    //!< determines whether or not we ended the dialog with OK or not

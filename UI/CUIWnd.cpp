@@ -430,7 +430,7 @@ void CUIEditWnd::ModalInit()
     GG::GUI::GetGUI()->SetFocusWnd(m_edit);
 }
 
-void CUIEditWnd::Keypress(GG::Key key, Uint32 key_mods)
+void CUIEditWnd::KeyPress(GG::Key key, Uint32 key_mods)
 {
     switch (key) {
     case GG::GGK_RETURN: if (!m_ok_bn->Disabled()) OkClicked(); break;
