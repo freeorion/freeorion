@@ -40,7 +40,7 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint32 flags = GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE | MINIMIZABLE); ///< basic ctor
+    FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint32 flags = GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE); ///< basic ctor
     ~FleetDetailWnd(); ///< virtual dtor
     //@}
 
@@ -71,7 +71,7 @@ public:
 
     /** \name Structors */ //@{
     /** constructs a fleet window for fleets in transit between systems */
-    FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only, Uint32 flags = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | MINIMIZABLE);
+    FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only, Uint32 flags = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
     ~FleetWnd(); ///< dtor
     //@}
 

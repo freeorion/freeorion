@@ -73,6 +73,8 @@ namespace {
 #endif
     }
 
+    const double BUTTON_DIMMING_SCALE_FACTOR = 0.75;
+
     bool temp_header_bool = RecordHeaderFile(CUIWndRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
@@ -91,11 +93,14 @@ void CUI_MinRestoreButton::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
+    GG::Clr color_to_use = ClientUI::WND_INNER_BORDER_COLOR;
+    if (State() != BN_ROLLOVER)
+        AdjustBrightness(color_to_use, BUTTON_DIMMING_SCALE_FACTOR);
     if (m_mode == MIN_BUTTON) {
         // draw a dash to signify the minimize command
         int middle_y = (lr.y + ul.y) / 2;
         glDisable(GL_TEXTURE_2D);
-        glColor4ubv(ClientUI::WND_INNER_BORDER_COLOR.v);
+        glColor4ubv(color_to_use.v);
         glBegin(GL_LINES);
         glVertex2i(ul.x, middle_y);
         glVertex2i(lr.x, middle_y);
@@ -132,8 +137,11 @@ void CUI_CloseButton::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
+    GG::Clr color_to_use = ClientUI::WND_INNER_BORDER_COLOR;
+    if (State() != BN_ROLLOVER)
+        AdjustBrightness(color_to_use, BUTTON_DIMMING_SCALE_FACTOR);
     glDisable(GL_TEXTURE_2D);
-    glColor4ubv(ClientUI::WND_INNER_BORDER_COLOR.v);
+    glColor4ubv(color_to_use.v);
     // this is slightly less efficient than using GL_LINES, but the lines are rasterized differently on different 
     // OpengGL implementaions, so we do it this way to produce the "x" we want
     glBegin(GL_POINTS);
@@ -406,11 +414,13 @@ void CUIWnd::MinimizeClicked()
 ///////////////////////////////////////
 
 CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, Uint32 flags/* = Wnd::MODAL*/) : 
-    CUIWnd(prompt_text, 0, 0, 1, 1, flags)
+    CUIWnd(prompt_text, 0, 0, w, 1, flags)
 {
-    m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, w - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), edit_text);
+    m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, ClientWidth() - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), edit_text);
     m_ok_bn = new CUIButton(m_edit->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, UserString("OK"));
     m_cancel_bn = new CUIButton(m_ok_bn->LowerRight().x + CONTROL_MARGIN, TopBorder() + 3, BUTTON_WIDTH, UserString("CANCEL"));
+    m_ok_bn->OffsetMove(GG::Pt(0, (m_edit->Height() - m_ok_bn->Height()) / 2));
+    m_cancel_bn->OffsetMove(GG::Pt(0, (m_edit->Height() - m_ok_bn->Height()) / 2));
 
     Resize(GG::Pt(w, std::max(m_edit->LowerRight().y, m_cancel_bn->LowerRight().y) + BottomBorder() + 3));
     MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - w) / 2, (GG::GUI::GetGUI()->AppHeight() - Height()) / 2));

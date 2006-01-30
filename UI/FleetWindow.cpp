@@ -704,7 +704,7 @@ std::string FleetDetailPanel::ShipStatusText(int ship_id) const
 ////////////////////////////////////////////////
 // FleetDetailWnd
 ////////////////////////////////////////////////
-FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint32 flags/* = CLICKABLE | DRAGABLE | RESIZABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
+FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint32 flags/* = CLICKABLE | DRAGABLE | RESIZABLE | ONTOP | CLOSABLE*/) : 
     CUIWnd("", x, y, 1, 1, flags),
     m_fleet_panel(0)
 {
@@ -751,7 +751,7 @@ FleetWnd::FleetWndItr FleetWnd::FleetWndBegin() {return s_open_fleet_wnds.begin(
 FleetWnd::FleetWndItr FleetWnd::FleetWndEnd()   {return s_open_fleet_wnds.end();}
 
 FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
-                   Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE | MINIMIZABLE*/) : 
+                   Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE*/) : 
     MapWndPopup("", x, y, 1, 1, flags | GG::RESIZABLE),
     m_empire_id(-1),
     m_system_id(UniverseObject::INVALID_OBJECT_ID),
