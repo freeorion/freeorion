@@ -54,10 +54,9 @@ ServerConnectWnd::ServerConnectWnd() :
     const int PLAYER_NAME_EDIT_X = CONTROL_MARGIN + text_width + CONTROL_MARGIN;
     m_player_name_edit = new CUIEdit(PLAYER_NAME_EDIT_X, CONTROL_MARGIN, ClientWidth() - 5 - PLAYER_NAME_EDIT_X, "");
 
-    GG::TextControl* temp = new GG::TextControl(CONTROL_MARGIN, CONTROL_MARGIN, text_width, m_player_name_edit->Height(),
-                                                UserString("PLAYER_NAME_LABEL"), 
-                                                GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    AttachChild(temp);
+    AttachChild(new GG::TextControl(CONTROL_MARGIN, CONTROL_MARGIN, text_width, m_player_name_edit->Height(),
+                                    UserString("PLAYER_NAME_LABEL"), 
+                                    GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR));
 
     m_host_or_join_radio_group = new GG::RadioButtonGroup(CONTROL_MARGIN, m_player_name_edit->LowerRight().y + CONTROL_MARGIN,
                                                           SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4 + CONTROL_MARGIN + ClientUI::PTS + 4, GG::VERTICAL);

@@ -155,10 +155,15 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
 
     m_galaxy_setup_panel = new GalaxySetupPanel(CHAT_WIDTH + 2 * CONTROL_MARGIN, RADIO_BN_HT, GALAXY_SETUP_PANEL_WIDTH);
 
-    m_new_load_game_buttons = new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + 100, 2 * RADIO_BN_HT, GG::VERTICAL);
-    m_new_load_game_buttons->AddButton(new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
-    m_new_load_game_buttons->AddButton(new CUIStateButton(0, m_galaxy_setup_panel->LowerRight().y, 100, RADIO_BN_HT, UserString("LOAD_GAME_BN"), 
-                                                          GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_new_load_game_buttons =
+        new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, CONTROL_MARGIN,
+                                 m_galaxy_setup_panel->LowerRight().y + 100, m_galaxy_setup_panel->LowerRight().y + RADIO_BN_HT - CONTROL_MARGIN,
+                                 GG::VERTICAL);
+    m_new_load_game_buttons->AddButton(
+        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+    m_new_load_game_buttons->AddButton(
+        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("LOAD_GAME_BN"), 
+                           GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
 
     m_saved_games_list = new CUIDropDownList(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y + CONTROL_MARGIN, 
                                              GALAXY_SETUP_PANEL_WIDTH, SAVED_GAMES_LIST_ROW_HEIGHT, SAVED_GAMES_LIST_DROP_HEIGHT);
@@ -178,7 +183,8 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     m_cancel_bn = new CUIButton(0, 0, 125, UserString("CANCEL"));
     m_cancel_bn->MoveTo(GG::Pt(ClientWidth() - m_cancel_bn->Width() - CONTROL_MARGIN, ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
     if (m_host)
-        m_start_game_bn->MoveTo(GG::Pt(m_cancel_bn->UpperLeft().x - CONTROL_MARGIN - m_start_game_bn->Width(), ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
+        m_start_game_bn->MoveTo(GG::Pt(m_cancel_bn->UpperLeft().x - CONTROL_MARGIN - m_start_game_bn->Width(),
+                                       ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
 
     Init();
 
