@@ -1,4 +1,4 @@
-#include "TechWnd.h"
+#include "TechTreeWnd.h"
 
 #include "ClientUI.h"
 #include "CUIControls.h"
@@ -427,7 +427,7 @@ namespace {
         const std::string m_category;
     };
 
-    bool temp_header_bool = RecordHeaderFile(TechWndRevision());
+    bool temp_header_bool = RecordHeaderFile(TechTreeWndRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 

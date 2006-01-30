@@ -6,7 +6,7 @@
 #include "../universe/Building.h"
 #include "CUIControls.h"
 #include "../universe/Fleet.h"
-#include "FleetWindow.h"
+#include "FleetWnd.h"
 #include "IntroScreen.h"
 #include "MapWnd.h"
 #include "SidePanel.h"

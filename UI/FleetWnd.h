@@ -1,6 +1,6 @@
 // -*- C++ -*-
-#ifndef _FleetWindow_h_
-#define _FleetWindow_h_
+#ifndef _FleetWnd_h_
+#define _FleetWnd_h_
 
 #ifndef _CUIWnd_h_
 #include "CUIWnd.h"
@@ -138,7 +138,7 @@ private:
     static GG::Pt s_last_position; ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.
 };
 
-inline std::pair<std::string, std::string> FleetWindowRevision()
+inline std::pair<std::string, std::string> FleetWndRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
-#endif // _FleetWindow_h_
+#endif // _FleetWnd_h_

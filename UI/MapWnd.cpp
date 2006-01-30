@@ -6,7 +6,7 @@
 #include "CUIControls.h"
 #include "../universe/Fleet.h"
 #include "FleetButton.h"
-#include "FleetWindow.h"
+#include "FleetWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "InGameMenu.h"
 #include "../network/Message.h"

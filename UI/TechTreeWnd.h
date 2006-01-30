@@ -1,6 +1,6 @@
 // -*- C++ -*-
-#ifndef _TechWnd_h_
-#define _TechWnd_h_
+#ifndef _TechTreeWnd_h_
+#define _TechTreeWnd_h_
 
 #include "CUIWnd.h"
 
@@ -83,7 +83,7 @@ private:
     CUIButton*              m_uncollapse_all_button;
 };
 
-inline std::pair<std::string, std::string> TechWndRevision()
+inline std::pair<std::string, std::string> TechTreeWndRevision()
 {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
 
-#endif // _TechWnd_h_
+#endif // _TechTreeWnd_h_

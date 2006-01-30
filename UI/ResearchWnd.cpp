@@ -7,7 +7,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Tech.h"
-#include "../UI/TechWnd.h"
+#include "../UI/TechTreeWnd.h"
 
 #include <GG/DrawUtil.h>
 

@@ -2,7 +2,7 @@
 
 #include "../util/AppInterface.h"
 #include "../universe/Fleet.h"
-#include "FleetWindow.h"
+#include "FleetWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "MapWnd.h"
 #include "../util/MultiplayerCommon.h"

@@ -1,4 +1,4 @@
-#include "FleetWindow.h"
+#include "FleetWnd.h"
 #include "../util/AppInterface.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
@@ -376,7 +376,7 @@ namespace {
         return current_fleet->ID() != fleet->ID() && (current_fleet->X() == fleet->X() && current_fleet->Y() == fleet->Y());
     }
 
-    bool temp_header_bool = RecordHeaderFile(FleetWindowRevision());
+    bool temp_header_bool = RecordHeaderFile(FleetWndRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
 }
 

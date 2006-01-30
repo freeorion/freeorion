@@ -21,7 +21,7 @@
 #include "../universe/Ship.h"
 #include "../util/OptionsDB.h"
 
-#include "../UI/FleetWindow.h"
+#include "../UI/FleetWnd.h"
 
 #include <boost/format.hpp>
 

@@ -9,7 +9,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../universe/ShipDesign.h"
 #include "SidePanel.h"
-#include "TechWnd.h"
+#include "TechTreeWnd.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>

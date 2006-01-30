@@ -86,7 +86,7 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'UI/CUIWnd.cpp',
         'UI/CombatWnd.cpp',
         'UI/FleetButton.cpp',
-        'UI/FleetWindow.cpp',
+        'UI/FleetWnd.cpp',
         'UI/FocusSelector.cpp',
         'UI/GalaxySetupWnd.cpp',
         'UI/InGameMenu.cpp',
@@ -102,7 +102,7 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'UI/SitRepPanel.cpp',
         'UI/Splash.cpp',
         'UI/SystemIcon.cpp',
-        'UI/TechWnd.cpp',
+        'UI/TechTreeWnd.cpp',
         'UI/TurnProgressWnd.cpp',
         'universe/Universe.cpp',
         'util/AppInterface.cpp'
