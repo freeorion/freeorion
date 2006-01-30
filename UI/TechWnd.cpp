@@ -1585,6 +1585,8 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     m_tech_status_buttons(0),
     m_uncollapse_all_button(0)
 {
+    TempUISoundDisabler sound_disabler;
+
     const int UNCOLLAPSE_ALL_BUTTON_WIDTH = 125;
     const int BUTTON_MARGIN = 4;
     m_uncollapse_all_button = new CUIButton(0, 0, UNCOLLAPSE_ALL_BUTTON_WIDTH, UserString("TECH_WND_UNCOLLAPSE_TECHS"));
