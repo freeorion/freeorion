@@ -62,7 +62,7 @@ SystemIcon::SystemIcon(int id, double zoom) :
 
     //setup static graphic
     m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::GR_FITGRAPHIC);
-    AdjustBrightness(m_default_star_color, 0.70);
+    AdjustBrightness(m_default_star_color, 0.80);
     m_static_graphic->SetColor(m_default_star_color);
     AttachChild(m_static_graphic);
 }

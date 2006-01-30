@@ -65,14 +65,14 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    GG::Clr     BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
-    int         BorderThickness() const {return m_border_thick;} ///< returns the width used to render the border of the button
+    GG::Clr      BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
+    int          BorderThickness() const {return m_border_thick;} ///< returns the width used to render the border of the button
 
-    virtual bool            InWindow(const GG::Pt& pt) const;
+    virtual bool InWindow(const GG::Pt& pt) const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void   MouseHere(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseHere(const GG::Pt& pt, Uint32 keys);
     //@}
 
 protected:
@@ -109,11 +109,11 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool   InWindow(const GG::Pt& pt) const;
+    virtual bool InWindow(const GG::Pt& pt) const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void   MouseHere(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseHere(const GG::Pt& pt, Uint32 keys);
     //@}
 
 protected:
@@ -143,15 +143,18 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    GG::Clr     BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
+    GG::Clr      BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
     //@}
 
     /** \name Mutators */ //@{
-    virtual void  Render();
+    virtual void Render();
+    virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseLeave(const GG::Pt& pt, Uint32 keys);
     //@}
 
 private:
     GG::Clr m_border_color;
+    bool    m_mouse_here;
 };
 
 
@@ -178,12 +181,12 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    GG::Clr BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the control
+    GG::Clr      BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the control
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    Render();
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void Render();
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 
 private:
@@ -201,7 +204,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void   Render();
+    virtual void Render();
     //@}
 };
 
@@ -216,13 +219,13 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void   Render();
-    virtual void   LClick(const GG::Pt& pt, Uint32 keys);
-    virtual void   MouseEnter(const GG::Pt& pt, Uint32 keys);
-    virtual void   MouseLeave(const GG::Pt& pt, Uint32 keys);
+    virtual void Render();
+    virtual void LClick(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseLeave(const GG::Pt& pt, Uint32 keys);
 
-    void DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
-    void EnableDropArrow();   ///< enables rendering of the small downward-facing arrow on the right of the control
+    void         DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
+    void         EnableDropArrow();   ///< enables rendering of the small downward-facing arrow on the right of the control
     //@}
 
 private:
@@ -242,7 +245,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void   Render();
+    virtual void Render();
     //@}
 };
 
@@ -259,7 +262,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void   Render();
+    virtual void Render();
     //@}
 };
 
@@ -273,7 +276,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void   Render();
+    virtual void Render();
     //@}
 };
 
@@ -390,9 +393,6 @@ class CUIToolBar : public GG::Control
 public:
     /** \name Structors */ //@{
     CUIToolBar(int x, int y, int w, int h);
-    //@}
-
-    /** \name Accessors */ //@{
     //@}
 
     /** \name Mutators */ //@{

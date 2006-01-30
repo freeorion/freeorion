@@ -83,6 +83,7 @@ namespace {
     }
 
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
+    const double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;
 
     bool temp_header_bool = RecordHeaderFile(CUIControlsRevision());
     bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
@@ -280,7 +281,8 @@ CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& st
                                GG::Clr text_color/* = ClientUI::TEXT_COLOR*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                                GG::Clr border/* = ClientUI::CTRL_BORDER_COLOR*/, Uint32 flags/* = GG::CLICKABLE*/) :
     StateButton(x, y, w, h, str, FontOrDefaultFont(font), text_fmt, color, text_color, interior, GG::StateButtonStyle(style), flags),
-    m_border_color(border)
+    m_border_color(border),
+    m_mouse_here(false)
 {
     // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
     // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
@@ -298,6 +300,11 @@ void CUIStateButton::Render()
         GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
         GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
         GG::Clr border_color_to_use = Disabled() ? DisabledColor(BorderColor()) : BorderColor();
+        if (!Disabled() && !Checked() && m_mouse_here) {
+            AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+            AdjustBrightness(int_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+            AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+        }
 
         if (static_cast<int>(Style()) == SBSTYLE_CUI_CHECKBOX) {
             const int MARGIN = 3;
@@ -376,6 +383,16 @@ void CUIStateButton::Render()
     } else {
         StateButton::Render();
     }
+}
+
+void CUIStateButton::MouseEnter(const GG::Pt& pt, Uint32 keys)
+{
+    m_mouse_here = true;
+}
+
+void CUIStateButton::MouseLeave(const GG::Pt& pt, Uint32 keys)
+{
+    m_mouse_here = false;
 }
 
 
