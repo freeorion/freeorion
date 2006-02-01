@@ -355,16 +355,6 @@ int main() {
 
         # GG
         AppendPackagePaths('gg', env)
-        try:
-            env.Append(CPPPATH = [
-                os.path.normpath(os.path.join(env['with_gg_include'], 'net')),
-                os.path.normpath(os.path.join(env['with_gg_include'], 'SDL')),
-                os.path.normpath(os.path.join(env['with_gg_include'], 'dialogs'))
-                ])
-        except KeyError:
-            # no with_gg_include set
-            pass
-        
 
         # zlib
         if str(Platform()) == 'win32':
