@@ -12,6 +12,16 @@
 
 #include <set>
 
+// deal with dirty, dirty MS macros
+#if defined(_MSC_VER)
+# if defined(SendMessage)
+#  undef SendMessage
+# endif
+# if defined(DispatchMessage)
+#  undef DispatchMessage
+# endif
+#endif
+
 /** the network core needed by the FreeOrion clients.  ClientNetworkCore is rather simple, since it only needs to worry
     itself with a single connection, especially since that connection is initiated by ClientNetworkCore itself.  
     ClientNetworkCore extends NetworkCore by implementing 3 different connection techniques: one for connecting to a
