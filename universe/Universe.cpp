@@ -497,9 +497,12 @@ namespace {
         }
         retval.second = distances[system2];
 
-        // note that at this point retval.first will be empty if there was no starlane path from system1 to system2
-        if (!retval.first.empty()) {
+        // note that at this point, if system1 != system2, retval.first will be empty if there was no starlane path from
+        // system1 to system2
+        if (!retval.first.empty() || system1 == system2) {
             retval.first.push_front(pointer_property_map[current_system]);
+            if (system1 == system2)
+                retval.first.push_front(retval.first.front());
         }
 
 #if 0   // disabled for now

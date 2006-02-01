@@ -1911,19 +1911,7 @@ void ServerApp::ProcessTurns()
         m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::FLEET_MOVEMENT, -1));
 
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it)
-    {
-        if (Fleet* fleet = dynamic_cast<Fleet*>(it->second)) {
-            std::cerr << "[PRE MOVE] Fleet \"" << fleet->Name() << "\"'s owner: "
-                      << *it->second->Owners().begin()
-                      << std::endl;
-        }
         it->second->MovementPhase();
-        if (Fleet* fleet = dynamic_cast<Fleet*>(it->second)) {
-            std::cerr << "[POST MOVE] Fleet \"" << fleet->Name() << "\"'s owner: "
-                      << *it->second->Owners().begin()
-                      << std::endl;
-        }
-    }
 
 
     // find planets which have starved to death
@@ -2015,11 +2003,6 @@ void ServerApp::ProcessTurns()
     GetUniverse().RebuildEmpireViewSystemGraphs();
 
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        if (Fleet* fleet = dynamic_cast<Fleet*>(it->second)) {
-            std::cerr << "[PRE GROWTH] Fleet \"" << fleet->Name() << "\"'s owner: "
-                      << *it->second->Owners().begin()
-                      << std::endl;
-        }
         it->second->PopGrowthProductionResearchPhase();
         it->second->ClampMeters();
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
