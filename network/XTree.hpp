@@ -42,8 +42,8 @@ public:
    }
 };*/
 
-#ifdef DELETE
-#undef DELETE
+#ifdef DELETE_
+#undef DELETE_
 #endif
 
 /**
@@ -162,7 +162,7 @@ public:
    static const int MATCH;
    static const int NO_MATCH;
    static const int INSERT;
-   static const int DELETE;
+   static const int DELETE_;
    static const int CHANGE; 
    static const int NULL_NODE;
    static const int NO_CONNECTION;
