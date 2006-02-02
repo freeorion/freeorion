@@ -71,6 +71,28 @@ SystemIcon::SystemIcon(int id, double zoom) :
 SystemIcon::~SystemIcon()
 {}
 
+const System& SystemIcon::GetSystem() const
+{
+    return m_system;
+}
+
+const FleetButton* SystemIcon::GetFleetButton(Fleet* fleet) const
+{
+    std::map<int, FleetButton*>::const_iterator it = m_stationary_fleet_markers.find(*fleet->Owners().begin());
+    if (it != m_stationary_fleet_markers.end()) {
+        const std::vector<Fleet*>& fleets = it->second->Fleets();
+        if (std::find(fleets.begin(), fleets.end(), fleet) != fleets.end())
+            return it->second;
+    }
+    it = m_moving_fleet_markers.find(*fleet->Owners().begin());
+    if (it != m_moving_fleet_markers.end()) {
+        const std::vector<Fleet*>& fleets = it->second->Fleets();
+        if (std::find(fleets.begin(), fleets.end(), fleet) != fleets.end())
+            return it->second;
+    }
+    return 0;
+}
+
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
@@ -113,11 +135,13 @@ void SystemIcon::LDoubleClick(const GG::Pt& pt, Uint32 keys)
 void SystemIcon::MouseEnter(const GG::Pt& pt, Uint32 keys)
 {
     m_static_graphic->SetColor(GG::CLR_WHITE);
+    MouseEnteringSignal(m_system.ID());
 }
 
 void SystemIcon::MouseLeave(const GG::Pt& pt, Uint32 keys)
 {
     m_static_graphic->SetColor(m_default_star_color);
+    MouseLeavingSignal(m_system.ID());
 }
 
 void SystemIcon::Refresh()

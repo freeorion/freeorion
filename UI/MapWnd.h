@@ -37,11 +37,13 @@ public:
     //! \name Signal Types //!@{
     typedef boost::signal<void (int)> SystemLeftClickedSignalType;  //!< emitted when the user left-clicks a star system
     typedef boost::signal<void (int)> SystemRightClickedSignalType; //!< emitted when the user right-clicks a star system
+    typedef boost::signal<void (int)> SystemBrowsedSignalType;      //!< emitted when the user moves the mouse over a star system
     //!@}
 
     //! \name Slot Types //!@{
     typedef SystemLeftClickedSignalType::slot_type  SystemLeftClickedSlotType;  //!< type of functor invoked when the user left-clicks a star system
     typedef SystemRightClickedSignalType::slot_type SystemRightClickedSlotType; //!< type of functor invoked when the user right-clicks a star system
+    typedef SystemBrowsedSignalType::slot_type      SystemBrowsedSlotType;      //!< type of functor invoked when the user moves the mouse over a star system
     //!@}
 
     //! \name Structors //!@{
@@ -76,6 +78,7 @@ public:
 
     mutable SystemLeftClickedSignalType  SystemLeftClickedSignal;
     mutable SystemRightClickedSignalType SystemRightClickedSignal;
+    mutable SystemBrowsedSignalType      SystemBrowsedSignal;
 
     void CenterOnMapCoord(double x, double y); //!< centers the map on map position (x, y)
     void CenterOnSystem(int systemID);         //!< centers the map on system \a systemID
@@ -88,8 +91,9 @@ public:
     void SelectSystem(System* system);         //!< allows programmatic selection of planets
     void SelectFleet(Fleet* fleet);            //!< allows programmatic selection of fleets
 
-    void SetFleetMovement(FleetButton* fleet_button); //!< allows code that creates FleetButtons to indicate where (and whether) they are moving
-    void SetFleetMovement(Fleet* fleet);       //!< allows updates for single fleets that are already moving
+    void SetFleetMovement(FleetButton* fleet_button); //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving
+    void SetFleetMovement(Fleet* fleet);       //!< creates fleet movement lines for a single fleet that are already moving
+    void SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route); //!< creates projected fleet movement lines for a fleet that the user has selected
 
     void RegisterPopup( MapWndPopup* popup );  //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void RemovePopup( MapWndPopup* popup );    //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
@@ -117,7 +121,19 @@ private:
     void SitRepBtnClicked() {ToggleSitRep();}
 
     struct StarlaneData;     ///< contains all the information necessary to render a single fleet movement line on the main map
-    struct MovementLineData; ///< contains all the information necessary to render a single fleet movement line on the main map
+
+    /** contains all the information necessary to render a single fleet movement line on the main map */
+    struct MovementLineData
+    {
+        MovementLineData() {}
+        MovementLineData(double x_, double y_, const std::list<System*>& dest, GG::Clr clr = GG::CLR_WHITE) :
+            x(x_), y(y_), destinations(dest), color(clr) {}
+        double x;
+        double y;
+        std::list<System*> destinations;
+        GG::Clr color;
+        // TODO : other properties, based on moving empire and destination, etc. (?)
+    };
 
     void Zoom(int delta);                        //!< changes the zoomlevel of the main map
     void RenderBackgrounds();                    //!< renders the backgrounds onto the screen
@@ -127,6 +143,8 @@ private:
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
     void SystemDoubleClicked(int system_id);
     void SystemRightClicked(int system_id);
+    void MouseEnteringSystem(int system_id);
+    void MouseLeavingSystem(int system_id);
     void UniverseObjectDeleted(const UniverseObject *obj);
     bool ReturnToMap();
     bool OpenChatWindow();
@@ -166,7 +184,7 @@ private:
 
     double                          m_zoom_factor;   //! the current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
     SidePanel*                      m_side_panel;    //! the planet view panel on the side of the main map
-    std::vector<SystemIcon*>        m_system_icons;  //! the system icons in the main map
+    std::map<int, SystemIcon*>      m_system_icons;  //! the system icons in the main map, indexed by system id
     SitRepPanel*      	            m_sitrep_panel;  //! the sitrep panel
     ResearchWnd*      	            m_research_wnd;  //! the research screen
     ProductionWnd*      	        m_production_wnd;  //! the production screen
@@ -176,6 +194,7 @@ private:
     std::set<StarlaneData>          m_starlanes;     //! the starlanes between systems
     std::map<Fleet*, 
              MovementLineData>      m_fleet_lines;   //! the lines used for moving fleets in the main map
+    MovementLineData                m_projected_fleet_lines; //! the lines that show the projected path of the active fleet in the FleetWnd
     GG::Pt                          m_drag_offset;   //! the distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                            m_dragged;       //! tracks whether or not a drag occurs during a left button down sequence of events
     CUITurnButton*                  m_turn_update;   //!< button that updates player's turn

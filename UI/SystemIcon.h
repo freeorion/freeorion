@@ -28,14 +28,16 @@ class SystemIcon : public GG::Control
 {
 public:
     //! \name Signal Types //!@{
-    typedef boost::signal<void (int)> BrowsedSignalType; //!< emitted when the user moves the cursor over the icon; returns the object id
+    typedef boost::signal<void (int)> MouseEnteringSignalType; //!< emitted when the user moves the cursor over the icon; returns the object id
+    typedef boost::signal<void (int)> MouseLeavingSignalType; //!< emitted when the user moves the cursor off of the icon; returns the object id
     typedef boost::signal<void (int)> LeftClickedSignalType; //!< emitted when the user left clicks the icon; returns the objectID
     typedef boost::signal<void (int)> RightClickedSignalType; //!< emitted when the user right clicks the icon; returns the objectID
     typedef boost::signal<void (int)> LeftDoubleClickedSignalType; //!< emitted when the user left double-clicks the icon; returns the object id
     //!@}
 
     //! \name Slot Types //!@{
-    typedef BrowsedSignalType::slot_type BrowsedSlotType; //!< type of functor invoked when the user moves over the system
+    typedef MouseEnteringSignalType::slot_type MouseEnteringSlotType; //!< type of functor invoked when the user moves over the system
+    typedef MouseLeavingSignalType::slot_type MouseLeavingSlotType; //!< type of functor invoked when the user moves off of the system
     typedef LeftClickedSignalType::slot_type LeftClickedSlotType; //!< type of functor invoked when the user left clicks
     typedef RightClickedSignalType::slot_type RightClickedSlotType; //!< type of functor invoked when the user right clicks
     typedef LeftDoubleClickedSignalType::slot_type LeftDoubleClickedSlotType; //!< type of functor invoked when the user left double-clicks
@@ -47,7 +49,8 @@ public:
     //!@}
 
     //! \name Accessors //!@{
-    const System&  GetSystem() const {return m_system;}
+    const System&      GetSystem() const;
+    const FleetButton* GetFleetButton(Fleet* fleet) const;
     //!@}
 
     //! \name Mutators //!@{
@@ -64,7 +67,8 @@ public:
     void           ShowName(); //!< enables the system name text
     void           HideName(); //!< disables the system name text
 
-    mutable BrowsedSignalType           BrowsedSignal;
+    mutable MouseEnteringSignalType     MouseEnteringSignal;
+    mutable MouseLeavingSignalType      MouseLeavingSignal;
     mutable LeftClickedSignalType       LeftClickedSignal;
     mutable RightClickedSignalType      RightClickedSignal;
     mutable LeftDoubleClickedSignalType LeftDoubleClickedSignal;

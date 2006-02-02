@@ -452,9 +452,9 @@ public:
             return;
         }
 
-        assert(static_cast<FleetRow*>(&GetRow(row_index))->m_fleet);
+        Fleet* target_fleet = static_cast<FleetRow*>(&GetRow(row_index))->m_fleet;
+        assert(target_fleet);
         if (wnds.front()->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-            Fleet* target_fleet = static_cast<FleetRow*>(&GetRow(row_index))->m_fleet;
             if (!CanJoin(ships[0], target_fleet)) {
                 wnds.clear();
                 return;
@@ -462,8 +462,8 @@ public:
             HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ships[0]->FleetID(), 
                                                                        target_fleet->ID(), ship_ids));
         } else if (wnds.front()->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
+            assert(wnds.size() == 1);
             FleetRow* fleet_row = static_cast<FleetRow*>(wnds.front());
-            Fleet* target_fleet = static_cast<FleetRow*>(&GetRow(row_index))->m_fleet;
             // disallow drops across fleet windows; fleets must be at the same location
             if (target_fleet->X() != fleet_row->m_fleet->X() || target_fleet->Y() != fleet_row->m_fleet->Y()) {
                 wnds.clear();
@@ -892,7 +892,7 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
     }
 }
 
-void FleetWnd::SystemClicked(int system_id)
+void FleetWnd::PlotMovement(int system_id, bool execute_move)
 {
     if (system_id != -1) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -910,12 +910,29 @@ void FleetWnd::SystemClicked(int system_id)
                     return;
                 }
 
-                HumanClientApp::Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id));
-                if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID)
-                    ClientUI::GetClientUI()->GetMapWnd()->SetFleetMovement(fleet);
+                if (execute_move) {
+                    HumanClientApp::Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id));
+                    if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+                        ClientUI::GetClientUI()->GetMapWnd()->SetFleetMovement(fleet);
+                } else {
+                    ClientUI::GetClientUI()->GetMapWnd()->SetProjectedFleetMovement(fleet, route) ;
+                }
             }
         }
     } 
+}
+
+void FleetWnd::SystemClicked(int system_id)
+{
+    PlotMovement(system_id, true);
+}
+
+void FleetWnd::SystemBrowsed(int system_id)
+{
+    if (system_id == UniverseObject::INVALID_OBJECT_ID)
+        ClientUI::GetClientUI()->GetMapWnd()->SetProjectedFleetMovement(0, std::list<System*>()) ;
+    else
+        PlotMovement(system_id, false);
 }
 
 void FleetWnd::AddFleet(Fleet* fleet)

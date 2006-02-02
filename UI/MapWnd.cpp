@@ -105,20 +105,6 @@ private:
 };
 
 
-////////////////////////////////////////////////
-// MapWnd::MovementLineData
-////////////////////////////////////////////////
-struct MapWnd::MovementLineData
-{
-    MovementLineData() {}
-    MovementLineData(double x_, double y_, const std::list<System*>& dest) : x(x_), y(y_), destinations(dest) {}
-    double x;
-    double y;
-    std::list<System*> destinations;
-    // TODO : color, other properties(?), based on moving empire and destination, etc.
-};
-
-
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
@@ -578,8 +564,8 @@ void MapWnd::InitTurn(int turn_number)
     m_fleet_lines.clear();
 
     // systems and starlanes
-    for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
-        DeleteChild(m_system_icons[i]);
+    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+        DeleteChild(it->second);
     }
     m_system_icons.clear();
     m_starlanes.clear();
@@ -588,13 +574,15 @@ void MapWnd::InitTurn(int turn_number)
     for (unsigned int i = 0; i < systems.size(); ++i) {
         // system
         SystemIcon* icon = new SystemIcon(systems[i]->ID(), m_zoom_factor);
-        m_system_icons.push_back(icon);
+        m_system_icons[systems[i]->ID()] = icon;
         icon->InstallEventFilter(this);
         AttachChild(icon);
         icon->Refresh();
         GG::Connect(icon->LeftClickedSignal, &MapWnd::SelectSystem, this);
         GG::Connect(icon->RightClickedSignal, &MapWnd::SystemRightClicked, this);
         GG::Connect(icon->LeftDoubleClickedSignal, &MapWnd::SystemDoubleClicked, this);
+        GG::Connect(icon->MouseEnteringSignal, &MapWnd::MouseEnteringSystem, this);
+        GG::Connect(icon->MouseLeavingSignal, &MapWnd::MouseLeavingSystem, this);
 
         // system's starlanes
         for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
@@ -684,13 +672,13 @@ void MapWnd::RestoreFromSaveData(const XMLElement& elem)
 {
     m_zoom_factor = boost::lexical_cast<double>(elem.Child("m_zoom_factor").Text());
 
-    for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
-        const System& system = m_system_icons[i]->GetSystem();
+    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+        const System& system = it->second->GetSystem();
         GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor), 
                        static_cast<int>((system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor));
-        m_system_icons[i]->SizeMove(icon_ul, 
-                                    GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5), 
-                                           static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5)));
+        it->second->SizeMove(icon_ul, 
+                             GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5), 
+                                    static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5)));
     }
 
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
@@ -741,14 +729,16 @@ void MapWnd::RestoreFromSaveData(const XMLElement& elem)
 
 void MapWnd::ShowSystemNames()
 {
-    for (unsigned int i = 0; i < m_system_icons.size(); ++i)
-        m_system_icons[i]->ShowName();
+    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+        it->second->ShowName();
+    }
 }
 
 void MapWnd::HideSystemNames()
 {
-    for (unsigned int i = 0; i < m_system_icons.size(); ++i)
-        m_system_icons[i]->HideName();
+    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+        it->second->HideName();
+    }
 }
 
 void MapWnd::HandlePlayerChatMessage(const std::string& msg)
@@ -838,9 +828,9 @@ void MapWnd::SelectSystem(System* system)
 void MapWnd::SelectFleet(Fleet* fleet)
 {
     if (System* system = fleet->GetSystem()) {
-        for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
-            if (&m_system_icons[i]->GetSystem() == system) {
-                m_system_icons[i]->ClickFleetButton(fleet);
+        for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+            if (&it->second->GetSystem() == system) {
+                it->second->ClickFleetButton(fleet);
                 break;
             }
         }
@@ -859,15 +849,15 @@ void MapWnd::SetFleetMovement(FleetButton* fleet_button)
     std::set<int> destinations;
     for (unsigned int i = 0; i < fleet_button->Fleets().size(); ++i) {
         Fleet* fleet = fleet_button->Fleets()[i];
-        GG::Pt ul = ClientUpperLeft();
+        GG::Pt cl_ul = ClientUpperLeft();
         if (fleet->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
             fleet->FinalDestinationID() != fleet->SystemID() &&
             destinations.find(fleet->FinalDestinationID()) == destinations.end()) {
             destinations.insert(fleet->FinalDestinationID());
-            GG::Pt fleet_ul = fleet_button->UpperLeft();
             GG::Pt sz = fleet_button->Size();
-            m_fleet_lines[fleet] = MovementLineData((fleet_ul.x + sz.x / 2 - ul.x) / m_zoom_factor, 
-                                                    (fleet_ul.y + sz.y / 2 - ul.y) / m_zoom_factor, 
+            GG::Pt fleet_center = fleet_button->UpperLeft() + GG::Pt(sz.x / 2, sz.y / 2);
+            m_fleet_lines[fleet] = MovementLineData((fleet_center - cl_ul).x / m_zoom_factor,
+                                                    (fleet_center - cl_ul).y / m_zoom_factor,
                                                     fleet->TravelRoute());
         } else {
             m_fleet_lines.erase(fleet);
@@ -881,6 +871,29 @@ void MapWnd::SetFleetMovement(Fleet* fleet)
     std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
     if (it != m_fleet_lines.end()) {
         m_fleet_lines[fleet].destinations = fleet->TravelRoute();
+    }
+}
+
+void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route)
+{
+    if (!fleet || travel_route.empty()) {
+        m_projected_fleet_lines = MovementLineData();
+    } else {
+        std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
+        GG::Clr line_color = Empires().Lookup(*fleet->Owners().begin())->Color();
+        if (it != m_fleet_lines.end()) {
+            m_projected_fleet_lines = m_fleet_lines[fleet];
+            m_projected_fleet_lines.destinations = travel_route;
+            m_projected_fleet_lines.color = line_color;
+        } else {
+            GG::Pt cl_ul = ClientUpperLeft();
+            const FleetButton* fleet_button = m_system_icons[fleet->SystemID()]->GetFleetButton(fleet);
+            GG::Pt sz = fleet_button->Size();
+            GG::Pt fleet_center = fleet_button->UpperLeft() + GG::Pt(sz.x / 2, sz.y / 2);
+            m_projected_fleet_lines = MovementLineData((fleet_center - cl_ul).x / m_zoom_factor,
+                                                       (fleet_center - cl_ul).y / m_zoom_factor,
+                                                       travel_route, line_color);
+        }
     }
 }
 
@@ -935,13 +948,13 @@ void MapWnd::Zoom(int delta)
     else
         ShowSystemNames();
 
-    for (unsigned int i = 0; i < m_system_icons.size(); ++i) {
-        const System& system = m_system_icons[i]->GetSystem();
+    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+        const System& system = it->second->GetSystem();
         GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2.0) * m_zoom_factor), 
                        static_cast<int>((system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2.0) * m_zoom_factor));
-        m_system_icons[i]->SizeMove(icon_ul,
-                                    GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor), 
-                                           static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor)));
+        it->second->SizeMove(icon_ul,
+                             GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor), 
+                                    static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor)));
     }
 
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
@@ -1075,8 +1088,13 @@ void MapWnd::RenderFleetMovementLines()
     const GLushort PATTERN = 0xF0F0;
     const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
     const double RATE = 0.25;
+    const double PROJECTED_PATH_RATE = 0.35;
     const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
+    const int PROJECTED_PATH_SHIFT =
+        static_cast<int>(GG::GUI::GetGUI()->Ticks() * PROJECTED_PATH_RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
     const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
+    const unsigned int PROJECTED_PATH_STIPPLE =
+        (PATTERN << PROJECTED_PATH_SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - PROJECTED_PATH_SHIFT));
     double LINE_SCALE = std::max(1.0, 1.333 * m_zoom_factor);
 
     glDisable(GL_TEXTURE_2D);
@@ -1084,18 +1102,33 @@ void MapWnd::RenderFleetMovementLines()
     glEnable(GL_LINE_STIPPLE);
     glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
     glLineWidth(LINE_SCALE);
-    glColor4d(1.0, 1.0, 1.0, 1.0);
 
     GG::Pt ul = ClientUpperLeft();
     for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
         // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
         // when the begining of a line segment starts offscreen
         glBegin(GL_LINES);
+        glColor4ubv(it->second.color.v);
         const std::list<System*>& destinations = it->second.destinations;
         glVertex2d(ul.x + it->second.x * m_zoom_factor, ul.y + it->second.y * m_zoom_factor);
         for (std::list<System*>::const_iterator dest_it = destinations.begin(); dest_it != destinations.end(); ++dest_it) {
             if (it->first->SystemID() == (*dest_it)->ID())
                 continue;
+            glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
+            std::list<System*>::const_iterator temp_it = dest_it;
+            if (++temp_it != destinations.end())
+                glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
+        }
+        glEnd();
+    }
+
+    glLineStipple(static_cast<int>(LINE_SCALE), PROJECTED_PATH_STIPPLE);
+    if (!m_projected_fleet_lines.destinations.empty()) {
+        glBegin(GL_LINES);
+        glColor4ubv(m_projected_fleet_lines.color.v);
+        const std::list<System*>& destinations = m_projected_fleet_lines.destinations;
+        glVertex2d(ul.x + m_projected_fleet_lines.x * m_zoom_factor, ul.y + m_projected_fleet_lines.y * m_zoom_factor);
+        for (std::list<System*>::const_iterator dest_it = destinations.begin(); dest_it != destinations.end(); ++dest_it) {
             glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
             std::list<System*>::const_iterator temp_it = dest_it;
             if (++temp_it != destinations.end())
@@ -1164,6 +1197,18 @@ void MapWnd::SystemRightClicked(int system_id)
 {
     if (!m_in_production_view_mode)
         SystemRightClickedSignal(system_id);
+}
+
+void MapWnd::MouseEnteringSystem(int system_id)
+{
+    if (!m_in_production_view_mode)
+        SystemBrowsedSignal(system_id);
+}
+
+void MapWnd::MouseLeavingSystem(int system_id)
+{
+    if (!m_in_production_view_mode)
+        SystemBrowsedSignal(UniverseObject::INVALID_OBJECT_ID);
 }
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)

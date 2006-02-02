@@ -82,7 +82,8 @@ public:
     //@}
 
     //! \name Mutators //@{
-    void SystemClicked(int system_id); ///< invoked when a system is clicked on the main map, possibly indicating that the currently-selected fleet should move there
+    void SystemClicked(int system_id); ///< invoked when a system is clicked on the main map, indicating that the currently-selected fleet should move there
+    void SystemBrowsed(int system_id); ///< invoked when the mouse is over a system on the main map, indicating that the projected movement to that system should be shown
     void AddFleet(Fleet* fleet); ///< adds a new fleet to a currently-open FletWnd
     void SelectFleet(Fleet* fleet); ///< selects the indicated fleet, bringing it into the fleet detail window
     //@}
@@ -105,6 +106,7 @@ protected:
 
 private:
     void        Init(const std::vector<Fleet*>& fleet_ids, int selected_fleet);
+    void        PlotMovement(int system_id, bool execute_move);
     void        FleetSelectionChanged(const std::set<int>& rows);
     void        FleetRightClicked(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);
     void        FleetDoubleClicked(int row_idx, GG::ListBox::Row* row);

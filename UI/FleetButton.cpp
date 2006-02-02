@@ -177,8 +177,10 @@ void FleetButton::Clicked()
                           FleetWnd::LastPosition());
     }
 
-    if (map_wnd)
+    if (map_wnd) {
         GG::Connect(map_wnd->SystemRightClickedSignal, &FleetWnd::SystemClicked, fleet_wnd);
+        GG::Connect(map_wnd->SystemBrowsedSignal, &FleetWnd::SystemBrowsed, fleet_wnd);
+    }
 
     for (unsigned int i = 0; i < fleets.size(); ++i) {
         s_open_fleets[fleets[i]] = fleet_wnd;
