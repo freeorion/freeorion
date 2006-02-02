@@ -254,7 +254,7 @@ ValueRef::ValueRefBase<T>* ParseArithmeticExpression(const std::string& str)
     return EvalArithExpr<T>(info.trees.begin());
 }
 
-inline std::pair<std::string, std::string> ParseRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ParseRevision()
+{return "$Id$";}
 
 #endif // _Parse_h_

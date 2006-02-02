@@ -131,7 +131,7 @@ private:
     bool                              m_handling_message;
 };
 
-inline std::pair<std::string, std::string> HumanClientAppRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string HumanClientAppRevision()
+{return "$Id$";}
 
 #endif // _HumanClientApp_h_

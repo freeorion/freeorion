@@ -86,7 +86,7 @@ namespace {
     const double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;
 
     bool temp_header_bool = RecordHeaderFile(CUIControlsRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 
     bool temp_header_bool2 = RecordHeaderFile(CUISpinRevision());
 }

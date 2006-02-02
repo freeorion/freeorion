@@ -47,7 +47,7 @@ private:
     BuildDesignatorWnd*  m_build_designator_wnd;
 };
 
-inline std::pair<std::string, std::string> ProductionWndRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ProductionWndRevision()
+{return "$Id$";}
 
 #endif // _ProductionWnd_h_

@@ -97,7 +97,7 @@ private:
 
 };//About
 
-inline std::pair<std::string, std::string> AboutRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string AboutRevision()
+{return "$Id$";}
 
 #endif // _About_h_

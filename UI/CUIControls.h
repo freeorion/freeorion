@@ -526,7 +526,7 @@ private:
     GG::Clr m_outline_color;
 };
 
-inline std::pair<std::string, std::string> CUIControlsRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string CUIControlsRevision()
+{return "$Id$";}
 
 #endif // _CUIControls_h_

@@ -52,7 +52,7 @@ private:
     friend class Universe;
 };
 
-inline std::pair<std::string, std::string> MeterRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string MeterRevision()
+{return "$Id$";}
 
 #endif // _Meter_h_

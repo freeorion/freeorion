@@ -13,7 +13,7 @@ namespace GG {
     minimal GL implementations. */
 void LoadSplashGraphics(std::vector<std::vector<GG::StaticGraphic*> >& graphics);
 
-inline std::pair<std::string, std::string> SplashRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string SplashRevision()
+{return "$Id$";}
 
 #endif // _Splash_h_

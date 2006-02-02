@@ -89,7 +89,7 @@ protected:
 	std::vector<GG::Wnd*>	m_pages;
 };
 
-inline std::pair<std::string, std::string> CUITabbedPagesRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string CUITabbedPagesRevision()
+{return "$Id$";}
 
 #endif // _CUITabbedPages_h_

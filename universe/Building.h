@@ -92,7 +92,7 @@ private:
 const BuildingType* GetBuildingType(const std::string& name);
 
 
-inline std::pair<std::string, std::string> BuildingRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string BuildingRevision()
+{return "$Id$";}
 
 #endif // _Building_h_

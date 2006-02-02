@@ -27,30 +27,29 @@ const std::vector<std::string>& VersionSensitiveSettingsFiles();
     server and clients are all using the same versions of code. */
 const std::map<std::string, std::string>& SourceFiles();
 
-/** Saves the filename \a filename and its revision number string for later retrieval via SourceFiles().
-    This function returns a dummy boolean value, allowing it to be executed at static initialization time,
-    via a hack -- simply declare a file-scope bool variable, and initialize it: bool temp_bool =
-    RecordSourceFile(...).  If the same filename is registered more than once, an exception will be thrown.
-    \see RecordHeaderFile () has more info on how it and this function should be used. */
-bool RecordSourceFile(const std::string& filename, const std::string& revision);
+/** Saves the filename and revision number contained within \a file_id_string for later retrieval via SourceFiles().
+    This function returns a dummy boolean value, allowing it to be executed at static initialization time, via a hack --
+    simply declare a file-scope bool variable, and initialize it: bool temp_bool = RecordSourceFile(...).  If the same
+    filename is registered more than once, an exception will be thrown.  \see RecordHeaderFile() has more info on how it
+    and this function should be used. */
+bool RecordSourceFile(const std::string& file_id_string);
 
-/** Identical to RecordSourceFile(), except that it takes a std::pair of std::strings, instead of two
-    individual std::strings.  Header files should declare an inline function that returns a pair specifying
-    its CVS-expanded filename and revision string, and the header file's matching source file should record
-    that info using this function.  Example:<br>In MultiplayerCommon.h:
+/** Virtually identical to RecordSourceFile().  Header files should declare an inline function that returns the
+    SVN-expanded file id string for that header, and the header file's matching source file should record that info
+    using this function.  Example:<br>In MultiplayerCommon.h:
     \verbatim
-    inline std::pair<std::string, std::string> MultiplayerCommonRevision()
-    {return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+    inline std::string MultiplayerCommonRevision()
+    {return std::string("$Id$");}
     \endverbatim<br>In MultiplayerCommon.cpp:
     \verbatim
     namespace {
     ...
     bool temp_header_bool = RecordHeaderFile(MultiplayerCommonRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
     }
     \endverbatim
 */
-bool RecordHeaderFile(const std::pair<std::string, std::string>& filename_revision_pair);
+bool RecordHeaderFile(const std::string& file_id_string);
 
 /** Returns an MD5 "sum" of the given string as a 32-digithexidecimal string. */
 std::string MD5StringSum(const std::string& str);
@@ -99,7 +98,7 @@ struct PlayerSetupData
     int save_game_empire_id;  ///< when an MP save game is being loaded, this is the id of the empire that this player will play
 };
 
-inline std::pair<std::string, std::string> MultiplayerCommonRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string MultiplayerCommonRevision()
+{return "$Id$";}
 
 #endif // _MultiplayerCommon_h_

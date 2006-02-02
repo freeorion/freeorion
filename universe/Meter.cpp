@@ -4,7 +4,7 @@
 
 namespace {
     bool temp_header_bool = RecordHeaderFile(MeterRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 const double Meter::METER_MIN = 0.0;

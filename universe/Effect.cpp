@@ -61,7 +61,7 @@ namespace {
     }
 
     bool temp_header_bool = RecordHeaderFile(EffectRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 XMLObjectFactory<EffectBase> Effect::EffectFactory()

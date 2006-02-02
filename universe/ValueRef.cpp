@@ -51,7 +51,7 @@ namespace {
     }
 
     bool temp_header_bool = RecordHeaderFile(ValueRefRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 ///////////////////////////////////////////////////////////

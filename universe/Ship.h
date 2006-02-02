@@ -43,8 +43,8 @@ private:
     int         m_fleet_id;
 };
 
-inline std::pair<std::string, std::string> ShipRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ShipRevision()
+{return "$Id$";}
 
 #endif // _Ship_h_
 

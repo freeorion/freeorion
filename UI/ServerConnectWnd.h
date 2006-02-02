@@ -64,7 +64,7 @@ private:
     CUIButton*       m_cancel_bn;
 };
 
-inline std::pair<std::string, std::string> ServerConnectWndRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ServerConnectWndRevision()
+{return "$Id$";}
 
 #endif // _ServerConnectWnd_h_

@@ -63,8 +63,8 @@ private:
     OrderMap m_orders;
 };
 
-inline std::pair<std::string, std::string> OrderSetRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string OrderSetRevision()
+{return "$Id$";}
 
 #endif // _OrderSet_h_
 

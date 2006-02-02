@@ -93,8 +93,8 @@ private:
     UniverseObject* const m_object; ///< the UniverseObject of which this center is a part
 };
 
-inline std::pair<std::string, std::string> ResourceCenterRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ResourceCenterRevision()
+{return "$Id$";}
 
 #endif // _ResourceCenter_h_
 

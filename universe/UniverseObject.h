@@ -147,8 +147,8 @@ private:
     std::set<std::string> m_specials;
 };
 
-inline std::pair<std::string, std::string> UniverseObjectRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string UniverseObjectRevision()
+{return "$Id$";}
 
 #endif // _UniverseObject_h_
 

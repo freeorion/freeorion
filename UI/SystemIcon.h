@@ -90,7 +90,7 @@ private:
     friend class FleetButtonClickedFunctor;
 };
 
-inline std::pair<std::string, std::string> SystemIconRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string SystemIconRevision()
+{return "$Id$";}
 
 #endif // _SystemIcon_h_

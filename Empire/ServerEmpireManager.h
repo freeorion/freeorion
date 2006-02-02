@@ -103,7 +103,7 @@ private:
     std::map<int, XMLElement> m_last_turn_empire_states;
 };
 
-inline std::pair<std::string, std::string> ServerEmpireManagerRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ServerEmpireManagerRevision()
+{return "$Id$";}
 
 #endif // _ServerEmpireManager_h_

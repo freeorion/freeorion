@@ -42,7 +42,7 @@ private:
     TechTreeWnd*         m_tech_tree_wnd;
 };
 
-inline std::pair<std::string, std::string> ResearchWndRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ResearchWndRevision()
+{return "$Id$";}
 
 #endif // _ResearchWnd_h_

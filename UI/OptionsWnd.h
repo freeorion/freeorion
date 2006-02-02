@@ -134,7 +134,7 @@ private:
     friend struct BrowseForFileFunctor;
 };
 
-inline std::pair<std::string, std::string> OptionsWndRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string OptionsWndRevision()
+{return "$Id$";}
 
 #endif // _OptionsWnd_h_

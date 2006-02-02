@@ -298,7 +298,7 @@ private:
     const ValueRef::ValueRefBase<int>* m_effect_target_id;
 };
 
-inline std::pair<std::string, std::string> EffectRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string EffectRevision()
+{return "$Id$";}
 
 #endif // _Effect_h_

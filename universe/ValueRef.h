@@ -320,7 +320,7 @@ bool ValueRef::ConstantExpr(const ValueRefBase<T>* expr)
 }
 
 
-inline std::pair<std::string, std::string> ValueRefRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ValueRefRevision()
+{return "$Id$";}
 
 #endif // _ValueRef_h_

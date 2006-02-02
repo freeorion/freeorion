@@ -46,8 +46,8 @@ private:
    static AIClientApp*  s_app;
 };
 
-inline std::pair<std::string, std::string> AIClientAppRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string AIClientAppRevision()
+{return "$Id$";}
 
 #endif // _AIClientApp_h_
 

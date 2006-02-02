@@ -179,8 +179,8 @@ private:
     static ServerApp*         s_app;
 };
 
-inline std::pair<std::string, std::string> ServerAppRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ServerAppRevision()
+{return "$Id$";}
 
 #endif // _ServerApp_h_
 

@@ -209,7 +209,7 @@ void PlanetChangedFunctor<PoolT>::operator()()
     m_pool.OnPlanetChanged(m_planet_id);
 }
 
-inline std::pair<std::string, std::string> ResourcePoolRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ResourcePoolRevision()
+{return "$Id$";}
 
 #endif // _ResourcePool_h_

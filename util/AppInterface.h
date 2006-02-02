@@ -28,7 +28,7 @@ int GetNewObjectID();
    that are needed for both the server and the client, but for which
    access will vary and requires an #ifdef */
 
-inline std::pair<std::string, std::string> AppInterfaceRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string AppInterfaceRevision()
+{return "$Id$";}
 
 #endif // _AppInterface_h_

@@ -205,7 +205,7 @@ TechManager& GetTechManager();
 /** returns a pointer to the tech with the name \a name, or 0 if no such tech exists */
 const Tech* GetTech(const std::string& name);
 
-inline std::pair<std::string, std::string> TechRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string TechRevision()
+{return "$Id$";}
 
 #endif // _Tech_h_

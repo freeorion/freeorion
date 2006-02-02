@@ -30,7 +30,7 @@ namespace {
     log4cpp::Category& logger = log4cpp::Category::getRoot();
 
     bool temp_header_bool = RecordHeaderFile(NetworkCoreRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 void NetworkCore::SendMessage(const Message& msg, int socket, const std::string& app_name) const

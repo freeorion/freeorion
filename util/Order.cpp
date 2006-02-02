@@ -43,7 +43,7 @@ namespace
     Order* GenProductionQueueOrder(const XMLElement& elem) {return new ProductionQueueOrder(elem);}
 
     bool temp_header_bool = RecordHeaderFile(OrderRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

@@ -24,7 +24,7 @@ namespace {
     const bool ALLOW_NO_STARLANES = false;
 
     bool temp_header_bool = RecordHeaderFile(GalaxySetupWndRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 ////////////////////////////////////////////////

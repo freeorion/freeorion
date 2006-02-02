@@ -54,7 +54,7 @@ struct CombatUpdateMessage
 
 };
 
-inline std::pair<std::string, std::string> CombatRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string CombatRevision()
+{return "$Id$";}
 
 #endif // _Combat_h_

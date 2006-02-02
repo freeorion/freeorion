@@ -41,7 +41,7 @@ namespace {
     }
 
     bool temp_header_bool = RecordHeaderFile(MultiplayerCommonRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 /////////////////////////////////////////////////////
@@ -113,6 +113,7 @@ const std::vector<std::string>& VersionSensitiveSettingsFiles()
         retval.push_back("techs.xml");
         retval.push_back("buildings.xml");
         retval.push_back("specials.xml");
+        // TODO: add table files here as well
         init = true;
     }
     return retval;
@@ -124,7 +125,7 @@ const std::map<std::string, std::string>& SourceFiles()
     return source_files;
 }
 
-bool RecordSourceFile(const std::string& filename, const std::string& revision)
+bool RecordSourceFile(const std::string& file_id_string)
 {
 #if 0 // TODO: re-enable this when the validity check is re-enabled in the server
     std::string::size_type filename_start = filename.find_first_of(" \t");
@@ -151,9 +152,9 @@ bool RecordSourceFile(const std::string& filename, const std::string& revision)
     return true;
 }
 
-bool RecordHeaderFile(const std::pair<std::string, std::string>& filename_revision_pair)
+bool RecordHeaderFile(const std::string& file_id_string)
 {
-    return RecordSourceFile(filename_revision_pair.first, filename_revision_pair.second);
+    return RecordSourceFile(file_id_string);
 }
 
 std::string MD5StringSum(const std::string& str)

@@ -357,7 +357,7 @@ namespace {
     }
 
     bool temp_header_bool = RecordHeaderFile(SidePanelRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 /** a single planet's info and controls; several of these may appear at any one time in a SidePanel */

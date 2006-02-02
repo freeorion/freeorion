@@ -69,7 +69,7 @@ private:
    int                        m_UDP_socket;           ///< the "socket" number returned by SDL_net2; close this socket to stop listening on the port
 };
 
-inline std::pair<std::string, std::string> ServerNetworkCoreRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ServerNetworkCoreRevision()
+{return "$Id$";}
 
 #endif // _ServerNetworkCore_h_

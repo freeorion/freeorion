@@ -40,7 +40,7 @@ private:
     CUIButton*  m_exit_btn;	  //!< Quit game button
 };
 
-inline std::pair<std::string, std::string> InGameMenuRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string InGameMenuRevision()
+{return "$Id$";}
 
 #endif // _InGameMenu_h_

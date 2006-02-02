@@ -117,8 +117,8 @@ private:
     /////////////////////////////////////////////////////////////////////////////
 };
 
-inline std::pair<std::string, std::string> PlanetRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string PlanetRevision()
+{return "$Id$";}
 
 #endif // _Planet_h_
 

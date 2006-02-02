@@ -99,7 +99,7 @@ private:
     mutable double              m_travel_distance;
 };
 
-inline std::pair<std::string, std::string> FleetRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string FleetRevision()
+{return "$Id$";}
 
 #endif // _Fleet_h_

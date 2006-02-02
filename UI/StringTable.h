@@ -93,7 +93,7 @@ private:
     
 };
 
-inline std::pair<std::string, std::string> StringTableRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string StringTableRevision()
+{return "$Id$";}
 
 #endif // _StringTable_h_

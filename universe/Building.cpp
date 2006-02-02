@@ -50,7 +50,7 @@ namespace {
     };
 
     bool temp_header_bool = RecordHeaderFile(BuildingRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 Building::Building() :

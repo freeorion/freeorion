@@ -247,7 +247,7 @@ std::ostream& operator<<(std::ostream& os, const StreamableColor& clr);
 std::istream& operator>>(std::istream& is, StreamableColor& clr);
 
 
-inline std::pair<std::string, std::string> ClientUIRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ClientUIRevision()
+{return "$Id$";}
 
 #endif // _ClientUI_h_

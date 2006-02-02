@@ -344,8 +344,8 @@ private:
 };
 
 
-inline std::pair<std::string, std::string> UniverseRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string UniverseRevision()
+{return "$Id$";}
 
 #if (10*__GNUC__ + __GNUC_MINOR__ > 33) && (!defined _UniverseObject_h_)
 #  include "UniverseObject.h"

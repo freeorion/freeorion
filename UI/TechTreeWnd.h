@@ -83,7 +83,7 @@ private:
     CUIButton*              m_uncollapse_all_button;
 };
 
-inline std::pair<std::string, std::string> TechTreeWndRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string TechTreeWndRevision()
+{return "$Id$";}
 
 #endif // _TechTreeWnd_h_

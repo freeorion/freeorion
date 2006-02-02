@@ -181,7 +181,7 @@ private:
     static const int CONTROL_MARGIN = 5;
 };
 
-inline std::pair<std::string, std::string> CUIWndRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string CUIWndRevision()
+{return "$Id$";}
 
 #endif // _CUIWnd_h_

@@ -441,8 +441,8 @@ private:
     static const int INVALID_QUANTITY = -1000;
 };
 
-inline std::pair<std::string, std::string> OrderRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string OrderRevision()
+{return "$Id$";}
 
 #endif // _Order_h_
 

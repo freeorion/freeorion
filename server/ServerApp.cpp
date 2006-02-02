@@ -53,7 +53,7 @@ namespace {
     bool condition_test_temp_bool = RegisterOptions(&AddConditionTestOptions);
 
     bool temp_header_bool = RecordHeaderFile(ServerAppRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 #endif
 

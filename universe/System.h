@@ -185,8 +185,8 @@ private:
 };
 
 
-inline std::pair<std::string, std::string> SystemRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string SystemRevision()
+{return "$Id$";}
 
 
 // template implementations

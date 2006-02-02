@@ -17,7 +17,7 @@ namespace {
     const double SHIP_SPEED = 50.0; // "reasonable" speed --can cross galaxy in 20 turns (v0.2 only !!!!)
 
     bool temp_header_bool = RecordHeaderFile(FleetRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

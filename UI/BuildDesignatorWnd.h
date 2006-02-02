@@ -59,7 +59,7 @@ private:
     GG::Rect          m_map_view_hole;
 };
 
-inline std::pair<std::string, std::string> BuildDesignatorWndRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string BuildDesignatorWndRevision()
+{return "$Id$";}
 
 #endif // _BuildDesignatorWnd_h_

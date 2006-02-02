@@ -53,8 +53,8 @@ void CircleArc(int x1, int y1, int x2, int y2, double theta1, double theta2, boo
     fill is true, the resulting rectangle is solid; it is drawn in outline otherwise. */
 void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_round, bool ul_round, bool ll_round, bool lr_round, bool fill);
 
-inline std::pair<std::string, std::string> CUIDrawUtilRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string CUIDrawUtilRevision()
+{return "$Id$";}
 
 #endif // _CUIDrawUtil_h_
 

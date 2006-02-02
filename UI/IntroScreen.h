@@ -55,7 +55,7 @@ private:
     std::vector<std::vector<GG::StaticGraphic*> > m_bg_graphics;
 };
 
-inline std::pair<std::string, std::string> IntroScreenRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string IntroScreenRevision()
+{return "$Id$";}
 
 #endif // _IntroScreen_h_

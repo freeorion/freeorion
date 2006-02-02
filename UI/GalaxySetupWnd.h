@@ -135,7 +135,7 @@ private:
     GG::Pt                m_preview_ul;
 };
 
-inline std::pair<std::string, std::string> GalaxySetupWndRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string GalaxySetupWndRevision()
+{return "$Id$";}
 
 #endif // _GalaxySetupWnd_h_

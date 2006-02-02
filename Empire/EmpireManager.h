@@ -131,7 +131,7 @@ private:
 
 };
 
-inline std::pair<std::string, std::string> EmpireManagerRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string EmpireManagerRevision()
+{return "$Id$";}
 
 #endif // _EmpireManager_h_

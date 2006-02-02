@@ -54,7 +54,7 @@ protected:
     std::string    m_text;      ///< the text, including hyperlinks, that describes this entry. Built from XML data
 };
 
-inline std::pair<std::string, std::string> VarTextRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string VarTextRevision()
+{return "$Id$";}
 
 #endif // _VarText_h_

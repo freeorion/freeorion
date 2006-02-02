@@ -30,7 +30,7 @@ class CombatWnd : public CUIWnd
 
 };
 
-inline std::pair<std::string, std::string> CombatWndRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string CombatWndRevision()
+{return "$Id$";}
 
 #endif // _CombatWnd_h_

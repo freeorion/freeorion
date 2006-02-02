@@ -5,7 +5,7 @@
 
 namespace {
     bool temp_header_bool = RecordHeaderFile(SitRepEntryRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 const std::string SitRepEntry::SITREP_UPDATE_TAG = "SitRepUpdate";

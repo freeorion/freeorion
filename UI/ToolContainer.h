@@ -44,7 +44,7 @@ private:
     static Uint32 Callback(Uint32, void*);    //!< callback function for SDL_Timer    
 };
 
-inline std::pair<std::string, std::string> ToolContainerRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ToolContainerRevision()
+{return "$Id$";}
 
 #endif // _ToolContainer_h_

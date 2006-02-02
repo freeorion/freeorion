@@ -8,7 +8,7 @@ namespace {
     boost::uniform_01<GeneratorType> zero_to_one_gen(gen);
 
     bool temp_header_bool = RecordHeaderFile(RandomRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

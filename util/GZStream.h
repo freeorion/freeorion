@@ -116,7 +116,7 @@ public:
 
 }
 
-inline std::pair<std::string, std::string> GZStreamRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string GZStreamRevision()
+{return "$Id$";}
 
 #endif // _GZStream_h_

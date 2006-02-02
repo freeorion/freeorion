@@ -105,7 +105,7 @@ LinkText::BoolCombiner::result_type LinkText::BoolCombiner::operator()(InIt firs
     return true;
 }
 
-inline std::pair<std::string, std::string> LinkTextRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string LinkTextRevision()
+{return "$Id$";}
 
 #endif // _LinkText_h_

@@ -38,7 +38,7 @@ private:
     GG::Clr          m_border_color; //!< the color of the border of the tool window
 };
 
-inline std::pair<std::string, std::string> ToolWndRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ToolWndRevision()
+{return "$Id$";}
 
 #endif // _ToolWnd_h_

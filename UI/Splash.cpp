@@ -8,7 +8,7 @@
 
 namespace {
     bool temp_header_bool = RecordHeaderFile(SplashRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 void LoadSplashGraphics(std::vector<std::vector<GG::StaticGraphic*> >& graphics)

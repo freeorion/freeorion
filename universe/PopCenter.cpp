@@ -41,7 +41,7 @@ namespace {
     }
 
     bool temp_header_bool = RecordHeaderFile(PopCenterRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 PopCenter::PopCenter(UniverseObject* object, double max_pop_mod, double max_health_mod) : 

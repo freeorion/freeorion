@@ -19,7 +19,7 @@ namespace {
     const unsigned int SYCHRONOUS_TIMEOUT = 30000;    // 30 seconds
 
     bool temp_header_bool = RecordHeaderFile(ClientNetworkCoreRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 ClientNetworkCore::ClientNetworkCore() : 

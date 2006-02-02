@@ -524,8 +524,8 @@ private:
     TradeResourcePool       m_trade_resource_pool;
 };
 
-inline std::pair<std::string, std::string> EmpireRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string EmpireRevision()
+{return "$Id$";}
 
 #endif // _Empire_h_
 

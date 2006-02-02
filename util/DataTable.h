@@ -17,7 +17,7 @@ typedef std::map<std::string, DataTable> DataTableMap;
     to stdout by setting echo to true; this is useful in debugging a incorrect config file. */
 void LoadDataTables(const std::string& filename, DataTableMap& tables, bool echo = false);
 
-inline std::pair<std::string, std::string> DataTableRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string DataTableRevision()
+{return "$Id$";}
 
 #endif // _DataTable_h_

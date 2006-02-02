@@ -196,7 +196,7 @@ private:
     friend OptionsDB& GetOptionsDB();
 };
 
-inline std::pair<std::string, std::string> OptionsDBRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string OptionsDBRevision()
+{return "$Id$";}
 
 #endif // _OptionsDB_h_

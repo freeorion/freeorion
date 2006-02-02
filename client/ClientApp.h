@@ -98,7 +98,7 @@ private:
     static ClientApp* s_app; ///< a ClientApp pointer to the singleton instance of the app
 };
 
-inline std::pair<std::string, std::string> ClientAppRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string ClientAppRevision()
+{return "$Id$";}
 
 #endif // _ClientApp_h_

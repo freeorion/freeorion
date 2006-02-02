@@ -32,7 +32,7 @@ private:
     CUIListBox*           m_sitreps_lb;
 };
 
-inline std::pair<std::string, std::string> SitRepPanelRevision()
-{return std::pair<std::string, std::string>("$RCSfile$", "$Revision$");}
+inline std::string SitRepPanelRevision()
+{return "$Id$";}
 
 #endif // _SitRepPanel_h_

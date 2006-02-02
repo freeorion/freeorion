@@ -31,7 +31,7 @@ namespace
     }
 
     bool temp_header_bool = RecordHeaderFile(CombatWndRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile$", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 class CombatInfoControl : public GG::Control
