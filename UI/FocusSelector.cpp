@@ -45,12 +45,15 @@ namespace {
 
 FocusButton::FocusButton(GG::Clr color, const boost::shared_ptr<GG::Texture>& image) :
     Button(0, 0, 1, 1, "", boost::shared_ptr<GG::Font>(), color),
-    m_texture(image)
+    m_texture(image),
+    m_mouse_here(false)
 {}
 
 void FocusButton::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
+    if (m_mouse_here)
+        GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_SHADOW, GG::CLR_ZERO, 0);
     if (m_texture) {
         glColor4ubv(GG::CLR_WHITE.v);
         m_texture->OrthoBlit(ul, lr, 0, false);
@@ -60,6 +63,16 @@ void FocusButton::Render()
 void FocusButton::RClick(const GG::Pt& pt, Uint32 keys)
 {
     RightClickedSignal();
+}
+
+void FocusButton::MouseEnter(const GG::Pt& pt, Uint32 keys)
+{
+    m_mouse_here = true;
+}
+
+void FocusButton::MouseLeave(const GG::Pt& pt, Uint32 keys)
+{
+    m_mouse_here = false;
 }
 
 void FocusButton::SetImage(const boost::shared_ptr<GG::Texture>& image)
@@ -152,7 +165,8 @@ FocusSelector::FocusSelector(int w, const ResourceCenter& resource_center) :
     Control(0, 0, w, w / (FOCUS_SELECTOR_LAST_FOCUS - FOCUS_SELECTOR_FIRST_FOCUS) + FOCUS_SELECTOR_METER_BAR_HEIGHT + FOCUS_SELECTOR_TEXT_HEIGHT),
     m_primary_focus(resource_center.PrimaryFocus()),
     m_secondary_focus(resource_center.SecondaryFocus()),
-    m_first_button_focus(FOCUS_SELECTOR_FIRST_FOCUS)
+    m_first_button_focus(FOCUS_SELECTOR_FIRST_FOCUS),
+    m_mouse_here(false)
 {
     SetColor(FOCUS_SELECTOR_COLOR);
     GG::Layout* layout = new GG::Layout(0, 0, Width(), Height(), 3, (FOCUS_SELECTOR_LAST_FOCUS - FOCUS_SELECTOR_FIRST_FOCUS), 1);
@@ -204,9 +218,14 @@ FocusSelector::FocusSelector(int w, const ResourceCenter& resource_center) :
 
 void FocusSelector::Render()
 {
+    if (m_mouse_here) {
+        GG::Pt ul = m_focus_buttons[0]->UpperLeft() - GG::Pt(1, 1);
+        GG::Pt lr = m_focus_buttons.back()->LowerRight() + GG::Pt(1, 1);
+        GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_SHADOW, GG::CLR_ZERO, 0);
+    }
     for (unsigned int i = 0; i < m_focus_buttons.size(); ++i) {
-        GG::Pt ul = m_focus_buttons[i]->UpperLeft() - GG::Pt(1, 1),
-            lr = m_focus_buttons[i]->LowerRight() + GG::Pt(1, 1);
+        GG::Pt ul = m_focus_buttons[i]->UpperLeft() - GG::Pt(1, 1);
+        GG::Pt lr = m_focus_buttons[i]->LowerRight() + GG::Pt(1, 1);
         GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, Color(), 1);
     }
     GG::Pt ul, lr;
@@ -229,6 +248,16 @@ void FocusSelector::LClick(const GG::Pt& pt, Uint32 keys)
 void FocusSelector::RClick(const GG::Pt& pt, Uint32 keys)
 {
     SecondaryFocusChangedSignal(FOCUS_BALANCED);
+}
+
+void FocusSelector::MouseEnter(const GG::Pt& pt, Uint32 keys)
+{
+    m_mouse_here = true;
+}
+
+void FocusSelector::MouseLeave(const GG::Pt& pt, Uint32 keys)
+{
+    m_mouse_here = false;
 }
 
 void FocusSelector::Update(const ResourceCenter& resource_center)

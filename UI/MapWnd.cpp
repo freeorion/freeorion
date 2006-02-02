@@ -876,7 +876,8 @@ void MapWnd::SetFleetMovement(Fleet* fleet)
 
 void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route)
 {
-    if (!fleet || travel_route.empty()) {
+    if (!fleet || travel_route.empty() ||
+        travel_route.size() == 2 && travel_route.front() == travel_route.back()) {
         m_projected_fleet_lines = MovementLineData();
     } else {
         std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);

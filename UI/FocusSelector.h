@@ -15,12 +15,15 @@ public:
 
     virtual void Render();
     virtual void RClick(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseLeave(const GG::Pt& pt, Uint32 keys);
     void SetImage(const boost::shared_ptr<GG::Texture>& image);
 
     mutable ClickedSignalType RightClickedSignal;
 
 private:
     boost::shared_ptr<GG::Texture> m_texture;
+    bool m_mouse_here;
 };
 
 class MeterStatusBar : public GG::Wnd
@@ -50,6 +53,8 @@ public:
     virtual void Render();
     virtual void LClick(const GG::Pt& pt, Uint32 keys);
     virtual void RClick(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseLeave(const GG::Pt& pt, Uint32 keys);
     void Update(const ResourceCenter& resource_center);
 
     mutable FocusChangedSignalType PrimaryFocusChangedSignal;
@@ -78,6 +83,7 @@ private:
     std::map<FocusType, MeterStatusBar*> m_meter_status_bars;
     std::vector<FocusButton*> m_focus_buttons;
     std::vector<GG::TextControl*> m_meter_deltas;
+    bool m_mouse_here;
 };
 
 #endif
