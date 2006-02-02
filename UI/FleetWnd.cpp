@@ -434,46 +434,50 @@ public:
     // Ship-display Wnds respond to changes in the system or fleet they display anyway.
     virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
     {
+        std::vector<Fleet*> fleets;
         std::vector<Ship*> ships;
         std::vector<int> ship_ids;
         for (std::list<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
-            if ((*it)->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
+            if ((*it)->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
+                fleets.push_back(static_cast<FleetRow*>(*it)->m_fleet);
+            } else if ((*it)->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 ships.push_back(static_cast<ShipRow*>(*it)->m_ship);
                 ship_ids.push_back(ships.back()->ID());
-            } else if ((*it)->DragDropDataType() != FLEET_DROP_TYPE_STRING) {
+            } else {
                 wnds.clear();
                 return;
             }
         }
+        assert(ships.empty() != fleets.empty());
+        wnds.clear();
 
         int row_index = RowUnderPt(pt);
-        if (m_read_only || row_index < 0 || NumRows() <= row_index) {
-            wnds.clear();
+        if (m_read_only || row_index < 0 || NumRows() <= row_index)
             return;
-        }
 
         Fleet* target_fleet = static_cast<FleetRow*>(&GetRow(row_index))->m_fleet;
         assert(target_fleet);
-        if (wnds.front()->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-            if (!CanJoin(ships[0], target_fleet)) {
-                wnds.clear();
-                return;
+        if (!fleets.empty()) {
+            for (unsigned int i = 0; i < fleets.size(); ++i)
+            {
+                // disallow drops across fleet windows; fleets must be at the same location
+                if (target_fleet->X() != fleets[i]->X() || target_fleet->Y() != fleets[i]->Y())
+                    continue;
+                HumanClientApp::Orders().IssueOrder(
+                    new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), fleets[i]->ID(), target_fleet->ID(),
+                                           std::vector<int>(fleets[i]->begin(), fleets[i]->end())));
+                if (fleets[i]->NumShips() == 0) {
+                    HumanClientApp::Orders().IssueOrder(
+                        new DeleteFleetOrder(HumanClientApp::GetApp()->EmpireID(), fleets[i]->ID()));
+                }
             }
-            HumanClientApp::Orders().IssueOrder(new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ships[0]->FleetID(), 
-                                                                       target_fleet->ID(), ship_ids));
-        } else if (wnds.front()->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
-            assert(wnds.size() == 1);
-            FleetRow* fleet_row = static_cast<FleetRow*>(wnds.front());
-            // disallow drops across fleet windows; fleets must be at the same location
-            if (target_fleet->X() != fleet_row->m_fleet->X() || target_fleet->Y() != fleet_row->m_fleet->Y()) {
-                wnds.clear();
+        } else if (!ships.empty()) {
+            if (!CanJoin(ships[0], target_fleet))
                 return;
-            }
             HumanClientApp::Orders().IssueOrder(
-                new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), fleet_row->FleetID(), 
-                                       target_fleet->ID(), std::vector<int>(fleet_row->m_fleet->begin(), fleet_row->m_fleet->end())));
+                new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ships[0]->FleetID(), target_fleet->ID(),
+                                       ship_ids));
         }
-        wnds.clear();
     }
 
 private:
@@ -749,7 +753,6 @@ FleetDetailWnd::~FleetDetailWnd()
 void FleetDetailWnd::CloseClicked()
 {
     CUIWnd::CloseClicked();
-    std::cout << "FleetDetailWnd::CloseClicked() : Deleting this" << std::endl;
     delete this;
 }
 
@@ -915,7 +918,7 @@ void FleetWnd::PlotMovement(int system_id, bool execute_move)
                     if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID)
                         ClientUI::GetClientUI()->GetMapWnd()->SetFleetMovement(fleet);
                 } else {
-                    ClientUI::GetClientUI()->GetMapWnd()->SetProjectedFleetMovement(fleet, route) ;
+                    ClientUI::GetClientUI()->GetMapWnd()->SetProjectedFleetMovement(fleet, route);
                 }
             }
         }
@@ -1081,6 +1084,7 @@ void FleetWnd::DeleteFleet(Fleet* fleet)
             break;
         }
     }
+    std::cout << "DeleteFleetOrder(fleet_id=" << fleet->ID() << ")" << std::endl;
     HumanClientApp::Orders().IssueOrder(new DeleteFleetOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID()));
 }
 
