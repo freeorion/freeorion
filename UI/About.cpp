@@ -35,7 +35,7 @@ About::About():
                               GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY,
                               GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
                               ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR,
-                              ClientUI::MULTIEDIT_INT_COLOR, GG::CLICKABLE | GG::DRAG_KEEPER);
+                              ClientUI::MULTIEDIT_INT_COLOR, GG::CLICKABLE);
     GG::Layout* layout = new GG::Layout(0, 0, ClientWidth(), ClientHeight(), 2, 6, 5);
     layout->SetMinimumRowHeight(1, m_license->Height() + 5);
     layout->SetRowStretch(0, 1);

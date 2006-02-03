@@ -36,6 +36,8 @@ public:
     FleetDataPanel(int w, int h, const Fleet* fleet);
 
     virtual void Render();
+    virtual void DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys);
+    virtual void DragDropLeave(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys);
     virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt);
     void Select(bool b);
 
@@ -290,6 +292,22 @@ void FleetDataPanel::Render()
     GG::FlatRectangle(text_ul.x, text_ul.y, text_lr.x + 5, text_lr.y, color_to_use, GG::CLR_ZERO, 0);
 }
 
+void FleetDataPanel::DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+{
+    Select(true);
+    for (std::map<Wnd*, GG::Pt>::const_iterator it = drag_drop_wnds.begin(); it != drag_drop_wnds.end(); ++it) {
+        if (it->first->DragDropDataType() != SHIP_DROP_TYPE_STRING) {
+            Select(false);
+            break;
+        }
+    }
+}
+
+void FleetDataPanel::DragDropLeave(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+{
+    Select(false);
+}
+
 void FleetDataPanel::AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
 {
     std::vector<Ship*> ships;
@@ -307,11 +325,12 @@ void FleetDataPanel::AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
         NewFleetFromShipsSignal(ships[0], ship_ids);
     }
     wnds.clear();
+    Select(false);
 }
 
 void FleetDataPanel::Select(bool b)
 {
-    if (m_fleet && m_selected != b) {
+    if (m_selected != b) {
         m_selected = b;
 
         const GG::Clr& unselected_text_color = ClientUI::TEXT_COLOR;

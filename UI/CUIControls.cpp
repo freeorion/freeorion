@@ -507,7 +507,7 @@ void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 // class CUIListBox
 ///////////////////////////////////////
 CUIListBox::CUIListBox(int x, int y, int w, int h, GG::Clr color/* = ClientUI::CTRL_BORDER_COLOR*/, 
-                       GG::Clr interior/* = GG::CLR_ZERO*/, Uint32 flags/* = CLICKABLE | DRAG_KEEPER*/) : 
+                       GG::Clr interior/* = GG::CLR_ZERO*/, Uint32 flags/* = CLICKABLE*/) : 
     ListBox(x, y, w, h, color, interior, flags)
 {
     RecreateScrolls();
@@ -614,7 +614,7 @@ void CUIDropDownList::EnableDropArrow()
 CUIEdit::CUIEdit(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                  GG::Clr color/* = ClientUI::CTRL_BORDER_COLOR*/, 
                  GG::Clr text_color/* = ClientUI::TEXT_COLOR*/, GG::Clr interior/* = ClientUI::EDIT_INT_COLOR*/, 
-                 Uint32 flags/* = CLICKABLE | DRAG_KEEPER*/) : 
+                 Uint32 flags/* = CLICKABLE*/) : 
     Edit(x, y, w, str, FontOrDefaultFont(font), color, text_color, interior, flags)
 {
     GG::Connect(EditedSignal, &PlayTextTypingSound, -1);
@@ -643,7 +643,7 @@ void CUIEdit::Render()
 CUIMultiEdit::CUIMultiEdit(int x, int y, int w, int h, const std::string& str, Uint32 style/* = TF_LINEWRAP*/, 
                            const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                            GG::Clr color/* = ClientUI::CTRL_BORDER_COLOR*/, GG::Clr text_color/* = ClientUI::TEXT_COLOR*/, 
-                           GG::Clr interior/* = ClientUI::MULTIEDIT_INT_COLOR*/, Uint32 flags/* = CLICKABLE | DRAG_KEEPER*/) : 
+                           GG::Clr interior/* = ClientUI::MULTIEDIT_INT_COLOR*/, Uint32 flags/* = CLICKABLE*/) : 
     MultiEdit(x, y, w, h, str, FontOrDefaultFont(font), color, style, text_color, interior, flags)
 {
     RecreateScrolls();

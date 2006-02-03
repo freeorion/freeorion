@@ -27,13 +27,13 @@ GG::DropDownList* CUIStyle::NewDropDownList(int x, int y, int w, int h, int drop
 
 GG::Edit* CUIStyle::NewEdit(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font,
                             GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
-                            Uint32 flags/* = GG::CLICKABLE | GG::DRAG_KEEPER*/) const
+                            Uint32 flags/* = GG::CLICKABLE*/) const
 {
     return new CUIEdit(x, y, w, str);
 }
 
 GG::ListBox* CUIStyle::NewListBox(int x, int y, int w, int h, GG::Clr color, GG::Clr interior/* = GG::CLR_ZERO*/,
-                                  Uint32 flags/* = GG::CLICKABLE | GG::DRAG_KEEPER*/) const
+                                  Uint32 flags/* = GG::CLICKABLE*/) const
 {
     return new CUIListBox(x, y, w, h);
 }
@@ -41,7 +41,7 @@ GG::ListBox* CUIStyle::NewListBox(int x, int y, int w, int h, GG::Clr color, GG:
 GG::MultiEdit* CUIStyle::NewMultiEdit(int x, int y, int w, int h, const std::string& str,
                                       const boost::shared_ptr<GG::Font>& font, GG::Clr color, Uint32 style/* = GG::TF_LINEWRAP*/,
                                       GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
-                                      Uint32 flags/* = GG::CLICKABLE |GG::DRAG_KEEPER*/) const
+                                      Uint32 flags/* = GG::CLICKABLE*/) const
 {
     return new CUIMultiEdit(x, y, w, h, str);
 }
@@ -61,14 +61,14 @@ GG::Slider* CUIStyle::NewSlider(int x, int y, int w, int h, int min, int max, GG
 
 GG::Spin<int>* CUIStyle::NewIntSpin(int x, int y, int w, int value, int step, int min, int max, bool edits,
                                     const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                    GG::Clr interior/* = GG::CLR_ZERO*/, Uint32 flags/* = GG::CLICKABLE | GG::DRAG_KEEPER*/) const
+                                    GG::Clr interior/* = GG::CLR_ZERO*/, Uint32 flags/* = GG::CLICKABLE*/) const
 {
     return new CUISpin<int>(x, y, w, value, step, min, max, edits);
 }
 
 GG::Spin<double>* CUIStyle::NewDoubleSpin(int x, int y, int w, double value, double step, double min, double max, bool edits,
                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                          GG::Clr interior/* = GG::CLR_ZERO*/, Uint32 flags/* = GG::CLICKABLE | GG::DRAG_KEEPER*/) const
+                                          GG::Clr interior/* = GG::CLR_ZERO*/, Uint32 flags/* = GG::CLICKABLE*/) const
 {
     return new CUISpin<double>(x, y, w, value, step, min, max, edits);
 }

@@ -200,7 +200,7 @@ class CUIListBox : public GG::ListBox
 public:
     /** \name Structors */ //@{
     CUIListBox(int x, int y, int w, int h, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr interior = GG::CLR_ZERO, 
-               Uint32 flags = GG::CLICKABLE | GG::DRAG_KEEPER); ///< basic ctor
+               Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
@@ -241,7 +241,7 @@ public:
     /** \name Structors */ //@{
     CUIEdit(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
             GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr text_color = ClientUI::TEXT_COLOR, 
-            GG::Clr interior = ClientUI::EDIT_INT_COLOR, Uint32 flags = GG::CLICKABLE | GG::DRAG_KEEPER); ///< basic ctor
+            GG::Clr interior = ClientUI::EDIT_INT_COLOR, Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
@@ -258,7 +258,7 @@ public:
     CUIMultiEdit(int x, int y, int w, int h, const std::string& str, Uint32 style = GG::TF_LINEWRAP,
                  const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
                  GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr text_color = ClientUI::TEXT_COLOR, 
-                 GG::Clr interior = ClientUI::MULTIEDIT_INT_COLOR, Uint32 flags = GG::CLICKABLE | GG::DRAG_KEEPER); ///< basic ctor
+                 GG::Clr interior = ClientUI::MULTIEDIT_INT_COLOR, Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{

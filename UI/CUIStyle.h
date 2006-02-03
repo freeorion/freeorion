@@ -21,15 +21,15 @@ public:
 
     virtual GG::Edit*              NewEdit(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font,
                                            GG::Clr color, GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO,
-                                           Uint32 flags = GG::CLICKABLE | GG::DRAG_KEEPER) const;
+                                           Uint32 flags = GG::CLICKABLE) const;
 
     virtual GG::ListBox*           NewListBox(int x, int y, int w, int h, GG::Clr color, GG::Clr interior = GG::CLR_ZERO,
-                                              Uint32 flags = GG::CLICKABLE | GG::DRAG_KEEPER) const;
+                                              Uint32 flags = GG::CLICKABLE) const;
 
     virtual GG::MultiEdit*         NewMultiEdit(int x, int y, int w, int h, const std::string& str,
                                                 const boost::shared_ptr<GG::Font>& font, GG::Clr color, Uint32 style = GG::TF_LINEWRAP,
                                                 GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO,
-                                                Uint32 flags = GG::CLICKABLE |GG::DRAG_KEEPER) const;
+                                                Uint32 flags = GG::CLICKABLE) const;
 
     virtual GG::Scroll*            NewScroll(int x, int y, int w, int h, GG::Orientation orientation, GG::Clr color, GG::Clr interior,
                                              Uint32 flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN) const;
@@ -40,11 +40,11 @@ public:
 
     virtual GG::Spin<int>*         NewIntSpin(int x, int y, int w, int value, int step, int min, int max, bool edits,
                                               const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                              GG::Clr interior = GG::CLR_ZERO, Uint32 flags = GG::CLICKABLE | GG::DRAG_KEEPER) const;
+                                              GG::Clr interior = GG::CLR_ZERO, Uint32 flags = GG::CLICKABLE) const;
 
     virtual GG::Spin<double>*      NewDoubleSpin(int x, int y, int w, double value, double step, double min, double max, bool edits,
                                                  const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
-                                                 GG::Clr interior = GG::CLR_ZERO, Uint32 flags = GG::CLICKABLE | GG::DRAG_KEEPER) const;
+                                                 GG::Clr interior = GG::CLR_ZERO, Uint32 flags = GG::CLICKABLE) const;
 
     virtual GG::Button*            NewScrollUpButton(int x, int y, int w, int h, const std::string& str,
                                                      const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
