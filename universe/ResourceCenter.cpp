@@ -18,14 +18,6 @@
 
 using boost::lexical_cast;
 
-#if defined(WIN32) && defined(_MSC_VER)
-#ifdef _DEBUG
-// Fix for evil M$ compile bug: fatal error C1055: compiler limit : out of keys
-#undef assert
-#define assert(exp) (void)( (exp) || (_assert(#exp, __FILE__, -1), 0) )
-#endif 
-#endif
-
 namespace {
     DataTableMap& ProductionDataTables()
     {

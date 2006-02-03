@@ -13,14 +13,6 @@ using namespace boost::io;
 using boost::lexical_cast;
 using boost::format;
 
-#if defined(WIN32) && defined(_MSC_VER)
-#ifdef _DEBUG
-// Fix for evil M$ compile bug: fatal error C1055: compiler limit : out of keys
-#undef assert
-#define assert(exp) (void)( (exp) || (_assert(#exp, __FILE__, -1), 0) )
-#endif 
-#endif
-
 namespace {
     Condition::ConditionBase* NewAll(const XMLElement& elem)                    {return new Condition::All(elem);}
     Condition::ConditionBase* NewEmpireAffiliation(const XMLElement& elem)      {return new Condition::EmpireAffiliation(elem);}
