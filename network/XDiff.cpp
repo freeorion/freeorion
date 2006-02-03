@@ -93,7 +93,7 @@ XDiff::XDiff(const XMLDoc& doc1, const XMLDoc& doc2, XMLDoc& output) :
    int root2 = _xtree2->getRoot();
    if (_xtree1->getHashValue(root1) != _xtree2->getHashValue(root2)) {
       if (_xtree1->getTag(root1).compare(_xtree2->getValue(root2)) != 0) {
-         _xtree1->addMatching(root1, XTree::DELETE_, root2);
+         _xtree1->addMatching(root1, XTree::DELETE_NODE, root2);
          _xtree2->addMatching(root2, XTree::INSERT, root1);
       } else {
          _xtree1->addMatching(root1, XTree::CHANGE, root2);
@@ -1522,8 +1522,8 @@ int XDiff::findMatching(int count1, int count2, int** dist,
       }
       else
       {
-         matching1[0] = XTree::DELETE_;
-         matching2[0] = XTree::DELETE_;
+         matching1[0] = XTree::DELETE_NODE;
+         matching2[0] = XTree::DELETE_NODE;
       }
 
       return dist[0][0];
@@ -1533,11 +1533,11 @@ int XDiff::findMatching(int count1, int count2, int** dist,
       int   distance = 0;
       int   mate = 0;
       int   mindist = XTree::NO_CONNECTION;
-      matching2[0] = XTree::DELETE_;
+      matching2[0] = XTree::DELETE_NODE;
 
       for (int i = 0; i < count1; i++)
       {
-         matching1[i] = XTree::DELETE_;
+         matching1[i] = XTree::DELETE_NODE;
          if (mindist > dist[i][0])
          {
             mindist = dist[i][0];
@@ -1576,8 +1576,8 @@ int XDiff::findMatching(int count1, int count2, int** dist,
          }
          else
          {
-            matching1[0] = XTree::DELETE_;
-            matching2[0] = XTree::DELETE_;
+            matching1[0] = XTree::DELETE_NODE;
+            matching2[0] = XTree::DELETE_NODE;
             distance1 = dist[0][2] + dist[2][0];
          }
 
@@ -1589,8 +1589,8 @@ int XDiff::findMatching(int count1, int count2, int** dist,
          }
          else
          {
-            matching1[1] = XTree::DELETE_;
-            matching2[1] = XTree::DELETE_;
+            matching1[1] = XTree::DELETE_NODE;
+            matching2[1] = XTree::DELETE_NODE;
             distance1 += dist[1][2] + dist[2][1];
          }
 
@@ -1606,8 +1606,8 @@ int XDiff::findMatching(int count1, int count2, int** dist,
          }
          else
          {
-            matching1[0] = XTree::DELETE_;
-            matching2[1] = XTree::DELETE_;
+            matching1[0] = XTree::DELETE_NODE;
+            matching2[1] = XTree::DELETE_NODE;
             distance2 = dist[0][2] + dist[2][1];
          }
 
@@ -1619,8 +1619,8 @@ int XDiff::findMatching(int count1, int count2, int** dist,
          }
          else
          {
-            matching1[1] = XTree::DELETE_;
-            matching2[0] = XTree::DELETE_;
+            matching1[1] = XTree::DELETE_NODE;
+            matching2[0] = XTree::DELETE_NODE;
             distance2 += dist[1][2] + dist[2][0];
          }
 
@@ -1643,7 +1643,7 @@ int XDiff::optimalMatching(int count1, int count2, int** dist,
    for (int i = 0; i < count2; i++)
       matching1[i] = i;
    for (int i = count2; i < count1; i++)
-      matching1[i] = XTree::DELETE_;
+      matching1[i] = XTree::DELETE_NODE;
 
    // Three artificial nodes: "start", "end" and "delete".
    int count = count1 + count2 + 3;
@@ -1677,7 +1677,7 @@ int XDiff::optimalMatching(int count1, int count2, int** dist,
                int   nid1 = n1 - 1;
                int   nid2 = _circuit[next] - count1 - 1;
                if (nid2 == count2)
-                  nid2 = XTree::DELETE_;
+                  nid2 = XTree::DELETE_NODE;
 
                matching1[nid1] = nid2;
             }
@@ -1699,7 +1699,7 @@ int XDiff::optimalMatching(int count1, int count2, int** dist,
    for (int i = 0; i < count1; i++)
    {
       int   mmm = matching1[i];
-      if (mmm == XTree::DELETE_)
+      if (mmm == XTree::DELETE_NODE)
          distance += dist[i][count2];
       else
       {
@@ -1759,7 +1759,7 @@ void XDiff::constructLCM(int** costMatrix, int* matching,
       }
 
       // According to matching.
-      if (matching[i] == XTree::DELETE_)
+      if (matching[i] == XTree::DELETE_NODE)
       {
          deleteCount++;
 
@@ -1897,7 +1897,7 @@ void XDiff::writeDiff(istream& in, ostream& out)
 
    int matchType, matchNode;
    _xtree1->getMatching(root1, matchType, matchNode);
-   if (matchType == XTree::DELETE_) {
+   if (matchType == XTree::DELETE_NODE) {
       writeDeleteNode(out, root1);
       writeInsertNode(out, root2);
    } else {
@@ -2040,7 +2040,7 @@ void XDiff::writeDiffNode(ostream &out, int node1, int node2)
          int matchType, matchNode;
          _xtree1->getMatching(attr1, matchType, matchNode);
          if (matchType != XTree::MATCH) {
-            if (matchType == XTree::DELETE_)
+            if (matchType == XTree::DELETE_NODE)
               ++deletes;
             else
               ++inserts;
@@ -2075,7 +2075,7 @@ void XDiff::writeDiffNode(ostream &out, int node1, int node2)
       while ((!has_different_text || !child_elements) && child2 > 0) {
          int matchType, matchNode;
          _xtree2->getMatching(child2, matchType, matchNode);
-         if (_xtree1->isElement(child1))
+         if (_xtree1->isElement(child2))
             child_elements = true;
          if (matchType == XTree::INSERT && _xtree2->isLeaf(child2) && !_xtree2->isAttribute(child2))
             has_different_text = true;
@@ -2119,7 +2119,7 @@ void XDiff::writeDiffNode(ostream &out, int node1, int node2)
          string value = _xtree1->getAttributeValue(attr1);
          int matchType, matchNode;
          _xtree1->getMatching(attr1, matchType, matchNode);
-         if (matchType == XTree::DELETE_) {
+         if (matchType == XTree::DELETE_NODE) {
             if (mode != ATTR_REDO)
                out << " " << atag << "=\"" << value << "\"";
          } else if (matchType != XTree::MATCH) {
@@ -2161,7 +2161,7 @@ void XDiff::writeDiffNode(ostream &out, int node1, int node2)
          _xtree1->getMatching(child1, matchType, matchNode);
          if (matchType == XTree::MATCH)
             ;
-         else if (matchType == XTree::DELETE_)
+         else if (matchType == XTree::DELETE_NODE)
             writeDeleteNode(out, child1);
          else
             writeDiffNode(out, child1, matchNode);

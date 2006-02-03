@@ -42,10 +42,6 @@ public:
    }
 };*/
 
-#ifdef DELETE_
-#undef DELETE_
-#endif
-
 /**
   * XTree provides the storage for input XML documents. Basically, an XML
   * document is parsed by a SAX parser and stored in an XTree.
@@ -162,7 +158,7 @@ public:
    static const int MATCH;
    static const int NO_MATCH;
    static const int INSERT;
-   static const int DELETE_;
+   static const int DELETE_NODE;
    static const int CHANGE; 
    static const int NULL_NODE;
    static const int NO_CONNECTION;

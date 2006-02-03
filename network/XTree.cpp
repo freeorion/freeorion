@@ -34,7 +34,7 @@ using std::endl;
 const int XTree::MATCH = 0;
 const int XTree::NO_MATCH = -1;
 const int XTree::INSERT = -1;
-const int XTree::DELETE_ = -1;
+const int XTree::DELETE_NODE = -1;
 const int XTree::CHANGE = 1;
 const int XTree::NULL_NODE = -1;
 const int XTree::NO_CONNECTION = 1048576;
