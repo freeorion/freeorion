@@ -329,7 +329,8 @@ namespace {
         // HACK! we're storing the border color here for color, and the color of the +/- symbol in text_color
         ExpandCollapseButton(const GG::Clr& color, const GG::Clr& border_color) :
             StateButton(0, 0, SIZE, SIZE, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), 0, border_color, color),
-            m_selected(false)
+            m_selected(false),
+            m_mouse_here(false)
             {}
 
         virtual bool InWindow(const GG::Pt& pt) const
@@ -350,6 +351,11 @@ namespace {
                     color = GG::LightColor(color);
                     border_color = GG::LightColor(border_color);
                 }
+                const double ROLLOVER_BRIGHTENING_FACTOR = 1.5;
+                if (!Disabled() && m_mouse_here) {
+                    AdjustBrightness(color, ROLLOVER_BRIGHTENING_FACTOR);
+                    AdjustBrightness(border_color, ROLLOVER_BRIGHTENING_FACTOR);
+                }
                 glDisable(GL_TEXTURE_2D);
                 glColor4ubv(color.v);
                 CircleArc(ul.x, ul.y, lr.x, lr.y, 0.0, 0.0, true);
@@ -361,6 +367,10 @@ namespace {
                 DrawOutline(ul, lr, border_color, 255, 255);
                 glEnable(GL_TEXTURE_2D);
             }
+
+        virtual void MouseEnter(const GG::Pt& pt, Uint32 keys) {m_mouse_here = true;}
+
+        virtual void MouseLeave(const GG::Pt& pt, Uint32 keys) {m_mouse_here = false;}
 
         void SetSelected(bool s) {m_selected = s;}
 
@@ -391,6 +401,7 @@ namespace {
             }
 
         bool m_selected;
+        bool m_mouse_here;
         static const int SIZE = 17;
     };
 

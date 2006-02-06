@@ -880,11 +880,14 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
         travel_route.size() == 2 && travel_route.front() == travel_route.back()) {
         m_projected_fleet_lines = MovementLineData();
     } else {
+        std::list<System*> route = travel_route;
+        if (route.front() == fleet->GetSystem())
+            route.pop_front();
         std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
         GG::Clr line_color = Empires().Lookup(*fleet->Owners().begin())->Color();
         if (it != m_fleet_lines.end()) {
             m_projected_fleet_lines = m_fleet_lines[fleet];
-            m_projected_fleet_lines.destinations = travel_route;
+            m_projected_fleet_lines.destinations = route;
             m_projected_fleet_lines.color = line_color;
         } else {
             GG::Pt cl_ul = ClientUpperLeft();
@@ -893,7 +896,7 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
             GG::Pt fleet_center = fleet_button->UpperLeft() + GG::Pt(sz.x / 2, sz.y / 2);
             m_projected_fleet_lines = MovementLineData((fleet_center - cl_ul).x / m_zoom_factor,
                                                        (fleet_center - cl_ul).y / m_zoom_factor,
-                                                       travel_route, line_color);
+                                                       route, line_color);
         }
     }
 }

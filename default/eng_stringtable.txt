@@ -703,7 +703,7 @@ SP_UNKNOWN_SYSTEM
 unknown system
 
 SP_SYSTEM_NAME
-The %1% System
+%1%
 
 SP_RENAME_PLANET
 Rename Planet

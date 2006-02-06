@@ -699,9 +699,6 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
 {
   SetText(UserString("PLANET_PANEL"));
 
-  m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PLANET_NAME_PTS),ClientUI::TEXT_COLOR);
-  AttachChild(m_planet_name);
-
   GG::Pt ul = UpperLeft(), lr = LowerRight();
   int planet_image_sz = PlanetDiameter();
   GG::Pt planet_image_pos(MAX_PLANET_DIAMETER / 2 - planet_image_sz / 2 + 3, Height() / 2 - planet_image_sz / 2);
@@ -737,6 +734,9 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
           AttachChild(m_rotating_planet_graphic);
       }
   }
+
+  m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PLANET_NAME_PTS),ClientUI::TEXT_COLOR);
+  AttachChild(m_planet_name);
 
   m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS),ClientUI::TEXT_COLOR,GG::TF_LEFT|GG::TF_TOP);
   AttachChild(m_planet_info);
@@ -1380,6 +1380,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
 
   m_system_name->DisableDropArrow();
   m_system_name->SetStyle(GG::LB_CENTER);
+  m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
 
   m_button_prev->SetUnpressedGraphic(GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/leftarrownormal.png"   ), 0, 0, 32, 32));
   m_button_prev->SetPressedGraphic  (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/leftarrowclicked.png"  ), 0, 0, 32, 32));
