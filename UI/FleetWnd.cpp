@@ -524,10 +524,13 @@ public:
                 // disallow drops across fleet windows; fleets must be at the same location
                 if (target_fleet->X() != fleets[i]->X() || target_fleet->Y() != fleets[i]->Y())
                     continue;
+                int fleet_id = fleets[i]->ID();
                 HumanClientApp::Orders().IssueOrder(
                     new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), fleets[i]->ID(), target_fleet->ID(),
                                            std::vector<int>(fleets[i]->begin(), fleets[i]->end())));
-                if (fleets[i]->NumShips() == 0) {
+                // if the transfer did not result in the indirect deletion of the fleet, delete it if it is empty
+                Fleet* fleet = GetUniverse().Object<Fleet>(fleet_id);
+                if (fleet && fleet->NumShips() == 0) {
                     HumanClientApp::Orders().IssueOrder(
                         new DeleteFleetOrder(HumanClientApp::GetApp()->EmpireID(), fleets[i]->ID()));
                 }

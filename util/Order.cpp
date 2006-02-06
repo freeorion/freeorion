@@ -680,7 +680,7 @@ void DeleteFleetOrder::ExecuteImpl() const
     Fleet* fleet = GetUniverse().Object<Fleet>(FleetID());
 
     if (!fleet)
-        throw std::runtime_error("Illegal fleet id specified in fleet colonize order.");
+        throw std::runtime_error("Illegal fleet id specified in fleet delete order.");
 
     if (!fleet->OwnedBy(EmpireID()))
         throw std::runtime_error("Empire attempted to issue deletion order to another's fleet.");
