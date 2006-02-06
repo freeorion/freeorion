@@ -999,7 +999,7 @@ void FleetWnd::PlotMovement(int system_id, bool execute_move)
                     return;
                 }
 
-                if (execute_move) {
+                if (execute_move && !route.empty()) {
                     HumanClientApp::Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id));
                     if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID)
                         ClientUI::GetClientUI()->GetMapWnd()->SetFleetMovement(fleet);
