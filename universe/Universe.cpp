@@ -260,7 +260,10 @@ namespace {
 
     void ClusterGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions, unsigned int clusters, unsigned int stars, double width, double height)
     {
-        //propability of systems which don't belong to a cluster
+        assert(clusters);
+        assert(stars);
+
+        // propability of systems which don't belong to a cluster
         const double system_noise = 0.15;
         double ellipse_width_vs_height = RandDouble(0.2,0.5);
         // first innermost pair hold cluster position, second innermost pair stores help values for cluster rotation (sin,cos)
@@ -1057,6 +1060,8 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
         break;
     case CLUSTER: {
         int average_clusters = size / 20; // chosen so that a "typical" size of 100 yields about 5 clusters
+        if (!average_clusters)
+            average_clusters = 2;
         int clusters = RandSmallInt(average_clusters * 8 / 10, average_clusters * 12 / 10); // +/- 20%
         ClusterGalaxyCalcPositions(positions, clusters, size, s_universe_width, s_universe_width);
         GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
