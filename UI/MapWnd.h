@@ -115,7 +115,7 @@ private:
     void IndustryResourcePoolChanged();
 
     void TurnBtnClicked() {EndTurn();}
-    void MenuBtnClicked() {ShowOptions();}
+    void MenuBtnClicked() {ShowMenu();}
     void ProductionBtnClicked() {ToggleProduction();}
     void ResearchBtnClicked() {ToggleResearch();}
     void SitRepBtnClicked() {ToggleSitRep();}
@@ -153,7 +153,7 @@ private:
     bool ToggleSitRep();
     bool ToggleResearch();
     bool ToggleProduction();
-    bool ShowOptions();
+    bool ShowMenu();
 	bool CloseSystemView();                      //!< closes off the current system view
     bool KeyboardZoomIn();
     bool KeyboardZoomOut();
@@ -199,7 +199,7 @@ private:
     bool                            m_dragged;       //! tracks whether or not a drag occurs during a left button down sequence of events
     CUITurnButton*                  m_turn_update;   //!< button that updates player's turn
     std::list<MapWndPopup*>         m_popups;        //!< list of currently active popup windows
-    bool                            m_options_showing; //!< set during ShowOptions() to prevent reentrency
+    bool                            m_menu_showing; //!< set during ShowMenu() to prevent reentrency
     int                             m_current_owned_system;
     int                             m_current_fleet;
     bool                            m_in_production_view_mode;

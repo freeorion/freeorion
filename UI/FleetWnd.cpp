@@ -916,6 +916,7 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
 
 FleetWnd::~FleetWnd()
 {
+    ClientUI::GetClientUI()->GetMapWnd()->SetProjectedFleetMovement(0, std::list<System*>());
     s_open_fleet_wnds.erase(this);
 }
 

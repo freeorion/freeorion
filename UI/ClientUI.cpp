@@ -432,10 +432,10 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
 /////////////////////////////////////////////////////
 
 //Screen Functions///////////////////////////////////
-void ClientUI::InitTurn( int turn_number )
+void ClientUI::InitTurn(int turn_number)
 {
 #ifndef FREEORION_BUILD_UTIL
-    m_map_wnd->InitTurn( turn_number );
+    m_map_wnd->InitTurn(turn_number);
 #endif
 }
 
@@ -543,14 +543,14 @@ void ClientUI::ScreenMap()
     SwitchState(STATE_MAP);
 }
 
-void ClientUI::UpdateTurnProgress( const std::string& phase_str, const int empire_id )
+void ClientUI::UpdateTurnProgress(const std::string& phase_str, const int empire_id)
 {
 #ifndef FREEORION_BUILD_UTIL
-    m_turn_progress_wnd->UpdateTurnProgress( phase_str, empire_id );
+    m_turn_progress_wnd->UpdateTurnProgress(phase_str, empire_id);
 #endif
 }
 
-void ClientUI::UpdateCombatTurnProgress( const std::string& msg)
+void ClientUI::UpdateCombatTurnProgress(const std::string& msg)
 {
 #ifndef FREEORION_BUILD_UTIL
     m_turn_progress_wnd->UpdateCombatTurnProgress(msg);
@@ -588,10 +588,10 @@ void ClientUI::LogMessage(const std::string& msg)
     s_logger.debug(msg);
 }
 
-void ClientUI::GenerateSitRepText( SitRepEntry *p_sit_rep )
+void ClientUI::GenerateSitRepText(SitRepEntry *p_sit_rep)
 {
     // get template string
-    std::string template_str( UserString( g_string_id_lut[ p_sit_rep->GetType() ] ) );
+    std::string template_str(UserString(g_string_id_lut[p_sit_rep->GetType()]));
 
     // parse string
     p_sit_rep->GenerateVarText( template_str );
@@ -634,7 +634,7 @@ ClientUI::GetNumberedTexture(const std::string& dir_name, const std::map<int, st
         }
     }
 
-    int star_variant = image_names[type].second!=0?(hash_key % image_names[type].second):0;
+    int star_variant = image_names[type].second ? (hash_key % image_names[type].second) : 0;
     std::string filename = ClientUI::ART_DIR + "stars/" + 
         image_names[type].first + lexical_cast<string>(star_variant + 1) + ".png";
     return GG::GUI::GetGUI()->GetTexture(filename);
@@ -676,16 +676,14 @@ StreamableColor::StreamableColor() :
     g(0),
     b(0),
     a(0)    
-{
-}
+{}
 
 StreamableColor::StreamableColor(const GG::Clr& clr) :
     r(clr.r),
     g(clr.g),
     b(clr.b),
     a(clr.a)    
-{
-}
+{}
 
 GG::Clr StreamableColor::ToClr() const
 {

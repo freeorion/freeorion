@@ -251,7 +251,7 @@ MapWnd::MapWnd() :
     m_chat_edit->Hide();
     EnableAlphaNumAccels();
 
-	m_options_showing = false;
+	m_menu_showing = false;
 
     //set up background images
     m_backgrounds[0].reset(new GG::Texture());
@@ -284,7 +284,7 @@ MapWnd::MapWnd() :
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2, 0), &MapWnd::ToggleSitRep, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3, 0), &MapWnd::ToggleResearch, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4, 0), &MapWnd::ToggleProduction, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowOptions, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowMenu, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s, 0), &MapWnd::CloseSystemView, this);
 
     // Keys for zooming
@@ -562,6 +562,7 @@ void MapWnd::InitTurn(int turn_number)
 
     // this gets cleared here instead of with the movement line stuff because that would clear some movement lines that come from the SystemIcons below
     m_fleet_lines.clear();
+    m_projected_fleet_lines = MovementLineData();
 
     // systems and starlanes
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
@@ -1303,6 +1304,7 @@ bool MapWnd::EndTurn()
 
 bool MapWnd::ToggleSitRep()
 {
+    m_projected_fleet_lines = MovementLineData();
     if (m_sitrep_panel->Visible()) {
         m_sitrep_panel->Hide();
     } else {
@@ -1326,6 +1328,7 @@ bool MapWnd::ToggleSitRep()
 
 bool MapWnd::ToggleResearch()
 {
+    m_projected_fleet_lines = MovementLineData();
     if (m_research_wnd->Visible()) {
         m_research_wnd->Hide();
     } else {
@@ -1349,6 +1352,7 @@ bool MapWnd::ToggleResearch()
 
 bool MapWnd::ToggleProduction()
 {
+    m_projected_fleet_lines = MovementLineData();
     if (m_production_wnd->Visible()) {
         m_production_wnd->Hide();
         m_in_production_view_mode = false;
@@ -1371,13 +1375,14 @@ bool MapWnd::ToggleProduction()
     return true;
 }
 
-bool MapWnd::ShowOptions()
+bool MapWnd::ShowMenu()
 {
-    if (!m_options_showing) {
-        m_options_showing = true;
+    if (!m_menu_showing) {
+        m_projected_fleet_lines = MovementLineData();
+        m_menu_showing = true;
         InGameMenu menu;
         menu.Run();
-        m_options_showing = false;
+        m_menu_showing = false;
     }
     return true;
 }
