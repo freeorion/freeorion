@@ -233,6 +233,8 @@ HumanClientApp::HumanClientApp() :
 
     boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
     SetStyleFactory(style);
+
+    GUI::SetMinDragTime(0);
 }
 
 HumanClientApp::~HumanClientApp()

@@ -234,7 +234,7 @@ CUIArrowButton::CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orie
 
 bool CUIArrowButton::InWindow(const GG::Pt& pt) const
 {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt ul = UpperLeft() + GG::Pt(3, 1), lr = LowerRight() - GG::Pt(2, 1);
     return InIsoscelesTriangle(pt, ul.x, ul.y, lr.x, lr.y, m_orientation);
 }
 
@@ -258,7 +258,7 @@ void CUIArrowButton::RenderPressed()
 
 void CUIArrowButton::RenderRollover()
 {
-    GG::Pt ul = UpperLeft() + GG::Pt(2, 1), lr = LowerRight() - GG::Pt(2, 1);
+    GG::Pt ul = UpperLeft() + GG::Pt(3, 1), lr = LowerRight() - GG::Pt(2, 1);
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     if (!Disabled())
         AdjustBrightness(color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
@@ -267,7 +267,7 @@ void CUIArrowButton::RenderRollover()
 
 void CUIArrowButton::RenderUnpressed()
 {
-    GG::Pt ul = UpperLeft() + GG::Pt(2, 1), lr = LowerRight() - GG::Pt(2, 1);
+    GG::Pt ul = UpperLeft() + GG::Pt(3, 1), lr = LowerRight() - GG::Pt(2, 1);
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     IsoscelesTriangle(ul.x, ul.y, lr.x, lr.y, m_orientation, color_to_use);
 }

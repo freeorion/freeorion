@@ -6,7 +6,7 @@
 
 namespace {
     void FindIsoscelesTriangleVertices(int x1, int y1, int x2, int y2, ShapeOrientation orientation,
-                                       int& x1_, int& y1_, int& x2_, int& y2_, int& x3_, int& y3_)
+                                       double& x1_, double& y1_, double& x2_, double& y2_, double& x3_, double& y3_)
     {
         switch (orientation) {
         case SHAPE_UP:
@@ -14,7 +14,7 @@ namespace {
             y1_ = y2;
             x2_ = x2;
             y2_ = y2;
-            x3_ = (x1 + x2) / 2;
+            x3_ = (x1 + x2) / 2.0;
             y3_ = y1;
             break;
         case SHAPE_DOWN:
@@ -22,7 +22,7 @@ namespace {
             y1_ = y1;
             x2_ = x1;
             y2_ = y1;
-            x3_ = (x1 + x2) / 2;
+            x3_ = (x1 + x2) / 2.0;
             y3_ = y2;
             break;
         case SHAPE_LEFT:
@@ -31,7 +31,7 @@ namespace {
             x2_ = x2;
             y2_ = y1;
             x3_ = x1;
-            y3_ = (y1 + y2) / 2;
+            y3_ = (y1 + y2) / 2.0;
             break;
         case SHAPE_RIGHT:
             x1_ = x1;
@@ -39,7 +39,7 @@ namespace {
             x2_ = x1;
             y2_ = y2;
             x3_ = x2;
-            y3_ = (y1 + y2) / 2;
+            y3_ = (y1 + y2) / 2.0;
             break;
         }
     }
@@ -181,56 +181,59 @@ bool InAngledCornerRect(const GG::Pt& pt, int x1, int y1, int x2, int y2, int an
     return retval;
 }
 
-void Triangle(int x1, int y1, int x2, int y2, int x3, int y3, GG::Clr color, bool border/*= true*/)
+void Triangle(double x1, double y1, double x2, double y2, double x3, double y3, GG::Clr color, bool border/*= true*/)
 {
     glDisable(GL_TEXTURE_2D);
     glColor4ubv(color.v);
     glBegin(GL_TRIANGLES);
-    glVertex2i(x1, y1);
-    glVertex2i(x2, y2);
-    glVertex2i(x3, y3);
+    glVertex2d(x1, y1);
+    glVertex2d(x2, y2);
+    glVertex2d(x3, y3);
     glEnd();
     if (border) {
 		AdjustBrightness(color, 75);
 		// trace the lines both ways, to ensure that this small polygon looks symmetrical
         glColor4ubv(color.v);
 		glBegin(GL_LINE_LOOP);
-		glVertex2i(x3, y3);
-		glVertex2i(x2, y2);
-		glVertex2i(x1, y1);
+		glVertex2d(x3, y3);
+		glVertex2d(x2, y2);
+		glVertex2d(x1, y1);
 		glEnd();
 		glBegin(GL_LINE_LOOP);
-		glVertex2i(x1, y1);
-		glVertex2i(x2, y2);
-		glVertex2i(x3, y3);
+		glVertex2d(x1, y1);
+		glVertex2d(x2, y2);
+		glVertex2d(x3, y3);
 		glEnd();
     }
     glEnable(GL_TEXTURE_2D);
 }
 
-bool InTriangle(const GG::Pt& pt, int x1, int y1, int x2, int y2, int x3, int y3)
+bool InTriangle(const GG::Pt& pt, double x1, double y1, double x2, double y2, double x3, double y3)
 {
-    GG::Pt vec_A(x2 - x1, y2 - y1); // side A is the vector from pt1 to pt2
-    GG::Pt vec_B(x3 - x2, y3 - y2); // side B is the vector from pt2 to pt3
-    GG::Pt vec_C(x1 - x3, y1 - y3); // side C is the vector from pt3 to pt1
+    double vec_A_x = x2 - x1; // side A is the vector from pt1 to pt2
+    double vec_A_y = y2 - y1; // side A is the vector from pt1 to pt2
+    double vec_B_x = x3 - x2; // side B is the vector from pt2 to pt3
+    double vec_B_y = y3 - y2; // side B is the vector from pt2 to pt3
+    double vec_C_x = x1 - x3; // side C is the vector from pt3 to pt1
+    double vec_C_y = y1 - y3; // side C is the vector from pt3 to pt1
     // take dot products of perpendicular vectors (normals of sides) with point pt, and sum the signs of these products
-    int sum = (0 < (pt.x - x1) * vec_A.y + (pt.y - y1) * -vec_A.x ? 1 : 0) + 
-              (0 < (pt.x - x2) * vec_B.y + (pt.y - y2) * -vec_B.x ? 1 : 0) +
-              (0 < (pt.x - x3) * vec_C.y + (pt.y - y3) * -vec_C.x ? 1 : 0);
+    int sum = (0 < (pt.x - x1) * vec_A_y + (pt.y - y1) * -vec_A_x ? 1 : 0) + 
+              (0 < (pt.x - x2) * vec_B_y + (pt.y - y2) * -vec_B_x ? 1 : 0) +
+              (0 < (pt.x - x3) * vec_C_y + (pt.y - y3) * -vec_C_x ? 1 : 0);
     // if the products are all the same sign, the point is in the triangle
     return (sum == 3 || sum == 0);
 }
 
 void IsoscelesTriangle(int x1, int y1, int x2, int y2, ShapeOrientation orientation, GG::Clr color, bool border/* = true*/)
 {
-    int x1_, y1_, x2_, y2_, x3_, y3_;
+    double x1_, y1_, x2_, y2_, x3_, y3_;
     FindIsoscelesTriangleVertices(x1, y1, x2, y2, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     Triangle(x1_, y1_, x2_, y2_, x3_, y3_, color, border);
 }
 
 bool InIsoscelesTriangle(const GG::Pt& pt, int x1, int y1, int x2, int y2, ShapeOrientation orientation)
 {
-    int x1_, y1_, x2_, y2_, x3_, y3_;
+    double x1_, y1_, x2_, y2_, x3_, y3_;
     FindIsoscelesTriangleVertices(x1, y1, x2, y2, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     return InTriangle(pt, x1_, y1_, x2_, y2_, x3_, y3_);
 }
@@ -315,7 +318,7 @@ bool InFleetMarker(const GG::Pt& pt, int x1, int y1, int x2, int y2, ShapeOrient
 {
     if (orientation == SHAPE_UP || orientation == SHAPE_DOWN)
         orientation = SHAPE_LEFT;
-    int x1_, y1_, x2_, y2_, x3_, y3_;
+    double x1_, y1_, x2_, y2_, x3_, y3_;
     FindIsoscelesTriangleVertices(x1, y1, x2, y2, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     return InTriangle(pt, x1_, y1_, x2_, y2_, x3_, y3_);
 }

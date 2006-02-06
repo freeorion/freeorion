@@ -21,7 +21,6 @@
 #include <GG/TextControl.h>
 
 #include <boost/format.hpp>
-#include <iostream>
 
 
 class FleetDataPanel : public GG::Control
@@ -34,6 +33,8 @@ public:
     };
 
     FleetDataPanel(int w, int h, const Fleet* fleet);
+
+    bool Selected() const;
 
     virtual void Render();
     virtual void DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys);
@@ -61,7 +62,7 @@ namespace {
     const int NEW_FLEET_BUTTON_WIDTH = 75;
     const int FLEET_LISTBOX_WIDTH =  250;
     const int FLEET_LISTBOX_HEIGHT = 150;
-    const int CONTROL_MARGIN = 5; // gap to leave between controls in these window
+    const int CONTROL_MARGIN = 5; // gap to leave between controls in these windows
     const std::string SHIP_DROP_TYPE_STRING = "FLeetWnd ShipRow";
     const std::string FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
 
@@ -275,6 +276,11 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet) :
     Refresh();
 }
 
+bool FleetDataPanel::Selected() const
+{
+    return m_selected;
+}
+
 void FleetDataPanel::Render()
 {
     const GG::Clr& unselected_color = GG::CLR_GRAY;
@@ -436,6 +442,41 @@ void FleetDataPanel::Refresh()
 
 
 ////////////////////////////////////////////////
+// FleetDetailPanel
+////////////////////////////////////////////////
+class ShipsListBox;
+class FleetDetailPanel : public GG::Wnd
+{
+public:
+    FleetDetailPanel(Fleet* fleet, bool read_only, Uint32 flags = 0); ///< ctor
+
+    Fleet* GetFleet() const {return m_fleet;} ///< returns the currently-displayed fleet (may be 0)
+
+    void SetFleet(Fleet* fleet); ///< sets the currently-displayed Fleet (may be null)
+
+    mutable boost::signal<void (Fleet*)> PanelEmptySignal;
+
+private:
+    int         GetShipIDOfListRow(int row_idx) const; ///< returns the ID number of the ship in row \a row_idx of the ships listbox
+    void        Init();
+    void        Refresh();
+    void        UniverseObjectDeleted(const UniverseObject *);
+    void        ShipSelectionChanged(const std::set<int>& rows);
+    void        ShipBrowsed(int row_idx);
+    void        ShipRightClicked(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);
+    std::string DestinationText() const;
+    std::string ShipStatusText(int ship_id) const;
+
+    Fleet*                      m_fleet;
+    const bool                  m_read_only;
+    boost::signals::connection  m_fleet_connection;
+
+    GG::TextControl*            m_destination_text;
+    ShipsListBox*               m_ships_lb;
+    GG::TextControl*            m_ship_status_text;
+};
+
+////////////////////////////////////////////////
 // FleetsListBox
 ////////////////////////////////////////////////
 class FleetsListBox : public CUIListBox
@@ -443,6 +484,7 @@ class FleetsListBox : public CUIListBox
 public:
     FleetsListBox(int x, int y, int w, int h, bool read_only) :
         CUIListBox(x, y, w, h),
+        m_selected_fleet_row(-1),
         m_read_only(read_only)
     {}
 
@@ -499,7 +541,59 @@ public:
         }
     }
 
+    virtual void DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+    {
+        DragDropHere(pt, drag_drop_wnds, keys);
+    }
+
+    virtual void DragDropHere(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+    {
+        int row_index = RowUnderPt(pt);
+
+        if (m_selected_fleet_row != row_index)
+            ClearSelection();
+
+        if (m_read_only || row_index < 0 || NumRows() <= row_index)
+            return;
+        
+        FleetDataPanel* fleet_data_panel = static_cast<FleetDataPanel*>((*static_cast<FleetRow*>(&GetRow(row_index)))[0]);
+        if (!fleet_data_panel->Selected()) {
+            bool valid_drop = true;
+            bool fleets_seen = false;
+            bool ships_seen = false;
+            for (std::map<Wnd*, GG::Pt>::const_iterator it = drag_drop_wnds.begin(); it != drag_drop_wnds.end(); ++it) {
+                if (it->first->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
+                    fleets_seen = true;
+                } else if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
+                    ships_seen = true;
+                } else {
+                    valid_drop = false;
+                    break;
+                }
+            }
+            if (fleets_seen && ships_seen)
+                valid_drop = false;
+            if (valid_drop) {
+                fleet_data_panel->Select(true);
+                m_selected_fleet_row = row_index;
+            }
+        }
+    }
+
+    virtual void DragDropLeave(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+    {
+        ClearSelection();
+    }
+
 private:
+    void ClearSelection()
+    {
+        if (m_selected_fleet_row != -1)
+            static_cast<FleetDataPanel*>((*static_cast<FleetRow*>(&GetRow(m_selected_fleet_row)))[0])->Select(false);
+        m_selected_fleet_row = -1;
+    }
+
+    int m_selected_fleet_row;
     const bool m_read_only;
 };
 
@@ -547,39 +641,8 @@ private:
 };
 
 ////////////////////////////////////////////////
-// FleetDetailPanel
+// FleetDetailPanel implementation
 ////////////////////////////////////////////////
-class FleetDetailPanel : public GG::Wnd
-{
-public:
-    FleetDetailPanel(Fleet* fleet, bool read_only, Uint32 flags = 0); ///< ctor
-
-    Fleet* GetFleet() const {return m_fleet;} ///< returns the currently-displayed fleet (may be 0)
-
-    void SetFleet(Fleet* fleet); ///< sets the currently-displayed Fleet (may be null)
-
-    mutable boost::signal<void (Fleet*)> PanelEmptySignal;
-
-private:
-    int         GetShipIDOfListRow(int row_idx) const; ///< returns the ID number of the ship in row \a row_idx of the ships listbox
-    void        Init();
-    void        Refresh();
-    void        UniverseObjectDeleted(const UniverseObject *);
-    void        ShipSelectionChanged(const std::set<int>& rows);
-    void        ShipBrowsed(int row_idx);
-    void        ShipRightClicked(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);
-    std::string DestinationText() const;
-    std::string ShipStatusText(int ship_id) const;
-
-    Fleet*                      m_fleet;
-    const bool                  m_read_only;
-    boost::signals::connection  m_fleet_connection;
-
-    GG::TextControl*            m_destination_text;
-    ShipsListBox*               m_ships_lb;
-    GG::TextControl*            m_ship_status_text;
-};
-
 FleetDetailPanel::FleetDetailPanel(Fleet* fleet, bool read_only, Uint32 flags/* = 0*/) : 
     Wnd(0, 0, 1, 1, flags),
     m_fleet(0),
@@ -1103,7 +1166,6 @@ void FleetWnd::DeleteFleet(Fleet* fleet)
             break;
         }
     }
-    std::cout << "DeleteFleetOrder(fleet_id=" << fleet->ID() << ")" << std::endl;
     HumanClientApp::Orders().IssueOrder(new DeleteFleetOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID()));
 }
 
