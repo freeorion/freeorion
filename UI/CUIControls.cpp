@@ -572,10 +572,9 @@ void CUIDropDownList::Render()
             AdjustBrightness(triangle_color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
         IsoscelesTriangle(lr.x - triangle_width - margin * 5 / 2, ul.y + 2 * margin, lr.x - margin * 5 / 2, lr.y - 2 * margin, 
                           SHAPE_DOWN, triangle_color_to_use);
+        AngledCornerRectangle(lr.x - outline_width - margin, ul.y + margin, lr.x - margin, lr.y - margin, GG::CLR_ZERO, 
+                              color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
     }
-
-    AngledCornerRectangle(lr.x - outline_width - margin, ul.y + margin, lr.x - margin, lr.y - margin, GG::CLR_ZERO, 
-                          color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
 }
 
 void CUIDropDownList::LClick(const GG::Pt& pt, Uint32 keys)
