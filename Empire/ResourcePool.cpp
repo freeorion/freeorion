@@ -1,11 +1,11 @@
 #include "ResourcePool.h"
 
+#include "../universe/Planet.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
-#include "../universe/Planet.h"
+#include "../util/XMLDoc.h"
 
-#include "GGSignalsAndSlots.h"
-#include "XMLDoc.h"
+#include <GG/SignalsAndSlots.h>
 
 namespace {
     bool Greater(const Planet* elem1, const Planet* elem2)
@@ -25,16 +25,16 @@ namespace {
 
     void DistributeFood(std::vector<Planet*>::iterator first, std::vector<Planet*>::iterator last, double multiple, double& available_pool)
     {
-        for (std::vector<Planet*>::iterator it = first; it != last && 0.0<available_pool; ++it) {
+        for (std::vector<Planet*>::iterator it = first; it != last && 0.0 < available_pool; ++it) {
             Planet* planet = *it;
-            double receives = std::min(available_pool, PopEstimate(planet)*multiple - planet->AvailableFood());
+            double receives = std::min(available_pool, PopEstimate(planet) * multiple - planet->AvailableFood());
             planet->SetAvailableFood(planet->AvailableFood() + receives);
             available_pool -= receives;
         }
     }
 
     bool temp_header_bool = RecordHeaderFile(ResourcePoolRevision());
-    bool temp_source_bool = RecordSourceFile("$RCSfile: ResourcePool.cpp,v $", "$Revision$");
+    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 //////////////////////////////////////////////////
@@ -91,7 +91,7 @@ MineralResourcePool::MineralResourcePool() :
     m_stockpile(0.0)
 {}
 
-MineralResourcePool::MineralResourcePool(const GG::XMLElement& elem)
+MineralResourcePool::MineralResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "MineralResourcePool")
@@ -124,10 +124,10 @@ double MineralResourcePool::Stockpile() const
     return m_stockpile;
 }
 
-GG::XMLElement MineralResourcePool::XMLEncode() const
+XMLElement MineralResourcePool::XMLEncode() const
 {
-    GG::XMLElement retval("MineralResourcePool");
-    retval.AppendChild(GG::XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
+    XMLElement retval("MineralResourcePool");
+    retval.AppendChild(XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
     return retval;
 }
 
@@ -144,7 +144,7 @@ FoodResourcePool::FoodResourcePool() :
     m_stockpile(0.0)
 {}
 
-FoodResourcePool::FoodResourcePool(const GG::XMLElement& elem)
+FoodResourcePool::FoodResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "FoodResourcePool")
@@ -164,39 +164,39 @@ void FoodResourcePool::PlanetChanged()
     m_needed_pool=0.0;
 
     // sum all food
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
+    for (std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
     {
-        Planet *planet=*it;
+        Planet *planet = *it;
         planet->SetAvailableFood(0.0);
-        m_pool_production+=planet->FarmingPoints();
-        m_needed_pool+=PopEstimate(planet);
+        m_pool_production += planet->FarmingPoints();
+        m_needed_pool += PopEstimate(planet);
     }
     double available = m_pool_production + m_stockpile;
 
-    // feed starving planets (limited by own food production)
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end() && 0.0<available;++it)
+    // first pass: give all planets required food limited by local food production
+    for (std::vector<Planet*>::iterator it = Planets().begin(); it != Planets().end() && 0.0 < available; ++it)
     {
-        Planet *planet=*it;
-        double receives = std::min(available,std::min(planet->FarmingPoints(),planet->PopPoints()) - planet->AvailableFood());
+        Planet* planet = *it;
+        double receives = std::min(available, std::min(planet->FarmingPoints(), planet->PopPoints()) - planet->AvailableFood());
         planet->SetAvailableFood(planet->AvailableFood() + receives);
         available -= receives;
     }
 
     // feed starving planets
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end() && 0.0<available;++it)
+    for (std::vector<Planet*>::iterator it = Planets().begin(); it != Planets().end() && 0.0 < available; ++it)
     {
-        Planet *planet=*it;
-        double receives = std::min(available,planet->PopPoints() - planet->AvailableFood());
+        Planet* planet = *it;
+        double receives = std::min(available, planet->PopPoints() - planet->AvailableFood());
         planet->SetAvailableFood(planet->AvailableFood() + receives);
         available -= receives;
     }
 
     // feed for popgrown!!!!
     // use food production locally first
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end() && 0.0<available;++it)
+    for (std::vector<Planet*>::iterator it = Planets().begin(); it != Planets().end() && 0.0 < available; ++it)
     {
-        Planet *planet=*it;
-        double receives = std::min(available, std::min(planet->FarmingPoints(),PopEstimate(planet)) - planet->AvailableFood());
+        Planet* planet = *it;
+        double receives = std::min(available, std::min(planet->FarmingPoints(), PopEstimate(planet)) - planet->AvailableFood());
         planet->SetAvailableFood(planet->AvailableFood() + receives);
         available -= receives;
     }
@@ -210,7 +210,7 @@ void FoodResourcePool::PlanetChanged()
     // fourth pass: give all planets up to 4 times the required minimum
     DistributeFood(Planets().begin(), Planets().end(), 4.0, available);
 
-    m_stockpile=std::max(0.0, available);
+    m_stockpile = std::max(0.0, available);
 
     ChangedSignal();
 }
@@ -220,10 +220,10 @@ double FoodResourcePool::Stockpile() const
     return m_stockpile;
 }
 
-GG::XMLElement FoodResourcePool::XMLEncode() const
+XMLElement FoodResourcePool::XMLEncode() const
 {
-    GG::XMLElement retval("FoodResourcePool");
-    retval.AppendChild(GG::XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
+    XMLElement retval("FoodResourcePool");
+    retval.AppendChild(XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
     return retval;
 }
 
@@ -240,7 +240,7 @@ ResearchResourcePool::ResearchResourcePool() :
     ResourcePool()
 {}
 
-ResearchResourcePool::ResearchResourcePool(const GG::XMLElement& elem)
+ResearchResourcePool::ResearchResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "ResearchResourcePool")
@@ -261,9 +261,9 @@ void ResearchResourcePool::PlanetChanged()
     ChangedSignal();
 }
 
-GG::XMLElement ResearchResourcePool::XMLEncode() const
+XMLElement ResearchResourcePool::XMLEncode() const
 {
-    return GG::XMLElement("ResearchResourcePool");
+    return XMLElement("ResearchResourcePool");
 }
 
 
@@ -274,7 +274,7 @@ PopulationResourcePool::PopulationResourcePool() :
     ResourcePool()
 {}
 
-PopulationResourcePool::PopulationResourcePool(const GG::XMLElement& elem)
+PopulationResourcePool::PopulationResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "PopulationResourcePool")
@@ -295,9 +295,9 @@ void PopulationResourcePool::PlanetChanged()
     ChangedSignal();
 }
 
-GG::XMLElement PopulationResourcePool::XMLEncode() const
+XMLElement PopulationResourcePool::XMLEncode() const
 {
-    return GG::XMLElement("PopulationResourcePool");
+    return XMLElement("PopulationResourcePool");
 }
 
 
@@ -308,7 +308,7 @@ IndustryResourcePool::IndustryResourcePool() :
     ResourcePool()
 {}
 
-IndustryResourcePool::IndustryResourcePool(const GG::XMLElement& elem)
+IndustryResourcePool::IndustryResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "IndustryResourcePool")
@@ -328,9 +328,9 @@ void IndustryResourcePool::PlanetChanged()
     ChangedSignal();
 }
 
-GG::XMLElement IndustryResourcePool::XMLEncode() const
+XMLElement IndustryResourcePool::XMLEncode() const
 {
-    return GG::XMLElement("IndustryResourcePool");
+    return XMLElement("IndustryResourcePool");
 }
 
 
@@ -342,7 +342,7 @@ TradeResourcePool::TradeResourcePool() :
     m_stockpile(0.0)
 {}
 
-TradeResourcePool::TradeResourcePool(const GG::XMLElement& elem)
+TradeResourcePool::TradeResourcePool(const XMLElement& elem)
     : ResourcePool()
 {
     if (elem.Tag() != "TradeResourcePool")
@@ -398,10 +398,10 @@ double TradeResourcePool::Stockpile() const
     return m_stockpile;
 }
 
-GG::XMLElement TradeResourcePool::XMLEncode() const
+XMLElement TradeResourcePool::XMLEncode() const
 {
-    GG::XMLElement retval("TradeResourcePool");
-    retval.AppendChild(GG::XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
+    XMLElement retval("TradeResourcePool");
+    retval.AppendChild(XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
     return retval;
 }
 
