@@ -415,7 +415,7 @@ if str(Platform()) == 'win32':
         '/GR',
         '/Gd',
         '/Zi',
-        '/wd4099', '/wd4251', '/wd4800', '/wd4267', '/wd4275', '/wd4244', '/wd4101', '/wd4258'
+        '/wd4099', '/wd4251', '/wd4800', '/wd4267', '/wd4275', '/wd4244', '/wd4101', '/wd4258', '/wd4351', '/wd4996'
         ]
     env.Append(CCFLAGS = flags)
     env.Append(CPPDEFINES = [
