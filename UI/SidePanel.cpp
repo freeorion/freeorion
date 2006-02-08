@@ -1430,18 +1430,14 @@ void SidePanel::SystemSelectionChanged(int selection)
 
 void SidePanel::PrevButtonClicked()
 {
-  int selected = m_system_name->CurrentItemIndex();
-
-  if(0< selected && selected<m_system_name->NumRows())
-    m_system_name->Select(selected-1);
+    int selected = m_system_name->CurrentItemIndex();
+    m_system_name->Select(selected ? selected - 1 : m_system_name->NumRows() - 1);
 }
 
 void SidePanel::NextButtonClicked()
 {
-  int selected = m_system_name->CurrentItemIndex();
-
-  if(0<=selected && selected<m_system_name->NumRows()-1)
-    m_system_name->Select(selected+1);
+    int selected = m_system_name->CurrentItemIndex();
+    m_system_name->Select((selected < m_system_name->NumRows() - 1) ? selected + 1 : 0);
 }
 
 void SidePanel::PlanetSelected(int planet_id)
