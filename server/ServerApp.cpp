@@ -1001,12 +1001,23 @@ void ServerApp::HandleMessage(const Message& msg)
             Order::InitOrderFactory(order_factory);
             const XMLElement& root = doc.root_node.Child("Orders");
 
+            // all orders must originate from this empire in order to be considered valid
+            Empire* empire = GetPlayerEmpire(msg.Sender());
+            assert(empire);
+
             for (int i = 0; i < root.NumChildren(); ++i) {
-                Order *p_order = order_factory.GenerateObject(root.Child(i));
-                if (p_order)
+                Order* p_order = order_factory.GenerateObject(root.Child(i));
+                if (p_order) {
+                    if (empire->EmpireID() != p_order->EmpireID()) {
+                        throw std::runtime_error(
+                            "ServerApp::HandleMessage : Player \"" + empire->PlayerName() + "\""
+                            " attempted to issue an order for player "
+                            "\"" + Empires().Lookup(p_order->EmpireID())->PlayerName() + "\"!  Terminating...");
+                    }
                     p_order_set->AddOrder(p_order);
-                else
-                    m_log_category.errorStream() << "An Order has been received that has no factory - ignoring.";
+                } else {
+                    m_log_category.errorStream() << "ServerApp::HandleMessage : An Order has been received that has no factory - ignoring.";
+                }
             }
 
             m_log_category.debugStream() << "ServerApp::HandleMessage : Received orders from player " << msg.Sender();
@@ -1744,6 +1755,21 @@ Empire* ServerApp::GetPlayerEmpire(int player_id) const
     return retval;
 }
 
+int ServerApp::GetEmpirePlayerID(int empire_id) const
+{
+    int retval = -1;
+    std::string player_name = Empires().Lookup(empire_id)->PlayerName();
+    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin();
+         it != m_network_core.Players().end();
+         ++it) {
+        if (it->second.name == player_name) {
+            retval = it->first;
+            break;
+        }
+    }
+    return retval;
+}
+
 
 void ServerApp::AddEmpireTurn(int empire_id)
 {
@@ -1801,7 +1827,9 @@ void ServerApp::ProcessTurns()
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         // broadcast UI message to all players
-        for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+        for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin();
+             player_it != m_network_core.Players().end();
+             ++player_it)
         {
             m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::PROCESSING_ORDERS, it->first ) );
         }
@@ -1811,10 +1839,10 @@ void ServerApp::ProcessTurns()
         pOrderSet = it->second;
      
         // execute order set
-        for ( order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it)
+        for (order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it)
         {
-            // Add exeption handling here 
-            order_it->second->Execute( );
+            // TODO: Consider adding exeption handling here 
+            order_it->second->Execute();
         }
     }    
 

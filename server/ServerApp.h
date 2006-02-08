@@ -134,7 +134,8 @@ private:
     void SaveGameVars(XMLDoc& doc) const;   ///< adds all game-state variables to \a doc
     void LoadGameVars(const XMLDoc& doc);   ///< assigns all game-state variables from \a doc
 
-    Empire* GetPlayerEmpire(int player_id) const; ///< returns the ID of the empire that the player with ID \a player_id is playing
+    Empire* GetPlayerEmpire(int player_id) const;   ///< returns the object for the empire that that the player with ID \a player_id is playing
+    int     GetEmpirePlayerID(int empire_id) const; ///< returns the player ID for the player playing the empire with ID \a empire_id
    
     Universe                m_universe;
     ServerEmpireManager     m_empires;

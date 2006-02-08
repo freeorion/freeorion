@@ -53,8 +53,7 @@ namespace
 Order::Order() :
     m_empire(-1),
     m_executed(false)
-{
-}
+{}
 
 Order::Order(const XMLElement& elem)
 {
@@ -78,7 +77,6 @@ void Order::ValidateEmpireID() const
     {
         throw std::runtime_error("Invalid empire ID specified for order.");
     }
-
 }
 
 void Order::Execute() const
@@ -122,8 +120,7 @@ void Order::InitOrderFactory(XMLObjectFactory<Order>& fact)
 RenameOrder::RenameOrder() : 
     Order(),
     m_object(UniverseObject::INVALID_OBJECT_ID)
-{
-}
+{}
    
 RenameOrder::RenameOrder(const XMLElement& elem) : Order(elem.Child("Order"))
 {
@@ -175,8 +172,7 @@ void RenameOrder::ExecuteImpl() const
 ////////////////////////////////////////////////
 NewFleetOrder::NewFleetOrder() :
     Order()
-{
-}
+{}
 
 NewFleetOrder::NewFleetOrder(const XMLElement& elem) : 
     Order(elem.Child("Order"))
@@ -269,9 +265,6 @@ void NewFleetOrder::ExecuteImpl() const
         // an ID is provided to ensure consistancy between server and client universes
         universe.InsertID(fleet, m_new_id);
         system->Insert(fleet);
-        for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
-            fleet->AddShip(m_ship_ids[i]);
-        }
     } else {
         fleet = new Fleet(m_fleet_name, m_position.first, m_position.second, EmpireID());
         // an ID is provided to ensure consistency between server and client universes
@@ -279,6 +272,12 @@ void NewFleetOrder::ExecuteImpl() const
         for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
             fleet->AddShip(m_ship_ids[i]);
         }
+    }
+    for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
+        // verify that empire is not trying to take ships from somebody else's fleet
+        if (!universe.Object(m_ship_ids[i])->OwnedBy(EmpireID()))
+            throw std::runtime_error("Empire attempted to create a new fleet with ships from another's fleet.");
+        fleet->AddShip(m_ship_ids[i]);
     }
 }
 
@@ -291,8 +290,7 @@ FleetMoveOrder::FleetMoveOrder() :
     m_fleet(UniverseObject::INVALID_OBJECT_ID),
     m_dest_system(UniverseObject::INVALID_OBJECT_ID),
     m_route_length(0.0)
-{
-}
+{}
 
 FleetMoveOrder::FleetMoveOrder(const XMLElement& elem) : Order(elem.Child("Order"))
 {
@@ -404,8 +402,7 @@ FleetTransferOrder::FleetTransferOrder() :
     Order(),
     m_fleet_from(UniverseObject::INVALID_OBJECT_ID),
     m_fleet_to(UniverseObject::INVALID_OBJECT_ID)
-{
-}
+{}
 
 FleetTransferOrder::FleetTransferOrder(const XMLElement& elem) : Order(elem.Child("Order"))
 {
@@ -422,8 +419,7 @@ FleetTransferOrder::FleetTransferOrder(int empire, int fleet_from, int fleet_to,
     m_fleet_from(fleet_from),
     m_fleet_to(fleet_to),
     m_add_ships(ships)
-{
-}
+{}
 
 XMLElement FleetTransferOrder::XMLEncode() const
 {
@@ -437,7 +433,6 @@ XMLElement FleetTransferOrder::XMLEncode() const
 
 void FleetTransferOrder::ExecuteImpl() const
 {
-
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
@@ -445,19 +440,19 @@ void FleetTransferOrder::ExecuteImpl() const
     // look up the source fleet and destination fleet
     Fleet* source_fleet = universe.Object<Fleet>(SourceFleet());
     Fleet* target_fleet = universe.Object<Fleet>(DestinationFleet());
-    
+
     // sanity check
     if (!source_fleet || !target_fleet)
     {
         throw std::runtime_error("Illegal fleet id specified in fleet merge order.");
     }
-    
+
     // verify that empire is not trying to take ships from somebody else's fleet
     if ( !source_fleet->OwnedBy(EmpireID()) )
     {
         throw std::runtime_error("Empire attempted to merge ships from another's fleet.");
     }
-    
+
     // verify that empire cannot merge ships into somebody else's fleet.
     // this is just an additional security measure.  IT could be removed to
     // allow 'donations' of ships to other players, provided the server
@@ -466,7 +461,7 @@ void FleetTransferOrder::ExecuteImpl() const
     {
         throw std::runtime_error("Empire attempted to merge ships into another's fleet.");
     }
-    
+
     // iterate down the ship vector and add each one to the fleet
     // after first verifying that it is a valid ship id
     vector<int>::const_iterator itr = m_add_ships.begin();
@@ -479,19 +474,19 @@ void FleetTransferOrder::ExecuteImpl() const
         {
             throw std::runtime_error("Illegal ship id specified in fleet merge order.");
         }
-        
+
         // figure out what fleet this ship is coming from -- verify its the one we
         // said it comes from
         if (a_ship->FleetID() != SourceFleet() )
         {
             throw std::runtime_error("Ship in merge order is not in specified source fleet.");
         }
-        
+
         // send the ship to its new fleet
         a_ship->SetFleetID(DestinationFleet());
         source_fleet->RemoveShip(curr);
         target_fleet->AddShip(curr);
-        
+
         itr++;
     }
 }
@@ -504,8 +499,7 @@ FleetColonizeOrder::FleetColonizeOrder() :
     Order(),
     m_ship(UniverseObject::INVALID_OBJECT_ID),
     m_planet(UniverseObject::INVALID_OBJECT_ID)
-{
-}
+{}
 
 FleetColonizeOrder::FleetColonizeOrder(const XMLElement& elem) :
     Order(elem.Child("Order"))
@@ -523,8 +517,7 @@ FleetColonizeOrder::FleetColonizeOrder(int empire, int ship, int planet) :
     Order(empire),
     m_ship(ship),
     m_planet(planet)
-{
-}
+{}
 
 void FleetColonizeOrder::ServerExecute() const
 {
@@ -557,12 +550,6 @@ void FleetColonizeOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
-
-//     XMLDoc doc;
-//     doc.root_node = universe.XMLEncode(EmpireID());
-//     std::ofstream ofs("before.xml");
-//     doc.WriteDoc(ofs);
-//     ofs.close();
 
     // look up the ship and fleet in question
     Ship* ship = universe.Object<Ship>(m_ship);
@@ -647,8 +634,7 @@ bool FleetColonizeOrder::UndoImpl() const
 DeleteFleetOrder::DeleteFleetOrder() : 
     Order(),
     m_fleet(-1)
-{
-}
+{}
 
 DeleteFleetOrder::DeleteFleetOrder(const XMLElement& elem):
     Order(elem.Child("Order"))
@@ -662,8 +648,7 @@ DeleteFleetOrder::DeleteFleetOrder(const XMLElement& elem):
 DeleteFleetOrder::DeleteFleetOrder(int empire, int fleet) : 
     Order(empire),
     m_fleet(fleet)
-{
-}
+{}
 
 XMLElement DeleteFleetOrder::XMLEncode() const
 {
@@ -701,8 +686,7 @@ ChangeFocusOrder::ChangeFocusOrder() :
     Order(),
     m_planet(UniverseObject::INVALID_OBJECT_ID),
     m_focus(FOCUS_UNKNOWN)
-{
-}
+{}
 
 ChangeFocusOrder::ChangeFocusOrder(const XMLElement& elem):
     Order(elem.Child("Order"))
@@ -720,8 +704,7 @@ ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, FocusType focus, bool
     m_planet(planet),
     m_focus(focus),
     m_primary(primary)
-{
-}
+{}
 
 XMLElement ChangeFocusOrder::XMLEncode() const
 {
@@ -755,8 +738,7 @@ ResearchQueueOrder::ResearchQueueOrder() :
     Order(),
     m_position(-1),
     m_remove(false)
-{
-}
+{}
 
 ResearchQueueOrder::ResearchQueueOrder(const XMLElement& elem) :
     Order(elem.Child("Order"))
@@ -774,8 +756,7 @@ ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name)
     m_tech_name(tech_name),
     m_position(-1),
     m_remove(true)
-{
-}
+{}
 
 ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name, int position) : 
     Order(empire),
