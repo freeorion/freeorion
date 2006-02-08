@@ -862,7 +862,7 @@ FleetWnd::FleetWndItr FleetWnd::FleetWndEnd()   {return s_open_fleet_wnds.end();
 FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
                    Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE*/) : 
     MapWndPopup("", x, y, 1, 1, flags | GG::RESIZABLE),
-    m_empire_id(-1),
+    m_empire_id(*fleets[0]->Owners().begin()),
     m_system_id(UniverseObject::INVALID_OBJECT_ID),
     m_read_only(read_only),
     m_moving_fleets(true),
@@ -1260,8 +1260,11 @@ void FleetWnd::UniverseObjectDeleted(const UniverseObject *obj)
 void FleetWnd::SystemChangedSlot()
 {
     const System* system = FleetInRow(0)->GetSystem();
-    std::vector<const Fleet*> system_fleet_vec = system->FindObjects<Fleet>();
-    std::set<const Fleet*> system_fleet_set(system_fleet_vec.begin(), system_fleet_vec.end());
+    System::ConstObjectVec system_fleet_vec = system->FindObjects(OwnedVisitor<Fleet>(m_empire_id));
+    std::set<const Fleet*> system_fleet_set;
+    for (System::ConstObjectVec::iterator it = system_fleet_vec.begin(); it != system_fleet_vec.end(); ++it) {
+        system_fleet_set.insert(static_cast<const Fleet*>(*it));
+    }
     for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
         system_fleet_set.erase(FleetInRow(i));
     }
