@@ -126,7 +126,7 @@ private:
         As a side effect, logs an error message and sends a failure message to the sending player as appropriate. */
     bool VersionMismatch(int player_id, const PlayerInfo& player_info, const PlayerInfo& connection, const XMLDoc& doc);
 
-    XMLDoc CreateTurnUpdate(int empire_id); ///< creates encoded universe and empire data for the specified empire, diffs it with the previous turn data, stores the new data over the previous turn data and returns the diff XMLElement
+    XMLDoc CreateTurnUpdate(int empire_id); ///< creates encoded universe and empire data for the specified empire
     XMLDoc LobbyUpdateDoc() const;          ///< returns an MP lobby-mode update XMLDoc containing all relevant parts of the lobby state
     XMLDoc LobbyStartDoc() const;           ///< returns an MP lobby-mode update XMLDoc containing just the initial server-side data that the clients don't have
     XMLDoc SaveGameUpdateDoc() const;       ///< returns an MP lobby-mode update XMLDoc containing just empire data for the currently-selected save game
@@ -169,8 +169,6 @@ private:
     std::set<int>             m_players_responded;     ///< tracks which players have responded to a server request (eg for save-data)
     std::map<int, XMLElement> 
     m_player_save_game_data; ///< stores the save game data coming in from the players during a save game operation
-
-    std::map<int, XMLDoc> m_last_turn_update_msg;  ///< stores the xml encoded empire and universe data from the previous turn in order to generate diffs for turn update message.  Map is indexed by empire ID, with separate message data for each since each player sees different parts of the universe.
 
     // turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
     std::map<int, OrderSet*>  m_turn_sequence;

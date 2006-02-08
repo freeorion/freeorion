@@ -784,8 +784,6 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
             m_empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Text());
 
-            m_previous_universe = doc.root_node.Child("Universe");
-
             // free current sitreps, if any
             if (Empires().Lookup(m_empire_id))
                 Empires().Lookup(m_empire_id)->ClearSitRep();
@@ -799,7 +797,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
                 Logger().debugStream() << "No Empire data received from server.  Update Server Code.";
             }
             
-            m_universe.SetUniverse(m_previous_universe);
+            m_universe.SetUniverse(doc.root_node.Child("Universe"));
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Universe setup complete.";
 
             for (Empire::SitRepItr it = Empires().Lookup(m_empire_id)->SitRepBegin(); it != Empires().Lookup(m_empire_id)->SitRepEnd(); ++it) {
@@ -852,7 +850,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         // free current sitreps
         Empires().Lookup(m_empire_id)->ClearSitRep();
 
-        // Update data used XPatch and needs only elements common to universe and empire
+        // Update data universe and empire using state from server
         UpdateTurnData(doc);
 
         Empires().Lookup(m_empire_id)->UpdateResourcePool();

@@ -3,7 +3,6 @@
 #include "../network/Message.h"
 #include "../util/XMLDoc.h"
 
-#include "../network/XDiff.hpp"
 #include "../universe/Building.h"
 #include "../util/OrderSet.h"
 #include "../util/GZStream.h"
@@ -1434,15 +1433,12 @@ void ServerApp::NewGameInit()
                               m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size(), g_lobby_data.players);
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << " (SERVER_GAME_SETUP).";
 
-    // add empires to turn sequence map
-    // according to spec this should be done randomly
-    // for now it's not
+    // add empires to turn sequence map according to spec this should be done randomly for now it's not
     for (it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
         AddEmpireTurn( it->first );
     }
 
-    // the universe creation caused the creation of empires.  But now we
-    // need to assign the empires to players.
+    // the universe creation caused the creation of empires.  But now we need to assign the empires to players.
     for (it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
         XMLDoc doc;
         if (m_single_player_game)
@@ -1592,30 +1588,17 @@ bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, co
 XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
 {
     XMLDoc this_turn;
-    XMLDoc update_patch;
 
     // generate new data for this turn
-    // for the final game, we'd have visibility
-    // but for now we are able to see the whole universe
     XMLElement universe_data = m_universe.XMLEncode(empire_id);
     XMLElement empire_data = m_empires.CreateClientEmpireUpdate(empire_id);
 
     // build the new turn doc
+    this_turn.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
     this_turn.root_node.AppendChild(universe_data);
     this_turn.root_node.AppendChild(empire_data);
 
-    std::map<int, XMLDoc>::iterator itr =  m_last_turn_update_msg.find(empire_id);
-
-    XMLDoc last_turn = itr->second;
-   
-    // diff this turn with previous turn
-    XDiff(last_turn, this_turn, update_patch);
-
-    // turn number is an attribute of the document
-    update_patch.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
-
-    // return the results of the diff
-    return update_patch;
+    return this_turn;
 }
 
 XMLDoc ServerApp::LobbyUpdateDoc() const
@@ -1721,21 +1704,11 @@ void ServerApp::SaveGameVars(XMLDoc& doc) const
 {
     doc.root_node.AppendChild(XMLElement("turn_number", boost::lexical_cast<std::string>(m_current_turn)));
 
-    XMLElement temp("m_last_turn_update_msg");
-    for (std::map<int, XMLDoc>::const_iterator it = m_last_turn_update_msg.begin(); it != m_last_turn_update_msg.end(); ++it) {
-        temp.AppendChild(XMLElement(LAST_TURN_UPDATE_SAVE_ELEM_PREFIX + boost::lexical_cast<std::string>(it->first), it->second.root_node));
-    }
-    doc.root_node.AppendChild(temp);
 }
 
 void ServerApp::LoadGameVars(const XMLDoc& doc)
 {
     m_current_turn = boost::lexical_cast<int>(doc.root_node.Child("turn_number").Text());
-
-    const XMLElement& last_turn_update_elem = doc.root_node.Child("m_last_turn_update_msg");
-    for (XMLElement::const_child_iterator it = last_turn_update_elem.child_begin(); it != last_turn_update_elem.child_end(); ++it) {
-        m_last_turn_update_msg[boost::lexical_cast<int>(it->Tag().substr(LAST_TURN_UPDATE_SAVE_ELEM_PREFIX.size()))].root_node = it->Child(0);
-    }
 }
 
 
@@ -1806,23 +1779,6 @@ void ServerApp::ProcessTurns()
     OrderSet                  *pOrderSet;
     OrderSet::const_iterator  order_it;
 
-
-    // Some orders, like NewFleetOrder, change the state of the universe, 
-    // we therefore need to get the state before these are executed,
-    // to be able to sucessfully diff later.
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-    {
-        XMLDoc game_state;
-
-        XMLElement universe_data = m_universe.XMLEncode(it->first);
-
-        // build the new turn doc
-        game_state.root_node.AppendChild(universe_data);
-
-        // We will append to it later
-        m_last_turn_update_msg[ it->first ] = game_state;
-    }
-
     // Now all orders, then process turns
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
@@ -1846,15 +1802,6 @@ void ServerApp::ProcessTurns()
         }
     }    
 
-    // After the Orders are processed, save the Empire states.
-    // Unlike Universe, orders do not change Empire states the client does
-    // not know about
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-    {
-        XMLElement empire_data = m_empires.CreateClientEmpireUpdate( it->first );
-        m_last_turn_update_msg[ it->first ].root_node.AppendChild(empire_data);
-    }
- 
     // filter FleetColonizeOrder for later processing
     std::map<int,std::vector<FleetColonizeOrder*> > colonize_order_map;
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)

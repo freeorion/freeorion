@@ -3,7 +3,6 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/SitRepEntry.h"
 #include "../util/XMLObjectFactory.h"
-#include "../network/XDiff.hpp"
 
 #include <map>
 #include <list>

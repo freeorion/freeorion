@@ -4,7 +4,6 @@
 #include "../universe/Planet.h"
 #include "../server/ServerApp.h"
 #include "../universe/Universe.h"
-#include "../network/XDiff.hpp"
 
 #include <boost/lexical_cast.hpp>
 
@@ -19,8 +18,7 @@ namespace {
 
 ServerEmpireManager::ServerEmpireManager() :
     EmpireManager()
-{
-}
+{}
 
 
 Empire* ServerEmpireManager::CreateEmpire(int id,
@@ -30,14 +28,10 @@ Empire* ServerEmpireManager::CreateEmpire(int id,
                                           int planetID)
 {
     Empire* emp = new Empire(name, player_name, id, color, planetID);
-    if(emp == NULL)
-    {
-        throw std::runtime_error("Memory allocation failed.  ServerEmpireManager::CreateEmpire()");
-    }
 
-    id++;
+    ++id;
 
-    // Add system homeplanet is in to the ExploredSystem list
+    // Add system homeplanet is in to the explored system list
     ServerApp* server_app = ServerApp::GetApp();
     Universe& universe = server_app->GetUniverse();
     Planet* planet = universe.Object<Planet>(planetID);
@@ -66,22 +60,14 @@ XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int empire_id)
 {
     XMLElement this_turn(EmpireManager::EMPIRE_UPDATE_TAG);
 
-    // find whatever empire they're talking about
     Empire* emp = Lookup(empire_id);
-
-    // perform sanity check
     if (!emp)
-    {
         throw std::runtime_error("Invalid empire_id passed to ServerEmpireManager::CreateClientEmpireUpdate()");
-    }
 
-    // set ID attribute of the update to indicate whose empire this is
     this_turn.SetAttribute("empire_id", boost::lexical_cast<std::string>(empire_id));
 
-    for (EmpireManager::iterator it = begin(); it != end(); it++)
-    {
+    for (EmpireManager::iterator it = begin(); it != end(); ++it) {
         XMLElement current_empire("Empire" + boost::lexical_cast<std::string>(it->second->EmpireID()));
-	// Only append visible information
         current_empire.AppendChild(it->second->XMLEncode(*emp));
         this_turn.AppendChild(current_empire);
     }
