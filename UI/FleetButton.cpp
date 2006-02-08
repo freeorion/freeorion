@@ -163,19 +163,17 @@ void FleetButton::Clicked()
          fleets[0]->SystemID() == UniverseObject::INVALID_OBJECT_ID);
     FleetWnd* fleet_wnd = new FleetWnd(ul.x + 50, ul.y + 50, fleets, selected_fleet, read_only);
 
-    if (multiple_fleet_windows) {
-        // for multiple windows, place them at the screen location of the fleet button
-        if (GG::GUI::GetGUI()->AppWidth() < fleet_wnd->LowerRight().x)
-            fleet_wnd->OffsetMove(GG::Pt(fleet_wnd->LowerRight().x - GG::GUI::GetGUI()->AppWidth() - 5, 0));
-
-        if (GG::GUI::GetGUI()->AppHeight() < fleet_wnd->LowerRight().y)
-            fleet_wnd->OffsetMove(GG::Pt(0, fleet_wnd->LowerRight().y - GG::GUI::GetGUI()->AppHeight() - 5));
-    } else {
+    if (!multiple_fleet_windows) {
         // for one-fleet-at-a-time, place them in the lower-left corner of the screen, or wherever the user has moved them
         fleet_wnd->MoveTo(FleetWnd::LastPosition() == GG::Pt() ? 
                           GG::Pt(5, GG::GUI::GetGUI()->AppHeight() - fleet_wnd->Height() - 5) : 
                           FleetWnd::LastPosition());
     }
+
+    if (GG::GUI::GetGUI()->AppWidth() - 5 < fleet_wnd->LowerRight().x)
+        fleet_wnd->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - fleet_wnd->LowerRight().x, 0));
+    if (GG::GUI::GetGUI()->AppHeight() - 5 < fleet_wnd->LowerRight().y)
+        fleet_wnd->OffsetMove(GG::Pt(0, GG::GUI::GetGUI()->AppHeight() - 5 - fleet_wnd->LowerRight().y));
 
     if (map_wnd) {
         GG::Connect(map_wnd->SystemRightClickedSignal, &FleetWnd::SystemClicked, fleet_wnd);
