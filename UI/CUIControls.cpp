@@ -84,6 +84,7 @@ namespace {
 
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
     const double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;
+    const double TAB_BRIGHTENING_SCALE_FACTOR = 1.25;
 
     bool temp_header_bool = RecordHeaderFile(CUIControlsRevision());
     bool temp_source_bool = RecordSourceFile("$Id$");
@@ -411,7 +412,8 @@ CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, G
            orientation == GG::VERTICAL ? 2 : 0,
            scroll_width, scroll_width, "", boost::shared_ptr<GG::Font>(), color),
     m_border_color(border_color),
-    m_orientation(orientation)
+    m_orientation(orientation),
+    m_mouse_here(false)
 {
     SetMinSize(GG::Pt(m_orientation == GG::VERTICAL ? MinSize().x : 10,
                       m_orientation == GG::VERTICAL ? 10 : MinSize().y));
@@ -433,11 +435,21 @@ void CUIScroll::ScrollTab::Render()
         ul.y += 3;
         lr.y -= 3;
     }
+
+    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+    GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
+    if (!Disabled() && m_mouse_here) {
+        AdjustBrightness(color_to_use, TAB_BRIGHTENING_SCALE_FACTOR);
+        AdjustBrightness(border_color_to_use, TAB_BRIGHTENING_SCALE_FACTOR);
+    }
+
     // basic shape, no border
-    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, Color(), GG::CLR_ZERO, CUISCROLL_ANGLE_OFFSET, 0);
+    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, color_to_use, GG::CLR_ZERO, CUISCROLL_ANGLE_OFFSET, 0);
     // upper left diagonal stripe
     GG::Clr light_color = Color();
     AdjustBrightness(light_color, 35);
+    if (!Disabled() && m_mouse_here)
+        AdjustBrightness(light_color, TAB_BRIGHTENING_SCALE_FACTOR);
     glColor4ubv(light_color.v);
     glDisable(GL_TEXTURE_2D);
     glBegin(GL_POLYGON);
@@ -445,9 +457,9 @@ void CUIScroll::ScrollTab::Render()
         glVertex2i(lr.x, ul.y);
         glVertex2i(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
         glVertex2i(ul.x, ul.y + CUISCROLL_ANGLE_OFFSET);
-        glVertex2i(ul.x, ul.y + (lr.x - ul.x));
+        glVertex2i(ul.x, ul.y + std::min(lr.x - ul.x, lr.y - ul.y));
     } else {
-        glVertex2i(ul.x + (lr.y - ul.y), ul.y);
+        glVertex2i(ul.x + std::min(lr.x - ul.x, lr.y - ul.y), ul.y);
         glVertex2i(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
         glVertex2i(ul.x, lr.y - CUISCROLL_ANGLE_OFFSET);
         glVertex2i(ul.x, lr.y);
@@ -456,20 +468,31 @@ void CUIScroll::ScrollTab::Render()
     // lower right diagonal stripe
     glBegin(GL_POLYGON);
     if (m_orientation == GG::VERTICAL) {
-        glVertex2i(lr.x, lr.y - (lr.x - ul.x));
+        glVertex2i(lr.x, lr.y - std::min(lr.x - ul.x, lr.y - ul.y));
         glVertex2i(ul.x, lr.y);
         glVertex2i(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
         glVertex2i(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
     } else {
         glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x - (lr.y - ul.y), lr.y);
+        glVertex2i(lr.x - std::min(lr.x - ul.x, lr.y - ul.y), lr.y);
         glVertex2i(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
         glVertex2i(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
     }
     glEnd();
     glEnable(GL_TEXTURE_2D);
     // border
-    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, m_border_color, CUISCROLL_ANGLE_OFFSET, 1);
+    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, border_color_to_use, CUISCROLL_ANGLE_OFFSET, 1);
+}
+
+void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, Uint32 keys)
+{
+    HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+    m_mouse_here = true;
+}
+
+void CUIScroll::ScrollTab::MouseLeave(const GG::Pt& pt, Uint32 keys)
+{
+    m_mouse_here = false;
 }
 
 

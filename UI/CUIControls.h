@@ -169,9 +169,12 @@ public:
         ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color, GG::Clr border_color); ///< basic ctor
         virtual void SetColor(GG::Clr c);
         virtual void Render();
+        virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
+        virtual void MouseLeave(const GG::Pt& pt, Uint32 keys);
     private:
         GG::Clr m_border_color;
         GG::Orientation m_orientation;
+        bool m_mouse_here;
     };
 
     /** \name Structors */ //@{

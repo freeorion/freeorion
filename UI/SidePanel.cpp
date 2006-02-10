@@ -1166,7 +1166,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h
     m_planet_panels(),
     m_planet_id(UniverseObject::INVALID_OBJECT_ID),
     m_hilite_selected_planet(false),
-    m_vscroll(new CUIScroll(Width()-10,0,10,Height(),GG::VERTICAL))
+    m_vscroll(new CUIScroll(Width()-14,0,14,Height(),GG::VERTICAL))
 {
   SetText("PlanetPanelContainer");
   EnableChildClipping(true);
