@@ -207,11 +207,7 @@ HumanClientApp::HumanClientApp() :
     signal(SIGSEGV, SigHandler);
 #endif
 
-#ifdef FREEORION_LINUX
     const std::string LOG_FILENAME((GetLocalDir() / "freeorion.log").native_file_string());
-#else
-    const std::string LOG_FILENAME = "freeorion.log";
-#endif
 
     // a platform-independent way to erase the old log We cannot use
     // boost::filesystem::ofstream here, as stupid b::f won't allow us
@@ -222,7 +218,7 @@ HumanClientApp::HumanClientApp() :
 
     log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", LOG_FILENAME);
     log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
-    layout->setConversionPattern("%d %p : %m%n");
+    layout->setConversionPattern("%d %p Client : %m%n");
     appender->setLayout(layout);
     Logger().setAdditivity(false);  // make appender the only appender used...
     Logger().setAppender(appender);

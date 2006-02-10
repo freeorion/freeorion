@@ -21,12 +21,9 @@ namespace {
     {
         db.Add<std::string>('S',
                             "save-dir", 
-                            "The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.",
-#ifdef FREEORION_LINUX
+                            "The directory in which saved games are saved and from which they are loaded.  Directory "
+                            "names are taken to be relative to the location of the executable.",
                             (GetLocalDir() / "save").native_directory_string());
-#else
-                            "save");
-#endif
     }
     bool foo_bool = RegisterOptions(&Options);
 

@@ -88,11 +88,7 @@ namespace {
         {
             if (build_save_game_list) {
                 // build a list of save files
-#ifdef FREEORION_LINUX
                 fs::path save_dir((GetLocalDir() / SAVE_DIR_NAME).native_directory_string());
-#else
-                fs::path save_dir = boost::filesystem::initial_path() / SAVE_DIR_NAME;
-#endif
                 fs::directory_iterator end_it;
                 for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
                     try {
@@ -121,13 +117,8 @@ namespace {
             save_game_empire_data.clear();
             if (0 <= save_file && save_file < static_cast<int>(save_games.size())) {
                 XMLDoc doc;
-                // GZStream does not yet support
-                // boost::filesystem::path, so we do it manually
-#ifdef FREEORION_LINUX
+                // GZStream does not yet support boost::filesystem::path, so we do it manually
                 GZStream::igzstream ifs((GetLocalDir() / SAVE_DIR_NAME / save_games[save_file]).native_file_string().c_str());
-#else
-                GZStream::igzstream ifs((fs::path(SAVE_DIR_NAME) / save_games[save_file]).native_file_string().c_str());
-#endif
                 doc.ReadDoc(ifs);
                 ifs.close();
 
@@ -165,8 +156,7 @@ namespace {
 #ifdef FREEORION_WIN32
     const std::string AI_CLIENT_EXE = "freeorionca.exe";
 #else
-    const fs::path BIN_DIR = GetBinDir();
-    const std::string AI_CLIENT_EXE = (BIN_DIR / "freeorionca").native_file_string();
+    const std::string AI_CLIENT_EXE = (GetBinDir() / "freeorionca").native_file_string();
 #endif    
     const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
     XMLDoc g_load_doc;
@@ -217,11 +207,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
    
     s_app = this;
 
-#ifdef FREEORION_LINUX
     const std::string SERVER_LOG_FILENAME((GetLocalDir() / "freeoriond.log").native_file_string());
-#else
-    const std::string SERVER_LOG_FILENAME = "freeoriond.log";
-#endif
    
     // a platform-independent way to erase the old log
     std::ofstream temp(SERVER_LOG_FILENAME.c_str());
@@ -229,7 +215,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
    
     log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", SERVER_LOG_FILENAME);
     log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
-    layout->setConversionPattern("%d %p : %m%n");
+    layout->setConversionPattern("%d %p Server : %m%n");
     appender->setLayout(layout);
     m_log_category.setAdditivity(false);  // make appender the only appender used...
     m_log_category.setAppender(appender);
@@ -345,11 +331,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     m_empires.RemoveAllEmpires();
                     m_single_player_game = false;
 
-#ifdef FREEORION_LINUX
                     std::string load_filename = (GetLocalDir() / SAVE_DIR_NAME / g_lobby_data.save_games[g_lobby_data.save_file]).native_file_string();
-#else
-                    std::string load_filename = (fs::path(SAVE_DIR_NAME) / g_lobby_data.save_games[g_lobby_data.save_file]).native_file_string();
-#endif
                     XMLDoc doc;
                     GZStream::igzstream ifs(load_filename.c_str());
                     doc.ReadDoc(ifs);

@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
         }
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
             GetOptionsDB().Remove("generate-config-xml");
-	    boost::filesystem::ofstream ofs(GetConfigPath());
+            boost::filesystem::ofstream ofs(GetConfigPath());
             GetOptionsDB().GetXML().WriteDoc(ofs);
             ofs.close();
         }

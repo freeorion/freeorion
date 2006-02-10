@@ -35,18 +35,14 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     s_app = this;
 
     if (argc < 2) {
-	m_log_category.fatal("The AI client should not be called directly!");
-	Exit(1);
+        m_log_category.fatal("The AI client should not be called directly!");
+        Exit(1);
     }
 	
     // read command line args
     m_player_name = argv[1];
 
-#ifdef FREEORION_LINUX
     const std::string AICLIENT_LOG_FILENAME((GetLocalDir() / (m_player_name + ".log")).native_file_string());
-#else
-    const std::string AICLIENT_LOG_FILENAME = m_player_name + ".log";
-#endif
 
     // a platform-independent way to erase the old log
     std::ofstream temp(AICLIENT_LOG_FILENAME.c_str());
@@ -55,7 +51,7 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     // establish debug logging
     log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", AICLIENT_LOG_FILENAME);
     log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
-    layout->setConversionPattern("%d %p : %m%n");
+    layout->setConversionPattern("%d %p AI : %m%n");
     appender->setLayout(layout);
     m_log_category.setAdditivity(false);  // make appender the only appender used...
     m_log_category.setAppender(appender);

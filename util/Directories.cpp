@@ -89,7 +89,11 @@ void InitDirs()
 
     fs::path::default_name_check(fs::native);
 
-    fs::path p = fs::initial_path() / "save";
+    fs::path local_dir = GetLocalDir();
+    if (!exists(local_dir))
+        fs::create_directories(local_dir);
+
+    fs::path p = GetLocalDir() / "save";
     if (!exists(p))
         fs::create_directories(p);
 
@@ -98,7 +102,10 @@ void InitDirs()
 
 const fs::path GetLocalDir()
 {
-    return fs::initial_path();
+    if (fs::path::default_name_check_writable())
+        fs::path::default_name_check(fs::native);
+    static fs::path p = fs::path(std::string(getenv("HOMEDRIVE")) + getenv("HOMEPATH")) / "FreeOrion";
+    return p;
 }
 
 const fs::path GetGlobalDir()
