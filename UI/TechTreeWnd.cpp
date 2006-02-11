@@ -64,6 +64,8 @@ namespace {
 
     const double OUTER_LINE_THICKNESS = 2.0;
 
+    const double TECH_NAVIGATOR_ROLLOVER_BRIGHTENING_FACTOR = 1.5;
+
     GG::Clr CategoryColor(const std::string& category_name)
     {
         const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
@@ -627,12 +629,15 @@ private:
         virtual GG::Pt ClientLowerRight() const {return LowerRight() - GG::Pt(2, 2);}
         virtual void Render();
         virtual void LClick(const GG::Pt& pt, Uint32 keys) {ClickedSignal(m_tech);}
+        virtual void MouseEnter(const GG::Pt& pt, Uint32 keys) {m_selected = true;}
+        virtual void MouseLeave(const GG::Pt& pt, Uint32 keys) {m_selected = false;}
         const Tech * const m_tech;
         GG::Clr m_border_color;
         GG::TextControl* m_name_text;
         mutable boost::signal<void (const Tech*)> ClickedSignal;
     private:
         int m_indentation;
+        bool m_selected;
     };
 
     static const int TECH_ROW_INDENTATION = 8;
@@ -744,7 +749,8 @@ void TechTreeWnd::TechNavigator::SectionHeaderControl::Render()
 TechTreeWnd::TechNavigator::TechControl::TechControl(int w, int h, const Tech* tech, int indentation) :
     GG::Control(0, 0, w, h),
     m_tech(tech),
-    m_indentation(indentation)
+    m_indentation(indentation),
+    m_selected(false)
 {
     EnableChildClipping(true);
 #ifndef FREEORION_BUILD_UTIL
@@ -782,15 +788,21 @@ void TechTreeWnd::TechNavigator::TechControl::Render()
     GG::Rect rect(UpperLeft(), LowerRight());
     rect += GG::Pt(m_indentation, 0);
     TechType tech_type = m_tech->Type();
+    GG::Clr color_to_use = Color();
+    GG::Clr border_color_to_use = m_border_color;
+    if (!Disabled() && m_selected) {
+        AdjustBrightness(color_to_use, TECH_NAVIGATOR_ROLLOVER_BRIGHTENING_FACTOR);
+        AdjustBrightness(border_color_to_use, TECH_NAVIGATOR_ROLLOVER_BRIGHTENING_FACTOR);
+    }
     glDisable(GL_TEXTURE_2D);
-    FillTechPanelInterior(tech_type, rect, GG::Rect(), Color(), false, 0.0);
+    FillTechPanelInterior(tech_type, rect, GG::Rect(), color_to_use, false, 0.0);
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(OUTER_LINE_THICKNESS);
-    glColor4ub(m_border_color.r, m_border_color.g, m_border_color.b, 127);
+    glColor4ub(border_color_to_use.r, border_color_to_use.g, border_color_to_use.b, 127);
     TraceTechPanelOutline(tech_type, rect, GG::Rect(), false);
     glLineWidth(1.0);
     glDisable(GL_LINE_SMOOTH);
-    glColor4ubv(m_border_color.v);
+    glColor4ubv(border_color_to_use.v);
     TraceTechPanelOutline(tech_type, rect, GG::Rect(), false);
     glEnable(GL_TEXTURE_2D);
 }
@@ -1359,7 +1371,6 @@ void TechTreeWnd::LayoutPanel::UncollapseAll()
     }
 }
 
-#include <iostream>
 void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
 {
     GG::Pt final_position = keep_position ? m_scroll_position : GG::Pt();
