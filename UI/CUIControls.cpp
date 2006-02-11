@@ -401,7 +401,7 @@ void CUIStateButton::MouseLeave(const GG::Pt& pt, Uint32 keys)
 // class CUIScroll
 ///////////////////////////////////////
 namespace {
-const int CUISCROLL_ANGLE_OFFSET = 3;
+    const int CUISCROLL_ANGLE_OFFSET = 3;
 }
 
 ///////////////////////////////////////
@@ -413,7 +413,8 @@ CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, G
            scroll_width, scroll_width, "", boost::shared_ptr<GG::Font>(), color),
     m_border_color(border_color),
     m_orientation(orientation),
-    m_mouse_here(false)
+    m_mouse_here(false),
+    m_being_dragged(false)
 {
     SetMinSize(GG::Pt(m_orientation == GG::VERTICAL ? MinSize().x : 10,
                       m_orientation == GG::VERTICAL ? 10 : MinSize().y));
@@ -484,15 +485,34 @@ void CUIScroll::ScrollTab::Render()
     AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, border_color_to_use, CUISCROLL_ANGLE_OFFSET, 1);
 }
 
+void CUIScroll::ScrollTab::LButtonDown(const GG::Pt& pt, Uint32 keys)
+{
+    m_being_dragged = true;
+}
+
+void CUIScroll::ScrollTab::LButtonUp(const GG::Pt& pt, Uint32 keys)
+{
+    m_being_dragged = false;
+    m_mouse_here = false;
+}
+
+void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, Uint32 keys)
+{
+    m_being_dragged = false;
+}
+
 void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, Uint32 keys)
 {
-    HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
-    m_mouse_here = true;
+    if (!m_being_dragged) {
+        HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+        m_mouse_here = true;
+    }
 }
 
 void CUIScroll::ScrollTab::MouseLeave(const GG::Pt& pt, Uint32 keys)
 {
-    m_mouse_here = false;
+    if (!m_being_dragged)
+        m_mouse_here = false;
 }
 
 
