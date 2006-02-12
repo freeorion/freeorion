@@ -428,7 +428,7 @@
   <type>TT_THEORY</type>
   <category>GROWTH_CATEGORY</category>
   <research_cost>30</research_cost>
-  <research_turns>45</research_turns>
+  <research_turns>5</research_turns>
   <prerequisites>
     <prereq>GRO_PLANET_ECOL</prereq>
   </prerequisites>
