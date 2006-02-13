@@ -30,6 +30,45 @@ namespace {
     };
 
     //////////////////////////////////////////////////
+    // QueueListBox
+    //////////////////////////////////////////////////
+    class QueueListBox : public CUIListBox
+    {
+    public:
+        QueueListBox(int x, int y, int w, int h, ProductionWnd* production_wnd) :
+            CUIListBox(x, y, w, h),
+            m_production_wnd(production_wnd)
+        {}
+        // HACK!  This is sort of a dirty trick, but we return false here in all cases, even when we accept the dropped
+        // item.  This keeps things simpler than if we handled ListBox::DroppedRow signals, since we are explicitly
+        // updating everything on drops anyway.
+        virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
+        {
+            assert(wnds.size() == 1);
+            if ((*wnds.begin())->DragDropDataType() == "PRODUCTION_QUEUE_ROW") {
+                GG::ListBox::Row* row = static_cast<GG::ListBox::Row*>(*wnds.begin());
+                int original_row_idx = -1;
+                for (int i = 0; i < NumRows(); ++i) {
+                    if (&GetRow(i) == row) {
+                        original_row_idx = i;
+                        break;
+                    }
+                }
+                assert(original_row_idx != -1);
+                int row_idx = RowUnderPt(pt);
+                if (original_row_idx < row_idx)
+                    ++row_idx;
+                if (row_idx < 0 || row_idx > NumRows())
+                    row_idx = NumRows();
+                m_production_wnd->QueueItemMoved(row_idx, row);
+            }
+            wnds.clear();
+        }
+    private:
+        ProductionWnd* m_production_wnd;
+    };
+
+    //////////////////////////////////////////////////
     // QueueBuildPanel
     //////////////////////////////////////////////////
     class QueueBuildPanel : public GG::Control
@@ -153,16 +192,14 @@ ProductionWnd::ProductionWnd(int w, int h) :
 {
     m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, 200, UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                       OUTER_LINE_THICKNESS, ClientUI::KNOWN_TECH_FILL_COLOR, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR);
-    m_queue_lb = new CUIListBox(2, m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height());
+    m_queue_lb = new QueueListBox(2, m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height(), this);
     m_queue_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL | GG::LB_USERDELETE);
-    m_queue_lb->AllowDropType("PRODUCTION_QUEUE_ROW");
     GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width() + 6, 6);
     m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
     m_build_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width() + 3, 3));
 
     GG::Connect(m_build_designator_wnd->AddBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this);
     GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal, &ProductionWnd::ChangeBuildQuantitySlot, this);
-    GG::Connect(m_queue_lb->DroppedSignal, &ProductionWnd::QueueItemMovedSlot, this);
     GG::Connect(m_queue_lb->ErasedSignal, &ProductionWnd::QueueItemDeletedSlot, this);
     GG::Connect(m_queue_lb->LeftClickedSignal, &ProductionWnd::QueueItemClickedSlot, this);
     GG::Connect(m_queue_lb->DoubleClickedSignal, &ProductionWnd::QueueItemDoubleClickedSlot, this);
@@ -299,6 +336,13 @@ void ProductionWnd::SelectSystem(int system)
     m_build_designator_wnd->SelectSystem(system);
 }
 
+void ProductionWnd::QueueItemMoved(int row_idx, GG::ListBox::Row* row)
+{
+    HumanClientApp::Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), static_cast<QueueRow*>(row)->queue_index, row_idx));
+    UpdateQueue();
+    ResetInfoPanel();
+}
+
 void ProductionWnd::Sanitize()
 {
     m_build_designator_wnd->Clear();
@@ -357,13 +401,6 @@ void ProductionWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
     } else if (row_idx < m_build_designator_wnd->QueueIndexShown()) {
         m_build_designator_wnd->CenterOnBuild(m_build_designator_wnd->QueueIndexShown() - 1);
     }
-}
-
-void ProductionWnd::QueueItemMovedSlot(int row_idx, GG::ListBox::Row* row)
-{
-    HumanClientApp::Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), static_cast<QueueRow*>(row)->queue_index, row_idx));
-    UpdateQueue();
-    ResetInfoPanel();
 }
 
 void ProductionWnd::QueueItemClickedSlot(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt)

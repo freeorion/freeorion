@@ -25,6 +25,7 @@ public:
 
     void Reset();
     void CenterOnTech(const std::string& tech_name);
+    void QueueItemMoved(int row_idx, GG::ListBox::Row* row);
     void Sanitize();
     //@}
 
@@ -33,7 +34,6 @@ private:
     void ResetInfoPanel();
     void AddTechToQueueSlot(const Tech* tech);
     void QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row);
-    void QueueItemMovedSlot(int row_idx, GG::ListBox::Row* row);
     void QueueItemClickedSlot(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);
     void QueueItemDoubleClickedSlot(int row_idx, GG::ListBox::Row* row);
 

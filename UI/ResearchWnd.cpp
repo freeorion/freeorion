@@ -30,6 +30,45 @@ namespace {
     };
 
     //////////////////////////////////////////////////
+    // QueueListBox
+    //////////////////////////////////////////////////
+    class QueueListBox : public CUIListBox
+    {
+    public:
+        QueueListBox(int x, int y, int w, int h, ResearchWnd* research_wnd) :
+            CUIListBox(x, y, w, h),
+            m_research_wnd(research_wnd)
+        {}
+        // HACK!  This is sort of a dirty trick, but we return false here in all cases, even when we accept the dropped
+        // item.  This keeps things simpler than if we handled ListBox::DroppedRow signals, since we are explicitly
+        // updating everything on drops anyway.
+        virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
+        {
+            assert(wnds.size() == 1);
+            if ((*wnds.begin())->DragDropDataType() == "RESEARCH_QUEUE_ROW") {
+                GG::ListBox::Row* row = static_cast<GG::ListBox::Row*>(*wnds.begin());
+                int original_row_idx = -1;
+                for (int i = 0; i < NumRows(); ++i) {
+                    if (&GetRow(i) == row) {
+                        original_row_idx = i;
+                        break;
+                    }
+                }
+                assert(original_row_idx != -1);
+                int row_idx = RowUnderPt(pt);
+                if (original_row_idx < row_idx)
+                    ++row_idx;
+                if (row_idx < 0 || row_idx > NumRows())
+                    row_idx = NumRows();
+                m_research_wnd->QueueItemMoved(row_idx, row);
+            }
+            wnds.clear();
+        }
+    private:
+        ResearchWnd* m_research_wnd;
+    };
+
+    //////////////////////////////////////////////////
     // QueueTechPanel
     //////////////////////////////////////////////////
     class QueueTechPanel : public GG::Control
@@ -144,15 +183,13 @@ ResearchWnd::ResearchWnd(int w, int h) :
 {
     m_research_info_panel = new ProductionInfoPanel(RESEARCH_INFO_AND_QUEUE_WIDTH, 200, UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
                                                     OUTER_LINE_THICKNESS, ClientUI::KNOWN_TECH_FILL_COLOR, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR);
-    m_queue_lb = new CUIListBox(2, m_research_info_panel->LowerRight().y, m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height());
+    m_queue_lb = new QueueListBox(2, m_research_info_panel->LowerRight().y, m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height(), this);
     m_queue_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL | GG::LB_USERDELETE);
-    m_queue_lb->AllowDropType("RESEARCH_QUEUE_ROW");
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width() + 6, 6);
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
     m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width() + 3, 3));
 
     GG::Connect(m_tech_tree_wnd->AddTechToQueueSignal, &ResearchWnd::AddTechToQueueSlot, this);
-    GG::Connect(m_queue_lb->DroppedSignal, &ResearchWnd::QueueItemMovedSlot, this);
     GG::Connect(m_queue_lb->ErasedSignal, &ResearchWnd::QueueItemDeletedSlot, this);
     GG::Connect(m_queue_lb->LeftClickedSignal, &ResearchWnd::QueueItemClickedSlot, this);
     GG::Connect(m_queue_lb->DoubleClickedSignal, &ResearchWnd::QueueItemDoubleClickedSlot, this);
@@ -183,6 +220,13 @@ void ResearchWnd::Reset()
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
 {
     m_tech_tree_wnd->CenterOnTech(GetTech(tech_name));
+}
+
+void ResearchWnd::QueueItemMoved(int row_idx, GG::ListBox::Row* row)
+{
+    HumanClientApp::Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name(), row_idx));
+    UpdateQueue();
+    ResetInfoPanel();
 }
 
 void ResearchWnd::Sanitize()
@@ -236,13 +280,6 @@ void ResearchWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
     UpdateQueue();
     ResetInfoPanel();
     m_tech_tree_wnd->Update();
-}
-
-void ResearchWnd::QueueItemMovedSlot(int row_idx, GG::ListBox::Row* row)
-{
-    HumanClientApp::Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name(), row_idx));
-    UpdateQueue();
-    ResetInfoPanel();
 }
 
 void ResearchWnd::QueueItemClickedSlot(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt)
