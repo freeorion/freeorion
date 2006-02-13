@@ -65,6 +65,7 @@ namespace {
         if (progress == -1.0)
             progress = 0.0;
         push_back(new QueueTechPanel(w, tech_, in_progress, turns_left, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost));
+        SetDragDropDataType("RESEARCH_QUEUE_ROW");
     }
 
     //////////////////////////////////////////////////
@@ -145,6 +146,7 @@ ResearchWnd::ResearchWnd(int w, int h) :
                                                     OUTER_LINE_THICKNESS, ClientUI::KNOWN_TECH_FILL_COLOR, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR);
     m_queue_lb = new CUIListBox(2, m_research_info_panel->LowerRight().y, m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height());
     m_queue_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL | GG::LB_USERDELETE);
+    m_queue_lb->AllowDropType("RESEARCH_QUEUE_ROW");
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width() + 6, 6);
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
     m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width() + 3, 3));

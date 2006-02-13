@@ -44,7 +44,9 @@ GalaxySetupPanel::GalaxySetupPanel(int x, int y, int w/* = DEFAULT_WIDTH*/) :
     const int LABELS_WIDTH = (w - CONTROL_MARGIN) / 2;
     const int DROPLIST_WIDTH = LABELS_WIDTH;
     const int DROPLIST_HEIGHT = ClientUI::PTS + 4;
-    const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
+    const int TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
+    const int MAX_DROPLIST_DROP_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT * 5;
+    const int TOTAL_LISTBOX_MARGIN = 4;
     int row = -1;
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
@@ -54,27 +56,32 @@ GalaxySetupPanel::GalaxySetupPanel(int x, int y, int w/* = DEFAULT_WIDTH*/) :
     m_stars_spin->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_stars_spin->Height()) / 2));
 
     AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SHAPE"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
-    m_galaxy_shapes_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+    int drop_height = std::min(TEXT_ROW_HEIGHT * Universe::GALAXY_SHAPES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    m_galaxy_shapes_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_galaxy_shapes_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_galaxy_shapes_list->Height()) / 2));
     m_galaxy_shapes_list->SetStyle(GG::LB_NOSORT);
 
     AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_AGE"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
-    m_galaxy_ages_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+    drop_height = std::min(TEXT_ROW_HEIGHT * Universe::NUM_UNIVERSE_AGES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    m_galaxy_ages_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_galaxy_ages_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_galaxy_ages_list->Height()) / 2));
     m_galaxy_ages_list->SetStyle(GG::LB_NOSORT);
 
     AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARLANE_FREQ"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
-    m_starlane_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+    drop_height = std::min(TEXT_ROW_HEIGHT * Universe::NUM_STARLANE_FREQENCIES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    m_starlane_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_starlane_freq_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_starlane_freq_list->Height()) / 2));
     m_starlane_freq_list->SetStyle(GG::LB_NOSORT);
 
     AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_PLANET_DENSITY"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
-    m_planet_density_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+    drop_height = std::min(TEXT_ROW_HEIGHT * Universe::NUM_UNIVERSE_PLANET_DENSITIES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    m_planet_density_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_planet_density_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_planet_density_list->Height()) / 2));
     m_planet_density_list->SetStyle(GG::LB_NOSORT);
 
     AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row* PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SPECIALS_FREQ"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
-    m_specials_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+    drop_height = std::min(TEXT_ROW_HEIGHT * Universe::NUM_SPECIALS_FREQENCIES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    m_specials_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_specials_freq_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_specials_freq_list->Height()) / 2));
     m_specials_freq_list->SetStyle(GG::LB_NOSORT);
 

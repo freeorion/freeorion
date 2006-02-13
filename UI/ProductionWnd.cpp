@@ -68,6 +68,7 @@ namespace {
         if (progress == -1.0)
             progress = 0.0;
         push_back(new QueueBuildPanel(w, build, turn_cost, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost));
+        SetDragDropDataType("PRODUCTION_QUEUE_ROW");
     }
 
     //////////////////////////////////////////////////
@@ -154,6 +155,7 @@ ProductionWnd::ProductionWnd(int w, int h) :
                                                       OUTER_LINE_THICKNESS, ClientUI::KNOWN_TECH_FILL_COLOR, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR);
     m_queue_lb = new CUIListBox(2, m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height());
     m_queue_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL | GG::LB_USERDELETE);
+    m_queue_lb->AllowDropType("PRODUCTION_QUEUE_ROW");
     GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width() + 6, 6);
     m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
     m_build_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width() + 3, 3));

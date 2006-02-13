@@ -832,7 +832,6 @@ public:
 
     /** \name Accessors */ //@{
     virtual GG::Pt ClientLowerRight() const;
-    virtual void   LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
 
     const std::string&             CategoryShown() const;
     TechTreeWnd::TechTypesShown    GetTechTypesShown() const;
@@ -870,6 +869,14 @@ private:
                                     std::vector<std::vector<std::pair<double, double> > > > > DependencyArcsMap;
     typedef std::map<TechStatus, DependencyArcsMap> DependencyArcsMapsByArcType;
 
+    class LayoutSurface : public GG::Wnd
+    {
+    public:
+        LayoutSurface() : Wnd(0, 0, 1, 1, GG::CLICKABLE | GG::DRAGABLE) {}
+        void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys) {DraggedSignal(move);}
+        mutable boost::signal<void (const GG::Pt&)> DraggedSignal;
+    };
+
     void Layout(bool keep_position);
     bool TechVisible(const Tech* tech);
     void CollapseTechSubtree(const Tech* tech, bool collapse);
@@ -878,6 +885,7 @@ private:
     void TechBrowsedSlot(const Tech* tech);
     void TechClickedSlot(const Tech* tech);
     void TechDoubleClickedSlot(const Tech* tech);
+    void TreeDraggedSlot(const GG::Pt& move);
 
     std::string       m_category_shown;
     TechTypesShown    m_tech_types_shown;
@@ -890,6 +898,7 @@ private:
     std::map<const Tech*, TechPanel*> m_techs;
     DependencyArcsMapsByArcType m_dependency_arcs;
 
+    LayoutSurface* m_layout_surface;
     CUIScroll*     m_vscroll;
     CUIScroll*     m_hscroll;
     GG::Pt         m_scroll_position;
@@ -1158,17 +1167,21 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
     m_tech_types_shown(ALL_TECH_TYPES),
     m_tech_statuses_shown(ALL_TECH_STATUSES),
     m_selected_tech(0),
+    m_layout_surface(0),
     m_vscroll(0),
     m_hscroll(0)
 {
     EnableChildClipping(true);
 
+    m_layout_surface = new LayoutSurface();
     m_vscroll = new CUIScroll(w - ClientUI::SCROLL_WIDTH, 0, ClientUI::SCROLL_WIDTH, h - ClientUI::SCROLL_WIDTH, GG::VERTICAL);
     m_hscroll = new CUIScroll(0, h - ClientUI::SCROLL_WIDTH, w - ClientUI::SCROLL_WIDTH, ClientUI::SCROLL_WIDTH, GG::HORIZONTAL);
 
+    AttachChild(m_layout_surface);
     AttachChild(m_vscroll);
     AttachChild(m_hscroll);
 
+    GG::Connect(m_layout_surface->DraggedSignal, &TechTreeWnd::LayoutPanel::TreeDraggedSlot, this);
     GG::Connect(m_vscroll->ScrolledSignal, &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
     GG::Connect(m_hscroll->ScrolledSignal, &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
 }
@@ -1176,12 +1189,6 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
 GG::Pt TechTreeWnd::LayoutPanel::ClientLowerRight() const
 {
     return LowerRight() - GG::Pt(ClientUI::SCROLL_WIDTH, ClientUI::SCROLL_WIDTH);
-}
-
-void TechTreeWnd::LayoutPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
-{
-    m_vscroll->ScrollTo(m_vscroll->PosnRange().first - move.y);
-    m_hscroll->ScrollTo(m_hscroll->PosnRange().first - move.x);
 }
 
 const std::string& TechTreeWnd::LayoutPanel::CategoryShown() const
@@ -1311,7 +1318,7 @@ void TechTreeWnd::LayoutPanel::Clear()
     m_vscroll->SizeScroll(0, 1, 1, 1);
     m_hscroll->SizeScroll(0, 1, 1, 1);
     for (std::map<const Tech*, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it) {
-        DeleteChild(it->second);
+        delete it->second;
     }
     m_techs.clear();
     m_dependency_arcs.clear();
@@ -1343,7 +1350,7 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const Tech* tech)
     std::map<const Tech*, TechPanel*>::const_iterator it = m_techs.find(tech);
     if (it != m_techs.end()) {
         TechPanel* tech_panel = it->second;
-        GG::Pt center_point = tech_panel->UpperLeft() + GG::Pt(tech_panel->Width() / 2, tech_panel->Height() / 2) - ClientUpperLeft() + m_scroll_position;
+        GG::Pt center_point = tech_panel->RelativeUpperLeft() + GG::Pt(tech_panel->Width() / 2, tech_panel->Height() / 2) + m_scroll_position;
         GG::Pt client_size = ClientSize();
         m_hscroll->ScrollTo(center_point.x - client_size.x / 2);
         m_vscroll->ScrollTo(center_point.y - client_size.y / 2);
@@ -1432,7 +1439,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
         m_techs[tech] = new TechPanel(tech, tech == m_selected_tech, collapsed_subtree_techs.find(tech) != collapsed_subtree_techs.end(), m_category_shown, m_tech_types_shown, m_tech_statuses_shown);
         m_techs[tech]->MoveTo(GG::Pt(static_cast<int>(PS2INCH(ND_coord_i(node).x) - m_techs[tech]->Width() / 2 + TECH_PANEL_MARGIN),
                                      static_cast<int>(PS2INCH(ND_coord_i(node).y) - (m_techs[tech]->Height() - PROGRESS_PANEL_BOTTOM_EXTRUSION) / 2 + TECH_PANEL_MARGIN)));
-        AttachChild(m_techs[tech]);
+        m_layout_surface->AttachChild(m_techs[tech]);
         GG::Connect(m_techs[tech]->TechBrowsedSignal, &TechTreeWnd::LayoutPanel::TechBrowsedSlot, this);
         GG::Connect(m_techs[tech]->TechClickedSignal, &TechTreeWnd::LayoutPanel::TechClickedSlot, this);
         GG::Connect(m_techs[tech]->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot, this);
@@ -1474,6 +1481,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
     GG::Pt client_sz = ClientSize();
     GG::Pt layout_size(static_cast<int>(PS2INCH(GD_bb(graph).UR.x - GD_bb(graph).LL.x) + 2 * TECH_PANEL_MARGIN + PROGRESS_PANEL_LEFT_EXTRUSION),
                        static_cast<int>(PS2INCH(GD_bb(graph).UR.y - GD_bb(graph).LL.y) + 2 * TECH_PANEL_MARGIN + PROGRESS_PANEL_BOTTOM_EXTRUSION));
+    m_layout_surface->Resize(layout_size);
     m_vscroll->SizeScroll(0, layout_size.y - 1, std::max(50, std::min(layout_size.y / 10, client_sz.y)), client_sz.y);
     m_hscroll->SizeScroll(0, layout_size.x - 1, std::max(50, std::min(layout_size.x / 10, client_sz.x)), client_sz.x);
 
@@ -1566,13 +1574,9 @@ void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int)
 {
     int scroll_x = m_hscroll->PosnRange().first;
     int scroll_y = m_vscroll->PosnRange().first;
-    int delta_x = m_scroll_position.x - scroll_x;
-    int delta_y = m_scroll_position.y - scroll_y;
     m_scroll_position.x = scroll_x;
     m_scroll_position.y = scroll_y;
-    for (std::map<const Tech*, TechPanel*>::iterator it = m_techs.begin(); it != m_techs.end(); ++it) {
-        it->second->OffsetMove(GG::Pt(delta_x, delta_y));
-    }
+    m_layout_surface->MoveTo(GG::Pt(-scroll_x, -scroll_y));
 }
 
 void TechTreeWnd::LayoutPanel::TechBrowsedSlot(const Tech* tech)
@@ -1592,6 +1596,12 @@ void TechTreeWnd::LayoutPanel::TechClickedSlot(const Tech* tech)
 void TechTreeWnd::LayoutPanel::TechDoubleClickedSlot(const Tech* tech)
 {
     TechDoubleClickedSignal(tech);
+}
+
+void TechTreeWnd::LayoutPanel::TreeDraggedSlot(const GG::Pt& move)
+{
+    m_vscroll->ScrollTo(m_vscroll->PosnRange().first - move.y);
+    m_hscroll->ScrollTo(m_hscroll->PosnRange().first - move.x);
 }
 
 

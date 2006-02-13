@@ -493,7 +493,8 @@ void CUIScroll::ScrollTab::LButtonDown(const GG::Pt& pt, Uint32 keys)
 void CUIScroll::ScrollTab::LButtonUp(const GG::Pt& pt, Uint32 keys)
 {
     m_being_dragged = false;
-    m_mouse_here = false;
+    if (!InWindow(GG::GUI::GetGUI()->MousePosition()))
+        m_mouse_here = false;
 }
 
 void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, Uint32 keys)
@@ -503,7 +504,7 @@ void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, Uint32 keys)
 
 void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, Uint32 keys)
 {
-    if (!m_being_dragged) {
+    if (!m_being_dragged && !m_mouse_here) {
         HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
         m_mouse_here = true;
     }
@@ -560,14 +561,13 @@ CUIListBox::CUIListBox(int x, int y, int w, int h, GG::Clr color/* = ClientUI::C
 
 void CUIListBox::Render()
 {
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::Clr color = Color(); // save color
+    GG::Clr color_to_use = Disabled() ? DisabledColor(color) : color;
+    FlatRectangle(ul.x, ul.y, lr.x, lr.y, InteriorColor(), color_to_use, 1);
     SetColor(GG::CLR_ZERO); // disable the default border by rendering it transparently
     ListBox::Render();
     SetColor(color); // restore color
-    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, color_to_use, 1);
 }
 
 
