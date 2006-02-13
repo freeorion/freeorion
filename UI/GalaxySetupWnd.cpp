@@ -45,7 +45,7 @@ GalaxySetupPanel::GalaxySetupPanel(int x, int y, int w/* = DEFAULT_WIDTH*/) :
     const int DROPLIST_WIDTH = LABELS_WIDTH;
     const int DROPLIST_HEIGHT = ClientUI::PTS + 4;
     const int TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
-    const int MAX_DROPLIST_DROP_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT * 5;
+    const int MAX_DROPLIST_DROP_HEIGHT = TEXT_ROW_HEIGHT * 5;
     const int TOTAL_LISTBOX_MARGIN = 4;
     int row = -1;
 

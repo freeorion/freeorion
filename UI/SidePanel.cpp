@@ -1490,6 +1490,7 @@ void SidePanel::SetSystem(int system_id)
       std::vector<const System*> sys_vec = GetUniverse().FindObjects<const System>();
       GG::ListBox::Row *select_row=0;
 
+      int system_names_in_droplist = 0;
       for (unsigned int i = 0; i < sys_vec.size(); i++) 
       {
         GG::ListBox::Row *row = new SystemRow(sys_vec[i]->ID());
@@ -1499,10 +1500,16 @@ void SidePanel::SetSystem(int system_id)
  
         row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4), ClientUI::TEXT_COLOR);
         m_system_name->Insert(row);
+        ++system_names_in_droplist;
 
         if(sys_vec[i]->ID() == system_id)
           select_row = row;
       }
+      const int TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
+      const int MAX_DROPLIST_DROP_HEIGHT = TEXT_ROW_HEIGHT * 10;
+      const int TOTAL_LISTBOX_MARGIN = 4;
+      int drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+      m_system_name->SetDropHeight(drop_height);
 
       for (int i = 0; i < m_system_name->NumRows(); i++) 
         if(select_row == &m_system_name->GetRow(i))
