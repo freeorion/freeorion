@@ -1350,7 +1350,7 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const Tech* tech)
     std::map<const Tech*, TechPanel*>::const_iterator it = m_techs.find(tech);
     if (it != m_techs.end()) {
         TechPanel* tech_panel = it->second;
-        GG::Pt center_point = tech_panel->RelativeUpperLeft() + GG::Pt(tech_panel->Width() / 2, tech_panel->Height() / 2) + m_scroll_position;
+        GG::Pt center_point = tech_panel->RelativeUpperLeft() + GG::Pt(tech_panel->Width() / 2, tech_panel->Height() / 2);
         GG::Pt client_size = ClientSize();
         m_hscroll->ScrollTo(center_point.x - client_size.x / 2);
         m_vscroll->ScrollTo(center_point.y - client_size.y / 2);

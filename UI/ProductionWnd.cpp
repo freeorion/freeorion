@@ -37,7 +37,8 @@ namespace {
     public:
         QueueListBox(int x, int y, int w, int h, ProductionWnd* production_wnd) :
             CUIListBox(x, y, w, h),
-            m_production_wnd(production_wnd)
+            m_production_wnd(production_wnd),
+            m_drop_point(-1)
         {}
         // HACK!  This is sort of a dirty trick, but we return false here in all cases, even when we accept the dropped
         // item.  This keeps things simpler than if we handled ListBox::DroppedRow signals, since we are explicitly
@@ -56,16 +57,46 @@ namespace {
                 }
                 assert(original_row_idx != -1);
                 int row_idx = RowUnderPt(pt);
-                if (original_row_idx < row_idx)
-                    ++row_idx;
                 if (row_idx < 0 || row_idx > NumRows())
                     row_idx = NumRows();
                 m_production_wnd->QueueItemMoved(row_idx, row);
             }
             wnds.clear();
         }
+        virtual void Render()
+        {
+            ListBox::Render();
+            if (m_drop_point != -1) {
+                GG::ListBox::Row& row = GetRow(m_drop_point == NumRows() ? NumRows() - 1 : m_drop_point);
+                GG::Pt row_ul = row.UpperLeft(), row_lr = row.LowerRight();
+                if (m_drop_point == NumRows())
+                    row_ul.y = row_lr.y;
+                GG::FlatRectangle(row_ul.x, row_ul.y, row_lr.x, row_ul.y + 1, GG::CLR_ZERO, GG::CLR_WHITE, 1);
+            }
+        }
+        virtual void DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+        {
+            DragDropHere(pt, drag_drop_wnds, keys);
+        }
+        virtual void DragDropHere(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+        {
+            if (drag_drop_wnds.size() == 1 && drag_drop_wnds.begin()->first->DragDropDataType() == "PRODUCTION_QUEUE_ROW") {
+                m_drop_point = RowUnderPt(pt);
+                if (m_drop_point < 0)
+                    m_drop_point = 0;
+                if (NumRows() < m_drop_point)
+                    m_drop_point = NumRows();
+            } else {
+                m_drop_point = -1;
+            }
+        }
+        virtual void DragDropLeave(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+        {
+            m_drop_point = -1;
+        }
     private:
         ProductionWnd* m_production_wnd;
+        int            m_drop_point;
     };
 
     //////////////////////////////////////////////////

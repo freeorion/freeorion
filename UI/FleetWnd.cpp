@@ -558,7 +558,7 @@ public:
 
         if (m_read_only || row_index < 0 || NumRows() <= row_index)
             return;
-        
+
         FleetDataPanel* fleet_data_panel = static_cast<FleetDataPanel*>((*static_cast<FleetRow*>(&GetRow(row_index)))[0]);
         if (!fleet_data_panel->Selected()) {
             bool valid_drop = true;
