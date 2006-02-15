@@ -983,15 +983,15 @@ void HumanClientApp::Autosave(int turn_number, bool new_game)
 
         std::string save_filename;
         if (m_single_player_game) {
-            save_filename = boost::io::str(boost::format("AS_%s_%03d.sav") % empire_name % turn_number);
+            save_filename = boost::io::str(boost::format("AS_%s_%04d.sav") % empire_name % turn_number);
         } else {
             unsigned int first_good_player_char = m_player_name.find_first_of(legal_chars);
             if (first_good_player_char == std::string::npos) {
-                save_filename = boost::io::str(boost::format("AS_%s_%03d.mps") % empire_name % turn_number);
+                save_filename = boost::io::str(boost::format("AS_%s_%04d.mps") % empire_name % turn_number);
             } else {
                 unsigned int first_bad_player_char = m_player_name.find_first_not_of(legal_chars, first_good_player_char);
                 std::string player_name = m_player_name.substr(first_good_player_char, first_bad_player_char - first_good_player_char);
-                save_filename = boost::io::str(boost::format("AS_%s_%s_%03d.mps") % player_name % empire_name % turn_number);
+                save_filename = boost::io::str(boost::format("AS_%s_%s_%04d.mps") % player_name % empire_name % turn_number);
             }
         }
 
@@ -999,7 +999,7 @@ void HumanClientApp::Autosave(int turn_number, bool new_game)
         std::set<std::string> old_save_files;
         std::string extension = m_single_player_game ? ".sav" : ".mps";
         namespace fs = boost::filesystem;
-        fs::path save_dir = "save";
+        fs::path save_dir = GetLocalDir() / "save";
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
             if (!fs::is_directory(*it)) {
@@ -1029,7 +1029,7 @@ void HumanClientApp::Autosave(int turn_number, bool new_game)
 
         Message response;
         bool save_succeeded = 
-            NetworkCore().SendSynchronousMessage(HostSaveGameMessage(PlayerID(), "save/" + save_filename), response);
+            NetworkCore().SendSynchronousMessage(HostSaveGameMessage(PlayerID(), (save_dir / save_filename).native_file_string()), response);
         if (!save_succeeded && m_game_started && NetworkCore().Connected())
             Logger().errorStream() << "HumanClientApp::Autosave : An error occured while attempting to save the autosave file \"" << save_filename << "\"";
     }
