@@ -68,10 +68,13 @@ namespace {
             ListBox::Render();
             if (m_drop_point != -1) {
                 GG::ListBox::Row& row = GetRow(m_drop_point == NumRows() ? NumRows() - 1 : m_drop_point);
-                GG::Pt row_ul = row.UpperLeft(), row_lr = row.LowerRight();
+                GG::Control* panel = row[0];
+                GG::Pt ul = row.UpperLeft(), lr = row.LowerRight();
                 if (m_drop_point == NumRows())
-                    row_ul.y = row_lr.y;
-                GG::FlatRectangle(row_ul.x, row_ul.y, row_lr.x, row_ul.y + 1, GG::CLR_ZERO, GG::CLR_WHITE, 1);
+                    ul.y = lr.y;
+                ul.x = panel->UpperLeft().x;
+                lr.x = panel->LowerRight().x;
+                GG::FlatRectangle(ul.x, ul.y - 1, lr.x, ul.y, GG::CLR_ZERO, GG::CLR_WHITE, 1);
             }
         }
         virtual void DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
