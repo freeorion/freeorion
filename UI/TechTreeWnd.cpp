@@ -372,7 +372,7 @@ namespace {
 
         virtual void MouseEnter(const GG::Pt& pt, Uint32 keys) {m_mouse_here = true;}
 
-        virtual void MouseLeave(const GG::Pt& pt, Uint32 keys) {m_mouse_here = false;}
+        virtual void MouseLeave() {m_mouse_here = false;}
 
         void SetSelected(bool s) {m_selected = s;}
 
@@ -630,7 +630,7 @@ private:
         virtual void Render();
         virtual void LClick(const GG::Pt& pt, Uint32 keys) {ClickedSignal(m_tech);}
         virtual void MouseEnter(const GG::Pt& pt, Uint32 keys) {m_selected = true;}
-        virtual void MouseLeave(const GG::Pt& pt, Uint32 keys) {m_selected = false;}
+        virtual void MouseLeave() {m_selected = false;}
         const Tech * const m_tech;
         GG::Clr m_border_color;
         GG::TextControl* m_name_text;

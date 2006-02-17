@@ -60,7 +60,7 @@ public:
     virtual void   RClick(const GG::Pt& pt, Uint32 keys);
     virtual void   LDoubleClick(const GG::Pt& pt, Uint32 keys);
     virtual void   MouseEnter(const GG::Pt& pt, Uint32 keys);
-    virtual void   MouseLeave(const GG::Pt& pt, Uint32 keys);
+    virtual void   MouseLeave();
 
     void           Refresh(); //!< sets up the icon's fleet buttons, generates fleet movement lines, etc.  Should be called after an icon is attached to the map
     void           ClickFleetButton(Fleet* fleet); //!< clicks the FleetButton containing \a fleet

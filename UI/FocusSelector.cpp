@@ -70,7 +70,7 @@ void FocusButton::MouseEnter(const GG::Pt& pt, Uint32 keys)
     m_mouse_here = true;
 }
 
-void FocusButton::MouseLeave(const GG::Pt& pt, Uint32 keys)
+void FocusButton::MouseLeave()
 {
     m_mouse_here = false;
 }
@@ -255,7 +255,7 @@ void FocusSelector::MouseEnter(const GG::Pt& pt, Uint32 keys)
     m_mouse_here = true;
 }
 
-void FocusSelector::MouseLeave(const GG::Pt& pt, Uint32 keys)
+void FocusSelector::MouseLeave()
 {
     m_mouse_here = false;
 }

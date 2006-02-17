@@ -391,7 +391,7 @@ void CUIStateButton::MouseEnter(const GG::Pt& pt, Uint32 keys)
     m_mouse_here = true;
 }
 
-void CUIStateButton::MouseLeave(const GG::Pt& pt, Uint32 keys)
+void CUIStateButton::MouseLeave()
 {
     m_mouse_here = false;
 }
@@ -512,7 +512,7 @@ void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, Uint32 keys)
     }
 }
 
-void CUIScroll::ScrollTab::MouseLeave(const GG::Pt& pt, Uint32 keys)
+void CUIScroll::ScrollTab::MouseLeave()
 {
     if (!m_being_dragged)
         m_mouse_here = false;
@@ -637,7 +637,7 @@ void CUIDropDownList::MouseEnter(const GG::Pt& pt, Uint32 keys)
     m_mouse_here = true;
 }
 
-void CUIDropDownList::MouseLeave(const GG::Pt& pt, Uint32 keys)
+void CUIDropDownList::MouseLeave()
 {
     m_mouse_here = false;
 }

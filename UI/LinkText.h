@@ -59,7 +59,7 @@ public:
     virtual void   LButtonUp(const GG::Pt& pt, Uint32 keys);
     virtual void   LClick(const GG::Pt& pt, Uint32 keys);
     virtual void   MouseHere(const GG::Pt& pt, Uint32 keys);
-    virtual void   MouseLeave(const GG::Pt& pt, Uint32 keys);
+    virtual void   MouseLeave();
    
     /** sets the text to \a str; may resize the window.  If the window was constructed to fit the size of the text 
         (i.e. if the second ctor type was used), calls to this function cause the window to be resized to whatever 

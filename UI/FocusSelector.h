@@ -16,7 +16,7 @@ public:
     virtual void Render();
     virtual void RClick(const GG::Pt& pt, Uint32 keys);
     virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseLeave(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseLeave();
     void SetImage(const boost::shared_ptr<GG::Texture>& image);
 
     mutable ClickedSignalType RightClickedSignal;
@@ -54,7 +54,7 @@ public:
     virtual void LClick(const GG::Pt& pt, Uint32 keys);
     virtual void RClick(const GG::Pt& pt, Uint32 keys);
     virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseLeave(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseLeave();
     void Update(const ResourceCenter& resource_center);
 
     mutable FocusChangedSignalType PrimaryFocusChangedSignal;

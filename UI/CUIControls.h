@@ -149,7 +149,7 @@ public:
     /** \name Mutators */ //@{
     virtual void Render();
     virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseLeave(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseLeave();
     //@}
 
 private:
@@ -173,7 +173,7 @@ public:
         virtual void LButtonUp(const GG::Pt& pt, Uint32 keys);
         virtual void LClick(const GG::Pt& pt, Uint32 keys);
         virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
-        virtual void MouseLeave(const GG::Pt& pt, Uint32 keys);
+        virtual void MouseLeave();
     private:
         GG::Clr m_border_color;
         GG::Orientation m_orientation;
@@ -229,7 +229,7 @@ public:
     virtual void Render();
     virtual void LClick(const GG::Pt& pt, Uint32 keys);
     virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseLeave(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseLeave();
 
     void         DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
     void         EnableDropArrow();   ///< enables rendering of the small downward-facing arrow on the right of the control

@@ -103,7 +103,7 @@ void LinkText::MouseHere(const GG::Pt& pt, Uint32 keys)
     }
 }
 
-void LinkText::MouseLeave(const GG::Pt& pt, Uint32 keys)
+void LinkText::MouseLeave()
 {
     ClearOldRollover();
 }

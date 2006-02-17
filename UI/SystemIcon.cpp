@@ -138,7 +138,7 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, Uint32 keys)
     MouseEnteringSignal(m_system.ID());
 }
 
-void SystemIcon::MouseLeave(const GG::Pt& pt, Uint32 keys)
+void SystemIcon::MouseLeave()
 {
     m_static_graphic->SetColor(m_default_star_color);
     MouseLeavingSignal(m_system.ID());

@@ -38,7 +38,7 @@ public:
 
     virtual void Render();
     virtual void DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys);
-    virtual void DragDropLeave(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys);
+    virtual void DragDropLeave();
     virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt);
     void Select(bool b);
 
@@ -309,7 +309,7 @@ void FleetDataPanel::DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt
     }
 }
 
-void FleetDataPanel::DragDropLeave(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+void FleetDataPanel::DragDropLeave()
 {
     Select(false);
 }
@@ -583,7 +583,7 @@ public:
         }
     }
 
-    virtual void DragDropLeave(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+    virtual void DragDropLeave()
     {
         ClearSelection();
     }
