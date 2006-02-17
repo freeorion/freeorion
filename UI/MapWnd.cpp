@@ -635,7 +635,7 @@ void MapWnd::InitTurn(int turn_number)
     // are there any sitreps to show?
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     m_sitrep_panel->Update();
-    if ( empire->NumSitRepEntries( ) )
+    if (empire->NumSitRepEntries())
         m_sitrep_panel->Show();
     else
         m_sitrep_panel->Hide();
@@ -1254,6 +1254,7 @@ void MapWnd::Sanitize()
     m_chat_display->MoveTo(GG::Pt(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN));
     m_chat_edit->MoveTo(GG::Pt(LAYOUT_MARGIN, GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
     m_sitrep_panel->MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - SITREP_PANEL_WIDTH) / 2, (GG::GUI::GetGUI()->AppHeight() - SITREP_PANEL_HEIGHT) / 2));
+    m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
     MoveTo(GG::Pt(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight()));
     m_zoom_factor = 1.0;
     m_research_wnd->Sanitize();
