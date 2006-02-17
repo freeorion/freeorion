@@ -787,7 +787,8 @@ void OptionsWnd::UISoundsVolumeSlid(int pos, int low, int high)
 {
     GetOptionsDB().Set("UI.sound.volume", pos);
     HumanClientApp::GetApp()->SetUISoundsVolume(pos);
-    HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
+    if (GetOptionsDB().Get<bool>("UI.sound.enabled"))
+        HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
 }
 
 void OptionsWnd::TextFont(int selection)

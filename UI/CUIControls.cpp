@@ -505,7 +505,9 @@ void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, Uint32 keys)
 void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, Uint32 keys)
 {
     if (!m_being_dragged && !m_mouse_here) {
-        HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+#ifndef FREEORION_BUILD_UTIL
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+#endif
         m_mouse_here = true;
     }
 }
@@ -629,7 +631,9 @@ void CUIDropDownList::LClick(const GG::Pt& pt, Uint32 keys)
 
 void CUIDropDownList::MouseEnter(const GG::Pt& pt, Uint32 keys)
 {
-    HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+#ifndef FREEORION_BUILD_UTIL
+    if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+#endif
     m_mouse_here = true;
 }
 
