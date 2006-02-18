@@ -1,7 +1,8 @@
-English
+Deutsch
 
-#This is the English String Table file for FreeOrion
-#Translate this file to other languages.
+#This is the String Table file for FreeOrion
+#Deutsche Übersetzung von Martin Wuttke [thesilentone]
+#Soon to be completed 02-18-2006
 
 #################
 # Common        #
@@ -25,7 +26,7 @@ DONE
 Fertig
 
 CLOSE
-Beenden
+Schliessen
 
 LOAD
 Laden
@@ -42,6 +43,15 @@ oder
 AND
 und
 
+YES
+Ja
+
+NO
+Nein
+
+NEW_GAME
+Erzeuge Universum und KIs ...
+
 LOADING
 Lade ...
 
@@ -49,22 +59,25 @@ SERVER_TIMEOUT
 Der Server antwortet nicht
 
 SERVER_LOST
-Die Verbindung zum Server wurde unterbrochen. 
+Die Verbindung zum Server wurde getrennt.
 
 SERVER_GAME_END
-Der Server hat das Spiel beendet. Und Tschüss
+Der Server hat das Spiel beendet.
 
 PLAYER_DISCONNECTED
-Die Verbindung von Spieler %1% wurde unterbrochen.
+Spieler %1% ist nicht länger mit dem Server verbunden.
 
 PLAYER_DEFEATED
-Du bist besiegt.
+Sie wurden besiegt.
 
 PLAYER_VICTORIOUS
-Du hast gewonnen.
+Sie haben gewonnen.
 
 EMPIRE_DEFEATED
-Das %1% Imperium existiert nicht mehr.
+Imperium %1% wurde ausgelöscht.
+
+ALL
+Alle
 
 UNKNOWN_SYSTEM
 unbekanntes System
@@ -73,16 +86,16 @@ RENAME
 Umbenennen
 
 ENTER_NEW_NAME
-Bitte gib einen neuen Namen ein
+Neuen Namen eingeben
 
 UNKNOWN_VALUE_SYMBOL
 ?
 
 DEFENSE_BASE
-Verteidigungsstation
+Verteidigungsbasis
 
 DEFENSE_BASE_DESCRIPTION
-Eine Orbitale Raumstation die die Verteidigung des Planeten in dessen Orbit sie sich befindet unterstützt.\n\nAngriff:  1\nVerteidigung:  3
+Eine orbitale Verteidigungsbasis, die bei der Verteidigung des Planeten hilft, in dessen Orbit sie sich befindet.\n\nAngriff: 1\nVerteidigung: 3
 
 
 #################
@@ -94,6 +107,56 @@ Datei(en):
 
 FILE_DLG_FILE_TYPES
 Typ(en):
+
+FILE_DLG_MALFORMED_FILENAME
+Ungültiger Dateiname.
+
+FILE_DLG_OVERWRITE_PROMPT
+%1% gibt es bereits.\nÜberschreiben?
+
+FILE_DLG_INVALID_FILENAME
+"%1%"\nist ein ungültiger Dateiname.
+
+FILE_DLG_FILENAME_IS_A_DIRECTORY
+"%1%"\nist ein Verzeichnis.
+
+FILE_DLG_FILE_DOES_NOT_EXIST
+File "%1%"\n gibt es nicht.
+
+FILE_DLG_DEVICE_IS_NOT_READY
+Gerät ist nicht bereit.
+
+
+#################
+# Color Dialog  #
+#################
+
+COLOR_DLG_NEW
+Neu
+
+COLOR_DLG_OLD
+Alt
+
+COLOR_DLG_RED
+R:
+
+COLOR_DLG_GREEN
+G:
+
+COLOR_DLG_BLUE
+B:
+
+COLOR_DLG_HUE
+H:
+
+COLOR_DLG_SATURATION
+S:
+
+COLOR_DLG_VALUE
+V:
+
+COLOR_DLG_ALPHA
+A:
 
 
 #################
@@ -112,7 +175,7 @@ INTRO_BTN_SINGLE_PLAYER
 Einzelspieler
 
 INTRO_BTN_MULTI_PLAYER
-Mehrspieler
+Multiplayer
 
 INTRO_BTN_LOAD_GAME
 Spiel laden
@@ -121,10 +184,10 @@ INTRO_BTN_OPTIONS
 Optionen
 
 INTRO_BTN_ABOUT
-Über
+Über das Spiel
 
 INTRO_BTN_CREDITS
-Danksagung
+Mitwirkende
 
 INTRO_BTN_EXIT
 Beenden
@@ -133,11 +196,10 @@ Beenden
 #Error Messages####
 
 ERR_CONNECT_TIMED_OUT
-Zeitüberschreitung beim Versuch zum Server zu verbinden
+Die Verbindungszeit zum Server wurde überschritten
 
 ERR_VERSION_MISMATCH
-Konnte nicht zum Server verbinden weil ihre Version der folgenden Einstellungen oder Quelldateien anders ist:
-
+Kann keine Verbindung zum Server herstellen, da dieser Client eine andere Version folgender Einstellungen und/oder Quellfiles verwendet:
 
 
 ########################
@@ -147,15 +209,15 @@ Konnte nicht zum Server verbinden weil ihre Version der folgenden Einstellungen 
 #Window title####
 
 SCONNECT_WINDOW_TITLE
-Zum Server verbinden
+Verbindung zum Server
 
 
 #Static labels####
 
 LAN_GAME_LABEL
-LAN Spiel auf:
+Lan Spiel an:
 INTERNET_GAME_LABEL
-Internet Spiel auf:
+Internet Spiel an:
 PLAYER_NAME_LABEL
 Spielername
 
@@ -163,11 +225,11 @@ Spielername
 #Button names####
 
 HOST_GAME_BN
-Ein neues Spiel starten
+Ein neues Spiel ausrichten
 JOIN_GAME_BN
 Einem Spiel beitreten
 REFRESH_LIST_BN
-Liste Aktualisieren
+Aktualisieren
 
 
 ########################
@@ -181,7 +243,7 @@ Multiplayer Setup
 
 #Strings
 MPLOBBY_HOST_ABORTED_GAME
-Der Server hat die Spielerstellung abgebrochen.
+Der Host hat das Spielsetup abgebrochen.
 
 #Button names####
 
@@ -202,17 +264,17 @@ Spiel starten
 #Window title####
 
 GSETUP_WINDOW_TITLE
-Galaxie Einstellungen
+Galaxie erstellen
 
 #Strings
 GSETUP_GRAPHICS_FILES
-Graphik Dateien
+Grafikdateien
 
 GSETUP_EMPIRE_NAME
 Name des Imperiums
 
 GSETUP_EMPIRE_COLOR
-Farbe
+Farbe des Imperiums
 
 
 #Drop-down list labels and choices####
@@ -224,24 +286,24 @@ Galaxieform
 GSETUP_AGE
 Galaxiealter
 GSETUP_STARLANE_FREQ
-Sternstrassenhäufigkeit
+Sternstrassen
 GSETUP_PLANET_DENSITY
 Planetendichte
 GSETUP_SPECIALS_FREQ
-Besonderheiten
+Specials
 
 GSETUP_2ARM
-Spiral, 2-armig
+Spirale, 2-armig
 GSETUP_3ARM
-Spiral, 3-armig
+Spirale, 3-armig
 GSETUP_4ARM
-Spiral, 4-armig
+Spirale, 4-armig
 GSETUP_CLUSTER
-Cluster
+Haufen
 GSETUP_ELLIPTICAL
-Elliptisch
+Ellipse
 GSETUP_IRREGULAR
-Irregulär
+Chaos
 GSETUP_RING
 Ring
 
@@ -249,16 +311,16 @@ GSETUP_NONE
 Keine
 
 GSETUP_YOUNG
-jung
+Jung
 GSETUP_MATURE
-durchschnittlich
+Alt
 GSETUP_ANCIENT
-alt
+Uralt
 
 GSETUP_FEW
-Wenig
-GSETUP_SOME
 Ein paar
+GSETUP_SOME
+Wenige
 GSETUP_SEVERAL
 Einige
 GSETUP_MANY
@@ -267,24 +329,24 @@ GSETUP_VERY_MANY
 Sehr viele
 
 GSETUP_LOW
-niedrig
+Niedrig
 GSETUP_MEDIUM
-mittel
+Mittel
 GSETUP_HIGH
-hoch
+Hoch
 
 GSETUP_RARE
-selten
+Kaum
 GSETUP_UNCOMMON
-nicht häufig
+Selten
 GSETUP_COMMON
-häufig
+Gelegentlich
 
 
 #Error messages####
 
 GSETUP_ERR_NOEXIST
-gibt es nicht.
+existiert nicht.
 
 
 ###########################
@@ -294,13 +356,13 @@ gibt es nicht.
 #Window Title####
 
 ESELECT_WINDOW_TITLE
-Imperiumsauswahl
+Auswahl des Imperiums
 
 
 #Static text####
 
 ESELECT_EMPIRE_NAME
-Imperiumsname:
+Name des Imperiums:
 
 ###########################
 # About Dialog		      #
@@ -315,20 +377,20 @@ ABOUT_WINDOW_TITLE
 Über FreeOrion
 
 CREDITS
-Danksagungen
+Mitwirkende
 
 VISION
 Vision
 
 FREEORION_VISION
-FreeOrion, an open-source game based on Master of Orion, is a turn-based game of epic space strategy that builds on the classic '4X' model by incorporating the nation-building elements of games such as Europa Universalis 2 and a versatile tactical combat engine. While its modular, open-source design allows for a significant degree of customization of the game engine and the story elements by the community, the FreeOrion team is dedicated to the construction of a living, breathing universe in a 'grand campaign' model. 
+FreeOrion ist ein zug-basierendes Open-Source Spiel, das von Master of Orion inspiriert ist. Es basiert auf dem klassischen "4x - Modell", den Nationenaufbau - Elementen von Spielen wie Europa Universalis 2 und einer vielseitigen taktischen Kampfengine. Der modulare Aufbau des Spiels ermöglicht Veränderungen sowohl an der Game Engine als auch der Story durch die Community; das FreeOrion - Team bemüht sich, ein lebendes, atmendes Universum mit einem Großkampagnen - Modell zu erschaffen.
 
 ###########################
 # Game Menu	              #
 ###########################
 
 GAME_MENU_WINDOW_TITLE
-Optionen
+Menü
 
 GAME_MENU_SAVE
 Spiel speichern
@@ -337,10 +399,10 @@ GAME_MENU_LOAD
 Spiel laden
 
 GAME_MENU_RESIGN
-Aufhören
+Aufgeben
 
 GAME_MENU_SAVE_FILES
-Gespeicherte Spiele
+Spieldateien
 
 ###########################
 # Game Options            #
@@ -350,13 +412,13 @@ OPTIONS_TITLE
 Optionen
 
 OPTIONS_AUTOSELECT_FLEET
-Automatisch erste Flotte auswählen
+Erste Flotte automatisch anwählen
 
 OPTIONS_MULTIPLE_FLEET_WNDS
 Mehrere Flottenfenster
 
 OPTIONS_QUICK_CLOSE_WNDS
-Schnelles beenden von Fenstern
+Fenster schnell schliessen
 
 OPTIONS_AUTOSAVE
 Autosave
@@ -368,16 +430,16 @@ OPTIONS_MULTIPLAYER
 Mehrspieler
 
 OPTIONS_AUTOSAVE_TO_KEEP
-Autosave Dateien behalten
+Autosaves behalten
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
-Runden zwischen Autosave
+Runden zw. den Autosaves
 
 OPTIONS_LANGUAGE
 Sprachdatei
 
 OPTIONS_FONTS
-Schriften
+Fonts
 
 OPTIONS_FONT_TEXT
 Text
@@ -389,7 +451,7 @@ OPTIONS_FONT_SIZE
 Größe
 
 OPTIONS_TECH_SPACING
-Technologie abstand
+Tech Abstand
 
 OPTIONS_HORIZONTAL
 Horizontal
@@ -398,7 +460,7 @@ OPTIONS_VERTICAL
 Vertikal
 
 OPTIONS_TOOLTIP_DELAY
-Tooltip verzögerung (ms)
+Tooltip Wartezeit (ms)
 
 OPTIONS_RESOLUTION
 Auflösung
@@ -410,22 +472,22 @@ OPTIONS_CHAT
 Chat
 
 OPTIONS_CHAT_HISTORY
-Chat verlauf
+Chat Vergangenheit
 
 OPTIONS_CHAT_HIDE
-Chat-verstecken verzögerung
+Chat Versteckdauer
 
 OPTIONS_MUSIC
 Musik
 
 OPTIONS_UI_SOUNDS
-UI sounds
+UI Sound
 
 OPTIONS_BACKGROUND_MUSIC
 Musik
 
 OPTIONS_SOUND_CLOSE
-Fenster schließen
+Fenster schliessen
 
 OPTIONS_SOUND_MINIMIZE
 Fenster minimieren
@@ -434,16 +496,16 @@ OPTIONS_SOUND_MAXIMIZE
 Fenster maximieren
 
 OPTIONS_SOUND_CLICK
-Klick
+Anklicken
 
 OPTIONS_SOUND_ROLLOVER
-Rollover
+Rollen
 
 OPTIONS_SOUND_WINDOW
 Allgemein
 
 OPTIONS_SOUND_BUTTON
-Tasten
+Buttons
 
 OPTIONS_SOUND_FLEET
 Flotten
@@ -455,139 +517,139 @@ OPTIONS_SOUND_TYPING
 Tippen
 
 OPTIONS_SOUND_TURN
-Rundenende Taste gedrückt
+Rundenbutton anklicken
 
 OPTIONS_SOUND_SIDEPANEL
-Systemansicht öffnet
+Seitenfenster öffnen
 
 OPTIONS_SOUND_PLANET
-Planeten klick
+Planet anklicken
 
 OPTIONS_SOUND_FOCUS
-Focus Sound
+Fokussounds
 
 OPTIONS_SOUND_BALANCED
-Balanziert focus
+Ausgeglichener Fokus
 
 OPTIONS_SOUND_FARMING
-Landwirtschaft focus
+Landwirtschaftfokus
 
 OPTIONS_SOUND_INDUSTRY
-Industrie focus
+Industriefokus
 
 OPTIONS_SOUND_MINING
-Bergbau focus
+Bergbaufokus
 
 OPTIONS_SOUND_RESEARCH
-Forschung focus
+Forschungsfokus
 
 OPTIONS_SOUND_LIST
-Liste Sounds auf
+Listensounds
 
 OPTIONS_SOUND_DROP
-Element entfernen
+Gegenstand loslassen
 
 OPTIONS_SOUND_PULLDOWN
-Drop-down liste öffnen
+Drop-down Liste öffnen
 
 OPTIONS_SOUND_SELECT
 Liste auswählen
 
 OPTIONS_COLOR_GENERAL
-Steuerungs Farben
+Kontrollfarben
 
 OPTIONS_COLOR_COLOR
-Füllen
+Hintergrund
 
 OPTIONS_COLOR_BORDER
-Rahmen
+Kante
 
 OPTIONS_COLOR_TEXT
 Text
 
 OPTIONS_COLOR_EDIT
-Editiere Steuerung
+Edit Kontrollen
 
 OPTIONS_COLOR_HIGHLIGHT
-Auswahl hervorheben
+Selection highlighting
 
 OPTIONS_COLOR_INTERIOR
-Inneres
+Interior
 
 OPTIONS_COLOR_WINDOW
-Fenster Farbe
+Fensterfarben
 
 OPTIONS_COLOR_INNER_BORDER
-Innerer Rahmen
+Innere Grenze
 
 OPTIONS_COLOR_OUTER_BORDER
-Äusserer Rahmen
+Äußere Grenze
 
 OPTIONS_PAGE_CONTROL
-General
+Allgemein
 
 OPTIONS_PAGE_UI
-UI Appearance
+UI Aussehen
 
 OPTIONS_PAGE_SOUND
 Sounds
 
 OPTIONS_PAGE_SOUND_2
-More sounds
+Mehr Sounds
 
 OPTIONS_PAGE_COLOR_CONTROLS
-Colors
+Farben
 
 OPTIONS_PAGE_COLOR_GAME
-Tech screen Colors
+Techfenster Farben
 
 OPTIONS_COLOR_TECH_KNOWN
-Known techs
+Bekannte Techs
 
 OPTIONS_COLOR_TECH_RESEARCHABLE
-Researchable techs
+Erforschbare Techs
 
 OPTIONS_COLOR_TECH_UNRESEARCHABLE
-Unresearchable techs
+Nicht erforschbare Techs
 
 OPTIONS_COLOR_TECH_PROGRESS
-Research progress bars
+Forschung Fortschrittsbalken
 
 OPTIONS_COLOR_PROGRESS
-Progress
+Fortschritt
 
 OPTIONS_COLOR_PROGRESS_BACKGROUND
-Background
+Hintergrund
 
 OPTIONS_ANY_FILE
-All files
+Alle Dateien
 
 OPTIONS_PAGE_FOLDERS
-Directories
+Verzeichnisse
 
 OPTIONS_FOLDER_SETTINGS
-Settings
+Einstellungen
 
 OPTIONS_FOLDER_ART
-Art
+Grafiken
 
 OPTIONS_FOLDER_SAVE
-Dateien speichern
+Spielstandverzeichnis
 
 OPTIONS_FOLDER_FONTS
 Fonts
 
 OPTIONS_FOLDER_SOUNDS
-Sounds and music
+Sound und Musik
 
 OPTIONS_LANGUAGE_FILE
-Sprachdatei
+Sprachdateien
 
 OPTIONS_MUSIC_FILE
-Music files
+Musikdateien
 
 OPTIONS_SOUND_FILE
-Sound files
+Sounddateien
 
 
 #################
@@ -614,29 +676,29 @@ Produktion
 #################
 
 SIDE_PANEL
-Systemansicht
+Seitenfenster
 
 SP_SYSTEM_PRODUCTION
-System Produktion
+Systemproduktion
 
 ##Planet Panel#############
 PLANET_PANEL
-Planetenansich
+Planetenfenster
 
 PL_UNINHABITED
-unbewohnt
+Unbewohnt
 
 PL_SIZE
 Größe
 
 PL_PRIMARY_FOCUS
-primär 
+Erster
 
 PL_SECONDARY_FOCUS
-sekundär
+Zweiter
 
 PL_COLONIZE
-besiedeln
+Besiedeln
 
 SP_UNKNOWN_SYSTEM
 unbekanntes System
@@ -648,10 +710,10 @@ SP_RENAME_PLANET
 Planet umbenennen
 
 SP_ENTER_NEW_PLANET_NAME
-Neuen Planetennamen eingeben:
+Neuen Planetennamen eingeben
 
 SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
-Alle Kolonieschiffe in diesem System haben den Befehl dieses zu verlassen.\n\nSoll eines davon zurückgerufen werden?
+Alle Kolonieschiffe in diesem System haben\nBefehl erhalten, das System zu\nverlassen.\n\nSoll eines dieser Schiffe verwandt werden?
 
 
 #################
@@ -662,17 +724,17 @@ FW_FLEET_AT
 Im %1% System
 
 FW_FLEET_MOVING_TO
-Bewegt sich nach %1%, ETA %2%
+Fliegt nach %1%, ETA %2%
 
 FW_SHIP_CLASS
-Schiffsklasse 
+Schiffklasse
 
 FW_UNKNOWN_DESIGN_NAME
 Unbekannt
 
 # used to name new fleets when they are created
 FW_NEW_FLEET_NAME
-Neue Flotte
+Neue Flotte 
 
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
@@ -681,6 +743,9 @@ Neue Flotte
 FW_EMPIRE_FLEETS
 %1% Flotten
 
+# the name that is used for fleets the player does not control
+FW_FOREIGN_FLEET
+Fremde Flotte
 
 ###############
 # TechTreeWnd #
@@ -704,44 +769,47 @@ TECH_DETAIL_TYPE_STR
 TECH_DETAIL_DESCRIPTION_STR
 %1%
 
-TECH_DETAIL_DESCRIPTION_STR_WITH_EFFECTS
-%1%\n\n<u>Effekte</u>\n\n%2%
+TECH_DETAIL_EFFECTS_STR
+\n\n<u>Effekte</u>\n\n%1%
+
+TECH_DETAIL_UNLOCKS_SECTION_STR
+\n\n<u>Ermöglicht</u>\n\n
+
+TECH_DETAIL_UNLOCKED_ITEM_STR
+%1%: %2%\n
 
 TECH_DETAIL_CENTER_ON_TECH
-Zentriere auf Tech
+Auf Tech zentrieren
 
 TECH_DETAIL_ADD_TO_QUEUE
-erforschen
+Zur Liste hinzufügen
 
 TECH_WND_TECH_COMPLETED
-VOLLSTÄNDIG
+FERTIG
 
 TECH_WND_TECH_QUEUED
-wird erforscht
+In Warteliste
 
 TECH_WND_TECH_INCOMPLETE
 Unvollständig
 
-TECH_WND_ALL_TECH_CATEGORIES
-Alle
-
 TECH_WND_TECH_TYPES_TO_SHOW
-Technologie Typen anzeigen:
+Tech Typen anzeigen:
 
 TECH_WND_TECH_TYPES_ALL
 Alle Typen
 
 TECH_WND_TECH_TYPES_THEORIES_AND_APPS
-Theorien und Anwendungen
+Theorien und Applikationen
 
 TECH_WND_TECH_TYPES_THEORIES_ONLY
 Nur Theorien
 
 TECH_WND_TECH_STATUSES_TO_SHOW
-Nur Technologien des Statuses:
+Tech Zustände anzeigen:
 
 TECH_WND_TECH_STATUS_ALL
-Alle
+Alle Zustände
 
 TECH_WND_TECH_STATUS_AVAILABLE_AND_COMPLETE
 Erforschbar oder fertig
@@ -750,10 +818,10 @@ TECH_WND_TECH_STATUS_AVAILABLE_ONLY
 Nur erforschbar
 
 TECH_WND_UNCOLLAPSE_TECHS
-Uncollapse all
+Alle ausklappen
 
 TECH_WND_REQUIRES
-Erfordert
+Benötigt
 
 TECH_WND_UNLOCKS
 Ermöglicht
@@ -764,19 +832,19 @@ Ermöglicht
 #######################
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
-Verfügbare Punkte
+Total verfügbare Punkte
 
 PRODUCTION_INFO_WASTED_PS_LABEL
 Verschwendete Punkte
 
 PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
-Projekte in Arbeit
+Laufende Projekte
 
 PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
-fehlende Punkte
+Unterbezahlte Projekte
 
 PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Projekte beauftragt
+Projekte in Warteliste
 
 
 ###############
@@ -798,7 +866,7 @@ RP
 ####################
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
-Baubares 
+Zu errichtende Objekte:
 
 PRODUCTION_WND_CATEGORY_BT_BUILDING
 Gebäude
@@ -807,10 +875,10 @@ PRODUCTION_WND_CATEGORY_BT_SHIP
 Schiffe
 
 PRODUCTION_WND_CATEGORY_BT_ORBITAL
-Orbitalstationen
+Orbital
 
 PRODUCTION_TOTAL_COST_STR
-%1% RP / %2% Runden
+%1% PP / %2% Runden
 
 PRODUCTION_TURN_COST_STR
 %1% PP / %2% Runden
@@ -834,10 +902,10 @@ PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Anzahl
 
 PRODUCTION_DETAIL_ADD_TO_QUEUE
-bauen
+Zur Liste hinzufügen
 
 PRODUCTION_DETAIL_CENTER_ON_BUILD
-Auf Bau zentrieren
+Auf Projekt zentrieren
 
 
 #################
@@ -865,22 +933,22 @@ COMBAT_WINDOW_TITLE
 Kampffenster
 
 COMBAT_BATTLE
-Schlacht : 
+KAMPF : 
 
 COMBAT_SYSTEM
 Das %1% System
 
 COMBAT_MILITARY_SHIPS
-Militärische Schiffe
+Militärschiffe
 
 COMBAT_CIVILIAN_SHIPS
-Zivile Schiffe
+Zivilschiffe
 
 COMBAT_PLANETS
 Planeten
 
 COMBAT_REMAINING
- Übrig
+ Verbleibend
 
 COMBAT_RETREATED
  Zurückgezogen
@@ -889,7 +957,7 @@ COMBAT_DESTROYED
  Zerstört
 
 COMBAT_DEFENSELESS
- Ohne Verteidigung
+ Wehrlos
 
 COMBAT_LOST
  Verloren!
@@ -903,19 +971,22 @@ TURN_PROGRESS_WND
 Rundenfortschritt
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
-Flottenbewegung
+Flottenbewegung ...
 
 TURN_PROGRESS_PHASE_COMBAT
-führe Kämpfe aus
+Führe Kämpfe durch ...
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
-Produktion und Wachstum
+Produktion und Wachstum ...
 
 TURN_PROGRESS_PHASE_WAITING
-warte auf andere Spieler
+Warte auf andere Spieler ...
 
 TURN_PROGRESS_PHASE_ORDERS
-führe Befehle aus
+Führe Befehle aus ...
+
+TURN_PROGRESS_PHASE_DOWNLOADING
+Lade neue Spieldaten ...
 
 
 ########################
@@ -925,7 +996,7 @@ führe Befehle aus
 #Window title####
 
 SITREP_PANEL_TITLE
-Situations Report
+Situationsbericht
 
 
 ####################
@@ -933,28 +1004,28 @@ Situations Report
 ####################
 
 SITREP_BASE_BUILT
-%planet% hat eine Verdteidigungsstation fertiggestellt.
+%planet% hat eine Verteidigungsbasis fertiggestellt.
 
 SITREP_SHIP_BUILT
-Ein neues %ship% ist nun im %system% System verfügbar.
+Im %system% System fertiggestellt: %ship%.
 
 SITREP_BUILDING_BUILT
-Ein neues %building% ist nun auf %planet% verfügbar.
+Auf %planet% fertiggestellt: %building%.
 
 SITREP_TECH_RESEARCHED
-%tech% wurde fertiggestellt.
+%tech% wurde erforscht.
 
 SITREP_COMBAT_SYSTEM_WON
-Eine Schlacht hat im %system% stattgefunden. Wir haben gewonnen!
+Ein Kampf hat sich im %system% System zugetragen. Wir haben gesiegt!
 
 SITREP_COMBAT_SYSTEM_LOST
-Eine Schlacht hat im %system% stattgefunden. Wir haben verloren!
+Ein Kampf hat sich im %system% System zugetragen. Wir wurden geschlagen.
 
 SITREP_COMBAT_SYSTEM_NO_VICTOR
-Eine Schlacht hat im %system% stattgefunden. Niemand konnte sie für sich entscheiden.
+Ein Kampf hat sich im %system% System zugetragen. Der Kampf verlief ergebnislos.
 
 PLANET_LOST_STARVED_TO_DEATH
-Alle auf %planet% sind verhungert!.\nWir haben den Planeten verloren.
+Die ganze Bevölkerung von %planet% ist verhungert. Der Planet ist verloren!
 
 
 ####################
@@ -965,31 +1036,31 @@ HOMEWORLD_SPECIAL
 Heimatwelt
 
 HOMEWORLD_SPECIAL_DESCRIPTION
-Dieser Planet ist die Wiege unserer Rasse. Wir wissen wie wir das beste aus ihm rausholen dadurch bekommen wir Boni auf alle Planeteneigenschaften.
+Dieser Planet ist der Geburtsort Deiner Spezies. Ihr wißt, wie man das Meiste aus ihm herausholt. Boni auf praktisch alle Planetenwerte.
 
 STARVATION_SPECIAL
 Hungersnot
 
 STARVATION_SPECIAL_DESCRIPTION
-Dieser Planet Hungert! Die Bevölkerung wird ausschliesslich Nahrung produzieren!
+Dieser Planet verhungert! Die Bevölkerung wird nichts mehr anständig tun, außer Lebensmittel herzustellen.
 
 ANCIENT_RUINS_SPECIAL
-Antike Ruinen
+Uralte Ruinen
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-Dieser Planet beheimatet Ruinen einer Antiken Zivilisation welche in den Geschichtsbüchern verloren gegengen ist. Wir erhalten dadurch einen Forschungsbonus.
+Auf diesem Planet befinden sich die Überreste einer uralten, technologisch forschrittlichen Rasse, die aus den Geschichtsbüchern verschwunden ist. Forschungsbonus.
 
 MINERALS_SPECIAL
-Mineralien Reich
+Mineralienreichtum
 
 MINERALS_SPECIAL_DESCRIPTION
-Dieser Planet ist Reich an natürlichen Mineralien und Erzen dadurch erhöht sich Bergbau und Handel
+Dieser Planet besitzt einen natürlichen Reichtum an Mineralien. Bonus auf Bergbau und Handel.
 
 TUNNELS_SPECIAL
-Natürliche Höhlen
+Natürliche Tunnel
 
 TUNNELS_SPECIAL_DESCRIPTION
-Dieser Planet hat viele natürliche Höhlen welche wir besiedeln können. Dies Ermöglicht uns mehr Regionen zu besiedeln.
+Dieser Planet besitzt ein Netzwerk natürlicher Tunnel; dadurch kann ein größerer Teil des Planeten als gewöhnlich kolonisiert werden.
 
 #######################
 # Enumeration  values #
@@ -1006,9 +1077,9 @@ Flotte
 OBJ_PLANET
 Planet
 OBJ_POP_CENTER
-Bevölkerungszentrum
+Bevölkerungscenter
 OBJ_PROD_CENTER
-Produktionszentrum
+Produktionscenter
 OBJ_SYSTEM
 System
 
@@ -1016,43 +1087,43 @@ System
 # StarTypes
 
 STAR_BLUE
-Blau
+blau
 STAR_WHITE
-Weiß
+weiß
 STAR_YELLOW
-Gelb
+gelb
 STAR_ORANGE
-Orange
+orange
 STAR_RED
-Rot
+rot
 STAR_NEUTRON
-Neutronen
+Neutronenstern
 STAR_BLACK
-Schwarzes Loch
+schwarzes Loch
 
 
 # PlanetTypes
 
 PT_SWAMP
-Sumpf
+sumpfig
 PT_TOXIC
 toxisch
 PT_INFERNO
-Inferno
+infernal
 PT_RADIATED
 verstrahlt
 PT_BARREN
-dürr
+unfruchtbar
 PT_TUNDRA
-Tundra
+arktisch
 PT_DESERT
-Wüste
+arid
 PT_TERRAN
 erdähnlich
 PT_OCEAN
 ozeanisch
 PT_GAIA
-Gaia
+paradisisch
 PT_ASTEROIDS
 Asteroiden
 PT_GASGIANT
@@ -1062,7 +1133,7 @@ Gasriese
 # Planet Sizes
 
 SZ_NOWORLD
-Hier ist nichts; flieg weiter.
+Es gibt nichts zu sehen; weitergehen.
 SZ_TINY
 winzig
 SZ_SMALL
@@ -1072,7 +1143,7 @@ mittel
 SZ_LARGE
 groß
 SZ_HUGE
-rießig
+gewaltig
 SZ_ASTEROIDS
 Asteroiden
 SZ_GASGIANT
@@ -1086,9 +1157,9 @@ unbewohnbar
 PE_TERRIBLE
 schrecklich
 PE_ADEQUATE
-bewohnbar
+adequat
 PE_SUPERB
-angenehm
+hervorragend
 PE_OPTIMAL
 optimal
 
@@ -1098,7 +1169,7 @@ optimal
 FOCUS_UNKNOWN
 unbekannt
 FOCUS_BALANCED
-ausbalanciert
+balanziert
 FOCUS_FARMING
 Landwirtschaft
 FOCUS_INDUSTRY
@@ -1126,7 +1197,7 @@ Handel
 METER_MINING
 Bergbau
 METER_CONSTRUCTION
-Produktion
+Konstruktion
 METER_HEALTH
 Gesundheit
 
@@ -1134,11 +1205,11 @@ Gesundheit
 # EmpireAffiliationTypes
 
 AFFIL_SELF
-eigene
+Eigenes
 AFFIL_ENEMY
-feindlich
+Gegner
 AFFIL_ALLY
-verbündet
+Verbündeter
 
 
 # UnlockableItemTypes
@@ -1146,7 +1217,7 @@ verbündet
 UIT_BUILDING
 Gebäude
 UIT_SHIP_COMPONENT
-Schiffskomponennte
+Schiffskomponente
 
 
 # TechTypes
@@ -1156,15 +1227,15 @@ Theorie
 TT_APPLICATION
 Anwendung
 TT_REFINEMENT
-Refinement
+Spezifikation
 
 
 # BuildTypes
 
 BT_NOT_BUILDING
-kein bau
+nichts
 BT_BUILDING
-baue
+Gebäude
 BT_SHIP
 Schiff
 BT_ORBITAL
@@ -1189,112 +1260,112 @@ Handel
 # ValueRef
 
 DESC_VAR_PLANET
-Planet
+planet
 
 DESC_VAR_SYSTEM
-System
+system
 
 DESC_VAR_SOURCE
-Ursprung
+source
 
 DESC_VAR_TARGET
-Ziel
+target
 
 DESC_VAR_PLANETSIZE
-Planetengröße
+planet size
 
 DESC_VAR_PLANETTYPE
-Planetentyp
+planet type
 
 DESC_VAR_PLANETENVIRONMENT
-Planeten Umweltbedingungen
+planet environment
 
 DESC_VAR_OBJECTTYPE
-Object typ
+object type
 
 DESC_VAR_STARTYPE
-Sterentyp
+star type
 
 DESC_VAR_PRIMARYFOCUS
-primarer focus
+primary focus
 
 DESC_VAR_SECONDARYFOCUS
-sekondärer focus
+secondary focus
 
 DESC_VAR_CURRENTFARMING
-landwirtschaftliche Ausbeute
+current farming
 
 DESC_VAR_MAXFARMING
-max landwirtschaftliche Ausbeute
+max farming
 
 DESC_VAR_CURRENTINDUSTRY
-aktuelle Industrie
+current industry
 
 DESC_VAR_MAXINDUSTRY
-max Industrie
+max industry
 
 DESC_VAR_CURRENTRESEARCH
-aktuelle Forschung
+current research
 
 DESC_VAR_MAXRESEARCH
-max Forschung
+max research
 
 DESC_VAR_CURRENTTRADE
-aktueller Handel
+current trade
 
 DESC_VAR_MAXTRADE
-max Handel
+max trade
 
 DESC_VAR_CURRENTMINING
-aktueller Bergbau
+current mining
 
 DESC_VAR_MAXMINING
-max Bergbau
+max mining
 
 DESC_VAR_CURRENTCONSTRUCTION
-aktuelle Produktion:
+current construction
 
 DESC_VAR_MAXCONSTRUCTION
-max Produktion:
+max construction
 
 DESC_VAR_CURRENTHEALTH
-aktueller Gesundheitszustand
+current health
 
 DESC_VAR_MAXHEALTH
-max Gesundheitszustand
+max health
 
 DESC_VAR_CURRENTPOPULATION
-aktuelle Bevölkerung
+current population
 
 DESC_VAR_MAXPOPULATION
-max Bevölkerung
+max population
 
 DESC_VAR_TRADESTOCKPILE
-Handelsvorrat
+trade stockpile
 
 DESC_VAR_MINERALSTOCKPILE
-Mineralienvorrat
+mineral stockpile
 
 DESC_VAR_FOODSTOCKPILE
-Nahrungsvorrat
+food stockpile
 
 DESC_VAR_TRADEPRODUCTION
-Produktion Handel
+trade production
 
 DESC_VAR_FOODPRODUCTION
-Nahrungsproduktion
+food production
 
 DESC_VAR_MINERALPRODUCTION
-Bergbauertrag
+mineral production
 
 DESC_VAR_INDUSTRYPRODUCTION
-Industrielle Produktion
+industry production
 
 DESC_VAR_RESEARCHPRODUCTION
-Forschungsertrag
+research production
 
 DESC_VAR_OWNER
-Eigentümer
+owner
 
 DESC_VAR_ID
 ID
@@ -1327,16 +1398,16 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 # Effects
 
 DESC_EFFECTS_GROUP_SCOPE
-Wirkt sich auf aus: Alle die %1%
+Objects affected: Any object%1%
 
 DESC_EFFECTS_GROUP_SELF_SCOPE
-Wirkt sich aus auf: Nur Ausgangsobjekt
+Objects affected: Source object only
 
 DESC_EFFECTS_GROUP_ACTIVATION
-Wirkt sich aus wenn Objekt vom Typ %1%
+Effect is active if the source is an object%1%
 
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Wirkt sich immer aus
+Effect is always active
 
 DESC_EFFECTS_GROUP_SCOPE_DESC
 %1%\n
@@ -1351,7 +1422,7 @@ DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
 %1%\n
 
 DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-Effekt Gruppe %1%:\n%2%\n
+Effects group %1%:\n%2%\n
 
 # SetMeter
 
@@ -1359,13 +1430,13 @@ DESC_SIMPLE_SET_METER_MAX
 Max %1% %2%%3%
 
 DESC_SIMPLE_SET_METER_CURRENT
-Aktuell %1% %2%%3%
+Current %1% %2%%3%
 
 DESC_COMPLEX_SET_METER_MAX
-setze maximale %1% auf %2%
+Set max %1% to %2%
 
 DESC_COMPLEX_SET_METER_CURRENT
-setze aktuelle %1% auf %2%
+Set current %1% to %2%
 
 
 # others
@@ -1374,80 +1445,80 @@ DESC_SET_EMPIRE_STOCKPILE
 Sets the stockpile of %1% of the object's owner to %2%
 
 DESC_SET_PLANET_TYPE
-Ändert den Planetentyp auf %1%
+Changes the planet's type to %1%
 
 DESC_SET_PLANET_SIZE
-Ändert die Planetengröße auf %1%
+Changes the planet's size to %1%
 
 DESC_ADD_OWNER
-Fügt das Imperium %1% zu den Eigentümern des Objekts hinzu
+Adds ownership by empire %1% to object
 
 DESC_REMOVE_OWNER
-Entfernt das Imperium %1% von den Eigentümern des Objekts
+Removes ownership by empire %1% from object
 
 DESC_DESTROY
-Zerstört Objekt
+Destroys object
 
 DESC_ADD_SPECIAL
-Fügt Special %1% zum Object hinzu
+Attaches %1% special to object
 
 DESC_REMOVE_SPECIAL
-Entfernt Special %1% vom Objekt
+Removes %1% special from object
 
 DESC_SET_STAR_TYPE
-Ändet den Sternentyp auf %1%
+Changes the star's type to %1%
 
 
 # SetTechAvailability
 
 DESC_TECH_AND_ITEMS_AFFECTED
-%1% und alles was davon abhängt
+%1% and all the items it unlocks
 
 DESC_ITEMS_ONLY_AFFECTED
-Alles was von der Technologie %1% abhängt
+the items unlocked by the %1% tech
 
 DESC_SET_TECH_AVAIL
-Macht %1% für das Imperium %2% verfügbar
+Makes %1% available to empire %2%
 
 DESC_SET_TECH_UNAVAIL
-%1% ist nicht länger für das Imperium %2% verfügbar
+Makes %1% unavailable to empire %2%
 
 
 # Conditions
 
 DESC_ALL
- im Universum
+ in the universe
 
 DESC_EMPIRE_AFFILIATION_SELF
- gehört zum %1% Imperium
+ that belongs to %1% empire
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
- welches nicht zum %1% Imperium gehört
+ that does not belong to %1% empire
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
- welches ausschliesslich zum %1% Imperium gehört
+ that belongs only to %1% empire
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE_NOT
- welches nur zum %1% Imperium gehört
+ that does not belong only to %1% empire
 
 DESC_EMPIRE_AFFILIATION
- that belongs to an %1% of %1% empire
+ that belongs to an %1% of %2% empire
 
 DESC_EMPIRE_AFFILIATION_NOT
- that belongs to an %1% of %1% empire
+ that does not belong to an %1% of %2% empire
 
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE
- that belongs only to an %1% of %1% empire
+ that belongs only to an %1% of %2% empire
 
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
- that belongs only to an %1% of %1% empire
+ that does not belong only to an %1% of %2% empire
 
 # this one is intentionally left empty
 DESC_SELF
-
+ that is the source object
 
 DESC_SELF_NOT
- welches nicht der Ursprung des Objekts ist
+ that is not the source object
 
 DESC_TYPE
  that is a %1%
@@ -1504,16 +1575,16 @@ DESC_FOCUS_TYPE_SECONDARY_NOT
  that doesn't have secondary focus %1%
 
 DESC_STAR_TYPE
- Dies ist ein System mit einem %1% Stern
+ that is a system with a %1% star
 
 DESC_STAR_TYPE_NOT
  that is not a system with a %1% star
 
 DESC_CHANCE_PERCENTAGE
- mit einer Chanceon von %1%%%
+ on a %1%%% chance
 
 DESC_CHANCE_PERCENTAGE_NOT
- mit einer Chance von (100 - %1%)%%
+ on a (100 - %1%)%% chance
 
 DESC_CHANCE
  with a probability of %1%
@@ -1564,10 +1635,10 @@ DESC_WITHIN_STARLANE_JUMPS_NOT
  that is not within %1% starlane jumps of any object%2%
 
 DESC_AND_BETWEEN_OPERANDS
- und
+ and
 
 DESC_OR_BETWEEN_OPERANDS
- oder
+ or
 
 
 ###################
@@ -1575,7 +1646,7 @@ DESC_OR_BETWEEN_OPERANDS
 ###################
 
 LEARNING_CATEGORY
-Ausbildung
+Entwicklung
 PRODUCTION_CATEGORY
 Produktion
 CONSTRUCTION_CATEGORY
@@ -1583,410 +1654,773 @@ Konstruktion
 GROWTH_CATEGORY
 Wachstum
 ECONOMICS_CATEGORY
-Wirtschaft
+Finanzen
 
 #############################
 # Tech Names & Descriptions #
 #############################
 
 LRN_PHYS_BRAIN
-The Physical Brain
+Das physikalische Gehirn
+
 LRN_PHYS_BRAIN_DESC
-The stuctures and their functions in the brain are determined.  The electrochemical and quantum nature of thought and memory are exposed.  With understanding, alteration and augmentation of brain functions becomes possible, and new ideas are spawned at the frontiers of thought, its expression, and its replacement.
+Die Strukturen des Gehirns und ihre Funktionen sind erforscht, die elektrochemische Natur und die Quantennatur von Gedanken und Erinnerung erkannt. Durch dieses Verständnis wird die Veränderung und Verstärkung von Hirnfunktionen möglich, und neue Ideen entspringen an den Grenzen des Vorstellbaren.
+
 LRN_ALGO_ELEGANCE
-Algorithmic Elegance
+Algorithmische Eleganz
+
 LRN_ALGO_ELEGANCE_DESC
-With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity.  At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.
+Die steigende Komplexität der Probleme in der Datenanalyse überfordert herkömmliche Algorithmen. Von dieser Entwicklungsstufe an werden andere algorithmische Ansätze und Funktionen notwendig; die Eleganz der Lösung muss ästhetisch und metaphorisch optimiert werden.
+
 LRN_GAL_EXPLO
-Galactische Erkundung
+Galaktischer Aufbruch
+
 LRN_GAL_EXPLO_DESC
-Die Entdeckung des interstellaren Reisens via Sternstraßen führt in ein neues Zeitalter in der Entwicklung von Gesellschaften. Alte Rivalitäten und Streitereien zwischen kleineren Fraktionen werden uninteressant wenn eine gesammte Rasse mit dem endlosen Potential der sterne konfrontiert wird... zu ihrem Wachstum oder ihrem Untergang
+Die Entdeckung des interstellaren Raumflugs über Sternenstraßen leitet eine neue Era der Entwicklung ein. Alte politische Streitigkeiten werden angesichts dem endlosen Potential der Sterne bedeutungslos... dem Potential zu Wachstum und Wohlstand, oder zur völligen Vernichtung.
+
 LRN_TRANSLING_THT
-Translinguistic Thought
+Translinguistisches Denken
+
 LRN_TRANSLING_THT_DESC
-Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truely great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
+Schwache Denker kämpfen mit den Gesetzen der Sprache, die sie erlernt haben; durchschnittliche Denker fühlen sich durch die etablierten Ausdrucksmöglichkeiten eingeengt; außergewöhnliche Denker können die Grenzen der Sprache überwinden und schaffen und analysieren Gedanken an der Grenze des Transzendenten. Doch lediglich großartige Denker bleiben isoliert und nutzlos, denn wie sollen sie ohne eine adequate Sprache ihre Geistesblitze ausdrücken?
+
 LRN_PSIONICS
-Psionics
+Psionik
+
 LRN_PSIONICS_DESC
-Though deep introspection or artificial enhancement, the brain may  develop abilites to directly interact with the universe around it, bypassing the limitations of a physical body.  Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives.  Applications of these powers, including mind control, personality alteration and possesion have profound implications for the relationship between talented and untalted beings.
+Durch tiefe Einsicht oder künstliche Erweiterungen kann das Gehirn Fähigkeiten entwickeln, mit deren Hilfe es ohne Einschränkungen durch den physischen Körpers direkt mit dem umliegenden Universum interagieren kann. Kräfte wie z. B. Telepathie, Empathie, Hellsicht, Prescience, Psychokinese und Psychoenergese ersetzen banale biologische oder technische Alternativen. Die Anwendungen dieser Kräfte, u. a. Gedankenkontrolle, Persönlichkeitsveränderung und Posession, haben eine tiefgreifende Bedeutung für die Beziehung zwischen begabten und unbegabten Wesen.
+
 LRN_ARTIF_MINDS
-Artificial Minds
+Artifizielles Bewußtsein
+
 LRN_ARTIF_MINDS_DESC
-While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience.  With the development of true artificial minds, these qualities may be synthesized, modified and altered.  These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
+Obwohl herkömmliche Computer nahezu unfassbare Intelligenz und Rechenfähigkeiten besitzen, fehlen ihnen entscheidende Qualitäten wie Selbsterkenntnis, Bewußtsein oder Gefühl. Durch die Entwicklung perfekter künstlicher Gehirne können diese Eigenschaften synthetisiert und modifiziert werden. Diese Erkenntnisse eröffnen ungeahnte Möglichkeiten in den kognitiven Wissenschaften und schaffen neue Metaparadigmen.
+
 LRN_XENOARCH
-Xenoarchaeology
+Xenoarchäologie
+
 LRN_XENOARCH_DESC
-The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy.  Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space.  Finding and decyphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
+Die gegenwärtigen Imperien, Rassen und Einzelsternzivilisationen sind nicht die ersten oder einzigen Wesen, die in dieser Galaxie gelebt haben. Überbleibsel, Ruinen und Gerüchte über die Alten finden sich auf verlassenen Planeten, leblosen Asteroiden oder treiben im leeren Weltraum. Der Fund und die Entzifferung solcher Hinweise bietet die Möglichkeit, alte Geheimnisse neu zu entdecken, von ihnen zu lernen oder auch vor altem Wissen gewarnt zu werden.
+
 LRN_GRAVITONICS
-Gravitonics
+Gravitonik
+
 LRN_GRAVITONICS_DESC
-Analagous to the "colour charge" of quantum chromodynamics, there are several types of graviton.  With the common attractive-force graviton, the colloqiual "anti-graviton", "right-graviton" and "left-graviton" may be combined to bend and flex the surface of spacetime arbitrarily.  This manipulation is percieved as control of the force of gravity, permitting structures, craft and investigations previously impossible, even theoretically.
+Analog zum "Farbwechsel" in der Quanten - Chromodynamik existieren verschiedene Gravitontypen. Durch Kombination des üblichen Anziehungskraftgravitons, des umgangssprachlichen "Antigravitons", "Rechtsgravitons" und "Linksgravitons" kann die Oberfläche der Raumzeit willkürlich gebogen und gedehnt werden. Diese Manipulation wird als Kontrolle über die Schwerkraft wahrgenommen und ermöglicht neue Gebäude, Techniken und Untersuchungen, die vorher selbst theoretisch undenkbar waren.
+
 LRN_EVERYTHING
-Theory of Everything
+Die einheitliche Theorie
+
 LRN_EVERYTHING_DESC
-Early, naive theories describe subsets of the four fundamental forces of nature: electromagnetism, the strong and weak nuclear nuclear forces, and gravity.  A complete framework expressing all forces as special cases of a single interaction represents a holy grail of science.  This theory describes the earliest moments of the universe, the most distorted depths of a singularity, the tightest windings of hidden dimensions and the final fate of the cosmos.  Yet still, there may "exist" layers of existence beyond what can be observed and described by science...
+Frühe, naive Theorien beschreiben ein System von vier fundamentalen Naturkräften: Elektromagnetismus, die starke und die schwache Kernkraft sowie die Gravitation. Eines der großen Ziele der Wissenschaft ist die Zusammenfassung dieser Kräfte in ein Bezugssystem, worin die Kräfte Spezialfälle einer einzigen Interaktion sind. Diese Theorie beschreibt die ersten Momente des Universums, die verzerrtesten Tiefen einer Singularität, die engsten Windungen versteckter Dimensionen und das endgültige Schicksal des Kosmos. Und doch können immer noch Ebenen des Seins über das hinaus "existieren", was beobachtet werden und durch die Wissenschaft beschrieben werden kann...
+
 LRN_FORCE_FIELD
-Force-Field Harmonics
+Kraftfeldharmonik
+
 LRN_FORCE_FIELD_DESC
-Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles.  By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.
+Wie in der Fourieranalyse des Schalls können Elektromagnetismus, starke und schwache Kraft als harmonische Quantenwellen - Überlagerungen von kraftvermittelnden Partikeln ausgedrückt werden. Durch selektive Verstärkung dieser Harmonik können Kräfte willkürlich kontrolliert werden, um abzuschirmen, anzugreifen, einzudämmen oder zu unterstützen.
+
 LRN_MIND_VOID
-Mind of the Void
+Der Geist der Leere
+
 LRN_MIND_VOID_DESC
-We are not alone in the cosmos... but why should the search be so limited?  Many cultures have myths, legends or fervent belief in a higher consciousness.  Whether a loving or malevolent God, or a detatched observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.
+Wir sind nicht allein im Kosmos... aber könnte es noch mehr als das geben? Viele Kulturen besitzen Mythen, Legenden oder eine inbrünstige Überzeugung von der Existenz eines höheren Bewußtseins. Ob als liebender oder zorniger Gott, oder ein entfernter Beobachter, es besteht kein Zweifel, dass etwas, vielleicht das Universum selbst, auf irgend eine Art und Weise lebt, wacht, beobachtet.
+
 LRN_TIME_MECH
-Temporal Mechanics
+Zeitmechanik
+
 LRN_TIME_MECH_DESC
-What are "now", "future" and "past"?  The twin paradox of special relativity, or the theoretical "wormhole" in its place, suggest early forms of "time travel".  Direct manipulation of spacetime and temporal flux permit these effects to be harnessed and magnified.  Temporal incursions cannot perceptibly alter the past of the universe that we perceive.  They can, however, compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...
+Was sind das "jetzt", die "Zukunft" und die "Vergangenheit"? Das Zwillingsparadoxon der speziellen Relativitätstheorie oder das theoretische "Wurmloch" an seiner Stelle kann man Frühform der "Zeitreise" verstehen. Die direkte Manipulation der Raumzeit und des Zeitflusses erlauben es, diese Effekte nutzbar zu machen und zu verstärken. Eingriffe in die Zeit können die Vergangenheit des von uns wahrgenommenen Universums zwar nicht wahrnehmlich verändern, sie können jedoch Zeitalter komprimieren oder Augenblicke zu willkürlichen Längen ausdehnen; die Nutzung der Zeit ist also nur durch beschränktes Material und die eigene Geduld limitiert...
+
 LRN_NDIM_SUBSPACE
-N-Dimensional Subspace
+N-Dimensionaler Subraum
+
 LRN_NDIM_SUBSPACE_DESC
-Early superstring theorists spoke of 10, 11 or 26 dimensional universes, with all but the 4 macrodimensions "curled up" so tightly as to be unseen.  These and other dimensions may now be uncurled and opened, and the very surface of space itself stretched and pierced by shifting matter to or from levels of existance previously hidden below the surface of our limited perception, or creating layers or bubbles where none existed before.
+Frühe Superstringtheorien sprachen von 10, 11 oder 26-dimensionalen Universen, wobei alle anderen außer den 4 Makrodimensionen so sehr "verdrillt" sind, das sie nicht sichtbar sind. Diese und weitere Dimensionen können nun aufgedreht und geöffnet werden, neue Ebenen und Blasen geschaffen werden, die es zuvor nicht gab; die Oberfläche des Raums selbst kann gedehnt und durch Materie durchbrochen werden, hin zu Ebenen der Existenz, die zuvor unter der Oberfläche von unserer beschränkten Wahrnehmung verborgen lagen.
+
 LRN_MATTER_ENERGY
-Matter-Energy Conversion
+Materie-Energie Konversion
+
 LRN_MATTER_ENERGY_DESC
-At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon.  Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two.  Transmutation and replication, at limited scales, become possible.   However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation. 
+In einer gewissen Größenordnung und unter bestimmten Bedingungen ist Materie und Energie ein einziges Phänomen. Bei der Anwendung dieser Äquivalenz in ausgedehnteren Größenordnungen wird die absolute Kontrolle über die Struktur der Materie und die Dynamik der Energie möglich, genau wie der Austausch zwischen den Beiden. Transmutation und Replikation werden in begrenzter Größe möglich. Der enormen Ruhemasse - Energie - Äquivalenz der Materie zum Trotz ist ihre direkte Konversion in Energie zur großflächigen Energieherstellung im Allgemeinen weniger effizient als die recht simple Fusionsgeneration.
+
 LRN_UNIF_CONC
-Unified Consciousness
+Vereintes Bewußtsein
+
 LRN_UNIF_CONC_DESC
-Telepathic communication between individuals or mind-machine interfaces only permit the most basic, trivial and surface exchanges of thought and ideas.  Truely joined minds function as a single consciousness, with the summed faculties and knowledge of its constituent parts, and acting as a new unique entity.  This has great potential, but also significant risk, in that the union may not seek its own destruction, which is necessary for the original minds to be regained.  Alternatively, one of the minds may dominate the other, controlling or destroying the other, rather than forming an equal, harmonious union.
+Telepathische Verständigung zwischen Individuen und Gedanken-Maschine Schnittstellen erlauben nur einfachsten, trivialsten und oberflächlichsten Austausch von Ideen. Wirklich vereinte Gedanken arbeiten als ein einziges Bewußtsein mit den gesamten Fähigkeiten und Wissen seiner Einzelteile, wie ein neues, einzigartiges Wesen. Diese Verschmelzung bietet ein gewaltiges Potential, doch auch ein nicht unwesentliches Risiko, insofern dass sich eine Einheit nicht wieder lösen kann. Das ist aber für die Wiederkehr der ursprünglichen Persönlichkeiten notwendig.
+
 LRN_TRANSCEND
-Singularity of Transcendence
+Transzendenz
+
 LRN_TRANSCEND_DESC
-What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infintitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
+Was ist ein Gott? Befasst sich ein Gott damit, ob er sich moralisch und wohlwollend oder böse und tyrannisch verhält? Behandelt ein Gott Sterbliche mit Sorgfalt und Liebe, Hass und Leid oder distanzierter Gleichgültigkeit? Ist ein Gott sich den unendlich vielen unbedeutenden Affären des physischen Universums bewußt, oder ist eine wahre Gottheit eine Entität fern jeder Beschreibung, das weder die Sterblichen verstehen, noch umgekehrt?
+
 GRO_PLANET_ECOL
-Planetary Ecology
+Planetare Ökologie
+
 GRO_PLANET_ECOL_DESC
-Agriculture and medical science can drastically increase survivability, causing population growth to become hyperexponential, for a time.  Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it.  Understanding natural ecology and its interaction to stresses permits the system to be sustained, and its benefits reaped for generations to come.
+Agrikultureller und medizinischer Fortschritt kann die Bevölkerungssterblichkeit drastisch reduzieren; daraufhin entwickelt sich ein zeitlich begrenztes hyperexponentielles Wachstum. Schliesslich ergeben sich durch die Flächenkapazität des Planeten und das Netzwerk des Lebens, das er versorgen muss, neue Grenzen für das Wachstum. Das Verständnis der natürlichen Ökologie und ihrer Reaktion auf Belastungen hilft dabei, sie zu erhalten, damit auch künftige Generationen ihre Vorzüge ausschöpfen können.
+
 GRO_GENETIC_ENG
-Genetic Engineering
+Gentechnik
+
 GRO_GENETIC_ENG_DESC
-The palette of genetics is as varied as the forms of life from which it borrows.  Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existant or possible in nature.  As well, genes may be altered prior to reinsertion, by writing altering the base codes directly, allowing entirely new genes to be created.  Techniques are limited, however, to small modifications of existing genes that are available for study.
+Die genetische Palette ist so vielfältig wie die Lebensformen, von denen sie sich ableitet. Gene können entfernt, kopiert und wieder in ein Genom eingebracht werden; so können transgene Organismen mit Eigenschaftskombinationen geschaffen werden, die in der Natur zuvor nicht vorkamen. Außerdem können Gene vor ihrer Wiedereinbringung durch direkte Veränderung des Basenkodes modifiziert werden; so können völlig neue Gene erzeugt werden. Diese Methoden sind jedoch auf kleine Veränderungen von in der Forschung verfügbaren Genen beschränkt.
+
 GRO_MEDICAL_PATH
-Medical Pathology
+Medizinische Pathologie
+
 GRO_MEDICAL_PATH_DESC
-Treatment of diseases and injuries requires thorough understanding of their causes.  
+Die Behandlung von Krankheiten und Verletzungen setzt ein weitreichendes Verständnis ihrer Ursachen vorraus.
+
 GRO_INDUSTY_FARM
-Industrial Farming
+Industrielle Landwirtschaft
+
 GRO_INDUSTY_FARM_DESC
-Traditional, simple farming methods are sufficient for small, locally self-sufficient populations without significant limits on available space or time.  With greater specialization of more advanced socieites, however, fewer farmers must feed many more workers from much greater distances away, including even interstellar food shipment for fledgling colonies.  Hydroponics, automation, fertilization, pest control and altered illumination growth cycles become necessary.  Successful use of these tools requires understanding of their function, interactions, costs and low-level mechanims.
+Traditionelle landwirtschaftliche Methoden reichen für lokal selbstständige Gemeinschaften aus; durch die größere Spezialisierung fortschrittlicher Gesellschaften müssen jedoch weniger Landwirte eine größere Zahl an Arbeitern über größere Entfernungen versorgen, unter anderem auch wachsende Kolonien mit instellaren Lebensmittellieferungen. Hydroponiken, Automatisierung, Dünger, Schädlingsbekämpfung und modifizierte Beleuchtungszyklen werden nötig. Der erfolgreiche Einsatz dieser Werkzeuge setzt das Verständnis ihrer Funktionen, Interaktionen, Kosten und zu Grunde liegenden Mechanismen voraus.
+
 GRO_ENV_ENCAPSUL
-Environmenal Encapsulation
+Umwelteindämmung
+
 GRO_ENV_ENCAPSUL_DESC
-Covered, surrounded and sealed pockets of a particular environment are essential for space travel, colonization of hazardous planets and preservation of natural diversity on heavily industrialized worlds.  Maintaining the desired conditions is not as trivial as it may seem however, as in many cases there is no external source of pure and clean materials or organisms available.  Rather, it is necessary to create a self-sufficient and sustainable environment, often an entire ecology, capable of recycling and reusing its wastes to supply everything it needs and consumes.
+Ummantelte und versiegelte Räume zur Beherbergung eines bestimmten Lebensraums sind für Raumreisen, die Kolonisierung gefährlicher Planeten oder die Erhaltung der natürlichen Vielfalt auf stark industrialisierten Welten unerlässlich. Die Aufrechterhaltung der erwünschten Bedingungen ist nicht so simpel, wie es erscheinen mag, da es in vielen Fällen keine äußere Quelle für reine Materialien oder Organismen gibt. Es ist daher notwendig, eine selbstständige Umwelt, oft ein ganzes Ökosystem, zu erschaffen, das fähig ist, seine Abfälle wieder zu verwerten und alle seine Bedürfnisse selbst zu decken.
+
 GRO_SYMBIOTIC_BIO
-Symbotic Biology
+Symbiotische Biologie
+
 GRO_SYMBIOTIC_BIO_DESC
-From the first domesticated animals or agricultural plants, societies discover the benefits of symbiotic relationships with other species.  Later, bacteria or natural parasites are often used for medical purposes.  In these early forms, however, the dominant species is (ideally) in complete control of the relationship, with the "farmed" organism existing only to server its owner.  True symbiosis only occurs when both organisms exist and prosper together, each aiding and depending on the other to mutual benefit, the combination greater than the sum of the parts alone.
+Durch die ersten domestizierten Tiere oder Agrarpflanzen lernen Gesellschaften die Vorteile symbiotischer Beziehungen mit anderen Spezies kennen. Später werden oft Bakterien oder natürliche Parasiten für medizinische Zwecke eingesetzt. Bei diesen Frühformen hat die dominante Spezies (idealerweise) komplette Kontrolle über die Beziehung, bei der nur der "gezüchtete" Organismus seinem Besitzer dient. Wahre Symbiose liegt aber nur dann vor, wenn beide Organismen zusammen leben und das Schicksal des Einen vom Anderen abhängt, die Gesamtsumme größer ist als die Summe der Einzelteile.
+
 GRO_GENETIC_MED
-Genetic Medicine
+Genetische Medizin
+
 GRO_GENETIC_MED_DESC
-Traditional Genetic Engineering alters genetic codes and then implements or raises the modified organism.  Similar techniques may be applied to already matured individuals as well.  Goals of these treatments may be cosmetic or enhancing modifications, or corrective, preventative or time-critical medical treatments.  Reducing the delay between alteration and results from generations to months, days or hours has a corresponding increase in the range and power of possible alterations.
+Traditionelle Gentherapie verändert den genetischen Kode und bringt ihn dann in den zu modifizierenden Organismus ein. Solche Methoden können auch bei gealterten Individuen angewandt werden. Das Ziel dieser Behandlung kann eine kosmetische oder anderweitig gewinnbringende Veränderung sein, aber auch eine korrektive, präventive oder zeitlich kritische medizinische Behandlung. Durch die Verkürzung der Zeit zwischen Anwendung und Ergebnis einer Behandlung von Generationen hin zu Monaten, Tagen oder Stunden erweitert sich die Zahl und das Ausmaß der Möglichkeiten für den Einsatz dieser Methoden.
+
 GRO_LIFECYCLE_MAN
-Lifecycle Manipulation
+Lebenszyklusmanipulation
+
 GRO_LIFECYCLE_MAN_DESC
-Most complex organisms have progress through physiological stages during a lifetime, whether distinctly separated by metamorphises, or blurred by continuous slow aging.  In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others.  By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.
+Die meisten komplexen Organismen durchschreiten während ihres Lebens physiologische Stadien, manchmal abgegrenzt durch Metamorphose oder auch kaum wahrnehmlich durch einen langsamen Altersprozess. In vielen Fällen sind eines oder mehrere dieser Stadien, zumindest zu einer gewissen Zeit, nützlicher und wünschenswerter als andere. Durch exakte Kontrolle hormonaler und mentaler Mechanismen wird es möglich, Lebensstadien drastisch zu verkürzen oder herauszuzögern, wodurch in einem Bruchteil des natürlichen Zeitrahmens voll entwickelte Individuen geschaffen werden können und die existierenden Individuen ihre Funktionalität niemals einbüßen und so praktisch unsterblich werden.
+
 GRO_XENO_GENETICS
-Xenological Genetics
+Xenogenetik
+
 GRO_XENO_GENETICS_DESC
-Early genetics is limited by the available samples of naturally occuring organims on which to base its modifications.  As well, these modifications are restricted within the limits of the physical mechanisms of genetic code storage, alteration and expression in developed individuals.  By investigating the equivalent systems in entirely different ecosystems and organisms, great insights or revalations may be reached, spurring new developments in more familiar genetic systems.
+Der frühen Genetik sind durch die natürlich vorhandenen Organismen Grenzen gesetzt, da die Methoden der Gentechnik ausschliesslich auf ihnen basieren. Darüber hinaus ist die Genetik durch die physikalischen Mechanismen des genetischen Kodes wie seine Unterbringung, Veränderung und Expression in erwachsenen Individuen limitiert. Durch den Vergleich sich entsprechender Systeme in unterschiedlichen Ökosystemen und ihren Organismen sind weitreichende Erkenntnisse möglich, die zu neuen Entwicklungen in den altbekannten genetischen Systemen Ansporn geben.
+
 GRO_NANOTECH_MED
-Nanotech Medicine
+Nanomedizin
+
 GRO_NANOTECH_MED_DESC
-While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corretive measures.  Nanotechnology may be used to accomplish these tasks, with two important advantages:  Correction may be done without invasive surguries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.
+Während genetische Modifikationen die Effekte unerwünschter oder schädlicher Mutationen rückgängig machen können, sind für die Behandlung größerer physikalischer Traumen und nicht-genetischer kongenitaler Effekte wirkliche physikalische Maßnahmen notwendig. Für diese Aufgaben kann Nanotechnologie eingesetzt werden, was zwei Vorteile mit sich bringt: die Korrektur kann ohne invasive Chirurgie mit den damit verbundenen Sekundärschäden und Risiken durchgeführt werden; außerdem wird die Vorbereitungszeit vor der Behandlung signifikant reduziert, da die benötigten Werkzeuge immer an Ort und Stelle und einsatzbereit sind.
+
 GRO_ORBIT_FARMING
-Orbital Farming
+Orbitalfarmen
+
 GRO_ORBIT_FARMING_DESC
-The primary energy source for food production in most societies is solar radiation.  Bound to a planet, farms have very limited access to this energy, due to the comparatively small solid angle subtended by the planet's surface, and surface farming must also compete with other land uses.  By moving food production to orbital installations, continuous access to solar energy is gained, and any undesired spectral filtration by planetary atmospheres is eliminated.  Food production may be increased dramatically.
+Die Sonne ist in den meisten Gemeinschaften die wichtigste Energiequelle für die Lebensmittelherstellung. Farmen auf der Oberfläche des Planeten haben aufgrund des vergleichbar kleinen Winkels, in dem die Oberfläche des Planeten vom Licht geschnitten wird, nur einen sehr begrenzten Zugang zu dieser Energie; außerdem müssen die Farmen auf der Oberfläche mit anderen Verwendungszwecken für die Oberfläche konkurrieren. Durch die Verlegung der Nahrungsmittelherstellung in den Orbit eröffnet sich die Möglichkeit durchgängigen Zugangs zur Solarenergie; unerwünschte Spektralfiltration durch die Atmosphäre des Planeten wird vermieden. Die Nahrungsmittelherstellung kann drastisch gesteigert werden.
+
 GRO_INDUSRY_CLONE
-Industrial Cloning
+Industrielles Klonen
+
 GRO_INDUSRY_CLONE_DESC
-Primitive manual nuclear transfer cloning techniques are little more than novelties for large organisms.  By applying techniques similar to industrial mass production or biochemical process engineering, it becomes possible to generate dozens, or millions, of full-grown copies of a single genetic blueprint.  Populations may be made to order, tailored to meet the specific needs of society.
+Primitive Klonrechniken wie z. B. manueller Zellkerntranfer sind für den großen Maßstab ungeeignet. Durch den Einsatz von Techniken, die industrieller Massenproduktion und biochemischer Manipulation nachempfunden sind, wird es möglich, von einer einzigen genetischen Blaupause Dutzende bis hin zu Millionen von ausgewachsenen Kopien zu erstellen. Ganze Bevölkerungen können bestellt werden, maßgeschneidert für die besonderen Bedürfnisse der Gesellschaft.
+
 GRO_XENO_HYBRIDS
-Xenlological Hybridization
+Xenohybridisierung
+
 GRO_XENO_HYBRIDS_DESC
-Regardless of how well understood, or how adeptly improved, a biological system is limited by its inheirent nature.  Structures and basic physiology can only be altered so far within the confines of a single planet's biology.  With understanding of other biologies, however, the disparate systems may be fused, forming an entirely new hybrid biology, with potential abilities and traits greater than those of any of its parts.
+Ganz gleich, wie umfassend das Verständnis für ein biologisches System ist oder wie geschickt es verbessert wurde, es wird immer durch sein innewohnendes Wesen eingeschränkt. Strukturen und grundlegende Physiologie können nur in den Grenzen der Biologie eines einzelnen Planeten verändert werden. Durch das Verständnis fremder Biologie können unterschiedliche Systeme vereint werden und so eine völlig neue hybride Biologie geschaffen werden, die bessere Fähigkeiten als ihre einzelnen Ursprünge besitzt.
+
 GRO_NANO_CYBERNET
-Nanotech Cybernetics
+Nanokybernetik
+
 GRO_NANO_CYBERNET_DESC
-After applying nanotechnology to internally correct defects or injuries, the next step is to augment or replace natural biochemical systems with superior artificial replacements.  Rather than merely regrowing lost limbs or repairing damaged organs, augments are able to quickly grow new ones to suit their needs at any time.  Antiquated biological systems, from muscle tissue and tendons, down to organelles or enzymes may also be replaced, affording greatly increased strength, endurance and flexibility.
+Der nächste Schritt nach der Anwendung von Nanotechnologie zur Heilung von Defekten oder Verletzungen ist, natürliche biochemische Systeme mit verbesserten, künstlichen Erweiterungen auszubauen oder sie ganz zu ersetzen. Statt verlorene Glieder nachzuzüchten oder beschädigte Organe zu reparieren, können solche Erweiterungen rasch und einfach neue Organe nachwachsen lassen. Antiquierte biologische Systeme, vom Muskelgewebe und Sehnen hin zu Organellen oder Enzymen, können ersetzt werden; das ermöglicht dem Organismus deutlich erhöhte Stärke, Ausdauer und Flexibilität.
+
 GRO_ENERGY_META
-Pure-Energy Metabolism
+Transmetabolismus
+
 GRO_ENERGY_META_DESC
-The ultimate stage of physical development is to transcend the physical altogether.  Without bodies, individuals and society may move, grow and exist freely, unhindered by unecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.
+Die letzte Stufe der physischen Entwicklung ist, das Physische ein für allemal zu überschreiten. Ohne Körper können Individuen und die Gesellschaft sich völlig frei bewegen, entwickeln und leben, ohne unnötige Behinderung durch physische Einschränkungen des Körpers und ineffiziente Stoffwechselprozesse, die Energie für die Aufrechterhaltung der Homöostase verschwenden.
+
 PRO_MICROGRAV_MAN
-Microgravity Manufacturing
+Mikrogravitationsproduktion
+
 PRO_MICROGRAV_MAN_DESC
-The microgravity of low planetary orbit offers great potential for  novel manufaturing facility designs, equipment and techniques not possible on planet surfaces.  Solids may be held in place with minimal support.  Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated.  Factory equipment may be arranged optimally in three dimensions.  These conditions permit great increases in efficiency and productivity, if properly exploited.
+Die geringe Gravitation im niedrigen Orbit eines Planeten bietet ein großes Potential für einen neuartigen Aufbau für Fabriken sowie den Einsatz von Produktionstechniken, die auf der Oberfläche des Planeten unmöglich wären. Flüssigkeiten und Gas treiben frei und werden nur durch die Oberflächenspannung verformt, sofern keine anderweitige Manipulation stattfindet; die Fabrikmaschinerie kann optimal in drei Dimensionen arrangiert werden. Diese Bedingungen gewähren bei sinnvollem Einsatz einen deutlichen Anstieg an Effizienz und Produktivität in der Produktion.
+
 PRO_PLANET_GEOL
-Planetary Geology
+Planetare Geologie
+
 PRO_PLANET_GEOL_DESC
-Useful minerals are created throughout the volume of planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis.  After creation processes such as plate techtonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources.  Understanding these processes, their effects, causes and signs is essential for large scale efficient mining operations.
+Nützliche Mineralien entstehen im ganzen Volumen des Planeten unter verschiedensten chemischen und thermodynamischen Bedingungen, unter anderem durch wässrige Oberflächensedimentation, Kerndruckdifferenzierung und Mitteltiefenmetamorphose. Nach diesen Entstehungsprozessen sind z. B. Plattentektonik, Vulkanismus und Tiefenkonvektionsströme für den entgültigen Ort und die schlussendliche Form dieser Ressourcen verantwortlich. Das Verständnis dieser Prozesse, ihre Effekte, Ursachen und Zeichen sind für effizienten, weitangelegten Bergbau unerlässlich.
+
 PRO_ROBOTIC_PROD
-Robotic Production
+Automatisierung
+
 PRO_ROBOTIC_PROD_DESC
-Though high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks.  Robots work continuously, without perpetual demands for greater economic compensation.  Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site.  Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.
+Obwohl das erste [high level] Design von Produkten und der Aufbau von Fabriken noch durch Menschen überwacht werden muss, werden durch den Rückzug von Arbeitern aus der Produktion viele Flaschenhälse beseitigt. Roboter arbeiten durchgehend und haben keine ständig steigenden Lohnansprüche. Sie sind besser für gefährliche Arbeitsbedingungen geeignet und brauchen keinen zusätzlichen Wohnraum außerhalb der Fabrik. Die ihnen zugewiesenen Aufgaben führen Roboter fehlerlos aus, zumindest aber so gut, wie sie instruiert wurden.
+
 PRO_FUSION_GEN
-Fusion Generation
+Kernfusion
+
 PRO_FUSION_GEN_DESC
-Explosive or uncontrolled thermonuclear reactions are comparatively simple to cause at scales ranging from small tactical warheads to supergiant stellar furnaces.  Controllable, stable and practical power generation from the reaction is somewhat more difficult.  The process remains attractive, however, due to the near-limitless supply of fuel and potential for emissions-free operation.
+Explosive oder unkontrollierte thermonukleare Reaktionen sind recht einfach auszulösen, von kleinen taktischen Sprengköpfen hin zu unvorstellbaren stellaren Höllenfeuern. Kontrollierbare, stabile und praktisch verwendbare Energieerzeugung ist um einiges schwieriger zu erreichen. Die Kontrolle des Fusionsprozesses bleibt nichtdestotrotz erstrebenswert, da er nahezu unbegrenzt Energie erzeugt, gleichzeitig aber keine Abfallprodukte anfallen.
+
 PRO_ASTEROID_MINE
-Asteroid Mining
+Asteroidenbergbau
+
 PRO_ASTEROID_MINE_DESC
-Mineral resource extraction from subplanetoid-sized bodies involves challenges, and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
+Die Ressourcenextraktion aus subplanetoiden Himmelskörpern bringt einige Schwierigkeiten mit sich, aber bietet ganz andere Möglichkeiten als der Bergbau auf Planeten. Da Asteroiden nicht genügend Masse zur Selbstverflüssigung und Differenzierung besitzen, ist einfacher Zugang zu einigen schweren Elementen möglich; die geringe Gravitation macht die Extraktion von Mineralien für die Verwendung im Weltraum deutlich effizienter. Umgekehrt setzt die begrenzte Größe jedes Asteroiden transportable, selbstständige Minen voraus. Die niedrige Schwerkraft der Asteroiden ist zu bewältigen; zahlreiche traditionelle Methoden müssen dementsprechend angepasst werden.
+
 PRO_CORE_MINE
-Deep Core Mining
+Tiefenbergbau
+
 PRO_CORE_MINE_DESC
-The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gascious planet contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
+Der Druck und die Temperatur in Mantel und Kern terrestrischer Planeten erzeugt eine gewaltige Masse an Kristall- und Mineralverbindungen, die nur durch Vulkanismus an die Oberfläche gelangen. Die tieferen Atmosphärenschichten und Kernmaterialien von Gasplaneten enthalten noch exotischere Materialien und das in höheren Konzentrationen. Der Zugang zu den Materialien in diesen Regionen ist anspruchsvoll und riskant, aber im Vergleich zum traditionellen Oberflächenbergbau sehr vielversprechend.
+
 PRO_NANOTECH_PROD
-Nanotech Production
+Nanotechproduktion
+
 PRO_NANOTECH_PROD_DESC
-Traditional production techniques are fundamentally limited by the size and form of the tools it employs.  As a product takes form, its outer may layers prevent direct access and manipulation of the inner structure, requiring inconvenient and inefficient adjustment to the order of assembly.  Further, the components of a larger product must be carefully formed and assembled to exacting specifications to ensure they will function as intended when combined.  By using nanotechnology to form a complete product in one step, directly from the stock materials, these limitations can be bypassed, dramatically improving efficiency and production speed.
+Traditionelle Produktionstechniken sind durch die Größe und Form der verwendeten Werkzeuge eingeschränkt. Wenn ein Produkt seine Form annimmt, verhindern seine äußeren Schichten den direkten Zugang und die Manipulation der inneren Strukturen, wodurch eine umständliche und ineffiziente Anpassung der Produktionsreihenfolge notwendig wird. Außerdem müssen die einzelnen Komponenten eines größeren Produkts sorgfältig geformt und zusammengesetzt werden, um sicherzustellen, dass sie wie vorhergesehen arbeiten. Durch den Einsatz von Nanotechnologie in der Herstellung kann ein Produkt in einem Schritt direkt aus den Rohstoffen hergestellt werden; so wird die Effizienz und die Produktionsgeschwindigkeit drastisch erhöht.
+
 PRO_ORBITAL_GEN
-Orbital Generation
+Orbitale Stromerzeugung
+
 PRO_ORBITAL_GEN_DESC
-Low orbit of planetary bodies provides numerous benefits for power generation compared to planetary surfaces.  Direct exposure to nearby solar radiation without atmospheric attenuation, and the orders of magnitude larger structures that may be assembled in microgravity to collect it are significant advantages.  The resulting power may be used in orbit, or may be beamed to the planet to support surface industry.  As well, new mechanisms of energy conversion become available in orbit, including planetary magnetic field coupling, orbital momentum exchange, and frictional heating with planetary atmospheres, which are uniquely beneficial for specialized applications.
+Der niedrige Orbit von Himmelskörpern bietet zahlreiche Vorteile für die Energieerzeugung im Vergleich zur Oberfläche eines Planeten, wie z. B. direkte Bestrahlung durch die Sonne ohne Abschwächung durch die Atmosphäre, sowie die Möglichkeit von deutlich größeren Gebäuden zur Energiekollektion, die in Mikrogravitation errichtet werden können. Die erzeugte Energie kann im Orbit verwandt werden oder zur Versorgung der Industrie auf die Oberfläche des Planeten hinab gebeamt werden. Im Orbit stehen außerdem neue Methoden der Energieumwandlung zur Verfügung, unter anderem "planetare Magnetfeldkopplung", Orbitbewegungsaustausch und Reibungshitze mit der planetaren Atmosphäre, die für spezielle Anwendungen einen einzigartigen Nutzen besitzen.
+
 PRO_ORBITAL_MINE
-Orbital Mining
+Orbitale Minen
+
 PRO_ORBITAL_MINE_DESC
-On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minearals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
+Auf festen, bewohnbaren Planeten ist traditioneller Oberflächenbergbau effektiv und relativ effizient. Bei Gasriesen und terrestrischen Planeten, die keine ausreichende Bevölkerung unterhalten können ist es dagegen deutlich praktischer, nützliche Mineralien mit Einrichtungen im Weltraum auszubeuten. Die wichtigste Herausforderung bei dieser Methode ist die Überwindung der planetaren Schwerkraft, aber sobald dieses Hindernis überwunden ist, stehen zahlreiche neue Quellen für Mineralien zur Verfügung. Darüber hinaus werden zum ersten Mal spezielle Ressourcen auf unbewohnbaren Planeten zugänglich.
+
 PRO_SENTIENT_FACT
-Sentient Autofactories
+Denkende Autofabriken
+
 PRO_SENTIENT_FACT_DESC
-As manufacturing equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce.  When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.
+Mit zunehmender Automatisierung in der Produktion wird die Maschinerie fähig, sich ohne äußeren Einfluss selbst zu replizieren und in Stand zu halten; sie benötigt nur entsprechende Rohstoffe und eine Vorgabe, welches Produkt hergestellt werden soll. Unter der Kontrolle einer künstlichen Intelligenz kann das gesamte System lernen, planen, reagieren und sich autonom anpassen, und das ohne die lästige Ineffizienz, die durch die Unterbringung und Anstellung von Arbeitern entsteht.
+
 PRO_FRC_FLD_ASSMB
-Force-Field Assembly
+Kraftfeldmechanik
+
 PRO_FRC_FLD_ASSMB_DESC
-Whether effected through artificial means, or psychokinesis, or a combination thereof, remote manipulation represents a revolutionary improvement in assembly techniques.  At nanoscopic scales, fully controlled chemical reactions and custom assembled molecules become almost trivial.  At larger scales, up to and including manipulation of celestial bodies, locally reactionless and non-contact force impartion permit previously impossible non-destructive testing, and are particularly suited to manipulation within an enclosed or covered region, without compromising isolation seals, nor removing masses of previously obstructing matter.
+Die Fernmanipulation bedeutet einen revolutionären Fortschritt in der Produktion, egal, ob sie durch künstliche Mittel, Psychokinese oder beides gemeinsam bewerkstelligt wird. Voll kontrollierte chemische Reaktionen und willkürrliche Molekülzusammenstellung werden nahezu eine Trivialität. In enormen Größenordnungen, hin zu Himmelskörpern, werden durch lokal unreaktive und kontaktfreie Krafteinwirkung zuvor unmögliche nicht-destruktive Tests möglich; diese Methoden sind besonders geeignet für die Manipulation umschlossender oder bedeckter Bereiche, ohne störende Isolationsversiegelung oder die Notwendigkeit, Materie aus dem Weg zu schaffen.
+
 PRO_INTSTEL_COPRO
-Interstellar Co-Production
+Interstellare Koproduktion
+
 PRO_INTSTEL_COPRO_DESC
-Traditional means of production are limited by the necessity of self-sufficiency due to transportation and other logistical problems.  Later planetary regional cooperation permits some degree of specialization and co-operation, with each facility producing only a few parts or subsystem, and the whole system benefitting from concentrated expertize and economy of scale.  Expanding this concept several orders of magnitude, it may adapted to a galactic scale, with individual planets or entire systems functioning in the role of the single specialized facility.  The logistical difficulties inherent in this paradigm are also similar to those of the earlier iteration, and are scaled up to the same degree as the potential benefits.
+Traditionelle Produktionsmethoden sind durch die Notwendigkeit der Selbstversorgung aufgrund logistischer Probleme begrenzt. Später wird durch regionale Zusammenarbeit auf Planeten ein gewisser Grad an Spezialisierung möglich, so dass jede Fabrik nur einige Teile oder ein Subsystem herstellt und das ganze System von konzentrierter Fachkompetenz profitiert. Dieses Konzept kann auf galaktischen Größenmaßstab übertragen werden; individuelle Planeten oder ganze Systeme dienen dann als eine einzige, spezialisierte Einrichtung. Die logistischen Schwierigkeiten, die diesem Paradigma innewohnen, ähneln denen des planetaren Maßstabs; Nutzen und Nachteil sind im gleichen Maß vergrößert.
+
 PRO_NDIM_ASSMB
-N-Dimensional Assembly
+N-Dimensionale Montage
+
 PRO_NDIM_ASSMB_DESC
-The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be colocated, and volumes cannot be simultaneously enclosed and open if their existance is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and continguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.
+Die Geometrie des physikalischen Raums hat schon immer die Montage von Objekten in diesem Raum behindert. Objekte können sich nicht am gleichen Ort befinden und Volumen nicht gleichzeitig offen und geschlossen vorliegen, wenn sich ihre Existenz auf drei Dimensionen beschränkt. Mit dem Überschreiten dieser Grenzen können störende Objektteile in Taschendimensionen und somit aus dem Weg gefaltet werden; kontinuierliche Linien können an Massen vorbeigeleitet werden, indem man sie von ihrer Achse ablenkt. Ähnliche Methoden werden auch angewandt, um niederdimensionale Objekte in Konfigurationen zu arrangieren, die ohne höherdimensionale Montagewege unmöglich wären.
+
 PRO_SINGULAR_GEN
-Singularity Generation
+Singularitätskonstruktion
+
 PRO_SINGULAR_GEN_DESC
-As matter is drawn towards a singularity by the intense spacetime curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated.  High energy radiation emitted from the disk may be captured and harnessed for power generation.  The event horizon of the singularity itself also emits radiation do to annihilation of virtual particle-antiparticle pairs that form in its vicinity.  This method of power generation is significantly more delicate and unstable than that with the accretion disk method, but can produce even greater output as well.
+Wenn Materie durch eine intensive Raumzeitkrümmung oder ein Gravitationsfeld zu einer Singularität hingezogen wird, formt sie eine Gasscheibe, die sich stark erhitzt und komprimiert wird. Die Scheibe sendet eine hochenergetische Strahlung aus, die aufgefangen und zur Energiegewinnung verwandt werden kann. Der Ereignishorizont der Singularität sendet ebenfalls eine Strahlung aus, die durch die Vernichtung von Partikel-Antipartikelpaaren, die sich in der Nähe des Ereignishorizontes bilden, entstehen. Diese Variante der Energieerzeugung ist wesentlich heikler und unstabiler als die aus der Strahlung der Gasscheibe, aber generiert auch deutlich mehr Energie.
+
 PRO_MATENG_REPLIC
-Matter-Energy Replication
+Materie-Energie Replikation
+
 PRO_MATENG_REPLIC_DESC
-Previous iterations of assembly techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter.  None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of smaller parts, be they prefabricated subsections, or individual atoms.  By converting pure energy directly into the desired material object, eliminating the need for precursor parts or supplied materials, the ultimate level of flexible and efficient assembly is achieved.
+Die früheren Montagetechniken waren im Grunde genommen Methoden, um besonders störende Probleme bei der Manipulation der Materie zu beseitigen. An der grundlegenden Methode, große Objekte aus kleinen zusammenzusetzen, seien es vorgefertigte Unterteile oder einzelne Atome, änderte keine dieser Techniken etwas. Durch die direkte Umwandlung purer Energie in das gewünschte materielle Objekt werden Produktionskomponenten und -materialien überflüssig; dies ist die ultimative Stufe flexibler und effizienter Montage.
+
 PRO_ZERO_GEN
-Zero-Point Generation
+Nullpunktenergie
+
 PRO_ZERO_GEN_DESC
-Any power generation mechanism that involves a material fuel supply is limited by the relativistic mass-energy relationship: no more energy can be produced than equivalent mass consumed, even with perfect efficiency.  By tapping the inherent energy of the vacuum, or zero-point energy, an effectively infinite source is made available.  The rate, or power, of this extraction is also theoretically unbounded, with limits only in the available means to collect and use the output.
+Jede Methode der Energieerzeugung, die eine materielle Treibstoffzufuhr verwendet, wird durch das relativistische Masse-Energie Verhältnis begrenzt: selbst bei perfekter Effizienz kann nicht mehr Energie erzeugt werden, als Masse verbraucht wird. Indem man die dem Vakuum innewohnende Energie, d. h. die Nullpunktenergie, anzapft, wird eine wirklich unerschöpfliche Quelle verfügbar. Das Ausmaß der Energiegewinnung ist theoretisch unbegrenzt; einzige Einschränkung sind die verfügbaren Mittel zur Nutzung dieser Quelle.
+
 CON_ORBITAL_CON
-Orbital Construction
+Orbitale Konstruktion
+
 CON_ORBITAL_CON_DESC
-On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfraces, the practical use of these spaces will be initial primarily by those who are used to, and adapated for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.
+Auf einem Planeten gibt es immer die festgelegte Referenzrichtung "hoch". Mikrogravitation dagegen ist praktisch isotrop. Dieser einfache Unterschied hat eine Vielzahl von Konsequenzen für die zu errichtenden Gebäudetypen, und wie sie den Raum, die Materialien und die Energie in ihrem jeweiligen Umfeld optimal ausnutzen. Außerdem muss die Inneneinrichtung von Räumen im Orbit neu durchdacht werden. Obwohl es attraktiv erscheint, ein vollkommen neues und vom planetaren Stil unabhängiges Innendesign zu entwerfen, werden diese Räume anfänglich hauptsächlich von Personen verwandt, die an die Oberfläche von Planeten gewohnt und angepasst sind. Ein stufenweiser Übergang vom alten zum neuen Innendesign ist daher wahrscheinlich effizienter als ein abrupter Wechsel.
+
 CON_ARCH_PSYCH
-Architectural Psychology
+Psychologische Architektur
+
 CON_ARCH_PSYCH_DESC
-The form of a structure or inhabited space is not merely guided by the physical limitations of the materials from which it is constructed.  Psychological effects on the inhabitants within, or observers outside can have a far greater influence on the success of a design than the strength of a wall or sturdiness of a foundation.
+Die Form eines Gebäudes oder Wohnraums sollte sich nicht nur an den physikalischen Einschränkungen der Baumaterialien orientieren; der psychologische Effekt auf einen Bewohner innen oder einen Betracher außen ist das, was einen Entwurf erfolgreich macht, und nicht die Stärke einer Mauer oder die Festigkeit eines Fundaments.
+
 CON_INFRA_ECOL
-Infrastructure Ecology
+Infrastruktureffizienz
+
 CON_INFRA_ECOL_DESC
-The basic infrastructure of an established planetary colony may seem to be created entirely by the colonizers, and to function only according to their designs.  In reality, however, the ecology of the planet on which it is built is the foundation and support mechanism for the added infrastructure, and often forms an integral part of its function.  Understanding the interaction between natural and artificial components, and the limits of the resources an ecological system can provide are essential to the development of an optimal and sustainable infrastructure for any colony.
+Der grundlegende Aufbau einer neu errichteten planetaren Kolonie scheint sich gänzlich nach dem Willen der Kolonisten zu richten und die Arbeitsweise der Kolonie allein von ihrem festgelegten Design abzuhängen. Tatsächlich sind es aber die Überlebensumstände des Planeten, auf dem die Kolonie errichtet wurde, die das Fundament der neuen Infrastruktur bilden und oft einen integralenBestandteil ihrer Funktionsweise darstellen. Das Verständnis der Interaktion zwischen natürlichen und künstlichen Komponenten und der Grenzen der Ressourcen eines Ökosystems sind für die Entwicklung einer optimalen und in Stand zu haltenden Infrastruktur jeder Kolonie unabdingbar.
+
 CON_ORGANIC_STRC
-Organic Structures
+Organische Gebäude
+
 CON_ORGANIC_STRC_DESC
-Buildings formed of inanitmate minerals are functional and occasionally elegant, and those of harvested but dead organics are often simple and inexpensive.  Actual living structures, however, can be grown into their final shape with no additional labour, as well effect some degree of self-repair when damaged.  They may also naturally self-regulate their internal environments, or potentially adapt to varied or changing surroundings as necessary, during or after their initial growth.
+Gebäude aus unbelebten Materialien sind funktional und gelegentlich auch elegant, und Gebäude aus organischen, aber toten Materialien sind oft simpel und günstig. Wirklich lebende Gebäude dagegen können ohne weitere Arbeit in ihre schlussendliche Form aufgezogen werden, und sich außerdem im Fall einer Beschädigung zu einem gewissen Grad selbst wieder in Stand setzen. Sie können zudem die Bedingungen in ihren inneren Räumen regulieren oder sich gegebenenfalls an veränderliche Umweltbedingungen nach Bedarf anpassen, sowohl während ihres Heranwachsens als auch danach.
+
 CON_METRO_INFRA
-Metroplex Architecture
+Metroplexarchitektur
+
 CON_METRO_INFRA_DESC
-When the entire surface of a world is covered, continued development must occur above and below pre-existing construction.   Care must be taken to ensure the stability of the undercut or overshadowed structures are not damaged, and transportation and supply routes must be rethought to support vastly increased population densities.  Furthermore, novel stylistic and functional issues must be considered, to ensure that the newer levels, and the combined whole, are worth inhabiting.
+Wenn die gesamte Oberfläche einer Welt bebaut ist, muss die weitere Entwicklung über- und unterhalb der bestehenden Gebäude stattfinden. Die Stabilität untergrabener oder überbauter Gebäude muss gewährleistet sein; Versorgungs- und Transportwege müssen hinsichtlich steigender Bevölkerungsdichten überdacht werden. Desweiteren müssen neuartige stilistische und funktionale Aspekte bedacht werden, um sicherzustellen, dass die neuen Ebenen, auch im Gesamtbild mit den alten, wohnlich sind.
+
 CON_TRANS_STRC
-Transforming Structures
+Anpassungsfähige Gebäude
+
 CON_TRANS_STRC_DESC
-A shutter functions as both a solid wall and open window, according to the desire of its user.  A room may be refurnished to serve an entirely new purpose, within the limits of the space available.  This concept may also be extended to the actual form and structure of an entire building or city, whether mechanical or organic.  Eliminating the need for demolition and rebulding permits much greater infrastructure flexibility and efficiency.  Single or isolated structures may also serve many purposes simultaneously, that would previously have required much larger and elaborate fixed designs.
+Ein Rolladen dient sowohl als feste Wand als auch als geöffnetes Fenster, je nach den Wünschen seines Anwenders. Ein Raum kann im Rahmen des verfügbaren Platzes ummöbliert werden, um einem ganz neuen Zweck zu erfüllen. Dieses Konzept kann auch auf die Form und Struktur eines ganzen Gebäudes oder einer ganzen Stadt, egal ob mechanisch oder organisch, ausgeweitet werden. Die Beseitigung der Notwendigkeit von Abriss und Neuaufbau erlaubt große Flexibilität und Effizienz der Infrastruktur. Einzelne oder isolierte Gebäude können gleichzeitig eine Vielzahl von Zwecken erfüllen, die zuvor größere und detailliertere, feste Designs voraussetzten.
+
 CON_ARCH_MONOFILS
-Architectural Monofilaments
+Monofilament Architektur
+
 CON_ARCH_MONOFILS_DESC
-Essentially unbreakable and merely a few atoms in diamater, single-crystal filaments have many uses in improving traditional structure designs in durability and economy of construction.  The capacity to suspend or stress other materials in previously impossible configurations also permits a wholly new designs.  Low weight and high strength filaments are of particular use in large-scale orbital or surface to orbit spanning structures, where variations in gravity across lengths were previously very prohibative.
+Praktisch unzerbrechliche und nicht mehr als wenige Atome im Durchmesser messende Einzelkristallfilamente können die Dauerhaftigkeit und Kostengünstigkeit traditioneller Bauweisen verbessern. Die Fähigkeit, die stärker belastbaren Materialien in vorher unmögliche Anordnungen anzubringen, eröffnet völlig neue Möglichkeiten. Leichte und zugleich zugfeste Filamente finden besondere Verwendung in großen orbitalen oder von der Oberfläche in den Orbit reichenden Gebäuden, bei denen die Veränderungen der Schwerkraft entlang der Achse zuvor sehr hinderlich waren.
+
 CON_SELFGRAV_STRC
-Self-Gravitating Structures
+Eigengravitation
+
 CON_SELFGRAV_STRC_DESC
-As orbital construction grows ever larger in scale, eventually the mass of a single installation is sufficient to appreciably self-gravitate.  Where previously the microgravity environment was fundamental, designs must be rethought again, just as they were when originally moving surface activity into orbit.  Rather than expanding endlessly in efficient regular patterns, the natural curved shapes of planetary bodies begins to emerge in artificial bodies as well.  Advantages over surface construction are retained, however, as the artifical mass is designed and built with its purpose in mind.
+Durch die Größenzunahme orbitaler Konstruktionen erreichen einzelne Einrichtungen eine Masse, die ausreicht, um eine wahrnehmliche Eigengravitation auszuüben. Da, wo die niedrige Schwerkraft eine fundamentale Rolle spielt, muss der Aufbau von Gebäuden neu durchdacht werden, so wie es der Fall war, als sie von der Oberfläche in den Orbit verlegt wurden. Statt sich immer weiter in geregelten Mustern auszubreiten, nehmen die künstlichen Körper die natürlich gebogene Form der Planetenkörper an. Die Vorteile orbitaler Strukturen gegenüber der Oberflächenkonstruktion verbleiben jedoch, da ihre künstliche Masse zweckdienlich eingesetzt wird.
+
 CON_ASYMP_MATS
-Asymptotic Materials
+Asymptotische Materialien
+
 CON_ASYMP_MATS_DESC
-Once certain thresholds of performance are passed, measuring the physical properties of materials for relative comparison becomes impractical in any terms other than orders of magnitude or logarithmic scales.  Much like superconductivity in electronics, the tensile strength, toughness, density, elasticity, refractory index and other mechanical properties of materials may be controlled with effectively no limits.  With all previously significant limitations removed, structure designs are further unhindered, and may extend or change by similar order of magnitude scales.
+Sobald gewisse Leistungsgrenzen überschritten werden, wird die relative Messung der physikalischen Eigenschaften von Materialien außer auf exponentiellen oder logarithmischen Skalen unhandlich. Genau wie bei der Supraleitfähigkeit in der Elektronik wird die Zugstärke, Härte, Dichte, Elastizität, der Refraktionsindex und andere mechanische Eigenschaften von Materialien praktisch grenzenlos kontrollierbar. Durch die Beseitigung aller zuvor hinderlichen Einschränkungen öffnen sich neue Möglichkeiten für Gebäude, so dass sie im gleichen Maße wie der Fortschritt der Materialtechnik erweitert werden können.
+
 CON_STRC_INT_FLDS
-Structural Integrity Fields
+Integritätsfelder
+
 CON_STRC_INT_FLDS_DESC
-a
+Fortgeschrittene Baumaterialien und -techniken ermöglichen deutlich größere Gebäude. Irgendwann erreicht der Druck auf die Stützstrukturen die Größenordnung der starken Kernkraft, die für den Zusammenhalt der Atomkerne verantwortlich ist; zu diesem Zeitpunkt werden alternative Stabilisierungsmaßnahmen unvermeidlich. Projizierte Energiestützfelder können diesem Zweck dienen; der Ersatz oder die Verstärkung fester Stützstrukturen mit dieser Technologie bietet den Vorteil, Volumen und die Masse der benötigten Materialien drastisch reduzieren  zu können. Darüber hinaus kann auf rasche Belastungsänderungen dynamisch reagiert werden, wogegen feste Stützstrukturen, auch wenn sie nicht aktiv verwandt werden, an ihrem Platz verweilen müssen.
+
 CON_CONTGRAV_ARCH
-Controlled Gravity Architecture
+Schwerkraftarchitektur
+
 CON_CONTGRAV_ARCH_DESC
-a
+Durch die perfekte Kontrolle der Orientierung und Stärke der Gravitationskraft, die auf und innerhalb eines Gebäudes wirken, können Bauten so gestaltet werden, dass sie gleichzeitig die Freiheit der Schwerelosigkeit und den Nutzen eines definierten Oben und Unten besitzen. Das Gebäude selbst und seine Räume können jede Form im Raum einnehmen, sich über große Längen erstrecken, um sich selbst winden und willkürliche Verbingungen herstellen. Die Räume können einen nützlichen direktionalen Drift enthalten, der sich etwas oder auch völlig von den direkt angrenzender Bereichen unterscheiden kann. Eine solche Vielseitigkeit bietet ganz neue Möglichkeiten für soziale, produktive oder anderweitige Zwecke.
+
 CON_GAL_INFRA
-Galactic Infrastructure
+Galaktische Infrastruktur
+
 CON_GAL_INFRA_DESC
-a
+Der Zusammenschluss und die Entwicklung der Infrastrukturen sehr produktiver Welten in ein vereintes, galaxis-weites Netzwerk ist eine der größten logistischen Herausforderungen überhaupt. Das fertige System schliesst die verbundenen Welten zu einer Einheit zusammen. Gemeinsame Transport-, Wohnwesen-, Instandhaltungs- und Bauwerkzeuge können dort, wo sie optimal zur Ressourcenverwertung oder Adaption eingesetzt werden können, zur Verfügung gestellt werden.
+
 CON_FRC_ENRG_STRC
-Force-Energy Structures
+Kraft-Energie Gebäude
+
 CON_FRC_ENRG_STRC_DESC
-a
+Wenn Kräfte und Energie so manipuliert werden können, dass sie dieselbe Funktionalität wie feste Oberflächen besitzen, gibt es keinen entscheidenden Grund dafür, physikalische Materialien zur Konstruktion von Gebäuden einzusetzen. Gebäude aus purer Energie haben zahlreiche Vorteile, wie z. B. einfacher Umbau, Widerstandsfähigkeit, Tragbarkeit und neuartige Designmöglichkeiten.
+
 CON_ART_HEAVENLY
-Artificial Heavenly Bodies
+Artifizielle Himmelskörper
+
 CON_ART_HEAVENLY_DESC
-a
+Ab der Masse eines kleinen Mondes wird es schwierig, ein Objekt als "Gebäude", "Raumstation" oder "Schiff" zu bezeichnen. In dieser Größenordnung handelt es sich eher um einen Himmelskörper; seine Gravitation bewirkt orbitale Bewegungen, es kann sich auf seiner Oberfläche eine dünne Atmosphäre ausbilden, und er kann von kleineren Strukturen umkreist werden. Auf noch größeren Skalen können ganze Planeten (um-)gebaut werden; selbst neue Sterne können geformt und entzündet werden und künden dem Universum die Macht und Bestimmtheit seiner Schöpfer.
+
 CON_TRANS_ARCH
-Transcendent Architecture
+Transarchitektur
+
 CON_TRANS_ARCH_DESC
-a
+Perfektes Design vereint optimale Funktionalität mit Formschönheit. Eine transzendiertes Gebäude erweitert und inspiriert die Gedanken seiner Bewohner oder Betrachter - durch seine Form, Platzierung, Substanz und Integration, ob durch überwältige Größe, perfekte Hervorhebung einer Idee, Sichtweise oder das Fehlen einer solchen, oder durch bloße Simplizität und Zweckdienlichkeit.
+
 CON_NDIM_STRC
-N-Dimensional Structures
+N-Dimensionale Gebäude
+
 CON_NDIM_STRC_DESC
-a
+Von allen bizzaren Kunststücken der angewandten Physik hat die Fähigkeit, den Raum in sich selbst zu falten, den direktesten und tiefgreifendsten Einfluss auf die Form und das Design von Gebäuden. Das Potential ist endlos, und das wortwörtlich: Flure biegen sich zurück an ihren Beginn oder werden so verdreht, dass ihre Decke der Boden wird. Darüber hinaus löst sich das Konzept des Städtewachstums in Wohlgefallen auf, da eine beliebige Anzahl Personen in einem willkürlich kleinen Volumen untergebracht werden können, sicher in einer angrenzenden Existenzebene untergebracht.
+
 ECO_MARKET_ECON
-Market Economics
+Marktwirtschaft
+
 ECO_MARKET_ECON_DESC
-a
+Der freie Austausch von Gütern und Dienstleistungen zwischen Individuen und Gruppen, ob durch simplen Tauschhandel oder eine allgemein anerkannte Währung, kann ein eiffizientes und dynamisches System bilden. Im idealisierten Fall reguliert der Markt sich vollkommen selbstständig; Angebot und Bedarf bringen die Wirtschaft zur optimal effizienten Ressourcenverwendung und Arbeiterbeschäftigung. Darüber hinaus sind die persönlichen Erfolgsmöglichkeiten in einem solchen System ein wirkungsvoller Motivator für Innovation und Einsatz. Im ungünstigsten Falle kann dieselbe Motivation aber auch zu Ausbeutung und Kartellbildung der Erfolgreichen führen, wodurch viele der Vorteile des Systems aufgehoben werden können.
+
 ECO_PLANNED_ECON
-Planned Economics
+Planwirtschaft
+
 ECO_PLANNED_ECON_DESC
-a
+Indem man die Bedürfnisse und spezifischen Ziele einer Gesellschaft identifiziert, nach ihrer Wichtigkeit ordnet und dann die notwendigen Schritte zu ihrer Realisierung einleitet, kann ein stabiles Wirtschaftssystem aufgebaut werden. Ob durch eine zentrale Verwaltungsstelle oder durch lokale Einrichtungen, im idealen Fall werden alle unnötigen Störfaktoren und Verschwendung beseitigt und alle Ressourcen für die höchsten Prioritäten eingesetzt. Außerdem beseitigt ein gemeinsames Ziel und effiziente Planung die Verschwendung verfügbarer Arbeitskräfte. Es besteht jedoch die Gefahr, dass einzelne Individuen sich nicht für die gemeinsamen Ziele oder die Methode, sie zu erreichen, einsetzen möchten und so die Arbeitsmoral zu untergraben.
+
 ECO_EXTERN_INTEG
-Externality Integration
+Externalitäteneinbezug
+
 ECO_EXTERN_INTEG_DESC
-a
+Undurchdachte Wirtschaftssysteme erlauben die Entscheidungsbildung basierend auf Faktoren, die nur den Entscheidenden direkt betreffen. Andere Faktoren, oder Externalitäten, die ausschliesslich nicht an der Entscheidung beteiligte Personen betreffen, werden nicht in Betracht gezogen; dies führt dementsprechend zu unerwarteten Konsequenzen, was insgesamt zu einem Verlust ökonomischer Effizienz in einem ansonsten idealem System führt. Durch den Einbezug von Faktoren wie Umweltschäden, Einzelschicksalen und Konsequenzen von [networking effects], kann die Wirtschaft näher an ihre theoretische Idealform gebracht werden.
+
 ECO_ECON_SPECTRO
-Economic Spectroscopy
+Ökonomische Spektroskopie
+
 ECO_ECON_SPECTRO_DESC
-a
+Durch sorgfältige Analyse und wohldurchdachte Modelle kann ein linear unabhängiger Satz von Grundzuständen, als eine Frequenzparameterisierung einer Wirtschaft, erstellt werden. Zyklische Wirtschaftstrends und Indikatoren wiederläufiger Phasen können so unabhängig betrachtet werden und Amplituden- oder Phasenverschoben werden, um die erwünschten Ziele zu erreichen. Solche Eingriffe müssen jedoch mit großer Vorsicht vorgenommen werden, da [simultaneously phase-matched] zyklische Effekte, die anfänglich als unbegrenzter Wachstum erscheinen, unausweichlich einen Gipfel erreichen werden, nach dem ein ebenso dramatischer wirtschaftlicher Zusammenbruch erfolgen wird.
+
 ECO_INTSTEL_TRADE
-Interstellar Trade
+Interstellarer Handel
+
 ECO_INTSTEL_TRADE_DESC
-Commerce between the stars is fundamentally similar to any other form of trade, aside from the scale of the distances involved.  Older paradigms must be adapted to space-based forms, however.  Trade routes, merchant guilds and piracy all remain, in new forms.  And as in earlier times, disruption and manipulation of these tools can have drastic effects on the economies that grow to depend on them.
+Der Kommerz zwischen den Sternen kann im Grunde genommen - unabhängig von der weiteren Größenordnung der Distanzen - direkt mit dem Handel auf einem einzelnen Planeten oder Kontinent verglichen werden. Während Grundprinzipien wie Handelsrouten, Handelsgilden und Piraterie auf eine gewisse Art bestehen bleiben, ist die Anpassung der Methodik ökonomischen Austauschs, seiner Regulation und Kontrolle an die Bedingungen des Weltraums alles andere als trivial. Wie zu früheren Zeiten kann der Einsatz oder Mißbrauch dieser Faktoren drastische Effekte auf die Wirtschaften ausüben, die vom Handel abhängig werden.
+
 ECO_ENV_ADAPTION
-Environmental Adaption
+Umweltadaption
+
 ECO_ENV_ADAPTION_DESC
-a
+Am Anfang der Kolonisierung des Weltraums erscheint die Vielfalt neuer Umwelten nur als Hindernis, da die meisten Umweltbedingungen für jede beliebige Rasse unwohnlich sind und daher Bevölkerungswachstum und -ausbreitung einschränken. Aber mit der Ausbreitung eines Imperiums über mehrere Sternsysteme wird die natürliche Vielfalt immer nützlicher, wenn sie richtig eingesetzt wird. Jede Umwelt bietet seine direkten und indirketen Vorteile, besonders bei der Schaffung und Ausbeutung physikalischer und konzeptueller [commodities], die dann zwischen Systemen gehandelt und ausgetauscht werden können. Indem man die Wirtschaft jeder Welt auf ihre Einzigartigkeit ausrichtet, kann man ihre Vorzüge maximieren.
+
 ECO_GAL_MONEY_POL
-Galactic Monetary Policy
+Galaktische Währungspolitik
+
 ECO_GAL_MONEY_POL_DESC
-a
+Mit der Ausweitung galaktischen Handels gehen isolierte planetare Wirtschaftkräfte in integrierte regionale oder imperiale Wirtschaftskräfte über. Intraimperiale Austauschquoten, Verleih- und Handelsgesetze und ihre Folgeeffekte auf scheinbar losgelöste Regionen werden die entscheidenden Faktoren für das allgemeine Wohlbefinden der galaktischen Wirtschaft. Dementsprechend müssen unilaterale ökonomische Erwägungen gemäßigt werden und lokale Angelegenheiten im Kontext weiterreichender Interessen diskutiert werden, um den wirtschaftlichen Wohlstand aller zu gewährleisten.
+
 ECO_ECON_FLUIDITY
-Economic Fluidity
+Ökonomische Fluidität
+
 ECO_ECON_FLUIDITY_DESC
-a
+Wenn die physikalische Distanz zwischen den Sternen von Handelspartnern nicht länger als gravierend wahrgenommen wird, tritt ein Paradigmenwechsel ein. Zuvor konnte man sich die interstellare Wirtschaft als ein Block vorstellen, seine Eckpunkte als lokale Wirtschaftskräfte und seine Kanten als starre Handelsverbindungen angrenzender Nachbarn. Durch die dieserartig veränderte Wahrnehmung durchläuft die Wirtschaft einen Phasenwechsel  von fest nach flüssig. Wirtschaftliche Aktivität beginnt, frei zwischen den Sternen zu fliessen: die Flüssigkeit gelangt in zuvor ungenutze [crevice]Öffnungen, füllt Spalten, folgt neuen Flussbahnen und beseitigt lokale Assymetrien.
+
 ECO_PLANET_COLONY
-Planetary Collonialism
+Planetarer Kolonialismus
+
 ECO_PLANET_COLONY_DESC
-a
+When an expending empire encoutners a planet that is rich in resources and which is populated by primitive native sentients, the opportunity arises to treat the planet as a colonial posession.  A large and well-adapted workforce is immediately available, and can often be a source of information about the non-obvious unique resources of the planet.  Care must be taken, however, to ensure that the native population, or at least its leaders, remains inclined to participate in the economic partnership, as former colonial workers can make an equally well-adapted rebel army.
+
 ECO_ECON_PRESCIEN
 Economic Prescience
+
 ECO_ECON_PRESCIEN_DESC
-a
+Feedback control systems often consider the present, the past, and projected future states of a system when making correctional adjustments.  Making projections is error-prone to the point of uselessness, however, for any highly complex and non-deterministic systems of interacting sentients such as an economy or society.  To resolve this difficultly, precognitive projection can be emplyed to reveal many of the possible future time-paths and their relative probabilities, as well as the best adjustments to make to adjust these probablities as desired.  By this method, the unpredictable and often illogical choices of sentients may be isolated, and the economy can finally be described and controlled as well as a macroscopic physical system.
+
 ECO_STAB_HYPGROW
 Stablized Hypergrowth
+
 ECO_STAB_HYPGROW_DESC
-a
+Economic activity functions as a positive feedback into its own growth.  An exponential growth curve naturally follows from this in many cases, and economic growth is thus often described as a ratio of the economy's size.  Occasional burts of hyperexponential growth intermittantly occur, but are unstable and followed by painful corrections.  However, through proper structuring and management, and careful cultivation of the necessary conditions for it to begin, indefinite hyperexponential growth may be maintained.
+
 ECO_ECON_HEGEMONY
 Economic Hegemony
+
 ECO_ECON_HEGEMONY_DESC
-a
-
-LRN_PHYS_BRAIN_APP1
-Sample Application 1
-
-LRN_PHYS_BRAIN_APP2
-Sample Application 2
-
-LRN_PHYS_BRAIN_APP2_REF
-Sample Refinement
+An economy in optimal form represents a great variety of financial, cultural and other social mechanisms that may be employed to achieve the goals of those who are able to control them.  Through use of these tools, other less-developed economies may completely controlled, either through overt domination or destruction, or more subtle and targetted manipulations.  By extention, an externally-controlled economy may be used to exert influence or control on all other aspects of a society.  Through these means, a power equal or greater than any martial force is realized.
 
 #########################################
 # Tech Application Names & Descriptions #
 #########################################
 
+CON_GRAVITY_WELLS
+Schwerkraftgeneratoren
+
+CON_GRAVITY_WELLS_DESC
+Durch die Installation eines Null - Schwerkraft Generators im Kern eines Planeten wird es möglich, die Schwerkraft in einem engen Bereich wie eine Lampe an- oder auszuschalten. Die Industrie des Planeten erhält alle Vorteile von Niedrig-G und Null-G ohne ihre Nachteile. Inverse Schwerkraftgeneratoren können auch erbaut werden; dadurch kosten Raumstarts nahezu nichts mehr.
+
 CON_MEGALITH
-Megalith Construction
+Megalith Konstruktion
 
 CON_MEGALITH_DESC
-Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring Megalith.
+Mit der Meisterschaft fortschrittlicher orbitaler Konstruktionstechniken erschaffen Wissenschaftler Methoden zur Konstruktion des Ehrfurcht erweckenden Megalith.
 
-LRN_ROBOT_SCIENTIST
-Robot Scientist
+CON_ORBITAL_FACT
+Orbitale Fabriken
 
-LRN_ROBOT_SCIENTIST_DESC
-With the creation of AI, and AI robots, it was inevitable that robots should be able to build more robots and make themselves better. The robot scientist is the ultimate achievement in robot construction. Able to advance robotics and AI technology as well as construct the most technically advanced AI robots imaginable.
+CON_ORBITAL_FACT_DESC
+Since all colonies begin in space and raw materials are largely imported from off-world, the common Exodus practice of complete planet-fall for new colony ships is wasteful. The manufacturing work so badly needed for upstart colonies can be done more cheaply in orbit. Equipping new colonies with pre-built orbital factory kits helps them make use of the natural resource of low orbit.
+
+CON_PLANET_RING
+Planetenring
+
+CON_PLANET_RING_DESC
+Die Technik der Raumfahrstühle ist nun etabliert; dadurch wird ihre logische Erweiterung möglich. Indem man Fahrstühle ringförmig auf dem Planeten wie Speichen an einem Rad platziert und sie dann durch Ketten von Satelliten und Raumstationen verbindet, kann man einen Planetenring erbauen.
+
+CON_SPACE_ELEVATOR
+Raumfahrstuhl
+
+CON_SPACE_ELEVATOR_DESC
+Die Materialien und Methoden der Nanokonstruktion eröffnen die Möglichkeit, ein Kabel zu schaffen, das zugfest genug ist, um in den niedrigen Orbit zu reichen und nicht zu zerreissen. Magnetisch am Kabel beförderte Fähren sind den teuren, ineffizienten und gefährlichen Raketenstarts überlegen.
+
+CON_SUBTER_CONST
+Subterrane Konstruktion
+
+CON_SUBTER_CONST_DESC
+Wenn der Platz knapp ist, liegt der heilige Gral der Konstruktion in der Fähigkeit, so leicht abwärts wie aufwärts zu bauen. Moderne Techniken machen dies möglich.
+
+CON_ORBITAL_INFRA
+Orbitale Infrastruktur
+
+CON_ORBITAL_INFRA_DESC
+Eine gut ausgebaute allgemeine Supportstruktur im Orbit gewährt große Flexibilität und eine schnelle Entwicklung der Produktionskapazität.
+
+ECO_COLONIAL_ECO
+Ökonomische Blaupausen
+
+ECO_COLONIAL_ECO_DESC
+Jetzt, wo fortschrittliche ökonomische Planung sich durchgesetzt hat, kann die Ökonomie einer sich entwickelnden Welt wie ein physikalisches Gebäude geplant werden. Neue Märkte können nun ihr ganzes Wachstumspotential ausnutzen ohne in der unreifen "wilde Grenzen" - Mentalität stecken zu bleiben.
+
+ECO_COMM_UNION
+Kommerzielle Union
+
+ECO_COMM_UNION_DESC
+Das Zusammenspiel verschiedenster Anwendungen, wie z. B. ökonomischer Spektroskopie, Biomimetik, digitaler Psychologie und fortschrittlicher Spieltheorie bewirkt einen Paradigmenwechsel in der Ökonomie. Es wird nun möglich, ökonomische Märkte von zuvor unvorstellbaren Größenordnungen zu organisieren.
+
+ECO_DEEP_GREEN
+Deep Green
+
+ECO_DEEP_GREEN_DESC
+Durch die komplexe Quantenfraktalnatur der Gleichungen in der ökonomischen Spektroskopie sind nur sehr oberflächliche Analysen für den Hauptanteil der Märkte durchführbar. Ein riesiger Computer, der von Grund auf für die Lösung solch unüblicher Algorithmen angelegt ist, könnte ein ganzes Imperium um ökonomischer Weitsicht und Stabilität bereichern.
+
+ECO_ECO_ETHER
+Etherische Wirtschaft
+
+ECO_ECO_ETHER_DESC
+Im Exoduszeitalter der unendlichen Möglichkeiten tun sich die meisten Wirtschaftssysteme schwer, die alte [paper and pencil] Handelsmentalität aufzugeben. Der letzte Schritt der wirtschaftlichen Modernisierung ist, die veralteten, physischen ökonomischen Systeme ein für alle Mal hinter sich zu lassen und eine reinere Ebene der digitalen Information und virtuellen Präsenz zu beschreiten. Diese Neuerung verleiht den Märkten aller Welten, besonders den größten, Aufschwung.
+
+ECO_PARADISE
+Paradisplanet
+
+ECO_PARADISE_DESC
+Der Paradiesplanet ist das Urlaubsziel schlechthin, eine Welt dessen gesamte Wirtschaftsstruktur auf Tourismus und Unterhaltung ausgerichtet ist. Auch die Bewohner weit entfernter Welten würden von einem solchen Planeten profitieren.
+
+ECO_SINKHOLE
+Ökonomischer Abfluss
+
+ECO_SINKHOLE_DESC
+Betrachtet man die ökonomische Aktivität als eine Flüssigkeit, dann kann man auch ihren Fluss beeinträchtigen. Indem man einen lokalen Abfluss in der Oberfläche erzeugt, über die der Handel fliesst, werden auch weit vom Abfluss entfernte Handelszentren beeinflusst. Eine solche Störung des Handels breitet sich jedoch in alle Richtungen aus; dadurch ist es praktisch unmöglich, ein Ziel selektiv auszuwählen.
+
+GRO_CADUCEAN
+Das Kaduzäerinstitut
+
+GRO_CADUCEAN_DESC
+Die medizinischen Einrichtungen der prä-Exodus Era können nicht den Bedarf eines ganzen Imperiums abdecken. Durch sorgfältige Vorausplanung und Finanzierung könnte eine weitläufige, von der Regierung geführte medizinische Akademie realisiert werden. Das Haupquartier dieses Instituts würde als Zentrum der medizinischen Lehre und Praxis dienen, eine Eichmarke des imperialen Ruhms.
+
+GRO_GENOME_BANK
+Genombank
+
+GRO_GENOME_BANK_DESC
+Außer bei den einfachsten Genreperaturen verbleiben zu viele unbekannte Variablen in genetischen Kalkulationen, ganz zu Schweigen von den Auswirkungen, die eine genetische Modifikation möglicherweise in einer größeren Biosphere mit zahlreichen Spezies entfalten kann. Um die Vorzüge der genetischen Medizin vollständig nutzbar zu machen, ist es unabdingbar, eine umfassende Genomdatenbank für alle Spezies aller bekannten Welten zu erstellen.
+
+GRO_LIVING_PLANET
+Der lebendige Planet
+
+GRO_LIVING_PLANET_DESC
+Theoretisch ist es möglich, die gesamte Ökologie eines einzelnen Planeten vorauszusagen, indem man das vollständige Netz seiner biologischen Abhängigkeiten, fühlend und nicht-fühlend, in Fraktalalgorithmen darstellt. In die Praxis umgesetzt werden könnte dies nur durch die Konstruktion eines den Planeten umspannendes Netzwerks, das für die Regulation der Biosphäre des Planeten programmiert ist. Dieser Computer wäre das Gehirn eines neuen Lebewesens - ein einziger planetarer Organismus, mit intelligenten Bewohnern als Bestandteil seines Gewebes, Diener des höheren Willens.
+
+GRO_ORBITAL_GARDENS
+Orbitale Gärten
+
+GRO_ORBITAL_GARDENS_DESC
+Die orbitalen Gärten, ein Meisterstück der Kunst und des Handwerks, präsentieren als Ausstellungsstücke Flora der gesamten bekannten Galaxie, jedes in seiner eigenen künstlichen Umwelt in diesem kleinen, artifiziellen Mond.
+
+GRO_URBAN_FARM
+Stadtfarmen
+
+GRO_URBAN_FARM_DESC
+Auf industrialisierten Welten, wo bestellbares Land äußerst begrenzt ist, ist die Fähigkeit, Nahrung in mehrstöckigen Hydro- oder Aeroponiken herzustellen, für die Nahrungsversorgung unverzichtbar.
 
 LRN_COLLECTIVE_NET
-Collective Thought Network 
+Kollektives Gedankennetzwerk
 
 LRN_COLLECTIVE_NET_DESC
-By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
+Durch die Übertragung eines Geistes in den Cyberspace können unzählige Wesen vereint agieren, so Probleme lösen und Gedanken fassen, die einem einzelnen Wesen nicht möglich wären.
 
-GRO_PLANET_GENOME
-Planetary Genome Project
+LRN_DISTRIB_THOUGHT
+Hirnrechennetzwerk
 
-GRO_PLANET_GENOME_DESC
-To truly master the genetic destiny of a race, it is insufficient to map the genome of the race in isolation. One must map the genome of the entire planet--every single species, every choromosone, every gene.
+LRN_DISTRIB_THOUGHT_DESC
+Der Durchschnittsbürger verschwendet wortwörtlich sein Hirn, das eine der besten Rechenmaschinen des Universums darstellt. Indem sie sich durch einen simplen cybernetischen Transceiver in die untätigen Gehirne einer hinreichend großen Population einschalten, erhalten die Forschungszentren einer Welt Zugang zu günstiger, reichhaltiger Rechenleistung.
 
-GRO_PLANET_CONSC
-Planetary Consciousness
+LRN_ENCLAVE_VOID
+Enklave der Leere
 
-GRO_PLANET_CONSC_DESC
-Symbiotic biology is just an arcane set of equations restricted to the laboratory. To truly realize symbiosis, the means must be developed to make every conscious citizen aware of their place in the planetary biosphere.
+LRN_ENCLAVE_VOID_DESC
+Das Studium des Geistes der Leere könnte beschleunigt werden, indem man die Bevölkerung einer ganzen Welt genetisch so manipuliert, dass sie auf die Leere abgestimmt wird. Diese neue Priesterklasse könnte die Sozialstruktur ihrer Welt auf eine Weise umstellen, dass sie die Weisheit des Geistes der Leere besser verstehen können und an das ganze Imperium weiterleiten können.
 
-GRO_ORBITAL_FARM
-Orbital Farm Complex
+LRN_LOOKING_GLASS
+Die Lupe
 
-GRO_ORBITAL_FARM_DESC
-To truly realize the potential of orbital farming, it would be necessary to develop a vast orbiting network of farms capable of producing every required environment and tether the entire structure to a space elevator.
+LRN_LOOKING_GLASS_DESC
+Die Lupe ist ein Fenster in die Raumzeit und als solches das ultimative Museum. Statt die Ruinen vergangener Zeiten auszugraben, wird es möglich, ein Fenster in die Zeit zu öffnen. Große Führer der Vergangenheit sind nicht nur durch Bücher und Holo-vids zugänglich, sondern können direkt beobachtet werden. Ein solches Museum würde Schwärme sowohl von Touristen als auch Akademikern anziehen.
 
-GRO_CLONE_CENTER
-Cloning Center
+LRN_MONUMENT_EXODUS
+Exodus - Monument
 
-GRO_CLONE_CENTER_DESC
-It would be possible to convert a planets entire reproduction to cloning. It would require a vast genetic database, and an enormous dedicated facility--probably several networked together.
+LRN_MONUMENT_EXODUS_DESC
+Die großen Künstler und Mechaniker der Exodusgesellschaft werden versammelt, um einen Entwurf für ein passendes Wahrzeichen ihrer Erfolge zu erarbeiten und so das Exoduszeitalter einzuleiten.
+
+LRN_PSICORP
+PsiCorp
+
+LRN_PSICORP_DESC
+Es ist nun möglich, die in vereinzelten Individuen schlummernden psionischen Fähigkeiten bei der Geburt zu erkennen. Aber um ihre Begabung wirklich zu fördern, ist es notwendig, eine Akademie aufzubauen, die sich nur der Psionik widmet. Absolventen dieser Akademie würden eine hochspezialisierte Psi-Eliteeinheit bilden, die als Überträger[conduit] und Verstärker[amplifier] für die größten Forscher eines Imperiums eingesetzt werden können.
+
+PRO_ART_BLACK_HOLE
+Artifizielles schwarzes Loch
+
+PRO_ART_BLACK_HOLE_DESC
+Durch einen kontrollierten Singularitätenkollaps in einem fernen Sonnenorbit liesse sich eine bequem lokalisierte Quelle unbegrenzter Kraft schaffen. Dies wäre zwar eine sehr kostenaufwendige und gefährliche Aufgabe, doch von großem Nutzen.
+
+PRO_EXOBOTS
+Exobots
+
+PRO_EXOBOTS_DESC
+Exobots vereinen auf einzigartige Weise Formschönheit und Funktionalität. Es handelt sich dabei um Roboter, die nahezu jegliche Montagearbeit erledigen können, von Elektrotechnik hin zu weitreichenden Bauarbeiten. Sie lassen sich leicht in Massen herstellen und können hervorragend in Kolonien einsetzen, die nicht die Infrastruktur und Arbeitskräfte für spezialisierte Fabriken besitzen. Jede Kolonie erhält einen Standartsatz Exobots, welche die frühe Entwicklung der Kolonie maßgeblich beschleunigen.
+
+PRO_FUSION_PLANTS
+Fusionskraftwerke
+
+PRO_FUSION_PLANTS_DESC
+Obwohl die Herstellung und Unterhaltung von Fusionskraftwerken teuer ist, machen sie sich auf industrialisierten Welten mit steigendem Energiebedarf bezahlt. Die alten, auf Kernspaltung basierenden Kernkraftwerke werden allmählich ein Ding der Vergangenheit.
+
+PRO_HYPER_DAM
+Hyperspatialdamm
+
+PRO_HYPER_DAM_DESC
+Eine der größten Ängste der n-dimensionalen Physiker ist nun ihr höchstes Ziel: einen hyperspatialen Riss willentlich zwischen unserem und den nächsten Universum zu schaffen, aber innerhalb einer Dimensionsblase, sicher von der Raumzeit getrennt. Wenn das zu Stande gebracht werden könnte, wäre es eine recht einfache Angelegenheit, sich des enormen Energieflusses durch den Rift zu bedienen.
+
+PRO_MINI_SUN
+Miniatursonne
+
+PRO_MINI_SUN_DESC
+Eine magnetisch abgeschirmte, sich selbst aufrecht erhaltende Fusionsreaktion kann sicher hergestellt und in einem Orbit auf der Nachtseite eines Planeten platziert werden. Dieser neue Stern würde den Nachthimmel erhellen und mit seiner dem Planeten abgewandten Seite als gewaltiges Fusionskraftwerk dienen.
+
+PRO_MINING_ENGINEERING
+
+Mining Engineering
+
+PRO_MINING_ENGINEERING_DESC
+Die Anwendung von Konzepten der planetaren Geologie erlaubt die effiziente Extraktion von oberflächennahen Mineralien des Planeten. Durch die Identifikation wahrscheinlicher Orte und geeigneter Extraktionsmethoden kann die Effizienz und die insgesamt mögliche Produktion erhöht werden. Des weiteren verbessert vorrausschauende Planung und Analyse die Sicherheit und Dauerhaftigkeit der Bergwerke.
 
 #################################
 # Building Names & Descriptions #
 #################################
 
+BLD_GRAVITY_WELLS
+Controlled Gravity Wells
+
+BLD_GRAVITY_WELLS_DESC
+A null gravity generator installed deep in the planet's core, greatly boosting industry and commerce in the system.
+
 BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-A marvel of Exodus-era Architecture, the Megalith is an abnormally massive Starscrapper, kilometers in diameter. The Megalith is an inspiration to architects sector-wide and is often the crown jewel of a powerful real estate mogul's empire.
+A marvel of Exodus-era Architecture, the Megalith is an abnormally massive Starscraper, kilometers in diameter. The Megalith is an inspiration to architects sector-wide and is often the crown jewel of a powerful real estate mogul's empire.
 
-BLD_ROBOT_SCIENTIST
-Robot Scientist 
+BLD_PLANET_RING
+Planetary Ring
 
-BLD_ROBOT_SCIENTIST_DESC
-With the creation of AI, and AI robots, it was inevitable that robots should be able to build more robots and make themselves better. The robot scientist is the ultimate achievement in robot construction. Able to advance robotics and AI technology as well as construct the most technically advanced AI robots imaginable.
+BLD_PLANET_RING_DESC
+A ring of satellites completely encircling a world, tethered to the planet's equator by spoke-like space elevators. These are used for housing, micro-gravity construction and inter-world trade.
+
+BLD_SPACE_ELEVATOR
+Space Elevator
+
+BLD_SPACE_ELEVATOR_DESC
+An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end. The space elevator boosts the trade for the entire system.
+
+BLD_COMM_UNION
+Commercial Union of the Colonies
+
+BLD_COMM_UNION_DESC
+The Commercial Union of the Colonies (CUC) is an organization with the means and will to monitor and regulate the entire galactic market. The first empire to complete the CUC gains an empire wide bonus to trade on all worlds.
+
+BLD_DEEP_GREEN
+Deep Green
+
+BLD_DEEP_GREEN_DESC
+A central economic forecast computer fed with data from all the economic markets of the known galaxy, it is capable of near perfect economic foresight and is used to boost all the markets in the empire.
+
+BLD_PARADISE
+Paradise Planet
+
+BLD_PARADISE_DESC
+A world whose entire infrastructure has been converted to tourism, giving an enormous boost to trade and tourism in the region, but eliminating almost all useful industrial and mining output.
+
+BLD_CADUCEAN
+The Caducean Institute
+
+BLD_CADUCEAN_DESC
+An institute that is at once the greatest medical academy, and greatest center for treatment of disease, the Caducean Institute supplies the empire with the highest quality of health care for generations to come.
+
+BLD_GENOME_BANK
+Genome Bank
+
+BLD_GENOME_BANK_DESC
+The largest database ever conceived. The Genome Bank includes maps of the genomes of every organism known to the empire. This database is invaluable in the treatment of disease and in establishing farming colonies.
+
+BLD_LIVING_PLANET
+The Living Planet
+
+BLD_LIVING_PLANET_DESC
+Convert a planet into the Living Planet by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own. Industrial and mineral output are severely limited, however, as such activities upset the global harmonious balance.
+
+BLD_ORBITAL_GARDENS
+Orbital Gardens
+
+BLD_ORBITAL_GARDENS_DESC
+An enormous moon-like satellite in orbit above a world, the Orbital Gardens are a testament throughout the galaxy to your ability to harness your environment. Besides being an excellent tourist attraction, research conducted here helps boost farming on all worlds in your empire.
 
 BLD_COLLECTIVE_NET
-Collective Thought Network 
+Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
 
-BLD_PLANET_GENOME
-Planetary Genome Project
+BLD_ENCLAVE_VOID
+Enclave of the Void
 
-BLD_PLANET_GENOME_DESC
-Map the genome of every single species on a planet. This greatly improves health and farming potential for that world, and slightly increases the maximum population.
+BLD_ENCLAVE_VOID_DESC
+The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects. This world may never exceed industrial or mining output greater than 30.
 
-BLD_PLANET_CONSC
-Planetary Consciousness
+BLD_LOOKING_GLASS
+The Looking Glass
 
-BLD_PLANET_CONSC_DESC
-Using a vast network of computers, coupled with relatively simple brainwave transceivers, grant all citizens of a planet an awareness of all living things around them and their place within. Greatly improves farming potential with some side benefit to health, happiness and trade.
+BLD_LOOKING_GLASS_DESC
+A space-time museum of galactic fame. Both tourism and science benefit from its unfettered view of all history, as the ebb and flow of all time become as transparent as glass.
 
-BLD_ORBITAL_FARM
-Orbital Farm Complex
+BLD_MONUMENT_EXODUS
+Monument to Exodus
 
-BLD_ORBITAL_FARM_DESC
-A monumental network of orbiting farms with every conceivable environment required to produce any food, tethered by a space elevator to the planet. Greatly increases both base and maximum farming output.
+BLD_MONUMENT_EXODUS_DESC
+A mighty orbiting sculpture visible from the ground and to passing ships. Your triumph over the starlanes will never be forgotten and your people will forever be emboldened to colonize new worlds. Increases population growth on all frontier worlds.
 
-BLD_CLONE_CENTER
-Klonzentrum
+BLD_PSICORP
+PsiCorp
 
-BLD_CLONE_CENTER_DESC
-A network of cloning facilities that produce tailored individuals for an entire planet. Population growth increases greatly and genetic disease is effectively eliminated.
+BLD_PSICORP_DESC
+An academy dedicated to identifying the psionically gifted citizens throughout the colonies and training them from birth to develop their abilities to the benefit of the most advanced research programs of the empire.
+
+BLD_ART_BLACK_HOLE
+Artificial Black Hole
+
+BLD_ART_BLACK_HOLE_DESC
+A constructed singularity in a distant orbit in one system. Its power is harnessed to advance industry for all nearby worlds.
+
+BLD_HYPER_DAM
+Hyperspatial Dam
+
+BLD_HYPER_DAM_DESC
+A tear in the fabric of the universe, safely controlled and harnessed. The hyperspatial dam serves as a source of nearly unlimited energy for the entire sector.
+
+BLD_MINI_SUN
+Miniature Sun
+
+BLD_MINI_SUN_DESC
+A miniature sun keeps the night sky above the world perpetually twilit. Besides being good for morale, the fusion reactor serves as a convenient source of energy for all planets in the system.
+
+BLD_REMOTE_CONST
+Remote Construction
+
+BLD_REMOTE_CONST_DESC
+A network of matter and construction. A team of construction workers and robots can assemble structures on distant worlds without the need for freighters or construction vessels. Only a small matter-terminal ship is needed. Quickly raises the industry on all worlds to that of an Established world.
+
+BLD_ECON_SINKHOLE
+Economic Sinkhole
+
+BLD_ECON_SINKHOLE_DESC
+An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does not distinguish between friend or foe, however, so care must be taken in its placement to maximize disruption of enemy trade, while assuring minimal impact on that of its builders.
