@@ -26,10 +26,14 @@ public:
         SUPERDENSE
     }; // others TBD (these are from the Public Review: Population & Econ Model thread on the forums)
 
+    /** \name Signal Types */ //@{
+    typedef boost::signal<UniverseObject* (), Default0Combiner> GetObjectSignalType; ///< emitted as a request for the UniverseObject to which this PopCenter is attached
+    //@}
+
     /** \name Structors */ //@{
-    PopCenter(UniverseObject* object, double max_pop_mod, double max_health_mod); ///< basic ctor
-    PopCenter(int race, UniverseObject* object, double max_pop_mod, double max_health_mod); ///< basic ctor
-    PopCenter(const XMLElement& elem, UniverseObject* object); ///< ctor that constructs a PopCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a PopCenter object
+    PopCenter(double max_pop_mod, double max_health_mod); ///< basic ctor
+    PopCenter(int race, double max_pop_mod, double max_health_mod); ///< basic ctor
+    PopCenter(const XMLElement& elem); ///< ctor that constructs a PopCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a PopCenter object
     virtual ~PopCenter(); ///< dtor
     //@}
 
@@ -68,7 +72,10 @@ public:
     /// Resets the meters, etc.  This should be called when a PopCenter is wiped out due to starvation, etc.
     void Reset(double max_pop_mod, double max_health_mod);
     //@}
-   
+
+protected:
+    mutable GetObjectSignalType GetObjectSignal; ///< the UniverseObject-retreiving signal object for this PopCenter
+
 private:
     Meter    m_pop;
     Meter    m_health;
@@ -76,8 +83,21 @@ private:
     int      m_race; ///< the id of the race that occupies this planet
     double   m_available_food;
 
-    UniverseObject* const m_object; ///< the UniverseObject of which this center is a part
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+// template implementations
+template <class Archive>
+void PopCenter::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_pop)
+        & BOOST_SERIALIZATION_NVP(m_health)
+        & BOOST_SERIALIZATION_NVP(m_growth)
+        & BOOST_SERIALIZATION_NVP(m_race)
+        & BOOST_SERIALIZATION_NVP(m_available_food);
+}
 
 inline std::string PopCenterRevision()
 {return "$Id$";}

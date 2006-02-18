@@ -40,6 +40,8 @@
 #include <boost/graph/filtered_graph.hpp>
 #endif
 
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
 #include <boost/type_traits/remove_const.hpp>
 
 #include <vector>
@@ -249,6 +251,11 @@ public:
 
     static const bool& InhibitUniverseObjectSignals() {return s_inhibit_universe_object_signals;}
 
+    /** HACK! This must be set to the encoding empire's id when serializing a Universe, so that only the relevant parts
+        of the Universe are serialized.  The use of this global variable is done just so I don't have to rewrite any
+        custom boost::serialization classes that implement empire-dependent visibility. */
+    static int s_encoding_empire;
+
 protected:
     typedef std::vector< std::vector<double> > DistanceMatrix;
 
@@ -341,8 +348,21 @@ protected:
 
 private:
     static bool s_inhibit_universe_object_signals;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
+
+// template implementations
+template <class Archive>
+void Universe::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
+        & BOOST_SERIALIZATION_NVP(m_objects)
+        & BOOST_SERIALIZATION_NVP(m_last_allocated_id);
+}
 
 inline std::string UniverseRevision()
 {return "$Id$";}

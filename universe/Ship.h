@@ -24,8 +24,9 @@ public:
     int    FleetID() const;            ///< returns the ID of the fleet the ship is residing in
     Fleet* GetFleet() const;           ///< returns the ID of the fleet the ship is residing in
 
-    virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-    virtual XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a Ship object with visibility limited relative to the input empire
+    virtual UniverseObject::Visibility GetVisibility(int empire_id) const;
+    virtual const std::string& PublicName(int empire_id) const;
+    virtual XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const;
 
     bool IsArmed() const;
 
@@ -41,7 +42,20 @@ public:
 private:
     std::string m_design_name;
     int         m_fleet_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+// template implementations
+template <class Archive>
+void Ship::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
+        & BOOST_SERIALIZATION_NVP(m_design_name)
+        & BOOST_SERIALIZATION_NVP(m_fleet_id);
+}
 
 inline std::string ShipRevision()
 {return "$Id$";}

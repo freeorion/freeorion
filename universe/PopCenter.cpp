@@ -44,26 +44,19 @@ namespace {
     bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
-PopCenter::PopCenter(UniverseObject* object, double max_pop_mod, double max_health_mod) : 
-    m_object(object)
+PopCenter::PopCenter(double max_pop_mod, double max_health_mod)
 {
-    assert(m_object);
     Reset(max_pop_mod, max_health_mod);
 }
 
-PopCenter::PopCenter(int race, UniverseObject* object, double max_pop_mod, double max_health_mod) : 
-    m_object(object)
+PopCenter::PopCenter(int race, double max_pop_mod, double max_health_mod)
 {
-    assert(m_object);
     Reset(max_pop_mod, max_health_mod);
     m_race = race;
 }
    
-PopCenter::PopCenter(const XMLElement& elem, UniverseObject* object) :
-    m_object(object)
+PopCenter::PopCenter(const XMLElement& elem)
 {
-    assert(m_object);
-
     if (elem.Tag() != "PopCenter")
         throw std::invalid_argument("Attempted to construct a PopCenter from an XMLElement that had a tag other than \"PopCenter\"");
 
@@ -146,25 +139,29 @@ double PopCenter::FuturePopGrowthMax() const
 
 void PopCenter::AdjustMaxMeters()
 {
+    UniverseObject* object = GetObjectSignal();
+    assert(object);
     // determine meter maxes; they should have been previously reset to 0, then adjusted by Specials, Building effects, etc.
-    m_pop.AdjustMax(MaxPopModFromObject(m_object));
-    m_health.AdjustMax(MaxHealthModFromObject(m_object));
+    m_pop.AdjustMax(MaxPopModFromObject(object));
+    m_health.AdjustMax(MaxHealthModFromObject(object));
 }
 
 void PopCenter::PopGrowthProductionResearchPhase()
 {
+    UniverseObject* object = GetObjectSignal();
+    assert(object);
     m_pop.AdjustCurrent(FuturePopGrowth());
     if (AvailableFood() < m_pop.Current()) { // starvation
-        m_object->AddSpecial("STARVATION_SPECIAL");
+        object->AddSpecial("STARVATION_SPECIAL");
         m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][0]);
     } else if (m_available_food < 2 * m_pop.Current()) { // "minimal" nutrient levels
-        m_object->RemoveSpecial("STARVATION_SPECIAL");
+        object->RemoveSpecial("STARVATION_SPECIAL");
         m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][1]);
     } else if (m_available_food < 4 * m_pop.Current()) { // "normal" nutrient levels
-        m_object->RemoveSpecial("STARVATION_SPECIAL");
+        object->RemoveSpecial("STARVATION_SPECIAL");
         m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][2]);
     } else { // food orgy!
-        m_object->RemoveSpecial("STARVATION_SPECIAL");
+        object->RemoveSpecial("STARVATION_SPECIAL");
         m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
     }
     m_health.AdjustCurrent(m_health.Current() * (((m_health.Max() + 1.0) - m_health.Current()) / (m_health.Max() + 1.0)));
@@ -178,4 +175,3 @@ void PopCenter::Reset(double max_pop_mod, double max_health_mod)
     m_race = -1;
     m_available_food = 0.0;
 }
-

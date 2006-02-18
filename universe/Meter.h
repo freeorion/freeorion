@@ -50,7 +50,23 @@ private:
 
     friend class ServerApp;
     friend class Universe;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+// template implementations
+template <class Archive>
+void Meter::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_current)
+        & BOOST_SERIALIZATION_NVP(m_max)
+        & BOOST_SERIALIZATION_NVP(m_initial_current)
+        & BOOST_SERIALIZATION_NVP(m_initial_max)
+        & BOOST_SERIALIZATION_NVP(m_previous_current)
+        & BOOST_SERIALIZATION_NVP(m_previous_max);
+}
 
 inline std::string MeterRevision()
 {return "$Id$";}

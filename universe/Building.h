@@ -49,6 +49,10 @@ private:
     std::string m_building_type;
     bool        m_operating;
     int         m_planet_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** A specification for a building of a certain type.  Each building type must have a \a unique name string, 
@@ -91,6 +95,16 @@ private:
     exists, 0 is returned instead. */
 const BuildingType* GetBuildingType(const std::string& name);
 
+
+// template implementations
+template <class Archive>
+void Building::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
+        & BOOST_SERIALIZATION_NVP(m_building_type)
+        & BOOST_SERIALIZATION_NVP(m_operating)
+        & BOOST_SERIALIZATION_NVP(m_planet_id);
+}
 
 inline std::string BuildingRevision()
 {return "$Id$";}

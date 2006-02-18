@@ -48,20 +48,22 @@ namespace {
 
 Planet::Planet() :
     UniverseObject(),
-    PopCenter(this, MaxPopMod(SZ_MEDIUM, Environment(PT_TERRAN)), MaxHealthMod(Environment(PT_TERRAN))),
-    ResourceCenter(PopCenter::PopulationMeter(), this),
+    PopCenter(MaxPopMod(SZ_MEDIUM, Environment(PT_TERRAN)), MaxHealthMod(Environment(PT_TERRAN))),
+    ResourceCenter(PopCenter::PopulationMeter()),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
     m_available_trade(0.0),
     m_just_conquered(false),
     m_is_about_to_be_colonized(0)
 {
+    GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
+    GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
 }
 
 Planet::Planet(PlanetType type, PlanetSize size) :
     UniverseObject(),
-    PopCenter(this, MaxPopMod(size, Environment(type)), MaxHealthMod(Environment(type))),
-    ResourceCenter(PopCenter::PopulationMeter(), this),
+    PopCenter(MaxPopMod(size, Environment(type)), MaxHealthMod(Environment(type))),
+    ResourceCenter(PopCenter::PopulationMeter()),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
     m_available_trade(0.0),
@@ -71,12 +73,14 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     SetType(type);
     SetSize(size);
     m_def_bases = 0;
+    GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
+    GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
 }
 
 Planet::Planet(const XMLElement& elem) :
     UniverseObject(elem.Child("UniverseObject")),
-    PopCenter(elem.Child("PopCenter"), this),
-    ResourceCenter(elem.Child("ResourceCenter"), PopCenter::PopulationMeter(), this),
+    PopCenter(elem.Child("PopCenter")),
+    ResourceCenter(elem.Child("ResourceCenter"), PopCenter::PopulationMeter()),
     m_is_about_to_be_colonized(0),
     m_def_bases(0)
 {
@@ -102,6 +106,9 @@ Planet::Planet(const XMLElement& elem) :
         Logger().debugStream() << "\n" << osstream.str();
         throw;
     }
+
+    GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
+    GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
 }
 
 PlanetEnvironment Planet::Environment() const
@@ -417,4 +424,9 @@ PlanetEnvironment Planet::Environment(PlanetType type)
     case PT_GAIA:       return PE_OPTIMAL;
     default:            return PE_UNINHABITABLE;
     }
+}
+
+UniverseObject* Planet::This()
+{
+    return this;
 }

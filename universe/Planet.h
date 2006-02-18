@@ -24,7 +24,10 @@
 
 
 /** a class representing a FreeOrion planet.*/
-class Planet : public UniverseObject, public PopCenter, public ResourceCenter
+class Planet :
+    public UniverseObject,
+    public PopCenter,
+    public ResourceCenter
 {
 public:
     /** \name Structors */ //@{
@@ -101,6 +104,8 @@ public:
     static PlanetEnvironment Environment(PlanetType type); ///< returns the environment that corresponds to each planet type
 
 private:
+    UniverseObject* This();
+
     PlanetType    m_type;
     PlanetSize    m_size;
     std::set<int> m_buildings;
@@ -111,11 +116,38 @@ private:
     int m_is_about_to_be_colonized;
 
     /////////////////////////////////////////////////////////////////////////////
-    // V0.2 ONLY!!!!
+    // V0.3 ONLY!!!!
     int            m_def_bases;
-    // V0.2 ONLY!!!!
+    // V0.3 ONLY!!!!
     /////////////////////////////////////////////////////////////////////////////
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+// template implementations
+template <class Archive>
+void Planet::serialize(Archive& ar, const unsigned int version)
+{
+    Visibility vis;
+    if (Archive::is_saving::value)
+        vis = GetVisibility(Universe::s_encoding_empire);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
+        & BOOST_SERIALIZATION_BASE_OBJECT_NVP(PopCenter)
+        & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourceCenter)
+        & BOOST_SERIALIZATION_NVP(vis)
+        & BOOST_SERIALIZATION_NVP(m_type)
+        & BOOST_SERIALIZATION_NVP(m_size)
+        & BOOST_SERIALIZATION_NVP(m_just_conquered);
+    if (ALL_OBJECTS_VISIBLE ||
+        vis == FULL_VISIBILITY) {
+        ar  & BOOST_SERIALIZATION_NVP(m_buildings)
+            & BOOST_SERIALIZATION_NVP(m_available_trade)
+            & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized)
+            & BOOST_SERIALIZATION_NVP(m_def_bases);
+    }
+}
 
 inline std::string PlanetRevision()
 {return "$Id$";}

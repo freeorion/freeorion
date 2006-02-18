@@ -82,22 +82,17 @@ namespace {
     bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
-ResourceCenter::ResourceCenter(const Meter& pop, UniverseObject* object) : 
-    m_pop(pop),
-    m_object(object)
+ResourceCenter::ResourceCenter(const Meter& pop) : 
+    m_pop(pop)
 {
-    assert(m_object);
     Reset();
 }
 
-ResourceCenter::ResourceCenter(const XMLElement& elem, const Meter& pop, UniverseObject* object) : 
+ResourceCenter::ResourceCenter(const XMLElement& elem, const Meter& pop) : 
     m_primary(FOCUS_UNKNOWN),
     m_secondary(FOCUS_UNKNOWN),
-    m_pop(pop),
-    m_object(object)
+    m_pop(pop)
 {
-    assert(m_object);
-
     if (elem.Tag() != "ResourceCenter")
         throw std::invalid_argument("Attempted to construct a ResourceCenter from an XMLElement that had a tag other than \"ResourceCenter\"");
 
@@ -264,8 +259,10 @@ void ResourceCenter::AdjustMaxMeters()
     double primary_balanced_factor = ProductionDataTables()["FocusMods"][2][0];
     double secondary_balanced_factor = ProductionDataTables()["FocusMods"][3][0];
     m_construction.AdjustMax(20.0); // default construction max is 20
-    m_farming.AdjustMax(MaxFarmingModFromObject(m_object));
-    m_industry.AdjustMax(MaxIndustryModFromObject(m_object));
+    UniverseObject* object = GetObjectSignal();
+    assert(object);
+    m_farming.AdjustMax(MaxFarmingModFromObject(object));
+    m_industry.AdjustMax(MaxIndustryModFromObject(object));
     switch (m_primary) {
     case FOCUS_BALANCED:
         m_farming.AdjustMax(primary_balanced_factor);

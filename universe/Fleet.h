@@ -30,9 +30,9 @@ public:
     const_iterator begin() const  {return m_ships.begin();}  ///< returns the begin const_iterator for the ships in the fleet
     const_iterator end() const    {return m_ships.end();}    ///< returns the end const_iterator for the ships in the fleet
 
-    virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-
-    virtual XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a Fleet object with visibility limited relative to the input empire
+    virtual UniverseObject::Visibility GetVisibility(int empire_id) const;
+    virtual const std::string& PublicName(int empire_id) const;
+    virtual XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const;
 
     /** Returns the list of systems that this fleet will move through en route to its destination (may be empty). 
         If this fleet is currently at a system, that system will be the first one in the list. */
@@ -97,7 +97,31 @@ private:
     // these are filled temporarily and only as needed, and they can be deduced from the other info above; don't put them in the XML encoding
     mutable std::list<System*>  m_travel_route;
     mutable double              m_travel_distance;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+// template implementations
+template <class Archive>
+void Fleet::serialize(Archive& ar, const unsigned int version)
+{
+    bool visible;
+    int moving_to;
+    if (Archive::is_saving::value)
+        visible = ALL_OBJECTS_VISIBLE || Universe::s_encoding_empire == Universe::ALL_EMPIRES || OwnedBy(Universe::s_encoding_empire);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
+        & BOOST_SERIALIZATION_NVP(visible);
+    if (Archive::is_saving::value)
+        moving_to = visible ? m_moving_to : m_next_system;
+    ar  & BOOST_SERIALIZATION_NVP(m_ships)
+        & BOOST_SERIALIZATION_NVP(moving_to)
+        & BOOST_SERIALIZATION_NVP(m_prev_system)
+        & BOOST_SERIALIZATION_NVP(m_next_system);
+    if (Archive::is_loading::value)
+        m_moving_to = moving_to;
+}
 
 inline std::string FleetRevision()
 {return "$Id$";}

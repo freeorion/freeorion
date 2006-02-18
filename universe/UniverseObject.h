@@ -13,9 +13,20 @@
 #include "InhibitableSignal.h"
 #endif
 
+#include <boost/serialization/is_abstract.hpp>
+
 #include <set>
 #include <string>
 #include <vector>
+
+/** Signal return value combiner used by ResourceCenter, PopCenter, and any other UniverseObject decorator that needs
+    access to its UniverseObject subclass. */
+struct Default0Combiner
+{
+    typedef UniverseObject* result_type;
+    template <class Iter>
+    UniverseObject* operator()(Iter first, Iter last);
+};
 
 class Meter;
 class System;
@@ -75,7 +86,7 @@ public:
     int                  SystemID() const;  ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
     System*              GetSystem() const; ///< returns system in which this object can be found, or null if the object is not within any system
     const std::set<std::string>&
-    Specials() const;                       ///< returns the set of names of the Specials attached to this object
+                         Specials() const;  ///< returns the set of names of the Specials attached to this object
 
     virtual const Meter* GetMeter(MeterType type) const;  ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
@@ -84,7 +95,7 @@ public:
     bool                 WhollyOwnedBy(int empire) const; ///< returns true iff the empire with id \a empire is the only owner of this object
 
     virtual Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-   
+    virtual const std::string& PublicName(int empire_id) const; ///< returns the name of this objectas it appears to empire \a empire_id
     virtual XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a UniverseObject object with visibility limited relative to the input empire
 
     /** accepts a visitor object \see UniverseObjectVisitor */
@@ -115,7 +126,7 @@ public:
    
     /** performs the movement that this object is responsible for this object's actions during the movement phase of 
         a turn. */
-    virtual void MovementPhase( ) = 0;
+    virtual void MovementPhase() = 0;
 
     /** sets all the max meter values for all meters in this UniverseObject to Meter::METER_MIN.  This should be done before any
         Effects act on the object. */
@@ -130,7 +141,7 @@ public:
 
     /** performs the movement that this object is responsible for this object's actions during the pop growth/production/research
         phase of a turn. */
-    virtual void PopGrowthProductionResearchPhase( ) = 0;
+    virtual void PopGrowthProductionResearchPhase() = 0;
     //@}
    
     static const double INVALID_POSITION;  ///< the position in x and y at which default-constructed objects are placed
@@ -145,7 +156,48 @@ private:
     std::set<int>         m_owners;
     int                   m_system_id;
     std::set<std::string> m_specials;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+BOOST_IS_ABSTRACT(UniverseObject)
+
+// template implementations
+template <class Iter>
+UniverseObject* Default0Combiner::operator()(Iter first, Iter last)
+{
+    UniverseObject* retval = 0;
+    while (first != last) {
+        assert(!retval); // ensure we retrieve at most one UniverseObject
+        retval = *first++;
+    }
+    return retval;
+}
+
+template <class Archive>
+void UniverseObject::serialize(Archive& ar, const unsigned int version)
+{
+    Visibility vis;
+    if (Archive::is_saving::value)
+        vis = GetVisibility(Universe::s_encoding_empire);
+    ar  & BOOST_SERIALIZATION_NVP(vis)
+        & BOOST_SERIALIZATION_NVP(m_id)
+        & BOOST_SERIALIZATION_NVP(m_x)
+        & BOOST_SERIALIZATION_NVP(m_y)
+        & BOOST_SERIALIZATION_NVP(m_system_id);
+    if (ALL_OBJECTS_VISIBLE ||
+        vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
+        // We don't disclose the real object name for some types of objects, cinve it would look funny if e.g. the user
+        // saw an incoming enemy cleet called "Decoy".
+        std::string name = PublicName();
+        ar  & BOOST_SERIALIZATION_NVP(name)
+            & BOOST_SERIALIZATION_NVP(m_owners)
+            & BOOST_SERIALIZATION_NVP(m_specials);
+        if (Archive::is_loading::value)
+            m_name = name;
+    }
+}
 
 inline std::string UniverseObjectRevision()
 {return "$Id$";}

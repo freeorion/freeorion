@@ -746,6 +746,10 @@ FW_EMPIRE_FLEETS
 FW_FOREIGN_FLEET
 Foreign fleet
 
+# the name that is used for ships the player does not control
+FW_FOREIGN_SHIP
+Foreign ship
+
 ###############
 # TechTreeWnd #
 ###############

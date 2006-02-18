@@ -871,6 +871,7 @@ bool Universe::EdgeVisibilityFilter::CanSeeAtLeastOneSystem(const Empire* empire
 // static(s)
 double Universe::s_universe_width = 1000.0;
 bool Universe::s_inhibit_universe_object_signals = false;
+int Universe::s_encoding_empire = Universe::ALL_EMPIRES;
 
 Universe::Universe()
 {

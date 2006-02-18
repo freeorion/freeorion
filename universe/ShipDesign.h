@@ -4,6 +4,9 @@
 
 #include "../util/XMLDoc.h"
 
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
+
 #include <string>
 
 /** a class representing a ship design */
@@ -32,9 +35,29 @@ struct ShipDesign
     /** \name Accessors */ //@{
   	XMLElement XMLEncode() const; ///< constructs an XMLElement from a ShipDesign object
     //@}
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 const ShipDesign* GetShipDesign(int empire_id, const std::string& name);
+
+// template implementations
+template <class Archive>
+void ShipDesign::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(empire)
+        & BOOST_SERIALIZATION_NVP(name)
+        & BOOST_SERIALIZATION_NVP(description)
+        & BOOST_SERIALIZATION_NVP(cost)
+        & BOOST_SERIALIZATION_NVP(speed)
+        & BOOST_SERIALIZATION_NVP(colonize)
+        & BOOST_SERIALIZATION_NVP(attack)
+        & BOOST_SERIALIZATION_NVP(defense)
+        & BOOST_SERIALIZATION_NVP(graphic);
+}
 
 inline std::string ShipDesignRevision()
 {return "$Id$";}

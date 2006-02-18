@@ -32,8 +32,7 @@ UniverseObject::UniverseObject() :
     m_x(INVALID_POSITION),
     m_y(INVALID_POSITION),
     m_system_id(INVALID_OBJECT_ID)
-{
-}
+{}
 
 UniverseObject::UniverseObject(const std::string name, double x, double y, 
                                const std::set<int>& owners/* = std::set<int>()*/) : 
@@ -80,8 +79,7 @@ UniverseObject::UniverseObject(const XMLElement& elem) :
 }
 
 UniverseObject::~UniverseObject()
-{
-}
+{}
 
 int UniverseObject::ID() const
 {
@@ -146,6 +144,11 @@ bool UniverseObject::WhollyOwnedBy(int empire) const
 UniverseObject::Visibility UniverseObject::GetVisibility(int empire_id) const
 {
     return (ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? FULL_VISIBILITY : NO_VISIBILITY;
+}
+
+const std::string& UniverseObject::PublicName(int empire_id) const
+{
+    return m_name;
 }
 
 XMLElement UniverseObject::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
@@ -251,8 +254,7 @@ void UniverseObject::ResetMaxMeters()
 }
 
 void UniverseObject::AdjustMaxMeters()
-{
-}
+{}
 
 void UniverseObject::ClampMeters()
 {

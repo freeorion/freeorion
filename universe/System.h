@@ -182,11 +182,11 @@ private:
     int            m_orbits;
     ObjectMultimap m_objects;              ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
     StarlaneMap    m_starlanes_wormholes;  ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
-
-
-inline std::string SystemRevision()
-{return "$Id$";}
 
 
 // template implementations
@@ -266,6 +266,42 @@ std::vector<T*> System::FindObjectsInOrbit(int orbit)
     return retval;
 }
 
+template <class Archive>
+void System::serialize(Archive& ar, const unsigned int version)
+{
+    Visibility vis;
+    int orbits;
+    ObjectMultimap objects;
+    StarlaneMap starlanes_wormholes;
+    if (Archive::is_saving::value) {
+        vis = GetVisibility(Universe::s_encoding_empire);
+        if (ALL_OBJECTS_VISIBLE ||
+            vis == FULL_VISIBILITY) {
+            orbits = m_orbits;
+            objects = m_objects;
+            starlanes_wormholes = m_starlanes_wormholes;
+        } else if (vis == PARTIAL_VISIBILITY) {
+            orbits = m_orbits;
+            objects = PartiallyVisibleObjects(Universe::s_encoding_empire);
+            starlanes_wormholes = VisibleStarlanes(Universe::s_encoding_empire);
+        }
+    }
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
+        & BOOST_SERIALIZATION_NVP(vis);
+    if (ALL_OBJECTS_VISIBLE ||
+        vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
+        ar  & BOOST_SERIALIZATION_NVP(orbits)
+            & BOOST_SERIALIZATION_NVP(objects)
+            & BOOST_SERIALIZATION_NVP(starlanes_wormholes);
+    }
+    if (Archive::is_loading::value) {
+        m_orbits = orbits;
+        m_objects = objects;
+        m_starlanes_wormholes = starlanes_wormholes;
+    }
+}
+
+inline std::string SystemRevision()
+{return "$Id$";}
 
 #endif // _System_h_
-

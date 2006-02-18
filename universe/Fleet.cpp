@@ -82,12 +82,18 @@ UniverseObject::Visibility Fleet::GetVisibility(int empire_id) const
     }
 }
 
+const std::string& Fleet::PublicName(int empire_id) const
+{
+    // Disclose real fleet name only to fleet owners. Rationale: a player might become suspicious if the incoming
+    // foreign fleet is called "Decoy"
+    if (ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
+        return Name();
+    else
+        return UserString("FW_FOREIGN_FLEET");
+}
 
 XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
-    // Fleets are either visible or not, so there is no 
-    // difference between the full and partial visibilty
-    // encodings for this class
     using boost::lexical_cast;
     using std::string;
 
@@ -97,13 +103,13 @@ XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
     // Disclose real fleet name only to fleet owners. Rationale: a player
     // might become suspicious if the incoming foreign fleet is called "Decoy"
     if (!ALL_OBJECTS_VISIBLE &&
-	empire_id != Universe::ALL_EMPIRES && !OwnedBy(empire_id)) {
-	retval.Child("UniverseObject").Child("m_name").SetText(UserString("FW_FOREIGN_FLEET"));
-	// the player also only sees the immediate destination of the fleet,
-	// not the entire route.
-	retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_next_system)));
+        empire_id != Universe::ALL_EMPIRES && !OwnedBy(empire_id)) {
+        retval.Child("UniverseObject").Child("m_name").SetText(UserString("FW_FOREIGN_FLEET"));
+        // the player also only sees the immediate destination of the fleet,
+        // not the entire route.
+        retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_next_system)));
     } else {
-	retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_moving_to)));
+        retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_moving_to)));
     }
     retval.AppendChild(XMLElement("m_ships", StringFromContainer<ShipIDSet>(m_ships)));
     retval.AppendChild(XMLElement("m_prev_system", lexical_cast<std::string>(m_prev_system)));

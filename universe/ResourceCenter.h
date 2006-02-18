@@ -27,11 +27,12 @@ class ResourceCenter
 public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()> ResourceCenterChangedSignalType; ///< emitted when the ResourceCenter is altered in any way
+    typedef boost::signal<UniverseObject* (), Default0Combiner> GetObjectSignalType; ///< emitted as a request for the UniverseObject to which this ResourceCenter is attached
     //@}
 
     /** \name Structors */ //@{
-    ResourceCenter(const Meter& pop, UniverseObject* object); ///< default ctor
-    ResourceCenter(const XMLElement& elem, const Meter& pop, UniverseObject* object); ///< ctor that constructs a ResourceCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ResourceCenter object
+    ResourceCenter(const Meter& pop); ///< default ctor
+    ResourceCenter(const XMLElement& elem, const Meter& pop); ///< ctor that constructs a ResourceCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ResourceCenter object
     virtual ~ResourceCenter(); ///< dtor
     //@}
 
@@ -57,7 +58,7 @@ public:
 
     virtual XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a ResourceCenter object with the given visibility
      
-    mutable ResourceCenterChangedSignalType ResourceCenterChangedSignal; ///< the state changed signal object for this UniverseObject
+    mutable ResourceCenterChangedSignalType ResourceCenterChangedSignal; ///< the state changed signal object for this ResourceCenter
     //@}
 
     /** \name Mutators */ //@{
@@ -78,6 +79,9 @@ public:
     void Reset();
     //@}
 
+protected:
+    mutable GetObjectSignalType GetObjectSignal; ///< the UniverseObject-retreiving signal object for this ResourceCenter
+
 private:
     FocusType  m_primary;
     FocusType  m_secondary;
@@ -89,13 +93,39 @@ private:
     Meter      m_trade;
     Meter      m_construction;
 
-    const Meter&          m_pop;    ///< current / max pop present in this center (may be the one from m_object, e.g. if m_object is a Planet)
-    UniverseObject* const m_object; ///< the UniverseObject of which this center is a part
+    const Meter& m_pop;    ///< current / max pop present in this center (may be the one from m_object, e.g. if m_object is a Planet)
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+// template implementations
+template <class Archive>
+void ResourceCenter::serialize(Archive& ar, const unsigned int version)
+{
+    UniverseObject::Visibility vis;
+    if (Archive::is_saving::value) {
+        UniverseObject* object = GetObjectSignal();
+        assert(object);
+        vis = object->GetVisibility(Universe::s_encoding_empire);
+    }
+    ar  & BOOST_SERIALIZATION_NVP(vis);
+    if (UniverseObject::ALL_OBJECTS_VISIBLE ||
+        vis == UniverseObject::FULL_VISIBILITY) {
+        ar  & BOOST_SERIALIZATION_NVP(m_primary)
+            & BOOST_SERIALIZATION_NVP(m_secondary)
+            & BOOST_SERIALIZATION_NVP(m_farming)
+            & BOOST_SERIALIZATION_NVP(m_industry)
+            & BOOST_SERIALIZATION_NVP(m_mining)
+            & BOOST_SERIALIZATION_NVP(m_research)
+            & BOOST_SERIALIZATION_NVP(m_trade)
+            & BOOST_SERIALIZATION_NVP(m_construction)
+            & BOOST_SERIALIZATION_NVP(m_pop);
+    }
+}
 
 inline std::string ResourceCenterRevision()
 {return "$Id$";}
 
 #endif // _ResourceCenter_h_
-
-
