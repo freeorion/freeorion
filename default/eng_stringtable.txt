@@ -1832,7 +1832,7 @@ GRO_INDUSRY_CLONE_DESC
 Primitive manual nuclear transfer cloning techniques are little more than novelties for large organisms.  By applying techniques similar to industrial mass production or biochemical process engineering, it becomes possible to generate dozens, or millions, of full-grown copies of a single genetic blueprint.  Populations may be made to order, tailored to meet the specific needs of society.
 
 GRO_XENO_HYBRIDS
-Xenlological Hybridization
+Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
 Regardless of how well understood, or how adeptly improved, a biological system is limited by its inheirent nature.  Structures and basic physiology can only be altered so far within the confines of a single planet's biology.  With understanding of other biologies, however, the disparate systems may be fused, forming an entirely new hybrid biology, with potential abilities and traits greater than those of any of its parts.
