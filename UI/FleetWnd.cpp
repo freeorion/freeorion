@@ -655,6 +655,7 @@ FleetDetailPanel::FleetDetailPanel(Fleet* fleet, bool read_only, Uint32 flags/* 
     m_ship_status_text(0)
 {
     SetText("FleetDetailPanel");
+    EnableChildClipping(true);
 
     m_destination_text = new GG::TextControl(0, 0, FLEET_LISTBOX_WIDTH, ClientUI::PTS + 4, "temp", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR, GG::TF_LEFT);
     m_ships_lb = new ShipsListBox(0, m_destination_text->LowerRight().y + CONTROL_MARGIN, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT, 0, read_only);
@@ -668,6 +669,8 @@ FleetDetailPanel::FleetDetailPanel(Fleet* fleet, bool read_only, Uint32 flags/* 
 
     m_destination_text->SetText("");
     m_ship_status_text->SetText("");
+    m_destination_text->SetMinSize(false);
+    m_ship_status_text->SetMinSize(false);
 
     SetFleet(fleet);
     Init();

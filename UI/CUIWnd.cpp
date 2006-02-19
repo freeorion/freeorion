@@ -179,22 +179,11 @@ CUIWnd::CUIWnd(const std::string& t, int x, int y, int w, int h, Uint32 flags) :
 }
 
 CUIWnd::~CUIWnd()
-{
-}
+{}
 
 void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
-    if (Width() < MinSize().x)
-        Resize(GG::Pt(MinSize().x, Height()));
-    if (MaxSize().x < Width())
-        Resize(GG::Pt(MaxSize().x, Height()));
-
-    if (Height() < MinSize().y)
-        Resize(GG::Pt(Width(), MinSize().y));
-    if (MaxSize().y < Height())
-        Resize(GG::Pt(Width(), MaxSize().y));
-
     GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET) + UpperLeft() - ClientUpperLeft();
     if (m_close_button)
         m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
