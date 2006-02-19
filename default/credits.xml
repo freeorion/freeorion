@@ -16,7 +16,7 @@
       <PERSON name="Ronald Nölte"        nick="Noelte"          task="Programming"/>
       <PERSON name="Tony Casale"         nick="Tsev"            task="Programming"/>
       <PERSON name="Michael J. Agostini" nick=""                task="Programming"/>
-      <PERSON name="Geoff Topping"       nick="Geoff the Medio"	task="Programming, Game Design"/>
+      <PERSON name="Geoff Topping"       nick="Geoff the Medio" task="Programming, Game Design"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Krum Stanoev"    nick=""           task="Game Design"/>
