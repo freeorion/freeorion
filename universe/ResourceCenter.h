@@ -121,7 +121,7 @@ void ResourceCenter::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_research)
             & BOOST_SERIALIZATION_NVP(m_trade)
             & BOOST_SERIALIZATION_NVP(m_construction)
-            & BOOST_SERIALIZATION_NVP(m_pop);
+            & boost::serialization::make_nvp("m_pop", const_cast<Meter&>(m_pop));
     }
 }
 

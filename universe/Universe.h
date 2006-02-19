@@ -40,6 +40,7 @@
 #include <boost/graph/filtered_graph.hpp>
 #endif
 
+#include <boost/iostreams/filtering_stream.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/type_traits/remove_const.hpp>
@@ -144,6 +145,7 @@ public:
     /** \name Structors */ //@{
     Universe(); ///< default ctor
     Universe(const XMLElement& elem); ///< ctor that constructs a Universe object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Universe object
+    const Universe& operator=(Universe& rhs); ///< assignment (move semantics)
     virtual ~Universe(); ///< dtor
     //@}
 
@@ -201,12 +203,14 @@ public:
     std::map<double, System*> ImmediateNeighbors(int system, int empire_id = ALL_EMPIRES) const;
 
     virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
+    std::string Encode(int empire_id = ALL_EMPIRES) const;  ///< constructs a serialized representation from a Universe object with visibility restrictions for the given empire
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
 
     /** \name Mutators */ //@{
-    void SetUniverse(const XMLElement& elem ); ///< wipes out the current object map and sets the map to the XMLElement passed in.
+    void SetUniverse(const XMLElement& elem); ///< wipes out the current object map and sets the map to the XMLElement passed in.
+    void SetUniverse(boost::iostreams::filtering_istream& is); ///< wipes out the current object map and sets the map to the serialized representation in stream \a is.
 
     /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.
         \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
@@ -319,7 +323,6 @@ protected:
 
     void PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
     
-    //old version -- void GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated
     void GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated
     bool ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray); // used by GenerateStarlanes.  Determines if two systems are connected by maxLaneJumps or less edges on graph
     void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems); // Removes lanes from passed graph that are angularly too close to eachother
@@ -356,22 +359,31 @@ private:
 
 
 // template implementations
-template <class Archive>
-void Universe::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
-        & BOOST_SERIALIZATION_NVP(m_objects)
-        & BOOST_SERIALIZATION_NVP(m_last_allocated_id);
-}
-
-inline std::string UniverseRevision()
-{return "$Id$";}
-
-#if (10*__GNUC__ + __GNUC_MINOR__ > 33) && (!defined _UniverseObject_h_)
+#if (10 * __GNUC__ + __GNUC_MINOR__ > 33) && (!defined _UniverseObject_h_)
 #  include "UniverseObject.h"
 #endif
 
-// template implementations
+template <class Archive>
+void Universe::serialize(Archive& ar, const unsigned int version)
+{
+    ObjectMap objects;
+    if (Archive::is_saving::value) {
+        for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+            if (UniverseObject::ALL_OBJECTS_VISIBLE ||
+                it->second->GetVisibility(s_encoding_empire) != UniverseObject::NO_VISIBILITY ||
+                universe_object_cast<System*>(it->second))
+            {
+                objects.insert(*it);
+            }
+        }
+    }
+    ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
+        & BOOST_SERIALIZATION_NVP(objects)
+        & BOOST_SERIALIZATION_NVP(m_last_allocated_id);
+    if (Archive::is_loading::value)
+        m_objects = objects;
+}
+
 template <class T> 
 const T* Universe::Object(int id) const
 {
@@ -458,5 +470,7 @@ void Universe::NumberedElementFactory<T>::AddGenerator(const std::string& name, 
     m_generators[name] = gen;
 }
 
+inline std::string UniverseRevision()
+{return "$Id$";}
 
 #endif // _Universe_h_

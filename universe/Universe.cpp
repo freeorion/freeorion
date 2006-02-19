@@ -27,13 +27,51 @@
 #include "../server/ServerApp.h"
 #endif
 
-#include <boost/tuple/tuple.hpp>
+#ifdef FREEORION_LINUX
+#  include <SDL/SDL_byteorder.h>
+#else
+#  include <SDL_byteorder.h>
+#endif
+
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/set.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #include <cmath>
-#include <boost/filesystem/fstream.hpp>
 #include <stdexcept>
+
+
+// exports for boost serialization of polymorphic UniverseObject hierarchy
+BOOST_CLASS_EXPORT(System)
+BOOST_CLASS_EXPORT(Planet)
+BOOST_CLASS_EXPORT(Building)
+BOOST_CLASS_EXPORT(Fleet)
+BOOST_CLASS_EXPORT(Ship)
+
+// some endianness and size checks to ensure portability of binary save files; of one or more of these fails, it means
+// that FreeOrion is not supported on your platform/compiler pair, and must be modified to provide data of the
+// appropriate size(s).
+BOOST_STATIC_ASSERT(SDL_BYTEORDER == SDL_LIL_ENDIAN);
+BOOST_STATIC_ASSERT(sizeof(char) == 1);
+BOOST_STATIC_ASSERT(sizeof(short) == 2);
+BOOST_STATIC_ASSERT(sizeof(int) == 4);
+BOOST_STATIC_ASSERT(sizeof(Uint32) == 4);
+BOOST_STATIC_ASSERT(sizeof(long) == 4);
+BOOST_STATIC_ASSERT(sizeof(long long) == 8);
+BOOST_STATIC_ASSERT(sizeof(float) == 4);
+BOOST_STATIC_ASSERT(sizeof(double) == 8);
 
 namespace {
     // for UniverseObject factory
@@ -883,6 +921,19 @@ Universe::Universe()
     m_last_allocated_id = -1;
 }
 
+const Universe& Universe::operator=(Universe& rhs)
+{
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        delete it->second;
+    }
+    m_objects.clear();
+    m_last_allocated_id = rhs.m_last_allocated_id;
+    m_objects = rhs.m_objects;
+    rhs.m_objects.clear();
+    InitializeSystemGraph();
+    return *this;
+}
+
 Universe::Universe(const XMLElement& elem)
 {
     m_factory.AddGenerator("Building", &NewBuilding);
@@ -921,6 +972,14 @@ void Universe::SetUniverse(const XMLElement& elem)
     m_last_allocated_id = boost::lexical_cast<int>(elem.Child("m_last_allocated_id").Text());
 
     InitializeSystemGraph();
+}
+
+void Universe::SetUniverse(boost::iostreams::filtering_istream& is)
+{
+    boost::archive::xml_iarchive ia(is);
+    Universe tmp;
+    ia >> boost::serialization::make_nvp("universe", tmp);
+    *this = tmp;
 }
 
 const UniverseObject* Universe::Object(int id) const
@@ -1021,6 +1080,20 @@ XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
     }
 
     retval.AppendChild(XMLElement("m_last_allocated_id", boost::lexical_cast<std::string>(m_last_allocated_id)));
+    return retval;
+}
+
+std::string Universe::Encode(int empire_id/* = ALL_EMPIRES*/) const
+{
+    std::string retval;
+    s_encoding_empire = empire_id;
+    {
+        namespace io = boost::iostreams;
+        io::filtering_ostream os;
+        os.push(io::back_inserter(retval));
+        boost::archive::xml_oarchive oa(os);
+        oa << boost::serialization::make_nvp("universe", *this);
+    }
     return retval;
 }
 

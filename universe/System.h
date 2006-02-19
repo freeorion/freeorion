@@ -287,7 +287,8 @@ void System::serialize(Archive& ar, const unsigned int version)
         }
     }
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(vis);
+        & BOOST_SERIALIZATION_NVP(vis)
+        & BOOST_SERIALIZATION_NVP(m_star);
     if (ALL_OBJECTS_VISIBLE ||
         vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
         ar  & BOOST_SERIALIZATION_NVP(orbits)

@@ -713,6 +713,7 @@ void HumanClientApp::SDLQuit()
     Logger().debugStream() << "SDLQuit() complete.";
 }
 
+#include <boost/iostreams/device/file.hpp>
 void HumanClientApp::HandleMessageImpl(const Message& msg)
 {
     m_handling_message = true;
@@ -792,8 +793,32 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             } else {
                 Logger().debugStream() << "No Empire data received from server.  Update Server Code.";
             }
-            
+
             m_universe.SetUniverse(doc.root_node.Child("Universe"));
+
+#define TEST_UNIVERSE_BOOST_SERIALIZATION 1
+#if TEST_UNIVERSE_BOOST_SERIALIZATION
+            Universe boost_xml_universe;
+            namespace io = boost::iostreams;
+            std::string boost_xml_filename = (GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.xml")).native_file_string();
+            io::filtering_istream is;
+            is.push(io::file_source(boost_xml_filename));
+            boost_xml_universe.SetUniverse(is);
+
+            {
+                XMLDoc doc;
+                doc.root_node.AppendChild(m_universe.XMLEncode());
+                std::ofstream ofs("Univese_XMLDoc.xml");
+                doc.WriteDoc(ofs);
+            }
+            {
+                XMLDoc doc;
+                doc.root_node.AppendChild(boost_xml_universe.XMLEncode());
+                std::ofstream ofs("Univese_Boost_Serialization.xml");
+                doc.WriteDoc(ofs);
+            }
+#endif
+
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Universe setup complete.";
 
             for (Empire::SitRepItr it = Empires().Lookup(m_empire_id)->SitRepBegin(); it != Empires().Lookup(m_empire_id)->SitRepEnd(); ++it) {

@@ -1429,6 +1429,14 @@ void ServerApp::NewGameInit()
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
         doc.root_node.AppendChild(XMLElement("empire_id", boost::lexical_cast<std::string>(it->first)));
 
+#define TEST_UNIVERSE_BOOST_SERIALIZATION 1
+#if TEST_UNIVERSE_BOOST_SERIALIZATION
+        {
+            boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(it->first) + "-boost.xml"));
+            ofs << m_universe.Encode(it->first);
+        }
+#endif
+
         // turn number is an attribute of the document
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
 

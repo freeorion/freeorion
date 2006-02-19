@@ -232,11 +232,11 @@ def CheckBoostLib(context, lib_tuple, conf):
     if suffix:
         lib_name += suffix
     print 'Looking for boost lib %s... ' % lib_name
-    if conf.CheckLib(lib_name, lib_tuple[1], header = lib_tuple[2], language = 'C++'):
+    if conf.CheckLibWithHeader(lib_name, lib_tuple[1], 'C++', lib_tuple[2]):
         ret = lib_name
     else:
         lib_name = lib_name + '-mt'
-        if conf.CheckLib(lib_name, lib_tuple[1], header = lib_tuple[2], language = 'C++'):
+        if conf.CheckLibWithHeader(lib_name, lib_tuple[1], 'C++', lib_tuple[2]):
             ret = lib_name
     return ret
 

@@ -190,7 +190,12 @@ if not env.GetOption('clean'):
                 env.ParseConfig('pkg-config --cflags --libs GiGiSDL')
                 found_gg_pkg_config = True
 
-        if not found_gg_pkg_config:
+        freeorion_boost_libs = [('boost_serialization', 'boost/archive/binary_iarchive.hpp', 'boost::archive::binary_iarchive::is_saving();')]
+
+        if found_gg_pkg_config:
+            if not conf.CheckBoost(boost_version_string, freeorion_boost_libs, conf, not ms_linker):
+                Exit(1)
+        else:
             if OptionValue('boost_signals_namespace', env):
                 signals_namespace = OptionValue('boost_signals_namespace', env)
                 env.Append(CPPDEFINES = [
@@ -198,9 +203,11 @@ if not env.GetOption('clean'):
                     ('signals', signals_namespace)
                     ])
 
-            boost_libs = [('boost_signals', 'boost::signals::connection', '#include <boost/signals.hpp>'),
-                          ('boost_filesystem', 'boost::filesystem::initial_path', '#include <boost/filesystem/operations.hpp>')]
-            if not conf.CheckBoost('1.32.0', boost_libs, conf, not ms_linker):
+            boost_libs = freeorion_boost_libs + [
+                ('boost_signals', 'boost/signals.hpp', 'boost::signals::connection();'),
+                ('boost_filesystem', 'boost/filesystem/operations.hpp', 'boost::filesystem::initial_path();')
+                ]
+            if not conf.CheckBoost(boost_version_string, boost_libs, conf, not ms_linker):
                 Exit(1)
 
             # pthreads

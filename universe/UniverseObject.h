@@ -190,7 +190,7 @@ void UniverseObject::serialize(Archive& ar, const unsigned int version)
         vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
         // We don't disclose the real object name for some types of objects, cinve it would look funny if e.g. the user
         // saw an incoming enemy cleet called "Decoy".
-        std::string name = PublicName();
+        std::string name = PublicName(Universe::s_encoding_empire);
         ar  & BOOST_SERIALIZATION_NVP(name)
             & BOOST_SERIALIZATION_NVP(m_owners)
             & BOOST_SERIALIZATION_NVP(m_specials);
