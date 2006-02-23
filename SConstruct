@@ -190,7 +190,10 @@ if not env.GetOption('clean'):
                 env.ParseConfig('pkg-config --cflags --libs GiGiSDL')
                 found_gg_pkg_config = True
 
-        freeorion_boost_libs = [('boost_serialization', 'boost/archive/binary_iarchive.hpp', 'boost::archive::binary_iarchive::is_saving();')]
+        freeorion_boost_libs = [
+            ('boost_serialization', 'boost/archive/binary_iarchive.hpp', 'boost::archive::binary_iarchive::is_saving();'),
+            ('boost_iostreams', 'boost/iostreams/filtering_stream.hpp', '')
+            ]
 
         if found_gg_pkg_config:
             if not conf.CheckBoost(boost_version_string, freeorion_boost_libs, conf, not ms_linker):
@@ -327,6 +330,8 @@ int main() {
         if pkg_config:
             if conf.CheckPkg('graphviz', graphviz_pkgconfig_version):
                 env.ParseConfig('pkg-config --cflags --libs graphviz')
+            elif conf.CheckPkg('libdotneato', graphviz_pkgconfig_version):
+                env.ParseConfig('pkg-config --cflags --libs libdotneato')
         if not conf.CheckCHeader('graphviz/render.h') and not conf.CheckCHeader('render.h'):
             Exit(1)
         env.Append(LIBS = [
