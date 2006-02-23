@@ -1,12 +1,3 @@
-#define TEST_BINARY_ARCHIVES 0
-#if TEST_BINARY_ARCHIVES
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#else
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#endif
-
 #include "ServerApp.h"
 
 #include "../combat/CombatSystem.h"
@@ -76,37 +67,14 @@ namespace {
 #  define GZIP_SAVE_FILES_COMPRESSION_LEVEL 0
 #endif
 
-#include "../universe/ShipDesign.h"
+#define TEST_UNIVERSE_BOOST_SERIALIZATION 0
+#define TEST_BINARY_ARCHIVES 1
+#if TEST_UNIVERSE_BOOST_SERIALIZATION
+#include "../util/Serialize.h"
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/range/iterator_range.hpp>
-#include <boost/serialization/export.hpp>
-#include <boost/serialization/deque.hpp>
-#include <boost/serialization/list.hpp>
-#include <boost/serialization/map.hpp>
-#include <boost/serialization/set.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/static_assert.hpp>
-
-// exports for boost serialization of polymorphic UniverseObject hierarchy
-BOOST_CLASS_EXPORT(System)
-BOOST_CLASS_EXPORT(Planet)
-BOOST_CLASS_EXPORT(Building)
-BOOST_CLASS_EXPORT(Fleet)
-BOOST_CLASS_EXPORT(Ship)
-
-// some endianness and size checks to ensure portability of binary save files; of one or more of these fails, it means
-// that FreeOrion is not supported on your platform/compiler pair, and must be modified to provide data of the
-// appropriate size(s).
-BOOST_STATIC_ASSERT(SDL_BYTEORDER == SDL_LIL_ENDIAN);
-BOOST_STATIC_ASSERT(sizeof(char) == 1);
-BOOST_STATIC_ASSERT(sizeof(short) == 2);
-BOOST_STATIC_ASSERT(sizeof(int) == 4);
-BOOST_STATIC_ASSERT(sizeof(Uint32) == 4);
-BOOST_STATIC_ASSERT(sizeof(long) == 4);
-BOOST_STATIC_ASSERT(sizeof(long long) == 8);
-BOOST_STATIC_ASSERT(sizeof(float) == 4);
-BOOST_STATIC_ASSERT(sizeof(double) == 8);
+#endif
 
 
 namespace {
@@ -1456,7 +1424,6 @@ void ServerApp::NewGameInit()
         AddEmpireTurn( it->first );
     }
 
-#define TEST_UNIVERSE_BOOST_SERIALIZATION 1
 #if TEST_UNIVERSE_BOOST_SERIALIZATION
     {
         Universe::s_encoding_empire = Universe::ALL_EMPIRES;
@@ -1470,13 +1437,12 @@ void ServerApp::NewGameInit()
 #else
             boost::archive::xml_oarchive oa(os);
 #endif
-            const EmpireManager& empire_manager = m_empires;
-            oa << boost::serialization::make_nvp("single_player_game", m_single_player_game)
-               << BOOST_SERIALIZATION_NVP(m_universe)
-               << boost::serialization::make_nvp("m_empires", empire_manager);
+            oa << boost::serialization::make_nvp("single_player_game", m_single_player_game);
+            Serialize(&oa, m_universe);
+            Serialize(&oa, m_empires);
         }
 #if TEST_BINARY_ARCHIVES
-        boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-boost.bin"));
+        boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-boost.bin"), std::ios_base::in | std::ios_base::binary);
 #else
         boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-boost.xml"));
 #endif
@@ -1506,14 +1472,12 @@ void ServerApp::NewGameInit()
 #else
                 boost::archive::xml_oarchive oa(os);
 #endif
-                const EmpireManager& empire_manager = m_empires;
-                oa << boost::serialization::make_nvp("single_player_game", m_single_player_game)
-                   << boost::serialization::make_nvp("m_empire_id", it->first)
-                   << BOOST_SERIALIZATION_NVP(m_universe)
-                   << boost::serialization::make_nvp("m_empires", empire_manager);
+                oa << boost::serialization::make_nvp("single_player_game", m_single_player_game);
+                Serialize(&oa, m_universe);
+                Serialize(&oa, m_empires);
             }
 #if TEST_BINARY_ARCHIVES
-            boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(it->first) + "-boost.bin"));
+            boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(it->first) + "-boost.bin"), std::ios_base::in | std::ios_base::binary);
 #else
             boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(it->first) + "-boost.xml"));
 #endif

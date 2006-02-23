@@ -68,7 +68,7 @@ XMLElement ServerEmpireManager::CreateClientEmpireUpdate(int empire_id)
 
     for (EmpireManager::iterator it = begin(); it != end(); ++it) {
         XMLElement current_empire("Empire" + boost::lexical_cast<std::string>(it->second->EmpireID()));
-        current_empire.AppendChild(it->second->XMLEncode(*emp));
+        current_empire.AppendChild(it->second->XMLEncode(emp->EmpireID()));
         this_turn.AppendChild(current_empire);
     }
 

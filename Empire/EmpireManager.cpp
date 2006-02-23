@@ -8,29 +8,26 @@ namespace {
     bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
-
 const std::string EmpireManager::EMPIRE_UPDATE_TAG = "EmpireUpdate";
 
-/**  Constructors */ 
-EmpireManager::EmpireManager()
-{
-    // nothing to do yet
-}
-   
-   
-/** Destructors */
 EmpireManager::~EmpireManager()
 {
-    // kill 'em all!
-    EmpireManager::iterator itr = begin();
-    while(itr != end())
-    {
-        delete (*itr).second;
-        itr++;
-    }
+    RemoveAllEmpires();
 }
-   
-/**  Const Iterators */ 
+
+const EmpireManager& EmpireManager::operator=(EmpireManager& rhs)
+{
+    RemoveAllEmpires();
+    m_empire_map = rhs.m_empire_map;
+    rhs.m_empire_map.clear();
+    return *this;
+}
+
+const Empire* EmpireManager::Lookup(int ID) const
+{
+    const_iterator it = m_empire_map.find(ID);
+    return it == end() ? 0 : it->second;
+}
 
 EmpireManager::const_iterator EmpireManager::begin() const
 {
@@ -42,46 +39,11 @@ EmpireManager::const_iterator EmpireManager::end() const
     return m_empire_map.end();
 }
 
-
-/**  Empire Lookup By ID */ 
-
-/**
-* Lookup will look up an empire by its EmpireID
-* and return a pointer to that empire, if it exists in teh manager
-*  or NULL if it does not.  (This one is the const version)
-*/
-const Empire* EmpireManager::Lookup(int ID) const
-{
-    const_iterator itr = m_empire_map.find(ID);
-
-    if(itr == end())
-    {
-        return NULL;
-    }
-    
-    return (*itr).second;
-    
-}
-/**
-* Lookup will look up an empire by its EmpireID
-* and return a pointer to that empire, if it exists in teh manager
-*  or NULL if it does not
-*/
 Empire* EmpireManager::Lookup(int ID)
 {
-    iterator itr = m_empire_map.find(ID);
-
-    if(itr == end())
-    {
-        return NULL;
-    }
-    
-    return (*itr).second;
+    iterator it = m_empire_map.find(ID);
+    return it == end() ? 0 : it->second;
 }
-  
-  
-  
-/**  Non-Const Iterators */ 
 
 EmpireManager::iterator EmpireManager::begin()
 {
@@ -93,57 +55,34 @@ EmpireManager::iterator EmpireManager::end()
     return m_empire_map.end();
 }
 
-
-bool EmpireManager::UpdateEmpireStatus(int empireID, 
-                        std::string &name, 
-                        GG::Clr color)
+XMLElement EmpireManager::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/)
 {
-    Empire* emp = Lookup(empireID);
-    
-    if(emp != NULL)
-    {
-        emp->SetName(name);
-        emp->SetColor(color);
-        
-        return true;
+    XMLElement retval("EmpireManager");
+    for (EmpireManager::iterator it = begin(); it != end(); ++it) {
+        retval.AppendChild(XMLElement("Empire" + boost::lexical_cast<std::string>(it->second->EmpireID()), it->second->XMLEncode(empire_id)));
     }
-    else
-    {
-        return false;
-    }
-   
+    return retval;
 }
-  
 
-  
-/**
-* InsertEmpire adds the given empire to the manager's map
-* 
-*/
 void EmpireManager::InsertEmpire(Empire* empire)
 {
-    if(empire != NULL)
-    {
-        std::pair<int, Empire*> newpair(empire->EmpireID(), empire);
-        m_empire_map.insert(newpair);
+    if (empire) {
+        assert(!m_empire_map[empire->EmpireID()]);
+        m_empire_map[empire->EmpireID()] = empire;
     }
 }
 
-/**
-* RemoveEmpire removes the given empire from the manager's map
-*/
 void EmpireManager::RemoveEmpire(Empire* empire)
 {
-    if(empire != NULL)
-    {
+    if (empire)
         m_empire_map.erase(empire->EmpireID());
-    }
 }
 
 void EmpireManager::RemoveAllEmpires()
 {
-    for(EmpireManager::iterator itr = begin(); itr != end(); itr++)
-        delete itr->second;
+    for (EmpireManager::iterator it = begin(); it != end(); ++it) {
+        delete it->second;
+    }
     m_empire_map.clear();
 }
 

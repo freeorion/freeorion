@@ -379,30 +379,9 @@ public:
     /// Returns the number of production points available to the empire (this is the minimum of current industry and mineral outputs).
     double ProductionPoints() const;
 
-    /// Encodes an empire into an XMLElement
-    /**
-     * This method encodes an empire into an XMLElement, which can then
-     * be transmitted over the network and used by a client to replicate
-     * the empire object.  
-     *
-     * This method is used by the Server to generate turn updates.
-     *
-     * All data on the empire is encoded.
-     *
-     *
-     */
-    XMLElement XMLEncode() const;
-
-
-    /// Encodes an empire into an XMLElement, from the perspective of another
-    /**
-     * This method encodes the empire into an XMLElement, but includes only
-     * the information that the specified empire will have access to.
-     * 
-     *   If the viewer has the same empire ID as the host object
-     *   then the return value is the same as the no-arg version of XMLEncode()
-     */
-    XMLElement XMLEncode(const Empire& viewer) const;
+    /** Encodes the dat of this empire as visible to the empire with id \a empire_id (or all data if \a empire_id ==
+        Universe::ALL_EMPIRES) */
+    XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const;
     //@}
 
 
@@ -552,6 +531,7 @@ private:
     TradeResourcePool       m_trade_resource_pool;
 
     friend class boost::serialization::access;
+    Empire();
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
@@ -617,7 +597,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_player_name)
         & BOOST_SERIALIZATION_NVP(m_color);
-    if (m_id == Universe::s_encoding_empire) {
+    if (Universe::ALL_OBJECTS_VISIBLE ||
+        Universe::s_encoding_empire == Universe::ALL_EMPIRES || m_id == Universe::s_encoding_empire) {
         ar  & BOOST_SERIALIZATION_NVP(m_homeworld_id)
             & BOOST_SERIALIZATION_NVP(m_techs)
             & BOOST_SERIALIZATION_NVP(m_research_queue)

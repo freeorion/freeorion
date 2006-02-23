@@ -46,9 +46,6 @@ class XMLElement;
 class UniverseObject
 {
 public:
-    /// Set to true to make everything visible for everyone. Useful for debugging
-    static const bool ALL_OBJECTS_VISIBLE = false;
-
     /** the three different visibility levels */
     enum Visibility { 
         FULL_VISIBILITY,
@@ -186,11 +183,14 @@ void UniverseObject::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_x)
         & BOOST_SERIALIZATION_NVP(m_y)
         & BOOST_SERIALIZATION_NVP(m_system_id);
-    if (ALL_OBJECTS_VISIBLE ||
+    if (Universe::ALL_OBJECTS_VISIBLE ||
         vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
-        // We don't disclose the real object name for some types of objects, cinve it would look funny if e.g. the user
-        // saw an incoming enemy cleet called "Decoy".
-        std::string name = PublicName(Universe::s_encoding_empire);
+        std::string name;
+        if (Archive::is_saving::value) {
+            // We don't disclose the real object name for some types of objects, cinve it would look funny if e.g. the user
+            // saw an incoming enemy cleet called "Decoy".
+            name = PublicName(Universe::s_encoding_empire);
+        }
         ar  & BOOST_SERIALIZATION_NVP(name)
             & BOOST_SERIALIZATION_NVP(m_owners)
             & BOOST_SERIALIZATION_NVP(m_specials);

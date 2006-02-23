@@ -535,6 +535,11 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empi
 ////////////////////////////////////////
 // class Empire                       //
 ////////////////////////////////////////
+Empire::Empire() :
+    m_id(-1),
+    m_homeworld_id(-1)
+{}
+
 Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id) :
     m_id(ID),
     m_name(name),
@@ -977,7 +982,7 @@ void Empire::ClearSitRep()
     m_sitrep_entries.clear();
 }
 
-XMLElement Empire::XMLEncode() const
+XMLElement Empire::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
 {
     using boost::lexical_cast;
 
@@ -986,85 +991,68 @@ XMLElement Empire::XMLEncode() const
     retval.AppendChild(XMLElement("m_name", m_name));
     retval.AppendChild(XMLElement("m_player_name", m_player_name));
     retval.AppendChild(XMLElement("m_color", ClrToXML(m_color)));
-    retval.AppendChild(XMLElement("m_homeworld_id", lexical_cast<std::string>(m_homeworld_id)));
 
-    retval.AppendChild(XMLElement("m_sitrep_entries"));
-    for (SitRepItr it = SitRepBegin(); it != SitRepEnd(); ++it) {
-       retval.LastChild().AppendChild((*it)->XMLEncode());
+    if (empire_id == m_id || empire_id == Universe::ALL_EMPIRES) {
+        retval.AppendChild(XMLElement("m_homeworld_id", lexical_cast<std::string>(m_homeworld_id)));
+
+        retval.AppendChild(XMLElement("m_sitrep_entries"));
+        for (SitRepItr it = SitRepBegin(); it != SitRepEnd(); ++it) {
+            retval.LastChild().AppendChild((*it)->XMLEncode());
+        }
+
+        retval.AppendChild(XMLElement("m_ship_designs"));
+        int i = 0;
+        for (ShipDesignItr it = ShipDesignBegin(); it != ShipDesignEnd(); ++it) {
+            retval.LastChild().AppendChild(XMLElement("design" + lexical_cast<std::string>(i++), it->second.XMLEncode()));
+        }
+
+        retval.AppendChild(XMLElement("m_explored_systems", StringFromContainer<std::set<int> >(m_explored_systems)));
+        retval.AppendChild(XMLElement("m_techs"));
+        i = 0;
+        for (TechItr it = TechBegin(); it != TechEnd(); ++it) {
+            retval.LastChild().AppendChild(XMLElement("tech" + lexical_cast<std::string>(i++), *it));
+        }
+
+        retval.AppendChild(XMLElement("m_research_queue", m_research_queue.XMLEncode()));
+        retval.AppendChild(XMLElement("m_research_status"));
+        for (std::map<std::string, double>::const_iterator it = m_research_status.begin(); it != m_research_status.end(); ++it) {
+            retval.LastChild().AppendChild(XMLElement(it->first, lexical_cast<std::string>(it->second)));
+        }
+
+        retval.AppendChild(XMLElement("m_production_queue", m_production_queue.XMLEncode()));
+        retval.AppendChild(XMLElement("m_production_status", StringFromContainer(m_production_status)));
+
+        retval.AppendChild(XMLElement("m_building_types"));
+        i = 0;
+        for (BuildingTypeItr it = BuildingTypeBegin(); it != BuildingTypeEnd(); ++it) {
+            retval.LastChild().AppendChild(XMLElement("building_type" + lexical_cast<std::string>(i++), *it));
+        }
+
+        retval.AppendChild(XMLElement("m_mineral_resource_pool", m_mineral_resource_pool.XMLEncode()));
+        retval.AppendChild(XMLElement("m_food_resource_pool", m_food_resource_pool.XMLEncode()));
+        retval.AppendChild(XMLElement("m_research_resource_pool", m_research_resource_pool.XMLEncode()));
+        retval.AppendChild(XMLElement("m_industry_resource_pool", m_industry_resource_pool.XMLEncode()));
+        retval.AppendChild(XMLElement("m_population_resource_pool", m_population_resource_pool.XMLEncode()));
+        retval.AppendChild(XMLElement("m_trade_resource_pool", m_trade_resource_pool.XMLEncode()));
+    } else {
+        // leave these in, but unpopulated or default-populated
+        retval.AppendChild(XMLElement("m_homeworld_id"));
+        retval.AppendChild(XMLElement("m_sitrep_entries"));
+        retval.AppendChild(XMLElement("m_ship_designs"));
+        retval.AppendChild(XMLElement("m_explored_systems"));
+        retval.AppendChild(XMLElement("m_techs"));
+        retval.AppendChild(XMLElement("m_research_queue", ResearchQueue().XMLEncode()));
+        retval.AppendChild(XMLElement("m_research_status"));
+        retval.AppendChild(XMLElement("m_production_queue", ProductionQueue().XMLEncode()));
+        retval.AppendChild(XMLElement("m_production_status"));
+        retval.AppendChild(XMLElement("m_building_types"));
+        retval.AppendChild(XMLElement("m_mineral_resource_pool", MineralResourcePool().XMLEncode()));
+        retval.AppendChild(XMLElement("m_food_resource_pool", FoodResourcePool().XMLEncode()));
+        retval.AppendChild(XMLElement("m_research_resource_pool", ResearchResourcePool().XMLEncode()));
+        retval.AppendChild(XMLElement("m_industry_resource_pool", IndustryResourcePool().XMLEncode()));
+        retval.AppendChild(XMLElement("m_population_resource_pool", PopulationResourcePool().XMLEncode()));
+        retval.AppendChild(XMLElement("m_trade_resource_pool", TradeResourcePool().XMLEncode()));
     }
-
-    retval.AppendChild(XMLElement("m_ship_designs"));
-    int i = 0;
-    for (ShipDesignItr it = ShipDesignBegin(); it != ShipDesignEnd(); ++it) {
-        retval.LastChild().AppendChild(XMLElement("design" + lexical_cast<std::string>(i++), it->second.XMLEncode()));
-    }
-
-    retval.AppendChild(XMLElement("m_explored_systems", StringFromContainer<std::set<int> >(m_explored_systems)));
-    retval.AppendChild(XMLElement("m_techs"));
-    i = 0;
-    for (TechItr it = TechBegin(); it != TechEnd(); ++it) {
-        retval.LastChild().AppendChild(XMLElement("tech" + lexical_cast<std::string>(i++), *it));
-    }
-
-    retval.AppendChild(XMLElement("m_research_queue", m_research_queue.XMLEncode()));
-    retval.AppendChild(XMLElement("m_research_status"));
-    for (std::map<std::string, double>::const_iterator it = m_research_status.begin(); it != m_research_status.end(); ++it) {
-        retval.LastChild().AppendChild(XMLElement(it->first, lexical_cast<std::string>(it->second)));
-    }
-
-    retval.AppendChild(XMLElement("m_production_queue", m_production_queue.XMLEncode()));
-    retval.AppendChild(XMLElement("m_production_status", StringFromContainer(m_production_status)));
-
-    retval.AppendChild(XMLElement("m_building_types"));
-    i = 0;
-    for (BuildingTypeItr it = BuildingTypeBegin(); it != BuildingTypeEnd(); ++it) {
-        retval.LastChild().AppendChild(XMLElement("building_type" + lexical_cast<std::string>(i++), *it));
-    }
-
-    retval.AppendChild(XMLElement("m_mineral_resource_pool", m_mineral_resource_pool.XMLEncode()));
-    retval.AppendChild(XMLElement("m_food_resource_pool", m_food_resource_pool.XMLEncode()));
-    retval.AppendChild(XMLElement("m_research_resource_pool", m_research_resource_pool.XMLEncode()));
-    retval.AppendChild(XMLElement("m_industry_resource_pool", m_industry_resource_pool.XMLEncode()));
-    retval.AppendChild(XMLElement("m_population_resource_pool", m_population_resource_pool.XMLEncode()));
-    retval.AppendChild(XMLElement("m_trade_resource_pool", m_trade_resource_pool.XMLEncode()));
-
-    return retval;
-}
-
-XMLElement Empire::XMLEncode(const Empire& viewer) const
-{
-    // same empire --->  call other version
-    if (viewer.EmpireID() == this->EmpireID())
-    {
-        return XMLEncode();
-    }
-    
-    using boost::lexical_cast;
-
-    XMLElement retval("Empire");
-    retval.AppendChild(XMLElement("m_id", lexical_cast<std::string>(m_id)));
-    retval.AppendChild(XMLElement("m_name", m_name));
-    retval.AppendChild(XMLElement("m_player_name", m_player_name));
-    retval.AppendChild(XMLElement("m_color", ClrToXML(m_color)));
-
-    // leave these in, but unpopulated or default-populated
-    retval.AppendChild(XMLElement("m_homeworld_id"));
-    retval.AppendChild(XMLElement("m_sitrep_entries"));
-    retval.AppendChild(XMLElement("m_ship_designs"));
-    retval.AppendChild(XMLElement("m_explored_systems"));
-    retval.AppendChild(XMLElement("m_techs"));
-    retval.AppendChild(XMLElement("m_research_queue", ResearchQueue().XMLEncode()));
-    retval.AppendChild(XMLElement("m_research_status"));
-    retval.AppendChild(XMLElement("m_production_queue", ProductionQueue().XMLEncode()));
-    retval.AppendChild(XMLElement("m_production_status"));
-    retval.AppendChild(XMLElement("m_building_types"));
-    retval.AppendChild(XMLElement("m_mineral_resource_pool", MineralResourcePool().XMLEncode()));
-    retval.AppendChild(XMLElement("m_food_resource_pool", FoodResourcePool().XMLEncode()));
-    retval.AppendChild(XMLElement("m_research_resource_pool", ResearchResourcePool().XMLEncode()));
-    retval.AppendChild(XMLElement("m_industry_resource_pool", IndustryResourcePool().XMLEncode()));
-    retval.AppendChild(XMLElement("m_population_resource_pool", PopulationResourcePool().XMLEncode()));
-    retval.AppendChild(XMLElement("m_trade_resource_pool", TradeResourcePool().XMLEncode()));
-
     return retval;
 }
 

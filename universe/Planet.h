@@ -140,7 +140,7 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_type)
         & BOOST_SERIALIZATION_NVP(m_size)
         & BOOST_SERIALIZATION_NVP(m_just_conquered);
-    if (ALL_OBJECTS_VISIBLE ||
+    if (Universe::ALL_OBJECTS_VISIBLE ||
         vis == FULL_VISIBILITY) {
         ar  & BOOST_SERIALIZATION_NVP(m_buildings)
             & BOOST_SERIALIZATION_NVP(m_available_trade)

@@ -111,7 +111,7 @@ void ResourceCenter::serialize(Archive& ar, const unsigned int version)
         vis = object->GetVisibility(Universe::s_encoding_empire);
     }
     ar  & BOOST_SERIALIZATION_NVP(vis);
-    if (UniverseObject::ALL_OBJECTS_VISIBLE ||
+    if (Universe::ALL_OBJECTS_VISIBLE ||
         vis == UniverseObject::FULL_VISIBILITY) {
         ar  & BOOST_SERIALIZATION_NVP(m_primary)
             & BOOST_SERIALIZATION_NVP(m_secondary)

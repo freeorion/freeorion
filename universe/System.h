@@ -275,7 +275,7 @@ void System::serialize(Archive& ar, const unsigned int version)
     StarlaneMap starlanes_wormholes;
     if (Archive::is_saving::value) {
         vis = GetVisibility(Universe::s_encoding_empire);
-        if (ALL_OBJECTS_VISIBLE ||
+        if (Universe::ALL_OBJECTS_VISIBLE ||
             vis == FULL_VISIBILITY) {
             orbits = m_orbits;
             objects = m_objects;
@@ -289,11 +289,13 @@ void System::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(vis)
         & BOOST_SERIALIZATION_NVP(m_star);
-    if (ALL_OBJECTS_VISIBLE ||
+    if (Universe::ALL_OBJECTS_VISIBLE ||
         vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
         ar  & BOOST_SERIALIZATION_NVP(orbits)
             & BOOST_SERIALIZATION_NVP(objects)
             & BOOST_SERIALIZATION_NVP(starlanes_wormholes);
+    } else {
+        orbits = 0;
     }
     if (Archive::is_loading::value) {
         m_orbits = orbits;

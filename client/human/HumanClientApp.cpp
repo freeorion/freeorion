@@ -31,6 +31,16 @@
 
 #include <sstream>
 
+#define TEST_UNIVERSE_BOOST_SERIALIZATION 0
+#define TEST_BINARY_ARCHIVES 1
+#if TEST_UNIVERSE_BOOST_SERIALIZATION
+#include "../../util/Serialize.h"
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/range/iterator_range.hpp>
+#endif
+
+
 #ifdef ENABLE_CRASH_BACKTRACE
 # include <signal.h>
 # include <execinfo.h>
@@ -796,24 +806,41 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
             m_universe.SetUniverse(doc.root_node.Child("Universe"));
 
-#define TEST_UNIVERSE_BOOST_SERIALIZATION 0
 #if TEST_UNIVERSE_BOOST_SERIALIZATION
-            Universe boost_xml_universe;
             namespace io = boost::iostreams;
             std::string boost_xml_filename = (GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.xml")).native_file_string();
+            std::string boost_binary_filename = (GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.bin")).native_file_string();
             io::filtering_istream is;
+#if TEST_BINARY_ARCHIVES
+            is.push(io::file_source(boost_binary_filename, std::ios_base::in | std::ios_base::binary));
+            boost::archive::binary_iarchive ia(is);
+#else
             is.push(io::file_source(boost_xml_filename));
-            boost_xml_universe.SetUniverse(is);
+            boost::archive::xml_iarchive ia(is);
+#endif
+            bool boost_xml_single_player_game;
+            Universe boost_xml_universe;
+            EmpireManager boost_xml_empire_manager;
+            Universe::s_encoding_empire = m_empire_id;
+            ia >> boost::serialization::make_nvp("single_player_game", boost_xml_single_player_game);
+            Deserialize(&ia, boost_xml_universe);
+            Deserialize(&ia, boost_xml_empire_manager);
+
+            assert(boost_xml_single_player_game == m_single_player_game);
 
             {
                 XMLDoc doc;
                 doc.root_node.AppendChild(m_universe.XMLEncode());
+                doc.root_node.AppendChild(m_empires.XMLEncode(m_empire_id));
+                doc.root_node.AppendChild(m_empires.XMLEncode());
                 std::ofstream ofs("Univese_XMLDoc.xml");
                 doc.WriteDoc(ofs);
             }
             {
                 XMLDoc doc;
                 doc.root_node.AppendChild(boost_xml_universe.XMLEncode());
+                doc.root_node.AppendChild(boost_xml_empire_manager.XMLEncode(m_empire_id));
+                doc.root_node.AppendChild(boost_xml_empire_manager.XMLEncode());
                 std::ofstream ofs("Univese_Boost_Serialization.xml");
                 doc.WriteDoc(ofs);
             }

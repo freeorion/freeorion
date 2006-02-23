@@ -120,7 +120,10 @@ public:
         NUM_SPECIALS_FREQENCIES    // keep this last, the number of specials frequency options
     };
 
-    /** the value passed to XMLEncode() when the entire object is desired, not just the portion visible to one empire */
+    /** Set to true to make everything visible for everyone. Useful for debugging. */
+    static const bool ALL_OBJECTS_VISIBLE;
+
+    /** the value used for the encoding empire when all data are desired, not just those visible to one empire */
     enum {ALL_EMPIRES = -1};
 
     struct vertex_system_pointer_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
@@ -367,7 +370,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     ObjectMap objects;
     if (Archive::is_saving::value) {
         for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-            if (UniverseObject::ALL_OBJECTS_VISIBLE ||
+            if (Universe::ALL_OBJECTS_VISIBLE ||
                 it->second->GetVisibility(s_encoding_empire) != UniverseObject::NO_VISIBILITY ||
                 universe_object_cast<System*>(it->second))
             {

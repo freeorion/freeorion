@@ -110,7 +110,7 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
     bool visible;
     int moving_to;
     if (Archive::is_saving::value)
-        visible = ALL_OBJECTS_VISIBLE || Universe::s_encoding_empire == Universe::ALL_EMPIRES || OwnedBy(Universe::s_encoding_empire);
+        visible = Universe::ALL_OBJECTS_VISIBLE || Universe::s_encoding_empire == Universe::ALL_EMPIRES || OwnedBy(Universe::s_encoding_empire);
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(visible);
     if (Archive::is_saving::value)
