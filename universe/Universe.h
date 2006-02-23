@@ -145,7 +145,7 @@ public:
     /** \name Structors */ //@{
     Universe(); ///< default ctor
     Universe(const XMLElement& elem); ///< ctor that constructs a Universe object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Universe object
-    const Universe& operator=(Universe& rhs); ///< assignment (move semantics)
+    const Universe& operator=(Universe& rhs); ///< assignment operator (move semantics)
     virtual ~Universe(); ///< dtor
     //@}
 
@@ -203,14 +203,12 @@ public:
     std::map<double, System*> ImmediateNeighbors(int system, int empire_id = ALL_EMPIRES) const;
 
     virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
-    std::string Encode(int empire_id = ALL_EMPIRES) const;  ///< constructs a serialized representation from a Universe object with visibility restrictions for the given empire
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
 
     /** \name Mutators */ //@{
     void SetUniverse(const XMLElement& elem); ///< wipes out the current object map and sets the map to the XMLElement passed in.
-    void SetUniverse(boost::iostreams::filtering_istream& is); ///< wipes out the current object map and sets the map to the serialized representation in stream \a is.
 
     /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.
         \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after

@@ -89,6 +89,10 @@ private:
     double                                                      m_maintenance_cost;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
     std::string                                                 m_graphic;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Returns the BuildingType specification object for a building of type \a name.  If no such BuildingType
@@ -104,6 +108,18 @@ void Building::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_building_type)
         & BOOST_SERIALIZATION_NVP(m_operating)
         & BOOST_SERIALIZATION_NVP(m_planet_id);
+}
+
+template <class Archive>
+void BuildingType::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_description)
+        & BOOST_SERIALIZATION_NVP(m_build_cost)
+        & BOOST_SERIALIZATION_NVP(m_build_time)
+        & BOOST_SERIALIZATION_NVP(m_maintenance_cost)
+        // TODO: & BOOST_SERIALIZATION_NVP(m_effects)
+        & BOOST_SERIALIZATION_NVP(m_graphic);
 }
 
 inline std::string BuildingRevision()

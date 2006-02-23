@@ -58,7 +58,12 @@ private:
     std::vector<boost::signals::connection > m_connections;///< connection list of planets
 
     friend class PlanetChangedFunctor<ResourcePool>;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+BOOST_IS_ABSTRACT(ResourcePool)
 
 /**
 * Resource pool for minerals.
@@ -82,6 +87,10 @@ protected:
 
 private:
     double m_pool_production,m_needed_pool,m_stockpile;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /**
@@ -107,6 +116,10 @@ protected:
 
 private:
     double m_pool_production,m_needed_pool,m_stockpile;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /**
@@ -127,6 +140,10 @@ protected:
 
 private:
     double m_pool_production;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /**
@@ -148,6 +165,10 @@ protected:
 
 private:
     double m_overall_pool,m_growth;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /**
@@ -168,6 +189,10 @@ protected:
 
 private:
     double m_pool_production;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /**
@@ -193,6 +218,10 @@ protected:
 
 private:
     double m_pool_production,m_needed_pool,m_stockpile;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -207,6 +236,49 @@ template <class PoolT>
 void PlanetChangedFunctor<PoolT>::operator()()
 {
     m_pool.OnPlanetChanged(m_planet_id);
+}
+
+template <class Archive>
+void ResourcePool::serialize(Archive& ar, const unsigned int version)
+{}
+
+template <class Archive>
+void MineralResourcePool::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool)
+        & BOOST_SERIALIZATION_NVP(m_stockpile);
+}
+
+template <class Archive>
+void FoodResourcePool::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool)
+        & BOOST_SERIALIZATION_NVP(m_stockpile);
+}
+
+template <class Archive>
+void ResearchResourcePool::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool);
+}
+
+template <class Archive>
+void PopulationResourcePool::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool);
+}
+
+template <class Archive>
+void IndustryResourcePool::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool);
+}
+
+template <class Archive>
+void TradeResourcePool::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool)
+        & BOOST_SERIALIZATION_NVP(m_stockpile);
 }
 
 inline std::string ResourcePoolRevision()

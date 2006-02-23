@@ -796,7 +796,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
             m_universe.SetUniverse(doc.root_node.Child("Universe"));
 
-#define TEST_UNIVERSE_BOOST_SERIALIZATION 1
+#define TEST_UNIVERSE_BOOST_SERIALIZATION 0
 #if TEST_UNIVERSE_BOOST_SERIALIZATION
             Universe boost_xml_universe;
             namespace io = boost::iostreams;

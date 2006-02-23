@@ -76,14 +76,16 @@ public:
     EntryType GetType( ) { return m_type; }
 
 private:
-
     EntryType                  m_type; ///< the type of SitRep this is
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 
-/*  Sitrep constructors - for each SitRep type, there is a global constructor function
- *  See implementation file for examples
- */
+// Sitrep constructors - for each SitRep type, there is a global constructor function See implementation file for
+// examples
 
 SitRepEntry *CreateTechResearchedSitRep(const std::string& tech_name);
 
@@ -96,6 +98,14 @@ SitRepEntry *CreateBuildingBuiltSitRep(const std::string& building_name, int pla
 SitRepEntry *CreateCombatSitRep(int empire_id, int victor_id, int system_id);
 
 SitRepEntry *CreatePlanetStarvedToDeathSitRep(int system_id, int planet_id);
+
+// template implementations
+template <class Archive>
+void SitRepEntry::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VarText)
+        & BOOST_SERIALIZATION_NVP(m_type);
+}
 
 inline std::string SitRepEntryRevision()
 {return "$Id$";}

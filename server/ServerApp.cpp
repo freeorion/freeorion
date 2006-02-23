@@ -1,22 +1,29 @@
+#define TEST_BINARY_ARCHIVES 0
+#if TEST_BINARY_ARCHIVES
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#else
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#endif
+
 #include "ServerApp.h"
 
+#include "../combat/CombatSystem.h"
 #include "../network/Message.h"
-#include "../util/XMLDoc.h"
-
 #include "../universe/Building.h"
-#include "../util/OrderSet.h"
-#include "../util/GZStream.h"
-#include "../util/Directories.h"
 #include "../universe/Effect.h"
 #include "../universe/Fleet.h"
-#include "../util/MultiplayerCommon.h"
-#include "../util/OptionsDB.h"
 #include "../universe/Planet.h"
+#include "../universe/Predicates.h"
 #include "../universe/Special.h"
 #include "../universe/System.h"
-#include "../universe/Predicates.h"
-
-#include "../combat/CombatSystem.h"
+#include "../util/Directories.h"
+#include "../util/GZStream.h"
+#include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
+#include "../util/OrderSet.h"
+#include "../util/XMLDoc.h"
 
 #include <GG/Font.h>
 #include <GG/net/fastevents.h>
@@ -68,6 +75,38 @@ namespace {
 #else
 #  define GZIP_SAVE_FILES_COMPRESSION_LEVEL 0
 #endif
+
+#include "../universe/ShipDesign.h"
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/deque.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/set.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/static_assert.hpp>
+
+// exports for boost serialization of polymorphic UniverseObject hierarchy
+BOOST_CLASS_EXPORT(System)
+BOOST_CLASS_EXPORT(Planet)
+BOOST_CLASS_EXPORT(Building)
+BOOST_CLASS_EXPORT(Fleet)
+BOOST_CLASS_EXPORT(Ship)
+
+// some endianness and size checks to ensure portability of binary save files; of one or more of these fails, it means
+// that FreeOrion is not supported on your platform/compiler pair, and must be modified to provide data of the
+// appropriate size(s).
+BOOST_STATIC_ASSERT(SDL_BYTEORDER == SDL_LIL_ENDIAN);
+BOOST_STATIC_ASSERT(sizeof(char) == 1);
+BOOST_STATIC_ASSERT(sizeof(short) == 2);
+BOOST_STATIC_ASSERT(sizeof(int) == 4);
+BOOST_STATIC_ASSERT(sizeof(Uint32) == 4);
+BOOST_STATIC_ASSERT(sizeof(long) == 4);
+BOOST_STATIC_ASSERT(sizeof(long long) == 8);
+BOOST_STATIC_ASSERT(sizeof(float) == 4);
+BOOST_STATIC_ASSERT(sizeof(double) == 8);
 
 
 namespace {
@@ -185,8 +224,7 @@ PlayerInfo::PlayerInfo(int sock, const IPaddress& addr, const std::string& playe
     address(addr),
     name(player_name),
     host(host_)
-{
-}
+{}
 
 
 
@@ -1409,19 +1447,45 @@ void ServerApp::SDLQuit()
 
 void ServerApp::NewGameInit()
 {
-    std::map<int, PlayerInfo>::const_iterator it;
-
     m_universe.CreateUniverse(m_galaxy_size, m_galaxy_shape, m_galaxy_age, m_starlane_freq, m_planet_density, m_specials_freq, 
                               m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size(), g_lobby_data.players);
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << " (SERVER_GAME_SETUP).";
 
     // add empires to turn sequence map according to spec this should be done randomly for now it's not
-    for (it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
         AddEmpireTurn( it->first );
     }
 
+#define TEST_UNIVERSE_BOOST_SERIALIZATION 1
+#if TEST_UNIVERSE_BOOST_SERIALIZATION
+    {
+        Universe::s_encoding_empire = Universe::ALL_EMPIRES;
+        std::string encoded_string;
+        {
+            namespace io = boost::iostreams;
+            io::filtering_ostream os;
+            os.push(io::back_inserter(encoded_string));
+#if TEST_BINARY_ARCHIVES
+            boost::archive::binary_oarchive oa(os);
+#else
+            boost::archive::xml_oarchive oa(os);
+#endif
+            const EmpireManager& empire_manager = m_empires;
+            oa << boost::serialization::make_nvp("single_player_game", m_single_player_game)
+               << BOOST_SERIALIZATION_NVP(m_universe)
+               << boost::serialization::make_nvp("m_empires", empire_manager);
+        }
+#if TEST_BINARY_ARCHIVES
+        boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-boost.bin"));
+#else
+        boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-boost.xml"));
+#endif
+        ofs << encoded_string;
+    }
+#endif
+
     // the universe creation caused the creation of empires.  But now we need to assign the empires to players.
-    for (it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
         XMLDoc doc;
         if (m_single_player_game)
             doc.root_node.AppendChild("single_player_game");
@@ -1429,11 +1493,31 @@ void ServerApp::NewGameInit()
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
         doc.root_node.AppendChild(XMLElement("empire_id", boost::lexical_cast<std::string>(it->first)));
 
-#define TEST_UNIVERSE_BOOST_SERIALIZATION 1
 #if TEST_UNIVERSE_BOOST_SERIALIZATION
         {
+            Universe::s_encoding_empire = it->first;
+            std::string encoded_string;
+            {
+                namespace io = boost::iostreams;
+                io::filtering_ostream os;
+                os.push(io::back_inserter(encoded_string));
+#if TEST_BINARY_ARCHIVES
+                boost::archive::binary_oarchive oa(os);
+#else
+                boost::archive::xml_oarchive oa(os);
+#endif
+                const EmpireManager& empire_manager = m_empires;
+                oa << boost::serialization::make_nvp("single_player_game", m_single_player_game)
+                   << boost::serialization::make_nvp("m_empire_id", it->first)
+                   << BOOST_SERIALIZATION_NVP(m_universe)
+                   << boost::serialization::make_nvp("m_empires", empire_manager);
+            }
+#if TEST_BINARY_ARCHIVES
+            boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(it->first) + "-boost.bin"));
+#else
             boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(it->first) + "-boost.xml"));
-            ofs << m_universe.Encode(it->first);
+#endif
+            ofs << encoded_string;
         }
 #endif
 

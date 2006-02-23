@@ -3,12 +3,15 @@
 #define _VarText_h_
 
 
-#include <string>
-
 #ifndef _XMLDoc_h_
 #include "XMLDoc.h"
 #endif
 
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
+
+#include <string>
+#include <sstream>
 
 /**
 *   VarText is a string tagged with variable names which are substituded for actual data at runtime
@@ -50,9 +53,35 @@ public:
     static const std::string BUILDING_ID_TAG;
 
 protected:
-    XMLElement m_variables; ///< the data describing the sitrep. See class comments for description
-    std::string    m_text;      ///< the text, including hyperlinks, that describes this entry. Built from XML data
+    XMLElement  m_variables; ///< the data describing the sitrep. See class comments for description
+    std::string m_text;      ///< the text, including hyperlinks, that describes this entry. Built from XML data
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+// template implementations
+template <class Archive>
+void VarText::serialize(Archive& ar, const unsigned int version)
+{
+    std::string variables;
+    if (Archive::is_saving::value) {
+        XMLDoc doc;
+        doc.root_node = m_variables;
+        std::stringstream stream;
+        doc.WriteDoc(stream);
+    }
+    ar  & BOOST_SERIALIZATION_NVP(m_text)
+        & BOOST_SERIALIZATION_NVP(variables);
+    if (Archive::is_loading::value) {
+        XMLDoc doc;
+        std::stringstream stream;
+        stream << variables;
+        doc.ReadDoc(stream);
+        m_variables = doc.root_node;
+    }
+}
 
 inline std::string VarTextRevision()
 {return "$Id$";}

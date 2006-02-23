@@ -22,8 +22,6 @@
 #include "../util/XMLDoc.h"
 #endif
 
-#include <boost/tuple/tuple.hpp>
-
 #include <deque>
 #include <list>
 #include <string>
@@ -33,9 +31,21 @@ class ShipDesign;
 
 struct ResearchQueue
 {
-    /** The type of a single element in the research queue.  Such an element includes the tech itself, the
-        spending being done on this tech, and the number of turns until this tech is completed. */
-    typedef boost::tuple<const Tech*, double, int> Element;
+    /** The type of a single element in the research queue. */
+    struct Element
+    {
+        Element(); ///< default ctor.
+        Element(const Tech* tech_, double spending_, int turns_left_); ///< basic ctor.
+
+        const Tech* tech;
+        double      spending;
+        int         turns_left;
+
+    private:
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version);
+    };
 
     typedef std::deque<Element> QueueType;
 
@@ -91,6 +101,10 @@ private:
     QueueType m_queue;
     int       m_projects_in_progress;
     double    m_total_RPs_spent;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 struct ProductionQueue
@@ -106,6 +120,11 @@ struct ProductionQueue
 
         BuildType   build_type;
         std::string name;
+
+    private:
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version);
     };
 
     /** The type of a single element in the production queue. */
@@ -125,6 +144,11 @@ struct ProductionQueue
         double         spending;
         int            turns_left_to_next_item;
         int            turns_left_to_completion;
+
+    private:
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version);
     };
 
     typedef std::deque<Element> QueueType;
@@ -183,6 +207,10 @@ private:
     QueueType m_queue;
     int       m_projects_in_progress;
     double    m_total_PPs_spent;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /**
@@ -522,7 +550,93 @@ private:
     PopulationResourcePool  m_population_resource_pool;
     IndustryResourcePool    m_industry_resource_pool;
     TradeResourcePool       m_trade_resource_pool;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+
+// template implementations
+template <class Archive>
+void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
+{
+    std::string tech_name;
+    if (Archive::is_saving::value) {
+        assert(tech);
+        tech_name = tech->Name();
+    }
+    ar  & BOOST_SERIALIZATION_NVP(tech_name)
+        & BOOST_SERIALIZATION_NVP(spending)
+        & BOOST_SERIALIZATION_NVP(turns_left);
+    if (Archive::is_loading::value) {
+        assert(tech_name != "");
+        tech = GetTech(tech_name);
+    }
+}
+
+template <class Archive>
+void ResearchQueue::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_queue)
+        & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
+        & BOOST_SERIALIZATION_NVP(m_total_RPs_spent);
+}
+
+template <class Archive>
+void ProductionQueue::ProductionItem::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(build_type)
+        & BOOST_SERIALIZATION_NVP(name);
+}
+
+template <class Archive>
+void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(item)
+        & BOOST_SERIALIZATION_NVP(ordered)
+        & BOOST_SERIALIZATION_NVP(remaining)
+        & BOOST_SERIALIZATION_NVP(location)
+        & BOOST_SERIALIZATION_NVP(spending)
+        & BOOST_SERIALIZATION_NVP(turns_left_to_next_item)
+        & BOOST_SERIALIZATION_NVP(turns_left_to_completion);
+}
+
+template <class Archive>
+void ProductionQueue::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_queue)
+        & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
+        & BOOST_SERIALIZATION_NVP(m_total_PPs_spent);
+}
+
+template <class Archive>
+void Empire::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_id)
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_player_name)
+        & BOOST_SERIALIZATION_NVP(m_color);
+    if (m_id == Universe::s_encoding_empire) {
+        ar  & BOOST_SERIALIZATION_NVP(m_homeworld_id)
+            & BOOST_SERIALIZATION_NVP(m_techs)
+            & BOOST_SERIALIZATION_NVP(m_research_queue)
+            & BOOST_SERIALIZATION_NVP(m_research_status)
+            & BOOST_SERIALIZATION_NVP(m_production_queue)
+            & BOOST_SERIALIZATION_NVP(m_production_status)
+            & BOOST_SERIALIZATION_NVP(m_building_types)
+            & BOOST_SERIALIZATION_NVP(m_modified_building_types)
+            & BOOST_SERIALIZATION_NVP(m_explored_systems)
+            & BOOST_SERIALIZATION_NVP(m_ship_designs)
+            & BOOST_SERIALIZATION_NVP(m_sitrep_entries)
+            & BOOST_SERIALIZATION_NVP(m_mineral_resource_pool)
+            & BOOST_SERIALIZATION_NVP(m_food_resource_pool)
+            & BOOST_SERIALIZATION_NVP(m_research_resource_pool)
+            & BOOST_SERIALIZATION_NVP(m_population_resource_pool)
+            & BOOST_SERIALIZATION_NVP(m_industry_resource_pool)
+            & BOOST_SERIALIZATION_NVP(m_trade_resource_pool);
+    }
+}
 
 inline std::string EmpireRevision()
 {return "$Id$";}

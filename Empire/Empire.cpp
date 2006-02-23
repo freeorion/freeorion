@@ -26,21 +26,21 @@ namespace {
         total_RPs_spent = 0.0;
         projects_in_progress = 0;
         for (ResearchQueue::iterator it = queue.begin(); it != queue.end(); ++it) {
-            const Tech* tech = it->get<0>();
+            const Tech* tech = it->tech;
             std::map<std::string, double>::const_iterator progress_it = research_status.find(tech->Name());
             double progress = progress_it == research_status.end() ? 0.0 : progress_it->second;
             double RPs_needed = tech->ResearchCost() * tech->ResearchTurns() - progress;
             double RPs_to_spend = std::min(RPs_needed, tech->ResearchCost());
             if (total_RPs_spent + RPs_to_spend <= RPs - EPSILON) {
-                it->get<1>() = RPs_to_spend;
-                total_RPs_spent += it->get<1>();
+                it->spending = RPs_to_spend;
+                total_RPs_spent += it->spending;
                 ++projects_in_progress;
             } else if (total_RPs_spent < RPs - EPSILON) {
-                it->get<1>() = RPs - total_RPs_spent;
-                total_RPs_spent += it->get<1>();
+                it->spending = RPs - total_RPs_spent;
+                total_RPs_spent += it->spending;
                 ++projects_in_progress;
             } else {
-                it->get<1>() = 0.0;
+                it->spending = 0.0;
             }
         }
     }
@@ -75,6 +75,22 @@ namespace {
     bool temp_header_bool = RecordHeaderFile(EmpireRevision());
     bool temp_source_bool = RecordSourceFile("$Id$");
 }
+
+
+////////////////////////////////////////
+// ResearchQueue::Element             //
+////////////////////////////////////////
+ResearchQueue::Element::Element() :
+    tech(0),
+    spending(0.0),
+    turns_left(0)
+{}
+
+ResearchQueue::Element::Element(const Tech* tech_, double spending_, int turns_left_) :
+    tech(tech_),
+    spending(spending_),
+    turns_left(turns_left_)
+{}
 
 
 ////////////////////////////////////////
@@ -137,7 +153,7 @@ ResearchQueue::const_iterator ResearchQueue::end() const
 ResearchQueue::const_iterator ResearchQueue::find(const Tech* tech) const
 {
     for (const_iterator it = begin(); it != end(); ++it) {
-        if (it->get<0>() == tech)
+        if (it->tech == tech)
             return it;
     }
     return end();
@@ -146,7 +162,7 @@ ResearchQueue::const_iterator ResearchQueue::find(const Tech* tech) const
 ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
 {
     for (const_iterator it = begin(); it != end(); ++it) {
-        if (it->get<1>() && it->get<1>() < it->get<0>()->ResearchCost() && 1 < it->get<2>())
+        if (it->spending && it->spending < it->tech->ResearchCost() && 1 < it->turns_left)
             return it;
     }
     return end();
@@ -157,7 +173,7 @@ XMLElement ResearchQueue::XMLEncode() const
     XMLElement retval("ResearchQueue");
     retval.AppendChild("m_queue");
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
-        retval.LastChild().AppendChild(m_queue[i].get<0>()->Name());
+        retval.LastChild().AppendChild(m_queue[i].tech->Name());
     }
     return retval;
 }
@@ -177,9 +193,9 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
             int projects_in_progress = 0;
             UpdateTechQueue(RPs, sim_research_status, sim_queue, total_RPs_spent, projects_in_progress);
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-                const Tech* tech = sim_queue[i].get<0>();
+                const Tech* tech = sim_queue[i].tech;
                 double& status = sim_research_status[tech->Name()];
-                status += sim_queue[i].get<1>();
+                status += sim_queue[i].spending;
                 if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= status) {
                     simulation_results[tech] = turns;
                     sim_queue.erase(sim_queue.begin() + i--);
@@ -188,12 +204,12 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
             ++turns;
         }
         for (unsigned int i = 0; i < m_queue.size(); ++i) {
-            m_queue[i].get<2>() = simulation_results[m_queue[i].get<0>()];
+            m_queue[i].turns_left = simulation_results[m_queue[i].tech];
         }
     } else {
         // since there are so few RPs, indicate that the number of turns left is indeterminate by providing a number < 0
         for (unsigned int i = 0; i < m_queue.size(); ++i) {
-            m_queue[i].get<2>() = -1;
+            m_queue[i].turns_left = -1;
         }
     }
 }
@@ -217,7 +233,7 @@ void ResearchQueue::erase(iterator it)
 ResearchQueue::iterator ResearchQueue::find(const Tech* tech)
 {
     for (iterator it = begin(); it != end(); ++it) {
-        if (it->get<0>() == tech)
+        if (it->tech == tech)
             return it;
     }
     return end();
@@ -236,7 +252,7 @@ ResearchQueue::iterator ResearchQueue::end()
 ResearchQueue::iterator ResearchQueue::UnderfundedProject()
 {
     for (iterator it = begin(); it != end(); ++it) {
-        if (it->get<1>() && it->get<1>() < it->get<0>()->ResearchCost() && 1 < it->get<2>())
+        if (it->spending && it->spending < it->tech->ResearchCost() && 1 < it->turns_left)
             return it;
     }
     return end();
@@ -1057,9 +1073,9 @@ void Empire::CheckResearchProgress()
     m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
     std::vector<const Tech*> to_erase;
     for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ++it) {
-        const Tech* tech = it->get<0>();
+        const Tech* tech = it->tech;
         double& status = m_research_status[tech->Name()];
-        status += it->get<1>();
+        status += it->spending;
         if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= status) {
             m_techs.insert(tech->Name());
             const std::vector<Tech::ItemSpec>& unlocked_items = tech->UnlockedItems();
