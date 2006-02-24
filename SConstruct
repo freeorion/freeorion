@@ -7,6 +7,8 @@ from build_config import *
 from build_support import *
 
 env = Environment()
+# Do not put a .sconsign file into every directory
+env.SConsignFile()
 
 mising_pkg_config = not WhereIs('pkg-config')
 
