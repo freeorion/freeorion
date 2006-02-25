@@ -36,8 +36,9 @@ public:
 
     XMLElement XMLEncode() const;
 
-    /** combines the given template with the varaibles ontained in object to create a string with live variables replaced with text
-        will produce exceptions if invalid variables are found ( no not exist in XML data or in universe ) */
+    /** combines the given template with the variables contained in object to create a string with live variables
+        replaced with text will produce exceptions if invalid variables are found ( no not exist in XML data or in
+        universe ) */
     void GenerateVarText( const std::string& template_str );
 
     XMLElement& GetVariables( )   { return m_variables; }
@@ -65,21 +66,20 @@ protected:
 template <class Archive>
 void VarText::serialize(Archive& ar, const unsigned int version)
 {
-    std::string variables;
+    std::vector<std::pair<std::string, std::string> > variables;
     if (Archive::is_saving::value) {
-        XMLDoc doc;
-        doc.root_node = m_variables;
-        std::stringstream stream;
-        doc.WriteDoc(stream);
+        for (XMLElement::child_iterator it = m_variables.child_begin(); it != m_variables.child_end(); ++it) {
+            variables.push_back(std::make_pair(it->Tag(), it->Attribute("value")));
+        }
     }
     ar  & BOOST_SERIALIZATION_NVP(m_text)
         & BOOST_SERIALIZATION_NVP(variables);
     if (Archive::is_loading::value) {
-        XMLDoc doc;
-        std::stringstream stream;
-        stream << variables;
-        doc.ReadDoc(stream);
-        m_variables = doc.root_node;
+        for (unsigned int i = 0; i < variables.size(); ++i) {
+            XMLElement elem(variables[i].first);
+            elem.SetAttribute("value", variables[i].second);
+            m_variables.AppendChild(elem);
+        }
     }
 }
 

@@ -67,9 +67,9 @@ namespace {
 #  define GZIP_SAVE_FILES_COMPRESSION_LEVEL 0
 #endif
 
-#define TEST_UNIVERSE_BOOST_SERIALIZATION 0
+#define TEST_BOOST_SERIALIZATION 0
 #define TEST_BINARY_ARCHIVES 1
-#if TEST_UNIVERSE_BOOST_SERIALIZATION
+#if TEST_BOOST_SERIALIZATION
 #include "../util/Serialize.h"
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
@@ -1424,7 +1424,7 @@ void ServerApp::NewGameInit()
         AddEmpireTurn( it->first );
     }
 
-#if TEST_UNIVERSE_BOOST_SERIALIZATION
+#if TEST_BOOST_SERIALIZATION
     {
         Universe::s_encoding_empire = Universe::ALL_EMPIRES;
         std::string encoded_string;
@@ -1442,7 +1442,7 @@ void ServerApp::NewGameInit()
             Serialize(&oa, m_empires);
         }
 #if TEST_BINARY_ARCHIVES
-        boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-boost.bin"), std::ios_base::in | std::ios_base::binary);
+        boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-boost.bin"), std::ios_base::out | std::ios_base::binary);
 #else
         boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-boost.xml"));
 #endif
@@ -1459,7 +1459,7 @@ void ServerApp::NewGameInit()
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
         doc.root_node.AppendChild(XMLElement("empire_id", boost::lexical_cast<std::string>(it->first)));
 
-#if TEST_UNIVERSE_BOOST_SERIALIZATION
+#if TEST_BOOST_SERIALIZATION
         {
             Universe::s_encoding_empire = it->first;
             std::string encoded_string;
@@ -1477,7 +1477,7 @@ void ServerApp::NewGameInit()
                 Serialize(&oa, m_empires);
             }
 #if TEST_BINARY_ARCHIVES
-            boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(it->first) + "-boost.bin"), std::ios_base::in | std::ios_base::binary);
+            boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(it->first) + "-boost.bin"), std::ios_base::out | std::ios_base::binary);
 #else
             boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(it->first) + "-boost.xml"));
 #endif
@@ -1805,7 +1805,7 @@ bool ServerApp::AllOrdersReceived()
     // Loop through to find empire ID and check for valid orders pointer
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         if (!it->second)
-            return false; 
+            return false;
     } 
     return true;
 }
@@ -2082,10 +2082,37 @@ void ServerApp::ProcessTurns()
     {
         pEmpire = GetPlayerEmpire( player_it->first );
         XMLDoc doc = CreateTurnUpdate( pEmpire->EmpireID() );
+#if TEST_BOOST_SERIALIZATION
+        {
+            Universe::s_encoding_empire = pEmpire->EmpireID();
+            std::string encoded_string;
+            {
+                namespace io = boost::iostreams;
+                io::filtering_ostream os;
+                os.push(io::back_inserter(encoded_string));
+#if TEST_BINARY_ARCHIVES
+                boost::archive::binary_oarchive oa(os);
+#else
+                boost::archive::xml_oarchive oa(os);
+#endif
+                oa << boost::serialization::make_nvp("turn_number", m_current_turn);
+                Serialize(&oa, m_universe);
+                Serialize(&oa, m_empires);
+            }
+#if TEST_BINARY_ARCHIVES
+            boost::filesystem::ofstream ofs(GetLocalDir() / ("TurnUpdate-empire" + boost::lexical_cast<std::string>(pEmpire->EmpireID()) + "-boost.bin"), std::ios_base::out | std::ios_base::binary);
+#else
+            boost::filesystem::ofstream ofs(GetLocalDir() / ("TurnUpdate-empire" + boost::lexical_cast<std::string>(pEmpire->EmpireID()) + "-boost.xml"));
+#endif
+            ofs << encoded_string;
+            ofs.close();
+        }
+#endif
         if (GetOptionsDB().Get<bool>("debug.log-turn-update-universe")) {
             std::string filename = "TurnUpdate" + boost::lexical_cast<std::string>(m_current_turn) +
                 "-empire" + boost::lexical_cast<std::string>(pEmpire->EmpireID()) +
                 "-doc.xml";
+            std::cerr << "writing \"" << filename << "\"" << std::endl;
 #ifdef FREEORION_LINUX
             boost::filesystem::ofstream ofs(GetLocalDir() / filename);
 #else

@@ -31,9 +31,9 @@
 
 #include <sstream>
 
-#define TEST_UNIVERSE_BOOST_SERIALIZATION 0
+#define TEST_BOOST_SERIALIZATION 0
 #define TEST_BINARY_ARCHIVES 1
-#if TEST_UNIVERSE_BOOST_SERIALIZATION
+#if TEST_BOOST_SERIALIZATION
 #include "../../util/Serialize.h"
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
@@ -806,7 +806,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
             m_universe.SetUniverse(doc.root_node.Child("Universe"));
 
-#if TEST_UNIVERSE_BOOST_SERIALIZATION
+#if TEST_BOOST_SERIALIZATION
             namespace io = boost::iostreams;
             std::string boost_xml_filename = (GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.xml")).native_file_string();
             std::string boost_binary_filename = (GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.bin")).native_file_string();
@@ -902,6 +902,46 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         UpdateTurnData(doc);
 
         Empires().Lookup(m_empire_id)->UpdateResourcePool();
+
+#if TEST_BOOST_SERIALIZATION
+        namespace io = boost::iostreams;
+        std::string boost_xml_filename = (GetLocalDir() / ("TurnUpdate-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.xml")).native_file_string();
+        std::string boost_binary_filename = (GetLocalDir() / ("TurnUpdate-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.bin")).native_file_string();
+        io::filtering_istream is;
+#if TEST_BINARY_ARCHIVES
+        is.push(io::file_source(boost_binary_filename, std::ios_base::in | std::ios_base::binary));
+        boost::archive::binary_iarchive ia(is);
+#else
+        is.push(io::file_source(boost_xml_filename));
+        boost::archive::xml_iarchive ia(is);
+#endif
+        int boost_xml_turn_number;
+        Universe boost_xml_universe;
+        EmpireManager boost_xml_empire_manager;
+        Universe::s_encoding_empire = m_empire_id;
+        ia >> boost::serialization::make_nvp("turn_number", boost_xml_turn_number);
+        Deserialize(&ia, boost_xml_universe);
+        Deserialize(&ia, boost_xml_empire_manager);
+
+        assert(boost_xml_turn_number == turn_number);
+
+        {
+            XMLDoc doc;
+            doc.root_node.AppendChild(m_universe.XMLEncode());
+            doc.root_node.AppendChild(m_empires.XMLEncode(m_empire_id));
+            doc.root_node.AppendChild(m_empires.XMLEncode());
+            std::ofstream ofs("TurnUpdate_XMLDoc.xml");
+            doc.WriteDoc(ofs);
+        }
+        {
+            XMLDoc doc;
+            doc.root_node.AppendChild(boost_xml_universe.XMLEncode());
+            doc.root_node.AppendChild(boost_xml_empire_manager.XMLEncode(m_empire_id));
+            doc.root_node.AppendChild(boost_xml_empire_manager.XMLEncode());
+            std::ofstream ofs("TurnUpdate_Boost_Serialization.xml");
+            doc.WriteDoc(ofs);
+        }
+#endif
 
         // Now decode sitreps
         // Empire sitreps need UI in order to generate text, since it needs string resources

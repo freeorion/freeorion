@@ -54,7 +54,8 @@ Planet::Planet() :
     m_size(SZ_MEDIUM),
     m_available_trade(0.0),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(0)
+    m_is_about_to_be_colonized(0),
+    m_def_bases(0)
 {
     GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
     GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
@@ -68,7 +69,8 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_size(SZ_MEDIUM),
     m_available_trade(0.0),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(0)
+    m_is_about_to_be_colonized(0),
+    m_def_bases(0)
 {
     SetType(type);
     SetSize(size);

@@ -17,8 +17,7 @@ Meter::Meter() :
     m_initial_max(METER_MIN),
     m_previous_current(METER_MIN),
     m_previous_max(METER_MIN)
-{
-}
+{}
 
 Meter::Meter(double current, double max) :
     m_current(current),
@@ -27,8 +26,7 @@ Meter::Meter(double current, double max) :
     m_initial_max(METER_MIN),
     m_previous_current(METER_MIN),
     m_previous_max(METER_MIN)
-{
-}
+{}
 
 Meter::Meter(const XMLElement& elem)
 {
