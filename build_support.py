@@ -189,14 +189,14 @@ def FindRegexMatchesInHeader(regex, filename, env = None):
                 f = open(os.path.normpath(os.path.join(i, filename)), 'r')
                 break
             except Exception:
-                None
+                pass
     if not f:
         for i in ['.', '/usr/include', '/usr/local/include']:
             try:
                 f = open(os.path.normpath(os.path.join(i, filename)), 'r')
                 break
             except Exception:
-                None
+                pass
     if f:
         return regex.findall(f.read())
     else:

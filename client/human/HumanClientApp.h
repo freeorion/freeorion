@@ -59,25 +59,25 @@ public:
     void SetLobby(MultiplayerLobbyWnd* lobby); ///< registers a lobby dialog so that Messages can reach it; passing 0 unsets the lobby dialog
 
     /** plays a music file.  The file will be played in an infinitve loop if \a loop is < 0, and it will be played \a loops + 1 times otherwise. */
-    void PlayMusic(const std::string& filename, int loops = 0);
-
-	/** stops playing music */
-	void StopMusic();
+    virtual void PlayMusic(const std::string& filename, int loops = 0);
+    
+    /** stops playing music */
+    virtual void StopMusic();
 
     /** plays a sound file.*/
-    void PlaySound(const std::string& filename);
+    virtual void PlaySound(const std::string& filename);
 
     /** frees the cached sound data associated with the filename.*/
-    void FreeSound(const std::string& filename);
+    virtual void FreeSound(const std::string& filename);
 
     /** frees all cached sound data.*/
-    void FreeAllSounds();
+    virtual void FreeAllSounds();
 
     /** sets the music volume from 0 (muted) to 255 (full volume); \a vol is range-adjusted */
-    void SetMusicVolume(int vol);
+    virtual void SetMusicVolume(int vol);
 
     /** sets the UI sounds volume from 0 (muted) to 255 (full volume); \a vol is range-adjusted */
-    void SetUISoundsVolume(int vol);
+    virtual void SetUISoundsVolume(int vol);
 
     bool LoadSinglePlayerGame(); ///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
     void SetSaveFileName(const std::string& filename) {m_save_filename = filename;} ///< records the current game's filename
@@ -116,13 +116,6 @@ private:
     void Autosave(int turn_number, bool new_game); ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
 
     Process                           m_server_process;     ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
-    FSOUND_STREAM*                    m_current_music;      ///< the currently-playing music, if any
-    int                               m_music_channel;      ///< the channel on which the currently-playing music is playing (or -1 if no music is playing)
-    int                               m_music_loops;        ///< the number of loops of the current music to play (< 0 for loop forever)
-    int                               m_next_music_time;    ///< the time in ms that the next loop of the current music should play (0 if no repeats are scheduled)
-    std::string                       m_music_name;         ///< the name of the currently-playing music file
-    std::map<std::string, int>        m_sounds;             ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
-    std::set<int>                     m_used_sample_indices;///< the used indices in m_sounds
     boost::shared_ptr<ClientUI>       m_ui;                 ///< the one and only ClientUI object!
     std::string                       m_save_filename;      ///< the name under which the current game has been saved
     bool                              m_single_player_game; ///< true when this game is a single-player game

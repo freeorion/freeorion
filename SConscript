@@ -70,6 +70,8 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
     target_sources = [
         'client/ClientApp.cpp',
         'client/human/HumanClientApp.cpp',
+        'client/human/HumanClientAppSoundFMOD.cpp',
+#        'client/human/HumanClientAppSoundOpenAL.cpp',
         'client/human/chmain.cpp',
         'network/ClientNetworkCore.cpp',
         'UI/About.cpp',
