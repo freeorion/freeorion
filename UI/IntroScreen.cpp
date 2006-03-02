@@ -14,6 +14,7 @@
 #include "../util/OptionsDB.h"
 #include "Splash.h"
 #include "ServerConnectWnd.h"
+#include "../util/Version.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -126,9 +127,9 @@ void CreditsWnd::Render()
                 }
             font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,"", format, 0);
             offset+=font->TextExtent("", format).y+2;
+
         }
     GG::EndScissorClipping();
-
     if(offset<0)
     {
         m_co = 0;
@@ -145,7 +146,7 @@ IntroScreen::IntroScreen() :
     m_credits_wnd(0)
 {
     LoadSplashGraphics(m_bg_graphics);
-    
+
     //create buttons
     m_single_player = new CUIButton(15, 12, 160, UserString("INTRO_BTN_SINGLE_PLAYER"));
     m_multi_player = new CUIButton(15, 52, 160, UserString("INTRO_BTN_MULTI_PLAYER"));
@@ -374,4 +375,14 @@ void IntroScreen::KeyPress (GG::Key key, Uint32 key_mods)
 {
     if (key == GG::GGK_ESCAPE) // Same behaviour as if "done" was pressed
         OnExitGame();
+}
+
+void IntroScreen::Render()
+{
+    boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PTS);
+    CUIWnd::Render();
+    GG::Pt size=font->TextExtent(FreeOrionVersionString());
+    font->RenderText(GG::GUI::GetGUI()->AppWidth()-size.x,
+		     GG::GUI::GetGUI()->AppHeight()-size.y,
+		     FreeOrionVersionString());
 }

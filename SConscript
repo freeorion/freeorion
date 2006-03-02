@@ -1,5 +1,6 @@
 # -*- Python -*-
 Import('env')
+
 common_sources = [
     'combat/Combat.cpp',
     'Empire/ClientEmpireManager.cpp',
@@ -107,7 +108,28 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         ]
     target = 'human'
 
+def get_revision(env):
+    "Try to determine the current revision from SVN."
+    try:
+        from os import popen
+        inf = popen("svn info")
+        for i in inf:
+            if i[:10] == "Revision: ":
+                # this \" madness is a workaround of what seems to be an SCons bug
+                # in combination with gcc. It might break on msvc, in that case, we
+                # need a check for msvc
+                return r'\" [Rev ' + i[10:-1] + r']\"'
+    except: 
+        return None
+
 objects = env.Object(common_sources)
+if get_revision(env):
+    objects += env.Object('util/Version.cpp',
+                          CPPDEFINES=[('FREEORION_REVISION',get_revision(env))]
+                          )
+else:
+    objects += env.Object('util/Version.cpp')
+
 objects += [env.Object(target = source.split(".")[0] + '-' + target,
                        source = source,
                        CPPDEFINES = env['CPPDEFINES'] + [env['target_define']])

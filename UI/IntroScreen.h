@@ -39,6 +39,8 @@ public:
     virtual void KeyPress (GG::Key key, Uint32 key_mods);
     
     virtual void Close() {OnExitGame();} //!< override to exit the game 
+
+    void Render();          //Override to output version info
     //!@}
 
 private:
