@@ -124,11 +124,9 @@ def get_revision(env):
 
 objects = env.Object(common_sources)
 if get_revision(env):
-    objects += env.Object('util/Version.cpp',
-                          CPPDEFINES=[('FREEORION_REVISION',get_revision(env))]
-                          )
-else:
-    objects += env.Object('util/Version.cpp')
+    env.AppendUnique(CPPDEFINES = [('FREEORION_REVISION', get_revision(env))])
+
+objects += env.Object('util/Version.cpp')
 
 objects += [env.Object(target = source.split(".")[0] + '-' + target,
                        source = source,
