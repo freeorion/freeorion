@@ -1,5 +1,7 @@
 # -*- Python -*-
 
+freeorion_version = "v0.3.1-RC4"
+
 gigi_version = '0.6.0'
 
 ft_pkgconfig_version = '9.0.0'

@@ -356,3 +356,14 @@ def InstallHeaderTree(dir, header_root, headers, current_path, op):
     install_nodes = []
     TraverseHeaderTree(dir, header_root, headers, current_path, op, install_nodes)
     return install_nodes
+
+def GetRepositoryRevision():
+    "Try to determine the current revision from SVN."
+    try:
+        from os import popen
+        inf = popen("svn info")
+        for i in inf:
+            if i[:10] == "Revision: ":
+                return ' [Rev ' + i[10:-1] + ']'
+    except: 
+        return None

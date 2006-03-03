@@ -1,0 +1,7 @@
+#include "Version.h"
+
+const std::string& FreeOrionVersionString()
+{
+    static const std::string retval = "%(freeorion_version)s%(freeorion_repository_revision)s";
+    return retval;
+}

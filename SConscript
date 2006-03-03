@@ -39,6 +39,7 @@ common_sources = [
     'util/SitRepEntry.cpp',
     'util/Serialize.cpp',
     'util/VarText.cpp',
+    'util/Version.cpp',
     'util/binreloc.c',
     'util/Directories.cpp',
     'util/XMLDoc.cpp'
@@ -108,27 +109,7 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         ]
     target = 'human'
 
-def get_revision(env):
-    "Try to determine the current revision from SVN."
-    try:
-        from os import popen
-        inf = popen("svn info")
-        for i in inf:
-            if i[:10] == "Revision: ":
-                return r'\" [Rev ' + i[10:-1] + r']\"'
-    except: 
-        return None
-
 objects = env.Object(common_sources)
-# This evil line should prevent SCons from issuing a warning
-# [b,a][c==d] is equivalent to C's c==d?a:b
-# So what is does is defining FREEORION_REVISION if get_revision
-# returned one
-objects += env.Object('util/Version.cpp', CPPDEFINES = [
-    [('FREEORION_REVISION', get_revision(env))],
-    []][get_revision(common_sources) == None]
-)
-
 objects += [env.Object(target = source.split(".")[0] + '-' + target,
                        source = source,
                        CPPDEFINES = env['CPPDEFINES'] + [env['target_define']])

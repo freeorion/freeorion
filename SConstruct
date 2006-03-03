@@ -470,6 +470,17 @@ else:
     else:
         env.Append(CCFLAGS = ['-Wall', '-O2'])
 
+# generate Version.cpp
+version_cpp_in = open('util/Version.cpp.in', 'r')
+version_cpp = open('util/Version.cpp', 'w')
+values = {
+    "freeorion_version" : freeorion_version,
+    "freeorion_repository_revision" : GetRepositoryRevision()
+    }
+version_cpp.write(version_cpp_in.read() % values)
+version_cpp.close()
+version_cpp_in.close()
+
 Export('env')
 
 # define server objects
