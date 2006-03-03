@@ -215,25 +215,28 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_btn_siterep);
     GG::Connect(m_btn_siterep->ClickedSignal, &MapWnd::SitRepBtnClicked, this);
 
-    m_population= new StatisticIconDualValue(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0,0,2,false,false);
+    // resources
+    const int ICON_DUAL_WIDTH = 110;
+    const int ICON_WIDTH = ICON_DUAL_WIDTH - 30;
+    m_population= new StatisticIconDualValue(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0,0,2,false,false);
     m_population->SetPositiveColor(GG::CLR_GREEN); m_population->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_population);
    
-    m_industry= new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-50,LAYOUT_MARGIN,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/industry.png",GG::CLR_WHITE,0);
+    m_industry= new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/industry.png",GG::CLR_WHITE,0);
     m_toolbar->AttachChild(m_industry);
 
-    m_research= new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-50,LAYOUT_MARGIN,50,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0);
+    m_research= new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0);
     m_toolbar->AttachChild(m_research);
 
-    m_trade = new StatisticIconDualValue(m_research->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/trade.png",GG::CLR_WHITE,0,0,0,0,false,false);
+    m_trade = new StatisticIconDualValue(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/trade.png",GG::CLR_WHITE,0,0,0,0,false,false);
     m_trade->SetPositiveColor(GG::CLR_GREEN); m_trade->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_trade);
 
-    m_mineral = new StatisticIconDualValue(m_trade->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0,0,0,false,false);
+    m_mineral = new StatisticIconDualValue(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0,0,0,false,false);
     m_mineral->SetPositiveColor(GG::CLR_GREEN); m_mineral->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_mineral);
 
-    m_food = new StatisticIconDualValue(m_mineral->UpperLeft().x-LAYOUT_MARGIN-80,LAYOUT_MARGIN,80,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0,0,0,false,false);
+    m_food = new StatisticIconDualValue(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0,0,0,false,false);
     m_food->SetPositiveColor(GG::CLR_GREEN); m_food->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_food);
 
