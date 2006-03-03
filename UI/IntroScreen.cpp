@@ -99,11 +99,11 @@ void CreditsWnd::Render()
     GG::BeginScissorClipping(ul.x+m_cx,ul.y+m_cy,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch);
 
     std::string credit;
-    for(int i = 0; i<m_credits.NumChildren();i++)
+    for(int i = 0; i<m_credits.NumChildren();i++) {
         if(0==m_credits.Child(i).Tag().compare("GROUP"))
         {
             XMLElement group = m_credits.Child(i);
-            for(int j = 0; j<group.NumChildren();j++)
+            for(int j = 0; j<group.NumChildren();j++) {
                 if(0==group.Child(j).Tag().compare("PERSON"))
                 {
                     XMLElement person = group.Child(j);
@@ -125,10 +125,10 @@ void CreditsWnd::Render()
                     font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,credit, format, 0);
                     offset+=font->TextExtent(credit, format).y+2;
                 }
-            font->RenderText(ul.x+m_cx,ul.y+m_cy+offset,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch,"", format, 0);
-            offset+=font->TextExtent("", format).y+2;
-
+            }
+            offset+=font->Lineskip()+2;
         }
+    }
     GG::EndScissorClipping();
     if(offset<0)
     {
