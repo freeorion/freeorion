@@ -75,7 +75,7 @@ void SitRepPanel::Update()
     // loop through sitreps and display
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
         LinkText* link_text = new LinkText(0, 0, width, (*sitrep_it)->GetText(), font, format, ClientUI::TEXT_COLOR);
-        GG::ListBox::Row *row = new GG::ListBox::Row(width, font->TextExtent(link_text->WindowText(), format, width).y, "");
+        GG::ListBox::Row *row = new GG::ListBox::Row(link_text->Width(), link_text->Height(), "");
         GG::Connect(link_text->PlanetLinkSignal, &ClientUI::ZoomToPlanet, ClientUI::GetClientUI());
         GG::Connect(link_text->SystemLinkSignal, &ClientUI::ZoomToSystem, ClientUI::GetClientUI());
         GG::Connect(link_text->FleetLinkSignal, &ClientUI::ZoomToFleet, ClientUI::GetClientUI());
