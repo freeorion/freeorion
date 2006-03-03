@@ -23,6 +23,10 @@
 #include <boost/format.hpp>
 
 
+//HACK! Since the new fleet drop target was originally a new fleet row in the fleets listbox, this class is used to
+//represent the single control in every fleet row and the new fleet drop target.  Note that this means that there is
+//some code used under each use of this class, and that this is not always obvious in the method implementations of this
+//class.
 class FleetDataPanel : public GG::Control
 {
 public:
@@ -32,7 +36,7 @@ public:
         STAT_ICON_WD = 40
     };
 
-    FleetDataPanel(int w, int h, const Fleet* fleet);
+    FleetDataPanel(int w, int h, const Fleet* fleet, int empire = -1, int system_id = -1, double x = 0.0, double y = 0.0);
 
     bool Selected() const;
 
@@ -49,6 +53,10 @@ private:
     void Refresh();
 
     const Fleet* const m_fleet;
+    const int m_empire;
+    const int m_system_id;
+    const double m_x;
+    const double m_y;
     GG::StaticGraphic* m_fleet_icon;
     GG::TextControl* m_fleet_name_text;
     StatisticIcon* m_num_ships_stat;
@@ -233,10 +241,28 @@ namespace {
         Ship* const m_ship;
     };
 
-    bool CanJoin(const Ship* ship, const Fleet* fleet)
+    bool ValidShip(const Ship* ship, const Fleet* new_fleet)
     {
         const Fleet* current_fleet = ship->GetFleet();
-        return current_fleet->ID() != fleet->ID() && (current_fleet->X() == fleet->X() && current_fleet->Y() == fleet->Y());
+        return (!current_fleet || current_fleet->ID() != new_fleet->ID()) &&
+            (ship->X() == new_fleet->X() && ship->Y() == new_fleet->Y()) &&
+            ship->SystemID() == new_fleet->SystemID() &&
+            *ship->Owners().begin() == *new_fleet->Owners().begin();
+    }
+
+    bool ValidShip(const Ship* ship, double x, double y, int system_id, int empire)
+    {
+        return (ship->X() == x && ship->Y() == y) &&
+            ship->SystemID() == system_id &&
+            *ship->Owners().begin() == empire;
+    }
+
+    bool ValidFleet(const Fleet* fleet, const Fleet* target_fleet)
+    {
+        return fleet->ID() != target_fleet->ID() &&
+            fleet->SystemID() == target_fleet->SystemID() &&
+            (fleet->X() == target_fleet->X() && fleet->Y() == target_fleet->Y()) &&
+            *fleet->Owners().begin() == *target_fleet->Owners().begin();
     }
 
     bool temp_header_bool = RecordHeaderFile(FleetWndRevision());
@@ -246,9 +272,14 @@ namespace {
 ////////////////////////////////////////////////
 // FleetDataPanel
 ////////////////////////////////////////////////
-FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet) :
+FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
+                               int empire/* = -1*/, int system_id/* = -1*/, double x/* = 0.0*/, double y/* = 0.0*/) :
     Control(0, 0, w, h, fleet ? 0 : GG::CLICKABLE),
     m_fleet(fleet),
+    m_empire(empire),
+    m_system_id(system_id),
+    m_x(x),
+    m_y(y),
     m_fleet_icon(0),
     m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + UserString("FW_NEW_FLEET_LABEL") + "</i>",
                                           GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), m_fleet ? ClientUI::TEXT_COLOR : GG::CLR_BLACK,
@@ -302,7 +333,8 @@ void FleetDataPanel::DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt
 {
     Select(true);
     for (std::map<Wnd*, GG::Pt>::const_iterator it = drag_drop_wnds.begin(); it != drag_drop_wnds.end(); ++it) {
-        if (it->first->DragDropDataType() != SHIP_DROP_TYPE_STRING) {
+        if (it->first->DragDropDataType() != SHIP_DROP_TYPE_STRING ||
+            !ValidShip(static_cast<ShipRow*>(it->first)->m_ship, m_x, m_y, m_system_id, m_empire)) {
             Select(false);
             break;
         }
@@ -322,6 +354,10 @@ void FleetDataPanel::AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
         if ((*it)->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
             ships.push_back(static_cast<ShipRow*>(*it)->m_ship);
             ship_ids.push_back(ships.back()->ID());
+            if (!ValidShip(ships.back(), m_x, m_y, m_system_id, m_empire)) {
+                wnds.clear();
+                return;
+            }
         } else {
             wnds.clear();
             return;
@@ -490,20 +526,37 @@ public:
 
     mutable boost::signal<void (Ship*, const std::vector<int>&)> NewFleetFromShipsSignal;
 
-    // HACK!  This is sort of a dirty trick, but we return false here in all cases, even when we accept the dropped
-    // item.  This keeps things simpler than if we handled ListBox::DroppedRow signals, since all the Fleet- and
+    // HACK!  This is sort of a dirty trick, but we clear wnds here in all cases, even when we accept the dropped
+    // item(s).  This keeps things simpler than if we handled ListBox::DroppedRow signals, since all the Fleet- and
     // Ship-display Wnds respond to changes in the system or fleet they display anyway.
     virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
     {
+        int row_index = RowUnderPt(pt);
+        if (m_read_only || row_index < 0 || NumRows() <= row_index) {
+            wnds.clear();
+            return;
+        }
+
+        Fleet* target_fleet = static_cast<FleetRow*>(&GetRow(row_index))->m_fleet;
+        assert(target_fleet);
+
         std::vector<Fleet*> fleets;
         std::vector<Ship*> ships;
         std::vector<int> ship_ids;
         for (std::list<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
             if ((*it)->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
                 fleets.push_back(static_cast<FleetRow*>(*it)->m_fleet);
+                if (!ValidFleet(fleets.back(), target_fleet)) {
+                    wnds.clear();
+                    return;
+                }
             } else if ((*it)->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 ships.push_back(static_cast<ShipRow*>(*it)->m_ship);
                 ship_ids.push_back(ships.back()->ID());
+                if (!ValidShip(ships.back(), target_fleet)) {
+                    wnds.clear();
+                    return;
+                }
             } else {
                 wnds.clear();
                 return;
@@ -512,18 +565,9 @@ public:
         assert(ships.empty() != fleets.empty());
         wnds.clear();
 
-        int row_index = RowUnderPt(pt);
-        if (m_read_only || row_index < 0 || NumRows() <= row_index)
-            return;
-
-        Fleet* target_fleet = static_cast<FleetRow*>(&GetRow(row_index))->m_fleet;
-        assert(target_fleet);
         if (!fleets.empty()) {
             for (unsigned int i = 0; i < fleets.size(); ++i)
             {
-                // disallow drops across fleet windows; fleets must be at the same location
-                if (target_fleet->X() != fleets[i]->X() || target_fleet->Y() != fleets[i]->Y())
-                    continue;
                 int fleet_id = fleets[i]->ID();
                 HumanClientApp::Orders().IssueOrder(
                     new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), fleets[i]->ID(), target_fleet->ID(),
@@ -536,7 +580,7 @@ public:
                 }
             }
         } else if (!ships.empty()) {
-            if (!CanJoin(ships[0], target_fleet))
+            if (!ValidShip(ships[0], target_fleet))
                 return;
             HumanClientApp::Orders().IssueOrder(
                 new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ships[0]->FleetID(), target_fleet->ID(),
@@ -559,7 +603,8 @@ public:
         if (m_read_only || row_index < 0 || NumRows() <= row_index)
             return;
 
-        FleetDataPanel* fleet_data_panel = static_cast<FleetDataPanel*>((*static_cast<FleetRow*>(&GetRow(row_index)))[0]);
+        FleetRow* fleet_row = static_cast<FleetRow*>(&GetRow(row_index));
+        FleetDataPanel* fleet_data_panel = static_cast<FleetDataPanel*>((*fleet_row)[0]);
         if (!fleet_data_panel->Selected()) {
             bool valid_drop = true;
             bool fleets_seen = false;
@@ -567,7 +612,15 @@ public:
             for (std::map<Wnd*, GG::Pt>::const_iterator it = drag_drop_wnds.begin(); it != drag_drop_wnds.end(); ++it) {
                 if (it->first->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
                     fleets_seen = true;
+                    if (!ValidFleet(static_cast<FleetRow*>(it->first)->m_fleet, fleet_row->m_fleet)) {
+                        valid_drop = false;
+                        break;
+                    }
                 } else if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
+                    if (!ValidShip(static_cast<ShipRow*>(it->first)->m_ship, fleet_row->m_fleet)) {
+                        valid_drop = false;
+                        break;
+                    }
                     ships_seen = true;
                 } else {
                     valid_drop = false;
@@ -614,7 +667,7 @@ public:
 
     void SetFleet(Fleet* fleet) {m_fleet = fleet;}
 
-    // see comments above FleetsListBox::FleetsListBox()
+    // see comments above FleetsListBox::AcceptDrops()
     virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
     {
         if (wnds.front()->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
@@ -626,7 +679,7 @@ public:
             }
 
             ShipRow* ship_row = 0;
-            if (m_read_only || !(ship_row = dynamic_cast<ShipRow*>(wnds.front())) || !CanJoin(ship_row->m_ship, m_fleet)) {
+            if (m_read_only || !(ship_row = dynamic_cast<ShipRow*>(wnds.front())) || !ValidShip(ship_row->m_ship, m_fleet)) {
                 wnds.clear();
                 return;
             }
@@ -875,21 +928,19 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
     m_fleet_detail_panel(0)
 {
     assert(0 <= selected_fleet && selected_fleet < static_cast<int>(fleets.size()));
+    assert(!fleets.empty());
 
-    if (!fleets.empty())
-    {
-        m_system_id = fleets[0]->SystemID();
-        for (unsigned int i = 1; i < fleets.size(); ++i) {
-            if (m_system_id != fleets[i]->SystemID())
-                m_system_id = UniverseObject::INVALID_OBJECT_ID;
-        }
+    m_system_id = fleets[0]->SystemID();
+    for (unsigned int i = 1; i < fleets.size(); ++i) {
+        if (m_system_id != fleets[i]->SystemID())
+            m_system_id = UniverseObject::INVALID_OBJECT_ID;
     }
 
     TempUISoundDisabler sound_disabler;
 
     m_fleets_lb = new FleetsListBox(0, 0, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT, read_only);
     if (!m_read_only) {
-        m_new_fleet_drop_target = new FleetDataPanel(FleetRow::PANEL_WD, FleetRow::PANEL_HT, 0);
+        m_new_fleet_drop_target = new FleetDataPanel(FleetRow::PANEL_WD, FleetRow::PANEL_HT, 0, m_empire_id, m_system_id, fleets[0]->X(), fleets[0]->Y());
         m_new_fleet_drop_target->SetMinSize(GG::Pt(1, FleetRow::PANEL_HT));
         m_new_fleet_drop_target->MoveTo(GG::Pt(0, 5));
     }
@@ -1177,7 +1228,7 @@ void FleetWnd::DeleteFleet(Fleet* fleet)
 
 void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>& ship_ids)
 {
-    Fleet* some_existing_fleet = FleetInRow(0);
+    Fleet* some_fleet = FleetInRow(0);
 
     // special case: disallow creating a new fleet from a ship when there is exactly 1 fleet containing exactly 1 ship
     if (m_fleets_lb->NumRows() == 1) { // if there is exactly one fleet in the list
@@ -1186,15 +1237,13 @@ void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>&
             return;
     }
 
-    if (!some_existing_fleet || !first_ship ||
-        some_existing_fleet->SystemID() != first_ship->GetFleet()->SystemID() ||
-        some_existing_fleet->X() != first_ship->GetFleet()->X() ||
-        some_existing_fleet->Y() != first_ship->GetFleet()->Y())
+    if (!some_fleet || !first_ship ||
+        !ValidShip(first_ship, some_fleet->X(), some_fleet->Y(), some_fleet->SystemID(), m_system_id))
         return;
 
-    System* system = some_existing_fleet->GetSystem();
-    double some_existing_fleet_x = some_existing_fleet->X();
-    double some_existing_fleet_y = some_existing_fleet->Y();
+    System* system = some_fleet->GetSystem();
+    double some_fleet_x = some_fleet->X();
+    double some_fleet_y = some_fleet->Y();
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     int new_fleet_id = ClientApp::GetNewObjectID();
@@ -1216,10 +1265,10 @@ void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>&
             }
         }
     } else {
-        HumanClientApp::Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, some_existing_fleet_x, some_existing_fleet_y, ship_ids));
+        HumanClientApp::Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, some_fleet_x, some_fleet_y, ship_ids));
         std::vector<Fleet*> fleets = GetUniverse().FindObjects<Fleet>();
         for (unsigned int i = 0; i < fleets.size(); ++i) {
-            if (fleets[i]->Name() == fleet_name && fleets[i]->X() == some_existing_fleet_x && fleets[i]->Y() == some_existing_fleet_y) {
+            if (fleets[i]->Name() == fleet_name && fleets[i]->X() == some_fleet_x && fleets[i]->Y() == some_fleet_y) {
                 new_fleet = fleets[i];
                 break;
             }
