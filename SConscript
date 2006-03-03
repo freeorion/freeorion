@@ -115,18 +115,19 @@ def get_revision(env):
         inf = popen("svn info")
         for i in inf:
             if i[:10] == "Revision: ":
-                # this \" madness is a workaround of what seems to be an SCons bug
-                # in combination with gcc. It might break on msvc, in that case, we
-                # need a check for msvc
                 return r'\" [Rev ' + i[10:-1] + r']\"'
     except: 
         return None
 
 objects = env.Object(common_sources)
-if get_revision(env):
-    env.AppendUnique(CPPDEFINES = [('FREEORION_REVISION', get_revision(env))])
-
-objects += env.Object('util/Version.cpp')
+# This evil line should prevent SCons from issuing a warning
+# [b,a][c==d] is equivalent to C's c==d?a:b
+# So what is does is defining FREEORION_REVISION if get_revision
+# returned one
+objects += env.Object('util/Version.cpp', CPPDEFINES = [
+    [('FREEORION_REVISION', get_revision(env))],
+    []][get_revision(common_sources) == None]
+)
 
 objects += [env.Object(target = source.split(".")[0] + '-' + target,
                        source = source,
