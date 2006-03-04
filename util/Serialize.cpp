@@ -12,6 +12,18 @@
 
 #include "SDL_byteorder.h"
 
+#if defined(_MSC_VER)
+  // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
+  // in boost/cstdint.h when compiling under windows
+#  if defined(int64_t)
+#    undef int64_t
+#  endif
+#elif defined(WIN32)
+  // HACK! this keeps gcc 3.x from barfing when it sees "typedef long long uint64_t;"
+  // in boost/cstdint.h when compiling under windows
+#  define BOOST_MSVC -1
+#endif
+
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/list.hpp>
