@@ -1237,8 +1237,7 @@ void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>&
             return;
     }
 
-    if (!some_fleet || !first_ship ||
-        !ValidShip(first_ship, some_fleet->X(), some_fleet->Y(), some_fleet->SystemID(), m_system_id))
+    if (!some_fleet || !first_ship)
         return;
 
     System* system = some_fleet->GetSystem();
