@@ -42,21 +42,21 @@ namespace fs = boost::filesystem;
 namespace {
     const fs::path GLOBAL_DIR = GetGlobalDir();
 }
-std::string ClientUI::FONT             = (GLOBAL_DIR / "Vera.ttf").native_file_string();
-std::string ClientUI::FONT_BOLD        = (GLOBAL_DIR / "VeraBd.ttf").native_file_string();
-std::string ClientUI::FONT_ITALIC      = (GLOBAL_DIR / "VeraIt.ttf").native_file_string();
-std::string ClientUI::FONT_BOLD_ITALIC = (GLOBAL_DIR / "VeraBI.ttf").native_file_string();
-std::string ClientUI::TITLE_FONT       = (GLOBAL_DIR / "Vera.ttf").native_file_string();
+std::string ClientUI::FONT             = (GLOBAL_DIR / "DejaVuSans.ttf").native_file_string();
+std::string ClientUI::FONT_BOLD        = (GLOBAL_DIR / "DejaVuSans-Bold.ttf").native_file_string();
+std::string ClientUI::FONT_ITALIC      = (GLOBAL_DIR / "DejaVuSans-Oblique.ttf").native_file_string();
+std::string ClientUI::FONT_BOLD_ITALIC = (GLOBAL_DIR / "DejaVuSans-BoldOblique.ttf").native_file_string();
+std::string ClientUI::TITLE_FONT       = (GLOBAL_DIR / "DejaVuSans.ttf").native_file_string();
 
 std::string ClientUI::DIR              = (GLOBAL_DIR / "default/").native_directory_string();
 std::string ClientUI::ART_DIR          = (GLOBAL_DIR / "default/data/art/").native_directory_string();
 std::string ClientUI::SOUND_DIR	       = (GLOBAL_DIR / "default/data/sound/").native_directory_string();
 #else
-std::string ClientUI::FONT             = "Vera.ttf";
-std::string ClientUI::FONT_BOLD        = "VeraBd.ttf";
-std::string ClientUI::FONT_ITALIC      = "VeraIt.ttf";
-std::string ClientUI::FONT_BOLD_ITALIC = "VeraBI.ttf";
-std::string ClientUI::TITLE_FONT       = "Vera.ttf";
+std::string ClientUI::FONT             = "DejaVuSans.ttf";
+std::string ClientUI::FONT_BOLD        = "DejaVuSans-Bold.ttf";
+std::string ClientUI::FONT_ITALIC      = "DejaVuSans-Oblique.ttf";
+std::string ClientUI::FONT_BOLD_ITALIC = "DejaVuSans-BoldOblique.ttf";
+std::string ClientUI::TITLE_FONT       = "DejaVuSans.ttf";
 
 std::string ClientUI::DIR              = "default/";
 std::string ClientUI::ART_DIR          = "default/data/art/";
