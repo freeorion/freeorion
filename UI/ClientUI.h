@@ -189,8 +189,6 @@ public:
     // game UI windows
     static GG::Clr     SIDE_PANEL_COLOR;
     static GG::Clr     SIDE_PANEL_BUILD_PROGRESSBAR_COLOR;
-    static int         SIDE_PANEL_PLANET_NAME_PTS;
-    static int         SIDE_PANEL_PTS;
 
     // tech screen
     static GG::Clr     KNOWN_TECH_FILL_COLOR;

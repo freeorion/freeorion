@@ -735,13 +735,13 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
       }
   }
 
-  m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PLANET_NAME_PTS),ClientUI::TEXT_COLOR);
+  m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::PTS*4/3),ClientUI::TEXT_COLOR);
   AttachChild(m_planet_name);
 
-  m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS),ClientUI::TEXT_COLOR,GG::TF_LEFT|GG::TF_TOP);
+  m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::PTS),ClientUI::TEXT_COLOR,GG::TF_LEFT|GG::TF_TOP);
   AttachChild(m_planet_info);
 
-  m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::SIDE_PANEL_PTS)/2,60,UserString("PL_COLONIZE"),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS),ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::CLICKABLE);
+  m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::PTS)/2,60,UserString("PL_COLONIZE"),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::PTS),ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::CLICKABLE);
   Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
   AttachChild(m_button_colonize);
 
@@ -969,7 +969,7 @@ bool SidePanel::PlanetPanel::RenderUnhabited(const Planet &planet)
 bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 {
   glColor4ubv(ClientUI::TEXT_COLOR.v);
-  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS);
+  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::PTS);
   Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
 
   std::string text; int x,y;
@@ -989,7 +989,7 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 
   boost::shared_ptr<GG::Texture> icon;
   const int ICON_MARGIN    =  5;
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.2));
+  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS));
 
   //population
   //x = m_planet_name->UpperLeft ().x+10; y = m_planet_name->LowerRight().y + RESOURCE_DISPLAY_HEIGHT+3;
@@ -1006,7 +1006,7 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 {
   glColor4ubv(ClientUI::TEXT_COLOR.v);
-  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::SIDE_PANEL_PTS);
+  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::PTS);
   Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
 
   std::string text; int x,y;
@@ -1024,7 +1024,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 
   boost::shared_ptr<GG::Texture> icon;
   const int ICON_MARGIN    =  5;
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.2));
+  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS));
 
   //population
   //x = m_planet_name->UpperLeft ().x+10; y = m_planet_name->LowerRight().y + RESOURCE_DISPLAY_HEIGHT+3;
@@ -1291,7 +1291,7 @@ void SidePanel::SystemResourceSummary::Render()
   int farming=m_farming,mining=m_mining,trade=m_trade,research=m_research,industry=m_industry,defense=m_defense;
 
   std::string text; int x,y; boost::shared_ptr<GG::Texture> icon;
-  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.2));
+  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS));
   Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
   const int ICON_MARGIN    =  5;
   
@@ -1365,7 +1365,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     Wnd(x, y, w, h, GG::CLICKABLE),
     m_system(0),
     m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5))),
-    m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,UserString("SP_UNKNOWN_SYSTEM"),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4)),ClientUI::TEXT_COLOR)),
+    m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,UserString("SP_UNKNOWN_SYSTEM"),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),ClientUI::TEXT_COLOR)),
     m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),GG::CLR_WHITE,GG::CLICKABLE)),
     m_button_next(new GG::Button(40+w-80                 ,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),GG::CLR_WHITE,GG::CLICKABLE)),
     m_star_graphic(0),
@@ -1498,7 +1498,7 @@ void SidePanel::SetSystem(int system_id)
         if(sys_vec[i]->Name().length()==0)
           continue;
  
-        row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,static_cast<int>(ClientUI::PTS*1.4), ClientUI::TEXT_COLOR);
+        row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,SYSTEM_NAME_FONT_SIZE, ClientUI::TEXT_COLOR);
         m_system_name->Insert(row);
         ++system_names_in_droplist;
 

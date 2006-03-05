@@ -293,7 +293,7 @@ void OptionsWnd::Init()
 	control_page->AttachChild(stateBtn);
 	// Autosave
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(x, y, UserString("OPTIONS_AUTOSAVE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y, UserString("OPTIONS_AUTOSAVE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	control_page->AttachChild(textControl);
 	// [x] Single Player [x] Multiplayer
 	y += PAGE_ROW_HEIGHT - 5;
@@ -356,7 +356,7 @@ void OptionsWnd::Init()
 	// Fonts
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN;
-	textControl = new GG::TextControl(x, y, UserString("OPTIONS_FONTS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y, UserString("OPTIONS_FONTS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
 	// *Text [font] *Size [size]^
 	y += PAGE_ROW_HEIGHT - 5;
@@ -373,7 +373,7 @@ void OptionsWnd::Init()
 	// Tech Spacing
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN;
-	textControl = new GG::TextControl(x, y, UserString("OPTIONS_TECH_SPACING"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y, UserString("OPTIONS_TECH_SPACING"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
 	// *Horz [space]^ *Vert[space]^
 	y += PAGE_ROW_HEIGHT - 5;
@@ -424,7 +424,7 @@ void OptionsWnd::Init()
 	// Chat
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN;
-	textControl = new GG::TextControl(x, y, UserString("OPTIONS_CHAT"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(x, y, UserString("OPTIONS_CHAT"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	ui_page->AttachChild(textControl);
 	// History [count]^
 	y += PAGE_ROW_HEIGHT - 5;
@@ -489,7 +489,7 @@ void OptionsWnd::Init()
 	// Window
 	y += PAGE_ROW_HEIGHT;
 	x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_WINDOW"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_WINDOW"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	sound_page->AttachChild(textControl);
 	// Close [sound] 
 	y += PAGE_ROW_HEIGHT - 5;
@@ -502,7 +502,7 @@ void OptionsWnd::Init()
 	AddSoundControls(x, y, "OPTIONS_SOUND_MINIMIZE", sound_page, "UI.sound.window-minimize", m_minimize_edit, btn);
 	// Button
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_BUTTON"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_BUTTON"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	sound_page->AttachChild(textControl);
 	// Click [sound] 
 	y += PAGE_ROW_HEIGHT - 5;
@@ -512,7 +512,7 @@ void OptionsWnd::Init()
 	AddSoundControls(x, y, "OPTIONS_SOUND_ROLLOVER", sound_page, "UI.sound.button-rollover", m_rolloverButton_edit, btn);
 	// Fleet
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_FLEET"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_FLEET"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	sound_page->AttachChild(textControl);
 	// Click [sound] 
 	y += PAGE_ROW_HEIGHT - 5;
@@ -557,7 +557,7 @@ void OptionsWnd::Init()
 	AddSoundControls(PAGE_HORZ_MARGIN, y, "OPTIONS_SOUND_PLANET", sound_page2, "UI.sound.planet-button-click", m_planet_edit, btn);
 	// Focus
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_FOCUS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_FOCUS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	sound_page2->AttachChild(textControl);
 	// Balanced [sound]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -576,7 +576,7 @@ void OptionsWnd::Init()
 	AddSoundControls(x, y, "OPTIONS_SOUND_RESEARCH", sound_page2, "UI.sound.research-focus", m_research_edit, btn);
 	// List
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_LIST"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_LIST"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	sound_page2->AttachChild(textControl);
 	// Drop [sound] 
 	y += PAGE_ROW_HEIGHT - 5;
@@ -606,7 +606,7 @@ void OptionsWnd::Init()
 	y = PAGE_VERT_MARGIN;
 	x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
 	// General
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_GENERAL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_GENERAL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	colors_page->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -619,7 +619,7 @@ void OptionsWnd::Init()
 	AddColorControls(x, y, "OPTIONS_COLOR_TEXT", colors_page, "UI.text-color", comboColor);
 	// Edit
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_EDIT"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_EDIT"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	colors_page->AttachChild(textControl);
 	// Highlight [color] 
 	y += PAGE_ROW_HEIGHT - 5;
@@ -629,7 +629,7 @@ void OptionsWnd::Init()
 	AddColorControls(x, y, "OPTIONS_COLOR_INTERIOR", colors_page, "UI.edit-interior", comboColor);
 	// Window
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_WINDOW"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_WINDOW"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	colors_page->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -662,7 +662,7 @@ void OptionsWnd::Init()
 	y = PAGE_VERT_MARGIN;
 	x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
 	// Known Tech
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_KNOWN"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_KNOWN"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	colors_page2->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -672,7 +672,7 @@ void OptionsWnd::Init()
 	AddColorControls(x, y, "OPTIONS_COLOR_BORDER", colors_page2, "UI.known-tech-border", comboColor);
 	// Researchable Tech
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_RESEARCHABLE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_RESEARCHABLE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	colors_page2->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -682,7 +682,7 @@ void OptionsWnd::Init()
 	AddColorControls(x, y, "OPTIONS_COLOR_BORDER", colors_page2, "UI.researchable-tech-border", comboColor);
 	// Unresearchable Tech
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_UNRESEARCHABLE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_UNRESEARCHABLE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	colors_page2->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;
@@ -692,7 +692,7 @@ void OptionsWnd::Init()
 	AddColorControls(x, y, "OPTIONS_COLOR_BORDER", colors_page2, "UI.unresearchable-tech-border", comboColor);
 	// Tech Progress
 	y += PAGE_ROW_HEIGHT;
-	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_PROGRESS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PLANET_NAME_PTS), ClientUI::TEXT_COLOR);
+	textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_PROGRESS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
 	colors_page2->AttachChild(textControl);
 	// Color [color]
 	y += PAGE_ROW_HEIGHT - 5;

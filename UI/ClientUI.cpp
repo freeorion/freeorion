@@ -102,8 +102,6 @@ double      ClientUI::FLEET_BUTTON_SIZE = 0.5;
 // game UI windows
 GG::Clr     ClientUI::SIDE_PANEL_COLOR(0, 0, 0, 220);
 GG::Clr     ClientUI::SIDE_PANEL_BUILD_PROGRESSBAR_COLOR(25, 40, 140, 150);
-int         ClientUI::SIDE_PANEL_PLANET_NAME_PTS = 15;
-int         ClientUI::SIDE_PANEL_PTS = 11;
 
 // tech screen
 GG::Clr     ClientUI::KNOWN_TECH_FILL_COLOR(72, 72, 72, 255);

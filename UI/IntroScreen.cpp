@@ -73,7 +73,7 @@ void CreditsWnd::Render()
         return;
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    boost::shared_ptr<GG::Font> font=HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.3));;
+    boost::shared_ptr<GG::Font> font=HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.3));;
     Uint32 format = GG::TF_CENTER | GG::TF_TOP;
 
     GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::Clr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
@@ -379,7 +379,7 @@ void IntroScreen::KeyPress (GG::Key key, Uint32 key_mods)
 
 void IntroScreen::Render()
 {
-    boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, ClientUI::SIDE_PANEL_PTS);
+    boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
     CUIWnd::Render();
     GG::Pt size=font->TextExtent(FreeOrionVersionString());
     font->RenderText(GG::GUI::GetGUI()->AppWidth()-size.x,

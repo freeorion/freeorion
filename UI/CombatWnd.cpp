@@ -59,7 +59,7 @@ class CombatInfoControl : public GG::Control
       GG::Pt ul(UpperLeft()),lr(LowerRight());
       GG::FlatRectangle(ul.x+1,ul.y+1,lr.x,lr.y,bg_color,border_color,2);
 
-      boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
+      boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.0));
       Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
       std::string text;
 
@@ -75,13 +75,13 @@ class CombatInfoControl : public GG::Control
       GG::Rect rc;
 
       rc = GG::Rect(ul+GG::Pt(20,5),ul+GG::Pt(500,25));
-      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
+      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.0));
       glColor4ubv(ClientUI::TEXT_COLOR.v);
       format = GG::TF_LEFT | GG::TF_BOTTOM;
       font->RenderText(rc.UpperLeft(),rc.LowerRight(),UserString("COMBAT_BATTLE"), format, 0);
 
       rc = GG::Rect(ul+GG::Pt(20+50,5),ul+GG::Pt(500,28));
-      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.7));
+      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.7));
       glColor4ubv(ClientUI::TEXT_COLOR.v);
       format = GG::TF_LEFT | GG::TF_BOTTOM;
       font->RenderText(rc.UpperLeft(),rc.LowerRight(),boost::io::str(boost::format(UserString("COMBAT_SYSTEM")) % m_combat_info.m_system), format, 0);
@@ -121,7 +121,7 @@ class CombatInfoControl : public GG::Control
         
         GG::FlatRectangle(area.Left(), area.Top(), area.Right()+2, area.Bottom(),bg_item_color,border_color, 2);
 
-        font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.2));
+        font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.2));
 
         rc = GG::Rect(area.UpperLeft()+rc_txt_empire.UpperLeft(),area.UpperLeft()+rc_txt_empire.LowerRight());
         glColor4ubv(ClientUI::TEXT_COLOR.v);format = GG::TF_LEFT | GG::TF_VCENTER;
@@ -137,7 +137,7 @@ class CombatInfoControl : public GG::Control
           img_topic[c]    .OrthoBlit(col.UpperLeft()+item_img_topic      .UpperLeft(),col.UpperLeft()+item_img_topic      .LowerRight(), false);
           img_arrow_split .OrthoBlit(col.UpperLeft()+item_img_arrow_split.UpperLeft(),col.UpperLeft()+item_img_arrow_split.LowerRight(), false);
 
-          font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::SIDE_PANEL_PTS*1.0));
+          font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.0));
           for(unsigned int j=0;j<4;j++)
           {
             rc = GG::Rect(col.UpperLeft()+item_txt[j].UpperLeft(),col.UpperLeft()+item_txt[j].LowerRight());
