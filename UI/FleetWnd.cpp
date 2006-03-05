@@ -1334,8 +1334,9 @@ bool FleetWnd::CloseAllFleetWnds()
     bool retval = 0 < s_open_fleet_wnds.size();
 
     while (0 < s_open_fleet_wnds.size()) {
-        (*s_open_fleet_wnds.begin())->Close();
-        s_open_fleet_wnds.erase(*s_open_fleet_wnds.begin());
+        FleetWnd* fleet_wnd = *s_open_fleet_wnds.begin();
+        fleet_wnd->Close();
+        s_open_fleet_wnds.erase(fleet_wnd);
     }
 
     return retval;
