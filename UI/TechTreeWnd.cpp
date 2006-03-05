@@ -979,11 +979,13 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
     m_selected(selected)
 {
     int name_font_pts = ClientUI::PTS + 2;
-    GG::Pt TECH_TEXT_OFFSET(4, 2);
+    GG::Pt UPPER_TECH_TEXT_OFFSET(4, 2);
+    GG::Pt LOWER_TECH_TEXT_OFFSET(4, 0);
     if (m_tech->Type() == TT_THEORY) {
         Resize(GG::Pt(THEORY_TECH_PANEL_LAYOUT_WIDTH, THEORY_TECH_PANEL_LAYOUT_HEIGHT));
         name_font_pts += 2;
-        TECH_TEXT_OFFSET += GG::Pt(2, 2);
+        UPPER_TECH_TEXT_OFFSET += GG::Pt(2, 2);
+        LOWER_TECH_TEXT_OFFSET += GG::Pt(2, 4);
     } else if (m_tech->Type() == TT_APPLICATION) {
         Resize(GG::Pt(APPLICATION_TECH_PANEL_LAYOUT_WIDTH, APPLICATION_TECH_PANEL_LAYOUT_HEIGHT));
     } else { // m_tech->Type() == TT_REFINEMENT
@@ -1032,11 +1034,11 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
     }
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, name_font_pts);
-    m_category_icon = new GG::StaticGraphic(TECH_TEXT_OFFSET.x, TECH_TEXT_OFFSET.y, font->Lineskip(), font->Lineskip(),
+    m_category_icon = new GG::StaticGraphic(UPPER_TECH_TEXT_OFFSET.x, UPPER_TECH_TEXT_OFFSET.y, font->Lineskip(), font->Lineskip(),
                                             CategoryIcon(m_tech->Category()), GG::GR_FITGRAPHIC);
     m_category_icon->SetColor(CategoryColor(m_tech->Category()));
 
-    m_tech_name_text = new GG::TextControl(m_category_icon->LowerRight().x + 4, TECH_TEXT_OFFSET.y, Width() - (m_category_icon->LowerRight().x + 4) - PROGRESS_PANEL_LEFT_EXTRUSION - 4,
+    m_tech_name_text = new GG::TextControl(m_category_icon->LowerRight().x + 4, UPPER_TECH_TEXT_OFFSET.y, Width() - (m_category_icon->LowerRight().x + 4) - PROGRESS_PANEL_LEFT_EXTRUSION - 4,
                                            font->Lineskip(), UserString(m_tech->Name()), font, m_text_and_border_color, GG::TF_TOP | GG::TF_LEFT);
     m_tech_name_text->ClipText(true);
     AttachChild(m_category_icon);
@@ -1045,8 +1047,8 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
     std::string cost_str;
     if (!known_tech)
         cost_str = str(format(UserString("TECH_TOTAL_COST_STR")) % static_cast<int>(m_tech->ResearchCost() + 0.5) % m_tech->ResearchTurns());
-    m_tech_cost_text = new GG::TextControl(TECH_TEXT_OFFSET.x, 0,
-                                           Width() - TECH_TEXT_OFFSET.x, Height() - TECH_TEXT_OFFSET.y - PROGRESS_PANEL_BOTTOM_EXTRUSION,
+    m_tech_cost_text = new GG::TextControl(UPPER_TECH_TEXT_OFFSET.x, 0,
+                                           Width() - LOWER_TECH_TEXT_OFFSET.x, Height() - LOWER_TECH_TEXT_OFFSET.y - PROGRESS_PANEL_BOTTOM_EXTRUSION,
                                            cost_str, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), m_text_and_border_color, GG::TF_BOTTOM | GG::TF_LEFT);
     AttachChild(m_tech_cost_text);
 
