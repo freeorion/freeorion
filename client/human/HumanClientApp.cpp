@@ -15,6 +15,7 @@
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
 #include "../../util/XMLDoc.h"
+#include "../../util/Version.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -353,7 +354,7 @@ void HumanClientApp::SDLInit()
         Exit(1);
     }
 
-    SDL_WM_SetCaption("FreeOrion v0.3", "FreeOrion v0.3");
+    SDL_WM_SetCaption(("FreeOrion "+FreeOrionVersionString()).c_str(), "FreeOrion");
 
     if (SDLNet_Init() < 0) {
         Logger().errorStream() << "SDL Net initialization failed: " << SDLNet_GetError();
