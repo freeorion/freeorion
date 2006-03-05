@@ -1481,8 +1481,12 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
     }
 
     GG::Pt client_sz = ClientSize();
-    GG::Pt layout_size(static_cast<int>(PS2INCH(GD_bb(graph).UR.x - GD_bb(graph).LL.x) + 2 * TECH_PANEL_MARGIN + PROGRESS_PANEL_LEFT_EXTRUSION),
-                       static_cast<int>(PS2INCH(GD_bb(graph).UR.y - GD_bb(graph).LL.y) + 2 * TECH_PANEL_MARGIN + PROGRESS_PANEL_BOTTOM_EXTRUSION));
+    GG::Pt layout_size(std::max(client_sz.x,
+                                static_cast<int>(PS2INCH(GD_bb(graph).UR.x - GD_bb(graph).LL.x) +
+                                                 2 * TECH_PANEL_MARGIN + PROGRESS_PANEL_LEFT_EXTRUSION)),
+                       std::max(client_sz.y,
+                                static_cast<int>(PS2INCH(GD_bb(graph).UR.y - GD_bb(graph).LL.y) +
+                                                 2 * TECH_PANEL_MARGIN + PROGRESS_PANEL_BOTTOM_EXTRUSION)));
     m_layout_surface->Resize(layout_size);
     m_vscroll->SizeScroll(0, layout_size.y - 1, std::max(50, std::min(layout_size.y / 10, client_sz.y)), client_sz.y);
     m_hscroll->SizeScroll(0, layout_size.x - 1, std::max(50, std::min(layout_size.x / 10, client_sz.x)), client_sz.x);
