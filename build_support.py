@@ -2,7 +2,6 @@
 
 import os
 import re
-import types
 from build_config import *
 
 def OptionValue(key, env):
@@ -213,9 +212,8 @@ def CheckVersionHeader(context, package, header, regex, comparison_string, versi
             context.Message('Checking %s version == %s... ' % (package, comparison_string))
     matches = FindRegexMatchesInHeader(regex, header, context.env)
     if len(matches) == 1:
-        import types
-        if type(matches[0]) == types.StringType:
-            match_str = matches[0]
+        if isinstance(matches[0], basestring):
+	    match_str = matches[0]
         else:
             match_str = '.'.join(matches[0])
         if version_leq_check:
@@ -344,7 +342,7 @@ def TraverseHeaderTree(dir, header_root, headers, current_path, op, nodes):
     for i in current_path:
         sub_path = os.path.normpath(os.path.join(sub_path, i))
     for i in range(1, len(headers)):
-        if type(headers[i]) == types.ListType:
+        if isinstance(headers[i],list):
             TraverseHeaderTree(dir, header_root, headers[i], current_path, op, nodes)
         else:
             nodes.append(op(os.path.normpath(os.path.join(dir, sub_path)),
