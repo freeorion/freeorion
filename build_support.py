@@ -16,7 +16,7 @@ def GenerateHelpText(options, env):
         'Targets:',
         '========',
         '',
-        'The default target builds GiGi, GiGiSDL, and GiGiNet based on the options you specify.  Not that some options force GiGiSDL and/or GiGiNet not to be built.',
+        'The default target builds freeorion, freeorionca and freeoriond based on the options you specify.'
         '',
         'install',
         'Installs the default targets in the installation directory, building it first if needed.',
@@ -363,7 +363,7 @@ def GetRepositoryRevision():
         from os import popen
         inf = popen("svn info")
         for i in inf:
-            if i[:10] == "Revision: ":
+            if i.startswith("Revision: "):
                 return ' [Rev ' + i[10:-1] + ']'
     except: 
         return None
