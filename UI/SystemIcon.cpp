@@ -41,7 +41,7 @@ namespace {
 ////////////////////////////////////////////////
 SystemIcon::SystemIcon(int id, double zoom) :
     GG::Control(0, 0, 1, 1, GG::CLICKABLE),
-    m_system(*ClientApp::GetUniverse().Object<const System>(id)),
+    m_system(*GetUniverse().Object<const System>(id)),
     m_static_graphic(0),
     m_default_star_color(GG::CLR_WHITE)
 {
@@ -158,7 +158,7 @@ void SystemIcon::Refresh()
     if (owners.size() < 2) {
         GG::Clr text_color = ClientUI::TEXT_COLOR;
         if (!owners.empty()) {
-            text_color = HumanClientApp::Empires().Lookup(*owners.begin())->Color();
+            text_color = Empires().Lookup(*owners.begin())->Color();
         }
         m_name.push_back(new GG::TextControl(0, 0, m_system.Name(), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), text_color));
         AttachChild(m_name[0]);
@@ -177,7 +177,7 @@ void SystemIcon::Refresh()
             }
             m_name.push_back(new GG::TextControl(0, 0, m_system.Name().substr(first_char_pos, last_char_pos - first_char_pos), 
                                                  GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
-                                                 HumanClientApp::Empires().Lookup(*it)->Color()));
+                                                 Empires().Lookup(*it)->Color()));
             AttachChild(m_name.back());
             first_char_pos = last_char_pos;
         }
@@ -240,7 +240,7 @@ void SystemIcon::CreateFleetButtons()
     MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     int stationary_y = 0;
     int moving_y = size.y - BUTTON_SIZE;
-    for (EmpireManager::const_iterator it = HumanClientApp::Empires().begin(); it != HumanClientApp::Empires().end(); ++it) {
+    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         std::vector<int> fleet_IDs = m_system.FindObjectIDs(StationaryFleetVisitor(it->first));
         FleetButton* stationary_fb = 0;
         if (!fleet_IDs.empty()) {

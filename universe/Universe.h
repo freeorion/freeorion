@@ -349,6 +349,7 @@ protected:
     std::set<int> m_marked_destroyed;
 
     static double s_universe_width;
+	static int s_turn;
 
 private:
     static bool s_inhibit_universe_object_signals;

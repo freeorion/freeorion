@@ -1643,6 +1643,25 @@ DESC_AND_BETWEEN_OPERANDS
 DESC_OR_BETWEEN_OPERANDS
  or
 
+DESC_TURN
+ when the current turn is between %1% and %2%
+
+DESC_TURN_NOT
+ when the current turn is not between %1% and %2%
+
+DESC_NUMBER_OF
+ that is one of %1% objects%2%
+
+DESC_NUMBER_OF_NOT
+ that is not one of %1% objects%2%
+
+DESC_CONTAINED_BY
+ that is contained by an object%1%
+
+DESC_CONTAINED_BY_NOT
+ that is not contained by an object%1%
+
+
 
 ###################
 # Tech Categories #

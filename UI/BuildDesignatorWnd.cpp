@@ -146,7 +146,7 @@ void BuildDesignatorWnd::BuildDetailPanel::SetBuildItem(BuildType build_type, co
 
 void BuildDesignatorWnd::BuildDetailPanel::SetBuild(int queue_idx)
 {
-    Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
         m_build_type = queue[queue_idx].item.build_type;
@@ -190,7 +190,7 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
     m_num_items_to_build_connect.disconnect();
     m_num_items_to_build->SetValue(1);
 
-    Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_num_items_to_build_connect = GG::Connect(m_num_items_to_build->ValueChangedSignal, &BuildDesignatorWnd::BuildDetailPanel::ItemsToBuildChangedSlot, this);
         return;
@@ -319,7 +319,7 @@ void BuildDesignatorWnd::BuildDetailPanel::CheckBuildability()
         m_num_items_to_build->Disable(true);
         m_num_items_to_build_label->Disable(true);
     }
-    Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->BuildableItem(m_build_type, m_item, m_build_location)) {
         m_add_to_queue_button->Disable(false);
         if (m_build_type != BT_BUILDING) {
@@ -477,7 +477,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
     m_current_build_type = build_type;
     m_buildable_items->Clear();
     m_build_types.clear();
-    Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
     boost::shared_ptr<GG::Font> default_font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
@@ -594,7 +594,7 @@ int BuildDesignatorWnd::QueueIndexShown() const
 void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
 {
     m_build_detail_panel->SetBuild(queue_idx);
-    Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
         UniverseObject* build_location = GetUniverse().Object(queue[queue_idx].location);
@@ -643,7 +643,7 @@ void BuildDesignatorWnd::Clear()
 
 void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build)
 {
-    Empire* empire = HumanClientApp::Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->BuildableItem(build_type, item, m_build_location))
         AddBuildToQueueSignal(build_type, item, num_to_build, m_build_location);
 }

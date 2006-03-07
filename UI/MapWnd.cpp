@@ -540,7 +540,7 @@ void MapWnd::InitTurn(int turn_number)
 {
     SetAccelerators();
 
-    Universe& universe = ClientApp::GetUniverse();
+    Universe& universe = GetUniverse();
 
     Resize(GG::Pt(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
                   static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5)));

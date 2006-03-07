@@ -18,6 +18,9 @@ namespace {
     bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
+const int INVALID_GAME_TURN = -1;
+const int BEFORE_FIRST_TURN = -2;
+const int IMPOSSIBLY_LARGE_TURN = 2 << 15;
 
 EmpireManager& Empires()
 {
@@ -27,7 +30,7 @@ EmpireManager& Empires()
     static EmpireManager em;
     return em;
 #else
-    return ClientApp::Empires();
+    return ClientApp::GetApp()->Empires();
 #endif
 }
 
@@ -39,7 +42,7 @@ Universe& GetUniverse()
     static Universe u;
     return u;
 #else
-    return ClientApp::GetUniverse();
+    return ClientApp::GetApp()->GetUniverse();
 #endif
 }
 
@@ -55,6 +58,28 @@ int GetNewObjectID()
 #elif defined(FREEORION_BUILD_UTIL)
     return UniverseObject::INVALID_OBJECT_ID;
 #else
-    return ClientApp::GetNewObjectID();
+    return ClientApp::GetApp()->GetNewObjectID();
+#endif
+}
+
+int CurrentTurn()
+{
+#ifdef FREEORION_BUILD_SERVER
+    return ServerApp::GetApp()->CurrentTurn();
+#elif defined(FREEORION_BUILD_UTIL)
+    return INVALID_GAME_TURN;
+#else
+    return ClientApp::GetApp()->CurrentTurn();
+#endif
+}
+
+DifficultyLevel CurrentDifficultyLevel()
+{
+#ifdef FREEORION_BUILD_SERVER
+    return ServerApp::GetApp()->CurrentDifficultyLevel();
+#elif defined(FREEORION_BUILD_UTIL)
+    return INVALID_DIFFICULTY_LEVEL;
+#else
+    return ClientApp::GetApp()->CurrentDifficultyLevel();
 #endif
 }

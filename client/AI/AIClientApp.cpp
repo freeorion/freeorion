@@ -217,9 +217,12 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
         if (msg.Sender() == -1) {
                 Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received GAME_START message; "
                     "starting AI turn...";
-    	    
+    	    std::stringstream stream(msg.GetText());
+            XMLDoc doc;
+            doc.ReadDoc(stream);
+            m_current_turn = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
 	        // as it stands now, just start turn	   
-	        StartTurn( );
+	        StartTurn();
         }
         break;
     }
@@ -245,7 +248,11 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
         if (msg.Sender() == -1) {
 	        // as it stands now, just start turn
             Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received TURN_UPDATE message; ...";
-	        StartTurn( );
+    	    std::stringstream stream(msg.GetText());
+            XMLDoc doc;
+            doc.ReadDoc(stream);
+            m_current_turn = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
+	        StartTurn();
         }
         break;
     }

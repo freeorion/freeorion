@@ -60,10 +60,10 @@ void TurnProgressWnd::Render()
 void TurnProgressWnd::UpdateTurnProgress(const std::string& phase_str, int empire_id)
 {
     *m_phase_text << phase_str;
-    Empire* empire = HumanClientApp::Empires().Lookup(empire_id);
+    Empire* empire = Empires().Lookup(empire_id);
     if (empire) {
         *m_empire_text << empire->Name();
-        GG::Clr text_color = HumanClientApp::Empires().Lookup(empire_id)->Color();
+        GG::Clr text_color = Empires().Lookup(empire_id)->Color();
         m_empire_text->SetColor(text_color);
     } else {
         *m_empire_text << "";

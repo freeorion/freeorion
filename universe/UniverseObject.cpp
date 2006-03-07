@@ -25,6 +25,10 @@ namespace {
 const double UniverseObject::INVALID_POSITION  = -100000.0;
 const int    UniverseObject::INVALID_OBJECT_ID = -1;
 const int    UniverseObject::MAX_ID            = 2000000000;
+// using big negative number to allow for potential negative object ages, which might be useful in the even of time
+// travel.
+const int UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;
+const int UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
 
 UniverseObject::UniverseObject() : 
     StateChangedSignal(Universe::InhibitUniverseObjectSignals()),
@@ -32,7 +36,9 @@ UniverseObject::UniverseObject() :
     m_x(INVALID_POSITION),
     m_y(INVALID_POSITION),
     m_system_id(INVALID_OBJECT_ID)
-{}
+{
+    m_created_on_turn = CurrentTurn();
+}
 
 UniverseObject::UniverseObject(const std::string name, double x, double y, 
                                const std::set<int>& owners/* = std::set<int>()*/) : 
@@ -46,6 +52,7 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
 {
     if (m_x < 0.0 || Universe::UniverseWidth() < m_x || m_y < 0.0 || Universe::UniverseWidth() < m_y)
         throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
+    m_created_on_turn = CurrentTurn();
 }
 
 UniverseObject::UniverseObject(const XMLElement& elem) :
@@ -61,6 +68,7 @@ UniverseObject::UniverseObject(const XMLElement& elem) :
         m_x = lexical_cast<double>(elem.Child("m_x").Text());
         m_y = lexical_cast<double>(elem.Child("m_y").Text());
         m_system_id = lexical_cast<int>(elem.Child("m_system_id").Text());
+        m_created_on_turn = lexical_cast<int>(elem.Child("m_created_on_turn").Text());
 
         if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
             m_name = elem.Child("m_name").Text();
@@ -99,6 +107,20 @@ double UniverseObject::X() const
 double UniverseObject::Y() const
 {
     return m_y;
+}
+
+int UniverseObject::CreationTurn() const
+{
+    return m_created_on_turn;
+}
+
+int UniverseObject::AgeInTurns() const
+{
+    if (m_created_on_turn == BEFORE_FIRST_TURN)
+        return SINCE_BEFORE_TIME_AGE;
+    if ((m_created_on_turn == INVALID_GAME_TURN) || (CurrentTurn() == INVALID_GAME_TURN))
+        return INVALID_OBJECT_AGE;
+    return CurrentTurn() - m_created_on_turn;
 }
 
 const std::set<int>& UniverseObject::Owners() const
@@ -164,6 +186,7 @@ XMLElement UniverseObject::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) 
     retval.AppendChild(XMLElement("m_x", lexical_cast<std::string>(m_x)));
     retval.AppendChild(XMLElement("m_y", lexical_cast<std::string>(m_y)));
     retval.AppendChild(XMLElement("m_system_id", lexical_cast<std::string>(m_system_id)));
+	retval.AppendChild(XMLElement("m_created_on_turn", lexical_cast<std::string>(m_created_on_turn)));
     if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
         retval.AppendChild(XMLElement("m_name", m_name));
         retval.AppendChild(XMLElement("m_owners", StringFromContainer<std::set<int> >(m_owners)));

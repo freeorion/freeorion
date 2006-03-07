@@ -868,7 +868,7 @@ void SidePanel::PlanetPanel::PlanetChanged()
     }
 
   if (!planet->Owners().empty()) {
-      Empire* planet_empire = HumanClientApp::Empires().Lookup(*(planet->Owners().begin()));
+      Empire* planet_empire = Empires().Lookup(*(planet->Owners().begin()));
       m_planet_name->SetTextColor(planet_empire?planet_empire->Color():ClientUI::TEXT_COLOR);
   }
 
@@ -923,13 +923,13 @@ void SidePanel::PlanetPanel::PlanetResourceCenterChanged()
 void SidePanel::PlanetPanel::SetPrimaryFocus(FocusType focus)
 {
   Planet *planet = GetPlanet();
-  HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,true));
+  HumanClientApp::GetApp()->Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,true));
 }
 
 void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 {
   Planet *planet = GetPlanet();
-  HumanClientApp::Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,false));
+  HumanClientApp::GetApp()->Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,false));
 } 
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
@@ -1099,14 +1099,14 @@ void SidePanel::PlanetPanel::ClickColonize()
         return;
     }
 
-    HumanClientApp::Orders().IssueOrder(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID()));
+    HumanClientApp::GetApp()->Orders().IssueOrder(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID()));
   }
   else // cancel colonization
   {
-    const FleetColonizeOrder *col_order = dynamic_cast<const FleetColonizeOrder*>(HumanClientApp::Orders().ExamineOrder(it->second));
+    const FleetColonizeOrder *col_order = dynamic_cast<const FleetColonizeOrder*>(HumanClientApp::GetApp()->Orders().ExamineOrder(it->second));
     int ship_id = col_order?col_order->ShipID():UniverseObject::INVALID_OBJECT_ID;
 
-    HumanClientApp::Orders().RecindOrder(it->second);
+    HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
     
     // if the ship now buils a fleet of its own, make sure that fleet appears
     // at a possibly opend FleetWnd
@@ -1148,7 +1148,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
         edit_wnd.Run();
         if(edit_wnd.Result() != "")
         {
-          HumanClientApp::Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result()));
+          HumanClientApp::GetApp()->Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result()));
           m_planet_name->SetText(planet->Name());
         }
         break;
@@ -1467,7 +1467,7 @@ int SidePanel::PlanetID() const
 
 void SidePanel::SetSystem(int system_id)
 {
-    const System* new_system = HumanClientApp::GetUniverse().Object<const System>(system_id);
+    const System* new_system = GetUniverse().Object<const System>(system_id);
     if (new_system && new_system != m_system)
         PlaySidePanelOpenSound();
     TempUISoundDisabler sound_disabler;

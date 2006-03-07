@@ -36,6 +36,7 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/range/iterator_range.hpp>
+#include <boost/iostreams/device/file.hpp>
 #endif
 
 
@@ -354,7 +355,7 @@ void HumanClientApp::SDLInit()
         Exit(1);
     }
 
-    SDL_WM_SetCaption(("FreeOrion "+FreeOrionVersionString()).c_str(), "FreeOrion");
+    SDL_WM_SetCaption(("FreeOrion " + FreeOrionVersionString()).c_str(), "FreeOrion");
 
     if (SDLNet_Init() < 0) {
         Logger().errorStream() << "SDL Net initialization failed: " << SDLNet_GetError();
@@ -534,7 +535,6 @@ void HumanClientApp::SDLQuit()
     Logger().debugStream() << "SDLQuit() complete.";
 }
 
-#include <boost/iostreams/device/file.hpp>
 void HumanClientApp::HandleMessageImpl(const Message& msg)
 {
     m_handling_message = true;
@@ -663,12 +663,11 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
                 m_ui->GenerateSitRepText(*it);
             }
 
-            int turn_number;
-            turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
+            m_current_turn = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
 
-            Autosave(turn_number, true);
+            Autosave(true);
             m_ui->ScreenMap();
-            m_ui->InitTurn( turn_number ); // init the new turn
+            m_ui->InitTurn(m_current_turn); // init the new turn
         }
         break;
     }
@@ -698,13 +697,11 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::TURN_UPDATE: {
-        int turn_number;
-
         std::stringstream stream(msg.GetText());
         XMLDoc doc;
         doc.ReadDoc(stream);
 
-        turn_number = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
+        m_current_turn = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
 
         // free current sitreps
         Empires().Lookup(m_empire_id)->ClearSitRep();
@@ -734,7 +731,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         Deserialize(&ia, boost_xml_universe);
         Deserialize(&ia, boost_xml_empire_manager);
 
-        assert(boost_xml_turn_number == turn_number);
+        assert(boost_xml_turn_number == m_current_turn);
 
         {
             XMLDoc doc;
@@ -763,7 +760,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         }
         Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Sitrep creation complete";
 
-        Autosave(turn_number, false);
+        Autosave(false);
 
         // if this is the last turn, the TCP message handling inherent in Autosave()'s synchronous message may have
         // processed an end-of-game message, in which case we need *not* to execute these last two lines below
@@ -771,7 +768,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             break;
 
         m_ui->ScreenMap(); 
-        m_ui->InitTurn(turn_number);
+        m_ui->InitTurn(m_current_turn);
         break;
     }
 
@@ -869,7 +866,7 @@ void HumanClientApp::HandleServerDisconnectImpl()
     }
 }
 
-void HumanClientApp::Autosave(int turn_number, bool new_game)
+void HumanClientApp::Autosave(bool new_game)
 {
     if (((m_single_player_game && GetOptionsDB().Get<bool>("autosave.single-player")) || 
          (!m_single_player_game && GetOptionsDB().Get<bool>("autosave.multiplayer"))) &&
@@ -886,15 +883,15 @@ void HumanClientApp::Autosave(int turn_number, bool new_game)
 
         std::string save_filename;
         if (m_single_player_game) {
-            save_filename = boost::io::str(boost::format("AS_%s_%04d.sav") % empire_name % turn_number);
+            save_filename = boost::io::str(boost::format("AS_%s_%04d.sav") % empire_name % m_current_turn);
         } else {
             unsigned int first_good_player_char = m_player_name.find_first_of(legal_chars);
             if (first_good_player_char == std::string::npos) {
-                save_filename = boost::io::str(boost::format("AS_%s_%04d.mps") % empire_name % turn_number);
+                save_filename = boost::io::str(boost::format("AS_%s_%04d.mps") % empire_name % m_current_turn);
             } else {
                 unsigned int first_bad_player_char = m_player_name.find_first_not_of(legal_chars, first_good_player_char);
                 std::string player_name = m_player_name.substr(first_good_player_char, first_bad_player_char - first_good_player_char);
-                save_filename = boost::io::str(boost::format("AS_%s_%s_%04d.mps") % player_name % empire_name % turn_number);
+                save_filename = boost::io::str(boost::format("AS_%s_%s_%04d.mps") % player_name % empire_name % m_current_turn);
             }
         }
 

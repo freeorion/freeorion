@@ -36,6 +36,9 @@ namespace {
     Condition::ConditionBase* NewAnd(const XMLElement& elem)                    {return new Condition::And(elem);}
     Condition::ConditionBase* NewOr(const XMLElement& elem)                     {return new Condition::Or(elem);}
     Condition::ConditionBase* NewNot(const XMLElement& elem)                    {return new Condition::Not(elem);}
+    Condition::ConditionBase* NewTurn(const XMLElement& elem)                   {return new Condition::Turn(elem);}
+    Condition::ConditionBase* NewContainedBy(const XMLElement& elem)            {return new Condition::ContainedBy(elem);}
+    Condition::ConditionBase* NewNumberOf(const XMLElement& elem)               {return new Condition::NumberOf(elem);}
 
     const Fleet* FleetFromObject(const UniverseObject* obj)
     {
@@ -45,6 +48,21 @@ namespace {
                 retval = ship->GetFleet();
         }
         return retval;
+    }
+
+    bool Contains(UniverseObject* a, UniverseObject* b)
+    {
+        if (const System* system = universe_object_cast<const System*>(a)) {
+            if (b->SystemID() == system->ID())
+                return true;
+        } else if (const Planet* planet = universe_object_cast<const Planet*>(a)) {
+            if (planet->ContainsBuilding(b->ID()))
+                return true;
+        } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(a)) {
+            if (fleet->ContainsShip(b->ID()))
+                return true;
+        }
+        return false;
     }
 
     bool temp_header_bool = RecordHeaderFile(ConditionRevision());
@@ -78,6 +96,9 @@ XMLObjectFactory<Condition::ConditionBase> Condition::ConditionFactory()
         factory.AddGenerator("Condition::And", &NewAnd);
         factory.AddGenerator("Condition::Or", &NewOr);
         factory.AddGenerator("Condition::Not", &NewNot);
+        factory.AddGenerator("Condition::Turn", &NewTurn);
+        factory.AddGenerator("Condition::ContainedBy", &NewContainedBy);
+        factory.AddGenerator("Condition::NumberOf", &NewNumberOf);
         init = true;
     }
     return factory;
@@ -87,12 +108,10 @@ XMLObjectFactory<Condition::ConditionBase> Condition::ConditionFactory()
 // Condition::ConditionBase                              //
 ///////////////////////////////////////////////////////////
 Condition::ConditionBase::ConditionBase()
-{
-}
+{}
 
 Condition::ConditionBase::~ConditionBase()
-{
-}
+{}
 
 void Condition::ConditionBase::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
@@ -101,12 +120,10 @@ void Condition::ConditionBase::Eval(const UniverseObject* source, ObjectSet& tar
     ObjectSet::iterator it = from_set.begin();
     ObjectSet::iterator end_it = from_set.end();
     for ( ; it != end_it; ) {
-        if (search_domain == TARGETS ? !Match(source, *it) : Match(source, *it)) {
-            to_set.insert(*it);
-            ObjectSet::iterator temp = it++;
+        ObjectSet::iterator temp = it++;
+        if (search_domain == TARGETS ? !Match(source, *temp) : Match(source, *temp)) {
+            to_set.insert(*temp);
             from_set.erase(temp);
-        } else {
-            ++it;
         }
     }
 }
@@ -122,11 +139,139 @@ bool Condition::ConditionBase::Match(const UniverseObject* source, const Univers
 }
 
 ///////////////////////////////////////////////////////////
+// Turn                                                  //
+///////////////////////////////////////////////////////////
+Condition::Turn::Turn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high) :
+    m_low(low),
+    m_high(high)
+{}
+
+Condition::Turn::Turn(const XMLElement& elem)
+{
+    if (elem.Tag() != "Condition::Turn")
+        throw std::runtime_error("Condition::Turn : Attempted to create a Turn condition from an XML element with a tag other than \"Condition::Turn\".");
+
+    m_low = ParseArithmeticExpression<int>(elem.Child("low").Text());
+    m_high = ParseArithmeticExpression<int>(elem.Child("high").Text());
+}
+
+Condition::Turn::~Turn()
+{
+    delete m_low;
+    delete m_high;
+}
+
+std::string Condition::Turn::Description(bool negated/* = false*/) const
+{
+    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
+	std::string description_str = "DESC_TURN";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str))
+               % low_str
+               % high_str);
+}
+
+void Condition::Turn::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
+                           SearchDomain search_domain/* = NON_TARGETS*/) const
+{
+    double low = std::max(0, m_low->Eval(source, source));
+    double high = std::min(m_high->Eval(source, source), IMPOSSIBLY_LARGE_TURN);
+    int turn = CurrentTurn();
+
+    if (low <= turn && turn < high) {
+        if (search_domain == NON_TARGETS) {
+            targets.insert(non_targets.begin(), non_targets.end());
+            non_targets.clear();
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////
+// NumberOf                                              //
+///////////////////////////////////////////////////////////
+Condition::NumberOf::NumberOf(const ValueRef::ValueRefBase<int>* number, const ConditionBase* condition) :
+    m_number(number),
+    m_condition(condition)
+{
+    Logger().debugStream() << "Creating NumberOf Conditition";
+}
+
+Condition::NumberOf::NumberOf(const XMLElement& elem)
+{
+    if (elem.Tag() != "Condition::NumberOf")
+        throw std::runtime_error("Condition::NumberOf : Attempted to create a NumberOf condition from an XML element with a tag other than \"Condition::NumberOf\".");
+
+    m_number = ParseArithmeticExpression<int>(elem.Child("number").Text());
+    m_condition = ConditionFactory().GenerateObject(elem.Child("condition").Child(0));
+}
+
+Condition::NumberOf::~NumberOf()
+{
+    delete m_number;
+    delete m_condition;
+}
+
+std::string Condition::NumberOf::Description(bool negated/* = false*/) const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_number) ? lexical_cast<std::string>(m_number->Eval(0, 0)) : m_number->Description();
+    std::string description_str = "DESC_NUMBER_OF";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str))
+               % value_str
+               % m_condition->Description());
+}
+
+void Condition::NumberOf::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
+                               SearchDomain search_domain/* = NON_TARGETS*/) const
+{
+    // get set of all UniverseObjects that satisfy m_condition
+    ObjectSet condition_targets;
+    ObjectSet condition_non_targets;
+    const Universe& universe = GetUniverse();
+    for (Universe::const_iterator uit = universe.begin(); uit != universe.end(); ++uit) {
+        condition_non_targets.insert(uit->second);
+    }
+    m_condition->Eval(source, condition_targets, condition_non_targets);
+
+    // find the desired number of objects in condition_targets
+    int number = m_number->Eval(0, 0);
+    std::vector<bool> inclusion_list(condition_targets.size());
+    std::vector<int> selection_list(condition_targets.size());
+    for (unsigned int i = 0; i < selection_list.size(); ++i) {
+        selection_list[i] = i;
+    }
+    for (int i = 0; i < std::min(number, static_cast<int>(condition_targets.size())); ++i) {
+        int selection = selection_list[RandSmallInt(0, selection_list.size() - 1)];
+        inclusion_list[selection] = true;
+        selection_list.erase(selection_list.begin() + selection);
+    }
+
+    int i = 0;
+    for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it, ++i) {
+        ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
+        ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
+        if (search_domain == TARGETS ? !inclusion_list[i] : inclusion_list[i]) {
+            to_set.insert(*it);
+            from_set.erase(*it);
+        }
+    }
+
+    if (search_domain == TARGETS) {
+        for (ObjectSet::const_iterator it = condition_non_targets.begin(); it != condition_non_targets.end(); ++it) {
+            non_targets.insert(*it);
+            targets.erase(*it);
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////
 // All                                                   //
 ///////////////////////////////////////////////////////////
 Condition::All::All()
-{
-}
+{}
 
 Condition::All::All(const XMLElement& elem)
 {
@@ -154,8 +299,7 @@ Condition::EmpireAffiliation::EmpireAffiliation(const ValueRef::ValueRefBase<int
     m_empire_id(empire_id),
     m_affiliation(affiliation),
     m_exclusive(exclusive)
-{
-}
+{}
 
 Condition::EmpireAffiliation::EmpireAffiliation(const XMLElement& elem)
 {
@@ -212,8 +356,7 @@ bool Condition::EmpireAffiliation::Match(const UniverseObject* source, const Uni
 // Self                                                  //
 ///////////////////////////////////////////////////////////
 Condition::Self::Self()
-{
-}
+{}
 
 Condition::Self::Self(const XMLElement& elem)
 {
@@ -239,13 +382,12 @@ bool Condition::Self::Match(const UniverseObject* source, const UniverseObject* 
 ///////////////////////////////////////////////////////////
 Condition::Type::Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
     m_type(type)
-{
-}
+{}
 
 Condition::Type::Type(const XMLElement& elem)
 {
     if (elem.Tag() != "Condition::Type")
-        throw std::runtime_error("Condition::Type : Attempted to create aType condition from an XML element with a tag other than \"Condition::Type\".");
+        throw std::runtime_error("Condition::Type : Attempted to create a Type condition from an XML element with a tag other than \"Condition::Type\".");
 
     m_type = ParseArithmeticExpression<UniverseObjectType>(elem.Text());
 }
@@ -294,8 +436,7 @@ bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* 
 ///////////////////////////////////////////////////////////
 Condition::Building::Building(const std::string& name) :
     m_name(name)
-{
-}
+{}
 
 Condition::Building::Building(const XMLElement& elem)
 {
@@ -324,8 +465,7 @@ bool Condition::Building::Match(const UniverseObject* source, const UniverseObje
 ///////////////////////////////////////////////////////////
 Condition::HasSpecial::HasSpecial(const std::string& name) :
     m_name(name)
-{
-}
+{}
 
 Condition::HasSpecial::HasSpecial(const XMLElement& elem)
 {
@@ -353,8 +493,7 @@ bool Condition::HasSpecial::Match(const UniverseObject* source, const UniverseOb
 ///////////////////////////////////////////////////////////
 Condition::Contains::Contains(const ConditionBase* condition) :
     m_condition(condition)
-{
-}
+{}
 
 Condition::Contains::Contains(const XMLElement& elem)
 {
@@ -372,7 +511,8 @@ std::string Condition::Contains::Description(bool negated/* = false*/) const
     return str(format(UserString(description_str)) % m_condition->Description());
 }
 
-bool Condition::Contains::Match(const UniverseObject* source, const UniverseObject* target) const
+void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
+                               SearchDomain search_domain/* = NON_TARGETS*/) const
 {
     // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
@@ -383,38 +523,72 @@ bool Condition::Contains::Match(const UniverseObject* source, const UniverseObje
     }
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
-    if (condition_targets.empty())
-        return false;
+    // determine which objects in the Universe contain one or more of the objects in condition_targets
+    for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+        ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
+        ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
+        ObjectSet::iterator it2 = from_set.begin();
+        ObjectSet::iterator end_it2 = from_set.end();
+        for ( ; it2 != end_it2; ) {
+            ObjectSet::iterator temp = it2++;
+            if (search_domain == TARGETS ? !::Contains(*temp, *it) : ::Contains(*temp, *it)) {
+                to_set.insert(*temp);
+                from_set.erase(temp);
+            }
+        }
+    }
+}
 
-    if (const System* system = universe_object_cast<const System*>(target)) {
-        bool found = false;
-        for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-            if ((*it)->SystemID() == system->ID()) {
-                found = true;
-                break;
+///////////////////////////////////////////////////////////
+// ContainedBy                                           //
+///////////////////////////////////////////////////////////
+Condition::ContainedBy::ContainedBy(const ConditionBase* condition) :
+    m_condition(condition)
+{}
+
+Condition::ContainedBy::ContainedBy(const XMLElement& elem)
+{
+    if (elem.Tag() != "Condition::ContainedBy") {
+        throw std::runtime_error("Condition::ContainedBy : Attempted to create a ContainedBy condition from an XML "
+                                 "element with a tag other than \"Condition::ContainedBy\".");
+    }
+
+    m_condition = ConditionFactory().GenerateObject(elem.Child(0));
+}
+
+std::string Condition::ContainedBy::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_CONTAINED_BY";
+    if (negated)
+        description_str += "_NOT";
+	return str(format(UserString(description_str)) % m_condition->Description());
+}
+
+void Condition::ContainedBy::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
+                                  SearchDomain search_domain/* = NON_TARGETS*/) const
+{
+    // get the list of all UniverseObjects that satisfy m_condition
+    ObjectSet condition_targets;
+    ObjectSet condition_non_targets;
+    const Universe& universe = GetUniverse();
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+        condition_non_targets.insert(it->second);
+    }
+    m_condition->Eval(source, condition_targets, condition_non_targets);
+
+    // determine which objects in the Universe are contained within one or more of the objects in condition_targets
+    for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+        ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
+        ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
+        ObjectSet::iterator it2 = from_set.begin();
+        ObjectSet::iterator end_it2 = from_set.end();
+        for ( ; it2 != end_it2; ) {
+            ObjectSet::iterator temp = it2++;
+            if (search_domain == TARGETS ? !::Contains(*it, *temp) : ::Contains(*it, *temp)) {
+                to_set.insert(*temp);
+                from_set.erase(temp);
             }
         }
-        return found;
-    } else if (const Planet* planet = universe_object_cast<const Planet*>(target)) {
-        bool found = false;
-        for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-            if (planet->ContainsBuilding((*it)->ID())) {
-                found = true;
-                break;
-            }
-        }
-        return found;
-    } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(target)) {
-        bool found = false;
-        for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-            if (fleet->ContainsShip((*it)->ID())) {
-                found = true;
-                break;
-            }
-        }
-        return found;
-    } else {
-        return false;
     }
 }
 
@@ -423,8 +597,7 @@ bool Condition::Contains::Match(const UniverseObject* source, const UniverseObje
 ///////////////////////////////////////////////////////////
 Condition::PlanetType::PlanetType(const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>& types) :
     m_types(types)
-{
-}
+{}
 
 Condition::PlanetType::PlanetType(const XMLElement& elem)
 {
@@ -483,8 +656,7 @@ bool Condition::PlanetType::Match(const UniverseObject* source, const UniverseOb
 ///////////////////////////////////////////////////////////
 Condition::PlanetSize::PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
     m_sizes(sizes)
-{
-}
+{}
 
 Condition::PlanetSize::PlanetSize(const XMLElement& elem)
 {
@@ -543,8 +715,7 @@ bool Condition::PlanetSize::Match(const UniverseObject* source, const UniverseOb
 ///////////////////////////////////////////////////////////
 Condition::PlanetEnvironment::PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments) :
     m_environments(environments)
-{
-}
+{}
 
 Condition::PlanetEnvironment::PlanetEnvironment(const XMLElement& elem)
 {
@@ -604,8 +775,7 @@ bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const Uni
 Condition::FocusType::FocusType(const std::vector<const ValueRef::ValueRefBase< ::FocusType>*>& foci, bool primary) :
     m_foci(foci),
     m_primary(primary)
-{
-}
+{}
 
 Condition::FocusType::FocusType(const XMLElement& elem)
 {
@@ -666,8 +836,7 @@ bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObj
 ///////////////////////////////////////////////////////////
 Condition::StarType::StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types) :
     m_types(types)
-{
-}
+{}
 
 Condition::StarType::StarType(const XMLElement& elem)
 {
@@ -722,8 +891,7 @@ bool Condition::StarType::Match(const UniverseObject* source, const UniverseObje
 ///////////////////////////////////////////////////////////
 Condition::Chance::Chance(const ValueRef::ValueRefBase<double>* chance) :
     m_chance(chance)
-{
-}
+{}
 
 Condition::Chance::Chance(const XMLElement& elem)
 {
@@ -768,8 +936,7 @@ Condition::MeterValue::MeterValue(MeterType meter, const ValueRef::ValueRefBase<
     m_low(low),
     m_high(high),
     m_max_meter(max_meter)
-{
-}
+{}
 
 Condition::MeterValue::MeterValue(const XMLElement& elem)
 {
@@ -819,8 +986,7 @@ Condition::EmpireStockpileValue::EmpireStockpileValue(StockpileType stockpile, c
     m_stockpile(stockpile),
     m_low(low),
     m_high(high)
-{
-}
+{}
 
 Condition::EmpireStockpileValue::EmpireStockpileValue(const XMLElement& elem)
 {
@@ -874,8 +1040,7 @@ bool Condition::EmpireStockpileValue::Match(const UniverseObject* source, const 
 ///////////////////////////////////////////////////////////
 Condition::VisibleToEmpire::VisibleToEmpire(const std::vector<const ValueRef::ValueRefBase<int>*>& empire_ids) :
     m_empire_ids(empire_ids)
-{
-}
+{}
 
 Condition::VisibleToEmpire::VisibleToEmpire(const XMLElement& elem)
 {
@@ -937,8 +1102,7 @@ bool Condition::VisibleToEmpire::Match(const UniverseObject* source, const Unive
 Condition::WithinDistance::WithinDistance(const ValueRef::ValueRefBase<double>* distance, const ConditionBase* condition) :
     m_distance(distance),
     m_condition(condition)
-{
-}
+{}
 
 Condition::WithinDistance::WithinDistance(const XMLElement& elem)
 {
@@ -974,12 +1138,10 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
         ObjectSet::iterator it2 = from_set.begin();
         ObjectSet::iterator end_it2 = from_set.end();
         for ( ; it2 != end_it2; ) {
-            if (search_domain == TARGETS ? !Match(*it, *it2) : Match(*it, *it2)) {
-                to_set.insert(*it2);
-                ObjectSet::iterator temp = it2++;
+            ObjectSet::iterator temp = it2++;
+            if (search_domain == TARGETS ? !Match(*it, *temp) : Match(*it, *temp)) {
+                to_set.insert(*temp);
                 from_set.erase(temp);
-            } else {
-                ++it2;
             }
         }
     }
@@ -1011,8 +1173,7 @@ bool Condition::WithinDistance::Match(const UniverseObject* source, const Univer
 Condition::WithinStarlaneJumps::WithinStarlaneJumps(const ValueRef::ValueRefBase<int>* jumps, const ConditionBase* condition) :
     m_jumps(jumps),
     m_condition(condition)
-{
-}
+{}
 
 Condition::WithinStarlaneJumps::WithinStarlaneJumps(const XMLElement& elem)
 {
@@ -1048,12 +1209,10 @@ void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSe
         ObjectSet::iterator it2 = from_set.begin();
         ObjectSet::iterator end_it2 = from_set.end();
         for ( ; it2 != end_it2; ) {
-            if (search_domain == TARGETS ? !Match(*it, *it2) : Match(*it, *it2)) {
-                to_set.insert(*it2);
-                ObjectSet::iterator temp = it2++;
+            ObjectSet::iterator temp = it2++;
+            if (search_domain == TARGETS ? !Match(*it, *temp) : Match(*it, *temp)) {
+                to_set.insert(*temp);
                 from_set.erase(temp);
-            } else {
-                ++it2;
             }
         }
     }
@@ -1129,8 +1288,7 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
 // EffectTarget                                          //
 ///////////////////////////////////////////////////////////
 Condition::EffectTarget::EffectTarget()
-{
-}
+{}
 
 Condition::EffectTarget::EffectTarget(const XMLElement& elem)
 {
@@ -1193,7 +1351,7 @@ void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, Obje
 
     for (unsigned int i = 1; i < m_operands.size(); ++i) {
         m_operands[i]->Eval(source, operand_targets, operand_non_targets, TARGETS);
-        if (targets.empty())
+        if (operand_targets.empty())
             break;
     }
 
@@ -1202,11 +1360,8 @@ void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, Obje
     ObjectSet& from = search_domain == TARGETS ? targets : non_targets;
     ObjectSet& to = search_domain == TARGETS ? non_targets : targets;
     for (; operand_it != operand_end_it; ++operand_it) {
-        if (search_domain == TARGETS) {
-            from.erase(*operand_it);
-        } else {
-            to.insert(*operand_it);
-        }
+        to.insert(*operand_it);
+        from.erase(*operand_it);
     }
 }
 
@@ -1277,11 +1432,8 @@ void Condition::Or::Eval(const UniverseObject* source, ObjectSet& targets, Objec
     ObjectSet& from = search_domain == TARGETS ? targets : non_targets;
     ObjectSet& to = search_domain == TARGETS ? non_targets : targets;
     for (; operand_it != operand_end_it; ++operand_it) {
-        if (search_domain == TARGETS) {
-            from.erase(*operand_it);
-        } else {
-            to.insert(*operand_it);
-        }
+        to.insert(*operand_it);
+        from.erase(*operand_it);
     }
 }
 

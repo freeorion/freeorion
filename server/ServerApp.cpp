@@ -206,7 +206,8 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_current_combat(0), 
     m_log_category(log4cpp::Category::getRoot()),
     m_state(SERVER_IDLE),
-    m_current_turn(1)
+    m_current_turn(1),
+    m_difficulty_level(INVALID_DIFFICULTY_LEVEL)
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class ServerApp");
@@ -2112,7 +2113,6 @@ void ServerApp::ProcessTurns()
             std::string filename = "TurnUpdate" + boost::lexical_cast<std::string>(m_current_turn) +
                 "-empire" + boost::lexical_cast<std::string>(pEmpire->EmpireID()) +
                 "-doc.xml";
-            std::cerr << "writing \"" << filename << "\"" << std::endl;
 #ifdef FREEORION_LINUX
             boost::filesystem::ofstream ofs(GetLocalDir() / filename);
 #else

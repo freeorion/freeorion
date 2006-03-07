@@ -372,7 +372,7 @@ void ProductionWnd::SelectSystem(int system)
 
 void ProductionWnd::QueueItemMoved(int row_idx, GG::ListBox::Row* row)
 {
-    HumanClientApp::Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), static_cast<QueueRow*>(row)->queue_index, row_idx));
+    HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), static_cast<QueueRow*>(row)->queue_index, row_idx));
     UpdateQueue();
     ResetInfoPanel();
 }
@@ -412,7 +412,7 @@ void ProductionWnd::ResetInfoPanel()
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location)
 {
-    HumanClientApp::Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, name, number, location));
+    HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, name, number, location));
     UpdateQueue();
     ResetInfoPanel();
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
@@ -420,14 +420,14 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string&
 
 void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity)
 {
-    HumanClientApp::Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true));
+    HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true));
     UpdateQueue();
     ResetInfoPanel();
 }
 
 void ProductionWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
 {
-    HumanClientApp::Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), row_idx));
+    HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), row_idx));
     UpdateQueue();
     ResetInfoPanel();
     if (row_idx == m_build_designator_wnd->QueueIndexShown()) {

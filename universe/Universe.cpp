@@ -268,7 +268,7 @@ namespace {
         assert(clusters);
         assert(stars);
 
-        // propability of systems which don't belong to a cluster
+        // probability of systems which don't belong to a cluster
         const double system_noise = 0.15;
         double ellipse_width_vs_height = RandDouble(0.2,0.5);
         // first innermost pair hold cluster position, second innermost pair stores help values for cluster rotation (sin,cos)
@@ -878,6 +878,7 @@ const bool Universe::ALL_OBJECTS_VISIBLE = false;
 double Universe::s_universe_width = 1000.0;
 bool Universe::s_inhibit_universe_object_signals = false;
 int Universe::s_encoding_empire = Universe::ALL_EMPIRES;
+int Universe::s_turn = 0;
 
 Universe::Universe()
 {

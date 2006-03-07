@@ -253,8 +253,8 @@ void ClientNetworkCore::DispatchMessage(const Message& msg, int socket)
 
     case Message::CLIENT_LOBBY_MODULE:
 #ifdef FREEORION_BUILD_HUMAN
-        if (ClientApp::MultiplayerLobby())
-            ClientApp::MultiplayerLobby()->HandleMessage(msg);
+        if (ClientApp::GetApp()->MultiplayerLobby())
+            ClientApp::GetApp()->MultiplayerLobby()->HandleMessage(msg);
 #endif
         break;
 
@@ -267,7 +267,7 @@ void ClientNetworkCore::DispatchMessage(const Message& msg, int socket)
         break;
 
     case Message::CLIENT_COMBAT_MODULE:
-        if (ClientApp::CurrentCombat()) {
+        if (ClientApp::GetApp()->CurrentCombat()) {
             //ClientApp::CombatModule().HandleMessage(msg);
         } else {
             logger.errorStream()<< "ClientNetworkCore::DispatchMessage : Attempted to pass message to Combat module when "

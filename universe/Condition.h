@@ -36,6 +36,9 @@ namespace Condition {
     struct And;
     struct Or;
     struct Not;
+	struct Turn;
+	struct NumberOf;
+	struct ContainedBy;
     XMLObjectFactory<ConditionBase> ConditionFactory(); ///< an XML factory that creates the right subclass of ConditionBase from a given XML element
 }
 
@@ -56,6 +59,35 @@ struct Condition::ConditionBase
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+};
+
+/** Matches all objects if the current game turn is >= \a low and < \a high. */
+struct Condition::Turn : Condition::ConditionBase
+{
+    Turn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high);
+    Turn(const XMLElement& elem);
+    virtual ~Turn();
+    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual std::string Description(bool negated = false) const;
+
+private:
+    const ValueRef::ValueRefBase<int>* m_low;
+    const ValueRef::ValueRefBase<int>* m_high;
+};
+
+/** Matches a randomly selected \a number of objects that match Condition \a condition, or as many objects
+    as match the condition if the number of objects is less than the number requested. */
+struct Condition::NumberOf : Condition::ConditionBase
+{
+    NumberOf(const ValueRef::ValueRefBase<int>* number, const ConditionBase* condition);
+    NumberOf(const XMLElement& elem);
+    virtual ~NumberOf();
+    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual std::string Description(bool negated = false) const;
+
+private:
+    const ValueRef::ValueRefBase<int>* m_number;
+	const ConditionBase*               m_condition;
 };
 
 /** Matches all objects. */
@@ -137,10 +169,23 @@ struct Condition::Contains : Condition::ConditionBase
 {
     Contains(const ConditionBase* condition);
     Contains(const XMLElement& elem);
+    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
 
 private:
-    virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+    const ConditionBase* m_condition;
+};
+
+/** Matches all objects that are contained by an object that matches Condition \a condition.  Container objects
+    are Systems, Planets (which contain Buildings), and Fleets (which contain Ships). */
+struct Condition::ContainedBy : Condition::ConditionBase
+{
+    ContainedBy(const ConditionBase* condition);
+    ContainedBy(const XMLElement& elem);
+    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual std::string Description(bool negated = false) const;
+
+private:
     const ConditionBase* m_condition;
 };
 

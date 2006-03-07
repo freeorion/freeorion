@@ -100,6 +100,9 @@ public:
 
     mutable StateChangedSignalType StateChangedSignal; ///< returns the state changed signal object for this UniverseObject
     //@}
+
+    int CreationTurn() const; ///< returns game turn on which object was created
+    int AgeInTurns() const; ///< returns elapsed number of turns between turn object was created and current game turn.
    
     /** \name Mutators */ //@{
     void SetID(int id);                   ///< sets the ID number of the object to \a id
@@ -141,9 +144,11 @@ public:
     virtual void PopGrowthProductionResearchPhase() = 0;
     //@}
    
-    static const double INVALID_POSITION;  ///< the position in x and y at which default-constructed objects are placed
-    static const int    INVALID_OBJECT_ID; ///< the ID number assigned to a UniverseObject upon construction; it is assigned an ID later when it is placed in the universe
-    static const int    MAX_ID; ///< the max ID number 
+    static const double INVALID_POSITION;      ///< the position in x and y at which default-constructed objects are placed
+    static const int    INVALID_OBJECT_ID;     ///< the ID number assigned to a UniverseObject upon construction; it is assigned an ID later when it is placed in the universe
+    static const int    MAX_ID;                ///< the max ID number 
+    static const int    INVALID_OBJECT_AGE;    ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN
+    static const int    SINCE_BEFORE_TIME_AGE; ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
 private:
     int                   m_id;
@@ -153,6 +158,7 @@ private:
     std::set<int>         m_owners;
     int                   m_system_id;
     std::set<std::string> m_specials;
+    int                   m_created_on_turn;
 
     friend class boost::serialization::access;
     template <class Archive>

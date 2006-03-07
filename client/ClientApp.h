@@ -22,6 +22,10 @@
 #include "../universe/Universe.h"
 #endif 
 
+#ifndef _AppInterface_h_
+#include "../util/AppInterface.h"
+#endif
+
 #include <string>
 
 namespace log4cpp {class Category;};
@@ -42,9 +46,11 @@ public:
     //@}
    
     /** \name Accessors */ //@{   
-    const std::string&   PlayerName() const {return m_player_name;}   ///< returns the player name of this client
-    int                  PlayerID() const   {return m_player_id;}     ///< returns the player ID of this client
-    int                  EmpireID() const   {return m_empire_id;}     ///< returns the empire ID of this client
+    const std::string&   PlayerName() const;       ///< returns the player name of this client
+    int                  PlayerID() const;         ///< returns the player ID of this client
+    int                  EmpireID() const;         ///< returns the empire ID of this client
+    int                  CurrentTurn() const;      ///< returns the current game turn
+    DifficultyLevel      CurrentDifficultyLevel() const; ///< returns current turn of the client (one of the DifficultyLevel enum values)
 
     /** returns the orders message containing all orders issued so far in the turn; if \a save_game_data is true, additional 
         client-side data may also be included */
@@ -52,7 +58,14 @@ public:
     //@}
 
     /** \name Mutators */ //@{   
-    virtual void         StartTurn( );   ///< encodes order sets and sends turn orders message
+    virtual void         StartTurn();   ///< encodes order sets and sends turn orders message
+
+    Universe&            GetUniverse();      ///< returns client's local copy of Universe
+    ClientEmpireManager& Empires();          ///< returns the set of known Empires
+    OrderSet&            Orders();           ///< returns Order set for this client's player
+    ClientNetworkCore&   NetworkCore();      ///< returns the network core object for this client's player
+    MultiplayerLobbyWnd* MultiplayerLobby(); ///< returns the multiplayer lobby window, or 0 if none exists
+    CombatModule*        CurrentCombat();    ///< returns this client's currently executing Combat; may be 0
     //@}
 
     /** handles an incoming message from the server with the appropriate action or response */
@@ -63,14 +76,9 @@ public:
 
     /** returns a universe object ID which can be used for new objects created by the client.
         Can return UniverseObject::INVALID_OBJECT_ID if an ID cannot be created. */
-    static int           GetNewObjectID( );
+    static int           GetNewObjectID();
 
-    static MultiplayerLobbyWnd*   MultiplayerLobby(); ///< returns the multiplayer lobby window, or 0 if none exists
-    static Universe&              GetUniverse();      ///< returns client's local copy of Universe
-    static ClientEmpireManager&   Empires();          ///< returns the set of known Empires
-    static CombatModule*          CurrentCombat();    ///< returns this client's currently executing Combat; may be 0
-    static OrderSet&              Orders();           ///< returns Order set for this client's player
-    static ClientNetworkCore&     NetworkCore();      ///< returns the network core object for this client's player
+    static ClientApp*    GetApp(); ///< returns the singletom ClientApp object
 
 protected:
     /** handles universe and empire data update */
@@ -86,7 +94,9 @@ protected:
     std::string             m_player_name;
     int                     m_player_id;
     int                     m_empire_id;
-   
+    int                     m_current_turn;
+    DifficultyLevel         m_difficulty_level;
+
 private:
     const ClientApp& operator=(const ClientApp&); // disabled
     ClientApp(const ClientApp&); // disabled

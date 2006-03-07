@@ -113,7 +113,7 @@ private:
     virtual void HandleMessageImpl(const Message& msg);
     virtual void HandleServerDisconnectImpl();
 
-    void Autosave(int turn_number, bool new_game); ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
+    void Autosave(bool new_game); ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
 
     Process                           m_server_process;     ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
     boost::shared_ptr<ClientUI>       m_ui;                 ///< the one and only ClientUI object!

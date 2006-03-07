@@ -258,7 +258,7 @@ void ResearchWnd::CenterOnTech(const std::string& tech_name)
 
 void ResearchWnd::QueueItemMoved(int row_idx, GG::ListBox::Row* row)
 {
-    HumanClientApp::Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name(), row_idx));
+    HumanClientApp::GetApp()->Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name(), row_idx));
     UpdateQueue();
     ResetInfoPanel();
 }
@@ -300,7 +300,7 @@ void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ResearchQueue& queue = empire->GetResearchQueue();
     if (!queue.InQueue(tech)) {
-        HumanClientApp::Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1));
+        HumanClientApp::GetApp()->Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1));
         UpdateQueue();
         ResetInfoPanel();
         m_tech_tree_wnd->Update();
@@ -309,7 +309,7 @@ void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
 
 void ResearchWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
 {
-    HumanClientApp::Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name()));
+    HumanClientApp::GetApp()->Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name()));
     UpdateQueue();
     ResetInfoPanel();
     m_tech_tree_wnd->Update();
