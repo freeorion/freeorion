@@ -922,22 +922,6 @@ void Empire::AddBuildingType(const std::string& name)
     m_building_types.insert(name);
 }
 
-void Empire::RefineBuildingType(const std::string& name, const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects)
-{
-    BuildingType*& building = m_modified_building_types[name];
-    if (!building)
-        building = new BuildingType(*::GetBuildingType(name));
-    building->AddEffects(effects);
-}
-
-void Empire::ClearRefinements()
-{
-    for (std::map<std::string, BuildingType*>::iterator it = m_modified_building_types.begin(); it != m_modified_building_types.end(); ++it) {
-        delete it->second;
-    }
-    m_modified_building_types.clear();
-}
-
 void Empire::AddExploredSystem(int ID)
 {
     m_explored_systems.insert(ID);

@@ -29,6 +29,7 @@ namespace Condition {
     struct Chance;
     struct MeterValue;
     struct EmpireStockpileValue;
+    struct OwnerHasTech;
     struct VisibleToEmpire;
     struct WithinDistance;
     struct WithinStarlaneJumps;
@@ -303,6 +304,18 @@ private:
     StockpileType m_stockpile;
     const ValueRef::ValueRefBase<double>* m_low;
     const ValueRef::ValueRefBase<double>* m_high;
+};
+
+/** Matches all objects that have a single owner who has tech \a tech_name. */
+struct Condition::OwnerHasTech : Condition::ConditionBase
+{
+    OwnerHasTech(const std::string& name);
+    OwnerHasTech(const XMLElement& elem);
+    virtual std::string Description(bool negated = false) const;
+
+private:
+    virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+    std::string m_name;
 };
 
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */

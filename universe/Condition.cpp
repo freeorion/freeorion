@@ -29,6 +29,7 @@ namespace {
     Condition::ConditionBase* NewChance(const XMLElement& elem)                 {return new Condition::Chance(elem);}
     Condition::ConditionBase* NewMeterValue(const XMLElement& elem)             {return new Condition::MeterValue(elem);}
     Condition::ConditionBase* NewEmpireStockpileValue(const XMLElement& elem)   {return new Condition::EmpireStockpileValue(elem);}
+    Condition::ConditionBase* NewOwnerHasTech(const XMLElement& elem)           {return new Condition::OwnerHasTech(elem);}
     Condition::ConditionBase* NewVisibleToEmpire(const XMLElement& elem)        {return new Condition::VisibleToEmpire(elem);}
     Condition::ConditionBase* NewWithinDistance(const XMLElement& elem)         {return new Condition::WithinDistance(elem);}
     Condition::ConditionBase* NewWithinStarlaneJumps(const XMLElement& elem)    {return new Condition::WithinStarlaneJumps(elem);}
@@ -89,6 +90,7 @@ XMLObjectFactory<Condition::ConditionBase> Condition::ConditionFactory()
         factory.AddGenerator("Condition::Chance", &NewChance);
         factory.AddGenerator("Condition::MeterValue", &NewMeterValue);
         factory.AddGenerator("Condition::EmpireStockpileValue", &NewEmpireStockpileValue);
+        factory.AddGenerator("Condition::OwnerHasTech", &NewOwnerHasTech);
         factory.AddGenerator("Condition::VisibleToEmpire", &NewVisibleToEmpire);
         factory.AddGenerator("Condition::WithinDistance", &NewWithinDistance);
         factory.AddGenerator("Condition::WithinStarlaneJumps", &NewWithinStarlaneJumps);
@@ -980,7 +982,7 @@ bool Condition::MeterValue::Match(const UniverseObject* source, const UniverseOb
 }
 
 ///////////////////////////////////////////////////////////
-// EmpireStockpileValue                                        //
+// EmpireStockpileValue                                  //
 ///////////////////////////////////////////////////////////
 Condition::EmpireStockpileValue::EmpireStockpileValue(StockpileType stockpile, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
     m_stockpile(stockpile),
@@ -1033,6 +1035,37 @@ bool Condition::EmpireStockpileValue::Match(const UniverseObject* source, const 
         return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
     }
     return false;
+}
+
+///////////////////////////////////////////////////////////
+// OwnerHasTech                                          //
+///////////////////////////////////////////////////////////
+Condition::OwnerHasTech::OwnerHasTech(const std::string& name) :
+    m_name(name)
+{}
+
+Condition::OwnerHasTech::OwnerHasTech(const XMLElement& elem)
+{
+    if (elem.Tag() != "Condition::OwnerHasTech")
+        throw std::runtime_error("Condition::OwnerHasTech : Attempted to create a OwnerHasTech condition from an XML element with a tag other than \"Condition::OwnerHasTech\".");
+
+    m_name = elem.Text();
+}
+
+std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_OWNER_HAS_TECH";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str)) % UserString(m_name));
+}
+
+bool Condition::OwnerHasTech::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    if (target->Owners().size() != 1)
+        return false;
+    Empire* empire = Empires().Lookup(*target->Owners().begin());
+    return empire->TechAvailable(m_name);
 }
 
 ///////////////////////////////////////////////////////////

@@ -324,7 +324,7 @@ public:
     /// Returns the set of all available techs.
     const std::set<std::string>& AvailableTechs() const;
 
-    /// progress of partially-researched techs; fully researched techs cannot be found in this container
+    /// Returns true iff this tech has been completely resarched.
     bool TechAvailable(const std::string& name) const;
 
     /// Returns the set of all available building types.
@@ -416,12 +416,6 @@ public:
     /// Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     void AddBuildingType(const std::string& name);
 
-    /** Adds EffectsGroups \a effects to the empire-specific version of BuildingType \a name. */
-    void RefineBuildingType(const std::string& name, const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects);
-
-    /** Removes all refinements to Buildings, ShipComponents, etc., that are caused by Tech effects. */
-    void ClearRefinements();
-
     /// Inserts the given ID into the Empire's list of explored systems.
     void AddExploredSystem(int ID);
 
@@ -436,7 +430,7 @@ public:
      *  references to SitRepEntries lying around when this happens.
      *  You \a must pass in a dynamically allocated sitrep entry
      */
-    void AddSitRepEntry( SitRepEntry* entry);
+    void AddSitRepEntry(SitRepEntry* entry);
 
     /// Removes the given Tech from the empire's list
     void RemoveTech(const std::string& name);

@@ -1176,7 +1176,6 @@ void Universe::ApplyEffects()
         }
     }
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        it->second->ClearRefinements();
         for (Empire::TechItr tech_it = it->second->TechBegin(); tech_it != it->second->TechEnd(); ++tech_it) {
             const Tech* tech = GetTech(*tech_it);
             assert(tech);
