@@ -66,13 +66,13 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="ProjectDir\..\..\..\..\..\!Bin"
+			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="ProjectDir\..\..\..\..\..\GG\include"
+				AdditionalIncludeDirectories="..\..\..\Gg"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_AI;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				RuntimeLibrary="2"
 				ForceConformanceInForLoopScope="TRUE"
@@ -86,10 +86,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib SDL_mixer.lib log4cpp.lib freetype214MT.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib SDL_mixer.lib log4cpp.lib freetype214MT.lib"
 				OutputFile="$(OutDir)/freeorionca.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGi\Release;ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGiNet\Release;ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGiSDL\Release"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -98,7 +98,8 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="copy /Y Release\freeorionca.exe ..\..\..\"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -205,36 +206,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\network\NetworkCore.h">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XDiff.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XDiff.hpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XHash.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XHash.hpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XLut.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XLut.hpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XParser.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XParser.hpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XTree.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XTree.hpp">
 				</File>
 			</Filter>
 			<Filter
@@ -441,6 +412,12 @@
 				</File>
 				<File
 					RelativePath="..\..\..\util\VarText.h">
+				</File>
+				<File
+					RelativePath="..\..\..\util\XMLDoc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\util\XMLDoc.h">
 				</File>
 			</Filter>
 		</Filter>
