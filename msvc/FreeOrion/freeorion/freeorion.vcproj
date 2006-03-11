@@ -67,13 +67,13 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="ProjectDir\..\..\..\..\..\!Bin"
+			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="ProjectDir\..\..\..\..\..\GG\include"
+				AdditionalIncludeDirectories="..\..\..\Gg"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				RuntimeLibrary="2"
 				ForceConformanceInForLoopScope="TRUE"
@@ -88,10 +88,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib fmodvc.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib dotgen.lib dotneato.lib gd.lib gfx.lib graph.lib gvrender.lib pathplan.lib libexpat.lib png.lib jpeg.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib fmodvc.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib dotgen.lib dotneato.lib gd.lib gfx.lib graph.lib gvrender.lib pathplan.lib libexpat.lib png.lib jpeg.lib"
 				OutputFile="$(OutDir)/freeorion.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGi\Release;ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGiNet\Release;ProjectDir\..\..\..\..\..\GG\msvc\GG\GiGiSDL\Release"
+				AdditionalLibraryDirectories=""
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
@@ -101,7 +101,8 @@
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="copy /Y Release\freeorion.exe ..\..\..\"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -147,6 +148,12 @@
 					</File>
 					<File
 						RelativePath="..\..\..\client\human\HumanClientApp.h">
+					</File>
+					<File
+						RelativePath="..\..\..\client\human\HumanClientAppSoundFMOD.cpp">
+					</File>
+					<File
+						RelativePath="..\..\..\client\human\HumanClientAppSoundFMOD.h">
 					</File>
 				</Filter>
 			</Filter>
@@ -237,6 +244,18 @@
 				<File
 					RelativePath="..\..\..\util\VarText.h">
 				</File>
+				<File
+					RelativePath="..\..\..\util\Version.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\util\Version.h">
+				</File>
+				<File
+					RelativePath="..\..\..\util\XMLDoc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\util\XMLDoc.h">
+				</File>
 			</Filter>
 			<Filter
 				Name="combat"
@@ -297,36 +316,6 @@
 				<File
 					RelativePath="..\..\..\network\NetworkCore.h">
 				</File>
-				<File
-					RelativePath="..\..\..\network\XDiff.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XDiff.hpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XHash.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XHash.hpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XLut.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XLut.hpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XParser.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XParser.hpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XTree.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\network\XTree.hpp">
-				</File>
 			</Filter>
 			<Filter
 				Name="UI"
@@ -356,12 +345,6 @@
 					RelativePath="..\..\..\Ui\CombatWnd.h">
 				</File>
 				<File
-					RelativePath="..\..\..\Ui\CUI_Wnd.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\CUI_Wnd.h">
-				</File>
-				<File
 					RelativePath="..\..\..\Ui\CUIControls.cpp">
 				</File>
 				<File
@@ -377,10 +360,22 @@
 					RelativePath="..\..\..\Ui\CUISpin.h">
 				</File>
 				<File
+					RelativePath="..\..\..\Ui\CUIStyle.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\CUIStyle.h">
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\CUITabbedPages.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\CUITabbedPages.h">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\CUIWnd.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\Ui\CUIWnd.h">
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\FleetButton.cpp">
@@ -389,10 +384,10 @@
 					RelativePath="..\..\..\Ui\FleetButton.h">
 				</File>
 				<File
-					RelativePath="..\..\..\Ui\FleetWindow.cpp">
+					RelativePath="..\..\..\Ui\FleetWnd.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\Ui\FleetWindow.h">
+					RelativePath="..\..\..\Ui\FleetWnd.h">
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\FocusSelector.cpp">
@@ -407,10 +402,10 @@
 					RelativePath="..\..\..\Ui\GalaxySetupWnd.h">
 				</File>
 				<File
-					RelativePath="..\..\..\Ui\InGameOptions.cpp">
+					RelativePath="..\..\..\Ui\InGameMenu.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\Ui\InGameOptions.h">
+					RelativePath="..\..\..\Ui\InGameMenu.h">
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\IntroScreen.cpp">
@@ -497,22 +492,10 @@
 					RelativePath="..\..\..\Ui\SystemIcon.h">
 				</File>
 				<File
-					RelativePath="..\..\..\Ui\TechWnd.cpp">
+					RelativePath="..\..\..\Ui\TechTreeWnd.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\Ui\TechWnd.h">
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\ToolContainer.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\ToolContainer.h">
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\ToolWnd.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\ToolWnd.h">
+					RelativePath="..\..\..\Ui\TechTreeWnd.h">
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\TurnProgressWnd.cpp">
