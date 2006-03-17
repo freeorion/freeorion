@@ -3,9 +3,16 @@ The artwork (images, sounds, music, etc.) is licensed under
 the Creative Commons Attribution-Share-Alike 2.0 license.
 (http://creativecommons.org/licenses/by-sa/2.0/)
 
-Everything else is licensed under the GNU General Public License, 
-Version 2.
-(http://creativecommons.org/licenses/GPL/2.0/)
+Everything else is licensed under the GNU General Public License,
+Version 2 (http://creativecommons.org/licenses/GPL/2.0/). As a
+special exception to the GPL terms, the FreeOrion Team grants
+permission to link the code of this program with any version of the
+FMOD library, and distributed linked combinations including the two.
+You must obey the GNU GPL in all respects for all of the code used
+other than FMOD. If you modify FreeOrion's code, you may extend this
+exception to your version of the file, but you are not obligated to do
+so.
+
 
                             ----------
 
