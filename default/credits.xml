@@ -51,6 +51,7 @@
     </GROUP>
     <GROUP name ="TRANSLATION">
       <PERSON name="Martin Wuttke" nick="The Silent One" task="German Translation"/>
+      <PERSON name="Ivan Sanchez" nick="Ivan s c" task="Spanish Translation"/>
     </GROUP>
   </CREDITS>
 </XMLDoc>
