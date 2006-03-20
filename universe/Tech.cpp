@@ -11,6 +11,8 @@
 #include <fstream>
 
 
+extern int g_indent;
+
 namespace {
     void NextTechs(std::vector<const Tech*>& retval, const std::set<std::string>& known_techs, std::set<const Tech*>& checked_techs,
                    TechManager::iterator it, TechManager::iterator end_it)
@@ -70,6 +72,28 @@ namespace {
 ///////////////////////////////////////////////////////////
 // Tech                                                  //
 ///////////////////////////////////////////////////////////
+Tech::Tech(const std::string& name,
+           const std::string& description,
+           const std::string& category,
+           TechType type,
+           double research_cost,
+           int research_turns,
+           const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+           const std::set<std::string>& prerequisites,
+           const std::vector<ItemSpec>& unlocked_items,
+           const std::string& graphic) :
+    m_name(name),
+    m_description(description),
+    m_category(category),
+    m_type(type),
+    m_research_cost(research_cost),
+    m_research_turns(research_turns),
+    m_effects(effects),
+    m_prerequisites(prerequisites),
+    m_unlocked_items(unlocked_items),
+    m_graphic(graphic)
+{}
+
 Tech::Tech(const XMLElement& elem) :
     m_effects(0)
 {
@@ -114,6 +138,70 @@ const std::string& Tech::Name() const
 const std::string& Tech::Description() const
 {
     return m_description;
+}
+
+std::string Tech::Dump() const
+{
+    using boost::lexical_cast;
+
+    std::string retval = DumpIndent() + "Tech\n";
+    ++g_indent;
+    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent() + "techtype = ";
+    switch (m_type) {
+    case TT_THEORY:      retval += "Theory"; break;
+    case TT_APPLICATION: retval += "Application"; break;
+    case TT_REFINEMENT:  retval += "Refinement"; break;
+    default: retval += "?"; break;
+    }
+    retval += "\n";
+    retval += DumpIndent() + "category = \"" + m_category + "\"\n";
+    retval += DumpIndent() + "researchcost = " + lexical_cast<std::string>(m_research_cost) + "\n";
+    retval += DumpIndent() + "researchturns = " + lexical_cast<std::string>(m_research_turns) + "\n";
+    retval += DumpIndent() + "prerequisites = ";
+    if (m_prerequisites.size() == 1) {
+        retval += "\"" + *m_prerequisites.begin() + "\"";
+    } else {
+        retval += "[\n";
+        ++g_indent;
+        for (std::set<std::string>::iterator it = m_prerequisites.begin(); it != m_prerequisites.end(); ++it) {
+            retval += DumpIndent() + "\"" + *it + "\"\n";
+        }
+        --g_indent;
+        retval += DumpIndent() + "]\n";
+    }
+    retval += DumpIndent() + "unlock = ";
+    if (m_unlocked_items.size() == 1) {
+        retval += m_unlocked_items[0].Dump();
+    } else {
+        retval += "[\n";
+        ++g_indent;
+        for (unsigned int i = 0; i < m_unlocked_items.size(); ++i) {
+            retval += m_unlocked_items[i].Dump();
+        }
+        --g_indent;
+        retval += DumpIndent() + "]\n";
+    }
+    if (!m_effects.empty()) {
+        if (m_effects.size() == 1) {
+            retval += DumpIndent() + "effectsgroups =\n";
+            ++g_indent;
+            retval += m_effects[0]->Dump();
+            --g_indent;
+        } else {
+            retval += DumpIndent() + "effectsgroups = [\n";
+            ++g_indent;
+            for (unsigned int i = 0; i < m_effects.size(); ++i) {
+                retval += m_effects[i]->Dump();
+            }
+            --g_indent;
+            retval += DumpIndent() + "]\n";
+        }
+        retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
+        --g_indent;
+    }
+    return retval;
 }
 
 TechType Tech::Type() const
@@ -168,8 +256,12 @@ const std::set<std::string>& Tech::UnlockedTechs() const
 Tech::ItemSpec::ItemSpec() :
     type(INVALID_UNLOCKABLE_ITEM_TYPE),
     name("")
-{
-}
+{}
+
+Tech::ItemSpec::ItemSpec(UnlockableItemType type_, const std::string& name_) :
+    type(type_),
+    name(name_)
+{}
 
 Tech::ItemSpec::ItemSpec(const XMLElement& elem)
 {
@@ -178,6 +270,18 @@ Tech::ItemSpec::ItemSpec(const XMLElement& elem)
 
     type = boost::lexical_cast<UnlockableItemType>(elem.Child("type").Text());
     name = elem.Child("name").Text();
+}
+
+std::string Tech::ItemSpec::Dump() const
+{
+    std::string retval = DumpIndent() + "Item type = ";
+    switch (type) {
+    case UIT_BUILDING:       retval += "Building"; break;
+    case UIT_SHIP_COMPONENT: retval += "ShipComponent"; break;
+    default: retval += "?"; break;
+    }
+    retval += " name = \"" + name + "\"\n";
+    return retval;
 }
 
 

@@ -6,6 +6,8 @@
 #include <fstream>
 
 
+extern int g_indent;
+
 namespace {
     class SpecialManager
     {
@@ -69,12 +71,12 @@ namespace {
     bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
-Special::Special(const std::string& name, const std::string& description) :
+Special::Special(const std::string& name, const std::string& description,
+                 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects) :
     m_name(name),
     m_description(description),
-    m_effects()
-{
-}
+    m_effects(effects)
+{}
 
 Special::Special(const XMLElement& elem)
 {
@@ -96,6 +98,30 @@ const std::string& Special::Name() const
 const std::string& Special::Description() const
 {
     return m_description;
+}
+
+std::string Special::Dump() const
+{
+    std::string retval = DumpIndent() + "Special\n";
+    ++g_indent;
+    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    if (m_effects.size() == 1) {
+        retval += DumpIndent() + "effectsgroups =\n";
+        ++g_indent;
+        retval += m_effects[0]->Dump();
+        --g_indent;
+    } else {
+        retval += DumpIndent() + "effectsgroups = [\n";
+        ++g_indent;
+        for (unsigned int i = 0; i < m_effects.size(); ++i) {
+            retval += m_effects[i]->Dump();
+        }
+        --g_indent;
+        retval += DumpIndent() + "]\n";
+    }
+    --g_indent;
+    return retval;
 }
 
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Special::Effects() const

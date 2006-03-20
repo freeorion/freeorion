@@ -28,6 +28,18 @@ public:
     struct ItemSpec;
 
     /** \name Structors */ //@{
+    /** basic ctor */
+    Tech(const std::string& name,
+         const std::string& description,
+         const std::string& category,
+         TechType type,
+         double research_cost,
+         int research_turns,
+         const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+         const std::set<std::string>& prerequisites,
+         const std::vector<ItemSpec>& unlocked_items,
+         const std::string& graphic);
+
     Tech(const XMLElement& elem); ///< XML ctor
     //@}
 
@@ -37,6 +49,9 @@ public:
 
     /** Returns the text description of this tech */
     const std::string& Description() const;
+
+    /** Returns a data file format representation of this object */
+    std::string Dump() const;
 
     /** Returns the type (theory/application/refinement) of this tech */
     TechType Type() const;
@@ -96,7 +111,10 @@ private:
 struct Tech::ItemSpec
 {
     ItemSpec(); ///< default ctor
+    ItemSpec(UnlockableItemType type_, const std::string& name_); ///< basic ctor
     ItemSpec(const XMLElement& elem); ///< XML ctor
+
+    std::string Dump() const; ///< returns a data file format representation of this object
 
     UnlockableItemType type; ///< the kind of item this is
     std::string        name; ///< the exact item this is

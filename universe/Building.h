@@ -62,13 +62,20 @@ class BuildingType
 public:
     /** \name Structors */ //@{
     BuildingType(); ///< default ctor
-    BuildingType(const std::string& name, const std::string& description); ///< basic ctor
+
+    /** basic ctor */
+    BuildingType(const std::string& name, const std::string& description,
+                 double build_cost, int build_time, double maintenance_cost,
+                 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+                 const std::string& graphic);
+
     BuildingType(const XMLElement& elem); ///< ctor that constructs a BuildingType object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a BuildingType object
     //@}
 
     /** \name Accessors */ //@{
     const std::string&          Name() const;             ///< returns the unique name for this type of building
     const std::string&          Description() const;      ///< returns a text description of this type of building
+    std::string                 Dump() const;             ///< returns a data file format representation of this object
     double                      BuildCost() const;        ///< returns the number of production points required to build this building
     int                         BuildTime() const;        ///< returns the number of turns required to build this building
     double                      MaintenanceCost() const;  ///< returns the number of monetary points required per turn to operate this building

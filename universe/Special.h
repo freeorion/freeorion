@@ -11,13 +11,17 @@ class Special
 {
 public:
     /** \name Structors */ //@{
-    Special(const std::string& name, const std::string& description); ///< basic ctor
+    /** basic ctor */
+    Special(const std::string& name, const std::string& description,
+            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects);
+
     Special(const XMLElement& elem); ///< XML ctor
     //@}
 
     /** \name Accessors */ //@{
     const std::string&          Name() const;               ///< returns the unique name for this type of special
     const std::string&          Description() const;        ///< returns a text description of this type of special
+    std::string                 Dump() const;               ///< returns a data file format representation of this object
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                 Effects() const;            ///< returns the EffectsGroups that encapsulate the effects that specials of this type have
     //@}

@@ -11,6 +11,8 @@ using namespace boost::io;
 using boost::lexical_cast;
 using boost::format;
 
+extern int g_indent;
+
 namespace {
     EffectBase* NewSetMeter(const XMLElement& elem)             {return new SetMeter(elem);}
     EffectBase* NewSetEmpireStockpile(const XMLElement& elem)   {return new SetEmpireStockpile(elem);}
@@ -96,8 +98,7 @@ EffectsGroup::EffectsGroup(const Condition::ConditionBase* scope, const Conditio
     m_activation(activation),
     m_stacking_group(stacking_group),
     m_effects(effects)
-{
-}
+{}
 
 EffectsGroup::EffectsGroup(const XMLElement& elem)
 {
@@ -210,6 +211,40 @@ std::string EffectsGroup::DescriptionString() const
     }
 }
 
+std::string EffectsGroup::Dump() const
+{
+    std::string retval = DumpIndent() + "EffectsGroup\n";
+    ++g_indent;
+    retval += DumpIndent() + "scope =\n";
+    ++g_indent;
+    retval += m_scope->Dump();
+    --g_indent;
+    if (m_activation) {
+        retval += DumpIndent() + "activation =\n";
+        ++g_indent;
+        retval += m_activation->Dump();
+        --g_indent;
+    }
+    if (!m_stacking_group.empty())
+        retval += DumpIndent() + "stackinggroup = \"" + m_stacking_group + "\"\n";
+    if (m_effects.size() == 1) {
+        retval += DumpIndent() + "effects =\n";
+        ++g_indent;
+        retval += m_effects[0]->Dump();
+        --g_indent;
+    } else {
+        retval += DumpIndent() + "effects = [\n";
+        ++g_indent;
+        for (unsigned int i = 0; i < m_effects.size(); ++i) {
+            retval += m_effects[i]->Dump();
+        }
+        --g_indent;
+        retval += DumpIndent() + "]\n";
+    }
+    --g_indent;
+    return retval;
+}
+
 
 ///////////////////////////////////////////////////////////
 // EffectsDescription function                           //
@@ -232,8 +267,7 @@ std::string EffectsDescription(const std::vector<boost::shared_ptr<const Effect:
 // EffectBase                                            //
 ///////////////////////////////////////////////////////////
 EffectBase::~EffectBase()
-{
-}
+{}
 
 
 ///////////////////////////////////////////////////////////
@@ -243,8 +277,7 @@ SetMeter::SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value,
     m_meter(meter),
     m_value(value),
     m_max(max)
-{
-}
+{}
 
 SetMeter::SetMeter(const XMLElement& elem)
 {
@@ -295,6 +328,24 @@ std::string SetMeter::Description() const
     }
 }
 
+std::string SetMeter::Dump() const
+{
+    std::string retval = DumpIndent() + (m_max ? "SetMax" : "SetCurrent");
+    switch (m_meter) {
+    case METER_POPULATION:   retval += "Population"; break;
+    case METER_FARMING:      retval += "Farming"; break;
+    case METER_INDUSTRY:     retval += "Industry"; break;
+    case METER_RESEARCH:     retval += "Research"; break;
+    case METER_TRADE:        retval += "Trade"; break;
+    case METER_MINING:       retval += "Mining"; break;
+    case METER_CONSTRUCTION: retval += "Construction"; break;
+    case METER_HEALTH:       retval += "Health"; break;
+    default: retval += "?"; break;
+    }
+    retval += " value = " + m_value->Dump() + "\n";
+    return retval;
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetEmpireStockpile                                    //
@@ -302,8 +353,7 @@ std::string SetMeter::Description() const
 SetEmpireStockpile::SetEmpireStockpile(StockpileType stockpile, const ValueRef::ValueRefBase<double>* value) :
     m_stockpile(stockpile),
     m_value(value)
-{
-}
+{}
 
 SetEmpireStockpile::SetEmpireStockpile(const XMLElement& elem)
 {
@@ -341,14 +391,26 @@ std::string SetEmpireStockpile::Description() const
     return str(format(UserString("DESC_SET_EMPIRE_STOCKPILE")) % UserString(lexical_cast<std::string>(m_stockpile)) % value_str);
 }
 
+std::string SetEmpireStockpile::Dump() const
+{
+    std::string retval = DumpIndent();
+    switch (m_stockpile) {
+    case ST_FOOD:    retval += "SetOwnerFoodStockpile"; break;
+    case ST_MINERAL: retval += "SetOwnerMineralStockpile"; break;
+    case ST_TRADE:   retval += "SetOwnerTradeStockpile"; break;
+    default: retval += "?"; break;
+    }
+    retval += " value = " + m_value->Dump() + "\n";
+    return retval;
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetPlanetType                                         //
 ///////////////////////////////////////////////////////////
 SetPlanetType::SetPlanetType(const ValueRef::ValueRefBase<PlanetType>* type) :
     m_type(type)
-{
-}
+{}
 
 SetPlanetType::SetPlanetType(const XMLElement& elem)
 {
@@ -385,14 +447,18 @@ std::string SetPlanetType::Description() const
     return str(format(UserString("DESC_SET_PLANET_TYPE")) % value_str);
 }
 
+std::string SetPlanetType::Dump() const
+{
+    return DumpIndent() + "SetPlanetType type = " + m_type->Dump() + "\n";
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetPlanetSize                                         //
 ///////////////////////////////////////////////////////////
 SetPlanetSize::SetPlanetSize(const ValueRef::ValueRefBase<PlanetSize>* size) :
     m_size(size)
-{
-}
+{}
 
 SetPlanetSize::SetPlanetSize(const XMLElement& elem)
 {
@@ -427,14 +493,18 @@ std::string SetPlanetSize::Description() const
     return str(format(UserString("DESC_SET_PLANET_SIZE")) % value_str);
 }
 
+std::string SetPlanetSize::Dump() const
+{
+    return DumpIndent() + "SetPlanetSize size = " + m_size->Dump() + "\n";
+}
+
 
 ///////////////////////////////////////////////////////////
 // AddOwner                                              //
 ///////////////////////////////////////////////////////////
 AddOwner::AddOwner(const ValueRef::ValueRefBase<int>* empire_id) :
     m_empire_id(empire_id)
-{
-}
+{}
 
 AddOwner::AddOwner(const XMLElement& elem)
 {
@@ -462,14 +532,18 @@ std::string AddOwner::Description() const
     return str(format(UserString("DESC_ADD_OWNER")) % value_str);
 }
 
+std::string AddOwner::Dump() const
+{
+    return DumpIndent() + "AddOwner empire = " + m_empire_id->Dump() + "\n";
+}
+
 
 ///////////////////////////////////////////////////////////
 // RemoveOwner                                           //
 ///////////////////////////////////////////////////////////
 RemoveOwner::RemoveOwner(const ValueRef::ValueRefBase<int>* empire_id) :
     m_empire_id(empire_id)
-{
-}
+{}
 
 RemoveOwner::RemoveOwner(const XMLElement& elem)
 {
@@ -497,6 +571,11 @@ std::string RemoveOwner::Description() const
     return str(format(UserString("DESC_REMOVE_OWNER")) % value_str);
 }
 
+std::string RemoveOwner::Dump() const
+{
+    return DumpIndent() + "RemoveOwner empire = " + m_empire_id->Dump() + "\n";
+}
+
 
 ///////////////////////////////////////////////////////////
 // Create                                                //
@@ -516,8 +595,7 @@ public:
 // Destroy                                               //
 ///////////////////////////////////////////////////////////
 Destroy::Destroy()
-{
-}
+{}
 
 Destroy::Destroy(const XMLElement& elem)
 {
@@ -535,14 +613,18 @@ std::string Destroy::Description() const
     return UserString("DESC_DESTROY");
 }
 
+std::string Destroy::Dump() const
+{
+    return DumpIndent() + "Destroy\n";
+}
+
 
 ///////////////////////////////////////////////////////////
 // AddSpecial                                            //
 ///////////////////////////////////////////////////////////
 AddSpecial::AddSpecial(const std::string& name) :
     m_name(name)
-{
-}
+{}
 
 AddSpecial::AddSpecial(const XMLElement& elem)
 {
@@ -562,14 +644,18 @@ std::string AddSpecial::Description() const
     return str(format(UserString("DESC_ADD_SPECIAL")) % UserString(m_name));
 }
 
+std::string AddSpecial::Dump() const
+{
+    return DumpIndent() + "AddSpecial name = \"" + m_name + "\"\n";
+}
+
 
 ///////////////////////////////////////////////////////////
 // RemoveSpecial                                         //
 ///////////////////////////////////////////////////////////
 RemoveSpecial::RemoveSpecial(const std::string& name) :
     m_name(name)
-{
-}
+{}
 
 RemoveSpecial::RemoveSpecial(const XMLElement& elem)
 {
@@ -589,14 +675,18 @@ std::string RemoveSpecial::Description() const
     return str(format(UserString("DESC_REMOVE_SPECIAL")) % UserString(m_name));
 }
 
+std::string RemoveSpecial::Dump() const
+{
+    return DumpIndent() + "RemoveSpecial name = \"" + m_name + "\"\n";
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetStarType                                           //
 ///////////////////////////////////////////////////////////
 SetStarType::SetStarType(const ValueRef::ValueRefBase<StarType>* type) :
     m_type(type)
-{
-}
+{}
 
 SetStarType::SetStarType(const XMLElement& elem)
 {
@@ -624,6 +714,11 @@ std::string SetStarType::Description() const
     return str(format(UserString("DESC_SET_STAR_TYPE")) % value_str);
 }
 
+std::string SetStarType::Dump() const
+{
+    return DumpIndent() + "SetStarType type = " + m_type->Dump() + "\n";
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetTechAvailability                                   //
@@ -633,8 +728,7 @@ SetTechAvailability::SetTechAvailability(const std::string& tech_name, const Val
     m_empire_id(empire_id),
     m_available(available),
     m_include_tech(include_tech)
-{
-}
+{}
 
 SetTechAvailability::SetTechAvailability(const XMLElement& elem)
 {
@@ -683,14 +777,28 @@ std::string SetTechAvailability::Description() const
                % empire_str);
 }
 
+std::string SetTechAvailability::Dump() const
+{
+    std::string retval = DumpIndent();
+    if (m_available && m_include_tech)
+        retval += "GiveTechToOwner";
+    if (!m_available && m_include_tech)
+        retval += "RevokeTechFromOwner";
+    if (m_available && !m_include_tech)
+        retval += "UnlockTechItemsForOwner";
+    if (!m_available && !m_include_tech)
+        retval += "LockTechItemsForOwner";
+    retval += " name = \"" + m_tech_name + "\"\n";
+    return retval;
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetEffectTarget                                       //
 ///////////////////////////////////////////////////////////
 SetEffectTarget::SetEffectTarget(const ValueRef::ValueRefBase<int>* effect_target_id) :
     m_effect_target_id(effect_target_id)
-{
-}
+{}
 
 SetEffectTarget::SetEffectTarget(const XMLElement& elem)
 {
@@ -714,4 +822,9 @@ std::string SetEffectTarget::Description() const
 {
     // TODO: implement after Effect targets are implemented
     return "ERROR: SetEffectTarget is currently unimplemented.";
+}
+
+std::string SetEffectTarget::Dump() const
+{
+    return "";
 }

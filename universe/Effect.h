@@ -52,6 +52,7 @@ public:
     const std::vector<EffectBase*>& EffectsList() const;
     Description GetDescription() const;
     std::string DescriptionString() const;
+    std::string Dump() const;
 
 protected:
     const Condition::ConditionBase* m_scope;
@@ -74,6 +75,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const = 0;
     virtual std::string Description() const = 0;
+    virtual std::string Dump() const = 0;
 };
 
 /** Sets the meter of the given kind to \a value.  The max value of the meter is set if \a max == true; otherwise the
@@ -88,6 +90,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     MeterType                             m_meter;
@@ -106,6 +109,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     StockpileType                         m_stockpile;
@@ -125,6 +129,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     const ValueRef::ValueRefBase<PlanetType>* m_type;
@@ -142,6 +147,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     const ValueRef::ValueRefBase<PlanetSize>* m_size;
@@ -157,6 +163,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     const ValueRef::ValueRefBase<int>* m_empire_id;
@@ -172,6 +179,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     const ValueRef::ValueRefBase<int>* m_empire_id;
@@ -199,6 +207,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 };
 
 /** Adds the Special with the name \a name to the target object. */
@@ -210,6 +219,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     std::string m_name;
@@ -224,6 +234,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     std::string m_name;
@@ -239,6 +250,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     const ValueRef::ValueRefBase<StarType>* m_type;
@@ -256,6 +268,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     std::string                        m_tech_name;
@@ -273,6 +286,7 @@ public:
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     const ValueRef::ValueRefBase<int>* m_effect_target_id;

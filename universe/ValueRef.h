@@ -44,6 +44,7 @@ struct ValueRef::ValueRefBase
     virtual ~ValueRefBase() {} ///< virtual dtor
     virtual T Eval(const UniverseObject* source, const UniverseObject* target) const = 0; ///< evaluates the expression tree and return the results
     virtual std::string Description() const = 0;
+    virtual std::string Dump() const = 0; ///< returns a text description of this type of special
 };
 
 /** the constant value leaf ValueRef class. */
@@ -56,6 +57,7 @@ struct ValueRef::Constant : public ValueRef::ValueRefBase<T>
 
     virtual T Eval(const UniverseObject* source, const UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     T m_value;
@@ -74,6 +76,7 @@ struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
 
     virtual T Eval(const UniverseObject* source, const UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     bool                     m_source_ref;
@@ -95,12 +98,17 @@ struct ValueRef::Operation : public ValueRef::ValueRefBase<T>
 
     virtual T Eval(const UniverseObject* source, const UniverseObject* target) const;
     virtual std::string Description() const;
+    virtual std::string Dump() const;
 
 private:
     OpType                 m_op_type;
     const ValueRefBase<T>* m_operand1;
     const ValueRefBase<T>* m_operand2;
 };
+
+/** A function that returns the correct amount of spacing for the current indentation level during a dump.  Note that
+    this function is used by several units (Condition.cpp, Effect.cpp, etc.), not just this one. */
+std::string DumpIndent();
 
 
 // Temlate Implementations
@@ -111,8 +119,7 @@ private:
 template <class T>
 ValueRef::Constant<T>::Constant(T value) :
     m_value(value)
-{
-}
+{}
 
 template <class T>
 T ValueRef::Constant<T>::Value() const
@@ -133,11 +140,35 @@ std::string ValueRef::Constant<T>::Description() const
 }
 
 namespace ValueRef {
-template <>
-std::string Constant<int>::Description() const;
+    template <>
+    std::string Constant<int>::Description() const;
 
-template <>
-std::string Constant<double>::Description() const;
+    template <>
+    std::string Constant<double>::Description() const;
+
+    template <>
+    std::string Constant<PlanetSize>::Dump() const;
+
+    template <>
+    std::string Constant<PlanetType>::Dump() const;
+
+    template <>
+    std::string Constant<PlanetEnvironment>::Dump() const;
+
+    template <>
+    std::string Constant<UniverseObjectType>::Dump() const;
+
+    template <>
+    std::string Constant<StarType>::Dump() const;
+
+    template <>
+    std::string Constant<FocusType>::Dump() const;
+
+    template <>
+    std::string Constant<double>::Dump() const;
+
+    template <>
+    std::string Constant<int>::Dump() const;
 }
 
 ///////////////////////////////////////////////////////////
@@ -147,8 +178,7 @@ template <class T>
 ValueRef::Variable<T>::Variable(bool source_ref, const std::string& property_name) :
     m_source_ref(source_ref),
     m_property_name(::detail::TokenizeDottedReference(property_name))
-{
-}
+{}
 
 template <class T>
 bool ValueRef::Variable<T>::SourceRef() const
@@ -173,30 +203,40 @@ std::string ValueRef::Variable<T>::Description() const
     return boost::io::str(formatter);
 }
 
+template <class T>
+std::string ValueRef::Variable<T>::Dump() const
+{
+    std::string str(m_source_ref ? "Source" : "Target");
+    for (unsigned int i = 0; i < m_property_name.size(); ++i) {
+        str += '.' + m_property_name[i];
+    }
+    return str;
+}
+
 namespace ValueRef {
-template <>
-PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    template <>
+    PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target) const;
 
-template <>
-PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    template <>
+    PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
 
-template <>
-PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    template <>
+    PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target) const;
 
-template <>
-UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    template <>
+    UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
 
-template <>
-StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    template <>
+    StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
 
-template <>
-FocusType Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    template <>
+    FocusType Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
 
-template <>
-double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    template <>
+    double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target) const;
 
-template <>
-int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    template <>
+    int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target) const;
 }
 
 ///////////////////////////////////////////////////////////
@@ -207,16 +247,14 @@ ValueRef::Operation<T>::Operation(OpType op_type, const ValueRefBase<T>* operand
     m_op_type(op_type),
     m_operand1(operand1),
     m_operand2(operand2)
-{
-}
+{}
 
 template <class T>
 ValueRef::Operation<T>::Operation(OpType op_type, const ValueRefBase<T>* operand) :
     m_op_type(op_type),
     m_operand1(operand),
     m_operand2(0)
-{
-}
+{}
 
 template <class T>
 ValueRef::Operation<T>::~Operation()
@@ -302,6 +340,51 @@ std::string ValueRef::Operation<T>::Description() const
         retval += '(' + m_operand2->Description() + ')';
     else
         retval += m_operand2->Description();
+    return retval;
+}
+
+template <class T>
+std::string ValueRef::Operation<T>::Dump() const
+{
+    if (m_op_type == NEGATE) {
+        if (dynamic_cast<const ValueRef::Operation<T>*>(m_operand1))
+            return "-(" + m_operand1->Dump() + ")";
+        else
+            return "-" + m_operand1->Dump();
+    }
+
+    bool parenthesize_lhs = false;
+    bool parenthesize_rhs = false;
+    if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
+        if ((m_op_type == TIMES || m_op_type == DIVIDES) &&
+            (lhs->GetOpType() == PLUS || lhs->GetOpType() == MINUS))
+            parenthesize_lhs = true;
+    }
+    if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand2)) {
+        if ((m_op_type == TIMES || m_op_type == DIVIDES) &&
+            (rhs->GetOpType() == PLUS || rhs->GetOpType() == MINUS))
+            parenthesize_rhs = true;
+    }
+
+    std::string retval;
+    if (parenthesize_lhs)
+        retval += '(' + m_operand1->Dump() + ')';
+    else
+        retval += m_operand1->Dump();
+
+    switch (m_op_type) {
+    case PLUS:    retval += " + "; break;
+    case MINUS:   retval += " - "; break;
+    case TIMES:   retval += " * "; break;
+    case DIVIDES: retval += " / "; break;
+    default:      retval += " ? "; break;
+    }
+
+    if (parenthesize_rhs)
+        retval += '(' + m_operand2->Dump() + ')';
+    else
+        retval += m_operand2->Dump();
+
     return retval;
 }
 

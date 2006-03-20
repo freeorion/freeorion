@@ -13,6 +13,8 @@ using namespace boost::io;
 using boost::lexical_cast;
 using boost::format;
 
+extern int g_indent;
+
 namespace {
     Condition::ConditionBase* NewAll(const XMLElement& elem)                    {return new Condition::All(elem);}
     Condition::ConditionBase* NewEmpireAffiliation(const XMLElement& elem)      {return new Condition::EmpireAffiliation(elem);}
@@ -135,6 +137,11 @@ std::string Condition::ConditionBase::Description(bool negated/* = false*/) cons
     return "";
 }
 
+std::string Condition::ConditionBase::Dump() const
+{
+    return "";
+}
+
 bool Condition::ConditionBase::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     return false;
@@ -173,6 +180,11 @@ std::string Condition::Turn::Description(bool negated/* = false*/) const
     return str(format(UserString(description_str))
                % low_str
                % high_str);
+}
+
+std::string Condition::Turn::Dump() const
+{
+    return DumpIndent() + "Turn low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
 }
 
 void Condition::Turn::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
@@ -224,6 +236,15 @@ std::string Condition::NumberOf::Description(bool negated/* = false*/) const
     return str(format(UserString(description_str))
                % value_str
                % m_condition->Description());
+}
+
+std::string Condition::NumberOf::Dump() const
+{
+    std::string retval = DumpIndent() + "NumberOf number = " + m_number->Dump() + " condition =\n";
+    ++g_indent;
+    retval += m_condition->Dump();
+    --g_indent;
+    return retval;
 }
 
 void Condition::NumberOf::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
@@ -294,6 +315,11 @@ std::string Condition::All::Description(bool negated/* = false*/) const
     return UserString("DESC_ALL");
 }
 
+std::string Condition::All::Dump() const
+{
+    return DumpIndent() + "All\n";
+}
+
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
@@ -336,6 +362,20 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
     }
 }
 
+std::string Condition::EmpireAffiliation::Dump() const
+{
+    std::string retval = DumpIndent() + (m_exclusive ? "OwnedExclusivelyBy" : "OwnedBy");
+    retval += " affiliation = ";
+    switch (m_affiliation) {
+    case AFFIL_SELF:  retval += "TheEmpire"; break;
+    case AFFIL_ENEMY: retval += "EnemyOf"; break;
+    case AFFIL_ALLY:  retval += "AllyOf"; break;
+    default: retval += "?"; break;
+    }
+    retval += " empire = " + m_empire_id->Dump() + "\n";
+    return retval;
+}
+
 bool Condition::EmpireAffiliation::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     switch (m_affiliation) {
@@ -374,6 +414,11 @@ std::string Condition::Self::Description(bool negated/* = false*/) const
     return UserString(description_str);
 }
 
+std::string Condition::Self::Dump() const
+{
+    return DumpIndent() + "Source\n";
+}
+
 bool Condition::Self::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     return source == target;
@@ -401,6 +446,26 @@ std::string Condition::Type::Description(bool negated/* = false*/) const
     if (negated)
         description_str += "_NOT";
     return str(format(UserString(description_str)) % value_str);
+}
+
+std::string Condition::Type::Dump() const
+{
+    std::string retval = DumpIndent();
+    if (dynamic_cast<const ValueRef::Constant<UniverseObjectType>*>(m_type)) {
+        switch (m_type->Eval(0, 0)) {
+        case OBJ_BUILDING:    retval += "Building\n"; break;
+        case OBJ_SHIP:        retval += "Ship\n"; break;
+        case OBJ_FLEET:       retval += "Fleet\n"; break;
+        case OBJ_PLANET:      retval += "Planet\n"; break;
+        case OBJ_POP_CENTER:  retval += "PopulationCenter\n"; break;
+        case OBJ_PROD_CENTER: retval += "ProductionCenter\n"; break;
+        case OBJ_SYSTEM:      retval += "System\n"; break;
+        default: retval += "?\n"; break;
+        }
+    } else {
+        retval += "ObjectType type = " + m_type->Dump() + "\n";
+    }
+    return retval;
 }
 
 bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -456,6 +521,11 @@ std::string Condition::Building::Description(bool negated/* = false*/) const
     return str(format(UserString(description_str)) % UserString(m_name));
 }
 
+std::string Condition::Building::Dump() const
+{
+    return DumpIndent() + "Building name = \"" + m_name + "\"\n";
+}
+
 bool Condition::Building::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const ::Building* building = universe_object_cast<const ::Building*>(target);
@@ -485,6 +555,11 @@ std::string Condition::HasSpecial::Description(bool negated/* = false*/) const
     return str(format(UserString(description_str)) % UserString(m_name));
 }
 
+std::string Condition::HasSpecial::Dump() const
+{
+    return DumpIndent() + "HasSpecial name = \"" + m_name + "\"\n";
+}
+
 bool Condition::HasSpecial::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     return (m_name == "All" && !target->Specials().empty()) || target->Specials().find(m_name) != target->Specials().end();
@@ -511,6 +586,15 @@ std::string Condition::Contains::Description(bool negated/* = false*/) const
     if (negated)
         description_str += "_NOT";
     return str(format(UserString(description_str)) % m_condition->Description());
+}
+
+std::string Condition::Contains::Dump() const
+{
+    std::string retval = DumpIndent() + "Contains condition =\n";
+    ++g_indent;
+    retval += m_condition->Dump();
+    --g_indent;
+    return retval;
 }
 
 void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
@@ -564,6 +648,15 @@ std::string Condition::ContainedBy::Description(bool negated/* = false*/) const
     if (negated)
         description_str += "_NOT";
 	return str(format(UserString(description_str)) % m_condition->Description());
+}
+
+std::string Condition::ContainedBy::Dump() const
+{
+    std::string retval = DumpIndent() + "ContainedBy condition =\n";
+    ++g_indent;
+    retval += m_condition->Dump();
+    --g_indent;
+    return retval;
 }
 
 void Condition::ContainedBy::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
@@ -637,6 +730,21 @@ std::string Condition::PlanetType::Description(bool negated/* = false*/) const
     return str(format(UserString(description_str)) % values_str);
 }
 
+std::string Condition::PlanetType::Dump() const
+{
+    std::string retval = DumpIndent() + "PlanetType type = ";
+    if (m_types.size() == 1) {
+        retval += m_types[0]->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_types.size(); ++i) {
+            retval += m_types[i]->Dump() + " ";
+        }
+        retval += "]\n";
+    }
+    return retval;
+}
+
 bool Condition::PlanetType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const Planet* planet = universe_object_cast<const Planet*>(target);
@@ -696,6 +804,21 @@ std::string Condition::PlanetSize::Description(bool negated/* = false*/) const
     return str(format(UserString(description_str)) % values_str);
 }
 
+std::string Condition::PlanetSize::Dump() const
+{
+    std::string retval = DumpIndent() + "PlanetSize type = ";
+    if (m_sizes.size() == 1) {
+        retval += m_sizes[0]->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_sizes.size(); ++i) {
+            retval += m_sizes[i]->Dump() + " ";
+        }
+        retval += "]\n";
+    }
+    return retval;
+}
+
 bool Condition::PlanetSize::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const Planet* planet = universe_object_cast<const Planet*>(target);
@@ -753,6 +876,21 @@ std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) 
     if (negated)
         description_str += "_NOT";
     return str(format(UserString(description_str)) % values_str);
+}
+
+std::string Condition::PlanetEnvironment::Dump() const
+{
+    std::string retval = DumpIndent() + "PlanetEnvironment type = ";
+    if (m_environments.size() == 1) {
+        retval += m_environments[0]->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_environments.size(); ++i) {
+            retval += m_environments[i]->Dump() + " ";
+        }
+        retval += "]\n";
+    }
+    return retval;
 }
 
 bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -817,6 +955,22 @@ std::string Condition::FocusType::Description(bool negated/* = false*/) const
     return str(format(UserString(description_str)) % values_str);
 }
 
+std::string Condition::FocusType::Dump() const
+{
+    std::string retval = DumpIndent() + (m_primary ? "Primary" : "Secondary");
+    retval += "FocusType type = ";
+    if (m_foci.size() == 1) {
+        retval += m_foci[0]->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_foci.size(); ++i) {
+            retval += m_foci[i]->Dump() + " ";
+        }
+        retval += "]\n";
+    }
+    return retval;
+}
+
 bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(target);
@@ -876,6 +1030,21 @@ std::string Condition::StarType::Description(bool negated/* = false*/) const
     return str(format(UserString(description_str)) % values_str);
 }
 
+std::string Condition::StarType::Dump() const
+{
+    std::string retval = DumpIndent() + "StarType type = ";
+    if (m_types.size() == 1) {
+        retval += m_types[0]->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_types.size(); ++i) {
+            retval += m_types[i]->Dump() + " ";
+        }
+        retval += "]\n";
+    }
+    return retval;
+}
+
 bool Condition::StarType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const System* system = target->GetSystem();
@@ -924,6 +1093,11 @@ std::string Condition::Chance::Description(bool negated/* = false*/) const
     }
 }
 
+std::string Condition::Chance::Dump() const
+{
+    return DumpIndent() + "Random probability = " + m_chance->Dump() + "\n";
+}
+
 bool Condition::Chance::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     double chance = std::max(0.0, std::min(m_chance->Eval(source, target), 1.0));
@@ -968,6 +1142,24 @@ std::string Condition::MeterValue::Description(bool negated/* = false*/) const
                % UserString(lexical_cast<std::string>(m_meter))
                % low_str
                % high_str);
+}
+
+std::string Condition::MeterValue::Dump() const
+{
+    std::string retval = DumpIndent() + (m_max_meter ? "Max" : "Current");
+    switch (m_meter) {
+    case METER_POPULATION:   retval += "Population"; break;
+    case METER_FARMING:      retval += "Farming"; break;
+    case METER_INDUSTRY:     retval += "Industry"; break;
+    case METER_RESEARCH:     retval += "Research"; break;
+    case METER_TRADE:        retval += "Trade"; break;
+    case METER_MINING:       retval += "Mining"; break;
+    case METER_CONSTRUCTION: retval += "Construction"; break;
+    case METER_HEALTH:       retval += "Health"; break;
+    default: retval += "?"; break;
+    }
+    retval += " low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
+    return retval;
 }
 
 bool Condition::MeterValue::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -1019,6 +1211,19 @@ std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*
                % high_str);
 }
 
+std::string Condition::EmpireStockpileValue::Dump() const
+{
+    std::string retval = DumpIndent();
+    switch (m_stockpile) {
+    case ST_FOOD:    retval += "OwnerFoodStockpile"; break;
+    case ST_MINERAL: retval += "OwnerMineralStockpile"; break;
+    case ST_TRADE:   retval += "OwnerTradeStockpile"; break;
+    default: retval += "?"; break;
+    }
+    retval += " low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
+    return retval;
+}
+
 bool Condition::EmpireStockpileValue::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     if (target->Owners().size() != 1)
@@ -1058,6 +1263,11 @@ std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const
     if (negated)
         description_str += "_NOT";
     return str(format(UserString(description_str)) % UserString(m_name));
+}
+
+std::string Condition::OwnerHasTech::Dump() const
+{
+    return DumpIndent() + "OwnerHasTech name = \"" + m_name + "\"\n";
 }
 
 bool Condition::OwnerHasTech::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -1117,6 +1327,21 @@ std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) co
             description_str += "_NOT";
         return str(format(UserString(description_str)) % values_str);
     }
+}
+
+std::string Condition::VisibleToEmpire::Dump() const
+{
+    std::string retval = DumpIndent() + "VisibleToEmpire epmire = ";
+    if (m_empire_ids.size() == 1) {
+        retval += m_empire_ids[0]->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
+            retval += m_empire_ids[i]->Dump() + " " ;
+        }
+        retval += "]\n";
+    }
+    return retval;
 }
 
 bool Condition::VisibleToEmpire::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -1191,6 +1416,15 @@ std::string Condition::WithinDistance::Description(bool negated/* = false*/) con
                % m_condition->Description());
 }
 
+std::string Condition::WithinDistance::Dump() const
+{
+    std::string retval = DumpIndent() + "WithinDistance distance = " + m_distance->Dump() + " condition =\n";
+    ++g_indent;
+    retval += m_condition->Dump();
+    --g_indent;
+    return retval;
+}
+
 bool Condition::WithinDistance::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     double dist = m_distance->Eval(source, target);
@@ -1260,6 +1494,15 @@ std::string Condition::WithinStarlaneJumps::Description(bool negated/* = false*/
     return str(format(UserString(description_str))
                % value_str
                % m_condition->Description());
+}
+
+std::string Condition::WithinStarlaneJumps::Dump() const
+{
+    std::string retval = DumpIndent() + "WithinStarlaneJumps jumps = " + m_jumps->Dump() + " condition =\n";
+    ++g_indent;
+    retval += m_condition->Dump();
+    --g_indent;
+    return retval;
 }
 
 bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -1336,6 +1579,11 @@ std::string Condition::EffectTarget::Description(bool negated/* = false*/) const
     std::string retval;
     // TODO
     return retval;
+}
+
+std::string Condition::EffectTarget::Dump() const
+{
+    return "";
 }
 
 bool Condition::EffectTarget::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -1415,6 +1663,18 @@ std::string Condition::And::Description(bool negated/* = false*/) const
     }
 }
 
+std::string Condition::And::Dump() const
+{
+    std::string retval = DumpIndent() + "And [\n";
+    ++g_indent;
+    for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        retval += m_operands[i]->Dump();
+    }
+    --g_indent;
+    retval += DumpIndent() + "]\n";
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Or                                                    //
 ///////////////////////////////////////////////////////////
@@ -1487,6 +1747,18 @@ std::string Condition::Or::Description(bool negated/* = false*/) const
     }
 }
 
+std::string Condition::Or::Dump() const
+{
+    std::string retval = DumpIndent() + "Or [\n";
+    ++g_indent;
+    for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        retval += m_operands[i]->Dump();
+    }
+    --g_indent;
+    retval += DumpIndent() + "]\n";
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Not                                                   //
 ///////////////////////////////////////////////////////////
@@ -1522,4 +1794,9 @@ void Condition::Not::Eval(const UniverseObject* source, ObjectSet& targets, Obje
 std::string Condition::Not::Description(bool negated/* = false*/) const
 {
     return m_operand->Description(true);
+}
+
+std::string Condition::Not::Dump() const
+{
+    return DumpIndent() + "Not " + m_operand->Dump();
 }

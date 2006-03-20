@@ -8,6 +8,9 @@
 
 #include <fstream>
 
+
+extern int g_indent;
+
 namespace {
     // loads and stores BuildingTypes specified in [settings-dir]/buildings.xml
     class BuildingTypeManager
@@ -57,8 +60,7 @@ Building::Building() :
     m_building_type(""),
     m_operating(true),
     m_planet_id(INVALID_OBJECT_ID)
-{
-}
+{}
 
 Building::Building(int empire_id, const std::string& building_type, int planet_id) :
     m_building_type(building_type),
@@ -145,8 +147,7 @@ void Building::MovementPhase()
 }
 
 void Building::PopGrowthProductionResearchPhase()
-{
-}
+{}
 
 
 BuildingType::BuildingType() :
@@ -157,19 +158,20 @@ BuildingType::BuildingType() :
     m_maintenance_cost(0.0),
     m_effects(0),
     m_graphic("")
-{
-}
+{}
 
-BuildingType::BuildingType(const std::string& name, const std::string& description) :
+BuildingType::BuildingType(const std::string& name, const std::string& description,
+                           double build_cost, int build_time, double maintenance_cost,
+                           const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+                           const std::string& graphic) :
     m_name(name),
     m_description(description),
-    m_build_cost(0.0),
-    m_build_time(0),
-    m_maintenance_cost(0.0),
-    m_effects(0),
-    m_graphic("")
-{
-}
+    m_build_cost(build_cost),
+    m_build_time(build_time),
+    m_maintenance_cost(maintenance_cost),
+    m_effects(effects),
+    m_graphic(graphic)
+{}
 
 BuildingType::BuildingType(const XMLElement& elem)
 {
@@ -197,6 +199,36 @@ const std::string& BuildingType::Name() const
 const std::string& BuildingType::Description() const
 {
     return m_description;
+}
+
+std::string BuildingType::Dump() const
+{
+    using boost::lexical_cast;
+
+    std::string retval = DumpIndent() + "BuildingType\n";
+    ++g_indent;
+    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent() + "buildcost = " + lexical_cast<std::string>(m_build_cost) + "\n";
+    retval += DumpIndent() + "buildtime = " + lexical_cast<std::string>(m_build_time) + "\n";
+    retval += DumpIndent() + "maintenancecost = " + lexical_cast<std::string>(m_maintenance_cost) + "\n";
+    if (m_effects.size() == 1) {
+        retval += DumpIndent() + "effectsgroups =\n";
+        ++g_indent;
+        retval += m_effects[0]->Dump();
+        --g_indent;
+    } else {
+        retval += DumpIndent() + "effectsgroups = [\n";
+        ++g_indent;
+        for (unsigned int i = 0; i < m_effects.size(); ++i) {
+            retval += m_effects[i]->Dump();
+        }
+        --g_indent;
+        retval += DumpIndent() + "]\n";
+    }
+    retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
+    --g_indent;
+    return retval;
 }
 
 double BuildingType::BuildCost() const
