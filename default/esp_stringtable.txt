@@ -168,7 +168,7 @@ Menu Principal
 #Button names####
 
 INTRO_BTN_SINGLE_PLAYER
-El Cori juego
+Un Jugador
 
 INTRO_BTN_MULTI_PLAYER
 Varios Jugadores
@@ -554,10 +554,10 @@ OPTIONS_COLOR_GENERAL
 Control Colors
 
 OPTIONS_COLOR_COLOR
-Fill
+Relleno
 
 OPTIONS_COLOR_BORDER
-Border
+Borde
 
 OPTIONS_COLOR_TEXT
 Texto
@@ -728,11 +728,11 @@ Desconocido
 
 # used to name new fleets when they are created
 FW_NEW_FLEET_NAME
-New Fleet
+Flota nueva
 
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
-New Fleet
+Flota nueva
 
 FW_EMPIRE_FLEETS
 %1% Flotas
@@ -887,7 +887,7 @@ PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR
 %1%
 
 PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
-%1%\n\n<u>Effects</u>\n\n%2%
+%1%\n\n<u>Efectos</u>\n\n%2%
 
 PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
 %1%\n\nAtaque: %2%\nDefensa: %3%\nVelocidad: %4%
@@ -1048,14 +1048,13 @@ MINERALS_SPECIAL
 Rico en mineral
 
 MINERALS_SPECIAL_DESCRIPTION
-This planet has a rich natural deposit of minerals, boosting mining and trade.
+Esta planeta posee un rico deposito de minerales, disparando su mineria y comercio.
 
 TUNNELS_SPECIAL
 Tuneles naturales
 
 TUNNELS_SPECIAL_DESCRIPTION
 Este planeta tiene formada una red de tuneles naturales, permitienco que una porcion mucho mayor del planeta pueda ser facilmente colonizada.
-This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonised.
 
 #######################
 # Enumeration  values #
@@ -1072,11 +1071,11 @@ flota
 OBJ_PLANET
 planeta
 OBJ_POP_CENTER
-population center
+centro de poblacion
 OBJ_PROD_CENTER
-production center
+centro de produccion
 OBJ_SYSTEM
-system
+sistema
 
 
 # StarTypes
@@ -1128,7 +1127,7 @@ gigante de gas
 # Planet Sizes
 
 SZ_NOWORLD
-Nothing to see here; move along.
+Nada que ver aqui; vayamos a otro lado.
 SZ_TINY
 Enano
 SZ_SMALL
@@ -1148,21 +1147,21 @@ Gigante de gas
 # PlanetEnvironments
 
 PE_UNINHABITABLE
-uninhabitable
+inhabitable
 PE_TERRIBLE
 terrible
 PE_ADEQUATE
-adequate
+adecuado
 PE_SUPERB
 superb
 PE_OPTIMAL
-optimal
+optimo
 
 
 # FocusTypes
 
 FOCUS_UNKNOWN
-unknown
+desconocido
 FOCUS_BALANCED
 balanced
 FOCUS_FARMING
@@ -1200,11 +1199,11 @@ health
 # EmpireAffiliationTypes
 
 AFFIL_SELF
-self
+nuestro
 AFFIL_ENEMY
-enemy
+enemigo
 AFFIL_ALLY
-ally
+aliado
 
 
 # UnlockableItemTypes
@@ -1240,7 +1239,7 @@ orbital
 # StockpileTypes
 
 ST_FOOD
-food
+comida
 ST_MINERAL
 mineral
 ST_TRADE
@@ -1255,10 +1254,10 @@ trade
 # ValueRef
 
 DESC_VAR_PLANET
-planet
+planeta
 
 DESC_VAR_SYSTEM
-system
+sistema
 
 DESC_VAR_SOURCE
 source
@@ -1677,7 +1676,7 @@ LRN_TRANSLING_THT
 Pensamiento tranlingüistico
 
 LRN_TRANSLING_THT_DESC
-Las mentes inferiores luchan, o aceptan los limites del lenguaje que han aprendido. Las mentes adecuadas se limitan y sienten obligadas por los conceptos que les han dado para expresarse. Las autenicas mentes superiores superan libremente los limites del lenguaje, formando y analizando pensamientos que rondan lo trascendental. Pero si las grandes mentes son aisladas y futiles, sin un lenguaje con el que expresar sus pensamientos, como podran compartir su interior.
+Las mentes inferiores luchan, o aceptan los limites del lenguaje que han aprendido. Las mentes adecuadas se limitan y sienten obligadas por los conceptos que les han dado para expresarse. Las autenticas mentes superiores superan libremente los limites del lenguaje, formando y analizando pensamientos que rondan lo trascendental. Pero si las grandes mentes son aisladas y futiles, sin un lenguaje con el que expresar sus pensamientos, como podran compartir su interior.
 
 LRN_PSIONICS
 Psionics
@@ -2236,110 +2235,110 @@ LRN_ENCLAVE_VOID_DESC
 Study of the Void Mind could be accelerated by genetically engineering the populace of an entire world to be attuned to the Void. This new priestly class could transform the entire social structure of their world to better understand and channel the wisdom of the Void Mind to the entire empire.
 
 LRN_LOOKING_GLASS
-The Looking Glass
+El Espejo
 
 LRN_LOOKING_GLASS_DESC
-A window into Space-Time, the Looking Glass will be the ultimate museum. Instead of excavating the ancient ruins of eras past, it is possible to simply open a window into time. Great leaders of the past would no longer be accessible only through books and holo-vids, but directly observable. Such a museum would gather flocks of both tourists and academicians.
+Una ventana en el Espacio-Tiempo, el Espejo será el último museo. En vez de excavar las ruinas antiguas de las eras pasadas, es posible abrir simplemente una ventana en el tiempo. Grandes líderes del pasado dejaran de ser unicamente accesible mediante los libros y holo-videos, sino directamente visibles. Tal museo atraeria las multitudes tanto de turistas como académicos. 
 
 LRN_MONUMENT_EXODUS
-Monument to Exodus
+Monumento al Exodo
 
 LRN_MONUMENT_EXODUS_DESC
-The greatest artists and engineers of an Exodus society are called together to produce a design for a fitting tribute to their accomplishments, and usher in the Exodus Age.
+Los artistas y los ingenieros más grandes de la sociedad del Exodo son convocados a realizar el diseño de un tributo apropiado a sus logros, y enmarcado en la Era del Exodo. 
 
 LRN_PSICORP
 PsiCorp
 
 LRN_PSICORP_DESC
-It is now possible to identify the nascent psionic abilities inherent in rare individuals at birth. But to truly cultivate their gifts, it would be necessary to create an academy dedicated to psionics. Graduates of this academy, would comprise a highly trained task-force of Psi elite that could be assigned to research projects as conduits and amplifiers for the greatest researchers of an empire.
+Ahora es posible identificar las habilidades psionicas inherentes a unos pocos individuos en el momento de nacer. Pero para cultivar de verdad sus dones, sería necesario crear una academia dedicada a los psionicos. Los graduados de esta academia, comprondrian un destacamento especial sumamente adiestrado de la élite Psi que se podría asignar para investigar proyectos realizando la funcion de conductores y amplificadores para los investigadores más grandes de un imperio. 
 
 PRO_ART_BLACK_HOLE
-Artificial Black Hole
+Agujero Negro Artifial
 
 PRO_ART_BLACK_HOLE_DESC
-By carefully collapsing a singularity in a distant solar orbit, a conveniently located source of unlimited power would be possible. This would be a highly expensive and dangerous task, but with far reaching benefits.
+Mediante el colapsamiento de una singularidad en una órbita solar lejana, seria posible localizar convenientemente una fuente de poder ilimitado. Esto sería una tarea sumamente costosa y peligrosa, pero con unos beneficios que la compensarian de largo. 
 
 PRO_EXOBOTS
 Exobots
 
 PRO_EXOBOTS_DESC
-Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that lack the infrastructure and work force to dedicate to specialized factories. Every colony receives a standard issue team of exobots, boosting their construction during the early development phase.
+Exobots, como se les conoce comunmente, son una maravilla del encuentro entre forma y función. Ellos son robots que se diseñaron para cumplir casi cualquier trabajo industrial, en campos que van desde la electrónica a la construcción a gran escala. Fáciles de producir en masa, sirven mejor en las colonias que carecen de la infraestructura y fuerza de trabajo para dedicar a fábricas especializadas. Cada colonia recibe un equipo estándar de exobots, aumentando su construcción durante las primeras fases del desarrollo. 
 
 PRO_FUSION_PLANTS
-Fusion Plants
+Plantas de Fusion
 
 PRO_FUSION_PLANTS_DESC
-Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
+Las plantas de fusión, aunque costosas de producir y mantener, se pagan fácilmente por sí mismas en mundos industrializados con demandas crecientes de energia. La dependencia de las viejas centrales nucleares de fision se convertira gradualmente en cosa del pasado. 
 
 PRO_HYPER_DAM
-Hyperspatial Dam
+Dique Hiperespacial
 
 PRO_HYPER_DAM_DESC
-Once the greatest fear of N-dimensional physicists, now the noblest goal. To deliberately create a hyperspatial rift between our universe and the next, but inside a dimensional bubble, safely separate from known space-time. Once this is accomplished, it would be a relatively simple matter to tap into the enormous flow of energy that would travel across the rift.
+Una vez fue el temor más grande de los físicos N-Dimensionales, ahora la meta más noble. Crear deliberadamente una ruptura hiperespacial entre nuestro universo y el próximo, pero dentro de una burbuja dimensional, separada de forma segura del espacio-tiempo conocido. Una vez que esto se alcanza, sería relativamente sencillo de utilizar el enorme flujo de energía que viajaría a través de la ruptura. 
 
 PRO_MINI_SUN
-Miniature Sun
+Sol en miniatura
 
 PRO_MINI_SUN_DESC
-A magnetically contained, self-perpetuating fusion reaction could be safely built and placed in coincident orbit above a planet's night facing hemisphere. This new star would dominate the night sky, providing constant twilight on its planet-facing hemisphere, while its outward facing hemisphere would be harnessed as a massive fusion power plant.
+Una magnéticamente contenida, y autoperpetúa reaccion de fusión que se podría construir de forma segura y ser colocada en una órbita coincidente sobre la linea del hemisferio nocturno. Esta nueva estrella  dominaría el cielo nocturno, proporcionando un ocaso constante en el lateral orientado al planeta, mientras su exterior sería usado como una masiva central eléctrica de fusión. 
 
 PRO_MINING_ENGINEERING
-Mining Engineering
+Ingenieria de Minas
 
 PRO_MINING_ENGINEERING_DESC
-Applying the concepts of Planetary Geology allows effective extraction of minerals from near the surface of planets.  By identifying the probably locations and ideal extraction methods, efficiency and total possible production are increased.  As well, proper planning and analysis increase mine safety and longevity.
+El aplicar los conceptos de la Geología Planetaria permite la extracción efectiva de minerales de cerca de la superficie de los planetas. Mediante la identificacion de las posibles ubicaciones y los métodos ideales de extracción, la eficiencia y la producción total se aumentan. También, una planificacion y analisis adecuado incrementan la seguridad y longevidad de las minas. 
 
 #################################
 # Building Names & Descriptions #
 #################################
 
 BLD_GRAVITY_WELLS
-Controlled Gravity Wells
+Pozos de Gravedad Controlada
 
 BLD_GRAVITY_WELLS_DESC
-A null gravity generator installed deep in the planet's core, greatly boosting industry and commerce in the system.
+Un generador de gravedad cero instalado profundamente en el nucleo del planeta, aumenta enormemente la industria y el comercio en el sistema. 
 
 BLD_MEGALITH
-Megalith
+Megalito
 
 BLD_MEGALITH_DESC
-A marvel of Exodus-era Architecture, the Megalith is an abnormally massive Starscraper, kilometers in diameter. The Megalith is an inspiration to architects sector-wide and is often the crown jewel of a powerful real estate mogul's empire.
+Una maravilla de la Arquitectura de la era del Exodo, el Megalito es un Rascaestrellas irregularmente masivo, de kilómetros de diámetro. El Megalito es una inspiración para arquitectos de todo el sector y es a menudo la joya de la corona del poderoso imperio de un verdadero magnate. 
 
 BLD_PLANET_RING
-Planetary Ring
+Anillo Planetario
 
 BLD_PLANET_RING_DESC
-A ring of satellites completely encircling a world, tethered to the planet's equator by spoke-like space elevators. These are used for housing, micro-gravity construction and inter-world trade.
+Un anillo de satélites rodeando completamente el mundo, atado al ecuador del planeta por elevadores espaciales. Estos se utilizan para alojamiento, construcción de la micro-gravedad y el comercio internacional. 
 
 BLD_SPACE_ELEVATOR
-Space Elevator
+Ascensor Espacial
 
 BLD_SPACE_ELEVATOR_DESC
-An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end. The space elevator boosts the trade for the entire system.
+Una enorme y prácticamente irrompible cable atado a un satélite en la órbita baja geoestacionaria en un lado, y una plataforma lanzadera en el limite del planeta en el otro. El ascensor espacial aumenta el comercio del sistema entero. 
 
 BLD_COMM_UNION
-Commercial Union of the Colonies
+Unión Comercial de las Colonias
 
 BLD_COMM_UNION_DESC
-The Commercial Union of the Colonies (CUC) is an organization with the means and will to monitor and regulate the entire galactic market. The first empire to complete the CUC gains an empire wide bonus to trade on all worlds.
+La Unión Comercial de las Colonias (UCC) es una organización con los medios y el poder para controlar y regular el mercado galáctico entero. El primer imperio en completar la UCC ganara un bonus en todo el imperio para comerciar con todos los mundos. 
 
 BLD_DEEP_GREEN
 Deep Green
 
 BLD_DEEP_GREEN_DESC
-A central economic forecast computer fed with data from all the economic markets of the known galaxy, it is capable of near perfect economic foresight and is used to boost all the markets in the empire.
+Una computadora central de previsiones económicas alimentada con datos de todos los mercados económicos de la galaxia conocida, es capaz de un previsión económica cercana a la perfeccion y se utiliza para aumentar todos los mercados del imperio. 
 
 BLD_PARADISE
-Paradise Planet
+Planeta Paradisiaco
 
 BLD_PARADISE_DESC
-A world whose entire infrastructure has been converted to tourism, giving an enormous boost to trade and tourism in the region, but eliminating almost all useful industrial and mining output.
+Un mundo cuya infraestructura entera ha sido convertida para turismo, dando un enorme empuje al comercio y el turismo en la región, pero eliminando casi todo el valor útil industrial y la producción minera.
 
 BLD_CADUCEAN
-The Caducean Institute
+Instituto Caducean
 
 BLD_CADUCEAN_DESC
-An institute that is at once the greatest medical academy, and greatest center for treatment of disease, the Caducean Institute supplies the empire with the highest quality of health care for generations to come.
+Un instituto que es a la vez la mayor la academia médica, y el centro más grande para el tratamiento de las enfermedades, el Instituto Caducean suministra al imperio con la mayor calidad de asistencia médica para generaciones venideras. 
 
 BLD_GENOME_BANK
 Banco de genomas
@@ -2348,73 +2347,73 @@ BLD_GENOME_BANK_DESC
 La mayor base de datos jamas concebida. El banco de genomas incluye mapas de genomas de cada organismo conocido por el imperio. Esta base de datos tiene un valor incalculable en el tratamiento de enfermedades y en el establecimiento de colonias agricolas.
 
 BLD_LIVING_PLANET
-The Living Planet
+Planeta Viviente
 
 BLD_LIVING_PLANET_DESC
-Convert a planet into the Living Planet by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own. Industrial and mineral output are severely limited, however, as such activities upset the global harmonious balance.
+Convierta un planeta en el Planeta Viviente por medio de un sensible, casi divino, programa basado en calulas. Este planeta es maravilloso de percibir y famoso a través de la galaxia, conocido como una celebración de la vida y la armonía. Los habitantes de este mundo piensan y actúan como parte de un organismo mayor, cumpliendo su necesidad simultáneamente con las propias. El valor industrial y la producción mineral se limitan severamente, aun asi, tales actividades trastornan el equilibrio armonioso global. 
 
 BLD_ORBITAL_GARDENS
-Orbital Gardens
+Jardines Orbitales
 
 BLD_ORBITAL_GARDENS_DESC
-An enormous moon-like satellite in orbit above a world, the Orbital Gardens are a testament throughout the galaxy to your ability to harness your environment. Besides being an excellent tourist attraction, research conducted here helps boost farming on all worlds in your empire.
+Un enorme satélite similar a una luna en órbita sobre el mundo, los Jardines Orbitales son un testamento a través de la galaxia de su habilidad de cuidar su ambiente. Además es un sitio excelente para turistas, la investigación realizada aquí ayuda a aumentar la agricultura en todos los mundos de tu imperio. 
 
 BLD_COLLECTIVE_NET
-Collective Thought Network
+Red de pensamiento colectivo
 
 BLD_COLLECTIVE_NET_DESC
-By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
+Transfiriendo la mente en el ciberespacio, millares de mentes pueden actuar como una, resolviendo los problemas y haciendo posible descubrimientos que una sola mente no podria lograr.
 
 BLD_ENCLAVE_VOID
-Enclave of the Void
+Enclave del Vacio
 
 BLD_ENCLAVE_VOID_DESC
-The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects. This world may never exceed industrial or mining output greater than 30.
+La población de un planeta entero es perfilada genéticamente hacia la Mente del Vacío y dedicada a canalizar su sabiduría para el imperio. Los ciudadanos del Enclave de Vacío son considerados como sacerdotes, los canales de un pensamiento y sabiduría mas elevados. En todos los asuntos de importancia para el imperio, se busca su consejo. Los emisarios del Enclave pueden incluso ser enviados para participar en los proyectos de investigación del imperio. Este mundo nunca puede exceder la produccion industrial o de mienria por más de 30. 
 
 BLD_LOOKING_GLASS
-The Looking Glass
+El espejo
 
 BLD_LOOKING_GLASS_DESC
-A space-time museum of galactic fame. Both tourism and science benefit from its unfettered view of all history, as the ebb and flow of all time become as transparent as glass.
+Un museo del espacio-tiempo de fama galáctica. Tanto el turismo como la ciencia se benefician de esta vista libre de toda la historia, asi como el reflujo y flujo de los tiempos llegan a ser tan transparentes como el cristal. 
 
 BLD_MONUMENT_EXODUS
-Monument to Exodus
+Monumento al Exodo
 
 BLD_MONUMENT_EXODUS_DESC
-A mighty orbiting sculpture visible from the ground and to passing ships. Your triumph over the starlanes will never be forgotten and your people will forever be emboldened to colonize new worlds. Increases population growth on all frontier worlds.
+Una escultura poderosa orbitando alrededor del planeta, visible desde el suelo y desde las naves. Tu triunfo sobre los starlanes nunca se olvidará y tus personas se sentiran animadas para siempre a colonizar mundos nuevos. Aumenta el crecimiento demográfico en todos mundos fronterizos.
 
 BLD_PSICORP
 PsiCorp
 
 BLD_PSICORP_DESC
-An academy dedicated to identifying the psionically gifted citizens throughout the colonies and training them from birth to develop their abilities to the benefit of the most advanced research programs of the empire.
+Una academia dedicada a identificar el ciudadanos con dones psiquicos a través de las colonias y entrenarlos desde el nacimiento para desarrollar sus habilidades al beneficio de los programas de investigación más avanzados del imperio. 
 
 BLD_ART_BLACK_HOLE
-Artificial Black Hole
+Agujero negro artificial
 
 BLD_ART_BLACK_HOLE_DESC
-A constructed singularity in a distant orbit in one system. Its power is harnessed to advance industry for all nearby worlds.
+Una singularidad construida en una órbita lejana de un sistema. Su poder sirve para mejorar la industria en todos los mundos cercanos. 
 
 BLD_HYPER_DAM
-Hyperspatial Dam
+Dique Hiperespacial
 
 BLD_HYPER_DAM_DESC
-A tear in the fabric of the universe, safely controlled and harnessed. The hyperspatial dam serves as a source of nearly unlimited energy for the entire sector.
+Un rasguño en la tela del universo, controlado y enjaezado de forma segura. El dique hiperespacial sirve como una fuente de energía casi ilimitada para el sector entero. 
 
 BLD_MINI_SUN
 Sol en miniatura
 
 BLD_MINI_SUN_DESC
-Un sol en minituara que mantiene el cielo nocturno en un perpetuo crepusculo. Ademas de ser bueno para la moral, el reactor de fusion sirve como fuente de energia para todos los planetas del sistema.
+Un sol en miniatura que mantiene el cielo nocturno en un perpetuo crepusculo. Ademas de ser bueno para la moral, el reactor de fusion sirve como fuente de energia para todos los planetas del sistema.
 
 BLD_REMOTE_CONST
-Remote Construction
+Construccion Remota
 
 BLD_REMOTE_CONST_DESC
-A network of matter and construction. A team of construction workers and robots can assemble structures on distant worlds without the need for freighters or construction vessels. Only a small matter-terminal ship is needed. Quickly raises the industry on all worlds to that of an Established world.
+Una red de materia y construcción. Un equipo de trabajadores de la construcción y robots puede levantar las estructuras en mundos lejanos sin la necesidad de naves y buques de carga o construcción. Sólo se necesita una pequeña nave terminal-materia. Levante rápidamente la industria en todos mundos al nivel de  un mundo Establecido. 
 
 BLD_ECON_SINKHOLE
-Economic Sinkhole
+Sumidero Economico
 
 BLD_ECON_SINKHOLE_DESC
-An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does not distinguish between friend or foe, however, so care must be taken in its placement to maximize disruption of enemy trade, while assuring minimal impact on that of its builders.
+Un Sumidero Económico interrumpe activamente el comercio en su vecindad. Este efecto no distingue entre amigo o enemigo, así que se debe extremar el cuidado en su colocación para llevar al máximo la interrupción del comercio enemigo, mientras aseguras el impacto mínimo en el comercio de los constructores.
