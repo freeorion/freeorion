@@ -3,7 +3,6 @@
 #include "../util/AppInterface.h"
 #include "Building.h"
 #include "Fleet.h"
-#include "../util/Parse.h"
 #include "../util/Random.h"
 #include "System.h"
 
@@ -16,33 +15,6 @@ using boost::format;
 extern int g_indent;
 
 namespace {
-    Condition::ConditionBase* NewAll(const XMLElement& elem)                    {return new Condition::All(elem);}
-    Condition::ConditionBase* NewEmpireAffiliation(const XMLElement& elem)      {return new Condition::EmpireAffiliation(elem);}
-    Condition::ConditionBase* NewSelf(const XMLElement& elem)                   {return new Condition::Self(elem);}
-    Condition::ConditionBase* NewType(const XMLElement& elem)                   {return new Condition::Type(elem);}
-    Condition::ConditionBase* NewBuilding(const XMLElement& elem)               {return new Condition::Building(elem);}
-    Condition::ConditionBase* NewHasSpecial(const XMLElement& elem)             {return new Condition::HasSpecial(elem);}
-    Condition::ConditionBase* NewContains(const XMLElement& elem)               {return new Condition::Contains(elem);}
-    Condition::ConditionBase* NewPlanetSize(const XMLElement& elem)             {return new Condition::PlanetSize(elem);}
-    Condition::ConditionBase* NewPlanetType(const XMLElement& elem)             {return new Condition::PlanetType(elem);}
-    Condition::ConditionBase* NewPlanetEnvironment(const XMLElement& elem)      {return new Condition::PlanetEnvironment(elem);}
-    Condition::ConditionBase* NewFocusType(const XMLElement& elem)              {return new Condition::FocusType(elem);}
-    Condition::ConditionBase* NewStarType(const XMLElement& elem)               {return new Condition::StarType(elem);}
-    Condition::ConditionBase* NewChance(const XMLElement& elem)                 {return new Condition::Chance(elem);}
-    Condition::ConditionBase* NewMeterValue(const XMLElement& elem)             {return new Condition::MeterValue(elem);}
-    Condition::ConditionBase* NewEmpireStockpileValue(const XMLElement& elem)   {return new Condition::EmpireStockpileValue(elem);}
-    Condition::ConditionBase* NewOwnerHasTech(const XMLElement& elem)           {return new Condition::OwnerHasTech(elem);}
-    Condition::ConditionBase* NewVisibleToEmpire(const XMLElement& elem)        {return new Condition::VisibleToEmpire(elem);}
-    Condition::ConditionBase* NewWithinDistance(const XMLElement& elem)         {return new Condition::WithinDistance(elem);}
-    Condition::ConditionBase* NewWithinStarlaneJumps(const XMLElement& elem)    {return new Condition::WithinStarlaneJumps(elem);}
-    Condition::ConditionBase* NewEffectTarget(const XMLElement& elem)           {return new Condition::EffectTarget(elem);}
-    Condition::ConditionBase* NewAnd(const XMLElement& elem)                    {return new Condition::And(elem);}
-    Condition::ConditionBase* NewOr(const XMLElement& elem)                     {return new Condition::Or(elem);}
-    Condition::ConditionBase* NewNot(const XMLElement& elem)                    {return new Condition::Not(elem);}
-    Condition::ConditionBase* NewTurn(const XMLElement& elem)                   {return new Condition::Turn(elem);}
-    Condition::ConditionBase* NewContainedBy(const XMLElement& elem)            {return new Condition::ContainedBy(elem);}
-    Condition::ConditionBase* NewNumberOf(const XMLElement& elem)               {return new Condition::NumberOf(elem);}
-
     const Fleet* FleetFromObject(const UniverseObject* obj)
     {
         const Fleet* retval = universe_object_cast<const Fleet*>(obj);
@@ -70,42 +42,6 @@ namespace {
 
     bool temp_header_bool = RecordHeaderFile(ConditionRevision());
     bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
-XMLObjectFactory<Condition::ConditionBase> Condition::ConditionFactory()
-{
-    static XMLObjectFactory<Condition::ConditionBase> factory;
-    static bool init = false;
-    if (!init) {
-        factory.AddGenerator("Condition::All", &NewAll);
-        factory.AddGenerator("Condition::EmpireAffiliation", &NewEmpireAffiliation);
-        factory.AddGenerator("Condition::Self", &NewSelf);
-        factory.AddGenerator("Condition::Type", &NewType);
-        factory.AddGenerator("Condition::Building", &NewBuilding);
-        factory.AddGenerator("Condition::HasSpecial", &NewHasSpecial);
-        factory.AddGenerator("Condition::Contains", &NewContains);
-        factory.AddGenerator("Condition::PlanetSize", &NewPlanetSize);
-        factory.AddGenerator("Condition::PlanetType", &NewPlanetType);
-        factory.AddGenerator("Condition::PlanetEnvironment", &NewPlanetEnvironment);
-        factory.AddGenerator("Condition::FocusType", &NewFocusType);
-        factory.AddGenerator("Condition::StarType", &NewStarType);
-        factory.AddGenerator("Condition::Chance", &NewChance);
-        factory.AddGenerator("Condition::MeterValue", &NewMeterValue);
-        factory.AddGenerator("Condition::EmpireStockpileValue", &NewEmpireStockpileValue);
-        factory.AddGenerator("Condition::OwnerHasTech", &NewOwnerHasTech);
-        factory.AddGenerator("Condition::VisibleToEmpire", &NewVisibleToEmpire);
-        factory.AddGenerator("Condition::WithinDistance", &NewWithinDistance);
-        factory.AddGenerator("Condition::WithinStarlaneJumps", &NewWithinStarlaneJumps);
-        factory.AddGenerator("Condition::EffectTarget", &NewEffectTarget);
-        factory.AddGenerator("Condition::And", &NewAnd);
-        factory.AddGenerator("Condition::Or", &NewOr);
-        factory.AddGenerator("Condition::Not", &NewNot);
-        factory.AddGenerator("Condition::Turn", &NewTurn);
-        factory.AddGenerator("Condition::ContainedBy", &NewContainedBy);
-        factory.AddGenerator("Condition::NumberOf", &NewNumberOf);
-        init = true;
-    }
-    return factory;
 }
 
 ///////////////////////////////////////////////////////////
@@ -155,15 +91,6 @@ Condition::Turn::Turn(const ValueRef::ValueRefBase<int>* low, const ValueRef::Va
     m_high(high)
 {}
 
-Condition::Turn::Turn(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::Turn")
-        throw std::runtime_error("Condition::Turn : Attempted to create a Turn condition from an XML element with a tag other than \"Condition::Turn\".");
-
-    m_low = ParseArithmeticExpression<int>(elem.Child("low").Text());
-    m_high = ParseArithmeticExpression<int>(elem.Child("high").Text());
-}
-
 Condition::Turn::~Turn()
 {
     delete m_low;
@@ -210,15 +137,6 @@ Condition::NumberOf::NumberOf(const ValueRef::ValueRefBase<int>* number, const C
     m_condition(condition)
 {
     Logger().debugStream() << "Creating NumberOf Conditition";
-}
-
-Condition::NumberOf::NumberOf(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::NumberOf")
-        throw std::runtime_error("Condition::NumberOf : Attempted to create a NumberOf condition from an XML element with a tag other than \"Condition::NumberOf\".");
-
-    m_number = ParseArithmeticExpression<int>(elem.Child("number").Text());
-    m_condition = ConditionFactory().GenerateObject(elem.Child("condition").Child(0));
 }
 
 Condition::NumberOf::~NumberOf()
@@ -296,12 +214,6 @@ void Condition::NumberOf::Eval(const UniverseObject* source, ObjectSet& targets,
 Condition::All::All()
 {}
 
-Condition::All::All(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::All")
-        throw std::runtime_error("Condition::All : Attempted to create a All condition from an XML element with a tag other than \"Condition::All\".");
-}
-
 void Condition::All::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
     if (search_domain == NON_TARGETS) {
@@ -328,16 +240,6 @@ Condition::EmpireAffiliation::EmpireAffiliation(const ValueRef::ValueRefBase<int
     m_affiliation(affiliation),
     m_exclusive(exclusive)
 {}
-
-Condition::EmpireAffiliation::EmpireAffiliation(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::EmpireAffiliation")
-        throw std::runtime_error("Condition::EmpireAffiliation : Attempted to create a EmpireAffiliation condition from an XML element with a tag other than \"Condition::EmpireAffiliation\".");
-
-    m_empire_id = ParseArithmeticExpression<int>(elem.Child("empire_id").Text());
-    m_affiliation = lexical_cast<EmpireAffiliationType>(elem.Child("affiliation").Text());
-    m_exclusive = lexical_cast<bool>(elem.Child("exclusive").Text());
-}
 
 Condition::EmpireAffiliation::~EmpireAffiliation()
 {
@@ -400,12 +302,6 @@ bool Condition::EmpireAffiliation::Match(const UniverseObject* source, const Uni
 Condition::Self::Self()
 {}
 
-Condition::Self::Self(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::Self")
-        throw std::runtime_error("Condition::Self : Attempted to create a Self condition from an XML element with a tag other than \"Condition::Self\".");
-}
-
 std::string Condition::Self::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_SELF";
@@ -430,14 +326,6 @@ bool Condition::Self::Match(const UniverseObject* source, const UniverseObject* 
 Condition::Type::Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
     m_type(type)
 {}
-
-Condition::Type::Type(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::Type")
-        throw std::runtime_error("Condition::Type : Attempted to create a Type condition from an XML element with a tag other than \"Condition::Type\".");
-
-    m_type = ParseArithmeticExpression<UniverseObjectType>(elem.Text());
-}
 
 std::string Condition::Type::Description(bool negated/* = false*/) const
 {
@@ -505,14 +393,6 @@ Condition::Building::Building(const std::string& name) :
     m_name(name)
 {}
 
-Condition::Building::Building(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::Building")
-        throw std::runtime_error("Condition::Building : Attempted to create a Building condition from an XML element with a tag other than \"Condition::Building\".");
-
-    m_name = elem.Text();
-}
-
 std::string Condition::Building::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_BUILDING";
@@ -539,14 +419,6 @@ Condition::HasSpecial::HasSpecial(const std::string& name) :
     m_name(name)
 {}
 
-Condition::HasSpecial::HasSpecial(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::HasSpecial")
-        throw std::runtime_error("Condition::HasSpecial : Attempted to create a HasSpecial condition from an XML element with a tag other than \"Condition::HasSpecial\".");
-
-    m_name = elem.Text();
-}
-
 std::string Condition::HasSpecial::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_SPECIAL";
@@ -571,14 +443,6 @@ bool Condition::HasSpecial::Match(const UniverseObject* source, const UniverseOb
 Condition::Contains::Contains(const ConditionBase* condition) :
     m_condition(condition)
 {}
-
-Condition::Contains::Contains(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::Contains")
-        throw std::runtime_error("Condition::Contains : Attempted to create a Contains condition from an XML element with a tag other than \"Condition::Contains\".");
-
-    m_condition = ConditionFactory().GenerateObject(elem.Child(0));
-}
 
 std::string Condition::Contains::Description(bool negated/* = false*/) const
 {
@@ -632,16 +496,6 @@ Condition::ContainedBy::ContainedBy(const ConditionBase* condition) :
     m_condition(condition)
 {}
 
-Condition::ContainedBy::ContainedBy(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::ContainedBy") {
-        throw std::runtime_error("Condition::ContainedBy : Attempted to create a ContainedBy condition from an XML "
-                                 "element with a tag other than \"Condition::ContainedBy\".");
-    }
-
-    m_condition = ConditionFactory().GenerateObject(elem.Child(0));
-}
-
 std::string Condition::ContainedBy::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_CONTAINED_BY";
@@ -694,16 +548,6 @@ Condition::PlanetType::PlanetType(const std::vector<const ValueRef::ValueRefBase
     m_types(types)
 {}
 
-Condition::PlanetType::PlanetType(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::PlanetType")
-        throw std::runtime_error("Condition::PlanetType : Attempted to create a PlanetType condition from an XML element with a tag other than \"Condition::PlanetType\".");
-
-    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
-        m_types.push_back(ParseArithmeticExpression< ::PlanetType>(it->Text()));
-    }
-}
-
 Condition::PlanetType::~PlanetType()
 {
     for (unsigned int i = 0; i < m_types.size(); ++i) {
@@ -732,7 +576,7 @@ std::string Condition::PlanetType::Description(bool negated/* = false*/) const
 
 std::string Condition::PlanetType::Dump() const
 {
-    std::string retval = DumpIndent() + "PlanetType type = ";
+    std::string retval = DumpIndent() + "Planet type = ";
     if (m_types.size() == 1) {
         retval += m_types[0]->Dump() + "\n";
     } else {
@@ -768,16 +612,6 @@ Condition::PlanetSize::PlanetSize(const std::vector<const ValueRef::ValueRefBase
     m_sizes(sizes)
 {}
 
-Condition::PlanetSize::PlanetSize(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::PlanetSize")
-        throw std::runtime_error("Condition::PlanetSize : Attempted to create a PlanetSize condition from an XML element with a tag other than \"Condition::PlanetSize\".");
-
-    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
-        m_sizes.push_back(ParseArithmeticExpression< ::PlanetSize>(it->Text()));
-    }
-}
-
 Condition::PlanetSize::~PlanetSize()
 {
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
@@ -806,7 +640,7 @@ std::string Condition::PlanetSize::Description(bool negated/* = false*/) const
 
 std::string Condition::PlanetSize::Dump() const
 {
-    std::string retval = DumpIndent() + "PlanetSize type = ";
+    std::string retval = DumpIndent() + "Planet size = ";
     if (m_sizes.size() == 1) {
         retval += m_sizes[0]->Dump() + "\n";
     } else {
@@ -842,16 +676,6 @@ Condition::PlanetEnvironment::PlanetEnvironment(const std::vector<const ValueRef
     m_environments(environments)
 {}
 
-Condition::PlanetEnvironment::PlanetEnvironment(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::PlanetEnvironment")
-        throw std::runtime_error("Condition::PlanetEnvironment : Attempted to create a PlanetEnvironment condition from an XML element with a tag other than \"Condition::PlanetEnvironment\".");
-
-    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
-        m_environments.push_back(ParseArithmeticExpression< ::PlanetEnvironment>(it->Text()));
-    }
-}
-
 Condition::PlanetEnvironment::~PlanetEnvironment()
 {
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
@@ -880,7 +704,7 @@ std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) 
 
 std::string Condition::PlanetEnvironment::Dump() const
 {
-    std::string retval = DumpIndent() + "PlanetEnvironment type = ";
+    std::string retval = DumpIndent() + "Planet environment = ";
     if (m_environments.size() == 1) {
         retval += m_environments[0]->Dump() + "\n";
     } else {
@@ -917,18 +741,6 @@ Condition::FocusType::FocusType(const std::vector<const ValueRef::ValueRefBase< 
     m_primary(primary)
 {}
 
-Condition::FocusType::FocusType(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::FocusType")
-        throw std::runtime_error("Condition::FocusType : Attempted to create a FocusType condition from an XML element with a tag other than \"Condition::FocusType\".");
-
-    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
-        if (it->Tag() == "FocusType")
-            m_foci.push_back(ParseArithmeticExpression< ::FocusType>(it->Text()));
-    }
-    m_primary = lexical_cast<bool>(elem.Child("primary").Text());
-}
-
 Condition::FocusType::~FocusType()
 {
     for (unsigned int i = 0; i < m_foci.size(); ++i) {
@@ -958,7 +770,7 @@ std::string Condition::FocusType::Description(bool negated/* = false*/) const
 std::string Condition::FocusType::Dump() const
 {
     std::string retval = DumpIndent() + (m_primary ? "Primary" : "Secondary");
-    retval += "FocusType type = ";
+    retval += "Focus focus = ";
     if (m_foci.size() == 1) {
         retval += m_foci[0]->Dump() + "\n";
     } else {
@@ -994,16 +806,6 @@ Condition::StarType::StarType(const std::vector<const ValueRef::ValueRefBase< ::
     m_types(types)
 {}
 
-Condition::StarType::StarType(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::StarType")
-        throw std::runtime_error("Condition::StarType : Attempted to create a StarType condition from an XML element with a tag other than \"Condition::StarType\".");
-
-    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
-        m_types.push_back(ParseArithmeticExpression< ::StarType>(it->Text()));
-    }
-}
-
 Condition::StarType::~StarType()
 {
     for (unsigned int i = 0; i < m_types.size(); ++i) {
@@ -1032,7 +834,7 @@ std::string Condition::StarType::Description(bool negated/* = false*/) const
 
 std::string Condition::StarType::Dump() const
 {
-    std::string retval = DumpIndent() + "StarType type = ";
+    std::string retval = DumpIndent() + "Star type = ";
     if (m_types.size() == 1) {
         retval += m_types[0]->Dump() + "\n";
     } else {
@@ -1063,14 +865,6 @@ bool Condition::StarType::Match(const UniverseObject* source, const UniverseObje
 Condition::Chance::Chance(const ValueRef::ValueRefBase<double>* chance) :
     m_chance(chance)
 {}
-
-Condition::Chance::Chance(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::Chance")
-        throw std::runtime_error("Condition::Chance : Attempted to create aChance condition from an XML element with a tag other than \"Condition::Chance\".");
-
-    m_chance = ParseArithmeticExpression<double>(elem.Child("chance").Text());
-}
 
 Condition::Chance::~Chance()
 {
@@ -1113,17 +907,6 @@ Condition::MeterValue::MeterValue(MeterType meter, const ValueRef::ValueRefBase<
     m_high(high),
     m_max_meter(max_meter)
 {}
-
-Condition::MeterValue::MeterValue(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::MeterValue")
-        throw std::runtime_error("Condition::MeterValue : Attempted to create a MeterValue condition from an XML element with a tag other than \"Condition::MeterValue\".");
-
-    m_meter = lexical_cast<MeterType>(elem.Child("meter").Text());
-    m_low = ParseArithmeticExpression<double>(elem.Child("low").Text());
-    m_high = ParseArithmeticExpression<double>(elem.Child("high").Text());
-    m_max_meter = lexical_cast<bool>(elem.Child("max_meter").Text());
-}
 
 Condition::MeterValue::~MeterValue()
 {
@@ -1182,16 +965,6 @@ Condition::EmpireStockpileValue::EmpireStockpileValue(StockpileType stockpile, c
     m_high(high)
 {}
 
-Condition::EmpireStockpileValue::EmpireStockpileValue(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::EmpireStockpileValue")
-        throw std::runtime_error("Condition::StockpileValue : Attempted to create a StockpileValue condition from an XML element with a tag other than \"Condition::StockpileValue\".");
-
-    m_stockpile = lexical_cast<StockpileType>(elem.Child("stockpile").Text());
-    m_low = ParseArithmeticExpression<double>(elem.Child("low").Text());
-    m_high = ParseArithmeticExpression<double>(elem.Child("high").Text());
-}
-
 Condition::EmpireStockpileValue::~EmpireStockpileValue()
 {
     delete m_low;
@@ -1249,14 +1022,6 @@ Condition::OwnerHasTech::OwnerHasTech(const std::string& name) :
     m_name(name)
 {}
 
-Condition::OwnerHasTech::OwnerHasTech(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::OwnerHasTech")
-        throw std::runtime_error("Condition::OwnerHasTech : Attempted to create a OwnerHasTech condition from an XML element with a tag other than \"Condition::OwnerHasTech\".");
-
-    m_name = elem.Text();
-}
-
 std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_OWNER_HAS_TECH";
@@ -1284,16 +1049,6 @@ bool Condition::OwnerHasTech::Match(const UniverseObject* source, const Universe
 Condition::VisibleToEmpire::VisibleToEmpire(const std::vector<const ValueRef::ValueRefBase<int>*>& empire_ids) :
     m_empire_ids(empire_ids)
 {}
-
-Condition::VisibleToEmpire::VisibleToEmpire(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::VisibleToEmpire")
-        throw std::runtime_error("Condition::VisibleToEmpire : Attempted to create a VisibleToEmpire condition from an XML element with a tag other than \"Condition::VisibleToEmpire\".");
-
-    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
-        m_empire_ids.push_back(ParseArithmeticExpression<int>(it->Text()));
-    }
-}
 
 Condition::VisibleToEmpire::~VisibleToEmpire()
 {
@@ -1331,7 +1086,7 @@ std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) co
 
 std::string Condition::VisibleToEmpire::Dump() const
 {
-    std::string retval = DumpIndent() + "VisibleToEmpire epmire = ";
+    std::string retval = DumpIndent() + "VisibleToEmpire empire = ";
     if (m_empire_ids.size() == 1) {
         retval += m_empire_ids[0]->Dump() + "\n";
     } else {
@@ -1361,15 +1116,6 @@ Condition::WithinDistance::WithinDistance(const ValueRef::ValueRefBase<double>* 
     m_distance(distance),
     m_condition(condition)
 {}
-
-Condition::WithinDistance::WithinDistance(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::WithinDistance")
-        throw std::runtime_error("Condition::WithinDistance : Attempted to create a WithinDistance condition from an XML element with a tag other than \"Condition::WithinDistance\".");
-
-    m_distance = ParseArithmeticExpression<double>(elem.Child("distance").Text());
-    m_condition = ConditionFactory().GenerateObject(elem.Child("condition").Child(0));
-}
 
 Condition::WithinDistance::~WithinDistance()
 {
@@ -1441,15 +1187,6 @@ Condition::WithinStarlaneJumps::WithinStarlaneJumps(const ValueRef::ValueRefBase
     m_jumps(jumps),
     m_condition(condition)
 {}
-
-Condition::WithinStarlaneJumps::WithinStarlaneJumps(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::WithinStarlaneJumps")
-        throw std::runtime_error("Condition::WithinStarlaneJumps : Attempted to create a WithinStarlaneJumps condition from an XML element with a tag other than \"Condition::WithinStarlaneJumps\".");
-
-    m_jumps = ParseArithmeticExpression<int>(elem.Child("jumps").Text());
-    m_condition = ConditionFactory().GenerateObject(elem.Child("condition").Child(0));
-}
 
 Condition::WithinStarlaneJumps::~WithinStarlaneJumps()
 {
@@ -1566,14 +1303,6 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
 Condition::EffectTarget::EffectTarget()
 {}
 
-Condition::EffectTarget::EffectTarget(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::EffectTarget")
-        throw std::runtime_error("Condition::EffectTarget : Attempted to create a EffectTarget condition from an XML element with a tag other than \"Condition::EffectTarget\".");
-
-    // TODO
-}
-
 std::string Condition::EffectTarget::Description(bool negated/* = false*/) const
 {
     std::string retval;
@@ -1597,18 +1326,6 @@ bool Condition::EffectTarget::Match(const UniverseObject* source, const Universe
 Condition::And::And(const std::vector<const ConditionBase*>& operands) :
     m_operands(operands)
 {
-    assert(!m_operands.empty());
-}
-
-Condition::And::And(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::And")
-        throw std::runtime_error("Condition::And : Attempted to create a And condition from an XML element with a tag other than \"Condition::And\".");
-
-    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
-        m_operands.push_back(ConditionFactory().GenerateObject(*it));
-    }
-
     assert(!m_operands.empty());
 }
 
@@ -1684,18 +1401,6 @@ Condition::Or::Or(const std::vector<const ConditionBase*>& operands) :
     assert(!m_operands.empty());
 }
 
-Condition::Or::Or(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::Or")
-        throw std::runtime_error("Condition::Or : Attempted to create a Or condition from an XML element with a tag other than \"Condition::Or\".");
-
-    for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
-        m_operands.push_back(ConditionFactory().GenerateObject(*it));
-    }
-
-    assert(!m_operands.empty());
-}
-
 Condition::Or::~Or()
 {
     for (unsigned int i = 0; i < m_operands.size(); ++i) {
@@ -1768,19 +1473,6 @@ Condition::Not::Not(const ConditionBase* operand) :
     assert(m_operand);
 }
 
-Condition::Not::Not(const XMLElement& elem)
-{
-    if (elem.Tag() != "Condition::Not")
-        throw std::runtime_error("Condition::Not : Attempted to create a Not condition from an XML element with a tag other than \"Condition::Not\".");
-
-    if (elem.NumChildren() != 1)
-        throw std::runtime_error("Condition::Not : Attempted to create a Not condition with more than one or no operand conditions.");
-
-    m_operand = ConditionFactory().GenerateObject(elem.Child(0));
-
-    assert(m_operand);
-}
-
 Condition::Not::~Not()
 {
     delete m_operand;
@@ -1798,5 +1490,9 @@ std::string Condition::Not::Description(bool negated/* = false*/) const
 
 std::string Condition::Not::Dump() const
 {
-    return DumpIndent() + "Not " + m_operand->Dump();
+    std::string retval = DumpIndent() + "Not\n";
+    ++g_indent;
+    retval += m_operand->Dump();
+    --g_indent;
+    return retval;
 }

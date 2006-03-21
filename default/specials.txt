@@ -1,0 +1,37 @@
+Special
+    name = "HOMEWORLD_SPECIAL"
+    description = "HOMEWORLD_SPECIAL_DESCRIPTION"
+    effectsgroups =
+        EffectsGroup
+            scope =
+                Source
+            activation =
+                Source
+            effects = [
+                SetMaxPopulation value = Source.MaxPopulation + 10
+                SetMaxConstruction value = Source.MaxConstruction + 20
+                SetMaxFarming value = Source.MaxFarming + 10
+                SetMaxMining value = Source.MaxMining + 10
+                SetMaxIndustry value = Source.MaxIndustry + 10
+                SetMaxResearch value = Source.MaxResearch + 10
+                SetMaxTrade value = Source.MaxTrade + 10
+                SetMaxHealth value = Source.MaxHealth + 10
+            ]
+
+Special
+    name = "STARVATION_SPECIAL"
+    description = "STARVATION_SPECIAL_DESCRIPTION"
+    effectsgroups =
+        EffectsGroup
+            scope =
+                Source
+            activation =
+                Source
+            effects = [
+                SetMaxConstruction value = Source.MaxConstruction / 2
+                SetMaxMining value = Source.MaxMining / 2
+                SetMaxIndustry value = Source.MaxIndustry / 2
+                SetMaxResearch value = Source.MaxResearch / 2
+                SetMaxTrade value = Source.MaxTrade / 2
+                SetMaxHealth value = Source.MaxHealth / 2
+            ]

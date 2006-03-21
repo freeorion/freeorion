@@ -1,9 +1,10 @@
 #include "Tech.h"
 
 #include "Effect.h"
+#include "../universe/Parser.h"
+#include "../universe/ParserUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
-#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -12,6 +13,26 @@
 
 
 extern int g_indent;
+
+struct store_tech_impl
+{
+    template <class T1, class T2, class T3>
+    struct result {typedef void type;};
+    template <class T>
+    void operator()(TechManager::TechContainer& techs, std::set<std::string>& categories_seen, const T& tech) const
+    {
+        categories_seen.insert(tech->Category());
+        if (techs.get<TechManager::NameIndex>().find(tech->Name()) != techs.get<TechManager::NameIndex>().end()) {
+            std::string error_str = "ERROR: More than one tech in techs.txt has the name " + tech->Name();
+            throw std::runtime_error(error_str.c_str());
+        }
+        if (tech->Prerequisites().find(tech->Name()) != tech->Prerequisites().end()) {
+            std::string error_str = "ERROR: Tech " + tech->Name() + " depends on itself!";
+            throw std::runtime_error(error_str.c_str());
+        }
+        techs.insert(tech);
+    }
+};
 
 namespace {
     void NextTechs(std::vector<const Tech*>& retval, const std::set<std::string>& known_techs, std::set<const Tech*>& checked_techs,
@@ -64,6 +85,8 @@ namespace {
         return next_techs[min_index];
     }
 
+    const phoenix::function<store_tech_impl> store_tech_;
+
     bool temp_header_bool = RecordHeaderFile(TechRevision());
     bool temp_source_bool = RecordSourceFile("$Id$");
 }
@@ -93,42 +116,6 @@ Tech::Tech(const std::string& name,
     m_unlocked_items(unlocked_items),
     m_graphic(graphic)
 {}
-
-Tech::Tech(const XMLElement& elem) :
-    m_effects(0)
-{
-    if (elem.Tag() != "Tech")
-        throw std::invalid_argument(("Attempted to construct a Tech from an XMLElement that had a tag other than \"Tech\"" + (" (\"" + elem.Tag() + ")")).c_str());
-
-    using boost::lexical_cast;
-
-    m_name = elem.Child("name").Text();
-    m_description = elem.Child("description").Text();
-    m_type = lexical_cast<TechType>(elem.Child("type").Text());
-    m_category = elem.Child("category").Text();
-    m_research_cost = lexical_cast<double>(elem.Child("research_cost").Text());
-    m_research_turns = lexical_cast<int>(elem.Child("research_turns").Text());
-
-    if (elem.ContainsChild("effects")) {
-        for (XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
-            m_effects.push_back(boost::shared_ptr<Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
-        }
-    }
-
-    for (XMLElement::const_child_iterator it = elem.Child("prerequisites").child_begin();
-         it != elem.Child("prerequisites").child_end();
-         ++it) {
-        m_prerequisites.insert(it->Text());
-    }
-
-    for (XMLElement::const_child_iterator it = elem.Child("unlocked_items").child_begin();
-         it != elem.Child("unlocked_items").child_end();
-         ++it) {
-        m_unlocked_items.push_back(ItemSpec(*it));
-    }
-    
-    m_graphic = elem.ContainsChild("graphic")?elem.Child("graphic").Text():"";
-}
 
 const std::string& Tech::Name() const
 {
@@ -160,8 +147,10 @@ std::string Tech::Dump() const
     retval += DumpIndent() + "researchcost = " + lexical_cast<std::string>(m_research_cost) + "\n";
     retval += DumpIndent() + "researchturns = " + lexical_cast<std::string>(m_research_turns) + "\n";
     retval += DumpIndent() + "prerequisites = ";
-    if (m_prerequisites.size() == 1) {
-        retval += "\"" + *m_prerequisites.begin() + "\"";
+    if (m_prerequisites.empty()) {
+        retval += "[]\n";
+    } else if (m_prerequisites.size() == 1) {
+        retval += "\"" + *m_prerequisites.begin() + "\"\n";
     } else {
         retval += "[\n";
         ++g_indent;
@@ -172,13 +161,15 @@ std::string Tech::Dump() const
         retval += DumpIndent() + "]\n";
     }
     retval += DumpIndent() + "unlock = ";
-    if (m_unlocked_items.size() == 1) {
+    if (m_unlocked_items.empty()) {
+        retval += "[]\n";
+    } else if (m_unlocked_items.size() == 1) {
         retval += m_unlocked_items[0].Dump();
     } else {
         retval += "[\n";
         ++g_indent;
         for (unsigned int i = 0; i < m_unlocked_items.size(); ++i) {
-            retval += m_unlocked_items[i].Dump();
+            retval += DumpIndent() + m_unlocked_items[i].Dump();
         }
         --g_indent;
         retval += DumpIndent() + "]\n";
@@ -198,9 +189,9 @@ std::string Tech::Dump() const
             --g_indent;
             retval += DumpIndent() + "]\n";
         }
-        retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
-        --g_indent;
     }
+    retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
+    --g_indent;
     return retval;
 }
 
@@ -263,18 +254,9 @@ Tech::ItemSpec::ItemSpec(UnlockableItemType type_, const std::string& name_) :
     name(name_)
 {}
 
-Tech::ItemSpec::ItemSpec(const XMLElement& elem)
-{
-    if (elem.Tag() != "Item")
-        throw std::invalid_argument(("Attempted to construct a Item from an XMLElement that had a tag other than \"Item\"" + (" (\"" + elem.Tag() + ")")).c_str());
-
-    type = boost::lexical_cast<UnlockableItemType>(elem.Child("type").Text());
-    name = elem.Child("name").Text();
-}
-
 std::string Tech::ItemSpec::Dump() const
 {
-    std::string retval = DumpIndent() + "Item type = ";
+    std::string retval = "Item type = ";
     switch (type) {
     case UIT_BUILDING:       retval += "Building"; break;
     case UIT_SHIP_COMPONENT: retval += "ShipComponent"; break;
@@ -363,33 +345,21 @@ TechManager::TechManager()
     std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
     if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
         settings_dir += '/';
-    std::ifstream ifs((settings_dir + "techs.xml").c_str());
-    XMLDoc doc;
-    doc.ReadDoc(ifs);
+    std::string filename = settings_dir + "techs.txt";
+    std::ifstream ifs(filename.c_str());
     std::set<std::string> categories_seen_in_techs;
-    for (XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
-        if (it->Tag() != "Tech" && it->Tag() != "Category")
-            throw std::runtime_error("ERROR: Encountered non-Tech, non-Category in techs.xml!");
-        if (it->Tag() == "Tech") {
-            Tech* tech = 0;
-            try {
-                tech = new Tech(*it);
-            } catch (const std::runtime_error& e) {
-                std::stringstream stream;
-                it->WriteElement(stream);
-                throw std::runtime_error(std::string("ERROR: \"") + e.what() + "\" encountered when loading this Tech XML code:\n" + stream.str());
-            }
-            categories_seen_in_techs.insert(tech->Category());
-            if (m_techs.get<NameIndex>().find(tech->Name()) != m_techs.get<NameIndex>().end())
-                throw std::runtime_error(("ERROR: More than one tech in techs.xml has the name " + tech->Name()).c_str());
-            if (tech->Prerequisites().find(tech->Name()) != tech->Prerequisites().end())
-                throw std::runtime_error(("ERROR: Tech " + tech->Name() + " depends on itself!").c_str());
-            m_techs.insert(tech);
-        } else {
-            m_categories.push_back(it->Text());
-        }
-    }
+    std::string input;
+    std::getline(ifs, input, '\0');
     ifs.close();
+    using namespace boost::spirit;
+    using namespace phoenix;
+    parse_info<const char*> result =
+        parse(input.c_str(),
+              as_lower_d[*(tech_p[store_tech_(var(m_techs), var(categories_seen_in_techs), arg1)]
+                           | tech_category_p[push_back_(var(m_categories), arg1)])],
+              skip_p);
+    if (!result.full)
+        ReportError(std::cerr, input.c_str(), result);
 
     std::set<std::string> empty_defined_categories;
     for (unsigned int i = 0; i < m_categories.size(); ++i) {
@@ -406,8 +376,9 @@ TechManager::TechManager()
         for (std::set<std::string>::iterator it = empty_defined_categories.begin(); it != empty_defined_categories.end(); ++it) {
             stream << " \"" << *it << "\"";
         }
-        throw std::runtime_error(("ERROR: The following categories were defined in techs.xml, but no "
-                                  "techs were defined that fell within them:" + stream.str()).c_str());
+        std::string error_str = "ERROR: The following categories were defined in techs.txt, but no "
+            "techs were defined that fell within them:" + stream.str();
+        throw std::runtime_error(error_str.c_str());
     }
 
     if (!categories_seen_in_techs.empty()) {
@@ -415,8 +386,9 @@ TechManager::TechManager()
         for (std::set<std::string>::iterator it = categories_seen_in_techs.begin(); it != categories_seen_in_techs.end(); ++it) {
             stream << " \"" << *it << "\"";
         }
-        throw std::runtime_error(("ERROR: The following categories were never defined in techs.xml, but some "
-                                  "techs were defined that fell within them:" + stream.str()).c_str());
+        std::string error_str = "ERROR: The following categories were never defined in techs.txt, but some "
+            "techs were defined that fell within them:" + stream.str();
+        throw std::runtime_error(error_str.c_str());
     }
 
     std::string illegal_dependency_str = FindIllegalDependencies();
@@ -491,7 +463,7 @@ std::string TechManager::FindFirstDependencyCycle()
                     if (stack_duplicate_it != stack.rend()) {
                         std::stringstream stream;
                         std::string current_tech_name = prereq_tech->Name();
-                        stream << "ERROR: Tech dependency cycle found in techs.xml (A <-- B means A is a prerequisite of B): \""
+                        stream << "ERROR: Tech dependency cycle found in techs.txt (A <-- B means A is a prerequisite of B): \""
                                << current_tech_name << "\"";
                         for (std::vector<const Tech*>::reverse_iterator stack_it = stack.rbegin();
                              stack_it != stack_duplicate_it;
@@ -533,7 +505,7 @@ std::string TechManager::FindRedundantDependency()
             std::map<std::string, std::string>::const_iterator map_it = techs_unlocked_by_prereqs.find(*prereq_it);
             if (map_it != techs_unlocked_by_prereqs.end()) {
                 std::stringstream stream;
-                stream << "ERROR: Redundant dependency found in tech.xml (A <-- B means A is a prerequisite of B): "
+                stream << "ERROR: Redundant dependency found in tech.txt (A <-- B means A is a prerequisite of B): "
                        << map_it->second << " <-- " << map_it->first << ", "
                        << map_it->first << " <-- " << (*it)->Name() << ", "
                        << map_it->second << " <-- " << (*it)->Name() << "; remove the " << map_it->second << " <-- " << (*it)->Name()

@@ -2,7 +2,6 @@
 
 #include "AppInterface.h"
 #include "../universe/Building.h"
-#include "Parse.h"
 #include "../universe/UniverseObject.h"
 
 #include <boost/spirit.hpp>
@@ -81,7 +80,6 @@ namespace {
 
     bool temp_header_bool = RecordHeaderFile(VarTextRevision());
     bool temp_source_bool = RecordSourceFile("$Id$");
-    bool temp_header_bool2 = RecordHeaderFile(ParseRevision());
 }
 
 // static(s)

@@ -1,18 +1,38 @@
 #include "Building.h"
 
 #include "Effect.h"
+#include "../universe/Parser.h"
+#include "../universe/ParserUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "Planet.h"
 #include "Predicates.h"
 
 #include <fstream>
+#include <iostream>
 
 
 extern int g_indent;
 
 namespace {
-    // loads and stores BuildingTypes specified in [settings-dir]/buildings.xml
+    struct store_building_type_impl
+    {
+        template <class T1, class T2>
+        struct result {typedef void type;};
+        template <class T>
+        void operator()(std::map<std::string, BuildingType*>& building_types, const T& building_type) const
+        {
+            if (building_types.find(building_type->Name()) != building_types.end()) {
+                std::string error_str = "ERROR: More than one building type in buildings.txt has the name " + building_type->Name();
+                throw std::runtime_error(error_str.c_str());
+            }
+            building_types[building_type->Name()] = building_type;
+        }
+    };
+
+    const phoenix::function<store_building_type_impl> store_building_type_;
+
+    // loads and stores BuildingTypes specified in [settings-dir]/buildings.txt
     class BuildingTypeManager
     {
     public:
@@ -21,25 +41,19 @@ namespace {
             std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
             if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
                 settings_dir += '/';
-            std::ifstream ifs((settings_dir + "buildings.xml").c_str());
-            XMLDoc doc;
-            doc.ReadDoc(ifs);
-            for (XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
-                if (it->Tag() != "BuildingType")
-                    throw std::runtime_error("ERROR: Encountered non-BuildingType in buildings.xml!");
-                BuildingType* building_type = 0;
-                try {
-                    building_type = new BuildingType(*it);
-                } catch (const std::runtime_error& e) {
-                    std::stringstream stream;
-                    it->WriteElement(stream);
-                    throw std::runtime_error(std::string("ERROR: \"") + e.what() + "\" encountered when loading this Building XML code:\n" + stream.str());
-                }
-                if (m_building_types.find(building_type->Name()) != m_building_types.end())
-                    throw std::runtime_error(("ERROR: More than one building type in buildings.xml has the name " + building_type->Name()).c_str());
-                m_building_types[building_type->Name()] = building_type;
-            }
+            std::string filename = settings_dir + "buildings.txt";
+            std::ifstream ifs(filename.c_str());
+            std::string input;
+            std::getline(ifs, input, '\0');
             ifs.close();
+            using namespace boost::spirit;
+            using namespace phoenix;
+            parse_info<const char*> result =
+                parse(input.c_str(),
+                      as_lower_d[*building_type_p[store_building_type_(var(m_building_types), arg1)]],
+                      skip_p);
+            if (!result.full)
+                ReportError(std::cerr, input.c_str(), result);
         }
 
         const BuildingType* GetBuildingType(const std::string& name) const
@@ -172,24 +186,6 @@ BuildingType::BuildingType(const std::string& name, const std::string& descripti
     m_effects(effects),
     m_graphic(graphic)
 {}
-
-BuildingType::BuildingType(const XMLElement& elem)
-{
-    if (elem.Tag() != "BuildingType")
-        throw std::invalid_argument("Attempted to construct a BuildingType from an XMLElement that had a tag other than \"BuildingType\"");
-
-    using boost::lexical_cast;
-
-    m_name = elem.Child("name").Text();
-    m_description = elem.Child("description").Text();
-    m_build_cost = lexical_cast<double>(elem.Child("build_cost").Text());
-    m_build_time = lexical_cast<int>(elem.Child("build_time").Text());
-    m_maintenance_cost = lexical_cast<double>(elem.Child("maintenance_cost").Text());
-    for (XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
-        m_effects.push_back(boost::shared_ptr<const Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
-    }
-    m_graphic = elem.Child("graphic").Text();
-}
 
 const std::string& BuildingType::Name() const
 {

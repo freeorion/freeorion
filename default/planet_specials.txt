@@ -1,0 +1,37 @@
+Special
+    name = "ANCIENT_RUINS_SPECIAL"
+    description = "ANCIENT_RUINS_SPECIAL_DESCRIPTION"
+    effectsgroups =
+        EffectsGroup
+            scope =
+                Source
+            activation =
+                Source
+            effects =
+                SetMaxResearch value = Source.MaxResearch + 4
+
+Special
+    name = "MINERALS_SPECIAL"
+    description = "MINERALS_SPECIAL_DESCRIPTION"
+    effectsgroups =
+        EffectsGroup
+            scope =
+                Source
+            activation =
+                Source
+            effects = [
+                SetMaxMining value = Source.MaxMining + 3
+                SetMaxTrade value = Source.MaxTrade + 1
+            ]
+
+Special
+    name = "TUNNELS_SPECIAL"
+    description = "TUNNELS_SPECIAL_DESCRIPTION"
+    effectsgroups =
+        EffectsGroup
+            scope =
+                Source
+            activation =
+                Source
+            effects =
+                SetMaxPopulation value = Source.MaxPopulation + 3

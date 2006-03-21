@@ -215,6 +215,8 @@ private:
     TechContainer            m_techs;
 
     static TechManager* s_instance;
+
+    friend struct store_tech_impl;
 };
 
 /** returns the singleton tech manager */

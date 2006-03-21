@@ -28,10 +28,10 @@ namespace {
     bool Init()
     {
         name_p =
-            lexeme_d['"' >> (+(alnum_p | '_'))[name_p.this_ = construct_<std::string>(arg1, arg2)] >> '"'];
+            lexeme_d['"' >> (*(alnum_p | '_'))[name_p.this_ = construct_<std::string>(arg1, arg2)] >> '"'];
 
         file_name_p =
-            lexeme_d['"' >> (+(alnum_p | '_' | '/' | '.'))[file_name_p.this_ = construct_<std::string>(arg1, arg2)] >> '"'];
+            lexeme_d['"' >> (*(alnum_p | '_' | '-'  | '/' | '.'))[file_name_p.this_ = construct_<std::string>(arg1, arg2)] >> '"'];
 
         planet_size_p.add
             ("tiny", SZ_TINY)
@@ -126,7 +126,7 @@ void ReportError(std::ostream& os, const char* input, const parse_info<const cha
     while (line_last < input + input_length && *line_last != '\n') {
         ++line_last;
     }
-    os << "error on line " << line << " at or after the indicated point:\n"
+    os << "error at or after the indicated point on line " << line << ":\n"
        << std::string(line_first, line_last) << "\n"
        << std::string(result.stop - line_first, ' ') << "^\n"
        << std::endl;

@@ -1,0 +1,1417 @@
+TechCategory "LEARNING_CATEGORY"
+
+Tech
+    name = "LRN_PHYS_BRAIN"
+    description = "LRN_PHYS_BRAIN_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/The_Physical_Brain.png"
+
+Tech
+    name = "LRN_ALGO_ELEGANCE"
+    description = "LRN_ALGO_ELEGANCE_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 10
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/Algorithmic_Elegance.png"
+
+Tech
+    name = "LRN_GAL_EXPLO"
+    description = "LRN_GAL_EXPLO_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 20
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/Galactic_Exploration.png"
+
+Tech
+    name = "LRN_TRANSLING_THT"
+    description = "LRN_TRANSLING_THT_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 45
+    researchturns = 10
+    prerequisites = [
+        "LRN_GAL_EXPLO"
+        "LRN_PHYS_BRAIN"
+    ]
+    unlock = []
+    graphic = "tech_icons/Translingustic_Thought.png"
+
+Tech
+    name = "LRN_PSIONICS"
+    description = "LRN_PSIONICS_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 60
+    researchturns = 10
+    prerequisites = "LRN_PHYS_BRAIN"
+    unlock = []
+    graphic = "tech_icons/Psionics.png"
+
+Tech
+    name = "LRN_ARTIF_MINDS"
+    description = "LRN_ARTIF_MINDS_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 30
+    researchturns = 10
+    prerequisites = [
+        "LRN_ALGO_ELEGANCE"
+        "LRN_PHYS_BRAIN"
+    ]
+    unlock = []
+    graphic = "tech_icons/Artificial_Minds.png"
+
+Tech
+    name = "LRN_XENOARCH"
+    description = "LRN_XENOARCH_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 30
+    researchturns = 10
+    prerequisites = "LRN_GAL_EXPLO"
+    unlock = []
+    graphic = "tech_icons/Xenoarchaeology.png"
+
+Tech
+    name = "LRN_GRAVITONICS"
+    description = "LRN_GRAVITONICS_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 120
+    researchturns = 15
+    prerequisites = "LRN_TRANSLING_THT"
+    unlock = []
+    graphic = "tech_icons/Gravitonics.png"
+
+Tech
+    name = "LRN_EVERYTHING"
+    description = "LRN_EVERYTHING_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 160
+    researchturns = 15
+    prerequisites = [
+        "LRN_ARTIF_MINDS"
+        "LRN_TRANSLING_THT"
+    ]
+    unlock = []
+    graphic = "tech_icons/The_Theory_of_Everything.png"
+
+Tech
+    name = "LRN_FORCE_FIELD"
+    description = "LRN_FORCE_FIELD_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 120
+    researchturns = 15
+    prerequisites = [
+        "LRN_PSIONICS"
+        "LRN_TRANSLING_THT"
+    ]
+    unlock = []
+    graphic = "tech_icons/Force-Field_Harmonics.png"
+
+Tech
+    name = "LRN_MIND_VOID"
+    description = "LRN_MIND_VOID_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 120
+    researchturns = 15
+    prerequisites = [
+        "LRN_PSIONICS"
+        "LRN_XENOARCH"
+    ]
+    unlock = []
+    graphic = "tech_icons/Mind_of_the_Void.png"
+
+Tech
+    name = "LRN_TIME_MECH"
+    description = "LRN_TIME_MECH_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 300
+    researchturns = 20
+    prerequisites = [
+        "LRN_EVERYTHING"
+        "LRN_GRAVITONICS"
+    ]
+    unlock = []
+    graphic = "tech_icons/Temporal_Mechanics.png"
+
+Tech
+    name = "LRN_NDIM_SUBSPACE"
+    description = "LRN_NDIM_SUBSPACE_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 300
+    researchturns = 20
+    prerequisites = [
+        "LRN_EVERYTHING"
+        "LRN_GRAVITONICS"
+    ]
+    unlock = []
+    graphic = "tech_icons/N-Dimensional_Subspace.png"
+
+Tech
+    name = "LRN_MATTER_ENERGY"
+    description = "LRN_MATTER_ENERGY_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 300
+    researchturns = 20
+    prerequisites = "LRN_EVERYTHING"
+    unlock = []
+    graphic = "tech_icons/Matter-Energy_Conversion.png"
+
+Tech
+    name = "LRN_UNIF_CONC"
+    description = "LRN_UNIF_CONC_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 400
+    researchturns = 20
+    prerequisites = [
+        "LRN_FORCE_FIELD"
+        "LRN_MIND_VOID"
+    ]
+    unlock = []
+    graphic = "tech_icons/Unified_Conscious.png"
+
+Tech
+    name = "LRN_TRANSCEND"
+    description = "LRN_TRANSCEND_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 1000
+    researchturns = 40
+    prerequisites = [
+        "CON_TRANS_ARCH"
+        "ECO_STAB_HYPGROW"
+        "LRN_TIME_MECH"
+        "LRN_UNIF_CONC"
+        "PRO_ZERO_GEN"
+    ]
+    unlock = []
+    graphic = "tech_icons/Singularity_of_Transcendence.png"
+
+Tech
+    name = "LRN_COLLECTIVE_NET"
+    description = "LRN_COLLECTIVE_NET_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 75
+    researchturns = 15
+    prerequisites = "LRN_PHYS_BRAIN"
+    unlock = Item type = Building name = "BLD_COLLECTIVE_NET"
+    graphic = ""
+
+Tech
+    name = "LRN_DISTRIB_THOUGHT"
+    description = "LRN_DISTRIB_THOUGHT_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 40
+    researchturns = 10
+    prerequisites = "LRN_PHYS_BRAIN"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    PrimaryFocus focus = Research
+                ]
+            activation =
+                Source
+            effects =
+                SetMaxResearch value = Target.MaxResearch + 5
+    graphic = ""
+
+Tech
+    name = "LRN_ENCLAVE_VOID"
+    description = "LRN_ENCLAVE_VOID_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 60
+    researchturns = 5
+    prerequisites = "LRN_MIND_VOID"
+    unlock = Item type = Building name = "BLD_ENCLAVE_VOID"
+    graphic = ""
+
+Tech
+    name = "LRN_LOOKING_GLASS"
+    description = "LRN_LOOKING_GLASS_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 150
+    researchturns = 10
+    prerequisites = "LRN_TIME_MECH"
+    unlock = Item type = Building name = "BLD_LOOKING_GLASS"
+    graphic = ""
+
+Tech
+    name = "LRN_MONUMENT_EXODUS"
+    description = "LRN_MONUMENT_EXODUS_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 25
+    researchturns = 5
+    prerequisites = "LRN_GAL_EXPLO"
+    unlock = Item type = Building name = "BLD_MONUMENT_EXODUS"
+    graphic = ""
+
+Tech
+    name = "LRN_PSICORP"
+    description = "LRN_PSICORP_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 40
+    researchturns = 10
+    prerequisites = "LRN_PSIONICS"
+    unlock = Item type = Building name = "BLD_PSICORP"
+    graphic = ""
+
+TechCategory "GROWTH_CATEGORY"
+
+Tech
+    name = "GRO_PLANET_ECOL"
+    description = "GRO_PLANET_ECOL_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/Planetary_Ecology.png"
+
+Tech
+    name = "GRO_GENETIC_ENG"
+    description = "GRO_GENETIC_ENG_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 20
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/Genetic_Engineering.png"
+
+Tech
+    name = "GRO_MEDICAL_PATH"
+    description = "GRO_MEDICAL_PATH_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/Medical_Pathology.png"
+
+Tech
+    name = "GRO_INDUSTY_FARM"
+    description = "GRO_INDUSTY_FARM_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 20
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/Industrial_Farming.png"
+
+Tech
+    name = "GRO_ENV_ENCAPSUL"
+    description = "GRO_ENV_ENCAPSUL_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = "GRO_PLANET_ECOL"
+    unlock = []
+    graphic = "tech_icons/Environmental_Encapsulation.png"
+
+Tech
+    name = "GRO_SYMBIOTIC_BIO"
+    description = "GRO_SYMBIOTIC_BIO_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 45
+    researchturns = 10
+    prerequisites = [
+        "GRO_MEDICAL_PATH"
+        "GRO_PLANET_ECOL"
+    ]
+    unlock = []
+    graphic = "tech_icons/Symbiosis_Biology.png"
+
+Tech
+    name = "GRO_GENETIC_MED"
+    description = "GRO_GENETIC_MED_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 45
+    researchturns = 10
+    prerequisites = [
+        "GRO_GENETIC_ENG"
+        "GRO_MEDICAL_PATH"
+    ]
+    unlock = []
+    graphic = "tech_icons/Genetic_Medicine.png"
+
+Tech
+    name = "GRO_LIFECYCLE_MAN"
+    description = "GRO_LIFECYCLE_MAN_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 120
+    researchturns = 15
+    prerequisites = "GRO_SYMBIOTIC_BIO"
+    unlock = []
+    graphic = "tech_icons/Lifecycle_Manipulation.png"
+
+Tech
+    name = "GRO_XENO_GENETICS"
+    description = "GRO_XENO_GENETICS_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 120
+    researchturns = 15
+    prerequisites = [
+        "GRO_GENETIC_MED"
+        "GRO_SYMBIOTIC_BIO"
+        "LRN_GAL_EXPLO"
+    ]
+    unlock = []
+    graphic = "tech_icons/Xenological_Genetics.png"
+
+Tech
+    name = "GRO_NANOTECH_MED"
+    description = "GRO_NANOTECH_MED_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 120
+    researchturns = 15
+    prerequisites = [
+        "GRO_GENETIC_MED"
+        "PRO_NANOTECH_PROD"
+    ]
+    unlock = []
+    graphic = "tech_icons/Nanotech_Medicine.png"
+
+Tech
+    name = "GRO_ORBIT_FARMING"
+    description = "GRO_ORBIT_FARMING_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 80
+    researchturns = 15
+    prerequisites = [
+        "CON_ORBITAL_CON"
+        "GRO_ENV_ENCAPSUL"
+        "GRO_INDUSTY_FARM"
+    ]
+    unlock = []
+    graphic = "tech_icons/Orbital_Farming.png"
+
+Tech
+    name = "GRO_INDUSRY_CLONE"
+    description = "GRO_INDUSRY_CLONE_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 300
+    researchturns = 20
+    prerequisites = [
+        "GRO_LIFECYCLE_MAN"
+        "GRO_NANOTECH_MED"
+    ]
+    unlock = []
+    graphic = "tech_icons/Industrial_Cloning.png"
+
+Tech
+    name = "GRO_XENO_HYBRIDS"
+    description = "GRO_XENO_HYBRIDS_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 300
+    researchturns = 20
+    prerequisites = [
+        "GRO_NANOTECH_MED"
+        "GRO_XENO_GENETICS"
+    ]
+    unlock = []
+    graphic = "tech_icons/Xenological_Hybridization.png"
+
+Tech
+    name = "GRO_NANO_CYBERNET"
+    description = "GRO_NANO_CYBERNET_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 300
+    researchturns = 20
+    prerequisites = "GRO_NANOTECH_MED"
+    unlock = []
+    graphic = "tech_icons/Nanotech_Cybernetics.png"
+
+Tech
+    name = "GRO_ENERGY_META"
+    description = "GRO_ENERGY_META_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 400
+    researchturns = 25
+    prerequisites = [
+        "GRO_XENO_HYBRIDS"
+        "LRN_FORCE_FIELD"
+        "PRO_FUSION_GEN"
+    ]
+    unlock = []
+    graphic = "tech_icons/Pure-Energy_Metabolism.png"
+
+Tech
+    name = "GRO_CADUCEAN"
+    description = "GRO_CADUCEAN_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 30
+    researchturns = 10
+    prerequisites = "GRO_MEDICAL_PATH"
+    unlock = Item type = Building name = "BLD_CADUCEAN"
+    graphic = ""
+
+Tech
+    name = "GRO_GENOME_BANK"
+    description = "GRO_GENOME_BANK_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 40
+    researchturns = 10
+    prerequisites = "GRO_GENETIC_MED"
+    unlock = Item type = Building name = "BLD_GENOME_BANK"
+    graphic = ""
+
+Tech
+    name = "GRO_LIVING_PLANET"
+    description = "GRO_LIVING_PLANET_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 50
+    researchturns = 5
+    prerequisites = "GRO_PLANET_ECOL"
+    unlock = Item type = Building name = "BLD_LIVING_PLANET"
+    graphic = ""
+
+Tech
+    name = "GRO_ORBITAL_GARDENS"
+    description = "GRO_ORBITAL_GARDENS_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 80
+    researchturns = 5
+    prerequisites = "GRO_ORBIT_FARMING"
+    unlock = Item type = Building name = "BLD_ORBITAL_GARDENS"
+    graphic = ""
+
+Tech
+    name = "GRO_URBAN_FARM"
+    description = "GRO_URBAN_FARM_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 50
+    researchturns = 10
+    prerequisites = "GRO_INDUSTY_FARM"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    PrimaryFocus focus = Industry
+                    CurrentIndustry low = 20 high = 999
+                ]
+            activation =
+                Source
+            effects =
+                SetMaxFarming value = Target.MaxFarming + 2
+    graphic = ""
+
+TechCategory "PRODUCTION_CATEGORY"
+
+Tech
+    name = "PRO_MICROGRAV_MAN"
+    description = "PRO_MICROGRAV_MAN_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 10
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/Microgravity_Manufacturing.png"
+
+Tech
+    name = "PRO_PLANET_GEOL"
+    description = "PRO_PLANET_GEOL_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/Planetary_Geology.png"
+
+Tech
+    name = "PRO_ROBOTIC_PROD"
+    description = "PRO_ROBOTIC_PROD_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/Robotic_Production.png"
+
+Tech
+    name = "PRO_FUSION_GEN"
+    description = "PRO_FUSION_GEN_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 40
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/Fusion_Generation.png"
+
+Tech
+    name = "PRO_ASTEROID_MINE"
+    description = "PRO_ASTEROID_MINE_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 60
+    researchturns = 10
+    prerequisites = [
+        "PRO_MICROGRAV_MAN"
+        "PRO_PLANET_GEOL"
+    ]
+    unlock = []
+    graphic = "tech_icons/Asteroid_Mining.png"
+
+Tech
+    name = "PRO_CORE_MINE"
+    description = "PRO_CORE_MINE_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 50
+    researchturns = 10
+    prerequisites = [
+        "PRO_PLANET_GEOL"
+        "PRO_ROBOTIC_PROD"
+    ]
+    unlock = []
+    graphic = "tech_icons/Deep_Core_Mining.png"
+
+Tech
+    name = "PRO_NANOTECH_PROD"
+    description = "PRO_NANOTECH_PROD_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 80
+    researchturns = 10
+    prerequisites = "PRO_ROBOTIC_PROD"
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "PRO_ORBITAL_GEN"
+    description = "PRO_ORBITAL_GEN_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 50
+    researchturns = 10
+    prerequisites = [
+        "CON_ARCH_MONOFILS"
+        "CON_ORBITAL_CON"
+        "PRO_FUSION_GEN"
+    ]
+    unlock = []
+    graphic = "tech_icons/Orbital_Generation.png"
+
+Tech
+    name = "PRO_ORBITAL_MINE"
+    description = "PRO_ORBITAL_MINE_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 80
+    researchturns = 15
+    prerequisites = [
+        "PRO_ASTEROID_MINE"
+        "PRO_CORE_MINE"
+    ]
+    unlock = []
+    graphic = "tech_icons/Orbital_Mining.png"
+
+Tech
+    name = "PRO_SENTIENT_FACT"
+    description = "PRO_SENTIENT_FACT_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 120
+    researchturns = 15
+    prerequisites = [
+        "LRN_ARTIF_MINDS"
+        "PRO_NANOTECH_PROD"
+    ]
+    unlock = []
+    graphic = "tech_icons/Sentient_Autofactories.png"
+
+Tech
+    name = "PRO_FRC_FLD_ASSMB"
+    description = "PRO_FRC_FLD_ASSMB_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 150
+    researchturns = 15
+    prerequisites = [
+        "LRN_FORCE_FIELD"
+        "PRO_NANOTECH_PROD"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "PRO_INTSTEL_COPRO"
+    description = "PRO_INTSTEL_COPRO_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 100
+    researchturns = 15
+    prerequisites = "ECO_INTSTEL_TRADE"
+    unlock = []
+    graphic = "tech_icons/Interstellar_Co-Production.png"
+
+Tech
+    name = "PRO_NDIM_ASSMB"
+    description = "PRO_NDIM_ASSMB_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 250
+    researchturns = 20
+    prerequisites = [
+        "LRN_NDIM_SUBSPACE"
+        "PRO_FRC_FLD_ASSMB"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "PRO_SINGULAR_GEN"
+    description = "PRO_SINGULAR_GEN_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 400
+    researchturns = 20
+    prerequisites = [
+        "LRN_GRAVITONICS"
+        "PRO_FRC_FLD_ASSMB"
+        "PRO_FUSION_GEN"
+    ]
+    unlock = []
+    graphic = "tech_icons/Singularity_Generation.png"
+
+Tech
+    name = "PRO_MATENG_REPLIC"
+    description = "PRO_MATENG_REPLIC_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 500
+    researchturns = 25
+    prerequisites = [
+        "LRN_MATTER_ENERGY"
+        "PRO_FRC_FLD_ASSMB"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "PRO_ZERO_GEN"
+    description = "PRO_ZERO_GEN_DESC"
+    techtype = Theory
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 500
+    researchturns = 25
+    prerequisites = [
+        "PRO_NDIM_ASSMB"
+        "PRO_SINGULAR_GEN"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "PRO_ART_BLACK_HOLE"
+    description = "PRO_ART_BLACK_HOLE_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 150
+    researchturns = 10
+    prerequisites = "PRO_SINGULAR_GEN"
+    unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
+    graphic = ""
+
+Tech
+    name = "PRO_MINING_ENGINEERING"
+    description = "PRO_MINING_ENGINEERING_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 40
+    researchturns = 10
+    prerequisites = "PRO_PLANET_GEOL"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    PrimaryFocus focus = Mining
+                ]
+            activation =
+                Source
+            effects =
+                SetMaxMining value = Target.MaxMining + 4
+    graphic = ""
+
+Tech
+    name = "PRO_EXOBOTS"
+    description = "PRO_EXOBOTS_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 40
+    researchturns = 5
+    prerequisites = "PRO_ROBOTIC_PROD"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    PrimaryFocus focus = Industry
+                ]
+            activation =
+                Source
+            effects =
+                SetMaxIndustry value = Target.MaxIndustry + 6
+    graphic = ""
+
+Tech
+    name = "PRO_FUSION_PLANTS"
+    description = "PRO_FUSION_PLANTS_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = "PRO_FUSION_GEN"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                ]
+            activation =
+                Source
+            effects =
+                SetMaxIndustry value = Target.MaxIndustry * 1.1
+    graphic = ""
+
+Tech
+    name = "PRO_HYPER_DAM"
+    description = "PRO_HYPER_DAM_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 100
+    researchturns = 10
+    prerequisites = "PRO_NDIM_ASSMB"
+    unlock = Item type = Building name = "BLD_HYPER_DAM"
+    graphic = ""
+
+Tech
+    name = "PRO_MINI_SUN"
+    description = "PRO_MINI_SUN_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = "PRO_ORBITAL_GEN"
+    unlock = Item type = Building name = "BLD_MINI_SUN"
+    graphic = ""
+
+TechCategory "CONSTRUCTION_CATEGORY"
+
+Tech
+    name = "CON_ORBITAL_CON"
+    description = "CON_ORBITAL_CON_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 20
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_ARCH_PSYCH"
+    description = "CON_ARCH_PSYCH_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 20
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_INFRA_ECOL"
+    description = "CON_INFRA_ECOL_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 40
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_ORGANIC_STRC"
+    description = "CON_ORGANIC_STRC_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 25
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_METRO_INFRA"
+    description = "CON_METRO_INFRA_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 45
+    researchturns = 10
+    prerequisites = [
+        "CON_ARCH_PSYCH"
+        "CON_INFRA_ECOL"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_TRANS_STRC"
+    description = "CON_TRANS_STRC_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 45
+    researchturns = 10
+    prerequisites = [
+        "CON_INFRA_ECOL"
+        "CON_ORGANIC_STRC"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_ARCH_MONOFILS"
+    description = "CON_ARCH_MONOFILS_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 60
+    researchturns = 10
+    prerequisites = "PRO_NANOTECH_PROD"
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_SELFGRAV_STRC"
+    description = "CON_SELFGRAV_STRC_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 100
+    researchturns = 15
+    prerequisites = [
+        "CON_METRO_INFRA"
+        "CON_ORBITAL_CON"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_ASYMP_MATS"
+    description = "CON_ASYMP_MATS_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 120
+    researchturns = 15
+    prerequisites = [
+        "CON_ARCH_MONOFILS"
+        "CON_METRO_INFRA"
+        "CON_TRANS_STRC"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_STRC_INT_FLDS"
+    description = "CON_STRC_INT_FLDS_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 120
+    researchturns = 15
+    prerequisites = "LRN_FORCE_FIELD"
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_CONTGRAV_ARCH"
+    description = "CON_CONTGRAV_ARCH_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 200
+    researchturns = 20
+    prerequisites = [
+        "CON_SELFGRAV_STRC"
+        "LRN_GRAVITONICS"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_GAL_INFRA"
+    description = "CON_GAL_INFRA_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 200
+    researchturns = 20
+    prerequisites = [
+        "CON_ASYMP_MATS"
+        "CON_SELFGRAV_STRC"
+        "ECO_INTSTEL_TRADE"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_FRC_ENRG_STRC"
+    description = "CON_FRC_ENRG_STRC_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 250
+    researchturns = 20
+    prerequisites = [
+        "CON_ASYMP_MATS"
+        "CON_STRC_INT_FLDS"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_ART_HEAVENLY"
+    description = "CON_ART_HEAVENLY_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 400
+    researchturns = 25
+    prerequisites = [
+        "CON_CONTGRAV_ARCH"
+        "CON_GAL_INFRA"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_TRANS_ARCH"
+    description = "CON_TRANS_ARCH_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 500
+    researchturns = 25
+    prerequisites = [
+        "CON_CONTGRAV_ARCH"
+        "CON_GAL_INFRA"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_NDIM_STRC"
+    description = "CON_NDIM_STRC_DESC"
+    techtype = Theory
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 400
+    researchturns = 25
+    prerequisites = [
+        "CON_FRC_ENRG_STRC"
+        "PRO_NDIM_ASSMB"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "CON_GRAVITY_WELLS"
+    description = "CON_GRAVITY_WELLS_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 150
+    researchturns = 10
+    prerequisites = "CON_CONTGRAV_ARCH"
+    unlock = Item type = Building name = "BLD_GRAVITY_WELLS"
+    graphic = ""
+
+Tech
+    name = "CON_MEGALITH"
+    description = "CON_MEGALITH_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 15
+    researchturns = 5
+    prerequisites = "CON_ORBITAL_CON"
+    unlock = Item type = Building name = "BLD_MEGALITH"
+    graphic = ""
+
+Tech
+    name = "CON_ORBITAL_INFRA"
+    description = "CON_ORBITAL_INFRA_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 30
+    researchturns = 10
+    prerequisites = "CON_ORBITAL_CON"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                ]
+            activation =
+                Source
+            effects =
+                SetMaxConstruction value = Target.MaxConstruction + 5
+    graphic = ""
+
+Tech
+    name = "CON_PLANET_RING"
+    description = "CON_PLANET_RING_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 80
+    researchturns = 5
+    prerequisites = [
+        "CON_ASYMP_MATS"
+        "CON_SPACE_ELEVATOR"
+    ]
+    unlock = Item type = Building name = "BLD_PLANET_RING"
+    graphic = ""
+
+Tech
+    name = "CON_SPACE_ELEVATOR"
+    description = "CON_SPACE_ELEVATOR_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 40
+    researchturns = 5
+    prerequisites = "CON_ARCH_MONOFILS"
+    unlock = Item type = Building name = "BLD_SPACE_ELEVATOR"
+    graphic = ""
+
+Tech
+    name = "CON_SUBTER_CONST"
+    description = "CON_SUBTER_CONST_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 40
+    researchturns = 10
+    prerequisites = "CON_INFRA_ECOL"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                ]
+            activation =
+                Source
+            effects =
+                SetMaxConstruction value = Target.MaxConstruction + 5
+    graphic = ""
+
+TechCategory "ECONOMICS_CATEGORY"
+
+Tech
+    name = "ECO_MARKET_ECON"
+    description = "ECO_MARKET_ECON_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_PLANNED_ECON"
+    description = "ECO_PLANNED_ECON_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_EXTERN_INTEG"
+    description = "ECO_EXTERN_INTEG_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 20
+    researchturns = 5
+    prerequisites = []
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_ECON_SPECTRO"
+    description = "ECO_ECON_SPECTRO_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 50
+    researchturns = 10
+    prerequisites = [
+        "ECO_MARKET_ECON"
+        "ECO_PLANNED_ECON"
+        "LRN_ALGO_ELEGANCE"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_INTSTEL_TRADE"
+    description = "ECO_INTSTEL_TRADE_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 50
+    researchturns = 10
+    prerequisites = [
+        "ECO_EXTERN_INTEG"
+        "ECO_MARKET_ECON"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_ENV_ADAPTION"
+    description = "ECO_ENV_ADAPTION_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 60
+    researchturns = 10
+    prerequisites = [
+        "ECO_EXTERN_INTEG"
+        "ECO_PLANNED_ECON"
+        "GRO_PLANET_ECOL"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_GAL_MONEY_POL"
+    description = "ECO_GAL_MONEY_POL_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 100
+    researchturns = 15
+    prerequisites = [
+        "ECO_ECON_SPECTRO"
+        "ECO_INTSTEL_TRADE"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_ECON_FLUIDITY"
+    description = "ECO_ECON_FLUIDITY_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 120
+    researchturns = 15
+    prerequisites = [
+        "ECO_ENV_ADAPTION"
+        "PRO_INTSTEL_COPRO"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_PLANET_COLONY"
+    description = "ECO_PLANET_COLONY_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 100
+    researchturns = 15
+    prerequisites = [
+        "CON_INFRA_ECOL"
+        "ECO_ENV_ADAPTION"
+        "ECO_INTSTEL_TRADE"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_ECON_PRESCIEN"
+    description = "ECO_ECON_PRESCIEN_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 150
+    researchturns = 20
+    prerequisites = [
+        "ECO_ECON_FLUIDITY"
+        "ECO_GAL_MONEY_POL"
+        "LRN_PSIONICS"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_STAB_HYPGROW"
+    description = "ECO_STAB_HYPGROW_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 200
+    researchturns = 20
+    prerequisites = [
+        "CON_GAL_INFRA"
+        "ECO_ECON_FLUIDITY"
+        "ECO_PLANET_COLONY"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_ECON_HEGEMONY"
+    description = "ECO_ECON_HEGEMONY_DESC"
+    techtype = Theory
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 400
+    researchturns = 25
+    prerequisites = [
+        "ECO_ECON_PRESCIEN"
+        "ECO_STAB_HYPGROW"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "ECO_COLONIAL_ECO"
+    description = "ECO_COLONIAL_ECO_DESC"
+    techtype = Application
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 40
+    researchturns = 10
+    prerequisites = "ECO_PLANNED_ECON"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    PrimaryFocus focus = Trade
+                ]
+            activation =
+                Source
+            effects =
+                SetMaxTrade value = Target.MaxTrade + 3
+    graphic = ""
+
+Tech
+    name = "ECO_COMM_UNION"
+    description = "ECO_COMM_UNION_DESC"
+    techtype = Application
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 120
+    researchturns = 5
+    prerequisites = "ECO_ECON_FLUIDITY"
+    unlock = Item type = Building name = "BLD_COMM_UNION"
+    graphic = ""
+
+Tech
+    name = "ECO_DEEP_GREEN"
+    description = "ECO_DEEP_GREEN_DESC"
+    techtype = Application
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = "ECO_ECON_SPECTRO"
+    unlock = Item type = Building name = "BLD_DEEP_GREEN"
+    graphic = ""
+
+Tech
+    name = "ECO_ECO_ETHER"
+    description = "ECO_ECO_ETHER_DESC"
+    techtype = Application
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 40
+    researchturns = 10
+    prerequisites = "ECO_MARKET_ECON"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    PrimaryFocus focus = Trade
+                ]
+            activation =
+                Source
+            effects = [
+                SetMaxTrade value = Target.MaxTrade + 5
+                SetMaxConstruction value = Target.MaxConstruction - 2
+            ]
+    graphic = ""
+
+Tech
+    name = "ECO_PARADISE"
+    description = "ECO_PARADISE_DESC"
+    techtype = Application
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 30
+    researchturns = 5
+    prerequisites = "ECO_ENV_ADAPTION"
+    unlock = Item type = Building name = "BLD_PARADISE"
+    graphic = ""
+
+Tech
+    name = "ECO_SINKHOLE"
+    description = "ECO_SINKHOLE_DESC"
+    techtype = Application
+    category = "ECONOMICS_CATEGORY"
+    researchcost = 80
+    researchturns = 20
+    prerequisites = "ECO_ECON_FLUIDITY"
+    unlock = Item type = Building name = "BLD_ECON_SINKHOLE"
+    graphic = ""

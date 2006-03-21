@@ -1,5 +1,7 @@
 #include "Special.h"
 
+#include "../universe/Parser.h"
+#include "../universe/ParserUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 
@@ -9,6 +11,25 @@
 extern int g_indent;
 
 namespace {
+    struct store_special_impl
+    {
+        template <class T1, class T2, class T3, class T4>
+        struct result {typedef void type;};
+        template <class T>
+        void operator()(std::map<std::string, Special*>& specials, std::set<std::string>& planet_special_names, bool planet_specials, const T& special) const
+        {
+            if (specials.find(special->Name()) != specials.end()) {
+                std::string error_str = "ERROR: More than one special in specials.txt and planet_specials.txt has the name " + special->Name();
+                throw std::runtime_error(error_str.c_str());
+            }
+            specials[special->Name()] = special;
+            if (planet_specials)
+                planet_special_names.insert(special->Name());
+        }
+    };
+
+    const phoenix::function<store_special_impl> store_special_;
+
     class SpecialManager
     {
     public:
@@ -17,8 +38,8 @@ namespace {
             std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
             if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
                 settings_dir += '/';
-            ProcessSpecialsFile(settings_dir + "specials.xml", false);
-            ProcessSpecialsFile(settings_dir + "planet_specials.xml", true);
+            ProcessSpecialsFile(settings_dir + "specials.txt", false);
+            ProcessSpecialsFile(settings_dir + "planet_specials.txt", true);
         }
 
         const std::set<std::string>& PlanetSpecialNames() const
@@ -36,26 +57,17 @@ namespace {
         void ProcessSpecialsFile(const std::string& filename, bool planet_specials)
         {
             std::ifstream ifs(filename.c_str());
-            XMLDoc doc;
-            doc.ReadDoc(ifs);
+            std::string input;
+            std::getline(ifs, input, '\0');
             ifs.close();
-            for (XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
-                if (it->Tag() != "Special")
-                    throw std::runtime_error("ERROR: Encountered non-Special in specials.xml or planet_specials.xml!");
-                Special* special = 0;
-                try {
-                    special = new Special(*it);
-                } catch (const std::runtime_error& e) {
-                    std::stringstream stream;
-                    it->WriteElement(stream);
-                    throw std::runtime_error(std::string("ERROR: \"") + e.what() + "\" encountered when loading this Special XML code:\n" + stream.str());
-                }
-                if (m_specials.find(special->Name()) != m_specials.end())
-                    throw std::runtime_error(("ERROR: More than one special in specials.xml and planet_specials.xml has the name " + special->Name()).c_str());
-                m_specials[special->Name()] = special;
-                if (planet_specials)
-                    m_planet_special_names.insert(special->Name());
-            }
+            using namespace boost::spirit;
+            using namespace phoenix;
+            parse_info<const char*> result =
+                parse(input.c_str(),
+                      as_lower_d[*special_p[store_special_(var(m_specials), var(m_planet_special_names), val(planet_specials), arg1)]],
+                      skip_p);
+            if (!result.full)
+                ReportError(std::cerr, input.c_str(), result);
         }
         std::map<std::string, Special*> m_specials;
         std::set<std::string> m_planet_special_names;
@@ -77,18 +89,6 @@ Special::Special(const std::string& name, const std::string& description,
     m_description(description),
     m_effects(effects)
 {}
-
-Special::Special(const XMLElement& elem)
-{
-    if (elem.Tag() != "Special")
-        throw std::invalid_argument("Attempted to construct a Special from an XMLElement that had a tag other than \"Special\"");
-
-    m_name = elem.Child("name").Text();
-    m_description = elem.Child("description").Text();
-    for (XMLElement::const_child_iterator it = elem.Child("effects").child_begin(); it != elem.Child("effects").child_end(); ++it) {
-        m_effects.push_back(boost::shared_ptr<Effect::EffectsGroup>(new Effect::EffectsGroup(*it)));
-    }
-}
 
 const std::string& Special::Name() const
 {

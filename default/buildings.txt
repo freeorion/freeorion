@@ -1,0 +1,546 @@
+BuildingType
+    name = "BLD_MEGALITH"
+    description = "BLD_MEGALITH_DESC"
+    buildcost = 30
+    buildtime = 5
+    maintenancecost = 20
+    effectsgroups = [
+        EffectsGroup
+            scope =
+                Contains condition =
+                    Source
+            activation =
+                CurrentConstruction low = 30 high = 999
+            stackinggroup = "MEGALITH_LOCAL_EFFECT"
+            effects = [
+                SetMaxPopulation value = Target.MaxPopulation + 1
+                SetMaxTrade value = Target.MaxTrade + 1
+            ]
+        EffectsGroup
+            scope =
+                And [
+                    WithinStarlaneJumps jumps = 1 condition =
+                        Source
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    CurrentConstruction low = 30 high = 999
+                ]
+            activation =
+                Source
+            stackinggroup = "MEGALITH_NEIGHBOUR_EFFECT"
+            effects =
+                SetMaxConstruction value = Target.MaxConstruction + 3
+    ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_COLLECTIVE_NET"
+    description = "BLD_COLLECTIVE_NET_DESC"
+    buildcost = 100
+    buildtime = 7
+    maintenancecost = 40
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    PrimaryFocus focus = Research
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_COLLECTIVE_NET_EFFECTS"
+            effects = [
+                SetMaxResearch value = Target.MaxResearch + 3
+                SetMaxTrade value = Target.MaxTrade + 3
+                SetMaxIndustry value = Target.MaxIndustry - 3
+                SetMaxFarming value = Target.MaxFarming - 3
+            ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_GENOME_BANK"
+    description = "BLD_GENOME_BANK_DESC"
+    buildcost = 100
+    buildtime = 10
+    maintenancecost = 40
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_GENOME_BANK_EFFECTS"
+            effects = [
+                SetMaxHealth value = Target.MaxHealth + 2
+                SetMaxFarming value = Target.MaxFarming + 1
+                SetMaxResearch value = Target.MaxResearch + 1
+            ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_GRAVITY_WELLS"
+    description = "BLD_GRAVITY_WELLS_DESC"
+    buildcost = 300
+    buildtime = 10
+    maintenancecost = 80
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    WithinStarlaneJumps jumps = 0 condition =
+                        Source
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_GRAVITY_WELLS_EFFECT"
+            effects = [
+                SetMaxIndustry value = Target.MaxIndustry + 2
+                SetMaxConstruction value = Target.MaxConstruction + 2
+                SetMaxTrade value = Target.MaxTrade + 1
+            ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_PLANET_RING"
+    description = "BLD_PLANET_RING_DESC"
+    buildcost = 500
+    buildtime = 10
+    maintenancecost = 100
+    effectsgroups =
+        EffectsGroup
+            scope =
+                Contains condition =
+                    Source
+            activation =
+                Source
+            stackinggroup = "BLD_PLANET_RING_EFFECT"
+            effects = [
+                SetMaxPopulation value = Target.MaxPopulation + 3
+                SetMaxConstruction value = Target.MaxConstruction + 1
+                SetMaxTrade value = Target.MaxTrade + 3
+                SetMaxFarming value = Target.MaxFarming - 5
+            ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_SPACE_ELEVATOR"
+    description = "BLD_SPACE_ELEVATOR_DESC"
+    buildcost = 100
+    buildtime = 10
+    maintenancecost = 80
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    Or [
+                        PrimaryFocus focus = Trade
+                        SecondaryFocus focus = Trade
+                    ]
+                    WithinStarlaneJumps jumps = 0 condition =
+                        Source
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_SPACE_ELEVATOR_EFFECT"
+            effects =
+                SetMaxTrade value = Target.MaxTrade + 2
+    graphic = ""
+
+BuildingType
+    name = "BLD_COMM_UNION"
+    description = "BLD_COMM_UNION_DESC"
+    buildcost = 300
+    buildtime = 20
+    maintenancecost = 40
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    PrimaryFocus focus = Trade
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_COMM_UNION_EFFECT"
+            effects =
+                SetMaxTrade value = Target.MaxTrade + 5
+    graphic = ""
+
+BuildingType
+    name = "BLD_DEEP_GREEN"
+    description = "BLD_DEEP_GREEN_DESC"
+    buildcost = 100
+    buildtime = 10
+    maintenancecost = 60
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_DEEP_GREEN_EFFECT"
+            effects =
+                SetMaxTrade value = Target.MaxTrade + 2
+    graphic = ""
+
+BuildingType
+    name = "BLD_PARADISE"
+    description = "BLD_DEEP_GREEN_DESC"
+    buildcost = 100
+    buildtime = 10
+    maintenancecost = 0
+    effectsgroups = [
+        EffectsGroup
+            scope =
+                Contains condition =
+                    Source
+            activation =
+                PrimaryFocus focus = Trade
+            stackinggroup = "BLD_PARADISE_SELF_EFFECT"
+            effects = [
+                SetMaxTrade value = Target.MaxTrade + 5
+                SetMaxMining value = Target.MaxMining - 5
+                SetMaxIndustry value = Target.MaxIndustry - 5
+            ]
+        EffectsGroup
+            scope =
+                And [
+                    WithinStarlaneJumps jumps = 1 condition =
+                        Source
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_PARADISE_AREA_EFFECT"
+            effects =
+                SetMaxHealth value = Target.MaxHealth + 2
+    ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_CADUCEAN"
+    description = "BLD_CADUCEAN_DESC"
+    buildcost = 50
+    buildtime = 10
+    maintenancecost = 60
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_CADUCEAN_EFFECT"
+            effects =
+                SetMaxHealth value = Target.MaxHealth + 1
+    graphic = ""
+
+BuildingType
+    name = "BLD_LIVING_PLANET"
+    description = "BLD_LIVING_PLANET_DESC"
+    buildcost = 50
+    buildtime = 15
+    maintenancecost = 0
+    effectsgroups = [
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                ]
+            activation =
+                PrimaryFocus focus = Research
+            stackinggroup = "LIVING_PLANET_EMPIRE_EFFECT"
+            effects =
+                SetMaxResearch value = Target.MaxResearch + 2
+        EffectsGroup
+            scope =
+                Contains condition =
+                    Source
+            activation =
+                Source
+            stackinggroup = "LIVING_PLANET_SELF_EFFECT"
+            effects = [
+                SetMaxHealth value = Target.MaxHealth + 5
+                SetMaxFarming value = Target.MaxFarming + 5
+            ]
+        EffectsGroup
+            scope =
+                Contains condition =
+                    Source
+            activation =
+                Source
+            effects = [
+                SetMaxIndustry value = 0
+                SetMaxMining value = 0
+            ]
+    ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_ORBITAL_GARDENS"
+    description = "BLD_ORBITAL_GARDENS_DESC"
+    buildcost = 250
+    buildtime = 10
+    maintenancecost = 90
+    effectsgroups = [
+        EffectsGroup
+            scope =
+                Contains condition =
+                    Source
+            activation =
+                PrimaryFocus focus = Trade
+            stackinggroup = "BLD_ORBITAL_GARDENS_EFFECT"
+            effects = [
+                SetMaxTrade value = Target.MaxTrade + 5
+                SetMaxFarming value = Target.MaxFarming + 2
+            ]
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_ORBITAL_GARDENS_EFFECT"
+            effects =
+                SetMaxFarming value = Target.MaxFarming + 2
+    ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_ENCLAVE_VOID"
+    description = "BLD_ENCLAVE_VOID"
+    buildcost = 250
+    buildtime = 15
+    maintenancecost = 40
+    effectsgroups = [
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    Or [
+                        PrimaryFocus focus = Research
+                        SecondaryFocus focus = Research
+                    ]
+                ]
+            activation =
+                PrimaryFocus focus = Research
+            stackinggroup = "BLD_ENCLAVE_VOID_EMPIRE_EFFECT"
+            effects =
+                SetMaxResearch value = Target.MaxResearch + 5
+        EffectsGroup
+            scope =
+                Contains condition =
+                    Source
+            activation =
+                MaxIndustry low = 10 high = 999
+            effects =
+                SetMaxIndustry value = 10
+        EffectsGroup
+            scope =
+                Contains condition =
+                    Source
+            activation =
+                MaxMining low = 10 high = 999
+            effects =
+                SetMaxMining value = 10
+    ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_LOOKING_GLASS"
+    description = "BLD_LOOKING_GLASS_DESC"
+    buildcost = 300
+    buildtime = 10
+    maintenancecost = 200
+    effectsgroups = [
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    Or [
+                        PrimaryFocus focus = Research
+                        SecondaryFocus focus = Research
+                    ]
+                ]
+            activation =
+                PrimaryFocus focus = Research
+            stackinggroup = "BLD_LOOKING_GLASS_RESEARCH_EFFECT"
+            effects =
+                SetMaxResearch value = Target.MaxResearch + 3
+        EffectsGroup
+            scope =
+                And [
+                    Contains condition =
+                        Source
+                    Or [
+                        PrimaryFocus focus = Trade
+                        SecondaryFocus focus = Trade
+                    ]
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_LOOKING_GLASS_TRADE_EFFECT"
+            effects =
+                SetMaxTrade value = Target.MaxTrade + 5
+    ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_MONUMENT_EXODUS"
+    description = "BLD_MONUMENT_EXODUS_DESC"
+    buildcost = 50
+    buildtime = 10
+    maintenancecost = 5
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    CurrentPopulation low = 0 high = 5
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_MONUMENT_EXODUS_EFFECT"
+            effects =
+                SetCurrentHealth value = Target.MaxHealth + 10
+    graphic = ""
+
+BuildingType
+    name = "BLD_PSICORP"
+    description = "BLD_PSICORP_DESC"
+    buildcost = 100
+    buildtime = 20
+    maintenancecost = 100
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    PrimaryFocus focus = Research
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_PSICORP_EFFECT"
+            effects =
+                SetMaxResearch value = Target.MaxResearch + Target.CurrentPopulation / 5
+    graphic = ""
+
+BuildingType
+    name = "BLD_ART_BLACK_HOLE"
+    description = "BLD_ART_BLACK_HOLE_DESC"
+    buildcost = 400
+    buildtime = 10
+    maintenancecost = 200
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    WithinStarlaneJumps jumps = 1 condition =
+                        Source
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    PrimaryFocus focus = Industry
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_ART_BLACK_HOLE_EFFECT"
+            effects =
+                SetMaxIndustry value = Target.MaxIndustry + 6
+    graphic = ""
+
+BuildingType
+    name = "BLD_HYPER_DAM"
+    description = "BLD_HYPER_DAM_DESC"
+    buildcost = 500
+    buildtime = 10
+    maintenancecost = 150
+    effectsgroups = [
+        EffectsGroup
+            scope =
+                And [
+                    WithinDistance distance = 50 condition =
+                        Source
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    PopulationCenter
+                    PrimaryFocus focus = Industry
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_HYPER_DAM_BONUS"
+            effects =
+                SetMaxIndustry value = Target.MaxIndustry + 10
+        EffectsGroup
+            scope =
+                And [
+                    WithinDistance distance = 30 condition =
+                        Source
+                    PopulationCenter
+                    Not
+                        Star type = BlackHole
+                ]
+            activation =
+                Source
+            effects =
+                SetMaxHealth value = Target.MaxHealth - 5
+    ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_MINI_SUN"
+    description = "BLD_MINI_SUN_DESC"
+    buildcost = 100
+    buildtime = 10
+    maintenancecost = 120
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    WithinStarlaneJumps jumps = 0 condition =
+                        Source
+                    PopulationCenter
+                ]
+            activation =
+                Source
+            stackinggroup = "BLD_MINI_SUN_EFFECT"
+            effects =
+                SetMaxIndustry value = Target.MaxIndustry + 4
+    graphic = ""
+
+BuildingType
+    name = "BLD_ECON_SINKHOLE"
+    description = "BLD_ECON_SINKHOLE_DESC"
+    buildcost = 100
+    buildtime = 10
+    maintenancecost = 50
+    effectsgroups =
+        EffectsGroup
+            scope =
+                WithinDistance distance = 75 condition =
+                    Source
+            activation =
+                Source
+            stackinggroup = "BLD_ECON_SINKHOLE_EFFECT"
+            effects =
+                SetMaxTrade value = Target.MaxTrade - 10
+    graphic = ""

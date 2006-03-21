@@ -6,7 +6,6 @@
 #include "Planet.h"
 #include "System.h"
 #include "ValueRef.h"
-#include "../util/XMLObjectFactory.h"
 
 class UniverseObject;
 
@@ -40,7 +39,6 @@ namespace Condition {
 	struct Turn;
 	struct NumberOf;
 	struct ContainedBy;
-    XMLObjectFactory<ConditionBase> ConditionFactory(); ///< an XML factory that creates the right subclass of ConditionBase from a given XML element
 }
 
 /** The base class for all Conditions. */
@@ -67,7 +65,6 @@ private:
 struct Condition::Turn : Condition::ConditionBase
 {
     Turn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high);
-    Turn(const XMLElement& elem);
     virtual ~Turn();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
@@ -83,7 +80,6 @@ private:
 struct Condition::NumberOf : Condition::ConditionBase
 {
     NumberOf(const ValueRef::ValueRefBase<int>* number, const ConditionBase* condition);
-    NumberOf(const XMLElement& elem);
     virtual ~NumberOf();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
@@ -98,7 +94,6 @@ private:
 struct Condition::All : Condition::ConditionBase
 {
     All();
-    All(const XMLElement& elem);
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -109,7 +104,6 @@ struct Condition::All : Condition::ConditionBase
 struct Condition::EmpireAffiliation : Condition::ConditionBase
 {
     EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation, bool exclusive);
-    EmpireAffiliation(const XMLElement& elem);
     virtual ~EmpireAffiliation();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -125,7 +119,6 @@ private:
 struct Condition::Self : Condition::ConditionBase
 {
     Self();
-    Self(const XMLElement& elem);
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -137,7 +130,6 @@ private:
 struct Condition::Type : Condition::ConditionBase
 {
     Type(const ValueRef::ValueRefBase<UniverseObjectType>* type);
-    Type(const XMLElement& elem);
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -150,7 +142,6 @@ private:
 struct Condition::Building : Condition::ConditionBase
 {
     Building(const std::string& name);
-    Building(const XMLElement& elem);
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -164,7 +155,6 @@ private:
 struct Condition::HasSpecial : Condition::ConditionBase
 {
     HasSpecial(const std::string& name);
-    HasSpecial(const XMLElement& elem);
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -178,7 +168,6 @@ private:
 struct Condition::Contains : Condition::ConditionBase
 {
     Contains(const ConditionBase* condition);
-    Contains(const XMLElement& elem);
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -192,7 +181,6 @@ private:
 struct Condition::ContainedBy : Condition::ConditionBase
 {
     ContainedBy(const ConditionBase* condition);
-    ContainedBy(const XMLElement& elem);
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -206,7 +194,6 @@ private:
 struct Condition::PlanetType : Condition::ConditionBase
 {
     PlanetType(const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>& types);
-    PlanetType(const XMLElement& elem);
     virtual ~PlanetType();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -221,7 +208,6 @@ private:
 struct Condition::PlanetSize : Condition::ConditionBase
 {
     PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes);
-    PlanetSize(const XMLElement& elem);
     virtual ~PlanetSize();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -236,7 +222,6 @@ private:
 struct Condition::PlanetEnvironment : Condition::ConditionBase
 {
     PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments);
-    PlanetEnvironment(const XMLElement& elem);
     virtual ~PlanetEnvironment();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -250,7 +235,6 @@ private:
 struct Condition::FocusType : Condition::ConditionBase
 {
     FocusType(const std::vector<const ValueRef::ValueRefBase< ::FocusType>*>& foci, bool primary);
-    FocusType(const XMLElement& elem);
     virtual ~FocusType();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -266,7 +250,6 @@ private:
 struct Condition::StarType : Condition::ConditionBase
 {
     StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types);
-    StarType(const XMLElement& elem);
     virtual ~StarType();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -280,7 +263,6 @@ private:
 struct Condition::Chance : Condition::ConditionBase
 {
     Chance(const ValueRef::ValueRefBase<double>* chance);
-    Chance(const XMLElement& elem);
     virtual ~Chance();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -295,7 +277,6 @@ private:
 struct Condition::MeterValue : Condition::ConditionBase
 {
     MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high, bool max_meter);
-    MeterValue(const XMLElement& elem);
     virtual ~MeterValue();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -313,7 +294,6 @@ private:
 struct Condition::EmpireStockpileValue : Condition::ConditionBase
 {
     EmpireStockpileValue(StockpileType stockpile, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high);
-    EmpireStockpileValue(const XMLElement& elem);
     virtual ~EmpireStockpileValue();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -329,7 +309,6 @@ private:
 struct Condition::OwnerHasTech : Condition::ConditionBase
 {
     OwnerHasTech(const std::string& name);
-    OwnerHasTech(const XMLElement& elem);
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -342,7 +321,6 @@ private:
 struct Condition::VisibleToEmpire : Condition::ConditionBase
 {
     VisibleToEmpire(const std::vector<const ValueRef::ValueRefBase<int>*>& empire_ids);
-    VisibleToEmpire(const XMLElement& elem);
     virtual ~VisibleToEmpire();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -358,7 +336,6 @@ private:
 struct Condition::WithinDistance : Condition::ConditionBase
 {
     WithinDistance(const ValueRef::ValueRefBase<double>* distance, const ConditionBase* condition);
-    WithinDistance(const XMLElement& elem);
     virtual ~WithinDistance();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
@@ -376,7 +353,6 @@ private:
 struct Condition::WithinStarlaneJumps : Condition::ConditionBase
 {
     WithinStarlaneJumps(const ValueRef::ValueRefBase<int>* jumps, const ConditionBase* condition);
-    WithinStarlaneJumps(const XMLElement& elem);
     virtual ~WithinStarlaneJumps();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
@@ -391,7 +367,6 @@ private:
 struct Condition::EffectTarget : Condition::ConditionBase
 {
     EffectTarget();
-    EffectTarget(const XMLElement& elem);
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -403,7 +378,6 @@ private:
 struct Condition::And : Condition::ConditionBase
 {
     And(const std::vector<const ConditionBase*>& operands);
-    And(const XMLElement& elem);
     virtual ~And();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
@@ -417,7 +391,6 @@ private:
 struct Condition::Or : Condition::ConditionBase
 {
     Or(const std::vector<const ConditionBase*>& operands);
-    Or(const XMLElement& elem);
     virtual ~Or();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
@@ -431,7 +404,6 @@ private:
 struct Condition::Not : Condition::ConditionBase
 {
     Not(const ConditionBase* operand);
-    Not(const XMLElement& elem);
     virtual ~Not();
     virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;

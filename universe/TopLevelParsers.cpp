@@ -107,7 +107,7 @@ namespace {
             [tech_item_spec_p.this_ = construct_<Tech::ItemSpec>(tech_item_spec_p.type, tech_item_spec_p.name)];
 
         tech_category_p =
-            (str_p("TechCategory")
+            (str_p("techcategory")
              >> name_p[tech_category_p.this_ = arg1]);
 
         tech_p =
@@ -120,10 +120,10 @@ namespace {
              >> researchturns_label >> int_p[tech_p.research_turns = arg1]
              >> prerequisites_label
              >> (name_p[insert_(tech_p.prerequisites, arg1)] |
-                 ('[' >> +(name_p[insert_(tech_p.prerequisites, arg1)]) >> ']'))
+                 ('[' >> *(name_p[insert_(tech_p.prerequisites, arg1)]) >> ']'))
              >> unlock_label
              >> (tech_item_spec_p[push_back_(tech_p.unlocked_items, arg1)]
-                 | ('[' >> +(tech_item_spec_p[push_back_(tech_p.unlocked_items, arg1)]) >> ']'))
+                 | ('[' >> *(tech_item_spec_p[push_back_(tech_p.unlocked_items, arg1)]) >> ']'))
              >> !(effectsgroups_label >> effects_group_vec_p[tech_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[tech_p.graphic = arg1])
             [tech_p.this_ = new_<Tech>(tech_p.name, tech_p.description, tech_p.category, tech_p.tech_type,
