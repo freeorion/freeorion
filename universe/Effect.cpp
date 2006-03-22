@@ -5,6 +5,8 @@
 #include <boost/format.hpp>
 #include <boost/tuple/tuple.hpp>
 
+#include <cctype>
+
 using namespace Effect;
 using namespace boost::io;
 using boost::lexical_cast;

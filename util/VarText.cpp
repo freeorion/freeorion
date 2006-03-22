@@ -1,6 +1,7 @@
 #include "VarText.h"
 
 #include "AppInterface.h"
+#include "MultiplayerCommon.h"
 #include "../universe/Building.h"
 #include "../universe/UniverseObject.h"
 

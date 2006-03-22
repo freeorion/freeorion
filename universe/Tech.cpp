@@ -154,7 +154,7 @@ std::string Tech::Dump() const
     } else {
         retval += "[\n";
         ++g_indent;
-        for (std::set<std::string>::iterator it = m_prerequisites.begin(); it != m_prerequisites.end(); ++it) {
+        for (std::set<std::string>::const_iterator it = m_prerequisites.begin(); it != m_prerequisites.end(); ++it) {
             retval += DumpIndent() + "\"" + *it + "\"\n";
         }
         --g_indent;
