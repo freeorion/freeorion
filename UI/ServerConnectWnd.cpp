@@ -30,8 +30,6 @@ namespace {
         return !name.empty();
     }
 
-    bool temp_header_bool = RecordHeaderFile(ServerConnectWndRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 ServerConnectWnd::ServerConnectWnd() : 

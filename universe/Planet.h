@@ -149,9 +149,6 @@ void Planet::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-inline std::string PlanetRevision()
-{return "$Id$";}
-
 #endif // _Planet_h_
 
 

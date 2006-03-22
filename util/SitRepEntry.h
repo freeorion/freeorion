@@ -107,7 +107,4 @@ void SitRepEntry::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_type);
 }
 
-inline std::string SitRepEntryRevision()
-{return "$Id$";}
-
 #endif // _SitRepEntry_h_

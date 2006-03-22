@@ -33,8 +33,6 @@ namespace {
         }
     }
 
-    bool temp_header_bool = RecordHeaderFile(ResourcePoolRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 //////////////////////////////////////////////////

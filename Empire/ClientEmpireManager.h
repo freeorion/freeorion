@@ -38,8 +38,5 @@ public:
 };
 
 
-inline std::string ClientEmpireManagerRevision()
-{return "$Id$";}
-
 #endif // _ClientEmpireManager_h_
 

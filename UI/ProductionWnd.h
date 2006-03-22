@@ -47,7 +47,4 @@ private:
     BuildDesignatorWnd*  m_build_designator_wnd;
 };
 
-inline std::string ProductionWndRevision()
-{return "$Id$";}
-
 #endif // _ProductionWnd_h_

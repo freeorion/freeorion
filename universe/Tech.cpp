@@ -87,8 +87,6 @@ namespace {
 
     const phoenix::function<store_tech_impl> store_tech_;
 
-    bool temp_header_bool = RecordHeaderFile(TechRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

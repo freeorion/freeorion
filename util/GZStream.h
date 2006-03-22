@@ -116,7 +116,4 @@ public:
 
 }
 
-inline std::string GZStreamRevision()
-{return "$Id$";}
-
 #endif // _GZStream_h_

@@ -17,8 +17,6 @@ namespace {
         }
     }
 
-    bool temp_header_bool = RecordHeaderFile(StringTableRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 // static(s)

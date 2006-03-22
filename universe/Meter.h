@@ -68,7 +68,4 @@ void Meter::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_previous_max);
 }
 
-inline std::string MeterRevision()
-{return "$Id$";}
-
 #endif // _Meter_h_

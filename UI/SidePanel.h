@@ -114,7 +114,4 @@ private:
     SystemResourceSummary *m_system_resource_summary;
 };
 
-inline std::string SidePanelRevision()
-{return "$Id$";}
-
 #endif // _SidePanel_h_

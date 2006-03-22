@@ -44,9 +44,6 @@ public:
 
 };
 
-inline std::string CombatSystemRevision()
-{return "$Id$";}
-
 #endif // _CombatSystem_h_
 
 

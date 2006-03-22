@@ -13,8 +13,6 @@
 namespace {
     const int PROGRESS_WND_HEIGHT = 100;
 
-    bool temp_header_bool = RecordHeaderFile(TurnProgressWndRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

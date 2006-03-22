@@ -181,7 +181,4 @@ private:
     static const int CONTROL_MARGIN = 5;
 };
 
-inline std::string CUIWndRevision()
-{return "$Id$";}
-
 #endif // _CUIWnd_h_

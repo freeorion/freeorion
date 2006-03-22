@@ -13,11 +13,6 @@ using boost::lexical_cast;
 #include <stdexcept>
 
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(SystemRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 
 System::System() : 
    UniverseObject(),

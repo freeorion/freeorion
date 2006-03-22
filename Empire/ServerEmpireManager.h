@@ -103,7 +103,4 @@ private:
     std::map<int, XMLElement> m_last_turn_empire_states;
 };
 
-inline std::string ServerEmpireManagerRevision()
-{return "$Id$";}
-
 #endif // _ServerEmpireManager_h_

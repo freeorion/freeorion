@@ -80,8 +80,5 @@ private:
     Message              m_response_msg;     ///< the synchronous response will contain data which the calling sender is expecting
 };
 
-inline std::string ClientNetworkCoreRevision()
-{return "$Id$";}
-
 #endif // _ClientNetworkCore_h_
 

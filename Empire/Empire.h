@@ -613,9 +613,6 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-inline std::string EmpireRevision()
-{return "$Id$";}
-
 #endif // _Empire_h_
 
 

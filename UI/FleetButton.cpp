@@ -20,8 +20,6 @@ namespace {
         return GetOptionsDB().Get<bool>("UI.sound.enabled");
     }
 
-    bool temp_header_bool = RecordHeaderFile(FleetButtonRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

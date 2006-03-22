@@ -14,11 +14,6 @@
 #include <boost/filesystem/fstream.hpp>
 
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(AboutRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 
 ////////////////////////////////////////////
 //   CONSTRUCTION/DESTRUCTION

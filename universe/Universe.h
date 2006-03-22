@@ -472,7 +472,4 @@ void Universe::NumberedElementFactory<T>::AddGenerator(const std::string& name, 
     m_generators[name] = gen;
 }
 
-inline std::string UniverseRevision()
-{return "$Id$";}
-
 #endif // _Universe_h_

@@ -40,8 +40,6 @@ namespace {
 
     bool foo_bool = RegisterOptions(&Options);
 
-    bool temp_header_bool = RecordHeaderFile(IntroScreenRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 //****************************************************************************************************

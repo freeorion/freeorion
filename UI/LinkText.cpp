@@ -9,11 +9,6 @@
 
 #define RENDER_DEBUGGING_LINK_RECTS 0
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(LinkTextRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 
 // initialize static(s)
 bool LinkText::s_link_tags_registered = false;

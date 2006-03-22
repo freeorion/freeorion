@@ -140,7 +140,4 @@ public:
     const T m_max;
 };
 
-inline std::string OptionValidatorsRevision()
-{return "$Id$";}
-
 #endif // _OptionValidators_h_

@@ -230,7 +230,4 @@ public:
     void Close();      //!< closes the MapWndPopup   
 };
 
-inline std::string MapWndRevision()
-{return "$Id$";}
-
 #endif // _MapWnd_h_

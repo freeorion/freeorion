@@ -57,7 +57,4 @@ private:
     std::vector<std::vector<GG::StaticGraphic*> > m_bg_graphics;
 };
 
-inline std::string IntroScreenRevision()
-{return "$Id$";}
-
 #endif // _IntroScreen_h_

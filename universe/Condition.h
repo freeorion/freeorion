@@ -413,7 +413,4 @@ private:
     const ConditionBase* m_operand;
 };
 
-inline std::string ConditionRevision()
-{return "$Id$";}
-
 #endif // _Condition_h_

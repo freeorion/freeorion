@@ -134,7 +134,4 @@ private:
     friend struct BrowseForFileFunctor;
 };
 
-inline std::string OptionsWndRevision()
-{return "$Id$";}
-
 #endif // _OptionsWnd_h_

@@ -223,8 +223,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    bool temp_header_bool = RecordHeaderFile(ClientUIRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

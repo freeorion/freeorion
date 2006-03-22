@@ -79,8 +79,6 @@ namespace
             std::cout << std::string(first, last);
     }
 
-    bool temp_header_bool = RecordHeaderFile(DataTableRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 #include <iostream>
 void LoadDataTables(const std::string& filename, DataTableMap& tables, bool echo/* = false*/)

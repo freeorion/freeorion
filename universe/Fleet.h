@@ -123,7 +123,4 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
         m_moving_to = moving_to;
 }
 
-inline std::string FleetRevision()
-{return "$Id$";}
-
 #endif // _Fleet_h_

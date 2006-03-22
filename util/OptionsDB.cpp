@@ -33,10 +33,6 @@ namespace {
         void operator()(const char* first, const char* last) const {m_string_vec.push_back(std::string(first, last));}
         std::vector<std::string>& m_string_vec;
     };
-
-    bool temp_header_bool = RecordHeaderFile(OptionsDBRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-    bool temp_header_bool2 = RecordHeaderFile(OptionValidatorsRevision());
 }
 
 /////////////////////////////////////////////

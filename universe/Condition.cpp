@@ -40,8 +40,6 @@ namespace {
         return false;
     }
 
-    bool temp_header_bool = RecordHeaderFile(ConditionRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 ///////////////////////////////////////////////////////////

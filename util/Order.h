@@ -441,8 +441,5 @@ private:
     static const int INVALID_QUANTITY = -1000;
 };
 
-inline std::string OrderRevision()
-{return "$Id$";}
-
 #endif // _Order_h_
 

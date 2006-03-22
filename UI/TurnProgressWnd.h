@@ -43,7 +43,4 @@ private:
     std::vector<std::vector<GG::StaticGraphic*> > m_bg_graphics;
 };
 
-inline std::string TurnProgressWndRevision()
-{return "$Id$";}
-
 #endif // _TurnProgressWnd_h_

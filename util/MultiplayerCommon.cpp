@@ -39,9 +39,6 @@ namespace {
             new StringTable(SettingsDir() + GetOptionsDB().Get<std::string>("stringtable-filename"));
         return string_table;
     }
-
-    bool temp_header_bool = RecordHeaderFile(MultiplayerCommonRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 /////////////////////////////////////////////////////
@@ -103,58 +100,6 @@ int PriorityValue(const std::string& name)
         priority_map["NOTSET"] = Priority::NOTSET;
     }
     return priority_map[name];
-}
-
-const std::vector<std::string>& VersionSensitiveSettingsFiles()
-{
-    static std::vector<std::string> retval;
-    static bool init = false;
-    if (!init) {
-        retval.push_back("techs.xml");
-        retval.push_back("buildings.xml");
-        retval.push_back("specials.xml");
-        // TODO: add table files here as well
-        init = true;
-    }
-    return retval;
-}
-
-const std::map<std::string, std::string>& SourceFiles()
-{
-    static std::map<std::string, std::string> source_files;
-    return source_files;
-}
-
-bool RecordSourceFile(const std::string& file_id_string)
-{
-#if 0 // TODO: re-enable this when the validity check is re-enabled in the server
-    std::string::size_type filename_start = filename.find_first_of(" \t");
-    filename_start = filename.find_first_not_of(" \t", filename_start);
-    std::string::size_type filename_length = filename.find_last_of(',') - filename_start;
-    std::string transformed_filename = filename.substr(filename_start, filename_length);
-
-    std::string::size_type revision_start = revision.find_first_of(" \t");
-    revision_start = revision.find_first_not_of(" \t", revision_start);
-    std::string::size_type revision_length = revision.find_first_of(" \t", revision_start) - revision_start;
-    std::string transformed_revision = revision.substr(revision_start, revision_length);
-
-    std::map<std::string, std::string>& source_files = const_cast<std::map<std::string, std::string>&>(SourceFiles());
-    std::map<std::string, std::string>::iterator it = source_files.find(transformed_filename);
-    if (it == source_files.end()) {
-        source_files[transformed_filename] = transformed_revision;
-    } else {
-        std::string message = "RecordSourceFile() : Attempted to record source file \"" +
-            transformed_filename + "\" twice.";
-        std::cerr << message << "\n";
-        throw std::runtime_error(message.c_str());
-    }
-#endif
-    return true;
-}
-
-bool RecordHeaderFile(const std::string& file_id_string)
-{
-    return RecordSourceFile(file_id_string);
 }
 
 std::string MD5StringSum(const std::string& str)

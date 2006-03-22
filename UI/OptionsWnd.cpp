@@ -19,8 +19,6 @@
 #include <boost/filesystem/exception.hpp>
 
 namespace {
-    bool temp_header_bool = RecordHeaderFile(OptionsWndRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 
 	const int PAGE_VERT_MARGIN = 10;
 	const int PAGE_ROW_HEIGHT = 30;

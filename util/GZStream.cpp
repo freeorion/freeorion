@@ -36,11 +36,6 @@
 #include <cstring>
 
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(GZStreamRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 
 namespace GZStream {
 

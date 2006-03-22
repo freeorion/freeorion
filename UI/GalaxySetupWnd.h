@@ -135,7 +135,4 @@ private:
     GG::Pt                m_preview_ul;
 };
 
-inline std::string GalaxySetupWndRevision()
-{return "$Id$";}
-
 #endif // _GalaxySetupWnd_h_

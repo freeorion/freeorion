@@ -9,26 +9,6 @@
 #include <stdexcept>
 #include <sstream>
 
-namespace {
-    void AddVersionInfo(XMLDoc& doc)
-    {
-        std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-        if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-            settings_dir += '/';
-        const std::vector<std::string>& settings_files = VersionSensitiveSettingsFiles();
-        for (unsigned int i = 0; i < settings_files.size(); ++i) {
-            doc.root_node.AppendChild(XMLElement(settings_files[i], MD5FileSum(settings_dir + settings_files[i])));
-        }
-        const std::map<std::string, std::string>& source_files = SourceFiles();
-        for (std::map<std::string, std::string>::const_iterator it = source_files.begin(); it != source_files.end(); ++it) {
-            doc.root_node.AppendChild(XMLElement(it->first, it->second));
-        }
-    }
-
-    bool temp_header_bool = RecordHeaderFile(MessageRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 ////////////////////////////////////////////////
 // Free Functions
 ////////////////////////////////////////////////
@@ -186,7 +166,6 @@ void Message::DecompressMessage(std::string& uncompressed_msg) const
 Message HostGameMessage(int player_id, const XMLDoc& game_parameters)
 {
     XMLDoc doc(game_parameters);
-    AddVersionInfo(doc);
     return Message(Message::HOST_GAME, player_id, -1, Message::CORE, doc);
 }
 
@@ -194,7 +173,6 @@ Message HostGameMessage(int player_id, const std::string& host_player_name)
 {
     XMLDoc doc;
     doc.root_node.AppendChild(XMLElement("host_player_name", host_player_name));
-    AddVersionInfo(doc);
     return Message(Message::HOST_GAME, player_id, -1, Message::CORE, doc);
 }
 
@@ -202,14 +180,12 @@ Message JoinGameMessage(const std::string& player_name)
 {
     XMLDoc doc;
     doc.root_node.AppendChild(XMLElement("player_name", player_name));
-    AddVersionInfo(doc);
     return Message(Message::JOIN_GAME, -1, -1, Message::CORE, doc);
 }
 
 Message JoinGameSetup(const XMLDoc& player_setup)
 {
     XMLDoc doc(player_setup);
-    AddVersionInfo(doc);
     return Message(Message::JOIN_GAME, -1, -1, Message::CORE, doc);
 }
 

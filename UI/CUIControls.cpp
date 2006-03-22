@@ -85,11 +85,6 @@ namespace {
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
     const double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;
     const double TAB_BRIGHTENING_SCALE_FACTOR = 1.25;
-
-    bool temp_header_bool = RecordHeaderFile(CUIControlsRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-
-    bool temp_header_bool2 = RecordHeaderFile(CUISpinRevision());
 }
 
 #if 0

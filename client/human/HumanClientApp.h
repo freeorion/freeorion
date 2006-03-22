@@ -124,7 +124,4 @@ private:
     bool                              m_handling_message;
 };
 
-inline std::string HumanClientAppRevision()
-{return "$Id$";}
-
 #endif // _HumanClientApp_h_

@@ -83,7 +83,4 @@ void VarText::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-inline std::string VarTextRevision()
-{return "$Id$";}
-
 #endif // _VarText_h_

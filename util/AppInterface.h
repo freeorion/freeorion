@@ -50,7 +50,4 @@ DifficultyLevel CurrentDifficultyLevel();
    that are needed for both the server and the client, but for which
    access will vary and requires an #ifdef */
 
-inline std::string AppInterfaceRevision()
-{return "$Id$";}
-
 #endif // _AppInterface_h_

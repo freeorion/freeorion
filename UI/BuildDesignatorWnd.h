@@ -59,7 +59,4 @@ private:
     GG::Rect          m_map_view_hole;
 };
 
-inline std::string BuildDesignatorWndRevision()
-{return "$Id$";}
-
 #endif // _BuildDesignatorWnd_h_

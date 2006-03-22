@@ -205,8 +205,5 @@ void UniverseObject::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-inline std::string UniverseObjectRevision()
-{return "$Id$";}
-
 #endif // _UniverseObject_h_
 

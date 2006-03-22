@@ -210,8 +210,6 @@ namespace {
         PartlyRoundedRect(UpperLeft(), LowerRight(), CORNER_RADIUS, true, false, true, false, fill);
     }
 
-    bool temp_header_bool = RecordHeaderFile(ProductionWndRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

@@ -79,8 +79,6 @@ namespace {
         return special_manager;
     }
 
-    bool temp_header_bool = RecordHeaderFile(SpecialRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 Special::Special(const std::string& name, const std::string& description,

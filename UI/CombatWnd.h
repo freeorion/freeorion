@@ -30,7 +30,4 @@ class CombatWnd : public CUIWnd
 
 };
 
-inline std::string CombatWndRevision()
-{return "$Id$";}
-
 #endif // _CombatWnd_h_

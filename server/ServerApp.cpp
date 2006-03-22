@@ -49,8 +49,6 @@ namespace {
     }
     bool condition_test_temp_bool = RegisterOptions(&AddConditionTestOptions);
 
-    bool temp_header_bool = RecordHeaderFile(ServerAppRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 #endif
 
@@ -1578,49 +1576,8 @@ void ServerApp::LoadGameInit()
 
 bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, const PlayerInfo& connection, const XMLDoc& doc)
 {
-#if 0
-    std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-    if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-        settings_dir += '/';
-
-    const std::vector<std::string>& settings_files = VersionSensitiveSettingsFiles();
-    std::string settings_files_mismatches;
-    for (unsigned int i = 0; i < settings_files.size(); ++i) {
-        if (MD5FileSum(settings_dir + settings_files[i]) != doc.root_node.Child(settings_files[i]).Text()) {
-            if (!settings_files_mismatches.empty())
-                settings_files_mismatches += " ";
-            settings_files_mismatches += settings_files[i];
-        }
-    }
-    const std::map<std::string, std::string>& source_files = SourceFiles();
-    std::string source_files_mismatches;
-    for (std::map<std::string, std::string>::const_iterator it = source_files.begin(); it != source_files.end(); ++it) {
-        if (doc.root_node.ContainsChild(it->first) &&
-            doc.root_node.Child(it->first).Text() != it->second) {
-            if (!source_files_mismatches.empty())
-                source_files_mismatches += " ";
-            source_files_mismatches += it->first;
-        }
-    }
-    if (!settings_files_mismatches.empty() || !source_files_mismatches.empty()) {
-        const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
-        m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A player at " << 
-            (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket <<
-            " attempted to connect, but is using a different version of the following files: " << 
-            settings_files_mismatches << " " << source_files_mismatches <<
-            ".  This player will be notified of the conflicts, then dumped.";
-        if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
-            XMLDoc conflict_details;
-            conflict_details.root_node.AppendChild(XMLElement("settings_files", settings_files_mismatches));
-            conflict_details.root_node.AppendChild(XMLElement("source_files", source_files_mismatches));
-            m_network_core.SendMessage(VersionConflictMessage(player_id, conflict_details));
-            
-            SDL_Delay(5000);
-            m_network_core.DumpPlayer(player_id);
-        }
-        return true;
-    }
-#endif
+    // TODO 1: add the version id string from Version.cpp to the message on the client side
+    // TODO 2: check the version id string from Version.cpp against the one in the message here, and report differences as appropriate
     return false;
 }
 

@@ -440,8 +440,6 @@ namespace {
         const std::string m_category;
     };
 
-    bool temp_header_bool = RecordHeaderFile(TechTreeWndRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 //////////////////////////////////////////////////

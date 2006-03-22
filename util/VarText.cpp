@@ -79,8 +79,6 @@ namespace {
         std::string& m_str;
     };
 
-    bool temp_header_bool = RecordHeaderFile(VarTextRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 // static(s)

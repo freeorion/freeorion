@@ -185,8 +185,5 @@ private:
     static ServerApp*         s_app;
 };
 
-inline std::string ServerAppRevision()
-{return "$Id$";}
-
 #endif // _ServerApp_h_
 

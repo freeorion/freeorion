@@ -40,7 +40,4 @@ private:
     CUIButton*  m_exit_btn;	  //!< Quit game button
 };
 
-inline std::string InGameMenuRevision()
-{return "$Id$";}
-
 #endif // _InGameMenu_h_

@@ -57,9 +57,6 @@ void Ship::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_fleet_id);
 }
 
-inline std::string ShipRevision()
-{return "$Id$";}
-
 #endif // _Ship_h_
 
 

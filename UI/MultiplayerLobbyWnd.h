@@ -82,7 +82,4 @@ private:
     CUIButton*            m_cancel_bn;
 };
 
-inline std::string MultiplayerLobbyWndRevision()
-{return "$Id$";}
-
 #endif // _MultiplayerLobbyWnd_h_

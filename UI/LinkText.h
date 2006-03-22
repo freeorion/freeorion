@@ -105,7 +105,4 @@ LinkText::BoolCombiner::result_type LinkText::BoolCombiner::operator()(InIt firs
     return true;
 }
 
-inline std::string LinkTextRevision()
-{return "$Id$";}
-
 #endif // _LinkText_h_

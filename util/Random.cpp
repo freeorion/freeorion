@@ -7,8 +7,6 @@ namespace {
     GeneratorType gen; // the one random number generator driving the distributions below
     boost::uniform_01<GeneratorType> zero_to_one_gen(gen);
 
-    bool temp_header_bool = RecordHeaderFile(RandomRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

@@ -70,8 +70,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    bool temp_header_bool = RecordHeaderFile(MapWndRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

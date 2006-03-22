@@ -107,7 +107,4 @@ private:
     static ClientApp* s_app; ///< a ClientApp pointer to the singleton instance of the app
 };
 
-inline std::string ClientAppRevision()
-{return "$Id$";}
-
 #endif // _ClientApp_h_

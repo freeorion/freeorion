@@ -142,7 +142,4 @@ private:
     static GG::Pt s_last_position; ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.
 };
 
-inline std::string FleetWndRevision()
-{return "$Id$";}
-
 #endif // _FleetWnd_h_

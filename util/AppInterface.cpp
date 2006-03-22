@@ -13,11 +13,6 @@
 #include "../util/MultiplayerCommon.h"
 
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(AppInterfaceRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 const int INVALID_GAME_TURN = -1;
 const int BEFORE_FIRST_TURN = -2;
 const int IMPOSSIBLY_LARGE_TURN = 2 << 15;

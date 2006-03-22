@@ -93,7 +93,4 @@ private:
     
 };
 
-inline std::string StringTableRevision()
-{return "$Id$";}
-
 #endif // _StringTable_h_

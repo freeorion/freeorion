@@ -5,11 +5,6 @@
 #include <stdexcept>
 
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(ProcessRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 
 Process::Process() : 
     m_empty(true)

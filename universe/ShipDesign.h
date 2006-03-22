@@ -59,9 +59,6 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(graphic);
 }
 
-inline std::string ShipDesignRevision()
-{return "$Id$";}
-
 #endif // _ShipDesign_h_
 
 

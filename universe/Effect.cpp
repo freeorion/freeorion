@@ -49,8 +49,6 @@ namespace {
         return retval;
     }
 
-    bool temp_header_bool = RecordHeaderFile(EffectRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 ///////////////////////////////////////////////////////////

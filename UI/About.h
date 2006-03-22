@@ -97,7 +97,4 @@ private:
 
 };//About
 
-inline std::string AboutRevision()
-{return "$Id$";}
-
 #endif // _About_h_

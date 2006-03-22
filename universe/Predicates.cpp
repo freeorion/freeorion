@@ -9,11 +9,6 @@
 
 #include "../util/MultiplayerCommon.h"
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(PredicatesRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 ////////////////////////////////////////////////
 // UniverseObjectVisitor
 ////////////////////////////////////////////////

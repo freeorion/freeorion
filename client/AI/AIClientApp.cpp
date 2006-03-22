@@ -17,11 +17,6 @@
 #include <boost/filesystem/fstream.hpp>
 
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(AIClientAppRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 
 // static member(s)
 AIClientApp*  AIClientApp::s_app = 0;

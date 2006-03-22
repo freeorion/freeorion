@@ -129,7 +129,4 @@ void BuildingType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_graphic);
 }
 
-inline std::string BuildingRevision()
-{return "$Id$";}
-
 #endif // _Building_h_

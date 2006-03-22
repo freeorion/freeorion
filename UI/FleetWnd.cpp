@@ -265,8 +265,6 @@ namespace {
             *fleet->Owners().begin() == *target_fleet->Owners().begin();
     }
 
-    bool temp_header_bool = RecordHeaderFile(FleetWndRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 ////////////////////////////////////////////////

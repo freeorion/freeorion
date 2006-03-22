@@ -41,7 +41,4 @@ Special* GetSpecial(const std::string& name);
     to non-planet UniverseObjects, just like all Specials, and are not restricted to use during universe creation. */
 const std::set<std::string>& PlanetSpecialNames();
 
-inline std::string SpecialRevision()
-{return "$Id$";}
-
 #endif // _Special_h_

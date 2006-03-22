@@ -64,7 +64,4 @@ private:
     CUIButton*       m_cancel_bn;
 };
 
-inline std::string ServerConnectWndRevision()
-{return "$Id$";}
-
 #endif // _ServerConnectWnd_h_

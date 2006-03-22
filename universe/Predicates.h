@@ -165,7 +165,4 @@ T* WhollyOwnedVisitor<T>::Visit(T* obj) const
     return 0;
 }
 
-inline std::string PredicatesRevision()
-{return "$Id$";}
-
 #endif // _Predicates_h_

@@ -30,8 +30,6 @@ namespace
         return GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultHeight());
     }
 
-    bool temp_header_bool = RecordHeaderFile(CombatWndRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 class CombatInfoControl : public GG::Control

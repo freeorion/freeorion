@@ -196,7 +196,4 @@ private:
     friend OptionsDB& GetOptionsDB();
 };
 
-inline std::string OptionsDBRevision()
-{return "$Id$";}
-
 #endif // _OptionsDB_h_

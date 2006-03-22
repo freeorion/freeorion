@@ -44,8 +44,6 @@ namespace {
         }
     }
 
-    bool temp_header_bool = RecordHeaderFile(CUIDrawUtilRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 void AdjustBrightness(GG::Clr& color, int amount)

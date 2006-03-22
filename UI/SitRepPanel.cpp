@@ -12,8 +12,6 @@ namespace {
     const int    SITREP_LB_MARGIN_X = 5;
     const int    SITREP_LB_MARGIN_Y = 5;
 
-    bool temp_header_bool = RecordHeaderFile(SitRepPanelRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

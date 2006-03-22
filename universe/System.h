@@ -304,7 +304,4 @@ void System::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-inline std::string SystemRevision()
-{return "$Id$";}
-
 #endif // _System_h_

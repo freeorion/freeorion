@@ -578,10 +578,6 @@ namespace {
         }
         return retval;
     }
-
-    bool temp_header_bool = RecordHeaderFile(UniverseRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-    bool temp_header_bool2 = RecordHeaderFile(EnumsRevision());
 }
 
 namespace Delauney {

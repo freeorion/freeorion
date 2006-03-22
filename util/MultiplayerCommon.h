@@ -20,37 +20,6 @@ GG::Clr XMLToClr(const XMLElement& clr);
 /** Returns the integer priority level that should be passed to log4cpp for a given priority name string. */
 int PriorityValue(const std::string& name);
 
-/** Returns a vector of the names of all settings files that must be the same between the server and clients. */
-const std::vector<std::string>& VersionSensitiveSettingsFiles();
-
-/** Returns a map of all source files to their CVS revision numbers.  This is used to verify that the
-    server and clients are all using the same versions of code. */
-const std::map<std::string, std::string>& SourceFiles();
-
-/** Saves the filename and revision number contained within \a file_id_string for later retrieval via SourceFiles().
-    This function returns a dummy boolean value, allowing it to be executed at static initialization time, via a hack --
-    simply declare a file-scope bool variable, and initialize it: bool temp_bool = RecordSourceFile(...).  If the same
-    filename is registered more than once, an exception will be thrown.  \see RecordHeaderFile() has more info on how it
-    and this function should be used. */
-bool RecordSourceFile(const std::string& file_id_string);
-
-/** Virtually identical to RecordSourceFile().  Header files should declare an inline function that returns the
-    SVN-expanded file id string for that header, and the header file's matching source file should record that info
-    using this function.  Example:<br>In MultiplayerCommon.h:
-    \verbatim
-    inline std::string MultiplayerCommonRevision()
-    {return std::string("$Id$");}
-    \endverbatim<br>In MultiplayerCommon.cpp:
-    \verbatim
-    namespace {
-    ...
-    bool temp_header_bool = RecordHeaderFile(MultiplayerCommonRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-    }
-    \endverbatim
-*/
-bool RecordHeaderFile(const std::string& file_id_string);
-
 /** Returns an MD5 "sum" of the given string as a 32-digithexidecimal string. */
 std::string MD5StringSum(const std::string& str);
 
@@ -97,8 +66,5 @@ struct PlayerSetupData
     GG::Clr empire_color;     ///< the color used to represent this player's empire.
     int save_game_empire_id;  ///< when an MP save game is being loaded, this is the id of the empire that this player will play
 };
-
-inline std::string MultiplayerCommonRevision()
-{return "$Id$";}
 
 #endif // _MultiplayerCommon_h_

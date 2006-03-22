@@ -75,8 +75,6 @@ namespace {
 
     const double BUTTON_DIMMING_SCALE_FACTOR = 0.75;
 
-    bool temp_header_bool = RecordHeaderFile(CUIWndRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 ////////////////////////////////////////////////

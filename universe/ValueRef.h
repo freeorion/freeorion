@@ -403,7 +403,4 @@ bool ValueRef::ConstantExpr(const ValueRefBase<T>* expr)
 }
 
 
-inline std::string ValueRefRevision()
-{return "$Id$";}
-
 #endif // _ValueRef_h_

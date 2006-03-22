@@ -68,7 +68,4 @@ namespace detail {
     inline void PlayValueChangedSound::operator()(int) const {operator()(0.0);}
 }
 
-inline std::string CUISpinRevision()
-{return "$Id$";}
-
 #endif // _CUISpin_h_

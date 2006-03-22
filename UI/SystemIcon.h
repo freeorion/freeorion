@@ -90,7 +90,4 @@ private:
     friend class FleetButtonClickedFunctor;
 };
 
-inline std::string SystemIconRevision()
-{return "$Id$";}
-
 #endif // _SystemIcon_h_

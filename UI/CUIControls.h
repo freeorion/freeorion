@@ -533,7 +533,4 @@ private:
     GG::Clr m_outline_color;
 };
 
-inline std::string CUIControlsRevision()
-{return "$Id$";}
-
 #endif // _CUIControls_h_

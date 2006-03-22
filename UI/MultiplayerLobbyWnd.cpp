@@ -125,8 +125,6 @@ namespace {
     const GG::Pt PREVIEW_SZ(248, 186);
     const int    PREVIEW_MARGIN = 3;
 
-    bool temp_header_bool = RecordHeaderFile(MultiplayerLobbyWndRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) : 

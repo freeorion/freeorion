@@ -78,8 +78,6 @@ namespace {
         trade.AdjustCurrent(construction.Current() / (10.0 + trade.Current()));
     }
 
-    bool temp_header_bool = RecordHeaderFile(ResourceCenterRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 ResourceCenter::ResourceCenter(const Meter& pop) : 

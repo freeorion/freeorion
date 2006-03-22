@@ -125,7 +125,4 @@ void ResourceCenter::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-inline std::string ResourceCenterRevision()
-{return "$Id$";}
-
 #endif // _ResourceCenter_h_

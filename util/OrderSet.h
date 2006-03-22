@@ -63,9 +63,6 @@ private:
     OrderMap m_orders;
 };
 
-inline std::string OrderSetRevision()
-{return "$Id$";}
-
 #endif // _OrderSet_h_
 
 

@@ -79,7 +79,4 @@ double RandDouble(double min, double max);
     with standard deviation \a sigma */
 double RandGaussian(double mean, double sigma);
 
-inline std::string RandomRevision()
-{return "$Id$";}
-
 #endif // _Random_h_

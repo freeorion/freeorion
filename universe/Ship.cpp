@@ -15,11 +15,6 @@
 using boost::lexical_cast;
 #include <stdexcept>
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(ShipRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 ////////////////////////////////////////////////
 // Ship
 ////////////////////////////////////////////////

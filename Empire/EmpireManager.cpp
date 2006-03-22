@@ -3,11 +3,6 @@
 #include "../util/MultiplayerCommon.h"
 
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(EmpireManagerRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 const std::string EmpireManager::EMPIRE_UPDATE_TAG = "EmpireUpdate";
 
 EmpireManager::~EmpireManager()

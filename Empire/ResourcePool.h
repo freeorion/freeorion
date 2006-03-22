@@ -281,7 +281,4 @@ void TradeResourcePool::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_stockpile);
 }
 
-inline std::string ResourcePoolRevision()
-{return "$Id$";}
-
 #endif // _ResourcePool_h_

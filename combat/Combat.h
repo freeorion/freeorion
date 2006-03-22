@@ -54,7 +54,4 @@ struct CombatUpdateMessage
 
 };
 
-inline std::string CombatRevision()
-{return "$Id$";}
-
 #endif // _Combat_h_

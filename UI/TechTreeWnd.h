@@ -83,7 +83,4 @@ private:
     CUIButton*              m_uncollapse_all_button;
 };
 
-inline std::string TechTreeWndRevision()
-{return "$Id$";}
-
 #endif // _TechTreeWnd_h_

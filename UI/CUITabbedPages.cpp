@@ -5,8 +5,6 @@
 #include "../util/MultiplayerCommon.h"
 
 namespace {
-    bool temp_header_bool = RecordHeaderFile(CUITabbedPagesRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 
 	const int INNER_BUTTON_THICKNESS = 5;
 	const int TABCONTROL_XOFFSET = 5;

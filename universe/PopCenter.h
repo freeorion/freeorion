@@ -99,9 +99,6 @@ void PopCenter::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_available_food);
 }
 
-inline std::string PopCenterRevision()
-{return "$Id$";}
-
 #endif // _PopCenter_h_
 
 

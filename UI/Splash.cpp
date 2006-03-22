@@ -6,11 +6,6 @@
 #include <GG/StaticGraphic.h>
 
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(SplashRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 void LoadSplashGraphics(std::vector<std::vector<GG::StaticGraphic*> >& graphics)
 {
     const int IMAGE_CELLS_X = 3;

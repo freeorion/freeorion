@@ -46,8 +46,5 @@ private:
    static AIClientApp*  s_app;
 };
 
-inline std::string AIClientAppRevision()
-{return "$Id$";}
-
 #endif // _AIClientApp_h_
 

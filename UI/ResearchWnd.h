@@ -42,7 +42,4 @@ private:
     TechTreeWnd*         m_tech_tree_wnd;
 };
 
-inline std::string ResearchWndRevision()
-{return "$Id$";}
-
 #endif // _ResearchWnd_h_

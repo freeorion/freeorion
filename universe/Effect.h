@@ -277,7 +277,4 @@ private:
     const ValueRef::ValueRefBase<int>* m_effect_target_id;
 };
 
-inline std::string EffectRevision()
-{return "$Id$";}
-
 #endif // _Effect_h_

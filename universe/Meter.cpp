@@ -2,11 +2,6 @@
 
 #include "../util/MultiplayerCommon.h"
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(MeterRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 const double Meter::METER_MIN = 0.0;
 const double Meter::METER_MAX = 100.0;
 

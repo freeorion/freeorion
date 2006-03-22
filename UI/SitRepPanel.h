@@ -32,7 +32,4 @@ private:
     CUIListBox*           m_sitreps_lb;
 };
 
-inline std::string SitRepPanelRevision()
-{return "$Id$";}
-
 #endif // _SitRepPanel_h_

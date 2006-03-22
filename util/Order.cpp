@@ -42,8 +42,6 @@ namespace
     Order* GenResearchQueueOrder(const XMLElement& elem)   {return new ResearchQueueOrder(elem);}
     Order* GenProductionQueueOrder(const XMLElement& elem) {return new ProductionQueueOrder(elem);}
 
-    bool temp_header_bool = RecordHeaderFile(OrderRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 

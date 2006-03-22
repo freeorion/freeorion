@@ -32,8 +32,6 @@ namespace {
         return star_type_names;
     }
 
-    bool temp_header_bool = RecordHeaderFile(SystemIconRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
 }
 
 ////////////////////////////////////////////////

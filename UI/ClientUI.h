@@ -245,7 +245,4 @@ std::ostream& operator<<(std::ostream& os, const StreamableColor& clr);
 std::istream& operator>>(std::istream& is, StreamableColor& clr);
 
 
-inline std::string ClientUIRevision()
-{return "$Id$";}
-
 #endif // _ClientUI_h_

@@ -89,7 +89,4 @@ protected:
 	std::vector<GG::Wnd*>	m_pages;
 };
 
-inline std::string CUITabbedPagesRevision()
-{return "$Id$";}
-
 #endif // _CUITabbedPages_h_

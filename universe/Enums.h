@@ -325,7 +325,4 @@ MeterType FocusToMeter(FocusType type);
 /** Returns the equivalent meter type for the given focus; if no such focus exists, returns INVALID_FOCUS_TYPE. */
 FocusType MeterToFocus(MeterType type);
 
-inline std::string EnumsRevision()
-{return "$Id$";}
-
 #endif // _Enums_h_

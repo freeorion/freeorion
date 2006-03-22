@@ -75,7 +75,4 @@ void EmpireManager::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_empire_map);
 }
 
-inline std::string EmpireManagerRevision()
-{return "$Id$";}
-
 #endif // _EmpireManager_h_

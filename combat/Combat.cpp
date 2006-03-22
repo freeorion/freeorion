@@ -4,11 +4,6 @@
 #include "../util/XMLDoc.h"
 
 
-namespace {
-    bool temp_header_bool = RecordHeaderFile(CombatRevision());
-    bool temp_source_bool = RecordSourceFile("$Id$");
-}
-
 
 ////////////////////////////////////////////////
 // CombatUpdateMessage

@@ -80,8 +80,5 @@ private:
    net/net2 involves hostname resolution.*/
 std::string ToString(const IPaddress& addr);
 
-inline std::string NetworkCoreRevision()
-{return "$Id$";}
-
 #endif // _NetworkCore_h_
 

@@ -69,7 +69,4 @@ private:
    int                        m_UDP_socket;           ///< the "socket" number returned by SDL_net2; close this socket to stop listening on the port
 };
 
-inline std::string ServerNetworkCoreRevision()
-{return "$Id$";}
-
 #endif // _ServerNetworkCore_h_
