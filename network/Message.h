@@ -33,6 +33,7 @@ public:
     /** Represents the type of the message */
     enum MessageType {
         UNDEFINED,
+        DEBUG,                   ///< used to send special messages used for debugging purposes
         SERVER_STATUS,           ///< sent to the client when requested, and when the server first recieves a connection from a client
         HOST_GAME,               ///< sent when a client wishes to establish a game at the server
         JOIN_GAME,               ///< sent when a client wishes to join a game being established at the server

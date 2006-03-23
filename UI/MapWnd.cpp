@@ -70,6 +70,15 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
+#ifndef FREEORION_RELEASE
+    bool RequestRegressionTestDump()
+    {
+        ClientNetworkCore& network_core = HumanClientApp::GetApp()->NetworkCore();
+        Message msg(Message::DEBUG, HumanClientApp::GetApp()->PlayerID(), -1, Message::CORE, "EffectsRegressionTest");
+        network_core.SendMessage(msg);
+        return true;
+    }
+#endif
 }
 
 
@@ -304,6 +313,12 @@ MapWnd::MapWnd() :
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g, 0), &MapWnd::ZoomToNextIdleFleet, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v, 0), &MapWnd::ZoomToPrevFleet, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b, 0), &MapWnd::ZoomToNextFleet, this);
+
+#ifndef FREEORION_RELEASE
+    // special development-only key combo that dumps ValueRef, Condition, and Effect regression tests using the current
+    // Universe
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, GG::GGKMOD_CTRL), &RequestRegressionTestDump);
+#endif
 
     g_chat_edit_history.push_front("");
 
@@ -1619,6 +1634,10 @@ void MapWnd::SetAccelerators()
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_g, 0);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v, 0);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_b, 0);
+
+#ifndef FREEORION_RELEASE
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_r, GG::GGKMOD_CTRL);
+#endif
 }
 
 void MapWnd::RemoveAccelerators()
@@ -1653,6 +1672,10 @@ void MapWnd::RemoveAccelerators()
     GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_g, 0);
     GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_v, 0);
     GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_b, 0);
+
+#ifndef FREEORION_RELEASE
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_r, GG::GGKMOD_CTRL);
+#endif
 }
 
 /* Disables keyboard accelerators that use an alphanumeric key
