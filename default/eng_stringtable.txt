@@ -1661,6 +1661,11 @@ DESC_CONTAINED_BY
 DESC_CONTAINED_BY_NOT
  that is not contained by an object%1%
 
+DESC_OWNER_HAS_TECH
+ that belongs to an empire that has the tech %1%
+
+DESC_OWNER_HAS_TECH_NOT
+ that does not belong to an empire that has the tech %1%
 
 
 ###################
