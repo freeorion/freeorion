@@ -203,7 +203,7 @@ if not env.GetOption('clean'):
         else:
             if OptionValue('boost_signals_namespace', env):
                 signals_namespace = OptionValue('boost_signals_namespace', env)
-                env.Append(CPPDEFINES = [
+                env.AppendUnique(CPPDEFINES = [
                     ('BOOST_SIGNALS_NAMESPACE', signals_namespace),
                     ('signals', signals_namespace)
                     ])
@@ -219,14 +219,14 @@ if not env.GetOption('clean'):
             if str(Platform()) == 'posix':
                 if env['multithreaded']:
                     if conf.CheckCHeader('pthread.h') and conf.CheckLib('pthread', 'pthread_create', autoadd = 0):
-                        env.Append(CCFLAGS = ' -pthread')
-                        env.Append(LINKFLAGS = ' -pthread')
+                        env.AppendUnique(CCFLAGS = ' -pthread')
+                        env.AppendUnique(LINKFLAGS = ' -pthread')
                     else:
                         Exit(1)
 
             # GL and GLU
             if str(Platform()) == 'win32':
-                env.Append(LIBS = [
+                env.AppendUnique(LIBS = [
                     'opengl32.lib',
                     'glu32.lib'
                     ])
@@ -266,7 +266,7 @@ if not env.GetOption('clean'):
                 if not conf.CheckLib('freetype', 'FT_Init_FreeType'):
                     Exit(1)
             else:
-                env.Append(LIBS = [ft_win32_lib_name])
+                env.AppendUnique(LIBS = [ft_win32_lib_name])
 
             # DevIL (aka IL)
             AppendPackagePaths('devil', env)
@@ -325,30 +325,26 @@ int main() {
             if not conf.CheckLib('fmod-' + fmod_version, 'FSOUND_GetVersion', header = '#include <fmod.h>'):
                 Exit(1)
         else:
-            env.Append(LIBS = [fmod_win32_lib_name])
+            env.AppendUnique(LIBS = [fmod_win32_lib_name])
 
         # GraphViz
         AppendPackagePaths('graphviz', env)
         if pkg_config:
-            if conf.CheckPkg('graphviz', graphviz_pkgconfig_version):
-                env.ParseConfig('pkg-config --cflags --libs graphviz')
-            elif conf.CheckPkg('libdotneato', graphviz_pkgconfig_version):
-                env.ParseConfig('pkg-config --cflags --libs libdotneato')
-        if not conf.CheckCHeader('graphviz/render.h') and not conf.CheckCHeader('render.h'):
-            Exit(1)
-        env.Append(LIBS = [
-            'cdt',
-            'common',
-            'dotgen',
-            'dotneato',
-            'graph',
-            'gvrender',
-            'pathplan'
-            ])
-        if str(Platform()) != 'win32':
-            old_libs = env['LIBS']
-            if not conf.CheckLib('dotgen', 'begin_component', header = '#include <graphviz/render.h>\n#include <graphviz/dotprocs.h>'):
+            if conf.CheckPkg('libgraph', graphviz_pkgconfig_version) and conf.CheckPkg('libgvc', graphviz_pkgconfig_version):
+                env.ParseConfig('pkg-config --cflags --libs libgraph')
+                env.ParseConfig('pkg-config --cflags --libs libgvc')
+                found_it_with_pkg_config = True
+        if not found_it_with_pkg_config:
+            if not conf.CheckCHeader('gvc.h'):
                 Exit(1)
+            if str(Platform()) != 'win32':
+                if not conf.CheckLib('gvc', 'gvContext', header = '#include <gvc.h>'):
+                    Exit(1)
+            env.AppendUnique(LIBS = [
+                'cdt',
+                'graph',
+                'gvc'
+                ])
 
         # Log4cpp
         AppendPackagePaths('log4cpp', env)
@@ -390,15 +386,15 @@ int main() {
 # define targets                                 #
 ##################################################
 if env['release']:
-    env.Append(CPPDEFINES = [
+    env.AppendUnique(CPPDEFINES = [
         'FREEORION_RELEASE'
         ])
 if str(Platform()) == 'win32':
-    env.Append(CPPDEFINES = [
+    env.AppendUnique(CPPDEFINES = [
         'FREEORION_WIN32'
         ])
 else:
-    env.Append(CPPDEFINES = [
+    env.AppendUnique(CPPDEFINES = [
         'FREEORION_LINUX',
         'ENABLE_BINRELOC'
         ])
@@ -431,19 +427,19 @@ if str(Platform()) == 'win32':
         '/Zi',
         '/wd4099', '/wd4251', '/wd4800', '/wd4267', '/wd4275', '/wd4244', '/wd4101', '/wd4258', '/wd4351', '/wd4996'
         ]
-    env.Append(CCFLAGS = flags)
-    env.Append(CPPDEFINES = [
+    env.AppendUnique(CCFLAGS = flags)
+    env.AppendUnique(CPPDEFINES = [
         (env['debug'] and '_DEBUG' or 'NDEBUG'),
         'WIN32',
         '_WINDOWS'
         ])
     if env['dynamic']:
-        env.Append(CPPDEFINES = [
+        env.AppendUnique(CPPDEFINES = [
         '_USRDLL',
         '_WINDLL'
         ])
-    env.Append(LINKFLAGS = ['/SUBSYSTEM:CONSOLE', '/DEBUG'])
-    env.Append(LIBS = [
+    env.AppendUnique(LINKFLAGS = ['/SUBSYSTEM:CONSOLE', '/DEBUG'])
+    env.AppendUnique(LIBS = [
         'comdlg32',
         'gd',
         'gdi32',
@@ -466,9 +462,9 @@ if str(Platform()) == 'win32':
         ])
 else:
     if env['debug']:
-        env.Append(CCFLAGS = ['-Wall', '-g', '-O0'])
+        env.AppendUnique(CCFLAGS = ['-Wall', '-g', '-O0'])
     else:
-        env.Append(CCFLAGS = ['-Wall', '-O2'])
+        env.AppendUnique(CCFLAGS = ['-Wall', '-O2'])
 
 # generate Version.cpp
 version_cpp_in = open('util/Version.cpp.in', 'r')

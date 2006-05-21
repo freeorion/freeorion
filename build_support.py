@@ -148,9 +148,9 @@ def AppendPackagePaths(package, env):
     if not lib and root:
         lib = os.path.normpath(os.path.join(root, 'lib'))
     if inc:
-        env.Append(CPPPATH = [inc])
+        env.AppendUnique(CPPPATH = [inc])
     if lib:
-        env.Append(LIBPATH = [lib])
+        env.AppendUnique(LIBPATH = [lib])
 
 def CheckPkgConfig(context, version):
     context.Message('Checking for pkg-config... ')

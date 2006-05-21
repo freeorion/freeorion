@@ -19,15 +19,7 @@
 
 #include <valarray>
 
-extern "C" {
-#ifdef FREEORION_WIN32
-#include <render.h>
-#include <dotprocs.h>
-#else
-#include <graphviz/render.h>
-#include <graphviz/dotprocs.h>
-#endif
-}
+#include <gvc.h>
 
 #include <boost/format.hpp>
 
@@ -93,6 +85,21 @@ namespace {
         return HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + icon_filename);
     }
 
+    pointf Bezier(pointf* patch, double t)
+    {
+	pointf temp[6][6];
+	for (int j = 0; j <= 3; j++) {
+	    temp[0][j] = patch[j];
+	}
+	for (int i = 1; i <= 3; i++) {
+	    for (int j = 0; j <= 3 - i; j++) {
+		temp[i][j].x = (1.0 - t) * temp[i - 1][j].x + t * temp[i - 1][j + 1].x;
+		temp[i][j].y = (1.0 - t) * temp[i - 1][j].y + t * temp[i - 1][j + 1].y;
+	    }
+	}
+	return temp[3][0];
+    }
+
     std::vector<std::pair<double, double> > Spline(const std::vector<std::pair<int, int> >& control_points)
     {
         std::vector<std::pair<double, double> > retval;
@@ -108,7 +115,7 @@ namespace {
             retval.push_back(std::make_pair(patch[0].x, patch[0].y));
             const int SUBDIVISIONS = 20;
             for (int step = 1; step <= SUBDIVISIONS; ++step) {
-                pointf pt = Bezier(patch, 3, static_cast<double>(step) / SUBDIVISIONS, 0, 0);
+                pointf pt = Bezier(patch, static_cast<double>(step) / SUBDIVISIONS);
                 retval.push_back(std::make_pair(pt.x, pt.y));
             }
         }
@@ -1385,7 +1392,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
     Clear();
     m_selected_tech = selected_tech;
 
-    aginit();
+    GVC_t* gvc = gvContext();
 
     // default graph properties
     agraphattr(0, "rankdir", "LR");
@@ -1427,7 +1434,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
         }
     }
 
-    dot_layout(graph);
+    gvLayout(gvc, graph, "dot");
 
     // create new tech panels and new dependency arcs
     const int TECH_PANEL_MARGIN = 10;
@@ -1489,7 +1496,9 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
     m_vscroll->SizeScroll(0, layout_size.y - 1, std::max(50, std::min(layout_size.y / 10, client_sz.y)), client_sz.y);
     m_hscroll->SizeScroll(0, layout_size.x - 1, std::max(50, std::min(layout_size.x / 10, client_sz.x)), client_sz.x);
 
-    dot_cleanup(graph);
+    gvFreeLayout(gvc, graph);
+    gvFreeContext(gvc);
+
     agclose(graph);
 
     if (keep_position) {

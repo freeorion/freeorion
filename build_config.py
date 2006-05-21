@@ -21,7 +21,7 @@ boost_version = BoostStringToNumber(boost_version_string)
 
 log4cpp_version = '0.3.4b'
 
-fmod_version = '3.74'
+fmod_version = '3.75'
 fmod_win32_lib_name = 'fmodvc'
 
-graphviz_pkgconfig_version = '0.15.0'
+graphviz_pkgconfig_version = '2.8'
