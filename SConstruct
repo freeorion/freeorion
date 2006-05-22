@@ -337,14 +337,31 @@ int main() {
         if not found_it_with_pkg_config:
             if not conf.CheckCHeader('gvc.h'):
                 Exit(1)
-            if str(Platform()) != 'win32':
+            if str(Platform()) == 'win32':
+                env.AppendUnique(LIBS = [
+                    'cdt',
+                    'circogen',
+                    'common',
+                    'dotgen',
+                    'fdpgen',
+                    'gd',
+                    'graph',
+                    'gvc',
+                    'libexpat',
+                    'neatogen',
+                    'pack',
+                    'pathplan',
+                    'plugin',
+                    'twopigen'
+                    ])
+            else:
                 if not conf.CheckLib('gvc', 'gvContext', header = '#include <gvc.h>'):
                     Exit(1)
-            env.AppendUnique(LIBS = [
-                'cdt',
-                'graph',
-                'gvc'
-                ])
+                env.AppendUnique(LIBS = [
+                    'cdt',
+                    'graph',
+                    'gvc'
+                    ])
 
         # Log4cpp
         AppendPackagePaths('log4cpp', env)
@@ -441,7 +458,6 @@ if str(Platform()) == 'win32':
     env.AppendUnique(LINKFLAGS = ['/SUBSYSTEM:CONSOLE', '/DEBUG'])
     env.AppendUnique(LIBS = [
         'comdlg32',
-        'gd',
         'gdi32',
         'GiGi',
         'GiGiNet',
@@ -449,7 +465,6 @@ if str(Platform()) == 'win32':
         'glu32',
         'jpeg',
         'kernel32',
-        'libexpat',
         'log4cpp',
         'opengl32',
         'png',
