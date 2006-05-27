@@ -82,6 +82,11 @@ bool Ship::IsArmed() const
     return Design()->attack > 0;
 }
 
+double Ship::Speed() const
+{
+	return Design()->speed;
+}
+
 const std::string& Ship::PublicName(int empire_id) const
 {
     // Disclose real ship name only to fleet owners. Rationale: a player who doesn't know the design for a particular

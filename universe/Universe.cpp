@@ -2226,14 +2226,14 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         for (unsigned int j = 0; j < special->Effects().size(); ++j) {
             special->Effects()[j]->Execute(home_planet->ID(), target_set);
         }
-        home_planet->AdjustPop(15);
+        home_planet->AdjustPop( home_planet->MaxPop() );
         home_planet->GetMeter(METER_HEALTH)->SetCurrent(home_planet->GetMeter(METER_HEALTH)->Max());
-        home_planet->GetMeter(METER_CONSTRUCTION)->SetCurrent(home_planet->GetMeter(METER_CONSTRUCTION)->Max() * 0.75);
-        home_planet->GetMeter(METER_FARMING)->SetCurrent(home_planet->GetMeter(METER_FARMING)->Max() * 0.75);
-        home_planet->GetMeter(METER_INDUSTRY)->SetCurrent(home_planet->GetMeter(METER_INDUSTRY)->Max() * 0.75);
-        home_planet->GetMeter(METER_MINING)->SetCurrent(home_planet->GetMeter(METER_MINING)->Max() * 0.75);
-        home_planet->GetMeter(METER_RESEARCH)->SetCurrent(home_planet->GetMeter(METER_RESEARCH)->Max() * 0.75);
-        home_planet->GetMeter(METER_TRADE)->SetCurrent(home_planet->GetMeter(METER_TRADE)->Max() * 0.75);
+        home_planet->GetMeter(METER_CONSTRUCTION)->SetCurrent(home_planet->GetMeter(METER_CONSTRUCTION)->Max());
+        home_planet->GetMeter(METER_FARMING)->SetCurrent(home_planet->GetMeter(METER_FARMING)->Max());
+        home_planet->GetMeter(METER_INDUSTRY)->SetCurrent(home_planet->GetMeter(METER_INDUSTRY)->Max());
+        home_planet->GetMeter(METER_MINING)->SetCurrent(home_planet->GetMeter(METER_MINING)->Max());
+        home_planet->GetMeter(METER_RESEARCH)->SetCurrent(home_planet->GetMeter(METER_RESEARCH)->Max());
+        home_planet->GetMeter(METER_TRADE)->SetCurrent(home_planet->GetMeter(METER_TRADE)->Max());
         home_planet->AdjustDefBases(3);
 
         home_planet->GetMeter(METER_HEALTH)->m_initial_current = home_planet->GetMeter(METER_HEALTH)->Current();
@@ -2259,7 +2259,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         design.attack = 0;
         design.defense = 1;
         design.cost = 10;
-        design.speed = 1;
+        design.speed = 80.0;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Small and cheap unarmed vessel designed for recon and exploration.";
@@ -2270,7 +2270,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         design.attack = 0;
         design.defense = 1;
         design.cost = 50;
-        design.speed = 1;
+        design.speed = 35.0;
         design.colonize = true;
         design.empire = empire_id;
         design.description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
@@ -2281,7 +2281,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         design.attack = 2;
         design.defense = 1;
         design.cost = 20;
-        design.speed = 1;
+        design.speed = 50.0;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Affordable armed patrol frigate.";
@@ -2292,7 +2292,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         design.attack = 5;
         design.defense = 2;
         design.cost = 40;
-        design.speed = 1;
+        design.speed = 40.0;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Cruiser with storng defensive and offensive capabilities.";
@@ -2303,7 +2303,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         design.attack = 10;
         design.defense = 3;
         design.cost = 75;
-        design.speed = 1;
+        design.speed = 30.0;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
@@ -2314,7 +2314,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         design.attack = 15;
         design.defense = 5;
         design.cost = 140;
-        design.speed = 1;
+        design.speed = 25.0;
         design.colonize = false;
         design.empire = empire_id;
         design.description = "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";

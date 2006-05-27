@@ -29,6 +29,7 @@ public:
     virtual XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const;
 
     bool IsArmed() const;
+	double Speed() const;
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
     //@}

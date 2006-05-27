@@ -64,7 +64,6 @@ public:
     ServerState     State() const {return m_state;} ///< returns the current state of the server (one of the ServerState enum values)
     XMLDoc          ServerStatusDoc() const;        ///< returns an XMLDoc that represents the status of the server, suitable for transmission to a client
     int             CurrentTurn() const {return m_current_turn;}                ///< returns current turn of the server
-    DifficultyLevel CurrentDifficultyLevel() const {return m_difficulty_level;} ///< returns current turn of the server (one of the DifficultyLevel enum values)
     //@}
 
     /** \name Mutators */ //@{
@@ -153,7 +152,6 @@ private:
     ServerState             m_state;                ///< the server's current state of execution
    
     int                     m_current_turn;         ///< current turn number
-    DifficultyLevel         m_difficulty_level;     ///< current difficulty level
 
     std::vector<Process>    m_ai_clients;           ///< AI client child processes
     std::set<int>           m_ai_IDs;               ///< player IDs of AI clients

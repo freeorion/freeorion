@@ -725,6 +725,9 @@ At %1% System
 FW_FLEET_MOVING_TO
 Moving to %1%, ETA %2%
 
+FW_FLEET_ETA_NEVER
+Never
+
 FW_SHIP_CLASS
 Ship Class 
 
@@ -1010,16 +1013,16 @@ SITREP_BASE_BUILT
 %planet% has completed a defense base.
 
 SITREP_SHIP_BUILT
-A new %ship% is now available in the %system% system.
+A new %ship% has been produced in the %system% system.
 
 SITREP_BUILDING_BUILT
-A new %building% is now available on %planet%.
+%building% has been produced on %planet%.
 
 SITREP_TECH_RESEARCHED
 %tech% has been researched.
 
 SITREP_COMBAT_SYSTEM_WON
-A combat has taken place in %system%. We won!
+A combat has taken place in %system%. We were victorious!
 
 SITREP_COMBAT_SYSTEM_LOST
 A combat has taken place in %system%. We were defeated!
@@ -1027,8 +1030,14 @@ A combat has taken place in %system%. We were defeated!
 SITREP_COMBAT_SYSTEM_NO_VICTOR
 A combat has taken place in %system%. The encounter was inconclusive.
 
-PLANET_LOST_STARVED_TO_DEATH
+SITREP_PLANET_LOST_STARVED_TO_DEATH
 The entire population of %planet% has starved to death. The planet is lost!
+
+SITREP_PLANET_COLONIZED
+%planet% has been colonized in the %system% system.
+
+SITREP_FLEET_ARRIVED_AT_DESTINATION
+%fleet% has arrived at the %system% system and awaits further orders.
 
 
 ####################
@@ -1372,6 +1381,15 @@ owner
 
 DESC_VAR_ID
 ID
+
+DESC_VAR_AGE
+age in turns
+
+DESC_VAR_CREATIONTURN
+turn of creation
+
+DESC_VAR_CURRENTTURN
+the current turn
 
 # this one is intentially left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0

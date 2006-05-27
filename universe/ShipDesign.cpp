@@ -15,7 +15,7 @@ ShipDesign::ShipDesign() :
     name(""),
     description(""),
     cost(10000000.0),
-    speed(1.0),
+    speed(50.0),
     colonize(false),
     attack(0),
     defense(0),

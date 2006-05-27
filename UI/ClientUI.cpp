@@ -131,7 +131,9 @@ namespace {
         "SITREP_COMBAT_SYSTEM_WON",
         "SITREP_COMBAT_SYSTEM_LOST",
         "SITREP_COMBAT_SYSTEM_NO_VICTOR",
-        "PLANET_LOST_STARVED_TO_DEATH"
+        "SITREP_PLANET_LOST_STARVED_TO_DEATH",
+        "SITREP_PLANET_COLONIZED",
+        "SITREP_FLEET_ARRIVED_AT_DESTINATION"
 	};
     // command-line options
     void AddOptions(OptionsDB& db)

@@ -14,17 +14,16 @@ using boost::lexical_cast;
 #include <cmath>
 
 namespace {
-    const double SHIP_SPEED = 50.0; // "reasonable" speed --can cross galaxy in 20 turns (v0.2 only !!!!)
-
+	const double MAX_SHIP_SPEED = 500.0; // max allowed speed of ship movement
 }
-
 
 Fleet::Fleet() : 
     UniverseObject(),
     m_moving_to(INVALID_OBJECT_ID),
     m_prev_system(INVALID_OBJECT_ID),
     m_next_system(INVALID_OBJECT_ID),
-    m_travel_distance(0.0)
+    m_travel_distance(0.0),
+	m_speed(0.0)
 {
 }
 
@@ -33,7 +32,8 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     m_moving_to(INVALID_OBJECT_ID),
     m_prev_system(INVALID_OBJECT_ID),
     m_next_system(INVALID_OBJECT_ID),
-    m_travel_distance(0.0)
+    m_travel_distance(0.0),
+	m_speed(0.0)
 {
     AddOwner(owner);
 }
@@ -49,6 +49,7 @@ Fleet::Fleet(const XMLElement& elem) :
         m_moving_to = lexical_cast<int>(elem.Child("m_moving_to").Text());
         m_prev_system = lexical_cast<int>(elem.Child("m_prev_system").Text());
         m_next_system = lexical_cast<int>(elem.Child("m_next_system").Text());
+		m_speed = lexical_cast<double>(elem.Child("m_speed").Text());   // can't calculate this because ships in fleet might not be constructed yet
     } catch (const boost::bad_lexical_cast& e) {
         Logger().debugStream() << "Caught boost::bad_lexical_cast in Fleet::Fleet(); bad XMLElement was:";
         std::stringstream osstream;
@@ -112,6 +113,7 @@ XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
     retval.AppendChild(XMLElement("m_ships", StringFromContainer<ShipIDSet>(m_ships)));
     retval.AppendChild(XMLElement("m_prev_system", lexical_cast<std::string>(m_prev_system)));
     retval.AppendChild(XMLElement("m_next_system", lexical_cast<std::string>(m_next_system)));
+	retval.AppendChild(XMLElement("m_speed", lexical_cast<std::string>(m_speed)));
     return retval;
 }
 
@@ -125,22 +127,27 @@ std::pair<int, int> Fleet::ETA() const
 {
     std::pair<int, int> retval;
     CalculateRoute();
-    retval.first = static_cast<int>(std::ceil(m_travel_distance / SHIP_SPEED));
-    if (!m_travel_route.empty()) {
-        std::list<System*>::iterator next_system_it = m_travel_route.begin();
-        if (SystemID() == m_travel_route.front()->ID())
-            ++next_system_it;
-        System* next = *next_system_it;
-        if (next == m_travel_route.back()) {
-            retval.second = retval.first;
-        } else {
-            double x = next->X() - X();
-            double y = next->Y() - Y();
-            retval.second = static_cast<int>(std::ceil(std::sqrt(x * x + y * y) / SHIP_SPEED));
-        }
-    }
-    return retval;
-}
+	if (m_speed > 0.0) {
+		retval.first = static_cast<int>(std::ceil(m_travel_distance / m_speed));
+		
+		if (!m_travel_route.empty()) {
+			std::list<System*>::iterator next_system_it = m_travel_route.begin();
+			if (SystemID() == m_travel_route.front()->ID())
+				++next_system_it;
+			System* next = *next_system_it;
+			if (next == m_travel_route.back()) {
+				retval.second = retval.first;
+			} else {
+				double x = next->X() - X();
+				double y = next->Y() - Y();
+				retval.second = static_cast<int>(std::ceil(std::sqrt(x * x + y * y) / m_speed));
+			}
+		}
+	} else {
+		retval.first = -1;  // sentinel indiates ETA of never
+	}
+	return retval;
+ }
 
 System* Fleet::FinalDestination() const
 {
@@ -215,6 +222,7 @@ void Fleet::AddShips(const std::vector<int>& ships)
             throw std::invalid_argument("Fleet::AddShips() : Attempted to add an id of a non-ship object to a fleet.");
         }
     }
+	RecalculateFleetSpeed();
     StateChangedSignal();
 }
 
@@ -235,6 +243,7 @@ void Fleet::AddShip(const int ship_id)
     } else {
         throw std::invalid_argument("Fleet::AddShip() : Attempted to add an id of a non-ship object to a fleet.");
     }
+	RecalculateFleetSpeed(); // makes AddShip take Order(m_ships.size()) time - may need replacement
     StateChangedSignal();
 }
 
@@ -247,6 +256,7 @@ std::vector<int> Fleet::RemoveShips(const std::vector<int>& ships)
         if (!found)
             retval.push_back(ships[i]);
     }
+	RecalculateFleetSpeed();
     StateChangedSignal();
     return retval;
 }
@@ -263,6 +273,7 @@ std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
             GetUniverse().Delete(ships[i]);
         }
     }
+	RecalculateFleetSpeed();
     StateChangedSignal();
     return retval;
 }
@@ -274,6 +285,7 @@ bool Fleet::RemoveShip(int ship)
     iterator it = m_ships.find(ship);
     if (it != m_ships.end()) {
         m_ships.erase(it);
+		RecalculateFleetSpeed();
         StateChangedSignal();
         retval = true;
     }
@@ -296,7 +308,7 @@ void Fleet::MovementPhase()
         }
 
         System* next_system = m_travel_route.front();
-        double movement_left = SHIP_SPEED;
+        double movement_left = m_speed;
         while (movement_left) {
             double direction_x = next_system->X() - X();
             double direction_y = next_system->Y() - Y();
@@ -397,4 +409,25 @@ void Fleet::CalculateRoute() const
             }
         }
     }
+}
+
+void Fleet::RecalculateFleetSpeed()
+{
+	//Logger().debugStream() << "Recalculating Fleet Speed";
+	if (!(m_ships.empty())) {
+		//Logger().debugStream() << "  More than one ship.";
+		m_speed = MAX_SHIP_SPEED;  // max speed no ship can go faster than
+		for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+			//Logger().debugStream() << "  Ship: " << *it;
+			Ship* ship = GetUniverse().Object<Ship>(*it);
+			if (ship) {
+				//Logger().debugStream() << "  Ship speed: " << pShip->Speed();
+				if (ship->Speed() < m_speed)
+					m_speed = ship->Speed();
+			}
+		}
+	} else {
+		m_speed = 0.0;
+	}
+	//Logger().debugStream() << "  Final speed of fleet: " << m_speed;
 }

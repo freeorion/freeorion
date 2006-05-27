@@ -14,8 +14,7 @@ ClientApp::ClientApp() :
     m_current_combat(0), 
     m_player_id(-1),
     m_empire_id(-1),
-    m_current_turn(INVALID_GAME_TURN),
-    m_difficulty_level(INVALID_DIFFICULTY_LEVEL)
+    m_current_turn(INVALID_GAME_TURN)
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of ClientApp");
@@ -44,11 +43,6 @@ int ClientApp::EmpireID() const
 int ClientApp::CurrentTurn() const
 {
     return m_current_turn;
-}
-
-DifficultyLevel ClientApp::CurrentDifficultyLevel() const
-{
-    return m_difficulty_level;
 }
 
 Message ClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const

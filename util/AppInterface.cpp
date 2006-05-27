@@ -13,8 +13,8 @@
 #include "../util/MultiplayerCommon.h"
 
 
-const int INVALID_GAME_TURN = -1;
-const int BEFORE_FIRST_TURN = -2;
+const int INVALID_GAME_TURN = -(2 << 15)+1;
+const int BEFORE_FIRST_TURN = -(2 << 14);
 const int IMPOSSIBLY_LARGE_TURN = 2 << 15;
 
 EmpireManager& Empires()
@@ -65,16 +65,5 @@ int CurrentTurn()
     return INVALID_GAME_TURN;
 #else
     return ClientApp::GetApp()->CurrentTurn();
-#endif
-}
-
-DifficultyLevel CurrentDifficultyLevel()
-{
-#ifdef FREEORION_BUILD_SERVER
-    return ServerApp::GetApp()->CurrentDifficultyLevel();
-#elif defined(FREEORION_BUILD_UTIL)
-    return INVALID_DIFFICULTY_LEVEL;
-#else
-    return ClientApp::GetApp()->CurrentDifficultyLevel();
 #endif
 }

@@ -34,18 +34,6 @@ extern const int INVALID_GAME_TURN;     ///< returned by CurrentGameTurn if a ga
 extern const int BEFORE_FIRST_TURN;     ///< returned by CurrentGameTurn if the galaxy is currently being set up
 extern const int IMPOSSIBLY_LARGE_TURN; ///< a number that's almost assuredly larger than any real turn number that might come up
 
-enum DifficultyLevel {
-    INVALID_DIFFICULTY_LEVEL = -1,
-    NOVICE,
-    EASY,
-    MEDIUM,
-    HARD,
-    IMPOSSIBLE,
-    NUM_DIFFICULTY_LEVELS
-};
-
-DifficultyLevel CurrentDifficultyLevel();
-
 /* add additional accessors here for app specific things
    that are needed for both the server and the client, but for which
    access will vary and requires an #ifdef */

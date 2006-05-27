@@ -33,7 +33,7 @@ namespace {
             std::string close_tag = "</" + token_elem.Tag() + ">";
 
             // universe object token types
-            if (token == VarText::PLANET_ID_TAG || token == VarText::SYSTEM_ID_TAG || token == VarText::SHIP_ID_TAG) {
+            if (token == VarText::PLANET_ID_TAG || token == VarText::SYSTEM_ID_TAG || token == VarText::SHIP_ID_TAG || token == VarText::FLEET_ID_TAG) {
                 int object_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
                 UniverseObject* obj = GetUniverse().Object(object_id);
 
@@ -88,6 +88,7 @@ const std::string VarText::PLANET_ID_TAG = "planet";
 const std::string VarText::SYSTEM_ID_TAG = "system";
 const std::string VarText::TECH_ID_TAG = "tech";
 const std::string VarText::SHIP_ID_TAG = "ship";
+const std::string VarText::FLEET_ID_TAG = "fleet";
 const std::string VarText::BUILDING_ID_TAG = "building";
 
 VarText::VarText(const XMLElement& elem)

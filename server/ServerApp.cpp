@@ -197,8 +197,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_current_combat(0), 
     m_log_category(log4cpp::Category::getRoot()),
     m_state(SERVER_IDLE),
-    m_current_turn(1),
-    m_difficulty_level(INVALID_DIFFICULTY_LEVEL)
+    m_current_turn(INVALID_GAME_TURN)
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class ServerApp");
@@ -1271,8 +1270,10 @@ void ServerApp::SDLQuit()
 
 void ServerApp::NewGameInit()
 {
+	m_current_turn = BEFORE_FIRST_TURN;	// every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
     m_universe.CreateUniverse(m_galaxy_size, m_galaxy_shape, m_galaxy_age, m_starlane_freq, m_planet_density, m_specials_freq, 
                               m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size(), g_lobby_data.players);
+	m_current_turn = 1;
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << " (SERVER_GAME_SETUP).";
 
     // add empires to turn sequence map according to spec this should be done randomly for now it's not
@@ -1686,8 +1687,11 @@ void ServerApp::ProcessTurns()
         Planet *planet = GetUniverse().Object<Planet>(it->first);
 
         // only one empire?
-        if(it->second.size()==1)
+		if(it->second.size()==1) {
             it->second[0]->ServerExecute();
+			pEmpire = Empires().Lookup( it->second[0]->EmpireID() );
+			pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
+		}
         else
         {
             const System *system = GetUniverse().Object<System>(planet->SystemID());
@@ -1725,8 +1729,11 @@ void ServerApp::ProcessTurns()
                         winner = -1; // if the current winner isn't armed, a winner must be armed!!!!
 
             for(int i=0;i<static_cast<int>(it->second.size());i++)
-                if(winner==i) 
+				if(winner==i) {
                     it->second[i]->ServerExecute();
+					pEmpire = Empires().Lookup( it->second[i]->EmpireID() );
+					pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
+				}
                 else
                     it->second[i]->Undo();
         }
@@ -1734,13 +1741,30 @@ void ServerApp::ProcessTurns()
         planet->ResetIsAboutToBeColonized();
     }
 
-    // process movement phase
-    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::FLEET_MOVEMENT, -1));
-
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it)
-        it->second->MovementPhase();
-
+	// process movement phase
+	for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+		m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::FLEET_MOVEMENT, -1));
+	
+	for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+		// save for possible SitRep generation after moving...
+		const Fleet* fleet = GetUniverse().Object<Fleet>(it->first);
+		int eta = -1;
+		if (fleet)
+			eta = fleet->ETA().first;
+        
+		it->second->MovementPhase();
+        
+		// SitRep for fleets having arrived at destinations, to all owners of those fleets
+		if (fleet) {
+			if (eta == 1) {
+				std::set<int> owners_set = fleet->Owners();
+				for (std::set<int>::const_iterator owners_it = owners_set.begin(); owners_it != owners_set.end(); ++owners_it) {
+					pEmpire = Empires().Lookup( *owners_it );
+					pEmpire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
+				}
+			}
+		}
+	}
 
     // find planets which have starved to death
     std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();

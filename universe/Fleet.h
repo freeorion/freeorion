@@ -53,6 +53,9 @@ public:
     /// Returns ID of system that this fleet is moving to next as it moves to its destination.
     int NextSystemID() const {return m_next_system;}
 
+	/// Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
+	double Speed() const {return m_speed;}
+
     /// Returns true iff this fleet can change its direction while in interstellar space.
     bool CanChangeDirectionEnRoute() const;
 
@@ -72,7 +75,7 @@ public:
     void              SetRoute(const std::list<System*>& route, double distance);  ///< orders the fleet to move through the systems in the list, in order
    
     void              AddShip(int ship_id);                        ///< adds the ship to the fleet
-    bool              RemoveShip(int ship); ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.
+    bool              RemoveShip(int ship);					       ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.
     void              AddShips(const std::vector<int>& ships);     ///< adds the ships with the IDs stored in \a ships to the fleet
     std::vector<int>  RemoveShips(const std::vector<int>& ships);  ///< removes the ships with the IDs stored in \a ships from the fleet, and returns any IDs not found in the fleet
     std::vector<int>  DeleteShips(const std::vector<int>& ships);  ///< removes and deletes the ships with the IDs stored in \a ships from the fleet, and returns any IDs not found in the fleet
@@ -85,10 +88,13 @@ public:
     //@}
 
 private:
-    void CalculateRoute() const; // sets m_travel_route and m_travel_distance to their proper values based on the other member data
+    void CalculateRoute() const;	// sets m_travel_route and m_travel_distance to their proper values based on the other member data
+	void RecalculateFleetSpeed();	// recalculates the speed of the fleet by finding the lowest speed of the ships in the fleet.
 
     ShipIDSet           m_ships;
     int                 m_moving_to;
+
+	double              m_speed;  // updated whenever ship is added or removed from fleet.  equal to speed of slowest ship in fleet.
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
     int                 m_prev_system;  // the next system in the route, if any

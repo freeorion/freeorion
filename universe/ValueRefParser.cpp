@@ -67,7 +67,9 @@ namespace {
 	    str_p("source") >> '.' >> (!(variable_container >> ".") >> variable_final)
 	    [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))]
 	    | str_p("target") >> '.' >> (!(variable_container >> ".") >> variable_final)
-	    [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))];
+	    [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))]
+		| str_p("currentturn")
+		[variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))];
 
 	primary_expr =
 	    constant[primary_expr.this_ = arg1]
@@ -104,7 +106,11 @@ namespace {
 	    real_p[constant.this_ = new_<RefConst>(static_cast_<int>(arg1))]
 	    | int_p[constant.this_ = new_<RefConst>(arg1)];
 
-	variable_final = str_p("owner") | "id";
+	variable_final =
+		str_p("owner")
+		| "id"
+		| "creationturn"
+		| "age";
     }
 
     template <>

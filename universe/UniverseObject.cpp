@@ -63,10 +63,10 @@ UniverseObject::UniverseObject(const XMLElement& elem) :
         m_x = lexical_cast<double>(elem.Child("m_x").Text());
         m_y = lexical_cast<double>(elem.Child("m_y").Text());
         m_system_id = lexical_cast<int>(elem.Child("m_system_id").Text());
-        m_created_on_turn = lexical_cast<int>(elem.Child("m_created_on_turn").Text());
 
         if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
-            m_name = elem.Child("m_name").Text();
+			m_created_on_turn = lexical_cast<int>(elem.Child("m_created_on_turn").Text());
+			m_name = elem.Child("m_name").Text();
             m_owners = ContainerFromString<std::set<int> >(elem.Child("m_owners").Text());
             for (XMLElement::const_child_iterator it = elem.Child("m_specials").child_begin(); it != elem.Child("m_specials").child_end(); ++it) {
                 m_specials.insert(it->Text());
@@ -181,9 +181,9 @@ XMLElement UniverseObject::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) 
     retval.AppendChild(XMLElement("m_x", lexical_cast<std::string>(m_x)));
     retval.AppendChild(XMLElement("m_y", lexical_cast<std::string>(m_y)));
     retval.AppendChild(XMLElement("m_system_id", lexical_cast<std::string>(m_system_id)));
-	retval.AppendChild(XMLElement("m_created_on_turn", lexical_cast<std::string>(m_created_on_turn)));
     if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
-        retval.AppendChild(XMLElement("m_name", m_name));
+		retval.AppendChild(XMLElement("m_created_on_turn", lexical_cast<std::string>(m_created_on_turn)));
+		retval.AppendChild(XMLElement("m_name", m_name));
         retval.AppendChild(XMLElement("m_owners", StringFromContainer<std::set<int> >(m_owners)));
         retval.AppendChild(XMLElement("m_specials"));
         int i = 0;

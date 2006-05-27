@@ -66,7 +66,7 @@ struct Condition::Turn : Condition::ConditionBase
 {
     Turn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high);
     virtual ~Turn();
-    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 

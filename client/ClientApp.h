@@ -50,7 +50,6 @@ public:
     int                  PlayerID() const;         ///< returns the player ID of this client
     int                  EmpireID() const;         ///< returns the empire ID of this client
     int                  CurrentTurn() const;      ///< returns the current game turn
-    DifficultyLevel      CurrentDifficultyLevel() const; ///< returns current turn of the client (one of the DifficultyLevel enum values)
 
     /** returns the orders message containing all orders issued so far in the turn; if \a save_game_data is true, additional 
         client-side data may also be included */
@@ -95,7 +94,6 @@ protected:
     int                     m_player_id;
     int                     m_empire_id;
     int                     m_current_turn;
-    DifficultyLevel         m_difficulty_level;
 
 private:
     const ClientApp& operator=(const ClientApp&); // disabled

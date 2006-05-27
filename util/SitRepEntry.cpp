@@ -117,7 +117,37 @@ SitRepEntry *CreatePlanetStarvedToDeathSitRep(int system_id, int planet_id)
   system_elem.SetAttribute("value",  boost::lexical_cast<std::string>( system_id ));
   pSitRep->GetVariables( ).AppendChild( system_elem );
 
-
   return( pSitRep );
 }
 
+SitRepEntry *CreatePlanetColonizedSitRep(int system_id, int planet_id) {
+  SitRepEntry  *pSitRep = new SitRepEntry( );
+
+  pSitRep->SetType(SitRepEntry::PLANET_COLONIZED);
+
+  XMLElement planet_elem( VarText::PLANET_ID_TAG );
+  planet_elem.SetAttribute("value",  boost::lexical_cast<std::string>( planet_id ));
+  pSitRep->GetVariables( ).AppendChild( planet_elem );
+
+  XMLElement system_elem( VarText::SYSTEM_ID_TAG );
+  system_elem.SetAttribute("value",  boost::lexical_cast<std::string>( system_id ));
+  pSitRep->GetVariables( ).AppendChild( system_elem );
+
+   return( pSitRep );
+ }
+
+SitRepEntry *CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id) {
+  SitRepEntry  *pSitRep = new SitRepEntry( );
+
+  pSitRep->SetType(SitRepEntry::FLEET_ARRIVED_AT_DESTINATION);
+
+  XMLElement fleet_elem( VarText::FLEET_ID_TAG );
+  fleet_elem.SetAttribute("value",  boost::lexical_cast<std::string>( fleet_id ));
+  pSitRep->GetVariables( ).AppendChild( fleet_elem );
+
+  XMLElement system_elem( VarText::SYSTEM_ID_TAG );
+  system_elem.SetAttribute("value",  boost::lexical_cast<std::string>( system_id ));
+  pSitRep->GetVariables( ).AppendChild( system_elem );
+
+  return( pSitRep );
+}

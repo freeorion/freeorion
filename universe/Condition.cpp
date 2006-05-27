@@ -112,19 +112,13 @@ std::string Condition::Turn::Dump() const
     return DumpIndent() + "Turn low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
 }
 
-void Condition::Turn::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
-                           SearchDomain search_domain/* = NON_TARGETS*/) const
+bool Condition::Turn::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    double low = std::max(0, m_low->Eval(source, source));
-    double high = std::min(m_high->Eval(source, source), IMPOSSIBLY_LARGE_TURN);
-    int turn = CurrentTurn();
-
-    if (low <= turn && turn < high) {
-        if (search_domain == NON_TARGETS) {
-            targets.insert(non_targets.begin(), non_targets.end());
-            non_targets.clear();
-        }
-    }
+	double low = std::max(0, m_low->Eval(source, target));
+	double high = std::min(m_high->Eval(source, target), IMPOSSIBLY_LARGE_TURN);
+	int turn = CurrentTurn();
+	
+	return (low <= turn && turn < high);
 }
 
 ///////////////////////////////////////////////////////////
@@ -145,7 +139,7 @@ Condition::NumberOf::~NumberOf()
 
 std::string Condition::NumberOf::Description(bool negated/* = false*/) const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_number) ? lexical_cast<std::string>(m_number->Eval(0, 0)) : m_number->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_number) ? lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
     std::string description_str = "DESC_NUMBER_OF";
     if (negated)
         description_str += "_NOT";
@@ -176,16 +170,17 @@ void Condition::NumberOf::Eval(const UniverseObject* source, ObjectSet& targets,
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
     // find the desired number of objects in condition_targets
-    int number = m_number->Eval(0, 0);
+    int number = m_number->Eval(source, source);
     std::vector<bool> inclusion_list(condition_targets.size());
     std::vector<int> selection_list(condition_targets.size());
     for (unsigned int i = 0; i < selection_list.size(); ++i) {
         selection_list[i] = i;
     }
     for (int i = 0; i < std::min(number, static_cast<int>(condition_targets.size())); ++i) {
-        int selection = selection_list[RandSmallInt(0, selection_list.size() - 1)];
+        int temp = RandSmallInt(0, selection_list.size() - 1);
+		int selection = selection_list[temp];
         inclusion_list[selection] = true;
-        selection_list.erase(selection_list.begin() + selection);
+        selection_list.erase(selection_list.begin() + temp);
     }
 
     int i = 0;

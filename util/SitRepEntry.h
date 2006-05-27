@@ -57,6 +57,8 @@ public:
         COMBAT_SYSTEM_LOST,
         COMBAT_SYSTEM_NO_VICTOR,
         PLANET_LOST_STARVED_TO_DEATH,
+		PLANET_COLONIZED,
+		FLEET_ARRIVED_AT_DESTINATION,
         NUM_SITREP_TYPES
     };
 
@@ -98,6 +100,10 @@ SitRepEntry *CreateBuildingBuiltSitRep(const std::string& building_name, int pla
 SitRepEntry *CreateCombatSitRep(int empire_id, int victor_id, int system_id);
 
 SitRepEntry *CreatePlanetStarvedToDeathSitRep(int system_id, int planet_id);
+
+SitRepEntry *CreatePlanetColonizedSitRep(int system_id, int planet_id);
+
+SitRepEntry *CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
 
 // template implementations
 template <class Archive>

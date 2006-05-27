@@ -391,8 +391,14 @@ namespace ValueRef {
                 retval = *object->Owners().begin();
             else
                 retval = -1;
-        } else if (m_property_name.back() == "ID") {
-            retval = object->ID();
+		} else if (m_property_name.back() == "ID") {
+			retval = object->ID();
+		} else if (m_property_name.back() == "CurrentTurn") {
+			retval = CurrentTurn();
+		} else if (m_property_name.back() == "CreationTurn") {
+			retval = object->CreationTurn();
+		} else if (m_property_name.back() == "Age") {
+			retval = object->AgeInTurns();
         } else {
             throw std::runtime_error("Attempted to read a non-int value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type int.");
         }

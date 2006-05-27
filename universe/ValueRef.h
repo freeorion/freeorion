@@ -207,6 +207,9 @@ template <class T>
 std::string ValueRef::Variable<T>::Dump() const
 {
     std::string str(m_source_ref ? "Source" : "Target");
+	// now that we have some variables that apply globally, we need to special-case them:
+	if (m_property_name.back() == "CurrentTurn")
+		str = "";
     for (unsigned int i = 0; i < m_property_name.size(); ++i) {
         str += '.' + m_property_name[i];
     }
