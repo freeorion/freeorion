@@ -24,6 +24,7 @@ namespace {
         typedef ValueRef::ValueRefBase<T> RefBase;
         typedef ValueRef::Constant<T> RefConst;
         typedef ValueRef::Variable<T> RefVar;
+        typedef ValueRef::Variable<int> IntRefVar;
         typedef ValueRef::Operation<T> RefOp;
 
         typedef typename ValueRefRule<T>::type Rule;
@@ -32,10 +33,12 @@ namespace {
 
     private:
         void SpecializedInit();
+        void SpecializedVarDefinition();
 
         Rule constant;
         Rule variable_container;
         Rule variable_final;
+        Rule int_variable_final;
         Rule variable;
         Rule primary_expr;
         Rule negative_expr;
@@ -57,19 +60,19 @@ namespace {
     template <class T>
     ValueRefParserDefinition<T>::ValueRefParserDefinition(Rule& expr)
     {
+        int_variable_final =
+            str_p("owner")
+            | "id"
+            | "creationturn"
+            | "age";
+
         SpecializedInit();
 
         variable_container =
             str_p("planet")
             | "system";
 
-        variable =
-            str_p("source") >> '.' >> (!(variable_container >> ".") >> variable_final)
-            [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))]
-            | str_p("target") >> '.' >> (!(variable_container >> ".") >> variable_final)
-            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))]
-            | str_p("currentturn")
-            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))];
+        SpecializedVarDefinition();
 
         primary_expr =
             constant[primary_expr.this_ = arg1]
@@ -106,11 +109,7 @@ namespace {
             real_p[constant.this_ = new_<RefConst>(static_cast_<int>(arg1))]
             | int_p[constant.this_ = new_<RefConst>(arg1)];
 
-        variable_final =
-            str_p("owner")
-            | "id"
-            | "creationturn"
-            | "age";
+        variable_final = int_variable_final;
     }
 
     template <>
@@ -205,5 +204,44 @@ namespace {
             | int_p[constant.this_ = new_<RefConst>(static_cast_<FocusType>(arg1))];
 
         variable_final = str_p("primaryfocus") | "secondaryfocus";
+    }
+
+    template <class T>
+    void ValueRefParserDefinition<T>::SpecializedVarDefinition()
+    {
+        variable =
+            str_p("source") >> '.' >> (!(variable_container >> ".") >> variable_final)
+            [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))]
+            | str_p("target") >> '.' >> (!(variable_container >> ".") >> variable_final)
+            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))];
+    }
+
+    template <>
+    void ValueRefParserDefinition<int>::SpecializedVarDefinition()
+    {
+        variable =
+            str_p("source") >> '.' >> (!(variable_container >> ".") >> variable_final)
+            [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))]
+            | str_p("target") >> '.' >> (!(variable_container >> ".") >> variable_final)
+            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))]
+            | str_p("currentturn")
+            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))];
+    }
+
+    template <>
+    void ValueRefParserDefinition<double>::SpecializedVarDefinition()
+    {
+        typedef ValueRef::StaticCast<int, double> CastRefVar;
+        variable =
+            str_p("source") >> '.' >> (!(variable_container >> ".") >> variable_final)
+            [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))]
+            | str_p("source") >> '.' >> (!(variable_container >> ".") >> int_variable_final)
+            [variable.this_ = new_<CastRefVar>(new_<IntRefVar>(val(true), construct_<std::string>(arg1, arg2)))]
+            | str_p("target") >> '.' >> (!(variable_container >> ".") >> variable_final)
+            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))]
+            | str_p("target") >> '.' >> (!(variable_container >> ".") >> int_variable_final)
+            [variable.this_ = new_<CastRefVar>(new_<IntRefVar>(val(false), construct_<std::string>(arg1, arg2)))]
+            | str_p("currentturn")
+            [variable.this_ = new_<CastRefVar>(new_<IntRefVar>(val(false), construct_<std::string>(arg1, arg2)))];
     }
 }

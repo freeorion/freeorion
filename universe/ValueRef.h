@@ -26,6 +26,7 @@ namespace ValueRef {
     template <class T> struct ValueRefBase;
     template <class T> struct Constant;
     template <class T> struct Variable;
+    template <class FromType, class ToType> struct StaticCast;
     template <class T> struct Operation;
     enum OpType {
         PLUS,
@@ -63,7 +64,7 @@ private:
     T m_value;
 };
 
-/** the variable value leaf ValueRef class.  The value returned by this node is taken from either the \a source or \a target parameters to Eval. */
+/** the variable value ValueRef class.  The value returned by this node is taken from either the \a source or \a target parameters to Eval. */
 template <class T>
 struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
 {
@@ -78,9 +79,27 @@ struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+protected:
+    Variable(bool source_ref, const std::vector<std::string>& property_name);
+
 private:
     bool                     m_source_ref;
     std::vector<std::string> m_property_name;
+};
+
+/** the variable static_cast class.  The value returned by this node is taken from the ctor \a value_ref parameter's FromType value,
+    static_cast to ToType. */
+template <class FromType, class ToType>
+struct ValueRef::StaticCast : public ValueRef::Variable<ToType>
+{
+    StaticCast(const ValueRef::Variable<FromType>* value_ref);
+
+    virtual double Eval(const UniverseObject* source, const UniverseObject* target) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const ValueRefBase<FromType>* m_value_ref;
 };
 
 /** an arithmetic operation node ValueRef class.  One of addition, subtraction, mutiplication, division, or unary negation is 
@@ -181,6 +200,12 @@ ValueRef::Variable<T>::Variable(bool source_ref, const std::string& property_nam
 {}
 
 template <class T>
+ValueRef::Variable<T>::Variable(bool source_ref, const std::vector<std::string>& property_name) :
+    m_source_ref(source_ref),
+    m_property_name(property_name)
+{}
+
+template <class T>
 bool ValueRef::Variable<T>::SourceRef() const
 {
     return m_source_ref;
@@ -240,6 +265,33 @@ namespace ValueRef {
 
     template <>
     int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+}
+
+///////////////////////////////////////////////////////////
+// StaticCast                                            //
+///////////////////////////////////////////////////////////
+template <class FromType, class ToType>
+ValueRef::StaticCast<FromType, ToType>::StaticCast(const ValueRef::Variable<FromType>* value_ref) :
+    ValueRef::Variable<ToType>(value_ref->SourceRef(), value_ref->PropertyName()),
+    m_value_ref(value_ref)
+{}
+
+template <class FromType, class ToType>
+double ValueRef::StaticCast<FromType, ToType>::Eval(const UniverseObject* source, const UniverseObject* target) const
+{
+    return static_cast<ToType>(m_value_ref->Eval(source, target));
+}
+
+template <class FromType, class ToType>
+std::string ValueRef::StaticCast<FromType, ToType>::Description() const
+{
+    return m_value_ref->Description();
+}
+
+template <class FromType, class ToType>
+std::string ValueRef::StaticCast<FromType, ToType>::Dump() const
+{
+    return m_value_ref->Dump();
 }
 
 ///////////////////////////////////////////////////////////
