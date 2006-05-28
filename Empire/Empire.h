@@ -449,7 +449,7 @@ public:
 
     /// Checks for production projects that have been completed, and places them at their respective production sites.
     void CheckProductionProgress();
-   	
+        
     /// Mutator for empire color
     void SetColor(const GG::Clr& color);
 

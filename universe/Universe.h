@@ -349,7 +349,7 @@ protected:
     std::set<int> m_marked_destroyed;
 
     static double s_universe_width;
-	static int s_turn;
+    static int s_turn;
 
 private:
     static bool s_inhibit_universe_object_signals;
@@ -391,7 +391,7 @@ const T* Universe::Object(int id) const
 {
     const_iterator it = m_objects.find(id);
     return (it != m_objects.end() ?
-	    static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
+            static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
             0);
 }
 

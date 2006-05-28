@@ -86,7 +86,7 @@ bool ClientNetworkCore::SendSynchronousMessage( const Message& msg, Message& res
             } else {
               SDL_Delay(100); // reduce cpu load while waiting
             }
-	    }
+        }
     }
 
     return success;

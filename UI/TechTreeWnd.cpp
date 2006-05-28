@@ -87,17 +87,17 @@ namespace {
 
     pointf Bezier(pointf* patch, double t)
     {
-	pointf temp[6][6];
-	for (int j = 0; j <= 3; j++) {
-	    temp[0][j] = patch[j];
-	}
-	for (int i = 1; i <= 3; i++) {
-	    for (int j = 0; j <= 3 - i; j++) {
-		temp[i][j].x = (1.0 - t) * temp[i - 1][j].x + t * temp[i - 1][j + 1].x;
-		temp[i][j].y = (1.0 - t) * temp[i - 1][j].y + t * temp[i - 1][j + 1].y;
-	    }
-	}
-	return temp[3][0];
+        pointf temp[6][6];
+        for (int j = 0; j <= 3; j++) {
+            temp[0][j] = patch[j];
+        }
+        for (int i = 1; i <= 3; i++) {
+            for (int j = 0; j <= 3 - i; j++) {
+                temp[i][j].x = (1.0 - t) * temp[i - 1][j].x + t * temp[i - 1][j + 1].x;
+                temp[i][j].y = (1.0 - t) * temp[i - 1][j].y + t * temp[i - 1][j + 1].y;
+            }
+        }
+        return temp[3][0];
     }
 
     std::vector<std::pair<double, double> > Spline(const std::vector<std::pair<int, int> >& control_points)

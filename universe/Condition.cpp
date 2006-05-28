@@ -99,7 +99,7 @@ std::string Condition::Turn::Description(bool negated/* = false*/) const
 {
     std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
     std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
-	std::string description_str = "DESC_TURN";
+    std::string description_str = "DESC_TURN";
     if (negated)
         description_str += "_NOT";
     return str(format(UserString(description_str))
@@ -114,11 +114,11 @@ std::string Condition::Turn::Dump() const
 
 bool Condition::Turn::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-	double low = std::max(0, m_low->Eval(source, target));
-	double high = std::min(m_high->Eval(source, target), IMPOSSIBLY_LARGE_TURN);
-	int turn = CurrentTurn();
-	
-	return (low <= turn && turn < high);
+    double low = std::max(0, m_low->Eval(source, target));
+    double high = std::min(m_high->Eval(source, target), IMPOSSIBLY_LARGE_TURN);
+    int turn = CurrentTurn();
+        
+    return (low <= turn && turn < high);
 }
 
 ///////////////////////////////////////////////////////////
@@ -178,7 +178,7 @@ void Condition::NumberOf::Eval(const UniverseObject* source, ObjectSet& targets,
     }
     for (int i = 0; i < std::min(number, static_cast<int>(condition_targets.size())); ++i) {
         int temp = RandSmallInt(0, selection_list.size() - 1);
-		int selection = selection_list[temp];
+        int selection = selection_list[temp];
         inclusion_list[selection] = true;
         selection_list.erase(selection_list.begin() + temp);
     }
@@ -374,7 +374,7 @@ bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* 
         return universe_object_cast<const System*>(target);
         break;
     default:
-	    break;
+            break;
     }
     return false;
 }
@@ -494,7 +494,7 @@ std::string Condition::ContainedBy::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_CONTAINED_BY";
     if (negated)
         description_str += "_NOT";
-	return str(format(UserString(description_str)) % m_condition->Description());
+    return str(format(UserString(description_str)) % m_condition->Description());
 }
 
 std::string Condition::ContainedBy::Dump() const

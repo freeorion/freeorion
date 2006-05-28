@@ -100,7 +100,7 @@ std::string ToString(const IPaddress& addr)
 {
    std::string retval;
 #ifdef __BIG_ENDIAN__
-   retval += boost::lexical_cast<std::string>(addr.host	      & 255) + '.';
+   retval += boost::lexical_cast<std::string>(addr.host       & 255) + '.';
    retval += boost::lexical_cast<std::string>(addr.host >> 8  & 255) + '.';
    retval += boost::lexical_cast<std::string>(addr.host >> 16 & 255) + '.';
    retval += boost::lexical_cast<std::string>(addr.host >> 24);

@@ -41,7 +41,7 @@ InGameMenu::InGameMenu():
     const int BUTTON_X = (ClientWidth() - BUTTON_WIDTH) / 2;
     m_save_btn = new CUIButton(BUTTON_X, 22, BUTTON_WIDTH, UserString("GAME_MENU_SAVE"));
     m_load_btn = new CUIButton(BUTTON_X, 62, BUTTON_WIDTH, UserString("GAME_MENU_LOAD"));
-	m_options_btn = new CUIButton(BUTTON_X, 102, BUTTON_WIDTH, UserString("INTRO_BTN_OPTIONS"));
+    m_options_btn = new CUIButton(BUTTON_X, 102, BUTTON_WIDTH, UserString("INTRO_BTN_OPTIONS"));
     m_exit_btn = new CUIButton(BUTTON_X, 142, BUTTON_WIDTH, UserString("GAME_MENU_RESIGN"));
     m_done_btn = new CUIButton(BUTTON_X, 192, BUTTON_WIDTH, UserString("DONE"));
 
@@ -75,14 +75,14 @@ void InGameMenu::Init()
     //add children
     AttachChild(m_save_btn);
     AttachChild(m_load_btn);
-	AttachChild(m_options_btn);
+    AttachChild(m_options_btn);
     AttachChild(m_exit_btn);
     AttachChild(m_done_btn);
 
     //attach signals
     GG::Connect(m_save_btn->ClickedSignal, &InGameMenu::Save, this);
     GG::Connect(m_load_btn->ClickedSignal, &InGameMenu::Load, this);
-	GG::Connect(m_options_btn->ClickedSignal, &InGameMenu::Options, this);
+    GG::Connect(m_options_btn->ClickedSignal, &InGameMenu::Options, this);
     GG::Connect(m_exit_btn->ClickedSignal, &InGameMenu::Exit, this);
     GG::Connect(m_done_btn->ClickedSignal, &InGameMenu::Done, this);
 
@@ -129,7 +129,7 @@ void InGameMenu::Load()
 void InGameMenu::Options()
 {
     OptionsWnd options_wnd;
-	options_wnd.Run();
+    options_wnd.Run();
 }
 
 void InGameMenu::Exit()

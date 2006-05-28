@@ -36,9 +36,9 @@ namespace Condition {
     struct And;
     struct Or;
     struct Not;
-	struct Turn;
-	struct NumberOf;
-	struct ContainedBy;
+    struct Turn;
+    struct NumberOf;
+    struct ContainedBy;
 }
 
 /** The base class for all Conditions. */
@@ -87,7 +87,7 @@ struct Condition::NumberOf : Condition::ConditionBase
 
 private:
     const ValueRef::ValueRefBase<int>* m_number;
-	const ConditionBase*               m_condition;
+    const ConditionBase*               m_condition;
 };
 
 /** Matches all objects. */

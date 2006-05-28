@@ -2,7 +2,7 @@
 #ifndef _OrderSet_h_
 #define _OrderSet_h_
 
-#ifndef	_Order_h_
+#ifndef _Order_h_
 #include "Order.h"
 #endif
 

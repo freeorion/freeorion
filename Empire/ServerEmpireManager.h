@@ -72,7 +72,7 @@ public:
      *
      * An std::runtime_error is thrown if no empire exists with the given ID
      */
-	XMLElement CreateClientEmpireUpdate(int empire_id);
+    XMLElement CreateClientEmpireUpdate(int empire_id);
     
     /// Creates an XML encoding of an Empire's sitrep, to send to a Client.
     /**
@@ -84,7 +84,7 @@ public:
      *
      *  This method is depracated.  It does nothing.
      */
-	//XMLElement CreateClientSitrepUpdate(int empire_id);
+    //XMLElement CreateClientSitrepUpdate(int empire_id);
     
     //@}
 private:

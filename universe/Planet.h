@@ -63,7 +63,7 @@ public:
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
     //@}
-  	
+        
     /** \name Mutators */ //@{
     virtual Meter* GetMeter(MeterType type);
 

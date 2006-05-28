@@ -176,7 +176,7 @@ void GalaxySetupPanel::Init()
     m_textures[Universe::CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
     m_textures[Universe::ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
     m_textures[Universe::IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
-	m_textures[Universe::RING]->Load(ClientUI::ART_DIR + "gp_ring.png");
+    m_textures[Universe::RING]->Load(ClientUI::ART_DIR + "gp_ring.png");
 
     // fill droplists
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_2ARM")));

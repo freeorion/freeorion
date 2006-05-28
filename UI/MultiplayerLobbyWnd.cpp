@@ -496,7 +496,7 @@ bool MultiplayerLobbyWnd::PlayerDataAcceptable() const
         empire_colors.insert(row.player_data.empire_color.i);
     }
     return static_cast<int>(empire_names.size()) == m_players_lb->NumRows() &&
-	static_cast<int>(empire_colors.size()) == m_players_lb->NumRows();
+        static_cast<int>(empire_colors.size()) == m_players_lb->NumRows();
 }
 
 bool MultiplayerLobbyWnd::CanStart() const

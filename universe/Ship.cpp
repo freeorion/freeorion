@@ -84,7 +84,7 @@ bool Ship::IsArmed() const
 
 double Ship::Speed() const
 {
-	return Design()->speed;
+    return Design()->speed;
 }
 
 const std::string& Ship::PublicName(int empire_id) const

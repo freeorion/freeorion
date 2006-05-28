@@ -68,11 +68,11 @@ OptionsDB::Option::Option()
 
 OptionsDB::Option::Option(char short_name_, const std::string& name_, const boost::any& value_, const std::string& default_value_, const std::string& description_, 
                           const ValidatorBase* validator_/* = 0*/) :
-	name(name_),
+    name(name_),
     short_name(short_name_),
-	value(value_),
-	default_value(default_value_),
-	description(description_),
+    value(value_),
+    default_value(default_value_),
+    description(description_),
     validator(validator_),
     option_changed_sig_ptr(new boost::signal<void ()>())
 {

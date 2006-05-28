@@ -33,7 +33,7 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
         m_log_category.fatal("The AI client should not be called directly!");
         Exit(1);
     }
-	
+        
     // read command line args
     m_player_name = argv[1];
 
@@ -210,14 +210,14 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::GAME_START: {
         if (msg.Sender() == -1) {
-                Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received GAME_START message; "
-                    "starting AI turn...";
-    	    std::stringstream stream(msg.GetText());
+            Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received GAME_START message; "
+                "starting AI turn...";
+            std::stringstream stream(msg.GetText());
             XMLDoc doc;
             doc.ReadDoc(stream);
             m_current_turn = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
-	        // as it stands now, just start turn	   
-	        StartTurn();
+            // as it stands now, just start turn       
+            StartTurn();
         }
         break;
     }
@@ -241,13 +241,13 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::TURN_UPDATE: {
         if (msg.Sender() == -1) {
-	        // as it stands now, just start turn
+            // as it stands now, just start turn
             Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received TURN_UPDATE message; ...";
-    	    std::stringstream stream(msg.GetText());
+            std::stringstream stream(msg.GetText());
             XMLDoc doc;
             doc.ReadDoc(stream);
             m_current_turn = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
-	        StartTurn();
+            StartTurn();
         }
         break;
     }

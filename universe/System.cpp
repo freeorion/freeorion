@@ -272,7 +272,7 @@ int System::Insert(int obj_id, int orbit)
             FleetAddedSignal(*fleet);
         StateChangedSignal();
     }
-	return orbit;
+    return orbit;
 }
 
 bool System::Remove(int id)

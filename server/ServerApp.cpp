@@ -225,7 +225,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
 ServerApp::~ServerApp()
 {
     m_log_category.debug("Shutting down freeoriond logger...");
-	log4cpp::Category::shutdown();
+    log4cpp::Category::shutdown();
 }
 
 XMLDoc ServerApp::ServerStatusDoc() const
@@ -273,9 +273,9 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs)
         args.push_back(AI_CLIENT_EXE);
         args.push_back(player_name);
         args.push_back("--settings-dir"); args.push_back(GetOptionsDB().Get<std::string>("settings-dir"));
-	Logger().debugStream() << "starting " << AI_CLIENT_EXE;
+        Logger().debugStream() << "starting " << AI_CLIENT_EXE;
         m_ai_clients.push_back(Process(AI_CLIENT_EXE, args));
-	Logger().debugStream() << "done starting " << AI_CLIENT_EXE;
+        Logger().debugStream() << "done starting " << AI_CLIENT_EXE;
     }
 }
 
@@ -572,9 +572,9 @@ void ServerApp::HandleMessage(const Message& msg)
 
     case Message::TURN_ORDERS: {
         /* decode order set */
-	    std::stringstream stream(msg.GetText());
-	    XMLDoc doc;
-	    doc.ReadDoc(stream);
+        std::stringstream stream(msg.GetText());
+        XMLDoc doc;
+        doc.ReadDoc(stream);
 
         if (doc.root_node.ContainsChild("save_game_data")) { // the Orders were in answer to a save game data request
             doc.root_node.RemoveChild("save_game_data");
@@ -685,7 +685,7 @@ void ServerApp::HandleMessage(const Message& msg)
         /* get get ID and send back to client, it's waiting for this */
         m_network_core.SendMessage(DispatchObjectIDMessage(msg.Sender(), GetUniverse().GenerateObjectID( ) ) );
         break;
-	}
+    }
 
     case Message::END_GAME: {
         std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().find(msg.Sender());
@@ -813,7 +813,7 @@ void ServerApp::HandleMessage(const Message& msg)
                         break;
                     }
 
-                    // the rest of these test And Or and Not, and their interactions; A = case 9, B = case 13, C = case 11
+                        // the rest of these test And Or and Not, and their interactions; A = case 9, B = case 13, C = case 11
                     case 24: { // A and B
                         std::vector<const Condition::ConditionBase*> operands;
                         operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
@@ -1196,7 +1196,7 @@ void ServerApp::SDLInit()
     // Dirty hack to active the dummy video handler of SDL; if the user has already set SDL_VIDEODRIVER, we'll trust him
     if (getenv("SDL_VIDEODRIVER") == NULL) {
         putenv("SDL_VIDEODRIVER=dummy");
-	std::cerr << "NOTE: All warnings about \"using the SDL dummy video driver\" can safely be ignored." << std::endl;
+        std::cerr << "NOTE: All warnings about \"using the SDL dummy video driver\" can safely be ignored." << std::endl;
     }
 #endif
 
@@ -1243,18 +1243,18 @@ void ServerApp::Poll()
             m_network_core.HandleNetEvent(event);
         } else { // some other SDL event
             switch (event.type) {
-			case SDL_QUIT:
+            case SDL_QUIT:
                 Exit(0);
                 break;
-			}
+            }
         }
     }
 }
 
 void ServerApp::FinalCleanup()
 {
-	NetworkCore().DumpAllConnections();
-	for (unsigned int i = 0; i < m_ai_clients.size(); ++i)
+    NetworkCore().DumpAllConnections();
+    for (unsigned int i = 0; i < m_ai_clients.size(); ++i)
         m_ai_clients[i].Kill();
 }
 
@@ -1270,10 +1270,10 @@ void ServerApp::SDLQuit()
 
 void ServerApp::NewGameInit()
 {
-	m_current_turn = BEFORE_FIRST_TURN;	// every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
+    m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
     m_universe.CreateUniverse(m_galaxy_size, m_galaxy_shape, m_galaxy_age, m_starlane_freq, m_planet_density, m_specials_freq, 
                               m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size(), g_lobby_data.players);
-	m_current_turn = 1;
+    m_current_turn = 1;
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << " (SERVER_GAME_SETUP).";
 
     // add empires to turn sequence map according to spec this should be done randomly for now it's not
@@ -1687,11 +1687,11 @@ void ServerApp::ProcessTurns()
         Planet *planet = GetUniverse().Object<Planet>(it->first);
 
         // only one empire?
-		if(it->second.size()==1) {
+        if(it->second.size()==1) {
             it->second[0]->ServerExecute();
-			pEmpire = Empires().Lookup( it->second[0]->EmpireID() );
-			pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
-		}
+            pEmpire = Empires().Lookup( it->second[0]->EmpireID() );
+            pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
+        }
         else
         {
             const System *system = GetUniverse().Object<System>(planet->SystemID());
@@ -1729,11 +1729,11 @@ void ServerApp::ProcessTurns()
                         winner = -1; // if the current winner isn't armed, a winner must be armed!!!!
 
             for(int i=0;i<static_cast<int>(it->second.size());i++)
-				if(winner==i) {
+                if(winner==i) {
                     it->second[i]->ServerExecute();
-					pEmpire = Empires().Lookup( it->second[i]->EmpireID() );
-					pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
-				}
+                    pEmpire = Empires().Lookup( it->second[i]->EmpireID() );
+                    pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
+                }
                 else
                     it->second[i]->Undo();
         }
@@ -1741,30 +1741,30 @@ void ServerApp::ProcessTurns()
         planet->ResetIsAboutToBeColonized();
     }
 
-	// process movement phase
-	for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-		m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::FLEET_MOVEMENT, -1));
-	
-	for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-		// save for possible SitRep generation after moving...
-		const Fleet* fleet = GetUniverse().Object<Fleet>(it->first);
-		int eta = -1;
-		if (fleet)
-			eta = fleet->ETA().first;
+    // process movement phase
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+        m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::FLEET_MOVEMENT, -1));
         
-		it->second->MovementPhase();
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+        // save for possible SitRep generation after moving...
+        const Fleet* fleet = GetUniverse().Object<Fleet>(it->first);
+        int eta = -1;
+        if (fleet)
+            eta = fleet->ETA().first;
         
-		// SitRep for fleets having arrived at destinations, to all owners of those fleets
-		if (fleet) {
-			if (eta == 1) {
-				std::set<int> owners_set = fleet->Owners();
-				for (std::set<int>::const_iterator owners_it = owners_set.begin(); owners_it != owners_set.end(); ++owners_it) {
-					pEmpire = Empires().Lookup( *owners_it );
-					pEmpire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
-				}
-			}
-		}
-	}
+        it->second->MovementPhase();
+        
+        // SitRep for fleets having arrived at destinations, to all owners of those fleets
+        if (fleet) {
+            if (eta == 1) {
+                std::set<int> owners_set = fleet->Owners();
+                for (std::set<int>::const_iterator owners_it = owners_set.begin(); owners_it != owners_set.end(); ++owners_it) {
+                    pEmpire = Empires().Lookup( *owners_it );
+                    pEmpire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
+                }
+            }
+        }
+    }
 
     // find planets which have starved to death
     std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();

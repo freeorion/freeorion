@@ -21,11 +21,11 @@ int main(int argc, char* argv[])
     try {
         GetOptionsDB().AddFlag('h', "help", "Print this help message.");
         GetOptionsDB().AddFlag('g', "generate-config-xml", "Uses all the settings from any existing config.xml file and those given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.");
-		GetOptionsDB().AddFlag('m', "music-off", "Disables music in the game");
+        GetOptionsDB().AddFlag('m', "music-off", "Disables music in the game");
 #ifdef FREEORION_LINUX
-		GetOptionsDB().Add("bg-music", "Sets the background track to play", (GetGlobalDir() / "artificial_intelligence_v3.ogg").native_file_string());
+        GetOptionsDB().Add("bg-music", "Sets the background track to play", (GetGlobalDir() / "artificial_intelligence_v3.ogg").native_file_string());
 #else
-		GetOptionsDB().Add<std::string>("bg-music", "Sets the background track to play", "artificial_intelligence_v3.ogg");
+        GetOptionsDB().Add<std::string>("bg-music", "Sets the background track to play", "artificial_intelligence_v3.ogg");
 #endif
         GetOptionsDB().AddFlag('f', "fullscreen", "Start the game in fullscreen");
         XMLDoc doc;

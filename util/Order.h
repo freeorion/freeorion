@@ -34,7 +34,7 @@ public:
     Order(); ///< default ctor
     Order(const XMLElement& elem);  ///< XML constructor
     Order(int empire) : m_empire(empire) {} ///< ctor taking the ID of the Empire issuing the order
-	virtual ~Order() {}
+    virtual ~Order() {}
     //@}
    
     /** \name Accessors */ //@{

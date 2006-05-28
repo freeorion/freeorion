@@ -84,7 +84,7 @@ public:
     typedef boost::signal<void (const std::string&)>   OptionRemovedSignalType;  ///< emitted when an option is removed
     //@}
 
-	void Validate(const std::string& name, const std::string& value) const; ///< validates a value for an option
+    void Validate(const std::string& name, const std::string& value) const; ///< validates a value for an option
 
     /** returns the value of option \a name. Note that the exact type of item stored in the option \a name must be known in advance.  
         This means that Get() must be called as Get<int>("foo"), etc. */
@@ -97,15 +97,15 @@ public:
         return boost::any_cast<T>(it->second.value);
     }
 
-    void        GetUsage(std::ostream& os, const std::string& command_line = "") const; ///< writes a usage message to \a os
+    void    GetUsage(std::ostream& os, const std::string& command_line = "") const; ///< writes a usage message to \a os
     XMLDoc  GetXML() const;                                                         ///< returns the contents of the DB as an XMLDoc
 
     OptionChangedSignalType&        OptionChangedSignal(const std::string& option); ///< the option changed signal object for the given option
     mutable OptionAddedSignalType   OptionAddedSignal;   ///< the option added signal object for this DB
     mutable OptionRemovedSignalType OptionRemovedSignal; ///< the change removed signal object for this DB
 
-	/** adds an Option, optionally with a custom validator */
-	template <class T>
+    /** adds an Option, optionally with a custom validator */
+    template <class T>
     void Add(const std::string& name, const std::string& description, T default_value, const ValidatorBase& validator = Validator<T>())
     {
         if (m_options.find(name) != m_options.end())
@@ -114,8 +114,8 @@ public:
         OptionAddedSignal(name);
     }
 
-	/** adds an Option with an alternative one-character shortened name, optionally with a custom validator */
-	template <class T>
+    /** adds an Option with an alternative one-character shortened name, optionally with a custom validator */
+    template <class T>
     void Add(char short_name, const std::string& name, const std::string& description, T default_value, const ValidatorBase& validator = Validator<T>())
     {
         if (m_options.find(name) != m_options.end())
@@ -124,7 +124,7 @@ public:
         OptionAddedSignal(name);
     }
 
-	/** adds a flag Option, which is treated as a boolean value with a default of false.  Using the flag on the command line at all indicates 
+    /** adds a flag Option, which is treated as a boolean value with a default of false.  Using the flag on the command line at all indicates 
         that its value it set to true. */
     void AddFlag(const std::string& name, const std::string& description)
     {
@@ -134,7 +134,7 @@ public:
         OptionAddedSignal(name);
     }
 
-	/** adds an Option with an alternative one-character shortened name, which is treated as a boolean value with a default of false.  
+    /** adds an Option with an alternative one-character shortened name, which is treated as a boolean value with a default of false.  
         Using the flag on the command line at all indicates that its value it set to true. */
     void AddFlag(char short_name, const std::string& name, const std::string& description)
     {

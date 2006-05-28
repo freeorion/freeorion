@@ -48,16 +48,16 @@ namespace {
 
 void AdjustBrightness(GG::Clr& color, int amount)
 {
-	color.r = std::max(0, std::min(color.r + amount, 255));
-	color.g = std::max(0, std::min(color.g + amount, 255));
-	color.b = std::max(0, std::min(color.b + amount, 255));
+    color.r = std::max(0, std::min(color.r + amount, 255));
+    color.g = std::max(0, std::min(color.g + amount, 255));
+    color.b = std::max(0, std::min(color.b + amount, 255));
 }
 
 void AdjustBrightness(GG::Clr& color, double amount)
 {
-	color.r = std::max(0, std::min(static_cast<int>(color.r * amount), 255));
-	color.g = std::max(0, std::min(static_cast<int>(color.g * amount), 255));
-	color.b = std::max(0, std::min(static_cast<int>(color.b * amount), 255));
+    color.r = std::max(0, std::min(static_cast<int>(color.r * amount), 255));
+    color.g = std::max(0, std::min(static_cast<int>(color.g * amount), 255));
+    color.b = std::max(0, std::min(static_cast<int>(color.b * amount), 255));
 }
 
 void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Clr border, int angle_offset, int thick, 
@@ -100,7 +100,7 @@ void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Cl
         if (upper_left_angled) {
             glVertex2i(ul_corner_x1, ul_corner_y1);
             glVertex2i(inner_ul_corner_x1, inner_ul_corner_y1);
-		} else {
+        } else {
             glVertex2i(x1, y1);
             glVertex2i(inner_x1, inner_y1);
         }
@@ -189,19 +189,19 @@ void Triangle(double x1, double y1, double x2, double y2, double x3, double y3, 
     glVertex2d(x3, y3);
     glEnd();
     if (border) {
-		AdjustBrightness(color, 75);
-		// trace the lines both ways, to ensure that this small polygon looks symmetrical
+        AdjustBrightness(color, 75);
+        // trace the lines both ways, to ensure that this small polygon looks symmetrical
         glColor4ubv(color.v);
-		glBegin(GL_LINE_LOOP);
-		glVertex2d(x3, y3);
-		glVertex2d(x2, y2);
-		glVertex2d(x1, y1);
-		glEnd();
-		glBegin(GL_LINE_LOOP);
-		glVertex2d(x1, y1);
-		glVertex2d(x2, y2);
-		glVertex2d(x3, y3);
-		glEnd();
+        glBegin(GL_LINE_LOOP);
+        glVertex2d(x3, y3);
+        glVertex2d(x2, y2);
+        glVertex2d(x1, y1);
+        glEnd();
+        glBegin(GL_LINE_LOOP);
+        glVertex2d(x1, y1);
+        glVertex2d(x2, y2);
+        glVertex2d(x3, y3);
+        glEnd();
     }
     glEnable(GL_TEXTURE_2D);
 }

@@ -74,7 +74,7 @@ public:
 public:
 //! \name Data Members
 //!@{
-       bool m_end_with_done;    //!< determines whether or not we ended the dialog with OK or not
+    bool m_end_with_done;    //!< determines whether or not we ended the dialog with OK or not
 //!@}
 private:
 //! \name Controls
@@ -84,11 +84,11 @@ private:
     GG::Button*       m_license;     //!< License button
     GG::Button*       m_vision;        //!< Vision button
 
-    XMLDoc 		      m_vision_doc; //!< XML document containing the project vision
+    XMLDoc                    m_vision_doc; //!< XML document containing the project vision
 
-    GG::MultiEdit *	  m_info;	//!< Displays the license or vision information
+    GG::MultiEdit *       m_info;       //!< Displays the license or vision information
 
-    std::string		  m_license_str;	//!< String containing the copyright license
+    std::string           m_license_str;        //!< String containing the copyright license
 
 //!@}
 

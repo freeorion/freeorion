@@ -50,7 +50,7 @@ std::string ClientUI::TITLE_FONT       = (GLOBAL_DIR / "DejaVuSans.ttf").native_
 
 std::string ClientUI::DIR              = (GLOBAL_DIR / "default/").native_directory_string();
 std::string ClientUI::ART_DIR          = (GLOBAL_DIR / "default/data/art/").native_directory_string();
-std::string ClientUI::SOUND_DIR	       = (GLOBAL_DIR / "default/data/sound/").native_directory_string();
+std::string ClientUI::SOUND_DIR        = (GLOBAL_DIR / "default/data/sound/").native_directory_string();
 #else
 std::string ClientUI::FONT             = "DejaVuSans.ttf";
 std::string ClientUI::FONT_BOLD        = "DejaVuSans-Bold.ttf";
@@ -123,7 +123,7 @@ namespace {
     // It's in this module becaue SitReps know nothing about how they
     // should be rendered - this is up to the client UI
     const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
-	{
+    {
         "SITREP_BASE_BUILT",
         "SITREP_SHIP_BUILT",
         "SITREP_BUILDING_BUILT",
@@ -134,7 +134,7 @@ namespace {
         "SITREP_PLANET_LOST_STARVED_TO_DEATH",
         "SITREP_PLANET_COLONIZED",
         "SITREP_FLEET_ARRIVED_AT_DESTINATION"
-	};
+    };
     // command-line options
     void AddOptions(OptionsDB& db)
     {
@@ -640,7 +640,7 @@ ClientUI::GetNumberedTexture(const std::string& dir_name, const std::map<int, st
 
 const std::string& ClientUI::SoundDir()
 {
-	return SOUND_DIR;
+    return SOUND_DIR;
 }
 
 ////////////////////////////////////////////////////

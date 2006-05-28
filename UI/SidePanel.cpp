@@ -951,12 +951,12 @@ bool SidePanel::PlanetPanel::Hilited() const
 
 void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys) 
 {
-  if(InPlanet(pt))
-  {
-    if(GetOptionsDB().Get<bool>("UI.sound.enabled"))
-      HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.planet-button-click"));
-	PlanetImageLClickedSignal(m_planet_id);
-  }
+    if(InPlanet(pt))
+    {
+        if(GetOptionsDB().Get<bool>("UI.sound.enabled"))
+            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.planet-button-click"));
+        PlanetImageLClickedSignal(m_planet_id);
+    }
 }
 
 bool SidePanel::PlanetPanel::RenderUnhabited(const Planet &planet)

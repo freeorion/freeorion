@@ -33,7 +33,7 @@ struct ShipDesign
     /////////////////////////////////////////////////////////////////////////////
 
     /** \name Accessors */ //@{
-  	XMLElement XMLEncode() const; ///< constructs an XMLElement from a ShipDesign object
+    XMLElement XMLEncode() const; ///< constructs an XMLElement from a ShipDesign object
     //@}
 
 private:

@@ -106,19 +106,19 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
 
     switch (m_process_id = fork()) {
     case -1: { // error
-       throw std::runtime_error("Process::Process : Failed to fork a new process.");
-       break;
+        throw std::runtime_error("Process::Process : Failed to fork a new process.");
+        break;
     }
 
     case 0: { // child process side of fork
-	execv(cmd.c_str(), &args[0]);
-	perror("execv failed");
-       break;
+        execv(cmd.c_str(), &args[0]);
+        perror("execv failed");
+        break;
     }
 
     default: // original process side of fork (execution continues after a set-up wait)
-       sleep(1); // wait a second to let the child process set up
-       break;
+        sleep(1); // wait a second to let the child process set up
+        break;
     }
 }
 

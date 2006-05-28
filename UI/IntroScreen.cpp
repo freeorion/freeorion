@@ -317,7 +317,7 @@ void IntroScreen::OnOptions()
         m_credits_wnd = 0;
     }
     OptionsWnd options_wnd;
-	options_wnd.Run();
+    options_wnd.Run();
 }
 
 void IntroScreen::OnAbout()
@@ -381,6 +381,6 @@ void IntroScreen::Render()
     CUIWnd::Render();
     GG::Pt size=font->TextExtent(FreeOrionVersionString());
     font->RenderText(GG::GUI::GetGUI()->AppWidth()-size.x,
-		     GG::GUI::GetGUI()->AppHeight()-size.y,
-		     FreeOrionVersionString());
+                     GG::GUI::GetGUI()->AppHeight()-size.y,
+                     FreeOrionVersionString());
 }

@@ -855,7 +855,7 @@ std::string FleetDetailPanel::DestinationText() const
         } else {
             retval = boost::io::str(boost::format(UserString("FW_FLEET_MOVING_TO")) % (dest->Name().empty() ? UserString("UNKNOWN_SYSTEM") : dest->Name()) % UserString("FW_FLEET_ETA_NEVER"));
         }
-	} else if (current) {
+    } else if (current) {
         retval = boost::io::str(boost::format(UserString("FW_FLEET_AT")) % current->Name());
     }
     return retval;

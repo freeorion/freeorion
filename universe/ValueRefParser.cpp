@@ -57,153 +57,153 @@ namespace {
     template <class T>
     ValueRefParserDefinition<T>::ValueRefParserDefinition(Rule& expr)
     {
-	SpecializedInit();
+        SpecializedInit();
 
-	variable_container =
-	    str_p("planet")
-	    | "system";
+        variable_container =
+            str_p("planet")
+            | "system";
 
-	variable =
-	    str_p("source") >> '.' >> (!(variable_container >> ".") >> variable_final)
-	    [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))]
-	    | str_p("target") >> '.' >> (!(variable_container >> ".") >> variable_final)
-	    [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))]
-		| str_p("currentturn")
-		[variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))];
+        variable =
+            str_p("source") >> '.' >> (!(variable_container >> ".") >> variable_final)
+            [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))]
+            | str_p("target") >> '.' >> (!(variable_container >> ".") >> variable_final)
+            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))]
+            | str_p("currentturn")
+            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))];
 
-	primary_expr =
-	    constant[primary_expr.this_ = arg1]
-	    | variable[primary_expr.this_ = arg1]
-	    | '(' >> expr[primary_expr.this_ = arg1] >> ')';
+        primary_expr =
+            constant[primary_expr.this_ = arg1]
+            | variable[primary_expr.this_ = arg1]
+            | '(' >> expr[primary_expr.this_ = arg1] >> ')';
 
-	negative_expr =
-	    primary_expr[negative_expr.this_ = arg1]
-	    | (ch_p('-') >> primary_expr[negative_expr.operand1 = arg1])[negative_expr.this_ = new_<RefOp>(val(ValueRef::NEGATE), negative_expr.operand1)];
+        negative_expr =
+            primary_expr[negative_expr.this_ = arg1]
+            | (ch_p('-') >> primary_expr[negative_expr.operand1 = arg1])[negative_expr.this_ = new_<RefOp>(val(ValueRef::NEGATE), negative_expr.operand1)];
 
-	times_expr =
-	    (negative_expr[times_expr.operand1 = arg1] >> ch_p('*') >> times_expr[times_expr.operand2 = arg1])[times_expr.this_ = new_<RefOp>(val(ValueRef::TIMES), times_expr.operand1, times_expr.operand2)]
-	    | negative_expr[times_expr.this_ = arg1];
+        times_expr =
+            (negative_expr[times_expr.operand1 = arg1] >> ch_p('*') >> times_expr[times_expr.operand2 = arg1])[times_expr.this_ = new_<RefOp>(val(ValueRef::TIMES), times_expr.operand1, times_expr.operand2)]
+            | negative_expr[times_expr.this_ = arg1];
 
-	divides_expr =
-	    (times_expr[divides_expr.operand1 = arg1] >> ch_p('/') >> divides_expr[divides_expr.operand2 = arg1])[divides_expr.this_ = new_<RefOp>(val(ValueRef::DIVIDES), divides_expr.operand1, divides_expr.operand2)]
-	    | times_expr[divides_expr.this_ = arg1];
+        divides_expr =
+            (times_expr[divides_expr.operand1 = arg1] >> ch_p('/') >> divides_expr[divides_expr.operand2 = arg1])[divides_expr.this_ = new_<RefOp>(val(ValueRef::DIVIDES), divides_expr.operand1, divides_expr.operand2)]
+            | times_expr[divides_expr.this_ = arg1];
 
-	plus_expr =
-	    (divides_expr[plus_expr.operand1 = arg1] >> ch_p('+') >> plus_expr[plus_expr.operand2 = arg1])[plus_expr.this_ = new_<RefOp>(val(ValueRef::PLUS), plus_expr.operand1, plus_expr.operand2)]
-	    | divides_expr[plus_expr.this_ = arg1];
+        plus_expr =
+            (divides_expr[plus_expr.operand1 = arg1] >> ch_p('+') >> plus_expr[plus_expr.operand2 = arg1])[plus_expr.this_ = new_<RefOp>(val(ValueRef::PLUS), plus_expr.operand1, plus_expr.operand2)]
+            | divides_expr[plus_expr.this_ = arg1];
 
-	minus_expr =
-	    (plus_expr[minus_expr.operand1 = arg1] >> ch_p('-') >> minus_expr[minus_expr.operand2 = arg1])[minus_expr.this_ = new_<RefOp>(val(ValueRef::MINUS), minus_expr.operand1, minus_expr.operand2)]
-	    | plus_expr[minus_expr.this_ = arg1];
+        minus_expr =
+            (plus_expr[minus_expr.operand1 = arg1] >> ch_p('-') >> minus_expr[minus_expr.operand2 = arg1])[minus_expr.this_ = new_<RefOp>(val(ValueRef::MINUS), minus_expr.operand1, minus_expr.operand2)]
+            | plus_expr[minus_expr.this_ = arg1];
 
-	expr = minus_expr[expr.this_ = arg1];
+        expr = minus_expr[expr.this_ = arg1];
     }
 
     template <>
     void ValueRefParserDefinition<int>::SpecializedInit()
     {
-	constant =
-	    real_p[constant.this_ = new_<RefConst>(static_cast_<int>(arg1))]
-	    | int_p[constant.this_ = new_<RefConst>(arg1)];
+        constant =
+            real_p[constant.this_ = new_<RefConst>(static_cast_<int>(arg1))]
+            | int_p[constant.this_ = new_<RefConst>(arg1)];
 
-	variable_final =
-		str_p("owner")
-		| "id"
-		| "creationturn"
-		| "age";
+        variable_final =
+            str_p("owner")
+            | "id"
+            | "creationturn"
+            | "age";
     }
 
     template <>
     void ValueRefParserDefinition<double>::SpecializedInit()
     {
-	constant =
-	    real_p[constant.this_ = new_<RefConst>(arg1)]
-	    | int_p[constant.this_ = new_<RefConst>(static_cast_<double>(arg1))];
+        constant =
+            real_p[constant.this_ = new_<RefConst>(arg1)]
+            | int_p[constant.this_ = new_<RefConst>(static_cast_<double>(arg1))];
 
-	variable_final =
-	    str_p("currentfarming")
-	    | "maxfarming"
-	    | "currentindustry"
-	    | "maxindustry"
-	    | "currentresearch"
-	    | "maxresearch"
-	    | "currenttrade"
-	    | "maxtrade"
-	    | "currentmining"
-	    | "maxmining"
-	    | "currentconstruction"
-	    | "maxconstruction"
-	    | "currenthealth"
-	    | "maxhealth"
-	    | "currentpopulation"
-	    | "maxpopulation"
-	    | "tradestockpile"
-	    | "mineralstockpile"
-	    | "foodstockpile"
-	    | "tradeproduction"
-	    | "foodproduction"
-	    | "mineralproduction"
-	    | "industryproduction"
-	    | "researchproduction";
+        variable_final =
+            str_p("currentfarming")
+            | "maxfarming"
+            | "currentindustry"
+            | "maxindustry"
+            | "currentresearch"
+            | "maxresearch"
+            | "currenttrade"
+            | "maxtrade"
+            | "currentmining"
+            | "maxmining"
+            | "currentconstruction"
+            | "maxconstruction"
+            | "currenthealth"
+            | "maxhealth"
+            | "currentpopulation"
+            | "maxpopulation"
+            | "tradestockpile"
+            | "mineralstockpile"
+            | "foodstockpile"
+            | "tradeproduction"
+            | "foodproduction"
+            | "mineralproduction"
+            | "industryproduction"
+            | "researchproduction";
     }
 
     template <>
     void ValueRefParserDefinition<PlanetSize>::SpecializedInit()
     {
-	constant =
-	    planet_size_p[constant.this_ = new_<RefConst>(arg1)]
-	    | int_p[constant.this_ = new_<RefConst>(static_cast_<PlanetSize>(arg1))];
+        constant =
+            planet_size_p[constant.this_ = new_<RefConst>(arg1)]
+            | int_p[constant.this_ = new_<RefConst>(static_cast_<PlanetSize>(arg1))];
 
-	variable_final = str_p("planetsize");
+        variable_final = str_p("planetsize");
     }
 
     template <>
     void ValueRefParserDefinition<PlanetType>::SpecializedInit()
     {
-	constant =
-	    planet_type_p[constant.this_ = new_<RefConst>(arg1)]
-	    | int_p[constant.this_ = new_<RefConst>(static_cast_<PlanetType>(arg1))];
+        constant =
+            planet_type_p[constant.this_ = new_<RefConst>(arg1)]
+            | int_p[constant.this_ = new_<RefConst>(static_cast_<PlanetType>(arg1))];
 
-	variable_final = str_p("planettype");
+        variable_final = str_p("planettype");
     }
 
     template <>
     void ValueRefParserDefinition<PlanetEnvironment>::SpecializedInit()
     {
-	constant =
-	    planet_environment_type_p[constant.this_ = new_<RefConst>(arg1)]
-	    | int_p[constant.this_ = new_<RefConst>(static_cast_<PlanetEnvironment>(arg1))];
+        constant =
+            planet_environment_type_p[constant.this_ = new_<RefConst>(arg1)]
+            | int_p[constant.this_ = new_<RefConst>(static_cast_<PlanetEnvironment>(arg1))];
 
-	variable_final = str_p("planetenvironment");
+        variable_final = str_p("planetenvironment");
     }
 
     template <>
     void ValueRefParserDefinition<UniverseObjectType>::SpecializedInit()
     {
-	constant =
-	    universe_object_type_p[constant.this_ = new_<RefConst>(arg1)]
-	    | int_p[constant.this_ = new_<RefConst>(static_cast_<UniverseObjectType>(arg1))];
+        constant =
+            universe_object_type_p[constant.this_ = new_<RefConst>(arg1)]
+            | int_p[constant.this_ = new_<RefConst>(static_cast_<UniverseObjectType>(arg1))];
 
-	variable_final = str_p("objecttype");
+        variable_final = str_p("objecttype");
     }
 
     template <>
     void ValueRefParserDefinition<StarType>::SpecializedInit()
     {
-	constant =
-	    star_type_p[constant.this_ = new_<RefConst>(arg1)]
-	    | int_p[constant.this_ = new_<RefConst>(static_cast_<StarType>(arg1))];
+        constant =
+            star_type_p[constant.this_ = new_<RefConst>(arg1)]
+            | int_p[constant.this_ = new_<RefConst>(static_cast_<StarType>(arg1))];
 
-	variable_final = str_p("startype");
+        variable_final = str_p("startype");
     }
 
     template <>
     void ValueRefParserDefinition<FocusType>::SpecializedInit()
     {
-	constant =
-	    focus_type_p[constant.this_ = new_<RefConst>(arg1)]
-	    | int_p[constant.this_ = new_<RefConst>(static_cast_<FocusType>(arg1))];
+        constant =
+            focus_type_p[constant.this_ = new_<RefConst>(arg1)]
+            | int_p[constant.this_ = new_<RefConst>(static_cast_<FocusType>(arg1))];
 
-	variable_final = str_p("primaryfocus") | "secondaryfocus";
+        variable_final = str_p("primaryfocus") | "secondaryfocus";
     }
 }

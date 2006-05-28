@@ -58,78 +58,78 @@ private:
     };
 
     void Init();
-	static std::string BrowseForFile(const std::string& directory, const std::string& file, const std::vector<std::pair<std::string, std::string> >& file_types);
-	static void FillCombo(CUIDropDownList* combo, const std::vector<std::string>& values, const std::string& currentValue);
-	void FillLists();
-	void FillFontList();
-	void FillFontCombo(CUIDropDownList* combo, const std::string& option_name);
-	void Browse(const std::string& optionName, const std::string& optionDir, const std::string& userString, const std::string& extension, CUIEdit* editControl);
-	void BrowseSoundFile(const std::string& optionName, CUIEdit* editControl);
-	void AddSoundControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName, CUIEdit*& editControl, CUIButton*& btn, bool connect_file_browser = true);
-	void AddColorControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName, ColorSelector*& comboColor);
-	void AddFolderControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName, CUIEdit*& editControl);
-	void AddFontControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, CUIDropDownList*& combo, const std::string& optionName, const std::string& userStringSize, CUISpin<int>*& spin);
-	bool TestFolder(std::string& value);
-	void UpdateFileOption(const std::string& option_name, std::string file_name, bool folder = false);
+    static std::string BrowseForFile(const std::string& directory, const std::string& file, const std::vector<std::pair<std::string, std::string> >& file_types);
+    static void FillCombo(CUIDropDownList* combo, const std::vector<std::string>& values, const std::string& currentValue);
+    void FillLists();
+    void FillFontList();
+    void FillFontCombo(CUIDropDownList* combo, const std::string& option_name);
+    void Browse(const std::string& optionName, const std::string& optionDir, const std::string& userString, const std::string& extension, CUIEdit* editControl);
+    void BrowseSoundFile(const std::string& optionName, CUIEdit* editControl);
+    void AddSoundControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName, CUIEdit*& editControl, CUIButton*& btn, bool connect_file_browser = true);
+    void AddColorControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName, ColorSelector*& comboColor);
+    void AddFolderControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName, CUIEdit*& editControl);
+    void AddFontControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, CUIDropDownList*& combo, const std::string& optionName, const std::string& userStringSize, CUISpin<int>*& spin);
+    bool TestFolder(std::string& value);
+    void UpdateFileOption(const std::string& option_name, std::string file_name, bool folder = false);
 
-	// General button handlers
+    // General button handlers
     void DoneClicked();
 
-	// UI Page handlers
-	void TextFont(int selection);
-	void TitleFont(int selection);
-	void Resolution(int selection);
-	void ColorDepth(int selection);
+    // UI Page handlers
+    void TextFont(int selection);
+    void TitleFont(int selection);
+    void Resolution(int selection);
+    void ColorDepth(int selection);
 
-	// Sound Page (1) handlers
-	void MusicClicked(bool checked);
-	void UIEffectsClicked(bool checked);
+    // Sound Page (1) handlers
+    void MusicClicked(bool checked);
+    void UIEffectsClicked(bool checked);
     void MusicVolumeSlid(int pos, int low, int high);
     void UISoundsVolumeSlid(int pos, int low, int high);
 
-	// Folders page handlers
-	void SettingsDirFocusUpdate(const std::string& value);
-	void ArtDirFocusUpdate(const std::string& value);
-	void SaveDirFocusUpdate(const std::string& value);
-	void SoundDirFocusUpdate(const std::string& value);
+    // Folders page handlers
+    void SettingsDirFocusUpdate(const std::string& value);
+    void ArtDirFocusUpdate(const std::string& value);
+    void SaveDirFocusUpdate(const std::string& value);
+    void SoundDirFocusUpdate(const std::string& value);
 
-	std::vector<std::string> m_fonts;
-	std::vector<std::string> m_resolutions;
-	std::vector<std::string> m_colorDepth;
+    std::vector<std::string> m_fonts;
+    std::vector<std::string> m_resolutions;
+    std::vector<std::string> m_colorDepth;
 
-	CUITabbedPages*		m_tabs;	//!< Tabbed pages control
-    CUIButton*			m_done_btn;    //!< Done button
+    CUITabbedPages*         m_tabs; //!< Tabbed pages control
+    CUIButton*                  m_done_btn;    //!< Done button
 
-	// UI page members
-	CUIEdit*			m_language_edit;
-	CUIDropDownList*	m_comboTextFont;
-	CUIDropDownList*	m_comboTitleFont;
-	CUIEdit*			m_music_edit;
-	CUIEdit*			m_alert_edit;
-	CUIEdit*			m_typing_edit;
-	CUIEdit*			m_turn_edit;
-	CUIEdit*			m_sidePanel_edit;
-	CUIEdit*			m_planet_edit;
-	CUIEdit*			m_close_edit;
-	CUIEdit*			m_maximize_edit;
-	CUIEdit*			m_minimize_edit;
-	CUIEdit*			m_balanced_edit;
-	CUIEdit*			m_industry_edit;
-	CUIEdit*			m_farming_edit;
-	CUIEdit*			m_mining_edit;
-	CUIEdit*			m_research_edit;
-	CUIEdit*			m_clickButton_edit;
-	CUIEdit*			m_rolloverButton_edit;
-	CUIEdit*			m_clickFleet_edit;
-	CUIEdit*			m_rolloverFleet_edit;
-	CUIEdit*			m_drop_edit;
-	CUIEdit*			m_pulldown_edit;
-	CUIEdit*			m_select_edit;
-	CUIEdit*			m_art_dir_edit;
-	CUIEdit*			m_save_dir_edit;
-	CUIEdit*			m_font_dir_edit;
-	CUIEdit*			m_sound_dir_edit;
-	CUIEdit*			m_settings_dir_edit;
+    // UI page members
+    CUIEdit*                        m_language_edit;
+    CUIDropDownList*        m_comboTextFont;
+    CUIDropDownList*        m_comboTitleFont;
+    CUIEdit*                        m_music_edit;
+    CUIEdit*                        m_alert_edit;
+    CUIEdit*                        m_typing_edit;
+    CUIEdit*                        m_turn_edit;
+    CUIEdit*                        m_sidePanel_edit;
+    CUIEdit*                        m_planet_edit;
+    CUIEdit*                        m_close_edit;
+    CUIEdit*                        m_maximize_edit;
+    CUIEdit*                        m_minimize_edit;
+    CUIEdit*                        m_balanced_edit;
+    CUIEdit*                        m_industry_edit;
+    CUIEdit*                        m_farming_edit;
+    CUIEdit*                        m_mining_edit;
+    CUIEdit*                        m_research_edit;
+    CUIEdit*                        m_clickButton_edit;
+    CUIEdit*                        m_rolloverButton_edit;
+    CUIEdit*                        m_clickFleet_edit;
+    CUIEdit*                        m_rolloverFleet_edit;
+    CUIEdit*                        m_drop_edit;
+    CUIEdit*                        m_pulldown_edit;
+    CUIEdit*                        m_select_edit;
+    CUIEdit*                        m_art_dir_edit;
+    CUIEdit*                        m_save_dir_edit;
+    CUIEdit*                        m_font_dir_edit;
+    CUIEdit*                        m_sound_dir_edit;
+    CUIEdit*                        m_settings_dir_edit;
 
     friend struct BrowseForFileFunctor;
 };

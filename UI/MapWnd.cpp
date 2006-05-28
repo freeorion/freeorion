@@ -261,7 +261,7 @@ MapWnd::MapWnd() :
     m_chat_edit->Hide();
     EnableAlphaNumAccels();
 
-	m_menu_showing = false;
+    m_menu_showing = false;
 
     //set up background images
     m_backgrounds[0].reset(new GG::Texture());
@@ -560,20 +560,20 @@ void MapWnd::InitTurn(int turn_number)
 
     // set up nebulae on the first turn
     if (m_nebulae.empty()) {
-	    // chosen so that the density of nebulae will be about MIN_NEBULAE to MAX_NEBULAE for a 1000.0-width galaxy
-	    const double DENSITY_SCALE_FACTOR = (Universe::UniverseWidth() * Universe::UniverseWidth()) / (1000.0 * 1000.0);
-	    int num_nebulae = RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
-				                       static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));
-	    m_nebulae.resize(num_nebulae);
-	    m_nebula_centers.resize(num_nebulae);
-	    SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
-	    SmallIntDistType nebula_type = SmallIntDist(1, NUM_NEBULA_TEXTURES);
-	    for (int i = 0; i < num_nebulae; ++i) {
-	        std::string nebula_filename = "nebula" + boost::lexical_cast<std::string>(nebula_type()) + ".png";
-	        m_nebulae[i].reset(new GG::Texture());
-	        m_nebulae[i]->Load(ClientUI::ART_DIR + nebula_filename);
-	        m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
-	    }
+        // chosen so that the density of nebulae will be about MIN_NEBULAE to MAX_NEBULAE for a 1000.0-width galaxy
+        const double DENSITY_SCALE_FACTOR = (Universe::UniverseWidth() * Universe::UniverseWidth()) / (1000.0 * 1000.0);
+        int num_nebulae = RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
+                                       static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));
+        m_nebulae.resize(num_nebulae);
+        m_nebula_centers.resize(num_nebulae);
+        SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
+        SmallIntDistType nebula_type = SmallIntDist(1, NUM_NEBULA_TEXTURES);
+        for (int i = 0; i < num_nebulae; ++i) {
+            std::string nebula_filename = "nebula" + boost::lexical_cast<std::string>(nebula_type()) + ".png";
+            m_nebulae[i].reset(new GG::Texture());
+            m_nebulae[i]->Load(ClientUI::ART_DIR + nebula_filename);
+            m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
+        }
     }
 
     // this gets cleared here instead of with the movement line stuff because that would clear some movement lines that come from the SystemIcons below
@@ -1413,7 +1413,7 @@ bool MapWnd::CloseSystemView()
         m_production_wnd->SelectSystem(UniverseObject::INVALID_OBJECT_ID);
     else
         SystemLeftClickedSignal(UniverseObject::INVALID_OBJECT_ID);
-	return true;
+    return true;
 }
 
 bool MapWnd::KeyboardZoomIn()

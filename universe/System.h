@@ -46,12 +46,12 @@ public:
     System();    ///< default ctor
 
     /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
-	of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
+        of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
     System(StarType star, int orbits, const std::string& name, double x, double y,
            const std::set<int>& owners = std::set<int>());
 
     /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
-	of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
+        of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
     System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
            const std::string& name, double x, double y, const std::set<int>& owners = std::set<int>());
 
@@ -116,18 +116,18 @@ public:
 
     /** \name Mutators */ //@{
     /** inserts a UniversObject into the system, though not in any particular orbit.  Only objects free of any
-	particular orbit, such as ships, should be inserted using this function.  This function calls obj->SetSystem(this).*/
+        particular orbit, such as ships, should be inserted using this function.  This function calls obj->SetSystem(this).*/
     int Insert(UniverseObject* obj);
 
     /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
-	objects should be inserted with this function.  This function calls obj->SetSystem(this).  \throw
-	std::invalid_arugment May throw std::invalid_arugment if \a orbit is out of the range [0, Orbits()].*/
+        objects should be inserted with this function.  This function calls obj->SetSystem(this).  \throw
+        std::invalid_arugment May throw std::invalid_arugment if \a orbit is out of the range [0, Orbits()].*/
     int Insert(UniverseObject* obj, int orbit);
 
     /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
-	objects should be inserted with this function. NOTE: This function is primarily intended for XML decoding purposes
-	and does not set the object's system to point to this system since it is assumed that this has already been done prior
-	to encoding. If used for other purposes you must set the object's System ID manually. */
+        objects should be inserted with this function. NOTE: This function is primarily intended for XML decoding purposes
+        and does not set the object's system to point to this system since it is assumed that this has already been done prior
+        to encoding. If used for other purposes you must set the object's System ID manually. */
     int Insert(int obj_id, int orbit);
 
     /** removes the object with ID number \a id from the system, and returns it; returns 0 if there is no such object*/

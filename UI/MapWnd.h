@@ -154,7 +154,7 @@ private:
     bool ToggleResearch();
     bool ToggleProduction();
     bool ShowMenu();
-	bool CloseSystemView();                      //!< closes off the current system view
+    bool CloseSystemView();                      //!< closes off the current system view
     bool KeyboardZoomIn();
     bool KeyboardZoomOut();
     bool ZoomToHomeSystem();
@@ -185,9 +185,9 @@ private:
     double                          m_zoom_factor;   //! the current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
     SidePanel*                      m_side_panel;    //! the planet view panel on the side of the main map
     std::map<int, SystemIcon*>      m_system_icons;  //! the system icons in the main map, indexed by system id
-    SitRepPanel*      	            m_sitrep_panel;  //! the sitrep panel
-    ResearchWnd*      	            m_research_wnd;  //! the research screen
-    ProductionWnd*      	        m_production_wnd;  //! the production screen
+    SitRepPanel*                    m_sitrep_panel;  //! the sitrep panel
+    ResearchWnd*                    m_research_wnd;  //! the research screen
+    ProductionWnd*                      m_production_wnd;  //! the production screen
     GG::MultiEdit*                  m_chat_display;  //! the (read-only) MP-chat output multi-line edit box
     CUIEdit*                        m_chat_edit;     //! the MP-chat input edit box
     std::vector<FleetButton*>       m_moving_fleet_buttons; //! the moving fleets in the main map
