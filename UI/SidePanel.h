@@ -41,9 +41,10 @@ class CUIDropDownList;
 class CUIIconButton;
 class CUIScroll;
 class CUITextureButton;
-namespace GG {class TextControl;}
-class RotatingPlanetControl;
 class FocusSelector;
+class RotatingPlanetControl;
+class UniverseObjectVisitor;
+namespace GG {class TextControl;}
 
 class SidePanel : public GG::Wnd
 {
@@ -56,6 +57,7 @@ public:
 
     /** \name Structors */ //@{
     SidePanel(int x, int y, int w, int h);
+    ~SidePanel();
     //@}
 
     /** \name Accessors */ //@{
@@ -70,10 +72,13 @@ public:
     /** \name Mutators */ //@{
     virtual void  Render();
 
-    void          SetSystem(int system_id); ///< sets the system currently being viewed in the side panel
     void          SelectPlanet(int planet_id); ///< selects the planet with id \a planet_id within the current system, if such a planet exists
-    void          HiliteSelectedPlanet(bool b); ///< enables/disables hiliting the currently-selected planet in the side panel
+
+    /** sets the predicate that determines what planets can be selected in the side panel.  If none is set, planet selection is disabled. */
+    void          SetValidSelectionPredicate(const boost::shared_ptr<UniverseObjectVisitor> &visitor);
     //@}
+
+    static void   SetSystem(int system_id); ///< sets the system currently being viewed in all side panels
 
     static const int MAX_PLANET_DIAMETER; // size of a huge planet, in on-screen pixels
     static const int MIN_PLANET_DIAMETER; // size of a tiny planet, in on-screen pixels
@@ -84,23 +89,19 @@ private:
     class PlanetPanelContainer;
     class SystemResourceSummary;
 
-    void AdjustScrolls();
-
+    void SetSystemImpl();
     void SystemSelectionChanged(int selection);
-
     void SystemFleetAdded  (const Fleet &);
     void SystemFleetRemoved(const Fleet &);
-
     void FleetsChanged();
     void PlanetsChanged();
     void PrevButtonClicked();
     void NextButtonClicked();
     void PlanetSelected(int planet_id);
 
-    const System        *m_system;
     CUIDropDownList     *m_system_name;
     GG::TextControl     *m_system_name_unknown;
-    GG::Button          *m_button_prev,*m_button_next;
+    GG::Button          *m_button_prev, *m_button_next;
     GG::DynamicGraphic  *m_star_graphic;
     GG::TextControl     *m_static_text_systemproduction;
 
@@ -112,6 +113,9 @@ private:
 
     PlanetPanelContainer  *m_planet_panel_container;
     SystemResourceSummary *m_system_resource_summary;
+
+    static const System*        s_system;
+    static std::set<SidePanel*> s_side_panels;
 };
 
 #endif // _SidePanel_h_

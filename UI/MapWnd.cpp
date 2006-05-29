@@ -179,7 +179,7 @@ MapWnd::MapWnd() :
     // system-view side panel
     m_side_panel = new SidePanel(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
     AttachChild(m_side_panel);
-    Connect(SystemLeftClickedSignal, &SidePanel::SetSystem, m_side_panel);
+    GG::Connect(SystemLeftClickedSignal, &SidePanel::SetSystem);
 
     m_sitrep_panel = new SitRepPanel( (GG::GUI::GetGUI()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::GUI::GetGUI()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);

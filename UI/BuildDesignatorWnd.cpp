@@ -549,7 +549,6 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     m_build_selector = new BuildSelector(CHILD_WIDTHS, BUILD_SELECTOR_HEIGHT);
     m_build_selector->MoveTo(GG::Pt(0, h - BUILD_SELECTOR_HEIGHT));
     m_side_panel = new SidePanel(CHILD_WIDTHS + SIDE_PANEL_PLANET_RADIUS, 0, MapWnd::SIDE_PANEL_WIDTH, h);
-    m_side_panel->HiliteSelectedPlanet(true);
     m_side_panel->Hide();
 
     GG::Connect(m_build_detail_panel->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
@@ -614,7 +613,12 @@ void BuildDesignatorWnd::SelectSystem(int system)
     if (system != UniverseObject::INVALID_OBJECT_ID && system != m_side_panel->SystemID()) {
         m_side_panel->Show();
         m_side_panel->SetSystem(system);
+        m_side_panel->SetValidSelectionPredicate(boost::shared_ptr<UniverseObjectVisitor>(new OwnedVisitor<Planet>(HumanClientApp::GetApp()->EmpireID())));
         m_build_location = UniverseObject::INVALID_OBJECT_ID;
+        System::ObjectIDVec owned_planets_ids =
+            GetUniverse().Object<System>(system)->FindObjectIDs(OwnedVisitor<Planet>(HumanClientApp::GetApp()->EmpireID()));
+        if (owned_planets_ids.size() == 1)
+            m_side_panel->SelectPlanet(*owned_planets_ids.begin());
     }
 }
 
