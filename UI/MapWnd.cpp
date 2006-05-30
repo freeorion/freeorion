@@ -522,8 +522,10 @@ void MapWnd::LButtonUp (const GG::Pt &pt, Uint32 keys)
 void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
-    if (!m_dragged && !m_in_production_view_mode)
+    if (!m_dragged && !m_in_production_view_mode) {
         SystemLeftClickedSignal(UniverseObject::INVALID_OBJECT_ID);
+        m_side_panel->Hide();
+    }
     m_dragged = false;
 }
 
@@ -824,19 +826,24 @@ void MapWnd::CenterOnFleet(Fleet* fleet)
     CenterOnMapCoord(fleet->X(), fleet->Y());
 }
 
-void MapWnd::SelectSystem(int systemID)
+void MapWnd::SelectSystem(int system_id)
 {
     if (m_in_production_view_mode) {
-        m_production_wnd->SelectSystem(systemID);
+        m_production_wnd->SelectSystem(system_id);
     } else {
-        if (!m_side_panel->Visible() || systemID != m_side_panel->SystemID())
-            SystemLeftClickedSignal(systemID);
+        if (!m_side_panel->Visible() || system_id != m_side_panel->SystemID()) {
+            SystemLeftClickedSignal(system_id);
+            if (system_id == UniverseObject::INVALID_OBJECT_ID)
+                m_side_panel->Hide();
+            else
+                m_side_panel->Show();
+        }
     }
 }
 
-void MapWnd::SelectFleet(int fleetID)
+void MapWnd::SelectFleet(int fleet_id)
 {
-    if (Fleet* fleet = GetUniverse().Object<Fleet>(fleetID))
+    if (Fleet* fleet = GetUniverse().Object<Fleet>(fleet_id))
         SelectFleet(fleet);
 }
 
@@ -1409,10 +1416,12 @@ bool MapWnd::ShowMenu()
 
 bool MapWnd::CloseSystemView()
 {
-    if (m_in_production_view_mode)
+    if (m_in_production_view_mode) {
         m_production_wnd->SelectSystem(UniverseObject::INVALID_OBJECT_ID);
-    else
+    } else {
         SystemLeftClickedSignal(UniverseObject::INVALID_OBJECT_ID);
+        m_side_panel->Hide();
+    }
     return true;
 }
 

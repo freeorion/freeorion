@@ -1181,7 +1181,7 @@ GG::Rect TechTreeWnd::LayoutPanel::TechPanel::ProgressPanelRect(const GG::Pt& ul
 {
     GG::Rect retval;
     retval.lr = lr + GG::Pt(static_cast<int>(PROGRESS_PANEL_LEFT_EXTRUSION * m_scale), static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale));
-    retval.ul = retval.lr - GG::Pt(PROGRESS_PANEL_WIDTH, static_cast<int>(PROGRESS_PANEL_HEIGHT * m_scale));
+    retval.ul = retval.lr - GG::Pt(static_cast<int>(PROGRESS_PANEL_WIDTH * m_scale), static_cast<int>(PROGRESS_PANEL_HEIGHT * m_scale));
     return retval;
 }
 

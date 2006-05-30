@@ -1456,50 +1456,48 @@ void SidePanel::SetSystemImpl()
 
     DeleteChild(m_star_graphic);m_star_graphic=0;
 
-    Hide();
-
     if (s_system)
     {
-      GG::Connect(s_system->FleetAddedSignal  , &SidePanel::SystemFleetAdded  , this);
-      GG::Connect(s_system->FleetRemovedSignal, &SidePanel::SystemFleetRemoved, this);
+        GG::Connect(s_system->FleetAddedSignal  , &SidePanel::SystemFleetAdded  , this);
+        GG::Connect(s_system->FleetRemovedSignal, &SidePanel::SystemFleetRemoved, this);
 
-      std::vector<const System*> sys_vec = GetUniverse().FindObjects<const System>();
-      GG::ListBox::Row *select_row=0;
+        std::vector<const System*> sys_vec = GetUniverse().FindObjects<const System>();
+        GG::ListBox::Row *select_row=0;
 
-      int system_names_in_droplist = 0;
-      for (unsigned int i = 0; i < sys_vec.size(); i++) 
-      {
-        GG::ListBox::Row *row = new SystemRow(sys_vec[i]->ID());
-
-        if(sys_vec[i]->Name().length()==0)
-          continue;
- 
-        row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,SYSTEM_NAME_FONT_SIZE, ClientUI::TEXT_COLOR);
-        m_system_name->Insert(row);
-        ++system_names_in_droplist;
-
-        if(sys_vec[i] == s_system)
-          select_row = row;
-      }
-      const int TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
-      const int MAX_DROPLIST_DROP_HEIGHT = TEXT_ROW_HEIGHT * 10;
-      const int TOTAL_LISTBOX_MARGIN = 4;
-      int drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-      m_system_name->SetDropHeight(drop_height);
-
-      for (int i = 0; i < m_system_name->NumRows(); i++) 
-        if(select_row == &m_system_name->GetRow(i))
+        int system_names_in_droplist = 0;
+        for (unsigned int i = 0; i < sys_vec.size(); i++) 
         {
-          m_system_name->Select(i);
-          break;
-        }
+            GG::ListBox::Row *row = new SystemRow(sys_vec[i]->ID());
 
-      std::vector<boost::shared_ptr<GG::Texture> > textures;
-      boost::shared_ptr<GG::Texture> graphic;
+            if(sys_vec[i]->Name().length()==0)
+                continue;
+ 
+            row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,SYSTEM_NAME_FONT_SIZE, ClientUI::TEXT_COLOR);
+            m_system_name->Insert(row);
+            ++system_names_in_droplist;
+
+            if(sys_vec[i] == s_system)
+                select_row = row;
+        }
+        const int TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
+        const int MAX_DROPLIST_DROP_HEIGHT = TEXT_ROW_HEIGHT * 10;
+        const int TOTAL_LISTBOX_MARGIN = 4;
+        int drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+        m_system_name->SetDropHeight(drop_height);
+
+        for (int i = 0; i < m_system_name->NumRows(); i++) 
+            if(select_row == &m_system_name->GetRow(i))
+            {
+                m_system_name->Select(i);
+                break;
+            }
+
+        std::vector<boost::shared_ptr<GG::Texture> > textures;
+        boost::shared_ptr<GG::Texture> graphic;
      
-      std::string star_image = ClientUI::ART_DIR + "stars_sidepanel/";
-      switch (s_system->Star())
-      {
+        std::string star_image = ClientUI::ART_DIR + "stars_sidepanel/";
+        switch (s_system->Star())
+        {
         case STAR_BLUE     : star_image += "blue0"     ; break;
         case STAR_WHITE    : star_image += "white0"    ; break;
         case STAR_YELLOW   : star_image += "yellow0"   ; break;
@@ -1508,51 +1506,51 @@ void SidePanel::SetSystemImpl()
         case STAR_NEUTRON  : star_image += "neutron0"  ; break;
         case STAR_BLACK    : star_image += "blackhole0"; break;
         default            : star_image += "white0"    ; break;
-      }
-      star_image += lexical_cast<std::string>(s_system->ID()%2)+".png";
+        }
+        star_image += lexical_cast<std::string>(s_system->ID()%2)+".png";
 
-      graphic = GetTexture(star_image);
+        graphic = GetTexture(star_image);
       
-      textures.push_back(graphic);
+        textures.push_back(graphic);
 
-      int star_dim = (Width()*4)/5;
-      m_star_graphic = new GG::DynamicGraphic(Width()-(star_dim*2)/3,-(star_dim*1)/3,star_dim,star_dim,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        int star_dim = (Width()*4)/5;
+        m_star_graphic = new GG::DynamicGraphic(Width()-(star_dim*2)/3,-(star_dim*1)/3,star_dim,star_dim,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
 
-      AttachChild(m_star_graphic);MoveChildDown(m_star_graphic);
+        AttachChild(m_star_graphic);MoveChildDown(m_star_graphic);
 
-      // TODO: add fleet icons
-      std::pair<System::const_orbit_iterator, System::const_orbit_iterator> range = s_system->non_orbit_range();
-      std::vector<const Fleet*> flt_vec = s_system->FindObjects<Fleet>();
-      for(unsigned int i = 0; i < flt_vec.size(); i++) 
-        GG::Connect(flt_vec[i]->StateChangedSignal, &SidePanel::FleetsChanged, this);
+        // TODO: add fleet icons
+        std::pair<System::const_orbit_iterator, System::const_orbit_iterator> range = s_system->non_orbit_range();
+        std::vector<const Fleet*> flt_vec = s_system->FindObjects<Fleet>();
+        for(unsigned int i = 0; i < flt_vec.size(); i++) 
+            GG::Connect(flt_vec[i]->StateChangedSignal, &SidePanel::FleetsChanged, this);
 
-      // add planets
-      std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
+        // add planets
+        std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
 
-      m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
-      for(unsigned int i = 0; i < plt_vec.size(); i++) 
-      {
-        GG::Connect(plt_vec[i]->StateChangedSignal, &SidePanel::PlanetsChanged, this);
-        GG::Connect(plt_vec[i]->ResourceCenterChangedSignal, &SidePanel::PlanetsChanged, this);
-      }
+        m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
+        for(unsigned int i = 0; i < plt_vec.size(); i++) 
+        {
+            GG::Connect(plt_vec[i]->StateChangedSignal, &SidePanel::PlanetsChanged, this);
+            GG::Connect(plt_vec[i]->ResourceCenterChangedSignal, &SidePanel::PlanetsChanged, this);
+        }
 
-      m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
+        m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
 
-      Show();PlanetsChanged();
-      if(select_row==0)
-      {
-        m_system_name_unknown->Show();
-        m_system_name->Hide();
-        m_button_prev->Hide();
-        m_button_next->Hide();
-      }
-      else
-      {
-        m_system_name_unknown->Hide();
-        m_system_name->Show();
-        m_button_prev->Show();
-        m_button_next->Show();
-      }
+        PlanetsChanged();
+        if(select_row==0)
+        {
+            m_system_name_unknown->Show();
+            m_system_name->Hide();
+            m_button_prev->Hide();
+            m_button_next->Hide();
+        }
+        else
+        {
+            m_system_name_unknown->Hide();
+            m_system_name->Show();
+            m_button_prev->Show();
+            m_button_next->Show();
+        }
     }
 }
 
