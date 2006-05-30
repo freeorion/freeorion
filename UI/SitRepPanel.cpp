@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "LinkText.h"
 #include "../util/MultiplayerCommon.h"
+#include "../empire/Empire.h"
 
 #include <GG/DrawUtil.h>
 

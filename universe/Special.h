@@ -4,6 +4,8 @@
 
 #include "Effect.h"
 
+class XMLElement;
+
 /** A predefined set of EffectsGroups that can be attached to a UniverseObject (often referred to as the "source" object).
     The effects of a Special are not limited to the object to which it is attached.  Each kind of Special must have a
     \a unique name string, by which it can be looked up using GetSpecial(). */

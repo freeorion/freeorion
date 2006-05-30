@@ -2,16 +2,23 @@
 #ifndef _Condition_h_
 #define _Condition_h_
 
-#include "Meter.h"
-#include "Planet.h"
-#include "System.h"
+#include <set>
+
 #include "ValueRef.h"
 
 class UniverseObject;
 
+
 /** this namespace holds ConditionBase and its subclasses; these classes represent predicates about UniverseObjects used
     by, for instance, the Effect system. */
 namespace Condition {
+    typedef std::set<UniverseObject*> ObjectSet;
+
+    enum SearchDomain {
+        NON_TARGETS, ///< The Condition will only examine items in the nontarget set; those that match the Condition will be inserted into the target set.
+        TARGETS      ///< The Condition will only examine items in the target set; those that do not match the Condition will be inserted into the nontarget set.
+    };
+
     struct ConditionBase;
     struct All;
     struct EmpireAffiliation;
@@ -39,26 +46,36 @@ namespace Condition {
     struct Turn;
     struct NumberOf;
     struct ContainedBy;
+    struct Number;
 }
 
 /** The base class for all Conditions. */
 struct Condition::ConditionBase
 {
-    typedef std::set<UniverseObject*> ObjectSet;
-
-    enum SearchDomain {
-        NON_TARGETS, ///< The Condition will only examine items in the nontarget set; those that match the Condition will be inserted into the target set.
-        TARGETS      ///< The Condition will only examine items in the target set; those that do not match the Condition will be inserted into the nontarget set.
-    };
-
     ConditionBase();
     virtual ~ConditionBase();
-    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+};
+
+/** Matches all objects if the number of objects that match Condition \a condition is is >= \a low and < \a high.
+    Matched objects may or may not themselves match the condition. */
+struct Condition::Number : Condition::ConditionBase
+{
+    Number(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const ConditionBase* condition);
+    virtual ~Number();
+    virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    const ValueRef::ValueRefBase<int>* m_low;
+    const ValueRef::ValueRefBase<int>* m_high;
+    const ConditionBase*               m_condition;
 };
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
@@ -81,7 +98,7 @@ struct Condition::NumberOf : Condition::ConditionBase
 {
     NumberOf(const ValueRef::ValueRefBase<int>* number, const ConditionBase* condition);
     virtual ~NumberOf();
-    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -94,7 +111,7 @@ private:
 struct Condition::All : Condition::ConditionBase
 {
     All();
-    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 };
@@ -168,7 +185,7 @@ private:
 struct Condition::Contains : Condition::ConditionBase
 {
     Contains(const ConditionBase* condition);
-    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -181,7 +198,7 @@ private:
 struct Condition::ContainedBy : Condition::ConditionBase
 {
     ContainedBy(const ConditionBase* condition);
-    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -337,7 +354,7 @@ struct Condition::WithinDistance : Condition::ConditionBase
 {
     WithinDistance(const ValueRef::ValueRefBase<double>* distance, const ConditionBase* condition);
     virtual ~WithinDistance();
-    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -354,7 +371,7 @@ struct Condition::WithinStarlaneJumps : Condition::ConditionBase
 {
     WithinStarlaneJumps(const ValueRef::ValueRefBase<int>* jumps, const ConditionBase* condition);
     virtual ~WithinStarlaneJumps();
-    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -379,7 +396,7 @@ struct Condition::And : Condition::ConditionBase
 {
     And(const std::vector<const ConditionBase*>& operands);
     virtual ~And();
-    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -392,7 +409,7 @@ struct Condition::Or : Condition::ConditionBase
 {
     Or(const std::vector<const ConditionBase*>& operands);
     virtual ~Or();
-    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -405,7 +422,7 @@ struct Condition::Not : Condition::ConditionBase
 {
     Not(const ConditionBase* operand);
     virtual ~Not();
-    virtual void Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 

@@ -24,6 +24,10 @@ ParamLabel jumps_label("jumps");
 
 rule<Scanner, ConditionClosure::context_t> condition1_p;
 
+namespace Condition {
+    class ConditionBase;
+}
+
 namespace {
     class ConditionParser1Definition
     {

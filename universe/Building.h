@@ -11,6 +11,9 @@ namespace Effect {
     class EffectsGroup;
 }
 class Planet;
+namespace Condition {
+    class ConditionBase;
+}
 
 /** A Building UniverseObject type. */
 class Building : public UniverseObject
@@ -32,7 +35,7 @@ public:
     int                 PlanetID() const;         ///< returns the ID number of the planet this building is on
     Planet*             GetPlanet() const;        ///< returns a pointer to the planet this building is on
 
-    virtual XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a Building object with visibility limited relative to the input empire
+    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a Building object with visibility limited relative to the input empire
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
     //@}
@@ -66,6 +69,7 @@ public:
     /** basic ctor */
     BuildingType(const std::string& name, const std::string& description,
                  double build_cost, int build_time, double maintenance_cost,
+                 const Condition::ConditionBase* location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& graphic);
 
@@ -79,9 +83,13 @@ public:
     double                      BuildCost() const;        ///< returns the number of production points required to build this building
     int                         BuildTime() const;        ///< returns the number of turns required to build this building
     double                      MaintenanceCost() const;  ///< returns the number of monetary points required per turn to operate this building
+    const Condition::ConditionBase* 
+                                Location() const;         ///< returns the condition that determines the locations where this building can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                 Effects() const;          ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
     const std::string&          Graphic() const;          ///< returns the name of the grapic file for this building type
+    bool ProductionLocation(int empire_id, 
+                            int location_id) const;       ///< returns true iff the empire with ID empire_id can produce this building at the location with location_id
     //@}
 
     /** \name Mutators */ //@{
@@ -94,6 +102,7 @@ private:
     double                                                      m_build_cost;
     int                                                         m_build_time;
     double                                                      m_maintenance_cost;
+    const Condition::ConditionBase*                             m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
     std::string                                                 m_graphic;
 

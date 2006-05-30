@@ -2,10 +2,6 @@
 #ifndef _Universe_h_
 #define _Universe_h_
 
-#ifndef _SitRepEntry_h_
-#include "../util/SitRepEntry.h"
-#endif
-
 #ifndef BOOST_SERIALIZATION_SHARED_PTR_HPP
 #include <boost/serialization/shared_ptr.hpp>
 #endif
@@ -122,9 +118,6 @@ public:
 
     /** Set to true to make everything visible for everyone. Useful for debugging. */
     static const bool ALL_OBJECTS_VISIBLE;
-
-    /** the value used for the encoding empire when all data are desired, not just those visible to one empire */
-    enum {ALL_EMPIRES = -1};
 
     struct vertex_system_pointer_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
     typedef boost::property<vertex_system_pointer_t, System*,

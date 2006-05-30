@@ -68,7 +68,7 @@ UniverseObject::Visibility Ship::GetVisibility(int empire_id) const
 {
     UniverseObject::Visibility vis = NO_VISIBILITY;
 
-    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
+    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         vis = FULL_VISIBILITY;
     else
         vis = PARTIAL_VISIBILITY; // TODO: do something smarter here, such as a range check vs. owned systems and fleets
@@ -91,13 +91,13 @@ const std::string& Ship::PublicName(int empire_id) const
 {
     // Disclose real ship name only to fleet owners. Rationale: a player who doesn't know the design for a particular
     // ship can easily guess it if the ship's name is "Scout"
-    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
+    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         return Name();
     else
         return UserString("FW_FOREIGN_SHIP");
 }
 
-XMLElement Ship::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement Ship::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 {
     using boost::lexical_cast;
     using std::string;

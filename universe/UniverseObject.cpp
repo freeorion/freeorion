@@ -160,7 +160,7 @@ bool UniverseObject::WhollyOwnedBy(int empire) const
 
 UniverseObject::Visibility UniverseObject::GetVisibility(int empire_id) const
 {
-    return (Universe::ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? FULL_VISIBILITY : NO_VISIBILITY;
+    return (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? FULL_VISIBILITY : NO_VISIBILITY;
 }
 
 const std::string& UniverseObject::PublicName(int empire_id) const
@@ -168,7 +168,7 @@ const std::string& UniverseObject::PublicName(int empire_id) const
     return m_name;
 }
 
-XMLElement UniverseObject::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement UniverseObject::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 {
     // limited visibility object -- no owner info
     using boost::lexical_cast;

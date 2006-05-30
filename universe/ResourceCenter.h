@@ -2,22 +2,13 @@
 #ifndef _ResourceCenter_h_
 #define _ResourceCenter_h_
 
-#ifndef _Meter_h_
+#include "Enums.h"
 #include "Meter.h"
-#endif
-
-#ifndef _UniverseObject_h_
 #include "UniverseObject.h"
-#endif
 
-#ifndef _Ship_h_
-#include "Ship.h"
-#endif
+#include <boost/signal.hpp>
 
-#ifndef _GG_Enum_h_
-#include <GG/Enum.h>
-#endif
-
+class XMLElement;
 class Empire;
 
 

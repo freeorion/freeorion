@@ -2,20 +2,17 @@
 #ifndef _Order_h_
 #define _Order_h_
 
-#include <vector>
-
-#ifndef _XMLDoc_h_
-#include "XMLDoc.h"
+#ifndef _Enums_h_
+#include "../Universe/Enums.h"
 #endif
+
+#include <vector>
 
 #ifndef _XMLObjectFactory_h_
 #include "XMLObjectFactory.h"
 #endif
 
-#ifndef _ResourceCenter_h_
-#include "../universe/ResourceCenter.h"
-#endif
-
+class XMLElement;
 
 /////////////////////////////////////////////////////
 // Order

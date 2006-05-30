@@ -13,6 +13,7 @@
 #include "../util/Random.h"
 #include "Special.h"
 #include "../Empire/ServerEmpireManager.h"
+#include "../Empire/Empire.h"
 #include "Ship.h"
 #include "ShipDesign.h"
 #include "System.h"
@@ -873,7 +874,7 @@ bool Universe::EdgeVisibilityFilter::CanSeeAtLeastOneSystem(const Empire* empire
 const bool Universe::ALL_OBJECTS_VISIBLE = false;
 double Universe::s_universe_width = 1000.0;
 bool Universe::s_inhibit_universe_object_signals = false;
-int Universe::s_encoding_empire = Universe::ALL_EMPIRES;
+int Universe::s_encoding_empire = ALL_EMPIRES;
 int Universe::s_turn = 0;
 
 Universe::Universe()

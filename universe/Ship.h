@@ -26,7 +26,7 @@ public:
 
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const;
     virtual const std::string& PublicName(int empire_id) const;
-    virtual XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const;
+    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const;
 
     bool IsArmed() const;
     double Speed() const;

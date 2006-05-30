@@ -2,12 +2,12 @@
 #ifndef _ShipDesign_h_
 #define _ShipDesign_h_
 
-#include "../util/XMLDoc.h"
-
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
 #include <string>
+
+class XMLElement;
 
 /** a class representing a ship design */
 struct ShipDesign

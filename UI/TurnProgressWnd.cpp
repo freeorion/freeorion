@@ -5,6 +5,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "Splash.h"
+#include "../empire/Empire.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>

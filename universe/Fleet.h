@@ -32,7 +32,7 @@ public:
 
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const;
     virtual const std::string& PublicName(int empire_id) const;
-    virtual XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const;
+    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const;
 
     /** Returns the list of systems that this fleet will move through en route to its destination (may be empty). 
         If this fleet is currently at a system, that system will be the first one in the list. */
@@ -116,7 +116,7 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
     bool visible;
     int moving_to;
     if (Archive::is_saving::value)
-        visible = Universe::ALL_OBJECTS_VISIBLE || Universe::s_encoding_empire == Universe::ALL_EMPIRES || OwnedBy(Universe::s_encoding_empire);
+        visible = Universe::ALL_OBJECTS_VISIBLE || Universe::s_encoding_empire == ALL_EMPIRES || OwnedBy(Universe::s_encoding_empire);
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(visible);
     if (Archive::is_saving::value)

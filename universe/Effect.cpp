@@ -1,9 +1,15 @@
 #include "Effect.h"
 
 #include "../util/AppInterface.h"
-
-#include <boost/format.hpp>
-#include <boost/tuple/tuple.hpp>
+#include "ValueRef.h"
+#include "Condition.h"
+#include "Universe.h"
+#include "UniverseObject.h"
+#include "../empire/EmpireManager.h"
+#include "../empire/Empire.h"
+#include "Planet.h"
+#include "System.h"
+#include "Tech.h"
 
 #include <cctype>
 
@@ -80,7 +86,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
     targets.clear();
 
     // evaluate the activation condition only on the source object
-    Condition::ConditionBase::ObjectSet non_targets;
+    Condition::ObjectSet non_targets;
     non_targets.insert(source);
     m_activation->Eval(source, targets, non_targets);
 
@@ -103,7 +109,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
     assert(source);
 
     // execute effects on targets
-    for (Condition::ConditionBase::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+    for (Condition::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         for (unsigned int i = 0; i < m_effects.size(); ++i) {
             m_effects[i]->Execute(source, *it);
         }
@@ -602,7 +608,7 @@ void SetTechAvailability::Execute(const UniverseObject* source, UniverseObject* 
     const Tech* tech = GetTech(m_tech_name);
     assert(empire && tech);
 
-    const std::vector<Tech::ItemSpec>& items = tech->UnlockedItems();
+    const std::vector<ItemSpec>& items = tech->UnlockedItems();
     for (unsigned int i = 0; i < items.size(); ++i) {
         if (m_available)
             empire->UnlockItem(items[i]);

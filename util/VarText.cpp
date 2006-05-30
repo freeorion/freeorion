@@ -2,10 +2,15 @@
 
 #include "AppInterface.h"
 #include "MultiplayerCommon.h"
-#include "../universe/Building.h"
 #include "../universe/UniverseObject.h"
 
 #include <boost/spirit.hpp>
+
+// Forward declarations
+class Tech;
+class BuildingType;
+const Tech* GetTech(const std::string& name);
+const BuildingType* GetBuildingType(const std::string& name);
 
 namespace {
     // converts (first, last) to a string, looks up its value in the Universe, then appends this to the end of a std::string

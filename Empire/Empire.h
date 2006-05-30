@@ -380,8 +380,8 @@ public:
     double ProductionPoints() const;
 
     /** Encodes the dat of this empire as visible to the empire with id \a empire_id (or all data if \a empire_id ==
-        Universe::ALL_EMPIRES) */
-    XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const;
+        ALL_EMPIRES) */
+    XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const;
     //@}
 
 
@@ -411,7 +411,7 @@ public:
     void AddTech(const std::string& name);
 
     /// Adds a given buildable item (Building, Ship Component, etc.) to the list of available buildable items.
-    void UnlockItem(const Tech::ItemSpec& item);
+    void UnlockItem(const ItemSpec& item);
 
     /// Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     void AddBuildingType(const std::string& name);
@@ -436,7 +436,7 @@ public:
     void RemoveTech(const std::string& name);
 
     /// Removes a given buildable item (Building, ShipComponent, etc.) from the list of available buildable items.
-    void LockItem(const Tech::ItemSpec& item);
+    void LockItem(const ItemSpec& item);
 
     /// Removes the given BuildingType from the empire's list
     void RemoveBuildingType(const std::string& name);
@@ -592,7 +592,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_player_name)
         & BOOST_SERIALIZATION_NVP(m_color);
     if (Universe::ALL_OBJECTS_VISIBLE ||
-        Universe::s_encoding_empire == Universe::ALL_EMPIRES || m_id == Universe::s_encoding_empire) {
+        Universe::s_encoding_empire == ALL_EMPIRES || m_id == Universe::s_encoding_empire) {
         ar  & BOOST_SERIALIZATION_NVP(m_homeworld_id)
             & BOOST_SERIALIZATION_NVP(m_techs)
             & BOOST_SERIALIZATION_NVP(m_research_queue)

@@ -7,6 +7,7 @@
 #include "../util/OptionsDB.h"
 #include "../universe/Tech.h"
 #include "../universe/Effect.h"
+#include "../empire/Empire.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
@@ -586,7 +587,7 @@ void TechTreeWnd::TechDetailPanel::Reset()
         description_str += str(format(UserString("TECH_DETAIL_EFFECTS_STR"))
                                % EffectsDescription(m_tech->Effects()));
     }
-    const std::vector<Tech::ItemSpec>& unlocked_items = m_tech->UnlockedItems();
+    const std::vector<ItemSpec>& unlocked_items = m_tech->UnlockedItems();
     if (!unlocked_items.empty())
         description_str += UserString("TECH_DETAIL_UNLOCKS_SECTION_STR");
     for (unsigned int i = 0; i < unlocked_items.size(); ++i) {

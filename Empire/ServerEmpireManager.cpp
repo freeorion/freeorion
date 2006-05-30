@@ -4,6 +4,7 @@
 #include "../universe/Planet.h"
 #include "../server/ServerApp.h"
 #include "../universe/Universe.h"
+#include "Empire.h"
 
 #include <boost/lexical_cast.hpp>
 

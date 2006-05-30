@@ -35,6 +35,8 @@
 
 #include <string>
 
+const Tech* GetTech(const std::string& name);
+
 namespace fs = boost::filesystem;
 
 // static members

@@ -7,6 +7,7 @@
 
 #include <fstream>
 
+std::string DumpIndent();
 
 extern int g_indent;
 

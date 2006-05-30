@@ -93,9 +93,10 @@ void StringTable::Load()
         if (!m_strings.insert(make_pair(temp, temp2)).second) {
             //found a duplicate or invalid key
             Logger().errorStream() << "Duplicate string ID found: '" << (string)temp << "' in file: '" << m_filename << "'.  Ignoring duplicate.";
-        } else {
+        } 
+        /*else {
             Logger().debugStream() << "Inserted(" << (string)temp << ", " << string(temp2) << ")";
-        }
+        }*/
     }
 }
 

@@ -46,6 +46,14 @@ namespace {
             member3 condition;
         };
 
+        struct NumberClosure : boost::spirit::closure<NumberClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
+        {
+            member1 this_;
+            member2 high;
+            member3 low;
+            member4 condition;
+        };
+
         struct TurnClosure : boost::spirit::closure<TurnClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*>
         {
             member1 this_;
@@ -100,6 +108,7 @@ namespace {
 
         typedef rule<Scanner, WithinDistanceClosure::context_t> WithinDistanceRule;
         typedef rule<Scanner, WithinStarlaneJumpsClosure::context_t> WithinStarlaneJumpsRule;
+        typedef rule<Scanner, NumberClosure::context_t> NumberRule;
         typedef rule<Scanner, TurnClosure::context_t> TurnRule;
         typedef rule<Scanner, NumberOfClosure::context_t> NumberOfRule;
         typedef rule<Scanner, NameParamClosure::context_t> NameParamRule;
@@ -112,6 +121,7 @@ namespace {
         NameParamRule owner_has_tech;
         WithinDistanceRule within_distance;
         WithinStarlaneJumpsRule within_starlane_jumps;
+        NumberRule number;
         TurnRule turn;
         NumberOfRule number_of;
         NameParamRule has_special;
@@ -141,6 +151,13 @@ namespace {
              >> jumps_label >> int_expr_p[within_starlane_jumps.jumps = arg1]
              >> condition_label >> condition_p[within_starlane_jumps.condition = arg1])
             [within_starlane_jumps.this_ = new_<Condition::WithinStarlaneJumps>(within_starlane_jumps.jumps, within_starlane_jumps.condition)];
+
+        number =
+            (str_p("number")
+             >> low_label >> int_expr_p[number.low = arg1]
+             >> high_label >> int_expr_p[number.high = arg1]
+             >> condition_label >> condition_p[number.condition = arg1])
+            [number.this_ = new_<Condition::Number>(number.low, number.high, number.condition)];
 
         turn =
             (str_p("turn")
@@ -201,6 +218,7 @@ namespace {
             owner_has_tech[condition2_p.this_ = arg1]
             | within_distance[condition2_p.this_ = arg1]
             | within_starlane_jumps[condition2_p.this_ = arg1]
+            | number[condition2_p.this_ = arg1]
             | turn[condition2_p.this_ = arg1]
             | number_of[condition2_p.this_ = arg1]
             | has_special[condition2_p.this_ = arg1]

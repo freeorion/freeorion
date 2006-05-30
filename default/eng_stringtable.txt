@@ -1685,6 +1685,11 @@ DESC_OWNER_HAS_TECH
 DESC_OWNER_HAS_TECH_NOT
  that does not belong to an empire that has the tech %1%
 
+DESC_NUMBER
+ if there are between %1% and %2% objects%3%
+
+DESC_NUMBER_NOT
+ if there are not between %1% and %2% objects%3%
 
 ###################
 # Tech Categories #
@@ -2105,7 +2110,7 @@ ECO_ECON_SPECTRO
 Economic Spectroscopy
 
 ECO_ECON_SPECTRO_DESC
-With careful analysis and well-formed models, a linearly independent set of basis states as a frequency parameterization of an economy may be constructed.  Cyclical economic trends and indicators of particular recurrance periods may then be studied independently, and may be amplitude- or phase-adjusted to achieve desired economic goals.  Such manipulations much be conducted with great caution however, as simultaneously phase-matched cyclical effects which initially appear to be unbounded growth will inevitably reach a peak, after which the economic collapse will be equally dramatic.
+With careful analysis and well-formed models, a linearly independent set of basis states as a frequency parameterization of an economy may be constructed.  Cyclical economic trends and indicators of particular recurrance periods may then be studied independently, and may be amplitude- or phase-adjusted to achieve desired economic goals.  Such manipulations must be conducted with great caution however, as simultaneously phase-matched cyclical effects which initially appear to be unbounded growth will inevitably reach a peak, after which the economic collapse will be equally dramatic.
 
 ECO_INTSTEL_TRADE
 Interstellar Trade

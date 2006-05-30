@@ -16,6 +16,7 @@
 #include "../../util/Directories.h"
 #include "../../util/XMLDoc.h"
 #include "../../util/Version.h"
+#include "../empire/Empire.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>

@@ -2,6 +2,7 @@
 
 #include "ParserUtil.h"
 #include "ValueRefParser.h"
+#include "ValueRef.h"
 #include "Effect.h"
 
 using namespace boost::spirit;

@@ -9,12 +9,15 @@
 #include "../universe/Ship.h"
 #include "../universe/System.h"
 #include "../universe/UniverseObject.h"
+#include "../empire/EmpireManager.h"
+#include "../empire/Empire.h"
 
 #include <boost/lexical_cast.hpp>
 
 #include <fstream>
 #include <vector>
 
+const Tech* GetTech(const std::string& name);
 
 using boost::lexical_cast;
 using std::vector;

@@ -2,6 +2,7 @@
 
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
+#include "../universe/Ship.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/Planet.h"
@@ -753,9 +754,17 @@ bool Empire::BuildableItem(BuildType build_type, std::string name, int location)
 {
     if (ProductionCostAndTime(build_type, name) != std::make_pair(-1.0, -1)) {
         UniverseObject* build_location = GetUniverse().Object(location);
-        // TODO: after v0.3, check for shipyards, building location limitations, etc.
-        return build_location && build_location->Owners().size() == 1 &&
-            *build_location->Owners().begin() == m_id;
+
+        if (build_type == BT_BUILDING) {
+            const BuildingType* building_type = GetBuildingType(name);
+            if (!building_type) return false;
+            return building_type->ProductionLocation(m_id, location);
+
+        } else {
+            return build_location && build_location->Owners().size() == 1 &&
+                *build_location->Owners().begin() == m_id;
+        }
+        // TODO: require ships to be built at shipyards
     } else {
         return false;
     }
@@ -908,7 +917,7 @@ void Empire::AddTech(const std::string& name)
     m_techs.insert(name);
 }
 
-void Empire::UnlockItem(const Tech::ItemSpec& item)
+void Empire::UnlockItem(const ItemSpec& item)
 {
     // TODO: handle other types (such as ship components) as they are implemented
     if (item.type == UIT_BUILDING)
@@ -944,7 +953,7 @@ void Empire::RemoveTech(const std::string& name)
     m_techs.erase(name);
 }
 
-void Empire::LockItem(const Tech::ItemSpec& item)
+void Empire::LockItem(const ItemSpec& item)
 {
     // TODO: handle other types (such as ship components) as they are implemented
     if (item.type == UIT_BUILDING) {
@@ -964,7 +973,7 @@ void Empire::ClearSitRep()
     m_sitrep_entries.clear();
 }
 
-XMLElement Empire::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement Empire::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 {
     using boost::lexical_cast;
 
@@ -974,7 +983,7 @@ XMLElement Empire::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
     retval.AppendChild(XMLElement("m_player_name", m_player_name));
     retval.AppendChild(XMLElement("m_color", ClrToXML(m_color)));
 
-    if (empire_id == m_id || empire_id == Universe::ALL_EMPIRES) {
+    if (empire_id == m_id || empire_id == ALL_EMPIRES) {
         retval.AppendChild(XMLElement("m_homeworld_id", lexical_cast<std::string>(m_homeworld_id)));
 
         retval.AppendChild(XMLElement("m_sitrep_entries"));
@@ -1048,7 +1057,7 @@ void Empire::CheckResearchProgress()
         status += it->spending;
         if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= status) {
             m_techs.insert(tech->Name());
-            const std::vector<Tech::ItemSpec>& unlocked_items = tech->UnlockedItems();
+            const std::vector<ItemSpec>& unlocked_items = tech->UnlockedItems();
             for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
                 UnlockItem(unlocked_items[i]);
             }
@@ -1088,6 +1097,7 @@ void Empire::CheckProductionProgress()
                 planet->AddBuilding(building_id);
                 SitRepEntry *entry = CreateBuildingBuiltSitRep(m_production_queue[i].item.name, planet->ID());
                 AddSitRepEntry(entry);
+                //Logger().debugStream() << "New Building created on turn: " << building->CreationTurn();
                 break;
             }
 
@@ -1108,6 +1118,7 @@ void Empire::CheckProductionProgress()
                 fleet_name += boost::lexical_cast<std::string>(fleet_id);
                 fleet->Rename(fleet_name);
                 system->Insert(fleet);
+                Logger().debugStream() << "New Fleet created on turn: " << fleet->CreationTurn();
   
                 // add ship
                 const ShipDesign* ship_design = GetShipDesign(m_production_queue[i].item.name);
@@ -1117,6 +1128,7 @@ void Empire::CheckProductionProgress()
                 ship_name += boost::lexical_cast<std::string>(ship_id);
                 ship->Rename(ship_name);
                 fleet->AddShip(ship_id);
+                Logger().debugStream() << "New Ship created on turn: " << ship->CreationTurn();
 
                 // add sitrep
                 SitRepEntry *entry = CreateShipBuiltSitRep(ship_id, system->ID());

@@ -24,6 +24,7 @@
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
 #include "TurnProgressWnd.h"
+#include "../empire/Empire.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/MultiEdit.h>

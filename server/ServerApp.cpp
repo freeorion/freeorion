@@ -5,16 +5,19 @@
 #include "../universe/Building.h"
 #include "../universe/Effect.h"
 #include "../universe/Fleet.h"
+#include "../universe/Ship.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../universe/Special.h"
 #include "../universe/System.h"
+#include "../empire/Empire.h"
 #include "../util/Directories.h"
 #include "../util/GZStream.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/OrderSet.h"
 #include "../util/XMLDoc.h"
+#include "../util/SitRepEntry.h"
 
 #include <GG/Font.h>
 #include <GG/net/fastevents.h>
@@ -217,7 +220,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_log_category.setAdditivity(false);  // make appender the only appender used...
     m_log_category.setAppender(appender);
     m_log_category.setAdditivity(true);   // ...but allow the addition of others later
-    m_log_category.setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
+    m_log_category.setPriority(log4cpp::Priority::DEBUG);
     m_log_category.debug("freeoriond logger initialized.");
     m_log_category.debugStream() << "ServerApp::ServerApp : Server now in mode " << SERVER_IDLE << " (SERVER_IDLE).";
 }
@@ -516,7 +519,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     }
                     doc.root_node.AppendChild(player_element);
                 }
-                doc.root_node.AppendChild(m_universe.XMLEncode(Universe::ALL_EMPIRES));
+                doc.root_node.AppendChild(m_universe.XMLEncode(ALL_EMPIRES));
 
 #if GZIP_SAVE_FILES_COMPRESSION_LEVEL
                 GZStream::ogzstream ofs(save_filename.c_str());
@@ -902,8 +905,8 @@ void ServerApp::HandleMessage(const Message& msg)
                     }
                     }
                     // get the list of all UniverseObjects that satisfy m_condition
-                    Condition::ConditionBase::ObjectSet condition_targets;
-                    Condition::ConditionBase::ObjectSet condition_non_targets;
+                    Condition::ObjectSet condition_targets;
+                    Condition::ObjectSet condition_non_targets;
                     for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
                         condition_non_targets.insert(it->second);
                     }
@@ -922,7 +925,7 @@ void ServerApp::HandleMessage(const Message& msg)
                         ofs2 << "\n\nTARGETS:\n" << std::endl;
 #endif
                         ofs2 << "Condition Test " << i << ": All objects" << condition->Description() << "\n";
-                        for (Condition::ConditionBase::ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+                        for (Condition::ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
                             ofs2 << "  " << (*it)->ID() << " \"" << (*it)->Name() << "\"" << std::endl;
                         }
                     } else {
@@ -1273,7 +1276,7 @@ void ServerApp::NewGameInit()
     m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
     m_universe.CreateUniverse(m_galaxy_size, m_galaxy_shape, m_galaxy_age, m_starlane_freq, m_planet_density, m_specials_freq, 
                               m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size(), g_lobby_data.players);
-    m_current_turn = 1;
+    m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << " (SERVER_GAME_SETUP).";
 
     // add empires to turn sequence map according to spec this should be done randomly for now it's not

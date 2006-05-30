@@ -11,6 +11,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/System.h"
+#include "../empire/Empire.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>

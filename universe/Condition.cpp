@@ -1,8 +1,15 @@
 #include "Condition.h"
 
 #include "../util/AppInterface.h"
+#include "UniverseObject.h"
 #include "Building.h"
 #include "Fleet.h"
+#include "Ship.h"
+#include "Planet.h"
+#include "Meter.h"
+#include "../empire/Empire.h"
+#include "../empire/EmpireManager.h"
+
 #include "../util/Random.h"
 #include "System.h"
 
@@ -79,6 +86,72 @@ std::string Condition::ConditionBase::Dump() const
 bool Condition::ConditionBase::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     return false;
+}
+
+///////////////////////////////////////////////////////////
+// Number                                                //
+///////////////////////////////////////////////////////////
+Condition::Number::Number(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const ConditionBase* condition) :
+    m_low(low),
+    m_high(high),
+    m_condition(condition)
+{
+    Logger().debugStream() << "Creating Number Conditition";
+}
+
+Condition::Number::~Number()
+{
+    delete m_low;
+    delete m_high;
+    delete m_condition;
+}
+
+std::string Condition::Number::Description(bool negated/* = false*/) const
+{
+    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
+    std::string description_str = "DESC_NUMBER";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str))
+               % low_str
+               % high_str
+               % m_condition->Description());
+}
+
+std::string Condition::Number::Dump() const
+{
+    std::string retval = DumpIndent() + "Number low = " + m_low->Dump() + "Number high = " + m_high->Dump() + " condition =\n";
+    ++g_indent;
+    retval += m_condition->Dump();
+    --g_indent;
+    return retval;
+}
+
+void Condition::Number::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
+                               SearchDomain search_domain/* = NON_TARGETS*/) const
+{
+    // get set of all UniverseObjects that satisfy m_condition
+    ObjectSet condition_targets;
+    ObjectSet condition_non_targets;
+    const Universe& universe = GetUniverse();
+    for (Universe::const_iterator uit = universe.begin(); uit != universe.end(); ++uit) {
+        condition_non_targets.insert(uit->second);
+    }
+    m_condition->Eval(source, condition_targets, condition_non_targets);
+
+    // compare number of objects that satisfy m_condition to the acceptable range of such objects
+    int matched = condition_targets.size();
+    int low = m_low->Eval(source, source);
+    int high = m_high->Eval(source, source);
+    bool in_range = (low <= matched && matched < high);
+
+    if (search_domain == TARGETS && !in_range) {
+        non_targets.insert(targets.begin(), targets.end());
+    }
+    if (search_domain == NON_TARGETS && in_range) {
+        targets.insert(non_targets.begin(), non_targets.end());
+    }
 }
 
 ///////////////////////////////////////////////////////////

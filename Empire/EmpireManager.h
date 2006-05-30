@@ -2,10 +2,9 @@
 #ifndef _EmpireManager_h_
 #define _EmpireManager_h_
 
-#include "Empire.h"
-
-#include "../universe/Universe.h"
-#include "../util/XMLDoc.h"
+//#include "../universe/Universe.h"
+//#include "../util/XMLDoc.h"
+#include "../universe/Enums.h"
 
 #ifndef _GG_Clr_h_
 #include <GG/Clr.h>
@@ -15,6 +14,8 @@
 #include <map>
 #include <string>
 
+class Empire;
+class XMLElement;
 
 /** Maintains all of the Empire objects that exist in the application. */
 class EmpireManager
@@ -49,7 +50,7 @@ public:
 
     /// Tag for empire update XMLElements
     static const std::string EMPIRE_UPDATE_TAG;
-    XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES);
+    XMLElement XMLEncode(int empire_id = ALL_EMPIRES);
 
     /** Adds the given empire to the manager. */
     void InsertEmpire(Empire* empire);

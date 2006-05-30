@@ -6,6 +6,8 @@
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/XMLDoc.h"
+#include "../empire/Empire.h"
+#include "../empire/EmpireManager.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -61,7 +63,7 @@ Fleet::Fleet(const XMLElement& elem) :
 
 UniverseObject::Visibility Fleet::GetVisibility(int empire_id) const
 {
-    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id)) {
+    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id)) {
         return FULL_VISIBILITY;
     } else {
         // A fleet is visible to another player, iff
@@ -85,13 +87,13 @@ const std::string& Fleet::PublicName(int empire_id) const
 {
     // Disclose real fleet name only to fleet owners. Rationale: a player might become suspicious if the incoming
     // foreign fleet is called "Decoy"
-    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == Universe::ALL_EMPIRES || OwnedBy(empire_id))
+    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         return Name();
     else
         return UserString("FW_FOREIGN_FLEET");
 }
 
-XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement Fleet::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 {
     using boost::lexical_cast;
     using std::string;
@@ -102,7 +104,7 @@ XMLElement Fleet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
     // Disclose real fleet name only to fleet owners. Rationale: a player
     // might become suspicious if the incoming foreign fleet is called "Decoy"
     if (!Universe::ALL_OBJECTS_VISIBLE &&
-        empire_id != Universe::ALL_EMPIRES && !OwnedBy(empire_id)) {
+        empire_id != ALL_EMPIRES && !OwnedBy(empire_id)) {
         retval.Child("UniverseObject").Child("m_name").SetText(UserString("FW_FOREIGN_FLEET"));
         // the player also only sees the immediate destination of the fleet,
         // not the entire route.

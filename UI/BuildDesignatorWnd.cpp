@@ -1,15 +1,18 @@
 #include "BuildDesignatorWnd.h"
 
-#include "../util/AppInterface.h"
-#include "../universe/Building.h"
+#include "CUIControls.h"
+#include "ClientUI.h"
 #include "CUISpin.h"
-#include "../universe/Effect.h"
-#include "../client/human/HumanClientApp.h"
-#include "MapWnd.h"
-#include "../util/MultiplayerCommon.h"
-#include "../universe/ShipDesign.h"
+#include "CUIWnd.h"
 #include "SidePanel.h"
 #include "TechTreeWnd.h"
+#include "MapWnd.h"
+#include "../util/MultiplayerCommon.h"
+#include "../universe/UniverseObject.h"
+#include "../empire/Empire.h"
+#include "../universe/Building.h"
+#include "../universe/ShipDesign.h"
+#include "../universe/Effect.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>

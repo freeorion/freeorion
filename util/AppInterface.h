@@ -2,15 +2,10 @@
 #ifndef _AppInterface_h_
 #define _AppInterface_h_
 
-#ifndef _EmpireManager_h_
-#include "../Empire/EmpireManager.h"
-#endif
-
-#ifndef _Universe_h_
-#include "../universe/Universe.h"
-#endif
-
 #include <log4cpp/Category.hh>
+
+class EmpireManager;
+class Universe;
 
 /** Accessor for the App's empire manager */
 EmpireManager& Empires();

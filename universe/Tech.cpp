@@ -11,6 +11,7 @@
 #include <sstream>
 #include <fstream>
 
+std::string DumpIndent();
 
 extern int g_indent;
 
@@ -228,7 +229,7 @@ const std::string& Tech::Graphic() const
     return m_graphic;
 }
 
-const std::vector<Tech::ItemSpec>& Tech::UnlockedItems() const
+const std::vector<ItemSpec>& Tech::UnlockedItems() const
 {
     return m_unlocked_items;
 }
@@ -240,19 +241,19 @@ const std::set<std::string>& Tech::UnlockedTechs() const
 
 
 ///////////////////////////////////////////////////////////
-// Tech::ItemSpec                                        //
+// ItemSpec                                        //
 ///////////////////////////////////////////////////////////
-Tech::ItemSpec::ItemSpec() :
+ItemSpec::ItemSpec() :
     type(INVALID_UNLOCKABLE_ITEM_TYPE),
     name("")
 {}
 
-Tech::ItemSpec::ItemSpec(UnlockableItemType type_, const std::string& name_) :
+ItemSpec::ItemSpec(UnlockableItemType type_, const std::string& name_) :
     type(type_),
     name(name_)
 {}
 
-std::string Tech::ItemSpec::Dump() const
+std::string ItemSpec::Dump() const
 {
     std::string retval = "Item type = ";
     switch (type) {

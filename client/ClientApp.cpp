@@ -1,10 +1,9 @@
 #include "ClientApp.h"
 
 #include "../util/MultiplayerCommon.h"
+#include "../universe/UniverseObject.h"
 
 #include <stdexcept>
-
-
 
 // static member(s)
 ClientApp* ClientApp::s_app = 0;

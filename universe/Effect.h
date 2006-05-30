@@ -2,7 +2,19 @@
 #ifndef _Effect_h_
 #define _Effect_h_
 
-#include "Condition.h"
+#include <set>
+#include <vector>
+
+#include "Enums.h"
+
+#include <boost/shared_ptr.hpp>
+
+class UniverseObject;
+
+namespace Condition {
+    class ConditionBase;
+    typedef std::set<UniverseObject*> ObjectSet;
+}
 
 namespace Effect {
     class EffectsGroup;
@@ -22,6 +34,11 @@ namespace Effect {
     class SetEffectTarget;
 }
 
+namespace ValueRef {
+    template <class T>
+    struct ValueRefBase;
+}
+
 /** Contains one or more Effects, a Condition which indicates the objects in the scope of the Effect(s), and a Condition which
     indicates whether or not the Effect(s) will be executed on the objects in scope during the current turn.  Since Conditions
     operate on sets of objects (usually all objects in the universe), the activation condition bears some explanation.  It
@@ -31,7 +48,7 @@ namespace Effect {
 class Effect::EffectsGroup
 {
 public:
-    typedef Condition::ConditionBase::ObjectSet TargetSet;
+    typedef Condition::ObjectSet TargetSet;
 
     struct Description
     {

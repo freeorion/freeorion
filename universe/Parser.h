@@ -6,7 +6,6 @@
 #define BOOST_SPIRIT_CLOSURE_LIMIT PHOENIX_LIMIT
 
 #include "Enums.h"
-#include "Tech.h"
 
 #include <boost/spirit.hpp>
 #include <boost/spirit/attribute.hpp>
@@ -30,7 +29,8 @@ namespace Effect {
 }
 class Special;
 class BuildingType;
-
+class Tech;
+struct ItemSpec;
 
 ////////////////////////////////////////////////////////////
 // Scanner                                                //
@@ -86,7 +86,7 @@ extern boost::spirit::rule<Scanner, EffectClosure::context_t> effect_p;
 // Top Level Parsers                                      //
 ////////////////////////////////////////////////////////////
 struct BuildingTypeClosure : boost::spirit::closure<BuildingTypeClosure, BuildingType*, std::string,
-                                                    std::string, double, int, double,
+                                                    std::string, double, int, double, Condition::ConditionBase*,
                                                     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                                     std::string>
 {
@@ -96,8 +96,9 @@ struct BuildingTypeClosure : boost::spirit::closure<BuildingTypeClosure, Buildin
     member4 build_cost;
     member5 build_time;
     member6 maintenance_cost;
-    member7 effects_groups;
-    member8 graphic;
+    member7 location;
+    member8 effects_groups;
+    member9 graphic;
 };
 
 struct SpecialClosure : boost::spirit::closure<SpecialClosure, Special*, std::string, std::string,
@@ -112,7 +113,7 @@ struct SpecialClosure : boost::spirit::closure<SpecialClosure, Special*, std::st
 struct TechClosure : boost::spirit::closure<TechClosure, Tech*,
                                             std::string, std::string, std::string, TechType, double, int,
                                             std::vector<boost::shared_ptr<const Effect::EffectsGroup> >, std::set<std::string>,
-                                            std::vector<Tech::ItemSpec>, std::string>
+                                            std::vector<ItemSpec>, std::string>
 {
     member1 this_;
     member2 name;

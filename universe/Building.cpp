@@ -1,16 +1,22 @@
 #include "Building.h"
 
 #include "Effect.h"
+#include "Condition.h"
 #include "../universe/Parser.h"
 #include "../universe/ParserUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "Planet.h"
 #include "Predicates.h"
+#include "../empire/Empire.h"
+#include "../empire/EmpireManager.h"
+#include "Universe.h"
+#include "../util/AppInterface.h"
 
 #include <fstream>
 #include <iostream>
 
+std::string DumpIndent();
 
 extern int g_indent;
 
@@ -124,7 +130,7 @@ Planet* Building::GetPlanet() const
     return m_planet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Planet>(m_planet_id);
 }
 
-XMLElement Building::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement Building::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 {
     using boost::lexical_cast;
 
@@ -168,12 +174,14 @@ BuildingType::BuildingType() :
     m_build_cost(0.0),
     m_build_time(0),
     m_maintenance_cost(0.0),
+    m_location(0),
     m_effects(0),
     m_graphic("")
 {}
 
 BuildingType::BuildingType(const std::string& name, const std::string& description,
                            double build_cost, int build_time, double maintenance_cost,
+                           const Condition::ConditionBase* location,
                            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                            const std::string& graphic) :
     m_name(name),
@@ -181,6 +189,7 @@ BuildingType::BuildingType(const std::string& name, const std::string& descripti
     m_build_cost(build_cost),
     m_build_time(build_time),
     m_maintenance_cost(maintenance_cost),
+    m_location(location),
     m_effects(effects),
     m_graphic(graphic)
 {}
@@ -240,6 +249,9 @@ double BuildingType::MaintenanceCost() const
     return m_maintenance_cost;
 }
 
+const Condition::ConditionBase* BuildingType::Location() const {
+    return m_location;
+}
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& BuildingType::Effects() const
 {
     return m_effects;
@@ -248,6 +260,26 @@ const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& BuildingType:
 const std::string& BuildingType::Graphic() const
 {
     return m_graphic;
+}
+
+bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
+    Condition::ObjectSet locations;
+    Condition::ObjectSet non_locations;
+    Universe& universe = GetUniverse();
+    UniverseObject* loc = universe.Object(location_id);
+    if (!loc) return false;
+    Logger().debugStream() << "Determining if object: " << loc->ID() << " : " << loc->Name() << " is a valid production location for empire: " << empire_id;
+    UniverseObject * source = universe.Object(Empires().Lookup(empire_id)->CapitolID());
+    if (!source) return false;
+    Logger().debugStream() << "  Source object: " << source->ID() << " : " << source->Name();
+    locations.insert(loc);
+    Logger().debugStream() << "  non_locations.size() initally: " << non_locations.size();
+    Logger().debugStream() << "  locations.size() initally:     " << locations.size();
+    m_location->Eval(source, locations, non_locations, Condition::TARGETS);
+    Logger().debugStream() << "  non_locations.size() after:    " << non_locations.size();
+    Logger().debugStream() << "  locations.size() after:        " << locations.size();
+        
+    return !(locations.empty());
 }
 
 void BuildingType::AddEffects(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects)

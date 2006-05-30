@@ -18,11 +18,6 @@
 #include "ResourceCenter.h"
 #endif
 
-#ifndef _Ship_h_
-#include "Ship.h"
-#endif
-
-
 /** a class representing a FreeOrion planet.*/
 class Planet :
     public UniverseObject,
@@ -59,7 +54,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////
    
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-    virtual XMLElement XMLEncode(int empire_id = Universe::ALL_EMPIRES) const; ///< constructs an XMLElement from a planet object with visibility limited relative to the input empire
+    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a planet object with visibility limited relative to the input empire
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
     //@}

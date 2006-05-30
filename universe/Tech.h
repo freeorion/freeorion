@@ -20,13 +20,12 @@ namespace Effect {
 class TechManager;
 class XMLElement;
 
+struct ItemSpec;
 
 /** encasulates the data for a single FreeOrion technology */
 class Tech
 {
 public:
-    struct ItemSpec;
-
     /** \name Structors */ //@{
     /** basic ctor */
     Tech(const std::string& name,
@@ -108,7 +107,7 @@ private:
 /** specifies a single item that may be unlocked by researching a tech.  The \a type field stores the type of item that
     is being unlocked, such as a building or ship component, and the \a name field contains the name of the actual item
     (e.g. (UIT_BUILDING, "Superfarm") or (UIT_SHIP_COMPONENT, "Death Ray")). */
-struct Tech::ItemSpec
+struct ItemSpec
 {
     ItemSpec(); ///< default ctor
     ItemSpec(UnlockableItemType type_, const std::string& name_); ///< basic ctor

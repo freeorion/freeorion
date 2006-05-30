@@ -2,8 +2,12 @@
 
 #include "ParserUtil.h"
 #include "ValueRefParser.h"
-#include "Building.h"
-#include "Special.h"
+#include "Tech.h"       // for struct ItemSpec;
+#include "Effect.h"     // for Effect::EffectsGroup constructor
+#include "Building.h"   // for Building and constructor
+#include "Special.h"    // for Special and constructor
+#include "../empire/Empire.h"
+#include "Condition.h"
 
 using namespace boost::spirit;
 using namespace phoenix;
@@ -29,7 +33,7 @@ struct EffectsGroupVecClosure : boost::spirit::closure<EffectsGroupVecClosure, s
     member1 this_;
 };
 
-struct TechItemSpecClosure : boost::spirit::closure<TechItemSpecClosure, Tech::ItemSpec, UnlockableItemType, std::string>
+struct TechItemSpecClosure : boost::spirit::closure<TechItemSpecClosure, ItemSpec, UnlockableItemType, std::string>
 {
     member1 this_;
     member2 type;
@@ -59,6 +63,7 @@ namespace {
     ParamLabel prerequisites_label("prerequisites");
     ParamLabel unlock_label("unlock");
     ParamLabel type_label("type");
+    ParamLabel location_label("location");
 
     Effect::EffectsGroup* const NULL_EFF = 0;
     Condition::ConditionBase* const NULL_COND = 0;
@@ -87,11 +92,12 @@ namespace {
              >> buildcost_label >> real_p[building_type_p.build_cost = arg1]
              >> buildtime_label >> int_p[building_type_p.build_time = arg1]
              >> maintenancecost_label >> real_p[building_type_p.maintenance_cost = arg1]
+             >> location_label >> condition_p[building_type_p.location = arg1]
              >> effectsgroups_label >> effects_group_vec_p[building_type_p.effects_groups = arg1]
              >> graphic_label >> file_name_p[building_type_p.graphic = arg1])
             [building_type_p.this_ = new_<BuildingType>(building_type_p.name, building_type_p.description, building_type_p.build_cost,
-                                                        building_type_p.build_time, building_type_p.maintenance_cost, building_type_p.effects_groups,
-                                                        building_type_p.graphic)];
+                                                        building_type_p.build_time, building_type_p.maintenance_cost, building_type_p.location,
+                                                        building_type_p.effects_groups, building_type_p.graphic)];
 
         special_p =
             (str_p("special")
@@ -104,7 +110,7 @@ namespace {
             (str_p("item")
              >> type_label >> unlockable_item_type_p[tech_item_spec_p.type = arg1]
              >> name_label >> name_p[tech_item_spec_p.name = arg1])
-            [tech_item_spec_p.this_ = construct_<Tech::ItemSpec>(tech_item_spec_p.type, tech_item_spec_p.name)];
+            [tech_item_spec_p.this_ = construct_<ItemSpec>(tech_item_spec_p.type, tech_item_spec_p.name)];
 
         tech_category_p =
             (str_p("techcategory")

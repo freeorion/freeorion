@@ -76,7 +76,7 @@ double Meter::DeltaMax() const
     return m_initial_max - m_previous_max;
 }
 
-XMLElement Meter::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement Meter::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 {
     XMLElement retval("Meter");
     retval.AppendChild(XMLElement("m_current", boost::lexical_cast<std::string>(m_current)));

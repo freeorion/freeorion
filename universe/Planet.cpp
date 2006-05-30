@@ -174,14 +174,14 @@ UniverseObject::Visibility Planet::GetVisibility(int empire_id) const
     return GetSystem()->GetVisibility(empire_id);
 }
 
-XMLElement Planet::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/) const
+XMLElement Planet::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 {
     // Partial encoding of Planet for limited visibility
     using boost::lexical_cast;
     using std::string;
 
     Visibility vis= GetVisibility(empire_id);
-    if (empire_id == Universe::ALL_EMPIRES)
+    if (empire_id == ALL_EMPIRES)
         vis = FULL_VISIBILITY;
 
     XMLElement retval("Planet" + boost::lexical_cast<std::string>(ID()));

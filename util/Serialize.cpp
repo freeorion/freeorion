@@ -4,11 +4,12 @@
 #include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
+#include "../universe/Ship.h"
 #include "../universe/Planet.h"
-#include "../universe/Predicates.h"
 #include "../universe/ShipDesign.h"
-#include "../universe/Special.h"
 #include "../universe/System.h"
+
+//#include "../universe/Predicates.h"
 
 #include "SDL_byteorder.h"
 

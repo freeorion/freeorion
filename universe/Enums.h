@@ -325,4 +325,9 @@ MeterType FocusToMeter(FocusType type);
 /** Returns the equivalent meter type for the given focus; if no such focus exists, returns INVALID_FOCUS_TYPE. */
 FocusType MeterToFocus(MeterType type);
 
+/** the value used for the encoding empire when all data are desired, not just those visible to one empire */
+enum EncodingVisbility {
+    ALL_EMPIRES = -1
+};
+
 #endif // _Enums_h_

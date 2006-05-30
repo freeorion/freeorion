@@ -2,7 +2,6 @@
 #ifndef _VarText_h_
 #define _VarText_h_
 
-
 #ifndef _XMLDoc_h_
 #include "XMLDoc.h"
 #endif

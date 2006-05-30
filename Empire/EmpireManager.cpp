@@ -1,4 +1,5 @@
 #include "EmpireManager.h"
+#include "Empire.h"
 
 #include "../util/MultiplayerCommon.h"
 
@@ -50,7 +51,7 @@ EmpireManager::iterator EmpireManager::end()
     return m_empire_map.end();
 }
 
-XMLElement EmpireManager::XMLEncode(int empire_id/* = Universe::ALL_EMPIRES*/)
+XMLElement EmpireManager::XMLEncode(int empire_id/* = ALL_EMPIRES*/)
 {
     XMLElement retval("EmpireManager");
     for (EmpireManager::iterator it = begin(); it != end(); ++it) {
