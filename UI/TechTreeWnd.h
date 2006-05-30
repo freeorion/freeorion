@@ -41,6 +41,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    double             Scale() const;
     const std::string& CategoryShown() const;
     TechTypesShown     GetTechTypesShown() const;
     TechStatusesShown  GetTechStatusesShown() const;
@@ -50,6 +51,7 @@ public:
     void Update();
     void Clear();
     void Reset();
+    void SetScale(double scale);
     void ShowCategory(const std::string& category);
     void SetTechTypesShown(TechTypesShown tech_types);
     void SetTechStatusesShown(TechStatusesShown tech_statuses);
