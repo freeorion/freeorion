@@ -611,9 +611,6 @@ Empire::Empire(const XMLElement& elem) :
 
 Empire::~Empire()
 {
-    for (std::map<std::string, BuildingType*>::const_iterator it = m_modified_building_types.begin(); it != m_modified_building_types.end(); ++it) {
-        delete it->second;
-    }
     ClearSitRep();
 }
 
@@ -699,16 +696,6 @@ bool Empire::BuildingTypeAvailable(const std::string& name) const
 {
     Empire::BuildingTypeItr item = m_building_types.find(name);
     return item != m_building_types.end();
-}
-
-const BuildingType* Empire::GetBuildingType(const std::string& name) const
-{
-    std::map<std::string, BuildingType*>::const_iterator it = m_modified_building_types.find(name);
-    if (it != m_modified_building_types.end()) {
-        return it->second;
-    } else {
-        return ::GetBuildingType(name);
-    }
 }
 
 const ProductionQueue& Empire::GetProductionQueue() const

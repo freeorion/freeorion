@@ -333,11 +333,6 @@ public:
     /// Returns true if the given building type is known to this empire, false if it is not.
     bool BuildingTypeAvailable(const std::string& name) const;
 
-    /** Returns the BuildingType called \a name.  This will be equivalent to the BuildingType
-        returned by the global GetBuildingType() function if this empire has not discovered
-        any Techs that modify it, or the modified version otherwise. */
-    const BuildingType* GetBuildingType(const std::string& name) const;
-
     /// Returns the queue of items being or queued to be produced.
     const ProductionQueue& GetProductionQueue() const;
 
@@ -505,8 +500,6 @@ private:
     /// list of acquired BuildingType.  These are string names referencing BuildingType objects
     std::set<std::string> m_building_types;
 
-    std::map<std::string, BuildingType*> m_modified_building_types;
-
     /// systems you've explored
     std::set<int> m_explored_systems;
 
@@ -600,7 +593,6 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
             & BOOST_SERIALIZATION_NVP(m_production_status)
             & BOOST_SERIALIZATION_NVP(m_building_types)
-            & BOOST_SERIALIZATION_NVP(m_modified_building_types)
             & BOOST_SERIALIZATION_NVP(m_explored_systems)
             & BOOST_SERIALIZATION_NVP(m_ship_designs)
             & BOOST_SERIALIZATION_NVP(m_sitrep_entries)

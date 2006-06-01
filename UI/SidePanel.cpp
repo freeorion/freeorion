@@ -1388,7 +1388,6 @@ std::set<SidePanel*> SidePanel::s_side_panels;
 SidePanel::SidePanel(int x, int y, int w, int h) : 
     Wnd(x, y, w, h, GG::CLICKABLE),
     m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5))),
-    m_system_name_unknown(new GG::TextControl(40, 0, w-80,SYSTEM_NAME_FONT_SIZE,UserString("SP_UNKNOWN_SYSTEM"),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),ClientUI::TEXT_COLOR)),
     m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),GG::CLR_WHITE,GG::CLICKABLE)),
     m_button_next(new GG::Button(40+w-80                 ,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),GG::CLR_WHITE,GG::CLICKABLE)),
     m_star_graphic(0),
@@ -1413,7 +1412,6 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
   m_button_next->SetPressedGraphic  (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/rightarrowclicked.png"   ), 0, 0, 32, 32));
   m_button_next->SetRolloverGraphic (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/rightarrowmouseover.png"), 0, 0, 32, 32));
 
-  AttachChild(m_system_name_unknown);
   AttachChild(m_system_name);
   AttachChild(m_button_prev);
   AttachChild(m_button_next);
@@ -1470,10 +1468,15 @@ void SidePanel::SetSystemImpl()
         {
             GG::ListBox::Row *row = new SystemRow(sys_vec[i]->ID());
 
-            if(sys_vec[i]->Name().length()==0)
-                continue;
- 
-            row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,SYSTEM_NAME_FONT_SIZE, ClientUI::TEXT_COLOR);
+            if (sys_vec[i]->Name().length()==0) {
+                if (sys_vec[i] == s_system) {
+                    row->push_back(boost::io::str(boost::format(UserString("SP_UNKNOWN_SYSTEM")) % sys_vec[i]->ID()), ClientUI::FONT,SYSTEM_NAME_FONT_SIZE, ClientUI::TEXT_COLOR);
+                } else
+                    continue;
+            } else {
+                row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,SYSTEM_NAME_FONT_SIZE, ClientUI::TEXT_COLOR);
+            }
+            
             m_system_name->Insert(row);
             ++system_names_in_droplist;
 
@@ -1538,20 +1541,6 @@ void SidePanel::SetSystemImpl()
         m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
 
         PlanetsChanged();
-        if(select_row==0)
-        {
-            m_system_name_unknown->Show();
-            m_system_name->Hide();
-            m_button_prev->Hide();
-            m_button_next->Hide();
-        }
-        else
-        {
-            m_system_name_unknown->Hide();
-            m_system_name->Show();
-            m_button_prev->Show();
-            m_button_next->Show();
-        }
     }
 }
 
@@ -1626,57 +1615,57 @@ void SidePanel::SetSystem(int system_id)
 
 void SidePanel::SystemFleetAdded(const Fleet &flt)
 {
-  GG::Connect(flt.StateChangedSignal, &SidePanel::FleetsChanged, this);
-  FleetsChanged();
+    GG::Connect(flt.StateChangedSignal, &SidePanel::FleetsChanged, this);
+    FleetsChanged();
 }
 
 void SidePanel::SystemFleetRemoved(const Fleet &)
 {
-  FleetsChanged();
+    FleetsChanged();
 }
 
 void SidePanel::FleetsChanged()
 {
-  for(int i=0;i<m_planet_panel_container->PlanetPanels();i++)
-    m_planet_panel_container->GetPlanetPanel(i)->Update();
+    for(int i=0;i<m_planet_panel_container->PlanetPanels();i++)
+        m_planet_panel_container->GetPlanetPanel(i)->Update();
 }
 
 void SidePanel::PlanetsChanged()
 {
-  if(s_system)
-  {
-    std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
-    int farming=0,mining=0,trade=0,research=0,industry=0,defense=0,num_empire_planets=0;
-
-    for(unsigned int i=0;i<plt_vec.size();i++)
-      if(plt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != plt_vec[i]->Owners().end())
-      {
-        farming   +=static_cast<int>(plt_vec[i]->FarmingPoints());
-        mining    +=static_cast<int>(plt_vec[i]->MiningPoints());
-        trade     +=static_cast<int>(plt_vec[i]->TradePoints());
-        industry  +=static_cast<int>(plt_vec[i]->IndustryPoints());
-        research  +=static_cast<int>(plt_vec[i]->ResearchPoints());
-        defense   +=plt_vec[i]->DefBases();
-        
-        num_empire_planets++;
-      }
-
-    m_system_resource_summary->SetFarming (farming );
-    m_system_resource_summary->SetMining  (mining  );
-    m_system_resource_summary->SetTrade   (trade   );
-    m_system_resource_summary->SetResearch(research);
-    m_system_resource_summary->SetIndustry(industry);
-    m_system_resource_summary->SetDefense (defense );
-
-    if(num_empire_planets==0)
+    if(s_system)
     {
-      m_system_resource_summary->Hide();
-      m_static_text_systemproduction->Hide();
+        std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
+        int farming=0,mining=0,trade=0,research=0,industry=0,defense=0,num_empire_planets=0;
+
+        for(unsigned int i=0;i<plt_vec.size();i++)
+            if(plt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != plt_vec[i]->Owners().end())
+            {
+                farming   +=static_cast<int>(plt_vec[i]->FarmingPoints());
+                mining    +=static_cast<int>(plt_vec[i]->MiningPoints());
+                trade     +=static_cast<int>(plt_vec[i]->TradePoints());
+                industry  +=static_cast<int>(plt_vec[i]->IndustryPoints());
+                research  +=static_cast<int>(plt_vec[i]->ResearchPoints());
+                defense   +=plt_vec[i]->DefBases();
+                        
+                num_empire_planets++;
+            }
+
+        m_system_resource_summary->SetFarming (farming );
+        m_system_resource_summary->SetMining  (mining  );
+        m_system_resource_summary->SetTrade   (trade   );
+        m_system_resource_summary->SetResearch(research);
+        m_system_resource_summary->SetIndustry(industry);
+        m_system_resource_summary->SetDefense (defense );
+
+        if(num_empire_planets==0)
+        {
+            m_system_resource_summary->Hide();
+            m_static_text_systemproduction->Hide();
+        }
+        else
+        {
+            m_system_resource_summary->Show();
+            m_static_text_systemproduction->Show();
+        }
     }
-    else
-    {
-      m_system_resource_summary->Show();
-      m_static_text_systemproduction->Show();
-    }
-  }
 }

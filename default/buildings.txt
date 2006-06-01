@@ -1,9 +1,46 @@
 BuildingType
+    name = "BLD_TEST"
+    description = "BLD_TEST_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxPopulation Target.MaxPopulation+1
+    ]
+    graphic = ""
+
+BuildingType
+    name = "BLD_TEST2"
+    description = "BLD_TEST2_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = And [
+        Ship
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxPopulation Target.MaxPopulation+1
+    ]
+    graphic = ""
+
+BuildingType
     name = "BLD_MEGALITH"
     description = "BLD_MEGALITH_DESC"
     buildcost = 30
     buildtime = 5
     maintenancecost = 20
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
             scope =
@@ -39,6 +76,7 @@ BuildingType
     buildcost = 100
     buildtime = 7
     maintenancecost = 40
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =
@@ -63,6 +101,7 @@ BuildingType
     buildcost = 100
     buildtime = 10
     maintenancecost = 40
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =
@@ -86,6 +125,7 @@ BuildingType
     buildcost = 300
     buildtime = 10
     maintenancecost = 80
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =
@@ -111,6 +151,7 @@ BuildingType
     buildcost = 500
     buildtime = 10
     maintenancecost = 100
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =
@@ -133,6 +174,7 @@ BuildingType
     buildcost = 100
     buildtime = 10
     maintenancecost = 80
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =
@@ -159,6 +201,7 @@ BuildingType
     buildcost = 300
     buildtime = 20
     maintenancecost = 40
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =
@@ -180,6 +223,7 @@ BuildingType
     buildcost = 100
     buildtime = 10
     maintenancecost = 60
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =
@@ -200,6 +244,7 @@ BuildingType
     buildcost = 100
     buildtime = 10
     maintenancecost = 0
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
             scope =
@@ -235,6 +280,10 @@ BuildingType
     buildcost = 50
     buildtime = 10
     maintenancecost = 60
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Number 0 3 Building "BLD_CADUCEAN"
+    ]
     effectsgroups =
         EffectsGroup
             scope =
@@ -255,6 +304,7 @@ BuildingType
     buildcost = 50
     buildtime = 15
     maintenancecost = 0
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
             scope =
@@ -297,6 +347,7 @@ BuildingType
     buildcost = 250
     buildtime = 10
     maintenancecost = 90
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
             scope =
@@ -329,6 +380,7 @@ BuildingType
     buildcost = 250
     buildtime = 15
     maintenancecost = 40
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
             scope =
@@ -370,6 +422,7 @@ BuildingType
     buildcost = 300
     buildtime = 10
     maintenancecost = 200
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
             scope =
@@ -410,6 +463,7 @@ BuildingType
     buildcost = 50
     buildtime = 10
     maintenancecost = 5
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =
@@ -431,6 +485,7 @@ BuildingType
     buildcost = 100
     buildtime = 20
     maintenancecost = 100
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =
@@ -452,6 +507,7 @@ BuildingType
     buildcost = 400
     buildtime = 10
     maintenancecost = 200
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =
@@ -475,6 +531,7 @@ BuildingType
     buildcost = 500
     buildtime = 10
     maintenancecost = 150
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
             scope =
@@ -512,6 +569,7 @@ BuildingType
     buildcost = 100
     buildtime = 10
     maintenancecost = 120
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =
@@ -533,6 +591,7 @@ BuildingType
     buildcost = 100
     buildtime = 10
     maintenancecost = 50
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
             scope =

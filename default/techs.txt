@@ -1,6 +1,28 @@
 TechCategory "LEARNING_CATEGORY"
 
 Tech
+    name = "TEST"
+    description = "TEST_DESC"
+    techtype = Theory
+    category = "LEARNING_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = []
+    unlock = [
+        Item type = Building name = "BLD_TEST"
+        Item type = Building name = "BLD_TEST2"
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Number 0 1 All
+                OwnedBy TheEmpire Source.Owner
+            ]
+            activation = Source
+            effects = SetPlanetType Desert
+    graphic = "tech_icons/The_Physical_Brain.png"
+
+Tech
     name = "LRN_PHYS_BRAIN"
     description = "LRN_PHYS_BRAIN_DESC"
     techtype = Theory

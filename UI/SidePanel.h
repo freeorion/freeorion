@@ -100,7 +100,6 @@ private:
     void PlanetSelected(int planet_id);
 
     CUIDropDownList     *m_system_name;
-    GG::TextControl     *m_system_name_unknown;
     GG::Button          *m_button_prev, *m_button_next;
     GG::DynamicGraphic  *m_star_graphic;
     GG::TextControl     *m_static_text_systemproduction;

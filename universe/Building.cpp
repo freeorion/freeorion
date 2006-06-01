@@ -103,11 +103,7 @@ Building::Building(const XMLElement& elem) :
 
 const BuildingType* Building::GetBuildingType() const
 {
-    if (Owners().size() != 1)
-        return ::GetBuildingType(m_building_type);
-
-    Empire* empire = Empires().Lookup(*Owners().begin());
-    return empire->GetBuildingType(m_building_type);
+    return ::GetBuildingType(m_building_type);
 }
 
 const std::string& Building::BuildingTypeName() const

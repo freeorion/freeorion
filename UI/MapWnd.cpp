@@ -832,12 +832,13 @@ void MapWnd::SelectSystem(int system_id)
     if (m_in_production_view_mode) {
         m_production_wnd->SelectSystem(system_id);
     } else {
-        if (!m_side_panel->Visible() || system_id != m_side_panel->SystemID()) {
-            SystemLeftClickedSignal(system_id);
+        if (!m_side_panel->Visible() || system_id != m_side_panel->SystemID()) {            
             if (system_id == UniverseObject::INVALID_OBJECT_ID)
                 m_side_panel->Hide();
             else
                 m_side_panel->Show();
+            
+            SystemLeftClickedSignal(system_id);
         }
     }
 }

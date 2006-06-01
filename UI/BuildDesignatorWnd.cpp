@@ -233,7 +233,7 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
     boost::shared_ptr<GG::Texture> graphic;
     if (m_build_type == BT_BUILDING) {
         assert(empire);
-        const BuildingType* building_type = empire->GetBuildingType(m_item);
+        const BuildingType* building_type = GetBuildingType(m_item);
         assert(building_type);
         turns = building_type->BuildTime();
         boost::tie(cost_per_turn, turns) = empire->ProductionCostAndTime(BT_BUILDING, m_item);
