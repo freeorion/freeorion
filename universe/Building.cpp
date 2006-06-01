@@ -265,15 +265,21 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     UniverseObject* loc = universe.Object(location_id);
     if (!loc) return false;
     Logger().debugStream() << "Determining if object: " << loc->ID() << " : " << loc->Name() << " is a valid production location for empire: " << empire_id;
-    UniverseObject * source = universe.Object(Empires().Lookup(empire_id)->CapitolID());
+    Empire * empire = Empires().Lookup(empire_id);
+    if (!empire) {
+        Logger().debugStream() << "Unable to get pointer to empire " << empire_id;
+        return false;
+    }
+    UniverseObject * source = universe.Object(empire->CapitolID());
     if (!source) return false;
     Logger().debugStream() << "  Source object: " << source->ID() << " : " << source->Name();
     locations.insert(loc);
-    Logger().debugStream() << "  non_locations.size() initally: " << non_locations.size();
-    Logger().debugStream() << "  locations.size() initally:     " << locations.size();
+    //Logger().debugStream() << "  non_locations.size() initally: " << non_locations.size();
+    //Logger().debugStream() << "  locations.size() initally:     " << locations.size();
+    Logger().debugStream() << "Evaluating Buidling Location Condition";
     m_location->Eval(source, locations, non_locations, Condition::TARGETS);
-    Logger().debugStream() << "  non_locations.size() after:    " << non_locations.size();
-    Logger().debugStream() << "  locations.size() after:        " << locations.size();
+    //Logger().debugStream() << "  non_locations.size() after:    " << non_locations.size();
+    //Logger().debugStream() << "  locations.size() after:        " << locations.size();
         
     return !(locations.empty());
 }

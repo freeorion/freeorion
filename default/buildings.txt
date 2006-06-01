@@ -20,10 +20,10 @@ BuildingType
     name = "BLD_TEST2"
     description = "BLD_TEST2_DESC"
     buildcost = 1
-    buildtime = 1
+    buildtime = 8
     maintenancecost = 1
     location = And [
-        Ship
+        Turn 4 6
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups = [
