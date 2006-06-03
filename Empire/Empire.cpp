@@ -1230,5 +1230,5 @@ void Empire::UpdateResearchQueue()
 
 void Empire::UpdateProductionQueue()
 {
-    m_production_queue.Update(this, m_industry_resource_pool.Production(), m_production_status);
+    m_production_queue.Update(this, ProductionPoints(), m_production_status);
 }
