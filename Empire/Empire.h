@@ -371,7 +371,7 @@ public:
     const IndustryResourcePool&   IndustryResPool   () const {return m_industry_resource_pool;}
     const TradeResourcePool&      TradeResPool      () const {return m_trade_resource_pool;}
 
-    /// Returns the number of production points available to the empire (this is the minimum of current industry and mineral outputs).
+    /// Returns the number of production points available to the empire (this is the minimum of current industry, and mineral output plus mineral stockpile
     double ProductionPoints() const;
 
     /** Encodes the dat of this empire as visible to the empire with id \a empire_id (or all data if \a empire_id ==

@@ -13,7 +13,7 @@
 #include "../universe/System.h"
 #include "../network/Message.h"
 #include "SidePanel.h"
-#include "../empire/Empire.h"
+#include "../Empire/Empire.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/Menu.h>

@@ -9,8 +9,8 @@
 #include "../universe/Ship.h"
 #include "../universe/System.h"
 #include "../universe/UniverseObject.h"
-#include "../empire/EmpireManager.h"
-#include "../empire/Empire.h"
+#include "../Empire/EmpireManager.h"
+#include "../Empire/Empire.h"
 
 #include <boost/lexical_cast.hpp>
 

@@ -406,6 +406,7 @@ void ProductionWnd::ResetInfoPanel()
     ProductionQueue::const_iterator underfunded_it = queue.UnderfundedProject(empire);
     double PPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->spending;
     m_production_info_panel->Reset(PPs, total_queue_cost, queue.ProjectsInProgress(), PPs_to_underfunded_projects, queue.size());
+    empire->MineralResPool().ChangedSignal(); // altering production queue may have freed up or required more PP, which may require or free minerals
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location)

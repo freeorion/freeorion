@@ -8,8 +8,8 @@
 #include "../util/OptionsDB.h"
 #include "Planet.h"
 #include "Predicates.h"
-#include "../empire/Empire.h"
-#include "../empire/EmpireManager.h"
+#include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 #include "Universe.h"
 #include "../util/AppInterface.h"
 

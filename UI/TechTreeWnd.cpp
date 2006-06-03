@@ -7,7 +7,7 @@
 #include "../util/OptionsDB.h"
 #include "../universe/Tech.h"
 #include "../universe/Effect.h"
-#include "../empire/Empire.h"
+#include "../Empire/Empire.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>

@@ -3,7 +3,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/SitRepEntry.h"
 #include "../util/XMLObjectFactory.h"
-#include "../empire/Empire.h"
+#include "../Empire/Empire.h"
 
 #include <map>
 #include <list>

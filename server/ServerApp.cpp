@@ -10,7 +10,7 @@
 #include "../universe/Predicates.h"
 #include "../universe/Special.h"
 #include "../universe/System.h"
-#include "../empire/Empire.h"
+#include "../Empire/Empire.h"
 #include "../util/Directories.h"
 #include "../util/GZStream.h"
 #include "../util/MultiplayerCommon.h"

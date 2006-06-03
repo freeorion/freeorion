@@ -3,8 +3,8 @@
 #include "Fleet.h"
 #include "Planet.h"
 
-#include "../empire/Empire.h"
-#include "../empire/EmpireManager.h"
+#include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 
 #include "../util/MultiplayerCommon.h"
 #include "Predicates.h"

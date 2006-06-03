@@ -3,7 +3,7 @@
 #define _Order_h_
 
 #ifndef _Enums_h_
-#include "../Universe/Enums.h"
+#include "../universe/Enums.h"
 #endif
 
 #include <vector>

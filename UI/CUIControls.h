@@ -371,12 +371,12 @@ public:
 
     void SetValue         (double value); ///< sets the value to be displayed
     void SetValueSecond   (double value); ///< sets the value to be displayed
-    void SetDecimalsShown (int        d) {m_decimals_to_show  = d; UpdateTextControl();} ///< sets the number of places after the decimal point to be shown
-    void SetDecimalsShownSecond (int        d) {m_decimals_to_show  = d; UpdateTextControl();} ///< sets the number of places after the decimal point to be shown
-    void ShowSign         (bool       b) {m_show_sign         = b; UpdateTextControl();}        ///< sets whether a sign should always be shown, even for positive values
-    void ShowSignSecond   (bool       b) {m_show_sign_second  = b; UpdateTextControl();}        ///< sets whether a sign should always be shown, even for positive values
-    void SetPositiveColor (GG::Clr    c) {m_positive_color    = c; UpdateTextControl();}   ///< sets the color that will be used to display positive values
-    void SetNegativeColor (GG::Clr    c) {m_negative_color    = c; UpdateTextControl();}   ///< sets the color that will be used to display negative values
+    void SetDecimalsShown (int        d) {m_decimals_to_show  = d; UpdateTextControl();}    ///< sets the number of places after the decimal point to be shown
+    void SetDecimalsShownSecond (int  d) {m_decimals_to_show  = d; UpdateTextControl();}    ///< sets the number of places after the decimal point to be shown
+    void ShowSign         (bool       b) {m_show_sign         = b; UpdateTextControl();}    ///< sets whether a sign should always be shown, even for positive values
+    void ShowSignSecond   (bool       b) {m_show_sign_second  = b; UpdateTextControl();}    ///< sets whether a sign should always be shown, even for positive values
+    void SetPositiveColor (GG::Clr    c) {m_positive_color    = c; UpdateTextControl();}    ///< sets the color that will be used to display positive values
+    void SetNegativeColor (GG::Clr    c) {m_negative_color    = c; UpdateTextControl();}    ///< sets the color that will be used to display negative values
    //@}
 
     static const double UNKNOWN_VALUE;

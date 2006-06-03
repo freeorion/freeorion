@@ -7,8 +7,8 @@
 #include "Ship.h"
 #include "Planet.h"
 #include "Meter.h"
-#include "../empire/Empire.h"
-#include "../empire/EmpireManager.h"
+#include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 
 #include "../util/Random.h"
 #include "System.h"

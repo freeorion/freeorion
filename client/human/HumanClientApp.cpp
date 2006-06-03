@@ -16,7 +16,7 @@
 #include "../../util/Directories.h"
 #include "../../util/XMLDoc.h"
 #include "../../util/Version.h"
-#include "../empire/Empire.h"
+#include "../Empire/Empire.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -757,7 +757,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             SitRepEntry *pEntry = *sitrep_it;
             m_ui->GenerateSitRepText(pEntry);
         }
-        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Sitrep creation complete";
+        //Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Sitrep creation complete";
 
         Autosave(false);
 

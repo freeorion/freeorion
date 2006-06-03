@@ -6,7 +6,7 @@
 #include "Effect.h"     // for Effect::EffectsGroup constructor
 #include "Building.h"   // for Building and constructor
 #include "Special.h"    // for Special and constructor
-#include "../empire/Empire.h"
+#include "../Empire/Empire.h"
 #include "Condition.h"
 
 using namespace boost::spirit;

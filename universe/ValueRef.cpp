@@ -6,8 +6,8 @@
 #include "Planet.h"
 #include "System.h"
 #include "UniverseObject.h"
-#include "../empire/EmpireManager.h"
-#include "../empire/Empire.h"
+#include "../Empire/EmpireManager.h"
+#include "../Empire/Empire.h"
 #include "../util/MultiplayerCommon.h"
 
 #include <boost/spirit.hpp>

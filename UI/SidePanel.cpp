@@ -10,7 +10,7 @@
 #include "../util/Random.h"
 #include "FocusSelector.h"
 #include "../util/XMLDoc.h"
-#include "../empire/Empire.h"
+#include "../Empire/Empire.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>

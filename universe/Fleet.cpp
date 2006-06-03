@@ -6,8 +6,8 @@
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/XMLDoc.h"
-#include "../empire/Empire.h"
-#include "../empire/EmpireManager.h"
+#include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;

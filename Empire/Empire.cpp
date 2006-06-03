@@ -469,7 +469,11 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
                 // (would be better to "simulate" future turns by setting the current turn
                 // to the appropriate number so that BuildableItem can correctly predict
                 // turn-dependent item buildabilities that depend on the Turn condition
-                // or object .Age properties)
+                // or object .Age properties), but would really need to create a full
+                // simulated universe in which to create / destroy buildings or process
+                // all possible game events that might be part of building location conditions
+                // to really do this thoroughly.  Instead, should probably just use reasonable
+                // and minimally time-dependent location conditions in building descriptions.)
                 int location = sim_queue[i].location;
                 bool buildable = empire->BuildableItem(build_type, name, location);
                 if (!buildable) {

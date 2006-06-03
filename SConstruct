@@ -373,7 +373,7 @@ int main() {
         if not found_it_with_pkg_config:
             version_regex = re.compile(r'LOG4CPP_VERSION\s*\"([^"]*)\"', re.DOTALL)
             if not conf.CheckVersionHeader('log4cpp', 'log4cpp/config.h', version_regex, log4cpp_version, False):
-                Exit(1)
+                pass
         if not conf.CheckCXXHeader('log4cpp/Category.hh'):
             Exit(1)
         if str(Platform()) != 'win32':

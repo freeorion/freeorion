@@ -9,7 +9,7 @@
 #include "MapWnd.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/UniverseObject.h"
-#include "../empire/Empire.h"
+#include "../Empire/Empire.h"
 #include "../universe/Building.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Effect.h"
