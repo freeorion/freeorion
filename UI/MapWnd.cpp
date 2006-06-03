@@ -1448,24 +1448,17 @@ void MapWnd::FoodResourcePoolChanged()
 
 void MapWnd::MineralResourcePoolChanged()
 {
-    Logger().debugStream() << "MapWnd::MineralResourcePoolChanged()";
-    
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     
-    double stockpile = empire->MineralResPool().Stockpile();
-    m_mineral->SetValue(stockpile);
-    Logger().debugStream() << "mineral stockpile : " << stockpile;
+    m_mineral->SetValue(empire->MineralResPool().Stockpile());
     
     double production = empire->MineralResPool().Production();
-    Logger().debugStream() << "mineral production: " << production;
-    
+
     // actual number of PPs, and thus minerals, that the projects on the queue are currently using.
     double spent = empire->GetProductionQueue().TotalPPsSpent();
-    Logger().debugStream() << "minerals/PP spent : " << spent;
     
     // excess or shortfall minerals...
     double change = production - spent;
-    Logger().debugStream() << "change            : " << change;
     
     m_mineral->SetValueSecond(change);
 }

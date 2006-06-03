@@ -56,10 +56,11 @@ namespace {
     const int TECH_PANEL_LAYOUT_HEIGHT = THEORY_TECH_PANEL_LAYOUT_HEIGHT - PROGRESS_PANEL_BOTTOM_EXTRUSION;
 
     const double OUTER_LINE_THICKNESS = 2.0;
+    const double ARC_THICKNESS = 3.0;
 
     const double TECH_NAVIGATOR_ROLLOVER_BRIGHTENING_FACTOR = 1.5;
 
-    const double MIN_SCALE = 0.2;
+    const double MIN_SCALE = 0.209715;  // = 1.0/(1.25)^7  (going to scale = 0.2 crashes client)
     const double MAX_SCALE = 1.0;
 
     GG::Clr CategoryColor(const std::string& category_name)
@@ -1251,9 +1252,9 @@ void TechTreeWnd::LayoutPanel::Render()
     glPushMatrix();
     glTranslated(-m_scroll_position.x, -m_scroll_position.y, 0);
 
-    // first, draw arc with thck, half-alpha line
+    // first, draw arc with thick, half-alpha line
     glEnable(GL_LINE_SMOOTH);
-    glLineWidth(OUTER_LINE_THICKNESS * m_scale);
+    glLineWidth(ARC_THICKNESS * m_scale);
     GG::Clr known_half_alpha = ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR;
     known_half_alpha.a = 127;
     GG::Clr researchable_half_alpha = ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
@@ -1297,7 +1298,7 @@ void TechTreeWnd::LayoutPanel::Render()
     }
 
     // now retrace the arc with a normal-width, full-alpha line
-    glLineWidth(1.0);
+    glLineWidth(ARC_THICKNESS * m_scale * 0.5);
     glDisable(GL_LINE_SMOOTH);
     for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
         GG::Clr arc_color;
