@@ -22,7 +22,7 @@ using boost::lexical_cast;
 namespace {
     const double EPSILON = 1.0e-5;
 
-    void UpdateTechQueue(double RPs, const std::map<std::string, double>& research_status, ResearchQueue::QueueType& queue, double& total_RPs_spent, int& projects_in_progress)
+    void SetTechQueueElementSpending(double RPs, const std::map<std::string, double>& research_status, ResearchQueue::QueueType& queue, double& total_RPs_spent, int& projects_in_progress)
     {
         total_RPs_spent = 0.0;
         projects_in_progress = 0;
@@ -195,29 +195,40 @@ XMLElement ResearchQueue::XMLEncode() const
 
 void ResearchQueue::Update(double RPs, const std::map<std::string, double>& research_status)
 {
-    UpdateTechQueue(RPs, research_status, m_queue, m_total_RPs_spent, m_projects_in_progress);
+    if (m_queue.empty()) return;    // nothing to do...
+    const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
+
+    SetTechQueueElementSpending(RPs, research_status, m_queue, m_total_RPs_spent, m_projects_in_progress);
 
     if (EPSILON < RPs) {
         // simulate future turns in order to determine when the techs in the queue will be finished
         int turns = 1;
         QueueType sim_queue = m_queue;
         std::map<std::string, double> sim_research_status = research_status;
+
         std::map<const Tech*, int> simulation_results;
-        while (!sim_queue.empty()) {
+        // initialize simulation_results with -1 for all techs, so that any techs that aren't
+        // finished in simulation by turn TOO_MANY_TURNS will be left marked as never to be finished
+        for (unsigned int i = 0; i < sim_queue.size(); ++i)
+            simulation_results[m_queue[i].tech] = -1;
+
+        while (!sim_queue.empty() && turns < TOO_MANY_TURNS) {
             double total_RPs_spent = 0.0;
             int projects_in_progress = 0;
-            UpdateTechQueue(RPs, sim_research_status, sim_queue, total_RPs_spent, projects_in_progress);
+            SetTechQueueElementSpending(RPs, sim_research_status, sim_queue, total_RPs_spent, projects_in_progress);
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
                 const Tech* tech = sim_queue[i].tech;
                 double& status = sim_research_status[tech->Name()];
                 status += sim_queue[i].spending;
                 if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= status) {
+                    m_queue[i].turns_left = simulation_results[m_queue[i].tech];
                     simulation_results[tech] = turns;
                     sim_queue.erase(sim_queue.begin() + i--);
                 }
             }
             ++turns;
         }
+        // return results
         for (unsigned int i = 0; i < m_queue.size(); ++i) {
             m_queue[i].turns_left = simulation_results[m_queue[i].tech];
         }
