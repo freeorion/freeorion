@@ -45,23 +45,25 @@ namespace {
             }
         }
     }
-
-    void UpdateProdQueue(Empire* empire, double PPs, const std::vector<double>& production_status, ProductionQueue::QueueType& queue, double& total_PPs_spent, int& projects_in_progress)
+    
+    // sets the .spending, value for each Element in the queue.  Only sets nonzero funding to
+    // an Element if its ProductionItem is buildable this turn
+    void SetProdQueueElementSpending(Empire* empire, double PPs, const std::vector<double>& production_status, ProductionQueue::QueueType& queue, double& total_PPs_spent, int& projects_in_progress)
     {
         assert(production_status.size() == queue.size());
         total_PPs_spent = 0.0;
         projects_in_progress = 0;
         int i = 0;
+
         for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
             // get details on what is being built...
             BuildType build_type = it->item.build_type;
             std::string name = it->item.name;
             int location = it->location;
             bool buildable = empire->BuildableItem(build_type, name, location);
-            //Logger().debugStream() << "Item on ProdQueue: " << name;
                         
             if (buildable) {
-                //Logger().debugStream() << "..Item is buildable";
+                //Logger().debugStream() << "SetProdQueueElementSpending: ..Item is buildable";
                 double item_cost;
                 int build_turns;
                 boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(build_type, name);
@@ -79,15 +81,14 @@ namespace {
                 } else {
                     it->spending = 0.0;
                 }
-                //Logger().debugStream() << "....spending: " << it->spending;
+                //Logger().debugStream() << "SetProdQueueElementSpending: ....spending: " << it->spending;
             } else {
                 // item can't be produced at its location this turn
                 it->spending = 0.0;
-                //Logger().debugStream() << "..Item is not buildable.";
+                //Logger().debugStream() << "SetProdQueueElementSpending: ..Item is not buildable.";
             }
         }
     }
-
 }
 
 
@@ -444,9 +445,13 @@ XMLElement ProductionQueue::XMLEncode() const
 
 void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<double>& production_status)
 {
-    UpdateProdQueue(empire, PPs, production_status, m_queue, m_total_PPs_spent, m_projects_in_progress);
+    if (m_queue.empty()) return;    // nothing to do...
+    const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
+    
+    SetProdQueueElementSpending(empire, PPs, production_status, m_queue, m_total_PPs_spent, m_projects_in_progress);
 
     if (EPSILON < PPs) {
+        //Logger().debugStream() << "ProductionQueue::Update: Simulating future turns of production queue";
         // simulate future turns in order to determine when the builditems in the queue will be finished
         int turns = 1;
         QueueType sim_queue = m_queue;
@@ -456,55 +461,70 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
         for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i) {
             sim_queue_original_indices[i] = i;
         }
-        while (!sim_queue.empty()) {
+        
+        // remove from simulated queue any items that can't be built due to not meeting their location conditions
+        // might be better to re-check buildability each turn, but this would require creating a simulated universe
+        // into which simulated completed buildings could be inserted, as well as spoofing the current turn, or
+        // otherwise faking the results for evaluating arbitrary location conditions for the simulated universe.
+        // this would also be inaccurate anyway due to player choices or random chance, so for simplicity, it is
+        // assume that building location conditions evaluated at the present turn apply indefinitely
+        for (unsigned int i = 0; i < sim_queue.size(); ++i) {
+            BuildType build_type = sim_queue[i].item.build_type;
+            std::string name = sim_queue[i].item.name;
+            int location = sim_queue[i].location;
+            if (empire->BuildableItem(build_type, name, location)) continue;
+            
+            // remove unbuildable items from the simulated queue, since they'll never finish...            
+            m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;   // turns left is indeterminate for this item
+            sim_queue.erase(sim_queue.begin() + i);
+            sim_production_status.erase(sim_production_status.begin() + i);
+            sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
+        }
+        
+        // cycle through items on queue, adding up their allotted PP until each is finished and removed from queue
+        // until everything on queue has been finished, in order to calculate expected completion times
+        while (!sim_queue.empty() && turns < TOO_MANY_TURNS) {
             double total_PPs_spent = 0.0;
             int projects_in_progress = 0;
-            //Logger().debugStream() << "Calling UpdateProdQueue for simulated queue";
-            UpdateProdQueue(empire, PPs, sim_production_status, sim_queue, total_PPs_spent, projects_in_progress);
+
+            //Logger().debugStream() << "ProductionQueue::Update: Calling SetProdQueueElementSpending for simulated queue";
+            SetProdQueueElementSpending(empire, PPs, sim_production_status, sim_queue, total_PPs_spent, projects_in_progress);
             
+            // cycle through items on queue, apply one turn's PP towards items, remove items that are done
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
                 BuildType build_type = sim_queue[i].item.build_type;
                 std::string name = sim_queue[i].item.name;
-                // remove unbuildable items from the queue, since they'll never finish...
-                // (would be better to "simulate" future turns by setting the current turn
-                // to the appropriate number so that BuildableItem can correctly predict
-                // turn-dependent item buildabilities that depend on the Turn condition
-                // or object .Age properties), but would really need to create a full
-                // simulated universe in which to create / destroy buildings or process
-                // all possible game events that might be part of building location conditions
-                // to really do this thoroughly.  Instead, should probably just use reasonable
-                // and minimally time-dependent location conditions in building descriptions.)
-                int location = sim_queue[i].location;
-                bool buildable = empire->BuildableItem(build_type, name, location);
-                if (!buildable) {
-                    //Logger().debugStream() << "..item is NOT buildable... removing";
-                    m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;   // turns left is indeterminate for this item
-                    sim_queue.erase(sim_queue.begin() + i);
-                    sim_production_status.erase(sim_production_status.begin() + i);
-                    sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
-                } else {
-                    //Logger().debugStream() << "..item IS buildable... simulating a turn";
-                    double item_cost;
-                    int build_turns;
-                    boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(build_type, name);
-                    double& status = sim_production_status[i];
-                    status += sim_queue[i].spending;
-                    if (item_cost * build_turns - EPSILON <= status) {
-                        sim_production_status[i] -= item_cost * build_turns;
-                        if (sim_queue[i].remaining == m_queue[sim_queue_original_indices[i]].remaining) {
-                            m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = turns;
-                        }
-                        if (!--sim_queue[i].remaining) {
-                            m_queue[sim_queue_original_indices[i]].turns_left_to_completion = turns;
-                            sim_queue.erase(sim_queue.begin() + i);
-                            sim_production_status.erase(sim_production_status.begin() + i);
-                            sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
-                        }
+                double item_cost;
+                int build_turns;
+                boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(build_type, name);
+                
+                double& status = sim_production_status[i];
+                status += sim_queue[i].spending;
+                
+                if (item_cost * build_turns - EPSILON <= status) {
+                    sim_production_status[i] -= item_cost * build_turns;    // might have spillover to next item in order, so don't set to exactly 0
+                    if (sim_queue[i].remaining == m_queue[sim_queue_original_indices[i]].remaining) {
+                        m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = turns;
+                    }
+                    if (!--sim_queue[i].remaining) {
+                        //Logger().debugStream() << "    ITEM COMPLETE!  REMOVING";
+                        m_queue[sim_queue_original_indices[i]].turns_left_to_completion = turns;
+                        sim_queue.erase(sim_queue.begin() + i);
+                        sim_production_status.erase(sim_production_status.begin() + i);
+                        sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
                     }
                 }
-            }
-            ++turns;
+            }            
+            ++turns;            
+        }   // loop while (!sim_queue.empty() && turns < TOO_MANY_TURNS)
+        
+        // mark rest of items on simulated queue (if any) as never to be finished
+        for (unsigned int i = 0; i < sim_queue.size(); ++i) {
+            if (sim_queue[i].remaining == m_queue[sim_queue_original_indices[i]].remaining)
+                m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = -1;
+            m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;
         }
+        
     } else {
         // since there are so few PPs, indicate that the number of turns left is indeterminate by providing a number < 0
         for (unsigned int i = 0; i < m_queue.size(); ++i) {
@@ -778,17 +798,10 @@ bool Empire::HasExploredSystem(int ID) const
 
 bool Empire::BuildableItem(BuildType build_type, std::string name, int location) const
 {
-    /*Logger().debugStream() << "Determining if item is buildable...";
-    Logger().debugStream() << "..empire: " << m_id;
-    Logger().debugStream() << "..build_type: " << build_type;
-    Logger().debugStream() << "..name: " << name;
-    Logger().debugStream() << "..location: " << location;*/
-    
     if (ProductionCostAndTime(build_type, name) != std::make_pair(-1.0, -1)) {
         UniverseObject* build_location = GetUniverse().Object(location);
 
         if (build_type == BT_BUILDING) {
-            //Logger().debugStream() << "..Item is a Building";
             const BuildingType* building_type = GetBuildingType(name);
             if (!building_type) return false;
             return building_type->ProductionLocation(m_id, location);
