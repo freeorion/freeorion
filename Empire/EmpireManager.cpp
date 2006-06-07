@@ -22,7 +22,7 @@ const EmpireManager& EmpireManager::operator=(EmpireManager& rhs)
 const Empire* EmpireManager::Lookup(int ID) const
 {
     const_iterator it = m_empire_map.find(ID);
-    return it == end() ? 0 : it->second;
+    return it == m_empire_map.end() ? 0 : it->second;
 }
 
 EmpireManager::const_iterator EmpireManager::begin() const

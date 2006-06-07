@@ -1499,8 +1499,10 @@ bool MapWnd::ZoomToHomeSystem()
     int id = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->HomeworldID();
 
     if (id != UniverseObject::INVALID_OBJECT_ID) {
-        CenterOnSystem(GetUniverse().Object(id)->SystemID());
-        SelectSystem(GetUniverse().Object(id)->SystemID());
+        UniverseObject *object = GetUniverse().Object(id);
+        if (!object) return false;
+        CenterOnSystem(object->SystemID());
+        SelectSystem(object->SystemID());
     }
 
     return true;

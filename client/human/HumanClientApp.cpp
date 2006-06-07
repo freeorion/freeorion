@@ -815,7 +815,9 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::PLAYER_ELIMINATED: {
         Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Message::PLAYER_ELIMINATED : m_empire_id=" << m_empire_id << " Empires().Lookup(m_empire_id)=" << Empires().Lookup(m_empire_id);
-        if (Empires().Lookup(m_empire_id)->Name() == msg.GetText()) {
+        Empire* empire = Empires().Lookup(m_empire_id);
+        if (!empire) break;
+        if (empire->Name() == msg.GetText()) {
             // TODO: replace this with something better
             ClientUI::MessageBox(UserString("PLAYER_DEFEATED"));
             EndGame();

@@ -77,7 +77,7 @@ public:
         Can return UniverseObject::INVALID_OBJECT_ID if an ID cannot be created. */
     static int           GetNewObjectID();
 
-    static ClientApp*    GetApp(); ///< returns the singletom ClientApp object
+    static ClientApp*    GetApp(); ///< returns the singleton ClientApp object
 
 protected:
     /** handles universe and empire data update */
