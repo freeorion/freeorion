@@ -258,10 +258,6 @@ void Planet::AddBuilding(int building_id)
 bool Planet::RemoveBuilding(int building_id)
 {
     if (m_buildings.find(building_id) != m_buildings.end()) {
-        if (Building* building = GetUniverse().Object<Building>(building_id)) {
-            building->SetPlanetID(INVALID_OBJECT_ID);
-            building->SetSystem(INVALID_OBJECT_ID);
-        }
         m_buildings.erase(building_id);
         StateChangedSignal();
         return true;

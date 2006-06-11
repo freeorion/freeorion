@@ -236,11 +236,12 @@ public:
     /** Reconstructs the per-empire system graph views needed to calculate routes based on visibility. */
     void              RebuildEmpireViewSystemGraphs();
 
-    /** removes the object with ID number \a id from the universe and any containing UniverseObjects (e.g. the containing System),
-        and returns it; returns 0 if there is no such object*/
-    UniverseObject*   Remove(int id);
+    /** removes the object with ID number \a id from the universe's map of existing objects and places it into the map of destroyed objects.
+        removes the object from any containing UniverseObjects, though leaves the object's own records of what contained it intact, so that
+        this information may be retained for later reference */
+    void              Destroy(int id);
 
-    /** removes and deletes the object with ID number \a id; returns true if such an object was found, false otherwise*/
+    /** removes from the universe (whether existing or destroyed) and deletes the object with ID number \a id; returns true if such an object was found, false otherwise*/
     bool              Delete(int id);
 
     /** marks an object for destruction by the Destroy effect. */

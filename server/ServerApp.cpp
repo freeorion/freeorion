@@ -220,7 +220,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_log_category.setAdditivity(false);  // make appender the only appender used...
     m_log_category.setAppender(appender);
     m_log_category.setAdditivity(true);   // ...but allow the addition of others later
-    m_log_category.setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
+    m_log_category.setPriority(log4cpp::Priority::DEBUG);
     m_log_category.debug("freeoriond logger initialized.");
     m_log_category.debugStream() << "ServerApp::ServerApp : Server now in mode " << SERVER_IDLE << " (SERVER_IDLE).";
 }
@@ -1910,13 +1910,8 @@ void ServerApp::ProcessTurns()
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
         // remove the empire from play
         Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(it->second));
-        for (unsigned int j = 0; j < object_vec.size(); ++j) {
-            if (object_vec[j]->WhollyOwnedBy(it->second)) {
-                GetUniverse().Remove(object_vec[j]->ID());
-            } else { // the object is owned by this empire, but also by at least one other empire as well
-                object_vec[j]->RemoveOwner(it->second);
-            }
-        }
+        for (unsigned int j = 0; j < object_vec.size(); ++j)
+            object_vec[j]->RemoveOwner(it->second);
     }
 
     // send new-turn updates to all players

@@ -57,23 +57,25 @@ namespace
 
 static void RemoveShip(int nID)
 {
-  Ship *shp = GetUniverse().Object<Ship>(nID);
-  if(shp!=NULL)
+  Ship* shp = GetUniverse().Object<Ship>(nID);
+  if (shp)
   {
-    System *sys;
-    if( (sys = shp->GetSystem()) ) sys->Remove(shp->ID());
+    System* sys = shp->GetSystem();
+    if (sys)
+        sys->Remove(shp->ID());
 
-    Fleet *flt = shp->GetFleet();
-    if( (flt = shp->GetFleet()) )
+    Fleet* flt = shp->GetFleet();
+    if (flt)
     {
       flt->RemoveShip(shp->ID());
-      if(flt->NumShips()==0)
-      {
-        if( (sys = flt->GetSystem()) ) sys->Remove(flt->ID());
-        GetUniverse().Remove(flt->ID());
+      if (flt->NumShips() == 0)
+      { 
+        if (sys = flt->GetSystem()) 
+            sys->Remove(flt->ID());
+        GetUniverse().Destroy(flt->ID());
       }
     }
-    GetUniverse().Remove(shp->ID());
+    GetUniverse().Destroy(shp->ID());
   }
 }
 

@@ -1241,37 +1241,75 @@ void Universe::RebuildEmpireViewSystemGraphs()
     }
 }
 
-UniverseObject* Universe::Remove(int id)
+void Universe::Destroy(int id)
 {
-    UniverseObject* retval = 0;
+    s_inhibit_universe_object_signals = true;
+    
+    UniverseObject* obj;
     iterator it = m_objects.find(id);
+    
+    // remove object from any containing UniverseObject
     if (it != m_objects.end()) {
-        retval = it->second;
-        if (System* sys = retval->GetSystem())
+        obj = it->second;
+        if (System* sys = obj->GetSystem())
             sys->Remove(id);
-        if (Ship* ship = universe_object_cast<Ship*>(retval)) {
+        if (Ship* ship = universe_object_cast<Ship*>(obj)) {
             if (Fleet* fleet = ship->GetFleet())
                 fleet->RemoveShip(ship->ID());
-        } else if (Building* building = universe_object_cast<Building*>(retval)) {
+        } else if (Building* building = universe_object_cast<Building*>(obj)) {
             if (Planet* planet = building->GetPlanet())
                 planet->RemoveBuilding(building->ID());
         }
         m_objects.erase(id);
+        m_destroyed_objects[id] = obj;
     }
-    return retval;
+    
+    s_inhibit_universe_object_signals = false;
 }
 
 bool Universe::Delete(int id)
 {
-    // the UniverseObjectDeleteSignal supercedes the StateChangedSignals emitted by the universe objects(s)
-    // affected by the Remove() call
     s_inhibit_universe_object_signals = true;
-    UniverseObject* obj = Remove(id);
-    s_inhibit_universe_object_signals = false;
-    if (obj)
+
+    // find object amongst existing objects
+    UniverseObject* obj;
+    iterator it = m_objects.find(id);
+    if (it != m_objects.end()) {
+        obj = it->second;
+
+        // remove object from any containing UniverseObject
+        if (System* sys = obj->GetSystem())
+            sys->Remove(id);
+        if (Ship* ship = universe_object_cast<Ship*>(obj)) {
+            if (Fleet* fleet = ship->GetFleet())
+                fleet->RemoveShip(ship->ID());
+        } else if (Building* building = universe_object_cast<Building*>(obj)) {
+            if (Planet* planet = building->GetPlanet())
+                planet->RemoveBuilding(building->ID());
+        }
+
+        m_objects.erase(id);
         UniverseObjectDeleteSignal(obj);
-    delete obj;
-    return obj;
+        delete obj;
+        s_inhibit_universe_object_signals = false;
+        return true;
+    }
+
+    // find object amongst destroyed objects
+    it = m_destroyed_objects.find(id);
+    if (it != m_destroyed_objects.end()) {
+        obj = it->second;
+        m_destroyed_objects.erase(id);
+        UniverseObjectDeleteSignal(obj);
+        delete obj;
+        s_inhibit_universe_object_signals = false;
+        return true;
+    }
+
+    Logger().debugStream() << "Tried to delete a nonexistant objects with id: " << id;
+
+    s_inhibit_universe_object_signals = false;
+    return false;
 }
 
 void Universe::EffectDestroy(int id)
@@ -1317,9 +1355,6 @@ void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjace
                 placed = true;
             }
         }
-
-        //if (!attempts_left)
-        //    Delete(system->ID());
     }
 }
 

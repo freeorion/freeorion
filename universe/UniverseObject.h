@@ -75,15 +75,15 @@ public:
     //@}
    
     /** \name Accessors */ //@{
-    int                  ID() const;        ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
-    const std::string&   Name() const;      ///< returns the name of this object; some valid objects will have no name
-    double               X() const;         ///< the X-coordinate of this object
-    double               Y() const;         ///< the Y-coordinate of this object
-    const std::set<int>& Owners() const;    ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
-    int                  SystemID() const;  ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
-    System*              GetSystem() const; ///< returns system in which this object can be found, or null if the object is not within any system
+    int                  ID() const;            ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
+    const std::string&   Name() const;          ///< returns the name of this object; some valid objects will have no name
+    double               X() const;             ///< the X-coordinate of this object
+    double               Y() const;             ///< the Y-coordinate of this object
+    const std::set<int>& Owners() const;        ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
+    int                  SystemID() const;      ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
+    System*              GetSystem() const;     ///< returns system in which this object can be found, or null if the object is not within any system
     const std::set<std::string>&
-                         Specials() const;  ///< returns the set of names of the Specials attached to this object
+                         Specials() const;      ///< returns the set of names of the Specials attached to this object
 
     virtual const Meter* GetMeter(MeterType type) const;  ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
