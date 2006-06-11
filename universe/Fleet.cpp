@@ -304,8 +304,11 @@ void Fleet::MovementPhase()
             if (current_system == m_travel_route.front())
                 m_travel_route.pop_front();
             current_system->Remove(ID());
+            SetSystem(INVALID_OBJECT_ID);
             for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
                 current_system->Remove(*it);
+                Ship* ship = GetUniverse().Object<Ship>(*it);
+                if (ship) ship->SetSystem(INVALID_OBJECT_ID);
             }
         }
 
@@ -415,15 +418,11 @@ void Fleet::CalculateRoute() const
 
 void Fleet::RecalculateFleetSpeed()
 {
-    //Logger().debugStream() << "Recalculating Fleet Speed";
     if (!(m_ships.empty())) {
-        //Logger().debugStream() << "  More than one ship.";
         m_speed = MAX_SHIP_SPEED;  // max speed no ship can go faster than
         for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-            //Logger().debugStream() << "  Ship: " << *it;
             Ship* ship = GetUniverse().Object<Ship>(*it);
             if (ship) {
-                //Logger().debugStream() << "  Ship speed: " << pShip->Speed();
                 if (ship->Speed() < m_speed)
                     m_speed = ship->Speed();
             }
@@ -431,5 +430,4 @@ void Fleet::RecalculateFleetSpeed()
     } else {
         m_speed = 0.0;
     }
-    //Logger().debugStream() << "  Final speed of fleet: " << m_speed;
 }

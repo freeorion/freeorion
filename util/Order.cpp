@@ -73,11 +73,8 @@ XMLElement Order::XMLEncode() const
 
 void Order::ValidateEmpireID() const
 {
-    EmpireManager* empire = &Empires(); 
-    if (empire->Lookup(EmpireID()) == NULL)
-    {
+    if (!(Empires().Lookup(EmpireID())))
         throw std::runtime_error("Invalid empire ID specified for order.");
-    }
 }
 
 void Order::Execute() const
@@ -358,41 +355,26 @@ void FleetMoveOrder::ExecuteImpl() const
 
     Universe& universe = GetUniverse();
     
-    // look up the fleet in question
-    UniverseObject* the_object = universe.Object(FleetID());
-    Fleet* the_fleet = universe_object_cast<Fleet*> ( the_object );
+    Fleet* fleet = universe.Object<Fleet>(FleetID());
+    System* system = universe.Object<System>(DestinationSystemID());
     
-    // perform sanity check
-    if (the_fleet == NULL)
-    {
-        throw std::runtime_error("Non-fleet object ID specified in fleet move order.");
-    }
-    
+    // perform sanity checks
+    if (!fleet) throw std::runtime_error("Non-fleet object ID specified in fleet move order.");
+    if (!system) throw std::runtime_error("Non-system destination ID specified in fleet move order.");
+
     // verify that empire specified in order owns specified fleet
-    if ( !the_fleet->OwnedBy(EmpireID()) )
-    {
+    if ( !fleet->OwnedBy(EmpireID()) )
         throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) + 
                                  " specified in fleet order does not own specified fleet " + boost::lexical_cast<std::string>(FleetID()) + ".");
-    }
-    
-    // look up destination
-    UniverseObject* another_object = universe.Object(DestinationSystemID());
-    System* the_system = universe_object_cast<System*> (another_object);
-    
-    // perform another sanity check
-    if (the_system == NULL)
-    {
-        throw std::runtime_error("Non-system destination ID specified in fleet move order.");
-    }
 
     // TODO:  check destination validity (once ship range is decided on)
 
     // set the movement route
     std::list<System*> route;
     for (unsigned int i = 0; i < m_route.size(); ++i) {
-        route.push_back(GetUniverse().Object<System>(m_route[i]));
+        route.push_back(universe.Object<System>(m_route[i]));
     }
-    the_fleet->SetRoute(route, m_route_length);
+    fleet->SetRoute(route, m_route_length);
 }
 
 
@@ -484,8 +466,8 @@ void FleetTransferOrder::ExecuteImpl() const
         }
 
         // send the ship to its new fleet
-        a_ship->SetFleetID(DestinationFleet());
-        source_fleet->RemoveShip(curr);
+        //a_ship->SetFleetID(DestinationFleet());  // redundant: AddShip resets the Fleet ID of ships it adds
+        //source_fleet->RemoveShip(curr);  // redundant: AddShip calls RemoveShip on ship's old fleet
         target_fleet->AddShip(curr);
 
         itr++;

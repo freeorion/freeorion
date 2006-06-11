@@ -180,9 +180,9 @@ XMLElement Planet::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
     using boost::lexical_cast;
     using std::string;
 
-    Visibility vis= GetVisibility(empire_id);
-    if (empire_id == ALL_EMPIRES)
-        vis = FULL_VISIBILITY;
+    Visibility vis = FULL_VISIBILITY;
+    if (empire_id != ALL_EMPIRES)
+        vis = GetVisibility(empire_id);
 
     XMLElement retval("Planet" + boost::lexical_cast<std::string>(ID()));
     retval.AppendChild(UniverseObject::XMLEncode(empire_id));

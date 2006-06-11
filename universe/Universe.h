@@ -65,7 +65,8 @@ class XMLElement;
 class Universe
 {
 protected:
-    typedef std::map<int, UniverseObject*> ObjectMap; ///< the container type that is used internally to hold the objects in the universe; keyed by ID number
+    typedef std::map<int, UniverseObject*> ObjectMap;           ///< container type used to hold the objects in the universe; keyed by ID number
+    typedef std::map<int, std::set<int> > ObjectKnowledgeMap;   ///< container type used to hold sets of IDs of Empires which known information about an object (or deleted object); keyed by object ID number
 
 public:
     /** the types of universe shapes available in FreeOrion*/
@@ -175,6 +176,13 @@ public:
 
     const_iterator begin() const  {return m_objects.begin();}   ///< returns the begin const_iterator for the objects in the universe
     const_iterator end() const    {return m_objects.end();}     ///< returns the end const_iterator for the objects in the universe
+
+
+    const UniverseObject* DestroyedObject(int id) const;          ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
+    
+    const_iterator beginDestroyed() const  {return m_destroyed_objects.begin();}   ///< returns the begin const_iterator for the destroyed objects from the universe
+    const_iterator endDestroyed() const    {return m_destroyed_objects.end();}     ///< returns the end const_iterator for the destroyed objects from the universe
+
 
     double LinearDistance(int system1, int system2) const; ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
@@ -333,11 +341,13 @@ protected:
 
     void DestroyImpl(int id);
 
-    ObjectMap m_objects;                                  ///< note that for the system graph algorithms to work more easily, the first N elements should be the N systems
-    DistanceMatrix m_system_distances;                    ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
-    SystemGraph m_system_graph;                           ///< a graph in which the systems are vertices and the starlanes are edges
-    EmpireViewSystemGraphMap m_empire_system_graph_views; ///< a map of empire IDs to the views of the system graph by those empires
-    NumberedElementFactory<UniverseObject> m_factory;     ///< generates new object IDs for all new objects
+    ObjectMap m_objects;                                    ///< note that for the system graph algorithms to work more easily, the first N elements should be the N systems
+    ObjectMap m_destroyed_objects;                          ///< objects that have been destroyed from the universe.  for the server: all of them;  for clients, only those that the local client knows about, not including previously-seen objects that the client no longer can see
+    ObjectKnowledgeMap m_destroyed_object_knowers;          ///< keyed by (destroyed) object ID, map of sets of Empires' IDs that know the objects have been destroyed (ie. could see the object when it was destroyed)
+    DistanceMatrix m_system_distances;                      ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
+    SystemGraph m_system_graph;                             ///< a graph in which the systems are vertices and the starlanes are edges
+    EmpireViewSystemGraphMap m_empire_system_graph_views;   ///< a map of empire IDs to the views of the system graph by those empires
+    NumberedElementFactory<UniverseObject> m_factory;       ///< generates new object IDs for all new objects
     int m_last_allocated_id;
     std::set<int> m_marked_destroyed;
 

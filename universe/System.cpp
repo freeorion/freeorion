@@ -283,7 +283,6 @@ bool System::Remove(int id)
     bool retval = false;
     for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         if (it->second == id) {
-            GetUniverse().Object(it->second)->SetSystem(INVALID_OBJECT_ID);
             m_objects.erase(it);
             retval = true;
             if (GetUniverse().Object<Planet>(id))

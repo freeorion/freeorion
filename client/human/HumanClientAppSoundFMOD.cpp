@@ -181,7 +181,7 @@ void HumanClientAppSoundFMOD::FreeAllSounds()
 
 void HumanClientAppSoundFMOD::SetMusicVolume(int vol)
 {
-    vol = std::max(0, std::min(vol, 255));
+    vol = std::max(0, std::min(vol*vol/255, 255));
     if (m_music_channel != -1)
         FSOUND_SetVolumeAbsolute(m_music_channel, vol);
     GetOptionsDB().Set<int>("music-volume", vol);
@@ -189,7 +189,7 @@ void HumanClientAppSoundFMOD::SetMusicVolume(int vol)
 
 void HumanClientAppSoundFMOD::SetUISoundsVolume(int vol)
 {
-    vol = std::max(0, std::min(vol, 255));
+    vol = std::max(0, std::min(vol*vol/255, 255));
     FSOUND_SetSFXMasterVolume(vol);
     GetOptionsDB().Set<int>("UI.sound.volume", vol);
 }
