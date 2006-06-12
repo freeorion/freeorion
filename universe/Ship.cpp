@@ -70,11 +70,10 @@ UniverseObject::Visibility Ship::GetVisibility(int empire_id) const
 
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         vis = FULL_VISIBILITY;
-    else
-        vis = PARTIAL_VISIBILITY; // TODO: do something smarter here, such as a range check vs. owned systems and fleets
 
     // Ship is visible if its fleet is visible
-    return FleetID() == INVALID_OBJECT_ID ? NO_VISIBILITY : (GetFleet()?GetFleet()->GetVisibility(empire_id):vis);
+    UniverseObject::Visibility retval = FleetID() == INVALID_OBJECT_ID ? NO_VISIBILITY : (GetFleet() ? GetFleet()->GetVisibility(empire_id) : vis);
+    return retval;
 }
 
 bool Ship::IsArmed() const
@@ -101,6 +100,8 @@ XMLElement Ship::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 {
     using boost::lexical_cast;
     using std::string;
+    //Logger().debugStream() << "XMLEncoding for empire: " << empire_id;
+    //Logger().debugStream() << "..Ship: " << ID() << " : " << Name();
     XMLElement retval("Ship" + boost::lexical_cast<std::string>(ID()));
     retval.AppendChild(UniverseObject::XMLEncode(empire_id));
     retval.AppendChild(XMLElement("m_fleet_id", lexical_cast<std::string>(m_fleet_id)));

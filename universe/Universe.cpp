@@ -893,9 +893,16 @@ const Universe& Universe::operator=(Universe& rhs)
         delete it->second;
     }
     m_objects.clear();
+    for (ObjectMap::iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it) {
+        delete it->second;
+    }
+    m_objects.clear();
+    m_destroyed_objects.clear();
     m_last_allocated_id = rhs.m_last_allocated_id;
     m_objects = rhs.m_objects;
     rhs.m_objects.clear();
+    m_destroyed_objects = rhs.m_destroyed_objects;
+    rhs.m_destroyed_objects.clear();
     InitializeSystemGraph();
     return *this;
 }
@@ -914,6 +921,8 @@ Universe::Universe(const XMLElement& elem)
 Universe::~Universe()
 {
     for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+        delete it->second;
+    for (ObjectMap::iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it)
         delete it->second;
 }
 
@@ -982,6 +991,12 @@ Universe::ObjectIDVec Universe::FindObjectIDs(const UniverseObjectVisitor& visit
     return retval;
 }
 
+const UniverseObject* Universe::DestroyedObject(int id) const
+{
+    const_iterator it = m_destroyed_objects.find(id);
+    return (it != m_destroyed_objects.end() ? it->second : 0);
+}
+
 double Universe::LinearDistance(int system1, int system2) const
 {
     return m_system_distances.at(std::max(system1, system2)).at(std::min(system1, system2));
@@ -1027,14 +1042,31 @@ std::map<double, System*> Universe::ImmediateNeighbors(int system, int empire_id
 
 XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
 {
+    Logger().debugStream() << "XMLEncoding universe for empire: " << empire_id;
     XMLElement retval("Universe");
     retval.AppendChild(XMLElement("s_universe_width", boost::lexical_cast<std::string>(s_universe_width)));
+    
     retval.AppendChild(XMLElement("m_objects"));
-
     for (const_iterator it = begin(); it != end(); ++it) {
         // skip all non-System objects that are completely invisible to this empire
-        if (it->second->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(it->second))
+        if (it->second->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(it->second)) {
+            Logger().debugStream() << "Object: " << it->first << " : " << it->second->Name();
             retval.LastChild().AppendChild(it->second->XMLEncode(empire_id));
+        }
+    }
+
+    retval.AppendChild(XMLElement("m_destroyed_objects"));
+    for (const_iterator it = beginDestroyed(); it != endDestroyed(); ++it) {
+        if (empire_id != ALL_EMPIRES) {
+            ObjectKnowledgeMap::const_iterator map_it = m_destroyed_object_knowers.find(it->first);
+            if (map_it == m_destroyed_object_knowers.end())
+                throw std::runtime_error("m_deleted_object_knowers XMLElement contained entry for with no corresponding entry in destroyed objects knowledge map.");
+            std::set<int> knowers_set = map_it->second;
+            std::set<int>::iterator know_it = knowers_set.find(empire_id);
+            if (know_it == knowers_set.end()) continue;
+        }
+        Logger().debugStream() << "Destroyed Object: " << it->first << " : " << it->second->Name();
+        retval.LastChild().AppendChild(it->second->XMLEncode(empire_id));
     }
 
     retval.AppendChild(XMLElement("m_last_allocated_id", boost::lexical_cast<std::string>(m_last_allocated_id)));
@@ -1247,10 +1279,24 @@ void Universe::Destroy(int id)
     
     UniverseObject* obj;
     iterator it = m_objects.find(id);
-    
+
     // remove object from any containing UniverseObject
     if (it != m_objects.end()) {
         obj = it->second;
+        Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
+
+        // get and record set of empires that can presently see this object
+        std::set<int> knowing_empires;
+        for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
+            int empire_id = emp_it->first;
+            if (obj->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(obj)) {
+                knowing_empires.insert(empire_id);
+                Logger().debugStream() << "..visible to empire: " << empire_id;
+            }
+        }
+        m_destroyed_object_knowers[id] = knowing_empires;
+
+        // remove object from any containing objects
         if (System* sys = obj->GetSystem())
             sys->Remove(id);
         if (Ship* ship = universe_object_cast<Ship*>(obj)) {
@@ -1260,8 +1306,12 @@ void Universe::Destroy(int id)
             if (Planet* planet = building->GetPlanet())
                 planet->RemoveBuilding(building->ID());
         }
+
+        // remove from existing objects set and insert into destroyed objects set
         m_objects.erase(id);
         m_destroyed_objects[id] = obj;
+    } else {
+        Logger().debugStream() << "Universe::Destroy called for nonexistant object with id: " << id;
     }
     
     s_inhibit_universe_object_signals = false;
