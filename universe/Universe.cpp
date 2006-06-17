@@ -931,10 +931,13 @@ void Universe::SetUniverse(const XMLElement& elem)
     if (elem.Tag() != "Universe")
         throw std::invalid_argument("Attempted to construct a Universe from an XMLElement that had a tag other than \"Universe\"");
 
-    // wipe out anything present in the object map
-    for (ObjectMap::iterator itr= m_objects.begin(); itr != m_objects.end(); ++itr)
+    // wipe out anything present in the object maps
+    for (ObjectMap::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr)
         delete itr->second;
     m_objects.clear();
+    for (ObjectMap::iterator itr = m_destroyed_objects.begin(); itr != m_destroyed_objects.end(); ++itr)
+        delete itr->second;
+    m_destroyed_objects.clear();
 
     s_universe_width = boost::lexical_cast<double>(elem.Child("s_universe_width").Text());
 
@@ -945,6 +948,26 @@ void Universe::SetUniverse(const XMLElement& elem)
     }
 
     m_last_allocated_id = boost::lexical_cast<int>(elem.Child("m_last_allocated_id").Text());
+
+    /*
+    for (int i = 0; i < elem.Child("m_destroyed_objects").NumChildren(); ++i) {
+        if (UniverseObject* obj = m_factory.GenerateObject(elem.Child("m_destroyed_objects").Child(i))) {
+            m_destroyed_objects[obj->ID()] = obj;
+        }
+    }
+
+    Logger().debugStream() << "m_destroyed_object_knowers entries: " << elem.Child("m_destroyed_object_knowers").NumChildren();
+    for (int i = 0; i < elem.Child("m_destroyed_object_knowers").NumChildren(); ++i) {
+        XMLElement elem2 = elem.Child("m_destroyed_object_knowers").Child(i);
+
+        std::stringstream os;
+        Logger().debugStream() << elem2.WriteElement(os, 0, true);
+
+        int obj_id = boost::lexical_cast<int>(elem2.Tag());
+        std::set<int> knowers_set = ContainerFromString<std::set<int> >(elem2.Text());
+        m_destroyed_object_knowers[obj_id] = knowers_set;
+    }    */
+
 
     InitializeSystemGraph();
 }
@@ -1050,12 +1073,13 @@ XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
     for (const_iterator it = begin(); it != end(); ++it) {
         // skip all non-System objects that are completely invisible to this empire
         if (it->second->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(it->second)) {
-            Logger().debugStream() << "Object: " << it->first << " : " << it->second->Name();
             retval.LastChild().AppendChild(it->second->XMLEncode(empire_id));
         }
     }
 
-    retval.AppendChild(XMLElement("m_destroyed_objects"));
+    retval.AppendChild(XMLElement("m_last_allocated_id", boost::lexical_cast<std::string>(m_last_allocated_id)));
+
+    /*retval.AppendChild(XMLElement("m_destroyed_objects"));
     for (const_iterator it = beginDestroyed(); it != endDestroyed(); ++it) {
         if (empire_id != ALL_EMPIRES) {
             ObjectKnowledgeMap::const_iterator map_it = m_destroyed_object_knowers.find(it->first);
@@ -1069,7 +1093,33 @@ XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
         retval.LastChild().AppendChild(it->second->XMLEncode(empire_id));
     }
 
-    retval.AppendChild(XMLElement("m_last_allocated_id", boost::lexical_cast<std::string>(m_last_allocated_id)));
+    Logger().debugStream() << "XMLEncoding destroyed object knowers";
+    retval.AppendChild(XMLElement("m_destroyed_object_knowers"));
+    for (const_iterator it = beginDestroyed(); it != endDestroyed(); ++it) {
+        int obj_id = it->first;
+
+        ObjectKnowledgeMap::const_iterator map_it = m_destroyed_object_knowers.find(it->first);
+        if (map_it == m_destroyed_object_knowers.end())
+            throw std::runtime_error("m_deleted_object_knowers XMLElement contained entry for with no corresponding entry in destroyed objects knowledge map.");
+        std::set<int> knowers_set = map_it->second;
+
+        if (empire_id == ALL_EMPIRES) {
+            // always include object, and include all knowing empires in set
+            retval.LastChild().AppendChild(XMLElement(boost::lexical_cast<std::string>(obj_id),
+                                           StringFromContainer<std::set<int> >(knowers_set) ));
+        } else {
+            // include object only if encoding empire knows about destroyed object, and then only include
+            // encoding empire in set
+            std::set<int>::const_iterator emp_it = knowers_set.find(empire_id);
+            if (emp_it != knowers_set.end()) {
+                std::set<int> one_emp_set;
+                one_emp_set.insert(empire_id);
+                retval.LastChild().AppendChild(XMLElement(boost::lexical_cast<std::string>(obj_id),
+                                               StringFromContainer<std::set<int> >(one_emp_set) ));
+            }
+        }
+    }*/
+
     return retval;
 }
 

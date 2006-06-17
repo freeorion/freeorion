@@ -96,7 +96,6 @@ Condition::Number::Number(const ValueRef::ValueRefBase<int>* low, const ValueRef
     m_high(high),
     m_condition(condition)
 {
-    Logger().debugStream() << "Creating Number Conditition";
 }
 
 Condition::Number::~Number()
@@ -201,7 +200,6 @@ Condition::NumberOf::NumberOf(const ValueRef::ValueRefBase<int>* number, const C
     m_number(number),
     m_condition(condition)
 {
-    Logger().debugStream() << "Creating NumberOf Conditition";
 }
 
 Condition::NumberOf::~NumberOf()

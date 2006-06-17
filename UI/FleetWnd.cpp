@@ -1046,7 +1046,7 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
 
 void FleetWnd::PlotMovement(int system_id, bool execute_move)
 {
-    if (system_id != -1) {
+    if (system_id != UniverseObject::INVALID_OBJECT_ID) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         for (std::set<int>::const_iterator it = m_fleets_lb->Selections().begin(); it != m_fleets_lb->Selections().end(); ++it) {
             Fleet* fleet = FleetInRow(*it);
@@ -1054,7 +1054,8 @@ void FleetWnd::PlotMovement(int system_id, bool execute_move)
                 // TODO: allow technologies or other factors to allow a fleet to turn around in mid-flight, without completing its current leg
                 int start_system = fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID ? fleet->NextSystemID() : fleet->SystemID();
 
-                std::list<System*> route = GetUniverse().ShortestPath(start_system, system_id).first;
+                std::list<System*> route = GetUniverse().ShortestPath(start_system, system_id, empire_id).first;
+
                 // disallow "offroad" (direct non-starlane non-wormhole) travel
                 if (route.size() == 2 && *route.begin() != *route.rbegin() &&
                     !(*route.begin())->HasStarlaneTo((*route.rbegin())->ID()) && !(*route.begin())->HasWormholeTo((*route.rbegin())->ID()) &&
