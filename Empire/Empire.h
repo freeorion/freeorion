@@ -28,6 +28,7 @@
 
 class BuildingType;
 class ShipDesign;
+static const int INVALID_OBJECT_ID;
 
 struct ResearchQueue
 {
@@ -138,9 +139,9 @@ struct ProductionQueue
         XMLElement XMLEncode() const; ///< Encodes this element as an XMLElement.
 
         ProductionItem item;
-        int            ordered;
-        int            remaining;
-        int            location;                 ///< the ID of the UniverseObject at which this item is being produced
+        int            ordered;                 ///< how many of item to produce
+        int            remaining;               ///< how many left to produce
+        int            location;                ///< the ID of the UniverseObject at which this item is being produced
         double         spending;
         int            turns_left_to_next_item;
         int            turns_left_to_completion;
@@ -192,7 +193,7 @@ struct ProductionQueue
     void push_back(const Element& element);
     void insert(iterator it, const Element& element);
     void erase(int i);
-    void erase(iterator it);
+    iterator erase(iterator it);
 
     iterator begin();
     iterator end();
@@ -401,6 +402,11 @@ public:
 
     /// Removes the build at position \a index in the production queue, if such an index exists.
     void RemoveBuildFromQueue(int index);
+
+    /** Processes Builditems on queues of empires other than this empire, at the location with id \a location_id and,
+        as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build 
+        queue of their current empire */
+    void ConquerBuildsAtLocation(int location_id);
 
     /// Inserts the given Tech into the Empire's list of available technologies.
     void AddTech(const std::string& name);

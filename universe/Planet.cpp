@@ -11,6 +11,7 @@
 #include "Ship.h"
 #include "System.h"
 #include "../util/XMLDoc.h"
+#include "../Empire/Empire.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -289,7 +290,7 @@ void Planet::AddOwner (int id)
 
 void Planet::RemoveOwner(int id)
 {
-    System *system=GetSystem();
+    System *system = GetSystem();
     std::vector<Planet*> planets = system->FindObjects<Planet>();
 
     // check if Empire(id) is owner of at least one other planet
@@ -322,11 +323,20 @@ void Planet::Reset()
 void Planet::Conquer(int conquerer)
 {
     m_just_conquered = true;
+    Empire* empire = Empires().Lookup(conquerer);
+    if (!empire)
+        throw std::invalid_argument("Planet::Conquer: attempted to conquer a planet with an invalid conquerer.");
 
-    // RemoveOwner will change owners - without temp_owner => side effect
+    empire->ConquerBuildsAtLocation(ID());
+
+    // TODO: Something with buildings on planet (not on queue, as above)
+
+    // RemoveOwner will change owners, invalidating iterators over owners, so iterate over temp set
     std::set<int> temp_owner(Owners());
-    for(std::set<int>::const_iterator own_it = temp_owner.begin();own_it != temp_owner.end();++own_it)
+    for(std::set<int>::const_iterator own_it = temp_owner.begin(); own_it != temp_owner.end(); ++own_it) {
+        // remove previous owner who has lost ownership due to other empire conquering planet
         RemoveOwner(*own_it);
+    }
 
     AddOwner(conquerer);
 }

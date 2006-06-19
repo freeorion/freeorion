@@ -12,6 +12,7 @@
 #include "../Empire/EmpireManager.h"
 #include "Universe.h"
 #include "../util/AppInterface.h"
+#include "Enums.h"
 
 #include <fstream>
 #include <iostream>
@@ -292,4 +293,25 @@ const BuildingType* GetBuildingType(const std::string& name)
 {
     static BuildingTypeManager manager;
     return manager.GetBuildingType(name);
+}
+CaptureResult BuildingType::CaptureResult(int from_empire_id, int to_empire_id, int location_id, bool as_production_item) const {
+    Empire* from_empire = Empires().Lookup(from_empire_id);
+    if (!from_empire)
+        throw std::invalid_argument("BuildingType::CaptureResult called with invalid from_empire_id");
+    
+    Empire* to_empire = Empires().Lookup(to_empire_id);
+    if (!to_empire)
+        throw std::invalid_argument("BuildingType::CaptureResult called with invalid to_empire_id");
+    
+    UniverseObject* location = GetUniverse().Object(location_id);
+    if (!location)
+        throw std::invalid_argument("BuildingType::CaptureResult called with invalid location_id");
+    
+    if (as_production_item) {
+        Logger().debugStream() << "BuildingType::CaptureResult: returning CAPTURE for production item";
+        return CAPTURE;
+    }
+    
+    Logger().debugStream() << "BuildingType::CaptureResult: returning DESTROY";
+    return DESTROY;
 }
