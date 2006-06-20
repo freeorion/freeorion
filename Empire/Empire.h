@@ -28,7 +28,6 @@
 
 class BuildingType;
 class ShipDesign;
-static const int INVALID_OBJECT_ID;
 
 struct ResearchQueue
 {

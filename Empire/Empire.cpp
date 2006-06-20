@@ -975,7 +975,7 @@ void Empire::RemoveBuildFromQueue(int index)
 }
 
 void Empire::ConquerBuildsAtLocation(int location_id) {
-    if (location_id == INVALID_OBJECT_ID)
+    if (location_id == UniverseObject::INVALID_OBJECT_ID)
         throw std::invalid_argument("Empire::ConquerBuildsAtLocationFromEmpire: tried to conquer build items located at an invalid location");
     
     Logger().debugStream() << "Empire::ConquerBuildsAtLocationFromEmpire: conquering items located at " << location_id << " to empire " << m_id;
