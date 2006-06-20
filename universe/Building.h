@@ -15,7 +15,7 @@ namespace Condition {
     class ConditionBase;
 }
 
-enum CaptureResult;
+#include "Enums.h"
 
 /** A Building UniverseObject type. */
 class Building : public UniverseObject
