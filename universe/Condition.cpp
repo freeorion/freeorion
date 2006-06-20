@@ -537,17 +537,44 @@ void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets,
     }
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
-    // determine which objects in the Universe contain one or more of the objects in condition_targets
-    for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-        ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
-        ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
-        ObjectSet::iterator it2 = from_set.begin();
-        ObjectSet::iterator end_it2 = from_set.end();
-        for ( ; it2 != end_it2; ) {
-            ObjectSet::iterator temp = it2++;
-            if (search_domain == TARGETS ? !::Contains(*temp, *it) : ::Contains(*temp, *it)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+    ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
+    ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
+    ObjectSet::iterator from_it = from_set.begin();
+    ObjectSet::iterator from_end = from_set.end();
+
+    for ( ; from_it != from_end; ) {
+        ObjectSet::iterator container_it = from_it++;
+
+        ObjectSet::const_iterator contained_it = condition_targets.begin();
+        ObjectSet::const_iterator contained_end = condition_targets.end();
+        
+        if (search_domain == NON_TARGETS) {
+            // non_targets (from_set) objects need to contain at least one condition_target to be transferred from
+            // from_set to to_set.
+            // As soon as one contained condition target is found, object may be transferred.
+            for ( ; contained_it != contained_end; ++contained_it) {
+                if (::Contains(*container_it, *contained_it)) {
+                    to_set.insert(*container_it);
+                    from_set.erase(container_it);
+                    break;  // don't need to check any more possible contained objects for this non_target set object
+                }
+            }
+        } else {
+            // targets (from_set) objects need to include no condition_targets to be transferred from from_set
+            // to to_set.
+            // As soon as one contained condition target is found, it is known that object need NOT
+            // be trasferred.  Only after all condition targets are verified not to be contained can object
+            // be transferred.
+            for ( ; contained_it != contained_end; ++contained_it) {
+                if (::Contains(*container_it, *contained_it)) {
+                    break;
+                }
+            }
+            // if the end of the condition_targets was reached, no condition targets were contained, so 
+            // this targets object can be transferred to the non_targets set
+            if (contained_it == contained_end) {
+                to_set.insert(*container_it);
+                from_set.erase(container_it);
             }
         }
     }
@@ -1402,28 +1429,20 @@ Condition::And::~And()
 
 void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
-    // get the list of all UniverseObjects that satisfy the m_operands AND'ed together
-    ObjectSet operand_targets;
-    ObjectSet operand_non_targets;
-    const Universe& universe = GetUniverse();
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        operand_non_targets.insert(it->second);
-    }
-    m_operands[0]->Eval(source, operand_targets, operand_non_targets);
+    // if search domain is non targets, evalucate first operand condition on non targets, to assemble an
+    // initial targets set.  if search domain is targets, evaluate first (and all other) operand condition
+    // on existing targets set
+    if (search_domain == NON_TARGETS)
+        m_operands[0]->Eval(source, targets, non_targets);
+    else
+        m_operands[0]->Eval(source, targets, non_targets, TARGETS);
 
+    // regardless of whether search domain is TARGET or NON_TARGETS, evaluate remaining operand conditions
+    // on targets set, removing any targets that don't meet additional conditions, and stopping early if all
+    // targets are removed
     for (unsigned int i = 1; i < m_operands.size(); ++i) {
-        m_operands[i]->Eval(source, operand_targets, operand_non_targets, TARGETS);
-        if (operand_targets.empty())
-            break;
-    }
-
-    ObjectSet::iterator operand_it = search_domain == TARGETS ? operand_non_targets.begin() : operand_targets.begin();
-    ObjectSet::iterator operand_end_it = search_domain == TARGETS ? operand_non_targets.end() : operand_targets.end();
-    ObjectSet& from = search_domain == TARGETS ? targets : non_targets;
-    ObjectSet& to = search_domain == TARGETS ? non_targets : targets;
-    for (; operand_it != operand_end_it; ++operand_it) {
-        to.insert(*operand_it);
-        from.erase(*operand_it);
+        if (targets.empty()) break;
+        m_operands[i]->Eval(source, targets, non_targets, TARGETS);
     }
 }
 
