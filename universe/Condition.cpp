@@ -616,17 +616,44 @@ void Condition::ContainedBy::Eval(const UniverseObject* source, ObjectSet& targe
     }
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
-    // determine which objects in the Universe are contained within one or more of the objects in condition_targets
-    for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-        ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
-        ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
-        ObjectSet::iterator it2 = from_set.begin();
-        ObjectSet::iterator end_it2 = from_set.end();
-        for ( ; it2 != end_it2; ) {
-            ObjectSet::iterator temp = it2++;
-            if (search_domain == TARGETS ? !::Contains(*it, *temp) : ::Contains(*it, *temp)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+    ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
+    ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
+    ObjectSet::iterator from_it = from_set.begin();
+    ObjectSet::iterator from_end = from_set.end();
+
+    for ( ; from_it != from_end; ) {
+        ObjectSet::iterator contained_it = from_it++;
+
+        ObjectSet::const_iterator container_it = condition_targets.begin();
+        ObjectSet::const_iterator container_end = condition_targets.end();
+        
+        if (search_domain == NON_TARGETS) {
+            // non_targets (from_set) objects need to be contained by at least one condition_target to be 
+            // transferred from from_set to to_set.
+            // As soon as one containing condition target is found, object may be transferred.
+            for ( ; container_it != container_end; ++container_it) {
+                if (::Contains(*container_it, *contained_it)) {
+                    to_set.insert(*contained_it);
+                    from_set.erase(contained_it);
+                    break;  // don't need to check any more possible container objects for this non_target set object
+                }
+            }
+        } else {
+            // targets (from_set) objects need to be contained by no condition_targets to be transferred from from_set
+            // to to_set.
+            // As soon as one containing condition target is found, it is known that object need NOT
+            // be trasferred.  Only after all condition targets are verified not to contain can object
+            // be transferred.
+            for ( ; container_it != container_end; ++container_it) {
+                if (::Contains(*container_it, *contained_it)) {
+                    break;
+                }
+            }
+            // if the end of the condition_targets was reached, no condition targets contained, so 
+            // this targets object can be transferred to the non_targets set
+            if (container_it == container_end) {
+                to_set.insert(*contained_it);
+                from_set.erase(contained_it);
             }
         }
     }
