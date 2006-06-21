@@ -15,7 +15,7 @@ namespace Condition {
     class ConditionBase;
 }
 
-#include "Enums.h"
+enum CaptureResult;
 
 /** A Building UniverseObject type. */
 class Building : public UniverseObject
@@ -94,7 +94,7 @@ public:
         the planet (or other UniverseObject) with id \a location_id on which this type of Building is located (if 
         \a as_production_item is false) or which is the location of a Production Queue BuildItem for a building
         of this type (otherwise) */
-    CaptureResult CaptureResult(int from_empire_id, int to_empire_id, int location_id, bool as_production_item) const;         
+    CaptureResult GetCaptureResult(int from_empire_id, int to_empire_id, int location_id, bool as_production_item) const;         
     //@}
 
     /** \name Mutators */ //@{
