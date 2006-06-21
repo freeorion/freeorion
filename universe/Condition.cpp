@@ -1493,28 +1493,31 @@ Condition::Or::~Or()
 
 void Condition::Or::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
-    // get the list of all UniverseObjects that satisfy the m_operands OR'ed together
-    ObjectSet operand_targets;
-    ObjectSet operand_non_targets;
-    const Universe& universe = GetUniverse();
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        operand_non_targets.insert(it->second);
+    if (search_domain == NON_TARGETS) {
+        // if search domain is non targets, evalucate with search domain non_targets on each operand condition, using
+        // the remaining non_targets from the previous operand condition as the non_targets for the next operand condition
+        
+        for (unsigned int i = 0; i < m_operands.size(); ++i) {
+            if (non_targets.empty()) break;
+            m_operands[i]->Eval(source, targets, non_targets);
+        }
     }
-    m_operands[0]->Eval(source, operand_targets, operand_non_targets);
-
-    for (unsigned int i = 1; i < m_operands.size(); ++i) {
-        m_operands[i]->Eval(source, operand_targets, operand_non_targets, NON_TARGETS);
-        if (operand_non_targets.empty())
-            break;
-    }
-
-    ObjectSet::iterator operand_it = search_domain == TARGETS ? operand_non_targets.begin() : operand_targets.begin();
-    ObjectSet::iterator operand_end_it = search_domain == TARGETS ? operand_non_targets.end() : operand_targets.end();
-    ObjectSet& from = search_domain == TARGETS ? targets : non_targets;
-    ObjectSet& to = search_domain == TARGETS ? non_targets : targets;
-    for (; operand_it != operand_end_it; ++operand_it) {
-        to.insert(*operand_it);
-        from.erase(*operand_it);
+    else
+    {
+        // if search domain is targets, create a temporary empty new_targets set, and use the targets set as the
+        // effective non_targets set while evaluating each condition on the effective non_targets set.  this way,
+        // if a target set object matches any conditions, it will be added to the new_targets set.  after evaluating
+        // all conditions on the effective non_targets set, add the remaining objects to the real non_targets set,
+        // and set the real targets set equal to the new_targets set
+        
+        ObjectSet new_targets;  // new empty targets set
+        ObjectSet& temp_non_targets = targets;
+        for (unsigned int i = 0; i < m_operands.size(); ++i) {
+            if (temp_non_targets.empty()) break;
+            m_operands[i]->Eval(source, new_targets, temp_non_targets);
+        }
+        non_targets.insert(temp_non_targets.begin(), temp_non_targets.end()); // move targets set object that didn't match any conditions to non_targets set
+        targets = new_targets;  // set targets set equal to set of objects that matched at least one condition
     }
 }
 
