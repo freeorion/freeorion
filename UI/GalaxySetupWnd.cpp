@@ -6,6 +6,10 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../universe/Universe.h"
+
+#include "../util/Directories.h"
+#include <boost/filesystem/fstream.hpp>
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -23,6 +27,17 @@ namespace {
     const GG::Pt PREVIEW_SZ(248, 186);
     const bool ALLOW_NO_STARLANES = false;
 
+    // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
+    void AddOptions(OptionsDB& db) {
+        Logger().debugStream() << "Adding GalaxyPanel Options";
+        db.Add("GameSetup.stars", "The number of stars in the galaxy to be generated.", 100, RangedValidator<int>(10, 500));
+        db.Add("GameSetup.galaxy-shape", "The shape of the galaxy to be generated.", static_cast<int>(Universe::SPIRAL_3), RangedValidator<int>(0, static_cast<int>(Universe::GALAXY_SHAPES) - 1));
+        db.Add("GameSetup.galaxy-age", "The shape of the galaxy to be generated.", static_cast<int>(Universe::AGE_MATURE), RangedValidator<int>(0, static_cast<int>(Universe::NUM_UNIVERSE_AGES) - 1));
+        db.Add("GameSetup.planet-density", "The number of planets per system in the galaxy to be generated.", static_cast<int>(Universe::PD_AVERAGE), RangedValidator<int>(0, static_cast<int>(Universe::NUM_UNIVERSE_PLANET_DENSITIES) - 1));
+        db.Add("GameSetup.starlane-frequency", "The number of starlanes in the galaxy to be generated.", static_cast<int>(Universe::LANES_SEVERAL), RangedValidator<int>(ALLOW_NO_STARLANES ? 1 : 0, static_cast<int>(Universe::NUM_STARLANE_FREQENCIES) - 1));
+        db.Add("GameSetup.specials-frequency", "The frequency of specials appearing in the galaxy to be generated.", static_cast<int>(Universe::SPECIALS_UNCOMMON), RangedValidator<int>(0, static_cast<int>(Universe::NUM_SPECIALS_FREQENCIES) - 1));
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 ////////////////////////////////////////////////
@@ -209,11 +224,12 @@ void GalaxySetupPanel::Init()
     m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_COMMON")));
 
     // default settings
-    m_galaxy_shapes_list->Select(0);
-    m_galaxy_ages_list->Select(1);
-    m_starlane_freq_list->Select(ALLOW_NO_STARLANES ? 3 : 2);
-    m_planet_density_list->Select(1);
-    m_specials_freq_list->Select(2);
+    m_stars_spin->SetValue(GetOptionsDB().Get<int>("GameSetup.stars"));
+    m_galaxy_shapes_list->Select(GetOptionsDB().Get<int>("GameSetup.galaxy-shape"));
+    m_galaxy_ages_list->Select(GetOptionsDB().Get<int>("GameSetup.galaxy-age"));
+    m_starlane_freq_list->Select(GetOptionsDB().Get<int>("GameSetup.starlane-frequency") - (ALLOW_NO_STARLANES ? 0 : 1));
+    m_planet_density_list->Select(GetOptionsDB().Get<int>("GameSetup.planet-density"));
+    m_specials_freq_list->Select(GetOptionsDB().Get<int>("GameSetup.specials-frequency"));
 }
 
 void GalaxySetupPanel::AttachSignalChildren()
@@ -371,6 +387,20 @@ void GalaxySetupWnd::EmpireNameChanged(const std::string& name)
 
 void GalaxySetupWnd::OkClicked()
 {
+    Logger().debugStream() << "GalaxySetupWnd::OkClicked()";
+
+    // record selected galaxy setup options as new defaults
+    GetOptionsDB().Set("GameSetup.stars", m_galaxy_setup_panel->Systems());
+    GetOptionsDB().Set("GameSetup.galaxy-shape", static_cast<int>(m_galaxy_setup_panel->GalaxyShape()));
+    GetOptionsDB().Set("GameSetup.galaxy-age", static_cast<int>(m_galaxy_setup_panel->GalaxyAge()));
+    GetOptionsDB().Set("GameSetup.starlane-frequency", static_cast<int>(m_galaxy_setup_panel->StarlaneFrequency()));
+    GetOptionsDB().Set("GameSetup.planet-density", static_cast<int>(m_galaxy_setup_panel->PlanetDensity()));
+    GetOptionsDB().Set("GameSetup.specials-frequency", static_cast<int>(m_galaxy_setup_panel->SpecialsFrequency()));
+
+    // Save the changes:
+    boost::filesystem::ofstream ofs(GetConfigPath());
+    GetOptionsDB().GetXML().WriteDoc(ofs);
+
     m_ended_with_ok = true;
     m_done = true;
 }

@@ -47,14 +47,14 @@ public:
     //!@}
 
     /** \name Accessors*/ //!@{
-    int                         Systems() const;      //!< Returns the number of star systems to use in generating the galaxy
-    Universe::Shape             GalaxyShape() const;  //!< Returns the shape of the galaxy
-    Universe::Age               GalaxyAge() const;    //!< Returns the age of the galaxy
-    Universe::StarlaneFrequency  StarlaneFrequency() const;  //!< Returns the frequency of starlanes in the galaxy
-    Universe::PlanetDensity     PlanetDensity() const;      //!< Returns the density of planets within systems
-    Universe::SpecialsFrequency  SpecialsFrequency() const;  //!< Returns the rarity of planetary and system specials
+    int                             Systems() const;      //!< Returns the number of star systems to use in generating the galaxy
+    Universe::Shape                 GalaxyShape() const;  //!< Returns the shape of the galaxy
+    Universe::Age                   GalaxyAge() const;    //!< Returns the age of the galaxy
+    Universe::StarlaneFrequency     StarlaneFrequency() const;  //!< Returns the frequency of starlanes in the galaxy
+    Universe::PlanetDensity         PlanetDensity() const;      //!< Returns the density of planets within systems
+    Universe::SpecialsFrequency     SpecialsFrequency() const;  //!< Returns the rarity of planetary and system specials
 
-    boost::shared_ptr<GG::Texture> PreviewImage() const;  //!< Returns the current preview image texture
+    boost::shared_ptr<GG::Texture>  PreviewImage() const;  //!< Returns the current preview image texture
 
     /** encodes the values of the controls in an XMLElement with the tag "universe_params", so they can be sent to the server 
         as universe creation parameters. */
