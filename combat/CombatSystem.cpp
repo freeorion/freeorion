@@ -70,7 +70,7 @@ static void RemoveShip(int nID)
       flt->RemoveShip(shp->ID());
       if (flt->NumShips() == 0)
       { 
-        if (sys = flt->GetSystem()) 
+        if ((sys = flt->GetSystem()))
             sys->Remove(flt->ID());
         GetUniverse().Destroy(flt->ID());
       }

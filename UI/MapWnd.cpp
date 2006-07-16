@@ -385,7 +385,7 @@ void MapWnd::KeyPress (GG::Key key, Uint32 key_mods)
             std::string text = m_chat_edit->WindowText();
             std::pair<int, int> cursor_pos = m_chat_edit->CursorPosn();
             if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= static_cast<int>(text.size())) {
-                unsigned int word_start = text.substr(0, cursor_pos.first).find_last_of(" :");
+                std::string::size_type word_start = text.substr(0, cursor_pos.first).find_last_of(" :");
                 if (word_start == std::string::npos)
                     word_start = 0;
                 else

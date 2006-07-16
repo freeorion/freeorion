@@ -189,7 +189,7 @@ XMLDoc OptionsDB::GetXML() const
     elem_stack.push_back(&doc.root_node);
 
     for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it) {
-        unsigned int last_dot = it->first.find_last_of('.');
+        std::string::size_type last_dot = it->first.find_last_of('.');
         std::string section_name = last_dot == std::string::npos ? "" : it->first.substr(0, last_dot);
         std::string name = it->first.substr(last_dot == std::string::npos ? 0 : last_dot + 1);
         while (1 < elem_stack.size()) {
@@ -204,8 +204,8 @@ XMLDoc OptionsDB::GetXML() const
             elem_stack.pop_back();
         }
         if (!section_name.empty()) {
-            unsigned int last_pos = 0;
-            unsigned int pos = 0;
+            std::string::size_type last_pos = 0;
+            std::string::size_type pos = 0;
             while ((pos = section_name.find('.', last_pos)) != std::string::npos) {
                 XMLElement temp(section_name.substr(last_pos, pos - last_pos));
                 elem_stack.back()->AppendChild(temp);

@@ -874,11 +874,11 @@ void HumanClientApp::Autosave(bool new_game)
         (m_turns_since_autosave++ % GetOptionsDB().Get<int>("autosave.turns")) == 0) {
         const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
         std::string empire_name = Empires().Lookup(EmpireID())->Name();
-        unsigned int first_good_empire_char = empire_name.find_first_of(legal_chars);
+        std::string::size_type first_good_empire_char = empire_name.find_first_of(legal_chars);
         if (first_good_empire_char == std::string::npos) {
             empire_name = "";
         } else {
-            unsigned int first_bad_empire_char = empire_name.find_first_not_of(legal_chars, first_good_empire_char);
+            std::string::size_type first_bad_empire_char = empire_name.find_first_not_of(legal_chars, first_good_empire_char);
             empire_name = empire_name.substr(first_good_empire_char, first_bad_empire_char - first_good_empire_char);
         }
 
@@ -886,11 +886,11 @@ void HumanClientApp::Autosave(bool new_game)
         if (m_single_player_game) {
             save_filename = boost::io::str(boost::format("AS_%s_%04d.sav") % empire_name % m_current_turn);
         } else {
-            unsigned int first_good_player_char = m_player_name.find_first_of(legal_chars);
+            std::string::size_type first_good_player_char = m_player_name.find_first_of(legal_chars);
             if (first_good_player_char == std::string::npos) {
                 save_filename = boost::io::str(boost::format("AS_%s_%04d.mps") % empire_name % m_current_turn);
             } else {
-                unsigned int first_bad_player_char = m_player_name.find_first_not_of(legal_chars, first_good_player_char);
+                std::string::size_type first_bad_player_char = m_player_name.find_first_not_of(legal_chars, first_good_player_char);
                 std::string player_name = m_player_name.substr(first_good_player_char, first_bad_player_char - first_good_player_char);
                 save_filename = boost::io::str(boost::format("AS_%s_%s_%04d.mps") % player_name % empire_name % m_current_turn);
             }

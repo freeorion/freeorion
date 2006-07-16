@@ -436,8 +436,8 @@ void XMLDoc::AppendToText(const char* first, const char* last)
 {
     if (!s_element_stack.empty()) {
         std::string text(first, last);
-        unsigned int first_good_posn = (text[0] != '\"') ? 0 : 1;
-        unsigned int last_good_posn = text.find_last_not_of(" \t\n\"\r\f");
+        std::string::size_type first_good_posn = (text[0] != '\"') ? 0 : 1;
+        std::string::size_type last_good_posn = text.find_last_not_of(" \t\n\"\r\f");
         // strip of leading quote and/or trailing quote, and/or trailing whitespace
         if (last_good_posn != std::string::npos)
             s_element_stack.back()->m_text += text.substr(first_good_posn, (last_good_posn + 1) - first_good_posn);

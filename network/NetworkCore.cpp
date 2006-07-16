@@ -85,7 +85,7 @@ void NetworkCore::ReceiveData(int socket, std::string& stream, const std::string
    }
 
    // construct Message(s) from data, and dispatch them as appropriate
-   unsigned int next_EOM = std::string::npos;
+   std::string::size_type next_EOM = std::string::npos;
    while ((next_EOM = stream.find(NetworkCore::EOM_STR)) != std::string::npos) {
        Message msg(stream.substr(0, next_EOM));
        stream = stream.substr(next_EOM + NetworkCore::EOM_STR.size());

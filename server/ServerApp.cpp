@@ -650,7 +650,7 @@ void ServerApp::HandleMessage(const Message& msg)
         // if there's a colon in the message, treat all tokens before the colon as player names.
         // if there are tokens before the colon, but at least one of them *is not* a valid player names, assume there has been a typo,
         // and don't send the message at all, since we can't decipher which parts are message and which parts are names
-        unsigned int colon_position = text.find(':');
+        std::string::size_type colon_position = text.find(':');
         // target_player_names.empty() implies that all players should be sent the message; otherwise, only the indicated players will receive the message
         std::set<std::string> target_player_names;
         if (colon_position != std::string::npos) {

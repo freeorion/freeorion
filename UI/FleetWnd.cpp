@@ -152,8 +152,8 @@ namespace {
             const ShipDesign* design = m_ship->Design();
             if (design) {
                 design_name = design->name;
-                unsigned int space;
-                if ((space = design_name.find(' ')) != std::string::npos) {
+                std::string::size_type space = design_name.find(' ');
+                if (space != std::string::npos) {
                     design_name[space] = '_';
                 }
             } else {
@@ -412,8 +412,8 @@ void FleetDataPanel::SetFleetIcon()
             std::string design_name;
             if (design) {
                 design_name = design->name;
-                unsigned int space;
-                if ((space = design_name.find(' ')) != std::string::npos) {
+                std::string::size_type space = design_name.find(' ');
+                if (space != std::string::npos) {
                     design_name[space] = '_';
                 }
             } else {
