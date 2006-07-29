@@ -220,7 +220,7 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_log_category.setAdditivity(false);  // make appender the only appender used...
     m_log_category.setAppender(appender);
     m_log_category.setAdditivity(true);   // ...but allow the addition of others later
-    m_log_category.setPriority(log4cpp::Priority::DEBUG);
+    m_log_category.setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
     m_log_category.debug("freeoriond logger initialized.");
     m_log_category.debugStream() << "ServerApp::ServerApp : Server now in mode " << SERVER_IDLE << " (SERVER_IDLE).";
 }
@@ -275,7 +275,10 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs)
         std::vector<std::string> args;
         args.push_back(AI_CLIENT_EXE);
         args.push_back(player_name);
-        args.push_back("--settings-dir"); args.push_back(GetOptionsDB().Get<std::string>("settings-dir"));
+        args.push_back("--settings-dir");
+        args.push_back(GetOptionsDB().Get<std::string>("settings-dir"));
+        args.push_back("--log-level");
+        args.push_back(GetOptionsDB().Get<std::string>("log-level"));
         Logger().debugStream() << "starting " << AI_CLIENT_EXE;
         m_ai_clients.push_back(Process(AI_CLIENT_EXE, args));
         Logger().debugStream() << "done starting " << AI_CLIENT_EXE;
