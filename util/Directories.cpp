@@ -104,7 +104,7 @@ const fs::path GetLocalDir()
 {
     if (fs::path::default_name_check_writable())
         fs::path::default_name_check(fs::native);
-    static fs::path p = fs::path(std::string(getenv("HOMEDRIVE")) + getenv("HOMEPATH")) / "FreeOrion";
+    static fs::path p = fs::path(std::string(getenv("APPDATA"))) / "FreeOrion";
     return p;
 }
 
