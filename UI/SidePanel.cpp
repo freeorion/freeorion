@@ -1469,9 +1469,9 @@ void SidePanel::SetSystemImpl()
             GG::ListBox::Row *row = new SystemRow(sys_vec[i]->ID());
 
             if (sys_vec[i]->Name().length()==0) {
-                if (sys_vec[i] == s_system) {
-                    row->push_back(boost::io::str(boost::format(UserString("SP_UNKNOWN_SYSTEM")) % sys_vec[i]->ID()), ClientUI::FONT,SYSTEM_NAME_FONT_SIZE, ClientUI::TEXT_COLOR);
-                } else
+                if (sys_vec[i] == s_system)
+                    row->push_back(UserString("SP_UNKNOWN_SYSTEM"), ClientUI::FONT, SYSTEM_NAME_FONT_SIZE, ClientUI::TEXT_COLOR);
+                else
                     continue;
             } else {
                 row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,SYSTEM_NAME_FONT_SIZE, ClientUI::TEXT_COLOR);
