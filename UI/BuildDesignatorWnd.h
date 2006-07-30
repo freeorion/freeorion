@@ -51,12 +51,14 @@ private:
 
     void BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build);
     void BuildQuantityChanged(int queue_idx, int quantity);
+    void SelectDefaultPlanet(int system);
 
-    BuildDetailPanel* m_build_detail_panel;
-    BuildSelector*    m_build_selector;
-    SidePanel*        m_side_panel;
-    int               m_build_location;
-    GG::Rect          m_map_view_hole;
+    BuildDetailPanel*  m_build_detail_panel;
+    BuildSelector*     m_build_selector;
+    SidePanel*         m_side_panel;
+    int                m_build_location;
+    GG::Rect           m_map_view_hole;
+    std::map<int, int> m_system_default_planets;
 };
 
 #endif // _BuildDesignatorWnd_h_

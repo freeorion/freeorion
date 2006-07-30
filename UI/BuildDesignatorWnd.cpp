@@ -614,14 +614,12 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
 void BuildDesignatorWnd::SelectSystem(int system)
 {
     if (system != UniverseObject::INVALID_OBJECT_ID) {
-        m_side_panel->Show();
-        m_side_panel->SetValidSelectionPredicate(boost::shared_ptr<UniverseObjectVisitor>(new OwnedVisitor<Planet>(HumanClientApp::GetApp()->EmpireID())));
-        m_side_panel->SetSystem(system);
-        m_build_location = UniverseObject::INVALID_OBJECT_ID;
-        System::ObjectIDVec owned_planets_ids =
-            GetUniverse().Object<System>(system)->FindObjectIDs(OwnedVisitor<Planet>(HumanClientApp::GetApp()->EmpireID()));
-        if (owned_planets_ids.size() == 1)
-            m_side_panel->SelectPlanet(*owned_planets_ids.begin());
+        if (system != m_side_panel->SystemID()) {
+            m_side_panel->Show();
+            m_side_panel->SetSystem(system);
+            m_build_location = UniverseObject::INVALID_OBJECT_ID;
+        }
+        SelectDefaultPlanet(system);
     }
 }
 
@@ -629,12 +627,18 @@ void BuildDesignatorWnd::SelectPlanet(int planet)
 {
     m_build_location = planet;
     m_build_detail_panel->SelectedBuildLocation(planet);
+    if (planet != UniverseObject::INVALID_OBJECT_ID)
+        m_system_default_planets[m_side_panel->SystemID()] = planet;
 }
 
 void BuildDesignatorWnd::Reset()
 {
-    if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
-        m_side_panel->Hide();
+    // default to the home system when nothing is selected in the main map's SidePanel
+    if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
+        int home_system_id = GetUniverse().Object<Planet>(Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->HomeworldID())->SystemID();
+        m_side_panel->SetSystem(home_system_id);
+    }
+    SelectDefaultPlanet(m_side_panel->SystemID());
     m_build_selector->Reset(true);
     m_build_detail_panel->Reset();
 }
@@ -646,6 +650,7 @@ void BuildDesignatorWnd::Clear()
     m_side_panel->SetSystem(UniverseObject::INVALID_OBJECT_ID);
     m_side_panel->Hide();
     m_build_location = UniverseObject::INVALID_OBJECT_ID;
+    m_system_default_planets.clear();
 }
 
 void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build)
@@ -658,4 +663,28 @@ void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::str
 void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)
 {
     BuildQuantityChangedSignal(queue_idx, quantity);
+}
+
+void BuildDesignatorWnd::SelectDefaultPlanet(int system)
+{
+    m_side_panel->SetValidSelectionPredicate(boost::shared_ptr<UniverseObjectVisitor>(new OwnedVisitor<Planet>(HumanClientApp::GetApp()->EmpireID())));
+    std::map<int, int>::iterator it = m_system_default_planets.find(system);
+    if (it != m_system_default_planets.end()) {
+        m_side_panel->SelectPlanet(it->second);
+    } else {
+        System::ObjectVec owned_planets =
+            GetUniverse().Object<System>(system)->FindObjects(OwnedVisitor<Planet>(HumanClientApp::GetApp()->EmpireID()));
+        if (!owned_planets.empty()) {
+            int planet_id = owned_planets[0]->ID();
+            double max_pop = owned_planets[0]->GetMeter(METER_POPULATION)->Current();
+            for (unsigned int i = 1; i < owned_planets.size(); ++i) {
+                double pop = owned_planets[0]->GetMeter(METER_POPULATION)->Current();
+                if (max_pop < pop) {
+                    max_pop = pop;
+                    planet_id = owned_planets[0]->ID();
+                }
+            }
+            m_side_panel->SelectPlanet(planet_id);
+        }
+    }
 }
