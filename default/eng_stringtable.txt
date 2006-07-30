@@ -700,7 +700,7 @@ PL_COLONIZE
 Colonize
 
 SP_UNKNOWN_SYSTEM
-Unknown System %1%
+Unknown System
 
 SP_SYSTEM_NAME
 %1%
