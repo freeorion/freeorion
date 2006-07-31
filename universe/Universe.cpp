@@ -386,7 +386,7 @@ namespace {
         }
     }
 
-    System* GenerateSystem(Universe &universe, Universe::Age age, double x, double y)
+    System* GenerateSystem(Universe &universe, Age age, double x, double y)
     {
         const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
         const std::vector<std::vector<int> >& universe_age_mod_to_star_type_dist = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
@@ -422,7 +422,7 @@ namespace {
         return system;
     }
 
-    void GenerateStarField(Universe &universe, Universe::Age age, const std::vector<std::pair<double, double> > &positions, 
+    void GenerateStarField(Universe &universe, Age age, const std::vector<std::pair<double, double> > &positions, 
                            Universe::AdjacencyGrid& adjacency_grid, double adjacency_box_size)
     {
         // generate star field

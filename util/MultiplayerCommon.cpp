@@ -21,7 +21,7 @@ namespace {
 #endif
         db.Add<std::string>("log-level", "Sets the level at or above which log messages will be output "
                             "(levels in order of decreasing verbosity: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, "
-                            "ALERT, FATAL, EMERG", "WARN");
+                            "ALERT, FATAL, EMERG)", "WARN");
         db.Add<std::string>("stringtable-filename", "Sets the language-specific string table filename.", "eng_stringtable.txt");
     }
     bool temp_bool = RegisterOptions(&AddOptions);

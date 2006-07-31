@@ -161,11 +161,11 @@ private:
     int                     m_expected_players;     ///< the total desired number of players in the game
 
     int                          m_galaxy_size;     ///< the size of the galaxy (the number of star systems)
-    Universe::Shape              m_galaxy_shape;    ///< the shape of the galaxy
-    Universe::Age                m_galaxy_age;      ///< the age of the galaxy
-    Universe::StarlaneFrequency  m_starlane_freq;   ///< the frequency of starlanes
-    Universe::PlanetDensity      m_planet_density;  ///< the density of planets within systems
-    Universe::SpecialsFrequency  m_specials_freq;   ///< the frequency of planetary and system specials
+    Shape                        m_galaxy_shape;    ///< the shape of the galaxy
+    Age                          m_galaxy_age;      ///< the age of the galaxy
+    StarlaneFrequency            m_starlane_freq;   ///< the frequency of starlanes
+    PlanetDensity                m_planet_density;  ///< the density of planets within systems
+    SpecialsFrequency            m_specials_freq;   ///< the frequency of planetary and system specials
     std::string                  m_galaxy_file;     ///< file to use for generating the galaxy
     // end SERVER_GAME_SETUP variables
 

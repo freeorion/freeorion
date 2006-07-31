@@ -80,11 +80,11 @@ namespace {
         MultiplayerLobbyData (bool build_save_game_list = true) :
             new_game(true),
             size(100),
-            shape(Universe::SPIRAL_2),
-            age(Universe::AGE_MATURE),
-            starlane_freq(Universe::LANES_SEVERAL),
-            planet_density(Universe::PD_AVERAGE),
-            specials_freq(Universe::SPECIALS_UNCOMMON),
+            shape(SPIRAL_2),
+            age(AGE_MATURE),
+            starlane_freq(LANES_SEVERAL),
+            planet_density(PD_AVERAGE),
+            specials_freq(SPECIALS_UNCOMMON),
             save_file(-1)
         {
             if (build_save_game_list) {
@@ -139,11 +139,11 @@ namespace {
 
         bool                            new_game;
         int                             size;
-        Universe::Shape                 shape;
-        Universe::Age                   age;
-        Universe::StarlaneFrequency     starlane_freq;
-        Universe::PlanetDensity         planet_density;
-        Universe::SpecialsFrequency     specials_freq;
+        Shape                           shape;
+        Age                             age;
+        StarlaneFrequency               starlane_freq;
+        PlanetDensity                   planet_density;
+        SpecialsFrequency               specials_freq;
         int                             save_file;
         std::vector<PlayerSetupData>    players;
         std::vector<PlayerSetupData>    AIs;
@@ -436,11 +436,11 @@ void ServerApp::HandleMessage(const Message& msg)
 
             if (doc.root_node.ContainsChild("universe_params")) {
                 g_lobby_data.size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("size").Text());
-                g_lobby_data.shape = Universe::Shape(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("shape").Text()));
-                g_lobby_data.age = Universe::Age(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("age").Text()));
-                g_lobby_data.starlane_freq = Universe::StarlaneFrequency(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("starlane_freq").Text()));
-                g_lobby_data.planet_density = Universe::PlanetDensity(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("planet_density").Text()));
-                g_lobby_data.specials_freq = Universe::SpecialsFrequency(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("specials_freq").Text()));
+                g_lobby_data.shape = boost::lexical_cast<Shape>(doc.root_node.Child("universe_params").Child("shape").Text());
+                g_lobby_data.age = boost::lexical_cast<Age>(doc.root_node.Child("universe_params").Child("age").Text());
+                g_lobby_data.starlane_freq = boost::lexical_cast<StarlaneFrequency>(doc.root_node.Child("universe_params").Child("starlane_freq").Text());
+                g_lobby_data.planet_density = boost::lexical_cast<PlanetDensity>(doc.root_node.Child("universe_params").Child("planet_density").Text());
+                g_lobby_data.specials_freq = boost::lexical_cast<SpecialsFrequency>(doc.root_node.Child("universe_params").Child("specials_freq").Text());
             }
 
             bool new_save_file_selected = false;
@@ -986,11 +986,11 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                 m_single_player_game = true;
                 m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Text());
                 m_galaxy_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("size").Text());
-                m_galaxy_shape = Universe::Shape(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("shape").Text()));
-                m_galaxy_age = Universe::Age(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("age").Text()));
-                m_starlane_freq = Universe::StarlaneFrequency(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("starlane_freq").Text()));
-                m_planet_density = Universe::PlanetDensity(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("planet_density").Text()));
-                m_specials_freq = Universe::SpecialsFrequency(boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("specials_freq").Text()));
+                m_galaxy_shape = boost::lexical_cast<Shape>(doc.root_node.Child("universe_params").Child("shape").Text());
+                m_galaxy_age = boost::lexical_cast<Age>(doc.root_node.Child("universe_params").Child("age").Text());
+                m_starlane_freq = boost::lexical_cast<StarlaneFrequency>(doc.root_node.Child("universe_params").Child("starlane_freq").Text());
+                m_planet_density = boost::lexical_cast<PlanetDensity>(doc.root_node.Child("universe_params").Child("planet_density").Text());
+                m_specials_freq = boost::lexical_cast<SpecialsFrequency>(doc.root_node.Child("universe_params").Child("specials_freq").Text());
                 CreateAIClients(doc.root_node);
                 g_load_doc.root_node = XMLElement();
                 g_lobby_data.players.clear();

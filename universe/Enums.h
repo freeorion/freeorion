@@ -218,6 +218,127 @@ namespace GG {
 GG_ENUM_STREAM_IN(MeterType)
 GG_ENUM_STREAM_OUT(MeterType)
 
+/** the types of universe shapes available in FreeOrion*/
+enum Shape {
+    INVALID_SHAPE = -1,
+    SPIRAL_2,      ///< a two-armed spiral galaxy
+    SPIRAL_3,      ///< a three-armed spiral galaxy
+    SPIRAL_4,      ///< a four-armed spiral galaxy
+    CLUSTER,       ///< a cluster galaxy
+    ELLIPTICAL,    ///< an elliptical galaxy
+    IRREGULAR,     ///< an irregular galaxy
+    RING,          ///< a ring galaxy
+    GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(Shape)
+    GG_ENUM_MAP_INSERT(INVALID_SHAPE)
+    GG_ENUM_MAP_INSERT(SPIRAL_2)
+    GG_ENUM_MAP_INSERT(SPIRAL_3)
+    GG_ENUM_MAP_INSERT(SPIRAL_4)
+    GG_ENUM_MAP_INSERT(CLUSTER)
+    GG_ENUM_MAP_INSERT(ELLIPTICAL)
+    GG_ENUM_MAP_INSERT(IRREGULAR)
+    GG_ENUM_MAP_INSERT(RING)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(Shape)
+GG_ENUM_STREAM_OUT(Shape)
+
+
+/** types of Univervse ages*/
+enum Age {
+    INVALID_AGE = -1,
+    AGE_YOUNG,
+    AGE_MATURE,
+    AGE_ANCIENT,
+    NUM_UNIVERSE_AGES    // keep this last, the number of universe age options
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(Age)
+    GG_ENUM_MAP_INSERT(INVALID_AGE)
+    GG_ENUM_MAP_INSERT(AGE_YOUNG)
+    GG_ENUM_MAP_INSERT(AGE_MATURE)
+    GG_ENUM_MAP_INSERT(AGE_ANCIENT)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(Age)
+GG_ENUM_STREAM_OUT(Age)
+
+
+/** types of Planet Density */
+enum PlanetDensity {
+    INVALID_PLANET_DENSITY = -1,
+    PD_LOW,
+    PD_AVERAGE,
+    PD_HIGH,
+    NUM_UNIVERSE_PLANET_DENSITIES        //keep this last, the number of planet density options
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(PlanetDensity)
+    GG_ENUM_MAP_INSERT(INVALID_PLANET_DENSITY)
+    GG_ENUM_MAP_INSERT(PD_LOW)
+    GG_ENUM_MAP_INSERT(PD_AVERAGE)
+    GG_ENUM_MAP_INSERT(PD_HIGH)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(PlanetDensity)
+GG_ENUM_STREAM_OUT(PlanetDensity)
+
+
+/** types of starlane frequencies */
+enum StarlaneFrequency {
+    INVALID_STARLANE_FREQENCY = -1,
+    LANES_NONE, 
+    LANES_FEW, 
+    LANES_SOME, 
+    LANES_SEVERAL, 
+    LANES_MANY, 
+    LANES_VERY_MANY,
+    NUM_STARLANE_FREQENCIES    // keep this last, the number of starlane frequency options
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(StarlaneFrequency)
+    GG_ENUM_MAP_INSERT(INVALID_STARLANE_FREQENCY)
+    GG_ENUM_MAP_INSERT(LANES_NONE)
+    GG_ENUM_MAP_INSERT(LANES_FEW)
+    GG_ENUM_MAP_INSERT(LANES_SOME)
+    GG_ENUM_MAP_INSERT(LANES_SEVERAL)
+    GG_ENUM_MAP_INSERT(LANES_MANY)
+    GG_ENUM_MAP_INSERT(LANES_VERY_MANY)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(StarlaneFrequency)
+GG_ENUM_STREAM_OUT(StarlaneFrequency)
+
+
+/** types of starlane frequencies */
+enum SpecialsFrequency {
+    INVALID_SPECIALS_FREQENCY = -1,
+    SPECIALS_NONE, 
+    SPECIALS_RARE, 
+    SPECIALS_UNCOMMON, 
+    SPECIALS_COMMON, 
+    NUM_SPECIALS_FREQENCIES    // keep this last, the number of specials frequency options
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(SpecialsFrequency)
+    GG_ENUM_MAP_INSERT(INVALID_SPECIALS_FREQENCY)
+    GG_ENUM_MAP_INSERT(SPECIALS_NONE)
+    GG_ENUM_MAP_INSERT(SPECIALS_RARE)
+    GG_ENUM_MAP_INSERT(SPECIALS_UNCOMMON)
+    GG_ENUM_MAP_INSERT(SPECIALS_COMMON)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(SpecialsFrequency)
+GG_ENUM_STREAM_OUT(SpecialsFrequency)
+
+
 /** the types of diplomatic empire affiliations to a given empire*/
 enum EmpireAffiliationType {
     INVALID_EMPIRE_AFFIL_TYPE = -1,

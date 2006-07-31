@@ -29,13 +29,12 @@ namespace {
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
-        Logger().debugStream() << "Adding GalaxyPanel Options";
         db.Add("GameSetup.stars", "The number of stars in the galaxy to be generated.", 100, RangedValidator<int>(10, 500));
-        db.Add("GameSetup.galaxy-shape", "The shape of the galaxy to be generated.", static_cast<int>(Universe::SPIRAL_3), RangedValidator<int>(0, static_cast<int>(Universe::GALAXY_SHAPES) - 1));
-        db.Add("GameSetup.galaxy-age", "The shape of the galaxy to be generated.", static_cast<int>(Universe::AGE_MATURE), RangedValidator<int>(0, static_cast<int>(Universe::NUM_UNIVERSE_AGES) - 1));
-        db.Add("GameSetup.planet-density", "The number of planets per system in the galaxy to be generated.", static_cast<int>(Universe::PD_AVERAGE), RangedValidator<int>(0, static_cast<int>(Universe::NUM_UNIVERSE_PLANET_DENSITIES) - 1));
-        db.Add("GameSetup.starlane-frequency", "The number of starlanes in the galaxy to be generated.", static_cast<int>(Universe::LANES_SEVERAL), RangedValidator<int>(ALLOW_NO_STARLANES ? 1 : 0, static_cast<int>(Universe::NUM_STARLANE_FREQENCIES) - 1));
-        db.Add("GameSetup.specials-frequency", "The frequency of specials appearing in the galaxy to be generated.", static_cast<int>(Universe::SPECIALS_UNCOMMON), RangedValidator<int>(0, static_cast<int>(Universe::NUM_SPECIALS_FREQENCIES) - 1));
+        db.Add("GameSetup.galaxy-shape", "The shape of the galaxy to be generated.", SPIRAL_3, RangedValidator<Shape>(SPIRAL_2, RING));
+        db.Add("GameSetup.galaxy-age", "The shape of the galaxy to be generated.", AGE_MATURE, RangedValidator<Age>(AGE_YOUNG, AGE_ANCIENT));
+        db.Add("GameSetup.planet-density", "The number of planets per system in the galaxy to be generated.", PD_AVERAGE, RangedValidator<PlanetDensity>(PD_LOW, PD_HIGH));
+        db.Add("GameSetup.starlane-frequency", "The number of starlanes in the galaxy to be generated.", LANES_SEVERAL, RangedValidator<StarlaneFrequency>(ALLOW_NO_STARLANES ? LANES_NONE : LANES_FEW, LANES_VERY_MANY));
+        db.Add("GameSetup.specials-frequency", "The frequency of specials appearing in the galaxy to be generated.", SPECIALS_UNCOMMON, RangedValidator<SpecialsFrequency>(SPECIALS_NONE, SPECIALS_COMMON));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -69,31 +68,31 @@ GalaxySetupPanel::GalaxySetupPanel(int x, int y, int w/* = DEFAULT_WIDTH*/) :
     m_stars_spin->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_stars_spin->Height()) / 2));
 
     AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SHAPE"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
-    int drop_height = std::min(TEXT_ROW_HEIGHT * Universe::GALAXY_SHAPES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    int drop_height = std::min(TEXT_ROW_HEIGHT * GALAXY_SHAPES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
     m_galaxy_shapes_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_galaxy_shapes_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_galaxy_shapes_list->Height()) / 2));
     m_galaxy_shapes_list->SetStyle(GG::LB_NOSORT);
 
     AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_AGE"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
-    drop_height = std::min(TEXT_ROW_HEIGHT * Universe::NUM_UNIVERSE_AGES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_UNIVERSE_AGES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
     m_galaxy_ages_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_galaxy_ages_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_galaxy_ages_list->Height()) / 2));
     m_galaxy_ages_list->SetStyle(GG::LB_NOSORT);
 
     AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARLANE_FREQ"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
-    drop_height = std::min(TEXT_ROW_HEIGHT * Universe::NUM_STARLANE_FREQENCIES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_STARLANE_FREQENCIES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
     m_starlane_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_starlane_freq_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_starlane_freq_list->Height()) / 2));
     m_starlane_freq_list->SetStyle(GG::LB_NOSORT);
 
     AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_PLANET_DENSITY"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
-    drop_height = std::min(TEXT_ROW_HEIGHT * Universe::NUM_UNIVERSE_PLANET_DENSITIES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_UNIVERSE_PLANET_DENSITIES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
     m_planet_density_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_planet_density_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_planet_density_list->Height()) / 2));
     m_planet_density_list->SetStyle(GG::LB_NOSORT);
 
     AttachChild(new GG::TextControl(CONTROL_MARGIN, ++row* PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SPECIALS_FREQ"), font, ClientUI::TEXT_COLOR, GG::TF_RIGHT));
-    drop_height = std::min(TEXT_ROW_HEIGHT * Universe::NUM_SPECIALS_FREQENCIES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_SPECIALS_FREQENCIES, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
     m_specials_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row* PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
     m_specials_freq_list->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_specials_freq_list->Height()) / 2));
     m_specials_freq_list->SetStyle(GG::LB_NOSORT);
@@ -106,34 +105,34 @@ int GalaxySetupPanel::Systems() const
     return m_stars_spin->Value();
 }
 
-Universe::Shape GalaxySetupPanel::GalaxyShape() const
+Shape GalaxySetupPanel::GetShape() const
 {
-    return Universe::Shape(m_galaxy_shapes_list->CurrentItemIndex());
+    return Shape(m_galaxy_shapes_list->CurrentItemIndex());
 }
 
-Universe::Age GalaxySetupPanel::GalaxyAge() const
+Age GalaxySetupPanel::GetAge() const
 {
-    return Universe::Age(m_galaxy_ages_list->CurrentItemIndex());
+    return Age(m_galaxy_ages_list->CurrentItemIndex());
 }
 
-Universe::StarlaneFrequency GalaxySetupPanel::StarlaneFrequency() const
+StarlaneFrequency GalaxySetupPanel::GetStarlaneFrequency() const
 {
-    return Universe::StarlaneFrequency(m_starlane_freq_list->CurrentItemIndex() + (ALLOW_NO_STARLANES ? 0 : 1));
+    return StarlaneFrequency(m_starlane_freq_list->CurrentItemIndex() + (ALLOW_NO_STARLANES ? 0 : 1));
 }
 
-Universe::PlanetDensity GalaxySetupPanel::PlanetDensity() const
+PlanetDensity GalaxySetupPanel::GetPlanetDensity() const
 {
-    return Universe::PlanetDensity(m_planet_density_list->CurrentItemIndex());
+    return PlanetDensity(m_planet_density_list->CurrentItemIndex());
 }
 
-Universe::SpecialsFrequency GalaxySetupPanel::SpecialsFrequency() const
+SpecialsFrequency GalaxySetupPanel::GetSpecialsFrequency() const
 {
-    return Universe::SpecialsFrequency(m_specials_freq_list->CurrentItemIndex());
+    return SpecialsFrequency(m_specials_freq_list->CurrentItemIndex());
 }
 
 boost::shared_ptr<GG::Texture> GalaxySetupPanel::PreviewImage() const
 {
-    return m_textures[GalaxyShape()];
+    return m_textures[GetShape()];
 }
 
 XMLElement GalaxySetupPanel::XMLEncode() const
@@ -143,11 +142,11 @@ XMLElement GalaxySetupPanel::XMLEncode() const
 
     XMLElement retval("universe_params");
     retval.AppendChild(XMLElement("size", lexical_cast<string>(Systems())));
-    retval.AppendChild(XMLElement("shape", lexical_cast<string>(GalaxyShape())));
-    retval.AppendChild(XMLElement("age", lexical_cast<string>(GalaxyAge())));
-    retval.AppendChild(XMLElement("starlane_freq", lexical_cast<string>(StarlaneFrequency())));
-    retval.AppendChild(XMLElement("planet_density", lexical_cast<string>(PlanetDensity())));
-    retval.AppendChild(XMLElement("specials_freq", lexical_cast<string>(SpecialsFrequency())));
+    retval.AppendChild(XMLElement("shape", lexical_cast<string>(GetShape())));
+    retval.AppendChild(XMLElement("age", lexical_cast<string>(GetAge())));
+    retval.AppendChild(XMLElement("starlane_freq", lexical_cast<string>(GetStarlaneFrequency())));
+    retval.AppendChild(XMLElement("planet_density", lexical_cast<string>(GetPlanetDensity())));
+    retval.AppendChild(XMLElement("specials_freq", lexical_cast<string>(GetSpecialsFrequency())));
     return retval;
 }
 
@@ -183,15 +182,15 @@ void GalaxySetupPanel::Init()
 
     // create and load textures
     m_textures.clear();
-    for (int i = 0; i < Universe::GALAXY_SHAPES; ++i)
+    for (int i = 0; i < GALAXY_SHAPES; ++i)
         m_textures.push_back(boost::shared_ptr<GG::Texture>(new GG::Texture()));
-    m_textures[Universe::SPIRAL_2]->Load(ClientUI::ART_DIR + "gp_spiral2.png");
-    m_textures[Universe::SPIRAL_3]->Load(ClientUI::ART_DIR + "gp_spiral3.png");
-    m_textures[Universe::SPIRAL_4]->Load(ClientUI::ART_DIR + "gp_spiral4.png");
-    m_textures[Universe::CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
-    m_textures[Universe::ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
-    m_textures[Universe::IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
-    m_textures[Universe::RING]->Load(ClientUI::ART_DIR + "gp_ring.png");
+    m_textures[SPIRAL_2]->Load(ClientUI::ART_DIR + "gp_spiral2.png");
+    m_textures[SPIRAL_3]->Load(ClientUI::ART_DIR + "gp_spiral3.png");
+    m_textures[SPIRAL_4]->Load(ClientUI::ART_DIR + "gp_spiral4.png");
+    m_textures[CLUSTER]->Load(ClientUI::ART_DIR + "gp_cluster.png");
+    m_textures[ELLIPTICAL]->Load(ClientUI::ART_DIR + "gp_elliptical.png");
+    m_textures[IRREGULAR]->Load(ClientUI::ART_DIR + "gp_irregular.png");
+    m_textures[RING]->Load(ClientUI::ART_DIR + "gp_ring.png");
 
     // fill droplists
     m_galaxy_shapes_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_2ARM")));
@@ -225,11 +224,11 @@ void GalaxySetupPanel::Init()
 
     // default settings
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("GameSetup.stars"));
-    m_galaxy_shapes_list->Select(GetOptionsDB().Get<int>("GameSetup.galaxy-shape"));
-    m_galaxy_ages_list->Select(GetOptionsDB().Get<int>("GameSetup.galaxy-age"));
-    m_starlane_freq_list->Select(GetOptionsDB().Get<int>("GameSetup.starlane-frequency") - (ALLOW_NO_STARLANES ? 0 : 1));
-    m_planet_density_list->Select(GetOptionsDB().Get<int>("GameSetup.planet-density"));
-    m_specials_freq_list->Select(GetOptionsDB().Get<int>("GameSetup.specials-frequency"));
+    m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape"));
+    m_galaxy_ages_list->Select(GetOptionsDB().Get<Age>("GameSetup.galaxy-age"));
+    m_starlane_freq_list->Select(GetOptionsDB().Get<StarlaneFrequency>("GameSetup.starlane-frequency") - (ALLOW_NO_STARLANES ? 0 : 1));
+    m_planet_density_list->Select(GetOptionsDB().Get<PlanetDensity>("GameSetup.planet-density"));
+    m_specials_freq_list->Select(GetOptionsDB().Get<SpecialsFrequency>("GameSetup.specials-frequency"));
 }
 
 void GalaxySetupPanel::AttachSignalChildren()
@@ -387,15 +386,13 @@ void GalaxySetupWnd::EmpireNameChanged(const std::string& name)
 
 void GalaxySetupWnd::OkClicked()
 {
-    Logger().debugStream() << "GalaxySetupWnd::OkClicked()";
-
     // record selected galaxy setup options as new defaults
     GetOptionsDB().Set("GameSetup.stars", m_galaxy_setup_panel->Systems());
-    GetOptionsDB().Set("GameSetup.galaxy-shape", static_cast<int>(m_galaxy_setup_panel->GalaxyShape()));
-    GetOptionsDB().Set("GameSetup.galaxy-age", static_cast<int>(m_galaxy_setup_panel->GalaxyAge()));
-    GetOptionsDB().Set("GameSetup.starlane-frequency", static_cast<int>(m_galaxy_setup_panel->StarlaneFrequency()));
-    GetOptionsDB().Set("GameSetup.planet-density", static_cast<int>(m_galaxy_setup_panel->PlanetDensity()));
-    GetOptionsDB().Set("GameSetup.specials-frequency", static_cast<int>(m_galaxy_setup_panel->SpecialsFrequency()));
+    GetOptionsDB().Set("GameSetup.galaxy-shape", m_galaxy_setup_panel->GetShape());
+    GetOptionsDB().Set("GameSetup.galaxy-age", m_galaxy_setup_panel->GetAge());
+    GetOptionsDB().Set("GameSetup.starlane-frequency", m_galaxy_setup_panel->GetStarlaneFrequency());
+    GetOptionsDB().Set("GameSetup.planet-density", m_galaxy_setup_panel->GetPlanetDensity());
+    GetOptionsDB().Set("GameSetup.specials-frequency", m_galaxy_setup_panel->GetSpecialsFrequency());
 
     // Save the changes:
     boost::filesystem::ofstream ofs(GetConfigPath());

@@ -69,54 +69,6 @@ protected:
     typedef std::map<int, std::set<int> > ObjectKnowledgeMap;   ///< container type used to hold sets of IDs of Empires which known information about an object (or deleted object); keyed by object ID number
 
 public:
-    /** the types of universe shapes available in FreeOrion*/
-    enum Shape {
-        SPIRAL_2,      ///< a two-armed spiral galaxy
-        SPIRAL_3,      ///< a three-armed spiral galaxy
-        SPIRAL_4,      ///< a four-armed spiral galaxy
-        CLUSTER,       ///< a cluster galaxy
-        ELLIPTICAL,    ///< an elliptical galaxy
-        IRREGULAR,     ///< an irregular galaxy
-        RING,          ///< a ring galaxy
-        GALAXY_SHAPES  ///< the number of shapes in this enum (leave this last)
-    };
-
-    /** types of Univervse ages*/
-    enum Age {
-        AGE_YOUNG,
-        AGE_MATURE,
-        AGE_ANCIENT,
-        NUM_UNIVERSE_AGES    // keep this last, the number of universe age options
-    };
-
-    /** types of Planet Density */
-    enum PlanetDensity {
-        PD_LOW,
-        PD_AVERAGE,
-        PD_HIGH,
-        NUM_UNIVERSE_PLANET_DENSITIES        //keep this last, the number of planet density options
-    };
-
-    /** types of starlane frequencies */
-    enum StarlaneFrequency{
-        LANES_NONE, 
-        LANES_FEW, 
-        LANES_SOME, 
-        LANES_SEVERAL, 
-        LANES_MANY, 
-        LANES_VERY_MANY,
-        NUM_STARLANE_FREQENCIES    // keep this last, the number of starlane frequency options
-    };
-
-    /** types of starlane frequencies */
-    enum SpecialsFrequency{
-        SPECIALS_NONE, 
-        SPECIALS_RARE, 
-        SPECIALS_UNCOMMON, 
-        SPECIALS_COMMON, 
-        NUM_SPECIALS_FREQENCIES    // keep this last, the number of specials frequency options
-    };
-
     /** Set to true to make everything visible for everyone. Useful for debugging. */
     static const bool ALL_OBJECTS_VISIBLE;
 
