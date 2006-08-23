@@ -792,6 +792,41 @@ Tech
     unlock = []
     graphic = ""
 
+Tech
+    name = "PRO_INDUSTRY_CENTRE_I"
+    description = "PRO_INDUSTRY_CENTRE_I_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "PRO_ROBOTIC_PROD"
+        "ECO_PLANNED_ECON"        
+    ]
+    unlock = Item type = Building name = "BLD_INDUSTRY_CENTRE"
+    graphic = ""
+
+Tech
+    name = "PRO_INDUSTRY_CENTRE_II"
+    description = "PRO_INDUSTRY_CENTRE_II_DESC"
+    techtype = Refinement
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "PRO_INDUSTRY_CENTRE_I"
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "PRO_INDUSTRY_CENTRE_III"
+    description = "PRO_INDUSTRY_CENTRE_III_DESC"
+    techtype = Refinement
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "PRO_INDUSTRY_CENTRE_II"
+    unlock = []
+    graphic = ""
 
 Tech
     name = "PRO_ART_BLACK_HOLE"
@@ -1254,8 +1289,8 @@ Tech
     description = "ECO_PLANNED_ECON_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
-    researchcost = 30
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = ""

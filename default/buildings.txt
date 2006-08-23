@@ -1,4 +1,44 @@
 BuildingType
+    name = "BLD_INDUSTRY_CENTRE"
+    description = "BLD_INDUSTRY_CENTRE_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                WithinDistance distance = 100 condition = Source
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                PrimaryFocus Industry
+            ]
+            activation = OwnerHasTech "PRO_INDUSTRY_CENTRE_I"
+            stackinggroup = "INDUSTRY_CENTRE_STACK"
+            effects = SetMaxIndustry Target.MaxIndustry + 5
+
+        EffectsGroup
+            scope = And [
+                WithinDistance distance = 200 condition = Source
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                PrimaryFocus Industry
+            ]
+            activation = OwnerHasTech "PRO_INDUSTRY_CENTRE_II"
+            stackinggroup = "INDUSTRY_CENTRE_STACK"
+            effects = SetMaxIndustry Target.MaxIndustry + 6
+
+        EffectsGroup
+            scope = And [
+                WithinDistance distance = 300 condition = Source
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                PrimaryFocus Industry
+            ]
+            activation = OwnerHasTech "PRO_INDUSTRY_CENTRE_III"
+            stackinggroup = "INDUSTRY_CENTRE_STACK"
+            effects = SetMaxIndustry Target.MaxIndustry + 7
+    ]
+    graphic = ""
+
+BuildingType
     name = "BLD_ASTEROID_MINE"
     description = "BLD_ASTEROID_MINE_DESC"
     buildcost = 1
