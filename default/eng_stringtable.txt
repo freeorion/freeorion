@@ -2308,6 +2308,12 @@ PsiCorp
 LRN_PSICORP_DESC
 It is now possible to identify the nascent psionic abilities inherent in rare individuals at birth. But to truly cultivate their gifts, it would be necessary to create an academy dedicated to psionics. Graduates of this academy, would comprise a highly trained task-force of Psi elite that could be assigned to research projects as conduits and amplifiers for the greatest researchers of an empire.
 
+PRO_ASTEROID_MINE_I
+Basic Asteroid Mines
+
+PRO_ASTEROID_MINE_I_DESC
+The initial implementation of asteroid mining techniques yields moderate gains to mineral production in systems with suitable asteroid belts to exploit.  Planets in-system that focus primarily on mining recive moderate increases in minreals production proportional to their populations.
+
 PRO_ART_BLACK_HOLE
 Artificial Black Hole
 
@@ -2344,9 +2350,26 @@ Mining Engineering
 PRO_MINING_ENGINEERING_DESC
 Applying the concepts of Planetary Geology allows effective extraction of minerals from near the surface of planets.  By identifying the probably locations and ideal extraction methods, efficiency and total possible production are increased.  As well, proper planning and analysis increase mine safety and longevity.
 
+########################################
+# Tech Refinement Names & Descriptions #
+########################################
+
+PRO_ASTEROID_MINE_II
+Advanced Asteroid Mines
+
+PRO_ASTEROID_MINE_II_DESC
+Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.  The same asteroid field and population produces additional minerals at all planets in-system that focus primarily on mining.
+
+
 #################################
 # Building Names & Descriptions #
 #################################
+
+BLD_ASTEROID_MINE
+Asteroid Mining Facility
+
+BLD_ASTEROID_MINE_DESC
+Available with Basic Asteroid Mines.  Initially provides +4 minerals production per 10 population to planets in same system that contains an asteroid belt.\n\nWith Advanced Asteroid Mines refinement, provides additional +4, or +8 total minerals production per 10 population to planets in same system that contains an asteroid belt.
 
 BLD_GRAVITY_WELLS
 Controlled Gravity Wells

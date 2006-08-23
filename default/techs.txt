@@ -12,14 +12,6 @@ Tech
         Item type = Building name = "BLD_TEST"
         Item type = Building name = "BLD_TEST2"
     ]
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Number 0 1 All
-                OwnedBy TheEmpire Source.Owner
-            ]
-            activation = Source
-            effects = SetPlanetType Desert
     graphic = "tech_icons/The_Physical_Brain.png"
 
 Tech
@@ -575,8 +567,8 @@ Tech
     description = "PRO_MICROGRAV_MAN_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
-    researchcost = 10
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = "tech_icons/Microgravity_Manufacturing.png"
@@ -586,8 +578,8 @@ Tech
     description = "PRO_PLANET_GEOL_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
-    researchcost = 30
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = "tech_icons/Planetary_Geology.png"
@@ -619,8 +611,8 @@ Tech
     description = "PRO_ASTEROID_MINE_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
-    researchcost = 60
-    researchturns = 10
+    researchcost = 1
+    researchturns = 1
     prerequisites = [
         "PRO_MICROGRAV_MAN"
         "PRO_PLANET_GEOL"
@@ -777,6 +769,29 @@ Tech
     ]
     unlock = []
     graphic = ""
+
+Tech
+    name = "PRO_ASTEROID_MINE_I"
+    description = "PRO_ASTEROID_MINE_I_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "PRO_ASTEROID_MINE"
+    unlock = Item type = Building name = "BLD_ASTEROID_MINE"
+    graphic = ""
+
+Tech
+    name = "PRO_ASTEROID_MINE_II"
+    description = "PRO_ASTEROID_MINE_II_DESC"
+    techtype = Refinement
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "PRO_ASTEROID_MINE_I"
+    unlock = []
+    graphic = ""
+
 
 Tech
     name = "PRO_ART_BLACK_HOLE"

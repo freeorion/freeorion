@@ -1,36 +1,36 @@
 BuildingType
-    name = "BLD_TEST"
-    description = "BLD_TEST_DESC"
+    name = "BLD_ASTEROID_MINE"
+    description = "BLD_ASTEROID_MINE_DESC"
     buildcost = 1
     buildtime = 1
     maintenancecost = 1
     location = And [
-        Planet
+        ContainedBy Contains Planet Asteroids
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetMaxPopulation Target.MaxPopulation+1
-    ]
-    graphic = ""
+            scope = And [
+                ContainedBy And [
+                    Contains Source
+                    Contains Planet Asteroids
+                ]
+                PrimaryFocus Mining
+            ]
+            activation = OwnerHasTech "PRO_ASTEROID_MINE_I"
+            effects = SetMaxMining Target.MaxMining + 4
 
-BuildingType
-    name = "BLD_TEST2"
-    description = "BLD_TEST2_DESC"
-    buildcost = 1
-    buildtime = 8
-    maintenancecost = 1
-    location = And [
-        Turn 4 6
-        OwnedBy TheEmpire Source.Owner
-    ]
-    effectsgroups = [
         EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetMaxPopulation Target.MaxPopulation+1
+            scope = And [
+                ContainedBy And [
+                    Contains Source
+                    Contains Planet Asteroids
+                ]
+                PrimaryFocus Mining
+            ]
+            activation = OwnerHasTech "PRO_ASTEROID_MINE_II"
+            effects = SetMaxMining Target.MaxMining + 4
+
     ]
     graphic = ""
 
