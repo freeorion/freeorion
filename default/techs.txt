@@ -589,8 +589,8 @@ Tech
     description = "PRO_ROBOTIC_PROD_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
-    researchcost = 30
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = "tech_icons/Robotic_Production.png"
@@ -809,22 +809,41 @@ Tech
     description = "PRO_MINING_ENGINEERING_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 40
-    researchturns = 10
+    researchcost = 1
+    researchturns = 1
     prerequisites = "PRO_PLANET_GEOL"
     unlock = []
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
-            scope =
-                And [
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+            scope = And [
+                    OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
-                    PrimaryFocus focus = Mining
+                    PrimaryFocus Mining
+                    Planet type = [Barren Inferno]
                 ]
-            activation =
-                Source
-            effects =
-                SetMaxMining value = Target.MaxMining + 4
+            activation = Source
+            effects = SetMaxMining value = Target.MaxMining + 4
+
+        EffectsGroup
+            scope = And [
+                    OwnedExclusivelyBy TheEmpire Source.Owner
+                    PopulationCenter
+                    PrimaryFocus Mining
+                    Planet type = [Desert Radiated Toxic]
+                ]
+            activation = Source
+            effects = SetMaxMining value = Target.MaxMining + 2
+
+        EffectsGroup
+            scope = And [
+                    OwnedExclusivelyBy TheEmpire Source.Owner
+                    PopulationCenter
+                    PrimaryFocus Mining
+                    Planet type = [Tundra Terran]
+                ]
+            activation = Source
+            effects = SetMaxMining value = Target.MaxMining + 1
+    ]
     graphic = ""
 
 Tech
@@ -832,22 +851,44 @@ Tech
     description = "PRO_EXOBOTS_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
-    researchcost = 40
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = "PRO_ROBOTIC_PROD"
     unlock = []
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope =
                 And [
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
-                    PrimaryFocus focus = Industry
+                    PrimaryFocus Industry
+                    Planet size = [Small Tiny]
                 ]
-            activation =
-                Source
-            effects =
-                SetMaxIndustry value = Target.MaxIndustry + 6
+            activation = Source
+            effects = SetMaxIndustry value = Target.MaxIndustry + 4
+
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy TheEmpire Source.Owner
+                    PopulationCenter
+                    PrimaryFocus Industry
+                    Planet size = Medium
+                ]
+            activation = Source
+            effects = SetMaxIndustry value = Target.MaxIndustry + 2
+
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy TheEmpire Source.Owner
+                    PopulationCenter
+                    PrimaryFocus Industry
+                    Planet size = Large
+                ]
+            activation = Source
+            effects = SetMaxIndustry value = Target.MaxIndustry + 1
+    ]
     graphic = ""
 
 Tech
