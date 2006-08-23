@@ -276,7 +276,7 @@ def CheckSDL(context, options, conf, sdl_config, check_lib):
         context.env.ParseConfig('sdl-config ' + sdl_config_prefix_flag + ' --cflags ' + (build_dynamic and '--libs' or '--static-libs'))
         found_it_with_sdl_config = True
     if not found_it_with_sdl_config:
-        if not conf.CheckCHeader('SDL/SDL.h') and not conf.CheckCHeader('SDL.h'):
+        if not conf.CheckCHeader(os.path.join('SDL', 'SDL.h')) and not conf.CheckCHeader('SDL.h'):
             context.Message('SDL configuration... ')
             context.Result(False)
             return False
@@ -285,7 +285,7 @@ def CheckSDL(context, options, conf, sdl_config, check_lib):
             context.Result(False)
             return False
     version_regex = re.compile(r'SDL_MAJOR_VERSION\s*(\d+).*SDL_MINOR_VERSION\s*(\d+).*SDL_PATCHLEVEL\s*(\d+)', re.DOTALL)
-    if not conf.CheckVersionHeader('SDL', 'SDL_version.h', version_regex, sdl_version, True):
+    if not conf.CheckVersionHeader('SDL', os.path.join('SDL', 'SDL_version.h'), version_regex, sdl_version, True):
         context.Message('SDL configuration... ')
         context.Result(False)
         return False
@@ -294,7 +294,7 @@ def CheckSDL(context, options, conf, sdl_config, check_lib):
         link_test_app = """
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
-int main()
+int main(int argc, char** argv)
 {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
@@ -319,9 +319,9 @@ int main()
 
 def CheckLibLTDL(context):
     retval = True
-    context.Message('Generating libltdl/config.h using libltdl/configure... ')
+    context.Message('Generating GG/libltdl/config.h using GG/libltdl/configure... ')
     initial_dir = os.getcwd()
-    os.chdir('libltdl')
+    os.chdir(os.path.join('GG', 'libltdl'))
     configure_run = os.system('./configure > /dev/null')
     code = os.WEXITSTATUS(configure_run)
     if code:

@@ -446,13 +446,8 @@ void HumanClientApp::HandleSystemEvents(int& last_mouse_event_time)
         EventType gg_event = MOUSEMOVE;
         GG::Key key = GGKeyFromSDLKey(event.key.keysym);
         Uint32 key_mods = SDL_GetModState();
-#ifdef __APPLE__
-        GG::Pt mouse_pos(event.motion.x, m_app_height - event.motion.y);
-        GG::Pt mouse_rel(event.motion.xrel, -event.motion.yrel);
-#else
         GG::Pt mouse_pos(event.motion.x, event.motion.y);
         GG::Pt mouse_rel(event.motion.xrel, event.motion.yrel);
-#endif
 
         switch (event.type) {
         case SDL_KEYDOWN:

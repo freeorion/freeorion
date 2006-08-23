@@ -286,7 +286,7 @@ if not env.GetOption('clean'):
             stdout.write('Checking for DevIL OpenGL support... ')
             devil_gl_check_app = """
 #include <IL/ilut.h>
-#if !ILUT_USE_OPENGL
+#ifndef ILUT_USE_OPENGL
 #error "DevIL not built with OpenGL support"
 #endif
 int main() {
