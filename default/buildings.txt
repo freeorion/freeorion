@@ -1,5 +1,19 @@
 
-Buildingtype
+BuildingType
+    name = "BLD_LIGHTHOUSE"
+    description = "BLD_LIGHTHOUSE_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Not Source
+            activation = Not Source
+            effects = SetMaxFarming Target.MaxFarming        
+    graphic = ""
+
+BuildingType
     name = "BLD_HEAVY_MINE_PROCESSOR"
     description = "BLD_HEAVY_MINE_PROCESSOR_DESC"
     buildcost = 1

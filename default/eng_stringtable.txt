@@ -2272,6 +2272,18 @@ Urban Farming
 GRO_URBAN_FARM_DESC
 On industrialized worlds, where arable land is rare to non-existent, the capability to produce food in hydroponic or aeroponic environments tightly packed into multi-storey buildings becomes critical to maintain food output.
 
+LRN_LIGHTHOUSE
+Interstellar Lighthouses
+
+LRN_LIGHTHOUSE_DESC
+Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
+
+LRN_NAVIGATION
+Intersetaller Navigation
+
+LRN_NAVIGATION_DESC
+Abstractly, starlanes form a relatively restrictive network of possible pathes.  However, in practice the process of interstellar travel along starlanes is somewhat more complicated and risky without proper navigation techniques.\n\nDoes nothing.  In future, might do something related to starlanes or ship speed or range...
+
 LRN_COLLECTIVE_NET
 Collective Thought Network
 
@@ -2309,7 +2321,7 @@ LRN_PSICORP_DESC
 It is now possible to identify the nascent psionic abilities inherent in rare individuals at birth. But to truly cultivate their gifts, it would be necessary to create an academy dedicated to psionics. Graduates of this academy, would comprise a highly trained task-force of Psi elite that could be assigned to research projects as conduits and amplifiers for the greatest researchers of an empire.
 
 PRO_HEAVY_MINING_I
-Heavy Mining
+Heavy Mining Processors
 
 PRO_HEAVY_MINING_I_DESC
 When increased minerals production is the only concern, no environmental damage considerations exist, and the environment itself is condusive, partially automated bulk mining activites can be optimal.  Significant processing capacity is required, however, necessitating the use of centralized ore-processing facilties.
@@ -2394,11 +2406,17 @@ Additional experience and facilities improvements further extend the range and s
 # Building Names & Descriptions #
 #################################
 
+BLD_LIGHTHOUSE
+Interstellar Lighthouse
+
+BLD_LIGHTHOUSE_DESC
+Does nothing.  Maybe in future this could make certain ships go faster, or increase trade, or make starlanes more visible nearby (thereby indirectly increasing trade)...
+
 BLD_HEAVY_MINE_PROCESSOR
-Heavy Mining Ore Processor
+Heavy Mining Processor
 
 BLD_HEAVY_MINE_PROCESSOR_DESC
-Available with Heavy Mining.\n\nProvides +5 mining to mining-focused worlds, non stacking, within 100 distance of the facility, that are of type Barren, Radiated, Toxic or Inferno.  Also proves +2 to mining and -5 to farming, both non-stacking, on planet at which it is built.
+Available with Heavy Mining Processors.\n\nProvides +5 mining to mining-focused worlds, non stacking, within 100 distance of the facility, that are of type Barren, Radiated, Toxic or Inferno.  Also proves +2 to mining and -5 to farming, both non-stacking, on planet at which it is built.
 
 BLD_INDUSTRY_CENTRE
 Regional Industrial Centre

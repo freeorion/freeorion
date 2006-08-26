@@ -41,8 +41,8 @@ Tech
     description = "LRN_GAL_EXPLO_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 20
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = "tech_icons/Galactic_Exploration.png"
@@ -219,6 +219,31 @@ Tech
     ]
     unlock = []
     graphic = "tech_icons/Singularity_of_Transcendence.png"
+
+Tech
+    name = "LRN_LIGHTHOUSE"
+    description = "LRN_LIGHTHOUSE_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "LRN_NAVIGATION"
+        "CON_ORBITAL_CON"
+    ]
+    unlock = Item type = Building name = "BLD_LIGHTHOUSE"
+    graphic = ""
+
+Tech
+    name = "LRN_NAVIGATION"
+    description = "LRN_NAVIGATION_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "LRN_GAL_EXPLO"
+    unlock = []
+    graphic = ""
 
 Tech
     name = "LRN_COLLECTIVE_NET"
@@ -1036,8 +1061,8 @@ Tech
     description = "CON_ORBITAL_CON_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 20
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = ""
