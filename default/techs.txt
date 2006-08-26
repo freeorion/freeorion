@@ -771,6 +771,65 @@ Tech
     graphic = ""
 
 Tech
+    name = "PRO_ENVIRO_MINING_I"
+    description = "PRO_ENVIRO_MINING_I_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "PRO_MINING_ENGINEERING"
+        "GRO_PLANET_ECOL"
+    ]
+    unlock = []
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                    OwnedExclusivelyBy TheEmpire Source.Owner
+                    PopulationCenter
+                    PrimaryFocus Mining
+                    Planet environment = [Optimal Superb]
+                ]
+            activation = Source
+            effects = SetMaxMining value = Target.MaxMining + 2
+
+        EffectsGroup
+            scope = And [
+                    OwnedExclusivelyBy TheEmpire Source.Owner
+                    PopulationCenter
+                    PrimaryFocus Balanced
+                    Planet environment = [Optimal Superb]
+                ]
+            activation = Source
+            effects = SetMaxMining value = Target.MaxMining + 1
+
+        EffectsGroup
+            scope = And [
+                    OwnedExclusivelyBy TheEmpire Source.Owner
+                    PopulationCenter
+                    SecondaryFocus Mining
+                    Planet environment = [Optimal Superb]
+                ]
+            activation = Source
+            effects = SetMaxMining value = Target.MaxMining + 1
+    ]
+    graphic = ""
+
+Tech
+    name = "PRO_HEAVY_MINING_I"
+    description = "PRO_HEAVY_MINING_I_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "PRO_MINING_ENGINEERING"
+        "PRO_ROBOTIC_PROD"
+    ]
+    unlock = Item type = Building name = "BLD_HEAVY_MINE_PROCESSOR"
+    graphic = ""
+
+Tech
     name = "PRO_ASTEROID_MINE_I"
     description = "PRO_ASTEROID_MINE_I_DESC"
     techtype = Application

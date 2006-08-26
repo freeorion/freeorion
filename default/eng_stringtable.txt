@@ -2308,6 +2308,18 @@ PsiCorp
 LRN_PSICORP_DESC
 It is now possible to identify the nascent psionic abilities inherent in rare individuals at birth. But to truly cultivate their gifts, it would be necessary to create an academy dedicated to psionics. Graduates of this academy, would comprise a highly trained task-force of Psi elite that could be assigned to research projects as conduits and amplifiers for the greatest researchers of an empire.
 
+PRO_HEAVY_MINING_I
+Heavy Mining
+
+PRO_HEAVY_MINING_I_DESC
+When increased minerals production is the only concern, no environmental damage considerations exist, and the environment itself is condusive, partially automated bulk mining activites can be optimal.  Significant processing capacity is required, however, necessitating the use of centralized ore-processing facilties.
+
+PRO_ENVIRO_MINING_I
+Environmentally-Conscious Mining
+
+PRO_ENVIRO_MINING_I_DESC
+Many mining methods are incompatiable with highly populous planets, due to environmental damage.  Careful consideration of Planetary Ecology is required to permit limited mining techniques to be employed without such downsides.  Minerals production is less per unit of population than more extreme methods, however additional population may somewhat offset this.  Additionaly, these limited techniques are only applicable to worlds capable of supporting high populations: Superb or Optimal for a given race.\n\nIncreases minerals production by +2 per 10 population on primary mining focused worlds.\nIncreases minreals production by +1 per 10 population on primary balanced and secondary mining focused worlds.\nMultiple focus balances are cumulative: primary and secondary mining focus provides +3 to mineral production per 10 population.
+
 PRO_ASTEROID_MINE_I
 Basic Asteroid Mines
 
@@ -2348,7 +2360,7 @@ PRO_MINING_ENGINEERING
 Mining Engineering
 
 PRO_MINING_ENGINEERING_DESC
-Applying the concepts of Planetary Geology allows effective extraction of minerals from near the surface of planets.  By identifying the probable locations and ideal extraction methods, efficiency and total possible production are increased.  As well, proper planning and analysis increase mine safety and longevity.\n\nBonusus depend on planet type:\nBarren and Inferno recive +4 per 10 population of planet at mining focused worlds.\nDesert, Radiated and Toxic recive +2.\nTundra and Terran recive +1.\nOcean and Swap receive no bonus.\n\nLarge research cost and time and lack of building-production requirement to receive effect make technology attractive for research-focused empires, but less useful for production-focused.  Bonuses are largest on low-population planet types, making overall benefit small until future advances can increase the popluations of these planet types.
+Applying the concepts of Planetary Geology allows effective extraction of minerals from near the surface of planets.  By identifying the probable locations and ideal extraction methods, efficiency and total possible production are increased.  As well, proper planning and analysis increase mine safety and longevity.\n\nBonuses depend on planet type:\nBarren and Inferno recive +4 per 10 population of planet at mining focused worlds.\nDesert, Radiated and Toxic recive +2.\nTundra and Terran recive +1.\nOcean and Swap receive no bonus.\n\nLarge research cost and time and lack of building-production requirement to receive effect make technology attractive for research-focused empires, but less useful for production-focused.  Bonuses are largest on low-population planet types, making overall benefit small until future advances can increase the popluations of these planet types.
 
 PRO_INDUSTRY_CENTRE_I
 Regional Industrial Centres
@@ -2381,6 +2393,12 @@ Additional experience and facilities improvements further extend the range and s
 #################################
 # Building Names & Descriptions #
 #################################
+
+BLD_HEAVY_MINE_PROCESSOR
+Heavy Mining Ore Processor
+
+BLD_HEAVY_MINE_PROCESSOR_DESC
+Available with Heavy Mining.\n\nProvides +5 mining to mining-focused worlds, non stacking, within 100 distance of the facility, that are of type Barren, Radiated, Toxic or Inferno.  Also proves +2 to mining and -5 to farming, both non-stacking, on planet at which it is built.
 
 BLD_INDUSTRY_CENTRE
 Regional Industrial Centre
