@@ -1,5 +1,90 @@
 
 BuildingType
+    name = "BLD_AUTOLAB_CONTROL"
+    description = "BLD_AUTOLAB_CONTROL_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                PrimaryFocus Research
+            ]
+            activation = Source
+            stackinggroup = "AUTOLAB_STACK_PRIMARY"
+            effects = SetMaxResearch Target.MaxResearch + 2
+
+         EffectsGroup
+            scope = And [
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                SecondaryFocus Research
+            ]
+            activation = Source
+            stackinggroup = "AUTOLAB_STACK_SECONDARY"
+            effects = SetMaxResearch Target.MaxResearch + 1
+    ]            
+    graphic = ""
+
+BuildingType
+    name = "BLD_AUTOFACTORY_CONTROL"
+    description = "BLD_AUTOFACTORY_CONTROL_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                PrimaryFocus Industry
+            ]
+            activation = Source
+            stackinggroup = "AUTOFACTORY_STACK_PRIMARY"
+            effects = SetMaxIndustry Target.MaxIndustry + 2
+
+         EffectsGroup
+            scope = And [
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                SecondaryFocus Industry
+            ]
+            activation = Source
+            stackinggroup = "AUTOFACTORY_STACK_SECONDARY"
+            effects = SetMaxIndustry Target.MaxIndustry + 1
+    ]            
+    graphic = ""
+
+BuildingType
+    name = "BLD_THEORM_PROVER"
+    description = "BLD_THEORM_PROVER_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                PrimaryFocus Research
+            ]
+            activation = OwnerHasTech "LRN_THEORM_PROVER"
+            stackinggroup = "THEORM_PROVER_STACK_PRIMARY"
+            effects = SetMaxResearch Target.MaxResearch + 5
+
+         EffectsGroup
+            scope = And [
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                SecondaryFocus Research
+            ]
+            activation = OwnerHasTech "LRN_THEORM_PROVER"
+            stackinggroup = "THEORM_PROVER_STACK_SECONDARY"
+            effects = SetMaxResearch Target.MaxResearch + 2
+    ]            
+    graphic = ""
+
+
+BuildingType
     name = "BLD_LIGHTHOUSE"
     description = "BLD_LIGHTHOUSE_DESC"
     buildcost = 1
@@ -8,8 +93,8 @@ BuildingType
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
-            scope = Not Source
-            activation = Not Source
+            scope = Not All
+            activation = Not All
             effects = SetMaxFarming Target.MaxFarming        
     graphic = ""
 

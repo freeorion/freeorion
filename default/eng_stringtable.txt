@@ -1950,11 +1950,11 @@ Orbital Mining
 PRO_ORBITAL_MINE_DESC
 On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minearals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
 
-PRO_SENTIENT_FACT
-Sentient Autofactories
+PRO_SENTIENT_AUTOMATION
+Sentient Automation
 
-PRO_SENTIENT_FACT_DESC
-As manufacturing equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce.  When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.
+PRO_SENTIENT_AUTOMATION_DESC
+As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce.  When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.
 
 PRO_FRC_FLD_ASSMB
 Force-Field Assembly
@@ -2272,6 +2272,18 @@ Urban Farming
 GRO_URBAN_FARM_DESC
 On industrialized worlds, where arable land is rare to non-existent, the capability to produce food in hydroponic or aeroponic environments tightly packed into multi-storey buildings becomes critical to maintain food output.
 
+LRN_AUTOLAB_I
+Basic Autolabs
+
+LRN_AUTOLAB_I_DESC
+Automated laboratories can produce significant research output without direct supervision, however it remains necessary to provide guidance to such labs regarding what avenues or research to persue, and extract the resulting information from them.  A specailzed control centre is required to facilitate these exchanges.  Consequently, while individual worlds develop their own autolabs without additional cost, the control centre requires signifiant up-front production effort to build.  This makes the use of autolabs more attractive to empires with excess production capacity, but lacking in research output, and less useful for empires already producing significant reserach, but lacking in industrial or minreals capacity.
+
+LRN_THEORM_PROVER
+Automatic Theorm Prover
+
+LRN_THEORM_PROVER_DESC
+Abstract mathematical discoveries frequently have practical, if unforseen, applications in future research.  Increasingly complex formal systems require correspondingly increased time to manipulate in order to prove such discoveries, limiting progress.  Elegant algorithmic methods to automate Theorm Proving can overcome this problem, however doing so requires significant research effort itself, limiting the method's usefulness to empires which have chosen to focus on research in the long-term.
+
 LRN_LIGHTHOUSE
 Interstellar Lighthouses
 
@@ -2320,6 +2332,12 @@ PsiCorp
 LRN_PSICORP_DESC
 It is now possible to identify the nascent psionic abilities inherent in rare individuals at birth. But to truly cultivate their gifts, it would be necessary to create an academy dedicated to psionics. Graduates of this academy, would comprise a highly trained task-force of Psi elite that could be assigned to research projects as conduits and amplifiers for the greatest researchers of an empire.
 
+PRO_AUTOFACTORY_I
+Basic Autofactories
+
+PRO_AUTOFACTORY_I_DESC
+Automated factories greatly increase industirial output without direct supervision, however it remains necessary to provide guidance to such labs regarding what needs to be produced.  A specailzed control centre is required to facilitate these exchanges, and the language in which they are conducted requires extensive research prior to implementation.  Consequently, the use of automated factories may only be practical for empires that conduct large amouts of research.  Conversely, empires with minimal research, but much existing production capacity, may find other production-enhancing methods more practical.
+
 PRO_HEAVY_MINING_I
 Heavy Mining Processors
 
@@ -2336,7 +2354,7 @@ PRO_ASTEROID_MINE_I
 Basic Asteroid Mines
 
 PRO_ASTEROID_MINE_I_DESC
-The initial implementation of asteroid mining techniques yields moderate gains to mineral production in systems with suitable asteroid belts to exploit.  Planets in-system that focus primarily on mining recive moderate increases in minreals production proportional to their populations.
+The initial implementation of asteroid mining techniques yields moderate gains to mineral production in systems with suitable asteroid belts to exploit.  Increased mining output occurs on all planets in system, allowing planets with environments normally difficult to mine, which often also allow larger populations, to produce large amounts of minerals per unit of population.  Normally large mining output per unit population is limited to low-population capacity worlds, limiting actual mineral output.
 
 PRO_ART_BLACK_HOLE
 Artificial Black Hole
@@ -2406,6 +2424,24 @@ Additional experience and facilities improvements further extend the range and s
 # Building Names & Descriptions #
 #################################
 
+BLD_AUTOFACTORY_CONTROL
+Autofactory Control Centre
+
+BLD_AUTOFACTORY_CONTROL_DESC
+Available with Sentient Autofactories.\n\nProvides +2 to max production output per 10 population on primary industry focused worlds.\nProvides additional +1 to max industry output per 10 population on secondary industry focused worlds.
+
+BLD_AUTOLAB_CONTROL
+Autolab Control Centre
+
+BLD_AUTOLAB_CONTROL_DESC
+Available with Sentient Autolabs.\n\nProvides +2 to max researc output per 10 population on primary research focused worlds.\nProvides additional +1 to max research output per 10 population on secondary research focused worlds.
+
+BLD_THEORM_PROVER
+Automatic Theorm Prover
+
+BLD_THEORM_PROVER_DESC
+Available with Automatic Theorm Prover.\n\nProvides +5 to max research output per 10 population on primary research focused worlds, non-stacking.\nProvides additional +1 to max research output per 10 population on secondary research focused worlds, non-stacking.
+
 BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
@@ -2428,7 +2464,7 @@ BLD_ASTEROID_MINE
 Asteroid Mining Facility
 
 BLD_ASTEROID_MINE_DESC
-Available with Basic Asteroid Mines.  Initially provides +4 minerals production per 10 population to planets in same system that contains an asteroid belt.\n\nWith Advanced Asteroid Mines refinement, provides additional +4, or +8 total minerals production per 10 population to planets in same system that contains an asteroid belt.
+Available with Basic Asteroid Mines.  Initially provides +4 minerals production per 10 population to planets in same system that contains an asteroid belt.\nWith Advanced Asteroid Mines refinement, provides additional +4, or +8 total minerals production per 10 population to planets in same system that contains an asteroid belt.
 
 BLD_GRAVITY_WELLS
 Controlled Gravity Wells

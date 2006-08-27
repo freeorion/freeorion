@@ -19,8 +19,8 @@ Tech
     description = "LRN_PHYS_BRAIN_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 30
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = "tech_icons/The_Physical_Brain.png"
@@ -30,8 +30,8 @@ Tech
     description = "LRN_ALGO_ELEGANCE_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 10
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = "tech_icons/Algorithmic_Elegance.png"
@@ -52,8 +52,8 @@ Tech
     description = "LRN_TRANSLING_THT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 45
-    researchturns = 10
+    researchcost = 1
+    researchturns = 1
     prerequisites = [
         "LRN_GAL_EXPLO"
         "LRN_PHYS_BRAIN"
@@ -77,8 +77,8 @@ Tech
     description = "LRN_ARTIF_MINDS_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
-    researchcost = 30
-    researchturns = 10
+    researchcost = 1
+    researchturns = 1
     prerequisites = [
         "LRN_ALGO_ELEGANCE"
         "LRN_PHYS_BRAIN"
@@ -219,6 +219,31 @@ Tech
     ]
     unlock = []
     graphic = "tech_icons/Singularity_of_Transcendence.png"
+
+Tech
+    name = "LRN_AUTOLAB_I"
+    description = "LRN_AUTOLAB_I_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "PRO_SENTIENT_AUTOMATION"
+        "LRN_TRANSLING_THT"
+    ]
+    unlock = Item type = Building name = "BLD_AUTOLAB_CONTROL"
+    graphic = ""
+
+Tech
+    name = "LRN_THEORM_PROVER"
+    description = "LRN_THEORM_PROVER_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "LRN_ALGO_ELEGANCE"
+    unlock = Item type = Building name = "BLD_THEORM_PROVER"
+    graphic = ""
 
 Tech
     name = "LRN_LIGHTHOUSE"
@@ -664,8 +689,8 @@ Tech
     description = "PRO_NANOTECH_PROD_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
-    researchcost = 80
-    researchturns = 10
+    researchcost = 1
+    researchturns = 1
     prerequisites = "PRO_ROBOTIC_PROD"
     unlock = []
     graphic = ""
@@ -700,12 +725,12 @@ Tech
     graphic = "tech_icons/Orbital_Mining.png"
 
 Tech
-    name = "PRO_SENTIENT_FACT"
-    description = "PRO_SENTIENT_FACT_DESC"
+    name = "PRO_SENTIENT_AUTOMATION"
+    description = "PRO_SENTIENT_AUTOMATION_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
-    researchcost = 120
-    researchturns = 15
+    researchcost = 1
+    researchturns = 1
     prerequisites = [
         "LRN_ARTIF_MINDS"
         "PRO_NANOTECH_PROD"
@@ -718,8 +743,8 @@ Tech
     description = "PRO_FRC_FLD_ASSMB_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
-    researchcost = 150
-    researchturns = 15
+    researchcost = 1
+    researchturns = 1
     prerequisites = [
         "LRN_FORCE_FIELD"
         "PRO_NANOTECH_PROD"
@@ -793,6 +818,20 @@ Tech
         "PRO_SINGULAR_GEN"
     ]
     unlock = []
+    graphic = ""
+
+Tech
+    name = "PRO_AUTOFACTORY_I"
+    description = "PRO_AUTOFACTORY_I_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "PRO_SENTIENT_AUTOMATION"
+        "CON_TRANS_STRC"
+    ]
+    unlock = Item type = Building name = "BLD_AUTOFACTORY_CONTROL"
     graphic = ""
 
 Tech
@@ -1083,8 +1122,8 @@ Tech
     description = "CON_INFRA_ECOL_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 40
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = ""
@@ -1094,8 +1133,8 @@ Tech
     description = "CON_ORGANIC_STRC_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 25
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = ""
@@ -1119,8 +1158,8 @@ Tech
     description = "CON_TRANS_STRC_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 45
-    researchturns = 10
+    researchcost = 1
+    researchturns = 1
     prerequisites = [
         "CON_INFRA_ECOL"
         "CON_ORGANIC_STRC"
