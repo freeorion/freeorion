@@ -2254,6 +2254,12 @@ Economic Sinkholes
 ECO_SINKHOLE_DESC
 When economic activity is viewed as a flowing fluid, the capability to affect its flow becomes apparent.  By creating a localized sinkhole in surface over which trade flows, trade centres well removed from the sinkhole itself are strongly affected.  Such trade current disruption propegates out in all directions however, and is difficult or impossible to target selectively.
 
+GRO_HABITATION_DOMES
+Habitation Domes
+
+GRO_HABITATION_DOMES_DESC
+While terraforming efforts can make planets much more useful, the process is expensive and time consuming.  Habibation Domes provide a faster and cheaper, though more limited, alternative for increasing the population capacity of inhospitable worlds, allowing moderate levels of infrastructure and resource capacity to be developed.\n\nIncreases by +2 the maximum population of Terrible environment worlds with current construction of at least 20.
+
 GRO_CADUCEAN
 The Caducean Institute
 

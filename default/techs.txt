@@ -355,8 +355,8 @@ Tech
     description = "GRO_PLANET_ECOL_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 30
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = "tech_icons/Planetary_Ecology.png"
@@ -399,8 +399,8 @@ Tech
     description = "GRO_ENV_ENCAPSUL_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 30
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = "GRO_PLANET_ECOL"
     unlock = []
     graphic = "tech_icons/Environmental_Encapsulation.png"
@@ -541,6 +541,27 @@ Tech
     ]
     unlock = []
     graphic = "tech_icons/Pure-Energy_Metabolism.png"
+
+Tech
+    name = "GRO_HABITATION_DOMES"
+    description = "GRO_HABITATION_DOMES_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "GRO_ENV_ENCAPSUL"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                    OwnedExclusivelyBy TheEmpire Source.Owner
+                    PopulationCenter
+                    Planet environment = Terrible
+                    CurrentConstruction low = 20 high = 999
+            ]
+            activation = Source
+            effects = SetMaxPopulation Target.MaxPopulation + 2
+    graphic = ""
 
 Tech
     name = "GRO_CADUCEAN"
