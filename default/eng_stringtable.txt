@@ -1074,6 +1074,18 @@ Natural Tunnels
 TUNNELS_SPECIAL_DESCRIPTION
 This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonised.
 
+TECHTONIC_INSTABILITY_SPECIAL
+Techtonically Unstable
+
+TECHTONIC_INSTABILITY_SPECIAL_DESC
+This planet is techtonically unstable.  Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.
+
+SOLID_CORE_SPECIAL
+Solid Core
+
+SOLID_CORE_SPECIAL_DESC
+This planet's core has solidifed, and it has a very weak magnetic field.  The star's solar wind reaches the surface relatively unfiltered, damaging health and limiting food production.
+
 #######################
 # Enumeration  values #
 #######################
