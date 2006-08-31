@@ -1086,6 +1086,30 @@ Solid Core
 SOLID_CORE_SPECIAL_DESC
 This planet's core has solidifed, and it has a very weak magnetic field.  The star's solar wind reaches the surface relatively unfiltered, damaging health and limiting food production.
 
+HIGH_AXIAL_TILT_SPECIAL
+High Axial Tilt
+
+HIGH_AXIAL_TILT_SPECIAL_DESC
+This planet's rotational axis is highly tilted relative to its orbital plane.  Seasonal weather variations are particularly extreme and infrastructure development is significantly impeded.
+
+SLOW_ROTATION_SPECIAL
+Very Slow Rotation
+
+SLOW_ROTATION_SPECIAL_DESC
+This planet rotates about its axis very slowly, causing very long days and nights.  Infrastructure growth, food production and population capacity are reduced.
+
+TIDAL_LOCK_SPECIAL
+Tidally Locked Rotation
+
+TIDAL_LOCK_SPECIAL_DESC
+This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night.  Infrastructure growth is hampered, though once established, industrial capacity benefits from the locally stable surface conditions.
+
+ECCENTRIC_ORBIT_SPECIAL
+Eccentric Orbit
+
+ECCENTRIC_ORBIT_SPECIAL_DESC
+This planet's orbit is very eccentric.  It has a large distance between its closest and farthest approaches to its star.  Total insolation varies significantly throughout the year.  The varied conditions inhibit infrastructure development, but provide a beneficial platform for research.
+
 #######################
 # Enumeration  values #
 #######################
@@ -1891,7 +1915,7 @@ GRO_INDUSRY_CLONE_DESC
 Primitive manual nuclear transfer cloning techniques are little more than novelties for large organisms.  By applying techniques similar to industrial mass production or biochemical process engineering, it becomes possible to generate dozens, or millions, of full-grown copies of a single genetic blueprint.  Populations may be made to order, tailored to meet the specific needs of society.
 
 GRO_XENO_HYBRIDS
-Xenlological Hybridization
+Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
 Regardless of how well understood, or how adeptly improved, a biological system is limited by its inheirent nature.  Structures and basic physiology can only be altered so far within the confines of a single planet's biology.  With understanding of other biologies, however, the disparate systems may be fused, forming an entirely new hybrid biology, with potential abilities and traits greater than those of any of its parts.
@@ -2254,6 +2278,12 @@ Economic Sinkholes
 ECO_SINKHOLE_DESC
 When economic activity is viewed as a flowing fluid, the capability to affect its flow becomes apparent.  By creating a localized sinkhole in surface over which trade flows, trade centres well removed from the sinkhole itself are strongly affected.  Such trade current disruption propegates out in all directions however, and is difficult or impossible to target selectively.
 
+GRO_BIOTERROR
+Bioterror Facilites
+
+GRO_BIOTERROR_DESC
+I dunno... it makes people grow less.
+
 GRO_HABITATION_DOMES
 Habitation Domes
 
@@ -2264,7 +2294,7 @@ GRO_CADUCEAN
 The Caducean Institute
 
 GRO_CADUCEAN_DESC
-The pre-Exodus era medical institutions are inadequate to serve the needs of an entire empire. Funding and careful planning would make possible a vast government operated medical academy and hospital. This institute's headquarters would be the center of medical learning and practice, a hallmark of an empire's claim to greatness.
+A premiere centralized medical academy and research centre has benefits to health and population growth throughout an empire.  Adequately funding such an institute can greatly tax smaller economies, however, potentially limiting its attraction to large or economically powerfully empires.
 
 GRO_GENOME_BANK
 Genome Bank
@@ -2294,7 +2324,7 @@ LRN_AUTOLAB_I
 Basic Autolabs
 
 LRN_AUTOLAB_I_DESC
-Automated laboratories can produce significant research output without direct supervision, however it remains necessary to provide guidance to such labs regarding what avenues or research to persue, and extract the resulting information from them.  A specailzed control centre is required to facilitate these exchanges.  Consequently, while individual worlds develop their own autolabs without additional cost, the control centre requires signifiant up-front production effort to build.  This makes the use of autolabs more attractive to empires with excess production capacity, but lacking in research output, and less useful for empires already producing significant reserach, but lacking in industrial or minreals capacity.
+Automated laboratories can produce significant research output without direct supervision, however it remains necessary to provide guidance to such labs regarding what avenues or research to persue, and extract the resulting information from them.  A specailzed control centre is required to facilitate these exchanges.  Consequently, while individual worlds develop their own autolabs without additional cost, the control centre requires signifiant up-front production effort to build.  This makes autolabs more attractive to empires with excess production capacity, but lacking in research output, and less useful for empires already producing significant reserach, but lacking in industrial or minreals capacity.  Additionally, autolabs produce larger quantities of waste products than standard laboratories, negatively impacting health on worlds on which they are used.
 
 LRN_THEORM_PROVER
 Automatic Theorm Prover
@@ -2442,6 +2472,18 @@ Additional experience and facilities improvements further extend the range and s
 # Building Names & Descriptions #
 #################################
 
+BLD_BIOTERROR_PROJECTOR
+Bioterror Projection Base
+
+BLD_BIOTERROR_PROJECTOR_DESC
+Available with Bioterror Facilites.  Projects negative health effects of minor biological warfare to nearby planets.\n\nPlanets within 2 starlane jumps owned by other empires receive -4 to max health.\nPlanets within 2 starlane jumps owned exclusively by the empire that builds the projector receive -1 to max health.\nRequires empire operating it to own at least one Bioterror Research Centre; otherwise produces no negative health effects on other empires' planets.
+
+BLD_BIOTERROR_LAB
+Bioterror Research Centre
+
+BLD_BIOTERROR_LAB_DESC
+Available with Bioterror Facilties.  Is required for Bioterror Projection Bases to affect other empires.\n\nCauses -2 to max health of planets in system where it is built, regardless of that planet's ownership.
+
 BLD_AUTOFACTORY_CONTROL
 Autofactory Control Centre
 
@@ -2452,7 +2494,7 @@ BLD_AUTOLAB_CONTROL
 Autolab Control Centre
 
 BLD_AUTOLAB_CONTROL_DESC
-Available with Sentient Autolabs.\n\nProvides +2 to max researc output per 10 population on primary research focused worlds.\nProvides additional +1 to max research output per 10 population on secondary research focused worlds.
+Available with Sentient Autolabs.\n\nProvides +2 to max research output per 10 population and -2 to max health on primary research focused worlds.\nProvides additional +1 to max research output per 10 population and -1 to max health on secondary research focused worlds.
 
 BLD_THEORM_PROVER
 Automatic Theorm Prover
@@ -2530,7 +2572,7 @@ BLD_CADUCEAN
 The Caducean Institute
 
 BLD_CADUCEAN_DESC
-An institute that is at once the greatest medical academy, and greatest center for treatment of disease, the Caducean Institute supplies the empire with the highest quality of health care for generations to come.
+Available with The Caducean Institute.\n\nIncreases max health on all populated worlds by +2, non-stacking.
 
 BLD_GENOME_BANK
 Genome Bank

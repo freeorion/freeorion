@@ -1,63 +1,88 @@
+
+Special
+    name = "ECCENTRIC_ORBIT_SPECIAL"
+    description = "ECCENTRIC_ORBIT_SPECIAL_DESC"
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = [
+            SetMaxResearch value = Source.MaxResearch + 3
+            SetMaxConstruction value = Source.MaxConstruction - 3
+        ]
+
+Special
+    name = "TIDAL_LOCK_SPECIAL"
+    description = "TIDAL_LOCK_SPECIAL_DESC"
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = [
+            SetMaxConstruction value = Source.MaxConstruction - 5
+            SetMaxIndustry value = Source.MaxIndustry + 5
+        ]
+
+Special
+    name = "SLOW_ROTATION_SPECIAL"
+    description = "SLOW_ROTATION_SPECIAL_DESC"
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = [
+            SetMaxFarming value = Source.MaxFarming - 5
+            SetMaxConstruction value = Source.MaxConstruction - 5
+            SetMaxPopulation value = Source.MaxPopulation * 0.5
+        ]
+
+Special
+    name = "HIGH_AXIAL_TILT_SPECIAL"
+    description = "HIGH_AXIAL_TILT_SPECIAL_DESC"
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = SetMaxConstruction value = Source.MaxConstruction - 8
+
 Special
     name = "SOLID_CORE_SPECIAL"
     description = "SOLID_CORE_SPECIAL_DESC"
-    effectsgroups =
-        EffectsGroup
-            scope =
-                Source
-            activation =
-                Source
-            effects =
-                SetMaxFarming value = Source.MaxFarming - 5
-                SetMaxHealth value = Source.MaxHealth - 5
-
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = [
+            SetMaxFarming value = Source.MaxFarming - 5
+            SetMaxHealth value = Source.MaxHealth - 5
+        ]
 
 Special
     name = "TECHTONIC_INSTABILITY_SPECIAL"
     description = "TECHTONIC_INSTABILITY_SPECIAL_DESC"
-    effectsgroups =
-        EffectsGroup
-            scope =
-                Source
-            activation =
-                Source
-            effects =
-                SetMaxConstruction value = Source.MaxConstruction - 5
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = SetMaxConstruction value = Source.MaxConstruction - 5
 
 Special
     name = "ANCIENT_RUINS_SPECIAL"
     description = "ANCIENT_RUINS_SPECIAL_DESCRIPTION"
-    effectsgroups =
-        EffectsGroup
-            scope =
-                Source
-            activation =
-                Source
-            effects =
-                SetMaxResearch value = Source.MaxResearch + 4
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = SetMaxResearch value = Source.MaxResearch + 4
 
 Special
     name = "MINERALS_SPECIAL"
     description = "MINERALS_SPECIAL_DESCRIPTION"
-    effectsgroups =
-        EffectsGroup
-            scope =
-                Source
-            activation =
-                Source
-            effects = [
-                SetMaxMining value = Source.MaxMining + 3
-                SetMaxTrade value = Source.MaxTrade + 1
-            ]
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = [
+            SetMaxMining value = Source.MaxMining + 3
+            SetMaxTrade value = Source.MaxTrade + 1
+        ]
 
 Special
     name = "TUNNELS_SPECIAL"
     description = "TUNNELS_SPECIAL_DESCRIPTION"
-    effectsgroups =
-        EffectsGroup
-            scope =
-                Source
-            activation =
-                Source
-            effects =
-                SetMaxPopulation value = Source.MaxPopulation + 3
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = SetMaxPopulation value = Source.MaxPopulation + 3

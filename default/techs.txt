@@ -377,8 +377,8 @@ Tech
     description = "GRO_MEDICAL_PATH_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 30
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = "tech_icons/Medical_Pathology.png"
@@ -568,10 +568,24 @@ Tech
     description = "GRO_CADUCEAN_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 30
-    researchturns = 10
+    researchcost = 1
+    researchturns = 1
     prerequisites = "GRO_MEDICAL_PATH"
     unlock = Item type = Building name = "BLD_CADUCEAN"
+    graphic = ""
+
+Tech
+    name = "GRO_BIOTERROR"
+    description = "GRO_BIOTERROR_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "GRO_CADUCEAN"
+    unlock = [
+        Item type = Building name = "BLD_BIOTERROR_LAB"
+        Item type = Building name = "BLD_BIOTERROR_PROJECTOR"
+    ]
     graphic = ""
 
 Tech
