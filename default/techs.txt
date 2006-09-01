@@ -728,7 +728,7 @@ Tech
     researchturns = 1
     prerequisites = "PRO_ROBOTIC_PROD"
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Nanotech_Production.png"
 
 Tech
     name = "PRO_ORBITAL_GEN"
@@ -839,7 +839,7 @@ Tech
         "PRO_FRC_FLD_ASSMB"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Matter-Energy_Replication.png"
 
 Tech
     name = "PRO_ZERO_GEN"
@@ -1150,7 +1150,7 @@ Tech
     researchturns = 5
     prerequisites = []
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Architecture_Psychology.png"
 
 Tech
     name = "CON_INFRA_ECOL"
@@ -1186,7 +1186,7 @@ Tech
         "CON_INFRA_ECOL"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Metroplex_Infrastructure.png"
 
 Tech
     name = "CON_TRANS_STRC"
@@ -1506,7 +1506,7 @@ Tech
         "GRO_PLANET_ECOL"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Enviromental_Adaptation.png"
 
 Tech
     name = "ECO_GAL_MONEY_POL"
