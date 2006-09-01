@@ -1,20 +1,6 @@
 TechCategory "LEARNING_CATEGORY"
 
 Tech
-    name = "TEST"
-    description = "TEST_DESC"
-    techtype = Theory
-    category = "LEARNING_CATEGORY"
-    researchcost = 1
-    researchturns = 1
-    prerequisites = []
-    unlock = [
-        Item type = Building name = "BLD_TEST"
-        Item type = Building name = "BLD_TEST2"
-    ]
-    graphic = "tech_icons/The_Physical_Brain.png"
-
-Tech
     name = "LRN_PHYS_BRAIN"
     description = "LRN_PHYS_BRAIN_DESC"
     techtype = Theory
@@ -220,6 +206,61 @@ Tech
     unlock = []
     graphic = "tech_icons/Singularity_of_Transcendence.png"
 
+Tech
+    name = "LRN_STELLAR_TOMOGRAPHY"
+    description = "LRN_STELLAR_TOMOGRAPHY_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "LRN_GAL_EXPLO"
+        "CON_ORBITAL_CON"
+    ]
+    unlock = []
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                Planet
+                Star type = BlackHole
+                PrimaryFocus Research
+            ]
+            activation = Source
+            effects = SetMaxResearch Target.MaxResearch + 4
+
+        EffectsGroup
+            scope = And [
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                Planet
+                Star type = Neutron
+                PrimaryFocus Research
+            ]
+            activation = Source
+            effects = SetMaxResearch Target.MaxResearch + 3
+
+        EffectsGroup
+            scope = And [
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                Planet
+                Star type = [Blue White]
+                PrimaryFocus Research
+            ]
+            activation = Source
+            effects = SetMaxResearch Target.MaxResearch + 2
+
+        EffectsGroup
+            scope = And [
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                Planet
+                Star type = [Red Orange Yellow]
+                PrimaryFocus Research
+            ]
+            activation = Source
+            effects = SetMaxResearch Target.MaxResearch + 1
+    ]
+    graphic = ""
+        
 Tech
     name = "LRN_AUTOLAB_I"
     description = "LRN_AUTOLAB_I_DESC"

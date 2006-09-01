@@ -2320,6 +2320,12 @@ Urban Farming
 GRO_URBAN_FARM_DESC
 On industrialized worlds, where arable land is rare to non-existent, the capability to produce food in hydroponic or aeroponic environments tightly packed into multi-storey buildings becomes critical to maintain food output.
 
+LRN_STELLAR_TOMOGRAPHY
+Stellar Tomography
+
+LRN_STELLAR_TOMOGRAPHY_DESC
+A network of specialized satellites can use tomographic methods to reconstruct the activities occurs deep within a star.  These otherwise costly-to-produce conditions are ideal for a variety of research endeavours, with larger benefits for more exotic star types.\n\nProvides + 4 to research per 10 population on primary research focused worlds in systems with black holes.\nProvides +3 to planets in systems with neutron stars.\nProvides +2 to planets in systems with white or blue stars.\nProvides +1 to planets in systems with red, orange or yellow stars.
+
 LRN_AUTOLAB_I
 Basic Autolabs
 
