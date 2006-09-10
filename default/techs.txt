@@ -1252,7 +1252,7 @@ Tech
     researchturns = 10
     prerequisites = "PRO_NANOTECH_PROD"
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Architectural_Monofilaments.png"
 
 Tech
     name = "CON_SELFGRAV_STRC"
@@ -1532,7 +1532,7 @@ Tech
         "ECO_MARKET_ECON"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Interstellar_Trade.png"
 
 Tech
     name = "ECO_ENV_ADAPTION"
@@ -1575,7 +1575,7 @@ Tech
         "PRO_INTSTEL_COPRO"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Economic_Fluidity.png"
 
 Tech
     name = "ECO_PLANET_COLONY"
@@ -1590,7 +1590,7 @@ Tech
         "ECO_INTSTEL_TRADE"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Planetary_Colonialism.png"
 
 Tech
     name = "ECO_ECON_PRESCIEN"
@@ -1605,7 +1605,7 @@ Tech
         "LRN_PSIONICS"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Economic_Prescience.png"
 
 Tech
     name = "ECO_STAB_HYPGROW"
@@ -1634,7 +1634,7 @@ Tech
         "ECO_STAB_HYPGROW"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Economic_Hegemony.png"
 
 Tech
     name = "ECO_COLONIAL_ECO"
