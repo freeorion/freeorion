@@ -31,7 +31,7 @@ public:
 
 private:
     void UpdateQueue();
-    void ResetInfoPanel();
+    void ResetInfoPanel();  ///< Updates research summary at top left of production screen, and signals that the empire's minerals research pool has changed (propegates to the mapwnd to update indicator)
     void AddTechToQueueSlot(const Tech* tech);
     void QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row);
     void QueueItemClickedSlot(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);

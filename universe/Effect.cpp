@@ -289,7 +289,7 @@ std::string SetMeter::Dump() const
 ///////////////////////////////////////////////////////////
 // SetEmpireStockpile                                    //
 ///////////////////////////////////////////////////////////
-SetEmpireStockpile::SetEmpireStockpile(StockpileType stockpile, const ValueRef::ValueRefBase<double>* value) :
+SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile, const ValueRef::ValueRefBase<double>* value) :
     m_stockpile(stockpile),
     m_value(value)
 {}
@@ -306,12 +306,12 @@ void SetEmpireStockpile::Execute(const UniverseObject* source, UniverseObject* t
 
     double value = m_value->Eval(source, target);
     Empire* empire = Empires().Lookup(*source->Owners().begin());
-    if (m_stockpile == ST_FOOD) {
-        empire->FoodResPool().SetStockpile(value);
-    } else if (m_stockpile == ST_MINERAL) {
-        empire->MineralResPool().SetStockpile(value);
-    } else if (m_stockpile == ST_TRADE) {
-        empire->TradeResPool().SetStockpile(value);
+    if (m_stockpile == RE_FOOD) {
+        empire->GetFoodResPool().SetStockpile(value);
+    } else if (m_stockpile == RE_MINERALS) {
+        empire->GetMineralResPool().SetStockpile(value);
+    } else if (m_stockpile == RE_TRADE) {
+        empire->GetTradeResPool().SetStockpile(value);
     }
 }
 
@@ -325,10 +325,10 @@ std::string SetEmpireStockpile::Dump() const
 {
     std::string retval = DumpIndent();
     switch (m_stockpile) {
-    case ST_FOOD:    retval += "SetOwnerFoodStockpile"; break;
-    case ST_MINERAL: retval += "SetOwnerMineralStockpile"; break;
-    case ST_TRADE:   retval += "SetOwnerTradeStockpile"; break;
-    default: retval += "?"; break;
+    case RE_FOOD:       retval += "SetOwnerFoodStockpile"; break;
+    case RE_MINERALS:   retval += "SetOwnerMineralStockpile"; break;
+    case RE_TRADE:      retval += "SetOwnerTradeStockpile"; break;
+    default:            retval += "?"; break;
     }
     retval += " value = " + m_value->Dump() + "\n";
     return retval;

@@ -2,283 +2,131 @@
 #ifndef _ResourcePool_h_
 #define _ResourcePool_h_
 
-#ifndef _Universe_h_
-#  include "../universe/Universe.h"
-#endif
+#include "../universe/Enums.h"
+#include "../universe/Universe.h"
+#include "../universe/UniverseObject.h"
 
-#ifndef _UniverseObject_h_
-#  include "../universe/UniverseObject.h"
-#endif
-
-class Planet;
 class XMLElement;
+class ResourceCenter;
+class PopCenter;
 
-template <class PoolT> 
-class PlanetChangedFunctor
-{
-public:
-    PlanetChangedFunctor(PoolT &pool, int planet_id);
-    void operator()();
-
-private:
-    PoolT& m_pool;
-    int    m_planet_id;
-};
-
-/**
-* Base class for all resource pool.
-*/
+//! The ResourcePool class keeps track of an empire's stockpile and production of 
+/** a particular resource (food, minerals, trade, and even research or industry). */
 class ResourcePool
 {
 public:
-    typedef bool (*SortFuncType)(const Planet*,const Planet*);///< type of function used to sort the planet vector
-
-    ResourcePool();
-    virtual ~ResourcePool();
-    
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()> ChangedSignalType;
     //@}
 
-    const std::vector<Planet*>& Planets() const {return m_planets;} ///< returns the planet vector 
-    virtual double Stockpile() const;
-    virtual XMLElement XMLEncode() const = 0;
-    mutable ChangedSignalType ChangedSignal; ///< the changed signal object for this ResourcePool
+    /** \name Structors */ //@{
+    ResourcePool(ResourceType type);
+    ResourcePool::ResourcePool(const XMLElement& elem);
+    ~ResourcePool();
+    //@}
 
-    std::vector<Planet*>& Planets() {return m_planets;} ///< returns the planet vector 
-    void                  SetPlanets(const Universe::ObjectVec &planet_vec);///< sets the planet vector 
-    virtual void          SetStockpile(double d) {}
+    /** \name Accessors */ //@{
+    const std::vector<ResourceCenter*>& ResourceCenters() const {return m_resource_centers;} ///< returns the ResourceCenter vector
 
-protected:
-    virtual SortFuncType SortFunc() const; ///< used to order planet list
-    virtual void PlanetChanged() = 0; ///< called when a planet of the planet vector has changed
+    double Stockpile() const;       ///< returns current stockpiled amount of resource
+    double MaxStockpile() const;    ///< returns maximum allowed stockpile of resource
+    double Production() const;      ///< returns amount of resource being produced by ResourceCenters
+    double Available() const;       ///< returns amount of resource immediately available = production + stockpile
+    //@}
+
+    /** \name Mutators */ //@{
+    XMLElement XMLEncode() const;
+
+    mutable ChangedSignalType ChangedSignal;    ///< the changed signal object for this ResourcePool
+
+    void SetResourceCenters(const std::vector<ResourceCenter*>& resource_center_vec);///< sets the ResourceCenter vector 
+
+    void SetStockpile(double d);    ///< sets current sockpiled amount of resource
+    void SetMaxStockpile(double d); ///< sets maximum allowed stockpile of resource
+    //@}
+
+    void ResourceCentersChanged();  ///< recalculates total resource production
 
 private:
-    std::vector<Planet*> m_planets; ///< list of planet which feed/consume the resource
-    std::vector<boost::signals::connection > m_connections;///< connection list of planets
+    std::vector<ResourceCenter*> m_resource_centers;        ///< list of ResourceCenters: produce resources
 
-    friend class PlanetChangedFunctor<ResourcePool>;
+    friend class ResourceCenterChangedFunctor;
 
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
-};
-BOOST_IS_ABSTRACT(ResourcePool)
 
+    double m_stockpile;         ///< current stockpiled amount of resource
+    double m_max_stockpile;     ///< maximum allowed stockpile of resource
+
+    double m_production;        ///< amount of resource being produced by empire
+
+    ResourceType m_type;        ///< what kind of resource does this pool hold?
+};
+
+//! The PopulationPool class keeps track of an empire's total population
 /**
-* Resource pool for minerals.
-*/
-class MineralResourcePool : public ResourcePool
+  */
+class PopulationPool
 {
 public:
-    MineralResourcePool();
-    MineralResourcePool(const XMLElement& elem);
+    /** \name Signal Types */ //@{
+    typedef boost::signal<void ()> ChangedSignalType;
+    //@}
+
+    /** \name Structors */ //@{
+    PopulationPool();
+    PopulationPool::PopulationPool(const XMLElement& elem);
+    ~PopulationPool();
+    //@}
+
+    /** \name Accessors */ //@{
+    const std::vector<PopCenter*>& PopCenters() const {return m_pop_centers;} ///< returns the PopCenter vector
+
+    double Population() const;  ///< returns current total population
+    double Growth() const;      ///< returns predicted growth for next turn    
+    //@}
     
-    double Production() const {return m_pool_production;}
-    double ExcessShortfall() const {return m_pool_production - m_needed_pool;}
-    double Needed() const {return m_needed_pool;}
-    virtual double Stockpile() const;
-    virtual XMLElement XMLEncode() const;
+    /** \name Mutators */ //@{
+    XMLElement XMLEncode() const;
+    
+    mutable ChangedSignalType ChangedSignal;    ///< the changed signal object for this PopulationPool
+    
+    void SetPopCenters(const std::vector<PopCenter*>& pop_center_vec);  ///< sets the PopCenter vector 
+    //@}
 
-    virtual void SetStockpile(double d);
-
-protected:
-    virtual void PlanetChanged();
+    void PopCentersChanged();  ///< recalculates total population and growth
 
 private:
-    double m_pool_production,m_needed_pool,m_stockpile;
+    std::vector<PopCenter*> m_pop_centers;   ///< list of PopCenters that contribute to empire total population pool
+
+    friend class PopCenterChangedFunctor;
 
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
+
+    double m_population;        ///< total population of all PopCenters in pool
+    double m_growth;            ///< total predicted population growth for next turn for all PopCenters in pool
 };
-
-/**
-* Resource pool for food.
-*/
-class FoodResourcePool : public ResourcePool
-{
-public:
-    FoodResourcePool();
-    FoodResourcePool(const XMLElement& elem);
-
-    double Production() const {return m_pool_production;}
-    double ExcessShortfall() const {return m_pool_production - m_needed_pool;}
-    double Needed() const {return m_needed_pool;}
-    virtual double Stockpile() const;
-    virtual XMLElement XMLEncode() const;
-
-    virtual void SetStockpile(double d);
-
-protected:
-    virtual SortFuncType SortFunc() const; 
-    virtual void PlanetChanged();
-
-private:
-    double m_pool_production,m_needed_pool,m_stockpile;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/**
-* Resource pool for research.
-*/
-class ResearchResourcePool : public ResourcePool
-{
-public:
-    ResearchResourcePool();
-    ResearchResourcePool(const XMLElement& elem);
-
-    double Production() const {return m_pool_production;}
-
-    virtual XMLElement XMLEncode() const;
-
-protected:
-    virtual void PlanetChanged();
-
-private:
-    double m_pool_production;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/**
-* Resource pool for population.
-*/
-class PopulationResourcePool : public ResourcePool
-{
-public:
-    PopulationResourcePool();
-    PopulationResourcePool(const XMLElement& elem);
-
-    double Available() const {return m_overall_pool;}
-    double Growth   () const {return m_growth;}
-
-    virtual XMLElement XMLEncode() const;
-
-protected:
-    virtual void PlanetChanged();
-
-private:
-    double m_overall_pool,m_growth;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/**
-* Resource pool for industry.
-*/
-class IndustryResourcePool : public ResourcePool
-{
-public:
-    IndustryResourcePool();
-    IndustryResourcePool(const XMLElement& elem);
-
-    double Production() const {return m_pool_production;}
-
-    virtual XMLElement XMLEncode() const;
-
-protected:
-    virtual void PlanetChanged();
-
-private:
-    double m_pool_production;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/**
-* Resource pool for trade.
-*/
-class TradeResourcePool : public ResourcePool
-{
-public:
-    TradeResourcePool();
-    TradeResourcePool(const XMLElement& elem);
-
-    double Production() const {return m_pool_production;}
-    double ExcessShortfall() const {return m_pool_production - m_needed_pool;}
-    double Needed   () const {return m_needed_pool;}
-    virtual double Stockpile() const;
-    virtual XMLElement XMLEncode() const;
-
-    virtual void SetStockpile(double d);
-
-protected:
-    virtual SortFuncType SortFunc() const; 
-    virtual void PlanetChanged();
-
-private:
-    double m_pool_production,m_needed_pool,m_stockpile;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
 
 // template implementations
-template <class PoolT> 
-PlanetChangedFunctor<PoolT>::PlanetChangedFunctor(PoolT& pool, int planet_id) :
-    m_pool(pool),
-    m_planet_id(planet_id)
-{}
-
-template <class PoolT> 
-void PlanetChangedFunctor<PoolT>::operator()()
-{
-    m_pool.OnPlanetChanged(m_planet_id);
-}
 
 template <class Archive>
 void ResourcePool::serialize(Archive& ar, const unsigned int version)
-{}
-
-template <class Archive>
-void MineralResourcePool::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool)
-        & BOOST_SERIALIZATION_NVP(m_stockpile);
+    ar  & BOOST_SERIALIZATION_NVP(m_resource_centers)
+        & BOOST_SERIALIZATION_NVP(m_stockpile)
+        & BOOST_SERIALIZATION_NVP(m_max_stockpile)
+        & BOOST_SERIALIZATION_NVP(m_production)
+        & BOOST_SERIALIZATION_NVP(m_type);
 }
 
 template <class Archive>
-void FoodResourcePool::serialize(Archive& ar, const unsigned int version)
+void PopulationPool::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool)
-        & BOOST_SERIALIZATION_NVP(m_stockpile);
+    ar  & BOOST_SERIALIZATION_NVP(m_pop_centers)
+	& BOOST_SERIALIZATION_NVP(m_population)
+	& BOOST_SERIALIZATION_NVP(m_growth);
 }
-
-template <class Archive>
-void ResearchResourcePool::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool);
-}
-
-template <class Archive>
-void PopulationResourcePool::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool);
-}
-
-template <class Archive>
-void IndustryResourcePool::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool);
-}
-
-template <class Archive>
-void TradeResourcePool::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourcePool)
-        & BOOST_SERIALIZATION_NVP(m_stockpile);
-}
-
 #endif // _ResourcePool_h_

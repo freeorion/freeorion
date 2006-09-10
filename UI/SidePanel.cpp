@@ -1396,37 +1396,37 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_planet_panel_container(new PlanetPanelContainer(0,100,w,h-100-30)),
     m_system_resource_summary(new SystemResourceSummary(0,100-20,w,20))
 {
-  TempUISoundDisabler sound_disabler;
+    TempUISoundDisabler sound_disabler;
 
-  SetText(UserString("SIDE_PANEL"));
+    SetText(UserString("SIDE_PANEL"));
 
-  m_system_name->DisableDropArrow();
-  m_system_name->SetStyle(GG::LB_CENTER);
-  m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
+    m_system_name->DisableDropArrow();
+    m_system_name->SetStyle(GG::LB_CENTER);
+    m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
 
-  m_button_prev->SetUnpressedGraphic(GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/leftarrownormal.png"   ), 0, 0, 32, 32));
-  m_button_prev->SetPressedGraphic  (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/leftarrowclicked.png"  ), 0, 0, 32, 32));
-  m_button_prev->SetRolloverGraphic (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/leftarrowmouseover.png"), 0, 0, 32, 32));
+    m_button_prev->SetUnpressedGraphic(GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/leftarrownormal.png"   ), 0, 0, 32, 32));
+    m_button_prev->SetPressedGraphic  (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/leftarrowclicked.png"  ), 0, 0, 32, 32));
+    m_button_prev->SetRolloverGraphic (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/leftarrowmouseover.png"), 0, 0, 32, 32));
 
-  m_button_next->SetUnpressedGraphic(GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/rightarrownormal.png"  ), 0, 0, 32, 32));
-  m_button_next->SetPressedGraphic  (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/rightarrowclicked.png"   ), 0, 0, 32, 32));
-  m_button_next->SetRolloverGraphic (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/rightarrowmouseover.png"), 0, 0, 32, 32));
+    m_button_next->SetUnpressedGraphic(GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/rightarrownormal.png"  ), 0, 0, 32, 32));
+    m_button_next->SetPressedGraphic  (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/rightarrowclicked.png"   ), 0, 0, 32, 32));
+    m_button_next->SetRolloverGraphic (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/rightarrowmouseover.png"), 0, 0, 32, 32));
 
-  AttachChild(m_system_name);
-  AttachChild(m_button_prev);
-  AttachChild(m_button_next);
-  AttachChild(m_static_text_systemproduction);
-  AttachChild(m_system_resource_summary);
-  AttachChild(m_planet_panel_container);
+    AttachChild(m_system_name);
+    AttachChild(m_button_prev);
+    AttachChild(m_button_next);
+    AttachChild(m_static_text_systemproduction);
+    AttachChild(m_system_resource_summary);
+    AttachChild(m_planet_panel_container);
 
-  GG::Connect(m_system_name->SelChangedSignal, &SidePanel::SystemSelectionChanged, this);
-  GG::Connect(m_button_prev->ClickedSignal, &SidePanel::PrevButtonClicked, this);
-  GG::Connect(m_button_next->ClickedSignal, &SidePanel::NextButtonClicked, this);
-  GG::Connect(m_planet_panel_container->PlanetSelectedSignal, &SidePanel::PlanetSelected, this);
+    GG::Connect(m_system_name->SelChangedSignal, &SidePanel::SystemSelectionChanged, this);
+    GG::Connect(m_button_prev->ClickedSignal, &SidePanel::PrevButtonClicked, this);
+    GG::Connect(m_button_next->ClickedSignal, &SidePanel::NextButtonClicked, this);
+    GG::Connect(m_planet_panel_container->PlanetSelectedSignal, &SidePanel::PlanetSelected, this);
 
-  Hide();
+    Hide();
 
-  s_side_panels.insert(this);
+    s_side_panels.insert(this);
 }
 
 SidePanel::~SidePanel()

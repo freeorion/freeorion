@@ -22,7 +22,7 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    ResourceCenter(const Meter& pop); ///< default ctor
+    ResourceCenter(const Meter& pop); ///< basic ctor
     ResourceCenter(const XMLElement& elem, const Meter& pop); ///< ctor that constructs a ResourceCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ResourceCenter object
     virtual ~ResourceCenter(); ///< dtor
     //@}

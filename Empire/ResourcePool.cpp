@@ -7,403 +7,170 @@
 
 #include <GG/SignalsAndSlots.h>
 
-namespace {
-    bool Greater(const Planet* elem1, const Planet* elem2)
-    {
-        return elem1->PopPoints() > elem2->PopPoints();
-    }
-
-    bool Lower(const Planet* elem1, const Planet* elem2)
-    {
-        return elem1->PopPoints() < elem2->PopPoints();
-    }
-
-    double PopEstimate(Planet* p)
-    {
-        return p->PopPoints() + std::min(p->FuturePopGrowthMax(), p->MaxPop() - p->PopPoints());
-    }
-
-    void DistributeFood(std::vector<Planet*>::iterator first, std::vector<Planet*>::iterator last, double multiple, double& available_pool)
-    {
-        for (std::vector<Planet*>::iterator it = first; it != last && 0.0 < available_pool; ++it) {
-            Planet* planet = *it;
-            double receives = std::min(available_pool, PopEstimate(planet) * multiple - planet->AvailableFood());
-            planet->SetAvailableFood(planet->AvailableFood() + receives);
-            available_pool -= receives;
-        }
-    }
-
-}
-
 //////////////////////////////////////////////////
 // ResourcePool
 //////////////////////////////////////////////////
-ResourcePool::ResourcePool()
+ResourcePool::ResourcePool(ResourceType type) :
+    m_stockpile(0.0),
+    m_max_stockpile(200.0), // change to 0.0 later when effects can alter the max stockpile
+    m_production(0.0),
+    m_type(type)
 {}
+
+ResourcePool::ResourcePool(const XMLElement& elem)
+{
+    m_max_stockpile = 200.0;
+    m_production = 0.0;
+    if (elem.Tag() != "ResourcePool")
+        throw std::invalid_argument("Attempted to construct a ResourcePool from an XMLElement that had a tag other than \"ResourcePool\"");
+    m_stockpile = boost::lexical_cast<double>(elem.Child("m_stockpile").Text());
+    m_type = boost::lexical_cast<ResourceType>(elem.Child("m_type").Text());
+}
 
 ResourcePool::~ResourcePool()
 {
-    for(unsigned int i=0;i<m_connections.size();i++)
-        m_connections[i].disconnect();
-    m_connections.clear();
-    m_planets.clear();
+    //for(unsigned int i = 0; i < m_connections.size(); i++)
+        //m_connections[i].disconnect();
+    //m_connections.clear();
+    m_resource_centers.clear();
+}
+
+XMLElement ResourcePool::XMLEncode() const
+{
+    XMLElement retval("ResourcePool");
+    retval.AppendChild(XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
+    retval.AppendChild(XMLElement("m_type", boost::lexical_cast<std::string>(m_type)));
+    return retval;
 }
 
 double ResourcePool::Stockpile() const
 {
-    return 0.0;
-}
-
-void ResourcePool::SetPlanets(const Universe::ObjectVec &planet_vec)
-{
-    for(unsigned int i=0;i<m_connections.size();i++)
-        m_connections[i].disconnect();
-    m_connections.clear();
-    m_planets.clear();
-
-    for(unsigned int i=0;i<planet_vec.size();i++)
-    {
-        Planet *planet = universe_object_cast<Planet*>(planet_vec[i]);
-        m_planets.push_back(planet);
-        // The design has changed, and due to the incremental growth of meters there should not be immediate
-        // UI changes when planet updates occur (focus changes, etc.); therefore, these signals should not
-        // exist.  However, I'm leaving this here since later we may want projections of output to be
-        // displayed in the new SidePanel design, so this or something similar may be required or desired.
-        //m_connections.push_back(GG::Connect(planet->ProdCenterChangedSignal, PlanetChangedFunctor<ResourcePool>(*this,planet->ID())));
-    }
-    std::sort(m_planets.begin(),m_planets.end(),SortFunc());
-
-    PlanetChanged();
-}
-
-ResourcePool::SortFuncType ResourcePool::SortFunc() const
-{
-    return &Lower;
-}
-
-//////////////////////////////////////////////////
-// MineralResourcePool
-//////////////////////////////////////////////////
-MineralResourcePool::MineralResourcePool() :
-    ResourcePool(),
-    m_stockpile(0.0)
-{}
-
-MineralResourcePool::MineralResourcePool(const XMLElement& elem)
-    : ResourcePool()
-{
-    if (elem.Tag() != "MineralResourcePool")
-        throw std::invalid_argument("Attempted to construct a MineralResourcePool from an XMLElement that had a tag other than \"MineralResourcePool\"");
-
-    m_stockpile = boost::lexical_cast<double>(elem.Child("m_stockpile").Text());
-}
-
-void MineralResourcePool::PlanetChanged()
-{
-    m_pool_production=0.0;
-    m_needed_pool=0.0;
-
-    // sum all minerals
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
-    {
-        m_pool_production+=(*it)->MiningPoints();
-        m_needed_pool+=(*it)->IndustryPoints();
-    }
-
-    // Note that m_stockpile is not updated; this should be done via a call the SetStockpile() by the owning empire's
-    // production queue, at the point at which production uses minerals.  This is important because the amount of actual
-    // production during a turn may be less than m_needed_pool, which is the sum of all industrial capacity.
-
-    ChangedSignal();
-}
-
-double MineralResourcePool::Stockpile() const
-{
     return m_stockpile;
 }
 
-XMLElement MineralResourcePool::XMLEncode() const
+void ResourcePool::SetStockpile(double d)
 {
-    XMLElement retval("MineralResourcePool");
-    retval.AppendChild(XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
-    return retval;
-}
-
-void MineralResourcePool::SetStockpile(double d)
-{
+    // allow m_stockpile to be < 0.0 or > m_max_stockpile for now.  will clamp during turn processing at last step.
     m_stockpile = d;
 }
 
-//////////////////////////////////////////////////
-//FoodResourcePool
-//////////////////////////////////////////////////
-FoodResourcePool::FoodResourcePool() :
-    ResourcePool(),
-    m_stockpile(0.0)
-{}
-
-FoodResourcePool::FoodResourcePool(const XMLElement& elem)
-    : ResourcePool()
-{
-    if (elem.Tag() != "FoodResourcePool")
-        throw std::invalid_argument("Attempted to construct a FoodResourcePool from an XMLElement that had a tag other than \"FoodResourcePool\"");
-
-    m_stockpile = boost::lexical_cast<double>(elem.Child("m_stockpile").Text());
+double ResourcePool::MaxStockpile() const
+{   
+    // need to ensure this is calculated from any effects...
+    return m_max_stockpile;
 }
 
-ResourcePool::SortFuncType FoodResourcePool::SortFunc() const
+void ResourcePool::SetMaxStockpile(double d)
 {
-    return &Greater;
+    m_max_stockpile = std::min(0.0, d);
 }
 
-void FoodResourcePool::PlanetChanged()
+double ResourcePool::Production() const
 {
-    m_pool_production=0.0;
-    m_needed_pool=0.0;
+    return m_production;
+}
 
-    // sum all food
-    for (std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
+double ResourcePool::Available() const
+{
+    return m_production + m_stockpile;
+}
+
+void ResourcePool::SetResourceCenters(const std::vector<ResourceCenter*>& resource_center_vec)
+{
+    m_resource_centers = resource_center_vec;
+    ResourceCentersChanged();
+}
+
+void ResourcePool::ResourceCentersChanged()
+{
+    m_production = 0.0;
+
+    // sum production from all ResourceCenters for resource point type appropriate for this pool
+    switch (m_type)
     {
-        Planet *planet = *it;
-        planet->SetAvailableFood(0.0);
-        m_pool_production += planet->FarmingPoints();
-        m_needed_pool += PopEstimate(planet);
+    case RE_FOOD:
+        for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
+            m_production += (*it)->FarmingPoints();
+        break;
+    case RE_INDUSTRY:
+        for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
+            m_production += (*it)->IndustryPoints();
+        break;
+    case RE_MINERALS:
+        for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
+            m_production += (*it)->MiningPoints();
+        break;
+    case RE_RESEARCH:
+        for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
+            m_production += (*it)->ResearchPoints();
+        break;
+    case RE_TRADE:
+        for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
+            m_production += (*it)->TradePoints();
+        break;
+    default:
+        throw std::runtime_error("ResourceCenterChanged was called without a valid m_type.");
     }
-    double available = m_pool_production + m_stockpile;
-
-    // first pass: give all planets required food limited by local food production
-    for (std::vector<Planet*>::iterator it = Planets().begin(); it != Planets().end() && 0.0 < available; ++it)
-    {
-        Planet* planet = *it;
-        double receives = std::min(available, std::min(planet->FarmingPoints(), planet->PopPoints()) - planet->AvailableFood());
-        planet->SetAvailableFood(planet->AvailableFood() + receives);
-        available -= receives;
-    }
-
-    // feed starving planets
-    for (std::vector<Planet*>::iterator it = Planets().begin(); it != Planets().end() && 0.0 < available; ++it)
-    {
-        Planet* planet = *it;
-        double receives = std::min(available, planet->PopPoints() - planet->AvailableFood());
-        planet->SetAvailableFood(planet->AvailableFood() + receives);
-        available -= receives;
-    }
-
-    // feed for popgrown!!!!
-    // use food production locally first
-    for (std::vector<Planet*>::iterator it = Planets().begin(); it != Planets().end() && 0.0 < available; ++it)
-    {
-        Planet* planet = *it;
-        double receives = std::min(available, std::min(planet->FarmingPoints(), PopEstimate(planet)) - planet->AvailableFood());
-        planet->SetAvailableFood(planet->AvailableFood() + receives);
-        available -= receives;
-    }
-
-    // second pass: give all planets up to 1 times the required minimum
-    DistributeFood(Planets().begin(), Planets().end(), 1.0, available);
-
-    // third pass: give all planets up to 2 times the required minimum
-    DistributeFood(Planets().begin(), Planets().end(), 2.0, available);
-
-    // fourth pass: give all planets up to 4 times the required minimum
-    DistributeFood(Planets().begin(), Planets().end(), 4.0, available);
-
-    m_stockpile = std::max(0.0, available);
-
     ChangedSignal();
 }
 
-double FoodResourcePool::Stockpile() const
-{
-    return m_stockpile;
+//////////////////////////////////////////////////
+// PopulationPool
+//////////////////////////////////////////////////
+namespace {
+    bool PopCenterLess(PopCenter*& elem1, PopCenter*& elem2)
+	{
+	    return elem1->PopPoints() < elem2->PopPoints();
+	}
 }
 
-XMLElement FoodResourcePool::XMLEncode() const
+PopulationPool::PopulationPool() :
+    m_population(0.0)
+{}
+
+PopulationPool::PopulationPool(const XMLElement& elem)
 {
-    XMLElement retval("FoodResourcePool");
-    retval.AppendChild(XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
+    PopulationPool();
+    if (elem.Tag() != "PopulationPool")
+        throw std::invalid_argument("Attempted to construct a PopulationPool from an XMLElement that had a tag other than \"PopulationPool\"");
+}
+
+PopulationPool::~PopulationPool()
+{
+    m_pop_centers.clear();
+}
+
+XMLElement PopulationPool::XMLEncode() const
+{
+    XMLElement retval("PopulationPool");
     return retval;
 }
 
-void FoodResourcePool::SetStockpile(double d)
+double PopulationPool::Population() const
 {
-    m_stockpile = d;
+    return m_population;
 }
 
-
-//////////////////////////////////////////////////
-//ResearchResourcePool
-//////////////////////////////////////////////////
-ResearchResourcePool::ResearchResourcePool() :
-    ResourcePool()
-{}
-
-ResearchResourcePool::ResearchResourcePool(const XMLElement& elem)
-    : ResourcePool()
+double PopulationPool::Growth() const
 {
-    if (elem.Tag() != "ResearchResourcePool")
-        throw std::invalid_argument("Attempted to construct a ResearchResourcePool from an XMLElement that had a tag other than \"ResearchResourcePool\"");
+    return m_growth;
 }
 
-void ResearchResourcePool::PlanetChanged()
+void PopulationPool::SetPopCenters(const std::vector<PopCenter*>& pop_center_vec)
 {
-    m_pool_production=0.0;
+    m_pop_centers = pop_center_vec;
+    std::sort(m_pop_centers.begin(), m_pop_centers.end(), &PopCenterLess);  // this ordering ensures higher population PopCenters get first priority for food distribution
+    PopCentersChanged();
+}
 
-    // sum all research
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
+void PopulationPool::PopCentersChanged()
+{
+    m_population = 0.0;
+    // sum population from all PopCenters in this pool
+    for (std::vector<PopCenter*>::const_iterator it = PopCenters().begin(); it != PopCenters().end(); ++it)
     {
-        Planet *planet=*it;
-        m_pool_production+=planet->ResearchPoints();
+        m_population += (*it)->PopPoints();
+        m_growth += (*it)->FuturePopGrowth();
     }
-
     ChangedSignal();
-}
-
-XMLElement ResearchResourcePool::XMLEncode() const
-{
-    return XMLElement("ResearchResourcePool");
-}
-
-
-//////////////////////////////////////////////////
-//PopulationResourcePool
-//////////////////////////////////////////////////
-PopulationResourcePool::PopulationResourcePool() :
-    ResourcePool()
-{}
-
-PopulationResourcePool::PopulationResourcePool(const XMLElement& elem)
-    : ResourcePool()
-{
-    if (elem.Tag() != "PopulationResourcePool")
-        throw std::invalid_argument("Attempted to construct a PopulationResourcePool from an XMLElement that had a tag other than \"PopulationResourcePool\"");
-}
-
-void PopulationResourcePool::PlanetChanged()
-{
-    m_overall_pool=m_growth=0.0;
-
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
-    {
-        Planet *planet=*it;
-        m_overall_pool+=planet->PopPoints();
-        m_growth+=planet->FuturePopGrowth();
-    }
-
-    ChangedSignal();
-}
-
-XMLElement PopulationResourcePool::XMLEncode() const
-{
-    return XMLElement("PopulationResourcePool");
-}
-
-
-//////////////////////////////////////////////////
-//IndustryResourcePool
-//////////////////////////////////////////////////
-IndustryResourcePool::IndustryResourcePool() :
-    ResourcePool()
-{}
-
-IndustryResourcePool::IndustryResourcePool(const XMLElement& elem)
-    : ResourcePool()
-{
-    if (elem.Tag() != "IndustryResourcePool")
-        throw std::invalid_argument("Attempted to construct a IndustryResourcePool from an XMLElement that had a tag other than \"IndustryResourcePool\"");
-}
-
-void IndustryResourcePool::PlanetChanged()
-{
-    m_pool_production=0.0;
-
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
-    {
-        Planet *planet=*it;
-        m_pool_production+=planet->IndustryPoints();
-    }
-
-    ChangedSignal();
-}
-
-XMLElement IndustryResourcePool::XMLEncode() const
-{
-    return XMLElement("IndustryResourcePool");
-}
-
-
-//////////////////////////////////////////////////
-//TradeResourcePool
-//////////////////////////////////////////////////
-TradeResourcePool::TradeResourcePool() :
-    ResourcePool(),
-    m_stockpile(0.0)
-{}
-
-TradeResourcePool::TradeResourcePool(const XMLElement& elem)
-    : ResourcePool()
-{
-    if (elem.Tag() != "TradeResourcePool")
-        throw std::invalid_argument("Attempted to construct a TradeResourcePool from an XMLElement that had a tag other than \"TradeResourcePool\"");
-
-    m_stockpile = boost::lexical_cast<double>(elem.Child("m_stockpile").Text());
-}
-
-ResourcePool::SortFuncType TradeResourcePool::SortFunc() const
-{
-    return &Greater;
-}
-
-void TradeResourcePool::PlanetChanged()
-{
-    m_pool_production=0.0;
-    m_needed_pool=0.0;
-
-    // sum all trade
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
-    {
-        Planet *planet=*it;
-        planet->SetAvailableTrade(0.0);
-        m_pool_production+=planet->TradePoints();
-        m_needed_pool+=planet->BuildingCosts();
-    }
-    double available = m_pool_production + m_stockpile;
-
-    // first pass: give all planets required trade limited by local trade production
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
-    {
-        Planet *planet=*it;
-        planet->SetAvailableTrade(std::min(available,std::min(planet->TradePoints(),planet->BuildingCosts())));
-        available-=planet->AvailableTrade();
-    }
-
-    // second pass: give all planets up to the required minimum to keep their buildings operating
-    for(std::vector<Planet*>::iterator it = Planets().begin();it !=Planets().end();++it)
-    {
-        Planet *planet=*it;
-        double receives = std::min(available,planet->BuildingCosts()-planet->AvailableTrade());
-        planet->SetAvailableTrade(planet->AvailableTrade()+receives);
-        available-=receives;
-    }
-
-    m_stockpile=available;
-
-    ChangedSignal();
-}
-
-double TradeResourcePool::Stockpile() const
-{
-    return m_stockpile;
-}
-
-XMLElement TradeResourcePool::XMLEncode() const
-{
-    XMLElement retval("TradeResourcePool");
-    retval.AppendChild(XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
-    return retval;
-}
-
-void TradeResourcePool::SetStockpile(double d)
-{
-    m_stockpile = d;
 }

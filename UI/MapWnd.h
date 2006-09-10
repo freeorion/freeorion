@@ -111,7 +111,7 @@ private:
     void MineralResourcePoolChanged();
     void TradeResourcePoolChanged();
     void ResearchResourcePoolChanged();
-    void PopulationResourcePoolChanged();
+    void PopulationPoolChanged();
     void IndustryResourcePoolChanged();
 
     void TurnBtnClicked() {EndTurn();}

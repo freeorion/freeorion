@@ -2,38 +2,14 @@
 #ifndef _SidePanel_h_
 #define _SidePanel_h_
 
-#ifndef _CUIControls_h_
 #include "CUIControls.h"
-#endif
-
-#ifndef _GG_DynamicGraphic_h_
 #include <GG/DynamicGraphic.h>
-#endif
-
-#ifndef _GG_Wnd_h_
 #include <GG/Wnd.h>
-#endif
-
-#ifndef _GG_SignalsAndSlots_h_
 #include <GG/SignalsAndSlots.h>
-#endif
-
-#ifndef _GG_Texture_h_
 #include <GG/Texture.h>
-#endif
-
-#ifndef _ResourceCenter_h_
 #include "../universe/ResourceCenter.h"
-#endif
-
-#ifndef _Planet_h_
 #include "../universe/Planet.h"
-#endif
-
-#ifndef _System_h_
 #include "../universe/System.h"
-#endif
-
 #include <vector>
 
 class CUI_CloseButton;
@@ -91,7 +67,7 @@ private:
 
     void SetSystemImpl();
     void SystemSelectionChanged(int selection);
-    void SystemFleetAdded  (const Fleet &);
+    void SystemFleetAdded(const Fleet &);
     void SystemFleetRemoved(const Fleet &);
     void FleetsChanged();
     void PlanetsChanged();

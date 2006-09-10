@@ -195,6 +195,7 @@ MapWnd::MapWnd() :
     GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
 
+
     // turn button
     m_turn_update = new CUITurnButton(LAYOUT_MARGIN, LAYOUT_MARGIN, END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
@@ -681,12 +682,19 @@ void MapWnd::InitTurn(int turn_number)
     if (ClientUpperLeft() == GG::Pt())
         CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
 
-    GG::Connect(empire->FoodResPool       ().ChangedSignal,&MapWnd::FoodResourcePoolChanged      ,this,0);FoodResourcePoolChanged();
-    GG::Connect(empire->MineralResPool    ().ChangedSignal,&MapWnd::MineralResourcePoolChanged   ,this,0);MineralResourcePoolChanged();
-    GG::Connect(empire->TradeResPool      ().ChangedSignal,&MapWnd::TradeResourcePoolChanged     ,this,0);TradeResourcePoolChanged();
-    GG::Connect(empire->ResearchResPool   ().ChangedSignal,&MapWnd::ResearchResourcePoolChanged  ,this,0);ResearchResourcePoolChanged();
-    GG::Connect(empire->PopulationResPool ().ChangedSignal,&MapWnd::PopulationResourcePoolChanged,this,1);PopulationResourcePoolChanged();
-    GG::Connect(empire->IndustryResPool   ().ChangedSignal,&MapWnd::IndustryResourcePoolChanged  ,this,0);IndustryResourcePoolChanged();
+    GG::Connect(empire->GetFoodResPool().ChangedSignal, &MapWnd::FoodResourcePoolChanged, this, 0);
+    FoodResourcePoolChanged();
+    GG::Connect(empire->GetMineralResPool().ChangedSignal, &MapWnd::MineralResourcePoolChanged, this, 0);
+    MineralResourcePoolChanged();
+    GG::Connect(empire->GetTradeResPool().ChangedSignal, &MapWnd::TradeResourcePoolChanged, this, 0);
+    TradeResourcePoolChanged();
+    GG::Connect(empire->GetResearchResPool().ChangedSignal, &MapWnd::ResearchResourcePoolChanged, this, 0);
+    ResearchResourcePoolChanged();
+    GG::Connect(empire->GetIndustryResPool().ChangedSignal, &MapWnd::IndustryResourcePoolChanged, this, 0);
+    IndustryResourcePoolChanged();
+
+    GG::Connect(empire->GetPopulationPool().ChangedSignal, &MapWnd::PopulationPoolChanged, this, 1);
+    PopulationPoolChanged();
 
     empire->UpdateResourcePool();
 
@@ -1402,6 +1410,7 @@ bool MapWnd::ToggleProduction()
         HideAllPopups();
         m_side_panel->Hide();
         GG::GUI::GetGUI()->MoveUp(m_production_wnd);
+
         m_production_wnd->Reset();
     }
     return true;
@@ -1445,56 +1454,74 @@ void MapWnd::FoodResourcePoolChanged()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     
-    m_food->SetValue      (empire->FoodResPool().Stockpile());
-    m_food->SetValueSecond(empire->FoodResPool().ExcessShortfall());
+    m_food->SetValue(empire->GetFoodResPool().Stockpile());
+
+    double production = empire->GetFoodResPool().Production();
+
+    empire->UpdateFoodDistribution();
+    double spent = empire->TotalFoodDistributed();
+    
+    m_food->SetValueSecond(production - spent);
 }
 
 void MapWnd::MineralResourcePoolChanged()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     
-    m_mineral->SetValue(empire->MineralResPool().Stockpile());
-    
-    double production = empire->MineralResPool().Production();
+    m_mineral->SetValue(empire->GetMineralResPool().Stockpile());
 
-    // actual number of PPs, and thus minerals, that the projects on the queue are currently using.
+    double production = empire->GetMineralResPool().Production();
     double spent = empire->GetProductionQueue().TotalPPsSpent();
     
-    // excess or shortfall minerals...
-    double change = production - spent;
-    
-    m_mineral->SetValueSecond(change);
+    m_mineral->SetValueSecond(production - spent);
 }
 
 void MapWnd::TradeResourcePoolChanged()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     
-    m_trade->SetValue      (empire->TradeResPool().Stockpile());
-    m_trade->SetValueSecond(empire->TradeResPool().ExcessShortfall());
+    m_trade->SetValue(empire->GetTradeResPool().Stockpile());
+
+    double production = empire->GetTradeResPool().Production();
+
+    empire->UpdateTradeSpending();
+    double spent = empire->TotalTradeSpending();
+
+    m_trade->SetValueSecond(production - spent);
 }
 
 void MapWnd::ResearchResourcePoolChanged()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     
-    m_research->SetValue(empire->ResearchResPool().Production());
+    m_research->SetValue(empire->GetResearchResPool().Production());
+    /*
+    m_research->SetValue(empire->GetResearchResPool().Stockpile());
+    double production = empire->GetResearchResPool().Production();
+    double spent = empire->GetResearchQueue().TotalRPsSpent();
+    m_research->SetValueSecond(production - spent);
+    */
 }
 
 void MapWnd::IndustryResourcePoolChanged()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     
-    m_industry->SetValue(empire->IndustryResPool().Production());
+    m_industry->SetValue(empire->GetIndustryResPool().Production());
+    /*
+    m_industry->SetValue(empire->GetIndustryResPool().Stockpile());
+    double production = empire->GetIndustryResPool().Production();
+    double spent = empire->GetProductionQueue().TotalPPsSpent();
+    m_industry->SetValueSecond(production - spent);
+    */
 }
 
-
-void MapWnd::PopulationResourcePoolChanged()
+void MapWnd::PopulationPoolChanged()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     
-    m_population->SetValue      (empire->PopulationResPool().Available());
-    m_population->SetValueSecond(empire->PopulationResPool().Growth   ());
+    m_population->SetValue(empire->GetPopulationPool().Population());
+    m_population->SetValueSecond(empire->GetPopulationPool().Growth());
 }
 
 bool MapWnd::ZoomToHomeSystem()

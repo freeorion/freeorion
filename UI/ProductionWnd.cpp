@@ -209,7 +209,6 @@ namespace {
         glColor4ubv(clr.v);
         PartlyRoundedRect(UpperLeft(), LowerRight(), CORNER_RADIUS, true, false, true, false, fill);
     }
-
 }
 
 
@@ -217,7 +216,7 @@ namespace {
 // ProductionWnd                                //
 //////////////////////////////////////////////////
 ProductionWnd::ProductionWnd(int w, int h) :
-    CUIWnd(UserString("PRODUCTION_WND_TITLE"), 0, 0, w, h, GG::CLICKABLE | GG::ONTOP),
+CUIWnd(UserString("PRODUCTION_WND_TITLE"), 0, 0, w, h, GG::ONTOP),
     m_production_info_panel(0),
     m_queue_lb(0),
     m_build_designator_wnd(0)
@@ -363,6 +362,11 @@ void ProductionWnd::CenterOnBuild(int queue_idx)
     m_build_designator_wnd->CenterOnBuild(queue_idx);
 }
 
+void ProductionWnd::SelectPlanet(int planet)
+{
+    m_build_designator_wnd->SelectPlanet(planet);
+}
+
 void ProductionWnd::SelectSystem(int system)
 {
     m_build_designator_wnd->SelectSystem(system);
@@ -406,7 +410,11 @@ void ProductionWnd::ResetInfoPanel()
     ProductionQueue::const_iterator underfunded_it = queue.UnderfundedProject(empire);
     double PPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->spending;
     m_production_info_panel->Reset(PPs, total_queue_cost, queue.ProjectsInProgress(), PPs_to_underfunded_projects, queue.size());
-    empire->MineralResPool().ChangedSignal(); // altering production queue may have freed up or required more PP, which may require or free minerals
+    /* Altering production queue may have freed up or required more PP, which may require extra
+       or free up excess minerals.  Signalling that the MineralResPool has changed causes the
+       MapWnd to be signalled that that pool has changed, which causes the resource indicator
+       to be updated (which polls the ProductionQueue to determine how many PPs are being spent) */
+    empire->GetMineralResPool().ChangedSignal(); 
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location)

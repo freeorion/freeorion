@@ -1077,7 +1077,7 @@ bool Condition::MeterValue::Match(const UniverseObject* source, const UniverseOb
 ///////////////////////////////////////////////////////////
 // EmpireStockpileValue                                  //
 ///////////////////////////////////////////////////////////
-Condition::EmpireStockpileValue::EmpireStockpileValue(StockpileType stockpile, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
+Condition::EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
     m_stockpile(stockpile),
     m_low(low),
     m_high(high)
@@ -1106,9 +1106,11 @@ std::string Condition::EmpireStockpileValue::Dump() const
 {
     std::string retval = DumpIndent();
     switch (m_stockpile) {
-    case ST_FOOD:    retval += "OwnerFoodStockpile"; break;
-    case ST_MINERAL: retval += "OwnerMineralStockpile"; break;
-    case ST_TRADE:   retval += "OwnerTradeStockpile"; break;
+    case RE_FOOD:       retval += "OwnerFoodStockpile";     break;
+    case RE_MINERALS:   retval += "OwnerMineralStockpile";  break;
+    case RE_TRADE:      retval += "OwnerTradeStockpile";    break;
+    case RE_RESEARCH:   retval += "OwnerResearchStockpile"; break;
+    case RE_INDUSTRY:   retval += "OwnerIndustryStockpile"; break;
     default: retval += "?"; break;
     }
     retval += " low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
@@ -1120,14 +1122,14 @@ bool Condition::EmpireStockpileValue::Match(const UniverseObject* source, const 
     if (target->Owners().size() != 1)
         return false;
     Empire* empire = Empires().Lookup(*target->Owners().begin());
-    if (m_stockpile == ST_FOOD) {
-        double stockpile = empire->FoodResPool().Stockpile();
+    if (m_stockpile == RE_FOOD) {
+        double stockpile = empire->GetFoodResPool().Stockpile();
         return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
-    } else if (m_stockpile == ST_MINERAL) {
-        double stockpile = empire->MineralResPool().Stockpile();
+    } else if (m_stockpile == RE_MINERALS) {
+        double stockpile = empire->GetMineralResPool().Stockpile();
         return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
-    } else if (m_stockpile == ST_TRADE) {
-        double stockpile = empire->TradeResPool().Stockpile();
+    } else if (m_stockpile == RE_TRADE) {
+        double stockpile = empire->GetTradeResPool().Stockpile();
         return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
     }
     return false;

@@ -117,7 +117,7 @@ private:
 class Effect::SetEmpireStockpile : public Effect::EffectBase
 {
 public:
-    SetEmpireStockpile(StockpileType stockpile, const ValueRef::ValueRefBase<double>* value);
+    SetEmpireStockpile(ResourceType stockpile, const ValueRef::ValueRefBase<double>* value);
     virtual ~SetEmpireStockpile();
 
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -125,7 +125,7 @@ public:
     virtual std::string Dump() const;
 
 private:
-    StockpileType                         m_stockpile;
+    ResourceType                          m_stockpile;
     const ValueRef::ValueRefBase<double>* m_value;
 };
 

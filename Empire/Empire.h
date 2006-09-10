@@ -2,25 +2,11 @@
 #ifndef _Empire_h_
 #define _Empire_h_
 
-#ifndef _GG_Clr_h_
 #include <GG/Clr.h>
-#endif
-
-#ifndef _ResourcePool_h_
-#include "ResourcePool.h"
-#endif
-
-#ifndef _SitRepEntry_h_
 #include "../util/SitRepEntry.h"
-#endif
-
-#ifndef _Tech_h_
 #include "../universe/Tech.h"
-#endif
-
-#ifndef _XMLDoc_h_
 #include "../util/XMLDoc.h"
-#endif
+#include "ResourcePool.h"
 
 #include <deque>
 #include <list>
@@ -183,9 +169,13 @@ struct ProductionQueue
 
     /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
-        determines the number of projects in progress, and the total number of PPs spent on the projects
-        in the queue.  \note A precondition of this function that \a PPs must be greater than some
-        epsilon > 0; see the implementation for the actual value used for epsilon. */
+      * determines the number of projects in progress, and the total number of PPs spent on the projects
+      * in the queue.  Does not actually "spend" the PP, but just determines how much should be spent
+      * on each item in the queue.  Later call to empire->CheckProductionProgress() will actually 
+      * spend PP, remove items from queue and create them in the universe.  \note A precondition of
+      * this function that \a PPs must be greater than some epsilon > 0; see the implementation for
+      * the actual value used for epsilon. 
+      */
     void Update(Empire* empire, double PPs, const std::vector<double>& production_status);
 
     // STL container-like interface
@@ -235,17 +225,17 @@ private:
 class Empire 
 {
 public:
-    /** 
+    /**
      * EmpireManagers must be friends so that they can have
      * access to the constructor and keep it hidden from others
      */
     friend class EmpireManager;
-    /** 
+    /**
      * EmpireManagers must be friends so that they can have
      * access to the constructor and keep it hidden from others
      */
     friend class ServerEmpireManager;
-    /** 
+    /**
      * EmpireManagers must be friends so that they can have
      * access to the constructor and keep it hidden from others
      */
@@ -364,20 +354,33 @@ public:
     SitRepItr SitRepBegin() const;
     SitRepItr SitRepEnd() const;
 
-    const MineralResourcePool&    MineralResPool    () const {return m_mineral_resource_pool;}
-    const FoodResourcePool&       FoodResPool       () const {return m_food_resource_pool;}
-    const ResearchResourcePool&   ResearchResPool   () const {return m_research_resource_pool;}
-    const PopulationResourcePool& PopulationResPool () const {return m_population_resource_pool;}
-    const IndustryResourcePool&   IndustryResPool   () const {return m_industry_resource_pool;}
-    const TradeResourcePool&      TradeResPool      () const {return m_trade_resource_pool;}
-
-    /// Returns the number of production points available to the empire (this is the minimum of current industry, and mineral output plus mineral stockpile
+    /// Returns the number of production points available to the empire (this is the minimum of available industry and available minerals)
     double ProductionPoints() const;
+
+    /** Returns amount of food empire will distribute this turn.  Assumes Empire::UpdateFoodDistribution() has
+      * previously been called to determine this number.  
+      * Equivalent to calling GetResearchQueue().TotalRPsSpent() for Research)
+      */
+    double TotalFoodDistributed() const {return m_food_total_distributed;}
+
+    /** Returns amount of trade empire will spend this turn.  Assumes Empire::UpdateTradeSpending() has
+      * previously been called to determine this number.
+      * Equivalent to calling GetResearchQueue().TotalRPsSpent() for Research)
+      */
+    double TotalTradeSpending() const {return m_maintenance_total_cost;}
 
     /** Encodes the dat of this empire as visible to the empire with id \a empire_id (or all data if \a empire_id ==
         ALL_EMPIRES) */
     XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const;
     //@}
+
+    const ResourcePool& GetMineralResPool() const {return m_mineral_resource_pool;}
+    const ResourcePool& GetFoodResPool() const {return m_food_resource_pool;}
+    const ResourcePool& GetResearchResPool() const {return m_research_resource_pool;}
+    const ResourcePool& GetIndustryResPool() const {return m_industry_resource_pool;}
+    const ResourcePool& GetTradeResPool() const {return m_trade_resource_pool;}
+    const PopulationPool& GetPopulationPool() const {return m_population_pool;}    
+
 
 
     /** \name Mutators */ //@{
@@ -444,11 +447,31 @@ public:
     /// Clears all sitrep entries;
     void ClearSitRep();
 
+    /** Checks for production projects that have been completed, and places them at their respective
+      * production sites.  Which projects have been completed is determined by the results of
+      * previously-called Update() on the production queue (which determines how much PP each project
+      * receives, but does not actually spend them).  This function spends the PP, removes complete
+      * items from the queue and creates the results in the universe.  Also updates the empire's 
+      * minerals stockpile to account for any excess not used or any shortfall that was made up by
+      * taking from the stockpile 
+      */
+    void CheckProductionProgress();
+
     /// Checks for tech projects that have been completed, and adds them to the known techs list.
     void CheckResearchProgress();
 
-    /// Checks for production projects that have been completed, and places them at their respective production sites.
-    void CheckProductionProgress();
+    /** Eventually : Will check for social projects that have been completed and/or
+      * process ongoing social projects... (not sure exactly what form "social projects" will take
+      * or how they will work).  Also will update the empire's trade stockpile to account for trade
+      * production and expenditures.
+      * Currently: Deducts cost of maintenance of buildings from empire's trade stockpile
+      */
+    void CheckTradeSocialProgress();
+
+    /** Distributes food to PopCenters and updates food stockpile accordingly.  Also does growth (or 
+      * Pop loss) at PopCenters.
+      */
+    void CheckGrowthFoodProgress();
         
     /// Mutator for empire color
     void SetColor(const GG::Clr& color);
@@ -460,16 +483,53 @@ public:
     void SetPlayerName(const std::string& player_name);
     //@}
 
+    /** Resets production of resources and calculates spending (on each item in queues and 
+      * overall) for each resource by calling UpdateResearchQueue, UpdateProductionQueue,
+      * UpdateTradeSpending, and UpdateFoodDistribution.  Does not actually "spend" resources,
+      * but just determines how much and on what to spend.  Actual spending, removal of items
+      * from queue, processing of finished items and population growth happens in various
+      * Check(Whatever)Progress functions.
+      */
     void UpdateResourcePool();
+
+    /** Calls Update() on empire's research queue, which recalculates the RPs spent on and
+      * number of turns left for each tech in the queue.
+      */
     void UpdateResearchQueue();
+
+    /** Calls Update() on empire's production queue, which recalculates the PPs spent on and
+      * number of turns left for each project in the queue.
+      */
     void UpdateProductionQueue();
 
-    MineralResourcePool&    MineralResPool    () {return m_mineral_resource_pool;}
-    FoodResourcePool&       FoodResPool       () {return m_food_resource_pool;}
-    ResearchResourcePool&   ResearchResPool   () {return m_research_resource_pool;}
-    PopulationResourcePool& PopulationResPool () {return m_population_resource_pool;}
-    IndustryResourcePool&   IndustryResPool   () {return m_industry_resource_pool;}
-    TradeResourcePool&      TradeResPool      () {return m_trade_resource_pool;}
+    /** Eventually: Calls appropriate subsystem Update to calculate trade spent on social projects
+      * and maintenance of buildings.  Later call to CheckTradeSocialProgress() will then have the
+      * correct allocations of trade.
+      * Currently: Sums maintenance costs of all buildings owned by empire, sets m_maintenance_total_cost
+      */
+    void UpdateTradeSpending();
+
+    /** Allocates available food to PopCenters.  Doesn't actually distribute food; just calculates how
+      * how much food each PopCenter gets.  Sets m_food_total_distributed to indicate how much food
+      * the empire will distribute (instead of the Production or Research-like system of having a subsystem
+      * keep track, since there is no separate food distribution subsystem class).  Does not automatically
+      * update population growth estimates, so UpdatePopulationGrowth() may need to be called after calling
+      * this function.
+      */
+    void UpdateFoodDistribution();
+
+    /** Has m_population_pool recalculate all PopCenters' and empire's total expected population growth
+      * Assumes UpdateFoodDistribution() has been called to determine food allocations to each planet (which
+      * are a factor in the growth prediction calculation).
+      */
+    void UpdatePopulationGrowth();
+
+    ResourcePool& GetMineralResPool() {return m_mineral_resource_pool;}
+    ResourcePool& GetFoodResPool() {return m_food_resource_pool;}
+    ResourcePool& GetResearchResPool() {return m_research_resource_pool;}
+    ResourcePool& GetIndustryResPool() {return m_industry_resource_pool;}
+    ResourcePool& GetTradeResPool() {return m_trade_resource_pool;}
+    PopulationPool& GetPopulationPool() {return m_population_pool;}
 
 private:
     /// Empire's unique numeric id
@@ -514,13 +574,27 @@ private:
     /// The Empire's sitrep entries
     std::list<SitRepEntry*> m_sitrep_entries;
 
-    /// The Empire resource pools
-    MineralResourcePool     m_mineral_resource_pool;
-    FoodResourcePool        m_food_resource_pool;
-    ResearchResourcePool    m_research_resource_pool;
-    PopulationResourcePool  m_population_resource_pool;
-    IndustryResourcePool    m_industry_resource_pool;
-    TradeResourcePool       m_trade_resource_pool;
+    /// The Empire resource & population pools
+    ResourcePool m_mineral_resource_pool;
+    ResourcePool m_food_resource_pool;
+    ResourcePool m_research_resource_pool;
+    ResourcePool m_industry_resource_pool;
+    ResourcePool m_trade_resource_pool;
+
+    PopulationPool m_population_pool;
+
+    /** set by UpdateFoodDistribution() to indicate how much food the empire will distribute this turn.  Unlike
+      * the Research and Production subsystems, food distribution only requires a single function and doesn't
+      * have its own queue class.  So, instead of GetFoodQueue().TotalFoodDistributed(), one just calls
+      * Empire::TotalFoodDistributed(), which returns this value.
+      */
+    double m_food_total_distributed;
+
+    /** MAYBE TEMPORARY: Until social projects and/or consequences of unpaid maintenance is implemented.
+      * Total maintenance on buildings owned by this empire.  Set by UpdateTradeSpending(), used
+      * by CheckTradeSocialProgress() to deduct maintenance cost from trade stockpile
+      */
+    double m_maintenance_total_cost;
 
     friend class boost::serialization::access;
     Empire();
@@ -604,7 +678,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_mineral_resource_pool)
             & BOOST_SERIALIZATION_NVP(m_food_resource_pool)
             & BOOST_SERIALIZATION_NVP(m_research_resource_pool)
-            & BOOST_SERIALIZATION_NVP(m_population_resource_pool)
+            & BOOST_SERIALIZATION_NVP(m_population_pool)
             & BOOST_SERIALIZATION_NVP(m_industry_resource_pool)
             & BOOST_SERIALIZATION_NVP(m_trade_resource_pool);
     }

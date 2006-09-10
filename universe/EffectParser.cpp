@@ -27,7 +27,7 @@ namespace {
             member4 max_meter;
         };
 
-        struct SetOwnerStockpileClosure : boost::spirit::closure<SetOwnerStockpileClosure, Effect::EffectBase*, StockpileType, ValueRef::ValueRefBase<double>*>
+        struct SetOwnerStockpileClosure : boost::spirit::closure<SetOwnerStockpileClosure, Effect::EffectBase*, ResourceType, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 stockpile_type;
@@ -122,9 +122,9 @@ namespace {
             [set_meter.this_ = new_<Effect::SetMeter>(set_meter.meter, set_meter.value, set_meter.max_meter)];
 
         set_owner_stockpile =
-            ((str_p("setownerfoodstockpile")[set_owner_stockpile.stockpile_type = val(ST_FOOD)]
-              | str_p("setownermineralstockpile")[set_owner_stockpile.stockpile_type = val(ST_MINERAL)]
-              | str_p("setownertradestockpile")[set_owner_stockpile.stockpile_type = val(ST_TRADE)])
+            ((str_p("setownerfoodstockpile")[set_owner_stockpile.stockpile_type = val(RE_FOOD)]
+              | str_p("setownermineralstockpile")[set_owner_stockpile.stockpile_type = val(RE_MINERALS)]
+              | str_p("setownertradestockpile")[set_owner_stockpile.stockpile_type = val(RE_TRADE)])
              >> value_label >> double_expr_p[set_owner_stockpile.value = arg1])
             [set_owner_stockpile.this_ = new_<Effect::SetEmpireStockpile>(set_owner_stockpile.stockpile_type, set_owner_stockpile.value)];
 

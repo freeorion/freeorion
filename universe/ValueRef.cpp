@@ -343,17 +343,17 @@ namespace ValueRef {
         } else if (m_property_name.back() == "TradeStockpile") {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
-                retval = empire->TradeResPool().Stockpile();
+                retval = empire->GetTradeResPool().Stockpile();
             }
         } else if (m_property_name.back() == "MineralStockpile") {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
-                retval = empire->MineralResPool().Stockpile();
+                retval = empire->GetMineralResPool().Stockpile();
             }
         } else if (m_property_name.back() == "FoodStockpile") {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
-                retval = empire->FoodResPool().Stockpile();
+                retval = empire->GetFoodResPool().Stockpile();
             }
         } else if (m_property_name.back() == "TradeProduction") {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {

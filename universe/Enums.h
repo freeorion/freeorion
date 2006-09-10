@@ -420,25 +420,29 @@ namespace GG {
 GG_ENUM_STREAM_IN(BuildType)
 GG_ENUM_STREAM_OUT(BuildType)
 
-/** The types of empire stockpiles. */
-enum StockpileType {
-    INVALID_STOCKPILE_TYPE = -1,
-    ST_FOOD,         ///< food stockpile
-    ST_MINERAL,      ///< mineral stockpile
-    ST_TRADE,        ///< money stockpile
-    NUM_STOCKPILE_TYPES
+/** The types of resources. */
+enum ResourceType {
+    INVALID_RESOURCE_TYPE = -1,
+    RE_FOOD,
+    RE_MINERALS,
+    RE_INDUSTRY,
+    RE_TRADE,
+    RE_RESEARCH,
+    NUM_RESOURCE_TYPES
 };
 
 namespace GG {
-    GG_ENUM_MAP_BEGIN(StockpileType)
-    GG_ENUM_MAP_INSERT(INVALID_STOCKPILE_TYPE)
-    GG_ENUM_MAP_INSERT(ST_FOOD)
-    GG_ENUM_MAP_INSERT(ST_MINERAL)
-    GG_ENUM_MAP_INSERT(ST_TRADE)
+    GG_ENUM_MAP_BEGIN(ResourceType)
+    GG_ENUM_MAP_INSERT(INVALID_RESOURCE_TYPE)
+    GG_ENUM_MAP_INSERT(RE_FOOD)
+    GG_ENUM_MAP_INSERT(RE_MINERALS)
+    GG_ENUM_MAP_INSERT(RE_INDUSTRY)
+    GG_ENUM_MAP_INSERT(RE_TRADE)
+    GG_ENUM_MAP_INSERT(RE_RESEARCH)
     GG_ENUM_MAP_END
 }
-GG_ENUM_STREAM_IN(StockpileType)
-GG_ENUM_STREAM_OUT(StockpileType)
+GG_ENUM_STREAM_IN(ResourceType)
+GG_ENUM_STREAM_OUT(ResourceType)
 
 /** Returns the equivalent focus type for the given meter; if no such focus exists, returns INVALID_METER_TYPE. */
 MeterType FocusToMeter(FocusType type);

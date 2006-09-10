@@ -310,14 +310,14 @@ private:
     and \a high, inclusive. */
 struct Condition::EmpireStockpileValue : Condition::ConditionBase
 {
-    EmpireStockpileValue(StockpileType stockpile, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high);
+    EmpireStockpileValue(ResourceType stockpile, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high);
     virtual ~EmpireStockpileValue();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
-    StockpileType m_stockpile;
+    ResourceType m_stockpile;
     const ValueRef::ValueRefBase<double>* m_low;
     const ValueRef::ValueRefBase<double>* m_high;
 };

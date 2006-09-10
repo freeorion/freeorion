@@ -92,7 +92,7 @@ namespace {
             member2 probability;
         };
 
-        struct StockpileClosure : boost::spirit::closure<StockpileClosure, Condition::ConditionBase*, StockpileType, ValueRef::ValueRefBase<double>*, ValueRef::ValueRefBase<double>*>
+        struct StockpileClosure : boost::spirit::closure<StockpileClosure, Condition::ConditionBase*, ResourceType, ValueRef::ValueRefBase<double>*, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 stockpile_type;
@@ -200,9 +200,9 @@ namespace {
             [random.this_ = new_<Condition::Chance>(random.probability)];
 
         owner_stockpile =
-            ((str_p("ownerfoodstockpile")[owner_stockpile.stockpile_type = val(ST_FOOD)]
-              | str_p("ownermineralstockpile")[owner_stockpile.stockpile_type = val(ST_MINERAL)]
-              | str_p("ownertradestockpile")[owner_stockpile.stockpile_type = val(ST_TRADE)])
+            ((str_p("ownerfoodstockpile")[owner_stockpile.stockpile_type = val(RE_FOOD)]
+              | str_p("ownermineralstockpile")[owner_stockpile.stockpile_type = val(RE_MINERALS)]
+              | str_p("ownertradestockpile")[owner_stockpile.stockpile_type = val(RE_TRADE)])
              >> low_label >> double_expr_p[owner_stockpile.low = arg1]
              >> high_label >> double_expr_p[owner_stockpile.high = arg1])
             [owner_stockpile.this_ = new_<Condition::EmpireStockpileValue>(owner_stockpile.stockpile_type, owner_stockpile.low, owner_stockpile.high)];

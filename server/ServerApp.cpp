@@ -1795,6 +1795,8 @@ void ServerApp::ProcessTurns()
         System* system = *it;
       
         std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
+        if (flt_vec.empty()) continue;  // skip systems with not fleets, as these can't have combat
+
         for(std::vector<Fleet*>::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it)
         {
             Fleet* flt = *flt_it;
@@ -1846,12 +1848,12 @@ void ServerApp::ProcessTurns()
         SDL_Delay(1500);
 
     // process production and growth phase
-    for (ServerEmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
-        it->second->UpdateResourcePool();
-
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
         m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::EMPIRE_PRODUCTION, -1));
 
+    for (ServerEmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
+        it->second->UpdateResourcePool();   // Reset ResourceCenters and PopCenter for Resource and Population pools
+    
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         it->second->ResetMaxMeters();
         it->second->AdjustMaxMeters();
@@ -1873,11 +1875,13 @@ void ServerApp::ProcessTurns()
         }
     }
 
-    // check now for completed research and production
+    // check for completed research, production or social projects, pay maintenance, distribute food and do population growth
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         Empire* empire = Empires().Lookup(it->first);
         empire->CheckResearchProgress();
         empire->CheckProductionProgress();
+        empire->CheckTradeSocialProgress();
+        empire->CheckGrowthFoodProgress();
     }
 
     // loop and free all orders
@@ -1960,6 +1964,7 @@ void ServerApp::ProcessTurns()
             doc.WriteDoc(ofs);
             ofs.close();
         }
+        
         m_network_core.SendMessage( TurnUpdateMessage( player_it->first, doc ) );
     }
 

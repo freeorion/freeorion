@@ -29,13 +29,14 @@ public:
     void Reset();
     void CenterOnBuild(int queue_idx);
     void SelectSystem(int system);
+    void SelectPlanet(int planet);
     void QueueItemMoved(int row_idx, GG::ListBox::Row* row);
     void Sanitize();
     //@}
 
 private:
     void UpdateQueue();
-    void ResetInfoPanel();
+    void ResetInfoPanel();  ///< Updates production summary at top left of production screen, and signals that the empire's minerals resource pool has changed (propegates to the mapwnd to update indicator)
     void AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location);
     void ChangeBuildQuantitySlot(int queue_idx, int quantity);
     void QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row);

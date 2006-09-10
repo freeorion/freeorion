@@ -286,11 +286,18 @@ void ResearchWnd::ResetInfoPanel()
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ResearchQueue& queue = empire->GetResearchQueue();
-    double RPs = empire->ResearchResPool().Production();
+    double RPs = empire->GetResearchResPool().Production();
     double total_queue_cost = queue.TotalRPsSpent();
     ResearchQueue::const_iterator underfunded_it = queue.UnderfundedProject();
     double RPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->spending;
     m_research_info_panel->Reset(RPs, total_queue_cost, queue.ProjectsInProgress(), RPs_to_underfunded_projects, queue.size());
+    /* Altering research queue may have freed up or required more RP.  Signalling that the
+       ResearchResPool has changed causes the MapWnd to be signalled that that pool has changed,
+       which causes the resource indicator to be updated (which polls the ResearchQueue to
+       determine how many RPs are being spent).  If/when RP are stockpilable, this might matter,
+       so then the following line should be uncommented.*/
+    //empire->GetResearchResPool().ChangedSignal(); 
+
 }
 
 void ResearchWnd::AddTechToQueueSlot(const Tech* tech)

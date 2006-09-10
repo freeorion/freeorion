@@ -610,7 +610,14 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empi
 ////////////////////////////////////////
 Empire::Empire() :
     m_id(-1),
-    m_homeworld_id(-1)
+    m_homeworld_id(-1),
+    m_mineral_resource_pool(RE_MINERALS),
+    m_food_resource_pool(RE_FOOD),
+    m_research_resource_pool(RE_RESEARCH),
+    m_population_pool(),
+    m_industry_resource_pool(RE_INDUSTRY),
+    m_trade_resource_pool(RE_TRADE)
+
 {}
 
 Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id) :
@@ -619,23 +626,23 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_player_name(player_name),
     m_color(color), 
     m_homeworld_id(homeworld_id), 
-    m_mineral_resource_pool(),
-    m_food_resource_pool(),
-    m_research_resource_pool(),
-    m_population_resource_pool(),
-    m_industry_resource_pool(),
-    m_trade_resource_pool()
+    m_mineral_resource_pool(RE_MINERALS),
+    m_food_resource_pool(RE_FOOD),
+    m_research_resource_pool(RE_RESEARCH),
+    m_population_pool(),
+    m_industry_resource_pool(RE_INDUSTRY),
+    m_trade_resource_pool(RE_TRADE)
 {}
 
 Empire::Empire(const XMLElement& elem) :
     m_research_queue(elem.Child("m_research_queue").Child("ResearchQueue")),
     m_production_queue(elem.Child("m_production_queue").Child("ProductionQueue")),
-    m_mineral_resource_pool(elem.Child("m_mineral_resource_pool").Child("MineralResourcePool")),
-    m_food_resource_pool(elem.Child("m_food_resource_pool").Child("FoodResourcePool")),
-    m_research_resource_pool(elem.Child("m_research_resource_pool").Child("ResearchResourcePool")),
-    m_population_resource_pool(elem.Child("m_population_resource_pool").Child("PopulationResourcePool")),
-    m_industry_resource_pool(elem.Child("m_industry_resource_pool").Child("IndustryResourcePool")),
-    m_trade_resource_pool(elem.Child("m_trade_resource_pool").Child("TradeResourcePool"))
+    m_mineral_resource_pool(elem.Child("m_mineral_resource_pool").Child("ResourcePool")),
+    m_food_resource_pool(elem.Child("m_food_resource_pool").Child("ResourcePool")),
+    m_research_resource_pool(elem.Child("m_research_resource_pool").Child("ResourcePool")),
+    m_population_pool(elem.Child("m_population_resource_pool").Child("PopulationPool")),
+    m_industry_resource_pool(elem.Child("m_industry_resource_pool").Child("ResourcePool")),
+    m_trade_resource_pool(elem.Child("m_trade_resource_pool").Child("ResourcePool"))
 {
     if (elem.Tag() != "Empire")
         throw std::invalid_argument("Attempted to construct a Empire from an XMLElement that had a tag other than \"Empire\"");
@@ -677,10 +684,6 @@ Empire::Empire(const XMLElement& elem) :
     for (int i = 0; i < building_types_elem.NumChildren(); ++i) {
         m_building_types.insert(building_types_elem.Child(i).Text());
     }
-
-    /*UpdateResourcePool();
-    m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
-    m_production_queue.Update(this, ProductionPoints(), m_production_status);*/
 }
 
 Empire::~Empire()
@@ -887,8 +890,7 @@ Empire::SitRepItr Empire::SitRepEnd() const
 
 double Empire::ProductionPoints() const
 {
-    return std::min(m_industry_resource_pool.Production(),
-                    m_mineral_resource_pool.Production() + m_mineral_resource_pool.Stockpile());
+    return std::min(m_industry_resource_pool.Available(), m_mineral_resource_pool.Available());
 }
 
 void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
@@ -907,7 +909,7 @@ void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
             m_research_queue.erase(it);
         m_research_queue.insert(m_research_queue.begin() + pos, tech);
     }
-    m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
+    m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
 }
 
 void Empire::RemoveTechFromQueue(const Tech* tech)
@@ -915,7 +917,7 @@ void Empire::RemoveTechFromQueue(const Tech* tech)
     ResearchQueue::iterator it = m_research_queue.find(tech);
     if (it != m_research_queue.end()) {
         m_research_queue.erase(it);
-        m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
+        m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
     }
 }
 
@@ -1149,7 +1151,7 @@ XMLElement Empire::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
         retval.AppendChild(XMLElement("m_food_resource_pool", m_food_resource_pool.XMLEncode()));
         retval.AppendChild(XMLElement("m_research_resource_pool", m_research_resource_pool.XMLEncode()));
         retval.AppendChild(XMLElement("m_industry_resource_pool", m_industry_resource_pool.XMLEncode()));
-        retval.AppendChild(XMLElement("m_population_resource_pool", m_population_resource_pool.XMLEncode()));
+        retval.AppendChild(XMLElement("m_population_resource_pool", m_population_pool.XMLEncode()));
         retval.AppendChild(XMLElement("m_trade_resource_pool", m_trade_resource_pool.XMLEncode()));
     } else {
         // leave these in, but unpopulated or default-populated
@@ -1163,19 +1165,20 @@ XMLElement Empire::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
         retval.AppendChild(XMLElement("m_production_queue", ProductionQueue().XMLEncode()));
         retval.AppendChild(XMLElement("m_production_status"));
         retval.AppendChild(XMLElement("m_building_types"));
-        retval.AppendChild(XMLElement("m_mineral_resource_pool", MineralResourcePool().XMLEncode()));
-        retval.AppendChild(XMLElement("m_food_resource_pool", FoodResourcePool().XMLEncode()));
-        retval.AppendChild(XMLElement("m_research_resource_pool", ResearchResourcePool().XMLEncode()));
-        retval.AppendChild(XMLElement("m_industry_resource_pool", IndustryResourcePool().XMLEncode()));
-        retval.AppendChild(XMLElement("m_population_resource_pool", PopulationResourcePool().XMLEncode()));
-        retval.AppendChild(XMLElement("m_trade_resource_pool", TradeResourcePool().XMLEncode()));
+        retval.AppendChild(XMLElement("m_mineral_resource_pool", ResourcePool(RE_MINERALS).XMLEncode()));
+        retval.AppendChild(XMLElement("m_food_resource_pool", ResourcePool(RE_FOOD).XMLEncode()));
+        retval.AppendChild(XMLElement("m_research_resource_pool", ResourcePool(RE_RESEARCH).XMLEncode()));
+        retval.AppendChild(XMLElement("m_industry_resource_pool", ResourcePool(RE_INDUSTRY).XMLEncode()));
+        retval.AppendChild(XMLElement("m_population_resource_pool", PopulationPool().XMLEncode()));
+        retval.AppendChild(XMLElement("m_trade_resource_pool", ResourcePool(RE_TRADE).XMLEncode()));
     }
     return retval;
 }
 
 void Empire::CheckResearchProgress()
 {
-    m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
+    // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
+    // m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
     std::vector<const Tech*> to_erase;
     for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ++it) {
         const Tech* tech = it->tech;
@@ -1199,11 +1202,14 @@ void Empire::CheckResearchProgress()
         if (temp_it != m_research_queue.end())
             m_research_queue.erase(temp_it);
     }
+    // can uncomment following line when / if research stockpiling is enabled...
+    // m_research_resource_pool.SetStockpile(m_industry_resource_pool.Available() - m_research_queue.TotalRPsSpent());
 }
 
 void Empire::CheckProductionProgress()
 {
-    m_production_queue.Update(this, ProductionPoints(), m_production_status);
+    // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
+    // m_production_queue.Update(this, ProductionPoints(), m_production_status);
     std::vector<int> to_erase;
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
         double item_cost;
@@ -1285,7 +1291,22 @@ void Empire::CheckProductionProgress()
         m_production_queue.erase(*it);
     }
 
-    m_mineral_resource_pool.SetStockpile(m_mineral_resource_pool.Stockpile() + (m_mineral_resource_pool.Production() - m_production_queue.TotalPPsSpent()));
+    m_mineral_resource_pool.SetStockpile(m_mineral_resource_pool.Available() - m_production_queue.TotalPPsSpent());
+    // can uncomment following line when / if industry stockpiling is allowed...
+    // m_industry_resource_pool.SetStockpile(m_industry_resource_pool.Available() - m_production_queue.TotalPPsSpent());
+}
+
+void Empire::CheckTradeSocialProgress()
+{
+    m_trade_resource_pool.SetStockpile(m_trade_resource_pool.Available() - m_maintenance_total_cost);
+}
+
+/** Distributes food to PopCenters and updates food stockpile accordingly.  Also does growth (or 
+  * Pop loss) at PopCenters.
+  */
+void Empire::CheckGrowthFoodProgress()
+{
+
 }
 
 void Empire::SetColor(const GG::Clr& color)
@@ -1305,23 +1326,168 @@ void Empire::SetPlayerName(const std::string& player_name)
 
 void Empire::UpdateResourcePool()
 {
-    m_mineral_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
-    m_food_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
-    m_research_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
-    m_industry_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
-    m_population_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
-    m_industry_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
-    m_trade_resource_pool.SetPlanets(GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id)));
+    Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(m_id));
+    std::vector<ResourceCenter*> res_vec;
+    std::vector<PopCenter*> pop_vec;
+    // determine if each object owned by this empire is a ResourceCenter and/or PopCenter (could be one, neither or both)
+    for (unsigned int i = 0; i < object_vec.size(); ++i)
+    {
+        if (ResourceCenter* rc = dynamic_cast<ResourceCenter*>(object_vec[i]))
+	        res_vec.push_back(rc);
+	    if (PopCenter* pc = dynamic_cast<PopCenter*>(object_vec[i]))
+	        pop_vec.push_back(pc);
+    }
+
+    m_mineral_resource_pool.SetResourceCenters(res_vec);
+    m_food_resource_pool.SetResourceCenters(res_vec);
+    m_research_resource_pool.SetResourceCenters(res_vec);
+    m_industry_resource_pool.SetResourceCenters(res_vec);
+    m_trade_resource_pool.SetResourceCenters(res_vec);
+
+    m_population_pool.SetPopCenters(pop_vec);
+
     UpdateResearchQueue();
     UpdateProductionQueue();
+    UpdateTradeSpending();
+    UpdateFoodDistribution();
+    UpdatePopulationGrowth();
 }
 
 void Empire::UpdateResearchQueue()
 {
-    m_research_queue.Update(m_research_resource_pool.Production(), m_research_status);
+    m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
 }
 
 void Empire::UpdateProductionQueue()
 {
     m_production_queue.Update(this, ProductionPoints(), m_production_status);
+}
+
+void Empire::UpdateTradeSpending()
+{
+    // TODO: Replace with call to some other subsystem, similar to the Update...Queue functions
+    m_maintenance_total_cost = 0.0;
+
+    Universe::ObjectVec buildings = GetUniverse().FindObjects(OwnedVisitor<Building>(m_id));
+    for (Universe::ObjectVec::const_iterator it = buildings.begin(); it != buildings.end(); ++it)
+    {
+        Building *building = universe_object_cast<Building*>(*it);
+        if (!building) continue;
+        if (building->Operating())
+            m_maintenance_total_cost += GetBuildingType(building->BuildingTypeName())->MaintenanceCost();
+    }
+}
+
+void Empire::UpdateFoodDistribution()
+{
+    double available_food = GetFoodResPool().Available();
+    m_food_total_distributed = 0.0;
+    
+    std::vector<PopCenter*> pop_centers = GetPopulationPool().PopCenters(); //GetUniverse().FindObjects(OwnedVisitor<PopCenter>(m_id));
+    std::vector<PopCenter*>::iterator pop_it;
+    std::vector<ResourceCenter*> resource_centers = GetFoodResPool().ResourceCenters(); //GetUniverse().FindObjects(OwnedVisitor<ResourceCenter>(m_id));
+    std::vector<ResourceCenter*>::iterator res_it;
+
+    // compile map of food production of ResourceCenters, indexed by center's id
+    std::map<int, double> fp_map;
+    std::map<int, double>::iterator fp_map_it;    
+    for (res_it = resource_centers.begin(); res_it != resource_centers.end(); ++res_it)
+    {
+        ResourceCenter *center = *res_it;
+        UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
+        if (!obj) continue; // apparently wasn't a valid object... might want to throw an error in this situation instead...
+        fp_map[obj->ID()] = center->FarmingPoints();
+    }
+
+    // first pass: give food to PopCenters that produce food, limited by their food need and their food production
+    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
+    {
+        PopCenter *center = *pop_it;
+        double need = center->PopPoints();  // basic need is current population - prevents starvation
+
+        UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
+        if (!obj)
+        {
+            // apparently wasn't a valid object... might want to throw an error in this situation instead...
+            center->SetAvailableFood(0.0);
+            continue; 
+        }
+        
+        // determine if, and if so how much, food this center produces locally
+        double food_prod = 0.0;
+        fp_map_it = fp_map.find(obj->ID());
+        if (fp_map_it != fp_map.end())
+            food_prod = fp_map_it->second;
+
+        // allocate food to this PopCenter, deduct from pool, add to total food distribution tally
+        double allocation = std::min(available_food, std::min(need, food_prod));
+        center->SetAvailableFood(allocation);
+        m_food_total_distributed += allocation;
+        available_food -= allocation;
+    }
+
+    // second pass: give food to PopCenters limited by their food need only: prevent starvation if possible
+    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
+    {
+        PopCenter *center = *pop_it;
+        double need = center->PopPoints();
+        double has = center->AvailableFood();
+        double addition = std::min(need - has, available_food);
+
+        center->SetAvailableFood(center->AvailableFood() + addition);
+        available_food -= addition;
+        m_food_total_distributed += addition;
+    }
+
+    /* third pass: give food to PopCenters limited by their twice their basic food need (the most a planet
+       can consume on one turn) or their local production if it is less than twice the basic need, but more
+       than they already have.  (Don't take any food away if production is less than already allocated.) */
+    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
+    {
+        PopCenter *center = *pop_it;
+        double basic_need = center->PopPoints();
+        double full_need = 2*basic_need;
+        double has = center->AvailableFood();
+
+        UniverseObject *obj = dynamic_cast<UniverseObject*>(center);
+
+        double food_prod = 0.0;
+        fp_map_it = fp_map.find(obj->ID());
+        if (fp_map_it != fp_map.end())
+            food_prod = fp_map_it->second;
+
+        double addition = 0.0;
+        if (food_prod > has)
+            addition = std::min(available_food, std::min(full_need, food_prod - has));
+
+        center->SetAvailableFood(has + addition);
+        available_food -= addition;
+        m_food_total_distributed += addition;
+    }
+
+    // fourth pass: give food to PopCenters limited by twice their food need only: allow full growth rate    
+    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
+    {
+        PopCenter *center = *pop_it;
+        double basic_need = center->PopPoints();
+        double full_need = 2*basic_need;
+        double has = center->AvailableFood();
+        double addition = std::min(full_need - has, available_food);
+
+        center->SetAvailableFood(has + addition);
+        available_food -= addition;
+        m_food_total_distributed += addition;
+    }
+
+    // note that after changing food distribution, population growth predictions may need to be redone
+    // by calling UpdatePopulationGrowth()
+}
+
+/** Has m_population_pool recalculate all PopCenters' and empire's total expected population growth
+  * Assumes UpdateFoodDistribution() has been called to determine food allocations to each planet (which
+  * are a factor in the growth prediction calculation).
+  */
+void Empire::UpdatePopulationGrowth()
+{
+    m_population_pool.PopCentersChanged();
 }
