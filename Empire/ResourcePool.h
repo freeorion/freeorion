@@ -45,7 +45,7 @@ public:
     void SetMaxStockpile(double d); ///< sets maximum allowed stockpile of resource
     //@}
 
-    void ResourceCentersChanged();  ///< recalculates total resource production
+    void Update();  ///< recalculates total resource production
 
 private:
     std::vector<ResourceCenter*> m_resource_centers;        ///< list of ResourceCenters: produce resources
@@ -95,7 +95,7 @@ public:
     void SetPopCenters(const std::vector<PopCenter*>& pop_center_vec);  ///< sets the PopCenter vector 
     //@}
 
-    void PopCentersChanged();  ///< recalculates total population and growth
+    void Update();  ///< recalculates total population and growth
 
 private:
     std::vector<PopCenter*> m_pop_centers;   ///< list of PopCenters that contribute to empire total population pool

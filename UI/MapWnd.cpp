@@ -683,18 +683,12 @@ void MapWnd::InitTurn(int turn_number)
         CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
 
     GG::Connect(empire->GetFoodResPool().ChangedSignal, &MapWnd::FoodResourcePoolChanged, this, 0);
-    FoodResourcePoolChanged();
     GG::Connect(empire->GetMineralResPool().ChangedSignal, &MapWnd::MineralResourcePoolChanged, this, 0);
-    MineralResourcePoolChanged();
     GG::Connect(empire->GetTradeResPool().ChangedSignal, &MapWnd::TradeResourcePoolChanged, this, 0);
-    TradeResourcePoolChanged();
     GG::Connect(empire->GetResearchResPool().ChangedSignal, &MapWnd::ResearchResourcePoolChanged, this, 0);
-    ResearchResourcePoolChanged();
     GG::Connect(empire->GetIndustryResPool().ChangedSignal, &MapWnd::IndustryResourcePoolChanged, this, 0);
-    IndustryResourcePoolChanged();
 
     GG::Connect(empire->GetPopulationPool().ChangedSignal, &MapWnd::PopulationPoolChanged, this, 1);
-    PopulationPoolChanged();
 
     empire->UpdateResourcePool();
 
@@ -1457,8 +1451,6 @@ void MapWnd::FoodResourcePoolChanged()
     m_food->SetValue(empire->GetFoodResPool().Stockpile());
 
     double production = empire->GetFoodResPool().Production();
-
-    empire->UpdateFoodDistribution();
     double spent = empire->TotalFoodDistributed();
     
     m_food->SetValueSecond(production - spent);
@@ -1483,8 +1475,6 @@ void MapWnd::TradeResourcePoolChanged()
     m_trade->SetValue(empire->GetTradeResPool().Stockpile());
 
     double production = empire->GetTradeResPool().Production();
-
-    empire->UpdateTradeSpending();
     double spent = empire->TotalTradeSpending();
 
     m_trade->SetValueSecond(production - spent);

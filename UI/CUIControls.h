@@ -3,45 +3,16 @@
 #ifndef _CUIControls_h_
 #define _CUIControls_h_
 
-#ifndef _ClientUI_h_
 #include "ClientUI.h"
-#endif
-
-#ifndef _GG_Button_h_
 #include <GG/Button.h>
-#endif
-
-#ifndef _CUIDrawUtil_h_
 #include "CUIDrawUtil.h"
-#endif
-
-#ifndef _GG_Listbox_h_
 #include <GG/DropDownList.h>
-#endif
-
-#ifndef _GG_Edit_h_
 #include <GG/Edit.h>
-#endif
-
-#ifndef _GG_FileDlg_h_
 #include <GG/dialogs/FileDlg.h>
-#endif
-
-#ifndef _GG_Menu_h_
 #include <GG/Menu.h>
-#endif
-
-#ifndef _GG_MultiEdit_h_
 #include <GG/MultiEdit.h>
-#endif
-
-#ifndef _GG_Scroll_h_
 #include <GG/Scroll.h>
-#endif
-
-#ifndef _GG_Slider_h_
 #include <GG/Slider.h>
-#endif
 
 namespace GG {
     class StaticGraphic;

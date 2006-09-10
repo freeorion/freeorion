@@ -17,10 +17,12 @@ ResourcePool::ResourcePool(ResourceType type) :
     m_type(type)
 {}
 
-ResourcePool::ResourcePool(const XMLElement& elem)
+ResourcePool::ResourcePool(const XMLElement& elem) :
+    m_stockpile(0.0),
+    m_max_stockpile(200.0), // change to 0.0 later when effects can alter the max stockpile
+    m_production(0.0),
+    m_type(INVALID_RESOURCE_TYPE)
 {
-    m_max_stockpile = 200.0;
-    m_production = 0.0;
     if (elem.Tag() != "ResourcePool")
         throw std::invalid_argument("Attempted to construct a ResourcePool from an XMLElement that had a tag other than \"ResourcePool\"");
     m_stockpile = boost::lexical_cast<double>(elem.Child("m_stockpile").Text());
@@ -78,10 +80,10 @@ double ResourcePool::Available() const
 void ResourcePool::SetResourceCenters(const std::vector<ResourceCenter*>& resource_center_vec)
 {
     m_resource_centers = resource_center_vec;
-    ResourceCentersChanged();
+    Update();
 }
 
-void ResourcePool::ResourceCentersChanged()
+void ResourcePool::Update()
 {
     m_production = 0.0;
 
@@ -125,12 +127,14 @@ namespace {
 }
 
 PopulationPool::PopulationPool() :
-    m_population(0.0)
+    m_population(0.0),
+    m_growth(0.0)
 {}
 
-PopulationPool::PopulationPool(const XMLElement& elem)
+PopulationPool::PopulationPool(const XMLElement& elem) :
+    m_population(0.0),
+    m_growth(0.0)
 {
-    PopulationPool();
     if (elem.Tag() != "PopulationPool")
         throw std::invalid_argument("Attempted to construct a PopulationPool from an XMLElement that had a tag other than \"PopulationPool\"");
 }
@@ -153,6 +157,7 @@ double PopulationPool::Population() const
 
 double PopulationPool::Growth() const
 {
+    Logger().debugStream() << "Population::Growth(): returning: " << m_growth;
     return m_growth;
 }
 
@@ -160,10 +165,10 @@ void PopulationPool::SetPopCenters(const std::vector<PopCenter*>& pop_center_vec
 {
     m_pop_centers = pop_center_vec;
     std::sort(m_pop_centers.begin(), m_pop_centers.end(), &PopCenterLess);  // this ordering ensures higher population PopCenters get first priority for food distribution
-    PopCentersChanged();
+    Update();
 }
 
-void PopulationPool::PopCentersChanged()
+void PopulationPool::Update()
 {
     m_population = 0.0;
     // sum population from all PopCenters in this pool

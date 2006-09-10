@@ -806,7 +806,6 @@ StatisticIconDualValue::StatisticIconDualValue(int x, int y, int w, int h, const
 
 void StatisticIconDualValue::UpdateTextControl()
 {
-    Logger().debugStream() << "StatisticIconDualValue::UpdateTextControl()";
     std::string value        = (ShowsSign      () && 0.0 <= Value      () ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(Value      ()));
     std::string value_second = (ShowsSignSecond() && 0.0 <= ValueSecond() ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(ValueSecond()));
 
@@ -849,14 +848,12 @@ void StatisticIconDualValue::UpdateTextControl()
 
 void StatisticIconDualValue::SetValue(double value)
 {
-    Logger().debugStream() << "StatisticIconDualValue::SetValue: " << value; 
     m_value = value;
     UpdateTextControl();
 }
 
 void StatisticIconDualValue::SetValueSecond(double value)
 {
-    Logger().debugStream() << "StatisticIconDualValue::SetValueSecond: " << value; 
     m_value_second = value;
     UpdateTextControl();
 }

@@ -51,7 +51,8 @@ namespace {
     }
     
     // sets the .spending, value for each Element in the queue.  Only sets nonzero funding to
-    // an Element if its ProductionItem is buildable this turn
+    // an Element if its ProductionItem is buildable this turn.  Also determines total number
+    // of spent PP (returning by reference in total_PPs_spent)
     void SetProdQueueElementSpending(Empire* empire, double PPs, const std::vector<double>& production_status, ProductionQueue::QueueType& queue, double& total_PPs_spent, int& projects_in_progress)
     {
         assert(production_status.size() == queue.size());
@@ -199,10 +200,10 @@ XMLElement ResearchQueue::XMLEncode() const
 
 void ResearchQueue::Update(double RPs, const std::map<std::string, double>& research_status)
 {
-    if (m_queue.empty()) return;    // nothing to do...
-    const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
-
     SetTechQueueElementSpending(RPs, research_status, m_queue, m_total_RPs_spent, m_projects_in_progress);
+
+    if (m_queue.empty()) return;    // nothing more to do...
+    const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
 
     if (EPSILON < RPs) {
         // simulate future turns in order to determine when the techs in the queue will be finished
@@ -460,11 +461,11 @@ XMLElement ProductionQueue::XMLEncode() const
 
 void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<double>& production_status)
 {
-    if (m_queue.empty()) return;    // nothing to do...
-    const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
-    
     SetProdQueueElementSpending(empire, PPs, production_status, m_queue, m_total_PPs_spent, m_projects_in_progress);
 
+    if (m_queue.empty()) return;   // nothing more to do...
+    const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
+    
     if (EPSILON < PPs) {
         //Logger().debugStream() << "ProductionQueue::Update: Simulating future turns of production queue";
         // simulate future turns in order to determine when the builditems in the queue will be finished
@@ -1355,16 +1356,21 @@ void Empire::UpdateResourcePool()
 
 void Empire::UpdateResearchQueue()
 {
+    m_research_resource_pool.Update();
     m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
 }
 
 void Empire::UpdateProductionQueue()
 {
+    m_mineral_resource_pool.Update();
+    m_industry_resource_pool.Update();
     m_production_queue.Update(this, ProductionPoints(), m_production_status);
 }
 
 void Empire::UpdateTradeSpending()
 {
+    m_trade_resource_pool.Update();
+
     // TODO: Replace with call to some other subsystem, similar to the Update...Queue functions
     m_maintenance_total_cost = 0.0;
 
@@ -1380,6 +1386,8 @@ void Empire::UpdateTradeSpending()
 
 void Empire::UpdateFoodDistribution()
 {
+    m_food_resource_pool.Update();
+
     double available_food = GetFoodResPool().Available();
     m_food_total_distributed = 0.0;
     
@@ -1478,9 +1486,9 @@ void Empire::UpdateFoodDistribution()
         available_food -= addition;
         m_food_total_distributed += addition;
     }
-
-    // note that after changing food distribution, population growth predictions may need to be redone
-    // by calling UpdatePopulationGrowth()
+    
+    // after changing food distribution, population growth predictions may need to be redone
+    // by calling UpdatePopulationGrowth()    
 }
 
 /** Has m_population_pool recalculate all PopCenters' and empire's total expected population growth
@@ -1489,5 +1497,5 @@ void Empire::UpdateFoodDistribution()
   */
 void Empire::UpdatePopulationGrowth()
 {
-    m_population_pool.PopCentersChanged();
+    m_population_pool.Update();
 }

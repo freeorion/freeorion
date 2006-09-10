@@ -107,7 +107,7 @@ protected:
     virtual bool   EventFilter(GG::Wnd* w, const GG::Wnd::Event& event);
 
 private:
-    void FoodResourcePoolChanged();
+    void FoodResourcePoolChanged();         ///< called after resource pool has changed, gets (new) stockpile and expected change and updates empire resource indicators
     void MineralResourcePoolChanged();
     void TradeResourcePoolChanged();
     void ResearchResourcePoolChanged();

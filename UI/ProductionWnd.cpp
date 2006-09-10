@@ -435,7 +435,7 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity)
 void ProductionWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
 {
     HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), row_idx));
-    UpdateQueue();
+    UpdateQueue();      ///< rebuild on-screen queue
     ResetInfoPanel();
     if (row_idx == m_build_designator_wnd->QueueIndexShown()) {
         m_build_designator_wnd->CenterOnBuild(-1);
