@@ -806,20 +806,26 @@ StatisticIconDualValue::StatisticIconDualValue(int x, int y, int w, int h, const
 
 void StatisticIconDualValue::UpdateTextControl()
 {
+    Logger().debugStream() << "StatisticIconDualValue::UpdateTextControl()";
     std::string value        = (ShowsSign      () && 0.0 <= Value      () ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(Value      ()));
     std::string value_second = (ShowsSignSecond() && 0.0 <= ValueSecond() ? "+" : "") + boost::lexical_cast<std::string>(static_cast<int>(ValueSecond()));
+
+    double val_temp = Value();
+    if (val_temp > 99999) val_temp = 99999;
+    double val_sec_temp = ValueSecond();
+    if (val_sec_temp > 99999) val_sec_temp = 99999;
 
     char buf[128];
 
     if (DecimalsShown()) 
     {
-        sprintf(buf, (ShowsSign() ? "%+.*f" : "%.*f"), DecimalsShown(), Value());
+        sprintf(buf, (ShowsSign() ? "%+.*f" : "%.*f"), DecimalsShown(), val_temp);
         value = buf;
     }
 
     if (DecimalsShownSecond()) 
     {
-        sprintf(buf, (ShowsSignSecond() ? "%+.*f" : "%.*f"), DecimalsShownSecond(), ValueSecond());
+        sprintf(buf, (ShowsSignSecond() ? "%+.*f" : "%.*f"), DecimalsShownSecond(), val_sec_temp);
         value_second = buf;
     }
 
@@ -843,14 +849,16 @@ void StatisticIconDualValue::UpdateTextControl()
 
 void StatisticIconDualValue::SetValue(double value)
 {
-  m_value = value;
-  UpdateTextControl();
+    Logger().debugStream() << "StatisticIconDualValue::SetValue: " << value; 
+    m_value = value;
+    UpdateTextControl();
 }
 
 void StatisticIconDualValue::SetValueSecond(double value)
 {
-  m_value_second = value;
-  UpdateTextControl();
+    Logger().debugStream() << "StatisticIconDualValue::SetValueSecond: " << value; 
+    m_value_second = value;
+    UpdateTextControl();
 }
 
 ///////////////////////////////////////
