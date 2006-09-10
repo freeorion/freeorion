@@ -44,7 +44,6 @@ common_sources = [
     'util/Process.cpp',
     'util/Random.cpp',
     'util/SitRepEntry.cpp',
-    'util/Serialize.cpp',
     'util/VarText.cpp',
     'util/Version.cpp',
     'util/binreloc.c',
