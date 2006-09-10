@@ -1481,7 +1481,7 @@ Tech
     researchturns = 5
     prerequisites = []
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Market_Economics.png"
 
 Tech
     name = "ECO_PLANNED_ECON"
@@ -1492,7 +1492,7 @@ Tech
     researchturns = 1
     prerequisites = []
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Planned_Economics.png"
 
 Tech
     name = "ECO_EXTERN_INTEG"
@@ -1561,7 +1561,7 @@ Tech
         "ECO_INTSTEL_TRADE"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Galactic_Monetary_Policy.png"
 
 Tech
     name = "ECO_ECON_FLUIDITY"
