@@ -20,7 +20,7 @@ struct ShipDesign
     int         empire;      ///< the empire that designed this ship
     std::string name;        ///< the name of the design
     std::string description; ///< short description of the design, will maybe last after v.2
-    double      cost;        ///< the cost of the design, in PP
+    double      cost;        ///< the cost per turn of the design, in PP
     double      speed;       ///< the number of map-units the ship can move in one turn
     bool        colonize;    ///< whether or not the ship is capable of creating a new colony
 

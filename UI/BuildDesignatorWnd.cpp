@@ -477,6 +477,23 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
         selected_row_data_type = m_buildable_items->GetRow(*m_buildable_items->Selections().begin()).DragDropDataType();
     }
 
+    const int ROW_HEIGHT = 22;          // should change to be font point size...
+    const int NAME_COL_WIDTH = 200;
+    const int COST_COL_WIDTH = 30;
+    const int TIME_COL_WIDTH = 20;
+    const int DESC_COL_WIDTH = m_buildable_items->Width() - (NAME_COL_WIDTH + COST_COL_WIDTH + TIME_COL_WIDTH);
+
+    m_buildable_items->SetNumCols(4);
+    m_buildable_items->LockColWidths();
+    m_buildable_items->SetColWidth(0, NAME_COL_WIDTH);
+    m_buildable_items->SetColWidth(1, COST_COL_WIDTH);
+    m_buildable_items->SetColWidth(2, TIME_COL_WIDTH);
+    m_buildable_items->SetColWidth(3, DESC_COL_WIDTH);
+    m_buildable_items->SetColAlignment(0, GG::ALIGN_LEFT);
+    m_buildable_items->SetColAlignment(0, GG::ALIGN_LEFT);
+    m_buildable_items->SetColAlignment(0, GG::ALIGN_LEFT);
+    m_buildable_items->SetColAlignment(0, GG::ALIGN_LEFT);
+
     m_current_build_type = build_type;
     m_buildable_items->Clear();
     m_build_types.clear();
@@ -490,7 +507,23 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
         for (Empire::BuildingTypeItr it = empire->BuildingTypeBegin(); it != end_it; ++it, ++i) {
             GG::ListBox::Row* row = new GG::ListBox::Row();
             row->SetDragDropDataType(*it);
+
+            //const BuildingType* type = GetBuildingType(*it);
+
+            // building name
             row->push_back(UserString(*it), default_font, ClientUI::TEXT_COLOR);
+
+            // cost / turn, and minimum production turns
+            const std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_BUILDING, *it);
+            std::string cost_text = boost::lexical_cast<std::string>(cost_time.first);
+            row->push_back(cost_text, default_font, ClientUI::TEXT_COLOR);
+            std::string time_text = boost::lexical_cast<std::string>(cost_time.second);
+            row->push_back(time_text, default_font, ClientUI::TEXT_COLOR);
+
+            // brief description
+            std::string desc_text = "DESCRIPTIVE TEXT";
+            row->push_back(desc_text, default_font, ClientUI::TEXT_COLOR);  
+
             m_buildable_items->Insert(row);
             m_build_types[row] = BT_BUILDING;
             if (row->DragDropDataType() == selected_row_data_type)
@@ -502,7 +535,23 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
         for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != end_it; ++it, ++i) {
             GG::ListBox::Row* row = new GG::ListBox::Row();
             row->SetDragDropDataType(it->first);
+
+            //const ShipDesign* type = GetShipDesign(empire->EmpireID(), it->first);
+
+            // ship design name
             row->push_back(it->first, default_font, ClientUI::TEXT_COLOR);
+
+            // cost / turn, and minimum production turns
+            const std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_SHIP, it->first);
+            std::string cost_text = boost::lexical_cast<std::string>(cost_time.first);
+            row->push_back(cost_text, default_font, ClientUI::TEXT_COLOR);
+            std::string time_text = boost::lexical_cast<std::string>(cost_time.second);
+            row->push_back(time_text, default_font, ClientUI::TEXT_COLOR);
+
+            // brief description            
+            std::string desc_text = "DESCRIPTIVE TEXT";
+            row->push_back(desc_text, default_font, ClientUI::TEXT_COLOR);  
+
             m_buildable_items->Insert(row);
             m_build_types[row] = BT_SHIP;
             if (row->DragDropDataType() == selected_row_data_type)
@@ -512,7 +561,21 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
     if (build_type == BT_ORBITAL || build_type == NUM_BUILD_TYPES) {
         GG::ListBox::Row* row = new GG::ListBox::Row();
         row->SetDragDropDataType("DEFENSE_BASE");
+
+        // Defense Base "name"
         row->push_back(UserString(row->DragDropDataType()), default_font, ClientUI::TEXT_COLOR);
+
+        // cost / turn, and minimum production turns
+        const std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_ORBITAL, UserString(row->DragDropDataType()));
+        std::string cost_text = boost::lexical_cast<std::string>(cost_time.first);
+        row->push_back(cost_text, default_font, ClientUI::TEXT_COLOR);
+        std::string time_text = boost::lexical_cast<std::string>(cost_time.second);
+        row->push_back(time_text, default_font, ClientUI::TEXT_COLOR);
+
+        // brief description            
+        std::string desc_text = "DESCRIPTIVE TEXT";
+        row->push_back(desc_text, default_font, ClientUI::TEXT_COLOR);  
+
         m_buildable_items->Insert(row);
         m_build_types[row] = BT_ORBITAL;
         if (row->DragDropDataType() == selected_row_data_type)
