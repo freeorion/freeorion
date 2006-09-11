@@ -24,8 +24,8 @@ bool ClientEmpireManager::HandleEmpireElementUpdate(const XMLElement& elem)
     for (int i = 0; i < elem.NumChildren(); ++i) {
         Empire *decoded_empire = new Empire(elem.Child(i).Child(0));
         InsertEmpire(decoded_empire);
-        decoded_empire->UpdateResourcePool();
-        decoded_empire->UpdateResearchQueue();
+        //decoded_empire->UpdateResourcePool();
+        //decoded_empire->UpdateResearchQueue();
     }
 
     return true;

@@ -37,7 +37,7 @@ public:
     /** \name Mutators */ //@{
     XMLElement XMLEncode() const;
 
-    mutable ChangedSignalType ChangedSignal;    ///< the changed signal object for this ResourcePool
+    mutable ChangedSignalType ChangedSignal;    ///< emitted after updating production, or called externally to indicate that stockpile and change need to be refreshed
 
     void SetResourceCenters(const std::vector<ResourceCenter*>& resource_center_vec);///< sets the ResourceCenter vector 
 
@@ -49,8 +49,6 @@ public:
 
 private:
     std::vector<ResourceCenter*> m_resource_centers;        ///< list of ResourceCenters: produce resources
-
-    friend class ResourceCenterChangedFunctor;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -89,8 +87,8 @@ public:
     
     /** \name Mutators */ //@{
     XMLElement XMLEncode() const;
-    
-    mutable ChangedSignalType ChangedSignal;    ///< the changed signal object for this PopulationPool
+
+    mutable ChangedSignalType ChangedSignal;    ///< emitted after updating population and growth numbers
     
     void SetPopCenters(const std::vector<PopCenter*>& pop_center_vec);  ///< sets the PopCenter vector 
     //@}
@@ -99,8 +97,6 @@ public:
 
 private:
     std::vector<PopCenter*> m_pop_centers;   ///< list of PopCenters that contribute to empire total population pool
-
-    friend class PopCenterChangedFunctor;
 
     friend class boost::serialization::access;
     template <class Archive>

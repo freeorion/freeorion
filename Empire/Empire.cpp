@@ -1302,12 +1302,11 @@ void Empire::CheckTradeSocialProgress()
     m_trade_resource_pool.SetStockpile(m_trade_resource_pool.Available() - m_maintenance_total_cost);
 }
 
-/** Distributes food to PopCenters and updates food stockpile accordingly.  Also does growth (or 
-  * Pop loss) at PopCenters.
+/** Updates food stockpile.  Growth actually occurs in PopGrowthProductionResearchPhase() of objects
   */
 void Empire::CheckGrowthFoodProgress()
 {
-
+    m_food_resource_pool.SetStockpile(m_food_resource_pool.Available() - m_food_total_distributed);
 }
 
 void Empire::SetColor(const GG::Clr& color)
@@ -1358,6 +1357,7 @@ void Empire::UpdateResearchQueue()
 {
     m_research_resource_pool.Update();
     m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
+    m_research_resource_pool.ChangedSignal();
 }
 
 void Empire::UpdateProductionQueue()
@@ -1365,6 +1365,8 @@ void Empire::UpdateProductionQueue()
     m_mineral_resource_pool.Update();
     m_industry_resource_pool.Update();
     m_production_queue.Update(this, ProductionPoints(), m_production_status);
+    m_mineral_resource_pool.ChangedSignal();
+    m_industry_resource_pool.ChangedSignal();
 }
 
 void Empire::UpdateTradeSpending()
@@ -1382,19 +1384,26 @@ void Empire::UpdateTradeSpending()
         if (building->Operating())
             m_maintenance_total_cost += GetBuildingType(building->BuildingTypeName())->MaintenanceCost();
     }
+    m_trade_resource_pool.ChangedSignal();
 }
 
 void Empire::UpdateFoodDistribution()
 {
     m_food_resource_pool.Update();
 
+    Logger().debugStream() << "Empire::UpdateFoodDistribution for empire " << m_id;
+
     double available_food = GetFoodResPool().Available();
     m_food_total_distributed = 0.0;
+
+    Logger().debugStream() << "Empire::UpdateFoodDistribution: total available_food = " << available_food;
     
     std::vector<PopCenter*> pop_centers = GetPopulationPool().PopCenters(); //GetUniverse().FindObjects(OwnedVisitor<PopCenter>(m_id));
     std::vector<PopCenter*>::iterator pop_it;
     std::vector<ResourceCenter*> resource_centers = GetFoodResPool().ResourceCenters(); //GetUniverse().FindObjects(OwnedVisitor<ResourceCenter>(m_id));
     std::vector<ResourceCenter*>::iterator res_it;
+
+    Logger().debugStream() << "Empire::UpdateFoodDistribution: pop_centers.size() = " << pop_centers.size();
 
     // compile map of food production of ResourceCenters, indexed by center's id
     std::map<int, double> fp_map;
@@ -1413,6 +1422,8 @@ void Empire::UpdateFoodDistribution()
         PopCenter *center = *pop_it;
         double need = center->PopPoints();  // basic need is current population - prevents starvation
 
+        Logger().debugStream() << "Empire::UpdateFoodDistribution: PopCenter needs: " << need;
+
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         if (!obj)
         {
@@ -1427,12 +1438,19 @@ void Empire::UpdateFoodDistribution()
         if (fp_map_it != fp_map.end())
             food_prod = fp_map_it->second;
 
+        Logger().debugStream() << "Empire::UpdateFoodDistribution: PopCenter produces: " << food_prod;
+
         // allocate food to this PopCenter, deduct from pool, add to total food distribution tally
         double allocation = std::min(available_food, std::min(need, food_prod));
+
+        Logger().debugStream() << "Empire::UpdateFoodDistribution: PopCenter allocated: " << allocation;
+
         center->SetAvailableFood(allocation);
         m_food_total_distributed += allocation;
         available_food -= allocation;
     }
+
+    Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
 
     // second pass: give food to PopCenters limited by their food need only: prevent starvation if possible
     for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
@@ -1466,7 +1484,7 @@ void Empire::UpdateFoodDistribution()
 
         double addition = 0.0;
         if (food_prod > has)
-            addition = std::min(available_food, std::min(full_need, food_prod - has));
+            addition = std::min(available_food, std::min(full_need - has, food_prod - has));
 
         center->SetAvailableFood(has + addition);
         available_food -= addition;
@@ -1486,9 +1504,10 @@ void Empire::UpdateFoodDistribution()
         available_food -= addition;
         m_food_total_distributed += addition;
     }
-    
     // after changing food distribution, population growth predictions may need to be redone
-    // by calling UpdatePopulationGrowth()    
+    // by calling UpdatePopulationGrowth()  
+
+    m_food_resource_pool.ChangedSignal();
 }
 
 /** Has m_population_pool recalculate all PopCenters' and empire's total expected population growth

@@ -1852,7 +1852,7 @@ void ServerApp::ProcessTurns()
         m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::EMPIRE_PRODUCTION, -1));
 
     for (ServerEmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
-        it->second->UpdateResourcePool();   // Reset ResourceCenters and PopCenter for Resource and Population pools
+        it->second->UpdateResourcePool();
     
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         it->second->ResetMaxMeters();
@@ -1863,8 +1863,8 @@ void ServerApp::ProcessTurns()
     GetUniverse().RebuildEmpireViewSystemGraphs();
 
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->PopGrowthProductionResearchPhase();
-        it->second->ClampMeters();
+        it->second->PopGrowthProductionResearchPhase(); // Population growth / starvation, health meter growth, resource current meter growth
+        it->second->ClampMeters();  // limit current meters by max meters
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
             if (Meter* meter = it->second->GetMeter(i)) {
                 meter->m_previous_current = meter->m_initial_current;
@@ -1875,7 +1875,8 @@ void ServerApp::ProcessTurns()
         }
     }
 
-    // check for completed research, production or social projects, pay maintenance, distribute food and do population growth
+    // check for completed research, production or social projects, pay maintenance.  Update stockpiles.
+    // doesn't do actual population growth, which occurs above when PopGrowthProductionResearchPhase() is called
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         Empire* empire = Empires().Lookup(it->first);
         empire->CheckResearchProgress();

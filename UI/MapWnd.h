@@ -107,12 +107,13 @@ protected:
     virtual bool   EventFilter(GG::Wnd* w, const GG::Wnd::Event& event);
 
 private:
-    void FoodResourcePoolChanged();         ///< called after resource pool has changed, gets (new) stockpile and expected change and updates empire resource indicators
-    void MineralResourcePoolChanged();
-    void TradeResourcePoolChanged();
-    void ResearchResourcePoolChanged();
-    void PopulationPoolChanged();
-    void IndustryResourcePoolChanged();
+    void RefreshFoodResourceIndicator();    ///< gets stockpile and expected change and updates resource indicator
+    void RefreshMineralsResourceIndicator();
+    void RefreshTradeResourceIndicator();
+    void RefreshResearchResourceIndicator();
+    void RefreshIndustryResourceIndicator();
+
+    void RefreshPopulationIndicator();
 
     void TurnBtnClicked() {EndTurn();}
     void MenuBtnClicked() {ShowMenu();}

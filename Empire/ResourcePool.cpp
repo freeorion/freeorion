@@ -31,9 +31,6 @@ ResourcePool::ResourcePool(const XMLElement& elem) :
 
 ResourcePool::~ResourcePool()
 {
-    //for(unsigned int i = 0; i < m_connections.size(); i++)
-        //m_connections[i].disconnect();
-    //m_connections.clear();
     m_resource_centers.clear();
 }
 
@@ -80,7 +77,6 @@ double ResourcePool::Available() const
 void ResourcePool::SetResourceCenters(const std::vector<ResourceCenter*>& resource_center_vec)
 {
     m_resource_centers = resource_center_vec;
-    Update();
 }
 
 void ResourcePool::Update()
@@ -146,8 +142,7 @@ PopulationPool::~PopulationPool()
 
 XMLElement PopulationPool::XMLEncode() const
 {
-    XMLElement retval("PopulationPool");
-    return retval;
+    return XMLElement("PopulationPool");
 }
 
 double PopulationPool::Population() const
@@ -157,7 +152,6 @@ double PopulationPool::Population() const
 
 double PopulationPool::Growth() const
 {
-    Logger().debugStream() << "Population::Growth(): returning: " << m_growth;
     return m_growth;
 }
 
@@ -165,12 +159,12 @@ void PopulationPool::SetPopCenters(const std::vector<PopCenter*>& pop_center_vec
 {
     m_pop_centers = pop_center_vec;
     std::sort(m_pop_centers.begin(), m_pop_centers.end(), &PopCenterLess);  // this ordering ensures higher population PopCenters get first priority for food distribution
-    Update();
 }
 
 void PopulationPool::Update()
 {
     m_population = 0.0;
+    m_growth = 0.0;
     // sum population from all PopCenters in this pool
     for (std::vector<PopCenter*>::const_iterator it = PopCenters().begin(); it != PopCenters().end(); ++it)
     {
