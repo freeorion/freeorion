@@ -477,30 +477,35 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
         selected_row_data_type = m_buildable_items->GetRow(*m_buildable_items->Selections().begin()).DragDropDataType();
     }
 
-    const int ROW_HEIGHT = 22;          // should change to be font point size...
-    const int NAME_COL_WIDTH = 200;
+    const int ROW_HEIGHT = 24;          // should change to be font point size...
+    const int ICON_COL_WIDTH = ROW_HEIGHT;
+    const int NAME_COL_WIDTH = 150;
     const int COST_COL_WIDTH = 30;
     const int TIME_COL_WIDTH = 20;
     const int DESC_COL_WIDTH = m_buildable_items->Width() - (NAME_COL_WIDTH + COST_COL_WIDTH + TIME_COL_WIDTH);
 
-    m_buildable_items->SetNumCols(4);
+    m_buildable_items->SetNumCols(5);
     m_buildable_items->LockColWidths();
-    m_buildable_items->SetColWidth(0, NAME_COL_WIDTH);
-    m_buildable_items->SetColWidth(1, COST_COL_WIDTH);
-    m_buildable_items->SetColWidth(2, TIME_COL_WIDTH);
-    m_buildable_items->SetColWidth(3, DESC_COL_WIDTH);
+    m_buildable_items->SetColWidth(0, ICON_COL_WIDTH);
+    m_buildable_items->SetColWidth(1, NAME_COL_WIDTH);
+    m_buildable_items->SetColWidth(2, COST_COL_WIDTH);
+    m_buildable_items->SetColWidth(3, TIME_COL_WIDTH);
+    m_buildable_items->SetColWidth(4, DESC_COL_WIDTH);
     m_buildable_items->SetColAlignment(0, GG::ALIGN_LEFT);
-    m_buildable_items->SetColAlignment(0, GG::ALIGN_LEFT);
-    m_buildable_items->SetColAlignment(0, GG::ALIGN_LEFT);
-    m_buildable_items->SetColAlignment(0, GG::ALIGN_LEFT);
+    m_buildable_items->SetColAlignment(1, GG::ALIGN_LEFT);
+    m_buildable_items->SetColAlignment(2, GG::ALIGN_LEFT);
+    m_buildable_items->SetColAlignment(3, GG::ALIGN_LEFT);
+    m_buildable_items->SetColAlignment(4, GG::ALIGN_LEFT);
 
     m_current_build_type = build_type;
     m_buildable_items->Clear();
     m_build_types.clear();
+
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire)
-        return;
+    if (!empire) return;
+
     boost::shared_ptr<GG::Font> default_font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
+
     int i = 0;
     if (build_type == BT_BUILDING || build_type == NUM_BUILD_TYPES) {
         Empire::BuildingTypeItr end_it = empire->BuildingTypeEnd();
@@ -508,7 +513,13 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
             GG::ListBox::Row* row = new GG::ListBox::Row();
             row->SetDragDropDataType(*it);
 
-            //const BuildingType* type = GetBuildingType(*it);
+            const BuildingType* type = GetBuildingType(*it);
+
+            // icon
+            GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, ICON_COL_WIDTH, ROW_HEIGHT, 
+                HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + type->Graphic()),
+                GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+            row->push_back(dynamic_cast<GG::Control*>(icon));
 
             // building name
             row->push_back(UserString(*it), default_font, ClientUI::TEXT_COLOR);
@@ -536,7 +547,13 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
             GG::ListBox::Row* row = new GG::ListBox::Row();
             row->SetDragDropDataType(it->first);
 
-            //const ShipDesign* type = GetShipDesign(empire->EmpireID(), it->first);
+            const ShipDesign* type = GetShipDesign(empire->EmpireID(), it->first);
+
+            // icon
+            GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, ICON_COL_WIDTH, ROW_HEIGHT, 
+                HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + type->graphic),
+                GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+            row->push_back(dynamic_cast<GG::Control*>(icon));
 
             // ship design name
             row->push_back(it->first, default_font, ClientUI::TEXT_COLOR);
@@ -561,6 +578,12 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
     if (build_type == BT_ORBITAL || build_type == NUM_BUILD_TYPES) {
         GG::ListBox::Row* row = new GG::ListBox::Row();
         row->SetDragDropDataType("DEFENSE_BASE");
+
+        // icon
+        GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, ICON_COL_WIDTH, ROW_HEIGHT, 
+            HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + "icons/defensebase.png"),
+            GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        row->push_back(dynamic_cast<GG::Control*>(icon));
 
         // Defense Base "name"
         row->push_back(UserString(row->DragDropDataType()), default_font, ClientUI::TEXT_COLOR);
