@@ -2138,7 +2138,7 @@ CON_PLANET_RING_DESC
 Die Technik der Raumfahrstühle ist nun etabliert; dadurch wird ihre logische Erweiterung möglich. Indem man Fahrstühle ringförmig auf dem Planeten wie Speichen an einem Rad platziert und sie dann durch Ketten von Satelliten und Raumstationen verbindet, kann man einen Planetenring erbauen.
 
 CON_SPACE_ELEVATOR
-Raumfahrstuhl
+Weltraumlift
 
 CON_SPACE_ELEVATOR_DESC
 Die Materialien und Methoden der Nanokonstruktion eröffnen die Möglichkeit, ein Kabel zu schaffen, das zugfest genug ist, um in den niedrigen Orbit zu reichen und nicht zu zerreissen. Magnetisch am Kabel beförderte Fähren sind den teuren, ineffizienten und gefährlichen Raketenstarts überlegen.
