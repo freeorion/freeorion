@@ -49,10 +49,10 @@ NO
 Nein
 
 NEW_GAME
-Erzeuge Universum und KIs ...
+Erzeuge Universum und KIs...
 
 LOADING
-Lade ...
+Lade...
 
 SERVER_TIMEOUT
 Der Server antwortet nicht.
@@ -111,7 +111,7 @@ FILE_DLG_MALFORMED_FILENAME
 Ungültiger Dateiname.
 
 FILE_DLG_OVERWRITE_PROMPT
-%1% gibt es bereits.\nÜberschreiben?
+"%1%" gibt es bereits.\nÜberschreiben?
 
 FILE_DLG_INVALID_FILENAME
 "%1%"\nist ein ungültiger Dateiname.
@@ -120,7 +120,7 @@ FILE_DLG_FILENAME_IS_A_DIRECTORY
 "%1%"\nist ein Verzeichnis.
 
 FILE_DLG_FILE_DOES_NOT_EXIST
-File "%1%"\n gibt es nicht.
+Datei "%1%"\n gibt es nicht.
 
 FILE_DLG_DEVICE_IS_NOT_READY
 Gerät ist nicht bereit.
@@ -382,7 +382,7 @@ VISION
 Vision
 
 FREEORION_VISION
-FreeOrion ist ein zug-basierendes Open-Source Spiel, das von Master of Orion inspiriert ist. Es basiert auf dem klassischen "4x - Modell", den Nationenaufbau - Elementen von Spielen wie Europa Universalis 2 und einer vielseitigen taktischen Kampfengine. Der modulare Aufbau des Spiels ermöglicht Veränderungen sowohl an der Game Engine als auch der Story durch die Community; das FreeOrion - Team bemüht sich, ein lebendes, atmendes Universum mit einem Großkampagnen - Modell zu erschaffen.
+FreeOrion ist ein zug-basierendes Open-Source Spiel, das von Master of Orion inspiriert ist. Es basiert auf dem klassischen "4x - Modell", den Nationenaufbau - Elementen von Spielen wie Europa Universalis 2 und einer vielseitigen taktischen Kampfengine. Der modulare Aufbau des Spiels ermöglicht Veränderungen sowohl an der Game Engine als auch der Story durch die Community; das FreeOrion-Team bemüht sich, ein lebendes, atmendes Universum mit einem Großkampagnen-Modell zu erschaffen.
 
 ###########################
 # Game Menu	              #
@@ -420,7 +420,7 @@ OPTIONS_QUICK_CLOSE_WNDS
 Fenster schnell schliessen
 
 OPTIONS_AUTOSAVE
-Autosave
+Automatisches Speichern
 
 OPTIONS_SINGLEPLAYER
 Einzelspieler
@@ -429,16 +429,16 @@ OPTIONS_MULTIPLAYER
 Mehrspieler
 
 OPTIONS_AUTOSAVE_TO_KEEP
-Autosaves behalten
+Automatisch gespeicherte Spielstände behalten
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
-Runden zw. den Autosaves
+Runden zwischen dem automatischem Speichern
 
 OPTIONS_LANGUAGE
 Sprachdatei
 
 OPTIONS_FONTS
-Fonts
+Schriftart
 
 OPTIONS_FONT_TEXT
 Text
@@ -504,7 +504,7 @@ OPTIONS_SOUND_WINDOW
 Allgemein
 
 OPTIONS_SOUND_BUTTON
-Buttons
+Knöpfe
 
 OPTIONS_SOUND_FLEET
 Flotten
@@ -573,7 +573,7 @@ OPTIONS_COLOR_HIGHLIGHT
 Selection highlighting
 
 OPTIONS_COLOR_INTERIOR
-Interior
+Inneres
 
 OPTIONS_COLOR_WINDOW
 Fensterfarben
@@ -591,10 +591,10 @@ OPTIONS_PAGE_UI
 UI Aussehen
 
 OPTIONS_PAGE_SOUND
-Sounds
+Geräusche
 
 OPTIONS_PAGE_SOUND_2
-Mehr Sounds
+Mehr Geräusche
 
 OPTIONS_PAGE_COLOR_CONTROLS
 Farben
@@ -603,13 +603,13 @@ OPTIONS_PAGE_COLOR_GAME
 Techfenster Farben
 
 OPTIONS_COLOR_TECH_KNOWN
-Bekannte Techs
+Bekannte Technologien
 
 OPTIONS_COLOR_TECH_RESEARCHABLE
-Erforschbare Techs
+Erforschbare Technologien
 
 OPTIONS_COLOR_TECH_UNRESEARCHABLE
-Nicht erforschbare Techs
+Nicht erforschbare Technologien
 
 OPTIONS_COLOR_TECH_PROGRESS
 Forschung Fortschrittsbalken
@@ -636,7 +636,7 @@ OPTIONS_FOLDER_SAVE
 Spielstandverzeichnis
 
 OPTIONS_FOLDER_FONTS
-Fonts
+Schriftarten
 
 OPTIONS_FOLDER_SOUNDS
 Sound und Musik
@@ -778,7 +778,7 @@ TECH_DETAIL_UNLOCKED_ITEM_STR
 %1%: %2%\n
 
 TECH_DETAIL_CENTER_ON_TECH
-Auf Tech zentrieren
+Auf Technologie zentrieren
 
 TECH_DETAIL_ADD_TO_QUEUE
 Zur Liste hinzufügen
@@ -793,19 +793,19 @@ TECH_WND_TECH_INCOMPLETE
 Unvollständig
 
 TECH_WND_TECH_TYPES_TO_SHOW
-Tech Typen anzeigen:
+Technologietypen anzeigen:
 
 TECH_WND_TECH_TYPES_ALL
 Alle Typen
 
 TECH_WND_TECH_TYPES_THEORIES_AND_APPS
-Theorien und Applikationen
+Theorien und Anwendungen
 
 TECH_WND_TECH_TYPES_THEORIES_ONLY
 Nur Theorien
 
 TECH_WND_TECH_STATUSES_TO_SHOW
-Tech Zustände anzeigen:
+Technologiezustände anzeigen:
 
 TECH_WND_TECH_STATUS_ALL
 Alle Zustände
@@ -831,7 +831,7 @@ Ermöglicht
 #######################
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
-Total verfügbare Punkte
+Insgesamt verfügbare Punkte
 
 PRODUCTION_INFO_WASTED_PS_LABEL
 Verschwendete Punkte
@@ -970,22 +970,22 @@ TURN_PROGRESS_WND
 Rundenfortschritt
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
-Flottenbewegung ...
+Flottenbewegung...
 
 TURN_PROGRESS_PHASE_COMBAT
-Führe Kämpfe durch ...
+Führe Kämpfe durch...
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
-Produktion und Wachstum ...
+Produktion und Wachstum...
 
 TURN_PROGRESS_PHASE_WAITING
-Warte auf andere Spieler ...
+Warte auf andere Spieler...
 
 TURN_PROGRESS_PHASE_ORDERS
-Führe Befehle aus ...
+Führe Befehle aus...
 
 TURN_PROGRESS_PHASE_DOWNLOADING
-Lade neue Spieldaten ...
+Lade neue Spieldaten...
 
 
 ########################
@@ -1035,7 +1035,7 @@ HOMEWORLD_SPECIAL
 Heimatwelt
 
 HOMEWORLD_SPECIAL_DESCRIPTION
-Dieser Planet ist der Geburtsort Deiner Spezies. Ihr wißt, wie man das Meiste aus ihm herausholt. Boni auf praktisch alle Planetenwerte.
+Dieser Planet ist der Geburtsort Deiner Spezies. Ihr wisst, wie man das Meiste aus ihm herausholt. Boni auf praktisch alle Planetenwerte.
 
 STARVATION_SPECIAL
 Hungersnot
@@ -1076,9 +1076,9 @@ Flotte
 OBJ_PLANET
 Planet
 OBJ_POP_CENTER
-Bevölkerungscenter
+Bevölkerungszentrum
 OBJ_PROD_CENTER
-Produktionscenter
+Produktionszentrum
 OBJ_SYSTEM
 System
 
@@ -1108,7 +1108,7 @@ sumpfig
 PT_TOXIC
 toxisch
 PT_INFERNO
-infernal
+vulkanisch
 PT_RADIATED
 verstrahlt
 PT_BARREN
@@ -1271,73 +1271,73 @@ DESC_VAR_TARGET
 target
 
 DESC_VAR_PLANETSIZE
-planet size
+planetengröße
 
 DESC_VAR_PLANETTYPE
-planet type
+planetenklasse
 
 DESC_VAR_PLANETENVIRONMENT
-planet environment
+planetare Umwelt
 
 DESC_VAR_OBJECTTYPE
-object type
+objektklasse
 
 DESC_VAR_STARTYPE
-star type
+sternenklasse
 
 DESC_VAR_PRIMARYFOCUS
-primary focus
+primärer Fokus
 
 DESC_VAR_SECONDARYFOCUS
-secondary focus
+sekundärer Fokus
 
 DESC_VAR_CURRENTFARMING
-current farming
+aktuelle Landwirdschaft
 
 DESC_VAR_MAXFARMING
-max farming
+maximales Landwirtschaft
 
 DESC_VAR_CURRENTINDUSTRY
-current industry
+aktuelle Industrie
 
 DESC_VAR_MAXINDUSTRY
-max industry
+maximale Industrie
 
 DESC_VAR_CURRENTRESEARCH
-current research
+aktuelle Forschung
 
 DESC_VAR_MAXRESEARCH
-max research
+maximale Forschung
 
 DESC_VAR_CURRENTTRADE
-current trade
+aktueller Handel
 
 DESC_VAR_MAXTRADE
-max trade
+maximaler Handel
 
 DESC_VAR_CURRENTMINING
-current mining
+aktueller Bergbau
 
 DESC_VAR_MAXMINING
-max mining
+maximaler Bergbau
 
 DESC_VAR_CURRENTCONSTRUCTION
-current construction
+aktuelle Konstruktion
 
 DESC_VAR_MAXCONSTRUCTION
-max construction
+maximale Konstruktion
 
 DESC_VAR_CURRENTHEALTH
-current health
+aktuelle Gesundheit
 
 DESC_VAR_MAXHEALTH
-max health
+maximale Gesundheit
 
 DESC_VAR_CURRENTPOPULATION
-current population
+aktuelle Bevölkerung
 
 DESC_VAR_MAXPOPULATION
-max population
+maximale Bevölkerung
 
 DESC_VAR_TRADESTOCKPILE
 trade stockpile
@@ -1364,7 +1364,7 @@ DESC_VAR_RESEARCHPRODUCTION
 research production
 
 DESC_VAR_OWNER
-owner
+Besitzer
 
 DESC_VAR_ID
 ID
@@ -1690,7 +1690,7 @@ LRN_PSIONICS_DESC
 Durch tiefe Einsicht oder künstliche Erweiterungen kann das Gehirn Fähigkeiten entwickeln, mit deren Hilfe es ohne Einschränkungen durch den physischen Körpers direkt mit dem umliegenden Universum interagieren kann. Kräfte wie z. B. Telepathie, Empathie, Hellsicht, Prescience, Psychokinese und Psychoenergese ersetzen banale biologische oder technische Alternativen. Die Anwendungen dieser Kräfte, u. a. Gedankenkontrolle, Persönlichkeitsveränderung und Posession, haben eine tiefgreifende Bedeutung für die Beziehung zwischen begabten und unbegabten Wesen.
 
 LRN_ARTIF_MINDS
-Artifizielles Bewußtsein
+Künstliches Bewußtsein
 
 LRN_ARTIF_MINDS_DESC
 Obwohl herkömmliche Computer nahezu unfassbare Intelligenz und Rechenfähigkeiten besitzen, fehlen ihnen entscheidende Qualitäten wie Selbsterkenntnis, Bewußtsein oder Gefühl. Durch die Entwicklung perfekter künstlicher Gehirne können diese Eigenschaften synthetisiert und modifiziert werden. Diese Erkenntnisse eröffnen ungeahnte Möglichkeiten in den kognitiven Wissenschaften und schaffen neue Metaparadigmen.
@@ -1705,7 +1705,7 @@ LRN_GRAVITONICS
 Gravitonik
 
 LRN_GRAVITONICS_DESC
-Analog zum "Farbwechsel" in der Quanten - Chromodynamik existieren verschiedene Gravitontypen. Durch Kombination des üblichen Anziehungskraftgravitons, des umgangssprachlichen "Antigravitons", "Rechtsgravitons" und "Linksgravitons" kann die Oberfläche der Raumzeit willkürlich gebogen und gedehnt werden. Diese Manipulation wird als Kontrolle über die Schwerkraft wahrgenommen und ermöglicht neue Gebäude, Techniken und Untersuchungen, die vorher selbst theoretisch undenkbar waren.
+Analog zum "Farbwechsel" in der Quantenchromodynamik existieren verschiedene Gravitonentypen. Durch Kombination des üblichen Anziehungskraftgravitons, des umgangssprachlichen "Antigravitons", "Rechtsgravitons" und "Linksgravitons" kann die Oberfläche der Raumzeit willkürlich gebogen und gedehnt werden. Diese Manipulation wird als Kontrolle über die Schwerkraft wahrgenommen und ermöglicht neue Gebäude, Techniken und Untersuchungen, die vorher selbst theoretisch undenkbar waren.
 
 LRN_EVERYTHING
 Die einheitliche Theorie
@@ -1882,7 +1882,7 @@ PRO_CORE_MINE_DESC
 Der Druck und die Temperatur in Mantel und Kern terrestrischer Planeten erzeugt eine gewaltige Masse an Kristall- und Mineralverbindungen, die nur durch Vulkanismus an die Oberfläche gelangen. Die tieferen Atmosphärenschichten und Kernmaterialien von Gasplaneten enthalten noch exotischere Materialien und das in hohen Konzentrationen. Der Zugang zu den Materialien in diesen Regionen ist schwierig und riskant, aber im Vergleich zu traditionellen Oberflächenbergbau sehr vielversprechend.
 
 PRO_NANOTECH_PROD
-Nanotechproduktion
+Nanotechnische Produktion
 
 PRO_NANOTECH_PROD_DESC
 Traditionelle Produktionstechniken sind durch die Größe und Form der verwendeten Werkzeuge eingeschränkt. Wenn ein Produkt seine Form annimmt, verhindern seine äußeren Schichten den direkten Zugang und die Manipulation der inneren Strukturen, wodurch eine umständliche und ineffiziente Anpassung der Produktionsreihenfolge notwendig wird. Außerdem müssen die einzelnen Komponenten eines größeren Produkts sorgfältig geformt und zusammengesetzt werden, um sicherzustellen, dass sie wie vorgesehen arbeiten. Durch den Einsatz von Nanotechnologie kann ein Produkt in einem Schritt direkt aus den Rohstoffen hergestellt werden; so wird die Effizienz und die Produktionsgeschwindigkeit drastisch erhöht.
@@ -1978,7 +1978,7 @@ CON_TRANS_STRC_DESC
 Ein Rolladen dient je nach den Wünschen seines Anwenders sowohl als feste Wand als auch als geöffnetes Fenster. Ein Raum kann im Rahmen des verfügbaren Platzes ummöbliert werden, um einem ganz neuen Zweck zu erfüllen. Dieses Konzept kann auch auf die Form und Struktur eines ganzen Gebäudes oder einer ganzen Stadt, egal ob mechanisch oder organisch, ausgeweitet werden. Die Beseitigung der Notwendigkeit von Abriss und Neuaufbau erlaubt große Flexibilität und Effizienz der Infrastruktur. Einzelne oder isolierte Gebäude können gleichzeitig eine Vielzahl von Zwecken erfüllen, die zuvor größere und detailliertere, feste Designs voraussetzten.
 
 CON_ARCH_MONOFILS
-Monofilament Architektur
+Monofilamentarchitektur
 
 CON_ARCH_MONOFILS_DESC
 Praktisch unzerbrechliche Einzelkristallfilamente, die im Durchmesser nur wenige Atome messen, können die Dauerhaftigkeit und Kostengünstigkeit traditioneller Baumethoden verbessern. Die Fähigkeit, diese stärker belastbaren Materialien in vorher unmögliche Anordnungen anzubringen, eröffnet völlig neue Möglichkeiten. Leichte und zugleich zugfeste Filamente finden besondere Verwendung in großen orbitalen oder von der Oberfläche in den Orbit reichenden Gebäuden, bei denen die Veränderung der Schwerkraft entlang der Achse zuvor sehr hinderlich waren.
@@ -2020,7 +2020,7 @@ CON_FRC_ENRG_STRC_DESC
 Wenn Kräfte und Energie so manipuliert werden können, dass sie dieselbe Funktionalität wie feste Oberflächen besitzen, gibt es keinen entscheidenden Grund dafür, physikalische Materialien zur Konstruktion von Gebäuden einzusetzen. Gebäude aus purer Energie haben zahlreiche Vorteile, wie z. B. einfacher Umbau, Widerstandsfähigkeit, Transportabilität und neuartige Designmöglichkeiten.
 
 CON_ART_HEAVENLY
-Artifizielle Himmelskörper
+Künstliche Himmelskörper
 
 CON_ART_HEAVENLY_DESC
 Ab der Masse eines kleinen Mondes wird es schwierig, ein Objekt als "Gebäude", "Raumstation" oder "Schiff" zu bezeichnen. In dieser Größenordnung handelt es sich eher um einen Himmelskörper; seine Gravitation bewirkt orbitale Bewegungen, es kann sich auf seiner Oberfläche eine dünne Atmosphäre ausbilden und er kann von kleineren Strukturen umkreist werden. Auf noch größeren Skalen können ganze Planeten (um-)gebaut werden; selbst neue Sterne können geformt und entzündet werden und künden dem Universum die Macht und Bestimmtheit seiner Schöpfer.
@@ -2144,7 +2144,7 @@ CON_SPACE_ELEVATOR_DESC
 Die Materialien und Methoden der Nanokonstruktion eröffnen die Möglichkeit, ein Kabel zu schaffen, das zugfest genug ist, um in den niedrigen Orbit zu reichen und nicht zu zerreissen. Magnetisch am Kabel beförderte Fähren sind den teuren, ineffizienten und gefährlichen Raketenstarts überlegen.
 
 CON_SUBTER_CONST
-Subterrane Konstruktion
+Unterirdische Konstruktion
 
 CON_SUBTER_CONST_DESC
 Wenn der Platz knapp ist, liegt der heilige Gral der Konstruktion in der Fähigkeit, so leicht abwärts wie aufwärts zu bauen. Moderne Techniken machen dies möglich.
@@ -2258,7 +2258,7 @@ LRN_PSICORP_DESC
 Es ist nun möglich, die in vereinzelten Individuen schlummernden psionischen Fähigkeiten bei der Geburt zu erkennen. Aber um ihre Begabung wirklich zu fördern, ist es notwendig, eine Akademie aufzubauen, die sich nur der Psionik widmet. Absolventen dieser Akademie würden eine hochspezialisierte Psi-Eliteeinheit bilden, die als Vermittler und Verstärker für die größten Forscher eines Imperiums eingesetzt werden können.
 
 PRO_ART_BLACK_HOLE
-Artifizielles schwarzes Loch
+Künstliches schwarzes Loch
 
 PRO_ART_BLACK_HOLE_DESC
 Durch einen kontrollierten Singularitätenkollaps in einem fernen Sonnenorbit liesse sich eine bequem lokalisierte Quelle unbegrenzter Kraft schaffen. Dies wäre zwar eine sehr kostenaufwendige und gefährliche Aufgabe, doch von großem Nutzen.
@@ -2316,7 +2316,7 @@ BLD_PLANET_RING_DESC
 Ein Planetenring ist ein Kreis von Satelliten, die eine Welt vollständig umringen. Durch speichenartige Raumfahrstühle ist der Ring am Äquator befestigt. Er dient als Wohnraum, für Montage bei niedriger Schwerkraft und interplanetaren Handel.
 
 BLD_SPACE_ELEVATOR
-Raumfahrstuhl
+Weltraumlift
 
 BLD_SPACE_ELEVATOR_DESC
 Ein enormes und nahezu unzerreissbares Kabel, dass an einem Ende mit einem Satelliten im niedrigen geostationären Orbit verbunden ist, und an dessen Ende zum Planeten hin sich eine Startplatform befindet. Der Raumfahrstuhl fördert den Handel im ganzen System.
