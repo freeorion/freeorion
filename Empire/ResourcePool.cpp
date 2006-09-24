@@ -116,7 +116,7 @@ void ResourcePool::Update()
 // PopulationPool
 //////////////////////////////////////////////////
 namespace {
-    bool PopCenterLess(PopCenter*& elem1, PopCenter*& elem2)
+    bool PopCenterLess(PopCenter* elem1, PopCenter* elem2)
 	{
 	    return elem1->PopPoints() < elem2->PopPoints();
 	}
