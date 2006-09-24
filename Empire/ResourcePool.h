@@ -21,7 +21,7 @@ public:
 
     /** \name Structors */ //@{
     ResourcePool(ResourceType type);
-    ResourcePool::ResourcePool(const XMLElement& elem);
+    ResourcePool(const XMLElement& elem);
     ~ResourcePool();
     //@}
 
@@ -74,7 +74,7 @@ public:
 
     /** \name Structors */ //@{
     PopulationPool();
-    PopulationPool::PopulationPool(const XMLElement& elem);
+    PopulationPool(const XMLElement& elem);
     ~PopulationPool();
     //@}
 
