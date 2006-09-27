@@ -1,7 +1,7 @@
 Deutsch
 
 #This is the String Table file for FreeOrion
-#Deutsche Übersetzung von Martin Wuttke [thesilentone]
+#Deutsche Übersetzung von Martin Wuttke [thesilentone] und [trace]
 
 #################
 # Common        #
@@ -382,7 +382,7 @@ VISION
 Vision
 
 FREEORION_VISION
-FreeOrion ist ein zug-basierendes Open-Source Spiel, das von Master of Orion inspiriert ist. Es basiert auf dem klassischen "4x - Modell", den Nationenaufbau - Elementen von Spielen wie Europa Universalis 2 und einer vielseitigen taktischen Kampfengine. Der modulare Aufbau des Spiels ermöglicht Veränderungen sowohl an der Game Engine als auch der Story durch die Community; das FreeOrion-Team bemüht sich, ein lebendes, atmendes Universum mit einem Großkampagnen-Modell zu erschaffen.
+FreeOrion ist ein runden-basierendes (TBS = Turned Based Strategy) Open-Source Spiel, das von Master of Orion inspiriert ist. Es basiert auf dem klassischen "4x - Modell", den Nationenaufbau - Elementen von Spielen wie Europa Universalis 2 und einer vielseitigen taktischen Kampfengine. Der modulare Aufbau des Spiels ermöglicht Veränderungen sowohl an der Game Engine als auch der Story durch die Community; das FreeOrion-Team bemüht sich, ein lebendes, atmendes Universum mit einem Großkampagnen-Modell zu erschaffen.
 
 ###########################
 # Game Menu	              #
@@ -726,7 +726,7 @@ FW_FLEET_MOVING_TO
 Fliegt nach %1%, ETA %2%
 
 FW_SHIP_CLASS
-Schiffklasse
+Schiffsklasse
 
 FW_UNKNOWN_DESIGN_NAME
 Unbekannt
@@ -1041,25 +1041,25 @@ STARVATION_SPECIAL
 Hungersnot
 
 STARVATION_SPECIAL_DESCRIPTION
-Dieser Planet verhungert! Die Bevölkerung wird nichts mehr anständig tun, außer Lebensmittel herzustellen.
+Dieser Planet verhungert! Die Bevölkerung wird nichts ordentlicheres mehr tun, außer Lebensmittel herzustellen.
 
 ANCIENT_RUINS_SPECIAL
 Uralte Ruinen
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-Auf diesem Planet befinden sich die Überreste einer uralten, technologisch forschrittlichen Rasse, die aus den Geschichtsbüchern verschwunden ist. Forschungsbonus.
+Auf diesem Planet befinden sich die Überreste einer uralten, technologisch forschrittlichen Rasse, die aus den Geschichtsbüchern verschwunden ist: Forschungsbonus
 
 MINERALS_SPECIAL
 Mineralienreichtum
 
 MINERALS_SPECIAL_DESCRIPTION
-Dieser Planet besitzt einen natürlichen Reichtum an Mineralien. Bonus auf Bergbau und Handel.
+Dieser Planet besitzt einen natürlichen Reichtum an Mineralien: Bonus auf Bergbau und Handel
 
 TUNNELS_SPECIAL
 Natürliche Tunnel
 
 TUNNELS_SPECIAL_DESCRIPTION
-Dieser Planet besitzt ein Netzwerk natürlicher Tunnel; dadurch kann ein größerer Teil des Planeten als gewöhnlich kolonisiert werden.
+Dieser Planet besitzt ein Netzwerk natürlicher Tunnel, dadurch kann ein größerer Teil des Planeten als gewöhnlich kolonisiert werden.
 
 #######################
 # Enumeration  values #
@@ -1849,7 +1849,7 @@ PRO_MICROGRAV_MAN
 Mikrogravitationsproduktion
 
 PRO_MICROGRAV_MAN_DESC
-Die geringe Gravitation im niedrigen Orbit eines Planeten bietet großes Potential für einen neuartigen Aufbau für Fabriken, außerdem können Produktionstechniken eingesetzt werden, die auf der Oberfläche des Planeten unmöglich wären. Flüssigkeiten und Gas treiben frei und werden nur durch die Oberflächenspannung verformt, sofern keine anderweitige Manipulation stattfindet; die Fabrikmaschinerie kann optimal in drei Dimensionen arrangiert werden. Diese Bedingungen gewähren bei sinnvollem Einsatz einen deutlichen Anstieg der Produtkionseffizienz.
+Die geringe Gravitation im niedrigen Orbit eines Planeten bietet großes Potential für einen neuartigen Aufbau für Fabriken, außerdem können Produktionstechniken eingesetzt werden, die auf der Oberfläche des Planeten unmöglich wären. Flüssigkeiten und Gas treiben frei und werden nur durch die Oberflächenspannung verformt, sofern keine anderweitige Manipulation stattfindet; die Fabrikmaschinerie kann optimal in drei Dimensionen arrangiert werden. Diese Bedingungen gewähren bei sinnvollem Einsatz einen deutlichen Anstieg der Produtkion und dessen Effizienz.
 
 PRO_PLANET_GEOL
 Planetare Geologie
@@ -1891,7 +1891,7 @@ PRO_ORBITAL_GEN
 Orbitale Stromerzeugung[]
 
 PRO_ORBITAL_GEN_DESC
-Der niedrige Orbit von Himmelskörpern bietet bei der Energieerzeugung im Vergleich zur Oberfläche eines Planeten zahlreiche Vorteile, wie zum Beispiel direkte Bestrahlung durch die Sonne ohne Abschwächung durch die Atmosphäre, sowie die Möglichkeit deutlich größerer Gebäude zur Energiekollektion, die bei Mikrogravitation errichtet werden können. Die erzeugte Energie kann im Orbit eingesetzt werden oder zur Versorgung der Industrie auf die Oberfläche des Planeten hinab gebeamt werden. Im Orbit stehen außerdem neue Methoden der Energieumwandlung zur Verfügung, unter anderem [planetare Magnetfeldkopplung], [Orbitbewegungsaustausch] und Reibungshitze mit der planetaren Atmosphäre, die für spezielle Anwendungen einen unschätzbaren Nutzen besitzen.
+Der niedrige Orbit von Himmelskörpern ermöglicht in der Energieerzeugung im Vergleich zur Oberfläche eines Planeten zahlreiche Vorteile, wie zum Beispiel direkte Bestrahlung durch die Sonne ohne Abschwächung durch die Atmosphäre, sowie die Möglichkeit deutlich größerer Gebäude zur Energiekollektion, die bei Mikrogravitation errichtet werden können. Die erzeugte Energie kann im Orbit eingesetzt werden oder zur Versorgung der Industrie auf die Oberfläche des Planeten hinab gebeamt werden. Im Orbit stehen außerdem neue Methoden der Energieumwandlung zur Verfügung, unter anderem [planetare Magnetfeldkopplung], [Orbitbewegungsaustausch] und Reibungshitze mit der planetaren Atmosphäre, die für spezielle Anwendungen einen unschätzbaren Nutzen besitzen.
 
 PRO_ORBITAL_MINE
 Orbitale Minen
