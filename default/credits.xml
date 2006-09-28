@@ -33,15 +33,16 @@
       <PERSON name="Andrew Hull"     nick="moxy"       task="Game Design"/>
     </GROUP>
     <GROUP name ="GRAPHICS">
-      <PERSON name="Ka"               nick=""          task="Graphics"/>
-      <PERSON name="Alex Kaludis"     nick="That Guy"  task="Graphics"/>
-      <PERSON name="Chris Montgomery" nick=""          task="Graphics"/>
-      <PERSON name="Mathias Köhler"   nick="pd"        task="Graphics"/>
-      <PERSON name="Anton Ruonala"    nick="Miu"       task="Graphics"/>
-      <PERSON name="Tim Gilmour"      nick="burndaddy" task="Graphics"/>
-      <PERSON name="Zanzibar"         nick=""          task="Graphics"/>
-      <PERSON name="Tomi Hartikka"    nick="Mystiqq"   task="Graphics"/>
-      <PERSON name="Brendan Mauro"    nick="BreadMan"  task="Graphics"/>
+      <PERSON name="Ka"               nick=""               task="Graphics"/>
+      <PERSON name="Alex Kaludis"     nick="That Guy"       task="Graphics"/>
+      <PERSON name="Chris Montgomery" nick=""               task="Graphics"/>
+      <PERSON name="Mathias Köhler"   nick="pd"             task="Graphics"/>
+      <PERSON name="Anton Ruonala"    nick="Miu"            task="Graphics"/>
+      <PERSON name="Tim Gilmour"      nick="burndaddy"      task="Graphics"/>
+      <PERSON name="Zanzibar"         nick=""               task="Graphics"/>
+      <PERSON name="Tomi Hartikka"    nick="Mystiqq"        task="Graphics"/>
+      <PERSON name="Brendan Mauro"    nick="BreadMan"       task="Graphics"/>
+      <PERSON name="Karel Kalvoda"    nick="Solid Liquid"   task="Graphics"/>
     </GROUP>
     <GROUP name ="AUDIO">
       <PERSON name="Shannon Roberts" nick="Guiguibaah" task="Audio"/>
