@@ -725,6 +725,9 @@ Im %1% System
 FW_FLEET_MOVING_TO
 Fliegt nach %1%, ETA %2%
 
+FW_FLEET_ETA_NEVER
+Never
+
 FW_SHIP_CLASS
 Schiffsklasse
 
@@ -745,6 +748,10 @@ FW_EMPIRE_FLEETS
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
 Fremde Flotte
+
+# the name that is used for ships the player does not control
+FW_FOREIGN_SHIP
+Foreign ship
 
 ###############
 # TechTreeWnd #
@@ -1023,8 +1030,14 @@ Ein Kampf hat sich im %system% System zugetragen. Wir wurden geschlagen.
 SITREP_COMBAT_SYSTEM_NO_VICTOR
 Ein Kampf hat sich im %system% System zugetragen. Der Kampf verlief ergebnislos.
 
-PLANET_LOST_STARVED_TO_DEATH
+SITREP_PLANET_LOST_STARVED_TO_DEATH
 Die ganze Bevölkerung von %planet% ist verhungert. Der Planet ist verloren!
+
+SITREP_PLANET_COLONIZED
+%planet% has been colonized in the %system% system.
+
+SITREP_FLEET_ARRIVED_AT_DESTINATION
+%fleet% has arrived at the %system% system and awaits further orders.
 
 
 ####################
@@ -1060,6 +1073,42 @@ Natürliche Tunnel
 
 TUNNELS_SPECIAL_DESCRIPTION
 Dieser Planet besitzt ein Netzwerk natürlicher Tunnel, dadurch kann ein größerer Teil des Planeten als gewöhnlich kolonisiert werden.
+
+TECHTONIC_INSTABILITY_SPECIAL
+Techtonically Unstable
+
+TECHTONIC_INSTABILITY_SPECIAL_DESC
+This planet is techtonically unstable.  Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.
+
+SOLID_CORE_SPECIAL
+Solid Core
+
+SOLID_CORE_SPECIAL_DESC
+This planet's core has solidifed, and it has a very weak magnetic field.  The star's solar wind reaches the surface relatively unfiltered, damaging health and limiting food production.
+
+HIGH_AXIAL_TILT_SPECIAL
+High Axial Tilt
+
+HIGH_AXIAL_TILT_SPECIAL_DESC
+This planet's rotational axis is highly tilted relative to its orbital plane.  Seasonal weather variations are particularly extreme and infrastructure development is significantly impeded.
+
+SLOW_ROTATION_SPECIAL
+Very Slow Rotation
+
+SLOW_ROTATION_SPECIAL_DESC
+This planet rotates about its axis very slowly, causing very long days and nights.  Infrastructure growth, food production and population capacity are reduced.
+
+TIDAL_LOCK_SPECIAL
+Tidally Locked Rotation
+
+TIDAL_LOCK_SPECIAL_DESC
+This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night.  Infrastructure growth is hampered, though once established, industrial capacity benefits from the locally stable surface conditions.
+
+ECCENTRIC_ORBIT_SPECIAL
+Eccentric Orbit
+
+ECCENTRIC_ORBIT_SPECIAL_DESC
+This planet's orbit is very eccentric.  It has a large distance between its closest and farthest approaches to its star.  Total insolation varies significantly throughout the year.  The varied conditions inhibit infrastructure development, but provide a beneficial platform for research.
 
 #######################
 # Enumeration  values #
@@ -1369,6 +1418,15 @@ Besitzer
 DESC_VAR_ID
 ID
 
+DESC_VAR_AGE
+age in turns
+
+DESC_VAR_CREATIONTURN
+turn of creation
+
+DESC_VAR_CURRENTTURN
+the current turn
+
 # this one is intentially left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
 %1%
@@ -1639,6 +1697,35 @@ DESC_AND_BETWEEN_OPERANDS
 DESC_OR_BETWEEN_OPERANDS
  or
 
+DESC_TURN
+ when the current turn is between %1% and %2%
+
+DESC_TURN_NOT
+ when the current turn is not between %1% and %2%
+
+DESC_NUMBER_OF
+ that is one of %1% objects%2%
+
+DESC_NUMBER_OF_NOT
+ that is not one of %1% objects%2%
+
+DESC_CONTAINED_BY
+ that is contained by an object%1%
+
+DESC_CONTAINED_BY_NOT
+ that is not contained by an object%1%
+
+DESC_OWNER_HAS_TECH
+ that belongs to an empire that has the tech %1%
+
+DESC_OWNER_HAS_TECH_NOT
+ that does not belong to an empire that has the tech %1%
+
+DESC_NUMBER
+ if there are between %1% and %2% objects%3%
+
+DESC_NUMBER_NOT
+ if there are not between %1% and %2% objects%3%
 
 ###################
 # Tech Categories #
@@ -1899,11 +1986,11 @@ Orbitale Minen
 PRO_ORBITAL_MINE_DESC
 Auf soliden, bewohnbaren Planeten ist traditioneller Oberflächenbergbau effektiv und relativ effizient. Bei Gasriesen und terrestrischen Planeten, die keine ausreichende Bevölkerung unterhalten können, ist es gagegen deutlich praktischer, nützliche Mineralien durch Einrichtungen im Weltraum auszubeuten. Dasentscheidende Hindernis, das es bei dieser Methode zu überwinden gilt, ist die planetare Schwerkraft; sobald dieses Hindernis überwunden ist, stehen zahlreiche neue Mineralienquellen zur Verfügung. Darüber hinaus werden zum ersten Mal spezielle Rohstoffe unbewohnbarer Planeten zugänglich.
 
-PRO_SENTIENT_FACT
-Denkende Autofabriken
+PRO_SENTIENT_AUTOMATION
+Sentient Automation
 
-PRO_SENTIENT_FACT_DESC
-Mit zunehmender Automatisierung in der Produktion wird die Maschinerie fähig, sich ohne äußeren Einfluss selbst zu replizieren und in Stand zu halten; sie benötigt nur entsprechende Rohstoffe und eine Vorgabe, welches Produkt hergestellt werden soll. Unter der Kontrolle einer künstlichen Intelligenz kann das gesamte System lernen, planen, reagieren und sich autonom anpassen, und das ohne die lästige Ineffizienz, die durch die Unterbringung und Anstellung von Arbeitern entsteht.
+PRO_SENTIENT_AUTOMATION_DESC
+As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce.  When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.
 
 PRO_FRC_FLD_ASSMB
 Kraftfeldmechanik
@@ -2191,6 +2278,18 @@ ECO_SINKHOLE
 ECO_SINKHOLE_DESC
 Betrachtet man die ökonomische Aktivität als eine Flüssigkeit, dann kann man auch ihren Fluss beeinträchtigen. Indem man einen lokalen Abfluss in der Oberfläche erzeugt, über die der Handel fliesst, werden auch weit vom Abfluss entfernte Handelszentren beeinflusst. Eine solche Störung des Handels breitet sich jedoch in alle Richtungen aus; dadurch ist es praktisch unmöglich, ein Ziel selektiv auszuwählen.
 
+GRO_BIOTERROR
+Bioterror Facilites
+
+GRO_BIOTERROR_DESC
+I dunno... it makes people grow less.
+
+GRO_HABITATION_DOMES
+Habitation Domes
+
+GRO_HABITATION_DOMES_DESC
+While terraforming efforts can make planets much more useful, the process is expensive and time consuming.  Habibation Domes provide a faster and cheaper, though more limited, alternative for increasing the population capacity of inhospitable worlds, allowing moderate levels of infrastructure and resource capacity to be developed.\n\nIncreases by +2 the maximum population of Terrible environment worlds with current construction of at least 20.
+
 GRO_CADUCEAN
 Das Kaduzäerinstitut
 
@@ -2220,6 +2319,36 @@ Stadtfarmen
 
 GRO_URBAN_FARM_DESC
 Auf industrialisierten Welten, wo bestellbares Land äußerst begrenzt ist, ist die Fähigkeit, Nahrung in mehrstöckigen Hydro- oder Aeroponiken herzustellen, für die Nahrungsversorgung unverzichtbar.
+
+LRN_STELLAR_TOMOGRAPHY
+Stellar Tomography
+
+LRN_STELLAR_TOMOGRAPHY_DESC
+A network of specialized satellites can use tomographic methods to reconstruct the activities occurs deep within a star.  These otherwise costly-to-produce conditions are ideal for a variety of research endeavours, with larger benefits for more exotic star types.\n\nProvides + 4 to research per 10 population on primary research focused worlds in systems with black holes.\nProvides +3 to planets in systems with neutron stars.\nProvides +2 to planets in systems with white or blue stars.\nProvides +1 to planets in systems with red, orange or yellow stars.
+
+LRN_AUTOLAB_I
+Basic Autolabs
+
+LRN_AUTOLAB_I_DESC
+Automated laboratories can produce significant research output without direct supervision, however it remains necessary to provide guidance to such labs regarding what avenues or research to persue, and extract the resulting information from them.  A specailzed control centre is required to facilitate these exchanges.  Consequently, while individual worlds develop their own autolabs without additional cost, the control centre requires signifiant up-front production effort to build.  This makes autolabs more attractive to empires with excess production capacity, but lacking in research output, and less useful for empires already producing significant reserach, but lacking in industrial or minreals capacity.  Additionally, autolabs produce larger quantities of waste products than standard laboratories, negatively impacting health on worlds on which they are used.
+
+LRN_THEORM_PROVER
+Automatic Theorm Prover
+
+LRN_THEORM_PROVER_DESC
+Abstract mathematical discoveries frequently have practical, if unforseen, applications in future research.  Increasingly complex formal systems require correspondingly increased time to manipulate in order to prove such discoveries, limiting progress.  Elegant algorithmic methods to automate Theorm Proving can overcome this problem, however doing so requires significant research effort itself, limiting the method's usefulness to empires which have chosen to focus on research in the long-term.
+
+LRN_LIGHTHOUSE
+Interstellar Lighthouses
+
+LRN_LIGHTHOUSE_DESC
+Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
+
+LRN_NAVIGATION
+Intersetaller Navigation
+
+LRN_NAVIGATION_DESC
+Abstractly, starlanes form a relatively restrictive network of possible pathes.  However, in practice the process of interstellar travel along starlanes is somewhat more complicated and risky without proper navigation techniques.\n\nDoes nothing.  In future, might do something related to starlanes or ship speed or range...
 
 LRN_COLLECTIVE_NET
 Kollektives Gedankennetzwerk
@@ -2257,6 +2386,30 @@ PsiCorp
 LRN_PSICORP_DESC
 Es ist nun möglich, die in vereinzelten Individuen schlummernden psionischen Fähigkeiten bei der Geburt zu erkennen. Aber um ihre Begabung wirklich zu fördern, ist es notwendig, eine Akademie aufzubauen, die sich nur der Psionik widmet. Absolventen dieser Akademie würden eine hochspezialisierte Psi-Eliteeinheit bilden, die als Vermittler und Verstärker für die größten Forscher eines Imperiums eingesetzt werden können.
 
+PRO_AUTOFACTORY_I
+Basic Autofactories
+
+PRO_AUTOFACTORY_I_DESC
+Automated factories greatly increase industirial output without direct supervision, however it remains necessary to provide guidance to such labs regarding what needs to be produced.  A specailzed control centre is required to facilitate these exchanges, and the language in which they are conducted requires extensive research prior to implementation.  Consequently, the use of automated factories may only be practical for empires that conduct large amouts of research.  Conversely, empires with minimal research, but much existing production capacity, may find other production-enhancing methods more practical.
+
+PRO_HEAVY_MINING_I
+Heavy Mining Processors
+
+PRO_HEAVY_MINING_I_DESC
+When increased minerals production is the only concern, no environmental damage considerations exist, and the environment itself is condusive, partially automated bulk mining activites can be optimal.  Significant processing capacity is required, however, necessitating the use of centralized ore-processing facilties.
+
+PRO_ENVIRO_MINING_I
+Environmentally-Conscious Mining
+
+PRO_ENVIRO_MINING_I_DESC
+Many mining methods are incompatiable with highly populous planets, due to environmental damage.  Careful consideration of Planetary Ecology is required to permit limited mining techniques to be employed without such downsides.  Minerals production is less per unit of population than more extreme methods, however additional population may somewhat offset this.  Additionaly, these limited techniques are only applicable to worlds capable of supporting high populations: Superb or Optimal for a given race.\n\nIncreases minerals production by +2 per 10 population on primary mining focused worlds.\nIncreases minreals production by +1 per 10 population on primary balanced and secondary mining focused worlds.\nMultiple focus balances are cumulative: primary and secondary mining focus provides +3 to mineral production per 10 population.
+
+PRO_ASTEROID_MINE_I
+Basic Asteroid Mines
+
+PRO_ASTEROID_MINE_I_DESC
+The initial implementation of asteroid mining techniques yields moderate gains to mineral production in systems with suitable asteroid belts to exploit.  Increased mining output occurs on all planets in system, allowing planets with environments normally difficult to mine, which often also allow larger populations, to produce large amounts of minerals per unit of population.  Normally large mining output per unit population is limited to low-population capacity worlds, limiting actual mineral output.
+
 PRO_ART_BLACK_HOLE
 Künstliches schwarzes Loch
 
@@ -2293,9 +2446,91 @@ Bergbauplanungswesen
 PRO_MINING_ENGINEERING_DESC
 Die Anwendung von Konzepten der planetaren Geologie erlaubt die effiziente Extraktion von oberflächennahen Mineralien des Planeten. Durch die Identifikation wahrscheinlicher Orte und geeigneter Extraktionsmethoden kann die Effizienz und die insgesamt mögliche Produktion erhöht werden. Des weiteren verbessert vorrausschauende Planung und Analyse die Sicherheit und Dauerhaftigkeit der Bergwerke.
 
+PRO_INDUSTRY_CENTRE_I
+Regional Industrial Centres
+
+PRO_INDUSTRY_CENTRE_I_DESC
+Coordinating industrial activity between planets and star systems can be effectively accomplished at large centralized complexes.\n\nFacility's large cost and build time, as well as significant future range growth potential, require strong planning to produce in location with ideal future utility.  Large industrial benefits come with large up-front cost, in both production resources and time, but with minimal research prerequisites, making facility useful for high-production strategies, but unattractive for research-focused empires.
+
+########################################
+# Tech Refinement Names & Descriptions #
+########################################
+
+PRO_ASTEROID_MINE_II
+Advanced Asteroid Mines
+
+PRO_ASTEROID_MINE_II_DESC
+Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.  The same asteroid field and population produces additional minerals at all planets in-system that focus primarily on mining.
+
+PRO_INDUSTRY_CENTRE_II
+Greater Regional Industrial Centre
+
+PRO_INDUSTRY_CENTRE_II_DESC
+Improved centralized management of dispersed industrial activities increases the range and size of increased industiral output provided.
+
+PRO_INDUSTRY_CENTRE_III
+Supreme Regional Industrial Centre
+
+PRO_INDUSTRY_CENTRE_III_DESC
+Additional experience and facilities improvements further extend the range and size of industrial output improvement.
+
 #################################
 # Building Names & Descriptions #
 #################################
+
+BLD_BIOTERROR_PROJECTOR
+Bioterror Projection Base
+
+BLD_BIOTERROR_PROJECTOR_DESC
+Available with Bioterror Facilites.  Projects negative health effects of minor biological warfare to nearby planets.\n\nPlanets within 2 starlane jumps owned by other empires receive -4 to max health.\nPlanets within 2 starlane jumps owned exclusively by the empire that builds the projector receive -1 to max health.\nRequires empire operating it to own at least one Bioterror Research Centre; otherwise produces no negative health effects on other empires' planets.
+
+BLD_BIOTERROR_LAB
+Bioterror Research Centre
+
+BLD_BIOTERROR_LAB_DESC
+Available with Bioterror Facilties.  Is required for Bioterror Projection Bases to affect other empires.\n\nCauses -2 to max health of planets in system where it is built, regardless of that planet's ownership.
+
+BLD_AUTOFACTORY_CONTROL
+Autofactory Control Centre
+
+BLD_AUTOFACTORY_CONTROL_DESC
+Available with Sentient Autofactories.\n\nProvides +2 to max production output per 10 population on primary industry focused worlds.\nProvides additional +1 to max industry output per 10 population on secondary industry focused worlds.
+
+BLD_AUTOLAB_CONTROL
+Autolab Control Centre
+
+BLD_AUTOLAB_CONTROL_DESC
+Available with Sentient Autolabs.\n\nProvides +2 to max research output per 10 population and -2 to max health on primary research focused worlds.\nProvides additional +1 to max research output per 10 population and -1 to max health on secondary research focused worlds.
+
+BLD_THEORM_PROVER
+Automatic Theorm Prover
+
+BLD_THEORM_PROVER_DESC
+Available with Automatic Theorm Prover.\n\nProvides +5 to max research output per 10 population on primary research focused worlds, non-stacking.\nProvides additional +1 to max research output per 10 population on secondary research focused worlds, non-stacking.
+
+BLD_LIGHTHOUSE
+Interstellar Lighthouse
+
+BLD_LIGHTHOUSE_DESC
+Does nothing.  Maybe in future this could make certain ships go faster, or increase trade, or make starlanes more visible nearby (thereby indirectly increasing trade)...
+
+BLD_HEAVY_MINE_PROCESSOR
+Heavy Mining Processor
+
+BLD_HEAVY_MINE_PROCESSOR_DESC
+Available with Heavy Mining Processors.\n\nProvides +5 mining to mining-focused worlds, non stacking, within 100 distance of the facility, that are of type Barren, Radiated, Toxic or Inferno.  Also proves +2 to mining and -5 to farming, both non-stacking, on planet at which it is built.
+
+BLD_INDUSTRY_CENTRE
+Regional Industrial Centre
+
+BLD_INDUSTRY_CENTRE_DESC
+Available with Regional Industrial Centres.\n\nInitially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.\n\nGreater Regional Industrial Centre refinement increases bonus to +6 and increases distance to 200.\n\nSupreme Regional Industrial Centre refinement further increases bonus to +7 and range to 300.
+
+BLD_ASTEROID_MINE
+Asteroid Mining Facility
+
+BLD_ASTEROID_MINE_DESC
+Available with Basic Asteroid Mines.  Initially provides +4 minerals production per 10 population to planets in same system that contains an asteroid belt.\nWith Advanced Asteroid Mines refinement, provides additional +4, or +8 total minerals production per 10 population to planets in same system that contains an asteroid belt.
 
 BLD_GRAVITY_WELLS
 Schwerkraftgeneratoren
