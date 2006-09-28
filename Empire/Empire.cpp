@@ -615,9 +615,9 @@ Empire::Empire() :
     m_mineral_resource_pool(RE_MINERALS),
     m_food_resource_pool(RE_FOOD),
     m_research_resource_pool(RE_RESEARCH),
-    m_population_pool(),
     m_industry_resource_pool(RE_INDUSTRY),
-    m_trade_resource_pool(RE_TRADE)
+    m_trade_resource_pool(RE_TRADE),
+    m_population_pool()
 
 {}
 
@@ -630,9 +630,9 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_mineral_resource_pool(RE_MINERALS),
     m_food_resource_pool(RE_FOOD),
     m_research_resource_pool(RE_RESEARCH),
-    m_population_pool(),
     m_industry_resource_pool(RE_INDUSTRY),
-    m_trade_resource_pool(RE_TRADE)
+    m_trade_resource_pool(RE_TRADE),
+    m_population_pool()
 {}
 
 Empire::Empire(const XMLElement& elem) :
@@ -641,9 +641,9 @@ Empire::Empire(const XMLElement& elem) :
     m_mineral_resource_pool(elem.Child("m_mineral_resource_pool").Child("ResourcePool")),
     m_food_resource_pool(elem.Child("m_food_resource_pool").Child("ResourcePool")),
     m_research_resource_pool(elem.Child("m_research_resource_pool").Child("ResourcePool")),
-    m_population_pool(elem.Child("m_population_resource_pool").Child("PopulationPool")),
     m_industry_resource_pool(elem.Child("m_industry_resource_pool").Child("ResourcePool")),
-    m_trade_resource_pool(elem.Child("m_trade_resource_pool").Child("ResourcePool"))
+    m_trade_resource_pool(elem.Child("m_trade_resource_pool").Child("ResourcePool")),
+    m_population_pool(elem.Child("m_population_resource_pool").Child("PopulationPool"))
 {
     if (elem.Tag() != "Empire")
         throw std::invalid_argument("Attempted to construct a Empire from an XMLElement that had a tag other than \"Empire\"");

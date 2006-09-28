@@ -104,7 +104,7 @@ class CUIStateButton : public GG::StateButton
 {
 public:
     /** styles used to render CUIStateButtons; these are in addition to the values in the GG::StateButton::StateButtonStyle enum.*/
-    enum CUIStateButtonStyle {SBSTYLE_CUI_CHECKBOX = 5, SBSTYLE_CUI_RADIO_BUTTON};
+    enum CUIStateButtonStyle {SBSTYLE_CUI_CHECKBOX = 7, SBSTYLE_CUI_RADIO_BUTTON};
 
     /** \name Structors */ //@{
     CUIStateButton(int x, int y, int w, int h, const std::string& str, Uint32 text_fmt, Uint32 style = SBSTYLE_CUI_CHECKBOX,
