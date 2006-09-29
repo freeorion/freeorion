@@ -59,9 +59,9 @@ ServerConnectWnd::ServerConnectWnd() :
     m_host_or_join_radio_group = new GG::RadioButtonGroup(CONTROL_MARGIN, m_player_name_edit->LowerRight().y + CONTROL_MARGIN,
                                                           SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4 + CONTROL_MARGIN + ClientUI::PTS + 4, GG::VERTICAL);
     m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4, UserString("HOST_GAME_BN"), GG::TF_LEFT, 
-                                                             CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+                                                             GG::SBSTYLE_3D_RADIO));
     m_host_or_join_radio_group->AddButton(new CUIStateButton(0, ClientUI::PTS + 4 + CONTROL_MARGIN, SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4, 
-                                                             UserString("JOIN_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+                                                             UserString("JOIN_GAME_BN"), GG::TF_LEFT, GG::SBSTYLE_3D_RADIO));
 
     const int JOIN_CONTROLS_X = CONTROL_MARGIN + 10;
     m_LAN_game_label = new GG::TextControl(JOIN_CONTROLS_X, m_host_or_join_radio_group->LowerRight().y + CONTROL_MARGIN, 

@@ -7,10 +7,10 @@
 #include "../util/Directories.h"
 
 #include "ClientUI.h"
-#include "CUITabbedPages.h"
 #include "CUISpin.h"
 
 #include <GG/GUI.h>
+#include <GG/TabWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
 #include <boost/filesystem/fstream.hpp>
@@ -149,7 +149,7 @@ OptionsWnd::OptionsWnd():
     m_end_with_done(false)
 {
     m_done_btn = new CUIButton(15, PAGE_HEIGHT + 17, 75, UserString("DONE"));
-    m_tabs = new CUITabbedPages(5, 2, PAGE_WIDTH, PAGE_HEIGHT + 20);
+    m_tabs = new GG::TabWnd(5, 2, PAGE_WIDTH, PAGE_HEIGHT + 20, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::WND_COLOR, ClientUI::TEXT_COLOR, GG::TAB_BAR_DETACHED);
     Init();
 }
 
@@ -726,13 +726,13 @@ void OptionsWnd::Init()
     y += PAGE_ROW_HEIGHT;
 
     // Add the pages to the tabbed pages control
-    m_tabs->AddPage(control_page, UserString("OPTIONS_PAGE_CONTROL"));
-    m_tabs->AddPage(ui_page, UserString("OPTIONS_PAGE_UI"));
-    m_tabs->AddPage(sound_page, UserString("OPTIONS_PAGE_SOUND"));
-    m_tabs->AddPage(sound_page2, UserString("OPTIONS_PAGE_SOUND_2"));
-    m_tabs->AddPage(colors_page, UserString("OPTIONS_PAGE_COLOR_CONTROLS"));
-    m_tabs->AddPage(colors_page2, UserString("OPTIONS_PAGE_COLOR_GAME"));
-    m_tabs->AddPage(folders_page, UserString("OPTIONS_PAGE_FOLDERS"));
+    m_tabs->AddWnd(control_page, UserString("OPTIONS_PAGE_CONTROL"));
+    m_tabs->AddWnd(ui_page, UserString("OPTIONS_PAGE_UI"));
+    m_tabs->AddWnd(sound_page, UserString("OPTIONS_PAGE_SOUND"));
+    m_tabs->AddWnd(sound_page2, UserString("OPTIONS_PAGE_SOUND_2"));
+    m_tabs->AddWnd(colors_page, UserString("OPTIONS_PAGE_COLOR_CONTROLS"));
+    m_tabs->AddWnd(colors_page2, UserString("OPTIONS_PAGE_COLOR_GAME"));
+    m_tabs->AddWnd(folders_page, UserString("OPTIONS_PAGE_FOLDERS"));
 
     // Connect the done and cancel button
     GG::Connect(m_done_btn->ClickedSignal, &OptionsWnd::DoneClicked, this);

@@ -81,10 +81,14 @@ public:
 
     /** \name Accessors */ //@{
     virtual bool InWindow(const GG::Pt& pt) const;
+
+    bool FillBackgroundWithWndColor() const;
     //@}
 
     /** \name Mutators */ //@{
     virtual void MouseHere(const GG::Pt& pt, Uint32 keys);
+
+    void FillBackgroundWithWndColor(bool fill);
     //@}
 
 protected:
@@ -96,6 +100,7 @@ protected:
 
 private:
     ShapeOrientation m_orientation;
+    bool             m_fill_background_with_wnd_color;
 };
 
 
@@ -103,11 +108,8 @@ private:
 class CUIStateButton : public GG::StateButton
 {
 public:
-    /** styles used to render CUIStateButtons; these are in addition to the values in the GG::StateButton::StateButtonStyle enum.*/
-    enum CUIStateButtonStyle {SBSTYLE_CUI_CHECKBOX = 7, SBSTYLE_CUI_RADIO_BUTTON};
-
     /** \name Structors */ //@{
-    CUIStateButton(int x, int y, int w, int h, const std::string& str, Uint32 text_fmt, Uint32 style = SBSTYLE_CUI_CHECKBOX,
+    CUIStateButton(int x, int y, int w, int h, const std::string& str, Uint32 text_fmt, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX,
                    GG::Clr color = ClientUI::STATE_BUTTON_COLOR, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
                    GG::Clr text_color = ClientUI::TEXT_COLOR, GG::Clr interior = GG::CLR_ZERO,
                    GG::Clr border = ClientUI::CTRL_BORDER_COLOR, Uint32 flags = GG::CLICKABLE); ///< ctor

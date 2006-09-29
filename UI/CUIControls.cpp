@@ -223,16 +223,24 @@ CUITurnButton::CUITurnButton(int x, int y, int w, const std::string& str, const 
 ///////////////////////////////////////
 CUIArrowButton::CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orientation, GG::Clr color, Uint32 flags/* = GG::CLICKABLE*/) :
     Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), color, GG::CLR_ZERO, flags),
-    m_orientation(orientation)
+    m_orientation(orientation),
+    m_fill_background_with_wnd_color (false)
 {
     GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
 }
 
 bool CUIArrowButton::InWindow(const GG::Pt& pt) const
 {
-    GG::Pt ul = UpperLeft() + GG::Pt(3, 1), lr = LowerRight() - GG::Pt(2, 1);
-    return InIsoscelesTriangle(pt, ul.x, ul.y, lr.x, lr.y, m_orientation);
+    if (m_fill_background_with_wnd_color) {
+        return Button::InWindow(pt);
+    } else {
+        GG::Pt ul = UpperLeft() + GG::Pt(3, 1), lr = LowerRight() - GG::Pt(2, 1);
+        return InIsoscelesTriangle(pt, ul.x, ul.y, lr.x, lr.y, m_orientation);
+    }
 }
+
+bool CUIArrowButton::FillBackgroundWithWndColor() const
+{ return m_fill_background_with_wnd_color; }
 
 void CUIArrowButton::MouseHere(const GG::Pt& pt, Uint32 keys)
 {
@@ -245,8 +253,14 @@ void CUIArrowButton::MouseHere(const GG::Pt& pt, Uint32 keys)
     }
 }
 
+void CUIArrowButton::FillBackgroundWithWndColor(bool fill)
+{ m_fill_background_with_wnd_color = fill; }
+
 void CUIArrowButton::RenderPressed()
 {
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    if (m_fill_background_with_wnd_color)
+        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WND_COLOR, GG::CLR_ZERO, 0);
     OffsetMove(GG::Pt(1, 1));
     RenderUnpressed();
     OffsetMove(GG::Pt(-1, -1));
@@ -254,42 +268,50 @@ void CUIArrowButton::RenderPressed()
 
 void CUIArrowButton::RenderRollover()
 {
-    GG::Pt ul = UpperLeft() + GG::Pt(3, 1), lr = LowerRight() - GG::Pt(2, 1);
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    if (m_fill_background_with_wnd_color)
+        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WND_COLOR, GG::CLR_ZERO, 0);
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     if (!Disabled())
         AdjustBrightness(color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
-    IsoscelesTriangle(ul.x, ul.y, lr.x, lr.y, m_orientation, color_to_use);
+    GG::Pt tri_ul = ul + GG::Pt(3, 1), tri_lr = lr - GG::Pt(2, 1);
+    IsoscelesTriangle(tri_ul.x, tri_ul.y, tri_lr.x, tri_lr.y, m_orientation, color_to_use);
 }
 
 void CUIArrowButton::RenderUnpressed()
 {
-    GG::Pt ul = UpperLeft() + GG::Pt(3, 1), lr = LowerRight() - GG::Pt(2, 1);
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    if (m_fill_background_with_wnd_color)
+        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WND_COLOR, GG::CLR_ZERO, 0);
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-    IsoscelesTriangle(ul.x, ul.y, lr.x, lr.y, m_orientation, color_to_use);
+    GG::Pt tri_ul = ul + GG::Pt(3, 1), tri_lr = lr - GG::Pt(2, 1);
+    IsoscelesTriangle(tri_ul.x, tri_ul.y, tri_lr.x, tri_lr.y, m_orientation, color_to_use);
 }
 
 
 ///////////////////////////////////////
 // class CUIStateButton
 ///////////////////////////////////////
-CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& str, Uint32 text_fmt, Uint32 style/* = SBSTYLE_CUI_CHECKBOX*/,
+CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& str, Uint32 text_fmt, GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/,
                                GG::Clr color/* = ClientUI::STATE_BUTTON_COLOR*/, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                                GG::Clr text_color/* = ClientUI::TEXT_COLOR*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                                GG::Clr border/* = ClientUI::CTRL_BORDER_COLOR*/, Uint32 flags/* = GG::CLICKABLE*/) :
-    StateButton(x, y, w, h, str, FontOrDefaultFont(font), text_fmt, color, text_color, interior, GG::StateButtonStyle(style), flags),
+    StateButton(x, y, w, h, str, FontOrDefaultFont(font), text_fmt, color, text_color, interior, style, flags),
     m_border_color(border),
     m_mouse_here(false)
 {
+    if (style == GG::SBSTYLE_3D_TOP_DETACHED_TAB || style == GG::SBSTYLE_3D_TOP_ATTACHED_TAB)
+        SetColor(ClientUI::WND_COLOR);
     // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
     // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
     // checking the redering style
-    GG::Connect(CheckedSignal, PlayButtonCheckSound(style == CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON), -1);
+    GG::Connect(CheckedSignal, PlayButtonCheckSound(style == GG::SBSTYLE_3D_RADIO), -1);
 }
 
 void CUIStateButton::Render()
 {
-    if (static_cast<int>(Style()) == SBSTYLE_CUI_CHECKBOX || 
-        static_cast<int>(Style()) == SBSTYLE_CUI_RADIO_BUTTON) {
+    if (static_cast<int>(Style()) == GG::SBSTYLE_3D_CHECKBOX || 
+        static_cast<int>(Style()) == GG::SBSTYLE_3D_RADIO) {
         // draw button
         GG::Pt bn_ul = ClientUpperLeft() + ButtonUpperLeft();
         GG::Pt bn_lr = ClientUpperLeft() + ButtonLowerRight();
@@ -302,7 +324,7 @@ void CUIStateButton::Render()
             AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
         }
 
-        if (static_cast<int>(Style()) == SBSTYLE_CUI_CHECKBOX) {
+        if (static_cast<int>(Style()) == GG::SBSTYLE_3D_CHECKBOX) {
             const int MARGIN = 3;
             FlatRectangle(bn_ul.x, bn_ul.y, bn_lr.x, bn_lr.y, int_color_to_use, border_color_to_use, 1);
             if (Checked()) {
@@ -352,7 +374,7 @@ void CUIStateButton::Render()
                 glScaled(-1.0, 1.0, 1.0);
                 glTranslated(-(bn_ul.x + bn_lr.x) / 2.0, (bn_ul.y + bn_lr.y) / 2.0, 0.0);
             }
-        } else if (static_cast<int>(Style()) == SBSTYLE_CUI_RADIO_BUTTON) {
+        } else if (static_cast<int>(Style()) == GG::SBSTYLE_3D_RADIO) {
             const int MARGIN = 2;
             FlatCircle(bn_ul.x, bn_ul.y, bn_lr.x, bn_lr.y, int_color_to_use, border_color_to_use, 1);
             if (Checked()) {
@@ -376,6 +398,22 @@ void CUIStateButton::Render()
         OffsetMove(TextUpperLeft());
         TextControl::Render();
         OffsetMove(-TextUpperLeft());
+    } else if (static_cast<int>(Style()) == GG::SBSTYLE_3D_TOP_DETACHED_TAB) {
+        GG::Pt ul = UpperLeft(), lr = LowerRight();
+        GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+        GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
+        if (Checked() || !Disabled() && m_mouse_here)
+            AdjustBrightness(border_color_to_use, 100);
+        const int UNCHECKED_OFFSET = 4;
+        GG::Pt additional_text_offset;
+        if (!Checked()) {
+            ul.y += UNCHECKED_OFFSET;
+            additional_text_offset.y = UNCHECKED_OFFSET / 2;
+        }
+        AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, 1, true, false, !Checked());
+        OffsetMove(TextUpperLeft() + additional_text_offset);
+        TextControl::Render();
+        OffsetMove(-(TextUpperLeft() + additional_text_offset));
     } else {
         StateButton::Render();
     }

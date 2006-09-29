@@ -88,7 +88,6 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'UI/CUIControls.cpp',
         'UI/CUIDrawUtil.cpp',
         'UI/CUIStyle.cpp',
-        'UI/CUITabbedPages.cpp',
         'UI/CUIWnd.cpp',
         'UI/CombatWnd.cpp',
         'UI/FleetButton.cpp',

@@ -143,6 +143,34 @@ GG::Button* CUIStyle::NewSpinDecrButton(int x, int y, int w, int h, const std::s
     return new CUIArrowButton(0, 0, 1, 1, SHAPE_DOWN, ClientUI::DROP_DOWN_LIST_ARROW_COLOR, flags);
 }
 
+GG::StateButton* CUIStyle::NewTabBarTab(int x, int y, int w, int h, const std::string& str,
+                                        const boost::shared_ptr<GG::Font>& font, Uint32 text_fmt, GG::Clr color,
+                                        GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
+                                        GG::StateButtonStyle style/* = GG::SBSTYLE_3D_TOP_ATTACHED_TAB*/, Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    GG::StateButton* retval = new CUIStateButton(x, y, w, h, str, text_fmt, GG::SBSTYLE_3D_TOP_DETACHED_TAB);
+    retval->Resize(retval->MinUsableSize() + GG::Pt(12, 0));
+    return retval;
+}
+
+GG::Button* CUIStyle::NewTabBarLeftButton(int x, int y, int w, int h, const std::string& str,
+                                          const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                          Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    CUIArrowButton* retval = new CUIArrowButton(x, y, w, h, SHAPE_LEFT, ClientUI::DROP_DOWN_LIST_ARROW_COLOR, flags);
+    retval->FillBackgroundWithWndColor(true);
+    return retval;
+}
+
+GG::Button* CUIStyle::NewTabBarRightButton(int x, int y, int w, int h, const std::string& str,
+                                           const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                           Uint32 flags/* = GG::CLICKABLE*/) const
+{
+    CUIArrowButton* retval = new CUIArrowButton(x, y, w, h, SHAPE_RIGHT, ClientUI::DROP_DOWN_LIST_ARROW_COLOR, flags);
+    retval->FillBackgroundWithWndColor(true);
+    return retval;
+}
+
 void CUIStyle::DeleteWnd(GG::Wnd* wnd) const
 {
     delete wnd;

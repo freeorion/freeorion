@@ -60,8 +60,8 @@ void AdjustBrightness(GG::Clr& color, double amount)
     color.b = std::max(0, std::min(static_cast<int>(color.b * amount), 255));
 }
 
-void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Clr border, int angle_offset, int thick, 
-                           bool upper_left_angled/* = true*/)
+void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Clr border, int angle_offset, int thick,
+                           bool upper_left_angled/* = true*/, bool lower_right_angled/* = true*/, bool draw_bottom/* = true*/)
 {
     glDisable(GL_TEXTURE_2D);
 
@@ -89,7 +89,7 @@ void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Cl
     int inner_lr_corner_x2 = lr_corner_x2 - thick;
     int inner_lr_corner_y2 = lr_corner_y2 - thick;
 
-    // draw beveled edges
+    // draw border
     if (thick) {
         glBegin(GL_QUADS);
         glColor4ubv(border.v);
@@ -125,20 +125,34 @@ void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Cl
         glVertex2i(inner_x1, inner_y2);
 
         // the bottom
-        glVertex2i(inner_x1, inner_y2);
-        glVertex2i(x1, y2);
-        glVertex2i(lr_corner_x1, lr_corner_y1);
-        glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
+        if (draw_bottom) {
+            glVertex2i(inner_x1, inner_y2);
+            glVertex2i(x1, y2);
+            if (lower_right_angled) {
+                glVertex2i(lr_corner_x1, lr_corner_y1);
+                glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
+            } else {
+                glVertex2i(x2, y2);
+                glVertex2i(inner_x2, inner_y2);
+            }
+        }
 
         // the lower-right angled side
-        glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
-        glVertex2i(lr_corner_x1, lr_corner_y1);
-        glVertex2i(lr_corner_x2, lr_corner_y2);
-        glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
+        if (lower_right_angled) {
+            glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
+            glVertex2i(lr_corner_x1, lr_corner_y1);
+            glVertex2i(lr_corner_x2, lr_corner_y2);
+            glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
+        }
 
         // the right side
-        glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
-        glVertex2i(lr_corner_x2, lr_corner_y2);
+        if (lower_right_angled) {
+            glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
+            glVertex2i(lr_corner_x2, lr_corner_y2);
+        } else {
+            glVertex2i(x2, y2);
+            glVertex2i(inner_x2, inner_y2);
+        }
         glVertex2i(x2, y1);
         glVertex2i(inner_x2, inner_y1);
 
@@ -155,8 +169,12 @@ void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Cl
         glVertex2i(inner_x1, inner_y1);
     }
     glVertex2i(inner_x1, inner_y2);
-    glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
-    glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
+    if (lower_right_angled) {
+        glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
+        glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
+    } else {
+        glVertex2i(inner_x2, inner_y2);
+    }
     glVertex2i(inner_x2, inner_y1);
     glEnd();
 
@@ -164,7 +182,7 @@ void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Cl
 }
 
 bool InAngledCornerRect(const GG::Pt& pt, int x1, int y1, int x2, int y2, int angle_offset, 
-                        bool upper_left_angled/* = true*/)
+                        bool upper_left_angled/* = true*/, bool lower_right_angled/* = true*/)
 {
     bool retval = false;
     GG::Pt ul(x1, y1);
@@ -173,7 +191,7 @@ bool InAngledCornerRect(const GG::Pt& pt, int x1, int y1, int x2, int y2, int an
         GG::Pt dist_from_ul = pt - ul;
         GG::Pt dist_from_lr = lr - pt;
         bool inside_upper_left_corner = upper_left_angled ? (angle_offset < dist_from_ul.x + dist_from_ul.y) : true;
-        bool inside_lower_right_corner = angle_offset < dist_from_lr.x + dist_from_lr.y;
+        bool inside_lower_right_corner = lower_right_angled ? (angle_offset < dist_from_lr.x + dist_from_lr.y) : true;
         retval = inside_upper_left_corner && inside_lower_right_corner;
     }
     return retval;

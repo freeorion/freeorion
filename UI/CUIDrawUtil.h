@@ -14,12 +14,12 @@ void AdjustBrightness(GG::Clr& color, double amount);
 
 /** renders a rectangle whose upper left and lower right corners are angled.  If \a upper_left_angled == false, 
     the upper left corner is drawn as a normal corner */
-void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Clr border, int angle_offset, int thick, 
-                           bool upper_left_angled = true);
+void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Clr border, int angle_offset, int thick,
+                           bool upper_left_angled = true, bool lower_right_angled = true, bool draw_bottom = true);
 
 /** returns true iff \a pt falls within \a rect, with the missing bits of the angled corners not catching the point. 
     If \a upper_left_angled == false, the upper left corner is treated as a normal corner. */
-bool InAngledCornerRect(const GG::Pt& pt, int x1, int y1, int x2, int y2, int angle_offset, bool upper_left_angled = true);
+bool InAngledCornerRect(const GG::Pt& pt, int x1, int y1, int x2, int y2, int angle_offset, bool upper_left_angled = true, bool lower_right_angled = true);
 
 /** the orientations used to render some shapes used in the UI; the orientations usually refer to the direction
     in which the shape is pointing */

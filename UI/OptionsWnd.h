@@ -14,8 +14,8 @@
 #include "CUISpin.h"
 #endif
 
-class CUITabbedPages;
 class ColorSelector;
+namespace GG { class TabWnd; }
 
 //! This is a dialog box that allows the user to control certain basic game parameters, such as sound and music
 class OptionsWnd : public CUIWnd
@@ -97,39 +97,39 @@ private:
     std::vector<std::string> m_resolutions;
     std::vector<std::string> m_colorDepth;
 
-    CUITabbedPages*         m_tabs; //!< Tabbed pages control
-    CUIButton*                  m_done_btn;    //!< Done button
+    GG::TabWnd*              m_tabs;
+    CUIButton*               m_done_btn;    //!< Done button
 
     // UI page members
-    CUIEdit*                        m_language_edit;
-    CUIDropDownList*        m_comboTextFont;
-    CUIDropDownList*        m_comboTitleFont;
-    CUIEdit*                        m_music_edit;
-    CUIEdit*                        m_alert_edit;
-    CUIEdit*                        m_typing_edit;
-    CUIEdit*                        m_turn_edit;
-    CUIEdit*                        m_sidePanel_edit;
-    CUIEdit*                        m_planet_edit;
-    CUIEdit*                        m_close_edit;
-    CUIEdit*                        m_maximize_edit;
-    CUIEdit*                        m_minimize_edit;
-    CUIEdit*                        m_balanced_edit;
-    CUIEdit*                        m_industry_edit;
-    CUIEdit*                        m_farming_edit;
-    CUIEdit*                        m_mining_edit;
-    CUIEdit*                        m_research_edit;
-    CUIEdit*                        m_clickButton_edit;
-    CUIEdit*                        m_rolloverButton_edit;
-    CUIEdit*                        m_clickFleet_edit;
-    CUIEdit*                        m_rolloverFleet_edit;
-    CUIEdit*                        m_drop_edit;
-    CUIEdit*                        m_pulldown_edit;
-    CUIEdit*                        m_select_edit;
-    CUIEdit*                        m_art_dir_edit;
-    CUIEdit*                        m_save_dir_edit;
-    CUIEdit*                        m_font_dir_edit;
-    CUIEdit*                        m_sound_dir_edit;
-    CUIEdit*                        m_settings_dir_edit;
+    CUIEdit*                 m_language_edit;
+    CUIDropDownList*         m_comboTextFont;
+    CUIDropDownList*         m_comboTitleFont;
+    CUIEdit*                 m_music_edit;
+    CUIEdit*                 m_alert_edit;
+    CUIEdit*                 m_typing_edit;
+    CUIEdit*                 m_turn_edit;
+    CUIEdit*                 m_sidePanel_edit;
+    CUIEdit*                 m_planet_edit;
+    CUIEdit*                 m_close_edit;
+    CUIEdit*                 m_maximize_edit;
+    CUIEdit*                 m_minimize_edit;
+    CUIEdit*                 m_balanced_edit;
+    CUIEdit*                 m_industry_edit;
+    CUIEdit*                 m_farming_edit;
+    CUIEdit*                 m_mining_edit;
+    CUIEdit*                 m_research_edit;
+    CUIEdit*                 m_clickButton_edit;
+    CUIEdit*                 m_rolloverButton_edit;
+    CUIEdit*                 m_clickFleet_edit;
+    CUIEdit*                 m_rolloverFleet_edit;
+    CUIEdit*                 m_drop_edit;
+    CUIEdit*                 m_pulldown_edit;
+    CUIEdit*                 m_select_edit;
+    CUIEdit*                 m_art_dir_edit;
+    CUIEdit*                 m_save_dir_edit;
+    CUIEdit*                 m_font_dir_edit;
+    CUIEdit*                 m_sound_dir_edit;
+    CUIEdit*                 m_settings_dir_edit;
 
     friend struct BrowseForFileFunctor;
 };

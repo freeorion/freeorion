@@ -158,10 +158,9 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
                                  m_galaxy_setup_panel->LowerRight().y + 100, m_galaxy_setup_panel->LowerRight().y + RADIO_BN_HT - CONTROL_MARGIN,
                                  GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::TF_LEFT, GG::SBSTYLE_3D_RADIO));
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("LOAD_GAME_BN"), 
-                           GG::TF_LEFT, CUIStateButton::SBSTYLE_CUI_RADIO_BUTTON));
+        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("LOAD_GAME_BN"), GG::TF_LEFT, GG::SBSTYLE_3D_RADIO));
 
     m_saved_games_list = new CUIDropDownList(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y + CONTROL_MARGIN, 
                                              GALAXY_SETUP_PANEL_WIDTH, SAVED_GAMES_LIST_ROW_HEIGHT, SAVED_GAMES_LIST_DROP_HEIGHT);
