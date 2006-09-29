@@ -594,14 +594,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Ui\CUITabbedPages.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\CUITabbedPages.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\Ui\CUIWnd.cpp"
 					>
 				</File>
