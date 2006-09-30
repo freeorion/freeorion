@@ -1538,8 +1538,6 @@ void SidePanel::SetSystemImpl()
             GG::Connect(plt_vec[i]->ResourceCenterChangedSignal, &SidePanel::PlanetsChanged, this);
         }
 
-        m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
-
         PlanetsChanged();
     }
 }
