@@ -706,8 +706,6 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         // Update data universe and empire using state from server
         UpdateTurnData(doc);
 
-        Empires().Lookup(m_empire_id)->UpdateResourcePool();
-
 #if TEST_BOOST_SERIALIZATION
         namespace io = boost::iostreams;
         std::string boost_xml_filename = (GetLocalDir() / ("TurnUpdate-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.xml")).native_file_string();

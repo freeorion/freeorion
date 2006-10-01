@@ -617,8 +617,9 @@ Empire::Empire() :
     m_research_resource_pool(RE_RESEARCH),
     m_industry_resource_pool(RE_INDUSTRY),
     m_trade_resource_pool(RE_TRADE),
-    m_population_pool()
-
+    m_population_pool(),
+    m_food_total_distributed(0),
+    m_maintenance_total_cost(0)
 {}
 
 Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id) :
@@ -632,7 +633,9 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_research_resource_pool(RE_RESEARCH),
     m_industry_resource_pool(RE_INDUSTRY),
     m_trade_resource_pool(RE_TRADE),
-    m_population_pool()
+    m_population_pool(),
+    m_food_total_distributed(0),
+    m_maintenance_total_cost(0)
 {}
 
 Empire::Empire(const XMLElement& elem) :
@@ -643,7 +646,9 @@ Empire::Empire(const XMLElement& elem) :
     m_research_resource_pool(elem.Child("m_research_resource_pool").Child("ResourcePool")),
     m_industry_resource_pool(elem.Child("m_industry_resource_pool").Child("ResourcePool")),
     m_trade_resource_pool(elem.Child("m_trade_resource_pool").Child("ResourcePool")),
-    m_population_pool(elem.Child("m_population_resource_pool").Child("PopulationPool"))
+    m_population_pool(elem.Child("m_population_resource_pool").Child("PopulationPool")),
+    m_food_total_distributed(0),
+    m_maintenance_total_cost(0)
 {
     if (elem.Tag() != "Empire")
         throw std::invalid_argument("Attempted to construct a Empire from an XMLElement that had a tag other than \"Empire\"");
@@ -1371,7 +1376,7 @@ void Empire::UpdateProductionQueue()
 
 void Empire::UpdateTradeSpending()
 {
-    m_trade_resource_pool.Update();
+    m_trade_resource_pool.Update(); // recalculate total trade production
 
     // TODO: Replace with call to some other subsystem, similar to the Update...Queue functions
     m_maintenance_total_cost = 0.0;
@@ -1389,7 +1394,7 @@ void Empire::UpdateTradeSpending()
 
 void Empire::UpdateFoodDistribution()
 {
-    m_food_resource_pool.Update();
+    m_food_resource_pool.Update();  // recalculate total food production
 
     //Logger().debugStream() << "Empire::UpdateFoodDistribution for empire " << m_id;
 

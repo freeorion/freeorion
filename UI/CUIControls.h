@@ -271,101 +271,93 @@ struct CUISimpleDropDownListRow : public GG::ListBox::Row
     }
 };
 
+/** Encapsulates an icon and text that goes with it in a single control.  For example, "[food icon] +1" or
+    "[population icon] 66 (+5)", where [... icon] is an icon image, not text.
+    The icon may have one or two numerical values.  If one, just that number is displayed.  If two, the first
+    number is displayed followed by the second in brackets "()"
+    
+    The number of significant figures to display may be specified for each value.  In order to represent
+    numbers which would normally require more digits than the allowed sig figs, SI unit prefixes indicate
+    powers of 1000.  Possible prefixes include k = 10^3, M = 10^6, G = 10^9, T = 10^12, m = 10^-3,
+    µ = 10^-6, n = 10^-9, p = 10^-12.  The smallest prefix possible for the number and sig figs limit is used.
 
-
-/** Encapsulates an icon and text that goes with it in a single control.  For example, "[food icon] +1" or "[population icon] 66", 
-    where [... icon] is an icon image, not text.  Note that no rounding is done when DecimalsShown() = 0; in this state, the number 
-    displayed will be the truncated integer version of the current value.  Also not that PositiveColor() and NegativeColor() are
-    the same color by default, specifically the one \a text_color parameter specified in the ctor. */
+    Each value may optionally be displayed rounded to the nearest integer, and/or with signs always indicated
+    (including + for positive numbers or zero) or only for negative numbers (-)
+    
+    Note: PositiveColor(), NegativeColor() and ZeroColor() are all the same color by default, specifically the one
+    \a text_color parameter specified in the ctor. 
+  */
 class StatisticIcon : public GG::Control
 {
 public:
     /** \name Structors */ //@{
-    StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color, double value, 
-                  int decimals_to_show = 0, bool show_sign = false);
+    StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color,
+                  double value, int digits, bool integerize, bool showsign); ///< initializes with one value
+    
+    StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color,
+                  double value0, double value1, int digits0, int digits1,
+                  bool integerize0, bool integerize1, bool showsign0, bool showsign1);  ///< initializes with two values
     //@}
 
     /** \name Accessors */ //@{
-    double  Value() const         {return m_value;}            ///< returns the value displayed
-    int     DecimalsShown() const {return m_decimals_to_show;} ///< returns the number of places after the decimal point to be shown
-    bool    ShowsSign() const     {return m_show_sign;}        ///< returns true iff a sign should always be shown, even for positive values
-    GG::Clr PositiveColor() const {return m_positive_color;}   ///< returns the color that will be used to display positive values
-    GG::Clr NegativeColor() const {return m_negative_color;}   ///< returns the color that will be used to display negative values
+    int NumValues() const {return m_num_values;}                ///< returns the number of values displayed
+    std::vector<double> Values() const {return m_values;}       ///< returns a vector containing the values displayed
+    double Value(int index) const;                              ///< returns the value with \a index
+    std::vector<int> SigFigs() const {return m_digits;}         ///< returns a vector of int containing the number of digits to display for each value
+    int SigFigs(int index) const;                               ///< returns the number of digits for value with \a index
+    std::vector<bool> Integerize() const {return m_integerize;} ///< returns a vector of bool containing whether each value should be rounded to an integer
+    bool Integerize(int index) const;                           ///< returns whether the the value with \a index should be rounded to an integer
+    std::vector<bool> ShowsSigns() const {return m_show_signs;} ///< returns a vector of bool containing whether the sign of each value should be shown
+    bool ShowSigns(int index) const;                            ///< returns whether the sign of the value with \a index should always be shown
+    GG::Clr PositiveColor() const {return m_positive_color;}    ///< returns the color that will be used to display positive values
+    GG::Clr ZeroColor() const {return m_zero_color;}            ///< returns the color that will be used to display values of 0
+    GG::Clr NegativeColor() const {return m_negative_color;}    ///< returns the color that will be used to display negative values
     //@}
+    
+    GG::Clr ValueColor(int index) const;                        ///< returns colour in which to draw value
 
     /** \name Mutators */ //@{
     void Render() {}
 
-    void SetValue(double value); ///< sets the value to be displayed
+    void SetValue(double value, int index = 0);             ///< sets displayed \a value with \a index
 
-    void SetDecimalsShown(int d)     {m_decimals_to_show = d; Refresh();} ///< sets the number of places after the decimal point to be shown
-    void ShowSign(bool b)            {m_show_sign = b; Refresh();}        ///< sets whether a sign should always be shown, even for positive values
-    void SetPositiveColor(GG::Clr c) {m_positive_color = c; Refresh();}   ///< sets the color that will be used to display positive values
-    void SetNegativeColor(GG::Clr c) {m_negative_color = c; Refresh();}   ///< sets the color that will be used to display negative values
+    /** sets the number of values displayed to \a num.  If \a num is greater than the current number of values, extra values are
+      * initilaized to 0.  If \a num is less than the current number of values, the extra values are discarded, and the first
+      * \a num values are kept unchanged
+      */
+    void SetNumValues(int num); 
+
+    void SetSigFigs(int digits, int index = 0);       ///< sets the significant figures of value with \a index.  Negative or zero digits are displayed to full precision.
+    void SetIntegerize(bool integerize, int index = 0); ///< sets whether value with \a index should be rounded to the nearest integer when displayed
+    void SetShowSigns(bool sign, int index = 0);        ///< sets whether the sign of value with \a index should always be shown, even for positive or zero values
+
+    void SetPositiveColor(GG::Clr c) {m_positive_color = c; Refresh();} ///< sets the color that will be used to display positive values
+    void SetZeroColor(GG::Clr c) {m_zero_color = c; Refresh();} ///< sets the color that will be used to display values of zero
+    void SetNegativeColor(GG::Clr c) {m_negative_color = c; Refresh();} ///< sets the color that will be used to display negative values
     //@}
 
     static const double UNKNOWN_VALUE;
+    static const double SMALL_VALUE;    ///< smallest (absolute value) number displayed as nonzero, with nonzero colour
+    static const double LARGE_VALUE;    ///< largest (absolute value) number displayed.  larger values rounded down to this
+
+    static std::string DoubleToString(double val, int digits, bool integerize, bool showsign); ///< converts double to string with \a digits significant figures.  Represents large numbers with SI prefixes.
 
 private:
-    void Refresh();
+    void Refresh();    
+    static int EffectiveSign(double val, bool integerize);  // returns sign of value, accounting for SMALL_VALUE: +1 for positive values and -1 for negative values if their absolute value is larger than SMALL VALUE, and returns 0 for zero values or values with absolute value less than SMALL_VALUE
 
-    double m_value;
-    int m_decimals_to_show;
-    bool m_show_sign;
-    GG::Clr m_positive_color;
-    GG::Clr m_negative_color;
-    GG::StaticGraphic* m_icon;
-    GG::TextControl* m_text;
-};
+    int                 m_num_values;
 
-
-class StatisticIconDualValue : public GG::Control
-{
-public:
-    /** \name Structors */ //@{
-    StatisticIconDualValue(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color, 
-                           double value, double value_second,  int decimals_to_show = 0,int decimals_to_show_second = 0,
-                           bool show_sign = false, bool show_sign_second = false);
-    //@}
-
-    /** \name Accessors */ //@{
-    double  Value         () const {return m_value;}            ///< returns the value displayed
-    double  ValueSecond   () const {return m_value_second;}     ///< returns the second value displayed
-    int     DecimalsShown () const {return m_decimals_to_show;} ///< returns the number of places after the decimal point to be shown
-    int     DecimalsShownSecond () const {return m_decimals_to_show_second;} ///< returns the number of places after the decimal point to be shown
-    bool    ShowsSign     () const {return m_show_sign;}        ///< returns true iff a sign should always be shown, even for positive values
-    bool    ShowsSignSecond() const {return m_show_sign_second;}///< returns true iff a sign should always be shown, even for positive values
-    GG::Clr PositiveColor () const {return m_positive_color;}   ///< returns the color that will be used to display positive values
-    GG::Clr NegativeColor () const {return m_negative_color;}   ///< returns the color that will be used to display negative values
-    //@}
-
-    /** \name Mutators */ //@{
-    void Render() {}
-
-    void SetValue         (double value); ///< sets the value to be displayed
-    void SetValueSecond   (double value); ///< sets the value to be displayed
-    void SetDecimalsShown (int        d) {m_decimals_to_show  = d; UpdateTextControl();}    ///< sets the number of places after the decimal point to be shown
-    void SetDecimalsShownSecond (int  d) {m_decimals_to_show  = d; UpdateTextControl();}    ///< sets the number of places after the decimal point to be shown
-    void ShowSign         (bool       b) {m_show_sign         = b; UpdateTextControl();}    ///< sets whether a sign should always be shown, even for positive values
-    void ShowSignSecond   (bool       b) {m_show_sign_second  = b; UpdateTextControl();}    ///< sets whether a sign should always be shown, even for positive values
-    void SetPositiveColor (GG::Clr    c) {m_positive_color    = c; UpdateTextControl();}    ///< sets the color that will be used to display positive values
-    void SetNegativeColor (GG::Clr    c) {m_negative_color    = c; UpdateTextControl();}    ///< sets the color that will be used to display negative values
-   //@}
-
-    static const double UNKNOWN_VALUE;
-
-private:
-    ///< sets the textcontrol form cuurent state
-    virtual void UpdateTextControl();
-
-    double m_value,m_value_second;
-
-    int m_decimals_to_show,m_decimals_to_show_second;
-    bool m_show_sign,m_show_sign_second;
-    GG::Clr m_positive_color;
-    GG::Clr m_negative_color;
-    GG::StaticGraphic* m_icon;
-    GG::TextControl* m_text;
+    std::vector<double> m_values;
+    std::vector<int>    m_digits;
+    std::vector<bool>   m_integerize;
+    std::vector<bool>   m_show_signs;
+    
+    GG::Clr             m_positive_color;
+    GG::Clr             m_zero_color;
+    GG::Clr             m_negative_color;
+    GG::StaticGraphic*  m_icon;
+    GG::TextControl*    m_text;
 };
 
 class CUIToolBar : public GG::Control

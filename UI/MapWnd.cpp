@@ -227,25 +227,25 @@ MapWnd::MapWnd() :
     // resources
     const int ICON_DUAL_WIDTH = 110;
     const int ICON_WIDTH = ICON_DUAL_WIDTH - 30;
-    m_population= new StatisticIconDualValue(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0,0,2,false,true);
+    m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0,3,2,false,false,false,true);
     m_population->SetPositiveColor(GG::CLR_GREEN); m_population->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_population);
    
-    m_industry= new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/industry.png",GG::CLR_WHITE,0);
+    m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/industry.png",GG::CLR_WHITE,0,2,false,false);
     m_toolbar->AttachChild(m_industry);
 
-    m_research= new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0);
+    m_research = new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0,5,true,false);
     m_toolbar->AttachChild(m_research);
 
-    m_trade = new StatisticIconDualValue(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/trade.png",GG::CLR_WHITE,0,0,0,0,false,true);
+    m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/trade.png",GG::CLR_WHITE,0,0,3,2,false,false,false,true);
     m_trade->SetPositiveColor(GG::CLR_GREEN); m_trade->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_trade);
 
-    m_mineral = new StatisticIconDualValue(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0,0,0,false,true);
+    m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0,2,2,false,false,false,true);
     m_mineral->SetPositiveColor(GG::CLR_GREEN); m_mineral->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_mineral);
 
-    m_food = new StatisticIconDualValue(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0,0,0,false,true);
+    m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0,3,2,false,false,false,true);
     m_food->SetPositiveColor(GG::CLR_GREEN); m_food->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_food);
 
@@ -1448,12 +1448,12 @@ void MapWnd::RefreshFoodResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     
-    m_food->SetValue(empire->GetFoodResPool().Stockpile());
+    m_food->SetValue(empire->GetFoodResPool().Stockpile()); // set first value to stockpiled food
 
     double production = empire->GetFoodResPool().Production();
     double spent = empire->TotalFoodDistributed();
     
-    m_food->SetValueSecond(production - spent);
+    m_food->SetValue(production - spent, 1);    // set second (bracketed) value to predicted stockpile change
 }
 
 void MapWnd::RefreshMineralsResourceIndicator()
@@ -1465,7 +1465,7 @@ void MapWnd::RefreshMineralsResourceIndicator()
     double production = empire->GetMineralResPool().Production();
     double spent = empire->GetProductionQueue().TotalPPsSpent();
     
-    m_mineral->SetValueSecond(production - spent);
+    m_mineral->SetValue(production - spent, 1);
 }
 
 void MapWnd::RefreshTradeResourceIndicator()
@@ -1477,7 +1477,7 @@ void MapWnd::RefreshTradeResourceIndicator()
     double production = empire->GetTradeResPool().Production();
     double spent = empire->TotalTradeSpending();
 
-    m_trade->SetValueSecond(production - spent);
+    m_trade->SetValue(production - spent, 1);
 }
 
 void MapWnd::RefreshResearchResourceIndicator()
@@ -1511,7 +1511,7 @@ void MapWnd::RefreshPopulationIndicator()
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     
     m_population->SetValue(empire->GetPopulationPool().Population());
-    m_population->SetValueSecond(empire->GetPopulationPool().Growth());
+    m_population->SetValue(empire->GetPopulationPool().Growth(), 1);
 }
 
 bool MapWnd::ZoomToHomeSystem()

@@ -103,7 +103,7 @@ namespace {
             AttachChild(m_ship_name_text);
 
             m_ship_strength_stat = new StatisticIcon(h, SHIP_NAME_HT, STAT_ICON_WD, h - SHIP_NAME_HT - 1, ClientUI::ART_DIR + "icons/combatstrength.png", 
-                                                     ClientUI::TEXT_COLOR, 0);
+                                                     ClientUI::TEXT_COLOR, 0, 0, true, false);
             AttachChild(m_ship_strength_stat);
             GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
 
@@ -179,7 +179,7 @@ namespace {
             if (damage_pts) {
                 if (!m_damage_stat) {
                     m_damage_stat = new StatisticIcon(x_position, SHIP_NAME_HT, STAT_ICON_WD, ICON_SZ, ClientUI::ART_DIR + "icons/damagemarker.png", 
-                                                      ClientUI::TEXT_COLOR, damage_pts);
+                                                      ClientUI::TEXT_COLOR, damage_pts, 0, true, false);
                     AttachChild(m_damage_stat);
                 }
                 x_position += m_damage_stat->Width(); // no icon spacing is needed after stat icons
@@ -299,9 +299,9 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
 
     if (m_fleet) {
         m_num_ships_stat = new StatisticIcon(h, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
-                                             ClientUI::ART_DIR + "icons/3shipfleet.png", ClientUI::TEXT_COLOR, 0);
+                                             ClientUI::ART_DIR + "icons/3shipfleet.png", ClientUI::TEXT_COLOR, 0, 0, true, false);
         m_fleet_strength_stat = new StatisticIcon(h + STAT_ICON_WD, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
-                                                  ClientUI::ART_DIR + "icons/combatstrength.png", ClientUI::TEXT_COLOR, 0);
+                                                  ClientUI::ART_DIR + "icons/combatstrength.png", ClientUI::TEXT_COLOR, 0, 0, true, false);
         AttachChild(m_num_ships_stat);
         AttachChild(m_fleet_strength_stat);
         GG::Connect(m_fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);

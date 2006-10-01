@@ -21,7 +21,6 @@ class SitRepPanel;
 class System;
 class SystemIcon;
 class StatisticIcon;
-class StatisticIconDualValue;
 class CUIToolBar;
 class UniverseObject;
 
@@ -206,8 +205,7 @@ private:
     bool                            m_in_production_view_mode;
 
     CUIToolBar                      *m_toolbar;
-    StatisticIconDualValue          *m_food,*m_mineral,*m_trade,*m_population;
-    StatisticIcon                   *m_research,*m_industry;
+    StatisticIcon                   *m_food,*m_mineral,*m_trade,*m_population,*m_research,*m_industry;
 
     CUIButton                       *m_btn_siterep,*m_btn_research,*m_btn_production,*m_btn_menu;
 
