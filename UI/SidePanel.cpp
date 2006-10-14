@@ -778,9 +778,15 @@ SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &pl
 
 SidePanel::PlanetPanel::~PlanetPanel()
 {
-  for(unsigned int i=0;i<m_vec_unused_controls.size();i++)
-    delete m_vec_unused_controls[i];
-  m_vec_unused_controls.clear();
+    // HACK! These disconnects should not be necessary, since PlanetPanel is derived from boost::signals::trackable, but
+    // a segfault occurrs if they are not done (as of Boost 1.33.1).
+    m_connection_system_changed.disconnect();
+    m_connection_planet_changed.disconnect();
+    m_connection_planet_production_changed.disconnect();
+
+    for(unsigned int i=0;i<m_vec_unused_controls.size();i++)
+        delete m_vec_unused_controls[i];
+    m_vec_unused_controls.clear();
 }
 
 Planet* SidePanel::PlanetPanel::GetPlanet()
