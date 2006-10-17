@@ -88,8 +88,8 @@ namespace {
             Control(0, 0, w, h, 0),
             m_ship(ship),
             m_ship_icon(0),
-            m_ship_name_text(new GG::TextControl(h, 0, w - h - 5, SHIP_NAME_HT, m_ship->Name(), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
-                                                 ClientUI::TEXT_COLOR, GG::TF_RIGHT | GG::TF_VCENTER)),
+            m_ship_name_text(new GG::TextControl(h, 0, w - h - 5, SHIP_NAME_HT, m_ship->Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                                 ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER)),
             m_ship_strength_stat(0),
             m_damage_stat(0),
             m_colonizer_icon(0),
@@ -102,8 +102,8 @@ namespace {
 
             AttachChild(m_ship_name_text);
 
-            m_ship_strength_stat = new StatisticIcon(h, SHIP_NAME_HT, STAT_ICON_WD, h - SHIP_NAME_HT - 1, ClientUI::ART_DIR + "icons/combatstrength.png", 
-                                                     ClientUI::TEXT_COLOR, 0, 0, true, false);
+            m_ship_strength_stat = new StatisticIcon(h, SHIP_NAME_HT, STAT_ICON_WD, h - SHIP_NAME_HT - 1, (ClientUI::ArtDir() / "icons" / "combatstrength.png").native_file_string(),
+                                                     ClientUI::TextColor(), 0, 0, true, false);
             AttachChild(m_ship_strength_stat);
             GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
 
@@ -132,7 +132,7 @@ namespace {
             if (m_selected != b) {
                 m_selected = b;
 
-                const GG::Clr& unselected_text_color = ClientUI::TEXT_COLOR;
+                const GG::Clr& unselected_text_color = ClientUI::TextColor();
                 const GG::Clr& selected_text_color = GG::CLR_BLACK;
 
                 GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
@@ -160,7 +160,8 @@ namespace {
                 design_name = "Scout";
             }
             m_ship_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, SHIP_ICON_SZ, SHIP_ICON_SZ, 
-                                                GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png"), GG::GR_FITGRAPHIC);
+                                                ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png")),
+                                                GG::GR_FITGRAPHIC);
             AttachChild(m_ship_icon);
         }
 
@@ -178,8 +179,8 @@ namespace {
             int damage_pts = 0; // TODO: acount for damaged ships once damage system is in place
             if (damage_pts) {
                 if (!m_damage_stat) {
-                    m_damage_stat = new StatisticIcon(x_position, SHIP_NAME_HT, STAT_ICON_WD, ICON_SZ, ClientUI::ART_DIR + "icons/damagemarker.png", 
-                                                      ClientUI::TEXT_COLOR, damage_pts, 0, true, false);
+                    m_damage_stat = new StatisticIcon(x_position, SHIP_NAME_HT, STAT_ICON_WD, ICON_SZ, (ClientUI::ArtDir() / "icons" / "damagemarker.png").native_file_string(),
+                                                      ClientUI::TextColor(), damage_pts, 0, true, false);
                     AttachChild(m_damage_stat);
                 }
                 x_position += m_damage_stat->Width(); // no icon spacing is needed after stat icons
@@ -189,7 +190,8 @@ namespace {
             if (m_ship->Design() && design->colonize) {
                 if (!m_colonizer_icon) {
                     m_colonizer_icon = new GG::StaticGraphic(x_position, SHIP_NAME_HT, ICON_SZ, ICON_SZ, 
-                                                             GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/colonymarker.png"), GG::GR_FITGRAPHIC);
+                                                             ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "colonymarker.png"),
+                                                             GG::GR_FITGRAPHIC);
                     AttachChild(m_colonizer_icon);
                 }
                 x_position += m_colonizer_icon->Width() + ICON_SPACING;
@@ -212,7 +214,7 @@ namespace {
         enum {PANEL_WD = FLEET_LISTBOX_WIDTH - 8, PANEL_HT = 38};
 
         FleetRow(Fleet* fleet) :
-            GG::ListBox::Row(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT + 4, fleet ? FLEET_DROP_TYPE_STRING : ""),
+            GG::ListBox::Row(PANEL_WD - ClientUI::ScrollWidth(), PANEL_HT + 4, fleet ? FLEET_DROP_TYPE_STRING : ""),
             m_fleet(fleet)
         {
             SetText("FleetRow");
@@ -230,7 +232,7 @@ namespace {
         enum {PANEL_WD = FleetRow::PANEL_WD, PANEL_HT = FleetRow::PANEL_HT};
 
         ShipRow(Ship* ship) :
-            GG::ListBox::Row(PANEL_WD - ClientUI::SCROLL_WIDTH, PANEL_HT + 4, SHIP_DROP_TYPE_STRING),
+            GG::ListBox::Row(PANEL_WD - ClientUI::ScrollWidth(), PANEL_HT + 4, SHIP_DROP_TYPE_STRING),
             m_ship(ship)
         {
             SetText("ShipRow");
@@ -285,7 +287,7 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
     m_y(y),
     m_fleet_icon(0),
     m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + UserString("FW_NEW_FLEET_LABEL") + "</i>",
-                                          GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), m_fleet ? ClientUI::TEXT_COLOR : GG::CLR_BLACK,
+                                          GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), m_fleet ? ClientUI::TextColor() : GG::CLR_BLACK,
                                           GG::TF_RIGHT | GG::TF_VCENTER)),
     m_num_ships_stat(0),
     m_fleet_strength_stat(0),
@@ -299,9 +301,11 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
 
     if (m_fleet) {
         m_num_ships_stat = new StatisticIcon(h, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
-                                             ClientUI::ART_DIR + "icons/3shipfleet.png", ClientUI::TEXT_COLOR, 0, 0, true, false);
+                                             (ClientUI::ArtDir() / "icons" / "3shipfleet.png").native_file_string(),
+                                             ClientUI::TextColor(), 0, 0, true, false);
         m_fleet_strength_stat = new StatisticIcon(h + STAT_ICON_WD, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
-                                                  ClientUI::ART_DIR + "icons/combatstrength.png", ClientUI::TEXT_COLOR, 0, 0, true, false);
+                                                  (ClientUI::ArtDir() / "icons" / "combatstrength.png").native_file_string(),
+                                                  ClientUI::TextColor(), 0, 0, true, false);
         AttachChild(m_num_ships_stat);
         AttachChild(m_fleet_strength_stat);
         GG::Connect(m_fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
@@ -378,7 +382,7 @@ void FleetDataPanel::Select(bool b)
     if (m_selected != b) {
         m_selected = b;
 
-        const GG::Clr& unselected_text_color = ClientUI::TEXT_COLOR;
+        const GG::Clr& unselected_text_color = ClientUI::TextColor();
         const GG::Clr& selected_text_color = GG::CLR_BLACK;
 
         GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
@@ -402,10 +406,10 @@ void FleetDataPanel::SetFleetIcon()
 
     if (m_fleet) { // a regular fleet data panel
         if (2 <= m_fleet->NumShips() && m_fleet->NumShips() <= 5) {
-            icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/" + 
-                                                 boost::lexical_cast<std::string>(m_fleet->NumShips()) + "shipfleet.png");
+            icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /
+                                        (boost::lexical_cast<std::string>(m_fleet->NumShips()) + "shipfleet.png"));
         } else if (5 < m_fleet->NumShips()) {
-            icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/5shipfleet.png");
+            icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "5shipfleet.png");
         } else if (m_fleet->NumShips() == 1) {
             Ship* ship = GetUniverse().Object<Ship>(*m_fleet->begin());
             const ShipDesign* design = ship->Design();
@@ -419,10 +423,10 @@ void FleetDataPanel::SetFleetIcon()
             } else {
                 design_name = "Scout";
             }
-            icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/" + design_name + ".png");
+            icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png"));
         }
     } else { // the "new fleet" data panel
-        icon = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/newfleet.png");
+        icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "newfleet.png");
     }
 
     if (icon) {
@@ -460,7 +464,8 @@ void FleetDataPanel::Refresh()
         if (damaged_ships) {
             if (!m_damage_icon) {
                 m_damage_icon = new GG::StaticGraphic(x_position, FLEET_NAME_HT, ICON_SZ, ICON_SZ, 
-                                                      GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/damagemarker.png"), GG::GR_FITGRAPHIC);
+                                                      ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "damagemarker.png"),
+                                                      GG::GR_FITGRAPHIC);
                 AttachChild(m_damage_icon);
             }
             x_position += m_damage_icon->Width() + ICON_SPACING;
@@ -470,7 +475,8 @@ void FleetDataPanel::Refresh()
         if (contains_colony_ship) {
             if (!m_colonizer_icon) {
                 m_colonizer_icon = new GG::StaticGraphic(x_position, FLEET_NAME_HT, ICON_SZ, ICON_SZ, 
-                                                         GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "icons/colonymarker.png"), GG::GR_FITGRAPHIC);
+                                                         ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "colonymarker.png"),
+                                                         GG::GR_FITGRAPHIC);
                 AttachChild(m_colonizer_icon);
             }
             x_position += m_colonizer_icon->Width() + ICON_SPACING;
@@ -714,10 +720,10 @@ FleetDetailPanel::FleetDetailPanel(Fleet* fleet, bool read_only, Uint32 flags/* 
     SetText("FleetDetailPanel");
     EnableChildClipping(true);
 
-    m_destination_text = new GG::TextControl(0, 0, FLEET_LISTBOX_WIDTH, ClientUI::PTS + 4, "temp", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR, GG::TF_LEFT);
+    m_destination_text = new GG::TextControl(0, 0, FLEET_LISTBOX_WIDTH, ClientUI::Pts() + 4, "temp", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::TF_LEFT);
     m_ships_lb = new ShipsListBox(0, m_destination_text->LowerRight().y + CONTROL_MARGIN, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT, 0, read_only);
-    m_ship_status_text = new GG::TextControl(0, m_ships_lb->LowerRight().y + CONTROL_MARGIN, m_ships_lb->Width(), ClientUI::PTS + 4, 
-                                             "temp", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR, GG::TF_LEFT);
+    m_ship_status_text = new GG::TextControl(0, m_ships_lb->LowerRight().y + CONTROL_MARGIN, m_ships_lb->Width(), ClientUI::Pts() + 4, 
+                                             "temp", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::TF_LEFT);
     m_destination_text->SetMinSize(true);
     m_ships_lb->SetMinSize(m_ships_lb->Size());
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
@@ -828,7 +834,7 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, GG::ListBox::Row* row, cons
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
 
-    GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
+    GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), menu_contents, ClientUI::TextColor());
 
     if (popup.Run()) {
         switch (popup.MenuID()) {
@@ -1144,7 +1150,7 @@ void FleetWnd::FleetRightClicked(int row_idx, GG::ListBox::Row* row, const GG::P
 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
-    GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
+    GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), menu_contents, ClientUI::TextColor());
 
     if (popup.Run()) {
       switch (popup.MenuID()) {

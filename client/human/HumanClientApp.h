@@ -22,10 +22,13 @@
 #include <log4cpp/Category.hh>
 #endif
 
+#include <boost/filesystem/path.hpp>
+
 #include <string>
 #include <map>
 #include <set>
 #include <vector>
+
 
 class MultiplayerLobbyWnd;
 struct FSOUND_STREAM;
@@ -59,16 +62,16 @@ public:
     void SetLobby(MultiplayerLobbyWnd* lobby); ///< registers a lobby dialog so that Messages can reach it; passing 0 unsets the lobby dialog
 
     /** plays a music file.  The file will be played in an infinitve loop if \a loop is < 0, and it will be played \a loops + 1 times otherwise. */
-    virtual void PlayMusic(const std::string& filename, int loops = 0);
+    virtual void PlayMusic(const boost::filesystem::path& path, int loops = 0);
     
     /** stops playing music */
     virtual void StopMusic();
 
     /** plays a sound file.*/
-    virtual void PlaySound(const std::string& filename);
+    virtual void PlaySound(const boost::filesystem::path& path);
 
     /** frees the cached sound data associated with the filename.*/
-    virtual void FreeSound(const std::string& filename);
+    virtual void FreeSound(const boost::filesystem::path& path);
 
     /** frees all cached sound data.*/
     virtual void FreeAllSounds();
@@ -92,10 +95,6 @@ public:
 
     /// override default so that UI can be updated
     virtual void         StartTurn();   ///< encodes order sets and sends turn orders message
-
-    ///< loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true
-    ///< load default missing.png if name isn't found
-    boost::shared_ptr<GG::Texture> GetTextureOrDefault(const std::string& name, bool mipmap = false); 
 
 private:
     virtual void SDLInit();

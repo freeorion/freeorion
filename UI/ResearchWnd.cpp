@@ -152,23 +152,23 @@ namespace {
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
     {
-        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR) : ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
-        m_name_text = new GG::TextControl(4, 2, w - 4, QueueRow::HEIGHT - 2, UserString(tech->Name()), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS + 2), text_and_border, GG::TF_TOP | GG::TF_LEFT);
+        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+        m_name_text = new GG::TextControl(4, 2, w - 4, QueueRow::HEIGHT - 2, UserString(tech->Name()), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() + 2), text_and_border, GG::TF_TOP | GG::TF_LEFT);
         m_name_text->ClipText(true);
         using boost::io::str;
         using boost::format;
-        const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::PTS + 4) - 4;
-        m_RPs_and_turns_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::PTS + 4,
+        const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::Pts() + 4) - 4;
+        m_RPs_and_turns_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::Pts() + 4,
                                                    str(format(UserString("TECH_TURN_COST_STR")) % tech->ResearchCost() % tech->ResearchTurns()),
-                                                   GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), text_and_border, GG::TF_LEFT);
+                                                   GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_and_border, GG::TF_LEFT);
         std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER") : str(format(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::PTS + 4, turns_left_text, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), text_and_border, GG::TF_RIGHT);
+        m_turns_remaining_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::Pts() + 4, turns_left_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_and_border, GG::TF_RIGHT);
         const int PROGRESS_METER_MARGIN = 6;
         const int PROGRESS_METER_WIDTH = Width() - 2 * PROGRESS_METER_MARGIN;
         const int PROGRESS_METER_HEIGHT = 18;
         m_progress_bar = new MultiTurnProgressBar(PROGRESS_METER_WIDTH, PROGRESS_METER_HEIGHT, tech->ResearchTurns(),
-                                                  turns_completed, partially_complete_turn, ClientUI::TECH_WND_PROGRESS_BAR,
-                                                  ClientUI::TECH_WND_PROGRESS_BAR_BACKGROUND, text_and_border);
+                                                  turns_completed, partially_complete_turn, ClientUI::TechWndProgressBar(),
+                                                  ClientUI::TechWndProgressBarBackground(), text_and_border);
         m_progress_bar->MoveTo(GG::Pt(PROGRESS_METER_MARGIN, m_RPs_and_turns_text->UpperLeft().y - 3 - PROGRESS_METER_HEIGHT));
 
         AttachChild(m_name_text);
@@ -179,8 +179,8 @@ namespace {
 
     void QueueTechPanel::Render()
     {
-        GG::Clr fill = m_in_progress ? GG::LightColor(ClientUI::RESEARCHABLE_TECH_FILL_COLOR) : ClientUI::RESEARCHABLE_TECH_FILL_COLOR;
-        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR) : ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+        GG::Clr fill = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
+        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
 
         glDisable(GL_TEXTURE_2D);
         Draw(fill, true);
@@ -214,7 +214,7 @@ ResearchWnd::ResearchWnd(int w, int h) :
     m_tech_tree_wnd(0)
 {
     m_research_info_panel = new ProductionInfoPanel(RESEARCH_INFO_AND_QUEUE_WIDTH, 200, UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
-                                                    OUTER_LINE_THICKNESS, ClientUI::KNOWN_TECH_FILL_COLOR, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR);
+                                                    OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
     m_queue_lb = new QueueListBox(2, m_research_info_panel->LowerRight().y, m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height(), this);
     m_queue_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL | GG::LB_USERDELETE);
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width() + 6, 6);

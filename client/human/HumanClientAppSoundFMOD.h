@@ -8,10 +8,10 @@ class HumanClientAppSoundFMOD : public HumanClientApp
 public:
     HumanClientAppSoundFMOD();
     virtual ~HumanClientAppSoundFMOD();
-    virtual void PlayMusic(const std::string& filename, int loops = 0);
+    virtual void PlayMusic(const boost::filesystem::path& path, int loops = 0);
     virtual void StopMusic();
-    virtual void PlaySound(const std::string& filename);
-    virtual void FreeSound(const std::string& filename);
+    virtual void PlaySound(const boost::filesystem::path& path);
+    virtual void FreeSound(const boost::filesystem::path& path);
     virtual void FreeAllSounds();
     virtual void SetMusicVolume(int vol);
     virtual void SetUISoundsVolume(int vol);

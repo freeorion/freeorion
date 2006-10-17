@@ -34,8 +34,8 @@ namespace {
 
 ServerConnectWnd::ServerConnectWnd() : 
     CUIWnd(UserString("SCONNECT_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - SERVER_CONNECT_WND_WIDTH) / 2, 
-           (GG::GUI::GetGUI()->AppHeight() - 500 + ClientUI::PTS + 10 + 3 * CONTROL_MARGIN) / 2, SERVER_CONNECT_WND_WIDTH, 
-           500 + ClientUI::PTS + 10 + 3 * CONTROL_MARGIN, GG::CLICKABLE | GG::MODAL),
+           (GG::GUI::GetGUI()->AppHeight() - 500 + ClientUI::Pts() + 10 + 3 * CONTROL_MARGIN) / 2, SERVER_CONNECT_WND_WIDTH, 
+           500 + ClientUI::Pts() + 10 + 3 * CONTROL_MARGIN, GG::CLICKABLE | GG::MODAL),
     m_host_or_join_radio_group(0),
     m_LAN_game_label(0),
     m_servers_lb(0),
@@ -48,28 +48,28 @@ ServerConnectWnd::ServerConnectWnd() :
 {
     TempUISoundDisabler sound_disabler;
 
-    int text_width = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS)->TextExtent(UserString("PLAYER_NAME_LABEL")).x;
+    int text_width = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts())->TextExtent(UserString("PLAYER_NAME_LABEL")).x;
     const int PLAYER_NAME_EDIT_X = CONTROL_MARGIN + text_width + CONTROL_MARGIN;
     m_player_name_edit = new CUIEdit(PLAYER_NAME_EDIT_X, CONTROL_MARGIN, ClientWidth() - 5 - PLAYER_NAME_EDIT_X, "");
 
     AttachChild(new GG::TextControl(CONTROL_MARGIN, CONTROL_MARGIN, text_width, m_player_name_edit->Height(),
                                     UserString("PLAYER_NAME_LABEL"), 
-                                    GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR));
+                                    GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor()));
 
     m_host_or_join_radio_group = new GG::RadioButtonGroup(CONTROL_MARGIN, m_player_name_edit->LowerRight().y + CONTROL_MARGIN,
-                                                          SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4 + CONTROL_MARGIN + ClientUI::PTS + 4, GG::VERTICAL);
-    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4, UserString("HOST_GAME_BN"), GG::TF_LEFT, 
+                                                          SERVERS_LIST_BOX_WIDTH / 2, ClientUI::Pts() + 4 + CONTROL_MARGIN + ClientUI::Pts() + 4, GG::VERTICAL);
+    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, SERVERS_LIST_BOX_WIDTH / 2, ClientUI::Pts() + 4, UserString("HOST_GAME_BN"), GG::TF_LEFT, 
                                                              GG::SBSTYLE_3D_RADIO));
-    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, ClientUI::PTS + 4 + CONTROL_MARGIN, SERVERS_LIST_BOX_WIDTH / 2, ClientUI::PTS + 4, 
+    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, ClientUI::Pts() + 4 + CONTROL_MARGIN, SERVERS_LIST_BOX_WIDTH / 2, ClientUI::Pts() + 4, 
                                                              UserString("JOIN_GAME_BN"), GG::TF_LEFT, GG::SBSTYLE_3D_RADIO));
 
     const int JOIN_CONTROLS_X = CONTROL_MARGIN + 10;
     m_LAN_game_label = new GG::TextControl(JOIN_CONTROLS_X, m_host_or_join_radio_group->LowerRight().y + CONTROL_MARGIN, 
-                                           UserString("LAN_GAME_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
+                                           UserString("LAN_GAME_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
     m_servers_lb = new CUIListBox(JOIN_CONTROLS_X, m_LAN_game_label->LowerRight().y + CONTROL_MARGIN, SERVERS_LIST_BOX_WIDTH, 300 - CONTROL_MARGIN);
     m_find_LAN_servers_bn = new CUIButton(JOIN_CONTROLS_X, m_servers_lb->LowerRight().y + CONTROL_MARGIN, 100, UserString("REFRESH_LIST_BN"));
     m_internet_game_label = new GG::TextControl(JOIN_CONTROLS_X, m_find_LAN_servers_bn->LowerRight().y + 2 * CONTROL_MARGIN, 
-                                                UserString("INTERNET_GAME_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
+                                                UserString("INTERNET_GAME_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
     m_IP_address_edit = new CUIEdit(JOIN_CONTROLS_X, m_internet_game_label->LowerRight().y + CONTROL_MARGIN, SERVERS_LIST_BOX_WIDTH, "");
     m_ok_bn = new CUIButton(ClientWidth() - 2 * (OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN), m_IP_address_edit->LowerRight().y + 2 * CONTROL_MARGIN, 
                             OK_CANCEL_BUTTON_WIDTH, UserString("OK"));
@@ -126,7 +126,7 @@ void ServerConnectWnd::PopulateServerList()
     m_servers_lb->Clear();
     for (std::set<std::string>::iterator it = g_LAN_servers.begin(); it != g_LAN_servers.end(); ++it) {
         GG::ListBox::Row* row = new GG::ListBox::Row;
-        row->push_back(*it, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
+        row->push_back(*it, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
         m_servers_lb->Insert(row);
     }
 }

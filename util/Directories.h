@@ -18,6 +18,10 @@ void InitDirs();
 */
 const boost::filesystem::path GetLocalDir();
 
+/** Returns the directory that is the root for all settings files, such as string table files, data files, and graphics
+    files. */
+const boost::filesystem::path GetSettingsDir();
+
 /** This function returns the main data directory of FreeOrion. Under Windows, it is the directory where FreeOrion is
     installed, under Linux, this can be <tt>/usr/local/share/freeorion</tt>, <tt>/opt/share/freorion</tt>, or even (when
     FreeOrion was installed locally with autopackage) <tt>~/.local/share/freeorion</tt>.  \note This directory and
@@ -33,5 +37,8 @@ const boost::filesystem::path GetBinDir();
 
 /** Returns the full path to the configfile. */
 const boost::filesystem::path GetConfigPath();
+
+/** Returns the path to \a to, as it appears from \a from. */
+boost::filesystem::path RelativePath (const boost::filesystem::path& from, const boost::filesystem::path& to);
 
 #endif

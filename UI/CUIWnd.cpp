@@ -81,7 +81,7 @@ namespace {
 // CUI_MinRestoreButton
 ////////////////////////////////////////////////
 CUI_MinRestoreButton::CUI_MinRestoreButton(int x, int y) : 
-    GG::Button(x, y, 7, 7, "", boost::shared_ptr<GG::Font>(), ClientUI::WND_INNER_BORDER_COLOR),
+    GG::Button(x, y, 7, 7, "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor()),
     m_mode(MIN_BUTTON)
 {
     GG::Connect(ClickedSignal, &CUI_MinRestoreButton::Toggle, this);
@@ -91,7 +91,7 @@ void CUI_MinRestoreButton::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::Clr color_to_use = ClientUI::WND_INNER_BORDER_COLOR;
+    GG::Clr color_to_use = ClientUI::WndInnerBorderColor();
     if (State() != BN_ROLLOVER)
         AdjustBrightness(color_to_use, BUTTON_DIMMING_SCALE_FACTOR);
     if (m_mode == MIN_BUTTON) {
@@ -106,7 +106,7 @@ void CUI_MinRestoreButton::Render()
         glEnable(GL_TEXTURE_2D);
     } else {
         // draw a square to signify the restore command
-        GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, ClientUI::WND_INNER_BORDER_COLOR, 1);
+        GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, ClientUI::WndInnerBorderColor(), 1);
     }
 }
 
@@ -126,7 +126,7 @@ void CUI_MinRestoreButton::Toggle()
 // CUI_CloseButton
 ////////////////////////////////////////////////
 CUI_CloseButton::CUI_CloseButton(int x, int y) : 
-    GG::Button(x, y, 7, 7, "", boost::shared_ptr<GG::Font>(), ClientUI::WND_INNER_BORDER_COLOR)
+    GG::Button(x, y, 7, 7, "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
 {
     GG::Connect(ClickedSignal, &PlayCloseSound, -1);
 }
@@ -135,7 +135,7 @@ void CUI_CloseButton::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::Clr color_to_use = ClientUI::WND_INNER_BORDER_COLOR;
+    GG::Clr color_to_use = ClientUI::WndInnerBorderColor();
     if (State() != BN_ROLLOVER)
         AdjustBrightness(color_to_use, BUTTON_DIMMING_SCALE_FACTOR);
     glDisable(GL_TEXTURE_2D);
@@ -205,7 +205,7 @@ void CUIWnd::Render()
         // draw background
         glPolygonMode(GL_BACK, GL_FILL);
         glBegin(GL_POLYGON);
-            glColor4ubv(ClientUI::WND_COLOR.v);
+            glColor4ubv(ClientUI::WndColor().v);
             glVertex2i(ul.x, ul.y);
             glVertex2i(lr.x, ul.y);
             glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
@@ -217,7 +217,7 @@ void CUIWnd::Render()
         // draw outer border on pixel inside of the outer edge of the window
         glPolygonMode(GL_BACK, GL_LINE);
         glBegin(GL_POLYGON);
-            glColor4ubv(ClientUI::WND_OUTER_BORDER_COLOR.v);
+            glColor4ubv(ClientUI::WndOuterBorderColor().v);
             glVertex2i(ul.x, ul.y);
             glVertex2i(lr.x, ul.y);
             glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
@@ -231,7 +231,7 @@ void CUIWnd::Render()
 
         // draw inner border, including extra resize-tab lines
         glBegin(GL_LINE_STRIP);
-            glColor4ubv(ClientUI::WND_INNER_BORDER_COLOR.v);
+            glColor4ubv(ClientUI::WndInnerBorderColor().v);
             glVertex2i(cl_ul.x, cl_ul.y);
             glVertex2i(cl_lr.x, cl_ul.y);
             glVertex2i(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
@@ -242,9 +242,9 @@ void CUIWnd::Render()
         glBegin(GL_LINES);
             // draw the extra lines of the resize tab
             if (m_resizable) {
-                glColor4ubv(ClientUI::WND_INNER_BORDER_COLOR.v);
+                glColor4ubv(ClientUI::WndInnerBorderColor().v);
             } else {
-                glColor4ubv(GG::DisabledColor(ClientUI::WND_INNER_BORDER_COLOR).v);
+                glColor4ubv(GG::DisabledColor(ClientUI::WndInnerBorderColor()).v);
             }
             glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
             glVertex2i(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
@@ -254,11 +254,11 @@ void CUIWnd::Render()
         glEnd();
         glEnable(GL_TEXTURE_2D);
     } else {
-        GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WND_COLOR, ClientUI::WND_OUTER_BORDER_COLOR, 1);
+        GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
     }
 
-    glColor4ubv(ClientUI::TEXT_COLOR.v);
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::TITLE_FONT, ClientUI::TITLE_PTS);
+    glColor4ubv(ClientUI::TextColor().v);
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::TitleFont(), ClientUI::TitlePts());
     font->RenderText(ul.x + BORDER_LEFT, ul.y, WindowText());
 }
 

@@ -176,9 +176,9 @@ FocusSelector::FocusSelector(int w, const ResourceCenter& resource_center) :
     for (FocusType i = FOCUS_SELECTOR_FIRST_FOCUS; i < FOCUS_SELECTOR_LAST_FOCUS; i = FocusType(i + 1)) {
         boost::shared_ptr<GG::Texture> texture;
         if (MonoImage(m_focus_buttons.size() - 1))
-            texture = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + MONO_IMAGES[i], true);
+            texture = ClientUI::GetTexture(ClientUI::ArtDir() / MONO_IMAGES[i], true);
         else
-            texture = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + IMAGES[i], true);
+            texture = ClientUI::GetTexture(ClientUI::ArtDir() / IMAGES[i], true);
         m_focus_buttons.push_back(new FocusButton(GG::CLR_WHITE, texture));
         GG::Connect(m_focus_buttons.back()->ClickedSignal, FocusClickFunctor(m_focus_buttons.size() - 1, true, this));
         GG::Connect(m_focus_buttons.back()->RightClickedSignal, FocusClickFunctor(m_focus_buttons.size() - 1, false, this));
@@ -209,7 +209,7 @@ FocusSelector::FocusSelector(int w, const ResourceCenter& resource_center) :
             else
                 delta_str << boost::format("%.2g") % delta;
         }
-        m_meter_deltas.push_back(new GG::TextControl(0, 0, 1, 1, delta_str.str(), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, 11), delta_color, GG::TF_TOP));
+        m_meter_deltas.push_back(new GG::TextControl(0, 0, 1, 1, delta_str.str(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), 11), delta_color, GG::TF_TOP));
         layout->Add(m_meter_deltas.back(), 2, m_meter_deltas.size() - 1);
     }
     glDisable(GL_TEXTURE_2D);
@@ -283,9 +283,9 @@ void FocusSelector::AdjustButtonImages()
 {
     for (unsigned int i = 0; i < m_focus_buttons.size(); ++i) {
         if (MonoImage(i))
-            m_focus_buttons[i]->SetImage(GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + MONO_IMAGES[ButtonFocus(i)]));
+            m_focus_buttons[i]->SetImage(ClientUI::GetTexture(ClientUI::ArtDir() / MONO_IMAGES[ButtonFocus(i)]));
         else
-            m_focus_buttons[i]->SetImage(GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + IMAGES[ButtonFocus(i)]));
+            m_focus_buttons[i]->SetImage(ClientUI::GetTexture(ClientUI::ArtDir() / IMAGES[ButtonFocus(i)]));
     }
 }
 

@@ -28,9 +28,9 @@ About::About():
     m_vision = new CUIButton(220,440,75,UserString("VISION"));
     m_info = new CUIMultiEdit(20, 20, 550, 400, UserString("FREEORION_VISION"), 
                               GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY,
-                              GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
-                              ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR,
-                              ClientUI::MULTIEDIT_INT_COLOR, GG::CLICKABLE);
+                              GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                              ClientUI::CtrlBorderColor(), ClientUI::TextColor(),
+                              ClientUI::MultieditIntColor(), GG::CLICKABLE);
     GG::Layout* layout = new GG::Layout(0, 0, ClientWidth(), ClientHeight(), 2, 6, 5);
     layout->SetMinimumRowHeight(1, m_license->Height() + 5);
     layout->SetRowStretch(0, 1);
@@ -41,11 +41,7 @@ About::About():
     AttachChild(layout);
 
     // Read in the copyright info from a file
-#ifdef FREEORION_LINUX
-    boost::filesystem::ifstream fin(GetGlobalDir() / "default/COPYING");
-#else
-    std::ifstream fin("default/COPYING");
-#endif
+    boost::filesystem::ifstream fin(GetGlobalDir() / "default" / "COPYING");
     if (!fin.is_open()) return;
     std::string temp_str;
     while (!fin.eof())

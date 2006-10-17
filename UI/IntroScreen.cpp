@@ -6,6 +6,7 @@
 #include "About.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
+#include "../util/Directories.h"
 #include "GalaxySetupWnd.h"
 #include "../network/Message.h"
 #include "../UI/MultiplayerLobbyWnd.h"
@@ -19,6 +20,8 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/Texture.h>
+
+#include <boost/filesystem/fstream.hpp>
 
 #include <cstdlib>
 #include <fstream>
@@ -71,7 +74,7 @@ void CreditsWnd::Render()
         return;
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    boost::shared_ptr<GG::Font> font=HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.3));;
+    boost::shared_ptr<GG::Font> font=HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.3));;
     Uint32 format = GG::TF_CENTER | GG::TF_TOP;
 
     GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::Clr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
@@ -338,7 +341,7 @@ void IntroScreen::OnCredits()
     }
 
     XMLDoc doc;
-    std::ifstream ifs((ClientUI::DIR + "credits.xml").c_str());
+    boost::filesystem::ifstream ifs(GetSettingsDir() / "credits.xml");
     doc.ReadDoc(ifs);
     ifs.close();
 
@@ -377,7 +380,7 @@ void IntroScreen::KeyPress (GG::Key key, Uint32 key_mods)
 
 void IntroScreen::Render()
 {
-    boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, ClientUI::PTS);
+    boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), ClientUI::Pts());
     CUIWnd::Render();
     GG::Pt size=font->TextExtent(FreeOrionVersionString());
     font->RenderText(GG::GUI::GetGUI()->AppWidth()-size.x,

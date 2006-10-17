@@ -24,6 +24,7 @@
 
 #include "../UI/FleetWnd.h"
 
+#include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 
 #include "MapWnd.h"
@@ -36,13 +37,13 @@ using boost::lexical_cast;
 
 namespace {
     bool PlaySounds() {return GetOptionsDB().Get<bool>("UI.sound.enabled");}
-    void PlaySidePanelOpenSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"));}
-    void PlayFarmingFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.farming-focus"));}
-    void PlayIndustryFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.industry-focus"));}
-    void PlayResearchFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.research-focus"));}
-    void PlayMiningFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.mining-focus"));}
-    void PlayTradeFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.trade-focus"));}
-    void PlayBalancedFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.balanced-focus"));}
+    void PlaySidePanelOpenSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"));}
+    void PlayFarmingFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.farming-focus"));}
+    void PlayIndustryFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.industry-focus"));}
+    void PlayResearchFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.research-focus"));}
+    void PlayMiningFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.mining-focus"));}
+    void PlayTradeFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.trade-focus"));}
+    void PlayBalancedFocusClickSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.balanced-focus"));}
 
     int CircleXFromY(double y, double r) {return static_cast<int>(std::sqrt(r * r - y * y) + 0.5);}
 
@@ -121,7 +122,7 @@ namespace {
         static std::map<PlanetType, std::vector<RotatingPlanetData> > data;
         if (data.empty()) {
             XMLDoc doc;
-            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -143,7 +144,7 @@ namespace {
         static std::map<std::string, PlanetAtmosphereData> data;
         if (data.empty()) {
             XMLDoc doc;
-            std::ifstream ifs((ClientUI::ART_DIR + "planets/atmospheres.xml").c_str());
+            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "atmospheres.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -162,7 +163,7 @@ namespace {
         static double retval = -1.0;
         if (retval == -1.0) {
             XMLDoc doc;
-            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -182,7 +183,7 @@ namespace {
 
         if (retval == -1.0) {
             XMLDoc doc;
-            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -203,7 +204,7 @@ namespace {
 
         if (retval == -1.0) {
             XMLDoc doc;
-            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -252,7 +253,7 @@ namespace {
 
         if (retval[0] == 0.0 && retval[1] == 0.0 && retval[2] == 0.0) {
             XMLDoc doc;
-            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -270,7 +271,7 @@ namespace {
 
         if (light_colors.empty()) {
             XMLDoc doc;
-            std::ifstream ifs((ClientUI::ART_DIR + "planets/planets.xml").c_str());
+            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -524,7 +525,7 @@ public:
         GG::Control(x, y, PlanetDiameter(size), PlanetDiameter(size), 0),
         m_planet_data(planet_data),
         m_size(size),
-        m_surface_texture(GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + m_planet_data.filename, true)),
+        m_surface_texture(ClientUI::GetTexture(ClientUI::ArtDir() / m_planet_data.filename, true)),
         m_atmosphere_texture(),
         m_initial_rotation(RandZeroToOne()),
         m_star_type(star_type)
@@ -534,7 +535,7 @@ public:
         std::map<std::string, PlanetAtmosphereData>::const_iterator it = atmosphere_data.find(m_planet_data.filename);
         if (it != atmosphere_data.end()) {
             const PlanetAtmosphereData::Atmosphere& atmosphere = it->second.atmospheres[RandSmallInt(0, it->second.atmospheres.size() - 1)];
-            m_atmosphere_texture = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + atmosphere.filename, true);
+            m_atmosphere_texture = ClientUI::GetTexture(ClientUI::ArtDir() / atmosphere.filename, true);
             m_atmosphere_texture->SetFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
             m_atmosphere_alpha = atmosphere.alpha;
             m_atmosphere_planet_rect = GG::Rect(1, 1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
@@ -596,27 +597,16 @@ private:
 ////////////////////////////////////////////////
 namespace {
   const int IMAGES_PER_PLANET_TYPE = 3; // number of planet images available per planet type (named "type1.png", "type2.png", ...)
-  const int SYSTEM_NAME_FONT_SIZE = static_cast<int>(ClientUI::PTS*1.4);
+    int SystemNameFontSize()
+    { return static_cast<int>(ClientUI::Pts()*1.4); }
   
-  boost::shared_ptr<GG::Texture> GetTexture(const std::string& name, bool mipmap = false)
-  {
-    try
-    {
-      return HumanClientApp::GetApp()->GetTexture(name,mipmap);
-    }
-    catch(...)
-    {
-      return HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "misc/missing.png",mipmap);
-    }
-  }
-
-  boost::shared_ptr<GG::Texture> IconPopulation() {return GetTexture(ClientUI::ART_DIR + "icons/pop.png"        );}
-  boost::shared_ptr<GG::Texture> IconIndustry  () {return GetTexture(ClientUI::ART_DIR + "icons/industry.png"   );}
-  boost::shared_ptr<GG::Texture> IconTrade     () {return GetTexture(ClientUI::ART_DIR + "icons/trade.png"      );}
-  boost::shared_ptr<GG::Texture> IconResearch  () {return GetTexture(ClientUI::ART_DIR + "icons/research.png"   );}
-  boost::shared_ptr<GG::Texture> IconMining    () {return GetTexture(ClientUI::ART_DIR + "icons/mining.png"     );}
-  boost::shared_ptr<GG::Texture> IconFarming   () {return GetTexture(ClientUI::ART_DIR + "icons/farming.png"    );}
-  boost::shared_ptr<GG::Texture> IconDefense   () {return GetTexture(ClientUI::ART_DIR + "icons/defensebase.png");}
+  boost::shared_ptr<GG::Texture> IconPopulation() {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "pop.png"        );}
+  boost::shared_ptr<GG::Texture> IconIndustry  () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "industry.png"   );}
+  boost::shared_ptr<GG::Texture> IconTrade     () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "trade.png"      );}
+  boost::shared_ptr<GG::Texture> IconResearch  () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "research.png"   );}
+  boost::shared_ptr<GG::Texture> IconMining    () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "mining.png"     );}
+  boost::shared_ptr<GG::Texture> IconFarming   () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "farming.png"    );}
+  boost::shared_ptr<GG::Texture> IconDefense   () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "defensebase.png");}
 
   struct SystemRow : public GG::ListBox::Row
   {
@@ -644,9 +634,9 @@ namespace {
     const int SET = (planet_id % NUM_ASTEROID_SETS) + 1;
 
     for (int i = 0; i < NUM_IMAGES_PER_SET; ++i) {
-      char buf[256];
+      char buf[1024];
       sprintf(buf, "asteroids%d_%03d.png", SET, i);
-      textures.push_back(HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "planets/asteroids/" + buf));
+      textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "planets" / " asteroids" / buf));
     }
   }
 
@@ -696,84 +686,82 @@ namespace {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 SidePanel::PlanetPanel::PlanetPanel(int x, int y, int w, int h, const Planet &planet, StarType star_type) :
-  Wnd(0, y, w, h, GG::CLICKABLE),
-  m_planet_id(planet.ID()),
-  m_planet_name(0),
-  m_planet_info(0),
-  m_focus_selector(0),
-  m_button_colonize(0),
-  m_planet_graphic(0),
-  m_rotating_planet_graphic(0),
-  m_hiliting(HILITING_NONE)
+    Wnd(0, y, w, h, GG::CLICKABLE),
+    m_planet_id(planet.ID()),
+    m_planet_name(0),
+    m_planet_info(0),
+    m_focus_selector(0),
+    m_button_colonize(0),
+    m_planet_graphic(0),
+    m_rotating_planet_graphic(0),
+    m_hiliting(HILITING_NONE)
 {
-  SetText(UserString("PLANET_PANEL"));
+    SetText(UserString("PLANET_PANEL"));
 
-  GG::Pt ul = UpperLeft(), lr = LowerRight();
-  int planet_image_sz = PlanetDiameter();
-  GG::Pt planet_image_pos(MAX_PLANET_DIAMETER / 2 - planet_image_sz / 2 + 3, Height() / 2 - planet_image_sz / 2);
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    int planet_image_sz = PlanetDiameter();
+    GG::Pt planet_image_pos(MAX_PLANET_DIAMETER / 2 - planet_image_sz / 2 + 3, Height() / 2 - planet_image_sz / 2);
 
-  if (planet.Type() == PT_ASTEROIDS)
-  {
-      std::vector<boost::shared_ptr<GG::Texture> > textures;
-      GetAsteroidTextures(planet.ID(), textures);
-      m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-      m_planet_graphic->SetFPS(GetAsteroidsFPS());
-      m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
-      AttachChild(m_planet_graphic);
-      m_planet_graphic->Play();
-  }
-  else if (planet.Type() < NUM_PLANET_TYPES)
-  {
-      const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
-      std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet.Type());
-      int num_planets_of_type;
-      if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet.Type())->second.size()))
-      {
-          // using algorithm from Thomas Wang's 32 bit Mix Function; assumes that only the lower 16 bits of the system and
-          // planet ID's are significant
-          Uint32 hash_value = (static_cast<Uint32>(planet.SystemID()) & 0xFFFF) + (static_cast<Uint32>(planet.ID()) & 0xFFFF);
-          hash_value += ~(hash_value << 15);
-          hash_value ^= hash_value >> 10;
-          hash_value += hash_value << 3;
-          hash_value ^= hash_value >> 6;
-          hash_value += ~(hash_value << 11);
-          hash_value ^= hash_value >> 16;
-          m_rotating_planet_graphic = new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, planet.Size(), star_type,
-                                                                it->second[hash_value % num_planets_of_type]);
-          AttachChild(m_rotating_planet_graphic);
-      }
-  }
+    if (planet.Type() == PT_ASTEROIDS)
+    {
+        std::vector<boost::shared_ptr<GG::Texture> > textures;
+        GetAsteroidTextures(planet.ID(), textures);
+        m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        m_planet_graphic->SetFPS(GetAsteroidsFPS());
+        m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
+        AttachChild(m_planet_graphic);
+        m_planet_graphic->Play();
+    }
+    else if (planet.Type() < NUM_PLANET_TYPES)
+    {
+        const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
+        std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet.Type());
+        int num_planets_of_type;
+        if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet.Type())->second.size()))
+        {
+            // using algorithm from Thomas Wang's 32 bit Mix Function; assumes that only the lower 16 bits of the system and
+            // planet ID's are significant
+            Uint32 hash_value = (static_cast<Uint32>(planet.SystemID()) & 0xFFFF) + (static_cast<Uint32>(planet.ID()) & 0xFFFF);
+            hash_value += ~(hash_value << 15);
+            hash_value ^= hash_value >> 10;
+            hash_value += hash_value << 3;
+            hash_value ^= hash_value >> 6;
+            hash_value += ~(hash_value << 11);
+            hash_value ^= hash_value >> 16;
+            m_rotating_planet_graphic = new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, planet.Size(), star_type,
+                                                                  it->second[hash_value % num_planets_of_type]);
+            AttachChild(m_rotating_planet_graphic);
+        }
+    }
 
-  m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::PTS*4/3),ClientUI::TEXT_COLOR);
-  AttachChild(m_planet_name);
+    m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()*4/3),ClientUI::TextColor());
+    AttachChild(m_planet_name);
 
-  m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::PTS),ClientUI::TEXT_COLOR,GG::TF_LEFT|GG::TF_TOP);
-  AttachChild(m_planet_info);
+    m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::TextColor(),GG::TF_LEFT|GG::TF_TOP);
+    AttachChild(m_planet_info);
 
-  m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::PTS)/2,60,UserString("PL_COLONIZE"),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::PTS),ClientUI::BUTTON_COLOR,ClientUI::CTRL_BORDER_COLOR,1,ClientUI::TEXT_COLOR,GG::CLICKABLE);
-  Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
-  AttachChild(m_button_colonize);
+    m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::Pts())/2,60,UserString("PL_COLONIZE"),GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::ButtonColor(),ClientUI::CtrlBorderColor(),1,ClientUI::TextColor(),GG::CLICKABLE);
+    Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
+    AttachChild(m_button_colonize);
 
-  m_focus_selector = new FocusSelector(175, planet);
-  m_focus_selector->MoveTo(GG::Pt(Width() - m_focus_selector->Width(),
-                                  (Height() - m_focus_selector->Height()) / 2));
-  AttachChild(m_focus_selector);
-  GG::Connect(m_focus_selector->PrimaryFocusChangedSignal, &SidePanel::PlanetPanel::SetPrimaryFocus, this);
-  GG::Connect(m_focus_selector->SecondaryFocusChangedSignal, &SidePanel::PlanetPanel::SetSecondaryFocus, this);
+    m_focus_selector = new FocusSelector(175, planet);
+    m_focus_selector->MoveTo(GG::Pt(Width() - m_focus_selector->Width(),
+                                    (Height() - m_focus_selector->Height()) / 2));
+    AttachChild(m_focus_selector);
+    GG::Connect(m_focus_selector->PrimaryFocusChangedSignal, &SidePanel::PlanetPanel::SetPrimaryFocus, this);
+    GG::Connect(m_focus_selector->SecondaryFocusChangedSignal, &SidePanel::PlanetPanel::SetSecondaryFocus, this);
 
-  if (planet.Type() == PT_ASTEROIDS) 
-  {
-    MoveChildDown(m_planet_graphic);
-  }
+    if (planet.Type() == PT_ASTEROIDS) 
+        MoveChildDown(m_planet_graphic);
 
-  const Planet *plt = GetUniverse().Object<const Planet>(m_planet_id);
+    const Planet *plt = GetUniverse().Object<const Planet>(m_planet_id);
 
-  if (System* system = plt->GetSystem())
-    m_connection_system_changed = GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::PlanetChanged, this);
-  m_connection_planet_changed = GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::PlanetChanged, this);
-  m_connection_planet_production_changed= GG::Connect(plt->ResourceCenterChangedSignal, &SidePanel::PlanetPanel::PlanetResourceCenterChanged, this);
+    if (System* system = plt->GetSystem())
+        m_connection_system_changed = GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::PlanetChanged, this);
+    m_connection_planet_changed = GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::PlanetChanged, this);
+    m_connection_planet_production_changed= GG::Connect(plt->ResourceCenterChangedSignal, &SidePanel::PlanetPanel::PlanetResourceCenterChanged, this);
 
-  Update();
+    Update();
 }
 
 SidePanel::PlanetPanel::~PlanetPanel()
@@ -841,90 +829,90 @@ void SidePanel::PlanetPanel::EnableControl(GG::Wnd *control,bool enable)
 
 void SidePanel::PlanetPanel::PlanetChanged()
 {
-  const Planet *planet = GetPlanet();
+    const Planet *planet = GetPlanet();
 
-  enum OWNERSHIP {OS_NONE,OS_FOREIGN,OS_SELF} owner = OS_NONE;
+    enum OWNERSHIP {OS_NONE,OS_FOREIGN,OS_SELF} owner = OS_NONE;
 
-  std::string text;
-  if(planet->Owners().size()==0 || planet->IsAboutToBeColonized()) 
-  { //uninhabited
-    owner = OS_NONE;
-    text = GetPlanetSizeName(*planet);
-    if(text.length()>0)
-      text+=" ";
-    text+= GetPlanetTypeName(*planet);
+    std::string text;
+    if(planet->Owners().size()==0 || planet->IsAboutToBeColonized()) 
+    { //uninhabited
+        owner = OS_NONE;
+        text = GetPlanetSizeName(*planet);
+        if(text.length()>0)
+            text+=" ";
+        text+= GetPlanetTypeName(*planet);
   
-    text+="\n";
-    if(planet->MaxPop()==0) text+= UserString("PE_UNINHABITABLE");
-    else                    text+= UserString("PL_SIZE") + " " + lexical_cast<std::string>(static_cast<int>(planet->MaxPop()));
+        text+="\n";
+        if(planet->MaxPop()==0) text+= UserString("PE_UNINHABITABLE");
+        else                    text+= UserString("PL_SIZE") + " " + lexical_cast<std::string>(static_cast<int>(planet->MaxPop()));
 
-    m_planet_info->SetText(text);
-  }
-  else 
-    if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-    {//inhabited
-      owner = OS_FOREIGN;
-      text = GetPlanetSizeName(*planet);
-      if(text.length()>0)
-        text+=" ";
-      text+= GetPlanetTypeName(*planet);
+        m_planet_info->SetText(text);
+    }
+    else 
+        if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+        {//inhabited
+            owner = OS_FOREIGN;
+            text = GetPlanetSizeName(*planet);
+            if(text.length()>0)
+                text+=" ";
+            text+= GetPlanetTypeName(*planet);
     
-      m_planet_info->SetText(text);
+            m_planet_info->SetText(text);
+        }
+        else
+        {//Owned
+            owner = OS_SELF;
+            text = GetPlanetSizeName(*planet);
+            if(text.length()>0)
+                text+="\n";
+            text+= GetPlanetTypeName(*planet);
+      
+            m_planet_info->SetText(text);
+        }
+
+    if (!planet->Owners().empty()) {
+        Empire* planet_empire = Empires().Lookup(*(planet->Owners().begin()));
+        m_planet_name->SetTextColor(planet_empire?planet_empire->Color():ClientUI::TextColor());
+    }
+
+    // visibility
+    if (owner==OS_NONE 
+        && planet->MaxPop()>0 
+        && !planet->IsAboutToBeColonized()
+        && FindColonyShip(planet->SystemID()))
+    {
+        std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
+        if(it != m_vec_unused_controls.end())
+        {
+            m_vec_unused_controls.erase(it);
+            AttachChild(m_button_colonize);
+            m_button_colonize->Show();
+        }
+        m_button_colonize->SetText(UserString("PL_COLONIZE"));
+    }
+    else if (planet->IsAboutToBeColonized())
+    {
+        std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
+        if(it != m_vec_unused_controls.end())
+        {
+            m_vec_unused_controls.erase(it);
+            AttachChild(m_button_colonize);
+            m_button_colonize->Show();
+        }
+        m_button_colonize->SetText(UserString("CANCEL"));
     }
     else
-    {//Owned
-      owner = OS_SELF;
-      text = GetPlanetSizeName(*planet);
-      if(text.length()>0)
-        text+="\n";
-      text+= GetPlanetTypeName(*planet);
-      
-      m_planet_info->SetText(text);
-    }
-
-  if (!planet->Owners().empty()) {
-      Empire* planet_empire = Empires().Lookup(*(planet->Owners().begin()));
-      m_planet_name->SetTextColor(planet_empire?planet_empire->Color():ClientUI::TEXT_COLOR);
-  }
-
-  // visibility
-  if (owner==OS_NONE 
-      && planet->MaxPop()>0 
-      && !planet->IsAboutToBeColonized()
-      && FindColonyShip(planet->SystemID()))
-  {
-    std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
-    if(it != m_vec_unused_controls.end())
     {
-      m_vec_unused_controls.erase(it);
-      AttachChild(m_button_colonize);
-      m_button_colonize->Show();
+        std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
+        if(it == m_vec_unused_controls.end())
+        {
+            m_vec_unused_controls.push_back(m_button_colonize);
+            DetachChild(m_button_colonize);
+            m_button_colonize->Hide();
+        }
     }
-    m_button_colonize->SetText(UserString("PL_COLONIZE"));
-  }
-  else if (planet->IsAboutToBeColonized())
-  {
-    std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
-    if(it != m_vec_unused_controls.end())
-    {
-      m_vec_unused_controls.erase(it);
-      AttachChild(m_button_colonize);
-      m_button_colonize->Show();
-    }
-    m_button_colonize->SetText(UserString("CANCEL"));
-  }
-  else
-  {
-     std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
-     if(it == m_vec_unused_controls.end())
-     {
-        m_vec_unused_controls.push_back(m_button_colonize);
-        DetachChild(m_button_colonize);
-        m_button_colonize->Hide();
-     }
-  }
 
-  EnableControl(m_focus_selector, (owner==OS_SELF));
+    EnableControl(m_focus_selector, (owner==OS_SELF));
 }
 
 void SidePanel::PlanetPanel::PlanetResourceCenterChanged()
@@ -971,7 +959,7 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys)
     if(InPlanet(pt))
     {
         if(GetOptionsDB().Get<bool>("UI.sound.enabled"))
-            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.planet-button-click"));
+            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.planet-button-click"));
         PlanetImageLClickedSignal(m_planet_id);
     }
 }
@@ -983,8 +971,8 @@ bool SidePanel::PlanetPanel::RenderUnhabited(const Planet &planet)
 
 bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 {
-  glColor4ubv(ClientUI::TEXT_COLOR.v);
-  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::PTS);
+  glColor4ubv(ClientUI::TextColor().v);
+  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(),ClientUI::Pts());
   Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
 
   std::string text; int x,y;
@@ -1004,11 +992,11 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 
   boost::shared_ptr<GG::Texture> icon;
   const int ICON_MARGIN    =  5;
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS));
+  font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()));
 
   //population
   //x = m_planet_name->UpperLeft ().x+10; y = m_planet_name->LowerRight().y + RESOURCE_DISPLAY_HEIGHT+3;
-  glColor4ubv(ClientUI::TEXT_COLOR.v);
+  glColor4ubv(ClientUI::TextColor().v);
   icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   x+=font->Height();
   text = lexical_cast<std::string>(population)+"/"+lexical_cast<std::string>(static_cast<int>(planet.MaxPop()));
@@ -1020,8 +1008,8 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 
 bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 {
-  glColor4ubv(ClientUI::TEXT_COLOR.v);
-  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT,ClientUI::PTS);
+  glColor4ubv(ClientUI::TextColor().v);
+  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(),ClientUI::Pts());
   Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
 
   std::string text; int x,y;
@@ -1039,18 +1027,18 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 
   boost::shared_ptr<GG::Texture> icon;
   const int ICON_MARGIN    =  5;
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS));
+  font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()));
 
   //population
   //x = m_planet_name->UpperLeft ().x+10; y = m_planet_name->LowerRight().y + RESOURCE_DISPLAY_HEIGHT+3;
-  glColor4ubv(ClientUI::TEXT_COLOR.v);
+  glColor4ubv(ClientUI::TextColor().v);
   icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   x+=font->Height();
 
   double future_pop_growth = static_cast<int>(planet.FuturePopGrowth()*100.0) / 100.0;
   if     (future_pop_growth<0.0)  text=GG::RgbaTag(GG::CLR_RED);
   else if(future_pop_growth>0.0)  text=GG::RgbaTag(GG::CLR_GREEN);
-       else                       text=GG::RgbaTag(ClientUI::TEXT_COLOR);
+       else                       text=GG::RgbaTag(ClientUI::TextColor());
 
   text+= lexical_cast<std::string>(static_cast<int>(planet.PopPoints())) + "</rgba>/"+lexical_cast<std::string>(static_cast<int>(planet.MaxPop()));
   font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0);
@@ -1113,7 +1101,7 @@ void SidePanel::PlanetPanel::ClickColonize()
     if(!ship->GetFleet()->Accept(StationaryFleetVisitor(*ship->GetFleet()->Owners().begin())))
     {
       GG::ThreeButtonDlg dlg(320,200,UserString("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
-                             GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::PTS),ClientUI::WND_COLOR,ClientUI::CTRL_BORDER_COLOR,ClientUI::CTRL_COLOR,ClientUI::TEXT_COLOR,2,
+                             GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::WndColor(),ClientUI::CtrlBorderColor(),ClientUI::CtrlColor(),ClientUI::TextColor(),2,
                              UserString("YES"),UserString("NO"));
       dlg.Run();
 
@@ -1158,7 +1146,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
 
   GG::MenuItem menu_contents;
   menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false));
-  GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), menu_contents, ClientUI::TEXT_COLOR);
+  GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), menu_contents, ClientUI::TextColor());
 
   if(popup.Run()) 
     switch (popup.MenuID())
@@ -1318,7 +1306,7 @@ void SidePanel::SystemResourceSummary::Render()
   int farming=m_farming,mining=m_mining,trade=m_trade,research=m_research,industry=m_industry,defense=m_defense;
 
   std::string text; int x,y; boost::shared_ptr<GG::Texture> icon;
-  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS));
+  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()));
   Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
   const int ICON_MARGIN    =  5;
   
@@ -1327,7 +1315,7 @@ void SidePanel::SystemResourceSummary::Render()
   int info_elem_width = (Width()-(6+1)*ICON_MARGIN)/6;
 
   //farming
-  glColor4ubv(ClientUI::TEXT_COLOR.v);
+  glColor4ubv(ClientUI::TextColor().v);
   icon=IconFarming(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (farming<0?"-":"+") + lexical_cast<std::string>(farming);
@@ -1336,7 +1324,7 @@ void SidePanel::SystemResourceSummary::Render()
   x+=info_elem_width+ICON_MARGIN;
 
   //mining
-  glColor4ubv(ClientUI::TEXT_COLOR.v);
+  glColor4ubv(ClientUI::TextColor().v);
   icon=IconMining(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (mining<0?"-":"+") + lexical_cast<std::string>(mining);
@@ -1345,7 +1333,7 @@ void SidePanel::SystemResourceSummary::Render()
   x+=info_elem_width+ICON_MARGIN;
 
   //trade
-  glColor4ubv(ClientUI::TEXT_COLOR.v);
+  glColor4ubv(ClientUI::TextColor().v);
   icon=IconTrade(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (trade<0?"-":"+") + lexical_cast<std::string>(trade);
@@ -1354,7 +1342,7 @@ void SidePanel::SystemResourceSummary::Render()
   x+=info_elem_width+ICON_MARGIN;
 
   //research
-  glColor4ubv(ClientUI::TEXT_COLOR.v);
+  glColor4ubv(ClientUI::TextColor().v);
   icon=IconResearch(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (research<0?"-":"+") + lexical_cast<std::string>(research);
@@ -1363,7 +1351,7 @@ void SidePanel::SystemResourceSummary::Render()
   x+=info_elem_width+ICON_MARGIN;
 
   //industy
-  glColor4ubv(ClientUI::TEXT_COLOR.v);
+  glColor4ubv(ClientUI::TextColor().v);
   icon=IconIndustry(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (industry<0?"-":"+") + lexical_cast<std::string>(industry);
@@ -1372,7 +1360,7 @@ void SidePanel::SystemResourceSummary::Render()
   x+=info_elem_width+ICON_MARGIN;
 
   //defense
-  glColor4ubv(ClientUI::TEXT_COLOR.v);
+  glColor4ubv(ClientUI::TextColor().v);
   icon=IconDefense(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = lexical_cast<std::string>(defense)+"/"+lexical_cast<std::string>(defense*3);
@@ -1393,11 +1381,11 @@ std::set<SidePanel*> SidePanel::s_side_panels;
 
 SidePanel::SidePanel(int x, int y, int w, int h) : 
     Wnd(x, y, w, h, GG::CLICKABLE),
-    m_system_name(new CUIDropDownList(40, 0, w-80,SYSTEM_NAME_FONT_SIZE, 10*SYSTEM_NAME_FONT_SIZE,GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5))),
-    m_button_prev(new GG::Button(40-SYSTEM_NAME_FONT_SIZE,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),GG::CLR_WHITE,GG::CLICKABLE)),
-    m_button_next(new GG::Button(40+w-80                 ,4,SYSTEM_NAME_FONT_SIZE,SYSTEM_NAME_FONT_SIZE,"",GG::GUI::GetGUI()->GetFont(ClientUI::FONT,SYSTEM_NAME_FONT_SIZE),GG::CLR_WHITE,GG::CLICKABLE)),
+    m_system_name(new CUIDropDownList(40, 0, w-80,SystemNameFontSize(), 10*SystemNameFontSize(),GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5))),
+    m_button_prev(new GG::Button(40-SystemNameFontSize(),4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE,GG::CLICKABLE)),
+    m_button_next(new GG::Button(40+w-80                 ,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE,GG::CLICKABLE)),
     m_star_graphic(0),
-    m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::PTS-5,UserString("SP_SYSTEM_PRODUCTION"),GG::GUI::GetGUI()->GetFont(ClientUI::FONT,ClientUI::PTS),ClientUI::TEXT_COLOR)),
+    m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::Pts()-5,UserString("SP_SYSTEM_PRODUCTION"),GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::TextColor())),
     m_next_pltview_fade_in(0),m_next_pltview_planet_id(UniverseObject::INVALID_OBJECT_ID),m_next_pltview_fade_out(-1),
     m_planet_panel_container(new PlanetPanelContainer(0,100,w,h-100-30)),
     m_system_resource_summary(new SystemResourceSummary(0,100-20,w,20))
@@ -1410,13 +1398,13 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_system_name->SetStyle(GG::LB_CENTER);
     m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
 
-    m_button_prev->SetUnpressedGraphic(GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/leftarrownormal.png"   ), 0, 0, 32, 32));
-    m_button_prev->SetPressedGraphic  (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/leftarrowclicked.png"  ), 0, 0, 32, 32));
-    m_button_prev->SetRolloverGraphic (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/leftarrowmouseover.png"), 0, 0, 32, 32));
+    m_button_prev->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrownormal.png"   ), 0, 0, 32, 32));
+    m_button_prev->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowclicked.png"  ), 0, 0, 32, 32));
+    m_button_prev->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowmouseover.png"), 0, 0, 32, 32));
 
-    m_button_next->SetUnpressedGraphic(GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/rightarrownormal.png"  ), 0, 0, 32, 32));
-    m_button_next->SetPressedGraphic  (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/rightarrowclicked.png"   ), 0, 0, 32, 32));
-    m_button_next->SetRolloverGraphic (GG::SubTexture(GetTexture( ClientUI::ART_DIR + "icons/rightarrowmouseover.png"), 0, 0, 32, 32));
+    m_button_next->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrownormal.png"  ), 0, 0, 32, 32));
+    m_button_next->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"   ), 0, 0, 32, 32));
+    m_button_next->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png"), 0, 0, 32, 32));
 
     AttachChild(m_system_name);
     AttachChild(m_button_prev);
@@ -1448,7 +1436,7 @@ bool SidePanel::InWindow(const GG::Pt& pt) const
 void SidePanel::Render()
 {
   GG::Pt ul = UpperLeft(), lr = LowerRight();
-  FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::SIDE_PANEL_COLOR, GG::CLR_ZERO, 0);
+  FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::SidePanelColor(), GG::CLR_ZERO, 0);
 }
 
 void SidePanel::SetSystemImpl()
@@ -1476,11 +1464,11 @@ void SidePanel::SetSystemImpl()
 
             if (sys_vec[i]->Name().length()==0) {
                 if (sys_vec[i] == s_system)
-                    row->push_back(UserString("SP_UNKNOWN_SYSTEM"), ClientUI::FONT, SYSTEM_NAME_FONT_SIZE, ClientUI::TEXT_COLOR);
+                    row->push_back(UserString("SP_UNKNOWN_SYSTEM"), ClientUI::Font(), SystemNameFontSize(), ClientUI::TextColor());
                 else
                     continue;
             } else {
-                row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::FONT,SYSTEM_NAME_FONT_SIZE, ClientUI::TEXT_COLOR);
+                row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::Font(),SystemNameFontSize(), ClientUI::TextColor());
             }
             
             m_system_name->Insert(row);
@@ -1505,21 +1493,23 @@ void SidePanel::SetSystemImpl()
         std::vector<boost::shared_ptr<GG::Texture> > textures;
         boost::shared_ptr<GG::Texture> graphic;
      
-        std::string star_image = ClientUI::ART_DIR + "stars_sidepanel/";
+        boost::filesystem::path star_image = ClientUI::ArtDir() / "stars_sidepanel";
+        std::string star_filename;
         switch (s_system->Star())
         {
-        case STAR_BLUE     : star_image += "blue0"     ; break;
-        case STAR_WHITE    : star_image += "white0"    ; break;
-        case STAR_YELLOW   : star_image += "yellow0"   ; break;
-        case STAR_ORANGE   : star_image += "orange0"   ; break;
-        case STAR_RED      : star_image += "red0"      ; break;
-        case STAR_NEUTRON  : star_image += "neutron0"  ; break;
-        case STAR_BLACK    : star_image += "blackhole0"; break;
-        default            : star_image += "white0"    ; break;
+        case STAR_BLUE     : star_image = "blue0"     ; break;
+        case STAR_WHITE    : star_image = "white0"    ; break;
+        case STAR_YELLOW   : star_image = "yellow0"   ; break;
+        case STAR_ORANGE   : star_image = "orange0"   ; break;
+        case STAR_RED      : star_image = "red0"      ; break;
+        case STAR_NEUTRON  : star_image = "neutron0"  ; break;
+        case STAR_BLACK    : star_image = "blackhole0"; break;
+        default            : star_image = "white0"    ; break;
         }
-        star_image += lexical_cast<std::string>(s_system->ID()%2)+".png";
+        star_filename += lexical_cast<std::string>(s_system->ID() % 2) + ".png";
+        star_image /= star_filename;
 
-        graphic = GetTexture(star_image);
+        graphic = ClientUI::GetTexture(star_image);
       
         textures.push_back(graphic);
 

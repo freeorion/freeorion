@@ -31,8 +31,8 @@ class CUIButton : public GG::Button
 public:
     /** \name Structors */ //@{
     CUIButton(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
-              GG::Clr color = ClientUI::BUTTON_COLOR, GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int thick = 1, 
-              GG::Clr text_color = ClientUI::TEXT_COLOR, Uint32 flags = GG::CLICKABLE); ///< basic ctor
+              GG::Clr color = ClientUI::ButtonColor(), GG::Clr border = ClientUI::CtrlBorderColor(), int thick = 1, 
+              GG::Clr text_color = ClientUI::TextColor(), Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -65,8 +65,8 @@ class CUITurnButton : public CUIButton
 public:
     /** \name Structors */ //@{
     CUITurnButton(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
-                  GG::Clr color = ClientUI::BUTTON_COLOR, GG::Clr border = ClientUI::CTRL_BORDER_COLOR, int thick = 1, 
-                  GG::Clr text_color = ClientUI::TEXT_COLOR, Uint32 flags = GG::CLICKABLE); ///< basic ctor
+                  GG::Clr color = ClientUI::ButtonColor(), GG::Clr border = ClientUI::CtrlBorderColor(), int thick = 1, 
+                  GG::Clr text_color = ClientUI::TextColor(), Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 };
 
@@ -110,9 +110,9 @@ class CUIStateButton : public GG::StateButton
 public:
     /** \name Structors */ //@{
     CUIStateButton(int x, int y, int w, int h, const std::string& str, Uint32 text_fmt, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX,
-                   GG::Clr color = ClientUI::STATE_BUTTON_COLOR, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
-                   GG::Clr text_color = ClientUI::TEXT_COLOR, GG::Clr interior = GG::CLR_ZERO,
-                   GG::Clr border = ClientUI::CTRL_BORDER_COLOR, Uint32 flags = GG::CLICKABLE); ///< ctor
+                   GG::Clr color = ClientUI::StateButtonColor(), const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
+                   GG::Clr text_color = ClientUI::TextColor(), GG::Clr interior = GG::CLR_ZERO,
+                   GG::Clr border = ClientUI::CtrlBorderColor(), Uint32 flags = GG::CLICKABLE); ///< ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -156,7 +156,7 @@ public:
 
     /** \name Structors */ //@{
     CUIScroll(int x, int y, int w, int h, GG::Orientation orientation, GG::Clr color = GG::CLR_ZERO, 
-              GG::Clr border = ClientUI::CTRL_BORDER_COLOR, GG::Clr interior = GG::CLR_ZERO,
+              GG::Clr border = ClientUI::CtrlBorderColor(), GG::Clr interior = GG::CLR_ZERO,
               Uint32 flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN); ///< basic ctor
     //@}
 
@@ -179,7 +179,7 @@ class CUIListBox : public GG::ListBox
 {
 public:
     /** \name Structors */ //@{
-    CUIListBox(int x, int y, int w, int h, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr interior = GG::CLR_ZERO, 
+    CUIListBox(int x, int y, int w, int h, GG::Clr color = ClientUI::CtrlBorderColor(), GG::Clr interior = GG::CLR_ZERO, 
                Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
@@ -194,8 +194,8 @@ class CUIDropDownList : public GG::DropDownList
 {
 public:
     /** \name Structors */ //@{
-    CUIDropDownList(int x, int y, int w, int h, int drop_ht, GG::Clr color = ClientUI::CTRL_BORDER_COLOR, 
-                    GG::Clr interior = ClientUI::DROP_DOWN_LIST_INT_COLOR, Uint32 flags = GG::CLICKABLE); ///< basic ctor
+    CUIDropDownList(int x, int y, int w, int h, int drop_ht, GG::Clr color = ClientUI::CtrlBorderColor(), 
+                    GG::Clr interior = ClientUI::DropDownListIntColor(), Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
@@ -220,8 +220,8 @@ class CUIEdit : public GG::Edit
 public:
     /** \name Structors */ //@{
     CUIEdit(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
-            GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr text_color = ClientUI::TEXT_COLOR, 
-            GG::Clr interior = ClientUI::EDIT_INT_COLOR, Uint32 flags = GG::CLICKABLE); ///< basic ctor
+            GG::Clr color = ClientUI::CtrlBorderColor(), GG::Clr text_color = ClientUI::TextColor(), 
+            GG::Clr interior = ClientUI::EditIntColor(), Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
@@ -237,8 +237,8 @@ public:
     /** \name Structors */ //@{
     CUIMultiEdit(int x, int y, int w, int h, const std::string& str, Uint32 style = GG::TF_LINEWRAP,
                  const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
-                 GG::Clr color = ClientUI::CTRL_BORDER_COLOR, GG::Clr text_color = ClientUI::TEXT_COLOR, 
-                 GG::Clr interior = ClientUI::MULTIEDIT_INT_COLOR, Uint32 flags = GG::CLICKABLE); ///< basic ctor
+                 GG::Clr color = ClientUI::CtrlBorderColor(), GG::Clr text_color = ClientUI::TextColor(), 
+                 GG::Clr interior = ClientUI::MultieditIntColor(), Uint32 flags = GG::CLICKABLE); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
@@ -257,18 +257,15 @@ public:
 
     /** \name Mutators */ //@{
     virtual void Render();
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 };
 
 /** A simple GG::ListBox::Row subclass designed for use in text-only drop-down lists, such as the ones used in the game setup dialogs. */
 struct CUISimpleDropDownListRow : public GG::ListBox::Row
 {
-    enum {DEFAULT_ROW_HEIGHT = 22};
-    CUISimpleDropDownListRow(const std::string& row_text, int row_height = DEFAULT_ROW_HEIGHT) :
-        GG::ListBox::Row(1, row_height, "")
-    {
-        push_back(row_text, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
-    }
+    CUISimpleDropDownListRow(const std::string& row_text, int row_height = DEFAULT_ROW_HEIGHT);
+    static const int DEFAULT_ROW_HEIGHT;
 };
 
 /** Encapsulates an icon and text that goes with it in a single control.  For example, "[food icon] +1" or

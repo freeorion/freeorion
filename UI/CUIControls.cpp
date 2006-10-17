@@ -27,14 +27,14 @@ namespace {
     void PlayButtonClickSound()
     {
 #ifndef FREEORION_BUILD_UTIL
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"));
 #endif
     }
 
     void PlayTurnButtonClickSound()
     {
 #ifndef FREEORION_BUILD_UTIL
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"));
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"));
 #endif
     }
 
@@ -44,7 +44,7 @@ namespace {
         void operator()(bool checked) const
         {
 #ifndef FREEORION_BUILD_UTIL
-            if ((!m_play_only_when_checked || checked) && PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
+            if ((!m_play_only_when_checked || checked) && PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"));
 #endif
         }
         const bool m_play_only_when_checked;
@@ -53,34 +53,34 @@ namespace {
     void PlayListSelectSound(const std::set<int>&)
     {
 #ifndef FREEORION_BUILD_UTIL
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.list-select"));
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-select"));
 #endif
     }
 
     void PlayDropDownListOpenSound()
     {
 #ifndef FREEORION_BUILD_UTIL
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"));
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"));
 #endif
     }
 
     void PlayItemDropSound(int, GG::ListBox::Row*)
     {
 #ifndef FREEORION_BUILD_UTIL
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.item-drop"));
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.item-drop"));
 #endif
     }
 
     void PlayTextTypingSound(const std::string&)
     {
 #ifndef FREEORION_BUILD_UTIL
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.text-typing"));
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.text-typing"));
 #endif
     }
 
     boost::shared_ptr<GG::Font> FontOrDefaultFont(const boost::shared_ptr<GG::Font>& font)
     {
-        return font ? font : GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
+        return font ? font : GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
     }
 
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
@@ -142,9 +142,9 @@ namespace {
 }
 
 CUIButton::CUIButton(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
-                     GG::Clr color/* = ClientUI::BUTTON_COLOR*/,
-                     GG::Clr border/* = ClientUI::CTRL_BORDER_COLOR*/, int thick/* = 2*/, 
-                     GG::Clr text_color/* = ClientUI::TEXT_COLOR*/, Uint32 flags/* = GG::CLICKABLE*/) :
+                     GG::Clr color/* = ClientUI::ButtonColor()*/,
+                     GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
+                     GG::Clr text_color/* = ClientUI::TextColor()*/, Uint32 flags/* = GG::CLICKABLE*/) :
     Button(x, y, w, FontOrDefaultFont(font)->Lineskip() + 6, str, FontOrDefaultFont(font), color, text_color, flags),
     m_border_color(border),
     m_border_thick(thick)
@@ -164,7 +164,7 @@ void CUIButton::MouseHere(const GG::Pt& pt, Uint32 keys)
     if (!Disabled()) {
 #ifndef FREEORION_BUILD_UTIL
         if (State() != BN_ROLLOVER && PlaySounds())
-            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
 #endif
         SetState(BN_ROLLOVER);
     }
@@ -210,9 +210,9 @@ void CUIButton::RenderUnpressed()
 // class CUITurnButton
 ///////////////////////////////////////
 CUITurnButton::CUITurnButton(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
-                             GG::Clr color/* = ClientUI::BUTTON_COLOR*/, 
-                             GG::Clr border/* = ClientUI::CTRL_BORDER_COLOR*/, int thick/* = 2*/, 
-                             GG::Clr text_color/* = ClientUI::TEXT_COLOR*/, Uint32 flags/* = GG::CLICKABLE*/) : 
+                             GG::Clr color/* = ClientUI::ButtonColor()*/, 
+                             GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
+                             GG::Clr text_color/* = ClientUI::TextColor()*/, Uint32 flags/* = GG::CLICKABLE*/) : 
     CUIButton(x, y, w, str, FontOrDefaultFont(font), color, border, thick, text_color, flags)
 {
     GG::Connect(ClickedSignal, &PlayTurnButtonClickSound, -1);
@@ -248,7 +248,7 @@ void CUIArrowButton::MouseHere(const GG::Pt& pt, Uint32 keys)
     if (!Disabled()) {
 #ifndef FREEORION_BUILD_UTIL
         if (State() != BN_ROLLOVER && PlaySounds())
-            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
 #endif
         SetState(BN_ROLLOVER);
     }
@@ -261,7 +261,7 @@ void CUIArrowButton::RenderPressed()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_fill_background_with_wnd_color)
-        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WND_COLOR, GG::CLR_ZERO, 0);
+        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_ZERO, 0);
     OffsetMove(GG::Pt(1, 1));
     RenderUnpressed();
     OffsetMove(GG::Pt(-1, -1));
@@ -271,7 +271,7 @@ void CUIArrowButton::RenderRollover()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_fill_background_with_wnd_color)
-        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WND_COLOR, GG::CLR_ZERO, 0);
+        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_ZERO, 0);
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     if (!Disabled())
         AdjustBrightness(color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
@@ -283,7 +283,7 @@ void CUIArrowButton::RenderUnpressed()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_fill_background_with_wnd_color)
-        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WND_COLOR, GG::CLR_ZERO, 0);
+        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_ZERO, 0);
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     GG::Pt tri_ul = ul + GG::Pt(3, 1), tri_lr = lr - GG::Pt(2, 1);
     IsoscelesTriangle(tri_ul.x, tri_ul.y, tri_lr.x, tri_lr.y, m_orientation, color_to_use);
@@ -294,15 +294,15 @@ void CUIArrowButton::RenderUnpressed()
 // class CUIStateButton
 ///////////////////////////////////////
 CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& str, Uint32 text_fmt, GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/,
-                               GG::Clr color/* = ClientUI::STATE_BUTTON_COLOR*/, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
-                               GG::Clr text_color/* = ClientUI::TEXT_COLOR*/, GG::Clr interior/* = GG::CLR_ZERO*/,
-                               GG::Clr border/* = ClientUI::CTRL_BORDER_COLOR*/, Uint32 flags/* = GG::CLICKABLE*/) :
+                               GG::Clr color/* = ClientUI::StateButtonColor()*/, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
+                               GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = GG::CLR_ZERO*/,
+                               GG::Clr border/* = ClientUI::CtrlBorderColor()*/, Uint32 flags/* = GG::CLICKABLE*/) :
     StateButton(x, y, w, h, str, FontOrDefaultFont(font), text_fmt, color, text_color, interior, style, flags),
     m_border_color(border),
     m_mouse_here(false)
 {
     if (style == GG::SBSTYLE_3D_TOP_DETACHED_TAB || style == GG::SBSTYLE_3D_TOP_ATTACHED_TAB)
-        SetColor(ClientUI::WND_COLOR);
+        SetColor(ClientUI::WndColor());
     // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
     // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
     // checking the redering style
@@ -540,7 +540,7 @@ void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, Uint32 keys)
 {
     if (!m_being_dragged && !m_mouse_here) {
 #ifndef FREEORION_BUILD_UTIL
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
 #endif
         m_mouse_here = true;
     }
@@ -557,7 +557,7 @@ void CUIScroll::ScrollTab::MouseLeave()
 // class CUIScroll
 ///////////////////////////////////////
 CUIScroll::CUIScroll(int x, int y, int w, int h, GG::Orientation orientation, GG::Clr color/* = GG::CLR_ZERO*/, 
-                     GG::Clr border/* = ClientUI::CTRL_BORDER_COLOR*/, GG::Clr interior/* = GG::CLR_ZERO*/, 
+                     GG::Clr border/* = ClientUI::CtrlBorderColor()*/, GG::Clr interior/* = GG::CLR_ZERO*/, 
                      Uint32 flags/* = CLICKABLE | REPEAT_BUTTON_DOWN*/) :
     Scroll(x, y, w, h, orientation, color, interior, flags),
     m_border_color(border)
@@ -586,7 +586,7 @@ void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 ///////////////////////////////////////
 // class CUIListBox
 ///////////////////////////////////////
-CUIListBox::CUIListBox(int x, int y, int w, int h, GG::Clr color/* = ClientUI::CTRL_BORDER_COLOR*/, 
+CUIListBox::CUIListBox(int x, int y, int w, int h, GG::Clr color/* = ClientUI::CtrlBorderColor()*/, 
                        GG::Clr interior/* = GG::CLR_ZERO*/, Uint32 flags/* = CLICKABLE*/) : 
     ListBox(x, y, w, h, color, interior, flags)
 {
@@ -614,8 +614,8 @@ namespace {
     const int CUIDROPDOWNLIST_ANGLE_OFFSET = 5;
 }
 
-CUIDropDownList::CUIDropDownList(int x, int y, int w, int h, int drop_ht, GG::Clr color/* = ClientUI::CTRL_BORDER_COLOR*/,
-                                 GG::Clr interior/* = ClientUI::DROP_DOWN_LIST_INT_COLOR*/, Uint32 flags/* = CLICKABLE*/) : 
+CUIDropDownList::CUIDropDownList(int x, int y, int w, int h, int drop_ht, GG::Clr color/* = ClientUI::CtrlBorderColor()*/,
+                                 GG::Clr interior/* = ClientUI::DropDownListIntColor()*/, Uint32 flags/* = CLICKABLE*/) : 
     DropDownList(x, y, w, h, drop_ht, color),
     m_render_drop_arrow(true),
     m_mouse_here(false)
@@ -646,7 +646,7 @@ void CUIDropDownList::Render()
     int outline_width = triangle_width + 3 * margin;
 
     if (m_render_drop_arrow) {
-        GG::Clr triangle_color_to_use = ClientUI::DROP_DOWN_LIST_ARROW_COLOR;
+        GG::Clr triangle_color_to_use = ClientUI::DropDownListArrowColor();
         if (m_mouse_here && !Disabled())
             AdjustBrightness(triangle_color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
         IsoscelesTriangle(lr.x - triangle_width - margin * 5 / 2, ul.y + 2 * margin, lr.x - margin * 5 / 2, lr.y - 2 * margin, 
@@ -666,7 +666,7 @@ void CUIDropDownList::LClick(const GG::Pt& pt, Uint32 keys)
 void CUIDropDownList::MouseEnter(const GG::Pt& pt, Uint32 keys)
 {
 #ifndef FREEORION_BUILD_UTIL
-    if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+    if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
 #endif
     m_mouse_here = true;
 }
@@ -690,13 +690,13 @@ void CUIDropDownList::EnableDropArrow()
 // class CUIEdit
 ///////////////////////////////////////
 CUIEdit::CUIEdit(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
-                 GG::Clr color/* = ClientUI::CTRL_BORDER_COLOR*/, 
-                 GG::Clr text_color/* = ClientUI::TEXT_COLOR*/, GG::Clr interior/* = ClientUI::EDIT_INT_COLOR*/, 
+                 GG::Clr color/* = ClientUI::CtrlBorderColor()*/, 
+                 GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = ClientUI::EditIntColor()*/, 
                  Uint32 flags/* = CLICKABLE*/) : 
     Edit(x, y, w, str, FontOrDefaultFont(font), color, text_color, interior, flags)
 {
     GG::Connect(EditedSignal, &PlayTextTypingSound, -1);
-    SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
+    SetHiliteColor(ClientUI::EditHiliteColor());
 }
 
 void CUIEdit::Render()
@@ -720,12 +720,12 @@ void CUIEdit::Render()
 ///////////////////////////////////////
 CUIMultiEdit::CUIMultiEdit(int x, int y, int w, int h, const std::string& str, Uint32 style/* = TF_LINEWRAP*/, 
                            const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
-                           GG::Clr color/* = ClientUI::CTRL_BORDER_COLOR*/, GG::Clr text_color/* = ClientUI::TEXT_COLOR*/, 
-                           GG::Clr interior/* = ClientUI::MULTIEDIT_INT_COLOR*/, Uint32 flags/* = CLICKABLE*/) : 
+                           GG::Clr color/* = ClientUI::CtrlBorderColor()*/, GG::Clr text_color/* = ClientUI::TextColor()*/, 
+                           GG::Clr interior/* = ClientUI::MultieditIntColor()*/, Uint32 flags/* = CLICKABLE*/) : 
     MultiEdit(x, y, w, h, str, FontOrDefaultFont(font), color, style, text_color, interior, flags)
 {
     RecreateScrolls();
-    SetHiliteColor(ClientUI::EDIT_HILITE_COLOR);
+    SetHiliteColor(ClientUI::EditHiliteColor());
 }
 
 void CUIMultiEdit::Render()
@@ -748,13 +748,13 @@ void CUIMultiEdit::Render()
 // class CUISlider
 ///////////////////////////////////////
 CUISlider::CUISlider(int x, int y, int w, int h, int min, int max, GG::Orientation orientation, Uint32 flags/* = CLICKABLE*/) :
-    Slider(x, y, w, h, min, max, orientation, GG::FLAT, ClientUI::CTRL_COLOR, orientation == GG::VERTICAL ? w : h, 5, flags)
+    Slider(x, y, w, h, min, max, orientation, GG::FLAT, ClientUI::CtrlColor(), orientation == GG::VERTICAL ? w : h, 5, flags)
 {}
 
 void CUISlider::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::Clr border_color_to_use = Disabled() ? GG::DisabledColor(ClientUI::CTRL_BORDER_COLOR) : ClientUI::CTRL_BORDER_COLOR;
+    GG::Clr border_color_to_use = Disabled() ? GG::DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
     int tab_width = GetOrientation() == GG::VERTICAL ? Tab()->Height() : Tab()->Width();
     int x_start, x_end, y_start, y_end;
     if (GetOrientation() == GG::VERTICAL) {
@@ -773,6 +773,35 @@ void CUISlider::Render()
     Tab()->Render();
     Tab()->OffsetMove(-UpperLeft());
 }
+
+void CUISlider::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    Wnd::SizeMove(ul, lr);
+    if (GetOrientation() == GG::VERTICAL) {
+        Tab()->Resize(GG::Pt(TabWidth(), TabWidth()));
+        Tab()->MoveTo(GG::Pt((Width() - Tab()->Width()) / 2, Tab()->RelativeUpperLeft().y));
+        Tab()->SetMinSize(GG::Pt(Tab()->MinSize().x, 10));
+    } else {
+        Tab()->SizeMove(GG::Pt(2, 0), GG::Pt(TabWidth(), TabWidth()));
+        Tab()->MoveTo(GG::Pt(Tab()->RelativeUpperLeft().x, (Height() - Tab()->Height()) / 2));
+        Tab()->SetMinSize(GG::Pt(10, Tab()->MinSize().y));
+    }
+    MoveTabToPosn();
+}
+
+
+///////////////////////////////////////
+// class CUISimpleDropDownListRow
+///////////////////////////////////////
+// static(s)
+const int CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT = 22;
+
+CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, int row_height/* = DEFAULT_ROW_HEIGHT*/) :
+    GG::ListBox::Row(1, row_height, "")
+{
+    push_back(new GG::TextControl(0, 0, row_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::TF_LEFT));
+}
+
 
 ///////////////////////////////////////
 // class StatisticIcon
@@ -794,7 +823,7 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon
     m_zero_color(text_color),
     m_negative_color(text_color),
     m_icon(new GG::StaticGraphic(0, 0, h, h, GG::GUI::GetGUI()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
-    m_text(new GG::TextControl(h, 0, w - h, h, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), text_color, GG::TF_LEFT | GG::TF_VCENTER))
+    m_text(new GG::TextControl(h, 0, w - h, h, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_color, GG::TF_LEFT | GG::TF_VCENTER))
 {    
     AttachChild(m_icon);
     AttachChild(m_text);
@@ -814,7 +843,7 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon
     m_zero_color(text_color),
     m_negative_color(text_color),
     m_icon(new GG::StaticGraphic(0, 0, h, h, GG::GUI::GetGUI()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
-    m_text(new GG::TextControl(h, 0, w - h, h, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), text_color, GG::TF_LEFT | GG::TF_VCENTER))
+    m_text(new GG::TextControl(h, 0, w - h, h, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_color, GG::TF_LEFT | GG::TF_VCENTER))
 {   
     m_values[0] = value0;
     m_values[1] = value1;
@@ -916,7 +945,7 @@ std::string StatisticIcon::DoubleToString(double val, int digits, bool integeriz
         return text;
     }
 
-    double mag = abs(val);
+    double mag = std::abs(val);
 
     // integerize?
     if (integerize)
@@ -1050,7 +1079,7 @@ int StatisticIcon::EffectiveSign(double val, bool integerize)
     if (integerize)
         val = floor(val);
 
-    if (abs(val) >= SMALL_VALUE)
+    if (std::abs(val) >= SMALL_VALUE)
     {
         if (val >= 0)
             return 1;
@@ -1159,7 +1188,7 @@ void ColorSelector::Render()
 
 void ColorSelector::LClick(const GG::Pt& pt, Uint32 keys)
 {
-    GG::ColorDlg dlg(pt.x, pt.y, Color(), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::CTRL_COLOR, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR);
+    GG::ColorDlg dlg(pt.x, pt.y, Color(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor());
     dlg.SetNewString(UserString("COLOR_DLG_NEW"));
     dlg.SetOldString(UserString("COLOR_DLG_OLD"));
     dlg.SetRedString(UserString("COLOR_DLG_RED"));
@@ -1184,8 +1213,8 @@ void ColorSelector::LClick(const GG::Pt& pt, Uint32 keys)
 ///////////////////////////////////////
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
                  const std::vector<std::pair<std::string, std::string> >& types) :
-    GG::FileDlg(directory, filename, save, multi, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
-                ClientUI::CTRL_COLOR, ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR)
+    GG::FileDlg(directory, filename, save, multi, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor())
 {
     SetFileFilters(types);
 
@@ -1218,8 +1247,8 @@ ProductionInfoPanel::ProductionInfoPanel(int w, int h, const std::string& title,
     m_color(color),
     m_text_and_border_color(text_and_border_color)
 {
-    const int RESEARCH_TITLE_PTS = ClientUI::PTS + 10;
-    const int STAT_TEXT_PTS = ClientUI::PTS;
+    const int RESEARCH_TITLE_PTS = ClientUI::Pts() + 10;
+    const int STAT_TEXT_PTS = ClientUI::Pts();
     const int CENTERLINE_GAP = 4;
     const int LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 2 / 3;
     const int VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
@@ -1227,23 +1256,23 @@ ProductionInfoPanel::ProductionInfoPanel(int w, int h, const std::string& title,
     const int RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
     const int P_LABEL_X = RIGHT_TEXT_X + 40;
     const int P_LABEL_WIDTH = Width() - 2 - 5 - P_LABEL_X;
-    const GG::Clr TEXT_COLOR = ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR;
+    const GG::Clr TEXT_COLOR = ClientUI::KnownTechTextAndBorderColor();
     m_center_gap = std::make_pair(LABEL_TEXT_WIDTH + 2, LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP);
 
-    m_title = new GG::TextControl(2, 4, Width() - 4, RESEARCH_TITLE_PTS + 4, title, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, RESEARCH_TITLE_PTS), TEXT_COLOR);
-    m_total_points_label = new GG::TextControl(LEFT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_RIGHT);
-    m_total_points = new GG::TextControl(RIGHT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
-    m_total_points_P_label = new GG::TextControl(P_LABEL_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
-    m_wasted_points_label = new GG::TextControl(LEFT_TEXT_X, m_total_points_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_RIGHT);
-    m_wasted_points = new GG::TextControl(RIGHT_TEXT_X, m_total_points_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
-    m_wasted_points_P_label = new GG::TextControl(P_LABEL_X, m_total_points_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
-    m_projects_in_progress_label = new GG::TextControl(LEFT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_RIGHT);
-    m_projects_in_progress = new GG::TextControl(RIGHT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
-    m_points_to_underfunded_projects_label = new GG::TextControl(LEFT_TEXT_X, m_projects_in_progress_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_RIGHT);
-    m_points_to_underfunded_projects = new GG::TextControl(RIGHT_TEXT_X, m_projects_in_progress_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
-    m_points_to_underfunded_projects_P_label = new GG::TextControl(P_LABEL_X, m_projects_in_progress_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
-    m_projects_in_queue_label = new GG::TextControl(LEFT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_RIGHT);
-    m_projects_in_queue = new GG::TextControl(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
+    m_title = new GG::TextControl(2, 4, Width() - 4, RESEARCH_TITLE_PTS + 4, title, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), RESEARCH_TITLE_PTS), TEXT_COLOR);
+    m_total_points_label = new GG::TextControl(LEFT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_RIGHT);
+    m_total_points = new GG::TextControl(RIGHT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
+    m_total_points_P_label = new GG::TextControl(P_LABEL_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
+    m_wasted_points_label = new GG::TextControl(LEFT_TEXT_X, m_total_points_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_RIGHT);
+    m_wasted_points = new GG::TextControl(RIGHT_TEXT_X, m_total_points_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
+    m_wasted_points_P_label = new GG::TextControl(P_LABEL_X, m_total_points_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
+    m_projects_in_progress_label = new GG::TextControl(LEFT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_RIGHT);
+    m_projects_in_progress = new GG::TextControl(RIGHT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
+    m_points_to_underfunded_projects_label = new GG::TextControl(LEFT_TEXT_X, m_projects_in_progress_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_RIGHT);
+    m_points_to_underfunded_projects = new GG::TextControl(RIGHT_TEXT_X, m_projects_in_progress_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
+    m_points_to_underfunded_projects_P_label = new GG::TextControl(P_LABEL_X, m_projects_in_progress_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
+    m_projects_in_queue_label = new GG::TextControl(LEFT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_RIGHT);
+    m_projects_in_queue = new GG::TextControl(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::TF_LEFT);
 
     Resize(GG::Pt(Width(), m_projects_in_queue_label->LowerRight().y + 5));
 
@@ -1266,13 +1295,13 @@ ProductionInfoPanel::ProductionInfoPanel(int w, int h, const std::string& title,
 void ProductionInfoPanel::Render()
 {
     glDisable(GL_TEXTURE_2D);
-    Draw(ClientUI::KNOWN_TECH_FILL_COLOR, true);
+    Draw(ClientUI::KnownTechFillColor(), true);
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(m_border_thickness);
-    Draw(GG::Clr(ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.r, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.g, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.b, 127), false);
+    Draw(GG::Clr(ClientUI::KnownTechTextAndBorderColor().r, ClientUI::KnownTechTextAndBorderColor().g, ClientUI::KnownTechTextAndBorderColor().b, 127), false);
     glLineWidth(1.0);
     glDisable(GL_LINE_SMOOTH);
-    Draw(GG::Clr(ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.r, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.g, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.b, 255), false);
+    Draw(GG::Clr(ClientUI::KnownTechTextAndBorderColor().r, ClientUI::KnownTechTextAndBorderColor().g, ClientUI::KnownTechTextAndBorderColor().b, 255), false);
     glEnable(GL_TEXTURE_2D);
 }
 

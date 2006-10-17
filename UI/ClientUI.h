@@ -1,5 +1,4 @@
 // -*- C++ -*-
-//ClientUI.h
 #ifndef _ClientUI_h_
 #define _ClientUI_h_
 
@@ -14,6 +13,9 @@
 #ifndef _GG_SDLGUI_h_
 #include <GG/SDL/SDLGUI.h>
 #endif
+
+#include <boost/filesystem/path.hpp>
+
 
 class ClientEmpire;
 class ClientNetworkCore;
@@ -125,9 +127,13 @@ public:
 
     static void GenerateSitRepText( SitRepEntry *p_sit_rep ); ///< generates a SitRep string from it's XML data.
 
+    /** Loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true load default
+        missing.png if name isn't found. */
+    static boost::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
+
     /** Loads and returns one of a set of numbered textures.  This is supposed to be used to retrieve textures that are numbered, e.g. the star textures 
         blue1.png, blue2,png, ..., yellow1.png, yellow2.png, etc.  It is assumed that all such files are numbered starting with 1, not 0.  \a dir_name 
-        is the name of the directory in which the images are found, relative to ClientUI::ART_DIR.
+        is the name of the directory in which the images are found, relative to ClientUI::ArtDir().
         \a types_to_names is a map of object types to their base filenames, e.g. (System::BLUE --> "blue"), (PT_SWAMP --> "swamp"), etc.  \a type is 
         the type of object for which you want a texture, which is used to look up the name in \a types_to_names.  \a hash_key is used to pick the numer 
         from [1, N] of the texture to be used.  This number is usually the ID() of the UniverseObject that the texture represents on-screen.  This is 
@@ -136,75 +142,69 @@ public:
     static boost::shared_ptr<GG::Texture> GetNumberedTexture(const std::string& dir_name, const std::map<int, std::string>& types_to_names, 
                                                              int type, int hash_key);
 
-    /** returns the directory in which sound files can be found */
-    static const std::string& SoundDir();
-
     //! \name Static Config Data
     //!@{
-    static std::string FONT;             //!< The default font to use
-    static std::string FONT_BOLD;        //!< The default bold font to use
-    static std::string FONT_ITALIC;      //!< The default italic font to use
-    static std::string FONT_BOLD_ITALIC; //!< The default bold and italic font to use
-    static int         PTS;              //!< default point size
-    static std::string TITLE_FONT;       //!< The default font to use for the window title
-    static int         TITLE_PTS;        //!< default point size to use for window title
-    
-    static std::string DIR;              //!< directory currently being used, contains config files
-    static std::string ART_DIR;          //!< directory holding artwork
-    static std::string SOUND_DIR;        //!< directory holding sound and music
+    static boost::filesystem::path ArtDir();   //!< directory holding artwork
+    static boost::filesystem::path SoundDir(); //!< directory holding sound and music
 
-    static GG::Clr     TEXT_COLOR;       //!< color of UI text
+    static std::string Font();            //!< The default font to use
+    static std::string FontBold();        //!< The default bold font to use
+    static std::string FontItalic();      //!< The default italic font to use
+    static std::string FontBoldItalic();  //!< The default bold and italic font to use
+    static int         Pts();             //!< default point size
+    static std::string TitleFont();       //!< The default font to use for the window title
+    static int         TitlePts();        //!< default point size to use for window title
+    
+    static GG::Clr     TextColor();       //!< color of UI text
     
     // generic UI windows
-    static GG::Clr     WND_COLOR;              //!< color of a UI window
-    static GG::Clr     WND_BORDER_COLOR;       //!< color of window borders
-    static GG::Clr     WND_OUTER_BORDER_COLOR; //!< color of the outermost border
-    static GG::Clr     WND_INNER_BORDER_COLOR; //!< color of the innermost border
+    static GG::Clr     WndColor();            //!< color of a UI window
+    static GG::Clr     WndBorderColor();      //!< color of window borders
+    static GG::Clr     WndOuterBorderColor(); //!< color of the outermost border
+    static GG::Clr     WndInnerBorderColor(); //!< color of the innermost border
 
     // controls
-    static GG::Clr     CTRL_COLOR;         //!< color of UI controls
-    static GG::Clr     CTRL_BORDER_COLOR;
+    static GG::Clr     CtrlColor();           //!< color of UI controls
+    static GG::Clr     CtrlBorderColor();
 
-    static GG::Clr     BUTTON_COLOR;
-    static int         BUTTON_WIDTH;       //!< default width to use for window buttons
+    static GG::Clr     ButtonColor();
 
-    static GG::Clr     STATE_BUTTON_COLOR;
+    static GG::Clr     StateButtonColor();
 
-    static GG::Clr     SCROLL_TAB_COLOR;
-    static  int        SCROLL_WIDTH;
+    static GG::Clr     ScrollTabColor();
+    static  int        ScrollWidth();
     
-    static GG::Clr     DROP_DOWN_LIST_INT_COLOR;
-    static GG::Clr     DROP_DOWN_LIST_ARROW_COLOR;
+    static GG::Clr     DropDownListIntColor();
+    static GG::Clr     DropDownListArrowColor();
 
-    static GG::Clr     EDIT_HILITE_COLOR;
-    static GG::Clr     EDIT_INT_COLOR;
-    static GG::Clr     MULTIEDIT_INT_COLOR;
+    static GG::Clr     EditHiliteColor();
+    static GG::Clr     EditIntColor();
+    static GG::Clr     MultieditIntColor();
 
-    static GG::Clr     STAT_INCR_COLOR;   //!< used to color increasing stats text (eg "+2")
-    static GG::Clr     STAT_DECR_COLOR;   //!< used to color decreasing stats text (eg "-3")
+    static GG::Clr     StatIncrColor();   //!< used to color increasing stats text (eg "+2")
+    static GG::Clr     StatDecrColor();   //!< used to color decreasing stats text (eg "-3")
 
-    static int         SYSTEM_ICON_SIZE;  //!< the width/height of a System/Icon at zoom = 1.0
-    static double      FLEET_BUTTON_SIZE; //!< the width/height of a FleetButton at zoom = 1.0, relative to the size of a SystemIcon
+    static int         SystemIconSize();  //!< the width/height of a System/Icon at zoom = 1.0
+    static double      FleetButtonSize(); //!< the width/height of a FleetButton at zoom = 1.0, relative to the size of a SystemIcon
 
     // game UI windows
-    static GG::Clr     SIDE_PANEL_COLOR;
-    static GG::Clr     SIDE_PANEL_BUILD_PROGRESSBAR_COLOR;
+    static GG::Clr     SidePanelColor();
 
     // tech screen
-    static GG::Clr     KNOWN_TECH_FILL_COLOR;
-    static GG::Clr     KNOWN_TECH_TEXT_AND_BORDER_COLOR;
-    static GG::Clr     RESEARCHABLE_TECH_FILL_COLOR;
-    static GG::Clr     RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
-    static GG::Clr     UNRESEARCHABLE_TECH_FILL_COLOR;
-    static GG::Clr     UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
-    static GG::Clr     TECH_WND_PROGRESS_BAR_BACKGROUND;
-    static GG::Clr     TECH_WND_PROGRESS_BAR;
+    static GG::Clr     KnownTechFillColor();
+    static GG::Clr     KnownTechTextAndBorderColor();
+    static GG::Clr     ResearchableTechFillColor();
+    static GG::Clr     ResearchableTechTextAndBorderColor();
+    static GG::Clr     UnresearchableTechFillColor();
+    static GG::Clr     UnresearchableTechTextAndBorderColor();
+    static GG::Clr     TechWndProgressBarBackground();
+    static GG::Clr     TechWndProgressBar();
     //!@}
 
 private:
     void HideAllWindows();              //!< hides all the UI windows from view
     
-    void SwitchState(State state);      //!< switch current state to >state<, free's last state window and create the one for the new state
+    void SwitchState(State state);      //!< switch current state to \a state, free's last state window and create the one for the new state
 
     State m_state;                      //!< represents the screen currently being displayed
 

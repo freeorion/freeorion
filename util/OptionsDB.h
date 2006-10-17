@@ -97,6 +97,10 @@ public:
         return boost::any_cast<T>(it->second.value);
     }
 
+    const std::string& GetDescription(const std::string& option_name) const; ///< returns the description string for option \a option_name, or throws std::runtime_error if no such Option exists
+    const std::string& GetDefaultValue(const std::string& option_name) const; ///< returns the default value string for option \a option_name, or throws std::runtime_error if no such Option exists
+    boost::shared_ptr<const ValidatorBase> GetValidator(const std::string& option_name) const; ///< returns the validator for option \a option_name, or throws std::runtime_error if no such Option exists
+
     void    GetUsage(std::ostream& os, const std::string& command_line = "") const; ///< writes a usage message to \a os
     XMLDoc  GetXML() const;                                                         ///< returns the contents of the DB as an XMLDoc
 

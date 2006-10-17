@@ -86,12 +86,12 @@ BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
     m_queue_idx(-1),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
-    const int NAME_PTS = ClientUI::PTS + 8;
-    const int COST_PTS = ClientUI::PTS;
+    const int NAME_PTS = ClientUI::Pts() + 8;
+    const int COST_PTS = ClientUI::Pts();
     const int BUTTON_WIDTH = 150;
-    boost::shared_ptr<GG::Font> default_font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
-    m_item_name_text = new GG::TextControl(1, 0, w - 1 - BUTTON_WIDTH, NAME_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT_BOLD, NAME_PTS), ClientUI::TEXT_COLOR);
-    m_cost_text = new GG::TextControl(1, m_item_name_text->LowerRight().y, w - 1 - BUTTON_WIDTH, COST_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, COST_PTS), ClientUI::TEXT_COLOR);
+    boost::shared_ptr<GG::Font> default_font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    m_item_name_text = new GG::TextControl(1, 0, w - 1 - BUTTON_WIDTH, NAME_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), NAME_PTS), ClientUI::TextColor());
+    m_cost_text = new GG::TextControl(1, m_item_name_text->LowerRight().y, w - 1 - BUTTON_WIDTH, COST_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), COST_PTS), ClientUI::TextColor());
     m_add_to_queue_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"));
     m_recenter_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, UserString("PRODUCTION_DETAIL_CENTER_ON_BUILD"));
     m_recenter_button->Disable();
@@ -99,9 +99,9 @@ BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
     m_num_items_to_build = new CUISpin<int>(0, 0, 75, 1, 1, 1, 1000, true);
     m_num_items_to_build->MoveTo(GG::Pt(1, h - m_num_items_to_build->Height() - 1));
     m_num_items_to_build_label = new GG::TextControl(m_num_items_to_build->LowerRight().x + 3, m_num_items_to_build->UpperLeft().y + (m_num_items_to_build->Height() - (NAME_PTS + 4)) / 2, w - 1 - BUTTON_WIDTH - 3 - (m_num_items_to_build->LowerRight().x + 3), NAME_PTS + 4,
-                                                     UserString("PRODUCTION_DETAIL_NUMBER_TO_BUILD"), default_font, ClientUI::TEXT_COLOR, GG::TF_LEFT);
-    m_build_location_name_text = new GG::TextControl(w - 1 - BUTTON_WIDTH, m_num_items_to_build->UpperLeft().y + (m_num_items_to_build->Height() - (NAME_PTS + 4)) / 2, BUTTON_WIDTH, ClientUI::PTS + 4,
-                                                     "", default_font, ClientUI::TEXT_COLOR);
+                                                     UserString("PRODUCTION_DETAIL_NUMBER_TO_BUILD"), default_font, ClientUI::TextColor(), GG::TF_LEFT);
+    m_build_location_name_text = new GG::TextControl(w - 1 - BUTTON_WIDTH, m_num_items_to_build->UpperLeft().y + (m_num_items_to_build->Height() - (NAME_PTS + 4)) / 2, BUTTON_WIDTH, ClientUI::Pts() + 4,
+                                                     "", default_font, ClientUI::TextColor());
     m_description_box = new CUIMultiEdit(1, m_cost_text->LowerRight().y, w - 2 - BUTTON_WIDTH, m_num_items_to_build_label->UpperLeft().y - 2 - m_cost_text->LowerRight().y, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
@@ -130,7 +130,7 @@ int BuildDesignatorWnd::BuildDetailPanel::QueueIndexShown() const
 void BuildDesignatorWnd::BuildDetailPanel::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WND_COLOR, GG::CLR_ZERO, 0);
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_ZERO, 0);
 }
 
 void BuildDesignatorWnd::BuildDetailPanel::SelectedBuildLocation(int location)
@@ -246,7 +246,7 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
                                   % EffectsDescription(building_type->Effects()));
         }
         if (!building_type->Graphic().empty())
-            graphic = HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + building_type->Graphic());
+            graphic = ClientUI::GetTexture(ClientUI::ArtDir() / building_type->Graphic());
     } else if (m_build_type == BT_SHIP) {
         assert(empire);
         const ShipDesign* design = empire->GetShipDesign(m_item);
@@ -259,13 +259,13 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
                               % design->attack
                               % design->defense
                               % design->speed);
-        graphic = HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + design->graphic);
+        graphic = ClientUI::GetTexture(ClientUI::ArtDir() / design->graphic);
     } else if (m_build_type == BT_ORBITAL) {
         turns = DEFENSE_BASE_BUILD_TURNS;
         cost_per_turn = DEFENSE_BASE_BUILD_COST;
         item_name_str = UserString("DEFENSE_BASE");
         description_str = UserString("DEFENSE_BASE_DESCRIPTION");
-        graphic = HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + "misc/base1.png"); // this is a kludge for v0.3 only
+        graphic = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "base1.png"); // this is a kludge for v0.3 only
     }
 
     if (graphic) {
@@ -504,7 +504,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire) return;
 
-    boost::shared_ptr<GG::Font> default_font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
+    boost::shared_ptr<GG::Font> default_font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
 
     int i = 0;
     if (build_type == BT_BUILDING || build_type == NUM_BUILD_TYPES) {
@@ -517,23 +517,23 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
 
             // icon
             GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, ICON_COL_WIDTH, ROW_HEIGHT, 
-                HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + type->Graphic()),
+                ClientUI::GetTexture(ClientUI::ArtDir() / type->Graphic()),
                 GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
             row->push_back(dynamic_cast<GG::Control*>(icon));
 
             // building name
-            row->push_back(UserString(*it), default_font, ClientUI::TEXT_COLOR);
+            row->push_back(UserString(*it), default_font, ClientUI::TextColor());
 
             // cost / turn, and minimum production turns
             const std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_BUILDING, *it);
             std::string cost_text = boost::lexical_cast<std::string>(cost_time.first);
-            row->push_back(cost_text, default_font, ClientUI::TEXT_COLOR);
+            row->push_back(cost_text, default_font, ClientUI::TextColor());
             std::string time_text = boost::lexical_cast<std::string>(cost_time.second);
-            row->push_back(time_text, default_font, ClientUI::TEXT_COLOR);
+            row->push_back(time_text, default_font, ClientUI::TextColor());
 
             // brief description
             std::string desc_text = "DESCRIPTIVE TEXT";
-            row->push_back(desc_text, default_font, ClientUI::TEXT_COLOR);  
+            row->push_back(desc_text, default_font, ClientUI::TextColor());  
 
             m_buildable_items->Insert(row);
             m_build_types[row] = BT_BUILDING;
@@ -551,23 +551,23 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
 
             // icon
             GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, ICON_COL_WIDTH, ROW_HEIGHT, 
-                HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + type->graphic),
+                ClientUI::GetTexture(ClientUI::ArtDir() / type->graphic),
                 GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
             row->push_back(dynamic_cast<GG::Control*>(icon));
 
             // ship design name
-            row->push_back(it->first, default_font, ClientUI::TEXT_COLOR);
+            row->push_back(it->first, default_font, ClientUI::TextColor());
 
             // cost / turn, and minimum production turns
             const std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_SHIP, it->first);
             std::string cost_text = boost::lexical_cast<std::string>(cost_time.first);
-            row->push_back(cost_text, default_font, ClientUI::TEXT_COLOR);
+            row->push_back(cost_text, default_font, ClientUI::TextColor());
             std::string time_text = boost::lexical_cast<std::string>(cost_time.second);
-            row->push_back(time_text, default_font, ClientUI::TEXT_COLOR);
+            row->push_back(time_text, default_font, ClientUI::TextColor());
 
             // brief description            
             std::string desc_text = "DESCRIPTIVE TEXT";
-            row->push_back(desc_text, default_font, ClientUI::TEXT_COLOR);  
+            row->push_back(desc_text, default_font, ClientUI::TextColor());  
 
             m_buildable_items->Insert(row);
             m_build_types[row] = BT_SHIP;
@@ -581,23 +581,23 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
 
         // icon
         GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, ICON_COL_WIDTH, ROW_HEIGHT, 
-            HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + "icons/defensebase.png"),
+            ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "defensebase.png"),
             GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
         row->push_back(dynamic_cast<GG::Control*>(icon));
 
         // Defense Base "name"
-        row->push_back(UserString(row->DragDropDataType()), default_font, ClientUI::TEXT_COLOR);
+        row->push_back(UserString(row->DragDropDataType()), default_font, ClientUI::TextColor());
 
         // cost / turn, and minimum production turns
         const std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_ORBITAL, UserString(row->DragDropDataType()));
         std::string cost_text = boost::lexical_cast<std::string>(cost_time.first);
-        row->push_back(cost_text, default_font, ClientUI::TEXT_COLOR);
+        row->push_back(cost_text, default_font, ClientUI::TextColor());
         std::string time_text = boost::lexical_cast<std::string>(cost_time.second);
-        row->push_back(time_text, default_font, ClientUI::TEXT_COLOR);
+        row->push_back(time_text, default_font, ClientUI::TextColor());
 
         // brief description            
         std::string desc_text = "DESCRIPTIVE TEXT";
-        row->push_back(desc_text, default_font, ClientUI::TEXT_COLOR);  
+        row->push_back(desc_text, default_font, ClientUI::TextColor());  
 
         m_buildable_items->Insert(row);
         m_build_types[row] = BT_ORBITAL;

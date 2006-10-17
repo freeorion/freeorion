@@ -15,16 +15,7 @@ void LoadSplashGraphics(std::vector<std::vector<GG::StaticGraphic*> >& graphics)
     std::vector<std::vector<boost::shared_ptr<GG::Texture> > > textures(IMAGE_CELLS_Y, std::vector<boost::shared_ptr<GG::Texture> >(IMAGE_CELLS_X));
     for (int y = 0; y < IMAGE_CELLS_Y; ++y) {
         for (int x = 0; x < IMAGE_CELLS_X; ++x) {
-#if 0
-            ofs << "loading \"" << (ClientUI::ART_DIR + "splash" +
-                                    boost::lexical_cast<std::string>(y) +
-                                    boost::lexical_cast<std::string>(x) +
-                                    ".png") << "\"" << std::endl;
-#endif
-            textures[y][x] = GG::GUI::GetGUI()->GetTexture(ClientUI::ART_DIR + "splash" +
-                                                           boost::lexical_cast<std::string>(y) +
-                                                           boost::lexical_cast<std::string>(x) +
-                                                           ".png");
+            textures[y][x] = ClientUI::GetTexture(ClientUI::ArtDir() / ("splash" + boost::lexical_cast<std::string>(y) + boost::lexical_cast<std::string>(x) + ".png"));
             if (!y)
                 total_width += textures[0][x]->DefaultWidth();
         }

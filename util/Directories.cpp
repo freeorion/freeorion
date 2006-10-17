@@ -1,9 +1,12 @@
 #include "Directories.h"
 
+#include "OptionsDB.h"
+
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
 
 #include <cstdlib>
+
 
 namespace fs = boost::filesystem;
 
@@ -14,7 +17,6 @@ namespace {
 #if defined(FREEORION_LINUX)
 #include "binreloc.h"
 
-#include <iostream>
 void InitDirs()
 {
     if (g_initialized)
@@ -74,12 +76,6 @@ const fs::path GetBinDir()
     }
 }
 
-const fs::path GetConfigPath()
-{
-    static const fs::path p = GetLocalDir() / "config.xml";
-    return p;
-}
-
 #elif defined(FREEORION_WIN32)
 
 void InitDirs()
@@ -118,12 +114,39 @@ const fs::path GetBinDir()
     return fs::initial_path();
 }
 
+#else
+#  error Neither FREEORION_LINUX nor FREEORION_WIN32 set
+#endif
+
+const boost::filesystem::path GetSettingsDir()
+{
+    return fs::path(GetOptionsDB().Get<std::string>("settings-dir"));
+}
+
 const fs::path GetConfigPath()
 {
     static const fs::path p = GetLocalDir() / "config.xml";
     return p;
 }
 
-#else
-#  error Neither FREEORION_LINUX nor FREEORION_WIN32 set
-#endif
+boost::filesystem::path RelativePath (const boost::filesystem::path& from, const boost::filesystem::path& to)
+{
+    boost::filesystem::path retval;
+    boost::filesystem::path from_abs = boost::filesystem::complete(from);
+    boost::filesystem::path to_abs = boost::filesystem::complete(to);
+    boost::filesystem::path::iterator from_it = from_abs.begin();
+    boost::filesystem::path::iterator end_from_it = from_abs.end();
+    boost::filesystem::path::iterator to_it = to_abs.begin();
+    boost::filesystem::path::iterator end_to_it = to_abs.end();
+    while (from_it != end_from_it && to_it != end_to_it && *from_it == *to_it) {
+        ++from_it;
+        ++to_it;
+    }
+    for (; from_it != end_from_it; ++from_it) {
+        retval /= "..";
+    }
+    for (; to_it != end_to_it; ++to_it) {
+        retval /= *to_it;
+    }
+    return retval;
+}

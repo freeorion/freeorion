@@ -49,11 +49,11 @@ SystemIcon::SystemIcon(int id, double zoom) :
     SetText(m_system.Name());
 
     //resize to the proper size
-    GG::Pt ul(static_cast<int>((m_system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * zoom),
-              static_cast<int>((m_system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2) * zoom));
+    GG::Pt ul(static_cast<int>((m_system.X() - ClientUI::SystemIconSize() / 2) * zoom),
+              static_cast<int>((m_system.Y() - ClientUI::SystemIconSize() / 2) * zoom));
     SizeMove(ul,
-             GG::Pt(static_cast<int>(ul.x + ClientUI::SYSTEM_ICON_SIZE * zoom + 0.5),
-                    static_cast<int>(ul.y + ClientUI::SYSTEM_ICON_SIZE * zoom + 0.5)));
+             GG::Pt(static_cast<int>(ul.x + ClientUI::SystemIconSize() * zoom + 0.5),
+                    static_cast<int>(ul.y + ClientUI::SystemIconSize() * zoom + 0.5)));
 
     // star graphic
     //boost::shared_ptr<GG::Texture> graphic = GetStarTexture(m_system.Star(), m_system.ID());
@@ -99,7 +99,7 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         m_static_graphic->SizeMove(GG::Pt(0, 0), lr - ul);
     PositionSystemName();
 
-    const int BUTTON_SIZE = static_cast<int>(Height() * ClientUI::FLEET_BUTTON_SIZE);
+    const int BUTTON_SIZE = static_cast<int>(Height() * ClientUI::FleetButtonSize());
     GG::Pt size = Size();
     int stationary_y = 0;
     for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
@@ -155,14 +155,14 @@ void SystemIcon::Refresh()
 
     const std::set<int>& owners = m_system.Owners();
     if (owners.size() < 2) {
-        GG::Clr text_color = ClientUI::TEXT_COLOR;
+        GG::Clr text_color = ClientUI::TextColor();
         if (!owners.empty()) {
             text_color = Empires().Lookup(*owners.begin())->Color();
         }
-        m_name.push_back(new GG::TextControl(0, 0, m_system.Name(), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), text_color));
+        m_name.push_back(new GG::TextControl(0, 0, m_system.Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_color));
         AttachChild(m_name[0]);
     } else {
-        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
+        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
         Uint32 format = 0;
         std::vector<GG::Font::LineData> lines;
         GG::Pt extent = font->DetermineLines(m_system.Name(), format, 1000, lines);
@@ -175,7 +175,7 @@ void SystemIcon::Refresh()
                 ++last_char_pos;
             }
             m_name.push_back(new GG::TextControl(0, 0, m_system.Name().substr(first_char_pos, last_char_pos - first_char_pos), 
-                                                 GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
+                                                 GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                                                  Empires().Lookup(*it)->Color()));
             AttachChild(m_name.back());
             first_char_pos = last_char_pos;
@@ -234,7 +234,7 @@ void SystemIcon::CreateFleetButtons()
     m_stationary_fleet_markers.clear();
     m_moving_fleet_markers.clear();
 
-    const int BUTTON_SIZE = static_cast<int>(Height() * ClientUI::FLEET_BUTTON_SIZE);
+    const int BUTTON_SIZE = static_cast<int>(Height() * ClientUI::FleetButtonSize());
     GG::Pt size = Size();
     MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     int stationary_y = 0;

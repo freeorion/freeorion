@@ -126,6 +126,29 @@ void OptionsDB::Validate(const std::string& name, const std::string& value) cons
     }
 }
 
+const std::string& OptionsDB::GetDescription(const std::string& option_name) const
+{
+    std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
+    if (it == m_options.end())
+        throw std::runtime_error(("OptionsDB::GetDescription(): No option called \"" + option_name + "\" could be found.").c_str());
+    return it->second.description;
+}
+const std::string& OptionsDB::GetDefaultValue(const std::string& option_name) const
+{
+    std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
+    if (it == m_options.end())
+        throw std::runtime_error(("OptionsDB::GetDefaultValue(): No option called \"" + option_name + "\" could be found.").c_str());
+    return it->second.default_value;
+}
+
+boost::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& option_name) const
+{
+    std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
+    if (it == m_options.end())
+        throw std::runtime_error(("OptionsDB::GetValidator(): No option called \"" + option_name + "\" could be found.").c_str());
+    return it->second.validator;
+}
+
 void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = ""*/) const
 {
     os << "Usage: " << command_line << "\n";

@@ -39,7 +39,7 @@ class BrowseFoo : public GG::TextBoxBrowseInfoWnd
 {
 public:
     BrowseFoo() :
-        TextBoxBrowseInfoWnd(200, ClientUI::FONT, 12, GG::CLR_SHADOW, GG::CLR_WHITE, GG::CLR_WHITE)
+        TextBoxBrowseInfoWnd(200, ClientUI::Font(), 12, GG::CLR_SHADOW, GG::CLR_WHITE, GG::CLR_WHITE)
         {}
 
     void Update(int mode, const GG::Wnd* target)
@@ -201,7 +201,7 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_turn_update);
     GG::Connect(m_turn_update->ClickedSignal, &MapWnd::TurnBtnClicked, this);
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
     const int BUTTON_TOTAL_MARGIN = 8;
 
     int button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
@@ -227,38 +227,50 @@ MapWnd::MapWnd() :
     // resources
     const int ICON_DUAL_WIDTH = 110;
     const int ICON_WIDTH = ICON_DUAL_WIDTH - 30;
-    m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/pop.png",GG::CLR_WHITE,0,0,3,2,false,false,false,true);
+    m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+                                     (ClientUI::ArtDir() / "icons" / "pop.png").native_file_string(),
+                                     GG::CLR_WHITE,0,0,3,2,false,false,false,true);
     m_population->SetPositiveColor(GG::CLR_GREEN); m_population->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_population);
    
-    m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/industry.png",GG::CLR_WHITE,0,2,false,false);
+    m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),
+                                   (ClientUI::ArtDir() / "icons" / "industry.png").native_file_string(),
+                                   GG::CLR_WHITE,0,2,false,false);
     m_toolbar->AttachChild(m_industry);
 
-    m_research = new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/research.png",GG::CLR_WHITE,0,5,true,false);
+    m_research = new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),
+                                   (ClientUI::ArtDir() / "icons" / "research.png").native_file_string(),
+                                   GG::CLR_WHITE,0,5,true,false);
     m_toolbar->AttachChild(m_research);
 
-    m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/trade.png",GG::CLR_WHITE,0,0,3,2,false,false,false,true);
+    m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+                                (ClientUI::ArtDir() / "icons" / "trade.png").native_file_string(),
+                                GG::CLR_WHITE,0,0,3,2,false,false,false,true);
     m_trade->SetPositiveColor(GG::CLR_GREEN); m_trade->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_trade);
 
-    m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/mining.png",GG::CLR_WHITE,0,0,2,2,false,false,false,true);
+    m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+                                  (ClientUI::ArtDir() / "icons" / "mining.png").native_file_string(),
+                                  GG::CLR_WHITE,0,0,2,2,false,false,false,true);
     m_mineral->SetPositiveColor(GG::CLR_GREEN); m_mineral->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_mineral);
 
-    m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),ClientUI::ART_DIR+"icons/farming.png",GG::CLR_WHITE,0,0,3,2,false,false,false,true);
+    m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+                               (ClientUI::ArtDir() / "icons" / "farming.png").native_file_string(),
+                               GG::CLR_WHITE,0,0,3,2,false,false,false,true);
     m_food->SetPositiveColor(GG::CLR_GREEN); m_food->SetNegativeColor(GG::CLR_RED);
     m_toolbar->AttachChild(m_food);
 
     // chat display and chat input box
-    m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), GG::CLR_ZERO, 
+    m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_ZERO, 
                                        GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE | GG::MultiEdit::INTEGRAL_HEIGHT | GG::MultiEdit::NO_VSCROLL, 
-                                       ClientUI::TEXT_COLOR, GG::CLR_ZERO, 0);
+                                       ClientUI::TextColor(), GG::CLR_ZERO, 0);
     AttachChild(m_chat_display);
     m_chat_display->SetMaxLinesOfHistory(100);
     m_chat_display->Hide();
 
     m_chat_edit = new CUIEdit(LAYOUT_MARGIN, GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
-                              GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::CTRL_BORDER_COLOR, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
+                              GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), GG::CLR_ZERO);
     AttachChild(m_chat_edit);
     m_chat_edit->Hide();
     EnableAlphaNumAccels();
@@ -266,20 +278,17 @@ MapWnd::MapWnd() :
     m_menu_showing = false;
 
     //set up background images
-    m_backgrounds[0].reset(new GG::Texture());
-    m_backgrounds[0]->Load(ClientUI::ART_DIR + "starfield1.png");
+    m_backgrounds[0] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield1.png");
     m_bg_position_X[0] = 10.0;
     m_bg_position_Y[0] = 10.0;
     m_bg_scroll_rate[0] = 0.125;
 
-    m_backgrounds[1].reset(new GG::Texture());
-    m_backgrounds[1]->Load(ClientUI::ART_DIR + "starfield2.png");
+    m_backgrounds[1] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield2.png");
     m_bg_position_X[1] = 10.0;
     m_bg_position_Y[1] = 10.0;
     m_bg_scroll_rate[1] = 0.25;
 
-    m_backgrounds[2].reset(new GG::Texture());
-    m_backgrounds[2]->Load(ClientUI::ART_DIR + "starfield3.png");
+    m_backgrounds[2] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield3.png");
     m_bg_position_X[2] = 10.0;
     m_bg_position_Y[2] = 10.0;
     m_bg_scroll_rate[2] = 0.5;
@@ -573,9 +582,7 @@ void MapWnd::InitTurn(int turn_number)
         SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
         SmallIntDistType nebula_type = SmallIntDist(1, NUM_NEBULA_TEXTURES);
         for (int i = 0; i < num_nebulae; ++i) {
-            std::string nebula_filename = "nebula" + boost::lexical_cast<std::string>(nebula_type()) + ".png";
-            m_nebulae[i].reset(new GG::Texture());
-            m_nebulae[i]->Load(ClientUI::ART_DIR + nebula_filename);
+            m_nebulae[i] = ClientUI::GetTexture(ClientUI::ArtDir() / "nebula" / (boost::lexical_cast<std::string>(nebula_type()) + ".png"));
             m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
         }
     }
@@ -673,7 +680,7 @@ void MapWnd::InitTurn(int turn_number)
     EnableAlphaNumAccels();
 
 
-    if (m_zoom_factor * ClientUI::PTS < MIN_SYSTEM_NAME_SIZE)
+    if (m_zoom_factor * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
         HideSystemNames();
     else
         ShowSystemNames();
@@ -701,22 +708,22 @@ void MapWnd::RestoreFromSaveData(const XMLElement& elem)
 
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const System& system = it->second->GetSystem();
-        GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor), 
-                       static_cast<int>((system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2) * m_zoom_factor));
+        GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SystemIconSize() / 2) * m_zoom_factor), 
+                       static_cast<int>((system.Y() - ClientUI::SystemIconSize() / 2) * m_zoom_factor));
         it->second->SizeMove(icon_ul, 
-                             GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5), 
-                                    static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor + 0.5)));
+                             GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SystemIconSize() * m_zoom_factor + 0.5), 
+                                    static_cast<int>(icon_ul.y + ClientUI::SystemIconSize() * m_zoom_factor + 0.5)));
     }
 
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
         Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
         double x = fleet->X();
         double y = fleet->Y();
-        GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor), 
-                         static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * m_zoom_factor));
+        GG::Pt button_ul(static_cast<int>((x - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2) * m_zoom_factor), 
+                         static_cast<int>((y - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2) * m_zoom_factor));
         m_moving_fleet_buttons[i]->SizeMove(button_ul, 
-                                            GG::Pt(static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5), 
-                                                   static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor + 0.5)));
+                                            GG::Pt(static_cast<int>(button_ul.x + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * m_zoom_factor + 0.5), 
+                                                   static_cast<int>(button_ul.y + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * m_zoom_factor + 0.5)));
     }
 
     GG::Pt ul = UpperLeft();
@@ -981,29 +988,29 @@ void MapWnd::Zoom(int delta)
         return; // If delta == 0, no change
     }
 
-    if (m_zoom_factor * ClientUI::PTS < MIN_SYSTEM_NAME_SIZE)
+    if (m_zoom_factor * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
         HideSystemNames();
     else
         ShowSystemNames();
 
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const System& system = it->second->GetSystem();
-        GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SYSTEM_ICON_SIZE / 2.0) * m_zoom_factor), 
-                       static_cast<int>((system.Y() - ClientUI::SYSTEM_ICON_SIZE / 2.0) * m_zoom_factor));
+        GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SystemIconSize() / 2.0) * m_zoom_factor), 
+                       static_cast<int>((system.Y() - ClientUI::SystemIconSize() / 2.0) * m_zoom_factor));
         it->second->SizeMove(icon_ul,
-                             GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor), 
-                                    static_cast<int>(icon_ul.y + ClientUI::SYSTEM_ICON_SIZE * m_zoom_factor)));
+                             GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SystemIconSize() * m_zoom_factor), 
+                                    static_cast<int>(icon_ul.y + ClientUI::SystemIconSize() * m_zoom_factor)));
     }
 
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
         Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
         double x = fleet->X();
         double y = fleet->Y();
-        GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2.0) * m_zoom_factor), 
-                         static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2.0) * m_zoom_factor));
+        GG::Pt button_ul(static_cast<int>((x - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2.0) * m_zoom_factor), 
+                         static_cast<int>((y - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2.0) * m_zoom_factor));
         m_moving_fleet_buttons[i]->SizeMove(button_ul,
-                                            GG::Pt(static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor), 
-                                                   static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * m_zoom_factor)));
+                                            GG::Pt(static_cast<int>(button_ul.x + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * m_zoom_factor), 
+                                                   static_cast<int>(button_ul.y + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * m_zoom_factor)));
     }
 
     GG::Pt map_move(static_cast<int>((center_x + ul_offset_x) - ul_x),

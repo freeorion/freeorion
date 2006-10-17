@@ -78,16 +78,16 @@ namespace {
     {
         std::string icon_filename;
         if (category_name == "CONSTRUCTION_CATEGORY")
-            icon_filename = "tech_icons/categories/construction.png";
+            icon_filename = "construction.png";
         if (category_name == "ECONOMICS_CATEGORY")
-            icon_filename = "tech_icons/categories/economics.png";
+            icon_filename = "economics.png";
         if (category_name == "GROWTH_CATEGORY")
-            icon_filename = "tech_icons/categories/growth.png";
+            icon_filename = "growth.png";
         if (category_name == "LEARNING_CATEGORY")
-            icon_filename = "tech_icons/categories/learning.png";
+            icon_filename = "learning.png";
         if (category_name == "PRODUCTION_CATEGORY")
-            icon_filename = "tech_icons/categories/production.png";
-        return HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + icon_filename);
+            icon_filename = "production.png";
+        return ClientUI::GetTexture(ClientUI::ArtDir() / "tech_icons" / "categories" / icon_filename);
     }
 
     pointf Bezier(pointf* patch, double t)
@@ -189,8 +189,8 @@ namespace {
 
     void FillTechPanelInterior(TechType tech_type, const GG::Rect& main_panel, const GG::Rect& progress_panel, GG::Clr color, bool show_progress, double progress)
     {
-        GG::Clr progress_background_color = ClientUI::TECH_WND_PROGRESS_BAR_BACKGROUND;
-        GG::Clr progress_color = ClientUI::TECH_WND_PROGRESS_BAR;
+        GG::Clr progress_background_color = ClientUI::TechWndProgressBarBackground();
+        GG::Clr progress_color = ClientUI::TechWndProgressBar();
         glColor4ubv(color.v);
         int progress_extent = (0.0 < progress && progress < 1.0) ? (progress_panel.ul.x + static_cast<int>(progress * PROGRESS_PANEL_WIDTH + 0.5)) : 0;
         if (tech_type == TT_THEORY) {
@@ -343,7 +343,7 @@ namespace {
         // HACK! we're storing the border color here for color, and the color of the +/- symbol in text_color
         ExpandCollapseButton(const GG::Clr& color, const GG::Clr& border_color, double scale) :
             StateButton(0, 0, static_cast<int>(SIZE * scale + 0.5), static_cast<int>(SIZE * scale + 0.5), "",
-                        GG::GUI::GetGUI()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS * scale + 0.5)), 0, border_color, color),
+                        GG::GUI::GetGUI()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts() * scale + 0.5)), 0, border_color, color),
             m_scale(scale),
             m_selected(false),
             m_mouse_here(false)
@@ -493,14 +493,14 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     GG::Wnd(0, 0, w, h, 0),
     m_tech(0)
 {
-    const int NAME_PTS = ClientUI::PTS + 8;
-    const int CATEGORY_AND_TYPE_PTS = ClientUI::PTS + 4;
-    const int COST_PTS = ClientUI::PTS;
+    const int NAME_PTS = ClientUI::Pts() + 8;
+    const int CATEGORY_AND_TYPE_PTS = ClientUI::Pts() + 4;
+    const int COST_PTS = ClientUI::Pts();
     const int BUTTON_WIDTH = 150;
     const int BUTTON_MARGIN = 5;
-    m_tech_name_text = new GG::TextControl(1, 0, w - 1 - BUTTON_WIDTH, NAME_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT_BOLD, NAME_PTS), ClientUI::TEXT_COLOR);
-    m_cost_text = new GG::TextControl(1, m_tech_name_text->LowerRight().y, w - 1 - BUTTON_WIDTH, COST_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, COST_PTS), ClientUI::TEXT_COLOR);
-    m_category_and_type_text = new GG::TextControl(1, m_cost_text->LowerRight().y, w - 1 - BUTTON_WIDTH, CATEGORY_AND_TYPE_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, CATEGORY_AND_TYPE_PTS), ClientUI::TEXT_COLOR);
+    m_tech_name_text = new GG::TextControl(1, 0, w - 1 - BUTTON_WIDTH, NAME_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), NAME_PTS), ClientUI::TextColor());
+    m_cost_text = new GG::TextControl(1, m_tech_name_text->LowerRight().y, w - 1 - BUTTON_WIDTH, COST_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), COST_PTS), ClientUI::TextColor());
+    m_category_and_type_text = new GG::TextControl(1, m_cost_text->LowerRight().y, w - 1 - BUTTON_WIDTH, CATEGORY_AND_TYPE_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), CATEGORY_AND_TYPE_PTS), ClientUI::TextColor());
     m_add_to_queue_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, UserString("TECH_DETAIL_ADD_TO_QUEUE"));
     m_recenter_button = new CUIButton(w - 1 - BUTTON_WIDTH, m_add_to_queue_button->LowerRight().y + BUTTON_MARGIN, BUTTON_WIDTH, UserString("TECH_DETAIL_CENTER_ON_TECH"));
     m_recenter_button->Hide();
@@ -565,7 +565,7 @@ void TechTreeWnd::TechDetailPanel::Reset()
     if (!m_tech->Graphic().empty()) {
         GG::Pt ul = TechGraphicUpperLeft();
         m_tech_graphic = new GG::StaticGraphic(ul.x, ul.y, 128, 128,
-                                               HumanClientApp::GetApp()->GetTextureOrDefault(ClientUI::ART_DIR + m_tech->Graphic()), 
+                                               ClientUI::GetTexture(ClientUI::ArtDir() / m_tech->Graphic()),
                                                GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
         m_tech_graphic->Show();
         m_tech_graphic->SetColor(CategoryColor(m_tech->Category()));
@@ -710,7 +710,7 @@ void TechTreeWnd::TechNavigator::Reset()
 TechTreeWnd::TechNavigator::SectionHeaderControl::SectionHeaderControl(int w, int h, const std::string& str) :
     GG::Control(0, 0, w, h)
 {
-    m_label = new GG::TextControl(8, 0, w - 8, h, str, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR, GG::TF_LEFT);
+    m_label = new GG::TextControl(8, 0, w - 8, h, str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::KnownTechTextAndBorderColor(), GG::TF_LEFT);
     AttachChild(m_label);
 }
 
@@ -719,7 +719,7 @@ void TechTreeWnd::TechNavigator::SectionHeaderControl::Render()
     GG::Pt ul = UpperLeft(), lr = LowerRight() + GG::Pt(0, 11);
     glDisable(GL_TEXTURE_2D);
     const int CORNER_RADIUS = 5;
-    glColor4ubv(ClientUI::KNOWN_TECH_FILL_COLOR.v);
+    glColor4ubv(ClientUI::KnownTechFillColor().v);
     CircleArc(lr.x - 2 * CORNER_RADIUS, ul.y,
                 lr.x, ul.y + 2 * CORNER_RADIUS,
                 0.0, PI / 2.0, true);
@@ -735,7 +735,7 @@ void TechTreeWnd::TechNavigator::SectionHeaderControl::Render()
     glEnd();
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(OUTER_LINE_THICKNESS);
-    glColor4ub(ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.r, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.g, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.b, 127);
+    glColor4ub(ClientUI::KnownTechTextAndBorderColor().r, ClientUI::KnownTechTextAndBorderColor().g, ClientUI::KnownTechTextAndBorderColor().b, 127);
     glBegin(GL_LINE_STRIP);
     CircleArc(lr.x - 2 * CORNER_RADIUS, ul.y,
                 lr.x, ul.y + 2 * CORNER_RADIUS,
@@ -747,7 +747,7 @@ void TechTreeWnd::TechNavigator::SectionHeaderControl::Render()
     glEnd();
     glLineWidth(1.0);
     glDisable(GL_LINE_SMOOTH);
-    glColor4ubv(ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR.v);
+    glColor4ubv(ClientUI::KnownTechTextAndBorderColor().v);
     glBegin(GL_LINE_STRIP);
     CircleArc(lr.x - 2 * CORNER_RADIUS, ul.y,
                 lr.x, ul.y + 2 * CORNER_RADIUS,
@@ -770,30 +770,30 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(int w, int h, const Tech* t
 #ifndef FREEORION_BUILD_UTIL
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire->TechAvailable(m_tech->Name())) {
-        SetColor(ClientUI::KNOWN_TECH_FILL_COLOR);
-        m_border_color = ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR;
+        SetColor(ClientUI::KnownTechFillColor());
+        m_border_color = ClientUI::KnownTechTextAndBorderColor();
     } else if (empire->ResearchableTech(m_tech->Name())) {
-        SetColor(ClientUI::RESEARCHABLE_TECH_FILL_COLOR);
-        m_border_color = ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+        SetColor(ClientUI::ResearchableTechFillColor());
+        m_border_color = ClientUI::ResearchableTechTextAndBorderColor();
     } else {
-        SetColor(ClientUI::UNRESEARCHABLE_TECH_FILL_COLOR);
-        m_border_color = ClientUI::UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+        SetColor(ClientUI::UnresearchableTechFillColor());
+        m_border_color = ClientUI::UnresearchableTechTextAndBorderColor();
     }
 #else
     // these values are arbitrary; they're only useful for displaying techs in the tech-view utility app
     if (m_tech->Type() == TT_THEORY) {
-        SetColor(ClientUI::KNOWN_TECH_FILL_COLOR);
-        m_border_color = ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR;
+        SetColor(ClientUI::KnownTechFillColor());
+        m_border_color = ClientUI::KnownTechTextAndBorderColor();
     } else if (m_tech->Type() == TT_APPLICATION) {
-        SetColor(ClientUI::RESEARCHABLE_TECH_FILL_COLOR);
-        m_border_color = ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+        SetColor(ClientUI::ResearchableTechFillColor());
+        m_border_color = ClientUI::ResearchableTechTextAndBorderColor();
     } else {
-        SetColor(ClientUI::UNRESEARCHABLE_TECH_FILL_COLOR);
-        m_border_color = ClientUI::UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+        SetColor(ClientUI::UnresearchableTechFillColor());
+        m_border_color = ClientUI::UnresearchableTechTextAndBorderColor();
     }
 #endif
     GG::Pt client_size = ClientSize();
-    m_name_text = new GG::TextControl(m_indentation, 0, client_size.x - m_indentation, client_size.y, UserString(m_tech->Name()), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), m_border_color, GG::TF_LEFT);
+    m_name_text = new GG::TextControl(m_indentation, 0, client_size.x - m_indentation, client_size.y, UserString(m_tech->Name()), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), m_border_color, GG::TF_LEFT);
     AttachChild(m_name_text);
 }
 
@@ -1000,7 +1000,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
     m_toggle_button(0),
     m_selected(selected)
 {
-    int name_font_pts = ClientUI::PTS + 2;
+    int name_font_pts = ClientUI::Pts() + 2;
     GG::Pt UPPER_TECH_TEXT_OFFSET(4, 2);
     GG::Pt LOWER_TECH_TEXT_OFFSET(4, 0);
     if (m_tech->Type() == TT_THEORY) {
@@ -1048,17 +1048,17 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
 #endif
 
     if (known_tech) {
-        m_fill_color = ClientUI::KNOWN_TECH_FILL_COLOR;
-        m_text_and_border_color = ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR;
+        m_fill_color = ClientUI::KnownTechFillColor();
+        m_text_and_border_color = ClientUI::KnownTechTextAndBorderColor();
     } else if (researchable_tech) {
-        m_fill_color = ClientUI::RESEARCHABLE_TECH_FILL_COLOR;
-        m_text_and_border_color = ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+        m_fill_color = ClientUI::ResearchableTechFillColor();
+        m_text_and_border_color = ClientUI::ResearchableTechTextAndBorderColor();
     } else {
-        m_fill_color = ClientUI::UNRESEARCHABLE_TECH_FILL_COLOR;
-        m_text_and_border_color = ClientUI::UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+        m_fill_color = ClientUI::UnresearchableTechFillColor();
+        m_text_and_border_color = ClientUI::UnresearchableTechTextAndBorderColor();
     }
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, name_font_pts);
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), name_font_pts);
     m_category_icon = new GG::StaticGraphic(UPPER_TECH_TEXT_OFFSET.x, UPPER_TECH_TEXT_OFFSET.y, font->Lineskip(), font->Lineskip(),
                                             CategoryIcon(m_tech->Category()), GG::GR_FITGRAPHIC);
     m_category_icon->SetColor(CategoryColor(m_tech->Category()));
@@ -1075,7 +1075,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
         cost_str = str(format(UserString("TECH_TOTAL_COST_STR")) % static_cast<int>(m_tech->ResearchCost() + 0.5) % m_tech->ResearchTurns());
     m_tech_cost_text = new GG::TextControl(UPPER_TECH_TEXT_OFFSET.x, 0,
                                            Width() - LOWER_TECH_TEXT_OFFSET.x, Height() - LOWER_TECH_TEXT_OFFSET.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale),
-                                           cost_str, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS * m_scale + 0.5)), m_text_and_border_color, GG::TF_BOTTOM | GG::TF_LEFT);
+                                           cost_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts() * m_scale + 0.5)), m_text_and_border_color, GG::TF_BOTTOM | GG::TF_LEFT);
     AttachChild(m_tech_cost_text);
 
     GG::Rect progress_panel = ProgressPanelRect(UpperLeft(), LowerRight());
@@ -1088,7 +1088,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
         progress_str = UserString("TECH_WND_TECH_INCOMPLETE");
     m_progress_text = new GG::TextControl(static_cast<int>(progress_panel.ul.x - PROGRESS_PANEL_LEFT_EXTRUSION * m_scale), progress_panel.ul.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale),
                                           progress_panel.Width(), progress_panel.Height(),
-                                          progress_str, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS * m_scale + 0.5)), m_text_and_border_color);
+                                          progress_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts() * m_scale + 0.5)), m_text_and_border_color);
     AttachChild(m_progress_text);
 
     m_toggle_button = new ExpandCollapseButton(m_fill_color, m_text_and_border_color, m_scale);
@@ -1204,8 +1204,8 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
     EnableChildClipping(true);
 
     m_layout_surface = new LayoutSurface();
-    m_vscroll = new CUIScroll(w - ClientUI::SCROLL_WIDTH, 0, ClientUI::SCROLL_WIDTH, h - ClientUI::SCROLL_WIDTH, GG::VERTICAL);
-    m_hscroll = new CUIScroll(0, h - ClientUI::SCROLL_WIDTH, w - ClientUI::SCROLL_WIDTH, ClientUI::SCROLL_WIDTH, GG::HORIZONTAL);
+    m_vscroll = new CUIScroll(w - ClientUI::ScrollWidth(), 0, ClientUI::ScrollWidth(), h - ClientUI::ScrollWidth(), GG::VERTICAL);
+    m_hscroll = new CUIScroll(0, h - ClientUI::ScrollWidth(), w - ClientUI::ScrollWidth(), ClientUI::ScrollWidth(), GG::HORIZONTAL);
 
     AttachChild(m_layout_surface);
     AttachChild(m_vscroll);
@@ -1219,7 +1219,7 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
 
 GG::Pt TechTreeWnd::LayoutPanel::ClientLowerRight() const
 {
-    return LowerRight() - GG::Pt(ClientUI::SCROLL_WIDTH, ClientUI::SCROLL_WIDTH);
+    return LowerRight() - GG::Pt(ClientUI::ScrollWidth(), ClientUI::ScrollWidth());
 }
 
 const std::string& TechTreeWnd::LayoutPanel::CategoryShown() const
@@ -1255,11 +1255,11 @@ void TechTreeWnd::LayoutPanel::Render()
     // first, draw arc with thick, half-alpha line
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(ARC_THICKNESS * m_scale);
-    GG::Clr known_half_alpha = ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR;
+    GG::Clr known_half_alpha = ClientUI::KnownTechTextAndBorderColor();
     known_half_alpha.a = 127;
-    GG::Clr researchable_half_alpha = ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+    GG::Clr researchable_half_alpha = ClientUI::ResearchableTechTextAndBorderColor();
     researchable_half_alpha.a = 127;
-    GG::Clr unresearchable_half_alpha = ClientUI::UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+    GG::Clr unresearchable_half_alpha = ClientUI::UnresearchableTechTextAndBorderColor();
     unresearchable_half_alpha.a = 127;
     std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> > selected_arcs;
     for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
@@ -1303,9 +1303,9 @@ void TechTreeWnd::LayoutPanel::Render()
     for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
         GG::Clr arc_color;
         switch (it->first) {
-        case KNOWN:          arc_color = ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR; break;
-        case RESEARCHABLE:   arc_color = ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR; break;
-        case UNRESEARCHABLE: arc_color = ClientUI::UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR; break;
+        case KNOWN:          arc_color = ClientUI::KnownTechTextAndBorderColor(); break;
+        case RESEARCHABLE:   arc_color = ClientUI::ResearchableTechTextAndBorderColor(); break;
+        case UNRESEARCHABLE: arc_color = ClientUI::UnresearchableTechTextAndBorderColor(); break;
         }
         glColor4ubv(arc_color.v);
         for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
@@ -1317,9 +1317,9 @@ void TechTreeWnd::LayoutPanel::Render()
             DrawArc(it2, arc_color, true);
         }
     }
-    GG::Clr known_selected = GG::LightColor(ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR);
-    GG::Clr researchable_selected = GG::LightColor(ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR);
-    GG::Clr unresearchable_selected = GG::LightColor(ClientUI::UNRESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR);
+    GG::Clr known_selected = GG::LightColor(ClientUI::KnownTechTextAndBorderColor());
+    GG::Clr researchable_selected = GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor());
+    GG::Clr unresearchable_selected = GG::LightColor(ClientUI::UnresearchableTechTextAndBorderColor());
     for (std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> >::const_iterator it = selected_arcs.begin();
          it != selected_arcs.end();
          ++it) {
@@ -1716,7 +1716,7 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     GG::Connect(m_tech_navigator->TechClickedSignal, &TechTreeWnd::CenterOnTech, this);
     AttachChild(m_tech_navigator);
 
-    const int LAYOUT_MARGIN_TOP = NAVIGATOR_AND_DETAIL_HEIGHT + 2 + ClientUI::PTS + 10; // leave room for category buttons at top
+    const int LAYOUT_MARGIN_TOP = NAVIGATOR_AND_DETAIL_HEIGHT + 2 + ClientUI::Pts() + 10; // leave room for category buttons at top
     const int LAYOUT_MARGIN_BOTTOM = m_uncollapse_all_button->Height() * 2 + 4; // leave room for tech types checkboxes and uncollapse-all button at bottom
     m_uncollapse_all_button->MoveTo(GG::Pt(w - (UNCOLLAPSE_ALL_BUTTON_WIDTH + 2), h - LAYOUT_MARGIN_BOTTOM / 2 - m_uncollapse_all_button->Height() / 2));
 
@@ -1741,14 +1741,14 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     AttachChild(m_layout_panel);
 
     const int RADIO_BUTTON_MARGIN = 30;
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
     int button_start = 2 + 15 + std::max(font->TextExtent(UserString("TECH_WND_TECH_TYPES_TO_SHOW")).x,
                                          font->TextExtent(UserString("TECH_WND_TECH_STATUSES_TO_SHOW")).x);
     int text_width = font->TextExtent(UserString("TECH_WND_TECH_TYPES_TO_SHOW")).x;
     GG::TextControl* tech_types_to_show_label =
         new GG::TextControl(2, h - LAYOUT_MARGIN_BOTTOM, text_width, LAYOUT_MARGIN_BOTTOM / 2,
-                            UserString("TECH_WND_TECH_TYPES_TO_SHOW"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
-                            ClientUI::TEXT_COLOR, GG::TF_LEFT);
+                            UserString("TECH_WND_TECH_TYPES_TO_SHOW"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                            ClientUI::TextColor(), GG::TF_LEFT);
     int total_text_width =
         font->TextExtent(UserString("TECH_WND_TECH_TYPES_ALL")).x + RADIO_BUTTON_MARGIN +
         font->TextExtent(UserString("TECH_WND_TECH_TYPES_THEORIES_AND_APPS")).x + RADIO_BUTTON_MARGIN +
@@ -1770,8 +1770,8 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     text_width = font->TextExtent(UserString("TECH_WND_TECH_STATUSES_TO_SHOW")).x;
     GG::TextControl* tech_statuses_to_show_label =
         new GG::TextControl(2, h - LAYOUT_MARGIN_BOTTOM / 2, text_width, LAYOUT_MARGIN_BOTTOM / 2,
-                            UserString("TECH_WND_TECH_STATUSES_TO_SHOW"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS),
-                            ClientUI::TEXT_COLOR, GG::TF_LEFT);
+                            UserString("TECH_WND_TECH_STATUSES_TO_SHOW"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                            ClientUI::TextColor(), GG::TF_LEFT);
     total_text_width =
         font->TextExtent(UserString("TECH_WND_TECH_STATUS_ALL")).x + RADIO_BUTTON_MARGIN +
         font->TextExtent(UserString("TECH_WND_TECH_STATUS_AVAILABLE_AND_COMPLETE")).x + RADIO_BUTTON_MARGIN +

@@ -35,8 +35,8 @@ namespace {
             PlayerRow(player_data_)
         {
             Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
-            push_back(player_name, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
-            CUIEdit* edit = new CUIEdit(0, 0, EMPIRE_NAME_WIDTH, player_data.empire_name, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), GG::CLR_ZERO, ClientUI::TEXT_COLOR, GG::CLR_ZERO);
+            push_back(player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+            CUIEdit* edit = new CUIEdit(0, 0, EMPIRE_NAME_WIDTH, player_data.empire_name, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
             push_back(edit);
             EmpireColorSelector* color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
             color_selector->SelectColor(player_data.empire_color);
@@ -70,7 +70,7 @@ namespace {
             PlayerRow(player_data_)
         {
             Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
-            push_back(player_name, ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+            push_back(player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
             CUIDropDownList* empire_list = new CUIDropDownList(0, 0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, 5 * PLAYER_ROW_HEIGHT);
             empire_list->SetStyle(GG::LB_NOSORT);
             for (unsigned int i = 0; i < g_save_game_empire_data.size(); ++i) {
@@ -87,7 +87,7 @@ namespace {
             m_color_selector->SelectColor(player_data.empire_color);
             push_back(m_color_selector);
             push_back(0 <= player_data.save_game_empire_id ? g_save_game_empire_data[player_data.save_game_empire_id].player_name : "", 
-                      ClientUI::FONT, ClientUI::PTS, ClientUI::TEXT_COLOR);
+                      ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
 
             m_color_selector->Disable();
 
@@ -119,8 +119,6 @@ namespace {
     const int    SAVED_GAMES_LIST_ROW_HEIGHT = 22;
     const int    SAVED_GAMES_LIST_DROP_HEIGHT = 10 * SAVED_GAMES_LIST_ROW_HEIGHT;
     const int    CHAT_WIDTH = 250;
-    const int    RADIO_BN_HT = ClientUI::PTS + 4;
-    const int    RADIO_BN_SPACING = RADIO_BN_HT + 10;
     GG::Pt       g_preview_ul;
     const GG::Pt PREVIEW_SZ(248, 186);
     const int    PREVIEW_MARGIN = 3;
@@ -146,10 +144,12 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     TempUISoundDisabler sound_disabler;
 
     int x = CONTROL_MARGIN;
-    m_chat_input_edit = new CUIEdit(x, ClientHeight() - (ClientUI::PTS + 10) - 2 * CONTROL_MARGIN, CHAT_WIDTH - x, "");
+    m_chat_input_edit = new CUIEdit(x, ClientHeight() - (ClientUI::Pts() + 10) - 2 * CONTROL_MARGIN, CHAT_WIDTH - x, "");
     m_chat_box = new CUIMultiEdit(x, CONTROL_MARGIN, CHAT_WIDTH - x, m_chat_input_edit->UpperLeft().y - 2 * CONTROL_MARGIN, "", 
                                   GG::TF_LINEWRAP | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
+
+    const int RADIO_BN_HT = ClientUI::Pts() + 4;
 
     m_galaxy_setup_panel = new GalaxySetupPanel(CHAT_WIDTH + 2 * CONTROL_MARGIN, RADIO_BN_HT, GALAXY_SETUP_PANEL_WIDTH);
 
@@ -211,7 +211,7 @@ void MultiplayerLobbyWnd::Render()
     CUIWnd::Render();
     GG::Pt image_ul = g_preview_ul + ClientUpperLeft(), image_lr = image_ul + PREVIEW_SZ;
     GG::FlatRectangle(image_ul.x - PREVIEW_MARGIN, image_ul.y - PREVIEW_MARGIN, image_lr.x + PREVIEW_MARGIN, image_lr.y + PREVIEW_MARGIN, 
-                      GG::CLR_BLACK, ClientUI::WND_INNER_BORDER_COLOR, 1);
+                      GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
 void MultiplayerLobbyWnd::KeyPress(GG::Key key, Uint32 key_mods)

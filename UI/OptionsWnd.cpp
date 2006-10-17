@@ -1,5 +1,3 @@
-//OptionsWnd.cpp
-
 #include "OptionsWnd.h"
 
 #include "../client/human/HumanClientApp.h"
@@ -10,135 +8,213 @@
 #include "CUISpin.h"
 
 #include <GG/GUI.h>
+#include <GG/Layout.h>
 #include <GG/TabWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/exception.hpp>
+#include <boost/format.hpp>
+#include <boost/spirit.hpp>
+
+
+namespace fs = boost::filesystem;
 
 namespace {
-
-    const int PAGE_VERT_MARGIN = 10;
-    const int PAGE_ROW_HEIGHT = 30;
-    const int PAGE_HORZ_MARGIN = 10;
-    const int PAGE_HORZ_OFFSET = 15;
     const int PAGE_WIDTH = 300;
     const int PAGE_HEIGHT = 450;
+    const int INDENTATION = 20;
+    const int ROW_WIDTH = PAGE_WIDTH - 4 - 14 - 5;
+    const int COLOR_SELECTOR_WIDTH = 75;
+    const int SPIN_WIDTH = 65;
+    const int LAYOUT_MARGIN = 3;
 
-    const int DROPLIST_HEIGHT = ClientUI::PTS + 4;
-    const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
+    const std::string STRINGTABLE_FILE_SUFFIX = "_stringtable.txt";
+    const std::string MUSIC_FILE_SUFFIX = ".ogg";
+    const std::string SOUND_FILE_SUFFIX = ".wav";
+    const std::string FONT_SUFFIX = ".ttf";
 
-    const std::vector<GG::Pt>& AppResolutions()
+    class PlaceholderWnd : public GG::Wnd
     {
-        static std::vector<GG::Pt> retval;
-        if (retval.empty()) {
-            retval.push_back(GG::Pt(1024, 768));
-            retval.push_back(GG::Pt(1280, 1024));
-            retval.push_back(GG::Pt(1600, 1200));
-        }
-        return retval;
+    public:
+        PlaceholderWnd(int w, int h) : Wnd(0, 0, w, h, 0) {}
+        virtual void Render() {}
+    };
+
+    class RowContentsWnd : public GG::Control
+    {
+    public:
+        RowContentsWnd(int w, int h, Wnd* contents, int indentation_level) :
+            Control(0, 0, w, h, GG::CLICKABLE)
+            {
+                assert(contents);
+                if (!indentation_level) {
+                    GG::Layout* layout = new GG::Layout(0, 0, w, h, 1, 1);
+                    layout->Add(contents, 0, 0);
+                    SetLayout(layout);
+                } else {
+                    GG::Layout* layout = new GG::Layout(0, 0, w, h, 1, 2);
+                    layout->SetMinimumColumnWidth(0, indentation_level * INDENTATION);
+                    layout->SetColumnStretch(1, 1.0);
+                    layout->Add(new PlaceholderWnd(1, 1), 0, 0);
+                    layout->Add(contents, 0, 1);
+                    SetLayout(layout);
+                }
+            }
+        virtual void Render() {}
+    };
+
+    struct BrowseForPathButtonFunctor
+    {
+        BrowseForPathButtonFunctor(const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters, CUIEdit* edit, bool directory) :
+            m_path(path), m_filters(filters), m_edit(edit), m_directory(directory) {}
+
+        void operator()()
+            {
+                try {
+                    FileDlg dlg(m_path.native_directory_string(), m_edit->WindowText(), false, false, m_filters);
+                    if (m_directory)
+                        dlg.SelectDirectories(true);
+                    dlg.Run();
+                    if (!dlg.Result().empty()) {
+                        fs::path path = m_directory ? fs::complete(*dlg.Result().begin()) : RelativePath(m_path, fs::path(*dlg.Result().begin()));
+                        *m_edit << path.native_file_string();
+                    }
+                } catch (const FileDlg::BadInitialDirectory& e) {
+                    ClientUI::MessageBox(e.what(), true);
+                }
+            }
+
+        fs::path m_path;
+        std::vector<std::pair<std::string, std::string> > m_filters;
+        CUIEdit* m_edit;
+        bool m_directory;
+    };
+
+    bool ValidStringtableFile(const std::string& file)
+    {
+        return boost::algorithm::ends_with(file, STRINGTABLE_FILE_SUFFIX) &&
+            fs::exists(GetSettingsDir() / file) && !fs::is_directory(GetSettingsDir() / file);
     }
 
-    bool OptionPathToNativePath(std::string& path)
+    bool ValidMusicFile(const std::string& file)
     {
-        boost::filesystem::path value_path;
-        try {
-            value_path = boost::filesystem::path(path);
-        } catch (const boost::filesystem::filesystem_error& e) {
-            return false;
-        }
-        path = value_path.native_file_string();
-        return true;
+        return boost::algorithm::ends_with(file, MUSIC_FILE_SUFFIX) &&
+            fs::exists(ClientUI::SoundDir() / file) && !fs::is_directory(ClientUI::SoundDir() / file);
     }
 
-    bool NativePathToOptionPath(std::string& path, bool folder)
+    bool ValidSoundFile(const std::string& file)
     {
-        boost::filesystem::path value_path;
-        try {
-            value_path = boost::filesystem::path(path);
-        } catch (const boost::filesystem::filesystem_error& e) {
-            return false;
-        }
-        path = value_path.string();
-        if (folder) {
-            if (path.empty())
-                path = "./";
-            else if (*path.rbegin() != '/')
-                path += '/';
-        }
-        return true;
+        return boost::algorithm::ends_with(file, SOUND_FILE_SUFFIX) &&
+            fs::exists(ClientUI::SoundDir() / file) && !fs::is_directory(ClientUI::SoundDir() / file);
+    }
+
+    bool ValidDirectory(const std::string& file)
+    {
+        return fs::exists(fs::path(file)) && fs::is_directory(fs::path(file));
     }
 
     template <class T>
     struct SetOptionFunctor
     {
-        SetOptionFunctor(const std::string& key_) : key(key_) {}
-        void operator()(const T& value) { GetOptionsDB().Set(key, value); }
-        const std::string key;
+        SetOptionFunctor(const std::string& option_name) : m_option_name(option_name) {}
+        void operator()(const T& value) { GetOptionsDB().Set(m_option_name, value); }
+        const std::string m_option_name;
     };
 
     template <>
     struct SetOptionFunctor<GG::Clr>
     {
-        SetOptionFunctor(const std::string& key_) : key(key_) {}
-        void operator()(const GG::Clr& clr) { GetOptionsDB().Set<StreamableColor>(key, clr); }
-        const std::string key;
+        SetOptionFunctor(const std::string& option_name) : m_option_name(option_name) {}
+        void operator()(const GG::Clr& clr) { GetOptionsDB().Set<StreamableColor>(m_option_name, clr); }
+        const std::string m_option_name;
     };
 
-    struct SetFileStringFunctor
+    template <>
+    struct SetOptionFunctor<std::string>
     {
-        SetFileStringFunctor(const std::string& key_, bool folder_ = false) :
-            key(key_),
-            folder(folder_)
-        {}
-        void operator()(const std::string& value)
-        {
-            std::string path = value;
-            if (NativePathToOptionPath(path, folder))
-                GetOptionsDB().Set<std::string>(key, path);
-        }
-        const std::string key;
-        const bool folder;
+        SetOptionFunctor(const std::string& option_name, CUIEdit* edit = 0, OptionsWnd::StringValidator string_validator = 0) :
+            m_option_name(option_name), m_edit(edit), m_string_validator(string_validator)
+            { assert(bool(m_edit) == bool(m_string_validator)); }
+        void operator()(const std::string& str)
+            {
+                if (m_string_validator && !m_string_validator(str)) {
+                    m_edit->SetTextColor(GG::CLR_RED);
+                } else {
+                    m_edit->SetTextColor(ClientUI::TextColor());
+                    GetOptionsDB().Set<std::string>(m_option_name, str);
+                }
+            }
+        const std::string m_option_name;
+        CUIEdit* m_edit;
+        OptionsWnd::StringValidator m_string_validator;
     };
-}
 
-#ifdef WIN32
-    #define SLASH    '\\'
-    #define CURRENT_DIR ".\\"
-#else
-    #define SLASH    '/'
-    #define CURRENT_DIR "./"
-#endif
+    struct DropListIndexSetOptionFunctor
+    {
+        DropListIndexSetOptionFunctor(const std::string& option_name, CUIDropDownList* drop_list) :
+            m_option_name(option_name), m_drop_list(drop_list) {}
+        void operator()(int index)
+            {
+                const GG::ListBox::Row* row = m_drop_list->CurrentItem();
+                assert(row);
+                GetOptionsDB().Set<std::string>(m_option_name, row->WindowText());
+            }
+        const std::string m_option_name;
+        CUIDropDownList* m_drop_list;
+    };
 
-
-OptionsWnd::BrowseForFileFunctor::BrowseForFileFunctor(const std::string& key_, const std::string& dir_key_,
-                                                       const std::string& file_type_,
-                                                       const std::string& file_extension_, CUIEdit* edit_,
-                                                       OptionsWnd* wnd_) :
-    key(key_),
-    dir_key(dir_key_),
-    file_type(file_type_),
-    file_extension(file_extension_),
-    edit(edit_),
-    wnd(wnd_)
-{}
-
-void OptionsWnd::BrowseForFileFunctor::operator()()
-{
-    wnd->Browse(key, dir_key, file_type, file_extension, edit);
-}
-
-OptionsWnd::BrowseForSoundFileFunctor::BrowseForSoundFileFunctor(const std::string& key_, CUIEdit* edit_, OptionsWnd* wnd_) :
-    key(key_),
-    edit(edit_),
-    wnd(wnd_)
-{}
-
-void OptionsWnd::BrowseForSoundFileFunctor::operator()()
-{
-    wnd->Browse(key, "sound-dir", "OPTIONS_SOUND_FILE", ".wav", edit);
+    struct ResolutionDropListIndexSetOptionFunctor
+    {
+        ResolutionDropListIndexSetOptionFunctor(CUIDropDownList* drop_list, CUISpin<int>* width_spin, CUISpin<int>* height_spin, CUISpin<int>* color_depth_spin, CUIStateButton* fullscreen_button) :
+            m_drop_list(drop_list), m_width_spin(width_spin), m_height_spin(height_spin), m_color_depth_spin(color_depth_spin), m_fullscreen_button(fullscreen_button)
+            {
+                const GG::ListBox::Row* row = m_drop_list->CurrentItem();
+                if (row && row->WindowText() != UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION")) {
+                    m_width_spin->Disable(true);
+                    m_height_spin->Disable(true);
+                    m_color_depth_spin->Disable(true);
+                    m_fullscreen_button->Disable(true);
+                }
+            }
+        void operator()(int index)
+            {
+                const GG::ListBox::Row* row = m_drop_list->CurrentItem();
+                assert(row);
+                if (row->WindowText() == UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION")) {
+                    m_width_spin->Disable(false);
+                    m_height_spin->Disable(false);
+                    m_color_depth_spin->Disable(false);
+                    m_fullscreen_button->Disable(false);
+                    GetOptionsDB().Set<int>("app-width", m_width_spin->Value());
+                    GetOptionsDB().Set<int>("app-height", m_height_spin->Value());
+                    GetOptionsDB().Set<int>("color-depth", m_color_depth_spin->Value());
+                    GetOptionsDB().Set<bool>("fullscreen", m_fullscreen_button->Checked());
+                } else {
+                    int w, h, bpp;
+                    using namespace boost::spirit;
+                    rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)] >> str_p(" @ ") >> int_p[assign_a(bpp)];
+                    parse(row->WindowText().c_str(), resolution_p);
+                    GetOptionsDB().Set<int>("app-width", w);
+                    GetOptionsDB().Set<int>("app-height", h);
+                    GetOptionsDB().Set<int>("color-depth", bpp);
+                    GetOptionsDB().Set<bool>("fullscreen", true);
+                    m_width_spin->Disable(true);
+                    m_height_spin->Disable(true);
+                    m_color_depth_spin->Disable(true);
+                    m_fullscreen_button->Disable(true);
+                }
+            }
+        CUIDropDownList* m_drop_list;
+        CUISpin<int>* m_width_spin;
+        CUISpin<int>* m_height_spin;
+        CUISpin<int>* m_color_depth_spin;
+        CUIStateButton* m_fullscreen_button;
+    };
 }
 
 OptionsWnd::OptionsWnd():
@@ -146,87 +222,381 @@ OptionsWnd::OptionsWnd():
            (GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + 20)) / 2,
            (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + 70)) / 2,
            PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::CLICKABLE | GG::DRAGABLE | GG::MODAL),
-    m_end_with_done(false)
+    m_current_option_list(0),
+    m_indentation_level(0),
+    m_tabs(0),
+    m_done_button(0),
+    m_num_wnds(0)
 {
-    m_done_btn = new CUIButton(15, PAGE_HEIGHT + 17, 75, UserString("DONE"));
-    m_tabs = new GG::TabWnd(5, 2, PAGE_WIDTH, PAGE_HEIGHT + 20, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::WND_COLOR, ClientUI::TEXT_COLOR, GG::TAB_BAR_DETACHED);
+    m_done_button = new CUIButton(15, PAGE_HEIGHT + 17, 75, UserString("DONE"));
+    m_tabs = new GG::TabWnd(5, 2, PAGE_WIDTH, PAGE_HEIGHT + 20, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
     Init();
 }
 
-class PageWnd : public GG::Wnd
+void OptionsWnd::BeginPage(const std::string& name)
 {
-public:
-    PageWnd(int x, int y, int w, int h) : GG::Wnd(x, y, w, h, 0) {};
-};
-
-void OptionsWnd::AddSoundControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName,
-                                  CUIEdit*& editControl, CUIButton*& btn, bool connect_file_browser/* = true*/)
-{
-    GG::TextControl* textControl = new GG::TextControl(x, y + 2, UserString(userString), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    pageWnd->AttachChild(textControl);
-    btn = new CUIButton(260, y, textControl->Height(), "...");
-    btn->MoveTo(GG::Pt(PAGE_WIDTH - btn->Width(), y));
-    pageWnd->AttachChild(btn);
-    x += textControl->Width() + 5;
-    std::string path(GetOptionsDB().Get<std::string>(optionName));
-    if (!OptionPathToNativePath(path))
-        path = "";
-    editControl = new CUIEdit(x, y - 4, PAGE_WIDTH - btn->Width() - x - 5, path);
-    pageWnd->AttachChild(editControl);
-    if (connect_file_browser)
-        GG::Connect(btn->ClickedSignal, BrowseForSoundFileFunctor(optionName, editControl, this));
-    GG::Connect(editControl->EditedSignal, SetFileStringFunctor(optionName));
+    m_current_option_list = new CUIListBox(0, 0, 1, 1);
+    m_current_option_list->SetColor(GG::CLR_ZERO);
+    m_current_option_list->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL);
+    m_tabs->AddWnd(m_current_option_list, name);
+    m_tabs->SetCurrentWnd(m_num_wnds++);
 }
 
-void OptionsWnd::AddColorControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName, ColorSelector*& comboColor)
+void OptionsWnd::EndPage()
 {
-    GG::TextControl* textControl = new GG::TextControl(x, y + 2, UserString(userString), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    pageWnd->AttachChild(textControl);
-    const int WIDTH = 75;
-    comboColor = new ColorSelector(PAGE_WIDTH - WIDTH, y, WIDTH, ClientUI::PTS + 4,
-                                   GetOptionsDB().Get<StreamableColor>(optionName).ToClr());
-    pageWnd->AttachChild(comboColor);
-    GG::Connect(comboColor->ColorChangedSignal, SetOptionFunctor<GG::Clr>(optionName));
+    assert(m_current_option_list);
+    m_current_option_list = 0;
+    m_tabs->SetCurrentWnd(0);
 }
 
-void OptionsWnd::AddFolderControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, const std::string& optionName, CUIEdit*& editControl)
+void OptionsWnd::BeginSection(const std::string& name)
 {
-    GG::TextControl* textControl = new GG::TextControl(x, y + 2, UserString(userString), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    pageWnd->AttachChild(textControl);
-    x += textControl->Width() + 5;
-    std::string path(GetOptionsDB().Get<std::string>(optionName));
-    if (!OptionPathToNativePath(path))
-        path = "";
-    else if (!path.empty() && (*path.rbegin() != SLASH))
-        path += SLASH;
-    editControl = new CUIEdit(x, y - 4, PAGE_WIDTH - x, path);
-    pageWnd->AttachChild(editControl);
-}
-void OptionsWnd::FillFontCombo(CUIDropDownList* combo, const std::string& option_name)
-{
-    std::string s = GetOptionsDB().Get<std::string>(option_name);
-    std::string::size_type pos = s.find_last_of('.');
-    if (pos != std::string::npos)
-        s.erase(pos);
-    FillCombo(combo, m_fonts, s);
+    assert(m_current_option_list);
+    assert(0 <= m_indentation_level);
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    GG::TextControl* heading_text = new GG::TextControl(0, 0, name, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() * 4 / 3), ClientUI::TextColor(), GG::TF_LEFT);
+    row->Resize(GG::Pt(ROW_WIDTH, heading_text->MinUsableSize().y + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), heading_text, m_indentation_level));
+    m_current_option_list->Insert(row);
+    ++m_indentation_level;
 }
 
-void OptionsWnd::AddFontControls(int x, int y, const std::string& userString, GG::Wnd* pageWnd, CUIDropDownList*& combo,
-                                 const std::string& optionName, const std::string& userStringSize, CUISpin<int>*& spin)
+void OptionsWnd::EndSection()
 {
-    GG::TextControl* textControl = new GG::TextControl(x, y + 3, UserString(userString), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    pageWnd->AttachChild(textControl);
-    x += textControl->Width() + 5;
-    combo = new CUIDropDownList(x, y, 200, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
-    combo->SetStyle(GG::LB_NOSORT);
-    FillFontCombo(combo, optionName);
-    pageWnd->AttachChild(combo);
-    textControl = new GG::TextControl(x, y + 3, UserString(userStringSize), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    textControl->MoveTo(GG::Pt(PAGE_WIDTH - 55 - textControl->Width(), y + 3));
-    combo->Resize(GG::Pt(PAGE_WIDTH - 60 - textControl->Width() - x, combo->Height()));
-    pageWnd->AttachChild(textControl);
-    spin = new CUISpin<int>(PAGE_WIDTH - 50, y - 1, 50, GetOptionsDB().Get<int>(optionName + "-size"), 1, 6, 72, true);
-    pageWnd->AttachChild(spin);
+    assert(m_current_option_list);
+    assert(0 < m_indentation_level);
+    --m_indentation_level;
+}
+
+CUIStateButton* OptionsWnd::BoolOption(const std::string& option_name, const std::string& text)
+{
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    CUIStateButton* button = new CUIStateButton(0, 0, 1, 1, text, GG::TF_LEFT);
+    button->Resize(button->MinUsableSize());
+    row->Resize(GG::Pt(ROW_WIDTH, button->MinUsableSize().y + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), button, m_indentation_level));
+    m_current_option_list->Insert(row);
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetCheck(GetOptionsDB().Get<bool>(option_name));
+    button->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    GG::Connect(button->CheckedSignal, SetOptionFunctor<bool>(option_name));
+    return button;
+}
+
+CUISpin<int>* OptionsWnd::IntOption(const std::string& option_name, const std::string& text)
+{
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    GG::TextControl* text_control = new GG::TextControl(0, 0, text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::TF_LEFT, GG::CLICKABLE);
+    boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
+    CUISpin<int>* spin = 0;
+    int value = GetOptionsDB().Get<int>(option_name);
+    if (boost::shared_ptr<const RangedValidator<int> > ranged_validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(validator))
+        spin = new CUISpin<int>(0, 0, 1, value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
+    else if (boost::shared_ptr<const StepValidator<int> > step_validator = boost::dynamic_pointer_cast<const StepValidator<int> >(validator))
+        spin = new CUISpin<int>(0, 0, 1, value, step_validator->m_step_size, -1000000, 1000000, true);
+    else if (boost::shared_ptr<const RangedStepValidator<int> > ranged_step_validator = boost::dynamic_pointer_cast<const RangedStepValidator<int> >(validator))
+        spin = new CUISpin<int>(0, 0, 1, value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
+    else if (boost::shared_ptr<const Validator<int> > int_validator = boost::dynamic_pointer_cast<const Validator<int> >(validator))
+        spin = new CUISpin<int>(0, 0, 1, value, 1, -1000000, 1000000, true);
+    assert(spin);
+    spin->SetMaxSize(GG::Pt(spin->MaxSize().x, spin->Size().y));
+    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 1, 2, 0, 5);
+    layout->Add(spin, 0, 0);
+    layout->Add(text_control, 0, 1);
+    layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
+    layout->SetColumnStretch(1, 1.0);
+    row->Resize(GG::Pt(ROW_WIDTH, std::max(spin->MinUsableSize().y, text_control->MinUsableSize().y) + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
+    m_current_option_list->Insert(row);
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    GG::Connect(spin->ValueChangedSignal, SetOptionFunctor<int>(option_name));
+    return spin;
+}
+
+CUISpin<double>* OptionsWnd::DoubleOption(const std::string& option_name, const std::string& text)
+{
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    GG::TextControl* text_control = new GG::TextControl(0, 0, text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::TF_LEFT, GG::CLICKABLE);
+    boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
+    CUISpin<double>* spin = 0;
+    double value = GetOptionsDB().Get<double>(option_name);
+    if (boost::shared_ptr<const RangedValidator<double> > ranged_validator = boost::dynamic_pointer_cast<const RangedValidator<double> >(validator))
+        spin = new CUISpin<double>(0, 0, 1, value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
+    else if (boost::shared_ptr<const StepValidator<double> > step_validator = boost::dynamic_pointer_cast<const StepValidator<double> >(validator))
+        spin = new CUISpin<double>(0, 0, 1, value, step_validator->m_step_size, -1000000, 1000000, true);
+    else if (boost::shared_ptr<const RangedStepValidator<double> > ranged_step_validator = boost::dynamic_pointer_cast<const RangedStepValidator<double> >(validator))
+        spin = new CUISpin<double>(0, 0, 1, value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
+    else if (boost::shared_ptr<const Validator<double> > double_validator = boost::dynamic_pointer_cast<const Validator<double> >(validator))
+        spin = new CUISpin<double>(0, 0, 1, value, 1, -1000000, 1000000, true);
+    assert(spin);
+    spin->SetMaxSize(GG::Pt(spin->MaxSize().x, spin->Size().y));
+    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 1, 2, 0, 5);
+    layout->Add(spin, 0, 0);
+    layout->Add(text_control, 0, 1);
+    layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
+    layout->SetColumnStretch(1, 1.0);
+    row->Resize(GG::Pt(ROW_WIDTH, std::max(spin->MinUsableSize().y, text_control->MinUsableSize().y) + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
+    m_current_option_list->Insert(row);
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    GG::Connect(spin->ValueChangedSignal, SetOptionFunctor<double>(option_name));
+    return spin;
+}
+
+void OptionsWnd::MusicVolumeOption()
+{
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    CUIStateButton* button = new CUIStateButton(0, 0, 1, 1, UserString("OPTIONS_MUSIC"), GG::TF_LEFT);
+    button->Resize(button->MinUsableSize());
+    button->SetCheck(!GetOptionsDB().Get<bool>("music-off"));
+    boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("music-volume"));
+    assert(validator);
+    CUISlider* slider = new CUISlider(0, 0, 1, 14, validator->m_min, validator->m_max, GG::HORIZONTAL);
+    slider->SlideTo(GetOptionsDB().Get<int>("music-volume"));
+    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 1, 2, 0, 5);
+    layout->Add(button, 0, 0);
+    layout->Add(slider, 0, 1);
+    row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
+    m_current_option_list->Insert(row);
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseText(GetOptionsDB().GetDescription("music-off"));
+    slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    slider->SetBrowseText(GetOptionsDB().GetDescription("music-volume"));
+    GG::Connect(button->CheckedSignal, &OptionsWnd::MusicClicked, this);
+    GG::Connect(slider->SlidAndStoppedSignal, &OptionsWnd::MusicVolumeSlid, this);
+}
+
+void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::string& volume_option_name, const std::string& text,
+                              VolumeSliderHandler volume_slider_handler, bool toggle_value)
+{
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    CUIStateButton* button = new CUIStateButton(0, 0, 1, 1, text, GG::TF_LEFT);
+    button->Resize(button->MinUsableSize());
+    button->SetCheck(toggle_value);
+    boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator(volume_option_name));
+    assert(validator);
+    CUISlider* slider = new CUISlider(0, 0, 1, 14, validator->m_min, validator->m_max, GG::HORIZONTAL);
+    slider->SlideTo(GetOptionsDB().Get<int>(volume_option_name));
+    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 1, 2, 0, 5);
+    layout->Add(button, 0, 0);
+    layout->Add(slider, 0, 1);
+    row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
+    m_current_option_list->Insert(row);
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseText(GetOptionsDB().GetDescription(toggle_option_name));
+    slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    slider->SetBrowseText(GetOptionsDB().GetDescription(volume_option_name));
+    GG::Connect(button->CheckedSignal, SetOptionFunctor<bool>(toggle_option_name));
+    GG::Connect(slider->SlidAndStoppedSignal, volume_slider_handler, this);
+}
+
+void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::string& text, const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory)
+{
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    GG::TextControl* text_control = new GG::TextControl(0, 0, text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::TF_LEFT, GG::CLICKABLE);
+    CUIEdit* edit = new CUIEdit(0, 0, 1, GetOptionsDB().Get<std::string>(option_name));
+    edit->SetMaxSize(GG::Pt(edit->MaxSize().x, edit->Size().y));
+    CUIButton* button = new CUIButton(0, 0, 1, "...");
+    button->SetMinSize(GG::Pt(button->MinUsableSize().x + 8, button->Height()));
+    button->SetMaxSize(GG::Pt(button->MaxSize().x, button->Height()));
+    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 2, 2, 0, LAYOUT_MARGIN);
+    layout->Add(text_control, 0, 0, 1, 2);
+    layout->Add(edit, 1, 0, 1, 1, GG::ALIGN_VCENTER);
+    layout->Add(button, 1, 1, 1, 1, GG::ALIGN_VCENTER);
+    layout->SetMinimumColumnWidth(1, button->Width());
+    layout->SetColumnStretch(0, 1.0);
+    row->Resize(GG::Pt(ROW_WIDTH, text_control->MinUsableSize().y + LAYOUT_MARGIN + std::max(edit->MinUsableSize().y, button->MinUsableSize().y) + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
+    m_current_option_list->Insert(row);
+    edit->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    edit->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    GG::Connect(edit->EditedSignal, SetOptionFunctor<std::string>(option_name, edit, string_validator));
+    GG::Connect(button->ClickedSignal, BrowseForPathButtonFunctor(path, filters, edit, directory));
+    if (string_validator && !string_validator(edit->WindowText()))
+        edit->SetTextColor(GG::CLR_RED);
+}
+
+void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path, StringValidator string_validator/* = 0*/)
+{
+    FileOption(option_name, text, path, std::vector<std::pair<std::string, std::string> >(), string_validator);
+}
+
+void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path, const std::pair<std::string, std::string>& filter, StringValidator string_validator/* = 0*/)
+{
+    FileOption(option_name, text, path, std::vector<std::pair<std::string, std::string> >(1, filter), string_validator);
+}
+
+void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator/* = 0*/)
+{
+    FileOptionImpl(option_name, text, path, filters, string_validator, false);
+}
+
+void OptionsWnd::SoundFileOption(const std::string& option_name, const std::string& text)
+{
+    FileOption(option_name, text, ClientUI::SoundDir(), std::make_pair(UserString("OPTIONS_SOUND_FILE"), "*" + SOUND_FILE_SUFFIX), ValidSoundFile);
+}
+
+void OptionsWnd::DirectoryOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path)
+{
+    FileOptionImpl(option_name, text, path, std::vector<std::pair<std::string, std::string> >(), ValidDirectory, true);
+}
+
+void OptionsWnd::ColorOption(const std::string& option_name, const std::string& text)
+{
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    GG::TextControl* text_control = new GG::TextControl(0, 0, text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::TF_LEFT, GG::CLICKABLE);
+    ColorSelector* color_selector = new ColorSelector(0, 0, 1, ClientUI::Pts() + 4, GetOptionsDB().Get<StreamableColor>(option_name).ToClr());
+    color_selector->SetMaxSize(GG::Pt(color_selector->MaxSize().x, color_selector->Size().y));
+    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 1, 2);
+    layout->Add(text_control, 0, 0);
+    layout->Add(color_selector, 0, 1, 1, 1, GG::ALIGN_VCENTER);
+    layout->SetMinimumColumnWidth(1, COLOR_SELECTOR_WIDTH);
+    layout->SetColumnStretch(0, 1.0);
+    row->Resize(GG::Pt(ROW_WIDTH, std::max(text_control->MinUsableSize().y, color_selector->MinUsableSize().y) + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
+    m_current_option_list->Insert(row);
+    color_selector->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    color_selector->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    GG::Connect(color_selector->ColorChangedSignal, SetOptionFunctor<GG::Clr>(option_name));
+}
+
+void OptionsWnd::FontOption(const std::string& option_name, const std::string& text)
+{
+    const int DROPLIST_HEIGHT = ClientUI::Pts() + 4;
+    const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    GG::TextControl* text_control = new GG::TextControl(0, 0, text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::TF_LEFT, GG::CLICKABLE);
+    CUIDropDownList* drop_list = new CUIDropDownList(0, 0, 1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+    drop_list->SetStyle(GG::LB_NOSORT);
+    std::set<std::string> filenames;
+    fs::directory_iterator end_it;
+    for (fs::directory_iterator it(fs::initial_path()); it != end_it; ++it) {
+        try {
+            if (fs::exists(*it)) {
+                std::string filename = it->leaf();
+                if (boost::algorithm::ends_with(filename, FONT_SUFFIX))
+                    filenames.insert(filename);
+            }
+        } catch (const fs::filesystem_error& e) {
+            // ignore files for which permission is denied, and rethrow other exceptions
+            if (e.error() != fs::security_error)
+                throw;
+        }
+    }
+    drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
+    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 2, 1, 0, LAYOUT_MARGIN);
+    layout->Add(text_control, 0, 0);
+    layout->Add(drop_list, 1, 0, 1, 1, GG::ALIGN_VCENTER);
+    row->Resize(GG::Pt(ROW_WIDTH, text_control->MinUsableSize().y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
+    m_current_option_list->Insert(row);
+    std::string current_font = GetOptionsDB().Get<std::string>(option_name);
+    assert(boost::algorithm::ends_with(current_font, FONT_SUFFIX));
+    int index = -1;
+    for (std::set<std::string>::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
+        GG::ListBox::Row* font_row = new CUISimpleDropDownListRow(boost::algorithm::erase_last_copy(*it, FONT_SUFFIX));
+        font_row->SetText(*it);
+        drop_list->Insert(font_row);
+        if (*it == current_font)
+            index = drop_list->NumRows() - 1;
+    }
+    if (index != -1)
+        drop_list->Select(index);
+    drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop_list->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    GG::Connect(drop_list->SelChangedSignal, DropListIndexSetOptionFunctor(option_name, drop_list));
+}
+
+void OptionsWnd::ResolutionOption()
+{
+    // NOTE: It appears that on the SDL-on-X setup, arbitrary resolutions can be selected (e.g. 307 x 400).  So the
+    // drop-down list of resolutions is really only useful on the Win32 platform.
+#ifdef FREEORION_WIN32
+    // Retrieve (and if necessary generate) the fullscreen resolutions.
+    std::vector<std::string> resolutions;
+    boost::shared_ptr<const RangedValidator<int> > width_validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("app-width"));
+    boost::shared_ptr<const RangedValidator<int> > height_validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("app-height"));
+    const std::string RESOLUTION_FORMAT_STR = "%1% x %2% @ %3%";
+    fs::path resolution_file = GetLocalDir() / "resolutions.txt";
+    if (!fs::exists(resolution_file)) {
+        boost::filesystem::ofstream ofs(resolution_file);
+        for (int w = width_validator->m_min; w <= width_validator->m_max; w += 4) {
+            for (int h = height_validator->m_min; h <= height_validator->m_max; h += 4) {
+                if (SDL_VideoModeOK(w, h, 16, SDL_FULLSCREEN | SDL_OPENGL))
+                    ofs << boost::io::str(boost::format(RESOLUTION_FORMAT_STR) % w % h % 16) << std::endl;
+                if (SDL_VideoModeOK(w, h, 32, SDL_FULLSCREEN | SDL_OPENGL))
+                    ofs << boost::io::str(boost::format(RESOLUTION_FORMAT_STR) % w % h % 32) << std::endl;
+            }
+        }
+    }
+    assert(fs::exists(resolution_file));
+    int current_resolution_index = -1;
+    std::string current_resolution_string = boost::io::str(boost::format(RESOLUTION_FORMAT_STR) % GetOptionsDB().Get<int>("app-width") % GetOptionsDB().Get<int>("app-height") % GetOptionsDB().Get<int>("color-depth"));
+    fs::ifstream ifs(resolution_file);
+    while (ifs) {
+        std::string line;
+        std::getline(ifs, line);
+        if (line != "") {
+            resolutions.push_back(line);
+            if (line == current_resolution_string)
+                current_resolution_index = resolutions.size() - 1;
+        }
+    }
+
+    // create controls
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    const int DROPLIST_HEIGHT = ClientUI::Pts() + 4;
+    const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
+    GG::TextControl* drop_list_text_control = new GG::TextControl(0, 0, UserString("OPTIONS_VIDEO_MODE"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::TF_LEFT, GG::CLICKABLE);
+    CUIDropDownList* drop_list = new CUIDropDownList(0, 0, 1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 2, 1, 0, LAYOUT_MARGIN);
+    drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
+    layout->Add(drop_list_text_control, 0, 0);
+    layout->Add(drop_list, 1, 0, 1, 1, GG::ALIGN_VCENTER);
+    row->Resize(GG::Pt(ROW_WIDTH, drop_list_text_control->MinUsableSize().y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
+    m_current_option_list->Insert(row);
+    drop_list->SetStyle(GG::LB_NOSORT);
+    GG::ListBox::Row* font_row = new CUISimpleDropDownListRow(UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION"));
+    font_row->SetText(UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION"));
+    drop_list->Insert(font_row);
+    for (std::vector<std::string>::const_iterator it = resolutions.begin(); it != resolutions.end(); ++it) {
+        font_row = new CUISimpleDropDownListRow(*it);
+        font_row->SetText(*it);
+        drop_list->Insert(font_row);
+    }
+    if (current_resolution_index != -1 && GetOptionsDB().Get<bool>("fullscreen"))
+        drop_list->Select(current_resolution_index + 1);
+    else
+        drop_list->Select(0);
+    drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop_list->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
+    drop_list_text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop_list_text_control->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
+#endif
+    CUISpin<int>* width_spin = IntOption("app-width", UserString("OPTIONS_APP_WIDTH"));
+    CUISpin<int>* height_spin = IntOption("app-height", UserString("OPTIONS_APP_HEIGHT"));
+    CUISpin<int>* color_depth_spin = IntOption("color-depth", UserString("OPTIONS_COLOR_DEPTH"));
+    CUIStateButton* fullscreen_button = BoolOption("fullscreen", UserString("OPTIONS_FULLSCREEN"));
+#ifdef FREEORION_WIN32
+    GG::Connect(drop_list->SelChangedSignal, ResolutionDropListIndexSetOptionFunctor(drop_list, width_spin, height_spin, color_depth_spin, fullscreen_button));
+#endif
 }
 
 void OptionsWnd::Init()
@@ -235,512 +605,149 @@ void OptionsWnd::Init()
 
     TempUISoundDisabler sound_disabler;
 
-    FillLists();
+    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 2, 2, LAYOUT_MARGIN, LAYOUT_MARGIN);
+    layout->SetMinimumColumnWidth(0, m_done_button->Width() + LAYOUT_MARGIN);
+    layout->SetColumnStretch(1, 1.0);
+    layout->SetRowStretch(0, 1.0);
+    layout->SetMinimumRowHeight(1, m_done_button->Height() + LAYOUT_MARGIN);
+    layout->Add(m_tabs, 0, 0, 1, 2);
+    layout->Add(m_done_button, 1, 0);
+    SetLayout(layout);
 
-    GG::Wnd* control_page = new PageWnd(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
-    GG::Wnd* ui_page = new PageWnd(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
-    GG::Wnd* sound_page = new PageWnd(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
-    GG::Wnd* sound_page2 = new PageWnd(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
-    GG::Wnd* colors_page = new PageWnd(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
-    GG::Wnd* colors_page2 = new PageWnd(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
-    GG::Wnd* folders_page = new PageWnd(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
+    // Video settings tab
+    BeginPage(UserString("OPTIONS_PAGE_VIDEO"));
+    ResolutionOption();
+    EndPage();
 
-    AttachChild(m_done_btn);
-    AttachChild(m_tabs);
+    // Audio settings tab
+    BeginPage(UserString("OPTIONS_PAGE_AUDIO"));
+    BeginSection(UserString("OPTIONS_VOLUME_AND_MUSIC"));
+    MusicVolumeOption();
+    VolumeOption("UI.sound.enabled", "UI.sound.volume", UserString("OPTIONS_UI_SOUNDS"), &OptionsWnd::UISoundsVolumeSlid, UI_sound_enabled);
+    FileOption("bg-music", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
+               std::make_pair(UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX),
+               ValidMusicFile);
+    EndSection();
+    BeginSection(UserString("OPTIONS_SOUNDS"));
+    BeginSection(UserString("OPTIONS_UI_SOUNDS"));
+    SoundFileOption("UI.sound.alert", UserString("OPTIONS_SOUND_ALERT"));
+    SoundFileOption("UI.sound.text-typing", UserString("OPTIONS_SOUND_TYPING"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_SOUND_WINDOW"));
+    SoundFileOption("UI.sound.window-close", UserString("OPTIONS_SOUND_CLOSE"));
+    SoundFileOption("UI.sound.window-maximize", UserString("OPTIONS_SOUND_MAXIMIZE"));
+    SoundFileOption("UI.sound.window-minimize", UserString("OPTIONS_SOUND_MINIMIZE"));
+    SoundFileOption("UI.sound.sidepanel-open", UserString("OPTIONS_SOUND_SIDEPANEL"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_SOUND_LIST"));
+    SoundFileOption("UI.sound.item-drop", UserString("OPTIONS_SOUND_DROP"));
+    SoundFileOption("UI.sound.list-pulldown", UserString("OPTIONS_SOUND_PULLDOWN"));
+    SoundFileOption("UI.sound.list-select", UserString("OPTIONS_SOUND_SELECT"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_SOUND_BUTTON"));
+    SoundFileOption("UI.sound.button-click", UserString("OPTIONS_SOUND_CLICK"));
+    SoundFileOption("UI.sound.button-rollover", UserString("OPTIONS_SOUND_ROLLOVER"));
+    SoundFileOption("UI.sound.fleet-button-click", UserString("OPTIONS_SOUND_FLEET_CLICK"));
+    SoundFileOption("UI.sound.fleet-button-rollover", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
+    SoundFileOption("UI.sound.turn-button-click", UserString("OPTIONS_SOUND_TURN"));
+    SoundFileOption("UI.sound.planet-button-click", UserString("OPTIONS_SOUND_PLANET"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_SOUND_FOCUS"));
+    SoundFileOption("UI.sound.balanced-focus", UserString("OPTIONS_SOUND_BALANCED"));
+    SoundFileOption("UI.sound.farming-focus", UserString("OPTIONS_SOUND_FARMING"));
+    SoundFileOption("UI.sound.industry-focus", UserString("OPTIONS_SOUND_INDUSTRY"));
+    SoundFileOption("UI.sound.mining-focus", UserString("OPTIONS_SOUND_MINING"));
+    SoundFileOption("UI.sound.research-focus", UserString("OPTIONS_SOUND_RESEARCH"));
+    EndSection();
+    EndSection();
+    EndPage();
 
-    GG::TextControl* textControl;
-    CUIStateButton* stateBtn;
-    CUISlider* sliderControl;
-    CUISpin<int>* spinControlInt;
-    CUISpin<double>* spinControlDouble;
-    CUIButton* btn;
-    CUIEdit* editControl;
-    CUIDropDownList* comboControl;
-    ColorSelector* comboColor;
-    std::string s;
-    char c[128];
+    // UI settings tab
+    BeginPage(UserString("OPTIONS_PAGE_UI"));
+    BeginSection(UserString("OPTIONS_MISC_UI"));
+    BoolOption("UI.fleet-autoselect", UserString("OPTIONS_AUTOSELECT_FLEET"));
+    BoolOption("UI.multiple-fleet-windows", UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
+    BoolOption("UI.window-quickclose", UserString("OPTIONS_QUICK_CLOSE_WNDS"));
+    FileOption("stringtable-filename", UserString("OPTIONS_LANGUAGE"), GetSettingsDir(), std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + STRINGTABLE_FILE_SUFFIX), &ValidStringtableFile);
+    IntOption("UI.tooltip-delay", UserString("OPTIONS_TOOLTIP_DELAY"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_FONTS"));
+    FontOption("UI.font", UserString("OPTIONS_FONT_TEXT"));
+    FontOption("UI.title-font", UserString("OPTIONS_FONT_TITLE"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_FONT_SIZES"));
+    IntOption("UI.font-size", UserString("OPTIONS_FONT_TEXT"));
+    IntOption("UI.title-font-size", UserString("OPTIONS_FONT_TITLE"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_TECH_SPACING"));
+    DoubleOption("UI.tech-layout-horz-spacing", UserString("OPTIONS_HORIZONTAL"));
+    DoubleOption("UI.tech-layout-vert-spacing", UserString("OPTIONS_VERTICAL"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_CHAT"));
+    IntOption("UI.chat-edit-history", UserString("OPTIONS_CHAT_HISTORY"));
+    IntOption("UI.chat-hide-interval", UserString("OPTIONS_CHAT_HIDE"));
+    EndSection();
+    EndPage();
 
-    // Fill up the Control Options tab page:
-    /*******************************************
-    [x] Autoselect Fleet
-    [x] Multiple Fleet Windows
-    [x] Quick close windows
-    Autosave
-        [x] Single Player [x] Multiplayer
-        Autosaves to keep [number]^
-        Turns between saves [number]^
-    *******************************************/
-    // [x] Autoselect Fleet
-    int y = PAGE_VERT_MARGIN;
-    int x = PAGE_HORZ_MARGIN;
-    stateBtn = new CUIStateButton(x, y, 75, 20, UserString("OPTIONS_AUTOSELECT_FLEET"), GG::TF_LEFT);
-    stateBtn->SetCheck(GetOptionsDB().Get<bool>("UI.fleet-autoselect"));
-    GG::Connect(stateBtn->CheckedSignal, SetOptionFunctor<bool>("UI.fleet-autoselect"));
-    control_page->AttachChild(stateBtn);
-    // [x] Multiple Fleet Windows
-    y += PAGE_ROW_HEIGHT;
-    stateBtn = new CUIStateButton(x, y, 75, 20, UserString("OPTIONS_MULTIPLE_FLEET_WNDS"), GG::TF_LEFT);
-    stateBtn->SetCheck(GetOptionsDB().Get<bool>("UI.multiple-fleet-windows"));
-    GG::Connect(stateBtn->CheckedSignal, SetOptionFunctor<bool>("UI.multiple-fleet-windows"));
-    control_page->AttachChild(stateBtn);
-    // [x] Quick close windows
-    y += PAGE_ROW_HEIGHT;
-    stateBtn = new CUIStateButton(x, y, 75, 20, UserString("OPTIONS_QUICK_CLOSE_WNDS"), GG::TF_LEFT);
-    stateBtn->SetCheck(GetOptionsDB().Get<bool>("UI.window-quickclose"));
-    GG::Connect(stateBtn->CheckedSignal, SetOptionFunctor<bool>("UI.window-quickclose"));
-    control_page->AttachChild(stateBtn);
-    // Autosave
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(x, y, UserString("OPTIONS_AUTOSAVE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    control_page->AttachChild(textControl);
-    // [x] Single Player [x] Multiplayer
-    y += PAGE_ROW_HEIGHT - 5;
-    x += PAGE_HORZ_OFFSET;
-    stateBtn = new CUIStateButton(x, y, 75, 20, UserString("OPTIONS_SINGLEPLAYER"), GG::TF_LEFT);
-    stateBtn->SetCheck(GetOptionsDB().Get<bool>("autosave.single-player"));
-    GG::Connect(stateBtn->CheckedSignal, SetOptionFunctor<bool>("autosave.single-player"));
-    control_page->AttachChild(stateBtn);
-    stateBtn = new CUIStateButton(x + 100, y, 75, 20, UserString("OPTIONS_MULTIPLAYER"), GG::TF_LEFT);
-    stateBtn->SetCheck(GetOptionsDB().Get<bool>("autosave.multiplayer"));
-    GG::Connect(stateBtn->CheckedSignal, SetOptionFunctor<bool>("autosave.multiplayer"));
-    control_page->AttachChild(stateBtn);
-    // Autosaves to keep [number]^
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(x, y, UserString("OPTIONS_AUTOSAVE_TO_KEEP"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    control_page->AttachChild(textControl);
-    spinControlInt = new CUISpin<int>(190, y - 5, 75, GetOptionsDB().Get<int>("autosave.saves"), 1, 1, 100, true);
-    GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("autosave.saves"));
-    control_page->AttachChild(spinControlInt);
-    // Turns between saves [number]^
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(x, y, UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    control_page->AttachChild(textControl);
-    spinControlInt = new CUISpin<int>(190, y - 5, 75, GetOptionsDB().Get<int>("autosave.turns"), 1, 1, 100, true);
-    GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("autosave.turns"));
-    control_page->AttachChild(spinControlInt);
+    // Colors tab
+    BeginPage(UserString("OPTIONS_PAGE_COLORS"));
+    BeginSection(UserString("OPTIONS_GENERAL_COLORS"));
+    ColorOption("UI.text-color", UserString("OPTIONS_TEXT_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_WINDOW_COLORS"));
+    ColorOption("UI.ctrl-color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.ctrl-border-color", UserString("OPTIONS_BORDER_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_CONTROL_COLORS"));
+    ColorOption("UI.wnd-color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.wnd-border-color", UserString("OPTIONS_BORDER_COLOR"));
+    ColorOption("UI.wnd-inner-border-color", UserString("OPTIONS_INNER_BORDER_COLOR"));
+    ColorOption("UI.wnd-outer-border-color", UserString("OPTIONS_OUTER_BORDER_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_EDIT_COLORS"));
+    ColorOption("UI.edit-hilite", UserString("OPTIONS_HIGHLIGHT_COLOR"));
+    ColorOption("UI.edit-interior", UserString("OPTIONS_INTERIOR_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_TECH_COLORS"));
+    BeginSection(UserString("OPTIONS_KNOWN_TECH_COLORS"));
+    ColorOption("UI.known-tech", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.known-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_RESEARCHABLE_TECH_COLORS"));
+    ColorOption("UI.researchable-tech", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.researchable-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
+    ColorOption("UI.unresearchable-tech", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.unresearchable-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_TECH_PROGRESS_COLORS"));
+    ColorOption("UI.tech-progress", UserString("OPTIONS_PROGRESS_BAR_COLOR"));
+    ColorOption("UI.tech-progress-background", UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
+    EndSection();
+    EndSection();
+    EndPage();
 
-    // Fill up the UI Options tab page:
-    /*******************************************
-    *Language [file]
-    Fonts
-        *Text [font] *Size [size]^
-        *Title [font] *Size [size]^
-    Tech Spacing
-        *Horz [space]^ *Vert[space]^
-    Tooltip Delay (ms.) [time]^
-    *Resolution [list]
-    *Color Depth [list]
-    Chat
-        History [count]^
-        Hide Interval [Interval]^
-    *******************************************/
-    // *Language [file]
-    y = PAGE_VERT_MARGIN;
-    x = PAGE_HORZ_MARGIN;
-    textControl = new GG::TextControl(x, y + 2, UserString("OPTIONS_LANGUAGE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    ui_page->AttachChild(textControl);
-    btn = new CUIButton(260, y, textControl->Height(), "...");
-    btn->MoveTo(GG::Pt(PAGE_WIDTH - btn->Width(), y));
-    ui_page->AttachChild(btn);
-    x += textControl->Width() + 5;
-    s = GetOptionsDB().Get<std::string>("stringtable-filename");
-    if (!OptionPathToNativePath(s))
-        s = "";
-    editControl = new CUIEdit(x, y - 4, PAGE_WIDTH - btn->Width() - x - 5, s);
-    ui_page->AttachChild(editControl);
-    GG::Connect(editControl->EditedSignal, SetFileStringFunctor("stringtable-filename"));
-    m_language_edit = editControl;
-    GG::Connect(btn->ClickedSignal, BrowseForFileFunctor("stringtable-filename", "settings-dir", "OPTIONS_LANGUAGE_FILE", "stringtable.txt", m_language_edit, this));
-    // Fonts
-    y += PAGE_ROW_HEIGHT;
-    x = PAGE_HORZ_MARGIN;
-    textControl = new GG::TextControl(x, y, UserString("OPTIONS_FONTS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    ui_page->AttachChild(textControl);
-    // *Text [font] *Size [size]^
-    y += PAGE_ROW_HEIGHT - 5;
-    x += PAGE_HORZ_OFFSET;
-    AddFontControls(x, y, "OPTIONS_FONT_TEXT", ui_page, m_comboTextFont, "UI.font", "OPTIONS_FONT_SIZE", spinControlInt);
-    GG::Connect(m_comboTextFont->SelChangedSignal, &OptionsWnd::TextFont, this);
-    GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("UI.font-size"));
-    // *Title [font] *Size [size]^
-    y += PAGE_ROW_HEIGHT;
-    x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-    AddFontControls(x, y, "OPTIONS_FONT_TITLE", ui_page, m_comboTitleFont, "UI.title-font", "OPTIONS_FONT_SIZE", spinControlInt);
-    GG::Connect(m_comboTitleFont->SelChangedSignal, &OptionsWnd::TitleFont, this);
-    GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("UI.title-font-size"));
-    // Tech Spacing
-    y += PAGE_ROW_HEIGHT;
-    x = PAGE_HORZ_MARGIN;
-    textControl = new GG::TextControl(x, y, UserString("OPTIONS_TECH_SPACING"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    ui_page->AttachChild(textControl);
-    // *Horz [space]^ *Vert[space]^
-    y += PAGE_ROW_HEIGHT - 5;
-    x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-    textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_HORIZONTAL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    ui_page->AttachChild(textControl);
-    x += textControl->Width() + 5;
-    spinControlDouble = new CUISpin<double>(x, y, 60, GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing"), 0.05, 0.1, 10.0, true);
-    GG::Connect(spinControlDouble->ValueChangedSignal, SetOptionFunctor<double>("UI.tech-layout-horz-spacing"));
-    ui_page->AttachChild(spinControlDouble);
-    x += 65;
-    textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_VERTICAL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    ui_page->AttachChild(textControl);
-    textControl->MoveTo(GG::Pt(PAGE_WIDTH - 65 - textControl->Width(), y + 4));
-    spinControlDouble = new CUISpin<double>(PAGE_WIDTH - 60, y, 60, GetOptionsDB().Get<double>("UI.tech-layout-vert-spacing"), 0.05, 0.1, 10.0, true);
-    GG::Connect(spinControlDouble->ValueChangedSignal, SetOptionFunctor<double>("UI.tech-layout-vert-spacing"));
-    ui_page->AttachChild(spinControlDouble);
-    // Tooltip Delay (ms.) [time]^
-    y += PAGE_ROW_HEIGHT;
-    x = PAGE_HORZ_MARGIN;
-    textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_TOOLTIP_DELAY"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    ui_page->AttachChild(textControl);
-    spinControlInt = new CUISpin<int>(PAGE_WIDTH - 110, y, 110, GetOptionsDB().Get<int>("UI.tooltip-delay"), 50, 0, 3000, true);
-    GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("UI.tooltip-delay"));
-    ui_page->AttachChild(spinControlInt);
-    // *Resolution [list]
-    y += PAGE_ROW_HEIGHT;
-    x = PAGE_HORZ_MARGIN;
-    textControl = new GG::TextControl(x, y + 3, UserString("OPTIONS_RESOLUTION"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    ui_page->AttachChild(textControl);
-    comboControl = new CUIDropDownList(PAGE_WIDTH - 110, y, 110, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
-    comboControl->SetStyle(GG::LB_NOSORT);
-    sprintf(c, "%d x %d", GetOptionsDB().Get<int>("app-width"), GetOptionsDB().Get<int>("app-height"));
-    FillCombo(comboControl, m_resolutions, c);
-    ui_page->AttachChild(comboControl);
-    GG::Connect(comboControl->SelChangedSignal, &OptionsWnd::Resolution, this);
-    // *Color Depth [list]
-    y += PAGE_ROW_HEIGHT;
-    x = PAGE_HORZ_MARGIN;
-    textControl = new GG::TextControl(x, y + 3, UserString("OPTIONS_COLOR_DEPTH"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    ui_page->AttachChild(textControl);
-    comboControl = new CUIDropDownList(PAGE_WIDTH - 110, y, 110, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
-    comboControl->SetStyle(GG::LB_NOSORT);
-    sprintf(c, "%d", GetOptionsDB().Get<int>("color-depth"));
-    FillCombo(comboControl, m_colorDepth, c);
-    ui_page->AttachChild(comboControl);
-    GG::Connect(comboControl->SelChangedSignal, &OptionsWnd::ColorDepth, this);
-    // Chat
-    y += PAGE_ROW_HEIGHT;
-    x = PAGE_HORZ_MARGIN;
-    textControl = new GG::TextControl(x, y, UserString("OPTIONS_CHAT"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    ui_page->AttachChild(textControl);
-    // History [count]^
-    y += PAGE_ROW_HEIGHT - 5;
-    x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-    textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_CHAT_HISTORY"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    ui_page->AttachChild(textControl);
-    spinControlInt = new CUISpin<int>(PAGE_WIDTH - 110, y, 110, GetOptionsDB().Get<int>("UI.chat-edit-history"), 10, 0, 1000, true);
-    GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("UI.chat-edit-history"));
-    ui_page->AttachChild(spinControlInt);
-    // Hide Interval [Interval]^
-    y += PAGE_ROW_HEIGHT;
-    x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-    textControl = new GG::TextControl(x, y + 4, UserString("OPTIONS_CHAT_HIDE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), ClientUI::TEXT_COLOR);
-    ui_page->AttachChild(textControl);
-    spinControlInt = new CUISpin<int>(PAGE_WIDTH - 110, y, 110, GetOptionsDB().Get<int>("UI.chat-hide-interval"), 10, 0, 3600, true);
-    GG::Connect(spinControlInt->ValueChangedSignal, SetOptionFunctor<int>("UI.chat-hide-interval"));
-    ui_page->AttachChild(spinControlInt);
+    // Misc. settings tab
+    BeginPage(UserString("OPTIONS_PAGE_AUTOSAVE"));
+    BoolOption("autosave.single-player", UserString("OPTIONS_SINGLEPLAYER"));
+    BoolOption("autosave.multiplayer", UserString("OPTIONS_MULTIPLAYER"));
+    IntOption("autosave.saves", UserString("OPTIONS_AUTOSAVE_TO_KEEP"));
+    IntOption("autosave.turns", UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
+    EndPage();
 
-    // Fill up the Sound Options (1) tab page:
-    /*******************************************
-    Music + volume
-    Effects + volume
-    BKG Music Track [music]
-    Window 
-        Close [sound] 
-        Maximize [sound] 
-        Minimize [sound]
-    Button
-        Click [sound] 
-        Rollover [sound]
-    Fleet button
-        Click [sound] 
-        Rollover [sound]
-    *******************************************/
-    //    The Music check box and slider
-    y = PAGE_VERT_MARGIN;
-    x = PAGE_HORZ_MARGIN;
-    stateBtn = new CUIStateButton(x, y, 75, 20, UserString("OPTIONS_MUSIC"), GG::TF_LEFT);
-    stateBtn->SetCheck(!GetOptionsDB().Get<bool>("music-off"));
-    GG::Connect(stateBtn->CheckedSignal, &OptionsWnd::MusicClicked, this);
-    sound_page->AttachChild(stateBtn);
-    sliderControl = new CUISlider(PAGE_WIDTH - 150, y, 150, 14, 0, 255, GG::HORIZONTAL);
-    sliderControl->SlideTo(GetOptionsDB().Get<int>("music-volume"));
-    GG::Connect(sliderControl->SlidSignal, &OptionsWnd::MusicVolumeSlid, this);
-    sound_page->AttachChild(sliderControl);
-    //    The Sound Effects check box and slider
-    y += PAGE_ROW_HEIGHT;
-    x = PAGE_HORZ_MARGIN;
-    stateBtn = new CUIStateButton(x, y, 75, 20, UserString("OPTIONS_UI_SOUNDS"), GG::TF_LEFT);
-    stateBtn->SetCheck(UI_sound_enabled);
-    GG::Connect(stateBtn->CheckedSignal, &OptionsWnd::UIEffectsClicked, this);
-    sound_page->AttachChild(stateBtn);
-    sliderControl = new CUISlider(PAGE_WIDTH - 150, 40, 150, 14, 0, 255, GG::HORIZONTAL);
-    sliderControl->SlideTo(GetOptionsDB().Get<int>("UI.sound.volume"));
-    GG::Connect(sliderControl->SlidAndStoppedSignal, &OptionsWnd::UISoundsVolumeSlid, this);
-    sound_page->AttachChild(sliderControl);
-    // BKG Music Track [music]
-    y += PAGE_ROW_HEIGHT;
-    x = PAGE_HORZ_MARGIN;
-    AddSoundControls(x, y, "OPTIONS_BACKGROUND_MUSIC", sound_page, "bg-music", m_music_edit, btn, false);
-    GG::Connect(btn->ClickedSignal, BrowseForFileFunctor("bg-music", "sound-dir", "OPTIONS_MUSIC_FILE", ".ogg", m_music_edit, this));
-    // Window
-    y += PAGE_ROW_HEIGHT;
-    x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_WINDOW"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    sound_page->AttachChild(textControl);
-    // Close [sound] 
-    y += PAGE_ROW_HEIGHT - 5;
-    AddSoundControls(x, y, "OPTIONS_SOUND_CLOSE", sound_page, "UI.sound.window-close", m_close_edit, btn);
-    // Maximize [sound] 
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(x, y, "OPTIONS_SOUND_MAXIMIZE", sound_page, "UI.sound.window-maximize", m_maximize_edit, btn);
-    // Minimize [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(x, y, "OPTIONS_SOUND_MINIMIZE", sound_page, "UI.sound.window-minimize", m_minimize_edit, btn);
-    // Button
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_BUTTON"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    sound_page->AttachChild(textControl);
-    // Click [sound] 
-    y += PAGE_ROW_HEIGHT - 5;
-    AddSoundControls(x, y, "OPTIONS_SOUND_CLICK", sound_page, "UI.sound.button-click", m_clickButton_edit, btn);
-    // Rollover [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(x, y, "OPTIONS_SOUND_ROLLOVER", sound_page, "UI.sound.button-rollover", m_rolloverButton_edit, btn);
-    // Fleet
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_FLEET"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    sound_page->AttachChild(textControl);
-    // Click [sound] 
-    y += PAGE_ROW_HEIGHT - 5;
-    AddSoundControls(x, y, "OPTIONS_SOUND_CLICK", sound_page, "UI.sound.fleet-button-click", m_clickFleet_edit, btn);
-    // Rollover [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(x, y, "OPTIONS_SOUND_ROLLOVER", sound_page, "UI.sound.fleet-button-rollover", m_rolloverFleet_edit, btn);
-
-    // Fill up the Sound Options (2) tab page:
-    /*******************************************
-    Alert [sound]
-    Text Typing [sound]
-    Turn Button [sound]
-    SidePanel Open [sound]
-    Planet Button [sound]
-    Focus
-        Balanced [sound]
-        Farming [sound]
-        Industry [sound]
-        Mining [sound]
-        Research [sound]
-    List
-        Drop [sound] 
-        Pulldown [sound] 
-        Select [sound]
-    *******************************************/
-    y = PAGE_VERT_MARGIN;
-    x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-    // Alert [sound]
-    AddSoundControls(PAGE_HORZ_MARGIN, y, "OPTIONS_SOUND_ALERT", sound_page2, "UI.sound.alert", m_alert_edit, btn);
-    // Text typing [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(PAGE_HORZ_MARGIN, y, "OPTIONS_SOUND_TYPING", sound_page2, "UI.sound.text-typing", m_typing_edit, btn);
-    // Turn Button [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(PAGE_HORZ_MARGIN, y, "OPTIONS_SOUND_TURN", sound_page2, "UI.sound.turn-button-click", m_turn_edit, btn);
-    // SidePanel Open [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(PAGE_HORZ_MARGIN, y, "OPTIONS_SOUND_SIDEPANEL", sound_page2, "UI.sound.sidepanel-open", m_sidePanel_edit, btn);
-    // Planet Button [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(PAGE_HORZ_MARGIN, y, "OPTIONS_SOUND_PLANET", sound_page2, "UI.sound.planet-button-click", m_planet_edit, btn);
-    // Focus
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_FOCUS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    sound_page2->AttachChild(textControl);
-    // Balanced [sound]
-    y += PAGE_ROW_HEIGHT - 5;
-    AddSoundControls(x, y, "OPTIONS_SOUND_BALANCED", sound_page2, "UI.sound.balanced-focus", m_balanced_edit, btn);
-    // Farming [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(x, y, "OPTIONS_SOUND_FARMING", sound_page2, "UI.sound.farming-focus", m_farming_edit, btn);
-    // Industry [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(x, y, "OPTIONS_SOUND_INDUSTRY", sound_page2, "UI.sound.industry-focus", m_industry_edit, btn);
-    // Mining [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(x, y, "OPTIONS_SOUND_MINING", sound_page2, "UI.sound.mining-focus", m_mining_edit, btn);
-    // Research [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(x, y, "OPTIONS_SOUND_RESEARCH", sound_page2, "UI.sound.research-focus", m_research_edit, btn);
-    // List
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_SOUND_LIST"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    sound_page2->AttachChild(textControl);
-    // Drop [sound] 
-    y += PAGE_ROW_HEIGHT - 5;
-    AddSoundControls(x, y, "OPTIONS_SOUND_DROP", sound_page2, "UI.sound.item-drop", m_drop_edit, btn);
-    // Pulldown [sound] 
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(x, y, "OPTIONS_SOUND_PULLDOWN", sound_page2, "UI.sound.list-pulldown", m_pulldown_edit, btn);
-    // Select [sound]
-    y += PAGE_ROW_HEIGHT;
-    AddSoundControls(x, y, "OPTIONS_SOUND_SELECT", sound_page2, "UI.sound.list-select", m_select_edit, btn);
-
-    // Fill up the Controls Color Options tab page:
-    /*******************************************
-    General
-        Color [color] 
-        Border [color]
-        Text [color]
-    Edit
-        Highlight [color] 
-        Interior [color]
-    Window 
-        Color [color] 
-        Border [color]
-        Inner Border [color] 
-        Outer border [color]
-    *******************************************/
-    y = PAGE_VERT_MARGIN;
-    x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-    // General
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_GENERAL"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    colors_page->AttachChild(textControl);
-    // Color [color]
-    y += PAGE_ROW_HEIGHT - 5;
-    AddColorControls(x, y, "OPTIONS_COLOR_COLOR", colors_page, "UI.ctrl-color", comboColor);
-    // Border [color]
-    y += PAGE_ROW_HEIGHT;
-    AddColorControls(x, y, "OPTIONS_COLOR_BORDER", colors_page, "UI.ctrl-border-color", comboColor);
-    // Text [color]
-    y += PAGE_ROW_HEIGHT;
-    AddColorControls(x, y, "OPTIONS_COLOR_TEXT", colors_page, "UI.text-color", comboColor);
-    // Edit
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_EDIT"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    colors_page->AttachChild(textControl);
-    // Highlight [color] 
-    y += PAGE_ROW_HEIGHT - 5;
-    AddColorControls(x, y, "OPTIONS_COLOR_HIGHLIGHT", colors_page, "UI.edit-hilite", comboColor);
-    // Interior [color]
-    y += PAGE_ROW_HEIGHT;
-    AddColorControls(x, y, "OPTIONS_COLOR_INTERIOR", colors_page, "UI.edit-interior", comboColor);
-    // Window
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_WINDOW"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    colors_page->AttachChild(textControl);
-    // Color [color]
-    y += PAGE_ROW_HEIGHT - 5;
-    AddColorControls(x, y, "OPTIONS_COLOR_COLOR", colors_page, "UI.wnd-color", comboColor);
-    // Border [color]
-    y += PAGE_ROW_HEIGHT;
-    AddColorControls(x, y, "OPTIONS_COLOR_BORDER", colors_page, "UI.wnd-border-color", comboColor);
-    // Inner Border [color]
-    y += PAGE_ROW_HEIGHT;
-    AddColorControls(x, y, "OPTIONS_COLOR_INNER_BORDER", colors_page, "UI.wnd-inner-border-color", comboColor);
-    // Outer Border [color]
-    y += PAGE_ROW_HEIGHT;
-    AddColorControls(x, y, "OPTIONS_COLOR_OUTER_BORDER", colors_page, "UI.wnd-outer-border-color", comboColor);
-
-    // Fill up the Game Color Options tab page:
-    /*******************************************
-    Known Tech 
-        Color [color] 
-        border [color]
-    Researchable Tech 
-        Color [color] 
-        border [color]
-    Unresearchable Tech 
-        Color [color] 
-        border [color]
-    Tech Progress 
-        Color [color] 
-        background [color]
-    *******************************************/
-    y = PAGE_VERT_MARGIN;
-    x = PAGE_HORZ_MARGIN + PAGE_HORZ_OFFSET;
-    // Known Tech
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_KNOWN"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    colors_page2->AttachChild(textControl);
-    // Color [color]
-    y += PAGE_ROW_HEIGHT - 5;
-    AddColorControls(x, y, "OPTIONS_COLOR_COLOR", colors_page2, "UI.known-tech", comboColor);
-    // Border [color]
-    y += PAGE_ROW_HEIGHT;
-    AddColorControls(x, y, "OPTIONS_COLOR_BORDER", colors_page2, "UI.known-tech-border", comboColor);
-    // Researchable Tech
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_RESEARCHABLE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    colors_page2->AttachChild(textControl);
-    // Color [color]
-    y += PAGE_ROW_HEIGHT - 5;
-    AddColorControls(x, y, "OPTIONS_COLOR_COLOR", colors_page2, "UI.researchable-tech", comboColor);
-    // Border [color]
-    y += PAGE_ROW_HEIGHT;
-    AddColorControls(x, y, "OPTIONS_COLOR_BORDER", colors_page2, "UI.researchable-tech-border", comboColor);
-    // Unresearchable Tech
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_UNRESEARCHABLE"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    colors_page2->AttachChild(textControl);
-    // Color [color]
-    y += PAGE_ROW_HEIGHT - 5;
-    AddColorControls(x, y, "OPTIONS_COLOR_COLOR", colors_page2, "UI.unresearchable-tech", comboColor);
-    // Border [color]
-    y += PAGE_ROW_HEIGHT;
-    AddColorControls(x, y, "OPTIONS_COLOR_BORDER", colors_page2, "UI.unresearchable-tech-border", comboColor);
-    // Tech Progress
-    y += PAGE_ROW_HEIGHT;
-    textControl = new GG::TextControl(PAGE_HORZ_MARGIN, y, UserString("OPTIONS_COLOR_TECH_PROGRESS"), GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS*4/3), ClientUI::TEXT_COLOR);
-    colors_page2->AttachChild(textControl);
-    // Color [color]
-    y += PAGE_ROW_HEIGHT - 5;
-    AddColorControls(x, y, "OPTIONS_COLOR_PROGRESS", colors_page2, "UI.tech-progress", comboColor);
-    // Background [color]
-    y += PAGE_ROW_HEIGHT;
-    AddColorControls(x, y, "OPTIONS_COLOR_PROGRESS_BACKGROUND", colors_page2, "UI.tech-progress-background", comboColor);
-
-    // Fill up the Folders Options tab page:
-    /*******************************************
-    Settings Directory [folder]
-    Art Directory [folder]
-    Save Directory [folder]
-    Sounds Directory [folder]
-    *******************************************/
-    y = PAGE_VERT_MARGIN;
-    x = PAGE_HORZ_MARGIN;
-    // Settings Directory [folder]
-    AddFolderControls(x, y, "OPTIONS_FOLDER_SETTINGS", folders_page, "settings-dir", m_settings_dir_edit);
-    GG::Connect(m_settings_dir_edit->FocusUpdateSignal, &OptionsWnd::SettingsDirFocusUpdate, this);
-    // Art Directory [folder]
-    y += PAGE_ROW_HEIGHT;
-    AddFolderControls(x, y, "OPTIONS_FOLDER_ART", folders_page, "art-dir", m_art_dir_edit);
-    GG::Connect(m_art_dir_edit->FocusUpdateSignal, &OptionsWnd::ArtDirFocusUpdate, this);
-    // Save Directory [folder]
-    y += PAGE_ROW_HEIGHT;
-    AddFolderControls(x, y, "OPTIONS_FOLDER_SAVE", folders_page, "save-dir", m_save_dir_edit);
-    GG::Connect(m_save_dir_edit->FocusUpdateSignal, &OptionsWnd::SaveDirFocusUpdate, this);
-    // Sounds Directory [folder]
-    y += PAGE_ROW_HEIGHT;
-    AddFolderControls(x, y, "OPTIONS_FOLDER_SOUNDS", folders_page, "sound-dir", m_sound_dir_edit);
-    GG::Connect(m_sound_dir_edit->FocusUpdateSignal, &OptionsWnd::SoundDirFocusUpdate, this);
-    y += PAGE_ROW_HEIGHT;
-
-    // Add the pages to the tabbed pages control
-    m_tabs->AddWnd(control_page, UserString("OPTIONS_PAGE_CONTROL"));
-    m_tabs->AddWnd(ui_page, UserString("OPTIONS_PAGE_UI"));
-    m_tabs->AddWnd(sound_page, UserString("OPTIONS_PAGE_SOUND"));
-    m_tabs->AddWnd(sound_page2, UserString("OPTIONS_PAGE_SOUND_2"));
-    m_tabs->AddWnd(colors_page, UserString("OPTIONS_PAGE_COLOR_CONTROLS"));
-    m_tabs->AddWnd(colors_page2, UserString("OPTIONS_PAGE_COLOR_GAME"));
-    m_tabs->AddWnd(folders_page, UserString("OPTIONS_PAGE_FOLDERS"));
+    // Directories tab
+    BeginPage(UserString("OPTIONS_PAGE_DIRECTORIES"));
+    DirectoryOption("settings-dir", UserString("OPTIONS_FOLDER_SETTINGS"), GetGlobalDir());
+    DirectoryOption("save-dir", UserString("OPTIONS_FOLDER_SAVE"), GetGlobalDir());
+    EndPage();
 
     // Connect the done and cancel button
-    GG::Connect(m_done_btn->ClickedSignal, &OptionsWnd::DoneClicked, this);
+    GG::Connect(m_done_button->ClickedSignal, &OptionsWnd::DoneClicked, this);
 }
 
 OptionsWnd::~OptionsWnd()
-{
-}
+{}
 
 void OptionsWnd::KeyPress (GG::Key key, Uint32 key_mods)
 {
@@ -751,7 +758,7 @@ void OptionsWnd::KeyPress (GG::Key key, Uint32 key_mods)
 void OptionsWnd::DoneClicked()
 {
     // Save the changes:
-    boost::filesystem::ofstream ofs(GetConfigPath());
+    fs::ofstream ofs(GetConfigPath());
     GetOptionsDB().GetXML().WriteDoc(ofs);
     m_done = true;
 }
@@ -766,13 +773,8 @@ void OptionsWnd::MusicClicked(bool checked)
     else
     {
         GetOptionsDB().Set("music-off", false);
-        HumanClientApp::GetApp()->PlayMusic(ClientUI::SOUND_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1);
+        HumanClientApp::GetApp()->PlayMusic(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("bg-music"), -1);
     }
-}
-
-void OptionsWnd::UIEffectsClicked(bool checked)
-{
-    GetOptionsDB().Set("UI.sound.enabled", checked);
 }
 
 void OptionsWnd::MusicVolumeSlid(int pos, int low, int high)
@@ -786,229 +788,5 @@ void OptionsWnd::UISoundsVolumeSlid(int pos, int low, int high)
     GetOptionsDB().Set("UI.sound.volume", pos);
     HumanClientApp::GetApp()->SetUISoundsVolume(pos);
     if (GetOptionsDB().Get<bool>("UI.sound.enabled"))
-        HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
-}
-
-void OptionsWnd::TextFont(int selection)
-{
-    GetOptionsDB().Set<std::string>("UI.font", m_fonts[selection] + ".ttf");
-}
-
-void OptionsWnd::TitleFont(int selection)
-{
-    GetOptionsDB().Set<std::string>("UI.title-font", m_fonts[selection] + ".ttf");
-}
-
-void OptionsWnd::Resolution(int selection)
-{
-    assert(0 <= selection && selection <= static_cast<int>(AppResolutions().size()));
-    GetOptionsDB().Set<int>("app-width", AppResolutions()[selection].x);
-    GetOptionsDB().Set<int>("app-height", AppResolutions()[selection].y);
-}
-
-void OptionsWnd::ColorDepth(int selection)
-{
-    if ((selection < 0) || (selection >= (int)m_colorDepth.size()))
-        return;
-    int depth = atoi(m_colorDepth[selection].c_str());
-    GetOptionsDB().Set<int>("color-depth", depth);
-}
-
-void OptionsWnd::UpdateFileOption(const std::string& option_name, std::string file_name, bool folder /* = false */)
-{
-    if (NativePathToOptionPath(file_name, folder))
-        GetOptionsDB().Set<std::string>(option_name, file_name);
-}
-
-bool OptionsWnd::TestFolder(std::string& value)
-{
-    if (value.empty()) {
-        value = CURRENT_DIR;
-        return true;
-    }
-
-    boost::filesystem::path value_path, dir;
-    try {
-        value_path = boost::filesystem::path(value);
-    } catch (const boost::filesystem::filesystem_error& e) {
-        GG::ThreeButtonDlg dlg(300, 125, "\"" + value + "\"\nis an invalid file name.", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS + 2), ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
-        dlg.Run();
-        return false;
-    }
-
-    dir = boost::filesystem::system_complete(value_path);
-    if (!boost::filesystem::exists(dir)) {
-        GG::ThreeButtonDlg dlg(300, 125, "\"" + value + "\"\ndoes not exist.", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS + 2), ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
-        dlg.Run();
-        return false;
-    }
-    if (!boost::filesystem::is_directory(dir)) {
-        GG::ThreeButtonDlg dlg(300, 125, "\"" + value + "\"\nisn't a directory.", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS + 2), ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
-        dlg.Run();
-        return false;
-    }
-    value = value_path.native_file_string() + SLASH;
-
-    return true;
-}
-
-void OptionsWnd::SettingsDirFocusUpdate(const std::string& value)
-{
-    // Make sure this is a valid folder:
-    std::string folder(value);
-    if (!TestFolder(folder))
-        return;
-    UpdateFileOption("settings-dir", folder, true);
-    if (folder != value)
-        m_settings_dir_edit->SetText(folder);
-}
-
-void OptionsWnd::ArtDirFocusUpdate(const std::string& value)
-{
-    // Make sure this is a valid folder:
-    std::string folder(value);
-    if (!TestFolder(folder))
-        return;
-    UpdateFileOption("art-dir", folder, true);
-    if (folder != value)
-        m_art_dir_edit->SetText(folder);
-}
-
-void OptionsWnd::SaveDirFocusUpdate(const std::string& value)
-{
-    // Make sure this is a valid folder:
-    std::string folder(value);
-    if (!TestFolder(folder))
-        return;
-    UpdateFileOption("save-dir", folder, true);
-    if (folder != value)
-        m_save_dir_edit->SetText(folder);
-}
-
-void OptionsWnd::SoundDirFocusUpdate(const std::string& value)
-{
-    // Make sure this is a valid folder:
-    std::string folder(value);
-    if (!TestFolder(folder))
-        return;
-    UpdateFileOption("sound-dir", folder, true);
-    if (folder != value)
-        m_sound_dir_edit->SetText(folder);
-}
-
-void OptionsWnd::Browse(const std::string& optionName, const std::string& optionDir, const std::string& userString, const std::string& extension, CUIEdit* editControl)
-{
-    std::vector<std::pair<std::string, std::string> > file_types;
-    file_types.push_back(std::pair<std::string, std::string>(UserString(userString), "*" + extension));
-    file_types.push_back(std::pair<std::string, std::string>(UserString("OPTIONS_ANY_FILE"), "*.*"));
-
-    std::string filename = BrowseForFile(GetOptionsDB().Get<std::string>(optionDir), GetOptionsDB().Get<std::string>(optionName), file_types);
-    if (filename.empty())
-        return;
-
-    std::string option_filename = filename;
-    if (!NativePathToOptionPath(option_filename, false)) {
-        GG::ThreeButtonDlg dlg(300, 125, "\"" + filename + "\"\nIs invalid.", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS + 2), ClientUI::WND_COLOR, ClientUI::WND_BORDER_COLOR, ClientUI::CTRL_COLOR, ClientUI::TEXT_COLOR, 1);
-        dlg.Run();
-    } else {
-        GetOptionsDB().Set<std::string>(optionName, option_filename);
-        editControl->SetText(option_filename);
-    }
-}
-
-std::string OptionsWnd::BrowseForFile(const std::string& directory, const std::string& aFile, const std::vector<std::pair<std::string, std::string> >& file_types)
-{
-    try {
-        boost::filesystem::path settings = boost::filesystem::system_complete(boost::filesystem::path(directory));
-        boost::filesystem::path file = settings / aFile;
-        file.normalize();
-        FileDlg dlg(file.branch_path().string(), file.leaf(), false, false, file_types);
-        dlg.Run();
-        if (dlg.Result().empty())
-            return "";
-
-        std::string filename = *dlg.Result().begin();
-        if (!filename.empty()) {
-            // Make it into a path relative to the settings-dir
-            boost::filesystem::path newFile(filename);
-            boost::filesystem::path::iterator iSettings, iNewFile = newFile.begin();
-            boost::filesystem::path relative;
-            for (iSettings = settings.begin(); (iSettings != settings.end()) && (iNewFile != newFile.end()); iSettings++, iNewFile++)
-            {
-                if ((*iSettings) != (*iNewFile))
-                    break;
-            }
-            if (iNewFile == newFile.begin())
-                relative = newFile;
-            else {
-                for (; iSettings != settings.end(); iSettings++)
-                    relative /= "..";
-                for (; iNewFile != newFile.end(); iNewFile++)
-                    relative /= (*iNewFile);
-            }
-            return relative.native_directory_string();
-        }
-    } catch (const FileDlg::BadInitialDirectory& e) {
-        ClientUI::MessageBox(e.what(), true);
-    }
-    return "";
-}
-
-void OptionsWnd::FillCombo(CUIDropDownList* combo, const std::vector<std::string>& values, const std::string& currentValue)
-{
-    combo->Clear();
-    bool selected = false;
-    for (unsigned int i = 0; i < values.size(); i++)
-    {
-        int index = combo->Insert(new CUISimpleDropDownListRow(values[i]), i);
-        if (values[i] == currentValue)
-        {
-            combo->Select(index);
-            selected = true;
-        }
-    }
-    if (!selected && !values.empty())
-        combo->Select(0);
-}
-
-void OptionsWnd::FillLists()
-{
-    // Fill up the fonts list
-    FillFontList();
-
-    // Fill up the resolution list
-    const std::vector<GG::Pt>& app_resolutions = AppResolutions();
-    m_resolutions.resize(app_resolutions.size());
-    for (unsigned int i = 0; i < app_resolutions.size(); ++i) {
-        m_resolutions[i] =
-            boost::lexical_cast<std::string>(app_resolutions[i].x) +
-            " x " +
-            boost::lexical_cast<std::string>(app_resolutions[i].y);
-    }
-
-    // Fill up the color-depth list
-    m_colorDepth.clear();
-    m_colorDepth.push_back("16");
-    m_colorDepth.push_back("32");
-}
-
-void OptionsWnd::FillFontList()
-{
-    m_fonts.clear();
-    try {
-        boost::filesystem::path font_folder = boost::filesystem::initial_path();
-        boost::filesystem::directory_iterator end_it;
-        for (boost::filesystem::directory_iterator it(font_folder); it != end_it; it++)
-        {
-            if (boost::filesystem::is_directory(*it))
-                continue;
-            if (boost::filesystem::extension(*it) != ".ttf")
-                continue;
-            std::string s(it->leaf());
-            s.erase(s.size() - 4);
-            m_fonts.push_back(s);
-        }
-    } catch (boost::filesystem::filesystem_error& e) {
-        m_fonts.clear();
-    }
+        HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"));
 }

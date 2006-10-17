@@ -29,8 +29,8 @@ TurnProgressWnd::TurnProgressWnd() :
 
     LoadSplashGraphics(m_bg_graphics);
 
-    m_phase_text = new GG::TextControl(0, 20, Width(), ClientUI::PTS * 2 + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS * 2), ClientUI::TEXT_COLOR, GG::TF_CENTER | GG::TF_VCENTER);
-    m_empire_text = new GG::TextControl(0, 50, Width(), ClientUI::PTS * 2 + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS * 2), ClientUI::TEXT_COLOR, GG::TF_CENTER | GG::TF_VCENTER);
+    m_phase_text = new GG::TextControl(0, 20, Width(), ClientUI::Pts() * 2 + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() * 2), ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+    m_empire_text = new GG::TextControl(0, 50, Width(), ClientUI::Pts() * 2 + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() * 2), ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
 
     AttachChild(m_phase_text);
     AttachChild(m_empire_text);

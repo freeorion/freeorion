@@ -593,11 +593,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 std::string dbg_file("TurnOrdersReceived_empire");
                 dbg_file += boost::lexical_cast<std::string>(GetPlayerEmpire(msg.Sender())->EmpireID());
                 dbg_file += ".xml";
-#ifdef FREEORION_LINUX
                 boost::filesystem::ofstream output(GetLocalDir() / dbg_file);
-#else
-                std::ofstream output(dbg_file.c_str());
-#endif
                 doc.WriteDoc(output);
                 output.close();
             }
@@ -1352,11 +1348,7 @@ void ServerApp::NewGameInit()
         doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
 
         if (GetOptionsDB().Get<bool>("debug.log-new-game-universe")) {
-#ifdef FREEORION_LINUX
             boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameInit-empire" + boost::lexical_cast<std::string>(it->first) + "-doc.xml"));
-#else
-            std::ofstream ofs(("NewGameInit-empire" + boost::lexical_cast<std::string>(it->first) + "-doc.xml").c_str());
-#endif
             doc.WriteDoc(ofs);
             ofs.close();
         }
@@ -1420,11 +1412,7 @@ void ServerApp::LoadGameInit()
         m_network_core.SendMessage(GameStartMessage(it->first, doc));
 
         if (GetOptionsDB().Get<bool>("debug.log-load-game-universe")) {
-#ifdef FREEORION_LINUX
             boost::filesystem::ofstream ofs(GetLocalDir() / ("LoadGameInit-empire" + boost::lexical_cast<std::string>(empire_id) + "-doc.xml"));
-#else
-            std::ofstream ofs(("LoadGameInit-empire" + boost::lexical_cast<std::string>(empire_id) + "-doc.xml").c_str());
-#endif
             doc.WriteDoc(ofs);
             ofs.close();
         }
@@ -1957,11 +1945,7 @@ void ServerApp::ProcessTurns()
             std::string filename = "TurnUpdate" + boost::lexical_cast<std::string>(m_current_turn) +
                 "-empire" + boost::lexical_cast<std::string>(pEmpire->EmpireID()) +
                 "-doc.xml";
-#ifdef FREEORION_LINUX
             boost::filesystem::ofstream ofs(GetLocalDir() / filename);
-#else
-            std::ofstream ofs(filename.c_str());
-#endif
             doc.WriteDoc(ofs);
             ofs.close();
         }

@@ -44,11 +44,11 @@ FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, doubl
     Fleet* fleet = m_fleets.back();
     double x = fleet->X();
     double y = fleet->Y();
-    GG::Pt button_ul(static_cast<int>((x - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * zoom), 
-                     static_cast<int>((y - ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE / 2) * zoom));
+    GG::Pt button_ul(static_cast<int>((x - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2) * zoom), 
+                     static_cast<int>((y - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2) * zoom));
     SizeMove(GG::Pt(button_ul.x, button_ul.y),
-             GG::Pt(static_cast<int>(button_ul.x + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * zoom + 0.5), 
-                    static_cast<int>(button_ul.y + ClientUI::SYSTEM_ICON_SIZE * ClientUI::FLEET_BUTTON_SIZE * zoom + 0.5)));
+             GG::Pt(static_cast<int>(button_ul.x + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * zoom + 0.5), 
+                    static_cast<int>(button_ul.y + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * zoom + 0.5)));
 
     m_orientation = GetUniverse().Object<System>(fleet->NextSystemID())->X() - fleet->X() < 0 ? SHAPE_LEFT : SHAPE_RIGHT;
 
@@ -82,7 +82,7 @@ void FleetButton::MouseHere(const GG::Pt& pt, Uint32 keys)
     MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode())) {
         if (State() != BN_ROLLOVER && PlaySounds())
-            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"));
+            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"));
         SetState(BN_ROLLOVER);
     }
 }
@@ -153,7 +153,7 @@ void FleetButton::Clicked()
     }
 
     if (PlaySounds())
-        HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"));
+        HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"));
 
     GG::Pt ul = UpperLeft();
     bool read_only = *fleets[0]->Owners().begin() != HumanClientApp::GetApp()->EmpireID() || 

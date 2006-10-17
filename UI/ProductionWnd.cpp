@@ -157,27 +157,27 @@ namespace {
     {
         using boost::io::str;
         using boost::format;
-        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR) : ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
         std::string name_text = UserString(build.item.name);
         if (build.item.build_type == BT_SHIP)
             name_text = build.item.name;
         if (build.item.build_type != BT_BUILDING)
             name_text = str(format(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
-        m_name_text = new GG::TextControl(4, 2, w - 4, QueueRow::HEIGHT - 2, name_text, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS + 2), text_and_border, GG::TF_TOP | GG::TF_LEFT);
+        m_name_text = new GG::TextControl(4, 2, w - 4, QueueRow::HEIGHT - 2, name_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() + 2), text_and_border, GG::TF_TOP | GG::TF_LEFT);
         m_name_text->ClipText(true);
-        const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::PTS + 4) - 4;
-        m_PPs_and_turns_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::PTS + 4,
+        const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::Pts() + 4) - 4;
+        m_PPs_and_turns_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::Pts() + 4,
                                                    str(format(UserString("PRODUCTION_TURN_COST_STR")) % turn_cost % turns),
-                                                   GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), text_and_border, GG::TF_LEFT);
+                                                   GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_and_border, GG::TF_LEFT);
         int turns_left = build.turns_left_to_next_item;
         std::string turns_left_text = turns_left < 0 ? UserString("PRODUCTION_TURNS_LEFT_NEVER") : str(format(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_until_next_complete_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::PTS + 4, turns_left_text, GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS), text_and_border, GG::TF_RIGHT);
+        m_turns_remaining_until_next_complete_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::Pts() + 4, turns_left_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_and_border, GG::TF_RIGHT);
         const int PROGRESS_METER_MARGIN = 6;
         const int PROGRESS_METER_WIDTH = Width() - 2 * PROGRESS_METER_MARGIN;
         const int PROGRESS_METER_HEIGHT = 18;
         m_progress_bar = new MultiTurnProgressBar(PROGRESS_METER_WIDTH, PROGRESS_METER_HEIGHT, turns,
-                                                  turns_completed, partially_complete_turn, ClientUI::TECH_WND_PROGRESS_BAR,
-                                                  ClientUI::TECH_WND_PROGRESS_BAR_BACKGROUND, text_and_border);
+                                                  turns_completed, partially_complete_turn, ClientUI::TechWndProgressBar(),
+                                                  ClientUI::TechWndProgressBarBackground(), text_and_border);
         m_progress_bar->MoveTo(GG::Pt(PROGRESS_METER_MARGIN, m_PPs_and_turns_text->UpperLeft().y - 3 - PROGRESS_METER_HEIGHT));
 
         AttachChild(m_name_text);
@@ -188,8 +188,8 @@ namespace {
 
     void QueueBuildPanel::Render()
     {
-        GG::Clr fill = m_in_progress ? GG::LightColor(ClientUI::RESEARCHABLE_TECH_FILL_COLOR) : ClientUI::RESEARCHABLE_TECH_FILL_COLOR;
-        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR) : ClientUI::RESEARCHABLE_TECH_TEXT_AND_BORDER_COLOR;
+        GG::Clr fill = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechFillColor()) : ClientUI::ResearchableTechFillColor();
+        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
 
         glDisable(GL_TEXTURE_2D);
         Draw(fill, true);
@@ -222,7 +222,7 @@ CUIWnd(UserString("PRODUCTION_WND_TITLE"), 0, 0, w, h, GG::ONTOP),
     m_build_designator_wnd(0)
 {
     m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, 200, UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
-                                                      OUTER_LINE_THICKNESS, ClientUI::KNOWN_TECH_FILL_COLOR, ClientUI::KNOWN_TECH_TEXT_AND_BORDER_COLOR);
+                                                      OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
     m_queue_lb = new QueueListBox(2, m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height(), this);
     m_queue_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL | GG::LB_USERDELETE);
     GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width() + 6, 6);
@@ -277,7 +277,7 @@ void ProductionWnd::Render()
 
     // draw background
     glPolygonMode(GL_BACK, GL_FILL);
-    glColor4ubv(ClientUI::WND_COLOR.v);
+    glColor4ubv(ClientUI::WndColor().v);
     glBegin(GL_QUADS);
     glVertex2i(ul.x, ul.y);
     glVertex2i(lr.x, ul.y);
@@ -307,7 +307,7 @@ void ProductionWnd::Render()
     // draw outer border on pixel inside of the outer edge of the window
     glPolygonMode(GL_BACK, GL_LINE);
     glBegin(GL_POLYGON);
-    glColor4ubv(ClientUI::WND_OUTER_BORDER_COLOR.v);
+    glColor4ubv(ClientUI::WndOuterBorderColor().v);
     glVertex2i(ul.x, ul.y);
     glVertex2i(lr.x, ul.y);
     glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
@@ -321,7 +321,7 @@ void ProductionWnd::Render()
 
     // draw inner border, including extra resize-tab lines
     glBegin(GL_LINE_STRIP);
-    glColor4ubv(ClientUI::WND_INNER_BORDER_COLOR.v);
+    glColor4ubv(ClientUI::WndInnerBorderColor().v);
     glVertex2i(cl_ul.x, cl_ul.y);
     glVertex2i(cl_lr.x, cl_ul.y);
     glVertex2i(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
@@ -332,9 +332,9 @@ void ProductionWnd::Render()
     glBegin(GL_LINES);
     // draw the extra lines of the resize tab
     if (m_resizable) {
-        glColor4ubv(ClientUI::WND_INNER_BORDER_COLOR.v);
+        glColor4ubv(ClientUI::WndInnerBorderColor().v);
     } else {
-        glColor4ubv(GG::DisabledColor(ClientUI::WND_INNER_BORDER_COLOR).v);
+        glColor4ubv(GG::DisabledColor(ClientUI::WndInnerBorderColor()).v);
     }
     glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
     glVertex2i(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
@@ -344,8 +344,8 @@ void ProductionWnd::Render()
     glEnd();
     glEnable(GL_TEXTURE_2D);
 
-    glColor4ubv(ClientUI::TEXT_COLOR.v);
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::TITLE_FONT, ClientUI::TITLE_PTS);
+    glColor4ubv(ClientUI::TextColor().v);
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::TitleFont(), ClientUI::TitlePts());
     font->RenderText(ul.x + BORDER_LEFT, ul.y, WindowText());
 }
 

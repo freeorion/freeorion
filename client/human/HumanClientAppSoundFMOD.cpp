@@ -117,8 +117,9 @@ HumanClientAppSoundFMOD::HumanClientAppSoundFMOD()
     InitFMOD();
 }
 
-void HumanClientAppSoundFMOD::PlayMusic(const std::string& filename, int loops)
+void HumanClientAppSoundFMOD::PlayMusic(const boost::filesystem::path& path, int loops)
 {
+    std::string filename = path.native_file_string();
     StopMusic();
     m_current_music = FSOUND_Stream_Open(filename.c_str(), FSOUND_2D, 0, 0);
     m_music_channel = FSOUND_Stream_Play(FSOUND_FREE, m_current_music);
@@ -139,8 +140,9 @@ void HumanClientAppSoundFMOD::StopMusic()
     }
 }
 
-void HumanClientAppSoundFMOD::PlaySound(const std::string& filename)
+void HumanClientAppSoundFMOD::PlaySound(const boost::filesystem::path& path)
 {
+    std::string filename = path.native_file_string();
     std::map<std::string, int>::iterator it = m_sounds.find(filename);
     if (it != m_sounds.end()) {
         if (FSOUND_SAMPLE* sample = FSOUND_Sample_Get(it->second))
@@ -160,8 +162,9 @@ void HumanClientAppSoundFMOD::PlaySound(const std::string& filename)
     }
 }
 
-void HumanClientAppSoundFMOD::FreeSound(const std::string& filename)
+void HumanClientAppSoundFMOD::FreeSound(const boost::filesystem::path& path)
 {
+    std::string filename = path.native_file_string();
     std::map<std::string, int>::iterator it = m_sounds.find(filename);
     if (it != m_sounds.end()) {
         FSOUND_Sample_Free(FSOUND_Sample_Get(it->second));
@@ -181,17 +184,15 @@ void HumanClientAppSoundFMOD::FreeAllSounds()
 
 void HumanClientAppSoundFMOD::SetMusicVolume(int vol)
 {
-    vol = std::max(0, std::min(vol*vol/255, 255));
+    int fmod_vol = std::max(0, std::min(vol*vol/255, 255));
     if (m_music_channel != -1)
-        FSOUND_SetVolumeAbsolute(m_music_channel, vol);
-    GetOptionsDB().Set<int>("music-volume", vol);
+        FSOUND_SetVolumeAbsolute(m_music_channel, fmod_vol);
 }
 
 void HumanClientAppSoundFMOD::SetUISoundsVolume(int vol)
 {
-    vol = std::max(0, std::min(vol*vol/255, 255));
-    FSOUND_SetSFXMasterVolume(vol);
-    GetOptionsDB().Set<int>("UI.sound.volume", vol);
+    int fmod_vol = std::max(0, std::min(vol*vol/255, 255));
+    FSOUND_SetSFXMasterVolume(fmod_vol);
 }
 
 void HumanClientAppSoundFMOD::RenderBegin()

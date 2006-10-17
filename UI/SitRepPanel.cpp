@@ -67,13 +67,13 @@ void SitRepPanel::Update()
     int first_visible_sitrep = m_sitreps_lb->FirstRowShown();
     m_sitreps_lb->Clear();
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::FONT, ClientUI::PTS);
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
     Uint32 format = GG::TF_LEFT | GG::TF_WORDBREAK;
     int width = m_sitreps_lb->Width() - 8;
 
     // loop through sitreps and display
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
-        LinkText* link_text = new LinkText(0, 0, width, (*sitrep_it)->GetText(), font, format, ClientUI::TEXT_COLOR);
+        LinkText* link_text = new LinkText(0, 0, width, (*sitrep_it)->GetText(), font, format, ClientUI::TextColor());
         GG::ListBox::Row *row = new GG::ListBox::Row(link_text->Width(), link_text->Height(), "");
         GG::Connect(link_text->PlanetLinkSignal, &ClientUI::ZoomToPlanet, ClientUI::GetClientUI());
         GG::Connect(link_text->SystemLinkSignal, &ClientUI::ZoomToSystem, ClientUI::GetClientUI());

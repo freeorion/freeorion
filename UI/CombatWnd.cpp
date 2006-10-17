@@ -12,33 +12,19 @@
 
 namespace
 {
-    boost::shared_ptr<GG::Texture> GetTexture(const std::string& name, bool mipmap = false)
+    GG::SubTexture GetSubTexture(const boost::filesystem::path& path, bool mipmap = false)
     {
-        try
-        {
-            return HumanClientApp::GetApp()->GetTexture(name,mipmap);
-        }
-        catch(...)
-        {
-            return HumanClientApp::GetApp()->GetTexture(ClientUI::ART_DIR + "misc/missing.png",mipmap);
-        }
-    }
-
-    GG::SubTexture GetSubTexture(const std::string& name, bool mipmap = false)
-    {
-        boost::shared_ptr<GG::Texture> texture(GetTexture(name,mipmap));
+        boost::shared_ptr<GG::Texture> texture(ClientUI::GetTexture(path, mipmap));
         return GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultHeight());
     }
-
 }
 
 class CombatInfoControl : public GG::Control
 {
   public:
     CombatInfoControl(int w, int h,const CombatUpdateMessage &combat_info) 
-    : Control(0, 0, w, h, 0),m_combat_info(combat_info)
-    {
-    }
+        : Control(0, 0, w, h, 0),m_combat_info(combat_info)
+    {}
 
     void Update(const CombatUpdateMessage &combat_info) {m_combat_info=combat_info;}
 
@@ -57,30 +43,30 @@ class CombatInfoControl : public GG::Control
       GG::Pt ul(UpperLeft()),lr(LowerRight());
       GG::FlatRectangle(ul.x+1,ul.y+1,lr.x,lr.y,bg_color,border_color,2);
 
-      boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.0));
+      boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
       Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
       std::string text;
 
       GG::SubTexture img_topic[3],img_ship_civil,img_planet,img_arrow_split;
 
-      img_topic[0]    = GetSubTexture(ClientUI::ART_DIR + "misc/mark2icon.png");
-      img_topic[1]    = GetSubTexture(ClientUI::ART_DIR + "misc/colonyicon.png");
-      img_topic[2]    = GetSubTexture(ClientUI::ART_DIR + "icons/colonymarker.png");
-      img_arrow_split = GetSubTexture(ClientUI::ART_DIR + "misc/forkedarrow.png");
+      img_topic[0]    = GetSubTexture(ClientUI::ArtDir() / "misc" / "mark2icon.png");
+      img_topic[1]    = GetSubTexture(ClientUI::ArtDir() / "misc" / "colonyicon.png");
+      img_topic[2]    = GetSubTexture(ClientUI::ArtDir() / "icons" / "colonymarker.png");
+      img_arrow_split = GetSubTexture(ClientUI::ArtDir() / "misc" / "forkedarrow.png");
 
       int y=ul.y;
 
       GG::Rect rc;
 
       rc = GG::Rect(ul+GG::Pt(20,5),ul+GG::Pt(500,25));
-      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.0));
-      glColor4ubv(ClientUI::TEXT_COLOR.v);
+      font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
+      glColor4ubv(ClientUI::TextColor().v);
       format = GG::TF_LEFT | GG::TF_BOTTOM;
       font->RenderText(rc.UpperLeft(),rc.LowerRight(),UserString("COMBAT_BATTLE"), format, 0);
 
       rc = GG::Rect(ul+GG::Pt(20+50,5),ul+GG::Pt(500,28));
-      font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.7));
-      glColor4ubv(ClientUI::TEXT_COLOR.v);
+      font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.7));
+      glColor4ubv(ClientUI::TextColor().v);
       format = GG::TF_LEFT | GG::TF_BOTTOM;
       font->RenderText(rc.UpperLeft(),rc.LowerRight(),boost::io::str(boost::format(UserString("COMBAT_SYSTEM")) % m_combat_info.m_system), format, 0);
       
@@ -93,7 +79,6 @@ class CombatInfoControl : public GG::Control
         struct 
         {
           std::string txt;Uint32 txt_fmt;
-          //GG::Clr txt_clr;
           GG::Clr bg_clr;GG::Clr border_clr;unsigned int border_width;
         } entries[3][4] =
         {
@@ -119,10 +104,10 @@ class CombatInfoControl : public GG::Control
         
         GG::FlatRectangle(area.Left(), area.Top(), area.Right()+2, area.Bottom(),bg_item_color,border_color, 2);
 
-        font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.2));
+        font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.2));
 
         rc = GG::Rect(area.UpperLeft()+rc_txt_empire.UpperLeft(),area.UpperLeft()+rc_txt_empire.LowerRight());
-        glColor4ubv(ClientUI::TEXT_COLOR.v);format = GG::TF_LEFT | GG::TF_VCENTER;
+        glColor4ubv(ClientUI::TextColor().v);format = GG::TF_LEFT | GG::TF_VCENTER;
         font->RenderText(rc.UpperLeft(),rc.LowerRight(),m_combat_info.m_opponents[i].empire, format, 0);
 
         for(unsigned int c=0;c<3;c++)
@@ -130,17 +115,17 @@ class CombatInfoControl : public GG::Control
           GG::Rect col (area.Left()+c*ITEM_WIDTH, area.Top(),area.Left()+(c+1)*ITEM_WIDTH, area.Bottom());
           
           GG::FlatRectangle(col.Left(), col.Top()+38, col.Right()+2, col.Bottom(), GG::CLR_ZERO,border_color, 2);
-          glColor4ubv(ClientUI::TEXT_COLOR.v);
+          glColor4ubv(ClientUI::TextColor().v);
 
           img_topic[c]    .OrthoBlit(col.UpperLeft()+item_img_topic      .UpperLeft(),col.UpperLeft()+item_img_topic      .LowerRight(), false);
           img_arrow_split .OrthoBlit(col.UpperLeft()+item_img_arrow_split.UpperLeft(),col.UpperLeft()+item_img_arrow_split.LowerRight(), false);
 
-          font = HumanClientApp::GetApp()->GetFont(ClientUI::FONT, static_cast<int>(ClientUI::PTS*1.0));
+          font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
           for(unsigned int j=0;j<4;j++)
           {
             rc = GG::Rect(col.UpperLeft()+item_txt[j].UpperLeft(),col.UpperLeft()+item_txt[j].LowerRight());
             GG::FlatRectangle(rc.Left(), rc.Top(), rc.Right(), rc.Bottom(),entries[c][j].bg_clr,entries[c][j].border_clr,entries[c][j].border_width);
-            glColor4ubv(ClientUI::TEXT_COLOR.v);
+            glColor4ubv(ClientUI::TextColor().v);
             font->RenderText(rc.UpperLeft(),rc.LowerRight(),entries[c][j].txt, entries[c][j].txt_fmt, 0);
           }
         }
@@ -196,7 +181,7 @@ void CombatWnd::UpdateCombatTurnProgress(const std::string& message)
     }
 
   if(r>=m_combats_lb->NumRows())
-    m_combats_lb->Insert(new CombatInfoRow(m_combats_lb->Width() - ClientUI::SCROLL_WIDTH,msg));
+    m_combats_lb->Insert(new CombatInfoRow(m_combats_lb->Width() - ClientUI::ScrollWidth(),msg));
 
 
 }

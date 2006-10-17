@@ -18,6 +18,8 @@
 #include "../../util/Version.h"
 #include "../../Empire/Empire.h"
 
+#include <GG/BrowseInfoWnd.h>
+
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
 #include <log4cpp/PatternLayout.hh>
@@ -325,15 +327,6 @@ void HumanClientApp::StartTurn()
     ClientApp::StartTurn();
 }
 
-boost::shared_ptr<GG::Texture> HumanClientApp::GetTextureOrDefault(const std::string& name, bool mipmap)
-{
-    try {
-        return SDLGUI::GetTexture(name,mipmap);
-    } catch(...) {
-        return SDLGUI::GetTexture(ClientUI::ART_DIR + "misc/missing.png", mipmap);
-    }
-}
-
 void HumanClientApp::SDLInit()
 {
     const SDL_VideoInfo* vid_info = 0;
@@ -388,7 +381,7 @@ void HumanClientApp::SDLInit()
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
     }
 
-    if (SDL_SetVideoMode(AppWidth(), AppHeight(), bpp, DoFullScreen|SDL_OPENGL) == 0) {
+    if (SDL_SetVideoMode(AppWidth(), AppHeight(), bpp, DoFullScreen | SDL_OPENGL) == 0) {
         Logger().errorStream() << "Video mode set failed: " << SDL_GetError();
         Exit(1);
     }
@@ -429,7 +422,13 @@ void HumanClientApp::Initialize()
     m_ui->ScreenIntro(); // start the first screen; the UI takes over from there.
 
     if (!(GetOptionsDB().Get<bool>("music-off")))
-        PlayMusic(ClientUI::SOUND_DIR + GetOptionsDB().Get<std::string>("bg-music"), -1);
+        PlayMusic(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("bg-music"), -1);
+
+    boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
+        new GG::TextBoxBrowseInfoWnd(300, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                     GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
+                                     GG::TF_LEFT | GG::TF_WORDBREAK, 1));
+    GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
 }
 
 void HumanClientApp::HandleSystemEvents(int& last_mouse_event_time)
@@ -933,16 +932,16 @@ void HumanClientApp::Autosave(bool new_game)
 }
 
 /* Default sound implementation, do nothing */
-void HumanClientApp::PlayMusic(const std::string& filename, int loops /* = 0*/)
+void HumanClientApp::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
 {}
 
 void HumanClientApp::StopMusic()
 {}
 
-void HumanClientApp::PlaySound(const std::string& filename)
+void HumanClientApp::PlaySound(const boost::filesystem::path& path)
 {}
 
-void HumanClientApp::FreeSound(const std::string& filename)
+void HumanClientApp::FreeSound(const boost::filesystem::path& path)
 {}
 
 void HumanClientApp::FreeAllSounds()

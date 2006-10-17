@@ -120,11 +120,7 @@ namespace {
 
     void LoadSystemNames(std::list<std::string>& names)
     {
-#ifdef FREEORION_LINUX
-        boost::filesystem::ifstream ifs(GetGlobalDir() / "default/starnames.txt");
-#else
-        std::ifstream ifs("default/starnames.txt");
-#endif
+        boost::filesystem::ifstream ifs(GetSettingsDir() / "starnames.txt");
         while (ifs) {
             std::string latest_name;
             std::getline(ifs, latest_name);
