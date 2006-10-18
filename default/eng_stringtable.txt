@@ -375,7 +375,7 @@ OPTIONS_DB_SAVE_DIR
 The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.
 
 OPTIONS_DB_SETTINGS_DIR
-Sets the root directory for the settings and data files.
+Sets the root directory for the game resource files (settings and data files).
 
 OPTIONS_DB_LOG_LEVEL
 Sets the level at or above which log messages will be output (levels in order of decreasing verbosity: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG)
@@ -965,19 +965,10 @@ OPTIONS_ANY_FILE
 All files
 
 OPTIONS_FOLDER_SETTINGS
-Settings
-
-OPTIONS_FOLDER_ART
-Art
+Resource Files
 
 OPTIONS_FOLDER_SAVE
 Save files
-
-OPTIONS_FOLDER_FONTS
-Fonts
-
-OPTIONS_FOLDER_SOUNDS
-Sounds and music
 
 OPTIONS_LANGUAGE_FILE
 Language files

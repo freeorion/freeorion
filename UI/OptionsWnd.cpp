@@ -280,7 +280,7 @@ CUIStateButton* OptionsWnd::BoolOption(const std::string& option_name, const std
     m_current_option_list->Insert(row);
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     button->SetCheck(GetOptionsDB().Get<bool>(option_name));
-    button->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     GG::Connect(button->CheckedSignal, SetOptionFunctor<bool>(option_name));
     return button;
 }
@@ -311,9 +311,9 @@ CUISpin<int>* OptionsWnd::IntOption(const std::string& option_name, const std::s
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    spin->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text_control->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     GG::Connect(spin->ValueChangedSignal, SetOptionFunctor<int>(option_name));
     return spin;
 }
@@ -344,9 +344,9 @@ CUISpin<double>* OptionsWnd::DoubleOption(const std::string& option_name, const 
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    spin->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text_control->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     GG::Connect(spin->ValueChangedSignal, SetOptionFunctor<double>(option_name));
     return spin;
 }
@@ -368,9 +368,9 @@ void OptionsWnd::MusicVolumeOption()
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    button->SetBrowseText(GetOptionsDB().GetDescription("music-off"));
+    button->SetBrowseText(UserString(GetOptionsDB().GetDescription("music-off")));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    slider->SetBrowseText(GetOptionsDB().GetDescription("music-volume"));
+    slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("music-volume")));
     GG::Connect(button->CheckedSignal, &OptionsWnd::MusicClicked, this);
     GG::Connect(slider->SlidAndStoppedSignal, &OptionsWnd::MusicVolumeSlid, this);
 }
@@ -393,9 +393,9 @@ void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    button->SetBrowseText(GetOptionsDB().GetDescription(toggle_option_name));
+    button->SetBrowseText(UserString(GetOptionsDB().GetDescription(toggle_option_name)));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    slider->SetBrowseText(GetOptionsDB().GetDescription(volume_option_name));
+    slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
     GG::Connect(button->CheckedSignal, SetOptionFunctor<bool>(toggle_option_name));
     GG::Connect(slider->SlidAndStoppedSignal, volume_slider_handler, this);
 }
@@ -419,11 +419,11 @@ void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::strin
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     edit->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    edit->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    edit->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    button->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text_control->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     GG::Connect(edit->EditedSignal, SetOptionFunctor<std::string>(option_name, edit, string_validator));
     GG::Connect(button->ClickedSignal, BrowseForPathButtonFunctor(path, filters, edit, directory));
     if (string_validator && !string_validator(edit->WindowText()))
@@ -470,9 +470,9 @@ void OptionsWnd::ColorOption(const std::string& option_name, const std::string& 
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     color_selector->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    color_selector->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    color_selector->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text_control->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     GG::Connect(color_selector->ColorChangedSignal, SetOptionFunctor<GG::Clr>(option_name));
 }
 
@@ -519,9 +519,9 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
     if (index != -1)
         drop_list->Select(index);
     drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    drop_list->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    drop_list->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text_control->SetBrowseText(GetOptionsDB().GetDescription(option_name));
+    text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     GG::Connect(drop_list->SelChangedSignal, DropListIndexSetOptionFunctor(option_name, drop_list));
 }
 
@@ -579,7 +579,7 @@ void OptionsWnd::ResolutionOption()
     font_row->SetText(UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION"));
     drop_list->Insert(font_row);
     for (std::vector<std::string>::const_iterator it = resolutions.begin(); it != resolutions.end(); ++it) {
-        font_row = new CUISimpleDropDownListRow(*it);
+        font_row = new CUISimpleDropDownListRow(*it + " " + UserString("OPTIONS_FULLSCREEN"));
         font_row->SetText(*it);
         drop_list->Insert(font_row);
     }
