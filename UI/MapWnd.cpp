@@ -65,9 +65,8 @@ namespace {
     int g_history_position = 0; // the current edit contents are in history position 0
     void AddOptions(OptionsDB& db)
     {
-        db.Add("UI.chat-hide-interval", "Time interval, in seconds, after which the multiplayer chat window will disappear if "
-               "nothing is added to it.  A value of 0 indicates that the window should never disappear.", 10, RangedValidator<int>(0, 3600));
-        db.Add("UI.chat-edit-history", "The number of outgoing messages to keep in the chat edit box history.", 50, RangedValidator<int>(0, 1000));
+        db.Add("UI.chat-hide-interval", "OPTIONS_DB_UI_CHAT_HIDE_INTERVAL", 10, RangedValidator<int>(0, 3600));
+        db.Add("UI.chat-edit-history", "OPTIONS_DB_UI_CHAT_EDIT_HISTORY", 50, RangedValidator<int>(0, 1000));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

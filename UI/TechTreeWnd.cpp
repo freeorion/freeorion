@@ -33,8 +33,8 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add("UI.tech-layout-horz-spacing", "The horizontal spacing to be placed between techs in the tech screen, in multiples of the width of a single theory tech.", 0.75, RangedValidator<double>(0.1, 10.0));
-        db.Add("UI.tech-layout-vert-spacing", "The vertical spacing to be placed between techs in the tech screen, in multiples of the height of a single theory tech.", 1.0, RangedValidator<double>(0.1, 10.0));
+        db.Add("UI.tech-layout-horz-spacing", "OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING", 0.75, RangedValidator<double>(0.1, 10.0));
+        db.Add("UI.tech-layout-vert-spacing", "OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING", 1.0, RangedValidator<double>(0.1, 10.0));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

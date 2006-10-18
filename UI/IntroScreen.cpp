@@ -34,11 +34,9 @@ namespace {
 
     void Options(OptionsDB& db)
     {
-        db.AddFlag("force-external-server", 
-                   "Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.");
-   
-        db.Add("UI.main-menu.x", "Position of the center of the intro screen main menu, as a portion of the application's total width.", 0.75, RangedValidator<double>(0.0, 1.0));
-        db.Add("UI.main-menu.y", "Position of the center of the intro screen main menu, as a portion of the application's total height.", 0.35, RangedValidator<double>(0.0, 1.0));
+        db.AddFlag("force-external-server",  "OPTIONS_DB_FORCE_EXTERNAL_SERVER");
+        db.Add("UI.main-menu.x", "OPTIONS_DB_UI_MAIN_MENU_X", 0.75, RangedValidator<double>(0.0, 1.0));
+        db.Add("UI.main-menu.y", "OPTIONS_DB_UI_MAIN_MENU_Y", 0.35, RangedValidator<double>(0.0, 1.0));
     }
 
     bool foo_bool = RegisterOptions(&Options);

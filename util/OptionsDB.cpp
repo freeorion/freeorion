@@ -151,7 +151,7 @@ boost::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string
 
 void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = ""*/) const
 {
-    os << "Usage: " << command_line << "\n";
+    os << UserString("COMMAND_LINE_USAGE") << command_line << "\n";
 
     int longest_param_name = 0;
     for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it) {
@@ -159,7 +159,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
             longest_param_name = it->first.size();
     }
 
-    int description_column = 5;//(longest_param_name + 7); // 7 comes from 4 for e.g. "-P, ", 2 for "--", and 1 space afterwards
+    int description_column = 5;
     int description_width = 80 - description_column;
 
     if (description_width <= 0)
@@ -171,14 +171,14 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
         else
             os << "--" << it->second.name << "\n";
 
-        os << std::string(description_column - 1, ' ');// - (it->second.name.size() + 7), ' ');
+        os << std::string(description_column - 1, ' ');
 
         std::vector<std::string> tokenized_strings;
         using boost::spirit::anychar_p;
         using boost::spirit::rule;
         using boost::spirit::space_p;
         rule<> tokenizer = +(*space_p >> (+(anychar_p - space_p))[PushBack(tokenized_strings)]);
-        parse(it->second.description.c_str(), tokenizer);
+        parse(UserString(it->second.description).c_str(), tokenizer);
         int curr_column = description_column;
         for (unsigned int i = 0; i < tokenized_strings.size(); ++i) {
             if (80 < curr_column + tokenized_strings[i].size() + (i ? 1 : 0)) {
@@ -191,16 +191,16 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
         }
         if (it->second.validator) {
             std::stringstream stream;
-            stream << "Default: " << it->second.default_value;
+            stream << UserString("COMMAND_LINE_DEFAULT") << it->second.default_value;
             if (80 < curr_column + stream.str().size() + 3) {
                 os << "\n" << std::string(description_column, ' ') << stream.str() << "\n";
             } else {
                 os << " | " << stream.str() << "\n";
             }
         } else {
-            std::cout << "\n";
+            os << "\n";
         }
-        std::cout << "\n";
+        os << "\n";
     }
 }
 

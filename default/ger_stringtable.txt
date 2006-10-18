@@ -97,6 +97,311 @@ DEFENSE_BASE_DESCRIPTION
 Eine orbitale Verteidigungsbasis, die bei der Verteidigung des Planeten hilft, in dessen Orbit sie sich befindet.\n\nAngriff: 1\nVerteidigung: 3
 
 
+######################################
+# Command Line and OptionsDB Options #
+######################################
+
+COMMAND_LINE_USAGE
+Usage: 
+
+COMMAND_LINE_DEFAULT
+Default: 
+
+OPTIONS_DB_HELP
+Print this help message.
+
+OPTIONS_DB_GENERATE_CONFIG_XML
+Uses all the settings from any existing config.xml file and those given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.
+
+OPTIONS_DB_MUSIC_OFF
+Disables music in the game.
+
+OPTIONS_DB_BG_MUSIC
+Sets the background track to play.
+
+OPTIONS_DB_FULLSCREEN
+Start the game in fullscreen.
+
+OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
+Time interval, in seconds, after which the multiplayer chat window will disappear if nothing is added to it.  A value of 0 indicates that the window should never disappear.
+
+OPTIONS_DB_UI_CHAT_EDIT_HISTORY
+The number of outgoing messages to keep in the chat edit box history.
+
+OPTIONS_DB_FORCE_EXTERNAL_SERVER
+Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
+
+OPTIONS_DB_UI_MAIN_MENU_X
+Position of the center of the intro screen main menu, as a portion of the application's total width.
+
+OPTIONS_DB_UI_MAIN_MENU_Y
+Position of the center of the intro screen main menu, as a portion of the application's total height.
+
+OPTIONS_DB_APP_WIDTH
+Sets horizontal app resolution.
+
+OPTIONS_DB_APP_HEIGHT
+Sets vertical app resolution.
+
+OPTIONS_DB_COLOR_DEPTH
+Sets screen color depth, in bits per pixel.
+
+OPTIONS_DB_UI_SOUND_ENABLED
+Toggles UI sound effects on or off.
+
+OPTIONS_DB_UI_SOUND_VOLUME
+The volume (0 to 255) at which UI sound effects should be played.
+
+OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER
+The sound file played when the mouse moves over a button.
+
+OPTIONS_DB_UI_SOUND_BUTTON_CLICK
+The sound file played when a button is clicked.
+
+OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
+The sound file played when the turn button is clicked.
+
+OPTIONS_DB_UI_SOUND_LIST_SELECT
+The sound file played when a listbox or drop-down list item is selected.
+
+OPTIONS_DB_UI_SOUND_ITEM_DROP
+The sound file played when an item is dropped into a listbox.
+
+OPTIONS_DB_UI_SOUND_LIST_PULLDOWN
+The sound file played when the list is opened in a drop-down list.
+
+OPTIONS_DB_UI_SOUND_TEXT_TYPING
+The sound file played when the user types text.
+
+OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE
+The sound file played when a window is maximized.
+
+OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE
+The sound file played when a window is minimized.
+
+OPTIONS_DB_UI_SOUND_WINDOW_CLOSE
+The sound file played when a window is closed.
+
+OPTIONS_DB_UI_SOUND_ALERT
+The sound file played when an error or illegal action occurs.
+
+OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK
+The sound file played when a planet button is clicked.
+
+OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER
+The sound file played when mouse moves over a fleet button.
+
+OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
+The sound file played when a fleet button is clicked.
+
+OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
+The sound file played when the system side-panel is opened.
+
+OPTIONS_DB_UI_SOUND_FARMING_FOCUS
+The sound file played when a farming focus button is clicked.
+
+OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
+The sound file played when an industry focus button is clicked.
+
+OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
+The sound file played when a research focus button is clicked.
+
+OPTIONS_DB_UI_SOUND_MINING_FOCUS
+The sound file played when a mining focus button is clicked.
+
+OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
+The sound file played when a balanced focus button is clicked.
+
+OPTIONS_DB_UI_FONT
+Sets UI font resource file.
+
+OPTIONS_DB_UI_FONT_BOLD
+Sets UI bold font resource file.
+
+OPTIONS_DB_UI_FONT_ITALIC
+Sets UI bold font resource file.
+
+OPTIONS_DB_UI_FONT_BOLD_ITALIC
+Sets UI bold font resource file.
+
+OPTIONS_DB_UI_FONT_SIZE
+Sets UI font size.
+
+OPTIONS_DB_UI_TITLE_FONT
+Sets UI title font resource file.
+
+OPTIONS_DB_UI_TITLE_FONT_SIZE
+Sets UI title font size.
+
+OPTIONS_DB_UI_WND_COLOR
+Sets UI window color.
+
+OPTIONS_DB_UI_TEXT_COLOR
+Sets UI text color.
+
+OPTIONS_DB_UI_CTRL_COLOR
+Sets UI control color.
+
+OPTIONS_DB_UI_CTRL_BORDER_COLOR
+Sets UI control border color.
+
+OPTIONS_DB_UI_BUTTON_COLOR
+Sets UI button color.
+
+OPTIONS_DB_UI_STATE_BUTTON_COLOR
+Sets UI state button color.
+
+OPTIONS_DB_UI_SCROLL_TAB_COLOR
+Sets UI scroll tab color.
+
+OPTIONS_DB_UI_DROPDOWNLIST_INTERIOR_COLOR
+Sets UI drop-down-list interior color.
+
+OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
+Sets UI drop-down-list arrow color.
+
+OPTIONS_DB_UI_EDIT_HILITE
+Sets color of hilighting in UI edit controls.
+
+OPTIONS_DB_UI_EDIT_INTERIOR
+Sets UI edit controls' interior color.
+
+OPTIONS_DB_UI_MULTIEDIT_INTERIOR
+Sets UI multi-line edit controls' interior color.
+
+OPTIONS_DB_UI_STAT_INCREASE_COLOR
+Sets the color of increased stats in the UI.
+
+OPTIONS_DB_UI_STAT_DECREASE_COLOR
+Sets the color of decreased stats in the UI.
+
+OPTIONS_DB_UI_SIDEPANEL_COLOR
+Sets the color of the side-panel.
+
+OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR
+Sets UI outer border color.
+
+OPTIONS_DB_UI_WND_BORDER_COLOR
+Sets UI border color.
+
+OPTIONS_DB_UI_WND_INNER_BORDER_COLOR
+Sets UI inner border color.
+
+OPTIONS_DB_UI_KNOWN_TECH
+Sets color of known techs in the tech tree.
+
+OPTIONS_DB_UI_KNOWN_TECH_BORDER
+Sets text and border color of known techs in the tech tree.
+
+OPTIONS_DB_UI_RESEARCHABLE_TECH
+Sets color of researchable techs in the tech tree.
+
+OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER
+Sets text and border color of researchable techs in the tech tree.
+
+OPTIONS_DB_UI_UNRESEARCHABLE_TECH
+Sets color of unresearchable techs in the tech tree.
+
+OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER
+Sets text and border color of unresearchable techs in the tech tree.
+
+OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND
+Sets background color of progress bars in the tech tree.
+
+OPTIONS_DB_UI_TECH_PROGRESS
+Sets color of progress bars in the tech tree.
+
+OPTIONS_DB_UI_SCROLL_WIDTH
+Sets UI scroll width.
+
+OPTIONS_DB_UI_SYSTEM_ICON_SIZE
+Sets size of system icons.
+
+OPTIONS_DB_UI_FLEET_BUTTON_SIZE
+Sets size of fleet buttons.
+
+OPTIONS_DB_UI_TECH_CATEGORY_1
+Sets color of the first category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_2
+Sets color of the second category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_3
+Sets color of the third category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_4
+Sets color of the fourth category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_5
+Sets color of the fifth category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TOOLTIP_DELAY
+Sets UI tooltip popup delay, in ms.
+
+OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
+If true, clicks on multiple fleet buttons will open multiple fleet windows at the same time.  Otherwise, opening a fleet window will close any currently-open fleet window.
+
+OPTIONS_DB_UI_FLEET_AUTOSELECT
+Auto-select the top fleet when a fleet window is opened.  Consider using this flag if you use UI.multiple-fleet-windows.
+
+OPTIONS_DB_UI_WINDOW_QUICKCLOSE
+Close open windows such as fleet windows and the system-view side panel when you right-click on the main map.
+
+OPTIONS_DB_GAMESETUP_STARS
+The number of stars in the galaxy to be generated.
+
+OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
+The shape of the galaxy to be generated.
+
+OPTIONS_DB_GAMESETUP_GALAXY_AGE
+The shape of the galaxy to be generated.
+
+OPTIONS_DB_GAMESETUP_PLANET_DENSITY
+The number of planets per system in the galaxy to be generated.
+
+OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
+The number of starlanes in the galaxy to be generated.
+
+OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
+The frequency of specials appearing in the galaxy to be generated.
+
+OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
+The horizontal spacing to be placed between techs in the tech screen, in multiples of the width of a single theory tech.
+
+OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
+The vertical spacing to be placed between techs in the tech screen, in multiples of the height of a single theory tech.
+
+OPTIONS_DB_SAVE_DIR
+The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.
+
+OPTIONS_DB_SETTINGS_DIR
+Sets the root directory for the settings and data files.
+
+OPTIONS_DB_LOG_LEVEL
+Sets the level at or above which log messages will be output (levels in order of decreasing verbosity: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG)
+
+OPTIONS_DB_STRINGTABLE_FILENAME
+Sets the language-specific string table filename.
+
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
+If true, autosaves will occur during single-player games.
+
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER
+If true, autosaves will occur during multiplayer games.
+
+OPTIONS_DB_AUTOSAVE_TURNS
+Sets the number of turns that should elapse between autosaves.
+
+OPTIONS_DB_AUTOSAVE_SAVES
+Sets the number of autosaved games that should be kept.
+
+OPTIONS_DB_ENABLE_SDL_EVENT_THREAD
+Enables creation of a thread dedicated to handling incoming SDL messages. This may make FreeOrion more or less responsive, depending on your system.
+
+OPTIONS_DB_MUSIC_VOLUME
+The volume (0 to 255) at which music should be played.
+
+
 #################
 # File Dialog   #
 #################

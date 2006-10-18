@@ -120,77 +120,77 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add("app-width", "Sets horizontal app resolution.", 1024, RangedValidator<int>(800, 2048));
-        db.Add("app-height", "Sets vertical app resolution.", 768, RangedValidator<int>(600, 1536));
-        db.Add('c', "color-depth", "Sets screen color depth, in bits per pixel.", 32, RangedStepValidator<int>(8, 16, 32));
+        db.Add("app-width", "OPTIONS_DB_APP_WIDTH", 1024, RangedValidator<int>(800, 2048));
+        db.Add("app-height", "OPTIONS_DB_APP_HEIGHT", 768, RangedValidator<int>(600, 1536));
+        db.Add('c', "color-depth", "OPTIONS_DB_COLOR_DEPTH", 32, RangedStepValidator<int>(8, 16, 32));
 
         // sound
-        db.Add("UI.sound.enabled", "Toggles UI sound effects on or off.", true, Validator<bool>());
-        db.Add("UI.sound.volume", "The volume (0 to 255) at which UI sound effects should be played.", 255, RangedValidator<int>(0, 255));
-        db.Add<std::string>("UI.sound.button-rollover", "The sound file played when the mouse moves over a button.", "button_rollover.wav");
-        db.Add<std::string>("UI.sound.button-click", "The sound file played when a button is clicked.", "button_click.wav");
-        db.Add<std::string>("UI.sound.turn-button-click", "The sound file played when the turn button is clicked.", "turn_button_click.wav");
-        db.Add<std::string>("UI.sound.list-select", "The sound file played when a listbox or drop-down list item is selected.", "list_select.wav");
-        db.Add<std::string>("UI.sound.item-drop", "The sound file played when an item is dropped into a listbox.", "item_drop.wav");
-        db.Add<std::string>("UI.sound.list-pulldown", "The sound file played when the list is opened in a drop-down list.", "list_pulldown.wav");
-        db.Add<std::string>("UI.sound.text-typing", "The sound file played when the user types text.", "text_typing.wav");
-        db.Add<std::string>("UI.sound.window-maximize", "The sound file played when a window is maximized.", "window_maximize.wav");
-        db.Add<std::string>("UI.sound.window-minimize", "The sound file played when a window is minimized.", "window_minimize.wav");
-        db.Add<std::string>("UI.sound.window-close", "The sound file played when a window is closed.", "window_close.wav");
-        db.Add<std::string>("UI.sound.alert", "The sound file played when an error or illegal action occurs.", "alert.wav");
-        db.Add<std::string>("UI.sound.planet-button-click", "The sound file played when a planet button is clicked.", "button_click.wav");
-        db.Add<std::string>("UI.sound.fleet-button-rollover", "The sound file played when mouse moves over a fleet button.", "fleet_button_rollover.wav");
-        db.Add<std::string>("UI.sound.fleet-button-click", "The sound file played when a fleet button is clicked.", "fleet_button_click.wav");
-        db.Add<std::string>("UI.sound.sidepanel-open", "The sound file played when the system side-panel is opened.", "sidepanel_open.wav");
-        db.Add<std::string>("UI.sound.farming-focus", "The sound file played when a farming focus button is clicked.", "farm_select.wav");
-        db.Add<std::string>("UI.sound.industry-focus", "The sound file played when an industry focus button is clicked.", "industry_select.wav");
-        db.Add<std::string>("UI.sound.research-focus", "The sound file played when a research focus button is clicked.", "research_select.wav");
-        db.Add<std::string>("UI.sound.mining-focus", "The sound file played when a mining focus button is clicked.", "mining_select.wav");
+        db.Add("UI.sound.enabled", "OPTIONS_DB_UI_SOUND_ENABLED", true, Validator<bool>());
+        db.Add("UI.sound.volume", "OPTIONS_DB_UI_SOUND_VOLUME", 255, RangedValidator<int>(0, 255));
+        db.Add<std::string>("UI.sound.button-rollover", "OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER", "button_rollover.wav");
+        db.Add<std::string>("UI.sound.button-click", "OPTIONS_DB_UI_SOUND_BUTTON_CLICK", "button_click.wav");
+        db.Add<std::string>("UI.sound.turn-button-click", "OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK", "turn_button_click.wav");
+        db.Add<std::string>("UI.sound.list-select", "OPTIONS_DB_UI_SOUND_LIST_SELECT", "list_select.wav");
+        db.Add<std::string>("UI.sound.item-drop", "OPTIONS_DB_UI_SOUND_ITEM_DROP", "item_drop.wav");
+        db.Add<std::string>("UI.sound.list-pulldown", "OPTIONS_DB_UI_SOUND_LIST_PULLDOWN", "list_pulldown.wav");
+        db.Add<std::string>("UI.sound.text-typing", "OPTIONS_DB_UI_SOUND_TEXT_TYPING", "text_typing.wav");
+        db.Add<std::string>("UI.sound.window-maximize", "OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE", "window_maximize.wav");
+        db.Add<std::string>("UI.sound.window-minimize", "OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE", "window_minimize.wav");
+        db.Add<std::string>("UI.sound.window-close", "OPTIONS_DB_UI_SOUND_WINDOW_CLOSE", "window_close.wav");
+        db.Add<std::string>("UI.sound.alert", "OPTIONS_DB_UI_SOUND_ALERT", "alert.wav");
+        db.Add<std::string>("UI.sound.planet-button-click", "OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK", "button_click.wav");
+        db.Add<std::string>("UI.sound.fleet-button-rollover", "OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER", "fleet_button_rollover.wav");
+        db.Add<std::string>("UI.sound.fleet-button-click", "OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK", "fleet_button_click.wav");
+        db.Add<std::string>("UI.sound.sidepanel-open", "OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN", "sidepanel_open.wav");
+        db.Add<std::string>("UI.sound.farming-focus", "OPTIONS_DB_UI_SOUND_FARMING_FOCUS", "farm_select.wav");
+        db.Add<std::string>("UI.sound.industry-focus", "OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS", "industry_select.wav");
+        db.Add<std::string>("UI.sound.research-focus", "OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS", "research_select.wav");
+        db.Add<std::string>("UI.sound.mining-focus", "OPTIONS_DB_UI_SOUND_MINING_FOCUS", "mining_select.wav");
         // TODO: uncomment when trade is added to side panel
         //db.Add<std::string>("UI.sound.trade-focus", "The sound file played when a trade focus button is clicked.", "trade_select.wav");
-        db.Add<std::string>("UI.sound.balanced-focus", "The sound file played when a balanced focus button is clicked.", "balanced_select.wav");
+        db.Add<std::string>("UI.sound.balanced-focus", "OPTIONS_DB_UI_SOUND_BALANCED_FOCUS", "balanced_select.wav");
 
         // fonts
-        db.Add<std::string>("UI.font", "Sets UI font resource file.", "DejaVuSans.ttf");
-        db.Add<std::string>("UI.font-bold", "Sets UI bold font resource file.", "DejaVuSans-Bold.ttf");
-        db.Add<std::string>("UI.font-italic", "Sets UI bold font resource file.", "DejaVuSans-Oblique.ttf");
-        db.Add<std::string>("UI.font-bold-italic", "Sets UI bold font resource file.", "DejaVuSans-BoldOblique.ttf");
-        db.Add("UI.font-size", "Sets UI font size.", 12, RangedValidator<int>(4, 40));
-        db.Add<std::string>("UI.title-font", "Sets UI title font resource file.", "DejaVuSans.ttf");
-        db.Add("UI.title-font-size", "Sets UI title font size.", 12, RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.font", "OPTIONS_DB_UI_FONT", "DejaVuSans.ttf");
+        db.Add<std::string>("UI.font-bold", "OPTIONS_DB_UI_FONT_BOLD", "DejaVuSans-Bold.ttf");
+        db.Add<std::string>("UI.font-italic", "OPTIONS_DB_UI_FONT_ITALIC", "DejaVuSans-Oblique.ttf");
+        db.Add<std::string>("UI.font-bold-italic", "OPTIONS_DB_UI_FONT_BOLD_ITALIC", "DejaVuSans-BoldOblique.ttf");
+        db.Add("UI.font-size", "OPTIONS_DB_UI_FONT_SIZE", 12, RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.title-font", "OPTIONS_DB_UI_TITLE_FONT", "DejaVuSans.ttf");
+        db.Add("UI.title-font-size", "OPTIONS_DB_UI_TITLE_FONT_SIZE", 12, RangedValidator<int>(4, 40));
 
         // colors
-        db.Add("UI.wnd-color", "Sets UI window color.", StreamableColor(GG::Clr(0, 0, 0, 210)), Validator<StreamableColor>());
-        db.Add("UI.text-color", "Sets UI text color.", StreamableColor(GG::Clr(255, 255, 255, 255)), Validator<StreamableColor>());
-        db.Add("UI.ctrl-color", "Sets UI control color.", StreamableColor(GG::Clr(30, 30, 30, 255)), Validator<StreamableColor>());
-        db.Add("UI.ctrl-border-color", "Sets UI control border color.", StreamableColor(GG::Clr(124, 124, 124, 255)), Validator<StreamableColor>());
-        db.Add("UI.button-color", "Sets UI button color.", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.state-button-color", "Sets UI state button color.", StreamableColor(GG::Clr(0, 127, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.scroll-tab-color", "Sets UI scroll tab color.", StreamableColor(GG::Clr(60, 60, 60, 255)), Validator<StreamableColor>());
-        db.Add("UI.dropdownlist-interior-color", "Sets UI drop-down-list interior color.", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.dropdownlist-arrow-color", "Sets UI drop-down-list arrow color.", StreamableColor(GG::Clr(130, 130, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.edit-hilite", "Sets color of hilighting in UI edit controls.", StreamableColor(GG::Clr(43, 81, 102, 255)), Validator<StreamableColor>());
-        db.Add("UI.edit-interior", "Sets UI edit controls' interior color.", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.multiedit-interior", "Sets UI multi-line edit controls' interior color.", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.stat-increase-color", "Sets the color of increased stats in the UI.", StreamableColor(GG::Clr(127, 255, 127, 255)), Validator<StreamableColor>());
-        db.Add("UI.stat-decrease-color", "Sets the color of decreased stats in the UI.", StreamableColor(GG::Clr(255, 127, 127, 255)), Validator<StreamableColor>());
-        db.Add("UI.sidepanel-color", "Sets the color of the side-panel.", StreamableColor(GG::Clr(0, 0, 0, 220)), Validator<StreamableColor>());
-        db.Add("UI.wnd-outer-border-color", "Sets UI outer border color.", StreamableColor(GG::Clr(64, 64, 64, 255)), Validator<StreamableColor>());
-        db.Add("UI.wnd-border-color", "Sets UI border color.", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.wnd-inner-border-color", "Sets UI inner border color.", StreamableColor(GG::Clr(255, 255, 255, 255)), Validator<StreamableColor>());
-        db.Add("UI.known-tech", "Sets color of known techs in the tech tree.", StreamableColor(GG::Clr(72, 72, 72, 255)), Validator<StreamableColor>());
-        db.Add("UI.known-tech-border", "Sets text and border color of known techs in the tech tree.", StreamableColor(GG::Clr(164, 164, 164, 255)), Validator<StreamableColor>());
-        db.Add("UI.researchable-tech", "Sets color of researchable techs in the tech tree.", StreamableColor(GG::Clr(48, 48, 48, 255)), Validator<StreamableColor>());
-        db.Add("UI.researchable-tech-border", "Sets text and border color of researchable techs in the tech tree.", StreamableColor(GG::Clr(164, 164, 164, 255)), Validator<StreamableColor>());
-        db.Add("UI.unresearchable-tech", "Sets color of unresearchable techs in the tech tree.", StreamableColor(GG::Clr(30, 30, 30, 255)), Validator<StreamableColor>());
-        db.Add("UI.unresearchable-tech-border", "Sets text and border color of unresearchable techs in the tech tree.", StreamableColor(GG::Clr(86, 86, 86, 255)), Validator<StreamableColor>());
-        db.Add("UI.tech-progress-background", "Sets background color of progress bars in the tech tree.", StreamableColor(GG::Clr(72, 72, 72, 255)), Validator<StreamableColor>());
-        db.Add("UI.tech-progress", "Sets color of progress bars in the tech tree.", StreamableColor(GG::Clr(40, 40, 40, 255)), Validator<StreamableColor>());
+        db.Add("UI.wnd-color", "OPTIONS_DB_UI_WND_COLOR", StreamableColor(GG::Clr(0, 0, 0, 210)), Validator<StreamableColor>());
+        db.Add("UI.text-color", "OPTIONS_DB_UI_TEXT_COLOR", StreamableColor(GG::Clr(255, 255, 255, 255)), Validator<StreamableColor>());
+        db.Add("UI.ctrl-color", "OPTIONS_DB_UI_CTRL_COLOR", StreamableColor(GG::Clr(30, 30, 30, 255)), Validator<StreamableColor>());
+        db.Add("UI.ctrl-border-color", "OPTIONS_DB_UI_CTRL_BORDER_COLOR", StreamableColor(GG::Clr(124, 124, 124, 255)), Validator<StreamableColor>());
+        db.Add("UI.button-color", "OPTIONS_DB_UI_BUTTON_COLOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
+        db.Add("UI.state-button-color", "OPTIONS_DB_UI_STATE_BUTTON_COLOR", StreamableColor(GG::Clr(0, 127, 0, 255)), Validator<StreamableColor>());
+        db.Add("UI.scroll-tab-color", "OPTIONS_DB_UI_SCROLL_TAB_COLOR", StreamableColor(GG::Clr(60, 60, 60, 255)), Validator<StreamableColor>());
+        db.Add("UI.dropdownlist-interior-color", "OPTIONS_DB_UI_DROPDOWNLIST_INTERIOR_COLOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
+        db.Add("UI.dropdownlist-arrow-color", "OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR", StreamableColor(GG::Clr(130, 130, 0, 255)), Validator<StreamableColor>());
+        db.Add("UI.edit-hilite", "OPTIONS_DB_UI_EDIT_HILITE", StreamableColor(GG::Clr(43, 81, 102, 255)), Validator<StreamableColor>());
+        db.Add("UI.edit-interior", "OPTIONS_DB_UI_EDIT_INTERIOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
+        db.Add("UI.multiedit-interior", "OPTIONS_DB_UI_MULTIEDIT_INTERIOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
+        db.Add("UI.stat-increase-color", "OPTIONS_DB_UI_STAT_INCREASE_COLOR", StreamableColor(GG::Clr(127, 255, 127, 255)), Validator<StreamableColor>());
+        db.Add("UI.stat-decrease-color", "OPTIONS_DB_UI_STAT_DECREASE_COLOR", StreamableColor(GG::Clr(255, 127, 127, 255)), Validator<StreamableColor>());
+        db.Add("UI.sidepanel-color", "OPTIONS_DB_UI_SIDEPANEL_COLOR", StreamableColor(GG::Clr(0, 0, 0, 220)), Validator<StreamableColor>());
+        db.Add("UI.wnd-outer-border-color", "OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR", StreamableColor(GG::Clr(64, 64, 64, 255)), Validator<StreamableColor>());
+        db.Add("UI.wnd-border-color", "OPTIONS_DB_UI_WND_BORDER_COLOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
+        db.Add("UI.wnd-inner-border-color", "OPTIONS_DB_UI_WND_INNER_BORDER_COLOR", StreamableColor(GG::Clr(255, 255, 255, 255)), Validator<StreamableColor>());
+        db.Add("UI.known-tech", "OPTIONS_DB_UI_KNOWN_TECH", StreamableColor(GG::Clr(72, 72, 72, 255)), Validator<StreamableColor>());
+        db.Add("UI.known-tech-border", "OPTIONS_DB_UI_KNOWN_TECH_BORDER", StreamableColor(GG::Clr(164, 164, 164, 255)), Validator<StreamableColor>());
+        db.Add("UI.researchable-tech", "OPTIONS_DB_UI_RESEARCHABLE_TECH", StreamableColor(GG::Clr(48, 48, 48, 255)), Validator<StreamableColor>());
+        db.Add("UI.researchable-tech-border", "OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER", StreamableColor(GG::Clr(164, 164, 164, 255)), Validator<StreamableColor>());
+        db.Add("UI.unresearchable-tech", "OPTIONS_DB_UI_UNRESEARCHABLE_TECH", StreamableColor(GG::Clr(30, 30, 30, 255)), Validator<StreamableColor>());
+        db.Add("UI.unresearchable-tech-border", "OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER", StreamableColor(GG::Clr(86, 86, 86, 255)), Validator<StreamableColor>());
+        db.Add("UI.tech-progress-background", "OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND", StreamableColor(GG::Clr(72, 72, 72, 255)), Validator<StreamableColor>());
+        db.Add("UI.tech-progress", "OPTIONS_DB_UI_TECH_PROGRESS", StreamableColor(GG::Clr(40, 40, 40, 255)), Validator<StreamableColor>());
 
         // misc
-        db.Add("UI.scroll-width", "Sets UI scroll width.", 14, RangedValidator<int>(8, 30));
-        db.Add("UI.system-icon-size", "Sets size of system icons.", 14, RangedValidator<int>(8, 50));
-        db.Add("UI.fleet-button-size", "Sets size of fleet buttons.", 0.5, RangedValidator<double>(0.2, 2));
+        db.Add("UI.scroll-width", "OPTIONS_DB_UI_SCROLL_WIDTH", 14, RangedValidator<int>(8, 30));
+        db.Add("UI.system-icon-size", "OPTIONS_DB_UI_SYSTEM_ICON_SIZE", 14, RangedValidator<int>(8, 50));
+        db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 0.5, RangedValidator<double>(0.2, 2));
 
         // tech category colors
         const GG::Clr LEARNING_CATEGORY(93, 155, 246, 255);
@@ -198,21 +198,17 @@ namespace {
         const GG::Clr PRODUCTION_CATEGORY(240, 106, 106, 255);
         const GG::Clr CONSTRUCTION_CATEGORY(241, 233, 87, 255);
         const GG::Clr ECONOMICS_CATEGORY(255, 112, 247, 255);
-        db.Add("UI.tech-category-1", "Sets color of the first category of techs defined in techs.xml.", StreamableColor(LEARNING_CATEGORY), Validator<StreamableColor>());
-        db.Add("UI.tech-category-2", "Sets color of the second category of techs defined in techs.xml.", StreamableColor(GROWTH_CATEGORY), Validator<StreamableColor>());
-        db.Add("UI.tech-category-3", "Sets color of the third category of techs defined in techs.xml.", StreamableColor(PRODUCTION_CATEGORY), Validator<StreamableColor>());
-        db.Add("UI.tech-category-4", "Sets color of the fourth category of techs defined in techs.xml.", StreamableColor(CONSTRUCTION_CATEGORY), Validator<StreamableColor>());
-        db.Add("UI.tech-category-5", "Sets color of the fifth category of techs defined in techs.xml.", StreamableColor(ECONOMICS_CATEGORY), Validator<StreamableColor>());
+        db.Add("UI.tech-category-1", "OPTIONS_DB_UI_TECH_CATEGORY_1", StreamableColor(LEARNING_CATEGORY), Validator<StreamableColor>());
+        db.Add("UI.tech-category-2", "OPTIONS_DB_UI_TECH_CATEGORY_2", StreamableColor(GROWTH_CATEGORY), Validator<StreamableColor>());
+        db.Add("UI.tech-category-3", "OPTIONS_DB_UI_TECH_CATEGORY_3", StreamableColor(PRODUCTION_CATEGORY), Validator<StreamableColor>());
+        db.Add("UI.tech-category-4", "OPTIONS_DB_UI_TECH_CATEGORY_4", StreamableColor(CONSTRUCTION_CATEGORY), Validator<StreamableColor>());
+        db.Add("UI.tech-category-5", "OPTIONS_DB_UI_TECH_CATEGORY_5", StreamableColor(ECONOMICS_CATEGORY), Validator<StreamableColor>());
 
         // UI behavior
-        db.Add("UI.tooltip-delay", "Sets UI tooltip popup delay, in ms.", 1000, RangedValidator<int>(0, 3000));
-        db.Add("UI.multiple-fleet-windows", "If true, clicks on multiple fleet buttons will open multiple fleet "
-               "windows at the same time.  Otherwise, opening a fleet window will close any currently-open fleet window.", 
-               false);
-        db.Add("UI.fleet-autoselect", "Auto-select the top fleet when a fleet window "
-               "is opened.  Consider using this flag if you use UI.multiple-fleet-windows.", true);
-        db.Add("UI.window-quickclose", "Close open windows such as fleet windows and the system-view side panel when you "
-               "right-click on the main map.", true);
+        db.Add("UI.tooltip-delay", "OPTIONS_DB_UI_TOOLTIP_DELAY", 1000, RangedValidator<int>(0, 3000));
+        db.Add("UI.multiple-fleet-windows", "OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS", false);
+        db.Add("UI.fleet-autoselect", "OPTIONS_DB_UI_FLEET_AUTOSELECT", true);
+        db.Add("UI.window-quickclose", "OPTIONS_DB_UI_WINDOW_QUICKCLOSE", true);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

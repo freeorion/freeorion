@@ -83,16 +83,14 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add("autosave.single-player", "If true, autosaves will occur during single-player games.", true, Validator<bool>());
-        db.Add("autosave.multiplayer", "If true, autosaves will occur during multiplayer games.", false, Validator<bool>());
-        db.Add("autosave.turns", "Sets the number of turns that should elapse between autosaves.", 5, RangedValidator<int>(1, 50));
-        db.Add("autosave.saves", "Sets the number of autosaved games that should be kept.", 10, RangedValidator<int>(1, 50));
+        db.Add("autosave.single-player", "OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER", true, Validator<bool>());
+        db.Add("autosave.multiplayer", "OPTIONS_DB_AUTOSAVE_MULTIPLAYER", false, Validator<bool>());
+        db.Add("autosave.turns", "OPTIONS_DB_AUTOSAVE_TURNS", 5, RangedValidator<int>(1, 50));
+        db.Add("autosave.saves", "OPTIONS_DB_AUTOSAVE_SAVES", 10, RangedValidator<int>(1, 50));
 #if defined(FREEORION_LINUX)
-        db.Add("enable-sdl-event-thread", "Enables creation of a thread dedicated to handling incoming SDL "
-               "messages. This may make FreeOrion more or less responsive, depending on your system.",
-               false, Validator<bool>());
+        db.Add("enable-sdl-event-thread", "OPTIONS_DB_ENABLE_SDL_EVENT_THREAD", false, Validator<bool>());
 #endif
-        db.Add("music-volume", "The volume (0 to 255) at which music should be played.", 255, RangedValidator<int>(1, 255));
+        db.Add("music-volume", "OPTIONS_DB_MUSIC_VOLUME", 255, RangedValidator<int>(1, 255));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

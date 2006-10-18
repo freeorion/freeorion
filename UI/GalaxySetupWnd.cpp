@@ -1,4 +1,3 @@
-//GalaxySetupWnd.cpp
 #include "GalaxySetupWnd.h"
 
 #include "CUIControls.h"
@@ -27,12 +26,12 @@ namespace {
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
-        db.Add("GameSetup.stars", "The number of stars in the galaxy to be generated.", 100, RangedValidator<int>(10, 500));
-        db.Add("GameSetup.galaxy-shape", "The shape of the galaxy to be generated.", SPIRAL_3, RangedValidator<Shape>(SPIRAL_2, RING));
-        db.Add("GameSetup.galaxy-age", "The shape of the galaxy to be generated.", AGE_MATURE, RangedValidator<Age>(AGE_YOUNG, AGE_ANCIENT));
-        db.Add("GameSetup.planet-density", "The number of planets per system in the galaxy to be generated.", PD_AVERAGE, RangedValidator<PlanetDensity>(PD_LOW, PD_HIGH));
-        db.Add("GameSetup.starlane-frequency", "The number of starlanes in the galaxy to be generated.", LANES_SEVERAL, RangedValidator<StarlaneFrequency>(ALLOW_NO_STARLANES ? LANES_NONE : LANES_FEW, LANES_VERY_MANY));
-        db.Add("GameSetup.specials-frequency", "The frequency of specials appearing in the galaxy to be generated.", SPECIALS_UNCOMMON, RangedValidator<SpecialsFrequency>(SPECIALS_NONE, SPECIALS_COMMON));
+        db.Add("GameSetup.stars", "OPTIONS_DB_GAMESETUP_STARS", 100, RangedValidator<int>(10, 500));
+        db.Add("GameSetup.galaxy-shape", "OPTIONS_DB_GAMESETUP_GALAXY_SHAPE", SPIRAL_3, RangedValidator<Shape>(SPIRAL_2, RING));
+        db.Add("GameSetup.galaxy-age", "OPTIONS_DB_GAMESETUP_GALAXY_AGE", AGE_MATURE, RangedValidator<Age>(AGE_YOUNG, AGE_ANCIENT));
+        db.Add("GameSetup.planet-density", "OPTIONS_DB_GAMESETUP_PLANET_DENSITY", PD_AVERAGE, RangedValidator<PlanetDensity>(PD_LOW, PD_HIGH));
+        db.Add("GameSetup.starlane-frequency", "OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY", LANES_SEVERAL, RangedValidator<StarlaneFrequency>(ALLOW_NO_STARLANES ? LANES_NONE : LANES_FEW, LANES_VERY_MANY));
+        db.Add("GameSetup.specials-frequency", "OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY", SPECIALS_UNCOMMON, RangedValidator<SpecialsFrequency>(SPECIALS_NONE, SPECIALS_COMMON));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }

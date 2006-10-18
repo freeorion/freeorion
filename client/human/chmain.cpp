@@ -19,11 +19,11 @@ int main(int argc, char* argv[])
 
     // read and process command-line arguments, if any
     try {
-        GetOptionsDB().AddFlag('h', "help", "Print this help message.");
-        GetOptionsDB().AddFlag('g', "generate-config-xml", "Uses all the settings from any existing config.xml file and those given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.");
-        GetOptionsDB().AddFlag('m', "music-off", "Disables music in the game");
-        GetOptionsDB().Add<std::string>("bg-music", "Sets the background track to play", "artificial_intelligence_v3.ogg");
-        GetOptionsDB().AddFlag('f', "fullscreen", "Start the game in fullscreen");
+        GetOptionsDB().AddFlag('h', "help", "OPTIONS_DB_HELP");
+        GetOptionsDB().AddFlag('g', "generate-config-xml", "OPTIONS_DB_GENERATE_CONFIG_XML");
+        GetOptionsDB().AddFlag('m', "music-off", "OPTIONS_DB_MUSIC_OFF");
+        GetOptionsDB().Add<std::string>("bg-music", "OPTIONS_DB_BG_MUSIC", "artificial_intelligence_v3.ogg");
+        GetOptionsDB().AddFlag('f', "fullscreen", "OPTIONS_DB_FULLSCREEN");
         XMLDoc doc;
         boost::filesystem::ifstream ifs(GetConfigPath());
         doc.ReadDoc(ifs);
