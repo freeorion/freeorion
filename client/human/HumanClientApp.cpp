@@ -83,7 +83,7 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add("autosave.single-player", "If true, autosaves will occur during single-player games.", false, Validator<bool>());
+        db.Add("autosave.single-player", "If true, autosaves will occur during single-player games.", true, Validator<bool>());
         db.Add("autosave.multiplayer", "If true, autosaves will occur during multiplayer games.", false, Validator<bool>());
         db.Add("autosave.turns", "Sets the number of turns that should elapse between autosaves.", 5, RangedValidator<int>(1, 50));
         db.Add("autosave.saves", "Sets the number of autosaved games that should be kept.", 10, RangedValidator<int>(1, 50));
@@ -425,7 +425,7 @@ void HumanClientApp::Initialize()
         PlayMusic(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("bg-music"), -1);
 
     boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
-        new GG::TextBoxBrowseInfoWnd(300, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+        new GG::TextBoxBrowseInfoWnd(400, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                                      GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
                                      GG::TF_LEFT | GG::TF_WORDBREAK, 1));
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);

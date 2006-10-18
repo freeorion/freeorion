@@ -25,7 +25,7 @@
 namespace fs = boost::filesystem;
 
 namespace {
-    const int PAGE_WIDTH = 300;
+    const int PAGE_WIDTH = 400;
     const int PAGE_HEIGHT = 450;
     const int INDENTATION = 20;
     const int ROW_WIDTH = PAGE_WIDTH - 4 - 14 - 5;
@@ -221,13 +221,15 @@ OptionsWnd::OptionsWnd():
     CUIWnd(UserString("OPTIONS_TITLE"),
            (GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + 20)) / 2,
            (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + 70)) / 2,
-           PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::CLICKABLE | GG::DRAGABLE | GG::MODAL),
+           PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::CLICKABLE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE),
     m_current_option_list(0),
     m_indentation_level(0),
     m_tabs(0),
     m_done_button(0),
     m_num_wnds(0)
 {
+    SetMaxSize(GG::Pt(PAGE_WIDTH + 20, MaxSize().y));
+    SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
     m_done_button = new CUIButton(15, PAGE_HEIGHT + 17, 75, UserString("DONE"));
     m_tabs = new GG::TabWnd(5, 2, PAGE_WIDTH, PAGE_HEIGHT + 20, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
     Init();
