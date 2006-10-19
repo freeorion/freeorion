@@ -422,6 +422,9 @@ void HumanClientApp::Initialize()
     if (!(GetOptionsDB().Get<bool>("music-off")))
         PlayMusic(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("bg-music"), -1);
 
+    SetMusicVolume(GetOptionsDB().Get<int>("music-volume"));
+    SetUISoundsVolume(GetOptionsDB().Get<int>("UI.sound.volume"));
+
     boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
         new GG::TextBoxBrowseInfoWnd(400, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                                      GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
