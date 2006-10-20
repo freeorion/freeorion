@@ -91,7 +91,7 @@ namespace {
             Atmosphere(const XMLElement& elem)
             {
                 if (elem.Tag() != "Atmosphere")
-                    throw std::invalid_argument("Attempted to construct a Atmosphere from an XMLElement that had a tag other than \"Atmosphere\"");
+                    throw std::invalid_argument("Attempted to construct an Atmosphere from an XMLElement that had a tag other than \"Atmosphere\"");
                 filename = elem.Child("filename").Text();
                 alpha = lexical_cast<int>(elem.Child("alpha").Text());
                 alpha = std::max(0, std::min(alpha, 255));
@@ -634,9 +634,7 @@ namespace {
     const int SET = (planet_id % NUM_ASTEROID_SETS) + 1;
 
     for (int i = 0; i < NUM_IMAGES_PER_SET; ++i) {
-      char buf[1024];
-      sprintf(buf, "asteroids%d_%03d.png", SET, i);
-      textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "planets" / " asteroids" / buf));
+      textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "planets" / "asteroids" / boost::io::str(boost::format("asteroids%d_%03d.png") % SET % i)));
     }
   }
 

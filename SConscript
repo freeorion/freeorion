@@ -36,7 +36,6 @@ common_sources = [
     'universe/ValueRefParser.cpp',
     'util/DataTable.cpp',
     'util/GZStream.cpp',
-    'util/md5.c',
     'util/MultiplayerCommon.cpp',
     'util/OptionsDB.cpp',
     'util/Order.cpp',

@@ -20,12 +20,6 @@ GG::Clr XMLToClr(const XMLElement& clr);
 /** Returns the integer priority level that should be passed to log4cpp for a given priority name string. */
 int PriorityValue(const std::string& name);
 
-/** Returns an MD5 "sum" of the given string as a 32-digithexidecimal string. */
-std::string MD5StringSum(const std::string& str);
-
-/** Returns an MD5 "sum" of the given text file as a 32-digit hexidecimal string. */
-std::string MD5FileSum(const std::string& filename);
-
 /** Returns a language-specific string for the key-string \a str */
 const std::string& UserString(const std::string& str);
 
