@@ -276,7 +276,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs)
         args.push_back(AI_CLIENT_EXE);
         args.push_back(player_name);
         args.push_back("--settings-dir");
-        args.push_back(GetOptionsDB().Get<std::string>("settings-dir"));
+        args.push_back("\"" + GetOptionsDB().Get<std::string>("settings-dir") + "\"");
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
         Logger().debugStream() << "starting " << AI_CLIENT_EXE;
