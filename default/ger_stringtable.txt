@@ -746,7 +746,7 @@ OPTIONS_FONTS
 Schriftart
 
 OPTIONS_FONT_SIZES
-Fonts Sizes
+Größe
 
 OPTIONS_FONT_TEXT
 Text
@@ -833,13 +833,13 @@ OPTIONS_SOUND_FLEET_ROLLOVER
 Fleet Button Rollover
 
 OPTIONS_SOUND_WINDOW
-Window Sounds
+Allgemein
 
 OPTIONS_SOUND_BUTTON
-Button Sounds
+Knöpfe
 
 OPTIONS_SOUND_FLEET
-Fleet Button Sounds
+Flotten
 
 OPTIONS_SOUND_ALERT
 Alarm
@@ -887,7 +887,7 @@ OPTIONS_SOUND_SELECT
 Liste auswählen
 
 OPTIONS_GENERAL_COLORS
-General
+Kontrollfarben
 
 OPTIONS_CONTROL_COLORS
 UI Controls
@@ -911,7 +911,7 @@ OPTIONS_INTERIOR_COLOR
 Inneres
 
 OPTIONS_WINDOW_COLORS
-Windows
+Fensterfarben
 
 OPTIONS_INNER_BORDER_COLOR
 Innere Grenze
@@ -920,16 +920,16 @@ OPTIONS_OUTER_BORDER_COLOR
 Äußere Grenze
 
 OPTIONS_PAGE_VIDEO
-Video
+Allgemein
 
 OPTIONS_PAGE_AUDIO
-Audio
+Geräusche
 
 OPTIONS_PAGE_AUTOSAVE
 Automatisches Speichern
 
 OPTIONS_PAGE_UI
-UI
+UI Aussehen
 
 OPTIONS_PAGE_COLORS
 Farben
@@ -965,7 +965,7 @@ OPTIONS_ANY_FILE
 Alle Dateien
 
 OPTIONS_FOLDER_SETTINGS
-Resource Files
+Einstellungen
 
 OPTIONS_FOLDER_SAVE
 Spielstandverzeichnis
