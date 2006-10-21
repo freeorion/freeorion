@@ -34,7 +34,7 @@ namespace {
 
     void Options(OptionsDB& db)
     {
-        db.AddFlag("force-external-server",  "OPTIONS_DB_FORCE_EXTERNAL_SERVER");
+        db.AddFlag("force-external-server",  "OPTIONS_DB_FORCE_EXTERNAL_SERVER", false);
         db.Add("UI.main-menu.x", "OPTIONS_DB_UI_MAIN_MENU_X", 0.75, RangedValidator<double>(0.0, 1.0));
         db.Add("UI.main-menu.y", "OPTIONS_DB_UI_MAIN_MENU_Y", 0.35, RangedValidator<double>(0.0, 1.0));
     }

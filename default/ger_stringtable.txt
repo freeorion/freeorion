@@ -72,6 +72,9 @@ Sie wurden besiegt.
 PLAYER_VICTORIOUS
 Sie haben gewonnen.
 
+EMPIRE
+Empire
+
 EMPIRE_DEFEATED
 Imperium %1% wurde ausgelöscht.
 
@@ -1016,6 +1019,9 @@ Systemproduktion
 PLANET_PANEL
 Planetenfenster
 
+PL_ASTEROID_BELT
+Asteroid belt
+
 PL_UNINHABITED
 Unbewohnt
 
@@ -1076,6 +1082,9 @@ Neue Flotte
 
 FW_EMPIRE_FLEETS
 %1% Flotten
+
+FW_HOME_FLEET
+Home Fleet
 
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET

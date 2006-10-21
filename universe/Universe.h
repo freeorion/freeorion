@@ -277,16 +277,14 @@ protected:
     void GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
     void PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
-    
     void GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated
     bool ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray); // used by GenerateStarlanes.  Determines if two systems are connected by maxLaneJumps or less edges on graph
     void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems); // Removes lanes from passed graph that are angularly too close to eachother
     void CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems); // Removes lanes from passed graph that are too long
     void GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray); // grows trees to connect stars...  takes an array of sets of potential starlanes for each star, and puts the starlanes of the tree into another set
-    
     void InitializeSystemGraph(); ///< resizes the system graph to the appropriate size and populates m_system_distances 
     void GenerateHomeworlds(int players, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
-
+    void NamePlanets(); ///< Names the planets in each system, based on the system's name
     /// Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets
     /// NOTE: does nothing if executed client-side. This is a hack to deal with the
     /// dependency on ServerEmpireManager -- jdb

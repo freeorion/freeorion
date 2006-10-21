@@ -95,6 +95,7 @@ void Process::ProcessImpl::Kill()
 #include <signal.h>
 #include <cstdio>
 
+
 Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std::string>& argv) :
     m_free(false)
 {

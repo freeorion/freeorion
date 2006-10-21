@@ -1183,6 +1183,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     GenerateStarlanes(starlane_freq, adjacency_grid);
     InitializeSystemGraph();
     GenerateHomeworlds(players + ai_players, homeworlds);
+    NamePlanets();
     GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
 
     ApplyEffects();
@@ -1475,7 +1476,6 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
 
-        int num_planets_in_system = 0;     // the number of slots in this system that were determined to contain planets
         for (int orbit = 0; orbit < system->Orbits(); orbit++) {
             // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
             int idx = 0;
@@ -1492,8 +1492,6 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
 
             if (planet_size == SZ_NOWORLD)
                 continue;
-            else if (planet_size != SZ_ASTEROIDS)
-                ++num_planets_in_system;
 
             if (planet_size == SZ_ASTEROIDS) {
                 idx = PT_ASTEROIDS;
@@ -1527,10 +1525,6 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
 
             Insert(planet); // add planet to universe map
             system->Insert(planet, orbit);  // add planet to system map
-            if (planet_type == PT_ASTEROIDS)
-                planet->Rename("Asteroid Belt");
-            else
-                planet->Rename(system->Name() + " " + RomanNumber(num_planets_in_system));
         }
     }
 }
@@ -2301,6 +2295,26 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
     }
 }
 
+void Universe::NamePlanets()
+{
+    std::vector<System*> sys_vec = FindObjects<System>();
+    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+        System* system = *it;
+        int num_planets_in_system = 0;
+        for (int i = 0; i < system->Orbits(); i++) {
+            std::vector<Planet*> planets = system->FindObjectsInOrbit<Planet>(i);
+            if (!planets.empty()) {
+                assert(planets.size() == 1);
+                Planet* planet = planets[0];
+                if (planet->Type() == PT_ASTEROIDS)
+                    planet->Rename(UserString("PL_ASTEROID_BELT"));
+                else
+                    planet->Rename(system->Name() + " " + RomanNumber(++num_planets_in_system));
+            }
+        }
+    }
+}
+
 void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const std::vector<PlayerSetupData>& player_setup_data)
 {
 #ifdef FREEORION_BUILD_SERVER
@@ -2311,7 +2325,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
     unsigned int i = 0;
     std::vector<GG::Clr> colors = EmpireColors();
     for (std::map<int, PlayerInfo>::const_iterator it = player_info.begin(); it != player_info.end(); ++it, ++i) {
-        std::string empire_name = "Empire" + boost::lexical_cast<std::string>(i);
+        std::string empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(i);
 
         GG::Clr color;
         if (i < player_setup_data.size()) { // first try to use user-assigned colors
@@ -2454,7 +2468,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         empire->AddShipDesign(design);
 
         // create the empire's starting fleet
-        Fleet* home_fleet = new Fleet("Home Fleet", home_system->X(), home_system->Y(), empire_id);
+        Fleet* home_fleet = new Fleet(UserString("FW_HOME_FLEET"), home_system->X(), home_system->Y(), empire_id);
         Insert(home_fleet);
         home_system->Insert(home_fleet);
 

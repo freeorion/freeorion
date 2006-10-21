@@ -110,41 +110,41 @@ public:
 
     /** adds an Option, optionally with a custom validator */
     template <class T>
-    void Add(const std::string& name, const std::string& description, T default_value, const ValidatorBase& validator = Validator<T>())
+    void Add(const std::string& name, const std::string& description, T default_value, const ValidatorBase& validator = Validator<T>(), bool storable = true)
     {
         if (m_options.find(name) != m_options.end())
             throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was specified twice.");
-        m_options[name] = Option(static_cast<char>(0), name, default_value, boost::lexical_cast<std::string>(default_value), description, validator.Clone());
+        m_options[name] = Option(static_cast<char>(0), name, default_value, boost::lexical_cast<std::string>(default_value), description, validator.Clone(), storable);
         OptionAddedSignal(name);
     }
 
     /** adds an Option with an alternative one-character shortened name, optionally with a custom validator */
     template <class T>
-    void Add(char short_name, const std::string& name, const std::string& description, T default_value, const ValidatorBase& validator = Validator<T>())
+    void Add(char short_name, const std::string& name, const std::string& description, T default_value, const ValidatorBase& validator = Validator<T>(), bool storable = true)
     {
         if (m_options.find(name) != m_options.end())
             throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was specified twice.");
-        m_options[name] = Option(short_name, name, default_value, boost::lexical_cast<std::string>(default_value), description, validator.Clone());
+        m_options[name] = Option(short_name, name, default_value, boost::lexical_cast<std::string>(default_value), description, validator.Clone(), storable);
         OptionAddedSignal(name);
     }
 
     /** adds a flag Option, which is treated as a boolean value with a default of false.  Using the flag on the command line at all indicates 
         that its value it set to true. */
-    void AddFlag(const std::string& name, const std::string& description)
+    void AddFlag(const std::string& name, const std::string& description, bool storable = true)
     {
         if (m_options.find(name) != m_options.end())
             throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
-        m_options[name] = Option(static_cast<char>(0), name, false, boost::lexical_cast<std::string>(false), description);
+        m_options[name] = Option(static_cast<char>(0), name, false, boost::lexical_cast<std::string>(false), description, 0, storable);
         OptionAddedSignal(name);
     }
 
     /** adds an Option with an alternative one-character shortened name, which is treated as a boolean value with a default of false.  
         Using the flag on the command line at all indicates that its value it set to true. */
-    void AddFlag(char short_name, const std::string& name, const std::string& description)
+    void AddFlag(char short_name, const std::string& name, const std::string& description, bool storable = true)
     {
         if (m_options.find(name) != m_options.end())
             throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
-        m_options[name] = Option(short_name, name, false, boost::lexical_cast<std::string>(false), description);
+        m_options[name] = Option(short_name, name, false, boost::lexical_cast<std::string>(false), description, 0, storable);
         OptionAddedSignal(name);
     }
 
@@ -164,14 +164,14 @@ public:
     }
 
     void SetFromCommandLine(int argc, char* argv[]); ///< fills some or all of the options of the DB from values passed in from the command line
-    void SetFromXML(const XMLDoc& doc);          ///< fills some or all of the options of the DB from values stored in XMLDoc \a doc
+    void SetFromXML(const XMLDoc& doc);              ///< fills some or all of the options of the DB from values stored in XMLDoc \a doc
 
 private:
     struct Option
     {
         Option();
         Option(char short_name_, const std::string& name_, const boost::any& value_, const std::string& default_value_, 
-               const std::string& description_, const ValidatorBase *validator_ = 0);
+               const std::string& description_, const ValidatorBase *validator_, bool storable_);
 
         void        FromString(const std::string& str);
         std::string ToString() const;
@@ -183,6 +183,7 @@ private:
         std::string       description;   ///< a desription of the option
         boost::shared_ptr<const ValidatorBase>
                           validator;     ///< a validator for the option. Flags have no validators; lexical_cast boolean conversions oare done for them.
+        bool              storable;      ///< whether this option can be stored in an XMl config file for use across multiple runs
 
         mutable boost::shared_ptr<boost::signal<void ()> > option_changed_sig_ptr;
 

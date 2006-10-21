@@ -8,6 +8,8 @@
 #include <string>
 
 #include <boost/spirit.hpp>
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace {
     std::vector<OptionsDBFn>& OptionsRegistry()
@@ -33,6 +35,16 @@ namespace {
         void operator()(const char* first, const char* last) const {m_string_vec.push_back(std::string(first, last));}
         std::vector<std::string>& m_string_vec;
     };
+
+    void StripQuotation(std::string& str)
+    {
+        using namespace boost::algorithm;
+        if (starts_with(str, "\"") && ends_with(str, "\""))
+        {
+            erase_first(str, "\"");
+            erase_last(str, "\"");
+        }
+    }
 }
 
 /////////////////////////////////////////////
@@ -63,17 +75,17 @@ OptionsDB& GetOptionsDB()
 std::map<char, std::string> OptionsDB::Option::short_names;
 
 OptionsDB::Option::Option()
-{
-}
+{}
 
 OptionsDB::Option::Option(char short_name_, const std::string& name_, const boost::any& value_, const std::string& default_value_, const std::string& description_, 
-                          const ValidatorBase* validator_/* = 0*/) :
+                          const ValidatorBase* validator_, bool storable_) :
     name(name_),
     short_name(short_name_),
     value(value_),
     default_value(default_value_),
     description(description_),
     validator(validator_),
+    storable(storable_),
     option_changed_sig_ptr(new boost::signal<void ()>())
 {
     if (short_name_)
@@ -212,6 +224,8 @@ XMLDoc OptionsDB::GetXML() const
     elem_stack.push_back(&doc.root_node);
 
     for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it) {
+        if (!it->second.storable)
+            continue;
         std::string::size_type last_dot = it->first.find_last_of('.');
         std::string section_name = last_dot == std::string::npos ? "" : it->first.substr(0, last_dot);
         std::string name = it->first.substr(last_dot == std::string::npos ? 0 : last_dot + 1);
@@ -292,7 +306,9 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
 
             if (option.validator) { // non-flag
                 try {
-                    option.FromString(argv[++i]);
+                    std::string value_str(argv[++i]);
+                    StripQuotation(value_str);
+                    option.FromString(value_str);
                 } catch (const std::exception& e) {
                     throw std::runtime_error("OptionsDB::SetFromCommandLine() : the following exception was caught when attemptimg to set option \"" + option.name + "\": " + e.what());
                 }

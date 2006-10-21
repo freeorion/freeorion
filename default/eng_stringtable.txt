@@ -72,6 +72,9 @@ You are defeated.
 PLAYER_VICTORIOUS
 You are victorious.
 
+EMPIRE
+Empire
+
 EMPIRE_DEFEATED
 The %1% empire is no more.
 
@@ -1016,6 +1019,9 @@ System Production
 PLANET_PANEL
 Planet Panel
 
+PL_ASTEROID_BELT
+Asteroid belt
+
 PL_UNINHABITED
 Uninhabited
 
@@ -1076,6 +1082,9 @@ New Fleet
 
 FW_EMPIRE_FLEETS
 %1% Fleets
+
+FW_HOME_FLEET
+Home Fleet
 
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
