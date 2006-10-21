@@ -31,7 +31,6 @@
 
 
 class MultiplayerLobbyWnd;
-struct FSOUND_STREAM;
 
 /** the application framework class for the human player FreeOrion client. */
 class HumanClientApp : public ClientApp, public SDLGUI

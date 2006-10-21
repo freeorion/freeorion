@@ -127,7 +127,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="C:\FreeOrion\GG;&quot;C:\Boost\include\boost-1_33_1&quot;;C:\DevIL\include;C:\fmodapi375win\api\inc;&quot;C:\log4cpp-0.3.4b\include&quot;;&quot;C:\SDL-1.2.7\include&quot;;C:\zlib\include;C:\graphviz\include;&quot;C:\freetype-2.1.7\include&quot;"
+				AdditionalIncludeDirectories="C:\FreeOrion\GG;&quot;C:\Boost\include\boost-1_33_1&quot;;C:\DevIL\include;C:\fmodapi375win\api\inc;&quot;C:\log4cpp-0.3.4b\include&quot;;&quot;C:\SDL-1.2.7\include&quot;;C:\zlib\include;C:\graphviz\include;&quot;C:\freetype-2.1.7\include&quot;;&quot;C:\OpenAL 1.1 SDK\include&quot;;&quot;C:\alut-1.1.0\include&quot;;&quot;C:\oggvorbis-win32sdk-1.0\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				DisableLanguageExtensions="false"
@@ -151,10 +151,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib fmodvc.lib log4cpp.lib freetype214MT.lib cdt.lib circogen.lib common.lib dotgen.lib fdpgen.lib gd.lib graph.lib gvc.lib libexpat.lib neatogen.lib pack.lib pathplan.lib plugin.lib twopigen.lib png.lib jpeg.lib"
+				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib fmodvc.lib log4cpp.lib freetype214MT.lib cdt.lib circogen.lib common.lib dotgen.lib fdpgen.lib gd.lib graph.lib gvc.lib libexpat.lib neatogen.lib pack.lib pathplan.lib plugin.lib twopigen.lib png.lib jpeg.lib OpenAL32.lib alut.lib vorbisfile.lib"
 				OutputFile="$(OutDir)/freeorion.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\FreeOrion\GG;C:\Boost\lib;C:\DevIL\lib;C:\fmodapi375win\api\lib;&quot;C:\freetype-2.1.7\objs&quot;;C:\Graphviz\lib;&quot;C:\SDL-1.2.7\lib&quot;;C:\zlib\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;"
+				AdditionalLibraryDirectories="C:\FreeOrion\GG;C:\Boost\lib;C:\DevIL\lib;C:\fmodapi375win\api\lib;&quot;C:\freetype-2.1.7\objs&quot;;C:\Graphviz\lib;&quot;C:\SDL-1.2.7\lib&quot;;C:\zlib\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;;&quot;C:\OpenAL 1.1 SDK\libs\Win32&quot;;&quot;C:\alut-1.1.0\lib&quot;;&quot;C:\oggvorbis-win32sdk-1.0\lib&quot;"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
@@ -317,6 +317,14 @@
 						RelativePath="..\..\..\client\human\HumanClientAppSoundFMOD.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\..\client\human\HumanClientAppSoundOpenAL.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\client\human\HumanClientAppSoundOpenAL.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
@@ -352,14 +360,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\util\GZStream.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\util\md5.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\util\md5.h"
 					>
 				</File>
 				<File

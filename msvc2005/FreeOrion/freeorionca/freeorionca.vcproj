@@ -610,14 +610,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\util\md5.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\util\md5.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\util\MultiplayerCommon.cpp"
 					>
 				</File>
