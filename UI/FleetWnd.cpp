@@ -787,7 +787,9 @@ void FleetDetailPanel::Init()
     AttachChild(m_ship_status_text);
     VerticalLayout();
     GetLayout()->SetCellMargin(4);
-    GetLayout()->SetRowStretch(1, 1);
+    GetLayout()->SetMinimumRowHeight(0, ClientUI::Pts() + 4);
+    GetLayout()->SetRowStretch(1, 1.0);
+    GetLayout()->SetMinimumRowHeight(2, ClientUI::Pts() + 4);
 
     GG::Connect(m_ships_lb->SelChangedSignal, &FleetDetailPanel::ShipSelectionChanged, this);
     GG::Connect(m_ships_lb->BrowsedSignal, &FleetDetailPanel::ShipBrowsed, this);
