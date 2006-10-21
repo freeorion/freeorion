@@ -1381,7 +1381,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     Wnd(x, y, w, h, GG::CLICKABLE),
     m_system_name(new CUIDropDownList(40, 0, w-80,SystemNameFontSize(), 10*SystemNameFontSize(),GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5))),
     m_button_prev(new GG::Button(40-SystemNameFontSize(),4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE,GG::CLICKABLE)),
-    m_button_next(new GG::Button(40+w-80                 ,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE,GG::CLICKABLE)),
+    m_button_next(new GG::Button(40+w-80                ,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE,GG::CLICKABLE)),
     m_star_graphic(0),
     m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::Pts()-5,UserString("SP_SYSTEM_PRODUCTION"),GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::TextColor())),
     m_next_pltview_fade_in(0),m_next_pltview_planet_id(UniverseObject::INVALID_OBJECT_ID),m_next_pltview_fade_out(-1),
@@ -1428,13 +1428,13 @@ SidePanel::~SidePanel()
 
 bool SidePanel::InWindow(const GG::Pt& pt) const
 {
-  return (UpperLeft() <= pt && pt < LowerRight()) || m_planet_panel_container->InWindow(pt);
+    return (UpperLeft() <= pt && pt < LowerRight()) || m_planet_panel_container->InWindow(pt);
 }
 
 void SidePanel::Render()
 {
-  GG::Pt ul = UpperLeft(), lr = LowerRight();
-  FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::SidePanelColor(), GG::CLR_ZERO, 0);
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::SidePanelColor(), GG::CLR_ZERO, 0);
 }
 
 void SidePanel::SetSystemImpl()
@@ -1495,18 +1495,19 @@ void SidePanel::SetSystemImpl()
         std::string star_filename;
         switch (s_system->Star())
         {
-        case STAR_BLUE     : star_image = "blue0"     ; break;
-        case STAR_WHITE    : star_image = "white0"    ; break;
-        case STAR_YELLOW   : star_image = "yellow0"   ; break;
-        case STAR_ORANGE   : star_image = "orange0"   ; break;
-        case STAR_RED      : star_image = "red0"      ; break;
-        case STAR_NEUTRON  : star_image = "neutron0"  ; break;
-        case STAR_BLACK    : star_image = "blackhole0"; break;
-        default            : star_image = "white0"    ; break;
+        case STAR_BLUE     : star_filename = "blue0"     ; break;
+        case STAR_WHITE    : star_filename = "white0"    ; break;
+        case STAR_YELLOW   : star_filename = "yellow0"   ; break;
+        case STAR_ORANGE   : star_filename = "orange0"   ; break;
+        case STAR_RED      : star_filename = "red0"      ; break;
+        case STAR_NEUTRON  : star_filename = "neutron0"  ; break;
+        case STAR_BLACK    : star_filename = "blackhole0"; break;
+        default            : star_filename = "white0"    ; break;
         }
         star_filename += lexical_cast<std::string>(s_system->ID() % 2) + ".png";
         star_image /= star_filename;
 
+        std::cout << star_image.native_file_string() << std::endl;
         graphic = ClientUI::GetTexture(star_image);
       
         textures.push_back(graphic);
