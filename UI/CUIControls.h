@@ -116,13 +116,15 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    GG::Clr      BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
+    virtual GG::Pt MinUsableSize() const;
+
+    GG::Clr        BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
     //@}
 
     /** \name Mutators */ //@{
-    virtual void Render();
-    virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseLeave();
+    virtual void   Render();
+    virtual void   MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void   MouseLeave();
     //@}
 
 private:

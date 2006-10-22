@@ -309,6 +309,15 @@ CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& st
     GG::Connect(CheckedSignal, PlayButtonCheckSound(style == GG::SBSTYLE_3D_RADIO), -1);
 }
 
+GG::Pt CUIStateButton::MinUsableSize() const
+{
+    // HACK! This code assumes that the text_format flag GG::TF_VCENTER is in effect.  This is currently the case for
+    // all of CUIStateButton in FO.
+    GG::Pt retval = StateButton::MinUsableSize();
+    retval.y = TextControl::MinUsableSize().y;
+    return retval;
+}
+
 void CUIStateButton::Render()
 {
     if (static_cast<int>(Style()) == GG::SBSTYLE_3D_CHECKBOX || 

@@ -40,8 +40,6 @@ public:
 private:
     void Init();
     void PopulateServerList();
-    void AttachSignalChildren();
-    void DetachSignalChildren();
     void RefreshServerList();
     void HostOrJoinClicked(int idx);
     void ServerSelected(const std::set<int>& selections);
