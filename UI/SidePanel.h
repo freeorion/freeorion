@@ -29,6 +29,7 @@ public:
 
     /** \name Signal Types */ //@{
     typedef boost::signal<void (int)> PlanetSelectedSignalType; ///< emitted when a rotating planet in the side panel is clicked by the user
+    typedef boost::signal<void (int)> SystemSelectedSignalType; ///< emitted when something in the sidepanel wants to change the selected system, including the droplist or back/forward arrows
     //@}
 
     /** \name Structors */ //@{
@@ -60,6 +61,7 @@ public:
     static const int MIN_PLANET_DIAMETER; // size of a tiny planet, in on-screen pixels
 
     mutable PlanetSelectedSignalType PlanetSelectedSignal;
+    mutable SystemSelectedSignalType SystemSelectedSignal;
 
 private:
     class PlanetPanelContainer;

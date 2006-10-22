@@ -15,6 +15,7 @@ public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void (BuildType, const std::string&, int, int)> AddBuildToQueueSignalType; ///< emitted when the indicated build is indicated by the user
     typedef boost::signal<void (int, int)> BuildQuantityChangedSignalType; ///< emitted when the quantity of items in a single build queue item is changed by the user
+    typedef boost::signal<void (int)> SystemSelectedSignalType; ///< emitted when system selection is required.
     //@}
 
     /** \name Slot Types */ //@{
@@ -44,6 +45,7 @@ public:
 
     mutable AddBuildToQueueSignalType AddBuildToQueueSignal;
     mutable BuildQuantityChangedSignalType BuildQuantityChangedSignal;
+    mutable SystemSelectedSignalType SystemSelectedSignal;
 
 private:
     class BuildDetailPanel;

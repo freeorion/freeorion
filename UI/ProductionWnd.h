@@ -19,6 +19,10 @@ public:
     ProductionWnd(int w, int h);
     //@}
 
+    /** \name Signal Types */ //@{
+    typedef boost::signal<void (int)> SystemSelectedSignalType; ///< emitted when something in the productionwnd wants to change the selected system
+    //@}
+
     /** \name Mutators */ //@{
     virtual GG::Pt ClientUpperLeft() const;
     virtual GG::Pt ClientLowerRight() const;
@@ -33,6 +37,8 @@ public:
     void QueueItemMoved(int row_idx, GG::ListBox::Row* row);
     void Sanitize();
     //@}
+
+    mutable SystemSelectedSignalType SystemSelectedSignal;
 
 private:
     void UpdateQueue();     ///< Clears and repopulates queue list with listitems corresponding to contents of empire's production queue

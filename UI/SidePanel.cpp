@@ -1543,7 +1543,7 @@ void SidePanel::SystemSelectionChanged(int selection)
     if (0 <= selection && selection < m_system_name->NumRows())
         system_id = static_cast<const SystemRow&>(m_system_name->GetRow(selection)).m_system_id;
     if (SystemID() != system_id)
-        ClientUI::GetClientUI()->GetMapWnd()->SelectSystem(system_id);
+        SystemSelectedSignal(system_id);
 }
 
 void SidePanel::PrevButtonClicked()

@@ -42,6 +42,7 @@ SystemIcon::SystemIcon(int id, double zoom) :
     GG::Control(0, 0, 1, 1, GG::CLICKABLE),
     m_system(*GetUniverse().Object<const System>(id)),
     m_static_graphic(0),
+    m_selection_indicator(0),
     m_default_star_color(GG::CLR_WHITE)
 {
     Connect(m_system.StateChangedSignal, &SystemIcon::Refresh, this);
@@ -55,15 +56,19 @@ SystemIcon::SystemIcon(int id, double zoom) :
              GG::Pt(static_cast<int>(ul.x + ClientUI::SystemIconSize() * zoom + 0.5),
                     static_cast<int>(ul.y + ClientUI::SystemIconSize() * zoom + 0.5)));
 
-    // star graphic
+    // static graphic
     //boost::shared_ptr<GG::Texture> graphic = GetStarTexture(m_system.Star(), m_system.ID());
     boost::shared_ptr<GG::Texture> graphic = ClientUI::GetNumberedTexture("stars", StarTypesNames(), m_system.Star(), m_system.ID());
-
-    //setup static graphic
     m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::GR_FITGRAPHIC);
     AdjustBrightness(m_default_star_color, 0.80);
     m_static_graphic->SetColor(m_default_star_color);
     AttachChild(m_static_graphic);
+
+    // selection indicator graphic
+    boost::shared_ptr<GG::Texture> selection_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection.png");
+    m_selection_indicator = new GG::StaticGraphic(0, 0, Width(), Height(), selection_texture, GG::GR_FITGRAPHIC);
+    AttachChild(m_static_graphic);
+    m_selection_indicator->Hide();
 }
 
 

@@ -645,6 +645,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     GG::Connect(m_build_selector->DisplayBuildItemSignal, &BuildDesignatorWnd::BuildDetailPanel::SetBuildItem, m_build_detail_panel);
     GG::Connect(m_build_selector->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
     GG::Connect(m_side_panel->PlanetSelectedSignal, &BuildDesignatorWnd::SelectPlanet, this);
+    GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal);
 
     m_map_view_hole = GG::Rect(0, 0, CHILD_WIDTHS + SIDE_PANEL_PLANET_RADIUS, h);
 
@@ -692,7 +693,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
         MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
         map->CenterOnSystem(system);
         if (m_side_panel->SystemID() != system)
-            m_side_panel->SetSystem(system);
+            SystemSelectedSignal(system);
         m_side_panel->SelectPlanet(queue[queue_idx].location);
     }
 }
@@ -701,8 +702,6 @@ void BuildDesignatorWnd::SelectSystem(int system)
 {
     if (system != UniverseObject::INVALID_OBJECT_ID) {
         if (system != m_side_panel->SystemID()) {
-            m_side_panel->Show();
-            m_side_panel->SetSystem(system);
             m_build_location = UniverseObject::INVALID_OBJECT_ID;
         }
         SelectDefaultPlanet(system);
@@ -722,7 +721,7 @@ void BuildDesignatorWnd::Reset()
     // default to the home system when nothing is selected in the main map's SidePanel
     if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
         int home_system_id = GetUniverse().Object<Planet>(Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->HomeworldID())->SystemID();
-        m_side_panel->SetSystem(home_system_id);
+        SystemSelectedSignal(home_system_id);
     }
     SelectDefaultPlanet(m_side_panel->SystemID());
     m_build_selector->Reset(true);
@@ -733,7 +732,7 @@ void BuildDesignatorWnd::Clear()
 {
     m_build_detail_panel->Clear();
     m_build_selector->Reset(false);
-    m_side_panel->SetSystem(UniverseObject::INVALID_OBJECT_ID);
+    SystemSelectedSignal(UniverseObject::INVALID_OBJECT_ID);
     m_side_panel->Hide();
     m_build_location = UniverseObject::INVALID_OBJECT_ID;
     m_system_default_planets.clear();

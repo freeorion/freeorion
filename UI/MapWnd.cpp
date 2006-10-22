@@ -179,7 +179,7 @@ MapWnd::MapWnd() :
     // system-view side panel
     m_side_panel = new SidePanel(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
     AttachChild(m_side_panel);
-    GG::Connect(SystemLeftClickedSignal, &SidePanel::SetSystem);
+    GG::Connect(m_side_panel->SystemSelectedSignal, &MapWnd::SelectSystem, this); // sidepanel requests system selection change -> select it
 
     m_sitrep_panel = new SitRepPanel( (GG::GUI::GetGUI()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::GUI::GetGUI()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);
@@ -193,7 +193,7 @@ MapWnd::MapWnd() :
     m_production_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
-
+    GG::Connect(m_production_wnd->SystemSelectedSignal, &MapWnd::SelectSystem, this); // productionwnd requests system selection change -> select it
 
     // turn button
     m_turn_update = new CUITurnButton(LAYOUT_MARGIN, LAYOUT_MARGIN, END_TURN_BTN_WIDTH, "" );
@@ -533,7 +533,7 @@ void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
     if (!m_dragged && !m_in_production_view_mode) {
-        SystemLeftClickedSignal(UniverseObject::INVALID_OBJECT_ID);
+        SelectSystem(UniverseObject::INVALID_OBJECT_ID);
         m_side_panel->Hide();
     }
     m_dragged = false;
@@ -605,7 +605,7 @@ void MapWnd::InitTurn(int turn_number)
         icon->InstallEventFilter(this);
         AttachChild(icon);
         icon->Refresh();
-        GG::Connect(icon->LeftClickedSignal, &MapWnd::SelectSystem, this);
+        GG::Connect(icon->LeftClickedSignal, &MapWnd::SystemLeftClicked, this);
         GG::Connect(icon->RightClickedSignal, &MapWnd::SystemRightClicked, this);
         GG::Connect(icon->LeftDoubleClickedSignal, &MapWnd::SystemDoubleClicked, this);
         GG::Connect(icon->MouseEnteringSignal, &MapWnd::MouseEnteringSystem, this);
@@ -840,15 +840,18 @@ void MapWnd::CenterOnFleet(Fleet* fleet)
 void MapWnd::SelectSystem(int system_id)
 {
     if (m_in_production_view_mode) {
-        m_production_wnd->SelectSystem(system_id);
-    } else {
+        if (system_id != m_side_panel->SystemID()) {
+            m_side_panel->SetSystem(system_id);
+            m_production_wnd->SelectSystem(system_id);            
+        }
+        m_side_panel->Hide();
+    } else {    
         if (!m_side_panel->Visible() || system_id != m_side_panel->SystemID()) {
+            m_side_panel->SetSystem(system_id);
             if (system_id == UniverseObject::INVALID_OBJECT_ID) {
-                SystemLeftClickedSignal(system_id);
                 m_side_panel->Hide();
             } else {
                 m_side_panel->Show();
-                SystemLeftClickedSignal(system_id);
             }
         }
     }
@@ -858,11 +861,6 @@ void MapWnd::SelectFleet(int fleet_id)
 {
     if (Fleet* fleet = GetUniverse().Object<Fleet>(fleet_id))
         SelectFleet(fleet);
-}
-
-void MapWnd::SelectSystem(System* system)
-{
-    SelectSystem(system->ID());
 }
 
 void MapWnd::SelectFleet(Fleet* fleet)
@@ -1237,6 +1235,12 @@ void MapWnd::SystemDoubleClicked(int system_id)
     }
 }
 
+void MapWnd::SystemLeftClicked(int system_id)
+{
+    SelectSystem(system_id);
+    SystemLeftClickedSignal(system_id);
+}
+
 void MapWnd::SystemRightClicked(int system_id)
 {
     if (!m_in_production_view_mode)
@@ -1430,12 +1434,8 @@ bool MapWnd::ShowMenu()
 
 bool MapWnd::CloseSystemView()
 {
-    if (m_in_production_view_mode) {
-        m_production_wnd->SelectSystem(UniverseObject::INVALID_OBJECT_ID);
-    } else {
-        SystemLeftClickedSignal(UniverseObject::INVALID_OBJECT_ID);
-        m_side_panel->Hide();
-    }
+    SelectSystem(UniverseObject::INVALID_OBJECT_ID);
+    m_side_panel->Hide();   // redundant, but safer to keep in case the behavior of SelectSystem changes
     return true;
 }
 

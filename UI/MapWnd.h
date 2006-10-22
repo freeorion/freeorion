@@ -70,7 +70,7 @@ public:
     virtual void   MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
 
     void           InitTurn( int turn_number );                     //!< called at the start of each turn
-    void           RestoreFromSaveData(const XMLElement& elem); //!< restores the UI state that was saved in an earlier call to SaveGameData().
+    void           RestoreFromSaveData(const XMLElement& elem);     //!< restores the UI state that was saved in an earlier call to SaveGameData().
     void           ShowSystemNames();                               //!< enables the system name text
     void           HideSystemNames();                               //!< disables the system name text
     void           HandlePlayerChatMessage(const std::string& msg); //!< displays incoming player chat text
@@ -87,7 +87,6 @@ public:
     void ShowTech(const std::string& tech_name);//!< brings up the research screen and centers the tech tree on \a tech_name
     void SelectSystem(int systemID);           //!< catches emitted signals from the system icons, and allows programmatic selection of planets
     void SelectFleet(int fleetID);             //!< allows programmatic selection of fleets
-    void SelectSystem(System* system);         //!< allows programmatic selection of planets
     void SelectFleet(Fleet* fleet);            //!< allows programmatic selection of fleets
 
     void SetFleetMovement(FleetButton* fleet_button); //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving
@@ -142,6 +141,7 @@ private:
     void MoveBackgrounds(const GG::Pt& move);    //!< scrolls the backgrounds at their respective rates
     void CorrectMapPosition(GG::Pt &move_to_pt); //!< ensures that the map data are positioned sensibly
     void SystemDoubleClicked(int system_id);
+    void SystemLeftClicked(int system_id);
     void SystemRightClicked(int system_id);
     void MouseEnteringSystem(int system_id);
     void MouseLeavingSystem(int system_id);
