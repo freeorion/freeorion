@@ -1,5 +1,3 @@
-//MapWnd.cpp
-
 #include "MapWnd.h"
 
 #include "ClientUI.h"
@@ -29,6 +27,10 @@
 #include <GG/DrawUtil.h>
 #include <GG/MultiEdit.h>
 
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/exception.hpp>
+
 #include <vector>
 #include <deque>
 
@@ -49,7 +51,6 @@ public:
 
 namespace {
     const double ZOOM_STEP_SIZE = 1.25;
-    const int NUM_NEBULA_TEXTURES = 5;
     const int MIN_NEBULAE = 3; // this min and max are for a 1000.0-width galaxy
     const int MAX_NEBULAE = 6;
     const int END_TURN_BTN_WIDTH = 60;
@@ -79,6 +80,29 @@ namespace {
         return true;
     }
 #endif
+
+    boost::shared_ptr<GG::Texture> RandomNebula()
+    {
+        static std::vector<boost::shared_ptr<GG::Texture> > nebulae;
+        static boost::shared_ptr<SmallIntDistType> rand_int;
+        if (nebulae.empty()) {
+            namespace fs = boost::filesystem;
+            fs::directory_iterator end_it;
+            for (fs::directory_iterator it(ClientUI::ArtDir()); it != end_it; ++it) {
+                try {
+                    if (fs::exists(*it) && !fs::is_directory(*it) && boost::algorithm::starts_with(it->leaf(), "nebula"))
+                        nebulae.push_back(ClientUI::GetTexture(*it));
+                } catch (const fs::filesystem_error& e) {
+                    // ignore files for which permission is denied, and rethrow other exceptions
+                    if (e.error() != fs::security_error)
+                        throw;
+                }
+            }
+            rand_int.reset(new SmallIntDistType(SmallIntDist(0, nebulae.size() - 1)));
+        }
+        assert(2 <= nebulae.size());
+        return nebulae[(*rand_int)()];
+    }
 }
 
 
@@ -579,9 +603,8 @@ void MapWnd::InitTurn(int turn_number)
         m_nebulae.resize(num_nebulae);
         m_nebula_centers.resize(num_nebulae);
         SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
-        SmallIntDistType nebula_type = SmallIntDist(1, NUM_NEBULA_TEXTURES);
         for (int i = 0; i < num_nebulae; ++i) {
-            m_nebulae[i] = ClientUI::GetTexture(ClientUI::ArtDir() / "nebula" / (boost::lexical_cast<std::string>(nebula_type()) + ".png"));
+            m_nebulae[i] = RandomNebula();
             m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
         }
     }

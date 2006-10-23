@@ -31,9 +31,8 @@
 
 #include <fstream>
 
-using boost::lexical_cast;
 
-#define ROTATING_PLANET_IMAGES 1 // set this to 1 to use the OpenGL-rendered rotating planets code
+using boost::lexical_cast;
 
 namespace {
     bool PlaySounds() {return GetOptionsDB().Get<bool>("UI.sound.enabled");}

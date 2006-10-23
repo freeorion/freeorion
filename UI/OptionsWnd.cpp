@@ -372,7 +372,7 @@ void OptionsWnd::MusicVolumeOption()
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("music-volume")));
     GG::Connect(button->CheckedSignal, &OptionsWnd::MusicClicked, this);
-    GG::Connect(slider->SlidAndStoppedSignal, &OptionsWnd::MusicVolumeSlid, this);
+    GG::Connect(slider->SlidSignal, &OptionsWnd::MusicVolumeSlid, this);
 }
 
 void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::string& volume_option_name, const std::string& text,
