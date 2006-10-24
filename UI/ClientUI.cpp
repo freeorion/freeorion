@@ -27,8 +27,10 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
-#include <boost/filesystem/operations.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <boost/spirit.hpp>
 
 #include <string>
@@ -95,6 +97,19 @@ GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptions
 GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<StreamableColor>("UI.unresearchable-tech-border").ToClr(); }
 GG::Clr     ClientUI::TechWndProgressBarBackground()         { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress-background").ToClr(); }
 GG::Clr     ClientUI::TechWndProgressBar()                   { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress").ToClr(); }
+
+std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes()
+{
+    static std::map<StarType, std::string> prefixes;
+    prefixes[STAR_BLUE] = "blue";
+    prefixes[STAR_WHITE] = "white";
+    prefixes[STAR_YELLOW] = "yellow";
+    prefixes[STAR_ORANGE] = "orange";
+    prefixes[STAR_RED] = "red";
+    prefixes[STAR_NEUTRON] = "neutron";
+    prefixes[STAR_BLACK] = "blackhole";
+    return prefixes;
+}
 
 
 // private static members
@@ -379,6 +394,19 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
 #endif
 }
 
+boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix)
+{
+    TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix);
+    return prefixed_textures_and_dist.first[(*prefixed_textures_and_dist.second)()];
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n)
+{
+    assert(0 <= n);
+    TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix);
+    return prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
+}
+
 /////////////////////////////////////////////////////
 
 //Screen Functions///////////////////////////////////
@@ -556,49 +584,6 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
     }
 }
 
-boost::shared_ptr<GG::Texture>
-ClientUI::GetNumberedTexture(const std::string& dir_name, const std::map<int, std::string>& types_to_names, 
-                             int type, int hash_key)
-{
-    using boost::lexical_cast;
-    using std::string;
-
-    static std::map<int, std::pair<string, int> > image_names;
-
-    if (image_names.empty()) {
-        for (std::map<int, std::string>::const_iterator it = types_to_names.begin(); it != types_to_names.end(); ++it) {
-            image_names[it->first].first = it->second;
-        }
-
-        fs::path star_dir(ClientUI::ArtDir() / dir_name);
-        fs::directory_iterator end_it;
-        for (fs::directory_iterator it(star_dir); it != end_it; ++it) {
-            if (!fs::is_directory(*it)) {
-                if (it->leaf().find("blue") == 0) {
-                    ++image_names[STAR_BLUE].second; 
-                } else if (it->leaf().find("white") == 0) {
-                    ++image_names[STAR_WHITE].second; 
-                } else if (it->leaf().find("yellow") == 0) {
-                    ++image_names[STAR_YELLOW].second; 
-                } else if (it->leaf().find("orange") == 0) {
-                    ++image_names[STAR_ORANGE].second; 
-                } else if (it->leaf().find("red") == 0) {
-                    ++image_names[STAR_RED].second; 
-                } else if (it->leaf().find("neutron") == 0) {
-                    ++image_names[STAR_NEUTRON].second; 
-                } else if (it->leaf().find("black") == 0) {
-                    ++image_names[STAR_BLACK].second; 
-                }
-            }
-        }
-    }
-
-    int star_variant = image_names[type].second ? (hash_key % image_names[type].second) : 0;
-    fs::path path = ClientUI::ArtDir() / "stars" /
-        (image_names[type].first + lexical_cast<string>(star_variant + 1) + ".png");
-    return GetTexture(path);
-}
-
 ////////////////////////////////////////////////////
 void ClientUI::HideAllWindows()
 {
@@ -610,6 +595,32 @@ void ClientUI::HideAllWindows()
     if (m_turn_progress_wnd)
         m_turn_progress_wnd->Hide();
 #endif
+}
+
+ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix)
+{
+    namespace fs = boost::filesystem;
+    assert(fs::is_directory(dir));
+    const std::string KEY = dir.native_directory_string() + "/" + prefix;
+    PrefixedTextures::iterator prefixed_textures_it = m_prefixed_textures.find(KEY);
+    if (prefixed_textures_it == m_prefixed_textures.end()) {
+        prefixed_textures_it = m_prefixed_textures.insert(std::make_pair(KEY, TexturesAndDist())).first;
+        std::vector<boost::shared_ptr<GG::Texture> >& textures = prefixed_textures_it->second.first;
+        boost::shared_ptr<SmallIntDistType>& rand_int = prefixed_textures_it->second.second;
+        fs::directory_iterator end_it;
+        for (fs::directory_iterator it(dir); it != end_it; ++it) {
+            try {
+                if (fs::exists(*it) && !fs::is_directory(*it) && boost::algorithm::starts_with(it->leaf(), prefix))
+                    textures.push_back(ClientUI::GetTexture(*it));
+            } catch (const fs::filesystem_error& e) {
+                // ignore files for which permission is denied, and rethrow other exceptions
+                if (e.error() != fs::security_error)
+                    throw;
+            }
+        }
+        rand_int.reset(new SmallIntDistType(SmallIntDist(0, textures.size() - 1)));
+    }
+    return prefixed_textures_it->second;
 }
 
 TempUISoundDisabler::TempUISoundDisabler() :

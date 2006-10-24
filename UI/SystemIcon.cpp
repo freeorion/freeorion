@@ -19,21 +19,6 @@
 #include <boost/lexical_cast.hpp>
 
 
-namespace {
-    const std::map<int, std::string>& StarTypesNames()
-    {
-        static std::map<int, std::string> star_type_names;
-        star_type_names[STAR_BLUE] = "blue";
-        star_type_names[STAR_WHITE] = "white";
-        star_type_names[STAR_YELLOW] = "yellow";
-        star_type_names[STAR_ORANGE] = "orange";
-        star_type_names[STAR_RED] = "red";
-        star_type_names[STAR_NEUTRON] = "neutron";
-        star_type_names[STAR_BLACK] = "black";
-        return star_type_names;
-    }
-}
-
 ////////////////////////////////////////////////
 // OwnerColoredSystemName
 ////////////////////////////////////////////////
@@ -84,9 +69,9 @@ SystemIcon::SystemIcon(int id, double zoom) :
     m_system(*GetUniverse().Object<const System>(id)),
     m_static_graphic(0),
     m_selection_indicator(0),
+    m_selected(false),
     m_name(0),
-    m_default_star_color(GG::CLR_WHITE),
-    m_selected(false)
+    m_default_star_color(GG::CLR_WHITE)
 {
     Connect(m_system.StateChangedSignal, &SystemIcon::Refresh, this);
 
@@ -100,7 +85,7 @@ SystemIcon::SystemIcon(int id, double zoom) :
                     static_cast<int>(ul.y + ClientUI::SystemIconSize() * zoom + 0.5)));
 
     // static graphic
-    boost::shared_ptr<GG::Texture> graphic = ClientUI::GetNumberedTexture("stars", StarTypesNames(), m_system.Star(), m_system.ID());
+    boost::shared_ptr<GG::Texture> graphic = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[m_system.Star()], m_system.ID());
     m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::GR_FITGRAPHIC);
     AdjustBrightness(m_default_star_color, 0.80);
     m_static_graphic->SetColor(m_default_star_color);
@@ -108,7 +93,7 @@ SystemIcon::SystemIcon(int id, double zoom) :
 
     // selection indicator graphic
     boost::shared_ptr<GG::Texture> selection_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection.png");
-    double size = ClientUI::SystemSelectionIndicatorSize()*Width();
+    int size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
     m_selection_indicator = new GG::StaticGraphic(0, 0, size, size, selection_texture, GG::GR_FITGRAPHIC);
     AttachChild(m_selection_indicator);
     m_selection_indicator->Hide();
@@ -147,8 +132,8 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         m_static_graphic->SizeMove(GG::Pt(0, 0), lr - ul);
 
     if (m_selection_indicator && m_selected) {
-        double size = ClientUI::SystemSelectionIndicatorSize()*Width();
-        GG::Pt ind_ul = GG::Pt((Width() - size)*0.5, (Height() - size)*0.5);
+        int size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
+        GG::Pt ind_ul = GG::Pt((Width() - size) / 2, (Height() - size) / 2);
         GG::Pt ind_lr = ind_ul + GG::Pt(size, size);
         m_selection_indicator->SizeMove(ind_ul, ind_lr);
         m_selection_indicator->Show();
@@ -205,8 +190,8 @@ void SystemIcon::SetSelected(bool selected)
     m_selected = selected;
 
     if (m_selected) {
-        double size = ClientUI::SystemSelectionIndicatorSize()*Width();
-        GG::Pt ind_ul = GG::Pt((Width() - size)*0.5, (Height() - size)*0.5);
+        int size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
+        GG::Pt ind_ul = GG::Pt((Width() - size) / 2, (Height() - size) / 2);
         GG::Pt ind_lr = ind_ul + GG::Pt(size, size);
         m_selection_indicator->SizeMove(ind_ul, ind_lr);
         m_selection_indicator->Show();

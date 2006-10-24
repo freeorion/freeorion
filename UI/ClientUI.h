@@ -2,9 +2,9 @@
 #ifndef _ClientUI_h_
 #define _ClientUI_h_
 
-#ifndef _SitRepEntry_h_
+#include "../universe/Enums.h"
 #include "../util/SitRepEntry.h"
-#endif
+#include "../util/Random.h"
 
 #ifndef _GG_Wnd_h_
 #include <GG/Wnd.h>
@@ -115,6 +115,13 @@ public:
     bool ZoomToEncyclopediaEntry(const std::string& str); //!< Opens the encyclodedia screen and presents the entry for the given item
     void ZoomToSystem(System* system); //!< Zooms to a particular system on the galaxy map
     void ZoomToFleet(Fleet* fleet);    //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+
+    /** Loads a texture at random from the set of files starting with \a prefix in directory \a dir. */
+    boost::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix);
+
+    /** Loads texture \a n % N from the set of files starting with \a prefix in directory \a dir, where N is the number
+        of files found in \a dir with prefix \a prefix. */
+    boost::shared_ptr<GG::Texture> GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n);
     //!@}
     
     static ClientUI*    GetClientUI() {return s_the_UI;}   //!< returns a pointer to the singleton ClientUI class
@@ -125,24 +132,12 @@ public:
 
     static void LogMessage(const std::string& msg); //!<sends a message to the logger
 
-    static void GenerateSitRepText( SitRepEntry *p_sit_rep ); ///< generates a SitRep string from it's XML data.
+    static void GenerateSitRepText(SitRepEntry *p_sit_rep); ///< generates a SitRep string from it's XML data.
 
     /** Loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true load default
         missing.png if name isn't found. */
     static boost::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 
-    /** Loads and returns one of a set of numbered textures.  This is supposed to be used to retrieve textures that are numbered, e.g. the star textures 
-        blue1.png, blue2,png, ..., yellow1.png, yellow2.png, etc.  It is assumed that all such files are numbered starting with 1, not 0.  \a dir_name 
-        is the name of the directory in which the images are found, relative to ClientUI::ArtDir().
-        \a types_to_names is a map of object types to their base filenames, e.g. (System::BLUE --> "blue"), (PT_SWAMP --> "swamp"), etc.  \a type is 
-        the type of object for which you want a texture, which is used to look up the name in \a types_to_names.  \a hash_key is used to pick the numer 
-        from [1, N] of the texture to be used.  This number is usually the ID() of the UniverseObject that the texture represents on-screen.  This is 
-        used so that the texture used to represent the object is arbitrary, but is always the same, even after a save-reload cycle.  \see SystemIcon.cpp 
-        ... for an example of how to use this function. */
-    static boost::shared_ptr<GG::Texture> GetNumberedTexture(const std::string& dir_name, const std::map<int, std::string>& types_to_names, 
-                                                             int type, int hash_key);
-
-    //! \name Static Config Data
     //!@{
     static boost::filesystem::path ArtDir();   //!< directory holding artwork
     static boost::filesystem::path SoundDir(); //!< directory holding sound and music
@@ -200,12 +195,18 @@ public:
     static GG::Clr     UnresearchableTechTextAndBorderColor();
     static GG::Clr     TechWndProgressBarBackground();
     static GG::Clr     TechWndProgressBar();
+
+    static std::map<StarType, std::string>& StarTypeFilePrefixes();
     //!@}
 
 private:
     void HideAllWindows();              //!< hides all the UI windows from view
     
     void SwitchState(State state);      //!< switch current state to \a state, free's last state window and create the one for the new state
+
+    typedef std::pair<std::vector<boost::shared_ptr<GG::Texture> >, boost::shared_ptr<SmallIntDistType> > TexturesAndDist;
+    typedef std::map<std::string, TexturesAndDist> PrefixedTextures;
+    TexturesAndDist PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix);
 
     State m_state;                      //!< represents the screen currently being displayed
 
@@ -215,6 +216,8 @@ private:
     TurnProgressWnd* m_turn_progress_wnd; //!< the turn progress window
 
     int              m_previously_shown_system; //!< the ID of the system that was shown in the sidepanel before the last call to HideAllWindows()
+
+    PrefixedTextures m_prefixed_textures;
 
     static log4cpp::Category& s_logger; //!< log4cpp logging category
     static ClientUI* s_the_UI;          //!< pointer to the one and only ClientUI object

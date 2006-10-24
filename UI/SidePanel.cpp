@@ -1477,41 +1477,23 @@ void SidePanel::SetSystemImpl()
         int drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
         m_system_name->SetDropHeight(drop_height);
 
-        for (int i = 0; i < m_system_name->NumRows(); i++) 
+        for (int i = 0; i < m_system_name->NumRows(); i++) {
             if(select_row == &m_system_name->GetRow(i))
             {
                 m_system_name->Select(i);
                 break;
             }
-
-        std::vector<boost::shared_ptr<GG::Texture> > textures;
-        boost::shared_ptr<GG::Texture> graphic;
-     
-        boost::filesystem::path star_image = ClientUI::ArtDir() / "stars_sidepanel";
-        std::string star_filename;
-        switch (s_system->Star())
-        {
-        case STAR_BLUE     : star_filename = "blue0"     ; break;
-        case STAR_WHITE    : star_filename = "white0"    ; break;
-        case STAR_YELLOW   : star_filename = "yellow0"   ; break;
-        case STAR_ORANGE   : star_filename = "orange0"   ; break;
-        case STAR_RED      : star_filename = "red0"      ; break;
-        case STAR_NEUTRON  : star_filename = "neutron0"  ; break;
-        case STAR_BLACK    : star_filename = "blackhole0"; break;
-        default            : star_filename = "white0"    ; break;
         }
-        star_filename += lexical_cast<std::string>(s_system->ID() % 2) + ".png";
-        star_image /= star_filename;
 
-        std::cout << star_image.native_file_string() << std::endl;
-        graphic = ClientUI::GetTexture(star_image);
-      
+        boost::shared_ptr<GG::Texture> graphic = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars_sidepanel", ClientUI::StarTypeFilePrefixes()[s_system->Star()], s_system->ID());
+        std::vector<boost::shared_ptr<GG::Texture> > textures;
         textures.push_back(graphic);
 
         int star_dim = (Width()*4)/5;
         m_star_graphic = new GG::DynamicGraphic(Width()-(star_dim*2)/3,-(star_dim*1)/3,star_dim,star_dim,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
 
-        AttachChild(m_star_graphic);MoveChildDown(m_star_graphic);
+        AttachChild(m_star_graphic);
+        MoveChildDown(m_star_graphic);
 
         // TODO: add fleet icons
         std::pair<System::const_orbit_iterator, System::const_orbit_iterator> range = s_system->non_orbit_range();
@@ -1523,8 +1505,7 @@ void SidePanel::SetSystemImpl()
         std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
 
         m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
-        for(unsigned int i = 0; i < plt_vec.size(); i++) 
-        {
+        for(unsigned int i = 0; i < plt_vec.size(); i++) {
             GG::Connect(plt_vec[i]->StateChangedSignal, &SidePanel::PlanetsChanged, this);
             GG::Connect(plt_vec[i]->ResourceCenterChangedSignal, &SidePanel::PlanetsChanged, this);
         }
