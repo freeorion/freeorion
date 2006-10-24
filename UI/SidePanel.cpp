@@ -2,15 +2,20 @@
 
 #include "CUIWnd.h"
 #include "CUIControls.h"
-
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/ShipDesign.h"
+#include "SystemIcon.h"
 #include "../util/Random.h"
+#include "FleetWnd.h"
 #include "FocusSelector.h"
+#include "MapWnd.h"
 #include "../util/XMLDoc.h"
 #include "../Empire/Empire.h"
+#include "../universe/Fleet.h"
+#include "../universe/Ship.h"
+#include "../util/OptionsDB.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -18,16 +23,8 @@
 #include <GG/Scroll.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
-#include "../universe/Fleet.h"
-#include "../universe/Ship.h"
-#include "../util/OptionsDB.h"
-
-#include "../UI/FleetWnd.h"
-
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
-
-#include "MapWnd.h"
 
 #include <fstream>
 
@@ -1465,7 +1462,7 @@ void SidePanel::SetSystemImpl()
                 else
                     continue;
             } else {
-                row->push_back(boost::io::str(boost::format(UserString("SP_SYSTEM_NAME")) % sys_vec[i]->Name()), ClientUI::Font(),SystemNameFontSize(), ClientUI::TextColor());
+                row->push_back(new OwnerColoredSystemName(sys_vec[i], HumanClientApp::GetApp()->GetFont(ClientUI::Font(), SystemNameFontSize()), UserString("SP_SYSTEM_NAME")));
             }
             
             m_system_name->Insert(row);

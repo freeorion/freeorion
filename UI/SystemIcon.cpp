@@ -1,5 +1,3 @@
-//SystemIcon.cpp
-
 #include "SystemIcon.h"
 
 #include "ClientUI.h"
@@ -17,7 +15,9 @@
 #include <GG/StaticGraphic.h>
 #include <GG/TextControl.h>
 
+#include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+
 
 namespace {
     const std::map<int, std::string>& StarTypesNames()
@@ -32,8 +32,49 @@ namespace {
         star_type_names[STAR_BLACK] = "black";
         return star_type_names;
     }
-
 }
+
+////////////////////////////////////////////////
+// OwnerColoredSystemName
+////////////////////////////////////////////////
+OwnerColoredSystemName::OwnerColoredSystemName(const System* system, const boost::shared_ptr<GG::Font>& font, const std::string& format_text/* = ""*/, Uint32 flags/* = 0*/) :
+    Control(0, 0, 1, 1, flags)
+{
+    std::string str = format_text == "" ? system->Name() : boost::io::str(boost::format(format_text) % system->Name());
+    int width = 0;
+    const std::set<int>& owners = system->Owners();
+    if (owners.size() <= 1) {
+        GG::Clr text_color = ClientUI::TextColor();
+        if (!owners.empty())
+            text_color = Empires().Lookup(*owners.begin())->Color();
+        GG::TextControl* text = new GG::TextControl(width, 0, str, font, text_color);
+        m_subcontrols.push_back(text);
+        AttachChild(m_subcontrols.back());
+        width += m_subcontrols.back()->Width();
+    } else {
+        Uint32 format = 0;
+        std::vector<GG::Font::LineData> lines;
+        GG::Pt extent = font->DetermineLines(str, format, 1000, lines);
+        unsigned int first_char_pos = 0;
+        unsigned int last_char_pos = 0;
+        int pixels_per_owner = extent.x / owners.size() + 1; // the +1 is to make sure there is not a stray character left off the end
+        int owner_idx = 1;
+        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
+            while (last_char_pos < str.size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
+                ++last_char_pos;
+            }
+            m_subcontrols.push_back(new GG::TextControl(width, 0, str.substr(first_char_pos, last_char_pos - first_char_pos), 
+                                                        font, Empires().Lookup(*it)->Color()));
+            AttachChild(m_subcontrols.back());
+            first_char_pos = last_char_pos;
+            width += m_subcontrols.back()->Width();
+        }
+    }
+    Resize(GG::Pt(width, m_subcontrols[0]->Height()));
+}
+
+void OwnerColoredSystemName::Render()
+{}
 
 ////////////////////////////////////////////////
 // SystemIcon
@@ -43,6 +84,7 @@ SystemIcon::SystemIcon(int id, double zoom) :
     m_system(*GetUniverse().Object<const System>(id)),
     m_static_graphic(0),
     m_selection_indicator(0),
+    m_name(0),
     m_default_star_color(GG::CLR_WHITE)
 {
     Connect(m_system.StateChangedSignal, &SystemIcon::Refresh, this);
@@ -57,7 +99,6 @@ SystemIcon::SystemIcon(int id, double zoom) :
                     static_cast<int>(ul.y + ClientUI::SystemIconSize() * zoom + 0.5)));
 
     // static graphic
-    //boost::shared_ptr<GG::Texture> graphic = GetStarTexture(m_system.Star(), m_system.ID());
     boost::shared_ptr<GG::Texture> graphic = ClientUI::GetNumberedTexture("stars", StarTypesNames(), m_system.Star(), m_system.ID());
     m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::GR_FITGRAPHIC);
     AdjustBrightness(m_default_star_color, 0.80);
@@ -153,40 +194,13 @@ void SystemIcon::Refresh()
     SetText(m_system.Name());
 
     // set up the name text controls
-    for (unsigned int i = 0; i < m_name.size(); ++i) {
-        DeleteChild(m_name[i]);
-    }
-    m_name.clear();
-
-    const std::set<int>& owners = m_system.Owners();
-    if (owners.size() < 2) {
-        GG::Clr text_color = ClientUI::TextColor();
-        if (!owners.empty()) {
-            text_color = Empires().Lookup(*owners.begin())->Color();
-        }
-        m_name.push_back(new GG::TextControl(0, 0, m_system.Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_color));
-        AttachChild(m_name[0]);
-    } else {
+    if (!m_system.Name().empty()) {
+        delete m_name;
         boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
-        Uint32 format = 0;
-        std::vector<GG::Font::LineData> lines;
-        GG::Pt extent = font->DetermineLines(m_system.Name(), format, 1000, lines);
-        unsigned int first_char_pos = 0;
-        unsigned int last_char_pos = 0;
-        int pixels_per_owner = extent.x / owners.size() + 1; // the +1 is to make sure there is not a stray character left off the end
-        int owner_idx = 1;
-        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
-            while (last_char_pos < m_system.Name().size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
-                ++last_char_pos;
-            }
-            m_name.push_back(new GG::TextControl(0, 0, m_system.Name().substr(first_char_pos, last_char_pos - first_char_pos), 
-                                                 GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
-                                                 Empires().Lookup(*it)->Color()));
-            AttachChild(m_name.back());
-            first_char_pos = last_char_pos;
-        }
+        m_name = new OwnerColoredSystemName(&m_system, font);
+        AttachChild(m_name);
+        PositionSystemName();
     }
-    PositionSystemName();
 
     std::vector<const Fleet*> fleets = m_system.FindObjects<Fleet>();
     for (unsigned int i = 0; i < fleets.size(); ++i)
@@ -217,16 +231,14 @@ void SystemIcon::ClickFleetButton(Fleet* fleet)
 
 void SystemIcon::ShowName()
 {
-    for (unsigned int i = 0; i < m_name.size(); ++i) {
-        m_name[i]->Show();
-    }
+    if (m_name)
+        m_name->Show();
 }
 
 void SystemIcon::HideName()
 {
-    for (unsigned int i = 0; i < m_name.size(); ++i) {
-        m_name[i]->Hide();
-    }
+    if (m_name)
+        m_name->Hide();
 }
 
 void SystemIcon::CreateFleetButtons()
@@ -272,17 +284,8 @@ void SystemIcon::CreateFleetButtons()
 
 void SystemIcon::PositionSystemName()
 {
-    if (!m_name.empty()) {
-        int total_width = 0;
-        std::vector<int> extents;
-        for (unsigned int i = 0; i < m_name.size(); ++i) {
-            extents.push_back(total_width);
-            total_width += m_name[i]->Width();
-        }
-        for (unsigned int i = 0; i < m_name.size(); ++i) {
-            m_name[i]->MoveTo(GG::Pt((Width() - total_width) / 2 + extents[i], Height()));
-        }
-    }
+    if (m_name)
+        m_name->MoveTo(GG::Pt((Width() - m_name->Width()) / 2, Height()));
 }
 
 void SystemIcon::FleetCreatedOrDestroyed(const Fleet&)

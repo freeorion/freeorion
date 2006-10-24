@@ -11,6 +11,7 @@
 #include "CUIDrawUtil.h"
 #endif
 
+
 class Fleet;
 class FleetButton;
 class System;
@@ -19,11 +20,20 @@ class StaticGraphic;
 class TextControl;
 }
 
-/** a GUI control that allows interaction with a star system.
-    This class allows user interaction with star systems
-    on the galaxy map.  It contains the graphic to display the 
-    system, along with the object ID of the UniverseObject associated
-    with it. */
+/** A TextControl-like GG::Control that displays the name of a system in the color(s) of the owning empire(s). */
+class OwnerColoredSystemName : public GG::Control
+{
+public:
+    OwnerColoredSystemName(const System* system, const boost::shared_ptr<GG::Font>& font, const std::string& format_text = "", Uint32 flags = 0);
+    virtual void Render();
+
+private:
+    std::vector<GG::TextControl*> m_subcontrols;
+};
+
+/** a GUI control that allows interaction with a star system.  This class allows user interaction with star systems on
+    the galaxy map.  It contains the graphic to display the system, along with the object ID of the UniverseObject
+    associated with it. */
 class SystemIcon : public GG::Control
 {
 public:
@@ -82,7 +92,7 @@ private:
     const System&                   m_system;         //!< the System object associated with this SystemIcon
     GG::StaticGraphic*              m_static_graphic; //!< the control used to render the displayed texture
     GG::StaticGraphic*              m_selection_indicator;  //!< shown to indicate system is selected in sidepanel
-    std::vector<GG::TextControl*>   m_name;           //!< the control that holds the name of the system (multiple controls may be needed, since there may be multiple owners and thus colors)
+    OwnerColoredSystemName*         m_name;           //!< the control that holds the name of the system
     GG::Clr                         m_default_star_color;
 
     std::map<int, FleetButton*> m_stationary_fleet_markers; //!< the fleet buttons for the fleets that are stationary in the system, indexed by Empire ID of the owner
