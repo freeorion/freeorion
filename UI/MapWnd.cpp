@@ -862,15 +862,28 @@ void MapWnd::CenterOnFleet(Fleet* fleet)
 
 void MapWnd::SelectSystem(int system_id)
 {
+    // remove selection indicator from previously selected system
+    int prev_system_id = m_side_panel->SystemID();
+    if (prev_system_id != UniverseObject::INVALID_OBJECT_ID)
+        m_system_icons[prev_system_id]->SetSelected(false);
+    
+    // place indicator on newly selected system
+    if (system_id != UniverseObject::INVALID_OBJECT_ID)
+        m_system_icons[system_id]->SetSelected(true);
+
+    // show selected system in sidepanel(s)
     if (m_in_production_view_mode) {
         if (system_id != m_side_panel->SystemID()) {
+            // only set selected system if newly selected system is different from before, otherwise planet rotation phase resets
             m_side_panel->SetSystem(system_id);
             m_production_wnd->SelectSystem(system_id);            
         }
-        m_side_panel->Hide();
+        m_side_panel->Hide();   // only show ProductionWnd's sidepanel when ProductionWnd is open
     } else {    
         if (!m_side_panel->Visible() || system_id != m_side_panel->SystemID()) {
             m_side_panel->SetSystem(system_id);
+            
+            // if selected an invalid system, hide sidepanel
             if (system_id == UniverseObject::INVALID_OBJECT_ID) {
                 m_side_panel->Hide();
             } else {

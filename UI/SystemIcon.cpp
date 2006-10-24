@@ -85,7 +85,8 @@ SystemIcon::SystemIcon(int id, double zoom) :
     m_static_graphic(0),
     m_selection_indicator(0),
     m_name(0),
-    m_default_star_color(GG::CLR_WHITE)
+    m_default_star_color(GG::CLR_WHITE),
+    m_selected(false)
 {
     Connect(m_system.StateChangedSignal, &SystemIcon::Refresh, this);
 
@@ -107,8 +108,9 @@ SystemIcon::SystemIcon(int id, double zoom) :
 
     // selection indicator graphic
     boost::shared_ptr<GG::Texture> selection_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection.png");
-    m_selection_indicator = new GG::StaticGraphic(0, 0, Width(), Height(), selection_texture, GG::GR_FITGRAPHIC);
-    AttachChild(m_static_graphic);
+    double size = ClientUI::SystemSelectionIndicatorSize()*Width();
+    m_selection_indicator = new GG::StaticGraphic(0, 0, size, size, selection_texture, GG::GR_FITGRAPHIC);
+    AttachChild(m_selection_indicator);
     m_selection_indicator->Hide();
 }
 
@@ -143,6 +145,15 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     Wnd::SizeMove(ul, lr);
     if (m_static_graphic)
         m_static_graphic->SizeMove(GG::Pt(0, 0), lr - ul);
+
+    if (m_selection_indicator && m_selected) {
+        double size = ClientUI::SystemSelectionIndicatorSize()*Width();
+        GG::Pt ind_ul = GG::Pt((Width() - size)*0.5, (Height() - size)*0.5);
+        GG::Pt ind_lr = ind_ul + GG::Pt(size, size);
+        m_selection_indicator->SizeMove(ind_ul, ind_lr);
+        m_selection_indicator->Show();
+    }
+
     PositionSystemName();
 
     const int BUTTON_SIZE = static_cast<int>(Height() * ClientUI::FleetButtonSize());
@@ -187,6 +198,22 @@ void SystemIcon::MouseLeave()
 {
     m_static_graphic->SetColor(m_default_star_color);
     MouseLeavingSignal(m_system.ID());
+}
+
+void SystemIcon::SetSelected(bool selected)
+{
+    m_selected = selected;
+
+    if (m_selected) {
+        double size = ClientUI::SystemSelectionIndicatorSize()*Width();
+        GG::Pt ind_ul = GG::Pt((Width() - size)*0.5, (Height() - size)*0.5);
+        GG::Pt ind_lr = ind_ul + GG::Pt(size, size);
+        m_selection_indicator->SizeMove(ind_ul, ind_lr);
+        m_selection_indicator->Show();
+        m_selection_indicator->Show();
+    } else {
+        m_selection_indicator->Hide();
+    }
 }
 
 void SystemIcon::Refresh()

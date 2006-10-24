@@ -79,8 +79,9 @@ GG::Clr     ClientUI::MultieditIntColor()      { return GetOptionsDB().Get<Strea
 GG::Clr     ClientUI::StatIncrColor()          { return GetOptionsDB().Get<StreamableColor>("UI.stat-increase-color").ToClr(); }
 GG::Clr     ClientUI::StatDecrColor()          { return GetOptionsDB().Get<StreamableColor>("UI.stat-decrease-color").ToClr(); }
 
-int         ClientUI::SystemIconSize()         { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
-double      ClientUI::FleetButtonSize()        { return GetOptionsDB().Get<double>("UI.fleet-button-size"); }
+int         ClientUI::SystemIconSize()                  { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
+double      ClientUI::FleetButtonSize()                 { return GetOptionsDB().Get<double>("UI.fleet-button-size"); }
+double      ClientUI::SystemSelectionIndicatorSize()    { return GetOptionsDB().Get<double>("UI.system-selection-indicator-size"); }
 
 // game UI windows
 GG::Clr     ClientUI::SidePanelColor()         { return GetOptionsDB().Get<StreamableColor>("UI.sidepanel-color").ToClr(); }
@@ -191,7 +192,8 @@ namespace {
         db.Add("UI.scroll-width", "OPTIONS_DB_UI_SCROLL_WIDTH", 14, RangedValidator<int>(8, 30));
         db.Add("UI.system-icon-size", "OPTIONS_DB_UI_SYSTEM_ICON_SIZE", 14, RangedValidator<int>(8, 50));
         db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 0.5, RangedValidator<double>(0.2, 2));
-
+        db.Add("UI.system-selection-indicator-size", "OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE", 2.0, RangedValidator<double>(0.5, 5));
+        
         // tech category colors
         const GG::Clr LEARNING_CATEGORY(93, 155, 246, 255);
         const GG::Clr GROWTH_CATEGORY(116, 225, 107, 255);

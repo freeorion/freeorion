@@ -184,8 +184,9 @@ public:
     static GG::Clr     StatIncrColor();   //!< used to color increasing stats text (eg "+2")
     static GG::Clr     StatDecrColor();   //!< used to color decreasing stats text (eg "-3")
 
-    static int         SystemIconSize();  //!< the width/height of a System/Icon at zoom = 1.0
-    static double      FleetButtonSize(); //!< the width/height of a FleetButton at zoom = 1.0, relative to the size of a SystemIcon
+    static int         SystemIconSize();                //!< the width/height of a System/Icon at zoom = 1.0
+    static double      FleetButtonSize();               //!< the width/height of a FleetButton, relative to the size of a SystemIcon
+    static double      SystemSelectionIndicatorSize();  //!< the width/height of a System Selection Indicator, relative to the size of a SystemIcon
 
     // game UI windows
     static GG::Clr     SidePanelColor();

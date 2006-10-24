@@ -71,6 +71,7 @@ public:
     virtual void   LDoubleClick(const GG::Pt& pt, Uint32 keys);
     virtual void   MouseEnter(const GG::Pt& pt, Uint32 keys);
     virtual void   MouseLeave();
+    void           SetSelected(bool selected = true);   //!< shows/hides the system selection indicator over this system
 
     void           Refresh(); //!< sets up the icon's fleet buttons, generates fleet movement lines, etc.  Should be called after an icon is attached to the map
     void           ClickFleetButton(Fleet* fleet); //!< clicks the FleetButton containing \a fleet
@@ -92,6 +93,7 @@ private:
     const System&                   m_system;         //!< the System object associated with this SystemIcon
     GG::StaticGraphic*              m_static_graphic; //!< the control used to render the displayed texture
     GG::StaticGraphic*              m_selection_indicator;  //!< shown to indicate system is selected in sidepanel
+    bool                            m_selected;             //!< is this icon presently selected / should it show m_selected_indicator
     OwnerColoredSystemName*         m_name;           //!< the control that holds the name of the system
     GG::Clr                         m_default_star_color;
 
