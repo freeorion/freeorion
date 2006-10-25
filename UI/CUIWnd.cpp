@@ -279,9 +279,9 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
         Resize((pt - m_drag_offset) - UpperLeft());
     } else { // normal-dragging
         GG::Pt ul = UpperLeft(), lr = LowerRight();
-        if ((0 <= ul.x + move.x) && (lr.x + move.x < GG::GUI::GetGUI()->AppWidth()) &&
-            (0 <= ul.y + move.y) && (lr.y + move.y < GG::GUI::GetGUI()->AppHeight()))
-            GG::Wnd::LDrag(pt, move, keys);
+        GG::Pt final_move(std::max(-ul.x, std::min(move.x, GG::GUI::GetGUI()->AppWidth() - 1 - lr.x)),
+                          std::max(-ul.y, std::min(move.y, GG::GUI::GetGUI()->AppHeight() - 1 - lr.y)));
+        GG::Wnd::LDrag(pt + final_move - move, final_move, keys);
     }
 }
 
