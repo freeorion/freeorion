@@ -758,7 +758,6 @@ namespace Delauney {
 		for (n = 0; n < theSize - 3; n++) {
 			pointNumList.clear();
 
-					
 			// check each triangle in list, to see if the new point lies in its circumcircle.  if so, delete
 			// the triangle and add its vertices to a list 
 			itCur = triList->begin();
@@ -825,6 +824,7 @@ namespace Delauney {
 			// go through list of points, making new triangles out of them
 			itCur2 = pointNumList.begin();
 			itEnd2 = pointNumList.end();
+            assert(itCur2 != itEnd2);
 
 			// add triangle for last and first points and n
 			triList->push_front(Delauney::DTTriangle(n, (pointNumList.front()).num, (pointNumList.back()).num, points));
@@ -1844,6 +1844,7 @@ void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vecto
 
 					// extract data on starlane vector...
 					laneVectsMapIter = laneVectsMap.find(dest1);
+                    assert(laneVectsMapIter != laneVectsMap.end());
 					tempVectAndMag = laneVectsMapIter->second;
 					tempVect = tempVectAndMag.first;
 					vectX1 = tempVect.first;
@@ -1865,6 +1866,7 @@ void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vecto
 								
 							// extract data on starlane vector...
 							laneVectsMapIter = laneVectsMap.find(dest2);
+                            assert(laneVectsMapIter != laneVectsMap.end());
 							tempVectAndMag = laneVectsMapIter->second;
 							tempVect = tempVectAndMag.first;
 							vectX2 = tempVect.first;

@@ -828,7 +828,7 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, GG::ListBox::Row* row, cons
 {
     ShipRow* ship_row = dynamic_cast<ShipRow*>(row);
 
-    if (ship_row->m_ship->Owners().size() != 1 || HumanClientApp::GetApp()->EmpireID() != *ship_row->m_ship->Owners().begin())
+    if (!ship_row || ship_row->m_ship->Owners().size() != 1 || HumanClientApp::GetApp()->EmpireID() != *ship_row->m_ship->Owners().begin())
         return;
 
     Ship* ship = GetUniverse().Object<Ship>(ship_row->ShipID());

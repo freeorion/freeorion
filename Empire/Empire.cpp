@@ -1396,28 +1396,21 @@ void Empire::UpdateFoodDistribution()
 {
     m_food_resource_pool.Update();  // recalculate total food production
 
-    //Logger().debugStream() << "Empire::UpdateFoodDistribution for empire " << m_id;
-
     double available_food = GetFoodResPool().Available();
     m_food_total_distributed = 0.0;
 
-    //Logger().debugStream() << "Empire::UpdateFoodDistribution: total available_food = " << available_food;
-    
     std::vector<PopCenter*> pop_centers = GetPopulationPool().PopCenters(); //GetUniverse().FindObjects(OwnedVisitor<PopCenter>(m_id));
     std::vector<PopCenter*>::iterator pop_it;
     std::vector<ResourceCenter*> resource_centers = GetFoodResPool().ResourceCenters(); //GetUniverse().FindObjects(OwnedVisitor<ResourceCenter>(m_id));
     std::vector<ResourceCenter*>::iterator res_it;
 
-    //Logger().debugStream() << "Empire::UpdateFoodDistribution: pop_centers.size() = " << pop_centers.size();
-
     // compile map of food production of ResourceCenters, indexed by center's id
     std::map<int, double> fp_map;
-    std::map<int, double>::iterator fp_map_it;    
     for (res_it = resource_centers.begin(); res_it != resource_centers.end(); ++res_it)
     {
         ResourceCenter *center = *res_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
-        if (!obj) continue; // apparently wasn't a valid object... might want to throw an error in this situation instead...
+        assert(obj);
         fp_map[obj->ID()] = center->FarmingPoints();
     }
 
@@ -1427,28 +1420,17 @@ void Empire::UpdateFoodDistribution()
         PopCenter *center = *pop_it;
         double need = center->PopPoints();  // basic need is current population - prevents starvation
 
-        //Logger().debugStream() << "Empire::UpdateFoodDistribution: PopCenter needs: " << need;
-
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
-        if (!obj)
-        {
-            // apparently wasn't a valid object... might want to throw an error in this situation instead...
-            center->SetAvailableFood(0.0);
-            continue; 
-        }
+        assert(obj);
         
         // determine if, and if so how much, food this center produces locally
         double food_prod = 0.0;
-        fp_map_it = fp_map.find(obj->ID());
+        std::map<int, double>::iterator fp_map_it = fp_map.find(obj->ID());
         if (fp_map_it != fp_map.end())
             food_prod = fp_map_it->second;
 
-        //Logger().debugStream() << "Empire::UpdateFoodDistribution: PopCenter produces: " << food_prod;
-
         // allocate food to this PopCenter, deduct from pool, add to total food distribution tally
         double allocation = std::min(available_food, std::min(need, food_prod));
-
-        //Logger().debugStream() << "Empire::UpdateFoodDistribution: PopCenter allocated: " << allocation;
 
         center->SetAvailableFood(allocation);
         m_food_total_distributed += allocation;
@@ -1477,13 +1459,14 @@ void Empire::UpdateFoodDistribution()
     {
         PopCenter *center = *pop_it;
         double basic_need = center->PopPoints();
-        double full_need = 2*basic_need;
+        double full_need = 2 * basic_need;
         double has = center->AvailableFood();
 
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);
+        assert(obj);
 
         double food_prod = 0.0;
-        fp_map_it = fp_map.find(obj->ID());
+        std::map<int, double>::iterator fp_map_it = fp_map.find(obj->ID());
         if (fp_map_it != fp_map.end())
             food_prod = fp_map_it->second;
 
@@ -1509,6 +1492,7 @@ void Empire::UpdateFoodDistribution()
         available_food -= addition;
         m_food_total_distributed += addition;
     }
+
     // after changing food distribution, population growth predictions may need to be redone
     // by calling UpdatePopulationGrowth()  
 

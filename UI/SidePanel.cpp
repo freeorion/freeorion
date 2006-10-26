@@ -1457,10 +1457,12 @@ void SidePanel::SetSystemImpl()
             GG::ListBox::Row *row = new SystemRow(sys_vec[i]->ID());
 
             if (sys_vec[i]->Name().length()==0) {
-                if (sys_vec[i] == s_system)
+                if (sys_vec[i] == s_system) {
                     row->push_back(UserString("SP_UNKNOWN_SYSTEM"), ClientUI::Font(), SystemNameFontSize(), ClientUI::TextColor());
-                else
+                } else {
+                    delete row;
                     continue;
+                }
             } else {
                 row->push_back(new OwnerColoredSystemName(sys_vec[i], HumanClientApp::GetApp()->GetFont(ClientUI::Font(), SystemNameFontSize()), UserString("SP_SYSTEM_NAME")));
             }

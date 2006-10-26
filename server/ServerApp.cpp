@@ -1402,6 +1402,8 @@ void ServerApp::LoadGameInit()
                     // since this must be an AI player, it does not have the correct player name set in its Empire yet, so we need to do so now
                     Empires().Lookup(empire_id)->SetPlayerName(it->second.name);
                     break;
+                } else {
+                    assert(!"No empire id was found for one of the players in ServerApp::LoadGameInit().");
                 }
             }
         }

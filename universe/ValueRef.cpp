@@ -38,7 +38,8 @@ namespace {
                     obj = 0;
                 }
             } else if (*first == "System") {
-                obj = obj->GetSystem();
+                if (obj)
+                    obj = obj->GetSystem();
             }
             ++first;
         }

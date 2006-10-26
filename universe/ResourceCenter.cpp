@@ -223,6 +223,7 @@ void ResourceCenter::SetPrimaryFocus(FocusType focus)
         else if (focus == FOCUS_BALANCED)
             new_max_mods = ProductionDataTables()["FocusMods"][2][0];
         Meter* meter = GetMeter(i);
+        assert(meter);
         meter->SetMax(meter->Max() + new_max_mods - old_max_mods);
     }
     m_primary = focus;
@@ -243,6 +244,7 @@ void ResourceCenter::SetSecondaryFocus(FocusType focus)
         else if (focus == FOCUS_BALANCED)
             new_max_mods = ProductionDataTables()["FocusMods"][3][0];
         Meter* meter = GetMeter(i);
+        assert(meter);
         meter->SetMax(meter->Max() + new_max_mods - old_max_mods);
     }
     m_secondary = focus;

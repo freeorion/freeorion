@@ -655,17 +655,16 @@ void MapWnd::InitTurn(int turn_number)
 
     MoveChildUp(m_sitrep_panel);
     // are there any sitreps to show?
-    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    assert(empire);
     m_sitrep_panel->Update();
     // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
     // I am sick of dealing with it, so I'm forcing a resize in order to force it to behave.
     m_sitrep_panel->Resize(m_sitrep_panel->Size());
-    if (empire) {
-        if (empire->NumSitRepEntries())
-            m_sitrep_panel->Show();
-        else
-            m_sitrep_panel->Hide();
-    }
+    if (empire->NumSitRepEntries())
+        m_sitrep_panel->Show();
+    else
+        m_sitrep_panel->Hide();
 
     m_research_wnd->Hide();
     m_production_wnd->Hide();
