@@ -26,6 +26,7 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/MultiEdit.h>
+#include <GG/WndEvent.h>
 
 #include <vector>
 #include <deque>
@@ -956,9 +957,9 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
     }
 }
 
-bool MapWnd::EventFilter(GG::Wnd* w, const GG::Wnd::Event& event)
+bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 {
-    if (event.Type() == GG::Wnd::Event::RClick && !FleetWnd::FleetWndsOpen()) {
+    if (event.Type() == GG::WndEvent::RClick && !FleetWnd::FleetWndsOpen()) {
         // Attempt to close the SidePanel (if open); if this fails, just let Wnd w handle it.  
         // Note that this enforces a one-close-per-click policy.
 

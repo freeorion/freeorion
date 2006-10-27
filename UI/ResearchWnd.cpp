@@ -39,14 +39,16 @@ namespace {
             CUIListBox(x, y, w, h),
             m_research_wnd(research_wnd),
             m_drop_point(-1)
-        {}
+        {
+            AllowDropType("RESEARCH_QUEUE_ROW");
+        }
         // HACK!  This is sort of a dirty trick, but we return false here in all cases, even when we accept the dropped
         // item.  This keeps things simpler than if we handled ListBox::DroppedRow signals, since we are explicitly
         // updating everything on drops anyway.
         virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
         {
             assert(wnds.size() == 1);
-            if ((*wnds.begin())->DragDropDataType() == "RESEARCH_QUEUE_ROW") {
+            if (AllowedDropTypes().find((*wnds.begin())->DragDropDataType()) != AllowedDropTypes().end()) {
                 GG::ListBox::Row* row = static_cast<GG::ListBox::Row*>(*wnds.begin());
                 int original_row_idx = -1;
                 for (int i = 0; i < NumRows(); ++i) {
@@ -77,13 +79,9 @@ namespace {
                 GG::FlatRectangle(ul.x, ul.y - 1, lr.x, ul.y, GG::CLR_ZERO, GG::CLR_WHITE, 1);
             }
         }
-        virtual void DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
-        {
-            DragDropHere(pt, drag_drop_wnds, keys);
-        }
         virtual void DragDropHere(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
         {
-            if (drag_drop_wnds.size() == 1 && drag_drop_wnds.begin()->first->DragDropDataType() == "RESEARCH_QUEUE_ROW") {
+            if (drag_drop_wnds.size() == 1 && AllowedDropTypes().find(drag_drop_wnds.begin()->first->DragDropDataType()) != AllowedDropTypes().end()) {
                 m_drop_point = RowUnderPt(pt);
                 if (m_drop_point < 0)
                     m_drop_point = 0;
@@ -92,10 +90,12 @@ namespace {
             } else {
                 m_drop_point = -1;
             }
+            ListBox::DragDropHere(pt, drag_drop_wnds, keys);
         }
         virtual void DragDropLeave()
         {
             m_drop_point = -1;
+            ListBox::DragDropLeave();
         }
     private:
         ResearchWnd* m_research_wnd;

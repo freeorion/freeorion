@@ -27,6 +27,7 @@ class UniverseObject;
 namespace GG {
     class Texture;
     class MultiEdit;
+    class WndEvent;
 }
 
 /** This class is a window that graphically displays everything in the universe */
@@ -102,7 +103,7 @@ public:
     static const int    SIDE_PANEL_WIDTH;
 
 protected:
-    virtual bool   EventFilter(GG::Wnd* w, const GG::Wnd::Event& event);
+    virtual bool   EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
 private:
     void RefreshFoodResourceIndicator();    ///< gets stockpile and expected change and updates resource indicator
