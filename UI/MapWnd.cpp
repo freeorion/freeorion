@@ -143,9 +143,10 @@ void MapWndPopup::Close( )
 ////////////////////////////////////////////////
 // static(s)
 const int MapWnd::NUM_BACKGROUNDS = 3;
-double    MapWnd::s_min_scale_factor = 0.5;
+double    MapWnd::s_min_scale_factor = 0.35;
 double    MapWnd::s_max_scale_factor = 8.0;
 const int MapWnd::SIDE_PANEL_WIDTH = 300;
+int       MapWnd::s_nebula_size = 192;
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
@@ -679,9 +680,17 @@ void MapWnd::InitTurn(int turn_number)
     else
         ShowSystemNames();
 
-    // center the map at the start of the game (if we're at the default start position, the odds are very good that this is a fresh game)
-    if (ClientUpperLeft() == GG::Pt())
-        CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
+    // center the map on player's home system at the start of the game (if we're at the default start position, the odds are very good that this is a fresh game)
+    if (ClientUpperLeft() == GG::Pt()) {
+        int capitol_id = empire->CapitolID();
+        UniverseObject *obj = universe.Object(capitol_id);
+        if (obj) {
+            CenterOnMapCoord(obj->X(), obj->Y());
+        } else {
+            // default to centred on whole universe if there is no capitol
+            CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
+        }
+    }
 
     GG::Connect(empire->GetFoodResPool().ChangedSignal, &MapWnd::RefreshFoodResourceIndicator, this, 0);
     GG::Connect(empire->GetMineralResPool().ChangedSignal, &MapWnd::RefreshMineralsResourceIndicator, this, 0);
@@ -1063,11 +1072,11 @@ void MapWnd::RenderBackgrounds()
     for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
         GG::Pt ul = 
             ClientUpperLeft() + 
-            GG::Pt(static_cast<int>((m_nebula_centers[i].x - m_nebulae[i]->Width() / 2.0) * m_zoom_factor),
-                   static_cast<int>((m_nebula_centers[i].y - m_nebulae[i]->Height() / 2.0) * m_zoom_factor));
+            GG::Pt(static_cast<int>((m_nebula_centers[i].x - s_nebula_size / 2.0) * m_zoom_factor),
+                   static_cast<int>((m_nebula_centers[i].y - s_nebula_size / 2.0) * m_zoom_factor));
         m_nebulae[i]->OrthoBlit(ul, 
-                                ul + GG::Pt(static_cast<int>(m_nebulae[i]->Width() * m_zoom_factor), 
-                                            static_cast<int>(m_nebulae[i]->Width() * m_zoom_factor)), 
+                                ul + GG::Pt(static_cast<int>(s_nebula_size * m_zoom_factor), 
+                                            static_cast<int>(s_nebula_size * m_zoom_factor)), 
                                 0,
                                 false);
     }
