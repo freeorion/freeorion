@@ -76,7 +76,7 @@ void CreditsWnd::Render()
     Uint32 format = GG::TF_CENTER | GG::TF_TOP;
 
     GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::Clr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
-    glColor4ubv(GG::CLR_WHITE.v);
+    glColor(GG::CLR_WHITE);
 
     int offset=m_co;
 
@@ -93,7 +93,7 @@ void CreditsWnd::Render()
             transparency = static_cast<int>(255*fade_in);
     }
 
-    glColor4ubv(GG::Clr(transparency,transparency,transparency,255).v);
+    glColor(GG::Clr(transparency,transparency,transparency,255));
 
     GG::BeginScissorClipping(ul.x+m_cx,ul.y+m_cy,ul.x+m_cx+m_cw,ul.y+m_cy+m_ch);
 

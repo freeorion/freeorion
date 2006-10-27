@@ -238,7 +238,7 @@ namespace {
             gluQuadricNormals(quad, GLU_SMOOTH);
             gluQuadricOrientation(quad, GLU_OUTSIDE);
 
-            glColor4ubv(GG::CLR_WHITE.v);
+            glColor(GG::CLR_WHITE);
             gluSphere(quad, r, 100, 100);
         }
     }
@@ -965,7 +965,7 @@ bool SidePanel::PlanetPanel::RenderUnhabited(const Planet &planet)
 
 bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 {
-  glColor4ubv(ClientUI::TextColor().v);
+  glColor(ClientUI::TextColor());
   boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(),ClientUI::Pts());
   Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
 
@@ -990,7 +990,7 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 
   //population
   //x = m_planet_name->UpperLeft ().x+10; y = m_planet_name->LowerRight().y + RESOURCE_DISPLAY_HEIGHT+3;
-  glColor4ubv(ClientUI::TextColor().v);
+  glColor(ClientUI::TextColor());
   icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   x+=font->Height();
   text = lexical_cast<std::string>(population)+"/"+lexical_cast<std::string>(static_cast<int>(planet.MaxPop()));
@@ -1002,7 +1002,7 @@ bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
 
 bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 {
-  glColor4ubv(ClientUI::TextColor().v);
+  glColor(ClientUI::TextColor());
   boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(),ClientUI::Pts());
   Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
 
@@ -1025,7 +1025,7 @@ bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
 
   //population
   //x = m_planet_name->UpperLeft ().x+10; y = m_planet_name->LowerRight().y + RESOURCE_DISPLAY_HEIGHT+3;
-  glColor4ubv(ClientUI::TextColor().v);
+  glColor(ClientUI::TextColor());
   icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   x+=font->Height();
 
@@ -1309,7 +1309,7 @@ void SidePanel::SystemResourceSummary::Render()
   int info_elem_width = (Width()-(6+1)*ICON_MARGIN)/6;
 
   //farming
-  glColor4ubv(ClientUI::TextColor().v);
+  glColor(ClientUI::TextColor());
   icon=IconFarming(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (farming<0?"-":"+") + lexical_cast<std::string>(farming);
@@ -1318,7 +1318,7 @@ void SidePanel::SystemResourceSummary::Render()
   x+=info_elem_width+ICON_MARGIN;
 
   //mining
-  glColor4ubv(ClientUI::TextColor().v);
+  glColor(ClientUI::TextColor());
   icon=IconMining(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (mining<0?"-":"+") + lexical_cast<std::string>(mining);
@@ -1327,7 +1327,7 @@ void SidePanel::SystemResourceSummary::Render()
   x+=info_elem_width+ICON_MARGIN;
 
   //trade
-  glColor4ubv(ClientUI::TextColor().v);
+  glColor(ClientUI::TextColor());
   icon=IconTrade(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (trade<0?"-":"+") + lexical_cast<std::string>(trade);
@@ -1336,7 +1336,7 @@ void SidePanel::SystemResourceSummary::Render()
   x+=info_elem_width+ICON_MARGIN;
 
   //research
-  glColor4ubv(ClientUI::TextColor().v);
+  glColor(ClientUI::TextColor());
   icon=IconResearch(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (research<0?"-":"+") + lexical_cast<std::string>(research);
@@ -1345,7 +1345,7 @@ void SidePanel::SystemResourceSummary::Render()
   x+=info_elem_width+ICON_MARGIN;
 
   //industy
-  glColor4ubv(ClientUI::TextColor().v);
+  glColor(ClientUI::TextColor());
   icon=IconIndustry(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = (industry<0?"-":"+") + lexical_cast<std::string>(industry);
@@ -1354,7 +1354,7 @@ void SidePanel::SystemResourceSummary::Render()
   x+=info_elem_width+ICON_MARGIN;
 
   //defense
-  glColor4ubv(ClientUI::TextColor().v);
+  glColor(ClientUI::TextColor());
   icon=IconDefense(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
   //x+=font->Height();
   text = lexical_cast<std::string>(defense)+"/"+lexical_cast<std::string>(defense*3);
@@ -1376,8 +1376,8 @@ std::set<SidePanel*> SidePanel::s_side_panels;
 SidePanel::SidePanel(int x, int y, int w, int h) : 
     Wnd(x, y, w, h, GG::CLICKABLE),
     m_system_name(new CUIDropDownList(40, 0, w-80,SystemNameFontSize(), 10*SystemNameFontSize(),GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5))),
-    m_button_prev(new GG::Button(40-SystemNameFontSize(),4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE,GG::CLICKABLE)),
-    m_button_next(new GG::Button(40+w-80                ,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE,GG::CLICKABLE)),
+    m_button_prev(new GG::Button(40-SystemNameFontSize(),4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
+    m_button_next(new GG::Button(40+w-80                ,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
     m_star_graphic(0),
     m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::Pts()-5,UserString("SP_SYSTEM_PRODUCTION"),GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::TextColor())),
     m_next_pltview_fade_in(0),m_next_pltview_planet_id(UniverseObject::INVALID_OBJECT_ID),m_next_pltview_fade_out(-1),

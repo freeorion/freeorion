@@ -2,7 +2,10 @@
 
 #include "../util/MultiplayerCommon.h"
 
+#include <GG/DrawUtil.h>
+
 #include <cmath>
+
 
 namespace {
     void FindIsoscelesTriangleVertices(int x1, int y1, int x2, int y2, ShapeOrientation orientation,
@@ -92,7 +95,7 @@ void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Cl
     // draw border
     if (thick) {
         glBegin(GL_QUADS);
-        glColor4ubv(border.v);
+        glColor(border);
 
         // the top
         glVertex2i(inner_x2, inner_y1);
@@ -160,7 +163,7 @@ void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Cl
     }
 
     // draw interior of rectangle
-    glColor4ubv(color.v);
+    glColor(color);
     glBegin(GL_POLYGON);
     if (upper_left_angled) {
         glVertex2i(inner_ul_corner_x1, inner_ul_corner_y1);
@@ -200,7 +203,7 @@ bool InAngledCornerRect(const GG::Pt& pt, int x1, int y1, int x2, int y2, int an
 void Triangle(double x1, double y1, double x2, double y2, double x3, double y3, GG::Clr color, bool border/*= true*/)
 {
     glDisable(GL_TEXTURE_2D);
-    glColor4ubv(color.v);
+    glColor(color);
     glBegin(GL_TRIANGLES);
     glVertex2d(x1, y1);
     glVertex2d(x2, y2);
@@ -209,7 +212,7 @@ void Triangle(double x1, double y1, double x2, double y2, double x3, double y3, 
     if (border) {
         AdjustBrightness(color, 75);
         // trace the lines both ways, to ensure that this small polygon looks symmetrical
-        glColor4ubv(color.v);
+        glColor(color);
         glBegin(GL_LINE_LOOP);
         glVertex2d(x3, y3);
         glVertex2d(x2, y2);
@@ -276,7 +279,7 @@ void FleetMarker(int x1, int y1, int x2, int y2, ShapeOrientation orientation, G
     AdjustBrightness(border_color, 75);
     border_color.a = 255;
     if (orientation == SHAPE_LEFT) {
-        glColor4ubv(color.v);
+        glColor(color);
         glBegin(GL_QUADS);
         glVertex2d(cutout_point, middle);
         glVertex2d(base, cutout_top);
@@ -288,7 +291,7 @@ void FleetMarker(int x1, int y1, int x2, int y2, ShapeOrientation orientation, G
         glVertex2d(cutout_point, middle);
         glEnd();
 
-        glColor4ubv(border_color.v);
+        glColor(border_color);
         glBegin(GL_LINE_STRIP);
         glVertex2d(cutout_point, middle);
         glVertex2d(base, cutout_top);
@@ -302,7 +305,7 @@ void FleetMarker(int x1, int y1, int x2, int y2, ShapeOrientation orientation, G
         glVertex2d(cutout_point, middle);
         glEnd();
     } else {
-        glColor4ubv(color.v);
+        glColor(color);
         glBegin(GL_QUADS);
         glVertex2d(point, middle);
         glVertex2d(base, top);
@@ -314,7 +317,7 @@ void FleetMarker(int x1, int y1, int x2, int y2, ShapeOrientation orientation, G
         glVertex2d(point, middle);
         glEnd();
 
-        glColor4ubv(border_color.v);
+        glColor(border_color);
         glBegin(GL_LINE_STRIP);
         glVertex2d(point, middle);
         glVertex2d(base, top);

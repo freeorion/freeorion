@@ -197,7 +197,7 @@ namespace {
     {
         const int CORNER_RADIUS = 7;
         GG::Pt ul = UpperLeft(), lr = LowerRight();
-        glColor4ubv(clr.v);
+        glColor(clr);
         PartlyRoundedRect(UpperLeft(), LowerRight(), CORNER_RADIUS, true, false, true, false, fill);
     }
 

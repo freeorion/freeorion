@@ -486,13 +486,18 @@ void MultiplayerLobbyWnd::SendUpdate()
 bool MultiplayerLobbyWnd::PlayerDataAcceptable() const
 {
     std::set<std::string> empire_names;
-    std::set<int> empire_colors;
+    std::set<Uint32> empire_colors;
     for (int i = 0; i < m_players_lb->NumRows(); ++i) {
         const PlayerRow& row = dynamic_cast<const PlayerRow&>(m_players_lb->GetRow(i));
         if (row.player_data.empire_name.empty())
             return false;
         empire_names.insert(row.player_data.empire_name);
-        empire_colors.insert(row.player_data.empire_color.i);
+        Uint32 color_as_uint =
+            row.player_data.empire_color.r << 24 |
+            row.player_data.empire_color.g << 16 |
+            row.player_data.empire_color.b << 8 |
+            row.player_data.empire_color.a;
+        empire_colors.insert(color_as_uint);
     }
     return static_cast<int>(empire_names.size()) == m_players_lb->NumRows() &&
         static_cast<int>(empire_colors.size()) == m_players_lb->NumRows();

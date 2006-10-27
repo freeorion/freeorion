@@ -98,7 +98,7 @@ void CUI_MinRestoreButton::Render()
         // draw a dash to signify the minimize command
         int middle_y = (lr.y + ul.y) / 2;
         glDisable(GL_TEXTURE_2D);
-        glColor4ubv(color_to_use.v);
+        glColor(color_to_use);
         glBegin(GL_LINES);
         glVertex2i(ul.x, middle_y);
         glVertex2i(lr.x, middle_y);
@@ -139,7 +139,7 @@ void CUI_CloseButton::Render()
     if (State() != BN_ROLLOVER)
         AdjustBrightness(color_to_use, BUTTON_DIMMING_SCALE_FACTOR);
     glDisable(GL_TEXTURE_2D);
-    glColor4ubv(color_to_use.v);
+    glColor(color_to_use);
     // this is slightly less efficient than using GL_LINES, but the lines are rasterized differently on different 
     // OpengGL implementaions, so we do it this way to produce the "x" we want
     glBegin(GL_POINTS);
@@ -205,7 +205,7 @@ void CUIWnd::Render()
         // draw background
         glPolygonMode(GL_BACK, GL_FILL);
         glBegin(GL_POLYGON);
-            glColor4ubv(ClientUI::WndColor().v);
+            glColor(ClientUI::WndColor());
             glVertex2i(ul.x, ul.y);
             glVertex2i(lr.x, ul.y);
             glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
@@ -217,7 +217,7 @@ void CUIWnd::Render()
         // draw outer border on pixel inside of the outer edge of the window
         glPolygonMode(GL_BACK, GL_LINE);
         glBegin(GL_POLYGON);
-            glColor4ubv(ClientUI::WndOuterBorderColor().v);
+            glColor(ClientUI::WndOuterBorderColor());
             glVertex2i(ul.x, ul.y);
             glVertex2i(lr.x, ul.y);
             glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
@@ -231,7 +231,7 @@ void CUIWnd::Render()
 
         // draw inner border, including extra resize-tab lines
         glBegin(GL_LINE_STRIP);
-            glColor4ubv(ClientUI::WndInnerBorderColor().v);
+            glColor(ClientUI::WndInnerBorderColor());
             glVertex2i(cl_ul.x, cl_ul.y);
             glVertex2i(cl_lr.x, cl_ul.y);
             glVertex2i(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
@@ -242,9 +242,9 @@ void CUIWnd::Render()
         glBegin(GL_LINES);
             // draw the extra lines of the resize tab
             if (m_resizable) {
-                glColor4ubv(ClientUI::WndInnerBorderColor().v);
+                glColor(ClientUI::WndInnerBorderColor());
             } else {
-                glColor4ubv(GG::DisabledColor(ClientUI::WndInnerBorderColor()).v);
+                glColor(GG::DisabledColor(ClientUI::WndInnerBorderColor()));
             }
             glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
             glVertex2i(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
@@ -257,7 +257,7 @@ void CUIWnd::Render()
         GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
     }
 
-    glColor4ubv(ClientUI::TextColor().v);
+    glColor(ClientUI::TextColor());
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::TitleFont(), ClientUI::TitlePts());
     font->RenderText(ul.x + BORDER_LEFT, ul.y, WindowText());
 }

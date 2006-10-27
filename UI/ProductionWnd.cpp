@@ -206,7 +206,7 @@ namespace {
     {
         const int CORNER_RADIUS = 7;
         GG::Pt ul = UpperLeft(), lr = LowerRight();
-        glColor4ubv(clr.v);
+        glColor(clr);
         PartlyRoundedRect(UpperLeft(), LowerRight(), CORNER_RADIUS, true, false, true, false, fill);
     }
 }
@@ -278,7 +278,7 @@ void ProductionWnd::Render()
 
     // draw background
     glPolygonMode(GL_BACK, GL_FILL);
-    glColor4ubv(ClientUI::WndColor().v);
+    glColor(ClientUI::WndColor());
     glBegin(GL_QUADS);
     glVertex2i(ul.x, ul.y);
     glVertex2i(lr.x, ul.y);
@@ -308,7 +308,7 @@ void ProductionWnd::Render()
     // draw outer border on pixel inside of the outer edge of the window
     glPolygonMode(GL_BACK, GL_LINE);
     glBegin(GL_POLYGON);
-    glColor4ubv(ClientUI::WndOuterBorderColor().v);
+    glColor(ClientUI::WndOuterBorderColor());
     glVertex2i(ul.x, ul.y);
     glVertex2i(lr.x, ul.y);
     glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
@@ -322,7 +322,7 @@ void ProductionWnd::Render()
 
     // draw inner border, including extra resize-tab lines
     glBegin(GL_LINE_STRIP);
-    glColor4ubv(ClientUI::WndInnerBorderColor().v);
+    glColor(ClientUI::WndInnerBorderColor());
     glVertex2i(cl_ul.x, cl_ul.y);
     glVertex2i(cl_lr.x, cl_ul.y);
     glVertex2i(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
@@ -333,9 +333,9 @@ void ProductionWnd::Render()
     glBegin(GL_LINES);
     // draw the extra lines of the resize tab
     if (m_resizable) {
-        glColor4ubv(ClientUI::WndInnerBorderColor().v);
+        glColor(ClientUI::WndInnerBorderColor());
     } else {
-        glColor4ubv(GG::DisabledColor(ClientUI::WndInnerBorderColor()).v);
+        glColor(GG::DisabledColor(ClientUI::WndInnerBorderColor()));
     }
     glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
     glVertex2i(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
@@ -345,7 +345,7 @@ void ProductionWnd::Render()
     glEnd();
     glEnable(GL_TEXTURE_2D);
 
-    glColor4ubv(ClientUI::TextColor().v);
+    glColor(ClientUI::TextColor());
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::TitleFont(), ClientUI::TitlePts());
     font->RenderText(ul.x + BORDER_LEFT, ul.y, WindowText());
 }

@@ -1117,23 +1117,23 @@ void MapWnd::RenderStarlanes()
 
         glBegin(GL_TRIANGLE_STRIP);
         color.a = static_cast<unsigned char>(255 * OUTER_LINE_EDGE_ALPHA);
-        glColor4ubv(color.v);
+        glColor(color);
         glVertex2dv(far_left2);
         glVertex2dv(far_left1);
         color.a = static_cast<unsigned char>(255 * INNER_LINE_EDGE_ALPHA);
-        glColor4ubv(color.v);
+        glColor(color);
         glVertex2dv(left2);
         glVertex2dv(left1);
         color.a = static_cast<unsigned char>(255 * CENTER_ALPHA);
-        glColor4ubv(color.v);
+        glColor(color);
         glVertex2dv(center2);
         glVertex2dv(center1);
         color.a = static_cast<unsigned char>(255 * INNER_LINE_EDGE_ALPHA);
-        glColor4ubv(color.v);
+        glColor(color);
         glVertex2dv(right2);
         glVertex2dv(right1);
         color.a = static_cast<unsigned char>(255 * OUTER_LINE_EDGE_ALPHA);
-        glColor4ubv(color.v);
+        glColor(color);
         glVertex2dv(far_right2);
         glVertex2dv(far_right1);
         glEnd();
@@ -1167,7 +1167,7 @@ void MapWnd::RenderFleetMovementLines()
         // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
         // when the begining of a line segment starts offscreen
         glBegin(GL_LINES);
-        glColor4ubv(it->second.color.v);
+        glColor(it->second.color);
         const std::list<System*>& destinations = it->second.destinations;
         glVertex2d(ul.x + it->second.x * m_zoom_factor, ul.y + it->second.y * m_zoom_factor);
         for (std::list<System*>::const_iterator dest_it = destinations.begin(); dest_it != destinations.end(); ++dest_it) {
@@ -1184,7 +1184,7 @@ void MapWnd::RenderFleetMovementLines()
     glLineStipple(static_cast<int>(LINE_SCALE), PROJECTED_PATH_STIPPLE);
     if (!m_projected_fleet_lines.destinations.empty()) {
         glBegin(GL_LINES);
-        glColor4ubv(m_projected_fleet_lines.color.v);
+        glColor(m_projected_fleet_lines.color);
         const std::list<System*>& destinations = m_projected_fleet_lines.destinations;
         glVertex2d(ul.x + m_projected_fleet_lines.x * m_zoom_factor, ul.y + m_projected_fleet_lines.y * m_zoom_factor);
         for (std::list<System*>::const_iterator dest_it = destinations.begin(); dest_it != destinations.end(); ++dest_it) {

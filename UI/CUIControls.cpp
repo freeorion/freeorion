@@ -345,7 +345,7 @@ void CUIStateButton::Render()
                 bn_lr -= GG::Pt(MARGIN, MARGIN);
                 const int OFFSET = (bn_lr.y - bn_ul.y) / 2;
                 glDisable(GL_TEXTURE_2D);
-                glColor4ubv(inside_color.v);
+                glColor(inside_color);
                 glBegin(GL_QUADS);
                 glVertex2i(bn_lr.x, bn_ul.y);
                 glVertex2i(bn_ul.x + OFFSET, bn_ul.y);
@@ -357,7 +357,7 @@ void CUIStateButton::Render()
                 glVertex2i(bn_lr.x, bn_ul.y);
                 glEnd();
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                glColor4ubv(outside_color.v);
+                glColor(outside_color);
                 glBegin(GL_POLYGON);
                 glVertex2i(bn_lr.x, bn_ul.y);
                 glVertex2i(bn_ul.x + OFFSET, bn_ul.y);
@@ -494,7 +494,7 @@ void CUIScroll::ScrollTab::Render()
     AdjustBrightness(light_color, 35);
     if (!Disabled() && m_mouse_here)
         AdjustBrightness(light_color, TAB_BRIGHTENING_SCALE_FACTOR);
-    glColor4ubv(light_color.v);
+    glColor(light_color);
     glDisable(GL_TEXTURE_2D);
     glBegin(GL_POLYGON);
     if (m_orientation == GG::VERTICAL) {
@@ -1327,7 +1327,7 @@ void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, in
 void ProductionInfoPanel::Draw(GG::Clr clr, bool fill)
 {
     GG::Pt ul = UpperLeft() + GG::Pt(3, 3), lr = LowerRight() - GG::Pt(3, 3);
-    glColor4ubv(clr.v);
+    glColor(clr);
     PartlyRoundedRect(ul, GG::Pt(lr.x, m_title->LowerRight().y + 2),
                       CORNER_RADIUS, true, true, false, false, fill);
     std::pair<int, int> gap_to_use(m_center_gap.first + ul.x, m_center_gap.second + ul.x);
@@ -1361,7 +1361,7 @@ void MultiTurnProgressBar::Render()
     int h = Height();
     const double TURN_SEGMENT_WIDTH = Width() / static_cast<double>(m_total_turns);
     glDisable(GL_TEXTURE_2D);
-    glColor4ubv(m_background.v);
+    glColor(m_background);
     if (m_partially_complete_turn && m_turns_completed == m_total_turns - 1) {
         GG::BeginScissorClipping(static_cast<int>(lr.x - TURN_SEGMENT_WIDTH), ul.y,
                                  lr.x, static_cast<int>(lr.y - m_partially_complete_turn * h));
@@ -1372,12 +1372,12 @@ void MultiTurnProgressBar::Render()
         GG::BeginScissorClipping(static_cast<int>(lr.x - TURN_SEGMENT_WIDTH),
                                  static_cast<int>(lr.y - m_partially_complete_turn * h),
                                  lr.x, lr.y);
-        glColor4ubv(m_bar_color.v);
+        glColor(m_bar_color);
         glBegin(GL_POLYGON);
         RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
         glEnd();
         GG::EndScissorClipping();
-        glColor4ubv(m_background.v);
+        glColor(m_background);
     } else {
         glBegin(GL_POLYGON);
         RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
@@ -1396,7 +1396,7 @@ void MultiTurnProgressBar::Render()
         glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y - h * m_partially_complete_turn);
         glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y - h * m_partially_complete_turn);
     }
-    glColor4ubv(m_bar_color.v);
+    glColor(m_bar_color);
     if (0 < m_turns_completed && m_turns_completed < m_total_turns - 1) {
         glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y - h * m_partially_complete_turn);
         glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y - h * m_partially_complete_turn);
@@ -1420,19 +1420,19 @@ void MultiTurnProgressBar::Render()
         GG::BeginScissorClipping(ul.x, ul.y,
                                  static_cast<int>(ul.x + TURN_SEGMENT_WIDTH),
                                  static_cast<int>(lr.y - m_partially_complete_turn * h));
-        glColor4ubv(m_background.v);
+        glColor(m_background);
         glBegin(GL_POLYGON);
         LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
         glEnd();
         GG::EndScissorClipping();
     } else {
         if (!m_turns_completed)
-            glColor4ubv(m_background.v);
+            glColor(m_background);
         glBegin(GL_POLYGON);
         LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
         glEnd();
     }
-    glColor4ubv(m_outline_color.v);
+    glColor(m_outline_color);
     glBegin(GL_LINES);
     for (double x = ul.x + TURN_SEGMENT_WIDTH; x < lr.x - 1.0e-5; x += TURN_SEGMENT_WIDTH) {
         glVertex2d(x, ul.y);

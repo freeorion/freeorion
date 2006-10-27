@@ -60,13 +60,13 @@ class CombatInfoControl : public GG::Control
 
       rc = GG::Rect(ul+GG::Pt(20,5),ul+GG::Pt(500,25));
       font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
-      glColor4ubv(ClientUI::TextColor().v);
+      glColor(ClientUI::TextColor());
       format = GG::TF_LEFT | GG::TF_BOTTOM;
       font->RenderText(rc.UpperLeft(),rc.LowerRight(),UserString("COMBAT_BATTLE"), format, 0);
 
       rc = GG::Rect(ul+GG::Pt(20+50,5),ul+GG::Pt(500,28));
       font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.7));
-      glColor4ubv(ClientUI::TextColor().v);
+      glColor(ClientUI::TextColor());
       format = GG::TF_LEFT | GG::TF_BOTTOM;
       font->RenderText(rc.UpperLeft(),rc.LowerRight(),boost::io::str(boost::format(UserString("COMBAT_SYSTEM")) % m_combat_info.m_system), format, 0);
       
@@ -107,7 +107,7 @@ class CombatInfoControl : public GG::Control
         font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.2));
 
         rc = GG::Rect(area.UpperLeft()+rc_txt_empire.UpperLeft(),area.UpperLeft()+rc_txt_empire.LowerRight());
-        glColor4ubv(ClientUI::TextColor().v);format = GG::TF_LEFT | GG::TF_VCENTER;
+        glColor(ClientUI::TextColor());format = GG::TF_LEFT | GG::TF_VCENTER;
         font->RenderText(rc.UpperLeft(),rc.LowerRight(),m_combat_info.m_opponents[i].empire, format, 0);
 
         for(unsigned int c=0;c<3;c++)
@@ -115,7 +115,7 @@ class CombatInfoControl : public GG::Control
           GG::Rect col (area.Left()+c*ITEM_WIDTH, area.Top(),area.Left()+(c+1)*ITEM_WIDTH, area.Bottom());
           
           GG::FlatRectangle(col.Left(), col.Top()+38, col.Right()+2, col.Bottom(), GG::CLR_ZERO,border_color, 2);
-          glColor4ubv(ClientUI::TextColor().v);
+          glColor(ClientUI::TextColor());
 
           img_topic[c]    .OrthoBlit(col.UpperLeft()+item_img_topic      .UpperLeft(),col.UpperLeft()+item_img_topic      .LowerRight(), false);
           img_arrow_split .OrthoBlit(col.UpperLeft()+item_img_arrow_split.UpperLeft(),col.UpperLeft()+item_img_arrow_split.LowerRight(), false);
@@ -125,7 +125,7 @@ class CombatInfoControl : public GG::Control
           {
             rc = GG::Rect(col.UpperLeft()+item_txt[j].UpperLeft(),col.UpperLeft()+item_txt[j].LowerRight());
             GG::FlatRectangle(rc.Left(), rc.Top(), rc.Right(), rc.Bottom(),entries[c][j].bg_clr,entries[c][j].border_clr,entries[c][j].border_width);
-            glColor4ubv(ClientUI::TextColor().v);
+            glColor(ClientUI::TextColor());
             font->RenderText(rc.UpperLeft(),rc.LowerRight(),entries[c][j].txt, entries[c][j].txt_fmt, 0);
           }
         }

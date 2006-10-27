@@ -191,15 +191,15 @@ namespace {
     {
         GG::Clr progress_background_color = ClientUI::TechWndProgressBarBackground();
         GG::Clr progress_color = ClientUI::TechWndProgressBar();
-        glColor4ubv(color.v);
+        glColor(color);
         int progress_extent = (0.0 < progress && progress < 1.0) ? (progress_panel.ul.x + static_cast<int>(progress * PROGRESS_PANEL_WIDTH + 0.5)) : 0;
         if (tech_type == TT_THEORY) {
             FillTheoryPanel(main_panel, MAIN_PANEL_CORNER_RADIUS);
             if (show_progress) {
                 if (progress_extent) {
-                    glColor4ubv(progress_background_color.v);
+                    glColor(progress_background_color);
                     FillTheoryPanel(progress_panel, PROGRESS_PANEL_CORNER_RADIUS);
-                    glColor4ubv(progress_color.v);
+                    glColor(progress_color);
                     GG::BeginScissorClipping(progress_panel.ul.x, progress_panel.ul.y, progress_extent, progress_panel.lr.y);
                     FillTheoryPanel(progress_panel, PROGRESS_PANEL_CORNER_RADIUS);
                     GG::EndScissorClipping();
@@ -211,9 +211,9 @@ namespace {
             FillApplicationPanel(main_panel, MAIN_PANEL_CORNER_RADIUS);
             if (show_progress) {
                 if (progress_extent) {
-                    glColor4ubv(progress_background_color.v);
+                    glColor(progress_background_color);
                     FillApplicationPanel(progress_panel, PROGRESS_PANEL_CORNER_RADIUS);
-                    glColor4ubv(progress_color.v);
+                    glColor(progress_color);
                     GG::BeginScissorClipping(progress_panel.ul.x, progress_panel.ul.y, progress_extent, progress_panel.lr.y);
                     FillApplicationPanel(progress_panel, PROGRESS_PANEL_CORNER_RADIUS);
                     GG::EndScissorClipping();
@@ -225,9 +225,9 @@ namespace {
             FillRefinementPanel(main_panel);
             if (show_progress) {
                 if (progress_extent) {
-                    glColor4ubv(progress_background_color.v);
+                    glColor(progress_background_color);
                     FillRefinementPanel(progress_panel);
-                    glColor4ubv(progress_color.v);
+                    glColor(progress_color);
                     GG::BeginScissorClipping(progress_panel.ul.x, progress_panel.ul.y, progress_extent, progress_panel.lr.y);
                     FillRefinementPanel(progress_panel);
                     GG::EndScissorClipping();
@@ -373,7 +373,7 @@ namespace {
                     AdjustBrightness(border_color, ROLLOVER_BRIGHTENING_FACTOR);
                 }
                 glDisable(GL_TEXTURE_2D);
-                glColor4ubv(color.v);
+                glColor(color);
                 CircleArc(ul.x, ul.y, lr.x, lr.y, 0.0, 0.0, true);
                 glEnable(GL_LINE_SMOOTH);
                 glLineWidth(OUTER_LINE_THICKNESS * m_scale);
@@ -529,7 +529,7 @@ void TechTreeWnd::TechDetailPanel::Render()
     if (m_tech) {
         GG::Clr category_color = CategoryColor(m_tech->Category());
         category_color.a = 127;
-        glColor4ubv(category_color.v);
+        glColor(category_color);
         GG::Pt ul = m_description_box->ClientUpperLeft(), lr = m_description_box->ClientLowerRight();
         int icon_size = lr.y - ul.y;
         int x1 = (ul.x + lr.x) / 2 - icon_size / 2;
@@ -719,7 +719,7 @@ void TechTreeWnd::TechNavigator::SectionHeaderControl::Render()
     GG::Pt ul = UpperLeft(), lr = LowerRight() + GG::Pt(0, 11);
     glDisable(GL_TEXTURE_2D);
     const int CORNER_RADIUS = 5;
-    glColor4ubv(ClientUI::KnownTechFillColor().v);
+    glColor(ClientUI::KnownTechFillColor());
     CircleArc(lr.x - 2 * CORNER_RADIUS, ul.y,
                 lr.x, ul.y + 2 * CORNER_RADIUS,
                 0.0, PI / 2.0, true);
@@ -747,7 +747,7 @@ void TechTreeWnd::TechNavigator::SectionHeaderControl::Render()
     glEnd();
     glLineWidth(1.0);
     glDisable(GL_LINE_SMOOTH);
-    glColor4ubv(ClientUI::KnownTechTextAndBorderColor().v);
+    glColor(ClientUI::KnownTechTextAndBorderColor());
     glBegin(GL_LINE_STRIP);
     CircleArc(lr.x - 2 * CORNER_RADIUS, ul.y,
                 lr.x, ul.y + 2 * CORNER_RADIUS,
@@ -816,7 +816,7 @@ void TechTreeWnd::TechNavigator::TechControl::Render()
     TraceTechPanelOutline(tech_type, rect, GG::Rect(), false);
     glLineWidth(1.0);
     glDisable(GL_LINE_SMOOTH);
-    glColor4ubv(border_color_to_use.v);
+    glColor(border_color_to_use);
     TraceTechPanelOutline(tech_type, rect, GG::Rect(), false);
     glEnable(GL_TEXTURE_2D);
 }
@@ -1144,7 +1144,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render()
     TraceTechPanelOutline(tech_type, main_panel, progress_panel, !m_progress_text->Empty());
     glLineWidth(1.0);
     glDisable(GL_LINE_SMOOTH);
-    glColor4ubv(border_color_to_use.v);
+    glColor(border_color_to_use);
     TraceTechPanelOutline(tech_type, main_panel, progress_panel, !m_progress_text->Empty());
     glEnable(GL_TEXTURE_2D);
 }
@@ -1269,7 +1269,7 @@ void TechTreeWnd::LayoutPanel::Render()
         case RESEARCHABLE:   arc_color = researchable_half_alpha; break;
         case UNRESEARCHABLE: arc_color = unresearchable_half_alpha; break;
         }
-        glColor4ubv(arc_color.v);
+        glColor(arc_color);
         for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
             bool selected_arc = it2->first == m_selected_tech || it2->second.first == m_selected_tech;
             if (selected_arc) {
@@ -1291,7 +1291,7 @@ void TechTreeWnd::LayoutPanel::Render()
         case RESEARCHABLE:   arc_color = researchable_half_alpha_selected; break;
         case UNRESEARCHABLE: arc_color = unresearchable_half_alpha_selected; break;
         }
-        glColor4ubv(arc_color.v);
+        glColor(arc_color);
         for (unsigned int i = 0; i < it->second.size(); ++i) {
             DrawArc(it->second[i], arc_color, false);
         }
@@ -1307,7 +1307,7 @@ void TechTreeWnd::LayoutPanel::Render()
         case RESEARCHABLE:   arc_color = ClientUI::ResearchableTechTextAndBorderColor(); break;
         case UNRESEARCHABLE: arc_color = ClientUI::UnresearchableTechTextAndBorderColor(); break;
         }
-        glColor4ubv(arc_color.v);
+        glColor(arc_color);
         for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
             bool selected_arc = it2->first == m_selected_tech || it2->second.first == m_selected_tech;
             if (selected_arc) {
@@ -1329,7 +1329,7 @@ void TechTreeWnd::LayoutPanel::Render()
         case RESEARCHABLE:   arc_color = researchable_selected; break;
         case UNRESEARCHABLE: arc_color = unresearchable_selected; break;
         }
-        glColor4ubv(arc_color.v);
+        glColor(arc_color);
         for (unsigned int i = 0; i < it->second.size(); ++i) {
             DrawArc(it->second[i], arc_color, true);
         }
