@@ -1388,7 +1388,8 @@ void ServerApp::LoadGameInit()
     std::map<int, XMLDoc>::iterator player_doc_it = player_docs.begin();
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++player_doc_it) {
         XMLDoc doc;
-        int empire_id;
+        const int INVALID_EMPIRE_ID = -5000;
+        int empire_id = INVALID_EMPIRE_ID;
         if (m_single_player_game) {
             doc.root_node.AppendChild("single_player_game");
         }
@@ -1402,11 +1403,10 @@ void ServerApp::LoadGameInit()
                     // since this must be an AI player, it does not have the correct player name set in its Empire yet, so we need to do so now
                     Empires().Lookup(empire_id)->SetPlayerName(it->second.name);
                     break;
-                } else {
-                    assert(!"No empire id was found for one of the players in ServerApp::LoadGameInit().");
                 }
             }
         }
+        assert(empire_id != INVALID_EMPIRE_ID);
         doc.root_node.AppendChild(m_universe.XMLEncode(empire_id));
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(empire_id));
         doc.root_node.AppendChild(XMLElement("empire_id", boost::lexical_cast<std::string>(empire_id)));
