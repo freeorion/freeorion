@@ -42,6 +42,12 @@ namespace {
 
 }
 
+PopCenter::PopCenter() :
+    m_growth(0),
+    m_race(0),
+    m_available_food(0)
+{}
+
 PopCenter::PopCenter(double max_pop_mod, double max_health_mod)
 {
     Reset(max_pop_mod, max_health_mod);

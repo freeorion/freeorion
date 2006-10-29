@@ -77,6 +77,8 @@ protected:
     mutable GetObjectSignalType GetObjectSignal; ///< the UniverseObject-retreiving signal object for this PopCenter
 
 private:
+    PopCenter(); ///< default ctor
+
     Meter    m_pop;
     Meter    m_health;
     double   m_growth;

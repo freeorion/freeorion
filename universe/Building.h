@@ -139,7 +139,8 @@ void BuildingType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_build_cost)
         & BOOST_SERIALIZATION_NVP(m_build_time)
         & BOOST_SERIALIZATION_NVP(m_maintenance_cost)
-        // TODO: & BOOST_SERIALIZATION_NVP(m_effects)
+        & BOOST_SERIALIZATION_NVP(m_location)
+        & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_graphic);
 }
 

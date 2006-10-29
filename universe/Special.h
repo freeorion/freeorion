@@ -33,6 +33,10 @@ private:
     std::string          m_description;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                          m_effects;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Returns the Special object used to represent specials of type \a name.  If no such Special exists, 0 is returned instead. */
@@ -42,5 +46,14 @@ Special* GetSpecial(const std::string& name);
     are ok to use when generating random specials during universe creation.  Note that "planet specials" can be attached
     to non-planet UniverseObjects, just like all Specials, and are not restricted to use during universe creation. */
 const std::set<std::string>& PlanetSpecialNames();
+
+// template implementations
+template <class Archive>
+void Special::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_description)
+        & BOOST_SERIALIZATION_NVP(m_effects);
+}
 
 #endif // _Special_h_

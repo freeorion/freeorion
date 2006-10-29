@@ -8,6 +8,8 @@
 #include "Enums.h"
 
 #include <boost/shared_ptr.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
 
 class UniverseObject;
 
@@ -75,6 +77,11 @@ protected:
     std::string                     m_stacking_group;
     std::string                     m_explicit_description;
     std::vector<EffectBase*>        m_effects;
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Returns a single string which describes a vector of EffectsGroups. */
@@ -91,6 +98,11 @@ public:
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const = 0;
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0;
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Sets the meter of the given kind to \a value.  The max value of the meter is set if \a max == true; otherwise the
@@ -110,6 +122,10 @@ private:
     MeterType                             m_meter;
     const ValueRef::ValueRefBase<double>* m_value;
     bool                                  m_max;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Sets the empire stockpile of the target's owning empire to \a value.  If the target does not have exactly one owner,
@@ -127,6 +143,10 @@ public:
 private:
     ResourceType                          m_stockpile;
     const ValueRef::ValueRefBase<double>* m_value;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Sets the planet type of the target to \a type.  This has no effect on non-Planet targets.  Note that changing the
@@ -145,6 +165,10 @@ public:
 
 private:
     const ValueRef::ValueRefBase<PlanetType>* m_type;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Sets the planet size of the target to \a size.  This has no effect on non-Planet targets.  Note that changing the
@@ -162,6 +186,10 @@ public:
 
 private:
     const ValueRef::ValueRefBase<PlanetSize>* m_size;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Adds empire \a empire_id as an owner of the target.  This has no effect if \a empire_id was already an owner of the target object. */
@@ -177,6 +205,10 @@ public:
 
 private:
     const ValueRef::ValueRefBase<int>* m_empire_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Removes empire \a empire_id as an owner of the target.  This has no effect if \a empire_id was not already an owner of the target object. */
@@ -192,6 +224,10 @@ public:
 
 private:
     const ValueRef::ValueRefBase<int>* m_empire_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 // TODO: create multiple Create*s for different kinds of objects
@@ -215,6 +251,11 @@ public:
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Adds the Special with the name \a name to the target object. */
@@ -229,6 +270,10 @@ public:
 
 private:
     std::string m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Removes the Special with the name \a name to the target object.  This has no effect if no such Special was already attached to the target object. */
@@ -243,6 +288,10 @@ public:
 
 private:
     std::string m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Sets the star type of the target to \a type.  This has no effect on non-System targets. */
@@ -258,6 +307,10 @@ public:
 
 private:
     const ValueRef::ValueRefBase<StarType>* m_type;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Sets the availability of tech \a tech_name to empire \a empire_id.  If \a include_tech is true, the tech is fully available, just as if it were
@@ -278,6 +331,10 @@ private:
     const ValueRef::ValueRefBase<int>* m_empire_id;
     bool                               m_available;
     bool                               m_include_tech;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 class Effect::SetEffectTarget : public Effect::EffectBase
@@ -292,6 +349,114 @@ public:
 
 private:
     const ValueRef::ValueRefBase<int>* m_effect_target_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+// template implementations
+template <class Archive>
+void Effect::EffectsGroup::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_scope)
+        & BOOST_SERIALIZATION_NVP(m_activation)
+        & BOOST_SERIALIZATION_NVP(m_stacking_group)
+        & BOOST_SERIALIZATION_NVP(m_explicit_description)
+        & BOOST_SERIALIZATION_NVP(m_effects);
+}
+
+template <class Archive>
+void Effect::EffectBase::serialize(Archive& ar, const unsigned int version)
+{}
+
+template <class Archive>
+void Effect::SetMeter::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_meter)
+        & BOOST_SERIALIZATION_NVP(m_value)
+        & BOOST_SERIALIZATION_NVP(m_max);
+}
+
+template <class Archive>
+void Effect::SetEmpireStockpile::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_stockpile)
+        & BOOST_SERIALIZATION_NVP(m_value);
+}
+
+template <class Archive>
+void Effect::SetPlanetType::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_type);
+}
+
+template <class Archive>
+void Effect::SetPlanetSize::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_size);
+}
+
+template <class Archive>
+void Effect::AddOwner::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
+}
+
+template <class Archive>
+void Effect::RemoveOwner::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
+}
+
+template <class Archive>
+void Effect::Destroy::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase);
+}
+
+template <class Archive>
+void Effect::AddSpecial::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void Effect::RemoveSpecial::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void Effect::SetStarType::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_type);
+}
+
+template <class Archive>
+void Effect::SetTechAvailability::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_tech_name)
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_available)
+        & BOOST_SERIALIZATION_NVP(m_include_tech);
+}
+
+template <class Archive>
+void Effect::SetEffectTarget::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_effect_target_id);
+}
 
 #endif // _Effect_h_

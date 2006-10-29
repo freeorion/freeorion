@@ -9,8 +9,6 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 
-//#include "../universe/Predicates.h"
-
 #include "SDL_byteorder.h"
 
 #if defined(_MSC_VER)

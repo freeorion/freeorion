@@ -48,9 +48,9 @@ public:
     virtual const Meter* GetMeter(MeterType type) const;
 
     /////////////////////////////////////////////////////////////////////////////
-    // V0.2 ONLY!!!!
+    // V0.3 ONLY!!!!
     int DefBases() const {return m_def_bases;}
-    // V0.2 ONLY!!!!
+    // V0.3 ONLY!!!!
     /////////////////////////////////////////////////////////////////////////////
    
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
@@ -67,9 +67,9 @@ public:
     virtual void PopGrowthProductionResearchPhase( );
 
     /////////////////////////////////////////////////////////////////////////////
-    // V0.2 ONLY!!!!
+    // V0.3 ONLY!!!!
     void AdjustDefBases(int bases) {m_def_bases += bases; if (m_def_bases < 0) m_def_bases = 0; StateChangedSignal();}
-    // V0.2 ONLY!!!!
+    // V0.3 ONLY!!!!
     /////////////////////////////////////////////////////////////////////////////
 
     void SetType(PlanetType type);        ///< sets the type of this Planet to \a type

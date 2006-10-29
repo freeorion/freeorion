@@ -62,12 +62,9 @@ namespace {
 #endif
 
 #define TEST_BOOST_SERIALIZATION 0
-#define TEST_BINARY_ARCHIVES 1
+#define TEST_BINARY_ARCHIVES 0
 #if TEST_BOOST_SERIALIZATION
 #include "../util/Serialize.h"
-#include <boost/iostreams/device/back_inserter.hpp>
-#include <boost/iostreams/filtering_stream.hpp>
-#include <boost/range/iterator_range.hpp>
 #endif
 
 
@@ -108,7 +105,7 @@ namespace {
                     }
                 }
 
-                // build list of empire colors
+                // get list of empire colors
                 empire_colors = EmpireColors();
             }
         }
@@ -556,15 +553,87 @@ void ServerApp::HandleMessage(const Message& msg)
             doc.ReadDoc(ifs);
             ifs.close();
 
+#if TEST_BOOST_SERIALIZATION
+            std::map<Empire*, XMLElement> empire_docs;
+#endif
+
             m_expected_players = 0;
             for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
                 if (doc.root_node.Child(i).Tag() == "Player") {
-                    m_empires.InsertEmpire(new Empire(doc.root_node.Child(i).Child("Empire")));
+                    Empire* empire = new Empire(doc.root_node.Child(i).Child("Empire"));
+                    m_empires.InsertEmpire(empire);
                     ++m_expected_players;
+#if TEST_BOOST_SERIALIZATION
+                    empire_docs[empire] = doc.root_node.Child(i).Child("Empire");
+#endif
                 }
             }
             m_universe.SetUniverse(doc.root_node.Child("Universe"));
             LoadGameVars(doc);
+
+#if TEST_BOOST_SERIALIZATION
+            using boost::lexical_cast;
+            for (std::map<Empire*, XMLElement>::iterator it = empire_docs.begin(); it != empire_docs.end(); ++it) {
+                Empire test_empire("", "", 0, GG::Clr(), 0);
+                std::ostringstream os;
+                {
+                    boost::archive::binary_oarchive oa(os);
+                    Serialize(&oa, *it->first);
+                }
+                std::ofstream ofs(("test_boost_empire_" + lexical_cast<std::string>(it->first->EmpireID())).c_str());
+                ofs << os.str();
+                {
+                    std::ifstream ifs(("test_boost_empire_" + lexical_cast<std::string>(it->first->EmpireID())).c_str());
+                    boost::archive::binary_iarchive ia(ifs);
+                    Deserialize(&ia, test_empire);
+                }
+                {
+                    XMLDoc empire_doc;
+                    empire_doc.root_node.AppendChild(it->first->XMLEncode(ALL_EMPIRES));
+                    for (int i = 0; i <= 4; ++i)
+                        empire_doc.root_node.AppendChild(it->first->XMLEncode(i));
+                    std::ofstream ofs(("empire_" + lexical_cast<std::string>(it->first->EmpireID()) + "_doc.xml").c_str());
+                    empire_doc.WriteDoc(ofs);
+                }
+                {
+                    XMLDoc copy_empire_doc;
+                    copy_empire_doc.root_node.AppendChild(it->first->XMLEncode(ALL_EMPIRES));
+                    for (int i = 0; i <= 4; ++i)
+                       copy_empire_doc.root_node.AppendChild(it->first->XMLEncode(i));
+                    std::ofstream ofs(("empire_" + lexical_cast<std::string>(it->first->EmpireID()) + "_doc_copy.xml").c_str());
+                    copy_empire_doc.WriteDoc(ofs);
+                }
+                std::cout << "loaded empire " << it->first->EmpireID() << " successfully" << std::endl;
+            }
+
+            Universe test_universe;
+            std::ostringstream os;
+            {
+                boost::archive::binary_oarchive oa(os);
+                Serialize(&oa, m_universe);
+            }
+            std::ofstream ofs("test_boost_universe", std::ios_base::binary);
+            ofs << os.str();
+            {
+                std::ifstream ifs("test_boost_universe", std::ios_base::binary);
+                boost::archive::binary_iarchive ia(ifs);
+                Deserialize(&ia, test_universe);
+            }
+            {
+                XMLDoc universe_doc;
+                universe_doc.root_node.AppendChild(m_universe.XMLEncode(ALL_EMPIRES));
+                std::ofstream ofs("universe_doc.xml");
+                universe_doc.WriteDoc(ofs);
+            }
+            {
+                XMLDoc copy_universe_doc;
+                copy_universe_doc.root_node.AppendChild(test_universe.XMLEncode(ALL_EMPIRES));
+                std::ofstream ofs("universe_doc_copy.xml");
+                copy_universe_doc.WriteDoc(ofs);
+            }
+
+            std::cout << "loaded universe successfully" << std::endl;
+#endif
 
             CreateAIClients(std::vector<PlayerSetupData>(m_expected_players - 1));
             g_load_doc = doc;
@@ -1283,7 +1352,7 @@ void ServerApp::NewGameInit()
         AddEmpireTurn( it->first );
     }
 
-#if TEST_BOOST_SERIALIZATION
+#if 0//TEST_BOOST_SERIALIZATION
     {
         Universe::s_encoding_empire = Universe::ALL_EMPIRES;
         std::string encoded_string;
@@ -1318,7 +1387,7 @@ void ServerApp::NewGameInit()
         doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
         doc.root_node.AppendChild(XMLElement("empire_id", boost::lexical_cast<std::string>(it->first)));
 
-#if TEST_BOOST_SERIALIZATION
+#if 0//TEST_BOOST_SERIALIZATION
         {
             Universe::s_encoding_empire = it->first;
             std::string encoded_string;
@@ -1917,7 +1986,7 @@ void ServerApp::ProcessTurns()
     {
         pEmpire = GetPlayerEmpire( player_it->first );
         XMLDoc doc = CreateTurnUpdate( pEmpire->EmpireID() );
-#if TEST_BOOST_SERIALIZATION
+#if 0//TEST_BOOST_SERIALIZATION
         {
             Universe::s_encoding_empire = pEmpire->EmpireID();
             std::string encoded_string;

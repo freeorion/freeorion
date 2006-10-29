@@ -35,9 +35,9 @@ struct ResearchQueue
 
     typedef std::deque<Element> QueueType;
 
-    /** The ResearchQueue iterator type.  Dereference yields a Element. */
+    /** The ResearchQueue iterator type.  Dereference yields an Element. */
     typedef QueueType::iterator iterator;
-    /** The const ResearchQueue iterator type.  Dereference yields a Element. */
+    /** The const ResearchQueue iterator type.  Dereference yields an Element. */
     typedef QueueType::const_iterator const_iterator;
 
     /** \name Structors */ //@{
@@ -678,9 +678,11 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_mineral_resource_pool)
             & BOOST_SERIALIZATION_NVP(m_food_resource_pool)
             & BOOST_SERIALIZATION_NVP(m_research_resource_pool)
-            & BOOST_SERIALIZATION_NVP(m_population_pool)
             & BOOST_SERIALIZATION_NVP(m_industry_resource_pool)
-            & BOOST_SERIALIZATION_NVP(m_trade_resource_pool);
+            & BOOST_SERIALIZATION_NVP(m_trade_resource_pool)
+            & BOOST_SERIALIZATION_NVP(m_population_pool)
+            & BOOST_SERIALIZATION_NVP(m_food_total_distributed)
+            & BOOST_SERIALIZATION_NVP(m_maintenance_total_cost);
     }
 }
 

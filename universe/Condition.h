@@ -60,6 +60,10 @@ struct Condition::ConditionBase
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects if the number of objects that match Condition \a condition is is >= \a low and < \a high.
@@ -76,6 +80,10 @@ private:
     const ValueRef::ValueRefBase<int>* m_low;
     const ValueRef::ValueRefBase<int>* m_high;
     const ConditionBase*               m_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
@@ -90,6 +98,10 @@ struct Condition::Turn : Condition::ConditionBase
 private:
     const ValueRef::ValueRefBase<int>* m_low;
     const ValueRef::ValueRefBase<int>* m_high;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches a randomly selected \a number of objects that match Condition \a condition, or as many objects
@@ -105,6 +117,10 @@ struct Condition::NumberOf : Condition::ConditionBase
 private:
     const ValueRef::ValueRefBase<int>* m_number;
     const ConditionBase*               m_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects. */
@@ -114,6 +130,10 @@ struct Condition::All : Condition::ConditionBase
     virtual void Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are owned (if \a exclusive == false) or only owned (if \a exclusive == true) by an empire that has
@@ -130,6 +150,10 @@ private:
     const ValueRef::ValueRefBase<int>* m_empire_id;
     EmpireAffiliationType              m_affiliation;
     bool                               m_exclusive;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches the source object only. */
@@ -141,6 +165,10 @@ struct Condition::Self : Condition::ConditionBase
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are of UniverseObjectType \a type. */
@@ -153,6 +181,10 @@ struct Condition::Type : Condition::ConditionBase
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     const ValueRef::ValueRefBase<UniverseObjectType>* m_type;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all Building objects of the sort specified by \a name. */
@@ -165,6 +197,10 @@ struct Condition::Building : Condition::ConditionBase
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     std::string m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that have an attached Special of the sort specified by \a name.  Passing "All" for
@@ -178,6 +214,10 @@ struct Condition::HasSpecial : Condition::ConditionBase
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     std::string m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that contain an object that matches Condition \a condition.  Container objects are Systems,
@@ -191,6 +231,10 @@ struct Condition::Contains : Condition::ConditionBase
 
 private:
     const ConditionBase* m_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are contained by an object that matches Condition \a condition.  Container objects
@@ -204,6 +248,10 @@ struct Condition::ContainedBy : Condition::ConditionBase
 
 private:
     const ConditionBase* m_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all Planet objects that have one of the PlanetTypes in \a types.  Note that all
@@ -218,6 +266,10 @@ struct Condition::PlanetType : Condition::ConditionBase
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     std::vector<const ValueRef::ValueRefBase< ::PlanetType>*> m_types;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all Planet objects that have one of the PlanetSizes in \a sizes.  Note that all
@@ -232,6 +284,10 @@ struct Condition::PlanetSize : Condition::ConditionBase
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*> m_sizes;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all Planet objects that have one of the PlanetEnvironments in \a environments.  Note that all
@@ -246,6 +302,10 @@ struct Condition::PlanetEnvironment : Condition::ConditionBase
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*> m_environments;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
@@ -260,6 +320,10 @@ private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     std::vector<const ValueRef::ValueRefBase< ::FocusType>*> m_foci;
     bool m_primary;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all System objects that have one of the StarTypes in \a types.  Note that all objects
@@ -274,6 +338,10 @@ struct Condition::StarType : Condition::ConditionBase
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     std::vector<const ValueRef::ValueRefBase< ::StarType>*> m_types;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches a given object with a linearly distributed probability of \a chance. */
@@ -287,6 +355,10 @@ struct Condition::Chance : Condition::ConditionBase
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     const ValueRef::ValueRefBase<double>* m_chance;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that have a meter of type \a meter, and whose current value (if \a max_meter == false) or
@@ -304,6 +376,10 @@ private:
     const ValueRef::ValueRefBase<double>* m_low;
     const ValueRef::ValueRefBase<double>* m_high;
     bool                                  m_max_meter;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects with exactly one owner, whose owner's stockpile of \a stockpile is between \a low
@@ -320,6 +396,10 @@ private:
     ResourceType m_stockpile;
     const ValueRef::ValueRefBase<double>* m_low;
     const ValueRef::ValueRefBase<double>* m_high;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that have a single owner who has tech \a tech_name. */
@@ -332,6 +412,10 @@ struct Condition::OwnerHasTech : Condition::ConditionBase
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     std::string m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
@@ -345,6 +429,10 @@ struct Condition::VisibleToEmpire : Condition::ConditionBase
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     std::vector<const ValueRef::ValueRefBase<int>*> m_empire_ids;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are within \a distance units of at least one object that meets \a condition.
@@ -362,6 +450,10 @@ private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     const ValueRef::ValueRefBase<double>* m_distance;
     const ConditionBase*                  m_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that are within \a jumps starlane jumps of at least one object that meets \a condition.
@@ -379,6 +471,10 @@ private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     const ValueRef::ValueRefBase<int>* m_jumps;
     const ConditionBase*               m_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 struct Condition::EffectTarget : Condition::ConditionBase
@@ -389,6 +485,10 @@ struct Condition::EffectTarget : Condition::ConditionBase
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that match every Condition in \a operands. */
@@ -402,6 +502,10 @@ struct Condition::And : Condition::ConditionBase
 
 private:
     std::vector<const ConditionBase*> m_operands;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that match at least one Condition in \a operands. */
@@ -415,6 +519,10 @@ struct Condition::Or : Condition::ConditionBase
 
 private:
     std::vector<const ConditionBase*> m_operands;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Matches all objects that do not match the Condition \a operand. */
@@ -428,6 +536,214 @@ struct Condition::Not : Condition::ConditionBase
 
 private:
     const ConditionBase* m_operand;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+// template implementations
+template <class Archive>
+void Condition::ConditionBase::serialize(Archive& ar, const unsigned int version)
+{}
+
+template <class Archive>
+void Condition::Number::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_low)
+        & BOOST_SERIALIZATION_NVP(m_high)
+        & BOOST_SERIALIZATION_NVP(m_condition);
+}
+
+template <class Archive>
+void Condition::Turn::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_low)
+        & BOOST_SERIALIZATION_NVP(m_high);
+}
+
+template <class Archive>
+void Condition::NumberOf::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_number)
+        & BOOST_SERIALIZATION_NVP(m_condition);
+}
+
+template <class Archive>
+void Condition::All::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::EmpireAffiliation::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_affiliation)
+        & BOOST_SERIALIZATION_NVP(m_exclusive);
+}
+
+template <class Archive>
+void Condition::Self::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::Type::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_type);
+}
+
+template <class Archive>
+void Condition::Building::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void Condition::HasSpecial::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void Condition::Contains::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_condition);
+}
+
+template <class Archive>
+void Condition::ContainedBy::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_condition);
+}
+
+template <class Archive>
+void Condition::PlanetType::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_types);
+}
+
+template <class Archive>
+void Condition::PlanetSize::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_sizes);
+}
+
+template <class Archive>
+void Condition::PlanetEnvironment::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_environments);
+}
+
+template <class Archive>
+void Condition::FocusType::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_foci)
+        & BOOST_SERIALIZATION_NVP(m_primary);
+}
+
+template <class Archive>
+void Condition::StarType::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_types);
+}
+
+template <class Archive>
+void Condition::Chance::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_chance);
+}
+
+template <class Archive>
+void Condition::MeterValue::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_meter)
+        & BOOST_SERIALIZATION_NVP(m_low)
+        & BOOST_SERIALIZATION_NVP(m_high)
+        & BOOST_SERIALIZATION_NVP(m_max_meter);
+}
+
+template <class Archive>
+void Condition::EmpireStockpileValue::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_low)
+        & BOOST_SERIALIZATION_NVP(m_high);
+}
+
+template <class Archive>
+void Condition::OwnerHasTech::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void Condition::VisibleToEmpire::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_empire_ids);
+}
+
+template <class Archive>
+void Condition::WithinDistance::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_distance)
+        & BOOST_SERIALIZATION_NVP(m_condition);
+}
+
+template <class Archive>
+void Condition::WithinStarlaneJumps::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_jumps)
+        & BOOST_SERIALIZATION_NVP(m_condition);
+}
+
+template <class Archive>
+void Condition::EffectTarget::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::And::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_operands);
+}
+
+template <class Archive>
+void Condition::Or::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_operands);
+}
+
+template <class Archive>
+void Condition::Not::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_operand);
+}
 
 #endif // _Condition_h_

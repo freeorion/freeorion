@@ -46,6 +46,11 @@ struct ValueRef::ValueRefBase
     virtual T Eval(const UniverseObject* source, const UniverseObject* target) const = 0; ///< evaluates the expression tree and return the results
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0; ///< returns a text description of this type of special
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** the constant value leaf ValueRef class. */
@@ -62,6 +67,10 @@ struct ValueRef::Constant : public ValueRef::ValueRefBase<T>
 
 private:
     T m_value;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** the variable value ValueRef class.  The value returned by this node is taken from either the \a source or \a target parameters to Eval. */
@@ -85,6 +94,10 @@ protected:
 private:
     bool                     m_source_ref;
     std::vector<std::string> m_property_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** the variable static_cast class.  The value returned by this node is taken from the ctor \a value_ref parameter's FromType value,
@@ -100,6 +113,10 @@ struct ValueRef::StaticCast : public ValueRef::Variable<ToType>
 
 private:
     const ValueRefBase<FromType>* m_value_ref;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** an arithmetic operation node ValueRef class.  One of addition, subtraction, mutiplication, division, or unary negation is 
@@ -123,6 +140,10 @@ private:
     OpType                 m_op_type;
     const ValueRefBase<T>* m_operand1;
     const ValueRefBase<T>* m_operand2;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** A function that returns the correct amount of spacing for the current indentation level during a dump.  Note that
@@ -131,6 +152,13 @@ std::string DumpIndent();
 
 
 // Template Implementations
+///////////////////////////////////////////////////////////
+// ValueRefBase                                          //
+///////////////////////////////////////////////////////////
+template <class T>
+template <class Archive>
+void ValueRef::ValueRefBase<T>::serialize(Archive& ar, const unsigned int version)
+{}
 
 ///////////////////////////////////////////////////////////
 // Constant                                              //
@@ -188,6 +216,14 @@ namespace ValueRef {
 
     template <>
     std::string Constant<int>::Dump() const;
+}
+
+template <class T>
+template <class Archive>
+void ValueRef::Constant<T>::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+        & BOOST_SERIALIZATION_NVP(m_value);
 }
 
 ///////////////////////////////////////////////////////////
@@ -267,6 +303,15 @@ namespace ValueRef {
     int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target) const;
 }
 
+template <class T>
+template <class Archive>
+void ValueRef::Variable<T>::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+        & BOOST_SERIALIZATION_NVP(m_source_ref)
+        & BOOST_SERIALIZATION_NVP(m_property_name);
+}
+
 ///////////////////////////////////////////////////////////
 // StaticCast                                            //
 ///////////////////////////////////////////////////////////
@@ -292,6 +337,14 @@ template <class FromType, class ToType>
 std::string ValueRef::StaticCast<FromType, ToType>::Dump() const
 {
     return m_value_ref->Dump();
+}
+
+template <class FromType, class ToType>
+template <class Archive>
+void ValueRef::StaticCast<FromType, ToType>::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+        & BOOST_SERIALIZATION_NVP(m_value_ref);
 }
 
 ///////////////////////////////////////////////////////////
@@ -443,7 +496,16 @@ std::string ValueRef::Operation<T>::Dump() const
     return retval;
 }
 
-// template implementations
+template <class T>
+template <class Archive>
+void ValueRef::Operation<T>::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+        & BOOST_SERIALIZATION_NVP(m_op_type)
+        & BOOST_SERIALIZATION_NVP(m_operand1)
+        & BOOST_SERIALIZATION_NVP(m_operand2);
+}
+
 template <class T>
 bool ValueRef::ConstantExpr(const ValueRefBase<T>* expr)
 {

@@ -122,7 +122,7 @@ template <class Archive>
 void PopulationPool::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_pop_centers)
-	& BOOST_SERIALIZATION_NVP(m_population)
-	& BOOST_SERIALIZATION_NVP(m_growth);
+        & BOOST_SERIALIZATION_NVP(m_population)
+        & BOOST_SERIALIZATION_NVP(m_growth);
 }
 #endif // _ResourcePool_h_

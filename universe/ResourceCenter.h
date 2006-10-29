@@ -74,6 +74,8 @@ protected:
     mutable GetObjectSignalType GetObjectSignal; ///< the UniverseObject-retreiving signal object for this ResourceCenter
 
 private:
+    ResourceCenter(); ///< default ctor
+
     FocusType  m_primary;
     FocusType  m_secondary;
 
@@ -84,7 +86,7 @@ private:
     Meter      m_trade;
     Meter      m_construction;
 
-    const Meter& m_pop;    ///< current / max pop present in this center (may be the one from m_object, e.g. if m_object is a Planet)
+    const Meter* m_pop;    ///< current / max pop present in this center (may be the one from m_object, e.g. if m_object is a Planet)
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -112,7 +114,7 @@ void ResourceCenter::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_research)
             & BOOST_SERIALIZATION_NVP(m_trade)
             & BOOST_SERIALIZATION_NVP(m_construction)
-            & boost::serialization::make_nvp("m_pop", const_cast<Meter&>(m_pop));
+            & boost::serialization::make_nvp("m_pop", const_cast<Meter*&>(m_pop));
     }
 }
 

@@ -80,8 +80,14 @@ namespace {
 
 }
 
+ResourceCenter::ResourceCenter() : 
+    m_primary(FOCUS_UNKNOWN),
+    m_secondary(FOCUS_UNKNOWN),
+    m_pop(0)
+{}
+
 ResourceCenter::ResourceCenter(const Meter& pop) : 
-    m_pop(pop)
+    m_pop(&pop)
 {
     Reset();
 }
@@ -89,7 +95,7 @@ ResourceCenter::ResourceCenter(const Meter& pop) :
 ResourceCenter::ResourceCenter(const XMLElement& elem, const Meter& pop) : 
     m_primary(FOCUS_UNKNOWN),
     m_secondary(FOCUS_UNKNOWN),
-    m_pop(pop)
+    m_pop(&pop)
 {
     if (elem.Tag() != "ResourceCenter")
         throw std::invalid_argument("Attempted to construct a ResourceCenter from an XMLElement that had a tag other than \"ResourceCenter\"");
@@ -134,33 +140,33 @@ const Meter* ResourceCenter::GetMeter(MeterType type) const
 
 double ResourceCenter::FarmingPoints() const
 {
-    return m_pop.Current() / 10.0 * m_farming.Current();
+    return m_pop->Current() / 10.0 * m_farming.Current();
 }
 
 double ResourceCenter::IndustryPoints() const
 {
-    return m_pop.Current() / 10.0 * m_industry.Current();
+    return m_pop->Current() / 10.0 * m_industry.Current();
 }
 
 double ResourceCenter::MiningPoints() const
 {
-    return m_pop.Current() / 10.0 * m_mining.Current();
+    return m_pop->Current() / 10.0 * m_mining.Current();
 }
 
 double ResourceCenter::ResearchPoints() const
 {
-    return m_pop.Current() / 10.0 * m_research.Current();
+    return m_pop->Current() / 10.0 * m_research.Current();
 }
 
 double ResourceCenter::TradePoints() const
 {
-    return m_pop.Current() / 10.0 * m_trade.Current();
+    return m_pop->Current() / 10.0 * m_trade.Current();
 }
 
 double ResourceCenter::ProjectedCurrent(MeterType type) const
 {
     Meter construction = m_construction, farming = m_farming, industry = m_industry, mining = m_mining, research = m_research, trade = m_trade;
-    Growth(construction, farming, industry, mining, research, trade, m_pop);
+    Growth(construction, farming, industry, mining, research, trade, *m_pop);
     switch (type) {
     case METER_FARMING: return farming.Current();
     case METER_INDUSTRY: return industry.Current();
@@ -301,7 +307,7 @@ void ResourceCenter::AdjustMaxMeters()
 
 void ResourceCenter::PopGrowthProductionResearchPhase()
 {
-    Growth(m_construction, m_farming, m_industry, m_mining, m_research, m_trade, m_pop);
+    Growth(m_construction, m_farming, m_industry, m_mining, m_research, m_trade, *m_pop);
 }
 
 

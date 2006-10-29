@@ -113,20 +113,23 @@ private:
 template <class Archive>
 void Fleet::serialize(Archive& ar, const unsigned int version)
 {
-    bool visible;
+    bool vis;
     int moving_to;
     if (Archive::is_saving::value)
-        visible = Universe::ALL_OBJECTS_VISIBLE || Universe::s_encoding_empire == ALL_EMPIRES || OwnedBy(Universe::s_encoding_empire);
+        vis = GetVisibility(Universe::s_encoding_empire);
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(visible);
+        & BOOST_SERIALIZATION_NVP(vis);
     if (Archive::is_saving::value)
-        moving_to = visible ? m_moving_to : m_next_system;
+        moving_to = vis ? m_moving_to : m_next_system;
     ar  & BOOST_SERIALIZATION_NVP(m_ships)
         & BOOST_SERIALIZATION_NVP(moving_to)
         & BOOST_SERIALIZATION_NVP(m_prev_system)
         & BOOST_SERIALIZATION_NVP(m_next_system);
     if (Archive::is_loading::value)
         m_moving_to = moving_to;
+    if (Universe::ALL_OBJECTS_VISIBLE ||
+        vis == FULL_VISIBILITY)
+        ar  & BOOST_SERIALIZATION_NVP(m_speed);
 }
 
 #endif // _Fleet_h_
