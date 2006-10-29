@@ -335,8 +335,10 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
         & BOOST_SERIALIZATION_NVP(objects)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_id);
-    if (Archive::is_loading::value)
+    if (Archive::is_loading::value) {
         m_objects = objects;
+        InitializeSystemGraph();
+    }
 }
 
 template <class T> 

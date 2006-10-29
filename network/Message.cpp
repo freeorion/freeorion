@@ -194,9 +194,9 @@ Message VersionConflictMessage(int player_id, const XMLDoc& conflict_details)
     return Message(Message::SERVER_STATUS, -1, player_id, Message::CORE, conflict_details);
 }
 
-Message GameStartMessage(int player_id, const XMLDoc& start_data)
+Message GameStartMessage(int player_id, const std::string& data)
 {
-    return Message(Message::GAME_START, -1, player_id, Message::CORE, start_data);
+    return Message(Message::GAME_START, -1, player_id, Message::CORE, data);
 }
 
 Message HostAckMessage(int player_id)

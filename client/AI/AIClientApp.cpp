@@ -212,12 +212,15 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
         if (msg.Sender() == -1) {
             Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received GAME_START message; "
                 "starting AI turn...";
-            std::stringstream stream(msg.GetText());
-            XMLDoc doc;
-            doc.ReadDoc(stream);
-            m_empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Text());
-            m_current_turn = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
-            // as it stands now, just start turn       
+            std::istringstream is(msg.GetText());
+            boost::archive::binary_iarchive ia(is);
+            bool single_player_game;
+            ia >> BOOST_SERIALIZATION_NVP(single_player_game);
+            ia >> boost::serialization::make_nvp("empire_id", m_empire_id);
+            ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
+            Universe::s_encoding_empire = m_empire_id;
+            Deserialize(&ia, Empires());
+            Deserialize(&ia, GetUniverse());
             StartTurn();
         }
         break;
@@ -246,8 +249,8 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
             boost::archive::binary_iarchive ia(is);
             Universe::s_encoding_empire = m_empire_id;
             ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
-            Deserialize(&ia, GetUniverse());
             Deserialize(&ia, Empires());
+            Deserialize(&ia, GetUniverse());
             StartTurn();
         }
         break;

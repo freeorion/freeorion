@@ -142,7 +142,7 @@ Message JoinGameSetup(const XMLDoc& player_setup);
 Message VersionConflictMessage(int player_id, const XMLDoc& conflict_details);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
-Message GameStartMessage(int player_id, const XMLDoc& start_data);
+Message GameStartMessage(int player_id, const std::string& data);
 
 /** creates a HOST_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
    should only be sent by the server.*/

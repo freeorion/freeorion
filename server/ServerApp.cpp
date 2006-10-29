@@ -1277,23 +1277,17 @@ void ServerApp::NewGameInit()
 
     // the universe creation caused the creation of empires.  But now we need to assign the empires to players.
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-        XMLDoc doc;
-        if (m_single_player_game)
-            doc.root_node.AppendChild("single_player_game");
-        doc.root_node.AppendChild(m_universe.XMLEncode(it->first));
-        doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(it->first));
-        doc.root_node.AppendChild(XMLElement("empire_id", boost::lexical_cast<std::string>(it->first)));
-
-        // turn number is an attribute of the document
-        doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
-
-        if (GetOptionsDB().Get<bool>("debug.log-new-game-universe")) {
-            boost::filesystem::ofstream ofs(GetLocalDir() / ("NewGameInit-empire" + boost::lexical_cast<std::string>(it->first) + "-doc.xml"));
-            doc.WriteDoc(ofs);
-            ofs.close();
+        std::ostringstream os;
+        {
+            boost::archive::binary_oarchive oa(os);
+            oa << boost::serialization::make_nvp("single_player_game", m_single_player_game);
+            oa << boost::serialization::make_nvp("empire_id", it->first);
+            oa << BOOST_SERIALIZATION_NVP(m_current_turn);
+            Universe::s_encoding_empire = it->first;
+            Serialize(&oa, m_empires);
+            Serialize(&oa, m_universe);
         }
-
-        m_network_core.SendMessage(GameStartMessage(it->first, doc));
+        m_network_core.SendMessage(GameStartMessage(it->first, os.str()));
     }
 
     m_losers.clear();
@@ -1327,12 +1321,8 @@ void ServerApp::LoadGameInit()
 
     std::map<int, XMLDoc>::iterator player_doc_it = player_docs.begin();
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++player_doc_it) {
-        XMLDoc doc;
         const int INVALID_EMPIRE_ID = -5000;
         int empire_id = INVALID_EMPIRE_ID;
-        if (m_single_player_game) {
-            doc.root_node.AppendChild("single_player_game");
-        }
         if (player_to_empire_ids[it->first] != -1) {
             empire_id = player_to_empire_ids[it->first];
         } else {
@@ -1347,17 +1337,17 @@ void ServerApp::LoadGameInit()
             }
         }
         assert(empire_id != INVALID_EMPIRE_ID);
-        doc.root_node.AppendChild(m_universe.XMLEncode(empire_id));
-        doc.root_node.AppendChild(m_empires.CreateClientEmpireUpdate(empire_id));
-        doc.root_node.AppendChild(XMLElement("empire_id", boost::lexical_cast<std::string>(empire_id)));
-        doc.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
-        m_network_core.SendMessage(GameStartMessage(it->first, doc));
-
-        if (GetOptionsDB().Get<bool>("debug.log-load-game-universe")) {
-            boost::filesystem::ofstream ofs(GetLocalDir() / ("LoadGameInit-empire" + boost::lexical_cast<std::string>(empire_id) + "-doc.xml"));
-            doc.WriteDoc(ofs);
-            ofs.close();
+        std::ostringstream os;
+        {
+            boost::archive::binary_oarchive oa(os);
+            oa << boost::serialization::make_nvp("single_player_game", m_single_player_game);
+            oa << BOOST_SERIALIZATION_NVP(empire_id);
+            oa << BOOST_SERIALIZATION_NVP(m_current_turn);
+            Universe::s_encoding_empire = empire_id;
+            Serialize(&oa, m_empires);
+            Serialize(&oa, m_universe);
         }
+        m_network_core.SendMessage(GameStartMessage(it->first, os.str()));
 
         // send saved pending orders to player
         m_network_core.SendMessage(ServerLoadGameMessage(it->first, player_docs[empire_id]));
@@ -1861,8 +1851,8 @@ void ServerApp::ProcessTurns()
             boost::archive::binary_oarchive oa(os);
             Universe::s_encoding_empire = pEmpire->EmpireID();
             oa << BOOST_SERIALIZATION_NVP(m_current_turn);
-            Serialize(&oa, m_universe);
             Serialize(&oa, m_empires);
+            Serialize(&oa, m_universe);
         }
         m_network_core.SendMessage(TurnUpdateMessage(player_it->first, os.str()));
     }

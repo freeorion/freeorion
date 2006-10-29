@@ -577,40 +577,22 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
                 "starting player turn...";
             m_game_started = true;
+            std::istringstream is(msg.GetText());
+            boost::archive::binary_iarchive ia(is);
+            ia >> boost::serialization::make_nvp("single_player_game", m_single_player_game);
+            ia >> boost::serialization::make_nvp("empire_id", m_empire_id);
+            ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
+            Universe::s_encoding_empire = m_empire_id;
+            Deserialize(&ia, Empires());
+            Deserialize(&ia, GetUniverse());
 
-            std::stringstream stream(msg.GetText());
-            XMLDoc doc;
-            doc.ReadDoc(stream);
-
-            if (m_single_player_game = doc.root_node.ContainsChild("single_player_game")) {
-                Logger().debugStream() << "Single-Player game";
-                doc.root_node.RemoveChild("single_player_game");
-            }
-
-            m_empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Text());
-
-            // free current sitreps, if any
-            if (Empires().Lookup(m_empire_id))
-                Empires().Lookup(m_empire_id)->ClearSitRep();
             Orders().Reset();
-
-            // if we have empire data, then process it.  As it stands now,
-            // we may not, so dont assume we do.
-            if (doc.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG)) {
-                m_empires.HandleEmpireElementUpdate(doc.root_node.Child(EmpireManager::EMPIRE_UPDATE_TAG));
-            } else {
-                Logger().debugStream() << "No Empire data received from server.  Update Server Code.";
-            }
-
-            m_universe.SetUniverse(doc.root_node.Child("Universe"));
 
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Universe setup complete.";
 
             for (Empire::SitRepItr it = Empires().Lookup(m_empire_id)->SitRepBegin(); it != Empires().Lookup(m_empire_id)->SitRepEnd(); ++it) {
                 m_ui->GenerateSitRepText(*it);
             }
-
-            m_current_turn = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
 
             Autosave(true);
             m_ui->ScreenMap();
@@ -648,8 +630,8 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         boost::archive::binary_iarchive ia(is);
         Universe::s_encoding_empire = m_empire_id;
         ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
-        Deserialize(&ia, GetUniverse());
         Deserialize(&ia, Empires());
+        Deserialize(&ia, GetUniverse());
 
         // Now decode sitreps
         // Empire sitreps need UI in order to generate text, since it needs string resources
