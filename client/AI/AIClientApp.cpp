@@ -3,6 +3,7 @@
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
+#include "../../util/Serialize.h"
 #include "../../network/Message.h"
 
 #include <GG/net/fastevents.h>
@@ -15,7 +16,6 @@
 #include <log4cpp/FileAppender.hh>
 
 #include <boost/filesystem/fstream.hpp>
-
 
 
 // static member(s)
@@ -215,6 +215,7 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
             std::stringstream stream(msg.GetText());
             XMLDoc doc;
             doc.ReadDoc(stream);
+            m_empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Text());
             m_current_turn = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
             // as it stands now, just start turn       
             StartTurn();
@@ -241,12 +242,12 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::TURN_UPDATE: {
         if (msg.Sender() == -1) {
-            // as it stands now, just start turn
-            Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received TURN_UPDATE message; ...";
-            std::stringstream stream(msg.GetText());
-            XMLDoc doc;
-            doc.ReadDoc(stream);
-            m_current_turn = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
+            std::istringstream is(msg.GetText());
+            boost::archive::binary_iarchive ia(is);
+            Universe::s_encoding_empire = m_empire_id;
+            ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
+            Deserialize(&ia, GetUniverse());
+            Deserialize(&ia, Empires());
             StartTurn();
         }
         break;

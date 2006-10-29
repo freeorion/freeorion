@@ -12,6 +12,7 @@
 #include "../../util/OptionsDB.h"
 #include "../../universe/Planet.h"
 #include "../../util/Process.h"
+#include "../../util/Serialize.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
 #include "../../util/XMLDoc.h"
@@ -31,17 +32,6 @@
 #include <boost/format.hpp>
 
 #include <sstream>
-
-#define TEST_BOOST_SERIALIZATION 0
-#define TEST_BINARY_ARCHIVES 1
-#if TEST_BOOST_SERIALIZATION
-#include "../../util/Serialize.h"
-#include <boost/iostreams/device/back_inserter.hpp>
-#include <boost/iostreams/filtering_stream.hpp>
-#include <boost/range/iterator_range.hpp>
-#include <boost/iostreams/device/file.hpp>
-#endif
-
 
 #ifdef ENABLE_CRASH_BACKTRACE
 # include <signal.h>
@@ -614,46 +604,6 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
             m_universe.SetUniverse(doc.root_node.Child("Universe"));
 
-#if TEST_BOOST_SERIALIZATION
-            namespace io = boost::iostreams;
-            std::string boost_xml_filename = (GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.xml")).native_file_string();
-            std::string boost_binary_filename = (GetLocalDir() / ("NewGameUniverse-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.bin")).native_file_string();
-            io::filtering_istream is;
-#if TEST_BINARY_ARCHIVES
-            is.push(io::file_source(boost_binary_filename, std::ios_base::in | std::ios_base::binary));
-            boost::archive::binary_iarchive ia(is);
-#else
-            is.push(io::file_source(boost_xml_filename));
-            boost::archive::xml_iarchive ia(is);
-#endif
-            bool boost_xml_single_player_game;
-            Universe boost_xml_universe;
-            EmpireManager boost_xml_empire_manager;
-            Universe::s_encoding_empire = m_empire_id;
-            ia >> boost::serialization::make_nvp("single_player_game", boost_xml_single_player_game);
-            Deserialize(&ia, boost_xml_universe);
-            Deserialize(&ia, boost_xml_empire_manager);
-
-            assert(boost_xml_single_player_game == m_single_player_game);
-
-            {
-                XMLDoc doc;
-                doc.root_node.AppendChild(m_universe.XMLEncode());
-                doc.root_node.AppendChild(m_empires.XMLEncode(m_empire_id));
-                doc.root_node.AppendChild(m_empires.XMLEncode());
-                std::ofstream ofs("Univese_XMLDoc.xml");
-                doc.WriteDoc(ofs);
-            }
-            {
-                XMLDoc doc;
-                doc.root_node.AppendChild(boost_xml_universe.XMLEncode());
-                doc.root_node.AppendChild(boost_xml_empire_manager.XMLEncode(m_empire_id));
-                doc.root_node.AppendChild(boost_xml_empire_manager.XMLEncode());
-                std::ofstream ofs("Univese_Boost_Serialization.xml");
-                doc.WriteDoc(ofs);
-            }
-#endif
-
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Universe setup complete.";
 
             for (Empire::SitRepItr it = Empires().Lookup(m_empire_id)->SitRepBegin(); it != Empires().Lookup(m_empire_id)->SitRepEnd(); ++it) {
@@ -694,57 +644,12 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::TURN_UPDATE: {
-        std::stringstream stream(msg.GetText());
-        XMLDoc doc;
-        doc.ReadDoc(stream);
-
-        m_current_turn = boost::lexical_cast<int>(doc.root_node.Attribute("turn_number"));
-
-        // free current sitreps
-        Empires().Lookup(m_empire_id)->ClearSitRep();
-
-        // Update data universe and empire using state from server
-        UpdateTurnData(doc);
-
-#if TEST_BOOST_SERIALIZATION
-        namespace io = boost::iostreams;
-        std::string boost_xml_filename = (GetLocalDir() / ("TurnUpdate-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.xml")).native_file_string();
-        std::string boost_binary_filename = (GetLocalDir() / ("TurnUpdate-empire" + boost::lexical_cast<std::string>(m_empire_id) + "-boost.bin")).native_file_string();
-        io::filtering_istream is;
-#if TEST_BINARY_ARCHIVES
-        is.push(io::file_source(boost_binary_filename, std::ios_base::in | std::ios_base::binary));
+        std::istringstream is(msg.GetText());
         boost::archive::binary_iarchive ia(is);
-#else
-        is.push(io::file_source(boost_xml_filename));
-        boost::archive::xml_iarchive ia(is);
-#endif
-        int boost_xml_turn_number;
-        Universe boost_xml_universe;
-        EmpireManager boost_xml_empire_manager;
         Universe::s_encoding_empire = m_empire_id;
-        ia >> boost::serialization::make_nvp("turn_number", boost_xml_turn_number);
-        Deserialize(&ia, boost_xml_universe);
-        Deserialize(&ia, boost_xml_empire_manager);
-
-        assert(boost_xml_turn_number == m_current_turn);
-
-        {
-            XMLDoc doc;
-            doc.root_node.AppendChild(m_universe.XMLEncode());
-            doc.root_node.AppendChild(m_empires.XMLEncode(m_empire_id));
-            doc.root_node.AppendChild(m_empires.XMLEncode());
-            std::ofstream ofs("TurnUpdate_XMLDoc.xml");
-            doc.WriteDoc(ofs);
-        }
-        {
-            XMLDoc doc;
-            doc.root_node.AppendChild(boost_xml_universe.XMLEncode());
-            doc.root_node.AppendChild(boost_xml_empire_manager.XMLEncode(m_empire_id));
-            doc.root_node.AppendChild(boost_xml_empire_manager.XMLEncode());
-            std::ofstream ofs("TurnUpdate_Boost_Serialization.xml");
-            doc.WriteDoc(ofs);
-        }
-#endif
+        ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
+        Deserialize(&ia, GetUniverse());
+        Deserialize(&ia, Empires());
 
         // Now decode sitreps
         // Empire sitreps need UI in order to generate text, since it needs string resources
@@ -753,7 +658,6 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             SitRepEntry *pEntry = *sitrep_it;
             m_ui->GenerateSitRepText(pEntry);
         }
-        //Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Sitrep creation complete";
 
         Autosave(false);
 

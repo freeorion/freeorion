@@ -12,7 +12,7 @@
 ////////////////////////////////////////////////
 // Free Functions
 ////////////////////////////////////////////////
-void ZipString(std::string str, std::string& zipped_str)
+void ZipString(const std::string& str, std::string& zipped_str)
 {
     zipped_str.resize(static_cast<int>(str.size() * 1.01 + 13)); // space required by zlib
     uLongf zipped_size = zipped_str.size();
@@ -24,7 +24,7 @@ void ZipString(std::string str, std::string& zipped_str)
     zipped_str.resize(zipped_size);
 }
 
-void UnzipString(std::string str, std::string& unzipped_str, int size)
+void UnzipString(const std::string& str, std::string& unzipped_str, int size)
 {
     unzipped_str.resize(size);
     uLongf unzipped_size = unzipped_str.size();
@@ -247,9 +247,9 @@ Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, 
     return Message(Message::TURN_PROGRESS, -1, player_id, Message::CORE, doc);
 }
 
-Message TurnUpdateMessage(int player_id, const XMLDoc& start_data)
+Message TurnUpdateMessage(int player_id, const std::string& data)
 {
-    return Message(Message::TURN_UPDATE, -1, player_id, Message::CORE, start_data);
+    return Message(Message::TURN_UPDATE, -1, player_id, Message::CORE, data);
 }
 
 Message RequestNewObjectIDMessage(int sender)

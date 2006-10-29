@@ -42,6 +42,7 @@ common_sources = [
     'util/OrderSet.cpp',
     'util/Process.cpp',
     'util/Random.cpp',
+    'util/Serialize.cpp',
     'util/SitRepEntry.cpp',
     'util/VarText.cpp',
     'util/Version.cpp',

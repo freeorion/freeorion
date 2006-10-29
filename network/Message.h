@@ -11,12 +11,12 @@
 #include <string>
 
 /** compresses \a str using zlib, and puts the result into \a zipped_str */
-void ZipString(std::string str, std::string& zipped_str);
+void ZipString(const std::string& str, std::string& zipped_str);
 
 /** decompresses \a str using zlib, and puts the result into \a unzipped_str. The uncompressed size of 
    the string must be known beforehand, and passed in \a size.  Results are undefined when \a str does 
    not conatain a valid zipped byte sequence.*/
-void UnzipString(std::string str, std::string& unzipped_str, int size);
+void UnzipString(const std::string& str, std::string& unzipped_str, int size);
 
 
 
@@ -169,8 +169,8 @@ Message TurnOrdersMessage(int sender, int receiver, const XMLDoc& orders_data);
 /** creates an TURN_PROGRESS message. */
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id);
 
-/** creates a TURN_UPDATE message.  Contains a diff of universe and empire data */
-Message TurnUpdateMessage(int player_id, const XMLDoc& start_data);
+/** creates a TURN_UPDATE message. */
+Message TurnUpdateMessage(int player_id, const std::string& data);
 
 /** creates an REQUEST_NEW_OBJECT_ID  message. This message is a synchronous message, when sent it will wait for a reply form the server */
 Message RequestNewObjectIDMessage(int sender);
