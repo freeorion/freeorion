@@ -61,7 +61,18 @@ public:
 
 private:
     OrderMap m_orders;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+// Template Implementations
+template <class Archive>
+void OrderSet::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_orders);
+}
 
 #endif // _OrderSet_h_
 

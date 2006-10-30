@@ -42,8 +42,9 @@ public:
         LOAD_GAME,               ///< sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
         GAME_START,              ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
         TURN_UPDATE,             ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
-        TURN_ORDERS,             ///< sent to the server by a client that has orders to be processed at the end of a turn or when a game is saved
+        TURN_ORDERS,             ///< sent to the server by a client that has orders to be processed at the end of a turn
         TURN_PROGRESS,           ///< sent to clients to display a turn progress message. To make messages short, IDs are used
+        CLIENT_SAVE_DATA,        ///< sent to the server in response to a server request for the data needed to create a save file
         COMBAT_START,            ///< sent to clients when a combat is about to start
         COMBAT_ROUND_UPDATE,     ///< sent to clients when a combat round has been resolved
         COMBAT_END,              ///< sent to clients when a combat is concluded
@@ -164,13 +165,16 @@ Message EndGameMessage(int sender, int receiver);
 Message VictoryMessage(int receiver);
 
 /** creates an TURN_ORDERS message. */
-Message TurnOrdersMessage(int sender, int receiver, const XMLDoc& orders_data);
+Message TurnOrdersMessage(int sender, const std::string& data);
 
 /** creates an TURN_PROGRESS message. */
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id);
 
 /** creates a TURN_UPDATE message. */
 Message TurnUpdateMessage(int player_id, const std::string& data);
+
+/** creates an CLIENT_SAVE_DATA message. */
+Message ClientSaveDataMessage(int sender, const XMLDoc& data);
 
 /** creates an REQUEST_NEW_OBJECT_ID  message. This message is a synchronous message, when sent it will wait for a reply form the server */
 Message RequestNewObjectIDMessage(int sender);

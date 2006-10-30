@@ -6,11 +6,16 @@
 #include "../universe/Enums.h"
 #endif
 
-#include <vector>
-
 #ifndef _XMLObjectFactory_h_
 #include "XMLObjectFactory.h"
 #endif
+
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/is_abstract.hpp>
+#include <boost/serialization/nvp.hpp>
+
+#include <vector>
+
 
 class XMLElement;
 
@@ -69,8 +74,13 @@ private:
     int m_empire;
 
     mutable bool m_executed; // indicates that Execute() has occured, and so an undo is legal
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
+BOOST_IS_ABSTRACT(Order);
 
 /////////////////////////////////////////////////////
 // RenameOrder
@@ -105,6 +115,10 @@ private:
 
     int           m_object;
     std::string   m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -150,6 +164,10 @@ private:
     int                       m_new_id;
     std::pair<double, double> m_position;
     std::vector<int>          m_ship_ids;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -194,6 +212,10 @@ private:
     int              m_dest_system;
     std::vector<int> m_route;
     double           m_route_length;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -237,6 +259,10 @@ private:
     int               m_fleet_from;
     int               m_fleet_to;
     std::vector<int>  m_add_ships;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -289,6 +315,10 @@ private:
     // these are for undoing this order only
     mutable int         m_colony_fleet_id;   // the fleet from which the colony ship was taken
     mutable std::string m_colony_fleet_name; // the name of fleet from which the colony ship was taken
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -333,6 +363,10 @@ private:
     virtual void ExecuteImpl() const;
 
     int                       m_fleet;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -369,6 +403,10 @@ private:
     int       m_planet;
     FocusType m_focus;
     bool      m_primary;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -398,6 +436,10 @@ private:
     std::string m_tech_name;
     int         m_position;
     bool        m_remove;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -436,7 +478,105 @@ private:
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
-#endif // _Order_h_
+// Template Implementations
+template <class Archive>
+void Order::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_empire)
+        & BOOST_SERIALIZATION_NVP(m_executed);
+}
 
+template <class Archive>
+void RenameOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_object)
+        & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void NewFleetOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_fleet_name)
+        & BOOST_SERIALIZATION_NVP(m_system_id)
+        & BOOST_SERIALIZATION_NVP(m_new_id)
+        & BOOST_SERIALIZATION_NVP(m_position)
+        & BOOST_SERIALIZATION_NVP(m_ship_ids);
+}
+
+template <class Archive>
+void FleetMoveOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_fleet)
+        & BOOST_SERIALIZATION_NVP(m_start_system)
+        & BOOST_SERIALIZATION_NVP(m_dest_system)
+        & BOOST_SERIALIZATION_NVP(m_route)
+        & BOOST_SERIALIZATION_NVP(m_route_length);
+}
+
+template <class Archive>
+void FleetTransferOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_fleet_from)
+        & BOOST_SERIALIZATION_NVP(m_fleet_to)
+        & BOOST_SERIALIZATION_NVP(m_add_ships);
+}
+
+template <class Archive>
+void FleetColonizeOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_ship)
+        & BOOST_SERIALIZATION_NVP(m_planet)
+        & BOOST_SERIALIZATION_NVP(m_colony_fleet_id)
+        & BOOST_SERIALIZATION_NVP(m_colony_fleet_name);
+}
+
+template <class Archive>
+void DeleteFleetOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_fleet);
+}
+
+template <class Archive>
+void ChangeFocusOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_planet)
+        & BOOST_SERIALIZATION_NVP(m_focus)
+        & BOOST_SERIALIZATION_NVP(m_primary);
+}
+
+template <class Archive>
+void ResearchQueueOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_tech_name)
+        & BOOST_SERIALIZATION_NVP(m_position)
+        & BOOST_SERIALIZATION_NVP(m_remove);
+}
+
+template <class Archive>
+void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_build_type)
+        & BOOST_SERIALIZATION_NVP(m_item)
+        & BOOST_SERIALIZATION_NVP(m_number)
+        & BOOST_SERIALIZATION_NVP(m_location)
+        & BOOST_SERIALIZATION_NVP(m_index)
+        & BOOST_SERIALIZATION_NVP(m_new_quantity)
+        & BOOST_SERIALIZATION_NVP(m_new_index);
+}
+
+#endif // _Order_h_

@@ -226,9 +226,9 @@ Message VictoryMessage(int receiver)
     return Message(Message::END_GAME, -1, receiver, Message::CORE, "VICTORY");
 }
 
-Message TurnOrdersMessage(int sender, int receiver, const XMLDoc& orders_data)
+Message TurnOrdersMessage(int sender, const std::string& data)
 {
-    return Message(Message::TURN_ORDERS, sender, receiver, Message::CORE, orders_data);
+    return Message(Message::TURN_ORDERS, sender, -1, Message::CORE, data);
 }
 
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id)
@@ -250,6 +250,11 @@ Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, 
 Message TurnUpdateMessage(int player_id, const std::string& data)
 {
     return Message(Message::TURN_UPDATE, -1, player_id, Message::CORE, data);
+}
+
+Message ClientSaveDataMessage(int sender, const XMLDoc& data)
+{
+    return Message(Message::CLIENT_SAVE_DATA, sender, -1, Message::CORE, data);
 }
 
 Message RequestNewObjectIDMessage(int sender)

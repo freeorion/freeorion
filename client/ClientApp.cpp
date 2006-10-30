@@ -1,6 +1,7 @@
 #include "ClientApp.h"
 
 #include "../util/MultiplayerCommon.h"
+#include "../util/Serialize.h"
 #include "../universe/UniverseObject.h"
 
 #include <stdexcept>
@@ -46,23 +47,27 @@ int ClientApp::CurrentTurn() const
 
 Message ClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
 {
-    XMLDoc orders_doc;
-    if (save_game_data)
-        orders_doc.root_node.AppendChild("save_game_data");
-    orders_doc.root_node.AppendChild(XMLElement("Orders"));
-    for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
-        orders_doc.root_node.LastChild().AppendChild(order_it->second->XMLEncode());
+    if (save_game_data) {
+        XMLDoc orders_doc;
+        orders_doc.root_node.AppendChild(XMLElement("Orders"));
+        for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
+            orders_doc.root_node.LastChild().AppendChild(order_it->second->XMLEncode());
+        }
+        return ClientSaveDataMessage(m_player_id, orders_doc);
+    } else {
+        std::ostringstream os;
+        {
+            boost::archive::xml_oarchive oa(os);
+            Serialize(&oa, m_orders);
+        }
+        return ::TurnOrdersMessage(m_player_id, os.str());
     }
-    return ::TurnOrdersMessage(m_player_id, -1, orders_doc);
 }
 
 void ClientApp::StartTurn()
 {
-    // send message
     m_network_core.SendMessage(TurnOrdersMessage());
-
-    // clear order set
-    m_orders.Reset( );
+    m_orders.Reset();
 }
 
 Universe& ClientApp::GetUniverse()

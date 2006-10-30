@@ -569,69 +569,52 @@ void ServerApp::HandleMessage(const Message& msg)
     }
 
     case Message::TURN_ORDERS: {
-        /* decode order set */
+        std::istringstream is(msg.GetText());
+        boost::archive::xml_iarchive ia(is);
+        OrderSet* order_set = new OrderSet;
+        Deserialize(&ia, *order_set);
+
+        // check order validity -- all orders must originate from this empire in order to be considered valid
+        Empire* empire = GetPlayerEmpire(msg.Sender());
+        assert(empire);
+        for (OrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
+            Order* order = it->second;
+            assert(order);
+            if (empire->EmpireID() != order->EmpireID()) {
+                throw std::runtime_error(
+                    "ServerApp::HandleMessage : Player \"" + empire->PlayerName() + "\""
+                    " attempted to issue an order for player "
+                    "\"" + Empires().Lookup(order->EmpireID())->PlayerName() + "\"!  Terminating...");
+            }
+        }
+
+        m_network_core.SendMessage(TurnProgressMessage(msg.Sender(), Message::WAITING_FOR_PLAYERS, -1));
+
+        m_log_category.debugStream() << "ServerApp::HandleMessage : Received orders from player " << msg.Sender();
+
+        /* if all orders are received already, do nothing as we are processing a turn */
+        if (AllOrdersReceived())
+            break;
+
+        /* add orders to turn sequence */    
+        SetEmpireTurnOrders(GetPlayerEmpire(msg.Sender())->EmpireID(), order_set);
+
+        /* look to see if all empires are done */
+        if (AllOrdersReceived()) {
+            m_log_category.debugStream() << "ServerApp::HandleMessage : All orders received; processing turn...";
+            ProcessTurns();
+        }
+        break;
+    }
+
+    case Message::CLIENT_SAVE_DATA: {
         std::stringstream stream(msg.GetText());
         XMLDoc doc;
         doc.ReadDoc(stream);
-
-        if (doc.root_node.ContainsChild("save_game_data")) { // the Orders were in answer to a save game data request
-            doc.root_node.RemoveChild("save_game_data");
-            m_player_save_game_data[msg.Sender()].AppendChild(doc.root_node.Child("Orders"));
-            if (doc.root_node.ContainsChild("UI"))
-                m_player_save_game_data[msg.Sender()].AppendChild(doc.root_node.Child("UI"));
-            m_players_responded.insert(msg.Sender());
-        } else { // the Orders were sent from a Player who has finished her turn
-            if (GetOptionsDB().Get<bool>("debug.log-turn-orders")) {
-                std::string dbg_file("TurnOrdersReceived_empire");
-                dbg_file += boost::lexical_cast<std::string>(GetPlayerEmpire(msg.Sender())->EmpireID());
-                dbg_file += ".xml";
-                boost::filesystem::ofstream output(GetLocalDir() / dbg_file);
-                doc.WriteDoc(output);
-                output.close();
-            }
-
-            m_network_core.SendMessage(TurnProgressMessage(msg.Sender(), Message::WAITING_FOR_PLAYERS, -1));
-
-            OrderSet *p_order_set;
-            p_order_set = new OrderSet( );
-            XMLObjectFactory<Order> order_factory;
-            Order::InitOrderFactory(order_factory);
-            const XMLElement& root = doc.root_node.Child("Orders");
-
-            // all orders must originate from this empire in order to be considered valid
-            Empire* empire = GetPlayerEmpire(msg.Sender());
-            assert(empire);
-
-            for (int i = 0; i < root.NumChildren(); ++i) {
-                Order* p_order = order_factory.GenerateObject(root.Child(i));
-                if (p_order) {
-                    if (empire->EmpireID() != p_order->EmpireID()) {
-                        throw std::runtime_error(
-                            "ServerApp::HandleMessage : Player \"" + empire->PlayerName() + "\""
-                            " attempted to issue an order for player "
-                            "\"" + Empires().Lookup(p_order->EmpireID())->PlayerName() + "\"!  Terminating...");
-                    }
-                    p_order_set->AddOrder(p_order);
-                } else {
-                    m_log_category.errorStream() << "ServerApp::HandleMessage : An Order has been received that has no factory - ignoring.";
-                }
-            }
-
-            m_log_category.debugStream() << "ServerApp::HandleMessage : Received orders from player " << msg.Sender();
-
-            /* if all orders are received already, do nothing as we are processing a turn */
-            if ( AllOrdersReceived( ) )
-                break;
-
-            /* add orders to turn sequence */    
-            SetEmpireTurnOrders( GetPlayerEmpire( msg.Sender() )->EmpireID(), p_order_set );
-            
-            /* look to see if all empires are done */
-            if ( AllOrdersReceived( ) ) {
-                m_log_category.debugStream() << "ServerApp::HandleMessage : All orders received; processing turn...";
-                ProcessTurns( );
-            }
-        }
+        m_player_save_game_data[msg.Sender()].AppendChild(doc.root_node.Child("Orders"));
+        if (doc.root_node.ContainsChild("UI"))
+            m_player_save_game_data[msg.Sender()].AppendChild(doc.root_node.Child("UI"));
+        m_players_responded.insert(msg.Sender());
         break;
     }
 

@@ -132,16 +132,23 @@ HumanClientApp::~HumanClientApp()
 
 Message HumanClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
 {
-    XMLDoc orders_doc;
     if (save_game_data) {
-        orders_doc.root_node.AppendChild("save_game_data");
-        orders_doc.root_node.AppendChild(ClientUI::GetClientUI()->SaveGameData()); // include relevant UI state
+        XMLDoc orders_doc;
+        if (save_game_data)
+            orders_doc.root_node.AppendChild(ClientUI::GetClientUI()->SaveGameData()); // include relevant UI state
+        orders_doc.root_node.AppendChild(XMLElement("Orders"));
+        for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
+            orders_doc.root_node.LastChild().AppendChild(order_it->second->XMLEncode());
+        }
+        return ClientSaveDataMessage(m_player_id, orders_doc);
+    } else {
+        std::ostringstream os;
+        {
+            boost::archive::xml_oarchive oa(os);
+            Serialize(&oa, m_orders);
+        }
+        return ::TurnOrdersMessage(m_player_id, os.str());
     }
-    orders_doc.root_node.AppendChild(XMLElement("Orders"));
-    for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
-        orders_doc.root_node.LastChild().AppendChild(order_it->second->XMLEncode());
-    }
-    return ::TurnOrdersMessage(m_player_id, -1, orders_doc);
 }
 
 std::map<int, int> HumanClientApp::PendingColonizationOrders() const

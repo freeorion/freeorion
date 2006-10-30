@@ -8,6 +8,7 @@
 #include "../universe/Planet.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
+#include "../util/OrderSet.h"
 
 #include "SDL_byteorder.h"
 
@@ -39,6 +40,17 @@ BOOST_CLASS_EXPORT(Planet)
 BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_EXPORT(Ship)
+
+// exports for boost serialization of polymorphic Order hierarchy
+BOOST_CLASS_EXPORT(RenameOrder)
+BOOST_CLASS_EXPORT(NewFleetOrder)
+BOOST_CLASS_EXPORT(FleetMoveOrder)
+BOOST_CLASS_EXPORT(FleetTransferOrder)
+BOOST_CLASS_EXPORT(FleetColonizeOrder)
+BOOST_CLASS_EXPORT(DeleteFleetOrder)
+BOOST_CLASS_EXPORT(ChangeFocusOrder)
+BOOST_CLASS_EXPORT(ResearchQueueOrder)
+BOOST_CLASS_EXPORT(ProductionQueueOrder)
 
 // some endianness and size checks to ensure portability of binary save files; of one or more of these fails, it means
 // that FreeOrion is not supported on your platform/compiler pair, and must be modified to provide data of the
@@ -78,6 +90,14 @@ void Serialize(OArchivePtr oa, const Universe& universe)
         *boost::get<boost::archive::binary_oarchive*>(oa) << BOOST_SERIALIZATION_NVP(universe);
 }
 
+void Serialize(OArchivePtr oa, const OrderSet& order_set)
+{
+    if (oa.which())
+        *boost::get<boost::archive::xml_oarchive*>(oa) << BOOST_SERIALIZATION_NVP(order_set);
+    else
+        *boost::get<boost::archive::binary_oarchive*>(oa) << BOOST_SERIALIZATION_NVP(order_set);
+}
+
 void Deserialize(IArchivePtr ia, Empire& empire)
 {
     if (ia.which())
@@ -100,4 +120,12 @@ void Deserialize(IArchivePtr ia, Universe& universe)
         *boost::get<boost::archive::xml_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(universe);
     else
         *boost::get<boost::archive::binary_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(universe);
+}
+
+void Deserialize(IArchivePtr ia, OrderSet& order_set)
+{
+    if (ia.which())
+        *boost::get<boost::archive::xml_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(order_set);
+    else
+        *boost::get<boost::archive::binary_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(order_set);
 }
