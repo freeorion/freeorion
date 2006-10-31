@@ -2,36 +2,62 @@
 #include "HumanClientAppSoundOpenAL.h"
 #include "../../util/OptionsDB.h"
 
-#include <al.h>
+#ifdef FREEORION_WIN32
+//#include <al.h> // already included in HumanClientAppSoundOpenAL.h
 #include <alc.h>
+#else
+//#include <AL/al.h> // already included in HumanClientAppSoundOpenAL.h
+#include <AL/alc.h>
+
+#endif
+
 #include <AL/alut.h>
-#include <vorbis/vorbisfile.h>
+//#include <vorbis/vorbisfile.h> // already included in HumanClientAppSoundOpenAL.h
 
 namespace {
     void InitOpenAL(int num_sources, ALuint *sources, ALuint *music_buffers)
     {
+        ALCcontext *m_context;
+        ALCdevice *m_device;
         log4cpp::Category& logger = HumanClientApp::GetApp()->Logger();
-        
-        if (alutInit(NULL, NULL) == AL_FALSE) {
-            logger.errorStream() << "Unable to initialise OpenAL: " << alutGetErrorString(alutGetError()) << "\n";
+       
+        m_device = alcOpenDevice(NULL); /* currently only select the default output device - usually a NULL-terminated
+                                         * string desctribing a device can be passed here (of type ALchar*)
+                                         */
+        if (m_device == NULL) {
+            logger.errorStream() << "Unable to initialise OpenAL device: " << alGetString(alGetError()) << "\n";
         } else {
+            m_context = alcCreateContext(m_device,NULL); // instead of NULL we can pass a ALCint* pointing to a set of
+            alcMakeContextCurrent(m_context);            // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
+            alutInitWithoutContext(NULL,NULL); // we need to init alut or we won't be able to read .wav files
+            alListenerf(AL_GAIN,1.0);
             alGenSources(num_sources, sources);
             alGenBuffers(2, music_buffers);
             for (int i=0; i<num_sources; i++) {
                 alSourcei(sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
             }
-            logger.debugStream() << "OpenAL initialized. Version " 
+            logger.debugStream() << "OpenAL initialized. Version "
                                  << alGetString(AL_VERSION)
                                  << "Renderer "
                                  << alGetString(AL_RENDERER)
                                  << "Vendor "
                                  << alGetString(AL_VENDOR)
-                                 << "\nExtensions: " 
+                                 << "\nExtensions: "
                                  << alGetString(AL_EXTENSIONS)
                                  << "\n";
         }
     }
 }
+
+#ifdef FREEORION_WIN32
+static int _fseek64_wrap(FILE *f,ogg_int64_t off,int whence){
+
+    if(f==NULL)return(-1);
+
+    return fseek(f,off,whence);
+
+}
+#endif
 
 HumanClientAppSoundOpenAL::HumanClientAppSoundOpenAL()
     : HumanClientApp()
@@ -81,26 +107,38 @@ int HumanClientAppSoundOpenAL::RefillBuffer(ALuint *bufferName)
         }
         else
         {
-            if (m_music_name.size() > 0)
-            {
-                m_music_name.clear();  // do this to avoid music being re-started by other functions
-                ov_clear(&m_ogg_file); // and unload the file for good measure. the file itself is closed now, don't re-close it again
-            }
+            m_music_name.clear();  // m_music_name.clear() must always be called before ov_clear. Otherwise
+            ov_clear(&m_ogg_file); // the app might think we still have something to play.
             return 1;
         }
         return 0;
     }
-    return 0;
+    return 1;
 }
 
-void HumanClientAppSoundOpenAL::PlayMusic(const std::string& filename, int loops /* = 0*/)
+void HumanClientAppSoundOpenAL::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
 {
     ALenum m_openal_error;
     log4cpp::Category& logger = HumanClientApp::GetApp()->Logger();
+    std::string filename = path.native_file_string();
     FILE *m_f = NULL;
     vorbis_info *m_ogg_info;
     m_music_loops = 0;
-   
+
+#ifdef FREEORION_WIN32
+    ov_callbacks callbacks = {
+
+    (size_t (*)(void *, size_t, size_t, void *))  fread,
+
+    (int (*)(void *, ogg_int64_t, int))           _fseek64_wrap,
+
+    (int (*)(void *))                             fclose,
+
+    (long (*)(void *))                            ftell
+
+    };
+#endif
+
     if (alcGetCurrentContext() != NULL)
     {
         if (m_music_name.size() > 0)
@@ -108,7 +146,11 @@ void HumanClientAppSoundOpenAL::PlayMusic(const std::string& filename, int loops
        
         if ((m_f = fopen(filename.c_str(), "rb")) != NULL) // make sure we CAN open it
         {
+#ifdef FREEORION_WIN32
+            if (!(ov_test_callbacks(m_f, &m_ogg_file, NULL, 0, callbacks))) // check if it's a proper ogg
+#else
             if (!(ov_test(m_f, &m_ogg_file, NULL, 0))) // check if it's a proper ogg
+#endif
             {
                 ov_test_open(&m_ogg_file); // it is, now fully open the file
                 /* now we need to take some info we will need later */
@@ -120,11 +162,16 @@ void HumanClientAppSoundOpenAL::PlayMusic(const std::string& filename, int loops
                 m_ogg_freq = m_ogg_info->rate;
                 m_music_loops = loops;
                 /* fill up the buffers and queue them up for the first time */
-                RefillBuffer(&m_music_buffers[0]);
-                RefillBuffer(&m_music_buffers[1]);
-                alSourceQueueBuffers(m_sources[0],2,m_music_buffers);
-                alSourcePlay(m_sources[0]);
-                m_music_name = filename; // yup, we're playing something
+                if (!RefillBuffer(&m_music_buffers[0]))
+                {
+                    alSourceQueueBuffers(m_sources[0],1,&m_music_buffers[0]); // queue up the buffer if we manage to fill it
+                    if (!RefillBuffer(&m_music_buffers[1]))
+                    {
+                        alSourceQueueBuffers(m_sources[0],1,&m_music_buffers[1]);
+                        m_music_name = filename; // yup, we're playing something that takes up more than 2 buffers
+                    }
+                    alSourcePlay(m_sources[0]); // play if at least one buffer is queued
+                }
             }
             else
             {
@@ -149,44 +196,48 @@ void HumanClientAppSoundOpenAL::StopMusic()
     if (alcGetCurrentContext() != NULL)
     {
         alSourceStop(m_sources[0]);
-        m_music_name.clear();  // do this to avoid being re-started by other functions
-        ov_clear(&m_ogg_file); // and unload the file for good measure. the file itself is still open, but PlayMusic is safeguarded against it.
+        if (m_music_name.size() > 0)
+        {
+            m_music_name.clear();  // do this to avoid music being re-started by other functions
+            ov_clear(&m_ogg_file); // and unload the file for good measure. the file itself is closed now, don't re-close it again
+        }
         alGetSourcei(m_sources[0],AL_BUFFERS_PROCESSED,&num_buffers_processed);         // we need to unqueue any unplayed buffers
         alSourceUnqueueBuffers (m_sources[0], num_buffers_processed, &buffer_name_yay); // otherwise they'll cause problems if we open another file
     }
 }
 
- void HumanClientAppSoundOpenAL::PlaySound(const std::string& filename)
- {
-     log4cpp::Category& logger = HumanClientApp::GetApp()->Logger();
+void HumanClientAppSoundOpenAL::PlaySound(const boost::filesystem::path& path)
+{
+    log4cpp::Category& logger = HumanClientApp::GetApp()->Logger();
+    std::string filename = path.native_file_string();
     ALuint m_current_buffer;
     ALenum m_source_state;
     int m_i;
     int m_found_buffer = 1;
     int m_found_source = 0;
-   
-     if (alcGetCurrentContext() != NULL)
-     {
+
+    if (alcGetCurrentContext() != NULL)
+    {
         /* First check if the sound data of the file we want to play is already buffered somewhere */
-         std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
-         if (it != m_buffers.end())
+        std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
+        if (it != m_buffers.end())
             m_current_buffer=it->second;
         else
-         {
+        {
             /* We buffer the file if it wasn't previously */
             if ((m_current_buffer = alutCreateBufferFromFile(filename.c_str())) != AL_NONE)
                 m_buffers[filename] = m_current_buffer;
             else
-             {
+            {
                 logger.errorStream() << "PlaySound: Cannot create buffer for: " << filename.c_str() << " Reason:" << alutGetErrorString(alutGetError());
                 m_found_buffer = 0;
-             }
+            }
         }
         if (m_found_buffer)
         {
             /* Now that we have the buffer, we need to find a source to send it to */
             for (m_i=1;m_i<M_SOURCES_NUM;m_i++) // as we're playing sounds we start at 1. 0 is reserved for music
-             {
+            {
                 alGetSourcei(m_sources[m_i],AL_SOURCE_STATE,&m_source_state);
                 if ((m_source_state != AL_PLAYING) && (m_source_state != AL_PAUSED))
                 {
@@ -195,52 +246,53 @@ void HumanClientAppSoundOpenAL::StopMusic()
                     alSourcePlay(m_sources[m_i]);
                     break; // so that the sound won't block all the sources
                 }
-             }
+            }
             if (!m_found_source)
                 logger.errorStream() << "PlaySound: Could not find aviable source - playback aborted\n";
-         }
+        }
         m_source_state = alGetError();
         if (m_source_state != AL_NONE)
             logger.errorStream() << "PlaySound: OpenAL ERROR: " << alGetString(m_source_state);
             /* it's important to check for errors, as some functions (mainly alut) won't work properly if
              * they're called when there is a unchecked previous error. */
-     }
- }
- 
- void HumanClientAppSoundOpenAL::FreeSound(const std::string& filename)
- {
+    }
+}
+
+void HumanClientAppSoundOpenAL::FreeSound(const boost::filesystem::path& path)
+{
     ALenum m_openal_error;
     log4cpp::Category& logger = HumanClientApp::GetApp()->Logger();
-     std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
+    std::string filename = path.native_file_string();
+    std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
    
-     if (it != m_buffers.end()) {
-         alDeleteBuffers(1, &(it->second));
+    if (it != m_buffers.end()) {
+        alDeleteBuffers(1, &(it->second));
         m_openal_error = alGetError();
         if (m_openal_error != AL_NONE)
             logger.errorStream() << "FreeSound: OpenAL ERROR: " << alGetString(m_openal_error);
         else
             m_buffers.erase(it); /* we don't erase if there was an error, as the buffer may not have been
                                     removed - potential memory leak */
-     }
- }
- 
- void HumanClientAppSoundOpenAL::FreeAllSounds()
- {
+    }
+}
+
+void HumanClientAppSoundOpenAL::FreeAllSounds()
+{
     ALenum m_openal_error;
     log4cpp::Category& logger = HumanClientApp::GetApp()->Logger();
    
-     for (std::map<std::string, ALuint>::iterator it = m_buffers.begin();
-          it != m_buffers.end(); ++it) {
-         alDeleteBuffers(1, &(it->second));
+    for (std::map<std::string, ALuint>::iterator it = m_buffers.begin();
+         it != m_buffers.end(); ++it) {
+        alDeleteBuffers(1, &(it->second));
         m_openal_error = alGetError();
         if (m_openal_error != AL_NONE)
             logger.errorStream() << "FreeAllSounds: OpenAL ERROR: " << alGetString(m_openal_error);
         else
             m_buffers.erase(it); /* same as in FreeSound */
-     }
- }
- 
- void HumanClientAppSoundOpenAL::SetMusicVolume(int vol)
+    }
+}
+
+void HumanClientAppSoundOpenAL::SetMusicVolume(int vol)
 {
     ALenum m_openal_error;
     log4cpp::Category& logger = HumanClientApp::GetApp()->Logger();
@@ -257,8 +309,8 @@ void HumanClientAppSoundOpenAL::StopMusic()
             logger.errorStream() << "PlaySound: OpenAL ERROR: " << alGetString(m_openal_error);
     }
 }
- 
- void HumanClientAppSoundOpenAL::SetUISoundsVolume(int vol)
+
+void HumanClientAppSoundOpenAL::SetUISoundsVolume(int vol)
 {
     ALenum m_openal_error;
     log4cpp::Category& logger = HumanClientApp::GetApp()->Logger();
@@ -276,7 +328,7 @@ void HumanClientAppSoundOpenAL::StopMusic()
             logger.errorStream() << "PlaySound: OpenAL ERROR: " << alGetString(m_openal_error);
     }
 }
- 
+
 void HumanClientAppSoundOpenAL::RenderBegin()
 {
     ALint    state;
@@ -299,4 +351,4 @@ void HumanClientAppSoundOpenAL::RenderBegin()
             alSourcePlay(m_sources[0]);
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // this is the only line in SDLGUI::RenderBegin()
-}
+} 
