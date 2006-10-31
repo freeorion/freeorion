@@ -67,11 +67,12 @@ void OwnerColoredSystemName::Render()
 SystemIcon::SystemIcon(int id, double zoom) :
     GG::Control(0, 0, 1, 1, GG::CLICKABLE),
     m_system(*GetUniverse().Object<const System>(id)),
-    m_static_graphic(0),
+    m_disc_graphic(0),
+    m_halo_graphic(0),
     m_selection_indicator(0),
     m_selected(false),
-    m_name(0),
-    m_default_star_color(GG::CLR_WHITE)
+    m_mouseover_indicator(0),
+    m_name(0)
 {
     Connect(m_system.StateChangedSignal, &SystemIcon::Refresh, this);
 
@@ -84,19 +85,38 @@ SystemIcon::SystemIcon(int id, double zoom) :
              GG::Pt(static_cast<int>(ul.x + ClientUI::SystemIconSize() * zoom + 0.5),
                     static_cast<int>(ul.y + ClientUI::SystemIconSize() * zoom + 0.5)));
 
-    // static graphic
-    boost::shared_ptr<GG::Texture> graphic = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[m_system.Star()], m_system.ID());
-    m_static_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), graphic, GG::GR_FITGRAPHIC);
-    AdjustBrightness(m_default_star_color, 0.80);
-    m_static_graphic->SetColor(m_default_star_color);
-    AttachChild(m_static_graphic);
+    StarType star_type = m_system.Star();
+    
+    // disc graphic
+    boost::shared_ptr<GG::Texture> disc_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], m_system.ID());
+    m_disc_graphic = new GG::StaticGraphic(0, 0, Width(), Height(), disc_texture, GG::GR_FITGRAPHIC);
+    m_disc_graphic->SetColor(GG::CLR_WHITE);
+    AttachChild(m_disc_graphic);
+
+    // halo graphic
+    boost::shared_ptr<GG::Texture> halo_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], m_system.ID());
+    if (halo_texture) {
+        m_halo_graphic = new GG::StaticGraphic(-Width()/2, -Height()/2, Width()*2, Height()*2, halo_texture, GG::GR_FITGRAPHIC);
+        AttachChild(m_halo_graphic);
+        MoveChildDown(m_halo_graphic);
+    }
+
+    int ind_size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
+    int ind_x = (Width() - ind_size) / 2;
+    int ind_y = (Height() - ind_size) / 2;
 
     // selection indicator graphic
     boost::shared_ptr<GG::Texture> selection_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection.png");
-    int size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
-    m_selection_indicator = new GG::StaticGraphic(0, 0, size, size, selection_texture, GG::GR_FITGRAPHIC);
+    m_selection_indicator = new GG::StaticGraphic(ind_x, ind_y, ind_size, ind_size, selection_texture, GG::GR_FITGRAPHIC);
     AttachChild(m_selection_indicator);
     m_selection_indicator->Hide();
+
+    // mouseover indicator graphic
+    boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
+    m_mouseover_indicator = new GG::StaticGraphic(ind_x, ind_y, ind_size, ind_size, mouseover_texture, GG::GR_FITGRAPHIC);
+    AttachChild(m_mouseover_indicator);
+    MoveChildUp(m_halo_graphic);
+    m_mouseover_indicator->Hide();
 }
 
 
@@ -128,15 +148,35 @@ const FleetButton* SystemIcon::GetFleetButton(Fleet* fleet) const
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
-    if (m_static_graphic)
-        m_static_graphic->SizeMove(GG::Pt(0, 0), lr - ul);
+    if (m_disc_graphic)
+        m_disc_graphic->SizeMove(GG::Pt(0, 0), lr - ul);
+
+    int ind_size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
+    GG::Pt ind_ul = GG::Pt((Width() - ind_size) / 2, (Height() - ind_size) / 2);
+    GG::Pt ind_lr = ind_ul + GG::Pt(ind_size, ind_size);
 
     if (m_selection_indicator && m_selected) {
-        int size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
-        GG::Pt ind_ul = GG::Pt((Width() - size) / 2, (Height() - size) / 2);
-        GG::Pt ind_lr = ind_ul + GG::Pt(size, size);
         m_selection_indicator->SizeMove(ind_ul, ind_lr);
         m_selection_indicator->Show();
+    }
+
+    if (m_mouseover_indicator) {
+        m_mouseover_indicator->SizeMove(ind_ul, ind_lr);
+    }
+
+    if (m_halo_graphic) {
+        double halo_size_factor = 1 + log10( static_cast<double>(Width()) / static_cast<double>(ClientUI::SystemIconSize()) );
+        Logger().debugStream() << "halosizefactor: " << halo_size_factor;
+        if (halo_size_factor > 0.5) {
+            int halo_size = static_cast<int>(ind_size * halo_size_factor);        
+            GG::Pt halo_ul = GG::Pt((Width() - halo_size) / 2, (Height() - halo_size) / 2);
+            GG::Pt halo_lr = halo_ul + GG::Pt(halo_size, halo_size);
+            m_halo_graphic->SizeMove(halo_ul, halo_lr);
+            MoveChildDown(m_halo_graphic);
+            m_halo_graphic->Show();
+        } else {
+            m_halo_graphic->Hide();
+        }
     }
 
     PositionSystemName();
@@ -175,13 +215,19 @@ void SystemIcon::LDoubleClick(const GG::Pt& pt, Uint32 keys)
 
 void SystemIcon::MouseEnter(const GG::Pt& pt, Uint32 keys)
 {
-    m_static_graphic->SetColor(GG::CLR_WHITE);
+    // indicate mouseover
+    if (m_mouseover_indicator)
+        m_mouseover_indicator->Show();
+
     MouseEnteringSignal(m_system.ID());
 }
 
 void SystemIcon::MouseLeave()
 {
-    m_static_graphic->SetColor(m_default_star_color);
+    // un-indicate mouseover
+    if (m_mouseover_indicator)
+        m_mouseover_indicator->Hide();
+
     MouseLeavingSignal(m_system.ID());
 }
 
@@ -194,7 +240,6 @@ void SystemIcon::SetSelected(bool selected)
         GG::Pt ind_ul = GG::Pt((Width() - size) / 2, (Height() - size) / 2);
         GG::Pt ind_lr = ind_ul + GG::Pt(size, size);
         m_selection_indicator->SizeMove(ind_ul, ind_lr);
-        m_selection_indicator->Show();
         m_selection_indicator->Show();
     } else {
         m_selection_indicator->Hide();

@@ -90,12 +90,13 @@ private:
     void PositionSystemName();
     void FleetCreatedOrDestroyed(const Fleet&);
 
-    const System&                   m_system;         //!< the System object associated with this SystemIcon
-    GG::StaticGraphic*              m_static_graphic; //!< the control used to render the displayed texture
+    const System&                   m_system;               //!< the System object associated with this SystemIcon
+    GG::StaticGraphic*              m_disc_graphic;         //!< solid star disc graphic
+    GG::StaticGraphic*              m_halo_graphic;         //!< transparent star halo graphic
     GG::StaticGraphic*              m_selection_indicator;  //!< shown to indicate system is selected in sidepanel
+    GG::StaticGraphic*              m_mouseover_indicator;  //!< shown when the mouse cursor is over the system
     bool                            m_selected;             //!< is this icon presently selected / should it show m_selected_indicator
-    OwnerColoredSystemName*         m_name;           //!< the control that holds the name of the system
-    GG::Clr                         m_default_star_color;
+    OwnerColoredSystemName*         m_name;                 //!< the control that holds the name of the system
 
     std::map<int, FleetButton*> m_stationary_fleet_markers; //!< the fleet buttons for the fleets that are stationary in the system, indexed by Empire ID of the owner
     std::map<int, FleetButton*> m_moving_fleet_markers;     //!< the fleet buttons for the fleets that are under orders to move out of the system, indexed by Empire ID of the owner

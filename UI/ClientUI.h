@@ -197,6 +197,7 @@ public:
     static GG::Clr     TechWndProgressBar();
 
     static std::map<StarType, std::string>& StarTypeFilePrefixes();
+    static std::map<StarType, std::string>& HaloStarTypeFilePrefixes();
     //!@}
 
 private:

@@ -111,6 +111,18 @@ std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes()
     return prefixes;
 }
 
+std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
+{
+    static std::map<StarType, std::string> prefixes;
+    prefixes[STAR_BLUE] = "halo_blue";
+    prefixes[STAR_WHITE] = "halo_white";
+    prefixes[STAR_YELLOW] = "halo_yellow";
+    prefixes[STAR_ORANGE] = "halo_orange";
+    prefixes[STAR_RED] = "halo_red";
+    prefixes[STAR_NEUTRON] = "halo_neutron";
+    prefixes[STAR_BLACK] = "halo_blackhole";    // as of this writing, no blackhole halos are available, so the calling code should check for StarType == STAR_BLACK and not call this function in this case
+    return prefixes;
+}
 
 // private static members
 log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
@@ -404,7 +416,9 @@ boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesyste
 {
     assert(0 <= n);
     TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix);
-    return prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
+    return prefixed_textures_and_dist.first.empty() ? 
+        boost::shared_ptr<GG::Texture>() : 
+        prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
 }
 
 /////////////////////////////////////////////////////
