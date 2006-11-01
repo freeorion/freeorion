@@ -33,6 +33,7 @@ class CombatModule;
 class Message;
 class OrderSet;
 struct PlayerSetupData;
+struct SaveGameUIData;
 class XMLDoc;
 class XMLElement;
 
@@ -136,9 +137,6 @@ private:
     XMLDoc LobbyStartDoc() const;           ///< returns an MP lobby-mode update XMLDoc containing just the initial server-side data that the clients don't have
     XMLDoc SaveGameUpdateDoc() const;       ///< returns an MP lobby-mode update XMLDoc containing just empire data for the currently-selected save game
 
-    void SaveGameVars(XMLDoc& doc) const;   ///< adds all game-state variables to \a doc
-    void LoadGameVars(const XMLDoc& doc);   ///< assigns all game-state variables from \a doc
-
     Empire* GetPlayerEmpire(int player_id) const;   ///< returns the object for the empire that that the player with ID \a player_id is playing
     int     GetEmpirePlayerID(int empire_id) const; ///< returns the player ID for the player playing the empire with ID \a empire_id
    
@@ -172,8 +170,23 @@ private:
     bool                      m_single_player_game;    ///< true when the game being played is single-player
 
     std::set<int>             m_players_responded;     ///< tracks which players have responded to a server request (eg for save-data)
-    std::map<int, XMLElement> 
-    m_player_save_game_data; ///< stores the save game data coming in from the players during a save game operation
+
+    struct PlayerSaveGameData
+    {
+        PlayerSaveGameData();
+        PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders, const boost::shared_ptr<SaveGameUIData>& ui_data);
+
+        std::string m_name;
+        Empire* m_empire;
+        boost::shared_ptr<OrderSet> m_orders;
+        boost::shared_ptr<SaveGameUIData> m_ui_data;
+
+    private:
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version);
+    };
+    std::vector<PlayerSaveGameData> m_player_save_game_data; ///< stores the save game data coming in from the players during a save game operation
 
     // turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
     std::map<int, OrderSet*>  m_turn_sequence;
@@ -182,6 +195,16 @@ private:
 
     static ServerApp*         s_app;
 };
+
+// template implementations
+template <class Archive>
+void ServerApp::PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_empire)
+        & BOOST_SERIALIZATION_NVP(m_orders)
+        & BOOST_SERIALIZATION_NVP(m_ui_data);
+}
 
 #endif // _ServerApp_h_
 

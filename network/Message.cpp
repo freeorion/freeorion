@@ -252,7 +252,7 @@ Message TurnUpdateMessage(int player_id, const std::string& data)
     return Message(Message::TURN_UPDATE, -1, player_id, Message::CORE, data);
 }
 
-Message ClientSaveDataMessage(int sender, const XMLDoc& data)
+Message ClientSaveDataMessage(int sender, const std::string& data)
 {
     return Message(Message::CLIENT_SAVE_DATA, sender, -1, Message::CORE, data);
 }
@@ -282,7 +282,7 @@ Message ServerSaveGameMessage(int receiver, bool done/* = false*/)
     return Message(Message::SAVE_GAME, -1, receiver, done ? Message::CLIENT_SYNCHRONOUS_RESPONSE : Message::CORE, "");
 }
 
-Message ServerLoadGameMessage(int receiver, const XMLDoc& data)
+Message ServerLoadGameMessage(int receiver, const std::string& data)
 {
     return Message(Message::LOAD_GAME, -1, receiver, Message::CORE, data);
 }

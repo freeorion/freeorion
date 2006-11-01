@@ -26,6 +26,7 @@ class IntroScreen;
 class MapWnd;
 class PythonConsoleWnd;
 class SitRepEntry;
+struct SaveGameUIData;
 class System;
 class Tech;
 class TurnProgressWnd;
@@ -74,9 +75,9 @@ public:
 
     const GG::SubTexture& SitRepIcon(SitRepEntry::EntryType type) const; //!< returns the icon for this sitrep entry type; returns the default icon if \a type has no associated icon
 
-    XMLElement SaveGameData() const; //!< returns the relevant data that should be restored after a save-and-load cycle
+    void GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
     //!@}
-    
+
     //! \name Mutators //!@{
     // GameCore Interface functions
     // calling these changes internal state to display the proper screen
@@ -86,10 +87,10 @@ public:
     //!@{
     void InitTurn( int turn_number );      //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
 
-    void RestoreFromSaveData(const XMLElement& elem); ///< restores the UI state that was saved in an earlier call to SaveGameData().
+    void RestoreFromSaveData(const SaveGameUIData& elem); ///< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
     
     void ScreenIntro();                        //!< Intro Screen
-    void ScreenProcessTurn();                     //!< Turn Star Progress Splash Screen
+    void ScreenProcessTurn();                  //!< Turn Star Progress Splash Screen
 
     void ScreenMap();     //!< Universe Map Screen
 

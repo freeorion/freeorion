@@ -174,7 +174,7 @@ Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, 
 Message TurnUpdateMessage(int player_id, const std::string& data);
 
 /** creates an CLIENT_SAVE_DATA message. */
-Message ClientSaveDataMessage(int sender, const XMLDoc& data);
+Message ClientSaveDataMessage(int sender, const std::string& data);
 
 /** creates an REQUEST_NEW_OBJECT_ID  message. This message is a synchronous message, when sent it will wait for a reply form the server */
 Message RequestNewObjectIDMessage(int sender);
@@ -192,7 +192,7 @@ Message HostLoadGameMessage(int sender, const std::string& filename);
 Message ServerSaveGameMessage(int receiver, bool done = false);
 
 /** creates a LOAD_GAME data message.  This message should only be sent by the server to provide saved game data to a client.*/
-Message ServerLoadGameMessage(int receiver, const XMLDoc& data);
+Message ServerLoadGameMessage(int receiver, const std::string& data);
 
 /** creates a HUMAN_PLAYER_MSG, which is sent to the server, and then from the server to all human players, including the 
     originating player.  This is used for MP chat.*/

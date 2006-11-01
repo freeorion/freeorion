@@ -296,13 +296,9 @@ bool ClientUI::Cleanup()
     return true; 
 }
 
-XMLElement ClientUI::SaveGameData() const
+void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 {
-    XMLElement retval("UI");
-#ifndef FREEORION_BUILD_UTIL
-    retval.AppendChild(m_map_wnd->SaveGameData());
-#endif
-    return retval;
+    m_map_wnd->GetSaveGameUIData(data);
 }
 
 
@@ -431,10 +427,10 @@ void ClientUI::InitTurn(int turn_number)
 #endif
 }
 
-void ClientUI::RestoreFromSaveData(const XMLElement& elem)
+void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data)
 {
 #ifndef FREEORION_BUILD_UTIL
-    m_map_wnd->RestoreFromSaveData(elem.Child("MapWnd"));
+    m_map_wnd->RestoreFromSaveData(ui_data);
 #endif
 }
 

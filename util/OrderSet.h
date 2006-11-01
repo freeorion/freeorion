@@ -46,15 +46,15 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** executes a given Order, then stores it order in the OrderSet. Returns an index that can be used to reference the order.  
-        \warning The OrderSet assumes that the Order is allocated on the heap, and takes ownership of it.  Do not delete any 
-        Order* passed to OrderSet.*/
+    /** executes a given Order, then stores it in the OrderSet. Returns an index that can be used to reference the
+        order.  \warning The OrderSet assumes that the Order is allocated on the heap, and takes ownership of it.  Do
+        not delete any Order* passed to OrderSet.*/
     int            IssueOrder(Order* order);
 
-    /** adds order order to set without executing it.  Order* passed to OrderSet.*/
-    int            AddOrder(Order* order);
+    /** Applies all Orders in the OrderSet.  As of this writing, this is needed only after deserializing an OrderSet
+        client-side during game loading. */
+    void           ApplyOrders();
 
-   
     bool           RecindOrder(int order);    ///< removes the order from the OrderSet; returns true on success, false if there was no such order or the order is non-recindable
     void           Reset(); ///< clears all orders; should be called at the beginning of a new turn
     //@}

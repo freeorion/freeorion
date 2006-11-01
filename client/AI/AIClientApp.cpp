@@ -232,14 +232,11 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::LOAD_GAME: {
-        std::stringstream stream(msg.GetText());
-        XMLDoc doc;
-        doc.ReadDoc(stream);
-        XMLObjectFactory<Order> factory;
-        Order::InitOrderFactory(factory);
-        for (int i = 0; i < doc.root_node.Child("Orders").NumChildren(); ++i) {
-            Orders().IssueOrder(factory.GenerateObject(doc.root_node.Child("Orders").Child(i)));
-        }
+        std::istringstream is(msg.GetText());
+        boost::archive::binary_iarchive ia(is);
+        Deserialize(&ia, Orders());
+        Orders().ApplyOrders();
+        // KLUDGE: We're just ignoring the rest of the message, since it only contains human-player UI settings
         break;
     }
 

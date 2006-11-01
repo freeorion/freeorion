@@ -15,6 +15,7 @@
 #include "../util/Random.h"
 #include "ProductionWnd.h"
 #include "ResearchWnd.h"
+#include "SaveGameUIData.h"
 #include "SidePanel.h"
 #include "SitRepPanel.h"
 #include "../universe/System.h"
@@ -350,20 +351,15 @@ GG::Pt MapWnd::ClientUpperLeft() const
     return UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
 }
 
-XMLElement MapWnd::SaveGameData() const
+void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 {
-    XMLElement retval("MapWnd");
-    retval.AppendChild(XMLElement("upper_left_x", boost::lexical_cast<std::string>(UpperLeft().x)));
-    retval.AppendChild(XMLElement("upper_left_y", boost::lexical_cast<std::string>(UpperLeft().y)));
-    retval.AppendChild(XMLElement("m_zoom_factor", boost::lexical_cast<std::string>(m_zoom_factor)));
-    retval.AppendChild(XMLElement("m_nebulae"));
-    for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
-        retval.LastChild().AppendChild(XMLElement("nebula" + boost::lexical_cast<std::string>(i)));
-        retval.LastChild().LastChild().AppendChild(XMLElement("filename", m_nebulae[i]->Filename()));
-        retval.LastChild().LastChild().AppendChild(XMLElement("position_x", boost::lexical_cast<std::string>(m_nebula_centers[i].x)));
-        retval.LastChild().LastChild().AppendChild(XMLElement("position_y", boost::lexical_cast<std::string>(m_nebula_centers[i].y)));
+    data.map_upper_left = UpperLeft();
+    data.map_zoom_factor = m_zoom_factor;
+    data.map_nebulae.resize(m_nebulae.size());
+    for (unsigned int i = 0; i < data.map_nebulae.size(); ++i) {
+        data.map_nebulae[i].filename = m_nebulae[i]->Filename();
+        data.map_nebulae[i].center = m_nebula_centers[i];
     }
-    return retval;
 }
 
 bool MapWnd::InProductionViewMode() const
@@ -706,9 +702,9 @@ void MapWnd::InitTurn(int turn_number)
     m_toolbar->Show();
 }
 
-void MapWnd::RestoreFromSaveData(const XMLElement& elem)
+void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
 {
-    m_zoom_factor = boost::lexical_cast<double>(elem.Child("m_zoom_factor").Text());
+    m_zoom_factor = data.map_zoom_factor;
 
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const System& system = it->second->GetSystem();
@@ -731,10 +727,7 @@ void MapWnd::RestoreFromSaveData(const XMLElement& elem)
     }
 
     GG::Pt ul = UpperLeft();
-    GG::Pt map_move =
-        GG::Pt(boost::lexical_cast<int>(elem.Child("upper_left_x").Text()),
-               boost::lexical_cast<int>(elem.Child("upper_left_y").Text())) -
-        ul;
+    GG::Pt map_move = data.map_upper_left - ul;
     OffsetMove(map_move);
     MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
@@ -756,12 +749,9 @@ void MapWnd::RestoreFromSaveData(const XMLElement& elem)
 
     m_nebulae.clear();
     m_nebula_centers.clear();
-    const XMLElement& nebulae = elem.Child("m_nebulae");
-    for (int i = 0; i < nebulae.NumChildren(); ++i) {
-        const XMLElement& curr_nebula = nebulae.Child(i);
-        m_nebulae.push_back(GG::GUI::GetGUI()->GetTexture(curr_nebula.Child("filename").Text()));
-        m_nebula_centers.push_back(GG::Pt(boost::lexical_cast<int>(curr_nebula.Child("position_x").Text()),
-                                          boost::lexical_cast<int>(curr_nebula.Child("position_y").Text())));
+    for (unsigned int i = 0; i < data.map_nebulae.size(); ++i) {
+        m_nebulae.push_back(GG::GUI::GetGUI()->GetTexture(data.map_nebulae[i].filename));
+        m_nebula_centers.push_back(data.map_nebulae[i].center);
     }
 }
 

@@ -5,6 +5,7 @@
 
 #include "../../UI/CUIControls.h"
 #include "../../UI/CUIStyle.h"
+#include "../../UI/SaveGameUIData.h"
 #include "../../UI/MapWnd.h"
 #include "../../network/Message.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
@@ -30,6 +31,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
+#include <boost/serialization/vector.hpp>
 
 #include <sstream>
 
@@ -133,18 +135,21 @@ HumanClientApp::~HumanClientApp()
 Message HumanClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
 {
     if (save_game_data) {
-        XMLDoc orders_doc;
-        if (save_game_data)
-            orders_doc.root_node.AppendChild(ClientUI::GetClientUI()->SaveGameData()); // include relevant UI state
-        orders_doc.root_node.AppendChild(XMLElement("Orders"));
-        for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
-            orders_doc.root_node.LastChild().AppendChild(order_it->second->XMLEncode());
+        std::ostringstream os;
+        {
+            boost::archive::binary_oarchive oa(os);
+            Serialize(&oa, m_orders);
+            bool ui_data_available = true;
+            oa << BOOST_SERIALIZATION_NVP(ui_data_available);
+            SaveGameUIData ui_data;
+            ClientUI::GetClientUI()->GetSaveGameUIData(ui_data);
+            oa << BOOST_SERIALIZATION_NVP(ui_data);
         }
-        return ClientSaveDataMessage(m_player_id, orders_doc);
+        return ClientSaveDataMessage(m_player_id, os.str());
     } else {
         std::ostringstream os;
         {
-            boost::archive::xml_oarchive oa(os);
+            boost::archive::binary_oarchive oa(os);
             Serialize(&oa, m_orders);
         }
         return ::TurnOrdersMessage(m_player_id, os.str());
@@ -614,20 +619,16 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::LOAD_GAME: {
-        std::stringstream stream(msg.GetText());
-        XMLDoc doc;
-        doc.ReadDoc(stream);
-
-        // re-issue orders given earlier in the saved turn
-        XMLObjectFactory<Order> factory;
-        Order::InitOrderFactory(factory);
-        for (int i = 0; i < doc.root_node.Child("Orders").NumChildren(); ++i) {
-            Orders().IssueOrder(factory.GenerateObject(doc.root_node.Child("Orders").Child(i)));
-        }
-
-        // restore UI state
-        if (doc.root_node.ContainsChild("UI")) {
-            ClientUI::GetClientUI()->RestoreFromSaveData(doc.root_node.Child("UI"));
+        std::istringstream is(msg.GetText());
+        boost::archive::binary_iarchive ia(is);
+        bool ui_data_available;
+        SaveGameUIData ui_data;
+        Deserialize(&ia, Orders());
+        Orders().ApplyOrders();
+        ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
+        if (ui_data_available) {
+            ia >> BOOST_SERIALIZATION_NVP(ui_data);
+            ClientUI::GetClientUI()->RestoreFromSaveData(ui_data);
         }
         break;
     }

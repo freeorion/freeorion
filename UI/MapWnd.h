@@ -16,6 +16,7 @@ class FleetButton;
 class MapWndPopup;
 class ProductionWnd;
 class ResearchWnd;
+struct SaveGameUIData;
 class SidePanel;
 class SitRepPanel;
 class System;
@@ -56,8 +57,8 @@ public:
 
     double         ZoomFactor() const    {return m_zoom_factor;}
     SidePanel*     GetSidePanel() const  {return m_side_panel;}
-    XMLElement     SaveGameData() const;         //!< returns the relevant data that should be restored after a save-and-load cycle
-    bool           InProductionViewMode() const; //!< returns tru iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
+    void           GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
+    bool           InProductionViewMode() const; //!< returns true iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
     //!@}
 
     //! \name Mutators //!@{
@@ -71,7 +72,7 @@ public:
     virtual void   MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
 
     void           InitTurn( int turn_number );                     //!< called at the start of each turn
-    void           RestoreFromSaveData(const XMLElement& elem);     //!< restores the UI state that was saved in an earlier call to SaveGameData().
+    void           RestoreFromSaveData(const SaveGameUIData& data); //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
     void           ShowSystemNames();                               //!< enables the system name text
     void           HideSystemNames();                               //!< disables the system name text
     void           HandlePlayerChatMessage(const std::string& msg); //!< displays incoming player chat text

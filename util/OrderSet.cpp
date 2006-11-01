@@ -34,11 +34,11 @@ int OrderSet::IssueOrder(Order* order)
 }
 
 
-int OrderSet::AddOrder(Order* order)
+void OrderSet::ApplyOrders()
 {
-    int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
-    m_orders[retval] = order;
-    return retval;    
+    for (OrderMap::iterator it = m_orders.begin(); it != m_orders.end(); ++it) {
+        it->second->Execute();
+    }
 }
 
 

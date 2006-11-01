@@ -48,16 +48,18 @@ int ClientApp::CurrentTurn() const
 Message ClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
 {
     if (save_game_data) {
-        XMLDoc orders_doc;
-        orders_doc.root_node.AppendChild(XMLElement("Orders"));
-        for (OrderSet::const_iterator order_it = m_orders.begin(); order_it != m_orders.end(); ++order_it) {
-            orders_doc.root_node.LastChild().AppendChild(order_it->second->XMLEncode());
+        std::ostringstream os;
+        {
+            boost::archive::binary_oarchive oa(os);
+            Serialize(&oa, m_orders);
+            bool ui_data_available = false;
+            oa << BOOST_SERIALIZATION_NVP(ui_data_available);
         }
-        return ClientSaveDataMessage(m_player_id, orders_doc);
+        return ClientSaveDataMessage(m_player_id, os.str());
     } else {
         std::ostringstream os;
         {
-            boost::archive::xml_oarchive oa(os);
+            boost::archive::binary_oarchive oa(os);
             Serialize(&oa, m_orders);
         }
         return ::TurnOrdersMessage(m_player_id, os.str());

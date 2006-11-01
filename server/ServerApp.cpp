@@ -19,14 +19,21 @@
 #include "../util/XMLDoc.h"
 #include "../util/Serialize.h"
 #include "../util/SitRepEntry.h"
+#include "../UI/SaveGameUIData.h"
 
 #include <GG/Font.h>
 #include <GG/net/fastevents.h>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/serialization/deque.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/set.hpp>
+#include <boost/serialization/vector.hpp>
+#include "../universe/ShipDesign.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -153,7 +160,6 @@ namespace {
     const std::string AI_CLIENT_EXE = (BIN_DIR / "freeorionca").native_file_string();
 #endif    
     const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
-    XMLDoc g_load_doc;
 
     // command-line options
     void AddOptions(OptionsDB& db)
@@ -178,6 +184,22 @@ PlayerInfo::PlayerInfo(int sock, const IPaddress& addr, const std::string& playe
     address(addr),
     name(player_name),
     host(host_)
+{}
+
+
+
+////////////////////////////////////////////////
+// ServerApp::PlayerSaveGameData
+////////////////////////////////////////////////
+ServerApp::PlayerSaveGameData::PlayerSaveGameData() :
+    m_empire(0)
+{}
+
+ServerApp::PlayerSaveGameData::PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders, const boost::shared_ptr<SaveGameUIData>& ui_data) :
+    m_name(name),
+    m_empire(empire),
+    m_orders(orders),
+    m_ui_data(ui_data)
 {}
 
 
@@ -310,13 +332,13 @@ void ServerApp::HandleMessage(const Message& msg)
                 }
                 m_state = SERVER_GAME_SETUP;
                 CreateAIClients(g_lobby_data.AIs);
-                g_load_doc.root_node = XMLElement();
+                m_player_save_game_data.clear();
                 m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
                 if (m_expected_players == static_cast<int>(m_network_core.Players().size())) {
-                    if (g_load_doc.root_node.NumChildren())
-                        LoadGameInit();
-                    else
+                    if (m_player_save_game_data.empty())
                         NewGameInit();
+                    else
+                        LoadGameInit();
                     m_state = SERVER_WAITING;
                     m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
                 }
@@ -327,37 +349,32 @@ void ServerApp::HandleMessage(const Message& msg)
                     m_single_player_game = false;
 
                     std::string load_filename = (GetLocalDir() / SAVE_DIR_NAME / g_lobby_data.save_games[g_lobby_data.save_file]).native_file_string();
-                    XMLDoc doc;
-                    GZStream::igzstream ifs(load_filename.c_str());
-                    doc.ReadDoc(ifs);
+#if GZIP_SAVE_FILES_COMPRESSION_LEVEL
+                    GZStream::igzstream ifs(load_filename.c_str(), std::ios_base::binary);
+#else
+                    std::ifstream ifs(load_filename.c_str(), std::ios_base::binary);
+#endif
+                    {
+                        boost::archive::binary_iarchive ia(ifs);
+                        ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
+                        ia >> BOOST_SERIALIZATION_NVP(m_player_save_game_data);
+                        Universe::s_encoding_empire = ALL_EMPIRES;
+                        ia >> BOOST_SERIALIZATION_NVP(m_universe);
+                    }
                     ifs.close();
+                    m_expected_players = m_player_save_game_data.size();
 
-                    // set the player names of all empires to match the selected player name/empire name pairs in the lobby
-                    // (AI players' names will replace the applicable old names when the AIs connect later.)
-                    for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
-                        if (doc.root_node.Child(i).Tag() == "Player") {
-                            int player_empire_id = boost::lexical_cast<int>(doc.root_node.Child(i).Child("Empire").Child("m_id").Text());
-                            for (unsigned int j = 0; j < g_lobby_data.players.size(); ++j) {
-                                if (g_lobby_data.players[j].save_game_empire_id == player_empire_id) {
-                                    std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin();
-                                    std::advance(player_it, j);
-                                    doc.root_node.Child(i).Child("name").SetText(player_it->second.name);
-                                    doc.root_node.Child(i).Child("Empire").Child("m_player_name").SetText(player_it->second.name);
-                                    break;
-                                }
+                    for (unsigned int i = 0; i < m_player_save_game_data.size(); ++i) {
+                        for (unsigned int j = 0; j < g_lobby_data.players.size(); ++j) {
+                            assert(m_player_save_game_data[i].m_empire);
+                            if (g_lobby_data.players[j].save_game_empire_id == m_player_save_game_data[i].m_empire->EmpireID()) {
+                                std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin();
+                                std::advance(player_it, j);
+                                m_player_save_game_data[i].m_name = player_it->second.name;
+                                m_player_save_game_data[i].m_empire->SetPlayerName(player_it->second.name);
                             }
                         }
                     }
-
-                    m_expected_players = 0;
-                    for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
-                        if (doc.root_node.Child(i).Tag() == "Player") {
-                            m_empires.InsertEmpire(new Empire(doc.root_node.Child(i).Child("Empire")));
-                            ++m_expected_players;
-                        }
-                    }
-                    m_universe.SetUniverse(doc.root_node.Child("Universe"));
-                    LoadGameVars(doc);
 
                     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
                         if (it != sender_it)
@@ -366,7 +383,6 @@ void ServerApp::HandleMessage(const Message& msg)
 
                     int AI_clients = m_expected_players - m_network_core.Players().size();
                     CreateAIClients(std::vector<PlayerSetupData>(AI_clients));
-                    g_load_doc = doc;
                     m_state = SERVER_GAME_SETUP;
 
                     if (!AI_clients)
@@ -503,30 +519,19 @@ void ServerApp::HandleMessage(const Message& msg)
                     break;
             }
             if (m_players_responded == needed_reponses) {
-                SaveGameVars(doc);
-                for (std::map<int, XMLElement>::iterator it = m_player_save_game_data.begin(); it != m_player_save_game_data.end(); ++it) {
-                    XMLElement player_element("Player");
-                    player_element.AppendChild(XMLElement("name", m_network_core.Players().find(it->first)->second.name));
-                    Empire* player_empire = GetPlayerEmpire(it->first);
-                    player_element.AppendChild(m_empires.Lookup(player_empire->EmpireID())->XMLEncode());
-                    for (XMLElement::const_child_iterator elem_it = it->second.child_begin(); elem_it != it->second.child_end(); ++elem_it) {
-                        player_element.AppendChild(*elem_it);
-                    }
-                    doc.root_node.AppendChild(player_element);
-                }
-                doc.root_node.AppendChild(m_universe.XMLEncode(ALL_EMPIRES));
-
 #if GZIP_SAVE_FILES_COMPRESSION_LEVEL
-                GZStream::ogzstream ofs(save_filename.c_str());
-                /* For now, we use the standard compression settings,
-                   but later we could let the compression settings be
-                   customizable in the save-dialog */
-                // The default is: ofs.set_gzparams(6, Z_DEFAULT_STRATEGY);
+                GZStream::ogzstream ofs(save_filename.c_str(), std::ios_base::binary);
                 ofs.set_gzparams(GZIP_SAVE_FILES_COMPRESSION_LEVEL, Z_DEFAULT_STRATEGY);
 #else
-                boost::filesystem::ofstream ofs(save_filename);
+                std::ofstream ofs(save_filename.c_str(), std::ios_base::binary);
 #endif
-                doc.WriteDoc(ofs, GZIP_SAVE_FILES_COMPRESSION_LEVEL ? false : true);
+                {
+                    boost::archive::binary_oarchive oa(ofs);
+                    oa << BOOST_SERIALIZATION_NVP(m_current_turn);
+                    Universe::s_encoding_empire = ALL_EMPIRES;
+                    oa << BOOST_SERIALIZATION_NVP(m_player_save_game_data);
+                    oa << BOOST_SERIALIZATION_NVP(m_universe);
+                }
                 ofs.close();
                 m_network_core.SendMessage(ServerSaveGameMessage(msg.Sender(), true));
             }
@@ -541,25 +546,23 @@ void ServerApp::HandleMessage(const Message& msg)
         if (sender_it != m_network_core.Players().end() && sender_it->second.host) {
             m_empires.RemoveAllEmpires();
             m_single_player_game = true;
-
             std::string load_filename = msg.GetText();
-            XMLDoc doc;
-            GZStream::igzstream ifs(load_filename.c_str());
-            doc.ReadDoc(ifs);
-            ifs.close();
-
-            m_expected_players = 0;
-            for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
-                if (doc.root_node.Child(i).Tag() == "Player") {
-                    m_empires.InsertEmpire(new Empire(doc.root_node.Child(i).Child("Empire")));
-                    ++m_expected_players;
-                }
+#if GZIP_SAVE_FILES_COMPRESSION_LEVEL
+            GZStream::igzstream ifs(load_filename.c_str(), std::ios_base::binary);
+#else
+            std::ifstream ifs(load_filename.c_str(), std::ios_base::binary);
+#endif
+            {
+                boost::archive::binary_iarchive ia(ifs);
+                ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
+                Universe::s_encoding_empire = ALL_EMPIRES;
+                ia >> BOOST_SERIALIZATION_NVP(m_player_save_game_data);
+                ia >> BOOST_SERIALIZATION_NVP(m_universe);
             }
-            m_universe.SetUniverse(doc.root_node.Child("Universe"));
-            LoadGameVars(doc);
+            ifs.close();
+            m_expected_players = m_player_save_game_data.size();
 
             CreateAIClients(std::vector<PlayerSetupData>(m_expected_players - 1));
-            g_load_doc = doc;
             m_state = SERVER_GAME_SETUP;
         } else {
             m_log_category.errorStream() << "Player #" << msg.Sender() << " attempted to initiate a game save, but is not the host, or is "
@@ -570,7 +573,7 @@ void ServerApp::HandleMessage(const Message& msg)
 
     case Message::TURN_ORDERS: {
         std::istringstream is(msg.GetText());
-        boost::archive::xml_iarchive ia(is);
+        boost::archive::binary_iarchive ia(is);
         OrderSet* order_set = new OrderSet;
         Deserialize(&ia, *order_set);
 
@@ -608,12 +611,20 @@ void ServerApp::HandleMessage(const Message& msg)
     }
 
     case Message::CLIENT_SAVE_DATA: {
-        std::stringstream stream(msg.GetText());
-        XMLDoc doc;
-        doc.ReadDoc(stream);
-        m_player_save_game_data[msg.Sender()].AppendChild(doc.root_node.Child("Orders"));
-        if (doc.root_node.ContainsChild("UI"))
-            m_player_save_game_data[msg.Sender()].AppendChild(doc.root_node.Child("UI"));
+        std::istringstream is(msg.GetText());
+        boost::archive::binary_iarchive ia(is);
+        boost::shared_ptr<OrderSet> order_set(new OrderSet);
+        bool ui_data_available;
+        boost::shared_ptr<SaveGameUIData> ui_data;
+        Deserialize(&ia, *order_set);
+        ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
+        if (ui_data_available) {
+            ui_data.reset(new SaveGameUIData);
+            ia >> boost::serialization::make_nvp("ui_data", *ui_data);
+        }
+        std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().find(msg.Sender());
+        assert(player_it != m_network_core.Players().end());
+        m_player_save_game_data.push_back(PlayerSaveGameData(player_it->second.name, GetPlayerEmpire(msg.Sender()), order_set, ui_data));
         m_players_responded.insert(msg.Sender());
         break;
     }
@@ -649,7 +660,7 @@ void ServerApp::HandleMessage(const Message& msg)
                 return;
         }
         Empire* sender_empire = GetPlayerEmpire(msg.Sender());
-        std::string final_text = RgbaTag(Empires().Lookup(sender_empire->EmpireID())->Color()) + m_network_core.Players().find(msg.Sender())->second.name + 
+        std::string final_text = RgbaTag(Empires().Lookup(sender_empire->EmpireID())->Color()) + m_network_core.Players().find(msg.Sender())->second.name +
             (target_player_names.empty() ? ": " : " (whisper):") + text + "</rgba>\n";
         for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
             if (target_player_names.empty() || target_player_names.find(it->second.name) != target_player_names.end())
@@ -963,7 +974,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                 m_planet_density = boost::lexical_cast<PlanetDensity>(doc.root_node.Child("universe_params").Child("planet_density").Text());
                 m_specials_freq = boost::lexical_cast<SpecialsFrequency>(doc.root_node.Child("universe_params").Child("specials_freq").Text());
                 CreateAIClients(doc.root_node);
-                g_load_doc.root_node = XMLElement();
+                m_player_save_game_data.clear();
                 g_lobby_data.players.clear();
                 g_lobby_data.players.push_back(PlayerSetupData());
                 g_lobby_data.players.back().empire_name = doc.root_node.Child("empire_name").Text();
@@ -1036,10 +1047,10 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
             }
 
             if (static_cast<int>(m_network_core.Players().size()) == m_expected_players) { // if we've gotten all the players joined up
-                if (g_load_doc.root_node.NumChildren())
-                    LoadGameInit();
-                else
+                if (m_player_save_game_data.empty())
                     NewGameInit();
+                else
+                    LoadGameInit();
                 m_state = SERVER_WAITING;
                 m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
             }
@@ -1278,18 +1289,14 @@ void ServerApp::NewGameInit()
 
 void ServerApp::LoadGameInit()
 {
+    assert(!m_player_save_game_data.empty());
+
     m_turn_sequence.clear();
 
-    std::map<int, XMLDoc> player_docs; // indexed by empire id
-    for (int i = 0; i < g_load_doc.root_node.NumChildren(); ++i) {
-        if (g_load_doc.root_node.Child(i).Tag() == "Player") {
-            XMLDoc player_doc;
-            player_doc.root_node.SetTag("XMLDoc");
-            player_doc.root_node.AppendChild(g_load_doc.root_node.Child(i).Child("Orders"));
-            if (g_load_doc.root_node.Child(i).ContainsChild("UI"))
-                player_doc.root_node.AppendChild(g_load_doc.root_node.Child(i).Child("UI"));
-            player_docs[boost::lexical_cast<int>(g_load_doc.root_node.Child(i).Child("Empire").Child("m_id").Text())] = player_doc;
-        }
+    std::map<int, PlayerSaveGameData> player_data_by_empire;
+    for (unsigned int i = 0; i < m_player_save_game_data.size(); ++i) {
+        assert(m_player_save_game_data[i].m_empire);
+        player_data_by_empire[m_player_save_game_data[i].m_empire->EmpireID()] = m_player_save_game_data[i];
     }
 
     std::map<int, int> player_to_empire_ids;
@@ -1302,19 +1309,19 @@ void ServerApp::LoadGameInit()
         already_chosen_empire_ids.insert(g_lobby_data.players[i].save_game_empire_id);
     }
 
-    std::map<int, XMLDoc>::iterator player_doc_it = player_docs.begin();
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++player_doc_it) {
+    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
         const int INVALID_EMPIRE_ID = -5000;
         int empire_id = INVALID_EMPIRE_ID;
         if (player_to_empire_ids[it->first] != -1) {
             empire_id = player_to_empire_ids[it->first];
         } else {
-            for (std::map<int, XMLDoc>::iterator doc_it = player_docs.begin(); doc_it != player_docs.end(); ++doc_it) {
-                if (already_chosen_empire_ids.find(doc_it->first) == already_chosen_empire_ids.end()) {
-                    empire_id = doc_it->first;
+            for (std::map<int, PlayerSaveGameData>::iterator player_data_it = player_data_by_empire.begin(); player_data_it != player_data_by_empire.end(); ++player_data_it) {
+                if (already_chosen_empire_ids.find(player_data_it->first) == already_chosen_empire_ids.end()) {
+                    empire_id = player_data_it->first;
                     already_chosen_empire_ids.insert(empire_id);
                     // since this must be an AI player, it does not have the correct player name set in its Empire yet, so we need to do so now
-                    Empires().Lookup(empire_id)->SetPlayerName(it->second.name);
+                    player_data_it->second.m_empire->SetPlayerName(it->second.name);
+                    Empires().InsertEmpire(player_data_it->second.m_empire);
                     break;
                 }
             }
@@ -1333,7 +1340,16 @@ void ServerApp::LoadGameInit()
         m_network_core.SendMessage(GameStartMessage(it->first, os.str()));
 
         // send saved pending orders to player
-        m_network_core.SendMessage(ServerLoadGameMessage(it->first, player_docs[empire_id]));
+        std::ostringstream os2;
+        {
+            boost::archive::binary_oarchive oa(os2);
+            Serialize(&oa, *player_data_by_empire[empire_id].m_orders);
+            bool ui_data_available = player_data_by_empire[empire_id].m_ui_data;
+            oa << BOOST_SERIALIZATION_NVP(ui_data_available);
+            if (ui_data_available)
+                oa << boost::serialization::make_nvp("ui_data", *player_data_by_empire[empire_id].m_ui_data);
+        }
+        m_network_core.SendMessage(ServerLoadGameMessage(it->first, os2.str()));
 
         m_turn_sequence[empire_id] = 0;
     }
@@ -1462,18 +1478,6 @@ XMLDoc ServerApp::SaveGameUpdateDoc() const
 
     return retval;
 }
-
-void ServerApp::SaveGameVars(XMLDoc& doc) const
-{
-    doc.root_node.AppendChild(XMLElement("turn_number", boost::lexical_cast<std::string>(m_current_turn)));
-
-}
-
-void ServerApp::LoadGameVars(const XMLDoc& doc)
-{
-    m_current_turn = boost::lexical_cast<int>(doc.root_node.Child("turn_number").Text());
-}
-
 
 Empire* ServerApp::GetPlayerEmpire(int player_id) const
 {
