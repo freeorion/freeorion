@@ -120,7 +120,7 @@ std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
     prefixes[STAR_ORANGE] = "halo_orange";
     prefixes[STAR_RED] = "halo_red";
     prefixes[STAR_NEUTRON] = "halo_neutron";
-    prefixes[STAR_BLACK] = "halo_blackhole";    // as of this writing, no blackhole halos are available, so the calling code should check for StarType == STAR_BLACK and not call this function in this case
+    prefixes[STAR_BLACK] = "halo_blackhole";
     return prefixes;
 }
 

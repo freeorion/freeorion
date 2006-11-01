@@ -702,6 +702,10 @@
 				Name="UI"
 				>
 				<File
+					RelativePath="..\..\..\UI\SaveGameUIData.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\StringTable.cpp"
 					>
 				</File>

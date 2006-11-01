@@ -166,7 +166,7 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 
     if (m_halo_graphic) {
         double halo_size_factor = 1 + log10( static_cast<double>(Width()) / static_cast<double>(ClientUI::SystemIconSize()) );
-        Logger().debugStream() << "halosizefactor: " << halo_size_factor;
+        //Logger().debugStream() << "halosizefactor: " << halo_size_factor;
         if (halo_size_factor > 0.5) {
             int halo_size = static_cast<int>(ind_size * halo_size_factor);        
             GG::Pt halo_ul = GG::Pt((Width() - halo_size) / 2, (Height() - halo_size) / 2);
