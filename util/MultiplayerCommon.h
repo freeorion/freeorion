@@ -3,8 +3,12 @@
 #define _MultiplayerCommon_h_
 
 #include "XMLDoc.h"
+#include "../universe/Enums.h"
 
 #include <GG/Clr.h>
+
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
 
 #include <vector>
 
@@ -31,17 +35,17 @@ struct SaveGameEmpireData
 {
     /** \name Structors */ //@{
     SaveGameEmpireData(); ///< default ctor.
-    SaveGameEmpireData(const XMLElement& elem); ///< XMLElement ctor.
     //@}
 
-    /** \name Accessors */ //@{
-    XMLElement XMLEncode();
-    //@}
+    int         m_id;
+    std::string m_name;
+    std::string m_player_name;
+    GG::Clr     m_color;
 
-    int         id;
-    std::string name;
-    std::string player_name;
-    GG::Clr     color;
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** The data structure used to represent a single player's setup options for a multiplayer game (in the multiplayer lobby screen). */
@@ -49,16 +53,92 @@ struct PlayerSetupData
 {
     /** \name Structors */ //@{
     PlayerSetupData(); ///< default ctor.
-    PlayerSetupData(const XMLElement& elem); ///< XMLElement ctor.
     //@}
 
-    /** \name Accessors */ //@{
-    XMLElement XMLEncode() const;
-    //@}
+    int         m_player_id;           ///< the player's id, assigned by the server
+    std::string m_player_name;         ///< the player's name
+    std::string m_empire_name;         ///< the name of the player's empire
+    GG::Clr     m_empire_color;        ///< the color used to represent this player's empire.
+    int         m_save_game_empire_id; ///< when an MP save game is being loaded, this is the id of the empire that this player will play
 
-    std::string empire_name;  ///< the name of the player's empire
-    GG::Clr empire_color;     ///< the color used to represent this player's empire.
-    int save_game_empire_id;  ///< when an MP save game is being loaded, this is the id of the empire that this player will play
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
+
+/** The data structure that represents the state of the multiplayer lobby. */
+struct MultiplayerLobbyData
+{
+    /** \name Structors */ //@{
+    MultiplayerLobbyData(); ///< Default ctor.
+    explicit MultiplayerLobbyData(bool build_save_game_list); ///< Basic ctor.
+    //@}
+
+    /** \name Mutators */ //@{
+    void RebuildSaveGameEmpireData(); ///< Rebuilds m_save_game_empire_data by reading player/Empire data from the current save file.
+    //@}
+
+    bool                            m_new_game;
+    int                             m_size;
+    Shape                           m_shape;
+    Age                             m_age;
+    StarlaneFrequency               m_starlane_freq;
+    PlanetDensity                   m_planet_density;
+    SpecialsFrequency               m_specials_freq;
+    int                             m_save_file_index;
+    std::vector<PlayerSetupData>    m_players;
+    std::vector<PlayerSetupData>    m_AIs;
+
+    std::vector<std::string>        m_save_games;
+    std::vector<GG::Clr>            m_empire_colors;
+    std::vector<SaveGameEmpireData> m_save_game_empire_data;
+
+    static const std::string MP_SAVE_FILE_EXTENSION;
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+
+// template implementations
+template <class Archive>
+void SaveGameEmpireData::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_id)
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_player_name)
+        & BOOST_SERIALIZATION_NVP(m_color);
+}
+
+template <class Archive>
+void PlayerSetupData::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_player_id)
+        & BOOST_SERIALIZATION_NVP(m_player_name)
+        & BOOST_SERIALIZATION_NVP(m_empire_name)
+        & BOOST_SERIALIZATION_NVP(m_empire_color)
+        & BOOST_SERIALIZATION_NVP(m_save_game_empire_id);
+}
+
+template <class Archive>
+void MultiplayerLobbyData::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_new_game)
+        & BOOST_SERIALIZATION_NVP(m_size)
+        & BOOST_SERIALIZATION_NVP(m_shape)
+        & BOOST_SERIALIZATION_NVP(m_age)
+        & BOOST_SERIALIZATION_NVP(m_starlane_freq)
+        & BOOST_SERIALIZATION_NVP(m_planet_density)
+        & BOOST_SERIALIZATION_NVP(m_specials_freq)
+        & BOOST_SERIALIZATION_NVP(m_save_file_index)
+        & BOOST_SERIALIZATION_NVP(m_players)
+        // NOTE: We are not serializing the AIs on purpose; they are supposed to be server-side entities only.
+        & BOOST_SERIALIZATION_NVP(m_save_games)
+        & BOOST_SERIALIZATION_NVP(m_empire_colors)
+        & BOOST_SERIALIZATION_NVP(m_save_game_empire_data);
+}
 
 #endif // _MultiplayerCommon_h_

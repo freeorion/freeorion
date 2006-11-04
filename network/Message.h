@@ -37,7 +37,10 @@ public:
         SERVER_STATUS,           ///< sent to the client when requested, and when the server first recieves a connection from a client
         HOST_GAME,               ///< sent when a client wishes to establish a game at the server
         JOIN_GAME,               ///< sent when a client wishes to join a game being established at the server
-        LOBBY_UPDATE,            ///< used to synchronize multiplayer lobby dialogs among different players, when one user changes a setting
+        LOBBY_UPDATE,            ///< used to synchronize multiplayer lobby dialogs among different players, when a user changes a setting, or the server updates the state
+        LOBBY_CHAT,              ///< used to send chat messages in the multiplayer lobby
+        LOBBY_HOST_ABORT,        ///< sent to server (by the "host" client only) when a multiplayer game is to be cancelled while it is still being set up in the multiplayer lobby
+        LOBBY_EXIT,              ///< sent to server (by a non-"host" client only) when a player leaves the multiplayer lobby
         SAVE_GAME,               ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
         LOAD_GAME,               ///< sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
         GAME_START,              ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
@@ -124,6 +127,20 @@ private:
     friend class ClientNetworkCore;   ///< grant access for calls to private ctor and HeaderString()
     friend class ServerNetworkCore;   ///< grant access for calls to private ctor and HeaderString()
 };
+
+
+/** Returns a string representation of \a type. */
+std::string MessageTypeStr(Message::MessageType type);
+
+/** Returns a string representation of \a type. */
+std::string ModuleTypeStr(Message::ModuleType type);
+
+/** Returns a string representation of \a phase. */
+std::string TurnProgressPhaseStr(Message::TurnProgressPhase phase);
+
+/** Writes \a msg to \a os.  The format of the output is designed for debugging purposes. */
+std::ostream& operator<<(std::ostream& os, const Message& msg);
+
 
 /** creates a HOST_GAME message*/
 Message HostGameMessage(int player_id, const XMLDoc& game_parameters);
@@ -218,19 +235,30 @@ Message PlayerEliminatedMessage(int receiver, const std::string& empire_name);
 /** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the 
     server, then to other users.  Clients must send all such updates to the server directly; the server
     will send updates to the other clients as needed.*/
-Message LobbyUpdateMessage(int sender, const XMLDoc& doc);
+Message LobbyUpdateMessage(int sender, const std::string& data);
 
 /** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the users.  
     This message should only be sent by the server.*/
-Message ServerLobbyUpdateMessage(int receiver, const XMLDoc& doc);
+Message ServerLobbyUpdateMessage(int receiver, const std::string& data);
 
-/** creates an LOBBY_UPDATE message containing a chat string to be broadcast to player \a receiver, or all players if 
-    \a receiver is -1. Note that the receiver of this message is always the server.*/
+/** creates an LOBBY_CHAT message containing a chat string to be broadcast to player \a receiver, or all players if \a
+    receiver is -1. Note that the receiver of this message is always the server.*/
 Message LobbyChatMessage(int sender, int receiver, const std::string& text);
 
-/** creates an LOBBY_UPDATE message containing a chat string from \sender to be displayed in \a receiver's lobby dialog.  
+/** creates an LOBBY_CHAT message containing a chat string from \sender to be displayed in \a receiver's lobby dialog.
     This message should only be sent by the server.*/
 Message ServerLobbyChatMessage(int sender, int receiver, const std::string& text);
 
-#endif // _Message_h_
+/** creates an LOBBY_HOST_ABORT message.  This message should only be sent by the host player.*/
+Message LobbyHostAbortMessage(int sender);
 
+/** creates an LOBBY_HOST_ABORT message.  This message should only be sent by the server.*/
+Message ServerLobbyHostAbortMessage(int receiver);
+
+/** creates an LOBBY_EXIT message.  This message should only be sent by a non-host player.*/
+Message LobbyExitMessage(int sender);
+
+/** creates an LOBBY_EXIT message.  This message should only be sent by the server.*/
+Message ServerLobbyExitMessage(int sender, int receiver);
+
+#endif // _Message_h_

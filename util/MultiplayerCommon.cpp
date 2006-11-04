@@ -6,8 +6,14 @@
 
 #include <log4cpp/Priority.hh>
 
+#include <boost/filesystem/exception.hpp>
+#include <boost/filesystem/operations.hpp>
+
 #include <fstream>
 #include <iostream>
+
+
+namespace fs = boost::filesystem;
 
 namespace {
     // command-line options
@@ -111,55 +117,70 @@ const std::string& Language()
 /////////////////////////////////////////////////////
 // SaveGameEmpireData
 /////////////////////////////////////////////////////
-SaveGameEmpireData::SaveGameEmpireData() 
-{
-}
-
-SaveGameEmpireData::SaveGameEmpireData(const XMLElement& elem)
-{
-    id = boost::lexical_cast<int>(elem.Child("id").Text());
-    name = elem.Child("name").Text();
-    player_name = elem.Child("player_name").Text();
-    color = XMLToClr(elem.Child("color").Child("GG::Clr"));
-}
-
-XMLElement SaveGameEmpireData::XMLEncode()
-{
-    using boost::lexical_cast;
-
-    XMLElement retval("SaveGameEmpireData");
-    retval.AppendChild(XMLElement("id", lexical_cast<std::string>(id)));
-    retval.AppendChild(XMLElement("name", name));
-    retval.AppendChild(XMLElement("player_name", player_name));
-    retval.AppendChild(XMLElement("color", ClrToXML(color)));
-    return retval;
-}
+SaveGameEmpireData::SaveGameEmpireData():
+    m_id(-1)
+{}
 
 
 /////////////////////////////////////////////////////
 // PlayerSetupData
 /////////////////////////////////////////////////////
 PlayerSetupData::PlayerSetupData() :
-    empire_name("Humans"),
-    empire_color(GG::CLR_GRAY),
-    save_game_empire_id(-1)
-{
-}
+    m_player_id(-1),
+    m_empire_name("Humans"),
+    m_empire_color(GG::CLR_GRAY),
+    m_save_game_empire_id(-1)
+{}
 
-PlayerSetupData::PlayerSetupData(const XMLElement& elem)
-{
-    empire_name = elem.Child("empire_name").Text();
-    empire_color = XMLToClr(elem.Child("empire_color").Child("GG::Clr"));
-    save_game_empire_id = boost::lexical_cast<int>(elem.Child("save_game_empire_id").Text());
-}
 
-XMLElement PlayerSetupData::XMLEncode() const
-{
-    using boost::lexical_cast;
+/////////////////////////////////////////////////////
+// MultiplayerLobbyData
+/////////////////////////////////////////////////////
+// static(s)
+const std::string MultiplayerLobbyData::MP_SAVE_FILE_EXTENSION = ".mps";
 
-    XMLElement retval("PlayerSetupData");
-    retval.AppendChild(XMLElement("empire_name", empire_name));
-    retval.AppendChild(XMLElement("empire_color", ClrToXML(empire_color)));
-    retval.AppendChild(XMLElement("save_game_empire_id", lexical_cast<std::string>(save_game_empire_id)));
-    return retval;
+MultiplayerLobbyData::MultiplayerLobbyData() :
+    m_new_game(true),
+    m_size(100),
+    m_shape(SPIRAL_2),
+    m_age(AGE_MATURE),
+    m_starlane_freq(LANES_SEVERAL),
+    m_planet_density(PD_AVERAGE),
+    m_specials_freq(SPECIALS_UNCOMMON),
+    m_save_file_index(-1),
+    m_empire_colors(EmpireColors())
+{}
+
+MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
+    m_new_game(true),
+    m_size(100),
+    m_shape(SPIRAL_2),
+    m_age(AGE_MATURE),
+    m_starlane_freq(LANES_SEVERAL),
+    m_planet_density(PD_AVERAGE),
+    m_specials_freq(SPECIALS_UNCOMMON),
+    m_save_file_index(-1),
+    m_empire_colors(EmpireColors())
+{
+    if (build_save_game_list) {
+        // build a list of save files
+        fs::path save_dir(GetLocalDir() / "save");
+        fs::directory_iterator end_it;
+        for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
+            try {
+                if (fs::exists(*it) && !fs::is_directory(*it) && it->leaf()[0] != '.') {
+                    std::string filename = it->leaf();
+                    // disallow filenames that begin with a dot, and filenames with spaces in them
+                    if (filename.find('.') != 0 && filename.find(' ') == std::string::npos && 
+                        filename.find(MP_SAVE_FILE_EXTENSION) == filename.size() - MP_SAVE_FILE_EXTENSION.size()) {
+                        m_save_games.push_back(filename);
+                    }
+                }
+            } catch (const fs::filesystem_error& e) {
+                // ignore files for which permission is denied, and rethrow other exceptions
+                if (e.error() != fs::security_error)
+                    throw;
+            }
+        }
+    }
 }

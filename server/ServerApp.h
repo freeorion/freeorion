@@ -51,6 +51,23 @@ struct PlayerInfo
     bool        host;    ///< true if this is the host player
 };
 
+/** contains the data that must be saved for a single player.  Note that the m_empire member is not deallocated by
+    PlayerSaveGameData.  Users of PlayerSaveGameData are resposible for managing its lifetime. */
+struct PlayerSaveGameData
+{
+    PlayerSaveGameData(); ///< default ctor
+    PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders, const boost::shared_ptr<SaveGameUIData>& ui_data); ///< ctor
+
+    std::string                       m_name;
+    Empire*                           m_empire;
+    boost::shared_ptr<OrderSet>       m_orders;
+    boost::shared_ptr<SaveGameUIData> m_ui_data;
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
 
 /** the application framework class for the FreeOrion server. */
 class ServerApp
@@ -128,14 +145,7 @@ private:
     void NewGameInit();     ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
     void LoadGameInit();    ///< restores saved game universe, sends out game state and saved pending orders to clients, and signals clients to finish current turn
 
-    /** Returns true iff the versions of settings files and/or source code differ between the server and the client sending \a doc.
-        As a side effect, logs an error message and sends a failure message to the sending player as appropriate. */
-    bool VersionMismatch(int player_id, const PlayerInfo& player_info, const PlayerInfo& connection, const XMLDoc& doc);
-
-    XMLDoc CreateTurnUpdate(int empire_id); ///< creates encoded universe and empire data for the specified empire
-    XMLDoc LobbyUpdateDoc() const;          ///< returns an MP lobby-mode update XMLDoc containing all relevant parts of the lobby state
-    XMLDoc LobbyStartDoc() const;           ///< returns an MP lobby-mode update XMLDoc containing just the initial server-side data that the clients don't have
-    XMLDoc SaveGameUpdateDoc() const;       ///< returns an MP lobby-mode update XMLDoc containing just empire data for the currently-selected save game
+    std::string LobbyUpdate();                      ///< returns a string containing the serialized state of the MP lobby
 
     Empire* GetPlayerEmpire(int player_id) const;   ///< returns the object for the empire that that the player with ID \a player_id is playing
     int     GetEmpirePlayerID(int empire_id) const; ///< returns the player ID for the player playing the empire with ID \a empire_id
@@ -171,22 +181,9 @@ private:
 
     std::set<int>             m_players_responded;     ///< tracks which players have responded to a server request (eg for save-data)
 
-    struct PlayerSaveGameData
-    {
-        PlayerSaveGameData();
-        PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders, const boost::shared_ptr<SaveGameUIData>& ui_data);
-
-        std::string m_name;
-        Empire* m_empire;
-        boost::shared_ptr<OrderSet> m_orders;
-        boost::shared_ptr<SaveGameUIData> m_ui_data;
-
-    private:
-        friend class boost::serialization::access;
-        template <class Archive>
-        void serialize(Archive& ar, const unsigned int version);
-    };
     std::vector<PlayerSaveGameData> m_player_save_game_data; ///< stores the save game data coming in from the players during a save game operation
+
+    MultiplayerLobbyData m_lobby_data;
 
     // turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
     std::map<int, OrderSet*>  m_turn_sequence;
@@ -198,7 +195,7 @@ private:
 
 // template implementations
 template <class Archive>
-void ServerApp::PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
+void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_empire)

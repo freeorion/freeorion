@@ -23,14 +23,15 @@
 #endif
 
 /** the states the server may be in at various points during its execution*/
-enum ServerState {SERVER_IDLE,         ///< there is no game yet and no one has send a HOST_GAME Message yet; this is the initial state
-                  SERVER_MP_LOBBY,     ///< the host and possibly other players are in the multiplayer lobby, preparing to start a game
-                  SERVER_GAME_SETUP,   ///< a HOST_GAME Message has been received, and a game is being set up (the server is waiting for all players to join)
-                  SERVER_WAITING,      ///< a game is in progress and currently the server is waiting for players to finish their turns
-                  SERVER_PROCESSING,   ///< the server is processing a turn
-                  SERVER_DISCONNECT,   ///< the server has encountered a disconnect error and is dealing with it
-                  SERVER_DYING         ///< the server is ending its execution
-                 };
+enum ServerState {
+    SERVER_IDLE,         ///< there is no game yet and no one has send a HOST_GAME Message yet; this is the initial state
+    SERVER_MP_LOBBY,     ///< the host and possibly other players are in the multiplayer lobby, preparing to start a game
+    SERVER_GAME_SETUP,   ///< a HOST_GAME Message has been received, and a game is being set up (the server is waiting for all players to join)
+    SERVER_WAITING,      ///< a game is in progress and currently the server is waiting for players to finish their turns
+    SERVER_PROCESSING,   ///< the server is processing a turn
+    SERVER_DISCONNECT,   ///< the server has encountered a disconnect error and is dealing with it
+    SERVER_DYING         ///< the server is ending its execution
+};
 
 class Message;
 
@@ -40,6 +41,10 @@ class Message;
 class NetworkCore
 {
 public:
+   /** \name Structors */ //@{
+   virtual ~NetworkCore();
+   //@}
+
    /** \name Accessors */ //@{
    /** sends entire contents of \a msg to the appropriate socket (based on the receiver), followed by a special 
       end-of-message marker */
@@ -59,7 +64,6 @@ public:
    static const std::string   SERVER_FIND_YES_MSG;       ///< the UDP message used to indicate this server is hosting a game that the querying host may join
    static const std::string   SERVER_FIND_NO_MSG;        ///< the UDP message used to indicate this server is not hosting a game that the querying host may join
 
-    virtual ~NetworkCore();
 protected:
    /** sends \a msg to the designated socket.  Creates a log entry on error.  \throw std::invalid_argument 
       Throws std::invalid_argument if \a socket is < 0.*/

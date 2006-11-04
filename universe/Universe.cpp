@@ -2320,8 +2320,7 @@ void Universe::NamePlanets()
 void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const std::vector<PlayerSetupData>& player_setup_data)
 {
 #ifdef FREEORION_BUILD_SERVER
-    // create empires and assign homeworlds, names, colors, and fleet ranges to
-    // for each one
+    // create empires and assign homeworlds, names, colors, and fleet ranges to each one
 
     const std::map<int, PlayerInfo>& player_info = ServerApp::GetApp()->NetworkCore().Players();
     unsigned int i = 0;
@@ -2331,8 +2330,8 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
         GG::Clr color;
         if (i < player_setup_data.size()) { // first try to use user-assigned colors
-            empire_name = player_setup_data[i].empire_name;
-            color = player_setup_data[i].empire_color;
+            empire_name = player_setup_data[i].m_empire_name;
+            color = player_setup_data[i].m_empire_color;
             std::vector<GG::Clr>::iterator color_it = std::find(colors.begin(), colors.end(), color);
             if (color_it != colors.end()) {
                 colors.erase(color_it);

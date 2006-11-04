@@ -50,7 +50,7 @@ Message ClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
     if (save_game_data) {
         std::ostringstream os;
         {
-            boost::archive::binary_oarchive oa(os);
+            boost::archive::xml_oarchive oa(os);
             Serialize(&oa, m_orders);
             bool ui_data_available = false;
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
@@ -59,7 +59,7 @@ Message ClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
     } else {
         std::ostringstream os;
         {
-            boost::archive::binary_oarchive oa(os);
+            boost::archive::xml_oarchive oa(os);
             Serialize(&oa, m_orders);
         }
         return ::TurnOrdersMessage(m_player_id, os.str());

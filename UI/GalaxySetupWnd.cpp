@@ -154,15 +154,24 @@ void GalaxySetupPanel::Disable(bool b/* = true*/)
     }
 }
 
-void GalaxySetupPanel::SetFromXML(const XMLElement& elem)
+void GalaxySetupPanel::SetFromLobbyData(const MultiplayerLobbyData& lobby_data)
 {
-    using boost::lexical_cast;
-    m_stars_spin->SetValue(lexical_cast<int>(elem.Child("size").Text()));
-    m_galaxy_shapes_list->Select(lexical_cast<int>(elem.Child("shape").Text()));
-    m_galaxy_ages_list->Select(lexical_cast<int>(elem.Child("age").Text()));
-    m_starlane_freq_list->Select(lexical_cast<int>(elem.Child("starlane_freq").Text()) - (ALLOW_NO_STARLANES ? 0 : 1));
-    m_planet_density_list->Select(lexical_cast<int>(elem.Child("planet_density").Text()));
-    m_specials_freq_list->Select(lexical_cast<int>(elem.Child("specials_freq").Text()));
+    m_stars_spin->SetValue(lobby_data.m_size);
+    m_galaxy_shapes_list->Select(lobby_data.m_shape);
+    m_galaxy_ages_list->Select(lobby_data.m_age);
+    m_starlane_freq_list->Select(lobby_data.m_starlane_freq - (ALLOW_NO_STARLANES ? 0 : 1));
+    m_planet_density_list->Select(lobby_data.m_planet_density);
+    m_specials_freq_list->Select(lobby_data.m_specials_freq);
+}
+
+void GalaxySetupPanel::GetLobbyData(MultiplayerLobbyData& lobby_data)
+{
+    lobby_data.m_size = Systems();
+    lobby_data.m_shape = GetShape();
+    lobby_data.m_age = GetAge();
+    lobby_data.m_starlane_freq = GetStarlaneFrequency();
+    lobby_data.m_planet_density = GetPlanetDensity();
+    lobby_data.m_specials_freq = GetSpecialsFrequency();
 }
 
 void GalaxySetupPanel::Init()

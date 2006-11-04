@@ -4,10 +4,24 @@
 #include "../util/OptionsDB.h"
 
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+
 #include <zlib.h>
 
 #include <stdexcept>
 #include <sstream>
+
+
+namespace {
+    const std::string MESSAGE_SCOPE_PREFIX = "Message::";
+    std::string StripMessageScoping(const std::string& str)
+    {
+        return boost::algorithm::starts_with(str, MESSAGE_SCOPE_PREFIX) ?
+            boost::algorithm::erase_first_copy(str, MESSAGE_SCOPE_PREFIX) :
+            str;
+    }
+}
 
 ////////////////////////////////////////////////
 // Free Functions
@@ -36,6 +50,100 @@ void UnzipString(const std::string& str, std::string& unzipped_str, int size)
     unzipped_str.resize(unzipped_size);
 }
 
+namespace GG {
+    GG_ENUM_MAP_BEGIN(Message::MessageType)
+    GG_ENUM_MAP_INSERT(Message::UNDEFINED)
+    GG_ENUM_MAP_INSERT(Message::DEBUG)
+    GG_ENUM_MAP_INSERT(Message::SERVER_STATUS)
+    GG_ENUM_MAP_INSERT(Message::HOST_GAME)
+    GG_ENUM_MAP_INSERT(Message::JOIN_GAME)
+    GG_ENUM_MAP_INSERT(Message::LOBBY_UPDATE)
+    GG_ENUM_MAP_INSERT(Message::LOBBY_CHAT)
+    GG_ENUM_MAP_INSERT(Message::LOBBY_HOST_ABORT)
+    GG_ENUM_MAP_INSERT(Message::LOBBY_EXIT)
+    GG_ENUM_MAP_INSERT(Message::SAVE_GAME)
+    GG_ENUM_MAP_INSERT(Message::LOAD_GAME)
+    GG_ENUM_MAP_INSERT(Message::GAME_START)
+    GG_ENUM_MAP_INSERT(Message::TURN_UPDATE)
+    GG_ENUM_MAP_INSERT(Message::TURN_ORDERS)
+    GG_ENUM_MAP_INSERT(Message::TURN_PROGRESS)
+    GG_ENUM_MAP_INSERT(Message::CLIENT_SAVE_DATA)
+    GG_ENUM_MAP_INSERT(Message::COMBAT_START)
+    GG_ENUM_MAP_INSERT(Message::COMBAT_ROUND_UPDATE)
+    GG_ENUM_MAP_INSERT(Message::COMBAT_END)
+    GG_ENUM_MAP_INSERT(Message::HUMAN_PLAYER_MSG)
+    GG_ENUM_MAP_INSERT(Message::PLAYER_ELIMINATED)
+    GG_ENUM_MAP_INSERT(Message::PLAYER_EXIT)
+    GG_ENUM_MAP_INSERT(Message::REQUEST_NEW_OBJECT_ID)
+    GG_ENUM_MAP_INSERT(Message::DISPATCH_NEW_OBJECT_ID)
+    GG_ENUM_MAP_INSERT(Message::END_GAME)
+    GG_ENUM_MAP_END
+}
+
+std::string MessageTypeStr(Message::MessageType type)
+{
+    return StripMessageScoping(GG::GetEnumMap<Message::MessageType>().FromEnum(type));
+}
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(Message::ModuleType)
+    GG_ENUM_MAP_INSERT(Message::CORE)
+    GG_ENUM_MAP_INSERT(Message::CLIENT_LOBBY_MODULE)
+    GG_ENUM_MAP_INSERT(Message::CLIENT_UNIVERSE_MODULE)
+    GG_ENUM_MAP_INSERT(Message::CLIENT_EMPIRE_MODULE)
+    GG_ENUM_MAP_INSERT(Message::CLIENT_COMBAT_MODULE)
+    GG_ENUM_MAP_INSERT(Message::CLIENT_SYNCHRONOUS_RESPONSE)
+    GG_ENUM_MAP_END
+}
+
+std::string ModuleTypeStr(Message::ModuleType type)
+{
+    return StripMessageScoping(GG::GetEnumMap<Message::ModuleType>().FromEnum(type));
+}
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(Message::TurnProgressPhase)
+    GG_ENUM_MAP_INSERT(Message::FLEET_MOVEMENT)
+    GG_ENUM_MAP_INSERT(Message::COMBAT)
+    GG_ENUM_MAP_INSERT(Message::EMPIRE_PRODUCTION)
+    GG_ENUM_MAP_INSERT(Message::WAITING_FOR_PLAYERS)
+    GG_ENUM_MAP_INSERT(Message::PROCESSING_ORDERS)
+    GG_ENUM_MAP_INSERT(Message::DOWNLOADING)
+    GG_ENUM_MAP_END
+}
+
+std::string TurnProgressPhaseStr(Message::TurnProgressPhase phase)
+{
+    return StripMessageScoping(GG::GetEnumMap<Message::TurnProgressPhase>().FromEnum(phase));
+}
+
+std::ostream& operator<<(std::ostream& os, const Message& msg)
+{
+    os << "Message: "
+       << MessageTypeStr(msg.Type()) << " "
+       << msg.Sender();
+
+    if (msg.Sender() == -1)
+        os << "(server) --> ";
+    else if (msg.Sender() == 0)
+        os << "(host) --> ";
+    else
+        os << " --> ";
+
+    os << msg.Receiver();
+
+    if (msg.Receiver() == -1)
+        os << "(server).";
+    else if (msg.Receiver() == 0)
+        os << "(host).";
+    else
+        os << ".";
+
+    os << ModuleTypeStr(msg.Module()) << " "
+       << "\"" << msg.GetText() << "\"\n";
+
+    return os;
+}
 
 ////////////////////////////////////////////////
 // Message
@@ -312,28 +420,42 @@ Message PlayerEliminatedMessage(int receiver, const std::string& empire_name)
 // Multiplayer Lobby Messages
 ////////////////////////////////////////////////
 
-Message LobbyUpdateMessage(int sender, const XMLDoc& doc)
+Message LobbyUpdateMessage(int sender, const std::string& data)
 {
-    return Message(Message::LOBBY_UPDATE, sender, -1, Message::CORE, doc);
+    return Message(Message::LOBBY_UPDATE, sender, -1, Message::CORE, data);
 }
 
-Message ServerLobbyUpdateMessage(int receiver, const XMLDoc& doc)
+Message ServerLobbyUpdateMessage(int receiver, const std::string& data)
 {
-    return Message(Message::LOBBY_UPDATE, -1, receiver, Message::CLIENT_LOBBY_MODULE, doc);
+    return Message(Message::LOBBY_UPDATE, -1, receiver, Message::CLIENT_LOBBY_MODULE, data);
 }
 
-Message LobbyChatMessage(int sender, int receiver, const std::string& text)
+Message LobbyChatMessage(int sender, int receiver, const std::string& data)
 {
-    XMLDoc doc;
-    doc.root_node.AppendChild(XMLElement("receiver", boost::lexical_cast<std::string>(receiver)));
-    doc.root_node.AppendChild(XMLElement("text", text));
-    return Message(Message::LOBBY_UPDATE, sender, -1, Message::CORE, doc);
+    return Message(Message::LOBBY_CHAT, sender, receiver, Message::CORE, data);
 }
 
-Message ServerLobbyChatMessage(int sender, int receiver, const std::string& text)
+Message ServerLobbyChatMessage(int sender, int receiver, const std::string& data)
 {
-    XMLDoc doc;
-    doc.root_node.AppendChild(XMLElement("sender", boost::lexical_cast<std::string>(sender)));
-    doc.root_node.AppendChild(XMLElement("text", text));
-    return Message(Message::LOBBY_UPDATE, -1, receiver, Message::CLIENT_LOBBY_MODULE, doc);
+    return Message(Message::LOBBY_CHAT, sender, receiver, Message::CLIENT_LOBBY_MODULE, data);
+}
+
+Message LobbyHostAbortMessage(int sender)
+{
+    return Message(Message::LOBBY_HOST_ABORT, sender, -1, Message::CORE, "");
+}
+
+Message ServerLobbyHostAbortMessage(int receiver)
+{
+    return Message(Message::LOBBY_HOST_ABORT, -1, receiver, Message::CLIENT_LOBBY_MODULE, "");
+}
+
+Message LobbyExitMessage(int sender)
+{
+    return Message(Message::LOBBY_EXIT, sender, -1, Message::CORE, "");
+}
+
+Message ServerLobbyExitMessage(int sender, int receiver)
+{
+    return Message(Message::LOBBY_EXIT, sender, receiver, Message::CLIENT_LOBBY_MODULE, "");
 }

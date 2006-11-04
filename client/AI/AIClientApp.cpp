@@ -213,7 +213,7 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
             Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received GAME_START message; "
                 "starting AI turn...";
             std::istringstream is(msg.GetText());
-            boost::archive::binary_iarchive ia(is);
+            boost::archive::xml_iarchive ia(is);
             bool single_player_game;
             ia >> BOOST_SERIALIZATION_NVP(single_player_game);
             ia >> boost::serialization::make_nvp("empire_id", m_empire_id);
@@ -233,7 +233,7 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::LOAD_GAME: {
         std::istringstream is(msg.GetText());
-        boost::archive::binary_iarchive ia(is);
+        boost::archive::xml_iarchive ia(is);
         Deserialize(&ia, Orders());
         Orders().ApplyOrders();
         // KLUDGE: We're just ignoring the rest of the message, since it only contains human-player UI settings
@@ -243,7 +243,7 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
     case Message::TURN_UPDATE: {
         if (msg.Sender() == -1) {
             std::istringstream is(msg.GetText());
-            boost::archive::binary_iarchive ia(is);
+            boost::archive::xml_iarchive ia(is);
             Universe::s_encoding_empire = m_empire_id;
             ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
             Deserialize(&ia, Empires());

@@ -1170,6 +1170,8 @@ void EmpireColorSelector::SelectColor(const GG::Clr& clr)
         if (colors[i] == clr) {
             Select(i);
             break;
+        } else if (i == colors.size() - 1) {
+            assert(!"EmpireColorSelector::SelectColor() : No such color!");
         }
     }
 }

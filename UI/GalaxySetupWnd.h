@@ -1,6 +1,4 @@
 // -*- C++ -*-
-//GalaxySetupWnd.h
-
 #ifndef _GalaxySetupWnd_h_
 #define _GalaxySetupWnd_h_
 
@@ -25,6 +23,7 @@ namespace GG {
 class CUIButton;
 class CUIStateButton;
 class EmpireColorSelector;
+class MultiplayerLobbyData;
 
 /** Encapsulates the galaxy setup options so that they may be reused in the GalaxySetupWnd and the MultiplayerLobbyWnd. */
 class GalaxySetupPanel : public GG::Control
@@ -68,7 +67,8 @@ public:
     virtual void Render() {}
     virtual void Disable(bool b = true);
 
-    void SetFromXML(const XMLElement& elem); ///< sets the controls from an XMLElement created in a previous call to XMLEncode()
+    void SetFromLobbyData(const MultiplayerLobbyData& lobby_data); ///< sets the controls from a MultiplayerLobbyData
+    void GetLobbyData(MultiplayerLobbyData& lobby_data);           ///< fills values in \a lobby_data from the panel's current state
     //!@}
 
 private:

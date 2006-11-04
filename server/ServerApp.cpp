@@ -12,7 +12,6 @@
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
 #include "../util/Directories.h"
-#include "../util/GZStream.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/OrderSet.h"
@@ -40,136 +39,47 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
-namespace fs = boost::filesystem;
-
-#ifndef FREEORION_RELEASE
-#define TEST_CONDITIONS_CLASS_CONCISE_OUTPUT 1
-#include "../universe/Condition.h"
-namespace {
-    // command-line options
-    void AddConditionTestOptions(OptionsDB& db)
-    {
-        db.Add("condition-test-set", "Selects the test of the Condition class to perform.", 0, Validator<int>());
-        db.Add("condition-test-source", "Selects source object (id) for the Condition class tests.", 528, Validator<int>());
-    }
-    bool condition_test_temp_bool = RegisterOptions(&AddConditionTestOptions);
-}
-#endif
-
 // for dummy video driver setenv-hack
 #include "SDL_getenv.h"
 
 #include <ctime>
 
-// The compression level of savegames. Range 0-9.  Define this as nonzero to save games in gzip-compressed form; define
-// this as zero when this is inconvenient, such as when testing and debugging.
-#ifdef FREEORION_RELEASE
-#  define GZIP_SAVE_FILES_COMPRESSION_LEVEL 6
-#else
-#  define GZIP_SAVE_FILES_COMPRESSION_LEVEL 0
-#endif
 
+namespace fs = boost::filesystem;
 
 namespace {
-    const std::string SAVE_FILE_EXTENSION = ".mps";
-    const std::string SAVE_DIR_NAME = "save/";
-
-    struct MultiplayerLobbyData
-    {
-        MultiplayerLobbyData (bool build_save_game_list = true) :
-            new_game(true),
-            size(100),
-            shape(SPIRAL_2),
-            age(AGE_MATURE),
-            starlane_freq(LANES_SEVERAL),
-            planet_density(PD_AVERAGE),
-            specials_freq(SPECIALS_UNCOMMON),
-            save_file(-1)
-        {
-            if (build_save_game_list) {
-                // build a list of save files
-                fs::path save_dir((GetLocalDir() / SAVE_DIR_NAME).native_directory_string());
-                fs::directory_iterator end_it;
-                for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
-                    try {
-                        if (fs::exists(*it) && !fs::is_directory(*it) && it->leaf()[0] != '.') {
-                            std::string filename = it->leaf();
-                            // disallow filenames that begin with a dot, and filenames with spaces in them
-                            if (filename.find('.') != 0 && filename.find(' ') == std::string::npos && 
-                                filename.find(SAVE_FILE_EXTENSION) == filename.size() - SAVE_FILE_EXTENSION.size()) {
-                                save_games.push_back(filename);
-                            }
-                        }
-                    } catch (const fs::filesystem_error& e) {
-                        // ignore files for which permission is denied, and rethrow other exceptions
-                        if (e.error() != fs::security_error)
-                            throw;
-                    }
-                }
-
-                // get list of empire colors
-                empire_colors = EmpireColors();
-            }
-        }
-
-        void RebuildSaveGameEmpireData()
-        {
-            save_game_empire_data.clear();
-            if (0 <= save_file && save_file < static_cast<int>(save_games.size())) {
-                XMLDoc doc;
-                // GZStream does not yet support boost::filesystem::path, so we do it manually
-                GZStream::igzstream ifs((GetLocalDir() / SAVE_DIR_NAME / save_games[save_file]).native_file_string().c_str());
-                doc.ReadDoc(ifs);
-                ifs.close();
-
-                for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
-                    if (doc.root_node.Child(i).Tag() == "Player") {
-                        const XMLElement& elem = doc.root_node.Child(i).Child("Empire");
-                        SaveGameEmpireData data;
-                        data.id = boost::lexical_cast<int>(elem.Child("m_id").Text());
-                        data.name = elem.Child("m_name").Text();
-                        data.player_name = elem.Child("m_player_name").Text();
-                        data.color = XMLToClr(elem.Child("m_color").Child("GG::Clr"));
-                        save_game_empire_data.push_back(data);
-                    }
-                }
-            }
-        }
-
-        bool                            new_game;
-        int                             size;
-        Shape                           shape;
-        Age                             age;
-        StarlaneFrequency               starlane_freq;
-        PlanetDensity                   planet_density;
-        SpecialsFrequency               specials_freq;
-        int                             save_file;
-        std::vector<PlayerSetupData>    players;
-        std::vector<PlayerSetupData>    AIs;
-
-        std::vector<std::string>        save_games;
-        std::vector<GG::Clr>            empire_colors;
-        std::vector<SaveGameEmpireData> save_game_empire_data;
-
-    } g_lobby_data(false);
-
 #ifdef FREEORION_WIN32
     const std::string AI_CLIENT_EXE = "freeorionca.exe";
 #else
     const fs::path BIN_DIR = GetBinDir();
     const std::string AI_CLIENT_EXE = (BIN_DIR / "freeorionca").native_file_string();
 #endif    
-    const std::string LAST_TURN_UPDATE_SAVE_ELEM_PREFIX = "empire_";
 
-    // command-line options
-    void AddOptions(OptionsDB& db)
+    void RebuildSaveGameEmpireData(std::vector<SaveGameEmpireData>& save_game_empire_data, const std::string& save_game_filename)
     {
-        db.Add("debug.log-turn-orders", "Enables the logging of orders coming in from each player.", false, Validator<bool>());
-        db.Add("debug.log-turn-update-universe", "Enables the logging of turn-update universes that are sent to each player.", false, Validator<bool>());
-        db.Add("debug.log-new-game-universe", "Enables the logging of new-game universes that are sent to each player.", false, Validator<bool>());
-        db.Add("debug.log-load-game-universe", "Enables the logging of loaded-game universes that are sent to each player.", false, Validator<bool>());
+        save_game_empire_data.clear();
+        std::ifstream ifs((GetLocalDir() / "save" / save_game_filename).native_file_string().c_str(), std::ios_base::binary);
+        std::vector<PlayerSaveGameData> player_save_game_data;
+        {
+            boost::archive::xml_iarchive ia(ifs);
+            int current_turn;
+            ia >> boost::serialization::make_nvp("m_current_turn", current_turn);
+            Universe::s_encoding_empire = ALL_EMPIRES;
+            ia >> boost::serialization::make_nvp("m_player_save_game_data", player_save_game_data);
+            // KLUDGE: We only need this much data, so we're ignoring the rest.
+        }
+        ifs.close();
+        for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
+            SaveGameEmpireData data;
+            Empire* empire = player_save_game_data[i].m_empire;
+            data.m_id = empire->EmpireID();
+            data.m_name = empire->Name();
+            data.m_player_name = empire->PlayerName();
+            data.m_color = empire->Color();
+            save_game_empire_data.push_back(data);
+            delete empire;
+        }
     }
-    bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 ////////////////////////////////////////////////
@@ -189,13 +99,13 @@ PlayerInfo::PlayerInfo(int sock, const IPaddress& addr, const std::string& playe
 
 
 ////////////////////////////////////////////////
-// ServerApp::PlayerSaveGameData
+// PlayerSaveGameData
 ////////////////////////////////////////////////
-ServerApp::PlayerSaveGameData::PlayerSaveGameData() :
+PlayerSaveGameData::PlayerSaveGameData() :
     m_empire(0)
 {}
 
-ServerApp::PlayerSaveGameData::PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders, const boost::shared_ptr<SaveGameUIData>& ui_data) :
+PlayerSaveGameData::PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders, const boost::shared_ptr<SaveGameUIData>& ui_data) :
     m_name(name),
     m_empire(empire),
     m_orders(orders),
@@ -318,27 +228,24 @@ void ServerApp::HandleMessage(const Message& msg)
         std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().find(msg.Sender());
         bool spoofed_host = (m_state == SERVER_MP_LOBBY && it != m_network_core.Players().end() && it->second.name == host_player_name);
         if (!spoofed_host) {
-            if (g_lobby_data.new_game) { // new game
-                m_galaxy_size = g_lobby_data.size;
-                m_galaxy_shape = g_lobby_data.shape;
-                m_galaxy_age = g_lobby_data.age;
-                m_starlane_freq = g_lobby_data.starlane_freq;
-                m_planet_density = g_lobby_data.planet_density;
-                m_specials_freq = g_lobby_data.specials_freq;
-                m_expected_players = m_network_core.Players().size() + g_lobby_data.AIs.size();
+            if (m_lobby_data.m_new_game) { // new game
+                m_galaxy_size = m_lobby_data.m_size;
+                m_galaxy_shape = m_lobby_data.m_shape;
+                m_galaxy_age = m_lobby_data.m_age;
+                m_starlane_freq = m_lobby_data.m_starlane_freq;
+                m_planet_density = m_lobby_data.m_planet_density;
+                m_specials_freq = m_lobby_data.m_specials_freq;
+                m_expected_players = m_network_core.Players().size() + m_lobby_data.m_AIs.size();
                 for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
                     if (it->first != msg.Sender())
                         m_network_core.SendMessage(Message(Message::GAME_START, -1, it->first, Message::CLIENT_LOBBY_MODULE, ""));
                 }
                 m_state = SERVER_GAME_SETUP;
-                CreateAIClients(g_lobby_data.AIs);
+                CreateAIClients(m_lobby_data.m_AIs);
                 m_player_save_game_data.clear();
                 m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
                 if (m_expected_players == static_cast<int>(m_network_core.Players().size())) {
-                    if (m_player_save_game_data.empty())
-                        NewGameInit();
-                    else
-                        LoadGameInit();
+                    NewGameInit();
                     m_state = SERVER_WAITING;
                     m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
                 }
@@ -348,32 +255,30 @@ void ServerApp::HandleMessage(const Message& msg)
                     m_empires.RemoveAllEmpires();
                     m_single_player_game = false;
 
-                    std::string load_filename = (GetLocalDir() / SAVE_DIR_NAME / g_lobby_data.save_games[g_lobby_data.save_file]).native_file_string();
-#if GZIP_SAVE_FILES_COMPRESSION_LEVEL
-                    GZStream::igzstream ifs(load_filename.c_str(), std::ios_base::binary);
-#else
+                    std::string load_filename = (GetLocalDir() / "save" / m_lobby_data.m_save_games[m_lobby_data.m_save_file_index]).native_file_string();
                     std::ifstream ifs(load_filename.c_str(), std::ios_base::binary);
-#endif
                     {
-                        boost::archive::binary_iarchive ia(ifs);
+                        boost::archive::xml_iarchive ia(ifs);
                         ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
-                        ia >> BOOST_SERIALIZATION_NVP(m_player_save_game_data);
                         Universe::s_encoding_empire = ALL_EMPIRES;
+                        ia >> BOOST_SERIALIZATION_NVP(m_player_save_game_data);
                         ia >> BOOST_SERIALIZATION_NVP(m_universe);
                     }
                     ifs.close();
                     m_expected_players = m_player_save_game_data.size();
 
+                    m_empires.RemoveAllEmpires();
                     for (unsigned int i = 0; i < m_player_save_game_data.size(); ++i) {
-                        for (unsigned int j = 0; j < g_lobby_data.players.size(); ++j) {
+                        for (unsigned int j = 0; j < m_lobby_data.m_players.size(); ++j) {
                             assert(m_player_save_game_data[i].m_empire);
-                            if (g_lobby_data.players[j].save_game_empire_id == m_player_save_game_data[i].m_empire->EmpireID()) {
+                            if (m_lobby_data.m_players[j].m_save_game_empire_id == m_player_save_game_data[i].m_empire->EmpireID()) {
                                 std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin();
                                 std::advance(player_it, j);
                                 m_player_save_game_data[i].m_name = player_it->second.name;
                                 m_player_save_game_data[i].m_empire->SetPlayerName(player_it->second.name);
                             }
                         }
+                        m_empires.InsertEmpire(m_player_save_game_data[i].m_empire);
                     }
 
                     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
@@ -403,82 +308,75 @@ void ServerApp::HandleMessage(const Message& msg)
     }
 
     case Message::LOBBY_UPDATE: {
-        std::stringstream stream(msg.GetText());
-        XMLDoc doc;
-        doc.ReadDoc(stream);
-        if (doc.root_node.ContainsChild("receiver")) { // chat message
-            int receiver = boost::lexical_cast<int>(doc.root_node.Child("receiver").Text());
-            const std::string& text = doc.root_node.Child("text").Text();
-            if (receiver == -1) { // the receiver is everyone (except the sender)
-                for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                    if (it->first != msg.Sender())
-                        m_network_core.SendMessage(ServerLobbyChatMessage(msg.Sender(), it->first, text));
-                }
-            } else {
-                m_network_core.SendMessage(ServerLobbyChatMessage(msg.Sender(), receiver, text));
+        std::istringstream is(msg.GetText());
+        MultiplayerLobbyData mp_lobby_data;
+        {
+            boost::archive::xml_iarchive ia(is);
+            ia >> BOOST_SERIALIZATION_NVP(mp_lobby_data);
+        }
+
+        // NOTE: The client is only allowed to update certain of these, so those are the only ones we'll copy into m_lobby_data.
+        m_lobby_data.m_new_game = mp_lobby_data.m_new_game;
+        m_lobby_data.m_size = mp_lobby_data.m_size;
+        m_lobby_data.m_shape = mp_lobby_data.m_shape;
+        m_lobby_data.m_age = mp_lobby_data.m_age;
+        m_lobby_data.m_starlane_freq = mp_lobby_data.m_starlane_freq;
+        m_lobby_data.m_planet_density = mp_lobby_data.m_planet_density;
+        m_lobby_data.m_specials_freq = mp_lobby_data.m_specials_freq;
+
+        bool new_save_file_selected = false;
+        if (mp_lobby_data.m_save_file_index != m_lobby_data.m_save_file_index &&
+            0 <= mp_lobby_data.m_save_file_index && mp_lobby_data.m_save_file_index < static_cast<int>(m_lobby_data.m_save_games.size())) {
+            m_lobby_data.m_save_file_index = mp_lobby_data.m_save_file_index;
+            RebuildSaveGameEmpireData(m_lobby_data.m_save_game_empire_data, m_lobby_data.m_save_games[m_lobby_data.m_save_file_index]);
+            // reset the current choice of empire for each player, since the new save game's empires may not have the same IDs
+            for (unsigned int i = 0; i < m_lobby_data.m_players.size(); ++i) {
+                m_lobby_data.m_players[i].m_save_game_empire_id = -1;
             }
-        } else if (doc.root_node.ContainsChild("abort_game")) { // host is aborting the game (must be sent by the host to be valid)
+            new_save_file_selected = true;
+        }
+        m_lobby_data.m_players = mp_lobby_data.m_players;
+
+        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+            if (it->first != msg.Sender() || new_save_file_selected)
+                m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, LobbyUpdate()));
+        }
+        break;
+    }
+
+    case Message::LOBBY_CHAT: {
+        if (msg.Receiver() == -1) { // the receiver is everyone (except the sender)
             for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                if (it->first != msg.Sender()) {
-                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, doc));
-                    m_network_core.DumpPlayer(it->first);
-                }
+                if (it->first != msg.Sender())
+                    m_network_core.SendMessage(ServerLobbyChatMessage(msg.Sender(), it->first, msg.GetText()));
             }
-        } else if (doc.root_node.ContainsChild("exit_lobby")) { // player is exiting the lobby (must be a non-host to be valid)
-            doc.root_node.Child("exit_lobby").AppendChild(XMLElement("id", boost::lexical_cast<std::string>(msg.Sender())));
-            unsigned int i = 0;
-            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
-                if (it->first != msg.Sender()) {
-                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, doc));
-                } else {
-                    if (i < g_lobby_data.players.size())
-                        g_lobby_data.players.erase(g_lobby_data.players.begin() + i); // remove the exiting player's PlayerSetupData struct
-                }
-            }
-            m_network_core.DumpPlayer(msg.Sender());
-        } else { // normal lobby data update
-            if (doc.root_node.ContainsChild("new_game"))
-                g_lobby_data.new_game = true;
-            else if (doc.root_node.ContainsChild("load_game"))
-                g_lobby_data.new_game = false;
+        } else {
+            m_network_core.SendMessage(ServerLobbyChatMessage(msg.Sender(), msg.Receiver(), msg.GetText()));
+        }
+        break;
+    }
 
-            if (doc.root_node.ContainsChild("universe_params")) {
-                g_lobby_data.size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("size").Text());
-                g_lobby_data.shape = boost::lexical_cast<Shape>(doc.root_node.Child("universe_params").Child("shape").Text());
-                g_lobby_data.age = boost::lexical_cast<Age>(doc.root_node.Child("universe_params").Child("age").Text());
-                g_lobby_data.starlane_freq = boost::lexical_cast<StarlaneFrequency>(doc.root_node.Child("universe_params").Child("starlane_freq").Text());
-                g_lobby_data.planet_density = boost::lexical_cast<PlanetDensity>(doc.root_node.Child("universe_params").Child("planet_density").Text());
-                g_lobby_data.specials_freq = boost::lexical_cast<SpecialsFrequency>(doc.root_node.Child("universe_params").Child("specials_freq").Text());
-            }
-
-            bool new_save_file_selected = false;
-            if (doc.root_node.ContainsChild("save_file")) {
-                int old_save_file = g_lobby_data.save_file;
-                g_lobby_data.save_file = boost::lexical_cast<int>(doc.root_node.Child("save_file").Text());
-                if (g_lobby_data.save_file != old_save_file) {
-                    g_lobby_data.RebuildSaveGameEmpireData();
-                    new_save_file_selected = true;
-                }
-            }
-
-            if (doc.root_node.ContainsChild("players")) {
-                g_lobby_data.players.clear();
-                for (XMLElement::child_iterator it = doc.root_node.Child("players").child_begin(); 
-                     it != doc.root_node.Child("players").child_end(); 
-                     ++it) {
-                    g_lobby_data.players.push_back(PlayerSetupData(*it));
-                }
-            }
-
-            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                if (it->first == msg.Sender()) {
-                    if (new_save_file_selected)
-                        m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, SaveGameUpdateDoc()));
-                } else {
-                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, LobbyUpdateDoc()));
-                }
+    case Message::LOBBY_HOST_ABORT: {
+        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+            if (it->first != msg.Sender()) {
+                m_network_core.SendMessage(ServerLobbyHostAbortMessage(it->first));
+                m_network_core.DumpPlayer(it->first);
             }
         }
+        break;
+    }
+
+    case Message::LOBBY_EXIT: {
+        unsigned int i = 0;
+        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
+            if (it->first == msg.Sender()) {
+                if (i < m_lobby_data.m_players.size())
+                    m_lobby_data.m_players.erase(m_lobby_data.m_players.begin() + i); // remove the exiting player's PlayerSetupData struct
+            } else {
+                m_network_core.SendMessage(ServerLobbyExitMessage(msg.Sender(), it->first));
+            }
+        }
+        m_network_core.DumpPlayer(msg.Sender());
         break;
     }
 
@@ -519,14 +417,9 @@ void ServerApp::HandleMessage(const Message& msg)
                     break;
             }
             if (m_players_responded == needed_reponses) {
-#if GZIP_SAVE_FILES_COMPRESSION_LEVEL
-                GZStream::ogzstream ofs(save_filename.c_str(), std::ios_base::binary);
-                ofs.set_gzparams(GZIP_SAVE_FILES_COMPRESSION_LEVEL, Z_DEFAULT_STRATEGY);
-#else
                 std::ofstream ofs(save_filename.c_str(), std::ios_base::binary);
-#endif
                 {
-                    boost::archive::binary_oarchive oa(ofs);
+                    boost::archive::xml_oarchive oa(ofs);
                     oa << BOOST_SERIALIZATION_NVP(m_current_turn);
                     Universe::s_encoding_empire = ALL_EMPIRES;
                     oa << BOOST_SERIALIZATION_NVP(m_player_save_game_data);
@@ -547,13 +440,9 @@ void ServerApp::HandleMessage(const Message& msg)
             m_empires.RemoveAllEmpires();
             m_single_player_game = true;
             std::string load_filename = msg.GetText();
-#if GZIP_SAVE_FILES_COMPRESSION_LEVEL
-            GZStream::igzstream ifs(load_filename.c_str(), std::ios_base::binary);
-#else
             std::ifstream ifs(load_filename.c_str(), std::ios_base::binary);
-#endif
             {
-                boost::archive::binary_iarchive ia(ifs);
+                boost::archive::xml_iarchive ia(ifs);
                 ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
                 Universe::s_encoding_empire = ALL_EMPIRES;
                 ia >> BOOST_SERIALIZATION_NVP(m_player_save_game_data);
@@ -573,7 +462,7 @@ void ServerApp::HandleMessage(const Message& msg)
 
     case Message::TURN_ORDERS: {
         std::istringstream is(msg.GetText());
-        boost::archive::binary_iarchive ia(is);
+        boost::archive::xml_iarchive ia(is);
         OrderSet* order_set = new OrderSet;
         Deserialize(&ia, *order_set);
 
@@ -612,7 +501,7 @@ void ServerApp::HandleMessage(const Message& msg)
 
     case Message::CLIENT_SAVE_DATA: {
         std::istringstream is(msg.GetText());
-        boost::archive::binary_iarchive ia(is);
+        boost::archive::xml_iarchive ia(is);
         boost::shared_ptr<OrderSet> order_set(new OrderSet);
         bool ui_data_available;
         boost::shared_ptr<SaveGameUIData> ui_data;
@@ -671,7 +560,7 @@ void ServerApp::HandleMessage(const Message& msg)
 
     case Message::REQUEST_NEW_OBJECT_ID: {
         /* get get ID and send back to client, it's waiting for this */
-        m_network_core.SendMessage(DispatchObjectIDMessage(msg.Sender(), GetUniverse().GenerateObjectID( ) ) );
+        m_network_core.SendMessage(DispatchObjectIDMessage(msg.Sender(), GetUniverse().GenerateObjectID()));
         break;
     }
 
@@ -690,245 +579,6 @@ void ServerApp::HandleMessage(const Message& msg)
         }
         break;
     }
-
-#ifndef FREEORION_RELEASE
-    case Message::DEBUG: {
-        if (msg.GetText() == "EffectsRegressionTest") {
-            for (int i = 0; i < 32; ++i) {
-                std::ofstream ofs2(("ConditionTest" + boost::lexical_cast<std::string>(i) + ".txt").c_str());
-                try {
-                    Condition::ConditionBase* condition = 0;
-                    switch (i) {
-                    case 0:
-                    default:
-                        condition = new Condition::All();
-                        break;
-                    case 1:
-                        condition = new Condition::EmpireAffiliation(new ValueRef::Constant<int>(0), AFFIL_SELF, true);
-                        break;
-                    case 2:
-                        condition = new Condition::EmpireAffiliation(new ValueRef::Constant<int>(0), AFFIL_SELF, false);
-                        break;
-                    case 3:
-                        condition = new Condition::Self();
-                        break;
-                    case 4:
-                        condition = new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_SHIP));
-                        break;
-                    case 5:
-                        condition = new Condition::Building("BLD_MEGALITH");
-                        break;
-                    case 6:
-                        condition = new Condition::HasSpecial("HOMEWORLD_SPECIAL");
-                        break;
-                    case 7:
-                        condition = new Condition::Contains(new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_PLANET)));
-                        break;
-                    case 8:
-                        condition = new Condition::ContainedBy(new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_PLANET)));
-                        break;
-                    case 9:
-                        condition = new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB)));
-                        break;
-                    case 10: {
-                        std::vector<const ValueRef::ValueRefBase<PlanetSize>*> vec;
-                        vec.push_back(new ValueRef::Constant<PlanetSize>(SZ_ASTEROIDS));
-                        vec.push_back(new ValueRef::Constant<PlanetSize>(SZ_GASGIANT));
-                        vec.push_back(new ValueRef::Constant<PlanetSize>(SZ_LARGE));
-                        //condition = new Condition::PlanetSize(std::vector<const ValueRef::ValueRefBase<PlanetSize>*>(1, new ValueRef::Constant<PlanetSize>(SZ_ASTEROIDS)));
-                        condition = new Condition::PlanetSize(vec);
-                        break;
-                    }
-                    case 11: {
-                        std::vector<const ValueRef::ValueRefBase<FocusType>*> vec;
-                        vec.push_back(new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY));
-                        vec.push_back(new ValueRef::Constant<FocusType>(FOCUS_RESEARCH));
-                        //condition = new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true);
-                        condition = new Condition::FocusType(vec, true);
-                        break;
-                    }
-                    case 12:
-                        condition = new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), false);
-                        break;
-                    case 13:
-                        condition = new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)));
-                        break;
-                    case 14:
-                        condition = new Condition::Chance(new ValueRef::Constant<double>(0.05));
-                        break;
-                    case 15:
-                        condition = new Condition::MeterValue(METER_POPULATION,
-                                                              new ValueRef::Constant<double>(10.0),
-                                                              new ValueRef::Constant<double>(90.0),
-                                                              true);
-                        break;
-                    case 16:
-                        condition = new Condition::MeterValue(METER_POPULATION,
-                                                              new ValueRef::Constant<double>(10.0),
-                                                              new ValueRef::Constant<double>(90.0),
-                                                              false);
-                        break;
-                    case 17:
-                        // TODO : put a valid stockpile type in here.
-                        /*condition = new Condition::StockpileValue(new ValueRef::Constant<StockpileType>(stockpile type value),
-                          new ValueRef::Constant<double>(10.0),
-                          new ValueRef::Constant<double>(90.0));*/
-                        break;
-                    case 18:
-                        condition = new Condition::VisibleToEmpire(std::vector<const ValueRef::ValueRefBase<int>*>(1, new ValueRef::Constant<int>(0)));
-                        break;
-                    case 19:
-                        // using condition from FocusType #2
-                        condition = new Condition::WithinDistance(new ValueRef::Constant<double>(50.0),
-                                                                  new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), false));
-                        break;
-                    case 20:
-                        // using condition from FocusType #2
-                        // TODO : test more extensively with Fleets at various positions (moving between Systems, etc.)
-                        condition = new Condition::WithinStarlaneJumps(new ValueRef::Constant<int>(2),
-                                                                       new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), false));
-                        break;
-                    case 21:
-                        // TODO (EffectTarget is currently unimplemented)
-                        //condition = new Condition::EffectTarget();
-                        break;
-                    case 22: {
-                        condition = new Condition::Turn(new ValueRef::Constant<int>(2), new ValueRef::Constant<int>(4));
-                        break;
-                    }
-                    case 23: {
-                        condition = new Condition::NumberOf(new ValueRef::Constant<int>(5), new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_SYSTEM)));
-                        break;
-                    }
-
-                        // the rest of these test And Or and Not, and their interactions; A = case 9, B = case 13, C = case 11
-                    case 24: { // A and B
-                        std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
-                        operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
-                        condition = new Condition::And(operands);
-                        break;
-                    }
-                    case 25: { // A or B
-                        std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
-                        operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
-                        condition = new Condition::Or(operands);
-                        break;
-                    }
-                    case 26: { // not A
-                        condition = new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
-                        break;
-                    }
-                    case 27: { // A and (B or C)
-                        std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
-                        std::vector<const Condition::ConditionBase*> or_operands;
-                        or_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
-                        or_operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
-                        operands.push_back(new Condition::Or(or_operands));
-                        condition = new Condition::And(operands);
-                        break;
-                    }
-                    case 28: { // (A and B) or C
-                        std::vector<const Condition::ConditionBase*> operands;
-                        std::vector<const Condition::ConditionBase*> and_operands;
-                        and_operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
-                        and_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
-                        operands.push_back(new Condition::And(and_operands));
-                        operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
-                        condition = new Condition::Or(operands);
-                        break;
-                    }
-                    case 29: { // A or (B and C)
-                        std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
-                        std::vector<const Condition::ConditionBase*> and_operands;
-                        and_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
-                        and_operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
-                        operands.push_back(new Condition::And(and_operands));
-                        condition = new Condition::Or(operands);
-                        break;
-                    }
-                    case 30: { // (A or B) and C
-                        std::vector<const Condition::ConditionBase*> operands;
-                        std::vector<const Condition::ConditionBase*> or_operands;
-                        or_operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
-                        or_operands.push_back(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE))));
-                        operands.push_back(new Condition::Or(or_operands));
-                        operands.push_back(new Condition::FocusType(std::vector<const ValueRef::ValueRefBase<FocusType>*>(1, new ValueRef::Constant<FocusType>(FOCUS_INDUSTRY)), true));
-                        condition = new Condition::And(operands);
-                        break;
-                    }
-                    case 31: { // A or not(B)
-                        std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
-                        operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
-                        condition = new Condition::Or(operands);
-                        break;
-                    }
-                    case 32: { // A and not(B)
-                        std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
-                        operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
-                        condition = new Condition::And(operands);
-                        break;
-                    }
-                    case 33: { // not(B) or A
-                        std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
-                        condition = new Condition::Or(operands);
-                        break;
-                    }
-                    case 34: { // not(B) and A
-                        std::vector<const Condition::ConditionBase*> operands;
-                        operands.push_back(new Condition::Not(new Condition::StarType(std::vector<const ValueRef::ValueRefBase<StarType>*>(1, new ValueRef::Constant<StarType>(STAR_WHITE)))));
-                        operands.push_back(new Condition::PlanetEnvironment(std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>(1, new ValueRef::Constant<PlanetEnvironment>(PE_SUPERB))));
-                        condition = new Condition::And(operands);
-                        break;
-                    }
-                    }
-                    // get the list of all UniverseObjects that satisfy m_condition
-                    Condition::ObjectSet condition_targets;
-                    Condition::ObjectSet condition_non_targets;
-                    for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
-                        condition_non_targets.insert(it->second);
-                    }
-#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
-                    ofs2 << "SOURCE:\n" << std::endl;
-#endif
-                    UniverseObject* source = m_universe.Object(GetOptionsDB().Get<int>("condition-test-source"));
-#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
-                    XMLDoc debug_doc;
-                    debug_doc.root_node.AppendChild(source->XMLEncode());
-                    debug_doc.WriteDoc(ofs2);
-#endif
-                    if (condition) {
-                        condition->Eval(source, condition_targets, condition_non_targets);
-#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
-                        ofs2 << "\n\nTARGETS:\n" << std::endl;
-#endif
-                        ofs2 << "Condition Test " << i << ": All objects" << condition->Description() << "\n";
-                        for (Condition::ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-                            ofs2 << "  " << (*it)->ID() << " \"" << (*it)->Name() << "\"" << std::endl;
-                        }
-                    } else {
-                        ofs2 << "Test #" << i << " not implemented yet.";
-                    }
-#if !TEST_CONDITIONS_CLASS_CONCISE_OUTPUT
-                    ofs2 << "\n" << std::endl;
-#endif
-                } catch (const std::exception &e) {
-                    ofs2 << e.what() << "\n";
-                    ofs2.close();
-                }
-                ofs2.close();
-            }
-        }
-        break;
-    }
-#endif
 
     default: {
         m_log_category.errorStream() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
@@ -950,20 +600,20 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
             PlayerInfo host_player_info(connection.socket, connection.address, host_player_name, true);
             int player_id = NetworkCore::HOST_PLAYER_ID;
 
-            // verify that the connecting client is using the same settings and/or source files
-            if (VersionMismatch(player_id, host_player_info, connection, doc))
-                return;
-
             if (!doc.root_node.ContainsChild("universe_params")) { // start an MP lobby situation so that game settings can be established
                 m_single_player_game = false;
                 m_state = SERVER_MP_LOBBY;
-                g_lobby_data = MultiplayerLobbyData();
+                m_lobby_data = MultiplayerLobbyData(true);
                 m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_MP_LOBBY << " (SERVER_MP_LOBBY).";
                 if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
                     m_network_core.SendMessage(HostAckMessage(player_id));
                     m_network_core.SendMessage(JoinAckMessage(player_id));
+                    m_lobby_data.m_players.push_back(PlayerSetupData());
+                    m_lobby_data.m_players.back().m_player_id = player_id;
+                    m_lobby_data.m_players.back().m_player_name = host_player_name;
+                    m_lobby_data.m_players.back().m_empire_color = EmpireColors().at(0);
                 }
-                m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, LobbyStartDoc()));
+                m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, LobbyUpdate()));
             } else { // immediately start a new game with the given parameters
                 m_single_player_game = true;
                 m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Text());
@@ -975,10 +625,12 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                 m_specials_freq = boost::lexical_cast<SpecialsFrequency>(doc.root_node.Child("universe_params").Child("specials_freq").Text());
                 CreateAIClients(doc.root_node);
                 m_player_save_game_data.clear();
-                g_lobby_data.players.clear();
-                g_lobby_data.players.push_back(PlayerSetupData());
-                g_lobby_data.players.back().empire_name = doc.root_node.Child("empire_name").Text();
-                g_lobby_data.players.back().empire_color = XMLToClr(doc.root_node.Child("empire_color").Child("GG::Clr"));
+                m_lobby_data.m_players.clear();
+                m_lobby_data.m_players.push_back(PlayerSetupData());
+                m_lobby_data.m_players.back().m_player_id = 0;
+                m_lobby_data.m_players.back().m_player_name = "Happy Player";
+                m_lobby_data.m_players.back().m_empire_name = doc.root_node.Child("empire_name").Text();
+                m_lobby_data.m_players.back().m_empire_color = XMLToClr(doc.root_node.Child("empire_color").Child("GG::Clr"));
                 m_state = SERVER_GAME_SETUP;
                 if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
                     m_network_core.SendMessage(HostAckMessage(player_id));
@@ -1011,16 +663,16 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
             player_id = m_network_core.Players().rbegin()->first + 1;
         }
 
-        // verify that the connecting client is using the same settings and/or source files
-        if (VersionMismatch(player_id, player_info, connection, doc))
-            return;
-
         if (m_state == SERVER_MP_LOBBY) { // enter an MP lobby
             if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
                 m_network_core.SendMessage(JoinAckMessage(player_id));
-                m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, LobbyStartDoc()));
+                m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, LobbyUpdate()));
+                m_lobby_data.m_players.push_back(PlayerSetupData());
+                m_lobby_data.m_players.back().m_player_id = player_id;
+                m_lobby_data.m_players.back().m_player_name = player_name;
+                m_lobby_data.m_players.back().m_empire_color = EmpireColors().at(0);
                 for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, LobbyUpdateDoc()));
+                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, LobbyUpdate()));
                 }
             }
         } else { // immediately join a game that is about to start
@@ -1074,11 +726,9 @@ void ServerApp::PlayerDisconnected(int id)
     // this will not usually happen, since the host process usually owns the server process, and will usually take it down if it fails
     if (id == NetworkCore::HOST_PLAYER_ID) {
         if (m_state == SERVER_MP_LOBBY) { // host disconnected in MP lobby
-            XMLDoc doc;
-            doc.root_node.AppendChild("abort_game");
             for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
                 if (it->first != id) {
-                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, doc));
+                    m_network_core.SendMessage(ServerLobbyHostAbortMessage(it->first));
                     m_network_core.DumpPlayer(it->first);
                 }
             }
@@ -1100,12 +750,14 @@ void ServerApp::PlayerDisconnected(int id)
         }
     } else {
         if (m_state == SERVER_MP_LOBBY) { // player disconnected in MP lobby
-            XMLDoc doc;
-            doc.root_node.AppendChild("exit_lobby");
-            doc.root_node.LastChild().AppendChild(XMLElement("id", boost::lexical_cast<std::string>(id)));
-            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                if (it->first != id)
-                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, doc));
+            unsigned int i = 0;
+            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
+                if (it->first == id) {
+                    if (i < m_lobby_data.m_players.size())
+                        m_lobby_data.m_players.erase(m_lobby_data.m_players.begin() + i); // remove the exiting player's PlayerSetupData struct
+                } else {
+                    m_network_core.SendMessage(ServerLobbyExitMessage(id, it->first));
+                }
             }
             m_network_core.DumpPlayer(id);
         } else if (m_losers.find(id) == m_losers.end()) { // player abnormally disconnected during a regular game
@@ -1260,20 +912,20 @@ void ServerApp::NewGameInit()
 {
     m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
     m_universe.CreateUniverse(m_galaxy_size, m_galaxy_shape, m_galaxy_age, m_starlane_freq, m_planet_density, m_specials_freq, 
-                              m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size(), g_lobby_data.players);
+                              m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size(), m_lobby_data.m_players);
     m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << " (SERVER_GAME_SETUP).";
 
     // add empires to turn sequence map according to spec this should be done randomly for now it's not
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-        AddEmpireTurn( it->first );
+        AddEmpireTurn(it->first);
     }
 
     // the universe creation caused the creation of empires.  But now we need to assign the empires to players.
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
         std::ostringstream os;
         {
-            boost::archive::binary_oarchive oa(os);
+            boost::archive::xml_oarchive oa(os);
             oa << boost::serialization::make_nvp("single_player_game", m_single_player_game);
             oa << boost::serialization::make_nvp("empire_id", it->first);
             oa << BOOST_SERIALIZATION_NVP(m_current_turn);
@@ -1301,12 +953,12 @@ void ServerApp::LoadGameInit()
 
     std::map<int, int> player_to_empire_ids;
     std::set<int> already_chosen_empire_ids;
+    assert(m_network_core.Players().size() == m_lobby_data.m_players.size());
+    // TODO: Verify that i and the #if-0'ed logic below are not necessary and that the assert above should never fail.
     unsigned int i = 0;
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
-        if (i <= g_lobby_data.players.size())
-            g_lobby_data.players.push_back(PlayerSetupData());
-        player_to_empire_ids[it->first] = g_lobby_data.players[i].save_game_empire_id;
-        already_chosen_empire_ids.insert(g_lobby_data.players[i].save_game_empire_id);
+        player_to_empire_ids[it->first] = m_lobby_data.m_players[i].m_save_game_empire_id;
+        already_chosen_empire_ids.insert(m_lobby_data.m_players[i].m_save_game_empire_id);
     }
 
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
@@ -1329,7 +981,7 @@ void ServerApp::LoadGameInit()
         assert(empire_id != INVALID_EMPIRE_ID);
         std::ostringstream os;
         {
-            boost::archive::binary_oarchive oa(os);
+            boost::archive::xml_oarchive oa(os);
             oa << boost::serialization::make_nvp("single_player_game", m_single_player_game);
             oa << BOOST_SERIALIZATION_NVP(empire_id);
             oa << BOOST_SERIALIZATION_NVP(m_current_turn);
@@ -1342,7 +994,7 @@ void ServerApp::LoadGameInit()
         // send saved pending orders to player
         std::ostringstream os2;
         {
-            boost::archive::binary_oarchive oa(os2);
+            boost::archive::xml_oarchive oa(os2);
             Serialize(&oa, *player_data_by_empire[empire_id].m_orders);
             bool ui_data_available = player_data_by_empire[empire_id].m_ui_data;
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
@@ -1357,126 +1009,14 @@ void ServerApp::LoadGameInit()
     m_losers.clear();
 }
 
-bool ServerApp::VersionMismatch(int player_id, const PlayerInfo& player_info, const PlayerInfo& connection, const XMLDoc& doc)
+std::string ServerApp::LobbyUpdate()
 {
-    // TODO 1: add the version id string from Version.cpp to the message on the client side
-    // TODO 2: check the version id string from Version.cpp against the one in the message here, and report differences as appropriate
-    return false;
-}
-
-XMLDoc ServerApp::CreateTurnUpdate(int empire_id)
-{
-    XMLDoc this_turn;
-
-    // generate new data for this turn
-    XMLElement universe_data = m_universe.XMLEncode(empire_id);
-    XMLElement empire_data = m_empires.CreateClientEmpireUpdate(empire_id);
-
-    // build the new turn doc
-    this_turn.root_node.SetAttribute("turn_number", boost::lexical_cast<std::string>(m_current_turn));
-    this_turn.root_node.AppendChild(universe_data);
-    this_turn.root_node.AppendChild(empire_data);
-
-    return this_turn;
-}
-
-XMLDoc ServerApp::LobbyUpdateDoc() const
-{
-    XMLDoc retval;
-
-    retval.root_node.AppendChild(XMLElement(g_lobby_data.new_game ? "new_game" : "load_game"));
-
-    retval.root_node.AppendChild(XMLElement("universe_params"));
-    retval.root_node.LastChild().AppendChild(XMLElement("size", boost::lexical_cast<std::string>(g_lobby_data.size)));
-    retval.root_node.LastChild().AppendChild(XMLElement("shape", boost::lexical_cast<std::string>(g_lobby_data.shape)));
-    retval.root_node.LastChild().AppendChild(XMLElement("age", boost::lexical_cast<std::string>(g_lobby_data.age)));
-    retval.root_node.LastChild().AppendChild(XMLElement("starlane_freq", boost::lexical_cast<std::string>(g_lobby_data.starlane_freq)));
-    retval.root_node.LastChild().AppendChild(XMLElement("planet_density", boost::lexical_cast<std::string>(g_lobby_data.planet_density)));
-    retval.root_node.LastChild().AppendChild(XMLElement("specials_freq", boost::lexical_cast<std::string>(g_lobby_data.specials_freq)));
-
-    if (!g_lobby_data.save_games.empty()) {
-        retval.root_node.AppendChild(XMLElement("save_games"));
-        std::string save_games;
-        for (unsigned int i = 0; i < g_lobby_data.save_games.size(); ++i) {
-            save_games += g_lobby_data.save_games[i] + " ";
-        }
-        retval.root_node.LastChild().SetText(save_games);
+    std::ostringstream os;
+    {
+        boost::archive::xml_oarchive oa(os);
+        oa << boost::serialization::make_nvp("mp_lobby_data", m_lobby_data);
     }
-
-    retval.root_node.AppendChild(XMLElement("save_file", boost::lexical_cast<std::string>(g_lobby_data.save_file)));
-
-    if (!g_lobby_data.save_game_empire_data.empty()) {
-        retval.root_node.AppendChild(XMLElement("save_game_empire_data"));
-        for (unsigned int i = 0; i < g_lobby_data.save_game_empire_data.size(); ++i) {
-            retval.root_node.LastChild().AppendChild(g_lobby_data.save_game_empire_data[i].XMLEncode());
-        }
-    }
-
-    retval.root_node.AppendChild(XMLElement("players"));
-    unsigned int i = 0;
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
-        retval.root_node.LastChild().AppendChild(XMLElement(it->second.name));
-        retval.root_node.LastChild().LastChild().AppendChild(XMLElement("id", boost::lexical_cast<std::string>(it->first)));
-        if (i <= g_lobby_data.players.size())
-            g_lobby_data.players.push_back(PlayerSetupData());
-        retval.root_node.LastChild().LastChild().AppendChild(g_lobby_data.players[i].XMLEncode());
-    }
-
-    return retval;
-}
-
-XMLDoc ServerApp::LobbyStartDoc() const
-{
-    XMLDoc retval;
-
-    if (!g_lobby_data.save_game_empire_data.empty()) {
-        retval.root_node.AppendChild(XMLElement("save_game_empire_data"));
-        for (unsigned int i = 0; i < g_lobby_data.save_game_empire_data.size(); ++i) {
-            retval.root_node.LastChild().AppendChild(g_lobby_data.save_game_empire_data[i].XMLEncode());
-        }
-    }
-
-    if (!g_lobby_data.save_games.empty()) {
-        retval.root_node.AppendChild(XMLElement("save_games"));
-        std::string save_games;
-        for (unsigned int i = 0; i < g_lobby_data.save_games.size(); ++i) {
-            save_games += g_lobby_data.save_games[i] + " ";
-        }
-        retval.root_node.LastChild().SetText(save_games);
-    }
-
-    retval.root_node.AppendChild(XMLElement("empire_colors"));
-    for (unsigned int i = 0; i < g_lobby_data.empire_colors.size(); ++i) {
-        retval.root_node.LastChild().AppendChild(ClrToXML(g_lobby_data.empire_colors[i]));
-    }
-
-    retval.root_node.AppendChild(XMLElement("players"));
-    unsigned int i = 0;
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
-        retval.root_node.LastChild().AppendChild(XMLElement(it->second.name));
-        retval.root_node.LastChild().LastChild().AppendChild(XMLElement("id", boost::lexical_cast<std::string>(it->first)));
-        if (i <= g_lobby_data.players.size())
-            g_lobby_data.players.push_back(PlayerSetupData());
-        retval.root_node.LastChild().LastChild().AppendChild(g_lobby_data.players[i].XMLEncode());
-    }
-
-    return retval;
-}
-
-XMLDoc ServerApp::SaveGameUpdateDoc() const
-{
-    XMLDoc retval;
-
-    retval.root_node.AppendChild(XMLElement("load_game"));
-
-    if (!g_lobby_data.save_game_empire_data.empty()) {
-        retval.root_node.AppendChild(XMLElement("save_game_empire_data"));
-        for (unsigned int i = 0; i < g_lobby_data.save_game_empire_data.size(); ++i) {
-            retval.root_node.LastChild().AppendChild(g_lobby_data.save_game_empire_data[i].XMLEncode());
-        }
-    }
-
-    return retval;
+    return os.str();
 }
 
 Empire* ServerApp::GetPlayerEmpire(int player_id) const
@@ -1552,9 +1092,8 @@ void ServerApp::ProcessTurns()
         // broadcast UI message to all players
         for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin();
              player_it != m_network_core.Players().end();
-             ++player_it)
-        {
-            m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::PROCESSING_ORDERS, it->first ) );
+             ++player_it) {
+            m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::PROCESSING_ORDERS, it->first));
         }
 
         pEmpire = Empires().Lookup( it->first );
@@ -1562,8 +1101,7 @@ void ServerApp::ProcessTurns()
         pOrderSet = it->second;
      
         // execute order set
-        for (order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it)
-        {
+        for (order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it) {
             // TODO: Consider adding exeption handling here 
             order_it->second->Execute();
         }
@@ -1656,7 +1194,7 @@ void ServerApp::ProcessTurns()
 
     // process movement phase
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::FLEET_MOVEMENT, -1));
+        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::FLEET_MOVEMENT, -1));
         
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         // save for possible SitRep generation after moving...
@@ -1692,7 +1230,7 @@ void ServerApp::ProcessTurns()
 
     // check for combats, and resolve them.
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::COMBAT, -1) );
+        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::COMBAT, -1));
 
     std::vector<System*> sys_vec = GetUniverse().FindObjects<System>();
     bool combat_happend = false;
@@ -1756,7 +1294,7 @@ void ServerApp::ProcessTurns()
 
     // process production and growth phase
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage(TurnProgressMessage( player_it->first, Message::EMPIRE_PRODUCTION, -1));
+        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::EMPIRE_PRODUCTION, -1));
 
     for (ServerEmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->UpdateResourcePool();
@@ -1803,7 +1341,7 @@ void ServerApp::ProcessTurns()
 
     // indicate that the clients are waiting for their new Universes
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage( TurnProgressMessage( player_it->first, Message::DOWNLOADING, -1) );
+        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::DOWNLOADING, -1));
 
     // check if all empires are still alive
     std::map<int, int> eliminations; // map from player ids to empire ids
@@ -1835,7 +1373,7 @@ void ServerApp::ProcessTurns()
         pEmpire = GetPlayerEmpire(player_it->first);
         std::ostringstream os;
         {
-            boost::archive::binary_oarchive oa(os);
+            boost::archive::xml_oarchive oa(os);
             Universe::s_encoding_empire = pEmpire->EmpireID();
             oa << BOOST_SERIALIZATION_NVP(m_current_turn);
             Serialize(&oa, m_empires);

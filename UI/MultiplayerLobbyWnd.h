@@ -29,7 +29,6 @@ class MultiplayerLobbyWnd : public CUIWnd
 public:
     /** \name Structors */ //@{
     MultiplayerLobbyWnd(bool host);
-    MultiplayerLobbyWnd(const XMLElement& elem);
     virtual ~MultiplayerLobbyWnd();
     //@}
     
@@ -48,8 +47,6 @@ public:
 
 private:
     void Init();
-    void AttachSignalChildren();
-    void DetachSignalChildren();
     void NewLoadClicked(int idx);
     void GalaxySetupPanelChanged();
     void SaveGameChanged(int idx);
@@ -57,29 +54,29 @@ private:
     void PlayerDataChanged();
     void StartGameClicked();
     void CancelClicked();
-    void PopulatePlayerList(bool loading_game);
+    bool PopulatePlayerList();
     void SendUpdate();
     bool PlayerDataAcceptable() const;
     bool CanStart() const;
-    XMLDoc LobbyUpdateDoc() const;
 
     bool m_result;
+
+    MultiplayerLobbyData       m_lobby_data; // a copy of the most recently received lobby update
+    bool                       m_handling_lobby_update;
 
     bool                       m_host;
     std::map<std::string, int> m_player_IDs;
     std::map<int, std::string> m_player_names;
-    std::vector<std::pair<PlayerSetupData, int> > 
-                               m_player_setup_data;
 
-    CUIMultiEdit*         m_chat_box;
-    CUIEdit*              m_chat_input_edit;
-    GG::RadioButtonGroup* m_new_load_game_buttons;
-    GalaxySetupPanel*     m_galaxy_setup_panel;
-    CUIDropDownList*      m_saved_games_list;
-    GG::StaticGraphic*    m_preview_image;
-    CUIListBox*           m_players_lb;
-    CUIButton*            m_start_game_bn;
-    CUIButton*            m_cancel_bn;
+    CUIMultiEdit*              m_chat_box;
+    CUIEdit*                   m_chat_input_edit;
+    GG::RadioButtonGroup*      m_new_load_game_buttons;
+    GalaxySetupPanel*          m_galaxy_setup_panel;
+    CUIDropDownList*           m_saved_games_list;
+    GG::StaticGraphic*         m_preview_image;
+    CUIListBox*                m_players_lb;
+    CUIButton*                 m_start_game_bn;
+    CUIButton*                 m_cancel_bn;
 };
 
 #endif // _MultiplayerLobbyWnd_h_

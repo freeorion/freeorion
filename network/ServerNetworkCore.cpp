@@ -72,7 +72,7 @@ void ServerNetworkCore::ListenToPorts()
    }
 }
 
-bool ServerNetworkCore::EstablishPlayer(int socket, int player_id, const PlayerInfo& data)//int player_id, const std::string& name, int socket)
+bool ServerNetworkCore::EstablishPlayer(int socket, int player_id, const PlayerInfo& data)
 {
    bool retval = false;
    bool found = false;

@@ -137,7 +137,7 @@ Message HumanClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
     if (save_game_data) {
         std::ostringstream os;
         {
-            boost::archive::binary_oarchive oa(os);
+            boost::archive::xml_oarchive oa(os);
             Serialize(&oa, m_orders);
             bool ui_data_available = true;
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
@@ -149,7 +149,7 @@ Message HumanClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
     } else {
         std::ostringstream os;
         {
-            boost::archive::binary_oarchive oa(os);
+            boost::archive::xml_oarchive oa(os);
             Serialize(&oa, m_orders);
         }
         return ::TurnOrdersMessage(m_player_id, os.str());
@@ -590,7 +590,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
                 "starting player turn...";
             m_game_started = true;
             std::istringstream is(msg.GetText());
-            boost::archive::binary_iarchive ia(is);
+            boost::archive::xml_iarchive ia(is);
             ia >> boost::serialization::make_nvp("single_player_game", m_single_player_game);
             ia >> boost::serialization::make_nvp("empire_id", m_empire_id);
             ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
@@ -620,7 +620,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::LOAD_GAME: {
         std::istringstream is(msg.GetText());
-        boost::archive::binary_iarchive ia(is);
+        boost::archive::xml_iarchive ia(is);
         bool ui_data_available;
         SaveGameUIData ui_data;
         Deserialize(&ia, Orders());
@@ -635,7 +635,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::TURN_UPDATE: {
         std::istringstream is(msg.GetText());
-        boost::archive::binary_iarchive ia(is);
+        boost::archive::xml_iarchive ia(is);
         Universe::s_encoding_empire = m_empire_id;
         ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
         Deserialize(&ia, Empires());
@@ -677,7 +677,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         if (phase_id == Message::FLEET_MOVEMENT)
             phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT");
         else if (phase_id == Message::COMBAT)
-            phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT" );
+            phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT");
         else if (phase_id == Message::EMPIRE_PRODUCTION)
             phase_str = UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH");
         else if (phase_id == Message::WAITING_FOR_PLAYERS)
@@ -790,7 +790,7 @@ void HumanClientApp::Autosave(bool new_game)
         std::set<std::string> old_save_files;
         std::string extension = m_single_player_game ? ".sav" : ".mps";
         namespace fs = boost::filesystem;
-        fs::path save_dir = GetLocalDir() / "save";
+        fs::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
             if (!fs::is_directory(*it)) {

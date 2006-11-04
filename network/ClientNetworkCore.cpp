@@ -15,22 +15,19 @@
 #include <sstream>
 
 namespace {
-    log4cpp::Category& logger = log4cpp::Category::getRoot();
     const unsigned int SYCHRONOUS_TIMEOUT = 30000;    // 30 seconds
-
 }
 
 ClientNetworkCore::ClientNetworkCore() : 
     m_server_socket(-1),
     m_waiting_for_msg( Message::UNDEFINED )
-{
-}
+{}
 
 ClientNetworkCore::~ClientNetworkCore()
 {
     if (m_server_socket != -1) {
         NET2_TCPClose(m_server_socket);
-        logger.debug("ClientNetworkCore::~ClientNetworkCore : Connection to server terminated.");
+        log4cpp::Category::getRoot().debug("ClientNetworkCore::~ClientNetworkCore : Connection to server terminated.");
     }
 }
 
@@ -39,7 +36,7 @@ void ClientNetworkCore::SendMessage(const Message& msg)
     if (m_server_socket != -1) {
         SendMessage(msg, m_server_socket, "ClientNetworkCore");
     } else {
-        logger.error("ClientNetworkCore::SendMessage : Attempted to send a message to the server when not yet connected.");
+        log4cpp::Category::getRoot().error("ClientNetworkCore::SendMessage : Attempted to send a message to the server when not yet connected.");
     }
 }   
 
@@ -48,7 +45,7 @@ bool ClientNetworkCore::SendSynchronousMessage( const Message& msg, Message& res
 {
     bool success = false;   
 
-    SendMessage( msg );
+    SendMessage(msg);
 
     // check for a synchronous message
     // this could be more sophisticated but there will probably not be many messages of this type
@@ -102,6 +99,8 @@ std::set<std::string> ClientNetworkCore::DiscoverLANServers(int timeout)
     std::set<std::string> retval;
    
     timeout *= 1000; // use milliseconds for convenience
+
+    log4cpp::Category& logger = log4cpp::Category::getRoot();
 
     // set listen flag and initialize UDP socket
     m_listening_on_LAN = true;
@@ -168,6 +167,7 @@ bool ClientNetworkCore::ConnectToLocalhostServer()
 bool ClientNetworkCore::ConnectToServer(const std::string& server)
 {
     m_server_socket = NET2_TCPConnectTo(const_cast<char*>(server.c_str()), NetworkCore::CONNECT_PORT);
+    log4cpp::Category& logger = log4cpp::Category::getRoot();
     if (Connected()) {
         logger.debugStream() << "ClientNetworkCore::ConnectToInternetServer : Connected "
             "to server \"" << server << "\"";
@@ -192,6 +192,7 @@ bool ClientNetworkCore::DisconnectFromServer()
 
 void ClientNetworkCore::HandleNetEvent(SDL_Event& event)
 {
+    log4cpp::Category& logger = log4cpp::Category::getRoot();
     if (event.type == SDL_USEREVENT) {
         switch(NET2_GetEventType(&event)) {
         case NET2_ERROREVENT: {
@@ -213,22 +214,9 @@ void ClientNetworkCore::HandleNetEvent(SDL_Event& event)
         }
 
         case NET2_TCPCLOSEEVENT: {
-            if (!Connected())
-                logger.error("ClientNetworkCore::HandleNetEvent : Somehow, a connection is closing and yet Connected() == false.");
-            int closing_socket = NET2_GetSocket(&event);
-            if (closing_socket == m_server_socket) { // connection to server
-                logger.debug("ClientNetworkCore::HandleNetEvent : Connection to server terminated.");
-                m_server_socket = -1;
-                SynchronousMessageEarlyTimout();
-                ClientApp::HandleServerDisconnect();
-            } else { // unknown connection
-                IPaddress* addr = NET2_TCPGetPeerAddress(closing_socket);
-                const char* socket_hostname = SDLNet_ResolveIP(addr);
-                logger.errorStream() << "ClientNetworkCore::HandleNetEvent : Connection to " <<
-                    (socket_hostname ? "host " + std::string(socket_hostname) : "[unknown host]") << " on socket " << 
-                    closing_socket << " terminated";
-            }
-            NET2_TCPClose(closing_socket);
+            ClientApp::HandleServerDisconnect();
+            NET2_TCPClose(NET2_GetSocket(&event));
+            m_server_socket = -1;
             break;
         }
          
@@ -244,6 +232,7 @@ void ClientNetworkCore::HandleNetEvent(SDL_Event& event)
    
 void ClientNetworkCore::DispatchMessage(const Message& msg, int socket)
 {
+    log4cpp::Category& logger = log4cpp::Category::getRoot();
     switch (msg.Module()) {
     case Message::CORE:
         ClientApp::HandleMessage(msg);
@@ -299,7 +288,7 @@ void ClientNetworkCore::HandleSynchronousResponse( const Message& msg )
             break;
 
         default:
-            logger.errorStream()<< "ClientNetworkCore::HandleSynchronousResponse : Unknown response \"" << 
+            log4cpp::Category::getRoot().errorStream()<< "ClientNetworkCore::HandleSynchronousResponse : Unknown response \"" << 
                 msg.Module() << "\" encountered.";
             break;
         }
