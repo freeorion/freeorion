@@ -18,7 +18,6 @@
 #include "../util/XMLDoc.h"
 #include "../util/Serialize.h"
 #include "../util/SitRepEntry.h"
-#include "../UI/SaveGameUIData.h"
 
 #include <GG/Font.h>
 #include <GG/net/fastevents.h>

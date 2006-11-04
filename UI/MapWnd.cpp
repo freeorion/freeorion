@@ -15,7 +15,6 @@
 #include "../util/Random.h"
 #include "ProductionWnd.h"
 #include "ResearchWnd.h"
-#include "SaveGameUIData.h"
 #include "SidePanel.h"
 #include "SitRepPanel.h"
 #include "../universe/System.h"

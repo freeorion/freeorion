@@ -5,7 +5,6 @@
 
 #include "../../UI/CUIControls.h"
 #include "../../UI/CUIStyle.h"
-#include "../../UI/SaveGameUIData.h"
 #include "../../UI/MapWnd.h"
 #include "../../network/Message.h"
 #include "../../UI/MultiplayerLobbyWnd.h"

@@ -70,8 +70,8 @@ SystemIcon::SystemIcon(int id, double zoom) :
     m_disc_graphic(0),
     m_halo_graphic(0),
     m_selection_indicator(0),
-    m_selected(false),
     m_mouseover_indicator(0),
+    m_selected(false),
     m_name(0)
 {
     Connect(m_system.StateChangedSignal, &SystemIcon::Refresh, this);
