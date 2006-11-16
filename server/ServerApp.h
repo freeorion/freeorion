@@ -2,25 +2,12 @@
 #ifndef _ServerApp_h_
 #define _ServerApp_h_
 
-#ifndef _AppInterface_h_
 #include "../util/AppInterface.h"
-#endif
-
-#ifndef _Process_h_
 #include "../util/Process.h"
-#endif
-
-#ifndef _ServerEmpire_h_
 #include "../Empire/ServerEmpireManager.h"
-#endif
-
-#ifndef _ServerNetworkCore_h_
 #include "../network/ServerNetworkCore.h"
-#endif
-
-#ifndef _Universe_h_
 #include "../universe/Universe.h"
-#endif 
+#include "../util/MultiplayerCommon.h"
 
 #include <set>
 #include <vector>
@@ -183,7 +170,7 @@ private:
 
     std::vector<PlayerSaveGameData> m_player_save_game_data; ///< stores the save game data coming in from the players during a save game operation
 
-    MultiplayerLobbyData m_lobby_data;
+    MultiplayerLobbyData      m_lobby_data;
 
     // turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
     std::map<int, OrderSet*>  m_turn_sequence;

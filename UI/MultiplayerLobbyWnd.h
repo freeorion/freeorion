@@ -10,6 +10,8 @@
 #include "GalaxySetupWnd.h"
 #endif
 
+#include "../util/MultiplayerCommon.h"
+
 #include <vector>
 
 class CUIButton;

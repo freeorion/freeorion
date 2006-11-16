@@ -201,8 +201,7 @@ void HumanClientAppSoundOpenAL::StopMusic()
             m_music_name.clear();  // do this to avoid music being re-started by other functions
             ov_clear(&m_ogg_file); // and unload the file for good measure. the file itself is closed now, don't re-close it again
         }
-        alGetSourcei(m_sources[0],AL_BUFFERS_PROCESSED,&num_buffers_processed);         // we need to unqueue any unplayed buffers
-        alSourceUnqueueBuffers (m_sources[0], num_buffers_processed, &buffer_name_yay); // otherwise they'll cause problems if we open another file
+        alSourcei(m_sources[0], AL_BUFFER, 0);
     }
 }
 
