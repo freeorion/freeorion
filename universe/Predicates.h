@@ -53,8 +53,8 @@ struct UniverseObjectSubclassVisitor : UniverseObjectVisitor
     virtual ~UniverseObjectSubclassVisitor() {}
 };
 
-/** returns obj iff \a obj is a Fleet belonging to the given empire, and that is under orders to move, but is not yet moving. 
-    If the given empire is -1, all stationary fleets will be returned.  Note that it is preferable to use this functor on System
+/** returns obj iff \a obj is a Fleet belonging to the given empire object that is parked at a System, not under orders to move.  
+    If the given empire is -1, all orderd moving fleets will be returned.  Note that it is preferable to use this functor on System
     searches, rather than Universe ones. */
 struct StationaryFleetVisitor : UniverseObjectVisitor
 {
@@ -64,8 +64,8 @@ struct StationaryFleetVisitor : UniverseObjectVisitor
     const int empire_id;
 };
 
-/** returns obj iff \a obj is a Fleet belonging to the given empire object that is parked at a System, not under orders to move.  
-    If the given empire is -1, all orderd moving fleets will be returned.  Note that it is preferable to use this functor on System
+/** returns obj iff \a obj is a Fleet belonging to the given empire, and that is under orders to move, but is not yet moving. 
+    If the given empire is -1, all stationary fleets will be returned.  Note that it is preferable to use this functor on System
     searches, rather than Universe ones. */
 struct OrderedMovingFleetVisitor : UniverseObjectVisitor
 {

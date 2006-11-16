@@ -714,10 +714,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\UI\SaveGameUIData.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\Ui\ServerConnectWnd.cpp"
 					>
 				</File>

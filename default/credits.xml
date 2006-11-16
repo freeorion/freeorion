@@ -17,6 +17,7 @@
       <PERSON name="Tony Casale"         nick="Tsev"            task="Programming"/>
       <PERSON name="Michael J. Agostini" nick=""                task="Programming"/>
       <PERSON name="Geoff Topping"       nick="Geoff the Medio" task="Programming, Game Design"/>
+      <PERSON name="Karol Szumski"       nick="MareviQ"         task="Programming"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Krum Stanoev"    nick=""           task="Game Design"/>
@@ -43,6 +44,7 @@
       <PERSON name="Tomi Hartikka"    nick="Mystiqq"        task="Graphics"/>
       <PERSON name="Brendan Mauro"    nick="BreadMan"       task="Graphics"/>
       <PERSON name="Karel Kalvoda"    nick="Solid Liquid"   task="Graphics"/>
+      <PERSON name="J. W. Bjerk"      nick="eleazar"        task="Graphics"/>
     </GROUP>
     <GROUP name ="AUDIO">
       <PERSON name="Shannon Roberts" nick="Guiguibaah" task="Audio"/>
