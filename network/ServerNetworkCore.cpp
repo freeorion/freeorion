@@ -194,7 +194,7 @@ void ServerNetworkCore::HandleNetEvent(SDL_Event& event)
             m_new_connections.push_back(PlayerInfo(socket, *addr));
             ServerApp::GetApp()->Logger().debugStream() << "ServerNetworkCore::HandleNetEvent : Now connected to client at " <<
                (socket_hostname ? socket_hostname : "[unknown host]") << ", on socket " << socket << ".";
-            SendMessage(Message(Message::SERVER_STATUS, -1, -1, Message::CORE, ServerApp::GetApp()->ServerStatusDoc()),
+            SendMessage(Message(Message::RENAME_PLAYER, -1, -1, Message::CORE, boost::lexical_cast<std::string>(ServerApp::GetApp()->State())),
                         socket, "ServerNetworkCore");
          } else { // oops. unknown port
             ServerApp::GetApp()->Logger().error("ServerNetworkCore::HandleNetEvent : Somehow we accepted a TCP connection "

@@ -12,6 +12,8 @@
 #include <GG/net/net2.h>
 #endif
 
+#include <GG/Enum.h>
+
 // deal with dirty, dirty MS macros
 #if defined(_MSC_VER)
 # if defined(SendMessage)
@@ -83,6 +85,20 @@ private:
 /** returns the dotted address notation for \a addr.  Provided since the only stringification provided by SDL 
    net/net2 involves hostname resolution.*/
 std::string ToString(const IPaddress& addr);
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(ServerState)
+    GG_ENUM_MAP_INSERT(SERVER_IDLE)
+    GG_ENUM_MAP_INSERT(SERVER_MP_LOBBY)
+    GG_ENUM_MAP_INSERT(SERVER_GAME_SETUP)
+    GG_ENUM_MAP_INSERT(SERVER_WAITING)
+    GG_ENUM_MAP_INSERT(SERVER_PROCESSING)
+    GG_ENUM_MAP_INSERT(SERVER_DISCONNECT)
+    GG_ENUM_MAP_INSERT(SERVER_DYING)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(ServerState)
+GG_ENUM_STREAM_OUT(ServerState)
 
 #endif // _NetworkCore_h_
 

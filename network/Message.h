@@ -37,6 +37,7 @@ public:
         SERVER_STATUS,           ///< sent to the client when requested, and when the server first recieves a connection from a client
         HOST_GAME,               ///< sent when a client wishes to establish a game at the server
         JOIN_GAME,               ///< sent when a client wishes to join a game being established at the server
+        RENAME_PLAYER,           ///< sent when the server must assign a new name to a player, because another player already has her desired name
         LOBBY_UPDATE,            ///< used to synchronize multiplayer lobby dialogs among different players, when a user changes a setting, or the server updates the state
         LOBBY_CHAT,              ///< used to send chat messages in the multiplayer lobby
         LOBBY_HOST_ABORT,        ///< sent to server (by the "host" client only) when a multiplayer game is to be cancelled while it is still being set up in the multiplayer lobby
@@ -58,13 +59,11 @@ public:
         DISPATCH_NEW_OBJECT_ID,  ///< sent by server to client with the new object ID.
         END_GAME,                ///< sent to the server by the host client when the current game is to end
     };
-               
+
     /** Represents the module which is the destination for the message */
     enum ModuleType {
         CORE,                           ///< this module is the ServerCore or ClientCore, as appropriate; all server-bound messages go here
         CLIENT_LOBBY_MODULE,            ///< the human-only multiplayer lobby dialog
-        CLIENT_UNIVERSE_MODULE,         ///< the ClientUniverse module
-        CLIENT_EMPIRE_MODULE,           ///< the ClientEmpire module
         CLIENT_COMBAT_MODULE,           ///< the client Combat module
         CLIENT_SYNCHRONOUS_RESPONSE     ///< client-only - the response to a synchronous message
     };
@@ -154,11 +153,6 @@ Message JoinGameMessage(const std::string& player_name);
 /** creates a JOIN_GAME message.  Sends an xml document of the player's details.*/
 Message JoinGameSetup(const XMLDoc& player_setup);
 
-/** creates a SERVER_STATUS message that indicates that the JOIN_GAME message just received from the client will
-    not be honored because the client and server are using different versions of code or essential configuration
-    files.  This message should only be sent by the server.*/
-Message VersionConflictMessage(int player_id, const XMLDoc& conflict_details);
-
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
 Message GameStartMessage(int player_id, const std::string& data);
 
@@ -170,8 +164,8 @@ Message HostAckMessage(int player_id);
    should only be sent by the server.*/
 Message JoinAckMessage(int player_id);
 
-/** creates a SERVER_STATUS message that renames a player that has just joined a game with a name already in use.  
-    The \a player_id is the ID of the receiving player.  This message should only be sent by the server.*/
+/** creates a RENAME_PLAYER message that renames a player that has just joined a game with a name already in use.  The
+    \a player_id is the ID of the receiving player.  This message should only be sent by the server.*/
 Message RenameMessage(int player_id, const std::string& new_name);
 
 /** creates an END_GAME message used to terminate an active game.  Only END_GAME messages sent from the host client 

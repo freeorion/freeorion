@@ -67,7 +67,6 @@ public:
 
     /** \name Accessors */ //@{
     ServerState     State() const {return m_state;} ///< returns the current state of the server (one of the ServerState enum values)
-    XMLDoc          ServerStatusDoc() const;        ///< returns an XMLDoc that represents the status of the server, suitable for transmission to a client
     int             CurrentTurn() const {return m_current_turn;}                ///< returns current turn of the server
     //@}
 

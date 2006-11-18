@@ -154,15 +154,6 @@ ServerApp::~ServerApp()
     log4cpp::Category::shutdown();
 }
 
-XMLDoc ServerApp::ServerStatusDoc() const
-{
-    XMLDoc retval;
-    XMLElement elem("server_state");
-    elem.SetAttribute("value", boost::lexical_cast<std::string>(m_state));
-    retval.root_node.AppendChild(elem);
-    return retval;
-}
-
 void ServerApp::operator()()
 {
     Run();
@@ -382,7 +373,6 @@ void ServerApp::HandleMessage(const Message& msg)
     case Message::SAVE_GAME: {
         if (m_network_core.Players().find(msg.Sender()) != m_network_core.Players().end()) {
             std::string save_filename = msg.GetText();
-            XMLDoc doc;
 
             // send out all save game data requests
             std::set<int> needed_reponses;
@@ -572,7 +562,7 @@ void ServerApp::HandleMessage(const Message& msg)
             }
             m_state = SERVER_DYING;
             m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_DYING << " (SERVER_DYING).";
-            m_network_core.SendMessage(Message(Message::SERVER_STATUS, -1, msg.Sender(), Message::CORE, ServerStatusDoc()));
+            m_network_core.SendMessage(Message(Message::SERVER_STATUS, -1, msg.Sender(), Message::CORE, boost::lexical_cast<std::string>(m_state)));
             m_network_core.DumpAllConnections();
             Exit(0);
         }

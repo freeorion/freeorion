@@ -89,8 +89,6 @@ namespace GG {
     GG_ENUM_MAP_BEGIN(Message::ModuleType)
     GG_ENUM_MAP_INSERT(Message::CORE)
     GG_ENUM_MAP_INSERT(Message::CLIENT_LOBBY_MODULE)
-    GG_ENUM_MAP_INSERT(Message::CLIENT_UNIVERSE_MODULE)
-    GG_ENUM_MAP_INSERT(Message::CLIENT_EMPIRE_MODULE)
     GG_ENUM_MAP_INSERT(Message::CLIENT_COMBAT_MODULE)
     GG_ENUM_MAP_INSERT(Message::CLIENT_SYNCHRONOUS_RESPONSE)
     GG_ENUM_MAP_END
@@ -319,9 +317,7 @@ Message JoinAckMessage(int player_id)
 
 Message RenameMessage(int player_id, const std::string& new_name)
 {
-    XMLDoc doc;
-    doc.root_node.AppendChild(XMLElement("new_name", new_name));
-    return Message(Message::SERVER_STATUS, -1, player_id, Message::CORE, doc);
+    return Message(Message::RENAME_PLAYER, -1, player_id, Message::CORE, new_name);
 }
 
 Message EndGameMessage(int sender, int receiver)

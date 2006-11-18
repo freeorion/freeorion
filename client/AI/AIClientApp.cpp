@@ -182,17 +182,7 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
 {
     switch (msg.Type()) {
     case Message::SERVER_STATUS: {
-        std::stringstream stream(msg.GetText());
-        XMLDoc doc;
-        doc.ReadDoc(stream);
-        if (doc.root_node.ContainsChild("new_name")) {
-            m_player_name = doc.root_node.Child("new_name").Text();
-            Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received SERVER_STATUS -- server has renamed this player \"" << 
-                m_player_name  << "\"";
-        } else if (doc.root_node.ContainsChild("server_state")) {
-            Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received SERVER_STATUS (status code " << 
-                doc.root_node.Child("server_state").Attribute("value") << ")";
-        }
+        Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received SERVER_STATUS (status code " << msg.GetText() << ")";
         break;
     }
           
@@ -205,6 +195,13 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
                 Logger().errorStream() << "AIClientApp::HandleMessageImpl : Received erroneous JOIN_GAME acknowledgement when already in a game";
             }
         }
+        break;
+    }
+
+    case Message::RENAME_PLAYER: {
+        m_player_name = msg.GetText();
+        Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received RENAME_PLAYER -- server has renamed this player \"" << 
+            m_player_name  << "\"";
         break;
     }
 

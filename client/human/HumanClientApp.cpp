@@ -538,28 +538,10 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     m_handling_message = true;
     switch (msg.Type()) {
     case Message::SERVER_STATUS: {
-        std::stringstream stream(msg.GetText());
-        XMLDoc doc;
-        doc.ReadDoc(stream);
-        if (doc.root_node.ContainsChild("new_name")) {
-            m_player_name = doc.root_node.Child("new_name").Text();
-            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS -- Server has renamed this player \"" << 
-                m_player_name  << "\"";
-        } else if (doc.root_node.ContainsChild("server_state")) {
-            ServerState server_state = ServerState(boost::lexical_cast<int>(doc.root_node.Child("server_state").Attribute("value")));
-            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS (status code " << 
-                doc.root_node.Child("server_state").Attribute("value") << ")";
-            if (server_state == SERVER_DYING)
-                KillServer();
-        } else if (doc.root_node.ContainsChild("settings_files")) {
-            std::string settings_files = doc.root_node.Child("settings_files").Text();
-            std::string source_files = doc.root_node.Child("source_files").Text();
-            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS -- Connection rejected by server, "
-                "because different versions of the following settings and/or source files are in use by the client and the server: " << 
-                settings_files << " " << source_files;
-            ClientUI::MessageBox(UserString("ERR_VERSION_MISMATCH") + settings_files + " " + source_files, true);
-            EndGame();
-        }
+        ServerState server_state = boost::lexical_cast<ServerState>(msg.GetText());
+        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS (status code " << msg.GetText() << ")";
+        if (server_state == SERVER_DYING)
+            KillServer();
         break;
     } 
 
@@ -580,6 +562,13 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
                     "already in a game";
             }
         }
+        break;
+    }
+
+    case Message::RENAME_PLAYER: {
+        m_player_name = msg.GetText();
+        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received RENAME_PLAYER -- Server has renamed this player \"" << 
+            m_player_name  << "\"";
         break;
     }
 
@@ -673,7 +662,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Attribute("value"));
 
         // given IDs, build message
-        if (phase_id == Message::FLEET_MOVEMENT)
+        if (phase_id ==Message:: FLEET_MOVEMENT)
             phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT");
         else if (phase_id == Message::COMBAT)
             phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT");
@@ -703,7 +692,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::PLAYER_ELIMINATED: {
-        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Message::PLAYER_ELIMINATED : m_empire_id=" << m_empire_id << " Empires().Lookup(m_empire_id)=" << Empires().Lookup(m_empire_id);
+        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : PLAYER_ELIMINATED : m_empire_id=" << m_empire_id << " Empires().Lookup(m_empire_id)=" << Empires().Lookup(m_empire_id);
         Empire* empire = Empires().Lookup(m_empire_id);
         if (!empire) break;
         if (empire->Name() == msg.GetText()) {

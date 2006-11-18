@@ -245,14 +245,6 @@ void ClientNetworkCore::DispatchMessage(const Message& msg, int socket)
 #endif
         break;
 
-    case Message::CLIENT_UNIVERSE_MODULE:
-        //ClientApp::ClientUniverse().HandleMessage(msg);
-        break;
-
-    case Message::CLIENT_EMPIRE_MODULE:
-        //ClientApp::ClientEmpire().HandleMessage(msg);
-        break;
-
     case Message::CLIENT_COMBAT_MODULE:
         if (ClientApp::GetApp()->CurrentCombat()) {
             //ClientApp::CombatModule().HandleMessage(msg);

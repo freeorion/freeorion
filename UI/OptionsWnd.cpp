@@ -598,6 +598,12 @@ void OptionsWnd::ResolutionOption()
     CUIStateButton* fullscreen_button = BoolOption("fullscreen", UserString("OPTIONS_FULLSCREEN"));
 #ifdef FREEORION_WIN32
     GG::Connect(drop_list->SelChangedSignal, ResolutionDropListIndexSetOptionFunctor(drop_list, width_spin, height_spin, color_depth_spin, fullscreen_button));
+#else
+    // HACK! These lines are only here to quiet "unused variable" warnings.
+    width_spin = 0;
+    height_spin = 0;
+    color_depth_spin = 0;
+    fullscreen_button = 0;
 #endif
 }
 
