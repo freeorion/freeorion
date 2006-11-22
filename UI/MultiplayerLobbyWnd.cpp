@@ -415,7 +415,7 @@ void MultiplayerLobbyWnd::PlayerDataChanged()
 
 void MultiplayerLobbyWnd::StartGameClicked()
 {
-    HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(HumanClientApp::GetApp()->PlayerID(), HumanClientApp::GetApp()->PlayerName()));
+    HumanClientApp::GetApp()->NetworkCore().SendMessage(StartMPGameMessage(HumanClientApp::GetApp()->PlayerID()));
     m_result = true;
     CUIWnd::CloseClicked();
 }

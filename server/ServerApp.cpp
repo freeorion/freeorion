@@ -213,86 +213,75 @@ void ServerApp::CreateAIClients(const XMLElement& elem)
 void ServerApp::HandleMessage(const Message& msg)
 {
     switch (msg.Type()) {
-    case Message::HOST_GAME: { // this should only be received at the end of MP setup
-        std::string host_player_name = msg.GetText();
-        std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().find(msg.Sender());
-        bool spoofed_host = (m_state == SERVER_MP_LOBBY && it != m_network_core.Players().end() && it->second.name == host_player_name);
-        if (!spoofed_host) {
-            if (m_lobby_data.m_new_game) { // new game
-                m_galaxy_size = m_lobby_data.m_size;
-                m_galaxy_shape = m_lobby_data.m_shape;
-                m_galaxy_age = m_lobby_data.m_age;
-                m_starlane_freq = m_lobby_data.m_starlane_freq;
-                m_planet_density = m_lobby_data.m_planet_density;
-                m_specials_freq = m_lobby_data.m_specials_freq;
-                m_expected_players = m_network_core.Players().size() + m_lobby_data.m_AIs.size();
+    case Message::START_MP_GAME: {
+        if (m_lobby_data.m_new_game) { // new game
+            m_galaxy_size = m_lobby_data.m_size;
+            m_galaxy_shape = m_lobby_data.m_shape;
+            m_galaxy_age = m_lobby_data.m_age;
+            m_starlane_freq = m_lobby_data.m_starlane_freq;
+            m_planet_density = m_lobby_data.m_planet_density;
+            m_specials_freq = m_lobby_data.m_specials_freq;
+            m_expected_players = m_network_core.Players().size() + m_lobby_data.m_AIs.size();
+            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+                if (it->first != msg.Sender())
+                    m_network_core.SendMessage(Message(Message::GAME_START, -1, it->first, Message::CLIENT_LOBBY_MODULE, ""));
+            }
+            m_state = SERVER_GAME_SETUP;
+            CreateAIClients(m_lobby_data.m_AIs);
+            m_player_save_game_data.clear();
+            m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
+            if (m_expected_players == static_cast<int>(m_network_core.Players().size())) {
+                NewGameInit();
+                m_state = SERVER_WAITING;
+                m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
+            }
+        } else { // load game
+            std::map<int, PlayerInfo>::const_iterator sender_it = m_network_core.Players().find(msg.Sender());
+            if (sender_it != m_network_core.Players().end() && sender_it->second.host) {
+                m_empires.RemoveAllEmpires();
+                m_single_player_game = false;
+
+                std::string load_filename = (GetLocalDir() / "save" / m_lobby_data.m_save_games[m_lobby_data.m_save_file_index]).native_file_string();
+                std::ifstream ifs(load_filename.c_str(), std::ios_base::binary);
+                {
+                    boost::archive::xml_iarchive ia(ifs);
+                    ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
+                    Universe::s_encoding_empire = ALL_EMPIRES;
+                    ia >> BOOST_SERIALIZATION_NVP(m_player_save_game_data);
+                    ia >> BOOST_SERIALIZATION_NVP(m_universe);
+                }
+                ifs.close();
+                m_expected_players = m_player_save_game_data.size();
+
+                m_empires.RemoveAllEmpires();
+                for (unsigned int i = 0; i < m_player_save_game_data.size(); ++i) {
+                    for (unsigned int j = 0; j < m_lobby_data.m_players.size(); ++j) {
+                        assert(m_player_save_game_data[i].m_empire);
+                        if (m_lobby_data.m_players[j].m_save_game_empire_id == m_player_save_game_data[i].m_empire->EmpireID()) {
+                            std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin();
+                            std::advance(player_it, j);
+                            m_player_save_game_data[i].m_name = player_it->second.name;
+                            m_player_save_game_data[i].m_empire->SetPlayerName(player_it->second.name);
+                        }
+                    }
+                    m_empires.InsertEmpire(m_player_save_game_data[i].m_empire);
+                }
+
                 for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                    if (it->first != msg.Sender())
+                    if (it != sender_it)
                         m_network_core.SendMessage(Message(Message::GAME_START, -1, it->first, Message::CLIENT_LOBBY_MODULE, ""));
                 }
+
+                int AI_clients = m_expected_players - m_network_core.Players().size();
+                CreateAIClients(std::vector<PlayerSetupData>(AI_clients));
                 m_state = SERVER_GAME_SETUP;
-                CreateAIClients(m_lobby_data.m_AIs);
-                m_player_save_game_data.clear();
-                m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
-                if (m_expected_players == static_cast<int>(m_network_core.Players().size())) {
-                    NewGameInit();
-                    m_state = SERVER_WAITING;
-                    m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
-                }
-            } else { // load game
-                std::map<int, PlayerInfo>::const_iterator sender_it = m_network_core.Players().find(msg.Sender());
-                if (sender_it != m_network_core.Players().end() && sender_it->second.host) {
-                    m_empires.RemoveAllEmpires();
-                    m_single_player_game = false;
 
-                    std::string load_filename = (GetLocalDir() / "save" / m_lobby_data.m_save_games[m_lobby_data.m_save_file_index]).native_file_string();
-                    std::ifstream ifs(load_filename.c_str(), std::ios_base::binary);
-                    {
-                        boost::archive::xml_iarchive ia(ifs);
-                        ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
-                        Universe::s_encoding_empire = ALL_EMPIRES;
-                        ia >> BOOST_SERIALIZATION_NVP(m_player_save_game_data);
-                        ia >> BOOST_SERIALIZATION_NVP(m_universe);
-                    }
-                    ifs.close();
-                    m_expected_players = m_player_save_game_data.size();
-
-                    m_empires.RemoveAllEmpires();
-                    for (unsigned int i = 0; i < m_player_save_game_data.size(); ++i) {
-                        for (unsigned int j = 0; j < m_lobby_data.m_players.size(); ++j) {
-                            assert(m_player_save_game_data[i].m_empire);
-                            if (m_lobby_data.m_players[j].m_save_game_empire_id == m_player_save_game_data[i].m_empire->EmpireID()) {
-                                std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin();
-                                std::advance(player_it, j);
-                                m_player_save_game_data[i].m_name = player_it->second.name;
-                                m_player_save_game_data[i].m_empire->SetPlayerName(player_it->second.name);
-                            }
-                        }
-                        m_empires.InsertEmpire(m_player_save_game_data[i].m_empire);
-                    }
-
-                    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                        if (it != sender_it)
-                            m_network_core.SendMessage(Message(Message::GAME_START, -1, it->first, Message::CLIENT_LOBBY_MODULE, ""));
-                    }
-
-                    int AI_clients = m_expected_players - m_network_core.Players().size();
-                    CreateAIClients(std::vector<PlayerSetupData>(AI_clients));
-                    m_state = SERVER_GAME_SETUP;
-
-                    if (!AI_clients)
-                        LoadGameInit();
-                } else {
-                    m_log_category.errorStream() << "Player #" << msg.Sender() << " attempted to initiate a game load, but is not the host, or is "
-                        "not found in the player list.";
-                }
+                if (!AI_clients)
+                    LoadGameInit();
+            } else {
+                m_log_category.errorStream() << "Player #" << msg.Sender() << " attempted to initiate a game load, but is not the host, or is "
+                    "not found in the player list.";
             }
-        } else {
-            const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&m_network_core.Players().find(msg.Sender())->second.address));
-            m_log_category.errorStream() << "ServerApp::HandleMessage : A human player attempted to host "
-                "a new MP game with the wrong player name, or while one was not being setup.  Terminating connection to " << 
-                (socket_hostname ? socket_hostname : "[unknown host]") << " (player #" << msg.Sender() << ")";
-            m_network_core.DumpPlayer(msg.Sender());
         }
         break;
     }
@@ -579,56 +568,40 @@ void ServerApp::HandleMessage(const Message& msg)
 void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& connection)
 {
     switch (msg.Type()) {
-    case Message::HOST_GAME: {
+    case Message::HOST_SP_GAME: {
         if (m_network_core.Players().empty() && m_expected_ai_players.empty()) {
             std::stringstream stream(msg.GetText());
             XMLDoc doc;
             doc.ReadDoc(stream);
             std::string host_player_name = doc.root_node.Child("host_player_name").Text();
-
             PlayerInfo host_player_info(connection.socket, connection.address, host_player_name, true);
             int player_id = NetworkCore::HOST_PLAYER_ID;
 
-            if (!doc.root_node.ContainsChild("universe_params")) { // start an MP lobby situation so that game settings can be established
-                m_single_player_game = false;
-                m_state = SERVER_MP_LOBBY;
-                m_lobby_data = MultiplayerLobbyData(true);
-                m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_MP_LOBBY << " (SERVER_MP_LOBBY).";
-                if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
-                    m_network_core.SendMessage(HostAckMessage(player_id));
-                    m_network_core.SendMessage(JoinAckMessage(player_id));
-                    m_lobby_data.m_players.push_back(PlayerSetupData());
-                    m_lobby_data.m_players.back().m_player_id = player_id;
-                    m_lobby_data.m_players.back().m_player_name = host_player_name;
-                    m_lobby_data.m_players.back().m_empire_color = EmpireColors().at(0);
-                }
-                m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, LobbyUpdate()));
-            } else { // immediately start a new game with the given parameters
-                m_single_player_game = true;
-                m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Text());
-                m_galaxy_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("size").Text());
-                m_galaxy_shape = boost::lexical_cast<Shape>(doc.root_node.Child("universe_params").Child("shape").Text());
-                m_galaxy_age = boost::lexical_cast<Age>(doc.root_node.Child("universe_params").Child("age").Text());
-                m_starlane_freq = boost::lexical_cast<StarlaneFrequency>(doc.root_node.Child("universe_params").Child("starlane_freq").Text());
-                m_planet_density = boost::lexical_cast<PlanetDensity>(doc.root_node.Child("universe_params").Child("planet_density").Text());
-                m_specials_freq = boost::lexical_cast<SpecialsFrequency>(doc.root_node.Child("universe_params").Child("specials_freq").Text());
-                CreateAIClients(doc.root_node);
-                m_player_save_game_data.clear();
-                m_lobby_data.m_players.clear();
-                m_lobby_data.m_players.push_back(PlayerSetupData());
-                m_lobby_data.m_players.back().m_player_id = 0;
-                m_lobby_data.m_players.back().m_player_name = "Happy_Player";
-                m_lobby_data.m_players.back().m_empire_name = doc.root_node.Child("empire_name").Text();
-                m_lobby_data.m_players.back().m_empire_color = XMLToClr(doc.root_node.Child("empire_color").Child("GG::Clr"));
-                m_state = SERVER_GAME_SETUP;
-                if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
-                    m_network_core.SendMessage(HostAckMessage(player_id));
-                    m_network_core.SendMessage(JoinAckMessage(player_id));
-                }
-                m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
-                m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe size set to " << m_galaxy_size << " systems (SERVER_GAME_SETUP).";
-                m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe shape set to " << m_galaxy_shape << " (SERVER_GAME_SETUP).";
+            // immediately start a new game with the given parameters
+            m_single_player_game = true;
+            m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Text());
+            m_galaxy_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("size").Text());
+            m_galaxy_shape = boost::lexical_cast<Shape>(doc.root_node.Child("universe_params").Child("shape").Text());
+            m_galaxy_age = boost::lexical_cast<Age>(doc.root_node.Child("universe_params").Child("age").Text());
+            m_starlane_freq = boost::lexical_cast<StarlaneFrequency>(doc.root_node.Child("universe_params").Child("starlane_freq").Text());
+            m_planet_density = boost::lexical_cast<PlanetDensity>(doc.root_node.Child("universe_params").Child("planet_density").Text());
+            m_specials_freq = boost::lexical_cast<SpecialsFrequency>(doc.root_node.Child("universe_params").Child("specials_freq").Text());
+            CreateAIClients(doc.root_node);
+            m_player_save_game_data.clear();
+            m_lobby_data.m_players.clear();
+            m_lobby_data.m_players.push_back(PlayerSetupData());
+            m_lobby_data.m_players.back().m_player_id = 0;
+            m_lobby_data.m_players.back().m_player_name = "Happy_Player";
+            m_lobby_data.m_players.back().m_empire_name = doc.root_node.Child("empire_name").Text();
+            m_lobby_data.m_players.back().m_empire_color = XMLToClr(doc.root_node.Child("empire_color").Child("GG::Clr"));
+            m_state = SERVER_GAME_SETUP;
+            if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
+                m_network_core.SendMessage(HostSPAckMessage(player_id));
+                m_network_core.SendMessage(JoinAckMessage(player_id));
             }
+            m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
+            m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe size set to " << m_galaxy_size << " systems (SERVER_GAME_SETUP).";
+            m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe shape set to " << m_galaxy_shape << " (SERVER_GAME_SETUP).";
         } else {
             const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
             m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to host "
@@ -636,10 +609,39 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                 (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
             m_network_core.DumpConnection(connection.socket);
         }
-
         break;
     }
-      
+
+    case Message::HOST_MP_GAME: {
+        if (m_network_core.Players().empty() && m_expected_ai_players.empty()) {
+            std::string host_player_name = msg.GetText();
+            PlayerInfo host_player_info(connection.socket, connection.address, host_player_name, true);
+            int player_id = NetworkCore::HOST_PLAYER_ID;
+
+            // start an MP lobby situation so that game settings can be established
+            m_single_player_game = false;
+            m_state = SERVER_MP_LOBBY;
+            m_lobby_data = MultiplayerLobbyData(true);
+            m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_MP_LOBBY << " (SERVER_MP_LOBBY).";
+            if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
+                m_network_core.SendMessage(HostMPAckMessage(player_id));
+                m_network_core.SendMessage(JoinAckMessage(player_id));
+                m_lobby_data.m_players.push_back(PlayerSetupData());
+                m_lobby_data.m_players.back().m_player_id = player_id;
+                m_lobby_data.m_players.back().m_player_name = host_player_name;
+                m_lobby_data.m_players.back().m_empire_color = EmpireColors().at(0);
+            }
+            m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, LobbyUpdate()));
+        } else {
+            const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
+            m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to host "
+                "a new game but there was already one in progress or one being setup.  Terminating connection to " << 
+                (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
+            m_network_core.DumpConnection(connection.socket);
+        }
+        break;
+    }
+
     case Message::JOIN_GAME: {
         std::string player_name = msg.GetText();
 

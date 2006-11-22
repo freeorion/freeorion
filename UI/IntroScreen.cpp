@@ -229,7 +229,7 @@ void IntroScreen::OnSinglePlayer()
 
         if (!failed) {
             ClientUI::GetClientUI()->ScreenNewGame();
-            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostGameMessage(HumanClientApp::GetApp()->PlayerID(), game_parameters));
+            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostSPGameMessage(HumanClientApp::GetApp()->PlayerID(), game_parameters));
         }
     } else {
         failed = true;
@@ -284,7 +284,7 @@ void IntroScreen::OnMultiPlayer()
         ClientUI::GetClientUI()->ScreenIntro();
     } else {
         HumanClientApp::GetApp()->NetworkCore().SendMessage(server_connect_wnd.Result().second == "HOST GAME SELECTED" ? 
-                                                            HostGameMessage(HumanClientApp::GetApp()->PlayerID(), server_connect_wnd.Result().first) : 
+                                                            HostMPGameMessage(HumanClientApp::GetApp()->PlayerID(), server_connect_wnd.Result().first) : 
                                                             JoinGameMessage(server_connect_wnd.Result().first));
         MultiplayerLobbyWnd multiplayer_lobby_wnd(server_connect_wnd.Result().second == "HOST GAME SELECTED");
         multiplayer_lobby_wnd.Run();

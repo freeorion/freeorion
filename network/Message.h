@@ -35,13 +35,15 @@ public:
         UNDEFINED,
         DEBUG,                   ///< used to send special messages used for debugging purposes
         SERVER_STATUS,           ///< sent to the client when requested, and when the server first recieves a connection from a client
-        HOST_GAME,               ///< sent when a client wishes to establish a game at the server
+        HOST_SP_GAME,            ///< sent when a client wishes to establish a single player game at the server
+        HOST_MP_GAME,            ///< sent when a client wishes to establish a multiplayer game at the server
         JOIN_GAME,               ///< sent when a client wishes to join a game being established at the server
         RENAME_PLAYER,           ///< sent when the server must assign a new name to a player, because another player already has her desired name
         LOBBY_UPDATE,            ///< used to synchronize multiplayer lobby dialogs among different players, when a user changes a setting, or the server updates the state
         LOBBY_CHAT,              ///< used to send chat messages in the multiplayer lobby
         LOBBY_HOST_ABORT,        ///< sent to server (by the "host" client only) when a multiplayer game is to be cancelled while it is still being set up in the multiplayer lobby
         LOBBY_EXIT,              ///< sent to server (by a non-"host" client only) when a player leaves the multiplayer lobby
+        START_MP_GAME,           ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
         SAVE_GAME,               ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
         LOAD_GAME,               ///< sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
         GAME_START,              ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
@@ -141,11 +143,11 @@ std::string TurnProgressPhaseStr(Message::TurnProgressPhase phase);
 std::ostream& operator<<(std::ostream& os, const Message& msg);
 
 
-/** creates a HOST_GAME message*/
-Message HostGameMessage(int player_id, const XMLDoc& doc);
+/** creates a HOST_SP_GAME message*/
+Message HostSPGameMessage(int player_id, const XMLDoc& doc);
 
-/** creates a minimal HOST_GAME message used to enter and finalize the multiplayer "lobby" setup*/
-Message HostGameMessage(int player_id, const std::string& host_player_name);
+/** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
+Message HostMPGameMessage(int player_id, const std::string& host_player_name);
 
 /** creates a JOIN_GAME message.  The sender's player name is sent in the message.*/
 Message JoinGameMessage(const std::string& player_name);
@@ -156,9 +158,13 @@ Message JoinGameSetup(const XMLDoc& doc);
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
 Message GameStartMessage(int player_id, const std::string& data);
 
-/** creates a HOST_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
+/** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
    should only be sent by the server.*/
-Message HostAckMessage(int player_id);
+Message HostSPAckMessage(int player_id);
+
+/** creates a HOST_MP_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
+   should only be sent by the server.*/
+Message HostMPAckMessage(int player_id);
 
 /** creates a JOIN_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
    should only be sent by the server.*/
@@ -254,5 +260,8 @@ Message LobbyExitMessage(int sender);
 
 /** creates an LOBBY_EXIT message.  This message should only be sent by the server.*/
 Message ServerLobbyExitMessage(int sender, int receiver);
+
+/** creates a START_MP_GAME used to finalize the multiplayer "lobby" setup*/
+Message StartMPGameMessage(int player_id);
 
 #endif // _Message_h_

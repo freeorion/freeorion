@@ -55,12 +55,14 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::UNDEFINED)
     GG_ENUM_MAP_INSERT(Message::DEBUG)
     GG_ENUM_MAP_INSERT(Message::SERVER_STATUS)
-    GG_ENUM_MAP_INSERT(Message::HOST_GAME)
+    GG_ENUM_MAP_INSERT(Message::HOST_SP_GAME)
+    GG_ENUM_MAP_INSERT(Message::HOST_MP_GAME)
     GG_ENUM_MAP_INSERT(Message::JOIN_GAME)
     GG_ENUM_MAP_INSERT(Message::LOBBY_UPDATE)
     GG_ENUM_MAP_INSERT(Message::LOBBY_CHAT)
     GG_ENUM_MAP_INSERT(Message::LOBBY_HOST_ABORT)
     GG_ENUM_MAP_INSERT(Message::LOBBY_EXIT)
+    GG_ENUM_MAP_INSERT(Message::START_MP_GAME)
     GG_ENUM_MAP_INSERT(Message::SAVE_GAME)
     GG_ENUM_MAP_INSERT(Message::LOAD_GAME)
     GG_ENUM_MAP_INSERT(Message::GAME_START)
@@ -269,16 +271,14 @@ void Message::DecompressMessage(std::string& uncompressed_msg) const
 ////////////////////////////////////////////////
 // Message-Creation Free Functions
 ////////////////////////////////////////////////
-Message HostGameMessage(int player_id, const XMLDoc& doc)
+Message HostSPGameMessage(int player_id, const XMLDoc& doc)
 {
-    return Message(Message::HOST_GAME, player_id, -1, Message::CORE, doc);
+    return Message(Message::HOST_SP_GAME, player_id, -1, Message::CORE, doc);
 }
 
-Message HostGameMessage(int player_id, const std::string& host_player_name)
+Message HostMPGameMessage(int player_id, const std::string& host_player_name)
 {
-    XMLDoc doc;
-    doc.root_node.AppendChild(XMLElement("host_player_name", host_player_name));
-    return Message(Message::HOST_GAME, player_id, -1, Message::CORE, doc);
+    return Message(Message::HOST_MP_GAME, player_id, -1, Message::CORE, host_player_name);
 }
 
 Message JoinGameMessage(const std::string& player_name)
@@ -296,9 +296,14 @@ Message GameStartMessage(int player_id, const std::string& data)
     return Message(Message::GAME_START, -1, player_id, Message::CORE, data);
 }
 
-Message HostAckMessage(int player_id)
+Message HostSPAckMessage(int player_id)
 {
-    return Message(Message::HOST_GAME, -1, player_id, Message::CORE, "ACK");
+    return Message(Message::HOST_SP_GAME, -1, player_id, Message::CORE, "ACK");
+}
+
+Message HostMPAckMessage(int player_id)
+{
+    return Message(Message::HOST_MP_GAME, -1, player_id, Message::CORE, "ACK");
 }
 
 Message JoinAckMessage(int player_id)
@@ -328,7 +333,7 @@ Message TurnOrdersMessage(int sender, const std::string& data)
 
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id)
 {
-    /// Turn progres message sends down message ID instead of text for faster transfer
+    /// Turn progress message sends down message ID instead of text for faster transfer
     /// The data is a number indicating the phase being started and the empire ID
     XMLDoc doc;
 
@@ -445,4 +450,9 @@ Message LobbyExitMessage(int sender)
 Message ServerLobbyExitMessage(int sender, int receiver)
 {
     return Message(Message::LOBBY_EXIT, sender, receiver, Message::CLIENT_LOBBY_MODULE, "");
+}
+
+Message StartMPGameMessage(int player_id)
+{
+    return Message(Message::START_MP_GAME, player_id, -1, Message::CORE, "");
 }

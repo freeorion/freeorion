@@ -253,11 +253,9 @@ bool HumanClientApp::LoadSinglePlayerGame()
             m_empire_id = -1;
             m_player_name = "Happy_Player";
 
-            // HACK!  send the multiplayer form of the HostGameMessage, since it establishes us as the host, and the single-player 
-            // LOAD_GAME message will establish us as a single-player game
-            XMLDoc parameters;
-            parameters.root_node.AppendChild(XMLElement("host_player_name", std::string("Happy_Player")));
-            NetworkCore().SendMessage(HostGameMessage(NetworkCore::HOST_PLAYER_ID, parameters));
+            // HACK!  Send HostMPGameMessage, since it establishes us as the host, and the LOAD_GAME message will
+            // establish us as a single-player game.
+            NetworkCore().SendMessage(HostMPGameMessage(NetworkCore::HOST_PLAYER_ID, "Happy_Player"));
             NetworkCore().SendMessage(HostLoadGameMessage(NetworkCore::HOST_PLAYER_ID, filename));
 
             return true;
@@ -545,9 +543,10 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         break;
     } 
 
-    case Message::HOST_GAME: {
+    case Message::HOST_SP_GAME:
+    case Message::HOST_MP_GAME: {
         if (msg.Sender() == -1 && msg.GetText() == "ACK")
-            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received HOST_GAME acknowledgement";
+            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received " << (msg.Type() == Message::HOST_SP_GAME ? "HOST_SP_GAME" : "HOST_MP_GAME") << " acknowledgement";
         break;
     } 
 
