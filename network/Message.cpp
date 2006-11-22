@@ -122,7 +122,7 @@ std::ostream& operator<<(std::ostream& os, const Message& msg)
        << msg.Sender();
 
     if (msg.Sender() == -1)
-        os << "(server) --> ";
+        os << "(server/unknown) --> ";
     else if (msg.Sender() == 0)
         os << "(host) --> ";
     else
@@ -131,7 +131,7 @@ std::ostream& operator<<(std::ostream& os, const Message& msg)
     os << msg.Receiver();
 
     if (msg.Receiver() == -1)
-        os << "(server).";
+        os << "(server/unknown).";
     else if (msg.Receiver() == 0)
         os << "(host).";
     else
@@ -269,9 +269,8 @@ void Message::DecompressMessage(std::string& uncompressed_msg) const
 ////////////////////////////////////////////////
 // Message-Creation Free Functions
 ////////////////////////////////////////////////
-Message HostGameMessage(int player_id, const XMLDoc& game_parameters)
+Message HostGameMessage(int player_id, const XMLDoc& doc)
 {
-    XMLDoc doc(game_parameters);
     return Message(Message::HOST_GAME, player_id, -1, Message::CORE, doc);
 }
 
@@ -284,20 +283,12 @@ Message HostGameMessage(int player_id, const std::string& host_player_name)
 
 Message JoinGameMessage(const std::string& player_name)
 {
-    XMLDoc doc;
-    doc.root_node.AppendChild(XMLElement("player_name", player_name));
-    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, doc);
+    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_name);
 }
 
-Message JoinGameSetup(const XMLDoc& player_setup)
+Message JoinGameSetup(const XMLDoc& doc)
 {
-    XMLDoc doc(player_setup);
     return Message(Message::JOIN_GAME, -1, -1, Message::CORE, doc);
-}
-
-Message VersionConflictMessage(int player_id, const XMLDoc& conflict_details)
-{
-    return Message(Message::SERVER_STATUS, -1, player_id, Message::CORE, conflict_details);
 }
 
 Message GameStartMessage(int player_id, const std::string& data)

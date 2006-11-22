@@ -641,10 +641,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
     }
       
     case Message::JOIN_GAME: {
-        std::stringstream stream(msg.GetText());
-        XMLDoc doc;
-        doc.ReadDoc(stream);
-        std::string player_name = doc.root_node.Child("player_name").Text();
+        std::string player_name = msg.GetText();
 
         PlayerInfo player_info(connection.socket, connection.address, player_name, false);
         int player_id = std::max(NetworkCore::HOST_PLAYER_ID + 1, static_cast<int>(m_network_core.Players().size()));
