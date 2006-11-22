@@ -30,6 +30,44 @@ const std::string& UserString(const std::string& str);
 /** Returns the language of the StringTable currently in use */
 const std::string& Language();
 
+/** The data that represent the galaxy setup for a new game. */
+struct GalaxySetupData
+{
+    /** \name Structors */ //@{
+    GalaxySetupData(); ///< default ctor.
+    //@}
+
+    int               m_size;
+    Shape             m_shape;
+    Age               m_age;
+    StarlaneFrequency m_starlane_freq;
+    PlanetDensity     m_planet_density;
+    SpecialsFrequency m_specials_freq;
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** The data needed to establish a new single player game. */
+struct SinglePlayerSetupData : public GalaxySetupData
+{
+    /** \name Structors */ //@{
+    SinglePlayerSetupData(); ///< default ctor.
+    //@}
+
+    std::string       m_host_player_name;
+    std::string       m_empire_name;
+    GG::Clr           m_empire_color;
+    int               m_AIs;
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Contains the UI data that must be saved in save game files in order to restore games to the users' last views. */
 struct SaveGameUIData
 {
@@ -92,7 +130,7 @@ private:
 };
 
 /** The data structure that represents the state of the multiplayer lobby. */
-struct MultiplayerLobbyData
+struct MultiplayerLobbyData : public GalaxySetupData
 {
     /** \name Structors */ //@{
     MultiplayerLobbyData(); ///< Default ctor.
@@ -104,12 +142,6 @@ struct MultiplayerLobbyData
     //@}
 
     bool                            m_new_game;
-    int                             m_size;
-    Shape                           m_shape;
-    Age                             m_age;
-    StarlaneFrequency               m_starlane_freq;
-    PlanetDensity                   m_planet_density;
-    SpecialsFrequency               m_specials_freq;
     int                             m_save_file_index;
     std::vector<PlayerSetupData>    m_players;
     std::vector<PlayerSetupData>    m_AIs;
@@ -128,6 +160,27 @@ private:
 
 
 // template implementations
+template <class Archive>
+void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_size)
+        & BOOST_SERIALIZATION_NVP(m_shape)
+        & BOOST_SERIALIZATION_NVP(m_age)
+        & BOOST_SERIALIZATION_NVP(m_starlane_freq)
+        & BOOST_SERIALIZATION_NVP(m_planet_density)
+        & BOOST_SERIALIZATION_NVP(m_specials_freq);
+}
+
+template <class Archive>
+void SinglePlayerSetupData::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GalaxySetupData)
+        & BOOST_SERIALIZATION_NVP(m_host_player_name)
+        & BOOST_SERIALIZATION_NVP(m_empire_name)
+        & BOOST_SERIALIZATION_NVP(m_empire_color)
+        & BOOST_SERIALIZATION_NVP(m_AIs);
+}
+
 template <class Archive>
 void SaveGameUIData::NebulaData::serialize(Archive& ar, const unsigned int version)
 {
@@ -165,13 +218,8 @@ void PlayerSetupData::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void MultiplayerLobbyData::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_new_game)
-        & BOOST_SERIALIZATION_NVP(m_size)
-        & BOOST_SERIALIZATION_NVP(m_shape)
-        & BOOST_SERIALIZATION_NVP(m_age)
-        & BOOST_SERIALIZATION_NVP(m_starlane_freq)
-        & BOOST_SERIALIZATION_NVP(m_planet_density)
-        & BOOST_SERIALIZATION_NVP(m_specials_freq)
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GalaxySetupData)
+        & BOOST_SERIALIZATION_NVP(m_new_game)
         & BOOST_SERIALIZATION_NVP(m_save_file_index)
         & BOOST_SERIALIZATION_NVP(m_players)
         // NOTE: We are not serializing the AIs on purpose; they are supposed to be server-side entities only.

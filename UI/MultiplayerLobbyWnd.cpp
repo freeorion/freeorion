@@ -264,7 +264,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
         m_lobby_data = mp_lobby_data;
 
         m_new_load_game_buttons->SetCheck(!mp_lobby_data.m_new_game);
-        m_galaxy_setup_panel->SetFromLobbyData(mp_lobby_data);
+        m_galaxy_setup_panel->SetFromSetupData(mp_lobby_data);
 
         m_saved_games_list->Clear();
         for (unsigned int i = 0; i < mp_lobby_data.m_save_games.size(); ++i) {
@@ -380,7 +380,7 @@ void MultiplayerLobbyWnd::NewLoadClicked(int idx)
 
 void MultiplayerLobbyWnd::GalaxySetupPanelChanged()
 {
-    m_galaxy_setup_panel->GetLobbyData(m_lobby_data);
+    m_galaxy_setup_panel->GetSetupData(m_lobby_data);
     SendUpdate();
 }
 

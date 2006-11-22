@@ -2,6 +2,7 @@
 
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/Serialize.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/erase.hpp>
@@ -271,9 +272,9 @@ void Message::DecompressMessage(std::string& uncompressed_msg) const
 ////////////////////////////////////////////////
 // Message-Creation Free Functions
 ////////////////////////////////////////////////
-Message HostSPGameMessage(int player_id, const XMLDoc& doc)
+Message HostSPGameMessage(int player_id, const std::string& data)
 {
-    return Message(Message::HOST_SP_GAME, player_id, -1, Message::CORE, doc);
+    return Message(Message::HOST_SP_GAME, player_id, -1, Message::CORE, data);
 }
 
 Message HostMPGameMessage(int player_id, const std::string& host_player_name)
@@ -284,11 +285,6 @@ Message HostMPGameMessage(int player_id, const std::string& host_player_name)
 Message JoinGameMessage(const std::string& player_name)
 {
     return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_name);
-}
-
-Message JoinGameSetup(const XMLDoc& doc)
-{
-    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, doc);
 }
 
 Message GameStartMessage(int player_id, const std::string& data)
@@ -333,18 +329,13 @@ Message TurnOrdersMessage(int sender, const std::string& data)
 
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id)
 {
-    /// Turn progress message sends down message ID instead of text for faster transfer
-    /// The data is a number indicating the phase being started and the empire ID
-    XMLDoc doc;
-
-    XMLElement phase_id_elt("phase_id");
-    phase_id_elt.SetAttribute("value", boost::lexical_cast<std::string>(phase_id));
-    doc.root_node.AppendChild( phase_id_elt );
-
-    XMLElement empire_id_elt("empire_id");
-    empire_id_elt.SetAttribute("value", boost::lexical_cast<std::string>(empire_id));
-    doc.root_node.AppendChild( empire_id_elt );
-    return Message(Message::TURN_PROGRESS, -1, player_id, Message::CORE, doc);
+    std::ostringstream os;
+    {
+        boost::archive::xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(phase_id)
+           << BOOST_SERIALIZATION_NVP(empire_id);
+    }
+    return Message(Message::TURN_PROGRESS, -1, player_id, Message::CORE, os.str());
 }
 
 Message TurnUpdateMessage(int player_id, const std::string& data)

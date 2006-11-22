@@ -154,24 +154,24 @@ void GalaxySetupPanel::Disable(bool b/* = true*/)
     }
 }
 
-void GalaxySetupPanel::SetFromLobbyData(const MultiplayerLobbyData& lobby_data)
+void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data)
 {
-    m_stars_spin->SetValue(lobby_data.m_size);
-    m_galaxy_shapes_list->Select(lobby_data.m_shape);
-    m_galaxy_ages_list->Select(lobby_data.m_age);
-    m_starlane_freq_list->Select(lobby_data.m_starlane_freq - (ALLOW_NO_STARLANES ? 0 : 1));
-    m_planet_density_list->Select(lobby_data.m_planet_density);
-    m_specials_freq_list->Select(lobby_data.m_specials_freq);
+    m_stars_spin->SetValue(setup_data.m_size);
+    m_galaxy_shapes_list->Select(setup_data.m_shape);
+    m_galaxy_ages_list->Select(setup_data.m_age);
+    m_starlane_freq_list->Select(setup_data.m_starlane_freq - (ALLOW_NO_STARLANES ? 0 : 1));
+    m_planet_density_list->Select(setup_data.m_planet_density);
+    m_specials_freq_list->Select(setup_data.m_specials_freq);
 }
 
-void GalaxySetupPanel::GetLobbyData(MultiplayerLobbyData& lobby_data)
+void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const
 {
-    lobby_data.m_size = Systems();
-    lobby_data.m_shape = GetShape();
-    lobby_data.m_age = GetAge();
-    lobby_data.m_starlane_freq = GetStarlaneFrequency();
-    lobby_data.m_planet_density = GetPlanetDensity();
-    lobby_data.m_specials_freq = GetSpecialsFrequency();
+    setup_data.m_size = Systems();
+    setup_data.m_shape = GetShape();
+    setup_data.m_age = GetAge();
+    setup_data.m_starlane_freq = GetStarlaneFrequency();
+    setup_data.m_planet_density = GetPlanetDensity();
+    setup_data.m_specials_freq = GetSpecialsFrequency();
 }
 
 void GalaxySetupPanel::Init()

@@ -42,7 +42,7 @@ namespace log4cpp {
 //! \brief ClientUI Main Module
 //!This is the main class of the ClientUI module.
 //!it contains objects of many other classes and controls the
-//!display of all information oTURN_PROGRESS_WND_COLORnscreen.
+//!display of all information onscreen.
 class ClientUI
 {
 public:

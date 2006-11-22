@@ -67,8 +67,8 @@ public:
     virtual void Render() {}
     virtual void Disable(bool b = true);
 
-    void SetFromLobbyData(const MultiplayerLobbyData& lobby_data); ///< sets the controls from a MultiplayerLobbyData
-    void GetLobbyData(MultiplayerLobbyData& lobby_data);           ///< fills values in \a lobby_data from the panel's current state
+    void SetFromSetupData(const GalaxySetupData& setup_data); ///< sets the controls from a GalaxySetupData
+    void GetSetupData(GalaxySetupData& setup_data) const;     ///< fills values in \a setup_data from the panel's current state
     //!@}
 
 private:

@@ -199,17 +199,6 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs)
     }
 }
 
-void ServerApp::CreateAIClients(const XMLElement& elem)
-{
-    std::vector<PlayerSetupData> AIs;
-    for (int i = 0; i < elem.NumChildren(); ++i) {
-        if (elem.Child(i).Tag() == "AI_client") {
-            AIs.push_back(PlayerSetupData());
-        }
-    }
-    CreateAIClients(AIs);
-}
-
 void ServerApp::HandleMessage(const Message& msg)
 {
     switch (msg.Type()) {
@@ -570,30 +559,33 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
     switch (msg.Type()) {
     case Message::HOST_SP_GAME: {
         if (m_network_core.Players().empty() && m_expected_ai_players.empty()) {
-            std::stringstream stream(msg.GetText());
-            XMLDoc doc;
-            doc.ReadDoc(stream);
-            std::string host_player_name = doc.root_node.Child("host_player_name").Text();
-            PlayerInfo host_player_info(connection.socket, connection.address, host_player_name, true);
+            std::istringstream is(msg.GetText());
+            SinglePlayerSetupData setup_data;
+            {
+                boost::archive::xml_iarchive ia(is);
+                ia >> BOOST_SERIALIZATION_NVP(setup_data);
+            }
+
+            PlayerInfo host_player_info(connection.socket, connection.address, setup_data.m_host_player_name, true);
             int player_id = NetworkCore::HOST_PLAYER_ID;
 
             // immediately start a new game with the given parameters
             m_single_player_game = true;
-            m_expected_players = boost::lexical_cast<int>(doc.root_node.Child("num_players").Text());
-            m_galaxy_size = boost::lexical_cast<int>(doc.root_node.Child("universe_params").Child("size").Text());
-            m_galaxy_shape = boost::lexical_cast<Shape>(doc.root_node.Child("universe_params").Child("shape").Text());
-            m_galaxy_age = boost::lexical_cast<Age>(doc.root_node.Child("universe_params").Child("age").Text());
-            m_starlane_freq = boost::lexical_cast<StarlaneFrequency>(doc.root_node.Child("universe_params").Child("starlane_freq").Text());
-            m_planet_density = boost::lexical_cast<PlanetDensity>(doc.root_node.Child("universe_params").Child("planet_density").Text());
-            m_specials_freq = boost::lexical_cast<SpecialsFrequency>(doc.root_node.Child("universe_params").Child("specials_freq").Text());
-            CreateAIClients(doc.root_node);
+            m_expected_players = setup_data.m_AIs + 1;
+            m_galaxy_size = setup_data.m_size;
+            m_galaxy_shape = setup_data.m_shape;
+            m_galaxy_age = setup_data.m_age;
+            m_starlane_freq = setup_data.m_starlane_freq;
+            m_planet_density = setup_data.m_planet_density;
+            m_specials_freq = setup_data.m_specials_freq;
+            CreateAIClients(std::vector<PlayerSetupData>(setup_data.m_AIs));
             m_player_save_game_data.clear();
             m_lobby_data.m_players.clear();
             m_lobby_data.m_players.push_back(PlayerSetupData());
             m_lobby_data.m_players.back().m_player_id = 0;
-            m_lobby_data.m_players.back().m_player_name = "Happy_Player";
-            m_lobby_data.m_players.back().m_empire_name = doc.root_node.Child("empire_name").Text();
-            m_lobby_data.m_players.back().m_empire_color = XMLToClr(doc.root_node.Child("empire_color").Child("GG::Clr"));
+            m_lobby_data.m_players.back().m_player_name = setup_data.m_host_player_name;
+            m_lobby_data.m_players.back().m_empire_name = setup_data.m_empire_name;
+            m_lobby_data.m_players.back().m_empire_color = setup_data.m_empire_color;
             m_state = SERVER_GAME_SETUP;
             if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
                 m_network_core.SendMessage(HostSPAckMessage(player_id));

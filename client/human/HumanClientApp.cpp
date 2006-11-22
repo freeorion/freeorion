@@ -649,19 +649,18 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::TURN_PROGRESS: {
-        XMLDoc doc;
-        int phase_id;
+        std::istringstream is(msg.GetText());
+        Message::TurnProgressPhase phase_id;
         int empire_id;
-        std::string phase_str;
-        std::stringstream stream(msg.GetText());
-
-        doc.ReadDoc(stream);          
-
-        phase_id = boost::lexical_cast<int>(doc.root_node.Child("phase_id").Attribute("value"));
-        empire_id = boost::lexical_cast<int>(doc.root_node.Child("empire_id").Attribute("value"));
+        {
+            boost::archive::xml_iarchive ia(is);
+            ia >> BOOST_SERIALIZATION_NVP(phase_id)
+               >> BOOST_SERIALIZATION_NVP(empire_id);
+        }
 
         // given IDs, build message
-        if (phase_id ==Message:: FLEET_MOVEMENT)
+        std::string phase_str;
+        if (phase_id == Message::FLEET_MOVEMENT)
             phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT");
         else if (phase_id == Message::COMBAT)
             phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT");
@@ -674,13 +673,13 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         else if (phase_id == Message::DOWNLOADING)
             phase_str = UserString("TURN_PROGRESS_PHASE_DOWNLOADING");
 
-        m_ui->UpdateTurnProgress( phase_str, empire_id);
+        m_ui->UpdateTurnProgress(phase_str, empire_id);
         break;
     }
 
     case Message::COMBAT_START:
     case Message::COMBAT_ROUND_UPDATE:
-    case Message::COMBAT_END:{
+    case Message::COMBAT_END: {
         m_ui->UpdateCombatTurnProgress(msg.GetText());
         break;
     }

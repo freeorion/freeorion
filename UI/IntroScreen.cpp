@@ -14,6 +14,7 @@
 #include "OptionsWnd.h"
 #include "../util/OptionsDB.h"
 #include "Splash.h"
+#include "../util/Serialize.h"
 #include "ServerConnectWnd.h"
 #include "../util/Version.h"
 
@@ -201,21 +202,6 @@ void IntroScreen::OnSinglePlayer()
     GalaxySetupWnd galaxy_wnd;    
     galaxy_wnd.Run();
     if (galaxy_wnd.EndedWithOk()) {
-        // TODO: Select number and difficulty of AIs
-        string player_name = "Happy_Player";
-        int num_AIs = 4;
-
-        XMLDoc game_parameters;
-        game_parameters.root_node.AppendChild(XMLElement("host_player_name", player_name));
-        game_parameters.root_node.AppendChild(XMLElement("num_players", lexical_cast<string>(num_AIs + 1)));
-        game_parameters.root_node.AppendChild(galaxy_wnd.Panel().XMLEncode());
-        game_parameters.root_node.AppendChild(XMLElement("empire_name", galaxy_wnd.EmpireName()));
-        game_parameters.root_node.AppendChild(XMLElement("empire_color", ClrToXML(galaxy_wnd.EmpireColor())));
-
-        for (int i = 0; i < num_AIs; ++i) {
-            game_parameters.root_node.AppendChild(XMLElement("AI_client"));
-        }
-
         int start_time = GG::GUI::GetGUI()->Ticks();
         while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) {
             if (SERVER_CONNECT_TIMEOUT < GG::GUI::GetGUI()->Ticks() - start_time) {
@@ -229,7 +215,20 @@ void IntroScreen::OnSinglePlayer()
 
         if (!failed) {
             ClientUI::GetClientUI()->ScreenNewGame();
-            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostSPGameMessage(HumanClientApp::GetApp()->PlayerID(), game_parameters));
+
+            // TODO: Select number and difficulty of AIs
+            SinglePlayerSetupData setup_data;
+            galaxy_wnd.Panel().GetSetupData(setup_data);
+            setup_data.m_host_player_name = "Happy_Player";
+            setup_data.m_empire_name = galaxy_wnd.EmpireName();
+            setup_data.m_empire_color = galaxy_wnd.EmpireColor();
+            setup_data.m_AIs = 4;
+            std::ostringstream os;
+            {
+                boost::archive::xml_oarchive oa(os);
+                oa << BOOST_SERIALIZATION_NVP(setup_data);
+            }
+            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostSPGameMessage(HumanClientApp::GetApp()->PlayerID(), os.str()));
         }
     } else {
         failed = true;

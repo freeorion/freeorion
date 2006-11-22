@@ -127,6 +127,27 @@ const std::string& Language()
 
 
 /////////////////////////////////////////////////////
+// GalaxySetupData
+/////////////////////////////////////////////////////
+GalaxySetupData::GalaxySetupData():
+    m_size(100),
+    m_shape(SPIRAL_2),
+    m_age(AGE_MATURE),
+    m_starlane_freq(LANES_SEVERAL),
+    m_planet_density(PD_AVERAGE),
+    m_specials_freq(SPECIALS_UNCOMMON)
+{}
+
+
+/////////////////////////////////////////////////////
+// SinglePlayerSetupData
+/////////////////////////////////////////////////////
+SinglePlayerSetupData::SinglePlayerSetupData():
+    m_AIs(0)
+{}
+
+
+/////////////////////////////////////////////////////
 // SaveGameEmpireData
 /////////////////////////////////////////////////////
 SaveGameEmpireData::SaveGameEmpireData():
@@ -153,24 +174,12 @@ const std::string MultiplayerLobbyData::MP_SAVE_FILE_EXTENSION = ".mps";
 
 MultiplayerLobbyData::MultiplayerLobbyData() :
     m_new_game(true),
-    m_size(100),
-    m_shape(SPIRAL_2),
-    m_age(AGE_MATURE),
-    m_starlane_freq(LANES_SEVERAL),
-    m_planet_density(PD_AVERAGE),
-    m_specials_freq(SPECIALS_UNCOMMON),
     m_save_file_index(-1),
     m_empire_colors(EmpireColors())
 {}
 
 MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
     m_new_game(true),
-    m_size(100),
-    m_shape(SPIRAL_2),
-    m_age(AGE_MATURE),
-    m_starlane_freq(LANES_SEVERAL),
-    m_planet_density(PD_AVERAGE),
-    m_specials_freq(SPECIALS_UNCOMMON),
     m_save_file_index(-1),
     m_empire_colors(EmpireColors())
 {

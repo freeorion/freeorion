@@ -144,16 +144,13 @@ std::ostream& operator<<(std::ostream& os, const Message& msg);
 
 
 /** creates a HOST_SP_GAME message*/
-Message HostSPGameMessage(int player_id, const XMLDoc& doc);
+Message HostSPGameMessage(int player_id, const std::string& data);
 
 /** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
 Message HostMPGameMessage(int player_id, const std::string& host_player_name);
 
 /** creates a JOIN_GAME message.  The sender's player name is sent in the message.*/
 Message JoinGameMessage(const std::string& player_name);
-
-/** creates a JOIN_GAME message.  Sends an xml document of the player's details.*/
-Message JoinGameSetup(const XMLDoc& doc);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
 Message GameStartMessage(int player_id, const std::string& data);

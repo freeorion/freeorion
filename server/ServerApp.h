@@ -21,8 +21,6 @@ class Message;
 class OrderSet;
 struct PlayerSetupData;
 struct SaveGameUIData;
-class XMLDoc;
-class XMLElement;
 
 /** contains the info needed to manage one player, including connection info */
 struct PlayerInfo
@@ -78,10 +76,6 @@ public:
     /** creates an AI client child process for each element of \a AIs*/
     void CreateAIClients(const std::vector<PlayerSetupData>& AIs);
 
-    /** creates a single AI client child process for each AI_client subelement of \a elem.  This function is provided as a convenience 
-        interface to void CreateAIClients(const LobbyModeData& AIs).*/
-    void CreateAIClients(const XMLElement& elem);
-
     /** handles an incoming message from the server with the appropriate action or response */
     void HandleMessage(const Message& msg);
 
@@ -92,20 +86,20 @@ public:
     void PlayerDisconnected(int id);
 
     /**  Adds an existing empire to turn processing. The position the empire is in the vector is it's position in the turn processing.*/
-    void AddEmpireTurn( int empire_id );
+    void AddEmpireTurn(int empire_id);
 
     /** Removes an empire from turn processing. This is most likely called when an empire is eliminated from the game */
-    void RemoveEmpireTurn( int empire_id );
+    void RemoveEmpireTurn(int empire_id);
 
     /** Adds turn orders for the given empire for the current turn. pOrderSet will be freed when all processing is done for the turn */
-    void SetEmpireTurnOrders( int empire_id , OrderSet *pOrderSet );
+    void SetEmpireTurnOrders(int empire_id, OrderSet* pOrderSet);
 
     /** Determines if all empired have submitted their orders for this turn It will loop the turn squence vector and check for a set pOrderSet. A pOrderSet 
      * of NULL indicates that the empire has not yet submitted their orders for the given turn */
-    bool AllOrdersReceived( );
+    bool AllOrdersReceived();
 
     /** Processes all empires in the manager in the order that they are added. Will delete all pOrderSets assigned.*/
-    void ProcessTurns( );
+    void ProcessTurns();
     //@}
 
     static ServerApp*             GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
