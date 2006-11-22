@@ -617,7 +617,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
                 m_lobby_data.m_players.clear();
                 m_lobby_data.m_players.push_back(PlayerSetupData());
                 m_lobby_data.m_players.back().m_player_id = 0;
-                m_lobby_data.m_players.back().m_player_name = "Happy Player";
+                m_lobby_data.m_players.back().m_player_name = "Happy_Player";
                 m_lobby_data.m_players.back().m_empire_name = doc.root_node.Child("empire_name").Text();
                 m_lobby_data.m_players.back().m_empire_color = XMLToClr(doc.root_node.Child("empire_color").Child("GG::Clr"));
                 m_state = SERVER_GAME_SETUP;
@@ -940,10 +940,14 @@ void ServerApp::LoadGameInit()
         player_data_by_empire[m_player_save_game_data[i].m_empire->EmpireID()] = m_player_save_game_data[i];
     }
 
+    if (m_single_player_game) {
+        while (m_lobby_data.m_players.size() < m_network_core.Players().size()) {
+            m_lobby_data.m_players.push_back(PlayerSetupData());
+        }
+    }
+
     std::map<int, int> player_to_empire_ids;
     std::set<int> already_chosen_empire_ids;
-    assert(m_network_core.Players().size() == m_lobby_data.m_players.size());
-    // TODO: Verify that i and the #if-0'ed logic below are not necessary and that the assert above should never fail.
     unsigned int i = 0;
     for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
         player_to_empire_ids[it->first] = m_lobby_data.m_players[i].m_save_game_empire_id;
