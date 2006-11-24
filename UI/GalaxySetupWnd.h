@@ -55,10 +55,6 @@ public:
 
     boost::shared_ptr<GG::Texture>  PreviewImage() const;  //!< Returns the current preview image texture
 
-    /** encodes the values of the controls in an XMLElement with the tag "universe_params", so they can be sent to the server 
-        as universe creation parameters. */
-    XMLElement XMLEncode() const;
-
     mutable SettingsChangedSignalType SettingsChangedSignal; ///< the settings changed signal object for this GalaxySetupPanel
     mutable ImageChangedSignalType    ImageChangedSignal;    ///< the image changed signal object for this GalaxySetupPanel
     //!@}

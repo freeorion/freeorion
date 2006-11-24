@@ -1,12 +1,19 @@
 #include "Message.h"
 
 #include "../util/MultiplayerCommon.h"
+#include "../universe/Universe.h"
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
+#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/serialization/deque.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/set.hpp>
+#include <boost/serialization/vector.hpp>
 
 #include <zlib.h>
 
@@ -269,12 +276,19 @@ void Message::DecompressMessage(std::string& uncompressed_msg) const
         uncompressed_msg = *m_message_text;
 }
 
+
 ////////////////////////////////////////////////
-// Message-Creation Free Functions
+// Message named ctors
 ////////////////////////////////////////////////
-Message HostSPGameMessage(int player_id, const std::string& data)
+
+Message HostSPGameMessage(int player_id, const SinglePlayerSetupData& setup_data)
 {
-    return Message(Message::HOST_SP_GAME, player_id, -1, Message::CORE, data);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(setup_data);
+    }
+    return Message(Message::HOST_SP_GAME, player_id, -1, Message::CORE, os.str());
 }
 
 Message HostMPGameMessage(int player_id, const std::string& host_player_name)
@@ -287,9 +301,19 @@ Message JoinGameMessage(const std::string& player_name)
     return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_name);
 }
 
-Message GameStartMessage(int player_id, const std::string& data)
+Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe)
 {
-    return Message(Message::GAME_START, -1, player_id, Message::CORE, data);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(single_player_game)
+           << BOOST_SERIALIZATION_NVP(empire_id)
+           << BOOST_SERIALIZATION_NVP(current_turn);
+        Universe::s_encoding_empire = empire_id;
+        Serialize(oa, empires);
+        Serialize(oa, universe);
+    }
+    return Message(Message::GAME_START, -1, player_id, Message::CORE, os.str());
 }
 
 Message HostSPAckMessage(int player_id)
@@ -322,30 +346,63 @@ Message VictoryMessage(int receiver)
     return Message(Message::END_GAME, -1, receiver, Message::CORE, "VICTORY");
 }
 
-Message TurnOrdersMessage(int sender, const std::string& data)
+Message TurnOrdersMessage(int sender, const OrderSet& orders)
 {
-    return Message(Message::TURN_ORDERS, sender, -1, Message::CORE, data);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        Serialize(oa, orders);
+    }
+    return Message(Message::TURN_ORDERS, sender, -1, Message::CORE, os.str());
 }
 
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id)
 {
     std::ostringstream os;
     {
-        boost::archive::xml_oarchive oa(os);
+        FREEORION_OARCHIVE_TYPE oa(os);
         oa << BOOST_SERIALIZATION_NVP(phase_id)
            << BOOST_SERIALIZATION_NVP(empire_id);
     }
     return Message(Message::TURN_PROGRESS, -1, player_id, Message::CORE, os.str());
 }
 
-Message TurnUpdateMessage(int player_id, const std::string& data)
+Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe)
 {
-    return Message(Message::TURN_UPDATE, -1, player_id, Message::CORE, data);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        Universe::s_encoding_empire = empire_id;
+        oa << BOOST_SERIALIZATION_NVP(current_turn);
+        Serialize(oa, empires);
+        Serialize(oa, universe);
+    }
+    return Message(Message::TURN_UPDATE, -1, player_id, Message::CORE, os.str());
 }
 
-Message ClientSaveDataMessage(int sender, const std::string& data)
+Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data)
 {
-    return Message(Message::CLIENT_SAVE_DATA, sender, -1, Message::CORE, data);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        Serialize(oa, orders);
+        bool ui_data_available = true;
+        oa << BOOST_SERIALIZATION_NVP(ui_data_available)
+           << BOOST_SERIALIZATION_NVP(ui_data);
+    }
+    return Message(Message::CLIENT_SAVE_DATA, sender, -1, Message::CORE, os.str());
+}
+
+Message ClientSaveDataMessage(int sender, const OrderSet& orders)
+{
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        Serialize(oa, orders);
+        bool ui_data_available = false;
+        oa << BOOST_SERIALIZATION_NVP(ui_data_available);
+    }
+    return Message(Message::CLIENT_SAVE_DATA, sender, -1, Message::CORE, os.str());
 }
 
 Message RequestNewObjectIDMessage(int sender)
@@ -373,9 +430,18 @@ Message ServerSaveGameMessage(int receiver, bool done/* = false*/)
     return Message(Message::SAVE_GAME, -1, receiver, done ? Message::CLIENT_SYNCHRONOUS_RESPONSE : Message::CORE, "");
 }
 
-Message ServerLoadGameMessage(int receiver, const std::string& data)
+Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const boost::shared_ptr<SaveGameUIData>& ui_data)
 {
-    return Message(Message::LOAD_GAME, -1, receiver, Message::CORE, data);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        Serialize(oa, orders);
+        bool ui_data_available = ui_data;
+        oa << BOOST_SERIALIZATION_NVP(ui_data_available);
+        if (ui_data_available)
+            oa << boost::serialization::make_nvp("ui_data", *ui_data);
+    }
+    return Message(Message::LOAD_GAME, -1, receiver, Message::CORE, os.str());
 }
 
 Message ChatMessage(int sender, const std::string& msg)
@@ -400,17 +466,27 @@ Message PlayerEliminatedMessage(int receiver, const std::string& empire_name)
 
 
 ////////////////////////////////////////////////
-// Multiplayer Lobby Messages
+// Multiplayer Lobby Message named ctors
 ////////////////////////////////////////////////
 
-Message LobbyUpdateMessage(int sender, const std::string& data)
+Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data)
 {
-    return Message(Message::LOBBY_UPDATE, sender, -1, Message::CORE, data);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(lobby_data);
+    }
+    return Message(Message::LOBBY_UPDATE, sender, -1, Message::CORE, os.str());
 }
 
-Message ServerLobbyUpdateMessage(int receiver, const std::string& data)
+Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data)
 {
-    return Message(Message::LOBBY_UPDATE, -1, receiver, Message::CLIENT_LOBBY_MODULE, data);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(lobby_data);
+    }
+    return Message(Message::LOBBY_UPDATE, -1, receiver, Message::CLIENT_LOBBY_MODULE, os.str());
 }
 
 Message LobbyChatMessage(int sender, int receiver, const std::string& data)
@@ -446,4 +522,72 @@ Message ServerLobbyExitMessage(int sender, int receiver)
 Message StartMPGameMessage(int player_id)
 {
     return Message(Message::START_MP_GAME, player_id, -1, Message::CORE, "");
+}
+
+
+////////////////////////////////////////////////
+// Message data extractors
+////////////////////////////////////////////////
+
+void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data)
+{
+    std::istringstream is(msg.GetText());
+    FREEORION_IARCHIVE_TYPE ia(is);
+    ia >> BOOST_SERIALIZATION_NVP(lobby_data);
+}
+
+void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe)
+{
+    std::istringstream is(msg.GetText());
+    FREEORION_IARCHIVE_TYPE ia(is);
+    ia >> BOOST_SERIALIZATION_NVP(single_player_game)
+       >> BOOST_SERIALIZATION_NVP(empire_id)
+       >> BOOST_SERIALIZATION_NVP(current_turn);
+    Universe::s_encoding_empire = empire_id;
+    Deserialize(ia, empires);
+    Deserialize(ia, universe);
+}
+
+void ExtractMessageData(const Message& msg, OrderSet& orders)
+{
+    std::istringstream is(msg.GetText());
+    FREEORION_IARCHIVE_TYPE ia(is);
+    Deserialize(ia, orders);
+}
+
+void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe)
+{
+    std::istringstream is(msg.GetText());
+    FREEORION_IARCHIVE_TYPE ia(is);
+    Universe::s_encoding_empire = empire_id;
+    ia >> BOOST_SERIALIZATION_NVP(current_turn);
+    Deserialize(ia, empires);
+    Deserialize(ia, universe);
+}
+
+bool ExtractMessageData(const Message& msg, OrderSet& orders, SaveGameUIData& ui_data)
+{
+    std::istringstream is(msg.GetText());
+    FREEORION_IARCHIVE_TYPE ia(is);
+    bool ui_data_available;
+    Deserialize(ia, orders);
+    ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
+    if (ui_data_available)
+        ia >> BOOST_SERIALIZATION_NVP(ui_data);
+    return ui_data_available;
+}
+
+void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id, int& empire_id)
+{
+    std::istringstream is(msg.GetText());
+    FREEORION_IARCHIVE_TYPE ia(is);
+    ia >> BOOST_SERIALIZATION_NVP(phase_id)
+       >> BOOST_SERIALIZATION_NVP(empire_id);
+}
+
+void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data)
+{
+    std::istringstream is(msg.GetText());
+    FREEORION_IARCHIVE_TYPE ia(is);
+    ia >> BOOST_SERIALIZATION_NVP(setup_data);
 }

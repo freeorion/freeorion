@@ -6,18 +6,12 @@
 #include "../universe/Enums.h"
 #endif
 
-#ifndef _XMLObjectFactory_h_
-#include "XMLObjectFactory.h"
-#endif
-
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/is_abstract.hpp>
 #include <boost/serialization/nvp.hpp>
 
 #include <vector>
 
-
-class XMLElement;
 
 /////////////////////////////////////////////////////
 // Order
@@ -34,7 +28,6 @@ class Order
 public:
     /** \name Structors */ //@{
     Order(); ///< default ctor
-    Order(const XMLElement& elem);  ///< XML constructor
     Order(int empire) : m_empire(empire) {} ///< ctor taking the ID of the Empire issuing the order
     virtual ~Order() {}
     //@}
@@ -52,11 +45,7 @@ public:
      */
     void                   Execute() const;   ///< executes the order on the Universe and Empires
     bool                   Undo() const;      ///< if this function returns true, it reverts the game state to what it was before this order was executed, otherwise it returns false and has no effect
-    virtual XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
-
-    /// initializes an XML object factory for constructing orders
-    static void InitOrderFactory(XMLObjectFactory<Order>& fact);
 
 protected:
     /** \name Mutators */ //@{
@@ -91,15 +80,12 @@ class RenameOrder : public Order
 public:
     /** \name Structors */ //@{
     RenameOrder();
-    RenameOrder(const XMLElement& elem);
     RenameOrder(int empire, int object, const std::string& name);
     //@}
    
     /** \name Accessors */ //@{
     int                  ObjectID() const {return m_object;} ///< returns ID of fleet selected in this order
     const std::string&   Name() const     {return m_name;}  ///< returns the new name of the fleet
-   
-    virtual XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
    
 private:
@@ -132,7 +118,6 @@ class NewFleetOrder : public Order
 public:
     /** \name Structors */ //@{
     NewFleetOrder();
-    NewFleetOrder(const XMLElement& elem);
     explicit NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, const std::vector<int>& ship_ids);
     explicit NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, double x, double y, const std::vector<int>& ship_ids);
     //@}
@@ -143,8 +128,6 @@ public:
     std::pair<double, double> Position() const     {return m_position;}   ///< returns the position of the new fleet (may be (INVALID_POSITION, INVALID_POSITION) if in a system)
     int                       NewID() const        {return m_new_id;}     ///< returns the ID for this fleet 
     const std::vector<int>&   ShipIDs() const      {return m_ship_ids;}   ///< returns the IDa for the ships used to start this fleet
-
-    virtual XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
 
 private:
@@ -181,7 +164,6 @@ class FleetMoveOrder : public Order
 public:
     /** \name Structors */ //@{
     FleetMoveOrder();
-    FleetMoveOrder(const XMLElement& elem);
     FleetMoveOrder(int empire, int fleet, int start_system, int dest_system);
     //@}
 
@@ -191,8 +173,6 @@ public:
     int                      DestinationSystemID() const {return m_dest_system;}  ///< returns ID of system set as destination for this order
     const std::vector<int>&  Route() const               {return m_route;}        ///< returns the IDs of the systems in the route specified by this Order
     double                   RouteLength() const         {return m_route_length;} ///< returns the length of the route specified by this Order
-
-    virtual XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
 
 private:
@@ -230,7 +210,6 @@ class FleetTransferOrder : public Order
 public:
     /** \name Structors */ //@{
     FleetTransferOrder();
-    FleetTransferOrder(const XMLElement& elem);
     FleetTransferOrder(int empire, int fleet_from, int fleet_to, const std::vector<int>& ships);
     //@}
 
@@ -238,9 +217,6 @@ public:
     int                     SourceFleet() const      {return m_fleet_from;}  ///< returns ID of the fleet the ships will come from
     int                     DestinationFleet() const {return m_fleet_to;}    ///< returns ID of the fleet that the ships will go into             
     const std::vector<int>& Ships() const            {return m_add_ships;}   ///< returns IDs of the ships selected for addition to the fleet
-
-    virtual XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
-
     //@}
 
 private:
@@ -275,7 +251,6 @@ class FleetColonizeOrder : public Order
 public:
     /** \name Structors */ //@{
     FleetColonizeOrder();
-    FleetColonizeOrder(const XMLElement& elem);
     FleetColonizeOrder(int empire, int ship, int planet);
     //@}
 
@@ -284,8 +259,6 @@ public:
     int   ShipID  () const  {return m_ship  ;} ///< returns ID of the ship which is colonizing the planet
 
     virtual void           ServerExecute() const; //< called if the server allows the colonization effort 
-
-    virtual XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
 
 private:
@@ -332,14 +305,11 @@ class DeleteFleetOrder : public Order
 public:
     /** \name Structors */ //@{
     DeleteFleetOrder();
-    DeleteFleetOrder(const XMLElement& elem);
     DeleteFleetOrder(int empire, int fleet);
     //@}
 
     /** \name Accessors */ //@{
     int   FleetID() const   {return m_fleet;}  ///< returns ID of the fleet to be deleted
-
-    virtual XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
 
 private:
@@ -379,14 +349,11 @@ class ChangeFocusOrder : public Order
 public:
     /** \name Structors */ //@{
     ChangeFocusOrder();
-    ChangeFocusOrder(const XMLElement& elem);
     ChangeFocusOrder(int empire, int planet, FocusType focus, bool primary);
     //@}
 
     /** \name Accessors */ //@{
     int   PlanetID() const   {return m_planet;}  ///< returns ID of the fleet to be deleted
-
-    virtual XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
 
 private:
@@ -421,13 +388,8 @@ class ResearchQueueOrder : public Order
 public:
     /** \name Structors */ //@{
     ResearchQueueOrder();
-    ResearchQueueOrder(const XMLElement& elem);
     ResearchQueueOrder(int empire, const std::string& tech_name);
     ResearchQueueOrder(int empire, const std::string& tech_name, int position);
-    //@}
-
-    /** \name Accessors */ //@{
-    virtual XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
 
 private:
@@ -454,15 +416,10 @@ class ProductionQueueOrder : public Order
 public:
     /** \name Structors */ //@{
     ProductionQueueOrder();
-    ProductionQueueOrder(const XMLElement& elem);
     ProductionQueueOrder(int empire, BuildType build_type, const std::string& item, int number, int location);
     ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy);
     ProductionQueueOrder(int empire, int index, int new_index);
     ProductionQueueOrder(int empire, int index);
-    //@}
-
-    /** \name Accessors */ //@{
-    virtual XMLElement XMLEncode() const; ///< constructs an XMLElement for the order
     //@}
 
 private:

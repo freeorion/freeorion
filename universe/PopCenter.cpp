@@ -5,7 +5,6 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "Planet.h"
-#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -59,26 +58,6 @@ PopCenter::PopCenter(int race, double max_pop_mod, double max_health_mod)
     m_race = race;
 }
    
-PopCenter::PopCenter(const XMLElement& elem)
-{
-    if (elem.Tag() != "PopCenter")
-        throw std::invalid_argument("Attempted to construct a PopCenter from an XMLElement that had a tag other than \"PopCenter\"");
-
-    try {
-        m_pop = Meter(elem.Child("m_pop").Child("Meter"));
-        m_health = Meter(elem.Child("m_health").Child("Meter"));
-        m_growth = lexical_cast<double>(elem.Child("m_growth").Text());
-        m_race = lexical_cast<int>(elem.Child("m_race").Text());
-        m_available_food = lexical_cast<double>(elem.Child("m_available_food").Text());
-    } catch (const boost::bad_lexical_cast& e) {
-        Logger().debugStream() << "Caught boost::bad_lexical_cast in PopCenter::PopCenter(); bad XMLElement was:";
-        std::stringstream osstream;
-        elem.WriteElement(osstream);
-        Logger().debugStream() << "\n" << osstream.str();
-        throw;
-    }
-}
-
 PopCenter::~PopCenter()
 {
 }
@@ -95,21 +74,6 @@ PopCenter::DensityType PopCenter::PopDensity() const
     DensityType retval = OUTPOST;
     // TODO
     return retval;
-}
-
-XMLElement PopCenter::XMLEncode(UniverseObject::Visibility vis) const
-{
-    // partial encode version.  PopCenter is always fully visible
-    using boost::lexical_cast;
-
-    XMLElement element("PopCenter");
-    element.AppendChild(XMLElement("m_pop", m_pop.XMLEncode()));
-    element.AppendChild(XMLElement("m_health", m_health.XMLEncode()));
-    element.AppendChild(XMLElement("m_growth", lexical_cast<std::string>(m_growth)));
-    element.AppendChild(XMLElement("m_race", lexical_cast<std::string>(m_race)));
-    element.AppendChild(XMLElement("m_available_food", lexical_cast<std::string>(m_available_food)));
-
-    return element;
 }
 
 double PopCenter::AdjustPop(double pop)

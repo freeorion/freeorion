@@ -2,29 +2,12 @@
 #ifndef _ClientApp_h_
 #define _ClientApp_h_
 
-#ifndef _ClientEmpire_h_
-#include "../Empire/ClientEmpireManager.h"
-#endif 
-
-#ifndef _ClientNetworkCore_h_
+#include "../Empire/EmpireManager.h"
 #include "../network/ClientNetworkCore.h"
-#endif
-
-#ifndef _Message_h_
 #include "../network/Message.h"
-#endif
-
-#ifndef _OrderSet_h_
-#include "../util/OrderSet.h"
-#endif
-
-#ifndef _Universe_h_
 #include "../universe/Universe.h"
-#endif 
-
-#ifndef _AppInterface_h_
 #include "../util/AppInterface.h"
-#endif
+#include "../util/OrderSet.h"
 
 #include <string>
 
@@ -50,17 +33,13 @@ public:
     int                  PlayerID() const;         ///< returns the player ID of this client
     int                  EmpireID() const;         ///< returns the empire ID of this client
     int                  CurrentTurn() const;      ///< returns the current game turn
-
-    /** returns the orders message containing all orders issued so far in the turn; if \a save_game_data is true, additional 
-        client-side data may also be included */
-    virtual Message      TurnOrdersMessage(bool save_game_data = false) const;
     //@}
 
     /** \name Mutators */ //@{   
     virtual void         StartTurn();   ///< encodes order sets and sends turn orders message
 
     Universe&            GetUniverse();      ///< returns client's local copy of Universe
-    ClientEmpireManager& Empires();          ///< returns the set of known Empires
+    EmpireManager&       Empires();          ///< returns the set of known Empires
     OrderSet&            Orders();           ///< returns Order set for this client's player
     ClientNetworkCore&   NetworkCore();      ///< returns the network core object for this client's player
     MultiplayerLobbyWnd* MultiplayerLobby(); ///< returns the multiplayer lobby window, or 0 if none exists
@@ -80,13 +59,10 @@ public:
     static ClientApp*    GetApp(); ///< returns the singleton ClientApp object
 
 protected:
-    /** handles universe and empire data update */
-    void UpdateTurnData( const XMLDoc &diff );
-
     MultiplayerLobbyWnd* m_multiplayer_lobby_wnd;
 
     Universe                m_universe;
-    ClientEmpireManager     m_empires;
+    EmpireManager           m_empires;
     CombatModule*           m_current_combat;
     OrderSet                m_orders;
     ClientNetworkCore       m_network_core;

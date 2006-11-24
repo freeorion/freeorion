@@ -93,7 +93,6 @@ public:
 
     /** \name Structors */ //@{
     Universe(); ///< default ctor
-    Universe(const XMLElement& elem); ///< ctor that constructs a Universe object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Universe object
     const Universe& operator=(Universe& rhs); ///< assignment operator (move semantics)
     virtual ~Universe(); ///< dtor
     //@}
@@ -158,14 +157,10 @@ public:
         system ID is out of range. */
     std::map<double, System*> ImmediateNeighbors(int system, int empire_id = ALL_EMPIRES) const;
 
-    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a Universe object with visibility restrictions for the given empire
-
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
 
     /** \name Mutators */ //@{
-    void SetUniverse(const XMLElement& elem); ///< wipes out the current object map and sets the map to the XMLElement passed in.
-
     /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.
         \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
         passing it to Insert().*/
@@ -249,31 +244,6 @@ protected:
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type    ConstEdgeWeightPropertyMap;
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type          EdgeWeightPropertyMap;
 
-    // factory class
-    template <class T> class NumberedElementFactory
-    {
-    public:
-        typedef T* (*Generator)(const XMLElement&); ///< this defines the function signature for object generators
-
-        /** \name Structors */ //@{
-        NumberedElementFactory(); ///< ctor
-        //@}
-
-        /** \name Accessors */ //@{
-        /** Generates objects whose tag name contains but is not limited to the generator name  */
-        T* GenerateObject(const XMLElement& elem) const;
-        //@}
-
-        /** \name Mutators */ //@{
-        /** adds (or overrides) a new generator that can generate subclass objects described by \a name */
-        void AddGenerator(const std::string& name, Generator gen);
-        //@}
-
-    private:
-        /** mapping from strings to functions that can create the type of object that corresponds to the string */
-        std::map<std::string, Generator> m_generators;
-    };
-
     void GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
     void PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
@@ -286,8 +256,6 @@ protected:
     void GenerateHomeworlds(int players, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
     void NamePlanets(); ///< Names the planets in each system, based on the system's name
     /// Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets
-    /// NOTE: does nothing if executed client-side. This is a hack to deal with the
-    /// dependency on ServerEmpireManager -- jdb
     void GenerateEmpires(int players, std::vector<int>& homeworlds, const std::vector<PlayerSetupData>& player_setup_data);
 
     void DestroyImpl(int id);
@@ -298,7 +266,6 @@ protected:
     DistanceMatrix m_system_distances;                      ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
     SystemGraph m_system_graph;                             ///< a graph in which the systems are vertices and the starlanes are edges
     EmpireViewSystemGraphMap m_empire_system_graph_views;   ///< a map of empire IDs to the views of the system graph by those empires
-    NumberedElementFactory<UniverseObject> m_factory;       ///< generates new object IDs for all new objects
     int m_last_allocated_id;
     std::set<int> m_marked_destroyed;
 
@@ -397,34 +364,6 @@ template <typename EdgeDescriptor>
 bool Universe::EdgeVisibilityFilter::operator()(const EdgeDescriptor& edge) const
 {
     return m_empire && m_graph ? CanSeeAtLeastOneSystem(m_empire, boost::source(edge, *m_graph), boost::target(edge, *m_graph)) : false;
-}
-
-template <class T>
-Universe::NumberedElementFactory<T>::NumberedElementFactory()
-{}
-
-template <class T>
-T* Universe::NumberedElementFactory<T>::GenerateObject(const XMLElement& elem) const ///< returns a heap-allocated subclass object of the appropriate type
-{
-    T* retval = 0;
-
-    for (typename std::map<std::string, Generator>::const_iterator it = m_generators.begin(); it != m_generators.end(); ++it) {
-        // is the object type name a prefix of the tag?
-        std::string tag_name = elem.Tag();
-        std::string tag_alpha = tag_name.substr(0, tag_name.find_first_of("0123456789"));
-
-        if (tag_alpha == it->first) {
-            retval = it->second(elem);
-            break;
-        }
-    }
-    return retval;
-}
-
-template <class T>
-void Universe::NumberedElementFactory<T>::AddGenerator(const std::string& name, Generator gen)
-{
-    m_generators[name] = gen;
 }
 
 #endif // _Universe_h_

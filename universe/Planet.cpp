@@ -10,7 +10,6 @@
 #include "../server/ServerApp.h"
 #include "Ship.h"
 #include "System.h"
-#include "../util/XMLDoc.h"
 #include "../Empire/Empire.h"
 
 #include <boost/lexical_cast.hpp>
@@ -78,40 +77,6 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
 }
 
-Planet::Planet(const XMLElement& elem) :
-    UniverseObject(elem.Child("UniverseObject")),
-    PopCenter(elem.Child("PopCenter")),
-    ResourceCenter(elem.Child("ResourceCenter"), PopCenter::PopulationMeter()),
-    m_is_about_to_be_colonized(0),
-    m_def_bases(0)
-{
-    if (elem.Tag().find( "Planet" ) == std::string::npos )
-        throw std::invalid_argument("Attempted to construct a Planet from an XMLElement that had a tag other than \"Planet\"");
-
-    try {
-        m_type = lexical_cast<PlanetType>(elem.Child("m_type").Text());
-        m_size = lexical_cast<PlanetSize>(elem.Child("m_size").Text());
-        m_just_conquered = lexical_cast<bool>(elem.Child("m_just_conquered").Text());
-
-        Visibility vis = Visibility(lexical_cast<int>(elem.Child("UniverseObject").Child("vis").Text()));
-        if (vis == FULL_VISIBILITY) {
-            m_def_bases = lexical_cast<int>(elem.Child("m_def_bases").Text());
-            m_is_about_to_be_colonized = lexical_cast<int>(elem.Child("m_is_about_to_be_colonized").Text());
-            m_buildings = ContainerFromString<std::set<int> >(elem.Child("m_buildings").Text());
-            m_available_trade  = lexical_cast<double>(elem.Child("m_available_trade").Text());
-        }
-    } catch (const boost::bad_lexical_cast& e) {
-        Logger().debugStream() << "Caught boost::bad_lexical_cast in Planet::Planet(); bad XMLElement was:";
-        std::stringstream osstream;
-        elem.WriteElement(osstream);
-        Logger().debugStream() << "\n" << osstream.str();
-        throw;
-    }
-
-    GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
-    GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
-}
-
 PlanetEnvironment Planet::Environment() const
 {
     return Environment(m_type);
@@ -173,32 +138,6 @@ UniverseObject::Visibility Planet::GetVisibility(int empire_id) const
 {
     // use the containing system's visibility
     return GetSystem()->GetVisibility(empire_id);
-}
-
-XMLElement Planet::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
-{
-    // Partial encoding of Planet for limited visibility
-    using boost::lexical_cast;
-    using std::string;
-
-    Visibility vis = FULL_VISIBILITY;
-    if (empire_id != ALL_EMPIRES)
-        vis = GetVisibility(empire_id);
-
-    XMLElement retval("Planet" + boost::lexical_cast<std::string>(ID()));
-    retval.AppendChild(UniverseObject::XMLEncode(empire_id));
-    retval.AppendChild(PopCenter::XMLEncode(vis));
-    retval.AppendChild(ResourceCenter::XMLEncode(vis));
-    retval.AppendChild(XMLElement("m_type", lexical_cast<std::string>(m_type)));
-    retval.AppendChild(XMLElement("m_size", lexical_cast<std::string>(m_size)));
-    retval.AppendChild(XMLElement("m_just_conquered", lexical_cast<std::string>(m_just_conquered)));
-    if (vis == FULL_VISIBILITY) {
-        retval.AppendChild(XMLElement("m_def_bases", lexical_cast<std::string>(m_def_bases)));
-        retval.AppendChild(XMLElement("m_is_about_to_be_colonized", lexical_cast<std::string>(m_is_about_to_be_colonized)));
-        retval.AppendChild(XMLElement("m_buildings", StringFromContainer<std::set<int> >(m_buildings)));
-        retval.AppendChild(XMLElement("m_available_trade", lexical_cast<std::string>(m_available_trade)));
-    }
-    return retval;
 }
 
 UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const

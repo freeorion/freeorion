@@ -8,7 +8,6 @@
 
 #include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
-#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -48,31 +47,6 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
       throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
 }
    
-System::System(const XMLElement& elem) : 
-   UniverseObject(elem.Child("UniverseObject")),
-   m_orbits(0)
-{
-    if (elem.Tag().find( "System" ) == std::string::npos )
-        throw std::invalid_argument("Attempted to construct a System from an XMLElement that had a tag other than \"System\"");
-
-    try {
-        m_star = lexical_cast<StarType>(elem.Child("m_star").Text());
-
-        Visibility vis = Visibility(lexical_cast<int>(elem.Child("UniverseObject").Child("vis").Text()));
-        if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
-            m_orbits = lexical_cast<int>(elem.Child("m_orbits").Text());
-            m_objects = MultimapFromString<int, int>(elem.Child("m_objects").Text());
-            m_starlanes_wormholes = MapFromString<int, bool>(elem.Child("m_starlanes_wormholes").Text());
-        }      
-    } catch (const boost::bad_lexical_cast& e) {
-        Logger().debugStream() << "Caught boost::bad_lexical_cast in System::System(); bad XMLElement was:";
-        std::stringstream osstream;
-        elem.WriteElement(osstream);
-        Logger().debugStream() << "\n" << osstream.str();
-        throw;
-    }
-}
-
 System::~System()
 {
 }
@@ -206,28 +180,6 @@ UniverseObject::Visibility System::GetVisibility(int empire_id) const
         return PARTIAL_VISIBILITY;
     else
         return NO_VISIBILITY;
-}
-
-XMLElement System::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
-{
-   using boost::lexical_cast;
-   using std::string;
-
-   Visibility vis = GetVisibility(empire_id);
-
-   XMLElement retval("System" + boost::lexical_cast<std::string>(ID()));
-   retval.AppendChild(UniverseObject::XMLEncode(empire_id)); // use partial encode so owners are not visible
-   retval.AppendChild(XMLElement("m_star", lexical_cast<std::string>(m_star)));
-   if (vis == PARTIAL_VISIBILITY) {
-      retval.AppendChild(XMLElement("m_orbits", lexical_cast<std::string>(m_orbits)));
-      retval.AppendChild(XMLElement("m_objects", StringFromMultimap<int, int>(PartiallyVisibleObjects(empire_id))));
-      retval.AppendChild(XMLElement("m_starlanes_wormholes", StringFromMap<int, bool>(VisibleStarlanes(empire_id))));
-   } else if (vis == FULL_VISIBILITY) {
-      retval.AppendChild(XMLElement("m_orbits", lexical_cast<std::string>(m_orbits)));
-      retval.AppendChild(XMLElement("m_objects", StringFromMultimap<int, int>(m_objects)));
-      retval.AppendChild(XMLElement("m_starlanes_wormholes", StringFromMap<int, bool>(m_starlanes_wormholes)));
-   }
-   return retval;
 }
 
 UniverseObject* System::Accept(const UniverseObjectVisitor& visitor) const

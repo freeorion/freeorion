@@ -23,19 +23,6 @@ Meter::Meter(double current, double max) :
     m_previous_max(METER_MIN)
 {}
 
-Meter::Meter(const XMLElement& elem)
-{
-    if (elem.Tag().find("Meter") == std::string::npos )
-        throw std::invalid_argument("Attempted to construct a Meter from an XMLElement that had a tag other than \"Meter\"");
-
-    m_current = boost::lexical_cast<double>(elem.Child("m_current").Text());
-    m_max = boost::lexical_cast<double>(elem.Child("m_max").Text());
-    m_initial_current = boost::lexical_cast<double>(elem.Child("m_initial_current").Text());
-    m_initial_max = boost::lexical_cast<double>(elem.Child("m_initial_max").Text());
-    m_previous_current = boost::lexical_cast<double>(elem.Child("m_previous_current").Text());
-    m_previous_max = boost::lexical_cast<double>(elem.Child("m_previous_max").Text());
-}
-
 double Meter::Current() const
 {
     return m_current;
@@ -74,18 +61,6 @@ double Meter::DeltaCurrent() const
 double Meter::DeltaMax() const
 {
     return m_initial_max - m_previous_max;
-}
-
-XMLElement Meter::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
-{
-    XMLElement retval("Meter");
-    retval.AppendChild(XMLElement("m_current", boost::lexical_cast<std::string>(m_current)));
-    retval.AppendChild(XMLElement("m_max", boost::lexical_cast<std::string>(m_max)));
-    retval.AppendChild(XMLElement("m_initial_current", boost::lexical_cast<std::string>(m_initial_current)));
-    retval.AppendChild(XMLElement("m_initial_max", boost::lexical_cast<std::string>(m_initial_max)));
-    retval.AppendChild(XMLElement("m_previous_current", boost::lexical_cast<std::string>(m_previous_current)));
-    retval.AppendChild(XMLElement("m_previous_max", boost::lexical_cast<std::string>(m_previous_max)));
-    return retval;
 }
 
 void Meter::ResetMax()

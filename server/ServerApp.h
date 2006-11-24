@@ -4,7 +4,7 @@
 
 #include "../util/AppInterface.h"
 #include "../util/Process.h"
-#include "../Empire/ServerEmpireManager.h"
+#include "../Empire/EmpireManager.h"
 #include "../network/ServerNetworkCore.h"
 #include "../universe/Universe.h"
 #include "../util/MultiplayerCommon.h"
@@ -104,7 +104,7 @@ public:
 
     static ServerApp*             GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
     static Universe&              GetUniverse();    ///< returns server's copy of Universe
-    static ServerEmpireManager&   Empires();        ///< returns the server's copy of the Empires
+    static EmpireManager&         Empires();        ///< returns the server's copy of the Empires
     static CombatModule*          CurrentCombat();  ///< returns the server's currently executing Combat; may be 0
     static ServerNetworkCore&     NetworkCore();    ///< returns the network core object for the server
 
@@ -125,13 +125,11 @@ private:
     void NewGameInit();     ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
     void LoadGameInit();    ///< restores saved game universe, sends out game state and saved pending orders to clients, and signals clients to finish current turn
 
-    std::string LobbyUpdate();                      ///< returns a string containing the serialized state of the MP lobby
-
     Empire* GetPlayerEmpire(int player_id) const;   ///< returns the object for the empire that that the player with ID \a player_id is playing
     int     GetEmpirePlayerID(int empire_id) const; ///< returns the player ID for the player playing the empire with ID \a empire_id
    
     Universe                m_universe;
-    ServerEmpireManager     m_empires;
+    EmpireManager           m_empires;
     CombatModule*           m_current_combat;
     ServerNetworkCore       m_network_core;
 

@@ -23,7 +23,6 @@ public:
     /** \name Structors */ //@{
     Fleet(); ///< default ctor
     Fleet(const std::string& name, double x, double y, int owner);
-    Fleet(const XMLElement& elem); ///< ctor that constructs a Fleet object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Fleet object
     //@}
 
     /** \name Accessors */ //@{
@@ -32,7 +31,6 @@ public:
 
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const;
     virtual const std::string& PublicName(int empire_id) const;
-    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const;
 
     /** Returns the list of systems that this fleet will move through en route to its destination (may be empty). 
         If this fleet is currently at a system, that system will be the first one in the list. */
@@ -100,7 +98,6 @@ private:
     int                 m_prev_system;  // the next system in the route, if any
     int                 m_next_system;  // the previous system in the route, if any 
 
-    // these are filled temporarily and only as needed, and they can be deduced from the other info above; don't put them in the XML encoding
     mutable std::list<System*>  m_travel_route;
     mutable double              m_travel_distance;
 

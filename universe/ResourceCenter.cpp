@@ -9,7 +9,6 @@
 #include "Planet.h"
 #include "../universe/ShipDesign.h"
 #include "System.h"
-#include "../util/XMLDoc.h"
 #include "../util/OptionsDB.h"
 
 #include <boost/lexical_cast.hpp>
@@ -92,35 +91,6 @@ ResourceCenter::ResourceCenter(const Meter& pop) :
     Reset();
 }
 
-ResourceCenter::ResourceCenter(const XMLElement& elem, const Meter& pop) : 
-    m_primary(FOCUS_UNKNOWN),
-    m_secondary(FOCUS_UNKNOWN),
-    m_pop(&pop)
-{
-    if (elem.Tag() != "ResourceCenter")
-        throw std::invalid_argument("Attempted to construct a ResourceCenter from an XMLElement that had a tag other than \"ResourceCenter\"");
-
-    try {
-        UniverseObject::Visibility vis = UniverseObject::Visibility(lexical_cast<int>(elem.Child("vis").Text()));
-        if (vis == UniverseObject::FULL_VISIBILITY) {
-            m_primary = lexical_cast<FocusType>(elem.Child("m_primary").Text());
-            m_secondary = lexical_cast<FocusType>(elem.Child("m_secondary").Text());
-            m_farming = Meter(elem.Child("m_farming").Child("Meter"));
-            m_industry = Meter(elem.Child("m_industry").Child("Meter"));
-            m_mining = Meter(elem.Child("m_mining").Child("Meter"));
-            m_research = Meter(elem.Child("m_research").Child("Meter"));
-            m_trade = Meter(elem.Child("m_trade").Child("Meter"));
-            m_construction = Meter(elem.Child("m_construction").Child("Meter"));
-        }
-    } catch (const boost::bad_lexical_cast& e) {
-        Logger().debugStream() << "Caught boost::bad_lexical_cast in ResourceCenter::ResourceCenter(); bad XMLElement was:";
-        std::stringstream osstream;
-        elem.WriteElement(osstream);
-        Logger().debugStream() << "\n" << osstream.str();
-        throw;
-    }
-}
-
 ResourceCenter::~ResourceCenter()
 {
 }
@@ -192,28 +162,6 @@ Meter* ResourceCenter::GetMeter(MeterType type)
     default: return 0;
     }
 }
-
-XMLElement ResourceCenter::XMLEncode(UniverseObject::Visibility vis) const
-{
-    // partial encode version -- no current production info
-    using boost::lexical_cast;
-    using std::string;
-
-    XMLElement retval("ResourceCenter");
-    retval.AppendChild(XMLElement("vis", lexical_cast<string>(vis)));
-    if (vis == UniverseObject::FULL_VISIBILITY) {
-        retval.AppendChild(XMLElement("m_primary", lexical_cast<string>(m_primary)));
-        retval.AppendChild(XMLElement("m_secondary", lexical_cast<string>(m_secondary)));
-        retval.AppendChild(XMLElement("m_farming", m_farming.XMLEncode()));
-        retval.AppendChild(XMLElement("m_industry", m_industry.XMLEncode()));
-        retval.AppendChild(XMLElement("m_mining", m_mining.XMLEncode()));
-        retval.AppendChild(XMLElement("m_research", m_research.XMLEncode()));
-        retval.AppendChild(XMLElement("m_trade", m_trade.XMLEncode()));
-        retval.AppendChild(XMLElement("m_construction", m_construction.XMLEncode()));
-    }
-    return retval;
-}
-
 
 void ResourceCenter::SetPrimaryFocus(FocusType focus)
 {

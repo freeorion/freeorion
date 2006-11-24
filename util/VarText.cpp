@@ -96,24 +96,6 @@ const std::string VarText::SHIP_ID_TAG = "ship";
 const std::string VarText::FLEET_ID_TAG = "fleet";
 const std::string VarText::BUILDING_ID_TAG = "building";
 
-VarText::VarText(const XMLElement& elem)
-{
-    // copy variables
-    for (int i = 0; i < elem.NumChildren(); ++i) {
-        m_variables.AppendChild(elem.Child(i));
-    }
-}
-
-
-XMLElement VarText::XMLEncode() const
-{
-    XMLElement retval;
-    for (int i = 0; i < m_variables.NumChildren(); ++i) {
-        retval.AppendChild(m_variables.Child(i));
-    }
-    return retval;
-}
-
 void VarText::GenerateVarText(const std::string& template_str)
 {
     // generates a string complete with substituted variables and hyperlinks

@@ -2,8 +2,6 @@
 #ifndef _EmpireManager_h_
 #define _EmpireManager_h_
 
-//#include "../universe/Universe.h"
-//#include "../util/XMLDoc.h"
 #include "../universe/Enums.h"
 
 #ifndef _GG_Clr_h_
@@ -15,7 +13,6 @@
 #include <string>
 
 class Empire;
-class XMLElement;
 
 /** Maintains all of the Empire objects that exist in the application. */
 class EmpireManager
@@ -48,9 +45,10 @@ public:
     iterator end();
     //@}
 
-    /// Tag for empire update XMLElements
-    static const std::string EMPIRE_UPDATE_TAG;
-    XMLElement XMLEncode(int empire_id = ALL_EMPIRES);
+    /** Creates and inserts an empire with the specified properties and returns a pointer to it.  \a planet_ID is the ID
+        of the planet which is the empire's homeworld the empire will be created.  This will only set up the data in
+        Empire.  It is the caller's responsibility to make sure that universe updates planet ownership. */
+    Empire* CreateEmpire(int id, const std::string& name, const std::string& player_name, const GG::Clr& color, int planet_ID);
 
     /** Adds the given empire to the manager. */
     void InsertEmpire(Empire* empire);
@@ -60,6 +58,10 @@ public:
 
     /** Removes and deletes all empires from the manager. */
     void RemoveAllEmpires();
+
+    /** Removes all traces of the empire with the given ID.  and deallocates that empire.  Again, this method does not
+       do anything to the universe.  This method returns true if the empire was removed, false if it doesn't exist. */
+    bool EliminateEmpire(int id);
 
 private:
     std::map<int, Empire*> m_empire_map;    

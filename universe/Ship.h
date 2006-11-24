@@ -16,7 +16,6 @@ public:
     /** \name Structors */ //@{
     Ship(); ///< default ctor
     Ship(int empire_id, const std::string& design_name); ///< general ctor taking just the ship's empire and design name; from this the design can be looked up and used to create the ship
-    Ship(const XMLElement& elem); ///< ctor that constructs a Ship object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Ship object
     //@}
 
     /** \name Accessors */ //@{
@@ -26,7 +25,6 @@ public:
 
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const;
     virtual const std::string& PublicName(int empire_id) const;
-    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const;
 
     bool IsArmed() const;
     double Speed() const;

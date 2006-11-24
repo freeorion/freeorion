@@ -7,7 +7,6 @@
 #include "System.h"
 #include "Special.h"
 #include "Universe.h"
-#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -48,37 +47,6 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
     if (m_x < 0.0 || Universe::UniverseWidth() < m_x || m_y < 0.0 || Universe::UniverseWidth() < m_y)
         throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
     m_created_on_turn = CurrentTurn();
-}
-
-UniverseObject::UniverseObject(const XMLElement& elem) :
-    StateChangedSignal(Universe::InhibitUniverseObjectSignals())
-{
-    if (elem.Tag() != "UniverseObject")
-        throw std::invalid_argument("Attempted to construct a UniverseObject from an XMLElement that had tag: \"" +  elem.Tag() + "\"." );
-
-    try {
-        Visibility vis = Visibility(lexical_cast<int>(elem.Child("vis").Text()));
-
-        m_id = lexical_cast<int>(elem.Child("m_id").Text());
-        m_x = lexical_cast<double>(elem.Child("m_x").Text());
-        m_y = lexical_cast<double>(elem.Child("m_y").Text());
-        m_system_id = lexical_cast<int>(elem.Child("m_system_id").Text());
-
-        if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
-            m_created_on_turn = lexical_cast<int>(elem.Child("m_created_on_turn").Text());
-            m_name = elem.Child("m_name").Text();
-            m_owners = ContainerFromString<std::set<int> >(elem.Child("m_owners").Text());
-            for (XMLElement::const_child_iterator it = elem.Child("m_specials").child_begin(); it != elem.Child("m_specials").child_end(); ++it) {
-                m_specials.insert(it->Text());
-            }
-        }
-    } catch (const boost::bad_lexical_cast& e) {
-        Logger().debugStream() << "Caught boost::bad_lexical_cast in UniverseObject::UniverseObject(); bad XMLElement was:";
-        std::stringstream osstream;
-        elem.WriteElement(osstream);
-        Logger().debugStream() << "\n" << osstream.str();
-        throw;
-    }
 }
 
 UniverseObject::~UniverseObject()
@@ -166,32 +134,6 @@ UniverseObject::Visibility UniverseObject::GetVisibility(int empire_id) const
 const std::string& UniverseObject::PublicName(int empire_id) const
 {
     return m_name;
-}
-
-XMLElement UniverseObject::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
-{
-    // limited visibility object -- no owner info
-    using boost::lexical_cast;
-
-    Visibility vis = GetVisibility(empire_id);
-   
-    XMLElement retval("UniverseObject");
-    retval.AppendChild(XMLElement("vis", lexical_cast<std::string>(vis)));
-    retval.AppendChild(XMLElement("m_id", lexical_cast<std::string>(m_id)));
-    retval.AppendChild(XMLElement("m_x", lexical_cast<std::string>(m_x)));
-    retval.AppendChild(XMLElement("m_y", lexical_cast<std::string>(m_y)));
-    retval.AppendChild(XMLElement("m_system_id", lexical_cast<std::string>(m_system_id)));
-    if (vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
-        retval.AppendChild(XMLElement("m_created_on_turn", lexical_cast<std::string>(m_created_on_turn)));
-        retval.AppendChild(XMLElement("m_name", m_name));
-        retval.AppendChild(XMLElement("m_owners", StringFromContainer<std::set<int> >(m_owners)));
-        retval.AppendChild(XMLElement("m_specials"));
-        int i = 0;
-        for (std::set<std::string>::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it) {
-            retval.LastChild().AppendChild(XMLElement("Special" + lexical_cast<std::string>(i++), *it));
-        }
-    }
-    return retval;
 }
 
 UniverseObject* UniverseObject::Accept(const UniverseObjectVisitor& visitor) const

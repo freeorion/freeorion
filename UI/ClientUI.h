@@ -17,9 +17,7 @@
 #include <boost/filesystem/path.hpp>
 
 
-class ClientEmpire;
 class ClientNetworkCore;
-class ClientUniverse;
 class Combat;
 class Fleet;
 class IntroScreen;
@@ -30,7 +28,6 @@ struct SaveGameUIData;
 class System;
 class Tech;
 class TurnProgressWnd;
-class XMLElement;
 namespace GG {
     class Clr;
     class SubTexture;
@@ -133,7 +130,7 @@ public:
 
     static void LogMessage(const std::string& msg); //!<sends a message to the logger
 
-    static void GenerateSitRepText(SitRepEntry *p_sit_rep); ///< generates a SitRep string from it's XML data.
+    static void GenerateSitRepText(SitRepEntry *sit_rep); ///< generates a SitRep string from \a sit_rep.
 
     /** Loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true load default
         missing.png if name isn't found. */

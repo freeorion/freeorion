@@ -24,7 +24,6 @@ public:
     /** \name Structors */ //@{
     Building(); ///< default ctor
     Building(int empire_id, const std::string& building_type, int planet_id); ///< basic ctor
-    Building(const XMLElement& elem); ///< ctor that constructs a Building object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Building object
     //@}
 
     /** \name Accessors */ //@{
@@ -36,8 +35,6 @@ public:
     bool                Operating() const;        ///< returns true iff this building is currently operating
     int                 PlanetID() const;         ///< returns the ID number of the planet this building is on
     Planet*             GetPlanet() const;        ///< returns a pointer to the planet this building is on
-
-    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a Building object with visibility limited relative to the input empire
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
     //@}
@@ -74,8 +71,6 @@ public:
                  const Condition::ConditionBase* location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& graphic);
-
-    BuildingType(const XMLElement& elem); ///< ctor that constructs a BuildingType object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a BuildingType object
     //@}
 
     /** \name Accessors */ //@{

@@ -5,7 +5,6 @@
 #include <GG/Clr.h>
 #include "../util/SitRepEntry.h"
 #include "../universe/Tech.h"
-#include "../util/XMLDoc.h"
 #include "ResourcePool.h"
 
 #include <deque>
@@ -42,7 +41,6 @@ struct ResearchQueue
 
     /** \name Structors */ //@{
     ResearchQueue(); ///< Basic ctor.
-    ResearchQueue(const XMLElement& elem); ///< Constructs a ResearchQueue from an XMLElement.
     //@}
 
     /** \name Accessors */ //@{
@@ -59,8 +57,6 @@ struct ResearchQueue
 
     /** Returns an iterator to the underfunded research project, or end() if none exists. */
     const_iterator UnderfundedProject() const;
-
-    XMLElement XMLEncode() const; ///< Encodes this queue as an XMLElement.
     //@}
 
     /** \name Mutators */ //@{
@@ -100,9 +96,6 @@ struct ProductionQueue
     {
         ProductionItem(); ///< default ctor.
         ProductionItem(BuildType build_type_, std::string name_); ///< basic ctor.
-        ProductionItem(const XMLElement& elem); ///< XML ctor.
-
-        XMLElement XMLEncode() const; ///< Encodes this item as an XMLElement.
 
         BuildType   build_type;
         std::string name;
@@ -119,9 +112,6 @@ struct ProductionQueue
         Element(); ///< default ctor.
         Element(ProductionItem item_, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_); ///< basic ctor.
-        Element(const XMLElement& elem); ///< XML ctor.
-
-        XMLElement XMLEncode() const; ///< Encodes this element as an XMLElement.
 
         ProductionItem item;
         int            ordered;                 ///< how many of item to produce
@@ -146,7 +136,6 @@ struct ProductionQueue
 
     /** \name Structors */ //@{
     ProductionQueue(); ///< Basic ctor.
-    ProductionQueue(const XMLElement& elem); ///< Constructs a ProductionQueue from an XMLElement.
     //@}
 
     /** \name Accessors */ //@{
@@ -163,8 +152,6 @@ struct ProductionQueue
 
     /** Returns an iterator to the underfunded production project, or end() if none exists. */
     const_iterator UnderfundedProject(const Empire* empire) const;
-
-    XMLElement XMLEncode() const; ///< Encodes this queue as an XMLElement.
     //@}
 
     /** \name Mutators */ //@{
@@ -217,10 +204,8 @@ private:
 *   - list of ship designs
 *   - list of sitrep entries
 *
-* Only ServerEmpire should create these objects.  
-* In both the client and server, Empires are managed by a subclass of EmpireManager, 
-* and can be accessed from other modules by using the EmpireManager::Lookup() 
-* method to obtain a pointer.
+* Only should create these objects.  In both the client and server, Empires are managed by a subclass of EmpireManager,
+* and can be accessed from other modules by using the EmpireManager::Lookup() method to obtain a pointer.
 */ 
 class Empire 
 {
@@ -230,17 +215,6 @@ public:
      * access to the constructor and keep it hidden from others
      */
     friend class EmpireManager;
-    /**
-     * EmpireManagers must be friends so that they can have
-     * access to the constructor and keep it hidden from others
-     */
-    friend class ServerEmpireManager;
-    /**
-     * EmpireManagers must be friends so that they can have
-     * access to the constructor and keep it hidden from others
-     */
-    friend class ClientEmpireManager;
-
 
     /** \name Iterator Types */ //@{
     typedef std::set<std::string>::const_iterator             TechItr;
@@ -258,14 +232,6 @@ public:
      * systems, sitrep entries) will be empty after creation
      */
     Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id); 
-
-    /// Creates an empire from an XMLElement
-    /**
-     * The empire's fields and lists will be initialized as specified 
-     * by the given XLMElement.  This XMLElement should have been created
-     * by Empire::XMLEncode()
-     */
-    Empire(const XMLElement& elem);
 
     //@}
     /** \name Destructors */ //@{
@@ -368,10 +334,6 @@ public:
       * Equivalent to calling GetResearchQueue().TotalRPsSpent() for Research)
       */
     double TotalTradeSpending() const {return m_maintenance_total_cost;}
-
-    /** Encodes the dat of this empire as visible to the empire with id \a empire_id (or all data if \a empire_id ==
-        ALL_EMPIRES) */
-    XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const;
     //@}
 
     const ResourcePool& GetMineralResPool() const {return m_mineral_resource_pool;}

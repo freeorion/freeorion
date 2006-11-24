@@ -15,7 +15,6 @@
 #include "../../util/Serialize.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
-#include "../../util/XMLDoc.h"
 #include "../../util/Version.h"
 #include "../../Empire/Empire.h"
 
@@ -129,30 +128,6 @@ HumanClientApp::HumanClientApp() :
 
 HumanClientApp::~HumanClientApp()
 {
-}
-
-Message HumanClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
-{
-    if (save_game_data) {
-        std::ostringstream os;
-        {
-            boost::archive::xml_oarchive oa(os);
-            Serialize(&oa, m_orders);
-            bool ui_data_available = true;
-            oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-            SaveGameUIData ui_data;
-            ClientUI::GetClientUI()->GetSaveGameUIData(ui_data);
-            oa << BOOST_SERIALIZATION_NVP(ui_data);
-        }
-        return ClientSaveDataMessage(m_player_id, os.str());
-    } else {
-        std::ostringstream os;
-        {
-            boost::archive::xml_oarchive oa(os);
-            Serialize(&oa, m_orders);
-        }
-        return ::TurnOrdersMessage(m_player_id, os.str());
-    }
 }
 
 std::map<int, int> HumanClientApp::PendingColonizationOrders() const
@@ -576,14 +551,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
                 "starting player turn...";
             m_game_started = true;
-            std::istringstream is(msg.GetText());
-            boost::archive::xml_iarchive ia(is);
-            ia >> boost::serialization::make_nvp("single_player_game", m_single_player_game);
-            ia >> boost::serialization::make_nvp("empire_id", m_empire_id);
-            ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
-            Universe::s_encoding_empire = m_empire_id;
-            Deserialize(&ia, Empires());
-            Deserialize(&ia, GetUniverse());
+            ExtractMessageData(msg, m_single_player_game, m_empire_id, m_current_turn, Empires(), GetUniverse());
 
             Orders().Reset();
 
@@ -601,32 +569,22 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::SAVE_GAME: {
-        NetworkCore().SendMessage(TurnOrdersMessage(true));
+        SaveGameUIData ui_data;
+        ClientUI::GetClientUI()->GetSaveGameUIData(ui_data);
+        NetworkCore().SendMessage(ClientSaveDataMessage(m_player_id, m_orders, ui_data));
         break;
     }
 
     case Message::LOAD_GAME: {
-        std::istringstream is(msg.GetText());
-        boost::archive::xml_iarchive ia(is);
-        bool ui_data_available;
         SaveGameUIData ui_data;
-        Deserialize(&ia, Orders());
-        Orders().ApplyOrders();
-        ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
-        if (ui_data_available) {
-            ia >> BOOST_SERIALIZATION_NVP(ui_data);
+        if (ExtractMessageData(msg, Orders(), ui_data))
             ClientUI::GetClientUI()->RestoreFromSaveData(ui_data);
-        }
+        Orders().ApplyOrders();
         break;
     }
 
     case Message::TURN_UPDATE: {
-        std::istringstream is(msg.GetText());
-        boost::archive::xml_iarchive ia(is);
-        Universe::s_encoding_empire = m_empire_id;
-        ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
-        Deserialize(&ia, Empires());
-        Deserialize(&ia, GetUniverse());
+        ExtractMessageData(msg, m_empire_id, m_current_turn, Empires(), GetUniverse());
 
         // Now decode sitreps
         // Empire sitreps need UI in order to generate text, since it needs string resources
@@ -649,14 +607,9 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::TURN_PROGRESS: {
-        std::istringstream is(msg.GetText());
         Message::TurnProgressPhase phase_id;
         int empire_id;
-        {
-            boost::archive::xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(phase_id)
-               >> BOOST_SERIALIZATION_NVP(empire_id);
-        }
+        ExtractMessageData(msg, phase_id, empire_id);
 
         // given IDs, build message
         std::string phase_str;

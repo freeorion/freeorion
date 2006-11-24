@@ -121,20 +121,6 @@ ResearchQueue::ResearchQueue() :
     m_total_RPs_spent(0.0)
 {}
 
-ResearchQueue::ResearchQueue(const XMLElement& elem) :
-    m_projects_in_progress(0),
-    m_total_RPs_spent(0.0)
-{
-    if (elem.Tag() != "ResearchQueue")
-        throw std::invalid_argument("Attempted to construct a ResearchQueue from an XMLElement that had a tag other than \"ResearchQueue\"");
-
-    // note that this leaves the queue elements incompletely specified, and does not find values for m_projects_in_progress or m_total_RPs_spent.
-    // the owner of this object must call Update() after this object is constructed
-    for (XMLElement::const_child_iterator it = elem.Child("m_queue").child_begin(); it != elem.Child("m_queue").child_end(); ++it) {
-        push_back(GetTech(it->Tag()));
-    }
-}
-
 bool ResearchQueue::InQueue(const Tech* tech) const
 {
     return find(tech) != end();
@@ -186,16 +172,6 @@ ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
             return it;
     }
     return end();
-}
-
-XMLElement ResearchQueue::XMLEncode() const
-{
-    XMLElement retval("ResearchQueue");
-    retval.AppendChild("m_queue");
-    for (unsigned int i = 0; i < m_queue.size(); ++i) {
-        retval.LastChild().AppendChild(m_queue[i].tech->Name());
-    }
-    return retval;
 }
 
 void ResearchQueue::Update(double RPs, const std::map<std::string, double>& research_status)
@@ -303,23 +279,6 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::stri
     name(name_)
 {}
 
-ProductionQueue::ProductionItem::ProductionItem(const XMLElement& elem)
-{
-    if (elem.Tag() != "ProductionItem")
-        throw std::invalid_argument("Attempted to construct a ProductionQueue::ProductionItem from an XMLElement that had a tag other than \"ProductionItem\"");
-
-    build_type = boost::lexical_cast<BuildType>(elem.Child("build_type").Text());
-    name = elem.Child("name").Text();
-}
-
-XMLElement ProductionQueue::ProductionItem::XMLEncode() const
-{
-    XMLElement retval("ProductionItem");
-    retval.AppendChild(XMLElement("build_type", boost::lexical_cast<std::string>(build_type)));
-    retval.AppendChild(XMLElement("name", name));
-    return retval;
-}
-
 // ProductionQueue::Elemnt
 ProductionQueue::Element::Element() :
     ordered(0),
@@ -350,51 +309,12 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int or
     turns_left_to_completion(-1)
 {}
 
-ProductionQueue::Element::Element(const XMLElement& elem) :
-    spending(0.0),
-    turns_left_to_next_item(-1),
-    turns_left_to_completion(-1)
-{
-    if (elem.Tag() != "Element")
-        throw std::invalid_argument("Attempted to construct a ProductionQueue::Element from an XMLElement that had a tag other than \"Element\"");
-
-    // note that this leaves the queue element incompletely specified; see ProductionQueue::ProductionQueue() for details
-    item = ProductionItem(elem.Child("item").Child("ProductionItem"));
-    ordered = boost::lexical_cast<int>(elem.Child("ordered").Text());
-    remaining = boost::lexical_cast<int>(elem.Child("remaining").Text());
-    location = boost::lexical_cast<int>(elem.Child("location").Text());
-}
-
-XMLElement ProductionQueue::Element::XMLEncode() const
-{
-    XMLElement retval("Element");
-    retval.AppendChild(XMLElement("item", item.XMLEncode()));
-    retval.AppendChild(XMLElement("ordered", boost::lexical_cast<std::string>(ordered)));
-    retval.AppendChild(XMLElement("remaining", boost::lexical_cast<std::string>(remaining)));
-    retval.AppendChild(XMLElement("location", boost::lexical_cast<std::string>(location)));
-    return retval;
-}
-
 
 // ProductionQueue
 ProductionQueue::ProductionQueue() :
     m_projects_in_progress(0),
     m_total_PPs_spent(0.0)
 {}
-
-ProductionQueue::ProductionQueue(const XMLElement& elem) :
-    m_projects_in_progress(0),
-    m_total_PPs_spent(0.0)
-{
-    if (elem.Tag() != "ProductionQueue")
-        throw std::invalid_argument("Attempted to construct a ProductionQueue from an XMLElement that had a tag other than \"ProductionQueue\"");
-
-    // note that this leaves the queue elements incompletely specified, and does not find values for m_projects_in_progress or m_total_PPs_spent.
-    // the owner of this object must call Update() after this object is constructed
-    for (XMLElement::const_child_iterator it = elem.Child("m_queue").child_begin(); it != elem.Child("m_queue").child_end(); ++it) {
-        m_queue.push_back(Element(it->Child(0)));
-    }
-}
 
 int ProductionQueue::ProjectsInProgress() const
 {
@@ -447,16 +367,6 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject(const Empire
             return it;
     }
     return end();
-}
-
-XMLElement ProductionQueue::XMLEncode() const
-{
-    XMLElement retval("ProductionQueue");
-    retval.AppendChild("m_queue");
-    for (unsigned int i = 0; i < m_queue.size(); ++i) {
-        retval.LastChild().AppendChild(XMLElement("Element" + boost::lexical_cast<std::string>(i), m_queue[i].XMLEncode()));
-    }
-    return retval;
 }
 
 void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<double>& production_status)
@@ -637,60 +547,6 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_food_total_distributed(0),
     m_maintenance_total_cost(0)
 {}
-
-Empire::Empire(const XMLElement& elem) :
-    m_research_queue(elem.Child("m_research_queue").Child("ResearchQueue")),
-    m_production_queue(elem.Child("m_production_queue").Child("ProductionQueue")),
-    m_mineral_resource_pool(elem.Child("m_mineral_resource_pool").Child("ResourcePool")),
-    m_food_resource_pool(elem.Child("m_food_resource_pool").Child("ResourcePool")),
-    m_research_resource_pool(elem.Child("m_research_resource_pool").Child("ResourcePool")),
-    m_industry_resource_pool(elem.Child("m_industry_resource_pool").Child("ResourcePool")),
-    m_trade_resource_pool(elem.Child("m_trade_resource_pool").Child("ResourcePool")),
-    m_population_pool(elem.Child("m_population_resource_pool").Child("PopulationPool")),
-    m_food_total_distributed(0),
-    m_maintenance_total_cost(0)
-{
-    if (elem.Tag() != "Empire")
-        throw std::invalid_argument("Attempted to construct a Empire from an XMLElement that had a tag other than \"Empire\"");
-
-    m_id = lexical_cast<int>(elem.Child("m_id").Text());
-    m_name = elem.Child("m_name").Text();
-    m_player_name = elem.Child("m_player_name").Text();
-    m_color = XMLToClr(elem.Child("m_color").Child("GG::Clr"));
-    m_homeworld_id = elem.Child("m_homeworld_id").Text().empty() ? 
-        UniverseObject::INVALID_OBJECT_ID :
-        lexical_cast<int>(elem.Child("m_homeworld_id").Text());
-
-    const XMLElement& sitreps_elem = elem.Child("m_sitrep_entries");
-    for (int i = 0; i < sitreps_elem.NumChildren(); ++i) {
-        AddSitRepEntry(new SitRepEntry(sitreps_elem.Child(i)));
-    }
-
-    const XMLElement& designs_elem = elem.Child("m_ship_designs");
-    for (int i = 0; i < designs_elem.NumChildren(); ++i) {
-        ShipDesign ship_design(designs_elem.Child(i).Child(0));
-        m_ship_designs[ship_design.name] = ship_design;
-    }
-
-    m_explored_systems = ContainerFromString<std::set<int> >(elem.Child("m_explored_systems").Text());
-
-    const XMLElement& techs_elem = elem.Child("m_techs");
-    for (int i = 0; i < techs_elem.NumChildren(); ++i) {
-        m_techs.insert(techs_elem.Child(i).Text());
-    }
-
-    const XMLElement& research_status_elem = elem.Child("m_research_status");
-    for (int i = 0; i < research_status_elem.NumChildren(); ++i) {
-        m_research_status[research_status_elem.Child(i).Tag()] = lexical_cast<double>(research_status_elem.Child(i).Text());
-    }
-
-    m_production_status = ContainerFromString<std::vector<double> >(elem.Child("m_production_status").Text());
-
-    const XMLElement& building_types_elem = elem.Child("m_building_types");
-    for (int i = 0; i < building_types_elem.NumChildren(); ++i) {
-        m_building_types.insert(building_types_elem.Child(i).Text());
-    }
-}
 
 Empire::~Empire()
 {
@@ -1105,80 +961,6 @@ void Empire::ClearSitRep()
     for (SitRepItr it = m_sitrep_entries.begin(); it != m_sitrep_entries.end(); ++it)
         delete *it;
     m_sitrep_entries.clear();
-}
-
-XMLElement Empire::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
-{
-    using boost::lexical_cast;
-
-    XMLElement retval("Empire");
-    retval.AppendChild(XMLElement("m_id", lexical_cast<std::string>(m_id)));
-    retval.AppendChild(XMLElement("m_name", m_name));
-    retval.AppendChild(XMLElement("m_player_name", m_player_name));
-    retval.AppendChild(XMLElement("m_color", ClrToXML(m_color)));
-
-    if (empire_id == m_id || empire_id == ALL_EMPIRES) {
-        retval.AppendChild(XMLElement("m_homeworld_id", lexical_cast<std::string>(m_homeworld_id)));
-
-        retval.AppendChild(XMLElement("m_sitrep_entries"));
-        for (SitRepItr it = SitRepBegin(); it != SitRepEnd(); ++it) {
-            retval.LastChild().AppendChild((*it)->XMLEncode());
-        }
-
-        retval.AppendChild(XMLElement("m_ship_designs"));
-        int i = 0;
-        for (ShipDesignItr it = ShipDesignBegin(); it != ShipDesignEnd(); ++it) {
-            retval.LastChild().AppendChild(XMLElement("design" + lexical_cast<std::string>(i++), it->second.XMLEncode()));
-        }
-
-        retval.AppendChild(XMLElement("m_explored_systems", StringFromContainer<std::set<int> >(m_explored_systems)));
-        retval.AppendChild(XMLElement("m_techs"));
-        i = 0;
-        for (TechItr it = TechBegin(); it != TechEnd(); ++it) {
-            retval.LastChild().AppendChild(XMLElement("tech" + lexical_cast<std::string>(i++), *it));
-        }
-
-        retval.AppendChild(XMLElement("m_research_queue", m_research_queue.XMLEncode()));
-        retval.AppendChild(XMLElement("m_research_status"));
-        for (std::map<std::string, double>::const_iterator it = m_research_status.begin(); it != m_research_status.end(); ++it) {
-            retval.LastChild().AppendChild(XMLElement(it->first, lexical_cast<std::string>(it->second)));
-        }
-
-        retval.AppendChild(XMLElement("m_production_queue", m_production_queue.XMLEncode()));
-        retval.AppendChild(XMLElement("m_production_status", StringFromContainer(m_production_status)));
-
-        retval.AppendChild(XMLElement("m_building_types"));
-        i = 0;
-        for (BuildingTypeItr it = BuildingTypeBegin(); it != BuildingTypeEnd(); ++it) {
-            retval.LastChild().AppendChild(XMLElement("building_type" + lexical_cast<std::string>(i++), *it));
-        }
-
-        retval.AppendChild(XMLElement("m_mineral_resource_pool", m_mineral_resource_pool.XMLEncode()));
-        retval.AppendChild(XMLElement("m_food_resource_pool", m_food_resource_pool.XMLEncode()));
-        retval.AppendChild(XMLElement("m_research_resource_pool", m_research_resource_pool.XMLEncode()));
-        retval.AppendChild(XMLElement("m_industry_resource_pool", m_industry_resource_pool.XMLEncode()));
-        retval.AppendChild(XMLElement("m_population_resource_pool", m_population_pool.XMLEncode()));
-        retval.AppendChild(XMLElement("m_trade_resource_pool", m_trade_resource_pool.XMLEncode()));
-    } else {
-        // leave these in, but unpopulated or default-populated
-        retval.AppendChild(XMLElement("m_homeworld_id"));
-        retval.AppendChild(XMLElement("m_sitrep_entries"));
-        retval.AppendChild(XMLElement("m_ship_designs"));
-        retval.AppendChild(XMLElement("m_explored_systems"));
-        retval.AppendChild(XMLElement("m_techs"));
-        retval.AppendChild(XMLElement("m_research_queue", ResearchQueue().XMLEncode()));
-        retval.AppendChild(XMLElement("m_research_status"));
-        retval.AppendChild(XMLElement("m_production_queue", ProductionQueue().XMLEncode()));
-        retval.AppendChild(XMLElement("m_production_status"));
-        retval.AppendChild(XMLElement("m_building_types"));
-        retval.AppendChild(XMLElement("m_mineral_resource_pool", ResourcePool(RE_MINERALS).XMLEncode()));
-        retval.AppendChild(XMLElement("m_food_resource_pool", ResourcePool(RE_FOOD).XMLEncode()));
-        retval.AppendChild(XMLElement("m_research_resource_pool", ResourcePool(RE_RESEARCH).XMLEncode()));
-        retval.AppendChild(XMLElement("m_industry_resource_pool", ResourcePool(RE_INDUSTRY).XMLEncode()));
-        retval.AppendChild(XMLElement("m_population_resource_pool", PopulationPool().XMLEncode()));
-        retval.AppendChild(XMLElement("m_trade_resource_pool", ResourcePool(RE_TRADE).XMLEncode()));
-    }
-    return retval;
 }
 
 void Empire::CheckResearchProgress()

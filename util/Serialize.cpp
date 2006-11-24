@@ -31,7 +31,6 @@
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/variant/get.hpp>
 
 
 // exports for boost serialization of polymorphic UniverseObject hierarchy
@@ -66,66 +65,26 @@ BOOST_STATIC_ASSERT(sizeof(float) == 4);
 BOOST_STATIC_ASSERT(sizeof(double) == 8);
 
 
-void Serialize(OArchivePtr oa, const Empire& empire)
-{
-    if (oa.which())
-        *boost::get<boost::archive::xml_oarchive*>(oa) << BOOST_SERIALIZATION_NVP(empire);
-    else
-        *boost::get<boost::archive::binary_oarchive*>(oa) << BOOST_SERIALIZATION_NVP(empire);
-}
+void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Empire& empire)
+{ oa << BOOST_SERIALIZATION_NVP(empire); }
 
-void Serialize(OArchivePtr oa, const EmpireManager& empire_manager)
-{
-    if (oa.which())
-        *boost::get<boost::archive::xml_oarchive*>(oa) << BOOST_SERIALIZATION_NVP(empire_manager);
-    else
-        *boost::get<boost::archive::binary_oarchive*>(oa) << BOOST_SERIALIZATION_NVP(empire_manager);
-}
+void Serialize(FREEORION_OARCHIVE_TYPE& oa, const EmpireManager& empire_manager)
+{ oa << BOOST_SERIALIZATION_NVP(empire_manager); }
 
-void Serialize(OArchivePtr oa, const Universe& universe)
-{
-    if (oa.which())
-        *boost::get<boost::archive::xml_oarchive*>(oa) << BOOST_SERIALIZATION_NVP(universe);
-    else
-        *boost::get<boost::archive::binary_oarchive*>(oa) << BOOST_SERIALIZATION_NVP(universe);
-}
+void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Universe& universe)
+{ oa << BOOST_SERIALIZATION_NVP(universe); }
 
-void Serialize(OArchivePtr oa, const OrderSet& order_set)
-{
-    if (oa.which())
-        *boost::get<boost::archive::xml_oarchive*>(oa) << BOOST_SERIALIZATION_NVP(order_set);
-    else
-        *boost::get<boost::archive::binary_oarchive*>(oa) << BOOST_SERIALIZATION_NVP(order_set);
-}
+void Serialize(FREEORION_OARCHIVE_TYPE& oa, const OrderSet& order_set)
+{ oa << BOOST_SERIALIZATION_NVP(order_set); }
 
-void Deserialize(IArchivePtr ia, Empire& empire)
-{
-    if (ia.which())
-        *boost::get<boost::archive::xml_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(empire);
-    else
-        *boost::get<boost::archive::binary_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(empire);
-}
+void Deserialize(FREEORION_IARCHIVE_TYPE& ia, Empire& empire)
+{ ia >> BOOST_SERIALIZATION_NVP(empire); }
 
-void Deserialize(IArchivePtr ia, EmpireManager& empire_manager)
-{
-    if (ia.which())
-        *boost::get<boost::archive::xml_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(empire_manager);
-    else
-        *boost::get<boost::archive::binary_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(empire_manager);
-}
+void Deserialize(FREEORION_IARCHIVE_TYPE& ia, EmpireManager& empire_manager)
+{ ia >> BOOST_SERIALIZATION_NVP(empire_manager); }
 
-void Deserialize(IArchivePtr ia, Universe& universe)
-{
-    if (ia.which())
-        *boost::get<boost::archive::xml_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(universe);
-    else
-        *boost::get<boost::archive::binary_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(universe);
-}
+void Deserialize(FREEORION_IARCHIVE_TYPE& ia, Universe& universe)
+{ ia >> BOOST_SERIALIZATION_NVP(universe); }
 
-void Deserialize(IArchivePtr ia, OrderSet& order_set)
-{
-    if (ia.which())
-        *boost::get<boost::archive::xml_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(order_set);
-    else
-        *boost::get<boost::archive::binary_iarchive*>(ia) >> BOOST_SERIALIZATION_NVP(order_set);
-}
+void Deserialize(FREEORION_IARCHIVE_TYPE& ia, OrderSet& order_set)
+{ ia >> BOOST_SERIALIZATION_NVP(order_set); }

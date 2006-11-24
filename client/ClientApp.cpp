@@ -45,30 +45,9 @@ int ClientApp::CurrentTurn() const
     return m_current_turn;
 }
 
-Message ClientApp::TurnOrdersMessage(bool save_game_data/* = false*/) const
-{
-    if (save_game_data) {
-        std::ostringstream os;
-        {
-            boost::archive::xml_oarchive oa(os);
-            Serialize(&oa, m_orders);
-            bool ui_data_available = false;
-            oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-        }
-        return ClientSaveDataMessage(m_player_id, os.str());
-    } else {
-        std::ostringstream os;
-        {
-            boost::archive::xml_oarchive oa(os);
-            Serialize(&oa, m_orders);
-        }
-        return ::TurnOrdersMessage(m_player_id, os.str());
-    }
-}
-
 void ClientApp::StartTurn()
 {
-    m_network_core.SendMessage(TurnOrdersMessage());
+    m_network_core.SendMessage(TurnOrdersMessage(m_player_id, m_orders));
     m_orders.Reset();
 }
 
@@ -77,7 +56,7 @@ Universe& ClientApp::GetUniverse()
     return m_universe;
 }
 
-ClientEmpireManager& ClientApp::Empires()
+EmpireManager& ClientApp::Empires()
 {
     return m_empires;
 }
@@ -129,12 +108,4 @@ int ClientApp::GetNewObjectID()
 ClientApp* ClientApp::GetApp()
 {
     return s_app;
-}
-
-void ClientApp::UpdateTurnData(const XMLDoc &new_doc)
-{
-    if (new_doc.root_node.ContainsChild(EmpireManager::EMPIRE_UPDATE_TAG))
-        m_empires.HandleEmpireElementUpdate(new_doc.root_node.Child(EmpireManager::EMPIRE_UPDATE_TAG));
-    if (new_doc.root_node.ContainsChild("Universe"))
-        m_universe.SetUniverse(new_doc.root_node.Child("Universe"));
 }

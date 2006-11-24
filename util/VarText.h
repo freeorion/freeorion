@@ -30,19 +30,16 @@
 class VarText
 {
 public:
-    VarText( ) { };
-    VarText(const XMLElement& elem);
-
-    XMLElement XMLEncode() const;
+    VarText() {};
 
     /** combines the given template with the variables contained in object to create a string with live variables
         replaced with text will produce exceptions if invalid variables are found ( no not exist in XML data or in
         universe ) */
-    void GenerateVarText( const std::string& template_str );
+    void GenerateVarText(const std::string& template_str);
 
-    XMLElement& GetVariables( )   { return m_variables; }
-    std::string& GetText( )           { return m_text; }
-    void SetText( std::string &text ) { m_text = text; }
+    XMLElement& GetVariables()      { return m_variables; }
+    std::string& GetText()          { return m_text; }
+    void SetText(std::string &text) { m_text = text; }
 
     static const std::string START_VAR;
     static const std::string END_VAR;

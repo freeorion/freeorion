@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "CUIWnd.h"
-#include "../util/XMLDoc.h"
 
 class CUIButton;
 class CUIEdit;
@@ -224,7 +223,6 @@ class MapWndPopup : public CUIWnd
 {
 public:
     MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags );
-    MapWndPopup(const XMLElement& elem);     
     virtual ~MapWndPopup();
 
     void CloseClicked();

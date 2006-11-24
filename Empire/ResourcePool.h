@@ -6,7 +6,6 @@
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
 
-class XMLElement;
 class ResourceCenter;
 class PopCenter;
 
@@ -21,7 +20,6 @@ public:
 
     /** \name Structors */ //@{
     ResourcePool(ResourceType type);
-    ResourcePool(const XMLElement& elem);
     ~ResourcePool();
     //@}
 
@@ -35,8 +33,6 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    XMLElement XMLEncode() const;
-
     mutable ChangedSignalType ChangedSignal;    ///< emitted after updating production, or called externally to indicate that stockpile and change need to be refreshed
 
     void SetResourceCenters(const std::vector<ResourceCenter*>& resource_center_vec);///< sets the ResourceCenter vector 
@@ -74,7 +70,6 @@ public:
 
     /** \name Structors */ //@{
     PopulationPool();
-    PopulationPool(const XMLElement& elem);
     ~PopulationPool();
     //@}
 
@@ -86,8 +81,6 @@ public:
     //@}
     
     /** \name Mutators */ //@{
-    XMLElement XMLEncode() const;
-
     mutable ChangedSignalType ChangedSignal;    ///< emitted after updating population and growth numbers
     
     void SetPopCenters(const std::vector<PopCenter*>& pop_center_vec);  ///< sets the PopCenter vector 

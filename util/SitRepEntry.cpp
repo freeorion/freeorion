@@ -5,26 +5,6 @@
 
 const std::string SitRepEntry::SITREP_UPDATE_TAG = "SitRepUpdate";
 
-SitRepEntry::SitRepEntry(const XMLElement& elem) : VarText( elem )
-{
-  if (elem.Tag() != "SitRepEntry")
-     throw std::invalid_argument("Attempted to construct a SitRepEntry from an XMLElement that had a tag other than \"SitRepEntry\"");
-
-  // set type
-  m_type = (EntryType)(boost::lexical_cast<int>(elem.Attribute("EntryType" ) ) );
-}
-
-XMLElement SitRepEntry::XMLEncode() const
-{
-  XMLElement retval = VarText::XMLEncode( );
-
-  retval.SetTag("SitRepEntry");
-
-  retval.SetAttribute("EntryType", boost::lexical_cast<std::string>(m_type));
-
-  return retval;
-}
-
 SitRepEntry *CreateTechResearchedSitRep( const std::string& tech_name )
 {
   SitRepEntry  *pSitRep = new SitRepEntry( );

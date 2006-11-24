@@ -3,7 +3,6 @@
 #define _ServerConnectWnd_h_
 
 #include "CUIWnd.h"
-#include "../util/XMLDoc.h"
 
 #include <string>
 
@@ -22,7 +21,6 @@ class ServerConnectWnd : public CUIWnd
 public:
     /** \name Structors */ //@{
     ServerConnectWnd();
-    ServerConnectWnd(const XMLElement& elem);
     //@}
 
     //! \name Mutators

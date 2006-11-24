@@ -255,29 +255,23 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
     switch (msg.Type()) {
     case Message::LOBBY_UPDATE: {
         m_handling_lobby_update = true;
-        std::istringstream is(msg.GetText());
-        MultiplayerLobbyData mp_lobby_data;
-        {
-            boost::archive::xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(mp_lobby_data);
-        }
-        m_lobby_data = mp_lobby_data;
+        ExtractMessageData(msg, m_lobby_data);
 
-        m_new_load_game_buttons->SetCheck(!mp_lobby_data.m_new_game);
-        m_galaxy_setup_panel->SetFromSetupData(mp_lobby_data);
+        m_new_load_game_buttons->SetCheck(!m_lobby_data.m_new_game);
+        m_galaxy_setup_panel->SetFromSetupData(m_lobby_data);
 
         m_saved_games_list->Clear();
-        for (unsigned int i = 0; i < mp_lobby_data.m_save_games.size(); ++i) {
-            m_saved_games_list->Insert(new CUISimpleDropDownListRow(mp_lobby_data.m_save_games[i]));
-            if (static_cast<int>(i) == mp_lobby_data.m_save_file_index)
-                m_saved_games_list->Select(mp_lobby_data.m_save_file_index);
+        for (unsigned int i = 0; i < m_lobby_data.m_save_games.size(); ++i) {
+            m_saved_games_list->Insert(new CUISimpleDropDownListRow(m_lobby_data.m_save_games[i]));
+            if (static_cast<int>(i) == m_lobby_data.m_save_file_index)
+                m_saved_games_list->Select(m_lobby_data.m_save_file_index);
         }
 
         m_player_IDs.clear();
         m_player_names.clear();
-        for (unsigned int i = 0; i < mp_lobby_data.m_players.size(); ++i) {
-            m_player_IDs[mp_lobby_data.m_players[i].m_player_name] = mp_lobby_data.m_players[i].m_player_id;
-            m_player_names[mp_lobby_data.m_players[i].m_player_id] = mp_lobby_data.m_players[i].m_player_name;
+        for (unsigned int i = 0; i < m_lobby_data.m_players.size(); ++i) {
+            m_player_IDs[m_lobby_data.m_players[i].m_player_name] = m_lobby_data.m_players[i].m_player_id;
+            m_player_names[m_lobby_data.m_players[i].m_player_id] = m_lobby_data.m_players[i].m_player_name;
         }
 
         bool send_update_back = PopulatePlayerList();
@@ -481,14 +475,8 @@ void MultiplayerLobbyWnd::SendUpdate()
 {
     if (!m_handling_lobby_update) {
         int player_id = HumanClientApp::GetApp()->PlayerID();
-        if (player_id != -1) {
-            std::ostringstream os;
-            {
-                boost::archive::xml_oarchive oa(os);
-                oa << boost::serialization::make_nvp("mp_lobby_data", m_lobby_data);
-            }
-            HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, os.str()));
-        }
+        if (player_id != -1)
+            HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, m_lobby_data));
     }
 }
 

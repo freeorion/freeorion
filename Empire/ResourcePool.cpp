@@ -3,7 +3,6 @@
 #include "../universe/Planet.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
-#include "../util/XMLDoc.h"
 
 #include <GG/SignalsAndSlots.h>
 
@@ -17,29 +16,9 @@ ResourcePool::ResourcePool(ResourceType type) :
     m_type(type)
 {}
 
-ResourcePool::ResourcePool(const XMLElement& elem) :
-    m_stockpile(0.0),
-    m_max_stockpile(200.0), // change to 0.0 later when effects can alter the max stockpile
-    m_production(0.0),
-    m_type(INVALID_RESOURCE_TYPE)
-{
-    if (elem.Tag() != "ResourcePool")
-        throw std::invalid_argument("Attempted to construct a ResourcePool from an XMLElement that had a tag other than \"ResourcePool\"");
-    m_stockpile = boost::lexical_cast<double>(elem.Child("m_stockpile").Text());
-    m_type = boost::lexical_cast<ResourceType>(elem.Child("m_type").Text());
-}
-
 ResourcePool::~ResourcePool()
 {
     m_resource_centers.clear();
-}
-
-XMLElement ResourcePool::XMLEncode() const
-{
-    XMLElement retval("ResourcePool");
-    retval.AppendChild(XMLElement("m_stockpile", boost::lexical_cast<std::string>(m_stockpile)));
-    retval.AppendChild(XMLElement("m_type", boost::lexical_cast<std::string>(m_type)));
-    return retval;
 }
 
 double ResourcePool::Stockpile() const
@@ -127,22 +106,9 @@ PopulationPool::PopulationPool() :
     m_growth(0.0)
 {}
 
-PopulationPool::PopulationPool(const XMLElement& elem) :
-    m_population(0.0),
-    m_growth(0.0)
-{
-    if (elem.Tag() != "PopulationPool")
-        throw std::invalid_argument("Attempted to construct a PopulationPool from an XMLElement that had a tag other than \"PopulationPool\"");
-}
-
 PopulationPool::~PopulationPool()
 {
     m_pop_centers.clear();
-}
-
-XMLElement PopulationPool::XMLEncode() const
-{
-    return XMLElement("PopulationPool");
 }
 
 double PopulationPool::Population() const

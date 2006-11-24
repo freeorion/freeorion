@@ -3,7 +3,6 @@ Import('env')
 
 common_sources = [
     'combat/Combat.cpp',
-    'Empire/ClientEmpireManager.cpp',
     'Empire/Empire.cpp',
     'Empire/EmpireManager.cpp',
     'Empire/ResourcePool.cpp',
@@ -53,9 +52,9 @@ common_sources = [
 
 if env['target_define'] == 'FREEORION_BUILD_SERVER':
     target_sources = [
-        'Empire/ServerEmpireManager.cpp',
         'combat/CombatSystem.cpp',
         'network/ServerNetworkCore.cpp',
+        'server/SaveLoad.cpp',
         'server/ServerApp.cpp',
         'server/dmain.cpp',
         'universe/Universe.cpp',

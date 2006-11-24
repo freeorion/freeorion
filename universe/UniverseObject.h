@@ -32,7 +32,6 @@ class Meter;
 class System;
 class SitRepEntry;
 struct UniverseObjectVisitor;
-class XMLElement;
 
 /** the abstract base class for all objects in the universe.  The UniverseObject class itself has only an ID, a name, 
     a position, possibly a System in which it is, and zero or more owners.  The position can range from 0 (left) to 1000 
@@ -70,7 +69,6 @@ public:
         outside the map area.*/
     UniverseObject(const std::string name, double x, double y, const std::set<int>& owners = std::set<int>());
    
-    UniverseObject(const XMLElement& elem); ///< ctor that constructs a UniverseObject object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a UniverseObject object
     virtual ~UniverseObject();   ///< dtor
     //@}
    
@@ -93,7 +91,6 @@ public:
 
     virtual Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
     virtual const std::string& PublicName(int empire_id) const; ///< returns the name of this objectas it appears to empire \a empire_id
-    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a UniverseObject object with visibility limited relative to the input empire
 
     /** accepts a visitor object \see UniverseObjectVisitor */
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;

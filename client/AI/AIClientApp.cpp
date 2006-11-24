@@ -209,42 +209,28 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
         if (msg.Sender() == -1) {
             Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received GAME_START message; "
                 "starting AI turn...";
-            std::istringstream is(msg.GetText());
-            boost::archive::xml_iarchive ia(is);
-            bool single_player_game;
-            ia >> BOOST_SERIALIZATION_NVP(single_player_game);
-            ia >> boost::serialization::make_nvp("empire_id", m_empire_id);
-            ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
-            Universe::s_encoding_empire = m_empire_id;
-            Deserialize(&ia, Empires());
-            Deserialize(&ia, GetUniverse());
+            bool single_player_game; // note that this is ignored
+            ExtractMessageData(msg, single_player_game, m_empire_id, m_current_turn, Empires(), GetUniverse());
             StartTurn();
         }
         break;
     }
 
     case Message::SAVE_GAME: {
-        NetworkCore().SendMessage(TurnOrdersMessage(true));
+        NetworkCore().SendMessage(ClientSaveDataMessage(m_player_id, m_orders));
         break;
     }
 
     case Message::LOAD_GAME: {
-        std::istringstream is(msg.GetText());
-        boost::archive::xml_iarchive ia(is);
-        Deserialize(&ia, Orders());
+        // HACK! We're just ignoring the rest of the message, since we only care about the orders
+        ExtractMessageData(msg, Orders());
         Orders().ApplyOrders();
-        // KLUDGE: We're just ignoring the rest of the message, since it only contains human-player UI settings
         break;
     }
 
     case Message::TURN_UPDATE: {
         if (msg.Sender() == -1) {
-            std::istringstream is(msg.GetText());
-            boost::archive::xml_iarchive ia(is);
-            Universe::s_encoding_empire = m_empire_id;
-            ia >> BOOST_SERIALIZATION_NVP(m_current_turn);
-            Deserialize(&ia, Empires());
-            Deserialize(&ia, GetUniverse());
+            ExtractMessageData(msg, m_empire_id, m_current_turn, Empires(), GetUniverse());
             StartTurn();
         }
         break;

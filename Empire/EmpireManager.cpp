@@ -1,10 +1,10 @@
 #include "EmpireManager.h"
-#include "Empire.h"
 
+#include "Empire.h"
+#include "../universe/Planet.h"
+#include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 
-
-const std::string EmpireManager::EMPIRE_UPDATE_TAG = "EmpireUpdate";
 
 EmpireManager::~EmpireManager()
 {
@@ -51,13 +51,14 @@ EmpireManager::iterator EmpireManager::end()
     return m_empire_map.end();
 }
 
-XMLElement EmpireManager::XMLEncode(int empire_id/* = ALL_EMPIRES*/)
+Empire* EmpireManager::CreateEmpire(int id, const std::string& name, const std::string& player_name, const GG::Clr& color, int planet_ID)
 {
-    XMLElement retval("EmpireManager");
-    for (EmpireManager::iterator it = begin(); it != end(); ++it) {
-        retval.AppendChild(XMLElement("Empire" + boost::lexical_cast<std::string>(it->second->EmpireID()), it->second->XMLEncode(empire_id)));
-    }
-    return retval;
+    Empire* empire = new Empire(name, player_name, id, color, planet_ID);
+    Universe& universe = GetUniverse();
+    Planet* planet = universe.Object<Planet>(planet_ID);
+    empire->AddExploredSystem(planet->SystemID());
+    InsertEmpire(empire);
+    return empire;
 }
 
 void EmpireManager::InsertEmpire(Empire* empire)
@@ -82,3 +83,10 @@ void EmpireManager::RemoveAllEmpires()
     m_empire_map.clear();
 }
 
+bool EmpireManager::EliminateEmpire(int id)
+{
+    Empire* emp = Lookup(id);
+    RemoveEmpire(emp);
+    delete emp;
+    return emp;
+}

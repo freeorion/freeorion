@@ -223,12 +223,7 @@ void IntroScreen::OnSinglePlayer()
             setup_data.m_empire_name = galaxy_wnd.EmpireName();
             setup_data.m_empire_color = galaxy_wnd.EmpireColor();
             setup_data.m_AIs = 4;
-            std::ostringstream os;
-            {
-                boost::archive::xml_oarchive oa(os);
-                oa << BOOST_SERIALIZATION_NVP(setup_data);
-            }
-            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostSPGameMessage(HumanClientApp::GetApp()->PlayerID(), os.str()));
+            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostSPGameMessage(HumanClientApp::GetApp()->PlayerID(), setup_data));
         }
     } else {
         failed = true;

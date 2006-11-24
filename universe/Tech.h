@@ -18,7 +18,6 @@ namespace Effect {
     class EffectsGroup;
 }
 class TechManager;
-class XMLElement;
 
 struct ItemSpec;
 
@@ -38,8 +37,6 @@ public:
          const std::set<std::string>& prerequisites,
          const std::vector<ItemSpec>& unlocked_items,
          const std::string& graphic);
-
-    Tech(const XMLElement& elem); ///< XML ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -97,7 +94,6 @@ private:
     std::vector<ItemSpec>      m_unlocked_items;
     std::string                m_graphic;
 
-    // note that m_unlocked_techs is not part of the XML representation of a tech; it is filled in by the TechManager at load-time
     std::set<std::string>      m_unlocked_techs;
 
     friend class TechManager;
@@ -111,7 +107,6 @@ struct ItemSpec
 {
     ItemSpec(); ///< default ctor
     ItemSpec(UnlockableItemType type_, const std::string& name_); ///< basic ctor
-    ItemSpec(const XMLElement& elem); ///< XML ctor
 
     std::string Dump() const; ///< returns a data file format representation of this object
 

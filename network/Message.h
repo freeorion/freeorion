@@ -2,13 +2,20 @@
 #ifndef _Message_h_
 #define _Message_h_
 
-#include "../util/XMLDoc.h"
-
-#ifndef BOOST_SERIALIZATION_SHARED_PTR_HPP
-#include <boost/serialization/shared_ptr.hpp>
-#endif
+#include <boost/shared_ptr.hpp>
 
 #include <string>
+
+
+class ClientNetworkCore;
+class EmpireManager;
+class MultiplayerLobbyData;
+class OrderSet;
+class SaveGameUIData;
+class ServerNetworkCore;
+class SinglePlayerSetupData;
+class Universe;
+class XMLDoc;
 
 /** compresses \a str using zlib, and puts the result into \a zipped_str */
 void ZipString(const std::string& str, std::string& zipped_str);
@@ -17,11 +24,6 @@ void ZipString(const std::string& str, std::string& zipped_str);
    the string must be known beforehand, and passed in \a size.  Results are undefined when \a str does 
    not conatain a valid zipped byte sequence.*/
 void UnzipString(const std::string& str, std::string& unzipped_str, int size);
-
-
-
-class ClientNetworkCore;
-class ServerNetworkCore;
 
 /** FreeOrion network message class.  Messages are designed to be created, sent, received, read, then destroyed.
    They are not meant to be altered; there are no mutators methods. Upon creation, the text of the Message is
@@ -130,6 +132,10 @@ private:
 };
 
 
+////////////////////////////////////////////////
+// Message stringification
+////////////////////////////////////////////////
+
 /** Returns a string representation of \a type. */
 std::string MessageTypeStr(Message::MessageType type);
 
@@ -143,8 +149,12 @@ std::string TurnProgressPhaseStr(Message::TurnProgressPhase phase);
 std::ostream& operator<<(std::ostream& os, const Message& msg);
 
 
+////////////////////////////////////////////////
+// Message named ctors
+////////////////////////////////////////////////
+
 /** creates a HOST_SP_GAME message*/
-Message HostSPGameMessage(int player_id, const std::string& data);
+Message HostSPGameMessage(int player_id, const SinglePlayerSetupData& setup_data);
 
 /** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
 Message HostMPGameMessage(int player_id, const std::string& host_player_name);
@@ -153,7 +163,7 @@ Message HostMPGameMessage(int player_id, const std::string& host_player_name);
 Message JoinGameMessage(const std::string& player_name);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
-Message GameStartMessage(int player_id, const std::string& data);
+Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe);
 
 /** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
    should only be sent by the server.*/
@@ -179,16 +189,19 @@ Message EndGameMessage(int sender, int receiver);
 Message VictoryMessage(int receiver);
 
 /** creates an TURN_ORDERS message. */
-Message TurnOrdersMessage(int sender, const std::string& data);
+Message TurnOrdersMessage(int sender, const OrderSet& orders);
 
 /** creates an TURN_PROGRESS message. */
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id);
 
 /** creates a TURN_UPDATE message. */
-Message TurnUpdateMessage(int player_id, const std::string& data);
+Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe);
 
-/** creates an CLIENT_SAVE_DATA message. */
-Message ClientSaveDataMessage(int sender, const std::string& data);
+/** creates a CLIENT_SAVE_DATA message, including UI data. */
+Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data);
+
+/** creates a CLIENT_SAVE_DATA message, without UI data. */
+Message ClientSaveDataMessage(int sender, const OrderSet& orders);
 
 /** creates an REQUEST_NEW_OBJECT_ID  message. This message is a synchronous message, when sent it will wait for a reply form the server */
 Message RequestNewObjectIDMessage(int sender);
@@ -206,7 +219,7 @@ Message HostLoadGameMessage(int sender, const std::string& filename);
 Message ServerSaveGameMessage(int receiver, bool done = false);
 
 /** creates a LOAD_GAME data message.  This message should only be sent by the server to provide saved game data to a client.*/
-Message ServerLoadGameMessage(int receiver, const std::string& data);
+Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const boost::shared_ptr<SaveGameUIData>& ui_data);
 
 /** creates a HUMAN_PLAYER_MSG, which is sent to the server, and then from the server to all human players, including the 
     originating player.  This is used for MP chat.*/
@@ -224,19 +237,18 @@ Message PlayerDisconnectedMessage(int receiver, const std::string& player_name);
 Message PlayerEliminatedMessage(int receiver, const std::string& empire_name);
 
 
-
 ////////////////////////////////////////////////
-// Multiplayer Lobby Messages
+// Multiplayer Lobby Message named ctors
 ////////////////////////////////////////////////
 
 /** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the 
     server, then to other users.  Clients must send all such updates to the server directly; the server
     will send updates to the other clients as needed.*/
-Message LobbyUpdateMessage(int sender, const std::string& data);
+Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data);
 
 /** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the users.  
     This message should only be sent by the server.*/
-Message ServerLobbyUpdateMessage(int receiver, const std::string& data);
+Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data);
 
 /** creates an LOBBY_CHAT message containing a chat string to be broadcast to player \a receiver, or all players if \a
     receiver is -1. Note that the receiver of this message is always the server.*/
@@ -258,7 +270,26 @@ Message LobbyExitMessage(int sender);
 /** creates an LOBBY_EXIT message.  This message should only be sent by the server.*/
 Message ServerLobbyExitMessage(int sender, int receiver);
 
-/** creates a START_MP_GAME used to finalize the multiplayer "lobby" setup*/
+/** creates a START_MP_GAME used to finalize the multiplayer lobby setup.*/
 Message StartMPGameMessage(int player_id);
+
+
+////////////////////////////////////////////////
+// Message data extractors
+////////////////////////////////////////////////
+
+void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
+
+void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe);
+
+void ExtractMessageData(const Message& msg, OrderSet& orders);
+
+void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe);
+
+bool ExtractMessageData(const Message& msg, OrderSet& orders, SaveGameUIData& ui_data);
+
+void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id, int& empire_id);
+
+void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data);
 
 #endif // _Message_h_

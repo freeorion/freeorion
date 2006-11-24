@@ -89,19 +89,6 @@ Building::Building(int empire_id, const std::string& building_type, int planet_i
    AddOwner(empire_id);
 }
 
-Building::Building(const XMLElement& elem) :
-    UniverseObject(elem.Child("UniverseObject"))
-{
-    if (elem.Tag().find("Building") == std::string::npos )
-        throw std::invalid_argument("Attempted to construct a Building from an XMLElement that had a tag other than \"Building\"");
-
-    using boost::lexical_cast;
-
-    m_building_type = elem.Child("m_building_type").Text();
-    m_operating = lexical_cast<bool>(elem.Child("m_operating").Text());
-    m_planet_id = lexical_cast<int>(elem.Child("m_planet_id").Text());
-}
-
 const BuildingType* Building::GetBuildingType() const
 {
     return ::GetBuildingType(m_building_type);
@@ -125,19 +112,6 @@ int Building::PlanetID() const
 Planet* Building::GetPlanet() const
 {
     return m_planet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Planet>(m_planet_id);
-}
-
-XMLElement Building::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
-{
-    using boost::lexical_cast;
-
-    XMLElement retval("Building" + lexical_cast<std::string>(ID()));
-    retval.AppendChild(UniverseObject::XMLEncode(empire_id));
-    retval.AppendChild(XMLElement("m_building_type", m_building_type));
-    retval.AppendChild(XMLElement("m_operating", lexical_cast<std::string>(m_operating)));
-    retval.AppendChild(XMLElement("m_planet_id", lexical_cast<std::string>(m_planet_id)));
-
-    return retval;
 }
 
 UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const

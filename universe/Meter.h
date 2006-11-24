@@ -16,7 +16,6 @@ class Meter
 public:
     Meter(); ///< default ctor.
     Meter(double current, double max); ///< basic ctor
-    Meter(const XMLElement& elem); ///< ctor that constructs a Meter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Meter object
 
     double    Current() const; ///< returns the current value of the meter, which will be in [METER_MIN, Max()]
     double    Max() const;     ///< returns the maximum value of the meter, which will be in [METER_MIN, METER_MAX]
@@ -27,8 +26,6 @@ public:
     double    PreviousMax() const;     ///< returns the maximum value of the meter, as it was at the beginning of last turn
     double    DeltaCurrent() const;    ///< returns InitialCurrent() - PreviousCurrent()
     double    DeltaMax() const;        ///< returns InitialMax() - PreviousMax()
-
-    XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a System object with visibility limited relative to the input empire
 
     void ResetMax();                       ///< resets the max value of the Meter to METER_MIN, during max value recalculation
     void SetCurrent(double current);       ///< sets the current value of the Meter, clamping it to the range [METER_MIN, METER_MAX]

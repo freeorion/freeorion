@@ -132,21 +132,6 @@ boost::shared_ptr<GG::Texture> GalaxySetupPanel::PreviewImage() const
     return m_textures[GetShape()];
 }
 
-XMLElement GalaxySetupPanel::XMLEncode() const
-{
-    using boost::lexical_cast;
-    using std::string;
-
-    XMLElement retval("universe_params");
-    retval.AppendChild(XMLElement("size", lexical_cast<string>(Systems())));
-    retval.AppendChild(XMLElement("shape", lexical_cast<string>(GetShape())));
-    retval.AppendChild(XMLElement("age", lexical_cast<string>(GetAge())));
-    retval.AppendChild(XMLElement("starlane_freq", lexical_cast<string>(GetStarlaneFrequency())));
-    retval.AppendChild(XMLElement("planet_density", lexical_cast<string>(GetPlanetDensity())));
-    retval.AppendChild(XMLElement("specials_freq", lexical_cast<string>(GetSpecialsFrequency())));
-    return retval;
-}
-
 void GalaxySetupPanel::Disable(bool b/* = true*/)
 {
     for (std::list<GG::Wnd*>::const_iterator it = Children().begin(); it != Children().end(); ++it) {

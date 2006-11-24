@@ -12,13 +12,12 @@
 #include "Predicates.h"
 #include "../util/Random.h"
 #include "Special.h"
-#include "../Empire/ServerEmpireManager.h"
 #include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 #include "Ship.h"
 #include "ShipDesign.h"
 #include "System.h"
 #include "UniverseObject.h"
-#include "../util/XMLDoc.h"
 
 #ifdef FREEORION_BUILD_HUMAN
 #include "../client/human/HumanClientApp.h"
@@ -42,13 +41,6 @@
 #include <stdexcept>
 
 namespace {
-    // for UniverseObject factory
-    UniverseObject* NewBuilding(const XMLElement& elem) {return new Building(elem);}
-    UniverseObject* NewFleet(const XMLElement& elem)    {return new Fleet(elem);}
-    UniverseObject* NewPlanet(const XMLElement& elem)   {return new Planet(elem);}
-    UniverseObject* NewShip(const XMLElement& elem)     {return new Ship(elem);}
-    UniverseObject* NewSystem(const XMLElement& elem)   {return new System(elem);}
-
     const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, s_universe_width]
     const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, s_universe_width]
     const double  AVG_UNIVERSE_WIDTH = 1000.0 / std::sqrt(150.0); // so a 150 star universe is 1000 units across
@@ -874,14 +866,7 @@ bool Universe::s_inhibit_universe_object_signals = false;
 int Universe::s_encoding_empire = ALL_EMPIRES;
 
 Universe::Universe()
-{
-    m_factory.AddGenerator("Building", &NewBuilding);
-    m_factory.AddGenerator("Fleet", &NewFleet);
-    m_factory.AddGenerator("Planet", &NewPlanet);
-    m_factory.AddGenerator("Ship", &NewShip);
-    m_factory.AddGenerator("System", &NewSystem);
-    m_last_allocated_id = -1;
-}
+{}
 
 const Universe& Universe::operator=(Universe& rhs)
 {
@@ -903,69 +888,12 @@ const Universe& Universe::operator=(Universe& rhs)
     return *this;
 }
 
-Universe::Universe(const XMLElement& elem)
-{
-    m_factory.AddGenerator("Building", &NewBuilding);
-    m_factory.AddGenerator("Fleet", &NewFleet);
-    m_factory.AddGenerator("Planet", &NewPlanet);
-    m_factory.AddGenerator("Ship", &NewShip);
-    m_factory.AddGenerator("System", &NewSystem);
-
-    SetUniverse(elem);
-}
-
 Universe::~Universe()
 {
     for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
         delete it->second;
     for (ObjectMap::iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it)
         delete it->second;
-}
-
-void Universe::SetUniverse(const XMLElement& elem)
-{
-    if (elem.Tag() != "Universe")
-        throw std::invalid_argument("Attempted to construct a Universe from an XMLElement that had a tag other than \"Universe\"");
-
-    // wipe out anything present in the object maps
-    for (ObjectMap::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr)
-        delete itr->second;
-    m_objects.clear();
-    for (ObjectMap::iterator itr = m_destroyed_objects.begin(); itr != m_destroyed_objects.end(); ++itr)
-        delete itr->second;
-    m_destroyed_objects.clear();
-
-    s_universe_width = boost::lexical_cast<double>(elem.Child("s_universe_width").Text());
-
-    for (int i = 0; i < elem.Child("m_objects").NumChildren(); ++i) {
-        if (UniverseObject* obj = m_factory.GenerateObject(elem.Child("m_objects").Child(i))) {
-            m_objects[obj->ID()] = obj;
-        }
-    }
-
-    m_last_allocated_id = boost::lexical_cast<int>(elem.Child("m_last_allocated_id").Text());
-
-    /*
-    for (int i = 0; i < elem.Child("m_destroyed_objects").NumChildren(); ++i) {
-        if (UniverseObject* obj = m_factory.GenerateObject(elem.Child("m_destroyed_objects").Child(i))) {
-            m_destroyed_objects[obj->ID()] = obj;
-        }
-    }
-
-    Logger().debugStream() << "m_destroyed_object_knowers entries: " << elem.Child("m_destroyed_object_knowers").NumChildren();
-    for (int i = 0; i < elem.Child("m_destroyed_object_knowers").NumChildren(); ++i) {
-        XMLElement elem2 = elem.Child("m_destroyed_object_knowers").Child(i);
-
-        std::stringstream os;
-        Logger().debugStream() << elem2.WriteElement(os, 0, true);
-
-        int obj_id = boost::lexical_cast<int>(elem2.Tag());
-        std::set<int> knowers_set = ContainerFromString<std::set<int> >(elem2.Text());
-        m_destroyed_object_knowers[obj_id] = knowers_set;
-    }    */
-
-
-    InitializeSystemGraph();
 }
 
 const UniverseObject* Universe::Object(int id) const
@@ -1057,66 +985,6 @@ std::map<double, System*> Universe::ImmediateNeighbors(int system, int empire_id
             return ImmediateNeighborsImpl(*graph_it->second, system, empire_id);
     }
     return std::map<double, System*>();
-}
-
-XMLElement Universe::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
-{
-    Logger().debugStream() << "XMLEncoding universe for empire: " << empire_id;
-    XMLElement retval("Universe");
-    retval.AppendChild(XMLElement("s_universe_width", boost::lexical_cast<std::string>(s_universe_width)));
-    
-    retval.AppendChild(XMLElement("m_objects"));
-    for (const_iterator it = begin(); it != end(); ++it) {
-        // skip all non-System objects that are completely invisible to this empire
-        if (it->second->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(it->second)) {
-            retval.LastChild().AppendChild(it->second->XMLEncode(empire_id));
-        }
-    }
-
-    retval.AppendChild(XMLElement("m_last_allocated_id", boost::lexical_cast<std::string>(m_last_allocated_id)));
-
-    /*retval.AppendChild(XMLElement("m_destroyed_objects"));
-    for (const_iterator it = beginDestroyed(); it != endDestroyed(); ++it) {
-        if (empire_id != ALL_EMPIRES) {
-            ObjectKnowledgeMap::const_iterator map_it = m_destroyed_object_knowers.find(it->first);
-            if (map_it == m_destroyed_object_knowers.end())
-                throw std::runtime_error("m_deleted_object_knowers XMLElement contained entry for with no corresponding entry in destroyed objects knowledge map.");
-            std::set<int> knowers_set = map_it->second;
-            std::set<int>::iterator know_it = knowers_set.find(empire_id);
-            if (know_it == knowers_set.end()) continue;
-        }
-        Logger().debugStream() << "Destroyed Object: " << it->first << " : " << it->second->Name();
-        retval.LastChild().AppendChild(it->second->XMLEncode(empire_id));
-    }
-
-    Logger().debugStream() << "XMLEncoding destroyed object knowers";
-    retval.AppendChild(XMLElement("m_destroyed_object_knowers"));
-    for (const_iterator it = beginDestroyed(); it != endDestroyed(); ++it) {
-        int obj_id = it->first;
-
-        ObjectKnowledgeMap::const_iterator map_it = m_destroyed_object_knowers.find(it->first);
-        if (map_it == m_destroyed_object_knowers.end())
-            throw std::runtime_error("m_deleted_object_knowers XMLElement contained entry for with no corresponding entry in destroyed objects knowledge map.");
-        std::set<int> knowers_set = map_it->second;
-
-        if (empire_id == ALL_EMPIRES) {
-            // always include object, and include all knowing empires in set
-            retval.LastChild().AppendChild(XMLElement(boost::lexical_cast<std::string>(obj_id),
-                                           StringFromContainer<std::set<int> >(knowers_set) ));
-        } else {
-            // include object only if encoding empire knows about destroyed object, and then only include
-            // encoding empire in set
-            std::set<int>::const_iterator emp_it = knowers_set.find(empire_id);
-            if (emp_it != knowers_set.end()) {
-                std::set<int> one_emp_set;
-                one_emp_set.insert(empire_id);
-                retval.LastChild().AppendChild(XMLElement(boost::lexical_cast<std::string>(obj_id),
-                                               StringFromContainer<std::set<int> >(one_emp_set) ));
-            }
-        }
-    }*/
-
-    return retval;
 }
 
 void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
@@ -2347,8 +2215,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         int home_planet_id = homeworlds[i];
 
         // create new Empire object through empire manager
-        Empire* empire =
-            dynamic_cast<ServerEmpireManager*>(&Empires())->CreateEmpire(it->first, empire_name, it->second.name, color, home_planet_id);
+        Empire* empire = Empires().CreateEmpire(it->first, empire_name, it->second.name, color, home_planet_id);
 
         // set ownership of home planet
         int empire_id = empire->EmpireID();

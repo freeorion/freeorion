@@ -11,24 +11,8 @@
 #include <vector>
 
 
-/** a simple SitRepEntry to be displayed in the SitRep screen. 
- *  This class describes a sitrep entry, for both the client and server. 
- *  Data for the SitRep is contained in a XML tree. The first element is
- *  always EntryType and represents the type of sitrep.
- *  Followed are elements representing the variables for the given SitRep.
- *  Their tag names correspond to placehold entries in the string used to
- *  display the SitRep.
- *  The server only maintains this XML data while the client decodes it and produces
- *  a string which is used to display the SitRep. This will contain tags for hyperlinks, etc
- *  For example:
- *  For SitRep type: MAX_INDUSTRY_HIT
- *  <SitRepEntry EntryType='0'>
- *     <m_planet value='123'/>
- *     <m_system value='56'/>
- *  </SitRepEntry>
- *
- *  The string for this entry would be:
- *  "The planet %m_planet% in the system %m_system% has reached it's maximum industry."
+/** a simple SitRepEntry to be displayed in the SitRep screen. This class describes a sitrep entry, for both the client
+    and server.
  */
 
 #ifndef _VarText_h_
@@ -64,16 +48,8 @@ public:
 
     /** \name Structors */ //@{
     SitRepEntry() : m_type(INVALID_ENTRY_TYPE) {} ///< default ctor
-
-    /** ctor that constructs a SitRepEntry object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a SitRepEntry object */
-    SitRepEntry(const XMLElement& elem);
     //@}
    
-    /** \name Accessors */ //@{
-    /** encodes the SitRepEntry into an XML element */
-    XMLElement XMLEncode() const;
-    //@}
-
     void SetType( EntryType type ) { m_type = type; }
     EntryType GetType( ) { return m_type; }
 

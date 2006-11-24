@@ -21,9 +21,8 @@
     <encyclopedia [string]>\endverbatim
     The ID parameters refer to the UniverseObjects that should be zoomed to for each link; encyclopedia entries are refered
     to by strings.
-    <br><br>Note that to save and load this class using GG's automatic serialization, LinkText must be added to the 
-    app's XMLObjectFactory. Note also that for link tags to be correctly handled, they must not overlap each other at all, 
-    even though overlap with regular GG::Font tags if fine. */
+    <br><br>Note that for link tags to be correctly handled, they must not overlap each other at all, even though
+    overlap with regular GG::Font tags if fine. */
 class LinkText : public GG::TextControl
 {
 private:

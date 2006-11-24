@@ -5,7 +5,6 @@
 #include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
 #include "ShipDesign.h"
-#include "../util/XMLDoc.h"
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -29,24 +28,6 @@ Ship::Ship(int empire_id, const std::string& design_name) :
       throw std::invalid_argument("Attempted to construct a Ship with an invalid design name");
 
    AddOwner(empire_id);
-}
-
-Ship::Ship(const XMLElement& elem) : 
-  UniverseObject(elem.Child("UniverseObject"))
-{
-    if (elem.Tag().find("Ship") == std::string::npos)
-        throw std::invalid_argument("Attempted to construct a Ship from an XMLElement that had a tag other than \"Ship\"");
-
-    try {
-        m_fleet_id = lexical_cast<int>(elem.Child("m_fleet_id").Text());
-        m_design_name = elem.Child("m_design_name").Text();
-    } catch (const boost::bad_lexical_cast& e) {
-        Logger().debugStream() << "Caught boost::bad_lexical_cast in Ship::Ship(); bad XMLElement was:";
-        std::stringstream osstream;
-        elem.WriteElement(osstream);
-        Logger().debugStream() << "\n" << osstream.str();
-        throw;
-    }
 }
 
 const ShipDesign* Ship::Design() const
@@ -94,19 +75,6 @@ const std::string& Ship::PublicName(int empire_id) const
         return Name();
     else
         return UserString("FW_FOREIGN_SHIP");
-}
-
-XMLElement Ship::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
-{
-    using boost::lexical_cast;
-    using std::string;
-    //Logger().debugStream() << "XMLEncoding for empire: " << empire_id;
-    //Logger().debugStream() << "..Ship: " << ID() << " : " << Name();
-    XMLElement retval("Ship" + boost::lexical_cast<std::string>(ID()));
-    retval.AppendChild(UniverseObject::XMLEncode(empire_id));
-    retval.AppendChild(XMLElement("m_fleet_id", lexical_cast<std::string>(m_fleet_id)));
-    retval.AppendChild(XMLElement("m_design_name", m_design_name));
-    return retval;
 }
 
 UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const

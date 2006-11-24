@@ -28,7 +28,6 @@ public:
     /** \name Structors */ //@{
     Planet(); ///< default ctor
     Planet(PlanetType type, PlanetSize size); ///< general ctor taking just the planet's type and size
-    Planet(const XMLElement& elem); ///< ctor that constructs a Planet object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a Planet object
     //@}
 
     /** \name Accessors */ //@{
@@ -54,7 +53,6 @@ public:
     /////////////////////////////////////////////////////////////////////////////
    
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a planet object with visibility limited relative to the input empire
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
     //@}

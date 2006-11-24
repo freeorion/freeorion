@@ -7,14 +7,12 @@
 
 #include <string>
 
-class XMLElement;
 
 /** a class representing a ship design */
 struct ShipDesign
 {
     /** \name Structors */ //@{
     ShipDesign(); ///< default ctor
-    ShipDesign(const XMLElement& elem); ///< ctor that constructs a ShipDesign object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ShipDesign object
     //@}
 
     int         empire;      ///< the empire that designed this ship
@@ -31,9 +29,6 @@ struct ShipDesign
     std::string graphic;     ///< the name of the grapic file for this ship design
     // V0.3 ONLY!!!!
     /////////////////////////////////////////////////////////////////////////////
-
-    /** \name Accessors */ //@{
-    XMLElement XMLEncode() const; ///< constructs an XMLElement from a ShipDesign object
     //@}
 
 private:

@@ -4,7 +4,6 @@
 
 #include "Effect.h"
 
-class XMLElement;
 
 /** A predefined set of EffectsGroups that can be attached to a UniverseObject (often referred to as the "source" object).
     The effects of a Special are not limited to the object to which it is attached.  Each kind of Special must have a
@@ -16,8 +15,6 @@ public:
     /** basic ctor */
     Special(const std::string& name, const std::string& description,
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects);
-
-    Special(const XMLElement& elem); ///< XML ctor
     //@}
 
     /** \name Accessors */ //@{

@@ -55,7 +55,6 @@ public:
     System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
            const std::string& name, double x, double y, const std::set<int>& owners = std::set<int>());
 
-    System(const XMLElement& elem); ///< ctor that constructs a System object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a System object
     ~System();   ///< dtor
     //@}
 
@@ -105,7 +104,6 @@ public:
     const_lane_iterator  end_lanes() const;     ///< end iterator for all starlanes and wormholes terminating in this system
 
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-    virtual XMLElement XMLEncode(int empire_id = ALL_EMPIRES) const; ///< constructs an XMLElement from a System object with visibility limited relative to the input empire
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
  
@@ -125,9 +123,7 @@ public:
     int Insert(UniverseObject* obj, int orbit);
 
     /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
-        objects should be inserted with this function. NOTE: This function is primarily intended for XML decoding purposes
-        and does not set the object's system to point to this system since it is assumed that this has already been done prior
-        to encoding. If used for other purposes you must set the object's System ID manually. */
+        objects should be inserted with this function. */
     int Insert(int obj_id, int orbit);
 
     /** removes the object with ID number \a id from the system, and returns it; returns 0 if there is no such object*/

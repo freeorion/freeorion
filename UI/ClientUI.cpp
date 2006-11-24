@@ -576,13 +576,10 @@ void ClientUI::LogMessage(const std::string& msg)
     s_logger.debug(msg);
 }
 
-void ClientUI::GenerateSitRepText(SitRepEntry *p_sit_rep)
+void ClientUI::GenerateSitRepText(SitRepEntry *sit_rep)
 {
-    // get template string
-    std::string template_str(UserString(g_string_id_lut[p_sit_rep->GetType()]));
-
-    // parse string
-    p_sit_rep->GenerateVarText( template_str );
+    std::string template_str(UserString(g_string_id_lut[sit_rep->GetType()]));
+    sit_rep->GenerateVarText(template_str);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)

@@ -5,7 +5,6 @@
 #include "Predicates.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
-#include "../util/XMLDoc.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
@@ -40,27 +39,6 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     AddOwner(owner);
 }
 
-Fleet::Fleet(const XMLElement& elem) : 
-    UniverseObject(elem.Child("UniverseObject"))
-{
-    if (elem.Tag().find("Fleet") == std::string::npos )
-        throw std::invalid_argument("Attempted to construct a Fleet from an XMLElement that had a tag other than \"Fleet\"");
-
-    try {
-        m_ships = ContainerFromString<ShipIDSet>(elem.Child("m_ships").Text());
-        m_moving_to = lexical_cast<int>(elem.Child("m_moving_to").Text());
-        m_prev_system = lexical_cast<int>(elem.Child("m_prev_system").Text());
-        m_next_system = lexical_cast<int>(elem.Child("m_next_system").Text());
-        m_speed = lexical_cast<double>(elem.Child("m_speed").Text());   // can't calculate this because ships in fleet might not be constructed yet
-    } catch (const boost::bad_lexical_cast& e) {
-        Logger().debugStream() << "Caught boost::bad_lexical_cast in Fleet::Fleet(); bad XMLElement was:";
-        std::stringstream osstream;
-        elem.WriteElement(osstream);
-        Logger().debugStream() << "\n" << osstream.str();
-        throw;
-    }
-}
-
 UniverseObject::Visibility Fleet::GetVisibility(int empire_id) const
 {
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id)) {
@@ -91,32 +69,6 @@ const std::string& Fleet::PublicName(int empire_id) const
         return Name();
     else
         return UserString("FW_FOREIGN_FLEET");
-}
-
-XMLElement Fleet::XMLEncode(int empire_id/* = ALL_EMPIRES*/) const
-{
-    using boost::lexical_cast;
-    using std::string;
-
-    XMLElement retval("Fleet" + boost::lexical_cast<std::string>(ID()));
-    retval.AppendChild(UniverseObject::XMLEncode(empire_id));
-
-    // Disclose real fleet name only to fleet owners. Rationale: a player
-    // might become suspicious if the incoming foreign fleet is called "Decoy"
-    if (!Universe::ALL_OBJECTS_VISIBLE &&
-        empire_id != ALL_EMPIRES && !OwnedBy(empire_id)) {
-        retval.Child("UniverseObject").Child("m_name").SetText(UserString("FW_FOREIGN_FLEET"));
-        // the player also only sees the immediate destination of the fleet,
-        // not the entire route.
-        retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_next_system)));
-    } else {
-        retval.AppendChild(XMLElement("m_moving_to", lexical_cast<std::string>(m_moving_to)));
-    }
-    retval.AppendChild(XMLElement("m_ships", StringFromContainer<ShipIDSet>(m_ships)));
-    retval.AppendChild(XMLElement("m_prev_system", lexical_cast<std::string>(m_prev_system)));
-    retval.AppendChild(XMLElement("m_next_system", lexical_cast<std::string>(m_next_system)));
-    retval.AppendChild(XMLElement("m_speed", lexical_cast<std::string>(m_speed)));
-    return retval;
 }
 
 const std::list<System*>& Fleet::TravelRoute() const

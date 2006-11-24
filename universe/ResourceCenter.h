@@ -8,7 +8,6 @@
 
 #include <boost/signal.hpp>
 
-class XMLElement;
 class Empire;
 
 
@@ -23,7 +22,6 @@ public:
 
     /** \name Structors */ //@{
     ResourceCenter(const Meter& pop); ///< basic ctor
-    ResourceCenter(const XMLElement& elem, const Meter& pop); ///< ctor that constructs a ResourceCenter object from an XMLElement. \throw std::invalid_argument May throw std::invalid_argument if \a elem does not encode a ResourceCenter object
     virtual ~ResourceCenter(); ///< dtor
     //@}
 
@@ -47,8 +45,6 @@ public:
         only a rough estimate, based on the meter's current and max from this turn. */
     double         ProjectedCurrent(MeterType type) const;
 
-    virtual XMLElement XMLEncode(UniverseObject::Visibility vis) const; ///< constructs an XMLElement from a ResourceCenter object with the given visibility
-     
     mutable ResourceCenterChangedSignalType ResourceCenterChangedSignal; ///< the state changed signal object for this ResourceCenter
     //@}
 
