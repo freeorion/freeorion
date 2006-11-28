@@ -407,8 +407,8 @@ Tech
     description = "GRO_GENETIC_ENG_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 20
-    researchturns = 5
+    researchcost = 1
+    researchturns = 1
     prerequisites = []
     unlock = []
     graphic = "tech_icons/Genetic_Engineering.png"
@@ -582,6 +582,28 @@ Tech
     ]
     unlock = []
     graphic = "tech_icons/Pure-Energy_Metabolism.png"
+
+Tech
+    name = "GRO_SELF_ROTATING_CROPS"
+    description = "GRO_SELF_ROTATING_CROPS_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "GRO_PLANET_ECOL"
+        "GRO_GENETIC_ENG"
+    ]
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                    OwnedExclusivelyBy TheEmpire Source.Owner
+                    PrimaryFocus Farming
+            ]
+            activation = Source
+            effects = SetMaxFarming Target.MaxFarming + 5
+    graphic = ""
 
 Tech
     name = "GRO_HABITATION_DOMES"
