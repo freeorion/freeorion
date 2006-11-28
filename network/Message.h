@@ -219,7 +219,7 @@ Message HostLoadGameMessage(int sender, const std::string& filename);
 Message ServerSaveGameMessage(int receiver, bool done = false);
 
 /** creates a LOAD_GAME data message.  This message should only be sent by the server to provide saved game data to a client.*/
-Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const boost::shared_ptr<SaveGameUIData>& ui_data);
+Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGameUIData* ui_data);
 
 /** creates a HUMAN_PLAYER_MSG, which is sent to the server, and then from the server to all human players, including the 
     originating player.  This is used for MP chat.*/

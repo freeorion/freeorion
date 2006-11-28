@@ -14,6 +14,14 @@
 
 #include <sstream>
 
+// Win32 macros strike again
+#ifdef SendMessage
+#undef SendMessage
+#endif
+#ifdef DispatchMessage
+#undef DispatchMessage
+#endif
+
 namespace {
     const unsigned int SYCHRONOUS_TIMEOUT = 30000;    // 30 seconds
 }

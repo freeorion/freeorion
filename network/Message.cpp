@@ -430,7 +430,7 @@ Message ServerSaveGameMessage(int receiver, bool done/* = false*/)
     return Message(Message::SAVE_GAME, -1, receiver, done ? Message::CLIENT_SYNCHRONOUS_RESPONSE : Message::CORE, "");
 }
 
-Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const boost::shared_ptr<SaveGameUIData>& ui_data)
+Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGameUIData* ui_data)
 {
     std::ostringstream os;
     {

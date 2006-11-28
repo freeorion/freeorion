@@ -1,6 +1,5 @@
 #include "SaveLoad.h"
 
-#include "ServerApp.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"

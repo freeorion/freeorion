@@ -898,7 +898,7 @@ void ServerApp::LoadGameInit()
         m_network_core.SendMessage(GameStartMessage(it->first, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
 
         // send saved pending orders to player
-        m_network_core.SendMessage(ServerLoadGameMessage(it->first, *player_data_by_empire[empire_id].m_orders, player_data_by_empire[empire_id].m_ui_data));
+        m_network_core.SendMessage(ServerLoadGameMessage(it->first, *player_data_by_empire[empire_id].m_orders, player_data_by_empire[empire_id].m_ui_data.get()));
 
         m_turn_sequence[empire_id] = 0;
     }
