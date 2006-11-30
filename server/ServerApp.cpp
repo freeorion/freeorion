@@ -895,6 +895,12 @@ void ServerApp::LoadGameInit()
             }
         }
         assert(empire_id != INVALID_EMPIRE_ID);
+
+        // This is a bit odd, but since Empires() is built from the data stored in m_player_save_game_data, and the
+        // universe is loaded long before that, the universe's empire-specific views of the systems is not properly
+        // initialized when the universe is loaded.  That means we must do it here.
+        m_universe.RebuildEmpireViewSystemGraphs();
+
         m_network_core.SendMessage(GameStartMessage(it->first, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
 
         // send saved pending orders to player
