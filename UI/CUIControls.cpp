@@ -1228,6 +1228,7 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
                 ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor())
 {
     SetFileFilters(types);
+    AppendMissingSaveExtension(true);
 
     SetFilesString(UserString("FILE_DLG_FILES"));
     SetFileTypesString(UserString("FILE_DLG_FILE_TYPES"));

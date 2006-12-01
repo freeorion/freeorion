@@ -100,9 +100,6 @@ void InGameMenu::Save()
         std::string filename;
         if (!dlg.Result().empty()) {
             filename = *dlg.Result().begin();
-            if (filename.find(SAVE_GAME_EXTENSION) != filename.size() - SAVE_GAME_EXTENSION.size())
-                filename += SAVE_GAME_EXTENSION;
-
             Message response;
             bool save_succeeded = HumanClientApp::GetApp()->NetworkCore().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), filename), response);
             if (save_succeeded) {
