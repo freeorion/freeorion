@@ -887,6 +887,7 @@ void ServerApp::LoadGameInit()
                 if (already_chosen_empire_ids.find(player_data_it->first) == already_chosen_empire_ids.end()) {
                     empire_id = player_data_it->first;
                     already_chosen_empire_ids.insert(empire_id);
+                    player_to_empire_ids[it->first] = empire_id;
                     // since this must be an AI player, it does not have the correct player name set in its Empire yet, so we need to do so now
                     player_data_it->second.m_empire->SetPlayerName(it->second.name);
                     Empires().InsertEmpire(player_data_it->second.m_empire);
@@ -895,18 +896,18 @@ void ServerApp::LoadGameInit()
             }
         }
         assert(empire_id != INVALID_EMPIRE_ID);
-
-        // This is a bit odd, but since Empires() is built from the data stored in m_player_save_game_data, and the
-        // universe is loaded long before that, the universe's empire-specific views of the systems is not properly
-        // initialized when the universe is loaded.  That means we must do it here.
-        m_universe.RebuildEmpireViewSystemGraphs();
-
-        m_network_core.SendMessage(GameStartMessage(it->first, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
-
-        // send saved pending orders to player
-        m_network_core.SendMessage(ServerLoadGameMessage(it->first, *player_data_by_empire[empire_id].m_orders, player_data_by_empire[empire_id].m_ui_data.get()));
-
         m_turn_sequence[empire_id] = 0;
+    }
+
+    // This is a bit odd, but since Empires() is built from the data stored in m_player_save_game_data, and the universe
+    // is loaded long before that, the universe's empire-specific views of the systems is not properly initialized when
+    // the universe is loaded.  That means we must do it here.
+    m_universe.RebuildEmpireViewSystemGraphs();
+
+    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+        int empire_id = player_to_empire_ids[it->first];
+        m_network_core.SendMessage(GameStartMessage(it->first, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
+        m_network_core.SendMessage(ServerLoadGameMessage(it->first, *player_data_by_empire[empire_id].m_orders, player_data_by_empire[empire_id].m_ui_data.get()));
     }
 
     m_losers.clear();
