@@ -1,6 +1,5 @@
 #include "Fleet.h"
 
-#include "System.h"
 #include "Ship.h"
 #include "Predicates.h"
 #include "../util/AppInterface.h"
@@ -16,7 +15,14 @@ using boost::lexical_cast;
 
 namespace {
     const double MAX_SHIP_SPEED = 500.0; // max allowed speed of ship movement
+
+    inline bool SystemNotReachable(System* system)
+    { return !GetUniverse().SystemReachable(system->ID(), Universe::s_encoding_empire); }
 }
+
+// static(s)
+const int Fleet::ETA_NEVER = -1;
+const int Fleet::ETA_UNKNOWN = -2;
 
 Fleet::Fleet() : 
     UniverseObject(),
@@ -25,8 +31,7 @@ Fleet::Fleet() :
     m_prev_system(INVALID_OBJECT_ID),
     m_next_system(INVALID_OBJECT_ID),
     m_travel_distance(0.0)
-{
-}
+{}
 
 Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     UniverseObject(name, x, y),
@@ -35,9 +40,13 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     m_prev_system(INVALID_OBJECT_ID),
     m_next_system(INVALID_OBJECT_ID),
     m_travel_distance(0.0)
-{
-    AddOwner(owner);
-}
+{ AddOwner(owner); }
+
+Fleet::const_iterator Fleet::begin() const
+{ return m_ships.begin(); }
+
+Fleet::const_iterator Fleet::end() const
+{ return m_ships.end(); }
 
 UniverseObject::Visibility Fleet::GetVisibility(int empire_id) const
 {
@@ -80,33 +89,47 @@ const std::list<System*>& Fleet::TravelRoute() const
 std::pair<int, int> Fleet::ETA() const
 {
     std::pair<int, int> retval;
-    CalculateRoute();
-    if (m_speed > 0.0) {
-        retval.first = static_cast<int>(std::ceil(m_travel_distance / m_speed));
-                
-        if (!m_travel_route.empty()) {
-            std::list<System*>::iterator next_system_it = m_travel_route.begin();
-            if (SystemID() == m_travel_route.front()->ID())
-                ++next_system_it;
-            System* next = *next_system_it;
-            if (next == m_travel_route.back()) {
-                retval.second = retval.first;
-            } else {
-                double x = next->X() - X();
-                double y = next->Y() - Y();
-                retval.second = static_cast<int>(std::ceil(std::sqrt(x * x + y * y) / m_speed));
-            }
-        }
+    if (UnknownRoute()) {
+        retval.first = ETA_UNKNOWN;
     } else {
-        retval.first = -1;  // sentinel indiates ETA of never
+        CalculateRoute();
+        if (m_speed > 0.0) {
+            retval.first = static_cast<int>(std::ceil(m_travel_distance / m_speed));
+
+            if (!m_travel_route.empty()) {
+                std::list<System*>::iterator next_system_it = m_travel_route.begin();
+                if (SystemID() == m_travel_route.front()->ID())
+                    ++next_system_it;
+                System* next = *next_system_it;
+                if (next == m_travel_route.back()) {
+                    retval.second = retval.first;
+                } else {
+                    double x = next->X() - X();
+                    double y = next->Y() - Y();
+                    retval.second = static_cast<int>(std::ceil(std::sqrt(x * x + y * y) / m_speed));
+                }
+            }
+        } else {
+            retval.first = ETA_NEVER;
+        }
     }
     return retval;
 }
 
+int Fleet::FinalDestinationID() const
+{ return m_moving_to; }
+
 System* Fleet::FinalDestination() const
-{
-    return GetUniverse().Object<System>(m_moving_to);
-}
+{ return GetUniverse().Object<System>(m_moving_to); }
+
+int Fleet::PreviousSystemID() const
+{ return m_prev_system; }
+
+int Fleet::NextSystemID() const
+{ return m_next_system; }
+
+double Fleet::Speed() const
+{ return m_speed; }
 
 bool Fleet::CanChangeDirectionEnRoute() const
 {
@@ -123,15 +146,25 @@ bool Fleet::HasArmedShips() const
     return false;
 }
 
+int Fleet::NumShips() const
+{ return m_ships.size(); }
+
+bool Fleet::ContainsShip(int id) const
+{ return m_ships.find(id) != m_ships.end(); }
+
+bool Fleet::UnknownRoute() const
+{ return m_travel_route.size() == 1 && m_travel_route.front() == 0; }
+
 UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
-{
-    return visitor.Visit(const_cast<Fleet* const>(this));
-}
+{ return visitor.Visit(const_cast<Fleet* const>(this)); }
 
 void Fleet::SetRoute(const std::list<System*>& route, double distance)
 {
     if (route.empty())
         throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an empty route.");
+
+    if (UnknownRoute())
+        throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an unkown route.");
 
     if (m_prev_system != SystemID() && m_prev_system == route.front()->ID() && !CanChangeDirectionEnRoute())
         throw std::invalid_argument("Fleet::SetRoute() : Illegally attempted to change a fleet's direction while it was in transit.");
@@ -324,6 +357,12 @@ void Fleet::MovementPhase()
     }
 }
 
+Fleet::iterator Fleet::begin()
+{ return m_ships.begin(); }
+
+Fleet::iterator Fleet::end()
+{ return m_ships.end(); }
+
 void Fleet::PopGrowthProductionResearchPhase()
 {
     // ensure that any newly opened or closed routes are taken into account
@@ -382,4 +421,22 @@ void Fleet::RecalculateFleetSpeed()
     } else {
         m_speed = 0.0;
     }
+}
+
+void Fleet::GetVisibleRoute(std::list<System*>& travel_route, int moving_to)
+{
+    std::list<System*>::iterator visible_end_it;
+    if (moving_to != m_moving_to) {
+        System* final_destination = GetUniverse().Object<System>(moving_to);
+        assert(std::find(m_travel_route.begin(), m_travel_route.end(), final_destination) != m_travel_route.end());
+        visible_end_it = ++std::find(m_travel_route.begin(), m_travel_route.end(), final_destination);
+    } else {
+        visible_end_it = m_travel_route.end();
+    }
+    std::list<System*>::iterator end_it = std::find_if(m_travel_route.begin(), visible_end_it, boost::bind(&SystemNotReachable, _1));
+    std::copy(m_travel_route.begin(), end_it, std::back_inserter(travel_route));
+    // If no Systems in a nonempty route are known reachable, put a null pointer in the route as a sentinel indicating
+    // that the route is unknown, but needs not be recomputed.
+    if (travel_route.empty() && !m_travel_route.empty())
+        travel_route.push_back(0);
 }

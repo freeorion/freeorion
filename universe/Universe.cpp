@@ -127,7 +127,7 @@ namespace {
         if(positions.size()==0)
             return 0.0;
 
-        unsigned int j; 
+        unsigned int j;
         double lowest_dist=  (positions[0].first  - position.first ) * (positions[0].first  - position.first ) 
             + (positions[0].second - position.second) * (positions[0].second - position.second),distance=0.0;
 
@@ -467,7 +467,7 @@ namespace {
 
     // templated implementations of Universe graph search methods
     template <class Graph>
-    std::pair<std::list<System*>, double> ShortestPathImpl(const Graph& graph, int system1, int system2, int empire_id, double linear_distance)
+    std::pair<std::list<System*>, double> ShortestPathImpl(const Graph& graph, int system1, int system2, double linear_distance)
     {
         typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
         typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type             ConstIndexPropertyMap;
@@ -512,12 +512,12 @@ namespace {
             retval.second = linear_distance;
         }
 #endif
-        
+
         return retval;
     }
 
     template <class Graph>
-    std::pair<std::list<System*>, int> LeastJumpsPathImpl(const Graph& graph, int system1, int system2, int empire_id)
+    std::pair<std::list<System*>, int> LeastJumpsPathImpl(const Graph& graph, int system1, int system2)
     {
         typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
 
@@ -553,7 +553,11 @@ namespace {
     }
 
     template <class Graph>
-    std::map<double, System*> ImmediateNeighborsImpl(const Graph& graph, int system, int empire_id)
+    bool SystemReachableImpl(const Graph& graph, int system)
+    { return boost::in_degree(system, graph); }
+
+    template <class Graph>
+    std::map<double, System*> ImmediateNeighborsImpl(const Graph& graph, int system)
     {
         typedef typename Graph::out_edge_iterator OutEdgeIterator;
         typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
@@ -938,6 +942,18 @@ Universe::ObjectIDVec Universe::FindObjectIDs(const UniverseObjectVisitor& visit
     return retval;
 }
 
+Universe::iterator Universe::begin()
+{ return m_objects.begin(); }
+
+Universe::iterator Universe::end()
+{ return m_objects.end(); }
+
+Universe::const_iterator Universe::begin() const
+{ return m_objects.begin(); }
+
+Universe::const_iterator Universe::end() const
+{ return m_objects.end(); }
+
 const UniverseObject* Universe::DestroyedObject(int id) const
 {
     const_iterator it = m_destroyed_objects.find(id);
@@ -953,11 +969,11 @@ std::pair<std::list<System*>, double> Universe::ShortestPath(int system1, int sy
 {
     double linear_distance = LinearDistance(system1, system2);
     if (empire_id == ALL_EMPIRES) {
-        return ShortestPathImpl(m_system_graph, system1, system2, empire_id, linear_distance);
+        return ShortestPathImpl(m_system_graph, system1, system2, linear_distance);
     } else {
         EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
         if (graph_it != m_empire_system_graph_views.end())
-            return ShortestPathImpl(*graph_it->second, system1, system2, empire_id, linear_distance);
+            return ShortestPathImpl(*graph_it->second, system1, system2, linear_distance);
     }
     return std::pair<std::list<System*>, double>();
 }
@@ -965,24 +981,37 @@ std::pair<std::list<System*>, double> Universe::ShortestPath(int system1, int sy
 std::pair<std::list<System*>, int> Universe::LeastJumpsPath(int system1, int system2, int empire_id/* = ALL_EMPIRES*/) const
 {
     if (empire_id == ALL_EMPIRES) {
-        return LeastJumpsPathImpl(m_system_graph, system1, system2, empire_id);
+        return LeastJumpsPathImpl(m_system_graph, system1, system2);
     } else {
         EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
         if (graph_it != m_empire_system_graph_views.end())
-            return LeastJumpsPathImpl(*graph_it->second, system1, system2, empire_id);
+            return LeastJumpsPathImpl(*graph_it->second, system1, system2);
     }
     return std::pair<std::list<System*>, int>();
+}
+
+bool Universe::SystemReachable(int system, int empire_id) const
+{
+    m_system_distances.at(system); // for an exception-throwing bounds check
+    if (empire_id == ALL_EMPIRES) {
+        return SystemReachableImpl(m_system_graph, system);
+    } else {
+        EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
+        if (graph_it != m_empire_system_graph_views.end())
+            return SystemReachableImpl(*graph_it->second, system);
+    }
+    return false;
 }
 
 std::map<double, System*> Universe::ImmediateNeighbors(int system, int empire_id/* = ALL_EMPIRES*/) const
 {
     m_system_distances.at(system); // for an exception-throwing bounds check
     if (empire_id == ALL_EMPIRES) {
-        return ImmediateNeighborsImpl(m_system_graph, system, empire_id);
+        return ImmediateNeighborsImpl(m_system_graph, system);
     } else {
         EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
         if (graph_it != m_empire_system_graph_views.end())
-            return ImmediateNeighborsImpl(*graph_it->second, system, empire_id);
+            return ImmediateNeighborsImpl(*graph_it->second, system);
     }
     return std::map<double, System*>();
 }
@@ -2360,10 +2389,14 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 #endif
 }
 
+double Universe::UniverseWidth()
+{ return s_universe_width; }
+
 int Universe::GenerateObjectID()
-{
-    return ++m_last_allocated_id;
-}
+{ return ++m_last_allocated_id; }
+
+const bool& Universe::InhibitUniverseObjectSignals()
+{ return s_inhibit_universe_object_signals; }
 
 void Universe::DestroyImpl(int id)
 {

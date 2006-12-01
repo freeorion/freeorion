@@ -866,8 +866,10 @@ std::string FleetDetailPanel::DestinationText() const
             retval = boost::io::str(boost::format(UserString("FW_FLEET_MOVING_TO")) % (dest->Name().empty() ? UserString("UNKNOWN_SYSTEM") : dest->Name()) % eta.first);
             if (eta.first != eta.second)
                 retval += "(" + boost::lexical_cast<std::string>(eta.second) + ")";
-        } else {
-            retval = boost::io::str(boost::format(UserString("FW_FLEET_MOVING_TO")) % (dest->Name().empty() ? UserString("UNKNOWN_SYSTEM") : dest->Name()) % UserString("FW_FLEET_ETA_NEVER"));
+        } else if (eta.first == Fleet::ETA_UNKNOWN) {
+            retval = boost::io::str(boost::format(UserString("FW_FLEET_MOVING_TO")) %
+                                    (dest->Name().empty() ? UserString("UNKNOWN_SYSTEM") : dest->Name()) %
+                                    UserString(eta.first == Fleet::ETA_UNKNOWN ? "FW_FLEET_ETA_UNKNOWN" : "FW_FLEET_ETA_NEVER"));
         }
     } else if (current) {
         retval = boost::io::str(boost::format(UserString("FW_FLEET_AT")) % current->Name());

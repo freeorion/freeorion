@@ -1154,6 +1154,9 @@ void MapWnd::RenderFleetMovementLines()
 
     GG::Pt ul = ClientUpperLeft();
     for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
+        if (it->first->UnknownRoute())
+            continue;
+
         // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
         // when the begining of a line segment starts offscreen
         glBegin(GL_LINES);

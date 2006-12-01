@@ -122,11 +122,11 @@ public:
     /** returns the IDs of all the objects of type T. */
     template <class T> ObjectIDVec FindObjectIDs() const;
 
-    iterator begin() { return m_objects.begin();}
-    iterator end() { return m_objects.end();}
+    iterator begin();
+    iterator end();
 
-    const_iterator begin() const  {return m_objects.begin();}   ///< returns the begin const_iterator for the objects in the universe
-    const_iterator end() const    {return m_objects.end();}     ///< returns the end const_iterator for the objects in the universe
+    const_iterator begin() const;   ///< returns the begin const_iterator for the objects in the universe
+    const_iterator end() const;     ///< returns the end const_iterator for the objects in the universe
 
 
     const UniverseObject* DestroyedObject(int id) const;          ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
@@ -150,6 +150,11 @@ public:
         visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function will throw if either system
         ID is out of range. */
     std::pair<std::list<System*>, int> LeastJumpsPath(int system1, int system2, int empire_id = ALL_EMPIRES) const;
+
+    /** returns true iff \a system is reachable (i.e. it has at least one known starlane to it).  The starlanes
+        considered depend on their visiblity for empire \a empire_id, or without regard to visibility if \a empire_id ==
+        ALL_EMPIRES.  \throw std::out_of_range This function will throw if the system ID is out of range. */
+    bool SystemReachable(int system, int empire_id = ALL_EMPIRES) const;
 
     /** returns the systems that are one starlane hop away from system \a system.  The returned systems are indexed by
         distance from \a system.  The neighborhood is calculated using the visiblity for empire \a empire_id, or without
@@ -197,13 +202,13 @@ public:
 
     /** returns the size of the galaxy map.  Does not measure absolute distances; the ratio between map coordinates and actual distance varies
         depending on universe size */
-    static double UniverseWidth() {return s_universe_width;}
+    static double UniverseWidth();
 
-    int GenerateObjectID( );  ///< generates an object ID for a future object. Usually used by the server to service new ID requests
+    int GenerateObjectID();  ///< generates an object ID for a future object. Usually used by the server to service new ID requests
 
     typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
 
-    static const bool& InhibitUniverseObjectSignals() {return s_inhibit_universe_object_signals;}
+    static const bool& InhibitUniverseObjectSignals();
 
     /** HACK! This must be set to the encoding empire's id when serializing a Universe, so that only the relevant parts
         of the Universe are serialized.  The use of this global variable is done just so I don't have to rewrite any
