@@ -858,7 +858,10 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
         int i = 0;
         for (ProductionQueue::iterator queue_it = queue.begin(); queue_it != queue.end(); ) {
             ProductionQueue::Element elem = *queue_it;
-            if (elem.location != location_id) continue; // skip projects with wrong location
+            if (elem.location != location_id) {
+                ++queue_it;
+                continue; // skip projects with wrong location
+            }
             
             ProductionQueue::ProductionItem item = elem.item;
             
