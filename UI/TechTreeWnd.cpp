@@ -26,8 +26,6 @@
 
 // TODO: after v0.3:
 // - make the category buttons toggle the visibility of each category
-// - render an insertion line between queue items when drag-dropping
-// - implement zooming (probably just need a zoomed-out version that shows only the tech icons)
 
 namespace {
     // command-line options
