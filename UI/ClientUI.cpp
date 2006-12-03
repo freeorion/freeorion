@@ -264,11 +264,9 @@ bool ClientUI::Initialize()
     //initialize UI state & window
     m_state = STATE_STARTUP;
 
-#ifndef FREEORION_BUILD_UTIL
     m_map_wnd = new MapWnd();
     GG::GUI::GetGUI()->Register(m_map_wnd);
     m_map_wnd->Hide();
-#endif
 
     return true;
 }
@@ -280,7 +278,6 @@ ClientUI::~ClientUI()
 
 bool ClientUI::Cleanup()
 {
-#ifndef FREEORION_BUILD_UTIL
     delete m_intro_screen;
     m_intro_screen = 0;
 
@@ -289,7 +286,6 @@ bool ClientUI::Cleanup()
 
     delete m_turn_progress_wnd;
     m_turn_progress_wnd = 0;
-#endif
 
     s_the_UI = 0;
 
@@ -345,26 +341,18 @@ bool ClientUI::ZoomToShip(int id)
 
 bool ClientUI::ZoomToTech(const std::string& tech_name)
 {
-#ifndef FREEORION_BUILD_UTIL
     if (!GetTech(tech_name))
         return false;
     m_map_wnd->ShowTech(tech_name);
     return true;
-#else
-    return false;
-#endif
 }
 
 bool ClientUI::ZoomToBuildingType(const std::string& building_type_name)
 {
-#ifndef FREEORION_BUILD_UTIL
     if (!GetBuildingType(building_type_name))
         return false;
     // TODO
     return true;
-#else
-    return false;
-#endif
 }
 
 bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
@@ -379,10 +367,8 @@ void ClientUI::ZoomToSystem(System* system)
     if (!system)
         return;
 
-#ifndef FREEORION_BUILD_UTIL
     m_map_wnd->CenterOnSystem(system->ID());
     m_map_wnd->SelectSystem(system->ID());
-#endif
 }
 
 void ClientUI::ZoomToFleet(Fleet* fleet)
@@ -390,7 +376,6 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
     if (!fleet)
         return;
 
-#ifndef FREEORION_BUILD_UTIL
     m_map_wnd->CenterOnFleet(fleet->ID());
     m_map_wnd->SelectFleet(fleet->ID());
     for (FleetWnd::FleetWndItr it = FleetWnd::FleetWndBegin(); it != FleetWnd::FleetWndEnd(); ++it) {
@@ -399,7 +384,6 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
             break;
         }
     }
-#endif
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix)
@@ -422,21 +406,16 @@ boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesyste
 //Screen Functions///////////////////////////////////
 void ClientUI::InitTurn(int turn_number)
 {
-#ifndef FREEORION_BUILD_UTIL
     m_map_wnd->InitTurn(turn_number);
-#endif
 }
 
 void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data)
 {
-#ifndef FREEORION_BUILD_UTIL
     m_map_wnd->RestoreFromSaveData(ui_data);
-#endif
 }
 
 void ClientUI::SwitchState(State state)
 {
-#ifndef FREEORION_BUILD_UTIL
     HideAllWindows();
     // clean up previous windows, based on previous state
     switch (m_state) {
@@ -513,7 +492,6 @@ void ClientUI::SwitchState(State state)
     default:
         break;
     }
-#endif
 }
 
 void ClientUI::ScreenIntro()
@@ -533,16 +511,12 @@ void ClientUI::ScreenMap()
 
 void ClientUI::UpdateTurnProgress(const std::string& phase_str, const int empire_id)
 {
-#ifndef FREEORION_BUILD_UTIL
     m_turn_progress_wnd->UpdateTurnProgress(phase_str, empire_id);
-#endif
 }
 
 void ClientUI::UpdateCombatTurnProgress(const std::string& msg)
 {
-#ifndef FREEORION_BUILD_UTIL
     m_turn_progress_wnd->UpdateCombatTurnProgress(msg);
-#endif
 }
 
 void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
@@ -564,10 +538,8 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
 {
     GG::ThreeButtonDlg dlg(320,200,message,GG::GUI::GetGUI()->GetFont(Font(),Pts()+2),WndColor(), WndBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
-#ifndef FREEORION_BUILD_UTIL
     if (play_alert_sound && GetOptionsDB().Get<bool>("UI.sound.enabled"))
         HumanClientApp::GetApp()->PlaySound(SoundDir() / "alert.wav");
-#endif
     dlg.Run();
 }
 
@@ -594,14 +566,12 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
 ////////////////////////////////////////////////////
 void ClientUI::HideAllWindows()
 {
-#ifndef FREEORION_BUILD_UTIL
     if (m_intro_screen)
         m_intro_screen->Hide();
     if (m_map_wnd)
         m_map_wnd->Hide();
     if (m_turn_progress_wnd)
         m_turn_progress_wnd->Hide();
-#endif
 }
 
 ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix)

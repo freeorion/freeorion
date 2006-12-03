@@ -40,9 +40,7 @@
 
 namespace {
     bool PlaySounds()
-    {
-        return GetOptionsDB().Get<bool>("UI.sound.enabled");
-    }
+    { return GetOptionsDB().Get<bool>("UI.sound.enabled"); }
     const std::string& SoundDir()
     {
         static std::string retval;
@@ -55,26 +53,13 @@ namespace {
         return retval;
     }
     void PlayMinimizeSound()
-    {
-#ifndef FREEORION_BUILD_UTIL
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-maximize"));
-#endif
-    }
+    { if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-maximize")); }
     void PlayMaximizeSound()
-    {
-#ifndef FREEORION_BUILD_UTIL
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-minimize"));
-#endif
-    }
+    { if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-minimize")); }
     void PlayCloseSound()
-    {
-#ifndef FREEORION_BUILD_UTIL
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-close"));
-#endif
-    }
+    { if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-close")); }
 
     const double BUTTON_DIMMING_SCALE_FACTOR = 0.75;
-
 }
 
 ////////////////////////////////////////////////

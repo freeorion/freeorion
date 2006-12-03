@@ -7,6 +7,7 @@
 #include "../../UI/CUIStyle.h"
 #include "../../UI/MapWnd.h"
 #include "../../network/Message.h"
+#include "../../network/Networking.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
@@ -93,8 +94,7 @@ HumanClientApp::HumanClientApp() :
            false, "freeorion"),
     m_single_player_game(true),
     m_game_started(false),
-    m_turns_since_autosave(0),
-    m_handling_message(false)
+    m_turns_since_autosave(0)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -127,13 +127,18 @@ HumanClientApp::HumanClientApp() :
 }
 
 HumanClientApp::~HumanClientApp()
-{
-}
+{}
+
+const std::string& HumanClientApp::SaveFileName() const
+{ return m_save_filename; }
+
+bool HumanClientApp::SinglePlayerGame() const
+{ return m_single_player_game; }
 
 std::map<int, int> HumanClientApp::PendingColonizationOrders() const
 {
     std::map<int, int> retval;
-    for (OrderSet::const_iterator it = m_orders.begin(); it != m_orders.end(); ++it) {
+    for (OrderSet::const_iterator it = Orders().begin(); it != Orders().end(); ++it) {
         if (const FleetColonizeOrder* order = dynamic_cast<const FleetColonizeOrder*>(it->second)) {
             retval[order->PlanetID()] = it->first;
         }
@@ -159,35 +164,33 @@ void HumanClientApp::StartServer()
 void HumanClientApp::FreeServer()
 {
     m_server_process.Free();
-    m_player_id = -1;
-    m_empire_id = -1;
-    m_player_name = "";
+    SetPlayerID(-1);
+    SetEmpireID(-1);
+    SetPlayerName("");
 }
 
 void HumanClientApp::KillServer()
 {
     m_server_process.Kill();
-    m_player_id = -1;
-    m_empire_id = -1;
-    m_player_name = "";
+    SetPlayerID(-1);
+    SetEmpireID(-1);
+    SetPlayerName("");
 }
 
 void HumanClientApp::EndGame()
 {
     m_game_started = false;
-    m_network_core.DisconnectFromServer();
+    Networking().DisconnectFromServer();
     m_server_process.RequestTermination();
-    m_player_id = -1;
-    m_empire_id = -1;
-    m_player_name = "";
+    SetPlayerID(-1);
+    SetEmpireID(-1);
+    SetPlayerName("");
     m_ui->GetMapWnd()->Sanitize();
     m_ui->ScreenIntro();
 }
 
 void HumanClientApp::SetLobby(MultiplayerLobbyWnd* lobby)
-{
-    m_multiplayer_lobby_wnd = lobby;
-}
+{ SetMultiplayerLobby(lobby); }
 
 bool HumanClientApp::LoadSinglePlayerGame()
 {
@@ -201,14 +204,14 @@ bool HumanClientApp::LoadSinglePlayerGame()
         if (!dlg.Result().empty()) {
             filename = *dlg.Result().begin();
 
-            if (!NetworkCore().Connected()) {
+            if (!Networking().Connected()) {
                 if (!GetOptionsDB().Get<bool>("force-external-server"))
                     StartServer();
 
                 bool failed = false;
                 int start_time = Ticks();
                 const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
-                while (!NetworkCore().ConnectToLocalhostServer()) {
+                while (!Networking().ConnectToLocalHostServer()) {
                     if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
                         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                         failed = true;
@@ -224,14 +227,14 @@ bool HumanClientApp::LoadSinglePlayerGame()
 
             m_ui->ScreenLoad();
             m_game_started = false;
-            m_player_id = NetworkCore::HOST_PLAYER_ID;
-            m_empire_id = -1;
-            m_player_name = "Happy_Player";
+            SetPlayerID(Networking::HOST_PLAYER_ID);
+            SetEmpireID(-1);
+            SetPlayerName("Happy_Player");
 
             // HACK!  Send HostMPGameMessage, since it establishes us as the host, and the LOAD_GAME message will
             // establish us as a single-player game.
-            NetworkCore().SendMessage(HostMPGameMessage(NetworkCore::HOST_PLAYER_ID, "Happy_Player"));
-            NetworkCore().SendMessage(HostLoadGameMessage(NetworkCore::HOST_PLAYER_ID, filename));
+            Networking().SendMessage(HostMPGameMessage(Networking::HOST_PLAYER_ID, "Happy_Player"));
+            Networking().SendMessage(HostLoadGameMessage(Networking::HOST_PLAYER_ID, filename));
 
             return true;
         }
@@ -292,10 +295,7 @@ HumanClientApp* HumanClientApp::GetApp()
 
 void HumanClientApp::StartTurn()
 {
-    // setup GUI
     m_ui->ScreenProcessTurn();
-
-    // call base method
     ClientApp::StartTurn();
 }
 
@@ -324,11 +324,6 @@ void HumanClientApp::SDLInit()
 
     SDL_WM_SetCaption(("FreeOrion " + FreeOrionVersionString()).c_str(), "FreeOrion");
 
-    if (SDLNet_Init() < 0) {
-        Logger().errorStream() << "SDL Net initialization failed: " << SDLNet_GetError();
-        Exit(1);
-    }
-
     if (FE_Init() < 0) {
         Logger().errorStream() << "FastEvents initialization failed: " << FE_GetError();
         Exit(1);
@@ -355,11 +350,6 @@ void HumanClientApp::SDLInit()
 
     if (SDL_SetVideoMode(AppWidth(), AppHeight(), bpp, DoFullScreen | SDL_OPENGL) == 0) {
         Logger().errorStream() << "Video mode set failed: " << SDL_GetError();
-        Exit(1);
-    }
-
-    if (NET2_Init() < 0) {
-        Logger().errorStream() << "SDL Net2 initialization failed: " << NET2_GetError();
         Exit(1);
     }
 
@@ -410,9 +400,7 @@ void HumanClientApp::HandleSystemEvents(int& last_mouse_event_time)
 {
     // handle events
     SDL_Event event;
-    while (0 < (m_handling_message ?
-                FE_PollMaskedEvent(&event, SDL_ALLEVENTS & ~SDL_EVENTMASK(SDL_USEREVENT)) :
-                FE_PollEvent(&event))) {
+    while (0 < FE_PollEvent(&event)) {
         if (event.type  == SDL_MOUSEBUTTONDOWN || event.type  == SDL_MOUSEBUTTONUP || event.type == SDL_MOUSEMOTION)
             last_mouse_event_time = Ticks();
 
@@ -459,28 +447,22 @@ void HumanClientApp::HandleSystemEvents(int& last_mouse_event_time)
             HandleGGEvent(gg_event, key, key_mods, mouse_pos, mouse_rel);
         else
             HandleNonGGEvent(event);
+
+        // now check for a single network message
+        if (!Networking().Connected()) {
+            HandleServerDisconnect();
+        } else if (Networking().MessageAvailable()) {
+            Message msg;
+            Networking().GetMessage(msg);
+            HandleMessage(msg);
+        }
     }
 }
 
 void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
 {
-    switch(event.type) {
-    case SDL_USEREVENT: {
-        int net2_type = NET2_GetEventType(const_cast<SDL_Event*>(&event));
-        if (net2_type == NET2_ERROREVENT || 
-            net2_type == NET2_TCPACCEPTEVENT || 
-            net2_type == NET2_TCPRECEIVEEVENT || 
-            net2_type == NET2_TCPCLOSEEVENT || 
-            net2_type == NET2_UDPRECEIVEEVENT)
-            m_network_core.HandleNetEvent(const_cast<SDL_Event&>(event));
-        break;
-    }
-
-    case SDL_QUIT: {
+    if (event.type == SDL_QUIT)
         Exit(0);
-        return;
-    }
-    }
 }
 
 void HumanClientApp::RenderBegin()
@@ -490,8 +472,8 @@ void HumanClientApp::RenderBegin()
 
 void HumanClientApp::FinalCleanup()
 {
-    if (NetworkCore().Connected()) {
-        NetworkCore().DisconnectFromServer();
+    if (Networking().Connected()) {
+        Networking().DisconnectFromServer();
     }
     m_server_process.RequestTermination();
 }
@@ -499,20 +481,17 @@ void HumanClientApp::FinalCleanup()
 void HumanClientApp::SDLQuit()
 {
     FinalCleanup();
-    NET2_Quit();
     FE_Quit();
-    SDLNet_Quit();
     SDL_Quit();
     Logger().debugStream() << "SDLQuit() complete.";
 }
 
-void HumanClientApp::HandleMessageImpl(const Message& msg)
+void HumanClientApp::HandleMessage(const Message& msg)
 {
-    m_handling_message = true;
     switch (msg.Type()) {
     case Message::SERVER_STATUS: {
-        ServerState server_state = boost::lexical_cast<ServerState>(msg.GetText());
-        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received SERVER_STATUS (status code " << msg.GetText() << ")";
+        ServerState server_state = boost::lexical_cast<ServerState>(msg.Text());
+        Logger().debugStream() << "HumanClientApp::HandleMessage : Received SERVER_STATUS (status code " << msg.Text() << ")";
         if (server_state == SERVER_DYING)
             KillServer();
         break;
@@ -520,19 +499,19 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::HOST_SP_GAME:
     case Message::HOST_MP_GAME: {
-        if (msg.Sender() == -1 && msg.GetText() == "ACK")
-            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received " << (msg.Type() == Message::HOST_SP_GAME ? "HOST_SP_GAME" : "HOST_MP_GAME") << " acknowledgement";
+        if (msg.SendingPlayer() == -1 && msg.Text() == "ACK")
+            Logger().debugStream() << "HumanClientApp::HandleMessage : Received " << (msg.Type() == Message::HOST_SP_GAME ? "HOST_SP_GAME" : "HOST_MP_GAME") << " acknowledgement";
         break;
     } 
 
     case Message::JOIN_GAME: {
-        if (msg.Sender() == -1) {
-            if (m_player_id == -1) {
-                m_player_id = boost::lexical_cast<int>(msg.GetText());
-                Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received JOIN_GAME acknowledgement "
-                    "(joined as player " << m_player_id << ")";
-            } else if (m_player_id != NetworkCore::HOST_PLAYER_ID) {
-                Logger().errorStream() << "HumanClientApp::HandleMessageImpl : Received erroneous JOIN_GAME acknowledgement when "
+        if (msg.SendingPlayer() == -1) {
+            if (PlayerID() == -1) {
+                SetPlayerID(boost::lexical_cast<int>(msg.Text()));
+                Logger().debugStream() << "HumanClientApp::HandleMessage : Received JOIN_GAME acknowledgement "
+                    "(joined as player " << PlayerID() << ")";
+            } else if (PlayerID() != Networking::HOST_PLAYER_ID) {
+                Logger().errorStream() << "HumanClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when "
                     "already in a game";
             }
         }
@@ -540,30 +519,30 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::RENAME_PLAYER: {
-        m_player_name = msg.GetText();
-        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received RENAME_PLAYER -- Server has renamed this player \"" << 
-            m_player_name  << "\"";
+        SetPlayerName(msg.Text());
+        Logger().debugStream() << "HumanClientApp::HandleMessage : Received RENAME_PLAYER -- Server has renamed this player \"" << 
+            PlayerName()  << "\"";
         break;
     }
 
     case Message::GAME_START: {
-        if (msg.Sender() == -1) {
-            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
+        if (msg.SendingPlayer() == -1) {
+            Logger().debugStream() << "HumanClientApp::HandleMessage : Received GAME_START message; "
                 "starting player turn...";
             m_game_started = true;
-            ExtractMessageData(msg, m_single_player_game, m_empire_id, m_current_turn, Empires(), GetUniverse());
+            ExtractMessageData(msg, m_single_player_game, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse());
 
             Orders().Reset();
 
-            Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Universe setup complete.";
+            Logger().debugStream() << "HumanClientApp::HandleMessage : Universe setup complete.";
 
-            for (Empire::SitRepItr it = Empires().Lookup(m_empire_id)->SitRepBegin(); it != Empires().Lookup(m_empire_id)->SitRepEnd(); ++it) {
+            for (Empire::SitRepItr it = Empires().Lookup(EmpireID())->SitRepBegin(); it != Empires().Lookup(EmpireID())->SitRepEnd(); ++it) {
                 m_ui->GenerateSitRepText(*it);
             }
 
             Autosave(true);
             m_ui->ScreenMap();
-            m_ui->InitTurn(m_current_turn); // init the new turn
+            m_ui->InitTurn(CurrentTurn()); // init the new turn
         }
         break;
     }
@@ -571,7 +550,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     case Message::SAVE_GAME: {
         SaveGameUIData ui_data;
         ClientUI::GetClientUI()->GetSaveGameUIData(ui_data);
-        NetworkCore().SendMessage(ClientSaveDataMessage(m_player_id, m_orders, ui_data));
+        Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
         break;
     }
 
@@ -584,12 +563,12 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::TURN_UPDATE: {
-        ExtractMessageData(msg, m_empire_id, m_current_turn, Empires(), GetUniverse());
+        ExtractMessageData(msg, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse());
 
         // Now decode sitreps
         // Empire sitreps need UI in order to generate text, since it needs string resources
         // generate textr for all sitreps
-        for (Empire::SitRepItr sitrep_it = Empires().Lookup(m_empire_id)->SitRepBegin(); sitrep_it != Empires().Lookup( m_empire_id )->SitRepEnd(); ++sitrep_it) {
+        for (Empire::SitRepItr sitrep_it = Empires().Lookup(EmpireID())->SitRepBegin(); sitrep_it != Empires().Lookup( EmpireID() )->SitRepEnd(); ++sitrep_it) {
             SitRepEntry *pEntry = *sitrep_it;
             m_ui->GenerateSitRepText(pEntry);
         }
@@ -598,11 +577,11 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
 
         // if this is the last turn, the TCP message handling inherent in Autosave()'s synchronous message may have
         // processed an end-of-game message, in which case we need *not* to execute these last two lines below
-        if (!m_game_started || !NetworkCore().Connected())
+        if (!m_game_started || !Networking().Connected())
             break;
 
         m_ui->ScreenMap(); 
-        m_ui->InitTurn(m_current_turn);
+        m_ui->InitTurn(CurrentTurn());
         break;
     }
 
@@ -633,39 +612,39 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     case Message::COMBAT_START:
     case Message::COMBAT_ROUND_UPDATE:
     case Message::COMBAT_END: {
-        m_ui->UpdateCombatTurnProgress(msg.GetText());
+        m_ui->UpdateCombatTurnProgress(msg.Text());
         break;
     }
 
     case Message::HUMAN_PLAYER_MSG: {
-        ClientUI::GetClientUI()->GetMapWnd()->HandlePlayerChatMessage(msg.GetText());
+        ClientUI::GetClientUI()->GetMapWnd()->HandlePlayerChatMessage(msg.Text());
         break;
     }
 
     case Message::PLAYER_ELIMINATED: {
-        Logger().debugStream() << "HumanClientApp::HandleMessageImpl : PLAYER_ELIMINATED : m_empire_id=" << m_empire_id << " Empires().Lookup(m_empire_id)=" << Empires().Lookup(m_empire_id);
-        Empire* empire = Empires().Lookup(m_empire_id);
+        Logger().debugStream() << "HumanClientApp::HandleMessage : PLAYER_ELIMINATED : EmpireID()=" << EmpireID() << " Empires().Lookup(EmpireID())=" << Empires().Lookup(EmpireID());
+        Empire* empire = Empires().Lookup(EmpireID());
         if (!empire) break;
-        if (empire->Name() == msg.GetText()) {
+        if (empire->Name() == msg.Text()) {
             // TODO: replace this with something better
             ClientUI::MessageBox(UserString("PLAYER_DEFEATED"));
             EndGame();
         } else {
             // TODO: replace this with something better
-            ClientUI::MessageBox(boost::io::str(boost::format(UserString("EMPIRE_DEFEATED")) % msg.GetText()));
+            ClientUI::MessageBox(boost::io::str(boost::format(UserString("EMPIRE_DEFEATED")) % msg.Text()));
         }
         break;
     }
 
     case Message::PLAYER_EXIT: {
-        std::string message = boost::io::str(boost::format(UserString("PLAYER_DISCONNECTED")) % msg.GetText());
+        std::string message = boost::io::str(boost::format(UserString("PLAYER_DISCONNECTED")) % msg.Text());
         ClientUI::MessageBox(message, true);
         break;
     }
 
     case Message::END_GAME: {
         if (m_game_started) {
-            if (msg.GetText() == "VICTORY") {
+            if (msg.Text() == "VICTORY") {
                 EndGame();
                 // TODO: replace this with something better
                 ClientUI::MessageBox(UserString("PLAYER_VICTORIOUS"));
@@ -678,18 +657,17 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     default: {
-        Logger().errorStream() << "HumanClientApp::HandleMessageImpl : Received unknown Message type code " << msg.Type();
+        Logger().errorStream() << "HumanClientApp::HandleMessage : Received unknown Message type code " << msg.Type();
         break;
     }
     }
-    m_handling_message = false;
 }
 
-void HumanClientApp::HandleServerDisconnectImpl()
+void HumanClientApp::HandleServerDisconnect()
 {
-    if (m_multiplayer_lobby_wnd) { // in MP lobby
+    if (MultiplayerLobby()) { // in MP lobby
         ClientUI::MessageBox(UserString("MPLOBBY_HOST_ABORTED_GAME"), true);
-        m_multiplayer_lobby_wnd->Cancel();
+        MultiplayerLobby()->Cancel();
     } else if (m_game_started) { // playing game
         ClientUI::MessageBox(UserString("SERVER_LOST"), true);
         EndGame();
@@ -713,15 +691,15 @@ void HumanClientApp::Autosave(bool new_game)
 
         std::string save_filename;
         if (m_single_player_game) {
-            save_filename = boost::io::str(boost::format("AS_%s_%04d.sav") % empire_name % m_current_turn);
+            save_filename = boost::io::str(boost::format("AS_%s_%04d.sav") % empire_name % CurrentTurn());
         } else {
-            std::string::size_type first_good_player_char = m_player_name.find_first_of(legal_chars);
+            std::string::size_type first_good_player_char = PlayerName().find_first_of(legal_chars);
             if (first_good_player_char == std::string::npos) {
-                save_filename = boost::io::str(boost::format("AS_%s_%04d.mps") % empire_name % m_current_turn);
+                save_filename = boost::io::str(boost::format("AS_%s_%04d.mps") % empire_name % CurrentTurn());
             } else {
-                std::string::size_type first_bad_player_char = m_player_name.find_first_not_of(legal_chars, first_good_player_char);
-                std::string player_name = m_player_name.substr(first_good_player_char, first_bad_player_char - first_good_player_char);
-                save_filename = boost::io::str(boost::format("AS_%s_%s_%04d.mps") % player_name % empire_name % m_current_turn);
+                std::string::size_type first_bad_player_char = PlayerName().find_first_not_of(legal_chars, first_good_player_char);
+                std::string player_name = PlayerName().substr(first_good_player_char, first_bad_player_char - first_good_player_char);
+                save_filename = boost::io::str(boost::format("AS_%s_%s_%04d.mps") % player_name % empire_name % CurrentTurn());
             }
         }
 
@@ -758,10 +736,7 @@ void HumanClientApp::Autosave(bool new_game)
         }
 
         Message response;
-        bool save_succeeded = 
-            NetworkCore().SendSynchronousMessage(HostSaveGameMessage(PlayerID(), (save_dir / save_filename).native_file_string()), response);
-        if (!save_succeeded && m_game_started && NetworkCore().Connected())
-            Logger().errorStream() << "HumanClientApp::Autosave : An error occured while attempting to save the autosave file \"" << save_filename << "\"";
+        Networking().SendSynchronousMessage(HostSaveGameMessage(PlayerID(), (save_dir / save_filename).native_file_string()), response);
     }
 }
 

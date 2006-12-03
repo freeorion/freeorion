@@ -194,6 +194,7 @@ if not env.GetOption('clean'):
 
         freeorion_boost_libs = [
             ('boost_serialization', 'boost/archive/binary_iarchive.hpp', 'boost::archive::binary_iarchive::is_saving();'),
+            ('boost_thread', 'boost/thread/thread.hpp', 'boost::thread::thread();'),
             ('boost_iostreams', 'boost/iostreams/filtering_stream.hpp', '')
             ]
 

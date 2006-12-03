@@ -7,13 +7,11 @@
 #include <string>
 
 
-class ClientNetworkCore;
 class EmpireManager;
 class Message;
 class MultiplayerLobbyData;
 class OrderSet;
 class SaveGameUIData;
-class ServerNetworkCore;
 class SinglePlayerSetupData;
 class Universe;
 class XMLDoc;

@@ -101,12 +101,8 @@ void InGameMenu::Save()
         if (!dlg.Result().empty()) {
             filename = *dlg.Result().begin();
             Message response;
-            bool save_succeeded = HumanClientApp::GetApp()->NetworkCore().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), filename), response);
-            if (save_succeeded) {
-                CloseClicked();
-            } else {
-                ClientUI::MessageBox("Could not save game as \"" + filename + "\".", true);
-            }
+            HumanClientApp::GetApp()->Networking().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), filename), response);
+            CloseClicked();
         }
     } catch (const FileDlg::BadInitialDirectory& e) {
         ClientUI::MessageBox(e.what(), true);
@@ -127,8 +123,8 @@ void InGameMenu::Options()
 
 void InGameMenu::Exit()
 {
-    if (HumanClientApp::GetApp()->NetworkCore().Connected())
-        HumanClientApp::GetApp()->NetworkCore().DisconnectFromServer();
+    if (HumanClientApp::GetApp()->Networking().Connected())
+        HumanClientApp::GetApp()->Networking().DisconnectFromServer();
     HumanClientApp::GetApp()->EndGame();
     CloseClicked();
 }

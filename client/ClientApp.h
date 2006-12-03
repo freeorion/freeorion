@@ -3,7 +3,7 @@
 #define _ClientApp_h_
 
 #include "../Empire/EmpireManager.h"
-#include "../network/ClientNetworkCore.h"
+#include "../network/ClientNetworking.h"
 #include "../network/Message.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
@@ -23,60 +23,69 @@ class MultiplayerLobbyWnd;
 class ClientApp
 {
 public:
-    /** \name Structors */ //@{   
+    /** \name Structors */ //@{
     ClientApp();
     virtual ~ClientApp();
     //@}
    
-    /** \name Accessors */ //@{   
-    const std::string&   PlayerName() const;       ///< returns the player name of this client
-    int                  PlayerID() const;         ///< returns the player ID of this client
-    int                  EmpireID() const;         ///< returns the empire ID of this client
-    int                  CurrentTurn() const;      ///< returns the current game turn
+    /** \name Accessors */ //@{
+    const std::string&      PlayerName() const;  ///< returns the player name of this client
+    int                     PlayerID() const;    ///< returns the player ID of this client
+    int                     EmpireID() const;    ///< returns the empire ID of this client
+    int                     CurrentTurn() const; ///< returns the current game turn
+
+    const Universe&         GetUniverse() const; ///< returns client's local copy of Universe
+    const EmpireManager&    Empires() const;     ///< returns the set of known Empires
+    const OrderSet&         Orders() const;      ///< returns Order set for this client's player
+    const ClientNetworking& Networking() const;  ///< returns the networking object for this client's player
     //@}
 
-    /** \name Mutators */ //@{   
-    virtual void         StartTurn();   ///< encodes order sets and sends turn orders message
+    /** \name Mutators */ //@{
+    virtual void            StartTurn();         ///< encodes order sets and sends turn orders message
 
-    Universe&            GetUniverse();      ///< returns client's local copy of Universe
-    EmpireManager&       Empires();          ///< returns the set of known Empires
-    OrderSet&            Orders();           ///< returns Order set for this client's player
-    ClientNetworkCore&   NetworkCore();      ///< returns the network core object for this client's player
-    MultiplayerLobbyWnd* MultiplayerLobby(); ///< returns the multiplayer lobby window, or 0 if none exists
-    CombatModule*        CurrentCombat();    ///< returns this client's currently executing Combat; may be 0
-    //@}
+    Universe&               GetUniverse();       ///< returns client's local copy of Universe
+    EmpireManager&          Empires();           ///< returns the set of known Empires
+    OrderSet&               Orders();            ///< returns Order set for this client's player
+    ClientNetworking&       Networking();        ///< returns the networking object for this client's player
+    MultiplayerLobbyWnd*    MultiplayerLobby();  ///< returns the multiplayer lobby window, or 0 if none exists
+    CombatModule*           CurrentCombat();     ///< returns this client's currently executing Combat; may be 0
 
     /** handles an incoming message from the server with the appropriate action or response */
-    static void          HandleMessage(const Message& msg);
-
-    /** handles the situation in which this client is disconnected from the server unexpectedly */
-    static void          HandleServerDisconnect();
+    virtual void            HandleMessage(const Message& msg) = 0;
 
     /** returns a universe object ID which can be used for new objects created by the client.
         Can return UniverseObject::INVALID_OBJECT_ID if an ID cannot be created. */
-    static int           GetNewObjectID();
+    int                     GetNewObjectID();
+    //@}
 
-    static ClientApp*    GetApp(); ///< returns the singleton ClientApp object
+    static ClientApp*       GetApp();            ///< returns the singleton ClientApp object
 
 protected:
-    MultiplayerLobbyWnd* m_multiplayer_lobby_wnd;
-
-    Universe                m_universe;
-    EmpireManager           m_empires;
-    CombatModule*           m_current_combat;
-    OrderSet                m_orders;
-    ClientNetworkCore       m_network_core;
-    std::string             m_player_name;
-    int                     m_player_id;
-    int                     m_empire_id;
-    int                     m_current_turn;
+    /** \name Mutators */ //@{
+    void SetPlayerName(const std::string& name);        ///< sets the player name of this client
+    void SetPlayerID(int id);                           ///< sets the player ID of this client
+    void SetEmpireID(int id);                           ///< sets the empire ID of this client
+    void SetCurrentTurn(int turn);                      ///< sets the current game turn
+    void SetMultiplayerLobby(MultiplayerLobbyWnd* wnd); ///< sets the multiplayer lobby window, or 0 if none exists
+    void SetCurrentCombat(CombatModule* combat);        ///< sets this client's currently executing Combat; may be 0
+    int& EmpireIDRef();                                 ///< returns the empire ID of this client
+    int& CurrentTurnRef();                              ///< returns the current game turn
+    //@}
 
 private:
     const ClientApp& operator=(const ClientApp&); // disabled
     ClientApp(const ClientApp&); // disabled
-   
-    virtual void HandleMessageImpl(const Message& msg) = 0;
-    virtual void HandleServerDisconnectImpl() {}
+
+    MultiplayerLobbyWnd*    m_multiplayer_lobby_wnd;
+    Universe                m_universe;
+    EmpireManager           m_empires;
+    CombatModule*           m_current_combat;
+    OrderSet                m_orders;
+    ClientNetworking        m_networking;
+    std::string             m_player_name;
+    int                     m_player_id;
+    int                     m_empire_id;
+    int                     m_current_turn;
 
     static ClientApp* s_app; ///< a ClientApp pointer to the singleton instance of the app
 };

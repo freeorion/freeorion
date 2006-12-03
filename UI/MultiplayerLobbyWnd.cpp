@@ -240,7 +240,7 @@ void MultiplayerLobbyWnd::KeyPress(GG::Key key, Uint32 key_mods)
     if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) && GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit) {
         int receiver = -1; // all players by default
         std::string text = m_chat_input_edit->WindowText();
-        HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
+        HumanClientApp::GetApp()->Networking().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
         m_chat_input_edit->SetText("");
         *m_chat_box += m_player_names[HumanClientApp::GetApp()->PlayerID()] + ": " + text + "\n";
     } else if (m_start_game_bn && !m_start_game_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
@@ -285,8 +285,8 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
     }
 
     case Message::LOBBY_CHAT: {
-        std::map<int, std::string>::iterator it = m_player_names.find(msg.Sender());
-        *m_chat_box += (it != m_player_names.end() ? (it->second + ": ") : "[unknown]: ") + msg.GetText() + '\n';
+        std::map<int, std::string>::iterator it = m_player_names.find(msg.SendingPlayer());
+        *m_chat_box += (it != m_player_names.end() ? (it->second + ": ") : "[unknown]: ") + msg.Text() + '\n';
         break;
     }
 
@@ -298,7 +298,7 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
     }
 
     case Message::LOBBY_EXIT: {
-        int player_id = msg.Sender();
+        int player_id = msg.SendingPlayer();
         std::string player_name = m_player_names[player_id];
         for (int i = 0; i < m_players_lb->NumRows(); ++i) {
             if (player_name == m_players_lb->GetRow(i)[0]->WindowText()) {
@@ -409,7 +409,7 @@ void MultiplayerLobbyWnd::PlayerDataChanged()
 
 void MultiplayerLobbyWnd::StartGameClicked()
 {
-    HumanClientApp::GetApp()->NetworkCore().SendMessage(StartMPGameMessage(HumanClientApp::GetApp()->PlayerID()));
+    HumanClientApp::GetApp()->Networking().SendMessage(StartMPGameMessage(HumanClientApp::GetApp()->PlayerID()));
     m_result = true;
     CUIWnd::CloseClicked();
 }
@@ -418,9 +418,9 @@ void MultiplayerLobbyWnd::CancelClicked()
 {
     int player_id = HumanClientApp::GetApp()->PlayerID();
     if (m_host)
-        HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyHostAbortMessage(player_id));
+        HumanClientApp::GetApp()->Networking().SendMessage(LobbyHostAbortMessage(player_id));
     else
-        HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyExitMessage(player_id));
+        HumanClientApp::GetApp()->Networking().SendMessage(LobbyExitMessage(player_id));
     m_result = false;
     CUIWnd::CloseClicked();
 }
@@ -476,7 +476,7 @@ void MultiplayerLobbyWnd::SendUpdate()
     if (!m_handling_lobby_update) {
         int player_id = HumanClientApp::GetApp()->PlayerID();
         if (player_id != -1)
-            HumanClientApp::GetApp()->NetworkCore().SendMessage(LobbyUpdateMessage(player_id, m_lobby_data));
+            HumanClientApp::GetApp()->Networking().SendMessage(LobbyUpdateMessage(player_id, m_lobby_data));
     }
 }
 

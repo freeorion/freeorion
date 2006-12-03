@@ -1265,7 +1265,7 @@ void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>&
     double some_fleet_y = some_fleet->Y();
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    int new_fleet_id = ClientApp::GetNewObjectID();
+    int new_fleet_id = HumanClientApp::GetApp()->GetNewObjectID();
     if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID) {
         ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
         return;

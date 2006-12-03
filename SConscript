@@ -10,7 +10,6 @@ common_sources = [
     'network/Message.cpp',
     'network/MessageQueue.cpp',
     'network/Networking.cpp',
-    'network/ServerNetworking.cpp',
     'network/boost/error_code.cpp',
     'UI/StringTable.cpp',
     'universe/Building.cpp',
@@ -57,7 +56,7 @@ common_sources = [
 if env['target_define'] == 'FREEORION_BUILD_SERVER':
     target_sources = [
         'combat/CombatSystem.cpp',
-        'network/ServerNetworkCore.cpp',
+        'network/ServerNetworking.cpp',
         'server/SaveLoad.cpp',
         'server/ServerApp.cpp',
         'server/dmain.cpp',

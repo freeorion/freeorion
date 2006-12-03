@@ -203,7 +203,7 @@ void IntroScreen::OnSinglePlayer()
     galaxy_wnd.Run();
     if (galaxy_wnd.EndedWithOk()) {
         int start_time = GG::GUI::GetGUI()->Ticks();
-        while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) {
+        while (!HumanClientApp::GetApp()->Networking().ConnectToLocalHostServer()) {
             if (SERVER_CONNECT_TIMEOUT < GG::GUI::GetGUI()->Ticks() - start_time) {
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 failed = true;
@@ -223,7 +223,7 @@ void IntroScreen::OnSinglePlayer()
             setup_data.m_empire_name = galaxy_wnd.EmpireName();
             setup_data.m_empire_color = galaxy_wnd.EmpireColor();
             setup_data.m_AIs = 4;
-            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostSPGameMessage(HumanClientApp::GetApp()->PlayerID(), setup_data));
+            HumanClientApp::GetApp()->Networking().SendMessage(HostSPGameMessage(HumanClientApp::GetApp()->PlayerID(), setup_data));
         }
     } else {
         failed = true;
@@ -245,7 +245,7 @@ void IntroScreen::OnMultiPlayer()
     Hide();
 
     ServerConnectWnd server_connect_wnd;
-    while (!failed && !HumanClientApp::GetApp()->NetworkCore().Connected()) {
+    while (!failed && !HumanClientApp::GetApp()->Networking().Connected()) {
         server_connect_wnd.Run();
 
         if (server_connect_wnd.Result().second == "") {
@@ -260,7 +260,7 @@ void IntroScreen::OnMultiPlayer()
                 server_name = "localhost";
             }
             int start_time = GG::GUI::GetGUI()->Ticks();
-            while (!HumanClientApp::GetApp()->NetworkCore().ConnectToServer(server_name)) {
+            while (!HumanClientApp::GetApp()->Networking().ConnectToServer(server_name)) {
                 if (SERVER_CONNECT_TIMEOUT < GG::GUI::GetGUI()->Ticks() - start_time) {
                     ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                     if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
@@ -277,9 +277,9 @@ void IntroScreen::OnMultiPlayer()
     if (failed) {
         ClientUI::GetClientUI()->ScreenIntro();
     } else {
-        HumanClientApp::GetApp()->NetworkCore().SendMessage(server_connect_wnd.Result().second == "HOST GAME SELECTED" ? 
-                                                            HostMPGameMessage(HumanClientApp::GetApp()->PlayerID(), server_connect_wnd.Result().first) : 
-                                                            JoinGameMessage(server_connect_wnd.Result().first));
+        HumanClientApp::GetApp()->Networking().SendMessage(server_connect_wnd.Result().second == "HOST GAME SELECTED" ? 
+                                                           HostMPGameMessage(HumanClientApp::GetApp()->PlayerID(), server_connect_wnd.Result().first) : 
+                                                           JoinGameMessage(server_connect_wnd.Result().first));
         MultiplayerLobbyWnd multiplayer_lobby_wnd(server_connect_wnd.Result().second == "HOST GAME SELECTED");
         multiplayer_lobby_wnd.Run();
         if (!multiplayer_lobby_wnd.Result()) {

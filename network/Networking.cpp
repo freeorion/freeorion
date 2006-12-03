@@ -7,4 +7,5 @@ namespace Networking {
     const int DISCOVERY_PORT = 12345;
     const int MESSAGE_PORT = 12346;
     const int SOCKET_LINGER_TIME = 5;
+    const int HOST_PLAYER_ID = 0;
 }

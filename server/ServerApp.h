@@ -5,7 +5,8 @@
 #include "../util/AppInterface.h"
 #include "../util/Process.h"
 #include "../Empire/EmpireManager.h"
-#include "../network/ServerNetworkCore.h"
+#include "../network/Networking.h"
+#include "../network/ServerNetworking.h"
 #include "../universe/Universe.h"
 #include "../util/MultiplayerCommon.h"
 
@@ -82,7 +83,7 @@ public:
     /** when Messages arrive from connections that are not established players, they arrive via a call to this function*/
     void HandleNonPlayerMessage(const Message& msg, const PlayerInfo& connection); 
 
-    /** called by ServerNetworkCore when a player's TCP connection is closed*/
+    /** called by ServerNetworking when a player's TCP connection is closed*/
     void PlayerDisconnected(int id);
 
     /**  Adds an existing empire to turn processing. The position the empire is in the vector is it's position in the turn processing.*/
@@ -106,7 +107,7 @@ public:
     static Universe&              GetUniverse();    ///< returns server's copy of Universe
     static EmpireManager&         Empires();        ///< returns the server's copy of the Empires
     static CombatModule*          CurrentCombat();  ///< returns the server's currently executing Combat; may be 0
-    static ServerNetworkCore&     NetworkCore();    ///< returns the network core object for the server
+    static ServerNetworking&      Networking();     ///< returns the networking object for the server
 
 private:
     const ServerApp& operator=(const ServerApp&); // disabled
@@ -127,11 +128,13 @@ private:
 
     Empire* GetPlayerEmpire(int player_id) const;   ///< returns the object for the empire that that the player with ID \a player_id is playing
     int     GetEmpirePlayerID(int empire_id) const; ///< returns the player ID for the player playing the empire with ID \a empire_id
-   
+
+    boost::asio::io_service m_io_service;
+
     Universe                m_universe;
     EmpireManager           m_empires;
     CombatModule*           m_current_combat;
-    ServerNetworkCore       m_network_core;
+    ServerNetworking        m_networking;
 
     log4cpp::Category&      m_log_category;         ///< reference to the log4cpp object used to log events to file
 

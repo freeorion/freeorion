@@ -2,25 +2,13 @@
 #ifndef _HumanClientApp_h_
 #define _HumanClientApp_h_
 
-#ifndef _GG_SDLGUI_h_
-#include <GG/SDL/SDLGUI.h>
-#endif
-
-#ifndef _ClientApp_h_
 #include "../ClientApp.h"
-#endif
-
-#ifndef _Process_h_
 #include "../../util/Process.h"
-#endif
-
-#ifndef _ClientUI_h_
 #include "../../UI/ClientUI.h"
-#endif
 
-#ifndef _LOG4CPP_CATEGORY_HH
+#include <GG/SDL/SDLGUI.h>
+
 #include <log4cpp/Category.hh>
-#endif
 
 #include <boost/filesystem/path.hpp>
 
@@ -42,8 +30,8 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  SaveFileName() const     {return m_save_filename;} ///< returns the current game's filename (may be "")
-    bool                SinglePlayerGame() const {return m_single_player_game;} ///< returns true iff this game is a single-player game
+    const std::string&  SaveFileName() const;     ///< returns the current game's filename (may be "")
+    bool                SinglePlayerGame() const; ///< returns true iff this game is a single-player game
 
     /** Returns a map from Planet IDs to pending (issued earlier this turn and undo-able) colonization order IDs. */
     std::map<int, int> PendingColonizationOrders() const;
@@ -106,9 +94,9 @@ private:
     virtual void FinalCleanup();
     virtual void SDLQuit();
 
-    virtual void HandleMessageImpl(const Message& msg);
-    virtual void HandleServerDisconnectImpl();
+    virtual void HandleMessage(const Message& msg);
 
+    void HandleServerDisconnect();
     void Autosave(bool new_game); ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
 
     Process                           m_server_process;     ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
@@ -117,7 +105,6 @@ private:
     bool                              m_single_player_game; ///< true when this game is a single-player game
     bool                              m_game_started;       ///< true when a game is currently in progress
     int                               m_turns_since_autosave; ///< the number of turns that have elapsed since the last autosave
-    bool                              m_handling_message;
 };
 
 #endif // _HumanClientApp_h_

@@ -2219,7 +2219,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 #ifdef FREEORION_BUILD_SERVER
     // create empires and assign homeworlds, names, colors, and fleet ranges to each one
 
-    const std::map<int, PlayerInfo>& player_info = ServerApp::GetApp()->NetworkCore().Players();
+    const std::map<int, PlayerInfo>& player_info = ServerApp::GetApp()->Networking().Players();
     unsigned int i = 0;
     std::vector<GG::Clr> colors = EmpireColors();
     for (std::map<int, PlayerInfo>::const_iterator it = player_info.begin(); it != player_info.end(); ++it, ++i) {

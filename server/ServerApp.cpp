@@ -109,22 +109,23 @@ PlayerSaveGameData::PlayerSaveGameData(const std::string& name, Empire* empire, 
 ServerApp*  ServerApp::s_app = 0;
 
 ServerApp::ServerApp(int argc, char* argv[]) : 
-    m_current_combat(0), 
+    m_current_combat(0),
+    m_networking(m_io_service),
     m_log_category(log4cpp::Category::getRoot()),
     m_state(SERVER_IDLE),
     m_current_turn(INVALID_GAME_TURN)
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class ServerApp");
-   
+
     s_app = this;
 
     const std::string SERVER_LOG_FILENAME((GetLocalDir() / "freeoriond.log").native_file_string());
-   
+
     // a platform-independent way to erase the old log
     std::ofstream temp(SERVER_LOG_FILENAME.c_str());
     temp.close();
-   
+
     log4cpp::Appender* appender = new log4cpp::FileAppender("FileAppender", SERVER_LOG_FILENAME);
     log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
     layout->setConversionPattern("%d %p Server : %m%n");
@@ -164,7 +165,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs)
 {
     m_expected_ai_players.clear();
     for (std::set<int>::iterator it = m_ai_IDs.begin(); it != m_ai_IDs.end(); ++it) {
-        m_network_core.DumpPlayer(*it);
+        m_networking.DumpPlayer(*it);
     }
     m_ai_clients.clear();
     m_ai_IDs.clear();
@@ -199,23 +200,23 @@ void ServerApp::HandleMessage(const Message& msg)
             m_starlane_freq = m_lobby_data.m_starlane_freq;
             m_planet_density = m_lobby_data.m_planet_density;
             m_specials_freq = m_lobby_data.m_specials_freq;
-            m_expected_players = m_network_core.Players().size() + m_lobby_data.m_AIs.size();
-            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                if (it->first != msg.Sender())
-                    m_network_core.SendMessage(Message(Message::GAME_START, -1, it->first, Message::CLIENT_LOBBY_MODULE, ""));
+            m_expected_players = m_networking.Players().size() + m_lobby_data.m_AIs.size();
+            for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
+                if (it->first != msg.SendingPlayer())
+                    m_networking.SendMessage(Message(Message::GAME_START, -1, it->first, Message::CLIENT_LOBBY_MODULE, ""));
             }
             m_state = SERVER_GAME_SETUP;
             CreateAIClients(m_lobby_data.m_AIs);
             m_player_save_game_data.clear();
             m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
-            if (m_expected_players == static_cast<int>(m_network_core.Players().size())) {
+            if (m_expected_players == static_cast<int>(m_networking.Players().size())) {
                 NewGameInit();
                 m_state = SERVER_WAITING;
                 m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_WAITING << " (SERVER_WAITING).";
             }
         } else { // load game
-            std::map<int, PlayerInfo>::const_iterator sender_it = m_network_core.Players().find(msg.Sender());
-            if (sender_it != m_network_core.Players().end() && sender_it->second.host) {
+            std::map<int, PlayerInfo>::const_iterator sender_it = m_networking.Players().find(msg.SendingPlayer());
+            if (sender_it != m_networking.Players().end() && sender_it->second.host) {
                 m_empires.RemoveAllEmpires();
                 m_single_player_game = false;
                 LoadGame((GetLocalDir() / "save" / m_lobby_data.m_save_games[m_lobby_data.m_save_file_index]).native_file_string(),
@@ -226,7 +227,7 @@ void ServerApp::HandleMessage(const Message& msg)
                     for (unsigned int j = 0; j < m_lobby_data.m_players.size(); ++j) {
                         assert(m_player_save_game_data[i].m_empire);
                         if (m_lobby_data.m_players[j].m_save_game_empire_id == m_player_save_game_data[i].m_empire->EmpireID()) {
-                            std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin();
+                            std::map<int, PlayerInfo>::const_iterator player_it = m_networking.Players().begin();
                             std::advance(player_it, j);
                             m_player_save_game_data[i].m_name = player_it->second.name;
                             m_player_save_game_data[i].m_empire->SetPlayerName(player_it->second.name);
@@ -235,19 +236,19 @@ void ServerApp::HandleMessage(const Message& msg)
                     m_empires.InsertEmpire(m_player_save_game_data[i].m_empire);
                 }
 
-                for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+                for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
                     if (it != sender_it)
-                        m_network_core.SendMessage(Message(Message::GAME_START, -1, it->first, Message::CLIENT_LOBBY_MODULE, ""));
+                        m_networking.SendMessage(Message(Message::GAME_START, -1, it->first, Message::CLIENT_LOBBY_MODULE, ""));
                 }
 
-                int AI_clients = m_expected_players - m_network_core.Players().size();
+                int AI_clients = m_expected_players - m_networking.Players().size();
                 CreateAIClients(std::vector<PlayerSetupData>(AI_clients));
                 m_state = SERVER_GAME_SETUP;
 
                 if (!AI_clients)
                     LoadGameInit();
             } else {
-                m_log_category.errorStream() << "Player #" << msg.Sender() << " attempted to initiate a game load, but is not the host, or is "
+                m_log_category.errorStream() << "Player #" << msg.SendingPlayer() << " attempted to initiate a game load, but is not the host, or is "
                     "not found in the player list.";
             }
         }
@@ -280,30 +281,30 @@ void ServerApp::HandleMessage(const Message& msg)
         }
         m_lobby_data.m_players = mp_lobby_data.m_players;
 
-        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-            if (it->first != msg.Sender() || new_save_file_selected)
-                m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, m_lobby_data));
+        for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
+            if (it->first != msg.SendingPlayer() || new_save_file_selected)
+                m_networking.SendMessage(ServerLobbyUpdateMessage(it->first, m_lobby_data));
         }
         break;
     }
 
     case Message::LOBBY_CHAT: {
-        if (msg.Receiver() == -1) { // the receiver is everyone (except the sender)
-            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                if (it->first != msg.Sender())
-                    m_network_core.SendMessage(ServerLobbyChatMessage(msg.Sender(), it->first, msg.GetText()));
+        if (msg.ReceivingPlayer() == -1) { // the receiver is everyone (except the sender)
+            for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
+                if (it->first != msg.SendingPlayer())
+                    m_networking.SendMessage(ServerLobbyChatMessage(msg.SendingPlayer(), it->first, msg.Text()));
             }
         } else {
-            m_network_core.SendMessage(ServerLobbyChatMessage(msg.Sender(), msg.Receiver(), msg.GetText()));
+            m_networking.SendMessage(ServerLobbyChatMessage(msg.SendingPlayer(), msg.ReceivingPlayer(), msg.Text()));
         }
         break;
     }
 
     case Message::LOBBY_HOST_ABORT: {
-        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-            if (it->first != msg.Sender()) {
-                m_network_core.SendMessage(ServerLobbyHostAbortMessage(it->first));
-                m_network_core.DumpPlayer(it->first);
+        for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
+            if (it->first != msg.SendingPlayer()) {
+                m_networking.SendMessage(ServerLobbyHostAbortMessage(it->first));
+                m_networking.DumpPlayer(it->first);
             }
         }
         break;
@@ -311,26 +312,26 @@ void ServerApp::HandleMessage(const Message& msg)
 
     case Message::LOBBY_EXIT: {
         unsigned int i = 0;
-        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
-            if (it->first == msg.Sender()) {
+        for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it, ++i) {
+            if (it->first == msg.SendingPlayer()) {
                 if (i < m_lobby_data.m_players.size())
                     m_lobby_data.m_players.erase(m_lobby_data.m_players.begin() + i); // remove the exiting player's PlayerSetupData struct
             } else {
-                m_network_core.SendMessage(ServerLobbyExitMessage(msg.Sender(), it->first));
+                m_networking.SendMessage(ServerLobbyExitMessage(msg.SendingPlayer(), it->first));
             }
         }
-        m_network_core.DumpPlayer(msg.Sender());
+        m_networking.DumpPlayer(msg.SendingPlayer());
         break;
     }
 
     case Message::SAVE_GAME: {
-        if (m_network_core.Players().find(msg.Sender()) != m_network_core.Players().end()) {
+        if (m_networking.Players().find(msg.SendingPlayer()) != m_networking.Players().end()) {
             // send out all save game data requests
             std::set<int> needed_reponses;
             m_players_responded.clear();
             m_player_save_game_data.clear();
-            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                m_network_core.SendMessage(ServerSaveGameMessage(it->first));
+            for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
+                m_networking.SendMessage(ServerSaveGameMessage(it->first));
                 needed_reponses.insert(it->first);
             }
 
@@ -338,6 +339,7 @@ void ServerApp::HandleMessage(const Message& msg)
             SDL_Event ev;
             const unsigned int SYCHRONOUS_TIMEOUT = 15000; // give up after this many ms without any valid responses
             unsigned int start_time = SDL_GetTicks();
+#if 0 // TODO: Block or something here, or just have the handler for the incoming events call the code that follows when m_players_responded == needed_reponses
             while (1) {
                 unsigned int starting_responses = m_players_responded.size();
                 FE_PollEvent(&ev);
@@ -348,7 +350,7 @@ void ServerApp::HandleMessage(const Message& msg)
                         net2_type == NET2_TCPRECEIVEEVENT || 
                         net2_type == NET2_TCPCLOSEEVENT || 
                         net2_type == NET2_UDPRECEIVEEVENT) {
-                        m_network_core.HandleNetEvent(ev);
+                        m_networking.HandleNetEvent(ev);
                     }
                 }
                 if (starting_responses < m_players_responded.size())
@@ -356,27 +358,28 @@ void ServerApp::HandleMessage(const Message& msg)
                 if (m_players_responded == needed_reponses || SYCHRONOUS_TIMEOUT < SDL_GetTicks() - start_time)
                     break;
             }
+#endif
             if (m_players_responded == needed_reponses) {
-                SaveGame(msg.GetText(), m_current_turn, m_player_save_game_data, m_universe);
-                m_network_core.SendMessage(ServerSaveGameMessage(msg.Sender(), true));
+                SaveGame(msg.Text(), m_current_turn, m_player_save_game_data, m_universe);
+                m_networking.SendMessage(ServerSaveGameMessage(msg.SendingPlayer(), true));
             }
         } else {
-            m_log_category.errorStream() << "Player #" << msg.Sender() << " attempted to initiate a game save, but is not found in the player list.";
+            m_log_category.errorStream() << "Player #" << msg.SendingPlayer() << " attempted to initiate a game save, but is not found in the player list.";
         }
         break;
     }
 
     case Message::LOAD_GAME: { // single-player loading (multiplayer loading is handled through the lobby interface)
-        std::map<int, PlayerInfo>::const_iterator sender_it = m_network_core.Players().find(msg.Sender());
-        if (sender_it != m_network_core.Players().end() && sender_it->second.host) {
+        std::map<int, PlayerInfo>::const_iterator sender_it = m_networking.Players().find(msg.SendingPlayer());
+        if (sender_it != m_networking.Players().end() && sender_it->second.host) {
             m_empires.RemoveAllEmpires();
             m_single_player_game = true;
-            LoadGame(msg.GetText(), m_current_turn, m_player_save_game_data, m_universe);
+            LoadGame(msg.Text(), m_current_turn, m_player_save_game_data, m_universe);
             m_expected_players = m_player_save_game_data.size();
             CreateAIClients(std::vector<PlayerSetupData>(m_expected_players - 1));
             m_state = SERVER_GAME_SETUP;
         } else {
-            m_log_category.errorStream() << "Player #" << msg.Sender() << " attempted to initiate a game save, but is not the host, or is "
+            m_log_category.errorStream() << "Player #" << msg.SendingPlayer() << " attempted to initiate a game save, but is not the host, or is "
                 "not found in the player list.";
         }
         break;
@@ -387,7 +390,7 @@ void ServerApp::HandleMessage(const Message& msg)
         ExtractMessageData(msg, *order_set);
 
         // check order validity -- all orders must originate from this empire in order to be considered valid
-        Empire* empire = GetPlayerEmpire(msg.Sender());
+        Empire* empire = GetPlayerEmpire(msg.SendingPlayer());
         assert(empire);
         for (OrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
             Order* order = it->second;
@@ -400,16 +403,16 @@ void ServerApp::HandleMessage(const Message& msg)
             }
         }
 
-        m_network_core.SendMessage(TurnProgressMessage(msg.Sender(), Message::WAITING_FOR_PLAYERS, -1));
+        m_networking.SendMessage(TurnProgressMessage(msg.SendingPlayer(), Message::WAITING_FOR_PLAYERS, -1));
 
-        m_log_category.debugStream() << "ServerApp::HandleMessage : Received orders from player " << msg.Sender();
+        m_log_category.debugStream() << "ServerApp::HandleMessage : Received orders from player " << msg.SendingPlayer();
 
         /* if all orders are received already, do nothing as we are processing a turn */
         if (AllOrdersReceived())
             break;
 
         /* add orders to turn sequence */    
-        SetEmpireTurnOrders(GetPlayerEmpire(msg.Sender())->EmpireID(), order_set);
+        SetEmpireTurnOrders(GetPlayerEmpire(msg.SendingPlayer())->EmpireID(), order_set);
 
         /* look to see if all empires are done */
         if (AllOrdersReceived()) {
@@ -424,15 +427,15 @@ void ServerApp::HandleMessage(const Message& msg)
         boost::shared_ptr<SaveGameUIData> ui_data(new SaveGameUIData);
         if (!ExtractMessageData(msg, *order_set, *ui_data))
             ui_data.reset();
-        std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().find(msg.Sender());
-        assert(player_it != m_network_core.Players().end());
-        m_player_save_game_data.push_back(PlayerSaveGameData(player_it->second.name, GetPlayerEmpire(msg.Sender()), order_set, ui_data));
-        m_players_responded.insert(msg.Sender());
+        std::map<int, PlayerInfo>::const_iterator player_it = m_networking.Players().find(msg.SendingPlayer());
+        assert(player_it != m_networking.Players().end());
+        m_player_save_game_data.push_back(PlayerSaveGameData(player_it->second.name, GetPlayerEmpire(msg.SendingPlayer()), order_set, ui_data));
+        m_players_responded.insert(msg.SendingPlayer());
         break;
     }
 
     case Message::HUMAN_PLAYER_MSG: {
-        std::string text = msg.GetText();
+        std::string text = msg.Text();
 
         // if there's a colon in the message, treat all tokens before the colon as player names.
         // if there are tokens before the colon, but at least one of them *is not* a valid player names, assume there has been a typo,
@@ -444,7 +447,7 @@ void ServerApp::HandleMessage(const Message& msg)
             std::vector<std::string> tokens = Tokenize(text.substr(0, colon_position));
             for (unsigned int i = 0; i < tokens.size(); ++i) {
                 bool token_is_name = false;
-                for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+                for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
                     if (tokens[i] == it->second.name) {
                         token_is_name = true;
                         break;
@@ -461,33 +464,33 @@ void ServerApp::HandleMessage(const Message& msg)
             if (text == "")
                 return;
         }
-        Empire* sender_empire = GetPlayerEmpire(msg.Sender());
-        std::string final_text = RgbaTag(Empires().Lookup(sender_empire->EmpireID())->Color()) + m_network_core.Players().find(msg.Sender())->second.name +
+        Empire* sender_empire = GetPlayerEmpire(msg.SendingPlayer());
+        std::string final_text = RgbaTag(Empires().Lookup(sender_empire->EmpireID())->Color()) + m_networking.Players().find(msg.SendingPlayer())->second.name +
             (target_player_names.empty() ? ": " : " (whisper):") + text + "</rgba>\n";
-        for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+        for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
             if (target_player_names.empty() || target_player_names.find(it->second.name) != target_player_names.end())
-                m_network_core.SendMessage(ChatMessage(msg.Sender(), it->first, final_text));
+                m_networking.SendMessage(ChatMessage(msg.SendingPlayer(), it->first, final_text));
         }
         break;
     }
 
     case Message::REQUEST_NEW_OBJECT_ID: {
         /* get get ID and send back to client, it's waiting for this */
-        m_network_core.SendMessage(DispatchObjectIDMessage(msg.Sender(), GetUniverse().GenerateObjectID()));
+        m_networking.SendMessage(DispatchObjectIDMessage(msg.SendingPlayer(), GetUniverse().GenerateObjectID()));
         break;
     }
 
     case Message::END_GAME: {
-        std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().find(msg.Sender());
-        if (it != m_network_core.Players().end() && it->second.host) {
-            for (std::map<int, PlayerInfo>::const_iterator it2 = m_network_core.Players().begin(); it2 != m_network_core.Players().end(); ++it2) {
+        std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().find(msg.SendingPlayer());
+        if (it != m_networking.Players().end() && it->second.host) {
+            for (std::map<int, PlayerInfo>::const_iterator it2 = m_networking.Players().begin(); it2 != m_networking.Players().end(); ++it2) {
                 if (it->first != it2->first)
-                    m_network_core.SendMessage(EndGameMessage(-1, it2->first));
+                    m_networking.SendMessage(EndGameMessage(-1, it2->first));
             }
             m_state = SERVER_DYING;
             m_log_category.debugStream() << "ServerApp::HandleMessage : Server now in mode " << SERVER_DYING << " (SERVER_DYING).";
-            m_network_core.SendMessage(Message(Message::SERVER_STATUS, -1, msg.Sender(), Message::CORE, boost::lexical_cast<std::string>(m_state)));
-            m_network_core.DumpAllConnections();
+            m_networking.SendMessage(Message(Message::SERVER_STATUS, -1, msg.SendingPlayer(), Message::CORE, boost::lexical_cast<std::string>(m_state)));
+            m_networking.DumpAllConnections();
             Exit(0);
         }
         break;
@@ -504,12 +507,12 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
 {
     switch (msg.Type()) {
     case Message::HOST_SP_GAME: {
-        if (m_network_core.Players().empty() && m_expected_ai_players.empty()) {
+        if (m_networking.Players().empty() && m_expected_ai_players.empty()) {
             SinglePlayerSetupData setup_data;
             ExtractMessageData(msg, setup_data);
 
             PlayerInfo host_player_info(connection.socket, connection.address, setup_data.m_host_player_name, true);
-            int player_id = NetworkCore::HOST_PLAYER_ID;
+            int player_id = Networking::HOST_PLAYER_ID;
 
             // immediately start a new game with the given parameters
             m_single_player_game = true;
@@ -529,9 +532,9 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
             m_lobby_data.m_players.back().m_empire_name = setup_data.m_empire_name;
             m_lobby_data.m_players.back().m_empire_color = setup_data.m_empire_color;
             m_state = SERVER_GAME_SETUP;
-            if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
-                m_network_core.SendMessage(HostSPAckMessage(player_id));
-                m_network_core.SendMessage(JoinAckMessage(player_id));
+            if (m_networking.EstablishPlayer(connection.socket, player_id, host_player_info)) {
+                m_networking.SendMessage(HostSPAckMessage(player_id));
+                m_networking.SendMessage(JoinAckMessage(player_id));
             }
             m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_GAME_SETUP << " (SERVER_GAME_SETUP).";
             m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Universe size set to " << m_galaxy_size << " systems (SERVER_GAME_SETUP).";
@@ -541,86 +544,86 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
             m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to host "
                 "a new game but there was already one in progress or one being setup.  Terminating connection to " << 
                 (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
-            m_network_core.DumpConnection(connection.socket);
+            m_networking.DumpConnection(connection.socket);
         }
         break;
     }
 
     case Message::HOST_MP_GAME: {
-        if (m_network_core.Players().empty() && m_expected_ai_players.empty()) {
-            std::string host_player_name = msg.GetText();
+        if (m_networking.Players().empty() && m_expected_ai_players.empty()) {
+            std::string host_player_name = msg.Text();
             PlayerInfo host_player_info(connection.socket, connection.address, host_player_name, true);
-            int player_id = NetworkCore::HOST_PLAYER_ID;
+            int player_id = Networking::HOST_PLAYER_ID;
 
             // start an MP lobby situation so that game settings can be established
             m_single_player_game = false;
             m_state = SERVER_MP_LOBBY;
             m_lobby_data = MultiplayerLobbyData(true);
             m_log_category.debugStream() << "ServerApp::HandleNonPlayerMessage : Server now in mode " << SERVER_MP_LOBBY << " (SERVER_MP_LOBBY).";
-            if (m_network_core.EstablishPlayer(connection.socket, player_id, host_player_info)) {
-                m_network_core.SendMessage(HostMPAckMessage(player_id));
-                m_network_core.SendMessage(JoinAckMessage(player_id));
+            if (m_networking.EstablishPlayer(connection.socket, player_id, host_player_info)) {
+                m_networking.SendMessage(HostMPAckMessage(player_id));
+                m_networking.SendMessage(JoinAckMessage(player_id));
                 m_lobby_data.m_players.push_back(PlayerSetupData());
                 m_lobby_data.m_players.back().m_player_id = player_id;
                 m_lobby_data.m_players.back().m_player_name = host_player_name;
                 m_lobby_data.m_players.back().m_empire_color = EmpireColors().at(0);
             }
-            m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, m_lobby_data));
+            m_networking.SendMessage(ServerLobbyUpdateMessage(player_id, m_lobby_data));
         } else {
             const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
             m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to host "
                 "a new game but there was already one in progress or one being setup.  Terminating connection to " << 
                 (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
-            m_network_core.DumpConnection(connection.socket);
+            m_networking.DumpConnection(connection.socket);
         }
         break;
     }
 
     case Message::JOIN_GAME: {
-        std::string player_name = msg.GetText();
+        std::string player_name = msg.Text();
 
         PlayerInfo player_info(connection.socket, connection.address, player_name, false);
-        int player_id = std::max(NetworkCore::HOST_PLAYER_ID + 1, static_cast<int>(m_network_core.Players().size()));
+        int player_id = std::max(Networking::HOST_PLAYER_ID + 1, static_cast<int>(m_networking.Players().size()));
         if (player_id) {
-            player_id = m_network_core.Players().rbegin()->first + 1;
+            player_id = m_networking.Players().rbegin()->first + 1;
         }
 
         if (m_state == SERVER_MP_LOBBY) { // enter an MP lobby
-            if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
-                m_network_core.SendMessage(JoinAckMessage(player_id));
-                m_network_core.SendMessage(ServerLobbyUpdateMessage(player_id, m_lobby_data));
+            if (m_networking.EstablishPlayer(connection.socket, player_id, player_info)) {
+                m_networking.SendMessage(JoinAckMessage(player_id));
+                m_networking.SendMessage(ServerLobbyUpdateMessage(player_id, m_lobby_data));
                 m_lobby_data.m_players.push_back(PlayerSetupData());
                 m_lobby_data.m_players.back().m_player_id = player_id;
                 m_lobby_data.m_players.back().m_player_name = player_name;
                 m_lobby_data.m_players.back().m_empire_color = EmpireColors().at(0);
-                for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-                    m_network_core.SendMessage(ServerLobbyUpdateMessage(it->first, m_lobby_data));
+                for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
+                    m_networking.SendMessage(ServerLobbyUpdateMessage(it->first, m_lobby_data));
                 }
             }
         } else { // immediately join a game that is about to start
             std::set<std::string>::iterator it = m_expected_ai_players.find(player_name);
             if (it != m_expected_ai_players.end()) { // incoming AI player connection
-                // let the server network core know what socket this player is on
-                if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
-                    m_network_core.SendMessage(JoinAckMessage(player_id));
+                // let the networking system know what socket this player is on
+                if (m_networking.EstablishPlayer(connection.socket, player_id, player_info)) {
+                    m_networking.SendMessage(JoinAckMessage(player_id));
                     m_expected_ai_players.erase(player_name); // only allow one connection per AI
                     m_ai_IDs.insert(player_id);
                 }
             } else { // non-AI player connection
-                if (static_cast<int>(m_expected_ai_players.size() + m_network_core.Players().size()) < m_expected_players) {
-                    if (m_network_core.EstablishPlayer(connection.socket, player_id, player_info)) {
-                        m_network_core.SendMessage(JoinAckMessage(player_id));
+                if (static_cast<int>(m_expected_ai_players.size() + m_networking.Players().size()) < m_expected_players) {
+                    if (m_networking.EstablishPlayer(connection.socket, player_id, player_info)) {
+                        m_networking.SendMessage(JoinAckMessage(player_id));
                     }
                 } else {
                     const char* socket_hostname = SDLNet_ResolveIP(const_cast<IPaddress*>(&connection.address));
                     m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : A human player attempted to join "
                         "the game but there was not enough room.  Terminating connection to " << 
                         (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
-                    m_network_core.DumpConnection(connection.socket);
+                    m_networking.DumpConnection(connection.socket);
                 }
             }
 
-            if (static_cast<int>(m_network_core.Players().size()) == m_expected_players) { // if we've gotten all the players joined up
+            if (static_cast<int>(m_networking.Players().size()) == m_expected_players) { // if we've gotten all the players joined up
                 if (m_player_save_game_data.empty())
                     NewGameInit();
                 else
@@ -637,7 +640,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
         m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \"" <<
             msg.Type() << "\" for a non-player Message.  Terminating connection to " << 
             (socket_hostname ? socket_hostname : "[unknown host]") << " on socket " << connection.socket;
-        m_network_core.DumpConnection(connection.socket);
+        m_networking.DumpConnection(connection.socket);
         break;
     }
     }
@@ -646,63 +649,63 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, const PlayerInfo& con
 void ServerApp::PlayerDisconnected(int id)
 {
     // this will not usually happen, since the host process usually owns the server process, and will usually take it down if it fails
-    if (id == NetworkCore::HOST_PLAYER_ID) {
+    if (id == Networking::HOST_PLAYER_ID) {
         if (m_state == SERVER_MP_LOBBY) { // host disconnected in MP lobby
-            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+            for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
                 if (it->first != id) {
-                    m_network_core.SendMessage(ServerLobbyHostAbortMessage(it->first));
-                    m_network_core.DumpPlayer(it->first);
+                    m_networking.SendMessage(ServerLobbyHostAbortMessage(it->first));
+                    m_networking.DumpPlayer(it->first);
                 }
             }
-            m_network_core.DumpPlayer(id);
+            m_networking.DumpPlayer(id);
             m_state = SERVER_DYING;
             m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Host player disconnected; server now in mode " << SERVER_DYING << " (SERVER_DYING).";
-            m_network_core.DumpAllConnections();
+            m_networking.DumpAllConnections();
             Exit(1);
         } else if (m_losers.find(id) == m_losers.end()) { // host abnormally disconnected during a regular game
             // if the host dies, there's really nothing else we can do
-            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+            for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
                 if (it->first != id)
-                    m_network_core.SendMessage(EndGameMessage(-1, it->first));
+                    m_networking.SendMessage(EndGameMessage(-1, it->first));
             }
             m_state = SERVER_DYING;
             m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Host player disconnected; server now in mode " << SERVER_DYING << " (SERVER_DYING).";
-            m_network_core.DumpAllConnections();
+            m_networking.DumpAllConnections();
             Exit(1);
         }
     } else {
         if (m_state == SERVER_MP_LOBBY) { // player disconnected in MP lobby
             unsigned int i = 0;
-            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
+            for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it, ++i) {
                 if (it->first == id) {
                     if (i < m_lobby_data.m_players.size())
                         m_lobby_data.m_players.erase(m_lobby_data.m_players.begin() + i); // remove the exiting player's PlayerSetupData struct
                 } else {
-                    m_network_core.SendMessage(ServerLobbyExitMessage(id, it->first));
+                    m_networking.SendMessage(ServerLobbyExitMessage(id, it->first));
                 }
             }
-            m_network_core.DumpPlayer(id);
+            m_networking.DumpPlayer(id);
         } else if (m_losers.find(id) == m_losers.end()) { // player abnormally disconnected during a regular game
             m_state = SERVER_DISCONNECT;
-            const PlayerInfo& disconnected_player_info = m_network_core.Players().find(id)->second;
+            const PlayerInfo& disconnected_player_info = m_networking.Players().find(id)->second;
             m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Lost connection to player #" << boost::lexical_cast<std::string>(id) 
                                          << ", named \"" << disconnected_player_info.name << "\"; server now in mode " << SERVER_DISCONNECT << " (SERVER_DISCONNECT).";
             std::string message = disconnected_player_info.name;
-            for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+            for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
                 if (it->first != id) {
-                    m_network_core.SendMessage(PlayerDisconnectedMessage(it->first, message));
+                    m_networking.SendMessage(PlayerDisconnectedMessage(it->first, message));
                     // in the future we may find a way to recover from this, but for now we will immediately send a game ending message as well
-                    m_network_core.SendMessage(EndGameMessage(-1, it->first));
+                    m_networking.SendMessage(EndGameMessage(-1, it->first));
                 }
             }
         }
     }
 
     // if there are no humans left, it's time to terminate
-    if (m_network_core.Players().empty() || m_ai_clients.size() == m_network_core.Players().size()) {
+    if (m_networking.Players().empty() || m_ai_clients.size() == m_networking.Players().size()) {
         m_state = SERVER_DYING;
         m_log_category.debugStream() << "ServerApp::PlayerDisconnected : All human players disconnected; server now in mode " << SERVER_DYING << " (SERVER_DYING).";
-        m_network_core.DumpAllConnections();
+        m_networking.DumpAllConnections();
         Exit(1);
     }
 }
@@ -727,125 +730,45 @@ CombatModule* ServerApp::CurrentCombat()
     return ServerApp::GetApp()->m_current_combat;
 }
 
-ServerNetworkCore& ServerApp::NetworkCore()
+ServerNetworking& ServerApp::Networking()
 {
-    return ServerApp::GetApp()->m_network_core;
+    return ServerApp::GetApp()->m_networking;
 }
 
 void ServerApp::Run()
 {
     try {
-        SDLInit();
-        Initialize();
-        while (1)
-            Poll();
-    } catch (const std::invalid_argument& exception) {
-        m_log_category.fatal("std::invalid_argument Exception caught in ServerApp::Run(): " + std::string(exception.what()));
-        Exit(1);
-    } catch (const std::runtime_error& exception) {
-        m_log_category.fatal("std::runtime_error Exception caught in ServerApp::Run(): " + std::string(exception.what()));
-        Exit(1);
+        m_io_service.run();
+    } catch (...) {
+        CleanupAIs();
+        throw;
     }
+    CleanupAIs();
 }
 
-#ifdef FREEORION_LINUX
-#  include <iostream> // for informal dummy videodriver message
-#endif
-
-void ServerApp::SDLInit()
+void ServerApp::CleanupAIs()
 {
-#ifdef FREEORION_LINUX
-    // Dirty hack to active the dummy video handler of SDL; if the user has already set SDL_VIDEODRIVER, we'll trust him
-    if (getenv("SDL_VIDEODRIVER") == NULL) {
-        putenv("SDL_VIDEODRIVER=dummy");
-        std::cerr << "NOTE: All warnings about \"using the SDL dummy video driver\" can safely be ignored." << std::endl;
-    }
-#endif
-
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
-        Logger().errorStream() << "SDL initialization failed: " << SDL_GetError();
-        Exit(1);
-    }
-
-    if (SDLNet_Init() < 0) {
-        Logger().errorStream() << "SDL Net initialization failed: " << SDLNet_GetError();
-        Exit(1);
-    }
-  
-    if (FE_Init() < 0) {
-        Logger().errorStream() << "FastEvents initialization failed: " << FE_GetError();
-        Exit(1);
-    }
-
-    if (NET2_Init() < 0) {
-        Logger().errorStream() << "SDL Net2 initialization failed: " << NET2_GetError();
-        Exit(1);
-    }
-  
-    Logger().debugStream() << "SDLInit() complete.";
-}
-
-void ServerApp::Initialize()
-{
-    m_network_core.ListenToPorts();
-}
-
-void ServerApp::Poll()
-{
-    // handle events
-    SDL_Event event;
-    while (FE_WaitEvent(&event)) {
-        int net2_type = NET2_GetEventType(&event);
-        if (event.type == SDL_USEREVENT && 
-            (net2_type == NET2_ERROREVENT || 
-             net2_type == NET2_TCPACCEPTEVENT || 
-             net2_type == NET2_TCPRECEIVEEVENT || 
-             net2_type == NET2_TCPCLOSEEVENT || 
-             net2_type == NET2_UDPRECEIVEEVENT)) { // an SDL_net2 event
-            m_network_core.HandleNetEvent(event);
-        } else { // some other SDL event
-            switch (event.type) {
-            case SDL_QUIT:
-                Exit(0);
-                break;
-            }
-        }
-    }
-}
-
-void ServerApp::FinalCleanup()
-{
-    NetworkCore().DumpAllConnections();
-    for (unsigned int i = 0; i < m_ai_clients.size(); ++i)
+    for (unsigned int i = 0; i < m_ai_clients.size(); ++i) {
         m_ai_clients[i].Kill();
-}
-
-void ServerApp::SDLQuit()
-{
-    FinalCleanup();
-    NET2_Quit();
-    FE_Quit();
-    SDLNet_Quit();
-    SDL_Quit();
-    Logger().debugStream() << "SDLQuit() complete.";
+    }
 }
 
 void ServerApp::NewGameInit()
 {
     m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
     m_universe.CreateUniverse(m_galaxy_size, m_galaxy_shape, m_galaxy_age, m_starlane_freq, m_planet_density, m_specials_freq, 
-                              m_network_core.Players().size() - m_ai_clients.size(), m_ai_clients.size(), m_lobby_data.m_players);
+                              m_networking.Players().size() - m_ai_clients.size(), m_ai_clients.size(), m_lobby_data.m_players);
     m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << " (SERVER_GAME_SETUP).";
 
     // add empires to turn sequence map according to spec this should be done randomly for now it's not
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+    for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
         AddEmpireTurn(it->first);
     }
 
     // the universe creation caused the creation of empires.  But now we need to assign the empires to players.
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
-        m_network_core.SendMessage(GameStartMessage(it->first, m_single_player_game, it->first, m_current_turn, m_empires, m_universe));
+    for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
+        m_networking.SendMessage(GameStartMessage(it->first, m_single_player_game, it->first, m_current_turn, m_empires, m_universe));
     }
 
     m_losers.clear();
@@ -864,7 +787,7 @@ void ServerApp::LoadGameInit()
     }
 
     if (m_single_player_game) {
-        while (m_lobby_data.m_players.size() < m_network_core.Players().size()) {
+        while (m_lobby_data.m_players.size() < m_networking.Players().size()) {
             m_lobby_data.m_players.push_back(PlayerSetupData());
         }
     }
@@ -872,12 +795,12 @@ void ServerApp::LoadGameInit()
     std::map<int, int> player_to_empire_ids;
     std::set<int> already_chosen_empire_ids;
     unsigned int i = 0;
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it, ++i) {
+    for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it, ++i) {
         player_to_empire_ids[it->first] = m_lobby_data.m_players[i].m_save_game_empire_id;
         already_chosen_empire_ids.insert(m_lobby_data.m_players[i].m_save_game_empire_id);
     }
 
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+    for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
         const int INVALID_EMPIRE_ID = -5000;
         int empire_id = INVALID_EMPIRE_ID;
         if (player_to_empire_ids[it->first] != -1) {
@@ -904,10 +827,10 @@ void ServerApp::LoadGameInit()
     // the universe is loaded.  That means we must do it here.
     m_universe.RebuildEmpireViewSystemGraphs();
 
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin(); it != m_network_core.Players().end(); ++it) {
+    for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin(); it != m_networking.Players().end(); ++it) {
         int empire_id = player_to_empire_ids[it->first];
-        m_network_core.SendMessage(GameStartMessage(it->first, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
-        m_network_core.SendMessage(ServerLoadGameMessage(it->first, *player_data_by_empire[empire_id].m_orders, player_data_by_empire[empire_id].m_ui_data.get()));
+        m_networking.SendMessage(GameStartMessage(it->first, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
+        m_networking.SendMessage(ServerLoadGameMessage(it->first, *player_data_by_empire[empire_id].m_orders, player_data_by_empire[empire_id].m_ui_data.get()));
     }
 
     m_losers.clear();
@@ -916,8 +839,8 @@ void ServerApp::LoadGameInit()
 Empire* ServerApp::GetPlayerEmpire(int player_id) const
 {
     Empire* retval = 0;
-    std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().find(player_id);
-    if (player_it != m_network_core.Players().end()) {
+    std::map<int, PlayerInfo>::const_iterator player_it = m_networking.Players().find(player_id);
+    if (player_it != m_networking.Players().end()) {
         std::string player_name = player_it->second.name;
         for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
             if (it->second->PlayerName() == player_name) {
@@ -933,8 +856,8 @@ int ServerApp::GetEmpirePlayerID(int empire_id) const
 {
     int retval = -1;
     std::string player_name = Empires().Lookup(empire_id)->PlayerName();
-    for (std::map<int, PlayerInfo>::const_iterator it = m_network_core.Players().begin();
-         it != m_network_core.Players().end();
+    for (std::map<int, PlayerInfo>::const_iterator it = m_networking.Players().begin();
+         it != m_networking.Players().end();
          ++it) {
         if (it->second.name == player_name) {
             retval = it->first;
@@ -984,10 +907,10 @@ void ServerApp::ProcessTurns()
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         // broadcast UI message to all players
-        for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin();
-             player_it != m_network_core.Players().end();
+        for (std::map<int, PlayerInfo>::const_iterator player_it = m_networking.Players().begin();
+             player_it != m_networking.Players().end();
              ++player_it) {
-            m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::PROCESSING_ORDERS, it->first));
+            m_networking.SendMessage(TurnProgressMessage(player_it->first, Message::PROCESSING_ORDERS, it->first));
         }
 
         pEmpire = Empires().Lookup( it->first );
@@ -1087,8 +1010,8 @@ void ServerApp::ProcessTurns()
     }
 
     // process movement phase
-    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::FLEET_MOVEMENT, -1));
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_networking.Players().begin(); player_it != m_networking.Players().end(); ++player_it) 
+        m_networking.SendMessage(TurnProgressMessage(player_it->first, Message::FLEET_MOVEMENT, -1));
         
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         // save for possible SitRep generation after moving...
@@ -1123,8 +1046,8 @@ void ServerApp::ProcessTurns()
         }
 
     // check for combats, and resolve them.
-    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::COMBAT, -1));
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_networking.Players().begin(); player_it != m_networking.Players().end(); ++player_it) 
+        m_networking.SendMessage(TurnProgressMessage(player_it->first, Message::COMBAT, -1));
 
     std::vector<System*> sys_vec = GetUniverse().FindObjects<System>();
     bool combat_happend = false;
@@ -1187,8 +1110,8 @@ void ServerApp::ProcessTurns()
         SDL_Delay(1500);
 
     // process production and growth phase
-    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::EMPIRE_PRODUCTION, -1));
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_networking.Players().begin(); player_it != m_networking.Players().end(); ++player_it) 
+        m_networking.SendMessage(TurnProgressMessage(player_it->first, Message::EMPIRE_PRODUCTION, -1));
 
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->UpdateResourcePool();
@@ -1234,16 +1157,16 @@ void ServerApp::ProcessTurns()
     ++m_current_turn;
 
     // indicate that the clients are waiting for their new Universes
-    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::DOWNLOADING, -1));
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_networking.Players().begin(); player_it != m_networking.Players().end(); ++player_it) 
+        m_networking.SendMessage(TurnProgressMessage(player_it->first, Message::DOWNLOADING, -1));
 
     // check if all empires are still alive
     std::map<int, int> eliminations; // map from player ids to empire ids
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         if (GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(it->first)).empty()) { // when you're out of planets, your game is over
             std::string player_name = it->second->PlayerName();
-            for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); 
-                 player_it != m_network_core.Players().end(); ++player_it) {
+            for (std::map<int, PlayerInfo>::const_iterator player_it = m_networking.Players().begin(); 
+                 player_it != m_networking.Players().end(); ++player_it) {
                 if (player_it->second.name == player_name) {
                     // record this player/empire so we can send out messages about it
                     eliminations[player_it->first] = it->first;
@@ -1262,15 +1185,15 @@ void ServerApp::ProcessTurns()
     }
 
     // send new-turn updates to all players
-    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) {
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_networking.Players().begin(); player_it != m_networking.Players().end(); ++player_it) {
         pEmpire = GetPlayerEmpire(player_it->first);
-        m_network_core.SendMessage(TurnUpdateMessage(player_it->first, pEmpire->EmpireID(), m_current_turn, m_empires, m_universe));
+        m_networking.SendMessage(TurnUpdateMessage(player_it->first, pEmpire->EmpireID(), m_current_turn, m_empires, m_universe));
     }
 
     // notify all players of the eliminated players
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
-        for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) {
-            m_network_core.SendMessage(PlayerEliminatedMessage(player_it->first, Empires().Lookup(it->second)->Name()));
+        for (std::map<int, PlayerInfo>::const_iterator player_it = m_networking.Players().begin(); player_it != m_networking.Players().end(); ++player_it) {
+            m_networking.SendMessage(PlayerEliminatedMessage(player_it->first, Empires().Lookup(it->second)->Name()));
         }
     }
 
@@ -1278,24 +1201,24 @@ void ServerApp::ProcessTurns()
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
         m_log_category.debugStream() << "ServerApp::ProcessTurns : Player " << it->first << " is marked as a loser and dumped";
         m_losers.insert(it->first);
-        m_network_core.DumpPlayer(it->first);
+        m_networking.DumpPlayer(it->first);
         m_ai_IDs.erase(it->first);
         Empires().EliminateEmpire(it->second);
         RemoveEmpireTurn(it->second);
     }
 
     // determine if victory conditions exist
-    if (m_network_core.Players().size() == 1) { // if there is only one player left, that player is the winner
+    if (m_networking.Players().size() == 1) { // if there is only one player left, that player is the winner
         m_log_category.debugStream() << "ServerApp::ProcessTurns : One player left -- sending victory notification and terminating.";
-        while (m_network_core.Players().size() == 1) {
-            m_network_core.SendMessage(VictoryMessage(m_network_core.Players().begin()->first));
+        while (m_networking.Players().size() == 1) {
+            m_networking.SendMessage(VictoryMessage(m_networking.Players().begin()->first));
             SDL_Delay(100);
         }
-        m_network_core.DumpAllConnections();
+        m_networking.DumpAllConnections();
         Exit(0);
-    } else if (m_ai_IDs.size() == m_network_core.Players().size()) { // if there are none but AI players left, we're done
+    } else if (m_ai_IDs.size() == m_networking.Players().size()) { // if there are none but AI players left, we're done
         m_log_category.debugStream() << "ServerApp::ProcessTurns : No human players left -- server terminating.";
-        m_network_core.DumpAllConnections();
+        m_networking.DumpAllConnections();
         Exit(0);
     }
 }

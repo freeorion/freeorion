@@ -3,6 +3,8 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "CUIDrawUtil.h"
+#include "../client/human/HumanClientApp.h"
+#include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Tech.h"
@@ -13,16 +15,12 @@
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
-#ifndef FREEORION_BUILD_UTIL
-#include "../client/human/HumanClientApp.h"
-#include "../util/AppInterface.h"
-#endif
-
-#include <valarray>
-
 #include <gvc.h>
 
 #include <boost/format.hpp>
+
+#include <valarray>
+
 
 // TODO: after v0.3:
 // - make the category buttons toggle the visibility of each category
@@ -767,7 +765,6 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(int w, int h, const Tech* t
     m_selected(false)
 {
     EnableChildClipping(true);
-#ifndef FREEORION_BUILD_UTIL
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire->TechAvailable(m_tech->Name())) {
         SetColor(ClientUI::KnownTechFillColor());
@@ -779,19 +776,6 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(int w, int h, const Tech* t
         SetColor(ClientUI::UnresearchableTechFillColor());
         m_border_color = ClientUI::UnresearchableTechTextAndBorderColor();
     }
-#else
-    // these values are arbitrary; they're only useful for displaying techs in the tech-view utility app
-    if (m_tech->Type() == TT_THEORY) {
-        SetColor(ClientUI::KnownTechFillColor());
-        m_border_color = ClientUI::KnownTechTextAndBorderColor();
-    } else if (m_tech->Type() == TT_APPLICATION) {
-        SetColor(ClientUI::ResearchableTechFillColor());
-        m_border_color = ClientUI::ResearchableTechTextAndBorderColor();
-    } else {
-        SetColor(ClientUI::UnresearchableTechFillColor());
-        m_border_color = ClientUI::UnresearchableTechTextAndBorderColor();
-    }
-#endif
     GG::Pt client_size = ClientSize();
     m_name_text = new GG::TextControl(m_indentation, 0, client_size.x - m_indentation, client_size.y, UserString(m_tech->Name()), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), m_border_color, GG::TF_LEFT);
     AttachChild(m_name_text);
@@ -1022,7 +1006,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
     bool known_tech = false;
     bool queued_tech = false;
     bool researchable_tech = false;
-#ifndef FREEORION_BUILD_UTIL
+
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire->TechAvailable(m_tech->Name())) {
         known_tech = true;
@@ -1037,15 +1021,6 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
         }
         researchable_tech = empire->ResearchableTech(m_tech->Name());
     }
-#else
-    // these values are arbitrary; they're only useful for displaying techs in the tech-view utility app
-    m_progress = 0.2;
-    if (m_tech->Type() == TT_THEORY) {
-        known_tech = true;
-    } else if (m_tech->Type() == TT_APPLICATION) {
-        researchable_tech = true;
-    }
-#endif
 
     if (known_tech) {
         m_fill_color = ClientUI::KnownTechFillColor();
@@ -1525,21 +1500,12 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
                 points.push_back(Spline(temp));
             }
             TechStatus arc_type = UNRESEARCHABLE;
-#ifndef FREEORION_BUILD_UTIL
             const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
             if (empire->TechAvailable(to->Name())) {
                 arc_type = KNOWN;
             } else if (empire->ResearchableTech(to->Name())) {
                 arc_type = RESEARCHABLE;
             }
-#else
-            // these values are arbitrary; they're only useful for displaying techs in the tech-view utility app
-            if (to->Type() == TT_THEORY) {
-                arc_type = KNOWN;
-            } else if (to->Type() == TT_APPLICATION) {
-                arc_type = RESEARCHABLE;
-            }
-#endif
             m_dependency_arcs[arc_type].insert(std::make_pair(from, std::make_pair(to, points)));
         }
     }

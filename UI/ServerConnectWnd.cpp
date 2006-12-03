@@ -15,10 +15,8 @@
 #include <cctype>
 
 namespace {
-    const int WINDOW_WIDTH = 400;
-    const int WINDOW_HEIGTH = 535;
-    const int LAN_SERVER_SEARCH_TIMEOUT = 1; // in seconds
-    std::set<std::string> g_LAN_servers; // semi-persistent list of known LAN servers (persists only during runtime, but longer than the server connect window)
+    const int WINDOW_WIDTH  = 400;
+    const int WINDOW_HEIGHT = 535;
 
     bool NameOK(const std::string& name)
     {
@@ -28,13 +26,12 @@ namespace {
         }
         return !name.empty();
     }
-
 }
 
 ServerConnectWnd::ServerConnectWnd() : 
     CUIWnd(UserString("SCONNECT_WINDOW_TITLE"),
-           (GG::GUI::GetGUI()->AppWidth() - WINDOW_WIDTH) / 2, (GG::GUI::GetGUI()->AppHeight() - WINDOW_HEIGTH) / 2,
-           WINDOW_WIDTH, WINDOW_HEIGTH, GG::CLICKABLE | GG::MODAL),
+           (GG::GUI::GetGUI()->AppWidth() - WINDOW_WIDTH) / 2, (GG::GUI::GetGUI()->AppHeight() - WINDOW_HEIGHT) / 2,
+           WINDOW_WIDTH, WINDOW_HEIGHT, GG::CLICKABLE | GG::MODAL),
     m_host_or_join_radio_group(0),
     m_LAN_game_label(0),
     m_servers_lb(0),
@@ -92,7 +89,7 @@ ServerConnectWnd::ServerConnectWnd() :
 
     SetLayout(layout);
 
-    g_LAN_servers = HumanClientApp::GetApp()->NetworkCore().DiscoverLANServers(LAN_SERVER_SEARCH_TIMEOUT);
+    m_LAN_servers = HumanClientApp::GetApp()->Networking().DiscoverLANServers();
     Init();
 }
 
@@ -136,16 +133,16 @@ void ServerConnectWnd::Init()
 void ServerConnectWnd::PopulateServerList()
 {
     m_servers_lb->Clear();
-    for (std::set<std::string>::iterator it = g_LAN_servers.begin(); it != g_LAN_servers.end(); ++it) {
+    for (ClientNetworking::ServerList::iterator it = m_LAN_servers.begin(); it != m_LAN_servers.end(); ++it) {
         GG::ListBox::Row* row = new GG::ListBox::Row;
-        row->push_back(*it, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
+        row->push_back(it->second, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
         m_servers_lb->Insert(row);
     }
 }
 
 void ServerConnectWnd::RefreshServerList()
 {
-    g_LAN_servers = HumanClientApp::GetApp()->NetworkCore().DiscoverLANServers(LAN_SERVER_SEARCH_TIMEOUT);
+    m_LAN_servers = HumanClientApp::GetApp()->Networking().DiscoverLANServers();
     PopulateServerList();
 }
 

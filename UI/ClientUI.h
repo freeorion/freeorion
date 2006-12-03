@@ -17,7 +17,7 @@
 #include <boost/filesystem/path.hpp>
 
 
-class ClientNetworkCore;
+class ClientNetworking;
 class Combat;
 class Fleet;
 class IntroScreen;

@@ -30,16 +30,7 @@ public:
 private:
    void Run();             ///< initializes app state, then executes main event handler/render loop (PollAndRender())
 
-   void SDLInit();         ///< initializes SDL and SDL-related libs
-   void Initialize();      ///< app initialization
-   
-   void Poll();            ///< handles all waiting SDL messages
-
-   void FinalCleanup();    ///< app final cleanup
-   void SDLQuit();         ///< cleans up FE and SDL
-
-   virtual void HandleMessageImpl(const Message& msg);
-   virtual void HandleServerDisconnectImpl();
+   virtual void HandleMessage(const Message& msg);
 
    log4cpp::Category&   m_log_category; ///< reference to the log4cpp object used to log events to file
 

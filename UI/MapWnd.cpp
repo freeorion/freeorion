@@ -71,9 +71,9 @@ namespace {
 #ifndef FREEORION_RELEASE
     bool RequestRegressionTestDump()
     {
-        ClientNetworkCore& network_core = HumanClientApp::GetApp()->NetworkCore();
+        ClientNetworking& networking = HumanClientApp::GetApp()->Networking();
         Message msg(Message::DEBUG, HumanClientApp::GetApp()->PlayerID(), -1, Message::CORE, "EffectsRegressionTest");
-        network_core.SendMessage(msg);
+        networking.SendMessage(msg);
         return true;
     }
 #endif
@@ -462,7 +462,7 @@ void MapWnd::KeyPress (GG::Key key, Uint32 key_mods)
                 while (GetOptionsDB().Get<int>("UI.chat-edit-history") < static_cast<int>(g_chat_edit_history.size()) + 1)
                     g_chat_edit_history.pop_back();
                 g_history_position = 0;
-                HumanClientApp::GetApp()->NetworkCore().SendMessage(ChatMessage(HumanClientApp::GetApp()->PlayerID(), edit_text));
+                HumanClientApp::GetApp()->Networking().SendMessage(ChatMessage(HumanClientApp::GetApp()->PlayerID(), edit_text));
             }
             m_chat_edit->Clear();
             m_chat_edit->Hide();
