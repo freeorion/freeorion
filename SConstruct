@@ -492,6 +492,10 @@ version_cpp.write(version_cpp_in.read() % values)
 version_cpp.close()
 version_cpp_in.close()
 
+# This is necessary until Boost 1.35 is released, which will include Boost.Asio.  For now, we have a local copy of
+# Boost.Asio in the network directory.
+env.AppendUnique(CPPPATH = ['network'])
+
 Export('env')
 
 # define server objects

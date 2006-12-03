@@ -34,30 +34,6 @@ namespace {
 ////////////////////////////////////////////////
 // Free Functions
 ////////////////////////////////////////////////
-void ZipString(const std::string& str, std::string& zipped_str)
-{
-    zipped_str.resize(static_cast<int>(str.size() * 1.01 + 13)); // space required by zlib
-    uLongf zipped_size = zipped_str.size();
-    int zip_result = compress(reinterpret_cast<Bytef*>(const_cast<char*>(zipped_str.c_str())), &zipped_size, 
-                              reinterpret_cast<const Bytef*>(str.c_str()), str.size());
-    if (zip_result != Z_OK)
-        throw std::runtime_error("ZipString : call to zlib's compress() failed with code " + boost::lexical_cast<std::string>(zip_result));
-   
-    zipped_str.resize(zipped_size);
-}
-
-void UnzipString(const std::string& str, std::string& unzipped_str, int size)
-{
-    unzipped_str.resize(size);
-    uLongf unzipped_size = unzipped_str.size();
-    int zip_result = uncompress(reinterpret_cast<Bytef*>(const_cast<char*>(unzipped_str.c_str())), &unzipped_size, 
-                                reinterpret_cast<const Bytef*>(str.c_str()), str.size());
-    if (zip_result != Z_OK)
-        throw std::runtime_error("ZipString : call to zlib's uncompress() failed with code " + boost::lexical_cast<std::string>(zip_result));
-   
-    unzipped_str.resize(unzipped_size);
-}
-
 namespace GG {
     GG_ENUM_MAP_BEGIN(Message::MessageType)
     GG_ENUM_MAP_INSERT(Message::UNDEFINED)
@@ -129,26 +105,26 @@ std::ostream& operator<<(std::ostream& os, const Message& msg)
 {
     os << "Message: "
        << MessageTypeStr(msg.Type()) << " "
-       << msg.Sender();
+       << msg.SendingPlayer();
 
-    if (msg.Sender() == -1)
+    if (msg.SendingPlayer() == -1)
         os << "(server/unknown) --> ";
-    else if (msg.Sender() == 0)
+    else if (msg.SendingPlayer() == 0)
         os << "(host) --> ";
     else
         os << " --> ";
 
-    os << msg.Receiver();
+    os << msg.ReceivingPlayer();
 
-    if (msg.Receiver() == -1)
+    if (msg.ReceivingPlayer() == -1)
         os << "(server/unknown).";
-    else if (msg.Receiver() == 0)
+    else if (msg.ReceivingPlayer() == 0)
         os << "(host).";
     else
         os << ".";
 
-    os << ModuleTypeStr(msg.Module()) << " "
-       << "\"" << msg.GetText() << "\"\n";
+    os << ModuleTypeStr(msg.ReceivingModule()) << " "
+       << "\"" << msg.Text() << "\"\n";
 
     return os;
 }
@@ -156,124 +132,119 @@ std::ostream& operator<<(std::ostream& os, const Message& msg)
 ////////////////////////////////////////////////
 // Message
 ////////////////////////////////////////////////
-Message::Message() : 
-    m_message_type(UNDEFINED),
-    m_sending_player(-2),
-    m_receiving_player(-2),
-    m_message_text(new std::string),
-    m_response_msg(UNDEFINED)
-{
-    m_compressed = false;
-}
+Message::Message() :
+    m_type(UNDEFINED),
+    m_sending_player(0),
+    m_receiving_player(0),
+    m_receiving_module(CORE),
+    m_message_size(0),
+    m_message_text(0)
+{}
 
-Message::Message(MessageType msg_type, int sender, int receiver, ModuleType module, const std::string& text, MessageType response_msg) : 
-    m_message_type(msg_type),
-    m_sending_player(sender),
-    m_receiving_player(receiver),
-    m_receiving_module(module),
-    m_message_text(new std::string),
-    m_response_msg( response_msg )
-{
-    ZipString(text, *m_message_text);
-    m_compressed = true;
-    m_uncompressed_size = text.size();
-}
+Message::Message(MessageType type,
+                 int sending_player,
+                 int receiving_player,
+                 ModuleType receiving_module,
+                 const std::string& text) :
+    m_type(type),
+    m_sending_player(sending_player),
+    m_receiving_player(receiving_player),
+    m_receiving_module(receiving_module),
+    m_message_size(text.size()),
+    m_message_text(new char[text.size()])
+{ std::copy(text.begin(), text.end(), m_message_text); }
 
-Message::Message(MessageType msg_type, int sender, int receiver, ModuleType module, const XMLDoc& doc,  MessageType response_msg) : 
-    m_message_type(msg_type),
-    m_sending_player(sender),
-    m_receiving_player(receiver),
-    m_receiving_module(module),
-    m_message_text(new std::string),
-    m_response_msg( response_msg )
-{
-    std::stringstream stream;
-    doc.WriteDoc(stream);
-    ZipString(stream.str(), *m_message_text);
-    m_compressed = true;
-    m_uncompressed_size = stream.str().size();
-}
+Message::Message(const Message& rhs) :
+    m_type(rhs.m_type),
+    m_sending_player(rhs.m_sending_player),
+    m_receiving_player(rhs.m_receiving_player),
+    m_receiving_module(rhs.m_receiving_module),
+    m_message_size(rhs.m_message_size),
+    m_message_text(new char[rhs.m_message_size])
+{ std::copy(rhs.m_message_text, rhs.m_message_text + rhs.m_message_size, const_cast<char*>(m_message_text)); }
 
-// private ctor
-Message::Message(const std::string& raw_msg) : 
-    m_message_text(new std::string),
-    m_response_msg( UNDEFINED )
+Message::~Message()
+{ delete[] m_message_text; }
+
+Message& Message::operator=(const Message& rhs)
 {
-    std::stringstream stream(raw_msg);
-   
-    int temp;
-    stream >> temp;
-    m_message_type = MessageType(temp);
-    stream >> m_sending_player >> m_receiving_player >> temp;
-    m_receiving_module = ModuleType(temp);
-    stream >> m_compressed >> m_uncompressed_size;
-   
-    *m_message_text = raw_msg.substr(static_cast<int>(stream.tellg()) + 1);
+    Message tmp(rhs);
+    swap(*this, tmp);
+    return *this;
 }
 
 Message::MessageType Message::Type() const
+{ return m_type; }
+
+int Message::SendingPlayer() const
+{ return m_sending_player; }
+
+int Message::ReceivingPlayer() const
+{ return m_receiving_player; }
+
+Message::ModuleType Message::ReceivingModule() const
+{ return m_receiving_module; }
+
+std::size_t Message::Size() const
+{ return m_message_size; }
+
+const char* Message::Data() const
+{ return m_message_text; }
+
+std::string Message::Text() const
+{ return std::string(m_message_text, m_message_size); }
+
+void Message::Resize(std::size_t size)
 {
-    return m_message_type;
+    delete[] m_message_text;
+    m_message_text = new char[size];
 }
 
-Message::MessageType Message::Response() const
+char* Message::Data()
+{ return m_message_text; }
+
+void Message::Swap(Message& rhs)
 {
-    return m_response_msg;
+    std::swap(m_type, rhs.m_type);
+    std::swap(m_sending_player, rhs.m_sending_player);
+    std::swap(m_receiving_player, rhs.m_receiving_player);
+    std::swap(m_receiving_module, rhs.m_receiving_module);
+    std::swap(m_message_size, rhs.m_message_size);
+    std::swap(m_message_text, rhs.m_message_text);
 }
 
-int Message::Sender() const
+bool operator==(const Message& lhs, const Message& rhs)
 {
-    return m_sending_player;
+    return
+        lhs.Type() == rhs.Type() &&
+        lhs.SendingPlayer() == rhs.SendingPlayer() &&
+        lhs.ReceivingPlayer() == rhs.ReceivingPlayer() &&
+        lhs.ReceivingModule() == rhs.ReceivingModule() &&
+        lhs.Text() == rhs.Text();
 }
 
-int Message::Receiver() const
+bool operator!=(const Message& lhs, const Message& rhs)
+{ return !(lhs == rhs); }
+
+void swap(Message& lhs, Message& rhs)
+{ lhs.Swap(rhs); }
+
+void BufferToHeader(const int* header_buf, Message& message)
 {
-    return m_receiving_player;
+    message.m_type = static_cast<Message::MessageType>(header_buf[0]);
+    message.m_sending_player = header_buf[1];
+    message.m_receiving_player = header_buf[2];
+    message.m_receiving_module = static_cast<Message::ModuleType>(header_buf[3]);
+    message.m_message_size = header_buf[4];
 }
 
-Message::ModuleType Message::Module() const
+void HeaderToBuffer(const Message& message, int* header_buf)
 {
-    return m_receiving_module;
-}
-
-std::string Message::GetText() const
-{
-    if (m_compressed) {
-        std::string retval;
-        DecompressMessage(retval);
-        return retval;
-    } else {
-        return *m_message_text;
-    }
-}
-
-std::string Message::HeaderString() const
-{
-    // compose header info (everything but the message text)
-    std::stringstream stream;
-    stream << m_message_type << " " << m_sending_player << " " << m_receiving_player << " " << 
-        m_receiving_module << " " << m_compressed << " " << m_uncompressed_size << " ";
-    return stream.str();
-}
-
-void Message::ValidateMessage()
-{
-}
-
-void Message::CompressMessage(std::string& compressed_msg) const
-{
-    if (m_compressed)
-        compressed_msg = *m_message_text;
-    else
-        ZipString(*m_message_text, compressed_msg);
-}
-
-void Message::DecompressMessage(std::string& uncompressed_msg) const
-{
-    if (m_compressed)
-        UnzipString(*m_message_text, uncompressed_msg, m_uncompressed_size);
-    else
-        uncompressed_msg = *m_message_text;
+    header_buf[0] = message.Type();
+    header_buf[1] = message.SendingPlayer();
+    header_buf[2] = message.ReceivingPlayer();
+    header_buf[3] = message.ReceivingModule();
+    header_buf[4] = message.Size();
 }
 
 
@@ -407,7 +378,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders)
 
 Message RequestNewObjectIDMessage(int sender)
 {
-    return Message(Message::REQUEST_NEW_OBJECT_ID, sender, -1, Message::CORE, "", Message::DISPATCH_NEW_OBJECT_ID);
+    return Message(Message::REQUEST_NEW_OBJECT_ID, sender, -1, Message::CORE, "");
 }
 
 Message DispatchObjectIDMessage(int player_id, int new_id)
@@ -417,7 +388,7 @@ Message DispatchObjectIDMessage(int player_id, int new_id)
 
 Message HostSaveGameMessage(int sender, const std::string& filename)
 {
-    return Message(Message::SAVE_GAME, sender, -1, Message::CORE, filename, Message::SAVE_GAME);
+    return Message(Message::SAVE_GAME, sender, -1, Message::CORE, filename);
 }
 
 Message HostLoadGameMessage(int sender, const std::string& filename)
@@ -531,14 +502,14 @@ Message StartMPGameMessage(int player_id)
 
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data)
 {
-    std::istringstream is(msg.GetText());
+    std::istringstream is(msg.Text());
     FREEORION_IARCHIVE_TYPE ia(is);
     ia >> BOOST_SERIALIZATION_NVP(lobby_data);
 }
 
 void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe)
 {
-    std::istringstream is(msg.GetText());
+    std::istringstream is(msg.Text());
     FREEORION_IARCHIVE_TYPE ia(is);
     ia >> BOOST_SERIALIZATION_NVP(single_player_game)
        >> BOOST_SERIALIZATION_NVP(empire_id)
@@ -550,14 +521,14 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
 
 void ExtractMessageData(const Message& msg, OrderSet& orders)
 {
-    std::istringstream is(msg.GetText());
+    std::istringstream is(msg.Text());
     FREEORION_IARCHIVE_TYPE ia(is);
     Deserialize(ia, orders);
 }
 
 void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe)
 {
-    std::istringstream is(msg.GetText());
+    std::istringstream is(msg.Text());
     FREEORION_IARCHIVE_TYPE ia(is);
     Universe::s_encoding_empire = empire_id;
     ia >> BOOST_SERIALIZATION_NVP(current_turn);
@@ -567,7 +538,7 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, Em
 
 bool ExtractMessageData(const Message& msg, OrderSet& orders, SaveGameUIData& ui_data)
 {
-    std::istringstream is(msg.GetText());
+    std::istringstream is(msg.Text());
     FREEORION_IARCHIVE_TYPE ia(is);
     bool ui_data_available;
     Deserialize(ia, orders);
@@ -579,7 +550,7 @@ bool ExtractMessageData(const Message& msg, OrderSet& orders, SaveGameUIData& ui
 
 void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id, int& empire_id)
 {
-    std::istringstream is(msg.GetText());
+    std::istringstream is(msg.Text());
     FREEORION_IARCHIVE_TYPE ia(is);
     ia >> BOOST_SERIALIZATION_NVP(phase_id)
        >> BOOST_SERIALIZATION_NVP(empire_id);
@@ -587,7 +558,7 @@ void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id
 
 void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data)
 {
-    std::istringstream is(msg.GetText());
+    std::istringstream is(msg.Text());
     FREEORION_IARCHIVE_TYPE ia(is);
     ia >> BOOST_SERIALIZATION_NVP(setup_data);
 }

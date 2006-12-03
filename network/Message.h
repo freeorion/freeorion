@@ -9,6 +9,7 @@
 
 class ClientNetworkCore;
 class EmpireManager;
+class Message;
 class MultiplayerLobbyData;
 class OrderSet;
 class SaveGameUIData;
@@ -17,18 +18,15 @@ class SinglePlayerSetupData;
 class Universe;
 class XMLDoc;
 
-/** compresses \a str using zlib, and puts the result into \a zipped_str */
-void ZipString(const std::string& str, std::string& zipped_str);
+/** Fills in the relevant portions of \a message with the values in the buffer \a header_buf. */
+void BufferToHeader(const int* header_buf, Message& message);
 
-/** decompresses \a str using zlib, and puts the result into \a unzipped_str. The uncompressed size of 
-   the string must be known beforehand, and passed in \a size.  Results are undefined when \a str does 
-   not conatain a valid zipped byte sequence.*/
-void UnzipString(const std::string& str, std::string& unzipped_str, int size);
+/** Fills \a header_buf from the relevant portions of \a message. */
+void HeaderToBuffer(const Message& message, int* header_buf);
 
-/** FreeOrion network message class.  Messages are designed to be created, sent, received, read, then destroyed.
-   They are not meant to be altered; there are no mutators methods. Upon creation, the text of the Message is
-   compressed using zlib.  Subsequent reads incur the expense of decompressing the text.  The compressed text
-   is stored in a string at the end of a shared_ptr, so copying Message objects is extremely inexpensive.*/
+/** Encapsulates a variable-length char buffer containing a message to be passed among the server and one or more
+    clients.  Note that std::string is often thread unsafe on many platforms, so a dynamically allocated char array is
+    used instead.  (It was feared that using another STL container of char might misbehave as well.) */
 class Message
 {
 public:
@@ -81,55 +79,52 @@ public:
         DOWNLOADING               ///< downloading new game state from server
     };
 
-
     /** \name Structors */ //@{
-    /** default ctor. */
-    Message();
+    Message(); ///< Default ctor.
 
-    /** standard ctor.  Senders that are not part of a game and so have no player number should send -1 as the \a 
-        sender parameter. \throw std::invalid_argument May throw std::invalid_argument if the parameters would form
-        an invalid message */
-    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const std::string& text, MessageType response_msg = UNDEFINED);
- 
-    /** convienience ctor that converts \a doc into a std::string automatically.  Senders that are not part of a game 
-        and so have no player number should send -1 as the \a sender parameter. \throw std::invalid_argument May throw 
-        std::invalid_argument if the parameters would form an invalid message */
-    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const XMLDoc& doc, MessageType response_msg = UNDEFINED);
+    /** Basic ctor. */
+    Message(MessageType message_type,
+            int sending_player,
+            int receiving_player,
+            ModuleType receiving_module,
+            const std::string& text);
+
+    Message(const Message& rhs);            ///< Copy ctor.
+    ~Message();                             ///< Dtor.
+    Message& operator=(const Message& rhs); ///< Assignment.
     //@}
 
     /** \name Accessors */ //@{
-    MessageType Type() const;      ///< returns type of message
-    MessageType Response() const;  ///< returns response this message expects, implies a sychronous message
-    int         Sender() const;    ///< returns the ID of the player sending the message (-1 represents server or a client not yet in a game)
-    int         Receiver() const;  ///< returns the ID of the player receiving the message (-1 represents server)
-    ModuleType  Module() const;    ///< returns the module that is to get the message at the receiving end
-    std::string GetText() const;   ///< returns the message text.  \note \note This function uncompresses the text in order to return it.
+    MessageType Type() const;               ///< Returns the type of the message.
+    int         SendingPlayer() const;      ///< Returns the ID of the sending player.
+    int         ReceivingPlayer() const;    ///< Returns the ID of the receiving player.
+    ModuleType  ReceivingModule() const;    ///< Returns the module to which this message should be sent when it reaches its destination.
+    std::size_t Size() const;               ///< Returns the size of the underlying buffer.
+    const char* Data() const;               ///< Returns the underlying buffer.
+    std::string Text() const;               ///< Returns the underlying buffer as a std::string.
     //@}
- 
+
+    /** \name Accessors */ //@{
+    void        Resize(std::size_t size);   ///< Resizes the underlying char buffer to \a size uninitialized bytes.
+    char*       Data();                     ///< Returns the underlying buffer.
+    void        Swap(Message& rhs);         ///< Swaps the contents of \a *this with \a rhs.  Does not throw.
+    //@}
+
 private:
-/** private ctor to be used by the NetworkCore classes. Constructs a message from a string of bytes received over a 
-    network connection. \throw std::invalid_argument May throw std::invalid_argument if the parameter would form
-    an invalid message */
-    Message(const std::string& raw_msg);
-   
-    std::string HeaderString() const; ///< for use by the NetworkCore classes to create a string of bytes of the non-text portion of a Message
-    void ValidateMessage(); ///< checks that the data in the message are consistent
-    void CompressMessage(std::string& compressed_msg) const;     ///< fills \a compressed_msg with the compressed text of the message text
-    void DecompressMessage(std::string& uncompressed_msg) const; ///< fills \a decompressed_msg with the decompressed text of the message text
+    MessageType   m_type;
+    int           m_sending_player;
+    int           m_receiving_player;
+    ModuleType    m_receiving_module;
+    int           m_message_size;
+    char*         m_message_text;
 
-    MessageType                    m_message_type;
-    int                            m_sending_player;
-    int                            m_receiving_player;
-    ModuleType                     m_receiving_module;
-    boost::shared_ptr<std::string> m_message_text;
-    bool                           m_compressed;
-    int                            m_uncompressed_size;
-    MessageType                    m_response_msg;  ///< implies a synchronous message is set, this is the message it's expecting to be returned from the server ( only client messages can be synchronous )
-
-    friend class NetworkCore;         ///< grant access for calls to HeaderString()
-    friend class ClientNetworkCore;   ///< grant access for calls to private ctor and HeaderString()
-    friend class ServerNetworkCore;   ///< grant access for calls to private ctor and HeaderString()
+    friend void BufferToHeader(const int* header_buf, Message& message);
 };
+
+bool operator==(const Message& lhs, const Message& rhs);
+bool operator!=(const Message& lhs, const Message& rhs);
+
+void swap(Message& lhs, Message& rhs); ///< Swaps the contents of \a lhs and \a rhs.  Does not throw.
 
 
 ////////////////////////////////////////////////
