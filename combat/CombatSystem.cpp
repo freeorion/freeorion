@@ -36,8 +36,8 @@ namespace
     {
         std::ostringstream stream;
         doc.WriteDoc(stream);
-        for (std::map<int, PlayerInfo>::const_iterator it = ServerApp::GetApp()->Networking().Players().begin(); it != ServerApp::GetApp()->Networking().Players().end(); ++it) {
-            ServerApp::GetApp()->Networking().SendMessage(Message(msg_type, -1, it->first, module, stream.str()));
+        for (ServerNetworking::const_iterator it = ServerApp::GetApp()->Networking().begin(); it != ServerApp::GetApp()->Networking().end(); ++it) {
+            (*it)->SendMessage(Message(msg_type, -1, (*it)->ID(), module, stream.str()));
         }
     }
 

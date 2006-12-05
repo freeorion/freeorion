@@ -1,80 +1,14 @@
 #include "ServerNetworking.h"
 
-#include "Message.h"
 #include "Networking.h"
 
 #include <boost/bind.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
 
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
 using namespace Networking;
-
-/** Encapsulates the connection to a single player.  This object should have nearly the same lifetime as the socket it
-    represents, except that the object is constructed just before the socket connection is made.  A newly-constructed
-    PlayerConnection has no associated player ID, player name, nor host-player status.  Once a PlayerConnection is
-    accepted by the server as an actual player in a game, EstablishPlayer() should be called.  This establishes the
-    aforementioned properties. */
-class PlayerConnection :
-    public boost::enable_shared_from_this<PlayerConnection>
-{
-public:
-    /** \name Structors */ //@{
-    ~PlayerConnection(); ///< Dtor.
-    //@}
-
-    /** \name Accessors */ //@{
-    bool               EstablishedPlayer() const;           ///< Returns true iff EstablishPlayer() has been called on this conenction.
-    int                ID() const;                          ///< Returns the ID of the player associated with this connection, if any.
-    const std::string& PlayerName() const;                  ///< Returns the name of the player associated with this connection, if any.
-    bool               Host() const;                        ///< Returns true iff the player associated with this connection, if any, is the host of the current game.
-    //@}
-
-    /** \name Mutators */ //@{
-    void               Start();                             ///< Starts the connection reading incoming messages on it socket.
-    void               SendMessage(const Message& message); ///< Sends \a message to out on the conenction.
-
-    /** Establishes a connection as a player with a specific name and id.  This function must only be called once. */
-    void               EstablishPlayer(int id, const std::string& player_name, bool host);
-    //@}
-
-    /** Creates a new PlayerConnection and returns it as a shared_ptr. */
-    static PlayerConnectionPtr NewConnection(boost::asio::io_service& io_service,
-                                             boost::function<void (const Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                                             boost::function<void (const Message&, PlayerConnectionPtr)> player_message_callback,
-                                             boost::function<void (PlayerConnectionPtr)> disconnected_callback);
-
-    static const int INVALID_PLAYER_ID;
-
-private:
-    typedef boost::array<int, 5> MessageHeaderBuffer;
-
-    PlayerConnection(boost::asio::io_service& io_service,
-                     boost::function<void (const Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                     boost::function<void (const Message&, PlayerConnectionPtr)> player_message_callback,
-                     boost::function<void (PlayerConnectionPtr)> disconnected_callback);
-    void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
-    void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
-    void AsyncReadMessage();
-
-    boost::asio::ip::tcp::socket m_socket;
-    MessageHeaderBuffer          m_incoming_header_buffer;
-    Message                      m_incoming_message;
-    int                          m_ID;
-    std::string                  m_player_name;
-    bool                         m_host;
-
-    boost::function<void (const Message&, PlayerConnectionPtr)> m_nonplayer_message_callback;
-    boost::function<void (const Message&, PlayerConnectionPtr)> m_player_message_callback;
-    boost::function<void (PlayerConnectionPtr)>                 m_disconnected_callback;
-
-    enum { HEADER_SIZE = MessageHeaderBuffer::static_size * sizeof(MessageHeaderBuffer::value_type) };
-
-    friend class ServerNetworking;
-};
 
 /** A simple server that listens for FreeOrion-server-discovery UDP datagrams on the local network and sends out
     responses to them. */
@@ -262,11 +196,23 @@ ServerNetworking::~ServerNetworking()
 ServerNetworking::const_iterator ServerNetworking::GetPlayer(int id) const
 { return std::find_if(begin(), end(), PlayerID(id)); }
 
+bool ServerNetworking::empty() const
+{ return m_player_connections.empty(); }
+
+std::size_t ServerNetworking::size() const
+{ return m_player_connections.size(); }
+
 ServerNetworking::const_iterator ServerNetworking::begin() const
-{ return iterator(EstablishedPlayer(), m_player_connections.begin(), m_player_connections.end()); }
+{ return const_iterator(EstablishedPlayer(), m_player_connections.begin(), m_player_connections.end()); }
 
 ServerNetworking::const_iterator ServerNetworking::end() const
-{ return iterator(EstablishedPlayer(), m_player_connections.end(), m_player_connections.end()); }
+{ return const_iterator(EstablishedPlayer(), m_player_connections.end(), m_player_connections.end()); }
+
+ServerNetworking::const_reverse_iterator ServerNetworking::rbegin() const
+{ return const_reverse_iterator(EstablishedPlayer(), m_player_connections.rbegin(), m_player_connections.rend()); }
+
+ServerNetworking::const_reverse_iterator ServerNetworking::rend() const
+{ return const_reverse_iterator(EstablishedPlayer(), m_player_connections.rend(), m_player_connections.rend()); }
 
 void ServerNetworking::SendMessage(const Message& message, PlayerConnectionPtr player_connection)
 { player_connection->SendMessage(message); }
@@ -299,6 +245,12 @@ ServerNetworking::iterator ServerNetworking::begin()
 
 ServerNetworking::iterator ServerNetworking::end()
 { return iterator(EstablishedPlayer(), m_player_connections.end(), m_player_connections.end()); }
+
+ServerNetworking::reverse_iterator ServerNetworking::rbegin()
+{ return reverse_iterator(EstablishedPlayer(), m_player_connections.rbegin(), m_player_connections.rend()); }
+
+ServerNetworking::reverse_iterator ServerNetworking::rend()
+{ return reverse_iterator(EstablishedPlayer(), m_player_connections.rend(), m_player_connections.rend()); }
 
 void ServerNetworking::Init()
 {

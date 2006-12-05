@@ -2219,10 +2219,9 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 #ifdef FREEORION_BUILD_SERVER
     // create empires and assign homeworlds, names, colors, and fleet ranges to each one
 
-    const std::map<int, PlayerInfo>& player_info = ServerApp::GetApp()->Networking().Players();
     unsigned int i = 0;
     std::vector<GG::Clr> colors = EmpireColors();
-    for (std::map<int, PlayerInfo>::const_iterator it = player_info.begin(); it != player_info.end(); ++it, ++i) {
+    for (ServerNetworking::const_iterator it = ServerApp::GetApp()->Networking().begin(); it != ServerApp::GetApp()->Networking().end(); ++it, ++i) {
         std::string empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(i);
 
         GG::Clr color;
@@ -2244,7 +2243,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         int home_planet_id = homeworlds[i];
 
         // create new Empire object through empire manager
-        Empire* empire = Empires().CreateEmpire(it->first, empire_name, it->second.name, color, home_planet_id);
+        Empire* empire = Empires().CreateEmpire((*it)->ID(), empire_name, (*it)->PlayerName(), color, home_planet_id);
 
         // set ownership of home planet
         int empire_id = empire->EmpireID();

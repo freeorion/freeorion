@@ -23,20 +23,6 @@ class OrderSet;
 struct PlayerSetupData;
 struct SaveGameUIData;
 
-/** contains the info needed to manage one player, including connection info */
-struct PlayerInfo
-{
-    PlayerInfo(); ///< default ctor
-    PlayerInfo(int sock, const IPaddress& addr, const std::string& player_name = "", bool host_ = false); ///< ctor
-
-    bool        Connected() const {return socket != -1;}  ///< returns true if this player is still connected
-
-    int         socket;  ///< socket on which the player is connected (-1 if there is no valid connection)
-    IPaddress   address; ///< the IP address of the connected player
-    std::string name;    ///< the unique name of the player
-    bool        host;    ///< true if this is the host player
-};
-
 /** contains the data that must be saved for a single player.  Note that the m_empire member is not deallocated by
     PlayerSaveGameData.  Users of PlayerSaveGameData are resposible for managing its lifetime. */
 struct PlayerSaveGameData
@@ -77,15 +63,6 @@ public:
     /** creates an AI client child process for each element of \a AIs*/
     void CreateAIClients(const std::vector<PlayerSetupData>& AIs);
 
-    /** handles an incoming message from the server with the appropriate action or response */
-    void HandleMessage(const Message& msg);
-
-    /** when Messages arrive from connections that are not established players, they arrive via a call to this function*/
-    void HandleNonPlayerMessage(const Message& msg, const PlayerInfo& connection); 
-
-    /** called by ServerNetworking when a player's TCP connection is closed*/
-    void PlayerDisconnected(int id);
-
     /**  Adds an existing empire to turn processing. The position the empire is in the vector is it's position in the turn processing.*/
     void AddEmpireTurn(int empire_id);
 
@@ -114,14 +91,16 @@ private:
     ServerApp(const ServerApp&); // disabled
 
     void Run();             ///< initializes app state, then executes main event handler/render loop (Poll())
+    void CleanupAIs();      ///< cleans up AI processes
 
-    void SDLInit();         ///< initializes SDL and SDL-related libs
-    void Initialize();      ///< app initialization
+    /** handles an incoming message from the server with the appropriate action or response */
+    void HandleMessage(const Message& msg, PlayerConnectionPtr player_connection);
 
-    void Poll();            ///< handles all waiting SDL messages
+    /** when Messages arrive from connections that are not established players, they arrive via a call to this function*/
+    void HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection);
 
-    void FinalCleanup();    ///< app final cleanup
-    void SDLQuit();         ///< cleans up FE and SDL
+    /** called by ServerNetworking when a player's TCP connection is closed*/
+    void PlayerDisconnected(PlayerConnectionPtr player_connection);
 
     void NewGameInit();     ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
     void LoadGameInit();    ///< restores saved game universe, sends out game state and saved pending orders to clients, and signals clients to finish current turn
