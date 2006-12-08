@@ -159,7 +159,9 @@ private:
     friend struct Idle;
     friend struct MPLobby;
     friend struct WaitingForJoiners;
+    friend struct PlayingGame;
     friend struct WaitingForTurnEnd;
+    friend struct WaitingForTurnEndIdle;
     friend struct WaitingForSaveData;
 };
 

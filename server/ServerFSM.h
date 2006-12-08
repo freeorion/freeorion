@@ -8,7 +8,9 @@
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/statechart/custom_reaction.hpp>
+#include <boost/statechart/deferral.hpp>
 #include <boost/statechart/event.hpp>
+#include <boost/statechart/in_state_reaction.hpp>
 #include <boost/statechart/state_machine.hpp>
 #include <boost/statechart/simple_state.hpp>
 
@@ -31,8 +33,7 @@ struct Disconnection : boost::statechart::event<Disconnection>
 /** The base class for all state machine events that are based on Messages. */
 struct MessageEventBase
 {
-    /** Basic ctor. */
-    MessageEventBase(const Message& message, PlayerConnectionPtr& player_connection);
+    MessageEventBase(const Message& message, PlayerConnectionPtr& player_connection); ///< Basic ctor.
 
     const Message&       m_message;
     PlayerConnectionPtr& m_player_connection;
@@ -76,7 +77,13 @@ BOOST_PP_SEQ_FOR_EACH(DECLARE_MESSAGE_EVENT, _, MESSAGE_EVENTS)
 struct Idle;
 struct MPLobby;
 struct WaitingForJoiners;
+struct PlayingGame;
+
+// Substates of PlayingGame
 struct WaitingForTurnEnd;
+
+// Substates of WaitingForTurnEnd
+struct WaitingForTurnEndIdle;
 struct WaitingForSaveData;
 
 
@@ -85,7 +92,9 @@ struct ServerFSM : boost::statechart::state_machine<ServerFSM, Idle>
 {
     ServerFSM(ServerApp &server);
 
+    void unconsumed_event(const boost::statechart::event_base &event);
     ServerApp& Server();
+    void HandleNonLobbyDisconnection(const Disconnection& d);
 
 private:
     ServerApp& m_server;
@@ -124,7 +133,7 @@ struct MPLobby : boost::statechart::simple_state<MPLobby, ServerFSM>
     MPLobby();
     ~MPLobby();
 
-    boost::statechart::result react(const Disconnection&);
+    boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const JoinGame& msg);
     boost::statechart::result react(const LobbyUpdate& msg);
     boost::statechart::result react(const LobbyChat& msg);
@@ -134,29 +143,38 @@ struct MPLobby : boost::statechart::simple_state<MPLobby, ServerFSM>
 };
 
 
-/** The server state in which a game has been initiated, and the server is waiting for all palyers to join. */
+/** The server state in which a game has been initiated, and the server is waiting for all players to join. */
 struct WaitingForJoiners : boost::statechart::simple_state<WaitingForJoiners, ServerFSM>
 {
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<Disconnection>,
+        boost::statechart::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         boost::statechart::custom_reaction<JoinGame>
     > reactions;
 
     WaitingForJoiners();
     ~WaitingForJoiners();
 
-    boost::statechart::result react(const Disconnection&);
     boost::statechart::result react(const JoinGame& msg);
 };
 
 
-/** The server state in which a game is being played, and the server is waiting for all players to finish their moves,
-    after which the server will process the turn.*/
-struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, ServerFSM>
+/** The server state in which a game has been startes, and is actually being played. */
+struct PlayingGame : boost::statechart::simple_state<PlayingGame, ServerFSM, WaitingForTurnEnd>
 {
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<Disconnection>,
-        boost::statechart::custom_reaction<SaveGameRequest>,
+        boost::statechart::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>
+    > reactions;
+
+    PlayingGame();
+    ~PlayingGame();
+};
+
+
+/** The substate of PlayingGame in which players are playing their turns and the server is waiting for all players to
+    finish their moves, after which the server will process the turn. */
+struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, PlayingGame, WaitingForTurnEndIdle>
+{
+    typedef boost::mpl::list<
         boost::statechart::custom_reaction<LoadSPGame>,
         boost::statechart::custom_reaction<TurnOrders>,
         boost::statechart::custom_reaction<RequestObjectID>,
@@ -167,8 +185,6 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Se
     WaitingForTurnEnd();
     ~WaitingForTurnEnd();
 
-    boost::statechart::result react(const Disconnection&);
-    boost::statechart::result react(const SaveGameRequest& msg);
     boost::statechart::result react(const LoadSPGame& msg);
     boost::statechart::result react(const TurnOrders& msg);
     boost::statechart::result react(const RequestObjectID& msg);
@@ -177,34 +193,38 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Se
 };
 
 
-/** The server state in which a game is being played, a player has initiated a save, and the server is waiting for all
-    players to send their save data, after which the server will save the data. */
-struct WaitingForSaveData : boost::statechart::simple_state<WaitingForSaveData, ServerFSM>
+/** The default substate of WaitingForTurnEndIdle. */
+struct WaitingForTurnEndIdle : boost::statechart::simple_state<WaitingForTurnEndIdle, WaitingForTurnEnd>
 {
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<Disconnection>,
-        boost::statechart::custom_reaction<ClientSaveData>,
-        boost::statechart::custom_reaction<SaveGameRequest>,
-        boost::statechart::custom_reaction<LoadSPGame>,
-        boost::statechart::custom_reaction<TurnOrders>,
-        boost::statechart::custom_reaction<RequestObjectID>,
-        boost::statechart::custom_reaction<PlayerChat>,
-        boost::statechart::custom_reaction<EndGame>
+        boost::statechart::custom_reaction<SaveGameRequest>
     > reactions;
 
-    // TODO: Catch all other types of messages, but defer them. Actually, test first if it is possible to let unhandled events fall through to the WaitingForTurnEnd state.
+    WaitingForTurnEndIdle();
+    ~WaitingForTurnEndIdle();
+
+    boost::statechart::result react(const SaveGameRequest& msg);
+};
+
+
+/** The default substate of WaitingForTurnEndIdle in which a player has initiated a save and the server is waiting for
+    all players to send their save data, after which the server will save the data. */
+struct WaitingForSaveData : boost::statechart::simple_state<WaitingForSaveData, WaitingForTurnEnd>
+{
+    typedef boost::mpl::list<
+        boost::statechart::custom_reaction<ClientSaveData>,
+        boost::statechart::deferral<SaveGameRequest>,
+        boost::statechart::deferral<LoadSPGame>,
+        boost::statechart::deferral<TurnOrders>,
+        boost::statechart::deferral<RequestObjectID>,
+        boost::statechart::deferral<PlayerChat>,
+        boost::statechart::deferral<EndGame>
+    > reactions;
 
     WaitingForSaveData();
     ~WaitingForSaveData();
 
-    boost::statechart::result react(const Disconnection&);
     boost::statechart::result react(const ClientSaveData& msg);
-    boost::statechart::result react(const SaveGameRequest& msg);
-    boost::statechart::result react(const LoadSPGame& msg);
-    boost::statechart::result react(const TurnOrders& msg);
-    boost::statechart::result react(const RequestObjectID& msg);
-    boost::statechart::result react(const PlayerChat& msg);
-    boost::statechart::result react(const EndGame& msg);
 };
 
 #endif

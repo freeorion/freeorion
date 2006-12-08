@@ -235,69 +235,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
 }
 
 void ServerApp::PlayerDisconnected(PlayerConnectionPtr player_connection)
-{
-    int id = player_connection->ID();
-    // this will not usually happen, since the host process usually owns the server process, and will usually take it down if it fails
-    if (id == Networking::HOST_PLAYER_ID) {
-        if (m_state == SERVER_MP_LOBBY) { // host disconnected in MP lobby
-            for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it) {
-                if ((*it)->ID() != id) {
-                    (*it)->SendMessage(ServerLobbyHostAbortMessage((*it)->ID()));
-                    m_networking.Disconnect((*it)->ID());
-                }
-            }
-            m_networking.Disconnect(id);
-            m_state = SERVER_DYING;
-            m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Host player disconnected; server now in mode " << SERVER_DYING << " (SERVER_DYING).";
-            m_networking.DisconnectAll();
-            Exit(1);
-        } else if (m_losers.find(id) == m_losers.end()) { // host abnormally disconnected during a regular game
-            // if the host dies, there's really nothing else we can do
-            for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it) {
-                if ((*it)->ID() != id)
-                    (*it)->SendMessage(EndGameMessage(-1, (*it)->ID()));
-            }
-            m_state = SERVER_DYING;
-            m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Host player disconnected; server now in mode " << SERVER_DYING << " (SERVER_DYING).";
-            m_networking.DisconnectAll();
-            Exit(1);
-        }
-    } else {
-        if (m_state == SERVER_MP_LOBBY) { // player disconnected in MP lobby
-            unsigned int i = 0;
-            for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it, ++i) {
-                if ((*it)->ID() == id) {
-                    if (i < m_lobby_data.m_players.size())
-                        m_lobby_data.m_players.erase(m_lobby_data.m_players.begin() + i); // remove the exiting player's PlayerSetupData struct
-                } else {
-                    (*it)->SendMessage(ServerLobbyExitMessage(id, (*it)->ID()));
-                }
-            }
-            m_networking.Disconnect(id);
-        } else if (m_losers.find(id) == m_losers.end()) { // player abnormally disconnected during a regular game
-            m_state = SERVER_DISCONNECT;
-            PlayerConnectionPtr disconnected_player = *m_networking.GetPlayer(id);
-            m_log_category.debugStream() << "ServerApp::PlayerDisconnected : Lost connection to player #" << boost::lexical_cast<std::string>(id) 
-                                         << ", named \"" << disconnected_player->PlayerName() << "\"; server now in mode " << SERVER_DISCONNECT << " (SERVER_DISCONNECT).";
-            std::string message = disconnected_player->PlayerName();
-            for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it) {
-                if ((*it)->ID() != id) {
-                    (*it)->SendMessage(PlayerDisconnectedMessage((*it)->ID(), message));
-                    // in the future we may find a way to recover from this, but for now we will immediately send a game ending message as well
-                    (*it)->SendMessage(EndGameMessage(-1, (*it)->ID()));
-                }
-            }
-        }
-    }
-
-    // if there are no humans left, it's time to terminate
-    if (m_networking.empty() || m_ai_clients.size() == m_networking.size()) {
-        m_state = SERVER_DYING;
-        m_log_category.debugStream() << "ServerApp::PlayerDisconnected : All human players disconnected; server now in mode " << SERVER_DYING << " (SERVER_DYING).";
-        m_networking.DisconnectAll();
-        Exit(1);
-    }
-}
+{ m_fsm.process_event(Disconnection(player_connection)); }
 
 void ServerApp::NewGameInit()
 {
