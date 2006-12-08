@@ -57,7 +57,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::COMBAT_START)
     GG_ENUM_MAP_INSERT(Message::COMBAT_ROUND_UPDATE)
     GG_ENUM_MAP_INSERT(Message::COMBAT_END)
-    GG_ENUM_MAP_INSERT(Message::HUMAN_PLAYER_MSG)
+    GG_ENUM_MAP_INSERT(Message::HUMAN_PLAYER_CHAT)
     GG_ENUM_MAP_INSERT(Message::PLAYER_ELIMINATED)
     GG_ENUM_MAP_INSERT(Message::PLAYER_EXIT)
     GG_ENUM_MAP_INSERT(Message::REQUEST_NEW_OBJECT_ID)
@@ -417,12 +417,12 @@ Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGa
 
 Message ChatMessage(int sender, const std::string& msg)
 {
-    return Message(Message::HUMAN_PLAYER_MSG, sender, -1, Message::CORE, msg);
+    return Message(Message::HUMAN_PLAYER_CHAT, sender, -1, Message::CORE, msg);
 }
 
 Message ChatMessage(int sender, int receiver, const std::string& msg)
 {
-    return Message(Message::HUMAN_PLAYER_MSG, sender, receiver, Message::CORE, msg);
+    return Message(Message::HUMAN_PLAYER_CHAT, sender, receiver, Message::CORE, msg);
 }
 
 Message PlayerDisconnectedMessage(int receiver, const std::string& player_name)

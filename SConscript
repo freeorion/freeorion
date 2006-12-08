@@ -59,6 +59,7 @@ if env['target_define'] == 'FREEORION_BUILD_SERVER':
         'network/ServerNetworking.cpp',
         'server/SaveLoad.cpp',
         'server/ServerApp.cpp',
+        'server/ServerFSM.cpp',
         'server/dmain.cpp',
         'universe/Universe.cpp',
         'util/AppInterface.cpp'

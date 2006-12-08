@@ -2,6 +2,7 @@
 #ifndef _ServerApp_h_
 #define _ServerApp_h_
 
+#include "ServerFSM.h"
 #include "../util/AppInterface.h"
 #include "../util/Process.h"
 #include "../Empire/EmpireManager.h"
@@ -118,6 +119,7 @@ private:
     log4cpp::Category&      m_log_category;         ///< reference to the log4cpp object used to log events to file
 
     ServerState             m_state;                ///< the server's current state of execution
+    ServerFSM               m_fsm;
    
     int                     m_current_turn;         ///< current turn number
 
@@ -134,7 +136,6 @@ private:
     StarlaneFrequency            m_starlane_freq;   ///< the frequency of starlanes
     PlanetDensity                m_planet_density;  ///< the density of planets within systems
     SpecialsFrequency            m_specials_freq;   ///< the frequency of planetary and system specials
-    std::string                  m_galaxy_file;     ///< file to use for generating the galaxy
     // end SERVER_GAME_SETUP variables
 
     bool                      m_single_player_game;    ///< true when the game being played is single-player
@@ -151,6 +152,15 @@ private:
     std::set<int>             m_losers;                ///< the IDs of players who have been eliminated during the normal course of the game
 
     static ServerApp*         s_app;
+
+    // Give FSM and its states direct access.  We are using the FSM code as a control-flow mechanism; it is all
+    // notionally part of this class.
+    friend struct ServerFSM;
+    friend struct Idle;
+    friend struct MPLobby;
+    friend struct WaitingForJoiners;
+    friend struct WaitingForTurnEnd;
+    friend struct WaitingForSaveData;
 };
 
 // template implementations

@@ -616,7 +616,7 @@ void HumanClientApp::HandleMessage(const Message& msg)
         break;
     }
 
-    case Message::HUMAN_PLAYER_MSG: {
+    case Message::HUMAN_PLAYER_CHAT: {
         ClientUI::GetClientUI()->GetMapWnd()->HandlePlayerChatMessage(msg.Text());
         break;
     }

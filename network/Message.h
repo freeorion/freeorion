@@ -52,7 +52,7 @@ public:
         COMBAT_START,            ///< sent to clients when a combat is about to start
         COMBAT_ROUND_UPDATE,     ///< sent to clients when a combat round has been resolved
         COMBAT_END,              ///< sent to clients when a combat is concluded
-        HUMAN_PLAYER_MSG,        ///< sent when one player sends a text message to another in multiplayer
+        HUMAN_PLAYER_CHAT,       ///< sent when one player sends a chat message to another in multiplayer
         PLAYER_ELIMINATED,       ///< sent to all clients when a player is eliminated from play
         PLAYER_EXIT,             ///< sent to the "host" client when another player leaves the game
         REQUEST_NEW_OBJECT_ID,   ///< sent by client to server requesting a new object ID.
