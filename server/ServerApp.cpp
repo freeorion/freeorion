@@ -77,7 +77,6 @@ ServerApp::ServerApp(int argc, char* argv[]) :
                  boost::bind(&ServerApp::HandleNonPlayerMessage, this, _1, _2),
                  boost::bind(&ServerApp::PlayerDisconnected, this, _1)),
     m_log_category(log4cpp::Category::getRoot()),
-    m_state(SERVER_IDLE),
     m_fsm(*this),
     m_current_turn(INVALID_GAME_TURN)
 {
@@ -101,7 +100,6 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_log_category.setAdditivity(true);   // ...but allow the addition of others later
     m_log_category.setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
     m_log_category.debug("freeoriond logger initialized.");
-    m_log_category.debugStream() << "ServerApp::ServerApp : Server now in mode " << SERVER_IDLE << " (SERVER_IDLE).";
 }
 
 ServerApp::~ServerApp()
@@ -199,6 +197,13 @@ void ServerApp::CleanupAIs()
 
 void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_connection)
 {
+    if (msg.SendingPlayer() != player_connection->ID()) {
+        m_log_category.errorStream() << "ServerApp::HandleMessage : Received an message with a sender ID that differs "
+            "from the sending player's ID.  Terminating connection.";
+        m_networking.Disconnect(player_connection);
+        return;
+    }
+
     switch (msg.Type()) {
     case Message::START_MP_GAME:         m_fsm.process_event(StartMPGame(msg, player_connection)); break;
     case Message::LOBBY_UPDATE:          m_fsm.process_event(LobbyUpdate(msg, player_connection)); break;

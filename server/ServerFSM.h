@@ -14,10 +14,14 @@
 #include <boost/statechart/state_machine.hpp>
 #include <boost/statechart/simple_state.hpp>
 
+#include <set>
+#include <vector>
+
 
 class Message;
 class PlayerConnection;
 class ServerApp;
+class PlayerSaveGameData;
 typedef boost::shared_ptr<PlayerConnection> PlayerConnectionPtr;
 
 // Non-Message events
@@ -216,7 +220,6 @@ struct WaitingForSaveData : boost::statechart::simple_state<WaitingForSaveData, 
         boost::statechart::deferral<SaveGameRequest>,
         boost::statechart::deferral<LoadSPGame>,
         boost::statechart::deferral<TurnOrders>,
-        boost::statechart::deferral<RequestObjectID>,
         boost::statechart::deferral<PlayerChat>,
         boost::statechart::deferral<EndGame>
     > reactions;
@@ -225,6 +228,10 @@ struct WaitingForSaveData : boost::statechart::simple_state<WaitingForSaveData, 
     ~WaitingForSaveData();
 
     boost::statechart::result react(const ClientSaveData& msg);
+
+    std::set<int>                   m_needed_reponses;
+    std::set<int>                   m_players_responded;
+    std::vector<PlayerSaveGameData> m_player_save_game_data;
 };
 
 #endif

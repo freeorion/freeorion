@@ -143,6 +143,7 @@ GalaxySetupData::GalaxySetupData():
 // SinglePlayerSetupData
 /////////////////////////////////////////////////////
 SinglePlayerSetupData::SinglePlayerSetupData():
+    m_new_game(true),
     m_AIs(0)
 {}
 

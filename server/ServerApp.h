@@ -52,7 +52,6 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    ServerState     State() const {return m_state;} ///< returns the current state of the server (one of the ServerState enum values)
     int             CurrentTurn() const {return m_current_turn;}                ///< returns current turn of the server
     //@}
 
@@ -118,7 +117,6 @@ private:
 
     log4cpp::Category&      m_log_category;         ///< reference to the log4cpp object used to log events to file
 
-    ServerState             m_state;                ///< the server's current state of execution
     ServerFSM               m_fsm;
    
     int                     m_current_turn;         ///< current turn number

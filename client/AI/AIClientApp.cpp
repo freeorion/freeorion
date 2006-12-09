@@ -109,11 +109,6 @@ void AIClientApp::Run()
 void AIClientApp::HandleMessage(const Message& msg)
 {
     switch (msg.Type()) {
-    case Message::SERVER_STATUS: {
-        Logger().debugStream() << "AIClientApp::HandleMessage : Received SERVER_STATUS (status code " << msg.Text() << ")";
-        break;
-    }
-          
     case Message::JOIN_GAME: {
         if (msg.SendingPlayer() == -1) {
             if (PlayerID() == -1) {

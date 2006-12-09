@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "OptionsWnd.h"
 #include "../client/human/HumanClientApp.h"
+#include "../network/Networking.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
@@ -83,6 +84,8 @@ void InGameMenu::Init()
     GG::Connect(m_done_btn->ClickedSignal, &InGameMenu::Done, this);
 
     if (!HumanClientApp::GetApp()->SinglePlayerGame()) {
+        if (HumanClientApp::GetApp()->PlayerID() != Networking::HOST_PLAYER_ID)
+            m_save_btn->Disable();
         m_load_btn->Disable();
     }
 }

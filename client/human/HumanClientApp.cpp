@@ -231,10 +231,10 @@ bool HumanClientApp::LoadSinglePlayerGame()
             SetEmpireID(-1);
             SetPlayerName("Happy_Player");
 
-            // HACK!  Send HostMPGameMessage, since it establishes us as the host, and the LOAD_GAME message will
-            // establish us as a single-player game.
-            Networking().SendMessage(HostMPGameMessage(Networking::HOST_PLAYER_ID, "Happy_Player"));
-            Networking().SendMessage(HostLoadGameMessage(Networking::HOST_PLAYER_ID, filename));
+            SinglePlayerSetupData setup_data;
+            setup_data.m_new_game = false;
+            setup_data.m_filename = filename;
+            Networking().SendMessage(HostSPGameMessage(Networking::HOST_PLAYER_ID, setup_data));
 
             return true;
         }
@@ -489,11 +489,8 @@ void HumanClientApp::SDLQuit()
 void HumanClientApp::HandleMessage(const Message& msg)
 {
     switch (msg.Type()) {
-    case Message::SERVER_STATUS: {
-        ServerState server_state = boost::lexical_cast<ServerState>(msg.Text());
-        Logger().debugStream() << "HumanClientApp::HandleMessage : Received SERVER_STATUS (status code " << msg.Text() << ")";
-        if (server_state == SERVER_DYING)
-            KillServer();
+    case Message::SERVER_DYING: {
+        KillServer();
         break;
     } 
 

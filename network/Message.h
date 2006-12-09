@@ -32,7 +32,7 @@ public:
     enum MessageType {
         UNDEFINED,
         DEBUG,                   ///< used to send special messages used for debugging purposes
-        SERVER_STATUS,           ///< sent to the client when requested, and when the server first recieves a connection from a client
+        SERVER_DYING,            ///< sent to the client when the server is about to terminate
         HOST_SP_GAME,            ///< sent when a client wishes to establish a single player game at the server
         HOST_MP_GAME,            ///< sent when a client wishes to establish a multiplayer game at the server
         JOIN_GAME,               ///< sent when a client wishes to join a game being established at the server
