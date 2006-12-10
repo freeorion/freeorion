@@ -19,8 +19,10 @@
 
 
 class Message;
-class PlayerConnection;
+class MultiplayerLobbyData;
 class ServerApp;
+class SinglePlayerSetupData;
+class PlayerConnection;
 class PlayerSaveGameData;
 typedef boost::shared_ptr<PlayerConnection> PlayerConnectionPtr;
 
@@ -100,6 +102,10 @@ struct ServerFSM : boost::statechart::state_machine<ServerFSM, Idle>
     ServerApp& Server();
     void HandleNonLobbyDisconnection(const Disconnection& d);
 
+    boost::shared_ptr<MultiplayerLobbyData>  m_lobby_data;
+    boost::shared_ptr<SinglePlayerSetupData> m_setup_data;
+    std::vector<PlayerSaveGameData>          m_player_save_game_data;
+
 private:
     ServerApp& m_server;
 };
@@ -144,21 +150,51 @@ struct MPLobby : boost::statechart::simple_state<MPLobby, ServerFSM>
     boost::statechart::result react(const LobbyHostAbort& msg);
     boost::statechart::result react(const LobbyNonHostExit& msg);
     boost::statechart::result react(const StartMPGame& msg);
+
+    boost::shared_ptr<MultiplayerLobbyData> m_lobby_data;
+    std::vector<PlayerSaveGameData>         m_player_save_game_data;
 };
 
 
-/** The server state in which a game has been initiated, and the server is waiting for all players to join. */
-struct WaitingForJoiners : boost::statechart::simple_state<WaitingForJoiners, ServerFSM>
+/** The server state in which a new single-player game has been initiated, and the server is waiting for all players to
+    join. */
+struct WaitingForSPGameJoiners : boost::statechart::simple_state<WaitingForSPGameJoiners, ServerFSM>
 {
     typedef boost::mpl::list<
         boost::statechart::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         boost::statechart::custom_reaction<JoinGame>
     > reactions;
 
-    WaitingForJoiners();
-    ~WaitingForJoiners();
+    WaitingForSPGameJoiners();
+    ~WaitingForSPGameJoiners();
 
     boost::statechart::result react(const JoinGame& msg);
+
+    boost::shared_ptr<SinglePlayerSetupData> m_setup_data;
+    std::vector<PlayerSaveGameData>          m_player_save_game_data;
+    std::set<std::string>                    m_expected_ai_player_names;
+    int                                      m_num_expected_players;
+};
+
+
+/** The server state in which a multiplayer game has been initiated, and the server is waiting for all players to
+    join. */
+struct WaitingForMPGameJoiners : boost::statechart::simple_state<WaitingForMPGameJoiners, ServerFSM>
+{
+    typedef boost::mpl::list<
+        boost::statechart::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
+        boost::statechart::custom_reaction<JoinGame>
+    > reactions;
+
+    WaitingForMPGameJoiners();
+    ~WaitingForMPGameJoiners();
+
+    boost::statechart::result react(const JoinGame& msg);
+
+    boost::shared_ptr<MultiplayerLobbyData> m_lobby_data;
+    std::vector<PlayerSaveGameData>         m_player_save_game_data;
+    std::set<std::string>                   m_expected_ai_player_names;
+    int                                     m_num_expected_players;
 };
 
 

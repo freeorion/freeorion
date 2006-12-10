@@ -124,9 +124,8 @@ log4cpp::Category& ServerApp::Logger()
     return m_log_category;
 }
 
-void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs)
+void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::set<std::string>& expected_ai_player_names)
 {
-    m_expected_ai_players.clear();
     for (std::set<int>::iterator it = m_ai_IDs.begin(); it != m_ai_IDs.end(); ++it) {
         m_networking.Disconnect(*it);
     }
@@ -138,7 +137,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs)
     for (std::vector<PlayerSetupData>::const_iterator it = AIs.begin(); it != AIs.end(); ++it, ++i) {
         // TODO: add other command line args to AI client invocation as needed
         std::string player_name = "AI_" + boost::lexical_cast<std::string>(ai_client_base_number + i);
-        m_expected_ai_players.insert(player_name);
+        expected_ai_player_names.insert(player_name);
         std::vector<std::string> args;
         args.push_back(AI_CLIENT_EXE);
         args.push_back(player_name);
@@ -242,11 +241,21 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
 void ServerApp::PlayerDisconnected(PlayerConnectionPtr player_connection)
 { m_fsm.process_event(Disconnection(player_connection)); }
 
-void ServerApp::NewGameInit()
+void ServerApp::NewGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data)
+{
+    // TODO
+}
+
+void ServerApp::LoadGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data, const std::vector<PlayerSaveGameData>& player_save_game_data)
+{
+    // TODO
+}
+
+void ServerApp::NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data)
 {
     m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
-    m_universe.CreateUniverse(m_galaxy_size, m_galaxy_shape, m_galaxy_age, m_starlane_freq, m_planet_density, m_specials_freq, 
-                              m_networking.size() - m_ai_clients.size(), m_ai_clients.size(), m_lobby_data.m_players);
+    m_universe.CreateUniverse(lobby_data->m_size, lobby_data->m_shape, lobby_data->m_age, lobby_data->m_starlane_freq, lobby_data->m_planet_density, lobby_data->m_specials_freq, 
+                              m_networking.size() - m_ai_clients.size(), m_ai_clients.size(), lobby_data->m_players);
     m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << " (SERVER_GAME_SETUP).";
 
@@ -263,21 +272,21 @@ void ServerApp::NewGameInit()
     m_losers.clear();
 }
 
-void ServerApp::LoadGameInit()
+void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data, const std::vector<PlayerSaveGameData>& player_save_game_data)
 {
-    assert(!m_player_save_game_data.empty());
+    assert(!player_save_game_data.empty());
 
     m_turn_sequence.clear();
 
     std::map<int, PlayerSaveGameData> player_data_by_empire;
-    for (unsigned int i = 0; i < m_player_save_game_data.size(); ++i) {
-        assert(m_player_save_game_data[i].m_empire);
-        player_data_by_empire[m_player_save_game_data[i].m_empire->EmpireID()] = m_player_save_game_data[i];
+    for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
+        assert(player_save_game_data[i].m_empire);
+        player_data_by_empire[player_save_game_data[i].m_empire->EmpireID()] = player_save_game_data[i];
     }
 
     if (m_single_player_game) {
-        while (m_lobby_data.m_players.size() < m_networking.size()) {
-            m_lobby_data.m_players.push_back(PlayerSetupData());
+        while (lobby_data->m_players.size() < m_networking.size()) {
+            lobby_data->m_players.push_back(PlayerSetupData());
         }
     }
 
@@ -285,8 +294,8 @@ void ServerApp::LoadGameInit()
     std::set<int> already_chosen_empire_ids;
     unsigned int i = 0;
     for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it, ++i) {
-        player_to_empire_ids[(*it)->ID()] = m_lobby_data.m_players[i].m_save_game_empire_id;
-        already_chosen_empire_ids.insert(m_lobby_data.m_players[i].m_save_game_empire_id);
+        player_to_empire_ids[(*it)->ID()] = lobby_data->m_players[i].m_save_game_empire_id;
+        already_chosen_empire_ids.insert(lobby_data->m_players[i].m_save_game_empire_id);
     }
 
     for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it) {
@@ -311,7 +320,7 @@ void ServerApp::LoadGameInit()
         m_turn_sequence[empire_id] = 0;
     }
 
-    // This is a bit odd, but since Empires() is built from the data stored in m_player_save_game_data, and the universe
+    // This is a bit odd, but since Empires() is built from the data stored in player_save_game_data, and the universe
     // is loaded long before that, the universe's empire-specific views of the systems is not properly initialized when
     // the universe is loaded.  That means we must do it here.
     m_universe.RebuildEmpireViewSystemGraphs();
@@ -354,13 +363,10 @@ int ServerApp::GetEmpirePlayerID(int empire_id) const
     return retval;
 }
 
-
 void ServerApp::AddEmpireTurn(int empire_id)
 {
-    // add empire
-    m_turn_sequence[empire_id] = NULL;
+    m_turn_sequence[empire_id] = 0;
 }
-
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
 {
@@ -440,20 +446,18 @@ void ServerApp::ProcessTurns()
         Planet *planet = GetUniverse().Object<Planet>(it->first);
 
         // only one empire?
-        if(it->second.size()==1) {
+        if (it->second.size()==1) {
             it->second[0]->ServerExecute();
             pEmpire = Empires().Lookup( it->second[0]->EmpireID() );
             pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
-        }
-        else
-        {
+        } else {
             const System *system = GetUniverse().Object<System>(planet->SystemID());
 
             std::vector<const Fleet*> vec_fleet = system->FindObjects<Fleet>();
             std::set<int> set_empire_with_military;
-            for(unsigned int i=0;i<vec_fleet.size();i++)
-                for(Fleet::const_iterator ship_it=vec_fleet[i]->begin();ship_it!=vec_fleet[i]->end();++ship_it)
-                    if(GetUniverse().Object<Ship>(*ship_it)->IsArmed())
+            for (unsigned int i=0;i<vec_fleet.size();i++)
+                for (Fleet::const_iterator ship_it=vec_fleet[i]->begin();ship_it!=vec_fleet[i]->end();++ship_it)
+                    if (GetUniverse().Object<Ship>(*ship_it)->IsArmed())
                     {
                         set_empire_with_military.insert(*vec_fleet[i]->Owners().begin());
                         break;
@@ -463,12 +467,12 @@ void ServerApp::ProcessTurns()
             int winner = 0;
             // is the current winner armed?
             bool winner_is_armed = set_empire_with_military.find(it->second[0]->EmpireID()) != set_empire_with_military.end();
-            for(unsigned int i=1;i<it->second.size();i++)
+            for (unsigned int i=1;i<it->second.size();i++)
                 // is this empire armed?
-                if(set_empire_with_military.find(it->second[i]->EmpireID()) != set_empire_with_military.end())
+                if (set_empire_with_military.find(it->second[i]->EmpireID()) != set_empire_with_military.end())
                 {
                     // if this empire is armed and the former winner too, noone can win
-                    if(winner_is_armed)
+                    if (winner_is_armed)
                     {
                         winner = -1; // no winner!!
                         break;       // won't find a winner!
@@ -481,8 +485,8 @@ void ServerApp::ProcessTurns()
                     if(!winner_is_armed)
                         winner = -1; // if the current winner isn't armed, a winner must be armed!!!!
 
-            for(int i=0;i<static_cast<int>(it->second.size());i++)
-                if(winner==i) {
+            for (int i=0;i<static_cast<int>(it->second.size());i++)
+                if (winner==i) {
                     it->second[i]->ServerExecute();
                     pEmpire = Empires().Lookup( it->second[i]->EmpireID() );
                     pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
@@ -538,7 +542,7 @@ void ServerApp::ProcessTurns()
 
     std::vector<System*> sys_vec = GetUniverse().FindObjects<System>();
     bool combat_happend = false;
-    for(std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it)
+    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it)
     {
         std::vector<CombatAssets> empire_combat_forces;
         System* system = *it;
@@ -546,15 +550,15 @@ void ServerApp::ProcessTurns()
         std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
         if (flt_vec.empty()) continue;  // skip systems with not fleets, as these can't have combat
 
-        for(std::vector<Fleet*>::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it)
+        for (std::vector<Fleet*>::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it)
         {
             Fleet* flt = *flt_it;
             // a fleet should belong only to one empire!?
-            if(1==flt->Owners().size())
+            if (1==flt->Owners().size())
             {
                 std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*flt->Owners().begin())));
 
-                if(ecf_it==empire_combat_forces.end())
+                if (ecf_it==empire_combat_forces.end())
                 {
                     CombatAssets ca(Empires().Lookup(*flt->Owners().begin()));
                     ca.fleets.push_back(flt);
@@ -565,15 +569,15 @@ void ServerApp::ProcessTurns()
             }
         }
         std::vector<Planet*> plt_vec = system->FindObjects<Planet>();
-        for(std::vector<Planet*>::iterator plt_it = plt_vec.begin();plt_it != plt_vec.end(); ++plt_it)
+        for (std::vector<Planet*>::iterator plt_it = plt_vec.begin();plt_it != plt_vec.end(); ++plt_it)
         {
             Planet* plt = *plt_it;
             // a planet should belong only to one empire!?
-            if(1==plt->Owners().size())
+            if (1==plt->Owners().size())
             {           
                 std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*plt->Owners().begin())));
 
-                if(ecf_it==empire_combat_forces.end())
+                if (ecf_it==empire_combat_forces.end())
                 {
                     CombatAssets ca(Empires().Lookup(*plt->Owners().begin()));
                     ca.planets.push_back(plt);
@@ -584,7 +588,7 @@ void ServerApp::ProcessTurns()
             }
         }
 
-        if(empire_combat_forces.size()>1)
+        if (empire_combat_forces.size()>1)
         {
             combat_happend=true;
             CombatSystem combat_system;
