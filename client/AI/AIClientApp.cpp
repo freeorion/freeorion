@@ -22,7 +22,7 @@
 #include "../../universe/ShipDesign.h"
 #include "../../util/OrderSet.h"
 #include "../../util/Order.h"
-#include "../../empire/Empire.h"
+#include "../../Empire/Empire.h"
 
 #include <boost/filesystem/fstream.hpp>
 
