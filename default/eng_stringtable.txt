@@ -2800,7 +2800,7 @@ PRO_MINING_ENGINEERING_DESC
 Applying the concepts of Planetary Geology allows effective extraction of minerals from near the surface of planets.  By identifying the probable locations and ideal extraction methods, efficiency and total possible production are increased.  As well, proper planning and analysis increase mine safety and longevity.\n\nBonuses depend on planet type:\nBarren and Inferno recive +4 per 10 population of planet at mining focused worlds.\nDesert, Radiated and Toxic recive +2.\nTundra and Terran recive +1.\nOcean and Swap receive no bonus.\n\nLarge research cost and time and lack of building-production requirement to receive effect make technology attractive for research-focused empires, but less useful for production-focused.  Bonuses are largest on low-population planet types, making overall benefit small until future advances can increase the popluations of these planet types.
 
 PRO_INDUSTRY_CENTRE_I
-Regional Industrial Centres
+Industrial Centres
 
 PRO_INDUSTRY_CENTRE_I_DESC
 Coordinating industrial activity between planets and star systems can be effectively accomplished at large centralized complexes.\n\nFacility's large cost and build time, as well as significant future range growth potential, require strong planning to produce in location with ideal future utility.  Large industrial benefits come with large up-front cost, in both production resources and time, but with minimal research prerequisites, making facility useful for high-production strategies, but unattractive for research-focused empires.
@@ -2816,13 +2816,13 @@ PRO_ASTEROID_MINE_II_DESC
 Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.  The same asteroid field and population produces additional minerals at all planets in-system that focus primarily on mining.
 
 PRO_INDUSTRY_CENTRE_II
-Greater Regional Industrial Centre
+Greater Industrial Centre
 
 PRO_INDUSTRY_CENTRE_II_DESC
 Improved centralized management of dispersed industrial activities increases the range and size of increased industiral output provided.
 
 PRO_INDUSTRY_CENTRE_III
-Supreme Regional Industrial Centre
+Supreme Industrial Centre
 
 PRO_INDUSTRY_CENTRE_III_DESC
 Additional experience and facilities improvements further extend the range and size of industrial output improvement.
@@ -2874,7 +2874,7 @@ BLD_HEAVY_MINE_PROCESSOR_DESC
 Available with Heavy Mining Processors.\n\nProvides +5 mining to mining-focused worlds, non stacking, within 100 distance of the facility, that are of type Barren, Radiated, Toxic or Inferno.  Also proves +2 to mining and -5 to farming, both non-stacking, on planet at which it is built.
 
 BLD_INDUSTRY_CENTRE
-Regional Industrial Centre
+Industrial Centre
 
 BLD_INDUSTRY_CENTRE_DESC
 Available with Regional Industrial Centres.\n\nInitially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.\n\nGreater Regional Industrial Centre refinement increases bonus to +6 and increases distance to 200.\n\nSupreme Regional Industrial Centre refinement further increases bonus to +7 and range to 300.

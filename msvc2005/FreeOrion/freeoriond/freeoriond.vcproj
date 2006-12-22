@@ -322,14 +322,6 @@
 					RelativePath="..\..\..\Empire\ResourcePool.h"
 					>
 				</File>
-				<File
-					RelativePath="..\..\..\Empire\ServerEmpireManager.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Empire\ServerEmpireManager.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="network"
@@ -364,6 +356,14 @@
 				>
 				<File
 					RelativePath="..\..\..\server\dmain.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\server\SaveLoad.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\server\SaveLoad.h"
 					>
 				</File>
 				<File

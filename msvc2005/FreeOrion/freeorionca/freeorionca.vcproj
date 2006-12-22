@@ -318,14 +318,6 @@
 				Name="Empire"
 				>
 				<File
-					RelativePath="..\..\..\Empire\ClientEmpireManager.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Empire\ClientEmpireManager.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\Empire\Empire.cpp"
 					>
 				</File>
@@ -443,6 +435,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\universe\Meter.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\universe\Parser.h"
 					>
 				</File>
 				<File
@@ -643,10 +639,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\util\OrderSet.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\util\Parse.h"
 					>
 				</File>
 				<File

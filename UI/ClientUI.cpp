@@ -218,7 +218,7 @@ namespace {
         // misc
         db.Add("UI.scroll-width", "OPTIONS_DB_UI_SCROLL_WIDTH", 14, RangedValidator<int>(8, 30));
         db.Add("UI.system-icon-size", "OPTIONS_DB_UI_SYSTEM_ICON_SIZE", 14, RangedValidator<int>(8, 50));
-        db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 0.5, RangedValidator<double>(0.2, 2));
+        db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 0.3, RangedValidator<double>(0.2, 2));
         db.Add("UI.system-selection-indicator-size", "OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE", 2.0, RangedValidator<double>(0.5, 5));
         
         // tech category colors
