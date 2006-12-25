@@ -831,9 +831,12 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon
     m_positive_color(text_color),
     m_zero_color(text_color),
     m_negative_color(text_color),
-    m_icon(new GG::StaticGraphic(0, 0, h, h, GG::GUI::GetGUI()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
+    m_icon(0),
     m_text(new GG::TextControl(h, 0, w - h, h, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_color, GG::TF_LEFT | GG::TF_VCENTER))
-{    
+{
+    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(icon_filename);
+    m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GR_FITGRAPHIC);
+    
     AttachChild(m_icon);
     AttachChild(m_text);
     Refresh();
@@ -851,9 +854,12 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon
     m_positive_color(text_color),
     m_zero_color(text_color),
     m_negative_color(text_color),
-    m_icon(new GG::StaticGraphic(0, 0, h, h, GG::GUI::GetGUI()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
+    m_icon(0),
     m_text(new GG::TextControl(h, 0, w - h, h, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_color, GG::TF_LEFT | GG::TF_VCENTER))
-{   
+{
+    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(icon_filename);
+    m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GR_FITGRAPHIC);
+
     m_values[0] = value0;
     m_values[1] = value1;
     m_digits[0] = digits0;
