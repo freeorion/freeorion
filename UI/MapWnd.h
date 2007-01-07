@@ -114,6 +114,8 @@ private:
 
     void RefreshPopulationIndicator();
 
+    void UpdateEmpireResourcePools();       ///< recalculates production and predicted changes of player's empire's resource and population pools
+
     void TurnBtnClicked() {EndTurn();}
     void MenuBtnClicked() {ShowMenu();}
     void ProductionBtnClicked() {ToggleProduction();}

@@ -228,7 +228,7 @@ BuildingType
             stackinggroup = "INDUSTRY_CENTRE_STACK"
             effects = SetMaxIndustry Target.MaxIndustry + 7
     ]
-    graphic = ""
+    graphic = "building_icons/Generic_Building.png"
 
 BuildingType
     name = "BLD_ASTEROID_MINE"

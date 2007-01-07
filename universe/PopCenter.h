@@ -37,18 +37,23 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const Meter& PopulationMeter() const      {return m_pop;}        ///< returns the population Meter for this center
-    const Meter& HealthMeter() const          {return m_health;}     ///< returns the population Meter for this center
-    double       PopPoints() const            {return m_pop.Current();}///< returns the number of pop points in this center
-    double       MaxPop() const               {return m_pop.Max();}  ///< returns the max number of pop points possible in this center
-    double       PopGrowth() const            {return m_growth;}     ///< returns the change in pop points since the last turn (may be negative)
-    int          Race() const                 {return m_race;}       ///< returns the race that the population is composed of
+    const Meter& PopulationMeter() const      {return m_pop;}               ///< returns the population Meter for this center
+    const Meter& HealthMeter() const          {return m_health;}            ///< returns the population Meter for this center
+    double       PopPoints() const            {return m_pop.Current();}     ///< returns the number of pop points in this center
+    double       MaxPop() const               {return m_pop.Max();}         ///< returns the max number of pop points possible in this center
+    double       PopGrowth() const            {return m_growth;}            ///< returns the change in pop points since the last turn (may be negative)
+    double       Health() const               {return m_health.Current();}  ///< returns current health of this center
+    double       MaxHealth() const            {return m_health.Max();}      ///< returns max health of this center
+    int          Race() const                 {return m_race;}              ///< returns the race that the population is composed of
     double       Inhabitants() const; ///< returns the number of inhabitants in the center (not the pop points); depends on race
     DensityType  PopDensity() const;  ///< returns the density of this center, based on its population
     double       AvailableFood() const {return m_available_food;}   ///< returns the amount of food which is currently available
 
     double       FuturePopGrowth() const;    ///< predicts by which amount the population will grow next turn, AvailableFood might limit growth rate
     double       FuturePopGrowthMax() const; ///< predicts by which amount the population will grow at maximum next turn (assuming there is enough food)
+
+    double       FutureHealthGrowth() const; ///< predicts by which amount the health meter will grow next turn
+
     //@}
 
     /** \name Mutators */ //@{

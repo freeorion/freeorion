@@ -65,18 +65,31 @@ namespace {
     void Growth(Meter& construction, Meter& farming, Meter& industry, Meter& mining, Meter& research, Meter& trade, const Meter& pop)
     {
         // update the construction meter
-        double construction_delta =
-            (construction.Current() + 1) * ((construction.Max() - construction.Current()) / (construction.Max() + 1)) * (pop.Current() * 10.0) * 0.01;
-        construction.AdjustCurrent(construction_delta);
+        double delta = (construction.Current() + 1) * ((construction.Max() - construction.Current()) / (construction.Max() + 1)) * (pop.Current() * 10.0) * 0.01;
+        double new_cur = std::min(construction.Max(), construction.Current() + delta);
+        construction.SetCurrent(new_cur);
 
         // update the resource meters
-        farming.AdjustCurrent(construction.Current() / (10.0 + farming.Current()));
-        industry.AdjustCurrent(construction.Current() / (10.0 + industry.Current()));
-        mining.AdjustCurrent(construction.Current() / (10.0 + mining.Current()));
-        research.AdjustCurrent(construction.Current() / (10.0 + research.Current()));
-        trade.AdjustCurrent(construction.Current() / (10.0 + trade.Current()));
-    }
+        delta = construction.Current() / (10.0 + farming.Current());
+        new_cur = std::min(farming.Max(), farming.Current() + delta);
+        farming.SetCurrent(new_cur);
 
+        delta = construction.Current() / (10.0 + industry.Current());
+        new_cur = std::min(industry.Max(), industry.Current() + delta);
+        industry.SetCurrent(new_cur);
+
+        delta = construction.Current() / (10.0 + mining.Current());
+        new_cur = std::min(mining.Max(), mining.Current() + delta);
+        mining.SetCurrent(new_cur);
+
+        delta = construction.Current() / (10.0 + research.Current());
+        new_cur = std::min(research.Max(), research.Current() + delta);
+        research.SetCurrent(new_cur);
+
+        delta = construction.Current() / (10.0 + trade.Current());
+        new_cur = std::min(trade.Max(), trade.Current() + delta);
+        trade.SetCurrent(new_cur);
+    }
 }
 
 ResourceCenter::ResourceCenter() : 
@@ -135,7 +148,13 @@ double ResourceCenter::TradePoints() const
 
 double ResourceCenter::ProjectedCurrent(MeterType type) const
 {
-    Meter construction = m_construction, farming = m_farming, industry = m_industry, mining = m_mining, research = m_research, trade = m_trade;
+    Meter construction = m_construction;
+    Meter farming = Meter(m_farming.Current(), m_farming.Max());
+    Meter mining = Meter(m_mining.Current(), m_mining.Max());
+    Meter industry = Meter(m_industry.Current(), m_industry.Max());
+    Meter research = Meter(m_research.Current(), m_research.Max());
+    Meter trade = Meter(m_trade.Current(), m_trade.Max());
+
     Growth(construction, farming, industry, mining, research, trade, *m_pop);
     switch (type) {
     case METER_FARMING: return farming.Current();

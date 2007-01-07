@@ -634,6 +634,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\UI\InfoPanels.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\UI\InfoPanels.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\InGameMenu.cpp"
 					>
 				</File>

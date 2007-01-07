@@ -455,10 +455,7 @@ void ClientUI::SwitchState(State state)
         m_turn_progress_wnd = 0;
         break;
     case STATE_MAP:
-        if (state != STATE_LOAD)
-            m_previously_shown_system = m_map_wnd->GetSidePanel()->SystemID();
-        //hide sidepanel
-        m_map_wnd->SelectSystem(UniverseObject::INVALID_OBJECT_ID);
+        m_map_wnd->Hide();
         break;
     case STATE_COMBAT:
         break;
@@ -477,10 +474,8 @@ void ClientUI::SwitchState(State state)
 
     switch (m_state = state) {
     case STATE_STARTUP:
-        m_previously_shown_system = UniverseObject::INVALID_OBJECT_ID;
         break;
     case STATE_INTRO:
-        m_previously_shown_system = UniverseObject::INVALID_OBJECT_ID;
         if (!m_intro_screen) {
             m_intro_screen = new IntroScreen();
             GG::GUI::GetGUI()->Register(m_intro_screen);
@@ -496,7 +491,6 @@ void ClientUI::SwitchState(State state)
         break;
     case STATE_MAP:
         m_map_wnd->Show();
-        m_map_wnd->SelectSystem(m_previously_shown_system);
         break;
     case STATE_COMBAT:
         break;

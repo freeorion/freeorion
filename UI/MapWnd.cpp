@@ -179,6 +179,7 @@ MapWnd::MapWnd() :
     m_side_panel = new SidePanel(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
     AttachChild(m_side_panel);
     GG::Connect(m_side_panel->SystemSelectedSignal, &MapWnd::SelectSystem, this); // sidepanel requests system selection change -> select it
+    GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateEmpireResourcePools, this);  // something in sidepanel changed resource pool(s), so need to recalculate and update amounts
 
     m_sitrep_panel = new SitRepPanel( (GG::GUI::GetGUI()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::GUI::GetGUI()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     AttachChild(m_sitrep_panel);
@@ -643,8 +644,6 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     MoveChildUp(m_side_panel);
-    if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
-        m_side_panel->Hide();
 
     // set turn button to current turn
     m_turn_update->SetText( UserString("MAP_BTN_TURN_UPDATE") + boost::lexical_cast<std::string>(turn_number ) );    
@@ -688,6 +687,8 @@ void MapWnd::InitTurn(int turn_number)
         }
     }
 
+    // empire is recreated each turn based on turn update from server, so connections of signals emitted from
+    // the empire must be remade each turn (unlike connections to signals from the sidepanel)
     GG::Connect(empire->GetFoodResPool().ChangedSignal, &MapWnd::RefreshFoodResourceIndicator, this, 0);
     GG::Connect(empire->GetMineralResPool().ChangedSignal, &MapWnd::RefreshMineralsResourceIndicator, this, 0);
     GG::Connect(empire->GetTradeResPool().ChangedSignal, &MapWnd::RefreshTradeResourceIndicator, this, 0);
@@ -696,9 +697,14 @@ void MapWnd::InitTurn(int turn_number)
 
     GG::Connect(empire->GetPopulationPool().ChangedSignal, &MapWnd::RefreshPopulationIndicator, this, 1);
 
+    //GG::Connect(empire->GetFoodResPool().ChangedSignal, &SidePanel::Refresh);
+    //GG::Connect(empire->GetPopulationPool().ChangedSignal, &SidePanel::Refresh);
+
     empire->UpdateResourcePool();
 
     m_toolbar->Show();
+    m_side_panel->Hide();   // prevents sidepanel from appearing if previous turn was ended without sidepanel open.  also ensures sidepanel UI updates properly, which it did not otherwise for unknown reasons.
+    SelectSystem(m_side_panel->SystemID());
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
@@ -1528,6 +1534,18 @@ void MapWnd::RefreshPopulationIndicator()
     
     m_population->SetValue(empire->GetPopulationPool().Population());
     m_population->SetValue(empire->GetPopulationPool().Growth(), 1);
+}
+
+void MapWnd::UpdateEmpireResourcePools()
+{
+    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    /* Recalculate stockpile, available, production, predicted change of resources.  When resourcepools
+       update, they emit ChangeSignal, which is connected to MapWnd::RefreshFoodResourceIndicator, which
+       updates the empire resource pool indicators of the MapWnd. */
+    empire->UpdateResourcePool();
+
+    // Update indicators on sidepanel, which are not directly connected to from the ResourcePool ChangedSignal
+    m_side_panel->Refresh();
 }
 
 bool MapWnd::ZoomToHomeSystem()

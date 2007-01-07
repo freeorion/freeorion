@@ -6,6 +6,8 @@
 #include "../util/OptionsDB.h"
 #include "Planet.h"
 
+#include "math.h"
+
 #include <boost/lexical_cast.hpp>
 
 #include <stdexcept>
@@ -101,8 +103,13 @@ double PopCenter::FuturePopGrowthMax() const
     } else if (m_health.Current() == 20.0) {
         return 0.0;
     } else { // m_health.Current() < 20.0
-        return m_pop.Current() * (m_health.Current() - 20.0) * 0.01;
+        return -m_pop.Current()*(  exp( (m_health.Current()-20)*(m_health.Current()-20) / (400/log(2.0)) ) - 1  );
     }
+}
+
+double PopCenter::FutureHealthGrowth() const
+{
+    return std::min(MaxHealth() - Health(), m_health.Current() * (((m_health.Max() + 1.0) - m_health.Current()) / (m_health.Max() + 1.0)));
 }
 
 void PopCenter::AdjustMaxMeters()

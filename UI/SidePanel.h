@@ -30,6 +30,7 @@ public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void (int)> PlanetSelectedSignalType; ///< emitted when a rotating planet in the side panel is clicked by the user
     typedef boost::signal<void (int)> SystemSelectedSignalType; ///< emitted when something in the sidepanel wants to change the selected system, including the droplist or back/forward arrows
+    typedef boost::signal<void ()> ResourceCenterChangedSignalType; ///< emitted when the a planet's resourcecenter has changed
     //@}
 
     /** \name Structors */ //@{
@@ -49,6 +50,8 @@ public:
     /** \name Mutators */ //@{
     virtual void  Render();
 
+    static void   Refresh();    ///< causes all sidepanels to refresh / update indicators
+
     void          SelectPlanet(int planet_id); ///< selects the planet with id \a planet_id within the current system, if such a planet exists
 
     /** sets the predicate that determines what planets can be selected in the side panel.  If none is set, planet selection is disabled. */
@@ -62,17 +65,19 @@ public:
 
     mutable PlanetSelectedSignalType PlanetSelectedSignal;
     mutable SystemSelectedSignalType SystemSelectedSignal;
+    mutable ResourceCenterChangedSignalType ResourceCenterChangedSignal;
 
 private:
     class PlanetPanelContainer;
     class SystemResourceSummary;
 
+    void RefreshImpl();
     void SetSystemImpl();
     void SystemSelectionChanged(int selection);
     void SystemFleetAdded(const Fleet &);
     void SystemFleetRemoved(const Fleet &);
     void FleetsChanged();
-    void PlanetsChanged();
+    void UpdateSystemResourceSummary();
     void PrevButtonClicked();
     void NextButtonClicked();
     void PlanetSelected(int planet_id);
