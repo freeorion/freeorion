@@ -765,6 +765,7 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
 
     m_buildings_panel = new BuildingsPanel(w - MAX_PLANET_DIAMETER, 4, planet);
     AttachChild(m_buildings_panel);
+    GG::Connect(m_buildings_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
     if (planet.Type() == PT_ASTEROIDS) 
         MoveChildDown(m_planet_graphic);
@@ -1495,7 +1496,6 @@ void SidePanel::Refresh()
 }
 void SidePanel::RefreshImpl()
 {
-    // update system resource summary... should be unnecessary since
     UpdateSystemResourceSummary();   
 
     // update individual PlanetPanels in PlanetPanelContainer

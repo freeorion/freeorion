@@ -697,6 +697,8 @@ void MapWnd::InitTurn(int turn_number)
 
     GG::Connect(empire->GetPopulationPool().ChangedSignal, &MapWnd::RefreshPopulationIndicator, this, 1);
 
+    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal, &SidePanel::Refresh);
+
     //GG::Connect(empire->GetFoodResPool().ChangedSignal, &SidePanel::Refresh);
     //GG::Connect(empire->GetPopulationPool().ChangedSignal, &SidePanel::Refresh);
 

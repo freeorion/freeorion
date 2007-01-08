@@ -479,7 +479,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
 
     const int ROW_HEIGHT = 24;          // should change to be font point size...
     const int ICON_COL_WIDTH = ROW_HEIGHT;
-    const int NAME_COL_WIDTH = 150;
+    const int NAME_COL_WIDTH = 200;
     const int COST_COL_WIDTH = 30;
     const int TIME_COL_WIDTH = 20;
     const int DESC_COL_WIDTH = m_buildable_items->Width() - (NAME_COL_WIDTH + COST_COL_WIDTH + TIME_COL_WIDTH);

@@ -564,6 +564,62 @@ void ResourcePanel::DoExpandCollapseLayout()
         m_primary_focus_drop->Hide();
         DetachChild(m_primary_focus_drop);
 
+        /*const ResourceCenter* res = GetResourceCenter();
+        FocusType first;
+
+        switch (res->PrimaryFocus())
+        {
+        case FOCUS_BALANCED:
+        case FOCUS_FARMING:
+            first = FOCUS_FARMING;
+            m_farming_stat->MoveTo(GG::Pt(0, 0));
+            break;
+        case FOCUS_MINING:
+            first = FOCUS_MINING;
+            m_mining_stat->MoveTo(GG::Pt(0, 0));
+            break;
+        case FOCUS_INDUSTRY:
+            first = FOCUS_INDUSTRY;
+            m_industry_stat->MoveTo(GG::Pt(0, 0));
+            break;
+        case FOCUS_RESEARCH:
+            first = FOCUS_RESEARCH;
+            m_research_stat->MoveTo(GG::Pt(0, 0));
+            break;
+        case FOCUS_TRADE:
+            first = FOCUS_TRADE;
+            m_trade_stat->MoveTo(GG::Pt(0, 0));            
+            break;
+        }
+
+        switch (res->SecondaryFocus())
+        {
+        case FOCUS_BALANCED:
+
+            break;
+        case FOCUS_FARMING:
+            first = FOCUS_FARMING;
+            m_farming_stat->MoveTo(GG::Pt(0, 0));
+            break;
+        case FOCUS_MINING:
+            first = FOCUS_MINING;
+            m_mining_stat->MoveTo(GG::Pt(0, 0));
+            break;
+        case FOCUS_INDUSTRY:
+            first = FOCUS_INDUSTRY;
+            m_industry_stat->MoveTo(GG::Pt(0, 0));
+            break;
+        case FOCUS_RESEARCH:
+            first = FOCUS_RESEARCH;
+            m_research_stat->MoveTo(GG::Pt(0, 0));
+            break;
+        case FOCUS_TRADE:
+            first = FOCUS_TRADE;
+            m_trade_stat->MoveTo(GG::Pt(0, 0));            
+            break;
+        }*/
+
+
         m_farming_stat->MoveTo(GG::Pt(0, 0));
         //m_farming_stat->Hide();
         //DetachChild(m_farming_stat);
@@ -982,6 +1038,15 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
     GG::Connect(m_expand_button->ClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this);
 
+    // get owners, connect their production queue changed signals to update this panel
+    const std::set<int>& owners = plt.Owners();
+    for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
+        const Empire* empire = Empires().Lookup(*it);
+        if (!empire) continue;  // shouldn't be a problem... maybe put check for it later
+        const ProductionQueue& queue = empire->GetProductionQueue();
+        GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this);
+    }
+
     Update();
 }
 
@@ -1002,6 +1067,13 @@ void BuildingsPanel::ExpandCollapse(bool expanded)
     ExpandCollapseSignal();
 
     Render();                       // redraw in new state
+}
+
+void BuildingsPanel::Refresh()
+{
+    Update();
+    ExpandCollapseSignal();
+    Render();
 }
 
 void BuildingsPanel::Render()
@@ -1056,6 +1128,10 @@ void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 
 void BuildingsPanel::Update()
 {
+    for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
+        DetachChild(*it);
+        delete (*it);
+    }
     m_building_indicators.clear();
 
     const Universe& universe = GetUniverse();
@@ -1112,38 +1188,63 @@ void BuildingsPanel::ExpandCollapseButtonPressed()
 
 void BuildingsPanel::DoExpandCollapseLayout()
 {
+
     int row = 0;
     int column = 0;
     const int w = Width();      // horizontal space in which to place indicators
     const int padding = 5;      // space around and between adjacent indicators
     const int effective_width = w - padding * (m_columns + 1);  // padding on either side and between
     const int indicator_size = static_cast<int>(static_cast<double>(effective_width) / m_columns);
+    const int icon_size = ClientUI::Pts()*4/3;
+    int height;
 
-    for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
-        BuildingIndicator* ind = *it;
+    // update size of panel and position and visibility of widgets
+    if (!s_expanded_map[m_planet_id]) {
+        int n = 0;
+        for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
+            BuildingIndicator* ind = *it;
+            
+            int x = icon_size * n;
 
-        int x = padding * (column + 1) + indicator_size * column;
-        int y = padding * (row + 1) + indicator_size * row;
-        ind->MoveTo(GG::Pt(x, y));
-        
-        ind->Resize(GG::Pt(indicator_size, indicator_size));
-        
-        AttachChild(ind);
-        ind->Show();
-
-        ++column;
-        if (column >= m_columns) {
-            column = 0;
-            ++row;
+            if (x < (w - m_expand_button->Width() - icon_size)) {
+                ind->MoveTo(GG::Pt(n*icon_size, 0));
+                ind->Resize(GG::Pt(icon_size, icon_size));
+                AttachChild(ind);
+            } else {
+                DetachChild(ind);
+                ind->Hide();
+            }
+            ++n;
         }
+        height = m_expand_button->Height();
+
+    } else {
+        for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
+            BuildingIndicator* ind = *it;
+
+            int x = padding * (column + 1) + indicator_size * column;
+            int y = padding * (row + 1) + indicator_size * row;
+            ind->MoveTo(GG::Pt(x, y));
+            
+            ind->Resize(GG::Pt(indicator_size, indicator_size));
+            
+            AttachChild(ind);
+            ind->Show();
+
+            ++column;
+            if (column >= m_columns) {
+                column = 0;
+                ++row;
+            }
+        }
+
+        if (column == 0)
+            height = padding * (row + 1) + row * indicator_size;        // if column is 0, then there are no buildings in the next row
+        else
+            height = padding * (row + 2) + (row + 1) * indicator_size;  // if column != 0, there are buildings in the next row, so need to make space
     }
 
-    int height;
-    if (column == 0)
-        height = padding * (row + 1) + row * indicator_size;        // if column is 0, then there are no buildings in the next row
-    else
-        height = padding * (row + 2) + (row + 1) * indicator_size;  // if column != 0, there are buildings in the next row, so need to make space
-
+    if (height < icon_size) height = icon_size;
 
     Resize(GG::Pt(Width(), height));
 

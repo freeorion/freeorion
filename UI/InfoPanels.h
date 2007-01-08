@@ -169,7 +169,8 @@ public:
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
     
-    void Update();          ///< refreshes / updates indicators
+    void Update();          ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
+    void Refresh();         ///< Updates, redraws and signals expand / collapse
 
     mutable ExpandCollapseSignalType ExpandCollapseSignal;
     //@}
@@ -177,7 +178,7 @@ public:
 private:
     void ExpandCollapseButtonPressed();         ///< toggles panel expanded or collapsed
 
-    void DoExpandCollapseLayout();              ///< resizes panel and positions widgets according to present collapsed / expanded status
+    void DoExpandCollapseLayout();              ///< resizes panel and positions indicators, differently depending on collapsed / expanded status
 
     Planet*                 GetPlanet();        ///< returns the planet with ID m_planet_id
     const Planet*           GetPlanet() const;

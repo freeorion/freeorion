@@ -458,6 +458,7 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
             m_queue[i].turns_left_to_completion = -1;
         }
     }
+    ProductionQueueChangedSignal();
 }
 
 void ProductionQueue::push_back(const Element& element)

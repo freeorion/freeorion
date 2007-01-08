@@ -134,6 +134,10 @@ struct ProductionQueue
     /** The const ProductionQueue iterator type.  Dereference yields a Element. */
     typedef QueueType::const_iterator const_iterator;
 
+    /** \name Signal Types */ //@{
+    typedef boost::signal<void ()> ProductionQueueChangedSignalType;    ///< emitted when something is added to, removed from or altered on the queue
+    //@}
+
     /** \name Structors */ //@{
     ProductionQueue(); ///< Basic ctor.
     //@}
@@ -178,6 +182,8 @@ struct ProductionQueue
 
     /** Returns an iterator to the underfunded production project, or end() if none exists. */
     iterator UnderfundedProject(const Empire* empire);
+
+    mutable ProductionQueueChangedSignalType ProductionQueueChangedSignal;
     //@}
 
 private:
