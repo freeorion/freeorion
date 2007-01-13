@@ -1111,17 +1111,6 @@ void ServerApp::ProcessTurns()
         }
     }
 
-    // find planets which have starved to death
-    std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();
-    for (std::vector<Planet*>::iterator it = plt_vec.begin();it!=plt_vec.end();++it)
-        if ((*it)->Owners().size()>0 && (*it)->PopPoints()==0.0)
-        {
-            // add some information to sitrep
-            Empire *empire = Empires().Lookup(*(*it)->Owners().begin());
-            empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(),(*it)->ID()));
-            (*it)->Reset();
-        }
-
     // check for combats, and resolve them.
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
         m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::COMBAT, -1));
@@ -1186,20 +1175,35 @@ void ServerApp::ProcessTurns()
     if (combat_happend)
         SDL_Delay(1500);
 
-    // process production and growth phase
-    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::EMPIRE_PRODUCTION, -1));
 
-    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
-        it->second->UpdateResourcePool();
-    
+    // Effects, including updating meters
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         it->second->ResetMaxMeters();
         it->second->AdjustMaxMeters();
     }
-
     GetUniverse().ApplyEffects();
+
+
+    // Determine how much of each resource is available, and determine how to distribute it
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
+        it->second->UpdateResourcePool();
+
+    // consume distributed resources on queues
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
+        Empire* empire = Empires().Lookup(it->first);
+        empire->CheckResearchProgress();
+        empire->CheckProductionProgress();
+        empire->CheckTradeSocialProgress();
+        empire->CheckGrowthFoodProgress();
+    }
+
+    // process production and growth phase.  consumes food distributed to planets
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::EMPIRE_PRODUCTION, -1));
+
+   
     GetUniverse().RebuildEmpireViewSystemGraphs();
+
 
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         it->second->PopGrowthProductionResearchPhase(); // Population growth / starvation, health meter growth, resource current meter growth
@@ -1214,8 +1218,13 @@ void ServerApp::ProcessTurns()
         }
     }
 
+
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
+        it->second->UpdateResourcePool();
+
+
     // check for completed research, production or social projects, pay maintenance.  Update stockpiles.
-    // doesn't do actual population growth, which occurs above when PopGrowthProductionResearchPhase() is called
+    // doesn't do actual population growth, which occurs when PopGrowthProductionResearchPhase() is called
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         Empire* empire = Empires().Lookup(it->first);
         empire->CheckResearchProgress();
@@ -1224,13 +1233,25 @@ void ServerApp::ProcessTurns()
         empire->CheckGrowthFoodProgress();
     }
 
+
+    // find planets which have starved to death
+    std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();
+    for (std::vector<Planet*>::iterator it = plt_vec.begin();it!=plt_vec.end();++it)
+        if ((*it)->Owners().size()>0 && (*it)->PopPoints()==0.0)
+        {
+            // add some information to sitrep
+            Empire *empire = Empires().Lookup(*(*it)->Owners().begin());
+            empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(),(*it)->ID()));
+            (*it)->Reset();
+        }
+
     // loop and free all orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         delete it->second;
         it->second = NULL;
     }   
-    
+
     ++m_current_turn;
 
     // indicate that the clients are waiting for their new Universes

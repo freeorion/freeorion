@@ -1093,8 +1093,6 @@ void Empire::CheckTradeSocialProgress()
     m_trade_resource_pool.SetStockpile(m_trade_resource_pool.Available() - m_maintenance_total_cost);
 }
 
-/** Updates food stockpile.  Growth actually occurs in PopGrowthProductionResearchPhase() of objects
-  */
 void Empire::CheckGrowthFoodProgress()
 {
     m_food_resource_pool.SetStockpile(m_food_resource_pool.Available() - m_food_total_distributed);

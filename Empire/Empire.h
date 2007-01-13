@@ -436,9 +436,7 @@ public:
       */
     void CheckTradeSocialProgress();
 
-    /** Distributes food to PopCenters and updates food stockpile accordingly.  Also does growth (or 
-      * Pop loss) at PopCenters.
-      */
+    /// Updates food stockpile.  Growth actually occurs in PopGrowthProductionResearchPhase() of objects
     void CheckGrowthFoodProgress();
         
     /// Mutator for empire color
