@@ -95,13 +95,13 @@ PopulationPanel::~PopulationPanel()
 
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     DetachChild(m_pop_stat);
-    if (m_pop_stat) delete m_pop_stat;
+    delete m_pop_stat;
     DetachChild(m_health_stat);
-    if (m_health_stat) delete m_health_stat;
+    delete m_health_stat;
     DetachChild(m_pop_meter_bar);
-    if (m_pop_meter_bar) delete m_pop_meter_bar;
+    delete m_pop_meter_bar;
     DetachChild(m_health_meter_bar);
-    if (m_health_meter_bar) delete m_health_meter_bar;
+    delete m_health_meter_bar;
 
     // don't need to manually delete m_expand_button, as it is attached as a child so will be deleted by ~Wnd
 }
@@ -502,35 +502,35 @@ ResourcePanel::~ResourcePanel()
 
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     DetachChild(m_farming_stat);
-    if (m_farming_stat) delete m_farming_stat;
+    delete m_farming_stat;
     DetachChild(m_mining_stat);
-    if (m_mining_stat) delete m_mining_stat;
+    delete m_mining_stat;
     DetachChild(m_industry_stat);
-    if (m_industry_stat) delete m_industry_stat;
+    delete m_industry_stat;
     DetachChild(m_research_stat);
-    if (m_research_stat) delete m_research_stat;
+    delete m_research_stat;
     DetachChild(m_trade_stat);
-    if (m_trade_stat) delete m_trade_stat;
+    delete m_trade_stat;
     DetachChild(m_construction_stat);
-    if (m_construction_stat) delete m_construction_stat;
+    delete m_construction_stat;
 
     DetachChild(m_farming_meter_bar);
-    if (m_farming_meter_bar) delete m_farming_meter_bar;
+    delete m_farming_meter_bar;
     DetachChild(m_mining_meter_bar);
-    if (m_mining_meter_bar) delete m_mining_meter_bar;
+    delete m_mining_meter_bar;
     DetachChild(m_industry_meter_bar);
-    if (m_industry_meter_bar) delete m_industry_meter_bar;
+    delete m_industry_meter_bar;
     DetachChild(m_research_meter_bar);
-    if (m_research_meter_bar) delete m_research_meter_bar;
+    delete m_research_meter_bar;
     DetachChild(m_trade_meter_bar);
-    if (m_trade_meter_bar) delete m_trade_meter_bar;
+    delete m_trade_meter_bar;
     DetachChild(m_construction_meter_bar);
-    if (m_construction_meter_bar) delete m_construction_meter_bar;
+    delete m_construction_meter_bar;
 
     DetachChild(m_primary_focus_drop);
-    if (m_primary_focus_drop) delete m_primary_focus_drop;
+    delete m_primary_focus_drop;
     DetachChild(m_secondary_focus_drop);
-    if (m_secondary_focus_drop) delete m_secondary_focus_drop;
+    delete m_secondary_focus_drop;
 
     // don't need to manually delete m_expand_button, as it is attached as a child so will be deleted by ~Wnd
 }
@@ -564,62 +564,13 @@ void ResourcePanel::DoExpandCollapseLayout()
         m_primary_focus_drop->Hide();
         DetachChild(m_primary_focus_drop);
 
-        /*const ResourceCenter* res = GetResourceCenter();
-        FocusType first;
-
-        switch (res->PrimaryFocus())
-        {
-        case FOCUS_BALANCED:
-        case FOCUS_FARMING:
-            first = FOCUS_FARMING;
-            m_farming_stat->MoveTo(GG::Pt(0, 0));
-            break;
-        case FOCUS_MINING:
-            first = FOCUS_MINING;
-            m_mining_stat->MoveTo(GG::Pt(0, 0));
-            break;
-        case FOCUS_INDUSTRY:
-            first = FOCUS_INDUSTRY;
-            m_industry_stat->MoveTo(GG::Pt(0, 0));
-            break;
-        case FOCUS_RESEARCH:
-            first = FOCUS_RESEARCH;
-            m_research_stat->MoveTo(GG::Pt(0, 0));
-            break;
-        case FOCUS_TRADE:
-            first = FOCUS_TRADE;
-            m_trade_stat->MoveTo(GG::Pt(0, 0));            
-            break;
-        }
-
-        switch (res->SecondaryFocus())
-        {
-        case FOCUS_BALANCED:
-
-            break;
-        case FOCUS_FARMING:
-            first = FOCUS_FARMING;
-            m_farming_stat->MoveTo(GG::Pt(0, 0));
-            break;
-        case FOCUS_MINING:
-            first = FOCUS_MINING;
-            m_mining_stat->MoveTo(GG::Pt(0, 0));
-            break;
-        case FOCUS_INDUSTRY:
-            first = FOCUS_INDUSTRY;
-            m_industry_stat->MoveTo(GG::Pt(0, 0));
-            break;
-        case FOCUS_RESEARCH:
-            first = FOCUS_RESEARCH;
-            m_research_stat->MoveTo(GG::Pt(0, 0));
-            break;
-        case FOCUS_TRADE:
-            first = FOCUS_TRADE;
-            m_trade_stat->MoveTo(GG::Pt(0, 0));            
-            break;
-        }*/
-
-
+        /* Ordering of indicators in collapsed mode:
+           - if primary focus is specialized:
+             - primary focus resource goes first.
+             - if secondary focus is specialized to something else
+               - secondary focus goes second
+        */
+        
         m_farming_stat->MoveTo(GG::Pt(0, 0));
         //m_farming_stat->Hide();
         //DetachChild(m_farming_stat);
@@ -804,80 +755,76 @@ void ResourcePanel::Update()
 
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
-    // determine ownership    
-    if(obj->Owners().empty()) 
+    // determine ownership
+    const std::set<int> owners = obj->Owners();
+
+    if(owners.empty()) {
         owner = OS_NONE;  // uninhabited
-    else {
+    } else {
         if(!obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
             owner = OS_FOREIGN; // inhabited by other empire
         else
             owner = OS_SELF; // inhabited by this empire (and possibly other empires)
     }
 
-    if (owner = OS_SELF) {
-        m_farming_stat->SetValue(res->FarmingPoints());
-        m_farming_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_FARMING));
-        m_farming_meter_bar->SetProjectedMax(res->FarmingMeter().Max());
-        
-        m_mining_stat->SetValue(res->MiningPoints());
-        m_mining_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_MINING));
-        m_mining_meter_bar->SetProjectedMax(res->MiningMeter().Max());
-
-        m_industry_stat->SetValue(res->IndustryPoints());
-        m_industry_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_INDUSTRY));
-        m_industry_meter_bar->SetProjectedMax(res->IndustryMeter().Max());
-
-        m_research_stat->SetValue(res->ResearchPoints());
-        m_research_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_RESEARCH));
-        m_research_meter_bar->SetProjectedMax(res->ResearchMeter().Max());
-        
-        m_trade_stat->SetValue(res->TradePoints());
-        m_trade_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_TRADE));
-        m_trade_meter_bar->SetProjectedMax(res->TradeMeter().Max());
+    if (owner == OS_SELF) {
+        m_primary_focus_drop->Disable(false);
+        m_secondary_focus_drop->Disable(false);
+    } else {
+        m_primary_focus_drop->Disable(true);
+        m_secondary_focus_drop->Disable(true);
     }
+
+    m_farming_stat->SetValue(res->FarmingPoints());
+    m_farming_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_FARMING));
+    m_farming_meter_bar->SetProjectedMax(res->FarmingMeter().Max());
+    
+    m_mining_stat->SetValue(res->MiningPoints());
+    m_mining_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_MINING));
+    m_mining_meter_bar->SetProjectedMax(res->MiningMeter().Max());
+
+    m_industry_stat->SetValue(res->IndustryPoints());
+    m_industry_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_INDUSTRY));
+    m_industry_meter_bar->SetProjectedMax(res->IndustryMeter().Max());
+
+    m_research_stat->SetValue(res->ResearchPoints());
+    m_research_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_RESEARCH));
+    m_research_meter_bar->SetProjectedMax(res->ResearchMeter().Max());
+    
+    m_trade_stat->SetValue(res->TradePoints());
+    m_trade_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_TRADE));
+    m_trade_meter_bar->SetProjectedMax(res->TradeMeter().Max());
 
     switch (res->PrimaryFocus())
     {
     case FOCUS_BALANCED:
-        m_primary_focus_drop->Select(0);
-        break;
+        m_primary_focus_drop->Select(0);  break;
     case FOCUS_FARMING:
-        m_primary_focus_drop->Select(1);
-        break;
+        m_primary_focus_drop->Select(1);  break;
     case FOCUS_MINING:
-        m_primary_focus_drop->Select(2);
-        break;
+        m_primary_focus_drop->Select(2);  break;
     case FOCUS_INDUSTRY:
-        m_primary_focus_drop->Select(3);
-        break;
+        m_primary_focus_drop->Select(3);  break;
     case FOCUS_RESEARCH:
-        m_primary_focus_drop->Select(4);
-        break;
+        m_primary_focus_drop->Select(4);  break;
     case FOCUS_TRADE:
-        m_primary_focus_drop->Select(5);
-        break;
+        m_primary_focus_drop->Select(5);  break;
     }
     
     switch (res->SecondaryFocus())
     {
     case FOCUS_BALANCED:
-        m_secondary_focus_drop->Select(0);
-        break;
+        m_secondary_focus_drop->Select(0);  break;
     case FOCUS_FARMING:
-        m_secondary_focus_drop->Select(1);
-        break;
+        m_secondary_focus_drop->Select(1);  break;
     case FOCUS_MINING:
-        m_secondary_focus_drop->Select(2);
-        break;
+        m_secondary_focus_drop->Select(2);  break;
     case FOCUS_INDUSTRY:
-        m_secondary_focus_drop->Select(3);
-        break;
+        m_secondary_focus_drop->Select(3);  break;
     case FOCUS_RESEARCH:
-        m_secondary_focus_drop->Select(4);
-        break;
+        m_secondary_focus_drop->Select(4);  break;
     case FOCUS_TRADE:
-        m_secondary_focus_drop->Select(5);
-        break;
+        m_secondary_focus_drop->Select(5);  break;
     }
 }
 

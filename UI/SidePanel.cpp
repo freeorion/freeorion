@@ -421,10 +421,6 @@ private:
 
     void DoLayout();
 
-    bool RenderUnhabited(const Planet &planet); ///< renders uninhabited planet
-    bool RenderInhabited(const Planet &planet); ///< renders planet inhabited by someone else
-    bool RenderOwned    (const Planet &planet); ///< renders planet inhabited by the player
-
     int  PlanetDiameter() const;
     bool InPlanet(const GG::Pt& pt) const;      ///< returns true if pt is within the planet image
 
@@ -438,7 +434,6 @@ private:
 
     int                     m_planet_id;                ///< id for the planet with is representet by this planet panel
     GG::TextControl*        m_planet_name;              ///< planet name
-    GG::TextControl*        m_planet_info;              ///< planet size and type info
     CUIButton*              m_button_colonize;          ///< btn which can be pressed to colonize this planet
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
@@ -697,7 +692,6 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     Wnd(0, 0, w, MAX_PLANET_DIAMETER, GG::CLICKABLE),
     m_planet_id(planet.ID()),
     m_planet_name(0),
-    m_planet_info(0),
     m_button_colonize(0),
     m_planet_graphic(0),
     m_rotating_planet_graphic(0),
@@ -746,10 +740,11 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()*4/3),ClientUI::TextColor());
     AttachChild(m_planet_name);
 
-    m_planet_info = new GG::TextControl(m_planet_name->UpperLeft().x-UpperLeft().x+10,m_planet_name->LowerRight().y-UpperLeft().y,"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::TextColor(),GG::TF_LEFT|GG::TF_TOP);
-    AttachChild(m_planet_info);
-
-    m_button_colonize = new CUIButton((Width()/3)*2,(Height()-ClientUI::Pts())/2,60,UserString("PL_COLONIZE"),GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::ButtonColor(),ClientUI::CtrlBorderColor(),1,ClientUI::TextColor(),GG::CLICKABLE);
+    int col_but_wid = 80;
+    m_button_colonize = new CUIButton(Width() - col_but_wid, 10, col_but_wid, UserString("PL_COLONIZE"),
+                                      GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                      ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, 
+                                      ClientUI::TextColor(), GG::CLICKABLE);
     Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
     AttachChild(m_button_colonize);
 
@@ -856,43 +851,20 @@ void SidePanel::PlanetPanel::Update()
 {
     const Planet *planet = GetPlanet();
 
-    enum OWNERSHIP {OS_NONE,OS_FOREIGN,OS_SELF} owner = OS_NONE;
+    enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
-    std::string text;
-    if(planet->Owners().size()==0 || planet->IsAboutToBeColonized()) 
+    if(planet->Owners().empty() || planet->IsAboutToBeColonized()) 
     { //uninhabited
         owner = OS_NONE;
-        text = GetPlanetSizeName(*planet);
-        if(text.length()>0)
-            text+=" ";
-        text+= GetPlanetTypeName(*planet);
-  
-        text+="\n";
-        if(planet->MaxPop()==0) text+= UserString("PE_UNINHABITABLE");
-        else                    text+= UserString("PL_SIZE") + " " + lexical_cast<std::string>(static_cast<int>(planet->MaxPop()));
-
-        m_planet_info->SetText(text);
     }
     else 
         if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         {//inhabited
             owner = OS_FOREIGN;
-            text = GetPlanetSizeName(*planet);
-            if(text.length()>0)
-                text+=" ";
-            text+= GetPlanetTypeName(*planet);
-    
-            m_planet_info->SetText(text);
         }
         else
         {//Owned
             owner = OS_SELF;
-            text = GetPlanetSizeName(*planet);
-            if(text.length()>0)
-                text+="\n";
-            text+= GetPlanetTypeName(*planet);
-      
-            m_planet_info->SetText(text);
         }
 
     if (!planet->Owners().empty()) {
@@ -902,7 +874,7 @@ void SidePanel::PlanetPanel::Update()
 
     // visibility
     if (owner==OS_NONE 
-        && planet->MaxPop()>0 
+        && planet->MaxPop() > 0 
         && !planet->IsAboutToBeColonized()
         && FindColonyShip(planet->SystemID()))
     {
@@ -983,101 +955,10 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys)
     }
 }
 
-bool SidePanel::PlanetPanel::RenderUnhabited(const Planet &planet)
-{
-    return true;
-}
-
-bool SidePanel::PlanetPanel::RenderInhabited(const Planet &planet)
-{
-    glColor(ClientUI::TextColor());
-    boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(),ClientUI::Pts());
-    Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
-
-    std::string text; int x,y;
-
-    x = m_planet_name->UpperLeft ().x+10;
-    y = m_planet_name->LowerRight().y+ 5;
-
-    //text = GetPlanetSizeName(planet);
-    //font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0);
-    y+=font->Height();
-
-    //text = GetPlanetTypeName(planet);
-    //font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0);
-    y+=font->Height();
-
-    int population=static_cast<int>(planet.PopPoints());
-
-    boost::shared_ptr<GG::Texture> icon;
-    const int ICON_MARGIN    =  5;
-    font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()));
-
-    //population
-    //x = m_planet_name->UpperLeft ().x+10; y = m_planet_name->LowerRight().y + RESOURCE_DISPLAY_HEIGHT+3;
-    glColor(ClientUI::TextColor());
-    icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
-    x+=font->Height();
-    text = lexical_cast<std::string>(population)+"/"+lexical_cast<std::string>(static_cast<int>(planet.MaxPop()));
-    font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0);
-    x+=font->TextExtent(text, format).x+ICON_MARGIN;
-
-    return true;
-}
-
-bool SidePanel::PlanetPanel::RenderOwned(const Planet &planet)
-{
-  glColor(ClientUI::TextColor());
-  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(),ClientUI::Pts());
-  Uint32 format = GG::TF_LEFT | GG::TF_BOTTOM;
-
-  std::string text; int x,y;
-
-  x = m_planet_name->UpperLeft ().x+10;
-  y = m_planet_name->LowerRight().y+ 5;
-
-  //text = GetPlanetSizeName(planet);
-  //font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0);
-  y+=font->Height();
-
-  //text = GetPlanetTypeName(planet);
-  //font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0);
-  y+=font->Height();
-
-  boost::shared_ptr<GG::Texture> icon;
-  const int ICON_MARGIN    =  5;
-  font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()));
-
-  //population
-  //x = m_planet_name->UpperLeft ().x+10; y = m_planet_name->LowerRight().y + RESOURCE_DISPLAY_HEIGHT+3;
-  glColor(ClientUI::TextColor());
-  icon=IconPopulation(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
-  x+=font->Height();
-
-  double future_pop_growth = static_cast<int>(planet.FuturePopGrowth()*100.0) / 100.0;
-  if     (future_pop_growth<0.0)  text=GG::RgbaTag(GG::CLR_RED);
-  else if(future_pop_growth>0.0)  text=GG::RgbaTag(GG::CLR_GREEN);
-       else                       text=GG::RgbaTag(ClientUI::TextColor());
-
-  text+= lexical_cast<std::string>(static_cast<int>(planet.PopPoints())) + "</rgba>/"+lexical_cast<std::string>(static_cast<int>(planet.MaxPop()));
-  font->RenderText(x,y,x + 500, y+font->Height(), text, format, 0);
-  x+=font->TextExtent(text, format).x+ICON_MARGIN;
-
-  return true;
-}
 
 void SidePanel::PlanetPanel::Render()
 {
     const Planet *planet = GetPlanet();
-
-    if (planet->Owners().size()==0 || planet->IsAboutToBeColonized()) {
-        RenderUnhabited(*planet);
-    } else {
-        if (!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-            RenderInhabited(*planet);
-        else
-            RenderOwned(*planet);
-    }
 
     if (m_hiliting == HILITING_CANDIDATE && planet->Type() != PT_ASTEROIDS) {
         GG::Rect planet_rect(m_rotating_planet_graphic->UpperLeft(), m_rotating_planet_graphic->LowerRight());
