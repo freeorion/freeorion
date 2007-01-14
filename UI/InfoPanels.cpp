@@ -6,6 +6,7 @@
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Building.h"
+#include "../universe/Special.h"
 #include "../Empire/Empire.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
@@ -999,8 +1000,10 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
 
 BuildingsPanel::~BuildingsPanel()
 {
-    for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it)
+    for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
+        DetachChild(*it);
         delete *it;
+    }
     m_building_indicators.clear();
 }
 
@@ -1316,5 +1319,86 @@ void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
     GG::Wnd *parent;
     if((parent = Parent()))
         parent->MouseWheel(pt, move, keys);
+}
+
+/////////////////////////////////////
+//         SpecialsPanel           //
+/////////////////////////////////////
+
+SpecialsPanel::SpecialsPanel(int w, const UniverseObject &obj) : 
+    Wnd(0, 0, w, ClientUI::Pts()*4/3, 0),
+    m_object_id(obj.ID()),
+    m_icons()
+{
+    Update();
+}
+SpecialsPanel::~SpecialsPanel()
+{
+    for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
+        DetachChild(*it);
+        delete *it;
+    }
+    m_icons.clear();
+}
+void SpecialsPanel::Render()
+{
+}
+void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
+{
+    GG::Wnd *parent;
+    if((parent = Parent()))
+        parent->MouseWheel(pt, move, keys);
+}
+void SpecialsPanel::Update()
+{
+    for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
+        DetachChild(*it);
+        delete *it;
+    }
+    m_icons.clear();
+
+    const Universe& universe = GetUniverse();
+    const UniverseObject* obj = GetObject();
+    const std::set<std::string>& specials = obj->Specials();
+
+    const int icon_size = ClientUI::Pts()*4/3;
+
+    // get specials and use them to create specials icons
+    for (std::set<std::string>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
+        const Special* special = GetSpecial(*it);
+
+        boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / "special_icons" / "Generic_Special.png");
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        m_icons.push_back(graphic);
+    }
+
+    int num_specials = specials.size();
+    int needed_width = icon_size * num_specials;
+    int actual_width = Width();
+    int max_icons = Width() / (icon_size + 1);      // most icons that can be fit into available space
+    int centre = Width() / 2;
+    int left = centre - (icon_size * num_specials) / 2; // left side of row of specials
+
+    int n = 0;
+    for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end() && n <= max_icons; ++it, ++n) {
+        GG::StaticGraphic* icon = *it;
+        
+        int x = left + icon_size * n;
+
+        icon->MoveTo(GG::Pt(x, 0));
+        AttachChild(icon);
+    }
+}
+UniverseObject* SpecialsPanel::GetObject()
+{
+    UniverseObject* obj = GetUniverse().Object(m_object_id);
+    if (!obj) throw std::runtime_error("SpecialsPanel tried to get a planet with an invalid m_object_id");
+    return obj;
+}
+const UniverseObject* SpecialsPanel::GetObject() const
+{
+    const UniverseObject* obj = GetUniverse().Object(m_object_id);
+    if (!obj) throw std::runtime_error("SpecialsPanel tried to get a planet with an invalid m_object_id");
+    return obj;
 }
 

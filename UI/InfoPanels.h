@@ -9,6 +9,7 @@ class PopulationPanel;
 class ResourcePanel;
 class BuildingsPanel;
 class BuildingIndicator;
+class SpecialsPanel;
 class MultiTurnProgressBar;
 class MeterStatusBar2;
 class Meter;
@@ -215,6 +216,38 @@ private:
 
     GG::StaticGraphic*      m_graphic;
     MultiTurnProgressBar*   m_progress_bar;
+};
+
+class SpecialsPanel : public GG::Wnd
+{
+public:
+    /** \name Structors */ //@{
+    SpecialsPanel(int w, const UniverseObject &obj);   ///< basic ctor
+    ~SpecialsPanel();
+    //@}
+
+    /** \name Accessors */ //@{
+    int ObjectID() const {return m_object_id;}
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual void Render();
+    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    
+    void Update();          ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
+    //@}
+
+private:
+    
+    UniverseObject*         GetObject();        ///< returns the object with ID m_object_id
+    const UniverseObject*   GetObject() const;
+
+    int                     m_object_id;        ///< id for the Object whose specials this panel displays
+
+    std::vector<GG::StaticGraphic*> m_icons;
+
+    boost::signals::connection m_connection_system_changed;     ///< stores connection used to handle a system change
+    boost::signals::connection m_connection_object_changed;     ///< stores connection used to handle an object change
 };
 
 /** Graphically represents the current, max and (in future: projected) changes to values of a Meter as a

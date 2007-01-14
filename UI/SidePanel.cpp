@@ -33,7 +33,7 @@ using boost::lexical_cast;
 class PopulationPanel;
 class ResourcePanel;
 class BuildingsPanel;
-
+class SpecialsPanel;
 
 namespace {
     bool PlaySounds() {return GetOptionsDB().Get<bool>("UI.sound.enabled");}
@@ -441,6 +441,7 @@ private:
     PopulationPanel*        m_population_panel;         ///< contains info about population and health
     ResourcePanel*          m_resource_panel;           ///< contains info about resources production and focus selection UI
     BuildingsPanel*         m_buildings_panel;          ///< contains icons representing buildings
+    SpecialsPanel*          m_specials_panel;           ///< contains icons representing specials
 
     boost::signals::connection m_connection_system_changed;           ///< stores connection used to handle a system change
     boost::signals::connection m_connection_planet_changed;           ///< stores connection used to handle a planet change
@@ -697,7 +698,9 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     m_rotating_planet_graphic(0),
     m_hiliting(HILITING_NONE),
     m_population_panel(0),
-    m_resource_panel(0)
+    m_resource_panel(0),
+    m_buildings_panel(0),
+    m_specials_panel(0)
 {
     SetText(UserString("PLANET_PANEL"));
 
@@ -762,6 +765,10 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     AttachChild(m_buildings_panel);
     GG::Connect(m_buildings_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
+    m_specials_panel = new SpecialsPanel(MAX_PLANET_DIAMETER, planet);
+    AttachChild(m_specials_panel);
+    m_specials_panel->MoveTo(GG::Pt(0, MAX_PLANET_DIAMETER - m_specials_panel->Height()));
+
     if (planet.Type() == PT_ASTEROIDS) 
         MoveChildDown(m_planet_graphic);
 
@@ -774,6 +781,7 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     EnableControl(m_population_panel, true);
     EnableControl(m_resource_panel, true);
     EnableControl(m_buildings_panel, true);
+    EnableControl(m_specials_panel, true);
 
     DoLayout();
     Update();
