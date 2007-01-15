@@ -94,6 +94,7 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'UI/FocusSelector.cpp',
         'UI/GalaxySetupWnd.cpp',
         'UI/InGameMenu.cpp',
+        'UI/InfoPanels.cpp',
         'UI/IntroScreen.cpp',
         'UI/LinkText.cpp',
         'UI/MapWnd.cpp',
