@@ -565,34 +565,42 @@ void ResourcePanel::DoExpandCollapseLayout()
         m_primary_focus_drop->Hide();
         DetachChild(m_primary_focus_drop);
 
-        /* Ordering of indicators in collapsed mode:
-           - if primary focus is specialized:
-             - primary focus resource goes first.
-             - if secondary focus is specialized to something else
-               - secondary focus goes second
-        */
+        // determine which two resource icons to display while collapsed: the two with the highest production
+        const ResourceCenter* res = GetResourceCenter();
+
+        // sort by insereting into multimap keyed by production amount, then taking the first two icons therein
+        std::multimap<double, StatisticIcon*> res_prod_icon_map;
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->FarmingPoints(), m_farming_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->MiningPoints(), m_mining_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->IndustryPoints(), m_industry_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ResearchPoints(), m_research_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->TradePoints(), m_trade_stat));
+
+        // initially detach all...
+        for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.begin(); it != res_prod_icon_map.end(); ++it) {
+            it->second->Hide();
+            DetachChild(it->second);
+        }
         
-        m_farming_stat->MoveTo(GG::Pt(0, 0));
-        //m_farming_stat->Hide();
-        //DetachChild(m_farming_stat);
+        // position and reattach icons to be shown
+        int n = 0;
+        for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.end(); it != res_prod_icon_map.begin();) {
+            int x = icon_size*n*7/2;
 
-        m_mining_stat->MoveTo(GG::Pt(m_farming_stat->LowerRight().x + icon_size*2, 0));
-        //m_mining_stat->Hide();
-        //DetachChild(m_mining_stat);
+            if (x > Width() - m_expand_button->Width() - icon_size*5/2) break;  // ensure icon doesn't extend past right edge of panel
+            
+            std::multimap<double, StatisticIcon*>::iterator it2 = --it;
+            
+            StatisticIcon* icon = it2->second;
+            AttachChild(icon);
+            icon->MoveTo(GG::Pt(n * icon_size*7/2, 0));
+            icon->Show();
 
-        m_industry_stat->MoveTo(GG::Pt(m_mining_stat->LowerRight().x + icon_size*2, 0));
-        //m_industry_stat->Hide();
-        //DetachChild(m_industry_stat);
-
-        m_research_stat->MoveTo(GG::Pt(m_industry_stat->LowerRight().x + icon_size*2, 0));
-        //m_research_stat->Hide();
-        //DetachChild(m_research_stat);
-
-        m_trade_stat->MoveTo(GG::Pt(m_research_stat->LowerRight().x + icon_size*2, 0));
-        //m_trade_stat->Hide();
-        //DetachChild(m_trade_stat);
-
-        m_construction_stat->MoveTo(GG::Pt(m_trade_stat->LowerRight().x + icon_size*2, 0));
+            n++;
+        }
+        
+        
+        // hide construction icon and all the meter bars
         m_construction_stat->Hide();
         DetachChild(m_construction_stat);
 
@@ -930,7 +938,14 @@ void MeterStatusBar2::SetProjectedMax(double max)
 
 void MeterStatusBar2::Render()
 {
-    GG::Clr CLR_LIGHT_GRAY(192, 192, 192, 255);
+    // colours from eleazar's forum post
+    GG::Clr light_grey_bar(166, 166, 166, 255); // A6A6A6 100%
+    GG::Clr red_bar(144, 38, 21, 255);          // 902615 100%
+    GG::Clr max_grey_bar(90, 90, 90, 255);      // 5A5A5A 60%
+    GG::Clr green_change(164, 244, 84, 255);    // A4F454 60%
+    GG::Clr red_change(207, 67, 41, 255);       // CF4329 60%
+    GG::Clr line_20(147, 147, 147, 255);        // 939393 45%
+    GG::Clr bar_box(120, 120, 120, 255);        // 787878 100%
 
     const GG::Pt MARGIN = GG::Pt(1, 2);
     GG::Pt working_space = Size() - GG::Pt(2 * MARGIN.x, 2 * MARGIN.y);
@@ -942,20 +957,22 @@ void MeterStatusBar2::Render()
     int w = working_space.x;
 
     // outline of whole length of meter bar
-    GG::FlatRectangle(main_ul.x, main_ul.y, main_lr.x, main_lr.y, GG::CLR_BLACK, GG::CLR_GRAY, 1); 
+    GG::FlatRectangle(main_ul.x, main_ul.y, main_lr.x, main_lr.y, GG::CLR_ZERO, bar_box, 1); 
 
     // max value
-    GG::FlatRectangle(main_ul.x, main_ul.y, main_ul.x + static_cast<int>(w * m_projected_max / (Meter::METER_MAX - Meter::METER_MIN) + 0.5), main_lr.y, GG::CLR_GRAY, GG::CLR_CYAN, 0);
+    GG::FlatRectangle(main_ul.x + 1, main_ul.y + 1, main_ul.x + static_cast<int>(w * m_projected_max / (Meter::METER_MAX - Meter::METER_MIN) + 0.5),
+                      main_lr.y - 1, max_grey_bar, max_grey_bar, 0);
 
     // current (initial) value
-    GG::FlatRectangle(main_ul.x, main_ul.y, main_ul.x + static_cast<int>(w * m_initial_current / (Meter::METER_MAX - Meter::METER_MIN) + 0.5), main_lr.y, CLR_LIGHT_GRAY, GG::CLR_CYAN, 0);
+    GG::FlatRectangle(main_ul.x + 1, main_ul.y + 1, main_ul.x + static_cast<int>(w * m_initial_current / (Meter::METER_MAX - Meter::METER_MIN) + 0.5),
+                      main_lr.y - 1, light_grey_bar, light_grey_bar, 0);
 
     // projected value
-    GG::Clr clr = GG::CLR_GREEN;
-    if (m_projected_current < m_initial_current) clr = GG::CLR_RED;
+    GG::Clr clr = green_change;
+    if (m_projected_current < m_initial_current) clr = red_change;
     GG::FlatRectangle(delta_ul.x + static_cast<int>(w * m_initial_current / (Meter::METER_MAX - Meter::METER_MIN) + 0.5), delta_ul.y, 
                       delta_ul.x + static_cast<int>(w * m_projected_current / (Meter::METER_MAX - Meter::METER_MIN) + 0.5), delta_lr.y,
-                      clr, GG::CLR_CYAN, 0);
+                      clr, clr, 0);
 }
 
 void MeterStatusBar2::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
