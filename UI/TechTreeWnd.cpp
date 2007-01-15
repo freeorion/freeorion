@@ -903,6 +903,8 @@ private:
     void TechDoubleClickedSlot(const Tech* tech);
     void TreeDraggedSlot(const GG::Pt& move);
     void TreeZoomedSlot(int move);
+    void TreeZoomInClicked();
+    void TreeZoomOutClicked();
 
     double            m_scale;
     std::string       m_category_shown;
@@ -920,6 +922,8 @@ private:
     CUIScroll*     m_vscroll;
     CUIScroll*     m_hscroll;
     GG::Pt         m_scroll_position;
+    CUIButton*     m_zoom_in_button;
+    CUIButton*     m_zoom_out_button;
 
     friend struct CollapseSubtreeFunctor;
 };
@@ -1197,7 +1201,9 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
     m_selected_tech(0),
     m_layout_surface(0),
     m_vscroll(0),
-    m_hscroll(0)
+    m_hscroll(0),
+    m_zoom_in_button(0),
+    m_zoom_out_button(0)
 {
     EnableChildClipping(true);
 
@@ -1205,14 +1211,27 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
     m_vscroll = new CUIScroll(w - ClientUI::ScrollWidth(), 0, ClientUI::ScrollWidth(), h - ClientUI::ScrollWidth(), GG::VERTICAL);
     m_hscroll = new CUIScroll(0, h - ClientUI::ScrollWidth(), w - ClientUI::ScrollWidth(), ClientUI::ScrollWidth(), GG::HORIZONTAL);
 
+    int zbsize = ClientUI::ScrollWidth() * 2;
+    int zboffset = ClientUI::ScrollWidth() / 2;
+    int top = UpperLeft().y;
+    int left = UpperLeft().x;
+    m_zoom_in_button = new CUIButton(w - zbsize - zboffset - ClientUI::ScrollWidth(), zboffset, zbsize, "+");
+        
+    m_zoom_out_button = new CUIButton(m_zoom_in_button->UpperLeft().x - left, 
+                                      m_zoom_in_button->LowerRight().y + zboffset - top, zbsize, "-");
+
     AttachChild(m_layout_surface);
     AttachChild(m_vscroll);
     AttachChild(m_hscroll);
+    AttachChild(m_zoom_in_button);
+    AttachChild(m_zoom_out_button);
 
     GG::Connect(m_layout_surface->DraggedSignal, &TechTreeWnd::LayoutPanel::TreeDraggedSlot, this);
     GG::Connect(m_layout_surface->ZoomedSignal, &TechTreeWnd::LayoutPanel::TreeZoomedSlot, this);
     GG::Connect(m_vscroll->ScrolledSignal, &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
     GG::Connect(m_hscroll->ScrolledSignal, &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
+    GG::Connect(m_zoom_in_button->ClickedSignal, &TechTreeWnd::LayoutPanel::TreeZoomInClicked, this);
+    GG::Connect(m_zoom_out_button->ClickedSignal, &TechTreeWnd::LayoutPanel::TreeZoomOutClicked, this);
 }
 
 GG::Pt TechTreeWnd::LayoutPanel::ClientLowerRight() const
@@ -1683,6 +1702,15 @@ void TechTreeWnd::LayoutPanel::TreeZoomedSlot(int move)
         SetScale(m_scale / ZOOM_STEP_SIZE);
 }
 
+void TechTreeWnd::LayoutPanel::TreeZoomInClicked()
+{
+    TreeZoomedSlot(1);
+}
+
+void TechTreeWnd::LayoutPanel::TreeZoomOutClicked()
+{
+    TreeZoomedSlot(-1);
+}
 
 //////////////////////////////////////////////////
 // TechTreeWnd                                  //
