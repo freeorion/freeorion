@@ -92,4 +92,4 @@ MaxStarlaneLength               120
 # since only integer values are expected in this file, each value X below will be taken to be X / 10,000 in the code
 <1x7>
 SpecialsFrequency               None    Rare    Uncommon        Common
-Freq                            0       25      200             1000
+Freq                            0       300     1000            3000

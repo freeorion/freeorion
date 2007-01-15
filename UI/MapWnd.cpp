@@ -204,22 +204,22 @@ MapWnd::MapWnd() :
     const int BUTTON_TOTAL_MARGIN = 8;
 
     int button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_MENU") );
+    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-button_width, 0, button_width, UserString("MAP_BTN_MENU") );
     m_toolbar->AttachChild(m_btn_menu);
     GG::Connect(m_btn_menu->ClickedSignal, &MapWnd::MenuBtnClicked, this);
 
     button_width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_production = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_PRODUCTION") );
+    m_btn_production = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_PRODUCTION") );
     m_toolbar->AttachChild(m_btn_production);
     GG::Connect(m_btn_production->ClickedSignal, &MapWnd::ProductionBtnClicked, this);
 
     button_width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_research = new CUIButton(m_btn_production->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_RESEARCH") );
+    m_btn_research = new CUIButton(m_btn_production->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_RESEARCH") );
     m_toolbar->AttachChild(m_btn_research);
     GG::Connect(m_btn_research->ClickedSignal, &MapWnd::ResearchBtnClicked, this);
 
     button_width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_SITREP") );
+    m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_SITREP") );
     m_toolbar->AttachChild(m_btn_siterep);
     GG::Connect(m_btn_siterep->ClickedSignal, &MapWnd::SitRepBtnClicked, this);
 
