@@ -373,7 +373,11 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
 {
     SetProdQueueElementSpending(empire, PPs, production_status, m_queue, m_total_PPs_spent, m_projects_in_progress);
 
-    if (m_queue.empty()) return;   // nothing more to do...
+    if (m_queue.empty()) {
+        ProductionQueueChangedSignal(); // need this so BuildingsPanel updates properly after removing last building
+        return;   // nothing more to do...
+    }
+
     const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
     
     if (EPSILON < PPs) {

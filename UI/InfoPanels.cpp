@@ -1045,6 +1045,7 @@ void BuildingsPanel::Refresh()
 
 void BuildingsPanel::Render()
 {
+    if (Height() < 1) return;   // don't render if empty
     // Draw outline and background...
 
     // copied from CUIWnd
@@ -1155,7 +1156,6 @@ void BuildingsPanel::ExpandCollapseButtonPressed()
 
 void BuildingsPanel::DoExpandCollapseLayout()
 {
-
     int row = 0;
     int column = 0;
     const int w = Width();      // horizontal space in which to place indicators
@@ -1211,7 +1211,15 @@ void BuildingsPanel::DoExpandCollapseLayout()
             height = padding * (row + 2) + (row + 1) * indicator_size;  // if column != 0, there are buildings in the next row, so need to make space
     }
 
-    if (height < icon_size) height = icon_size;
+    if (m_building_indicators.empty()) {
+        height = 0;  // hide if empty
+        DetachChild(m_expand_button);
+        m_expand_button->Hide();
+    } else {
+        AttachChild(m_expand_button);
+        m_expand_button->Show();
+        if (height < icon_size) height = icon_size;
+    }
 
     Resize(GG::Pt(Width(), height));
 

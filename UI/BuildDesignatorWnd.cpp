@@ -532,7 +532,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
             row->push_back(time_text, default_font, ClientUI::TextColor());
 
             // brief description
-            std::string desc_text = "DESCRIPTIVE TEXT";
+            std::string desc_text = "DESC. TEXT";
             row->push_back(desc_text, default_font, ClientUI::TextColor());  
 
             m_buildable_items->Insert(row);

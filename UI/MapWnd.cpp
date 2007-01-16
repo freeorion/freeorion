@@ -702,11 +702,11 @@ void MapWnd::InitTurn(int turn_number)
     //GG::Connect(empire->GetFoodResPool().ChangedSignal, &SidePanel::Refresh);
     //GG::Connect(empire->GetPopulationPool().ChangedSignal, &SidePanel::Refresh);
 
-    empire->UpdateResourcePool();
-
     m_toolbar->Show();
     m_side_panel->Hide();   // prevents sidepanel from appearing if previous turn was ended without sidepanel open.  also ensures sidepanel UI updates properly, which it did not otherwise for unknown reasons.
     SelectSystem(m_side_panel->SystemID());
+
+    empire->UpdateResourcePool();
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
