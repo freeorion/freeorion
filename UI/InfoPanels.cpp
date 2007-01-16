@@ -1392,7 +1392,7 @@ void SpecialsPanel::Update()
     for (std::set<std::string>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
         const Special* special = GetSpecial(*it);
 
-        boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / "special_icons" / "Generic_Special.png");
+        boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
         GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
         m_icons.push_back(graphic);
     }

@@ -102,12 +102,14 @@ struct BuildingTypeClosure : boost::spirit::closure<BuildingTypeClosure, Buildin
 };
 
 struct SpecialClosure : boost::spirit::closure<SpecialClosure, Special*, std::string, std::string,
-                                               std::vector<boost::shared_ptr<const Effect::EffectsGroup> > >
+                                               std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                               std::string>
 {
     member1 this_;
     member2 name;
     member3 description;
     member4 effects_groups;
+    member5 graphic;
 };
 
 struct TechClosure : boost::spirit::closure<TechClosure, Tech*,

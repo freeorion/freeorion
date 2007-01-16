@@ -1379,9 +1379,8 @@ void SidePanel::Render()
 
 void SidePanel::Refresh()
 {
-    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it) {
+    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
         (*it)->RefreshImpl();
-    }
 }
 void SidePanel::RefreshImpl()
 {
@@ -1563,9 +1562,9 @@ void SidePanel::UpdateSystemResourceSummary()
     if(s_system)
     {
         std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
-        int farming=0,mining=0,trade=0,research=0,industry=0,defense=0,num_empire_planets=0;
+        int farming = 0, mining = 0, trade = 0, research = 0, industry = 0, defense = 0, num_empire_planets = 0;
 
-        for(unsigned int i=0;i<plt_vec.size();i++)
+        for(unsigned int i = 0; i < plt_vec.size(); i++)
             if(plt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != plt_vec[i]->Owners().end())
             {
                 farming   +=static_cast<int>(plt_vec[i]->FarmingPoints());

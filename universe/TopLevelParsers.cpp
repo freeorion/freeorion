@@ -103,8 +103,10 @@ namespace {
             (str_p("special")
              >> name_label >> name_p[special_p.name = arg1]
              >> description_label >> name_p[special_p.description = arg1]
-             >> effectsgroups_label >> effects_group_vec_p[special_p.effects_groups = arg1])
-            [special_p.this_ = new_<Special>(special_p.name, special_p.description, special_p.effects_groups)];
+             >> effectsgroups_label >> effects_group_vec_p[special_p.effects_groups = arg1]
+             >> graphic_label >> file_name_p[special_p.graphic = arg1])
+            [special_p.this_ = new_<Special>(special_p.name, special_p.description, special_p.effects_groups,
+                                             special_p.graphic)];
 
         tech_item_spec_p =
             (str_p("item")

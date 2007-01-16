@@ -13,6 +13,7 @@ Special
                 SetMaxIndustry value = Source.MaxIndustry + 5
                 SetMaxTrade value = Source.MaxTrade + 2
             ]
+    graphic = ""
 
 Special
     name = "STARVATION_SPECIAL"
@@ -31,3 +32,4 @@ Special
                 SetMaxTrade value = Source.MaxTrade / 2
                 SetMaxHealth value = Source.MaxHealth / 2
             ]
+    graphic = ""
