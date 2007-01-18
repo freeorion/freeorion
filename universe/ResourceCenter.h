@@ -35,6 +35,8 @@ public:
     const Meter&   TradeMeter() const       {return m_trade;}        ///< returns the trade Meter for this center
     const Meter&   ConstructionMeter() const{return m_construction;} ///< returns the construction Meter for this center
     const Meter*   GetMeter(MeterType type) const;
+
+    /** Return the amount of each resource the ResourceCenter produced this turn */
     double         FarmingPoints() const;
     double         IndustryPoints() const;
     double         MiningPoints() const;
@@ -44,6 +46,15 @@ public:
     /** Returns the Current() value that the requested type of meter is projected to have next turn.  This projection is
         only a rough estimate, based on the meter's current and max from this turn. */
     double         ProjectedCurrent(MeterType type) const;
+
+    /** Returns the amount of each resource the ResourceCenter is predicted to produce next turn, after focus changes
+        and effects are applied */
+    double         ProjectedFarmingPoints() const;
+    double         ProjectedIndustryPoints() const;
+    double         ProjectedMiningPoints() const;
+    double         ProjectedResearchPoints() const;
+    double         ProjectedTradePoints() const;
+
 
     mutable ResourceCenterChangedSignalType ResourceCenterChangedSignal; ///< the state changed signal object for this ResourceCenter
     //@}

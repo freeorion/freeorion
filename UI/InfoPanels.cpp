@@ -77,23 +77,11 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     if (it == s_expanded_map.end())
         s_expanded_map[m_popcenter_id] = false; // if not, default to collapsed state
     
-    DoExpandCollapseLayout();
-    
-    // these may be redundant...
-    if (System* system = obj.GetSystem())
-        m_connection_system_changed = GG::Connect(system->StateChangedSignal, &PopulationPanel::Update, this);
-    m_connection_popcenter_changed = GG::Connect(obj.StateChangedSignal, &PopulationPanel::Update, this);
-
-    Update();
+    Refresh();
 }
 
 PopulationPanel::~PopulationPanel()
 {
-    // HACK! These disconnects should not be necessary, since PopulationPanel is derived from boost::signals::trackable, but
-    // a segfault occurrs if they are not done (as of Boost 1.33.1).
-    m_connection_system_changed.disconnect();
-    m_connection_popcenter_changed.disconnect();
-
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     DetachChild(m_pop_stat);
     delete m_pop_stat;
@@ -118,10 +106,6 @@ void PopulationPanel::ExpandCollapse(bool expanded)
     s_expanded_map[m_popcenter_id] = expanded;
 
     DoExpandCollapseLayout();
-
-    ExpandCollapseSignal();
-
-    Render();                       // redraw in new state
 }
 
 void PopulationPanel::DoExpandCollapseLayout()
@@ -164,6 +148,8 @@ void PopulationPanel::DoExpandCollapseLayout()
         m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
         m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
     }
+
+    ExpandCollapseSignal();
 }
 
 void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
@@ -273,6 +259,12 @@ void PopulationPanel::Update()
         m_health_meter_bar->SetProjectedCurrent(pop->Health() + pop->FutureHealthGrowth());
         m_health_meter_bar->SetProjectedMax(pop->MaxHealth());
     }
+}
+
+void PopulationPanel::Refresh()
+{
+    Update();
+    DoExpandCollapseLayout();
 }
 
 const PopCenter* PopulationPanel::GetPopCenter() const
@@ -484,23 +476,11 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     if (it == s_expanded_map.end())
         s_expanded_map[m_rescenter_id] = false; // if not, default to collapsed state
     
-    DoExpandCollapseLayout();
-    
-    // these may be redundant...
-    if (System* system = obj.GetSystem())
-        m_connection_system_changed = GG::Connect(system->StateChangedSignal, &ResourcePanel::Update, this);
-    m_connection_rescenter_changed = GG::Connect(obj.StateChangedSignal, &ResourcePanel::Update, this);
-
-    Update();
+    Refresh();
 }
 
 ResourcePanel::~ResourcePanel()
 {
-    // HACK! These disconnects should not be necessary, since PopulationPanel is derived from boost::signals::trackable, but
-    // a segfault occurrs if they are not done (as of Boost 1.33.1).
-    m_connection_system_changed.disconnect();
-    m_connection_rescenter_changed.disconnect();
-
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     DetachChild(m_farming_stat);
     delete m_farming_stat;
@@ -547,10 +527,6 @@ void ResourcePanel::ExpandCollapse(bool expanded)
     s_expanded_map[m_rescenter_id] = expanded;
 
     DoExpandCollapseLayout();
-
-    ExpandCollapseSignal();
-
-    Render();                       // redraw in new state
 }
 
 void ResourcePanel::DoExpandCollapseLayout()
@@ -690,6 +666,8 @@ void ResourcePanel::DoExpandCollapseLayout()
         m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
         m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
     }
+
+    ExpandCollapseSignal();
 }
 
 void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
@@ -837,6 +815,12 @@ void ResourcePanel::Update()
     }
 }
 
+
+void ResourcePanel::Refresh()
+{
+    Update();
+    DoExpandCollapseLayout();
+}
 const ResourceCenter* ResourcePanel::GetResourceCenter() const
 {
     const UniverseObject* obj = GetUniverse().Object(m_rescenter_id);
@@ -1012,7 +996,7 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
         GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this);
     }
 
-    Update();
+    Refresh();
 }
 
 BuildingsPanel::~BuildingsPanel()
@@ -1030,17 +1014,6 @@ void BuildingsPanel::ExpandCollapse(bool expanded)
     s_expanded_map[m_planet_id] = expanded;
 
     DoExpandCollapseLayout();
-
-    ExpandCollapseSignal();
-
-    Render();                       // redraw in new state
-}
-
-void BuildingsPanel::Refresh()
-{
-    Update();
-    ExpandCollapseSignal();
-    Render();
 }
 
 void BuildingsPanel::Render()
@@ -1129,6 +1102,8 @@ void BuildingsPanel::Update()
 
             BuildType type = elem.item.build_type;
             if (type != BT_BUILDING) continue;  // don't show in-progress ships in BuildingsPanel...
+            int location = elem.location;
+            if (location != plt->ID()) continue;    // don't show buildings located elsewhere
 
             const BuildingType* building_type = GetBuildingType(elem.item.name);
             
@@ -1146,6 +1121,11 @@ void BuildingsPanel::Update()
             m_building_indicators.push_back(ind);
         }
     }
+}
+
+void BuildingsPanel::Refresh()
+{
+    Update();
     DoExpandCollapseLayout();
 }
 
@@ -1237,6 +1217,8 @@ void BuildingsPanel::DoExpandCollapseLayout()
         m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
     }
     Wnd::MoveChildUp(m_expand_button);
+
+    ExpandCollapseSignal();
 }
 
 Planet* BuildingsPanel::GetPlanet()

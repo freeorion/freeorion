@@ -400,7 +400,7 @@ public:
     virtual void RClick(const GG::Pt& pt, Uint32 keys);
     virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
 
-    void Update();                      ///< refreshes and rerenders all indicators
+    void Refresh();                 ///< updates panels, shows / hides colonize button, redoes layout of infopanels
     void Hilite(HilitingType ht);
     //@}
 
@@ -482,7 +482,7 @@ public:
     /** \name Mutators */ //@{
     PlanetPanel* GetPlanetPanel(int n) {return m_planet_panels[n];}
     
-    void UpdateAllPlanetPanels();   ///< refreshes and rerenders all indicators
+    void RefreshAllPlanetPanels();  ///< updates data displayed in info panels and redoes layout
     //@}
 
     mutable PlanetSelectedSignalType PlanetSelectedSignal;
@@ -775,16 +775,15 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     const Planet *plt = GetUniverse().Object<const Planet>(m_planet_id);
 
     if (System* system = plt->GetSystem())
-        m_connection_system_changed = GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Update, this);
-    m_connection_planet_changed = GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::Update, this);
+        m_connection_system_changed = GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
+    m_connection_planet_changed = GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
 
     EnableControl(m_population_panel, true);
     EnableControl(m_resource_panel, true);
     EnableControl(m_buildings_panel, true);
     EnableControl(m_specials_panel, true);
 
-    DoLayout();
-    Update();
+    Refresh();
 }
 
 SidePanel::PlanetPanel::~PlanetPanel()
@@ -855,7 +854,7 @@ void SidePanel::PlanetPanel::EnableControl(GG::Wnd *control,bool enable)
     }
 }
 
-void SidePanel::PlanetPanel::Update()
+void SidePanel::PlanetPanel::Refresh()
 {
     const Planet *planet = GetPlanet();
 
@@ -917,9 +916,11 @@ void SidePanel::PlanetPanel::Update()
         }
     }
 
-    m_population_panel->Update();
-    m_resource_panel->Update();
-    m_buildings_panel->Update();
+    m_population_panel->Refresh();
+    m_resource_panel->Refresh();
+    m_buildings_panel->Refresh();
+    m_specials_panel->Update();
+    // BuildingsPanel::Refresh (and other panels) should emit ExpandCollapseSignal, which should be connected to SidePanel::PlanetPanel::DoLayout
 }
 
 void SidePanel::PlanetPanel::SetPrimaryFocus(FocusType focus)
@@ -1222,10 +1223,10 @@ void SidePanel::PlanetPanelContainer::VScroll(int from, int to, int range_min, i
     }
 }
 
-void SidePanel::PlanetPanelContainer::UpdateAllPlanetPanels()
+void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels()
 {
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it)
-        (*it)->Update();
+        (*it)->Refresh();
 }
 
 ////////////////////////////////////////////////
@@ -1386,8 +1387,8 @@ void SidePanel::RefreshImpl()
 {
     UpdateSystemResourceSummary();   
 
-    // update individual PlanetPanels in PlanetPanelContainer
-    m_planet_panel_container->UpdateAllPlanetPanels();
+    // update individual PlanetPanels in PlanetPanelContainer, then redo layout of panel container
+    m_planet_panel_container->RefreshAllPlanetPanels();
 
 }
 void SidePanel::SetSystemImpl()
@@ -1553,8 +1554,6 @@ void SidePanel::SystemFleetRemoved(const Fleet &)
 
 void SidePanel::FleetsChanged()
 {
-    for(int i=0;i<m_planet_panel_container->PlanetPanels();i++)
-        m_planet_panel_container->GetPlanetPanel(i)->Update();
 }
 
 void SidePanel::UpdateSystemResourceSummary()

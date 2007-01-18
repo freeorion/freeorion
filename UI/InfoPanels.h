@@ -44,11 +44,11 @@ public:
     void ExpandCollapse(bool expanded);         ///< expands or collapses panel to show details or just summary info
 
     virtual void Render();
-    //virtual void LClick(const GG::Pt& pt, Uint32 keys);
-    //virtual void RClick(const GG::Pt& pt, Uint32 keys);
+
     virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
     
-    void Update();          ///< refreshes / updates indicators
+    void Update();          ///< updates indicators with values of associated object.  Does not do layout and resizing.
+    void Refresh();         ///< updates, redoes layout, resizes indicator
 
     mutable ExpandCollapseSignalType ExpandCollapseSignal;
     //@}
@@ -72,9 +72,6 @@ private:
     GG::Button*             m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
     static std::map<int, bool> s_expanded_map;  ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
-    
-    boost::signals::connection m_connection_system_changed;     ///< stores connection used to handle a system change
-    boost::signals::connection m_connection_popcenter_changed;  ///< stores connection used to handle a popcenter change
 };
 
 class ResourcePanel : public GG::Wnd
@@ -84,7 +81,6 @@ public:
     typedef boost::signal<void ()>          ExpandCollapseSignalType;   ///< emitted when the panel is expanded or collapsed, so that container can reposition other panels whose location depends on this one's size
     typedef boost::signal<void (FocusType)> FocusChangedSignalType;     ///< emitted when either the primary or secondary focus changes
     //@}
-
 
     /** \name Structors */ //@{
     ResourcePanel(int w, const UniverseObject &obj);
@@ -99,11 +95,10 @@ public:
     void ExpandCollapse(bool expanded);         ///< expands or collapses panel to show details or just summary info
 
     virtual void Render();
-    //virtual void LClick(const GG::Pt& pt, Uint32 keys);
-    //virtual void RClick(const GG::Pt& pt, Uint32 keys);
     virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
     
-    void Update();          ///< refreshes / updates indicators
+    void Update();          ///< updates indicators with values of associated object.  Does not do layout and resizing.
+    void Refresh();         ///< updates, redoes layout, resizes indicator
 
     mutable ExpandCollapseSignalType ExpandCollapseSignal;
     mutable FocusChangedSignalType PrimaryFocusChangedSignal;
@@ -143,9 +138,6 @@ private:
     GG::Button*             m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
     static std::map<int, bool> s_expanded_map;  ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
-    
-    boost::signals::connection m_connection_system_changed;     ///< stores connection used to handle a system change
-    boost::signals::connection m_connection_rescenter_changed;  ///< stores connection used to handle a popcenter change
 };
 
 class BuildingsPanel : public GG::Wnd
@@ -170,8 +162,7 @@ public:
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
     
-    void Update();          ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
-    void Refresh();         ///< Updates, redraws and signals expand / collapse
+    void Refresh();                             ///< recreates indicators, redoes layout, resizes
 
     mutable ExpandCollapseSignalType ExpandCollapseSignal;
     //@}
@@ -180,6 +171,8 @@ private:
     void ExpandCollapseButtonPressed();         ///< toggles panel expanded or collapsed
 
     void DoExpandCollapseLayout();              ///< resizes panel and positions indicators, differently depending on collapsed / expanded status
+
+    void Update();                              ///< recreates building indicators for building on or being built at this planet
 
     Planet*                 GetPlanet();        ///< returns the planet with ID m_planet_id
     const Planet*           GetPlanet() const;
@@ -192,9 +185,6 @@ private:
     GG::Button*             m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
     static std::map<int, bool> s_expanded_map;  ///< map indexed by planet ID indicating whether the BuildingsPanel for each object is expanded (true) or collapsed (false)
-    
-    boost::signals::connection m_connection_system_changed;     ///< stores connection used to handle a system change
-    boost::signals::connection m_connection_planet_changed;     ///< stores connection used to handle a planet change
 };
 
 /** Represents and allows some user interaction with a building */
@@ -245,9 +235,6 @@ private:
     int                     m_object_id;        ///< id for the Object whose specials this panel displays
 
     std::vector<GG::StaticGraphic*> m_icons;
-
-    boost::signals::connection m_connection_system_changed;     ///< stores connection used to handle a system change
-    boost::signals::connection m_connection_object_changed;     ///< stores connection used to handle an object change
 };
 
 /** Graphically represents the current, max and (in future: projected) changes to values of a Meter as a

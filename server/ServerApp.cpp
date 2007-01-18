@@ -1176,15 +1176,20 @@ void ServerApp::ProcessTurns()
         SDL_Delay(1500);
 
 
-    // Effects, including updating meters
+    // inform players that production processing is starting...
+    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
+        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::EMPIRE_PRODUCTION, -1));
+
+
+    // Update meters, do other effects stuff
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ResetMaxMeters();
-        it->second->AdjustMaxMeters();
+        it->second->ResetMaxMeters();   // zero all meters
+        it->second->AdjustMaxMeters();  // apply non-effects max meter modifications, including focus mods
     }
-    GetUniverse().ApplyEffects();
+    GetUniverse().ApplyEffects();       // apply effects, futher altering meters (and also non-meter effects)
 
 
-    // Determine how much of each resource is available, and determine how to distribute it
+    // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->UpdateResourcePool();
 
@@ -1197,16 +1202,14 @@ void ServerApp::ProcessTurns()
         empire->CheckGrowthFoodProgress();
     }
 
-    // process production and growth phase.  consumes food distributed to planets
-    for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) 
-        m_network_core.SendMessage(TurnProgressMessage(player_it->first, Message::EMPIRE_PRODUCTION, -1));
 
-   
+    // regenerate empire system visibility, which is needed for some UniverseObject subclasses' PopGrowthProductionResearchPhase()
     GetUniverse().RebuildEmpireViewSystemGraphs();
 
 
+    // Population growth or loss, health meter growth, resource current meter growth
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->PopGrowthProductionResearchPhase(); // Population growth / starvation, health meter growth, resource current meter growth
+        it->second->PopGrowthProductionResearchPhase();
         it->second->ClampMeters();  // limit current meters by max meters
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
             if (Meter* meter = it->second->GetMeter(i)) {
@@ -1216,21 +1219,6 @@ void ServerApp::ProcessTurns()
                 meter->m_initial_max = meter->m_max;
             }
         }
-    }
-
-
-    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
-        it->second->UpdateResourcePool();
-
-
-    // check for completed research, production or social projects, pay maintenance.  Update stockpiles.
-    // doesn't do actual population growth, which occurs when PopGrowthProductionResearchPhase() is called
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        Empire* empire = Empires().Lookup(it->first);
-        empire->CheckResearchProgress();
-        empire->CheckProductionProgress();
-        empire->CheckTradeSocialProgress();
-        empire->CheckGrowthFoodProgress();
     }
 
 
@@ -1245,6 +1233,7 @@ void ServerApp::ProcessTurns()
             (*it)->Reset();
         }
 
+    
     // loop and free all orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
@@ -1281,6 +1270,7 @@ void ServerApp::ProcessTurns()
         for (unsigned int j = 0; j < object_vec.size(); ++j)
             object_vec[j]->RemoveOwner(it->second);
     }
+
 
     // send new-turn updates to all players
     for (std::map<int, PlayerInfo>::const_iterator player_it = m_network_core.Players().begin(); player_it != m_network_core.Players().end(); ++player_it) {

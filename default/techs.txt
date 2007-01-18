@@ -711,6 +711,28 @@ Tech
 TechCategory "PRODUCTION_CATEGORY"
 
 Tech
+    name = "TEST"
+    description = "TEST_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = []
+    unlock = []
+    effectsgroups = [
+        EffectsGroup
+            scope = Planet type = [Swamp Toxic Terran Inferno Radiated Barren Tundra]
+            activation = Source
+            effects = [
+                SetMaxPopulation Target.MaxPopulation + 3
+                AddSpecial "ECCENTRIC_ORBIT_SPECIAL"
+                AddSpecial "TIDAL_LOCK_SPECIAL"
+                AddSpecial "SLOW_ROTATION_SPECIAL"
+            ]
+    ]
+    graphic = ""
+
+Tech
     name = "PRO_MICROGRAV_MAN"
     description = "PRO_MICROGRAV_MAN_DESC"
     techtype = Theory

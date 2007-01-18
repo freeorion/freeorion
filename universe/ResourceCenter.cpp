@@ -168,6 +168,35 @@ double ResourceCenter::ProjectedCurrent(MeterType type) const
         return 0.0;
     }
 }
+double ResourceCenter::ProjectedFarmingPoints() const
+{
+    const int projected_meter = ProjectedCurrent(METER_FARMING);
+    return m_pop->Current() / 10.0 * projected_meter;
+}
+
+double ResourceCenter::ProjectedIndustryPoints() const
+{
+    const int projected_meter = ProjectedCurrent(METER_INDUSTRY);
+    return m_pop->Current() / 10.0 * projected_meter;
+}
+
+double ResourceCenter::ProjectedMiningPoints() const
+{
+    const int projected_meter = ProjectedCurrent(METER_MINING);
+    return m_pop->Current() / 10.0 * projected_meter;
+}
+
+double ResourceCenter::ProjectedResearchPoints() const
+{
+    const int projected_meter = ProjectedCurrent(METER_RESEARCH);
+    return m_pop->Current() / 10.0 * projected_meter;
+}
+
+double ResourceCenter::ProjectedTradePoints() const
+{
+    const int projected_meter = ProjectedCurrent(METER_TRADE);
+    return m_pop->Current() / 10.0 * projected_meter;
+}
 
 Meter* ResourceCenter::GetMeter(MeterType type)
 {

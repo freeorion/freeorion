@@ -532,7 +532,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
             row->push_back(time_text, default_font, ClientUI::TextColor());
 
             // brief description
-            std::string desc_text = "DESC. TEXT";
+            std::string desc_text = "Building";
             row->push_back(desc_text, default_font, ClientUI::TextColor());  
 
             m_buildable_items->Insert(row);
@@ -566,7 +566,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
             row->push_back(time_text, default_font, ClientUI::TextColor());
 
             // brief description            
-            std::string desc_text = "DESCRIPTIVE TEXT";
+            std::string desc_text = "Ship";
             row->push_back(desc_text, default_font, ClientUI::TextColor());  
 
             m_buildable_items->Insert(row);
@@ -596,7 +596,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(BuildType build_type, bool 
         row->push_back(time_text, default_font, ClientUI::TextColor());
 
         // brief description            
-        std::string desc_text = "DESCRIPTIVE TEXT";
+        std::string desc_text = "Def. Base";
         row->push_back(desc_text, default_font, ClientUI::TextColor());  
 
         m_buildable_items->Insert(row);
@@ -726,6 +726,7 @@ void BuildDesignatorWnd::Reset()
     SelectDefaultPlanet(m_side_panel->SystemID());
     m_build_selector->Reset(true);
     m_build_detail_panel->Reset();
+    m_side_panel->Refresh();
 }
 
 void BuildDesignatorWnd::Clear()
