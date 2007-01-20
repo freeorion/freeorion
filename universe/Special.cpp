@@ -90,8 +90,8 @@ Special::Special(const std::string& name, const std::string& description,
     m_effects(effects),
     m_graphic(graphic)
 {
-    if (!m_graphic.compare(""))
-        m_graphic = std::string("special_icons/Generic_Special.png");
+    if (m_graphic == "")
+        m_graphic = "special_icons/Generic_Special.png";
 }
 
 const std::string& Special::Name() const

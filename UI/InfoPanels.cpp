@@ -83,13 +83,9 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
 PopulationPanel::~PopulationPanel()
 {
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
-    DetachChild(m_pop_stat);
     delete m_pop_stat;
-    DetachChild(m_health_stat);
     delete m_health_stat;
-    DetachChild(m_pop_meter_bar);
     delete m_pop_meter_bar;
-    DetachChild(m_health_meter_bar);
     delete m_health_meter_bar;
 
     // don't need to manually delete m_expand_button, as it is attached as a child so will be deleted by ~Wnd
@@ -117,8 +113,6 @@ void PopulationPanel::DoExpandCollapseLayout()
         m_pop_stat->MoveTo(GG::Pt(0, 0));
         m_health_stat->MoveTo(GG::Pt(Width()/2, 0));
 
-        m_pop_meter_bar->Hide();
-        m_health_meter_bar->Hide();
         DetachChild(m_pop_meter_bar);
         DetachChild(m_health_meter_bar);
 
@@ -482,35 +476,21 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
 ResourcePanel::~ResourcePanel()
 {
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
-    DetachChild(m_farming_stat);
     delete m_farming_stat;
-    DetachChild(m_mining_stat);
     delete m_mining_stat;
-    DetachChild(m_industry_stat);
     delete m_industry_stat;
-    DetachChild(m_research_stat);
     delete m_research_stat;
-    DetachChild(m_trade_stat);
     delete m_trade_stat;
-    DetachChild(m_construction_stat);
     delete m_construction_stat;
 
-    DetachChild(m_farming_meter_bar);
     delete m_farming_meter_bar;
-    DetachChild(m_mining_meter_bar);
     delete m_mining_meter_bar;
-    DetachChild(m_industry_meter_bar);
     delete m_industry_meter_bar;
-    DetachChild(m_research_meter_bar);
     delete m_research_meter_bar;
-    DetachChild(m_trade_meter_bar);
     delete m_trade_meter_bar;
-    DetachChild(m_construction_meter_bar);
     delete m_construction_meter_bar;
 
-    DetachChild(m_primary_focus_drop);
     delete m_primary_focus_drop;
-    DetachChild(m_secondary_focus_drop);
     delete m_secondary_focus_drop;
 
     // don't need to manually delete m_expand_button, as it is attached as a child so will be deleted by ~Wnd
@@ -535,10 +515,7 @@ void ResourcePanel::DoExpandCollapseLayout()
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_rescenter_id]) {
-        m_secondary_focus_drop->Hide();
         DetachChild(m_secondary_focus_drop);
-        
-        m_primary_focus_drop->Hide();
         DetachChild(m_primary_focus_drop);
 
         // determine which two resource icons to display while collapsed: the two with the highest production
@@ -553,11 +530,9 @@ void ResourcePanel::DoExpandCollapseLayout()
         res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->TradePoints(), m_trade_stat));
 
         // initially detach all...
-        for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.begin(); it != res_prod_icon_map.end(); ++it) {
-            it->second->Hide();
+        for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.begin(); it != res_prod_icon_map.end(); ++it)
             DetachChild(it->second);
-        }
-        
+                
         // position and reattach icons to be shown
         int n = 0;
         for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.end(); it != res_prod_icon_map.begin();) {
@@ -577,26 +552,13 @@ void ResourcePanel::DoExpandCollapseLayout()
         
         
         // hide construction icon and all the meter bars
-        m_construction_stat->Hide();
         DetachChild(m_construction_stat);
-
         DetachChild(m_farming_meter_bar);
-        m_farming_meter_bar->Hide();
-        
         DetachChild(m_mining_meter_bar);
-        m_mining_meter_bar->Hide();
-        
         DetachChild(m_industry_meter_bar);
-        m_industry_meter_bar->Hide();
-        
         DetachChild(m_research_meter_bar);
-        m_research_meter_bar->Hide();
-        
         DetachChild(m_trade_meter_bar);
-        m_trade_meter_bar->Hide();
-        
         DetachChild(m_construction_meter_bar);
-        m_construction_meter_bar->Hide();
 
         Resize(GG::Pt(Width(), icon_size));
     } else {
@@ -1001,10 +963,8 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
 
 BuildingsPanel::~BuildingsPanel()
 {
-    for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
-        DetachChild(*it);
+    for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it)
         delete *it;
-    }
     m_building_indicators.clear();
 }
 
@@ -1159,7 +1119,6 @@ void BuildingsPanel::DoExpandCollapseLayout()
                 AttachChild(ind);
             } else {
                 DetachChild(ind);
-                ind->Hide();
             }
             ++n;
         }
@@ -1194,7 +1153,6 @@ void BuildingsPanel::DoExpandCollapseLayout()
     if (m_building_indicators.empty()) {
         height = 0;  // hide if empty
         DetachChild(m_expand_button);
-        m_expand_button->Hide();
     } else {
         AttachChild(m_expand_button);
         m_expand_button->Show();
