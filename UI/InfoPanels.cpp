@@ -744,6 +744,11 @@ void ResourcePanel::Update()
     m_trade_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_TRADE));
     m_trade_meter_bar->SetProjectedMax(res->TradeMeter().Max());
 
+    m_construction_stat->SetValue(res->ConstructionMeter().Current());
+    m_construction_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_CONSTRUCTION));
+    m_construction_meter_bar->SetProjectedMax(res->ConstructionMeter().Max());
+
+
     switch (res->PrimaryFocus())
     {
     case FOCUS_BALANCED:
