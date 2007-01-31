@@ -1368,7 +1368,8 @@ bool MapWnd::ToggleSitRep()
 {
     m_projected_fleet_lines = MovementLineData();
     if (m_sitrep_panel->Visible()) {
-        m_sitrep_panel->Hide();
+        DetachChild(m_sitrep_panel);
+        m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
     } else {
         // hide other "competing" windows
         m_research_wnd->Hide();
@@ -1383,6 +1384,8 @@ bool MapWnd::ToggleSitRep()
         HumanClientApp::GetApp()->MoveDown(m_production_wnd);
 
         // show the sitrep window
+        AttachChild(m_sitrep_panel);
+        MoveChildUp(m_sitrep_panel);
         m_sitrep_panel->Show();
     }
     return true;
