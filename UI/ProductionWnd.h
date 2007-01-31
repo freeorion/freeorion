@@ -12,7 +12,7 @@ class ProductionInfoPanel;
 class BuildDesignatorWnd;
 
 /** Contains a BuildDesignatorWnd, some stats on the empire-wide production queue, and the queue itself. */
-class ProductionWnd : public CUIWnd
+class ProductionWnd : public GG::Wnd
 {
 public:
     /** \name Structors */ //@{
@@ -24,8 +24,6 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual GG::Pt ClientUpperLeft() const;
-    virtual GG::Pt ClientLowerRight() const;
     virtual bool   InWindow(const GG::Pt& pt) const;
     virtual bool   InClient(const GG::Pt& pt) const;
     virtual void   Render();

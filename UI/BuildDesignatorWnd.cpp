@@ -630,14 +630,13 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     Wnd(0, 0, w, h, GG::CLICKABLE),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
-    const int SIDE_PANEL_PLANET_RADIUS = SidePanel::MAX_PLANET_DIAMETER / 2;
-    int CHILD_WIDTHS = w - MapWnd::SIDE_PANEL_WIDTH - SIDE_PANEL_PLANET_RADIUS;
+    int CHILD_WIDTHS = w - MapWnd::SIDE_PANEL_WIDTH;
     const int DETAIL_PANEL_HEIGHT = TechTreeWnd::NAVIGATOR_AND_DETAIL_HEIGHT;
     const int BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
     m_build_detail_panel = new BuildDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT);
     m_build_selector = new BuildSelector(CHILD_WIDTHS, BUILD_SELECTOR_HEIGHT);
     m_build_selector->MoveTo(GG::Pt(0, h - BUILD_SELECTOR_HEIGHT));
-    m_side_panel = new SidePanel(CHILD_WIDTHS + SIDE_PANEL_PLANET_RADIUS, 0, MapWnd::SIDE_PANEL_WIDTH, h);
+    m_side_panel = new SidePanel(Width() - MapWnd::SIDE_PANEL_WIDTH, 0, MapWnd::SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
     m_side_panel->Hide();
 
     GG::Connect(m_build_detail_panel->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
@@ -647,7 +646,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     GG::Connect(m_side_panel->PlanetSelectedSignal, &BuildDesignatorWnd::SelectPlanet, this);
     GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal);
 
-    m_map_view_hole = GG::Rect(0, 0, CHILD_WIDTHS + SIDE_PANEL_PLANET_RADIUS, h);
+    m_map_view_hole = GG::Rect(0, 0, CHILD_WIDTHS + SidePanel::MAX_PLANET_DIAMETER, h);
 
     AttachChild(m_build_detail_panel);
     AttachChild(m_build_selector);

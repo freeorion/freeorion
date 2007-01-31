@@ -216,7 +216,7 @@ namespace {
 // ProductionWnd                                //
 //////////////////////////////////////////////////
 ProductionWnd::ProductionWnd(int w, int h) :
-CUIWnd(UserString("PRODUCTION_WND_TITLE"), 0, 0, w, h, GG::ONTOP),
+    GG::Wnd(0, 0, w, h, GG::ONTOP),
     m_production_info_panel(0),
     m_queue_lb(0),
     m_build_designator_wnd(0)
@@ -225,9 +225,11 @@ CUIWnd(UserString("PRODUCTION_WND_TITLE"), 0, 0, w, h, GG::ONTOP),
                                                       OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
     m_queue_lb = new QueueListBox(2, m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height(), this);
     m_queue_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL | GG::LB_USERDELETE);
-    GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width() + 6, 6);
+    GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width(), 6);
     m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
-    m_build_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width() + 3, 3));
+    m_build_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width(), 0));
+
+    EnableChildClipping(true);
 
     GG::Connect(m_build_designator_wnd->AddBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this);
     GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal, &ProductionWnd::ChangeBuildQuantitySlot, this);
@@ -241,26 +243,18 @@ CUIWnd(UserString("PRODUCTION_WND_TITLE"), 0, 0, w, h, GG::ONTOP),
     AttachChild(m_build_designator_wnd);
 }
 
-GG::Pt ProductionWnd::ClientUpperLeft() const
-{
-    return UpperLeft() + GG::Pt(LeftBorder(), TopBorder());
-}
 
-GG::Pt ProductionWnd::ClientLowerRight() const
-{
-    return LowerRight() - GG::Pt(RightBorder(), BottomBorder());
-}
 
 bool ProductionWnd::InWindow(const GG::Pt& pt) const
 {
     GG::Rect clip_rect = m_build_designator_wnd->MapViewHole() + m_build_designator_wnd->UpperLeft();
-    return clip_rect.Contains(pt) ? m_build_designator_wnd->InWindow(pt) : CUIWnd::InWindow(pt);
+    return clip_rect.Contains(pt) ? m_build_designator_wnd->InWindow(pt) : GG::Wnd::InWindow(pt);
 }
 
 bool ProductionWnd::InClient(const GG::Pt& pt) const
 {
     GG::Rect clip_rect = m_build_designator_wnd->MapViewHole() + m_build_designator_wnd->UpperLeft();
-    return clip_rect.Contains(pt) ? m_build_designator_wnd->InClient(pt) : CUIWnd::InClient(pt);
+    return clip_rect.Contains(pt) ? m_build_designator_wnd->InClient(pt) : GG::Wnd::InClient(pt);
 }
 
 void ProductionWnd::Render()
@@ -268,8 +262,6 @@ void ProductionWnd::Render()
     GG::Rect clip_rect = m_build_designator_wnd->MapViewHole() + m_build_designator_wnd->UpperLeft();
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, BORDER_TOP);
-    GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
@@ -299,55 +291,15 @@ void ProductionWnd::Render()
     glBegin(GL_POLYGON);
     glVertex2i(ul.x, clip_rect.lr.y);
     glVertex2i(lr.x, clip_rect.lr.y);
-    glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-    glVertex2i(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
+    glVertex2i(lr.x, lr.y);
     glVertex2i(ul.x, lr.y);
     glVertex2i(ul.x, clip_rect.lr.y);
-    glEnd();
-
-    // draw outer border on pixel inside of the outer edge of the window
-    glPolygonMode(GL_BACK, GL_LINE);
-    glBegin(GL_POLYGON);
-    glColor(ClientUI::WndOuterBorderColor());
-    glVertex2i(ul.x, ul.y);
-    glVertex2i(lr.x, ul.y);
-    glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-    glVertex2i(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-    glVertex2i(ul.x, lr.y);
-    glVertex2i(ul.x, ul.y);
     glEnd();
 
     // reset this to whatever it was initially
     glPolygonMode(GL_BACK, initial_modes[1]);
 
-    // draw inner border, including extra resize-tab lines
-    glBegin(GL_LINE_STRIP);
-    glColor(ClientUI::WndInnerBorderColor());
-    glVertex2i(cl_ul.x, cl_ul.y);
-    glVertex2i(cl_lr.x, cl_ul.y);
-    glVertex2i(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
-    glVertex2i(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
-    glVertex2i(cl_ul.x, cl_lr.y);
-    glVertex2i(cl_ul.x, cl_ul.y);
-    glEnd();
-    glBegin(GL_LINES);
-    // draw the extra lines of the resize tab
-    if (m_resizable) {
-        glColor(ClientUI::WndInnerBorderColor());
-    } else {
-        glColor(GG::DisabledColor(ClientUI::WndInnerBorderColor()));
-    }
-    glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-    glVertex2i(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
-            
-    glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-    glVertex2i(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
-    glEnd();
     glEnable(GL_TEXTURE_2D);
-
-    glColor(ClientUI::TextColor());
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::TitleFont(), ClientUI::TitlePts());
-    font->RenderText(ul.x + BORDER_LEFT, ul.y, WindowText());
 }
 
 void ProductionWnd::Reset()

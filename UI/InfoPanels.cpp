@@ -21,12 +21,6 @@
 
 using boost::lexical_cast;
 
-namespace {
-    GG::Clr METER_STATUS_BAR_COLOR(193, 193, 193, 255);
-    GG::Clr METER_STATUS_BAR_GROWTH_COLOR(151, 151, 151, 200);
-    GG::Clr METER_STATUS_BAR_SHRINK_COLOR(255, 0, 0, 255);
-}
-
 /////////////////////////////////////
 //        PopulationPanel          //
 /////////////////////////////////////
@@ -355,7 +349,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     AttachChild(m_primary_focus_drop);
 
     m_secondary_focus_drop = new CUIDropDownList(m_primary_focus_drop->LowerRight().x + icon_size/2, 0,
-                                                 icon_size*6, icon_size*3/2, icon_size*12);
+                                                 icon_size*4, icon_size*3/2, icon_size*12);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "balanced.png");
     graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC);
@@ -890,7 +884,7 @@ void MeterStatusBar2::SetProjectedMax(double max)
 void MeterStatusBar2::Render()
 {
     // colours from eleazar's forum post
-    GG::Clr light_grey_bar(166, 166, 166, 255); // A6A6A6 100%
+    GG::Clr light_grey_bar(193, 193, 193, 255); // lighter than A6A6A6 100%
     GG::Clr red_bar(144, 38, 21, 255);          // 902615 100%
     GG::Clr max_grey_bar(90, 90, 90, 255);      // 5A5A5A 60%
     GG::Clr green_change(164, 244, 84, 255);    // A4F454 60%

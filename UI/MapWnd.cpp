@@ -146,7 +146,7 @@ void MapWndPopup::Close( )
 const int MapWnd::NUM_BACKGROUNDS = 3;
 double    MapWnd::s_min_scale_factor = 0.35;
 double    MapWnd::s_max_scale_factor = 8.0;
-const int MapWnd::SIDE_PANEL_WIDTH = 300;
+const int MapWnd::SIDE_PANEL_WIDTH = 360;
 int       MapWnd::s_nebula_size = 192;
 
 MapWnd::MapWnd() :

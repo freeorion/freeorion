@@ -408,17 +408,6 @@ public:
     mutable ResizedSignalType ResizedSignal;
 
 private:
-    /** some of the elements at planet panel are only used if a specific
-        planet ownership state is present, some others are only used if
-        additional conditions applies. If a control is being enabled, it's
-        moved from the list of disabled controls (m_vec_unused_controls) to
-        the child list of planet panel, if the control isn't found at m_vec_unused_controls
-        is assumed that it is already enable. after that control->Show() is called. Disabling a
-        control is done in reverse.
-        for example: colonize btn is only enable/visible if there is a colony ship in orbit 
-        and the planet is unowned and inhabitable*/
-    void EnableControl(GG::Wnd *control, bool enable);
-
     void DoLayout();
 
     int  PlanetDiameter() const;
@@ -434,6 +423,7 @@ private:
 
     int                     m_planet_id;                ///< id for the planet with is representet by this planet panel
     GG::TextControl*        m_planet_name;              ///< planet name
+    GG::TextControl*        m_habitability;             ///< indicates planet environment rating un uncolonized planets
     CUIButton*              m_button_colonize;          ///< btn which can be pressed to colonize this planet
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
@@ -445,13 +435,6 @@ private:
 
     boost::signals::connection m_connection_system_changed;           ///< stores connection used to handle a system change
     boost::signals::connection m_connection_planet_changed;           ///< stores connection used to handle a planet change
-
-    /** planet panel is constructed without taking care of which controls
-        are needed by current planet ownership state. All controls which aren't
-        needed by current planet ownership state are stored in m_vec_unused_controls
-        and can be used when for instance planet ownership changes
-    */
-    std::vector<GG::Wnd*> m_vec_unused_controls;
 };
 
 class SidePanel::PlanetPanelContainer : public GG::Wnd
@@ -693,6 +676,7 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     Wnd(0, 0, w, MAX_PLANET_DIAMETER, GG::CLICKABLE),
     m_planet_id(planet.ID()),
     m_planet_name(0),
+    m_habitability(0),
     m_button_colonize(0),
     m_planet_graphic(0),
     m_rotating_planet_graphic(0),
@@ -740,8 +724,24 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
         }
     }
 
-    m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER-15,10,planet.Name(),GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()*4/3),ClientUI::TextColor());
+    m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER, 5, planet.Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()*4/3), ClientUI::TextColor());
     AttachChild(m_planet_name);
+
+    std::string env_text = "!!!";
+    switch (planet.Environment()) {
+    case PE_UNINHABITABLE:
+        env_text = UserString("PE_UNINHABITABLE");    break;
+    case PE_TERRIBLE:
+        env_text = UserString("PE_TERRIBLE");         break;
+    case PE_ADEQUATE:
+        env_text = UserString("PE_ADEQUATE");         break;
+    case PE_SUPERB:
+        env_text = UserString("PE_SUPERB");           break;
+    case PE_OPTIMAL:
+        env_text = UserString("PE_OPTIMAL");          break;
+    }
+    m_habitability = new GG::TextControl(MAX_PLANET_DIAMETER, m_planet_name->LowerRight().y - UpperLeft().y, env_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
+    AttachChild(m_habitability);
 
     int col_but_wid = 80;
     m_button_colonize = new CUIButton(Width() - col_but_wid, 10, col_but_wid, UserString("PL_COLONIZE"),
@@ -778,11 +778,6 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
         m_connection_system_changed = GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
     m_connection_planet_changed = GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
 
-    EnableControl(m_population_panel, true);
-    EnableControl(m_resource_panel, true);
-    EnableControl(m_buildings_panel, true);
-    EnableControl(m_specials_panel, true);
-
     Refresh();
 }
 
@@ -793,25 +788,27 @@ SidePanel::PlanetPanel::~PlanetPanel()
     m_connection_system_changed.disconnect();
     m_connection_planet_changed.disconnect();
 
-    for(unsigned int i=0;i<m_vec_unused_controls.size();i++)
-        delete m_vec_unused_controls[i];
-    m_vec_unused_controls.clear();
+    delete m_button_colonize;
+    delete m_habitability;
+
+    delete m_population_panel;
+    delete m_resource_panel;
+    delete m_buildings_panel;
+    delete m_specials_panel;
 }
 
 Planet* SidePanel::PlanetPanel::GetPlanet()
 {
-  Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
-  if(!planet)
-    throw std::runtime_error("SidePanel::PlanetPanel::GetPlanet: planet not found!");
-  return planet;
+    Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
+    if (!planet) throw std::runtime_error("SidePanel::PlanetPanel::GetPlanet: planet not found!");
+    return planet;
 }
 
 const Planet* SidePanel::PlanetPanel::GetPlanet() const
 {
-  const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
-  if(!planet)
-    throw std::runtime_error("SidePanel::PlanetPanel::GetPlanet: planet not found!");
-  return planet;
+    const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
+    if(!planet) throw std::runtime_error("SidePanel::PlanetPanel::GetPlanet: planet not found!");
+    return planet;
 }
 
 void SidePanel::PlanetPanel::Hilite(HilitingType ht)
@@ -831,28 +828,6 @@ void SidePanel::PlanetPanel::DoLayout()
     Resize(GG::Pt(Width(), std::max(m_buildings_panel->LowerRight().y - UpperLeft().y, MAX_PLANET_DIAMETER)));
     ResizedSignal();
 }
-void SidePanel::PlanetPanel::EnableControl(GG::Wnd *control,bool enable)
-{
-    std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),control);
-    if(it != m_vec_unused_controls.end())
-    {
-        if(enable)
-        {
-        m_vec_unused_controls.erase(it);
-        AttachChild(control);
-        control->Show();
-        }
-    }
-    else
-    {
-        if(!enable)
-        {
-            m_vec_unused_controls.push_back(control);
-            DetachChild(control);
-            control->Hide();
-        }
-    }
-}
 
 void SidePanel::PlanetPanel::Refresh()
 {
@@ -860,64 +835,44 @@ void SidePanel::PlanetPanel::Refresh()
 
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
-    if(planet->Owners().empty() || planet->IsAboutToBeColonized()) 
-    { //uninhabited
+    if(planet->Owners().empty() || planet->IsAboutToBeColonized()) {
         owner = OS_NONE;
-    }
-    else 
+    } else {
         if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-        {//inhabited
             owner = OS_FOREIGN;
-        }
         else
-        {//Owned
             owner = OS_SELF;
-        }
+    }
 
     if (!planet->Owners().empty()) {
         Empire* planet_empire = Empires().Lookup(*(planet->Owners().begin()));
-        m_planet_name->SetTextColor(planet_empire?planet_empire->Color():ClientUI::TextColor());
+        m_planet_name->SetTextColor(planet_empire ? planet_empire->Color() : ClientUI::TextColor());
     }
 
-    // visibility
-    if (owner==OS_NONE 
-        && planet->MaxPop() > 0 
-        && !planet->IsAboutToBeColonized()
-        && FindColonyShip(planet->SystemID()))
-    {
-        std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
-        if(it != m_vec_unused_controls.end())
-        {
-            m_vec_unused_controls.erase(it);
-            AttachChild(m_button_colonize);
-            m_button_colonize->Show();
-        }
+    if (owner == OS_NONE) {
+        AttachChild(m_habitability);
+        DetachChild(m_population_panel);
+        DetachChild(m_resource_panel);
+    } else {
+        DetachChild(m_habitability);
+        AttachChild(m_population_panel);
+        m_population_panel->Refresh();
+        AttachChild(m_resource_panel);
+        m_resource_panel->Refresh();
+    }
+    
+    if (owner == OS_NONE && planet->MaxPop() > 0 && !planet->IsAboutToBeColonized() && FindColonyShip(planet->SystemID())) {
+        AttachChild(m_button_colonize);
         m_button_colonize->SetText(UserString("PL_COLONIZE"));
-    }
-    else if (planet->IsAboutToBeColonized())
-    {
-        std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
-        if(it != m_vec_unused_controls.end())
-        {
-            m_vec_unused_controls.erase(it);
-            AttachChild(m_button_colonize);
-            m_button_colonize->Show();
-        }
+    
+    } else if (planet->IsAboutToBeColonized()) {
+        AttachChild(m_button_colonize);
         m_button_colonize->SetText(UserString("CANCEL"));
-    }
-    else
-    {
-        std::vector<GG::Wnd*>::iterator it = std::find(m_vec_unused_controls.begin(),m_vec_unused_controls.end(),m_button_colonize);
-        if(it == m_vec_unused_controls.end())
-        {
-            m_vec_unused_controls.push_back(m_button_colonize);
-            DetachChild(m_button_colonize);
-            m_button_colonize->Hide();
-        }
+    
+    } else {
+        DetachChild(m_button_colonize);
     }
 
-    m_population_panel->Refresh();
-    m_resource_panel->Refresh();
     m_buildings_panel->Refresh();
     m_specials_panel->Update();
     // BuildingsPanel::Refresh (and other panels) should emit ExpandCollapseSignal, which should be connected to SidePanel::PlanetPanel::DoLayout
@@ -989,7 +944,7 @@ int SidePanel::PlanetPanel::PlanetDiameter() const
 
 bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
 {
-    GG::Pt center = UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER / 2, Height() / 2);
+    GG::Pt center = UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER / 2, MAX_PLANET_DIAMETER / 2);
     GG::Pt diff = pt - center;
     int r_squared = PlanetDiameter() * PlanetDiameter() / 4;
     return diff.x * diff.x + diff.y * diff.y <= r_squared;
@@ -1081,7 +1036,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
 // SidePanel::PlanetPanelContainer
 ////////////////////////////////////////////////
 SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h) :
-    Wnd(x-MAX_PLANET_DIAMETER/2, y, w+MAX_PLANET_DIAMETER/2, h, GG::CLICKABLE),
+    Wnd(x, y, w, h, GG::CLICKABLE),
     m_planet_panels(),
     m_planet_id(UniverseObject::INVALID_OBJECT_ID),
     m_vscroll(new CUIScroll(Width()-14,0,14,Height(),GG::VERTICAL))
@@ -1093,10 +1048,10 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h
 
 bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
 {
-    if(pt.y<UpperLeft().y)
+    if(pt.y < UpperLeft().y)
         return false;
 
-    bool retval = UpperLeft()+GG::Pt(MAX_PLANET_DIAMETER/2,0) <= pt && pt < LowerRight();
+    bool retval = UpperLeft() <= pt && pt < LowerRight();
     for(unsigned int i = 0; i < m_planet_panels.size() && !retval; ++i)
         if(m_planet_panels[i]->InWindow(pt))
             retval = true;
@@ -1153,7 +1108,6 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout()
     m_vscroll->ScrolledSignal(m_vscroll->PosnRange().first, m_vscroll->PosnRange().second, 0, 0);   // fake a scroll event in order to update scrollbar and panel container position
     if (y < container_height) {
         DetachChild(m_vscroll);
-        m_vscroll->Hide();
     }
     else {
         AttachChild(m_vscroll);
@@ -1369,13 +1323,13 @@ SidePanel::~SidePanel()
 
 bool SidePanel::InWindow(const GG::Pt& pt) const
 {
-    return (UpperLeft() <= pt && pt < LowerRight()) || m_planet_panel_container->InWindow(pt);
+    return (UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER, 0) <= pt && pt < LowerRight()) || m_planet_panel_container->InWindow(pt);
 }
 
 void SidePanel::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::SidePanelColor(), GG::CLR_ZERO, 0);
+    FlatRectangle(ul.x + MAX_PLANET_DIAMETER, ul.y, lr.x, lr.y, ClientUI::SidePanelColor(), GG::CLR_CYAN, 0);
 }
 
 void SidePanel::Refresh()

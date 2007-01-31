@@ -1041,7 +1041,7 @@ SP_UNKNOWN_SYSTEM
 unbekanntes System
 
 SP_SYSTEM_NAME
-Das %1% System
+%1%
 
 SP_RENAME_PLANET
 Planet umbenennen
