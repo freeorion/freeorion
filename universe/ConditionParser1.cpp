@@ -15,7 +15,7 @@ ParamLabel empire_label("empire");
 ParamLabel affiliation_label("affiliation");
 ParamLabel name_label("name");
 ParamLabel type_label("type");
-ParamLabel size_label("size");
+ParamLabel planetsize_label("size");
 ParamLabel focus_label("focus");
 ParamLabel environment_label("environment");
 ParamLabel probability_label("probability");
@@ -159,7 +159,7 @@ namespace {
 
         planet_size =
             (str_p("planet")
-             >> size_label
+             >> planetsize_label
              >> (planetsize_expr_p[push_back_(planet_size.sizes, arg1)]
                  | ('[' >> +(planetsize_expr_p[push_back_(planet_size.sizes, arg1)]) >> ']')))
             [planet_size.this_ = new_<Condition::PlanetSize>(planet_size.sizes)];
