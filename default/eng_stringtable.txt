@@ -2571,6 +2571,9 @@ Improves Industry
 TRADE_SHORT_DESC
 Improves Trade
 
+CONSTRUCTION_SHORT_DESC
+Improves Infrastructure
+
 POPULATION_SHORT_DESC
 Increases Planet Population Limits
 
