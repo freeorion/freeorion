@@ -423,7 +423,7 @@ private:
 
     int                     m_planet_id;                ///< id for the planet with is representet by this planet panel
     GG::TextControl*        m_planet_name;              ///< planet name
-    GG::TextControl*        m_habitability;             ///< indicates planet environment rating un uncolonized planets
+    GG::TextControl*        m_env_size;                 ///< indicates size and planet environment rating un uncolonized planets
     CUIButton*              m_button_colonize;          ///< btn which can be pressed to colonize this planet
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
@@ -587,59 +587,65 @@ private:
 ////////////////////////////////////////////////
 namespace {
     int SystemNameFontSize()
-    { return static_cast<int>(ClientUI::Pts()*1.4); }
-  
-  boost::shared_ptr<GG::Texture> IconPopulation() {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "pop.png"        );}
-  boost::shared_ptr<GG::Texture> IconIndustry  () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "industry.png"   );}
-  boost::shared_ptr<GG::Texture> IconTrade     () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "trade.png"      );}
-  boost::shared_ptr<GG::Texture> IconResearch  () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "research.png"   );}
-  boost::shared_ptr<GG::Texture> IconMining    () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "mining.png"     );}
-  boost::shared_ptr<GG::Texture> IconFarming   () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "farming.png"    );}
-  boost::shared_ptr<GG::Texture> IconDefense   () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "defensebase.png");}
-
-  struct SystemRow : public GG::ListBox::Row
-  {
-    public:
-      SystemRow(int system_id) : m_system_id(system_id) {SetDragDropDataType("SystemID");}
-      int m_system_id;
-  };
-
-  XMLElement GetXMLChild(XMLElement &node,const std::string &child_path)
-  {
-    int index;
-
-    if(-1==(index=child_path.find_first_of('.')))
-      return node.ContainsChild(child_path)?node.Child(child_path):XMLElement();
-    else
-      return node.ContainsChild(child_path.substr(0,index))
-              ?GetXMLChild(node.Child(child_path.substr(0,index)),child_path.substr(index+1,child_path.length()-index-1))
-              :XMLElement();
-  }
-
-  void GetAsteroidTextures(int planet_id, std::vector<boost::shared_ptr<GG::Texture> > &textures)
-  {
-    const int NUM_ASTEROID_SETS = 3;
-    const int NUM_IMAGES_PER_SET = 256;
-    const int SET = (planet_id % NUM_ASTEROID_SETS) + 1;
-
-    for (int i = 0; i < NUM_IMAGES_PER_SET; ++i) {
-      textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "planets" / "asteroids" / boost::io::str(boost::format("asteroids%d_%03d.png") % SET % i)));
+    {
+        return static_cast<int>(ClientUI::Pts()*1.4);
     }
-  }
+  
+    boost::shared_ptr<GG::Texture> IconPopulation() {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "pop.png"        );}
+    boost::shared_ptr<GG::Texture> IconIndustry  () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "industry.png"   );}
+    boost::shared_ptr<GG::Texture> IconTrade     () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "trade.png"      );}
+    boost::shared_ptr<GG::Texture> IconResearch  () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "research.png"   );}
+    boost::shared_ptr<GG::Texture> IconMining    () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "mining.png"     );}
+    boost::shared_ptr<GG::Texture> IconFarming   () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "farming.png"    );}
+    boost::shared_ptr<GG::Texture> IconDefense   () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "defensebase.png");}
 
-  std::string GetPlanetSizeName(const Planet &planet)
-  {
-    if (planet.Size() == SZ_ASTEROIDS || planet.Size() == SZ_GASGIANT)
-      return "";
-    return UserString(lexical_cast<std::string>(planet.Size()));
-  }
+    struct SystemRow : public GG::ListBox::Row
+    {
+    public:
+        SystemRow(int system_id) : m_system_id(system_id) {SetDragDropDataType("SystemID");}
+        int m_system_id;
+    };
 
-  std::string GetPlanetTypeName(const Planet &planet)
-  {
-    return UserString(lexical_cast<std::string>(planet.Type()));
-  }
+    XMLElement GetXMLChild(XMLElement &node,const std::string &child_path)
+    {
+        int index;
 
-  Ship* FindColonyShip(int system_id)
+        if(-1 == (index=child_path.find_first_of('.')))
+            return node.ContainsChild(child_path)?node.Child(child_path):XMLElement();
+        else
+            return node.ContainsChild(child_path.substr(0,index)) ? 
+                GetXMLChild(node.Child(child_path.substr(0, index)), child_path.substr(index + 1, child_path.length() - index - 1))
+              : XMLElement();
+    }
+
+    void GetAsteroidTextures(int planet_id, std::vector<boost::shared_ptr<GG::Texture> > &textures)
+    {
+        const int NUM_ASTEROID_SETS = 3;
+        const int NUM_IMAGES_PER_SET = 256;
+        const int SET = (planet_id % NUM_ASTEROID_SETS) + 1;
+
+        for (int i = 0; i < NUM_IMAGES_PER_SET; ++i)
+            textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "planets" / "asteroids" / boost::io::str(boost::format("asteroids%d_%03d.png") % SET % i)));
+    }
+
+    std::string GetPlanetSizeName(const Planet &planet)
+    {
+        if (planet.Size() == SZ_ASTEROIDS || planet.Size() == SZ_GASGIANT)
+            return "";
+        return UserString(lexical_cast<std::string>(planet.Size()));
+    }
+
+    std::string GetPlanetTypeName(const Planet &planet)
+    {
+        return UserString(lexical_cast<std::string>(planet.Type()));
+    }
+
+    std::string GetPlanetEnvironmentName(const Planet &planet)
+    {
+        return UserString(lexical_cast<std::string>(planet.Environment()));
+    }
+
+    Ship* FindColonyShip(int system_id)
   {
     const System *system = GetUniverse().Object<const System>(system_id);
     if(system==0)
@@ -676,7 +682,7 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     Wnd(0, 0, w, MAX_PLANET_DIAMETER, GG::CLICKABLE),
     m_planet_id(planet.ID()),
     m_planet_name(0),
-    m_habitability(0),
+    m_env_size(0),
     m_button_colonize(0),
     m_planet_graphic(0),
     m_rotating_planet_graphic(0),
@@ -727,21 +733,10 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER, 5, planet.Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()*4/3), ClientUI::TextColor());
     AttachChild(m_planet_name);
 
-    std::string env_text = "!!!";
-    switch (planet.Environment()) {
-    case PE_UNINHABITABLE:
-        env_text = UserString("PE_UNINHABITABLE");    break;
-    case PE_TERRIBLE:
-        env_text = UserString("PE_TERRIBLE");         break;
-    case PE_ADEQUATE:
-        env_text = UserString("PE_ADEQUATE");         break;
-    case PE_SUPERB:
-        env_text = UserString("PE_SUPERB");           break;
-    case PE_OPTIMAL:
-        env_text = UserString("PE_OPTIMAL");          break;
-    }
-    m_habitability = new GG::TextControl(MAX_PLANET_DIAMETER, m_planet_name->LowerRight().y - UpperLeft().y, env_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
-    AttachChild(m_habitability);
+    std::string env_size_text = GetPlanetSizeName(planet) + " " + GetPlanetTypeName(planet) + " (" + GetPlanetEnvironmentName(planet) + ")";
+
+    m_env_size = new GG::TextControl(MAX_PLANET_DIAMETER, m_planet_name->LowerRight().y - UpperLeft().y, env_size_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
+    AttachChild(m_env_size);
 
     int col_but_wid = 80;
     m_button_colonize = new CUIButton(Width() - col_but_wid, 10, col_but_wid, UserString("PL_COLONIZE"),
@@ -789,7 +784,7 @@ SidePanel::PlanetPanel::~PlanetPanel()
     m_connection_planet_changed.disconnect();
 
     delete m_button_colonize;
-    delete m_habitability;
+    delete m_env_size;
 
     delete m_population_panel;
     delete m_resource_panel;
@@ -850,11 +845,11 @@ void SidePanel::PlanetPanel::Refresh()
     }
 
     if (owner == OS_NONE) {
-        AttachChild(m_habitability);
+        AttachChild(m_env_size);
         DetachChild(m_population_panel);
         DetachChild(m_resource_panel);
     } else {
-        DetachChild(m_habitability);
+        DetachChild(m_env_size);
         AttachChild(m_population_panel);
         m_population_panel->Refresh();
         AttachChild(m_resource_panel);
