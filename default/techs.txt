@@ -3,6 +3,7 @@ TechCategory "LEARNING_CATEGORY"
 Tech
     name = "LRN_PHYS_BRAIN"
     description = "LRN_PHYS_BRAIN_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 1
@@ -14,6 +15,7 @@ Tech
 Tech
     name = "LRN_ALGO_ELEGANCE"
     description = "LRN_ALGO_ELEGANCE_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 1
@@ -25,6 +27,7 @@ Tech
 Tech
     name = "LRN_GAL_EXPLO"
     description = "LRN_GAL_EXPLO_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 1
@@ -33,9 +36,11 @@ Tech
     unlock = []
     graphic = "tech_icons/Galactic_Exploration.png"
 
+
 Tech
     name = "LRN_TRANSLING_THT"
     description = "LRN_TRANSLING_THT_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 1
@@ -50,6 +55,7 @@ Tech
 Tech
     name = "LRN_PSIONICS"
     description = "LRN_PSIONICS_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 60
@@ -61,6 +67,7 @@ Tech
 Tech
     name = "LRN_ARTIF_MINDS"
     description = "LRN_ARTIF_MINDS_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 1
@@ -75,6 +82,7 @@ Tech
 Tech
     name = "LRN_XENOARCH"
     description = "LRN_XENOARCH_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 30
@@ -86,6 +94,7 @@ Tech
 Tech
     name = "LRN_GRAVITONICS"
     description = "LRN_GRAVITONICS_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 120
@@ -97,6 +106,7 @@ Tech
 Tech
     name = "LRN_EVERYTHING"
     description = "LRN_EVERYTHING_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 160
@@ -111,6 +121,7 @@ Tech
 Tech
     name = "LRN_FORCE_FIELD"
     description = "LRN_FORCE_FIELD_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 120
@@ -125,6 +136,7 @@ Tech
 Tech
     name = "LRN_MIND_VOID"
     description = "LRN_MIND_VOID_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 120
@@ -139,6 +151,7 @@ Tech
 Tech
     name = "LRN_TIME_MECH"
     description = "LRN_TIME_MECH_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 300
@@ -153,6 +166,7 @@ Tech
 Tech
     name = "LRN_NDIM_SUBSPACE"
     description = "LRN_NDIM_SUBSPACE_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 300
@@ -167,6 +181,7 @@ Tech
 Tech
     name = "LRN_MATTER_ENERGY"
     description = "LRN_MATTER_ENERGY_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 300
@@ -178,6 +193,7 @@ Tech
 Tech
     name = "LRN_UNIF_CONC"
     description = "LRN_UNIF_CONC_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 400
@@ -192,6 +208,7 @@ Tech
 Tech
     name = "LRN_TRANSCEND"
     description = "LRN_TRANSCEND_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 1000
@@ -209,6 +226,7 @@ Tech
 Tech
     name = "LRN_STELLAR_TOMOGRAPHY"
     description = "LRN_STELLAR_TOMOGRAPHY_DESC"
+    short_description = "LRN_STELLAR_TOMOGRAPHY_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 1
@@ -264,6 +282,7 @@ Tech
 Tech
     name = "LRN_AUTOLAB_I"
     description = "LRN_AUTOLAB_I_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 1
@@ -278,6 +297,7 @@ Tech
 Tech
     name = "LRN_THEORM_PROVER"
     description = "LRN_THEORM_PROVER_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 1
@@ -289,6 +309,7 @@ Tech
 Tech
     name = "LRN_LIGHTHOUSE"
     description = "LRN_LIGHTHOUSE_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 1
@@ -303,6 +324,7 @@ Tech
 Tech
     name = "LRN_NAVIGATION"
     description = "LRN_NAVIGATION_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 1
@@ -314,6 +336,7 @@ Tech
 Tech
     name = "LRN_COLLECTIVE_NET"
     description = "LRN_COLLECTIVE_NET_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 75
@@ -325,6 +348,7 @@ Tech
 Tech
     name = "LRN_DISTRIB_THOUGHT"
     description = "LRN_DISTRIB_THOUGHT_DESC"
+    short_description = "RESEARCH_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 40
@@ -348,6 +372,7 @@ Tech
 Tech
     name = "LRN_ENCLAVE_VOID"
     description = "LRN_ENCLAVE_VOID_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 60
@@ -359,6 +384,7 @@ Tech
 Tech
     name = "LRN_LOOKING_GLASS"
     description = "LRN_LOOKING_GLASS_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 150
@@ -370,6 +396,7 @@ Tech
 Tech
     name = "LRN_MONUMENT_EXODUS"
     description = "LRN_MONUMENT_EXODUS_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 25
@@ -381,6 +408,7 @@ Tech
 Tech
     name = "LRN_PSICORP"
     description = "LRN_PSICORP_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 40
@@ -394,6 +422,7 @@ TechCategory "GROWTH_CATEGORY"
 Tech
     name = "GRO_PLANET_ECOL"
     description = "GRO_PLANET_ECOL_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 1
@@ -405,6 +434,7 @@ Tech
 Tech
     name = "GRO_GENETIC_ENG"
     description = "GRO_GENETIC_ENG_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 1
@@ -416,6 +446,7 @@ Tech
 Tech
     name = "GRO_MEDICAL_PATH"
     description = "GRO_MEDICAL_PATH_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 1
@@ -427,6 +458,7 @@ Tech
 Tech
     name = "GRO_INDUSTY_FARM"
     description = "GRO_INDUSTY_FARM_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 20
@@ -438,6 +470,7 @@ Tech
 Tech
     name = "GRO_ENV_ENCAPSUL"
     description = "GRO_ENV_ENCAPSUL_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 1
@@ -449,6 +482,7 @@ Tech
 Tech
     name = "GRO_SYMBIOTIC_BIO"
     description = "GRO_SYMBIOTIC_BIO_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 45
@@ -463,6 +497,7 @@ Tech
 Tech
     name = "GRO_GENETIC_MED"
     description = "GRO_GENETIC_MED_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 45
@@ -477,6 +512,7 @@ Tech
 Tech
     name = "GRO_LIFECYCLE_MAN"
     description = "GRO_LIFECYCLE_MAN_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 120
@@ -488,6 +524,7 @@ Tech
 Tech
     name = "GRO_XENO_GENETICS"
     description = "GRO_XENO_GENETICS_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 120
@@ -503,6 +540,7 @@ Tech
 Tech
     name = "GRO_NANOTECH_MED"
     description = "GRO_NANOTECH_MED_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 120
@@ -517,6 +555,7 @@ Tech
 Tech
     name = "GRO_ORBIT_FARMING"
     description = "GRO_ORBIT_FARMING_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 80
@@ -532,6 +571,7 @@ Tech
 Tech
     name = "GRO_INDUSRY_CLONE"
     description = "GRO_INDUSRY_CLONE_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 300
@@ -546,6 +586,7 @@ Tech
 Tech
     name = "GRO_XENO_HYBRIDS"
     description = "GRO_XENO_HYBRIDS_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 300
@@ -560,6 +601,7 @@ Tech
 Tech
     name = "GRO_NANO_CYBERNET"
     description = "GRO_NANO_CYBERNET_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 300
@@ -571,6 +613,7 @@ Tech
 Tech
     name = "GRO_ENERGY_META"
     description = "GRO_ENERGY_META_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 400
@@ -586,6 +629,7 @@ Tech
 Tech
     name = "GRO_SELF_ROTATING_CROPS"
     description = "GRO_SELF_ROTATING_CROPS_DESC"
+    short_description = "FARMING_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 1
@@ -608,6 +652,7 @@ Tech
 Tech
     name = "GRO_HABITATION_DOMES"
     description = "GRO_HABITATION_DOMES_DESC"
+    short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 1
@@ -629,6 +674,7 @@ Tech
 Tech
     name = "GRO_CADUCEAN"
     description = "GRO_CADUCEAN_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 1
@@ -640,6 +686,7 @@ Tech
 Tech
     name = "GRO_BIOTERROR"
     description = "GRO_BIOTERROR_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 1
@@ -654,6 +701,7 @@ Tech
 Tech
     name = "GRO_GENOME_BANK"
     description = "GRO_GENOME_BANK_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 40
@@ -665,6 +713,7 @@ Tech
 Tech
     name = "GRO_LIVING_PLANET"
     description = "GRO_LIVING_PLANET_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 50
@@ -676,6 +725,7 @@ Tech
 Tech
     name = "GRO_ORBITAL_GARDENS"
     description = "GRO_ORBITAL_GARDENS_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 80
@@ -687,6 +737,7 @@ Tech
 Tech
     name = "GRO_URBAN_FARM"
     description = "GRO_URBAN_FARM_DESC"
+    short_description = "FARMING_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 50
@@ -708,11 +759,14 @@ Tech
                 SetMaxFarming value = Target.MaxFarming + 2
     graphic = ""
 
+
+
 TechCategory "PRODUCTION_CATEGORY"
 
 Tech
-    name = "TEST"
+    name = "THEORY_SHORT_DESC"
     description = "TEST_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -735,6 +789,7 @@ Tech
 Tech
     name = "PRO_MICROGRAV_MAN"
     description = "PRO_MICROGRAV_MAN_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -746,6 +801,7 @@ Tech
 Tech
     name = "PRO_PLANET_GEOL"
     description = "PRO_PLANET_GEOL_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -757,6 +813,7 @@ Tech
 Tech
     name = "PRO_ROBOTIC_PROD"
     description = "PRO_ROBOTIC_PROD_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -768,6 +825,7 @@ Tech
 Tech
     name = "PRO_FUSION_GEN"
     description = "PRO_FUSION_GEN_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 40
@@ -779,6 +837,7 @@ Tech
 Tech
     name = "PRO_ASTEROID_MINE"
     description = "PRO_ASTEROID_MINE_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -793,6 +852,7 @@ Tech
 Tech
     name = "PRO_CORE_MINE"
     description = "PRO_CORE_MINE_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 50
@@ -807,6 +867,7 @@ Tech
 Tech
     name = "PRO_NANOTECH_PROD"
     description = "PRO_NANOTECH_PROD_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -818,6 +879,7 @@ Tech
 Tech
     name = "PRO_ORBITAL_GEN"
     description = "PRO_ORBITAL_GEN_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 50
@@ -833,6 +895,7 @@ Tech
 Tech
     name = "PRO_ORBITAL_MINE"
     description = "PRO_ORBITAL_MINE_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 80
@@ -847,6 +910,7 @@ Tech
 Tech
     name = "PRO_SENTIENT_AUTOMATION"
     description = "PRO_SENTIENT_AUTOMATION_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -861,6 +925,7 @@ Tech
 Tech
     name = "PRO_FRC_FLD_ASSMB"
     description = "PRO_FRC_FLD_ASSMB_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -875,6 +940,7 @@ Tech
 Tech
     name = "PRO_INTSTEL_COPRO"
     description = "PRO_INTSTEL_COPRO_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 100
@@ -886,6 +952,7 @@ Tech
 Tech
     name = "PRO_NDIM_ASSMB"
     description = "PRO_NDIM_ASSMB_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 250
@@ -900,6 +967,7 @@ Tech
 Tech
     name = "PRO_SINGULAR_GEN"
     description = "PRO_SINGULAR_GEN_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 400
@@ -915,6 +983,7 @@ Tech
 Tech
     name = "PRO_MATENG_REPLIC"
     description = "PRO_MATENG_REPLIC_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 500
@@ -929,6 +998,7 @@ Tech
 Tech
     name = "PRO_ZERO_GEN"
     description = "PRO_ZERO_GEN_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 500
@@ -943,6 +1013,7 @@ Tech
 Tech
     name = "PRO_AUTOFACTORY_I"
     description = "PRO_AUTOFACTORY_I_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -957,6 +1028,7 @@ Tech
 Tech
     name = "PRO_ENVIRO_MINING_I"
     description = "PRO_ENVIRO_MINING_I_DESC"
+    short_description = "MINING_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -1002,6 +1074,7 @@ Tech
 Tech
     name = "PRO_HEAVY_MINING_I"
     description = "PRO_HEAVY_MINING_I_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -1016,6 +1089,7 @@ Tech
 Tech
     name = "PRO_ASTEROID_MINE_I"
     description = "PRO_ASTEROID_MINE_I_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -1027,6 +1101,7 @@ Tech
 Tech
     name = "PRO_ASTEROID_MINE_II"
     description = "PRO_ASTEROID_MINE_II_DESC"
+    short_description = "BUILDING_REFINE_SHORT_DESC"
     techtype = Refinement
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -1038,6 +1113,7 @@ Tech
 Tech
     name = "PRO_INDUSTRY_CENTRE_I"
     description = "PRO_INDUSTRY_CENTRE_I_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -1052,6 +1128,7 @@ Tech
 Tech
     name = "PRO_INDUSTRY_CENTRE_II"
     description = "PRO_INDUSTRY_CENTRE_II_DESC"
+    short_description = "BUILDING_REFINE_SHORT_DESC"
     techtype = Refinement
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -1063,6 +1140,7 @@ Tech
 Tech
     name = "PRO_INDUSTRY_CENTRE_III"
     description = "PRO_INDUSTRY_CENTRE_III_DESC"
+    short_description = "BUILDING_REFINE_SHORT_DESC"
     techtype = Refinement
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -1074,6 +1152,7 @@ Tech
 Tech
     name = "PRO_ART_BLACK_HOLE"
     description = "PRO_ART_BLACK_HOLE_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 150
@@ -1085,6 +1164,7 @@ Tech
 Tech
     name = "PRO_MINING_ENGINEERING"
     description = "PRO_MINING_ENGINEERING_DESC"
+    short_description = "MINING_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -1127,6 +1207,7 @@ Tech
 Tech
     name = "PRO_EXOBOTS"
     description = "PRO_EXOBOTS_DESC"
+    short_description = "INDUSTRY_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
@@ -1172,6 +1253,7 @@ Tech
 Tech
     name = "PRO_FUSION_PLANTS"
     description = "PRO_FUSION_PLANTS_DESC"
+    short_description = "INDUSTRY_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 30
@@ -1188,12 +1270,13 @@ Tech
             activation =
                 Source
             effects =
-                SetMaxIndustry value = Target.MaxIndustry * 1.1
+                SetMaxIndustry value = Target.MaxIndustry + 3
     graphic = ""
 
 Tech
     name = "PRO_HYPER_DAM"
     description = "PRO_HYPER_DAM_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 100
@@ -1205,6 +1288,7 @@ Tech
 Tech
     name = "PRO_MINI_SUN"
     description = "PRO_MINI_SUN_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 30
@@ -1218,6 +1302,7 @@ TechCategory "CONSTRUCTION_CATEGORY"
 Tech
     name = "CON_ORBITAL_CON"
     description = "CON_ORBITAL_CON_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 1
@@ -1229,6 +1314,7 @@ Tech
 Tech
     name = "CON_ARCH_PSYCH"
     description = "CON_ARCH_PSYCH_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 20
@@ -1240,6 +1326,7 @@ Tech
 Tech
     name = "CON_INFRA_ECOL"
     description = "CON_INFRA_ECOL_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 1
@@ -1251,6 +1338,7 @@ Tech
 Tech
     name = "CON_ORGANIC_STRC"
     description = "CON_ORGANIC_STRC_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 1
@@ -1262,6 +1350,7 @@ Tech
 Tech
     name = "CON_METRO_INFRA"
     description = "CON_METRO_INFRA_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 45
@@ -1276,6 +1365,7 @@ Tech
 Tech
     name = "CON_TRANS_STRC"
     description = "CON_TRANS_STRC_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 1
@@ -1290,6 +1380,7 @@ Tech
 Tech
     name = "CON_ARCH_MONOFILS"
     description = "CON_ARCH_MONOFILS_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 60
@@ -1301,6 +1392,7 @@ Tech
 Tech
     name = "CON_SELFGRAV_STRC"
     description = "CON_SELFGRAV_STRC_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 100
@@ -1315,6 +1407,7 @@ Tech
 Tech
     name = "CON_ASYMP_MATS"
     description = "CON_ASYMP_MATS_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 120
@@ -1330,6 +1423,7 @@ Tech
 Tech
     name = "CON_STRC_INT_FLDS"
     description = "CON_STRC_INT_FLDS_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 120
@@ -1341,6 +1435,7 @@ Tech
 Tech
     name = "CON_CONTGRAV_ARCH"
     description = "CON_CONTGRAV_ARCH_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 200
@@ -1355,6 +1450,7 @@ Tech
 Tech
     name = "CON_GAL_INFRA"
     description = "CON_GAL_INFRA_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 200
@@ -1370,6 +1466,7 @@ Tech
 Tech
     name = "CON_FRC_ENRG_STRC"
     description = "CON_FRC_ENRG_STRC_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 250
@@ -1384,6 +1481,7 @@ Tech
 Tech
     name = "CON_ART_HEAVENLY"
     description = "CON_ART_HEAVENLY_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 400
@@ -1398,6 +1496,7 @@ Tech
 Tech
     name = "CON_TRANS_ARCH"
     description = "CON_TRANS_ARCH_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 500
@@ -1412,6 +1511,7 @@ Tech
 Tech
     name = "CON_NDIM_STRC"
     description = "CON_NDIM_STRC_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 400
@@ -1426,6 +1526,7 @@ Tech
 Tech
     name = "CON_GRAVITY_WELLS"
     description = "CON_GRAVITY_WELLS_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 150
@@ -1437,6 +1538,7 @@ Tech
 Tech
     name = "CON_MEGALITH"
     description = "CON_MEGALITH_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 15
@@ -1448,6 +1550,7 @@ Tech
 Tech
     name = "CON_ORBITAL_INFRA"
     description = "CON_ORBITAL_INFRA_DESC"
+    short_description = "CONSTRUCTION_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 30
@@ -1470,6 +1573,7 @@ Tech
 Tech
     name = "CON_PLANET_RING"
     description = "CON_PLANET_RING_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 80
@@ -1484,6 +1588,7 @@ Tech
 Tech
     name = "CON_SPACE_ELEVATOR"
     description = "CON_SPACE_ELEVATOR_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 40
@@ -1495,6 +1600,7 @@ Tech
 Tech
     name = "CON_SUBTER_CONST"
     description = "CON_SUBTER_CONST_DESC"
+    short_description = "CONSTRUCTION_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 40
@@ -1519,6 +1625,7 @@ TechCategory "ECONOMICS_CATEGORY"
 Tech
     name = "ECO_MARKET_ECON"
     description = "ECO_MARKET_ECON_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 30
@@ -1530,6 +1637,7 @@ Tech
 Tech
     name = "ECO_PLANNED_ECON"
     description = "ECO_PLANNED_ECON_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 1
@@ -1541,6 +1649,7 @@ Tech
 Tech
     name = "ECO_EXTERN_INTEG"
     description = "ECO_EXTERN_INTEG_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 20
@@ -1552,6 +1661,7 @@ Tech
 Tech
     name = "ECO_ECON_SPECTRO"
     description = "ECO_ECON_SPECTRO_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 50
@@ -1567,6 +1677,7 @@ Tech
 Tech
     name = "ECO_INTSTEL_TRADE"
     description = "ECO_INTSTEL_TRADE_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 50
@@ -1581,6 +1692,7 @@ Tech
 Tech
     name = "ECO_ENV_ADAPTION"
     description = "ECO_ENV_ADAPTION_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 60
@@ -1596,6 +1708,7 @@ Tech
 Tech
     name = "ECO_GAL_MONEY_POL"
     description = "ECO_GAL_MONEY_POL_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 100
@@ -1610,6 +1723,7 @@ Tech
 Tech
     name = "ECO_ECON_FLUIDITY"
     description = "ECO_ECON_FLUIDITY_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 120
@@ -1624,6 +1738,7 @@ Tech
 Tech
     name = "ECO_PLANET_COLONY"
     description = "ECO_PLANET_COLONY_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 100
@@ -1639,6 +1754,7 @@ Tech
 Tech
     name = "ECO_ECON_PRESCIEN"
     description = "ECO_ECON_PRESCIEN_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 150
@@ -1654,6 +1770,7 @@ Tech
 Tech
     name = "ECO_STAB_HYPGROW"
     description = "ECO_STAB_HYPGROW_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 200
@@ -1669,6 +1786,7 @@ Tech
 Tech
     name = "ECO_ECON_HEGEMONY"
     description = "ECO_ECON_HEGEMONY_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "ECONOMICS_CATEGORY"
     researchcost = 400
@@ -1683,6 +1801,7 @@ Tech
 Tech
     name = "ECO_COLONIAL_ECO"
     description = "ECO_COLONIAL_ECO_DESC"
+    short_description = "TRADE_SHORT_DESC"
     techtype = Application
     category = "ECONOMICS_CATEGORY"
     researchcost = 40
@@ -1706,6 +1825,7 @@ Tech
 Tech
     name = "ECO_COMM_UNION"
     description = "ECO_COMM_UNION_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "ECONOMICS_CATEGORY"
     researchcost = 120
@@ -1717,6 +1837,7 @@ Tech
 Tech
     name = "ECO_DEEP_GREEN"
     description = "ECO_DEEP_GREEN_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "ECONOMICS_CATEGORY"
     researchcost = 30
@@ -1728,6 +1849,7 @@ Tech
 Tech
     name = "ECO_ECO_ETHER"
     description = "ECO_ECO_ETHER_DESC"
+    short_description = "TRADE_SHORT_DESC"
     techtype = Application
     category = "ECONOMICS_CATEGORY"
     researchcost = 40
@@ -1753,6 +1875,7 @@ Tech
 Tech
     name = "ECO_PARADISE"
     description = "ECO_PARADISE_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "ECONOMICS_CATEGORY"
     researchcost = 30
@@ -1764,6 +1887,7 @@ Tech
 Tech
     name = "ECO_SINKHOLE"
     description = "ECO_SINKHOLE_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "ECONOMICS_CATEGORY"
     researchcost = 80

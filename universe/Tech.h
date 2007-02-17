@@ -29,6 +29,7 @@ public:
     /** basic ctor */
     Tech(const std::string& name,
          const std::string& description,
+         const std::string& short_description,
          const std::string& category,
          TechType type,
          double research_cost,
@@ -45,6 +46,9 @@ public:
 
     /** Returns the text description of this tech */
     const std::string& Description() const;
+
+    /** Returns the single-line short text description of this tech */
+    const std::string& ShortDescription() const;
 
     /** Returns a data file format representation of this object */
     std::string Dump() const;
@@ -84,6 +88,7 @@ private:
 
     std::string                m_name;
     std::string                m_description;
+    std::string                m_short_description;
     std::string                m_category;
     TechType                   m_type;
     double                     m_research_cost;

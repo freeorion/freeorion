@@ -2089,9 +2089,12 @@ Growth
 ECONOMICS_CATEGORY
 Economics
 
-#############################
-# Tech Names & Descriptions #
-#############################
+####################################
+# Theory Tech Names & Descriptions #
+####################################
+
+THEORY_SHORT_DESC
+Theoretical Prerequisite
 
 LRN_PHYS_BRAIN
 The Physical Brain
@@ -2547,6 +2550,30 @@ An economy in optimal form represents a great variety of financial, cultural and
 # Tech Application Names & Descriptions #
 #########################################
 
+DOES_NOTHING_SHORT_DESC
+Useless: Does Nothing
+
+BUILDING_UNLOCK_SHORT_DESC
+Unlocks Building
+
+RESEARCH_SHORT_DESC
+Improves Research
+
+FARMING_SHORT_DESC
+Improves Farming
+
+MINING_SHORT_DESC
+Improves Mining
+
+INDUSTRY_SHORT_DESC
+Improves Industry
+
+TRADE_SHORT_DESC
+Improves Trade
+
+POPULATION_SHORT_DESC
+Increases Planet Population Limits
+
 CON_GRAVITY_WELLS
 Controlled gravity wells
 
@@ -2701,7 +2728,7 @@ LRN_NAVIGATION
 Intersetaller Navigation
 
 LRN_NAVIGATION_DESC
-Abstractly, starlanes form a relatively restrictive network of possible pathes.  However, in practice the process of interstellar travel along starlanes is somewhat more complicated and risky without proper navigation techniques.\n\nDoes nothing.  In future, might do something related to starlanes or ship speed or range...
+Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
 
 LRN_COLLECTIVE_NET
 Collective Thought Network
@@ -2808,6 +2835,9 @@ Coordinating industrial activity between planets and star systems can be effecti
 ########################################
 # Tech Refinement Names & Descriptions #
 ########################################
+
+BUILDING_REFINE_SHORT_DESC
+Refines Building
 
 PRO_ASTEROID_MINE_II
 Advanced Asteroid Mines

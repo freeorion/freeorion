@@ -5,6 +5,7 @@
 #include "../universe/ParserUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/AppInterface.h"   // for Logger()
 
 #include <boost/lexical_cast.hpp>
 
@@ -96,6 +97,7 @@ namespace {
 ///////////////////////////////////////////////////////////
 Tech::Tech(const std::string& name,
            const std::string& description,
+           const std::string& short_description,
            const std::string& category,
            TechType type,
            double research_cost,
@@ -106,6 +108,7 @@ Tech::Tech(const std::string& name,
            const std::string& graphic) :
     m_name(name),
     m_description(description),
+    m_short_description(short_description),
     m_category(category),
     m_type(type),
     m_research_cost(research_cost),
@@ -126,6 +129,11 @@ const std::string& Tech::Description() const
     return m_description;
 }
 
+const std::string& Tech::ShortDescription() const
+{
+    return m_short_description;
+}
+
 std::string Tech::Dump() const
 {
     using boost::lexical_cast;
@@ -134,6 +142,7 @@ std::string Tech::Dump() const
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent() + "shortdescription = \"" + m_short_description + "\"\n";
     retval += DumpIndent() + "techtype = ";
     switch (m_type) {
     case TT_THEORY:      retval += "Theory"; break;
@@ -425,6 +434,10 @@ std::string TechManager::FindIllegalDependencies()
         const std::set<std::string>& prereqs = tech->Prerequisites();
         for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
             const Tech* prereq_tech = GetTech(*prereq_it);
+            if (!prereq_tech) {
+                retval += "ERROR: Tech \"" + tech->Name() + "\" requires a missing or malformed tech as its prerequisite.\"\n";
+                continue;
+            }
             TechType prereq_type = prereq_tech->Type();
             if (tech_type == TT_THEORY && prereq_type != TT_THEORY)
                 retval += "ERROR: Theory tech \"" + tech->Name() + "\" requires non-Theory tech \"" + prereq_tech->Name() + "\"; Theory techs can only require other Theory techs.\n";

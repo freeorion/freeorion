@@ -112,22 +112,23 @@ struct SpecialClosure : boost::spirit::closure<SpecialClosure, Special*, std::st
     member5 graphic;
 };
 
-struct TechClosure : boost::spirit::closure<TechClosure, Tech*,
-                                            std::string, std::string, std::string, TechType, double, int,
-                                            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >, std::set<std::string>,
-                                            std::vector<ItemSpec>, std::string>
+struct TechClosure : boost::spirit::closure<TechClosure, Tech*, std::string, std::string, std::string,
+                                            std::string, TechType, double, int,
+                                            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                            std::set<std::string>, std::vector<ItemSpec>, std::string>
 {
     member1 this_;
     member2 name;
     member3 description;
-    member4 category;
-    member5 tech_type;
-    member6 research_cost;
-    member7 research_turns;
-    member8 effects_groups;
-    member9 prerequisites;
-    member10 unlocked_items;
-    member11 graphic;
+    member4 short_description;
+    member5 category;
+    member6 tech_type;
+    member7 research_cost;
+    member8 research_turns;
+    member9 effects_groups;
+    member10 prerequisites;
+    member11 unlocked_items;
+    member12 graphic;
 };
 
 extern boost::spirit::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
