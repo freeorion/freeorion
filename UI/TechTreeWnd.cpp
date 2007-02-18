@@ -480,7 +480,7 @@ private:
     const Tech*         m_tech;
     GG::TextControl*    m_tech_name_text;
     GG::TextControl*    m_cost_text;
-    GG::TextControl*    m_category_and_type_text;
+    GG::TextControl*    m_summary_text;
     CUIButton*          m_recenter_button;
     CUIButton*          m_add_to_queue_button;
     CUIMultiEdit*       m_description_box;
@@ -491,21 +491,21 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     GG::Wnd(0, 0, w, h, 0),
     m_tech(0)
 {
-    const int NAME_PTS = ClientUI::Pts() + 8;
-    const int CATEGORY_AND_TYPE_PTS = ClientUI::Pts() + 4;
+    const int NAME_PTS = ClientUI::Pts() + 6;
+    const int SUMMARY_PTS = ClientUI::Pts() + 3;
     const int COST_PTS = ClientUI::Pts();
     const int BUTTON_WIDTH = 150;
     const int BUTTON_MARGIN = 5;
     m_tech_name_text = new GG::TextControl(1, 0, w - 1 - BUTTON_WIDTH, NAME_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), NAME_PTS), ClientUI::TextColor());
     m_cost_text = new GG::TextControl(1, m_tech_name_text->LowerRight().y, w - 1 - BUTTON_WIDTH, COST_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), COST_PTS), ClientUI::TextColor());
-    m_category_and_type_text = new GG::TextControl(1, m_cost_text->LowerRight().y, w - 1 - BUTTON_WIDTH, CATEGORY_AND_TYPE_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), CATEGORY_AND_TYPE_PTS), ClientUI::TextColor());
+    m_summary_text = new GG::TextControl(1, m_cost_text->LowerRight().y, w - 1 - BUTTON_WIDTH, SUMMARY_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), SUMMARY_PTS), ClientUI::TextColor());
     m_add_to_queue_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, UserString("TECH_DETAIL_ADD_TO_QUEUE"));
     m_recenter_button = new CUIButton(w - 1 - BUTTON_WIDTH, m_add_to_queue_button->LowerRight().y + BUTTON_MARGIN, BUTTON_WIDTH, UserString("TECH_DETAIL_CENTER_ON_TECH"));
     m_recenter_button->Hide();
     m_add_to_queue_button->Hide();
     m_recenter_button->Disable();
     m_add_to_queue_button->Disable();
-    m_description_box = new CUIMultiEdit(1, m_category_and_type_text->LowerRight().y, w - 2 - BUTTON_WIDTH, h - m_category_and_type_text->LowerRight().y - 2, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
+    m_description_box = new CUIMultiEdit(1, m_summary_text->LowerRight().y, w - 2 - BUTTON_WIDTH, h - m_summary_text->LowerRight().y - 2, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
 
@@ -516,7 +516,7 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
 
     AttachChild(m_tech_name_text);
     AttachChild(m_cost_text);
-    AttachChild(m_category_and_type_text);
+    AttachChild(m_summary_text);
     AttachChild(m_recenter_button);
     AttachChild(m_add_to_queue_button);
     AttachChild(m_description_box);
@@ -538,7 +538,7 @@ void TechTreeWnd::TechDetailPanel::Render()
 void TechTreeWnd::TechDetailPanel::Reset()
 {
     m_tech_name_text->SetText("");
-    m_category_and_type_text->SetText("");
+    m_summary_text->SetText("");
     m_cost_text->SetText("");
     m_description_box->SetText("");
 
@@ -573,10 +573,11 @@ void TechTreeWnd::TechDetailPanel::Reset()
     m_tech_name_text->SetText(UserString(m_tech->Name()));
     using boost::io::str;
     using boost::format;
-    m_category_and_type_text->SetText("<i>" + str(format(UserString("TECH_DETAIL_TYPE_STR"))
+    m_summary_text->SetText("<i>" + str(format(UserString("TECH_DETAIL_TYPE_STR"))
         % UserString(m_tech->Category())
-        % UserString(boost::lexical_cast<std::string>(m_tech->Type()))) + "</i>");
-    m_category_and_type_text->SetColor(CategoryColor(m_tech->Category()));
+        % UserString(boost::lexical_cast<std::string>(m_tech->Type()))) + " - "
+        + str(format(UserString(m_tech->ShortDescription()))) + "</i>");
+    m_summary_text->SetColor(CategoryColor(m_tech->Category()));
     m_cost_text->SetText(str(format(UserString("TECH_TOTAL_COST_STR"))
         % static_cast<int>(m_tech->ResearchCost() + 0.5)
         % m_tech->ResearchTurns()));
