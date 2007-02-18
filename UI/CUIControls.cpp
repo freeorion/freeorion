@@ -1205,7 +1205,9 @@ void ColorSelector::Render()
 
 void ColorSelector::LClick(const GG::Pt& pt, Uint32 keys)
 {
-    GG::ColorDlg dlg(pt.x, pt.y, Color(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor());
+    int x = std::min(pt.x, GG::GUI::GetGUI()->AppWidth() - 315);    // 315 is width of ColorDlg from GG::ColorDlg:::ColorDlg
+    int y = std::min(pt.y, GG::GUI::GetGUI()->AppHeight() - 300);   // 300 is height of ColorDlg from GG::ColorDlg:::ColorDlg
+    GG::ColorDlg dlg(x, y, Color(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor());
     dlg.SetNewString(UserString("COLOR_DLG_NEW"));
     dlg.SetOldString(UserString("COLOR_DLG_OLD"));
     dlg.SetRedString(UserString("COLOR_DLG_RED"));
