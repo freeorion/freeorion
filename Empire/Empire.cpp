@@ -625,10 +625,17 @@ const std::set<std::string>& Empire::AvailableTechs() const
     return m_techs;
 }
 
-bool Empire::TechAvailable(const std::string& name) const
+bool Empire::TechResearched(const std::string& name) const
 {
     Empire::TechItr item = m_techs.find(name);
     return item != m_techs.end();
+}
+
+TechStatus Empire::TechStatus(const std::string& name) const
+{
+    if (TechResearched(name)) return TS_COMPLETE;
+    if (ResearchableTech(name)) return TS_RESEARCHABLE;
+    return TS_UNRESEARCHABLE;
 }
 
 const std::set<std::string>& Empire::AvailableBuildingTypes() const

@@ -170,6 +170,16 @@ void CUIButton::MouseHere(const GG::Pt& pt, Uint32 keys)
     }
 }
 
+void CUIButton::SetBorderColor(GG::Clr clr)
+{
+    m_border_color = clr;
+}
+
+void CUIButton::SetBorderThick(int thick)
+{
+    m_border_thick = std::max(thick, 0);    // don't allow negative thickness borders
+}
+
 void CUIButton::RenderPressed()
 {
     GG::Clr color_to_use = Color();

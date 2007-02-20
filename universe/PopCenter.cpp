@@ -6,7 +6,7 @@
 #include "../util/OptionsDB.h"
 #include "Planet.h"
 
-#include "math.h"
+#include <algorithm>
 
 #include <boost/lexical_cast.hpp>
 

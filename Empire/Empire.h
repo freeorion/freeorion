@@ -273,7 +273,7 @@ public:
      *    - Explored Systems
      *********************************************************/
 
-    /// Returns true iff \a name is an unavailable tech, and it has no unavailable prerequisites.
+    /// Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     bool ResearchableTech(const std::string& name) const;
 
     /// Returns the queue of techs being or queued to be researched.
@@ -286,8 +286,11 @@ public:
     /// Returns the set of all available techs.
     const std::set<std::string>& AvailableTechs() const;
 
-    /// Returns true iff this tech has been completely resarched.
-    bool TechAvailable(const std::string& name) const;
+    /// Returns true iff this tech has been completely researched.
+    bool TechResearched(const std::string& name) const;
+
+    /// Returns the status (researchable, researched, unresearchable) for this tech for this
+    TechStatus TechStatus(const std::string& name) const;
 
     /// Returns the set of all available building types.
     const std::set<std::string>& AvailableBuildingTypes() const;

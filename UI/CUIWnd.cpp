@@ -160,7 +160,7 @@ void CUI_CloseButton::Render()
 ////////////////////////////////////////////////
 CUIWnd::CUIWnd(const std::string& t, int x, int y, int w, int h, Uint32 flags) : 
     GG::Wnd(x, y, w, h, flags & ~GG::RESIZABLE),
-    m_resizable (flags & GG::RESIZABLE),
+    m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
     m_minimizable(flags & MINIMIZABLE),
     m_minimized(false),

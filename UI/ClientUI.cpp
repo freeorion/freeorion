@@ -227,11 +227,22 @@ namespace {
         const GG::Clr PRODUCTION_CATEGORY(240, 106, 106, 255);
         const GG::Clr CONSTRUCTION_CATEGORY(241, 233, 87, 255);
         const GG::Clr ECONOMICS_CATEGORY(255, 112, 247, 255);
+        const GG::Clr CATEGORY6(255, 85, 255, 255);
+        const GG::Clr CATEGORY7(85, 170, 255, 255);
+        const GG::Clr CATEGORY8(170, 255, 85, 255);
+        const GG::Clr CATEGORY9(85, 255, 170, 255);
+        const GG::Clr CATEGORY10(255, 170, 85, 255);
+
         db.Add("UI.tech-category-1", "OPTIONS_DB_UI_TECH_CATEGORY_1", StreamableColor(LEARNING_CATEGORY), Validator<StreamableColor>());
         db.Add("UI.tech-category-2", "OPTIONS_DB_UI_TECH_CATEGORY_2", StreamableColor(GROWTH_CATEGORY), Validator<StreamableColor>());
         db.Add("UI.tech-category-3", "OPTIONS_DB_UI_TECH_CATEGORY_3", StreamableColor(PRODUCTION_CATEGORY), Validator<StreamableColor>());
         db.Add("UI.tech-category-4", "OPTIONS_DB_UI_TECH_CATEGORY_4", StreamableColor(CONSTRUCTION_CATEGORY), Validator<StreamableColor>());
         db.Add("UI.tech-category-5", "OPTIONS_DB_UI_TECH_CATEGORY_5", StreamableColor(ECONOMICS_CATEGORY), Validator<StreamableColor>());
+        db.Add("UI.tech-category-6", "OPTIONS_DB_UI_TECH_CATEGORY_6", StreamableColor(CATEGORY6), Validator<StreamableColor>());
+        db.Add("UI.tech-category-7", "OPTIONS_DB_UI_TECH_CATEGORY_7", StreamableColor(CATEGORY7), Validator<StreamableColor>());
+        db.Add("UI.tech-category-8", "OPTIONS_DB_UI_TECH_CATEGORY_8", StreamableColor(CATEGORY8), Validator<StreamableColor>());
+        db.Add("UI.tech-category-9", "OPTIONS_DB_UI_TECH_CATEGORY_9", StreamableColor(CATEGORY9), Validator<StreamableColor>());
+        db.Add("UI.tech-category-10", "OPTIONS_DB_UI_TECH_CATEGORY_10", StreamableColor(CATEGORY10), Validator<StreamableColor>());
 
         // UI behavior
         db.Add("UI.tooltip-delay", "OPTIONS_DB_UI_TOOLTIP_DELAY", 1000, RangedValidator<int>(0, 3000));
