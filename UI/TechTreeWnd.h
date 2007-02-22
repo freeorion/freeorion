@@ -59,7 +59,6 @@ public:
     void HideType(const TechType type);
     void ToggleType(const TechType type);
 
-    void UncollapseAll();
     void CenterOnTech(const Tech* tech);
     //@}
 

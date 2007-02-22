@@ -1207,12 +1207,12 @@ public:
     void CenterOnTech(const Tech* tech);
     void SetTechTypesShown(std::set<TechType> tech_types);
     void SetTechStatusesShown(std::set<TechStatus> tech_statuses);
-    void UncollapseAll();
     //@}
+
+    static const double ZOOM_STEP_SIZE;
 
 private:
     class TechPanel;
-    struct CollapseSubtreeFunctor;
     typedef std::multimap<const Tech*,
                           std::pair<const Tech*,
                                     std::vector<std::vector<std::pair<double, double> > > > > DependencyArcsMap;
@@ -1230,7 +1230,6 @@ private:
 
     void Layout(bool keep_position, double old_scale = -1.0);
     bool TechVisible(const Tech* tech);
-    void CollapseTechSubtree(const Tech* tech, bool collapse);
     void DrawArc(DependencyArcsMap::const_iterator it, GG::Clr color, bool with_arrow_head);
     void ScrolledSlot(int, int, int, int);
     void TechBrowsedSlot(const Tech* tech);
@@ -1247,9 +1246,6 @@ private:
     std::set<TechStatus>    m_tech_statuses_shown;
     const Tech*             m_selected_tech;
 
-    // indexed by category-view (including "ALL"), the techs whose subtrees are desired collapsed
-    //std::map<std::string, std::set<const Tech*> > m_collapsed_subtree_techs_per_view;
-
     std::map<const Tech*, TechPanel*> m_techs;
     DependencyArcsMapsByArcType m_dependency_arcs;
 
@@ -1259,19 +1255,6 @@ private:
     GG::Pt         m_scroll_position;
     CUIButton*     m_zoom_in_button;
     CUIButton*     m_zoom_out_button;
-
-    friend struct CollapseSubtreeFunctor;
-};
-
-//////////////////////////////////////////////////////
-// TechTreeWnd::LayoutPanel::CollapseSubtreeFunctor //
-//////////////////////////////////////////////////////
-struct TechTreeWnd::LayoutPanel::CollapseSubtreeFunctor
-{
-    CollapseSubtreeFunctor(TechTreeWnd::LayoutPanel* layout_panel, const Tech* tech) : m_layout_panel(layout_panel), m_tech(tech) {}
-    void operator()(bool checked) {m_layout_panel->CollapseTechSubtree(m_tech, checked);}
-    TechTreeWnd::LayoutPanel* const m_layout_panel;
-    const Tech* const m_tech;
 };
 
 //////////////////////////////////////////////////
@@ -1293,7 +1276,7 @@ public:
     typedef TechDoubleClickedSignalType::slot_type TechDoubleClickedSlotType; ///< type of functor(s) invoked on a TechDoubleClickedSignalType
     //@}
 
-    TechPanel(const Tech* tech, bool selected, bool collapsed_subtree, std::set<std::string> categories_shown, std::set<TechType> types_shown, std::set<TechStatus> statuses_shown, double scale = 1.0);
+    TechPanel(const Tech* tech, bool selected, std::set<std::string> categories_shown, std::set<TechType> types_shown, std::set<TechStatus> statuses_shown, double scale = 1.0);
 
     virtual bool InWindow(const GG::Pt& pt) const;
     virtual void Render();
@@ -1306,7 +1289,6 @@ public:
     mutable boost::signal<void (const Tech*)> TechBrowsedSignal;
     mutable boost::signal<void (const Tech*)> TechClickedSignal;
     mutable boost::signal<void (const Tech*)> TechDoubleClickedSignal;
-    GG::StateButton::CheckedSignalType& CollapseSubtreeSignal() {return m_toggle_button->CheckedSignal;}
 
 private:
     GG::Rect ProgressPanelRect(const GG::Pt& ul, const GG::Pt& lr);
@@ -1320,11 +1302,10 @@ private:
     GG::TextControl*      m_tech_name_text;
     GG::TextControl*      m_tech_cost_text;
     GG::TextControl*      m_progress_text;
-    ExpandCollapseButton* m_toggle_button;
     bool                  m_selected;
 };
 
-TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, bool collapsed_subtree,
+TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
                                                std::set<std::string> categories_shown, std::set<TechType> types_shown,
                                                std::set<TechStatus> statuses_shown, double scale/* = 1.0*/) :
     GG::Wnd(0, 0, 1, 1, GG::CLICKABLE),
@@ -1334,7 +1315,6 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
     m_tech_name_text(0),
     m_tech_cost_text(0),
     m_progress_text(0),
-    m_toggle_button(0),
     m_selected(selected)
 {
     int name_font_pts = ClientUI::Pts() + 2;
@@ -1383,7 +1363,6 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
         researchable_tech = true;
     }
 #endif
-
     if (known_tech) {
         m_fill_color = ClientUI::KnownTechFillColor();
         m_text_and_border_color = ClientUI::KnownTechTextAndBorderColor();
@@ -1428,37 +1407,6 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
                                           progress_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts() * m_scale + 0.5)), m_text_and_border_color);
     AttachChild(m_progress_text);
 
-    /*
-    m_toggle_button = new ExpandCollapseButton(m_fill_color, m_text_and_border_color, m_scale);
-    bool show_toggle_button = false;
-    const std::set<std::string>& unlocked_techs = m_tech->UnlockedTechs();
-    for (std::set<std::string>::const_iterator it = unlocked_techs.begin(); it != unlocked_techs.end(); ++it) {
-        const Tech* unlocked_tech = GetTech(*it);
-
-        std::string category = unlocked_tech->Category();
-        if (categories_shown.find(category) == categories_shown.end()) continue;
-
-        TechType type = unlocked_tech->Type();
-        if (types_shown.find(type) == types_shown.end()) continue;
-
-        TechStatus status = empire->TechStatus(unlocked_tech->Name());
-        if (statuses_shown.find(status) == statuses_shown.end()) continue;
-
-        if (RootOfSubtree(unlocked_tech, categories_shown)) {
-            show_toggle_button = true;
-            break;
-        }
-    }
-    if (show_toggle_button) {
-        if (collapsed_subtree)
-            m_toggle_button->SetCheck();
-        m_toggle_button->MoveTo(GG::Pt(Width() + static_cast<int>((-PROGRESS_PANEL_LEFT_EXTRUSION + 3) * m_scale),
-                                       UpperLeft().x + static_cast<int>(Height() + (-PROGRESS_PANEL_HEIGHT + PROGRESS_PANEL_BOTTOM_EXTRUSION) * m_scale) / 2 - m_toggle_button->Height() / 2));
-    } else {
-        m_toggle_button->Hide();
-    }
-    AttachChild(m_toggle_button);*/
-    
     Select(m_selected);
 }
 
@@ -1533,6 +1481,7 @@ GG::Rect TechTreeWnd::LayoutPanel::TechPanel::ProgressPanelRect(const GG::Pt& ul
 //////////////////////////////////////////////////
 // TechTreeWnd::LayoutPanel                     //
 //////////////////////////////////////////////////
+const double TechTreeWnd::LayoutPanel::ZOOM_STEP_SIZE = 1.25;
 TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
     GG::Wnd(0, 0, w, h, GG::CLICKABLE),
     m_scale(1.0),
@@ -1547,6 +1496,8 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
     m_zoom_out_button(0)
 {
     EnableChildClipping(true);
+
+    m_scale = 1.0 / ZOOM_STEP_SIZE; // because fully zoomed in is too close
 
     m_layout_surface = new LayoutSurface();
     m_vscroll = new CUIScroll(w - ClientUI::ScrollWidth(), 0, ClientUI::ScrollWidth(), h - ClientUI::ScrollWidth(), GG::VERTICAL);
@@ -1574,11 +1525,11 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
     GG::Connect(m_zoom_in_button->ClickedSignal, &TechTreeWnd::LayoutPanel::TreeZoomInClicked, this);
     GG::Connect(m_zoom_out_button->ClickedSignal, &TechTreeWnd::LayoutPanel::TreeZoomOutClicked, this);
 
-    TechManager& manager = GetTechManager();
+    
     
     // show all categories...
     m_categories_shown.clear();
-    const std::vector<std::string> categories = manager.CategoryNames();
+    const std::vector<std::string> categories = GetTechManager().CategoryNames();
     for (std::vector<std::string>::const_iterator it = categories.begin(); it != categories.end(); ++it)
         m_categories_shown.insert(*it);
 
@@ -1761,7 +1712,7 @@ void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category)
 {
     if (m_categories_shown.find(category) == m_categories_shown.end()) {
         m_categories_shown.insert(category);
-        Layout(false);
+        Layout(true);
     }
 }
 
@@ -1770,7 +1721,7 @@ void TechTreeWnd::LayoutPanel::HideCategory(const std::string& category)
     std::set<std::string>::iterator it = m_categories_shown.find(category);
     if (it != m_categories_shown.end()) {
         m_categories_shown.erase(it);
-        Layout(false);
+        Layout(true);
     }
 }
 
@@ -1795,21 +1746,13 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const Tech* tech)
 void TechTreeWnd::LayoutPanel::SetTechTypesShown(std::set<TechType> tech_types)
 {
     m_tech_types_shown = tech_types;
-    Layout(false);
+    Layout(true);
 }
 
 void TechTreeWnd::LayoutPanel::SetTechStatusesShown(std::set<TechStatus> tech_statuses)
 {
     m_tech_statuses_shown = tech_statuses;
-    Layout(false);
-}
-
-void TechTreeWnd::LayoutPanel::UncollapseAll()
-{
-    /*if (!m_collapsed_subtree_techs_per_view["ALL"].empty()) {
-        m_collapsed_subtree_techs_per_view.clear();
-        Layout(false);
-    }*/
+    Layout(true);
 }
 
 void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -1.0*/)
@@ -1881,13 +1824,13 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     gvLayout(gvc, graph, "dot");
 
     // create new tech panels and new dependency arcs
-    const int TECH_PANEL_MARGIN = static_cast<int>(10 * m_scale);
+    const int TECH_PANEL_MARGIN = ClientUI::Pts()*16;
     m_dependency_arcs.clear();
     //const std::set<const Tech*>& collapsed_subtree_techs = m_collapsed_subtree_techs_per_view[m_category_shown];
     for (Agnode_t* node = agfstnode(graph); node; node = agnxtnode(graph, node)) {
         const Tech* tech = GetTech(node->name);
         assert(tech);
-        m_techs[tech] = new TechPanel(tech, tech == m_selected_tech, false /*collapsed_subtree_techs.find(tech) != collapsed_subtree_techs.end()*/, m_categories_shown, m_tech_types_shown, m_tech_statuses_shown, m_scale);
+        m_techs[tech] = new TechPanel(tech, tech == m_selected_tech, m_categories_shown, m_tech_types_shown, m_tech_statuses_shown, m_scale);
         m_techs[tech]->MoveTo(GG::Pt(static_cast<int>(PS2INCH(ND_coord_i(node).x) - m_techs[tech]->Width() / 2 + TECH_PANEL_MARGIN),
                                      static_cast<int>(PS2INCH(ND_coord_i(node).y) - (m_techs[tech]->Height() - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) / 2 + TECH_PANEL_MARGIN)));
         m_layout_surface->AttachChild(m_techs[tech]);
@@ -1909,20 +1852,16 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
                 }
                 points.push_back(Spline(temp));
             }
-            TechStatus arc_type = TS_UNRESEARCHABLE;
 #ifndef FREEORION_BUILD_UTIL
             const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-            if (empire->TechResearched(to->Name())) {
-                arc_type = TS_COMPLETE;
-            } else if (empire->ResearchableTech(to->Name())) {
-                arc_type = TS_RESEARCHABLE;
-            }
+            
+            TechStatus arc_type = empire->TechStatus(to->Name());
 #else
             // these values are arbitrary; they're only useful for displaying techs in the tech-view utility app
             if (to->Type() == TT_THEORY) {
-                arc_type = KNOWN;
+                arc_type = TS_COMPLETE;
             } else if (to->Type() == TT_APPLICATION) {
-                arc_type = RESEARCHABLE;
+                arc_type = TS_RESEARCHABLE;
             }
 #endif
             m_dependency_arcs[arc_type].insert(std::make_pair(from, std::make_pair(to, points)));
@@ -1968,32 +1907,7 @@ bool TechTreeWnd::LayoutPanel::TechVisible(const Tech* tech)
     if (m_tech_statuses_shown.find(empire->TechStatus(tech->Name())) == m_tech_statuses_shown.end())
         return false;
 
-    /*std::set<std::string> category_prereqs;
-    const std::set<std::string> prereqs = tech->Prerequisites();
-    for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
-        const Tech* prereq = GetTech(*it);
-        if (m_category_shown == "ALL" || prereq->Category() == m_category_shown)
-            category_prereqs.insert(*it);
-    }
-    if (category_prereqs.size() == 1) {
-        const std::set<const Tech*>& collapsed_subtree_techs = m_collapsed_subtree_techs_per_view[m_category_shown];
-        const Tech* prereq = GetTech(*category_prereqs.begin());
-        if (collapsed_subtree_techs.find(prereq) != collapsed_subtree_techs.end())
-            return false;
-    }*/
     return true;
-}
-
-void TechTreeWnd::LayoutPanel::CollapseTechSubtree(const Tech* tech, bool collapse)
-{
-    /*if (collapse) {
-        m_collapsed_subtree_techs_per_view["ALL"].insert(tech);
-        m_collapsed_subtree_techs_per_view[tech->Category()].insert(tech);
-    } else {
-        m_collapsed_subtree_techs_per_view["ALL"].erase(tech);
-        m_collapsed_subtree_techs_per_view[tech->Category()].erase(tech);
-    }
-    Layout(true);*/
 }
 
 void TechTreeWnd::LayoutPanel::DrawArc(DependencyArcsMap::const_iterator it, GG::Clr color, bool with_arrow_head)
@@ -2062,7 +1976,6 @@ void TechTreeWnd::LayoutPanel::TreeDraggedSlot(const GG::Pt& move)
 
 void TechTreeWnd::LayoutPanel::TreeZoomedSlot(int move)
 {
-    const double ZOOM_STEP_SIZE = 1.25;
     if (0 < move)
         SetScale(m_scale * ZOOM_STEP_SIZE);
     else if (move < 0)
@@ -2317,12 +2230,6 @@ void TechTreeWnd::ToggleType(const TechType type)
 void TechTreeWnd::SetScale(double scale)
 {
     m_layout_panel->SetScale(scale);
-}
-
-
-void TechTreeWnd::UncollapseAll()
-{
-    m_layout_panel->UncollapseAll();
 }
 
 void TechTreeWnd::CenterOnTech(const Tech* tech)
