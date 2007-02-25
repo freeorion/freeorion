@@ -208,7 +208,7 @@ namespace {
 // ResearchWnd                                  //
 //////////////////////////////////////////////////
 ResearchWnd::ResearchWnd(int w, int h) :
-    CUIWnd(UserString("RESEARCH_WND_TITLE"), 0, 0, w, h, GG::CLICKABLE | GG::ONTOP),
+    GG::Wnd(0, 0, w, h, GG::CLICKABLE | GG::ONTOP | ~GG::RESIZABLE),
     m_research_info_panel(0),
     m_queue_lb(0),
     m_tech_tree_wnd(0)
@@ -229,16 +229,8 @@ ResearchWnd::ResearchWnd(int w, int h) :
     AttachChild(m_research_info_panel);
     AttachChild(m_queue_lb);
     AttachChild(m_tech_tree_wnd);
-}
 
-GG::Pt ResearchWnd::ClientUpperLeft() const
-{
-    return UpperLeft() + GG::Pt(LeftBorder(), TopBorder());
-}
-
-GG::Pt ResearchWnd::ClientLowerRight() const
-{
-    return LowerRight() - GG::Pt(RightBorder(), BottomBorder());
+    EnableChildClipping(true);
 }
 
 void ResearchWnd::Reset()
@@ -264,6 +256,32 @@ void ResearchWnd::QueueItemMoved(int row_idx, GG::ListBox::Row* row)
 void ResearchWnd::Sanitize()
 {
     m_tech_tree_wnd->Clear();
+}
+
+void ResearchWnd::Render()
+{
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+
+    // use GL to draw the lines
+    glDisable(GL_TEXTURE_2D);
+    GLint initial_modes[2];
+    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
+
+    // draw background
+    glPolygonMode(GL_BACK, GL_FILL);
+    glBegin(GL_POLYGON);
+        glColor(ClientUI::WndColor());
+        glVertex2i(ul.x, ul.y);
+        glVertex2i(lr.x, ul.y);
+        glVertex2i(lr.x, lr.y);
+        glVertex2i(ul.x, lr.y);
+        glVertex2i(ul.x, ul.y);
+    glEnd();
+
+    // reset this to whatever it was initially
+    glPolygonMode(GL_BACK, initial_modes[1]);
+    glEnable(GL_TEXTURE_2D);
 }
 
 void ResearchWnd::UpdateQueue()

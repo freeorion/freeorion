@@ -12,7 +12,7 @@ class TechTreeWnd;
 class ProductionInfoPanel;
 
 /** Contains a TechTreeWnd, some stats on the empire-wide research queue, and the queue itself. */
-class ResearchWnd : public CUIWnd
+class ResearchWnd : public GG::Wnd
 {
 public:
     /** \name Structors */ //@{
@@ -20,13 +20,12 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual GG::Pt ClientUpperLeft() const;
-    virtual GG::Pt ClientLowerRight() const;
-
     void Reset();
     void CenterOnTech(const std::string& tech_name);
     void QueueItemMoved(int row_idx, GG::ListBox::Row* row);
     void Sanitize();
+
+    void Render();
     //@}
 
 private:

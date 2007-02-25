@@ -24,9 +24,10 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool   InWindow(const GG::Pt& pt) const;
-    virtual bool   InClient(const GG::Pt& pt) const;
-    virtual void   Render();
+    bool InWindow(const GG::Pt& pt) const;
+    bool InClient(const GG::Pt& pt) const;
+
+    void Render();
 
     void Reset();
     void CenterOnBuild(int queue_idx);
