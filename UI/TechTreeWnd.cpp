@@ -1757,6 +1757,8 @@ void TechTreeWnd::LayoutPanel::SetTechStatusesShown(std::set<TechStatus> tech_st
 
 void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -1.0*/)
 {
+    const int TECH_PANEL_MARGIN = ClientUI::Pts()*16;
+
     if (old_scale < 0.0)
         old_scale = m_scale;
     GG::Pt final_position;
@@ -1766,8 +1768,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         } else {
             GG::Pt cl_sz = ClientSize();
             GG::Pt center = m_scroll_position + GG::Pt(cl_sz.x / 2, cl_sz.y / 2);
-            center.x = static_cast<int>(center.x * m_scale / old_scale + 0.5);
-            center.y = static_cast<int>(center.y * m_scale / old_scale + 0.5);
+            center.x = static_cast<int>((center.x - TECH_PANEL_MARGIN) * m_scale / old_scale + 0.5 + TECH_PANEL_MARGIN);
+            center.y = static_cast<int>((center.y - TECH_PANEL_MARGIN) * m_scale / old_scale + 0.5 + TECH_PANEL_MARGIN);
             final_position = GG::Pt(center.x - cl_sz.x / 2, center.y - cl_sz.y / 2);
         }
     }
@@ -1824,7 +1826,6 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     gvLayout(gvc, graph, "dot");
 
     // create new tech panels and new dependency arcs
-    const int TECH_PANEL_MARGIN = ClientUI::Pts()*16;
     m_dependency_arcs.clear();
     //const std::set<const Tech*>& collapsed_subtree_techs = m_collapsed_subtree_techs_per_view[m_category_shown];
     for (Agnode_t* node = agfstnode(graph); node; node = agnxtnode(graph, node)) {
@@ -1837,7 +1838,6 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         GG::Connect(m_techs[tech]->TechBrowsedSignal, &TechTreeWnd::LayoutPanel::TechBrowsedSlot, this);
         GG::Connect(m_techs[tech]->TechClickedSignal, &TechTreeWnd::LayoutPanel::TechClickedSlot, this);
         GG::Connect(m_techs[tech]->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot, this);
-        //GG::Connect(m_techs[tech]->CollapseSubtreeSignal(), CollapseSubtreeFunctor(this, tech));
 
         for (Agedge_t* edge = agfstout(graph, node); edge; edge = agnxtout(graph, edge)) {
             const Tech* from = tech;
