@@ -631,7 +631,7 @@ bool Empire::TechResearched(const std::string& name) const
     return item != m_techs.end();
 }
 
-TechStatus Empire::TechStatus(const std::string& name) const
+TechStatus Empire::GetTechStatus(const std::string& name) const
 {
     if (TechResearched(name)) return TS_COMPLETE;
     if (ResearchableTech(name)) return TS_RESEARCHABLE;

@@ -9,7 +9,6 @@ class Tech;
 enum TechType;
 enum TechStatus;
 
-namespace GG {class RadioButtonGroup;}
 
 /** Contains the tech graph layout, some controls to control what is visible in the tech layout, the tech navigator, and the tech detail window. */
 class TechTreeWnd : public GG::Wnd

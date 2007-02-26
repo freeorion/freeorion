@@ -2,6 +2,7 @@
 
 #include "CUIControls.h"
 
+#include "ClientUI.h"
 #include "CUIDrawUtil.h"
 #include "CUISpin.h"
 #include "../client/human/HumanClientApp.h"
@@ -213,6 +214,32 @@ void CUIButton::RenderUnpressed()
     GG::Pt lr = LowerRight();
     AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
     TextControl::Render();
+}
+
+void CUIButton::MarkNotSelected()
+{
+    SetColor(ClientUI::ButtonColor());
+    SetBorderColor(ClientUI::CtrlBorderColor());
+    SetBorderThick(1);
+}
+
+void CUIButton::MarkSelectedGray()
+{
+    GG::Clr colour = ClientUI::CtrlBorderColor();
+    AdjustBrightness(colour, 120);
+    colour = ClientUI::CtrlColor();
+    AdjustBrightness(colour, 50);
+    SetColor(colour);
+    SetBorderThick(2);
+}
+
+void CUIButton::MarkSelectedTechCategoryColor(std::string category)
+{
+    GG::Clr cat_colour = ClientUI::CategoryColor(category);
+    SetBorderColor(cat_colour);
+    AdjustBrightness(cat_colour, -50);
+    SetColor(cat_colour);        
+    SetBorderThick(2);
 }
 
 

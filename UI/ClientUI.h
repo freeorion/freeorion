@@ -194,6 +194,8 @@ public:
     static GG::Clr     TechWndProgressBarBackground();
     static GG::Clr     TechWndProgressBar();
 
+    static GG::Clr     CategoryColor(const std::string& category_name);
+
     static std::map<StarType, std::string>& StarTypeFilePrefixes();
     static std::map<StarType, std::string>& HaloStarTypeFilePrefixes();
     //!@}

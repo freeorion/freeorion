@@ -290,7 +290,7 @@ public:
     bool TechResearched(const std::string& name) const;
 
     /// Returns the status (researchable, researched, unresearchable) for this tech for this
-    TechStatus TechStatus(const std::string& name) const;
+    TechStatus GetTechStatus(const std::string& name) const;
 
     /// Returns the set of all available building types.
     const std::set<std::string>& AvailableBuildingTypes() const;

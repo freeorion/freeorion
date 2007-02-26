@@ -208,7 +208,7 @@ namespace {
 // ResearchWnd                                  //
 //////////////////////////////////////////////////
 ResearchWnd::ResearchWnd(int w, int h) :
-    GG::Wnd(0, 0, w, h, GG::CLICKABLE | GG::ONTOP | ~GG::RESIZABLE),
+    GG::Wnd(0, 0, w, h, GG::ONTOP),
     m_research_info_panel(0),
     m_queue_lb(0),
     m_tech_tree_wnd(0)

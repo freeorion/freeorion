@@ -47,6 +47,10 @@ public:
 
     void SetBorderColor(GG::Clr clr);   ///< sets the color used to render the border of the button
     void SetBorderThick(int thick);     ///< sets the thickness of the rendered the border of the button
+
+    void MarkNotSelected();             ///< sets button colours to standard UI colours
+    void MarkSelectedGray();            ///< sets button colours to lighter grey background and border to indicate selection or activation
+    void MarkSelectedTechCategoryColor(std::string category);   ///< sets button background and border colours to variants of the colour of the tech category specified
     //@}
 
 protected:

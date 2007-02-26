@@ -11,6 +11,7 @@
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
+#include "../universe/Tech.h"
 #include "TurnProgressWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
@@ -97,6 +98,17 @@ GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptions
 GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<StreamableColor>("UI.unresearchable-tech-border").ToClr(); }
 GG::Clr     ClientUI::TechWndProgressBarBackground()         { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress-background").ToClr(); }
 GG::Clr     ClientUI::TechWndProgressBar()                   { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress").ToClr(); }
+
+GG::Clr     ClientUI::CategoryColor(const std::string& category_name)
+{
+    const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
+    std::vector<std::string>::const_iterator it = std::find(tech_categories.begin(), tech_categories.end(), category_name);
+    if (it != tech_categories.end()) {
+        int category_index = std::distance(tech_categories.begin(), it) + 1;
+        return GetOptionsDB().Get<StreamableColor>("UI.tech-category-" + boost::lexical_cast<std::string>(category_index)).ToClr();
+    }
+    return GG::Clr();
+}
 
 std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes()
 {
