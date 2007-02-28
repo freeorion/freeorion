@@ -23,6 +23,7 @@
 #include <boost/format.hpp>
 #include <algorithm>
 
+
 namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
@@ -453,11 +454,12 @@ TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
 void TechTreeWnd::TechTreeControls::DoButtonLayout()
 {
     const unsigned int RIGHT_EDGE_PAD = 12;
-    const unsigned int USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, unsigned int(1));   // space in which to do layout
+    const unsigned int ONE = 1; // unless I use this, I ge complaints from std::max that the type is ambiguous, and "unsigned int(1)" is apparently rejected by gcc
+    const unsigned int USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, ONE);   // space in which to do layout
     const unsigned int PTS = ClientUI::Pts();
     const unsigned int PTS_WIDE = PTS/2;  // how wide per character the font needs... not sure how better to get this
     const unsigned int MIN_BUTTON_WIDTH = PTS_WIDE*18;    // rough guesstimate...
-    const unsigned int MAX_BUTTONS_PER_ROW = std::max(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION), unsigned int(1));
+    const unsigned int MAX_BUTTONS_PER_ROW = std::max(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION), ONE);
 
     const float NUM_CATEGORY_BUTTONS = static_cast<float>(m_category_buttons.size());
     const unsigned int ROWS = static_cast<unsigned int>(std::ceil(NUM_CATEGORY_BUTTONS / MAX_BUTTONS_PER_ROW));
@@ -1456,7 +1458,7 @@ void TechTreeWnd::LayoutPanel::Render()
         switch (it->first) {
         case TS_COMPLETE:       arc_color = known_half_alpha; break;
         case TS_RESEARCHABLE:   arc_color = researchable_half_alpha; break;
-        case TS_UNRESEARCHABLE: arc_color = unresearchable_half_alpha; break;
+        default:                arc_color = unresearchable_half_alpha; break;
         }
         glColor(arc_color);
         for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
@@ -1478,7 +1480,7 @@ void TechTreeWnd::LayoutPanel::Render()
         switch (it->first) {
         case TS_COMPLETE:       arc_color = known_half_alpha_selected; break;
         case TS_RESEARCHABLE:   arc_color = researchable_half_alpha_selected; break;
-        case TS_UNRESEARCHABLE: arc_color = unresearchable_half_alpha_selected; break;
+        default:                arc_color = unresearchable_half_alpha_selected; break;
         }
         glColor(arc_color);
         for (unsigned int i = 0; i < it->second.size(); ++i) {
@@ -1494,7 +1496,7 @@ void TechTreeWnd::LayoutPanel::Render()
         switch (it->first) {
         case TS_COMPLETE:       arc_color = ClientUI::KnownTechTextAndBorderColor(); break;
         case TS_RESEARCHABLE:   arc_color = ClientUI::ResearchableTechTextAndBorderColor(); break;
-        case TS_UNRESEARCHABLE: arc_color = ClientUI::UnresearchableTechTextAndBorderColor(); break;
+        default:                arc_color = ClientUI::UnresearchableTechTextAndBorderColor(); break;
         }
         glColor(arc_color);
         for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
@@ -1516,7 +1518,7 @@ void TechTreeWnd::LayoutPanel::Render()
         switch (it->first) {
         case TS_COMPLETE:       arc_color = known_selected; break;
         case TS_RESEARCHABLE:   arc_color = researchable_selected; break;
-        case TS_UNRESEARCHABLE: arc_color = unresearchable_selected; break;
+        default:                arc_color = unresearchable_selected; break;
         }
         glColor(arc_color);
         for (unsigned int i = 0; i < it->second.size(); ++i) {
@@ -1764,7 +1766,6 @@ bool TechTreeWnd::LayoutPanel::TechVisible(const Tech* tech)
         return false;
 
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    TechStatus status = empire->GetTechStatus(tech->Name());
     if (m_tech_statuses_shown.find(empire->GetTechStatus(tech->Name())) == m_tech_statuses_shown.end())
         return false;
 
@@ -2113,5 +2114,19 @@ void TechTreeWnd::TechClickedSlot(const Tech* tech)
 
 void TechTreeWnd::TechDoubleClickedSlot(const Tech* tech)
 {
-    AddTechToQueueSignal(tech);
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+
+    // if tech can be researched already, just add it
+    if (empire->ResearchableTech(tech->Name())) {
+        AddTechToQueueSignal(tech);
+        return;
+    }
+
+    // if tech can't yet be researched, add any prerequisites it requires (recursively) and then add it
+    if (empire->GetTechStatus(tech->Name()) == TS_UNRESEARCHABLE) {
+        AddTechToQueueSignal(tech);
+        //std::deque<std::s
+    }
+
+    // if tech has already been researched (not caught by above checks), then do nothing
 }

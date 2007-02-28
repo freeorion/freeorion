@@ -64,7 +64,7 @@ struct ResearchQueue
         determines the number of projects in prgress, and the total number of RPs spent on the projects
         in the queue.  \note A precondition of this function that \a RPs must be greater than some
         epsilon > 0; see the implementation for the actual value used for epsilon. */
-    void Update(double RPs, const std::map<std::string, double>& research_status);
+    void Update(Empire* empire, double RPs, const std::map<std::string, double>& research_progress);
 
     // STL container-like interface
     void push_back(const Tech* tech);
@@ -523,13 +523,13 @@ private:
     ResearchQueue m_research_queue;
 
     /// progress of partially-researched techs; fully researched techs are removed
-    std::map<std::string, double> m_research_status;
+    std::map<std::string, double> m_research_progress;
 
     /// the queue of items being or waiting to be built
     ProductionQueue m_production_queue;
 
     /// progress of partially-completed builds; completed items are removed
-    std::vector<double> m_production_status;
+    std::vector<double> m_production_progress;
 
     /// list of acquired BuildingType.  These are string names referencing BuildingType objects
     std::set<std::string> m_building_types;
@@ -637,9 +637,9 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & BOOST_SERIALIZATION_NVP(m_homeworld_id)
             & BOOST_SERIALIZATION_NVP(m_techs)
             & BOOST_SERIALIZATION_NVP(m_research_queue)
-            & BOOST_SERIALIZATION_NVP(m_research_status)
+            & BOOST_SERIALIZATION_NVP(m_research_progress)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
-            & BOOST_SERIALIZATION_NVP(m_production_status)
+            & BOOST_SERIALIZATION_NVP(m_production_progress)
             & BOOST_SERIALIZATION_NVP(m_building_types)
             & BOOST_SERIALIZATION_NVP(m_explored_systems)
             & BOOST_SERIALIZATION_NVP(m_ship_designs)

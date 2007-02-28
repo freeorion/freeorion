@@ -2,13 +2,10 @@
 #ifndef _TechTreeWnd_h_
 #define _TechTreeWnd_h_
 
-#include "CUIWnd.h"
+#include <GG/Wnd.h>
+#include "../universe/Enums.h"
 
-class CUIScroll;
 class Tech;
-enum TechType;
-enum TechStatus;
-
 
 /** Contains the tech graph layout, some controls to control what is visible in the tech layout, the tech navigator, and the tech detail window. */
 class TechTreeWnd : public GG::Wnd

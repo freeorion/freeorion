@@ -26,25 +26,44 @@ using boost::lexical_cast;
 namespace {
     const double EPSILON = 1.0e-5;
 
-    void SetTechQueueElementSpending(double RPs, const std::map<std::string, double>& research_status, ResearchQueue::QueueType& queue, double& total_RPs_spent, int& projects_in_progress)
+    // sets the .spending, value for each Tech in the queue.  Only sets nonzero funding to
+    // a Tech if it is researchable this turn.  Also determines total number of spent RP
+    // (returning by reference in total_RPs_spent)
+    void SetTechQueueElementSpending(double RPs, const std::map<std::string, double>& research_progress, const std::map<std::string, TechStatus>& research_status, ResearchQueue::QueueType& queue, double& total_RPs_spent, int& projects_in_progress)
     {
         total_RPs_spent = 0.0;
         projects_in_progress = 0;
-        for (ResearchQueue::iterator it = queue.begin(); it != queue.end(); ++it) {
+        int i = 0;
+
+        for (ResearchQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
+            // get details on what is being researched...
             const Tech* tech = it->tech;
-            std::map<std::string, double>::const_iterator progress_it = research_status.find(tech->Name());
-            double progress = progress_it == research_status.end() ? 0.0 : progress_it->second;
-            double RPs_needed = tech->ResearchCost() * tech->ResearchTurns() - progress;
-            double RPs_to_spend = std::min(RPs_needed, tech->ResearchCost());
-            if (total_RPs_spent + RPs_to_spend <= RPs - EPSILON) {
-                it->spending = RPs_to_spend;
-                total_RPs_spent += it->spending;
-                ++projects_in_progress;
-            } else if (total_RPs_spent < RPs - EPSILON) {
-                it->spending = RPs - total_RPs_spent;
-                total_RPs_spent += it->spending;
-                ++projects_in_progress;
+            const std::string name = tech->Name();
+            std::map<std::string, TechStatus>::const_iterator status_it = research_status.find(name);
+            if (status_it == research_status.end()) 
+                throw std::exception("SetTechQueueElementSpending couldn't find tech!");
+            bool researchable = false;
+            if (status_it->second == TS_RESEARCHABLE) researchable = true;
+                        
+            if (researchable) {
+                std::map<std::string, double>::const_iterator progress_it = research_progress.find(name);
+                double progress = progress_it == research_progress.end() ? 0.0 : progress_it->second;
+                double RPs_needed = tech->ResearchCost() * tech->ResearchTurns() - progress;
+                double RPs_to_spend = std::min(RPs_needed, tech->ResearchCost());
+
+                if (total_RPs_spent + RPs_to_spend <= RPs - EPSILON) {
+                    it->spending = RPs_to_spend;
+                    total_RPs_spent += it->spending;
+                    ++projects_in_progress;
+                } else if (total_RPs_spent < RPs - EPSILON) {
+                    it->spending = RPs - total_RPs_spent;
+                    total_RPs_spent += it->spending;
+                    ++projects_in_progress;
+                } else {
+                    it->spending = 0.0;
+                }
             } else {
+                // item can't be researched this turn
                 it->spending = 0.0;
             }
         }
@@ -68,7 +87,6 @@ namespace {
             bool buildable = empire->BuildableItem(build_type, name, location);
                         
             if (buildable) {
-                //Logger().debugStream() << "SetProdQueueElementSpending: ..Item is buildable";
                 double item_cost;
                 int build_turns;
                 boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(build_type, name);
@@ -86,11 +104,9 @@ namespace {
                 } else {
                     it->spending = 0.0;
                 }
-                //Logger().debugStream() << "SetProdQueueElementSpending: ....spending: " << it->spending;
             } else {
                 // item can't be produced at its location this turn
                 it->spending = 0.0;
-                //Logger().debugStream() << "SetProdQueueElementSpending: ..Item is not buildable.";
             }
         }
     }
@@ -174,9 +190,17 @@ ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
     return end();
 }
 
-void ResearchQueue::Update(double RPs, const std::map<std::string, double>& research_status)
+void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::string, double>& research_progress)
 {
-    SetTechQueueElementSpending(RPs, research_status, m_queue, m_total_RPs_spent, m_projects_in_progress);
+    // status of all techs for this empire
+    TechManager& tech_manager = GetTechManager();
+    std::map<std::string, TechStatus> sim_tech_status_map;
+    for (TechManager::iterator tech_it = tech_manager.begin(); tech_it != tech_manager.end(); ++tech_it) {
+        std::string tech_name = (*tech_it)->Name();
+        sim_tech_status_map[tech_name] = empire->GetTechStatus(tech_name);
+    }
+
+    SetTechQueueElementSpending(RPs, research_progress, sim_tech_status_map, m_queue, m_total_RPs_spent, m_projects_in_progress);
 
     if (m_queue.empty()) return;    // nothing more to do...
     const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
@@ -185,7 +209,7 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
         // simulate future turns in order to determine when the techs in the queue will be finished
         int turns = 1;
         QueueType sim_queue = m_queue;
-        std::map<std::string, double> sim_research_status = research_status;
+        std::map<std::string, double> sim_research_progress = research_progress;
 
         std::map<const Tech*, int> simulation_results;
         // initialize simulation_results with -1 for all techs, so that any techs that aren't
@@ -196,15 +220,40 @@ void ResearchQueue::Update(double RPs, const std::map<std::string, double>& rese
         while (!sim_queue.empty() && turns < TOO_MANY_TURNS) {
             double total_RPs_spent = 0.0;
             int projects_in_progress = 0;
-            SetTechQueueElementSpending(RPs, sim_research_status, sim_queue, total_RPs_spent, projects_in_progress);
+            SetTechQueueElementSpending(RPs, sim_research_progress, sim_tech_status_map, sim_queue, total_RPs_spent, projects_in_progress);
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
                 const Tech* tech = sim_queue[i].tech;
-                double& status = sim_research_status[tech->Name()];
+                double& status = sim_research_progress[tech->Name()];
                 status += sim_queue[i].spending;
                 if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= status) {
                     m_queue[i].turns_left = simulation_results[m_queue[i].tech];
                     simulation_results[tech] = turns;
                     sim_queue.erase(sim_queue.begin() + i--);
+                    sim_tech_status_map[tech->Name()] = TS_COMPLETE;
+                }
+            }
+
+            // update simulated status of techs: some may be not researchable that were previously not.
+            // only need to check techs that are actually on the queue, as these are the only ones
+            // that might now be researched
+            for (unsigned int i = 0; i < sim_queue.size(); ++i) {
+                const Tech* tech = sim_queue[i].tech;
+                const std::string tech_name = tech->Name();
+                // if tech is currently not researchable, this is because one or more of its prereqs is not researched
+                if (sim_tech_status_map[tech_name] == TS_UNRESEARCHABLE) {
+                    const std::set<std::string>& prereqs = tech->Prerequisites();
+                    // find if any prereqs are presently not researched.  if all prereqs are researched, this tech should be researchable
+                    bool has_not_complete_prereq = false;
+                    for (std::set<std::string>::const_iterator it = prereqs.begin(); it != prereqs.end(); ++it) {
+                        if (sim_tech_status_map[*it] != TS_COMPLETE) {
+                            has_not_complete_prereq = true;
+                            break;
+                        }
+                    }
+                    if (!has_not_complete_prereq) {
+                        // all prereqs were complete!  this tech is researchable!
+                        sim_tech_status_map[tech_name] = TS_RESEARCHABLE;
+                    }
                 }
             }
             ++turns;
@@ -616,8 +665,8 @@ const ResearchQueue& Empire::GetResearchQueue() const
 
 double Empire::ResearchStatus(const std::string& name) const
 {
-    std::map<std::string, double>::const_iterator it = m_research_status.find(name);
-    return (it == m_research_status.end()) ? -1.0 : it->second;
+    std::map<std::string, double>::const_iterator it = m_research_progress.find(name);
+    return (it == m_research_progress.end()) ? -1.0 : it->second;
 }
 
 const std::set<std::string>& Empire::AvailableTechs() const
@@ -656,7 +705,7 @@ const ProductionQueue& Empire::GetProductionQueue() const
 
 double Empire::ProductionStatus(int i) const
 {
-    return (0 <= i && i < static_cast<int>(m_production_status.size())) ? m_production_status[i] : -1.0;
+    return (0 <= i && i < static_cast<int>(m_production_progress.size())) ? m_production_progress[i] : -1.0;
 }
 
 std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, std::string name) const
@@ -769,7 +818,7 @@ double Empire::ProductionPoints() const
 
 void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
 {
-    if (!ResearchableTech(tech->Name()) || m_techs.find(tech->Name()) != m_techs.end())
+    if (TechResearched(tech->Name()) || m_techs.find(tech->Name()) != m_techs.end())
         return;
     ResearchQueue::iterator it = m_research_queue.find(tech);
     if (pos < 0 || static_cast<int>(m_research_queue.size()) <= pos) {
@@ -783,7 +832,7 @@ void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
             m_research_queue.erase(it);
         m_research_queue.insert(m_research_queue.begin() + pos, tech);
     }
-    m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
+    m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
 }
 
 void Empire::RemoveTechFromQueue(const Tech* tech)
@@ -791,7 +840,7 @@ void Empire::RemoveTechFromQueue(const Tech* tech)
     ResearchQueue::iterator it = m_research_queue.find(tech);
     if (it != m_research_queue.end()) {
         m_research_queue.erase(it);
-        m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
+        m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
     }
 }
 
@@ -803,12 +852,12 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
     ProductionQueue::Element build(build_type, name, number, number, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos) {
         m_production_queue.push_back(build);
-        m_production_status.push_back(0.0);
+        m_production_progress.push_back(0.0);
     } else {
         m_production_queue.insert(m_production_queue.begin() + pos, build);
-        m_production_status.insert(m_production_status.begin() + pos, 0.0);
+        m_production_progress.insert(m_production_progress.begin() + pos, 0.0);
     }
-    m_production_queue.Update(this, ProductionPoints(), m_production_status);
+    m_production_queue.Update(this, ProductionPoints(), m_production_progress);
 }
 
 void Empire::SetBuildQuantity(int index, int quantity)
@@ -822,7 +871,7 @@ void Empire::SetBuildQuantity(int index, int quantity)
     int original_quantity = m_production_queue[index].remaining;
     m_production_queue[index].remaining = quantity;
     m_production_queue[index].ordered += quantity - original_quantity;
-    m_production_queue.Update(this, ProductionPoints(), m_production_status);
+    m_production_queue.Update(this, ProductionPoints(), m_production_progress);
 }
 
 void Empire::MoveBuildWithinQueue(int index, int new_index)
@@ -833,12 +882,12 @@ void Empire::MoveBuildWithinQueue(int index, int new_index)
         new_index < 0 || static_cast<int>(m_production_queue.size()) <= new_index)
         throw std::runtime_error("Empire::MoveBuildWithinQueue() : Attempted to move a production queue item to or from an invalid index.");
     ProductionQueue::Element build = m_production_queue[index];
-    double status = m_production_status[index];
+    double status = m_production_progress[index];
     m_production_queue.erase(index);
-    m_production_status.erase(m_production_status.begin() + index);
+    m_production_progress.erase(m_production_progress.begin() + index);
     m_production_queue.insert(m_production_queue.begin() + new_index, build);
-    m_production_status.insert(m_production_status.begin() + new_index, status);
-    m_production_queue.Update(this, ProductionPoints(), m_production_status);
+    m_production_progress.insert(m_production_progress.begin() + new_index, status);
+    m_production_queue.Update(this, ProductionPoints(), m_production_progress);
 }
 
 void Empire::RemoveBuildFromQueue(int index)
@@ -846,8 +895,8 @@ void Empire::RemoveBuildFromQueue(int index)
     if (index < 0 || static_cast<int>(m_production_queue.size()) <= index)
         throw std::runtime_error("Empire::RemoveBuildFromQueue() : Attempted to delete a production queue item with an invalid index.");
     m_production_queue.erase(index);
-    m_production_status.erase(m_production_status.begin() + index);
-    m_production_queue.Update(this, ProductionPoints(), m_production_status);
+    m_production_progress.erase(m_production_progress.begin() + index);
+    m_production_queue.Update(this, ProductionPoints(), m_production_progress);
 }
 
 void Empire::ConquerBuildsAtLocation(int location_id) {
@@ -865,7 +914,7 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
 
         Empire* from_empire = emp_it->second;
         ProductionQueue& queue = from_empire->m_production_queue;
-        std::vector<double>& status = from_empire->m_production_status;
+        std::vector<double>& status = from_empire->m_production_progress;
 
         int i = 0;
         for (ProductionQueue::iterator queue_it = queue.begin(); queue_it != queue.end(); ) {
@@ -895,7 +944,7 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
                     ProductionQueue::Element build(item, elem.ordered, elem.remaining, location_id);
                     m_production_queue.push_back(build);
 
-                    m_production_status.push_back(status[i]);
+                    m_production_progress.push_back(status[i]);
 
                     queue_it = queue.erase(queue_it);
                     status.erase(status.begin() + i);
@@ -981,13 +1030,13 @@ void Empire::ClearSitRep()
 void Empire::CheckResearchProgress()
 {
     // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
-    // m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
+    // m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
     std::vector<const Tech*> to_erase;
     for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ++it) {
         const Tech* tech = it->tech;
-        double& status = m_research_status[tech->Name()];
-        status += it->spending;
-        if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= status) {
+        double& progress = m_research_progress[tech->Name()];
+        progress += it->spending;
+        if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= progress) {
             m_techs.insert(tech->Name());
             const std::vector<ItemSpec>& unlocked_items = tech->UnlockedItems();
             for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
@@ -995,7 +1044,7 @@ void Empire::CheckResearchProgress()
             }
             AddSitRepEntry(CreateTechResearchedSitRep(tech->Name()));
             // TODO: create unlocked item sitreps?
-            m_research_status.erase(tech->Name());
+            m_research_progress.erase(tech->Name());
             to_erase.push_back(tech);
         }
     }
@@ -1012,16 +1061,16 @@ void Empire::CheckResearchProgress()
 void Empire::CheckProductionProgress()
 {
     // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
-    // m_production_queue.Update(this, ProductionPoints(), m_production_status);
+    // m_production_queue.Update(this, ProductionPoints(), m_production_progress);
     std::vector<int> to_erase;
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
         double item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = ProductionCostAndTime(m_production_queue[i].item.build_type, m_production_queue[i].item.name);
-        double& status = m_production_status[i];
+        double& status = m_production_progress[i];
         status += m_production_queue[i].spending;
         if (item_cost * build_turns - EPSILON <= status) {
-            m_production_status[i] -= item_cost * build_turns;
+            m_production_progress[i] -= item_cost * build_turns;
             switch (m_production_queue[i].item.build_type) {
             case BT_BUILDING: {
                 Universe& universe = GetUniverse();
@@ -1090,7 +1139,7 @@ void Empire::CheckProductionProgress()
     }
 
     for (std::vector<int>::reverse_iterator it = to_erase.rbegin(); it != to_erase.rend(); ++it) {
-        m_production_status.erase(m_production_status.begin() + *it);
+        m_production_progress.erase(m_production_progress.begin() + *it);
         m_production_queue.erase(*it);
     }
 
@@ -1156,7 +1205,7 @@ void Empire::UpdateResourcePool()
 void Empire::UpdateResearchQueue()
 {
     m_research_resource_pool.Update();
-    m_research_queue.Update(m_research_resource_pool.Available(), m_research_status);
+    m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
     m_research_resource_pool.ChangedSignal();
 }
 
@@ -1164,7 +1213,7 @@ void Empire::UpdateProductionQueue()
 {
     m_mineral_resource_pool.Update();
     m_industry_resource_pool.Update();
-    m_production_queue.Update(this, ProductionPoints(), m_production_status);
+    m_production_queue.Update(this, ProductionPoints(), m_production_progress);
     m_mineral_resource_pool.ChangedSignal();
     m_industry_resource_pool.ChangedSignal();
 }
