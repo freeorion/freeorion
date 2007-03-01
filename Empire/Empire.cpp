@@ -41,7 +41,7 @@ namespace {
             const std::string name = tech->Name();
             std::map<std::string, TechStatus>::const_iterator status_it = research_status.find(name);
             if (status_it == research_status.end()) 
-                throw std::exception("SetTechQueueElementSpending couldn't find tech!");
+                throw std::runtime_error("SetTechQueueElementSpending couldn't find tech!");
             bool researchable = false;
             if (status_it->second == TS_RESEARCHABLE) researchable = true;
                         
