@@ -2115,18 +2115,144 @@ void TechTreeWnd::TechClickedSlot(const Tech* tech)
 void TechTreeWnd::TechDoubleClickedSlot(const Tech* tech)
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    std::string name = tech->Name();
+    const TechStatus tech_status = empire->GetTechStatus(name);
 
     // if tech can be researched already, just add it
-    if (empire->ResearchableTech(tech->Name())) {
+    if (tech_status == TS_RESEARCHABLE) {
         AddTechToQueueSignal(tech);
         return;
     }
 
+    if (tech_status != TS_UNRESEARCHABLE) return;
+
     // if tech can't yet be researched, add any prerequisites it requires (recursively) and then add it
-    if (empire->GetTechStatus(tech->Name()) == TS_UNRESEARCHABLE) {
-        AddTechToQueueSignal(tech);
-        //std::deque<std::s
+
+    TechManager& manager = GetTechManager();
+    // compile set of recursive prereqs
+    std::list<std::string> prereqs_list;                    // working list of prereqs as being processed.  may contain duplicates
+    std::set<std::string> prereqs_set;                      // set of (unique) prereqs leading to tech
+    std::multimap<double, const Tech*> techs_to_add_map;    // indexed and sorted by cost per turn
+
+    // initialize working list with 1st order prereqs
+    std::set<std::string> cur_prereqs = tech->Prerequisites();
+    std::copy(cur_prereqs.begin(), cur_prereqs.end(), std::back_inserter(prereqs_list));
+
+    // traverse list, appending new prereqs to it, and putting unique prereqs into set
+    for (std::list<std::string>::iterator it = prereqs_list.begin(); it != prereqs_list.end(); ++it) {
+        std::string cur_name = *it;
+        const Tech* cur_tech = manager.GetTech(cur_name);
+
+        // check if this tech is already in the map of prereqs.  If so, it has already been processed, and can be skipped.
+        if (prereqs_set.find(cur_name) != prereqs_set.end()) continue;
+
+        // tech is new, so put it into the set of already-processed prereqs
+        prereqs_set.insert(cur_name);
+        // and the map of techs, sorted by cost
+        techs_to_add_map.insert(std::pair<double, const Tech*>(cur_tech->ResearchCost(), cur_tech));
+
+        // get prereqs of new tech, append to list
+        cur_prereqs = cur_tech->Prerequisites();
+        std::copy(cur_prereqs.begin(), cur_prereqs.end(), std::back_inserter(prereqs_list));
     }
 
-    // if tech has already been researched (not caught by above checks), then do nothing
+    // extract sorted techs into vector, to be passed to signal...
+    std::vector<const Tech*> tech_vec;
+    for (std::multimap<double, const Tech*>::const_iterator it = techs_to_add_map.begin(); it != techs_to_add_map.end(); ++it)
+        tech_vec.push_back(it->second);
+    // put original tech to be enqueued into vector last
+    tech_vec.push_back(tech);
+    AddMultipleTechsToQueueSignal(tech_vec);
+
+    /* Alternative automatic tech ordering code.  Written first and seemed to work, but had undesirable
+       behaviour in practice.  Leaving here, commented out, incase wanted later...
+       
+    std::map<std::string, TechStatus> prereq_status_map;    // set of (unique) prereqs leading to tech, with TechStatus of each
+
+    // traverse list, appending new prereqs to it, and putting unique prereqs into set
+    for (std::list<std::string>::iterator it = prereqs_list.begin(); it != prereqs_list.end(); ++it) {
+        std::string cur_name = *it;
+        Logger().errorStream() << "traversing list: tech: " << cur_name;
+        const Tech* cur_tech = manager.GetTech(cur_name);
+
+        // check if this tech is already in the map of prereqs.  If so, it has already been processed, and can be skipped.
+        if (prereq_status_map.find(cur_name) != prereq_status_map.end()) continue;
+
+        // tech is new, so put it into the map of prereqs
+        prereq_status_map[cur_name] = empire->GetTechStatus(cur_name);
+
+        Logger().errorStream() << ".. tech is new. adding its prereqs to end of list";
+        Logger().errorStream() << ".. and adding its status to prereq_status_map: " << prereq_status_map[cur_name];
+
+        // get prereqs of new tech, append to list
+        const std::set<std::string> cur_prereqs = cur_tech->Prerequisites();
+        std::copy(cur_prereqs.begin(), cur_prereqs.end(), std::back_inserter(prereqs_list));
+    }
+
+    // repeatedly traverse set, enqueuing that are researchable (because their prereqs are complete or they
+    // are initially researchable), then marking enqueued techs as complete so the next iteration will
+    // find the techs that they are prereqs of to now have completed prereqs and thus enequeue the next layer
+    // of techs in the prereqs tree.  within each level, currently enqueues techs in order of cost.
+    // in future, could instead determine optimal order of enqueuing to minimize total research time using
+    // a more sophisticated scheduling algorithm.
+    
+    std::multimap<double, const Tech*> techs_to_add_map;  // indexed and sorted by turns to research
+    while (true) {
+        techs_to_add_map.clear();
+
+        Logger().errorStream() << "determining techs to add";
+        for (std::map<std::string, TechStatus>::iterator it = prereq_status_map.begin(); it != prereq_status_map.end(); ++it) {
+            const std::string cur_name = it->first;
+            const Tech* cur_tech = manager.GetTech(cur_name);
+
+            Logger().errorStream() << ".. considering tech: " << cur_name;
+            TechStatus status = it->second;
+
+            // if tech is marked as complete, don't need to do anything with it
+            if (status == TS_COMPLETE) {
+                Logger().errorStream() << ".... tech is already complete.  skipping.";
+                continue;
+            } 
+            if (status == TS_RESEARCHABLE) {
+                Logger().errorStream() << ".... tech is researchable, adding to map of techs to enqueue";
+                techs_to_add_map.insert(std::pair<double, const Tech*>(cur_tech->ResearchTurns(), cur_tech));
+                continue;
+            }
+
+            Logger().errorStream() << ".... tech is not yet researchable.  checking its prereqs";
+            // if tech's prereqs are all complete, tech is researchable (even if not marked TS_RESEARCHABLE initially)
+            const std::set<std::string> cur_prereqs = cur_tech->Prerequisites();
+            bool all_prereqs_complete = true;   // until proven otherwise by a tech being not TS_COMPLETE
+            for (std::set<std::string>::const_iterator it = cur_prereqs.begin(); it != cur_prereqs.end(); ++it) {
+                if (prereq_status_map[*it] != TS_COMPLETE) {
+                    Logger().errorStream() << "...... prereq " << *it << " is not complete.  skipping.";
+                    all_prereqs_complete = false;
+                    break;
+                }
+            }
+            
+            // if all prereqs complete, tech is researchable
+            if (all_prereqs_complete) {
+                Logger().errorStream() << "...... all prereqs are complete.  adding tech to map of techs to enqueue";
+                techs_to_add_map.insert(std::pair<double, const Tech*>(cur_tech->ResearchTurns(), cur_tech));
+            }
+        }
+
+        Logger().errorStream() << "adding techs, and marking as TS_COMPLETE for next round...";
+
+        // if no techs were researchable, must be done
+        if (techs_to_add_map.empty()) {
+            Logger().errorStream() << "... no techs to add!  DONE!";
+            break;  // exit while loop
+        }
+
+        for (std::multimap<double, const Tech*>::const_iterator it = techs_to_add_map.begin(); it != techs_to_add_map.end(); ++it) {
+            const Tech* cur_tech = it->second;
+            const std::string cur_name = cur_tech->Name();
+            tech_vec.push_back(cur_tech);
+            prereq_status_map[cur_name] = TS_COMPLETE;
+            Logger().errorStream() << ".. adding and marking tech: " << cur_name;;
+        }
+    }
+    */
 }

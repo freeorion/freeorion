@@ -12,9 +12,10 @@ class TechTreeWnd : public GG::Wnd
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (const Tech*)>      TechBrowsedSignalType;       ///< emitted when a technology is single-clicked
-    typedef boost::signal<void (const Tech*)>      TechClickedSignalType;       ///< emitted when the mouse rolls over a technology
-    typedef boost::signal<void (const Tech*)>      TechDoubleClickedSignalType; ///< emitted when a technology is double-clicked
+    typedef boost::signal<void (const Tech*)>               TechBrowsedSignalType;              ///< emitted when a technology is single-clicked
+    typedef boost::signal<void (const Tech*)>               TechClickedSignalType;              ///< emitted when the mouse rolls over a technology
+    typedef boost::signal<void (const Tech*)>               TechDoubleClickedSignalType;        ///< emitted when a technology is double-clicked
+    typedef boost::signal<void (std::vector<const Tech*>)>  AddMultipleTechsToQueueSignalType;  ///< emitted to enqueue multiple techs simultaneously, without updating the GUI after each
     //@}
 
     /** \name Slot Types */ //@{
@@ -60,9 +61,10 @@ public:
 
     static const int NAVIGATOR_AND_DETAIL_HEIGHT = 200;
 
-    mutable TechBrowsedSignalType       TechBrowsedSignal;
-    mutable TechClickedSignalType       TechSelectedSignal;
-    mutable TechDoubleClickedSignalType AddTechToQueueSignal;
+    mutable TechBrowsedSignalType               TechBrowsedSignal;
+    mutable TechClickedSignalType               TechSelectedSignal;
+    mutable TechDoubleClickedSignalType         AddTechToQueueSignal;
+    mutable AddMultipleTechsToQueueSignalType   AddMultipleTechsToQueueSignal;
 
 private:
     class TechTreeControls;
