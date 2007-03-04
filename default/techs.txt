@@ -179,18 +179,6 @@ Tech
     graphic = "tech_icons/N-Dimensional_Subspace.png"
 
 Tech
-    name = "LRN_MATTER_ENERGY"
-    description = "LRN_MATTER_ENERGY_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "LEARNING_CATEGORY"
-    researchcost = 300
-    researchturns = 20
-    prerequisites = "LRN_EVERYTHING"
-    unlock = []
-    graphic = "tech_icons/Matter-Energy_Conversion.png"
-
-Tech
     name = "LRN_UNIF_CONC"
     description = "LRN_UNIF_CONC_DESC"
     short_description = "THEORY_SHORT_DESC"
@@ -226,7 +214,7 @@ Tech
 Tech
     name = "LRN_STELLAR_TOMOGRAPHY"
     description = "LRN_STELLAR_TOMOGRAPHY_DESC"
-    short_description = "LRN_STELLAR_TOMOGRAPHY_SHORT_DESC"
+    short_description = "RESEARCH_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 1
@@ -456,18 +444,6 @@ Tech
     graphic = "tech_icons/Medical_Pathology.png"
 
 Tech
-    name = "GRO_INDUSTY_FARM"
-    description = "GRO_INDUSTY_FARM_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 20
-    researchturns = 5
-    prerequisites = []
-    unlock = []
-    graphic = "tech_icons/Industrial_Farming.png"
-
-Tech
     name = "GRO_ENV_ENCAPSUL"
     description = "GRO_ENV_ENCAPSUL_DESC"
     short_description = "THEORY_SHORT_DESC"
@@ -553,37 +529,6 @@ Tech
     graphic = "tech_icons/Nanotech_Medicine.png"
 
 Tech
-    name = "GRO_ORBIT_FARMING"
-    description = "GRO_ORBIT_FARMING_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 80
-    researchturns = 15
-    prerequisites = [
-        "CON_ORBITAL_CON"
-        "GRO_ENV_ENCAPSUL"
-        "GRO_INDUSTY_FARM"
-    ]
-    unlock = []
-    graphic = "tech_icons/Orbital_Farming.png"
-
-Tech
-    name = "GRO_INDUSRY_CLONE"
-    description = "GRO_INDUSRY_CLONE_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 300
-    researchturns = 20
-    prerequisites = [
-        "GRO_LIFECYCLE_MAN"
-        "GRO_NANOTECH_MED"
-    ]
-    unlock = []
-    graphic = "tech_icons/Industrial_Cloning.png"
-
-Tech
     name = "GRO_XENO_HYBRIDS"
     description = "GRO_XENO_HYBRIDS_DESC"
     short_description = "THEORY_SHORT_DESC"
@@ -625,6 +570,18 @@ Tech
     ]
     unlock = []
     graphic = "tech_icons/Pure-Energy_Metabolism.png"
+
+Tech
+    name = "GRO_INDUSTY_FARM"
+    description = "GRO_INDUSTY_FARM_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "GRO_PLANET_ECOL"
+    unlock = []
+    graphic = "tech_icons/Industrial_Farming.png"
 
 Tech
     name = "GRO_SELF_ROTATING_CROPS"
@@ -759,7 +716,36 @@ Tech
                 SetMaxFarming value = Target.MaxFarming + 2
     graphic = ""
 
+Tech
+    name = "GRO_ORBIT_FARMING"
+    description = "GRO_ORBIT_FARMING_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 80
+    researchturns = 15
+    prerequisites = [
+        "CON_ORBITAL_CON"
+        "GRO_ENV_ENCAPSUL"
+        "GRO_INDUSTY_FARM"
+    ]
+    unlock = []
+    graphic = "tech_icons/Orbital_Farming.png"
 
+Tech
+    name = "GRO_INDUSRY_CLONE"
+    description = "GRO_INDUSRY_CLONE_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 300
+    researchturns = 20
+    prerequisites = [
+        "GRO_LIFECYCLE_MAN"
+        "GRO_NANOTECH_MED"
+    ]
+    unlock = []
+    graphic = "tech_icons/Industrial_Cloning.png"
 
 TechCategory "PRODUCTION_CATEGORY"
 
@@ -835,36 +821,6 @@ Tech
     graphic = "tech_icons/Fusion_Generation.png"
 
 Tech
-    name = "PRO_ASTEROID_MINE"
-    description = "PRO_ASTEROID_MINE_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 1
-    researchturns = 1
-    prerequisites = [
-        "PRO_MICROGRAV_MAN"
-        "PRO_PLANET_GEOL"
-    ]
-    unlock = []
-    graphic = "tech_icons/Asteroid_Mining.png"
-
-Tech
-    name = "PRO_CORE_MINE"
-    description = "PRO_CORE_MINE_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 50
-    researchturns = 10
-    prerequisites = [
-        "PRO_PLANET_GEOL"
-        "PRO_ROBOTIC_PROD"
-    ]
-    unlock = []
-    graphic = "tech_icons/Deep_Core_Mining.png"
-
-Tech
     name = "PRO_NANOTECH_PROD"
     description = "PRO_NANOTECH_PROD_DESC"
     short_description = "THEORY_SHORT_DESC"
@@ -891,21 +847,6 @@ Tech
     ]
     unlock = []
     graphic = "tech_icons/Orbital_Generation.png"
-
-Tech
-    name = "PRO_ORBITAL_MINE"
-    description = "PRO_ORBITAL_MINE_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 80
-    researchturns = 15
-    prerequisites = [
-        "PRO_ASTEROID_MINE"
-        "PRO_CORE_MINE"
-    ]
-    unlock = []
-    graphic = "tech_icons/Orbital_Mining.png"
 
 Tech
     name = "PRO_SENTIENT_AUTOMATION"
@@ -935,7 +876,7 @@ Tech
         "PRO_NANOTECH_PROD"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Force-Field_Assembly.png"
 
 Tech
     name = "PRO_INTSTEL_COPRO"
@@ -979,21 +920,6 @@ Tech
     ]
     unlock = []
     graphic = "tech_icons/Singularity_Generation.png"
-
-Tech
-    name = "PRO_MATENG_REPLIC"
-    description = "PRO_MATENG_REPLIC_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 500
-    researchturns = 25
-    prerequisites = [
-        "LRN_MATTER_ENERGY"
-        "PRO_FRC_FLD_ASSMB"
-    ]
-    unlock = []
-    graphic = "tech_icons/Matter-Energy_Replication.png"
 
 Tech
     name = "PRO_ZERO_GEN"
@@ -1087,16 +1013,35 @@ Tech
     graphic = ""
 
 Tech
-    name = "PRO_ASTEROID_MINE_I"
-    description = "PRO_ASTEROID_MINE_I_DESC"
+    name = "PRO_ORBITAL_MINE"
+    description = "PRO_ORBITAL_MINE_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 80
+    researchturns = 15
+    prerequisites = [
+        "PRO_ASTEROID_MINE"
+        "CON_ORBITAL_CON"
+    ]
+    unlock = []
+    graphic = "tech_icons/Orbital_Mining.png"
+
+
+Tech
+    name = "PRO_ASTEROID_MINE"
+    description = "PRO_ASTEROID_MINE_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
     researchturns = 1
-    prerequisites = "PRO_ASTEROID_MINE"
+    prerequisites = [
+        "PRO_MICROGRAV_MAN"
+        "PRO_PLANET_GEOL"
+    ]
     unlock = Item type = Building name = "BLD_ASTEROID_MINE"
-    graphic = ""
+    graphic = "tech_icons/Asteroid_Mining.png"
 
 Tech
     name = "PRO_ASTEROID_MINE_II"
@@ -1106,9 +1051,25 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 1
     researchturns = 1
-    prerequisites = "PRO_ASTEROID_MINE_I"
+    prerequisites = "PRO_ASTEROID_MINE"
     unlock = []
     graphic = ""
+
+Tech
+    name = "PRO_CORE_MINE"
+    description = "PRO_CORE_MINE_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 50
+    researchturns = 10
+    prerequisites = [
+        "PRO_PLANET_GEOL"
+        "CON_SUBTER_CONST"
+        "PRO_ROBOTIC_PROD"
+    ]
+    unlock = []
+    graphic = "tech_icons/Deep_Core_Mining.png"
 
 Tech
     name = "PRO_INDUSTRY_CENTRE_I"
@@ -1274,6 +1235,33 @@ Tech
     graphic = ""
 
 Tech
+    name = "PRO_ENERGY_CONV"
+    description = "PRO_ENERGY_CONV_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 300
+    researchturns = 20
+    prerequisites = "LRN_EVERYTHING"
+    unlock = []
+    graphic = "tech_icons/Matter-Energy_Conversion.png"
+
+Tech
+    name = "PRO_MATENG_REPLIC"
+    description = "PRO_MATENG_REPLIC_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 500
+    researchturns = 25
+    prerequisites = [
+        "PRO_ENERGY_CONV"
+        "PRO_FRC_FLD_ASSMB"
+    ]
+    unlock = []
+    graphic = "tech_icons/Matter-Energy_Replication.png"
+
+Tech
     name = "PRO_HYPER_DAM"
     description = "PRO_HYPER_DAM_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
@@ -1309,7 +1297,7 @@ Tech
     researchturns = 1
     prerequisites = []
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Orbital_Construction.png"
 
 Tech
     name = "CON_ARCH_PSYCH"
@@ -1333,7 +1321,7 @@ Tech
     researchturns = 1
     prerequisites = []
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Infrastructure_Ecology.png"
 
 Tech
     name = "CON_ORGANIC_STRC"
@@ -1356,6 +1344,7 @@ Tech
     researchcost = 45
     researchturns = 10
     prerequisites = [
+        "PRO_PLANET_GEOL"
         "CON_ARCH_PSYCH"
         "CON_INFRA_ECOL"
     ]
@@ -1672,7 +1661,7 @@ Tech
         "LRN_ALGO_ELEGANCE"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Economic_Spectroscopy.png"
 
 Tech
     name = "ECO_INTSTEL_TRADE"
