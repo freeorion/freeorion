@@ -84,7 +84,7 @@ Base                            30      40      50      40      30      0       
 # This one is a bit misleading.  With the exception of "None", larger values mean more starlanes, which is why VeryMany has the lowest value.
 <1x6>
 MaxJumpsBetweenSystems          None    Few     Some    Several Many    VeryMany
-Max                             0       8       6       4       3       2
+Max                             0       8       5       3       2       1
 
 <1x1>
 MaxStarlaneLength               120
