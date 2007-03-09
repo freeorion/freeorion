@@ -133,7 +133,7 @@ void MapWndPopup::CloseClicked()
     delete this;
 }
 
-void MapWndPopup::Close( )
+void MapWndPopup::Close()
 {
     // close window as though it's been clicked closed by the user.
     CloseClicked( );
@@ -164,6 +164,7 @@ MapWnd::MapWnd() :
     m_dragged(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
     m_current_fleet(UniverseObject::INVALID_OBJECT_ID),
+    m_active_fleet_wnd(0),
     m_in_production_view_mode(false)
 {
     SetText("MapWnd");
@@ -367,6 +368,11 @@ bool MapWnd::InProductionViewMode() const
     return m_in_production_view_mode;
 }
 
+bool MapWnd::FleetWndsOpen() const 
+{
+     return !m_fleet_wnds.empty();
+}
+
 void MapWnd::Render()
 {
     RenderBackgrounds();
@@ -540,7 +546,7 @@ void MapWnd::RClick(const GG::Pt& pt, Uint32 keys)
     // if these fail, go ahead with the context-sensitive popup menu . Note that this enforces a one-close-per-click policy.
 
     if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
-        if (FleetWnd::CloseAllFleetWnds())
+        if (CloseAllFleetWnds())
             return;
 
         if (m_side_panel->Visible()) {
@@ -604,6 +610,7 @@ void MapWnd::InitTurn(int turn_number)
         GG::Connect(icon->LeftDoubleClickedSignal, &MapWnd::SystemDoubleClicked, this);
         GG::Connect(icon->MouseEnteringSignal, &MapWnd::MouseEnteringSystem, this);
         GG::Connect(icon->MouseLeavingSignal, &MapWnd::MouseLeavingSystem, this);
+        GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked, this);
 
         // system's starlanes
         for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
@@ -640,8 +647,11 @@ void MapWnd::InitTurn(int turn_number)
             m_moving_fleet_buttons.push_back(fb);
             AttachChild(fb);
             SetFleetMovement(fb);
+            GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
         }
     }
+
+    m_active_fleet_wnd = 0;
 
     MoveChildUp(m_side_panel);
 
@@ -760,6 +770,22 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
         m_nebulae.push_back(GG::GUI::GetGUI()->GetTexture(data.map_nebulae[i].filename));
         m_nebula_centers.push_back(data.map_nebulae[i].center);
     }
+}
+
+bool MapWnd::CloseAllFleetWnds()
+{
+    bool retval = 0 < m_fleet_wnds.size();
+    if (!retval) return retval;
+    
+    m_active_fleet_wnd = 0;
+
+    // TODO: close the currently open FleetWnd last, so that FleetWnd::LastPosition is preserved
+    while (0 < m_fleet_wnds.size()) {
+        FleetWnd* fleet_wnd = *m_fleet_wnds.begin();
+        fleet_wnd->Close(); // this erases fleet_wnd from m_fleet_wnds
+    }
+
+    return retval;
 }
 
 void MapWnd::ShowSystemNames()
@@ -956,7 +982,7 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
 
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 {
-    if (event.Type() == GG::WndEvent::RClick && !FleetWnd::FleetWndsOpen()) {
+    if (event.Type() == GG::WndEvent::RClick && !FleetWndsOpen()) {
         // Attempt to close the SidePanel (if open); if this fails, just let Wnd w handle it.  
         // Note that this enforces a one-close-per-click policy.
 
@@ -1261,25 +1287,172 @@ void MapWnd::SystemLeftClicked(int system_id)
 
 void MapWnd::SystemRightClicked(int system_id)
 {
-    if (!m_in_production_view_mode)
-        SystemRightClickedSignal(system_id);
+    if (!m_in_production_view_mode && m_active_fleet_wnd) {
+        if (system_id == UniverseObject::INVALID_OBJECT_ID)
+            SetProjectedFleetMovement(0, std::list<System*>()) ;
+        else
+            PlotFleetMovement(system_id, true);
+    }
+    SystemRightClickedSignal(system_id);
 }
 
 void MapWnd::MouseEnteringSystem(int system_id)
 {
-    if (!m_in_production_view_mode)
-        SystemBrowsedSignal(system_id);
+    if (!m_in_production_view_mode && m_active_fleet_wnd) {
+        PlotFleetMovement(system_id, false);        
+    }
+    SystemBrowsedSignal(system_id);
 }
 
 void MapWnd::MouseLeavingSystem(int system_id)
 {
-    if (!m_in_production_view_mode)
-        SystemBrowsedSignal(UniverseObject::INVALID_OBJECT_ID);
+    MouseEnteringSystem(UniverseObject::INVALID_OBJECT_ID);
+}
+
+void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
+{
+    if (!m_active_fleet_wnd) return;
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+    std::set<Fleet*> fleets = m_active_fleet_wnd->SelectedFleets();
+
+    for (std::set<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        Fleet* fleet = *it;
+        // only give orders / plot prospective move paths of fleets owned by player
+        if (!(fleet->OwnedBy(empire_id)) || !(fleet->NumShips())) continue;
+
+        // plot empty move pathes if destination is not a known system
+        if (system_id == UniverseObject::INVALID_OBJECT_ID) {
+            SetProjectedFleetMovement(fleet, std::list<System*>()) ;
+            continue;
+        }
+
+        int fleet_sys_id = fleet->SystemID();
+
+        int start_system = fleet_sys_id;
+        if (fleet_sys_id == UniverseObject::INVALID_OBJECT_ID)
+            start_system = fleet->NextSystemID();
+
+        // get path to destination...
+        std::list<System*> route = GetUniverse().ShortestPath(start_system, system_id, empire_id).first;
+
+        // disallow "offroad" (direct non-starlane non-wormhole) travel
+        if (route.size() == 2 && *route.begin() != *route.rbegin() &&
+            !(*route.begin())->HasStarlaneTo((*route.rbegin())->ID()) && !(*route.begin())->HasWormholeTo((*route.rbegin())->ID()) &&
+            !(*route.rbegin())->HasStarlaneTo((*route.begin())->ID()) && !(*route.rbegin())->HasWormholeTo((*route.begin())->ID())) {
+            continue;
+        }
+
+        // if actually ordering fleet movement, not just prospectively previewing, ... do so
+        if (execute_move && !route.empty()) {
+            HumanClientApp::GetApp()->Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id));
+            if (fleet_sys_id == UniverseObject::INVALID_OBJECT_ID)
+                SetFleetMovement(fleet);
+        }
+
+        // show route on map
+        SetProjectedFleetMovement(fleet, route);
+    }
+}
+
+void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn)
+{
+    if (m_in_production_view_mode) return;
+
+    const std::vector<Fleet*>& btn_fleets = fleet_btn.Fleets();
+    if (btn_fleets.empty())
+        throw std::runtime_error("caught clicked signal for empty fleet button");
+
+    bool multiple_fleet_windows = GetOptionsDB().Get<bool>("UI.multiple-fleet-windows");
+
+    Fleet* fleet = btn_fleets[0];
+
+    System* system = fleet->GetSystem();
+    int X = fleet->X();
+    int Y = fleet->Y();
+    int owner = *(fleet->Owners().begin());
+
+    // find if a FleetWnd for this FleetButton's fleet(s) is already open
+    FleetWnd* wnd_for_button = 0;
+    for (std::set<FleetWnd*>::iterator it = m_fleet_wnds.begin(); it != m_fleet_wnds.end(); ++it) {
+        if ((*it)->ContainsFleet(fleet->ID())) {
+            wnd_for_button = *it;
+            break;
+        }
+    }
+
+    if (!wnd_for_button) {
+        // there was no preexisting open FleetWnd for this button's fleets
+        if (!multiple_fleet_windows)
+            CloseAllFleetWnds();
+
+        // get all fleets at this location.  may be in a system, in which case fleets are separated into
+        // departing or stationary; or may be away from any system, moving
+        std::vector<Fleet*> fleets;
+        if (system) {
+            const System::ObjectVec owned_fleets = system->FindObjects(OwnedVisitor<Fleet>(owner));
+            for (System::ObjectVec::const_iterator it = owned_fleets.begin(); it != owned_fleets.end(); ++it) {
+                Fleet* owned_fleet = dynamic_cast<Fleet*>(*it);
+                if (owned_fleet) fleets.push_back(owned_fleet);
+            }
+        } else {
+            std::copy(btn_fleets.begin(), btn_fleets.end(), std::back_inserter(fleets));
+        }
+        
+        // determine whether this FleetWnd can't be manipulated by the users: can't manipulate other 
+        // empires FleetWnds, and can't give orders to your fleets while they're en-route.
+        bool read_only = false;
+        if (owner != HumanClientApp::GetApp()->EmpireID() || !system)
+            read_only = true;
+
+        wnd_for_button = new FleetWnd(0, 0, fleets, 0, read_only);
+        m_fleet_wnds.insert(wnd_for_button);
+
+        GG::Connect(wnd_for_button->ClosingSignal, &MapWnd::FleetWndClosing, this);
+
+        // position new FleetWnd.  default to last user-set position...
+        GG::Pt wnd_position = FleetWnd::LastPosition();
+        // unless the user hasn't opened and closed a FleetWnd yet, in which case use the lower-right
+        if (wnd_position == GG::Pt())
+            wnd_position = GG::Pt(5, GG::GUI::GetGUI()->AppHeight() - wnd_for_button->Height() - 5);
+
+        wnd_for_button->MoveTo(wnd_position);
+
+        // safety check to ensure window is on screen... may be redundant
+        if (GG::GUI::GetGUI()->AppWidth() - 5 < wnd_for_button->LowerRight().x)
+            wnd_for_button->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - wnd_for_button->LowerRight().x, 0));
+        if (GG::GUI::GetGUI()->AppHeight() - 5 < wnd_for_button->LowerRight().y)
+            wnd_for_button->OffsetMove(GG::Pt(0, GG::GUI::GetGUI()->AppHeight() - 5 - wnd_for_button->LowerRight().y));
+
+        GG::GUI::GetGUI()->Register(wnd_for_button);
+        //wnd_for_button->Show();
+
+    }
+
+    // make FleetWnd for clicked button the selected fleet wnd
+    m_active_fleet_wnd = wnd_for_button;
+
+    // TODO: select next fleet in wnd, amongst fleets belonging to clicked button 
+}
+
+void MapWnd::FleetWndClosing(FleetWnd* fleet_wnd)
+{
+    m_fleet_wnds.erase(fleet_wnd);
+    if (fleet_wnd == m_active_fleet_wnd) {
+        if (m_fleet_wnds.empty())
+            m_active_fleet_wnd = 0;
+        else
+            m_active_fleet_wnd = *(m_fleet_wnds.begin());
+    }
 }
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
 {
-    m_fleet_lines.erase(const_cast<Fleet*>(universe_object_cast<const Fleet*>(obj)));
+    Fleet* fleet = const_cast<Fleet*>(universe_object_cast<const Fleet*>(obj));
+    if (fleet) {
+        m_fleet_lines.erase(const_cast<Fleet*>(universe_object_cast<const Fleet*>(obj)));
+    }
 }
 
 void MapWnd::RegisterPopup( MapWndPopup* popup )
@@ -1817,4 +1990,14 @@ void MapWnd::ShowAllPopups()
     for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ++it) {
         (*it)->Show();
     }
+}
+
+MapWnd::FleetButtonClickedFunctor::FleetButtonClickedFunctor(FleetButton& fleet_btn, MapWnd& map_wnd) :
+    m_fleet_btn(fleet_btn),
+    m_map_wnd(map_wnd)
+{}
+
+void MapWnd::FleetButtonClickedFunctor::operator()()
+{
+    m_map_wnd.FleetButtonLeftClicked(m_fleet_btn);
 }

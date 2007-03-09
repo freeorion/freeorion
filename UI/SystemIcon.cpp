@@ -119,7 +119,6 @@ SystemIcon::SystemIcon(int id, double zoom) :
     m_mouseover_indicator->Hide();
 }
 
-
 SystemIcon::~SystemIcon()
 {}
 
@@ -272,14 +271,12 @@ void SystemIcon::ClickFleetButton(Fleet* fleet)
 {
     for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
         if (std::find(it->second->Fleets().begin(), it->second->Fleets().end(), fleet) != it->second->Fleets().end()) {
-            it->second->SelectFleet(fleet);
             it->second->LClick(GG::Pt(), 0);
             return;
         }
     }
     for (std::map<int, FleetButton*>::iterator it = m_moving_fleet_markers.begin(); it != m_moving_fleet_markers.end(); ++it) {
         if (std::find(it->second->Fleets().begin(), it->second->Fleets().end(), fleet) != it->second->Fleets().end()) {
-            it->second->SelectFleet(fleet);
             it->second->LClick(GG::Pt(), 0);
             return;
         }
@@ -321,6 +318,7 @@ void SystemIcon::CreateFleetButtons()
             m_stationary_fleet_markers[it->first] = stationary_fb;
             AttachChild(m_stationary_fleet_markers[it->first]);
             map_wnd->SetFleetMovement(stationary_fb);
+            GG::Connect(stationary_fb->ClickedSignal, FleetButtonClickedFunctor(*stationary_fb, *this));
             stationary_y += BUTTON_SIZE;
         }
         fleet_IDs = m_system.FindObjectIDs(OrderedMovingFleetVisitor(it->first));
@@ -331,10 +329,6 @@ void SystemIcon::CreateFleetButtons()
             AttachChild(m_moving_fleet_markers[it->first]);
             map_wnd->SetFleetMovement(moving_fb);
             moving_y -= BUTTON_SIZE;
-        }
-        if (stationary_fb && moving_fb) {
-            moving_fb->SetCompliment(stationary_fb);
-            stationary_fb->SetCompliment(moving_fb);
         }
     }
 }
@@ -348,4 +342,14 @@ void SystemIcon::PositionSystemName()
 void SystemIcon::FleetCreatedOrDestroyed(const Fleet&)
 {
     CreateFleetButtons();
+}
+    
+SystemIcon::FleetButtonClickedFunctor::FleetButtonClickedFunctor(FleetButton& fleet_btn, SystemIcon& system_icon) :
+    m_fleet_btn(fleet_btn),
+    m_system_icon(system_icon)
+{}
+        
+void SystemIcon::FleetButtonClickedFunctor::operator()()
+{
+    m_system_icon.FleetButtonClickedSignal(m_fleet_btn);
 }

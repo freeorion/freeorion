@@ -222,6 +222,7 @@ ResearchWnd::ResearchWnd(int w, int h) :
     m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width() + 3, 3));
 
     GG::Connect(m_tech_tree_wnd->AddTechToQueueSignal, &ResearchWnd::AddTechToQueueSlot, this);
+    GG::Connect(m_tech_tree_wnd->AddMultipleTechsToQueueSignal, &ResearchWnd::AddMultipleTechsToQueueSlot, this);
     GG::Connect(m_queue_lb->ErasedSignal, &ResearchWnd::QueueItemDeletedSlot, this);
     GG::Connect(m_queue_lb->LeftClickedSignal, &ResearchWnd::QueueItemClickedSlot, this);
     GG::Connect(m_queue_lb->DoubleClickedSignal, &ResearchWnd::QueueItemDoubleClickedSlot, this);
@@ -328,6 +329,23 @@ void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
         ResetInfoPanel();
         m_tech_tree_wnd->Update();
     }
+}
+
+void ResearchWnd::AddMultipleTechsToQueueSlot(std::vector<const Tech*> tech_vec)
+{
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const ResearchQueue& queue = empire->GetResearchQueue();
+    const int id = HumanClientApp::GetApp()->EmpireID();
+    OrderSet& orders = HumanClientApp::GetApp()->Orders();
+    for (std::vector<const Tech*>::const_iterator it = tech_vec.begin(); it != tech_vec.end(); ++it) {
+        const Tech* tech = *it;
+        if (!queue.InQueue(tech))
+            orders.IssueOrder(new ResearchQueueOrder(id, tech->Name(), -1));
+    }
+    
+    UpdateQueue();
+    ResetInfoPanel();
+    m_tech_tree_wnd->Update();
 }
 
 void ResearchWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)

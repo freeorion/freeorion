@@ -416,7 +416,7 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
 #ifndef FREEORION_BUILD_UTIL
     m_map_wnd->CenterOnFleet(fleet->ID());
     m_map_wnd->SelectFleet(fleet->ID());
-    for (FleetWnd::FleetWndItr it = FleetWnd::FleetWndBegin(); it != FleetWnd::FleetWndEnd(); ++it) {
+    for (MapWnd::FleetWndIter it = m_map_wnd->FleetWndBegin(); it != m_map_wnd->FleetWndEnd(); ++it) {
         if ((*it)->ContainsFleet(fleet->ID())) {
             (*it)->SelectFleet(fleet);
             break;

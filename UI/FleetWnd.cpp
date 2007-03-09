@@ -929,10 +929,7 @@ std::string FleetDetailWnd::TitleText() const
 // FleetWnd
 ////////////////////////////////////////////////
 // static(s)
-std::set<FleetWnd*> FleetWnd::s_open_fleet_wnds;
 GG::Pt FleetWnd::s_last_position;
-FleetWnd::FleetWndItr FleetWnd::FleetWndBegin() {return s_open_fleet_wnds.begin();}
-FleetWnd::FleetWndItr FleetWnd::FleetWndEnd()   {return s_open_fleet_wnds.end();}
 
 FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
                    Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE*/) : 
@@ -985,15 +982,12 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
     if (const System* system = fleets.back()->GetSystem())
         m_system_changed_connection = Connect(system->StateChangedSignal, &FleetWnd::SystemChangedSlot, this);
 
-    s_open_fleet_wnds.insert(this);
-
     SetMaxSize(GG::Pt(Width(), MaxSize().y));
 }
 
 FleetWnd::~FleetWnd()
 {
     ClientUI::GetClientUI()->GetMapWnd()->SetProjectedFleetMovement(0, std::list<System*>());
-    s_open_fleet_wnds.erase(this);
 }
 
 void FleetWnd::CloseClicked()
@@ -1008,6 +1002,7 @@ void FleetWnd::CloseClicked()
             NotShowingFleetSignal(fleet);
     }
     CUIWnd::CloseClicked();
+    ClosingSignal(this);
     delete this;
 }
 
@@ -1054,49 +1049,6 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
     }
 }
 
-void FleetWnd::PlotMovement(int system_id, bool execute_move)
-{
-    if (system_id != UniverseObject::INVALID_OBJECT_ID) {
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        for (std::set<int>::const_iterator it = m_fleets_lb->Selections().begin(); it != m_fleets_lb->Selections().end(); ++it) {
-            Fleet* fleet = FleetInRow(*it);
-            if (fleet->OwnedBy(empire_id) && fleet->NumShips()) {
-                // TODO: allow technologies or other factors to allow a fleet to turn around in mid-flight, without completing its current leg
-                int start_system = fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID ? fleet->NextSystemID() : fleet->SystemID();
-
-                std::list<System*> route = GetUniverse().ShortestPath(start_system, system_id, empire_id).first;
-
-                // disallow "offroad" (direct non-starlane non-wormhole) travel
-                if (route.size() == 2 && *route.begin() != *route.rbegin() &&
-                    !(*route.begin())->HasStarlaneTo((*route.rbegin())->ID()) && !(*route.begin())->HasWormholeTo((*route.rbegin())->ID()) &&
-                    !(*route.rbegin())->HasStarlaneTo((*route.begin())->ID()) && !(*route.rbegin())->HasWormholeTo((*route.begin())->ID())) {
-                    return;
-                }
-
-                if (execute_move && !route.empty()) {
-                    HumanClientApp::GetApp()->Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id));
-                    if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID)
-                        ClientUI::GetClientUI()->GetMapWnd()->SetFleetMovement(fleet);
-                }
-                ClientUI::GetClientUI()->GetMapWnd()->SetProjectedFleetMovement(fleet, route);
-            }
-        }
-    } 
-}
-
-void FleetWnd::SystemClicked(int system_id)
-{
-    PlotMovement(system_id, true);
-}
-
-void FleetWnd::SystemBrowsed(int system_id)
-{
-    if (system_id == UniverseObject::INVALID_OBJECT_ID)
-        ClientUI::GetClientUI()->GetMapWnd()->SetProjectedFleetMovement(0, std::list<System*>()) ;
-    else
-        PlotMovement(system_id, false);
-}
-
 void FleetWnd::AddFleet(Fleet* fleet)
 {
     m_fleets_lb->Insert(new FleetRow(fleet));
@@ -1131,6 +1083,29 @@ bool FleetWnd::ContainsFleet(int fleet_id) const
             return true;
     }
     return false;
+}
+
+std::set<Fleet*> FleetWnd::Fleets() const
+{
+    std::set<Fleet*> retval;
+    for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
+        if (Fleet* fleet = FleetInRow(i)) {
+            retval.insert(fleet);
+        }
+    }
+    return retval;
+}
+
+std::set<Fleet*> FleetWnd::SelectedFleets() const
+{
+    std::set<Fleet*> retval;
+    for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
+        if (m_fleets_lb->Selected(i)) {
+            Fleet* fleet = FleetInRow(i);
+            if (fleet) retval.insert(fleet);
+        }
+    }
+    return retval;
 }
 
 void FleetWnd::FleetSelectionChanged(const std::set<int>& rows)
@@ -1324,8 +1299,9 @@ void FleetWnd::UniverseObjectDeleted(const UniverseObject *obj)
             break;
         }
     }
-
-    // TODO: CloseClicked() if the fleets lb is empty
+    
+    if (m_fleets_lb->Empty() || m_fleets_lb->NumRows() == 1 && !FleetInRow(0))
+        CloseClicked();
 }
 
 void FleetWnd::SystemChangedSlot()
@@ -1342,24 +1318,6 @@ void FleetWnd::SystemChangedSlot()
     for (std::set<const Fleet*>::const_iterator it = system_fleet_set.begin(); it != system_fleet_set.end(); ++it) {
         AddFleet(const_cast<Fleet*>(*it));
     }
-}
-
-bool FleetWnd::FleetWndsOpen()
-{
-    return !s_open_fleet_wnds.empty();
-}
-
-bool FleetWnd::CloseAllFleetWnds()
-{
-    bool retval = 0 < s_open_fleet_wnds.size();
-
-    while (0 < s_open_fleet_wnds.size()) {
-        FleetWnd* fleet_wnd = *s_open_fleet_wnds.begin();
-        fleet_wnd->Close();
-        s_open_fleet_wnds.erase(fleet_wnd);
-    }
-
-    return retval;
 }
 
 GG::Pt FleetWnd::LastPosition()

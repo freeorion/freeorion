@@ -978,11 +978,12 @@ void SidePanel::PlanetPanel::ClickColonize()
         HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
     
         // if the ship now buils a fleet of its own, make sure that fleet appears
-        // at a possibly opend FleetWnd
-        Ship  *ship = GetUniverse().Object<Ship>(ship_id);
-        Fleet *fleet= ship?GetUniverse().Object<Fleet>(ship->FleetID()):NULL;
+        // at a possibly opened FleetWnd
+        Ship* ship = GetUniverse().Object<Ship>(ship_id);
+        Fleet* fleet= ship ? GetUniverse().Object<Fleet>(ship->FleetID()) : NULL;
+        MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
         if(fleet)
-            for( FleetWnd::FleetWndItr it = FleetWnd::FleetWndBegin();it != FleetWnd::FleetWndEnd();++it)
+            for( MapWnd::FleetWndIter it = map_wnd->FleetWndBegin();it != map_wnd->FleetWndEnd();++it)
             {
                 FleetWnd *fleet_wnd = *it;
                 if(fleet->SystemID() == fleet_wnd->SystemID()
