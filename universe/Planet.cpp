@@ -52,7 +52,7 @@ Planet::Planet() :
     m_size(SZ_MEDIUM),
     m_available_trade(0.0),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(0),
+    m_is_about_to_be_colonized(false),
     m_def_bases(0)
 {
     GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
@@ -67,7 +67,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_size(SZ_MEDIUM),
     m_available_trade(0.0),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(0),
+    m_is_about_to_be_colonized(false),
     m_def_bases(0)
 {
     SetType(type);
@@ -256,7 +256,7 @@ void Planet::Reset()
     m_buildings.clear();
     m_available_trade = 0.0;
     m_just_conquered = false;
-    m_is_about_to_be_colonized = 0;
+    m_is_about_to_be_colonized = false;
 }
 
 void Planet::Conquer(int conquerer)
@@ -282,17 +282,15 @@ void Planet::Conquer(int conquerer)
 
 void Planet::SetIsAboutToBeColonized(bool b)
 {
-    bool overall_status = m_is_about_to_be_colonized;
-    b ? ++m_is_about_to_be_colonized : --m_is_about_to_be_colonized;
-    if (m_is_about_to_be_colonized < 0)
-        m_is_about_to_be_colonized = 0;
-    if (overall_status != static_cast<bool>(m_is_about_to_be_colonized))
-        StateChangedSignal();
+    bool initial_status = m_is_about_to_be_colonized;
+    if (b == initial_status) return;
+    m_is_about_to_be_colonized = b;
+    StateChangedSignal();
 }
 
 void Planet::ResetIsAboutToBeColonized()
 {
-    m_is_about_to_be_colonized = 0;
+    SetIsAboutToBeColonized(false);
 }
 
 Meter* Planet::GetMeter(MeterType type)

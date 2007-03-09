@@ -106,7 +106,7 @@ private:
    
     bool m_just_conquered;
 
-    int m_is_about_to_be_colonized;
+    bool m_is_about_to_be_colonized;
 
     /////////////////////////////////////////////////////////////////////////////
     // V0.3 ONLY!!!!

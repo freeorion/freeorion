@@ -401,11 +401,8 @@ bool FleetColonizeOrder::UndoImpl() const
 
     Universe& universe = GetUniverse();
     
-    Fleet* fleet = universe.Object<Fleet>(m_colony_fleet_id);
     Planet* planet = universe.Object<Planet>(m_planet);
-
-    planet->SetIsAboutToBeColonized(false);
-    
+    Fleet* fleet = universe.Object<Fleet>(m_colony_fleet_id);
     Ship* ship = universe.Object<Ship>(m_ship);
 
     // if the fleet from which the colony ship came no longer exists or has moved, recreate it
@@ -421,6 +418,8 @@ bool FleetColonizeOrder::UndoImpl() const
     } else {
         fleet->AddShip(ship->ID());
     }
+
+    planet->SetIsAboutToBeColonized(false);
 
     return true;
 }
