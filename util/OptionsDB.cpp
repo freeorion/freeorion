@@ -306,11 +306,22 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
 
             if (option.validator) { // non-flag
                 try {
+                    // ensure a parameter exists...
+                    if (i + 1 >= argc)
+                        throw std::runtime_error("the option \"" + option.name + 
+                                                 "\" was specified, at the end of the list, with no parameter value.");
+                    // get parameter value
                     std::string value_str(argv[++i]);
                     StripQuotation(value_str);
+                    // ensure parameter is actually a parameter, and not the next option name (which would indicate
+                    // that the option was specified without a parameter value, as if it was a flag)
+                    if (value_str.find("-") != std::string::npos)
+                        throw std::runtime_error("the option \"" + option.name + 
+                                                 "\" was followed by the parameter \"" + value_str + 
+                                                 "\", which appears to be an option flag, not a parameter value, because it contains a \"-\" character.");
                     option.FromString(value_str);
                 } catch (const std::exception& e) {
-                    throw std::runtime_error("OptionsDB::SetFromCommandLine() : the following exception was caught when attemptimg to set option \"" + option.name + "\": " + e.what());
+                    throw std::runtime_error("OptionsDB::SetFromCommandLine() : the following exception was caught when attemptimg to set option \"" + option.name + "\": " + e.what() + "\n\n");
                 }
             } else { // flag
                 option.value = true;

@@ -182,8 +182,8 @@ private:
         std::string       default_value; ///< a string representation of the option's default value
         std::string       description;   ///< a desription of the option
         boost::shared_ptr<const ValidatorBase>
-                          validator;     ///< a validator for the option. Flags have no validators; lexical_cast boolean conversions oare done for them.
-        bool              storable;      ///< whether this option can be stored in an XMl config file for use across multiple runs
+                          validator;     ///< a validator for the option. Flags have no validators; lexical_cast boolean conversions are done for them.
+        bool              storable;      ///< whether this option can be stored in an XML config file for use across multiple runs
 
         mutable boost::shared_ptr<boost::signal<void ()> > option_changed_sig_ptr;
 
