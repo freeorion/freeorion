@@ -814,13 +814,25 @@ void SidePanel::PlanetPanel::Hilite(HilitingType ht)
 void SidePanel::PlanetPanel::DoLayout()
 {
     const int INTERPANEL_SPACE = 3;
-    m_population_panel->MoveTo(GG::Pt(Width() - m_population_panel->Width(),
-                               m_planet_name->LowerRight().y - UpperLeft().y));
-    m_resource_panel->MoveTo(GG::Pt(Width() - m_resource_panel->Width(),
-                             m_population_panel->LowerRight().y - UpperLeft().y + INTERPANEL_SPACE));
-    m_buildings_panel->MoveTo(GG::Pt(Width() - m_buildings_panel->Width(),
-                              m_resource_panel->LowerRight().y - UpperLeft().y + INTERPANEL_SPACE));
-    Resize(GG::Pt(Width(), std::max(m_buildings_panel->LowerRight().y - UpperLeft().y, MAX_PLANET_DIAMETER)));
+    int next_panel_top = m_planet_name->LowerRight().y - UpperLeft().y;
+    int panel_width = Width() - m_population_panel->Width();
+    
+    if (m_population_panel->Parent() == this) {
+        m_population_panel->MoveTo(GG::Pt(panel_width, next_panel_top));
+        next_panel_top += m_population_panel->Height() + INTERPANEL_SPACE;
+    }
+    
+    if (m_resource_panel->Parent() == this) {
+        m_resource_panel->MoveTo(GG::Pt(panel_width, next_panel_top));
+        next_panel_top += m_population_panel->Height() + INTERPANEL_SPACE;
+    }   
+
+    if (m_buildings_panel->Parent() == this) {
+        m_buildings_panel->MoveTo(GG::Pt(panel_width, next_panel_top));
+        next_panel_top += m_population_panel->Height();
+    }
+
+    Resize(GG::Pt(Width(), std::max(next_panel_top, MAX_PLANET_DIAMETER)));
     ResizedSignal();
 }
 
@@ -855,7 +867,7 @@ void SidePanel::PlanetPanel::Refresh()
         AttachChild(m_resource_panel);
         m_resource_panel->Refresh();
     }
-    
+
     if (owner == OS_NONE && planet->MaxPop() > 0 && !planet->IsAboutToBeColonized() && FindColonyShip(planet->SystemID())) {
         AttachChild(m_button_colonize);
         m_button_colonize->SetText(UserString("PL_COLONIZE"));
@@ -870,7 +882,8 @@ void SidePanel::PlanetPanel::Refresh()
 
     m_buildings_panel->Refresh();
     m_specials_panel->Update();
-    // BuildingsPanel::Refresh (and other panels) should emit ExpandCollapseSignal, which should be connected to SidePanel::PlanetPanel::DoLayout
+
+    // BuildingsPanel::Refresh (and other panels) emit ExpandCollapseSignal, which should be connected to SidePanel::PlanetPanel::DoLayout
 }
 
 void SidePanel::PlanetPanel::SetPrimaryFocus(FocusType focus)
@@ -1504,6 +1517,10 @@ void SidePanel::SystemFleetRemoved(const Fleet &)
 
 void SidePanel::FleetsChanged()
 {
+    // may need to add or remove colonize buttons
+    m_planet_panel_container->RefreshAllPlanetPanels();
+
+    // TODO: if there are fleet status indicators on the SidePanel, update them
 }
 
 void SidePanel::UpdateSystemResourceSummary()
