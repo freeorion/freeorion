@@ -824,12 +824,12 @@ void SidePanel::PlanetPanel::DoLayout()
     
     if (m_resource_panel->Parent() == this) {
         m_resource_panel->MoveTo(GG::Pt(panel_width, next_panel_top));
-        next_panel_top += m_population_panel->Height() + INTERPANEL_SPACE;
+        next_panel_top += m_resource_panel->Height() + INTERPANEL_SPACE;
     }   
 
     if (m_buildings_panel->Parent() == this) {
         m_buildings_panel->MoveTo(GG::Pt(panel_width, next_panel_top));
-        next_panel_top += m_population_panel->Height();
+        next_panel_top += m_buildings_panel->Height();
     }
 
     Resize(GG::Pt(Width(), std::max(next_panel_top, MAX_PLANET_DIAMETER)));
