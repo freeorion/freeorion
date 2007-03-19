@@ -166,9 +166,6 @@ void NewFleetOrder::ExecuteImpl() const
         fleet = new Fleet(m_fleet_name, m_position.first, m_position.second, EmpireID());
         // an ID is provided to ensure consistency between server and client universes
         universe.InsertID(fleet, m_new_id);
-        for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
-            fleet->AddShip(m_ship_ids[i]);
-        }
     }
     for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
         // verify that empire is not trying to take ships from somebody else's fleet
