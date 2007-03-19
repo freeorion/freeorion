@@ -14,10 +14,6 @@ class FleetsListBox;
 class Ship;
 class System;
 class UniverseObject;
-namespace GG {
-    class TextControl;
-}
-
 
 class FleetDetailWnd : public CUIWnd
 {
@@ -44,6 +40,8 @@ public:
 
 private:
     std::string TitleText() const;
+
+    boost::signals::connection m_panel_empty_connection;
 
     FleetDetailPanel* m_fleet_panel;
 };
@@ -114,16 +112,15 @@ private:
     int                 m_current_fleet;
 
     std::map<Fleet*, FleetDetailWnd*> m_open_fleet_detail_wnds;
-    std::map<FleetDetailWnd*, boost::signals::connection> m_open_fleet_detail_wnd_connections;
+
+    std::multimap<FleetDetailWnd*, boost::signals::connection>  m_open_fleet_detail_wnd_connections;
+    std::set<boost::signals::connection>                        m_misc_connections;
 
     FleetsListBox*      m_fleets_lb;
     FleetDataPanel*     m_new_fleet_drop_target;
     FleetDetailPanel*   m_fleet_detail_panel;
 
-    boost::signals::connection  m_lb_delete_connection;
-    boost::signals::connection  m_system_changed_connection;
-    std::vector<boost::signals::connection> m_misc_connections;
-
+    
     static GG::Pt s_last_position; ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.
 };
 

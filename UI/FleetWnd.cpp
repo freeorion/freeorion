@@ -38,7 +38,8 @@ public:
     };
 
     FleetDataPanel(int w, int h, const Fleet* fleet, int empire = -1, int system_id = -1, double x = 0.0, double y = 0.0);
-
+    ~FleetDataPanel();
+    
     bool Selected() const;
 
     virtual void Render();
@@ -58,6 +59,9 @@ private:
     const int m_system_id;
     const double m_x;
     const double m_y;
+
+    boost::signals::connection m_fleet_connection;
+
     GG::StaticGraphic* m_fleet_icon;
     GG::TextControl* m_fleet_name_text;
     StatisticIcon* m_num_ships_stat;
@@ -105,9 +109,14 @@ namespace {
             m_ship_strength_stat = new StatisticIcon(h, SHIP_NAME_HT, STAT_ICON_WD, h - SHIP_NAME_HT - 1, (ClientUI::ArtDir() / "icons" / "combatstrength.png").native_file_string(),
                                                      ClientUI::TextColor(), 0, 0, true, false);
             AttachChild(m_ship_strength_stat);
-            GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
+            m_ship_connection = GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
 
             Refresh();
+        }
+
+        ~ShipDataPanel()
+        {
+            m_ship_connection.disconnect();
         }
 
         virtual void Render()
@@ -160,8 +169,7 @@ namespace {
                 design_name = "Scout";
             }
             m_ship_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, SHIP_ICON_SZ, SHIP_ICON_SZ, 
-                                                ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png")),
-                                                GG::GR_FITGRAPHIC);
+            /*ClientUI::ShipIcon(design_name)*/ ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png")), GG::GR_FITGRAPHIC);
             AttachChild(m_ship_icon);
         }
 
@@ -207,6 +215,7 @@ namespace {
         StatisticIcon* m_damage_stat;
         GG::StaticGraphic* m_colonizer_icon;
         bool m_selected;
+        boost::signals::connection m_ship_connection;
     };
 
     struct FleetRow : public GG::ListBox::Row
@@ -308,10 +317,15 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
                                                   ClientUI::TextColor(), 0, 0, true, false);
         AttachChild(m_num_ships_stat);
         AttachChild(m_fleet_strength_stat);
-        GG::Connect(m_fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
+        m_fleet_connection = GG::Connect(m_fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
     }
 
     Refresh();
+}
+    
+FleetDataPanel::~FleetDataPanel()
+{
+    m_fleet_connection.disconnect();
 }
 
 bool FleetDataPanel::Selected() const
@@ -423,7 +437,7 @@ void FleetDataPanel::SetFleetIcon()
             } else {
                 design_name = "Scout";
             }
-            icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png"));
+            icon = ClientUI::ShipIcon(design_name);
         }
     } else { // the "new fleet" data panel
         icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "newfleet.png");
@@ -495,6 +509,7 @@ class FleetDetailPanel : public GG::Wnd
 {
 public:
     FleetDetailPanel(Fleet* fleet, bool read_only, Uint32 flags = 0); ///< ctor
+    ~FleetDetailPanel();
 
     Fleet* GetFleet() const {return m_fleet;} ///< returns the currently-displayed fleet (may be 0)
 
@@ -516,6 +531,8 @@ private:
     Fleet*                      m_fleet;
     const bool                  m_read_only;
     boost::signals::connection  m_fleet_connection;
+    std::set<boost::signals::connection> 
+                                m_misc_connections;
 
     GG::TextControl*            m_destination_text;
     ShipsListBox*               m_ships_lb;
@@ -735,10 +752,21 @@ FleetDetailPanel::FleetDetailPanel(Fleet* fleet, bool read_only, Uint32 flags/* 
     m_destination_text->SetMinSize(false);
     m_ship_status_text->SetMinSize(false);
 
-    SetFleet(fleet);
+    if (fleet) SetFleet(fleet);
     Init();
 
-    GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetDetailPanel::UniverseObjectDeleted, this);
+    m_misc_connections.insert(GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetDetailPanel::UniverseObjectDeleted, this));
+}
+
+FleetDetailPanel::~FleetDetailPanel()
+{
+    if (m_fleet) {
+        m_fleet_connection.disconnect();
+    }
+    while (!m_misc_connections.empty()) {
+        m_misc_connections.begin()->disconnect();
+        m_misc_connections.erase(m_misc_connections.begin());
+    }
 }
 
 int FleetDetailPanel::GetShipIDOfListRow(int row_idx) const
@@ -749,25 +777,33 @@ int FleetDetailPanel::GetShipIDOfListRow(int row_idx) const
 void FleetDetailPanel::SetFleet(Fleet* fleet)
 {
     Fleet* old_fleet = m_fleet;
-    if (fleet != old_fleet)
+
+    if (old_fleet && old_fleet != fleet) {
         m_fleet_connection.disconnect();
+    }
+
     *m_destination_text << "";
     *m_ship_status_text << "";
     m_ships_lb->Clear();
     m_ships_lb->SetFleet(fleet);
-    if ((m_fleet = fleet)) {
+    
+    m_fleet = fleet;
+
+    if (m_fleet) {
         Universe& universe = GetUniverse();
+
         if (m_fleet->NumShips()) {
-            for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it) {
+            for (Fleet::const_iterator it = m_fleet->begin(); it != m_fleet->end(); ++it)
                 m_ships_lb->Insert(new ShipRow(universe.Object<Ship>(*it)));
-            }
+
         } else {
             PanelEmptySignal(m_fleet);
-            return; // return immediately, since the signal above may invalidate this
+            return; // return immediately, since PanelEmptySignal may invalidate this pointer
         }
+
         *m_destination_text << DestinationText();
-        if (fleet != old_fleet) {
-            m_fleet_connection.disconnect();
+
+        if (old_fleet != fleet) {
             m_fleet_connection = GG::Connect(m_fleet->StateChangedSignal, &FleetDetailPanel::Refresh, this);
         }
     }
@@ -791,9 +827,9 @@ void FleetDetailPanel::Init()
     GetLayout()->SetRowStretch(1, 1.0);
     GetLayout()->SetMinimumRowHeight(2, ClientUI::Pts() + 4);
 
-    GG::Connect(m_ships_lb->SelChangedSignal, &FleetDetailPanel::ShipSelectionChanged, this);
-    GG::Connect(m_ships_lb->BrowsedSignal, &FleetDetailPanel::ShipBrowsed, this);
-    GG::Connect(m_ships_lb->RightClickedSignal, &FleetDetailPanel::ShipRightClicked, this);
+    m_misc_connections.insert(GG::Connect(m_ships_lb->SelChangedSignal, &FleetDetailPanel::ShipSelectionChanged, this));
+    m_misc_connections.insert(GG::Connect(m_ships_lb->BrowsedSignal, &FleetDetailPanel::ShipBrowsed, this));
+    m_misc_connections.insert(GG::Connect(m_ships_lb->RightClickedSignal, &FleetDetailPanel::ShipRightClicked, this));
 }
 
 void FleetDetailPanel::Refresh()
@@ -902,11 +938,12 @@ FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint3
     SetMaxSize(GG::Pt(Width(), MaxSize().y));
     SetText(TitleText());
     EnableChildClipping(false);
-    GG::Connect(m_fleet_panel->PanelEmptySignal, PanelEmptySignal);
+    m_panel_empty_connection = GG::Connect(m_fleet_panel->PanelEmptySignal, PanelEmptySignal);
 }
 
 FleetDetailWnd::~FleetDetailWnd()
 {
+    m_panel_empty_connection.disconnect();
     ClosingSignal(m_fleet_panel->GetFleet());
 }
 
@@ -977,23 +1014,40 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
     EnableChildClipping(false);
 
     Init(fleets, selected_fleet);
-    GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetWnd::UniverseObjectDeleted, this);
+    m_misc_connections.insert(GG::Connect(GetUniverse().UniverseObjectDeleteSignal, &FleetWnd::UniverseObjectDeleted, this));
 
     if (const System* system = fleets.back()->GetSystem())
-        m_system_changed_connection = Connect(system->StateChangedSignal, &FleetWnd::SystemChangedSlot, this);
+        m_misc_connections.insert(Connect(system->StateChangedSignal, &FleetWnd::SystemChangedSlot, this));
 
     SetMaxSize(GG::Pt(Width(), MaxSize().y));
 }
 
 FleetWnd::~FleetWnd()
 {
+    // disconnect all signals connect to the FleetWnd itself
+    while (!m_misc_connections.empty()) {
+        m_misc_connections.begin()->disconnect();
+        m_misc_connections.erase(m_misc_connections.begin());
+    }
+    // disconnect all signals attached to FleetDetailWnds
+    while (!m_open_fleet_detail_wnd_connections.empty()) {
+        m_open_fleet_detail_wnd_connections.begin()->second.disconnect();
+        m_open_fleet_detail_wnd_connections.erase(m_open_fleet_detail_wnd_connections.begin());
+    }
+    //std::multimap<FleetDetailWnd*, boost::signals::connection>::iterator sig_it = m_open_fleet_detail_wnd_connections.begin();
+    //while (sig_it != m_open_fleet_detail_wnd_connections.end()) {
+    //    sig_it->second.disconnect();
+    //    m_open_fleet_detail_wnd_connections.erase(sig_it);
+    //    sig_it = m_open_fleet_detail_wnd_connections.begin();
+    //}
+   
     ClientUI::GetClientUI()->GetMapWnd()->SetProjectedFleetMovement(0, std::list<System*>());
 }
 
 void FleetWnd::CloseClicked()
 {
     s_last_position = UpperLeft();
-    m_lb_delete_connection.disconnect();
+    
     for (std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_detail_wnds.begin(); it != m_open_fleet_detail_wnds.end(); ++it) {
         delete it->second;
     }
@@ -1031,13 +1085,13 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
     }
     GetLayout()->SetBorderMargin(7);
 
-    GG::Connect(m_fleet_detail_panel->PanelEmptySignal, &FleetWnd::DeleteFleet, this);
-    GG::Connect(m_fleets_lb->SelChangedSignal, &FleetWnd::FleetSelectionChanged, this);
-    GG::Connect(m_fleets_lb->RightClickedSignal, &FleetWnd::FleetRightClicked, this);
-    GG::Connect(m_fleets_lb->DoubleClickedSignal, &FleetWnd::FleetDoubleClicked, this);
-    m_lb_delete_connection = GG::Connect(m_fleets_lb->ErasedSignal, &FleetWnd::FleetDeleted, this);
+    m_misc_connections.insert(GG::Connect(m_fleet_detail_panel->PanelEmptySignal, &FleetWnd::DeleteFleet, this));
+    m_misc_connections.insert(GG::Connect(m_fleets_lb->SelChangedSignal, &FleetWnd::FleetSelectionChanged, this));
+    m_misc_connections.insert(GG::Connect(m_fleets_lb->RightClickedSignal, &FleetWnd::FleetRightClicked, this));
+    m_misc_connections.insert(GG::Connect(m_fleets_lb->DoubleClickedSignal, &FleetWnd::FleetDoubleClicked, this));
+    m_misc_connections.insert(GG::Connect(m_fleets_lb->ErasedSignal, &FleetWnd::FleetDeleted, this));
     if (!m_read_only)
-        GG::Connect(m_new_fleet_drop_target->NewFleetFromShipsSignal, &FleetWnd::CreateNewFleetFromDrops, this);
+        m_misc_connections.insert(GG::Connect(m_new_fleet_drop_target->NewFleetFromShipsSignal, &FleetWnd::CreateNewFleetFromDrops, this));
 
     SetText(TitleText());
 
@@ -1155,17 +1209,20 @@ void FleetWnd::FleetDoubleClicked(int row_idx, GG::ListBox::Row* row)
     int num_open_windows = m_open_fleet_detail_wnds.size();
     GG::Pt window_posn(std::max(0, 25 + LowerRight().x + num_open_windows * 25), std::max(0, UpperLeft().y + num_open_windows * 25));
     if (!m_open_fleet_detail_wnds[row_fleet]) {
-        FleetDetailWnd* fleet_wnd = new FleetDetailWnd(window_posn.x, window_posn.y, row_fleet, m_read_only);
-        m_open_fleet_detail_wnds[row_fleet] = fleet_wnd;
-        if (GG::GUI::GetGUI()->AppWidth() < fleet_wnd->LowerRight().x)
-            window_posn.x = GG::GUI::GetGUI()->AppWidth() - fleet_wnd->Width();
-        if (GG::GUI::GetGUI()->AppHeight() < fleet_wnd->LowerRight().y)
-            window_posn.y = GG::GUI::GetGUI()->AppHeight() - fleet_wnd->Height();
-        fleet_wnd->MoveTo(window_posn);
-        m_open_fleet_detail_wnd_connections[fleet_wnd] =
-            GG::Connect(fleet_wnd->ClosingSignal, &FleetWnd::FleetDetailWndClosing, this);
-        GG::Connect(fleet_wnd->PanelEmptySignal, &FleetWnd::DeleteFleet, this);
-        GG::GUI::GetGUI()->Register(fleet_wnd);
+        FleetDetailWnd* fleet_detail_wnd = new FleetDetailWnd(window_posn.x, window_posn.y, row_fleet, m_read_only);
+        m_open_fleet_detail_wnds[row_fleet] = fleet_detail_wnd;
+        if (GG::GUI::GetGUI()->AppWidth() < fleet_detail_wnd->LowerRight().x)
+            window_posn.x = GG::GUI::GetGUI()->AppWidth() - fleet_detail_wnd->Width();
+        if (GG::GUI::GetGUI()->AppHeight() < fleet_detail_wnd->LowerRight().y)
+            window_posn.y = GG::GUI::GetGUI()->AppHeight() - fleet_detail_wnd->Height();
+        fleet_detail_wnd->MoveTo(window_posn);
+
+        m_open_fleet_detail_wnd_connections.insert(std::pair<FleetDetailWnd*, boost::signals::connection>(
+            fleet_detail_wnd, GG::Connect(fleet_detail_wnd->ClosingSignal, &FleetWnd::FleetDetailWndClosing, this)));
+        m_open_fleet_detail_wnd_connections.insert(std::pair<FleetDetailWnd*, boost::signals::connection>(
+            fleet_detail_wnd, GG::Connect(fleet_detail_wnd->PanelEmptySignal, &FleetWnd::DeleteFleet, this)));
+
+        GG::GUI::GetGUI()->Register(fleet_detail_wnd);
     }
 }
 
@@ -1206,9 +1263,19 @@ void FleetWnd::DeleteFleet(Fleet* fleet)
 
     std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_detail_wnds.find(fleet);
     if (it != m_open_fleet_detail_wnds.end()) {
-        m_open_fleet_detail_wnd_connections[it->second].disconnect();
+
+        // disconnect all signals attached to this FleetDetailWnd
+        // find first signal...
+        std::multimap<FleetDetailWnd*, boost::signals::connection>::iterator sig_it = m_open_fleet_detail_wnd_connections.find(it->second);
+        while (sig_it != m_open_fleet_detail_wnd_connections.end()) {
+            // disconnect and remove from map
+            sig_it->second.disconnect();
+            m_open_fleet_detail_wnd_connections.erase(sig_it);
+            // find next signal, if present, until all signals disconnected and removed
+            sig_it = m_open_fleet_detail_wnd_connections.find(it->second);
+        }
+
         delete it->second;
-        m_open_fleet_detail_wnd_connections.erase(it->second);
         m_open_fleet_detail_wnds.erase(it);
     }
     NotShowingFleetSignal(fleet);
@@ -1253,7 +1320,7 @@ void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>&
         HumanClientApp::GetApp()->Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system->ID(), ship_ids));
         System::ObjectVec fleets = system->FindObjectsInOrbit(-1, StationaryFleetVisitor(empire_id));
         for (unsigned int i = 0; i < fleets.size(); ++i) {
-            if (fleets[i]->Name() == fleet_name) {
+            if (fleets[i]->ID() == new_fleet_id) {
                 new_fleet = universe_object_cast<Fleet*>(fleets[i]);
                 break;
             }
@@ -1284,10 +1351,15 @@ void FleetWnd::UniverseObjectDeleted(const UniverseObject *obj)
 
     for (std::map<Fleet*, FleetDetailWnd*>::iterator it = m_open_fleet_detail_wnds.begin(); it != m_open_fleet_detail_wnds.end(); ++it) {
         if (it->first == fleet) {
-            m_open_fleet_detail_wnd_connections[it->second].disconnect();
-            delete it->second;
-            m_open_fleet_detail_wnd_connections.erase(it->second);
+            FleetDetailWnd* fleet_detail_wnd = it->second;
+            std::multimap<FleetDetailWnd*, boost::signals::connection>::iterator sig_it = m_open_fleet_detail_wnd_connections.find(fleet_detail_wnd);
+            while (sig_it != m_open_fleet_detail_wnd_connections.end()) {
+                sig_it->second.disconnect();
+                m_open_fleet_detail_wnd_connections.erase(sig_it);
+                sig_it = m_open_fleet_detail_wnd_connections.find(fleet_detail_wnd);
+            }
             m_open_fleet_detail_wnds.erase(it);
+            delete fleet_detail_wnd;
             break;
         }
     }
