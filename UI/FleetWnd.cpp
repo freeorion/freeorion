@@ -437,7 +437,7 @@ void FleetDataPanel::SetFleetIcon()
             } else {
                 design_name = "Scout";
             }
-            icon = ClientUI::ShipIcon(design_name);
+            icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png"));
         }
     } else { // the "new fleet" data panel
         icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "newfleet.png");
