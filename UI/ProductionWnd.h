@@ -17,6 +17,7 @@ class ProductionWnd : public GG::Wnd
 public:
     /** \name Structors */ //@{
     ProductionWnd(int w, int h);
+    ~ProductionWnd();
     //@}
 
     /** \name Signal Types */ //@{
@@ -51,6 +52,8 @@ private:
     ProductionInfoPanel* m_production_info_panel;
     CUIListBox*          m_queue_lb;
     BuildDesignatorWnd*  m_build_designator_wnd;
+
+    std::set<boost::signals::connection> m_misc_connections;
 };
 
 #endif // _ProductionWnd_h_

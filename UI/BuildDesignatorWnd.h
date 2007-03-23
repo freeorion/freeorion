@@ -25,6 +25,7 @@ public:
 
     /** \name Structors */ //@{
     BuildDesignatorWnd(int w, int h);
+    ~BuildDesignatorWnd();
     //@}
 
     /** \name Accessors */ //@{
@@ -61,6 +62,8 @@ private:
     int                m_build_location;
     GG::Rect           m_map_view_hole;
     std::map<int, int> m_system_default_planets;
+
+    std::set<boost::signals::connection> m_misc_connections;
 };
 
 #endif // _BuildDesignatorWnd_h_

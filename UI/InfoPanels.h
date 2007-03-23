@@ -71,6 +71,8 @@ private:
     
     GG::Button*             m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
+    std::set<boost::signals::connection> m_misc_connections;
+
     static std::map<int, bool> s_expanded_map;  ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 };
 
@@ -137,6 +139,8 @@ private:
 
     GG::Button*             m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
+    std::set<boost::signals::connection> m_misc_connections;
+
     static std::map<int, bool> s_expanded_map;  ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 };
 
@@ -183,6 +187,8 @@ private:
     std::vector<BuildingIndicator*> m_building_indicators;
 
     GG::Button*             m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
+
+    std::set<boost::signals::connection> m_misc_connections;
 
     static std::map<int, bool> s_expanded_map;  ///< map indexed by planet ID indicating whether the BuildingsPanel for each object is expanded (true) or collapsed (false)
 };

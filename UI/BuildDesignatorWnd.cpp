@@ -41,6 +41,7 @@ class BuildDesignatorWnd::BuildDetailPanel : public GG::Wnd
 {
 public:
     BuildDetailPanel(int w, int h);
+    ~BuildDetailPanel();
     int QueueIndexShown() const;
     virtual void Render();
     void SelectedBuildLocation(int location);
@@ -76,7 +77,7 @@ private:
     CUIMultiEdit*       m_description_box;
     GG::StaticGraphic*  m_item_graphic;
 
-    boost::signals::connection m_num_items_to_build_connect;
+    std::set<boost::signals::connection> m_misc_connections;
 };
 
 BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
@@ -108,9 +109,9 @@ BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
 
     m_item_graphic = 0;
 
-    GG::Connect(m_recenter_button->ClickedSignal, &BuildDesignatorWnd::BuildDetailPanel::CenterClickedSlot, this);
-    GG::Connect(m_add_to_queue_button->ClickedSignal, &BuildDesignatorWnd::BuildDetailPanel::AddToQueueClickedSlot, this);
-    m_num_items_to_build_connect = GG::Connect(m_num_items_to_build->ValueChangedSignal, &BuildDesignatorWnd::BuildDetailPanel::ItemsToBuildChangedSlot, this);
+    m_misc_connections.insert(GG::Connect(m_recenter_button->ClickedSignal, &BuildDesignatorWnd::BuildDetailPanel::CenterClickedSlot, this));
+    m_misc_connections.insert(GG::Connect(m_add_to_queue_button->ClickedSignal, &BuildDesignatorWnd::BuildDetailPanel::AddToQueueClickedSlot, this));
+    m_misc_connections.insert(GG::Connect(m_num_items_to_build->ValueChangedSignal, &BuildDesignatorWnd::BuildDetailPanel::ItemsToBuildChangedSlot, this));
 
     AttachChild(m_item_name_text);
     AttachChild(m_cost_text);
@@ -120,6 +121,15 @@ BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
     AttachChild(m_num_items_to_build_label);
     AttachChild(m_build_location_name_text);
     AttachChild(m_description_box);
+}
+
+BuildDesignatorWnd::BuildDetailPanel::~BuildDetailPanel()
+{
+    // disconnect all signals
+    while (!m_misc_connections.empty()) {
+        m_misc_connections.begin()->disconnect();
+        m_misc_connections.erase(m_misc_connections.begin());
+    }
 }
 
 int BuildDesignatorWnd::BuildDetailPanel::QueueIndexShown() const
@@ -190,14 +200,11 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
     m_num_items_to_build_label->Show();
     m_build_location_name_text->Show();
     m_recenter_button->Disable(!DisplayingQueueItem());
-    m_num_items_to_build_connect.disconnect();
     m_num_items_to_build->SetValue(1);
 
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire) {
-        m_num_items_to_build_connect = GG::Connect(m_num_items_to_build->ValueChangedSignal, &BuildDesignatorWnd::BuildDetailPanel::ItemsToBuildChangedSlot, this);
+    if (!empire)
         return;
-    }
 
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (static_cast<int>(queue.size()) <= m_queue_idx) {
@@ -219,8 +226,6 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
     } else {
         ConfigureForNewBuildView();
     }
-
-    m_num_items_to_build_connect = GG::Connect(m_num_items_to_build->ValueChangedSignal, &BuildDesignatorWnd::BuildDetailPanel::ItemsToBuildChangedSlot, this);
 
     CheckBuildability();
 
@@ -358,6 +363,7 @@ class BuildDesignatorWnd::BuildSelector : public CUIWnd
 {
 public:
     BuildSelector(int w, int h);
+    ~BuildSelector();
 
     virtual void MinimizeClicked();
 
@@ -385,6 +391,8 @@ private:
     std::map<GG::ListBox::Row*, BuildType> m_build_types;
     GG::Pt                                 m_original_ul;
 
+    std::set<boost::signals::connection>   m_misc_connections;
+
     friend struct PopulateListFunctor;
 };
 
@@ -408,18 +416,18 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
     for (BuildType i = BuildType(BT_NOT_BUILDING + 1); i < NUM_BUILD_TYPES; i = BuildType(i + 1)) {
         CUIButton* button = new CUIButton(0, 0, 1, UserString("PRODUCTION_WND_CATEGORY_" + boost::lexical_cast<std::string>(i)));
         button_height = button->Height();
-        GG::Connect(button->ClickedSignal, CategoryClickedFunctor(i, *this));
+        m_misc_connections.insert(GG::Connect(button->ClickedSignal, CategoryClickedFunctor(i, *this)));
         m_build_category_buttons.push_back(button);
         layout->Add(button, 0, i - (BT_NOT_BUILDING + 1));
     }
     CUIButton* button = new CUIButton(0, 0, 1, UserString("ALL"));
     button_height = button->Height();
-    GG::Connect(button->ClickedSignal, CategoryClickedFunctor(NUM_BUILD_TYPES, *this));
+    m_misc_connections.insert(GG::Connect(button->ClickedSignal, CategoryClickedFunctor(NUM_BUILD_TYPES, *this)));
     m_build_category_buttons.push_back(button);
     layout->Add(button, 0, NUM_BUILD_TYPES - (BT_NOT_BUILDING + 1));
     m_buildable_items = new BuildableItemsListBox(0, 0, 1, 1);
-    GG::Connect(m_buildable_items->SelChangedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemSelected, this);
-    GG::Connect(m_buildable_items->DoubleClickedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
+    m_misc_connections.insert(GG::Connect(m_buildable_items->SelChangedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemSelected, this));
+    m_misc_connections.insert(GG::Connect(m_buildable_items->DoubleClickedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this));
     m_buildable_items->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
     layout->Add(m_buildable_items, 1, 0, 1, layout->Columns());
     layout->SetMinimumRowHeight(0, button_height);
@@ -427,6 +435,15 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
     layout->SetRowStretch(1, 1);
     AttachChild(layout);
     PopulateList(m_current_build_type, false);
+}
+
+BuildDesignatorWnd::BuildSelector::~BuildSelector()
+{
+    // disconnect all signals
+    while (!m_misc_connections.empty()) {
+        m_misc_connections.begin()->disconnect();
+        m_misc_connections.erase(m_misc_connections.begin());
+    }
 }
 
 void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
@@ -639,18 +656,27 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     m_side_panel = new SidePanel(Width() - MapWnd::SIDE_PANEL_WIDTH, 0, MapWnd::SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
     m_side_panel->Hide();
 
-    GG::Connect(m_build_detail_panel->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
-    GG::Connect(m_build_detail_panel->BuildQuantityChangedSignal, BuildQuantityChangedSignal);
-    GG::Connect(m_build_selector->DisplayBuildItemSignal, &BuildDesignatorWnd::BuildDetailPanel::SetBuildItem, m_build_detail_panel);
-    GG::Connect(m_build_selector->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
-    GG::Connect(m_side_panel->PlanetSelectedSignal, &BuildDesignatorWnd::SelectPlanet, this);
-    GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal);
+    m_misc_connections.insert(GG::Connect(m_build_detail_panel->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this));
+    m_misc_connections.insert(GG::Connect(m_build_detail_panel->BuildQuantityChangedSignal, BuildQuantityChangedSignal));
+    m_misc_connections.insert(GG::Connect(m_build_selector->DisplayBuildItemSignal, &BuildDesignatorWnd::BuildDetailPanel::SetBuildItem, m_build_detail_panel));
+    m_misc_connections.insert(GG::Connect(m_build_selector->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this));
+    m_misc_connections.insert(GG::Connect(m_side_panel->PlanetSelectedSignal, &BuildDesignatorWnd::SelectPlanet, this));
+    m_misc_connections.insert(GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal));
 
     m_map_view_hole = GG::Rect(0, 0, CHILD_WIDTHS + SidePanel::MAX_PLANET_DIAMETER, h);
 
     AttachChild(m_build_detail_panel);
     AttachChild(m_build_selector);
     AttachChild(m_side_panel);
+}
+
+BuildDesignatorWnd::~BuildDesignatorWnd()
+{
+    // disconnect all signals
+    while (!m_misc_connections.empty()) {
+        m_misc_connections.begin()->disconnect();
+        m_misc_connections.erase(m_misc_connections.begin());
+    }
 }
 
 bool BuildDesignatorWnd::InWindow(const GG::Pt& pt) const

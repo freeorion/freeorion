@@ -42,7 +42,7 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
-    GG::Connect(m_expand_button->ClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this);
+    m_misc_connections.insert(GG::Connect(m_expand_button->ClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this));
 
     int icon_size = ClientUI::Pts()*4/3;
 
@@ -76,6 +76,12 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
 
 PopulationPanel::~PopulationPanel()
 {
+    // disconnect all signals
+    while (!m_misc_connections.empty()) {
+        m_misc_connections.begin()->disconnect();
+        m_misc_connections.erase(m_misc_connections.begin());
+    }
+
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     delete m_pop_stat;
     delete m_health_stat;
@@ -298,7 +304,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
-    GG::Connect(m_expand_button->ClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
+    m_misc_connections.insert(GG::Connect(m_expand_button->ClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this));
 
     
     int icon_size = ClientUI::Pts()*4/3;
@@ -389,8 +395,8 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
 
     AttachChild(m_secondary_focus_drop);
 
-    GG::Connect(m_primary_focus_drop->SelChangedSignal, &ResourcePanel::PrimaryFocusDropListSelectionChanged, this);
-    GG::Connect(m_secondary_focus_drop->SelChangedSignal, &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
+    m_misc_connections.insert(GG::Connect(m_primary_focus_drop->SelChangedSignal, &ResourcePanel::PrimaryFocusDropListSelectionChanged, this));
+    m_misc_connections.insert(GG::Connect(m_secondary_focus_drop->SelChangedSignal, &ResourcePanel::SecondaryFocusDropListSelectionChanged, this));
     
     // resource indicators
     m_farming_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "farming.png").native_file_string(), GG::CLR_WHITE,
@@ -469,6 +475,12 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
 
 ResourcePanel::~ResourcePanel()
 {
+    // disconnect all signals
+    while (!m_misc_connections.empty()) {
+        m_misc_connections.begin()->disconnect();
+        m_misc_connections.erase(m_misc_connections.begin());
+    }
+
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     delete m_farming_stat;
     delete m_mining_stat;
@@ -946,7 +958,7 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
-    GG::Connect(m_expand_button->ClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this);
+    m_misc_connections.insert(GG::Connect(m_expand_button->ClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this));
 
     // get owners, connect their production queue changed signals to update this panel
     const std::set<int>& owners = plt.Owners();
@@ -954,7 +966,7 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
         const Empire* empire = Empires().Lookup(*it);
         if (!empire) continue;  // shouldn't be a problem... maybe put check for it later
         const ProductionQueue& queue = empire->GetProductionQueue();
-        GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this);
+        m_misc_connections.insert(GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this));
     }
 
     Refresh();
@@ -962,6 +974,12 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
 
 BuildingsPanel::~BuildingsPanel()
 {
+    // disconnect all signals
+    while (!m_misc_connections.empty()) {
+        m_misc_connections.begin()->disconnect();
+        m_misc_connections.erase(m_misc_connections.begin());
+    }
+    // delete building indicators
     for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it)
         delete *it;
     m_building_indicators.clear();
