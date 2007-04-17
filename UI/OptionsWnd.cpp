@@ -115,7 +115,14 @@ namespace {
 
     bool ValidDirectory(const std::string& file)
     {
-        return fs::exists(fs::path(file)) && fs::is_directory(fs::path(file));
+        // putting this in try-catch block prevents crash with error output along the lines of:
+        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        try {
+            fs::path path = fs::path(file);
+            return fs::exists(path) && fs::is_directory(path);
+        } catch (std::exception ex) {
+            return false;
+        }        
     }
 
     template <class T>
