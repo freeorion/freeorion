@@ -1480,7 +1480,7 @@ Tech
         "CON_GAL_INFRA"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Artificial_Heavenly_Bodies.png"
 
 Tech
     name = "CON_TRANS_ARCH"

@@ -2572,7 +2572,7 @@ CON_SPACE_ELEVATOR
 Space Elevator
 
 CON_SPACE_ELEVATOR_DESC
-The materials and methods of nano-construction open up the possibility of building a cable strong enough to reach into low orbit. Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity.
+Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit.  Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity.
 
 CON_SUBTER_CONST
 Subterranean Construction
@@ -2590,7 +2590,7 @@ ECO_COLONIAL_ECO
 Colonial Economic Blueprinting
 
 ECO_COLONIAL_ECO_DESC
-With advanced economic planning now a reality, the economy for an entire developing world can be blueprinted with the same precision as a physical building. Upstart markets can now tap into their raw potential for growth, without getting mired in the traditionally immature "wild frontier" mentality.
+With advanced economic planning now a reality, the economy for an entire developing world can be blueprinted with the precision of a physical building.  Upstart markets tap their raw potential for growth, without risk of being mired in traditionally immature "wild frontier" mentalities.
 
 ECO_COMM_UNION
 Commercial Union of the Colonies
