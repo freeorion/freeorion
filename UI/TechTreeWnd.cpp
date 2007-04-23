@@ -55,34 +55,8 @@ namespace {
 
     const double TECH_NAVIGATOR_ROLLOVER_BRIGHTENING_FACTOR = 1.5;
 
-    const double MIN_SCALE = 0.209715;  // = 1.0/(1.25)^7  (going to scale = 0.2 crashes client)
+    const double MIN_SCALE = 0.1073741824;  // = 1.0/(1.25)^10
     const double MAX_SCALE = 1.0;
-
-    boost::shared_ptr<GG::Texture> CategoryIcon(const std::string& category_name)
-    {
-        std::string icon_filename;
-        if (category_name == "CONSTRUCTION_CATEGORY")
-            icon_filename = "construction.png";
-        if (category_name == "ECONOMICS_CATEGORY")
-            icon_filename = "economics.png";
-        if (category_name == "GROWTH_CATEGORY")
-            icon_filename = "growth.png";
-        if (category_name == "LEARNING_CATEGORY")
-            icon_filename = "learning.png";
-        if (category_name == "PRODUCTION_CATEGORY")
-            icon_filename = "production.png";
-        return ClientUI::GetTexture(ClientUI::ArtDir() / "tech_icons" / "categories" / icon_filename);
-    }
-
-    boost::shared_ptr<GG::Texture> TechTexture(const std::string& tech_name)
-    {
-        const Tech* tech = GetTechManager().GetTech(tech_name);
-        std::string texture_name = tech->Graphic();
-        if (texture_name.empty()) {
-            return CategoryIcon(tech->Category());
-        }
-        return ClientUI::GetTexture(ClientUI::ArtDir() / texture_name);
-    }
 
     pointf Bezier(pointf* patch, double t)
     {
@@ -725,7 +699,7 @@ void TechTreeWnd::TechDetailPanel::Render()
         GG::Pt ul = m_description_box->ClientUpperLeft(), lr = m_description_box->ClientLowerRight();
         int icon_size = lr.y - ul.y;
         int x1 = (ul.x + lr.x) / 2 - icon_size / 2;
-        CategoryIcon(m_tech->Category())->OrthoBlit(x1, ul.y, x1 + icon_size, lr.y, 0, false);
+        ClientUI::CategoryIcon(m_tech->Category())->OrthoBlit(x1, ul.y, x1 + icon_size, lr.y, 0, false);
     }
 }
 
@@ -756,7 +730,7 @@ void TechTreeWnd::TechDetailPanel::Reset()
 
     GG::Pt ul = TechGraphicUpperLeft();
     m_tech_graphic = new GG::StaticGraphic(ul.x, ul.y, 128, 128,
-                                           TechTexture(m_tech->Name()),
+                                           ClientUI::TechTexture(m_tech->Name()),
                                            GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     m_tech_graphic->Show();
     m_tech_graphic->SetColor(ClientUI::CategoryColor(m_tech->Category()));
@@ -851,6 +825,8 @@ private:
     GG::ListBox::Row* NewTechRow(const Tech* tech);
     void Reset();
 
+    std::set<boost::signals::connection> m_row_connections;
+
     const Tech* m_current_tech;
     GG::ListBox* m_lb;
 };
@@ -876,12 +852,18 @@ GG::ListBox::Row* TechTreeWnd::TechNavigator::NewTechRow(const Tech* tech)
     GG::ListBox::Row* retval = new GG::ListBox::Row(Width() - TECH_ROW_INDENTATION - 8 - 14, ROW_HEIGHT + 2, "");
     TechControl* control = new TechControl(Width() - TECH_ROW_INDENTATION - 8 - 14, ROW_HEIGHT, tech, TECH_ROW_INDENTATION);
     retval->push_back(control);
-    GG::Connect(control->ClickedSignal, &TechTreeWnd::TechNavigator::TechClickedSlot, this);
+    m_row_connections.insert(GG::Connect(control->ClickedSignal, &TechTreeWnd::TechNavigator::TechClickedSlot, this));
     return retval;
 }
 
 void TechTreeWnd::TechNavigator::Reset()
 {
+    // disconnect all signals
+    while (!m_row_connections.empty()) {
+        m_row_connections.begin()->disconnect();
+        m_row_connections.erase(m_row_connections.begin());
+    }
+
     m_lb->Clear();
     if (!m_current_tech)
         return;
@@ -1105,6 +1087,8 @@ private:
     std::map<const Tech*, TechPanel*> m_techs;
     DependencyArcsMapsByArcType m_dependency_arcs;
 
+    std::set<boost::signals::connection> m_tech_connections;
+
     LayoutSurface* m_layout_surface;
     CUIScroll*     m_vscroll;
     CUIScroll*     m_hscroll;
@@ -1175,22 +1159,20 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
     m_progress_text(0),
     m_selected(selected)
 {
-    int name_font_pts = ClientUI::Pts() + 2;
+    const int FONT_PTS = std::max(static_cast<const int>(ClientUI::Pts() * m_scale + 0.5), 3);
+
     GG::Pt UPPER_TECH_TEXT_OFFSET(4, 2);
     GG::Pt LOWER_TECH_TEXT_OFFSET(4, 0);
     GG::Pt size;
     if (m_tech->Type() == TT_THEORY) {
         size = GG::Pt(static_cast<int>(THEORY_TECH_PANEL_LAYOUT_WIDTH * m_scale + 0.5), static_cast<int>(THEORY_TECH_PANEL_LAYOUT_HEIGHT * m_scale + 0.5));
-        name_font_pts += 2;
-        UPPER_TECH_TEXT_OFFSET += GG::Pt(2, 2);
-        LOWER_TECH_TEXT_OFFSET += GG::Pt(2, 4);
     } else if (m_tech->Type() == TT_APPLICATION) {
         size = GG::Pt(static_cast<int>(APPLICATION_TECH_PANEL_LAYOUT_WIDTH * m_scale + 0.5), static_cast<int>(APPLICATION_TECH_PANEL_LAYOUT_HEIGHT * m_scale + 0.5));
     } else { // m_tech->Type() == TT_REFINEMENT
         size = GG::Pt(static_cast<int>(REFINEMENT_TECH_PANEL_LAYOUT_WIDTH * m_scale + 0.5), static_cast<int>(REFINEMENT_TECH_PANEL_LAYOUT_HEIGHT * m_scale + 0.5));
     }
     Resize(size);
-    name_font_pts = static_cast<int>(name_font_pts * m_scale + 0.5);
+
     UPPER_TECH_TEXT_OFFSET = GG::Pt(static_cast<int>(UPPER_TECH_TEXT_OFFSET.x * m_scale), static_cast<int>(UPPER_TECH_TEXT_OFFSET.y * m_scale));
     LOWER_TECH_TEXT_OFFSET = GG::Pt(static_cast<int>(LOWER_TECH_TEXT_OFFSET.x * m_scale), static_cast<int>(LOWER_TECH_TEXT_OFFSET.y * m_scale));
 
@@ -1235,12 +1217,11 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
     }
 
     int graphic_size = size.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) - 2;
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), name_font_pts);
-    m_icon = new GG::StaticGraphic(1, 1, graphic_size, graphic_size,
-                                   TechTexture(m_tech->Name()), GG::GR_FITGRAPHIC);
+    m_icon = new GG::StaticGraphic(1, 1, graphic_size, graphic_size, ClientUI::TechTexture(m_tech->Name()), GG::GR_FITGRAPHIC);
     m_icon->SetColor(ClientUI::CategoryColor(m_tech->Category()));
 
-    
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), FONT_PTS);
+
     int text_left = m_icon->LowerRight().x + static_cast<int>(4 * m_scale);
     m_tech_name_text = new GG::TextControl(text_left, UPPER_TECH_TEXT_OFFSET.y,
                                            Width() - m_icon->LowerRight().x - static_cast<int>(PROGRESS_PANEL_LEFT_EXTRUSION * m_scale), font->Lineskip(),
@@ -1254,7 +1235,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
         cost_str = str(format(UserString("TECH_TOTAL_COST_STR")) % static_cast<int>(m_tech->ResearchCost() + 0.5) % m_tech->ResearchTurns());
     m_tech_cost_text = new GG::TextControl(text_left, 0,
                                            Width() - text_left, Height() - LOWER_TECH_TEXT_OFFSET.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale),
-                                           cost_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts() * m_scale + 0.5)), m_text_and_border_color, GG::TF_BOTTOM | GG::TF_LEFT);
+                                           cost_str, font, m_text_and_border_color, GG::TF_BOTTOM | GG::TF_LEFT);
     AttachChild(m_tech_cost_text);
 
     GG::Rect progress_panel = ProgressPanelRect(UpperLeft(), LowerRight());
@@ -1267,7 +1248,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
         progress_str = UserString("TECH_WND_TECH_INCOMPLETE");
     m_progress_text = new GG::TextControl(static_cast<int>(progress_panel.ul.x - PROGRESS_PANEL_LEFT_EXTRUSION * m_scale), progress_panel.ul.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale),
                                           progress_panel.Width(), progress_panel.Height(),
-                                          progress_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts() * m_scale + 0.5)), m_text_and_border_color);
+                                          progress_str, font, m_text_and_border_color);
     AttachChild(m_progress_text);
 
     EnableChildClipping(true);
@@ -1549,6 +1530,11 @@ void TechTreeWnd::LayoutPanel::Clear()
     for (std::map<const Tech*, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it) {
         delete it->second;
     }
+    // disconnect all tech signals
+    while (!m_tech_connections.empty()) {
+        m_tech_connections.begin()->disconnect();
+        m_tech_connections.erase(m_tech_connections.begin());
+    }
     m_techs.clear();
     m_dependency_arcs.clear();
     m_selected_tech = 0;
@@ -1716,10 +1702,10 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         m_techs[tech]->MoveTo(GG::Pt(static_cast<int>(PS2INCH(ND_coord_i(node).x) - m_techs[tech]->Width() / 2 + TECH_PANEL_MARGIN),
                                      static_cast<int>(PS2INCH(ND_coord_i(node).y) - (m_techs[tech]->Height() - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) / 2 + TECH_PANEL_MARGIN)));
         m_layout_surface->AttachChild(m_techs[tech]);
-        GG::Connect(m_techs[tech]->TechBrowsedSignal, &TechTreeWnd::LayoutPanel::TechBrowsedSlot, this);
-        GG::Connect(m_techs[tech]->TechClickedSignal, &TechTreeWnd::LayoutPanel::TechClickedSlot, this);
-        GG::Connect(m_techs[tech]->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot, this);
-        GG::Connect(m_techs[tech]->ZoomedSignal, &TechTreeWnd::LayoutPanel::TreeZoomedSlot, this);
+        m_tech_connections.insert(GG::Connect(m_techs[tech]->TechBrowsedSignal, &TechTreeWnd::LayoutPanel::TechBrowsedSlot, this));
+        m_tech_connections.insert(GG::Connect(m_techs[tech]->TechClickedSignal, &TechTreeWnd::LayoutPanel::TechClickedSlot, this));
+        m_tech_connections.insert(GG::Connect(m_techs[tech]->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot, this));
+        m_tech_connections.insert(GG::Connect(m_techs[tech]->ZoomedSignal, &TechTreeWnd::LayoutPanel::TreeZoomedSlot, this));
 
         for (Agedge_t* edge = agfstout(graph, node); edge; edge = agnxtout(graph, edge)) {
             const Tech* from = tech;
