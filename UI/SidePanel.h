@@ -74,8 +74,8 @@ private:
     void RefreshImpl();
     void SetSystemImpl();
     void SystemSelectionChanged(int selection);
-    void SystemFleetAdded(const Fleet &);
-    void SystemFleetRemoved(const Fleet &);
+    void SystemFleetAdded(const Fleet& flt);
+    void SystemFleetRemoved(const Fleet& flt);
     void FleetsChanged();
     void UpdateSystemResourceSummary();
     void PrevButtonClicked();
@@ -98,6 +98,9 @@ private:
 
     static const System*        s_system;
     static std::set<SidePanel*> s_side_panels;
+
+    std::set<boost::signals::connection> m_system_connections;
+    std::map<int, boost::signals::connection> m_fleet_connections;
 };
 
 #endif // _SidePanel_h_

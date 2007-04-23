@@ -433,8 +433,7 @@ private:
     BuildingsPanel*         m_buildings_panel;          ///< contains icons representing buildings
     SpecialsPanel*          m_specials_panel;           ///< contains icons representing specials
 
-    boost::signals::connection m_connection_system_changed;           ///< stores connection used to handle a system change
-    boost::signals::connection m_connection_planet_changed;           ///< stores connection used to handle a planet change
+    std::set<boost::signals::connection> m_misc_connections;
 };
 
 class SidePanel::PlanetPanelContainer : public GG::Wnd
@@ -743,22 +742,22 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
                                       GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                                       ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, 
                                       ClientUI::TextColor(), GG::CLICKABLE);
-    Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
+    m_misc_connections.insert(GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this));
     AttachChild(m_button_colonize);
 
     m_population_panel = new PopulationPanel(w - MAX_PLANET_DIAMETER, planet);
     AttachChild(m_population_panel);
-    GG::Connect(m_population_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
+    m_misc_connections.insert(GG::Connect(m_population_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this));
 
     m_resource_panel = new ResourcePanel(w - MAX_PLANET_DIAMETER, planet);
     AttachChild(m_resource_panel);
-    GG::Connect(m_resource_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
-    GG::Connect(m_resource_panel->PrimaryFocusChangedSignal, &SidePanel::PlanetPanel::SetPrimaryFocus, this);
-    GG::Connect(m_resource_panel->SecondaryFocusChangedSignal, &SidePanel::PlanetPanel::SetSecondaryFocus, this);
+    m_misc_connections.insert(GG::Connect(m_resource_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this));
+    m_misc_connections.insert(GG::Connect(m_resource_panel->PrimaryFocusChangedSignal, &SidePanel::PlanetPanel::SetPrimaryFocus, this));
+    m_misc_connections.insert(GG::Connect(m_resource_panel->SecondaryFocusChangedSignal, &SidePanel::PlanetPanel::SetSecondaryFocus, this));
 
     m_buildings_panel = new BuildingsPanel(w - MAX_PLANET_DIAMETER, 4, planet);
     AttachChild(m_buildings_panel);
-    GG::Connect(m_buildings_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
+    m_misc_connections.insert(GG::Connect(m_buildings_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this));
 
     m_specials_panel = new SpecialsPanel(MAX_PLANET_DIAMETER, planet);
     AttachChild(m_specials_panel);
@@ -770,18 +769,19 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     const Planet *plt = GetUniverse().Object<const Planet>(m_planet_id);
 
     if (System* system = plt->GetSystem())
-        m_connection_system_changed = GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
-    m_connection_planet_changed = GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
+        m_misc_connections.insert(GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this));
+    m_misc_connections.insert(GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this));
 
     Refresh();
 }
 
 SidePanel::PlanetPanel::~PlanetPanel()
 {
-    // HACK! These disconnects should not be necessary, since PlanetPanel is derived from boost::signals::trackable, but
-    // a segfault occurrs if they are not done (as of Boost 1.33.1).
-    m_connection_system_changed.disconnect();
-    m_connection_planet_changed.disconnect();
+    // disconnect all signals
+    while (!m_misc_connections.empty()) {
+        m_misc_connections.begin()->disconnect();
+        m_misc_connections.erase(m_misc_connections.begin());
+    }
 
     delete m_button_colonize;
     delete m_env_size;
@@ -1283,7 +1283,7 @@ std::set<SidePanel*> SidePanel::s_side_panels;
 
 SidePanel::SidePanel(int x, int y, int w, int h) : 
     Wnd(x, y, w, h, GG::CLICKABLE),
-    m_system_name(new CUIDropDownList(40, 0, w-80,SystemNameFontSize(), 10*SystemNameFontSize(),GG::CLR_ZERO,GG::Clr(0.0, 0.0, 0.0, 0.5))),
+    m_system_name(new CUIDropDownList(40, 0, w-80, SystemNameFontSize(), 10*SystemNameFontSize(), GG::CLR_ZERO, GG::Clr(0.0, 0.0, 0.0, 0.5))),
     m_button_prev(new GG::Button(40-SystemNameFontSize(),4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
     m_button_next(new GG::Button(40+w-80                ,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
     m_star_graphic(0),
@@ -1327,6 +1327,15 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
 
 SidePanel::~SidePanel()
 {
+    // disconnect any existing stored signals
+    while (!m_system_connections.empty()) {
+        m_system_connections.begin()->disconnect();
+        m_system_connections.erase(m_system_connections.begin());
+    }
+    while (!m_fleet_connections.empty()) {
+        m_fleet_connections.begin()->second.disconnect();
+        m_fleet_connections.erase(m_fleet_connections.begin());
+    }
     s_side_panels.erase(this);
 }
 
@@ -1363,11 +1372,21 @@ void SidePanel::SetSystemImpl()
     m_system_name->Clear();
 
     DeleteChild(m_star_graphic);    m_star_graphic = 0;
+    
+    // disconnect any existing system signals
+    while (!m_system_connections.empty()) {
+        m_system_connections.begin()->disconnect();
+        m_system_connections.erase(m_system_connections.begin());
+    }
+    while (!m_fleet_connections.empty()) {
+        m_fleet_connections.begin()->second.disconnect();
+        m_fleet_connections.erase(m_fleet_connections.begin());
+    }
 
     if (s_system)
     {
-        GG::Connect(s_system->FleetAddedSignal  , &SidePanel::SystemFleetAdded  , this);
-        GG::Connect(s_system->FleetRemovedSignal, &SidePanel::SystemFleetRemoved, this);
+        m_system_connections.insert(GG::Connect(s_system->FleetAddedSignal, &SidePanel::SystemFleetAdded, this));
+        m_system_connections.insert(GG::Connect(s_system->FleetRemovedSignal, &SidePanel::SystemFleetRemoved, this));
 
         std::vector<const System*> sys_vec = GetUniverse().FindObjects<const System>();
         GG::ListBox::Row *select_row = 0;
@@ -1422,15 +1441,15 @@ void SidePanel::SetSystemImpl()
         std::pair<System::const_orbit_iterator, System::const_orbit_iterator> range = s_system->non_orbit_range();
         std::vector<const Fleet*> flt_vec = s_system->FindObjects<Fleet>();
         for(unsigned int i = 0; i < flt_vec.size(); i++) 
-            GG::Connect(flt_vec[i]->StateChangedSignal, &SidePanel::FleetsChanged, this);
+            m_fleet_connections.insert(std::pair<int, boost::signals::connection>(flt_vec[i]->ID(), GG::Connect(flt_vec[i]->StateChangedSignal, &SidePanel::FleetsChanged, this)));
 
         // add planets
         std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
 
         m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
         for(unsigned int i = 0; i < plt_vec.size(); i++) {
-            GG::Connect(plt_vec[i]->StateChangedSignal, &SidePanel::UpdateSystemResourceSummary, this);
-            GG::Connect(plt_vec[i]->ResourceCenterChangedSignal, SidePanel::ResourceCenterChangedSignal);
+            m_system_connections.insert(GG::Connect(plt_vec[i]->StateChangedSignal, &SidePanel::UpdateSystemResourceSummary, this));
+            m_system_connections.insert(GG::Connect(plt_vec[i]->ResourceCenterChangedSignal, SidePanel::ResourceCenterChangedSignal));
         }
 
         UpdateSystemResourceSummary();
@@ -1504,14 +1523,19 @@ void SidePanel::SetSystem(int system_id)
     }
 }
 
-void SidePanel::SystemFleetAdded(const Fleet &flt)
+void SidePanel::SystemFleetAdded(const Fleet& flt)
 {
-    GG::Connect(flt.StateChangedSignal, &SidePanel::FleetsChanged, this);
+    m_fleet_connections.insert(std::pair<int, boost::signals::connection>(flt.ID(), GG::Connect(flt.StateChangedSignal, &SidePanel::FleetsChanged, this)));
     FleetsChanged();
 }
 
-void SidePanel::SystemFleetRemoved(const Fleet &)
+void SidePanel::SystemFleetRemoved(const Fleet& flt)
 {
+    std::map<int, boost::signals::connection>::iterator map_it = m_fleet_connections.find(flt.ID());
+    if (map_it != m_fleet_connections.end()) {
+        map_it->second.disconnect();
+        m_fleet_connections.erase(map_it);
+    }
     FleetsChanged();
 }
 

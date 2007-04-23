@@ -421,6 +421,16 @@ TechManager::TechManager()
     if (!redundant_dependency.empty()) {
         throw std::runtime_error(redundant_dependency.c_str());
     }
+
+#ifdef OUTPUT_TECH_LIST
+    for (iterator it = begin(); it != end(); ++it) {
+        const Tech* tech = *it;
+        std::cerr << UserString(tech->Name()) << " (" 
+                  << UserString(tech->Category()) << " "
+                  << UserString(boost::lexical_cast<std::string>(tech->Type())) << ") - "
+                  << tech->Graphic() << std::endl;
+    }
+#endif
 }
 
 std::string TechManager::FindIllegalDependencies()
