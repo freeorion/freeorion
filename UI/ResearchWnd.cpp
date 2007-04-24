@@ -10,6 +10,7 @@
 #include "../UI/TechTreeWnd.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/StaticGraphic.h>
 
 #include <boost/format.hpp>
 #include <cmath>
@@ -26,7 +27,6 @@ namespace {
     {
         QueueRow(int w, const Tech* tech_, bool in_progress, int turns_left);
         const Tech* const tech;
-        static const int HEIGHT = 64;
     };
 
     //////////////////////////////////////////////////
@@ -114,22 +114,23 @@ namespace {
     private:
         void Draw(GG::Clr clr, bool fill);
 
-        const Tech* const m_tech;
-        GG::TextControl*  m_name_text;
-        GG::TextControl*  m_RPs_and_turns_text;
-        GG::TextControl*  m_turns_remaining_text;
-        MultiTurnProgressBar* m_progress_bar;
-        bool              m_in_progress;
-        int               m_total_turns;
-        int               m_turns_completed;
-        double            m_partially_complete_turn;
+        const Tech* const       m_tech;
+        GG::TextControl*        m_name_text;
+        GG::TextControl*        m_RPs_and_turns_text;
+        GG::TextControl*        m_turns_remaining_text;
+        GG::StaticGraphic*      m_icon;
+        MultiTurnProgressBar*   m_progress_bar;
+        bool                    m_in_progress;
+        int                     m_total_turns;
+        int                     m_turns_completed;
+        double                  m_partially_complete_turn;
     };
 
     //////////////////////////////////////////////////
     // QueueRow implementation
     //////////////////////////////////////////////////
     QueueRow::QueueRow(int w, const Tech* tech_, bool in_progress, int turns_left) :
-        GG::ListBox::Row(w, HEIGHT, ""),
+        GG::ListBox::Row(),
         tech(tech_)
     {
         const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
@@ -137,7 +138,11 @@ namespace {
         double progress = empire->ResearchStatus(tech->Name());
         if (progress == -1.0)
             progress = 0.0;
-        push_back(new QueueTechPanel(w, tech_, in_progress, turns_left, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost));
+
+        GG::Control* panel = new QueueTechPanel(w, tech_, in_progress, turns_left, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
+        Resize(panel->Size());
+        push_back(panel);
+        
         SetDragDropDataType("RESEARCH_QUEUE_ROW");
     }
 
@@ -145,35 +150,73 @@ namespace {
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
     QueueTechPanel::QueueTechPanel(int w, const Tech* tech, bool in_progress, int turns_left, int turns_completed, double partially_complete_turn) :
-        GG::Control(0, 0, w, QueueRow::HEIGHT, 0),
+        GG::Control(0, 0, w, 10, 0),
         m_tech(tech),
         m_in_progress(in_progress),
         m_total_turns(tech->ResearchTurns()),
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
     {
-        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
-        m_name_text = new GG::TextControl(4, 2, w - 4, QueueRow::HEIGHT - 2, UserString(tech->Name()), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() + 2), text_and_border, GG::TF_TOP | GG::TF_LEFT);
+        const int MARGIN = 2;
+        const int WIDTH = w - 6;    // 6 pixels accounts for border
+
+        const int FONT_PTS = ClientUI::Pts();
+        const int METER_HEIGHT = FONT_PTS;
+
+        const int HEIGHT = MARGIN + FONT_PTS + MARGIN + METER_HEIGHT + MARGIN + FONT_PTS + MARGIN + 6;
+
+        const int GRAPHIC_SIZE = HEIGHT - 9;    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
+
+        const int NAME_WIDTH = w - GRAPHIC_SIZE - 2*MARGIN - 3;
+        const int METER_WIDTH = w - GRAPHIC_SIZE - 3*MARGIN - 3;
+        const int TURNS_AND_COST_WIDTH = NAME_WIDTH/2;
+
+        Resize(GG::Pt(w, HEIGHT));
+
+
+        GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+
+        int top = MARGIN;
+        int left = MARGIN;
+
+
+        m_icon = new GG::StaticGraphic(left, top, GRAPHIC_SIZE, GRAPHIC_SIZE, ClientUI::TechTexture(m_tech->Name()), GG::GR_FITGRAPHIC);
+        m_icon->SetColor(ClientUI::CategoryColor(m_tech->Category()));
+
+        left += m_icon->Width() + MARGIN;
+
+        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, FONT_PTS + 2*MARGIN, UserString(tech->Name()), font, clr, GG::TF_TOP | GG::TF_LEFT);
         m_name_text->ClipText(true);
+
+        top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
+        
+        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech->ResearchTurns(),
+                                                  turns_completed, partially_complete_turn, ClientUI::TechWndProgressBar(),
+                                                  ClientUI::TechWndProgressBarBackground(), clr);
+        m_progress_bar->MoveTo(GG::Pt(left, top));
+
+        top += m_progress_bar->Height() + MARGIN;
+        
         using boost::io::str;
         using boost::format;
-        const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::Pts() + 4) - 4;
-        m_RPs_and_turns_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::Pts() + 4,
-                                                   str(format(UserString("TECH_TURN_COST_STR")) % tech->ResearchCost() % tech->ResearchTurns()),
-                                                   GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_and_border, GG::TF_LEFT);
+
+        std::string turns_cost_text = str(format(UserString("TECH_TURN_COST_STR")) % tech->ResearchCost() % tech->ResearchTurns());
+        m_RPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
+                                                   turns_cost_text, font, clr, GG::TF_LEFT);
+
+        left += TURNS_AND_COST_WIDTH;
+        
         std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER") : str(format(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::Pts() + 4, turns_left_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_and_border, GG::TF_RIGHT);
-        const int PROGRESS_METER_MARGIN = 6;
-        const int PROGRESS_METER_WIDTH = Width() - 2 * PROGRESS_METER_MARGIN;
-        const int PROGRESS_METER_HEIGHT = 18;
-        m_progress_bar = new MultiTurnProgressBar(PROGRESS_METER_WIDTH, PROGRESS_METER_HEIGHT, tech->ResearchTurns(),
-                                                  turns_completed, partially_complete_turn, ClientUI::TechWndProgressBar(),
-                                                  ClientUI::TechWndProgressBarBackground(), text_and_border);
-        m_progress_bar->MoveTo(GG::Pt(PROGRESS_METER_MARGIN, m_RPs_and_turns_text->UpperLeft().y - 3 - PROGRESS_METER_HEIGHT));
+        m_turns_remaining_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
+                                                     turns_left_text, font, clr, GG::TF_RIGHT);
+        m_turns_remaining_text->ClipText(true);
+
 
         AttachChild(m_name_text);
         AttachChild(m_RPs_and_turns_text);
         AttachChild(m_turns_remaining_text);
+        AttachChild(m_icon);
         AttachChild(m_progress_bar);
     }
 

@@ -185,7 +185,7 @@ public:
     // misc UI windows
     static GG::Clr      SidePanelColor();
     static boost::shared_ptr<GG::Texture>
-                        ClientUI::ShipIcon(const std::string& design_name);
+                        ShipIcon(const std::string& design_name);
     static boost::shared_ptr<GG::Texture>
                         BuildingTexture(const BuildingType* building_type);
 
