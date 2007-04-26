@@ -58,6 +58,8 @@ namespace {
     const double MIN_SCALE = 0.1073741824;  // = 1.0/(1.25)^10
     const double MAX_SCALE = 1.0;
 
+    const int TECH_DETAIL_PANEL_ICON_SIZE = 128;
+
     pointf Bezier(pointf* patch, double t)
     {
         pointf temp[6][6];
@@ -366,13 +368,14 @@ private:
 
     GG::Pt m_drag_offset;   //!< offset from the lower-right corner of the point being used to drag-resize
 
-    unsigned int m_buttons_per_row;
-    unsigned int m_col_offset;  //!< horizontal distance between each column of buttons
-    unsigned int m_row_offset;  //!< vertical distance between each row of buttons
-    unsigned int m_category_button_rows;
-    unsigned int m_status_or_type_button_rows;
+    int m_buttons_per_row;
+    int m_col_offset;  //!< horizontal distance between each column of buttons
+    int m_row_offset;  //!< vertical distance between each row of buttons
+    int m_category_button_rows;
+    int m_status_or_type_button_rows;
 
-    static const unsigned int BUTTON_SEPARATION = 3;   // vertical or horizontal sepration between adjacent buttons
+    static const int BUTTON_SEPARATION = 3;    // vertical or horizontal sepration between adjacent buttons
+    static const int UPPER_LEFT_PAD = 2;       // offset of buttons' position from top left of controls box
 
     static const int BORDER_LEFT = 4;
     static const int BORDER_TOP = 4;
@@ -427,32 +430,31 @@ TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
 
 void TechTreeWnd::TechTreeControls::DoButtonLayout()
 {
-    const unsigned int RIGHT_EDGE_PAD = 12;
-    const unsigned int ONE = 1; // unless I use this, I ge complaints from std::max that the type is ambiguous, and "unsigned int(1)" is apparently rejected by gcc
-    const unsigned int USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, ONE);   // space in which to do layout
-    const unsigned int PTS = ClientUI::Pts();
-    const unsigned int PTS_WIDE = PTS/2;  // how wide per character the font needs... not sure how better to get this
-    const unsigned int MIN_BUTTON_WIDTH = PTS_WIDE*18;    // rough guesstimate...
-    const unsigned int MAX_BUTTONS_PER_ROW = std::max(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION), ONE);
+    const int RIGHT_EDGE_PAD = 12;
+    const int USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, 1);   // space in which to do layout
+    const int PTS = ClientUI::Pts();
+    const int PTS_WIDE = PTS/2;  // how wide per character the font needs... not sure how better to get this
+    const int MIN_BUTTON_WIDTH = PTS_WIDE*18;    // rough guesstimate...
+    const int MAX_BUTTONS_PER_ROW = std::max(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION), 1);
 
     const float NUM_CATEGORY_BUTTONS = static_cast<float>(m_category_buttons.size());
-    const unsigned int ROWS = static_cast<unsigned int>(std::ceil(NUM_CATEGORY_BUTTONS / MAX_BUTTONS_PER_ROW));
-    m_buttons_per_row = static_cast<unsigned int>(std::ceil(NUM_CATEGORY_BUTTONS / ROWS));   // number of buttons in a typical row
+    const int ROWS = static_cast<int>(std::ceil(NUM_CATEGORY_BUTTONS / MAX_BUTTONS_PER_ROW));
+    m_buttons_per_row = static_cast<int>(std::ceil(NUM_CATEGORY_BUTTONS / ROWS));   // number of buttons in a typical row
     
-    const unsigned int BUTTON_WIDTH = (USABLE_WIDTH - (m_buttons_per_row - 1)*BUTTON_SEPARATION) / m_buttons_per_row;
-    const unsigned int BUTTON_HEIGHT = m_category_buttons.back()->Height();
+    const int BUTTON_WIDTH = (USABLE_WIDTH - (m_buttons_per_row - 1)*BUTTON_SEPARATION) / m_buttons_per_row;
+    const int BUTTON_HEIGHT = m_category_buttons.back()->Height();
 
     m_col_offset = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
     m_row_offset = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
     
-    unsigned int row = 0, col = -1;
+    int row = 0, col = -1;
     for (std::vector<CUIButton*>::iterator it = m_category_buttons.begin(); it != m_category_buttons.end(); ++it) {
         ++col;
         if (col >= m_buttons_per_row) {
             ++row;
             col = 0;
         }
-        GG::Pt ul(col*m_col_offset, row*m_row_offset);
+        GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD+ row*m_row_offset);
         GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
         (*it)->SizeMove(ul, lr);
     }
@@ -465,7 +467,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
             ++row;
             col = 0;
         }
-        GG::Pt ul(col*m_col_offset, row*m_row_offset);
+        GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
         GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
         it->second->SizeMove(ul, lr);
     }
@@ -481,7 +483,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
             ++row;
             col = 0;
         }
-        GG::Pt ul(col*m_col_offset, row*m_row_offset);
+        GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
         GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
         it->second->SizeMove(ul, lr);
     }
@@ -493,14 +495,17 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
     else
         m_status_or_type_button_rows = 1;   // only one row, three buttons per row
 
-    SetMinSize(GG::Pt(MIN_BUTTON_WIDTH + 3*RIGHT_EDGE_PAD, (++row)*m_row_offset));
+    // prevent window from being shrunk less than one button width, or current number of rows of height
+    SetMinSize(GG::Pt(UPPER_LEFT_PAD + MIN_BUTTON_WIDTH + 3*RIGHT_EDGE_PAD, UPPER_LEFT_PAD + (++row)*m_row_offset));
 }
 
 void TechTreeWnd::TechTreeControls::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     // maybe later do something interesting with docking
-    Wnd::SizeMove(ul, lr);
-    DoButtonLayout();
+
+    Wnd::SizeMove(ul, lr);                  // set width and upper left as user-requested
+    DoButtonLayout();                       // given set width, position buttons and set appropriate minimum height
+    Wnd::SizeMove(ul, GG::Pt(lr.x, ul.y + MinSize().y));  // width and upper left unchanged.  set height to minimum height
 }
 
 void TechTreeWnd::TechTreeControls::Render()
@@ -552,14 +557,14 @@ void TechTreeWnd::TechTreeControls::Render()
         // draw separator lines between types of buttons
         glColor(ClientUI::WndOuterBorderColor());
 
-        int category_bottom = cl_ul.y + m_category_button_rows*m_row_offset - BUTTON_SEPARATION/2;
+        int category_bottom = cl_ul.y + m_category_button_rows*m_row_offset - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
         
         glVertex2i(cl_ul.x, category_bottom);
         glVertex2i(cl_lr.x - 1, category_bottom);
 
         if (m_buttons_per_row >= 6) {
             // all six status and type buttons are on one row, and need a vertical separator between them
-            int middle = cl_ul.x + m_col_offset*3 - BUTTON_SEPARATION/2;
+            int middle = cl_ul.x + m_col_offset*3 - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
             glVertex2i(middle, category_bottom);
             glVertex2i(middle, cl_lr.y - 1);
             
@@ -612,24 +617,21 @@ class TechTreeWnd::TechDetailPanel : public GG::Wnd
 {
 public:
     TechDetailPanel(int w, int h);
+
     const Tech* CurrentTech() const {return m_tech;}
+
     virtual void Render();
     void SetTech(const Tech* tech)  {m_tech = tech; Reset();}
-    mutable boost::signal<void (const Tech*)> CenterOnTechSignal;
-    mutable boost::signal<void (const Tech*)> QueueTechSignal;
 
 private:
     GG::Pt TechGraphicUpperLeft() const;
-    void CenterClickedSlot() {if (m_tech) CenterOnTechSignal(m_tech);}
-    void AddToQueueClickedSlot() {if (m_tech) QueueTechSignal(m_tech);}
     void Reset();
+    void DoLayout();
 
     const Tech*         m_tech;
     GG::TextControl*    m_tech_name_text;
     GG::TextControl*    m_cost_text;
     GG::TextControl*    m_summary_text;
-    CUIButton*          m_recenter_button;
-    CUIButton*          m_add_to_queue_button;
     CUIMultiEdit*       m_description_box;
     GG::StaticGraphic*  m_tech_graphic;
 };
@@ -638,35 +640,69 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     GG::Wnd(0, 0, w, h, 0),
     m_tech(0)
 {
-    const int NAME_PTS = ClientUI::Pts() + 6;
-    const int SUMMARY_PTS = ClientUI::Pts() + 3;
-    const int COST_PTS = ClientUI::Pts();
-    const int BUTTON_WIDTH = 150;
-    const int BUTTON_MARGIN = 5;
-    m_tech_name_text = new GG::TextControl(1, 0, w - 1 - BUTTON_WIDTH, NAME_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), NAME_PTS), ClientUI::TextColor());
-    m_cost_text = new GG::TextControl(1, m_tech_name_text->LowerRight().y, w - 1 - BUTTON_WIDTH, COST_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), COST_PTS), ClientUI::TextColor());
-    m_summary_text = new GG::TextControl(1, m_cost_text->LowerRight().y, w - 1 - BUTTON_WIDTH, SUMMARY_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), SUMMARY_PTS), ClientUI::TextColor());
-    m_add_to_queue_button = new CUIButton(w - 1 - BUTTON_WIDTH, 1, BUTTON_WIDTH, UserString("TECH_DETAIL_ADD_TO_QUEUE"));
-    m_recenter_button = new CUIButton(w - 1 - BUTTON_WIDTH, m_add_to_queue_button->LowerRight().y + BUTTON_MARGIN, BUTTON_WIDTH, UserString("TECH_DETAIL_CENTER_ON_TECH"));
-    m_recenter_button->Hide();
-    m_add_to_queue_button->Hide();
-    m_recenter_button->Disable();
-    m_add_to_queue_button->Disable();
-    m_description_box = new CUIMultiEdit(1, m_summary_text->LowerRight().y, w - 2 - BUTTON_WIDTH, h - m_summary_text->LowerRight().y - 2, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
+    const int PTS = ClientUI::Pts();
+    const int NAME_PTS = PTS*3/2;
+    const int COST_PTS = PTS;
+    const int SUMMARY_PTS = PTS*4/3;
+    const int DESCRIPTION_PTS = PTS;
+
+    m_tech_name_text = new GG::TextControl(0, 0, w, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), NAME_PTS), ClientUI::TextColor());
+    m_cost_text =      new GG::TextControl(0, 0, w, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), COST_PTS), ClientUI::TextColor());
+    m_summary_text =   new GG::TextControl(0, 0, w, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), SUMMARY_PTS), ClientUI::TextColor());
+    m_description_box =   new CUIMultiEdit(0, 0, w, 10, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
 
     m_tech_graphic = 0;
 
-    GG::Connect(m_recenter_button->ClickedSignal, &TechTreeWnd::TechDetailPanel::CenterClickedSlot, this);
-    GG::Connect(m_add_to_queue_button->ClickedSignal, &TechTreeWnd::TechDetailPanel::AddToQueueClickedSlot, this);
-
     AttachChild(m_tech_name_text);
     AttachChild(m_cost_text);
     AttachChild(m_summary_text);
-    AttachChild(m_recenter_button);
-    AttachChild(m_add_to_queue_button);
     AttachChild(m_description_box);
+
+    DoLayout();
+}
+
+void TechTreeWnd::TechDetailPanel::DoLayout()
+{
+    const int USABLE_WIDTH = std::max(ClientWidth(), 1);
+    const int USABLE_HEIGHT = std::max(ClientHeight(), 1);
+
+    const int PTS = ClientUI::Pts();
+    const int NAME_PTS = PTS*3/2;
+    const int COST_PTS = PTS;
+    const int SUMMARY_PTS = PTS*4/3;
+    const int DESCRIPTION_PTS = PTS;
+
+    const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
+
+
+    // name
+    GG::Pt ul = GG::Pt(0, 0);
+    GG::Pt lr = ul + GG::Pt(USABLE_WIDTH, NAME_PTS + 4);
+    m_tech_name_text->SizeMove(ul, lr);
+
+    // cost / turns
+    ul += GG::Pt(0, m_tech_name_text->Height());
+    lr = ul + GG::Pt(USABLE_WIDTH, COST_PTS + 4);
+    m_cost_text->SizeMove(ul, lr);
+
+    // one line summary
+    ul += GG::Pt(0, m_cost_text->Height());
+    lr = ul + GG::Pt(USABLE_WIDTH, SUMMARY_PTS + 4);
+    m_summary_text->SizeMove(ul, lr);
+
+    // main verbose description (fluff, effects, unlocks, ...)
+    ul = GG::Pt(0, ICON_SIZE);
+    lr = ul + GG::Pt(USABLE_WIDTH, USABLE_HEIGHT - ul.y);
+    m_description_box->SizeMove(ul, lr);
+
+    // icon
+    if (m_tech_graphic) {
+        ul = GG::Pt(2, 2);
+        lr = ul + GG::Pt(ICON_SIZE, ICON_SIZE);
+        m_tech_graphic->SizeMove(ul, lr);
+    }
 }
 
 void TechTreeWnd::TechDetailPanel::Render()
@@ -705,54 +741,54 @@ void TechTreeWnd::TechDetailPanel::Render()
 
 void TechTreeWnd::TechDetailPanel::Reset()
 {
-    m_tech_name_text->SetText("");
-    m_summary_text->SetText("");
-    m_cost_text->SetText("");
-    m_description_box->SetText("");
-
     if (m_tech_graphic) {
         DeleteChild(m_tech_graphic);
         m_tech_graphic = 0;
     }
 
     if (!m_tech) {
-        m_recenter_button->Hide();
-        m_add_to_queue_button->Hide();
-        m_recenter_button->Disable();
-        m_add_to_queue_button->Disable();
+        m_tech_name_text->SetText("");
+        m_summary_text->SetText("");
+        m_cost_text->SetText("");
+        m_description_box->SetText("");
         return;
     }
 
-    m_recenter_button->Show();
-    m_add_to_queue_button->Show();
-    m_recenter_button->Disable(false);
-    m_add_to_queue_button->Disable(false);
-
-    GG::Pt ul = TechGraphicUpperLeft();
-    m_tech_graphic = new GG::StaticGraphic(ul.x, ul.y, 128, 128,
+    m_tech_graphic = new GG::StaticGraphic(0, 0, 10, 10,
                                            ClientUI::TechTexture(m_tech->Name()),
                                            GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     m_tech_graphic->Show();
     m_tech_graphic->SetColor(ClientUI::CategoryColor(m_tech->Category()));
     AttachChild(m_tech_graphic);
 
+    DoLayout();
+
     m_tech_name_text->SetText(UserString(m_tech->Name()));
     using boost::io::str;
     using boost::format;
+
     m_summary_text->SetText("<i>" + str(format(UserString("TECH_DETAIL_TYPE_STR"))
         % UserString(m_tech->Category())
         % UserString(boost::lexical_cast<std::string>(m_tech->Type()))) + " - "
         + str(format(UserString(m_tech->ShortDescription()))) + "</i>");
+
     m_summary_text->SetColor(ClientUI::CategoryColor(m_tech->Category()));
+ 
     m_cost_text->SetText(str(format(UserString("TECH_TOTAL_COST_STR"))
         % static_cast<int>(m_tech->ResearchCost() + 0.5)
         % m_tech->ResearchTurns()));
+
+
     std::string description_str = str(format(UserString("TECH_DETAIL_DESCRIPTION_STR"))
                                       % UserString(m_tech->Description()));
+
+
     if (!m_tech->Effects().empty()) {
         description_str += str(format(UserString("TECH_DETAIL_EFFECTS_STR"))
                                % EffectsDescription(m_tech->Effects()));
     }
+
+
     const std::vector<ItemSpec>& unlocked_items = m_tech->UnlockedItems();
     if (!unlocked_items.empty())
         description_str += UserString("TECH_DETAIL_UNLOCKS_SECTION_STR");
@@ -761,14 +797,10 @@ void TechTreeWnd::TechDetailPanel::Reset()
                                % UserString(boost::lexical_cast<std::string>(unlocked_items[i].type))
                                % UserString(unlocked_items[i].name));
     }
+
+
     m_description_box->SetText(description_str);
 }
-
-GG::Pt TechTreeWnd::TechDetailPanel::TechGraphicUpperLeft() const
-{
-    return GG::Pt(Width() - 2 - 150 + (150 - 128) / 2, m_recenter_button->LowerRight().y - UpperLeft().y + 5);
-}
-
 
 //////////////////////////////////////////////////
 // TechTreeWnd::TechNavigator                   //
@@ -1873,8 +1905,6 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     const int NAVIGATOR_WIDTH = 214;
 
     m_tech_detail_panel = new TechDetailPanel(w - NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
-    GG::Connect(m_tech_detail_panel->CenterOnTechSignal, &TechTreeWnd::CenterOnTech, this);
-    GG::Connect(m_tech_detail_panel->QueueTechSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
     AttachChild(m_tech_detail_panel);
 
     m_tech_navigator = new TechNavigator(NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
