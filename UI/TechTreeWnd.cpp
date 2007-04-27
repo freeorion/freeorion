@@ -3,6 +3,7 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "CUIDrawUtil.h"
+#include "CUIWnd.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Tech.h"
@@ -343,7 +344,7 @@ namespace {
 //////////////////////////////////////////////////
 /** A panel of buttons that control how the tech tree is displayed: what categories, statuses and
     types of techs to show. */
-class TechTreeWnd::TechTreeControls : public GG::Wnd
+class TechTreeWnd::TechTreeControls : public CUIWnd
 {
 public:
     //! \name Structors //@{
@@ -377,17 +378,10 @@ private:
     static const int BUTTON_SEPARATION = 3;    // vertical or horizontal sepration between adjacent buttons
     static const int UPPER_LEFT_PAD = 2;       // offset of buttons' position from top left of controls box
 
-    static const int BORDER_LEFT = 4;
-    static const int BORDER_TOP = 4;
-    static const int BORDER_RIGHT = 4;
-    static const int BORDER_BOTTOM = 4;
-    static const int OUTER_EDGE_ANGLE_OFFSET = 11;
-    static const int RESIZE_HASHMARK1_OFFSET = 7;
-    static const int RESIZE_HASHMARK2_OFFSET = 3;
 };
 
 TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
-    GG::Wnd(x, y, w, 10, GG::CLICKABLE | GG::ONTOP)
+    CUIWnd("Tech Tree Display", x, y, w, 10, GG::CLICKABLE | GG::DRAGABLE)
 {
     // create a button for each tech category...
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
@@ -430,7 +424,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
 
 void TechTreeWnd::TechTreeControls::DoButtonLayout()
 {
-    const int RIGHT_EDGE_PAD = 12;
+    const int RIGHT_EDGE_PAD = 8;
     const int USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, 1);   // space in which to do layout
     const int PTS = ClientUI::Pts();
     const int PTS_WIDE = PTS/2;  // how wide per character the font needs... not sure how better to get this
@@ -496,20 +490,22 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
         m_status_or_type_button_rows = 1;   // only one row, three buttons per row
 
     // prevent window from being shrunk less than one button width, or current number of rows of height
-    SetMinSize(GG::Pt(UPPER_LEFT_PAD + MIN_BUTTON_WIDTH + 3*RIGHT_EDGE_PAD, UPPER_LEFT_PAD + (++row)*m_row_offset));
+    SetMinSize(GG::Pt(UPPER_LEFT_PAD + MIN_BUTTON_WIDTH + 3*RIGHT_EDGE_PAD, CUIWnd::BORDER_TOP + CUIWnd::BORDER_BOTTOM + UPPER_LEFT_PAD + (++row)*m_row_offset));
 }
 
 void TechTreeWnd::TechTreeControls::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     // maybe later do something interesting with docking
 
-    Wnd::SizeMove(ul, lr);                  // set width and upper left as user-requested
+    CUIWnd::SizeMove(ul, lr);          // set width and upper left as user-requested
     DoButtonLayout();                       // given set width, position buttons and set appropriate minimum height
-    Wnd::SizeMove(ul, GG::Pt(lr.x, ul.y + MinSize().y));  // width and upper left unchanged.  set height to minimum height
+    CUIWnd::SizeMove(ul, GG::Pt(lr.x, ul.y + MinSize().y));  // width and upper left unchanged.  set height to minimum height
 }
 
 void TechTreeWnd::TechTreeControls::Render()
 {
+    CUIWnd::Render();
+
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     GG::Pt cl_ul = ClientUpperLeft();
@@ -520,41 +516,7 @@ void TechTreeWnd::TechTreeControls::Render()
     GLint initial_modes[2];
     glGetIntegerv(GL_POLYGON_MODE, initial_modes);
 
-    // draw background
-    glPolygonMode(GL_BACK, GL_FILL);    // filled in polygon
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
-    glEnd();
-
-    // draw border
-    glPolygonMode(GL_BACK, GL_LINE);    // polygon outline only
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndInnerBorderColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex2i(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
-    glEnd();
-    //*/
-
     glBegin(GL_LINES);
-        // draw extra resize-tab lines
-        glColor(ClientUI::WndInnerBorderColor());
-
-        glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-        glVertex2i(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
-        
-        glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-        glVertex2i(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
-
-        // draw separator lines between types of buttons
         glColor(ClientUI::WndOuterBorderColor());
 
         int category_bottom = cl_ul.y + m_category_button_rows*m_row_offset - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
@@ -593,13 +555,36 @@ void TechTreeWnd::TechTreeControls::LButtonDown(const GG::Pt& pt, Uint32 keys)
 
 void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
 {
-    if (m_drag_offset != GG::Pt(-1, -1)) { // resize-dragging
-        Resize((GG::Pt(pt.x, 0) - m_drag_offset) - UpperLeft());    // only respond to horizontal drags
-    } else { // normal-dragging
-        GG::Pt ul = UpperLeft(), lr = LowerRight();
-        GG::Pt final_move(std::max(-ul.x, std::min(move.x, GG::GUI::GetGUI()->AppWidth() - 1 - lr.x)),
-                          std::max(-ul.y, std::min(move.y, GG::GUI::GetGUI()->AppHeight() - 1 - lr.y)));
-        GG::Wnd::LDrag(pt + final_move - move, final_move, keys);
+    if (m_drag_offset != GG::Pt(-1, -1)) {  // resize-dragging
+        GG::Pt new_lr = pt - m_drag_offset;
+
+        new_lr.y = this->LowerRight().y;    // ignore y-resizes
+
+        // constrain to within parent
+        if (GG::Wnd* parent = Parent()) {
+            GG::Pt max_lr = parent->ClientLowerRight();
+            new_lr.x = std::min(new_lr.x, max_lr.x);
+        }        
+
+        Resize(new_lr - UpperLeft());    // only respond to horizontal resize
+    } else {    // normal-dragging
+        GG::Pt final_move = move;
+
+        if (GG::Wnd* parent = Parent()) {
+            GG::Pt ul = UpperLeft(), lr = LowerRight();
+            GG::Pt new_ul = ul + move, new_lr = lr + move;
+
+            GG::Pt min_ul = parent->ClientUpperLeft();
+            GG::Pt max_lr = parent->ClientLowerRight();
+            GG::Pt max_ul = max_lr - this->Size();
+
+            new_ul.x = std::max(min_ul.x, std::min(max_ul.x, new_ul.x));
+            new_ul.y = std::max(min_ul.y, std::min(max_ul.y, new_ul.y));
+
+            final_move = new_ul - ul;
+        }
+
+        GG::Wnd::LDrag(pt, final_move, keys);
     }
 }
 
@@ -1385,10 +1370,13 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
     const unsigned int ZBOFFSET = ClientUI::ScrollWidth() / 2;
     const unsigned int TOP = UpperLeft().y;
     const unsigned int LEFT = UpperLeft().x;
-    m_zoom_in_button = new CUIButton(w - ZBSIZE - ZBOFFSET - ClientUI::ScrollWidth(), ZBOFFSET, ZBSIZE, "+");
+
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+
+    m_zoom_in_button = new CUIButton(w - ZBSIZE - ZBOFFSET - ClientUI::ScrollWidth(), ZBOFFSET, ZBSIZE, "+", font, ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
         
     m_zoom_out_button = new CUIButton(m_zoom_in_button->UpperLeft().x - LEFT, 
-                                      m_zoom_in_button->LowerRight().y + ZBOFFSET - TOP, ZBSIZE, "-");
+                                      m_zoom_in_button->LowerRight().y + ZBOFFSET - TOP, ZBSIZE, "-", font, ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
 
     AttachChild(m_layout_surface);
     AttachChild(m_vscroll);
@@ -1919,9 +1907,7 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     GG::Connect(m_layout_panel->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
     AttachChild(m_layout_panel);
 
-    const unsigned int TREECONTWIDTH = m_layout_panel->Width() - ClientUI::ScrollWidth()*4;
-    m_tech_tree_controls = new TechTreeControls(0, 0, TREECONTWIDTH);
-    m_tech_tree_controls->SetMaxSize(GG::Pt(TREECONTWIDTH, m_layout_panel->Height() - ClientUI::ScrollWidth()));
+    m_tech_tree_controls = new TechTreeControls(0, 0, m_layout_panel->Width() - ClientUI::ScrollWidth()*4);
     m_tech_tree_controls->MoveTo(GG::Pt(1, 1));
     const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
     // connect category button clicks to update display
