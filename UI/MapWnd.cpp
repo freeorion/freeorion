@@ -867,6 +867,7 @@ void MapWnd::CenterOnFleet(Fleet* fleet)
 
 void MapWnd::SelectSystem(int system_id)
 {
+    Logger().errorStream() << "MapWnd::SelectSystem(" << system_id << ")";
     // remove selection indicator from previously selected system
     int prev_system_id = m_side_panel->SystemID();
     if (prev_system_id != UniverseObject::INVALID_OBJECT_ID)
@@ -1108,7 +1109,7 @@ void MapWnd::RenderBackgrounds()
 
 void MapWnd::RenderStarlanes()
 {
-    double LINE_SCALE = std::max(1.0, 0.666 * m_zoom_factor);
+    double LINE_SCALE = 3.0;   //std::max(1.0, 0.666 * m_zoom_factor);
     double INNER_LINE_PORTION = 0.3;
     double INNER_LINE_WIDTH = (LINE_SCALE / 2.0) * INNER_LINE_PORTION; // these are actually half-widths in either direction
     double OUTER_LINE_WIDTH = (LINE_SCALE / 2.0);
