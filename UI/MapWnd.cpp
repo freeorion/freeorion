@@ -867,7 +867,6 @@ void MapWnd::CenterOnFleet(Fleet* fleet)
 
 void MapWnd::SelectSystem(int system_id)
 {
-    Logger().errorStream() << "MapWnd::SelectSystem(" << system_id << ")";
     // remove selection indicator from previously selected system
     int prev_system_id = m_side_panel->SystemID();
     if (prev_system_id != UniverseObject::INVALID_OBJECT_ID)
