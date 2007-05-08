@@ -1111,7 +1111,7 @@ TECH_TURN_COST_STR
 %1% RP / %2% Turns
 
 TECH_TURNS_LEFT_STR
-%1% Turns left
+%1% Turns
 
 TECH_TURNS_LEFT_NEVER
 Never
