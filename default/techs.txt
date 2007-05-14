@@ -265,7 +265,7 @@ Tech
             activation = Source
             effects = SetMaxResearch Target.MaxResearch + 1
     ]
-    graphic = ""
+    graphic = "tech_icons/Stellar_Tomography.png"
         
 Tech
     name = "LRN_AUTOLAB_I"
@@ -319,7 +319,7 @@ Tech
     researchturns = 1
     prerequisites = "LRN_GAL_EXPLO"
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Stellar_Navigation.png"
 
 Tech
     name = "LRN_COLLECTIVE_NET"
@@ -1120,7 +1120,7 @@ Tech
     researchturns = 10
     prerequisites = "PRO_SINGULAR_GEN"
     unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
-    graphic = ""
+    graphic = "tech_icons/Artificial_Black_Hole.png"
 
 Tech
     name = "PRO_MINING_ENGINEERING"
@@ -1407,7 +1407,7 @@ Tech
         "CON_TRANS_STRC"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Asymptotic_Materials.png"
 
 Tech
     name = "CON_STRC_INT_FLDS"
