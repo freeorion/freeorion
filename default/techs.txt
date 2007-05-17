@@ -903,7 +903,7 @@ Tech
         "PRO_FRC_FLD_ASSMB"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/N-Dimensional_Assembly.png"
 
 Tech
     name = "PRO_SINGULAR_GEN"
@@ -1283,7 +1283,7 @@ Tech
     researchturns = 5
     prerequisites = "PRO_ORBITAL_GEN"
     unlock = Item type = Building name = "BLD_MINI_SUN"
-    graphic = ""
+    graphic = "tech_icons/Miniature_Suns.png"
 
 TechCategory "CONSTRUCTION_CATEGORY"
 
@@ -1510,7 +1510,7 @@ Tech
         "PRO_NDIM_ASSMB"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/N-Dimensional_Structures.png"
 
 Tech
     name = "CON_GRAVITY_WELLS"

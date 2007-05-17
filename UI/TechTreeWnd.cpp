@@ -373,7 +373,7 @@ private:
 };
 
 TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
-    CUIWnd("Display", x, y, w, 10, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE)
+    CUIWnd(UserString("TECH_DISPLAY"), x, y, w, 10, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE)
 {
     // create a button for each tech category...
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
@@ -676,7 +676,7 @@ void TechTreeWnd::TechDetailPanel::DoLayout()
         m_tech_graphic->SizeMove(ul, lr);
     }
     if (m_category_graphic) {
-        lr = GG::Pt(Width(), ICON_SIZE + 1);
+        lr = GG::Pt(Width() - BORDER_RIGHT, ICON_SIZE + 1);
         ul = lr - GG::Pt(ICON_SIZE, ICON_SIZE);
         m_category_graphic->SizeMove(ul, lr);
     }
@@ -876,8 +876,6 @@ void TechTreeWnd::TechDetailPanel::Reset()
 class TechTreeWnd::TechNavigator : public CUIWnd
 {
 public:
-    enum {ROW_HEIGHT = 25};
-
     TechNavigator(int w, int h);
 
     const Tech* CurrentTech() const {return m_current_tech;}
@@ -895,8 +893,9 @@ private:
     class SectionHeaderControl : public GG::Control
     {
     public:
-        SectionHeaderControl(int w, int h, const std::string& str);
+        SectionHeaderControl(const std::string& str);
         virtual void Render();
+        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
         GG::TextControl* m_label;
     };
 
@@ -904,29 +903,33 @@ private:
     class TechControl : public GG::Control
     {
     public:
-        TechControl(int w, int h, const Tech* tech, int indentation);
+        TechControl(const Tech* tech);
         virtual GG::Pt ClientUpperLeft() const {return UpperLeft() + GG::Pt(3, 2);}
         virtual GG::Pt ClientLowerRight() const {return LowerRight() - GG::Pt(2, 2);}
+        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
         virtual void Render();
         virtual void LClick(const GG::Pt& pt, Uint32 keys) {ClickedSignal(m_tech);}
         virtual void MouseEnter(const GG::Pt& pt, Uint32 keys) {m_selected = true;}
         virtual void MouseLeave() {m_selected = false;}
+
+        mutable boost::signal<void (const Tech*)> ClickedSignal;
+
+    private:
         const Tech * const m_tech;
         GG::Clr m_border_color;
         GG::TextControl* m_name_text;
-        mutable boost::signal<void (const Tech*)> ClickedSignal;
-    private:
-        int m_indentation;
         bool m_selected;
     };
 
     static const int TECH_ROW_INDENTATION = 8;
     static const int LB_MARGIN_X = 5;
     static const int LB_MARGIN_Y = 5;
-
+    
     GG::ListBox::Row* NewSectionHeaderRow(const std::string& str);
     GG::ListBox::Row* NewTechRow(const Tech* tech);
     void Reset();
+
+    void DoLayout();
 
     std::set<boost::signals::connection> m_row_connections;
 
@@ -935,28 +938,27 @@ private:
 };
 
 TechTreeWnd::TechNavigator::TechNavigator(int w, int h) :
-    CUIWnd("Navigation", 0, 0, w, h, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+    CUIWnd(UserString("TECH_NAVIGATION"), 0, 0, w, h, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
     m_current_tech(0)
 {
-    m_lb = new CUIListBox(LB_MARGIN_X, LB_MARGIN_Y, ClientWidth() - LB_MARGIN_X, ClientHeight() - LB_MARGIN_Y);
+    m_lb = new CUIListBox(LB_MARGIN_X, LB_MARGIN_Y, 100, 100);    // resized later when TechNavigator is SizeMoved
     m_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL);
     AttachChild(m_lb);
-    EnableChildClipping(true);
 }
 
 GG::ListBox::Row* TechTreeWnd::TechNavigator::NewSectionHeaderRow(const std::string& str)
 {
-    GG::ListBox::Row* retval = new GG::ListBox::Row(Width() - 33 - 14, ROW_HEIGHT + 2, "");
-    retval->push_back(new SectionHeaderControl(Width() - 33 - 14, ROW_HEIGHT, str));
+    GG::ListBox::Row* retval = new GG::ListBox::Row(m_lb->Width(), 3*ClientUI::Pts()/2 + 4, "");
+    retval->push_back(new SectionHeaderControl(str));
     return retval;
 }
 
 GG::ListBox::Row* TechTreeWnd::TechNavigator::NewTechRow(const Tech* tech)
 {
-    GG::ListBox::Row* retval = new GG::ListBox::Row(Width() - TECH_ROW_INDENTATION - 8 - 14, ROW_HEIGHT + 2, "");
-    TechControl* control = new TechControl(Width() - TECH_ROW_INDENTATION - 8 - 14, ROW_HEIGHT, tech, TECH_ROW_INDENTATION);
-    retval->push_back(control);
+    TechControl* control = new TechControl(tech);
     m_row_connections.insert(GG::Connect(control->ClickedSignal, &TechTreeWnd::TechNavigator::TechClickedSlot, this));
+    GG::ListBox::Row* retval = new GG::ListBox::Row(m_lb->Width(), 3*ClientUI::Pts()/2 + 4, "");
+    retval->push_back(control);
     return retval;
 }
 
@@ -982,13 +984,29 @@ void TechTreeWnd::TechNavigator::Reset()
     for (std::set<std::string>::const_iterator it = unlocks.begin(); it != unlocks.end(); ++it) {
         m_lb->Insert(NewTechRow(GetTech(*it)));
     }
+    
+    DoLayout();
 }
 
 void TechTreeWnd::TechNavigator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     // maybe later do something interesting with docking
     CUIWnd::SizeMove(ul, lr);
+
+    DoLayout();
+}
+
+void TechTreeWnd::TechNavigator::DoLayout()
+{
     m_lb->Resize(ClientSize() - GG::Pt(2*LB_MARGIN_X, 2*LB_MARGIN_Y));
+
+    for (int i = 0; i < m_lb->NumRows(); ++i) {
+        GG::ListBox::Row& row = m_lb->GetRow(i);
+        GG::Pt size = GG::Pt(m_lb->Width() - 4*LB_MARGIN_X, row.Height());
+        row.Resize(size);
+        GG::Control* control = row.at(0);
+        control->Resize(size);
+    }
 }
 
 void TechTreeWnd::TechNavigator::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
@@ -1025,12 +1043,12 @@ void TechTreeWnd::TechNavigator::LDrag(const GG::Pt& pt, const GG::Pt& move, Uin
     }
 }
 
-
-
-TechTreeWnd::TechNavigator::SectionHeaderControl::SectionHeaderControl(int w, int h, const std::string& str) :
-    GG::Control(0, 0, w, h)
+TechTreeWnd::TechNavigator::SectionHeaderControl::SectionHeaderControl(const std::string& str) :
+    GG::Control(0, 0, 10, 3*ClientUI::Pts()/2 + 4)
 {
-    m_label = new GG::TextControl(8, 0, w - 8, h, str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::KnownTechTextAndBorderColor(), GG::TF_LEFT);
+    m_label = new GG::TextControl(0, 0, 10, 3*ClientUI::Pts()/2 + 4, str,
+                                  GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                  ClientUI::KnownTechTextAndBorderColor(), GG::TF_LEFT);
     AttachChild(m_label);
 }
 
@@ -1080,10 +1098,17 @@ void TechTreeWnd::TechNavigator::SectionHeaderControl::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-TechTreeWnd::TechNavigator::TechControl::TechControl(int w, int h, const Tech* tech, int indentation) :
-    GG::Control(0, 0, w, h),
+void TechTreeWnd::TechNavigator::SectionHeaderControl::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Wnd::SizeMove(ul, lr);
+    GG::Pt label_ul(TECH_ROW_INDENTATION, 0);
+    GG::Pt label_lr(ClientWidth(), ClientHeight());
+    m_label->SizeMove(label_ul, label_lr);
+}
+
+TechTreeWnd::TechNavigator::TechControl::TechControl(const Tech* tech) :
+    GG::Control(0, 0, 10, 3*ClientUI::Pts()/2 + 4),
     m_tech(tech),
-    m_indentation(indentation),
     m_selected(false)
 {
     EnableChildClipping(true);
@@ -1113,14 +1138,16 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(int w, int h, const Tech* t
     }
 #endif
     GG::Pt client_size = ClientSize();
-    m_name_text = new GG::TextControl(m_indentation, 0, client_size.x - m_indentation, client_size.y, UserString(m_tech->Name()), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), m_border_color, GG::TF_LEFT);
+    m_name_text = new GG::TextControl(0, 0, 10, 3*ClientUI::Pts()/2 + 4, UserString(m_tech->Name()),
+                                      GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                      m_border_color, GG::TF_LEFT);
     AttachChild(m_name_text);
 }
 
 void TechTreeWnd::TechNavigator::TechControl::Render()
 {
     GG::Rect rect(UpperLeft(), LowerRight());
-    rect += GG::Pt(m_indentation, 0);
+    rect += GG::Pt(TECH_ROW_INDENTATION, 0);
     TechType tech_type = m_tech->Type();
     GG::Clr color_to_use = Color();
     GG::Clr border_color_to_use = m_border_color;
@@ -1141,6 +1168,13 @@ void TechTreeWnd::TechNavigator::TechControl::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
+void TechTreeWnd::TechNavigator::TechControl::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Wnd::SizeMove(ul, lr);
+    GG::Pt text_ul(TECH_ROW_INDENTATION, 0);
+    GG::Pt text_lr(ClientWidth() - TECH_ROW_INDENTATION, ClientHeight());
+    m_name_text->SizeMove(text_ul, text_lr);
+}
 //////////////////////////////////////////////////
 // TechTreeWnd::LayoutPanel                     //
 //////////////////////////////////////////////////
@@ -1774,7 +1808,8 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const Tech* tech)
 
 void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -1.0*/)
 {
-    const int TECH_PANEL_MARGIN = ClientUI::Pts()*16;
+    const int TECH_PANEL_MARGIN_X = ClientUI::Pts()*16;
+    const int TECH_PANEL_MARGIN_Y = ClientUI::Pts()*16 + 100;
 
     if (old_scale < 0.0)
         old_scale = m_scale;
@@ -1785,8 +1820,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         } else {
             GG::Pt cl_sz = ClientSize();
             GG::Pt center = m_scroll_position + GG::Pt(cl_sz.x / 2, cl_sz.y / 2);
-            center.x = static_cast<int>((center.x - TECH_PANEL_MARGIN) * m_scale / old_scale + 0.5 + TECH_PANEL_MARGIN);
-            center.y = static_cast<int>((center.y - TECH_PANEL_MARGIN) * m_scale / old_scale + 0.5 + TECH_PANEL_MARGIN);
+            center.x = static_cast<int>((center.x - TECH_PANEL_MARGIN_X) * m_scale / old_scale + 0.5 + TECH_PANEL_MARGIN_X);
+            center.y = static_cast<int>((center.y - TECH_PANEL_MARGIN_Y) * m_scale / old_scale + 0.5 + TECH_PANEL_MARGIN_Y);
             final_position = GG::Pt(center.x - cl_sz.x / 2, center.y - cl_sz.y / 2);
         }
     }
@@ -1849,8 +1884,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         const Tech* tech = GetTech(node->name);
         assert(tech);
         m_techs[tech] = new TechPanel(tech, tech == m_selected_tech, m_categories_shown, m_tech_types_shown, m_tech_statuses_shown, m_scale);
-        m_techs[tech]->MoveTo(GG::Pt(static_cast<int>(PS2INCH(ND_coord_i(node).x) - m_techs[tech]->Width() / 2 + TECH_PANEL_MARGIN),
-                                     static_cast<int>(PS2INCH(ND_coord_i(node).y) - (m_techs[tech]->Height() - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) / 2 + TECH_PANEL_MARGIN)));
+        m_techs[tech]->MoveTo(GG::Pt(static_cast<int>(PS2INCH(ND_coord_i(node).x) - m_techs[tech]->Width() / 2 + TECH_PANEL_MARGIN_X),
+                                     static_cast<int>(PS2INCH(ND_coord_i(node).y) - (m_techs[tech]->Height() - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) / 2 + TECH_PANEL_MARGIN_Y)));
         m_layout_surface->AttachChild(m_techs[tech]);
         m_tech_connections.insert(GG::Connect(m_techs[tech]->TechBrowsedSignal, &TechTreeWnd::LayoutPanel::TechBrowsedSlot, this));
         m_tech_connections.insert(GG::Connect(m_techs[tech]->TechClickedSignal, &TechTreeWnd::LayoutPanel::TechClickedSlot, this));
@@ -1865,8 +1900,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
             for (int i = 0; i < ED_spl(edge)->size; ++i) {
                 std::vector<std::pair<int, int> > temp;
                 for (int j = 0; j < ED_spl(edge)->list[i].size; ++j) {
-                    temp.push_back(std::make_pair(static_cast<int>(PS2INCH(ED_spl(edge)->list[i].list[j].x) + TECH_PANEL_MARGIN),
-                                                  static_cast<int>(PS2INCH(ED_spl(edge)->list[i].list[j].y) + TECH_PANEL_MARGIN)));
+                    temp.push_back(std::make_pair(static_cast<int>(PS2INCH(ED_spl(edge)->list[i].list[j].x) + TECH_PANEL_MARGIN_X),
+                                                  static_cast<int>(PS2INCH(ED_spl(edge)->list[i].list[j].y) + TECH_PANEL_MARGIN_Y)));
                 }
                 points.push_back(Spline(temp));
             }
@@ -1889,10 +1924,10 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     GG::Pt client_sz = ClientSize();
     GG::Pt layout_size(std::max(client_sz.x,
                                 static_cast<int>(PS2INCH(GD_bb(graph).UR.x - GD_bb(graph).LL.x) +
-                                                 2 * TECH_PANEL_MARGIN + PROGRESS_PANEL_LEFT_EXTRUSION * m_scale)),
+                                                 2 * TECH_PANEL_MARGIN_X + PROGRESS_PANEL_LEFT_EXTRUSION * m_scale)),
                        std::max(client_sz.y,
                                 static_cast<int>(PS2INCH(GD_bb(graph).UR.y - GD_bb(graph).LL.y) +
-                                                 2 * TECH_PANEL_MARGIN + PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale)));
+                                                 2 * TECH_PANEL_MARGIN_Y + PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale)));
     m_layout_surface->Resize(layout_size);
     m_vscroll->SizeScroll(0, layout_size.y - 1, std::max(50, std::min(layout_size.y / 10, client_sz.y)), client_sz.y);
     m_hscroll->SizeScroll(0, layout_size.x - 1, std::max(50, std::min(layout_size.x / 10, client_sz.x)), client_sz.x);
