@@ -551,7 +551,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
             Logger().debugStream() << "HumanClientApp::HandleMessageImpl : Received GAME_START message; "
                 "starting player turn...";
             m_game_started = true;
-            ExtractMessageData(msg, m_single_player_game, m_empire_id, m_current_turn, Empires(), GetUniverse());
+            ExtractMessageData(msg, m_single_player_game, m_empire_id, m_current_turn, Empires(), GetUniverse(), m_player_info);
 
             Orders().Reset();
 
@@ -584,7 +584,7 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
     }
 
     case Message::TURN_UPDATE: {
-        ExtractMessageData(msg, m_empire_id, m_current_turn, Empires(), GetUniverse());
+        ExtractMessageData(msg, m_empire_id, m_current_turn, Empires(), GetUniverse(), m_player_info);
 
         // Now decode sitreps
         // Empire sitreps need UI in order to generate text, since it needs string resources
@@ -637,8 +637,21 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         break;
     }
 
-    case Message::HUMAN_PLAYER_MSG: {
-        ClientUI::GetClientUI()->GetMapWnd()->HandlePlayerChatMessage(msg.GetText());
+    case Message::CHAT_MSG: {
+        // determine sender, prepending "name: " and colouring with empire colour
+        Empire* sender_empire = GetPlayerEmpire(msg.Sender());
+        GG::Clr sender_colour;
+        std::string sender_name;
+        if (sender_empire) {
+            sender_colour = sender_empire->Color();
+            sender_name = sender_empire->PlayerName();
+        } else {
+            sender_colour = GG::CLR_WHITE;
+            sender_name = "????";
+        }
+        std::string wrapped_text = RgbaTag(sender_colour) + sender_name + ": " + msg.GetText() + "</rgba>\n";
+
+        ClientUI::GetClientUI()->GetMapWnd()->HandlePlayerChatMessage(wrapped_text);
         break;
     }
 

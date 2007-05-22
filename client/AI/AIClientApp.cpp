@@ -215,26 +215,17 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::GAME_START: {
         if (msg.Sender() == -1) {
-            Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received GAME_START message; "
-                "starting AI turn...";
+            Logger().debugStream() << "AIClientApp::HandleMessageImpl : Received GAME_START message; starting AI turn...";
             bool single_player_game; // note that this is ignored
-            ExtractMessageData(msg, single_player_game, m_empire_id, m_current_turn, Empires(), GetUniverse());
-
-            Logger().debugStream() << "Got Turn Update message, extracted message data";
+            ExtractMessageData(msg, single_player_game, m_empire_id, m_current_turn, Empires(), GetUniverse(), m_player_info);
 
             // ... copied from HumanClientApp.cpp.  Not sure if / why it's necessary.
-            // if this is the last turn, the TCP message handling inherent in Autosave()'s synchronous message may have
-            // processed an end-of-game message, in which case we need *not* to execute these last two lines below
             if (!NetworkCore().Connected()) break;
-            Logger().debugStream() << "Still connected, starting to generate AI orders";
 
             AIGenerateOrders();
 
-            Logger().debugStream() << "Generated AI Orders, starting turn update";
-
+            //Logger().debugStream() << "Starting turn update (sending orders to server)";
             StartTurn();
-
-            Logger().debugStream() << "Done dealing with turn update message";
         }
         break;
     }
@@ -253,23 +244,20 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
 
     case Message::TURN_UPDATE: {
         if (msg.Sender() == -1) {
-            ExtractMessageData(msg, m_empire_id, m_current_turn, Empires(), GetUniverse());
-
-            Logger().debugStream() << "Got Turn Update message, extracted message data";
+            ExtractMessageData(msg, m_empire_id, m_current_turn, Empires(), GetUniverse(), m_player_info);
 
             // ... copied from HumanClientApp.cpp.  Not sure if / why it's necessary.
-            // if this is the last turn, the TCP message handling inherent in Autosave()'s synchronous message may have
-            // processed an end-of-game message, in which case we need *not* to execute these last two lines below
             if (!NetworkCore().Connected()) break;
-            Logger().debugStream() << "Still connected, starting to generate AI orders";
+
+            std::string chat_message = "Generating AI orders for ID: " + boost::lexical_cast<std::string>(ClientApp::EmpireID());
+            NetworkCore().SendMessage(GlobalChatMessage(PlayerID(), chat_message));
 
             AIGenerateOrders();
 
-            Logger().debugStream() << "Generated AI Orders, starting turn update";
+            chat_message = "Sending orders for ID: " + boost::lexical_cast<std::string>(ClientApp::EmpireID());
+            NetworkCore().SendMessage(SingleRecipientChatMessage(PlayerID(), 0, chat_message));
 
             StartTurn();
-
-            Logger().debugStream() << "Done dealing with turn update message";
         }
         break;
     }
@@ -281,6 +269,9 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
         Exit(0);
         break;
     }
+
+    case Message::CHAT_MSG:
+        break;
        
     default: {
         Logger().errorStream() << "AIClientApp::HandleMessageImpl : Received unknown Message type code " << msg.Type();

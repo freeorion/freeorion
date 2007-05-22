@@ -3,6 +3,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/Serialize.h"
 #include "../universe/UniverseObject.h"
+#include "../Empire/Empire.h"
 
 #include <stdexcept>
 
@@ -43,6 +44,27 @@ int ClientApp::EmpireID() const
 int ClientApp::CurrentTurn() const
 {
     return m_current_turn;
+}
+
+Empire* ClientApp::GetPlayerEmpire(int player_id)
+{
+    std::map<int, PlayerInfo>::const_iterator it = m_player_info.find(player_id);
+    if (it != m_player_info.end())
+        return m_empires.Lookup(it->second.empire_id);
+    return 0;
+}
+
+int ClientApp::GetEmpirePlayerID(int empire_id) const
+{
+    for (std::map<int, PlayerInfo>::const_iterator it = m_player_info.begin(); it != m_player_info.end(); ++it)
+        if (it->second.empire_id == empire_id)
+            return it->first;
+    return -1;
+}
+
+const std::map<int, PlayerInfo>& ClientApp::Players() const
+{
+    return m_player_info;
 }
 
 void ClientApp::StartTurn()

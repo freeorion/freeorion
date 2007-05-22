@@ -34,7 +34,7 @@ namespace
 {
   void SendMessageToAllPlayer(Message::MessageType msg_type,Message::ModuleType module, const XMLDoc& doc)
   {
-    for (std::map<int, PlayerInfo>::const_iterator it = ServerApp::GetApp()->NetworkCore().Players().begin(); it != ServerApp::GetApp()->NetworkCore().Players().end(); ++it)
+    for (std::map<int, PlayerConnection>::const_iterator it = ServerApp::GetApp()->NetworkCore().PlayerConnections().begin(); it != ServerApp::GetApp()->NetworkCore().PlayerConnections().end(); ++it)
       ServerApp::GetApp()->NetworkCore().SendMessage(Message(msg_type,-1,it->first,module,doc));
   }
 

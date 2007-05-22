@@ -22,20 +22,6 @@ class OrderSet;
 struct PlayerSetupData;
 struct SaveGameUIData;
 
-/** contains the info needed to manage one player, including connection info */
-struct PlayerInfo
-{
-    PlayerInfo(); ///< default ctor
-    PlayerInfo(int sock, const IPaddress& addr, const std::string& player_name = "", bool host_ = false); ///< ctor
-
-    bool        Connected() const {return socket != -1;}  ///< returns true if this player is still connected
-
-    int         socket;  ///< socket on which the player is connected (-1 if there is no valid connection)
-    IPaddress   address; ///< the IP address of the connected player
-    std::string name;    ///< the unique name of the player
-    bool        host;    ///< true if this is the host player
-};
-
 /** contains the data that must be saved for a single player.  Note that the m_empire member is not deallocated by
     PlayerSaveGameData.  Users of PlayerSaveGameData are resposible for managing its lifetime. */
 struct PlayerSaveGameData
@@ -80,7 +66,7 @@ public:
     void HandleMessage(const Message& msg);
 
     /** when Messages arrive from connections that are not established players, they arrive via a call to this function*/
-    void HandleNonPlayerMessage(const Message& msg, const PlayerInfo& connection); 
+    void HandleNonPlayerMessage(const Message& msg, const PlayerConnection& connection); 
 
     /** called by ServerNetworkCore when a player's TCP connection is closed*/
     void PlayerDisconnected(int id);
@@ -146,29 +132,29 @@ private:
     std::set<std::string>   m_expected_ai_players;  ///< the player names expected from valid AI clients; this prevents malicious users from "spoofing" as AI clients.  Should be empty after all players have joined a game.
     int                     m_expected_players;     ///< the total desired number of players in the game
 
-    int                          m_galaxy_size;     ///< the size of the galaxy (the number of star systems)
-    Shape                        m_galaxy_shape;    ///< the shape of the galaxy
-    Age                          m_galaxy_age;      ///< the age of the galaxy
-    StarlaneFrequency            m_starlane_freq;   ///< the frequency of starlanes
-    PlanetDensity                m_planet_density;  ///< the density of planets within systems
-    SpecialsFrequency            m_specials_freq;   ///< the frequency of planetary and system specials
-    std::string                  m_galaxy_file;     ///< file to use for generating the galaxy
+    int                     m_galaxy_size;          ///< the size of the galaxy (the number of star systems)
+    Shape                   m_galaxy_shape;         ///< the shape of the galaxy
+    Age                     m_galaxy_age;           ///< the age of the galaxy
+    StarlaneFrequency       m_starlane_freq;        ///< the frequency of starlanes
+    PlanetDensity           m_planet_density;       ///< the density of planets within systems
+    SpecialsFrequency       m_specials_freq;        ///< the frequency of planetary and system specials
+    std::string             m_galaxy_file;          ///< file to use for generating the galaxy
     // end SERVER_GAME_SETUP variables
 
-    bool                      m_single_player_game;    ///< true when the game being played is single-player
+    bool                    m_single_player_game;   ///< true when the game being played is single-player
 
-    std::set<int>             m_players_responded;     ///< tracks which players have responded to a server request (eg for save-data)
+    std::set<int>           m_player_connections_responded;     ///< tracks which players have responded to a server request (eg for save-data)
 
-    std::vector<PlayerSaveGameData> m_player_save_game_data; ///< stores the save game data coming in from the players during a save game operation
+    std::vector<PlayerSaveGameData> m_player_save_game_data;    ///< stores the save game data coming in from the players during a save game operation
 
-    MultiplayerLobbyData      m_lobby_data;
+    MultiplayerLobbyData        m_lobby_data;
 
     // turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
-    std::map<int, OrderSet*>  m_turn_sequence;
+    std::map<int, OrderSet*>    m_turn_sequence;
 
-    std::set<int>             m_losers;                ///< the IDs of players who have been eliminated during the normal course of the game
+    std::set<int>               m_losers;   ///< the IDs of players who have been eliminated during the normal course of the game
 
-    static ServerApp*         s_app;
+    static ServerApp*           s_app;
 };
 
 // template implementations

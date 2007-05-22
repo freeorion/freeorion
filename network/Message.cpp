@@ -19,6 +19,7 @@
 
 #include <stdexcept>
 #include <sstream>
+#include <map>
 
 
 namespace {
@@ -81,7 +82,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::COMBAT_START)
     GG_ENUM_MAP_INSERT(Message::COMBAT_ROUND_UPDATE)
     GG_ENUM_MAP_INSERT(Message::COMBAT_END)
-    GG_ENUM_MAP_INSERT(Message::HUMAN_PLAYER_MSG)
+    GG_ENUM_MAP_INSERT(Message::CHAT_MSG)
     GG_ENUM_MAP_INSERT(Message::PLAYER_ELIMINATED)
     GG_ENUM_MAP_INSERT(Message::PLAYER_EXIT)
     GG_ENUM_MAP_INSERT(Message::REQUEST_NEW_OBJECT_ID)
@@ -301,7 +302,7 @@ Message JoinGameMessage(const std::string& player_name)
     return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_name);
 }
 
-Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe)
+Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players)
 {
     std::ostringstream os;
     {
@@ -312,6 +313,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id, 
         Universe::s_encoding_empire = empire_id;
         Serialize(oa, empires);
         Serialize(oa, universe);
+        oa << BOOST_SERIALIZATION_NVP(players);
     }
     return Message(Message::GAME_START, -1, player_id, Message::CORE, os.str());
 }
@@ -367,7 +369,7 @@ Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, 
     return Message(Message::TURN_PROGRESS, -1, player_id, Message::CORE, os.str());
 }
 
-Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe)
+Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players)
 {
     std::ostringstream os;
     {
@@ -376,6 +378,7 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const 
         oa << BOOST_SERIALIZATION_NVP(current_turn);
         Serialize(oa, empires);
         Serialize(oa, universe);
+        oa << BOOST_SERIALIZATION_NVP(players);
     }
     return Message(Message::TURN_UPDATE, -1, player_id, Message::CORE, os.str());
 }
@@ -444,14 +447,14 @@ Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGa
     return Message(Message::LOAD_GAME, -1, receiver, Message::CORE, os.str());
 }
 
-Message ChatMessage(int sender, const std::string& msg)
+Message GlobalChatMessage(int sender, const std::string& msg)
 {
-    return Message(Message::HUMAN_PLAYER_MSG, sender, -1, Message::CORE, msg);
+    return Message(Message::CHAT_MSG, sender, -1, Message::CORE, msg);  // receiver = -1 indicate to send to all players
 }
 
-Message ChatMessage(int sender, int receiver, const std::string& msg)
+Message SingleRecipientChatMessage(int sender, int receiver, const std::string& msg)
 {
-    return Message(Message::HUMAN_PLAYER_MSG, sender, receiver, Message::CORE, msg);
+    return Message(Message::CHAT_MSG, sender, receiver, Message::CORE, msg);
 }
 
 Message PlayerDisconnectedMessage(int receiver, const std::string& player_name)
@@ -536,7 +539,7 @@ void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data)
     ia >> BOOST_SERIALIZATION_NVP(lobby_data);
 }
 
-void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe)
+void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players)
 {
     std::istringstream is(msg.GetText());
     FREEORION_IARCHIVE_TYPE ia(is);
@@ -546,6 +549,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
     Universe::s_encoding_empire = empire_id;
     Deserialize(ia, empires);
     Deserialize(ia, universe);
+    ia >> BOOST_SERIALIZATION_NVP(players);
 }
 
 void ExtractMessageData(const Message& msg, OrderSet& orders)
@@ -555,7 +559,7 @@ void ExtractMessageData(const Message& msg, OrderSet& orders)
     Deserialize(ia, orders);
 }
 
-void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe)
+void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players)
 {
     std::istringstream is(msg.GetText());
     FREEORION_IARCHIVE_TYPE ia(is);
@@ -563,6 +567,7 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, Em
     ia >> BOOST_SERIALIZATION_NVP(current_turn);
     Deserialize(ia, empires);
     Deserialize(ia, universe);
+    ia >> BOOST_SERIALIZATION_NVP(players);
 }
 
 bool ExtractMessageData(const Message& msg, OrderSet& orders, SaveGameUIData& ui_data)

@@ -2,20 +2,27 @@
 #ifndef _ServerNetworkCore_h_
 #define _ServerNetworkCore_h_
 
-#ifndef _NetworkCore_h_
 #include "NetworkCore.h"
-#endif
 
-#ifndef _NET2_H_
-#include "../SDL_net2/net2.h"
-#endif
+#include <GG/net/net2.h>
 
 #include <map>
 #include <string>
 #include <vector>
 
 class Message;
-class PlayerInfo;
+struct PlayerConnection
+{
+    PlayerConnection(); ///< default ctor
+    PlayerConnection(int sock, const IPaddress& addr, const std::string& player_name = "???", bool host_ = false); ///< ctor
+
+    bool        Connected() const {return socket != -1;}  ///< returns true if this player is still connected
+
+    int         socket;  ///< socket on which the player is connected (-1 if there is no valid connection)
+    IPaddress   address; ///< the IP address of the connected player
+    std::string name;    ///< the unique name of the player
+    bool        host;    ///< true if this is the host player
+};
 
 /** the network core needed by the FreeOrion server.  This class extends NetworkCore by allowing mutliple connections, 
    allowing connections to be associated with players by the server app, and allowing connections to be terminated by 
@@ -38,14 +45,14 @@ public:
    //@}
 
    /** \name Accessors */ //@{
-   const std::map<int, PlayerInfo>& Players() const {return m_player_connections;}
-
-   virtual void SendMessage(const Message& msg);
+   const std::map<int, PlayerConnection>& PlayerConnections() const {return m_player_connections;}
    //@}
-   
+
    /** \name Mutators */ //@{
+   virtual void SendMessage(const Message& msg);
+
    void ListenToPorts(); ///< closes any currently-open listen-ports, then sets up ports for incoming connections
-   bool EstablishPlayer(int socket, int player_id, const PlayerInfo& data); ///< establishes player with ID number \a id as being the connection on \a socket; returns true on success
+   bool EstablishPlayer(int socket, int player_id, const PlayerConnection& data); ///< establishes player with ID number \a id as being the connection on \a socket; returns true on success
    bool DumpPlayer(int player_id); ///< disconnects player \a player_id; returns true if a connection to \a player_id existed and was terminated
    bool DumpConnection(int socket); ///< disconnects the connection on socket number \a socket; returns true if a connection on \a socket existed and was terminated
    void DumpAllConnections(); ///< closes all connections
@@ -62,11 +69,11 @@ private:
    virtual void DispatchMessage(const Message& msg, int socket);
    void ClosePorts();
    
-   std::map<int, std::string> m_receive_streams;      ///< a map of streams of incoming data, keyed on socket number
-   std::vector<PlayerInfo>    m_new_connections;      ///< connection info objects for new connections
-   std::map<int, PlayerInfo>  m_player_connections;   ///< connection info objects associated with established players; indexed by player id number
-   int                        m_TCP_socket;           ///< the "socket" number returned by SDL_net2; close this socket to stop listening on the port
-   int                        m_UDP_socket;           ///< the "socket" number returned by SDL_net2; close this socket to stop listening on the port
+   std::map<int, std::string>       m_receive_streams;      ///< a map of streams of incoming data, keyed on socket number
+   std::vector<PlayerConnection>    m_new_connections;      ///< incoming TCP connections on the server's CONNECT_PORT are stored here until being parsed later by ServerNetworkCore::EstablishPlayer(...)
+   std::map<int, PlayerConnection>  m_player_connections;   ///< connection info objects associated with established players; indexed by player id number
+   int                              m_TCP_socket;           ///< the "socket" number returned by SDL_net2; close this socket to stop listening on the port
+   int                              m_UDP_socket;           ///< the "socket" number returned by SDL_net2; close this socket to stop listening on the port
 };
 
 #endif // _ServerNetworkCore_h_

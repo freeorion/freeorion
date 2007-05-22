@@ -5,7 +5,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <string>
-
+#include <map>
 
 class ClientNetworkCore;
 class EmpireManager;
@@ -16,6 +16,7 @@ class ServerNetworkCore;
 class SinglePlayerSetupData;
 class Universe;
 class XMLDoc;
+struct PlayerInfo;
 
 /** compresses \a str using zlib, and puts the result into \a zipped_str */
 void ZipString(const std::string& str, std::string& zipped_str);
@@ -56,7 +57,7 @@ public:
         COMBAT_START,            ///< sent to clients when a combat is about to start
         COMBAT_ROUND_UPDATE,     ///< sent to clients when a combat round has been resolved
         COMBAT_END,              ///< sent to clients when a combat is concluded
-        HUMAN_PLAYER_MSG,        ///< sent when one player sends a text message to another in multiplayer
+        CHAT_MSG,                ///< sent when one player sends a text message to another
         PLAYER_ELIMINATED,       ///< sent to all clients when a player is eliminated from play
         PLAYER_EXIT,             ///< sent to the "host" client when another player leaves the game
         REQUEST_NEW_OBJECT_ID,   ///< sent by client to server requesting a new object ID.
@@ -163,7 +164,7 @@ Message HostMPGameMessage(int player_id, const std::string& host_player_name);
 Message JoinGameMessage(const std::string& player_name);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
-Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe);
+Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players);
 
 /** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
    should only be sent by the server.*/
@@ -195,7 +196,7 @@ Message TurnOrdersMessage(int sender, const OrderSet& orders);
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id);
 
 /** creates a TURN_UPDATE message. */
-Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe);
+Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players);
 
 /** creates a CLIENT_SAVE_DATA message, including UI data. */
 Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data);
@@ -221,12 +222,12 @@ Message ServerSaveGameMessage(int receiver, bool done = false);
 /** creates a LOAD_GAME data message.  This message should only be sent by the server to provide saved game data to a client.*/
 Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGameUIData* ui_data);
 
-/** creates a HUMAN_PLAYER_MSG, which is sent to the server, and then from the server to all human players, including the 
-    originating player.  This is used for MP chat.*/
-Message ChatMessage(int sender, const std::string& msg);
+/** creates a CHAT_MSG, which is sent to the server, and then from the server to all players, including the 
+    originating player.*/
+Message GlobalChatMessage(int sender, const std::string& msg);
 
-/** creates a HUMAN_PLAYER_MSG, which is sent to the specific indicated receiver.  This is used for MP chat.*/
-Message ChatMessage(int sender, int receiver, const std::string& msg);
+/** creates a CHAT_MSG, which is sent to the server, and then from the server to a single recipient player */
+Message SingleRecipientChatMessage(int sender, int receiver, const std::string& msg);
 
 /** creates a PLAYER_EXIT message, which is sent to all remaining clients when a client looses its connection to the server.  
     This message should only be sent by the server.*/
@@ -280,11 +281,11 @@ Message StartMPGameMessage(int player_id);
 
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 
-void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe);
+void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players);
 
 void ExtractMessageData(const Message& msg, OrderSet& orders);
 
-void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe);
+void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players);
 
 bool ExtractMessageData(const Message& msg, OrderSet& orders, SaveGameUIData& ui_data);
 

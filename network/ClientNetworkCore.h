@@ -71,13 +71,13 @@ private:
 
     void HandleSynchronousResponse( const Message& msg );
    
-    int          m_server_socket;     ///< the number of the socket through which the client is connected to the server; -1 if not connected
-    std::string  m_receive_stream;    ///< all network traffic must go through the server, so we only need this one input streams
-    bool         m_listening_on_LAN;  ///< set to true when the client is broadcasting a discovery request on the LAN
+    int          m_server_socket;       ///< the number of the socket through which the client is connected to the server; -1 if not connected
+    std::string  m_receive_stream;      ///< all network traffic must go through the server, so we only need this one input streams
+    bool         m_listening_on_LAN;    ///< set to true when the client is broadcasting a discovery request on the LAN
     unsigned int m_synch_message_start_time;
 
-    Message::MessageType m_waiting_for_msg;   ///< for a synchronous message, this is set to the msg type it's waiting for to be returned by the server
-    Message              m_response_msg;     ///< the synchronous response will contain data which the calling sender is expecting
+    Message::MessageType m_waiting_for_msg;     ///< for a synchronous message, this is set to the msg type it's waiting for to be returned by the server
+    Message              m_response_msg;        ///< the synchronous response will contain data which the calling sender is expecting
 };
 
 #endif // _ClientNetworkCore_h_
