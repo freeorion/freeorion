@@ -69,7 +69,9 @@ if env['target_define'] == 'FREEORION_BUILD_AI':
         'client/AI/camain.cpp',
         'network/ClientNetworkCore.cpp',
         'universe/Universe.cpp',
-        'util/AppInterface.cpp'
+        'util/AppInterface.cpp',
+        'AI/AIInterface.cpp',
+        'AI/ReferenceAI.cpp'
         ]
     target = 'ai'
 
