@@ -123,7 +123,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="C:\FreeOrion\GG;&quot;C:\Boost\include\boost-1_33_1&quot;;C:\DevIL\include;C:\fmodapi375win\api\inc;&quot;C:\log4cpp-0.3.4b\include&quot;;&quot;C:\SDL-1.2.7\include&quot;;C:\zlib\include;C:\graphviz\include;&quot;C:\freetype-2.1.7\include&quot;"
+				AdditionalIncludeDirectories="C:\FreeOrion\GG;&quot;C:\Boost\include\boost-1_33_1&quot;;C:\DevIL\include;C:\fmodapi375win\api\inc;&quot;C:\log4cpp-0.3.4b\include&quot;;&quot;C:\SDL-1.2.7\include&quot;;C:\zlib\include;C:\graphviz\include;&quot;C:\freetype-2.1.7\include&quot;;&quot;C:\Program Files\Python 2.4\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_AI;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				DisableLanguageExtensions="false"
@@ -146,10 +146,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib fmodvc.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib dotgen.lib gd.lib graph.lib pathplan.lib libexpat.lib png.lib jpeg.lib"
+				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib fmodvc.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib dotgen.lib gd.lib graph.lib pathplan.lib libexpat.lib png.lib jpeg.lib python24.lib boost_python-vc80-mt-1_33_1.lib"
 				OutputFile="$(OutDir)/freeorionca.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\FreeOrion\GG;C:\Boost\lib;C:\DevIL\lib;C:\fmodapi375win\api\lib;&quot;C:\freetype-2.1.7\objs&quot;;C:\graphviz\lib;&quot;C:\SDL-1.2.7\lib&quot;;C:\zlib\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;"
+				AdditionalLibraryDirectories="C:\FreeOrion\GG;C:\Boost\lib;C:\DevIL\lib;C:\fmodapi375win\api\lib;&quot;C:\freetype-2.1.7\objs&quot;;C:\graphviz\lib;&quot;C:\SDL-1.2.7\lib&quot;;C:\zlib\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;;&quot;C:\Program Files\Python 2.4\libs&quot;"
 				GenerateManifest="true"
 				GenerateDebugInformation="false"
 				SubSystem="2"
@@ -699,6 +699,38 @@
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\StringTable.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="AI"
+				>
+				<File
+					RelativePath="..\..\..\AI\AIInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\AI\AIInterface.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\AI\FreeOrionAI.py"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\AI\PythonAI.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\AI\PythonAI.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\AI\ReferenceAI.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\AI\ReferenceAI.h"
 					>
 				</File>
 			</Filter>

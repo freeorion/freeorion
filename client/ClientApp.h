@@ -41,7 +41,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{   
-    virtual void            StartTurn();   ///< encodes order sets and sends turn orders message
+    virtual void            StartTurn();        ///< encodes order sets and sends turn orders message
 
     Universe&               GetUniverse();      ///< returns client's local copy of Universe
     EmpireManager&          Empires();          ///< returns the set of known Empires
