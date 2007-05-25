@@ -1,6 +1,8 @@
+import foaiint
 
 def InitFreeOrionAI():
-	import foaiint
-	
 	foaiint.LogOutput("Initialized FreeOrion Python AI")
 
+def GenerateOrders():
+	foaiint.DoneTurn()
+	foaiint.LogOutput("Generated Orders")

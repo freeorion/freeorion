@@ -19,9 +19,6 @@ BOOST_PYTHON_MODULE(foaiint)
 ///////////////////////
 //     PythonAI      //
 ///////////////////////
-typedef boost::python::handle<PyObject>     PyHANDLE;
-typedef boost::python::object               PyOBJECT;
-typedef boost::python::error_already_set    PyERROR;
 using boost::python::borrowed;
 
 PythonAI::PythonAI()
@@ -43,7 +40,7 @@ PythonAI::PythonAI()
     try {
         handle = PyHANDLE(PyRun_String("import sys", Py_file_input, dict.ptr(), dict.ptr()));
     } catch (PyERROR err) {
-        Logger().debugStream() << "error importing sys";
+        Logger().errorStream() << "error importing sys";
         return;
     }
 
@@ -61,7 +58,7 @@ PythonAI::PythonAI()
     try {
         handle = PyHANDLE(PyRun_String("import FreeOrionAI", Py_file_input, dict.ptr(), dict.ptr()));
     } catch (PyERROR err) {
-        Logger().debugStream() << "error importing blah";
+        Logger().errorStream() << "error importing blah";
         return;
     }
 
@@ -69,27 +66,28 @@ PythonAI::PythonAI()
     try {
         handle = PyHANDLE(PyRun_String("FreeOrionAI.InitFreeOrionAI()", Py_file_input, dict.ptr(), dict.ptr()));
     } catch(PyERROR err) {
-        Logger().debugStream() << "error calling FreeOrionAI.InitFreeOrionAI()";
+        Logger().errorStream() << "error calling FreeOrionAI.InitFreeOrionAI()";
         return;
     }
 
-
-    Py_Finalize();      // stops Python interpreter and release its resources
-
-    Logger().debugStream() << "back in C++";
+    Logger().debugStream() << "Initialized PythonAI";
 }
 
 PythonAI::~PythonAI()
 {
     std::cout << "Cleaning up / destructing Python AI" << std::endl;
-    //Py_Finalize();      // stops Python interpreter and release its resources
+    Py_Finalize();      // stops Python interpreter and release its resources
 }
 
 void PythonAI::GenerateOrders()
 {
-    //Logger().debugStream() << "PythonAI::GenerateOrders() start";
-
-    //Logger().debugStream() << "PythonAI::GenerateOrders() finished";
+    try {
+        PyHANDLE handle = PyHANDLE(PyRun_String("FreeOrionAI.GenerateOrders()", Py_file_input, dict.ptr(), dict.ptr()));
+    } catch(PyERROR err) {
+        Logger().errorStream() << "error calling FreeOrionAI.GenerateOrders()";
+        AIInterface::DoneTurn();
+        return;
+    }
 }
 
 void PythonAI::HandleChatMessage(int sender_id, const std::string& msg)
