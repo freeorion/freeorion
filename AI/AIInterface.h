@@ -60,6 +60,10 @@ namespace AIInterface
     void SaveState();
     void LoadState();
     //@}
+
+    /** Misc */ //@{
+    void LogOutput(char const* log_text);   ///< output text to logfile
+    //@}
 };
 
 #endif

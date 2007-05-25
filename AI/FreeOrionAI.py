@@ -1,7 +1,6 @@
 
-def GenerateOrders():
-	import FreeOrionAIPythonInterface
+def InitFreeOrionAI():
+	import foaiint
 	
-	foInt = FreeOrionAIPythonInterface.fointerface()
-	
-	foInt.DoneTurn()
+	foaiint.LogOutput("Initialized FreeOrion Python AI")
+

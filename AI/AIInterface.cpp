@@ -219,6 +219,7 @@ namespace AIInterface {
 
     void DoneTurn()
     {
+        Logger().debugStream() << "AIInterface::DoneTurn()";
         AIClientApp::GetApp()->StartTurn(); // encodes order sets and sends turn orders message.  "done" the turn for the client, but "starts" the turn for the server
     }
 
@@ -227,4 +228,9 @@ namespace AIInterface {
 
     void LoadState()
     {}
+
+    void LogOutput(char const* log_text)
+    {
+        Logger().debugStream() << "AI Log : " << log_text;
+    }
 } // namespace AIInterface
