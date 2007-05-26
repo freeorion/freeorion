@@ -229,7 +229,7 @@ namespace AIInterface {
     void LoadState()
     {}
 
-    void LogOutput(char const* log_text)
+    void LogOutput(const std::string& log_text)
     {
         Logger().debugStream() << "AI Log : " << log_text;
     }

@@ -5,4 +5,5 @@ def InitFreeOrionAI():
 
 def GenerateOrders():
 	foaiint.DoneTurn()
+	foaiint.SendChatMessage(0, "Sending chat message from within Python!")
 	foaiint.LogOutput("Generated Orders")
