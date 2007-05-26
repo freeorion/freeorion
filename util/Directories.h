@@ -12,7 +12,7 @@ void InitDirs();
 
 /** This function returns the directory where FreeOrion should store user specific data, like the configuration file and
     savegames.  Under Unix, this would be <tt>~/.freeorion</tt>, under Windows, this might be something along the lines
-    of <tt>C:\\Documents and settings\\Username\\FreeOrion</tt> or even
+    of <tt>C:\\Documents and Settings\\Username\\FreeOrion</tt> or even
     <tt>\\\\Gandalf\\Users\\Frodo\\Settings\\FreeOrion</tt>. \note <ul><li> If the directory does not exist, it will be
     created.<li>This directory is the only one that can be considered writable!</ul>
 */

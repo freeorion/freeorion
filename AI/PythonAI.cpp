@@ -1,5 +1,6 @@
 #include "PythonAI.h"
 #include "../util/AppInterface.h"
+#include "../util/Directories.h"
 
 #include <boost/python.hpp>
 
@@ -50,8 +51,8 @@ PythonAI::PythonAI()
     }
 
     // tell Python the path in which to locate AI script file
-    std::string AI_DIR("C:\\FreeOrion\\AI");
-    std::string python_path_command = "sys.path.append('" + AI_DIR + "')";
+    std::string AI_path = (GetGlobalDir() / "default" / "AI").native_directory_string();
+    std::string python_path_command = "sys.path.append('" + AI_path + "')";
     try {
         handle = PyHANDLE(PyRun_String(python_path_command.c_str(), Py_file_input, dict.ptr(), dict.ptr()));
     } catch (PyERROR err) {
