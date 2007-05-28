@@ -2,21 +2,65 @@
 #include "../util/AppInterface.h"
 #include "../util/Directories.h"
 
+#include "../Empire/Empire.h"
+
 #include <boost/python.hpp>
 
 ////////////////////////
 // Python AIInterface //
 ////////////////////////
+// disambiguate overloaded AIInterface functions
+const std::string& (*AIIntPlayerNameVoid)(void) = &AIInterface::PlayerName;
+const std::string& (*AIIntPlayerNameInt)(int) = &AIInterface::PlayerName;
+
+const Empire* (*AIIntGetEmpireVoid)(void) = &AIInterface::GetEmpire;
+const Empire* (*AIIntGetEmpireInt)(int) = &AIInterface::GetEmpire;
+
+
+// expose to Python
 BOOST_PYTHON_MODULE(foaiint)
 {
-    boost::python::def("EmpirePlayerID", AIInterface::EmpirePlayerID);
-    boost::python::def("CurrentTurn", AIInterface::CurrentTurn);
+    using boost::python::def;
+    using boost::python::return_value_policy;
+    using boost::python::copy_const_reference;
+    using boost::python::reference_existing_object;
+    using boost::python::class_;
+    using boost::noncopyable;
+    using boost::python::no_init;
 
-    boost::python::def("DoneTurn", AIInterface::DoneTurn);
+    // AIInterface
+    def("PlayerName",               AIIntPlayerNameVoid,        return_value_policy<copy_const_reference>());
+    def("IDPlayerName",             AIIntPlayerNameInt,         return_value_policy<copy_const_reference>());
 
-    boost::python::def("SendChatMessage", AIInterface::SendPlayerChatMessage);
+    def("PlayerID",                 AIInterface::PlayerID);
+    def("EmpireID",                 AIInterface::EmpireID);
+    def("EmpirePlayerID",           AIInterface::EmpirePlayerID);
 
-    boost::python::def("LogOutput", AIInterface::LogOutput);
+    def("GetEmpire",                AIIntGetEmpireVoid,         return_value_policy<reference_existing_object>());
+    def("GetIDEmpire",              AIIntGetEmpireInt,          return_value_policy<reference_existing_object>());
+
+    def("CurrentTurn",              AIInterface::CurrentTurn);
+
+    def("IssueFleetMoveOrder",      AIInterface::IssueFleetMoveOrder);
+    def("IssueRenameOrder",         AIInterface::IssueRenameOrder);
+    def("IssueNewFleetOrder",       AIInterface::IssueNewFleetOrder);
+    def("IssueFleetColonizeOrder",  AIInterface::IssueFleetColonizeOrder);
+
+    def("SendChatMessage",          AIInterface::SendPlayerChatMessage);
+
+    def("DoneTurn",                 AIInterface::DoneTurn);
+
+    def("LogOutput",                AIInterface::LogOutput);
+
+    // Empire
+    class_<Empire, noncopyable>("Empire", no_init)
+        .def("Name",                    &Empire::Name,          return_value_policy<copy_const_reference>())
+        .def("PlayerName",              &Empire::PlayerName,    return_value_policy<copy_const_reference>())
+        .def("EmpireID", &Empire::EmpireID)
+        .def("HomeworldID",             &Empire::HomeworldID)
+        .def("CapitolID",               &Empire::CapitolID)
+        .def("BuildingTypeAvailable",   &Empire::BuildingTypeAvailable)
+    ;
 }
  
 ///////////////////////

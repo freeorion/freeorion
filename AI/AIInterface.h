@@ -25,27 +25,34 @@ public:
 namespace AIInterface
 {
     /** Gamestate Accessors */ //@{
-    const Universe&         GetUniverse();                  ///< returns Universe known to this player
-
     const std::string&      PlayerName();                   ///< returns the player name of this client
     const std::string&      PlayerName(int player_id);      ///< returns the name of player with \a player_id
 
     int                     PlayerID();                     ///< returns the player ID of this client
+    int                     EmpirePlayerID(int empire_id);  ///< returns ID of player controlling empire with id \a empire_id
+    const std::set<int>     AllPlayerIDs();                 ///< returns std::set<int> containing IDs of all players in game
+
+    bool                    PlayerIsAI(int player_id);      ///< returns true iff the player with id \a player_id is an AI
+    bool                    PlayerIsHost(int player_id);    ///< returns true iff the player with id \a player_id is the game host
+
     int                     EmpireID();                     ///< returns the empire ID of this client
+    int                     PlayerEmpireID(int player_id);  ///< returns ID of empire controlled by player with id \a player_id
+    const std::set<int>     AllEmpireIDs();                 ///< returns std::set<int> containing IDs of all empires in game
+
     const Empire*           GetEmpire();                    ///< returns empire of this client's player
     const Empire*           GetEmpire(int empire_id);       ///< returns empire with id \a empire_id
-    const Empire*           GetPlayerEmpire(int player_id); ///< returns empire of player with id \a player_id
-    int                     EmpirePlayerID(int empire_id);  ///< returns ID of player controlling empire with id \a empire_id
+
+    const Universe&         GetUniverse();                  ///< returns Universe known to this player
 
     int                     CurrentTurn();                  ///< returns the current game turn
     //@}
 
     /** Order-Giving */ //@{
     int IssueFleetMoveOrder(int fleet_id, int destination_id);
-    int IssueRenameOrder();
-    int IssueNewFleetOrder(const std::string fleet_name, const std::vector<int>& ship_ids);
+    int IssueRenameOrder(int object_id, const std::string& new_name);
+    int IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids);
     int IssueFleetTransferOrder();
-    int IssueFleetColonizeOrder();
+    int IssueFleetColonizeOrder(int ship_id, int planet_id);
     int IssueDeleteFleetOrder();
     int IssueChangeFocusOrder();
     int IssueResearchQueueOrder();

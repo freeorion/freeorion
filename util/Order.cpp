@@ -76,9 +76,9 @@ RenameOrder::RenameOrder() :
     m_object(UniverseObject::INVALID_OBJECT_ID)
 {}
    
-RenameOrder::RenameOrder(int empire, int fleet, const std::string& name) : 
+RenameOrder::RenameOrder(int empire, int object, const std::string& name) : 
     Order(empire),
-    m_object(fleet),
+    m_object(object),
     m_name(name)
 {
     if (name == "")

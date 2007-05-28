@@ -96,7 +96,8 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_current_combat(0), 
     m_log_category(log4cpp::Category::getRoot()),
     m_state(SERVER_IDLE),
-    m_current_turn(INVALID_GAME_TURN)
+    m_current_turn(INVALID_GAME_TURN),
+    m_universe()
 {
     for (int n = 0; n < 10000; n++) {
         int x = n/(n+1);
@@ -685,7 +686,7 @@ ServerApp* ServerApp::GetApp()
 
 Universe& ServerApp::GetUniverse()
 {
-    return ServerApp::GetApp()->m_universe;
+    return s_app->m_universe;
 }
 
 EmpireManager& ServerApp::Empires()

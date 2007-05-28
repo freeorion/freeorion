@@ -6,9 +6,9 @@
 
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/Planet.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
-
 
 #include "../util/OrderSet.h"
 
@@ -47,8 +47,10 @@ namespace AIInterface {
         std::map<int, PlayerInfo>::const_iterator it = players.find(player_id);
         if (it != players.end())
             return it->second.name;
-        else
+        else {
+            Logger().debugStream() << "AIInterface::PlayerName(" << boost::lexical_cast<std::string>(player_id) << ") - passed an invalid player_id";
             throw std::invalid_argument("AIInterface::PlayerName : given invalid player_id");
+        }
     }
 
     int PlayerID()
@@ -73,12 +75,10 @@ namespace AIInterface {
 
     int EmpirePlayerID(int empire_id)
     {
-        return AIClientApp::GetApp()->GetEmpirePlayerID(empire_id);
-    }
-
-    const Empire* GetPlayerEmpire(int player_id)
-    {
-        return AIClientApp::GetApp()->GetPlayerEmpire(player_id);
+        int player_id = AIClientApp::GetApp()->GetEmpirePlayerID(empire_id);
+        if (-1 == player_id)
+            Logger().debugStream() << "AIInterface::EmpirePlayerID(" << boost::lexical_cast<std::string>(empire_id) << ") - passed an invalid empire_id";
+        return player_id;
     }
 
     int CurrentTurn()
@@ -88,7 +88,7 @@ namespace AIInterface {
 
     int IssueFleetMoveOrder(int fleet_id, int destination_id)
     {
-        Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         
         const Fleet* fleet = universe.Object<Fleet>(fleet_id);
         if (!fleet) {
@@ -111,21 +111,41 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueRenameOrder()
+    int IssueRenameOrder(int object_id, const std::string& new_name)
     {
-        return 0;
+        if (new_name.empty()) {
+            Logger().errorStream() << "AIInterface::IssueRenameOrder : passed an empty new name";
+            return 0;
+        }
+
+        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        const UniverseObject* obj = universe.Object(object_id);
+
+        if (!obj) {
+            Logger().errorStream() << "AIInterface::IssueRenameOrder : passed an invalid object_id";
+            return 0;
+        }
+        if (!obj->WhollyOwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueRenameOrder : passed object_id of object not owned only by player";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(new RenameOrder(empire_id, object_id, new_name));
+
+        return 1;
     }
 
-    int IssueNewFleetOrder(const std::string fleet_name, const std::vector<int>& ship_ids)
+    int IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids)
     {
         if (ship_ids.empty()) {
             Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed empty vector of ship_ids";
             return 0;
         }
 
-        Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Ship* ship = 0;
+        const Ship* ship = 0;
         
         // make sure all ships exist and are owned just by this player       
         for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
@@ -149,7 +169,7 @@ namespace AIInterface {
             // ships are located in a system: can just check that all ships have same system id as first ship
             std::vector<int>::const_iterator it = ship_ids.begin();
             for (++it; it != ship_ids.end(); ++it) {
-                Ship* ship2 = universe.Object<Ship>(*it);
+                const Ship* ship2 = universe.Object<Ship>(*it);
                 if (ship2->SystemID() != system_id) {
                     Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed ship_ids of ships at different locations";
                     return 0;
@@ -159,7 +179,7 @@ namespace AIInterface {
             // ships are located in deep space: need to check their exact locations
             std::vector<int>::const_iterator it = ship_ids.begin();
             for (++it; it != ship_ids.end(); ++it) {
-                Ship* ship2 = universe.Object<Ship>(*it);
+                const Ship* ship2 = universe.Object<Ship>(*it);
                 if ((ship2->X() != ship_x) || (ship2->Y() != ship_y)) {
                     Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed ship_ids of ships at different locations";
                     return 0;
@@ -184,9 +204,59 @@ namespace AIInterface {
         return 0;
     }
 
-    int IssueFleetColonizeOrder()
+    int IssueFleetColonizeOrder(int ship_id, int planet_id)
     {
-        return 0;
+        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+
+        // make sure ship_id is a ship...
+        const Ship* ship = universe.Object<Ship>(ship_id);
+        if (!ship) {
+            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : passed an invalid ship_id";
+            return 0;
+        }
+
+        // get fleet of ship
+        const Fleet* fleet = universe.Object<Fleet>(ship->FleetID());
+        if (!fleet) {
+            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : ship with passed ship_id has invalid fleet_id";
+            return 0;
+        }
+
+        // make sure player owns ship and its fleet
+        if (!fleet->WhollyOwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : empire does not own fleet of passed ship";
+            return 0;
+        }
+        if (!ship->WhollyOwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : empire does not own passed ship";
+            return 0;
+        }
+
+        // verify that planet exists and is un-occupied.
+        const Planet* planet = universe.Object<Planet>(planet_id);
+        if (!planet) {
+            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : no planet with passed planet_id";
+            return 0;
+        }
+        if (!planet->Unowned()) {
+            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : planet with passed planet_id is already owned or colonized";
+            return 0;
+        }
+
+        // verify that planet is in same system as the fleet
+        if (planet->SystemID() != fleet->SystemID()) {
+            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : fleet and planet are not in the same system";
+            return 0;
+        }
+        if (ship->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
+            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : ship is not in a system";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(new FleetColonizeOrder(empire_id, ship_id, planet_id));
+    
+        return 1;
     }
 
     int IssueDeleteFleetOrder()

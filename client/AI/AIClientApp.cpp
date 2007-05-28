@@ -27,7 +27,7 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include "../AI/ReferenceAI.h"
-//#include "../AI/PythonAI.h"
+#include "../AI/PythonAI.h"
 
 // static member(s)
 AIClientApp*  AIClientApp::s_app = 0;
@@ -137,7 +137,8 @@ void AIClientApp::SDLInit()
 
 void AIClientApp::Initialize()
 {
-    m_AI = new ReferenceAI();
+    //m_AI = new ReferenceAI();
+    m_AI = new PythonAI();
     // join game at server
     const int MAX_TRIES = 5;
     int tries = 0;
@@ -250,15 +251,7 @@ void AIClientApp::HandleMessageImpl(const Message& msg)
             // ... copied from HumanClientApp.cpp.  Not sure if / why it's necessary.
             if (!NetworkCore().Connected()) break;
 
-            std::string chat_message = "Generating AI orders for ID: " + boost::lexical_cast<std::string>(ClientApp::EmpireID());
-            NetworkCore().SendMessage(GlobalChatMessage(PlayerID(), chat_message));
-
             AIGenerateOrders();
-
-            chat_message = "Sending orders for ID: " + boost::lexical_cast<std::string>(ClientApp::EmpireID());
-            NetworkCore().SendMessage(SingleRecipientChatMessage(PlayerID(), 0, chat_message));
-
-            StartTurn();
         }
         break;
     }
