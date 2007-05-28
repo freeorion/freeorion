@@ -4,31 +4,42 @@
 
 #include "../Empire/Empire.h"
 
+#include "../universe/Universe.h"
+#include "../universe/UniverseObject.h"
+#include "../universe/Fleet.h"
+#include "../universe/Ship.h"
+
 #include <boost/python.hpp>
+
+using boost::python::def;
+using boost::python::return_value_policy;
+using boost::python::copy_const_reference;
+using boost::python::reference_existing_object;
+using boost::python::class_;
+using boost::python::bases;
+using boost::noncopyable;
+using boost::python::no_init;
 
 ////////////////////////
 // Python AIInterface //
 ////////////////////////
-// disambiguate overloaded AIInterface functions
+// disambiguate overloaded functions
 const std::string& (*AIIntPlayerNameVoid)(void) = &AIInterface::PlayerName;
 const std::string& (*AIIntPlayerNameInt)(int) = &AIInterface::PlayerName;
 
 const Empire* (*AIIntGetEmpireVoid)(void) = &AIInterface::GetEmpire;
 const Empire* (*AIIntGetEmpireInt)(int) = &AIInterface::GetEmpire;
 
+const UniverseObject* (Universe::*UniverseGetObject)(int) = &Universe::Object;
+const Fleet* (Universe::*UniverseGetFleet)(int) = &Universe::Object;
+const Ship* (Universe::*UniverseGetShip)(int) = &Universe::Object;
 
-// expose to Python
-BOOST_PYTHON_MODULE(foaiint)
+// Expose AIInterface and all associated classes to Python
+BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
 {
-    using boost::python::def;
-    using boost::python::return_value_policy;
-    using boost::python::copy_const_reference;
-    using boost::python::reference_existing_object;
-    using boost::python::class_;
-    using boost::noncopyable;
-    using boost::python::no_init;
-
-    // AIInterface
+    ///////////////////
+    //  AIInterface  //
+    ///////////////////
     def("PlayerName",               AIIntPlayerNameVoid,        return_value_policy<copy_const_reference>());
     def("IDPlayerName",             AIIntPlayerNameInt,         return_value_policy<copy_const_reference>());
 
@@ -52,14 +63,67 @@ BOOST_PYTHON_MODULE(foaiint)
 
     def("LogOutput",                AIInterface::LogOutput);
 
-    // Empire
+    ///////////////////
+    //     Empire    //
+    ///////////////////
     class_<Empire, noncopyable>("Empire", no_init)
         .def("Name",                    &Empire::Name,          return_value_policy<copy_const_reference>())
         .def("PlayerName",              &Empire::PlayerName,    return_value_policy<copy_const_reference>())
-        .def("EmpireID", &Empire::EmpireID)
+        .def("EmpireID",                &Empire::EmpireID)
         .def("HomeworldID",             &Empire::HomeworldID)
         .def("CapitolID",               &Empire::CapitolID)
         .def("BuildingTypeAvailable",   &Empire::BuildingTypeAvailable)
+    ;
+
+    ////////////////////
+    //    Universe    //
+    ////////////////////
+    class_<Universe, noncopyable>("Universe", no_init)
+        .def("GetObject",   UniverseGetObject,  return_value_policy<reference_existing_object>())
+        .def("GetFleet",    UniverseGetFleet,   return_value_policy<reference_existing_object>())
+        .def("GetShip",     UniverseGetShip,    return_value_policy<reference_existing_object>())
+    ;
+
+    ////////////////////
+    // UniverseObject //
+    ////////////////////
+    class_<UniverseObject, noncopyable>("UniverseObject", no_init)
+        .def("ID",                          &UniverseObject::ID)
+        .def("Name",                        &UniverseObject::Name,      return_value_policy<copy_const_reference>())
+        .def("X",                           &UniverseObject::X)
+        .def("Y",                           &UniverseObject::Y)
+        .def("SystemID",                    &UniverseObject::SystemID)
+        .def("Unowned",                     &UniverseObject::Unowned)
+        .def("OwnedBy",                     &UniverseObject::OwnedBy)
+        .def("WhollyOwnedBy",               &UniverseObject::WhollyOwnedBy)
+        .def("CreationTurn",                &UniverseObject::CreationTurn)
+        .def("AgeInTurns",                  &UniverseObject::AgeInTurns)
+
+        .def_readonly("INVALID_OBJECT_ID",  &UniverseObject::INVALID_OBJECT_ID)
+        .def_readonly("INVALID_OBJECT_AGE", &UniverseObject::INVALID_OBJECT_AGE)
+    ;
+
+    ///////////////////
+    //     Fleet     //
+    ///////////////////
+    class_<Fleet, bases<UniverseObject>, noncopyable>("Fleet", no_init)
+        .def("FinalDestinationID",          &Fleet::FinalDestinationID)
+        .def("NextSystemID",                &Fleet::NextSystemID)
+        .def("Speed",                       &Fleet::Speed)
+        .def("CanChangeDirectionEnRoute",   &Fleet::CanChangeDirectionEnRoute)
+        .def("HasArmedShips",               &Fleet::HasArmedShips)
+        .def("NumShips",                    &Fleet::NumShips)
+        .def("ContainsShipID",              &Fleet::ContainsShip)
+    ;
+
+    //////////////////
+    //     Ship     //
+    //////////////////
+    class_<Ship, bases<UniverseObject>, noncopyable>("Ship", no_init)
+        .def("FleetID",     &Ship::FleetID)
+        .def("GetFleet",    &Ship::GetFleet,    return_value_policy<reference_existing_object>())
+        .def("IsArmed",     &Ship::IsArmed)
+        .def("Speed",       &Ship::Speed)
     ;
 }
  

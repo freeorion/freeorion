@@ -95,12 +95,12 @@ public:
     /** accepts a visitor object \see UniverseObjectVisitor */
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
+    int CreationTurn() const; ///< returns game turn on which object was created
+    int AgeInTurns() const; ///< returns elapsed number of turns between turn object was created and current game turn.
+
     mutable StateChangedSignalType StateChangedSignal; ///< returns the state changed signal object for this UniverseObject
     //@}
 
-    int CreationTurn() const; ///< returns game turn on which object was created
-    int AgeInTurns() const; ///< returns elapsed number of turns between turn object was created and current game turn.
-   
     /** \name Mutators */ //@{
     void SetID(int id);                   ///< sets the ID number of the object to \a id
     void Rename(const std::string& name); ///< renames this object to \a name
