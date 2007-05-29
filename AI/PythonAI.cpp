@@ -8,6 +8,12 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../universe/ResourceCenter.h"
+#include "../universe/PopCenter.h"
+#include "../universe/Planet.h"
+#include "../universe/System.h"
+
+#include "../universe/Enums.h"
 
 #include <boost/python.hpp>
 
@@ -19,20 +25,24 @@ using boost::python::class_;
 using boost::python::bases;
 using boost::noncopyable;
 using boost::python::no_init;
+using boost::python::enum_;
 
 ////////////////////////
 // Python AIInterface //
 ////////////////////////
 // disambiguate overloaded functions
-const std::string& (*AIIntPlayerNameVoid)(void) = &AIInterface::PlayerName;
-const std::string& (*AIIntPlayerNameInt)(int) = &AIInterface::PlayerName;
+const std::string&      (*AIIntPlayerNameVoid)(void) =          &AIInterface::PlayerName;
+const std::string&      (*AIIntPlayerNameInt)(int) =            &AIInterface::PlayerName;
 
-const Empire* (*AIIntGetEmpireVoid)(void) = &AIInterface::GetEmpire;
-const Empire* (*AIIntGetEmpireInt)(int) = &AIInterface::GetEmpire;
+const Empire*           (*AIIntGetEmpireVoid)(void) =           &AIInterface::GetEmpire;
+const Empire*           (*AIIntGetEmpireInt)(int) =             &AIInterface::GetEmpire;
 
-const UniverseObject* (Universe::*UniverseGetObject)(int) = &Universe::Object;
-const Fleet* (Universe::*UniverseGetFleet)(int) = &Universe::Object;
-const Ship* (Universe::*UniverseGetShip)(int) = &Universe::Object;
+const UniverseObject*   (Universe::*UniverseGetObject)(int) =   &Universe::Object;
+const Fleet*            (Universe::*UniverseGetFleet)(int) =    &Universe::Object;
+const Ship*             (Universe::*UniverseGetShip)(int) =     &Universe::Object;
+const Planet*           (Universe::*UniverseGetPlanet)(int) =   &Universe::Object;
+const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
+
 
 // Expose AIInterface and all associated classes to Python
 BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
@@ -82,6 +92,8 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
         .def("GetObject",   UniverseGetObject,  return_value_policy<reference_existing_object>())
         .def("GetFleet",    UniverseGetFleet,   return_value_policy<reference_existing_object>())
         .def("GetShip",     UniverseGetShip,    return_value_policy<reference_existing_object>())
+        .def("GetPlanet",   UniverseGetPlanet,  return_value_policy<reference_existing_object>())
+        .def("GetSystem",   UniverseGetSystem,  return_value_policy<reference_existing_object>())
     ;
 
     ////////////////////
@@ -124,6 +136,103 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
         .def("GetFleet",    &Ship::GetFleet,    return_value_policy<reference_existing_object>())
         .def("IsArmed",     &Ship::IsArmed)
         .def("Speed",       &Ship::Speed)
+    ;
+
+    ////////////////////
+    // ResourceCenter //
+    ////////////////////
+    class_<ResourceCenter, noncopyable>("ResourceCenter", no_init)
+        .def("PrimaryFocus",            &ResourceCenter::PrimaryFocus)
+        .def("SecondaryFocus",          &ResourceCenter::SecondaryFocus)
+        .def("FarmingPoints",           &ResourceCenter::FarmingPoints)
+        .def("IndustryPoints",          &ResourceCenter::IndustryPoints)
+        .def("MiningPoints",            &ResourceCenter::MiningPoints)
+        .def("ResearchPoints",          &ResourceCenter::ResearchPoints)
+        .def("TradePoints",             &ResourceCenter::TradePoints)
+        .def("ProjectedFarmingPoints",  &ResourceCenter::ProjectedFarmingPoints)
+        .def("ProjectedIndustryPoints", &ResourceCenter::ProjectedIndustryPoints)
+        .def("ProjectedMiningPoints",   &ResourceCenter::ProjectedMiningPoints)
+        .def("ProjectedResearchPoints", &ResourceCenter::ProjectedResearchPoints)
+        .def("ProjectedTradePoints",    &ResourceCenter::ProjectedTradePoints)
+    ;
+
+    ///////////////////
+    //   PopCenter   //
+    ///////////////////
+    class_<PopCenter, noncopyable>("PopCenter", no_init)
+        .def("PopPoints",           &PopCenter::PopPoints)
+        .def("MaxPop",              &PopCenter::MaxPop)
+        .def("PopGrowth",           &PopCenter::PopGrowth)
+        .def("Health",              &PopCenter::Health)
+        .def("MaxHealth",           &PopCenter::MaxHealth)
+        .def("Inhabitants",         &PopCenter::Inhabitants)
+        .def("AvailableFood",       &PopCenter::AvailableFood)
+        .def("FuturePopGrowth",     &PopCenter::FuturePopGrowth)
+        .def("FuturePopGrowthMax",  &PopCenter::FuturePopGrowthMax)
+    ;
+
+    //////////////////
+    //    Planet    //
+    //////////////////
+    class_<Planet, bases<UniverseObject, PopCenter, ResourceCenter>, noncopyable>("Planet", no_init)
+        .def("Size",    &Planet::Size)
+        .def("Type",    &Planet::Type)
+    ;
+
+    //////////////////
+    //    System    //
+    //////////////////
+    class_<System, bases<UniverseObject>, noncopyable>("System", no_init)
+        .def("StarType",                &System::Star)
+        .def("Orbits",                  &System::Orbits)
+        .def("Starlanes",               &System::Starlanes)
+        .def("Wormholes",               &System::Wormholes)
+        .def("HasStarlaneToSystemID",   &System::HasStarlaneTo)
+        .def("HasWormholeToSystemID",   &System::HasWormholeTo)
+    ;
+
+    ////////////////////
+    //     Enums      //
+    ////////////////////
+    enum_<StarType>("StarType")
+        .value("Blue", STAR_BLUE)
+        .value("White", STAR_WHITE)
+        .value("Yellow", STAR_YELLOW)
+        .value("Orange", STAR_ORANGE)
+        .value("Red", STAR_RED)
+        .value("Neutron", STAR_NEUTRON)
+        .value("BlackHole", STAR_BLACK)
+    ;
+    enum_<FocusType>("FocusType")
+        .value("Balanced", FOCUS_BALANCED)
+        .value("Farming", FOCUS_FARMING)
+        .value("Industry", FOCUS_INDUSTRY)
+        .value("Mining", FOCUS_MINING)
+        .value("Research", FOCUS_RESEARCH)
+        .value("Trade", FOCUS_TRADE)
+    ;
+    enum_<PlanetSize>("PlanetSize")
+        .value("Tiny", SZ_TINY)
+        .value("Small", SZ_SMALL)
+        .value("Medium", SZ_MEDIUM)
+        .value("Large", SZ_LARGE)
+        .value("Huge", SZ_HUGE)
+        .value("Asteroids", SZ_ASTEROIDS)
+        .value("GasGiant", SZ_GASGIANT)
+    ;
+    enum_<PlanetType>("PlanetType")
+        .value("Swamp", PT_SWAMP)
+        .value("Radiated", PT_RADIATED)
+        .value("Toxic", PT_TOXIC)
+        .value("Inferno", PT_INFERNO)
+        .value("Barren", PT_BARREN)
+        .value("Tundra", PT_TUNDRA)
+        .value("Desert", PT_DESERT)
+        .value("Terran", PT_TERRAN)
+        .value("Ocean", PT_OCEAN)
+        .value("Gaia", PT_GAIA)
+        .value("Asteroids", PT_ASTEROIDS)
+        .value("GasGiant", PT_GASGIANT)
     ;
 }
  
