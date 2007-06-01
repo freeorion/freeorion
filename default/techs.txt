@@ -616,7 +616,6 @@ Tech
     researchturns = 1
     prerequisites = "GRO_ENV_ENCAPSUL"
     unlock = []
-    graphic = "tech_icons/Habitation_Domes.png"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -703,7 +702,6 @@ Tech
     researchturns = 10
     prerequisites = "GRO_INDUSTY_FARM"
     unlock = []
-    graphic = "tech_icons/Urban_Farming.png"
     effectsgroups =
         EffectsGroup
             scope =
