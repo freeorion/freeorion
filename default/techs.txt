@@ -627,6 +627,8 @@ Tech
             ]
             activation = Source
             effects = SetMaxPopulation Target.MaxPopulation + 2
+    graphic = "tech_icons/Habitation_Domes.png"
+
 
 Tech
     name = "GRO_CADUCEAN"
@@ -715,7 +717,7 @@ Tech
                 Source
             effects =
                 SetMaxFarming value = Target.MaxFarming + 2
-    graphic = ""
+    graphic = "tech_icons/Urban_Farming.png"
 
 Tech
     name = "GRO_ORBIT_FARMING"

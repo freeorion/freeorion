@@ -8,10 +8,12 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../universe/Building.h"
 #include "../universe/ResourceCenter.h"
 #include "../universe/PopCenter.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
+#include "../universe/Special.h"
 
 #include "../universe/Enums.h"
 
@@ -30,6 +32,7 @@ using boost::python::enum_;
 ////////////////////////
 // Python AIInterface //
 ////////////////////////
+
 // disambiguate overloaded functions
 const std::string&      (*AIIntPlayerNameVoid)(void) =          &AIInterface::PlayerName;
 const std::string&      (*AIIntPlayerNameInt)(int) =            &AIInterface::PlayerName;
@@ -42,7 +45,7 @@ const Fleet*            (Universe::*UniverseGetFleet)(int) =    &Universe::Objec
 const Ship*             (Universe::*UniverseGetShip)(int) =     &Universe::Object;
 const Planet*           (Universe::*UniverseGetPlanet)(int) =   &Universe::Object;
 const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
-
+const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
 // Expose AIInterface and all associated classes to Python
 BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
@@ -59,6 +62,8 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
 
     def("GetEmpire",                AIIntGetEmpireVoid,         return_value_policy<reference_existing_object>());
     def("GetIDEmpire",              AIIntGetEmpireInt,          return_value_policy<reference_existing_object>());
+
+    def("GetUniverse",              AIInterface::GetUniverse,   return_value_policy<reference_existing_object>());
 
     def("CurrentTurn",              AIInterface::CurrentTurn);
 
@@ -89,11 +94,13 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     //    Universe    //
     ////////////////////
     class_<Universe, noncopyable>("Universe", no_init)
-        .def("GetObject",   UniverseGetObject,  return_value_policy<reference_existing_object>())
-        .def("GetFleet",    UniverseGetFleet,   return_value_policy<reference_existing_object>())
-        .def("GetShip",     UniverseGetShip,    return_value_policy<reference_existing_object>())
-        .def("GetPlanet",   UniverseGetPlanet,  return_value_policy<reference_existing_object>())
-        .def("GetSystem",   UniverseGetSystem,  return_value_policy<reference_existing_object>())
+        .def("GetObject",   UniverseGetObject,      return_value_policy<reference_existing_object>())
+        .def("GetFleet",    UniverseGetFleet,       return_value_policy<reference_existing_object>())
+        .def("GetShip",     UniverseGetShip,        return_value_policy<reference_existing_object>())
+        .def("GetPlanet",   UniverseGetPlanet,      return_value_policy<reference_existing_object>())
+        .def("GetSystem",   UniverseGetSystem,      return_value_policy<reference_existing_object>())
+        .def("GetBuilding", UniverseGetBuilding,    return_value_policy<reference_existing_object>())
+        .def("GetSpecial",  GetSpecial,             return_value_policy<reference_existing_object>())
     ;
 
     ////////////////////
@@ -136,6 +143,27 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
         .def("GetFleet",    &Ship::GetFleet,    return_value_policy<reference_existing_object>())
         .def("IsArmed",     &Ship::IsArmed)
         .def("Speed",       &Ship::Speed)
+    ;
+
+    //////////////////
+    //   Building   //
+    //////////////////
+    class_<Building, bases<UniverseObject>, noncopyable>("Building", no_init)
+        .def("GetBuildingType", &Building::GetBuildingType, return_value_policy<reference_existing_object>())
+        .def("Operating",       &Building::Operating)
+        .def("GetPlanet",       &Building::GetPlanet,       return_value_policy<reference_existing_object>())
+    ;
+
+    //////////////////
+    // BuildingType //
+    //////////////////
+    class_<BuildingType, noncopyable>("BuildingType", no_init)
+        .def("Name",            &BuildingType::Name,        return_value_policy<copy_const_reference>())
+        .def("Description",     &BuildingType::Description, return_value_policy<copy_const_reference>())
+        .def("BuildCost",       &BuildingType::BuildCost)
+        .def("BuildTime",       &BuildingType::BuildTime)
+        .def("MaintenanceCost", &BuildingType::MaintenanceCost)
+        .def("CaptureResult",   &BuildingType::GetCaptureResult)
     ;
 
     ////////////////////
@@ -191,48 +219,104 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
         .def("HasWormholeToSystemID",   &System::HasWormholeTo)
     ;
 
+    //////////////////
+    //     Tech     //
+    //////////////////
+    class_<Tech, noncopyable>("Tech", no_init)
+        .def("Name",                &Tech::Name,                return_value_policy<copy_const_reference>())
+        .def("Description",         &Tech::Description,         return_value_policy<copy_const_reference>())
+        .def("ShortDescription",    &Tech::ShortDescription,    return_value_policy<copy_const_reference>())
+        .def("Type",                &Tech::Type)
+        .def("Category",            &Tech::Category,            return_value_policy<copy_const_reference>())
+        .def("ResearchCost",        &Tech::ResearchCost)
+        .def("ResearchTurns",       &Tech::ResearchTurns)
+    ;
+
+    /////////////////
+    //   Special   //
+    /////////////////
+    class_<Special, noncopyable>("Special", no_init)
+        .def("Name",                &Special::Name,                return_value_policy<copy_const_reference>())
+        .def("Description",         &Special::Description,         return_value_policy<copy_const_reference>())
+    ;
+
+
     ////////////////////
     //     Enums      //
     ////////////////////
     enum_<StarType>("StarType")
-        .value("Blue", STAR_BLUE)
-        .value("White", STAR_WHITE)
-        .value("Yellow", STAR_YELLOW)
-        .value("Orange", STAR_ORANGE)
-        .value("Red", STAR_RED)
-        .value("Neutron", STAR_NEUTRON)
+        .value("Blue",      STAR_BLUE)
+        .value("White",     STAR_WHITE)
+        .value("Yellow",    STAR_YELLOW)
+        .value("Orange",    STAR_ORANGE)
+        .value("Red",       STAR_RED)
+        .value("Neutron",   STAR_NEUTRON)
         .value("BlackHole", STAR_BLACK)
     ;
-    enum_<FocusType>("FocusType")
-        .value("Balanced", FOCUS_BALANCED)
-        .value("Farming", FOCUS_FARMING)
-        .value("Industry", FOCUS_INDUSTRY)
-        .value("Mining", FOCUS_MINING)
-        .value("Research", FOCUS_RESEARCH)
-        .value("Trade", FOCUS_TRADE)
-    ;
     enum_<PlanetSize>("PlanetSize")
-        .value("Tiny", SZ_TINY)
-        .value("Small", SZ_SMALL)
-        .value("Medium", SZ_MEDIUM)
-        .value("Large", SZ_LARGE)
-        .value("Huge", SZ_HUGE)
+        .value("Tiny",      SZ_TINY)
+        .value("Small",     SZ_SMALL)
+        .value("Medium",    SZ_MEDIUM)
+        .value("Large",     SZ_LARGE)
+        .value("Huge",      SZ_HUGE)
         .value("Asteroids", SZ_ASTEROIDS)
-        .value("GasGiant", SZ_GASGIANT)
+        .value("GasGiant",  SZ_GASGIANT)
     ;
     enum_<PlanetType>("PlanetType")
-        .value("Swamp", PT_SWAMP)
-        .value("Radiated", PT_RADIATED)
-        .value("Toxic", PT_TOXIC)
-        .value("Inferno", PT_INFERNO)
-        .value("Barren", PT_BARREN)
-        .value("Tundra", PT_TUNDRA)
-        .value("Desert", PT_DESERT)
-        .value("Terran", PT_TERRAN)
-        .value("Ocean", PT_OCEAN)
-        .value("Gaia", PT_GAIA)
+        .value("Swamp",     PT_SWAMP)
+        .value("Radiated",  PT_RADIATED)
+        .value("Toxic",     PT_TOXIC)
+        .value("Inferno",   PT_INFERNO)
+        .value("Barren",    PT_BARREN)
+        .value("Tundra",    PT_TUNDRA)
+        .value("Desert",    PT_DESERT)
+        .value("Terran",    PT_TERRAN)
+        .value("Ocean",     PT_OCEAN)
+        .value("Gaia",      PT_GAIA)
         .value("Asteroids", PT_ASTEROIDS)
-        .value("GasGiant", PT_GASGIANT)
+        .value("GasGiant",  PT_GASGIANT)
+    ;
+    enum_<PlanetEnvironment>("PlanetEnvironment")
+        .value("Uninhabitable", PE_UNINHABITABLE)
+        .value("Terrible",      PE_TERRIBLE)
+        .value("Adequate",      PE_ADEQUATE)
+        .value("Superb",        PE_SUPERB)
+        .value("Optimal",       PE_OPTIMAL)
+    ;
+    enum_<TechType>("TechType")
+        .value("Theory",        TT_THEORY)
+        .value("Application",   TT_APPLICATION)
+        .value("Refinement",    TT_REFINEMENT)
+    ;
+    enum_<TechStatus>("TechStatus")
+        .value("Unresearchable",    TS_UNRESEARCHABLE)
+        .value("Researchable",      TS_RESEARCHABLE)
+        .value("Complete",          TS_COMPLETE)
+    ;
+    enum_<MeterType>("MeterType")
+        .value("Population",    METER_POPULATION)
+        .value("Farming",       METER_FARMING)
+        .value("Industry",      METER_INDUSTRY)
+        .value("Research",      METER_RESEARCH)
+        .value("Trade",         METER_TRADE)
+        .value("Mining",        METER_MINING)
+        .value("Construction",  METER_CONSTRUCTION)
+        .value("Health",        METER_HEALTH)
+    ;
+    enum_<FocusType>("FocusType")
+        .value("Balanced",  FOCUS_BALANCED)
+        .value("Farming",   FOCUS_FARMING)
+        .value("Industry",  FOCUS_INDUSTRY)
+        .value("Mining",    FOCUS_MINING)
+        .value("Research",  FOCUS_RESEARCH)
+        .value("Trade",     FOCUS_TRADE)
+    ;
+
+    enum_<CaptureResult>("CaptureResult")
+        .value("Capture",   CAPTURE)
+        .value("Destroy",   DESTROY)
+        .value("Retain",    RETAIN)
+        .value("Share",     SHARE)
     ;
 }
  

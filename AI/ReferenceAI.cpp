@@ -8,6 +8,7 @@
 #include "../Empire/Empire.h"
 
 #include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <set>
 

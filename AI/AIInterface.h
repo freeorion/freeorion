@@ -2,14 +2,12 @@
 #define AI_INTERFACE
 
 #include "../universe/Universe.h"
-#include "../universe/UniverseObject.h"
-#include "../universe/Condition.h"
-#include "../util/Order.h"
 
 #include <string>
 
 class AIClientApp;
 class Empire;
+class Tech;
 
 /* AI logic modules implement this class, and AIClientApps contain one, and call it to generate orders */
 class AIBase
@@ -43,6 +41,8 @@ namespace AIInterface
     const Empire*           GetEmpire(int empire_id);       ///< returns empire with id \a empire_id
 
     const Universe&         GetUniverse();                  ///< returns Universe known to this player
+
+    const Tech*             GetTech(const std::string& tech_name);  ///< returns Tech with name \a name
 
     int                     CurrentTurn();                  ///< returns the current game turn
     //@}

@@ -9,6 +9,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../universe/Tech.h"
 
 #include "../util/OrderSet.h"
 
@@ -31,11 +32,6 @@ void AIBase::HandleChatMessage(int sender_id, const std::string& msg)
 //        AI Interface          //
 //////////////////////////////////
 namespace AIInterface {
-    const Universe& GetUniverse()
-    {
-        return AIClientApp::GetApp()->GetUniverse();
-    }
-
     const std::string& PlayerName()
     {
         return AIClientApp::GetApp()->PlayerName();
@@ -79,6 +75,16 @@ namespace AIInterface {
         if (-1 == player_id)
             Logger().debugStream() << "AIInterface::EmpirePlayerID(" << boost::lexical_cast<std::string>(empire_id) << ") - passed an invalid empire_id";
         return player_id;
+    }
+
+    const Universe& GetUniverse()
+    {
+        return AIClientApp::GetApp()->GetUniverse();
+    }
+
+    const Tech* GetTech(const std::string& tech_name)
+    {
+        return TechManager::GetTechManager().GetTech(tech_name);
     }
 
     int CurrentTurn()
