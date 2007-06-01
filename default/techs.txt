@@ -379,7 +379,7 @@ Tech
     researchturns = 10
     prerequisites = "LRN_TIME_MECH"
     unlock = Item type = Building name = "BLD_LOOKING_GLASS"
-    graphic = ""
+    graphic = "tech_icons/Looking_Glass.png"
 
 Tech
     name = "LRN_MONUMENT_EXODUS"
@@ -616,6 +616,7 @@ Tech
     researchturns = 1
     prerequisites = "GRO_ENV_ENCAPSUL"
     unlock = []
+    graphic = "tech_icons/Habitation_Domes.png"
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -626,7 +627,6 @@ Tech
             ]
             activation = Source
             effects = SetMaxPopulation Target.MaxPopulation + 2
-    graphic = ""
 
 Tech
     name = "GRO_CADUCEAN"
@@ -665,7 +665,7 @@ Tech
     researchturns = 10
     prerequisites = "GRO_GENETIC_MED"
     unlock = Item type = Building name = "BLD_GENOME_BANK"
-    graphic = ""
+    graphic = "tech_icons/Genome_Bank.png"
 
 Tech
     name = "GRO_LIVING_PLANET"
@@ -701,6 +701,7 @@ Tech
     researchturns = 10
     prerequisites = "GRO_INDUSTY_FARM"
     unlock = []
+    graphic = "tech_icons/Urban_Farming.png"
     effectsgroups =
         EffectsGroup
             scope =
@@ -1041,7 +1042,7 @@ Tech
         "PRO_PLANET_GEOL"
     ]
     unlock = Item type = Building name = "BLD_ASTEROID_MINE"
-    graphic = "tech_icons/Asteroid_Mining.png"
+    graphic = "tech_icons/Asteroid_Mining_I.png"
 
 Tech
     name = "PRO_ASTEROID_MINE_II"
@@ -1053,7 +1054,7 @@ Tech
     researchturns = 1
     prerequisites = "PRO_ASTEROID_MINE"
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Asteroid_Mining_II.png"
 
 Tech
     name = "PRO_CORE_MINE"
@@ -1084,7 +1085,7 @@ Tech
         "ECO_PLANNED_ECON"        
     ]
     unlock = Item type = Building name = "BLD_INDUSTRY_CENTRE"
-    graphic = ""
+    graphic = "tech_icons/Industrial_Centre_I.png"
 
 Tech
     name = "PRO_INDUSTRY_CENTRE_II"
@@ -1096,7 +1097,7 @@ Tech
     researchturns = 1
     prerequisites = "PRO_INDUSTRY_CENTRE_I"
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Industrial_Centre_II.png"
 
 Tech
     name = "PRO_INDUSTRY_CENTRE_III"
@@ -1108,7 +1109,7 @@ Tech
     researchturns = 1
     prerequisites = "PRO_INDUSTRY_CENTRE_II"
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Industrial_Centre_III.png"
 
 Tech
     name = "PRO_ART_BLACK_HOLE"
@@ -1271,7 +1272,7 @@ Tech
     researchturns = 10
     prerequisites = "PRO_NDIM_ASSMB"
     unlock = Item type = Building name = "BLD_HYPER_DAM"
-    graphic = ""
+    graphic = "tech_icons/Hyperspatial_Dam.png"
 
 Tech
     name = "PRO_MINI_SUN"
@@ -1465,7 +1466,7 @@ Tech
         "CON_STRC_INT_FLDS"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Force_Energy_Structures.png"
 
 Tech
     name = "CON_ART_HEAVENLY"
@@ -1495,7 +1496,7 @@ Tech
         "CON_GAL_INFRA"
     ]
     unlock = []
-    graphic = ""
+    graphic = "tech_icons/Transcendent_Architecture.png"
 
 Tech
     name = "CON_NDIM_STRC"
