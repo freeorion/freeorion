@@ -27,7 +27,7 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include "../../AI/ReferenceAI.h"
-#include "../../AI/PythonAI.h"
+//#include "../../AI/PythonAI.h"
 
 // static member(s)
 AIClientApp*  AIClientApp::s_app = 0;
