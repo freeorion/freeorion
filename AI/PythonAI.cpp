@@ -18,22 +18,27 @@
 #include "../universe/Enums.h"
 
 #include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
 using boost::python::def;
 using boost::python::return_value_policy;
 using boost::python::copy_const_reference;
 using boost::python::reference_existing_object;
+using boost::python::return_by_value;
 using boost::python::class_;
 using boost::python::bases;
 using boost::noncopyable;
 using boost::python::no_init;
 using boost::python::enum_;
+using boost::python::vector_indexing_suite;
+using boost::python::map_indexing_suite;
 
 ////////////////////////
 // Python AIInterface //
 ////////////////////////
 
-// disambiguate overloaded functions
+// disambiguation of overloaded functions
 const std::string&      (*AIIntPlayerNameVoid)(void) =          &AIInterface::PlayerName;
 const std::string&      (*AIIntPlayerNameInt)(int) =            &AIInterface::PlayerName;
 
@@ -47,6 +52,14 @@ const Planet*           (Universe::*UniverseGetPlanet)(int) =   &Universe::Objec
 const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
 const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
+// convertion of STL container types to those which can be easily exposed to Python using built-in Boost-Python containers
+template <typename T> std::vector<T> SetToVector(const std::set<T>& set);
+template <typename T> std::vector<T> ListToVector(const std::set<T>& set);
+
+std::vector<int>            (*IntSetToIntVector)(const std::set<int>&) =                &SetToVector;
+std::vector<std::string>    (*StringSetToStringVector)(const std::set<std::string>&) =  &SetToVector;
+
+
 // Expose AIInterface and all associated classes to Python
 BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
 {
@@ -57,8 +70,15 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     def("IDPlayerName",             AIIntPlayerNameInt,         return_value_policy<copy_const_reference>());
 
     def("PlayerID",                 AIInterface::PlayerID);
-    def("EmpireID",                 AIInterface::EmpireID);
     def("EmpirePlayerID",           AIInterface::EmpirePlayerID);
+    def("AllPlayerIDs",             AIInterface::AllPlayerIDs,  return_value_policy<return_by_value>());
+
+    def("PlayerIsAI",               AIInterface::PlayerIsAI);
+    def("PlayerIsHost",             AIInterface::PlayerIsHost);
+
+    def("EmpireID",                 AIInterface::EmpireID);
+    def("PlayerEmpireID",           AIInterface::PlayerEmpireID);
+    def("AllEmpireIDs",             AIInterface::AllEmpireIDs,  return_value_policy<return_by_value>());
 
     def("GetEmpire",                AIIntGetEmpireVoid,         return_value_policy<reference_existing_object>());
     def("GetIDEmpire",              AIIntGetEmpireInt,          return_value_policy<reference_existing_object>());
@@ -82,25 +102,35 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     //     Empire    //
     ///////////////////
     class_<Empire, noncopyable>("Empire", no_init)
-        .def("Name",                    &Empire::Name,          return_value_policy<copy_const_reference>())
-        .def("PlayerName",              &Empire::PlayerName,    return_value_policy<copy_const_reference>())
+        .def("Name",                    &Empire::Name,                      return_value_policy<copy_const_reference>())
+        .def("PlayerName",              &Empire::PlayerName,                return_value_policy<copy_const_reference>())
         .def("EmpireID",                &Empire::EmpireID)
         .def("HomeworldID",             &Empire::HomeworldID)
         .def("CapitolID",               &Empire::CapitolID)
+
         .def("BuildingTypeAvailable",   &Empire::BuildingTypeAvailable)
+        .def("AvailableBuildingTypes",  &Empire::AvailableBuildingTypes,    return_value_policy<copy_const_reference>()) 
+        .def("TechResearched",          &Empire::TechResearched)
+        .def("AvailableTechs",          &Empire::AvailableTechs,            return_value_policy<copy_const_reference>()) 
+        .def("GetTechStatus",           &Empire::GetTechStatus)
+        .def("ResearchStatus",          &Empire::ResearchStatus)
+
+        .def("HasExploredSystem",       &Empire::HasExploredSystem)
     ;
 
     ////////////////////
     //    Universe    //
     ////////////////////
     class_<Universe, noncopyable>("Universe", no_init)
-        .def("GetObject",   UniverseGetObject,      return_value_policy<reference_existing_object>())
-        .def("GetFleet",    UniverseGetFleet,       return_value_policy<reference_existing_object>())
-        .def("GetShip",     UniverseGetShip,        return_value_policy<reference_existing_object>())
-        .def("GetPlanet",   UniverseGetPlanet,      return_value_policy<reference_existing_object>())
-        .def("GetSystem",   UniverseGetSystem,      return_value_policy<reference_existing_object>())
-        .def("GetBuilding", UniverseGetBuilding,    return_value_policy<reference_existing_object>())
-        .def("GetSpecial",  GetSpecial,             return_value_policy<reference_existing_object>())
+        .def("GetObject",   UniverseGetObject,                          return_value_policy<reference_existing_object>())
+        .def("GetFleet",    UniverseGetFleet,                           return_value_policy<reference_existing_object>())
+        .def("GetShip",     UniverseGetShip,                            return_value_policy<reference_existing_object>())
+        .def("GetPlanet",   UniverseGetPlanet,                          return_value_policy<reference_existing_object>())
+        .def("GetSystem",   UniverseGetSystem,                          return_value_policy<reference_existing_object>())
+        .def("GetBuilding", UniverseGetBuilding,                        return_value_policy<reference_existing_object>())
+        .def("GetSpecial",  GetSpecial,                                 return_value_policy<reference_existing_object>())
+
+        .def("ObjectIDs",   &Universe::FindObjectIDs<UniverseObject>,   return_value_policy<return_by_value>())
     ;
 
     ////////////////////
@@ -117,6 +147,7 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
         .def("WhollyOwnedBy",               &UniverseObject::WhollyOwnedBy)
         .def("CreationTurn",                &UniverseObject::CreationTurn)
         .def("AgeInTurns",                  &UniverseObject::AgeInTurns)
+        .def("Specials",                    &UniverseObject::Specials,  return_value_policy<copy_const_reference>())
 
         .def_readonly("INVALID_OBJECT_ID",  &UniverseObject::INVALID_OBJECT_ID)
         .def_readonly("INVALID_OBJECT_AGE", &UniverseObject::INVALID_OBJECT_AGE)
@@ -203,8 +234,9 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     //    Planet    //
     //////////////////
     class_<Planet, bases<UniverseObject, PopCenter, ResourceCenter>, noncopyable>("Planet", no_init)
-        .def("Size",    &Planet::Size)
-        .def("Type",    &Planet::Type)
+        .def("Size",                &Planet::Size)
+        .def("Type",                &Planet::Type)
+        .def("Buildings",           &Planet::Buildings,     return_value_policy<copy_const_reference>());
     ;
 
     //////////////////
@@ -230,6 +262,9 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
         .def("Category",            &Tech::Category,            return_value_policy<copy_const_reference>())
         .def("ResearchCost",        &Tech::ResearchCost)
         .def("ResearchTurns",       &Tech::ResearchTurns)
+        .def("Prerequisites",       &Tech::Prerequisites,      return_value_policy<copy_const_reference>())
+        .def("UnlockedTechs",       &Tech::UnlockedTechs,      return_value_policy<copy_const_reference>())
+        //.def("UnlockedItems",       &Tech::UnlockedItems,      return_value_policy<copy_const_reference>())
     ;
 
     /////////////////
@@ -313,11 +348,34 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     ;
 
     enum_<CaptureResult>("CaptureResult")
-        .value("Capture",   CAPTURE)
-        .value("Destroy",   DESTROY)
-        .value("Retain",    RETAIN)
-        .value("Share",     SHARE)
+        .value("Capture",   CR_CAPTURE)
+        .value("Destroy",   CR_DESTROY)
+        .value("Retain",    CR_RETAIN)
+        .value("Share",     CR_SHARE)
     ;
+
+
+    ////////////////////
+    // STL Containers //
+    ////////////////////
+    class_<std::vector<int> >("IntVec")
+        .def(vector_indexing_suite<std::vector<int> >())
+    ;
+    class_<std::vector<std::string> >("StringVec")
+        .def(vector_indexing_suite<std::vector<std::string> >())
+    ;
+    //class_<std::map<double, int> >("DoubleIntMap")
+    //    .def(map_indexing_suite<std::map<double, int> >())
+    //;
+
+    /* a few functions return std::set<int> or std::set<std::string>.  std::set is not wrapped
+       by Boost Python, so these classes are trivially defined just to be able to pass them
+       to converters to the fully-exposed std::vector<> class */
+    class_<std::set<int> >("IntSet");
+    def("IntSetToIntVector",        IntSetToIntVector);
+
+    class_<std::set<std::string> >("StringSet");
+    def("StringSetToStringVector",  StringSetToStringVector);
 }
  
 ///////////////////////
@@ -399,3 +457,23 @@ void PythonAI::GenerateOrders()
 
 void PythonAI::HandleChatMessage(int sender_id, const std::string& msg)
 {}
+
+//////////////////////////
+// Container Conversion //
+//////////////////////////
+template <typename T>
+std::vector<T> SetToVector(const std::set<T>& set)
+{
+    std::vector<T> retval;
+    for (std::set<T>::const_iterator it = set.begin(); it != set.end(); ++it)
+        retval.push_back(*it);
+    return retval;
+}
+template <typename T>
+std::vector<T> ListToVector(const std::set<T>& set)
+{
+    std::vector<T> retval;
+    for (std::list<T>::const_iterator it = set.begin(); it != set.end(); ++it)
+        retval.push_back(*it);
+    return retval;
+}

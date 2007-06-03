@@ -286,10 +286,10 @@ CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_i
         throw std::invalid_argument("BuildingType::GetCaptureResult called with invalid location_id");
     
     if (as_production_item) {
-        Logger().debugStream() << "BuildingType::GetCaptureResult: returning CAPTURE for production item";
-        return CAPTURE;
+        Logger().debugStream() << "BuildingType::GetCaptureResult: returning CR_CAPTURE for production item";
+        return CR_CAPTURE;
     }
     
-    Logger().debugStream() << "BuildingType::GetCaptureResult: returning DESTROY";
-    return DESTROY;
+    Logger().debugStream() << "BuildingType::GetCaptureResult: returning CR_DESTROY";
+    return CR_DESTROY;
 }

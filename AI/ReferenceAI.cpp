@@ -114,8 +114,8 @@ void ReferenceAI::Explore(Fleet* fleet) {
     }
 }
 
-void ReferenceAI::ColonizeSomewhere(Fleet* fleet) {
-
+void ReferenceAI::ColonizeSomewhere(Fleet* fleet)
+{
 }
 
 void ReferenceAI::SplitFleet(Fleet* fleet)

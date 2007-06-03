@@ -59,6 +59,25 @@ namespace AIInterface {
         return AIClientApp::GetApp()->EmpireID();
     }
 
+    int PlayerEmpireID(int player_id)
+    {
+        const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
+        for (std::map<int, PlayerInfo>::const_iterator it = players.begin(); it != players.end(); ++it) {
+            if (it->first == player_id)
+                return it->second.empire_id;
+        }
+        return -1;  // default invalid value
+    }
+
+    std::vector<int>  AllEmpireIDs()
+    {
+        const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
+        std::vector<int> empire_ids;
+        for (std::map<int, PlayerInfo>::const_iterator it = players.begin(); it != players.end(); ++it)
+            empire_ids.push_back(it->second.empire_id);
+        return empire_ids;
+    }
+
     const Empire* GetEmpire()
     {
         return AIClientApp::GetApp()->Empires().Lookup(AIClientApp::GetApp()->EmpireID());
@@ -75,6 +94,25 @@ namespace AIInterface {
         if (-1 == player_id)
             Logger().debugStream() << "AIInterface::EmpirePlayerID(" << boost::lexical_cast<std::string>(empire_id) << ") - passed an invalid empire_id";
         return player_id;
+    }
+
+    std::vector<int> AllPlayerIDs()
+    {
+        const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
+        std::vector<int> player_ids;
+        for (std::map<int, PlayerInfo>::const_iterator it = players.begin(); it != players.end(); ++it)
+            player_ids.push_back(it->first);
+        return player_ids;
+    }
+
+    bool PlayerIsAI(int player_id)
+    {
+        return false;
+    }
+
+    bool PlayerIsHost(int player_id)
+    {
+        return false;
     }
 
     const Universe& GetUniverse()

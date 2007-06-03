@@ -479,10 +479,10 @@ enum EncodingVisbility {
     or the result of other future events, such as spy activity... */
 enum CaptureResult {
     INVALID_CAPTURE_RESULT = -1,
-    CAPTURE,    // object has ownership by original empire(s) removed, and conquering empire added
-    DESTROY,    // object is destroyed
-    RETAIN,     // object ownership unchanged: original empire(s) still own object
-    SHARE       // object has ownership by conquering empire added, while still retaining ownership by original empire(s)
+    CR_CAPTURE,    // object has ownership by original empire(s) removed, and conquering empire added
+    CR_DESTROY,    // object is destroyed
+    CR_RETAIN,     // object ownership unchanged: original empire(s) still own object
+    CR_SHARE       // object has ownership by conquering empire added, while still retaining ownership by original empire(s)
 };
 
 #endif // _Enums_h_

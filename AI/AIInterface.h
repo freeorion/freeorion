@@ -28,14 +28,14 @@ namespace AIInterface
 
     int                     PlayerID();                     ///< returns the player ID of this client
     int                     EmpirePlayerID(int empire_id);  ///< returns ID of player controlling empire with id \a empire_id
-    const std::set<int>     AllPlayerIDs();                 ///< returns std::set<int> containing IDs of all players in game
+    std::vector<int>        AllPlayerIDs();                 ///< returns vector containing IDs of all players in game
 
     bool                    PlayerIsAI(int player_id);      ///< returns true iff the player with id \a player_id is an AI
     bool                    PlayerIsHost(int player_id);    ///< returns true iff the player with id \a player_id is the game host
 
     int                     EmpireID();                     ///< returns the empire ID of this client
     int                     PlayerEmpireID(int player_id);  ///< returns ID of empire controlled by player with id \a player_id
-    const std::set<int>     AllEmpireIDs();                 ///< returns std::set<int> containing IDs of all empires in game
+    std::vector<int>        AllEmpireIDs();                 ///< returns vector containing IDs of all empires in game
 
     const Empire*           GetEmpire();                    ///< returns empire of this client's player
     const Empire*           GetEmpire(int empire_id);       ///< returns empire with id \a empire_id

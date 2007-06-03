@@ -934,12 +934,12 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
                 
                 CaptureResult result = type->GetCaptureResult(from_empire_id, m_id, location_id, true);
                 
-                if (result == DESTROY) {
+                if (result == CR_DESTROY) {
                     // item removed from current queue, NOT added to conquerer's queue
                     queue_it = queue.erase(queue_it);
                     status.erase(status.begin() + i);
                     
-                } else if (result == CAPTURE) {
+                } else if (result == CR_CAPTURE) {
                     // item removed from current queue, added to conquerer's queue
                     ProductionQueue::Element build(item, elem.ordered, elem.remaining, location_id);
                     m_production_queue.push_back(build);
