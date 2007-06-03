@@ -3,7 +3,7 @@
 #define _AIClientApp_h_
 
 #include "../ClientApp.h"
-#include "../AI/AIInterface.h"
+#include "../../AI/AIInterface.h"
 
 namespace log4cpp {class Category;}
 

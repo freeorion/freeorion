@@ -122,15 +122,17 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     //    Universe    //
     ////////////////////
     class_<Universe, noncopyable>("Universe", no_init)
-        .def("GetObject",   UniverseGetObject,                          return_value_policy<reference_existing_object>())
-        .def("GetFleet",    UniverseGetFleet,                           return_value_policy<reference_existing_object>())
-        .def("GetShip",     UniverseGetShip,                            return_value_policy<reference_existing_object>())
-        .def("GetPlanet",   UniverseGetPlanet,                          return_value_policy<reference_existing_object>())
-        .def("GetSystem",   UniverseGetSystem,                          return_value_policy<reference_existing_object>())
-        .def("GetBuilding", UniverseGetBuilding,                        return_value_policy<reference_existing_object>())
-        .def("GetSpecial",  GetSpecial,                                 return_value_policy<reference_existing_object>())
+        .def("GetObject",       UniverseGetObject,                          return_value_policy<reference_existing_object>())
+        .def("GetFleet",        UniverseGetFleet,                           return_value_policy<reference_existing_object>())
+        .def("GetShip",         UniverseGetShip,                            return_value_policy<reference_existing_object>())
+        .def("GetPlanet",       UniverseGetPlanet,                          return_value_policy<reference_existing_object>())
+        .def("GetSystem",       UniverseGetSystem,                          return_value_policy<reference_existing_object>())
+        .def("GetBuilding",     UniverseGetBuilding,                        return_value_policy<reference_existing_object>())
+        .def("GetSpecial",      GetSpecial,                                 return_value_policy<reference_existing_object>())
 
-        .def("ObjectIDs",   &Universe::FindObjectIDs<UniverseObject>,   return_value_policy<return_by_value>())
+        .def("ObjectIDs",       &Universe::FindObjectIDs<UniverseObject>,   return_value_policy<return_by_value>())
+
+        .def("SystemReachable", &Universe::SystemReachable)
     ;
 
     ////////////////////
@@ -346,7 +348,6 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
         .value("Research",  FOCUS_RESEARCH)
         .value("Trade",     FOCUS_TRADE)
     ;
-
     enum_<CaptureResult>("CaptureResult")
         .value("Capture",   CR_CAPTURE)
         .value("Destroy",   CR_DESTROY)
@@ -368,9 +369,8 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     //    .def(map_indexing_suite<std::map<double, int> >())
     //;
 
-    /* a few functions return std::set<int> or std::set<std::string>.  std::set is not wrapped
-       by Boost Python, so these classes are trivially defined just to be able to pass them
-       to converters to the fully-exposed std::vector<> class */
+    /* std::set is not pre-wrapped by Boost Python, so these classes are trivially defined in order to
+       be able to pass them to converters to the fully-exposed std::vector<> */
     class_<std::set<int> >("IntSet");
     def("IntSetToIntVector",        IntSetToIntVector);
 

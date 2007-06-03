@@ -26,8 +26,8 @@
 
 #include <boost/filesystem/fstream.hpp>
 
-#include "../AI/ReferenceAI.h"
-#include "../AI/PythonAI.h"
+#include "../../AI/ReferenceAI.h"
+#include "../../AI/PythonAI.h"
 
 // static member(s)
 AIClientApp*  AIClientApp::s_app = 0;
@@ -137,8 +137,8 @@ void AIClientApp::SDLInit()
 
 void AIClientApp::Initialize()
 {
-    //m_AI = new ReferenceAI();
-    m_AI = new PythonAI();
+    m_AI = new ReferenceAI();
+    //m_AI = new PythonAI();
     // join game at server
     const int MAX_TRIES = 5;
     int tries = 0;
