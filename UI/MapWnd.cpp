@@ -147,7 +147,6 @@ const int MapWnd::NUM_BACKGROUNDS = 3;
 double    MapWnd::s_min_scale_factor = 0.35;
 double    MapWnd::s_max_scale_factor = 8.0;
 const int MapWnd::SIDE_PANEL_WIDTH = 360;
-int       MapWnd::s_nebula_size = 192;
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
@@ -1094,13 +1093,16 @@ void MapWnd::RenderBackgrounds()
     }
 
     for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
+        int nebula_width = m_nebulae[i]->Width() / 3;   // factor of 3 chosen to give ok-seeming nebula sizes for images in use at time of this writing
+        int nebula_height = m_nebulae[i]->Height() / 3;
+
         GG::Pt ul = 
             ClientUpperLeft() + 
-            GG::Pt(static_cast<int>((m_nebula_centers[i].x - s_nebula_size / 2.0) * m_zoom_factor),
-                   static_cast<int>((m_nebula_centers[i].y - s_nebula_size / 2.0) * m_zoom_factor));
+            GG::Pt(static_cast<int>((m_nebula_centers[i].x - nebula_width / 2.0) * m_zoom_factor),
+                   static_cast<int>((m_nebula_centers[i].y - nebula_height / 2.0) * m_zoom_factor));
         m_nebulae[i]->OrthoBlit(ul, 
-                                ul + GG::Pt(static_cast<int>(s_nebula_size * m_zoom_factor), 
-                                            static_cast<int>(s_nebula_size * m_zoom_factor)), 
+                                ul + GG::Pt(static_cast<int>(nebula_width * m_zoom_factor), 
+                                            static_cast<int>(nebula_height * m_zoom_factor)), 
                                 0,
                                 false);
     }

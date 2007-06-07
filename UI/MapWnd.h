@@ -229,7 +229,6 @@ private:
     static const int NUM_BACKGROUNDS;
     static double s_min_scale_factor;
     static double s_max_scale_factor;
-    static int s_nebula_size;       // width of nebula at zoom = 1
 
     struct FleetButtonClickedFunctor
     {
