@@ -151,9 +151,17 @@ public:
         ID is out of range. */
     std::pair<std::list<System*>, int> LeastJumpsPath(int system1, int system2, int empire_id = ALL_EMPIRES) const;
 
-    /** returns true iff \a system is reachable (i.e. it has at least one known starlane to it).  The starlanes
-        considered depend on their visiblity for empire \a empire_id, or without regard to visibility if \a empire_id ==
-        ALL_EMPIRES.  \throw std::out_of_range This function will throw if the system ID is out of range. */
+    /** returns whether there is a path known to empire \a empire_id between system \a system1 and system \a system2.
+        The path is calculated using the visiblity for empire \a empire_id, or without regard to visibility if
+        \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function will throw if either system
+        ID is out of range. */
+    bool SystemsConnected(int system1, int system2, int empire_id = ALL_EMPIRES) const;
+
+    /** returns true iff \a system is reachable from another system (i.e. it has at least one known starlane to it).
+        This does not guarantee that the system is reachable from any other system, as two separate groups of locally
+        but not globally internonnected systems may exist. The starlanes considered depend on their visiblity for 
+        empire \a empire_id, or without regard to visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range
+        This function will throw if the system ID is out of range. */
     bool SystemReachable(int system, int empire_id = ALL_EMPIRES) const;
 
     /** returns the systems that are one starlane hop away from system \a system.  The returned systems are indexed by

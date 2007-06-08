@@ -122,17 +122,18 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     //    Universe    //
     ////////////////////
     class_<Universe, noncopyable>("Universe", no_init)
-        .def("GetObject",       UniverseGetObject,                          return_value_policy<reference_existing_object>())
-        .def("GetFleet",        UniverseGetFleet,                           return_value_policy<reference_existing_object>())
-        .def("GetShip",         UniverseGetShip,                            return_value_policy<reference_existing_object>())
-        .def("GetPlanet",       UniverseGetPlanet,                          return_value_policy<reference_existing_object>())
-        .def("GetSystem",       UniverseGetSystem,                          return_value_policy<reference_existing_object>())
-        .def("GetBuilding",     UniverseGetBuilding,                        return_value_policy<reference_existing_object>())
-        .def("GetSpecial",      GetSpecial,                                 return_value_policy<reference_existing_object>())
+        .def("GetObject",           UniverseGetObject,                          return_value_policy<reference_existing_object>())
+        .def("GetFleet",            UniverseGetFleet,                           return_value_policy<reference_existing_object>())
+        .def("GetShip",             UniverseGetShip,                            return_value_policy<reference_existing_object>())
+        .def("GetPlanet",           UniverseGetPlanet,                          return_value_policy<reference_existing_object>())
+        .def("GetSystem",           UniverseGetSystem,                          return_value_policy<reference_existing_object>())
+        .def("GetBuilding",         UniverseGetBuilding,                        return_value_policy<reference_existing_object>())
+        .def("GetSpecial",          GetSpecial,                                 return_value_policy<reference_existing_object>())
 
-        .def("ObjectIDs",       &Universe::FindObjectIDs<UniverseObject>,   return_value_policy<return_by_value>())
+        .def("ObjectIDs",           &Universe::FindObjectIDs<UniverseObject>,   return_value_policy<return_by_value>())
 
-        .def("SystemReachable", &Universe::SystemReachable)
+        .def("SystemHasStarlane",   &Universe::SystemReachable)
+        .def("SystemsConnected",    &Universe::SystemsConnected)
     ;
 
     ////////////////////
@@ -465,7 +466,7 @@ template <typename T>
 std::vector<T> SetToVector(const std::set<T>& set)
 {
     std::vector<T> retval;
-    for (std::set<T>::const_iterator it = set.begin(); it != set.end(); ++it)
+    for (typename std::set<T>::const_iterator it = set.begin(); it != set.end(); ++it)
         retval.push_back(*it);
     return retval;
 }
@@ -473,7 +474,7 @@ template <typename T>
 std::vector<T> ListToVector(const std::set<T>& set)
 {
     std::vector<T> retval;
-    for (std::list<T>::const_iterator it = set.begin(); it != set.end(); ++it)
+    for (typename std::list<T>::const_iterator it = set.begin(); it != set.end(); ++it)
         retval.push_back(*it);
     return retval;
 }

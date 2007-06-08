@@ -99,10 +99,6 @@ ServerApp::ServerApp(int argc, char* argv[]) :
     m_current_turn(INVALID_GAME_TURN),
     m_universe()
 {
-    for (int n = 0; n < 10000; n++) {
-        int x = n/(n+1);
-        std::cerr << "\n" << n;
-    }
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class ServerApp");
    

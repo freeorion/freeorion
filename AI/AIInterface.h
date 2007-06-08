@@ -13,6 +13,8 @@ class Tech;
 class AIBase
 {
 public:
+    virtual ~AIBase();
+
     virtual void GenerateOrders();  ///< The server has sent a new turn update.  AI should review the new gamestate and send orders for this turn.
     virtual void HandleChatMessage(int sender_id, const std::string& msg);  ///< another player has sent a chat message to this player.  AI can respond or ignore.
 };

@@ -26,6 +26,7 @@
 // Standard C++ Library".
 // ============================================================================
 // Modified by Dennis Brakhane at 2004-03-11: added set_gzparams-wrapper
+// Modified by Geoff Topping on 2007-06-08: include stdio
 
 
 #ifndef _GZStream_h_
@@ -35,6 +36,7 @@
 #include <iostream>
 #include <fstream>
 #include <zlib.h>
+#include <cstdio>    // added this line to fix undefined EOF with gcc 4.1.2 and libstdc++6-4.1
 
 namespace GZStream {
 

@@ -20,6 +20,9 @@
 //////////////////////////////////
 //          AI Base             //
 //////////////////////////////////
+AIBase::~AIBase()
+{}
+
 void AIBase::GenerateOrders()
 {
     AIInterface::DoneTurn();

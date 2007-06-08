@@ -990,6 +990,11 @@ std::pair<std::list<System*>, int> Universe::LeastJumpsPath(int system1, int sys
     return std::pair<std::list<System*>, int>();
 }
 
+bool Universe::SystemsConnected(int system1, int system2, int empire_id) const
+{
+    return !(LeastJumpsPath(system1, system2, empire_id).first.empty());
+}
+
 bool Universe::SystemReachable(int system, int empire_id) const
 {
     m_system_distances.at(system); // for an exception-throwing bounds check
