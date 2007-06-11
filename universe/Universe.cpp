@@ -80,8 +80,7 @@ namespace {
         const int destination_system;
     };
 
-    // "only" defined for 1 <= n <= 3999, as we can't
-    // display the symbol for 5000
+    // "only" defined for 1 <= n <= 3999, as we can't display the symbol for 5000
     std::string RomanNumber(unsigned int n)
     {
         static const char N[] = "IVXLCDM??";
@@ -466,8 +465,13 @@ namespace {
     }
 
     // templated implementations of Universe graph search methods
+
+    /* returns the path between vertices \a system1_id and \a system2_id of \a graph that travels the shorest 
+       distance on starlanes, and the path length.  If system1_id is the same vertex as system2_id, the path 
+       has just that system in it, and the path lenth is 0.  If there is no path between the two vertices, then
+       the list is empty and the path length is -1.0 */
     template <class Graph>
-    std::pair<std::list<System*>, double> ShortestPathImpl(const Graph& graph, int system1, int system2, double linear_distance)
+    std::pair<std::list<System*>, double> ShortestPathImpl(const Graph& graph, int system1_id, int system2_id, double linear_distance)
     {
         typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
         typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type             ConstIndexPropertyMap;
@@ -475,40 +479,71 @@ namespace {
 
         std::pair<std::list<System*>, double> retval;
 
-        std::vector<int> predecessors(boost::num_vertices(graph));
-        std::vector<double> distances(boost::num_vertices(graph));
         ConstIndexPropertyMap index_map = boost::get(boost::vertex_index, graph);
         ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
+
+        // get graph indices for system_ids by finding the graph vertex that has the appropriate associated system
+        ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
+
+        int system1_index = -1, system2_index = -1;
+        for (unsigned int i = 0; i < boost::num_vertices(graph); ++i) {
+            const int system_id = pointer_property_map[i]->ID();    // get system ID of this vertex
+            if (system_id == system1_id) system1_index = i;
+            if (system_id == system2_id) system2_index = i;
+        }
+        if (-1 == system1_index || -1 == system2_index)
+            throw std::out_of_range("ShortestPathImpl was given an invalid system ID");
+
+        // early exit if systems are the same
+        if (system1_id == system2_id) {
+            System* system = pointer_property_map[system2_index];
+            retval.first.push_back(system);
+            retval.second = 0.0;    // no jumps needed -> 0 distance
+            return retval;
+        }
+
+        /* initializing all vertices' predecessors to themselves prevents endless loops when back traversing the tree in the case where
+           one of the end systems is system 0, because systems that are not connected to the root system (system2) are not visited
+           by the search, and so their predecessors are left unchanged.  Default initialization of the vector may be 0 or undefined
+           which could lead to out of bounds errors, or endless loops if a system's default predecessor is 0 (debug mode), and 0's
+           predecessor is that system */
+        std::vector<int> predecessors(boost::num_vertices(graph));
+        std::vector<double> distances(boost::num_vertices(graph));
+        for (unsigned int i = 0; i < boost::num_vertices(graph); ++i) {
+            predecessors[i] = i;
+            distances[i] = -1.0;
+        }
+
+
+        // do the actual path finding using verbose boost magic...
         try {
-            boost::dijkstra_shortest_paths(graph, system1, &predecessors[0], &distances[0], edge_weight_map, index_map, 
+            boost::dijkstra_shortest_paths(graph, system1_index, &predecessors[0], &distances[0], edge_weight_map, index_map, 
                                            std::less<double>(), std::plus<double>(), std::numeric_limits<int>::max(), 0, 
-                                           boost::make_dijkstra_visitor(PathFindingShortCircuitingVisitor(system2)));
+                                           boost::make_dijkstra_visitor(PathFindingShortCircuitingVisitor(system2_index)));
         } catch (const PathFindingShortCircuitingVisitor::FoundDestination& fd) {
             // catching this just means that the destination was found, and so the algorithm was exited early, via exception
         }
 
-        ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
-        int current_system = system2;
+
+        int current_system = system2_index;
         while (predecessors[current_system] != current_system) {
             retval.first.push_front(pointer_property_map[current_system]);
             current_system = predecessors[current_system];
         }
-        retval.second = distances[system2];
+        retval.second = distances[system2_index];
 
-        // note that at this point, if system1 != system2, retval.first will be empty if there was no starlane path from
-        // system1 to system2
-        if (!retval.first.empty() || system1 == system2) {
-            retval.first.push_front(pointer_property_map[current_system]);
-            if (system1 == system2)
-                retval.first.push_front(retval.first.front());
+        if (retval.first.empty()) {
+            // there is no path between the specified nodes
+            retval.second = -1.0;
+            return retval;
         }
 
 #if 0   // disabled for now
         // if system2 is unreachable or it would be faster to travel "offroad", use the linear distance
         if (linear_distance * OFFROAD_SLOWDOWN_FACTOR < retval.second || retval.first.empty()) {
             retval.first.clear();
-            retval.first.push_back(pointer_property_map[system1]);
-            retval.first.push_back(pointer_property_map[system2]);
+            retval.first.push_back(pointer_property_map[system1_id]);
+            retval.first.push_back(pointer_property_map[system2_id]);
             retval.second = linear_distance;
         }
 #endif
@@ -516,19 +551,52 @@ namespace {
         return retval;
     }
 
+    /* returns the path between vertices \a system1_id and \a system2_id of \a graph that takes the fewest 
+       number of jumps (edge traversals), and the number of jumps this path takes.  If system1_id is the same
+       vertex as system2_id, the path has just that system in it, and the path lenth is 0.  If there is no
+       path between the two vertices, then the list is empty and the path length is -1 */
     template <class Graph>
-    std::pair<std::list<System*>, int> LeastJumpsPathImpl(const Graph& graph, int system1, int system2)
+    std::pair<std::list<System*>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id)
     {
         typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
 
+        ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
         std::pair<std::list<System*>, int> retval;
-        std::vector<int> path;
+
+        // get graph indices for system_ids by finding the graph vertex that has the appropriate associated system
+        int system1_index = -1, system2_index = -1;
+        for (unsigned int i = 0; i < boost::num_vertices(graph); ++i) {
+            const int system_id = pointer_property_map[i]->ID();    // get system ID of this vertex
+            if (system_id == system1_id) system1_index = i;         // check if this vertex is one of the endpoint systems whose index needs to be kept track of
+            if (system_id == system2_id) system2_index = i;
+        }
+        if (-1 == system1_index || -1 == system2_index)
+            throw std::out_of_range("LeastJumpsPathImpl was given an invalid system ID");
+
+        // early exit if systems are the same
+        if (system1_id == system2_id) {
+            System* system = pointer_property_map[system2_index];
+            retval.first.push_back(system);
+            retval.second = 0;  // no jumps needed
+            return retval;
+        }
+
+        /* initializing all vertices' predecessors to themselves prevents endless loops when back traversing the tree in the case where
+           one of the end systems is system 0, because systems that are not connected to the root system (system2) are not visited
+           by the search, and so their predecessors are left unchanged.  Default initialization of the vector may be 0 or undefined
+           which could lead to out of bounds errors, or endless loops if a system's default predecessor is 0, (debug mode) and 0's
+           predecessor is that system */
         std::vector<int> predecessors(boost::num_vertices(graph));
+        for (unsigned int i = 0; i < boost::num_vertices(graph); ++i)
+            predecessors[i] = i;
+        
+        
+        // do the actual path finding using verbose boost magic...
         try {
             boost::queue<int> buf;
             std::vector<int> colors(boost::num_vertices(graph));
-            boost::breadth_first_search(graph, system1, buf,
-                                        boost::make_bfs_visitor(std::make_pair(PathFindingShortCircuitingVisitor(system2),
+            boost::breadth_first_search(graph, system1_index, buf,
+                                        boost::make_bfs_visitor(std::make_pair(PathFindingShortCircuitingVisitor(system2_index),
                                                                                boost::record_predecessors(&predecessors[0],
                                                                                                           boost::on_tree_edge()))),
                                         &colors[0]);
@@ -536,19 +604,20 @@ namespace {
             // catching this just means that the destination was found, and so the algorithm was exited early, via exception
         }
 
-        ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
-        int current_system = system2;
+
+        int current_system = system2_index;
         while (predecessors[current_system] != current_system) {
             retval.first.push_front(pointer_property_map[current_system]);
             current_system = predecessors[current_system];
         }
-        retval.second = retval.first.size() - 1;
+        retval.second = retval.first.size() - 1;    // number of jumps is number of systems in path minus one for the starting system
 
-        // note that at this point retval.first will be empty if there was no starlane path from system1 to system2
-        if (!retval.first.empty()) {
-            retval.first.push_front(pointer_property_map[current_system]);
+        if (retval.first.empty()) {
+            // there is no path between the specified nodes
+            retval.second = -1;
+            return retval;
         }
-
+        
         return retval;
     }
 
@@ -992,7 +1061,8 @@ std::pair<std::list<System*>, int> Universe::LeastJumpsPath(int system1, int sys
 
 bool Universe::SystemsConnected(int system1, int system2, int empire_id) const
 {
-    return !(LeastJumpsPath(system1, system2, empire_id).first.empty());
+    std::pair<std::list<System*>, int> path = LeastJumpsPath(system1, system2, empire_id);
+    return (!path.first.empty());
 }
 
 bool Universe::SystemReachable(int system, int empire_id) const
@@ -2105,18 +2175,33 @@ void Universe::InitializeSystemGraph()
     EdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_system_graph);
     typedef boost::graph_traits<SystemGraph>::edge_descriptor EdgeDescriptor;
 
+    std::map<int, int> system_id_graph_index_reverse_lookup_map;    // key is system ID, value is index in m_system_graph of system's vertex
+
     for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
         // add a vertex to the graph for this system, and assign it a pointer for its System object
         boost::add_vertex(m_system_graph);
         System* system1 = systems[i];
         pointer_property_map[i] = system1;
+        // add record of index in m_system_graph of this system
+        system_id_graph_index_reverse_lookup_map[system1->ID()] = i;
+    }
+
+    for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
+        System* system1 = systems[i];
 
         // add edges and edge weights
         for (System::lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
-            std::pair<EdgeDescriptor, bool> add_edge_result = boost::add_edge(system1->ID(), it->first, m_system_graph);
-            if (it->second) { // if this is a wormhole
+            // get id in universe of system at other end of lane
+            int lane_dest_id = it->first;
+
+            // get m_system_graph index for this system
+            int lane_dest_graph_index = system_id_graph_index_reverse_lookup_map[lane_dest_id];
+
+            std::pair<EdgeDescriptor, bool> add_edge_result = boost::add_edge(i, lane_dest_graph_index, m_system_graph);
+            
+            if (it->second) {                               // if this is a wormhole
                 edge_weight_map[add_edge_result.first] = 0.0;
-            } else if (add_edge_result.second) { // if this is a non-duplicate starlane
+            } else if (add_edge_result.second) {            // if this is a non-duplicate starlane
                 UniverseObject* system2 = Object(it->first);
                 double x_dist = system2->X() - system1->X();
                 double y_dist = system2->Y() - system1->Y();

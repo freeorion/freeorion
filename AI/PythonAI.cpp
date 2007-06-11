@@ -67,7 +67,7 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     //  AIInterface  //
     ///////////////////
     def("PlayerName",               AIIntPlayerNameVoid,        return_value_policy<copy_const_reference>());
-    def("IDPlayerName",             AIIntPlayerNameInt,         return_value_policy<copy_const_reference>());
+    def("PlayerName",               AIIntPlayerNameInt,         return_value_policy<copy_const_reference>());
 
     def("PlayerID",                 AIInterface::PlayerID);
     def("EmpirePlayerID",           AIInterface::EmpirePlayerID);
@@ -81,7 +81,7 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     def("AllEmpireIDs",             AIInterface::AllEmpireIDs,  return_value_policy<return_by_value>());
 
     def("GetEmpire",                AIIntGetEmpireVoid,         return_value_policy<reference_existing_object>());
-    def("GetIDEmpire",              AIIntGetEmpireInt,          return_value_policy<reference_existing_object>());
+    def("GetEmpire",                AIIntGetEmpireInt,          return_value_policy<reference_existing_object>());
 
     def("GetUniverse",              AIInterface::GetUniverse,   return_value_policy<reference_existing_object>());
 

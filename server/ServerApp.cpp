@@ -369,7 +369,11 @@ void ServerApp::HandleMessage(const Message& msg)
 
     case Message::TURN_ORDERS: {
         OrderSet* order_set = new OrderSet;
-        ExtractMessageData(msg, *order_set);
+        try {
+            ExtractMessageData(msg, *order_set);
+        } catch (std::exception e) {
+            Logger().errorStream() << "ServerApp::HandleMessage - error extracting TURN_ORDERS:" << e.what();
+        }
 
         // check order validity -- all orders must originate from this empire in order to be considered valid
         Empire* empire = GetPlayerEmpire(msg.Sender());
