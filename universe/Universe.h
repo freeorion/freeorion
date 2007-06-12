@@ -135,40 +135,40 @@ public:
     const_iterator endDestroyed() const    {return m_destroyed_objects.end();}     ///< returns the end const_iterator for the destroyed objects from the universe
 
 
-    double LinearDistance(int system1, int system2) const; ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
+    double LinearDistance(int system1_id, int system2_id) const; ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
     /** returns the sequence of systems, including \a system1 and \a system2, that defines the shortest path from \a
         system1 to \a system2, and the distance travelled to get there.  If no such path exists, the list will be empty.
         Note that the path returned may be via one or more starlane, or may be "offroad".  The path is calculated using
         the visiblity for empire \a empire_id, or without regard to visibility if \a empire_id == ALL_EMPIRES.  \throw
         std::out_of_range This function will throw if either system ID is out of range. */
-    std::pair<std::list<System*>, double> ShortestPath(int system1, int system2, int empire_id = ALL_EMPIRES) const;
+    std::pair<std::list<System*>, double> ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** returns the sequence of systems, including \a system1 and \a system2, that defines the path with the fewest
         jumps from \a system1 to \a system2, and the number of jumps to get there.  If no such path exists, the list
         will be empty.  The path is calculated using the visiblity for empire \a empire_id, or without regard to
         visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function will throw if either system
         ID is out of range. */
-    std::pair<std::list<System*>, int> LeastJumpsPath(int system1, int system2, int empire_id = ALL_EMPIRES) const;
+    std::pair<std::list<System*>, int> LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** returns whether there is a path known to empire \a empire_id between system \a system1 and system \a system2.
         The path is calculated using the visiblity for empire \a empire_id, or without regard to visibility if
         \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function will throw if either system
         ID is out of range. */
-    bool SystemsConnected(int system1, int system2, int empire_id = ALL_EMPIRES) const;
+    bool SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** returns true iff \a system is reachable from another system (i.e. it has at least one known starlane to it).
         This does not guarantee that the system is reachable from any other system, as two separate groups of locally
         but not globally internonnected systems may exist. The starlanes considered depend on their visiblity for 
         empire \a empire_id, or without regard to visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range
         This function will throw if the system ID is out of range. */
-    bool SystemReachable(int system, int empire_id = ALL_EMPIRES) const;
+    bool SystemReachable(int system_id, int empire_id = ALL_EMPIRES) const;
 
     /** returns the systems that are one starlane hop away from system \a system.  The returned systems are indexed by
         distance from \a system.  The neighborhood is calculated using the visiblity for empire \a empire_id, or without
         regard to visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function will throw if the
         system ID is out of range. */
-    std::map<double, System*> ImmediateNeighbors(int system, int empire_id = ALL_EMPIRES) const;
+    std::map<double, System*> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
