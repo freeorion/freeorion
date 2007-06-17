@@ -266,13 +266,6 @@ public:
     /// Returns the ship design with the requested name, or 0 if none exists.
     const ShipDesign* GetShipDesign(const std::string& name) const;
 
-    /* ******************************************************
-     *  The Empire object maintains containers of the following 
-     *  objects (all referenced by their object IDs)
-     *    - Tech advances
-     *    - Explored Systems
-     *********************************************************/
-
     /// Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     bool ResearchableTech(const std::string& name) const;
 
@@ -298,6 +291,15 @@ public:
     /// Returns true if the given building type is known to this empire, false if it is not.
     bool BuildingTypeAvailable(const std::string& name) const;
 
+    /// Returns the set of all ship designs of this empire
+    const std::map<std::string, ShipDesign>& ShipDesigns() const;
+
+    /// Returns the set of ship designs of this empire that the empire can actually build
+    std::map<std::string, ShipDesign> AvailableShipDesigns() const;
+
+    /// Returns true iff this ship design can be built by this empire
+    bool ShipDesignAvailable(const std::string& name) const;
+
     /// Returns the queue of items being or queued to be produced.
     const ProductionQueue& GetProductionQueue() const;
 
@@ -320,8 +322,8 @@ public:
 
     TechItr TechBegin() const;
     TechItr TechEnd() const;
-    BuildingTypeItr BuildingTypeBegin() const;
-    BuildingTypeItr BuildingTypeEnd() const;
+    BuildingTypeItr AvailableBuildingTypeBegin() const;
+    BuildingTypeItr AvailableBuildingTypeEnd() const;
     SystemIDItr ExploredBegin() const;
     SystemIDItr ExploredEnd() const;
     ShipDesignItr ShipDesignBegin() const;
@@ -532,7 +534,7 @@ private:
     std::vector<double> m_production_progress;
 
     /// list of acquired BuildingType.  These are string names referencing BuildingType objects
-    std::set<std::string> m_building_types;
+    std::set<std::string> m_available_building_types;
 
     /// systems you've explored
     std::set<int> m_explored_systems;
@@ -640,7 +642,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_research_progress)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
             & BOOST_SERIALIZATION_NVP(m_production_progress)
-            & BOOST_SERIALIZATION_NVP(m_building_types)
+            & BOOST_SERIALIZATION_NVP(m_available_building_types)
             & BOOST_SERIALIZATION_NVP(m_explored_systems)
             & BOOST_SERIALIZATION_NVP(m_ship_designs)
             & BOOST_SERIALIZATION_NVP(m_sitrep_entries)

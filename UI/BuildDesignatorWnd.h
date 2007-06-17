@@ -29,6 +29,9 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    const std::set<BuildType>& GetBuildTypesShown() const;
+    const std::pair<bool, bool>& GetAvailabilitiesShown() const; // .first -> available items; .second -> unavailable items
+
     virtual bool InWindow(const GG::Pt& pt) const;
     virtual bool InClient(const GG::Pt& pt) const;
 
@@ -42,6 +45,17 @@ public:
     void SelectPlanet(int planet);
     void Reset();
     void Clear();
+
+    void ShowType(BuildType type);
+    void ShowAllTypes();
+    void HideType(BuildType type);
+    void HideAllTypes();
+    void ToggleType(BuildType type);
+    void ToggleAllTypes();
+    
+    void ShowAvailability(bool available);
+    void HideAvailability(bool available);
+    void ToggleAvailabilitly(bool available);
     //@}
 
     mutable AddBuildToQueueSignalType AddBuildToQueueSignal;

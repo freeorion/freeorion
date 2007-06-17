@@ -111,6 +111,37 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Holds all FreeOrion building types.  Techs may be looked up by name. */
+class BuildingTypeManager
+{
+public:
+    typedef std::map<std::string, BuildingType*>::const_iterator iterator;
+
+    /** \name Accessors */ //@{
+    /** returns the building type with the name \a name; you should use the free function GetBuildingType() instead */
+    const BuildingType* GetBuildingType(const std::string& name) const;
+
+    /** iterator to the first tech */
+    iterator begin() const;
+
+    /** iterator to the last + 1th tech */
+    iterator end() const;
+
+    /** returns the instance of this singleton class; you should use the free function GetBuildingTypeManager() instead */
+    static BuildingTypeManager& GetBuildingTypeManager();
+    //@}
+
+private:
+    BuildingTypeManager();
+
+    std::map<std::string, BuildingType*> m_building_types;
+
+    static BuildingTypeManager* s_instance;
+};
+
+/** returns the singleton building type manager */
+BuildingTypeManager& GetBuildingTypeManager();
+
 /** Returns the BuildingType specification object for a building of type \a name.  If no such BuildingType
     exists, 0 is returned instead. */
 const BuildingType* GetBuildingType(const std::string& name);

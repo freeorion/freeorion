@@ -88,7 +88,6 @@ namespace {
     }
 
     const phoenix::function<store_tech_impl> store_tech_;
-
 }
 
 

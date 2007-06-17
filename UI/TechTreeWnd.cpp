@@ -355,10 +355,6 @@ public:
     virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
     //@}
 
-    std::vector<CUIButton*> m_category_buttons;
-    std::map<TechType, CUIButton*> m_tech_type_buttons;
-    std::map<TechStatus, CUIButton*> m_tech_status_buttons;
-
 private:
     void DoButtonLayout();
 
@@ -368,8 +364,14 @@ private:
     int m_category_button_rows;
     int m_status_or_type_button_rows;
 
-    static const int BUTTON_SEPARATION = 3;    // vertical or horizontal sepration between adjacent buttons
-    static const int UPPER_LEFT_PAD = 2;       // offset of buttons' position from top left of controls box
+    static const int BUTTON_SEPARATION = 3;     // vertical or horizontal sepration between adjacent buttons
+    static const int UPPER_LEFT_PAD = 2;        // offset of buttons' position from top left of controls box
+
+    std::vector<CUIButton*> m_category_buttons;
+    std::map<TechType, CUIButton*> m_tech_type_buttons;
+    std::map<TechStatus, CUIButton*> m_tech_status_buttons;
+
+    friend class TechTreeWnd;                   // so TechTreeWnd can access buttons
 };
 
 TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
@@ -1220,10 +1222,10 @@ public:
     void SetScale(double scale);
     void ShowCategory(const std::string& category);
     void HideCategory(const std::string& category);
-    void ShowType(const TechType type);
-    void HideType(const TechType type);
-    void ShowStatus(const TechStatus status);
-    void HideStatus(const TechStatus status);
+    void ShowType(TechType type);
+    void HideType(TechType type);
+    void ShowStatus(TechStatus status);
+    void HideStatus(TechStatus status);
     void ShowTech(const Tech* tech);
     void CenterOnTech(const Tech* tech);
     //@}
@@ -1759,14 +1761,14 @@ void TechTreeWnd::LayoutPanel::HideCategory(const std::string& category)
     }
 }
 
-void TechTreeWnd::LayoutPanel::ShowType(const TechType type) {
+void TechTreeWnd::LayoutPanel::ShowType(TechType type) {
     if (m_tech_types_shown.find(type) == m_tech_types_shown.end()) {
         m_tech_types_shown.insert(type);
         Layout(true);
     }
 }
 
-void TechTreeWnd::LayoutPanel::HideType(const TechType type) {
+void TechTreeWnd::LayoutPanel::HideType(TechType type) {
     std::set<TechType>::iterator it = m_tech_types_shown.find(type);
     if (it != m_tech_types_shown.end()) {
         m_tech_types_shown.erase(it);
@@ -1774,14 +1776,14 @@ void TechTreeWnd::LayoutPanel::HideType(const TechType type) {
     }
 }
 
-void TechTreeWnd::LayoutPanel::ShowStatus(const TechStatus status) {
+void TechTreeWnd::LayoutPanel::ShowStatus(TechStatus status) {
     if (m_tech_statuses_shown.find(status) == m_tech_statuses_shown.end()) {
         m_tech_statuses_shown.insert(status);
         Layout(true);
     }
 }
 
-void TechTreeWnd::LayoutPanel::HideStatus(const TechStatus status) {
+void TechTreeWnd::LayoutPanel::HideStatus(TechStatus status) {
     std::set<TechStatus>::iterator it = m_tech_statuses_shown.find(status);
     if (it != m_tech_statuses_shown.end()) {
         m_tech_statuses_shown.erase(it);
@@ -2198,7 +2200,7 @@ void TechTreeWnd::ToggleCategory(const std::string& category)
         HideCategory(category);
 }
 
-void TechTreeWnd::ShowStatus(const TechStatus status)
+void TechTreeWnd::ShowStatus(TechStatus status)
 {
     m_layout_panel->ShowStatus(status);
     
@@ -2206,7 +2208,7 @@ void TechTreeWnd::ShowStatus(const TechStatus status)
     button->MarkSelectedGray();
 }
 
-void TechTreeWnd::HideStatus(const TechStatus status)
+void TechTreeWnd::HideStatus(TechStatus status)
 {
     m_layout_panel->HideStatus(status);
 
@@ -2214,7 +2216,7 @@ void TechTreeWnd::HideStatus(const TechStatus status)
     button->MarkNotSelected();
 }
 
-void TechTreeWnd::ToggleStatus(const TechStatus status)
+void TechTreeWnd::ToggleStatus(TechStatus status)
 {
     std::set<TechStatus> statuses = m_layout_panel->GetTechStatusesShown();
 
@@ -2225,7 +2227,7 @@ void TechTreeWnd::ToggleStatus(const TechStatus status)
         HideStatus(status);
 }
 
-void TechTreeWnd::ShowType(const TechType type)
+void TechTreeWnd::ShowType(TechType type)
 {
     m_layout_panel->ShowType(type);
 
@@ -2233,7 +2235,7 @@ void TechTreeWnd::ShowType(const TechType type)
     button->MarkSelectedGray();
 }
 
-void TechTreeWnd::HideType(const TechType type)
+void TechTreeWnd::HideType(TechType type)
 {
     m_layout_panel->HideType(type);
 
@@ -2241,7 +2243,7 @@ void TechTreeWnd::HideType(const TechType type)
     button->MarkNotSelected();
 }
 
-void TechTreeWnd::ToggleType(const TechType type)
+void TechTreeWnd::ToggleType(TechType type)
 {
     std::set<TechType> types = m_layout_panel->GetTechTypesShown();
 

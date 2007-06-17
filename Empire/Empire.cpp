@@ -689,13 +689,39 @@ TechStatus Empire::GetTechStatus(const std::string& name) const
 
 const std::set<std::string>& Empire::AvailableBuildingTypes() const
 {
-    return m_building_types;
+    return m_available_building_types;
 }
 
 bool Empire::BuildingTypeAvailable(const std::string& name) const
 {
-    Empire::BuildingTypeItr item = m_building_types.find(name);
-    return item != m_building_types.end();
+    Empire::BuildingTypeItr item = m_available_building_types.find(name);
+    return item != m_available_building_types.end();
+}
+
+const std::map<std::string, ShipDesign>& Empire::ShipDesigns() const
+{
+    return m_ship_designs;
+}
+
+std::map<std::string, ShipDesign> Empire::AvailableShipDesigns() const
+{
+    // create new map containing all ship designs that are available
+    std::map<std::string, ShipDesign> retval;
+    for (std::map<std::string, ShipDesign>::const_iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
+        if (ShipDesignAvailable(it->first))
+            retval.insert(*it);
+    }
+    return retval;
+}
+
+bool Empire::ShipDesignAvailable(const std::string& name) const
+{
+    /* currently any ship design is available, but in future this will need to determine if 
+       the specific design is buildable */
+    if (m_ship_designs.find(name) != m_ship_designs.end())
+        return true;
+    else
+        return false;        
 }
 
 const ProductionQueue& Empire::GetProductionQueue() const
@@ -775,13 +801,13 @@ Empire::TechItr Empire::TechEnd() const
     return m_techs.end();
 }
 
-Empire::TechItr Empire::BuildingTypeBegin() const
+Empire::TechItr Empire::AvailableBuildingTypeBegin() const
 {
-    return m_building_types.begin();
+    return m_available_building_types.begin();
 }
-Empire::TechItr Empire::BuildingTypeEnd() const
+Empire::TechItr Empire::AvailableBuildingTypeEnd() const
 {
-    return m_building_types.end();
+    return m_available_building_types.end();
 }
 
 Empire::SystemIDItr Empire::ExploredBegin()  const
@@ -980,7 +1006,7 @@ void Empire::UnlockItem(const ItemSpec& item)
 
 void Empire::AddBuildingType(const std::string& name)
 {
-    m_building_types.insert(name);
+    m_available_building_types.insert(name);
 }
 
 void Empire::AddExploredSystem(int ID)
@@ -1017,7 +1043,7 @@ void Empire::LockItem(const ItemSpec& item)
 
 void Empire::RemoveBuildingType(const std::string& name)
 {
-    m_building_types.erase(name);
+    m_available_building_types.erase(name);
 }
 
 void Empire::ClearSitRep()
