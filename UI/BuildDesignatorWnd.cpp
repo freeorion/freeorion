@@ -432,15 +432,13 @@ public:
 
     void Reset(bool keep_selection);
 
-    void ShowType(BuildType type);
-    void ShowAllTypes();
-    void HideType(BuildType type);
-    void HideAllTypes();
+    void ShowType(BuildType type, bool refresh_list = true);
+    void ShowAllTypes(bool refresh_list = true);
+    void HideType(BuildType type, bool refresh_list = true);
+    void HideAllTypes(bool refresh_list = true);
     
-    void ShowAvailability(bool available);
-    void ShowAllAvailabilities();
-    void HideAvailability(bool available);
-    void HideAllAvailabilities();
+    void ShowAvailability(bool available, bool refresh_list = true);
+    void HideAvailability(bool available, bool refresh_list = true);
 
     mutable boost::signal<void (BuildType, const std::string&)>         DisplayNamedBuildItemSignal;
     mutable boost::signal<void (BuildType, const std::string&, int)>    RequestNamedBuildItemSignal;
@@ -616,63 +614,63 @@ void BuildDesignatorWnd::BuildSelector::Reset(bool keep_selection)
     DoLayout();
 }
 
-void BuildDesignatorWnd::BuildSelector::ShowType(BuildType type)
+void BuildDesignatorWnd::BuildSelector::ShowType(BuildType type, bool refresh_list)
 {
     if (m_build_types_shown.find(type) == m_build_types_shown.end()) {
         m_build_types_shown.insert(type);
-        PopulateList(true);
+        if (refresh_list) PopulateList(true);
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::HideType(BuildType type)
+void BuildDesignatorWnd::BuildSelector::HideType(BuildType type, bool refresh_list)
 {
     std::set<BuildType>::iterator it = m_build_types_shown.find(type);
     if (it != m_build_types_shown.end()) {
         m_build_types_shown.erase(it);
-        PopulateList(true);
+        if (refresh_list) PopulateList(true);
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::ShowAllTypes()
+void BuildDesignatorWnd::BuildSelector::ShowAllTypes(bool refresh_list)
 {
     m_build_types_shown.insert(BT_BUILDING);
     m_build_types_shown.insert(BT_SHIP);
     m_build_types_shown.insert(BT_ORBITAL);
-    PopulateList(true);
+    if (refresh_list) PopulateList(true);
 }
 
-void BuildDesignatorWnd::BuildSelector::HideAllTypes()
+void BuildDesignatorWnd::BuildSelector::HideAllTypes(bool refresh_list)
 {
     m_build_types_shown.clear();
-    PopulateList(false);
+    if (refresh_list) PopulateList(false);
 }
 
-void BuildDesignatorWnd::BuildSelector::ShowAvailability(bool available)
+void BuildDesignatorWnd::BuildSelector::ShowAvailability(bool available, bool refresh_list)
 {
     if (available) {
         if (!m_availabilities_shown.first) {
             m_availabilities_shown.first = true;
-            PopulateList(true);
+            if (refresh_list) PopulateList(true);
         }
     } else {
         if (!m_availabilities_shown.second) {
             m_availabilities_shown.second = true;
-            PopulateList(true);
+            if (refresh_list) PopulateList(true);
         }
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::HideAvailability(bool available)
+void BuildDesignatorWnd::BuildSelector::HideAvailability(bool available, bool refresh_list)
 {
     if (available) {
         if (m_availabilities_shown.first) {
             m_availabilities_shown.first = false;
-            PopulateList(true);
+            if (refresh_list) PopulateList(true);
         }
     } else {
         if (m_availabilities_shown.second) {
             m_availabilities_shown.second = false;
-            PopulateList(true);
+            if (refresh_list) PopulateList(true);
         }
     }
 }
@@ -721,6 +719,8 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 
 void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
 {
+    if (!Visible()) return;
+
     Logger().debugStream() << "PopulateList start";
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire) return;
@@ -957,6 +957,10 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     AttachChild(m_build_detail_panel);
     AttachChild(m_build_selector);
     AttachChild(m_side_panel);
+
+    ShowAllTypes(false);            // without populating the list
+    ShowAvailability(false, false); // ...
+    ShowAvailability(true, false);  // ...
 }
 
 BuildDesignatorWnd::~BuildDesignatorWnd()
@@ -1050,9 +1054,6 @@ void BuildDesignatorWnd::Reset()
     }
     SelectDefaultPlanet(m_side_panel->SystemID());
     m_build_selector->Reset(true);
-    ShowAllTypes();
-    ShowAvailability(true);
-    ShowAvailability(false);
     m_build_detail_panel->Reset();
     m_side_panel->Refresh();
 }
@@ -1067,97 +1068,97 @@ void BuildDesignatorWnd::Clear()
     m_system_default_planets.clear();
 }
 
-void BuildDesignatorWnd::ShowType(BuildType type)
+void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list)
 {
     Logger().errorStream() << "BuildDesignatorWnd::ShowType(" << boost::lexical_cast<std::string>(type) << ")";
     if (type == BT_BUILDING || type == BT_SHIP || type == BT_ORBITAL) {
-        m_build_selector->ShowType(type);
+        m_build_selector->ShowType(type, refresh_list);
         m_build_selector->m_build_type_buttons[type]->MarkSelectedGray();
     } else {
         throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
     }
 }
 
-void BuildDesignatorWnd::ShowAllTypes()
+void BuildDesignatorWnd::ShowAllTypes(bool refresh_list)
 {
-    m_build_selector->ShowAllTypes();
+    m_build_selector->ShowAllTypes(refresh_list);
     m_build_selector->m_build_type_buttons[BT_BUILDING]->MarkSelectedGray();
     m_build_selector->m_build_type_buttons[BT_SHIP]->MarkSelectedGray();
     m_build_selector->m_build_type_buttons[BT_ORBITAL]->MarkSelectedGray();
 }
 
-void BuildDesignatorWnd::HideType(BuildType type)
+void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list)
 {
     Logger().errorStream() << "BuildDesignatorWnd::HideType(" << boost::lexical_cast<std::string>(type) << ")";
     if (type == BT_BUILDING || type == BT_SHIP || type == BT_ORBITAL) {
-        m_build_selector->HideType(type);
+        m_build_selector->HideType(type, refresh_list);
         m_build_selector->m_build_type_buttons[type]->MarkNotSelected();
     } else {
         throw std::invalid_argument("BuildDesignatorWnd::HideType was passed an invalid BuildType");
     }
 }
 
-void BuildDesignatorWnd::HideAllTypes()
+void BuildDesignatorWnd::HideAllTypes(bool refresh_list)
 {
-    m_build_selector->HideAllTypes();
+    m_build_selector->HideAllTypes(refresh_list);
     m_build_selector->m_build_type_buttons[BT_BUILDING]->MarkNotSelected();
     m_build_selector->m_build_type_buttons[BT_SHIP]->MarkNotSelected();
     m_build_selector->m_build_type_buttons[BT_ORBITAL]->MarkNotSelected();
 }
 
-void BuildDesignatorWnd::ToggleType(BuildType type)
+void BuildDesignatorWnd::ToggleType(BuildType type, bool refresh_list)
 {
     if (type == BT_BUILDING || type == BT_SHIP || type == BT_ORBITAL) {
         const std::set<BuildType>& types_shown = m_build_selector->GetBuildTypesShown();
         if (types_shown.find(type) == types_shown.end())
-            ShowType(type);
+            ShowType(type, refresh_list);
         else
-            HideType(type);
+            HideType(type, refresh_list);
     } else {
         throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
     } 
 }
 
-void BuildDesignatorWnd::ToggleAllTypes()
+void BuildDesignatorWnd::ToggleAllTypes(bool refresh_list)
 {
     const std::set<BuildType>& types_shown = m_build_selector->GetBuildTypesShown();
     if (types_shown.size() == 3)    // will need to update this if more build types are added
-        HideAllTypes();
+        HideAllTypes(refresh_list);
     else
-        ShowAllTypes();
+        ShowAllTypes(refresh_list);
 }
 
-void BuildDesignatorWnd::ShowAvailability(bool available)
+void BuildDesignatorWnd::ShowAvailability(bool available, bool refresh_list)
 {
-    m_build_selector->ShowAvailability(available);
+    m_build_selector->ShowAvailability(available, refresh_list);
     if (available)
         m_build_selector->m_availability_buttons.at(0)->MarkSelectedGray();
     else
         m_build_selector->m_availability_buttons.at(1)->MarkSelectedGray();
 }
 
-void BuildDesignatorWnd::HideAvailability(bool available)
+void BuildDesignatorWnd::HideAvailability(bool available, bool refresh_list)
 {
-    m_build_selector->HideAvailability(available);
+    m_build_selector->HideAvailability(available, refresh_list);
     if (available)
         m_build_selector->m_availability_buttons.at(0)->MarkNotSelected();
     else
         m_build_selector->m_availability_buttons.at(1)->MarkNotSelected();
 }
 
-void BuildDesignatorWnd::ToggleAvailabilitly(bool available)
+void BuildDesignatorWnd::ToggleAvailabilitly(bool available, bool refresh_list)
 {
     const std::pair<bool, bool>& avail_shown = m_build_selector->GetAvailabilitiesShown();
     if (available) {
         if (avail_shown.first)
-            HideAvailability(true);
+            HideAvailability(true, refresh_list);
         else
-            ShowAvailability(true);
+            ShowAvailability(true, refresh_list);
     } else {
         if (avail_shown.second)
-            HideAvailability(false);
+            HideAvailability(false, refresh_list);
         else
-            ShowAvailability(false);
+            ShowAvailability(false, refresh_list);
     }
 }
 

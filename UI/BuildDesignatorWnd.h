@@ -42,16 +42,16 @@ public:
     void Reset();
     void Clear();
 
-    void ShowType(BuildType type);
-    void ShowAllTypes();
-    void HideType(BuildType type);
-    void HideAllTypes();
-    void ToggleType(BuildType type);
-    void ToggleAllTypes();
+    void ShowType(BuildType type, bool refresh_list = true);
+    void ShowAllTypes(bool refresh_list = true);
+    void HideType(BuildType type, bool refresh_list = true);
+    void HideAllTypes(bool refresh_list = true);
+    void ToggleType(BuildType type, bool refresh_list = true);
+    void ToggleAllTypes(bool refresh_list = true);
     
-    void ShowAvailability(bool available);
-    void HideAvailability(bool available);
-    void ToggleAvailabilitly(bool available);
+    void ShowAvailability(bool available, bool refresh_list = true);
+    void HideAvailability(bool available, bool refresh_list = true);
+    void ToggleAvailabilitly(bool available, bool refresh_list = true);
     //@}
 
     mutable AddNamedBuildToQueueSignalType AddNamedBuildToQueueSignal;
