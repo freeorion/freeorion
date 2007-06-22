@@ -204,10 +204,12 @@ void BuildDesignatorWnd::BuildDetailPanel::SetBuild(int queue_idx)
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
         m_build_type = queue[queue_idx].item.build_type;
         m_item_name = queue[queue_idx].item.name;
+        m_item_design_id = queue[queue_idx].item.design_id;
         m_queue_idx = queue_idx;
     } else {
         m_build_type = INVALID_BUILD_TYPE;
         m_item_name = "";
+        m_item_design_id = UniverseObject::INVALID_OBJECT_ID;
         m_queue_idx = -1;
     }
     Reset();
@@ -252,9 +254,11 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
             m_queue_idx = queue.size() - 1;
             m_build_type = queue[m_queue_idx].item.build_type;
             m_item_name = queue[m_queue_idx].item.name;
+            m_item_design_id = queue[m_queue_idx].item.design_id;
         } else {
             m_build_type = INVALID_BUILD_TYPE;
             m_item_name = "";
+            m_item_design_id = UniverseObject::INVALID_OBJECT_ID;
             m_queue_idx = -1;
         }
     }
@@ -424,6 +428,8 @@ public:
 
     virtual void                    MinimizeClicked();
 
+    void SetBuildLocation(int location_id);
+
     void Reset(bool keep_selection);
 
     void ShowType(BuildType type);
@@ -464,6 +470,8 @@ private:
 
     std::set<boost::signals::connection>    m_misc_connections;
 
+    int m_build_location;
+
     int row_height;
     int icon_col_width;
     int name_col_width;
@@ -475,7 +483,8 @@ private:
 };
 
 BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
-    CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), 0, 0, w, h, GG::CLICKABLE | CUIWnd::MINIMIZABLE)
+    CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), 0, 0, w, h, GG::CLICKABLE | CUIWnd::MINIMIZABLE),
+    m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
     // create build type toggle buttons (ship, building, orbital, all)
     m_build_type_buttons[BT_BUILDING] = new CUIButton(0, 0, 1, UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"));
@@ -501,7 +510,6 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
     m_buildable_items->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
 
     DoLayout();
-    PopulateList(false);
 }
 
 BuildDesignatorWnd::BuildSelector::~BuildSelector()
@@ -594,6 +602,12 @@ void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
             m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : 0), button_ul.y));
         Show();
     }
+}
+
+void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id)
+{
+    m_build_location = location_id;
+    PopulateList(true);
 }
 
 void BuildDesignatorWnd::BuildSelector::Reset(bool keep_selection)
@@ -762,6 +776,13 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
             GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::TF_LEFT); ///< ctor taking a font directly
             row->push_back(desc_control);
 
+            // is item buildable?  If not, disable row
+            if (!empire->BuildableItem(BT_BUILDING, name, m_build_location)) {
+                row->Disable(true);
+            } else {
+                row->Disable(false);
+            }
+
             m_buildable_items->Insert(row);
             m_build_types[row] = BT_BUILDING;
             if (row->DragDropDataType() == selected_row)
@@ -804,6 +825,13 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
             GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::TF_LEFT); ///< ctor taking a font directly
             row->push_back(desc_control);
 
+            // is item buildable?  If not, disable row
+            if (!empire->BuildableItem(BT_SHIP, ship_design_id, m_build_location)) {
+                row->Disable(true);
+            } else {
+                row->Disable(false);
+            }
+
             m_buildable_items->Insert(row);
             m_build_types[row] = BT_SHIP;
             if (row->DragDropDataType() == selected_row)
@@ -838,6 +866,13 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
             GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::TF_LEFT); ///< ctor taking a font directly
             row->push_back(desc_control);
 
+            // is item buildable?  If not, disable row
+            if (!empire->BuildableItem(BT_ORBITAL, "", m_build_location)) {
+                row->Disable(true);
+            } else {
+                row->Disable(false);
+            }
+
             m_buildable_items->Insert(row);
             m_build_types[row] = BT_ORBITAL;
             if (row->DragDropDataType() == selected_row)
@@ -865,6 +900,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const std::set<int>& s
 
 void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(int row_index, GG::ListBox::Row* row)
 {
+    if (row->Disabled()) return;
     BuildType build_type = m_build_types[row];
     if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
         RequestNamedBuildItemSignal(build_type, row->DragDropDataType(), 1);
@@ -1000,6 +1036,7 @@ void BuildDesignatorWnd::SelectPlanet(int planet)
 {
     m_build_location = planet;
     m_build_detail_panel->SelectedBuildLocation(planet);
+    m_build_selector->SetBuildLocation(planet);
     if (planet != UniverseObject::INVALID_OBJECT_ID)
         m_system_default_planets[m_side_panel->SystemID()] = planet;
 }

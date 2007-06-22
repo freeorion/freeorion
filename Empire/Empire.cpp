@@ -800,6 +800,10 @@ bool Empire::BuildableItem(BuildType build_type, std::string name, int location)
     if (build_type == BT_SHIP)
         throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_SHIP with a name, but ship designs are tracked by number");
 
+    if (build_type == BT_BUILDING && !BuildingTypeAvailable(name)) return false;
+
+    //if (build_type == BT_ORBITAL) -> nothing to do yet; orbitals are currently always buildable
+
     if (ProductionCostAndTime(build_type, name) == std::make_pair(-1.0, -1)) {
         // item is unknown, unavailable, or invalid.
         return false;
@@ -828,6 +832,8 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
     // special case to check for buildings or orbitals being passed with ids, not names
     if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
         throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_BUILDING OR BT_ORBITAL with a design id number, but these types are tracked by name");
+
+    if (build_type == BT_SHIP && !ShipDesignAvailable(design_id)) return false;
 
     if (ProductionCostAndTime(build_type, design_id) == std::make_pair(-1.0, -1)) {
         // item is unknown, unavailable, or invalid.
