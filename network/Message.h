@@ -62,6 +62,8 @@ public:
         PLAYER_EXIT,             ///< sent to the "host" client when another player leaves the game
         REQUEST_NEW_OBJECT_ID,   ///< sent by client to server requesting a new object ID.
         DISPATCH_NEW_OBJECT_ID,  ///< sent by server to client with the new object ID.
+        REQUEST_NEW_DESIGN_ID,   ///< sent by client to server requesting a new design ID.
+        DISPATCH_NEW_DESIGN_ID,  ///< sent by server to client with the new design ID.
         END_GAME,                ///< sent to the server by the host client when the current game is to end
     };
 
@@ -209,6 +211,12 @@ Message RequestNewObjectIDMessage(int sender);
 
 /** creates an DISPATCH_NEW_OBJECT_ID  message.  This message is sent to a client who is waiting for a new object ID */
 Message DispatchObjectIDMessage(int player_id, int new_id);
+
+/** creates an REQUEST_NEW_DESIGN_ID  message. This message is a synchronous message, when sent it will wait for a reply form the server */
+Message RequestNewDesignIDMessage(int sender);
+
+/** creates an DISPATCH_NEW_DESIGN_ID  message.  This message is sent to a client who is waiting for a new design ID */
+Message DispatchDesignIDMessage(int player_id, int new_id);
 
 /** creates a SAVE_GAME request message.  This message should only be sent by the host player.*/
 Message HostSaveGameMessage(int sender, const std::string& filename);

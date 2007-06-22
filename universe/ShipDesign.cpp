@@ -24,8 +24,7 @@ ShipDesign::ShipDesign() :
 {
 }
 
-const ShipDesign* GetShipDesign(int empire_id, const std::string& name)
+const ShipDesign* GetShipDesign(int ship_design_id)
 {
-    Empire* empire = Empires().Lookup(empire_id);
-    return empire->GetShipDesign(name);
+    return GetUniverse().GetShipDesign(ship_design_id);
 }

@@ -136,7 +136,7 @@ namespace {
         const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
         double turn_cost;
         int turns;
-        boost::tie(turn_cost, turns) = empire->ProductionCostAndTime(build.item.build_type, build.item.name);
+        boost::tie(turn_cost, turns) = empire->ProductionCostAndTime(build.item);
         double progress = empire->ProductionStatus(queue_index);
         if (progress == -1.0)
             progress = 0.0;
@@ -158,11 +158,19 @@ namespace {
         using boost::io::str;
         using boost::format;
         GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
-        std::string name_text = UserString(build.item.name);
+
+        std::string name_text;
+
         if (build.item.build_type == BT_SHIP)
-            name_text = build.item.name;
+            name_text = GetShipDesign(build.item.design_id)->name;
+        else if (build.item.build_type == BT_BUILDING || build.item.build_type == BT_ORBITAL)
+            name_text = UserString(build.item.name);
+        else
+            name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
+        
         if (build.item.build_type != BT_BUILDING)
             name_text = str(format(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
+
         m_name_text = new GG::TextControl(4, 2, w - 4, QueueRow::HEIGHT - 2, name_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() + 2), text_and_border, GG::TF_TOP | GG::TF_LEFT);
         m_name_text->ClipText(true);
         const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::Pts() + 4) - 4;
@@ -231,7 +239,8 @@ ProductionWnd::ProductionWnd(int w, int h) :
 
     EnableChildClipping(true);
 
-    m_misc_connections.insert(GG::Connect(m_build_designator_wnd->AddBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this));
+    m_misc_connections.insert(GG::Connect(m_build_designator_wnd->AddNamedBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this));
+    m_misc_connections.insert(GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this));
     m_misc_connections.insert(GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal, &ProductionWnd::ChangeBuildQuantitySlot, this));
     m_misc_connections.insert(GG::Connect(m_build_designator_wnd->SystemSelectedSignal, SystemSelectedSignal));
     m_misc_connections.insert(GG::Connect(m_queue_lb->ErasedSignal, &ProductionWnd::QueueItemDeletedSlot, this));
@@ -353,9 +362,10 @@ void ProductionWnd::UpdateQueue()
     m_queue_lb->Clear();
     const int QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
     int i = 0;
-    for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
+    
+    for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i)
         m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, *it, i));
-    }
+
     m_queue_lb->BringRowIntoView(m_queue_lb->NumRows() - 1);
     if (m_queue_lb->NumRows() <= original_queue_length)
         m_queue_lb->BringRowIntoView(first_visible_queue_row);
@@ -380,6 +390,14 @@ void ProductionWnd::ResetInfoPanel()
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location)
 {
     HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, name, number, location));
+    UpdateQueue();
+    ResetInfoPanel();
+    m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
+}
+
+void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location)
+{
+    HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, design_id, number, location));
     UpdateQueue();
     ResetInfoPanel();
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);

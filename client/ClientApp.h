@@ -61,6 +61,10 @@ public:
         Can return UniverseObject::INVALID_OBJECT_ID if an ID cannot be created. */
     static int              GetNewObjectID();
 
+    /** returns a design ID which can be used for a new design to uniquely identify it.
+        Can return UniverseObject::INVALID_OBJECT_ID if an ID cannot be created. */
+    static int              GetNewDesignID();
+
     static ClientApp*       GetApp(); ///< returns the singleton ClientApp object
 
 protected:

@@ -41,13 +41,6 @@
 #include <stdexcept>
 
 namespace {
-    const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, s_universe_width]
-    const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, s_universe_width]
-    const double  AVG_UNIVERSE_WIDTH = 1000.0 / std::sqrt(150.0); // so a 150 star universe is 1000 units across
-    const int     ADJACENCY_BOXES = 25;
-    const double  PI = 3.141592653589793;
-    const int     MAX_SYSTEM_ORBITS = 10;   // maximum slots where planets can be, in v0.2
-    SmallIntDistType g_hundred_dist = SmallIntDist(1, 100); // a linear distribution [1, 100] used in most universe generation
     const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0; // the factor by which non-starlane travel is slower than starlane travel
 
     DataTableMap& UniverseDataTables()
@@ -121,350 +114,9 @@ namespace {
         }
     }
 
-    double CalcNewPosNearestNeighbour(const std::pair<double, double> &position,const std::vector<std::pair<double, double> > &positions)
-    {
-        if(positions.size()==0)
-            return 0.0;
-
-        unsigned int j;
-        double lowest_dist=  (positions[0].first  - position.first ) * (positions[0].first  - position.first ) 
-            + (positions[0].second - position.second) * (positions[0].second - position.second),distance=0.0;
-
-        for (j=1; j < positions.size(); ++j){
-            distance =  (positions[j].first  - position.first ) * (positions[j].first  - position.first ) 
-                + (positions[j].second - position.second) * (positions[j].second - position.second);
-            if(lowest_dist>distance)
-                lowest_dist = distance;
-        }
-        return lowest_dist;
-    }
-
-    const int MAX_ATTEMPTS_PLACE_SYSTEM = 100;
-
-    void SpiralGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int arms, unsigned int stars, double width, double height)
-    {
-        double arm_offset     = RandDouble(0.0,2.0*PI);
-        double arm_angle      = 2.0*PI / arms;
-        double arm_spread     = 0.3 * PI / arms;
-        double arm_length     = 1.5 * PI;
-        double center         = 0.25;
-        double x,y;
-
-        int i, attempts;
-
-        GaussianDistType  random_gaussian = GaussianDist(0.0,arm_spread);
-        SmallIntDistType  random_arm      = SmallIntDist(0  ,arms);
-        DoubleDistType    random_angle    = DoubleDist  (0.0,2.0*PI);
-        DoubleDistType    random_radius   = DoubleDist  (0.0,  1.0);
-
-        for (i = 0, attempts = 0; i < static_cast<int>(stars) && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts)
-        {
-            double radius = random_radius();
-
-            if (radius < center) {
-                double angle = random_angle();
-                x = radius * cos( arm_offset + angle );
-                y = radius * sin( arm_offset + angle );
-            } else {
-                double arm    = (double)random_arm() * arm_angle;
-                double angle  = random_gaussian();
-
-                x = radius * cos( arm_offset + arm + angle + radius * arm_length );
-                y = radius * sin( arm_offset + arm + angle + radius * arm_length );
-            }
-
-            x = (x + 1) * width / 2.0;
-            y = (y + 1) * height / 2.0;
-
-            if (x < 0 || width <= x || y < 0 || height <= y)
-                continue;
-
-            // See if new star is too close to any existing star.
-            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
-
-            // If so, we try again.
-            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
-                --i;
-                continue;
-            }
-
-            // Add the new star location.
-            positions.push_back(std::make_pair(x, y));
-
-            // Note that attempts is reset for every star.
-            attempts = 0;
-        }
-    }
-
-    void EllipticalGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions, unsigned int stars, double width, double height)
-    {
-        const double ellipse_width_vs_height = RandDouble(0.4, 0.6);
-        const double rotation = RandDouble(0.0, PI),
-            rotation_sin = std::sin(rotation),
-            rotation_cos = std::cos(rotation);
-        const double gap_constant = .95;
-        const double gap_size = 1.0 - gap_constant * gap_constant * gap_constant;
-
-        // Random number generators.
-        DoubleDistType radius_dist = DoubleDist(0.0, gap_constant);
-        DoubleDistType random_angle  = DoubleDist(0.0, 2.0 * PI);
-
-        // Used to give up when failing to place a star too often.
-        int attempts = 0;
-
-        // For each attempt to place a star...
-        for (unsigned int i = 0; i < stars && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts){
-            double radius = radius_dist();
-            // Adjust for bigger density near center and create gap.
-            radius = radius * radius * radius + gap_size;
-            double angle  = random_angle();
-
-            // Rotate for individual angle and apply elliptical shape.
-            double x1 = radius * std::cos(angle);
-            double y1 = radius * std::sin(angle) * ellipse_width_vs_height;
-
-            // Rotate for ellipse angle.
-            double x = x1 * rotation_cos - y1 * rotation_sin;
-            double y = x1 * rotation_sin + y1 * rotation_cos;
-
-            // Move from [-1.0, 1.0] universe coordinates.
-            x = (x + 1.0) * width / 2.0;
-            y = (y + 1.0) * height / 2.0;
-
-            // Discard stars that are outside boundaries (due to possible rounding errors).
-            if (x < 0 || x >= width || y < 0 || y >= height)
-                continue;
-
-            // See if new star is too close to any existing star.
-            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
-
-            // If so, we try again.
-            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
-                --i;
-                continue;
-            }
-
-            // Add the new star location.
-            positions.push_back(std::make_pair(x, y));
-
-            // Note that attempts is reset for every star.
-            attempts = 0;
-        }
-    }
-
-    void ClusterGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions, unsigned int clusters, unsigned int stars, double width, double height)
-    {
-        assert(clusters);
-        assert(stars);
-
-        // probability of systems which don't belong to a cluster
-        const double system_noise = 0.15;
-        double ellipse_width_vs_height = RandDouble(0.2,0.5);
-        // first innermost pair hold cluster position, second innermost pair stores help values for cluster rotation (sin,cos)
-        std::vector<std::pair<std::pair<double,double>,std::pair<double,double> > > clusters_position;
-        unsigned int i,j,attempts;
-
-        DoubleDistType    random_zero_to_one = DoubleDist  (0.0,  1.0);
-        DoubleDistType    random_angle  = DoubleDist  (0.0,2.0*PI);
-
-        for (i=0,attempts=0;i<clusters && static_cast<int>(attempts)<MAX_ATTEMPTS_PLACE_SYSTEM;i++,attempts++)
-        {
-            // prevent cluster position near borders (and on border)
-            double x=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters,
-                y=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters;
-
-
-            // ensure all clusters have a min separation to each other (search isn't opimized, not worth the effort)
-            for (j=0;j<clusters_position.size();j++)
-                if ((clusters_position[j].first.first - x)*(clusters_position[j].first.first - x)+ (clusters_position[j].first.second - y)*(clusters_position[j].first.second - y)
-                    < (2.0/clusters))
-                    break;
-            if (j<clusters_position.size())
-            {
-                i--;
-                continue;
-            }
-
-            attempts=0;
-            double rotation = RandDouble(0.0,PI);
-            clusters_position.push_back(std::pair<std::pair<double,double>,std::pair<double,double> >(std::pair<double,double>(x,y),std::pair<double,double>(sin(rotation),cos(rotation))));
-        }
-
-        for (i=0,attempts=0; i < stars && attempts<100; i++,attempts++ )
-        {
-            double x,y;
-            if (random_zero_to_one()<system_noise)
-            {
-                x = random_zero_to_one() * 2.0 - 1.0;
-                y = random_zero_to_one() * 2.0 - 1.0;
-            }
-            else
-            {
-                short  cluster = i%clusters_position.size();
-                double radius  = random_zero_to_one();
-                double angle   = random_angle();
-                double x1,y1;
-
-                x1 = radius * cos(angle);
-                y1 = radius * sin(angle)*ellipse_width_vs_height;
-
-                x = x1*clusters_position[cluster].second.second + y1*clusters_position[cluster].second.first;
-                y =-x1*clusters_position[cluster].second.first  + y1*clusters_position[cluster].second.second;
-
-                x = x/sqrt((double)clusters) + clusters_position[cluster].first.first;
-                y = y/sqrt((double)clusters) + clusters_position[cluster].first.second;
-            }
-            x = (x+1)*width /2.0;
-            y = (y+1)*height/2.0;
-
-            if (x<0 || width<=x || y<0 || height<=y)
-                continue;
-
-            // See if new star is too close to any existing star.
-            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
-
-            // If so, we try again.
-            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
-                --i;
-                continue;
-            }
-
-            // Add the new star location.
-            positions.push_back(std::make_pair(x, y));
-
-            // Note that attempts is reset for every star.
-            attempts = 0;
-        }
-    }
-
-    void RingGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int stars, double width, double height)
-    {
-        double RING_WIDTH = width / 4.0;
-        double RING_RADIUS = (width - RING_WIDTH) / 2.0;
-
-        DoubleDistType   theta_dist = DoubleDist(0.0, 2.0 * PI);
-        GaussianDistType radius_dist = GaussianDist(RING_RADIUS, RING_WIDTH / 3.0);
-
-        for (unsigned int i = 0, attempts = 0; i < stars && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts)
-        {
-            double theta = theta_dist();
-            double radius = radius_dist();
-
-            double x = width / 2.0 + radius * std::cos(theta);
-            double y = height / 2.0 + radius * std::sin(theta);
-
-            if (x < 0 || width <= x || y < 0 || height <= y)
-                continue;
-
-            // See if new star is too close to any existing star.
-            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
-
-            // If so, we try again.
-            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
-                --i;
-                continue;
-            }
-
-            // Add the new star location.
-            positions.push_back(std::make_pair(x, y));
-
-            // Note that attempts is reset for every star.
-            attempts = 0;
-        }
-    }
-
-    System* GenerateSystem(Universe &universe, Age age, double x, double y)
-    {
-        const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
-        const std::vector<std::vector<int> >& universe_age_mod_to_star_type_dist = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
-
-        static std::list<std::string> star_names;
-        if (star_names.empty())
-            LoadSystemNames(star_names);
-
-        // generate new star
-        int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
-        std::list<std::string>::iterator it = star_names.begin();
-        std::advance(it, star_name_idx);
-        std::string star_name(*it);
-        star_names.erase(it);
-
-        // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
-        int idx = 0;
-        int max_roll = 0;
-        for (unsigned int i = 0; i < NUM_STAR_TYPES; ++i) {
-            int roll = g_hundred_dist() + universe_age_mod_to_star_type_dist[age][i] + base_star_type_dist[i];
-            if (max_roll < roll) {
-                max_roll = roll;
-                idx = i;
-            }
-        }
-        System* system = new System(StarType(idx), MAX_SYSTEM_ORBITS, star_name, x, y);
-
-        int new_system_id = universe.Insert(system);
-        if (new_system_id == UniverseObject::INVALID_OBJECT_ID) {
-            throw std::runtime_error("Universe::GenerateIrregularGalaxy() : Attempt to insert system " +
-                                     star_name + " into the object map failed.");
-        }
-        return system;
-    }
-
-    void GenerateStarField(Universe &universe, Age age, const std::vector<std::pair<double, double> > &positions, 
-                           Universe::AdjacencyGrid& adjacency_grid, double adjacency_box_size)
-    {
-        // generate star field
-        for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
-            System* system = GenerateSystem(universe, age, positions[star_cnt].first, positions[star_cnt].second);
-            adjacency_grid[static_cast<int>(system->X() / adjacency_box_size)]
-                [static_cast<int>(system->Y() / adjacency_box_size)].insert(system);
-        }
-    }
-
-    void GetNeighbors(double x, double y, const Universe::AdjacencyGrid& adjacency_grid, std::set<System*>& neighbors)
-    {
-        const double ADJACENCY_BOX_SIZE = Universe::UniverseWidth() / ADJACENCY_BOXES;
-        std::pair<unsigned int, unsigned int> grid_box(static_cast<unsigned int>(x / ADJACENCY_BOX_SIZE),
-                                                       static_cast<unsigned int>(y / ADJACENCY_BOX_SIZE));
-
-        // look in the box into which this system falls, and those boxes immediately around that box
-        neighbors = adjacency_grid[grid_box.first][grid_box.second];
-
-        if (0 < grid_box.first) {
-            if (0 < grid_box.second) {
-                const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second - 1];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-            }
-            const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second];
-            neighbors.insert(grid_square.begin(), grid_square.end());
-            if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-                const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second + 1];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-            }
-        }
-        if (0 < grid_box.second) {
-            const std::set<System*>& grid_square = adjacency_grid[grid_box.first][grid_box.second - 1];
-            neighbors.insert(grid_square.begin(), grid_square.end());
-        }
-        if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-            const std::set<System*>& grid_square = adjacency_grid[grid_box.first][grid_box.second + 1];
-            neighbors.insert(grid_square.begin(), grid_square.end());
-        }
-
-        if (grid_box.first < adjacency_grid.size() - 1) {
-            if (0 < grid_box.second) {
-                const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second - 1];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-            }
-            const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second];
-            neighbors.insert(grid_square.begin(), grid_square.end());
-            if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
-                const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second + 1];
-                neighbors.insert(grid_square.begin(), grid_square.end());
-            }
-        }
-    }
-
-    // templated implementations of Universe graph search methods
+    ////////////////////////////////////////////////////////////////
+    // templated implementations of Universe graph search methods //
+    ////////////////////////////////////////////////////////////////
 
     // returns the \a graph index for system with \a system_id
     template <class Graph>
@@ -561,6 +213,7 @@ namespace {
     template <class Graph>
     std::pair<std::list<System*>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id)
     {
+        Logger().errorStream() << "LeastJumpsPathImpl";
         typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
 
         ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
@@ -643,273 +296,6 @@ namespace {
     }
 }
 
-namespace Delauney {
-	
-	// simple 2D point.  would have used array of systems, but System class has limits on the range of 
-	// position values that would interfere with the triangulation algorithm (need a single large covering
-	// triangle that overlaps all actual points being triangulated)
-	class DTPoint {
-	public:
-		double x;
-		double y;
-
-		DTPoint(double xp, double yp);
-		DTPoint();
-	};
-	
-	// simple class for an integer that has an associated "sorting value", so the integer can be stored in
-	// a list sorted by something other than the value of the integer
-	class SortValInt {
-	public:
-		int num;
-		double sortVal;
-		
-		SortValInt(int n, double s);
-	};
-	
-	// list of three interger array indices, and some additional info about the triangle that the corresponding
-	// points make up, such as the circumcentre and radius, and a function to find if another point is in the
-	// circumcircle
-	class DTTriangle {
-	private:
-		std::vector<int> verts;  // indices of vertices of triangle
-		Delauney::DTPoint centre;  // location of circumcentre of triangle
-		double radius2;  // radius of circumcircle squared
-
-	public:
-		// determines whether a specified point is within the circumcircle of the triangle
-		bool PointInCircumCircle(Delauney::DTPoint &p);
-		
-		const std::vector<int>& getVerts(); // getter
-
-		DTTriangle(int vert1, int vert2, int vert3, std::vector<Delauney::DTPoint> &points);
-		DTTriangle();
-	};
-
-	
-	// runs a Delauney Triangulation routine on a set of 2D points extracted from an array of systems
-	// returns the list of triangles produced
-	std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems);
-
-} // end namespace Delauney
-
-namespace Delauney {	
-	SortValInt::SortValInt(int n, double s) {
-		num = n;
-		sortVal = s;
-	};
-	
-	DTPoint::DTPoint() {
-		x = 0;
-		y = 0;
-	};
-	DTPoint::DTPoint(double xp, double yp) {
-		x = xp;
-		y = yp;
-	};
-	
-	// determines whether a specified point is within the circumcircle of the triangle
-	bool DTTriangle::PointInCircumCircle(Delauney::DTPoint &p) {
-		double vectX, vectY;
-
-		vectX = p.x - centre.x;
-		vectY = p.y - centre.y;
-
-		if (vectX*vectX + vectY*vectY < radius2)
-			return true;
-		return false;
-	};
-
-	DTTriangle::DTTriangle(int vert1, int vert2, int vert3, std::vector<Delauney::DTPoint> &points) {
-		double a, Sx, Sy, b;
-		double x1, x2, x3, y1, y2, y3;
-
-		if ( vert1 == vert2 || vert1 == vert3 || vert2 == vert3)
-			throw std::runtime_error("Attempted to create Triangle with two of the same vertex indices.");
-
-		verts = std::vector<int>(3);
-
-		// record indices of vertices of triangle
-		verts[0] = vert1;
-		verts[1] = vert2;
-		verts[2] = vert3;
-
-        // extract position info for vertices
-		x1 = points[vert1].x;
-		x2 = points[vert2].x;
-		x3 = points[vert3].x;
-		y1 = points[vert1].y;
-		y2 = points[vert2].y;
-		y3 = points[vert3].y;
-			
-		// calculate circumcircle and circumcentre of triangle
-		a = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
-			
-		Sx = 0.5 * ((x1 * x1 + y1 * y1) * (y2 - y3) +
-			 		(x2 * x2 + y2 * y2) * (y3 - y1) +
-			 		(x3 * x3 + y3 * y3) * (y1 - y2));
-
-		Sy = -0.5* ((x1 * x1 + y1 * y1) * (x2 - x3) +
-					(x2 * x2 + y2 * y2) * (x3 - x1) +
-					(x3 * x3 + y3 * y3) * (x1 - x2));
-
-		b =   (	(x1 * x1 + y1 * y1) * (x2 * y3 - x3 * y2) +
-				(x2 * x2 + y2 * y2) * (x3 * y1 - x1 * y3) +
-				(x3 * x3 + y3 * y3) * (x1 * y2 - x2 * y1));
-			
-		// make sure nothing funky's going on...
-		if (std::abs(a) < 0.01)
-			throw std::runtime_error("Attempted to find circumcircle for a triangle with vertices in a line.");
-					
-		// finish!
-		centre.x = Sx / a;
-		centre.y = Sy / a;
-		radius2 = (Sx*Sx + Sy*Sy)/(a*a) + b/a;
-	};
-
-
-	DTTriangle::DTTriangle() {
-		verts = std::vector<int>(3, 0);
-		centre.x = 0;
-		centre.y = 0;
-		radius2 = 0;
-	};
-
-	const std::vector<int>& DTTriangle::getVerts() {
-		return verts;
-	};
-
-	// does Delauney Triangulation to generate starlanes
-	std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems) {
-
-		int n, c, theSize, num, num2; // loop counters, storage for retreived size of a vector, temp storage
-		std::list<Delauney::DTTriangle>::iterator itCur, itEnd;
-		std::list<Delauney::SortValInt>::iterator itCur2, itEnd2; 
-		// vector of x and y positions of stars
-		std::vector<Delauney::DTPoint> points;	
-		// pointer to main list of triangles algorithm works with.
-		std::list<Delauney::DTTriangle> *triList;
-		// list of indices in vector of points extracted from removed triangles that need to be retriangulated
-		std::list<Delauney::SortValInt> pointNumList;
-		double vx, vy, mag;  // vector components, magnitude
-	
-		// ensure a useful list of systems was passed...
-		if (systems.empty())
-			throw std::runtime_error("Attempted to run Delauney Triangulation on empty array of systems");
-	
-		// extract systems positions, and store in vector.  Can't use actual systems data since
-		// systems have position limitations which would interfere with algorithm	
-		theSize = static_cast<int>(systems.size());
-		for (n = 0; n < theSize; n++) {		
-			points.push_back(Delauney::DTPoint(systems[n]->X(), systems[n]->Y()));	
-		}
-	
-		// add points for covering triangle.  the point positions should be big enough to form a triangle
-		// that encloses all the systems of the galaxy (or at least one whose circumcircle covers all points)
-		points.push_back(Delauney::DTPoint(-1.0, -1.0));
-        points.push_back(Delauney::DTPoint(2.0 * (Universe::UniverseWidth() + 1.0), -1.0));
-		points.push_back(Delauney::DTPoint(-1.0, 2.0 * (Universe::UniverseWidth() + 1.0)));
-
-		// initialize triList.  algorithm adds and removes triangles from this list, and the resulting 
-		// list is returned (so should be deleted externally)
-		triList = new std::list<Delauney::DTTriangle>;
-		
-		// add last three points into the first triangle, the "covering triangle"
-		theSize = static_cast<int>(points.size());
-		triList->push_front(Delauney::DTTriangle(theSize-1, theSize-2, theSize-3, points));
-	
-		
-		// loop through "real" points (from systems, not the last three added to make the covering triangle)
-		for (n = 0; n < theSize - 3; n++) {
-			pointNumList.clear();
-
-			// check each triangle in list, to see if the new point lies in its circumcircle.  if so, delete
-			// the triangle and add its vertices to a list 
-			itCur = triList->begin();
-			itEnd = triList->end();		
-			while (itCur != itEnd) {
-				// get current triangle
-				Delauney::DTTriangle& tri = *itCur;
-
-				// check if point to be added to triangulation is within the circumcircle for the current triangle
-				if (tri.PointInCircumCircle(points[n])) {
-					// if so, insert the triangles vertices indices into the list.  add in sorted position
-					// based on angle of direction to current point n being inserted.  don't add if doing
-					// so would duplicate an index already in the list
-					for (c = 0; c < 3; c++) {
-						num = (tri.getVerts())[c];  // store "current point"
-						
-						// get sorting value to order points clockwise circumferentially around point n
-						// vector from point n to current point
-						vx = points[num].x - points[n].x;
-						vy = points[num].y - points[n].y;
-						mag = sqrt(vx*vx + vy*vy);
-						// normalize
-						vx /= mag;
-						vy /= mag;
-						// dot product with (0, 1) is vy, magnitude of cross product is vx
-						// this gives a range of "sortValue" from -2 to 2, around the circle
-						if (vx >= 0) mag = vy + 1; else mag = -vy - 1;
-						// sorting value in "mag"
-
-						// iterate through list, finding insert spot and verifying uniqueness (or add if list is empty)
-						itCur2 = pointNumList.begin();
-						itEnd2 = pointNumList.end();
-						if (itCur2 == itEnd2) {
-							// list is empty
-							pointNumList.push_back(Delauney::SortValInt(num, mag));
-						}
-						else {
-							while (itCur2 != itEnd2) {
-								if ((*itCur2).num == num) 
-									break;
-								if ((*itCur2).sortVal > mag) {
-									pointNumList.insert(itCur2, Delauney::SortValInt(num, mag));
-									break;
-								}							
-								itCur2++;
-							}
-							if (itCur2 == itEnd2) {
-								// point wasn't added, so should go at end
-								pointNumList.push_back(Delauney::SortValInt(num, mag));
-							}
-						}
-					} // end for c
-
-					// remove current triangle from list of triangles
-					itCur = triList->erase(itCur);
-				}
-				else {
-					// point not in circumcircle for this triangle
-					// to go next triangle in list
-					++itCur;
-				}
-			} // end while
-
-			// go through list of points, making new triangles out of them
-			itCur2 = pointNumList.begin();
-			itEnd2 = pointNumList.end();
-            assert(itCur2 != itEnd2);
-
-			// add triangle for last and first points and n
-			triList->push_front(Delauney::DTTriangle(n, (pointNumList.front()).num, (pointNumList.back()).num, points));
-			
-			num = (*itCur2).num;
-			++itCur2;
-			while (itCur2 != itEnd2) {
-				num2 = num;				
-                num = (*itCur2).num;
-				
-				triList->push_front(Delauney::DTTriangle(n, num2, num, points));
-                
-				++itCur2;
-			} // end while
-			
-		} // end for		
-		return triList;
-	} // end function
-} // end namespace
-
 /////////////////////////////////////////////
 // struct Universe::EdgeVisibilityFilter
 /////////////////////////////////////////////
@@ -952,7 +338,8 @@ const Universe& Universe::operator=(Universe& rhs)
     }
     m_objects.clear();
     m_destroyed_objects.clear();
-    m_last_allocated_id = rhs.m_last_allocated_id;
+    m_last_allocated_object_id = rhs.m_last_allocated_object_id;
+    m_last_allocated_design_id = rhs.m_last_allocated_design_id;
     m_objects = rhs.m_objects;
     rhs.m_objects.clear();
     m_destroyed_objects = rhs.m_destroyed_objects;
@@ -1029,6 +416,12 @@ const UniverseObject* Universe::DestroyedObject(int id) const
     return (it != m_destroyed_objects.end() ? it->second : 0);
 }
 
+const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
+{
+    ship_design_iterator it = m_ship_designs.find(ship_design_id);
+    return (it != m_ship_designs.end() ? it->second : 0);
+}
+
 double Universe::LinearDistance(int system1_id, int system2_id) const
 {
     int system1_index = SystemGraphIndex(m_system_graph, system1_id);
@@ -1091,84 +484,14 @@ std::map<double, System*> Universe::ImmediateNeighbors(int system_id, int empire
     return std::map<double, System*>();
 }
 
-void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
-                              SpecialsFrequency specials_freq, int players, int ai_players, 
-                              const std::vector<PlayerSetupData>& player_setup_data/* = std::vector<PlayerSetupData>()*/)
-{
-#ifdef FREEORION_RELEASE
-    ClockSeed();
-#endif
-
-    // wipe out anything present in the object map
-    for (ObjectMap::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr)
-        delete itr->second;
-    m_objects.clear();
-
-    m_last_allocated_id = -1;
-
-    Logger().debugStream() << "Creating universe with " << size << " stars and " << players << " players.";
-
-    std::vector<int> homeworlds;
-
-    // a grid of ADJACENCY_BOXES x ADJACENCY_BOXES boxes to hold the positions of the systems as they are generated,
-    // in order to ensure that they get spaced out properly
-    AdjacencyGrid adjacency_grid(ADJACENCY_BOXES, std::vector<std::set<System*> >(ADJACENCY_BOXES));
-
-    s_universe_width = std::sqrt(static_cast<double>(size)) * AVG_UNIVERSE_WIDTH;
-
-    std::vector<std::pair<double,double> > positions;
-
-    // generate the stars
-    switch (shape) {
-    case SPIRAL_2:
-    case SPIRAL_3:
-    case SPIRAL_4:
-        SpiralGalaxyCalcPositions(positions, 2 + (shape - SPIRAL_2), size, s_universe_width, s_universe_width);
-        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
-        break;
-    case CLUSTER: {
-        int average_clusters = size / 20; // chosen so that a "typical" size of 100 yields about 5 clusters
-        if (!average_clusters)
-            average_clusters = 2;
-        int clusters = RandSmallInt(average_clusters * 8 / 10, average_clusters * 12 / 10); // +/- 20%
-        ClusterGalaxyCalcPositions(positions, clusters, size, s_universe_width, s_universe_width);
-        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
-        break;
-    }
-    case ELLIPTICAL:
-        EllipticalGalaxyCalcPositions(positions, size, s_universe_width, s_universe_width);
-        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
-        break;
-    case IRREGULAR:
-        GenerateIrregularGalaxy(size, age, adjacency_grid);
-        break;
-	case RING:
-        RingGalaxyCalcPositions(positions, size, s_universe_width, s_universe_width);
-        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
-        break;
-    default:
-        Logger().errorStream() << "Universe::Universe : Unknown galaxy shape: " << shape << ".  Using IRREGULAR as default.";
-        GenerateIrregularGalaxy(size, age, adjacency_grid);
-    }
-
-    PopulateSystems(planet_density, specials_freq);
-    GenerateStarlanes(starlane_freq, adjacency_grid);
-    InitializeSystemGraph();
-    GenerateHomeworlds(players + ai_players, homeworlds);
-    NamePlanets();
-    GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
-
-    ApplyEffects();
-}
-
 int Universe::Insert(UniverseObject* obj)
 {
     int retval = UniverseObject::INVALID_OBJECT_ID;
     if (obj) {
-        if (m_last_allocated_id + 1 < UniverseObject::MAX_ID) {
-            m_objects[++m_last_allocated_id] = obj;
-            obj->SetID(m_last_allocated_id);
-            retval = m_last_allocated_id;
+        if (m_last_allocated_object_id + 1 < UniverseObject::MAX_ID) {
+            m_objects[++m_last_allocated_object_id] = obj;
+            obj->SetID(m_last_allocated_object_id);
+            retval = m_last_allocated_object_id;
         } else { // we'll probably never execute this branch, considering how many IDs are available
             // find a hole in the assigned IDs in which to place the object
             int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
@@ -1182,7 +505,6 @@ int Universe::Insert(UniverseObject* obj)
             }
         }
     }
-
     return retval;
 }
 
@@ -1194,6 +516,41 @@ bool Universe::InsertID(UniverseObject* obj, int id )
         if ( id < UniverseObject::MAX_ID) {
             m_objects[id] = obj;
             obj->SetID(id);
+            retval = true;
+        }
+    }
+    return retval;
+}
+
+int Universe::InsertShipDesign(ShipDesign* ship_design)
+{
+    int retval = UniverseObject::INVALID_OBJECT_ID;
+    if (ship_design) {
+        if (m_last_allocated_design_id + 1 < UniverseObject::MAX_ID) {
+            m_ship_designs[++m_last_allocated_design_id] = ship_design;
+            retval = m_last_allocated_design_id;
+        } else { // we'll probably never execute this branch, considering how many IDs are available
+            // find a hole in the assigned IDs in which to place the object
+            int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
+            for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
+                if (1 < it->first - last_id_seen) {
+                    m_ship_designs[last_id_seen + 1] = ship_design;
+                    retval = last_id_seen + 1;
+                    break;
+                }
+            }
+        }
+    }
+    return retval;
+}
+
+bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id)
+{
+    bool retval = false;
+
+    if (ship_design) {
+        if ( id < UniverseObject::MAX_ID) {
+            m_ship_designs[id] = ship_design;
             retval = true;
         }
     }
@@ -1386,8 +743,935 @@ void Universe::EffectDestroy(int id)
     m_marked_destroyed.insert(id);
 }
 
+bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray) {
+	// list of indices of systems that are accessible from previously visited systems.
+	// when a new system is found to be accessible, it is added to the back of the
+	// list.  the list is iterated through from front to back to find systems
+	// to examine
+	std::list<int> accessibleSystemsList;
+	std::list<int>::iterator sysListIter, sysListEnd;
+	
+	// map using star index number as the key, and also storing the number of starlane
+	// jumps away from system1 a given system is.  this is used to determine if a
+	// system has already been added to the accessibleSystemsList without needing
+	// to iterate through the list.  it also provides some indication of the
+	// current depth of the search, which allows the serch to terminate after searching
+	// to the depth of maxLaneJumps without finding system2
+	// (considered using a vector for this, but felt that for large galaxies, the
+	// size of the vector and the time to intialize would be too much)
+	std::map<int, int> accessibleSystemsMap;
+
+	// system currently being investigated, destination of a starlane origination at curSys
+	int curSys, curLaneDest;
+	// "depth" level in tree of system currently being investigated
+	int curDepth;
+
+	// iterators to set of starlanes, in graph, for the current system	
+	std::set<int>::iterator curSysLanesSetIter, curSysLanesSetEnd;
+	
+	// check for simple cases for quick termination
+	if (system1 == system2) return true; // system is always connected to itself
+	if (0 == maxLaneJumps) return false; // no system is connected to any other system by less than 1 jump
+	if (0 == (laneSetArray[system1]).size()) return false; // no lanes out of start system
+	if (0 == (laneSetArray[system2]).size()) return false; // no lanes into destination system
+	if (system1 >= static_cast<int>(laneSetArray.size()) || system2 >= static_cast<int>(laneSetArray.size())) return false; // out of range
+	if (system1 < 0 || system2 < 0) return false; // out of range
+	
+    // add starting system to list and set of accessible systems
+	accessibleSystemsList.push_back(system1);
+	accessibleSystemsMap.insert(std::pair<int, int>(system1, 0));
+
+	// loop through visited systems
+	sysListIter = accessibleSystemsList.begin();
+	sysListEnd = accessibleSystemsList.end();
+	while (sysListIter != sysListEnd) {
+		curSys = *sysListIter;
+		
+		// check that iteration hasn't reached maxLaneJumps levels deep, which would 
+		// mean that system2 isn't within maxLaneJumps starlane jumps of system1
+		curDepth = (*accessibleSystemsMap.find(curSys)).second;
+
+		if (curDepth >= maxLaneJumps) return false;
+		
+		// get set of starlanes for this system
+		curSysLanesSetIter = (laneSetArray[curSys]).begin();
+		curSysLanesSetEnd = (laneSetArray[curSys]).end();
+		
+		// add starlanes accessible from this system to list and set of accessible starlanes
+		// (and check for the goal starlane)
+		while (curSysLanesSetIter != curSysLanesSetEnd) {
+			curLaneDest = *curSysLanesSetIter;
+		
+			// check if curLaneDest has been added to the map of accessible systems
+			if (0 == accessibleSystemsMap.count(curLaneDest)) {
+				
+				// check for goal
+				if (curLaneDest == system2) return true;
+				
+				// add curLaneDest to accessible systems list and map
+				accessibleSystemsList.push_back(curLaneDest);
+				accessibleSystemsMap.insert(std::pair<int, int>(curLaneDest, curDepth + 1));
+       		}
+		
+			curSysLanesSetIter++;
+		}
+
+		sysListIter++;
+	}	
+	return false; // default
+}
+
+void Universe::InitializeSystemGraph()
+{
+    for (int i = static_cast<int>(boost::num_vertices(m_system_graph)) - 1; i >= 0; --i) {
+        boost::clear_vertex(i, m_system_graph);
+        boost::remove_vertex(i, m_system_graph);
+    }
+
+    std::vector<System*> systems = FindObjects<System>();
+    m_system_distances.resize(systems.size());
+    SystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), m_system_graph);
+
+    EdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_system_graph);
+    typedef boost::graph_traits<SystemGraph>::edge_descriptor EdgeDescriptor;
+
+    std::map<int, int> system_id_graph_index_reverse_lookup_map;    // key is system ID, value is index in m_system_graph of system's vertex
+
+    for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
+        // add a vertex to the graph for this system, and assign it a pointer for its System object
+        boost::add_vertex(m_system_graph);
+        System* system1 = systems[i];
+        pointer_property_map[i] = system1;
+        // add record of index in m_system_graph of this system
+        system_id_graph_index_reverse_lookup_map[system1->ID()] = i;
+    }
+
+    for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
+        System* system1 = systems[i];
+
+        // add edges and edge weights
+        for (System::lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
+            // get id in universe of system at other end of lane
+            int lane_dest_id = it->first;
+
+            // get m_system_graph index for this system
+            int lane_dest_graph_index = system_id_graph_index_reverse_lookup_map[lane_dest_id];
+
+            std::pair<EdgeDescriptor, bool> add_edge_result = boost::add_edge(i, lane_dest_graph_index, m_system_graph);
+            
+            if (it->second) {                               // if this is a wormhole
+                edge_weight_map[add_edge_result.first] = 0.0;
+            } else if (add_edge_result.second) {            // if this is a non-duplicate starlane
+                UniverseObject* system2 = Object(it->first);
+                double x_dist = system2->X() - system1->X();
+                double y_dist = system2->Y() - system1->Y();
+                edge_weight_map[add_edge_result.first] = std::sqrt(x_dist * x_dist + y_dist * y_dist);
+            }
+        }
+
+        // define the straight-line system distances for this system
+        m_system_distances[i].clear();
+        for (int j = 0; j < i; ++j) {
+            UniverseObject* system2 = Object(j);
+            double x_dist = system2->X() - system1->X();
+            double y_dist = system2->Y() - system1->Y();
+            m_system_distances[i].push_back(std::sqrt(x_dist * x_dist + y_dist * y_dist));
+        }
+        m_system_distances[i].push_back(0.0);
+    }
+
+    RebuildEmpireViewSystemGraphs();
+}
+
+double Universe::UniverseWidth()
+{
+    return s_universe_width;
+}
+
+const bool& Universe::InhibitUniverseObjectSignals()
+{
+    return s_inhibit_universe_object_signals;
+}
+
+void Universe::DestroyImpl(int id)
+{
+    UniverseObject* obj = Object(id);
+    if (!obj)
+        return;
+    if (Ship* ship = universe_object_cast<Ship*>(obj)) {
+        // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
+        Fleet* fleet = ship->GetFleet();
+        Delete(id);
+        if (fleet && fleet->NumShips() == 0)
+            Delete(fleet->ID());
+    } else if (Fleet* fleet = universe_object_cast<Fleet*>(obj)) {
+        for (Fleet::iterator it = fleet->begin(); it != fleet->end(); ++it) {
+            Delete(*it);
+        }
+        Delete(id);
+    } else if (Planet* planet = universe_object_cast<Planet*>(obj)) {
+        for (std::set<int>::const_iterator it = planet->Buildings().begin(); it != planet->Buildings().end(); ++it) {
+            Delete (*it);
+        }
+        Delete(id);
+    } else if (universe_object_cast<System*>(obj)) {
+        // unsupported: do nothing
+    } else {
+        Delete(id);
+    }
+}
+
+//////////////////////////////////////////
+//    Server-Only General Functions     //
+//////////////////////////////////////////
+int Universe::GenerateObjectID()
+{
+#ifdef FREEORION_BUILD_SERVER
+    return ++m_last_allocated_object_id;
+#else
+    throw std::runtime_error("Non-server called Universe::GenerateObjectID");
+#endif
+}
+
+int Universe::GenerateDesignID()
+{
+#ifdef FREEORION_BUILD_SERVER
+    return ++m_last_allocated_design_id;
+#else
+    throw std::runtime_error("Non-server called Universe::GenerateDesignID");
+#endif
+}
+
+
+//////////////////////////////////////////
+//  Server-Only Galaxy Setup Functions  //
+//////////////////////////////////////////
+namespace {
+#ifdef FREEORION_BUILD_SERVER
+    const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, s_universe_width]
+    const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, s_universe_width]
+    const double  AVG_UNIVERSE_WIDTH = 1000.0 / std::sqrt(150.0); // so a 150 star universe is 1000 units across
+    const int     ADJACENCY_BOXES = 25;
+    const double  PI = 3.141592653589793;
+    const int     MAX_SYSTEM_ORBITS = 10;   // maximum slots where planets can be, in v0.2
+    SmallIntDistType g_hundred_dist = SmallIntDist(1, 100); // a linear distribution [1, 100] used in most universe generation
+    const int MAX_ATTEMPTS_PLACE_SYSTEM = 100;
+#endif
+
+    double CalcNewPosNearestNeighbour(const std::pair<double, double> &position,const std::vector<std::pair<double, double> > &positions)
+    {
+#ifdef FREEORION_BUILD_SERVER
+        if(positions.size()==0)
+            return 0.0;
+
+        unsigned int j;
+        double lowest_dist=  (positions[0].first  - position.first ) * (positions[0].first  - position.first ) 
+            + (positions[0].second - position.second) * (positions[0].second - position.second),distance=0.0;
+
+        for (j=1; j < positions.size(); ++j){
+            distance =  (positions[j].first  - position.first ) * (positions[j].first  - position.first ) 
+                + (positions[j].second - position.second) * (positions[j].second - position.second);
+            if(lowest_dist>distance)
+                lowest_dist = distance;
+        }
+        return lowest_dist;
+#else
+        throw std::runtime_error("Non-server called CalcNewPosNearestNeighbour; only server should call this while creating the universe");
+#endif
+    }
+
+    void SpiralGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int arms, unsigned int stars, double width, double height)
+    {
+#ifdef FREEORION_BUILD_SERVER
+        double arm_offset     = RandDouble(0.0,2.0*PI);
+        double arm_angle      = 2.0*PI / arms;
+        double arm_spread     = 0.3 * PI / arms;
+        double arm_length     = 1.5 * PI;
+        double center         = 0.25;
+        double x,y;
+
+        int i, attempts;
+
+        GaussianDistType  random_gaussian = GaussianDist(0.0,arm_spread);
+        SmallIntDistType  random_arm      = SmallIntDist(0  ,arms);
+        DoubleDistType    random_angle    = DoubleDist  (0.0,2.0*PI);
+        DoubleDistType    random_radius   = DoubleDist  (0.0,  1.0);
+
+        for (i = 0, attempts = 0; i < static_cast<int>(stars) && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts)
+        {
+            double radius = random_radius();
+
+            if (radius < center) {
+                double angle = random_angle();
+                x = radius * cos( arm_offset + angle );
+                y = radius * sin( arm_offset + angle );
+            } else {
+                double arm    = (double)random_arm() * arm_angle;
+                double angle  = random_gaussian();
+
+                x = radius * cos( arm_offset + arm + angle + radius * arm_length );
+                y = radius * sin( arm_offset + arm + angle + radius * arm_length );
+            }
+
+            x = (x + 1) * width / 2.0;
+            y = (y + 1) * height / 2.0;
+
+            if (x < 0 || width <= x || y < 0 || height <= y)
+                continue;
+
+            // See if new star is too close to any existing star.
+            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
+
+            // If so, we try again.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
+                --i;
+                continue;
+            }
+
+            // Add the new star location.
+            positions.push_back(std::make_pair(x, y));
+
+            // Note that attempts is reset for every star.
+            attempts = 0;
+        }
+#else
+        throw std::runtime_error("Non-server called SpiralGalaxyCalcPositions; only server should call this while creating the universe");
+#endif
+    }
+
+    void EllipticalGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions, unsigned int stars, double width, double height)
+    {
+#ifdef FREEORION_BUILD_SERVER
+        const double ellipse_width_vs_height = RandDouble(0.4, 0.6);
+        const double rotation = RandDouble(0.0, PI),
+            rotation_sin = std::sin(rotation),
+            rotation_cos = std::cos(rotation);
+        const double gap_constant = .95;
+        const double gap_size = 1.0 - gap_constant * gap_constant * gap_constant;
+
+        // Random number generators.
+        DoubleDistType radius_dist = DoubleDist(0.0, gap_constant);
+        DoubleDistType random_angle  = DoubleDist(0.0, 2.0 * PI);
+
+        // Used to give up when failing to place a star too often.
+        int attempts = 0;
+
+        // For each attempt to place a star...
+        for (unsigned int i = 0; i < stars && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts){
+            double radius = radius_dist();
+            // Adjust for bigger density near center and create gap.
+            radius = radius * radius * radius + gap_size;
+            double angle  = random_angle();
+
+            // Rotate for individual angle and apply elliptical shape.
+            double x1 = radius * std::cos(angle);
+            double y1 = radius * std::sin(angle) * ellipse_width_vs_height;
+
+            // Rotate for ellipse angle.
+            double x = x1 * rotation_cos - y1 * rotation_sin;
+            double y = x1 * rotation_sin + y1 * rotation_cos;
+
+            // Move from [-1.0, 1.0] universe coordinates.
+            x = (x + 1.0) * width / 2.0;
+            y = (y + 1.0) * height / 2.0;
+
+            // Discard stars that are outside boundaries (due to possible rounding errors).
+            if (x < 0 || x >= width || y < 0 || y >= height)
+                continue;
+
+            // See if new star is too close to any existing star.
+            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
+
+            // If so, we try again.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
+                --i;
+                continue;
+            }
+
+            // Add the new star location.
+            positions.push_back(std::make_pair(x, y));
+
+            // Note that attempts is reset for every star.
+            attempts = 0;
+        }
+#else
+        throw std::runtime_error("Non-server called EllipticalGalaxyCalcPositions; only server should call this while creating the universe");
+#endif
+    }
+
+    void ClusterGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions, unsigned int clusters, unsigned int stars, double width, double height)
+    {
+#ifdef FREEORION_BUILD_SERVER
+        assert(clusters);
+        assert(stars);
+
+        // probability of systems which don't belong to a cluster
+        const double system_noise = 0.15;
+        double ellipse_width_vs_height = RandDouble(0.2,0.5);
+        // first innermost pair hold cluster position, second innermost pair stores help values for cluster rotation (sin,cos)
+        std::vector<std::pair<std::pair<double,double>,std::pair<double,double> > > clusters_position;
+        unsigned int i,j,attempts;
+
+        DoubleDistType    random_zero_to_one = DoubleDist  (0.0,  1.0);
+        DoubleDistType    random_angle  = DoubleDist  (0.0,2.0*PI);
+
+        for (i=0,attempts=0;i<clusters && static_cast<int>(attempts)<MAX_ATTEMPTS_PLACE_SYSTEM;i++,attempts++)
+        {
+            // prevent cluster position near borders (and on border)
+            double x=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters,
+                y=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters;
+
+
+            // ensure all clusters have a min separation to each other (search isn't opimized, not worth the effort)
+            for (j=0;j<clusters_position.size();j++)
+                if ((clusters_position[j].first.first - x)*(clusters_position[j].first.first - x)+ (clusters_position[j].first.second - y)*(clusters_position[j].first.second - y)
+                    < (2.0/clusters))
+                    break;
+            if (j<clusters_position.size())
+            {
+                i--;
+                continue;
+            }
+
+            attempts=0;
+            double rotation = RandDouble(0.0,PI);
+            clusters_position.push_back(std::pair<std::pair<double,double>,std::pair<double,double> >(std::pair<double,double>(x,y),std::pair<double,double>(sin(rotation),cos(rotation))));
+        }
+
+        for (i=0,attempts=0; i < stars && attempts<100; i++,attempts++ )
+        {
+            double x,y;
+            if (random_zero_to_one()<system_noise)
+            {
+                x = random_zero_to_one() * 2.0 - 1.0;
+                y = random_zero_to_one() * 2.0 - 1.0;
+            }
+            else
+            {
+                short  cluster = i%clusters_position.size();
+                double radius  = random_zero_to_one();
+                double angle   = random_angle();
+                double x1,y1;
+
+                x1 = radius * cos(angle);
+                y1 = radius * sin(angle)*ellipse_width_vs_height;
+
+                x = x1*clusters_position[cluster].second.second + y1*clusters_position[cluster].second.first;
+                y =-x1*clusters_position[cluster].second.first  + y1*clusters_position[cluster].second.second;
+
+                x = x/sqrt((double)clusters) + clusters_position[cluster].first.first;
+                y = y/sqrt((double)clusters) + clusters_position[cluster].first.second;
+            }
+            x = (x+1)*width /2.0;
+            y = (y+1)*height/2.0;
+
+            if (x<0 || width<=x || y<0 || height<=y)
+                continue;
+
+            // See if new star is too close to any existing star.
+            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
+
+            // If so, we try again.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
+                --i;
+                continue;
+            }
+
+            // Add the new star location.
+            positions.push_back(std::make_pair(x, y));
+
+            // Note that attempts is reset for every star.
+            attempts = 0;
+        }
+#else
+        throw std::runtime_error("Non-server called ClusterGalaxyCalcPositions; only server should call this while creating the universe");
+#endif
+    }
+
+    void RingGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int stars, double width, double height)
+    {
+#ifdef FREEORION_BUILD_SERVER
+        double RING_WIDTH = width / 4.0;
+        double RING_RADIUS = (width - RING_WIDTH) / 2.0;
+
+        DoubleDistType   theta_dist = DoubleDist(0.0, 2.0 * PI);
+        GaussianDistType radius_dist = GaussianDist(RING_RADIUS, RING_WIDTH / 3.0);
+
+        for (unsigned int i = 0, attempts = 0; i < stars && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts)
+        {
+            double theta = theta_dist();
+            double radius = radius_dist();
+
+            double x = width / 2.0 + radius * std::cos(theta);
+            double y = height / 2.0 + radius * std::sin(theta);
+
+            if (x < 0 || width <= x || y < 0 || height <= y)
+                continue;
+
+            // See if new star is too close to any existing star.
+            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
+
+            // If so, we try again.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
+                --i;
+                continue;
+            }
+
+            // Add the new star location.
+            positions.push_back(std::make_pair(x, y));
+
+            // Note that attempts is reset for every star.
+            attempts = 0;
+        }
+#else
+        throw std::runtime_error("Non-server called RingGalaxyCalcPositions; only server should call this while creating the universe");
+#endif
+    }
+
+    System* GenerateSystem(Universe &universe, Age age, double x, double y)
+    {
+#ifdef FREEORION_BUILD_SERVER
+        const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
+        const std::vector<std::vector<int> >& universe_age_mod_to_star_type_dist = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
+
+        static std::list<std::string> star_names;
+        if (star_names.empty())
+            LoadSystemNames(star_names);
+
+        // generate new star
+        int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
+        std::list<std::string>::iterator it = star_names.begin();
+        std::advance(it, star_name_idx);
+        std::string star_name(*it);
+        star_names.erase(it);
+
+        // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
+        int idx = 0;
+        int max_roll = 0;
+        for (unsigned int i = 0; i < NUM_STAR_TYPES; ++i) {
+            int roll = g_hundred_dist() + universe_age_mod_to_star_type_dist[age][i] + base_star_type_dist[i];
+            if (max_roll < roll) {
+                max_roll = roll;
+                idx = i;
+            }
+        }
+        System* system = new System(StarType(idx), MAX_SYSTEM_ORBITS, star_name, x, y);
+
+        int new_system_id = universe.Insert(system);
+        if (new_system_id == UniverseObject::INVALID_OBJECT_ID) {
+            throw std::runtime_error("Universe::GenerateIrregularGalaxy() : Attempt to insert system " +
+                                     star_name + " into the object map failed.");
+        }
+        return system;
+#else
+        throw std::runtime_error("Non-server called GenerateSystem; only server should call this while creating the universe");
+#endif
+    }
+
+    void GenerateStarField(Universe &universe, Age age, const std::vector<std::pair<double, double> > &positions, 
+                           Universe::AdjacencyGrid& adjacency_grid, double adjacency_box_size)
+    {
+#ifdef FREEORION_BUILD_SERVER
+        // generate star field
+        for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
+            System* system = GenerateSystem(universe, age, positions[star_cnt].first, positions[star_cnt].second);
+            adjacency_grid[static_cast<int>(system->X() / adjacency_box_size)]
+                [static_cast<int>(system->Y() / adjacency_box_size)].insert(system);
+        }
+#else
+        throw std::runtime_error("Non-server called GenerateStarField; only server should call this while creating the universe");
+#endif
+    }
+
+    void GetNeighbors(double x, double y, const Universe::AdjacencyGrid& adjacency_grid, std::set<System*>& neighbors)
+    {
+#ifdef FREEORION_BUILD_SERVER
+        const double ADJACENCY_BOX_SIZE = Universe::UniverseWidth() / ADJACENCY_BOXES;
+        std::pair<unsigned int, unsigned int> grid_box(static_cast<unsigned int>(x / ADJACENCY_BOX_SIZE),
+                                                       static_cast<unsigned int>(y / ADJACENCY_BOX_SIZE));
+
+        // look in the box into which this system falls, and those boxes immediately around that box
+        neighbors = adjacency_grid[grid_box.first][grid_box.second];
+
+        if (0 < grid_box.first) {
+            if (0 < grid_box.second) {
+                const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second - 1];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+            }
+            const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second];
+            neighbors.insert(grid_square.begin(), grid_square.end());
+            if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
+                const std::set<System*>& grid_square = adjacency_grid[grid_box.first - 1][grid_box.second + 1];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+            }
+        }
+        if (0 < grid_box.second) {
+            const std::set<System*>& grid_square = adjacency_grid[grid_box.first][grid_box.second - 1];
+            neighbors.insert(grid_square.begin(), grid_square.end());
+        }
+        if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
+            const std::set<System*>& grid_square = adjacency_grid[grid_box.first][grid_box.second + 1];
+            neighbors.insert(grid_square.begin(), grid_square.end());
+        }
+
+        if (grid_box.first < adjacency_grid.size() - 1) {
+            if (0 < grid_box.second) {
+                const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second - 1];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+            }
+            const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second];
+            neighbors.insert(grid_square.begin(), grid_square.end());
+            if (grid_box.second < adjacency_grid[grid_box.first].size() - 1) {
+                const std::set<System*>& grid_square = adjacency_grid[grid_box.first + 1][grid_box.second + 1];
+                neighbors.insert(grid_square.begin(), grid_square.end());
+            }
+        }
+#else
+        throw std::runtime_error("Non-server called GetNeighbors; only server should call this while creating the universe");
+#endif
+    }
+}
+
+#ifdef FREEORION_BUILD_SERVER
+namespace Delauney {
+	// simple 2D point.  would have used array of systems, but System class has limits on the range of 
+	// position values that would interfere with the triangulation algorithm (need a single large covering
+	// triangle that overlaps all actual points being triangulated)
+	class DTPoint {
+	public:
+		double x;
+		double y;
+
+		DTPoint(double xp, double yp);
+		DTPoint();
+	};
+	DTPoint::DTPoint() {
+		x = 0;
+		y = 0;
+	};
+	DTPoint::DTPoint(double xp, double yp) {
+		x = xp;
+		y = yp;
+	};
+
+    // simple class for an integer that has an associated "sorting value", so the integer can be stored in
+	// a list sorted by something other than the value of the integer
+	class SortValInt {
+	public:
+		int num;
+		double sortVal;
+		
+		SortValInt(int n, double s);
+	};
+	SortValInt::SortValInt(int n, double s) {
+		num = n;
+		sortVal = s;
+	};
+	
+	// list of three interger array indices, and some additional info about the triangle that the corresponding
+	// points make up, such as the circumcentre and radius, and a function to find if another point is in the
+	// circumcircle
+	class DTTriangle {
+	private:
+		std::vector<int> verts;  // indices of vertices of triangle
+		Delauney::DTPoint centre;  // location of circumcentre of triangle
+		double radius2;  // radius of circumcircle squared
+
+	public:
+		// determines whether a specified point is within the circumcircle of the triangle
+		bool PointInCircumCircle(Delauney::DTPoint &p);
+		
+		const std::vector<int>& getVerts(); // getter
+
+		DTTriangle(int vert1, int vert2, int vert3, std::vector<Delauney::DTPoint> &points);
+		DTTriangle();
+	};
+
+	// determines whether a specified point is within the circumcircle of the triangle
+	bool DTTriangle::PointInCircumCircle(Delauney::DTPoint &p) {
+		double vectX, vectY;
+
+		vectX = p.x - centre.x;
+		vectY = p.y - centre.y;
+
+		if (vectX*vectX + vectY*vectY < radius2)
+			return true;
+		return false;
+	};
+
+	DTTriangle::DTTriangle(int vert1, int vert2, int vert3, std::vector<Delauney::DTPoint> &points) {
+		double a, Sx, Sy, b;
+		double x1, x2, x3, y1, y2, y3;
+
+		if ( vert1 == vert2 || vert1 == vert3 || vert2 == vert3)
+			throw std::runtime_error("Attempted to create Triangle with two of the same vertex indices.");
+
+		verts = std::vector<int>(3);
+
+		// record indices of vertices of triangle
+		verts[0] = vert1;
+		verts[1] = vert2;
+		verts[2] = vert3;
+
+        // extract position info for vertices
+		x1 = points[vert1].x;
+		x2 = points[vert2].x;
+		x3 = points[vert3].x;
+		y1 = points[vert1].y;
+		y2 = points[vert2].y;
+		y3 = points[vert3].y;
+			
+		// calculate circumcircle and circumcentre of triangle
+		a = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
+			
+		Sx = 0.5 * ((x1 * x1 + y1 * y1) * (y2 - y3) +
+			 		(x2 * x2 + y2 * y2) * (y3 - y1) +
+			 		(x3 * x3 + y3 * y3) * (y1 - y2));
+
+		Sy = -0.5* ((x1 * x1 + y1 * y1) * (x2 - x3) +
+					(x2 * x2 + y2 * y2) * (x3 - x1) +
+					(x3 * x3 + y3 * y3) * (x1 - x2));
+
+		b =   (	(x1 * x1 + y1 * y1) * (x2 * y3 - x3 * y2) +
+				(x2 * x2 + y2 * y2) * (x3 * y1 - x1 * y3) +
+				(x3 * x3 + y3 * y3) * (x1 * y2 - x2 * y1));
+			
+		// make sure nothing funky's going on...
+		if (std::abs(a) < 0.01)
+			throw std::runtime_error("Attempted to find circumcircle for a triangle with vertices in a line.");
+					
+		// finish!
+		centre.x = Sx / a;
+		centre.y = Sy / a;
+		radius2 = (Sx*Sx + Sy*Sy)/(a*a) + b/a;
+	};
+
+
+	DTTriangle::DTTriangle() {
+		verts = std::vector<int>(3, 0);
+		centre.x = 0;
+		centre.y = 0;
+		radius2 = 0;
+	};
+
+	const std::vector<int>& DTTriangle::getVerts() {
+		return verts;
+	};
+
+
+    // runs a Delauney Triangulation routine on a set of 2D points extracted from an array of systems
+	// returns the list of triangles produced
+	std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems);
+	
+	// does Delauney Triangulation to generate starlanes
+	std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems) {
+
+		int n, c, theSize, num, num2; // loop counters, storage for retreived size of a vector, temp storage
+		std::list<Delauney::DTTriangle>::iterator itCur, itEnd;
+		std::list<Delauney::SortValInt>::iterator itCur2, itEnd2; 
+		// vector of x and y positions of stars
+		std::vector<Delauney::DTPoint> points;	
+		// pointer to main list of triangles algorithm works with.
+		std::list<Delauney::DTTriangle> *triList;
+		// list of indices in vector of points extracted from removed triangles that need to be retriangulated
+		std::list<Delauney::SortValInt> pointNumList;
+		double vx, vy, mag;  // vector components, magnitude
+	
+		// ensure a useful list of systems was passed...
+		if (systems.empty())
+			throw std::runtime_error("Attempted to run Delauney Triangulation on empty array of systems");
+	
+		// extract systems positions, and store in vector.  Can't use actual systems data since
+		// systems have position limitations which would interfere with algorithm	
+		theSize = static_cast<int>(systems.size());
+		for (n = 0; n < theSize; n++) {		
+			points.push_back(Delauney::DTPoint(systems[n]->X(), systems[n]->Y()));	
+		}
+	
+		// add points for covering triangle.  the point positions should be big enough to form a triangle
+		// that encloses all the systems of the galaxy (or at least one whose circumcircle covers all points)
+		points.push_back(Delauney::DTPoint(-1.0, -1.0));
+        points.push_back(Delauney::DTPoint(2.0 * (Universe::UniverseWidth() + 1.0), -1.0));
+		points.push_back(Delauney::DTPoint(-1.0, 2.0 * (Universe::UniverseWidth() + 1.0)));
+
+		// initialize triList.  algorithm adds and removes triangles from this list, and the resulting 
+		// list is returned (so should be deleted externally)
+		triList = new std::list<Delauney::DTTriangle>;
+		
+		// add last three points into the first triangle, the "covering triangle"
+		theSize = static_cast<int>(points.size());
+		triList->push_front(Delauney::DTTriangle(theSize-1, theSize-2, theSize-3, points));
+	
+		
+		// loop through "real" points (from systems, not the last three added to make the covering triangle)
+		for (n = 0; n < theSize - 3; n++) {
+			pointNumList.clear();
+
+			// check each triangle in list, to see if the new point lies in its circumcircle.  if so, delete
+			// the triangle and add its vertices to a list 
+			itCur = triList->begin();
+			itEnd = triList->end();		
+			while (itCur != itEnd) {
+				// get current triangle
+				Delauney::DTTriangle& tri = *itCur;
+
+				// check if point to be added to triangulation is within the circumcircle for the current triangle
+				if (tri.PointInCircumCircle(points[n])) {
+					// if so, insert the triangles vertices indices into the list.  add in sorted position
+					// based on angle of direction to current point n being inserted.  don't add if doing
+					// so would duplicate an index already in the list
+					for (c = 0; c < 3; c++) {
+						num = (tri.getVerts())[c];  // store "current point"
+						
+						// get sorting value to order points clockwise circumferentially around point n
+						// vector from point n to current point
+						vx = points[num].x - points[n].x;
+						vy = points[num].y - points[n].y;
+						mag = sqrt(vx*vx + vy*vy);
+						// normalize
+						vx /= mag;
+						vy /= mag;
+						// dot product with (0, 1) is vy, magnitude of cross product is vx
+						// this gives a range of "sortValue" from -2 to 2, around the circle
+						if (vx >= 0) mag = vy + 1; else mag = -vy - 1;
+						// sorting value in "mag"
+
+						// iterate through list, finding insert spot and verifying uniqueness (or add if list is empty)
+						itCur2 = pointNumList.begin();
+						itEnd2 = pointNumList.end();
+						if (itCur2 == itEnd2) {
+							// list is empty
+							pointNumList.push_back(Delauney::SortValInt(num, mag));
+						}
+						else {
+							while (itCur2 != itEnd2) {
+								if ((*itCur2).num == num) 
+									break;
+								if ((*itCur2).sortVal > mag) {
+									pointNumList.insert(itCur2, Delauney::SortValInt(num, mag));
+									break;
+								}							
+								itCur2++;
+							}
+							if (itCur2 == itEnd2) {
+								// point wasn't added, so should go at end
+								pointNumList.push_back(Delauney::SortValInt(num, mag));
+							}
+						}
+					} // end for c
+
+					// remove current triangle from list of triangles
+					itCur = triList->erase(itCur);
+				}
+				else {
+					// point not in circumcircle for this triangle
+					// to go next triangle in list
+					++itCur;
+				}
+			} // end while
+
+			// go through list of points, making new triangles out of them
+			itCur2 = pointNumList.begin();
+			itEnd2 = pointNumList.end();
+            assert(itCur2 != itEnd2);
+
+			// add triangle for last and first points and n
+			triList->push_front(Delauney::DTTriangle(n, (pointNumList.front()).num, (pointNumList.back()).num, points));
+			
+			num = (*itCur2).num;
+			++itCur2;
+			while (itCur2 != itEnd2) {
+				num2 = num;				
+                num = (*itCur2).num;
+				
+				triList->push_front(Delauney::DTTriangle(n, num2, num, points));
+                
+				++itCur2;
+			} // end while
+			
+		} // end for		
+		return triList;
+	} // end function
+} // end namespace
+#endif
+void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
+                              SpecialsFrequency specials_freq, int players, int ai_players, 
+                              const std::vector<PlayerSetupData>& player_setup_data/* = std::vector<PlayerSetupData>()*/)
+{
+#ifdef FREEORION_BUILD_SERVER
+#ifdef FREEORION_RELEASE
+    ClockSeed();
+#endif
+
+    // wipe out anything present in the object map
+    for (ObjectMap::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr)
+        delete itr->second;
+    m_objects.clear();
+
+    m_last_allocated_object_id = -1;
+    m_last_allocated_design_id = -1;
+
+    Logger().debugStream() << "Creating universe with " << size << " stars and " << players << " players.";
+
+    std::vector<int> homeworlds;
+
+    // a grid of ADJACENCY_BOXES x ADJACENCY_BOXES boxes to hold the positions of the systems as they are generated,
+    // in order to ensure that they get spaced out properly
+    AdjacencyGrid adjacency_grid(ADJACENCY_BOXES, std::vector<std::set<System*> >(ADJACENCY_BOXES));
+
+    s_universe_width = std::sqrt(static_cast<double>(size)) * AVG_UNIVERSE_WIDTH;
+
+    std::vector<std::pair<double,double> > positions;
+
+    // generate the stars
+    switch (shape) {
+    case SPIRAL_2:
+    case SPIRAL_3:
+    case SPIRAL_4:
+        SpiralGalaxyCalcPositions(positions, 2 + (shape - SPIRAL_2), size, s_universe_width, s_universe_width);
+        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
+        break;
+    case CLUSTER: {
+        int average_clusters = size / 20; // chosen so that a "typical" size of 100 yields about 5 clusters
+        if (!average_clusters)
+            average_clusters = 2;
+        int clusters = RandSmallInt(average_clusters * 8 / 10, average_clusters * 12 / 10); // +/- 20%
+        ClusterGalaxyCalcPositions(positions, clusters, size, s_universe_width, s_universe_width);
+        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
+        break;
+    }
+    case ELLIPTICAL:
+        EllipticalGalaxyCalcPositions(positions, size, s_universe_width, s_universe_width);
+        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
+        break;
+    case IRREGULAR:
+        GenerateIrregularGalaxy(size, age, adjacency_grid);
+        break;
+	case RING:
+        RingGalaxyCalcPositions(positions, size, s_universe_width, s_universe_width);
+        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
+        break;
+    default:
+        Logger().errorStream() << "Universe::Universe : Unknown galaxy shape: " << shape << ".  Using IRREGULAR as default.";
+        GenerateIrregularGalaxy(size, age, adjacency_grid);
+    }
+
+    PopulateSystems(planet_density, specials_freq);
+    GenerateStarlanes(starlane_freq, adjacency_grid);
+    InitializeSystemGraph();
+    GenerateHomeworlds(players + ai_players, homeworlds);
+    NamePlanets();
+    GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
+
+    ApplyEffects();
+#else
+        throw std::runtime_error("Non-server called Universe::CreateUniverse; only server should call this while creating the universe");
+#endif
+}
+
 void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid)
 {
+#ifdef FREEORION_BUILD_SERVER
     std::list<std::string> star_names;
     LoadSystemNames(star_names);
 
@@ -1425,10 +1709,14 @@ void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjace
             }
         }
     }
+#else
+        throw std::runtime_error("Non-server called Universe::GenerateIrregularGalaxy; only server should call this while creating the universe");
+#endif
 }
 
 void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq)
 {
+#ifdef FREEORION_BUILD_SERVER
     std::vector<System*> sys_vec = FindObjects<System>();
 
     if (sys_vec.empty())
@@ -1499,9 +1787,14 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
             system->Insert(planet, orbit);  // add planet to system map
         }
     }
+#else
+        throw std::runtime_error("Non-server called Universe::PopulateSystems; only server should call this while creating the universe");
+#endif
 }
 
-void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid) {
+void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid)
+{
+#ifdef FREEORION_BUILD_SERVER
     if (freq == LANES_NONE)
         return;
 
@@ -1636,94 +1929,14 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
 			laneSetIter++;
 		} // end while
 	} // end for n
-	//Logger().debugStream() << "Done generating starlanes.";
+#else
+        throw std::runtime_error("Non-server called Universe::GenerateStarlanes; only server should call this while creating the universe");
+#endif
 }
 
-// used by GenerateStarlanes.  Determines if system1 and system2 are connected by maxLaneJumps or less edges
-// on graph.  Uses limited-depth breadth first search
-bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray) {
-	// list of indices of systems that are accessible from previously visited systems.
-	// when a new system is found to be accessible, it is added to the back of the
-	// list.  the list is iterated through from front to back to find systems
-	// to examine
-	std::list<int> accessibleSystemsList;
-	std::list<int>::iterator sysListIter, sysListEnd;
-	
-	// map using star index number as the key, and also storing the number of starlane
-	// jumps away from system1 a given system is.  this is used to determine if a
-	// system has already been added to the accessibleSystemsList without needing
-	// to iterate through the list.  it also provides some indication of the
-	// current depth of the search, which allows the serch to terminate after searching
-	// to the depth of maxLaneJumps without finding system2
-	// (considered using a vector for this, but felt that for large galaxies, the
-	// size of the vector and the time to intialize would be too much)
-	std::map<int, int> accessibleSystemsMap;
-
-	// system currently being investigated, destination of a starlane origination at curSys
-	int curSys, curLaneDest;
-	// "depth" level in tree of system currently being investigated
-	int curDepth;
-
-	// iterators to set of starlanes, in graph, for the current system	
-	std::set<int>::iterator curSysLanesSetIter, curSysLanesSetEnd;
-	
-	// check for simple cases for quick termination
-	if (system1 == system2) return true; // system is always connected to itself
-	if (0 == maxLaneJumps) return false; // no system is connected to any other system by less than 1 jump
-	if (0 == (laneSetArray[system1]).size()) return false; // no lanes out of start system
-	if (0 == (laneSetArray[system2]).size()) return false; // no lanes into destination system
-	if (system1 >= static_cast<int>(laneSetArray.size()) || system2 >= static_cast<int>(laneSetArray.size())) return false; // out of range
-	if (system1 < 0 || system2 < 0) return false; // out of range
-	
-    // add starting system to list and set of accessible systems
-	accessibleSystemsList.push_back(system1);
-	accessibleSystemsMap.insert(std::pair<int, int>(system1, 0));
-
-	// loop through visited systems
-	sysListIter = accessibleSystemsList.begin();
-	sysListEnd = accessibleSystemsList.end();
-	while (sysListIter != sysListEnd) {
-		curSys = *sysListIter;
-		
-		// check that iteration hasn't reached maxLaneJumps levels deep, which would 
-		// mean that system2 isn't within maxLaneJumps starlane jumps of system1
-		curDepth = (*accessibleSystemsMap.find(curSys)).second;
-
-		if (curDepth >= maxLaneJumps) return false;
-		
-		// get set of starlanes for this system
-		curSysLanesSetIter = (laneSetArray[curSys]).begin();
-		curSysLanesSetEnd = (laneSetArray[curSys]).end();
-		
-		// add starlanes accessible from this system to list and set of accessible starlanes
-		// (and check for the goal starlane)
-		while (curSysLanesSetIter != curSysLanesSetEnd) {
-			curLaneDest = *curSysLanesSetIter;
-		
-			// check if curLaneDest has been added to the map of accessible systems
-			if (0 == accessibleSystemsMap.count(curLaneDest)) {
-				
-				// check for goal
-				if (curLaneDest == system2) return true;
-				
-				// add curLaneDest to accessible systems list and map
-				accessibleSystemsList.push_back(curLaneDest);
-				accessibleSystemsMap.insert(std::pair<int, int>(curLaneDest, curDepth + 1));
-       		}
-		
-			curSysLanesSetIter++;
-		}
-
-		sysListIter++;
-	}	
-	return false; // default
-}
-
-// Removes lanes from passed graph that are angularly too close to other lanes emanating from the same star
-// Preferentially removes longer lanes in the case of two conficting lanes
-// Ensures that removing a lane does not create any isoalted subgraphs
-void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems) {
-		
+void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems)
+{
+#ifdef FREEORION_BUILD_SERVER
 	// start and end systems of a new lane being considered, and end points of lanes that already exist with that
 	// start at the start or destination of the new lane
 	int curSys, dest1, dest2;
@@ -1890,10 +2103,14 @@ void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vecto
 
 		lanesToRemoveIter++;
 	}
+#else
+        throw std::runtime_error("Non-server called Universe::CullAngularlyTooCloseLanes; only server should call this while creating the universe");
+#endif
 }
 
-// Removes lanes from passed graph that are too long Ensures that removing a lane does not create any isoalted subgraphs
-void Universe::CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems) {
+void Universe::CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems)
+{
+#ifdef FREEORION_BUILD_SERVER
 	// start and end systems of a new lane being considered, and end points of lanes that already exist with that start
 	// at the start or destination of the new lane
 	int curSys, dest;
@@ -1978,12 +2195,14 @@ void Universe::CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> 
 		}	
 		lanesToRemoveIter++;
 	}
+#else
+        throw std::runtime_error("Non-server called Universe::CullTooLongLanes; only server should call this while creating the universe");
+#endif
 }
 
-// Grows trees to connect stars.  Should produce a single, or nearly singly connected graph.  Takes an array of indices
-// of starting systems for the growing trees takes potential lanes as an array of sets for each system, and puts lanes
-// of tree(s) into other array of sets.
-void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray) {
+void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray)
+{
+#ifdef FREEORION_BUILD_SERVER
 	// array to keep track of whether a given system (index #) has been connected to by growing tree algorithm
 	std::vector<int> treeOfSystemArray; // which growing tree a particular system has been assigned to
 	
@@ -2158,73 +2377,15 @@ void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<in
 		treeSysListsMapEnd = treeSysListsMap.end();  // incase deleting or merging trees messed things up
 		if (treeSysListsMapIter == treeSysListsMapEnd)
 			treeSysListsMapIter = treeSysListsMap.begin();
-	}	
-}
-
-void Universe::InitializeSystemGraph()
-{
-    for (int i = static_cast<int>(boost::num_vertices(m_system_graph)) - 1; i >= 0; --i) {
-        boost::clear_vertex(i, m_system_graph);
-        boost::remove_vertex(i, m_system_graph);
     }
-
-    std::vector<System*> systems = FindObjects<System>();
-    m_system_distances.resize(systems.size());
-    SystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), m_system_graph);
-
-    EdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_system_graph);
-    typedef boost::graph_traits<SystemGraph>::edge_descriptor EdgeDescriptor;
-
-    std::map<int, int> system_id_graph_index_reverse_lookup_map;    // key is system ID, value is index in m_system_graph of system's vertex
-
-    for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
-        // add a vertex to the graph for this system, and assign it a pointer for its System object
-        boost::add_vertex(m_system_graph);
-        System* system1 = systems[i];
-        pointer_property_map[i] = system1;
-        // add record of index in m_system_graph of this system
-        system_id_graph_index_reverse_lookup_map[system1->ID()] = i;
-    }
-
-    for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
-        System* system1 = systems[i];
-
-        // add edges and edge weights
-        for (System::lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
-            // get id in universe of system at other end of lane
-            int lane_dest_id = it->first;
-
-            // get m_system_graph index for this system
-            int lane_dest_graph_index = system_id_graph_index_reverse_lookup_map[lane_dest_id];
-
-            std::pair<EdgeDescriptor, bool> add_edge_result = boost::add_edge(i, lane_dest_graph_index, m_system_graph);
-            
-            if (it->second) {                               // if this is a wormhole
-                edge_weight_map[add_edge_result.first] = 0.0;
-            } else if (add_edge_result.second) {            // if this is a non-duplicate starlane
-                UniverseObject* system2 = Object(it->first);
-                double x_dist = system2->X() - system1->X();
-                double y_dist = system2->Y() - system1->Y();
-                edge_weight_map[add_edge_result.first] = std::sqrt(x_dist * x_dist + y_dist * y_dist);
-            }
-        }
-
-        // define the straight-line system distances for this system
-        m_system_distances[i].clear();
-        for (int j = 0; j < i; ++j) {
-            UniverseObject* system2 = Object(j);
-            double x_dist = system2->X() - system1->X();
-            double y_dist = system2->Y() - system1->Y();
-            m_system_distances[i].push_back(std::sqrt(x_dist * x_dist + y_dist * y_dist));
-        }
-        m_system_distances[i].push_back(0.0);
-    }
-
-    RebuildEmpireViewSystemGraphs();
+#else
+        throw std::runtime_error("Non-server called Universe::GrowSpanningTrees; only server should call this while creating the universe");
+#endif
 }
 
 void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
 {
+#ifdef FREEORION_BUILD_SERVER
     homeworlds.clear();
 
     std::vector<System*> sys_vec = FindObjects<System>();
@@ -2282,10 +2443,14 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
 
         homeworlds.push_back(planet_id);
     }
+#else
+        throw std::runtime_error("Non-server called Universe::GenerateHomeworlds; only server should call this while creating the universe");
+#endif
 }
 
 void Universe::NamePlanets()
 {
+#ifdef FREEORION_BUILD_SERVER
     std::vector<System*> sys_vec = FindObjects<System>();
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
@@ -2302,6 +2467,9 @@ void Universe::NamePlanets()
             }
         }
     }
+#else
+        throw std::runtime_error("Non-server called Universe::NamePlanets; only server should call this while creating the universe");
+#endif
 }
 
 void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const std::vector<PlayerSetupData>& player_setup_data)
@@ -2387,71 +2555,76 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         // create the empire's initial ship designs
         // for now, the order that these are created need to match
         // the enums for ship designs in ships.h
-        ShipDesign design;
-        design.name = "Scout";
-        design.attack = 0;
-        design.defense = 1;
-        design.cost = 10;
-        design.speed = 80.0;
-        design.colonize = false;
-        design.empire = empire_id;
-        design.description = "Small and cheap unarmed vessel designed for recon and exploration.";
-        design.graphic = "misc/scout1.png";
+        ShipDesign* design = new ShipDesign();
+        design->name = "Scout";
+        design->attack = 0;
+        design->defense = 1;
+        design->cost = 10;
+        design->speed = 80.0;
+        design->colonize = false;
+        design->empire = empire_id;
+        design->description = "Small and cheap unarmed vessel designed for recon and exploration.";
+        design->graphic = "misc/scout1.png";
+        int scout_design_id = empire->AddShipDesign(design);
+
+        design = new ShipDesign();
+        design->name = "Colony Ship";
+        design->attack = 0;
+        design->defense = 1;
+        design->cost = 50;
+        design->speed = 35.0;
+        design->colonize = true;
+        design->empire = empire_id;
+        design->description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
+        design->graphic = "misc/colony1.png";
+        int colony_ship_design_id = empire->AddShipDesign(design);
+
+        design = new ShipDesign();
+        design->name = "Mark I";
+        design->attack = 2;
+        design->defense = 1;
+        design->cost = 20;
+        design->speed = 50.0;
+        design->colonize = false;
+        design->empire = empire_id;
+        design->description = "Affordable armed patrol frigate.";
+        design->graphic = "misc/mark1.png";
         empire->AddShipDesign(design);
 
-        design.name = "Colony Ship";
-        design.attack = 0;
-        design.defense = 1;
-        design.cost = 50;
-        design.speed = 35.0;
-        design.colonize = true;
-        design.empire = empire_id;
-        design.description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
-        design.graphic = "misc/colony1.png";
+        design = new ShipDesign();
+        design->name = "Mark II";
+        design->attack = 5;
+        design->defense = 2;
+        design->cost = 40;
+        design->speed = 40.0;
+        design->colonize = false;
+        design->empire = empire_id;
+        design->description = "Cruiser with storng defensive and offensive capabilities.";
+        design->graphic = "misc/mark2.png";
         empire->AddShipDesign(design);
 
-        design.name = "Mark I";
-        design.attack = 2;
-        design.defense = 1;
-        design.cost = 20;
-        design.speed = 50.0;
-        design.colonize = false;
-        design.empire = empire_id;
-        design.description = "Affordable armed patrol frigate.";
-        design.graphic = "misc/mark1.png";
+        design = new ShipDesign();
+        design->name = "Mark III";
+        design->attack = 10;
+        design->defense = 3;
+        design->cost = 75;
+        design->speed = 30.0;
+        design->colonize = false;
+        design->empire = empire_id;
+        design->description = "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
+        design->graphic = "misc/mark3.png";
         empire->AddShipDesign(design);
 
-        design.name = "Mark II";
-        design.attack = 5;
-        design.defense = 2;
-        design.cost = 40;
-        design.speed = 40.0;
-        design.colonize = false;
-        design.empire = empire_id;
-        design.description = "Cruiser with storng defensive and offensive capabilities.";
-        design.graphic = "misc/mark2.png";
-        empire->AddShipDesign(design);
-
-        design.name = "Mark III";
-        design.attack = 10;
-        design.defense = 3;
-        design.cost = 75;
-        design.speed = 30.0;
-        design.colonize = false;
-        design.empire = empire_id;
-        design.description = "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
-        design.graphic = "misc/mark3.png";
-        empire->AddShipDesign(design);
-
-        design.name = "Mark IV";
-        design.attack = 15;
-        design.defense = 5;
-        design.cost = 140;
-        design.speed = 25.0;
-        design.colonize = false;
-        design.empire = empire_id;
-        design.description = "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";
-        design.graphic = "misc/mark4.png";
+        design = new ShipDesign();
+        design->name = "Mark IV";
+        design->attack = 15;
+        design->defense = 5;
+        design->cost = 140;
+        design->speed = 25.0;
+        design->colonize = false;
+        design->empire = empire_id;
+        design->description = "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";
+        design->graphic = "misc/mark4.png";
         empire->AddShipDesign(design);
 
         // create the empire's starting fleet
@@ -2461,57 +2634,23 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
         Ship* ship = 0;
 
-        ship = new Ship(empire_id, "Scout");
+        ship = new Ship(empire_id, scout_design_id);
         ship->Rename("Scout");
         int ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
 
-        ship = new Ship(empire_id, "Scout");
+        ship = new Ship(empire_id, scout_design_id);
         ship->Rename("Scout");
         ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
 
-        ship = new Ship(empire_id, "Colony Ship");
+        ship = new Ship(empire_id, colony_ship_design_id);
         ship->Rename("Colony Ship");
         ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
     }
+#else
+        throw std::runtime_error("Non-server called Universe::GenerateEmpires; only server should call this while creating the universe");
 #endif
 }
 
-double Universe::UniverseWidth()
-{ return s_universe_width; }
-
-int Universe::GenerateObjectID()
-{ return ++m_last_allocated_id; }
-
-const bool& Universe::InhibitUniverseObjectSignals()
-{ return s_inhibit_universe_object_signals; }
-
-void Universe::DestroyImpl(int id)
-{
-    UniverseObject* obj = Object(id);
-    if (!obj)
-        return;
-    if (Ship* ship = universe_object_cast<Ship*>(obj)) {
-        // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
-        Fleet* fleet = ship->GetFleet();
-        Delete(id);
-        if (fleet && fleet->NumShips() == 0)
-            Delete(fleet->ID());
-    } else if (Fleet* fleet = universe_object_cast<Fleet*>(obj)) {
-        for (Fleet::iterator it = fleet->begin(); it != fleet->end(); ++it) {
-            Delete(*it);
-        }
-        Delete(id);
-    } else if (Planet* planet = universe_object_cast<Planet*>(obj)) {
-        for (std::set<int>::const_iterator it = planet->Buildings().begin(); it != planet->Buildings().end(); ++it) {
-            Delete (*it);
-        }
-        Delete(id);
-    } else if (universe_object_cast<System*>(obj)) {
-        // unsupported: do nothing
-    } else {
-        Delete(id);
-    }
-}

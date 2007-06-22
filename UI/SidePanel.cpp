@@ -645,35 +645,44 @@ namespace {
     }
 
     Ship* FindColonyShip(int system_id)
-  {
-    const System *system = GetUniverse().Object<const System>(system_id);
-    if(system==0)
-      return 0;
+    {
+        const System *system = GetUniverse().Object<const System>(system_id);
+        if (!system) return 0;
 
-    std::vector<const Fleet*> flt_vec = system->FindObjects<Fleet>();
+        std::vector<const Fleet*> flt_vec = system->FindObjects<Fleet>();
 
-    Ship* ship=0;
 
-    for(unsigned int i=0;i<flt_vec.size();i++)
-      if(flt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != flt_vec[i]->Owners().end())
-      {
-        Ship* s=0;
-        for(Fleet::const_iterator it = flt_vec[i]->begin(); it != flt_vec[i]->end(); ++it)
-          if(   (s=GetUniverse().Object<Ship>(*it))
-             && s->Design()->colonize)
-          {
-            ship = s;
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
 
-            // prefere non moving colony ship
-            if(!flt_vec[i]->Accept(StationaryFleetVisitor(*flt_vec[i]->Owners().begin())))
-              break;
-            return s;
-          }
-      }
+        // check all fleets in this system...
+        for (unsigned int i = 0; i < flt_vec.size(); i++) {
+            // reject fleets not owned by this empire
+            if (flt_vec[i]->Owners().find(empire_id) == flt_vec[i]->Owners().end()) continue;
 
-    return ship;
-  }
+            // reject fleets that are moving
+            if (!flt_vec[i]->Accept(StationaryFleetVisitor(*flt_vec[i]->Owners().begin()))) continue;
+            
+            // check if any of the ship in this fleet is a colony ship
+            for (Fleet::const_iterator it = flt_vec[i]->begin(); it != flt_vec[i]->end(); ++it) {
+                Ship* s = GetUniverse().Object<Ship>(*it);
 
+                if (!s) {
+                    Logger().errorStream() << "coudln't find ship with id: " << *it;
+                    continue;
+                }
+
+                const ShipDesign* design = s->Design();
+
+                if (!design) {
+                    Logger().errorStream() << "coudln't get ship design of ship " << *it << " with design id: " << s->ShipDesignID();
+                    continue;
+                }
+                
+                if (design->colonize) return s;
+            }
+        }
+        return 0;   // no ships found...
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////

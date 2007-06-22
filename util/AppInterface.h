@@ -19,6 +19,9 @@ log4cpp::Category& Logger();
 /** Returns a new object ID from the server */
 int GetNewObjectID();
 
+/** Returns a new object ID from the server */
+int GetNewDesignID();
+
 /** Returns current game turn.  This is >= 1 during a game, BEFORE_FIRST_TURN during galaxy setup, or is
     INVALID_GAME_TURN at other times */
 int CurrentTurn();

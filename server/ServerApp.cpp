@@ -440,6 +440,12 @@ void ServerApp::HandleMessage(const Message& msg)
         break;
     }
 
+    case Message::REQUEST_NEW_DESIGN_ID: {
+        /* get get ID and send back to client, it's waiting for this */
+        m_network_core.SendMessage(DispatchDesignIDMessage(msg.Sender(), GetUniverse().GenerateDesignID()));
+        break;
+    }
+
     case Message::END_GAME: {
         std::map<int, PlayerConnection>::const_iterator it = m_network_core.PlayerConnections().find(msg.Sender());
         if (it != m_network_core.PlayerConnections().end() && it->second.host) {

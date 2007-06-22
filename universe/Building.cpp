@@ -265,7 +265,7 @@ BuildingTypeManager* BuildingTypeManager::s_instance = 0;
 BuildingTypeManager::BuildingTypeManager()
 {
     if (s_instance)
-        throw std::runtime_error("Attempted to create more than one TechManager.");
+        throw std::runtime_error("Attempted to create more than one BuildingTypeManager.");
 
     s_instance = this;
 

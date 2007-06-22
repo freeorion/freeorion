@@ -75,7 +75,7 @@ RenameOrder::RenameOrder() :
     Order(),
     m_object(UniverseObject::INVALID_OBJECT_ID)
 {}
-   
+
 RenameOrder::RenameOrder(int empire, int object, const std::string& name) : 
     Order(empire),
     m_object(object),
@@ -522,10 +522,14 @@ void ResearchQueueOrder::ExecuteImpl() const
         empire->PlaceTechInQueue(GetTech(m_tech_name), m_position);
 }
 
+////////////////////////////////////////////////
+// ProductionQueueOrder
+////////////////////////////////////////////////
 ProductionQueueOrder::ProductionQueueOrder() : 
     Order(),
     m_build_type(INVALID_BUILD_TYPE),
-    m_item(""),
+    m_item_name(""),
+    m_design_id(UniverseObject::INVALID_OBJECT_ID),
     m_number(0),
     m_location(UniverseObject::INVALID_OBJECT_ID),
     m_index(INVALID_INDEX),
@@ -536,18 +540,39 @@ ProductionQueueOrder::ProductionQueueOrder() :
 ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, const std::string& item, int number, int location) :
     Order(empire),
     m_build_type(build_type),
-    m_item(item),
+    m_item_name(item),
+    m_design_id(UniverseObject::INVALID_OBJECT_ID),
     m_number(number),
     m_location(location),
     m_index(INVALID_INDEX),
     m_new_quantity(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
-{}
+{
+    if (build_type == BT_SHIP)
+        throw std::invalid_argument("Attempted to construct a ProductionQueueOrder for a BT_SHIP with a name, not a design id");
+}
+
+ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int design_id, int number, int location) :
+    Order(empire),
+    m_build_type(build_type),
+    m_item_name(""),
+    m_design_id(design_id),
+    m_number(number),
+    m_location(location),
+    m_index(INVALID_INDEX),
+    m_new_quantity(INVALID_QUANTITY),
+    m_new_index(INVALID_INDEX)
+{
+    if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
+        throw std::invalid_argument("Attempted to construct a ProductionQueueOrder for a BT_BUILDING or BT_ORBITAL with a design id, not a name");
+}
+
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy) :
     Order(empire),
     m_build_type(INVALID_BUILD_TYPE),
-    m_item(""),
+    m_item_name(""),
+    m_design_id(UniverseObject::INVALID_OBJECT_ID),
     m_number(0),
     m_location(UniverseObject::INVALID_OBJECT_ID),
     m_index(index),
@@ -558,7 +583,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quanti
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_index) :
     Order(empire),
     m_build_type(INVALID_BUILD_TYPE),
-    m_item(""),
+    m_item_name(""),
+    m_design_id(UniverseObject::INVALID_OBJECT_ID),
     m_number(0),
     m_location(UniverseObject::INVALID_OBJECT_ID),
     m_index(index),
@@ -569,7 +595,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_index)
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index) :
     Order(empire),
     m_build_type(INVALID_BUILD_TYPE),
-    m_item(""),
+    m_item_name(""),
+    m_design_id(UniverseObject::INVALID_OBJECT_ID),
     m_number(0),
     m_location(UniverseObject::INVALID_OBJECT_ID),
     m_index(index),
@@ -582,8 +609,10 @@ void ProductionQueueOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Empire* empire = Empires().Lookup(EmpireID());
-    if (m_build_type != INVALID_BUILD_TYPE)
-        empire->PlaceBuildInQueue(m_build_type, m_item, m_number, m_location);
+    if (m_build_type == BT_BUILDING || m_build_type == BT_ORBITAL)
+        empire->PlaceBuildInQueue(m_build_type, m_item_name, m_number, m_location);
+    else if (m_build_type == BT_SHIP)
+        empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location);
     else if (m_new_quantity != INVALID_QUANTITY)
         empire->SetBuildQuantity(m_index, m_new_quantity);
     else if (m_new_index != INVALID_INDEX)
@@ -592,4 +621,66 @@ void ProductionQueueOrder::ExecuteImpl() const
         empire->RemoveBuildFromQueue(m_index);
     else
         throw std::runtime_error("Malformed ProductionQueueOrder.");
+}
+
+
+
+////////////////////////////////////////////////
+// ShipDesignOrder
+////////////////////////////////////////////////
+//ShipDesign                  m_ship_design;
+//int                         m_design_id;
+//bool                        m_delete_design_from_empire;
+//bool                        m_create_new_design;
+ShipDesignOrder::ShipDesignOrder() :
+    Order(),
+    m_ship_design(),
+    m_delete_design_from_empire(false),
+    m_create_new_design(false)
+{}
+
+ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember) :
+    Order(),
+    m_ship_design(),
+    m_delete_design_from_empire(false),
+    m_create_new_design(false)
+{
+}
+
+ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy) :
+    Order(),
+    m_ship_design(),
+    m_delete_design_from_empire(true),
+    m_create_new_design(false)
+{
+}
+
+ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design) :
+    Order(),
+    m_ship_design(ship_design),
+    m_delete_design_from_empire(false),
+    m_create_new_design(true)
+{
+}
+
+void ShipDesignOrder::ExecuteImpl() const
+{
+    const Empire* empire = Empires().Lookup(EmpireID());
+    if (!empire)
+        throw std::runtime_error("Invalid empire ID specified for order.");
+
+    // verify that design of given id is visible to this empire
+
+    // 1st: check if empire is already remembering the design
+    
+    
+    /*Universe& universe = GetUniverse();    
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+        if (Universe::ALL_OBJECTS_VISIBLE ||
+            it->second->GetVisibility(s_encoding_empire) != UniverseObject::NO_VISIBILITY ||
+            universe_object_cast<System*>(it->second))
+        {
+            objects.insert(*it);
+        }
+    }*/
 }

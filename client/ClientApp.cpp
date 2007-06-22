@@ -128,6 +128,20 @@ int ClientApp::GetNewObjectID()
     return new_id;
 }
 
+int ClientApp::GetNewDesignID()
+{
+    int new_id = UniverseObject::INVALID_OBJECT_ID; 
+
+    // ask the server for a design ID. This is a blocking method and can timeout without a valid ID
+    Message msg;
+    s_app->m_network_core.SendSynchronousMessage( RequestNewDesignIDMessage( s_app->m_player_id ), msg );
+
+    if (msg.GetText().length()>0)
+      new_id = boost::lexical_cast<int>(msg.GetText());
+
+    return new_id;
+}
+
 ClientApp* ClientApp::GetApp()
 {
     return s_app;

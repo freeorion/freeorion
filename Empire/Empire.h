@@ -95,10 +95,14 @@ struct ProductionQueue
     struct ProductionItem
     {
         ProductionItem(); ///< default ctor.
-        ProductionItem(BuildType build_type_, std::string name_); ///< basic ctor.
+        ProductionItem(BuildType build_type_, std::string name_);   ///< basic ctor for BuildTypes that use std::string to identify specific items (BuildingTypes)
+        ProductionItem(BuildType build_type_, int design_id_);      ///< basic ctor for BuildTypes that use int to indentify the design of the item (ShipDesigns)
 
         BuildType   build_type;
+
+        // only one of these may be valid, depending on BuildType
         std::string name;
+        int         design_id;
 
     private:
         friend class boost::serialization::access;
@@ -112,6 +116,7 @@ struct ProductionQueue
         Element(); ///< default ctor.
         Element(ProductionItem item_, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_); ///< basic ctor.
+        Element(BuildType build_type, int design_id, int ordered_, int remaining_, int location_); ///< basic ctor.
 
         ProductionItem item;
         int            ordered;                 ///< how many of item to produce
@@ -223,11 +228,11 @@ public:
     friend class EmpireManager;
 
     /** \name Iterator Types */ //@{
-    typedef std::set<std::string>::const_iterator             TechItr;
-    typedef std::set<std::string>::const_iterator             BuildingTypeItr;
-    typedef std::set<int>::const_iterator                     SystemIDItr;
-    typedef std::map<std::string, ShipDesign>::const_iterator ShipDesignItr;
-    typedef std::list<SitRepEntry*>::const_iterator           SitRepItr;
+    typedef std::set<std::string>::const_iterator   TechItr;
+    typedef std::set<std::string>::const_iterator   BuildingTypeItr;
+    typedef std::set<int>::const_iterator           SystemIDItr;
+    typedef std::set<int>::const_iterator           ShipDesignItr;
+    typedef std::list<SitRepEntry*>::const_iterator SitRepItr;
     //@}
 
     /** \name Constructors */ //@{
@@ -263,9 +268,6 @@ public:
     /// Returns the numeric ID of the empire's capitol
     int CapitolID() const;
 
-    /// Returns the ship design with the requested name, or 0 if none exists.
-    const ShipDesign* GetShipDesign(const std::string& name) const;
-
     /// Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     bool ResearchableTech(const std::string& name) const;
 
@@ -288,17 +290,17 @@ public:
     /// Returns the set of all available building types.
     const std::set<std::string>& AvailableBuildingTypes() const;
 
-    /// Returns true if the given building type is known to this empire, false if it is not.
+    /// Returns true if the given building type is known to this empire, false if it is not
     bool BuildingTypeAvailable(const std::string& name) const;
 
-    /// Returns the set of all ship designs of this empire
-    const std::map<std::string, ShipDesign>& ShipDesigns() const;
+    /// Returns the set of all ship design ids of this empire
+    const std::set<int>& ShipDesigns() const;
 
-    /// Returns the set of ship designs of this empire that the empire can actually build
-    std::map<std::string, ShipDesign> AvailableShipDesigns() const;
+    /// Returns the set of ship design ids of this empire that the empire can actually build
+    std::set<int> AvailableShipDesigns() const;
 
-    /// Returns true iff this ship design can be built by this empire
-    bool ShipDesignAvailable(const std::string& name) const;
+    /// Returns true iff this ship design can be built by this empire.  If no such ship design exists, returns false
+    bool ShipDesignAvailable(int ship_design_id) const;
 
     /// Returns the queue of items being or queued to be produced.
     const ProductionQueue& GetProductionQueue() const;
@@ -311,8 +313,22 @@ public:
         item is unknown, unavailable, or invalid. */
     std::pair<double, int> ProductionCostAndTime(BuildType build_type, std::string name) const;
 
+    /** Returns the cost per turn and the number of turns required to produce the indicated item, or (-1.0, -1) if the
+        item is unknown, unavailable, or invalid. */
+    std::pair<double, int> ProductionCostAndTime(BuildType build_type, int design_id = UniverseObject::INVALID_OBJECT_ID) const;
+
+    /** Returns the cost per turn and the number of turns required to produce the indicated item, or (-1.0, -1) if the
+        item is unknown, unavailable, or invalid. */
+    std::pair<double, int> ProductionCostAndTime(const ProductionQueue::ProductionItem& item) const;
+
     /** Returns true iff this empire can produce the specified item at the specified location. */
     bool BuildableItem(BuildType build_type, std::string name, int location) const;
+
+    /** Returns true iff this empire can produce the specified item at the specified location. */
+    bool BuildableItem(BuildType build_type, int design_id, int location) const;
+
+    /** Returns true iff this empire can produce the specified item at the specified location. */
+    bool BuildableItem(const ProductionQueue::ProductionItem& item, int location) const;
 
     /// Returns true if the given item is in the appropriate list, false if it is not.
     bool HasExploredSystem(int ID) const;
@@ -369,6 +385,14 @@ public:
         queue.size() <= pos, the build is placed at the end of the queue. */
     void PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos = -1);
 
+    /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
+        queue.size() <= pos, the build is placed at the end of the queue. */
+    void PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos = -1);
+
+    /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
+        queue.size() <= pos, the build is placed at the end of the queue. */
+    void PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
+
     /// Changes the remaining number to build for queue item \a index to \a quantity
     void SetBuildQuantity(int index, int quantity);
 
@@ -395,8 +419,11 @@ public:
     /// Inserts the given ID into the Empire's list of explored systems.
     void AddExploredSystem(int ID);
 
-    /// inserts a copy of the given design into the empire's design list
-    void AddShipDesign(const ShipDesign& design);
+    /// inserts given design id into the empire's set of designs
+    void AddShipDesign(int ship_design_id);
+
+    /// inserts given ShipDesign into the Universe, adds the design's id to the Empire's set of ids, and returns the new design's id, which is UniverseObject::INVALID_OBJECT_ID on failure.  If successful, universe takes ownership of passed ShipDesign.
+    int AddShipDesign(ShipDesign* ship_design);
 
     /** Inserts the a pointer to given SitRep entry into the empire's sitrep list.
      *  \warning When you call this method, you are transferring ownership
@@ -539,8 +566,8 @@ private:
     /// systems you've explored
     std::set<int> m_explored_systems;
 
-    /// The Empire's ship designs
-    std::map<std::string, ShipDesign> m_ship_designs;
+    /// The Empire's ship designs, indexed by design id
+    std::set<int> m_ship_designs;
 
     /// The Empire's sitrep entries
     std::list<SitRepEntry*> m_sitrep_entries;
@@ -604,7 +631,8 @@ template <class Archive>
 void ProductionQueue::ProductionItem::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(build_type)
-        & BOOST_SERIALIZATION_NVP(name);
+        & BOOST_SERIALIZATION_NVP(name)
+        & BOOST_SERIALIZATION_NVP(design_id);
 }
 
 template <class Archive>

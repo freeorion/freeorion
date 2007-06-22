@@ -111,7 +111,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Holds all FreeOrion building types.  Techs may be looked up by name. */
+/** Holds all FreeOrion building types.  Types may be looked up by name. */
 class BuildingTypeManager
 {
 public:
@@ -121,10 +121,10 @@ public:
     /** returns the building type with the name \a name; you should use the free function GetBuildingType() instead */
     const BuildingType* GetBuildingType(const std::string& name) const;
 
-    /** iterator to the first tech */
+    /** iterator to the first building type */
     iterator begin() const;
 
-    /** iterator to the last + 1th tech */
+    /** iterator to the last + 1th building type */
     iterator end() const;
 
     /** returns the instance of this singleton class; you should use the free function GetBuildingTypeManager() instead */

@@ -61,12 +61,14 @@ class System;
 class Empire;
 struct UniverseObjectVisitor;
 class XMLElement;
+struct ShipDesign;
 
 class Universe
 {
 protected:
-    typedef std::map<int, UniverseObject*> ObjectMap;           ///< container type used to hold the objects in the universe; keyed by ID number
-    typedef std::map<int, std::set<int> > ObjectKnowledgeMap;   ///< container type used to hold sets of IDs of Empires which known information about an object (or deleted object); keyed by object ID number
+    typedef std::map<int, UniverseObject*>  ObjectMap;          ///< container type used to hold the objects in the universe; keyed by ID number
+    typedef std::map<int, std::set<int> >   ObjectKnowledgeMap; ///< container type used to hold sets of IDs of Empires which known information about an object (or deleted object); keyed by object ID number
+    typedef std::map<int, ShipDesign*>      ShipDesignMap;      ///< container type used to hold ShipDesigns created by players, keyed by design id number
 
 public:
     /** Set to true to make everything visible for everyone. Useful for debugging. */
@@ -81,6 +83,8 @@ public:
 
     typedef ObjectMap::const_iterator            const_iterator;   ///< a const_iterator for sequences over the objects in the universe
     typedef ObjectMap::iterator                  iterator;         ///< an iterator for sequences over the objects in the universe
+
+    typedef ShipDesignMap::const_iterator        ship_design_iterator;  ///< const iterator over ship designs created by players that are known by this client
 
     typedef std::vector<const UniverseObject*>   ConstObjectVec;   ///< the return type of FindObjects()
     typedef std::vector<UniverseObject*>         ObjectVec;        ///< the return type of the non-const FindObjects()
@@ -131,9 +135,14 @@ public:
 
     const UniverseObject* DestroyedObject(int id) const;          ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
     
-    const_iterator beginDestroyed() const  {return m_destroyed_objects.begin();}   ///< returns the begin const_iterator for the destroyed objects from the universe
-    const_iterator endDestroyed() const    {return m_destroyed_objects.end();}     ///< returns the end const_iterator for the destroyed objects from the universe
+    const_iterator beginDestroyed() const  {return m_destroyed_objects.begin();}    ///< returns the begin const_iterator for the destroyed objects from the universe
+    const_iterator endDestroyed() const    {return m_destroyed_objects.end();}      ///< returns the end const_iterator for the destroyed objects from the universe
 
+
+    const ShipDesign* GetShipDesign(int ship_design_id) const;                      ///< returns the ship design with id \a ship_design id, or 0 if non exists
+
+    ship_design_iterator beginShipDesigns() const   {return m_ship_designs.begin();}    ///< returns the begin iterator for ship designs
+    ship_design_iterator endShipDesigns() const     {return m_ship_designs.end();}      ///< returns the end iterator for ship designs
 
     double LinearDistance(int system1_id, int system2_id) const; ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
@@ -179,11 +188,19 @@ public:
         passing it to Insert().*/
     int               Insert(UniverseObject* obj);
 
-    /** inserts object \a obj of given ID into the universe; returns true on proper insert , or false on failure.
+    /** inserts object \a obj of given ID into the universe; returns true on proper insert, or false on failure.
         \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
         passing it to InsertID().
         Useful mostly for times when ID needs to be consistant on client and server*/
-    bool              InsertID(UniverseObject* obj, int id );
+    bool              InsertID(UniverseObject* obj, int id);
+
+    /** Inserts \a ship_design into the universe; returns the ship design ID assigned to it, or -1 on failure.
+        \note Unvierse gains ownership of \a ship_design once inserted. */
+    int               InsertShipDesign(ShipDesign* ship_design);
+
+    /** Inserts \a ship_design into the universe with given \a id;  returns true on success, or false on failure.
+        \note Unvierse gains ownership of \a ship_design once inserted. */
+    bool              InsertShipDesignID(ShipDesign* ship_design, int id);
 
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
     void              CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
@@ -213,6 +230,8 @@ public:
     static double UniverseWidth();
 
     int GenerateObjectID();  ///< generates an object ID for a future object. Usually used by the server to service new ID requests
+
+    int GenerateDesignID();  ///< generates adesign ID for a new (ship) design. Usually used by the server to service new ID requests
 
     typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
 
@@ -273,14 +292,21 @@ protected:
 
     void DestroyImpl(int id);
 
-    ObjectMap m_objects;                                    ///< note that for the system graph algorithms to work more easily, the first N elements should be the N systems
+    ObjectMap m_objects;                                    ///< UniverseObjects in the universe
+
     ObjectMap m_destroyed_objects;                          ///< objects that have been destroyed from the universe.  for the server: all of them;  for clients, only those that the local client knows about, not including previously-seen objects that the client no longer can see
     ObjectKnowledgeMap m_destroyed_object_knowers;          ///< keyed by (destroyed) object ID, map of sets of Empires' IDs that know the objects have been destroyed (ie. could see the object when it was destroyed)
+
+    ShipDesignMap m_ship_designs;                           ///< ship designs in the universe
+
     DistanceMatrix m_system_distances;                      ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
     SystemGraph m_system_graph;                             ///< a graph in which the systems are vertices and the starlanes are edges
     EmpireViewSystemGraphMap m_empire_system_graph_views;   ///< a map of empire IDs to the views of the system graph by those empires
-    int m_last_allocated_id;
-    std::set<int> m_marked_destroyed;
+
+    int m_last_allocated_object_id;
+    int m_last_allocated_design_id;
+
+    std::set<int> m_marked_destroyed;                       ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object
 
     static double s_universe_width;
 
@@ -312,11 +338,36 @@ void Universe::serialize(Archive& ar, const unsigned int version)
             }
         }
     }
+    ShipDesignMap ship_designs;
+    if (Archive::is_saving::value) {
+        if (s_encoding_empire != ALL_EMPIRES) {
+            // add all ship designs of ships this empire knows about -> "objects" from above, not "m_objects"
+            for (ObjectMap::const_iterator it = objects.begin(); it != objects.end(); ++it) {
+                Ship* ship = universe_object_cast<Ship*>(it->second);
+                if (ship) {
+                    int design_id = ship->ShipDesignID();
+                    if (design_id != UniverseObject::INVALID_OBJECT_ID)
+                        ship_designs[design_id] = m_ship_designs[design_id];
+                }
+            }
+
+            // add all ship designs owned by this empire
+            Empire* empire = Empires().Lookup(s_encoding_empire);
+            for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
+                ship_designs[*it] = m_ship_designs[*it];
+            }
+        } else {
+            ship_designs = m_ship_designs;
+        }
+    }
     ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
         & BOOST_SERIALIZATION_NVP(objects)
-        & BOOST_SERIALIZATION_NVP(m_last_allocated_id);
+        & BOOST_SERIALIZATION_NVP(ship_designs)
+        & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id)
+        & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
     if (Archive::is_loading::value) {
         m_objects = objects;
+        m_ship_designs = ship_designs;
         InitializeSystemGraph();
     }
 }

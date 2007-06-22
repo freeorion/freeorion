@@ -57,6 +57,17 @@ int GetNewObjectID()
 #endif
 }
 
+int GetNewDesignID()
+{
+#ifdef FREEORION_BUILD_SERVER
+    return GetUniverse().GenerateDesignID();
+#elif defined(FREEORION_BUILD_UTIL)
+    return UniverseObject::INVALID_OBJECT_ID;
+#else
+    return ClientApp::GetApp()->GetNewDesignID();
+#endif
+}
+
 int CurrentTurn()
 {
 #ifdef FREEORION_BUILD_SERVER

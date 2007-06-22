@@ -87,6 +87,8 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::PLAYER_EXIT)
     GG_ENUM_MAP_INSERT(Message::REQUEST_NEW_OBJECT_ID)
     GG_ENUM_MAP_INSERT(Message::DISPATCH_NEW_OBJECT_ID)
+    GG_ENUM_MAP_INSERT(Message::REQUEST_NEW_DESIGN_ID)
+    GG_ENUM_MAP_INSERT(Message::DISPATCH_NEW_DESIGN_ID)
     GG_ENUM_MAP_INSERT(Message::END_GAME)
     GG_ENUM_MAP_END
 }
@@ -416,6 +418,16 @@ Message RequestNewObjectIDMessage(int sender)
 Message DispatchObjectIDMessage(int player_id, int new_id)
 {
     return Message(Message::DISPATCH_NEW_OBJECT_ID, -1, player_id, Message::CLIENT_SYNCHRONOUS_RESPONSE, boost::lexical_cast<std::string>(new_id));
+}
+
+Message RequestNewDesignIDMessage(int sender)
+{
+    return Message(Message::REQUEST_NEW_DESIGN_ID, sender, -1, Message::CORE, "", Message::DISPATCH_NEW_DESIGN_ID);
+}
+
+Message DispatchDesignIDMessage(int player_id, int new_id)
+{
+    return Message(Message::DISPATCH_NEW_DESIGN_ID, -1, player_id, Message::CLIENT_SYNCHRONOUS_RESPONSE, boost::lexical_cast<std::string>(new_id));
 }
 
 Message HostSaveGameMessage(int sender, const std::string& filename)

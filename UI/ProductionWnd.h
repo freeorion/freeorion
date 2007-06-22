@@ -44,6 +44,7 @@ private:
     void UpdateQueue();     ///< Clears and repopulates queue list with listitems corresponding to contents of empire's production queue
     void ResetInfoPanel();  ///< Updates production summary at top left of production screen, and signals that the empire's minerals resource pool has changed (propegates to the mapwnd to update indicator)
     void AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location);
+    void AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location);
     void ChangeBuildQuantitySlot(int queue_idx, int quantity);
     void QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row);
     void QueueItemClickedSlot(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);

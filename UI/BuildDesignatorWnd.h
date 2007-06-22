@@ -13,14 +13,10 @@ class BuildDesignatorWnd : public GG::Wnd
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (BuildType, const std::string&, int, int)> AddBuildToQueueSignalType; ///< emitted when the indicated build is indicated by the user
+    typedef boost::signal<void (BuildType, const std::string&, int, int)> AddNamedBuildToQueueSignalType; ///< emitted when the indicated named build is indicated by the user
+    typedef boost::signal<void (BuildType, int, int, int)> AddIDedBuildToQueueSignalType; ///< emitted when the indicated id'd build is indicated by the user
     typedef boost::signal<void (int, int)> BuildQuantityChangedSignalType; ///< emitted when the quantity of items in a single build queue item is changed by the user
     typedef boost::signal<void (int)> SystemSelectedSignalType; ///< emitted when system selection is required.
-    //@}
-
-    /** \name Slot Types */ //@{
-    typedef AddBuildToQueueSignalType::slot_type AddBuildToQueueSlotType; ///< type of functor(s) invoked on a BuildPickedSignalType
-    typedef BuildQuantityChangedSignalType::slot_type BuildQuantityChangedSlotType; ///< type of functor(s) invoked on a BuildQuantityChangedSignalType
     //@}
 
     /** \name Structors */ //@{
@@ -58,7 +54,8 @@ public:
     void ToggleAvailabilitly(bool available);
     //@}
 
-    mutable AddBuildToQueueSignalType AddBuildToQueueSignal;
+    mutable AddNamedBuildToQueueSignalType AddNamedBuildToQueueSignal;
+    mutable AddIDedBuildToQueueSignalType AddIDedBuildToQueueSignal;
     mutable BuildQuantityChangedSignalType BuildQuantityChangedSignal;
     mutable SystemSelectedSignalType SystemSelectedSignal;
 
@@ -67,6 +64,7 @@ private:
     class BuildSelector;
 
     void BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build);
+    void BuildItemRequested(BuildType build_type, int design_id, int num_to_build);
     void BuildQuantityChanged(int queue_idx, int quantity);
     void SelectDefaultPlanet(int system);
 

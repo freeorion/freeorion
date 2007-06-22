@@ -15,11 +15,12 @@ class Ship : public UniverseObject
 public:
     /** \name Structors */ //@{
     Ship(); ///< default ctor
-    Ship(int empire_id, const std::string& design_name); ///< general ctor taking just the ship's empire and design name; from this the design can be looked up and used to create the ship
+    Ship(int empire_id, int design_id);             ///< general ctor taking ship's empire and design id; from this the design can be looked up and used to create the ship
     //@}
 
     /** \name Accessors */ //@{
     const  ShipDesign* Design() const; ///< returns the design of the ship, containing engine type, weapons, etc.
+    int    ShipDesignID() const;       ///< returns the design id of the ship
     int    FleetID() const;            ///< returns the ID of the fleet the ship is residing in
     Fleet* GetFleet() const;           ///< returns the ID of the fleet the ship is residing in
 
@@ -39,7 +40,7 @@ public:
     //@}
 
 private:
-    std::string m_design_name;
+    int         m_design_id;
     int         m_fleet_id;
 
     friend class boost::serialization::access;
@@ -52,7 +53,7 @@ template <class Archive>
 void Ship::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(m_design_name)
+        & BOOST_SERIALIZATION_NVP(m_design_id)
         & BOOST_SERIALIZATION_NVP(m_fleet_id);
 }
 
