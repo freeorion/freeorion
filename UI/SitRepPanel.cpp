@@ -46,10 +46,13 @@ void SitRepPanel::KeyPress (GG::Key key, Uint32 key_mods)
 
 void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
+    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
+
     CUIWnd::SizeMove(ul, lr);
     m_sitreps_lb->SizeMove(GG::Pt(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y),
                            GG::Pt(ClientWidth() - SITREP_LB_MARGIN_X, ClientHeight() - SITREP_LB_MARGIN_Y));
-    Update();
+    if (Visible() && old_size != GG::Wnd::Size())
+        Update();
 }
 
 void SitRepPanel::OnClose()

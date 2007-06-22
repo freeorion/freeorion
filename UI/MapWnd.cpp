@@ -664,8 +664,8 @@ void MapWnd::InitTurn(int turn_number)
     assert(empire);
     m_sitrep_panel->Update();
     // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
-    // I am sick of dealing with it, so I'm forcing a resize in order to force it to behave.
-    m_sitrep_panel->Resize(m_sitrep_panel->Size());
+    // I am sick of dealing with it, so I'm forcing an update in order to force it to behave.
+    m_sitrep_panel->Update();
     if (empire->NumSitRepEntries())
         m_sitrep_panel->Show();
     else
@@ -1544,9 +1544,11 @@ bool MapWnd::ToggleSitRep()
 {
     m_projected_fleet_lines = MovementLineData();
     if (m_sitrep_panel->Visible()) {
+        Logger().debugStream() << "sitrep visible";
         DetachChild(m_sitrep_panel);
         m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
     } else {
+        Logger().debugStream() << "sitrep not visible";
         // hide other "competing" windows
         m_research_wnd->Hide();
         HumanClientApp::GetApp()->MoveDown(m_research_wnd);
