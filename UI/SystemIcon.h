@@ -48,6 +48,7 @@ public:
     //! \name Accessors //!@{
     const System&      GetSystem() const;
     const FleetButton* GetFleetButton(Fleet* fleet) const;
+    virtual bool       InWindow(const GG::Pt& pt) const;    //!< Overrides GG::Wnd::InWindow. Checks to see if point lies inside in-system fleet buttons before checking main InWindow method.
     //!@}
 
     //! \name Mutators //!@{

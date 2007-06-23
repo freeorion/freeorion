@@ -349,3 +349,14 @@ void SystemIcon::FleetButtonClickedFunctor::operator()()
 {
     m_system_icon.FleetButtonClickedSignal(m_fleet_btn);
 }
+
+bool SystemIcon::InWindow(const GG::Pt& pt) const
+{
+    // Before we blindly check our bounding rect, make sure it doesn't fall in any of our fleets.
+    for (std::map<int, FleetButton*>::const_iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
+        if (it->second->InWindow(pt))
+            return true;
+    }
+
+    return Wnd::InWindow(pt);
+}
