@@ -158,7 +158,6 @@ namespace {
         m_partially_complete_turn(partially_complete_turn)
     {
         const int MARGIN = 2;
-        const int WIDTH = w - 6;    // 6 pixels accounts for border
 
         const int FONT_PTS = ClientUI::Pts();
         const int METER_HEIGHT = FONT_PTS;

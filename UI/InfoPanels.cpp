@@ -28,11 +28,11 @@ std::map<int, bool> PopulationPanel::s_expanded_map = std::map<int, bool>();
 PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     Wnd(0, 0, w, ClientUI::Pts()*4/3, GG::CLICKABLE),
     m_popcenter_id(obj.ID()),
-    m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE)),
     m_pop_stat(0),
     m_health_stat(0),
     m_pop_meter_bar(0),
-    m_health_meter_bar(0)
+    m_health_meter_bar(0),
+    m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE))
 {
     const PopCenter* pop = dynamic_cast<const PopCenter*>(&obj);
     if (!pop)
@@ -198,8 +198,8 @@ void PopulationPanel::Render()
     // draw details depending on state of ownership and expanded / collapsed status
     
     // determine ownership
-    const UniverseObject* obj = GetUniverse().Object(m_popcenter_id);
-    /*if(obj->Owners().empty()) 
+    /*const UniverseObject* obj = GetUniverse().Object(m_popcenter_id);
+    if(obj->Owners().empty()) 
         // uninhabited
     else
     {
@@ -228,7 +228,7 @@ void PopulationPanel::Update()
             owner = OS_SELF; // inhabited by this empire (and possibly other empires)
     }
 
-    if (owner = OS_SELF) {
+    if ((owner = OS_SELF)) {
         // mousover text
         m_pop_stat->SetValue(pop->PopPoints());
         std::string text = StatisticIcon::DoubleToString(pop->PopPoints(), 3, false, false) +
@@ -287,12 +287,12 @@ std::map<int, bool> ResourcePanel::s_expanded_map = std::map<int, bool>();
 ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     Wnd(0, 0, w, ClientUI::Pts()*9, GG::CLICKABLE),
     m_rescenter_id(obj.ID()),
-    m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE)),
     m_farming_stat(0), m_mining_stat(0), m_industry_stat(0),
     m_research_stat(0), m_trade_stat(0), m_construction_stat(0),
     m_farming_meter_bar(0), m_mining_meter_bar(0), m_industry_meter_bar(0),
     m_research_meter_bar(0), m_trade_meter_bar(0), m_construction_meter_bar(0),
-    m_primary_focus_drop(0), m_secondary_focus_drop(0)
+    m_primary_focus_drop(0), m_secondary_focus_drop(0),
+    m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE))
 {
     const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(&obj);
     if (!res)
@@ -690,8 +690,8 @@ void ResourcePanel::Render()
     // draw details depending on state of ownership and expanded / collapsed status
     
     // determine ownership
-    const UniverseObject* obj = GetUniverse().Object(m_rescenter_id);
-    /*if(obj->Owners().empty()) 
+    /*const UniverseObject* obj = GetUniverse().Object(m_rescenter_id);
+    if(obj->Owners().empty()) 
         // uninhabited
     else
     {
@@ -769,6 +769,8 @@ void ResourcePanel::Update()
         m_primary_focus_drop->Select(4);  break;
     case FOCUS_TRADE:
         m_primary_focus_drop->Select(5);  break;
+    default:
+        throw std::runtime_error("ResourcePanel::Update() : Attempted to set an illegal primary Focus.");
     }
     
     switch (res->SecondaryFocus())
@@ -785,6 +787,8 @@ void ResourcePanel::Update()
         m_secondary_focus_drop->Select(4);  break;
     case FOCUS_TRADE:
         m_secondary_focus_drop->Select(5);  break;
+    default:
+        throw std::runtime_error("ResourcePanel::Update() : Attempted to set an illegal secondary Focus.");
     }
 }
 
@@ -876,10 +880,10 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(int selected)
 MeterStatusBar2::MeterStatusBar2(int w, int h, const Meter& meter) :
     GG::Wnd(0, 0, w, h, 0),
     m_meter(meter),
-    m_initial_current(m_meter.Current()),
     m_initial_max(m_meter.Max()),
-    m_projected_current(m_meter.Current()),
-    m_projected_max(m_meter.Max())
+    m_initial_current(m_meter.Current()),
+    m_projected_max(m_meter.Max()),
+    m_projected_current(m_meter.Current())
 {}
 
 void MeterStatusBar2::SetProjectedCurrent(double current)
@@ -1339,7 +1343,6 @@ void SpecialsPanel::Update()
     }
     m_icons.clear();
 
-    const Universe& universe = GetUniverse();
     const UniverseObject* obj = GetObject();
     const std::set<std::string>& specials = obj->Specials();
 
@@ -1355,8 +1358,6 @@ void SpecialsPanel::Update()
     }
 
     int num_specials = specials.size();
-    int needed_width = icon_size * num_specials;
-    int actual_width = Width();
     int max_icons = Width() / (icon_size + 1);      // most icons that can be fit into available space
     int centre = Width() / 2;
     int left = centre - (icon_size * num_specials) / 2; // left side of row of specials
@@ -1383,4 +1384,3 @@ const UniverseObject* SpecialsPanel::GetObject() const
     if (!obj) throw std::runtime_error("SpecialsPanel tried to get a planet with an invalid m_object_id");
     return obj;
 }
-

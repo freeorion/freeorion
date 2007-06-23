@@ -621,7 +621,6 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     const int NAME_PTS = PTS*3/2;
     const int COST_PTS = PTS;
     const int SUMMARY_PTS = PTS*4/3;
-    const int DESCRIPTION_PTS = PTS;
 
     m_tech_name_text = new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), NAME_PTS), ClientUI::TextColor());
     m_cost_text =      new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), COST_PTS), ClientUI::TextColor());
@@ -647,7 +646,6 @@ void TechTreeWnd::TechDetailPanel::DoLayout()
     const int NAME_PTS = PTS*3/2;
     const int COST_PTS = PTS;
     const int SUMMARY_PTS = PTS*4/3;
-    const int DESCRIPTION_PTS = PTS;
 
     const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
 

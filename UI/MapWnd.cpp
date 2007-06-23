@@ -159,11 +159,11 @@ MapWnd::MapWnd() :
     m_bg_position_X(NUM_BACKGROUNDS),
     m_bg_position_Y(NUM_BACKGROUNDS),
     m_zoom_factor(1.0),
+    m_active_fleet_wnd(0),
     m_drag_offset(-1, -1),
     m_dragged(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
     m_current_fleet(UniverseObject::INVALID_OBJECT_ID),
-    m_active_fleet_wnd(0),
     m_in_production_view_mode(false)
 {
     SetText("MapWnd");
@@ -1371,8 +1371,6 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn)
     Fleet* fleet = btn_fleets[0];
 
     System* system = fleet->GetSystem();
-    int X = fleet->X();
-    int Y = fleet->Y();
     int owner = *(fleet->Owners().begin());
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open

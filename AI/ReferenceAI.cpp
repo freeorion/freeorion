@@ -85,7 +85,6 @@ void ReferenceAI::Explore(Fleet* fleet) {
     Logger().debugStream() << "telling fleet to explore2";
     
     // attempt to find an unexplored system that can be explored (fleet can get to)
-    int explorable_system = UniverseObject::INVALID_OBJECT_ID;
     std::vector<System*> systems = universe.FindObjects<System>();
     for (std::vector<System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it) {
         System* system = *system_it;

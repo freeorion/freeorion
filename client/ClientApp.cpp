@@ -12,11 +12,11 @@ ClientApp* ClientApp::s_app = 0;
 
 ClientApp::ClientApp() : 
     m_multiplayer_lobby_wnd(0),
+    m_universe(),
     m_current_combat(0), 
     m_player_id(-1),
     m_empire_id(-1),
-    m_current_turn(INVALID_GAME_TURN),
-    m_universe()
+    m_current_turn(INVALID_GAME_TURN)
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of ClientApp");

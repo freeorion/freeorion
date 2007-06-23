@@ -688,7 +688,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (build_type == BT_BUILDING)
         available = empire->BuildingTypeAvailable(name);
-    else if (build_type = BT_ORBITAL)
+    else if ((build_type = BT_ORBITAL))
         available = true;
 
     if (available)

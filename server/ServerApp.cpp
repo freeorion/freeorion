@@ -93,11 +93,11 @@ PlayerSaveGameData::PlayerSaveGameData(const std::string& name, Empire* empire, 
 ServerApp*  ServerApp::s_app = 0;
 
 ServerApp::ServerApp(int argc, char* argv[]) : 
+    m_universe(),
     m_current_combat(0), 
     m_log_category(log4cpp::Category::getRoot()),
     m_state(SERVER_IDLE),
-    m_current_turn(INVALID_GAME_TURN),
-    m_universe()
+    m_current_turn(INVALID_GAME_TURN)
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class ServerApp");
