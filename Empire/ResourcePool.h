@@ -3,8 +3,11 @@
 #define _ResourcePool_h_
 
 #include "../universe/Enums.h"
-#include "../universe/Universe.h"
-#include "../universe/UniverseObject.h"
+
+#include <boost/signal.hpp>
+#include <boost/serialization/nvp.hpp>
+
+#include <vector>
 
 class ResourceCenter;
 class PopCenter;

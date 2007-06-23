@@ -5,6 +5,7 @@
 #include <GG/Clr.h>
 #include "../util/SitRepEntry.h"
 #include "../universe/Tech.h"
+#include "../universe/UniverseObject.h"
 #include "ResourcePool.h"
 
 #include <deque>
@@ -13,6 +14,7 @@
 
 class BuildingType;
 class ShipDesign;
+class Empire;
 
 struct ResearchQueue
 {

@@ -10,13 +10,11 @@
 #include <boost/signal.hpp>
 #endif
 
-#ifndef _Enums_h_
 #include "Enums.h"
-#endif
-
-#ifndef _Predicates_h_
 #include "Predicates.h"
-#endif
+#include "Ship.h"
+#include "../Empire/EmpireManager.h"
+#include "../Empire/Empire.h"
 
 #if defined(_MSC_VER)
   // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
