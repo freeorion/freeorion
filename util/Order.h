@@ -608,7 +608,7 @@ void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_ship_design)
         & BOOST_SERIALIZATION_NVP(m_design_id)
         & BOOST_SERIALIZATION_NVP(m_delete_design_from_empire)
-        & BOOST_SERIALIZATION_NVP(m_create_new_design)
+        & BOOST_SERIALIZATION_NVP(m_create_new_design);
 }
 
 #endif // _Order_h_

@@ -921,6 +921,28 @@ void Universe::DestroyImpl(int id)
     }
 }
 
+void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize)
+{
+    if (s_encoding_empire == ALL_EMPIRES) {
+        designs_to_serialize = m_ship_designs;
+    } else {
+        // add all ship designs of ships this empire knows about -> "objects" from above, not "m_objects"
+        for (ObjectMap::const_iterator it = serialized_objects.begin(); it != serialized_objects.end(); ++it) {
+            Ship* ship = universe_object_cast<Ship*>(it->second);
+            if (ship) {
+                int design_id = ship->ShipDesignID();
+                if (design_id != UniverseObject::INVALID_OBJECT_ID)
+                    designs_to_serialize[design_id] = m_ship_designs[design_id];
+            }
+        }
+
+        // add all ship designs owned by this empire
+        Empire* empire = Empires().Lookup(s_encoding_empire);
+        for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
+            designs_to_serialize[*it] = m_ship_designs[*it];
+        }
+    }
+}
 //////////////////////////////////////////
 //    Server-Only General Functions     //
 //////////////////////////////////////////

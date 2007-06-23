@@ -12,9 +12,6 @@
 
 #include "Enums.h"
 #include "Predicates.h"
-#include "Ship.h"
-#include "../Empire/EmpireManager.h"
-#include "../Empire/Empire.h"
 
 #if defined(_MSC_VER)
   // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
@@ -45,8 +42,6 @@
 #include <string>
 #include <set>
 
-class System;
-
 #ifdef __GNUC__
   // GCC doesn't allow us to forward-declare PlayerSetupData
 #  ifndef _MultiplayerCommon_h_
@@ -60,6 +55,8 @@ class Empire;
 struct UniverseObjectVisitor;
 class XMLElement;
 struct ShipDesign;
+class UniverseObject;
+class System;
 
 class Universe
 {
@@ -311,6 +308,8 @@ protected:
 private:
     static bool s_inhibit_universe_object_signals;
 
+    void GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize);
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -337,27 +336,9 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         }
     }
     ShipDesignMap ship_designs;
-    if (Archive::is_saving::value) {
-        if (s_encoding_empire != ALL_EMPIRES) {
-            // add all ship designs of ships this empire knows about -> "objects" from above, not "m_objects"
-            for (ObjectMap::const_iterator it = objects.begin(); it != objects.end(); ++it) {
-                Ship* ship = universe_object_cast<Ship*>(it->second);
-                if (ship) {
-                    int design_id = ship->ShipDesignID();
-                    if (design_id != UniverseObject::INVALID_OBJECT_ID)
-                        ship_designs[design_id] = m_ship_designs[design_id];
-                }
-            }
+    if (Archive::is_saving::value)
+        GetShipDesignsToSerialize(objects, ship_designs);
 
-            // add all ship designs owned by this empire
-            Empire* empire = Empires().Lookup(s_encoding_empire);
-            for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
-                ship_designs[*it] = m_ship_designs[*it];
-            }
-        } else {
-            ship_designs = m_ship_designs;
-        }
-    }
     ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
         & BOOST_SERIALIZATION_NVP(objects)
         & BOOST_SERIALIZATION_NVP(ship_designs)
