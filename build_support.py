@@ -238,6 +238,14 @@ def CheckBoostLib(context, lib_tuple, conf):
             ret = lib_name
     return ret
 
+def CheckBGL(context, conf):
+    if not conf.CheckHeader('boost/graph/dijkstra_shortest_paths.hpp', '<>', 'C++'):
+        context.Message('Boost configuration... ')
+        context.Result(False)
+        return False
+    else:
+        return True
+
 def CheckBoost(context, required_version, lib_tuples, conf, check_libs):
     AppendPackagePaths('boost', context.env)
     if not conf.CheckCXXHeader('boost/shared_ptr.hpp'):
@@ -250,6 +258,8 @@ def CheckBoost(context, required_version, lib_tuples, conf, check_libs):
         context.Result(False)
         return False
     if check_libs:
+        if not CheckBGL(context, conf):
+            return False
         for i in lib_tuples:
             lib = CheckBoostLib(context, i, conf)
             if not lib:

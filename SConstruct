@@ -53,9 +53,15 @@ options.Add('with_devil_libdir', 'Specify exact library dir for DevIL library')
 options.Add('with_log4cpp', 'Root directory of Log4cpp installation')
 options.Add('with_log4cpp_include', 'Specify exact include dir for Log4cpp headers')
 options.Add('with_log4cpp_libdir', 'Specify exact library dir for Log4cpp library')
-options.Add('with_fmod', 'Root directory of FMOD installation')
-options.Add('with_fmod_include', 'Specify exact include dir for FMOD headers')
-options.Add('with_fmod_libdir', 'Specify exact library dir for FMOD library')
+options.Add('with_openal', 'Root directory of OpenAL installation')
+options.Add('with_openal_include', 'Specify exact include dir for OpenAL headers')
+options.Add('with_openal_libdir', 'Specify exact library dir for OpenAL library')
+options.Add('with_alut', 'Root directory of ALUT installation')
+options.Add('with_alut_include', 'Specify exact include dir for ALUT headers')
+options.Add('with_alut_libdir', 'Specify exact library dir for ALUT library')
+options.Add('with_vorbis', 'Root directory of Vorbis installation')
+options.Add('with_vorbis_include', 'Specify exact include dir for Vorbis headers')
+options.Add('with_vorbis_libdir', 'Specify exact library dir for Vorbis library')
 options.Add('with_graphviz', 'Root directory of GraphViz installation')
 options.Add('with_graphviz_include', 'Specify exact include dir for GraphViz headers')
 options.Add('with_graphviz_libdir', 'Specify exact library dir for GraphViz library')
@@ -308,24 +314,29 @@ int main() {
         # End of GG requirements #
         ##########################
 
-        # FMOD
-        AppendPackagePaths('fmod', env)
         found_it_with_pkg_config = False
+
+        # OpenAL & ALUT
+        AppendPackagePaths('openal', env)
         if pkg_config:
-            if conf.CheckPkg('fmod', fmod_version):
-                env.ParseConfig('pkg-config --cflags --libs fmod')
-                found_it_with_pkg_config = True
-        if not found_it_with_pkg_config:
-            version_regex = re.compile(r'FMOD_VERSION\s*(\d+\.\d+)', re.DOTALL)
-            if not conf.CheckVersionHeader('fmod', 'fmod.h', version_regex, fmod_version, True):
-                Exit(1)
-        if not conf.CheckCHeader('fmod.h'):
-            Exit(1)
-        if str(Platform()) != 'win32':
-            if not conf.CheckLib('fmod-' + fmod_version, 'FSOUND_GetVersion', header = '#include <fmod.h>'):
-                Exit(1)
+            if conf.CheckPkg('openal', openal_pkgconfig_version):
+                env.ParseConfig('pkg-config --cflags --libs openal')
         else:
-            env.AppendUnique(LIBS = [fmod_win32_lib_name])
+            if not conf.CheckLibWithHeader('openal', 'AL/alc.h', 'C', 'alcGetCurrentContext();'):
+                Exit(1)
+        AppendPackagePaths('alut', env)
+        env.ParseConfig('freealut-config --cflags --libs')
+        if not conf.CheckLibWithHeader('alut', 'AL/alut.h', 'C', 'alutInitWithoutContext(0,0);', autoadd = 0):
+            Exit(1)
+
+        # Vorbis
+        AppendPackagePaths('vorbisfile', env)
+        if pkg_config:
+            if conf.CheckPkg('vorbisfile', vorbis_pkgconfig_version):
+                env.ParseConfig('pkg-config --cflags --libs vorbisfile')
+        else:
+            if not conf.CheckLibWithHeader('vorbisfile', 'vorbis/vorbisfile.h', 'C', 'ov_clear(0);'):
+                Exit(1)
 
         # GraphViz
         AppendPackagePaths('graphviz', env)
