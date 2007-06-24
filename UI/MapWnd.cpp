@@ -1358,7 +1358,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
     }
 }
 
-void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn)
+void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing)
 {
     if (m_in_production_view_mode) return;
 
@@ -1426,14 +1426,11 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn)
             wnd_for_button->OffsetMove(GG::Pt(0, GG::GUI::GetGUI()->AppHeight() - 5 - wnd_for_button->LowerRight().y));
 
         GG::GUI::GetGUI()->Register(wnd_for_button);
-        //wnd_for_button->Show();
+     }
 
-    }
 
     // make FleetWnd for clicked button the selected fleet wnd
     m_active_fleet_wnd = wnd_for_button;
-
-    // TODO: select next fleet in wnd, amongst fleets belonging to clicked button 
 }
 
 void MapWnd::FleetWndClosing(FleetWnd* fleet_wnd)
@@ -2002,5 +1999,6 @@ MapWnd::FleetButtonClickedFunctor::FleetButtonClickedFunctor(FleetButton& fleet_
 
 void MapWnd::FleetButtonClickedFunctor::operator()()
 {
-    m_map_wnd.FleetButtonLeftClicked(m_fleet_btn);
+    m_map_wnd.FleetButtonLeftClicked(m_fleet_btn, false);
 }
+

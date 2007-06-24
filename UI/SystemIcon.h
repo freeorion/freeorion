@@ -37,7 +37,7 @@ public:
     typedef boost::signal<void (int)>   LeftClickedSignalType;      //!< emitted when the user left clicks the icon; returns the objectID
     typedef boost::signal<void (int)>   RightClickedSignalType;     //!< emitted when the user right clicks the icon; returns the objectID
     typedef boost::signal<void (int)>   LeftDoubleClickedSignalType;    //!< emitted when the user left double-clicks the icon; returns the object id
-    typedef boost::signal<void (FleetButton&)>  FleetButtonClickedSignalType;   //!< emitted when one of the fleet buttons on this icon is clicked
+    typedef boost::signal<void (FleetButton&, bool)>  FleetButtonClickedSignalType;   //!< emitted when one of the fleet buttons on this icon is clicked
     //!@}
 
     //! \name Structors //!@{
@@ -92,10 +92,11 @@ private:
 
     struct FleetButtonClickedFunctor
     {
-        FleetButtonClickedFunctor(FleetButton& fleet_btn, SystemIcon& system_icon);
+        FleetButtonClickedFunctor(FleetButton& fleet_btn, SystemIcon& system_icon, bool fleet_departing);
         void operator()();
         FleetButton& m_fleet_btn;
         SystemIcon& m_system_icon;
+        bool m_fleet_departing;
     };
 };
 

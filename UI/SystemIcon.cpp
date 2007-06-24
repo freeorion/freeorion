@@ -314,7 +314,7 @@ void SystemIcon::CreateFleetButtons()
             m_stationary_fleet_markers[it->first] = stationary_fb;
             AttachChild(m_stationary_fleet_markers[it->first]);
             map_wnd->SetFleetMovement(stationary_fb);
-            GG::Connect(stationary_fb->ClickedSignal, FleetButtonClickedFunctor(*stationary_fb, *this));
+            GG::Connect(stationary_fb->ClickedSignal, FleetButtonClickedFunctor(*stationary_fb, *this, false));
             stationary_y += BUTTON_SIZE;
         }
         fleet_IDs = m_system.FindObjectIDs(OrderedMovingFleetVisitor(it->first));
@@ -324,6 +324,7 @@ void SystemIcon::CreateFleetButtons()
             m_moving_fleet_markers[it->first] = moving_fb;
             AttachChild(m_moving_fleet_markers[it->first]);
             map_wnd->SetFleetMovement(moving_fb);
+            GG::Connect(moving_fb->ClickedSignal, FleetButtonClickedFunctor(*moving_fb, *this, true));
             moving_y -= BUTTON_SIZE;
         }
     }
@@ -339,16 +340,6 @@ void SystemIcon::FleetCreatedOrDestroyed(const Fleet&)
 {
     CreateFleetButtons();
 }
-    
-SystemIcon::FleetButtonClickedFunctor::FleetButtonClickedFunctor(FleetButton& fleet_btn, SystemIcon& system_icon) :
-    m_fleet_btn(fleet_btn),
-    m_system_icon(system_icon)
-{}
-        
-void SystemIcon::FleetButtonClickedFunctor::operator()()
-{
-    m_system_icon.FleetButtonClickedSignal(m_fleet_btn);
-}
 
 bool SystemIcon::InWindow(const GG::Pt& pt) const
 {
@@ -359,4 +350,18 @@ bool SystemIcon::InWindow(const GG::Pt& pt) const
     }
 
     return Wnd::InWindow(pt);
+}
+
+////////////////////////////////////////////////
+// SystemIcon::FleetButtonClickedFunctor
+////////////////////////////////////////////////
+SystemIcon::FleetButtonClickedFunctor::FleetButtonClickedFunctor(FleetButton& fleet_btn, SystemIcon& system_icon, bool fleet_departing) :
+    m_fleet_btn(fleet_btn),
+    m_system_icon(system_icon),
+    m_fleet_departing(fleet_departing)
+{}
+
+void SystemIcon::FleetButtonClickedFunctor::operator()()
+{
+    m_system_icon.FleetButtonClickedSignal(m_fleet_btn, m_fleet_departing);
 }

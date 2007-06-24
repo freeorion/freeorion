@@ -157,7 +157,7 @@ private:
     void MouseEnteringSystem(int system_id);
     void MouseLeavingSystem(int system_id);
     void PlotFleetMovement(int system_id, bool execute_move);
-    void FleetButtonLeftClicked(FleetButton& fleet_btn);
+    void FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing);
     void UniverseObjectDeleted(const UniverseObject *obj);
     bool ReturnToMap();
     bool OpenChatWindow();

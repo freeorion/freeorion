@@ -146,10 +146,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib fmodvc.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib dotgen.lib gd.lib graph.lib pathplan.lib libexpat.lib png.lib jpeg.lib python24.lib boost_python-vc80-mt-1_33_1.lib"
+				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib dotgen.lib gd.lib graph.lib pathplan.lib libexpat.lib png.lib jpeg.lib python24.lib boost_python-vc80-mt-1_33_1.lib"
 				OutputFile="$(OutDir)/freeorionca.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="C:\FreeOrion\GG;C:\Boost\lib;C:\DevIL\lib;C:\fmodapi375win\api\lib;&quot;C:\freetype-2.1.7\objs&quot;;C:\graphviz\lib;&quot;C:\SDL-1.2.7\lib&quot;;C:\zlib\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;;&quot;C:\Program Files\Python 2.4\libs&quot;"
+				AdditionalLibraryDirectories="C:\FreeOrion\GG;C:\Boost\lib;C:\DevIL\lib;&quot;C:\freetype-2.1.7\objs&quot;;C:\graphviz\lib;&quot;C:\SDL-1.2.7\lib&quot;;C:\zlib\lib;&quot;C:\log4cpp-0.3.4b\msvc6\log4cppDLL\Release&quot;;&quot;C:\Program Files\Python 2.4\libs&quot;"
 				GenerateManifest="true"
 				GenerateDebugInformation="false"
 				SubSystem="2"
