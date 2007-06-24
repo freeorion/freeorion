@@ -25,6 +25,9 @@ class EmpireManager;
 class OrderSet;
 class Universe;
 
+// NB: Do not try to serialize types that contain longs, since longs are different sizes on 32- and 64-bit
+// architectures.  Replace your longs with long longs for portability.  See longer note in Serialize.cpp for more info.
+
 /** Serializes the single empire \a empire to output archive \a oa. */
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Empire& empire);
 

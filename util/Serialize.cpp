@@ -59,10 +59,15 @@ BOOST_STATIC_ASSERT(sizeof(char) == 1);
 BOOST_STATIC_ASSERT(sizeof(short) == 2);
 BOOST_STATIC_ASSERT(sizeof(int) == 4);
 BOOST_STATIC_ASSERT(sizeof(Uint32) == 4);
-BOOST_STATIC_ASSERT(sizeof(long) == 4);
 BOOST_STATIC_ASSERT(sizeof(long long) == 8);
 BOOST_STATIC_ASSERT(sizeof(float) == 4);
 BOOST_STATIC_ASSERT(sizeof(double) == 8);
+
+// This is commented out, but left here by way of explanation.  This assert is the only one that seems to fail on 64-bit
+// systems.  It would seem that short of writing some Boost.Serialization archive that handles longs portably, we cannot
+// transmit longs across machines with different bit-size architectures.  So, don't use longs -- use long longs instead
+// if you need something bigger than an int for some reason.
+//BOOST_STATIC_ASSERT(sizeof(long) == 4);
 
 
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Empire& empire)
