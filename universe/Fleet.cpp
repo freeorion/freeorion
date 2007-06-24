@@ -91,6 +91,8 @@ std::pair<int, int> Fleet::ETA() const
     std::pair<int, int> retval;
     if (UnknownRoute()) {
         retval.first = ETA_UNKNOWN;
+    } else if (m_next_system == UniverseObject::INVALID_OBJECT_ID) {
+        retval.first = 0;
     } else {
         CalculateRoute();
         if (m_speed > 0.0) {
@@ -153,7 +155,7 @@ bool Fleet::ContainsShip(int id) const
 { return m_ships.find(id) != m_ships.end(); }
 
 bool Fleet::UnknownRoute() const
-{ return m_travel_route.size() == 1 && m_travel_route.front() == 0; }
+{ return m_travel_route.size() == 1 && m_travel_route.front()->ID() == UniverseObject::INVALID_OBJECT_ID; }
 
 UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(const_cast<Fleet* const>(this)); }
@@ -171,21 +173,27 @@ void Fleet::SetRoute(const std::list<System*>& route, double distance)
 
     m_travel_route = route;
     m_travel_distance = distance;
-    // if we're already moving, add in the distance from where we are to the first system in the route
-    if (SystemID() != route.front()->ID()) {
-        System* starting_system = route.front();
-        double dist_x = starting_system->X() - X();
-        double dist_y = starting_system->Y() - Y();
-        m_travel_distance += std::sqrt(dist_x * dist_x + dist_y * dist_y);
+
+    // if resetting to no movement while in a system
+    if (SystemID() != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_travel_route.back()->ID()) {
+        m_moving_to = UniverseObject::INVALID_OBJECT_ID;
+    } else {
+        // if we're already moving, add in the distance from where we are to the first system in the route
+        if (SystemID() != route.front()->ID()) {
+            System* starting_system = route.front();
+            double dist_x = starting_system->X() - X();
+            double dist_y = starting_system->Y() - Y();
+            m_travel_distance += std::sqrt(dist_x * dist_x + dist_y * dist_y);
+        }
+        m_moving_to = m_travel_route.back()->ID();
+        if (m_prev_system != SystemID() && m_prev_system == m_travel_route.front()->ID()) {
+            m_prev_system = m_next_system; // if already in transit and turning around, swap prev and next
+        } else if (SystemID() == route.front()->ID()) {
+            m_prev_system = SystemID();
+        }
+        std::list<System*>::const_iterator it = m_travel_route.begin();
+        m_next_system = m_prev_system == SystemID() ? (*++it)->ID() : (*it)->ID();
     }
-    m_moving_to = m_travel_route.back()->ID();
-    if (m_prev_system != SystemID() && m_prev_system == m_travel_route.front()->ID()) {
-        m_prev_system = m_next_system; // if already in transit and turning around, swap prev and next
-    } else if (SystemID() == route.front()->ID()) {
-        m_prev_system = SystemID();
-    }
-    std::list<System*>::const_iterator it = m_travel_route.begin();
-    m_next_system = m_prev_system == SystemID() ? (*++it)->ID() : (*it)->ID();
 
     StateChangedSignal();
 }

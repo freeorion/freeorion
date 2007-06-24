@@ -770,7 +770,7 @@ void ResourcePanel::Update()
     case FOCUS_TRADE:
         m_primary_focus_drop->Select(5);  break;
     default:
-        throw std::runtime_error("ResourcePanel::Update() : Attempted to set an illegal primary Focus.");
+        m_primary_focus_drop->Select(-1);
     }
     
     switch (res->SecondaryFocus())
@@ -788,7 +788,7 @@ void ResourcePanel::Update()
     case FOCUS_TRADE:
         m_secondary_focus_drop->Select(5);  break;
     default:
-        throw std::runtime_error("ResourcePanel::Update() : Attempted to set an illegal secondary Focus.");
+        m_secondary_focus_drop->Select(-1);
     }
 }
 
