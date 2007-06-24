@@ -859,7 +859,7 @@ const double StatisticIcon::LARGE_VALUE = 9.9999e+9;
 
 StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color,
                              double value, int digits, bool integerize, bool showsign) :
-    GG::Control(x, y, w, h, 0),
+    GG::Control(x, y, w, h),
     m_num_values(1),
     m_values(std::vector<double>(1, value)),
     m_digits(std::vector<int>(1, digits)),
