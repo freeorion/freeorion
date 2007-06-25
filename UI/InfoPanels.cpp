@@ -12,6 +12,8 @@
 #include "CUIControls.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/OptionsDB.h"
+#include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
@@ -1312,7 +1314,7 @@ void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 /////////////////////////////////////
 
 SpecialsPanel::SpecialsPanel(int w, const UniverseObject &obj) : 
-    Wnd(0, 0, w, ClientUI::Pts()*4/3, 0),
+    Wnd(0, 0, w, ClientUI::Pts()*4/3, GG::CLICKABLE),
     m_object_id(obj.ID()),
     m_icons()
 {
@@ -1353,7 +1355,9 @@ void SpecialsPanel::Update()
         const Special* special = GetSpecial(*it);
 
         boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
-        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE | GG::CLICKABLE);
+        graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        graphic->SetBrowseText(UserString(special->Name()) + "\n\n" + UserString(special->Description()));
         m_icons.push_back(graphic);
     }
 

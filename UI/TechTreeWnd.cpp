@@ -684,9 +684,13 @@ void TechTreeWnd::TechDetailPanel::DoLayout()
 
 void TechTreeWnd::TechDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
+    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
+
     // maybe later do something interesting with docking
     GG::Wnd::SizeMove(ul, lr);
-    DoLayout();
+
+    if (Visible() && old_size != GG::Wnd::Size())
+        DoLayout();
 }
 
 GG::Pt TechTreeWnd::TechDetailPanel::ClientUpperLeft() const
