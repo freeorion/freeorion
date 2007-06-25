@@ -1,7 +1,6 @@
 import foaiint
 
 # globals
-systems_to_explore = []
 systems_being_explored = []
 
 
@@ -27,15 +26,23 @@ def GenerateOrders():
     for fleet_id in fleet_ids_list:
         fleet = universe.GetFleet(fleet_id)
         if (fleet == None): continue
+
+        foaiint.LogOutput("Fleet: " + str(fleet_id));
         
         start_system_id = fleet.SystemID()
         if (start_system_id == fleet.INVALID_OBJECT_ID): continue
+
+        foaiint.LogOutput("in system: " + str(start_system_id));
         
         system_ids_list = GetExplorableSystemIDs(start_system_id, empire_id)
 
-        
-    foaiint.LogOutput("system_ids_list: " + str(system_ids_list))
-        
+        foaiint.LogOutput("can explore: " + str(system_ids_list));
+
+        if (len(system_ids_list) > 0):
+            destination_id = system_ids_list[0]
+            foaiint.IssueFleetMoveOrder(fleet_id, destination_id)
+    
+    
     foaiint.DoneTurn()
 
 
@@ -91,30 +98,3 @@ def GetEmpireStationaryFleetIDs(empire_id):
 
     return fleet_ids_list
 
-
-#def GetExplorableSystemID(start_system_id, object_ids_list):
-#    foaiint.LogOutput("GetExplorableSystemID")
-#    universe = foaiint.GetUniverse()
-#    empire_id = foaiint.EmpireID()
-#    
-#    system_ids_list = []
-#    
-#    foaiint.LogOutput("A")
-#    for obj_id in object_ids_list:
-#        foaiint.LogOutput("B")
-#        
- #       system = universe.GetSystem(obj_id)        
- #       if (system == None): continue
- #       
- #       foaiint.LogOutput("C")
-#        
- #       if (not universe.SystemsConnected(start_system_id, obj_id, empire_id)): continue
- #       
- #       foaiint.LogOutput("D")
- #       
- #       system_ids_list = system_ids_list + [obj_id]
- #       
- #       foaiint.LogOutput("E")
- #   
- #   foaiint.LogOutput("F")
- #   return system_ids_list
