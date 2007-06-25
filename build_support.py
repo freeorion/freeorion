@@ -213,7 +213,7 @@ def CheckVersionHeader(context, package, header, regex, comparison_string, versi
     matches = FindRegexMatchesInHeader(regex, header, context.env)
     if len(matches) == 1:
         if isinstance(matches[0], basestring):
-	    match_str = matches[0]
+            match_str = matches[0]
         else:
             match_str = '.'.join(matches[0])
         if version_leq_check:
@@ -295,7 +295,8 @@ def CheckSDL(context, options, conf, sdl_config, check_lib):
             context.Result(False)
             return False
     version_regex = re.compile(r'SDL_MAJOR_VERSION\s*(\d+).*SDL_MINOR_VERSION\s*(\d+).*SDL_PATCHLEVEL\s*(\d+)', re.DOTALL)
-    if not conf.CheckVersionHeader('SDL', os.path.join('SDL', 'SDL_version.h'), version_regex, sdl_version, True):
+    if not conf.CheckVersionHeader('SDL', os.path.join('SDL', 'SDL_version.h'), version_regex, sdl_version, True) \
+           and not conf.CheckVersionHeader('SDL', 'SDL_version.h', version_regex, sdl_version, True):
         context.Message('SDL configuration... ')
         context.Result(False)
         return False

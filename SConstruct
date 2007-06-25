@@ -322,12 +322,26 @@ int main() {
             if conf.CheckPkg('openal', openal_pkgconfig_version):
                 env.ParseConfig('pkg-config --cflags --libs openal')
         else:
-            if not conf.CheckLibWithHeader('openal', 'AL/alc.h', 'C', 'alcGetCurrentContext();'):
-                Exit(1)
+            if str(Platform()) == 'win32':
+                env.AppendUnique(LIBS = [
+                    'OpenAL32.lib'
+                    ])
+            else:
+                if not conf.CheckLibWithHeader('openal', 'AL/alc.h', 'C', 'alcGetCurrentContext();') \
+                       or not conf.CheckLibWithHeader('alut', 'AL/alut.h', 'C', 'alutInitWithoutContext(0,0);', autoadd = 0):
+                    Exit(1)
         AppendPackagePaths('alut', env)
-        env.ParseConfig('freealut-config --cflags --libs')
-        if not conf.CheckLibWithHeader('alut', 'AL/alut.h', 'C', 'alutInitWithoutContext(0,0);', autoadd = 0):
-            Exit(1)
+        if pkg_config:
+            if conf.CheckPkg('alut', alut_pkgconfig_version):
+                env.ParseConfig('pkg-config --cflags --libs freealut')
+        else:
+            if str(Platform()) == 'win32':
+                env.AppendUnique(LIBS = [
+                    'ALut.lib'
+                    ])
+            else:
+                if not conf.CheckLibWithHeader('alut', 'AL/alut.h', 'C', 'alutInitWithoutContext(0,0);', autoadd = 0):
+                    Exit(1)
 
         # Vorbis
         AppendPackagePaths('vorbisfile', env)
@@ -335,8 +349,15 @@ int main() {
             if conf.CheckPkg('vorbisfile', vorbis_pkgconfig_version):
                 env.ParseConfig('pkg-config --cflags --libs vorbisfile')
         else:
-            if not conf.CheckLibWithHeader('vorbisfile', 'vorbis/vorbisfile.h', 'C', 'ov_clear(0);'):
-                Exit(1)
+            if str(Platform()) == 'win32':
+                env.AppendUnique(LIBS = [
+                    'libogg.lib',
+                    'libvorbis.lib',
+                    'libvorbisfile.lib'
+                    ])
+            else:
+                if not conf.CheckLibWithHeader('vorbisfile', 'vorbis/vorbisfile.h', 'C', 'ov_clear(0);'):
+                    Exit(1)
 
         # GraphViz
         AppendPackagePaths('graphviz', env)
