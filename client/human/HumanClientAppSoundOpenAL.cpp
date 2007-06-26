@@ -1,12 +1,7 @@
 #include "HumanClientAppSoundOpenAL.h"
 #include "../../util/OptionsDB.h"
 
-#ifdef FREEORION_WIN32
-# include <alc.h>
-#else
-# include <AL/alc.h>
-#endif
-
+#include <AL/alc.h>
 #include <AL/alut.h>
 
 namespace {

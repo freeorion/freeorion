@@ -22,6 +22,7 @@ boost_version = BoostStringToNumber(boost_version_string)
 log4cpp_version = '0.3.4b'
 
 openal_pkgconfig_version = '0.0.8'
+alut_pkgconfig_version ='1.1.0'
 openal_win32_lib_name = 'OpenAL32'
 
 ogg_pkgconfig_version = '1.1.3'

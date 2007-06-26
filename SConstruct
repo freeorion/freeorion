@@ -318,37 +318,42 @@ int main() {
 
         # OpenAL & ALUT
         AppendPackagePaths('openal', env)
+        found_it_with_pkg_config = False
         if pkg_config:
             if conf.CheckPkg('openal', openal_pkgconfig_version):
                 env.ParseConfig('pkg-config --cflags --libs openal')
-        else:
+                found_it_with_pkg_config = True
+        if not found_it_with_pkg_config:
             if str(Platform()) == 'win32':
                 env.AppendUnique(LIBS = [
                     'OpenAL32.lib'
                     ])
             else:
-                if not conf.CheckLibWithHeader('openal', 'AL/alc.h', 'C', 'alcGetCurrentContext();') \
-                       or not conf.CheckLibWithHeader('alut', 'AL/alut.h', 'C', 'alutInitWithoutContext(0,0);', autoadd = 0):
+                if not conf.CheckLibWithHeader('openal', 'AL/alc.h', 'C', 'alcGetCurrentContext();'):
                     Exit(1)
         AppendPackagePaths('alut', env)
+        found_it_with_pkg_config = False
         if pkg_config:
             if conf.CheckPkg('alut', alut_pkgconfig_version):
                 env.ParseConfig('pkg-config --cflags --libs freealut')
-        else:
+                found_it_with_pkg_config = True
+        if not found_it_with_pkg_config:
             if str(Platform()) == 'win32':
                 env.AppendUnique(LIBS = [
                     'ALut.lib'
                     ])
             else:
-                if not conf.CheckLibWithHeader('alut', 'AL/alut.h', 'C', 'alutInitWithoutContext(0,0);', autoadd = 0):
+                if not conf.CheckLibWithHeader('alut', 'AL/alut.h', 'C', 'alutInitWithoutContext(0,0);'):
                     Exit(1)
 
         # Vorbis
         AppendPackagePaths('vorbisfile', env)
+        found_it_with_pkg_config = False
         if pkg_config:
             if conf.CheckPkg('vorbisfile', vorbis_pkgconfig_version):
                 env.ParseConfig('pkg-config --cflags --libs vorbisfile')
-        else:
+                found_it_with_pkg_config = True
+        if not found_it_with_pkg_config:
             if str(Platform()) == 'win32':
                 env.AppendUnique(LIBS = [
                     'libogg.lib',
@@ -361,6 +366,7 @@ int main() {
 
         # GraphViz
         AppendPackagePaths('graphviz', env)
+        found_it_with_pkg_config = False
         if pkg_config:
             if conf.CheckPkg('libgraph', graphviz_pkgconfig_version) and conf.CheckPkg('libgvc', graphviz_pkgconfig_version):
                 env.ParseConfig('pkg-config --cflags --libs libgraph')

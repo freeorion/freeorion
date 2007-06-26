@@ -5,7 +5,7 @@
 #include <string>
 
 #ifndef _SDL_H
-#include "SDL.h"
+#include <SDL/SDL.h>
 #endif
 
 #ifndef _NET2_H_

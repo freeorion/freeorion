@@ -27,11 +27,7 @@
 #include "../server/ServerApp.h"
 #endif
 
-#ifdef FREEORION_LINUX
-#  include <SDL/SDL_byteorder.h>
-#else
-#  include <SDL_byteorder.h>
-#endif
+#include <SDL/SDL_byteorder.h>
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>

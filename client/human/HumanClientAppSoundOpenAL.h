@@ -1,11 +1,7 @@
 // -*- C++ -*-
 #include "HumanClientApp.h"
 
-#ifdef FREEORION_WIN32
-#include <al.h>
-#else
 #include <AL/al.h>
-#endif
 
 #include <vorbis/vorbisfile.h>
 
