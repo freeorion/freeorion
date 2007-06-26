@@ -177,12 +177,10 @@ MapWnd::MapWnd() :
 
     // system-view side panel
     m_side_panel = new SidePanel(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
-    AttachChild(m_side_panel);
     GG::Connect(m_side_panel->SystemSelectedSignal, &MapWnd::SelectSystem, this); // sidepanel requests system selection change -> select it
     GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateEmpireResourcePools, this);  // something in sidepanel changed resource pool(s), so need to recalculate and update amounts
 
     m_sitrep_panel = new SitRepPanel( (GG::GUI::GetGUI()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::GUI::GetGUI()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
-    AttachChild(m_sitrep_panel);
 
     m_research_wnd = new ResearchWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
     m_research_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
@@ -534,6 +532,7 @@ void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
     m_drag_offset = GG::Pt(-1, -1);
     if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(UniverseObject::INVALID_OBJECT_ID);
+        DetachChild(m_side_panel);
         m_side_panel->Hide();
     }
     m_dragged = false;
@@ -549,6 +548,7 @@ void MapWnd::RClick(const GG::Pt& pt, Uint32 keys)
             return;
 
         if (m_side_panel->Visible()) {
+            DetachChild(m_side_panel);
             m_side_panel->Hide();
             return;
         }
@@ -712,6 +712,7 @@ void MapWnd::InitTurn(int turn_number)
     //GG::Connect(empire->GetPopulationPool().ChangedSignal, &SidePanel::Refresh);
 
     m_toolbar->Show();
+    DetachChild(m_side_panel);
     m_side_panel->Hide();   // prevents sidepanel from appearing if previous turn was ended without sidepanel open.  also ensures sidepanel UI updates properly, which it did not otherwise for unknown reasons.
     SelectSystem(m_side_panel->SystemID());
 
@@ -882,6 +883,7 @@ void MapWnd::SelectSystem(int system_id)
             m_side_panel->SetSystem(system_id);
             m_production_wnd->SelectSystem(system_id);            
         }
+        DetachChild(m_side_panel);
         m_side_panel->Hide();   // only show ProductionWnd's sidepanel when ProductionWnd is open
     } else {    
         if (!m_side_panel->Visible() || system_id != m_side_panel->SystemID()) {
@@ -889,8 +891,10 @@ void MapWnd::SelectSystem(int system_id)
             
             // if selected an invalid system, hide sidepanel
             if (system_id == UniverseObject::INVALID_OBJECT_ID) {
+                DetachChild(m_side_panel);
                 m_side_panel->Hide();
             } else {
+                AttachChild(m_side_panel);
                 m_side_panel->Show();
             }
         }
@@ -987,6 +991,7 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 
         if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
             if (m_side_panel->Visible()) {
+                DetachChild(m_side_panel);
                 m_side_panel->Hide();
                 return true;
             }
@@ -1606,6 +1611,7 @@ bool MapWnd::ToggleProduction()
         m_production_wnd->Show();
         m_in_production_view_mode = true;
         HideAllPopups();
+        DetachChild(m_side_panel);
         m_side_panel->Hide();
         GG::GUI::GetGUI()->MoveUp(m_production_wnd);
 
@@ -1629,6 +1635,7 @@ bool MapWnd::ShowMenu()
 bool MapWnd::CloseSystemView()
 {
     SelectSystem(UniverseObject::INVALID_OBJECT_ID);
+    DetachChild(m_side_panel);
     m_side_panel->Hide();   // redundant, but safer to keep in case the behavior of SelectSystem changes
     return true;
 }
