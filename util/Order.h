@@ -450,7 +450,7 @@ private:
 // ShipDesignOrder
 /////////////////////////////////////////////////////
 /** The Order subclass that represents manipulating an empire's ship designs.
-    The 2-arg ctor adds the existing ship design to the \a empire's set of designs - essentially remembering the
+    The 2-arg ctor adds the existing ship design to the \a empire's set of designs - remembering, or "keeping" the
     design and enabling the \a empire to produce ships of that design (if all design prerequisites are met)
     The 3-arg ctor taking a bool removes the indicated design from the empire's set of remembered designs
     The 3-arg ctor taking a ShipDesign argument creates a new shipdesign in the universe's catalog of shipdesigns

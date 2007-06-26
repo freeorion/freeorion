@@ -640,47 +640,65 @@ ShipDesignOrder::ShipDesignOrder() :
 {}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember) :
-    Order(),
+    Order(empire),
     m_ship_design(),
     m_delete_design_from_empire(false),
     m_create_new_design(false)
-{
-}
+{}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy) :
-    Order(),
+    Order(empire),
     m_ship_design(),
     m_delete_design_from_empire(true),
     m_create_new_design(false)
-{
-}
+{}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design) :
-    Order(),
+    Order(empire),
     m_ship_design(ship_design),
     m_delete_design_from_empire(false),
     m_create_new_design(true)
-{
-}
+{}
 
 void ShipDesignOrder::ExecuteImpl() const
 {
-    const Empire* empire = Empires().Lookup(EmpireID());
-    if (!empire)
-        throw std::runtime_error("Invalid empire ID specified for order.");
+    ValidateEmpireID();
 
-    // verify that design of given id is visible to this empire
+    Empire* empire = Empires().Lookup(EmpireID());
+    if (m_delete_design_from_empire) {
+        if (!empire->ShipDesignKept(m_design_id))
+            throw std::runtime_error("Tried to remove a ShipDesign that the empire wasn't remembering");
+        empire->RemoveShipDesign(m_design_id);
 
-    // 1st: check if empire is already remembering the design
-    
-    
-    /*Universe& universe = GetUniverse();    
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        if (Universe::ALL_OBJECTS_VISIBLE ||
-            it->second->GetVisibility(s_encoding_empire) != UniverseObject::NO_VISIBILITY ||
-            universe_object_cast<System*>(it->second))
-        {
-            objects.insert(*it);
+    } else if (m_create_new_design) {
+        if (m_ship_design.empire != EmpireID())
+            throw std::runtime_error("Tried to create a new ShipDesign designed by another empire");
+        ShipDesign* new_ship_design = new ShipDesign(m_ship_design);
+        empire->AddShipDesign(new_ship_design);
+
+    } else if (!m_create_new_design && !m_delete_design_from_empire) {
+        // check if empire is already remembering the design
+        if (empire->ShipDesignKept(m_design_id))
+            throw std::runtime_error("Tried to remember a ShipDesign that was already being remembered");
+
+        // check if the empire can see any objects that have this design (thus enabling it to be copied)
+        std::vector<Ship*> ship_vec = GetUniverse().FindObjects<Ship>();
+        bool known = false;
+        for (std::vector<Ship*>::const_iterator it = ship_vec.begin(); it != ship_vec.end(); ++it) {
+            if (Universe::ALL_OBJECTS_VISIBLE || (*it)->GetVisibility(EmpireID()) != UniverseObject::NO_VISIBILITY) {
+                if ((*it)->ShipDesignID() == m_design_id) {
+                    known = true;
+                    break;
+                }
+            }
         }
-    }*/
+
+        if (known)
+            empire->AddShipDesign(m_design_id);
+        else
+            throw std::runtime_error("Tried to remember a ShipDesign that this empire can't see");
+ 
+    } else {
+        throw std::runtime_error("Malformed ShipDesignOrder.");
+    }
 }

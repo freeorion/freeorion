@@ -304,6 +304,9 @@ public:
     /// Returns true iff this ship design can be built by this empire.  If no such ship design exists, returns false
     bool ShipDesignAvailable(int ship_design_id) const;
 
+    /// Returns true iff the given ship design id is in the set of design ids of this empire.  That is, it has been added to this empire.
+    bool ShipDesignKept(int ship_design_id) const;
+
     /// Returns the queue of items being or queued to be produced.
     const ProductionQueue& GetProductionQueue() const;
 
@@ -445,6 +448,9 @@ public:
 
     /// Removes the given BuildingType from the empire's list
     void RemoveBuildingType(const std::string& name);
+
+    /// Removes the ShipDesign with the given id from the empire's set
+    void RemoveShipDesign(int ship_design_id);
 
     /// Clears all sitrep entries;
     void ClearSitRep();

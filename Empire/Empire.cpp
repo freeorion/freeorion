@@ -729,10 +729,11 @@ bool Empire::ShipDesignAvailable(int ship_design_id) const
 {
     /* currently any ship design is available, but in future this will need to determine if 
        the specific design is buildable */
-    if (m_ship_designs.find(ship_design_id) != m_ship_designs.end())
-        return true;
-    else
-        return false;        
+    return ShipDesignKept(ship_design_id);
+}
+
+bool Empire::ShipDesignKept(int ship_design_id) const {
+    return (m_ship_designs.find(ship_design_id) != m_ship_designs.end());
 }
 
 const ProductionQueue& Empire::GetProductionQueue() const
@@ -1131,10 +1132,10 @@ void Empire::AddExploredSystem(int ID)
 
 void Empire::AddShipDesign(int ship_design_id)
 {
-    // Check if design id is valid.  that is, check that it corresponds to an existing shipdesign in the
-    // universe.  On clients, this means that this empire knows about this ship design.  On the server, 
-    // all existing ship designs will be valid, so this just adds this design's id to those that this empire
-    // will remember
+    /* Check if design id is valid.  that is, check that it corresponds to an existing shipdesign in the
+       universe.  On clients, this means that this empire knows about this ship design.  On the server, 
+       all existing ship designs will be valid, so this just adds this design's id to those that this empire
+       will remember */
     const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
     if (ship_design) {
         // design is valid, so just add the id to empire's set of ids that it knows about
@@ -1145,12 +1146,17 @@ void Empire::AddShipDesign(int ship_design_id)
     }
 }
 
+void Empire::RemoveShipDesign(int ship_design_id)
+{
+        m_ship_designs.erase(ship_design_id);
+}
+
 int Empire::AddShipDesign(ShipDesign* ship_design)
 {
     Universe& universe = GetUniverse();
-    // check if there already exists this same design in the universe.  On clients, this checks whether this empire
-    // knows of this exact design and is trying to re-add it.  On the server, this checks whether this exact design
-    // exists at all yet
+    /* check if there already exists this same design in the universe.  On clients, this checks whether this empire
+       knows of this exact design and is trying to re-add it.  On the server, this checks whether this exact design
+       exists at all yet */
     for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
         if (ship_design == it->second) {
             // ship design is already present in universe.  just need to add it to the empire's set of ship designs
@@ -1180,10 +1186,6 @@ void Empire::AddSitRepEntry(SitRepEntry* entry)
     m_sitrep_entries.push_back(entry);
 }
 
-
-/*************************************************
-    Methods to remove items from our various lists
-**************************************************/
 void Empire::RemoveTech(const std::string& name)
 {
     m_techs.erase(name);
