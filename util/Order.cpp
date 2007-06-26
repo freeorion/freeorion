@@ -673,8 +673,16 @@ void ShipDesignOrder::ExecuteImpl() const
     } else if (m_create_new_design) {
         if (m_ship_design.empire != EmpireID())
             throw std::runtime_error("Tried to create a new ShipDesign designed by another empire");
+
+        Universe& universe = GetUniverse();
+
+        // check if a design with this ID alreadyh exists
+        if (universe.GetShipDesign(m_design_id))
+            throw std::runtime_error("Tried to create a new ShipDesign with an id of an already-existing ShipDesign");
         ShipDesign* new_ship_design = new ShipDesign(m_ship_design);
-        empire->AddShipDesign(new_ship_design);
+
+        universe.InsertShipDesignID(new_ship_design, m_design_id);
+        empire->AddShipDesign(m_design_id);
 
     } else if (!m_create_new_design && !m_delete_design_from_empire) {
         // check if empire is already remembering the design

@@ -454,7 +454,7 @@ private:
     design and enabling the \a empire to produce ships of that design (if all design prerequisites are met)
     The 3-arg ctor taking a bool removes the indicated design from the empire's set of remembered designs
     The 3-arg ctor taking a ShipDesign argument creates a new shipdesign in the universe's catalog of shipdesigns
-    with the passed design, and adds this design to the \a empire's set of remembered designs.  The new design must
+    with the passed new design id, and adds this design to the \a empire's set of remembered designs.  The new design must
     be marked as designed by this \a empire.*/
 class ShipDesignOrder : public Order
 {
