@@ -429,26 +429,6 @@ int main() {
         if str(Platform()) == 'win32':
             AppendPackagePaths('zlib', env)
 
-        # Python
-        import distutils.sysconfig
-        env.AppendUnique(LINKFLAGS = [
-            Split(distutils.sysconfig.get_config_var('LINKFORSHARED'))
-            ])
-        print Split(distutils.sysconfig.get_config_var('LINKFORSHARED'))
-        if not (env.has_key('with_python_include') and env.has_key('with_python_libdir') and env.has_key('python_suffix')):
-            python_include = distutils.sysconfig.get_python_inc()
-            python_libdir = distutils.sysconfig.get_config_var('LIBDIR')
-            python_suffix = distutils.sysconfig.get_config_var('VERSION')
-        else:
-            python_include = env['with_python_include']
-            python_libdir = env['with_python_libdir']
-            python_suffix = env['python_suffix']
-
-        #env.AppendUnique(CPPPATH = [python_include])
-        #env.AppendUnique(LIBPATH = [python_libdir])
-        if not conf.CheckLibWithHeader('python' + python_suffix, 'Python.h', 'C', 'Py_Initialize();'):
-            Exit(1)
-
         # finish config and save results for later
         conf.CheckConfigSuccess(True)
         conf.Finish();
