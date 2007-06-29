@@ -666,10 +666,13 @@ void MapWnd::InitTurn(int turn_number)
     // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
     // I am sick of dealing with it, so I'm forcing an update in order to force it to behave.
     m_sitrep_panel->Update();
-    if (empire->NumSitRepEntries())
+    if (empire->NumSitRepEntries()) {
+        AttachChild(m_sitrep_panel);
         m_sitrep_panel->Show();
-    else
+    } else {
+        DetachChild(m_sitrep_panel);
         m_sitrep_panel->Hide();
+    }
 
     m_research_wnd->Hide();
     m_production_wnd->Hide();
