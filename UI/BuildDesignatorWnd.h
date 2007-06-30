@@ -32,7 +32,6 @@ public:
     virtual bool InClient(const GG::Pt& pt) const;
 
     GG::Rect MapViewHole() const;
-    int QueueIndexShown() const;
     //@}
 
     /** \name Mutators */ //@{

@@ -415,11 +415,6 @@ void ProductionWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
     HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), row_idx));
     UpdateQueue();      ///< rebuild on-screen queue
     ResetInfoPanel();
-    if (row_idx == m_build_designator_wnd->QueueIndexShown()) {
-        m_build_designator_wnd->CenterOnBuild(-1);
-    } else if (row_idx < m_build_designator_wnd->QueueIndexShown()) {
-        m_build_designator_wnd->CenterOnBuild(m_build_designator_wnd->QueueIndexShown() - 1);
-    }
 }
 
 void ProductionWnd::QueueItemClickedSlot(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt)

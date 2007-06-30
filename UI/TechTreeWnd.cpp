@@ -600,7 +600,6 @@ private:
     static const int TEXT_MARGIN_X = 3;
     static const int TEXT_MARGIN_Y = 3;
 
-    GG::Pt TechGraphicUpperLeft() const;
     void Reset();
     void DoLayout();
 
@@ -793,9 +792,6 @@ void TechTreeWnd::TechDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, U
         GG::Wnd::LDrag(pt, final_move, keys);
     }
 }
-
-
-
 
 void TechTreeWnd::TechDetailPanel::Reset()
 {
