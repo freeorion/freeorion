@@ -7,8 +7,10 @@
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
+#include "../universe/Building.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/StaticGraphic.h>
 
 #include <boost/format.hpp>
 #include <cmath>
@@ -26,7 +28,6 @@ namespace {
     {
         QueueRow(int w, const ProductionQueue::Element& build, int queue_index_);
         const int queue_index;
-        static const int HEIGHT = 64;
     };
 
     //////////////////////////////////////////////////
@@ -118,7 +119,7 @@ namespace {
         GG::TextControl*               m_name_text;
         GG::TextControl*               m_PPs_and_turns_text;
         GG::TextControl*               m_turns_remaining_until_next_complete_text;
-        GG::TextControl*               m_turns_remaining_until_all_complete_text;
+        GG::StaticGraphic*             m_icon;
         MultiTurnProgressBar*          m_progress_bar;
         bool                           m_in_progress;
         int                            m_total_turns;
@@ -130,7 +131,7 @@ namespace {
     // QueueRow implementation
     //////////////////////////////////////////////////
     QueueRow::QueueRow(int w, const ProductionQueue::Element& build, int queue_index_) :
-        GG::ListBox::Row(w, HEIGHT, ""),
+        GG::ListBox::Row(),
         queue_index(queue_index_)
     {
         const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
@@ -140,7 +141,11 @@ namespace {
         double progress = empire->ProductionStatus(queue_index);
         if (progress == -1.0)
             progress = 0.0;
-        push_back(new QueueBuildPanel(w, build, turn_cost, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost));
+
+        GG::Control* panel = new QueueBuildPanel(w, build, turn_cost, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
+        Resize(panel->Size());
+        push_back(panel);
+
         SetDragDropDataType("PRODUCTION_QUEUE_ROW");
     }
 
@@ -148,46 +153,93 @@ namespace {
     // QueueBuildPanel implementation
     //////////////////////////////////////////////////
     QueueBuildPanel::QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_cost, int turns, int number, int turns_completed, double partially_complete_turn) :
-        GG::Control(0, 0, w, QueueRow::HEIGHT, 0),
+        GG::Control(0, 0, w, 10, 0),
         m_build(build),
         m_in_progress(build.spending),
         m_total_turns(turns),
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
     {
+        const int MARGIN = 2;
+
+        const int FONT_PTS = ClientUI::Pts();
+        const int METER_HEIGHT = FONT_PTS;
+
+        const int HEIGHT = MARGIN + FONT_PTS + MARGIN + METER_HEIGHT + MARGIN + FONT_PTS + MARGIN + 6;
+
+        const int GRAPHIC_SIZE = HEIGHT - 9;    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
+
+        const int NAME_WIDTH = w - GRAPHIC_SIZE - 2*MARGIN - 3;
+        const int METER_WIDTH = w - GRAPHIC_SIZE - 3*MARGIN - 3;
+        const int TURNS_AND_COST_WIDTH = NAME_WIDTH/2;
+
+        Resize(GG::Pt(w, HEIGHT));
+
+        GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+
+        // get graphic and player-visible name text for item
+        boost::shared_ptr<GG::Texture> graphic;
+        std::string name_text;
+        if (build.item.build_type == BT_BUILDING) {
+            graphic = ClientUI::BuildingTexture(GetBuildingType(build.item.name));
+            name_text = UserString(build.item.name);
+        } else if (build.item.build_type == BT_SHIP) {
+            graphic = ClientUI::GetTexture(ClientUI::ArtDir() / GetShipDesign(build.item.design_id)->graphic);
+            name_text = GetShipDesign(build.item.design_id)->name;
+        } else if (build.item.build_type == BT_ORBITAL) {
+            graphic = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "base1.png"); // this is a kludge for v0.3 only
+            name_text = UserString(build.item.name);
+        } else {
+            graphic = ClientUI::GetTexture(""); // get "missing texture" texture by supply intentionally bad path
+            name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
+        }
+
         using boost::io::str;
         using boost::format;
-        GG::Clr text_and_border = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
 
-        std::string name_text;
-
-        if (build.item.build_type == BT_SHIP)
-            name_text = GetShipDesign(build.item.design_id)->name;
-        else if (build.item.build_type == BT_BUILDING || build.item.build_type == BT_ORBITAL)
-            name_text = UserString(build.item.name);
-        else
-            name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
-        
+        // things other than buildings can be built in multiple copies with one order
         if (build.item.build_type != BT_BUILDING)
             name_text = str(format(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
 
-        m_name_text = new GG::TextControl(4, 2, w - 4, QueueRow::HEIGHT - 2, name_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() + 2), text_and_border, GG::TF_TOP | GG::TF_LEFT);
+
+        // create and arrange widgets to display info
+        int top = MARGIN;
+        int left = MARGIN;
+
+        if (graphic)
+            m_icon = new GG::StaticGraphic(left, top, GRAPHIC_SIZE, GRAPHIC_SIZE, graphic, GG::GR_FITGRAPHIC);
+        else
+            m_icon = 0;
+
+        left += GRAPHIC_SIZE + MARGIN;
+
+        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, FONT_PTS + 2*MARGIN, name_text, font, clr, GG::TF_TOP | GG::TF_LEFT);
         m_name_text->ClipText(true);
-        const int LOWER_TEXT_Y = QueueRow::HEIGHT - (ClientUI::Pts() + 4) - 4;
-        m_PPs_and_turns_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::Pts() + 4,
-                                                   str(format(UserString("PRODUCTION_TURN_COST_STR")) % turn_cost % turns),
-                                                   GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_and_border, GG::TF_LEFT);
+
+        top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
+        
+        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, turns, turns_completed, 
+                                                  partially_complete_turn, ClientUI::TechWndProgressBar(),
+                                                  ClientUI::TechWndProgressBarBackground(), clr);
+        m_progress_bar->MoveTo(GG::Pt(left, top));
+
+        top += m_progress_bar->Height() + MARGIN;
+
+        std::string turns_cost_text = str(format(UserString("PRODUCTION_TURN_COST_STR")) % turn_cost % turns);
+        m_PPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
+                                                   turns_cost_text, font, clr, GG::TF_LEFT);
+
+        left += TURNS_AND_COST_WIDTH;
+        
+
         int turns_left = build.turns_left_to_next_item;
         std::string turns_left_text = turns_left < 0 ? UserString("PRODUCTION_TURNS_LEFT_NEVER") : str(format(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_until_next_complete_text = new GG::TextControl(4, LOWER_TEXT_Y, w - 8, ClientUI::Pts() + 4, turns_left_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_and_border, GG::TF_RIGHT);
-        const int PROGRESS_METER_MARGIN = 6;
-        const int PROGRESS_METER_WIDTH = Width() - 2 * PROGRESS_METER_MARGIN;
-        const int PROGRESS_METER_HEIGHT = 18;
-        m_progress_bar = new MultiTurnProgressBar(PROGRESS_METER_WIDTH, PROGRESS_METER_HEIGHT, turns,
-                                                  turns_completed, partially_complete_turn, ClientUI::TechWndProgressBar(),
-                                                  ClientUI::TechWndProgressBarBackground(), text_and_border);
-        m_progress_bar->MoveTo(GG::Pt(PROGRESS_METER_MARGIN, m_PPs_and_turns_text->UpperLeft().y - 3 - PROGRESS_METER_HEIGHT));
+        m_turns_remaining_until_next_complete_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
+                                                                         turns_left_text, font, clr, GG::TF_RIGHT);
+        m_turns_remaining_until_next_complete_text->ClipText(true);
 
+        if (m_icon) AttachChild(m_icon);
         AttachChild(m_name_text);
         AttachChild(m_PPs_and_turns_text);
         AttachChild(m_turns_remaining_until_next_complete_text);
