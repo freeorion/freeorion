@@ -527,7 +527,7 @@ const std::pair<bool, bool>& BuildDesignatorWnd::BuildSelector::GetAvailabilitie
 
 void BuildDesignatorWnd::BuildSelector::DoLayout()
 {
-    int num_buttons = std::max(1u, m_build_type_buttons.size() + m_availability_buttons.size());
+    int num_buttons = std::max(1, static_cast<int>(m_build_type_buttons.size() + m_availability_buttons.size()));
     int x = 0;
     int button_width = ClientWidth() / num_buttons;
     int button_height = 20;
