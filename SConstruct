@@ -429,6 +429,31 @@ int main() {
         if str(Platform()) == 'win32':
             AppendPackagePaths('zlib', env)
 
+        # Python
+        import distutils.sysconfig
+        if str(Platform()) == 'win32':
+            env['with_python'] = distutils.sysconfig.PREFIX
+            env['with_python_include'] = os.path.join(env['with_python'], 'include')
+            env['with_python_libdir'] = os.path.join(env['with_python'], 'libs')
+            AppendPackagePaths('python', env)
+            env.AppendUnique(LIBS = [
+                python_win32_libname
+                ])
+        else:
+            env['with_python'] = ''
+            env['with_python_include'] = distutils.sysconfig.get_python_inc()
+            env['with_python_libdir'] = distutils.sysconfig.get_config_var('LIBDIR')
+            AppendPackagePaths('python', env)
+            regex = re.compile(r'lib(.+)\.so.*')
+            matches = regex.findall(distutils.sysconfig.get_config_var('LDLIBRARY'))
+            if len(matches):
+                python_libname = matches[0]
+            else:
+                print 'Unable to determine the name of the Python runtime library.  Terminating....'
+                Exit(1)
+            if not conf.CheckLibWithHeader(python_libname, 'Python.h', 'C', 'Py_Initialize();'):
+                Exit(1)
+
         # finish config and save results for later
         conf.CheckConfigSuccess(True)
         conf.Finish();
@@ -533,6 +558,13 @@ values = {
 version_cpp.write(version_cpp_in.read() % values)
 version_cpp.close()
 version_cpp_in.close()
+
+# On Win32, assume we're using the SDK, and copy the installed GG DLLs to the FreeOrion directory.
+if str(Platform()) == 'win32':
+    import shutil
+    shutil.copy(os.path.join('..', 'lib', 'GiGi.dll'), '.')
+    shutil.copy(os.path.join('..', 'lib', 'GiGiNet.dll'), '.')
+    shutil.copy(os.path.join('..', 'lib', 'GiGiSDL.dll'), '.')
 
 Export('env')
 
