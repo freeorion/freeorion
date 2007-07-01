@@ -405,10 +405,13 @@ public:
     BuildSelector(int w, int h);
     ~BuildSelector();
 
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
+
     const std::set<BuildType>&      GetBuildTypesShown() const;
     const std::pair<bool, bool>&    GetAvailabilitiesShown() const; // .first -> available items; .second -> unavailable items
 
-    virtual void                    MinimizeClicked();
+    void MinimizeClicked();
 
     void SetBuildLocation(int location_id);
 
@@ -428,12 +431,16 @@ public:
     mutable boost::signal<void (BuildType, int, int)>                   RequestIDedBuildItemSignal;
 
 private:
+    static const int TEXT_MARGIN_X = 3;
+    static const int TEXT_MARGIN_Y = 3;
+
     void DoLayout();
 
     bool BuildableItemVisible(BuildType build_type, const std::string& name);
     bool BuildableItemVisible(BuildType build_type, int design_id);
 
     void PopulateList(bool keep_selection);
+    std::vector<int> ColWidths();
     
     void BuildItemSelected(const std::set<int>& selections);
     void BuildItemDoubleClicked(int row_index, GG::ListBox::Row* row);
@@ -453,17 +460,12 @@ private:
     int m_build_location;
 
     int row_height;
-    int icon_col_width;
-    int name_col_width;
-    int cost_col_width;
-    int time_col_width;
-    int desc_col_width;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
 };
 
 BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
-    CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), 0, 0, w, h, GG::CLICKABLE | CUIWnd::MINIMIZABLE),
+    CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), 1, 1, w - 1, h - 1, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
     // create build type toggle buttons (ship, building, orbital, all)
@@ -489,6 +491,18 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
     m_misc_connections.insert(GG::Connect(m_buildable_items->DoubleClickedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this));
     m_buildable_items->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
 
+    row_height = ClientUI::Pts()*3/2;
+
+    std::vector<int> col_widths = ColWidths();
+
+    m_buildable_items->SetNumCols(static_cast<int>(col_widths.size()));
+    m_buildable_items->LockColWidths();
+
+    for (unsigned int i = 0; i < col_widths.size(); ++i) {
+        m_buildable_items->SetColWidth(i, col_widths[i]);
+        m_buildable_items->SetColAlignment(i, GG::ALIGN_LEFT);
+    }
+
     DoLayout();
 }
 
@@ -513,9 +527,10 @@ const std::pair<bool, bool>& BuildDesignatorWnd::BuildSelector::GetAvailabilitie
 
 void BuildDesignatorWnd::BuildSelector::DoLayout()
 {
-    GG::Pt client_size = ClientSize();
-
-    int x = 0, button_width = 60, button_height = 20;
+    int num_buttons = std::max(1u, m_build_type_buttons.size() + m_availability_buttons.size());
+    int x = 0;
+    int button_width = ClientWidth() / num_buttons;
+    int button_height = 20;
     for (unsigned int i = 0; i < m_build_type_buttons.size() - 1; ++i) {
         m_build_type_buttons[BuildType(BT_BUILDING + i)]->SizeMove(GG::Pt(x, 0), GG::Pt(x + button_width, button_height));
         x += button_width;
@@ -525,29 +540,52 @@ void BuildDesignatorWnd::BuildSelector::DoLayout()
     m_availability_buttons[0]->SizeMove(GG::Pt(x, 0), GG::Pt(x + button_width, button_height)); x += button_width;
     m_availability_buttons[1]->SizeMove(GG::Pt(x, 0), GG::Pt(x + button_width, button_height));
 
-    m_buildable_items->SizeMove(GG::Pt(0, button_height), client_size);
+    m_buildable_items->SizeMove(GG::Pt(0, button_height), ClientSize() - GG::Pt(TEXT_MARGIN_X, TEXT_MARGIN_Y));
+}
 
-    row_height = ClientUI::Pts()*3/2;
-    icon_col_width = row_height;
-    name_col_width = ClientUI::Pts()*18;
-    cost_col_width = ClientUI::Pts()*3;
-    time_col_width = ClientUI::Pts()*2;
-    desc_col_width = m_buildable_items->ClientWidth() 
-                     - (icon_col_width + name_col_width + cost_col_width + time_col_width)
-                     - ClientUI::ScrollWidth();
+void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
 
-    m_buildable_items->SetNumCols(5);
-    m_buildable_items->LockColWidths();
-    m_buildable_items->SetColWidth(0, icon_col_width);
-    m_buildable_items->SetColWidth(1, name_col_width);
-    m_buildable_items->SetColWidth(2, cost_col_width);
-    m_buildable_items->SetColWidth(3, time_col_width);
-    m_buildable_items->SetColWidth(4, desc_col_width);
-    m_buildable_items->SetColAlignment(0, GG::ALIGN_LEFT);
-    m_buildable_items->SetColAlignment(1, GG::ALIGN_LEFT);
-    m_buildable_items->SetColAlignment(2, GG::ALIGN_LEFT);
-    m_buildable_items->SetColAlignment(3, GG::ALIGN_LEFT);
-    m_buildable_items->SetColAlignment(4, GG::ALIGN_LEFT);
+    // maybe later do something interesting with docking
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (Visible() && old_size != GG::Wnd::Size())
+        DoLayout();
+}
+
+void BuildDesignatorWnd::BuildSelector::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
+{
+    if (m_drag_offset != GG::Pt(-1, -1)) {  // resize-dragging
+        GG::Pt new_lr = pt - m_drag_offset;
+
+        // constrain to within parent
+        if (GG::Wnd* parent = Parent()) {
+            GG::Pt max_lr = parent->ClientLowerRight();
+            new_lr.x = std::min(new_lr.x, max_lr.x);
+            new_lr.y = std::min(new_lr.y, max_lr.y);
+        }        
+
+        Resize(new_lr - UpperLeft());
+    } else {    // normal-dragging
+        GG::Pt final_move = move;
+
+        if (GG::Wnd* parent = Parent()) {
+            GG::Pt ul = UpperLeft(), lr = LowerRight();
+            GG::Pt new_ul = ul + move, new_lr = lr + move;
+
+            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(1, 1);
+            GG::Pt max_lr = parent->ClientLowerRight();
+            GG::Pt max_ul = max_lr - this->Size();
+
+            new_ul.x = std::max(min_ul.x, std::min(max_ul.x, new_ul.x));
+            new_ul.y = std::max(min_ul.y, std::min(max_ul.y, new_ul.y));
+
+            final_move = new_ul - ul;
+        }
+
+        GG::Wnd::LDrag(pt, final_move, keys);
+    }
 }
 
 void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
@@ -720,6 +758,13 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
 
     boost::shared_ptr<GG::Font> default_font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
 
+    std::vector<int> col_widths = ColWidths();
+    int icon_col_width = col_widths[0];
+    int name_col_width = col_widths[1];
+    int cost_col_width = col_widths[2];
+    int time_col_width = col_widths[3];
+    int desc_col_width = col_widths[4];
+
     int row_to_select = -1; // may be set while populating - used to reselect previously selected row after populating
     int i = 0;              // counter that keeps track of how many rows have been added so far
 
@@ -769,6 +814,12 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
             m_build_types[row] = BT_BUILDING;
             if (row->DragDropDataType() == selected_row)
                 row_to_select = i;
+
+            row->GetLayout()->SetColumnStretch(0, 0.0);
+            row->GetLayout()->SetColumnStretch(1, 0.0);
+            row->GetLayout()->SetColumnStretch(2, 0.0);
+            row->GetLayout()->SetColumnStretch(3, 0.0);
+            row->GetLayout()->SetColumnStretch(4, 1.0);
         }
     }
     // populate with ship designs
@@ -818,6 +869,12 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
             m_build_types[row] = BT_SHIP;
             if (row->DragDropDataType() == selected_row)
                 row_to_select = i;
+
+            row->GetLayout()->SetColumnStretch(0, 0.0);
+            row->GetLayout()->SetColumnStretch(1, 0.0);
+            row->GetLayout()->SetColumnStretch(2, 0.0);
+            row->GetLayout()->SetColumnStretch(3, 0.0);
+            row->GetLayout()->SetColumnStretch(4, 1.0);
         }
     }
     // populate with orbitals
@@ -859,6 +916,12 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
             m_build_types[row] = BT_ORBITAL;
             if (row->DragDropDataType() == selected_row)
                 row_to_select = i;
+
+            row->GetLayout()->SetColumnStretch(0, 0.0);
+            row->GetLayout()->SetColumnStretch(1, 0.0);
+            row->GetLayout()->SetColumnStretch(2, 0.0);
+            row->GetLayout()->SetColumnStretch(3, 0.0);
+            row->GetLayout()->SetColumnStretch(4, 1.0);
         }
     }
 
@@ -866,6 +929,23 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
     if (row_to_select != -1)
         m_buildable_items->SelectRow(row_to_select);
     Logger().errorStream() << "Done";
+}
+
+std::vector<int> BuildDesignatorWnd::BuildSelector::ColWidths()
+{
+    std::vector<int> retval;
+
+    retval.push_back(row_height);           // icon
+    retval.push_back(ClientUI::Pts()*18);   // name
+    retval.push_back(ClientUI::Pts()*3);    // cost
+    retval.push_back(ClientUI::Pts()*2);    // time
+
+    int desc_col_width = m_buildable_items->ClientWidth() 
+                         - (retval[0] + retval[1] + retval[2] + retval[3])
+                         - ClientUI::ScrollWidth();
+    retval.push_back(desc_col_width);
+
+    return retval;
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const std::set<int>& selections)
@@ -882,6 +962,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const std::set<int>& s
 
 void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(int row_index, GG::ListBox::Row* row)
 {
+    Logger().errorStream() << "row layout: " << row->GetLayout();
     if (row->Disabled()) return;
     BuildType build_type = m_build_types[row];
     if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
@@ -937,6 +1018,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     AttachChild(m_side_panel);
     
     MoveChildUp(m_build_detail_panel);
+    MoveChildUp(m_build_selector);
 
     ShowAllTypes(false);            // without populating the list
     ShowAvailability(false, false); // ...
