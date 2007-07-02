@@ -270,6 +270,28 @@ def CheckBoost(context, required_version, lib_tuples, conf, check_libs):
     context.Result('ok')
     return True
 
+def BoostLibWin32Name(name, env):
+    # For now, assume VC80 is used
+    toolset_tag = '-vc80'
+    if env['multithreaded']:
+        if env['dynamic']:
+            if env['debug']:
+                threading_and_abi_tag = '-mt-gd'
+            else:
+                threading_and_abi_tag = '-mt'
+        else:
+            if env['debug']:
+                threading_and_abi_tag = '-mt-sgd'
+            else:
+                threading_and_abi_tag = '-mt-sd'
+    else:
+        if env['debug']:
+            threading_and_abi_tag = '-sgd'
+        else:
+            threading_and_abi_tag = '-sd'
+    version_tag = '-' + boost_version_string.replace('.', '_')
+    return 'boost_' + name + toolset_tag + threading_and_abi_tag + version_tag
+
 def CheckSDL(context, options, conf, sdl_config, check_lib):
     ret = True
     AppendPackagePaths('sdl', context.env)

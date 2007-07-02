@@ -220,6 +220,10 @@ if not env.GetOption('clean'):
                 ]
             if not conf.CheckBoost(boost_version_string, boost_libs, conf, not ms_linker):
                 Exit(1)
+            if str(Platform()) == 'win32' and ms_linker:
+                env.AppendUnique(LIBS = [
+                    BoostLibWin32Name('python', env)
+                    ])
 
             # pthreads
             if str(Platform()) == 'posix':
