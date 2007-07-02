@@ -532,8 +532,8 @@ void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
     m_drag_offset = GG::Pt(-1, -1);
     if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(UniverseObject::INVALID_OBJECT_ID);
-        DetachChild(m_side_panel);
         m_side_panel->Hide();
+        DetachChild(m_side_panel);
     }
     m_dragged = false;
 }
@@ -548,8 +548,8 @@ void MapWnd::RClick(const GG::Pt& pt, Uint32 keys)
             return;
 
         if (m_side_panel->Visible()) {
-            DetachChild(m_side_panel);
             m_side_panel->Hide();
+            DetachChild(m_side_panel);
             return;
         }
     }
@@ -650,24 +650,42 @@ void MapWnd::InitTurn(int turn_number)
         }
     }
 
+    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+
+    // determine level of supply each empire can provide to each system
+    m_system_supply.clear();
+    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        Empire* empire = it->second;
+        int empire_id = it->first;
+        const std::map<const System*, int>& supplyable_systems = empire->GetSupplyableSystems();
+        
+        for (std::map<const System*, int>::const_iterator it = supplyable_systems.begin(); it != supplyable_systems.end(); ++it) {
+            int system_id = it->first->ID();
+            int supply_level_for_current_empire = it->second;
+            std::map<int, int>& system_empire_supply_map = m_system_supply[system_id];
+
+            system_empire_supply_map[empire_id] = supply_level_for_current_empire;
+        }
+    }
+
     m_active_fleet_wnd = 0;
 
     MoveChildUp(m_side_panel);
 
     // set turn button to current turn
     m_turn_update->SetText( UserString("MAP_BTN_TURN_UPDATE") + boost::lexical_cast<std::string>(turn_number ) );    
-    MoveChildUp( m_turn_update );
+    MoveChildUp(m_turn_update);
 
-    MoveChildUp(m_sitrep_panel);
     // are there any sitreps to show?
-    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
     assert(empire);
     m_sitrep_panel->Update();
     // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
-    // I am sick of dealing with it, so I'm forcing an update in order to force it to behave.
+    // I am sick of dealing with it, so I'm forcing another update in order to force it to behave.
     m_sitrep_panel->Update();
     if (empire->NumSitRepEntries()) {
         AttachChild(m_sitrep_panel);
+        MoveChildUp(m_sitrep_panel);
         m_sitrep_panel->Show();
     } else {
         DetachChild(m_sitrep_panel);
@@ -715,8 +733,8 @@ void MapWnd::InitTurn(int turn_number)
     //GG::Connect(empire->GetPopulationPool().ChangedSignal, &SidePanel::Refresh);
 
     m_toolbar->Show();
-    DetachChild(m_side_panel);
     m_side_panel->Hide();   // prevents sidepanel from appearing if previous turn was ended without sidepanel open.  also ensures sidepanel UI updates properly, which it did not otherwise for unknown reasons.
+    DetachChild(m_side_panel);
     SelectSystem(m_side_panel->SystemID());
 
     empire->UpdateResourcePool();
@@ -886,18 +904,20 @@ void MapWnd::SelectSystem(int system_id)
             m_side_panel->SetSystem(system_id);
             m_production_wnd->SelectSystem(system_id);            
         }
-        DetachChild(m_side_panel);
         m_side_panel->Hide();   // only show ProductionWnd's sidepanel when ProductionWnd is open
+        DetachChild(m_side_panel);
     } else {    
         if (!m_side_panel->Visible() || system_id != m_side_panel->SystemID()) {
             m_side_panel->SetSystem(system_id);
             
             // if selected an invalid system, hide sidepanel
             if (system_id == UniverseObject::INVALID_OBJECT_ID) {
-                DetachChild(m_side_panel);
                 m_side_panel->Hide();
+                DetachChild(m_side_panel);
             } else {
                 AttachChild(m_side_panel);
+                MoveChildUp(m_side_panel);
+                MoveChildUp(m_sitrep_panel);
                 m_side_panel->Show();
             }
         }
@@ -994,8 +1014,8 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 
         if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
             if (m_side_panel->Visible()) {
-                DetachChild(m_side_panel);
                 m_side_panel->Hide();
+                DetachChild(m_side_panel);
                 return true;
             }
         }
@@ -1126,6 +1146,9 @@ void MapWnd::RenderStarlanes()
     double INNER_LINE_EDGE_ALPHA = 0.4;
     double OUTER_LINE_EDGE_ALPHA = 0.0;
 
+    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const std::map<const System*, int>& supplyable_systems = empire->GetSupplyableSystems();
+
     glDisable(GL_TEXTURE_2D);
 
     GG::Pt ul = ClientUpperLeft();
@@ -1144,10 +1167,29 @@ void MapWnd::RenderStarlanes()
         double far_right2[2] = {center2[0] - OUTER_LINE_WIDTH * left_vec[0], center2[1] - OUTER_LINE_WIDTH * left_vec[1]};
 
         GG::Clr color = GG::CLR_WHITE;
-        if (it->Src()->Owners().size() == 1 && it->Dst()->Owners().size() == 1 &&
-            *it->Src()->Owners().begin() == *it->Dst()->Owners().begin()) {
-            color = Empires().Lookup(*it->Src()->Owners().begin())->Color();
+        // if systems on both sides of starlane can be supplied, mark lane with this client's empire colour
+        // TODO: add way to mark lanes multiple colours
+        int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int system1 = it->Src()->ID(), system2 = it->Dst()->ID();
+        
+        std::map<int, std::map<int, int> >::const_iterator it1 = m_system_supply.find(system1);
+        std::map<int, std::map<int, int> >::const_iterator it2 = m_system_supply.find(system2);
+        std::map<int, std::map<int, int> >::const_iterator end = m_system_supply.end();
+        if (it1 != end && it2 != end) {
+            std::map<int, int>::const_iterator it1a = it1->second.find(this_client_empire_id);
+            std::map<int, int>::const_iterator it2a = it2->second.find(this_client_empire_id);
+            std::map<int, int>::const_iterator end1 = it1->second.end();
+            std::map<int, int>::const_iterator end2 = it2->second.end();
+
+            if (it1a != end1 && it2a != end2)
+                color = empire->Color();
         }
+
+        // old version that coloured starlanes based on system ownership
+        //if (it->Src()->Owners().size() == 1 && it->Dst()->Owners().size() == 1 &&
+        //    *it->Src()->Owners().begin() == *it->Dst()->Owners().begin()) {
+        //    color = Empires().Lookup(*it->Src()->Owners().begin())->Color();
+        //}
 
         glBegin(GL_TRIANGLE_STRIP);
         color.a = static_cast<unsigned char>(255 * OUTER_LINE_EDGE_ALPHA);
@@ -1547,11 +1589,9 @@ bool MapWnd::ToggleSitRep()
 {
     m_projected_fleet_lines = MovementLineData();
     if (m_sitrep_panel->Visible()) {
-        Logger().debugStream() << "sitrep visible";
         DetachChild(m_sitrep_panel);
         m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
     } else {
-        Logger().debugStream() << "sitrep not visible";
         // hide other "competing" windows
         m_research_wnd->Hide();
         HumanClientApp::GetApp()->MoveDown(m_research_wnd);
@@ -1608,14 +1648,17 @@ bool MapWnd::ToggleProduction()
     } else {
         // hide other "competing" windows
         m_sitrep_panel->Hide();
+        DetachChild(m_sitrep_panel);
         m_research_wnd->Hide();
 
         // show the production window
         m_production_wnd->Show();
         m_in_production_view_mode = true;
         HideAllPopups();
-        DetachChild(m_side_panel);
+
         m_side_panel->Hide();
+        DetachChild(m_side_panel);
+
         GG::GUI::GetGUI()->MoveUp(m_production_wnd);
 
         m_production_wnd->Reset();
@@ -1638,8 +1681,8 @@ bool MapWnd::ShowMenu()
 bool MapWnd::CloseSystemView()
 {
     SelectSystem(UniverseObject::INVALID_OBJECT_ID);
-    DetachChild(m_side_panel);
     m_side_panel->Hide();   // redundant, but safer to keep in case the behavior of SelectSystem changes
+    DetachChild(m_side_panel);
     return true;
 }
 

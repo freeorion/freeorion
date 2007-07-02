@@ -212,6 +212,9 @@ private:
     std::map<Fleet*, 
              MovementLineData>  m_fleet_lines;      //! lines used for moving fleets in the main map
     MovementLineData            m_projected_fleet_lines; //! lines that show the projected path of the active fleet in the FleetWnd
+    std::map<int, 
+             std::map<int, int>
+            >                   m_system_supply;    //! map from system id to ( map from empire id to level of supply that empire can provide to ships in system )
     GG::Pt                      m_drag_offset;      //! distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //! tracks whether or not a drag occurs during a left button down sequence of events
     CUITurnButton*              m_turn_update;      //!< button that updates player's turn

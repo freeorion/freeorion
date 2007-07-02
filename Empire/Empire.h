@@ -341,6 +341,9 @@ public:
     /// Returns the number of entries in the SitRep.
     int NumSitRepEntries() const;
 
+    ///returns map of systems, where ship can be resupply and amoung of supply
+    const std::map<const System*,int>& GetSupplyableSystems();
+
     TechItr TechBegin() const;
     TechItr TechEnd() const;
     BuildingTypeItr AvailableBuildingTypeBegin() const;
@@ -567,6 +570,9 @@ private:
 
     /// progress of partially-completed builds; completed items are removed
     std::vector<double> m_production_progress;
+
+    /// set of supplyable systems
+    std::map<const System*, int> m_sup_systems;
 
     /// list of acquired BuildingType.  These are string names referencing BuildingType objects
     std::set<std::string> m_available_building_types;

@@ -109,6 +109,12 @@ namespace {
             }
         }
     }
+
+    struct reverseComparator {
+        bool operator()(int a, int b) {
+            return a > b;
+        }
+    };
 }
 
 
@@ -878,6 +884,56 @@ int Empire::NumSitRepEntries() const
     return m_sitrep_entries.size();
 }
 
+const std::map<const System*, int>& Empire::GetSupplyableSystems()
+{
+    Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(m_id));
+    //erase previous result - TODO erase only after begin turn
+    m_sup_systems.clear();
+    std::multimap<const int, const System*, reverseComparator> sortedSystems;
+    //find all ResourceCenter and add it to pop_vec
+    for (unsigned i = 0; i < object_vec.size(); i++){
+        if (dynamic_cast<ResourceCenter*>(object_vec[i])){
+            //TODO add supply rating information from system, when is implemented
+            const System* sys = object_vec[i]->GetSystem();
+            sortedSystems.insert(std::pair<const int, const System*>(3, sys));
+            //TODO add real count
+            m_sup_systems.insert(std::pair<const System*, int>(sys, 1000));
+        }
+    }
+    //process wave until reach all systems
+    //TODO remove interupted supply route system - enemy fleet and colony
+    while (!sortedSystems.empty()){
+        std::multimap<const int, const System*, reverseComparator>::iterator it = sortedSystems.begin();
+        System::const_lane_iterator end = it->second->end_lanes();
+        for (System::const_lane_iterator csi = it->second->begin_lanes(); csi!= end; csi++) {
+            const System* system = dynamic_cast<const System*>(GetUniverse().Object(csi->first));
+            bool add = HasExploredSystem(csi->first);
+            if (add) {
+                System::ConstObjectVec fleets = system->FindObjects(StationaryFleetVisitor());
+                System::ConstObjectVec::iterator end = fleets.end();
+                for (System::ConstObjectVec::iterator it=fleets.begin();it!=end;it++) {
+                    //empire isn't beetween owner of fleet
+                    if (!((*it)->Owners().count(m_id))) {
+                        add = false;
+                        break;
+                    }
+                }
+            }
+            //test if system isn`t allready added or is end of wave or isn`t explored
+            if (add && m_sup_systems.insert(std::pair<const System*, int>(system, 1000)).second && it->first) {
+                //OK, new system, lets wave flow
+                sortedSystems.insert(std::pair<const int, const System*>(it->first-1, system));
+            } else if (add) {
+                //TODO implements how many can system produce supply
+                if (m_sup_systems[system] > 1000){
+                    m_sup_systems[system] = 1000;
+                }
+            }
+        }
+        sortedSystems.erase(it);
+    }
+    return m_sup_systems;
+}
 
 /**************************************
 (const) Iterators over our various lists
