@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_33_1&quot;"
+				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_33_1&quot;;&quot;C:\Program Files\Python 2.4\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_SERVER;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				DisableLanguageExtensions="false"
@@ -66,7 +66,7 @@
 				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib dotgen.lib gd.lib graph.lib pathplan.lib libexpat.lib png.lib jpeg.lib"
 				OutputFile="../../../freeoriond.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/"
+				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;&quot;C:\Program Files\Python 2.4\libs&quot;"
 				GenerateManifest="true"
 				GenerateDebugInformation="true"
 				SubSystem="2"

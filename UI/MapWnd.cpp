@@ -876,6 +876,13 @@ void MapWnd::ShowTech(const std::string& tech_name)
     m_research_wnd->CenterOnTech(tech_name);
 }
 
+void MapWnd::ShowBuildingType(const std::string& building_type_name)
+{
+    //if (!m_production_wnd->Visible())
+    //    ToggleProduction();
+    //m_production_wnd->building_type_name);
+}
+
 void MapWnd::CenterOnSystem(System* system)
 {
     CenterOnMapCoord(system->X(), system->Y());

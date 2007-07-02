@@ -93,7 +93,8 @@ public:
     void CenterOnFleet(int fleetID);           //!< centers the map on fleet \a fleetID
     void CenterOnSystem(System* system);       //!< centers the map on system \a system
     void CenterOnFleet(Fleet* fleet);          //!< centers the map on fleet \a fleet
-    void ShowTech(const std::string& tech_name);//!< brings up the research screen and centers the tech tree on \a tech_name
+    void ShowTech(const std::string& tech_name);                    //!< brings up the research screen and centers the tech tree on \a tech_name
+    void ShowBuildingType(const std::string& building_type_name);   //!< brings up the production screen and displays info about the buildtype \a type_name
     void SelectSystem(int systemID);           //!< catches emitted signals from the system icons, and allows programmatic selection of planets
     void SelectFleet(int fleetID);             //!< allows programmatic selection of fleets
     void SelectFleet(Fleet* fleet);            //!< allows programmatic selection of fleets

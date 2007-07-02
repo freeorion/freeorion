@@ -424,7 +424,7 @@ bool ClientUI::ZoomToBuildingType(const std::string& building_type_name)
 #ifndef FREEORION_BUILD_UTIL
     if (!GetBuildingType(building_type_name))
         return false;
-    // TODO
+    m_map_wnd->ShowBuildingType(building_type_name);
     return true;
 #else
     return false;
