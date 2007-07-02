@@ -186,6 +186,31 @@ if not env.GetOption('clean'):
         else:
             print 'Configuring unknown system (assuming the system is POSIX-like) ...'
 
+        # Python
+        import distutils.sysconfig
+        if str(Platform()) == 'win32':
+            env['with_python'] = distutils.sysconfig.PREFIX
+            env['with_python_include'] = os.path.join(env['with_python'], 'include')
+            env['with_python_libdir'] = os.path.join(env['with_python'], 'libs')
+            AppendPackagePaths('python', env)
+            env.AppendUnique(LIBS = [
+                python_win32_libname
+                ])
+        else:
+            env['with_python'] = ''
+            env['with_python_include'] = distutils.sysconfig.get_python_inc()
+            env['with_python_libdir'] = distutils.sysconfig.get_config_var('LIBDIR')
+            AppendPackagePaths('python', env)
+            regex = re.compile(r'lib(.+)\.so.*')
+            matches = regex.findall(distutils.sysconfig.get_config_var('LDLIBRARY'))
+            if len(matches):
+                python_libname = matches[0]
+            else:
+                print 'Unable to determine the name of the Python runtime library.  Terminating....'
+                Exit(1)
+            if not conf.CheckLibWithHeader(python_libname, 'Python.h', 'C', 'Py_Initialize();'):
+                Exit(1)
+
         ####################################################################
         # Configure GG requirements; use GG pkg-config first, if available #
         ####################################################################
@@ -200,7 +225,8 @@ if not env.GetOption('clean'):
 
         freeorion_boost_libs = [
             ('boost_serialization', 'boost/archive/binary_iarchive.hpp', 'boost::archive::binary_iarchive::is_saving();'),
-            ('boost_iostreams', 'boost/iostreams/filtering_stream.hpp', '')
+            ('boost_iostreams', 'boost/iostreams/filtering_stream.hpp', ''),
+            ('boost_python', 'boost/python.hpp', 'boost::python::throw_error_already_set();')
             ]
 
         if found_gg_pkg_config:
@@ -432,31 +458,6 @@ int main() {
         # zlib
         if str(Platform()) == 'win32':
             AppendPackagePaths('zlib', env)
-
-        # Python
-        import distutils.sysconfig
-        if str(Platform()) == 'win32':
-            env['with_python'] = distutils.sysconfig.PREFIX
-            env['with_python_include'] = os.path.join(env['with_python'], 'include')
-            env['with_python_libdir'] = os.path.join(env['with_python'], 'libs')
-            AppendPackagePaths('python', env)
-            env.AppendUnique(LIBS = [
-                python_win32_libname
-                ])
-        else:
-            env['with_python'] = ''
-            env['with_python_include'] = distutils.sysconfig.get_python_inc()
-            env['with_python_libdir'] = distutils.sysconfig.get_config_var('LIBDIR')
-            AppendPackagePaths('python', env)
-            regex = re.compile(r'lib(.+)\.so.*')
-            matches = regex.findall(distutils.sysconfig.get_config_var('LDLIBRARY'))
-            if len(matches):
-                python_libname = matches[0]
-            else:
-                print 'Unable to determine the name of the Python runtime library.  Terminating....'
-                Exit(1)
-            if not conf.CheckLibWithHeader(python_libname, 'Python.h', 'C', 'Py_Initialize();'):
-                Exit(1)
 
         # finish config and save results for later
         conf.CheckConfigSuccess(True)

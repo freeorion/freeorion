@@ -760,9 +760,6 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
 
     std::vector<int> col_widths = ColWidths();
     int icon_col_width = col_widths[0];
-    int name_col_width = col_widths[1];
-    int cost_col_width = col_widths[2];
-    int time_col_width = col_widths[3];
     int desc_col_width = col_widths[4];
 
     int row_to_select = -1; // may be set while populating - used to reselect previously selected row after populating
