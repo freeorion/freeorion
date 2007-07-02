@@ -1479,8 +1479,89 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
      }
 
 
-    // make FleetWnd for clicked button the selected fleet wnd
-    m_active_fleet_wnd = wnd_for_button;
+    // if active fleet wnd hasn't changed, cycle through fleets
+    if (m_active_fleet_wnd == wnd_for_button) {
+        std::set<Fleet*> selected_fleets = m_active_fleet_wnd->SelectedFleets();
+
+        const UniverseObject* selected_fleet = 0;
+
+        if (selected_fleets.empty()) {
+            // do nothing
+        } else if (selected_fleets.size() > 1) {
+            return; // don't mess up user's carefully selected fleets
+        } else {
+            selected_fleet = dynamic_cast<UniverseObject*>(*(selected_fleets.begin()));
+        }
+
+        if (system) {
+            System::ObjectVec departing_fleets = system->FindObjects(OrderedMovingFleetVisitor(owner));
+            System::ObjectVec stationary_fleets = system->FindObjects(StationaryFleetVisitor(owner));
+
+            if (departing_fleets.empty() && stationary_fleets.empty()) return;
+
+            if ((fleet_departing && !departing_fleets.empty()) || stationary_fleets.empty()) {
+                // are assured there is at least one departing fleet
+
+                // attempt to find already-selected fleet in departing fleets
+                System::ObjectVec::iterator it;
+                if (selected_fleet)
+                    it = std::find(departing_fleets.begin(), departing_fleets.end(), selected_fleet);
+                else
+                    it = departing_fleets.end();
+
+                if (it == departing_fleets.end() || it == departing_fleets.end() - 1) {
+                    // selected fleet wasn't found, or it was found at the end, so select the first departing fleet
+
+                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(departing_fleets.front()));
+                } else {
+                    // it was found, and wasn't at the end, so select the next fleet after it
+                    ++it;
+                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+                }
+            } else {
+                // are assured there is at least one stationary fleet
+
+                // attempt to find already-selected fleet in departing fleets
+                System::ObjectVec::iterator it;
+                if (selected_fleet)
+                    it = std::find(stationary_fleets.begin(), stationary_fleets.end(), selected_fleet);
+                else
+                    it = stationary_fleets.end();
+
+                if (it == stationary_fleets.end() || it == stationary_fleets.end() - 1) {
+                    // it wasn't found, or it was found at the end, so select the first stationary fleet
+                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(stationary_fleets.front()));
+                } else {
+                    // it was found, and wasn't at the end, so select the next fleet after it
+                    ++it;
+                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+                }
+            }
+        } else {
+            if (btn_fleets.empty()) return;
+            // are assured there is at least one moving fleet
+
+            // attempt to find already-selected fleet in moving fleets
+            std::vector<Fleet*>::const_iterator it;
+            if (selected_fleet)
+                it = std::find(btn_fleets.begin(), btn_fleets.end(), selected_fleet);
+            else
+                it == btn_fleets.end();
+
+            if (it == btn_fleets.end() || it == btn_fleets.end() - 1) {
+                // it wasn't found, or it was found at the end, so select the first moving fleet
+                m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(btn_fleets.front()));
+            } else {
+                // it was found, and wasn't at the end, so select the next fleet after it
+                ++it;
+                m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+            }
+        }
+    } else {
+        // make FleetWnd for clicked button the selected fleet wnd
+        m_active_fleet_wnd = wnd_for_button;
+    }
+
 }
 
 void MapWnd::FleetWndClosing(FleetWnd* fleet_wnd)
