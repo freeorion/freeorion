@@ -316,40 +316,40 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
 
 
     // focus-selection droplists
-    m_primary_focus_drop = new CUIDropDownList(0, 0, icon_size*4, icon_size, icon_size*6);
+    m_primary_focus_drop = new CUIDropDownList(0, 0, icon_size*4, icon_size*3/2, icon_size*6);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "balanced.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*2, icon_size*2, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(dynamic_cast<GG::Control*>(graphic));
     m_primary_focus_drop->Insert(row);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "farming.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*2, icon_size*2, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(dynamic_cast<GG::Control*>(graphic));
     m_primary_focus_drop->Insert(row);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "mining.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(dynamic_cast<GG::Control*>(graphic));
     m_primary_focus_drop->Insert(row);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "industry.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(dynamic_cast<GG::Control*>(graphic));
     m_primary_focus_drop->Insert(row);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "research.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(dynamic_cast<GG::Control*>(graphic));
     m_primary_focus_drop->Insert(row);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "trade.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(dynamic_cast<GG::Control*>(graphic));
     m_primary_focus_drop->Insert(row);
@@ -360,37 +360,37 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
                                                  icon_size*4, icon_size*3/2, icon_size*12);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "balanced.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(graphic);
     m_secondary_focus_drop->Insert(row);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "farming.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(graphic);
     m_secondary_focus_drop->Insert(row);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "mining.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(dynamic_cast<GG::Control*>(graphic));
     m_secondary_focus_drop->Insert(row);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "industry.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(dynamic_cast<GG::Control*>(graphic));
     m_secondary_focus_drop->Insert(row);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "research.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(dynamic_cast<GG::Control*>(graphic));
     m_secondary_focus_drop->Insert(row);
 
     texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "trade.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC);
+    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     row = new GG::DropDownList::Row();
     row->push_back(dynamic_cast<GG::Control*>(graphic));
     m_secondary_focus_drop->Insert(row);
