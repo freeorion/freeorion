@@ -18,8 +18,8 @@
 #  define BOOST_MSVC -1
 #endif
 
-#include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/cerrno.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -199,7 +199,7 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
                 }
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
-                if (e.error() != fs::security_error)
+                if (e.system_error() != EACCES)
                     throw;
             }
         }
