@@ -223,6 +223,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    bool InWindow(const GG::Pt& pt) const;
     int ObjectID() const {return m_object_id;}
     //@}
 
