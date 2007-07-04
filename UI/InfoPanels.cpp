@@ -316,85 +316,31 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
 
 
     // focus-selection droplists
-    m_primary_focus_drop = new CUIDropDownList(0, 0, icon_size*4, icon_size*3/2, icon_size*6);
+    std::vector<boost::shared_ptr<GG::Texture> > textures;
+    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "balanced.png"));
+    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "farming.png"));
+    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "mining.png"));
+    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "industry.png"));
+    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "research.png"));
+    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "trade.png"));
 
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "balanced.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(dynamic_cast<GG::Control*>(graphic));
-    m_primary_focus_drop->Insert(row);
-
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "farming.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(dynamic_cast<GG::Control*>(graphic));
-    m_primary_focus_drop->Insert(row);
-
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "mining.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(dynamic_cast<GG::Control*>(graphic));
-    m_primary_focus_drop->Insert(row);
-
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "industry.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(dynamic_cast<GG::Control*>(graphic));
-    m_primary_focus_drop->Insert(row);
-
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "research.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(dynamic_cast<GG::Control*>(graphic));
-    m_primary_focus_drop->Insert(row);
-
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "trade.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(dynamic_cast<GG::Control*>(graphic));
-    m_primary_focus_drop->Insert(row);
-
+    m_primary_focus_drop = new CUIDropDownList(0, 0, icon_size*4, icon_size*3/2, icon_size*19/2);
+    for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
+        graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, *it, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "focus_drop");
+        row->push_back(dynamic_cast<GG::Control*>(graphic));
+        m_primary_focus_drop->Insert(row);
+    }
     AttachChild(m_primary_focus_drop);
 
     m_secondary_focus_drop = new CUIDropDownList(m_primary_focus_drop->LowerRight().x + icon_size/2, 0,
-                                                 icon_size*4, icon_size*3/2, icon_size*12);
-
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "balanced.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(graphic);
-    m_secondary_focus_drop->Insert(row);
-
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "farming.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(graphic);
-    m_secondary_focus_drop->Insert(row);
-
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "mining.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(dynamic_cast<GG::Control*>(graphic));
-    m_secondary_focus_drop->Insert(row);
-
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "industry.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(dynamic_cast<GG::Control*>(graphic));
-    m_secondary_focus_drop->Insert(row);
-
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "research.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(dynamic_cast<GG::Control*>(graphic));
-    m_secondary_focus_drop->Insert(row);
-
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "trade.png");
-    graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
-    row = new GG::DropDownList::Row();
-    row->push_back(dynamic_cast<GG::Control*>(graphic));
-    m_secondary_focus_drop->Insert(row);
-
+                                                 icon_size*4, icon_size*3/2, icon_size*19/2);
+    for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
+        graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, *it, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "focus_drop");
+        row->push_back(dynamic_cast<GG::Control*>(graphic));
+        m_secondary_focus_drop->Insert(row);
+    }
     AttachChild(m_secondary_focus_drop);
 
     m_misc_connections.insert(GG::Connect(m_primary_focus_drop->SelChangedSignal, &ResourcePanel::PrimaryFocusDropListSelectionChanged, this));
@@ -1319,7 +1265,10 @@ SpecialsPanel::SpecialsPanel(int w, const UniverseObject &obj) :
     m_icons()
 {
     Update();
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseText("??????????");
 }
+
 SpecialsPanel::~SpecialsPanel()
 {
     for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
@@ -1328,15 +1277,27 @@ SpecialsPanel::~SpecialsPanel()
     }
     m_icons.clear();
 }
+
+bool SpecialsPanel::InWindow(const GG::Pt& pt) const
+{
+    for (std::vector<GG::StaticGraphic*>::const_iterator it = m_icons.begin(); it != m_icons.end(); ++it)
+        if ((*it)->InWindow(pt))
+            return true;
+
+    return false;
+}
+
 void SpecialsPanel::Render()
 {
 }
+
 void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 {
     GG::Wnd *parent;
     if((parent = Parent()))
         parent->MouseWheel(pt, move, keys);
 }
+
 void SpecialsPanel::Update()
 {
     for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
@@ -1357,7 +1318,7 @@ void SpecialsPanel::Update()
         boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
         GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE | GG::CLICKABLE);
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        graphic->SetBrowseText(UserString(special->Name()) + "\n\n" + UserString(special->Description()));
+        graphic->SetBrowseText("!!!!!!!!!!");
         m_icons.push_back(graphic);
     }
 
@@ -1376,12 +1337,14 @@ void SpecialsPanel::Update()
         AttachChild(icon);
     }
 }
+
 UniverseObject* SpecialsPanel::GetObject()
 {
     UniverseObject* obj = GetUniverse().Object(m_object_id);
     if (!obj) throw std::runtime_error("SpecialsPanel tried to get a planet with an invalid m_object_id");
     return obj;
 }
+
 const UniverseObject* SpecialsPanel::GetObject() const
 {
     const UniverseObject* obj = GetUniverse().Object(m_object_id);
