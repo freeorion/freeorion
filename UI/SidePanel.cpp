@@ -352,7 +352,7 @@ namespace {
         case SZ_HUGE      : scale = 4.0/5.0; break;
         case SZ_GASGIANT  : scale = 5.0/5.0; break;
         case SZ_ASTEROIDS : scale = 5.0/5.0; break;
-        default                   : scale = 2.0/5.0; break;
+        default           : scale = 2.0/5.0; break;
         }
 
         return static_cast<int>(SidePanel::MIN_PLANET_DIAMETER + (SidePanel::MAX_PLANET_DIAMETER - SidePanel::MIN_PLANET_DIAMETER) * scale);
@@ -609,7 +609,7 @@ namespace {
     {
         int index;
 
-        if(-1 == (index=child_path.find_first_of('.')))
+        if (-1 == (index=child_path.find_first_of('.')))
             return node.ContainsChild(child_path)?node.Child(child_path):XMLElement();
         else
             return node.ContainsChild(child_path.substr(0,index)) ? 
@@ -811,7 +811,7 @@ Planet* SidePanel::PlanetPanel::GetPlanet()
 const Planet* SidePanel::PlanetPanel::GetPlanet() const
 {
     const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
-    if(!planet) throw std::runtime_error("SidePanel::PlanetPanel::GetPlanet: planet not found!");
+    if (!planet) throw std::runtime_error("SidePanel::PlanetPanel::GetPlanet: planet not found!");
     return planet;
 }
 
@@ -851,10 +851,10 @@ void SidePanel::PlanetPanel::Refresh()
 
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
-    if(planet->Owners().empty() || planet->IsAboutToBeColonized()) {
+    if (planet->Owners().empty() || planet->IsAboutToBeColonized()) {
         owner = OS_NONE;
     } else {
-        if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+        if (!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
             owner = OS_FOREIGN;
         else
             owner = OS_SELF;
@@ -910,15 +910,18 @@ void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 {
     GG::Wnd *parent;
-    if((parent=Parent()))
+    if ((parent=Parent()))
         parent->MouseWheel(pt,move,keys);
 }
 
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 {
+    // The mouse is in this window if it is in the rightmost Width() - MAX_PLANET_DIAMETER portion, or if it is over the
+    // planet graphic, or if it is over the specials panel.  That is, it falls through to the MapWnd if it is over the
+    // empty space around the planet on the left side of the panel.
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    ul.x += MAX_PLANET_DIAMETER / 2;
-    return ((ul <= pt && pt < lr) || InPlanet(pt));
+    ul.x += MAX_PLANET_DIAMETER;
+    return (ul <= pt && pt < lr || m_specials_panel->InWindow(pt) || InPlanet(pt));
 }
 
 SidePanel::PlanetPanel::HilitingType SidePanel::PlanetPanel:: Hiliting() const
@@ -928,14 +931,13 @@ SidePanel::PlanetPanel::HilitingType SidePanel::PlanetPanel:: Hiliting() const
 
 void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys) 
 {
-    if(InPlanet(pt))
+    if (InPlanet(pt))
     {
-        if(GetOptionsDB().Get<bool>("UI.sound.enabled"))
+        if (GetOptionsDB().Get<bool>("UI.sound.enabled"))
             HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.planet-button-click"));
         PlanetImageLClickedSignal(m_planet_id);
     }
 }
-
 
 void SidePanel::PlanetPanel::Render()
 {
@@ -973,20 +975,20 @@ void SidePanel::PlanetPanel::ClickColonize()
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::map<int, int> pending_colonization_orders = HumanClientApp::GetApp()->PendingColonizationOrders();
     std::map<int, int>::const_iterator it = pending_colonization_orders.find(planet->ID());
-    if(it == pending_colonization_orders.end()) // colonize
+    if (it == pending_colonization_orders.end()) // colonize
     {
         Ship *ship=FindColonyShip(planet->SystemID());
-        if(ship==0)
+        if (ship==0)
             throw std::runtime_error("SidePanel::PlanetPanel::ClickColonize ship not found!");
 
-        if(!ship->GetFleet()->Accept(StationaryFleetVisitor(*ship->GetFleet()->Owners().begin())))
+        if (!ship->GetFleet()->Accept(StationaryFleetVisitor(*ship->GetFleet()->Owners().begin())))
         {
             GG::ThreeButtonDlg dlg(320,200,UserString("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
                                    GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::WndColor(),ClientUI::CtrlBorderColor(),ClientUI::CtrlColor(),ClientUI::TextColor(),2,
                                    UserString("YES"),UserString("NO"));
             dlg.Run();
 
-            if(dlg.Result()!=0)
+            if (dlg.Result()!=0)
             return;
         }
 
@@ -1004,11 +1006,11 @@ void SidePanel::PlanetPanel::ClickColonize()
         Ship* ship = GetUniverse().Object<Ship>(ship_id);
         Fleet* fleet= ship ? GetUniverse().Object<Fleet>(ship->FleetID()) : NULL;
         MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if(fleet)
-            for( MapWnd::FleetWndIter it = map_wnd->FleetWndBegin();it != map_wnd->FleetWndEnd();++it)
+        if (fleet)
+            for ( MapWnd::FleetWndIter it = map_wnd->FleetWndBegin();it != map_wnd->FleetWndEnd();++it)
             {
                 FleetWnd *fleet_wnd = *it;
-                if(fleet->SystemID() == fleet_wnd->SystemID()
+                if (fleet->SystemID() == fleet_wnd->SystemID()
                    && !fleet_wnd->ContainsFleet(fleet->ID()))
                 {
                     fleet_wnd->AddFleet(GetUniverse().Object<Fleet>(fleet->ID()));
@@ -1022,7 +1024,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
 {
     const Planet *planet = GetPlanet();
   
-    if(!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+    if (!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
 
 
@@ -1030,7 +1032,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
     menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false));
     GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), menu_contents, ClientUI::TextColor());
 
-    if(popup.Run()) 
+    if (popup.Run()) 
         switch (popup.MenuID())
         {
         case 1: 
@@ -1038,7 +1040,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
             std::string plt_name = planet->Name();
             CUIEditWnd edit_wnd(350, UserString("SP_ENTER_NEW_PLANET_NAME"), plt_name);
             edit_wnd.Run();
-            if(edit_wnd.Result() != "")
+            if (edit_wnd.Result() != "")
             {
                 HumanClientApp::GetApp()->Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result()));
                 m_planet_name->SetText(planet->Name());
@@ -1066,20 +1068,23 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h
 
 bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
 {
-    if(pt.y < UpperLeft().y)
-        return false;
-
-    bool retval = UpperLeft() <= pt && pt < LowerRight();
-    for(unsigned int i = 0; i < m_planet_panels.size() && !retval; ++i)
-        if(m_planet_panels[i]->InWindow(pt))
-            retval = true;
-
+    // The pt is in the container if it is in the vertical extent of the container and at least one of the container's
+    // panels.
+    bool retval = false;
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    if (ul.y <= pt.y || pt.y < lr.y)
+    {
+        for (unsigned int i = 0; i < m_planet_panels.size() && !retval; ++i) {
+            if (m_planet_panels[i]->InWindow(pt))
+                retval = true;
+        }
+    }
     return retval;
 }
 
 void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 {
-    if(m_vscroll)
+    if (m_vscroll)
         move < 0 ? m_vscroll->ScrollLineIncr() : m_vscroll->ScrollLineDecr();
 }
 
@@ -1350,7 +1355,13 @@ SidePanel::~SidePanel()
 
 bool SidePanel::InWindow(const GG::Pt& pt) const
 {
-    return (UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER, 0) <= pt && pt < LowerRight()) || m_planet_panel_container->InWindow(pt);
+    // The pt is in the panel if it is in the normal bounds of the panel and above the PlanetPanelContainer, OR if it is
+    // either within the rightmost Width() - MAX_PLANET_DIAMETER portion of the panel, or within the
+    // PlanetPanelContainer.  Note that this allows clicks, etc., to fall through the spaces between the planets to the
+    // MapWnd.
+    return pt.y < m_planet_panel_container->UpperLeft().y ?
+        Wnd::InWindow(pt) :
+        UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER, 0) <= pt && pt < LowerRight() || m_planet_panel_container->InWindow(pt);
 }
 
 void SidePanel::Render()
@@ -1367,10 +1378,8 @@ void SidePanel::Refresh()
 void SidePanel::RefreshImpl()
 {
     UpdateSystemResourceSummary();   
-
     // update individual PlanetPanels in PlanetPanelContainer, then redo layout of panel container
     m_planet_panel_container->RefreshAllPlanetPanels();
-
 }
 void SidePanel::SetSystemImpl()
 {
@@ -1419,7 +1428,7 @@ void SidePanel::SetSystemImpl()
             m_system_name->Insert(row);
             ++system_names_in_droplist;
 
-            if(sys_vec[i] == s_system)
+            if (sys_vec[i] == s_system)
                 select_row = row;
         }
         const int TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
@@ -1429,7 +1438,7 @@ void SidePanel::SetSystemImpl()
         m_system_name->SetDropHeight(drop_height);
 
         for (int i = 0; i < m_system_name->NumRows(); i++) {
-            if(select_row == &m_system_name->GetRow(i))
+            if (select_row == &m_system_name->GetRow(i))
             {
                 m_system_name->Select(i);
                 break;
@@ -1449,14 +1458,14 @@ void SidePanel::SetSystemImpl()
         // TODO: add fleet icons
         std::pair<System::const_orbit_iterator, System::const_orbit_iterator> range = s_system->non_orbit_range();
         std::vector<const Fleet*> flt_vec = s_system->FindObjects<Fleet>();
-        for(unsigned int i = 0; i < flt_vec.size(); i++) 
+        for (unsigned int i = 0; i < flt_vec.size(); i++) 
             m_fleet_connections.insert(std::pair<int, boost::signals::connection>(flt_vec[i]->ID(), GG::Connect(flt_vec[i]->StateChangedSignal, &SidePanel::FleetsChanged, this)));
 
         // add planets
         std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
 
         m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
-        for(unsigned int i = 0; i < plt_vec.size(); i++) {
+        for (unsigned int i = 0; i < plt_vec.size(); i++) {
             m_system_connections.insert(GG::Connect(plt_vec[i]->StateChangedSignal, &SidePanel::UpdateSystemResourceSummary, this));
             m_system_connections.insert(GG::Connect(plt_vec[i]->ResourceCenterChangedSignal, SidePanel::ResourceCenterChangedSignal));
         }
@@ -1558,13 +1567,13 @@ void SidePanel::FleetsChanged()
 
 void SidePanel::UpdateSystemResourceSummary()
 {
-    if(s_system)
+    if (s_system)
     {
         std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
         int farming = 0, mining = 0, trade = 0, research = 0, industry = 0, defense = 0, num_empire_planets = 0;
 
-        for(unsigned int i = 0; i < plt_vec.size(); i++)
-            if(plt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != plt_vec[i]->Owners().end())
+        for (unsigned int i = 0; i < plt_vec.size(); i++) {
+            if (plt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != plt_vec[i]->Owners().end())
             {
                 farming   +=static_cast<int>(plt_vec[i]->FarmingPoints());
                 mining    +=static_cast<int>(plt_vec[i]->MiningPoints());
@@ -1575,6 +1584,7 @@ void SidePanel::UpdateSystemResourceSummary()
                         
                 num_empire_planets++;
             }
+        }
 
         m_system_resource_summary->SetFarming (farming );
         m_system_resource_summary->SetMining  (mining  );
@@ -1583,7 +1593,7 @@ void SidePanel::UpdateSystemResourceSummary()
         m_system_resource_summary->SetIndustry(industry);
         m_system_resource_summary->SetDefense (defense );
 
-        if(num_empire_planets==0)
+        if (num_empire_planets==0)
         {
             m_system_resource_summary->Hide();
             m_static_text_systemproduction->Hide();

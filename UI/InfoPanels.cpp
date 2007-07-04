@@ -36,6 +36,8 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     m_health_meter_bar(0),
     m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE))
 {
+    SetText("PopulationPanel");
+
     const PopCenter* pop = dynamic_cast<const PopCenter*>(&obj);
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an UniverseObject that is not a PopCenter");
@@ -296,6 +298,8 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     m_primary_focus_drop(0), m_secondary_focus_drop(0),
     m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE))
 {
+    SetText("ResourcePanel");
+
     const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(&obj);
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
@@ -832,7 +836,9 @@ MeterStatusBar2::MeterStatusBar2(int w, int h, const Meter& meter) :
     m_initial_current(m_meter.Current()),
     m_projected_max(m_meter.Max()),
     m_projected_current(m_meter.Current())
-{}
+{
+    SetText("MeterStatusBar2");
+}
 
 void MeterStatusBar2::SetProjectedCurrent(double current)
 {
@@ -903,6 +909,8 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
     m_building_indicators(),
     m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE))
 {
+    SetText("BuildingsPanel");
+
     if (m_columns < 1) throw std::invalid_argument("Attempted to create a BuidingsPanel with less than 1 column");
 
     // expand / collapse button at top right    
@@ -1171,6 +1179,8 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type) :
     m_graphic(0),
     m_progress_bar(0)
 {
+    SetText("BuildingIndicator");
+
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     AttachChild(m_graphic);
@@ -1183,6 +1193,8 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type, int turns,
     m_graphic(0),
     m_progress_bar(0)
 {
+    SetText("BuildingIndicator");
+
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     AttachChild(m_graphic);
@@ -1258,12 +1270,13 @@ void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 /////////////////////////////////////
 //         SpecialsPanel           //
 /////////////////////////////////////
-
 SpecialsPanel::SpecialsPanel(int w, const UniverseObject &obj) : 
     Wnd(0, 0, w, ClientUI::Pts()*4/3, GG::CLICKABLE),
     m_object_id(obj.ID()),
     m_icons()
 {
+    SetText("SpecialsPanel");
+
     Update();
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     SetBrowseText("??????????");
@@ -1280,16 +1293,16 @@ SpecialsPanel::~SpecialsPanel()
 
 bool SpecialsPanel::InWindow(const GG::Pt& pt) const
 {
-    for (std::vector<GG::StaticGraphic*>::const_iterator it = m_icons.begin(); it != m_icons.end(); ++it)
+    bool retval = false;
+    for (std::vector<GG::StaticGraphic*>::const_iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
         if ((*it)->InWindow(pt))
-            return true;
-
-    return false;
+            retval = true;
+    }
+    return retval;
 }
 
 void SpecialsPanel::Render()
-{
-}
+{}
 
 void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 {
@@ -1316,9 +1329,10 @@ void SpecialsPanel::Update()
         const Special* special = GetSpecial(*it);
 
         boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
-        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE | GG::CLICKABLE);
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         graphic->SetBrowseText("!!!!!!!!!!");
+        graphic->SetText(UserString(special->Name()) + " Special graphic");
         m_icons.push_back(graphic);
     }
 
@@ -1335,6 +1349,7 @@ void SpecialsPanel::Update()
 
         icon->MoveTo(GG::Pt(x, 0));
         AttachChild(icon);
+        GG::Pt icon_ul = icon->UpperLeft();
     }
 }
 
