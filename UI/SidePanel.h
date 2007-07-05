@@ -85,7 +85,6 @@ private:
     CUIDropDownList     *m_system_name;
     GG::Button          *m_button_prev, *m_button_next;
     GG::DynamicGraphic  *m_star_graphic;
-    GG::TextControl     *m_static_text_systemproduction;
 
     int                 m_next_pltview_fade_in;
     int                 m_next_pltview_planet_id;

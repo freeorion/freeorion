@@ -1068,18 +1068,14 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h
 
 bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
 {
-    // The pt is in the container if it is in the vertical extent of the container and at least one of the container's
-    // panels.
-    bool retval = false;
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-    if (ul.y <= pt.y || pt.y < lr.y)
-    {
-        for (unsigned int i = 0; i < m_planet_panels.size() && !retval; ++i) {
-            if (m_planet_panels[i]->InWindow(pt))
-                retval = true;
-        }
-    }
-    return retval;
+    if (!(pt > UpperLeft() && pt < LowerRight()))
+        return false;
+
+    for (std::vector<PlanetPanel*>::const_iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it)
+        if ((*it)->InWindow(pt))
+            return true;
+
+    return false;
 }
 
 void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
@@ -1297,14 +1293,13 @@ std::set<SidePanel*> SidePanel::s_side_panels;
 
 SidePanel::SidePanel(int x, int y, int w, int h) : 
     Wnd(x, y, w, h, GG::CLICKABLE),
-    m_system_name(new CUIDropDownList(40, 0, w-80, SystemNameFontSize(), 10*SystemNameFontSize(), GG::CLR_ZERO, GG::Clr(0.0, 0.0, 0.0, 0.5))),
-    m_button_prev(new GG::Button(40-SystemNameFontSize(),4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
-    m_button_next(new GG::Button(40+w-80                ,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
+    m_system_name(new CUIDropDownList(MAX_PLANET_DIAMETER, 0, w-MAX_PLANET_DIAMETER, SystemNameFontSize(), 10*SystemNameFontSize(), GG::CLR_ZERO, GG::Clr(0.0, 0.0, 0.0, 0.5))),
+    m_button_prev(new GG::Button(MAX_PLANET_DIAMETER+4,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
+    m_button_next(new GG::Button(w-SystemNameFontSize()-4,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
     m_star_graphic(0),
-    m_static_text_systemproduction(new GG::TextControl(0,100-20-ClientUI::Pts()-5,UserString("SP_SYSTEM_PRODUCTION"),GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::TextColor())),
     m_next_pltview_fade_in(0),m_next_pltview_planet_id(UniverseObject::INVALID_OBJECT_ID),m_next_pltview_fade_out(-1),
-    m_planet_panel_container(new PlanetPanelContainer(0,100,w,h-100-30)),
-    m_system_resource_summary(new SystemResourceSummary(0,100-20,w,20))
+    m_planet_panel_container(new PlanetPanelContainer(0,140,w,h-100-30)),
+    m_system_resource_summary(new SystemResourceSummary(MAX_PLANET_DIAMETER,140-20,w-MAX_PLANET_DIAMETER,20))
 {
     TempUISoundDisabler sound_disabler;
 
@@ -1325,7 +1320,6 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     AttachChild(m_system_name);
     AttachChild(m_button_prev);
     AttachChild(m_button_next);
-    AttachChild(m_static_text_systemproduction);
     AttachChild(m_system_resource_summary);
     AttachChild(m_planet_panel_container);
 
@@ -1355,13 +1349,7 @@ SidePanel::~SidePanel()
 
 bool SidePanel::InWindow(const GG::Pt& pt) const
 {
-    // The pt is in the panel if it is in the normal bounds of the panel and above the PlanetPanelContainer, OR if it is
-    // either within the rightmost Width() - MAX_PLANET_DIAMETER portion of the panel, or within the
-    // PlanetPanelContainer.  Note that this allows clicks, etc., to fall through the spaces between the planets to the
-    // MapWnd.
-    return pt.y < m_planet_panel_container->UpperLeft().y ?
-        Wnd::InWindow(pt) :
-        UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER, 0) <= pt && pt < LowerRight() || m_planet_panel_container->InWindow(pt);
+    return (UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER, 0) <= pt && pt < LowerRight()) || m_planet_panel_container->InWindow(pt);
 }
 
 void SidePanel::Render()
@@ -1375,6 +1363,7 @@ void SidePanel::Refresh()
     for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
         (*it)->RefreshImpl();
 }
+
 void SidePanel::RefreshImpl()
 {
     UpdateSystemResourceSummary();   
@@ -1567,14 +1556,15 @@ void SidePanel::FleetsChanged()
 
 void SidePanel::UpdateSystemResourceSummary()
 {
-    if (s_system)
-    {
+
+    if (s_system) {
+
         std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
         int farming = 0, mining = 0, trade = 0, research = 0, industry = 0, defense = 0, num_empire_planets = 0;
 
+
         for (unsigned int i = 0; i < plt_vec.size(); i++) {
-            if (plt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != plt_vec[i]->Owners().end())
-            {
+            if (plt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != plt_vec[i]->Owners().end()) {
                 farming   +=static_cast<int>(plt_vec[i]->FarmingPoints());
                 mining    +=static_cast<int>(plt_vec[i]->MiningPoints());
                 trade     +=static_cast<int>(plt_vec[i]->TradePoints());
@@ -1593,15 +1583,9 @@ void SidePanel::UpdateSystemResourceSummary()
         m_system_resource_summary->SetIndustry(industry);
         m_system_resource_summary->SetDefense (defense );
 
-        if (num_empire_planets==0)
-        {
+        if (num_empire_planets == 0)
             m_system_resource_summary->Hide();
-            m_static_text_systemproduction->Hide();
-        }
         else
-        {
             m_system_resource_summary->Show();
-            m_static_text_systemproduction->Show();
-        }
     }
 }

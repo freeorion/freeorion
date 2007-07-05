@@ -959,7 +959,6 @@ void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const std::set<int>& s
 
 void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(int row_index, GG::ListBox::Row* row)
 {
-    Logger().errorStream() << "row layout: " << row->GetLayout();
     if (row->Disabled()) return;
     BuildType build_type = m_build_types[row];
     if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
