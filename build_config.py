@@ -30,4 +30,4 @@ vorbis_pkgconfig_version = '1.1.2'
 
 graphviz_pkgconfig_version = '2.8'
 
-python_win32_libname = 'python24'
+python_win32_libname = 'python25'
