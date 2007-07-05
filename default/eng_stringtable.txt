@@ -1032,10 +1032,10 @@ PL_SIZE
 Size
 
 PL_PRIMARY_FOCUS
-Primary 
+Primary Focus
 
 PL_SECONDARY_FOCUS
-Secondary
+Secondary Focus
 
 PL_COLONIZE
 Colonize
@@ -1055,6 +1055,38 @@ Enter new planet name
 SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
 All colony ships in this system have been\ngiven orders to leave the system.\n\nUse one of the departing colony ships?
 
+SP_POPULATION
+Population
+
+SP_HEALTH
+Health
+
+SP_FOOD_PRODUCTION
+Food Production
+
+SP_MINERALS_PRODUCTION
+Minerals Production
+
+SP_INDUSTRIAL_OUTPUT
+Industrial Output
+
+SP_RESEARCH_OUTPUT
+Research Output
+
+SP_TRADE_LEVEL
+Trade Level
+
+SP_CONSTRUCTION_INFRASTRUCTURE
+Construction Infrastructure
+
+SP_CURRENT
+Current
+
+SP_MAX
+Maximum
+
+SP_CHANGE
+Change
 
 #################
 # Fleet Window  #
