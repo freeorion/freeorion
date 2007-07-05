@@ -10,7 +10,7 @@
 #include "../universe/System.h"
 #include "../util/OrderSet.h"
 
-#include "SDL_byteorder.h"
+#include "SDL/SDL_byteorder.h"
 
 #if defined(_MSC_VER)
   // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"

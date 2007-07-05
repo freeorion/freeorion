@@ -32,7 +32,7 @@
 #include <log4cpp/FileAppender.hh>
 
 // for dummy video driver setenv-hack
-#include "SDL_getenv.h"
+#include "SDL/SDL_getenv.h"
 
 #include <ctime>
 

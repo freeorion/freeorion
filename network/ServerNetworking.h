@@ -9,6 +9,8 @@
 #include <boost/function.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
+#include <set>
+
 
 class DiscoveryServer;
 class Message;

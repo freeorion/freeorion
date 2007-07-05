@@ -28,7 +28,7 @@
 #include <log4cpp/FileAppender.hh>
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/exception.hpp>
+#include <boost/filesystem/cerrno.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/spirit.hpp>
@@ -591,7 +591,7 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
                     textures.push_back(ClientUI::GetTexture(*it));
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
-                if (e.error() != fs::security_error)
+                if (e.system_error() != EACCES)
                     throw;
             }
         }
